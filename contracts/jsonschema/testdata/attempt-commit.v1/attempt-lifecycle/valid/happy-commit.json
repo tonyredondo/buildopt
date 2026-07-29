@@ -1,0 +1,83 @@
+{
+  "attemptId": "attempt-01K4Y800",
+  "sourceStateDigest": "hmac-sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "policyDigest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+  "ownerId": "gateway-1",
+  "pendingObjects": [
+    {
+      "namespaceGeneration": 12,
+      "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "checksum": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "sizeBytes": 1024
+    },
+    {
+      "namespaceGeneration": 12,
+      "key": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "checksum": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "sizeBytes": 2048
+    }
+  ],
+  "transitions": [
+    {
+      "sequence": 1,
+      "stateVersion": 1,
+      "commandId": "command-create",
+      "toState": "CREATED",
+      "occurredAt": "2026-07-21T10:00:00Z",
+      "taskActionBoundary": "NOT_REACHED"
+    },
+    {
+      "sequence": 2,
+      "stateVersion": 2,
+      "expectedStateVersion": 1,
+      "commandId": "command-bind",
+      "fromState": "CREATED",
+      "toState": "POLICY_BOUND",
+      "occurredAt": "2026-07-21T10:01:00Z",
+      "taskActionBoundary": "NOT_REACHED"
+    },
+    {
+      "sequence": 3,
+      "stateVersion": 3,
+      "expectedStateVersion": 2,
+      "commandId": "command-start",
+      "fromState": "POLICY_BOUND",
+      "toState": "GRADLE_STARTED",
+      "occurredAt": "2026-07-21T10:02:00Z",
+      "taskActionBoundary": "NOT_REACHED"
+    },
+    {
+      "sequence": 4,
+      "stateVersion": 4,
+      "expectedStateVersion": 3,
+      "commandId": "command-task",
+      "fromState": "GRADLE_STARTED",
+      "toState": "TASK_ACTION_STARTED",
+      "occurredAt": "2026-07-21T10:03:00Z",
+      "taskActionBoundary": "CONFIRMED"
+    },
+    {
+      "sequence": 5,
+      "stateVersion": 5,
+      "expectedStateVersion": 4,
+      "commandId": "command-validate",
+      "fromState": "TASK_ACTION_STARTED",
+      "toState": "VALIDATED",
+      "occurredAt": "2026-07-21T10:05:00Z",
+      "taskActionBoundary": "CONFIRMED",
+      "validationStatus": "PASSED"
+    },
+    {
+      "sequence": 6,
+      "stateVersion": 6,
+      "expectedStateVersion": 5,
+      "commandId": "command-commit",
+      "fromState": "VALIDATED",
+      "toState": "COMMITTED",
+      "occurredAt": "2026-07-21T10:06:00Z",
+      "taskActionBoundary": "CONFIRMED",
+      "commitDecisionId": "decision-01K4Y800"
+    }
+  ],
+  "commitDecisionFixture": "../../commit-decision/valid/complete-decision.json"
+}

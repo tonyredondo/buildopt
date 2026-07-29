@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "ATTEMPT_STATE",
+  "attemptId": "attempt-01K4Y801",
+  "attemptKind": "CACHE_PUBLICATION",
+  "sequence": 2,
+  "stateVersion": 2,
+  "expectedStateVersion": 1,
+  "commandId": "command-start-01K4Y801",
+  "transition": "START_GRADLE",
+  "previousState": "CREATED",
+  "state": "GRADLE_STARTED",
+  "occurredAt": "2026-07-21T10:01:00Z",
+  "repository": {
+    "tenant": "tenant-7",
+    "repository": "repo-42",
+    "trustDomain": "trusted-ci"
+  },
+  "sourceRevision": "8c74f2a",
+  "sourceStateDigest": "hmac-sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "policyDigest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+  "owner": {
+    "ownerId": "gateway-1",
+    "leaseId": "lease-01K4Y801",
+    "leaseExpiresAt": "2026-07-21T10:15:00Z"
+  },
+  "taskActionBoundary": "NOT_REACHED"
+}

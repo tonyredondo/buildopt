@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "CI_VALIDATION_REQUEST",
+  "contractVersion": "buildopt-ci-validation/v1",
+  "requestId": "request-01K4Y800",
+  "actionId": "action-01K4Y800",
+  "attemptId": "attempt-01K4Y900",
+  "idempotencyKey": "request-01K4Y800/action-01K4Y800",
+  "repository": {
+    "tenant": "tenant-7",
+    "repository": "repo-42",
+    "trustDomain": "trusted-ci"
+  },
+  "revision": "8c74f2a",
+  "sourceStateDigest": "hmac-sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "candidateArtifactRefs": [
+    {
+      "artifactId": "candidate-classes",
+      "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "sizeBytes": 2048,
+      "mediaType": "application/zip"
+    }
+  ],
+  "controlArtifactRefs": [
+    {
+      "artifactId": "control-classes",
+      "digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "sizeBytes": 2048,
+      "mediaType": "application/zip"
+    }
+  ],
+  "changedBuildInputs": [
+    "build.gradle.kts",
+    "buildSrc/src/main/java/**"
+  ],
+  "requestedMode": "FULL_RELEVANT_VALIDATION",
+  "createdAt": "2026-07-21T10:00:00Z",
+  "deadline": "2026-07-21T11:00:00Z",
+  "budgetReservation": {
+    "reservationId": "reservation-01K4Y800",
+    "reservedRunnerMs": 3600000,
+    "maxConcurrentValidations": 1,
+    "expiresAt": "2026-07-21T11:00:00Z"
+  },
+  "isolation": {
+    "freshWorktrees": true,
+    "separateGradleUserHomes": true,
+    "separateWritableOutputs": true,
+    "separateConfigurationCaches": true,
+    "separateDaemons": true,
+    "separateL1Caches": true,
+    "separateWriteCredentials": true,
+    "executionOrder": "RANDOMIZED_SEQUENTIAL"
+  }
+}

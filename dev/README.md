@@ -246,6 +246,20 @@ four-arm golden-runner catalog. Cross-record checks bind policy to evidence and
 the selected profile, verify the policy time window and cgroup headroom, and
 reject treatment changes beyond workers and Gradle heap.
 
+## Attempt and atomic commit validation
+
+Validate the `F0-014` attempt, isolated CI request, and `CommitDecision`
+contracts:
+
+```bash
+./dev/check-attempt-commit-schemas
+```
+
+The checker rejects skipped CAS states, shared candidate/control L1 state, and
+inconclusive commit authorization. Linked vectors additionally prove ordered
+idempotent transitions, single ownership, terminal abort behavior, positive
+validation, and exact coverage of every pending cache object.
+
 ## Metrics catalog validation
 
 Validate the machine-readable `F0-024` catalog and its private-beta measurement

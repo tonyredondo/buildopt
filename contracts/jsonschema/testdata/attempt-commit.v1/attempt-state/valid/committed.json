@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "ATTEMPT_STATE",
+  "attemptId": "attempt-01K4Y800",
+  "attemptKind": "CACHE_PUBLICATION",
+  "sequence": 6,
+  "stateVersion": 6,
+  "expectedStateVersion": 5,
+  "commandId": "command-commit-01K4Y800",
+  "transition": "COMMIT",
+  "previousState": "VALIDATED",
+  "state": "COMMITTED",
+  "occurredAt": "2026-07-21T10:06:00Z",
+  "repository": {
+    "tenant": "tenant-7",
+    "repository": "repo-42",
+    "trustDomain": "trusted-ci"
+  },
+  "sourceRevision": "8c74f2a",
+  "sourceStateDigest": "hmac-sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "policyDigest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+  "owner": {
+    "ownerId": "gateway-1",
+    "leaseId": "lease-01K4Y800",
+    "leaseExpiresAt": "2026-07-21T10:15:00Z"
+  },
+  "taskActionBoundary": "CONFIRMED",
+  "commitDecisionRef": {
+    "decisionId": "decision-01K4Y800",
+    "decisionDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+}

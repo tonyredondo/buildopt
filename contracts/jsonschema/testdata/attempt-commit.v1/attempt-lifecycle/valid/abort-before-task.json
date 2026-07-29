@@ -1,0 +1,48 @@
+{
+  "attemptId": "attempt-01K4Y810",
+  "sourceStateDigest": "hmac-sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "policyDigest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+  "ownerId": "gateway-1",
+  "pendingObjects": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "stateVersion": 1,
+      "commandId": "abort-create",
+      "toState": "CREATED",
+      "occurredAt": "2026-07-21T10:00:00Z",
+      "taskActionBoundary": "NOT_REACHED"
+    },
+    {
+      "sequence": 2,
+      "stateVersion": 2,
+      "expectedStateVersion": 1,
+      "commandId": "abort-bind",
+      "fromState": "CREATED",
+      "toState": "POLICY_BOUND",
+      "occurredAt": "2026-07-21T10:01:00Z",
+      "taskActionBoundary": "NOT_REACHED"
+    },
+    {
+      "sequence": 3,
+      "stateVersion": 3,
+      "expectedStateVersion": 2,
+      "commandId": "abort-start",
+      "fromState": "POLICY_BOUND",
+      "toState": "GRADLE_STARTED",
+      "occurredAt": "2026-07-21T10:02:00Z",
+      "taskActionBoundary": "NOT_REACHED"
+    },
+    {
+      "sequence": 4,
+      "stateVersion": 4,
+      "expectedStateVersion": 3,
+      "commandId": "abort-timeout",
+      "fromState": "GRADLE_STARTED",
+      "toState": "ABORTED",
+      "occurredAt": "2026-07-21T10:04:00Z",
+      "taskActionBoundary": "NOT_REACHED",
+      "abortReason": "TIMEOUT"
+    }
+  ]
+}

@@ -120,3 +120,37 @@ policy/evidence identity, policy validity at observation time, exact selected
 profile binding, the fixed four-arm catalog, cgroup headroom, and the absence
 of undeclared treatment differences. Simulator/replay, A/A, propensity, drift,
 and rollback behavior still belong to the wider `BANDIT-001` gate.
+
+## Attempt, CI validation request, and CommitDecision v1
+
+[`attempt-state.v1.schema.json`](./attempt-state.v1.schema.json),
+[`ci-validation-request.v1.schema.json`](./ci-validation-request.v1.schema.json),
+and [`commit-decision.v1.schema.json`](./commit-decision.v1.schema.json) are the
+normative `F0-014` contracts.
+
+- `ATTEMPT_STATE` is one immutable CAS transition. It fixes the only forward
+  path from `CREATED` through `VALIDATED`, permits explicit aborts from
+  nonterminal states, persists the first-task-action replay boundary, and
+  binds one owner/lease, source state, policy, and optional validation budget.
+- `CI_VALIDATION_REQUEST` binds request/action/attempt idempotency, source and
+  artifact digests, `FULL_RELEVANT_VALIDATION`, deadline, one reserved
+  validation slot, and explicit candidate/control isolation for worktrees,
+  outputs, Gradle state, daemons, L1, and credentials.
+- `COMMIT_DECISION` is the canonical authenticated authorization persisted
+  atomically with committed cache metadata. It binds the exact object tuples,
+  repository/trust domain, source, policy/configuration/cache-contract
+  digests, grant state, revocation epoch, positive or explicitly unnecessary
+  validation, and expiry.
+
+Run individual schemas and linked state vectors with:
+
+```bash
+./dev/check-attempt-commit-schemas
+```
+
+The semantic checker enforces contiguous sequence/state versions, unique
+idempotency commands, immutable owner/source/policy bindings, ordered terminal
+transitions, positive validation, and exact object coverage. The authentication
+shape is fail-closed now; canonical JSON and cryptographic signature verification
+remain owned by `F0-020`. Queue execution, crash recovery, SQLite transactions,
+and reconciliation remain implementation work under `CI-ORCH-001`/`CACHE-008`.

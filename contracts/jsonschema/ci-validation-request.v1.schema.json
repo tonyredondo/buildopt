@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/ci-validation-request.v1.schema.json",
+  "title": "BuildOpt CI_VALIDATION_REQUEST v1",
+  "description": "Idempotent, budgeted request for isolated candidate/control validation in the protected CI-ORCH-001 workflow.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "contractVersion",
+    "requestId",
+    "actionId",
+    "attemptId",
+    "idempotencyKey",
+    "repository",
+    "revision",
+    "sourceStateDigest",
+    "candidateArtifactRefs",
+    "controlArtifactRefs",
+    "changedBuildInputs",
+    "requestedMode",
+    "createdAt",
+    "deadline",
+    "budgetReservation",
+    "isolation"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "recordType": {
+      "const": "CI_VALIDATION_REQUEST"
+    },
+    "contractVersion": {
+      "const": "buildopt-ci-validation/v1"
+    },
+    "requestId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "actionId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "attemptId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "idempotencyKey": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{2,511}$"
+    },
+    "repository": {
+      "$ref": "#/$defs/repository"
+    },
+    "revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{7,64}$"
+    },
+    "sourceStateDigest": {
+      "$ref": "#/$defs/digest"
+    },
+    "candidateArtifactRefs": {
+      "$ref": "#/$defs/artifactRefs"
+    },
+    "controlArtifactRefs": {
+      "$ref": "#/$defs/artifactRefs"
+    },
+    "changedBuildInputs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1024,
+        "not": {
+          "pattern": "(^|/)\\.\\.(/|$)|^/"
+        }
+      },
+      "minItems": 1,
+      "maxItems": 4096,
+      "uniqueItems": true
+    },
+    "requestedMode": {
+      "const": "FULL_RELEVANT_VALIDATION"
+    },
+    "createdAt": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "deadline": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "budgetReservation": {
+      "$ref": "#/$defs/budgetReservation"
+    },
+    "isolation": {
+      "$ref": "#/$defs/isolation"
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^(?:sha256|hmac-sha256):[0-9a-f]{64}$"
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant",
+        "repository",
+        "trustDomain"
+      ],
+      "properties": {
+        "tenant": {
+          "$ref": "#/$defs/identifier"
+        },
+        "repository": {
+          "$ref": "#/$defs/identifier"
+        },
+        "trustDomain": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "artifactRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifactRef"
+      },
+      "minItems": 1,
+      "maxItems": 1024
+    },
+    "artifactRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifactId",
+        "digest",
+        "sizeBytes",
+        "mediaType"
+      ],
+      "properties": {
+        "artifactId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 107374182400
+        },
+        "mediaType": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9!#$&^_.+-]+/[a-z0-9][a-z0-9!#$&^_.+-]+$"
+        }
+      }
+    },
+    "budgetReservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reservationId",
+        "reservedRunnerMs",
+        "maxConcurrentValidations",
+        "expiresAt"
+      ],
+      "properties": {
+        "reservationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "reservedRunnerMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 86400000
+        },
+        "maxConcurrentValidations": {
+          "const": 1
+        },
+        "expiresAt": {
+          "$ref": "#/$defs/utcTimestamp"
+        }
+      }
+    },
+    "isolation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "freshWorktrees",
+        "separateGradleUserHomes",
+        "separateWritableOutputs",
+        "separateConfigurationCaches",
+        "separateDaemons",
+        "separateL1Caches",
+        "separateWriteCredentials",
+        "executionOrder"
+      ],
+      "properties": {
+        "freshWorktrees": {
+          "const": true
+        },
+        "separateGradleUserHomes": {
+          "const": true
+        },
+        "separateWritableOutputs": {
+          "const": true
+        },
+        "separateConfigurationCaches": {
+          "const": true
+        },
+        "separateDaemons": {
+          "const": true
+        },
+        "separateL1Caches": {
+          "const": true
+        },
+        "separateWriteCredentials": {
+          "const": true
+        },
+        "executionOrder": {
+          "enum": [
+            "RANDOMIZED_SEQUENTIAL",
+            "PROVEN_EQUIVALENT_RUNNER_POOLS"
+          ]
+        }
+      }
+    }
+  }
+}

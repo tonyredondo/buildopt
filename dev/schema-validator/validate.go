@@ -26,6 +26,15 @@ const OptimizationPolicySchemaID = "https://schemas.buildopt.dev/optimization-po
 // ResourceProfileSchemaID is the canonical RESOURCE_PROFILE v1 schema identifier.
 const ResourceProfileSchemaID = "https://schemas.buildopt.dev/resource-profile.v1.schema.json"
 
+// AttemptStateSchemaID is the canonical ATTEMPT_STATE v1 schema identifier.
+const AttemptStateSchemaID = "https://schemas.buildopt.dev/attempt-state.v1.schema.json"
+
+// CIValidationRequestSchemaID is the canonical CI_VALIDATION_REQUEST v1 schema identifier.
+const CIValidationRequestSchemaID = "https://schemas.buildopt.dev/ci-validation-request.v1.schema.json"
+
+// CommitDecisionSchemaID is the canonical COMMIT_DECISION v1 schema identifier.
+const CommitDecisionSchemaID = "https://schemas.buildopt.dev/commit-decision.v1.schema.json"
+
 // ValidateBuildSessionV1 compiles the pinned Draft 2020-12 schema and validates
 // one JSON document with format assertions enabled.
 func ValidateBuildSessionV1(schemaPath string, instancePath string) error {
@@ -89,6 +98,39 @@ func ValidateResourceProfileV1(schemaPath string, instancePath string) error {
 		instancePath,
 		ResourceProfileSchemaID,
 		"RESOURCE_PROFILE",
+	)
+}
+
+// ValidateAttemptStateV1 compiles the pinned Draft 2020-12 schema and validates
+// one immutable attempt-state transition.
+func ValidateAttemptStateV1(schemaPath string, instancePath string) error {
+	return validateContract(
+		schemaPath,
+		instancePath,
+		AttemptStateSchemaID,
+		"ATTEMPT_STATE",
+	)
+}
+
+// ValidateCIValidationRequestV1 compiles the pinned Draft 2020-12 schema and
+// validates one isolated CI validation request.
+func ValidateCIValidationRequestV1(schemaPath string, instancePath string) error {
+	return validateContract(
+		schemaPath,
+		instancePath,
+		CIValidationRequestSchemaID,
+		"CI_VALIDATION_REQUEST",
+	)
+}
+
+// ValidateCommitDecisionV1 compiles the pinned Draft 2020-12 schema and
+// validates one atomic cache publication decision.
+func ValidateCommitDecisionV1(schemaPath string, instancePath string) error {
+	return validateContract(
+		schemaPath,
+		instancePath,
+		CommitDecisionSchemaID,
+		"COMMIT_DECISION",
 	)
 }
 

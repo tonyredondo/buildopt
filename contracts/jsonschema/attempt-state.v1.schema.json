@@ -1,0 +1,554 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/attempt-state.v1.schema.json",
+  "title": "BuildOpt ATTEMPT_STATE v1",
+  "description": "One immutable compare-and-set transition in the durable CI-ORCH-001 attempt lifecycle.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "attemptId",
+    "attemptKind",
+    "sequence",
+    "stateVersion",
+    "commandId",
+    "transition",
+    "state",
+    "occurredAt",
+    "repository",
+    "sourceRevision",
+    "sourceStateDigest",
+    "owner",
+    "taskActionBoundary"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "recordType": {
+      "const": "ATTEMPT_STATE"
+    },
+    "attemptId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "attemptKind": {
+      "enum": [
+        "CACHE_PUBLICATION",
+        "HIGH_CORRECTION_VALIDATION"
+      ]
+    },
+    "sequence": {
+      "$ref": "#/$defs/positiveInteger"
+    },
+    "stateVersion": {
+      "$ref": "#/$defs/positiveInteger"
+    },
+    "expectedStateVersion": {
+      "$ref": "#/$defs/positiveInteger"
+    },
+    "commandId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "transition": {
+      "enum": [
+        "CREATE",
+        "BIND_POLICY",
+        "START_GRADLE",
+        "CONFIRM_TASK_ACTION",
+        "RECORD_VALIDATION",
+        "COMMIT",
+        "ABORT"
+      ]
+    },
+    "previousState": {
+      "$ref": "#/$defs/state"
+    },
+    "state": {
+      "$ref": "#/$defs/state"
+    },
+    "occurredAt": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "repository": {
+      "$ref": "#/$defs/repository"
+    },
+    "sourceRevision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{7,64}$"
+    },
+    "sourceStateDigest": {
+      "$ref": "#/$defs/digest"
+    },
+    "policyDigest": {
+      "$ref": "#/$defs/sha256Digest"
+    },
+    "owner": {
+      "$ref": "#/$defs/owner"
+    },
+    "budgetReservation": {
+      "$ref": "#/$defs/budgetReservation"
+    },
+    "taskActionBoundary": {
+      "enum": [
+        "NOT_REACHED",
+        "CONFIRMED",
+        "UNKNOWN"
+      ]
+    },
+    "validation": {
+      "$ref": "#/$defs/validation"
+    },
+    "commitDecisionRef": {
+      "$ref": "#/$defs/decisionRef"
+    },
+    "abort": {
+      "$ref": "#/$defs/abort"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "transition": {
+            "const": "CREATE"
+          }
+        },
+        "required": [
+          "transition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "sequence": {
+            "const": 1
+          },
+          "stateVersion": {
+            "const": 1
+          },
+          "state": {
+            "const": "CREATED"
+          },
+          "taskActionBoundary": {
+            "const": "NOT_REACHED"
+          }
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "expectedStateVersion"
+              ]
+            },
+            {
+              "required": [
+                "previousState"
+              ]
+            },
+            {
+              "required": [
+                "policyDigest"
+              ]
+            },
+            {
+              "required": [
+                "validation"
+              ]
+            },
+            {
+              "required": [
+                "commitDecisionRef"
+              ]
+            },
+            {
+              "required": [
+                "abort"
+              ]
+            }
+          ]
+        }
+      },
+      "else": {
+        "required": [
+          "expectedStateVersion",
+          "previousState",
+          "policyDigest"
+        ],
+        "properties": {
+          "sequence": {
+            "minimum": 2
+          },
+          "stateVersion": {
+            "minimum": 2
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "attemptKind": {
+            "const": "HIGH_CORRECTION_VALIDATION"
+          }
+        },
+        "required": [
+          "attemptKind"
+        ]
+      },
+      "then": {
+        "required": [
+          "budgetReservation"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transition": {
+            "const": "BIND_POLICY"
+          }
+        },
+        "required": [
+          "transition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "previousState": {
+            "const": "CREATED"
+          },
+          "state": {
+            "const": "POLICY_BOUND"
+          },
+          "taskActionBoundary": {
+            "const": "NOT_REACHED"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transition": {
+            "const": "START_GRADLE"
+          }
+        },
+        "required": [
+          "transition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "previousState": {
+            "const": "POLICY_BOUND"
+          },
+          "state": {
+            "const": "GRADLE_STARTED"
+          },
+          "taskActionBoundary": {
+            "const": "NOT_REACHED"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transition": {
+            "const": "CONFIRM_TASK_ACTION"
+          }
+        },
+        "required": [
+          "transition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "previousState": {
+            "const": "GRADLE_STARTED"
+          },
+          "state": {
+            "const": "TASK_ACTION_STARTED"
+          },
+          "taskActionBoundary": {
+            "const": "CONFIRMED"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transition": {
+            "const": "RECORD_VALIDATION"
+          }
+        },
+        "required": [
+          "transition"
+        ]
+      },
+      "then": {
+        "required": [
+          "validation"
+        ],
+        "properties": {
+          "previousState": {
+            "const": "TASK_ACTION_STARTED"
+          },
+          "state": {
+            "const": "VALIDATED"
+          },
+          "taskActionBoundary": {
+            "const": "CONFIRMED"
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "required": [
+            "validation"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transition": {
+            "const": "COMMIT"
+          }
+        },
+        "required": [
+          "transition"
+        ]
+      },
+      "then": {
+        "required": [
+          "commitDecisionRef"
+        ],
+        "properties": {
+          "previousState": {
+            "const": "VALIDATED"
+          },
+          "state": {
+            "const": "COMMITTED"
+          },
+          "taskActionBoundary": {
+            "const": "CONFIRMED"
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "required": [
+            "commitDecisionRef"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transition": {
+            "const": "ABORT"
+          }
+        },
+        "required": [
+          "transition"
+        ]
+      },
+      "then": {
+        "required": [
+          "abort"
+        ],
+        "properties": {
+          "previousState": {
+            "enum": [
+              "CREATED",
+              "POLICY_BOUND",
+              "GRADLE_STARTED",
+              "TASK_ACTION_STARTED",
+              "VALIDATED"
+            ]
+          },
+          "state": {
+            "const": "ABORTED"
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "required": [
+            "abort"
+          ]
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+    },
+    "positiveInteger": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647
+    },
+    "state": {
+      "enum": [
+        "CREATED",
+        "POLICY_BOUND",
+        "GRADLE_STARTED",
+        "TASK_ACTION_STARTED",
+        "VALIDATED",
+        "COMMITTED",
+        "ABORTED"
+      ]
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "sha256Digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^(?:sha256|hmac-sha256):[0-9a-f]{64}$"
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant",
+        "repository",
+        "trustDomain"
+      ],
+      "properties": {
+        "tenant": {
+          "$ref": "#/$defs/identifier"
+        },
+        "repository": {
+          "$ref": "#/$defs/identifier"
+        },
+        "trustDomain": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ownerId",
+        "leaseId",
+        "leaseExpiresAt"
+      ],
+      "properties": {
+        "ownerId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "leaseId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "leaseExpiresAt": {
+          "$ref": "#/$defs/utcTimestamp"
+        }
+      }
+    },
+    "budgetReservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reservationId",
+        "reservedRunnerMs",
+        "expiresAt"
+      ],
+      "properties": {
+        "reservationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "reservedRunnerMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 86400000
+        },
+        "expiresAt": {
+          "$ref": "#/$defs/utcTimestamp"
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "evidenceRef",
+        "completedAt"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "PASSED",
+            "FAILED",
+            "INCONCLUSIVE"
+          ]
+        },
+        "evidenceRef": {
+          "$ref": "#/$defs/identifier"
+        },
+        "completedAt": {
+          "$ref": "#/$defs/utcTimestamp"
+        }
+      }
+    },
+    "decisionRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decisionId",
+        "decisionDigest"
+      ],
+      "properties": {
+        "decisionId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "decisionDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        }
+      }
+    },
+    "abort": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reason",
+        "cleanupRequired"
+      ],
+      "properties": {
+        "reason": {
+          "enum": [
+            "BUILD_FAILURE",
+            "INFRA_FAILURE",
+            "CANCELLED",
+            "TIMEOUT",
+            "POLICY_CHANGED",
+            "SOURCE_CHANGED",
+            "LEASE_EXPIRED",
+            "OWNER_CONFLICT",
+            "INVALID_TRANSITION",
+            "TASK_ACTION_BOUNDARY_UNKNOWN",
+            "VALIDATION_FAILED",
+            "INCOMPLETE_COMMIT_DECISION"
+          ]
+        },
+        "cleanupRequired": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

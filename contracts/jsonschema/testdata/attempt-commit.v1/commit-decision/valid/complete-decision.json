@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "COMMIT_DECISION",
+  "contractVersion": "buildopt-cache-commit/v1",
+  "decisionId": "decision-01K4Y800",
+  "decisionDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "attemptId": "attempt-01K4Y800",
+  "repository": {
+    "tenant": "tenant-7",
+    "repository": "repo-42",
+    "trustDomain": "trusted-ci"
+  },
+  "sourceRevision": "8c74f2a",
+  "sourceStateDigest": "hmac-sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "objects": [
+    {
+      "namespaceGeneration": 12,
+      "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "checksum": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "sizeBytes": 1024
+    },
+    {
+      "namespaceGeneration": 12,
+      "key": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "checksum": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "sizeBytes": 2048
+    }
+  ],
+  "policyDigest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+  "configurationPolicyDigest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+  "cacheContractDigest": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+  "testOptimizationGrant": {
+    "state": "NOT_REQUIRED",
+    "reason": "NO_TEST_OUTPUTS"
+  },
+  "revocationEpoch": 42,
+  "validation": {
+    "status": "PASSED",
+    "evidenceRef": "validation-01K4Y800",
+    "completedAt": "2026-07-21T10:05:00Z",
+    "expiresAt": "2026-07-21T10:20:00Z"
+  },
+  "issuedAt": "2026-07-21T10:05:30Z",
+  "expiresAt": "2026-07-21T10:10:00Z",
+  "authentication": {
+    "algorithm": "Ed25519",
+    "keyId": "commit-signing-2026-q3",
+    "signature": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  }
+}
