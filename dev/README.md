@@ -398,6 +398,17 @@ It does not apply a bundle to Git or execute bundle content; those parser,
 worktree, symlink/submodule, idempotency, and recovery proofs remain with
 `F0-034`/C4.
 
+Validate the ordered `F0-034` application and recovery plan with:
+
+```bash
+./dev/check-patch-bundle-spec
+```
+
+The specification checker requires strict trust/source/blob verification,
+link-safe staged application, exact pre/postimages, isolated validation, and
+new-branch/draft-PR idempotency. Its 15 cases become the executable acceptance
+matrix for the Java patcher spike.
+
 ## BuildOpt OpenAPI validation
 
 Validate the `F0-017` BuildOpt control and internal cache-control APIs:

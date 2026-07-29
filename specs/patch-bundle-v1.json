@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "buildopt.specs/patch-bundle-application/v1",
+  "idempotencyIdentity": [
+    "repository",
+    "actionId",
+    "bundleDigest"
+  ],
+  "phases": [
+    "STRICT_PARSE",
+    "VERIFY_SIGNATURE_AND_EXPIRATION",
+    "VERIFY_SOURCE_AND_BLOBS",
+    "VALIDATE_PATH_GRAPH",
+    "CREATE_DETACHED_STAGING_WORKTREE",
+    "VERIFY_EXACT_PREIMAGES",
+    "APPLY_EXACT_REPLACEMENTS",
+    "VERIFY_POSTIMAGES",
+    "RUN_ISOLATED_VALIDATION",
+    "CREATE_OR_RECOVER_EPHEMERAL_BRANCH",
+    "CREATE_OR_RECOVER_DRAFT_PR"
+  ],
+  "cases": [
+    {
+      "id": "apply-archive-reproducibility-recipe",
+      "category": "GOLDEN",
+      "expected": "APPLIED_STAGED"
+    },
+    {
+      "id": "apply-custom-task-contract-recipe",
+      "category": "GOLDEN",
+      "expected": "APPLIED_STAGED"
+    },
+    {
+      "id": "exact-repeat-is-idempotent",
+      "category": "IDEMPOTENCY",
+      "expected": "EXISTING_DRAFT_PR"
+    },
+    {
+      "id": "divergent-preimage-rejected",
+      "category": "SOURCE_STATE",
+      "expected": "PROPOSED"
+    },
+    {
+      "id": "base-tree-mismatch-rejected",
+      "category": "SOURCE_STATE",
+      "expected": "PROPOSED"
+    },
+    {
+      "id": "expired-or-untrusted-bundle-rejected",
+      "category": "AUTHORITY",
+      "expected": "REJECTED"
+    },
+    {
+      "id": "traversal-or-git-path-rejected",
+      "category": "PATH",
+      "expected": "REJECTED"
+    },
+    {
+      "id": "symlink-target-rejected",
+      "category": "PATH",
+      "expected": "REJECTED"
+    },
+    {
+      "id": "symlink-parent-rejected",
+      "category": "PATH",
+      "expected": "REJECTED"
+    },
+    {
+      "id": "submodule-or-nested-repository-rejected",
+      "category": "PATH",
+      "expected": "REJECTED"
+    },
+    {
+      "id": "postimage-mismatch-rolls-back-staging",
+      "category": "CONTENT",
+      "expected": "UNCHANGED"
+    },
+    {
+      "id": "branch-without-pr-is-recovered",
+      "category": "RECOVERY",
+      "expected": "DRAFT_PR_CREATED"
+    },
+    {
+      "id": "existing-branch-with-different-marker-conflicts",
+      "category": "RECOVERY",
+      "expected": "PROPOSED"
+    },
+    {
+      "id": "existing-matching-pr-replays",
+      "category": "RECOVERY",
+      "expected": "EXISTING_DRAFT_PR"
+    },
+    {
+      "id": "interrupted-staging-leaves-customer-checkout-unchanged",
+      "category": "RECOVERY",
+      "expected": "UNCHANGED"
+    }
+  ],
+  "forbiddenCapabilities": [
+    "EXECUTE_BUNDLE_CONTENT",
+    "FUZZY_PATCH",
+    "DELETE_PATH",
+    "CHANGE_MODE",
+    "FOLLOW_SYMLINK",
+    "ENTER_SUBMODULE",
+    "AUTO_REBASE",
+    "MODIFY_EXISTING_BRANCH",
+    "FORCE_PUSH",
+    "WRITE_DEFAULT_BRANCH",
+    "AUTO_MERGE",
+    "MARK_PR_READY"
+  ]
+}
