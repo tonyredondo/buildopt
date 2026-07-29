@@ -122,6 +122,16 @@ The checker runs exact ShellCheck 0.11.0 over every executable script directly u
 
 This is provisioning and lint-smoke evidence for `ENV-010`; it does not create an authoritative CI workflow or close `F0-004`.
 
+## Normative package validation
+
+Validate the namespace skeleton defined by RFC §29.2:
+
+```bash
+./dev/check-normative-layout
+```
+
+The checker requires all 14 contract, vector, specification, benchmark, and ADR namespaces, their non-empty indexes, and parent directories for the 26 planned normative artifacts. It also preserves the already-materialized golden-lane ADR and runner contract and rejects an empty file at any planned artifact path. F0-010 creates only this structure; each schema, API, IDL, vector, specification, benchmark, or ADR remains owned by its later tracker item.
+
 ## JVM release validation
 
 Build and inspect the neutral Gradle plugin and JVM agent artifacts:
@@ -190,6 +200,7 @@ The doctor deliberately probes the active `PATH` and repository state; it does n
 Run the lock and doctor contract tests from the repository root:
 
 ```bash
+./dev/check-normative-layout
 ./dev/check-toolchains-lock
 ./dev/test-doctor
 ./dev/test-jdk-toolchain

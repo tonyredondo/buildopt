@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+
+buildopt_required_directories=(
+    "adr"
+    "benchmarks"
+    "contracts"
+    "contracts/jsonschema"
+    "contracts/openapi"
+    "contracts/proto"
+    "contracts/proto/local-events"
+    "contracts/proto/local-events/v1"
+    "contracts/test-vectors"
+    "contracts/test-vectors/canonical-json"
+    "contracts/test-vectors/compatibility"
+    "contracts/test-vectors/signatures"
+    "contracts/test-vectors/state-machines"
+    "specs"
+)
+
+buildopt_required_indexes=(
+    "adr/README.md"
+    "benchmarks/README.md"
+    "contracts/README.md"
+    "contracts/jsonschema/README.md"
+    "contracts/openapi/README.md"
+    "contracts/proto/README.md"
+    "contracts/proto/local-events/v1/README.md"
+    "contracts/test-vectors/README.md"
+    "contracts/test-vectors/canonical-json/README.md"
+    "contracts/test-vectors/compatibility/README.md"
+    "contracts/test-vectors/signatures/README.md"
+    "contracts/test-vectors/state-machines/README.md"
+    "specs/README.md"
+)
+
+buildopt_planned_artifacts=(
+    "contracts/jsonschema/build-session.v1.schema.json"
+    "contracts/jsonschema/experiment-result.v1.schema.json"
+    "contracts/jsonschema/action-record.v1.schema.json"
+    "contracts/jsonschema/evidence-record.v1.schema.json"
+    "contracts/jsonschema/optimization-policy.v1.schema.json"
+    "contracts/jsonschema/attempt-state.v1.schema.json"
+    "contracts/jsonschema/ci-validation-request.v1.schema.json"
+    "contracts/jsonschema/commit-decision.v1.schema.json"
+    "contracts/jsonschema/resource-profile.v1.schema.json"
+    "contracts/jsonschema/test-cache-grant.v1.schema.json"
+    "contracts/jsonschema/test-validation-result.v1.schema.json"
+    "contracts/jsonschema/patch-bundle.v1.schema.json"
+    "contracts/openapi/buildopt-control.v1.yaml"
+    "contracts/openapi/buildopt-cache-control.v1.yaml"
+    "contracts/openapi/test-optimization.v1.yaml"
+    "contracts/proto/local-events/v1/task_events.proto"
+    "specs/ci-orchestration-v1.md"
+    "specs/gradle-correlation-v1.md"
+    "specs/benchmark-beta-v1.md"
+    "specs/test-optimization-integration-v1.md"
+    "specs/patch-bundle-v1.md"
+    "specs/capability-matrix-v1.md"
+    "benchmarks/beta-v1.yaml"
+    "adr/0001-golden-lane.md"
+    "adr/0002-single-node-commit-atomicity.md"
+    "adr/0003-local-task-event-channel.md"
+)
+
+buildopt_materialized_artifacts=(
+    "adr/0001-golden-lane.md"
+    "specs/golden-lane-runner-v1.json"
+)
+
+buildopt_failed=0
+
+for buildopt_path in "${buildopt_required_directories[@]}"; do
+    if [[ ! -d "${buildopt_repo_root}/${buildopt_path}" ]]; then
+        printf 'missing normative directory: %s\n' "${buildopt_path}" >&2
+        buildopt_failed=1
+    fi
+done
+
+for buildopt_path in "${buildopt_required_indexes[@]}"; do
+    if [[ ! -s "${buildopt_repo_root}/${buildopt_path}" ]]; then
+        printf 'missing or empty normative index: %s\n' "${buildopt_path}" >&2
+        buildopt_failed=1
+    fi
+done
+
+for buildopt_path in "${buildopt_planned_artifacts[@]}"; do
+    buildopt_parent=${buildopt_path%/*}
+    buildopt_namespace=${buildopt_path%%/*}
+    buildopt_relative_path=${buildopt_path#*/}
+    buildopt_index="${buildopt_repo_root}/${buildopt_namespace}/README.md"
+
+    if [[ ! -d "${buildopt_repo_root}/${buildopt_parent}" ]]; then
+        printf 'missing parent namespace for planned artifact: %s\n' \
+            "${buildopt_path}" >&2
+        buildopt_failed=1
+    fi
+    if [[ -s "${buildopt_index}" ]] &&
+        ! grep -Fq -- "\`${buildopt_relative_path}\`" "${buildopt_index}"; then
+        printf 'planned artifact is absent from its namespace index: %s\n' \
+            "${buildopt_path}" >&2
+        buildopt_failed=1
+    fi
+    if [[ -e "${buildopt_repo_root}/${buildopt_path}" ]] &&
+        [[ ! -s "${buildopt_repo_root}/${buildopt_path}" ]]; then
+        printf 'planned normative artifact is empty: %s\n' \
+            "${buildopt_path}" >&2
+        buildopt_failed=1
+    fi
+done
+
+for buildopt_path in "${buildopt_materialized_artifacts[@]}"; do
+    if [[ ! -s "${buildopt_repo_root}/${buildopt_path}" ]]; then
+        printf 'missing or empty materialized normative artifact: %s\n' \
+            "${buildopt_path}" >&2
+        buildopt_failed=1
+    fi
+done
+
+if ((buildopt_failed != 0)); then
+    exit 1
+fi
+
+printf 'F0-010 normative layout OK: %s namespaces and %s planned artifacts\n' \
+    "${#buildopt_required_directories[@]}" \
+    "${#buildopt_planned_artifacts[@]}"

@@ -37,6 +37,7 @@ buildopt_required_files=(
     "dev/check-go-toolchain"
     "dev/check-jvm-release"
     "dev/check-lint-toolchains"
+    "dev/check-normative-layout"
     "dev/check-rust-toolchain"
     "dev/README.md"
     "dev/run"

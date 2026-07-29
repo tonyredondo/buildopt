@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — `ENV-010` closed with exact project-local lint tools; `F0-010` is the next block<br>
+**Overall status:** `DOING` — `F0-010` closed with the Phase 0 normative namespace skeleton; `F0-011` is the next block<br>
 **Current phase:** Phase 0 — contracts, fixtures, and walking skeleton<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
 **Last updated:** 2026-07-29<br>
@@ -91,8 +91,8 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 8 | `ENV-008` | Docker and the golden image verified by digest | `DONE` | Codex |
 | 9 | `ENV-009` | Rust toolchain pinned for the optional hermetic helper | `DONE` | Codex |
 | 10 | `ENV-010` | ShellCheck and actionlint provisioned from the lock | `DONE` | Codex |
-| 11 | `F0-010` | `contracts/`, `specs/`, `benchmarks/`, and `adr/` structure created | `TODO` | — |
-| 12 | `F0-011` | First normative schema: `BUILD_SESSION v1` | `WAITING` | — |
+| 11 | `F0-010` | `contracts/`, `specs/`, `benchmarks/`, and `adr/` structure created | `DONE` | Codex |
+| 12 | `F0-011` | First normative schema: `BUILD_SESSION v1` | `TODO` | — |
 | 13 | `WS-001` | `buildopt run` → `BUILD_SESSION` vertical slice started | `TODO` | — |
 | 14 | `SPK-001` | Task → cache key → PUT spike on the golden lane | `WAITING` | — |
 
@@ -215,8 +215,8 @@ Do not mark `ENV-003`, `ENV-006`, `ENV-010`, or `ENV-011` complete because a “
 
 | ID | Deliverable | Related decision | State | Owner | Expected evidence |
 |---|---|---|---|---|---|
-| `F0-010` | Create `contracts/`, `specs/`, `benchmarks/`, and `adr/` structure | `CONTRACTS-001` | `TODO` | — | Tree defined in RFC §29.2 |
-| `F0-011` | `build-session.v1.schema.json` | `OBS-002`, `METRICS-001` | `WAITING` | — | Schema + valid/invalid fixtures |
+| `F0-010` | Create `contracts/`, `specs/`, `benchmarks/`, and `adr/` structure | `CONTRACTS-001` | `DONE` | Codex | `E-018`: checked RFC §29.2 namespaces and artifact indexes |
+| `F0-011` | `build-session.v1.schema.json` | `OBS-002`, `METRICS-001` | `TODO` | — | Schema + valid/invalid fixtures |
 | `F0-012` | `experiment-result.v1` and `action-record.v1` | `OBS-002`, `MEASURE-001` | `WAITING` | — | Schemas + lifecycle fixtures |
 | `F0-013` | Evidence, policy, and resource-profile schemas | `TASK-001`, `BANDIT-001` | `WAITING` | — | Schemas + golden records |
 | `F0-014` | Attempt, validation-request, and `CommitDecision` schemas | `CACHE-008`, `CI-ORCH-001` | `WAITING` | — | Schemas + state fixtures |
@@ -484,6 +484,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Go toolchain | Exact compiler, module baseline, local-only selection and caches, offline module state, and deterministic smoke build | Official Go 1.26.5 archive matched the lock; real and synthetic isolation checks passed; doctor reported the project-local binary as `MATCH`; repeated smoke binaries matched | 2026-07-29 | `E-014` |
 | Rust toolchain | Exact optional compiler/Cargo pair, repository override, locked channel manifest, isolated offline state, and Cargo smoke | Rust/Cargo 1.93.0 and the Linux AMD64 host matched; official manifest SHA-256, doctor `MATCH`, temporary-state Cargo check, global-default isolation, and deterministic negative fixtures passed | 2026-07-29 | `E-016` |
 | Lint toolchains | Exact ShellCheck/actionlint artifacts, isolated execution, repository scripts, and workflow parsing | Official ShellCheck 0.11.0 and actionlint 1.7.12 archives matched the lock; real and synthetic provisioning, doctor matching, all executable `dev/` scripts, and the integrated workflow smoke passed | 2026-07-29 | `E-017` |
+| Normative package layout | RFC §29.2 namespaces, indexes, planned artifact parents, and non-empty materialized artifacts | `dev/check-normative-layout` passed for 14 namespaces and 26 planned artifacts; ShellCheck and repository layout passed | 2026-07-29 | `E-018` |
 | Contract schemas | JSON Schema/OpenAPI/Protobuf | Not run | — | — |
 | Golden vectors | Go ↔ Java canonicalization/signatures | Not run | — | — |
 | Go unit/integration | Launcher/gateway/server | Not run | — | — |
@@ -530,6 +531,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-015` | 2026-07-29 | `ENV-008` | Strengthened [`dev/check-golden-lane`](./dev/check-golden-lane), [`dev/run-golden-lane-container`](./dev/run-golden-lane-container), and [`dev/golden-lane-build`](./dev/golden-lane-build), plus deterministic [`dev/test-golden-lane-container`](./dev/test-golden-lane-container); Docker 29.6.2 resolved immutable index `sha256:9d8dcf999b0bce2453e913823595a5ff2a4e8e9e5d5241b45280d0ff069818ec` to the unique Linux AMD64 platform digest `sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50`, pulled and inspected that exact image, verified Temurin 21.0.11+10, enforced 4 CPU/16 GiB and observed matching cgroup v2 limits, then passed the offline Gradle 9.6.1 build; negative fixtures covered mutable/spec drift, daemon, resources, index, local image, Java patch, usage, and child failure without starting a real container | `DONE`: Docker and the golden runtime are executable by immutable digest without making the 12-CPU host itself satisfy the 4-CPU runner class; `ENV-009` became the next executable block |
 | `E-016` | 2026-07-29 | `ENV-009` | Root [`rust-toolchain.toml`](./rust-toolchain.toml), [`dev/check-rust-toolchain`](./dev/check-rust-toolchain), deterministic [`dev/test-rust-toolchain`](./dev/test-rust-toolchain), and a read-only Rustup-aware [`dev/doctor`](./dev/doctor); official Rust 1.93.0 channel-manifest bytes matched lock SHA-256 `beb6ba4e41c84e9c11c80e6804a007497d0c8ba0810cd403fabc8f4a9c45b1f8`; the repository selected rustc 1.93.0 commit `254b59607` and Cargo 1.93.0 commit `083ac5135` for `x86_64-unknown-linux-gnu`, doctor reported `MATCH`, and a dependency-free edition-2024 crate passed `cargo check --locked --offline` with temporary Cargo home/target state; outside the repository, stable 1.96.0 remained the unchanged Rustup default; negative fixtures covered missing/mismatched tools, manifest checksum, configuration drift, usage, and Cargo failure without installing a toolchain | `DONE`: the optional helper has a reproducible compiler baseline without implementing or claiming `SPK-003` hermeticity; `ENV-010` is next |
 | `E-017` | 2026-07-29 | `ENV-010` | Generalized [`dev/bootstrap`](./dev/bootstrap) and [`dev/run`](./dev/run), [`dev/check-lint-toolchains`](./dev/check-lint-toolchains), and deterministic [`dev/test-lint-toolchains`](./dev/test-lint-toolchains); official ShellCheck 0.11.0 `tar.xz` bytes matched SHA-256 `8c3be12b05d5c177a04c29e3c78ce89ac86f1595681cab149b65b97c4e227198`, and official actionlint 1.7.12 `tar.gz` bytes matched `8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8`; atomic and idempotent provisioning normalized both upstream layouts, exact project-local versions remained isolated from global ShellCheck 0.9.0 and missing global actionlint, doctor reported both as `MATCH`, all executable `dev/` scripts passed ShellCheck, and actionlint parsed an in-memory workflow while using the locked ShellCheck for its embedded Bash; negative fixtures covered checksum and manifest drift, missing tools, usage, and child lint failures | `DONE`: reproducible lint tooling is available without creating or claiming the authoritative `F0-004` workflow; `F0-010` is next |
+| `E-018` | 2026-07-29 | `F0-010` | [`dev/check-normative-layout`](./dev/check-normative-layout) and non-empty indexes under [`contracts/`](./contracts/README.md), [`specs/`](./specs/README.md), [`benchmarks/`](./benchmarks/README.md), and [`adr/`](./adr/README.md); all 14 namespaces from RFC §29.2 exist, all 26 planned artifact paths have an indexed owner and materialized parent, existing golden-lane artifacts and any materialized planned path must be non-empty, and repository layout plus locked ShellCheck passed | `DONE`: the normative package structure is executable without prematurely implementing schemas, APIs, IDLs, vectors, specs, benchmarks, or ADR decisions; `F0-011` is unblocked and next |
 
 ---
 
@@ -537,6 +539,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-29 | Closed `F0-010`: materialized and checked the RFC §29.2 normative namespaces and artifact indexes without creating empty future contracts | Codex |
 | 2026-07-29 | Closed `ENV-010`: provisioned exact repository-local ShellCheck and actionlint archives, integrated their lint smoke, preserved global selections, and added deterministic failure fixtures | Codex |
 | 2026-07-29 | Closed `ENV-009`: pinned the optional Linux AMD64 Rust 1.93.0 toolchain, verified its official channel manifest, isolated Cargo smoke state, and preserved the global Rustup default | Codex |
 | 2026-07-29 | Closed `ENV-008`: bound the golden index to its Linux AMD64 digest, verified the pulled image and exact Java patch, enforced strict cgroups, and added deterministic Docker failure fixtures | Codex |

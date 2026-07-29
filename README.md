@@ -50,6 +50,7 @@ From the repository root:
 
 ```bash
 ./dev/check-layout
+./dev/check-normative-layout
 ./dev/check-toolchains-lock
 ./dev/doctor
 ./dev/test-doctor
@@ -65,7 +66,7 @@ From the repository root:
 ./dev/check-golden-lane --static
 ```
 
-The commands validate the repository layout, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, and actionlint provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, repository shell scripts, an actionlint workflow smoke fixture, and golden lane configuration and checksums.
+The commands validate the repository and Phase 0 normative-package layouts, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, and actionlint provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, repository shell scripts, an actionlint workflow smoke fixture, and golden lane configuration and checksums.
 
 Project-local smoke tests:
 
