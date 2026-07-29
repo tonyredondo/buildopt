@@ -52,6 +52,7 @@ From the repository root:
 ./dev/check-layout
 ./dev/check-normative-layout
 ./dev/check-build-session-schema
+./dev/check-protobuf-toolchains
 ./dev/check-task-events-proto
 ./dev/check-buildopt-cli
 ./dev/run -- ./dev/check-gradle-correlation-fixture
@@ -60,6 +61,7 @@ From the repository root:
 ./dev/test-doctor
 ./dev/test-jdk-toolchain
 ./dev/test-go-toolchain
+./dev/test-protobuf-toolchains
 ./dev/test-rust-toolchain
 ./dev/test-lint-toolchains
 ./dev/test-golden-lane-container
@@ -70,11 +72,7 @@ From the repository root:
 ./dev/check-golden-lane --static
 ```
 
-The commands validate the repository and Phase 0 normative-package layouts, the first Draft 2020-12 contract and its positive/negative fixtures, the Protobuf local task-event channel with Go/Java Unix-socket round trips, the real `buildopt run --` passthrough binary and its Linux process/signal contract, the first parallel Gradle correlation fixture, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, and actionlint provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, repository shell scripts, an actionlint workflow smoke fixture, and golden lane configuration and checksums.
-
-`check-task-events-proto` currently requires exact `protoc` 35.1 and Buf 1.72.0
-on `PATH`. `ENV-006` is the next block and will expose both through the
-repository-local bootstrap and runner.
+The commands validate the repository and Phase 0 normative-package layouts, the first Draft 2020-12 contract and its positive/negative fixtures, reproducible project-local Protobuf tooling and the local task-event channel with Go/Java Unix-socket round trips, the real `buildopt run --` passthrough binary and its Linux process/signal contract, the first parallel Gradle correlation fixture, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, and actionlint provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, repository shell scripts, an actionlint workflow smoke fixture, and golden lane configuration and checksums.
 
 Project-local smoke tests:
 
@@ -83,6 +81,9 @@ Project-local smoke tests:
 ./dev/run -- ./dev/check-golden-lane --smoke
 ./dev/bootstrap --toolchain go
 ./dev/run --toolchain go -- ./dev/check-go-toolchain
+./dev/bootstrap --toolchain protoc
+./dev/bootstrap --toolchain buf
+./dev/check-protobuf-toolchains
 ./dev/bootstrap --toolchain shellcheck
 ./dev/bootstrap --toolchain actionlint
 ./dev/check-lint-toolchains

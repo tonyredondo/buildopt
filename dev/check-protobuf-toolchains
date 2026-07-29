@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_lock=${BUILDOPT_TOOLCHAINS_LOCK_FILE:-"${buildopt_script_dir}/toolchains.lock.yaml"}
+
+if ! command -v jq >/dev/null 2>&1; then
+    printf 'jq is required for Protobuf toolchain validation\n' >&2
+    exit 1
+fi
+
+buildopt_protoc_version=$(
+    jq -er '
+        [.artifacts[] | select(.id == "protoc")] |
+        if length == 1 then .[0].version else error("protoc lock entry") end
+    ' "${buildopt_lock}"
+)
+buildopt_buf_version=$(
+    jq -er '
+        [.artifacts[] | select(.id == "buf")] |
+        if length == 1 then .[0].version else error("Buf lock entry") end
+    ' "${buildopt_lock}"
+)
+
+"${buildopt_script_dir}/check-task-events-proto"
+
+printf 'ENV-006 Protobuf toolchains OK: protoc %s and Buf %s are project-local and reproducible\n' \
+    "${buildopt_protoc_version}" \
+    "${buildopt_buf_version}"

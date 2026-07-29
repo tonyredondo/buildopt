@@ -23,16 +23,18 @@ Operating-system capabilities and externally supplied commands such as Docker, G
 
 ## Bootstrap
 
-`ENV-003` introduced the exact Temurin JDK 21 artifact required by the golden lane. `ENV-005` added the exact Go toolchain required by the core, and `ENV-010` adds the locked lint tools used by repository scripts and future workflows. Provision a supported target from the repository root:
+`ENV-003` introduced the exact Temurin JDK 21 artifact required by the golden lane. `ENV-005` added the exact Go toolchain required by the core, `ENV-006` added exact Protobuf tooling, and `ENV-010` added the locked lint tools used by repository scripts and future workflows. Provision a supported target from the repository root:
 
 ```bash
 ./dev/bootstrap --toolchain temurin-jdk-21
 ./dev/bootstrap --toolchain go
+./dev/bootstrap --toolchain protoc
+./dev/bootstrap --toolchain buf
 ./dev/bootstrap --toolchain shellcheck
 ./dev/bootstrap --toolchain actionlint
 ```
 
-The bootstrap downloads the immutable URL from the lock, verifies its SHA-256 before extraction, rejects unsafe archive paths, handles the locked `tar.gz` and `tar.xz` layouts, runs target-specific version and runtime probes, and installs atomically under `.tools/toolchains/`. A second invocation verifies and reuses the existing installation without another download. It never uses `sudo` or modifies global tools.
+The bootstrap downloads the immutable URL from the lock, verifies its SHA-256 before extraction, rejects unsafe archive paths, handles the locked binary, ZIP, `tar.gz`, and `tar.xz` layouts, runs target-specific version and runtime probes, and installs atomically under `.tools/toolchains/`. A second invocation verifies and reuses the existing installation without another download. It never uses `sudo` or modifies global tools.
 
 Set `BUILDOPT_TOOLS_ROOT` to keep the ignored tool state in another local directory. The repository lock remains the source of truth. `ENV-012` will extend this entrypoint to the other adopted toolchains and add the complete cleanup contract.
 
@@ -62,6 +64,17 @@ Run a command with the provisioned Go toolchain:
 ```
 
 For Go, `dev/run` verifies the locked binary and manifest, disables automatic toolchain switching and the user Go environment file, and supplies project-local module and build caches only to the child process. The parent shell and its global Go selection remain unchanged.
+
+Run either Protobuf tool without depending on the workstation `PATH`:
+
+```bash
+./dev/run --toolchain protoc -- protoc --version
+./dev/run --toolchain buf -- buf --version
+```
+
+For both tools, `dev/run` verifies the provisioned manifest, upstream layout,
+and exact reported version before prepending only that tool's repository-local
+`bin` directory for the child process.
 
 Run either lint tool without depending on a global installation:
 
@@ -130,25 +143,25 @@ attempt. See [`specs/gradle-correlation-v1.md`](../specs/gradle-correlation-v1.m
 
 `F0-019` materializes the correlation result as the normative
 [`task_events.proto`](../contracts/proto/local-events/v1/task_events.proto) and
-[ADR 0003](../adr/0003-local-task-event-channel.md). The check requires exact
-`protoc` 35.1 and the adopted Buf 1.72.0 on `PATH`; `ENV-006` is the next block
-and will add their repository-local provisioning through `dev/bootstrap` and
-`dev/run`.
+[ADR 0003](../adr/0003-local-task-event-channel.md). `ENV-006` provisions exact
+`protoc` 35.1 and Buf 1.72.0 from their immutable locked artifacts.
 
-With the exact locked tools available, run:
+Provision and validate the complete toolchain plus protocol round trip:
 
 ```bash
-./dev/check-task-events-proto
+./dev/bootstrap --toolchain protoc
+./dev/bootstrap --toolchain buf
+./dev/check-protobuf-toolchains
 ```
 
-The checker runs Buf `STANDARD` lint, compares the source descriptor produced by
-Buf and `protoc` byte-for-byte, compiles the Java peer with the locked JDK as
-Java 17 bytecode, and runs the standard-library Go peer with locked Go. The two
-directions exchange conventional varint-length-delimited messages over real
-Unix sockets. They cover exact attribution, `UNATTRIBUTED`, attempt-wide
-`UNAVAILABLE`, atomic whole-attempt abort, acknowledgements, invalid semantic
-combinations, and the 1 MiB frame bound. Generated clients remain deferred to
-`F0-022`.
+The integrated checker resolves both tools only from `.tools/`, runs Buf
+`STANDARD` lint, compares the source descriptor produced by Buf and `protoc`
+byte-for-byte, compiles the Java peer with the locked JDK as Java 17 bytecode,
+and runs the standard-library Go peer with locked Go. The two directions
+exchange conventional varint-length-delimited messages over real Unix sockets.
+They cover exact attribution, `UNATTRIBUTED`, attempt-wide `UNAVAILABLE`, atomic
+whole-attempt abort, acknowledgements, invalid semantic combinations, and the
+1 MiB frame bound. Generated clients remain deferred to `F0-022`.
 
 ## Rust toolchain validation
 
@@ -279,11 +292,13 @@ Run the lock and doctor contract tests from the repository root:
 ./dev/check-normative-layout
 ./dev/check-build-session-schema
 ./dev/check-buildopt-cli
+./dev/check-protobuf-toolchains
 ./dev/run -- ./dev/check-gradle-correlation-fixture
 ./dev/check-toolchains-lock
 ./dev/test-doctor
 ./dev/test-jdk-toolchain
 ./dev/test-go-toolchain
+./dev/test-protobuf-toolchains
 ./dev/test-rust-toolchain
 ./dev/test-lint-toolchains
 ./dev/test-golden-lane-container
@@ -296,6 +311,8 @@ The doctor tests exercise successful and failed host reports, JSON shape, exit c
 The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.
 
 The Go toolchain tests use a synthetic archive and isolated tool root. They exercise atomic provisioning, idempotency, exact-version selection, project-local `GOROOT`, `GOPATH`, module/build caches, disabled automatic toolchain switching and user configuration, global-Go isolation, missing-tool behavior, and child exit-code propagation without downloading or changing the workstation Go installation.
+
+The Protobuf toolchain tests use a synthetic upstream-layout ZIP and raw binary in an isolated tool root. They exercise checksum verification, standard-include layout validation, atomic installation, idempotency, exact-version selection, repository-local `PATH`, global-tool isolation, manifest drift, missing tools, usage errors, and child exit propagation without downloading or changing workstation Protobuf tools.
 
 The Rust toolchain tests use synthetic Rustup, rustc, Cargo, and channel-manifest fixtures. They exercise the exact repository override, offline isolated Cargo state, locked manifest verification, missing/mismatched tools, configuration drift, usage errors, and Cargo failure propagation without installing a toolchain or touching the global default.
 

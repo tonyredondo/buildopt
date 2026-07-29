@@ -8,7 +8,8 @@ fi
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
-buildopt_lock="${buildopt_script_dir}/toolchains.lock.yaml"
+buildopt_lock=${BUILDOPT_TOOLCHAINS_LOCK_FILE:-"${buildopt_script_dir}/toolchains.lock.yaml"}
+buildopt_tools_root=${BUILDOPT_TOOLS_ROOT:-"${buildopt_repo_root}/.tools"}
 buildopt_proto_root="${buildopt_repo_root}/contracts/proto"
 buildopt_proto="${buildopt_proto_root}/local-events/v1/task_events.proto"
 buildopt_java_source="${buildopt_script_dir}/proto-conformance/java/dev/buildopt/contracts/localevents/v1/TaskEventsRoundTrip.java"
@@ -19,9 +20,9 @@ buildopt_cleanup() {
 }
 trap buildopt_cleanup EXIT
 
-for buildopt_command in buf cmp jq protoc sha256sum uname; do
+for buildopt_command in cmp jq sha256sum uname; do
     if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
-        printf '%s is required; ENV-006 will provision the locked tool\n' \
+        printf '%s is required for Protobuf conformance\n' \
             "${buildopt_command}" >&2
         exit 1
     fi
@@ -39,23 +40,58 @@ fi
 buildopt_expected_protoc=$(
     jq -er '
         [.artifacts[] | select(.id == "protoc")] |
-        if length == 1 then .[0].version else error("protoc lock entry") end
+        if length == 1 and
+            .[0].adoption == "required" and
+            .[0].provider == "protocol-buffers" and
+            .[0].kind == "zip"
+        then .[0].version
+        else error("adopted protoc lock entry")
+        end
+    ' "${buildopt_lock}"
+)
+buildopt_protoc_sha256=$(
+    jq -er '
+        [.artifacts[] | select(.id == "protoc")] |
+        if length == 1 then .[0].sha256 else error("protoc lock entry") end
     ' "${buildopt_lock}"
 )
 buildopt_expected_buf=$(
     jq -er '
         [.artifacts[] | select(.id == "buf")] |
-        if length == 1 and .[0].adoption == "required"
+        if length == 1 and
+            .[0].adoption == "required" and
+            .[0].provider == "buf" and
+            .[0].kind == "binary"
         then .[0].version
         else error("adopted Buf lock entry")
         end
     ' "${buildopt_lock}"
 )
+buildopt_buf_sha256=$(
+    jq -er '
+        [.artifacts[] | select(.id == "buf")] |
+        if length == 1 then .[0].sha256 else error("Buf lock entry") end
+    ' "${buildopt_lock}"
+)
 
-buildopt_protoc=$(command -v protoc)
-buildopt_buf=$(command -v buf)
-buildopt_protoc_output=$("${buildopt_protoc}" --version)
-buildopt_buf_output=$("${buildopt_buf}" --version)
+buildopt_protoc="${buildopt_tools_root}/toolchains/protoc-${buildopt_protoc_sha256:0:16}/bin/protoc"
+buildopt_buf="${buildopt_tools_root}/toolchains/buf-${buildopt_buf_sha256:0:16}/bin/buf"
+buildopt_protoc_output=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        "${buildopt_script_dir}/run" \
+        --toolchain protoc \
+        -- \
+        protoc --version
+)
+buildopt_buf_output=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        "${buildopt_script_dir}/run" \
+        --toolchain buf \
+        -- \
+        buf --version
+)
 if [[ "${buildopt_protoc_output}" != "libprotoc ${buildopt_expected_protoc}" ]]; then
     printf 'protoc must match lock version %s, found: %s\n' \
         "${buildopt_expected_protoc}" \
@@ -90,7 +126,9 @@ fi
 
 buildopt_class_dir="${buildopt_test_root}/java-classes"
 mkdir -p -- "${buildopt_class_dir}"
-"${buildopt_script_dir}/run" -- \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_script_dir}/run" -- \
     javac \
     --release 17 \
     -encoding UTF-8 \
@@ -101,7 +139,9 @@ mkdir -p -- "${buildopt_class_dir}"
 
 buildopt_class_file="${buildopt_class_dir}/dev/buildopt/contracts/localevents/v1/TaskEventsRoundTrip.class"
 buildopt_class_major=$(
-    "${buildopt_script_dir}/run" -- \
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        "${buildopt_script_dir}/run" -- \
         javap -verbose "${buildopt_class_file}" |
         awk '/major version:/ {print $3; exit}'
 )
@@ -111,7 +151,6 @@ if [[ "${buildopt_class_major}" != "61" ]]; then
     exit 1
 fi
 
-buildopt_tools_root=${BUILDOPT_TOOLS_ROOT:-"${buildopt_repo_root}/.tools"}
 buildopt_jdk_sha=$(
     jq -er '
         [.artifacts[] | select(.id == "temurin-jdk-21")] |
@@ -138,10 +177,14 @@ BUILDOPT_PROTO_CONFORMANCE_CLASSES="${buildopt_class_dir}" \
 BUILDOPT_PROTO_CONFORMANCE_JAVA="${buildopt_java}" \
 BUILDOPT_PROTO_CONFORMANCE_PROTOC="${buildopt_protoc}" \
 BUILDOPT_PROTO_CONFORMANCE_ROOT="${buildopt_proto_root}" \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
     "${buildopt_script_dir}/run" --toolchain go -- \
     go test -race -count=1 ./dev/proto-conformance
 
-"${buildopt_script_dir}/run" --toolchain go -- \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_script_dir}/run" --toolchain go -- \
     go vet ./dev/proto-conformance
 
 buildopt_descriptor_sha=$(

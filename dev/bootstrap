@@ -2,7 +2,7 @@
 set -euo pipefail
 
 buildopt_usage() {
-    printf 'usage: %s --toolchain <temurin-jdk-21|go|shellcheck|actionlint>\n' "$0"
+    printf 'usage: %s --toolchain <temurin-jdk-21|go|protoc|buf|shellcheck|actionlint>\n' "$0"
 }
 
 buildopt_toolchain=
@@ -28,7 +28,7 @@ while (($# > 0)); do
 done
 
 case "${buildopt_toolchain}" in
-    actionlint | go | shellcheck | temurin-jdk-21) ;;
+    actionlint | buf | go | protoc | shellcheck | temurin-jdk-21) ;;
     *)
         buildopt_usage >&2
         exit 64
@@ -45,7 +45,7 @@ if [[ -z "${buildopt_tools_root}" || "${buildopt_tools_root}" == "/" ]]; then
     exit 1
 fi
 
-for buildopt_command in awk curl jq sha256sum tar uname xz; do
+for buildopt_command in awk curl jq sha256sum tar uname unzip xz; do
     if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
         printf 'required bootstrap command is unavailable: %s\n' \
             "${buildopt_command}" >&2
@@ -86,8 +86,10 @@ buildopt_sha256=$(jq -r '.sha256' <<<"${buildopt_entry}")
 if [[ ! "${buildopt_id}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
     [[ ! "${buildopt_provider}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
     [[ ! "${buildopt_sha256}" =~ ^[0-9a-f]{64}$ ]] ||
-    [[ "${buildopt_kind}" != "tar.gz" &&
-        "${buildopt_kind}" != "tar.xz" ]] ||
+    [[ "${buildopt_kind}" != "binary" &&
+        "${buildopt_kind}" != "tar.gz" &&
+        "${buildopt_kind}" != "tar.xz" &&
+        "${buildopt_kind}" != "zip" ]] ||
     [[ ! "${buildopt_url}" =~ ^https:// ]]; then
     printf 'unsupported or malformed toolchain entry: %s\n' \
         "${buildopt_toolchain}" >&2
@@ -103,11 +105,27 @@ case "${buildopt_id}" in
             exit 70
         fi
         ;;
+    buf)
+        if [[ "${buildopt_provider}" != "buf" ]] ||
+            [[ "${buildopt_kind}" != "binary" ]] ||
+            [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
+            printf 'unsupported or malformed Buf toolchain entry\n' >&2
+            exit 70
+        fi
+        ;;
     go)
         if [[ "${buildopt_provider}" != "go-project" ]] ||
             [[ "${buildopt_kind}" != "tar.gz" ]] ||
             [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+([.][0-9]+)?$ ]]; then
             printf 'unsupported or malformed Go toolchain entry\n' >&2
+            exit 70
+        fi
+        ;;
+    protoc)
+        if [[ "${buildopt_provider}" != "protocol-buffers" ]] ||
+            [[ "${buildopt_kind}" != "zip" ]] ||
+            [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+([.][0-9]+)?$ ]]; then
+            printf 'unsupported or malformed protoc toolchain entry\n' >&2
             exit 70
         fi
         ;;
@@ -147,10 +165,12 @@ buildopt_validate_toolchain() {
     local buildopt_tool_home=$1
     local buildopt_actionlint_output
     local buildopt_actionlint_version
+    local buildopt_buf_output
     local buildopt_go_root
     local buildopt_go_output
     local buildopt_java_output
     local buildopt_javac_output
+    local buildopt_protoc_output
     local buildopt_runtime_version
     local buildopt_shellcheck_line
     local buildopt_shellcheck_output
@@ -183,6 +203,13 @@ buildopt_validate_toolchain() {
             [[ "${buildopt_actionlint_version}" == "${buildopt_version}" ]] ||
                 return 1
             ;;
+        buf)
+            [[ -x "${buildopt_tool_home}/bin/buf" ]] || return 1
+            buildopt_buf_output=$(
+                "${buildopt_tool_home}/bin/buf" --version 2>&1
+            ) || return 1
+            [[ "${buildopt_buf_output}" == "${buildopt_version}" ]] || return 1
+            ;;
         go)
             [[ -x "${buildopt_tool_home}/bin/go" ]] || return 1
             buildopt_go_output=$(
@@ -200,6 +227,16 @@ buildopt_validate_toolchain() {
                     "${buildopt_tool_home}/bin/go" env GOROOT
             ) || return 1
             [[ "${buildopt_go_root}" == "${buildopt_tool_home}" ]] || return 1
+            ;;
+        protoc)
+            [[ -x "${buildopt_tool_home}/bin/protoc" ]] || return 1
+            [[ -f "${buildopt_tool_home}/include/google/protobuf/descriptor.proto" ]] ||
+                return 1
+            buildopt_protoc_output=$(
+                "${buildopt_tool_home}/bin/protoc" --version 2>&1
+            ) || return 1
+            [[ "${buildopt_protoc_output}" == \
+                "libprotoc ${buildopt_version}" ]] || return 1
             ;;
         shellcheck)
             [[ -x "${buildopt_tool_home}/bin/shellcheck" ]] || return 1
@@ -337,49 +374,81 @@ if ! printf '%s  %s\n' "${buildopt_sha256}" "${buildopt_archive}" |
     exit 1
 fi
 
-declare -a buildopt_tar_compression=()
-case "${buildopt_kind}" in
-    tar.gz) buildopt_tar_compression=(--gzip) ;;
-    tar.xz) buildopt_tar_compression=(--xz) ;;
-esac
-
-if ! tar \
-    --list \
-    "${buildopt_tar_compression[@]}" \
-    --file "${buildopt_archive}" |
-    awk '
-        /^\// {
-            invalid = 1
-        }
-        {
-            component_count = split($0, components, "/")
-            for (component = 1; component <= component_count; component++) {
-                if (components[component] == "..") {
-                    invalid = 1
-                }
-            }
-        }
-        END {
-            exit invalid
-        }
-    '; then
-    printf 'toolchain archive contains an unsafe path: %s\n' \
-        "${buildopt_id}" >&2
-    exit 1
-fi
-
 buildopt_staging_root=$(
     mktemp -d "${buildopt_temporary_dir}/${buildopt_id}.XXXXXX"
 )
 buildopt_extract_root="${buildopt_staging_root}/extract"
 mkdir -- "${buildopt_extract_root}"
-tar \
-    --extract \
-    "${buildopt_tar_compression[@]}" \
-    --file "${buildopt_archive}" \
-    --directory "${buildopt_extract_root}" \
-    --no-same-owner \
-    --no-same-permissions
+
+case "${buildopt_kind}" in
+    binary)
+        mkdir -- "${buildopt_extract_root}/bin"
+        cp -- "${buildopt_archive}" "${buildopt_extract_root}/bin/${buildopt_id}"
+        chmod 0755 "${buildopt_extract_root}/bin/${buildopt_id}"
+        ;;
+    tar.gz | tar.xz)
+        declare -a buildopt_tar_compression=()
+        case "${buildopt_kind}" in
+            tar.gz) buildopt_tar_compression=(--gzip) ;;
+            tar.xz) buildopt_tar_compression=(--xz) ;;
+        esac
+        if ! tar \
+            --list \
+            "${buildopt_tar_compression[@]}" \
+            --file "${buildopt_archive}" |
+            awk '
+                /^\// {
+                    invalid = 1
+                }
+                {
+                    component_count = split($0, components, "/")
+                    for (component = 1; component <= component_count; component++) {
+                        if (components[component] == "..") {
+                            invalid = 1
+                        }
+                    }
+                }
+                END {
+                    exit invalid
+                }
+            '; then
+            printf 'toolchain archive contains an unsafe path: %s\n' \
+                "${buildopt_id}" >&2
+            exit 1
+        fi
+        tar \
+            --extract \
+            "${buildopt_tar_compression[@]}" \
+            --file "${buildopt_archive}" \
+            --directory "${buildopt_extract_root}" \
+            --no-same-owner \
+            --no-same-permissions
+        ;;
+    zip)
+        if ! unzip -Z1 "${buildopt_archive}" |
+            awk '
+                /^\// {
+                    invalid = 1
+                }
+                {
+                    component_count = split($0, components, "/")
+                    for (component = 1; component <= component_count; component++) {
+                        if (components[component] == "..") {
+                            invalid = 1
+                        }
+                    }
+                }
+                END {
+                    exit invalid
+                }
+            '; then
+            printf 'toolchain archive contains an unsafe path: %s\n' \
+                "${buildopt_id}" >&2
+            exit 1
+        fi
+        unzip -q "${buildopt_archive}" -d "${buildopt_extract_root}"
+        ;;
+esac
 
 mapfile -d '' buildopt_roots < <(
     find "${buildopt_extract_root}" \
@@ -400,6 +469,9 @@ case "${buildopt_id}" in
             "${buildopt_extract_root}/bin/actionlint"
         buildopt_staged_tool=${buildopt_extract_root}
         ;;
+    buf)
+        buildopt_staged_tool=${buildopt_extract_root}
+        ;;
     go | temurin-jdk-21)
         if ((${#buildopt_roots[@]} != 1)) ||
             [[ ! -d "${buildopt_roots[0]}" ]]; then
@@ -408,6 +480,15 @@ case "${buildopt_id}" in
             exit 1
         fi
         buildopt_staged_tool=${buildopt_roots[0]}
+        ;;
+    protoc)
+        if [[ ! -f "${buildopt_extract_root}/bin/protoc" ]] ||
+            [[ ! -f "${buildopt_extract_root}/include/google/protobuf/descriptor.proto" ]]; then
+            printf 'protoc archive has an unexpected layout\n' >&2
+            exit 1
+        fi
+        chmod 0755 "${buildopt_extract_root}/bin/protoc"
+        buildopt_staged_tool=${buildopt_extract_root}
         ;;
     shellcheck)
         if ((${#buildopt_roots[@]} != 1)) ||

@@ -1,0 +1,396 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_bootstrap="${buildopt_script_dir}/bootstrap"
+buildopt_run="${buildopt_script_dir}/run"
+buildopt_test_root=$(mktemp -d)
+
+buildopt_cleanup() {
+    rm -rf -- "${buildopt_test_root}"
+}
+trap buildopt_cleanup EXIT
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+buildopt_payload_root="${buildopt_test_root}/payload"
+buildopt_fake_protoc_root="${buildopt_payload_root}/protoc"
+mkdir -p \
+    "${buildopt_fake_protoc_root}/bin" \
+    "${buildopt_fake_protoc_root}/include/google/protobuf"
+
+# The generated fixtures read test controls only when their fake binaries run.
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'if [[ "${1:-}" == "--version" ]]; then' \
+    '    printf '\''libprotoc 35.1\n'\''' \
+    '    exit 0' \
+    'fi' \
+    'if [[ -n "${BUILDOPT_TEST_PROTOC_LOG:-}" ]]; then' \
+    '    printf '\''%s\n'\'' "$*" >>"${BUILDOPT_TEST_PROTOC_LOG}"' \
+    'fi' \
+    'if [[ -n "${BUILDOPT_TEST_PROTOC_FAIL:-}" ]]; then' \
+    '    exit "${BUILDOPT_TEST_PROTOC_FAIL}"' \
+    'fi' \
+    >"${buildopt_fake_protoc_root}/bin/protoc"
+chmod +x "${buildopt_fake_protoc_root}/bin/protoc"
+printf '%s\n' \
+    'syntax = "proto2";' \
+    'package google.protobuf;' \
+    >"${buildopt_fake_protoc_root}/include/google/protobuf/descriptor.proto"
+
+buildopt_fake_buf="${buildopt_payload_root}/buf"
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'if [[ "${1:-}" == "--version" ]]; then' \
+    '    printf '\''1.72.0\n'\''' \
+    '    exit 0' \
+    'fi' \
+    'if [[ -n "${BUILDOPT_TEST_BUF_LOG:-}" ]]; then' \
+    '    printf '\''%s\n'\'' "$*" >>"${BUILDOPT_TEST_BUF_LOG}"' \
+    'fi' \
+    'if [[ -n "${BUILDOPT_TEST_BUF_FAIL:-}" ]]; then' \
+    '    exit "${BUILDOPT_TEST_BUF_FAIL}"' \
+    'fi' \
+    >"${buildopt_fake_buf}"
+chmod +x "${buildopt_fake_buf}"
+
+buildopt_protoc_archive="${buildopt_test_root}/fake-protoc.zip"
+"${buildopt_run}" -- \
+    jar --create --file "${buildopt_protoc_archive}" \
+    -C "${buildopt_fake_protoc_root}" .
+buildopt_protoc_sha256=$(
+    sha256sum "${buildopt_protoc_archive}" | awk '{print $1}'
+)
+buildopt_buf_sha256=$(
+    sha256sum "${buildopt_fake_buf}" | awk '{print $1}'
+)
+
+buildopt_lock="${buildopt_test_root}/toolchains.lock.json"
+jq -n \
+    --arg buildopt_protoc_sha256 "${buildopt_protoc_sha256}" \
+    --arg buildopt_buf_sha256 "${buildopt_buf_sha256}" \
+    '{
+        schemaVersion: "buildopt.dev/toolchains-lock/v1",
+        platforms: [
+            {
+                id: "linux-amd64",
+                operatingSystem: "linux",
+                architecture: "amd64"
+            }
+        ],
+        artifacts: [
+            {
+                id: "protoc",
+                version: "35.1",
+                adoption: "required",
+                kind: "zip",
+                platform: "linux-amd64",
+                provider: "protocol-buffers",
+                url: "https://example.invalid/fake-protoc.zip",
+                sha256: $buildopt_protoc_sha256,
+                requiredBy: ["ENV-006"]
+            },
+            {
+                id: "buf",
+                version: "1.72.0",
+                adoption: "required",
+                kind: "binary",
+                platform: "linux-amd64",
+                provider: "buf",
+                url: "https://example.invalid/fake-buf",
+                sha256: $buildopt_buf_sha256,
+                requiredBy: ["ENV-006"]
+            }
+        ]
+    }' >"${buildopt_lock}"
+
+buildopt_fake_host_bin="${buildopt_test_root}/fake-host-bin"
+buildopt_curl_count="${buildopt_test_root}/curl-count"
+mkdir "${buildopt_fake_host_bin}"
+# The generated fixture selects bytes from the immutable fixture URL.
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'buildopt_output=' \
+    'buildopt_url=' \
+    'while (($# > 0)); do' \
+    '    case "$1" in' \
+    '        --output)' \
+    '            buildopt_output=$2' \
+    '            shift 2' \
+    '            ;;' \
+    '        https://*)' \
+    '            buildopt_url=$1' \
+    '            shift' \
+    '            ;;' \
+    '        *)' \
+    '            shift' \
+    '            ;;' \
+    '    esac' \
+    'done' \
+    'case "${buildopt_url}" in' \
+    '    *fake-protoc.zip)' \
+    '        buildopt_artifact=${BUILDOPT_TEST_PROTOC_ARCHIVE}' \
+    '        ;;' \
+    '    *fake-buf)' \
+    '        buildopt_artifact=${BUILDOPT_TEST_BUF_BINARY}' \
+    '        ;;' \
+    '    *)' \
+    '        exit 64' \
+    '        ;;' \
+    'esac' \
+    'buildopt_count=0' \
+    'if [[ -f "${BUILDOPT_TEST_CURL_COUNT}" ]]; then' \
+    '    read -r buildopt_count <"${BUILDOPT_TEST_CURL_COUNT}"' \
+    'fi' \
+    'printf '\''%s\n'\'' "$((buildopt_count + 1))" >"${BUILDOPT_TEST_CURL_COUNT}"' \
+    'cp -- "${buildopt_artifact}" "${buildopt_output}"' \
+    >"${buildopt_fake_host_bin}/curl"
+chmod +x "${buildopt_fake_host_bin}/curl"
+
+buildopt_tools_root="${buildopt_test_root}/tools with spaces"
+for buildopt_id in protoc buf; do
+    buildopt_bootstrap_output=$(
+        BUILDOPT_TEST_BUF_BINARY="${buildopt_fake_buf}" \
+        BUILDOPT_TEST_CURL_COUNT="${buildopt_curl_count}" \
+        BUILDOPT_TEST_PROTOC_ARCHIVE="${buildopt_protoc_archive}" \
+        BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+        BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        PATH="${buildopt_fake_host_bin}:${PATH}" \
+            "${buildopt_bootstrap}" --toolchain "${buildopt_id}"
+    )
+    if [[ "${buildopt_bootstrap_output}" != *"Provisioned ${buildopt_id} "* ]]; then
+        printf 'bootstrap did not report successful %s provisioning\n' \
+            "${buildopt_id}" >&2
+        exit 1
+    fi
+done
+
+buildopt_protoc_home="${buildopt_tools_root}/toolchains/protoc-${buildopt_protoc_sha256:0:16}"
+buildopt_buf_home="${buildopt_tools_root}/toolchains/buf-${buildopt_buf_sha256:0:16}"
+if [[ ! -x "${buildopt_protoc_home}/bin/protoc" ]] ||
+    [[ ! -f "${buildopt_protoc_home}/include/google/protobuf/descriptor.proto" ]] ||
+    [[ ! -x "${buildopt_buf_home}/bin/buf" ]]; then
+    printf 'bootstrap did not normalize the Protobuf tool layouts\n' >&2
+    exit 1
+fi
+
+for buildopt_id in protoc buf; do
+    buildopt_second_output=$(
+        BUILDOPT_TEST_BUF_BINARY="${buildopt_fake_buf}" \
+        BUILDOPT_TEST_CURL_COUNT="${buildopt_curl_count}" \
+        BUILDOPT_TEST_PROTOC_ARCHIVE="${buildopt_protoc_archive}" \
+        BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+        BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        PATH="${buildopt_fake_host_bin}:${PATH}" \
+            "${buildopt_bootstrap}" --toolchain "${buildopt_id}"
+    )
+    if [[ "${buildopt_second_output}" != *"is already provisioned"* ]]; then
+        printf '%s bootstrap is not idempotent\n' "${buildopt_id}" >&2
+        exit 1
+    fi
+done
+if [[ "$(<"${buildopt_curl_count}")" != "2" ]]; then
+    printf 'idempotent Protobuf bootstrap downloaded an artifact again\n' >&2
+    exit 1
+fi
+
+buildopt_global_bin="${buildopt_test_root}/global-bin"
+mkdir "${buildopt_global_bin}"
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf '\''libprotoc 3.21.12\n'\''' \
+    >"${buildopt_global_bin}/protoc"
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf '\''1.60.0\n'\''' \
+    >"${buildopt_global_bin}/buf"
+chmod +x "${buildopt_global_bin}/protoc" "${buildopt_global_bin}/buf"
+
+buildopt_global_protoc=$(
+    PATH="${buildopt_global_bin}:${PATH}" protoc --version
+)
+buildopt_global_buf=$(
+    PATH="${buildopt_global_bin}:${PATH}" buf --version
+)
+buildopt_project_protoc=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    PATH="${buildopt_global_bin}:${PATH}" \
+        "${buildopt_run}" --toolchain protoc -- protoc --version
+)
+buildopt_project_buf=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    PATH="${buildopt_global_bin}:${PATH}" \
+        "${buildopt_run}" --toolchain buf -- buf --version
+)
+if [[ "${buildopt_global_protoc}" != "libprotoc 3.21.12" ]] ||
+    [[ "${buildopt_global_buf}" != "1.60.0" ]] ||
+    [[ "${buildopt_project_protoc}" != "libprotoc 35.1" ]] ||
+    [[ "${buildopt_project_buf}" != "1.72.0" ]]; then
+    printf 'dev/run did not isolate locked Protobuf tools from global tools\n' >&2
+    exit 1
+fi
+
+buildopt_manifest="${buildopt_buf_home}/.buildopt-toolchain.json"
+cp -- "${buildopt_manifest}" "${buildopt_manifest}.original"
+jq '.provider = "unexpected-provider"' \
+    "${buildopt_manifest}" >"${buildopt_manifest}.changed"
+mv -- "${buildopt_manifest}.changed" "${buildopt_manifest}"
+set +e
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_run}" --toolchain buf -- buf --version >/dev/null 2>&1
+buildopt_manifest_exit=$?
+set -e
+mv -- "${buildopt_manifest}.original" "${buildopt_manifest}"
+if ((buildopt_manifest_exit != 1)); then
+    printf 'dev/run accepted Buf metadata that diverged from the lock\n' >&2
+    exit 1
+fi
+
+set +e
+BUILDOPT_TEST_BUF_FAIL=37 \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_run}" --toolchain buf -- buf smoke >/dev/null 2>&1
+buildopt_child_exit=$?
+"${buildopt_bootstrap}" >/dev/null 2>&1
+buildopt_bootstrap_usage_exit=$?
+"${buildopt_run}" protoc --version >/dev/null 2>&1
+buildopt_run_usage_exit=$?
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_test_root}/missing-tools" \
+    "${buildopt_run}" \
+    --toolchain protoc \
+    -- \
+    protoc --version >/dev/null 2>&1
+buildopt_missing_exit=$?
+set -e
+if ((buildopt_child_exit != 37)) ||
+    ((buildopt_bootstrap_usage_exit != 64)) ||
+    ((buildopt_run_usage_exit != 64)) ||
+    ((buildopt_missing_exit != 1)); then
+    printf 'unexpected Protobuf tool error contract: %s/%s/%s/%s\n' \
+        "${buildopt_child_exit}" \
+        "${buildopt_bootstrap_usage_exit}" \
+        "${buildopt_run_usage_exit}" \
+        "${buildopt_missing_exit}" >&2
+    exit 1
+fi
+
+buildopt_bad_checksum_lock="${buildopt_test_root}/bad-checksum-lock.json"
+jq '(.artifacts[] | select(.id == "buf") | .sha256) = ("0" * 64)' \
+    "${buildopt_lock}" >"${buildopt_bad_checksum_lock}"
+set +e
+BUILDOPT_TEST_BUF_BINARY="${buildopt_fake_buf}" \
+BUILDOPT_TEST_CURL_COUNT="${buildopt_test_root}/bad-checksum-count" \
+BUILDOPT_TEST_PROTOC_ARCHIVE="${buildopt_protoc_archive}" \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_bad_checksum_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_test_root}/bad-checksum-tools" \
+PATH="${buildopt_fake_host_bin}:${PATH}" \
+    "${buildopt_bootstrap}" --toolchain buf >/dev/null 2>&1
+buildopt_checksum_exit=$?
+set -e
+if ((buildopt_checksum_exit != 1)); then
+    printf 'Buf bootstrap accepted a checksum mismatch\n' >&2
+    exit 1
+fi
+
+buildopt_wrong_buf="${buildopt_test_root}/wrong-buf"
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf '\''1.71.0\n'\''' \
+    >"${buildopt_wrong_buf}"
+chmod +x "${buildopt_wrong_buf}"
+buildopt_wrong_buf_sha256=$(
+    sha256sum "${buildopt_wrong_buf}" | awk '{print $1}'
+)
+buildopt_wrong_version_lock="${buildopt_test_root}/wrong-version-lock.json"
+jq \
+    --arg buildopt_sha256 "${buildopt_wrong_buf_sha256}" \
+    '(.artifacts[] | select(.id == "buf") | .sha256) = $buildopt_sha256' \
+    "${buildopt_lock}" >"${buildopt_wrong_version_lock}"
+set +e
+BUILDOPT_TEST_BUF_BINARY="${buildopt_wrong_buf}" \
+BUILDOPT_TEST_CURL_COUNT="${buildopt_test_root}/wrong-version-count" \
+BUILDOPT_TEST_PROTOC_ARCHIVE="${buildopt_protoc_archive}" \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_wrong_version_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_test_root}/wrong-version-tools" \
+PATH="${buildopt_fake_host_bin}:${PATH}" \
+    "${buildopt_bootstrap}" --toolchain buf >/dev/null 2>&1
+buildopt_version_exit=$?
+set -e
+if ((buildopt_version_exit != 1)); then
+    printf 'Buf bootstrap accepted a binary with the wrong version\n' >&2
+    exit 1
+fi
+
+buildopt_bad_protoc_root="${buildopt_test_root}/bad-protoc-root"
+mkdir -p "${buildopt_bad_protoc_root}/bin"
+cp -- \
+    "${buildopt_fake_protoc_root}/bin/protoc" \
+    "${buildopt_bad_protoc_root}/bin/protoc"
+buildopt_bad_protoc_archive="${buildopt_test_root}/bad-protoc.zip"
+"${buildopt_run}" -- \
+    jar --create --file "${buildopt_bad_protoc_archive}" \
+    -C "${buildopt_bad_protoc_root}" .
+buildopt_bad_protoc_sha256=$(
+    sha256sum "${buildopt_bad_protoc_archive}" | awk '{print $1}'
+)
+buildopt_bad_layout_lock="${buildopt_test_root}/bad-layout-lock.json"
+jq \
+    --arg buildopt_sha256 "${buildopt_bad_protoc_sha256}" \
+    '(.artifacts[] | select(.id == "protoc") | .sha256) = $buildopt_sha256' \
+    "${buildopt_lock}" >"${buildopt_bad_layout_lock}"
+set +e
+BUILDOPT_TEST_BUF_BINARY="${buildopt_fake_buf}" \
+BUILDOPT_TEST_CURL_COUNT="${buildopt_test_root}/bad-layout-count" \
+BUILDOPT_TEST_PROTOC_ARCHIVE="${buildopt_bad_protoc_archive}" \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_bad_layout_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_test_root}/bad-layout-tools" \
+PATH="${buildopt_fake_host_bin}:${PATH}" \
+    "${buildopt_bootstrap}" --toolchain protoc >/dev/null 2>&1
+buildopt_layout_exit=$?
+set -e
+if ((buildopt_layout_exit != 1)); then
+    printf 'protoc bootstrap accepted a distribution without standard includes\n' >&2
+    exit 1
+fi
+
+buildopt_global_protoc_after=$(
+    PATH="${buildopt_global_bin}:${PATH}" protoc --version
+)
+buildopt_global_buf_after=$(
+    PATH="${buildopt_global_bin}:${PATH}" buf --version
+)
+if [[ "${buildopt_global_protoc_after}" != "${buildopt_global_protoc}" ]] ||
+    [[ "${buildopt_global_buf_after}" != "${buildopt_global_buf}" ]]; then
+    printf 'Protobuf tool execution changed global tool state\n' >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'Protobuf toolchain tests changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'ENV-006 Protobuf toolchain tests OK: binary/ZIP provisioning, idempotency, isolation, and failures\n'

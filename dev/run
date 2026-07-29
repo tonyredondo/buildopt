@@ -2,7 +2,7 @@
 set -euo pipefail
 
 buildopt_usage() {
-    printf 'usage: %s [--toolchain <temurin-jdk-21|go|shellcheck|actionlint>] -- command [args...]\n' "$0"
+    printf 'usage: %s [--toolchain <temurin-jdk-21|go|protoc|buf|shellcheck|actionlint>] -- command [args...]\n' "$0"
 }
 
 buildopt_toolchain=temurin-jdk-21
@@ -20,7 +20,7 @@ if [[ "${1:-}" == "--toolchain" ]]; then
 fi
 
 case "${buildopt_toolchain}" in
-    actionlint | go | shellcheck | temurin-jdk-21) ;;
+    actionlint | buf | go | protoc | shellcheck | temurin-jdk-21) ;;
     *)
         buildopt_usage >&2
         exit 64
@@ -84,8 +84,10 @@ buildopt_manifest="${buildopt_tool_home}/.buildopt-toolchain.json"
 if [[ ! "${buildopt_id}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
     [[ ! "${buildopt_provider}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
     [[ ! "${buildopt_sha256}" =~ ^[0-9a-f]{64}$ ]] ||
-    [[ "${buildopt_kind}" != "tar.gz" &&
-        "${buildopt_kind}" != "tar.xz" ]] ||
+    [[ "${buildopt_kind}" != "binary" &&
+        "${buildopt_kind}" != "tar.gz" &&
+        "${buildopt_kind}" != "tar.xz" &&
+        "${buildopt_kind}" != "zip" ]] ||
     [[ "${buildopt_platform}" != "linux-amd64" ]] ||
     [[ ! "${buildopt_url}" =~ ^https:// ]]; then
     printf 'malformed toolchain identity: %s\n' "${buildopt_toolchain}" >&2
@@ -101,11 +103,27 @@ case "${buildopt_id}" in
             exit 70
         fi
         ;;
+    buf)
+        if [[ "${buildopt_provider}" != "buf" ]] ||
+            [[ "${buildopt_kind}" != "binary" ]] ||
+            [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
+            printf 'malformed Buf toolchain identity\n' >&2
+            exit 70
+        fi
+        ;;
     go)
         if [[ "${buildopt_provider}" != "go-project" ]] ||
             [[ "${buildopt_kind}" != "tar.gz" ]] ||
             [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+([.][0-9]+)?$ ]]; then
             printf 'malformed Go toolchain identity\n' >&2
+            exit 70
+        fi
+        ;;
+    protoc)
+        if [[ "${buildopt_provider}" != "protocol-buffers" ]] ||
+            [[ "${buildopt_kind}" != "zip" ]] ||
+            [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+([.][0-9]+)?$ ]]; then
+            printf 'malformed protoc toolchain identity\n' >&2
             exit 70
         fi
         ;;
@@ -174,6 +192,25 @@ case "${buildopt_id}" in
             exit 1
         fi
         ;;
+    buf)
+        if [[ ! -x "${buildopt_tool_home}/bin/buf" ]]; then
+            printf 'provisioned Buf binary is unavailable: %s\n' \
+                "${buildopt_tool_home}/bin/buf" >&2
+            exit 1
+        fi
+        buildopt_buf_output=$(
+            "${buildopt_tool_home}/bin/buf" --version 2>&1
+        ) || {
+            printf 'provisioned Buf failed its version probe: %s\n' \
+                "${buildopt_tool_home}/bin/buf" >&2
+            exit 1
+        }
+        if [[ "${buildopt_buf_output}" != "${buildopt_version}" ]]; then
+            printf 'provisioned Buf binary does not match %s\n' \
+                "${buildopt_version}" >&2
+            exit 1
+        fi
+        ;;
     go)
         if [[ ! -x "${buildopt_tool_home}/bin/go" ]]; then
             printf 'provisioned Go binary is unavailable: %s\n' \
@@ -202,6 +239,27 @@ case "${buildopt_id}" in
         export GOPATH="${buildopt_tools_root}/state/go/gopath"
         export GOMODCACHE="${GOPATH}/pkg/mod"
         export GOCACHE="${buildopt_tools_root}/state/go/build-cache"
+        ;;
+    protoc)
+        if [[ ! -x "${buildopt_tool_home}/bin/protoc" ]] ||
+            [[ ! -f "${buildopt_tool_home}/include/google/protobuf/descriptor.proto" ]]; then
+            printf 'provisioned protoc distribution is unavailable: %s\n' \
+                "${buildopt_tool_home}" >&2
+            exit 1
+        fi
+        buildopt_protoc_output=$(
+            "${buildopt_tool_home}/bin/protoc" --version 2>&1
+        ) || {
+            printf 'provisioned protoc failed its version probe: %s\n' \
+                "${buildopt_tool_home}/bin/protoc" >&2
+            exit 1
+        }
+        if [[ "${buildopt_protoc_output}" != \
+            "libprotoc ${buildopt_version}" ]]; then
+            printf 'provisioned protoc binary does not match %s\n' \
+                "${buildopt_version}" >&2
+            exit 1
+        fi
         ;;
     shellcheck)
         if [[ ! -x "${buildopt_tool_home}/bin/shellcheck" ]]; then
