@@ -53,6 +53,7 @@ From the repository root:
 ./dev/check-layout
 ./dev/check-normative-layout
 ./dev/check-build-session-schema
+./dev/check-metrics-catalog
 ./dev/check-build-session-export
 ./dev/check-protobuf-toolchains
 ./dev/check-task-events-proto
@@ -83,7 +84,7 @@ From the repository root:
 ./dev/check-golden-lane --static
 ```
 
-The commands validate the repository and Phase 0 normative-package layouts, the first Draft 2020-12 contract and its positive/negative fixtures, reproducible project-local Protobuf tooling and the local task-event channel with Go/Java Unix-socket round trips, the real `buildopt run --` passthrough binary and its Linux process/signal contract, the control-plane-independent local bypass and base recovery exercises, the authenticated neutral loopback gateway and Gradle plugin handshake with Configuration Cache reuse, authenticated idempotent session ingest into the real `buildopt-server`, preserved failure/cancellation classification with complete invocation cleanup, atomic schema-valid `BUILD_SESSION v1` JSON export, the first parallel Gradle correlation fixture, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, actionlint, Cosign, and Syft provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, deterministic signed release bundles with SPDX and provenance, the full-SHA/checksum-pinned Linux x64 setup Action, repository shell scripts and workflow fixtures, and golden lane configuration and checksums.
+The commands validate the repository and Phase 0 normative-package layouts, the first Draft 2020-12 contract and its positive/negative fixtures, the versioned METRICS-001/MEASURE-001 catalog with fixed units and signs, reproducible project-local Protobuf tooling and the local task-event channel with Go/Java Unix-socket round trips, the real `buildopt run --` passthrough binary and its Linux process/signal contract, the control-plane-independent local bypass and base recovery exercises, the authenticated neutral loopback gateway and Gradle plugin handshake with Configuration Cache reuse, authenticated idempotent session ingest into the real `buildopt-server`, preserved failure/cancellation classification with complete invocation cleanup, atomic schema-valid `BUILD_SESSION v1` JSON export, the first parallel Gradle correlation fixture, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, actionlint, Cosign, and Syft provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, deterministic signed release bundles with SPDX and provenance, the full-SHA/checksum-pinned Linux x64 setup Action, repository shell scripts and workflow fixtures, and golden lane configuration and checksums.
 
 Project-local smoke tests:
 

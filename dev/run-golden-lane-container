@@ -184,6 +184,7 @@ buildopt_launcher_binary="${buildopt_launcher_root}/buildopt"
 buildopt_server_binary="${buildopt_launcher_root}/buildopt-server"
 buildopt_validator_binary="${buildopt_launcher_root}/build-session-validator"
 buildopt_signal_helper_binary="${buildopt_launcher_root}/signal-helper"
+buildopt_metrics_validator_binary="${buildopt_launcher_root}/metrics-catalog-validator"
 if ! CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     "${buildopt_script_dir}/run" --toolchain go -- \
         go build \
@@ -214,6 +215,16 @@ if ! CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     printf 'cannot build the locked WS-008 signal helper for the golden container\n' >&2
     exit 1
 fi
+if ! CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build \
+        -buildvcs=false \
+        -trimpath \
+        -o "${buildopt_metrics_validator_binary}" \
+        ./cmd/metrics-catalog-validator; then
+    printf 'cannot build the locked F0-024 metrics validator for the golden container\n' >&2
+    exit 1
+fi
 if ! (
     cd -- "${buildopt_repo_root}/dev/schema-validator"
     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
@@ -232,6 +243,7 @@ buildopt_docker_args+=(
     --env BUILDOPT_GOLDEN_LANE_SERVER_BINARY=/buildopt-host-tools/buildopt-server
     --env BUILDOPT_GOLDEN_LANE_SCHEMA_VALIDATOR_BINARY=/buildopt-host-tools/build-session-validator
     --env BUILDOPT_GOLDEN_LANE_SIGNAL_HELPER_BINARY=/buildopt-host-tools/signal-helper
+    --env BUILDOPT_GOLDEN_LANE_METRICS_VALIDATOR_BINARY=/buildopt-host-tools/metrics-catalog-validator
     --env BUILDOPT_GOLDEN_LANE_USE_ACTIVE_JAVA=1
     --volume "${buildopt_launcher_root}:/buildopt-host-tools:ro"
 )

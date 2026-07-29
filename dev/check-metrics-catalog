@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_catalog="${buildopt_repo_root}/contracts/metrics/build-impact-v1.json"
+buildopt_test_root=$(mktemp -d)
+
+buildopt_cleanup() {
+    rm -rf -- "${buildopt_test_root}"
+}
+trap buildopt_cleanup EXIT
+
+cd -- "${buildopt_repo_root}"
+buildopt_before_status=$(
+    git status --porcelain=v1 --untracked-files=all 2>/dev/null || true
+)
+
+buildopt_validator=${BUILDOPT_GOLDEN_LANE_METRICS_VALIDATOR_BINARY:-}
+if [[ -n "${buildopt_validator}" ]]; then
+    if [[ ! -x "${buildopt_validator}" ]]; then
+        printf 'supplied golden-lane metrics validator is not executable\n' >&2
+        exit 1
+    fi
+else
+    "${buildopt_script_dir}/run" \
+        --toolchain go \
+        -- go test -race -count=1 \
+        ./cmd/metrics-catalog-validator \
+        ./internal/buildsession \
+        ./internal/metricscatalog
+
+    buildopt_validator="${buildopt_test_root}/metrics-catalog-validator"
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build \
+        -buildvcs=false \
+        -trimpath \
+        -o "${buildopt_validator}" \
+        ./cmd/metrics-catalog-validator
+fi
+
+buildopt_output=$("${buildopt_validator}" "${buildopt_catalog}")
+if [[ "${buildopt_output}" != \
+    "METRICS-001 catalog valid: version=build-impact-v1 metrics=35 policy=beta-measurement-v1" ]]; then
+    printf 'unexpected metrics catalog validator output: %s\n' \
+        "${buildopt_output}" >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git status --porcelain=v1 --untracked-files=all 2>/dev/null || true
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'metrics catalog checker changed the working tree\n' >&2
+    exit 1
+fi
+
+printf '%s\n' "${buildopt_output}"

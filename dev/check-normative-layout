@@ -14,6 +14,7 @@ buildopt_required_directories=(
     "benchmarks"
     "contracts"
     "contracts/jsonschema"
+    "contracts/metrics"
     "contracts/openapi"
     "contracts/proto"
     "contracts/proto/local-events"
@@ -31,6 +32,7 @@ buildopt_required_indexes=(
     "benchmarks/README.md"
     "contracts/README.md"
     "contracts/jsonschema/README.md"
+    "contracts/metrics/README.md"
     "contracts/openapi/README.md"
     "contracts/proto/README.md"
     "contracts/proto/local-events/v1/README.md"
@@ -44,6 +46,7 @@ buildopt_required_indexes=(
 
 buildopt_planned_artifacts=(
     "contracts/jsonschema/build-session.v1.schema.json"
+    "contracts/metrics/build-impact-v1.json"
     "contracts/jsonschema/experiment-result.v1.schema.json"
     "contracts/jsonschema/action-record.v1.schema.json"
     "contracts/jsonschema/evidence-record.v1.schema.json"
@@ -75,6 +78,7 @@ buildopt_materialized_artifacts=(
     "adr/0001-golden-lane.md"
     "adr/0003-local-task-event-channel.md"
     "contracts/jsonschema/build-session.v1.schema.json"
+    "contracts/metrics/build-impact-v1.json"
     "contracts/proto/local-events/v1/task_events.proto"
     "specs/gradle-correlation-v1.md"
     "specs/golden-lane-runner-v1.json"

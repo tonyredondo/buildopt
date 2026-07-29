@@ -7,6 +7,7 @@ import (
 	"errors"
 	"regexp"
 
+	"github.com/tonyredondo/buildopt/internal/metricscatalog"
 	"github.com/tonyredondo/buildopt/internal/sessioningest"
 )
 
@@ -14,9 +15,8 @@ const (
 	schemaVersion = "1.0"
 	recordType    = "BUILD_SESSION"
 
-	metricDefinitionVersion = "build-impact-v1"
-	envelopeVersion         = "local-envelope-v1"
-	baselineDefinition      = "buildopt:baseline:pre-product:walking-skeleton:v1"
+	envelopeVersion    = "local-envelope-v1"
+	baselineDefinition = "buildopt:baseline:pre-product:walking-skeleton:v1"
 )
 
 var versionPattern = regexp.MustCompile(
@@ -219,7 +219,7 @@ func NewDocument(record sessioningest.Record) (Document, error) {
 			},
 		},
 		MeasurementMetadata: MeasurementMetadata{
-			MetricDefinitionVersion:   metricDefinitionVersion,
+			MetricDefinitionVersion:   metricscatalog.Version,
 			Status:                    "COMPLETE",
 			DurationUnit:              "ms",
 			ClockSource:               "MONOTONIC",
