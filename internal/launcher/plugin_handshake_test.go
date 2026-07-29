@@ -100,7 +100,9 @@ func TestPluginHandshakeRoundTrip(t *testing.T) {
 	if result.err != nil {
 		t.Fatalf("finish plugin handshake: %v", result.err)
 	}
-	if !result.connected || result.implementationVersion != "plugin-test-version" {
+	if !result.connected ||
+		result.producerInstanceID != producerInstanceID ||
+		result.implementationVersion != "plugin-test-version" {
 		t.Fatalf("unexpected handshake result: %+v", result)
 	}
 	if _, err := os.Stat(directory); !errors.Is(err, os.ErrNotExist) {

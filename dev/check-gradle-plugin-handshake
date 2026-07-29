@@ -6,7 +6,10 @@ if (($# != 0)); then
     exit 64
 fi
 
-unset BUILDOPT_SERVER_URL BUILDOPT_SERVER_INGEST_TOKEN
+unset \
+    BUILDOPT_SERVER_URL \
+    BUILDOPT_SERVER_INGEST_TOKEN \
+    BUILDOPT_BUILD_SESSION_CONTEXT
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)

@@ -1,0 +1,323 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+unset \
+    BUILDOPT_SERVER_URL \
+    BUILDOPT_SERVER_INGEST_TOKEN \
+    BUILDOPT_BUILD_SESSION_CONTEXT
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_fixture_source="${buildopt_repo_root}/fixtures/gradle-handshake"
+buildopt_test_root=$(mktemp -d)
+buildopt_server_pid=
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_server_pid}" ]] &&
+        kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        kill -TERM "${buildopt_server_pid}" 2>/dev/null || true
+        wait "${buildopt_server_pid}" 2>/dev/null || true
+    fi
+    rm -rf -- "${buildopt_test_root}"
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in find grep sed sha256sum stat; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required BUILD_SESSION check command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+cd -- "${buildopt_repo_root}"
+buildopt_before_status=$(
+    git status --porcelain=v1 --untracked-files=all 2>/dev/null || true
+)
+
+buildopt_build_home=${GRADLE_USER_HOME:-"${buildopt_repo_root}/.tools/gradle-user-home/local"}
+mkdir -p -- "${buildopt_build_home}"
+buildopt_gradle_command=(
+    "${buildopt_script_dir}/run"
+    --
+    "${buildopt_repo_root}/gradlew"
+)
+if [[ "${BUILDOPT_GOLDEN_LANE_USE_ACTIVE_JAVA:-0}" == "1" ]]; then
+    buildopt_gradle_command=("${buildopt_repo_root}/gradlew")
+fi
+GRADLE_USER_HOME="${buildopt_build_home}" \
+    "${buildopt_gradle_command[@]}" \
+    --no-daemon \
+    --offline \
+    --stacktrace \
+    --warning-mode=fail \
+    :jvm:gradle-plugin:jar
+
+mapfile -d '' buildopt_plugin_jars < <(
+    find "${buildopt_repo_root}/jvm/gradle-plugin/build/libs" \
+        -maxdepth 1 \
+        -type f \
+        -name 'buildopt-gradle-plugin-*.jar' \
+        ! -name '*-javadoc.jar' \
+        ! -name '*-sources.jar' \
+        -print0
+)
+if ((${#buildopt_plugin_jars[@]} != 1)); then
+    printf 'expected one packaged Gradle plugin, found %s\n' \
+        "${#buildopt_plugin_jars[@]}" >&2
+    exit 1
+fi
+buildopt_plugin_jar=${buildopt_plugin_jars[0]}
+
+buildopt_launcher=${BUILDOPT_GOLDEN_LANE_LAUNCHER_BINARY:-}
+buildopt_server=${BUILDOPT_GOLDEN_LANE_SERVER_BINARY:-}
+buildopt_validator=${BUILDOPT_GOLDEN_LANE_SCHEMA_VALIDATOR_BINARY:-}
+if [[ -n "${buildopt_launcher}" ||
+    -n "${buildopt_server}" ||
+    -n "${buildopt_validator}" ]]; then
+    if [[ ! -x "${buildopt_launcher}" ||
+        ! -x "${buildopt_server}" ||
+        ! -x "${buildopt_validator}" ]]; then
+        printf 'supplied golden-lane BUILD_SESSION binaries are incomplete\n' >&2
+        exit 1
+    fi
+else
+    "${buildopt_script_dir}/run" \
+        --toolchain go \
+        -- go test -race -count=1 \
+        ./cmd/buildopt \
+        ./cmd/buildopt-server \
+        ./internal/buildsession \
+        ./internal/launcher \
+        ./internal/sessioningest
+
+    buildopt_launcher="${buildopt_test_root}/buildopt"
+    buildopt_server="${buildopt_test_root}/buildopt-server"
+    buildopt_validator="${buildopt_test_root}/build-session-validator"
+    "${buildopt_script_dir}/run" \
+        --toolchain go \
+        -- go build \
+        -buildvcs=false \
+        -trimpath \
+        -o "${buildopt_launcher}" \
+        ./cmd/buildopt
+    "${buildopt_script_dir}/run" \
+        --toolchain go \
+        -- go build \
+        -buildvcs=false \
+        -trimpath \
+        -o "${buildopt_server}" \
+        ./cmd/buildopt-server
+    (
+        cd -- "${buildopt_repo_root}/dev/schema-validator"
+        "${buildopt_script_dir}/run" \
+            --toolchain go \
+            -- go build \
+            -buildvcs=false \
+            -trimpath \
+            -o "${buildopt_validator}" \
+            ./cmd/build-session-validator
+    )
+fi
+
+buildopt_token=0123456789abcdefghijklmnopqrstuvwxyzABCDEFG
+buildopt_export_directory="${buildopt_test_root}/exports"
+buildopt_server_log="${buildopt_test_root}/server.log"
+BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+    "${buildopt_server}" serve \
+    --listen 127.0.0.1:0 \
+    --export-dir "${buildopt_export_directory}" \
+    >"${buildopt_server_log}" 2>&1 &
+buildopt_server_pid=$!
+
+buildopt_endpoint=
+for _ in {1..100}; do
+    buildopt_endpoint=$(
+        sed -n \
+            's/^buildopt-server: listening on \(http:\/\/127[.]0[.]0[.]1:[0-9][0-9]*\)$/\1/p' \
+            "${buildopt_server_log}" |
+            head -n 1
+    )
+    if [[ -n "${buildopt_endpoint}" ]]; then
+        break
+    fi
+    if ! kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        printf 'buildopt-server exited before export readiness\n' >&2
+        grep -vF -- "${buildopt_token}" "${buildopt_server_log}" >&2 || true
+        exit 1
+    fi
+    sleep 0.05
+done
+if [[ -z "${buildopt_endpoint}" ]]; then
+    printf 'buildopt-server did not report its export endpoint\n' >&2
+    grep -vF -- "${buildopt_token}" "${buildopt_server_log}" >&2 || true
+    exit 1
+fi
+
+buildopt_fixture="${buildopt_test_root}/fixture"
+cp -R -- "${buildopt_fixture_source}" "${buildopt_fixture}"
+buildopt_init_script="${buildopt_fixture}/buildopt.init.gradle"
+buildopt_expected_handshake='buildopt: authenticated Gradle plugin handshake accepted (protocol 1.0, plugin 0.1.0-SNAPSHOT)'
+buildopt_common_arguments=(
+    --no-daemon
+    --offline
+    --stacktrace
+    --warning-mode=fail
+    --configuration-cache
+    -p
+    "${buildopt_fixture}"
+    --init-script
+    "${buildopt_init_script}"
+    "-Dbuildopt.ws003.pluginJar=${buildopt_plugin_jar}"
+)
+
+buildopt_run_case() {
+    local buildopt_name=$1
+    local buildopt_task=$2
+    local buildopt_expected_exit=$3
+    local buildopt_fingerprint_character=$4
+    local buildopt_log="${buildopt_test_root}/${buildopt_name}.log"
+    local buildopt_fingerprint
+    buildopt_fingerprint=$(
+        printf '%064d' 0 |
+            tr '0' "${buildopt_fingerprint_character}"
+    )
+    local buildopt_context
+    printf -v buildopt_context \
+        '{"repositoryId":"gradle-handshake-fixture","revision":"synthetic-revision-1","requestedTasks":["%s"],"sourceStateDigest":"hmac-sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","workUnitsFingerprint":"hmac-sha256:%s","tokenKeyVersion":"fixture-token-v1","trustDomain":"fixture-local"}' \
+        "${buildopt_task}" \
+        "${buildopt_fingerprint}"
+
+    set +e
+    BUILDOPT_SERVER_URL="${buildopt_endpoint}" \
+    BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+    BUILDOPT_BUILD_SESSION_CONTEXT="${buildopt_context}" \
+    GRADLE_USER_HOME="${buildopt_build_home}" \
+        "${buildopt_launcher}" run -- \
+        "${buildopt_repo_root}/gradlew" \
+        "${buildopt_common_arguments[@]}" \
+        "${buildopt_task}" >"${buildopt_log}" 2>&1
+    local buildopt_exit=$?
+    set -e
+
+    if ((buildopt_exit != buildopt_expected_exit)) ||
+        [[ "$(grep -Fc "${buildopt_expected_handshake}" "${buildopt_log}")" != "1" ]] ||
+        ! grep -Eq \
+            '^buildopt: buildopt-server accepted session [^[:space:]]+$' \
+            "${buildopt_log}"; then
+        printf 'BUILD_SESSION %s case failed with exit %s\n' \
+            "${buildopt_name}" \
+            "${buildopt_exit}" >&2
+        grep -vF -- "${buildopt_token}" "${buildopt_log}" >&2 || true
+        exit 1
+    fi
+}
+
+buildopt_run_case success neutralProbe 0 b
+buildopt_run_case failure intentionalFailure 1 c
+
+for _ in {1..100}; do
+    buildopt_export_count=$(
+        find "${buildopt_export_directory}" \
+            -maxdepth 1 \
+            -type f \
+            -name 'build-session-*.json' |
+            wc -l
+    )
+    if ((buildopt_export_count == 2)); then
+        break
+    fi
+    sleep 0.05
+done
+if ((buildopt_export_count != 2)); then
+    printf 'expected two BUILD_SESSION exports, found %s\n' \
+        "${buildopt_export_count}" >&2
+    grep -vF -- "${buildopt_token}" "${buildopt_server_log}" >&2 || true
+    exit 1
+fi
+
+buildopt_success_export=$(
+    grep -l \
+        '"outcome": "SUCCESS"' \
+        "${buildopt_export_directory}"/build-session-*.json
+)
+buildopt_failure_export=$(
+    grep -l \
+        '"outcome": "BUILD_FAILURE"' \
+        "${buildopt_export_directory}"/build-session-*.json
+)
+if [[ ! -f "${buildopt_success_export}" ||
+    ! -f "${buildopt_failure_export}" ||
+    "${buildopt_success_export}" == "${buildopt_failure_export}" ]]; then
+    printf 'could not distinguish success and failure exports\n' >&2
+    exit 1
+fi
+
+buildopt_schema="${buildopt_repo_root}/contracts/jsonschema/build-session.v1.schema.json"
+for buildopt_export in \
+    "${buildopt_success_export}" \
+    "${buildopt_failure_export}"; do
+    if [[ "$(stat -c '%a' "${buildopt_export}")" != "600" ]]; then
+        printf 'BUILD_SESSION export is not mode 600: %s\n' \
+            "${buildopt_export}" >&2
+        exit 1
+    fi
+    "${buildopt_validator}" "${buildopt_schema}" "${buildopt_export}"
+done
+
+if ! grep -Fq '"requestedTasks": [' "${buildopt_success_export}" ||
+    ! grep -Fq '"neutralProbe"' "${buildopt_success_export}" ||
+    ! grep -Fq '"exitCode": 0' "${buildopt_success_export}" ||
+    ! grep -Fq '"state": "UNAVAILABLE"' "${buildopt_success_export}" ||
+    ! grep -Fq '"intentionalFailure"' "${buildopt_failure_export}" ||
+    ! grep -Fq '"exitCode": 1' "${buildopt_failure_export}" ||
+    ! grep -Fq '"state": "PARTIAL"' "${buildopt_failure_export}"; then
+    printf 'BUILD_SESSION exports did not preserve expected observed facts\n' >&2
+    exit 1
+fi
+
+if find "${buildopt_export_directory}" \
+    -maxdepth 1 \
+    -name '.build-session-*.tmp' |
+    grep -q .; then
+    printf 'atomic BUILD_SESSION export left a temporary file\n' >&2
+    exit 1
+fi
+if grep -Fq -- "${buildopt_token}" \
+    "${buildopt_test_root}"/*.log \
+    "${buildopt_export_directory}"/*.json; then
+    printf 'server ingest credential appeared in BUILD_SESSION evidence\n' >&2
+    exit 1
+fi
+if [[ "$(grep -c '^buildopt-server: published BUILD_SESSION ' "${buildopt_server_log}")" != "2" ]]; then
+    printf 'buildopt-server did not publish both BUILD_SESSION documents\n' >&2
+    grep -vF -- "${buildopt_token}" "${buildopt_server_log}" >&2 || true
+    exit 1
+fi
+
+kill -TERM "${buildopt_server_pid}"
+set +e
+wait "${buildopt_server_pid}"
+buildopt_server_exit=$?
+set -e
+buildopt_server_pid=
+if ((buildopt_server_exit != 0)); then
+    printf 'buildopt-server export shutdown returned %s\n' \
+        "${buildopt_server_exit}" >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git status --porcelain=v1 --untracked-files=all 2>/dev/null || true
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'BUILD_SESSION export checker changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'WS-006 BUILD_SESSION export OK: real Gradle success/failure, schema v1 validation, atomic private JSON, explicit unavailable metrics, and credential isolation\n'

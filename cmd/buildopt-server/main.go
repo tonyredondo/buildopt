@@ -11,17 +11,19 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strconv"
 	"syscall"
 	"time"
 
+	"github.com/tonyredondo/buildopt/internal/buildsession"
 	"github.com/tonyredondo/buildopt/internal/sessioningest"
 )
 
 const (
 	exitUsage         = 64
 	exitConfiguration = 78
-	serverUsage       = "usage: buildopt-server serve [--listen 127.0.0.1:8042]\n"
+	serverUsage       = "usage: buildopt-server serve [--listen 127.0.0.1:8042] [--export-dir PATH]\n"
 )
 
 func main() {
@@ -61,6 +63,11 @@ func run(
 		"127.0.0.1:8042",
 		"loopback address for the WS-005 ingest server",
 	)
+	exportDirectory := flags.String(
+		"export-dir",
+		"",
+		"local directory for atomic BUILD_SESSION v1 JSON exports",
+	)
 	if err := flags.Parse(args[1:]); err != nil || flags.NArg() != 0 {
 		_, _ = io.WriteString(stderr, serverUsage)
 		return exitUsage
@@ -68,6 +75,21 @@ func run(
 	if err := validateListenAddress(*listenAddress); err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt-server: invalid listen address: %v\n", err)
 		return exitConfiguration
+	}
+
+	var exporter *buildsession.Exporter
+	if *exportDirectory != "" {
+		configuredExporter, exportErr := buildsession.NewExporter(
+			*exportDirectory,
+		)
+		if exportErr != nil {
+			_, _ = fmt.Fprintln(
+				stderr,
+				"buildopt-server: invalid BUILD_SESSION export configuration",
+			)
+			return exitConfiguration
+		}
+		exporter = configuredExporter
 	}
 
 	store := sessioningest.NewStore()
@@ -86,6 +108,28 @@ func run(
 				record.SessionID,
 				record.Outcome,
 				record.ExitCode,
+			)
+			if exporter == nil {
+				return
+			}
+			path, created, err := exporter.Export(record)
+			if err != nil {
+				logger.Printf(
+					"BUILD_SESSION export unavailable for session %s: %v",
+					record.SessionID,
+					err,
+				)
+				return
+			}
+			exportAction := "retained"
+			if created {
+				exportAction = "published"
+			}
+			logger.Printf(
+				"%s BUILD_SESSION %s as %s",
+				exportAction,
+				record.SessionID,
+				filepath.Base(path),
 			)
 		},
 	)

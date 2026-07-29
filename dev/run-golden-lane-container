@@ -182,6 +182,7 @@ printf 'Golden image digest OK: index=%s platform=%s (%s/%s)\n' \
 buildopt_launcher_root=$(mktemp -d)
 buildopt_launcher_binary="${buildopt_launcher_root}/buildopt"
 buildopt_server_binary="${buildopt_launcher_root}/buildopt-server"
+buildopt_validator_binary="${buildopt_launcher_root}/build-session-validator"
 if ! CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     "${buildopt_script_dir}/run" --toolchain go -- \
         go build \
@@ -202,9 +203,23 @@ if ! CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     printf 'cannot build the locked WS-005 server for the golden container\n' >&2
     exit 1
 fi
+if ! (
+    cd -- "${buildopt_repo_root}/dev/schema-validator"
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+        "${buildopt_script_dir}/run" --toolchain go -- \
+        go build \
+        -buildvcs=false \
+        -trimpath \
+        -o "${buildopt_validator_binary}" \
+        ./cmd/build-session-validator
+); then
+    printf 'cannot build the locked WS-006 schema validator for the golden container\n' >&2
+    exit 1
+fi
 buildopt_docker_args+=(
     --env BUILDOPT_GOLDEN_LANE_LAUNCHER_BINARY=/buildopt-host-tools/buildopt
     --env BUILDOPT_GOLDEN_LANE_SERVER_BINARY=/buildopt-host-tools/buildopt-server
+    --env BUILDOPT_GOLDEN_LANE_SCHEMA_VALIDATOR_BINARY=/buildopt-host-tools/build-session-validator
     --env BUILDOPT_GOLDEN_LANE_USE_ACTIVE_JAVA=1
     --volume "${buildopt_launcher_root}:/buildopt-host-tools:ro"
 )

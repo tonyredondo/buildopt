@@ -3,6 +3,9 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"testing"
@@ -94,13 +97,20 @@ func TestBuildoptServerUsageAndConfiguration(t *testing.T) {
 func TestBuildoptServerReceivesAndStopsGracefully(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+	exportDirectory := filepath.Join(t.TempDir(), "exports")
 	output := newNotifyingWriter()
 	var stderr bytes.Buffer
 	exited := make(chan int, 1)
 	go func() {
 		exited <- run(
 			ctx,
-			[]string{"serve", "--listen", "127.0.0.1:0"},
+			[]string{
+				"serve",
+				"--listen",
+				"127.0.0.1:0",
+				"--export-dir",
+				exportDirectory,
+			},
 			func(key string) string {
 				if key == sessioningest.ServerTokenEnvironment {
 					return serverTestToken
@@ -138,9 +148,54 @@ func TestBuildoptServerReceivesAndStopsGracefully(t *testing.T) {
 		sessioningest.OutcomeSuccess,
 		0,
 	)
+	record.ExportContext = &sessioningest.ExportContext{
+		RepositoryID:         "repository-main-test",
+		Revision:             "revision-main-test",
+		RequestedTasks:       []string{"neutralProbe"},
+		SourceStateDigest:    "hmac-sha256:" + strings.Repeat("a", 64),
+		WorkUnitsFingerprint: "hmac-sha256:" + strings.Repeat("b", 64),
+		TokenKeyVersion:      "fixture-token-v1",
+		TrustDomain:          "fixture-local",
+	}
+	record.GradleInvocation = &sessioningest.GradleInvocation{
+		ID: "gradle-invocation-main-test",
+		StartedAt: startedAt.Add(100 * time.Millisecond).
+			UTC().
+			Format(time.RFC3339Nano),
+		CompletedAt: startedAt.Add(900 * time.Millisecond).
+			UTC().
+			Format(time.RFC3339Nano),
+		DurationMs:    800,
+		PluginVersion: "0.1.0-SNAPSHOT",
+	}
 	if result, err := client.Deliver(context.Background(), record); err != nil ||
 		result != sessioningest.PutCreated {
 		t.Fatalf("deliver session = %d/%v", result, err)
+	}
+	exports, err := filepath.Glob(
+		filepath.Join(exportDirectory, "build-session-*.json"),
+	)
+	if err != nil || len(exports) != 1 {
+		t.Fatalf("exported files = %v/%v, want one", exports, err)
+	}
+	content, err := os.ReadFile(exports[0])
+	if err != nil {
+		t.Fatalf("read BUILD_SESSION export: %v", err)
+	}
+	var exported struct {
+		SchemaVersion string `json:"schemaVersion"`
+		RecordType    string `json:"recordType"`
+		Build         struct {
+			ID string `json:"id"`
+		} `json:"build"`
+	}
+	if err := json.Unmarshal(content, &exported); err != nil {
+		t.Fatalf("decode BUILD_SESSION export: %v", err)
+	}
+	if exported.SchemaVersion != "1.0" ||
+		exported.RecordType != "BUILD_SESSION" ||
+		exported.Build.ID != record.SessionID {
+		t.Fatalf("unexpected BUILD_SESSION export: %+v", exported)
 	}
 
 	cancel()

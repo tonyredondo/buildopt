@@ -34,6 +34,7 @@ type signalProcessObservation struct {
 func TestBuildoptForwardsSignalsToChildProcessGroup(t *testing.T) {
 	t.Setenv(serverURLEnvironment, "")
 	t.Setenv(serverTokenEnvironment, "")
+	t.Setenv(buildSessionContextEnvironment, "")
 
 	buildoptBinary := buildBuildopt(t)
 	signalHelper := buildSignalHelper(t)
@@ -152,6 +153,7 @@ func TestBuildoptForwardsSignalsToChildProcessGroup(t *testing.T) {
 func TestBuildoptReturnsConventionalStatusForUnhandledSignal(t *testing.T) {
 	t.Setenv(serverURLEnvironment, "")
 	t.Setenv(serverTokenEnvironment, "")
+	t.Setenv(buildSessionContextEnvironment, "")
 
 	buildoptBinary := buildBuildopt(t)
 	signalHelper := buildSignalHelper(t)

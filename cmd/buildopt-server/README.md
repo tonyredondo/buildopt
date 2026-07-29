@@ -6,7 +6,7 @@ It will host the Shared Cache, Policy API, experiment/evidence state, and
 export. Internal boundaries follow versioned contracts without prematurely
 splitting the private beta into microservices.
 
-`WS-005` activates only the first session-ingest boundary:
+`WS-005` activates the first session-ingest boundary:
 
 ```bash
 BUILDOPT_SERVER_INGEST_TOKEN=<opaque-token> \
@@ -21,11 +21,34 @@ byte Bearer token, accepts strict JSON only at
 ID returns `409`. Authentication failures and malformed input expose neither
 the credential nor submitted content.
 
-The in-memory store deliberately retains no state after shutdown. The accepted
-record is a provisional internal handoff, not the normative export.
-`WS-006` owns conversion to and validation of `BUILD_SESSION v1`; later
-contracts own durable SQLite state, JSONL, bounded retry/spooling, remote TLS,
-cache/policy APIs, and hardened identity.
+The in-memory ingest store deliberately retains no state after shutdown.
+
+`WS-006` optionally activates the first local-file export:
+
+```bash
+BUILDOPT_SERVER_INGEST_TOKEN=<opaque-token> \
+    buildopt-server serve \
+    --listen 127.0.0.1:8042 \
+    --export-dir /absolute/or/relative/export/path
+```
+
+After accepting a complete authenticated Gradle handoff, the server converts
+it to the normative `BUILD_SESSION v1` producer model. Each immutable document
+is formatted JSON ending in one newline, mode `0600`, and atomically linked
+under a filename derived from the SHA-256 of its session ID. An identical
+replay retains the existing bytes; different bytes for the same ID are a
+conflict. Export failure is diagnostic and fail-open for the Gradle result.
+
+The document contains an exact neutral-envelope duration, an explicitly
+approximated launcher-observed Gradle-process interval, pre-outcome passthrough
+assignment, predeclared tokenized workload identity, and explicit
+`UNAVAILABLE` observations for CI timing, critical path, task outcomes, cache
+causes, resources, overhead decomposition, and cost. It never invents values
+or includes the ingest credential.
+
+Durable SQLite state, JSONL, bounded retry/spooling, remote TLS, cache/policy
+APIs, hardened identity, and non-local workload profiles remain owned by later
+tracker items.
 
 Validate the handler, concurrency, real launcher/server binaries, graceful
 shutdown, credential isolation, child outcomes, fail-open delivery, and local
@@ -33,4 +56,5 @@ bypass with:
 
 ```bash
 ./dev/check-session-ingest
+./dev/check-build-session-export
 ```

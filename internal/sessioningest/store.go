@@ -2,6 +2,7 @@ package sessioningest
 
 import (
 	"errors"
+	"reflect"
 	"sort"
 	"sync"
 )
@@ -44,12 +45,12 @@ func (store *Store) Put(record Record) (PutResult, error) {
 
 	existing, found := store.sessions[record.SessionID]
 	if found {
-		if existing != record {
+		if !reflect.DeepEqual(existing, record) {
 			return 0, ErrSessionConflict
 		}
 		return PutDuplicate, nil
 	}
-	store.sessions[record.SessionID] = record
+	store.sessions[record.SessionID] = cloneRecord(record)
 	return PutCreated, nil
 }
 
@@ -60,10 +61,27 @@ func (store *Store) Snapshot() []Record {
 
 	result := make([]Record, 0, len(store.sessions))
 	for _, record := range store.sessions {
-		result = append(result, record)
+		result = append(result, cloneRecord(record))
 	}
 	sort.Slice(result, func(left int, right int) bool {
 		return result[left].SessionID < result[right].SessionID
 	})
 	return result
+}
+
+func cloneRecord(record Record) Record {
+	cloned := record
+	if record.ExportContext != nil {
+		context := *record.ExportContext
+		context.RequestedTasks = append(
+			[]string(nil),
+			record.ExportContext.RequestedTasks...,
+		)
+		cloned.ExportContext = &context
+	}
+	if record.GradleInvocation != nil {
+		invocation := *record.GradleInvocation
+		cloned.GradleInvocation = &invocation
+	}
+	return cloned
 }

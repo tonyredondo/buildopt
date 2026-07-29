@@ -34,6 +34,7 @@ const (
 
 type pluginHandshakeResult struct {
 	connected             bool
+	producerInstanceID    string
 	implementationVersion string
 	err                   error
 }
@@ -217,6 +218,7 @@ func (server *pluginHandshakeServer) serve() {
 
 	server.result <- pluginHandshakeResult{
 		connected:             true,
+		producerInstanceID:    hello.producerInstanceID,
 		implementationVersion: hello.implementationVersion,
 	}
 }

@@ -10,8 +10,9 @@ import (
 )
 
 const (
-	serverURLEnvironment   = sessioningest.ServerURLEnvironment
-	serverTokenEnvironment = sessioningest.ServerTokenEnvironment
+	serverURLEnvironment     = sessioningest.ServerURLEnvironment
+	serverTokenEnvironment   = sessioningest.ServerTokenEnvironment
+	exportContextEnvironment = sessioningest.ExportContextEnvironment
 )
 
 func (gateway *localGateway) deliverSession(

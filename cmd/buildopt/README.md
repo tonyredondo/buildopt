@@ -99,7 +99,8 @@ identity overlap. The Wrapper fixture proves a fresh authenticated rendezvous
 after Configuration Cache reuse.
 
 Cache GET/PUT behavior, upstream credentials, retained task-event streaming,
-observability export, and every optimization remain inactive.
+and every optimization remain inactive. The first local JSON export is
+described below.
 
 ## WS-005 server ingest
 
@@ -123,8 +124,45 @@ Run the real-binary ingest fixture with:
 ./dev/check-session-ingest
 ```
 
-This block carries only session identity, gateway generation, neutral
-timestamps/duration, outcome, and exit code. `WS-006` owns construction and
-schema validation of the complete immutable `BUILD_SESSION v1`; durable
-storage, JSONL export, retries/spooling, cancellation classification, cache
-payloads, and optimization remain inactive.
+Without additional context this block carries only session identity, gateway
+generation, neutral timestamps/duration, outcome, and exit code.
+
+## WS-006 BUILD_SESSION export context
+
+`BUILDOPT_BUILD_SESSION_CONTEXT` may predeclare the non-secret, tokenized facts
+that cannot be inferred safely from the process:
+
+```json
+{
+  "repositoryId": "repository-42",
+  "revision": "revision-abc",
+  "requestedTasks": ["build"],
+  "sourceStateDigest": "hmac-sha256:<64-lowercase-hex>",
+  "workUnitsFingerprint": "hmac-sha256:<64-lowercase-hex>",
+  "tokenKeyVersion": "local-token-v1",
+  "trustDomain": "developer-local"
+}
+```
+
+The context is strict JSON, limited to 32 KiB, parsed before the outcome, and
+removed from the child environment. It contains no HMAC key or source content.
+The current walking skeleton exports only when this context, valid server
+configuration, and one authenticated Gradle `ProducerHello` are all present.
+The launcher then attaches the producer identity/version and exact child
+process interval to the provisional ingest record.
+
+`buildopt-server --export-dir` derives requested-work and empty-deliverables
+manifest digests, preserves neutral-envelope timestamps and monotonic
+durations, and writes the immutable `BUILD_SESSION v1`. Invalid or incomplete
+context and export failure remain fail-open and cannot replace the Gradle exit
+code.
+
+Validate real Gradle success/failure exports against the normative schema with:
+
+```bash
+./dev/check-build-session-export
+```
+
+Durable storage, JSONL, retries/spooling, cancellation and infrastructure
+classification, CI workload metadata, cache payloads, and optimization remain
+inactive.

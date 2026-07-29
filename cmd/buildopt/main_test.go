@@ -19,43 +19,46 @@ import (
 )
 
 const (
-	helperModeEnvironment    = "GO_WANT_BUILDOPT_HELPER_PROCESS"
-	helperExitEnvironment    = "GO_BUILDOPT_HELPER_EXIT"
-	helperStderrEnvironment  = "GO_BUILDOPT_HELPER_STDERR"
-	passthroughEnvironment   = "WS001_PASSTHROUGH_VALUE"
-	pluginAttemptEnvironment = "BUILDOPT_PLUGIN_ATTEMPT_ID"
-	pluginSocketEnvironment  = "BUILDOPT_PLUGIN_EVENT_SOCKET"
-	pluginTokenEnvironment   = "BUILDOPT_PLUGIN_EVENT_TOKEN"
-	gatewayURLEnvironment    = "BUILDOPT_GATEWAY_URL"
-	gatewayUserEnvironment   = "BUILDOPT_GATEWAY_USERNAME"
-	gatewayPassEnvironment   = "BUILDOPT_GATEWAY_PASSWORD"
-	gatewayGenEnvironment    = "BUILDOPT_GATEWAY_CONNECTION_GENERATION"
-	serverURLEnvironment     = "BUILDOPT_SERVER_URL"
-	serverTokenEnvironment   = "BUILDOPT_SERVER_INGEST_TOKEN"
-	gatewayReadyPath         = "/_buildopt/ready"
-	gatewayGenerationHeader  = "BuildOpt-Gateway-Connection-Generation"
-	expectedUsage            = "usage: buildopt run -- <command> [args...]\n"
+	helperModeEnvironment          = "GO_WANT_BUILDOPT_HELPER_PROCESS"
+	helperExitEnvironment          = "GO_BUILDOPT_HELPER_EXIT"
+	helperStderrEnvironment        = "GO_BUILDOPT_HELPER_STDERR"
+	passthroughEnvironment         = "WS001_PASSTHROUGH_VALUE"
+	pluginAttemptEnvironment       = "BUILDOPT_PLUGIN_ATTEMPT_ID"
+	pluginSocketEnvironment        = "BUILDOPT_PLUGIN_EVENT_SOCKET"
+	pluginTokenEnvironment         = "BUILDOPT_PLUGIN_EVENT_TOKEN"
+	gatewayURLEnvironment          = "BUILDOPT_GATEWAY_URL"
+	gatewayUserEnvironment         = "BUILDOPT_GATEWAY_USERNAME"
+	gatewayPassEnvironment         = "BUILDOPT_GATEWAY_PASSWORD"
+	gatewayGenEnvironment          = "BUILDOPT_GATEWAY_CONNECTION_GENERATION"
+	serverURLEnvironment           = "BUILDOPT_SERVER_URL"
+	serverTokenEnvironment         = "BUILDOPT_SERVER_INGEST_TOKEN"
+	buildSessionContextEnvironment = "BUILDOPT_BUILD_SESSION_CONTEXT"
+	gatewayReadyPath               = "/_buildopt/ready"
+	gatewayGenerationHeader        = "BuildOpt-Gateway-Connection-Generation"
+	expectedUsage                  = "usage: buildopt run -- <command> [args...]\n"
 )
 
 type helperObservation struct {
-	Argv0             string   `json:"argv0"`
-	Arguments         []string `json:"arguments"`
-	WorkingDirectory  string   `json:"workingDirectory"`
-	StandardInput     string   `json:"standardInput"`
-	EnvironmentValue  string   `json:"environmentValue"`
-	PluginAttemptID   string   `json:"pluginAttemptId"`
-	PluginEventSocket string   `json:"pluginEventSocket"`
-	PluginTokenLength int      `json:"pluginTokenLength"`
-	GatewayURL        string   `json:"gatewayUrl"`
-	GatewayGeneration string   `json:"gatewayGeneration"`
-	GatewayReady      int      `json:"gatewayReady"`
-	GatewayRejected   int      `json:"gatewayRejected"`
-	ReadyGeneration   string   `json:"readyGeneration"`
+	Argv0                      string   `json:"argv0"`
+	Arguments                  []string `json:"arguments"`
+	WorkingDirectory           string   `json:"workingDirectory"`
+	StandardInput              string   `json:"standardInput"`
+	EnvironmentValue           string   `json:"environmentValue"`
+	PluginAttemptID            string   `json:"pluginAttemptId"`
+	PluginEventSocket          string   `json:"pluginEventSocket"`
+	PluginTokenLength          int      `json:"pluginTokenLength"`
+	GatewayURL                 string   `json:"gatewayUrl"`
+	GatewayGeneration          string   `json:"gatewayGeneration"`
+	GatewayReady               int      `json:"gatewayReady"`
+	GatewayRejected            int      `json:"gatewayRejected"`
+	ReadyGeneration            string   `json:"readyGeneration"`
+	BuildSessionContextPresent bool     `json:"buildSessionContextPresent"`
 }
 
 func TestBuildoptCLI(t *testing.T) {
 	t.Setenv(serverURLEnvironment, "")
 	t.Setenv(serverTokenEnvironment, "")
+	t.Setenv(buildSessionContextEnvironment, "")
 
 	buildoptBinary := buildBuildopt(t)
 
@@ -103,6 +106,7 @@ func TestBuildoptCLI(t *testing.T) {
 			gatewayUserEnvironment+"=parent-user",
 			gatewayPassEnvironment+"=parent-password",
 			gatewayGenEnvironment+"=parent-generation",
+			buildSessionContextEnvironment+"=untrusted-parent-context",
 		)
 		command.Stdin = strings.NewReader(input)
 
@@ -196,6 +200,9 @@ func TestBuildoptCLI(t *testing.T) {
 				observation.GatewayReady,
 				observation.GatewayRejected,
 			)
+		}
+		if observation.BuildSessionContextPresent {
+			t.Error("BUILD_SESSION export context reached the child")
 		}
 		if response, err := gatewayTestClient().Get(
 			observation.GatewayURL + gatewayReadyPath,
@@ -362,6 +369,9 @@ func TestBuildoptChildHelper(t *testing.T) {
 		GatewayReady:      gatewayReady,
 		GatewayRejected:   gatewayRejected,
 		ReadyGeneration:   readyGeneration,
+		BuildSessionContextPresent: os.Getenv(
+			buildSessionContextEnvironment,
+		) != "",
 	}
 	if err := json.NewEncoder(os.Stdout).Encode(observation); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "encode helper observation: %v\n", err)

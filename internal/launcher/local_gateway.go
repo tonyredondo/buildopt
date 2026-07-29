@@ -263,6 +263,7 @@ var reservedChildEnvironment = []string{
 	gatewayGenerationEnvironment,
 	serverURLEnvironment,
 	serverTokenEnvironment,
+	exportContextEnvironment,
 }
 
 func replaceEnvironment(

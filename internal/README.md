@@ -14,7 +14,13 @@ sources.
 
 `sessioningest/` contains the provisional `WS-005` gateway-to-server record,
 strict authenticated HTTP transport, and concurrency-safe in-memory acceptance
-store. It is an internal walking-skeleton boundary rather than the normative
-`BUILD_SESSION`; `WS-006` owns that export and its schema validation.
+store. Its optional `WS-006` handoff carries only predeclared tokenized context
+and facts from an authenticated Gradle invocation.
+
+`buildsession/` is the dependency-free producer for the normative
+`BUILD_SESSION v1` schema and the atomic local-file exporter. It derives only
+deterministic manifest/baseline digests, declares unobserved metrics
+unavailable, publishes mode-`0600` immutable JSON, and leaves runtime schema
+conformance to the isolated validator under `dev/schema-validator/`.
 
 No type in this directory replaces the normative schemas, OpenAPI, or Protobuf definitions in `contracts/`.

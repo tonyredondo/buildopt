@@ -23,4 +23,15 @@ Run the pinned Draft 2020-12 conformance test with:
 
 The test uses the repository-local Go toolchain, asserts date-time formats, validates every fixture under [`testdata/build-session.v1`](./testdata/build-session.v1), and rejects each negative fixture for its documented reason. The validator dependency is isolated and versioned in `dev/schema-validator/go.mod` and authenticated by its `go.sum`; no workstation-global JSON Schema executable is used, and the product module remains dependency-free.
 
+Run the real `WS-006` producer and validate its successful and failed Gradle
+documents with the same isolated compiler:
+
+```bash
+./dev/check-build-session-export
+```
+
+The product-side model remains dependency-free; the checker builds the
+isolated validator as a separate executable and injects it into the pinned
+JDK-only golden container.
+
 Future schemas must retain the same explicit identifier, compatibility, required-field, unknown-field, format, bound, and positive/negative fixture policy. Signed commands additionally fail closed on unknown fields.

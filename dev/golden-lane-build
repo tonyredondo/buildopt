@@ -113,7 +113,8 @@ fi
 
 "${buildopt_script_dir}/check-gradle-plugin-handshake"
 "${buildopt_script_dir}/check-session-ingest"
+"${buildopt_script_dir}/check-build-session-export"
 "${buildopt_script_dir}/check-gradle-correlation-fixture"
 "${buildopt_script_dir}/check-gradle-correlation-spike" --gradle-9-only
 
-printf 'Golden lane build OK: Gradle 9.6.1, Java 21, bytecode major 61, authenticated local rendezvous, and server ingest\n'
+printf 'Golden lane build OK: Gradle 9.6.1, Java 21, bytecode major 61, authenticated local rendezvous, server ingest, and BUILD_SESSION v1 export\n'

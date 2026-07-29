@@ -47,6 +47,15 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			serverErr,
 		)
 	}
+	exportContext, exportContextConfigured, exportContextErr :=
+		sessioningest.ExportContextFromEnvironment(os.Getenv)
+	if serverConfigured && exportContextErr != nil {
+		_, _ = fmt.Fprintf(
+			stderr,
+			"buildopt: BUILD_SESSION export context unavailable: %v\n",
+			exportContextErr,
+		)
+	}
 	gateway, gatewayErr := startLocalGateway()
 	if gatewayErr != nil {
 		_, _ = fmt.Fprintf(
@@ -86,6 +95,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	signals := make(chan os.Signal, 2)
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
 
+	childStartedAt := time.Now()
 	err := command.Start()
 	if err != nil {
 		signal.Stop(signals)
@@ -108,8 +118,10 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	close(stopForwarding)
 	<-forwardingStopped
 
+	handshakeResult := pluginHandshakeResult{}
 	if handshake != nil {
-		reportPluginHandshake(handshake.finish(), stderr)
+		handshakeResult = handshake.finish()
+		reportPluginHandshake(handshakeResult, stderr)
 	}
 	exitCode := childWaitExitCode(childArgs[0], err, stderr)
 	if serverConfigured && gateway != nil && handshake != nil {
@@ -125,6 +137,24 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			outcome,
 			exitCode,
 		)
+		if exportContextConfigured &&
+			exportContextErr == nil &&
+			handshakeResult.connected &&
+			handshakeResult.err == nil {
+			record.ExportContext = exportContext
+			record.GradleInvocation = &sessioningest.GradleInvocation{
+				ID:            handshakeResult.producerInstanceID,
+				StartedAt:     childStartedAt.UTC().Format(time.RFC3339Nano),
+				CompletedAt:   completedAt.UTC().Format(time.RFC3339Nano),
+				DurationMs:    completedAt.Sub(childStartedAt).Milliseconds(),
+				PluginVersion: handshakeResult.implementationVersion,
+			}
+		} else if exportContextConfigured && exportContextErr == nil {
+			_, _ = fmt.Fprintln(
+				stderr,
+				"buildopt: BUILD_SESSION export unavailable: authenticated Gradle invocation was not observed",
+			)
+		}
 		ingestContext, cancel := context.WithTimeout(
 			context.Background(),
 			2*time.Second,

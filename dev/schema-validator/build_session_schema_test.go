@@ -12,8 +12,6 @@ import (
 	"github.com/santhosh-tekuri/jsonschema/v6"
 )
 
-const buildSessionSchemaID = "https://schemas.buildopt.dev/build-session.v1.schema.json"
-
 func TestBuildSessionV1Fixtures(t *testing.T) {
 	t.Parallel()
 
@@ -33,11 +31,11 @@ func TestBuildSessionV1Fixtures(t *testing.T) {
 	if err != nil {
 		t.Fatalf("compile %s: %v", relativePath(repositoryRoot, schemaPath), err)
 	}
-	if schema.ID != buildSessionSchemaID {
+	if schema.ID != BuildSessionSchemaID {
 		t.Fatalf(
 			"compiled schema ID = %q, want %q",
 			schema.ID,
-			buildSessionSchemaID,
+			BuildSessionSchemaID,
 		)
 	}
 	if schema.DraftVersion != 2020 {
