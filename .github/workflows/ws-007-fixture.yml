@@ -1,0 +1,97 @@
+name: WS-007 pinned BuildOpt Action
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  action-fixture:
+    name: Pinned Action and release archive
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out the consumer fixture
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Install BuildOpt
+        id: buildopt
+        uses: tonyredondo/buildopt@3fe068790878420a2a9e1d84b6ae5fc83f5752c3
+        with:
+          version: 0.0.0-ws007
+          archive-url: https://raw.githubusercontent.com/tonyredondo/buildopt/3fe068790878420a2a9e1d84b6ae5fc83f5752c3/fixtures/github-actions/testdata/buildopt-0.0.0-ws007-linux-amd64.tar.gz
+          archive-sha256: d15319d6a9c08bb02587a68a93ea49803678a57d137fb812676f7f614682dcc9
+
+      - name: Verify the neutral wrapper contract
+        shell: bash
+        env:
+          BUILDOPT_PATH: ${{ steps.buildopt.outputs.buildopt-path }}
+          BUILDOPT_SERVER_PATH: ${{ steps.buildopt.outputs.buildopt-server-path }}
+          GRADLE_PLUGIN_PATH: ${{ steps.buildopt.outputs.gradle-plugin-path }}
+          JVM_AGENT_PATH: ${{ steps.buildopt.outputs.jvm-agent-path }}
+          GRADLE_INIT_SCRIPT: ${{ steps.buildopt.outputs.gradle-init-script }}
+          INSTALL_ROOT: ${{ steps.buildopt.outputs.install-root }}
+          BUILDOPT_PROBE: ${{ github.workspace }}/fixtures/github-actions/argv-probe
+        run: |
+          set -euo pipefail
+
+          for buildopt_file in \
+            "$BUILDOPT_PATH" \
+            "$BUILDOPT_SERVER_PATH" \
+            "$GRADLE_PLUGIN_PATH" \
+            "$JVM_AGENT_PATH" \
+            "$GRADLE_INIT_SCRIPT"; do
+            if [[ ! -f "$buildopt_file" || -L "$buildopt_file" ]]; then
+              printf 'missing or unsafe Action output: %s\n' "$buildopt_file" >&2
+              exit 1
+            fi
+          done
+          if [[ "$(command -v buildopt)" != "$BUILDOPT_PATH" ]] ||
+            [[ "$BUILDOPT_RELEASE_ROOT" != "$INSTALL_ROOT" ]] ||
+            [[ "$BUILDOPT_GRADLE_PLUGIN_JAR" != "$GRADLE_PLUGIN_PATH" ]] ||
+            [[ "$BUILDOPT_JVM_AGENT_JAR" != "$JVM_AGENT_PATH" ]] ||
+            [[ "$BUILDOPT_GRADLE_INIT_SCRIPT" != "$GRADLE_INIT_SCRIPT" ]]; then
+            printf 'Action PATH, outputs, and environment do not agree\n' >&2
+            exit 1
+          fi
+
+          buildopt_probe_output=$(
+            buildopt run -- \
+              "$BUILDOPT_PROBE" \
+              "" \
+              "space value" \
+              "*" \
+              "\$HOME"
+          )
+          buildopt_expected_probe=$(
+            printf '%s\n' \
+              'argc=4' \
+              'arg0=<>' \
+              'arg1=<space value>' \
+              'arg2=<*>' \
+              "arg3=<\$HOME>"
+          )
+          if [[ "$buildopt_probe_output" != "$buildopt_expected_probe" ]]; then
+            printf 'Action-installed wrapper changed command argv\n' >&2
+            exit 1
+          fi
+
+          set +e
+          buildopt run -- "$BUILDOPT_PROBE" --exit 37
+          buildopt_child_exit=$?
+          set -e
+          if ((buildopt_child_exit != 37)); then
+            printf 'Action-installed wrapper returned %s instead of 37\n' \
+              "$buildopt_child_exit" >&2
+            exit 1
+          fi
+          if [[ "$("$BUILDOPT_SERVER_PATH" --fixture-version)" != \
+            'buildopt-server 0.0.0-ws007' ]]; then
+            printf 'Action-installed server has the wrong fixture version\n' >&2
+            exit 1
+          fi
+
+          printf 'WS-007 hosted Action fixture OK\n'

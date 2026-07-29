@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "buildopt.dev/github-action-fixture/v1",
+  "runner": "ubuntu-24.04",
+  "workflow": ".github/workflows/ws-007-fixture.yml",
+  "action": {
+    "repository": "tonyredondo/buildopt",
+    "commit": "3fe068790878420a2a9e1d84b6ae5fc83f5752c3"
+  },
+  "checkout": {
+    "repository": "actions/checkout",
+    "version": "v7.0.1",
+    "commit": "3d3c42e5aac5ba805825da76410c181273ba90b1"
+  },
+  "release": {
+    "version": "0.0.0-ws007",
+    "archivePath": "fixtures/github-actions/testdata/buildopt-0.0.0-ws007-linux-amd64.tar.gz",
+    "archiveUrl": "https://raw.githubusercontent.com/tonyredondo/buildopt/3fe068790878420a2a9e1d84b6ae5fc83f5752c3/fixtures/github-actions/testdata/buildopt-0.0.0-ws007-linux-amd64.tar.gz",
+    "archiveSha256": "d15319d6a9c08bb02587a68a93ea49803678a57d137fb812676f7f614682dcc9"
+  }
+}

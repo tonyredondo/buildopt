@@ -159,3 +159,20 @@ Verify without access to the private key:
 ```
 
 The executable conformance suite is `dev/check-release-package`.
+
+## GitHub Actions consumption
+
+The repository-root setup Action consumes the TAR through three independent
+workflow inputs: release version, HTTPS archive URL, and lowercase SHA-256. The
+consumer pins the Action itself by full commit SHA. The Action verifies the
+archive checksum and exact safe TAR layout before extraction, then publishes
+the launcher/server/plugin/agent paths without executing them.
+
+Release authentication remains outside the download step: the checksum entered
+in a customer workflow must come from a separately trusted verification of this
+six-file bundle and its pinned public key. An archive and checksum retrieved
+from the same unauthenticated source are not sufficient provenance.
+
+`WS-007` proves this setup boundary with a synthetic layout-compatible archive.
+Publishing real release assets plus install/upgrade/uninstall and revocation
+remain in `DEPLOY-001`.

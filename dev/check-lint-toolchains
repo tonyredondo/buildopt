@@ -62,15 +62,17 @@ fi
 buildopt_shellcheck_path="${buildopt_tools_root}/toolchains/shellcheck-${buildopt_shellcheck_sha256:0:16}/bin/shellcheck"
 
 mapfile -d '' buildopt_shell_scripts < <(
-    find "${buildopt_script_dir}" \
-        -maxdepth 1 \
+    find \
+        "${buildopt_script_dir}" \
+        "${buildopt_repo_root}/.github/actions" \
+        "${buildopt_repo_root}/fixtures/github-actions" \
         -type f \
         -perm -u+x \
         -print0 |
         sort -z
 )
 if ((${#buildopt_shell_scripts[@]} == 0)); then
-    printf 'no executable development scripts were found for ShellCheck\n' >&2
+    printf 'no executable repository scripts were found for ShellCheck\n' >&2
     exit 1
 fi
 

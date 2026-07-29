@@ -75,11 +75,12 @@ From the repository root:
 ./dev/check-lint-toolchains
 ./dev/check-supply-chain-toolchains
 ./dev/check-release-package
+./dev/check-github-action
 ./dev/run -- ./dev/check-jvm-release
 ./dev/check-golden-lane --static
 ```
 
-The commands validate the repository and Phase 0 normative-package layouts, the first Draft 2020-12 contract and its positive/negative fixtures, reproducible project-local Protobuf tooling and the local task-event channel with Go/Java Unix-socket round trips, the real `buildopt run --` passthrough binary and its Linux process/signal contract, the authenticated neutral loopback gateway and Gradle plugin handshake with Configuration Cache reuse, authenticated idempotent session ingest into the real `buildopt-server`, atomic schema-valid `BUILD_SESSION v1` JSON export, the first parallel Gradle correlation fixture, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, actionlint, Cosign, and Syft provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, deterministic signed release bundles with SPDX and provenance, repository shell scripts, an actionlint workflow smoke fixture, and golden lane configuration and checksums.
+The commands validate the repository and Phase 0 normative-package layouts, the first Draft 2020-12 contract and its positive/negative fixtures, reproducible project-local Protobuf tooling and the local task-event channel with Go/Java Unix-socket round trips, the real `buildopt run --` passthrough binary and its Linux process/signal contract, the authenticated neutral loopback gateway and Gradle plugin handshake with Configuration Cache reuse, authenticated idempotent session ingest into the real `buildopt-server`, atomic schema-valid `BUILD_SESSION v1` JSON export, the first parallel Gradle correlation fixture, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, actionlint, Cosign, and Syft provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, deterministic signed release bundles with SPDX and provenance, the full-SHA/checksum-pinned Linux x64 setup Action, repository shell scripts and workflow fixtures, and golden lane configuration and checksums.
 
 Project-local smoke tests:
 
@@ -98,6 +99,42 @@ Project-local smoke tests:
 ./dev/bootstrap --toolchain syft
 ./dev/check-supply-chain-toolchains
 ```
+
+## GitHub Action
+
+Consumers pin the Action itself by its complete commit SHA and pin the release
+archive independently:
+
+```yaml
+- name: Install BuildOpt
+  id: buildopt
+  uses: tonyredondo/buildopt@3fe068790878420a2a9e1d84b6ae5fc83f5752c3
+  with:
+    version: <release-version>
+    archive-url: https://example.invalid/buildopt-<release-version>-linux-amd64.tar.gz
+    archive-sha256: <lowercase-sha256>
+
+- name: Run the existing Gradle command
+  shell: bash
+  run: >-
+    buildopt run --
+    ./gradlew
+    --init-script "$BUILDOPT_GRADLE_INIT_SCRIPT"
+    build
+```
+
+The Action supports GitHub-hosted or self-hosted Linux x64 runners, requires
+HTTPS for the archive and redirects, verifies the complete SHA-256 and exact
+Release Bundle v1 TAR layout before extraction, and installs under
+`runner.temp`. It adds only the packaged `bin/` directory to subsequent-step
+`PATH`; the server, plugin, agent, installation root, and pinned init script are
+also exposed as outputs and non-secret environment paths.
+
+The SHA-256 value is expected to come from a separately authenticated Release
+Bundle v1 publication. The Action does not turn an unauthenticated checksum
+supplied by the same download location into a trust root. See the
+[WS-007 fixture](./fixtures/github-actions/README.md) for the immutable test
+pins and scope boundaries.
 
 Smoke test inside the pinned image:
 

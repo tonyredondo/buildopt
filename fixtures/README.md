@@ -13,3 +13,10 @@ Gradle 9.6.1 Wrapper loads the exact packaged plugin JAR, authenticates both
 local rendezvous hops, compares a deterministic task output with the direct
 baseline, reuses Configuration Cache with the task up-to-date, exercises a
 missing rendezvous, and preserves an intentional Gradle failure.
+
+`github-actions/` is the `WS-007` consumer fixture. It binds the root composite
+Action and a synthetic Release Bundle v1 archive to immutable commit/checksum
+identities, exercises installation locally without network access, and
+provides a manual read-only hosted workflow that proves PATH/output publication
+plus argv and exit-code preservation. It does not implement authoritative CI
+or the protected validation queue.

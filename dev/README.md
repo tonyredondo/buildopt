@@ -280,7 +280,7 @@ Provision both tools and run their integrated smoke:
 ./dev/check-lint-toolchains
 ```
 
-The checker runs exact ShellCheck 0.11.0 over every executable script directly under `dev/`. It then runs exact actionlint 1.7.12 over any existing `.github/workflows/*.yml` or `*.yaml` files and an in-memory valid workflow fixture. actionlint receives the exact repository-local ShellCheck path for embedded `run:` scripts and has opportunistic global Pyflakes discovery disabled.
+The checker runs exact ShellCheck 0.11.0 over executable scripts under `dev/`, `.github/actions/`, and `fixtures/github-actions/`. It then runs exact actionlint 1.7.12 over any existing `.github/workflows/*.yml` or `*.yaml` files and an in-memory valid workflow fixture. actionlint receives the exact repository-local ShellCheck path for embedded `run:` scripts and has opportunistic global Pyflakes discovery disabled.
 
 This is provisioning and lint-smoke evidence for `ENV-010`; it does not create an authoritative CI workflow or close `F0-004`.
 
@@ -304,6 +304,31 @@ Exercise the complete `F0-038` bundle twice and run tamper cases:
 ```
 
 The checker snapshots the current source into a temporary clean Git repository, builds the Linux AMD64 launcher/server and versioned Java 17 plugin/agent twice, and requires byte-identical TAR, SPDX, SLSA provenance, release manifest, and checksum manifest. Both Cosign signatures must bind the same digest. Verification rejects modified payloads, modified signatures, an unpinned public key, and extra files. See [`specs/release-bundle-v1.md`](../specs/release-bundle-v1.md) for the production command and trust boundary.
+
+## GitHub Action validation
+
+Exercise the Action metadata, immutable fixture lock, offline installer, and
+manual workflow:
+
+```bash
+./dev/test-github-action-install
+./dev/check-github-action
+```
+
+The installer suite regenerates the synthetic Release Bundle v1 TAR, intercepts
+the HTTPS request without network access, and proves checksum-before-extract,
+exact entries/types/modes, atomic publication, matching-install reuse, GitHub
+outputs/environment/PATH, literal argv, exit `37`, checksum mismatch, platform
+rejection, mutable-install rejection, and invalid input handling.
+
+The integrated checker proves that every `uses:` reference is a full 40-hex
+commit, the BuildOpt commit contains the exact Action and archive, the raw
+archive URL is bound to that commit, the SHA-256 matches its Git object, the
+workflow is manual-only with `contents: read`, and locked
+ShellCheck/actionlint accept all scripts and the hosted fixture. The hosted run
+is dispatched separately for GitHub-runner evidence. This closes `WS-007`, not
+`F0-004`, `CI-ORCH-001`, release publication, token/fork policy, or the full
+`DEPLOY-001` lifecycle.
 
 ## Normative package validation
 
@@ -407,6 +432,8 @@ Run the lock and doctor contract tests from the repository root:
 ./dev/test-lint-toolchains
 ./dev/test-supply-chain-toolchains
 ./dev/check-release-package
+./dev/test-github-action-install
+./dev/check-github-action
 ./dev/test-golden-lane-container
 ```
 
@@ -425,6 +452,8 @@ The Rust toolchain tests use synthetic Rustup, rustc, Cargo, and channel-manifes
 The lint toolchain tests use synthetic ShellCheck and actionlint archives in their real upstream layouts. They exercise checksum-verified `tar.xz` and `tar.gz` provisioning, atomic installation, idempotency, exact-version selection, repository-local `PATH`, global-tool isolation, manifest drift, lint failure propagation, usage errors, and missing-tool behavior without downloading or changing global tools.
 
 The supply-chain tool tests use synthetic Cosign and Syft artifacts. They exercise checksum-verified binary and `tar.gz` provisioning, atomic installation, idempotency, project-local selection, global-tool isolation, local sign/verify and SPDX paths, metadata drift, checksum rejection, usage errors, and child failure propagation. The release-package checker then uses the real locked tools and build toolchains for deterministic positive and tamper fixtures.
+
+The GitHub Action tests use a deterministic synthetic release archive and fake HTTPS transport to exercise the setup boundary without downloading or executing untrusted product bytes. The integrated fixture then binds the committed Action, archive, checkout dependency, runner, permissions, and manual workflow to exact identities.
 
 The golden container tests use a synthetic Docker client and deterministic host-resource probes. They verify index-to-platform digest binding, exact pull and run arguments, local image identity, strict cgroup settings, mutable-reference rejection, daemon/resource failures, and child exit-code propagation without contacting a registry or starting a container.
 

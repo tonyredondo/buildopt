@@ -1,0 +1,205 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_lock="${buildopt_repo_root}/fixtures/github-actions/fixture-lock.json"
+buildopt_action="${buildopt_repo_root}/action.yml"
+
+for buildopt_command in \
+    awk \
+    git \
+    grep \
+    jq \
+    mktemp \
+    sha256sum; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required GitHub Action verification command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+if [[ ! -f "${buildopt_lock}" ]] || [[ ! -f "${buildopt_action}" ]]; then
+    printf 'WS-007 Action metadata or fixture lock is missing\n' >&2
+    exit 1
+fi
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+buildopt_test_root=$(mktemp -d)
+buildopt_cleanup() {
+    if [[ -n "${buildopt_test_root:-}" ]] &&
+        [[ "${buildopt_test_root}" == /tmp/* ]] &&
+        [[ -d "${buildopt_test_root}" ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+if ! jq -e '
+    keys == [
+        "action",
+        "checkout",
+        "release",
+        "runner",
+        "schemaVersion",
+        "workflow"
+    ] and
+    .schemaVersion == "buildopt.dev/github-action-fixture/v1" and
+    .runner == "ubuntu-24.04" and
+    .workflow == ".github/workflows/ws-007-fixture.yml" and
+    (.action | keys == ["commit", "repository"]) and
+    .action.repository == "tonyredondo/buildopt" and
+    (.action.commit | test("^[0-9a-f]{40}$")) and
+    (.checkout | keys == ["commit", "repository", "version"]) and
+    .checkout.repository == "actions/checkout" and
+    (.checkout.version | test("^v[0-9]+[.][0-9]+[.][0-9]+$")) and
+    (.checkout.commit | test("^[0-9a-f]{40}$")) and
+    (.release | keys == [
+        "archivePath",
+        "archiveSha256",
+        "archiveUrl",
+        "version"
+    ]) and
+    (.release.version |
+        test("^(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)(-[0-9A-Za-z][0-9A-Za-z.-]*)?([+][0-9A-Za-z][0-9A-Za-z.-]*)?$")) and
+    (.release.archivePath |
+        test("^fixtures/github-actions/testdata/buildopt-[^/]+-linux-amd64[.]tar[.]gz$")) and
+    (.release.archiveSha256 | test("^[0-9a-f]{64}$"))
+' "${buildopt_lock}" >/dev/null; then
+    printf 'WS-007 fixture lock is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_action_repository=$(jq -r '.action.repository' "${buildopt_lock}")
+buildopt_action_commit=$(jq -r '.action.commit' "${buildopt_lock}")
+buildopt_checkout_repository=$(jq -r '.checkout.repository' "${buildopt_lock}")
+buildopt_checkout_commit=$(jq -r '.checkout.commit' "${buildopt_lock}")
+buildopt_release_version=$(jq -r '.release.version' "${buildopt_lock}")
+buildopt_release_path=$(jq -r '.release.archivePath' "${buildopt_lock}")
+buildopt_release_url=$(jq -r '.release.archiveUrl' "${buildopt_lock}")
+buildopt_release_sha256=$(jq -r '.release.archiveSha256' "${buildopt_lock}")
+buildopt_workflow_relative=$(jq -r '.workflow' "${buildopt_lock}")
+buildopt_workflow="${buildopt_repo_root}/${buildopt_workflow_relative}"
+
+if ! git -C "${buildopt_repo_root}" cat-file -e \
+    "${buildopt_action_commit}^{commit}" ||
+    ! git -C "${buildopt_repo_root}" merge-base --is-ancestor \
+        "${buildopt_action_commit}" HEAD; then
+    printf 'pinned BuildOpt Action commit is absent or not an ancestor\n' >&2
+    exit 1
+fi
+for buildopt_path in \
+    action.yml \
+    .github/actions/buildopt.init.gradle \
+    .github/actions/install-buildopt \
+    .github/actions/setup-buildopt \
+    "${buildopt_release_path}"; do
+    if ! git -C "${buildopt_repo_root}" cat-file -e \
+        "${buildopt_action_commit}:${buildopt_path}"; then
+        printf 'pinned Action commit is missing %s\n' "${buildopt_path}" >&2
+        exit 1
+    fi
+done
+if ! git -C "${buildopt_repo_root}" diff --quiet \
+    "${buildopt_action_commit}" -- \
+    action.yml \
+    .github/actions/buildopt.init.gradle \
+    .github/actions/install-buildopt \
+    .github/actions/setup-buildopt \
+    "${buildopt_release_path}"; then
+    printf 'current Action bytes differ from the pinned fixture commit\n' >&2
+    exit 1
+fi
+
+git -C "${buildopt_repo_root}" show \
+    "${buildopt_action_commit}:${buildopt_release_path}" \
+    >"${buildopt_test_root}/release.tar.gz"
+if [[ "$(sha256sum "${buildopt_test_root}/release.tar.gz" | awk '{print $1}')" != \
+    "${buildopt_release_sha256}" ]]; then
+    printf 'fixture archive does not match its immutable checksum\n' >&2
+    exit 1
+fi
+buildopt_expected_url="https://raw.githubusercontent.com/${buildopt_action_repository}/${buildopt_action_commit}/${buildopt_release_path}"
+if [[ "${buildopt_release_url}" != "${buildopt_expected_url}" ]]; then
+    printf 'fixture archive URL is not bound to the Action commit\n' >&2
+    exit 1
+fi
+
+if [[ ! -f "${buildopt_workflow}" ]] ||
+    [[ "$(grep -Fxc \
+        "        uses: ${buildopt_checkout_repository}@${buildopt_checkout_commit}" \
+        "${buildopt_workflow}")" != "1" ]] ||
+    [[ "$(grep -Fxc \
+        "        uses: ${buildopt_action_repository}@${buildopt_action_commit}" \
+        "${buildopt_workflow}")" != "1" ]] ||
+    [[ "$(grep -Fxc \
+        "          version: ${buildopt_release_version}" \
+        "${buildopt_workflow}")" != "1" ]] ||
+    [[ "$(grep -Fxc \
+        "          archive-url: ${buildopt_release_url}" \
+        "${buildopt_workflow}")" != "1" ]] ||
+    [[ "$(grep -Fxc \
+        "          archive-sha256: ${buildopt_release_sha256}" \
+        "${buildopt_workflow}")" != "1" ]]; then
+    printf 'hosted fixture does not match the WS-007 lock\n' >&2
+    exit 1
+fi
+
+mapfile -t buildopt_uses < <(
+    awk '$1 == "uses:" {print $2}' "${buildopt_workflow}"
+)
+if ((${#buildopt_uses[@]} != 2)); then
+    printf 'hosted fixture must contain exactly two pinned actions\n' >&2
+    exit 1
+fi
+for buildopt_uses_ref in "${buildopt_uses[@]}"; do
+    if [[ ! "${buildopt_uses_ref}" =~ ^[^@[:space:]]+@[0-9a-f]{40}$ ]]; then
+        printf 'hosted fixture has a mutable action reference: %s\n' \
+            "${buildopt_uses_ref}" >&2
+        exit 1
+    fi
+done
+if ! grep -Fqx '  workflow_dispatch:' "${buildopt_workflow}" ||
+    grep -Eq '^[[:space:]]+(push|pull_request|pull_request_target|schedule):' \
+        "${buildopt_workflow}" ||
+    ! grep -Fqx '  contents: read' "${buildopt_workflow}"; then
+    printf 'hosted fixture trigger or permission boundary is unsafe\n' >&2
+    exit 1
+fi
+
+for buildopt_action_line in \
+    '  using: composite' \
+    "        BUILDOPT_ACTION_VERSION: \${{ inputs.version }}" \
+    "        BUILDOPT_ACTION_ARCHIVE_URL: \${{ inputs.archive-url }}" \
+    "        BUILDOPT_ACTION_ARCHIVE_SHA256: \${{ inputs.archive-sha256 }}" \
+    "        BUILDOPT_ACTION_INSTALL_DIR: \${{ runner.temp }}/buildopt-action" \
+    "      run: '\"\$BUILDOPT_ACTION_PATH/.github/actions/setup-buildopt\"'"; do
+    if [[ "$(grep -Fxc "${buildopt_action_line}" "${buildopt_action}")" != "1" ]]; then
+        printf 'Action metadata is missing its immutable installer contract\n' >&2
+        exit 1
+    fi
+done
+
+"${buildopt_script_dir}/test-github-action-install"
+"${buildopt_script_dir}/check-lint-toolchains"
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'GitHub Action verification changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'WS-007 GitHub Action OK: action=%s release=%s@%s workflow=%s\n' \
+    "${buildopt_action_commit}" \
+    "${buildopt_release_version}" \
+    "${buildopt_release_sha256}" \
+    "${buildopt_workflow_relative}"
