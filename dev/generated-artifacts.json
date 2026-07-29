@@ -16,6 +16,44 @@
       "toolchains": [
         "protoc"
       ]
+    },
+    {
+      "id": "openapi-go-client-v1",
+      "owningItem": "F0-022",
+      "owner": "Contracts",
+      "sources": [
+        "contracts/openapi/buildopt-control.v1.yaml",
+        "contracts/openapi/buildopt-cache-control.v1.yaml",
+        "contracts/openapi/test-optimization.v1.yaml",
+        "contracts/test-vectors/compatibility/n-n-minus-1.tsv"
+      ],
+      "outputs": [
+        "internal/generated/openapi/client_v1.go"
+      ],
+      "command": "./dev/generate-code --artifact openapi-go-client-v1",
+      "format": "Go 1.26 HTTP client source",
+      "toolchains": [
+        "go"
+      ]
+    },
+    {
+      "id": "openapi-java-client-v1",
+      "owningItem": "F0-022",
+      "owner": "Contracts",
+      "sources": [
+        "contracts/openapi/buildopt-control.v1.yaml",
+        "contracts/openapi/buildopt-cache-control.v1.yaml",
+        "contracts/openapi/test-optimization.v1.yaml",
+        "contracts/test-vectors/compatibility/n-n-minus-1.tsv"
+      ],
+      "outputs": [
+        "jvm/generated-client/src/main/java/dev/buildopt/generated/BuildOptClientsV1.java"
+      ],
+      "command": "./dev/generate-code --artifact openapi-java-client-v1",
+      "format": "Java 17 HTTP client source",
+      "toolchains": [
+        "temurin-jdk-21"
+      ]
     }
   ]
 }

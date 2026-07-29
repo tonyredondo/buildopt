@@ -8,8 +8,17 @@ fi
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_client_classes=$(mktemp -d)
 
-for buildopt_command in awk find grep jar java javap tr unzip; do
+buildopt_cleanup() {
+    if [[ "${buildopt_client_classes}" == /tmp/* ]] &&
+        [[ -d "${buildopt_client_classes}" ]]; then
+        rm -rf -- "${buildopt_client_classes}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in awk find grep jar java javac javap mktemp tr unzip; do
     if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
         printf 'required JVM verification command is unavailable: %s\n' \
             "${buildopt_command}" >&2
@@ -35,6 +44,7 @@ fi
 
 buildopt_build_files=(
     "${buildopt_repo_root}/jvm/gradle-plugin/build.gradle.kts"
+    "${buildopt_repo_root}/jvm/generated-client/build.gradle.kts"
     "${buildopt_repo_root}/jvm/jvm-agent/build.gradle.kts"
 )
 for buildopt_build_file in "${buildopt_build_files[@]}"; do
@@ -67,10 +77,13 @@ mkdir -p -- "${GRADLE_USER_HOME}"
     --stacktrace \
     --warning-mode=fail \
     :jvm:gradle-plugin:clean \
+    :jvm:generated-client:clean \
     :jvm:jvm-agent:clean \
     :jvm:gradle-plugin:check \
+    :jvm:generated-client:check \
     :jvm:jvm-agent:check \
     :jvm:gradle-plugin:jar \
+    :jvm:generated-client:jar \
     :jvm:jvm-agent:jar
 
 buildopt_find_jar() {
@@ -106,6 +119,11 @@ buildopt_agent_jar=$(
     buildopt_find_jar \
         "${buildopt_repo_root}/jvm/jvm-agent/build/libs" \
         'buildopt-jvm-agent-*.jar'
+)
+buildopt_generated_client_jar=$(
+    buildopt_find_jar \
+        "${buildopt_repo_root}/jvm/generated-client/build/libs" \
+        'buildopt-generated-client-*.jar'
 )
 
 buildopt_verify_jar_classes() {
@@ -172,8 +190,17 @@ if ! jar tf "${buildopt_agent_jar}" |
         "${buildopt_agent_jar}" >&2
     exit 1
 fi
+if ! jar tf "${buildopt_generated_client_jar}" |
+    grep -Fqx 'dev/buildopt/generated/BuildOptClientsV1.class'; then
+    printf 'generated client entry point is missing from %s\n' \
+        "${buildopt_generated_client_jar}" >&2
+    exit 1
+fi
 
 buildopt_verify_jar_classes "Gradle plugin" "${buildopt_plugin_jar}"
+buildopt_verify_jar_classes \
+    "Generated client" \
+    "${buildopt_generated_client_jar}"
 buildopt_verify_jar_classes "JVM agent" "${buildopt_agent_jar}"
 
 buildopt_agent_manifest=$(
@@ -199,6 +226,7 @@ fi
 java -javaagent:"${buildopt_agent_jar}" -version >/dev/null 2>&1
 
 buildopt_java17_status=not-requested
+buildopt_conformance_java=java
 if [[ -n "${BUILDOPT_JAVA17_HOME:-}" ]]; then
     buildopt_java17="${BUILDOPT_JAVA17_HOME}/bin/java"
     if [[ ! -x "${buildopt_java17}" ]]; then
@@ -227,7 +255,20 @@ if [[ -n "${BUILDOPT_JAVA17_HOME:-}" ]]; then
         -javaagent:"${buildopt_agent_jar}" \
         -version >/dev/null 2>&1
     buildopt_java17_status=verified
+    buildopt_conformance_java=${buildopt_java17}
 fi
 
-printf 'JVM release OK: Java 21 compiler, --release 17 bytecode, Gradle plugin marker, loadable agent, Java 17 %s\n' \
+javac \
+    --release 17 \
+    -Xlint:all \
+    -Werror \
+    -cp "${buildopt_generated_client_jar}" \
+    -d "${buildopt_client_classes}" \
+    "${buildopt_repo_root}/dev/client-conformance/java/dev/buildopt/contracts/ClientConformance.java"
+"${buildopt_conformance_java}" \
+    -cp "${buildopt_generated_client_jar}:${buildopt_client_classes}" \
+    dev.buildopt.contracts.ClientConformance \
+    "${buildopt_repo_root}"
+
+printf 'JVM release OK: Java 21 compiler, --release 17 bytecode, Gradle plugin marker, generated client conformance, loadable agent, Java 17 %s\n' \
     "${buildopt_java17_status}"

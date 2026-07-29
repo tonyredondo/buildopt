@@ -21,6 +21,7 @@ An RFC example is not an executable contract. If a contract contradicts an RFC i
 | `internal/` | Private Go packages shared by both binaries | Go | `WS-001` |
 | `jvm/gradle-plugin/` | Gradle plugin, adapters, and handshake | Java 17 | `WS-003` |
 | `jvm/jvm-agent/` | Opt-in Instrumentation Agent | Java 17 | `SPK-002` |
+| `jvm/generated-client/` | Generated control-plane transport bindings | Java 17 | `F0-022` |
 | `jvm/patcher/` | Customer-side `PatchBundle` validator and applier | Java 17 | `SPK-004` |
 | `rust/hermetic-helper/` | Experimental optional Linux helper | Rust | `SPK-003` |
 | `contracts/` | JSON Schema, OpenAPI, Protobuf, and vectors | Multi-language | `F0-010` |
@@ -55,6 +56,7 @@ From the repository root:
 ./dev/check-ownership
 ./dev/check-base-ci --static
 ./dev/check-generated-code
+./dev/check-generated-clients
 ./dev/check-build-session-schema
 ./dev/check-experiment-action-schemas
 ./dev/check-metrics-catalog

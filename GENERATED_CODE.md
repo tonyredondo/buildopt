@@ -1,8 +1,8 @@
 # Generated-code policy
 
 This policy implements `F0-005` for every generated artifact checked into the
-repository. Generated Go and Java clients remain deferred to `F0-022`; adding
-the first descriptor snapshot here does not create those clients early.
+repository. `F0-019` owns the reviewable Protobuf descriptor and `F0-022` owns
+the Go and Java OpenAPI client sources.
 
 ## Source and inventory
 
@@ -31,13 +31,16 @@ vectors are not generated source and do not belong in this inventory.
 6. Commit the source, manifest change when applicable, and generated output in
    the same change.
 
-For the first tracked artifact:
+Tracked generation commands:
 
 ```bash
 ./dev/bootstrap --toolchain protoc
 ./dev/generate-code --artifact local-events-v1-descriptor
+./dev/generate-code --artifact openapi-go-client-v1
+./dev/generate-code --artifact openapi-java-client-v1
 ./dev/check-generated-code
 ./dev/check-task-events-proto
+./dev/check-generated-clients
 ```
 
 ## CI drift contract

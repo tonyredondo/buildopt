@@ -304,6 +304,24 @@ state, accepted cancellation, non-idempotent refusal, fail-closed policy
 timeout, terminal errors, and capped backoff, then audits every operation in
 all three OpenAPI documents against the same allowed codes and outcomes.
 
+## Generated client and compatibility validation
+
+Regenerate and validate the `F0-022` Go and Java 17 control-plane clients:
+
+```bash
+./dev/generate-code --artifact openapi-go-client-v1
+./dev/generate-code --artifact openapi-java-client-v1
+./dev/check-generated-clients
+```
+
+The generator extracts all 13 operation IDs, methods, paths, and contract
+versions from the three normative OpenAPI documents and binds output drift to
+those documents plus the compatibility corpus. Both generated clients perform
+one bounded HTTPS attempt without hiding retry policy. The checker regenerates
+all tracked outputs in isolation, compiles both clients, exercises real Go TLS
+transport/header/path safety, and runs the same N/N-1, incompatible-major, and
+unknown-field vectors in Go and Java 17.
+
 ## PatchBundle contract validation
 
 Validate the `F0-016` declarative bundle envelope and its two private-beta
@@ -485,7 +503,8 @@ and runs the standard-library Go peer with locked Go. The two directions
 exchange conventional varint-length-delimited messages over real Unix sockets.
 They cover exact attribution, `UNATTRIBUTED`, attempt-wide `UNAVAILABLE`, atomic
 whole-attempt abort, acknowledgements, invalid semantic combinations, and the
-1 MiB frame bound. Generated clients remain deferred to `F0-022`.
+1 MiB frame bound. Generated control-plane clients and their compatibility
+vectors are validated separately by `./dev/check-generated-clients`.
 
 ## Rust toolchain validation
 

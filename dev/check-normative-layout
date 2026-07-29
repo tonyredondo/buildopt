@@ -98,6 +98,7 @@ buildopt_materialized_artifacts=(
     "contracts/proto/local-events/v1/task_events.proto"
     "contracts/test-vectors/canonical-json/timestamps.tsv"
     "contracts/test-vectors/canonical-json/vectors.tsv"
+    "contracts/test-vectors/compatibility/n-n-minus-1.tsv"
     "contracts/test-vectors/http-semantics/http-semantics.v1.json"
     "contracts/test-vectors/signatures/ed25519.tsv"
     "specs/gradle-correlation-v1.md"

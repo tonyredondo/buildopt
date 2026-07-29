@@ -32,3 +32,8 @@ reconciles required-output digests, retains signed differences, and binds the
 runner, metric catalog, envelope, launcher, server, and plugin inputs.
 
 No type in this directory replaces the normative schemas, OpenAPI, or Protobuf definitions in `contracts/`.
+
+`generated/openapi/` contains the checked-in Go transport binding derived from
+the normative OpenAPI documents. It is regenerated through
+`./dev/generate-code --artifact openapi-go-client-v1` and never edited
+manually.

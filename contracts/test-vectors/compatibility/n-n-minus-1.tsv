@@ -1,0 +1,10 @@
+# name	local_major	local_minor	remote_major	remote_minor	shape	unknown_fields	expected
+current-current	1	1	1	1	HTTP_CONTROL	false	ACCEPT
+current-previous	1	1	1	0	HTTP_CONTROL	false	ACCEPT
+previous-current	1	0	1	1	HTTP_CONTROL	false	ACCEPT
+adjacent-future	1	1	1	2	HTTP_CONTROL	false	ACCEPT
+minor-too-old	1	2	1	0	HTTP_CONTROL	false	INCOMPATIBLE_BASELINE
+minor-too-new	1	0	1	2	HTTP_CONTROL	false	INCOMPATIBLE_BASELINE
+incompatible-major	1	1	2	0	HTTP_CONTROL	false	INCOMPATIBLE_BASELINE
+signed-command-unknown-field	1	1	1	1	SIGNED_COMMAND	true	REJECT_UNKNOWN_FIELD
+export-record-unknown-field	1	1	1	1	EXPORTABLE_RECORD	true	ACCEPT_PRESERVE_UNKNOWN

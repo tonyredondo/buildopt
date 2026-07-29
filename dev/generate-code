@@ -2,7 +2,7 @@
 set -euo pipefail
 
 buildopt_usage() {
-    printf 'usage: %s --artifact <local-events-v1-descriptor> [--source-root <path>] [--output-root <path>]\n' "$0"
+    printf 'usage: %s --artifact <local-events-v1-descriptor|openapi-go-client-v1|openapi-java-client-v1> [--source-root <path>] [--output-root <path>]\n' "$0"
 }
 
 buildopt_artifact=
@@ -44,10 +44,13 @@ while (($# > 0)); do
             ;;
     esac
 done
-if [[ "${buildopt_artifact}" != "local-events-v1-descriptor" ]]; then
-    buildopt_usage >&2
-    exit 64
-fi
+case "${buildopt_artifact}" in
+    local-events-v1-descriptor | openapi-go-client-v1 | openapi-java-client-v1) ;;
+    *)
+        buildopt_usage >&2
+        exit 64
+        ;;
+esac
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
@@ -104,6 +107,57 @@ if ! buildopt_entry=$(
         "${buildopt_artifact}" >&2
     exit 70
 fi
+
+if [[ "${buildopt_artifact}" == "openapi-go-client-v1" ]] ||
+    [[ "${buildopt_artifact}" == "openapi-java-client-v1" ]]; then
+    buildopt_expected_output=internal/generated/openapi/client_v1.go
+    buildopt_expected_format='Go 1.26 HTTP client source'
+    buildopt_expected_toolchain=go
+    if [[ "${buildopt_artifact}" == "openapi-java-client-v1" ]]; then
+        buildopt_expected_output=jvm/generated-client/src/main/java/dev/buildopt/generated/BuildOptClientsV1.java
+        buildopt_expected_format='Java 17 HTTP client source'
+        buildopt_expected_toolchain=temurin-jdk-21
+    fi
+    if ! jq -e \
+        --arg buildopt_id "${buildopt_artifact}" \
+        --arg buildopt_output "${buildopt_expected_output}" \
+        --arg buildopt_format "${buildopt_expected_format}" \
+        --arg buildopt_toolchain "${buildopt_expected_toolchain}" \
+        '
+            keys == [
+                "command",
+                "format",
+                "id",
+                "outputs",
+                "owner",
+                "owningItem",
+                "sources",
+                "toolchains"
+            ] and
+            .id == $buildopt_id and
+            .owningItem == "F0-022" and
+            .owner == "Contracts" and
+            .sources == [
+                "contracts/openapi/buildopt-control.v1.yaml",
+                "contracts/openapi/buildopt-cache-control.v1.yaml",
+                "contracts/openapi/test-optimization.v1.yaml",
+                "contracts/test-vectors/compatibility/n-n-minus-1.tsv"
+            ] and
+            .outputs == [$buildopt_output] and
+            .command == ("./dev/generate-code --artifact " + $buildopt_id) and
+            .format == $buildopt_format and
+            .toolchains == [$buildopt_toolchain]
+        ' <<<"${buildopt_entry}" >/dev/null; then
+        printf 'unsupported generated-artifact contract: %s\n' \
+            "${buildopt_artifact}" >&2
+        exit 70
+    fi
+    exec "${buildopt_script_dir}/generate-openapi-client" \
+        --artifact "${buildopt_artifact}" \
+        --source-root "${buildopt_source_root}" \
+        --output-root "${buildopt_output_root}"
+fi
+
 if ! jq -e '
     keys == [
         "command",

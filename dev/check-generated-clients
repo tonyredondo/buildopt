@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_classes=$(mktemp -d)
+
+buildopt_cleanup() {
+    if [[ "${buildopt_classes}" == /tmp/* ]] &&
+        [[ -d "${buildopt_classes}" ]]; then
+        rm -rf -- "${buildopt_classes}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+"${buildopt_script_dir}/check-generated-code"
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" \
+    --toolchain go \
+    -- \
+    go test -count=1 -race ./internal/generated/openapi
+
+"${buildopt_script_dir}/run" \
+    -- \
+    javac \
+        --release 17 \
+        -Xlint:all \
+        -Werror \
+        -d "${buildopt_classes}" \
+        "${buildopt_repo_root}/jvm/generated-client/src/main/java/dev/buildopt/generated/BuildOptClientsV1.java" \
+        "${buildopt_script_dir}/client-conformance/java/dev/buildopt/contracts/ClientConformance.java"
+
+"${buildopt_script_dir}/run" \
+    -- \
+    java \
+        -cp "${buildopt_classes}" \
+        dev.buildopt.contracts.ClientConformance \
+        "${buildopt_repo_root}"
+
+printf 'F0-022 generated clients OK: drift-free Go/Java 17 clients and shared N/N-1 vectors\n'

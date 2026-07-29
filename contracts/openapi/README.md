@@ -70,9 +70,10 @@ request/response-validating mock with:
 ./dev/check-test-optimization-openapi
 ```
 
-`F0-020..022` own cryptographic vectors, complete error/retry conformance,
-N/N-1 compatibility, and generated clients. Full cross-product missing,
-expired, revoked, delayed, corrupt-artifact, and compatibility fixtures remain
-with `F0-033`. Queue execution and the atomic SQLite commit/recovery
-implementation remain with `CI-ORCH-001`/`CACHE-008`; these API documents do
-not close either wider gate.
+`F0-020..022` materialize the shared cryptographic and failure vectors,
+generated single-attempt Go/Java transport clients, and N/N-1 compatibility.
+The generated clients deliberately leave retry and semantic response
+validation visible to their callers. Full cross-product missing, expired,
+revoked, delayed, and corrupt-artifact fixtures remain with `F0-033`. Queue
+execution and the atomic SQLite commit/recovery implementation remain with
+`CI-ORCH-001`/`CACHE-008`; these API documents do not close either wider gate.
