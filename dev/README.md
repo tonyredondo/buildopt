@@ -291,6 +291,27 @@ It does not apply a bundle to Git or execute bundle content; those parser,
 worktree, symlink/submodule, idempotency, and recovery proofs remain with
 `F0-034`/C4.
 
+## BuildOpt OpenAPI validation
+
+Validate the `F0-017` BuildOpt control and internal cache-control APIs:
+
+```bash
+./dev/check-buildopt-openapi
+```
+
+The isolated contract module loads both OpenAPI 3.1 documents with external
+JSON Schema references enabled, performs full document validation, checks the
+TLS/bearer/contract-version/idempotency/precondition/deadline/cancellation/
+retry/error policy on every operation, and rejects any opaque cache-payload
+route in the control API. Its in-process mock validates every request and
+response, exercises all nine operations, proves byte-equivalent exact replay,
+and returns a schema-valid conflict when a key is reused with another payload.
+
+The validator is pinned in `dev/schema-validator/go.mod`; it does not add a
+dependency to the product module. Complete fault/retry vectors, generated
+clients, N/N-1 compatibility, and durable queue/cache transactions remain with
+their later tracker items.
+
 ## Metrics catalog validation
 
 Validate the machine-readable `F0-024` catalog and its private-beta measurement

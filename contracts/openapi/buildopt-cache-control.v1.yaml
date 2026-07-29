@@ -1,0 +1,725 @@
+openapi: 3.1.0
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+info:
+  title: BuildOpt Internal Cache Control API
+  version: 1.0.0
+  description: >-
+    Private-beta attempt, commit, abort, and revocation control protocol between
+    the verifying gateway and the shared cache authority. Opaque Gradle
+    HttpBuildCache GET/PUT payloads are intentionally outside this API.
+servers:
+  - url: https://cache-control.buildopt.example.invalid
+    description: Deployment-specific TLS endpoint
+security:
+  - bearerAuth: []
+tags:
+  - name: Cache attempts
+  - name: Revocation
+paths:
+  /v1/cache/attempts:
+    post:
+      tags: [Cache attempts]
+      operationId: startCacheAttempt
+      summary: Open one bounded pending cache attempt
+      parameters:
+        - $ref: '#/components/parameters/ContractVersion'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartCacheAttemptRequest'
+      responses:
+        '201':
+          description: New pending attempt; an identical replay is byte-equivalent
+          headers:
+            X-BuildOpt-Request-ID:
+              $ref: '#/components/headers/RequestId'
+            ETag:
+              $ref: '#/components/headers/StateVersion'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CacheAttemptStatus'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '504':
+          $ref: '#/components/responses/DeadlineExceeded'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      x-buildopt-deadline:
+        source: body.context.deadline
+        exceededOutcome: ABORTED
+      x-buildopt-cancellation:
+        clientDisconnect: DOES_NOT_REVERSE_ACCEPTED_ATTEMPT
+        acceptedMutation: DURABLE
+      x-buildopt-retry:
+        idempotent: true
+        maxBackoffMs: 5000
+        unknownResponse: RETRY_SAME_KEY
+      x-buildopt-idempotency:
+        header: Idempotency-Key
+        payload: body.context.requestId
+        conflictCode: IDEMPOTENCY_CONFLICT
+      x-buildopt-error-codes:
+        - INVALID_REQUEST
+        - UNAUTHENTICATED
+        - IDEMPOTENCY_CONFLICT
+        - ATTEMPT_CONFLICT
+        - DEADLINE_EXCEEDED
+        - INTERNAL
+  /v1/cache/attempts/{attemptId}:
+    get:
+      tags: [Cache attempts]
+      operationId: getCacheAttempt
+      summary: Resolve attempt state after an accepted or unknown response
+      parameters:
+        - $ref: '#/components/parameters/ContractVersion'
+        - $ref: '#/components/parameters/AttemptId'
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Deadline'
+      responses:
+        '200':
+          description: Current durable pending, committed, or aborted state
+          headers:
+            X-BuildOpt-Request-ID:
+              $ref: '#/components/headers/RequestId'
+            ETag:
+              $ref: '#/components/headers/StateVersion'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CacheAttemptStatus'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '504':
+          $ref: '#/components/responses/DeadlineExceeded'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      x-buildopt-deadline:
+        source: header.X-BuildOpt-Deadline
+        exceededOutcome: ABORTED
+      x-buildopt-cancellation:
+        clientDisconnect: CANCEL_READ
+        acceptedMutation: NONE
+      x-buildopt-retry:
+        idempotent: true
+        maxBackoffMs: 5000
+        unknownResponse: RETRY_READ
+      x-buildopt-error-codes:
+        - UNAUTHENTICATED
+        - NOT_FOUND
+        - DEADLINE_EXCEEDED
+        - INTERNAL
+  /v1/cache/attempts/{attemptId}:commit:
+    post:
+      tags: [Cache attempts]
+      operationId: commitCacheAttempt
+      summary: Atomically authorize and expose the exact pending object set
+      parameters:
+        - $ref: '#/components/parameters/ContractVersion'
+        - $ref: '#/components/parameters/AttemptId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/StatePrecondition'
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Deadline'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../jsonschema/commit-decision.v1.schema.json'
+      responses:
+        '200':
+          description: Atomic commit result; exact retries return the same result
+          headers:
+            X-BuildOpt-Request-ID:
+              $ref: '#/components/headers/RequestId'
+            ETag:
+              $ref: '#/components/headers/StateVersion'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CacheCommitResult'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '422':
+          $ref: '#/components/responses/CommitRejected'
+        '504':
+          $ref: '#/components/responses/DeadlineExceeded'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      x-buildopt-deadline:
+        source: header.X-BuildOpt-Deadline
+        exceededOutcome: ABORTED
+      x-buildopt-cancellation:
+        clientDisconnect: DOES_NOT_REVERSE_ATOMIC_COMMIT
+        acceptedMutation: DURABLE
+      x-buildopt-retry:
+        idempotent: true
+        maxBackoffMs: 5000
+        unknownResponse: QUERY_ATTEMPT_BEFORE_RETRY
+      x-buildopt-idempotency:
+        header: Idempotency-Key
+        payload: body.decisionId
+        conflictCode: IDEMPOTENCY_CONFLICT
+      x-buildopt-state-precondition:
+        header: If-Match
+        payload: path.attemptId
+        conflictCode: STATE_PRECONDITION_FAILED
+      x-buildopt-error-codes:
+        - INVALID_REQUEST
+        - UNAUTHENTICATED
+        - IDEMPOTENCY_CONFLICT
+        - ATTEMPT_CONFLICT
+        - STATE_PRECONDITION_FAILED
+        - COMMIT_REJECTED
+        - REVOCATION_STALE
+        - DEADLINE_EXCEEDED
+        - INTERNAL
+  /v1/cache/attempts/{attemptId}:abort:
+    post:
+      tags: [Cache attempts]
+      operationId: abortCacheAttempt
+      summary: Abort a pending attempt and release its candidates
+      parameters:
+        - $ref: '#/components/parameters/ContractVersion'
+        - $ref: '#/components/parameters/AttemptId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/StatePrecondition'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AbortCacheAttemptRequest'
+      responses:
+        '200':
+          description: Attempt is durably aborted; exact retries are idempotent
+          headers:
+            X-BuildOpt-Request-ID:
+              $ref: '#/components/headers/RequestId'
+            ETag:
+              $ref: '#/components/headers/StateVersion'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CacheAbortResult'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '504':
+          $ref: '#/components/responses/DeadlineExceeded'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      x-buildopt-deadline:
+        source: body.context.deadline
+        exceededOutcome: ABORTED
+      x-buildopt-cancellation:
+        clientDisconnect: DOES_NOT_REVERSE_ACCEPTED_ABORT
+        acceptedMutation: DURABLE
+      x-buildopt-retry:
+        idempotent: true
+        maxBackoffMs: 5000
+        unknownResponse: QUERY_ATTEMPT_BEFORE_RETRY
+      x-buildopt-idempotency:
+        header: Idempotency-Key
+        payload: body.context.requestId
+        conflictCode: IDEMPOTENCY_CONFLICT
+      x-buildopt-state-precondition:
+        header: If-Match
+        payload: path.attemptId
+        conflictCode: STATE_PRECONDITION_FAILED
+      x-buildopt-error-codes:
+        - INVALID_REQUEST
+        - UNAUTHENTICATED
+        - IDEMPOTENCY_CONFLICT
+        - ATTEMPT_CONFLICT
+        - STATE_PRECONDITION_FAILED
+        - DEADLINE_EXCEEDED
+        - INTERNAL
+  /v1/cache/revocations/{trustDomain}:
+    get:
+      tags: [Revocation]
+      operationId: getCacheRevocationState
+      summary: Read current cumulative revocation and L1 security generations
+      parameters:
+        - $ref: '#/components/parameters/ContractVersion'
+        - $ref: '#/components/parameters/TrustDomain'
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Deadline'
+      responses:
+        '200':
+          description: Authenticated cumulative revocation state
+          headers:
+            X-BuildOpt-Request-ID:
+              $ref: '#/components/headers/RequestId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevocationState'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '504':
+          $ref: '#/components/responses/DeadlineExceeded'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      x-buildopt-deadline:
+        source: header.X-BuildOpt-Deadline
+        exceededOutcome: CACHE_DISABLED
+      x-buildopt-cancellation:
+        clientDisconnect: CANCEL_READ
+        acceptedMutation: NONE
+      x-buildopt-retry:
+        idempotent: true
+        maxBackoffMs: 5000
+        unknownResponse: DISABLE_CACHE_UNTIL_REFRESH
+      x-buildopt-error-codes:
+        - UNAUTHENTICATED
+        - NOT_FOUND
+        - REVOCATION_STALE
+        - DEADLINE_EXCEEDED
+        - INTERNAL
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque gateway-scoped token
+      description: >-
+        Independently scoped internal control credential. It never becomes the
+        Basic credential visible to Gradle and does not authorize blob reads.
+  parameters:
+    ContractVersion:
+      name: X-BuildOpt-Contract-Version
+      in: header
+      required: true
+      schema:
+        type: string
+        const: buildopt-cache-control/v1
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        $ref: '#/components/schemas/Identifier'
+    StatePrecondition:
+      name: If-Match
+      in: header
+      required: true
+      description: Quoted current attempt state version.
+      schema:
+        type: string
+        pattern: '^"[0-9]+"$'
+    RequestId:
+      name: X-BuildOpt-Request-ID
+      in: header
+      required: true
+      schema:
+        $ref: '#/components/schemas/Identifier'
+    Deadline:
+      name: X-BuildOpt-Deadline
+      in: header
+      required: true
+      schema:
+        $ref: '#/components/schemas/UtcTimestamp'
+    AttemptId:
+      name: attemptId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/Identifier'
+    TrustDomain:
+      name: trustDomain
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/Identifier'
+  headers:
+    RequestId:
+      required: true
+      schema:
+        $ref: '#/components/schemas/Identifier'
+    StateVersion:
+      required: true
+      description: Quoted current attempt state version.
+      schema:
+        type: string
+        pattern: '^"[0-9]+"$'
+  responses:
+    InvalidRequest:
+      description: Malformed or semantically invalid request
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Unauthenticated:
+      description: Missing or invalid gateway-scoped authentication
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Attempt or trust domain does not exist
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Conflict:
+      description: Idempotency reuse, terminal state, or object identity conflict
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    PreconditionFailed:
+      description: If-Match does not name the current attempt state version
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    CommitRejected:
+      description: CommitDecision is expired, revoked, invalid, or incomplete
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    DeadlineExceeded:
+      description: Attempt remains or becomes aborted; no objects become visible
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    UnexpectedError:
+      description: Stable fail-closed error response
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    Identifier:
+      type: string
+      pattern: '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$'
+    Sha256Digest:
+      type: string
+      pattern: '^sha256:[0-9a-f]{64}$'
+    Digest:
+      type: string
+      pattern: '^(?:sha256|hmac-sha256):[0-9a-f]{64}$'
+    Revision:
+      type: string
+      pattern: '^[0-9a-f]{7,64}$'
+    UtcTimestamp:
+      type: string
+      format: date-time
+      pattern: 'Z$'
+    RepositoryIdentity:
+      type: object
+      additionalProperties: false
+      required: [tenant, repository, trustDomain]
+      properties:
+        tenant:
+          $ref: '#/components/schemas/Identifier'
+        repository:
+          $ref: '#/components/schemas/Identifier'
+        trustDomain:
+          $ref: '#/components/schemas/Identifier'
+    RequestContext:
+      type: object
+      additionalProperties: false
+      required:
+        - requestId
+        - repository
+        - revision
+        - sourceStateDigest
+        - deadline
+      properties:
+        requestId:
+          $ref: '#/components/schemas/Identifier'
+        repository:
+          $ref: '#/components/schemas/RepositoryIdentity'
+        revision:
+          $ref: '#/components/schemas/Revision'
+        sourceStateDigest:
+          $ref: '#/components/schemas/Digest'
+        deadline:
+          $ref: '#/components/schemas/UtcTimestamp'
+    AttemptOwner:
+      type: object
+      additionalProperties: false
+      required: [ownerId, leaseId, leaseExpiresAt]
+      properties:
+        ownerId:
+          $ref: '#/components/schemas/Identifier'
+        leaseId:
+          $ref: '#/components/schemas/Identifier'
+        leaseExpiresAt:
+          $ref: '#/components/schemas/UtcTimestamp'
+    StartCacheAttemptRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - context
+        - attemptId
+        - owner
+        - namespaceGeneration
+        - policyDigest
+        - configurationPolicyDigest
+        - cacheContractDigest
+      properties:
+        context:
+          $ref: '#/components/schemas/RequestContext'
+        attemptId:
+          $ref: '#/components/schemas/Identifier'
+        owner:
+          $ref: '#/components/schemas/AttemptOwner'
+        namespaceGeneration:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        policyDigest:
+          $ref: '#/components/schemas/Sha256Digest'
+        configurationPolicyDigest:
+          $ref: '#/components/schemas/Sha256Digest'
+        cacheContractDigest:
+          $ref: '#/components/schemas/Sha256Digest'
+    CacheAttemptStatus:
+      type: object
+      additionalProperties: false
+      required:
+        - contractVersion
+        - requestId
+        - attemptId
+        - state
+        - stateVersion
+        - pendingObjectCount
+        - expiresAt
+      properties:
+        contractVersion:
+          const: buildopt-cache-control/v1
+        requestId:
+          $ref: '#/components/schemas/Identifier'
+        attemptId:
+          $ref: '#/components/schemas/Identifier'
+        state:
+          enum: [PENDING, COMMITTED, ABORTED]
+        stateVersion:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        pendingObjectCount:
+          type: integer
+          minimum: 0
+          maximum: 100000
+        expiresAt:
+          $ref: '#/components/schemas/UtcTimestamp'
+    AbortCacheAttemptRequest:
+      type: object
+      additionalProperties: false
+      required: [context, reason]
+      properties:
+        context:
+          $ref: '#/components/schemas/RequestContext'
+        reason:
+          enum:
+            - BUILD_FAILURE
+            - INFRA_FAILURE
+            - CANCELLED
+            - TIMEOUT
+            - POLICY_CHANGED
+            - SOURCE_CHANGED
+            - LEASE_EXPIRED
+            - VALIDATION_FAILED
+            - INCOMPLETE_COMMIT_DECISION
+    CacheCommitResult:
+      type: object
+      additionalProperties: false
+      required:
+        - contractVersion
+        - requestId
+        - attemptId
+        - decisionDigest
+        - state
+        - outcome
+        - objectCount
+        - committedAt
+      properties:
+        contractVersion:
+          const: buildopt-cache-control/v1
+        requestId:
+          $ref: '#/components/schemas/Identifier'
+        attemptId:
+          $ref: '#/components/schemas/Identifier'
+        decisionDigest:
+          $ref: '#/components/schemas/Sha256Digest'
+        state:
+          const: COMMITTED
+        outcome:
+          enum: [COMMITTED, IDEMPOTENT_REPLAY]
+        objectCount:
+          type: integer
+          minimum: 1
+          maximum: 100000
+        committedAt:
+          $ref: '#/components/schemas/UtcTimestamp'
+    CacheAbortResult:
+      type: object
+      additionalProperties: false
+      required:
+        - contractVersion
+        - requestId
+        - attemptId
+        - state
+        - outcome
+        - abortedAt
+      properties:
+        contractVersion:
+          const: buildopt-cache-control/v1
+        requestId:
+          $ref: '#/components/schemas/Identifier'
+        attemptId:
+          $ref: '#/components/schemas/Identifier'
+        state:
+          const: ABORTED
+        outcome:
+          enum: [ABORTED, ALREADY_ABORTED]
+        abortedAt:
+          $ref: '#/components/schemas/UtcTimestamp'
+    RevocationState:
+      type: object
+      additionalProperties: false
+      required:
+        - contractVersion
+        - requestId
+        - trustDomain
+        - revocationEpoch
+        - l1SecurityGeneration
+        - cumulativeStateDigest
+        - validUntil
+        - authentication
+      properties:
+        contractVersion:
+          const: buildopt-cache-control/v1
+        requestId:
+          $ref: '#/components/schemas/Identifier'
+        trustDomain:
+          $ref: '#/components/schemas/Identifier'
+        revocationEpoch:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        l1SecurityGeneration:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        cumulativeStateDigest:
+          $ref: '#/components/schemas/Sha256Digest'
+        validUntil:
+          $ref: '#/components/schemas/UtcTimestamp'
+        authentication:
+          type: object
+          additionalProperties: false
+          required: [algorithm, keyId, signature]
+          properties:
+            algorithm:
+              const: Ed25519
+            keyId:
+              $ref: '#/components/schemas/Identifier'
+            signature:
+              type: string
+              pattern: '^[A-Za-z0-9_-]{86}$'
+    Problem:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+        - title
+        - status
+        - errorCode
+        - requestId
+        - retryable
+        - maxBackoffMs
+        - unknownResponse
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+          minLength: 1
+          maxLength: 160
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        errorCode:
+          enum:
+            - INVALID_REQUEST
+            - UNAUTHENTICATED
+            - FORBIDDEN
+            - NOT_FOUND
+            - IDEMPOTENCY_CONFLICT
+            - ATTEMPT_CONFLICT
+            - STATE_PRECONDITION_FAILED
+            - DEADLINE_EXCEEDED
+            - CANCELLED
+            - COMMIT_REJECTED
+            - REVOCATION_STALE
+            - INTERNAL
+        requestId:
+          $ref: '#/components/schemas/Identifier'
+        retryable:
+          type: boolean
+        maxBackoffMs:
+          type: integer
+          minimum: 0
+          maximum: 5000
+        unknownResponse:
+          enum:
+            - NONE
+            - RETRY_SAME_KEY
+            - QUERY_ATTEMPT
+            - DISABLE_CACHE_UNTIL_REFRESH

@@ -1,0 +1,557 @@
+openapi: 3.1.0
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+info:
+  title: BuildOpt Control API
+  version: 1.0.0
+  description: >-
+    Private-beta policy resolution, durable attempt transitions, and isolated
+    CI validation submission. This API is control traffic only; it never
+    transports Gradle cache payloads.
+servers:
+  - url: https://control.buildopt.example.invalid
+    description: Deployment-specific TLS endpoint
+security:
+  - bearerAuth: []
+tags:
+  - name: Policies
+  - name: Attempts
+  - name: Validation
+paths:
+  /v1/policies:resolve:
+    post:
+      tags: [Policies]
+      operationId: resolveOptimizationPolicy
+      summary: Resolve one immutable policy before Gradle starts
+      parameters:
+        - $ref: '#/components/parameters/ContractVersion'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PolicyResolutionRequest'
+      responses:
+        '200':
+          description: Exact immutable policy for the supplied source state
+          headers:
+            X-BuildOpt-Request-ID:
+              $ref: '#/components/headers/RequestId'
+          content:
+            application/json:
+              schema:
+                $ref: '../jsonschema/optimization-policy.v1.schema.json'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '504':
+          $ref: '#/components/responses/DeadlineExceeded'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      x-buildopt-deadline:
+        source: body.context.deadline
+        exceededOutcome: BASELINE
+      x-buildopt-cancellation:
+        clientDisconnect: CANCEL_IF_UNACCEPTED
+        acceptedMutation: NONE
+      x-buildopt-retry:
+        idempotent: true
+        maxBackoffMs: 5000
+        unknownResponse: RETRY_SAME_KEY
+      x-buildopt-idempotency:
+        header: Idempotency-Key
+        payload: body.context.requestId
+        conflictCode: IDEMPOTENCY_CONFLICT
+      x-buildopt-error-codes:
+        - INVALID_REQUEST
+        - UNAUTHENTICATED
+        - IDEMPOTENCY_CONFLICT
+        - DEADLINE_EXCEEDED
+        - POLICY_UNAVAILABLE
+        - INTERNAL
+  /v1/attempt-transitions:
+    post:
+      tags: [Attempts]
+      operationId: appendAttemptTransition
+      summary: Append one preconditioned attempt-state transition
+      parameters:
+        - $ref: '#/components/parameters/ContractVersion'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/StatePrecondition'
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Deadline'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../jsonschema/attempt-state.v1.schema.json'
+      responses:
+        '200':
+          description: Persisted transition; identical retries return this response
+          headers:
+            X-BuildOpt-Request-ID:
+              $ref: '#/components/headers/RequestId'
+            ETag:
+              $ref: '#/components/headers/StateVersion'
+          content:
+            application/json:
+              schema:
+                $ref: '../jsonschema/attempt-state.v1.schema.json'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '504':
+          $ref: '#/components/responses/DeadlineExceeded'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      x-buildopt-deadline:
+        source: header.X-BuildOpt-Deadline
+        exceededOutcome: ABORTED
+      x-buildopt-cancellation:
+        clientDisconnect: DOES_NOT_REVERSE_ACCEPTED_TRANSITION
+        acceptedMutation: DURABLE
+      x-buildopt-retry:
+        idempotent: true
+        maxBackoffMs: 5000
+        unknownResponse: RETRY_SAME_KEY_AND_PRECONDITION
+      x-buildopt-idempotency:
+        header: Idempotency-Key
+        payload: body.commandId
+        conflictCode: IDEMPOTENCY_CONFLICT
+      x-buildopt-state-precondition:
+        header: If-Match
+        payload: body.expectedStateVersion
+        conflictCode: STATE_PRECONDITION_FAILED
+      x-buildopt-error-codes:
+        - INVALID_REQUEST
+        - UNAUTHENTICATED
+        - IDEMPOTENCY_CONFLICT
+        - ATTEMPT_CONFLICT
+        - STATE_PRECONDITION_FAILED
+        - DEADLINE_EXCEEDED
+        - INTERNAL
+  /v1/validation-requests:
+    post:
+      tags: [Validation]
+      operationId: submitValidationRequest
+      summary: Submit an isolated full-relevant-validation request
+      parameters:
+        - $ref: '#/components/parameters/ContractVersion'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../jsonschema/ci-validation-request.v1.schema.json'
+      responses:
+        '202':
+          description: Validation is durably queued within the original deadline
+          headers:
+            X-BuildOpt-Request-ID:
+              $ref: '#/components/headers/RequestId'
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationReceipt'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '429':
+          $ref: '#/components/responses/ResourceExhausted'
+        '504':
+          $ref: '#/components/responses/DeadlineExceeded'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      x-buildopt-deadline:
+        source: body.deadline
+        exceededOutcome: INCONCLUSIVE
+      x-buildopt-cancellation:
+        clientDisconnect: DOES_NOT_CANCEL_ACCEPTED_VALIDATION
+        acceptedMutation: DURABLE
+      x-buildopt-retry:
+        idempotent: true
+        maxBackoffMs: 5000
+        unknownResponse: RETRY_SAME_REQUEST_AND_ACTION
+      x-buildopt-idempotency:
+        header: Idempotency-Key
+        payload: body.idempotencyKey
+        conflictCode: IDEMPOTENCY_CONFLICT
+      x-buildopt-error-codes:
+        - INVALID_REQUEST
+        - UNAUTHENTICATED
+        - IDEMPOTENCY_CONFLICT
+        - RESOURCE_EXHAUSTED
+        - DEADLINE_EXCEEDED
+        - VALIDATION_INCONCLUSIVE
+        - INTERNAL
+  /v1/validation-requests/{requestId}:
+    get:
+      tags: [Validation]
+      operationId: getValidationRequest
+      summary: Read validation state after an accepted or unknown response
+      parameters:
+        - $ref: '#/components/parameters/ContractVersion'
+        - $ref: '#/components/parameters/RequestIdPath'
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Deadline'
+      responses:
+        '200':
+          description: Current durable validation state
+          headers:
+            X-BuildOpt-Request-ID:
+              $ref: '#/components/headers/RequestId'
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationStatus'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '504':
+          $ref: '#/components/responses/DeadlineExceeded'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      x-buildopt-deadline:
+        source: header.X-BuildOpt-Deadline
+        exceededOutcome: INCONCLUSIVE
+      x-buildopt-cancellation:
+        clientDisconnect: CANCEL_READ
+        acceptedMutation: NONE
+      x-buildopt-retry:
+        idempotent: true
+        maxBackoffMs: 5000
+        unknownResponse: RETRY_READ
+      x-buildopt-error-codes:
+        - UNAUTHENTICATED
+        - NOT_FOUND
+        - DEADLINE_EXCEEDED
+        - INTERNAL
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque integration-scoped token
+      description: >-
+        Deployment-scoped opaque token. It is never the loopback Gradle cache
+        credential and does not authorize direct cache payload access.
+  parameters:
+    ContractVersion:
+      name: X-BuildOpt-Contract-Version
+      in: header
+      required: true
+      schema:
+        type: string
+        const: buildopt-control/v1
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        $ref: '#/components/schemas/Identifier'
+    StatePrecondition:
+      name: If-Match
+      in: header
+      required: true
+      description: Quoted expected state version, for example `"5"`.
+      schema:
+        type: string
+        pattern: '^"[0-9]+"$'
+    RequestId:
+      name: X-BuildOpt-Request-ID
+      in: header
+      required: true
+      schema:
+        $ref: '#/components/schemas/Identifier'
+    Deadline:
+      name: X-BuildOpt-Deadline
+      in: header
+      required: true
+      schema:
+        $ref: '#/components/schemas/UtcTimestamp'
+    RequestIdPath:
+      name: requestId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/Identifier'
+  headers:
+    RequestId:
+      required: true
+      schema:
+        $ref: '#/components/schemas/Identifier'
+    StateVersion:
+      required: true
+      description: Quoted persisted state version.
+      schema:
+        type: string
+        pattern: '^"[0-9]+"$'
+    RetryAfter:
+      required: true
+      description: Whole seconds before the next bounded retry.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 5
+  responses:
+    InvalidRequest:
+      description: Malformed or semantically invalid request
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Unauthenticated:
+      description: Missing or invalid deployment-scoped authentication
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Requested durable record does not exist
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Conflict:
+      description: Idempotency key reuse or conflicting durable state
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    PreconditionFailed:
+      description: If-Match does not name the current state version
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    ResourceExhausted:
+      description: Validation capacity is unavailable within the request budget
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+        Retry-After:
+          $ref: '#/components/headers/RetryAfter'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    DeadlineExceeded:
+      description: No positive authorization is inferred after the deadline
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    UnexpectedError:
+      description: Stable fail-closed error response
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    Identifier:
+      type: string
+      pattern: '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$'
+    Digest:
+      type: string
+      pattern: '^(?:sha256|hmac-sha256):[0-9a-f]{64}$'
+    Revision:
+      type: string
+      pattern: '^[0-9a-f]{7,64}$'
+    UtcTimestamp:
+      type: string
+      format: date-time
+      pattern: 'Z$'
+    RepositoryIdentity:
+      type: object
+      additionalProperties: false
+      required: [tenant, repository, trustDomain]
+      properties:
+        tenant:
+          $ref: '#/components/schemas/Identifier'
+        repository:
+          $ref: '#/components/schemas/Identifier'
+        trustDomain:
+          $ref: '#/components/schemas/Identifier'
+    RequestContext:
+      type: object
+      additionalProperties: false
+      required:
+        - requestId
+        - repository
+        - revision
+        - sourceStateDigest
+        - deadline
+      properties:
+        requestId:
+          $ref: '#/components/schemas/Identifier'
+        repository:
+          $ref: '#/components/schemas/RepositoryIdentity'
+        revision:
+          $ref: '#/components/schemas/Revision'
+        sourceStateDigest:
+          $ref: '#/components/schemas/Digest'
+        deadline:
+          $ref: '#/components/schemas/UtcTimestamp'
+    PolicyResolutionRequest:
+      type: object
+      additionalProperties: false
+      required: [context, launcherVersion, pluginVersion, runnerClass]
+      properties:
+        context:
+          $ref: '#/components/schemas/RequestContext'
+        launcherVersion:
+          type: string
+          pattern: '^[0-9]+\.[0-9]+\.[0-9]+$'
+        pluginVersion:
+          type: string
+          pattern: '^[0-9]+\.[0-9]+\.[0-9]+$'
+        runnerClass:
+          $ref: '#/components/schemas/Identifier'
+    ValidationReceipt:
+      type: object
+      additionalProperties: false
+      required:
+        - contractVersion
+        - requestId
+        - operationId
+        - status
+        - pollAfterMs
+      properties:
+        contractVersion:
+          const: buildopt-control/v1
+        requestId:
+          $ref: '#/components/schemas/Identifier'
+        operationId:
+          $ref: '#/components/schemas/Identifier'
+        status:
+          const: QUEUED
+        pollAfterMs:
+          type: integer
+          minimum: 100
+          maximum: 5000
+    ValidationStatus:
+      type: object
+      additionalProperties: false
+      required:
+        - contractVersion
+        - requestId
+        - operationId
+        - status
+        - updatedAt
+      properties:
+        contractVersion:
+          const: buildopt-control/v1
+        requestId:
+          $ref: '#/components/schemas/Identifier'
+        operationId:
+          $ref: '#/components/schemas/Identifier'
+        status:
+          enum: [QUEUED, RUNNING, PASSED, FAILED, INCONCLUSIVE, CANCELLED]
+        updatedAt:
+          $ref: '#/components/schemas/UtcTimestamp'
+        retryAfterMs:
+          type: integer
+          minimum: 100
+          maximum: 5000
+      allOf:
+        - if:
+            properties:
+              status:
+                enum: [QUEUED, RUNNING]
+            required: [status]
+          then:
+            required: [retryAfterMs]
+          else:
+            not:
+              required: [retryAfterMs]
+    Problem:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+        - title
+        - status
+        - errorCode
+        - requestId
+        - retryable
+        - maxBackoffMs
+        - unknownResponse
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+          minLength: 1
+          maxLength: 160
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        errorCode:
+          enum:
+            - INVALID_REQUEST
+            - UNAUTHENTICATED
+            - FORBIDDEN
+            - NOT_FOUND
+            - IDEMPOTENCY_CONFLICT
+            - ATTEMPT_CONFLICT
+            - STATE_PRECONDITION_FAILED
+            - DEADLINE_EXCEEDED
+            - CANCELLED
+            - POLICY_UNAVAILABLE
+            - VALIDATION_INCONCLUSIVE
+            - RESOURCE_EXHAUSTED
+            - INTERNAL
+        requestId:
+          $ref: '#/components/schemas/Identifier'
+        retryable:
+          type: boolean
+        maxBackoffMs:
+          type: integer
+          minimum: 0
+          maximum: 5000
+        unknownResponse:
+          enum:
+            - NONE
+            - RETRY_SAME_KEY
+            - QUERY_BY_REQUEST_ID

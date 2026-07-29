@@ -1,7 +1,55 @@
 # OpenAPI contracts
 
-OpenAPI 3.1/JSON contracts for BuildOpt control, internal cache control, and Test Optimization integration.
+OpenAPI 3.1/JSON contracts for BuildOpt control, internal cache control, and
+Test Optimization integration.
 
-Each API must define authentication boundaries, idempotency keys, state preconditions, deadlines, cancellation, stable error codes, retryability, maximum backoff, and unknown-response behavior. Public Gradle `HttpBuildCache` payloads remain opaque and separate from internal attempt, provenance, revocation, and commit APIs.
+## BuildOpt control APIs
 
-`F0-017` and `F0-018` own the API documents; `F0-010` creates their namespace only.
+[`buildopt-control.v1.yaml`](./buildopt-control.v1.yaml) and
+[`buildopt-cache-control.v1.yaml`](./buildopt-cache-control.v1.yaml) are the
+normative `F0-017` documents. Both use the JSON Schema 2020-12 dialect,
+deployment-scoped HTTP bearer authentication over TLS, JSON request/response
+bodies, required contract-version headers, bounded deadlines, cancellation
+semantics, stable error codes, explicit retryability/backoff, and defined
+unknown-response recovery.
+
+The control API owns:
+
+- immutable policy resolution before Gradle starts;
+- append-only, `If-Match`-preconditioned attempt transitions;
+- isolated `FULL_RELEVANT_VALIDATION` submission and status reads.
+
+The internal cache-control API owns:
+
+- opening and reading bounded pending attempts;
+- atomic commit with the exact authenticated `CommitDecision`;
+- explicit abort and cumulative revocation/L1-generation reads.
+
+Every mutation requires an `Idempotency-Key`. Exact replays return the same
+result and reuse with different content is `IDEMPOTENCY_CONFLICT`. Stateful
+mutations additionally require `If-Match`; an unknown commit/abort response is
+resolved by reading attempt state before retry. Deadlines never infer a
+positive policy, validation, or cache verdict.
+
+Opaque Gradle `HttpBuildCache` GET/PUT bytes are deliberately absent. That
+public protocol remains a separate data-plane boundary, while attempt,
+revocation, provenance, and commit metadata use this internal API.
+
+Validate both documents and exercise every operation against the in-process
+request/response-validating mock with:
+
+```bash
+./dev/check-buildopt-openapi
+```
+
+The checker uses the isolated, checksum-authenticated Go module and
+`kin-openapi` validator. Mock requests and responses are validated against the
+loaded documents and the already-materialized policy, attempt, validation, and
+commit JSON Schemas; it also proves exact replay and conflicting-payload
+behavior.
+
+`F0-018` still owns [`test-optimization.v1.yaml`](./test-optimization.v1.yaml).
+`F0-020..022` own cryptographic vectors, complete error/retry conformance,
+N/N-1 compatibility, and generated clients. Queue execution and the atomic
+SQLite commit/recovery implementation remain with `CI-ORCH-001`/`CACHE-008`;
+these API documents do not close either wider gate.
