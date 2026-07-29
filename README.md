@@ -62,6 +62,7 @@ From the repository root:
 ./dev/check-protobuf-toolchains
 ./dev/check-task-events-proto
 ./dev/check-contract-crypto
+./dev/check-http-semantics
 ./dev/check-test-optimization-openapi
 ./dev/check-buildopt-cli
 ./dev/check-local-gateway

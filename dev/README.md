@@ -289,6 +289,21 @@ timestamps, and real Ed25519 verification. Negative vectors cover duplicate
 keys, malformed UTF-8, unpaired surrogates, non-finite numeric input, changed
 payloads, wrong keys, and malformed signatures.
 
+## HTTP failure-semantics validation
+
+Validate the common `F0-021` error, deadline, retry, idempotency, unknown
+response, and cancellation contract:
+
+```bash
+./dev/check-http-semantics
+```
+
+The checker validates the machine-readable stable-error catalog, executes
+fault cases for retry success, payload conflict, deadline exhaustion, unknown
+state, accepted cancellation, non-idempotent refusal, fail-closed policy
+timeout, terminal errors, and capped backoff, then audits every operation in
+all three OpenAPI documents against the same allowed codes and outcomes.
+
 ## PatchBundle contract validation
 
 Validate the `F0-016` declarative bundle envelope and its two private-beta

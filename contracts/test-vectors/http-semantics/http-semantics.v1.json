@@ -1,0 +1,344 @@
+{
+  "schemaVersion": "buildopt.contracts/http-semantics/v1",
+  "maxBackoffMs": 5000,
+  "errorCodes": [
+    {
+      "code": "ARTIFACT_REJECTED",
+      "httpStatus": 422,
+      "defaultRetryable": false
+    },
+    {
+      "code": "ATTEMPT_CONFLICT",
+      "httpStatus": 409,
+      "defaultRetryable": false
+    },
+    {
+      "code": "COMMIT_REJECTED",
+      "httpStatus": 409,
+      "defaultRetryable": false
+    },
+    {
+      "code": "CONTRACT_INCOMPATIBLE",
+      "httpStatus": 426,
+      "defaultRetryable": false
+    },
+    {
+      "code": "DEADLINE_EXCEEDED",
+      "httpStatus": 504,
+      "defaultRetryable": false
+    },
+    {
+      "code": "GRANT_UNAVAILABLE",
+      "httpStatus": 404,
+      "defaultRetryable": false
+    },
+    {
+      "code": "IDEMPOTENCY_CONFLICT",
+      "httpStatus": 409,
+      "defaultRetryable": false
+    },
+    {
+      "code": "INTERNAL",
+      "httpStatus": 500,
+      "defaultRetryable": true
+    },
+    {
+      "code": "INVALID_REQUEST",
+      "httpStatus": 400,
+      "defaultRetryable": false
+    },
+    {
+      "code": "NOT_FOUND",
+      "httpStatus": 404,
+      "defaultRetryable": false
+    },
+    {
+      "code": "POLICY_UNAVAILABLE",
+      "httpStatus": 503,
+      "defaultRetryable": true
+    },
+    {
+      "code": "RESOURCE_EXHAUSTED",
+      "httpStatus": 429,
+      "defaultRetryable": true
+    },
+    {
+      "code": "REVOCATION_STALE",
+      "httpStatus": 409,
+      "defaultRetryable": false
+    },
+    {
+      "code": "STATE_PRECONDITION_FAILED",
+      "httpStatus": 412,
+      "defaultRetryable": false
+    },
+    {
+      "code": "UNAUTHENTICATED",
+      "httpStatus": 401,
+      "defaultRetryable": false
+    },
+    {
+      "code": "VALIDATION_INCONCLUSIVE",
+      "httpStatus": 422,
+      "defaultRetryable": false
+    }
+  ],
+  "unknownResponseActions": [
+    "DISABLE_CACHE_UNTIL_REFRESH",
+    "POLL_BY_OPERATION_OR_RETRY_SAME_KEY",
+    "QUERY_ATTEMPT_BEFORE_RETRY",
+    "RETRY_READ",
+    "RETRY_SAME_KEY",
+    "RETRY_SAME_KEY_AND_PRECONDITION",
+    "RETRY_SAME_REQUEST_AND_ACTION"
+  ],
+  "deadlineOutcomes": [
+    "ABORTED",
+    "ABORT_PENDING",
+    "BASELINE",
+    "CACHE_DISABLED",
+    "INCONCLUSIVE",
+    "NO_GRANT"
+  ],
+  "clientCancellationActions": [
+    "CANCEL_IF_UNACCEPTED",
+    "CANCEL_READ",
+    "DOES_NOT_CANCEL_ACCEPTED_VALIDATION",
+    "DOES_NOT_REVERSE_ACCEPTED_ABORT",
+    "DOES_NOT_REVERSE_ACCEPTED_ATTEMPT",
+    "DOES_NOT_REVERSE_ACCEPTED_TRANSITION",
+    "DOES_NOT_REVERSE_ATOMIC_COMMIT"
+  ],
+  "acceptedMutationStates": [
+    "DURABLE",
+    "NONE"
+  ],
+  "faultCases": [
+    {
+      "id": "retryable-read-then-success",
+      "operationClass": "READ",
+      "idempotent": true,
+      "deadlineMs": 10000,
+      "payloadDigests": [
+        "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+        "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      ],
+      "attempts": [
+        {
+          "latencyMs": 100,
+          "result": "ERROR",
+          "errorCode": "INTERNAL",
+          "retryAfterMs": 1000
+        },
+        {
+          "latencyMs": 100,
+          "result": "SUCCESS"
+        }
+      ],
+      "expected": {
+        "requestCount": 2,
+        "elapsedMs": 1200,
+        "outcome": "SUCCESS",
+        "recoveryAction": "NONE"
+      }
+    },
+    {
+      "id": "changed-payload-reuse-conflicts",
+      "operationClass": "IDEMPOTENT_MUTATION",
+      "idempotent": true,
+      "deadlineMs": 10000,
+      "payloadDigests": [
+        "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+      ],
+      "attempts": [
+        {
+          "latencyMs": 10,
+          "result": "ERROR",
+          "errorCode": "INTERNAL",
+          "retryAfterMs": 100
+        },
+        {
+          "latencyMs": 10,
+          "result": "SUCCESS"
+        }
+      ],
+      "expected": {
+        "requestCount": 2,
+        "elapsedMs": 110,
+        "outcome": "IDEMPOTENCY_CONFLICT",
+        "recoveryAction": "NONE"
+      }
+    },
+    {
+      "id": "positive-gate-deadline-during-backoff",
+      "operationClass": "POSITIVE_GATE",
+      "idempotent": true,
+      "deadlineMs": 4000,
+      "payloadDigests": [
+        "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+        "sha256:4444444444444444444444444444444444444444444444444444444444444444"
+      ],
+      "attempts": [
+        {
+          "latencyMs": 100,
+          "result": "ERROR",
+          "errorCode": "RESOURCE_EXHAUSTED",
+          "retryAfterMs": 5000
+        },
+        {
+          "latencyMs": 10,
+          "result": "SUCCESS"
+        }
+      ],
+      "expected": {
+        "requestCount": 1,
+        "elapsedMs": 4000,
+        "outcome": "INCONCLUSIVE",
+        "recoveryAction": "NONE"
+      }
+    },
+    {
+      "id": "unknown-stateful-mutation-reads-state",
+      "operationClass": "STATEFUL_MUTATION",
+      "idempotent": true,
+      "deadlineMs": 10000,
+      "payloadDigests": [
+        "sha256:5555555555555555555555555555555555555555555555555555555555555555"
+      ],
+      "attempts": [
+        {
+          "latencyMs": 50,
+          "result": "UNKNOWN"
+        }
+      ],
+      "expected": {
+        "requestCount": 1,
+        "elapsedMs": 50,
+        "outcome": "UNKNOWN",
+        "recoveryAction": "READ_STATE"
+      }
+    },
+    {
+      "id": "accepted-cancellation-remains-durable",
+      "operationClass": "STATEFUL_MUTATION",
+      "idempotent": true,
+      "deadlineMs": 10000,
+      "payloadDigests": [
+        "sha256:6666666666666666666666666666666666666666666666666666666666666666"
+      ],
+      "attempts": [
+        {
+          "latencyMs": 30,
+          "result": "CANCELLED",
+          "accepted": true
+        }
+      ],
+      "expected": {
+        "requestCount": 1,
+        "elapsedMs": 30,
+        "outcome": "ACCEPTED_DURABLE",
+        "recoveryAction": "READ_STATE"
+      }
+    },
+    {
+      "id": "non-idempotent-operation-does-not-retry",
+      "operationClass": "IDEMPOTENT_MUTATION",
+      "idempotent": false,
+      "deadlineMs": 10000,
+      "payloadDigests": [
+        "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+        "sha256:7777777777777777777777777777777777777777777777777777777777777777"
+      ],
+      "attempts": [
+        {
+          "latencyMs": 20,
+          "result": "ERROR",
+          "errorCode": "INTERNAL",
+          "retryAfterMs": 100
+        },
+        {
+          "latencyMs": 10,
+          "result": "SUCCESS"
+        }
+      ],
+      "expected": {
+        "requestCount": 1,
+        "elapsedMs": 20,
+        "outcome": "NO_RETRY",
+        "recoveryAction": "NONE"
+      }
+    },
+    {
+      "id": "policy-resolution-timeout-preserves-baseline",
+      "operationClass": "POLICY_RESOLUTION",
+      "idempotent": true,
+      "deadlineMs": 100,
+      "payloadDigests": [
+        "sha256:8888888888888888888888888888888888888888888888888888888888888888"
+      ],
+      "attempts": [
+        {
+          "latencyMs": 200,
+          "result": "SUCCESS"
+        }
+      ],
+      "expected": {
+        "requestCount": 1,
+        "elapsedMs": 100,
+        "outcome": "BASELINE",
+        "recoveryAction": "NONE"
+      }
+    },
+    {
+      "id": "non-retryable-error-is-terminal",
+      "operationClass": "IDEMPOTENT_MUTATION",
+      "idempotent": true,
+      "deadlineMs": 10000,
+      "payloadDigests": [
+        "sha256:9999999999999999999999999999999999999999999999999999999999999999"
+      ],
+      "attempts": [
+        {
+          "latencyMs": 15,
+          "result": "ERROR",
+          "errorCode": "INVALID_REQUEST"
+        }
+      ],
+      "expected": {
+        "requestCount": 1,
+        "elapsedMs": 15,
+        "outcome": "INVALID_REQUEST",
+        "recoveryAction": "NONE"
+      }
+    },
+    {
+      "id": "retry-backoff-is-capped",
+      "operationClass": "READ",
+      "idempotent": true,
+      "deadlineMs": 10000,
+      "payloadDigests": [
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "attempts": [
+        {
+          "latencyMs": 10,
+          "result": "ERROR",
+          "errorCode": "INTERNAL",
+          "retryAfterMs": 8000
+        },
+        {
+          "latencyMs": 10,
+          "result": "SUCCESS"
+        }
+      ],
+      "expected": {
+        "requestCount": 2,
+        "elapsedMs": 5020,
+        "outcome": "SUCCESS",
+        "recoveryAction": "NONE"
+      }
+    }
+  ]
+}
