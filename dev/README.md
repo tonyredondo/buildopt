@@ -381,7 +381,47 @@ Provision both tools and run their integrated smoke:
 
 The checker runs exact ShellCheck 0.11.0 over executable scripts under `dev/`, `.github/actions/`, and `fixtures/github-actions/`. It then runs exact actionlint 1.7.12 over any existing `.github/workflows/*.yml` or `*.yaml` files and an in-memory valid workflow fixture. actionlint receives the exact repository-local ShellCheck path for embedded `run:` scripts and has opportunistic global Pyflakes discovery disabled.
 
-This is provisioning and lint-smoke evidence for `ENV-010`; it does not create an authoritative CI workflow or close `F0-004`.
+`ENV-010` owns this reproducible lint tooling. `F0-004` consumes it in the
+authoritative base workflow described below.
+
+## Base CI validation
+
+The read-only [base workflow](../.github/workflows/base-ci.yml) runs on pushes
+to `main`, pull requests, and manual dispatch. Validate its immutable Action
+pins, exact Ubuntu runner, Java/Rust versions, triggers, permissions, and lane
+commands without executing a build:
+
+```bash
+./dev/check-base-ci --static
+```
+
+The core lane requires the locked JDK 21, Go, ShellCheck, and actionlint
+installations plus a checksum-primed Gradle Wrapper. It runs layout, ownership,
+lock, shell/workflow lint, race-enabled Go tests, Go vet, the nested schema
+validator module, Java 17 bytecode verification, and the JVM agent on both Java
+21 and the exact Java 17.0.19 compatibility runtime:
+
+```bash
+./dev/run -- ./gradlew --no-daemon --version
+BUILDOPT_JAVA17_HOME=/path/to/jdk-17 \
+    ./dev/check-base-ci --lane core
+```
+
+The separately named Rust lane keeps the helper optional to the core while
+still making its accepted compiler baseline a required check whenever the
+workflow runs:
+
+```bash
+rustup toolchain install \
+    1.93.0-x86_64-unknown-linux-gnu \
+    --profile minimal \
+    --no-self-update
+./dev/check-base-ci --lane rust
+```
+
+Both lanes require an unchanged tracked working tree. This workflow closes
+only base `F0-004` validation; protected scheduling, validation queues,
+cross-run lifecycle, budgets, and recovery remain with `CI-ORCH-001`.
 
 ## Supply-chain and release validation
 

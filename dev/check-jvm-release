@@ -198,4 +198,36 @@ fi
 
 java -javaagent:"${buildopt_agent_jar}" -version >/dev/null 2>&1
 
-printf 'JVM release OK: Java 21 compiler, --release 17 bytecode, Gradle plugin marker, and loadable agent\n'
+buildopt_java17_status=not-requested
+if [[ -n "${BUILDOPT_JAVA17_HOME:-}" ]]; then
+    buildopt_java17="${BUILDOPT_JAVA17_HOME}/bin/java"
+    if [[ ! -x "${buildopt_java17}" ]]; then
+        printf 'Java 17 compatibility runtime is unavailable: %s\n' \
+            "${buildopt_java17}" >&2
+        exit 1
+    fi
+    buildopt_java17_settings=$(
+        "${buildopt_java17}" -XshowSettings:properties -version 2>&1
+    )
+    buildopt_java17_major=$(
+        awk -F'= ' '
+            /^[[:space:]]*java.version = / {
+                split($2, version, ".")
+                print version[1]
+                exit
+            }
+        ' <<<"${buildopt_java17_settings}"
+    )
+    if [[ "${buildopt_java17_major}" != "17" ]]; then
+        printf 'compatibility runtime must be Java 17; found major %s\n' \
+            "${buildopt_java17_major:-unknown}" >&2
+        exit 1
+    fi
+    "${buildopt_java17}" \
+        -javaagent:"${buildopt_agent_jar}" \
+        -version >/dev/null 2>&1
+    buildopt_java17_status=verified
+fi
+
+printf 'JVM release OK: Java 21 compiler, --release 17 bytecode, Gradle plugin marker, loadable agent, Java 17 %s\n' \
+    "${buildopt_java17_status}"

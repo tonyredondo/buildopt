@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "buildopt.dev/base-ci-lock/v1",
+  "workflow": ".github/workflows/base-ci.yml",
+  "runner": "ubuntu-24.04",
+  "checkout": {
+    "repository": "actions/checkout",
+    "version": "v7.0.1",
+    "commit": "3d3c42e5aac5ba805825da76410c181273ba90b1"
+  },
+  "setupJava": {
+    "repository": "actions/setup-java",
+    "version": "v5.6.0",
+    "commit": "03ad4de0992f5dab5e18fcb136590ce7c4a0ac95"
+  },
+  "javaRuntime": {
+    "distribution": "temurin",
+    "version": "17.0.19+10"
+  },
+  "rust": {
+    "adoption": "optional",
+    "toolchain": "1.93.0-x86_64-unknown-linux-gnu"
+  }
+}

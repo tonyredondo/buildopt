@@ -1,0 +1,77 @@
+name: Base CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: base-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  core:
+    name: Go and Java 17
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out the source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Install the pinned Java 17 compatibility runtime
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
+        with:
+          distribution: temurin
+          java-version: '17.0.19+10'
+          check-latest: false
+
+      - name: Provision locked project toolchains
+        run: |
+          set -euo pipefail
+          for buildopt_toolchain in \
+            temurin-jdk-21 \
+            go \
+            shellcheck \
+            actionlint; do
+            ./dev/bootstrap --toolchain "${buildopt_toolchain}"
+          done
+
+      - name: Prime the checksum-pinned Gradle Wrapper
+        run: ./dev/run -- ./gradlew --no-daemon --version
+
+      - name: Run reproducible Go and Java checks
+        run: |
+          set -euo pipefail
+          BUILDOPT_JAVA17_HOME="${JAVA_HOME}" \
+            ./dev/check-base-ci --lane core
+
+  rust-optional:
+    name: Rust 1.93 optional helper
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out the source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Install the optional pinned Rust toolchain
+        run: >-
+          rustup toolchain install
+          1.93.0-x86_64-unknown-linux-gnu
+          --profile minimal
+          --no-self-update
+
+      - name: Run the optional Rust checks
+        run: ./dev/check-base-ci --lane rust
