@@ -22,3 +22,12 @@ tasks.register("correlationFixture") {
     description = "Runs the equivalent cacheable tasks used by the correlation spike."
     dependsOn(subprojects.map { "${it.path}:correlationFixture" })
 }
+
+tasks.register("correlationMatrix") {
+    group = "verification"
+    description = "Runs every successful task shape used by the correlation spike."
+    dependsOn(subprojects.map { "${it.path}:correlationFixture" })
+    dependsOn(subprojects.map { "${it.path}:workerNoIsolationFixture" })
+    dependsOn(subprojects.map { "${it.path}:workerProcessIsolationFixture" })
+    dependsOn(subprojects.map { "${it.path}:childProcessFixture" })
+}

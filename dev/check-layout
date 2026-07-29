@@ -14,6 +14,7 @@ buildopt_required_directories=(
     "dev"
     "fixtures"
     "fixtures/gradle-correlation"
+    "fixtures/gradle-correlation/cache-server"
     "internal"
     "jvm/gradle-plugin"
     "jvm/jvm-agent"
@@ -42,6 +43,7 @@ buildopt_required_files=(
     "dev/check-buildopt-cli"
     "dev/check-build-session-schema"
     "dev/check-gradle-correlation-fixture"
+    "dev/check-gradle-correlation-spike"
     "dev/check-go-toolchain"
     "dev/check-jvm-release"
     "dev/check-lint-toolchains"
@@ -64,6 +66,8 @@ buildopt_required_files=(
     "fixtures/gradle-correlation/build.gradle.kts"
     "fixtures/gradle-correlation/buildSrc/build.gradle.kts"
     "fixtures/gradle-correlation/buildSrc/src/main/java/dev/buildopt/fixtures/correlation/CorrelationFixturePlugin.java"
+    "fixtures/gradle-correlation/buildSrc/src/main/java/dev/buildopt/fixtures/correlation/CorrelationTraceAnalyzer.java"
+    "fixtures/gradle-correlation/cache-server/src/main/java/dev/buildopt/fixtures/correlation/CorrelationCacheServer.java"
     "fixtures/gradle-correlation/settings.gradle.kts"
     "go.mod"
     "gradle-build-optimization-platform.md"
@@ -79,6 +83,7 @@ buildopt_required_files=(
     "rust/hermetic-helper/README.md"
     "rust-toolchain.toml"
     "specs/README.md"
+    "specs/gradle-correlation-v1.md"
 )
 
 buildopt_failed=0

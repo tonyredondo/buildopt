@@ -1,0 +1,417 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_usage() {
+    printf 'usage: %s [--full|--gradle-9-only]\n' "$0"
+}
+
+if (($# > 1)); then
+    buildopt_usage >&2
+    exit 64
+fi
+buildopt_mode=${1:---full}
+case "${buildopt_mode}" in
+    --full | --gradle-9-only) ;;
+    *)
+        buildopt_usage >&2
+        exit 64
+        ;;
+esac
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_fixture_root="${buildopt_repo_root}/fixtures/gradle-correlation"
+buildopt_server_source="${buildopt_fixture_root}/cache-server/src/main/java/dev/buildopt/fixtures/correlation/CorrelationCacheServer.java"
+buildopt_tmp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-correlation-spike.XXXXXX")
+buildopt_server_pid=
+buildopt_any_unavailable=0
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_server_pid}" ]]; then
+        kill "${buildopt_server_pid}" 2>/dev/null || true
+        wait "${buildopt_server_pid}" 2>/dev/null || true
+    fi
+    if [[ -n "${buildopt_tmp}" &&
+        "${buildopt_tmp}" == "${TMPDIR:-/tmp}/buildopt-correlation-spike."* ]]; then
+        rm -rf -- "${buildopt_tmp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_required_commands=(
+    awk
+    cmp
+    find
+    grep
+    java
+    javac
+    mktemp
+    sed
+    sha256sum
+    sort
+    truncate
+)
+if [[ "${buildopt_mode}" == "--full" ]]; then
+    buildopt_required_commands+=(curl unzip)
+fi
+for buildopt_command in "${buildopt_required_commands[@]}"; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required correlation-spike command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_java_settings=$(java -XshowSettings:properties -version 2>&1)
+buildopt_java_major=$(
+    awk -F'= ' '
+        /^[[:space:]]*java.version = / {
+            split($2, version, ".")
+            print version[1]
+            exit
+        }
+    ' <<<"${buildopt_java_settings}"
+)
+if [[ "${buildopt_java_major}" != "21" ]]; then
+    printf 'correlation spike requires Java 21, found major %s\n' \
+        "${buildopt_java_major:-unknown}" >&2
+    exit 1
+fi
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p "${GRADLE_USER_HOME}"
+
+buildopt_server_classes="${buildopt_tmp}/cache-server-classes"
+mkdir -p "${buildopt_server_classes}"
+javac \
+    --release 17 \
+    --add-modules jdk.httpserver \
+    -Xlint:all \
+    -Werror \
+    -d "${buildopt_server_classes}" \
+    "${buildopt_server_source}"
+
+buildopt_wrapper_version=$(
+    "${buildopt_repo_root}/gradlew" --no-daemon --version
+)
+if ! grep -Fq 'Gradle 9.6.1' <<<"${buildopt_wrapper_version}"; then
+    printf 'SPK-001 requires the Gradle 9.6.1 Wrapper first\n' >&2
+    exit 1
+fi
+buildopt_gradle_9_bin=$(
+    find \
+        "${GRADLE_USER_HOME}/wrapper/dists/gradle-9.6.1-bin" \
+        -type f \
+        -path '*/gradle-9.6.1/bin/gradle' \
+        -print \
+        -quit
+)
+if [[ -z "${buildopt_gradle_9_bin}" ||
+    ! -x "${buildopt_gradle_9_bin}" ]]; then
+    printf 'cannot resolve the provisioned Gradle 9.6.1 distribution\n' >&2
+    exit 1
+fi
+buildopt_gradle_9_home=$(cd -- "$(dirname -- "${buildopt_gradle_9_bin}")/.." && pwd)
+
+buildopt_provision_gradle_814() {
+    local buildopt_version=8.14.3
+    local buildopt_sha=bd71102213493060956ec229d946beee57158dbd89d0e62b91bca0fa2c5f3531
+    local buildopt_url=https://services.gradle.org/distributions/gradle-8.14.3-bin.zip
+    local buildopt_root=${BUILDOPT_GRADLE_COMPAT_ROOT:-"${buildopt_repo_root}/.tools/gradle-compat"}
+    local buildopt_archive="${buildopt_root}/gradle-${buildopt_version}-bin.zip"
+    local buildopt_home="${buildopt_root}/gradle-${buildopt_version}"
+    local buildopt_download
+    local buildopt_extract
+
+    mkdir -p "${buildopt_root}"
+    if [[ ! -f "${buildopt_archive}" ]] ||
+        ! printf '%s  %s\n' "${buildopt_sha}" "${buildopt_archive}" |
+            sha256sum -c - >/dev/null 2>&1; then
+        buildopt_download=$(mktemp "${buildopt_tmp}/gradle-${buildopt_version}.XXXXXX")
+        curl \
+            --fail \
+            --location \
+            --proto '=https' \
+            --retry 3 \
+            --retry-delay 1 \
+            --show-error \
+            --silent \
+            --output "${buildopt_download}" \
+            "${buildopt_url}"
+        printf '%s  %s\n' "${buildopt_sha}" "${buildopt_download}" |
+            sha256sum -c - >/dev/null
+        mv -f -- "${buildopt_download}" "${buildopt_archive}"
+    fi
+
+    if [[ ! -x "${buildopt_home}/bin/gradle" ]]; then
+        buildopt_extract=$(mktemp -d "${buildopt_root}/extract-${buildopt_version}.XXXXXX")
+        unzip -q "${buildopt_archive}" -d "${buildopt_extract}"
+        if [[ ! -x "${buildopt_extract}/gradle-${buildopt_version}/bin/gradle" ]]; then
+            printf 'Gradle %s archive has an unexpected layout\n' \
+                "${buildopt_version}" >&2
+            exit 1
+        fi
+        mv -- "${buildopt_extract}/gradle-${buildopt_version}" "${buildopt_home}"
+        rmdir -- "${buildopt_extract}"
+    fi
+    printf '%s\n' "${buildopt_home}"
+}
+
+buildopt_analyze() {
+    local buildopt_gradle_home=$1
+    local buildopt_analyzer_jar=$2
+    local buildopt_trace=$3
+    local buildopt_scenario=$4
+    local buildopt_put_log=$5
+    local buildopt_report=$6
+
+    java \
+        -cp "${buildopt_analyzer_jar}:${buildopt_gradle_home}/lib/*:${buildopt_gradle_home}/lib/plugins/*" \
+        dev.buildopt.fixtures.correlation.CorrelationTraceAnalyzer \
+        "${buildopt_trace}" \
+        "${buildopt_scenario}" \
+        "${buildopt_put_log}" \
+        "${buildopt_report}"
+}
+
+buildopt_run_matrix() {
+    local buildopt_version=$1
+    local buildopt_gradle_home=$2
+    local buildopt_gradle_bin="${buildopt_gradle_home}/bin/gradle"
+    local buildopt_version_root="${buildopt_tmp}/gradle-${buildopt_version}"
+    local buildopt_ready="${buildopt_version_root}/cache.ready"
+    local buildopt_put_log="${buildopt_version_root}/puts.log"
+    local buildopt_server_log="${buildopt_version_root}/cache-server.log"
+    local buildopt_cache_root="${buildopt_version_root}/remote-cache"
+    local buildopt_output_root="${buildopt_version_root}/outputs"
+    local buildopt_project_cache="${buildopt_version_root}/project-cache"
+    local buildopt_buildsrc_output="${buildopt_version_root}/build-src"
+    local buildopt_matrix_gradle_user_home="${buildopt_version_root}/gradle-user-home"
+    local buildopt_cache_url=
+    local buildopt_analyzer_jar="${buildopt_buildsrc_output}/libs/buildSrc.jar"
+    local buildopt_scenario
+    local buildopt_trace
+    local buildopt_log
+    local buildopt_report
+    local buildopt_project
+    local buildopt_variant
+
+    mkdir -p "${buildopt_matrix_gradle_user_home}"
+    java \
+        --add-modules jdk.httpserver \
+        -cp "${buildopt_server_classes}" \
+        dev.buildopt.fixtures.correlation.CorrelationCacheServer \
+        "${buildopt_cache_root}" \
+        "${buildopt_ready}" \
+        "${buildopt_put_log}" \
+        >"${buildopt_server_log}" 2>&1 &
+    buildopt_server_pid=$!
+
+    for _ in {1..200}; do
+        if [[ -s "${buildopt_ready}" ]]; then
+            buildopt_cache_url=$(<"${buildopt_ready}")
+            break
+        fi
+        if ! kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+            sed -n '1,200p' "${buildopt_server_log}" >&2
+            printf 'correlation cache server stopped before becoming ready\n' >&2
+            exit 1
+        fi
+        sleep 0.05
+    done
+    if [[ -z "${buildopt_cache_url}" ]]; then
+        printf 'correlation cache server did not become ready\n' >&2
+        exit 1
+    fi
+
+    local buildopt_common_args=(
+        --project-dir "${buildopt_fixture_root}"
+        --project-cache-dir "${buildopt_project_cache}"
+        --no-daemon
+        --stacktrace
+        --warning-mode=fail
+        --console=plain
+        --parallel
+        --max-workers=4
+        --build-cache
+        --configuration-cache
+        --info
+        "-PbuildoptFixtureOutputDir=${buildopt_output_root}"
+        "-PbuildoptFixtureBuildSrcOutputDir=${buildopt_buildsrc_output}"
+        "-PbuildoptFixtureCacheUrl=${buildopt_cache_url}"
+    )
+
+    buildopt_scenario=miss
+    buildopt_trace="${buildopt_version_root}/${buildopt_scenario}-operations"
+    buildopt_log="${buildopt_version_root}/${buildopt_scenario}.log"
+    buildopt_report="${buildopt_version_root}/${buildopt_scenario}.json"
+    truncate --size 0 "${buildopt_put_log}"
+    if ! GRADLE_USER_HOME="${buildopt_matrix_gradle_user_home}" \
+        "${buildopt_gradle_bin}" \
+        "${buildopt_common_args[@]}" \
+        "-Dorg.gradle.internal.operations.trace=${buildopt_trace}" \
+        clean correlationMatrix >"${buildopt_log}" 2>&1; then
+        sed -n '1,300p' "${buildopt_log}" >&2
+        exit 1
+    fi
+    if [[ ! -s "${buildopt_analyzer_jar}" ]]; then
+        printf 'missing correlation analyzer jar for Gradle %s\n' \
+            "${buildopt_version}" >&2
+        exit 1
+    fi
+    java \
+        -cp "${buildopt_analyzer_jar}:${buildopt_gradle_home}/lib/*:${buildopt_gradle_home}/lib/plugins/*" \
+        dev.buildopt.fixtures.correlation.CorrelationTraceAnalyzer \
+        --self-test
+    local buildopt_miss_capability=EXACT
+    if buildopt_analyze \
+        "${buildopt_gradle_home}" \
+        "${buildopt_analyzer_jar}" \
+        "${buildopt_trace}" \
+        "${buildopt_scenario}" \
+        "${buildopt_put_log}" \
+        "${buildopt_report}"; then
+        :
+    else
+        buildopt_analyzer_status=$?
+        if ((buildopt_analyzer_status != 2)); then
+            printf 'miss analysis failed without the supported fallback on Gradle %s\n' \
+                "${buildopt_version}" >&2
+            exit "${buildopt_analyzer_status}"
+        fi
+        grep -Fq '"capability": "UNAVAILABLE"' "${buildopt_report}"
+        grep -Fq '"attemptAborted": true' "${buildopt_report}"
+        grep -Fq 'UNATTRIBUTED PUT' "${buildopt_report}"
+        buildopt_miss_capability=UNAVAILABLE
+        buildopt_any_unavailable=1
+    fi
+
+    for buildopt_variant in \
+        correlation \
+        worker-no-isolation \
+        worker-process-isolation \
+        child-process; do
+        for buildopt_project in alpha beta; do
+            if [[ ! -s "${buildopt_output_root}/${buildopt_project}/${buildopt_variant}/output.txt" ]]; then
+                printf 'missing %s/%s output on Gradle %s\n' \
+                    "${buildopt_project}" \
+                    "${buildopt_variant}" \
+                    "${buildopt_version}" >&2
+                exit 1
+            fi
+        done
+        if ! cmp -s \
+            "${buildopt_output_root}/alpha/${buildopt_variant}/output.txt" \
+            "${buildopt_output_root}/beta/${buildopt_variant}/output.txt"; then
+            printf '%s equivalent outputs differ on Gradle %s\n' \
+                "${buildopt_variant}" \
+                "${buildopt_version}" >&2
+            exit 1
+        fi
+    done
+    for buildopt_project in alpha beta; do
+        if [[ ! -f "${buildopt_output_root}/root/correlation-barrier/${buildopt_project}.ready" ]]; then
+            printf 'parallel marker %s is missing on Gradle %s\n' \
+                "${buildopt_project}" \
+                "${buildopt_version}" >&2
+            exit 1
+        fi
+    done
+
+    buildopt_scenario=hit
+    buildopt_trace="${buildopt_version_root}/${buildopt_scenario}-operations"
+    buildopt_log="${buildopt_version_root}/${buildopt_scenario}.log"
+    buildopt_report="${buildopt_version_root}/${buildopt_scenario}.json"
+    truncate --size 0 "${buildopt_put_log}"
+    if ! GRADLE_USER_HOME="${buildopt_matrix_gradle_user_home}" \
+        "${buildopt_gradle_bin}" \
+        "${buildopt_common_args[@]}" \
+        "-Dorg.gradle.internal.operations.trace=${buildopt_trace}" \
+        clean correlationMatrix >"${buildopt_log}" 2>&1; then
+        sed -n '1,300p' "${buildopt_log}" >&2
+        exit 1
+    fi
+    grep -Fq 'Reusing configuration cache.' "${buildopt_log}"
+    buildopt_analyze \
+        "${buildopt_gradle_home}" \
+        "${buildopt_analyzer_jar}" \
+        "${buildopt_trace}" \
+        "${buildopt_scenario}" \
+        "${buildopt_put_log}" \
+        "${buildopt_report}"
+
+    buildopt_scenario=failure
+    buildopt_trace="${buildopt_version_root}/${buildopt_scenario}-operations"
+    buildopt_log="${buildopt_version_root}/${buildopt_scenario}.log"
+    buildopt_report="${buildopt_version_root}/${buildopt_scenario}.json"
+    truncate --size 0 "${buildopt_put_log}"
+    if GRADLE_USER_HOME="${buildopt_matrix_gradle_user_home}" \
+        "${buildopt_gradle_bin}" \
+        "${buildopt_common_args[@]}" \
+        "-Dorg.gradle.internal.operations.trace=${buildopt_trace}" \
+        :alpha:failureFixture >"${buildopt_log}" 2>&1; then
+        printf 'failure fixture unexpectedly succeeded on Gradle %s\n' \
+            "${buildopt_version}" >&2
+        exit 1
+    fi
+    grep -Fq 'intentional correlation fixture failure' "${buildopt_log}"
+    buildopt_analyze \
+        "${buildopt_gradle_home}" \
+        "${buildopt_analyzer_jar}" \
+        "${buildopt_trace}" \
+        "${buildopt_scenario}" \
+        "${buildopt_put_log}" \
+        "${buildopt_report}"
+
+    buildopt_scenario=cancellation
+    buildopt_trace="${buildopt_version_root}/${buildopt_scenario}-operations"
+    buildopt_log="${buildopt_version_root}/${buildopt_scenario}.log"
+    buildopt_report="${buildopt_version_root}/${buildopt_scenario}.json"
+    truncate --size 0 "${buildopt_put_log}"
+    if GRADLE_USER_HOME="${buildopt_matrix_gradle_user_home}" \
+        "${buildopt_gradle_bin}" \
+        "${buildopt_common_args[@]}" \
+        "-Dorg.gradle.internal.operations.trace=${buildopt_trace}" \
+        :alpha:cancellationFixture >"${buildopt_log}" 2>&1; then
+        printf 'cancellation fixture unexpectedly succeeded on Gradle %s\n' \
+            "${buildopt_version}" >&2
+        exit 1
+    fi
+    grep -Fq 'intentional correlation fixture cancellation' "${buildopt_log}"
+    buildopt_analyze \
+        "${buildopt_gradle_home}" \
+        "${buildopt_analyzer_jar}" \
+        "${buildopt_trace}" \
+        "${buildopt_scenario}" \
+        "${buildopt_put_log}" \
+        "${buildopt_report}"
+
+    kill "${buildopt_server_pid}"
+    wait "${buildopt_server_pid}" 2>/dev/null || true
+    buildopt_server_pid=
+    printf 'SPK-001 Gradle %s matrix OK: miss=%s, hit/failure/cancellation=EXACT\n' \
+        "${buildopt_version}" \
+        "${buildopt_miss_capability}"
+}
+
+buildopt_run_matrix 9.6.1 "${buildopt_gradle_9_home}"
+
+if [[ "${buildopt_mode}" == "--full" ]]; then
+    buildopt_gradle_814_home=$(buildopt_provision_gradle_814)
+    buildopt_gradle_814_version=$(
+        "${buildopt_gradle_814_home}/bin/gradle" --no-daemon --version
+    )
+    if ! grep -Fq 'Gradle 8.14.3' <<<"${buildopt_gradle_814_version}"; then
+        printf 'pinned compatibility distribution is not Gradle 8.14.3\n' >&2
+        exit 1
+    fi
+    buildopt_run_matrix 8.14.3 "${buildopt_gradle_814_home}"
+fi
+
+if ((buildopt_any_unavailable)); then
+    printf 'GRADLE-CORR-001 OK: capability UNAVAILABLE; UNATTRIBUTED aborts the complete attempt\n'
+else
+    printf 'GRADLE-CORR-001 OK: supported combinations are EXACT; UNATTRIBUTED aborts the attempt\n'
+fi

@@ -4,6 +4,11 @@ plugins {
     `java-gradle-plugin`
 }
 
+val fixtureBuildSrcOutput = providers.gradleProperty("buildoptFixtureBuildSrcOutputDir")
+    .map(::file)
+    .orElse(layout.projectDirectory.dir("build").asFile)
+layout.buildDirectory.set(layout.dir(fixtureBuildSrcOutput))
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)

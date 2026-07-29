@@ -106,7 +106,25 @@ Run the first `F0-040` fixture with the locked JDK 21 and real Gradle 9.6.1 Wrap
 
 The checker uses an isolated project cache, output tree, and local build cache. On the initial empty-cache run, two equivalent cacheable tasks in separate projects must execute concurrently and expose the same native Gradle cache key. After cleaning their outputs, the second identical run must reuse Configuration Cache and restore both tasks from the local build cache with byte-identical outputs.
 
-This is fixture evidence, not correlation evidence. `SPK-001` must still associate each task execution and outcome with the native key and cache PUT without relying on timing, thread names, or task paths.
+Run the closed `SPK-001` matrix on the golden version:
+
+```bash
+./dev/run -- ./dev/check-gradle-correlation-spike --gradle-9-only
+```
+
+Run the complete Gradle 9.6.1 and checksum-pinned 8.14.3 matrix:
+
+```bash
+./dev/run -- ./dev/check-gradle-correlation-spike --full
+```
+
+The spike starts a loopback HTTP Build Cache, exercises direct tasks, both
+Worker API isolation modes, a real child JVM, cache hit/miss, failure,
+cancellation, and Configuration Cache, then correlates Gradle operation IDs
+structurally with native keys and observed HTTP `PUT` requests. Cold Kotlin DSL
+work emits non-task stores, so the accepted result is the fail-closed
+`UNAVAILABLE` capability: every `UNATTRIBUTED` store aborts the complete
+attempt. See [`specs/gradle-correlation-v1.md`](../specs/gradle-correlation-v1.md).
 
 ## Rust toolchain validation
 

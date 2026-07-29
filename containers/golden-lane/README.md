@@ -24,4 +24,10 @@ Contractual evidence:
 
 The second command rejects hosts that cannot provide the 4 vCPU/16 GiB development runner class.
 
-Both modes run the `F0-040A` Gradle correlation fixture after the base Java artifact checks. Strict mode therefore proves its parallel miss, shared native key, two cache hits, and Configuration Cache reuse inside the pinned 4-CPU/16-GiB container as well as on the host.
+Both modes run the `F0-040A` fixture and the Gradle 9.6.1 half of `SPK-001`
+after the base Java artifact checks. Strict mode therefore covers the parallel
+equivalent tasks, Worker API isolation modes, child JVM, remote HTTP cache,
+failure/cancellation, Configuration Cache reuse, and the tested
+`UNATTRIBUTED` whole-attempt fallback inside the pinned 4-CPU/16-GiB container.
+The checksum-pinned Gradle 8.14.3 half runs through the host-side `--full`
+matrix.

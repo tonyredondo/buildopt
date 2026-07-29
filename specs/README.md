@@ -2,10 +2,10 @@
 
 Operational contracts connecting multiple components: CI orchestration, Gradle correlation, Test Optimization integration, PatchBundle, and the capability matrix.
 
-| Planned specification | Owning item |
+| Specification | Owning item |
 |---|---|
 | `ci-orchestration-v1.md` | `F0-030` |
-| `gradle-correlation-v1.md` | `SPK-001` / `GRADLE-CORR-001` |
+| [`gradle-correlation-v1.md`](./gradle-correlation-v1.md) | `SPK-001` / `GRADLE-CORR-001` |
 | `benchmark-beta-v1.md` | `F0-032` |
 | `test-optimization-integration-v1.md` | `F0-033` |
 | `patch-bundle-v1.md` | `F0-034` |
