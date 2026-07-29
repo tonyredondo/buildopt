@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+
+cd -- "${buildopt_script_dir}/schema-validator"
+"${buildopt_script_dir}/run" \
+    --toolchain go \
+    -- \
+    go test \
+        -count=1 \
+        -run '^TestTestOptimizationIntegrationV1$' \
+        .
+
+cd -- "${buildopt_script_dir}/.."
+"${buildopt_script_dir}/check-test-optimization-openapi"
+"${buildopt_script_dir}/check-test-optimization-schemas"
+"${buildopt_script_dir}/check-contract-crypto"
+"${buildopt_script_dir}/check-http-semantics"
+"${buildopt_script_dir}/check-generated-clients"

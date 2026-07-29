@@ -1,0 +1,173 @@
+{
+  "schemaVersion": "buildopt.specs/test-optimization-integration/v1",
+  "contractMajor": 1,
+  "currentMinor": 1,
+  "artifacts": {
+    "validPath": "fixtures/test-optimization/artifacts/valid-artifact.bin",
+    "validSize": 26,
+    "validSha256": "sha256:29a15f50d0e922b838667a709e4967342c8d9b729d07cec13f19600615016fe0",
+    "corruptPath": "fixtures/test-optimization/artifacts/corrupt-artifact.bin"
+  },
+  "cases": [
+    {
+      "id": "current-signed-grant-enables-test-cache",
+      "kind": "GRANT",
+      "remoteMajor": 1,
+      "remoteMinor": 1,
+      "authority": "ACTIVE_TRUSTED",
+      "transport": "OK",
+      "expectedProducer": "SIGNED_GRANT",
+      "expectedConsumer": "ENABLE_TEST_CACHE"
+    },
+    {
+      "id": "previous-minor-grant-is-compatible",
+      "kind": "GRANT",
+      "remoteMajor": 1,
+      "remoteMinor": 0,
+      "authority": "ACTIVE_TRUSTED",
+      "transport": "OK",
+      "expectedProducer": "SIGNED_GRANT",
+      "expectedConsumer": "ENABLE_TEST_CACHE"
+    },
+    {
+      "id": "missing-grant-disables-test-cache",
+      "kind": "GRANT",
+      "remoteMajor": 1,
+      "remoteMinor": 1,
+      "authority": "MISSING",
+      "transport": "OK",
+      "expectedProducer": "GRANT_UNAVAILABLE",
+      "expectedConsumer": "DISABLE_TEST_CACHE"
+    },
+    {
+      "id": "expired-grant-disables-test-cache",
+      "kind": "GRANT",
+      "remoteMajor": 1,
+      "remoteMinor": 1,
+      "authority": "EXPIRED",
+      "transport": "OK",
+      "expectedProducer": "SIGNED_EXPIRED_GRANT",
+      "expectedConsumer": "DISABLE_TEST_CACHE"
+    },
+    {
+      "id": "untrusted-grant-disables-test-cache",
+      "kind": "GRANT",
+      "remoteMajor": 1,
+      "remoteMinor": 1,
+      "authority": "UNTRUSTED_SIGNATURE",
+      "transport": "OK",
+      "expectedProducer": "SIGNED_GRANT",
+      "expectedConsumer": "DISABLE_TEST_CACHE"
+    },
+    {
+      "id": "revoked-status-aborts-pending",
+      "kind": "GRANT_STATUS",
+      "remoteMajor": 1,
+      "remoteMinor": 1,
+      "authority": "REVOKED",
+      "transport": "OK",
+      "expectedProducer": "SIGNED_REVOKED_STATUS",
+      "expectedConsumer": "ABORT_PENDING"
+    },
+    {
+      "id": "status-digest-mismatch-aborts-pending",
+      "kind": "GRANT_STATUS",
+      "remoteMajor": 1,
+      "remoteMinor": 1,
+      "authority": "DIGEST_MISMATCH",
+      "transport": "OK",
+      "expectedProducer": "SIGNED_ACTIVE_STATUS",
+      "expectedConsumer": "ABORT_PENDING"
+    },
+    {
+      "id": "status-timeout-aborts-pending",
+      "kind": "GRANT_STATUS",
+      "remoteMajor": 1,
+      "remoteMinor": 1,
+      "authority": "ACTIVE_TRUSTED",
+      "transport": "TIMEOUT",
+      "expectedProducer": "DEADLINE_EXCEEDED",
+      "expectedConsumer": "ABORT_PENDING"
+    },
+    {
+      "id": "delayed-passed-validation-allows-action",
+      "kind": "VALIDATION",
+      "remoteMajor": 1,
+      "remoteMinor": 1,
+      "authority": "PASSED_TRUSTED",
+      "transport": "DELAYED_POLL",
+      "expectedProducer": "SIGNED_RESULT_AFTER_POLL",
+      "expectedConsumer": "ALLOW_ACTION"
+    },
+    {
+      "id": "exact-retry-replays-validation",
+      "kind": "VALIDATION",
+      "remoteMajor": 1,
+      "remoteMinor": 1,
+      "authority": "PASSED_TRUSTED",
+      "transport": "TRANSIENT_EXACT_RETRY",
+      "expectedProducer": "SIGNED_RESULT_REPLAY",
+      "expectedConsumer": "ALLOW_ACTION"
+    },
+    {
+      "id": "changed-retry-payload-conflicts",
+      "kind": "VALIDATION",
+      "remoteMajor": 1,
+      "remoteMinor": 1,
+      "authority": "PASSED_TRUSTED",
+      "transport": "CHANGED_RETRY",
+      "expectedProducer": "IDEMPOTENCY_CONFLICT",
+      "expectedConsumer": "BLOCK_ACTION"
+    },
+    {
+      "id": "corrupt-artifact-is-rejected",
+      "kind": "VALIDATION",
+      "remoteMajor": 1,
+      "remoteMinor": 1,
+      "authority": "CORRUPT_ARTIFACT",
+      "transport": "OK",
+      "expectedProducer": "ARTIFACT_REJECTED",
+      "expectedConsumer": "BLOCK_ACTION"
+    },
+    {
+      "id": "caller-path-artifact-is-rejected",
+      "kind": "VALIDATION",
+      "remoteMajor": 1,
+      "remoteMinor": 1,
+      "authority": "ARBITRARY_PATH",
+      "transport": "OK",
+      "expectedProducer": "ARTIFACT_REJECTED",
+      "expectedConsumer": "BLOCK_ACTION"
+    },
+    {
+      "id": "failed-result-blocks-action",
+      "kind": "VALIDATION",
+      "remoteMajor": 1,
+      "remoteMinor": 1,
+      "authority": "FAILED_TRUSTED",
+      "transport": "OK",
+      "expectedProducer": "SIGNED_RESULT",
+      "expectedConsumer": "BLOCK_ACTION"
+    },
+    {
+      "id": "inconclusive-result-remains-inconclusive",
+      "kind": "VALIDATION",
+      "remoteMajor": 1,
+      "remoteMinor": 1,
+      "authority": "INCONCLUSIVE_TRUSTED",
+      "transport": "OK",
+      "expectedProducer": "SIGNED_RESULT",
+      "expectedConsumer": "INCONCLUSIVE"
+    },
+    {
+      "id": "incompatible-major-preserves-baseline",
+      "kind": "VALIDATION",
+      "remoteMajor": 2,
+      "remoteMinor": 0,
+      "authority": "PASSED_TRUSTED",
+      "transport": "OK",
+      "expectedProducer": "CONTRACT_INCOMPATIBLE",
+      "expectedConsumer": "INCONCLUSIVE"
+    }
+  ]
+}

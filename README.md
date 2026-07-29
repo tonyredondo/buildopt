@@ -70,6 +70,7 @@ From the repository root:
 ./dev/check-commit-atomicity
 ./dev/check-beta-benchmark
 ./dev/check-test-optimization-openapi
+./dev/check-test-optimization-integration
 ./dev/check-buildopt-cli
 ./dev/check-local-gateway
 ./dev/check-session-ingest

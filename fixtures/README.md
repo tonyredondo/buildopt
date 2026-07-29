@@ -25,3 +25,7 @@ or the protected validation queue.
 fixture. Its schedule, manual recovery, repository concurrency, trusted
 default-branch boundary, read-only permissions, and single-lease command are
 checked together with the executable queue/budget/recovery scenarios.
+
+`test-optimization/` contains the shared `F0-033` producer/consumer artifact
+bytes. The integration corpus binds their exact size and digest and proves
+that corrupt or caller-selected paths cannot satisfy validation.

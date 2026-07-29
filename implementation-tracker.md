@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — the private-beta benchmark now has a digest-bound seed, runner, object/load matrix, Tier 1 build classes, 15 fault classes, and strict result requirements; `F0-033` is next for Test Optimization integration<br>
+**Overall status:** `DOING` — Test Optimization now shares executable grant, revocation, artifact, polling, retry, trust, and compatibility fixtures with Build Optimization; `F0-034` is next for PatchBundle application semantics<br>
 **Current phase:** Phase 0 — contracts, fixtures, and walking skeleton<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
 **Last updated:** 2026-07-29<br>
@@ -127,7 +127,8 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 44 | `F0-030` | Define executable CI scheduling, isolation, lifecycle, and recovery | `DONE` | Codex |
 | 45 | `F0-031` | Decide and test `CommitDecision + COMMITTED` atomicity | `DONE` | Codex |
 | 46 | `F0-032` | Define the reproducible beta benchmark and fault matrix | `DONE` | Codex |
-| 47 | `F0-033` | Define and exercise Test Optimization integration | `TODO` | — |
+| 47 | `F0-033` | Define and exercise Test Optimization integration | `DONE` | Codex |
+| 48 | `F0-034` | Define PatchBundle format, path safety, and recovery | `TODO` | — |
 
 ---
 
@@ -162,7 +163,7 @@ These states represent implementation and evidence, not the `Accepted` state of 
 | `HERMETIC-SCOPE-001` | Task-specific producer and coverage/fault fixtures | C1 hermetic path | `TODO` | — | — |
 | `BANDIT-001` | Arms/features/reward, replay, A/A, delayed outcomes, drift, and rollback | B bandit | `TODO` | — | — |
 | `PATCH-BUNDLE-001` | Parser/applier, golden/negative vectors, and idempotency | C4 materialization | `TODO` | — | — |
-| `TESTOPT-API-001` | Producer/consumer fixtures, trust, grants, artifacts, retries, and N/N-1 | Test grants and patches with tests | `TODO` | — | — |
+| `TESTOPT-API-001` | Producer/consumer fixtures, trust, grants, artifacts, retries, and N/N-1 | Test grants and patches with tests | `DONE` | Codex | `E-043`, `E-046..049`, `E-054` |
 | `DEPLOY-001` | Installable artifacts, upgrade/uninstall, and end-to-end fixture | A1 pilot | `TODO` | — | — |
 | `OPS-001/A1` | Benchmark/fault/soak, readiness, revocation, bypass, and runbooks | A1 pilot | `TODO` | — | — |
 | `OPS-001/B` | GitHub adapter with an `EXACT` queue | B | `TODO` | — | — |
@@ -273,7 +274,7 @@ Do not mark `ENV-003`, `ENV-006`, `ENV-010`, or `ENV-011` complete because a “
 | `F0-030` | `ci-orchestration-v1.md` | `CI-ORCH-001` | `DONE` | Codex | `E-051`: GitHub shape + scheduling/budget/recovery conformance |
 | `F0-031` | `CommitDecision + COMMITTED` atomicity ADR | `CACHE-008`, `STORAGE-001` | `DONE` | Codex | `E-052`: ADR 0002 + 14 transaction fault/replay cases |
 | `F0-032` | `benchmark-beta-v1.md` and `beta-v1.yaml` | `OPS-001` | `DONE` | Codex | `E-053`: pinned seed/runner/load/fault/result contract |
-| `F0-033` | `test-optimization-integration-v1.md` | `TESTOPT-API-001` | `TODO` | — | Contract + fixtures for both products |
+| `F0-033` | `test-optimization-integration-v1.md` | `TESTOPT-API-001` | `DONE` | Codex | `E-054`: 16 shared producer/consumer fixtures |
 | `F0-034` | `patch-bundle-v1.md` | `PATCH-BUNDLE-001` | `TODO` | — | Format, path safety, and recovery |
 | `F0-035` | Bandit policy/replay specification | `BANDIT-001` | `TODO` | — | Arms, buckets, reward, and reset |
 | `F0-036` | Capability matrix v1 | `COMPAT-001` | `TODO` | — | Exact/Approximate/Unavailable by combination |
@@ -624,6 +625,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-051` | 2026-07-29 | `F0-030` / `CI-ORCH-001` | Executable [`CI orchestration v1`](./specs/ci-orchestration-v1.md) with a machine-readable [12-case corpus](./specs/ci-orchestration-v1.json), inert protected-default-branch [GitHub validation fixture](./fixtures/ci-orchestration/github-validation.yml), and [`dev/check-ci-orchestration`](./dev/check-ci-orchestration); the contract keeps one normal arm authoritative, leases at most one trusted validation per repository, fixes 15-minute scheduling plus manual recovery, requires seven independent writable identities, reserves at most 10%/24h and 5%/7d without borrowing, and releases unused reservation on completion, cancellation, timeout, unknown task boundary, or reconciled dead owner; cases reject dual authoritative arms, forks, budget exhaustion, concurrent leases, and shared state while preserving the originating job; lifecycle states are cross-checked against the F0-014 schema, the fixture passed actionlint, and focused/race/vet/layout/normative/lint checks passed locally | `DONE`: `CI-ORCH-001` is executable without installing a live customer workflow or pretending validation outputs control the normal job; `F0-031` is next for the storage transaction decision |
 | `E-052` | 2026-07-29 | `F0-031` | Accepted [`ADR 0002`](./adr/0002-single-node-commit-atomicity.md), machine-readable [transaction fault plan](./specs/commit-atomicity-v1.json), and executable [`dev/check-commit-atomicity`](./dev/check-commit-atomicity); the decision makes `cache.sqlite` the sole visibility authority, persists the immutable decision plus every object visibility row in one all-or-nothing transaction, keeps `control.sqlite` as a repairable digest index, and forbids per-object visibility, cross-database authorization, or decision reconstruction from blobs; 14 cases cover happy multi-object commit, exact replay, changed-payload conflict, incomplete/expired/revoked authority, three pre-commit crash points, post-commit/audit-index failure, missing/corrupt blobs, and first-writer CAS loss; focused schema/model checks, nested race/vet, layout, normative layout, JSON parsing, and locked lint passed locally | `DONE`: Phase 0 has an implementation-independent transaction contract and test plan; the real WAL/filesystem backend must rerun equivalent cases before `A0-G05`, while `F0-032` is next |
 | `E-053` | 2026-07-29 | `F0-032` | Versioned [`private-beta benchmark v1`](./specs/benchmark-beta-v1.md), JSON-compatible YAML [`beta-v1`](./benchmarks/beta-v1.yaml), and executable [`dev/check-beta-benchmark`](./dev/check-beta-benchmark); the manifest binds deterministic seed `2026072901`, the exact golden-runner and metrics-catalog digests, Gradle/JDK versions, 1/8/32 clients, a deterministic 10,000-object 70% 64-KiB / 20% 1-MiB / 8% 10-MiB / 2% 100-MiB cycle, cold/warm-70/60-minute/eight-hour phases, small/medium/large build classes, 15 named restart/cancel/corruption/network/SQLite/lease/disk/revocation/death faults with fail-safe outcomes, 19 mandatory report fields, and 10 alert classes; strict parsing and repository digest binding produced manifest digest `sha256:cf032b976164e8162a782a2266b1ae8bed3c0b876d3699083c636c87bd299d3d`, while focused/race/vet/layout/normative/lint checks passed locally | `DONE`: the reproducible workload and evidence surface are fixed; no sustained/soak measurement was invented, so `OPS-001/A1` remains open and `F0-033` is next |
+| `E-054` | 2026-07-29 | `F0-033` / `TESTOPT-API-001` | Versioned [`Test Optimization integration v1`](./specs/test-optimization-integration-v1.md), shared [16-case producer/consumer corpus](./specs/test-optimization-integration-v1.json), exact synthetic [artifact bytes](./fixtures/test-optimization/README.md), and composite [`dev/check-test-optimization-integration`](./dev/check-test-optimization-integration); fixtures cover current/N-1 signed grants, missing/expired/untrusted authority, revoked or digest-mismatched status, unavailable status, delayed polling, exact replay, changed-payload conflict, corrupt bytes, arbitrary caller paths, failed/inconclusive results, and incompatible major, always preserving the normal baseline; the valid 26-byte artifact matched its declared digest while the corrupt artifact differed, and the same command passed the OpenAPI mock, strict signed schemas, real Go/Java Ed25519/JCS vectors, common HTTP semantics, generated Go/Java clients, nested race/vet, layout, normative layout, and locked lint locally | `DONE`: the deployable producer/consumer boundary is fail-closed and `TESTOPT-API-001` is closed without transferring test ownership to Build Optimization; `F0-034` is next |
 
 ---
 
@@ -631,6 +633,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-29 | Closed `F0-033` and `TESTOPT-API-001`: added 16 shared grant/status/validation/artifact/retry/trust/version cases and composed every existing API, crypto, schema, semantics, and generated-client suite; moved `F0-034` next | Codex |
 | 2026-07-29 | Closed `F0-032`: materialized the digest-bound benchmark seed, exact runner, load/object/fixture phases, 15-fault matrix, result fields, and alert surface with strict conformance; moved `F0-033` next without claiming unexecuted soak evidence | Codex |
 | 2026-07-29 | Closed `F0-031`: accepted ADR 0002 and added 14 executable all-or-nothing, crash, replay, CAS, corruption, and control-index reconciliation cases; moved `F0-032` next without claiming the later WAL storage implementation complete | Codex |
 | 2026-07-29 | Closed `F0-030` and `CI-ORCH-001`: added the protected GitHub validation shape and 12 executable authority, trust, isolation, budget, cancellation, and dead-owner cases; moved `F0-031` next without activating a customer workflow | Codex |

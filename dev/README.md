@@ -434,6 +434,20 @@ grant status, delayed validation submission, and final polling through a
 request/response-validating mock. It also proves exact replay and rejects an
 idempotency key reused with another payload.
 
+## Test Optimization integration validation
+
+Run the full shared producer/consumer conformance surface for `F0-033`:
+
+```bash
+./dev/check-test-optimization-integration
+```
+
+Sixteen fixtures cover current/N-1 grants, missing/expired/untrusted authority,
+revocation and status failures, delayed polling, exact and conflicting
+retries, corrupt or caller-path artifacts, failed/inconclusive results, and an
+incompatible major. The command composes those cases with the OpenAPI,
+signed-schema, crypto, HTTP-semantics, and generated-client suites.
+
 ## Metrics catalog validation
 
 Validate the machine-readable `F0-024` catalog and its private-beta measurement
