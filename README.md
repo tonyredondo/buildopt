@@ -2,7 +2,7 @@
 
 Monorepo for the autonomous Gradle build optimization platform. The product observes real builds, applies only qualified and reversible optimizations, preserves Gradle behavior as the baseline, and measures net time savings inside the neutral measurement envelope.
 
-The repository is in **Phase 0**. It defines technical ownership and module boundaries, locked development toolchains, and the initial executable observability and local-event contracts; it does not yet contain active optimizations or distributable artifacts.
+The repository is in **Phase 0**. It defines technical ownership and module boundaries, locked development toolchains, the initial executable observability and local-event contracts, and a verifiable Linux AMD64 release bundle; it does not yet contain active optimizations or a customer installation lifecycle.
 
 ## Sources of truth
 
@@ -68,15 +68,18 @@ From the repository root:
 ./dev/test-protobuf-toolchains
 ./dev/test-rust-toolchain
 ./dev/test-lint-toolchains
+./dev/test-supply-chain-toolchains
 ./dev/test-golden-lane-container
 ./dev/run --toolchain go -- ./dev/check-go-toolchain
 ./dev/check-rust-toolchain --verify-manifest
 ./dev/check-lint-toolchains
+./dev/check-supply-chain-toolchains
+./dev/check-release-package
 ./dev/run -- ./dev/check-jvm-release
 ./dev/check-golden-lane --static
 ```
 
-The commands validate the repository and Phase 0 normative-package layouts, the first Draft 2020-12 contract and its positive/negative fixtures, reproducible project-local Protobuf tooling and the local task-event channel with Go/Java Unix-socket round trips, the real `buildopt run --` passthrough binary and its Linux process/signal contract, the authenticated neutral loopback gateway and Gradle plugin handshake with Configuration Cache reuse, authenticated idempotent session ingest into the real `buildopt-server`, atomic schema-valid `BUILD_SESSION v1` JSON export, the first parallel Gradle correlation fixture, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, and actionlint provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, repository shell scripts, an actionlint workflow smoke fixture, and golden lane configuration and checksums.
+The commands validate the repository and Phase 0 normative-package layouts, the first Draft 2020-12 contract and its positive/negative fixtures, reproducible project-local Protobuf tooling and the local task-event channel with Go/Java Unix-socket round trips, the real `buildopt run --` passthrough binary and its Linux process/signal contract, the authenticated neutral loopback gateway and Gradle plugin handshake with Configuration Cache reuse, authenticated idempotent session ingest into the real `buildopt-server`, atomic schema-valid `BUILD_SESSION v1` JSON export, the first parallel Gradle correlation fixture, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, actionlint, Cosign, and Syft provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, deterministic signed release bundles with SPDX and provenance, repository shell scripts, an actionlint workflow smoke fixture, and golden lane configuration and checksums.
 
 Project-local smoke tests:
 
@@ -91,6 +94,9 @@ Project-local smoke tests:
 ./dev/bootstrap --toolchain shellcheck
 ./dev/bootstrap --toolchain actionlint
 ./dev/check-lint-toolchains
+./dev/bootstrap --toolchain cosign
+./dev/bootstrap --toolchain syft
+./dev/check-supply-chain-toolchains
 ```
 
 Smoke test inside the pinned image:

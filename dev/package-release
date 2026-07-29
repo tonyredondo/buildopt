@@ -1,0 +1,473 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_usage() {
+    printf 'usage: %s --version <semver> --output <directory> --signing-key <cosign.key> --verification-key <cosign.pub>\n' "$0"
+}
+
+buildopt_version=
+buildopt_output=
+buildopt_signing_key=
+buildopt_verification_key=
+while (($# > 0)); do
+    case "$1" in
+        --version)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_version=$2
+            shift 2
+            ;;
+        --output)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_output=$2
+            shift 2
+            ;;
+        --signing-key)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_signing_key=$2
+            shift 2
+            ;;
+        --verification-key)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_verification_key=$2
+            shift 2
+            ;;
+        --help)
+            buildopt_usage
+            exit 0
+            ;;
+        *)
+            buildopt_usage >&2
+            exit 64
+            ;;
+    esac
+done
+
+if [[ ! "${buildopt_version}" =~ ^(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)(-[0-9A-Za-z][0-9A-Za-z.-]*)?([+][0-9A-Za-z][0-9A-Za-z.-]*)?$ ]] ||
+    [[ -z "${buildopt_output}" ]] ||
+    [[ -z "${buildopt_signing_key}" ]] ||
+    [[ -z "${buildopt_verification_key}" ]]; then
+    buildopt_usage >&2
+    exit 64
+fi
+if [[ -z "${COSIGN_PASSWORD:-}" ]]; then
+    printf 'COSIGN_PASSWORD must be set for non-interactive release signing\n' >&2
+    exit 1
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_lock="${buildopt_script_dir}/toolchains.lock.yaml"
+buildopt_run="${buildopt_script_dir}/run"
+buildopt_verify="${buildopt_script_dir}/verify-release"
+
+for buildopt_command in \
+    awk \
+    chmod \
+    cp \
+    date \
+    dirname \
+    find \
+    git \
+    gzip \
+    jq \
+    mkdir \
+    mktemp \
+    mv \
+    realpath \
+    rm \
+    sed \
+    sha256sum \
+    stat \
+    tar; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required release-packaging command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+if [[ ! -f "${buildopt_signing_key}" ]] ||
+    [[ ! -f "${buildopt_verification_key}" ]]; then
+    printf 'release signing and verification keys must be regular files\n' >&2
+    exit 1
+fi
+buildopt_signing_key=$(realpath -e -- "${buildopt_signing_key}")
+buildopt_verification_key=$(realpath -e -- "${buildopt_verification_key}")
+buildopt_key_mode=$(stat -c '%a' -- "${buildopt_signing_key}")
+if [[ ! "${buildopt_key_mode}" =~ ^[0-7]{3,4}$ ]] ||
+    ((((8#${buildopt_key_mode}) & 8#077) != 0)); then
+    printf 'release signing key must not be accessible by group or other users\n' >&2
+    exit 1
+fi
+if [[ ! -f "${buildopt_lock}" ]]; then
+    printf 'missing toolchain lock: %s\n' "${buildopt_lock}" >&2
+    exit 70
+fi
+
+buildopt_source_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ -n "${buildopt_source_status}" ]]; then
+    printf 'release packaging requires a clean source checkout\n' >&2
+    exit 1
+fi
+buildopt_source_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_source_epoch=$(git -C "${buildopt_repo_root}" show -s --format=%ct HEAD)
+if [[ ! "${buildopt_source_revision}" =~ ^[0-9a-f]{40}$ ]] ||
+    [[ ! "${buildopt_source_epoch}" =~ ^[0-9]+$ ]]; then
+    printf 'cannot resolve immutable release source provenance\n' >&2
+    exit 1
+fi
+buildopt_created_at=$(
+    date -u --date="@${buildopt_source_epoch}" '+%Y-%m-%dT%H:%M:%SZ'
+)
+
+buildopt_output=$(realpath -m -- "${buildopt_output}")
+if [[ "${buildopt_output}" == "/" ]] || [[ -e "${buildopt_output}" ]]; then
+    printf 'release output must be a new, non-root path: %s\n' \
+        "${buildopt_output}" >&2
+    exit 1
+fi
+buildopt_output_parent=$(dirname -- "${buildopt_output}")
+mkdir -p -- "${buildopt_output_parent}"
+
+umask 077
+buildopt_work_root=$(
+    mktemp -d "${buildopt_output_parent}/.buildopt-release.XXXXXX"
+)
+buildopt_cleanup() {
+    if [[ -n "${buildopt_work_root:-}" ]] &&
+        [[ "${buildopt_work_root}" == "${buildopt_output_parent}/.buildopt-release."* ]] &&
+        [[ -d "${buildopt_work_root}" ]]; then
+        rm -rf -- "${buildopt_work_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_base="buildopt-${buildopt_version}-linux-amd64"
+buildopt_archive="${buildopt_base}.tar.gz"
+buildopt_sbom="${buildopt_base}.spdx.json"
+buildopt_provenance="${buildopt_base}.provenance.json"
+buildopt_release="${buildopt_base}.release.json"
+buildopt_checksums="${buildopt_base}.sha256"
+buildopt_signature="${buildopt_base}.sha256.sigstore.json"
+buildopt_payload_parent="${buildopt_work_root}/payload"
+buildopt_package_root="${buildopt_payload_parent}/${buildopt_base}"
+buildopt_result="${buildopt_work_root}/result"
+mkdir -p \
+    "${buildopt_package_root}/bin" \
+    "${buildopt_package_root}/lib" \
+    "${buildopt_result}"
+
+(
+    cd -- "${buildopt_repo_root}"
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64 \
+        "${buildopt_run}" --toolchain go -- \
+        go build \
+        -mod=readonly \
+        -buildvcs=false \
+        -trimpath \
+        -o "${buildopt_package_root}/bin/buildopt" \
+        ./cmd/buildopt
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64 \
+        "${buildopt_run}" --toolchain go -- \
+        go build \
+        -mod=readonly \
+        -buildvcs=false \
+        -trimpath \
+        -o "${buildopt_package_root}/bin/buildopt-server" \
+        ./cmd/buildopt-server
+
+    "${buildopt_run}" -- \
+        "${buildopt_repo_root}/gradlew" \
+        --no-daemon \
+        --offline \
+        --stacktrace \
+        --warning-mode=fail \
+        "-PbuildoptVersion=${buildopt_version}" \
+        :jvm:gradle-plugin:clean \
+        :jvm:jvm-agent:clean \
+        :jvm:gradle-plugin:check \
+        :jvm:jvm-agent:check \
+        :jvm:gradle-plugin:jar \
+        :jvm:jvm-agent:jar
+)
+
+buildopt_plugin_source="${buildopt_repo_root}/jvm/gradle-plugin/build/libs/buildopt-gradle-plugin-${buildopt_version}.jar"
+buildopt_agent_source="${buildopt_repo_root}/jvm/jvm-agent/build/libs/buildopt-jvm-agent-${buildopt_version}.jar"
+if [[ ! -s "${buildopt_plugin_source}" ]] ||
+    [[ ! -s "${buildopt_agent_source}" ]]; then
+    printf 'versioned JVM release artifacts are missing\n' >&2
+    exit 1
+fi
+cp -- \
+    "${buildopt_plugin_source}" \
+    "${buildopt_package_root}/lib/buildopt-gradle-plugin-${buildopt_version}.jar"
+cp -- \
+    "${buildopt_agent_source}" \
+    "${buildopt_package_root}/lib/buildopt-jvm-agent-${buildopt_version}.jar"
+chmod 0755 \
+    "${buildopt_package_root}" \
+    "${buildopt_package_root}/bin" \
+    "${buildopt_package_root}/lib" \
+    "${buildopt_package_root}/bin/buildopt" \
+    "${buildopt_package_root}/bin/buildopt-server"
+chmod 0644 "${buildopt_package_root}/lib/"*.jar
+
+TZ=UTC tar \
+    --sort=name \
+    --format=posix \
+    --mtime="@${buildopt_source_epoch}" \
+    --owner=0 \
+    --group=0 \
+    --numeric-owner \
+    --pax-option=delete=atime,delete=ctime \
+    --create \
+    --file=- \
+    --directory="${buildopt_payload_parent}" \
+    "${buildopt_base}" |
+    gzip -n >"${buildopt_result}/${buildopt_archive}"
+chmod 0644 "${buildopt_result}/${buildopt_archive}"
+buildopt_archive_sha256=$(
+    sha256sum "${buildopt_result}/${buildopt_archive}" | awk '{print $1}'
+)
+
+buildopt_raw_sbom="${buildopt_work_root}/raw-spdx.json"
+SYFT_CHECK_FOR_APP_UPDATE=false \
+SYFT_PARALLELISM=1 \
+    "${buildopt_run}" --toolchain syft -- \
+    syft scan \
+    "dir:${buildopt_package_root}" \
+    --source-name "${buildopt_base}" \
+    --source-version "${buildopt_version}" \
+    --output "spdx-json=${buildopt_raw_sbom}" \
+    --quiet
+jq -S \
+    --arg buildopt_namespace \
+        "https://buildopt.dev/spdx/${buildopt_base}/${buildopt_archive_sha256}" \
+    --arg buildopt_created_at "${buildopt_created_at}" \
+    '
+        .documentNamespace = $buildopt_namespace |
+        .creationInfo.created = $buildopt_created_at
+    ' "${buildopt_raw_sbom}" >"${buildopt_result}/${buildopt_sbom}"
+chmod 0644 "${buildopt_result}/${buildopt_sbom}"
+buildopt_sbom_sha256=$(
+    sha256sum "${buildopt_result}/${buildopt_sbom}" | awk '{print $1}'
+)
+
+buildopt_gradle_url=$(
+    awk -F= '$1 == "distributionUrl" {print $2; exit}' \
+        "${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.properties" |
+        sed 's/\\:/:/g'
+)
+buildopt_gradle_sha256=$(
+    awk -F= '$1 == "distributionSha256Sum" {print $2; exit}' \
+        "${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.properties"
+)
+if [[ ! "${buildopt_gradle_url}" =~ ^https:// ]] ||
+    [[ ! "${buildopt_gradle_sha256}" =~ ^[0-9a-f]{64}$ ]]; then
+    printf 'Gradle Wrapper release provenance is malformed\n' >&2
+    exit 1
+fi
+buildopt_dependencies=$(
+    jq -ce \
+        --arg buildopt_gradle_url "${buildopt_gradle_url}" \
+        --arg buildopt_gradle_sha256 "${buildopt_gradle_sha256}" \
+        '
+            (
+                [
+                    .artifacts[] |
+                    select(
+                        .id == "go" or
+                        .id == "temurin-jdk-21" or
+                        .id == "cosign" or
+                        .id == "syft"
+                    ) |
+                    {
+                        name: .id,
+                        uri: .url,
+                        digest: {sha256: .sha256}
+                    }
+                ] +
+                [
+                    {
+                        name: "gradle-wrapper",
+                        uri: $buildopt_gradle_url,
+                        digest: {sha256: $buildopt_gradle_sha256}
+                    }
+                ]
+            ) |
+            sort_by(.name)
+        ' "${buildopt_lock}"
+)
+jq -S -n \
+    --arg buildopt_archive "${buildopt_archive}" \
+    --arg buildopt_archive_sha256 "${buildopt_archive_sha256}" \
+    --arg buildopt_sbom "${buildopt_sbom}" \
+    --arg buildopt_sbom_sha256 "${buildopt_sbom_sha256}" \
+    --arg buildopt_version "${buildopt_version}" \
+    --arg buildopt_source_revision "${buildopt_source_revision}" \
+    --arg buildopt_source_epoch "${buildopt_source_epoch}" \
+    --argjson buildopt_dependencies "${buildopt_dependencies}" \
+    '{
+        "_type": "https://in-toto.io/Statement/v1",
+        subject: [
+            {
+                name: $buildopt_archive,
+                digest: {sha256: $buildopt_archive_sha256}
+            },
+            {
+                name: $buildopt_sbom,
+                digest: {sha256: $buildopt_sbom_sha256}
+            }
+        ],
+        predicateType: "https://slsa.dev/provenance/v1",
+        predicate: {
+            buildDefinition: {
+                buildType: "https://buildopt.dev/buildtypes/release/v1",
+                externalParameters: {
+                    version: $buildopt_version,
+                    platform: "linux-amd64"
+                },
+                internalParameters: {
+                    sourceDateEpoch: ($buildopt_source_epoch | tonumber)
+                },
+                resolvedDependencies: (
+                    [
+                        {
+                            name: "buildopt-source",
+                            uri: (
+                                "git+https://github.com/tonyredondo/buildopt@" +
+                                $buildopt_source_revision
+                            ),
+                            digest: {gitCommit: $buildopt_source_revision}
+                        }
+                    ] +
+                    $buildopt_dependencies
+                )
+            },
+            runDetails: {
+                builder: {
+                    id: (
+                        "https://github.com/tonyredondo/buildopt/blob/" +
+                        $buildopt_source_revision +
+                        "/dev/package-release"
+                    )
+                }
+            }
+        }
+    }' >"${buildopt_result}/${buildopt_provenance}"
+chmod 0644 "${buildopt_result}/${buildopt_provenance}"
+buildopt_provenance_sha256=$(
+    sha256sum "${buildopt_result}/${buildopt_provenance}" | awk '{print $1}'
+)
+buildopt_public_key_sha256=$(
+    sha256sum "${buildopt_verification_key}" | awk '{print $1}'
+)
+
+jq -S -n \
+    --arg buildopt_version "${buildopt_version}" \
+    --arg buildopt_base "${buildopt_base}" \
+    --arg buildopt_archive "${buildopt_archive}" \
+    --arg buildopt_archive_sha256 "${buildopt_archive_sha256}" \
+    --arg buildopt_sbom "${buildopt_sbom}" \
+    --arg buildopt_sbom_sha256 "${buildopt_sbom_sha256}" \
+    --arg buildopt_provenance "${buildopt_provenance}" \
+    --arg buildopt_provenance_sha256 "${buildopt_provenance_sha256}" \
+    --arg buildopt_checksums "${buildopt_checksums}" \
+    --arg buildopt_signature "${buildopt_signature}" \
+    --arg buildopt_public_key_sha256 "${buildopt_public_key_sha256}" \
+    --arg buildopt_source_revision "${buildopt_source_revision}" \
+    --arg buildopt_source_epoch "${buildopt_source_epoch}" \
+    --arg buildopt_created_at "${buildopt_created_at}" \
+    '{
+        schemaVersion: "buildopt.dev/release-bundle/v1",
+        version: $buildopt_version,
+        platform: {
+            operatingSystem: "linux",
+            architecture: "amd64"
+        },
+        packageRoot: $buildopt_base,
+        artifacts: {
+            archive: {
+                name: $buildopt_archive,
+                sha256: $buildopt_archive_sha256
+            },
+            sbom: {
+                name: $buildopt_sbom,
+                format: "SPDX-2.3",
+                sha256: $buildopt_sbom_sha256
+            },
+            provenance: {
+                name: $buildopt_provenance,
+                predicateType: "https://slsa.dev/provenance/v1",
+                sha256: $buildopt_provenance_sha256
+            }
+        },
+        integrity: {
+            algorithm: "sha256",
+            checksums: $buildopt_checksums,
+            signature: $buildopt_signature,
+            signatureFormat: "application/vnd.dev.sigstore.bundle.v0.3+json",
+            publicKeySha256: $buildopt_public_key_sha256
+        },
+        source: {
+            repository: "https://github.com/tonyredondo/buildopt",
+            revision: $buildopt_source_revision,
+            sourceDateEpoch: ($buildopt_source_epoch | tonumber),
+            createdAt: $buildopt_created_at
+        }
+    }' >"${buildopt_result}/${buildopt_release}"
+chmod 0644 "${buildopt_result}/${buildopt_release}"
+
+(
+    cd -- "${buildopt_result}"
+    sha256sum \
+        "${buildopt_archive}" \
+        "${buildopt_sbom}" \
+        "${buildopt_provenance}" \
+        "${buildopt_release}" \
+        >"${buildopt_checksums}"
+)
+chmod 0644 "${buildopt_result}/${buildopt_checksums}"
+printf '%s\n' \
+    '{"mediaType":"application/vnd.dev.sigstore.signingconfig.v0.2+json"}' \
+    >"${buildopt_work_root}/local-signing-config.json"
+
+if ! COSIGN_PASSWORD="${COSIGN_PASSWORD}" \
+    "${buildopt_run}" --toolchain cosign -- \
+    cosign sign-blob \
+    --signing-config "${buildopt_work_root}/local-signing-config.json" \
+    --bundle "${buildopt_result}/${buildopt_signature}" \
+    --yes \
+    --key "${buildopt_signing_key}" \
+    "${buildopt_result}/${buildopt_checksums}" >/dev/null; then
+    printf 'cosign could not sign the release checksum manifest\n' >&2
+    exit 1
+fi
+chmod 0644 "${buildopt_result}/${buildopt_signature}"
+
+"${buildopt_verify}" \
+    --bundle "${buildopt_result}" \
+    --key "${buildopt_verification_key}"
+
+chmod 0755 "${buildopt_result}"
+mv -- "${buildopt_result}" "${buildopt_output}"
+printf 'F0-038 release package OK: %s (%s)\n' \
+    "${buildopt_output}" \
+    "${buildopt_source_revision}"

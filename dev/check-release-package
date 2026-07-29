@@ -1,0 +1,282 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_package="${buildopt_script_dir}/package-release"
+buildopt_verify="${buildopt_script_dir}/verify-release"
+buildopt_tools_root=${BUILDOPT_TOOLS_ROOT:-"${buildopt_repo_root}/.tools"}
+buildopt_gradle_home=${GRADLE_USER_HOME:-"${buildopt_repo_root}/.tools/gradle-user-home/local"}
+buildopt_version=0.1.0-dev.1
+buildopt_base="buildopt-${buildopt_version}-linux-amd64"
+
+for buildopt_command in \
+    chmod \
+    cmp \
+    cp \
+    dirname \
+    git \
+    jq \
+    mkdir \
+    mktemp \
+    mv \
+    rm \
+    sha256sum \
+    sort; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required release-package test command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+buildopt_test_root=$(mktemp -d)
+buildopt_cleanup() {
+    if [[ -n "${buildopt_test_root:-}" ]] &&
+        [[ "${buildopt_test_root}" == /tmp/* ]] &&
+        [[ -d "${buildopt_test_root}" ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_source="${buildopt_test_root}/source"
+mkdir "${buildopt_source}"
+while IFS= read -r -d '' buildopt_path; do
+    if [[ ! -e "${buildopt_repo_root}/${buildopt_path}" ]] &&
+        [[ ! -L "${buildopt_repo_root}/${buildopt_path}" ]]; then
+        continue
+    fi
+    mkdir -p -- "${buildopt_source}/$(dirname -- "${buildopt_path}")"
+    cp -a -- \
+        "${buildopt_repo_root}/${buildopt_path}" \
+        "${buildopt_source}/${buildopt_path}"
+done < <(
+    git -C "${buildopt_repo_root}" \
+        ls-files -z --cached --others --exclude-standard
+)
+git -C "${buildopt_source}" init --quiet
+git -C "${buildopt_source}" add -A
+GIT_AUTHOR_DATE='2026-07-29T00:00:00Z' \
+GIT_COMMITTER_DATE='2026-07-29T00:00:00Z' \
+    git -C "${buildopt_source}" \
+    -c user.name=BuildOpt \
+    -c user.email=buildopt@example.invalid \
+    commit --quiet -m 'F0-038 release fixture'
+
+COSIGN_PASSWORD='buildopt-f0-038-test-only' \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_source}/dev/run" --toolchain cosign -- \
+    cosign generate-key-pair \
+    --output-key-prefix "${buildopt_test_root}/release" >/dev/null
+
+buildopt_run_package() {
+    local buildopt_output=$1
+
+    COSIGN_PASSWORD='buildopt-f0-038-test-only' \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_source}/dev/package-release" \
+        --version "${buildopt_version}" \
+        --output "${buildopt_output}" \
+        --signing-key "${buildopt_test_root}/release.key" \
+        --verification-key "${buildopt_test_root}/release.pub"
+}
+
+buildopt_bundle_one="${buildopt_test_root}/bundle-one"
+buildopt_bundle_two="${buildopt_test_root}/bundle-two"
+buildopt_run_package "${buildopt_bundle_one}"
+buildopt_run_package "${buildopt_bundle_two}"
+
+for buildopt_suffix in \
+    tar.gz \
+    spdx.json \
+    provenance.json \
+    release.json \
+    sha256; do
+    if ! cmp -s \
+        "${buildopt_bundle_one}/${buildopt_base}.${buildopt_suffix}" \
+        "${buildopt_bundle_two}/${buildopt_base}.${buildopt_suffix}"; then
+        printf 'repeated release packaging changed %s\n' \
+            "${buildopt_suffix}" >&2
+        exit 1
+    fi
+done
+buildopt_signed_digest_one=$(
+    jq -r '.messageSignature.messageDigest.digest' \
+        "${buildopt_bundle_one}/${buildopt_base}.sha256.sigstore.json"
+)
+buildopt_signed_digest_two=$(
+    jq -r '.messageSignature.messageDigest.digest' \
+        "${buildopt_bundle_two}/${buildopt_base}.sha256.sigstore.json"
+)
+if [[ -z "${buildopt_signed_digest_one}" ]] ||
+    [[ "${buildopt_signed_digest_one}" != "${buildopt_signed_digest_two}" ]]; then
+    printf 'repeated signatures do not bind the same checksum manifest\n' >&2
+    exit 1
+fi
+
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_verify}" \
+    --bundle "${buildopt_bundle_one}" \
+    --key "${buildopt_test_root}/release.pub" >/dev/null
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_verify}" \
+    --bundle "${buildopt_bundle_two}" \
+    --key "${buildopt_test_root}/release.pub" >/dev/null
+
+buildopt_expect_verify_failure() {
+    local buildopt_label=$1
+    local buildopt_bundle=$2
+    local buildopt_key=${3:-"${buildopt_test_root}/release.pub"}
+    local buildopt_exit
+
+    set +e
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        "${buildopt_verify}" \
+        --bundle "${buildopt_bundle}" \
+        --key "${buildopt_key}" >/dev/null 2>&1
+    buildopt_exit=$?
+    set -e
+    if ((buildopt_exit != 1)); then
+        printf '%s verification returned %s instead of 1\n' \
+            "${buildopt_label}" \
+            "${buildopt_exit}" >&2
+        exit 1
+    fi
+}
+
+cp -a "${buildopt_bundle_one}" "${buildopt_test_root}/tampered-archive"
+printf 'tamper\n' \
+    >>"${buildopt_test_root}/tampered-archive/${buildopt_base}.tar.gz"
+buildopt_expect_verify_failure \
+    "tampered archive" \
+    "${buildopt_test_root}/tampered-archive"
+
+cp -a "${buildopt_bundle_one}" "${buildopt_test_root}/tampered-signature"
+jq '.messageSignature.signature = ("A" + .messageSignature.signature[1:])' \
+    "${buildopt_test_root}/tampered-signature/${buildopt_base}.sha256.sigstore.json" \
+    >"${buildopt_test_root}/tampered-signature/changed.json"
+mv \
+    "${buildopt_test_root}/tampered-signature/changed.json" \
+    "${buildopt_test_root}/tampered-signature/${buildopt_base}.sha256.sigstore.json"
+buildopt_expect_verify_failure \
+    "tampered signature" \
+    "${buildopt_test_root}/tampered-signature"
+
+cp -a "${buildopt_bundle_one}" "${buildopt_test_root}/extra-entry"
+printf 'not covered\n' >"${buildopt_test_root}/extra-entry/extra"
+buildopt_expect_verify_failure \
+    "extra entry" \
+    "${buildopt_test_root}/extra-entry"
+
+COSIGN_PASSWORD='buildopt-f0-038-wrong-key' \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_source}/dev/run" --toolchain cosign -- \
+    cosign generate-key-pair \
+    --output-key-prefix "${buildopt_test_root}/wrong" >/dev/null
+buildopt_expect_verify_failure \
+    "wrong trust root" \
+    "${buildopt_bundle_one}" \
+    "${buildopt_test_root}/wrong.pub"
+
+set +e
+"${buildopt_package}" >/dev/null 2>&1
+buildopt_package_usage_exit=$?
+"${buildopt_verify}" >/dev/null 2>&1
+buildopt_verify_usage_exit=$?
+COSIGN_PASSWORD='buildopt-f0-038-test-only' \
+    "${buildopt_source}/dev/package-release" \
+    --version invalid \
+    --output "${buildopt_test_root}/invalid-version" \
+    --signing-key "${buildopt_test_root}/release.key" \
+    --verification-key "${buildopt_test_root}/release.pub" \
+    >/dev/null 2>&1
+buildopt_version_exit=$?
+set -e
+if ((buildopt_package_usage_exit != 64)) ||
+    ((buildopt_verify_usage_exit != 64)) ||
+    ((buildopt_version_exit != 64)); then
+    printf 'unexpected release usage contract: %s/%s/%s\n' \
+        "${buildopt_package_usage_exit}" \
+        "${buildopt_verify_usage_exit}" \
+        "${buildopt_version_exit}" >&2
+    exit 1
+fi
+
+mkdir "${buildopt_test_root}/existing-output"
+set +e
+COSIGN_PASSWORD='buildopt-f0-038-test-only' \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+GRADLE_USER_HOME="${buildopt_gradle_home}" \
+    "${buildopt_source}/dev/package-release" \
+    --version "${buildopt_version}" \
+    --output "${buildopt_test_root}/existing-output" \
+    --signing-key "${buildopt_test_root}/release.key" \
+    --verification-key "${buildopt_test_root}/release.pub" \
+    >/dev/null 2>&1
+buildopt_existing_output_exit=$?
+printf 'dirty\n' >"${buildopt_source}/untracked-release-input"
+COSIGN_PASSWORD='buildopt-f0-038-test-only' \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+GRADLE_USER_HOME="${buildopt_gradle_home}" \
+    "${buildopt_source}/dev/package-release" \
+    --version "${buildopt_version}" \
+    --output "${buildopt_test_root}/dirty-output" \
+    --signing-key "${buildopt_test_root}/release.key" \
+    --verification-key "${buildopt_test_root}/release.pub" \
+    >/dev/null 2>&1
+buildopt_dirty_exit=$?
+rm -f -- "${buildopt_source}/untracked-release-input"
+chmod 0644 "${buildopt_test_root}/release.key"
+COSIGN_PASSWORD='buildopt-f0-038-test-only' \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+GRADLE_USER_HOME="${buildopt_gradle_home}" \
+    "${buildopt_source}/dev/package-release" \
+    --version "${buildopt_version}" \
+    --output "${buildopt_test_root}/permissive-key-output" \
+    --signing-key "${buildopt_test_root}/release.key" \
+    --verification-key "${buildopt_test_root}/release.pub" \
+    >/dev/null 2>&1
+buildopt_key_mode_exit=$?
+chmod 0600 "${buildopt_test_root}/release.key"
+COSIGN_PASSWORD='' \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+GRADLE_USER_HOME="${buildopt_gradle_home}" \
+    "${buildopt_source}/dev/package-release" \
+    --version "${buildopt_version}" \
+    --output "${buildopt_test_root}/password-output" \
+    --signing-key "${buildopt_test_root}/release.key" \
+    --verification-key "${buildopt_test_root}/release.pub" \
+    >/dev/null 2>&1
+buildopt_password_exit=$?
+set -e
+if ((buildopt_existing_output_exit != 1)) ||
+    ((buildopt_dirty_exit != 1)) ||
+    ((buildopt_key_mode_exit != 1)) ||
+    ((buildopt_password_exit != 1)); then
+    printf 'unexpected release safety contract: %s/%s/%s/%s\n' \
+        "${buildopt_existing_output_exit}" \
+        "${buildopt_dirty_exit}" \
+        "${buildopt_key_mode_exit}" \
+        "${buildopt_password_exit}" >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'release-package check changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'F0-038 release-package tests OK: reproducible payloads, signed checksums, SPDX, provenance, and tamper rejection\n'

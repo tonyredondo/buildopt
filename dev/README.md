@@ -23,7 +23,7 @@ Operating-system capabilities and externally supplied commands such as Docker, G
 
 ## Bootstrap
 
-`ENV-003` introduced the exact Temurin JDK 21 artifact required by the golden lane. `ENV-005` added the exact Go toolchain required by the core, `ENV-006` added exact Protobuf tooling, and `ENV-010` added the locked lint tools used by repository scripts and future workflows. Provision a supported target from the repository root:
+`ENV-003` introduced the exact Temurin JDK 21 artifact required by the golden lane. `ENV-005` added the exact Go toolchain required by the core, `ENV-006` added exact Protobuf tooling, `ENV-010` added the locked lint tools used by repository scripts and future workflows, and `ENV-011` added Cosign and Syft for verifiable releases. Provision a supported target from the repository root:
 
 ```bash
 ./dev/bootstrap --toolchain temurin-jdk-21
@@ -32,11 +32,13 @@ Operating-system capabilities and externally supplied commands such as Docker, G
 ./dev/bootstrap --toolchain buf
 ./dev/bootstrap --toolchain shellcheck
 ./dev/bootstrap --toolchain actionlint
+./dev/bootstrap --toolchain cosign
+./dev/bootstrap --toolchain syft
 ```
 
 The bootstrap downloads the immutable URL from the lock, verifies its SHA-256 before extraction, rejects unsafe archive paths, handles the locked binary, ZIP, `tar.gz`, and `tar.xz` layouts, runs target-specific version and runtime probes, and installs atomically under `.tools/toolchains/`. A second invocation verifies and reuses the existing installation without another download. It never uses `sudo` or modifies global tools.
 
-Set `BUILDOPT_TOOLS_ROOT` to keep the ignored tool state in another local directory. The repository lock remains the source of truth. `ENV-012` will extend this entrypoint to the other adopted toolchains and add the complete cleanup contract.
+Set `BUILDOPT_TOOLS_ROOT` to keep the ignored tool state in another local directory. The repository lock remains the source of truth. `ENV-012` retains ownership of the complete cleanup and uninstall contract.
 
 ## Project-local execution
 
@@ -84,6 +86,15 @@ Run either lint tool without depending on a global installation:
 ```
 
 For both tools, `dev/run` verifies the provisioned manifest and exact reported version, then prepends only that tool's repository-local `bin` directory for the child process. The parent shell and any global lint installation remain unchanged.
+
+Run either supply-chain tool without depending on a global installation:
+
+```bash
+./dev/run --toolchain cosign -- cosign version
+./dev/run --toolchain syft -- syft version
+```
+
+`dev/run` verifies exact Cosign 3.1.2 and Syft 1.50.0 identities before exposing only the selected binary to the child. Release signing uses an explicit local configuration and never treats a public transparency service as an implicit dependency.
 
 ## Go toolchain validation
 
@@ -273,6 +284,27 @@ The checker runs exact ShellCheck 0.11.0 over every executable script directly u
 
 This is provisioning and lint-smoke evidence for `ENV-010`; it does not create an authoritative CI workflow or close `F0-004`.
 
+## Supply-chain and release validation
+
+Provision the exact release tools and exercise the offline local-key profile:
+
+```bash
+./dev/bootstrap --toolchain cosign
+./dev/bootstrap --toolchain syft
+./dev/check-supply-chain-toolchains
+./dev/test-supply-chain-toolchains
+```
+
+The `ENV-011` checker uses a temporary test key to sign and verify a blob with Cosign 3.1.2, requires a Sigstore bundle v0.3 with no transparency-log or timestamp entries, and generates an SPDX 2.3 document with Syft 1.50.0. The synthetic suite proves checksum-verified binary and `tar.gz` provisioning, normalized layouts, idempotency, isolation from global tools, metadata drift rejection, usage codes, and child failure propagation without contacting upstream services.
+
+Exercise the complete `F0-038` bundle twice and run tamper cases:
+
+```bash
+./dev/check-release-package
+```
+
+The checker snapshots the current source into a temporary clean Git repository, builds the Linux AMD64 launcher/server and versioned Java 17 plugin/agent twice, and requires byte-identical TAR, SPDX, SLSA provenance, release manifest, and checksum manifest. Both Cosign signatures must bind the same digest. Verification rejects modified payloads, modified signatures, an unpinned public key, and extra files. See [`specs/release-bundle-v1.md`](../specs/release-bundle-v1.md) for the production command and trust boundary.
+
 ## Normative package validation
 
 Validate the namespace skeleton defined by RFC §29.2:
@@ -373,6 +405,8 @@ Run the lock and doctor contract tests from the repository root:
 ./dev/test-protobuf-toolchains
 ./dev/test-rust-toolchain
 ./dev/test-lint-toolchains
+./dev/test-supply-chain-toolchains
+./dev/check-release-package
 ./dev/test-golden-lane-container
 ```
 
@@ -389,6 +423,8 @@ The Protobuf toolchain tests use a synthetic upstream-layout ZIP and raw binary 
 The Rust toolchain tests use synthetic Rustup, rustc, Cargo, and channel-manifest fixtures. They exercise the exact repository override, offline isolated Cargo state, locked manifest verification, missing/mismatched tools, configuration drift, usage errors, and Cargo failure propagation without installing a toolchain or touching the global default.
 
 The lint toolchain tests use synthetic ShellCheck and actionlint archives in their real upstream layouts. They exercise checksum-verified `tar.xz` and `tar.gz` provisioning, atomic installation, idempotency, exact-version selection, repository-local `PATH`, global-tool isolation, manifest drift, lint failure propagation, usage errors, and missing-tool behavior without downloading or changing global tools.
+
+The supply-chain tool tests use synthetic Cosign and Syft artifacts. They exercise checksum-verified binary and `tar.gz` provisioning, atomic installation, idempotency, project-local selection, global-tool isolation, local sign/verify and SPDX paths, metadata drift, checksum rejection, usage errors, and child failure propagation. The release-package checker then uses the real locked tools and build toolchains for deterministic positive and tamper fixtures.
 
 The golden container tests use a synthetic Docker client and deterministic host-resource probes. They verify index-to-platform digest binding, exact pull and run arguments, local image identity, strict cgroup settings, mutable-reference rejection, daemon/resource failures, and child exit-code propagation without contacting a registry or starting a container.
 

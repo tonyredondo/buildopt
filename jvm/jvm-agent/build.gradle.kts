@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "dev.buildopt"
-version = "0.1.0-SNAPSHOT"
+version = providers.gradleProperty("buildoptVersion").getOrElse("0.1.0-SNAPSHOT")
 
 base {
     archivesName = "buildopt-jvm-agent"

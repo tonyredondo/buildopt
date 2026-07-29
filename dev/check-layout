@@ -59,8 +59,11 @@ buildopt_required_files=(
     "dev/check-normative-layout"
     "dev/check-protobuf-toolchains"
     "dev/check-rust-toolchain"
+    "dev/check-release-package"
     "dev/check-session-ingest"
+    "dev/check-supply-chain-toolchains"
     "dev/check-task-events-proto"
+    "dev/package-release"
     "dev/README.md"
     "dev/proto-conformance/java/dev/buildopt/contracts/localevents/v1/TaskEventsRoundTrip.java"
     "dev/proto-conformance/task_events_roundtrip_linux_test.go"
@@ -77,6 +80,8 @@ buildopt_required_files=(
     "dev/test-lint-toolchains"
     "dev/test-protobuf-toolchains"
     "dev/test-rust-toolchain"
+    "dev/test-supply-chain-toolchains"
+    "dev/verify-release"
     "fixtures/README.md"
     "fixtures/gradle-correlation/README.md"
     "fixtures/gradle-correlation/alpha/build.gradle.kts"
@@ -124,6 +129,7 @@ buildopt_required_files=(
     "rust-toolchain.toml"
     "specs/README.md"
     "specs/gradle-correlation-v1.md"
+    "specs/release-bundle-v1.md"
 )
 
 buildopt_failed=0

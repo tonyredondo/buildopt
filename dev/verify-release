@@ -1,0 +1,416 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_usage() {
+    printf 'usage: %s --bundle <directory> --key <cosign.pub>\n' "$0"
+}
+
+buildopt_bundle=
+buildopt_key=
+while (($# > 0)); do
+    case "$1" in
+        --bundle)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_bundle=$2
+            shift 2
+            ;;
+        --key)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_key=$2
+            shift 2
+            ;;
+        --help)
+            buildopt_usage
+            exit 0
+            ;;
+        *)
+            buildopt_usage >&2
+            exit 64
+            ;;
+    esac
+done
+if [[ -z "${buildopt_bundle}" ]] || [[ -z "${buildopt_key}" ]]; then
+    buildopt_usage >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_run="${buildopt_script_dir}/run"
+for buildopt_command in \
+    awk \
+    basename \
+    cmp \
+    find \
+    grep \
+    jq \
+    mktemp \
+    rm \
+    sha256sum \
+    sort \
+    stat \
+    tar \
+    tr \
+    unzip; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required release-verification command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+if [[ ! -d "${buildopt_bundle}" ]] || [[ ! -f "${buildopt_key}" ]]; then
+    printf 'release bundle directory and public key must exist\n' >&2
+    exit 1
+fi
+
+buildopt_test_root=$(mktemp -d)
+buildopt_cleanup() {
+    if [[ -n "${buildopt_test_root:-}" ]] &&
+        [[ "${buildopt_test_root}" == /tmp/* ]] &&
+        [[ -d "${buildopt_test_root}" ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+mapfile -d '' buildopt_release_files < <(
+    find "${buildopt_bundle}" \
+        -mindepth 1 \
+        -maxdepth 1 \
+        -type f \
+        -name 'buildopt-*.release.json' \
+        -print0
+)
+if ((${#buildopt_release_files[@]} != 1)); then
+    printf 'release bundle must contain exactly one release manifest\n' >&2
+    exit 1
+fi
+buildopt_release_path=${buildopt_release_files[0]}
+if ! jq -e '
+    keys == [
+        "artifacts",
+        "integrity",
+        "packageRoot",
+        "platform",
+        "schemaVersion",
+        "source",
+        "version"
+    ] and
+    .schemaVersion == "buildopt.dev/release-bundle/v1" and
+    (.version | type == "string") and
+    .platform == {
+        operatingSystem: "linux",
+        architecture: "amd64"
+    } and
+    (.packageRoot | type == "string") and
+    (.artifacts | keys == ["archive", "provenance", "sbom"]) and
+    (.artifacts.archive | keys == ["name", "sha256"]) and
+    (.artifacts.sbom | keys == ["format", "name", "sha256"]) and
+    .artifacts.sbom.format == "SPDX-2.3" and
+    (.artifacts.provenance |
+        keys == ["name", "predicateType", "sha256"]) and
+    .artifacts.provenance.predicateType ==
+        "https://slsa.dev/provenance/v1" and
+    .integrity.algorithm == "sha256" and
+    .integrity.signatureFormat ==
+        "application/vnd.dev.sigstore.bundle.v0.3+json" and
+    (.source | keys == [
+        "createdAt",
+        "repository",
+        "revision",
+        "sourceDateEpoch"
+    ]) and
+    .source.repository == "https://github.com/tonyredondo/buildopt"
+' "${buildopt_release_path}" >/dev/null; then
+    printf 'release manifest structure is invalid\n' >&2
+    exit 1
+fi
+
+buildopt_version=$(jq -r '.version' "${buildopt_release_path}")
+buildopt_revision=$(jq -r '.source.revision' "${buildopt_release_path}")
+buildopt_created_at=$(jq -r '.source.createdAt' "${buildopt_release_path}")
+buildopt_source_epoch=$(jq -r '.source.sourceDateEpoch' "${buildopt_release_path}")
+if [[ ! "${buildopt_version}" =~ ^(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)(-[0-9A-Za-z][0-9A-Za-z.-]*)?([+][0-9A-Za-z][0-9A-Za-z.-]*)?$ ]] ||
+    [[ ! "${buildopt_revision}" =~ ^[0-9a-f]{40}$ ]] ||
+    [[ ! "${buildopt_created_at}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$ ]] ||
+    [[ ! "${buildopt_source_epoch}" =~ ^[0-9]+$ ]]; then
+    printf 'release version or source identity is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_base="buildopt-${buildopt_version}-linux-amd64"
+buildopt_archive="${buildopt_base}.tar.gz"
+buildopt_sbom="${buildopt_base}.spdx.json"
+buildopt_provenance="${buildopt_base}.provenance.json"
+buildopt_release="${buildopt_base}.release.json"
+buildopt_checksums="${buildopt_base}.sha256"
+buildopt_signature="${buildopt_base}.sha256.sigstore.json"
+if [[ "$(jq -r '.packageRoot' "${buildopt_release_path}")" != "${buildopt_base}" ]] ||
+    [[ "$(basename -- "${buildopt_release_path}")" != "${buildopt_release}" ]] ||
+    [[ "$(jq -r '.artifacts.archive.name' "${buildopt_release_path}")" != "${buildopt_archive}" ]] ||
+    [[ "$(jq -r '.artifacts.sbom.name' "${buildopt_release_path}")" != "${buildopt_sbom}" ]] ||
+    [[ "$(jq -r '.artifacts.provenance.name' "${buildopt_release_path}")" != "${buildopt_provenance}" ]] ||
+    [[ "$(jq -r '.integrity.checksums' "${buildopt_release_path}")" != "${buildopt_checksums}" ]] ||
+    [[ "$(jq -r '.integrity.signature' "${buildopt_release_path}")" != "${buildopt_signature}" ]]; then
+    printf 'release manifest names do not match its version and platform\n' >&2
+    exit 1
+fi
+
+printf '%s\n' \
+    "${buildopt_archive}" \
+    "${buildopt_checksums}" \
+    "${buildopt_provenance}" \
+    "${buildopt_release}" \
+    "${buildopt_sbom}" \
+    "${buildopt_signature}" |
+    sort >"${buildopt_test_root}/expected-files"
+find "${buildopt_bundle}" \
+    -mindepth 1 \
+    -maxdepth 1 \
+    -printf '%f\n' |
+    sort >"${buildopt_test_root}/actual-files"
+if ! cmp -s \
+    "${buildopt_test_root}/expected-files" \
+    "${buildopt_test_root}/actual-files"; then
+    printf 'release bundle has missing, extra, or nested entries\n' >&2
+    exit 1
+fi
+for buildopt_name in \
+    "${buildopt_archive}" \
+    "${buildopt_checksums}" \
+    "${buildopt_provenance}" \
+    "${buildopt_release}" \
+    "${buildopt_sbom}" \
+    "${buildopt_signature}"; do
+    if [[ ! -f "${buildopt_bundle}/${buildopt_name}" ]] ||
+        [[ -L "${buildopt_bundle}/${buildopt_name}" ]]; then
+        printf 'release entry is not a regular non-symlink file: %s\n' \
+            "${buildopt_name}" >&2
+        exit 1
+    fi
+done
+
+(
+    cd -- "${buildopt_bundle}"
+    sha256sum \
+        "${buildopt_archive}" \
+        "${buildopt_sbom}" \
+        "${buildopt_provenance}" \
+        "${buildopt_release}"
+) >"${buildopt_test_root}/expected-checksums"
+if ! cmp -s \
+    "${buildopt_test_root}/expected-checksums" \
+    "${buildopt_bundle}/${buildopt_checksums}"; then
+    printf 'release checksum manifest is incomplete, non-canonical, or invalid\n' >&2
+    exit 1
+fi
+
+buildopt_public_key_sha256=$(sha256sum "${buildopt_key}" | awk '{print $1}')
+if [[ "$(jq -r '.integrity.publicKeySha256' "${buildopt_release_path}")" != \
+    "${buildopt_public_key_sha256}" ]]; then
+    printf 'release trust-root fingerprint does not match the pinned public key\n' >&2
+    exit 1
+fi
+if ! "${buildopt_run}" --toolchain cosign -- \
+    cosign verify-blob \
+    --insecure-ignore-tlog \
+    --bundle "${buildopt_bundle}/${buildopt_signature}" \
+    --key "${buildopt_key}" \
+    "${buildopt_bundle}/${buildopt_checksums}" >/dev/null 2>&1; then
+    printf 'release checksum signature is invalid\n' >&2
+    exit 1
+fi
+if ! jq -e '
+    .mediaType == "application/vnd.dev.sigstore.bundle.v0.3+json" and
+    (.verificationMaterial.publicKey.hint | type == "string" and length > 0) and
+    ((.verificationMaterial.tlogEntries // []) | length == 0) and
+    (
+        (.verificationMaterial.timestampVerificationData.rfc3161Timestamps // []) |
+        length == 0
+    ) and
+    (.messageSignature.messageDigest.algorithm == "SHA2_256") and
+    (.messageSignature.messageDigest.digest | type == "string" and length > 0) and
+    (.messageSignature.signature | type == "string" and length > 0)
+' "${buildopt_bundle}/${buildopt_signature}" >/dev/null; then
+    printf 'release signature is not the local-key Sigstore bundle profile\n' >&2
+    exit 1
+fi
+
+buildopt_archive_sha256=$(
+    sha256sum "${buildopt_bundle}/${buildopt_archive}" | awk '{print $1}'
+)
+buildopt_sbom_sha256=$(
+    sha256sum "${buildopt_bundle}/${buildopt_sbom}" | awk '{print $1}'
+)
+buildopt_provenance_sha256=$(
+    sha256sum "${buildopt_bundle}/${buildopt_provenance}" | awk '{print $1}'
+)
+if ! jq -e \
+    --arg buildopt_archive_sha256 "${buildopt_archive_sha256}" \
+    --arg buildopt_sbom_sha256 "${buildopt_sbom_sha256}" \
+    --arg buildopt_provenance_sha256 "${buildopt_provenance_sha256}" \
+    '
+        .artifacts.archive.sha256 == $buildopt_archive_sha256 and
+        .artifacts.sbom.sha256 == $buildopt_sbom_sha256 and
+        .artifacts.provenance.sha256 == $buildopt_provenance_sha256
+    ' "${buildopt_release_path}" >/dev/null; then
+    printf 'release manifest artifact digests are invalid\n' >&2
+    exit 1
+fi
+
+if ! jq -e \
+    --arg buildopt_base "${buildopt_base}" \
+    --arg buildopt_version "${buildopt_version}" \
+    --arg buildopt_archive_sha256 "${buildopt_archive_sha256}" \
+    --arg buildopt_created_at "${buildopt_created_at}" \
+    '
+        .spdxVersion == "SPDX-2.3" and
+        .dataLicense == "CC0-1.0" and
+        .SPDXID == "SPDXRef-DOCUMENT" and
+        .name == $buildopt_base and
+        .documentNamespace == (
+            "https://buildopt.dev/spdx/" +
+            $buildopt_base +
+            "/" +
+            $buildopt_archive_sha256
+        ) and
+        .creationInfo.created == $buildopt_created_at and
+        any(.creationInfo.creators[]; . == "Tool: syft-1.50.0") and
+        (
+            [.files[]?.fileName] |
+            index("bin/buildopt") != null and
+            index("bin/buildopt-server") != null and
+            index("lib/buildopt-gradle-plugin-" + $buildopt_version + ".jar") != null and
+            index("lib/buildopt-jvm-agent-" + $buildopt_version + ".jar") != null
+        )
+    ' "${buildopt_bundle}/${buildopt_sbom}" >/dev/null; then
+    printf 'release SPDX SBOM does not describe the packaged deliverables\n' >&2
+    exit 1
+fi
+
+if ! jq -e \
+    --arg buildopt_archive "${buildopt_archive}" \
+    --arg buildopt_archive_sha256 "${buildopt_archive_sha256}" \
+    --arg buildopt_sbom "${buildopt_sbom}" \
+    --arg buildopt_sbom_sha256 "${buildopt_sbom_sha256}" \
+    --arg buildopt_version "${buildopt_version}" \
+    --arg buildopt_revision "${buildopt_revision}" \
+    --arg buildopt_source_epoch "${buildopt_source_epoch}" \
+    '
+        ."_type" == "https://in-toto.io/Statement/v1" and
+        .predicateType == "https://slsa.dev/provenance/v1" and
+        .subject == [
+            {
+                name: $buildopt_archive,
+                digest: {sha256: $buildopt_archive_sha256}
+            },
+            {
+                name: $buildopt_sbom,
+                digest: {sha256: $buildopt_sbom_sha256}
+            }
+        ] and
+        .predicate.buildDefinition.buildType ==
+            "https://buildopt.dev/buildtypes/release/v1" and
+        .predicate.buildDefinition.externalParameters == {
+            version: $buildopt_version,
+            platform: "linux-amd64"
+        } and
+        .predicate.buildDefinition.internalParameters.sourceDateEpoch ==
+            ($buildopt_source_epoch | tonumber) and
+        any(
+            .predicate.buildDefinition.resolvedDependencies[];
+            .name == "buildopt-source" and
+            .digest.gitCommit == $buildopt_revision and
+            .uri == (
+                "git+https://github.com/tonyredondo/buildopt@" +
+                $buildopt_revision
+            )
+        ) and
+        (
+            [
+                .predicate.buildDefinition.resolvedDependencies[] |
+                select(
+                    .name == "cosign" or
+                    .name == "go" or
+                    .name == "gradle-wrapper" or
+                    .name == "syft" or
+                    .name == "temurin-jdk-21"
+                ) |
+                .name
+            ] |
+            sort
+        ) == [
+            "cosign",
+            "go",
+            "gradle-wrapper",
+            "syft",
+            "temurin-jdk-21"
+        ] and
+        .predicate.runDetails.builder.id == (
+            "https://github.com/tonyredondo/buildopt/blob/" +
+            $buildopt_revision +
+            "/dev/package-release"
+        )
+    ' "${buildopt_bundle}/${buildopt_provenance}" >/dev/null; then
+    printf 'release provenance does not bind source, tools, and subjects\n' >&2
+    exit 1
+fi
+
+tar -tzf "${buildopt_bundle}/${buildopt_archive}" \
+    >"${buildopt_test_root}/archive-entries"
+printf '%s\n' \
+    "${buildopt_base}/" \
+    "${buildopt_base}/bin/" \
+    "${buildopt_base}/bin/buildopt" \
+    "${buildopt_base}/bin/buildopt-server" \
+    "${buildopt_base}/lib/" \
+    "${buildopt_base}/lib/buildopt-gradle-plugin-${buildopt_version}.jar" \
+    "${buildopt_base}/lib/buildopt-jvm-agent-${buildopt_version}.jar" \
+    >"${buildopt_test_root}/expected-archive-entries"
+if ! cmp -s \
+    "${buildopt_test_root}/expected-archive-entries" \
+    "${buildopt_test_root}/archive-entries"; then
+    printf 'release archive layout is unsafe or unexpected\n' >&2
+    exit 1
+fi
+tar -xzf \
+    "${buildopt_bundle}/${buildopt_archive}" \
+    --directory="${buildopt_test_root}" \
+    --same-permissions
+
+buildopt_extracted_root="${buildopt_test_root}/${buildopt_base}"
+for buildopt_binary in buildopt buildopt-server; do
+    if [[ ! -f "${buildopt_extracted_root}/bin/${buildopt_binary}" ]] ||
+        [[ -L "${buildopt_extracted_root}/bin/${buildopt_binary}" ]] ||
+        [[ "$(stat -c '%a' "${buildopt_extracted_root}/bin/${buildopt_binary}")" != \
+            "755" ]]; then
+        printf 'release binary mode or type is invalid: %s\n' \
+            "${buildopt_binary}" >&2
+        exit 1
+    fi
+done
+for buildopt_jar in \
+    "buildopt-gradle-plugin-${buildopt_version}.jar" \
+    "buildopt-jvm-agent-${buildopt_version}.jar"; do
+    if [[ ! -f "${buildopt_extracted_root}/lib/${buildopt_jar}" ]] ||
+        [[ -L "${buildopt_extracted_root}/lib/${buildopt_jar}" ]] ||
+        [[ "$(stat -c '%a' "${buildopt_extracted_root}/lib/${buildopt_jar}")" != \
+            "644" ]] ||
+        ! unzip -p \
+            "${buildopt_extracted_root}/lib/${buildopt_jar}" \
+            META-INF/MANIFEST.MF |
+            tr -d '\r' |
+            grep -Fqx "Implementation-Version: ${buildopt_version}"; then
+        printf 'release JVM artifact is invalid: %s\n' "${buildopt_jar}" >&2
+        exit 1
+    fi
+done
+
+printf 'F0-038 release verification OK: version=%s revision=%s\n' \
+    "${buildopt_version}" \
+    "${buildopt_revision}"

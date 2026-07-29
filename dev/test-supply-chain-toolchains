@@ -1,0 +1,425 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_bootstrap="${buildopt_script_dir}/bootstrap"
+buildopt_run="${buildopt_script_dir}/run"
+buildopt_check="${buildopt_script_dir}/check-supply-chain-toolchains"
+buildopt_test_root=$(mktemp -d)
+
+buildopt_cleanup() {
+    if [[ "${buildopt_test_root}" == /tmp/* ]] &&
+        [[ -d "${buildopt_test_root}" ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+buildopt_payload_root="${buildopt_test_root}/payload"
+buildopt_fake_syft_root="${buildopt_payload_root}/syft"
+mkdir -p "${buildopt_fake_syft_root}"
+
+buildopt_fake_cosign="${buildopt_payload_root}/cosign"
+# The generated fixture reads test controls when the fake binary runs.
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'case "${1:-}" in' \
+    '    version)' \
+    '        printf '\''GitVersion:    v3.1.2\n'\''' \
+    '        printf '\''Platform:      linux/amd64\n'\''' \
+    '        ;;' \
+    '    generate-key-pair)' \
+    '        buildopt_prefix=cosign' \
+    '        while (($# > 0)); do' \
+    '            if [[ "$1" == "--output-key-prefix" ]]; then' \
+    '                buildopt_prefix=$2' \
+    '                shift 2' \
+    '            else' \
+    '                shift' \
+    '            fi' \
+    '        done' \
+    '        printf '\''synthetic private key\n'\'' >"${buildopt_prefix}.key"' \
+    '        printf '\''synthetic public key\n'\'' >"${buildopt_prefix}.pub"' \
+    '        chmod 0600 "${buildopt_prefix}.key"' \
+    '        chmod 0644 "${buildopt_prefix}.pub"' \
+    '        ;;' \
+    '    sign-blob)' \
+    '        if [[ -n "${BUILDOPT_TEST_COSIGN_FAIL:-}" ]]; then' \
+    '            exit "${BUILDOPT_TEST_COSIGN_FAIL}"' \
+    '        fi' \
+    '        buildopt_bundle=' \
+    '        while (($# > 0)); do' \
+    '            if [[ "$1" == "--bundle" ]]; then' \
+    '                buildopt_bundle=$2' \
+    '                shift 2' \
+    '            else' \
+    '                shift' \
+    '            fi' \
+    '        done' \
+    '        jq -n '\''{' \
+    '            mediaType: "application/vnd.dev.sigstore.bundle.v0.3+json",' \
+    '            verificationMaterial: {' \
+    '                publicKey: {hint: "synthetic"},' \
+    '                tlogEntries: []' \
+    '            },' \
+    '            messageSignature: {' \
+    '                messageDigest: {' \
+    '                    algorithm: "SHA2_256",' \
+    '                    digest: "c3ludGhldGlj"' \
+    '                },' \
+    '                signature: "c3ludGhldGlj"' \
+    '            }' \
+    '        }'\'' >"${buildopt_bundle}"' \
+    '        if [[ -n "${BUILDOPT_TEST_COSIGN_LOG:-}" ]]; then' \
+    '            printf '\''sign-blob\n'\'' >>"${BUILDOPT_TEST_COSIGN_LOG}"' \
+    '        fi' \
+    '        ;;' \
+    '    verify-blob)' \
+    '        if [[ -n "${BUILDOPT_TEST_COSIGN_LOG:-}" ]]; then' \
+    '            printf '\''verify-blob\n'\'' >>"${BUILDOPT_TEST_COSIGN_LOG}"' \
+    '        fi' \
+    '        ;;' \
+    '    *)' \
+    '        exit 64' \
+    '        ;;' \
+    'esac' \
+    >"${buildopt_fake_cosign}"
+chmod +x "${buildopt_fake_cosign}"
+
+# The generated fixture reads test controls when the fake binary runs.
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'if [[ "${1:-}" == "version" ]]; then' \
+    '    printf '\''Application:   syft\n'\''' \
+    '    printf '\''Version:       1.50.0\n'\''' \
+    '    printf '\''Platform:      linux/amd64\n'\''' \
+    '    exit 0' \
+    'fi' \
+    'if [[ "${1:-}" != "scan" ]]; then' \
+    '    exit 64' \
+    'fi' \
+    'if [[ -n "${BUILDOPT_TEST_SYFT_FAIL:-}" ]]; then' \
+    '    exit "${BUILDOPT_TEST_SYFT_FAIL}"' \
+    'fi' \
+    'buildopt_output=' \
+    'buildopt_name=' \
+    'while (($# > 0)); do' \
+    '    case "$1" in' \
+    '        --output)' \
+    '            buildopt_output=${2#spdx-json=}' \
+    '            shift 2' \
+    '            ;;' \
+    '        --source-name)' \
+    '            buildopt_name=$2' \
+    '            shift 2' \
+    '            ;;' \
+    '        *)' \
+    '            shift' \
+    '            ;;' \
+    '    esac' \
+    'done' \
+    'jq -n --arg buildopt_name "${buildopt_name}" '\''{' \
+    '    spdxVersion: "SPDX-2.3",' \
+    '    dataLicense: "CC0-1.0",' \
+    '    SPDXID: "SPDXRef-DOCUMENT",' \
+    '    name: $buildopt_name,' \
+    '    documentNamespace: "https://example.invalid/synthetic",' \
+    '    creationInfo: {' \
+    '        creators: ["Tool: syft-1.50.0"],' \
+    '        created: "2026-07-29T00:00:00Z"' \
+    '    }' \
+    '}'\'' >"${buildopt_output}"' \
+    'if [[ -n "${BUILDOPT_TEST_SYFT_LOG:-}" ]]; then' \
+    '    printf '\''scan\n'\'' >>"${BUILDOPT_TEST_SYFT_LOG}"' \
+    'fi' \
+    >"${buildopt_fake_syft_root}/syft"
+printf '%s\n' 'Synthetic Syft license' \
+    >"${buildopt_fake_syft_root}/LICENSE"
+chmod +x "${buildopt_fake_syft_root}/syft"
+
+buildopt_syft_archive="${buildopt_test_root}/fake-syft.tar.gz"
+tar -czf "${buildopt_syft_archive}" \
+    -C "${buildopt_fake_syft_root}" \
+    .
+buildopt_cosign_sha256=$(
+    sha256sum "${buildopt_fake_cosign}" | awk '{print $1}'
+)
+buildopt_syft_sha256=$(
+    sha256sum "${buildopt_syft_archive}" | awk '{print $1}'
+)
+
+buildopt_lock="${buildopt_test_root}/toolchains.lock.json"
+jq -n \
+    --arg buildopt_cosign_sha256 "${buildopt_cosign_sha256}" \
+    --arg buildopt_syft_sha256 "${buildopt_syft_sha256}" \
+    '{
+        schemaVersion: "buildopt.dev/toolchains-lock/v1",
+        platforms: [
+            {
+                id: "linux-amd64",
+                operatingSystem: "linux",
+                architecture: "amd64"
+            }
+        ],
+        artifacts: [
+            {
+                id: "cosign",
+                version: "3.1.2",
+                adoption: "required",
+                kind: "binary",
+                platform: "linux-amd64",
+                provider: "sigstore",
+                url: "https://example.invalid/fake-cosign",
+                sha256: $buildopt_cosign_sha256,
+                requiredBy: ["ENV-011"]
+            },
+            {
+                id: "syft",
+                version: "1.50.0",
+                adoption: "required",
+                kind: "tar.gz",
+                platform: "linux-amd64",
+                provider: "anchore",
+                url: "https://example.invalid/fake-syft.tar.gz",
+                sha256: $buildopt_syft_sha256,
+                requiredBy: ["ENV-011"]
+            }
+        ]
+    }' >"${buildopt_lock}"
+
+buildopt_fake_host_bin="${buildopt_test_root}/fake-host-bin"
+buildopt_curl_count="${buildopt_test_root}/curl-count"
+mkdir "${buildopt_fake_host_bin}"
+# The generated fixture selects bytes from the immutable fixture URL.
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'buildopt_output=' \
+    'buildopt_url=' \
+    'while (($# > 0)); do' \
+    '    case "$1" in' \
+    '        --output)' \
+    '            buildopt_output=$2' \
+    '            shift 2' \
+    '            ;;' \
+    '        https://*)' \
+    '            buildopt_url=$1' \
+    '            shift' \
+    '            ;;' \
+    '        *)' \
+    '            shift' \
+    '            ;;' \
+    '    esac' \
+    'done' \
+    'case "${buildopt_url}" in' \
+    '    *fake-cosign)' \
+    '        buildopt_artifact=${BUILDOPT_TEST_COSIGN_BINARY}' \
+    '        ;;' \
+    '    *fake-syft.tar.gz)' \
+    '        buildopt_artifact=${BUILDOPT_TEST_SYFT_ARCHIVE}' \
+    '        ;;' \
+    '    *)' \
+    '        exit 64' \
+    '        ;;' \
+    'esac' \
+    'buildopt_count=0' \
+    'if [[ -f "${BUILDOPT_TEST_CURL_COUNT}" ]]; then' \
+    '    read -r buildopt_count <"${BUILDOPT_TEST_CURL_COUNT}"' \
+    'fi' \
+    'printf '\''%s\n'\'' "$((buildopt_count + 1))" >"${BUILDOPT_TEST_CURL_COUNT}"' \
+    'cp -- "${buildopt_artifact}" "${buildopt_output}"' \
+    >"${buildopt_fake_host_bin}/curl"
+chmod +x "${buildopt_fake_host_bin}/curl"
+
+buildopt_tools_root="${buildopt_test_root}/tools with spaces"
+for buildopt_id in cosign syft; do
+    buildopt_output=$(
+        BUILDOPT_TEST_COSIGN_BINARY="${buildopt_fake_cosign}" \
+        BUILDOPT_TEST_CURL_COUNT="${buildopt_curl_count}" \
+        BUILDOPT_TEST_SYFT_ARCHIVE="${buildopt_syft_archive}" \
+        BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+        BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        PATH="${buildopt_fake_host_bin}:${PATH}" \
+            "${buildopt_bootstrap}" --toolchain "${buildopt_id}"
+    )
+    if [[ "${buildopt_output}" != *"Provisioned ${buildopt_id} "* ]]; then
+        printf 'bootstrap did not report successful %s provisioning\n' \
+            "${buildopt_id}" >&2
+        exit 1
+    fi
+done
+
+buildopt_cosign_home="${buildopt_tools_root}/toolchains/cosign-${buildopt_cosign_sha256:0:16}"
+buildopt_syft_home="${buildopt_tools_root}/toolchains/syft-${buildopt_syft_sha256:0:16}"
+if [[ ! -x "${buildopt_cosign_home}/bin/cosign" ]] ||
+    [[ ! -x "${buildopt_syft_home}/bin/syft" ]]; then
+    printf 'bootstrap did not normalize supply-chain binaries under bin/\n' >&2
+    exit 1
+fi
+for buildopt_id in cosign syft; do
+    buildopt_output=$(
+        BUILDOPT_TEST_COSIGN_BINARY="${buildopt_fake_cosign}" \
+        BUILDOPT_TEST_CURL_COUNT="${buildopt_curl_count}" \
+        BUILDOPT_TEST_SYFT_ARCHIVE="${buildopt_syft_archive}" \
+        BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+        BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        PATH="${buildopt_fake_host_bin}:${PATH}" \
+            "${buildopt_bootstrap}" --toolchain "${buildopt_id}"
+    )
+    if [[ "${buildopt_output}" != *"is already provisioned"* ]]; then
+        printf '%s bootstrap is not idempotent\n' "${buildopt_id}" >&2
+        exit 1
+    fi
+done
+if [[ "$(<"${buildopt_curl_count}")" != "2" ]]; then
+    printf 'idempotent supply-chain bootstrap downloaded again\n' >&2
+    exit 1
+fi
+
+buildopt_global_bin="${buildopt_test_root}/global-bin"
+mkdir "${buildopt_global_bin}"
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf '\''GitVersion:    v2.0.0\n'\''' \
+    >"${buildopt_global_bin}/cosign"
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf '\''Version:       0.90.0\n'\''' \
+    >"${buildopt_global_bin}/syft"
+chmod +x "${buildopt_global_bin}/cosign" "${buildopt_global_bin}/syft"
+
+buildopt_project_cosign=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    PATH="${buildopt_global_bin}:${PATH}" \
+        "${buildopt_run}" --toolchain cosign -- cosign version
+)
+buildopt_project_syft=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    PATH="${buildopt_global_bin}:${PATH}" \
+        "${buildopt_run}" --toolchain syft -- syft version
+)
+if [[ "${buildopt_project_cosign}" != *'v3.1.2'* ]] ||
+    [[ "${buildopt_project_syft}" != *'1.50.0'* ]]; then
+    printf 'dev/run did not isolate supply-chain tools from PATH\n' >&2
+    exit 1
+fi
+
+buildopt_cosign_log="${buildopt_test_root}/cosign.log"
+buildopt_syft_log="${buildopt_test_root}/syft.log"
+buildopt_check_output=$(
+    BUILDOPT_TEST_COSIGN_LOG="${buildopt_cosign_log}" \
+    BUILDOPT_TEST_SYFT_LOG="${buildopt_syft_log}" \
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    PATH="${buildopt_global_bin}:${PATH}" \
+        "${buildopt_check}"
+)
+if [[ "${buildopt_check_output}" != \
+    *'ENV-011 supply-chain toolchains OK: cosign 3.1.2'* ]] ||
+    ! grep -Fqx 'sign-blob' "${buildopt_cosign_log}" ||
+    ! grep -Fqx 'verify-blob' "${buildopt_cosign_log}" ||
+    ! grep -Fqx 'scan' "${buildopt_syft_log}"; then
+    printf 'supply-chain checker did not exercise sign/verify/SBOM paths\n' >&2
+    exit 1
+fi
+
+buildopt_manifest="${buildopt_cosign_home}/.buildopt-toolchain.json"
+cp "${buildopt_manifest}" "${buildopt_manifest}.original"
+jq '.provider = "unexpected-provider"' \
+    "${buildopt_manifest}" >"${buildopt_manifest}.changed"
+mv "${buildopt_manifest}.changed" "${buildopt_manifest}"
+set +e
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_run}" --toolchain cosign -- cosign version \
+    >/dev/null 2>&1
+buildopt_manifest_exit=$?
+set -e
+mv "${buildopt_manifest}.original" "${buildopt_manifest}"
+if ((buildopt_manifest_exit != 1)); then
+    printf 'dev/run accepted supply-chain metadata drift\n' >&2
+    exit 1
+fi
+
+set +e
+BUILDOPT_TEST_COSIGN_FAIL=41 \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_check}" >/dev/null 2>&1
+buildopt_cosign_exit=$?
+BUILDOPT_TEST_SYFT_FAIL=42 \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_check}" >/dev/null 2>&1
+buildopt_syft_exit=$?
+"${buildopt_bootstrap}" >/dev/null 2>&1
+buildopt_bootstrap_usage_exit=$?
+"${buildopt_run}" syft version >/dev/null 2>&1
+buildopt_run_usage_exit=$?
+"${buildopt_check}" invalid >/dev/null 2>&1
+buildopt_check_usage_exit=$?
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_test_root}/missing-tools" \
+    "${buildopt_run}" --toolchain syft -- syft version \
+    >/dev/null 2>&1
+buildopt_missing_exit=$?
+set -e
+if ((buildopt_cosign_exit != 41)) ||
+    ((buildopt_syft_exit != 42)) ||
+    ((buildopt_bootstrap_usage_exit != 64)) ||
+    ((buildopt_run_usage_exit != 64)) ||
+    ((buildopt_check_usage_exit != 64)) ||
+    ((buildopt_missing_exit != 1)); then
+    printf 'unexpected supply-chain error contract: %s/%s/%s/%s/%s/%s\n' \
+        "${buildopt_cosign_exit}" \
+        "${buildopt_syft_exit}" \
+        "${buildopt_bootstrap_usage_exit}" \
+        "${buildopt_run_usage_exit}" \
+        "${buildopt_check_usage_exit}" \
+        "${buildopt_missing_exit}" >&2
+    exit 1
+fi
+
+buildopt_bad_lock="${buildopt_test_root}/bad-checksum-lock.json"
+jq '(.artifacts[] | select(.id == "cosign") | .sha256) = ("0" * 64)' \
+    "${buildopt_lock}" >"${buildopt_bad_lock}"
+set +e
+BUILDOPT_TEST_COSIGN_BINARY="${buildopt_fake_cosign}" \
+BUILDOPT_TEST_CURL_COUNT="${buildopt_test_root}/bad-curl-count" \
+BUILDOPT_TEST_SYFT_ARCHIVE="${buildopt_syft_archive}" \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_bad_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_test_root}/bad-tools" \
+PATH="${buildopt_fake_host_bin}:${PATH}" \
+    "${buildopt_bootstrap}" --toolchain cosign >/dev/null 2>&1
+buildopt_checksum_exit=$?
+set -e
+if ((buildopt_checksum_exit != 1)); then
+    printf 'cosign bootstrap accepted a checksum mismatch\n' >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'supply-chain toolchain tests changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'ENV-011 supply-chain toolchain tests OK: provisioning, isolation, sign/verify, SBOM, and failures\n'

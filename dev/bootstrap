@@ -2,7 +2,7 @@
 set -euo pipefail
 
 buildopt_usage() {
-    printf 'usage: %s --toolchain <temurin-jdk-21|go|protoc|buf|shellcheck|actionlint>\n' "$0"
+    printf 'usage: %s --toolchain <temurin-jdk-21|go|protoc|buf|shellcheck|actionlint|cosign|syft>\n' "$0"
 }
 
 buildopt_toolchain=
@@ -28,7 +28,7 @@ while (($# > 0)); do
 done
 
 case "${buildopt_toolchain}" in
-    actionlint | buf | go | protoc | shellcheck | temurin-jdk-21) ;;
+    actionlint | buf | cosign | go | protoc | shellcheck | syft | temurin-jdk-21) ;;
     *)
         buildopt_usage >&2
         exit 64
@@ -113,6 +113,14 @@ case "${buildopt_id}" in
             exit 70
         fi
         ;;
+    cosign)
+        if [[ "${buildopt_provider}" != "sigstore" ]] ||
+            [[ "${buildopt_kind}" != "binary" ]] ||
+            [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
+            printf 'unsupported or malformed cosign toolchain entry\n' >&2
+            exit 70
+        fi
+        ;;
     go)
         if [[ "${buildopt_provider}" != "go-project" ]] ||
             [[ "${buildopt_kind}" != "tar.gz" ]] ||
@@ -134,6 +142,14 @@ case "${buildopt_id}" in
             [[ "${buildopt_kind}" != "tar.xz" ]] ||
             [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
             printf 'unsupported or malformed ShellCheck toolchain entry\n' >&2
+            exit 70
+        fi
+        ;;
+    syft)
+        if [[ "${buildopt_provider}" != "anchore" ]] ||
+            [[ "${buildopt_kind}" != "tar.gz" ]] ||
+            [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
+            printf 'unsupported or malformed Syft toolchain entry\n' >&2
             exit 70
         fi
         ;;
@@ -166,6 +182,8 @@ buildopt_validate_toolchain() {
     local buildopt_actionlint_output
     local buildopt_actionlint_version
     local buildopt_buf_output
+    local buildopt_cosign_output
+    local buildopt_cosign_version
     local buildopt_go_root
     local buildopt_go_output
     local buildopt_java_output
@@ -175,6 +193,8 @@ buildopt_validate_toolchain() {
     local buildopt_shellcheck_line
     local buildopt_shellcheck_output
     local buildopt_shellcheck_version
+    local buildopt_syft_output
+    local buildopt_syft_version
 
     [[ -f "${buildopt_tool_home}/.buildopt-toolchain.json" ]] || return 1
 
@@ -209,6 +229,18 @@ buildopt_validate_toolchain() {
                 "${buildopt_tool_home}/bin/buf" --version 2>&1
             ) || return 1
             [[ "${buildopt_buf_output}" == "${buildopt_version}" ]] || return 1
+            ;;
+        cosign)
+            [[ -x "${buildopt_tool_home}/bin/cosign" ]] || return 1
+            buildopt_cosign_output=$(
+                "${buildopt_tool_home}/bin/cosign" version 2>&1
+            ) || return 1
+            buildopt_cosign_version=$(
+                awk '$1 == "GitVersion:" {sub(/^v/, "", $2); print $2; exit}' \
+                    <<<"${buildopt_cosign_output}"
+            )
+            [[ "${buildopt_cosign_version}" == "${buildopt_version}" ]] ||
+                return 1
             ;;
         go)
             [[ -x "${buildopt_tool_home}/bin/go" ]] || return 1
@@ -251,6 +283,18 @@ buildopt_validate_toolchain() {
                 fi
             done <<<"${buildopt_shellcheck_output}"
             [[ "${buildopt_shellcheck_version}" == "${buildopt_version}" ]] ||
+                return 1
+            ;;
+        syft)
+            [[ -x "${buildopt_tool_home}/bin/syft" ]] || return 1
+            buildopt_syft_output=$(
+                "${buildopt_tool_home}/bin/syft" version 2>&1
+            ) || return 1
+            buildopt_syft_version=$(
+                awk '$1 == "Version:" {print $2; exit}' \
+                    <<<"${buildopt_syft_output}"
+            )
+            [[ "${buildopt_syft_version}" == "${buildopt_version}" ]] ||
                 return 1
             ;;
         temurin-jdk-21)
@@ -469,7 +513,7 @@ case "${buildopt_id}" in
             "${buildopt_extract_root}/bin/actionlint"
         buildopt_staged_tool=${buildopt_extract_root}
         ;;
-    buf)
+    buf | cosign)
         buildopt_staged_tool=${buildopt_extract_root}
         ;;
     go | temurin-jdk-21)
@@ -503,6 +547,18 @@ case "${buildopt_id}" in
             "${buildopt_roots[0]}/shellcheck" \
             "${buildopt_roots[0]}/bin/shellcheck"
         buildopt_staged_tool=${buildopt_roots[0]}
+        ;;
+    syft)
+        if [[ ! -f "${buildopt_extract_root}/syft" ]] ||
+            [[ -e "${buildopt_extract_root}/bin" ]]; then
+            printf 'Syft archive has an unexpected layout\n' >&2
+            exit 1
+        fi
+        mkdir -- "${buildopt_extract_root}/bin"
+        mv -- \
+            "${buildopt_extract_root}/syft" \
+            "${buildopt_extract_root}/bin/syft"
+        buildopt_staged_tool=${buildopt_extract_root}
         ;;
 esac
 jq -n \

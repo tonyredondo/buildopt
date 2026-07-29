@@ -2,7 +2,7 @@
 set -euo pipefail
 
 buildopt_usage() {
-    printf 'usage: %s [--toolchain <temurin-jdk-21|go|protoc|buf|shellcheck|actionlint>] -- command [args...]\n' "$0"
+    printf 'usage: %s [--toolchain <temurin-jdk-21|go|protoc|buf|shellcheck|actionlint|cosign|syft>] -- command [args...]\n' "$0"
 }
 
 buildopt_toolchain=temurin-jdk-21
@@ -20,7 +20,7 @@ if [[ "${1:-}" == "--toolchain" ]]; then
 fi
 
 case "${buildopt_toolchain}" in
-    actionlint | buf | go | protoc | shellcheck | temurin-jdk-21) ;;
+    actionlint | buf | cosign | go | protoc | shellcheck | syft | temurin-jdk-21) ;;
     *)
         buildopt_usage >&2
         exit 64
@@ -111,6 +111,14 @@ case "${buildopt_id}" in
             exit 70
         fi
         ;;
+    cosign)
+        if [[ "${buildopt_provider}" != "sigstore" ]] ||
+            [[ "${buildopt_kind}" != "binary" ]] ||
+            [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
+            printf 'malformed cosign toolchain identity\n' >&2
+            exit 70
+        fi
+        ;;
     go)
         if [[ "${buildopt_provider}" != "go-project" ]] ||
             [[ "${buildopt_kind}" != "tar.gz" ]] ||
@@ -132,6 +140,14 @@ case "${buildopt_id}" in
             [[ "${buildopt_kind}" != "tar.xz" ]] ||
             [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
             printf 'malformed ShellCheck toolchain identity\n' >&2
+            exit 70
+        fi
+        ;;
+    syft)
+        if [[ "${buildopt_provider}" != "anchore" ]] ||
+            [[ "${buildopt_kind}" != "tar.gz" ]] ||
+            [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
+            printf 'malformed Syft toolchain identity\n' >&2
             exit 70
         fi
         ;;
@@ -211,6 +227,29 @@ case "${buildopt_id}" in
             exit 1
         fi
         ;;
+    cosign)
+        if [[ ! -x "${buildopt_tool_home}/bin/cosign" ]]; then
+            printf 'provisioned cosign binary is unavailable: %s\n' \
+                "${buildopt_tool_home}/bin/cosign" >&2
+            exit 1
+        fi
+        buildopt_cosign_output=$(
+            "${buildopt_tool_home}/bin/cosign" version 2>&1
+        ) || {
+            printf 'provisioned cosign failed its version probe: %s\n' \
+                "${buildopt_tool_home}/bin/cosign" >&2
+            exit 1
+        }
+        buildopt_cosign_version=$(
+            awk '$1 == "GitVersion:" {sub(/^v/, "", $2); print $2; exit}' \
+                <<<"${buildopt_cosign_output}"
+        )
+        if [[ "${buildopt_cosign_version}" != "${buildopt_version}" ]]; then
+            printf 'provisioned cosign binary does not match %s\n' \
+                "${buildopt_version}" >&2
+            exit 1
+        fi
+        ;;
     go)
         if [[ ! -x "${buildopt_tool_home}/bin/go" ]]; then
             printf 'provisioned Go binary is unavailable: %s\n' \
@@ -283,6 +322,29 @@ case "${buildopt_id}" in
         done <<<"${buildopt_shellcheck_output}"
         if [[ "${buildopt_shellcheck_version}" != "${buildopt_version}" ]]; then
             printf 'provisioned ShellCheck binary does not match %s\n' \
+                "${buildopt_version}" >&2
+            exit 1
+        fi
+        ;;
+    syft)
+        if [[ ! -x "${buildopt_tool_home}/bin/syft" ]]; then
+            printf 'provisioned Syft binary is unavailable: %s\n' \
+                "${buildopt_tool_home}/bin/syft" >&2
+            exit 1
+        fi
+        buildopt_syft_output=$(
+            "${buildopt_tool_home}/bin/syft" version 2>&1
+        ) || {
+            printf 'provisioned Syft failed its version probe: %s\n' \
+                "${buildopt_tool_home}/bin/syft" >&2
+            exit 1
+        }
+        buildopt_syft_version=$(
+            awk '$1 == "Version:" {print $2; exit}' \
+                <<<"${buildopt_syft_output}"
+        )
+        if [[ "${buildopt_syft_version}" != "${buildopt_version}" ]]; then
+            printf 'provisioned Syft binary does not match %s\n' \
                 "${buildopt_version}" >&2
             exit 1
         fi

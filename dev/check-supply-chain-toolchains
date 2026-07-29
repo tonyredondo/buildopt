@@ -1,0 +1,180 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_lock=${BUILDOPT_TOOLCHAINS_LOCK_FILE:-"${buildopt_script_dir}/toolchains.lock.yaml"}
+buildopt_tools_root=${BUILDOPT_TOOLS_ROOT:-"${buildopt_repo_root}/.tools"}
+buildopt_run="${buildopt_script_dir}/run"
+
+for buildopt_command in jq mktemp sha256sum; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required supply-chain verification command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+if [[ ! -f "${buildopt_lock}" ]]; then
+    printf 'missing toolchain lock: %s\n' "${buildopt_lock}" >&2
+    exit 70
+fi
+if ! buildopt_entries=$(
+    jq -ce '
+        [.artifacts[] | select(.id == "cosign" or .id == "syft")] |
+        if length == 2 and
+            ([.[].id] | sort) == ["cosign", "syft"]
+        then
+            .
+        else
+            error("expected exactly one cosign and Syft entry")
+        end
+    ' "${buildopt_lock}"
+); then
+    printf 'invalid supply-chain tool entries in lock\n' >&2
+    exit 70
+fi
+buildopt_cosign_version=$(
+    jq -r '.[] | select(.id == "cosign") | .version' \
+        <<<"${buildopt_entries}"
+)
+buildopt_syft_version=$(
+    jq -r '.[] | select(.id == "syft") | .version' \
+        <<<"${buildopt_entries}"
+)
+
+buildopt_has_git=0
+buildopt_before_status=
+if command -v git >/dev/null 2>&1 &&
+    git -C "${buildopt_repo_root}" rev-parse --is-inside-work-tree \
+    >/dev/null 2>&1; then
+    buildopt_has_git=1
+    buildopt_before_status=$(
+        git -C "${buildopt_repo_root}" \
+            status --porcelain=v1 --untracked-files=all
+    )
+fi
+
+buildopt_test_root=$(mktemp -d)
+buildopt_cleanup() {
+    if [[ -n "${buildopt_test_root:-}" ]] &&
+        [[ "${buildopt_test_root}" == /tmp/* ]] &&
+        [[ -d "${buildopt_test_root}" ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_cosign_output=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        "${buildopt_run}" --toolchain cosign -- cosign version
+)
+buildopt_observed_cosign=$(
+    awk '$1 == "GitVersion:" {sub(/^v/, "", $2); print $2; exit}' \
+        <<<"${buildopt_cosign_output}"
+)
+buildopt_syft_output=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        "${buildopt_run}" --toolchain syft -- syft version
+)
+buildopt_observed_syft=$(
+    awk '$1 == "Version:" {print $2; exit}' <<<"${buildopt_syft_output}"
+)
+if [[ "${buildopt_observed_cosign}" != "${buildopt_cosign_version}" ]] ||
+    [[ "${buildopt_observed_syft}" != "${buildopt_syft_version}" ]]; then
+    printf 'supply-chain tool versions do not match the lock\n' >&2
+    exit 1
+fi
+
+printf '%s\n' 'buildopt supply-chain fixture' \
+    >"${buildopt_test_root}/payload"
+printf '%s\n' \
+    '{"mediaType":"application/vnd.dev.sigstore.signingconfig.v0.2+json"}' \
+    >"${buildopt_test_root}/local-signing-config.json"
+COSIGN_PASSWORD='buildopt-env-011-test-only' \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_run}" --toolchain cosign -- \
+    cosign generate-key-pair \
+    --output-key-prefix "${buildopt_test_root}/release" >/dev/null
+COSIGN_PASSWORD='buildopt-env-011-test-only' \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_run}" --toolchain cosign -- \
+    cosign sign-blob \
+    --signing-config "${buildopt_test_root}/local-signing-config.json" \
+    --bundle "${buildopt_test_root}/payload.sigstore.json" \
+    --yes \
+    --key "${buildopt_test_root}/release.key" \
+    "${buildopt_test_root}/payload" >/dev/null
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_run}" --toolchain cosign -- \
+    cosign verify-blob \
+    --insecure-ignore-tlog \
+    --bundle "${buildopt_test_root}/payload.sigstore.json" \
+    --key "${buildopt_test_root}/release.pub" \
+    "${buildopt_test_root}/payload" >/dev/null 2>&1
+if ! jq -e '
+    .mediaType == "application/vnd.dev.sigstore.bundle.v0.3+json" and
+    ((.verificationMaterial.tlogEntries // []) | length == 0) and
+    (
+        (.verificationMaterial.timestampVerificationData.rfc3161Timestamps // []) |
+        length == 0
+    ) and
+    (.messageSignature.messageDigest.algorithm == "SHA2_256") and
+    (.messageSignature.signature | type == "string" and length > 0)
+' "${buildopt_test_root}/payload.sigstore.json" >/dev/null; then
+    printf 'cosign did not produce the offline local-key signature profile\n' >&2
+    exit 1
+fi
+
+mkdir "${buildopt_test_root}/sbom-source"
+printf '%s\n' 'versioned release payload' \
+    >"${buildopt_test_root}/sbom-source/artifact.txt"
+SYFT_CHECK_FOR_APP_UPDATE=false \
+SYFT_PARALLELISM=1 \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_run}" --toolchain syft -- \
+    syft scan \
+    "dir:${buildopt_test_root}/sbom-source" \
+    --source-name buildopt-env-011 \
+    --source-version 0.1.0 \
+    --output "spdx-json=${buildopt_test_root}/sbom.json" \
+    --quiet
+if ! jq -e \
+    --arg buildopt_syft_version "${buildopt_syft_version}" \
+    '
+        .spdxVersion == "SPDX-2.3" and
+        .dataLicense == "CC0-1.0" and
+        .name == "buildopt-env-011" and
+        any(
+            .creationInfo.creators[];
+            . == ("Tool: syft-" + $buildopt_syft_version)
+        )
+    ' "${buildopt_test_root}/sbom.json" >/dev/null; then
+    printf 'Syft did not produce the expected SPDX 2.3 document\n' >&2
+    exit 1
+fi
+
+if ((buildopt_has_git != 0)); then
+    buildopt_after_status=$(
+        git -C "${buildopt_repo_root}" \
+            status --porcelain=v1 --untracked-files=all
+    )
+    if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+        printf 'supply-chain tool check changed the working tree\n' >&2
+        exit 1
+    fi
+fi
+
+printf 'ENV-011 supply-chain toolchains OK: cosign %s local signing and Syft %s SPDX\n' \
+    "${buildopt_cosign_version}" \
+    "${buildopt_syft_version}"
