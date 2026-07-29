@@ -74,7 +74,7 @@ For both tools, `dev/run` verifies the provisioned manifest and exact reported v
 
 ## Go toolchain validation
 
-The root [`go.mod`](../go.mod) declares module `github.com/tonyredondo/buildopt`, the Go 1.26.0 language baseline, and exact `go1.26.5` toolchain. `ENV-005` established that compiler contract before product packages existed; `WS-001` now adds the first dependency-free launcher packages without changing the toolchain or module graph.
+The root [`go.mod`](../go.mod) declares module `github.com/tonyredondo/buildopt`, the Go 1.26.0 language baseline, and exact `go1.26.5` toolchain. `ENV-005` established that compiler contract before product packages existed; `WS-001` and `WS-002` now provide the first dependency-free launcher behavior without changing the toolchain or module graph.
 
 Run the checker through the isolated toolchain:
 
@@ -86,13 +86,15 @@ The checker requires Linux AMD64, exact locked provenance and version, local-onl
 
 ## `buildopt` CLI validation
 
-Build the real `buildopt` binary and run the `WS-001` passthrough integration suite:
+Build the real `buildopt` binary and run the `WS-001`/`WS-002` launcher integration suite:
 
 ```bash
 ./dev/check-buildopt-cli
 ```
 
-The checker runs with the locked Go toolchain and offline module resolution. It executes a helper process through the built CLI and verifies exact argument boundaries without shell expansion, inherited working directory/environment/standard streams, zero and non-zero child statuses, usage code `64`, cannot-execute code `126`, and command-not-found code `127`. Process-group and signal behavior is intentionally deferred to `WS-002`.
+The checker runs with the locked Go toolchain and offline module resolution. It executes helpers through the built CLI and verifies exact argument boundaries without shell expansion, inherited working directory/environment/standard streams, zero and non-zero child statuses, usage code `64`, cannot-execute code `126`, and command-not-found code `127`.
+
+On Linux, the same suite verifies that the direct child leads a process group separate from the launcher, a nested descendant receives forwarded `SIGINT` and `SIGTERM`, cancellation waits for delayed cleanup without a launcher-owned deadline, handled child statuses remain authoritative, and an unhandled `SIGTERM` becomes status `143`. Other platforms remain outside the current acceptance matrix.
 
 ## Rust toolchain validation
 

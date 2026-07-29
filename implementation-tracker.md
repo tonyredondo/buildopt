@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — `WS-001` closed with the real `buildopt run --` passthrough and CLI integration suite; `WS-002` is the next block<br>
+**Overall status:** `DOING` — `WS-002` closed with Linux process-group isolation, signal forwarding, and cancellation fixtures; `SPK-001` is next in sequence and remains dependency-gated<br>
 **Current phase:** Phase 0 — contracts, fixtures, and walking skeleton<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
 **Last updated:** 2026-07-29<br>
@@ -94,7 +94,7 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 11 | `F0-010` | `contracts/`, `specs/`, `benchmarks/`, and `adr/` structure created | `DONE` | Codex |
 | 12 | `F0-011` | First normative schema: `BUILD_SESSION v1` | `DONE` | Codex |
 | 13 | `WS-001` | `buildopt run` → `BUILD_SESSION` vertical slice started | `DONE` | Codex |
-| 14 | `WS-002` | Process group and signal forwarding | `TODO` | — |
+| 14 | `WS-002` | Process group and signal forwarding | `DONE` | Codex |
 | 15 | `SPK-001` | Task → cache key → PUT spike on the golden lane | `WAITING` | — |
 
 ---
@@ -262,7 +262,7 @@ GitHub Action
 | ID | Deliverable | Depends on | State | Owner | Expected evidence |
 |---|---|---|---|---|---|
 | `WS-001` | `buildopt run -- <argv>` preserves argv and exit code | `F0-001`, `F0-002` | `DONE` | Codex | `E-020`: real-binary CLI integration suite |
-| `WS-002` | Process group and signal forwarding | `WS-001` | `TODO` | — | SIGINT/SIGTERM/cancel fixtures |
+| `WS-002` | Process group and signal forwarding | `WS-001` | `DONE` | Codex | `E-021`: Linux process-tree signal and cancellation fixtures |
 | `WS-003` | Gradle plugin handshakes without optimizing | `F0-019`, `WS-001` | `WAITING` | — | Real Wrapper on golden lane |
 | `WS-004` | Loopback gateway with authenticated rendezvous | `F0-019`, `WS-001` | `WAITING` | — | Restart/concurrency fixture |
 | `WS-005` | `buildopt-server` receives a session | `F0-011`, `WS-004` | `WAITING` | — | Ingest integration test |
@@ -488,7 +488,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Normative package layout | RFC §29.2 namespaces, indexes, planned artifact parents, and non-empty materialized artifacts | `dev/check-normative-layout` passed for 14 namespaces and 26 planned artifacts; ShellCheck and repository layout passed | 2026-07-29 | `E-018` |
 | Contract schemas | `BUILD_SESSION v1` Draft 2020-12; later schemas, OpenAPI, and Protobuf remain pending | Pinned Go validator compiled the schema with format assertions; 4 valid fixtures passed and 7 focused invalid fixtures were rejected for their intended diagnostics | 2026-07-29 | `E-019` |
 | Golden vectors | Go ↔ Java canonicalization/signatures | Not run | — | — |
-| Go unit/integration | Launcher CLI; gateway/server remain pending | Real `buildopt` binary preserved difficult argv boundaries, cwd, environment, stdin/stdout/stderr, success and non-zero child statuses; usage and launch-error cases passed offline | 2026-07-29 | `E-020` |
+| Go unit/integration | Launcher CLI; gateway/server remain pending | Real `buildopt` binary preserved argv/process context and child statuses; Linux fixtures proved a distinct child group, exact SIGINT/SIGTERM delivery to a descendant, delayed cancellation cleanup, and conventional unhandled-signal status | 2026-07-29 | `E-021` |
 | Gradle TestKit | Plugin/adapters | Not run | — | — |
 | Real Gradle Wrapper | Wrapper 9.6.1, Kotlin DSL fixture, and Configuration Cache | Strict gate passed on the nominal 4 vCPU/16 GiB host and a container with 4 CPU/16 GiB cgroups; bytecode major 61; Configuration Cache reused; `compileJava FROM-CACHE`; negative 2-CPU fixture rejected | 2026-07-29 | `E-008` |
 | Golden container runtime | Docker daemon, immutable image index/platform identity, local image provenance, exact JDK patch, and cgroup limits | Docker 29.6.2 resolved the pinned index to the unique Linux AMD64 digest; strict image inspection and a 4-CPU/16-GiB container build passed; deterministic negative fixtures passed | 2026-07-29 | `E-015` |
@@ -535,6 +535,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-018` | 2026-07-29 | `F0-010` | [`dev/check-normative-layout`](./dev/check-normative-layout) and non-empty indexes under [`contracts/`](./contracts/README.md), [`specs/`](./specs/README.md), [`benchmarks/`](./benchmarks/README.md), and [`adr/`](./adr/README.md); all 14 namespaces from RFC §29.2 exist, all 26 planned artifact paths have an indexed owner and materialized parent, existing golden-lane artifacts and any materialized planned path must be non-empty, and repository layout plus locked ShellCheck passed | `DONE`: the normative package structure is executable without prematurely implementing schemas, APIs, IDLs, vectors, specs, benchmarks, or ADR decisions; `F0-011` is unblocked and next |
 | `E-019` | 2026-07-29 | `F0-011` | Normative [`BUILD_SESSION v1`](./contracts/jsonschema/build-session.v1.schema.json), documented [fixture set](./contracts/jsonschema/testdata/build-session.v1/README.md), and [`dev/check-build-session-schema`](./dev/check-build-session-schema); exact `jsonschema/v6` 6.0.2 is isolated in the test module and authenticated by `go.sum`; Draft 2020-12 compilation with asserted RFC 3339 formats accepted four complete/partial, CI/local, success/failure fixtures and rejected seven focused cases for lifecycle mismatch, future aggregate effects, impossible timestamps, negative duration, missing recovery ranges, inconsistent success exit, and invented unavailable values; module tidy/verify/vet, the unchanged offline core Go toolchain check, JSON/Bash syntax, repository/normative layouts, locked ShellCheck/actionlint, and the locked-JDK Gradle build passed | `DONE`: `BUILD_SESSION` now fixes neutral-envelope boundaries, explicit metric availability/methods, pre-outcome assignment, complete/partial recovery, strict unknown fields, and OBS-002 lifecycle separation without activating generated clients or later metric catalogs; `WS-001` is next |
 | `E-020` | 2026-07-29 | `WS-001` | Dependency-free [`cmd/buildopt`](./cmd/buildopt/main.go), [`internal/launcher`](./internal/launcher/run.go), real-binary [integration tests](./cmd/buildopt/main_test.go), and [`dev/check-buildopt-cli`](./dev/check-buildopt-cli); the locked Go 1.26.5 toolchain built the executable with offline module resolution, then direct execution without a shell preserved empty, whitespace, quoted, wildcard, variable-like, literal-delimiter, Unicode, and newline arguments plus `argv[0]`, cwd, environment, stdin, stdout, and stderr; child exits `0` and `37`, usage `64`, cannot-execute `126`, and not-found `127` passed; Go formatting/vet, the unchanged offline module/toolchain contract, repository layout, Bash syntax, and locked ShellCheck/actionlint passed | `DONE`: the first walking-skeleton behavior now executes the original command and returns ordinary child statuses without activating policy, plugin, gateway, telemetry, optimization, or untested signal semantics; `WS-002` is unblocked and next |
+| `E-021` | 2026-07-29 | `WS-002` | Linux process-group and signal handling in [`internal/launcher`](./internal/launcher/run.go), real-binary [signal integration tests](./cmd/buildopt/main_signal_linux_test.go), and a nested [signal helper](./cmd/buildopt/testdata/signal-helper/main.go); the direct child became a group leader distinct from `buildopt`, its descendant inherited the group, and signals sent only to the launcher reached both processes as exact `SIGINT` and `SIGTERM`; handled cancellation waited through a 150 ms cleanup and preserved child exits `41`/`42`, while unhandled `SIGTERM` returned `143` without launcher stderr; the signal suite passed 10 consecutive runs and the race detector, full CLI tests, Go vet including the helper, the unchanged offline module/toolchain contract, repository layout, Bash syntax, and locked ShellCheck/actionlint passed | `DONE`: the launcher now preserves the Linux process-tree cancellation contract without imposing or shortening the CI provider's grace period; platform expansion and observability/lifecycle behavior remain deferred, and `SPK-001` remains dependency-gated |
 
 ---
 
@@ -542,6 +543,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-29 | Closed `WS-002`: isolated the Linux child process group, forwarded `SIGINT`/`SIGTERM` through the process tree, preserved cleanup and exit semantics, and added repeated cancellation fixtures | Codex |
 | 2026-07-29 | Closed `WS-001`: added the dependency-free `buildopt run --` passthrough, real-binary argv/stdio/cwd/environment and exit-status integration tests, and kept signal semantics isolated for `WS-002` | Codex |
 | 2026-07-29 | Closed `F0-011`: added the strict `BUILD_SESSION v1` Draft 2020-12 contract, explicit unavailable/partial metric semantics, lifecycle isolation, positive/negative fixtures, and a pinned validator isolated from the product module | Codex |
 | 2026-07-29 | Closed `F0-010`: materialized and checked the RFC §29.2 normative namespaces and artifact indexes without creating empty future contracts | Codex |

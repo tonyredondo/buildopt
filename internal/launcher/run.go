@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"os"
 	"os/exec"
+	"os/signal"
+	"syscall"
 )
 
 const (
@@ -15,8 +18,8 @@ const (
 	usage             = "usage: buildopt run -- <command> [args...]\n"
 )
 
-// Run executes the WS-001 passthrough command and returns the process exit code.
-// Process-group creation and signal forwarding are intentionally owned by WS-002.
+// Run executes the WS-001 passthrough command with the WS-002 process contract
+// and returns the child process exit status.
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	if isHelp(args) {
 		_, _ = io.WriteString(stdout, usage)
@@ -32,8 +35,26 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	command.Stdin = stdin
 	command.Stdout = stdout
 	command.Stderr = stderr
+	command.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
-	err := command.Run()
+	signals := make(chan os.Signal, 2)
+	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
+
+	err := command.Start()
+	if err != nil {
+		signal.Stop(signals)
+		return launchErrorExitCode(childArgs[0], err, stderr)
+	}
+
+	stopForwarding := make(chan struct{})
+	forwardingStopped := make(chan struct{})
+	go forwardSignals(command.Process.Pid, signals, stopForwarding, forwardingStopped, stderr)
+
+	err = command.Wait()
+	signal.Stop(signals)
+	close(stopForwarding)
+	<-forwardingStopped
+
 	if err == nil {
 		return 0
 	}
@@ -43,6 +64,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		if exitCode := exitError.ExitCode(); exitCode >= 0 {
 			return exitCode
 		}
+		if status, ok := exitError.Sys().(syscall.WaitStatus); ok && status.Signaled() {
+			return 128 + int(status.Signal())
+		}
 		_, _ = fmt.Fprintf(
 			stderr,
 			"buildopt: command %q terminated without an exit code\n",
@@ -51,10 +75,52 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		return 1
 	}
 
+	return launchErrorExitCode(childArgs[0], err, stderr)
+}
+
+func forwardSignals(
+	processGroupID int,
+	signals <-chan os.Signal,
+	stop <-chan struct{},
+	stopped chan<- struct{},
+	stderr io.Writer,
+) {
+	defer close(stopped)
+
+	for {
+		select {
+		case <-stop:
+			return
+		default:
+		}
+
+		select {
+		case <-stop:
+			return
+		case incoming := <-signals:
+			unixSignal, ok := incoming.(syscall.Signal)
+			if !ok {
+				continue
+			}
+			if err := syscall.Kill(-processGroupID, unixSignal); err != nil &&
+				!errors.Is(err, syscall.ESRCH) {
+				_, _ = fmt.Fprintf(
+					stderr,
+					"buildopt: cannot forward %s to process group %d: %v\n",
+					incoming,
+					processGroupID,
+					err,
+				)
+			}
+		}
+	}
+}
+
+func launchErrorExitCode(command string, err error, stderr io.Writer) int {
 	_, _ = fmt.Fprintf(
 		stderr,
 		"buildopt: cannot execute %q: %v\n",
-		childArgs[0],
+		command,
 		err,
 	)
 	if errors.Is(err, exec.ErrNotFound) || errors.Is(err, fs.ErrNotExist) {
