@@ -91,6 +91,7 @@ buildopt_materialized_artifacts=(
     "contracts/jsonschema/test-validation-result.v1.schema.json"
     "contracts/openapi/buildopt-cache-control.v1.yaml"
     "contracts/openapi/buildopt-control.v1.yaml"
+    "contracts/openapi/test-optimization.v1.yaml"
     "contracts/metrics/build-impact-v1.json"
     "contracts/proto/local-events/v1/task_events.proto"
     "specs/gradle-correlation-v1.md"

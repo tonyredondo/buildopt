@@ -1,0 +1,663 @@
+openapi: 3.1.0
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+info:
+  title: Test Optimization Integration API
+  version: 1.0.0
+  description: >-
+    Private-beta boundary used by Build Optimization to resolve signed test
+    cache grants and request FULL_RELEVANT_VALIDATION. The API is fail-closed:
+    absence, incompatibility, timeout, or incomplete validation never becomes
+    positive authority.
+servers:
+  - url: https://test-optimization.example.invalid
+    description: Deployment-specific TLS endpoint
+security:
+  - bearerAuth: []
+tags:
+  - name: Grants
+  - name: Validation
+paths:
+  /v1/test-cache-grants:resolve:
+    post:
+      tags: [Grants]
+      operationId: resolveTestCacheGrant
+      summary: Resolve a signed test-cache grant before Gradle configuration
+      parameters:
+        - $ref: '#/components/parameters/ContractVersion'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrantResolutionRequest'
+      responses:
+        '200':
+          description: A signed grant bound to the exact repository and source state
+          headers:
+            X-BuildOpt-Request-ID:
+              $ref: '#/components/headers/RequestId'
+          content:
+            application/json:
+              schema:
+                $ref: '../jsonschema/test-cache-grant.v1.schema.json'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '404':
+          $ref: '#/components/responses/GrantUnavailable'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '504':
+          $ref: '#/components/responses/DeadlineExceeded'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      x-buildopt-deadline:
+        source: body.context.deadline
+        exceededOutcome: NO_GRANT
+      x-buildopt-cancellation:
+        clientDisconnect: CANCEL_IF_UNACCEPTED
+        acceptedMutation: NONE
+      x-buildopt-retry:
+        idempotent: true
+        maxBackoffMs: 5000
+        unknownResponse: RETRY_SAME_KEY
+      x-buildopt-idempotency:
+        header: Idempotency-Key
+        payload: body.context.requestId
+        conflictCode: IDEMPOTENCY_CONFLICT
+      x-buildopt-error-codes:
+        - INVALID_REQUEST
+        - UNAUTHENTICATED
+        - IDEMPOTENCY_CONFLICT
+        - DEADLINE_EXCEEDED
+        - GRANT_UNAVAILABLE
+        - CONTRACT_INCOMPATIBLE
+        - INTERNAL
+  /v1/test-cache-grants/{grantId}/status:
+    get:
+      tags: [Grants]
+      operationId: getTestCacheGrantStatus
+      summary: Read current signed grant status before authorizing commit
+      parameters:
+        - $ref: '#/components/parameters/ContractVersion'
+        - $ref: '#/components/parameters/GrantId'
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Deadline'
+      responses:
+        '200':
+          description: Current signed status and cumulative grant epoch
+          headers:
+            X-BuildOpt-Request-ID:
+              $ref: '#/components/headers/RequestId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCacheGrantStatus'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '404':
+          $ref: '#/components/responses/GrantUnavailable'
+        '504':
+          $ref: '#/components/responses/DeadlineExceeded'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      x-buildopt-deadline:
+        source: header.X-BuildOpt-Deadline
+        exceededOutcome: ABORT_PENDING
+      x-buildopt-cancellation:
+        clientDisconnect: CANCEL_READ
+        acceptedMutation: NONE
+      x-buildopt-retry:
+        idempotent: true
+        maxBackoffMs: 5000
+        unknownResponse: RETRY_READ
+      x-buildopt-error-codes:
+        - UNAUTHENTICATED
+        - GRANT_UNAVAILABLE
+        - DEADLINE_EXCEEDED
+        - CONTRACT_INCOMPATIBLE
+        - INTERNAL
+  /v1/build-validations:
+    post:
+      tags: [Validation]
+      operationId: submitTestBuildValidation
+      summary: Request idempotent full relevant validation for one action
+      parameters:
+        - $ref: '#/components/parameters/ContractVersion'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BuildValidationRequest'
+      responses:
+        '200':
+          description: Validation completed synchronously
+          headers:
+            X-BuildOpt-Request-ID:
+              $ref: '#/components/headers/RequestId'
+          content:
+            application/json:
+              schema:
+                $ref: '../jsonschema/test-validation-result.v1.schema.json'
+        '202':
+          description: Validation accepted for bounded polling
+          headers:
+            X-BuildOpt-Request-ID:
+              $ref: '#/components/headers/RequestId'
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationReceipt'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/ArtifactRejected'
+        '429':
+          $ref: '#/components/responses/ResourceExhausted'
+        '504':
+          $ref: '#/components/responses/DeadlineExceeded'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      x-buildopt-deadline:
+        source: body.context.deadline
+        exceededOutcome: INCONCLUSIVE
+      x-buildopt-cancellation:
+        clientDisconnect: DOES_NOT_CANCEL_ACCEPTED_VALIDATION
+        acceptedMutation: DURABLE
+      x-buildopt-retry:
+        idempotent: true
+        maxBackoffMs: 5000
+        unknownResponse: POLL_BY_OPERATION_OR_RETRY_SAME_KEY
+      x-buildopt-idempotency:
+        header: Idempotency-Key
+        payload: body.context.requestId+body.actionId
+        conflictCode: IDEMPOTENCY_CONFLICT
+      x-buildopt-error-codes:
+        - INVALID_REQUEST
+        - UNAUTHENTICATED
+        - IDEMPOTENCY_CONFLICT
+        - ARTIFACT_REJECTED
+        - RESOURCE_EXHAUSTED
+        - DEADLINE_EXCEEDED
+        - CONTRACT_INCOMPATIBLE
+        - INTERNAL
+  /v1/build-validations/{operationId}:
+    get:
+      tags: [Validation]
+      operationId: getTestBuildValidation
+      summary: Poll an accepted validation operation until its original deadline
+      parameters:
+        - $ref: '#/components/parameters/ContractVersion'
+        - $ref: '#/components/parameters/OperationId'
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Deadline'
+      responses:
+        '200':
+          description: Final signed validation result
+          headers:
+            X-BuildOpt-Request-ID:
+              $ref: '#/components/headers/RequestId'
+          content:
+            application/json:
+              schema:
+                $ref: '../jsonschema/test-validation-result.v1.schema.json'
+        '202':
+          description: Validation is still pending
+          headers:
+            X-BuildOpt-Request-ID:
+              $ref: '#/components/headers/RequestId'
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationReceipt'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '504':
+          $ref: '#/components/responses/DeadlineExceeded'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+      x-buildopt-deadline:
+        source: header.X-BuildOpt-Deadline
+        exceededOutcome: INCONCLUSIVE
+      x-buildopt-cancellation:
+        clientDisconnect: CANCEL_READ
+        acceptedMutation: NONE
+      x-buildopt-retry:
+        idempotent: true
+        maxBackoffMs: 5000
+        unknownResponse: RETRY_READ
+      x-buildopt-error-codes:
+        - UNAUTHENTICATED
+        - NOT_FOUND
+        - DEADLINE_EXCEEDED
+        - CONTRACT_INCOMPATIBLE
+        - INTERNAL
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque integration-scoped token
+      description: >-
+        Deployment-scoped integration token. Signed grants and validation
+        results are verified independently against the configured Ed25519
+        trust root.
+  parameters:
+    ContractVersion:
+      name: X-BuildOpt-Contract-Version
+      in: header
+      required: true
+      schema:
+        type: string
+        const: test-optimization/v1
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 512
+    RequestId:
+      name: X-BuildOpt-Request-ID
+      in: header
+      required: true
+      schema:
+        $ref: '#/components/schemas/Identifier'
+    Deadline:
+      name: X-BuildOpt-Deadline
+      in: header
+      required: true
+      schema:
+        $ref: '#/components/schemas/UtcTimestamp'
+    GrantId:
+      name: grantId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/Identifier'
+    OperationId:
+      name: operationId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/Identifier'
+  headers:
+    RequestId:
+      required: true
+      schema:
+        $ref: '#/components/schemas/Identifier'
+    RetryAfter:
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 5
+  responses:
+    InvalidRequest:
+      description: Request does not satisfy the contract
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Unauthenticated:
+      description: Integration token is absent or invalid
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    GrantUnavailable:
+      description: No current compatible grant exists
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Conflict:
+      description: Idempotency key was reused with different content
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    ArtifactRejected:
+      description: Artifact reference or exact content digest is invalid
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    ResourceExhausted:
+      description: Validation budget or queue capacity is unavailable
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Operation is unknown or no longer retained
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    DeadlineExceeded:
+      description: Original request deadline has elapsed
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    UnexpectedError:
+      description: Stable fail-closed service error
+      headers:
+        X-BuildOpt-Request-ID:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    Identifier:
+      type: string
+      pattern: '^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$'
+    Digest:
+      type: string
+      pattern: '^(?:sha256|hmac-sha256):[0-9a-f]{64}$'
+    Sha256Digest:
+      type: string
+      pattern: '^sha256:[0-9a-f]{64}$'
+    UtcTimestamp:
+      type: string
+      format: date-time
+      pattern: 'Z$'
+    Repository:
+      type: object
+      additionalProperties: false
+      required: [tenant, repository, trustDomain]
+      properties:
+        tenant:
+          $ref: '#/components/schemas/Identifier'
+        repository:
+          $ref: '#/components/schemas/Identifier'
+        trustDomain:
+          $ref: '#/components/schemas/Identifier'
+    RequestContext:
+      type: object
+      additionalProperties: false
+      required:
+        - requestId
+        - repository
+        - revision
+        - sourceStateDigest
+        - deadline
+      properties:
+        requestId:
+          $ref: '#/components/schemas/Identifier'
+        repository:
+          $ref: '#/components/schemas/Repository'
+        revision:
+          type: string
+          pattern: '^[0-9a-f]{7,64}$'
+        sourceStateDigest:
+          $ref: '#/components/schemas/Digest'
+        deadline:
+          $ref: '#/components/schemas/UtcTimestamp'
+    Selector:
+      type: object
+      additionalProperties: false
+      required: [kind, id]
+      properties:
+        kind:
+          enum: [TASK_TYPE, ADAPTER]
+        id:
+          $ref: '#/components/schemas/Identifier'
+    GrantResolutionRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - contractVersion
+        - context
+        - policyDigest
+        - requestedSelectors
+        - requestedCapabilities
+      properties:
+        contractVersion:
+          const: test-optimization/v1
+        context:
+          $ref: '#/components/schemas/RequestContext'
+        policyDigest:
+          $ref: '#/components/schemas/Sha256Digest'
+        requestedSelectors:
+          type: array
+          minItems: 1
+          maxItems: 256
+          items:
+            $ref: '#/components/schemas/Selector'
+        requestedCapabilities:
+          type: array
+          minItems: 1
+          maxItems: 2
+          uniqueItems: true
+          items:
+            enum: [READ, WRITE]
+    ArtifactRef:
+      type: object
+      additionalProperties: false
+      required:
+        - artifactId
+        - digest
+        - sizeBytes
+        - mediaType
+        - retrieval
+      properties:
+        artifactId:
+          $ref: '#/components/schemas/Identifier'
+        digest:
+          $ref: '#/components/schemas/Sha256Digest'
+        sizeBytes:
+          type: integer
+          minimum: 0
+          maximum: 107374182400
+        mediaType:
+          type: string
+          pattern: '^[a-z0-9][a-z0-9!#$&^_.+-]+/[a-z0-9][a-z0-9!#$&^_.+-]+$'
+        retrieval:
+          type: object
+          additionalProperties: false
+          required: [kind, locator]
+          properties:
+            kind:
+              enum: [CUSTOMER_CHANNEL, EPHEMERAL_HTTPS]
+            locator:
+              type: string
+              minLength: 1
+              maxLength: 2048
+    BuildValidationRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - contractVersion
+        - context
+        - actionId
+        - validationMode
+        - policyDigest
+        - candidateArtifacts
+      properties:
+        contractVersion:
+          const: test-optimization/v1
+        context:
+          $ref: '#/components/schemas/RequestContext'
+        actionId:
+          $ref: '#/components/schemas/Identifier'
+        validationMode:
+          const: FULL_RELEVANT_VALIDATION
+        policyDigest:
+          $ref: '#/components/schemas/Sha256Digest'
+        candidateArtifacts:
+          type: array
+          minItems: 1
+          maxItems: 1024
+          items:
+            $ref: '#/components/schemas/ArtifactRef'
+    Signature:
+      type: object
+      additionalProperties: false
+      required:
+        - algorithm
+        - canonicalization
+        - keyId
+        - signedPayloadDigest
+        - value
+      properties:
+        algorithm:
+          const: Ed25519
+        canonicalization:
+          const: JCS
+        keyId:
+          $ref: '#/components/schemas/Identifier'
+        signedPayloadDigest:
+          $ref: '#/components/schemas/Sha256Digest'
+        value:
+          type: string
+          pattern: '^[A-Za-z0-9_-]{86}$'
+    TestCacheGrantStatus:
+      type: object
+      additionalProperties: false
+      required:
+        - contractVersion
+        - grantId
+        - grantDigest
+        - grantEpoch
+        - repository
+        - status
+        - observedAt
+        - validUntil
+        - signature
+      properties:
+        contractVersion:
+          const: test-optimization/v1
+        grantId:
+          $ref: '#/components/schemas/Identifier'
+        grantDigest:
+          $ref: '#/components/schemas/Sha256Digest'
+        grantEpoch:
+          type: integer
+          minimum: 0
+          maximum: 9223372036854775807
+        repository:
+          $ref: '#/components/schemas/Repository'
+        status:
+          enum: [ACTIVE, REVOKED, EXPIRED]
+        observedAt:
+          $ref: '#/components/schemas/UtcTimestamp'
+        validUntil:
+          $ref: '#/components/schemas/UtcTimestamp'
+        reason:
+          type: string
+          minLength: 1
+          maxLength: 512
+        signature:
+          $ref: '#/components/schemas/Signature'
+    ValidationReceipt:
+      type: object
+      additionalProperties: false
+      required:
+        - contractVersion
+        - requestId
+        - actionId
+        - operationId
+        - status
+        - pollAfterMs
+        - expiresAt
+      properties:
+        contractVersion:
+          const: test-optimization/v1
+        requestId:
+          $ref: '#/components/schemas/Identifier'
+        actionId:
+          $ref: '#/components/schemas/Identifier'
+        operationId:
+          $ref: '#/components/schemas/Identifier'
+        status:
+          const: PENDING
+        pollAfterMs:
+          type: integer
+          minimum: 0
+          maximum: 5000
+        expiresAt:
+          $ref: '#/components/schemas/UtcTimestamp'
+    Problem:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+        - title
+        - status
+        - errorCode
+        - requestId
+        - retryable
+        - maxBackoffMs
+        - unknownResponse
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+          minLength: 1
+          maxLength: 512
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        errorCode:
+          type: string
+          pattern: '^[A-Z][A-Z0-9_]{1,63}$'
+        requestId:
+          $ref: '#/components/schemas/Identifier'
+        retryable:
+          type: boolean
+        maxBackoffMs:
+          type: integer
+          minimum: 0
+          maximum: 5000
+        unknownResponse:
+          enum:
+            - NONE
+            - RETRY_SAME_KEY
+            - RETRY_READ
+            - POLL_BY_OPERATION
+            - FAIL_CLOSED

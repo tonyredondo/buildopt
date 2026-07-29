@@ -312,6 +312,21 @@ dependency to the product module. Complete fault/retry vectors, generated
 clients, N/N-1 compatibility, and durable queue/cache transactions remain with
 their later tracker items.
 
+## Test Optimization OpenAPI validation
+
+Validate the `F0-018` producer/consumer API:
+
+```bash
+./dev/check-test-optimization-openapi
+```
+
+The isolated checker loads the OpenAPI 3.1 contract and its signed grant/result
+schemas, enforces the common TLS, bearer, deadline, cancellation, retry,
+idempotency, and stable-error policy, and exercises grant resolution, current
+grant status, delayed validation submission, and final polling through a
+request/response-validating mock. It also proves exact replay and rejects an
+idempotency key reused with another payload.
+
 ## Metrics catalog validation
 
 Validate the machine-readable `F0-024` catalog and its private-beta measurement

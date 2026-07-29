@@ -48,8 +48,31 @@ loaded documents and the already-materialized policy, attempt, validation, and
 commit JSON Schemas; it also proves exact replay and conflicting-payload
 behavior.
 
-`F0-018` still owns [`test-optimization.v1.yaml`](./test-optimization.v1.yaml).
+## Test Optimization API
+
+[`test-optimization.v1.yaml`](./test-optimization.v1.yaml) is the normative
+`F0-018` producer/consumer boundary. It resolves a signed grant before Gradle
+configuration, rechecks signed cumulative grant status before commit, submits
+one idempotent `FULL_RELEVANT_VALIDATION`, and polls delayed results within the
+original deadline. Artifact references are content-addressed and may use only a
+customer-owned channel or an authorized ephemeral HTTPS locator.
+
+Missing, expired, revoked, or incompatible grants and incomplete validation
+remain fail-closed for the optimization while preserving the baseline build.
+Every mutation binds the request ID, and validation additionally binds the
+action ID. Exact replays return the same operation; another payload is an
+`IDEMPOTENCY_CONFLICT`.
+
+Validate the document and exercise all four operations against its
+request/response-validating mock with:
+
+```bash
+./dev/check-test-optimization-openapi
+```
+
 `F0-020..022` own cryptographic vectors, complete error/retry conformance,
-N/N-1 compatibility, and generated clients. Queue execution and the atomic
-SQLite commit/recovery implementation remain with `CI-ORCH-001`/`CACHE-008`;
-these API documents do not close either wider gate.
+N/N-1 compatibility, and generated clients. Full cross-product missing,
+expired, revoked, delayed, corrupt-artifact, and compatibility fixtures remain
+with `F0-033`. Queue execution and the atomic SQLite commit/recovery
+implementation remain with `CI-ORCH-001`/`CACHE-008`; these API documents do
+not close either wider gate.
