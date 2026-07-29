@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)) || [[ "$1" != "--fixture-version" ]]; then
+    printf 'usage: buildopt-server --fixture-version\n' >&2
+    exit 64
+fi
+printf 'buildopt-server 0.0.0-ws007\n'

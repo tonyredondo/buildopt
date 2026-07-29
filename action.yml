@@ -1,0 +1,47 @@
+name: Setup BuildOpt
+description: Install a checksum-pinned BuildOpt release on a Linux x64 runner
+
+inputs:
+  version:
+    description: Exact BuildOpt release version
+    required: true
+  archive-url:
+    description: HTTPS URL of the Linux AMD64 release archive
+    required: true
+  archive-sha256:
+    description: Lowercase SHA-256 of the release archive
+    required: true
+
+outputs:
+  install-root:
+    description: Verified release installation root
+    value: ${{ steps.install.outputs.install-root }}
+  buildopt-path:
+    description: Absolute path to the BuildOpt launcher
+    value: ${{ steps.install.outputs.buildopt-path }}
+  buildopt-server-path:
+    description: Absolute path to buildopt-server
+    value: ${{ steps.install.outputs.buildopt-server-path }}
+  gradle-plugin-path:
+    description: Absolute path to the versioned Gradle plugin JAR
+    value: ${{ steps.install.outputs.gradle-plugin-path }}
+  jvm-agent-path:
+    description: Absolute path to the versioned JVM agent JAR
+    value: ${{ steps.install.outputs.jvm-agent-path }}
+  gradle-init-script:
+    description: Pinned init script that applies the packaged Gradle plugin
+    value: ${{ steps.install.outputs.gradle-init-script }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install verified BuildOpt release
+      id: install
+      shell: bash
+      env:
+        BUILDOPT_ACTION_VERSION: ${{ inputs.version }}
+        BUILDOPT_ACTION_ARCHIVE_URL: ${{ inputs.archive-url }}
+        BUILDOPT_ACTION_ARCHIVE_SHA256: ${{ inputs.archive-sha256 }}
+        BUILDOPT_ACTION_INSTALL_DIR: ${{ runner.temp }}/buildopt-action
+        BUILDOPT_ACTION_PATH: ${{ github.action_path }}
+      run: '"$BUILDOPT_ACTION_PATH/.github/actions/setup-buildopt"'

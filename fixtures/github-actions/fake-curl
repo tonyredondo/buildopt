@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_fixture_archive=${BUILDOPT_FIXTURE_ARCHIVE:?missing BUILDOPT_FIXTURE_ARCHIVE}
+buildopt_fixture_url=${BUILDOPT_FIXTURE_ARCHIVE_URL:?missing BUILDOPT_FIXTURE_ARCHIVE_URL}
+buildopt_fixture_log=${BUILDOPT_FIXTURE_CURL_LOG:?missing BUILDOPT_FIXTURE_CURL_LOG}
+buildopt_output=
+buildopt_url=
+buildopt_https_only=0
+buildopt_redirect_https_only=0
+buildopt_tls=0
+
+while (($# > 0)); do
+    case "$1" in
+        --output)
+            buildopt_output=${2:?missing curl output}
+            shift 2
+            ;;
+        --proto)
+            [[ "${2:-}" == "=https" ]] && buildopt_https_only=1
+            shift 2
+            ;;
+        --proto-redir)
+            [[ "${2:-}" == "=https" ]] && buildopt_redirect_https_only=1
+            shift 2
+            ;;
+        --tlsv1.2)
+            buildopt_tls=1
+            shift
+            ;;
+        --)
+            shift
+            if (($# != 1)); then
+                printf 'fixture curl expected one URL after --\n' >&2
+                exit 1
+            fi
+            buildopt_url=$1
+            shift
+            ;;
+        --connect-timeout | --max-time | --retry)
+            shift 2
+            ;;
+        --fail | --silent | --show-error | --location | --retry-all-errors)
+            shift
+            ;;
+        *)
+            printf 'fixture curl received an unexpected argument: %s\n' "$1" >&2
+            exit 1
+            ;;
+    esac
+done
+
+if [[ -z "${buildopt_output}" ]] ||
+    [[ "${buildopt_url}" != "${buildopt_fixture_url}" ]] ||
+    ((buildopt_https_only != 1)) ||
+    ((buildopt_redirect_https_only != 1)) ||
+    ((buildopt_tls != 1)); then
+    printf 'fixture curl did not receive the locked HTTPS request\n' >&2
+    exit 1
+fi
+
+cp -- "${buildopt_fixture_archive}" "${buildopt_output}"
+printf '%s\n' "${buildopt_url}" >"${buildopt_fixture_log}"

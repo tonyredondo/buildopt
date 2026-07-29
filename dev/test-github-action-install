@@ -1,0 +1,278 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_setup="${buildopt_repo_root}/.github/actions/setup-buildopt"
+buildopt_fixture_dir="${buildopt_repo_root}/fixtures/github-actions"
+buildopt_fixture_archive="${buildopt_fixture_dir}/testdata/buildopt-0.0.0-ws007-linux-amd64.tar.gz"
+buildopt_fixture_package="${buildopt_fixture_dir}/testdata/package"
+buildopt_fixture_url='https://example.invalid/buildopt-0.0.0-ws007-linux-amd64.tar.gz'
+buildopt_fixture_sha256='d15319d6a9c08bb02587a68a93ea49803678a57d137fb812676f7f614682dcc9'
+buildopt_version='0.0.0-ws007'
+
+for buildopt_command in \
+    chmod \
+    cmp \
+    cp \
+    dirname \
+    find \
+    git \
+    grep \
+    gzip \
+    ln \
+    mkdir \
+    mktemp \
+    sha256sum \
+    stat \
+    tar; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required GitHub Action test command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+buildopt_test_root=$(mktemp -d)
+buildopt_cleanup() {
+    if [[ -n "${buildopt_test_root:-}" ]] &&
+        [[ "${buildopt_test_root}" == /tmp/* ]] &&
+        [[ -d "${buildopt_test_root}" ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_rebuilt_archive="${buildopt_test_root}/rebuilt.tar.gz"
+TZ=UTC tar \
+    --sort=name \
+    --format=ustar \
+    --mtime=@0 \
+    --owner=0 \
+    --group=0 \
+    --numeric-owner \
+    --create \
+    --file=- \
+    --directory="${buildopt_fixture_package}" \
+    "buildopt-${buildopt_version}-linux-amd64" |
+    gzip -n >"${buildopt_rebuilt_archive}"
+if ! cmp -s "${buildopt_fixture_archive}" "${buildopt_rebuilt_archive}" ||
+    [[ "$(sha256sum "${buildopt_fixture_archive}" | awk '{print $1}')" != \
+        "${buildopt_fixture_sha256}" ]]; then
+    printf 'WS-007 release archive fixture is not reproducible\n' >&2
+    exit 1
+fi
+
+buildopt_fake_bin="${buildopt_test_root}/fake-bin"
+mkdir "${buildopt_fake_bin}"
+ln -s \
+    "${buildopt_fixture_dir}/fake-curl" \
+    "${buildopt_fake_bin}/curl"
+buildopt_curl_log="${buildopt_test_root}/curl.log"
+buildopt_github_output="${buildopt_test_root}/github-output"
+buildopt_github_path="${buildopt_test_root}/github-path"
+buildopt_github_env="${buildopt_test_root}/github-env"
+: >"${buildopt_github_output}"
+: >"${buildopt_github_path}"
+: >"${buildopt_github_env}"
+
+buildopt_run_setup() {
+    local buildopt_archive=${1:-"${buildopt_fixture_archive}"}
+    local buildopt_sha256=${2:-"${buildopt_fixture_sha256}"}
+    local buildopt_install_dir=${3:-"${buildopt_test_root}/install"}
+    local buildopt_runner_os=${4:-Linux}
+    local buildopt_runner_arch=${5:-X64}
+
+    BUILDOPT_FIXTURE_ARCHIVE="${buildopt_archive}" \
+    BUILDOPT_FIXTURE_ARCHIVE_URL="${buildopt_fixture_url}" \
+    BUILDOPT_FIXTURE_CURL_LOG="${buildopt_curl_log}" \
+    BUILDOPT_ACTION_VERSION="${buildopt_version}" \
+    BUILDOPT_ACTION_ARCHIVE_URL="${buildopt_fixture_url}" \
+    BUILDOPT_ACTION_ARCHIVE_SHA256="${buildopt_sha256}" \
+    BUILDOPT_ACTION_INSTALL_DIR="${buildopt_install_dir}" \
+    BUILDOPT_ACTION_PATH="${buildopt_repo_root}" \
+    GITHUB_OUTPUT="${buildopt_github_output}" \
+    GITHUB_PATH="${buildopt_github_path}" \
+    GITHUB_ENV="${buildopt_github_env}" \
+    RUNNER_OS="${buildopt_runner_os}" \
+    RUNNER_ARCH="${buildopt_runner_arch}" \
+    PATH="${buildopt_fake_bin}:${PATH}" \
+        "${buildopt_setup}"
+}
+
+buildopt_run_setup >/dev/null
+if [[ "$(<"${buildopt_curl_log}")" != "${buildopt_fixture_url}" ]]; then
+    printf 'BuildOpt Action did not request the pinned HTTPS archive\n' >&2
+    exit 1
+fi
+
+buildopt_missing_archive="${buildopt_test_root}/must-not-download"
+buildopt_run_setup "${buildopt_missing_archive}" >/dev/null
+
+buildopt_install_root="${buildopt_test_root}/install/buildopt-${buildopt_version}-linux-amd64"
+buildopt_binary="${buildopt_install_root}/bin/buildopt"
+buildopt_server="${buildopt_install_root}/bin/buildopt-server"
+buildopt_plugin="${buildopt_install_root}/lib/buildopt-gradle-plugin-${buildopt_version}.jar"
+buildopt_agent="${buildopt_install_root}/lib/buildopt-jvm-agent-${buildopt_version}.jar"
+buildopt_init_script="${buildopt_repo_root}/.github/actions/buildopt.init.gradle"
+for buildopt_file in \
+    "${buildopt_binary}" \
+    "${buildopt_server}" \
+    "${buildopt_plugin}" \
+    "${buildopt_agent}" \
+    "${buildopt_init_script}"; do
+    if [[ ! -f "${buildopt_file}" ]] || [[ -L "${buildopt_file}" ]]; then
+        printf 'BuildOpt Action fixture output is missing: %s\n' \
+            "${buildopt_file}" >&2
+        exit 1
+    fi
+done
+
+buildopt_probe_output=$(
+    "${buildopt_binary}" run -- \
+        "${buildopt_fixture_dir}/argv-probe" \
+        "" \
+        "space value" \
+        "*" \
+        "\$HOME"
+)
+buildopt_expected_probe=$(
+    printf '%s\n' \
+        'argc=4' \
+        'arg0=<>' \
+        'arg1=<space value>' \
+        'arg2=<*>' \
+        "arg3=<\$HOME>"
+)
+if [[ "${buildopt_probe_output}" != "${buildopt_expected_probe}" ]]; then
+    printf 'installed BuildOpt fixture did not preserve command argv\n' >&2
+    exit 1
+fi
+
+set +e
+"${buildopt_binary}" run -- \
+    "${buildopt_fixture_dir}/argv-probe" \
+    --exit 37
+buildopt_child_exit=$?
+set -e
+if ((buildopt_child_exit != 37)); then
+    printf 'installed BuildOpt fixture returned %s instead of 37\n' \
+        "${buildopt_child_exit}" >&2
+    exit 1
+fi
+if [[ "$("${buildopt_server}" --fixture-version)" != \
+    "buildopt-server ${buildopt_version}" ]]; then
+    printf 'installed buildopt-server fixture has the wrong version\n' >&2
+    exit 1
+fi
+
+for buildopt_expected_output in \
+    "install-root=${buildopt_install_root}" \
+    "buildopt-path=${buildopt_binary}" \
+    "buildopt-server-path=${buildopt_server}" \
+    "gradle-plugin-path=${buildopt_plugin}" \
+    "jvm-agent-path=${buildopt_agent}" \
+    "gradle-init-script=${buildopt_init_script}"; do
+    if [[ "$(grep -Fxc "${buildopt_expected_output}" "${buildopt_github_output}")" != \
+        "2" ]]; then
+        printf 'GitHub output is missing or duplicated unexpectedly: %s\n' \
+            "${buildopt_expected_output}" >&2
+        exit 1
+    fi
+done
+if [[ "$(grep -Fxc "${buildopt_install_root}/bin" "${buildopt_github_path}")" != \
+    "2" ]] ||
+    [[ "$(grep -Fxc "BUILDOPT_RELEASE_ROOT=${buildopt_install_root}" \
+        "${buildopt_github_env}")" != "2" ]] ||
+    [[ "$(grep -Fxc "BUILDOPT_GRADLE_PLUGIN_JAR=${buildopt_plugin}" \
+        "${buildopt_github_env}")" != "2" ]] ||
+    [[ "$(grep -Fxc "BUILDOPT_JVM_AGENT_JAR=${buildopt_agent}" \
+        "${buildopt_github_env}")" != "2" ]] ||
+    [[ "$(grep -Fxc "BUILDOPT_GRADLE_INIT_SCRIPT=${buildopt_init_script}" \
+        "${buildopt_github_env}")" != "2" ]]; then
+    printf 'BuildOpt Action did not publish its PATH or environment contract\n' >&2
+    exit 1
+fi
+
+buildopt_expect_setup_failure() {
+    local buildopt_label=$1
+    local buildopt_expected_exit=$2
+    shift 2
+    local buildopt_exit
+
+    set +e
+    "$@" >/dev/null 2>&1
+    buildopt_exit=$?
+    set -e
+    if ((buildopt_exit != buildopt_expected_exit)); then
+        printf '%s returned %s instead of %s\n' \
+            "${buildopt_label}" \
+            "${buildopt_exit}" \
+            "${buildopt_expected_exit}" >&2
+        exit 1
+    fi
+}
+
+buildopt_expect_setup_failure \
+    "checksum mismatch" \
+    1 \
+    buildopt_run_setup \
+    "${buildopt_fixture_archive}" \
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" \
+    "${buildopt_test_root}/bad-checksum"
+buildopt_expect_setup_failure \
+    "unsupported runner" \
+    1 \
+    buildopt_run_setup \
+    "${buildopt_fixture_archive}" \
+    "${buildopt_fixture_sha256}" \
+    "${buildopt_test_root}/bad-runner" \
+    Windows \
+    X64
+
+printf 'tamper\n' >>"${buildopt_binary}"
+buildopt_expect_setup_failure \
+    "mutated existing installation" \
+    1 \
+    buildopt_run_setup \
+    "${buildopt_missing_archive}"
+
+set +e
+"${buildopt_repo_root}/.github/actions/install-buildopt" \
+    --version invalid \
+    --archive-url "${buildopt_fixture_url}" \
+    --archive-sha256 "${buildopt_fixture_sha256}" \
+    --install-dir "${buildopt_test_root}/invalid-version" \
+    >/dev/null 2>&1
+buildopt_invalid_version_exit=$?
+"${buildopt_repo_root}/.github/actions/install-buildopt" \
+    --version "${buildopt_version}" \
+    --archive-url "http://example.invalid/archive.tar.gz" \
+    --archive-sha256 "${buildopt_fixture_sha256}" \
+    --install-dir "${buildopt_test_root}/invalid-url" \
+    >/dev/null 2>&1
+buildopt_invalid_url_exit=$?
+set -e
+if ((buildopt_invalid_version_exit != 64)) ||
+    ((buildopt_invalid_url_exit != 64)); then
+    printf 'BuildOpt installer did not reject invalid immutable inputs\n' >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'GitHub Action installation tests changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'WS-007 Action installer tests OK: HTTPS/checksum pinning, safe extraction, idempotency, outputs, argv/exit preservation, and negative fixtures\n'

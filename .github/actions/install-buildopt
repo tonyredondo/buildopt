@@ -1,0 +1,299 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_usage() {
+    printf 'usage: %s --version <semver> --archive-url <https-url> --archive-sha256 <sha256> --install-dir <directory>\n' "$0"
+}
+
+buildopt_version=
+buildopt_archive_url=
+buildopt_archive_sha256=
+buildopt_install_dir=
+while (($# > 0)); do
+    case "$1" in
+        --version)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_version=$2
+            shift 2
+            ;;
+        --archive-url)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_archive_url=$2
+            shift 2
+            ;;
+        --archive-sha256)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_archive_sha256=$2
+            shift 2
+            ;;
+        --install-dir)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_install_dir=$2
+            shift 2
+            ;;
+        --help)
+            buildopt_usage
+            exit 0
+            ;;
+        *)
+            buildopt_usage >&2
+            exit 64
+            ;;
+    esac
+done
+
+if [[ ! "${buildopt_version}" =~ ^(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)(-[0-9A-Za-z][0-9A-Za-z.-]*)?([+][0-9A-Za-z][0-9A-Za-z.-]*)?$ ]] ||
+    [[ ! "${buildopt_archive_url}" =~ ^https://[^[:space:]]+$ ]] ||
+    [[ ! "${buildopt_archive_sha256}" =~ ^[0-9a-f]{64}$ ]] ||
+    [[ -z "${buildopt_install_dir}" ]] ||
+    [[ "${buildopt_install_dir}" == *$'\n'* ]] ||
+    [[ "${buildopt_install_dir}" == *$'\r'* ]]; then
+    buildopt_usage >&2
+    exit 64
+fi
+
+for buildopt_command in \
+    awk \
+    chmod \
+    cmp \
+    curl \
+    find \
+    mkdir \
+    mktemp \
+    mv \
+    realpath \
+    rm \
+    sha256sum \
+    sort \
+    stat \
+    tar; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required BuildOpt installation command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_install_dir=$(realpath -m -- "${buildopt_install_dir}")
+if [[ "${buildopt_install_dir}" == "/" ]]; then
+    printf 'BuildOpt installation directory must not be the filesystem root\n' >&2
+    exit 1
+fi
+
+umask 077
+mkdir -p -- "${buildopt_install_dir}"
+chmod 0700 "${buildopt_install_dir}"
+
+buildopt_base="buildopt-${buildopt_version}-linux-amd64"
+buildopt_install_root="${buildopt_install_dir}/${buildopt_base}"
+buildopt_plugin="lib/buildopt-gradle-plugin-${buildopt_version}.jar"
+buildopt_agent="lib/buildopt-jvm-agent-${buildopt_version}.jar"
+buildopt_metadata=".buildopt-action-install"
+buildopt_file_checksums=".buildopt-action-files.sha256"
+
+buildopt_verify_install() {
+    local buildopt_root=$1
+    local buildopt_actual_entries
+    local buildopt_expected_metadata
+
+    if [[ ! -d "${buildopt_root}" ]] || [[ -L "${buildopt_root}" ]]; then
+        return 1
+    fi
+    for buildopt_directory in bin lib; do
+        if [[ ! -d "${buildopt_root}/${buildopt_directory}" ]] ||
+            [[ -L "${buildopt_root}/${buildopt_directory}" ]] ||
+            [[ "$(stat -c '%a' "${buildopt_root}/${buildopt_directory}")" != "755" ]]; then
+            return 1
+        fi
+    done
+    for buildopt_binary in bin/buildopt bin/buildopt-server; do
+        if [[ ! -f "${buildopt_root}/${buildopt_binary}" ]] ||
+            [[ -L "${buildopt_root}/${buildopt_binary}" ]] ||
+            [[ "$(stat -c '%a' "${buildopt_root}/${buildopt_binary}")" != "755" ]]; then
+            return 1
+        fi
+    done
+    for buildopt_jar in "${buildopt_plugin}" "${buildopt_agent}"; do
+        if [[ ! -f "${buildopt_root}/${buildopt_jar}" ]] ||
+            [[ -L "${buildopt_root}/${buildopt_jar}" ]] ||
+            [[ "$(stat -c '%a' "${buildopt_root}/${buildopt_jar}")" != "644" ]]; then
+            return 1
+        fi
+    done
+    if [[ ! -f "${buildopt_root}/${buildopt_metadata}" ]] ||
+        [[ -L "${buildopt_root}/${buildopt_metadata}" ]] ||
+        [[ ! -f "${buildopt_root}/${buildopt_file_checksums}" ]] ||
+        [[ -L "${buildopt_root}/${buildopt_file_checksums}" ]]; then
+        return 1
+    fi
+
+    buildopt_expected_metadata=$(
+        printf 'version=%s\narchive_sha256=%s\n' \
+            "${buildopt_version}" \
+            "${buildopt_archive_sha256}"
+    )
+    if [[ "$(<"${buildopt_root}/${buildopt_metadata}")" != \
+        "${buildopt_expected_metadata}" ]]; then
+        return 1
+    fi
+
+    buildopt_actual_entries=$(
+        find "${buildopt_root}" -mindepth 1 -printf '%P\n' | sort
+    )
+    if [[ "${buildopt_actual_entries}" != "$(
+        printf '%s\n' \
+            "${buildopt_file_checksums}" \
+            "${buildopt_metadata}" \
+            "bin" \
+            "bin/buildopt" \
+            "bin/buildopt-server" \
+            "lib" \
+            "${buildopt_plugin}" \
+            "${buildopt_agent}" |
+            sort
+    )" ]]; then
+        return 1
+    fi
+    (
+        cd -- "${buildopt_root}"
+        sha256sum --check --status "${buildopt_file_checksums}"
+    )
+}
+
+if [[ -e "${buildopt_install_root}" ]] ||
+    [[ -L "${buildopt_install_root}" ]]; then
+    if ! buildopt_verify_install "${buildopt_install_root}"; then
+        printf 'existing BuildOpt installation does not match the requested release\n' >&2
+        exit 1
+    fi
+    printf '%s\n' "${buildopt_install_root}"
+    exit 0
+fi
+
+buildopt_work_root=$(mktemp -d "${buildopt_install_dir}/.buildopt-action.XXXXXX")
+buildopt_cleanup() {
+    if [[ -n "${buildopt_work_root:-}" ]] &&
+        [[ "${buildopt_work_root}" == "${buildopt_install_dir}/.buildopt-action."* ]] &&
+        [[ -d "${buildopt_work_root}" ]]; then
+        rm -rf -- "${buildopt_work_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_archive="${buildopt_work_root}/${buildopt_base}.tar.gz"
+if ! curl \
+    --fail \
+    --silent \
+    --show-error \
+    --location \
+    --proto '=https' \
+    --proto-redir '=https' \
+    --tlsv1.2 \
+    --retry 3 \
+    --retry-all-errors \
+    --connect-timeout 15 \
+    --max-time 300 \
+    --output "${buildopt_archive}" \
+    -- \
+    "${buildopt_archive_url}"; then
+    printf 'could not download the BuildOpt release archive\n' >&2
+    exit 1
+fi
+
+buildopt_observed_sha256=$(
+    sha256sum "${buildopt_archive}" | awk '{print $1}'
+)
+if [[ "${buildopt_observed_sha256}" != "${buildopt_archive_sha256}" ]]; then
+    printf 'BuildOpt release archive checksum mismatch\n' >&2
+    exit 1
+fi
+
+printf '%s\n' \
+    "${buildopt_base}/" \
+    "${buildopt_base}/bin/" \
+    "${buildopt_base}/bin/buildopt" \
+    "${buildopt_base}/bin/buildopt-server" \
+    "${buildopt_base}/lib/" \
+    "${buildopt_base}/${buildopt_plugin}" \
+    "${buildopt_base}/${buildopt_agent}" \
+    >"${buildopt_work_root}/expected-entries"
+tar -tzf "${buildopt_archive}" >"${buildopt_work_root}/actual-entries"
+if ! cmp -s \
+    "${buildopt_work_root}/expected-entries" \
+    "${buildopt_work_root}/actual-entries"; then
+    printf 'BuildOpt release archive layout is unexpected or unsafe\n' >&2
+    exit 1
+fi
+
+printf '%s\n' \
+    "drwxr-xr-x ${buildopt_base}/" \
+    "drwxr-xr-x ${buildopt_base}/bin/" \
+    "-rwxr-xr-x ${buildopt_base}/bin/buildopt" \
+    "-rwxr-xr-x ${buildopt_base}/bin/buildopt-server" \
+    "drwxr-xr-x ${buildopt_base}/lib/" \
+    "-rw-r--r-- ${buildopt_base}/${buildopt_plugin}" \
+    "-rw-r--r-- ${buildopt_base}/${buildopt_agent}" \
+    >"${buildopt_work_root}/expected-types"
+tar -tvzf "${buildopt_archive}" |
+    awk '{print substr($1, 1, 10), $NF}' \
+        >"${buildopt_work_root}/actual-types"
+if ! cmp -s \
+    "${buildopt_work_root}/expected-types" \
+    "${buildopt_work_root}/actual-types"; then
+    printf 'BuildOpt release archive types or modes are invalid\n' >&2
+    exit 1
+fi
+
+buildopt_extract_root="${buildopt_work_root}/extract"
+mkdir "${buildopt_extract_root}"
+tar -xzf "${buildopt_archive}" \
+    --directory="${buildopt_extract_root}" \
+    --no-same-owner \
+    --same-permissions
+buildopt_staged_root="${buildopt_extract_root}/${buildopt_base}"
+
+printf 'version=%s\narchive_sha256=%s\n' \
+    "${buildopt_version}" \
+    "${buildopt_archive_sha256}" \
+    >"${buildopt_staged_root}/${buildopt_metadata}"
+(
+    cd -- "${buildopt_staged_root}"
+    sha256sum \
+        bin/buildopt \
+        bin/buildopt-server \
+        "${buildopt_plugin}" \
+        "${buildopt_agent}" \
+        >"${buildopt_file_checksums}"
+)
+chmod 0644 \
+    "${buildopt_staged_root}/${buildopt_metadata}" \
+    "${buildopt_staged_root}/${buildopt_file_checksums}"
+
+if ! buildopt_verify_install "${buildopt_staged_root}"; then
+    printf 'staged BuildOpt release installation is invalid\n' >&2
+    exit 1
+fi
+if ! mv -T -- "${buildopt_staged_root}" "${buildopt_install_root}"; then
+    if ! buildopt_verify_install "${buildopt_install_root}"; then
+        printf 'could not publish the BuildOpt release installation atomically\n' >&2
+        exit 1
+    fi
+fi
+if ! buildopt_verify_install "${buildopt_install_root}"; then
+    printf 'published BuildOpt release installation is invalid\n' >&2
+    exit 1
+fi
+
+printf '%s\n' "${buildopt_install_root}"

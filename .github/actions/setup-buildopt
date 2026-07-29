@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_version=${BUILDOPT_ACTION_VERSION:?missing BUILDOPT_ACTION_VERSION}
+buildopt_archive_url=${BUILDOPT_ACTION_ARCHIVE_URL:?missing BUILDOPT_ACTION_ARCHIVE_URL}
+buildopt_archive_sha256=${BUILDOPT_ACTION_ARCHIVE_SHA256:?missing BUILDOPT_ACTION_ARCHIVE_SHA256}
+buildopt_install_dir=${BUILDOPT_ACTION_INSTALL_DIR:?missing BUILDOPT_ACTION_INSTALL_DIR}
+buildopt_action_path=${BUILDOPT_ACTION_PATH:?missing BUILDOPT_ACTION_PATH}
+buildopt_github_output=${GITHUB_OUTPUT:?missing GITHUB_OUTPUT}
+buildopt_github_path=${GITHUB_PATH:?missing GITHUB_PATH}
+buildopt_github_env=${GITHUB_ENV:?missing GITHUB_ENV}
+
+if [[ "${RUNNER_OS:-}" != "Linux" ]] || [[ "${RUNNER_ARCH:-}" != "X64" ]]; then
+    printf 'BuildOpt Action v1 supports only GitHub Linux x64 runners\n' >&2
+    exit 1
+fi
+for buildopt_value in \
+    "${buildopt_action_path}" \
+    "${buildopt_github_output}" \
+    "${buildopt_github_path}" \
+    "${buildopt_github_env}"; do
+    if [[ -z "${buildopt_value}" ]] ||
+        [[ "${buildopt_value}" == *$'\n'* ]] ||
+        [[ "${buildopt_value}" == *$'\r'* ]]; then
+        printf 'GitHub Actions supplied an unsafe filesystem path\n' >&2
+        exit 1
+    fi
+done
+
+buildopt_install_root=$(
+    "${buildopt_action_path}/.github/actions/install-buildopt" \
+        --version "${buildopt_version}" \
+        --archive-url "${buildopt_archive_url}" \
+        --archive-sha256 "${buildopt_archive_sha256}" \
+        --install-dir "${buildopt_install_dir}"
+)
+buildopt_binary="${buildopt_install_root}/bin/buildopt"
+buildopt_server="${buildopt_install_root}/bin/buildopt-server"
+buildopt_plugin="${buildopt_install_root}/lib/buildopt-gradle-plugin-${buildopt_version}.jar"
+buildopt_agent="${buildopt_install_root}/lib/buildopt-jvm-agent-${buildopt_version}.jar"
+buildopt_init_script="${buildopt_action_path}/.github/actions/buildopt.init.gradle"
+
+for buildopt_file in \
+    "${buildopt_binary}" \
+    "${buildopt_server}" \
+    "${buildopt_plugin}" \
+    "${buildopt_agent}" \
+    "${buildopt_init_script}"; do
+    if [[ ! -f "${buildopt_file}" ]] || [[ -L "${buildopt_file}" ]]; then
+        printf 'BuildOpt Action output is missing or unsafe: %s\n' \
+            "${buildopt_file}" >&2
+        exit 1
+    fi
+done
+
+{
+    printf 'install-root=%s\n' "${buildopt_install_root}"
+    printf 'buildopt-path=%s\n' "${buildopt_binary}"
+    printf 'buildopt-server-path=%s\n' "${buildopt_server}"
+    printf 'gradle-plugin-path=%s\n' "${buildopt_plugin}"
+    printf 'jvm-agent-path=%s\n' "${buildopt_agent}"
+    printf 'gradle-init-script=%s\n' "${buildopt_init_script}"
+} >>"${buildopt_github_output}"
+printf '%s\n' "${buildopt_install_root}/bin" >>"${buildopt_github_path}"
+{
+    printf 'BUILDOPT_RELEASE_ROOT=%s\n' "${buildopt_install_root}"
+    printf 'BUILDOPT_GRADLE_PLUGIN_JAR=%s\n' "${buildopt_plugin}"
+    printf 'BUILDOPT_JVM_AGENT_JAR=%s\n' "${buildopt_agent}"
+    printf 'BUILDOPT_GRADLE_INIT_SCRIPT=%s\n' "${buildopt_init_script}"
+} >>"${buildopt_github_env}"
+
+printf 'BuildOpt Action installed version %s for linux-amd64\n' \
+    "${buildopt_version}"

@@ -1,0 +1,14 @@
+def pluginJarPath = System.getenv("BUILDOPT_GRADLE_PLUGIN_JAR")
+if (pluginJarPath == null || pluginJarPath.isBlank()) {
+    throw new GradleException("missing BUILDOPT_GRADLE_PLUGIN_JAR")
+}
+
+initscript {
+    dependencies {
+        classpath files(pluginJarPath)
+    }
+}
+
+allprojects {
+    pluginManager.apply(dev.buildopt.gradle.BuildOptProjectPlugin)
+}
