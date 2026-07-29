@@ -354,6 +354,20 @@ untrusted revisions, shared writable state, daily or weekly overspend, and a
 second concurrent lease; cancellation, timeout, unknown task boundaries, and
 dead owners release unused reservations without changing the normal job.
 
+## Single-node commit atomicity validation
+
+Validate the executable fault plan for ADR 0002:
+
+```bash
+./dev/check-commit-atomicity
+```
+
+The checker proves that the immutable `CommitDecision` and every
+`COMMITTED` visibility row form one all-or-nothing cache transaction. Thirteen
+cases cover replay/conflict, invalid authority, blob and transaction crash
+points, corrupt or missing content, first-writer CAS, and independent
+`control.sqlite` reconciliation.
+
 ## PatchBundle contract validation
 
 Validate the `F0-016` declarative bundle envelope and its two private-beta

@@ -1,0 +1,221 @@
+{
+  "schemaVersion": "buildopt.specs/commit-atomicity/v1",
+  "visibilityAuthority": "cache.sqlite",
+  "auditIndex": "control.sqlite",
+  "transactionMembers": [
+    "COMMIT_DECISION",
+    "ALL_COMMITTED_OBJECT_RECORDS"
+  ],
+  "cases": [
+    {
+      "id": "two-object-happy-commit",
+      "objectCount": 2,
+      "precondition": "VALID",
+      "faultPoint": "NONE",
+      "expected": {
+        "outcome": "COMMITTED",
+        "visibleObjects": 2,
+        "decisionPersisted": true,
+        "orphanBlobs": 0,
+        "quarantinedBlobs": 0,
+        "controlIndexed": true,
+        "requiresReconcile": false
+      }
+    },
+    {
+      "id": "exact-decision-replay",
+      "objectCount": 2,
+      "precondition": "EXACT_REPLAY",
+      "faultPoint": "NONE",
+      "expected": {
+        "outcome": "REPLAYED",
+        "visibleObjects": 2,
+        "decisionPersisted": true,
+        "orphanBlobs": 0,
+        "quarantinedBlobs": 0,
+        "controlIndexed": true,
+        "requiresReconcile": false
+      }
+    },
+    {
+      "id": "changed-payload-reuse-conflicts",
+      "objectCount": 2,
+      "precondition": "CONFLICTING_REPLAY",
+      "faultPoint": "NONE",
+      "expected": {
+        "outcome": "IDEMPOTENCY_CONFLICT",
+        "visibleObjects": 2,
+        "decisionPersisted": true,
+        "orphanBlobs": 0,
+        "quarantinedBlobs": 0,
+        "controlIndexed": true,
+        "requiresReconcile": false
+      }
+    },
+    {
+      "id": "incomplete-object-coverage-aborts",
+      "objectCount": 2,
+      "precondition": "INCOMPLETE_DECISION",
+      "faultPoint": "NONE",
+      "expected": {
+        "outcome": "ABORTED",
+        "visibleObjects": 0,
+        "decisionPersisted": false,
+        "orphanBlobs": 0,
+        "quarantinedBlobs": 0,
+        "controlIndexed": false,
+        "requiresReconcile": false
+      }
+    },
+    {
+      "id": "expired-decision-aborts",
+      "objectCount": 1,
+      "precondition": "EXPIRED_DECISION",
+      "faultPoint": "NONE",
+      "expected": {
+        "outcome": "ABORTED",
+        "visibleObjects": 0,
+        "decisionPersisted": false,
+        "orphanBlobs": 0,
+        "quarantinedBlobs": 0,
+        "controlIndexed": false,
+        "requiresReconcile": false
+      }
+    },
+    {
+      "id": "revoked-epoch-aborts",
+      "objectCount": 1,
+      "precondition": "REVOKED_DECISION",
+      "faultPoint": "NONE",
+      "expected": {
+        "outcome": "ABORTED",
+        "visibleObjects": 0,
+        "decisionPersisted": false,
+        "orphanBlobs": 0,
+        "quarantinedBlobs": 0,
+        "controlIndexed": false,
+        "requiresReconcile": false
+      }
+    },
+    {
+      "id": "crash-before-blob-durable",
+      "objectCount": 2,
+      "precondition": "VALID",
+      "faultPoint": "BEFORE_BLOB_DURABLE",
+      "expected": {
+        "outcome": "CRASHED_MISS",
+        "visibleObjects": 0,
+        "decisionPersisted": false,
+        "orphanBlobs": 0,
+        "quarantinedBlobs": 0,
+        "controlIndexed": false,
+        "requiresReconcile": true
+      }
+    },
+    {
+      "id": "crash-after-blob-before-transaction",
+      "objectCount": 2,
+      "precondition": "VALID",
+      "faultPoint": "AFTER_BLOB_DURABLE",
+      "expected": {
+        "outcome": "CRASHED_MISS",
+        "visibleObjects": 0,
+        "decisionPersisted": false,
+        "orphanBlobs": 2,
+        "quarantinedBlobs": 0,
+        "controlIndexed": false,
+        "requiresReconcile": true
+      }
+    },
+    {
+      "id": "transaction-fault-rolls-back-all-objects",
+      "objectCount": 3,
+      "precondition": "VALID",
+      "faultPoint": "BEFORE_CACHE_TX_COMMIT",
+      "expected": {
+        "outcome": "ROLLED_BACK_MISS",
+        "visibleObjects": 0,
+        "decisionPersisted": false,
+        "orphanBlobs": 3,
+        "quarantinedBlobs": 0,
+        "controlIndexed": false,
+        "requiresReconcile": true
+      }
+    },
+    {
+      "id": "crash-after-cache-commit-needs-audit-repair",
+      "objectCount": 2,
+      "precondition": "VALID",
+      "faultPoint": "AFTER_CACHE_TX_COMMIT",
+      "expected": {
+        "outcome": "COMMITTED",
+        "visibleObjects": 2,
+        "decisionPersisted": true,
+        "orphanBlobs": 0,
+        "quarantinedBlobs": 0,
+        "controlIndexed": false,
+        "requiresReconcile": true
+      }
+    },
+    {
+      "id": "control-index-failure-does-not-revoke",
+      "objectCount": 1,
+      "precondition": "VALID",
+      "faultPoint": "CONTROL_INDEX_WRITE",
+      "expected": {
+        "outcome": "COMMITTED",
+        "visibleObjects": 1,
+        "decisionPersisted": true,
+        "orphanBlobs": 0,
+        "quarantinedBlobs": 0,
+        "controlIndexed": false,
+        "requiresReconcile": true
+      }
+    },
+    {
+      "id": "missing-blob-is-quarantined-miss",
+      "objectCount": 2,
+      "precondition": "MISSING_BLOB",
+      "faultPoint": "NONE",
+      "expected": {
+        "outcome": "QUARANTINED_MISS",
+        "visibleObjects": 0,
+        "decisionPersisted": false,
+        "orphanBlobs": 0,
+        "quarantinedBlobs": 1,
+        "controlIndexed": false,
+        "requiresReconcile": true
+      }
+    },
+    {
+      "id": "corrupt-blob-is-quarantined-miss",
+      "objectCount": 2,
+      "precondition": "CORRUPT_BLOB",
+      "faultPoint": "NONE",
+      "expected": {
+        "outcome": "QUARANTINED_MISS",
+        "visibleObjects": 0,
+        "decisionPersisted": false,
+        "orphanBlobs": 0,
+        "quarantinedBlobs": 1,
+        "controlIndexed": false,
+        "requiresReconcile": true
+      }
+    },
+    {
+      "id": "first-writer-cas-loser-commits-nothing",
+      "objectCount": 2,
+      "precondition": "CAS_LOST",
+      "faultPoint": "NONE",
+      "expected": {
+        "outcome": "CAS_LOST_ABORTED",
+        "visibleObjects": 0,
+        "decisionPersisted": false,
+        "orphanBlobs": 2,
+        "quarantinedBlobs": 0,
+        "controlIndexed": false,
+        "requiresReconcile": true
+      }
+    }
+  ]
+}
