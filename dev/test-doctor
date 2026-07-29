@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_doctor="${buildopt_script_dir}/doctor"
+buildopt_test_root=$(mktemp -d)
+
+buildopt_cleanup() {
+    rm -rf -- "${buildopt_test_root}"
+}
+trap buildopt_cleanup EXIT
+
+buildopt_success_bin="${buildopt_test_root}/success-bin"
+buildopt_failure_bin="${buildopt_test_root}/failure-bin"
+buildopt_internal_error_bin="${buildopt_test_root}/internal-error-bin"
+mkdir -p \
+    "${buildopt_success_bin}" \
+    "${buildopt_failure_bin}" \
+    "${buildopt_internal_error_bin}"
+
+buildopt_link_command() {
+    local buildopt_command=$1
+    local buildopt_destination=$2
+    local buildopt_source
+
+    if ! buildopt_source=$(command -v "${buildopt_command}"); then
+        printf 'test prerequisite is missing: %s\n' "${buildopt_command}" >&2
+        exit 1
+    fi
+    ln -s "${buildopt_source}" "${buildopt_destination}/${buildopt_command}"
+}
+
+buildopt_fixture_commands=(
+    awk
+    bash
+    curl
+    df
+    dirname
+    getconf
+    grep
+    jq
+    sha256sum
+    stat
+    tar
+    uname
+    unzip
+)
+
+for buildopt_command in "${buildopt_fixture_commands[@]}"; do
+    buildopt_link_command "${buildopt_command}" "${buildopt_success_bin}"
+    buildopt_link_command "${buildopt_command}" "${buildopt_failure_bin}"
+done
+buildopt_link_command git "${buildopt_success_bin}"
+buildopt_link_command bash "${buildopt_internal_error_bin}"
+buildopt_link_command dirname "${buildopt_internal_error_bin}"
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+if ! buildopt_success_report=$(
+    PATH="${buildopt_success_bin}" "${buildopt_doctor}" --json
+); then
+    printf 'doctor success fixture returned a non-zero exit code\n' >&2
+    exit 1
+fi
+
+jq -e '
+    .schemaVersion == "buildopt.dev/doctor-report/v1" and
+    .status == "PASS" and
+    .exitCode == 0 and
+    .platform.matchesLock == true and
+    (.resources.cpuCount | type == "number") and
+    (.resources.memoryBytes | type == "number") and
+    (.resources.workspaceDiskAvailableBytes | type == "number") and
+    (.commands | length == 15) and
+    (.toolchains.entries | length == 10) and
+    (
+        [
+            .toolchains.entries[] |
+            select(.id == "temurin-jdk-21") |
+            .probes[].executable
+        ] == ["java", "javac"]
+    ) and
+    (
+        [
+            .checks[] |
+            select(.level == "required" and .status == "FAIL")
+        ] |
+        length == 0
+    )
+' <<<"${buildopt_success_report}" >/dev/null
+
+set +e
+buildopt_failure_report=$(
+    PATH="${buildopt_failure_bin}" "${buildopt_doctor}" --json
+)
+buildopt_failure_exit=$?
+set -e
+if ((buildopt_failure_exit != 1)); then
+    printf 'doctor failure fixture returned %s instead of 1\n' \
+        "${buildopt_failure_exit}" >&2
+    exit 1
+fi
+
+jq -e '
+    .status == "FAIL" and
+    .exitCode == 1 and
+    any(
+        .checks[];
+        .id == "command:git" and
+        .level == "required" and
+        .status == "FAIL"
+    )
+' <<<"${buildopt_failure_report}" >/dev/null
+
+set +e
+"${buildopt_doctor}" --invalid >/dev/null 2>&1
+buildopt_usage_exit=$?
+set -e
+if ((buildopt_usage_exit != 64)); then
+    printf 'doctor invalid usage returned %s instead of 64\n' \
+        "${buildopt_usage_exit}" >&2
+    exit 1
+fi
+
+set +e
+PATH="${buildopt_internal_error_bin}" \
+    "${buildopt_doctor}" --json >/dev/null 2>&1
+buildopt_internal_error_exit=$?
+set -e
+if ((buildopt_internal_error_exit != 70)); then
+    printf 'doctor internal error fixture returned %s instead of 70\n' \
+        "${buildopt_internal_error_exit}" >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'doctor changed the working tree during a read-only probe\n' >&2
+    exit 1
+fi
+
+printf 'ENV-002 doctor tests OK: exit codes 0, 1, 64, and 70\n'

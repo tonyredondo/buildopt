@@ -51,10 +51,12 @@ From the repository root:
 ```bash
 ./dev/check-layout
 ./dev/check-toolchains-lock
+./dev/doctor
+./dev/test-doctor
 ./dev/check-golden-lane --static
 ```
 
-The commands validate the repository layout, the portable toolchain lock, and the golden lane configuration and checksums.
+The commands validate the repository layout, portable toolchain lock, host inventory contract, and golden lane configuration and checksums.
 
 Local smoke test with JDK 21:
 

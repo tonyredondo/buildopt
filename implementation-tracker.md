@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — `ENV-001` closed with a portable toolchain lock; `ENV-002` is the next block<br>
+**Overall status:** `DOING` — `ENV-002` closed with a read-only, machine-readable host doctor; `ENV-003` is the next block<br>
 **Current phase:** Phase 0 — contracts, fixtures, and walking skeleton<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
 **Last updated:** 2026-07-29<br>
@@ -84,7 +84,7 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 1 | `F0-001` | Implementation workspace/repository and modules defined | `DONE` | Codex |
 | 2 | `F0-002` | Golden lane pinned through an ADR, wrapper, image, and runner class | `DONE` | Codex |
 | 3 | `ENV-001` | Toolchain and checksum manifest created | `DONE` | Codex |
-| 4 | `ENV-002` | `dev/doctor` reproduces the host inventory | `TODO` | — |
+| 4 | `ENV-002` | `dev/doctor` reproduces the host inventory | `DONE` | Codex |
 | 5 | `ENV-003` | JDK 21 available alongside and isolated from global JDK 25 | `TODO` | — |
 | 6 | `F0-010` | `contracts/`, `specs/`, `benchmarks/`, and `adr/` structure created | `WAITING` | — |
 | 7 | `F0-011` | First normative schema: `BUILD_SESSION v1` | `WAITING` | — |
@@ -154,18 +154,18 @@ Verified snapshot from the initial 4-vCPU workstation on 2026-07-29. Manually in
 
 | Dependency | Needed for | Initial target | Detected | State | Action |
 |---|---|---|---|---|---|
-| Linux x86-64 | Entire MVP | Recorded kernel/capabilities | Linux 6.8 x86-64 | Available | Capture capability probe |
+| Linux x86-64 | Entire MVP | Recorded kernel/capabilities | Linux 6.8 x86-64 | Available | Re-run `dev/doctor` on each workstation; C1 retains strict capability qualification |
 | JDK/Javac | Golden lane, plugin, and agent | JDK 21; `--release 17` bytecode | Global OpenJDK/Javac 25.0.3 + isolated Temurin 21.0.12+8 | Available on workstation | Consume the lock through `dev/run` in `ENV-003` |
 | Go | Launcher, gateway, and server | Exact version in lock | Go 1.26.5 | Available without project isolation | Validate the locked toolchain in `ENV-005` |
 | Rust/Cargo | C1 hermetic helper | Exact version in `rust-toolchain.toml` | Rust/Cargo 1.93.0 | Available, optional | Materialize the locked channel in `ENV-009` |
 | `protoc` | Local-events Protobuf | Exact project-local version | Isolated 35.1; checksum and descriptor smoke test verified | Available on workstation | Provision from the lock in `ENV-006` |
 | Buf | Protobuf lint/breaking/codegen, if adopted | Exact project-local version | Isolated 1.72.0; `buf lint` passed | Available; contract adoption pending | Close adoption in `F0-019` before provisioning the pinned candidate |
 | Gradle | Plugin/fixtures | Gradle Wrapper 9.6.1 only at first | Not installed globally | Correct | Create/pin wrappers |
-| Docker | Golden image and fixture services | Functional daemon + image by digest | Client/server 24.0.2, `overlay2` | Available | Add smoke check |
-| Git | Workspace and patch workflows | Available | Git 2.54.0 | Available | Record minimum supported version |
-| SQLite CLI | Diagnostics/fault fixtures | Available | SQLite 3.45.1 | Available | Do not use as a runtime API |
-| `jq`, `curl`, `tar`, `unzip` | Bootstrap and fixtures | Available | Installed | Available | Verify in `doctor` |
-| C/C++ toolchain | Rust/native fault fixtures | GCC/Clang available | GCC 13.3, Clang 18.1 | Available | Verify only for C1 |
+| Docker | Golden image and fixture services | Functional daemon + image by digest | Client/server 24.0.2, `overlay2` | Available | Doctor reports the daemon; verify the pinned image in `ENV-008` |
+| Git | Workspace and patch workflows | Available | Git 2.54.0 | Available | Doctor records the active path/version; minimum support remains a later policy decision |
+| SQLite CLI | Diagnostics/fault fixtures | Available | SQLite 3.45.1 | Available | Doctor reports it when present; do not use it as a runtime API |
+| `jq`, `curl`, `tar`, `unzip` | Bootstrap and fixtures | Available | Installed | Available | Required host-command probes implemented in `dev/doctor` |
+| C/C++ toolchain | Rust/native fault fixtures | GCC/Clang available | GCC 13.3, Clang 18.1 | Available | Doctor inventories active versions; strict verification remains in C1 |
 | `shellcheck` | Bootstrap/CI scripts | Project-local or pinned package | Isolated 0.11.0; lint smoke test passed | Available on workstation | Provision from the lock in `ENV-010` |
 | `actionlint` | GitHub workflows | Project-local and pinned | Isolated 1.7.12; workflow smoke test passed | Available on workstation | Provision from the lock in `ENV-010` |
 | `cosign`/`syft` | Signatures, SBOM, and provenance | Project-local and pinned | Isolated cosign 3.1.2 + Syft 1.50.0; version/SBOM smoke tests passed | Available on workstation | Provision from the lock and complete sign/verify in `F0-038` |
@@ -182,13 +182,13 @@ Initial 4-vCPU workstation installation:
 | ID | Deliverable | Depends on | State | Owner | Expected evidence |
 |---|---|---|---|---|---|
 | `ENV-001` | Create `dev/toolchains.lock.yaml` and update policy | `F0-001`, `F0-002` | `DONE` | Codex | `E-010`: portable lock, validator, and update policy |
-| `ENV-002` | Implement read-only `dev/doctor` | `ENV-001` | `TODO` | — | Machine-readable output + exit codes |
+| `ENV-002` | Implement read-only `dev/doctor` | `ENV-001` | `DONE` | Codex | `E-011`: JSON/human reports, live inventory, and deterministic exit-code fixtures |
 | `ENV-003` | Provision JDK 21 alongside JDK 25 without global replacement | `ENV-001` | `TODO` | — | `java`/`javac` 21 through `dev/run` |
 | `ENV-004` | Verify plugin/agent compilation with `--release 17` | `ENV-003` | `WAITING` | — | Bytecode/API compatibility test |
 | `ENV-005` | Validate and pin Go for the core | `ENV-001` | `TODO` | — | `go.mod`/toolchain + passing doctor |
 | `ENV-006` | Provision `protoc` and decide/adopt Buf | `F0-019`, `ENV-001` | `WAITING` | — | Reproducible lint/generate/round trip |
 | `ENV-007` | Pin Gradle Wrapper 9.6.1 and verify checksum | `F0-002` | `DONE` | Codex | `E-007`: Wrapper 9.6.1 and checksums verified |
-| `ENV-008` | Verify Docker and golden image by digest | `F0-002`, `ENV-002` | `WAITING` | — | Container smoke test |
+| `ENV-008` | Verify Docker and golden image by digest | `F0-002`, `ENV-002` | `TODO` | — | Container smoke test |
 | `ENV-009` | Pin Rust 1.93.0 or an approved version | `ENV-001` | `TODO` | — | `rust-toolchain.toml` + cargo check |
 | `ENV-010` | Provision `shellcheck` and `actionlint` | `ENV-001` | `TODO` | — | Passing lint checks |
 | `ENV-011` | Provision `cosign`/`syft` for the supply chain | `ENV-001`, `F0-038` | `WAITING` | — | SBOM/sign/verify fixture |
@@ -475,7 +475,7 @@ This table points to the latest valid result. It does not replace reports or all
 |---|---|---|---|---|
 | Repository layout | Git root, modules, and `F0-001` conventions | `dev/check-layout` and ShellCheck passed; structure included in the initial commit | 2026-07-29 | `E-006` |
 | Toolchain lock | Portable versions, platforms, providers, immutable URLs, SHA-256 values, and tracker references | `dev/check-toolchains-lock` passed for ten artifacts on `linux-amd64`; update policy recorded | 2026-07-29 | `E-010` |
-| Host inventory | Java/Go/Rust/Protobuf/Docker/base tools | Initial workstation prepared; project lock validated; read-only doctor and repository-local bootstrap pending | 2026-07-29 | `E-004`, `E-010`, tracker §5.1 |
+| Host inventory | Platform/resources, active Java/Go/Rust/Protobuf/base-tool paths and versions, Docker, cgroups, namespaces, and available space | `dev/doctor --json` passed on the 12-CPU workstation and reported active-path drift without treating deferred provisioning as success; deterministic fixtures passed codes `0/1/64/70` and preserved the working tree | 2026-07-29 | `E-011` |
 | Contract schemas | JSON Schema/OpenAPI/Protobuf | Not run | — | — |
 | Golden vectors | Go ↔ Java canonicalization/signatures | Not run | — | — |
 | Go unit/integration | Launcher/gateway/server | Not run | — | — |
@@ -513,6 +513,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-008` | 2026-07-29 | `GOLDEN-LANE-001` | Pre-translation [master RFC](./gradle-build-optimization-platform.md) baseline, SHA-256 `b8ab7fb89086365b62bef53219bd919b23a0a867191e092bcb56425a8f82a776`, revised [ADR 0001](./adr/0001-golden-lane.md), and runner spec `linux-amd64-4c-16g-v1`; strict host and digest-pinned container exited 0; negative 2-CPU cgroup exited 1 | `DONE`: 4 vCPU/16 GiB development golden lane verified without extrapolating to customer benchmarks; RFC text superseded by `E-009` without changing the decision set |
 | `E-009` | 2026-07-29 | Repository language baseline | Repository-owned tracked content audited in English; English-only contribution policy added; translated [master RFC](./gradle-build-optimization-platform.md) SHA-256 `e97b068433128a51cab509f2f799efdf872b6950056bce308b80cbd1470ef81d` | Current English repository baseline; the 51 accepted private-beta decisions and executable golden-lane state are preserved |
 | `E-010` | 2026-07-29 | `ENV-001` | [`dev/toolchains.lock.yaml`](./dev/toolchains.lock.yaml), static validator, and update policy; eight GitHub release digests reverified against official release metadata plus official Go archive and Rust channel-manifest metadata; Bash syntax, lock validation, ShellCheck, layout, golden-lane static checks, and the Java 21 smoke build passed on the non-golden 12-CPU host | `DONE`: one host-independent `linux-amd64` lock now unblocks `ENV-002`, `ENV-003`, `ENV-005`, `ENV-009`, and `ENV-010` |
+| `E-011` | 2026-07-29 | `ENV-002` | [`dev/doctor`](./dev/doctor), [`dev/test-doctor`](./dev/test-doctor), documented `buildopt.dev/doctor-report/v1`, live human/JSON inventory on the 12-CPU workstation, isolated JDK 21/25 active-path matches, deterministic missing-command and internal-error fixtures, Bash syntax, ShellCheck 0.11.0, read-only Git-state comparison, and exit codes `0/1/64/70` | `DONE`: workstations now share one active-path comparison contract without global-tool assumptions; `ENV-008` is unblocked |
 
 ---
 
@@ -520,6 +521,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-29 | Closed `ENV-002`: added read-only human/JSON host inventory, stable exit codes, active-path toolchain drift reporting, Docker/capability/resource probes, and deterministic fixtures | Codex |
 | 2026-07-29 | Closed `ENV-001`: added the portable toolchain lock, static validation, update policy, and dependency evidence without adopting candidate or optional tools | Codex |
 | 2026-07-29 | Established English as the repository-wide language and translated all repository-owned documentation while preserving contracts, decisions, and validated implementation state | Codex |
 | 2026-07-29 | Adjusted golden lane to the 4 vCPU/16 GiB development workstation; strict host/container gate passed and `GOLDEN-LANE-001` closed | Codex |

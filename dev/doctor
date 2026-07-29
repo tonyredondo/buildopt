@@ -1,0 +1,873 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_format=text
+case "${1:-}" in
+    "")
+        if (($# != 0)); then
+            printf 'usage: %s [--json]\n' "$0" >&2
+            exit 64
+        fi
+        ;;
+    --json)
+        if (($# != 1)); then
+            printf 'usage: %s [--json]\n' "$0" >&2
+            exit 64
+        fi
+        buildopt_format=json
+        ;;
+    -h | --help)
+        if (($# != 1)); then
+            printf 'usage: %s [--json]\n' "$0" >&2
+            exit 64
+        fi
+        printf 'usage: %s [--json]\n' "$0"
+        exit 0
+        ;;
+    *)
+        printf 'usage: %s [--json]\n' "$0" >&2
+        exit 64
+        ;;
+esac
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_lock="${buildopt_script_dir}/toolchains.lock.yaml"
+
+if ! command -v jq >/dev/null 2>&1; then
+    printf 'doctor cannot generate its report because jq is unavailable\n' >&2
+    exit 70
+fi
+
+if ! "${buildopt_script_dir}/check-toolchains-lock" >/dev/null; then
+    printf 'doctor cannot use the invalid toolchain lock\n' >&2
+    exit 70
+fi
+
+declare -a buildopt_checks=()
+declare -a buildopt_commands=()
+declare -a buildopt_toolchains=()
+
+buildopt_add_check() {
+    local buildopt_id=$1
+    local buildopt_level=$2
+    local buildopt_status=$3
+    local buildopt_detail=$4
+
+    buildopt_checks+=("$(
+        jq -cn \
+            --arg id "${buildopt_id}" \
+            --arg level "${buildopt_level}" \
+            --arg status "${buildopt_status}" \
+            --arg detail "${buildopt_detail}" \
+            '{id: $id, level: $level, status: $status, detail: $detail}'
+    )")
+}
+
+buildopt_json_array() {
+    if (($# == 0)); then
+        printf '[]\n'
+        return
+    fi
+
+    printf '%s\n' "$@" | jq -s '.'
+}
+
+buildopt_normalize_output() {
+    local buildopt_output=$1
+
+    buildopt_output=${buildopt_output//$'\r'/}
+    buildopt_output=${buildopt_output//$'\n'/'; '}
+    while [[ "${buildopt_output}" == *"  "* ]]; do
+        buildopt_output=${buildopt_output//  / }
+    done
+
+    printf '%s\n' "${buildopt_output}"
+}
+
+buildopt_capture_version() {
+    local buildopt_id=$1
+    local buildopt_path=$2
+    local buildopt_output
+
+    case "${buildopt_id}" in
+        actionlint)
+            buildopt_output=$("${buildopt_path}" -version 2>&1) || return 1
+            ;;
+        bash)
+            buildopt_output=$("${buildopt_path}" --version 2>&1) || return 1
+            ;;
+        buf)
+            buildopt_output=$("${buildopt_path}" --version 2>&1) || return 1
+            ;;
+        clang | curl | gcc | git | jq | sha256sum | sqlite3 | tar | unzip)
+            if [[ "${buildopt_id}" == unzip ]]; then
+                buildopt_output=$("${buildopt_path}" -v 2>&1) || return 1
+            else
+                buildopt_output=$("${buildopt_path}" --version 2>&1) || return 1
+            fi
+            ;;
+        cosign)
+            buildopt_output=$("${buildopt_path}" version 2>&1) || return 1
+            ;;
+        go)
+            buildopt_output=$("${buildopt_path}" version 2>&1) || return 1
+            ;;
+        java)
+            buildopt_output=$("${buildopt_path}" -version 2>&1) || return 1
+            ;;
+        javac | protoc | rustc)
+            buildopt_output=$("${buildopt_path}" --version 2>&1) || return 1
+            ;;
+        shellcheck)
+            buildopt_output=$("${buildopt_path}" --version 2>&1) || return 1
+            ;;
+        syft)
+            buildopt_output=$("${buildopt_path}" version 2>&1) || return 1
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+
+    case "${buildopt_id}" in
+        cosign | java | shellcheck | syft) ;;
+        *) buildopt_output=${buildopt_output%%$'\n'*} ;;
+    esac
+
+    buildopt_normalize_output "${buildopt_output}"
+}
+
+buildopt_probe_command() {
+    local buildopt_id=$1
+    local buildopt_required=$2
+    local buildopt_path
+    local buildopt_version=
+    local buildopt_status
+    local buildopt_detail
+
+    buildopt_path=$(command -v "${buildopt_id}" 2>/dev/null || true)
+    if [[ -z "${buildopt_path}" ]]; then
+        if [[ "${buildopt_required}" == true ]]; then
+            buildopt_status=FAIL
+            buildopt_detail="${buildopt_id} is required but was not found on PATH"
+        else
+            buildopt_status=WARN
+            buildopt_detail="${buildopt_id} was not found on PATH"
+        fi
+    else
+        if ! buildopt_version=$(buildopt_capture_version "${buildopt_id}" "${buildopt_path}"); then
+            if [[ "${buildopt_required}" == true ]]; then
+                buildopt_status=FAIL
+                buildopt_detail="${buildopt_id} is required at ${buildopt_path}, but its version could not be read"
+            else
+                buildopt_status=WARN
+                buildopt_detail="${buildopt_id} is at ${buildopt_path}, but its version could not be read"
+            fi
+        else
+            buildopt_status=PASS
+            buildopt_detail="${buildopt_id} is available at ${buildopt_path}"
+        fi
+    fi
+
+    buildopt_commands+=("$(
+        jq -cn \
+            --arg id "${buildopt_id}" \
+            --argjson required "${buildopt_required}" \
+            --arg status "${buildopt_status}" \
+            --arg path "${buildopt_path}" \
+            --arg version "${buildopt_version}" \
+            '{
+                id: $id,
+                required: $required,
+                status: $status,
+                path: ($path | if length == 0 then null else . end),
+                version: ($version | if length == 0 then null else . end)
+            }'
+    )")
+
+    if [[ "${buildopt_required}" == true ]]; then
+        buildopt_add_check \
+            "command:${buildopt_id}" \
+            required \
+            "${buildopt_status}" \
+            "${buildopt_detail}"
+    fi
+}
+
+for buildopt_command in \
+    bash \
+    git \
+    curl \
+    jq \
+    tar \
+    unzip \
+    sha256sum \
+    awk \
+    df \
+    getconf \
+    stat \
+    uname; do
+    if [[ "${buildopt_command}" =~ ^(awk|df|getconf|stat|uname)$ ]]; then
+        buildopt_path=$(command -v "${buildopt_command}" 2>/dev/null || true)
+        if [[ -z "${buildopt_path}" ]]; then
+            buildopt_commands+=("$(
+                jq -cn \
+                    --arg id "${buildopt_command}" \
+                    '{
+                        id: $id,
+                        required: true,
+                        status: "FAIL",
+                        path: null,
+                        version: null
+                    }'
+            )")
+            buildopt_add_check \
+                "command:${buildopt_command}" \
+                required \
+                FAIL \
+                "${buildopt_command} is required but was not found on PATH"
+        else
+            buildopt_commands+=("$(
+                jq -cn \
+                    --arg id "${buildopt_command}" \
+                    --arg path "${buildopt_path}" \
+                    '{
+                        id: $id,
+                        required: true,
+                        status: "PASS",
+                        path: $path,
+                        version: null
+                    }'
+            )")
+            buildopt_add_check \
+                "command:${buildopt_command}" \
+                required \
+                PASS \
+                "${buildopt_command} is available at ${buildopt_path}"
+        fi
+    else
+        buildopt_probe_command "${buildopt_command}" true
+    fi
+done
+
+for buildopt_command in sqlite3 gcc clang; do
+    buildopt_probe_command "${buildopt_command}" false
+done
+
+buildopt_raw_os=unknown
+buildopt_kernel=unknown
+if buildopt_uname=$(command -v uname 2>/dev/null); then
+    buildopt_raw_os=$("${buildopt_uname}" -s 2>/dev/null || printf 'unknown')
+    buildopt_kernel=$("${buildopt_uname}" -r 2>/dev/null || printf 'unknown')
+fi
+
+case "${buildopt_raw_os}" in
+    Linux) buildopt_os=linux ;;
+    Darwin) buildopt_os=macos ;;
+    *) buildopt_os=${buildopt_raw_os,,} ;;
+esac
+
+buildopt_raw_arch=unknown
+if [[ -n "${buildopt_uname:-}" ]]; then
+    buildopt_raw_arch=$("${buildopt_uname}" -m 2>/dev/null || printf 'unknown')
+fi
+
+case "${buildopt_raw_arch}" in
+    amd64 | x86_64) buildopt_arch=amd64 ;;
+    aarch64 | arm64) buildopt_arch=arm64 ;;
+    *) buildopt_arch="${buildopt_raw_arch}" ;;
+esac
+
+buildopt_detected_platform="${buildopt_os}-${buildopt_arch}"
+if jq -e \
+    --arg operatingSystem "${buildopt_os}" \
+    --arg architecture "${buildopt_arch}" \
+    'any(
+        .platforms[];
+        .operatingSystem == $operatingSystem and
+        .architecture == $architecture
+    )' \
+    "${buildopt_lock}" >/dev/null; then
+    buildopt_platform_matches=true
+    buildopt_add_check \
+        platform \
+        required \
+        PASS \
+        "detected supported platform ${buildopt_detected_platform}"
+else
+    buildopt_platform_matches=false
+    buildopt_add_check \
+        platform \
+        required \
+        FAIL \
+        "detected unsupported platform ${buildopt_detected_platform}"
+fi
+
+buildopt_cpu_count=
+if buildopt_getconf=$(command -v getconf 2>/dev/null); then
+    buildopt_cpu_count=$(
+        "${buildopt_getconf}" _NPROCESSORS_ONLN 2>/dev/null ||
+            true
+    )
+fi
+
+buildopt_memory_bytes=
+if buildopt_awk=$(command -v awk 2>/dev/null); then
+    if [[ -r /proc/meminfo ]]; then
+        # The dollar expression belongs to AWK, not the shell.
+        # shellcheck disable=SC2016
+        buildopt_memory_bytes=$(
+            "${buildopt_awk}" \
+                '/MemTotal:/ {printf "%.0f", $2 * 1024; exit}' \
+                /proc/meminfo 2>/dev/null ||
+                true
+        )
+    fi
+fi
+
+buildopt_disk_available_bytes=
+if buildopt_df=$(command -v df 2>/dev/null); then
+    # The dollar expression belongs to AWK, not the shell.
+    # shellcheck disable=SC2016
+    buildopt_disk_available_kib=$(
+        "${buildopt_df}" -Pk "${buildopt_repo_root}" 2>/dev/null |
+            "${buildopt_awk:-awk}" 'END {print $4}' ||
+            true
+    )
+    if [[ "${buildopt_disk_available_kib}" =~ ^[0-9]+$ ]]; then
+        buildopt_disk_available_bytes=$((buildopt_disk_available_kib * 1024))
+    fi
+fi
+
+buildopt_filesystem=
+if buildopt_stat=$(command -v stat 2>/dev/null); then
+    buildopt_filesystem=$(
+        "${buildopt_stat}" -f -c '%T' "${buildopt_repo_root}" 2>/dev/null ||
+            true
+    )
+fi
+
+if [[ "${buildopt_cpu_count}" =~ ^[0-9]+$ ]] &&
+    [[ "${buildopt_memory_bytes}" =~ ^[0-9]+$ ]] &&
+    [[ "${buildopt_disk_available_bytes}" =~ ^[0-9]+$ ]]; then
+    buildopt_add_check \
+        resources \
+        informational \
+        PASS \
+        "CPU, memory, and workspace disk availability were measured"
+else
+    buildopt_add_check \
+        resources \
+        informational \
+        WARN \
+        "one or more resource measurements were unavailable"
+fi
+
+buildopt_cgroup_v2=false
+if [[ -r /sys/fs/cgroup/cgroup.controllers ]]; then
+    buildopt_cgroup_v2=true
+    buildopt_add_check \
+        cgroup-v2 \
+        deferred \
+        PASS \
+        "cgroup v2 controllers are visible"
+else
+    buildopt_add_check \
+        cgroup-v2 \
+        deferred \
+        WARN \
+        "cgroup v2 controllers are not visible"
+fi
+
+buildopt_max_user_namespaces=
+if [[ -r /proc/sys/user/max_user_namespaces ]]; then
+    buildopt_max_user_namespaces=$(</proc/sys/user/max_user_namespaces)
+fi
+
+buildopt_unprivileged_userns_clone=
+if [[ -r /proc/sys/kernel/unprivileged_userns_clone ]]; then
+    buildopt_unprivileged_userns_clone=$(
+        </proc/sys/kernel/unprivileged_userns_clone
+    )
+fi
+
+if [[ "${buildopt_max_user_namespaces}" =~ ^[0-9]+$ ]] &&
+    ((buildopt_max_user_namespaces > 0)); then
+    buildopt_user_namespaces=true
+    buildopt_add_check \
+        user-namespaces \
+        deferred \
+        PASS \
+        "the kernel allows ${buildopt_max_user_namespaces} user namespaces"
+else
+    buildopt_user_namespaces=false
+    buildopt_add_check \
+        user-namespaces \
+        deferred \
+        WARN \
+        "user namespace capacity is unavailable or disabled"
+fi
+
+buildopt_seccomp_process_mode=
+if [[ -r /proc/self/status ]] && [[ -n "${buildopt_awk:-}" ]]; then
+    # The dollar expression belongs to AWK, not the shell.
+    # shellcheck disable=SC2016
+    buildopt_seccomp_process_mode=$(
+        "${buildopt_awk}" '/^Seccomp:/ {print $2; exit}' /proc/self/status ||
+            true
+    )
+fi
+
+buildopt_landlock_securityfs_entry=false
+if [[ -d /sys/kernel/security/landlock ]]; then
+    buildopt_landlock_securityfs_entry=true
+fi
+
+buildopt_docker_path=$(command -v docker 2>/dev/null || true)
+buildopt_docker_client_version=
+buildopt_docker_server_version=
+buildopt_docker_storage_driver=
+buildopt_docker_cgroup_version=
+buildopt_docker_daemon=false
+buildopt_docker_cpu_quota=null
+buildopt_docker_memory_limit=null
+
+if [[ -n "${buildopt_docker_path}" ]]; then
+    buildopt_docker_client_version=$(
+        "${buildopt_docker_path}" --version 2>/dev/null ||
+            true
+    )
+
+    if buildopt_docker_version_json=$(
+        "${buildopt_docker_path}" version --format '{{json .}}' 2>/dev/null
+    ) && jq -e '.Server.Version | strings | length > 0' \
+        <<<"${buildopt_docker_version_json}" >/dev/null; then
+        buildopt_docker_daemon=true
+        buildopt_docker_client_version=$(
+            jq -r '.Client.Version // empty' <<<"${buildopt_docker_version_json}"
+        )
+        buildopt_docker_server_version=$(
+            jq -r '.Server.Version // empty' <<<"${buildopt_docker_version_json}"
+        )
+
+        if buildopt_docker_info_json=$(
+            "${buildopt_docker_path}" info --format '{{json .}}' 2>/dev/null
+        ) && jq -e 'type == "object"' \
+            <<<"${buildopt_docker_info_json}" >/dev/null; then
+            buildopt_docker_storage_driver=$(
+                jq -r '.Driver // empty' <<<"${buildopt_docker_info_json}"
+            )
+            buildopt_docker_cgroup_version=$(
+                jq -r '.CgroupVersion // empty' <<<"${buildopt_docker_info_json}"
+            )
+            buildopt_docker_cpu_quota=$(
+                jq -c '.CpuCfsQuota // null' <<<"${buildopt_docker_info_json}"
+            )
+            buildopt_docker_memory_limit=$(
+                jq -c '.MemoryLimit // null' <<<"${buildopt_docker_info_json}"
+            )
+        fi
+    fi
+fi
+
+if [[ "${buildopt_docker_daemon}" == true ]]; then
+    buildopt_docker_status=PASS
+    buildopt_add_check \
+        docker-daemon \
+        deferred \
+        PASS \
+        "Docker client and daemon are available"
+elif [[ -n "${buildopt_docker_path}" ]]; then
+    buildopt_docker_status=WARN
+    buildopt_add_check \
+        docker-daemon \
+        deferred \
+        WARN \
+        "Docker is installed, but the daemon is unavailable"
+else
+    buildopt_docker_status=WARN
+    buildopt_add_check \
+        docker-daemon \
+        deferred \
+        WARN \
+        "Docker is not installed"
+fi
+
+buildopt_toolchain_executables() {
+    case "$1" in
+        actionlint) printf 'actionlint\n' ;;
+        buf) printf 'buf\n' ;;
+        cosign) printf 'cosign\n' ;;
+        go) printf 'go\n' ;;
+        protoc) printf 'protoc\n' ;;
+        rust-channel-manifest) printf 'rustc\n' ;;
+        shellcheck) printf 'shellcheck\n' ;;
+        syft) printf 'syft\n' ;;
+        temurin-jdk-21 | temurin-jdk-25) printf 'java\njavac\n' ;;
+        *) return 1 ;;
+    esac
+}
+
+while IFS=$'\t' read -r \
+    buildopt_toolchain_id \
+    buildopt_expected_version \
+    buildopt_adoption; do
+    buildopt_toolchain_state=UNPROBED
+    buildopt_toolchain_missing=0
+    buildopt_toolchain_mismatch=0
+    buildopt_toolchain_unprobed=0
+    declare -a buildopt_toolchain_probes=()
+
+    if buildopt_executable_list=$(
+        buildopt_toolchain_executables "${buildopt_toolchain_id}"
+    ); then
+        while IFS= read -r buildopt_executable; do
+            buildopt_toolchain_path=$(
+                command -v "${buildopt_executable}" 2>/dev/null ||
+                    true
+            )
+            buildopt_observed_version=
+            buildopt_probe_state=UNPROBED
+            buildopt_probe_expected_version=${buildopt_expected_version}
+
+            if [[ "${buildopt_toolchain_id}" == temurin-jdk-* ]] &&
+                [[ "${buildopt_executable}" == javac ]]; then
+                buildopt_probe_expected_version=${buildopt_expected_version%%+*}
+            fi
+
+            if [[ -z "${buildopt_toolchain_path}" ]]; then
+                buildopt_probe_state=MISSING
+                ((buildopt_toolchain_missing += 1))
+            elif buildopt_observed_version=$(
+                buildopt_capture_version \
+                    "${buildopt_executable}" \
+                    "${buildopt_toolchain_path}"
+            ); then
+                if [[ "${buildopt_observed_version}" == *"${buildopt_probe_expected_version}"* ]]; then
+                    buildopt_probe_state=MATCH
+                else
+                    buildopt_probe_state=MISMATCH
+                    ((buildopt_toolchain_mismatch += 1))
+                fi
+            else
+                ((buildopt_toolchain_unprobed += 1))
+            fi
+
+            buildopt_toolchain_probes+=("$(
+                jq -cn \
+                    --arg executable "${buildopt_executable}" \
+                    --arg expectedVersion "${buildopt_probe_expected_version}" \
+                    --arg state "${buildopt_probe_state}" \
+                    --arg path "${buildopt_toolchain_path}" \
+                    --arg observedVersion "${buildopt_observed_version}" \
+                    '{
+                        executable: $executable,
+                        expectedVersion: $expectedVersion,
+                        state: $state,
+                        path: (
+                            $path |
+                            if length == 0 then null else . end
+                        ),
+                        observedVersion: (
+                            $observedVersion |
+                            if length == 0 then null else . end
+                        )
+                    }'
+            )")
+        done <<<"${buildopt_executable_list}"
+
+        if ((buildopt_toolchain_missing > 0)); then
+            buildopt_toolchain_state=MISSING
+        elif ((buildopt_toolchain_unprobed > 0)); then
+            buildopt_toolchain_state=UNPROBED
+        elif ((buildopt_toolchain_mismatch > 0)); then
+            buildopt_toolchain_state=MISMATCH
+        else
+            buildopt_toolchain_state=MATCH
+        fi
+    fi
+
+    buildopt_required_by=$(
+        jq -c \
+            --arg id "${buildopt_toolchain_id}" \
+            '.artifacts[] | select(.id == $id) | .requiredBy' \
+            "${buildopt_lock}"
+    )
+    buildopt_toolchain_probes_json=$(
+        buildopt_json_array "${buildopt_toolchain_probes[@]}"
+    )
+
+    buildopt_toolchains+=("$(
+        jq -cn \
+            --arg id "${buildopt_toolchain_id}" \
+            --arg expectedVersion "${buildopt_expected_version}" \
+            --arg adoption "${buildopt_adoption}" \
+            --arg state "${buildopt_toolchain_state}" \
+            --argjson probes "${buildopt_toolchain_probes_json}" \
+            --argjson requiredBy "${buildopt_required_by}" \
+            '{
+                id: $id,
+                expectedVersion: $expectedVersion,
+                adoption: $adoption,
+                state: $state,
+                probes: $probes,
+                requiredBy: $requiredBy
+            }'
+    )")
+done < <(
+    jq -r \
+        '.artifacts[] | [.id, .version, .adoption] | @tsv' \
+        "${buildopt_lock}"
+)
+
+buildopt_checks_json=$(buildopt_json_array "${buildopt_checks[@]}")
+buildopt_commands_json=$(buildopt_json_array "${buildopt_commands[@]}")
+buildopt_toolchains_json=$(buildopt_json_array "${buildopt_toolchains[@]}")
+buildopt_platforms_json=$(jq -c '.platforms' "${buildopt_lock}")
+
+buildopt_required_failures=$(
+    jq '[.[] | select(.level == "required" and .status == "FAIL")] | length' \
+        <<<"${buildopt_checks_json}"
+)
+buildopt_pass_count=$(
+    jq '[.[] | select(.status == "PASS")] | length' \
+        <<<"${buildopt_checks_json}"
+)
+buildopt_warn_count=$(
+    jq '[.[] | select(.status == "WARN")] | length' \
+        <<<"${buildopt_checks_json}"
+)
+buildopt_fail_count=$(
+    jq '[.[] | select(.status == "FAIL")] | length' \
+        <<<"${buildopt_checks_json}"
+)
+
+if ((buildopt_required_failures == 0)); then
+    buildopt_status=PASS
+    buildopt_exit_code=0
+else
+    buildopt_status=FAIL
+    buildopt_exit_code=1
+fi
+
+buildopt_generated_at=
+if buildopt_date=$(command -v date 2>/dev/null); then
+    buildopt_generated_at=$(
+        "${buildopt_date}" -u '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null ||
+            true
+    )
+fi
+
+buildopt_cpu_json=null
+if [[ "${buildopt_cpu_count}" =~ ^[0-9]+$ ]]; then
+    buildopt_cpu_json=${buildopt_cpu_count}
+fi
+
+buildopt_memory_json=null
+if [[ "${buildopt_memory_bytes}" =~ ^[0-9]+$ ]]; then
+    buildopt_memory_json=${buildopt_memory_bytes}
+fi
+
+buildopt_disk_json=null
+if [[ "${buildopt_disk_available_bytes}" =~ ^[0-9]+$ ]]; then
+    buildopt_disk_json=${buildopt_disk_available_bytes}
+fi
+
+buildopt_userns_json=null
+if [[ "${buildopt_max_user_namespaces}" =~ ^[0-9]+$ ]]; then
+    buildopt_userns_json=${buildopt_max_user_namespaces}
+fi
+
+buildopt_unprivileged_userns_json=null
+if [[ "${buildopt_unprivileged_userns_clone}" =~ ^[0-9]+$ ]]; then
+    buildopt_unprivileged_userns_json=${buildopt_unprivileged_userns_clone}
+fi
+
+buildopt_seccomp_json=null
+if [[ "${buildopt_seccomp_process_mode}" =~ ^[0-9]+$ ]]; then
+    buildopt_seccomp_json=${buildopt_seccomp_process_mode}
+fi
+
+buildopt_report=$(
+    jq -cn \
+        --arg schemaVersion "buildopt.dev/doctor-report/v1" \
+        --arg generatedAt "${buildopt_generated_at}" \
+        --arg status "${buildopt_status}" \
+        --argjson exitCode "${buildopt_exit_code}" \
+        --arg repoRoot "${buildopt_repo_root}" \
+        --arg lockPath "${buildopt_lock}" \
+        --arg rawOperatingSystem "${buildopt_raw_os}" \
+        --arg operatingSystem "${buildopt_os}" \
+        --arg kernel "${buildopt_kernel}" \
+        --arg rawArchitecture "${buildopt_raw_arch}" \
+        --arg architecture "${buildopt_arch}" \
+        --arg detectedPlatform "${buildopt_detected_platform}" \
+        --argjson platformMatches "${buildopt_platform_matches}" \
+        --argjson expectedPlatforms "${buildopt_platforms_json}" \
+        --argjson cpuCount "${buildopt_cpu_json}" \
+        --argjson memoryBytes "${buildopt_memory_json}" \
+        --argjson diskAvailableBytes "${buildopt_disk_json}" \
+        --arg filesystem "${buildopt_filesystem}" \
+        --argjson cgroupV2 "${buildopt_cgroup_v2}" \
+        --argjson userNamespaces "${buildopt_user_namespaces}" \
+        --argjson maxUserNamespaces "${buildopt_userns_json}" \
+        --argjson unprivilegedUsernsClone "${buildopt_unprivileged_userns_json}" \
+        --argjson seccompProcessMode "${buildopt_seccomp_json}" \
+        --argjson landlockSecurityfsEntry "${buildopt_landlock_securityfs_entry}" \
+        --arg dockerStatus "${buildopt_docker_status}" \
+        --arg dockerPath "${buildopt_docker_path}" \
+        --arg dockerClientVersion "${buildopt_docker_client_version}" \
+        --arg dockerServerVersion "${buildopt_docker_server_version}" \
+        --arg dockerStorageDriver "${buildopt_docker_storage_driver}" \
+        --arg dockerCgroupVersion "${buildopt_docker_cgroup_version}" \
+        --argjson dockerDaemon "${buildopt_docker_daemon}" \
+        --argjson dockerCpuQuota "${buildopt_docker_cpu_quota}" \
+        --argjson dockerMemoryLimit "${buildopt_docker_memory_limit}" \
+        --argjson commands "${buildopt_commands_json}" \
+        --argjson toolchains "${buildopt_toolchains_json}" \
+        --argjson checks "${buildopt_checks_json}" \
+        --argjson passCount "${buildopt_pass_count}" \
+        --argjson warnCount "${buildopt_warn_count}" \
+        --argjson failCount "${buildopt_fail_count}" \
+        '{
+            schemaVersion: $schemaVersion,
+            generatedAt: (
+                $generatedAt |
+                if length == 0 then null else . end
+            ),
+            status: $status,
+            exitCode: $exitCode,
+            repository: {
+                root: $repoRoot,
+                toolchainLock: $lockPath
+            },
+            platform: {
+                expected: $expectedPlatforms,
+                detected: {
+                    id: $detectedPlatform,
+                    operatingSystem: $operatingSystem,
+                    rawOperatingSystem: $rawOperatingSystem,
+                    architecture: $architecture,
+                    rawArchitecture: $rawArchitecture,
+                    kernel: $kernel
+                },
+                matchesLock: $platformMatches
+            },
+            resources: {
+                cpuCount: $cpuCount,
+                memoryBytes: $memoryBytes,
+                workspaceDiskAvailableBytes: $diskAvailableBytes,
+                workspaceFilesystem: (
+                    $filesystem |
+                    if length == 0 then null else . end
+                )
+            },
+            capabilities: {
+                cgroupV2: $cgroupV2,
+                userNamespaces: {
+                    enabled: $userNamespaces,
+                    maximum: $maxUserNamespaces,
+                    unprivilegedCloneSetting: $unprivilegedUsernsClone
+                },
+                seccompProcessMode: $seccompProcessMode,
+                landlockSecurityfsEntry: $landlockSecurityfsEntry,
+                qualification: "inventory-only"
+            },
+            docker: {
+                status: $dockerStatus,
+                path: (
+                    $dockerPath |
+                    if length == 0 then null else . end
+                ),
+                clientVersion: (
+                    $dockerClientVersion |
+                    if length == 0 then null else . end
+                ),
+                daemonAvailable: $dockerDaemon,
+                serverVersion: (
+                    $dockerServerVersion |
+                    if length == 0 then null else . end
+                ),
+                storageDriver: (
+                    $dockerStorageDriver |
+                    if length == 0 then null else . end
+                ),
+                cgroupVersion: (
+                    $dockerCgroupVersion |
+                    if length == 0 then null else . end
+                ),
+                cpuQuota: $dockerCpuQuota,
+                memoryLimit: $dockerMemoryLimit,
+                requiredBy: "ENV-008"
+            },
+            commands: $commands,
+            toolchains: {
+                probeScope: "active-path",
+                entries: $toolchains,
+                matched: (
+                    [$toolchains[] | select(.state == "MATCH")] |
+                    length
+                ),
+                pending: (
+                    [
+                        $toolchains[] |
+                        select(.state != "MATCH")
+                    ] |
+                    length
+                )
+            },
+            checks: $checks,
+            summary: {
+                pass: $passCount,
+                warn: $warnCount,
+                fail: $failCount
+            }
+        }'
+)
+
+if [[ "${buildopt_format}" == json ]]; then
+    jq '.' <<<"${buildopt_report}"
+else
+    jq -r '
+        "BuildOpt doctor: \(.status)",
+        "Platform: \(.platform.detected.id) (kernel \(.platform.detected.kernel))",
+        (
+            "Resources: cpu=\(.resources.cpuCount // "unknown") " +
+            "memoryBytes=\(.resources.memoryBytes // "unknown") " +
+            "diskAvailableBytes=\(.resources.workspaceDiskAvailableBytes // "unknown")"
+        ),
+        (
+            "Docker: \(.docker.status) " +
+            (
+                if .docker.daemonAvailable then
+                    "client=\(.docker.clientVersion) server=\(.docker.serverVersion)"
+                else
+                    "daemon unavailable"
+                end
+            )
+        ),
+        (
+            "Active PATH toolchains: " +
+            "\(.toolchains.matched) matching, " +
+            "\(.toolchains.pending) pending"
+        ),
+        "",
+        "Checks:",
+        (
+            .checks[] |
+            "  [\(.status)] \(.id): \(.detail)"
+        ),
+        "",
+        "Toolchains:",
+        (
+            .toolchains.entries[] |
+            (
+                "  [\(.state)] \(.id) expected=\(.expectedVersion) " +
+                "paths=\([.probes[].path // "not found"] | join(","))"
+            )
+        )
+    ' <<<"${buildopt_report}"
+fi
+
+exit "${buildopt_exit_code}"
