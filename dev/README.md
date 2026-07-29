@@ -260,6 +260,20 @@ inconclusive commit authorization. Linked vectors additionally prove ordered
 idempotent transitions, single ownership, terminal abort behavior, positive
 validation, and exact coverage of every pending cache object.
 
+## Test Optimization signed-schema validation
+
+Validate the `F0-015` signed grant and validation-result contracts:
+
+```bash
+./dev/check-test-optimization-schemas
+```
+
+The checker requires closed Ed25519/JCS envelopes, explicit grant selectors
+and capabilities, disjoint final status shapes, valid time windows, exact
+policy/grant references, and result identity/artifact equality with the
+originating F0-014 request. It validates structure and semantic binding;
+`F0-020` supplies real cryptographic golden vectors.
+
 ## Metrics catalog validation
 
 Validate the machine-readable `F0-024` catalog and its private-beta measurement

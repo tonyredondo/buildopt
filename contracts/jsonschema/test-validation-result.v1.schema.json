@@ -1,0 +1,286 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/test-validation-result.v1.schema.json",
+  "title": "BuildOpt TestValidationResult v1",
+  "description": "Signed final Test Optimization verdict for one idempotent FULL_RELEVANT_VALIDATION action and its content-addressed artifacts.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "contractVersion",
+    "resultId",
+    "requestId",
+    "actionId",
+    "repository",
+    "revision",
+    "sourceStateDigest",
+    "validationMode",
+    "status",
+    "validatedArtifactRefs",
+    "artifactSetDigest",
+    "policyDigest",
+    "evidenceRef",
+    "completedAt",
+    "expiresAt",
+    "signature"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "recordType": {
+      "const": "TEST_VALIDATION_RESULT"
+    },
+    "contractVersion": {
+      "const": "test-optimization/v1"
+    },
+    "resultId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "requestId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "actionId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "repository": {
+      "$ref": "#/$defs/repository"
+    },
+    "revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{7,64}$"
+    },
+    "sourceStateDigest": {
+      "$ref": "#/$defs/digest"
+    },
+    "validationMode": {
+      "const": "FULL_RELEVANT_VALIDATION"
+    },
+    "status": {
+      "enum": [
+        "PASSED",
+        "FAILED",
+        "INCONCLUSIVE"
+      ]
+    },
+    "validatedArtifactRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifactRef"
+      },
+      "minItems": 1,
+      "maxItems": 1024
+    },
+    "artifactSetDigest": {
+      "$ref": "#/$defs/sha256Digest"
+    },
+    "policyDigest": {
+      "$ref": "#/$defs/sha256Digest"
+    },
+    "evidenceRef": {
+      "$ref": "#/$defs/identifier"
+    },
+    "completedAt": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "expiresAt": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "failure": {
+      "$ref": "#/$defs/failure"
+    },
+    "inconclusive": {
+      "$ref": "#/$defs/inconclusive"
+    },
+    "signature": {
+      "$ref": "#/$defs/signature"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "FAILED"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "failure"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "failure"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "INCONCLUSIVE"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "inconclusive"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "inconclusive"
+          ]
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+    },
+    "sha256Digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^(?:sha256|hmac-sha256):[0-9a-f]{64}$"
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant",
+        "repository",
+        "trustDomain"
+      ],
+      "properties": {
+        "tenant": {
+          "$ref": "#/$defs/identifier"
+        },
+        "repository": {
+          "$ref": "#/$defs/identifier"
+        },
+        "trustDomain": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "artifactRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifactId",
+        "digest",
+        "sizeBytes",
+        "mediaType"
+      ],
+      "properties": {
+        "artifactId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 107374182400
+        },
+        "mediaType": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9!#$&^_.+-]+/[a-z0-9][a-z0-9!#$&^_.+-]+$"
+        }
+      }
+    },
+    "failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reason",
+        "summary"
+      ],
+      "properties": {
+        "reason": {
+          "enum": [
+            "TEST_FAILURE",
+            "ARTIFACT_DIVERGENCE",
+            "CORRECTNESS_GUARDRAIL"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        }
+      }
+    },
+    "inconclusive": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reason"
+      ],
+      "properties": {
+        "reason": {
+          "enum": [
+            "TIMEOUT",
+            "INCOMPATIBLE_VERSION",
+            "MISSING_ARTIFACT",
+            "CORRUPT_ARTIFACT",
+            "INFRA_FAILURE",
+            "INCOMPLETE_RESULT"
+          ]
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "canonicalization",
+        "keyId",
+        "signedPayloadDigest",
+        "value"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "Ed25519"
+        },
+        "canonicalization": {
+          "const": "JCS"
+        },
+        "keyId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "signedPayloadDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{86}$"
+        }
+      }
+    }
+  }
+}

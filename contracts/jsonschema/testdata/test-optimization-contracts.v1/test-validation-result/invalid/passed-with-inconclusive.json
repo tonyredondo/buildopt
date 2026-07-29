@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "TEST_VALIDATION_RESULT",
+  "contractVersion": "test-optimization/v1",
+  "resultId": "test-result-contradictory",
+  "requestId": "request-01K4Y800",
+  "actionId": "action-01K4Y800",
+  "repository": {
+    "tenant": "tenant-7",
+    "repository": "repo-42",
+    "trustDomain": "trusted-ci"
+  },
+  "revision": "8c74f2a",
+  "sourceStateDigest": "hmac-sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "validationMode": "FULL_RELEVANT_VALIDATION",
+  "status": "PASSED",
+  "validatedArtifactRefs": [
+    {
+      "artifactId": "candidate-classes",
+      "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "sizeBytes": 2048,
+      "mediaType": "application/zip"
+    }
+  ],
+  "artifactSetDigest": "sha256:abababababababababababababababababababababababababababababababab",
+  "policyDigest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+  "evidenceRef": "testopt-evidence-01K4Y800",
+  "completedAt": "2026-07-21T10:30:00Z",
+  "expiresAt": "2026-07-21T11:00:00Z",
+  "inconclusive": {
+    "reason": "INCOMPLETE_RESULT"
+  },
+  "signature": {
+    "algorithm": "Ed25519",
+    "canonicalization": "JCS",
+    "keyId": "testopt-signing-2026-q3",
+    "signedPayloadDigest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  }
+}

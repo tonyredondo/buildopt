@@ -35,6 +35,12 @@ const CIValidationRequestSchemaID = "https://schemas.buildopt.dev/ci-validation-
 // CommitDecisionSchemaID is the canonical COMMIT_DECISION v1 schema identifier.
 const CommitDecisionSchemaID = "https://schemas.buildopt.dev/commit-decision.v1.schema.json"
 
+// TestCacheGrantSchemaID is the canonical TEST_CACHE_GRANT v1 schema identifier.
+const TestCacheGrantSchemaID = "https://schemas.buildopt.dev/test-cache-grant.v1.schema.json"
+
+// TestValidationResultSchemaID is the canonical TEST_VALIDATION_RESULT v1 schema identifier.
+const TestValidationResultSchemaID = "https://schemas.buildopt.dev/test-validation-result.v1.schema.json"
+
 // ValidateBuildSessionV1 compiles the pinned Draft 2020-12 schema and validates
 // one JSON document with format assertions enabled.
 func ValidateBuildSessionV1(schemaPath string, instancePath string) error {
@@ -131,6 +137,28 @@ func ValidateCommitDecisionV1(schemaPath string, instancePath string) error {
 		instancePath,
 		CommitDecisionSchemaID,
 		"COMMIT_DECISION",
+	)
+}
+
+// ValidateTestCacheGrantV1 compiles the pinned Draft 2020-12 schema and
+// validates one signed Test Optimization cache grant.
+func ValidateTestCacheGrantV1(schemaPath string, instancePath string) error {
+	return validateContract(
+		schemaPath,
+		instancePath,
+		TestCacheGrantSchemaID,
+		"TEST_CACHE_GRANT",
+	)
+}
+
+// ValidateTestValidationResultV1 compiles the pinned Draft 2020-12 schema and
+// validates one signed Test Optimization validation result.
+func ValidateTestValidationResultV1(schemaPath string, instancePath string) error {
+	return validateContract(
+		schemaPath,
+		instancePath,
+		TestValidationResultSchemaID,
+		"TEST_VALIDATION_RESULT",
 	)
 }
 

@@ -154,3 +154,33 @@ transitions, positive validation, and exact object coverage. The authentication
 shape is fail-closed now; canonical JSON and cryptographic signature verification
 remain owned by `F0-020`. Queue execution, crash recovery, SQLite transactions,
 and reconciliation remain implementation work under `CI-ORCH-001`/`CACHE-008`.
+
+## TestCacheGrant and TestValidationResult v1
+
+[`test-cache-grant.v1.schema.json`](./test-cache-grant.v1.schema.json) and
+[`test-validation-result.v1.schema.json`](./test-validation-result.v1.schema.json)
+are the normative `F0-015` contracts issued by Test Optimization.
+
+- `TestCacheGrant` binds an epoch and digest to one repository/trust domain,
+  exact revision or bounded policy range, explicit task-type/adapter selectors,
+  namespace, independent read/write authority, policy, and expiration. It
+  cannot grant neither permission or use wildcard selectors.
+- `TestValidationResult` binds the request/action, repository, revision/source
+  state, `FULL_RELEVANT_VALIDATION`, exact content-addressed artifacts, policy,
+  evidence, final status, and expiration. `FAILED` and `INCONCLUSIVE` have
+  explicit disjoint reason shapes; neither can masquerade as `PASSED`.
+- Both require a closed Ed25519 envelope declaring JCS canonicalization, key
+  ID, canonical payload digest, and unpadded 64-byte signature encoding.
+
+Run schema negatives and producer/consumer bindings with:
+
+```bash
+./dev/check-test-optimization-schemas
+```
+
+The checker links the grant digest/expiration to the F0-013 policy and the
+result to the F0-014 validation request. It rejects missing signatures,
+wildcard/no-op grants, contradictory status, reversed validity windows, and
+artifact rebinding. `F0-020` owns cryptographic verification and canonical
+vectors; `F0-018` owns the OpenAPI producer/consumer, status/revocation,
+polling, retry, and compatibility fixtures needed to close `TESTOPT-API-001`.

@@ -86,6 +86,8 @@ buildopt_materialized_artifacts=(
     "contracts/jsonschema/experiment-result.v1.schema.json"
     "contracts/jsonschema/optimization-policy.v1.schema.json"
     "contracts/jsonschema/resource-profile.v1.schema.json"
+    "contracts/jsonschema/test-cache-grant.v1.schema.json"
+    "contracts/jsonschema/test-validation-result.v1.schema.json"
     "contracts/metrics/build-impact-v1.json"
     "contracts/proto/local-events/v1/task_events.proto"
     "specs/gradle-correlation-v1.md"

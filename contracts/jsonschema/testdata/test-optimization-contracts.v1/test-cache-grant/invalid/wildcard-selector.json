@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "TEST_CACHE_GRANT",
+  "contractVersion": "test-optimization/v1",
+  "grantId": "test-grant-wildcard",
+  "grantEpoch": 7,
+  "grantDigest": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+  "repository": {
+    "tenant": "tenant-7",
+    "repository": "repo-42",
+    "trustDomain": "trusted-ci"
+  },
+  "revisionOrPolicyRange": {
+    "kind": "REVISION",
+    "revision": "8c74f2a",
+    "sourceStateDigest": "hmac-sha256:1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "allowedTaskTypesOrAdapters": [
+    {
+      "kind": "TASK_TYPE",
+      "id": "*"
+    }
+  ],
+  "namespace": "tenant-7/repo-42/test/linux-amd64",
+  "read": true,
+  "write": true,
+  "issuedAt": "2026-07-21T09:40:00Z",
+  "expiresAt": "2026-07-22T00:00:00Z",
+  "policyDigest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+  "signature": {
+    "algorithm": "Ed25519",
+    "canonicalization": "JCS",
+    "keyId": "testopt-signing-2026-q3",
+    "signedPayloadDigest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  }
+}
