@@ -31,3 +31,8 @@ failure/cancellation, Configuration Cache reuse, and the tested
 `UNATTRIBUTED` whole-attempt fallback inside the pinned 4-CPU/16-GiB container.
 The checksum-pinned Gradle 8.14.3 half runs through the host-side `--full`
 matrix.
+
+Both modes also execute the four-pair `WS-009` neutral-envelope smoke. Only
+strict mode qualifies the runner class and may create the initial
+`benchmarks/results/ws-009-golden-lane.json`; once present, that historical
+report is validated but never rewritten.

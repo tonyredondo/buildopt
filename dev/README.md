@@ -208,6 +208,28 @@ walking skeleton has no cache data route, so it creates no cache lease. A final
 early-bypass case returns exit `38` without adding a server record. The same
 suite runs inside `dev/golden-lane-build` with the host-built locked binaries.
 
+## Walking-skeleton overhead validation
+
+Measure the complete optimization-off wrapper against native Gradle from the
+same external envelope:
+
+```bash
+./dev/check-walking-skeleton-overhead
+```
+
+The `WS-009` checker runs four real `neutralProbe` pairs in alternating order,
+removes the required output before every arm, requires byte-identical
+deliverables, and retains the first pair plus signed negative differences. The
+wrapper arm includes launcher, authenticated plugin/gateway rendezvous, server
+ingest, and export; the native arm includes none of them. The generated report
+binds all measurement inputs by SHA-256 and always keeps
+`promotionGateActive: false`.
+
+A host run is a non-qualifying smoke. The strict golden-container run records
+the evidence report once under `benchmarks/results/`; subsequent runs validate
+that historical report without rewriting it. See
+[`walking-skeleton-overhead-v1.md`](../specs/walking-skeleton-overhead-v1.md).
+
 ## Gradle plugin handshake validation
 
 Build the packaged `dev.buildopt` plugin and exercise its neutral authenticated

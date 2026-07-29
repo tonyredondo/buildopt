@@ -43,6 +43,7 @@ buildopt_required_files=(
     "adr/0003-local-task-event-channel.md"
     "adr/README.md"
     "benchmarks/README.md"
+    "benchmarks/results/ws-009-golden-lane.json"
     "buf.yaml"
     "cmd/buildopt/main.go"
     "cmd/buildopt/main_signal_linux_test.go"
@@ -52,6 +53,9 @@ buildopt_required_files=(
     "cmd/buildopt-server/README.md"
     "cmd/buildopt-server/main.go"
     "cmd/buildopt-server/main_test.go"
+    "cmd/neutral-envelope/README.md"
+    "cmd/neutral-envelope/main.go"
+    "cmd/neutral-envelope/main_test.go"
     "contracts/README.md"
     "contracts/proto/local-events/v1/task_events.proto"
     "dev/check-base-runbooks"
@@ -74,6 +78,7 @@ buildopt_required_files=(
     "dev/check-session-ingest"
     "dev/check-supply-chain-toolchains"
     "dev/check-task-events-proto"
+    "dev/check-walking-skeleton-overhead"
     "dev/package-release"
     "dev/README.md"
     "dev/proto-conformance/java/dev/buildopt/contracts/localevents/v1/TaskEventsRoundTrip.java"
@@ -132,6 +137,8 @@ buildopt_required_files=(
     "internal/launcher/run.go"
     "internal/launcher/session_ingest.go"
     "internal/launcher/session_ingest_test.go"
+    "internal/neutralenvelope/report.go"
+    "internal/neutralenvelope/report_test.go"
     "internal/sessioningest/http.go"
     "internal/sessioningest/http_test.go"
     "internal/sessioningest/record.go"
@@ -153,6 +160,7 @@ buildopt_required_files=(
     "specs/README.md"
     "specs/gradle-correlation-v1.md"
     "specs/release-bundle-v1.md"
+    "specs/walking-skeleton-overhead-v1.md"
 )
 
 buildopt_failed=0

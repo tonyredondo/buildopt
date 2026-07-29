@@ -26,4 +26,9 @@ deterministic manifest/baseline digests, declares unobserved metrics
 unavailable, publishes mode-`0600` immutable JSON, and leaves runtime schema
 conformance to the isolated validator under `dev/schema-validator/`.
 
+`neutralenvelope/` owns the strict `WS-009` observation and report contract. It
+pairs externally timed native and optimization-off wrapper executions,
+reconciles required-output digests, retains signed differences, and binds the
+runner, metric catalog, envelope, launcher, server, and plugin inputs.
+
 No type in this directory replaces the normative schemas, OpenAPI, or Protobuf definitions in `contracts/`.

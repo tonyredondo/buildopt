@@ -170,6 +170,8 @@ if ((${#buildopt_smoke_calls[@]} != 5)) ||
     [[ "${buildopt_smoke_calls[4]}" != \
         *$'\t--env\tBUILDOPT_GOLDEN_LANE_METRICS_VALIDATOR_BINARY=/buildopt-host-tools/metrics-catalog-validator'* ]] ||
     [[ "${buildopt_smoke_calls[4]}" != \
+        *$'\t--env\tBUILDOPT_GOLDEN_LANE_ENVELOPE_BINARY=/buildopt-host-tools/neutral-envelope'* ]] ||
+    [[ "${buildopt_smoke_calls[4]}" != \
         *$'\t--env\tBUILDOPT_GOLDEN_LANE_USE_ACTIVE_JAVA=1'* ]] ||
     [[ "${buildopt_smoke_calls[4]}" != \
         *$'\t--volume\t'*':/buildopt-host-tools:ro'* ]] ||

@@ -83,6 +83,9 @@ buildopt_materialized_artifacts=(
     "specs/gradle-correlation-v1.md"
     "specs/golden-lane-runner-v1.json"
     "specs/release-bundle-v1.md"
+    "specs/walking-skeleton-faults-v1.md"
+    "specs/walking-skeleton-overhead-v1.md"
+    "benchmarks/results/ws-009-golden-lane.json"
 )
 
 buildopt_failed=0

@@ -116,7 +116,8 @@ fi
 "${buildopt_script_dir}/check-build-session-export"
 "${buildopt_script_dir}/check-walking-skeleton-faults"
 "${buildopt_script_dir}/check-metrics-catalog"
+"${buildopt_script_dir}/check-walking-skeleton-overhead"
 "${buildopt_script_dir}/check-gradle-correlation-fixture"
 "${buildopt_script_dir}/check-gradle-correlation-spike" --gradle-9-only
 
-printf 'Golden lane build OK: Gradle 9.6.1, Java 21, bytecode major 61, authenticated local rendezvous, server ingest, BUILD_SESSION v1 export, fault cleanup, and METRICS-001 catalog\n'
+printf 'Golden lane build OK: Gradle 9.6.1, Java 21, bytecode major 61, authenticated local rendezvous, server ingest, BUILD_SESSION v1 export, fault cleanup, METRICS-001 catalog, and neutral-envelope overhead\n'

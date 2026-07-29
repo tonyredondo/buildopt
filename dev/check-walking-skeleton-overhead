@@ -1,0 +1,409 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+unset \
+    BUILDOPT_BYPASS \
+    BUILDOPT_SERVER_URL \
+    BUILDOPT_SERVER_INGEST_TOKEN \
+    BUILDOPT_BUILD_SESSION_CONTEXT \
+    BUILDOPT_PLUGIN_ATTEMPT_ID \
+    BUILDOPT_PLUGIN_EVENT_SOCKET \
+    BUILDOPT_PLUGIN_EVENT_TOKEN \
+    BUILDOPT_GATEWAY_URL \
+    BUILDOPT_GATEWAY_USERNAME \
+    BUILDOPT_GATEWAY_PASSWORD \
+    BUILDOPT_GATEWAY_CONNECTION_GENERATION
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_fixture_source="${buildopt_repo_root}/fixtures/gradle-handshake"
+buildopt_runner_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+buildopt_metrics_catalog="${buildopt_repo_root}/contracts/metrics/build-impact-v1.json"
+buildopt_evidence_relative=benchmarks/results/ws-009-golden-lane.json
+buildopt_evidence_report="${buildopt_repo_root}/${buildopt_evidence_relative}"
+buildopt_test_root=$(mktemp -d)
+buildopt_server_pid=
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_server_pid}" ]] &&
+        kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        kill -TERM "${buildopt_server_pid}" 2>/dev/null || true
+        wait "${buildopt_server_pid}" 2>/dev/null || true
+    fi
+    rm -rf -- "${buildopt_test_root}"
+}
+trap buildopt_cleanup EXIT
+
+if [[ "$(uname -s)" != "Linux" ]]; then
+    printf 'WS-009 neutral-envelope measurement requires Linux\n' >&2
+    exit 1
+fi
+
+for buildopt_command in \
+    cat chmod cp dirname find grep head mkdir mktemp rm sed sha256sum sleep uname wc; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required overhead-measurement command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+cd -- "${buildopt_repo_root}"
+
+buildopt_check_git_state=0
+buildopt_before_status=
+if command -v git >/dev/null 2>&1; then
+    buildopt_check_git_state=1
+    buildopt_before_status=$(
+        git status --porcelain=v1 --untracked-files=all |
+            sed "\\| ${buildopt_evidence_relative}\$|d"
+    )
+fi
+buildopt_evidence_before_digest=
+if [[ -f "${buildopt_evidence_report}" ]]; then
+    buildopt_evidence_before_digest=$(
+        sha256sum "${buildopt_evidence_report}" |
+            sed 's/[[:space:]].*$//'
+    )
+fi
+
+buildopt_build_home=${GRADLE_USER_HOME:-"${buildopt_repo_root}/.tools/gradle-user-home/local"}
+mkdir -p -- "${buildopt_build_home}"
+buildopt_gradle_prefix=(
+    "${buildopt_script_dir}/run"
+    --
+    "${buildopt_repo_root}/gradlew"
+)
+if [[ "${BUILDOPT_GOLDEN_LANE_USE_ACTIVE_JAVA:-0}" == "1" ]]; then
+    buildopt_gradle_prefix=("${buildopt_repo_root}/gradlew")
+fi
+
+GRADLE_USER_HOME="${buildopt_build_home}" \
+    "${buildopt_gradle_prefix[@]}" \
+    --no-daemon \
+    --offline \
+    --stacktrace \
+    --warning-mode=fail \
+    :jvm:gradle-plugin:jar
+
+mapfile -d '' buildopt_plugin_jars < <(
+    find "${buildopt_repo_root}/jvm/gradle-plugin/build/libs" \
+        -maxdepth 1 \
+        -type f \
+        -name 'buildopt-gradle-plugin-*.jar' \
+        ! -name '*-javadoc.jar' \
+        ! -name '*-sources.jar' \
+        -print0
+)
+if ((${#buildopt_plugin_jars[@]} != 1)); then
+    printf 'expected one packaged Gradle plugin, found %s\n' \
+        "${#buildopt_plugin_jars[@]}" >&2
+    exit 1
+fi
+buildopt_plugin_jar=${buildopt_plugin_jars[0]}
+
+buildopt_launcher=${BUILDOPT_GOLDEN_LANE_LAUNCHER_BINARY:-}
+buildopt_server=${BUILDOPT_GOLDEN_LANE_SERVER_BINARY:-}
+buildopt_envelope=${BUILDOPT_GOLDEN_LANE_ENVELOPE_BINARY:-}
+if [[ -n "${buildopt_launcher}" ||
+    -n "${buildopt_server}" ||
+    -n "${buildopt_envelope}" ]]; then
+    if [[ ! -x "${buildopt_launcher}" ||
+        ! -x "${buildopt_server}" ||
+        ! -x "${buildopt_envelope}" ]]; then
+        printf 'supplied golden-lane overhead binaries are incomplete\n' >&2
+        exit 1
+    fi
+else
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go test -race -count=1 \
+        ./cmd/neutral-envelope \
+        ./internal/neutralenvelope
+
+    buildopt_launcher="${buildopt_test_root}/buildopt"
+    buildopt_server="${buildopt_test_root}/buildopt-server"
+    buildopt_envelope="${buildopt_test_root}/neutral-envelope"
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -buildvcs=false -trimpath \
+        -o "${buildopt_launcher}" ./cmd/buildopt
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -buildvcs=false -trimpath \
+        -o "${buildopt_server}" ./cmd/buildopt-server
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -buildvcs=false -trimpath \
+        -o "${buildopt_envelope}" ./cmd/neutral-envelope
+fi
+
+buildopt_token=0123456789abcdefghijklmnopqrstuvwxyzABCDEFG
+buildopt_exports="${buildopt_test_root}/exports"
+buildopt_server_log="${buildopt_test_root}/server.log"
+BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+    "${buildopt_server}" serve \
+    --listen 127.0.0.1:0 \
+    --export-dir "${buildopt_exports}" \
+    >"${buildopt_server_log}" 2>&1 &
+buildopt_server_pid=$!
+
+buildopt_endpoint=
+for _ in {1..100}; do
+    buildopt_endpoint=$(
+        sed -n \
+            's/^buildopt-server: listening on \(http:\/\/127[.]0[.]0[.]1:[0-9][0-9]*\)$/\1/p' \
+            "${buildopt_server_log}" |
+            head -n 1
+    )
+    if [[ -n "${buildopt_endpoint}" ]]; then
+        break
+    fi
+    if ! kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        printf 'buildopt-server exited before WS-009 readiness\n' >&2
+        grep -vF -- "${buildopt_token}" "${buildopt_server_log}" >&2 || true
+        exit 1
+    fi
+    sleep 0.05
+done
+if [[ -z "${buildopt_endpoint}" ]]; then
+    printf 'buildopt-server did not report its WS-009 endpoint\n' >&2
+    grep -vF -- "${buildopt_token}" "${buildopt_server_log}" >&2 || true
+    exit 1
+fi
+
+buildopt_fixture="${buildopt_test_root}/fixture"
+buildopt_observations="${buildopt_test_root}/observations"
+mkdir -p -- "${buildopt_observations}"
+cp -R -- "${buildopt_fixture_source}" "${buildopt_fixture}"
+buildopt_output="${buildopt_fixture}/build/ws-003/neutral.properties"
+buildopt_init_script="${buildopt_fixture}/buildopt.init.gradle"
+buildopt_expected_handshake='buildopt: authenticated Gradle plugin handshake accepted (protocol 1.0, plugin 0.1.0-SNAPSHOT)'
+buildopt_context='{"repositoryId":"gradle-handshake-fixture","revision":"ws009-measurement-v1","requestedTasks":["neutralProbe"],"sourceStateDigest":"hmac-sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","workUnitsFingerprint":"hmac-sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","tokenKeyVersion":"fixture-token-v1","trustDomain":"fixture-local"}'
+buildopt_common_arguments=(
+    --no-daemon
+    --offline
+    --stacktrace
+    --warning-mode=fail
+    --configuration-cache
+    -p
+    "${buildopt_fixture}"
+)
+buildopt_plugin_arguments=(
+    --init-script
+    "${buildopt_init_script}"
+    "-Dbuildopt.ws003.pluginJar=${buildopt_plugin_jar}"
+)
+
+buildopt_run_arm() {
+    local buildopt_arm=$1
+    local buildopt_pair=$2
+    local buildopt_order=$3
+    local buildopt_pair_label
+    local buildopt_arm_lower
+    local buildopt_command_class
+    local buildopt_log
+    local buildopt_observation
+    local -a buildopt_command
+
+    printf -v buildopt_pair_label '%02d' "${buildopt_pair}"
+    buildopt_arm_lower=${buildopt_arm,,}
+    buildopt_log="${buildopt_test_root}/pair-${buildopt_pair_label}-${buildopt_order}-${buildopt_arm_lower}.log"
+    buildopt_observation="${buildopt_observations}/observation-${buildopt_pair_label}-${buildopt_order}-${buildopt_arm_lower}.json"
+    rm -f -- "${buildopt_output}"
+
+    if [[ "${buildopt_arm}" == "NATIVE" ]]; then
+        buildopt_command_class=gradle-neutral-probe-native-v1
+        buildopt_command=(
+            "${buildopt_gradle_prefix[@]}"
+            "${buildopt_common_arguments[@]}"
+            neutralProbe
+        )
+        if ! GRADLE_USER_HOME="${buildopt_build_home}" \
+            "${buildopt_envelope}" observe \
+            --arm "${buildopt_arm}" \
+            --pair "${buildopt_pair}" \
+            --order "${buildopt_order}" \
+            --command-class "${buildopt_command_class}" \
+            --deliverable "${buildopt_output}" \
+            --output "${buildopt_observation}" \
+            -- "${buildopt_command[@]}" >"${buildopt_log}" 2>&1; then
+            printf 'WS-009 native arm failed in pair %s\n' \
+                "${buildopt_pair}" >&2
+            cat "${buildopt_log}" >&2
+            exit 1
+        fi
+        if grep -Fq 'buildopt:' "${buildopt_log}"; then
+            printf 'WS-009 native arm contacted the BuildOpt wrapper\n' >&2
+            cat "${buildopt_log}" >&2
+            exit 1
+        fi
+        return
+    fi
+
+    buildopt_command_class=buildopt-gradle-neutral-probe-wrapper-v1
+    if [[ "${BUILDOPT_GOLDEN_LANE_USE_ACTIVE_JAVA:-0}" == "1" ]]; then
+        buildopt_command=(
+            "${buildopt_launcher}"
+            run
+            --
+            "${buildopt_repo_root}/gradlew"
+            "${buildopt_common_arguments[@]}"
+            "${buildopt_plugin_arguments[@]}"
+            neutralProbe
+        )
+    else
+        buildopt_command=(
+            "${buildopt_script_dir}/run"
+            --
+            "${buildopt_launcher}"
+            run
+            --
+            "${buildopt_repo_root}/gradlew"
+            "${buildopt_common_arguments[@]}"
+            "${buildopt_plugin_arguments[@]}"
+            neutralProbe
+        )
+    fi
+    if ! BUILDOPT_SERVER_URL="${buildopt_endpoint}" \
+        BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+        BUILDOPT_BUILD_SESSION_CONTEXT="${buildopt_context}" \
+        GRADLE_USER_HOME="${buildopt_build_home}" \
+        "${buildopt_envelope}" observe \
+        --arm "${buildopt_arm}" \
+        --pair "${buildopt_pair}" \
+        --order "${buildopt_order}" \
+        --command-class "${buildopt_command_class}" \
+        --deliverable "${buildopt_output}" \
+        --output "${buildopt_observation}" \
+        -- "${buildopt_command[@]}" >"${buildopt_log}" 2>&1; then
+        printf 'WS-009 wrapper arm failed in pair %s\n' \
+            "${buildopt_pair}" >&2
+        grep -vF -- "${buildopt_token}" "${buildopt_log}" >&2 || true
+        exit 1
+    fi
+    if [[ "$(grep -Fc "${buildopt_expected_handshake}" "${buildopt_log}")" != "1" ]] ||
+        [[ "$(grep -Ec '^buildopt: buildopt-server accepted session [^[:space:]]+$' "${buildopt_log}")" != "1" ]]; then
+        printf 'WS-009 wrapper arm did not complete exactly one neutral session\n' >&2
+        grep -vF -- "${buildopt_token}" "${buildopt_log}" >&2 || true
+        exit 1
+    fi
+}
+
+buildopt_pair_count=4
+for ((buildopt_pair = 1; buildopt_pair <= buildopt_pair_count; buildopt_pair++)); do
+    if ((buildopt_pair % 2 == 1)); then
+        buildopt_run_arm NATIVE "${buildopt_pair}" 1
+        buildopt_run_arm WRAPPER "${buildopt_pair}" 2
+    else
+        buildopt_run_arm WRAPPER "${buildopt_pair}" 1
+        buildopt_run_arm NATIVE "${buildopt_pair}" 2
+    fi
+done
+
+for _ in {1..100}; do
+    buildopt_export_count=$(
+        find "${buildopt_exports}" \
+            -maxdepth 1 \
+            -type f \
+            -name 'build-session-*.json' |
+            wc -l
+    )
+    buildopt_accepted_count=$(
+        grep -c '^buildopt-server: accepted session ' \
+            "${buildopt_server_log}" || true
+    )
+    if ((buildopt_export_count == buildopt_pair_count &&
+        buildopt_accepted_count == buildopt_pair_count)); then
+        break
+    fi
+    sleep 0.05
+done
+if ((buildopt_export_count != buildopt_pair_count ||
+    buildopt_accepted_count != buildopt_pair_count)); then
+    printf 'WS-009 expected %s wrapper exports, found %s/%s\n' \
+        "${buildopt_pair_count}" \
+        "${buildopt_export_count}" \
+        "${buildopt_accepted_count}" >&2
+    grep -vF -- "${buildopt_token}" "${buildopt_server_log}" >&2 || true
+    exit 1
+fi
+if grep -RFq -- "${buildopt_token}" \
+    "${buildopt_server_log}" \
+    "${buildopt_exports}" \
+    "${buildopt_test_root}"/pair-*.log; then
+    printf 'WS-009 diagnostics or exports exposed the ingest token\n' >&2
+    exit 1
+fi
+
+buildopt_execution_environment=HOST_SMOKE
+if [[ "${BUILDOPT_EXPECT_CGROUP_LIMITS:-0}" == "1" ]]; then
+    buildopt_execution_environment=STRICT_GOLDEN_CONTAINER
+fi
+buildopt_report_output="${buildopt_test_root}/ws-009-report.json"
+buildopt_recorded_evidence=0
+if [[ "${buildopt_execution_environment}" == "STRICT_GOLDEN_CONTAINER" &&
+    ! -e "${buildopt_evidence_report}" ]]; then
+    buildopt_report_output="${buildopt_evidence_report}"
+    buildopt_recorded_evidence=1
+fi
+
+"${buildopt_envelope}" report \
+    --observations "${buildopt_observations}" \
+    --execution-environment "${buildopt_execution_environment}" \
+    --runner-spec "${buildopt_runner_spec}" \
+    --metrics-catalog "${buildopt_metrics_catalog}" \
+    --envelope "${buildopt_envelope}" \
+    --launcher "${buildopt_launcher}" \
+    --server "${buildopt_server}" \
+    --plugin "${buildopt_plugin_jar}" \
+    --output "${buildopt_report_output}"
+"${buildopt_envelope}" validate --report "${buildopt_report_output}"
+
+if ((buildopt_recorded_evidence == 1)); then
+    chmod 0644 "${buildopt_evidence_report}"
+fi
+if [[ -f "${buildopt_evidence_report}" &&
+    "${buildopt_report_output}" != "${buildopt_evidence_report}" ]]; then
+    "${buildopt_envelope}" validate --report "${buildopt_evidence_report}"
+fi
+
+kill -TERM "${buildopt_server_pid}"
+set +e
+wait "${buildopt_server_pid}"
+buildopt_server_exit=$?
+set -e
+buildopt_server_pid=
+if ((buildopt_server_exit != 0)); then
+    printf 'WS-009 server graceful stop returned %s\n' \
+        "${buildopt_server_exit}" >&2
+    exit 1
+fi
+
+if ((buildopt_check_git_state == 1)); then
+    buildopt_after_status=$(
+        git status --porcelain=v1 --untracked-files=all |
+            sed "\\| ${buildopt_evidence_relative}\$|d"
+    )
+    if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+        printf 'WS-009 overhead check changed files outside its evidence report\n' >&2
+        exit 1
+    fi
+fi
+if [[ -n "${buildopt_evidence_before_digest}" ]]; then
+    buildopt_evidence_after_digest=$(
+        sha256sum "${buildopt_evidence_report}" |
+            sed 's/[[:space:]].*$//'
+    )
+    if [[ "${buildopt_evidence_after_digest}" != "${buildopt_evidence_before_digest}" ]]; then
+        printf 'WS-009 overhead check rewrote existing evidence\n' >&2
+        exit 1
+    fi
+elif ((buildopt_recorded_evidence == 0)) &&
+    [[ -e "${buildopt_evidence_report}" ]]; then
+    printf 'WS-009 host smoke unexpectedly created golden evidence\n' >&2
+    exit 1
+fi
+
+printf 'WS-009 neutral-envelope overhead OK: four alternating native/wrapper pairs, first pair retained, byte-identical deliverables, optimizations off, promotionGate=false\n'
