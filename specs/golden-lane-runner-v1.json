@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "buildopt.dev/golden-lane-runner/v1",
+  "runnerClass": {
+    "id": "linux-amd64-4c-16g-v1",
+    "operatingSystem": "linux",
+    "architecture": "amd64",
+    "cpuCount": 4,
+    "memoryBytes": 17179869184,
+    "minimumObservedMemoryBytes": 16106127360,
+    "maximumObservedMemoryBytes": 17179869184
+  },
+  "container": {
+    "repository": "docker.io/library/eclipse-temurin",
+    "sourceTag": "21.0.11_10-jdk-jammy",
+    "indexDigest": "sha256:9d8dcf999b0bce2453e913823595a5ff2a4e8e9e5d5241b45280d0ff069818ec",
+    "platformDigest": "sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50",
+    "reference": "docker.io/library/eclipse-temurin@sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50"
+  },
+  "jdk": {
+    "vendor": "Eclipse Temurin",
+    "version": "21.0.11+10",
+    "runtimeMajor": 21,
+    "compiledBytecodeRelease": 17
+  },
+  "gradle": {
+    "version": "9.6.1",
+    "distributionType": "bin",
+    "distributionUrl": "https://services.gradle.org/distributions/gradle-9.6.1-bin.zip",
+    "distributionSha256": "9c0f7faeeb306cb14e4279a3e084ca6b596894089a0638e68a07c945a32c9e14",
+    "wrapperJarSha256": "497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7",
+    "networkTimeoutMillis": 30000,
+    "downloadRetries": 3,
+    "retryBackOffMillis": 1000,
+    "dsl": "kotlin"
+  },
+  "environment": {
+    "locale": "C.UTF-8",
+    "timezone": "UTC"
+  },
+  "resolvedAt": "2026-07-29"
+}

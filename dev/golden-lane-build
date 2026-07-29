@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p "${GRADLE_USER_HOME}"
+
+if [[ "${BUILDOPT_EXPECT_CGROUP_LIMITS:-0}" == "1" ]]; then
+    buildopt_expected_cpu=${BUILDOPT_EXPECT_CPU_COUNT:?missing BUILDOPT_EXPECT_CPU_COUNT}
+    buildopt_expected_memory=${BUILDOPT_EXPECT_MEMORY_BYTES:?missing BUILDOPT_EXPECT_MEMORY_BYTES}
+
+    if [[ ! -r /sys/fs/cgroup/cpu.max || ! -r /sys/fs/cgroup/memory.max ]]; then
+        printf 'cgroup v2 limits are unavailable inside the golden container\n' >&2
+        exit 1
+    fi
+
+    read -r buildopt_cpu_quota buildopt_cpu_period </sys/fs/cgroup/cpu.max
+    buildopt_memory_limit=$(</sys/fs/cgroup/memory.max)
+
+    if [[ "${buildopt_cpu_quota}" == "max" ]] ||
+        ((buildopt_cpu_quota != buildopt_expected_cpu * buildopt_cpu_period)); then
+        printf 'expected a %s-CPU cgroup quota, found %s/%s\n' \
+            "${buildopt_expected_cpu}" \
+            "${buildopt_cpu_quota}" \
+            "${buildopt_cpu_period}" >&2
+        exit 1
+    fi
+    if [[ "${buildopt_memory_limit}" != "${buildopt_expected_memory}" ]]; then
+        printf 'expected cgroup memory.max=%s, found %s\n' \
+            "${buildopt_expected_memory}" \
+            "${buildopt_memory_limit}" >&2
+        exit 1
+    fi
+fi
+
+buildopt_java_settings=$(java -XshowSettings:properties -version 2>&1)
+buildopt_java_major=$(
+    awk -F'= ' '
+        /^[[:space:]]*java.version = / {
+            split($2, version, ".")
+            print version[1]
+            exit
+        }
+    ' <<<"${buildopt_java_settings}"
+)
+
+if [[ "${buildopt_java_major}" != "21" ]]; then
+    printf 'golden lane requires Java 21, found major %s\n' "${buildopt_java_major:-unknown}" >&2
+    exit 1
+fi
+
+buildopt_gradle_version=$("${buildopt_repo_root}/gradlew" --no-daemon --version)
+if ! grep -Fq 'Gradle 9.6.1' <<<"${buildopt_gradle_version}"; then
+    printf 'golden lane requires Gradle 9.6.1\n' >&2
+    exit 1
+fi
+if ! grep -Eq '^Launcher JVM:[[:space:]]+21([.]|$)' <<<"${buildopt_gradle_version}"; then
+    printf 'Gradle launcher is not running on Java 21\n' >&2
+    exit 1
+fi
+if ! grep -Fq 'no Daemon JVM specified, using current Java home' <<<"${buildopt_gradle_version}"; then
+    printf 'Gradle daemon is not using the verified Java home\n' >&2
+    exit 1
+fi
+
+"${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --stacktrace \
+    --warning-mode=fail \
+    clean \
+    build
+
+buildopt_class_file="${buildopt_repo_root}/fixtures/golden-lane/build/classes/java/main/dev/buildopt/fixture/GoldenLane.class"
+buildopt_jar_file="${buildopt_repo_root}/fixtures/golden-lane/build/libs/golden-lane-fixture-1.0.0.jar"
+
+if [[ ! -f "${buildopt_class_file}" || ! -s "${buildopt_jar_file}" ]]; then
+    printf 'golden lane deliverables are missing\n' >&2
+    exit 1
+fi
+
+buildopt_class_major=$(javap -verbose "${buildopt_class_file}" | awk '/major version:/ {print $3; exit}')
+if [[ "${buildopt_class_major}" != "61" ]]; then
+    printf 'expected Java 17 bytecode major 61, found %s\n' "${buildopt_class_major:-unknown}" >&2
+    exit 1
+fi
+
+buildopt_marker=$(java -cp "${buildopt_jar_file}" dev.buildopt.fixture.GoldenLane)
+if [[ "${buildopt_marker}" != "golden-lane-v1" ]]; then
+    printf 'unexpected fixture output: %s\n' "${buildopt_marker}" >&2
+    exit 1
+fi
+
+printf 'Golden lane build OK: Gradle 9.6.1, Java 21, bytecode major 61\n'

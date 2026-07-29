@@ -1,0 +1,31 @@
+# Project-local toolchains and runtime state
+/.tools/
+/.buildopt/
+/.env
+/.env.*
+!/.env.example
+
+# Build outputs
+/.gradle/
+**/.gradle/
+**/build/
+**/out/
+**/target/
+/dist/
+/coverage/
+*.class
+*.prof
+*.test
+
+# Local databases, logs and temporary files
+*.db
+*.log
+*.sqlite
+*.sqlite-*
+*.tmp
+
+# Editors and operating systems
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db

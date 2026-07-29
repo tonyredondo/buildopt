@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+
+buildopt_required_directories=(
+    ".github"
+    "adr"
+    "benchmarks"
+    "cmd/buildopt"
+    "cmd/buildopt-server"
+    "contracts"
+    "dev"
+    "fixtures"
+    "internal"
+    "jvm/gradle-plugin"
+    "jvm/jvm-agent"
+    "jvm/patcher"
+    "rust/hermetic-helper"
+    "specs"
+)
+
+buildopt_required_files=(
+    ".editorconfig"
+    ".gitattributes"
+    ".github/README.md"
+    ".gitignore"
+    "CONTRIBUTING.md"
+    "README.md"
+    "adr/README.md"
+    "benchmarks/README.md"
+    "cmd/buildopt/README.md"
+    "cmd/buildopt-server/README.md"
+    "contracts/README.md"
+    "dev/README.md"
+    "fixtures/README.md"
+    "gradle-build-optimization-platform.md"
+    "implementation-tracker.md"
+    "internal/README.md"
+    "jvm/README.md"
+    "jvm/gradle-plugin/README.md"
+    "jvm/jvm-agent/README.md"
+    "jvm/patcher/README.md"
+    "rust/hermetic-helper/README.md"
+    "specs/README.md"
+)
+
+buildopt_failed=0
+
+for buildopt_path in "${buildopt_required_directories[@]}"; do
+    if [[ ! -d "${buildopt_repo_root}/${buildopt_path}" ]]; then
+        printf 'missing directory: %s\n' "${buildopt_path}" >&2
+        buildopt_failed=1
+    fi
+done
+
+for buildopt_path in "${buildopt_required_files[@]}"; do
+    if [[ ! -f "${buildopt_repo_root}/${buildopt_path}" ]]; then
+        printf 'missing file: %s\n' "${buildopt_path}" >&2
+        buildopt_failed=1
+    fi
+done
+
+if ! buildopt_git_root=$(git -C "${buildopt_repo_root}" rev-parse --show-toplevel 2>/dev/null); then
+    printf 'not a Git repository: %s\n' "${buildopt_repo_root}" >&2
+    buildopt_failed=1
+elif [[ "${buildopt_git_root}" != "${buildopt_repo_root}" ]]; then
+    printf 'unexpected Git root: %s\n' "${buildopt_git_root}" >&2
+    buildopt_failed=1
+fi
+
+if ! buildopt_branch=$(git -C "${buildopt_repo_root}" symbolic-ref --short HEAD 2>/dev/null); then
+    printf 'repository has no symbolic branch\n' >&2
+    buildopt_failed=1
+elif [[ "${buildopt_branch}" != "main" ]]; then
+    printf 'unexpected initial branch: %s\n' "${buildopt_branch}" >&2
+    buildopt_failed=1
+fi
+
+if ((buildopt_failed != 0)); then
+    exit 1
+fi
+
+printf 'F0-001 layout OK: %s\n' "${buildopt_repo_root}"

@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_mode=${1:---smoke}
+case "${buildopt_mode}" in
+    --static | --smoke | --require-runner-class) ;;
+    *)
+        printf 'usage: %s [--static|--smoke|--require-runner-class]\n' "$0" >&2
+        exit 64
+        ;;
+esac
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_runner_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+buildopt_wrapper_properties="${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.properties"
+buildopt_wrapper_jar="${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.jar"
+
+jq -e '
+    .schemaVersion == "buildopt.dev/golden-lane-runner/v1" and
+    .runnerClass.id == "linux-amd64-4c-16g-v1" and
+    .runnerClass.operatingSystem == "linux" and
+    .runnerClass.architecture == "amd64" and
+    .runnerClass.cpuCount == 4 and
+    .runnerClass.memoryBytes == 17179869184 and
+    .runnerClass.minimumObservedMemoryBytes == 16106127360 and
+    .runnerClass.maximumObservedMemoryBytes == 17179869184 and
+    .jdk.runtimeMajor == 21 and
+    .jdk.compiledBytecodeRelease == 17 and
+    .gradle.version == "9.6.1" and
+    .gradle.networkTimeoutMillis == 30000 and
+    .gradle.downloadRetries == 3 and
+    .gradle.retryBackOffMillis == 1000 and
+    .gradle.dsl == "kotlin"
+' "${buildopt_runner_spec}" >/dev/null
+
+buildopt_distribution_sha=$(jq -er '.gradle.distributionSha256' "${buildopt_runner_spec}")
+buildopt_wrapper_sha=$(jq -er '.gradle.wrapperJarSha256' "${buildopt_runner_spec}")
+
+grep -Fqx 'distributionUrl=https\://services.gradle.org/distributions/gradle-9.6.1-bin.zip' "${buildopt_wrapper_properties}"
+grep -Fqx "distributionSha256Sum=${buildopt_distribution_sha}" "${buildopt_wrapper_properties}"
+grep -Fqx 'networkTimeout=30000' "${buildopt_wrapper_properties}"
+grep -Fqx 'retries=3' "${buildopt_wrapper_properties}"
+grep -Fqx 'retryBackOffMs=1000' "${buildopt_wrapper_properties}"
+grep -Fqx 'validateDistributionUrl=true' "${buildopt_wrapper_properties}"
+printf '%s  %s\n' "${buildopt_wrapper_sha}" "${buildopt_wrapper_jar}" | sha256sum -c - >/dev/null
+
+if [[ "${buildopt_mode}" == "--static" ]]; then
+    printf 'Golden lane static contract OK\n'
+    exit 0
+fi
+
+buildopt_os=$(uname -s)
+buildopt_arch=$(uname -m)
+buildopt_cpu_count=$(getconf _NPROCESSORS_ONLN)
+buildopt_memory_bytes=$(awk '/MemTotal:/ {printf "%.0f", $2 * 1024}' /proc/meminfo)
+buildopt_required_cpu=$(jq -er '.runnerClass.cpuCount' "${buildopt_runner_spec}")
+buildopt_minimum_memory=$(jq -er '.runnerClass.minimumObservedMemoryBytes' "${buildopt_runner_spec}")
+buildopt_maximum_memory=$(jq -er '.runnerClass.maximumObservedMemoryBytes' "${buildopt_runner_spec}")
+
+buildopt_runner_matches=true
+if [[ "${buildopt_os}" != "Linux" || "${buildopt_arch}" != "x86_64" ]]; then
+    buildopt_runner_matches=false
+fi
+if ((
+    buildopt_cpu_count != buildopt_required_cpu ||
+    buildopt_memory_bytes < buildopt_minimum_memory ||
+    buildopt_memory_bytes > buildopt_maximum_memory
+)); then
+    buildopt_runner_matches=false
+fi
+
+if [[ "${buildopt_runner_matches}" != true ]]; then
+    printf 'runner mismatch: host=%s/%s cpu=%s memoryBytes=%s; required linux/x86_64 cpu=%s memoryBytes=%s..%s\n' \
+        "${buildopt_os}" \
+        "${buildopt_arch}" \
+        "${buildopt_cpu_count}" \
+        "${buildopt_memory_bytes}" \
+        "${buildopt_required_cpu}" \
+        "${buildopt_minimum_memory}" \
+        "${buildopt_maximum_memory}" >&2
+    if [[ "${buildopt_mode}" == "--require-runner-class" ]]; then
+        exit 2
+    fi
+fi
+
+"${buildopt_script_dir}/golden-lane-build"
+
+if [[ "${buildopt_runner_matches}" == true ]]; then
+    printf 'Golden runner class verified\n'
+else
+    printf 'Smoke passed on a non-golden host; this is not runner-class evidence\n'
+fi

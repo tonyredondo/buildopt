@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_mode=${1:---smoke}
+case "${buildopt_mode}" in
+    --smoke | --require-runner-class) ;;
+    *)
+        printf 'usage: %s [--smoke|--require-runner-class]\n' "$0" >&2
+        exit 64
+        ;;
+esac
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_runner_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+
+"${buildopt_script_dir}/check-golden-lane" --static
+
+if ! docker info >/dev/null 2>&1; then
+    printf 'Docker daemon is unavailable\n' >&2
+    exit 1
+fi
+
+buildopt_image=$(jq -er '.container.reference' "${buildopt_runner_spec}")
+buildopt_platform_os=$(jq -er '.runnerClass.operatingSystem' "${buildopt_runner_spec}")
+buildopt_platform_arch=$(jq -er '.runnerClass.architecture' "${buildopt_runner_spec}")
+buildopt_required_cpu=$(jq -er '.runnerClass.cpuCount' "${buildopt_runner_spec}")
+buildopt_required_memory=$(jq -er '.runnerClass.memoryBytes' "${buildopt_runner_spec}")
+buildopt_minimum_memory=$(jq -er '.runnerClass.minimumObservedMemoryBytes' "${buildopt_runner_spec}")
+buildopt_cpu_count=$(getconf _NPROCESSORS_ONLN)
+buildopt_memory_bytes=$(awk '/MemTotal:/ {printf "%.0f", $2 * 1024}' /proc/meminfo)
+
+buildopt_docker_args=(
+    run
+    --rm
+    --platform "${buildopt_platform_os}/${buildopt_platform_arch}"
+    --user "$(id -u):$(id -g)"
+    --env HOME=/tmp/buildopt-home
+    --env GRADLE_USER_HOME=/gradle-home
+    --env LANG=C.UTF-8
+    --env LC_ALL=C.UTF-8
+    --env TZ=UTC
+    --volume "${buildopt_repo_root}:/workspace"
+    --workdir /workspace
+)
+
+buildopt_gradle_home="${buildopt_repo_root}/.tools/gradle-user-home/container"
+mkdir -p "${buildopt_gradle_home}"
+buildopt_docker_args+=(--volume "${buildopt_gradle_home}:/gradle-home")
+
+if [[ "${buildopt_mode}" == "--require-runner-class" ]]; then
+    if ((buildopt_cpu_count < buildopt_required_cpu || buildopt_memory_bytes < buildopt_minimum_memory)); then
+        printf 'host cannot enforce runner class: cpu=%s memoryBytes=%s; required cpu>=%s observableMemoryBytes>=%s\n' \
+            "${buildopt_cpu_count}" \
+            "${buildopt_memory_bytes}" \
+            "${buildopt_required_cpu}" \
+            "${buildopt_minimum_memory}" >&2
+        exit 2
+    fi
+    buildopt_docker_args+=(
+        --cpus "${buildopt_required_cpu}"
+        --memory "${buildopt_required_memory}"
+        --env BUILDOPT_EXPECT_CGROUP_LIMITS=1
+        --env "BUILDOPT_EXPECT_CPU_COUNT=${buildopt_required_cpu}"
+        --env "BUILDOPT_EXPECT_MEMORY_BYTES=${buildopt_required_memory}"
+    )
+else
+    printf 'container smoke does not qualify the contractual runner class\n'
+fi
+
+docker "${buildopt_docker_args[@]}" "${buildopt_image}" ./dev/golden-lane-build
