@@ -1,0 +1,2 @@
+{"eventId":"event-conflict","buildId":"build-01K4YDATA","sequence":2,"occurredAt":"2026-07-29T10:00:02Z","emittedAt":"2026-07-29T10:00:03Z","schemaVersion":"1.0","idempotencyKey":"build-01K4YDATA/2","profile":"TASKS","payload":{"type":"TASK_FINISHED","outcome":"SUCCESS"}}
+{"eventId":"event-conflict","buildId":"build-01K4YDATA","sequence":2,"occurredAt":"2026-07-29T10:00:02Z","emittedAt":"2026-07-29T10:00:03Z","schemaVersion":"1.0","idempotencyKey":"build-01K4YDATA/2","profile":"TASKS","payload":{"type":"TASK_FINISHED","outcome":"FAILED"}}

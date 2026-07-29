@@ -406,6 +406,20 @@ The checker requires all ten Gradle/JDK/DSL combinations and validates exact,
 approximated, and unavailable records with their methods, reasons, evidence,
 and safe fallbacks. Untested rows cannot inherit the golden-lane profile.
 
+## Data lifecycle and redaction validation
+
+Validate the `F0-037` retention, profile authorization, keyed redaction,
+JSON/JSONL, bounded spool, and managed-deletion contract:
+
+```bash
+./dev/check-data-lifecycle
+```
+
+The checker recomputes exact HMAC tokens for four export profiles, scans every
+managed golden output for raw sensitive values, validates at-least-once
+deduplication and partial sequence recovery, rejects changed event reuse, and
+executes eight deletion-order/boundary cases.
+
 ## PatchBundle contract validation
 
 Validate the `F0-016` declarative bundle envelope and its two private-beta

@@ -29,3 +29,8 @@ checked together with the executable queue/budget/recovery scenarios.
 `test-optimization/` contains the shared `F0-033` producer/consumer artifact
 bytes. The integration corpus binds their exact size and digest and proves
 that corrupt or caller-selected paths cannot satisfy validation.
+
+`data-lifecycle/` contains the `F0-037` raw-to-redacted JSON golden profiles,
+at-least-once JSONL delivery cases, and changed-duplicate negative. All
+sensitive values are synthetic; managed golden outputs retain only keyed
+tokens.

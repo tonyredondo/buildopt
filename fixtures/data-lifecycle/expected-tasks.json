@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "buildopt.export/redacted/v1",
+  "profile": "TASKS",
+  "tokenKeyVersion": "fixture-key-v1",
+  "buildId": "build-01K4YDATA",
+  "actionId": "action-01K4YDATA",
+  "outcome": "SUCCESS",
+  "durationMs": 4200,
+  "taskPathToken": "hmac-sha256:72add30bc50520fc72bcfa5259baedf8f04e1d8fa7c2209128127f9880d8fb84"
+}

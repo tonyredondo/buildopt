@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "buildopt.specs/data-lifecycle/v1",
+  "tokenization": {
+    "algorithm": "HMAC-SHA-256",
+    "keyVersionRequired": true,
+    "beforeBuffering": true,
+    "plainDigestAllowed": false
+  },
+  "profiles": [
+    {"id": "SUMMARY", "explicitAuthorization": false},
+    {"id": "TASKS", "explicitAuthorization": true},
+    {"id": "EVIDENCE", "explicitAuthorization": true},
+    {"id": "DIAGNOSTIC", "explicitAuthorization": true}
+  ],
+  "classes": [
+    {"id": "STABLE_CACHE_BLOB", "ttlHours": 720, "optIn": false, "deletion": "LOGICAL_IMMEDIATE_PHYSICAL_ASYNC"},
+    {"id": "MANAGED_L1", "ttlHours": 720, "optIn": false, "deletion": "ROTATE_GENERATION_AND_PURGE"},
+    {"id": "PENDING", "ttlHours": 24, "optIn": false, "deletion": "AUTOMATIC_ABORT"},
+    {"id": "METADATA_PROVENANCE_TOMBSTONE", "ttlHours": 888, "optIn": false, "deletion": "AFTER_REFERENCED_OBJECTS"},
+    {"id": "QUARANTINE_SECURITY_EVIDENCE", "ttlHours": 168, "optIn": false, "deletion": "RESTRICTED_ASYNC"},
+    {"id": "OPTIMIZATION_EVIDENCE", "ttlHours": 720, "optIn": false, "deletion": "COORDINATED"},
+    {"id": "SUMMARY_TELEMETRY", "ttlHours": 720, "optIn": false, "deletion": "COORDINATED"},
+    {"id": "DIAGNOSTIC_TELEMETRY", "ttlHours": 168, "optIn": true, "deletion": "COORDINATED"},
+    {"id": "LOCAL_SPOOL_DLQ", "ttlHours": 24, "optIn": false, "deletion": "BEST_EFFORT_SECURE_WIPE"},
+    {"id": "SECURITY_AUDIT", "ttlHours": 2160, "optIn": false, "deletion": "APPEND_ONLY_WITHIN_WINDOW"}
+  ],
+  "spool": {
+    "bounded": true,
+    "encrypted": true,
+    "dropFirst": "OLDEST_DIAGNOSTIC",
+    "retainFinalSummary": true
+  },
+  "deletionCases": [
+    {"id": "logical-revocation-precedes-physical-delete", "expected": "ACCESS_REVOKED_IMMEDIATELY"},
+    {"id": "managed-copies-cover-blob-metadata-l1-evidence-spool", "expected": "ALL_MANAGED_CLASSES_SCHEDULED"},
+    {"id": "l1-deletion-rotates-security-generation", "expected": "GENERATION_ROTATED"},
+    {"id": "tombstone-outlives-referenced-objects", "expected": "ORDER_ENFORCED"},
+    {"id": "downstream-copy-receives-tombstone", "expected": "EXTERNAL_OBLIGATION_RECORDED"},
+    {"id": "legal-hold-without-consent-is-rejected", "expected": "NO_SILENT_HOLD"},
+    {"id": "diagnostic-default-is-disabled", "expected": "OPT_IN_REQUIRED"},
+    {"id": "spool-expiry-removes-managed-copy", "expected": "SPOOL_PURGED"}
+  ]
+}

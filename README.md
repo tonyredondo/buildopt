@@ -74,6 +74,7 @@ From the repository root:
 ./dev/check-patch-bundle-spec
 ./dev/check-bandit-policy
 ./dev/check-capability-matrix
+./dev/check-data-lifecycle
 ./dev/check-buildopt-cli
 ./dev/check-local-gateway
 ./dev/check-session-ingest

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.fixtures/raw-export/v1",
+  "buildId": "build-01K4YDATA",
+  "actionId": "action-01K4YDATA",
+  "outcome": "SUCCESS",
+  "durationMs": 4200,
+  "taskPath": ":payments:compileJava",
+  "argument": "--credential=fixture-only-value",
+  "sensitiveEnvironmentValue": "fixture-env-value",
+  "sourceContent": "class FixtureOnlySource {}",
+  "fingerprint": "hmac-sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}

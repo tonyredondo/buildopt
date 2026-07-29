@@ -73,6 +73,8 @@ buildopt_planned_artifacts=(
     "specs/bandit-policy-v1.md"
     "specs/capability-matrix-v1.json"
     "specs/capability-matrix-v1.md"
+    "specs/data-lifecycle-v1.json"
+    "specs/data-lifecycle-v1.md"
     "specs/test-optimization-integration-v1.json"
     "specs/test-optimization-integration-v1.md"
     "specs/patch-bundle-v1.json"
