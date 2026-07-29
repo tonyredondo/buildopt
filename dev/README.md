@@ -74,7 +74,7 @@ For both tools, `dev/run` verifies the provisioned manifest and exact reported v
 
 ## Go toolchain validation
 
-The root [`go.mod`](../go.mod) declares module `github.com/tonyredondo/buildopt`, the Go 1.26.0 language baseline, and exact `go1.26.5` toolchain. This establishes the compiler contract without activating product behavior or adding packages before their tracker items.
+The root [`go.mod`](../go.mod) declares module `github.com/tonyredondo/buildopt`, the Go 1.26.0 language baseline, and exact `go1.26.5` toolchain. `ENV-005` established that compiler contract before product packages existed; `WS-001` now adds the first dependency-free launcher packages without changing the toolchain or module graph.
 
 Run the checker through the isolated toolchain:
 
@@ -83,6 +83,16 @@ Run the checker through the isolated toolchain:
 ```
 
 The checker requires Linux AMD64, exact locked provenance and version, local-only toolchain selection, disabled user Go configuration, project-local caches, and an unchanged module graph. It then builds and executes a standard-library-only smoke program twice offline and requires identical binaries.
+
+## `buildopt` CLI validation
+
+Build the real `buildopt` binary and run the `WS-001` passthrough integration suite:
+
+```bash
+./dev/check-buildopt-cli
+```
+
+The checker runs with the locked Go toolchain and offline module resolution. It executes a helper process through the built CLI and verifies exact argument boundaries without shell expansion, inherited working directory/environment/standard streams, zero and non-zero child statuses, usage code `64`, cannot-execute code `126`, and command-not-found code `127`. Process-group and signal behavior is intentionally deferred to `WS-002`.
 
 ## Rust toolchain validation
 
@@ -212,6 +222,7 @@ Run the lock and doctor contract tests from the repository root:
 ```bash
 ./dev/check-normative-layout
 ./dev/check-build-session-schema
+./dev/check-buildopt-cli
 ./dev/check-toolchains-lock
 ./dev/test-doctor
 ./dev/test-jdk-toolchain
