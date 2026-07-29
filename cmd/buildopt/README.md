@@ -30,7 +30,7 @@ Run the real-binary integration suite with:
 ./dev/check-buildopt-cli
 ```
 
-The suite covers empty, quoted, whitespace, wildcard, Unicode, newline, and literal `--` arguments; inherited cwd, environment, and standard streams; success and non-zero child statuses; usage; launch failures; process-group isolation; and signal forwarding through a child process tree.
+The suite covers empty, quoted, whitespace, wildcard, Unicode, newline, and literal `--` arguments; inherited cwd, environment, and standard streams; success and non-zero child statuses; usage; launch failures; process-group isolation; signal forwarding through a child process tree; and the local bypass described below.
 
 ## WS-002 process and signal contract
 
@@ -39,6 +39,31 @@ On the Linux x86-64 acceptance platform, the child becomes the leader of a proce
 The launcher then waits for the child to finish and returns the child's ordinary exit status unchanged. It does not impose its own termination deadline or escalate to `SIGKILL`; the CI provider retains control of its grace period and final escalation. If the child does not handle the forwarded signal, the CLI returns the conventional `128 + signal` status without adding a launcher diagnostic to the child's standard error.
 
 The integration fixture verifies an independent process group, a nested descendant, exact `SIGINT` and `SIGTERM` delivery, delayed cleanup during cancellation, preserved handled exit statuses, and conventional unhandled-signal status. Platform expansion remains deferred until its own compatibility fixtures.
+
+## F0-039 local bypass
+
+Set the launcher-owned bypass to the exact value `1` when the product path must
+be removed from an invocation immediately:
+
+```bash
+BUILDOPT_BYPASS=1 buildopt run -- ./gradlew build
+```
+
+The bypass is evaluated before server/export configuration, gateway startup,
+or plugin-handshake startup. The child still uses the WS-001/WS-002 execution
+path, but every reserved launcher variable—including `BUILDOPT_BYPASS`
+itself—is removed from its environment. The original argv, standard streams,
+working directory, process-group signal behavior, and exit status remain
+authoritative.
+
+Unset the variable to restore the normal path; only `1` activates bypass. See
+the [Phase 0 base recovery runbook](../../runbooks/base-recovery.md) for the CI
+kill switch, rollback, and uninstall procedures, and execute its recorded
+drills with:
+
+```bash
+./dev/check-base-runbooks
+```
 
 ## WS-003 Gradle plugin handshake
 

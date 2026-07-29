@@ -28,6 +28,7 @@ An RFC example is not an executable contract. If a contract contradicts an RFC i
 | `benchmarks/` | Workloads, seeds, budgets, and fault matrices | Data + harness | `F0-032` |
 | `fixtures/` | Reproducible integration repositories and scenarios | Gradle/Kotlin DSL | `F0-040` |
 | `adr/` | Technical decisions that refine the RFC | Markdown | `F0-002` |
+| `runbooks/` | Executable recovery and operator procedures | Markdown + shell exercises | `F0-039` |
 | `dev/` | Bootstrap, doctor, local execution, and validation | Shell | `ENV-001..012` |
 | `.github/` | CI and protected workflows | GitHub Actions | `F0-004` |
 
@@ -76,11 +77,12 @@ From the repository root:
 ./dev/check-supply-chain-toolchains
 ./dev/check-release-package
 ./dev/check-github-action
+./dev/check-base-runbooks
 ./dev/run -- ./dev/check-jvm-release
 ./dev/check-golden-lane --static
 ```
 
-The commands validate the repository and Phase 0 normative-package layouts, the first Draft 2020-12 contract and its positive/negative fixtures, reproducible project-local Protobuf tooling and the local task-event channel with Go/Java Unix-socket round trips, the real `buildopt run --` passthrough binary and its Linux process/signal contract, the authenticated neutral loopback gateway and Gradle plugin handshake with Configuration Cache reuse, authenticated idempotent session ingest into the real `buildopt-server`, atomic schema-valid `BUILD_SESSION v1` JSON export, the first parallel Gradle correlation fixture, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, actionlint, Cosign, and Syft provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, deterministic signed release bundles with SPDX and provenance, the full-SHA/checksum-pinned Linux x64 setup Action, repository shell scripts and workflow fixtures, and golden lane configuration and checksums.
+The commands validate the repository and Phase 0 normative-package layouts, the first Draft 2020-12 contract and its positive/negative fixtures, reproducible project-local Protobuf tooling and the local task-event channel with Go/Java Unix-socket round trips, the real `buildopt run --` passthrough binary and its Linux process/signal contract, the control-plane-independent local bypass and base recovery exercises, the authenticated neutral loopback gateway and Gradle plugin handshake with Configuration Cache reuse, authenticated idempotent session ingest into the real `buildopt-server`, atomic schema-valid `BUILD_SESSION v1` JSON export, the first parallel Gradle correlation fixture, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, actionlint, Cosign, and Syft provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, deterministic signed release bundles with SPDX and provenance, the full-SHA/checksum-pinned Linux x64 setup Action, repository shell scripts and workflow fixtures, and golden lane configuration and checksums.
 
 Project-local smoke tests:
 
@@ -135,6 +137,12 @@ Bundle v1 publication. The Action does not turn an unauthenticated checksum
 supplied by the same download location into a trust root. See the
 [WS-007 fixture](./fixtures/github-actions/README.md) for the immutable test
 pins and scope boundaries.
+
+For immediate recovery, set `BUILDOPT_BYPASS=1` on the launcher invocation.
+The launcher consumes that value and runs the original command without the
+plugin, gateway, or configured server path. The
+[base recovery runbook](./runbooks/base-recovery.md) covers the CI kill switch,
+immutable rollback, uninstall, and explicit state preservation or purge.
 
 Smoke test inside the pinned image:
 

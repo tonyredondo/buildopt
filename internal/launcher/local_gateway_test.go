@@ -201,6 +201,7 @@ func TestLocalGatewayChildEnvironment(t *testing.T) {
 
 	environment := gateway.childEnvironment([]string{
 		"PATH=/usr/bin",
+		bypassEnvironment + "=parent-bypass",
 		gatewayURLEnvironment + "=http://127.0.0.1:1",
 		gatewayUsernameEnvironment + "=parent-user",
 		gatewayPasswordEnvironment + "=parent-password",
@@ -219,6 +220,9 @@ func TestLocalGatewayChildEnvironment(t *testing.T) {
 		if count := environmentKeyCount(environment, key); count != 1 {
 			t.Fatalf("child environment contains %d %s entries", count, key)
 		}
+	}
+	if count := environmentKeyCount(environment, bypassEnvironment); count != 0 {
+		t.Fatalf("child environment contains %d bypass entries, want 0", count)
 	}
 }
 

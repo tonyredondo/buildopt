@@ -254,6 +254,7 @@ func newLocalSecret(size int) ([]byte, string, error) {
 }
 
 var reservedChildEnvironment = []string{
+	bypassEnvironment,
 	pluginAttemptIDEnvironment,
 	pluginSocketEnvironment,
 	pluginTokenEnvironment,

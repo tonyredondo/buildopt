@@ -1,0 +1,300 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_runbook="${buildopt_repo_root}/runbooks/base-recovery.md"
+buildopt_lock="${buildopt_repo_root}/fixtures/github-actions/fixture-lock.json"
+buildopt_installer="${buildopt_repo_root}/.github/actions/install-buildopt"
+buildopt_fixture_dir="${buildopt_repo_root}/fixtures/github-actions"
+
+for buildopt_command in \
+    bash \
+    cp \
+    git \
+    grep \
+    jq \
+    ln \
+    mkdir \
+    mktemp \
+    rm \
+    sed; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required base-runbook exercise command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+for buildopt_heading in \
+    '## Local bypass' \
+    '## CI kill switch' \
+    '## Immutable version rollback' \
+    '## Uninstall and state choice' \
+    '## Partial patch branch or pull request' \
+    '## Recorded exercise'; do
+    if [[ "$(grep -Fxc "${buildopt_heading}" "${buildopt_runbook}")" != "1" ]]; then
+        printf 'base recovery runbook is missing: %s\n' \
+            "${buildopt_heading}" >&2
+        exit 1
+    fi
+done
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+buildopt_test_root=$(mktemp -d)
+buildopt_cleanup() {
+    if [[ -n "${buildopt_test_root:-}" ]] &&
+        [[ "${buildopt_test_root}" == /tmp/* ]] &&
+        [[ -d "${buildopt_test_root}" ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_remove_exercise_tree() {
+    local buildopt_target=$1
+
+    case "${buildopt_target}" in
+        "${buildopt_test_root}"/*) ;;
+        *)
+            printf 'refusing to remove path outside exercise root: %s\n' \
+                "${buildopt_target}" >&2
+            return 1
+            ;;
+    esac
+    rm -rf -- "${buildopt_target}"
+}
+
+buildopt_binary="${buildopt_test_root}/buildopt"
+(
+    cd -- "${buildopt_repo_root}"
+    "${buildopt_script_dir}/run" \
+        --toolchain go \
+        -- go build \
+        -buildvcs=false \
+        -trimpath \
+        -o "${buildopt_binary}" \
+        ./cmd/buildopt
+)
+
+# The variables in this program expand only inside the bypassed child.
+# shellcheck disable=SC2016
+buildopt_bypass_child='
+set -euo pipefail
+for buildopt_key in \
+    BUILDOPT_BYPASS \
+    BUILDOPT_PLUGIN_ATTEMPT_ID \
+    BUILDOPT_PLUGIN_EVENT_SOCKET \
+    BUILDOPT_PLUGIN_EVENT_TOKEN \
+    BUILDOPT_GATEWAY_URL \
+    BUILDOPT_GATEWAY_USERNAME \
+    BUILDOPT_GATEWAY_PASSWORD \
+    BUILDOPT_GATEWAY_CONNECTION_GENERATION \
+    BUILDOPT_SERVER_URL \
+    BUILDOPT_SERVER_INGEST_TOKEN \
+    BUILDOPT_BUILD_SESSION_CONTEXT; do
+    if [[ -v "${buildopt_key}" ]]; then
+        printf "bypassed child received %s\n" "${buildopt_key}" >&2
+        exit 90
+    fi
+done
+if (($# != 4)) ||
+    [[ "$1" != "" ]] ||
+    [[ "$2" != "two words" ]] ||
+    [[ "$3" != "*" ]] ||
+    [[ "$4" != "\$HOME" ]]; then
+    printf "bypassed child argv changed\n" >&2
+    exit 91
+fi
+printf "bypass-child-ok\n"
+exit 37
+'
+
+set +e
+BUILDOPT_BYPASS=1 \
+BUILDOPT_PLUGIN_ATTEMPT_ID=parent-attempt \
+BUILDOPT_PLUGIN_EVENT_SOCKET=/tmp/parent-buildopt.sock \
+BUILDOPT_PLUGIN_EVENT_TOKEN=parent-token \
+BUILDOPT_GATEWAY_URL=http://127.0.0.1:1 \
+BUILDOPT_GATEWAY_USERNAME=parent-user \
+BUILDOPT_GATEWAY_PASSWORD=parent-password \
+BUILDOPT_GATEWAY_CONNECTION_GENERATION=parent-generation \
+BUILDOPT_SERVER_URL=https://control-plane.invalid \
+BUILDOPT_SERVER_INGEST_TOKEN=parent-server-token \
+BUILDOPT_BUILD_SESSION_CONTEXT='{invalid-json' \
+    "${buildopt_binary}" run -- \
+    bash -c "${buildopt_bypass_child}" buildopt-bypass \
+    "" \
+    "two words" \
+    "*" \
+    "\$HOME" \
+    >"${buildopt_test_root}/bypass.stdout" \
+    2>"${buildopt_test_root}/bypass.stderr"
+buildopt_bypass_exit=$?
+set -e
+if ((buildopt_bypass_exit != 37)) ||
+    [[ "$(<"${buildopt_test_root}/bypass.stdout")" != "bypass-child-ok" ]] ||
+    [[ -s "${buildopt_test_root}/bypass.stderr" ]]; then
+    printf 'local bypass exercise failed with exit %s\n' \
+        "${buildopt_bypass_exit}" >&2
+    sed -n '1,40p' "${buildopt_test_root}/bypass.stderr" >&2
+    exit 1
+fi
+
+# The variables in this program expand only inside the normal-path child.
+# shellcheck disable=SC2016
+buildopt_active_child='
+set -euo pipefail
+if [[ -v BUILDOPT_BYPASS ]]; then
+    printf "normal child received BUILDOPT_BYPASS\n" >&2
+    exit 92
+fi
+for buildopt_key in \
+    BUILDOPT_PLUGIN_ATTEMPT_ID \
+    BUILDOPT_PLUGIN_EVENT_SOCKET \
+    BUILDOPT_PLUGIN_EVENT_TOKEN \
+    BUILDOPT_GATEWAY_URL \
+    BUILDOPT_GATEWAY_USERNAME \
+    BUILDOPT_GATEWAY_PASSWORD \
+    BUILDOPT_GATEWAY_CONNECTION_GENERATION; do
+    if [[ -z "${!buildopt_key:-}" ]]; then
+        printf "normal child is missing %s\n" "${buildopt_key}" >&2
+        exit 93
+    fi
+done
+printf "normal-child-ok\n"
+'
+BUILDOPT_BYPASS=0 \
+    "${buildopt_binary}" run -- \
+    bash -c "${buildopt_active_child}" buildopt-normal \
+    >"${buildopt_test_root}/normal.stdout" \
+    2>"${buildopt_test_root}/normal.stderr"
+if [[ "$(<"${buildopt_test_root}/normal.stdout")" != "normal-child-ok" ]] ||
+    [[ -s "${buildopt_test_root}/normal.stderr" ]]; then
+    printf 'cleared kill-switch exercise did not restore the normal path\n' >&2
+    sed -n '1,40p' "${buildopt_test_root}/normal.stderr" >&2
+    exit 1
+fi
+
+(
+    cd -- "${buildopt_repo_root}"
+    "${buildopt_script_dir}/run" \
+        --toolchain go \
+        -- go test \
+        -race \
+        -count=1 \
+        -run '^TestBuildoptForwardsSignalsToChildProcessGroup$' \
+        ./cmd/buildopt
+)
+
+buildopt_release_version=$(jq -er '.release.version' "${buildopt_lock}")
+buildopt_release_url=$(jq -er '.release.archiveUrl' "${buildopt_lock}")
+buildopt_release_sha256=$(jq -er '.release.archiveSha256' "${buildopt_lock}")
+buildopt_release_relative=$(jq -er '.release.archivePath' "${buildopt_lock}")
+buildopt_release_archive="${buildopt_repo_root}/${buildopt_release_relative}"
+buildopt_fake_bin="${buildopt_test_root}/fake-bin"
+buildopt_curl_log="${buildopt_test_root}/curl.log"
+buildopt_install_dir="${buildopt_test_root}/action-install"
+mkdir "${buildopt_fake_bin}"
+ln -s "${buildopt_fixture_dir}/fake-curl" "${buildopt_fake_bin}/curl"
+
+buildopt_install_fixture() {
+    local buildopt_sha256=$1
+
+    BUILDOPT_FIXTURE_ARCHIVE="${buildopt_release_archive}" \
+    BUILDOPT_FIXTURE_ARCHIVE_URL="${buildopt_release_url}" \
+    BUILDOPT_FIXTURE_CURL_LOG="${buildopt_curl_log}" \
+    PATH="${buildopt_fake_bin}:${PATH}" \
+        "${buildopt_installer}" \
+        --version "${buildopt_release_version}" \
+        --archive-url "${buildopt_release_url}" \
+        --archive-sha256 "${buildopt_sha256}" \
+        --install-dir "${buildopt_install_dir}"
+}
+
+set +e
+buildopt_install_fixture \
+    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+    >"${buildopt_test_root}/candidate.stdout" \
+    2>"${buildopt_test_root}/candidate.stderr"
+buildopt_candidate_exit=$?
+set -e
+if ((buildopt_candidate_exit != 1)) ||
+    ! grep -Fq 'checksum mismatch' "${buildopt_test_root}/candidate.stderr"; then
+    printf 'rollback exercise did not reject the bad candidate digest\n' >&2
+    exit 1
+fi
+
+buildopt_install_root=$(buildopt_install_fixture "${buildopt_release_sha256}")
+buildopt_probe_output=$(
+    "${buildopt_install_root}/bin/buildopt" run -- \
+        "${buildopt_fixture_dir}/argv-probe" \
+        "" \
+        "rollback restored"
+)
+buildopt_expected_probe=$(
+    printf '%s\n' \
+        'argc=2' \
+        'arg0=<>' \
+        'arg1=<rollback restored>'
+)
+if [[ "${buildopt_probe_output}" != "${buildopt_expected_probe}" ]]; then
+    printf 'known-good rollback fixture did not preserve argv\n' >&2
+    exit 1
+fi
+
+buildopt_state_dir="${buildopt_test_root}/preserved-export"
+mkdir "${buildopt_state_dir}"
+printf 'retained evidence\n' >"${buildopt_state_dir}/session.json"
+buildopt_remove_exercise_tree "${buildopt_install_root}"
+if [[ -e "${buildopt_install_root}" ]] ||
+    [[ "$(<"${buildopt_state_dir}/session.json")" != "retained evidence" ]]; then
+    printf 'preserve-state uninstall exercise failed\n' >&2
+    exit 1
+fi
+
+buildopt_install_root=$(buildopt_install_fixture "${buildopt_release_sha256}")
+buildopt_remove_exercise_tree "${buildopt_install_root}"
+buildopt_remove_exercise_tree "${buildopt_state_dir}"
+if [[ -e "${buildopt_install_root}" ]] || [[ -e "${buildopt_state_dir}" ]]; then
+    printf 'explicit-purge uninstall exercise failed\n' >&2
+    exit 1
+fi
+
+buildopt_probe_output=$(
+    "${buildopt_fixture_dir}/argv-probe" \
+        "" \
+        "baseline restored"
+)
+buildopt_expected_probe=$(
+    printf '%s\n' \
+        'argc=2' \
+        'arg0=<>' \
+        'arg1=<baseline restored>'
+)
+if [[ "${buildopt_probe_output}" != "${buildopt_expected_probe}" ]]; then
+    printf 'baseline command failed after uninstall exercise\n' >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'base-runbook exercises changed the working tree\n' >&2
+    exit 1
+fi
+
+printf '%s\n' \
+    'F0-039 base recovery exercises OK:' \
+    '- local bypass consumed control and integration environment' \
+    '- CI kill-switch activation/clear paths and signal cleanup passed' \
+    '- bad candidate digest was rejected and known-good rollback ran' \
+    '- uninstall preserved state by default and purged only explicitly'

@@ -6,8 +6,11 @@ Private implementation shared by `buildopt` and `buildopt-server`.
 `WS-002` Linux process-group and signal contract, the `WS-003` plugin handshake,
 and the neutral `WS-004` authenticated local rendezvous used by `cmd/buildopt`.
 It forwards `SIGINT`/`SIGTERM` to the child group, preserves child status, owns
-the private event socket and loopback readiness gateway, and leaves
-grace-period escalation to the invoking CI environment. The gateway has no
+the private event socket and loopback readiness gateway, and consumes the
+`F0-039` local bypass before creating either service or parsing server
+configuration. The bypass uses the same process/signal contract and removes all
+reserved launcher state from the child. Grace-period escalation remains with
+the invoking CI environment. The gateway has no
 cache data or upstream route yet; later lifecycle, policy, cache, and
 observation behavior must extend this boundary without replacing contract
 sources.

@@ -116,9 +116,9 @@ Build the real `buildopt` binary and run the `WS-001..004` launcher unit and int
 ./dev/check-buildopt-cli
 ```
 
-The checker runs with the locked Go toolchain and offline module resolution. It executes helpers through the built CLI and verifies exact argument boundaries without shell expansion, inherited working directory/environment/standard streams, fresh reserved rendezvous context and cleanup, zero and non-zero child statuses, usage code `64`, cannot-execute code `126`, and command-not-found code `127`. Unit coverage also validates accepted and rejected v1 frames, invocation matching, size bounds, event authentication, and private socket cleanup.
+The checker runs with the locked Go toolchain and offline module resolution. It executes helpers through the built CLI and verifies exact argument boundaries without shell expansion, inherited working directory/environment/standard streams, fresh reserved rendezvous context and cleanup, zero and non-zero child statuses, usage code `64`, cannot-execute code `126`, command-not-found code `127`, and the early `BUILDOPT_BYPASS=1` path. Unit coverage also validates accepted and rejected v1 frames, invocation matching, size bounds, event authentication, and private socket cleanup.
 
-On Linux, the same suite verifies that the direct child leads a process group separate from the launcher, a nested descendant receives forwarded `SIGINT` and `SIGTERM`, cancellation waits for delayed cleanup without a launcher-owned deadline, handled child statuses remain authoritative, and an unhandled `SIGTERM` becomes status `143`. Other platforms remain outside the current acceptance matrix.
+On Linux, the same suite verifies that the direct child leads a process group separate from the launcher, a nested descendant receives forwarded `SIGINT` and `SIGTERM`, cancellation waits for delayed cleanup without a launcher-owned deadline, handled child statuses remain authoritative, an unhandled `SIGTERM` becomes status `143`, and bypass retains that process-group contract. Other platforms remain outside the current acceptance matrix.
 
 ## Authenticated local gateway validation
 
@@ -149,8 +149,8 @@ The checker starts the server on an operating-system-assigned loopback port,
 delivers successful and failed child sessions through the active gateway, and
 requires the server to observe the exact outcomes while the launcher preserves
 exit `0` and `37`. It proves that the server token is absent from the child and
-diagnostics, unavailable delivery remains fail-open, no server configuration
-performs a contact-free local bypass, and `SIGTERM` shuts down the server
+diagnostics, unavailable delivery remains fail-open, absent server configuration
+performs no ingest contact, and `SIGTERM` shuts down the server
 cleanly. Unit coverage adds strict JSON/authentication/size negatives,
 generation binding, idempotent replay, conflicting duplicate rejection, and
 concurrent acceptance.
@@ -329,6 +329,29 @@ ShellCheck/actionlint accept all scripts and the hosted fixture. The hosted run
 is dispatched separately for GitHub-runner evidence. This closes `WS-007`, not
 `F0-004`, `CI-ORCH-001`, release publication, token/fork policy, or the full
 `DEPLOY-001` lifecycle.
+
+## Base recovery runbook validation
+
+Execute every `F0-039` base recovery drill:
+
+```bash
+./dev/check-base-runbooks
+```
+
+The checker builds the real launcher and proves that
+`BUILDOPT_BYPASS=1` is consumed before invalid server context can be parsed or
+any plugin/gateway context reaches the child. It also clears the CI-style kill
+switch to recover the normal rendezvous, runs bypassed process-tree signal
+cleanup under the race detector, rejects a candidate Action archive with a bad
+digest, restores the checksum-pinned known-good fixture, and exercises
+uninstall with preserved state and with an explicit purge. Every file operation
+is confined to a guarded temporary directory, and the Git working tree must
+remain unchanged.
+
+The operator procedure and Phase 0 limitations are in
+[`runbooks/base-recovery.md`](../runbooks/base-recovery.md). Online revocation,
+durable attempt/lease cleanup, and the complete install/upgrade/uninstall
+lifecycle remain with `OPS-001/A1`, `WS-008`, and `DEPLOY-001`.
 
 ## Normative package validation
 

@@ -20,12 +20,13 @@ const (
 	exitCannotExecute = 126
 	exitNotFound      = 127
 	usage             = "usage: buildopt run -- <command> [args...]\n"
+	bypassEnvironment = "BUILDOPT_BYPASS"
 )
 
 // Run executes the WS-001 passthrough command with the WS-002 process contract,
 // exposes the neutral authenticated WS-003/WS-004 local rendezvous, delivers
-// the WS-005 session ingest when configured, and returns the child process exit
-// status.
+// the WS-005 session ingest when configured, honors the F0-039 local bypass,
+// and returns the child process exit status.
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	if isHelp(args) {
 		_, _ = io.WriteString(stdout, usage)
@@ -37,6 +38,20 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	}
 
 	childArgs := args[2:]
+	if os.Getenv(bypassEnvironment) == "1" {
+		execution := executeChild(
+			childArgs,
+			nil,
+			stdin,
+			stdout,
+			stderr,
+		)
+		if !execution.started {
+			return launchErrorExitCode(childArgs[0], execution.err, stderr)
+		}
+		return childWaitExitCode(childArgs[0], execution.err, stderr)
+	}
+
 	startedAt := time.Now()
 	serverClient, serverConfigured, serverErr :=
 		sessioningest.ClientFromEnvironment(os.Getenv)
@@ -73,11 +88,6 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		)
 	}
 
-	command := exec.Command(childArgs[0], childArgs[1:]...)
-	command.Stdin = stdin
-	command.Stdout = stdout
-	command.Stderr = stderr
-	command.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	rendezvousEnvironment := map[string]string(nil)
 	if gateway != nil && handshake != nil {
 		rendezvousEnvironment = map[string]string{
@@ -90,40 +100,29 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			gatewayGenerationEnvironment: gateway.generation,
 		}
 	}
-	command.Env = replaceEnvironment(os.Environ(), rendezvousEnvironment)
-
-	signals := make(chan os.Signal, 2)
-	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
-
-	childStartedAt := time.Now()
-	err := command.Start()
-	if err != nil {
-		signal.Stop(signals)
+	execution := executeChild(
+		childArgs,
+		rendezvousEnvironment,
+		stdin,
+		stdout,
+		stderr,
+	)
+	if !execution.started {
 		if handshake != nil {
 			_ = handshake.finish()
 		}
 		if gateway != nil {
 			_ = gateway.close()
 		}
-		return launchErrorExitCode(childArgs[0], err, stderr)
+		return launchErrorExitCode(childArgs[0], execution.err, stderr)
 	}
-
-	stopForwarding := make(chan struct{})
-	forwardingStopped := make(chan struct{})
-	go forwardSignals(command.Process.Pid, signals, stopForwarding, forwardingStopped, stderr)
-
-	err = command.Wait()
-	completedAt := time.Now()
-	signal.Stop(signals)
-	close(stopForwarding)
-	<-forwardingStopped
 
 	handshakeResult := pluginHandshakeResult{}
 	if handshake != nil {
 		handshakeResult = handshake.finish()
 		reportPluginHandshake(handshakeResult, stderr)
 	}
-	exitCode := childWaitExitCode(childArgs[0], err, stderr)
+	exitCode := childWaitExitCode(childArgs[0], execution.err, stderr)
 	if serverConfigured && gateway != nil && handshake != nil {
 		outcome := sessioningest.OutcomeBuildFailure
 		if exitCode == 0 {
@@ -133,7 +132,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			handshake.attemptID,
 			gateway.generation,
 			startedAt,
-			completedAt,
+			execution.completedAt,
 			outcome,
 			exitCode,
 		)
@@ -144,9 +143,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			record.ExportContext = exportContext
 			record.GradleInvocation = &sessioningest.GradleInvocation{
 				ID:            handshakeResult.producerInstanceID,
-				StartedAt:     childStartedAt.UTC().Format(time.RFC3339Nano),
-				CompletedAt:   completedAt.UTC().Format(time.RFC3339Nano),
-				DurationMs:    completedAt.Sub(childStartedAt).Milliseconds(),
+				StartedAt:     execution.startedAt.UTC().Format(time.RFC3339Nano),
+				CompletedAt:   execution.completedAt.UTC().Format(time.RFC3339Nano),
+				DurationMs:    execution.completedAt.Sub(execution.startedAt).Milliseconds(),
 				PluginVersion: handshakeResult.implementationVersion,
 			}
 		} else if exportContextConfigured && exportContextErr == nil {
@@ -172,6 +171,61 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	}
 
 	return exitCode
+}
+
+type childExecution struct {
+	started     bool
+	startedAt   time.Time
+	completedAt time.Time
+	err         error
+}
+
+func executeChild(
+	childArgs []string,
+	environmentOverrides map[string]string,
+	stdin io.Reader,
+	stdout io.Writer,
+	stderr io.Writer,
+) childExecution {
+	command := exec.Command(childArgs[0], childArgs[1:]...)
+	command.Stdin = stdin
+	command.Stdout = stdout
+	command.Stderr = stderr
+	command.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+	command.Env = replaceEnvironment(os.Environ(), environmentOverrides)
+
+	signals := make(chan os.Signal, 2)
+	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
+
+	startedAt := time.Now()
+	err := command.Start()
+	if err != nil {
+		signal.Stop(signals)
+		return childExecution{startedAt: startedAt, err: err}
+	}
+
+	stopForwarding := make(chan struct{})
+	forwardingStopped := make(chan struct{})
+	go forwardSignals(
+		command.Process.Pid,
+		signals,
+		stopForwarding,
+		forwardingStopped,
+		stderr,
+	)
+
+	err = command.Wait()
+	completedAt := time.Now()
+	signal.Stop(signals)
+	close(stopForwarding)
+	<-forwardingStopped
+
+	return childExecution{
+		started:     true,
+		startedAt:   startedAt,
+		completedAt: completedAt,
+		err:         err,
+	}
 }
 
 func childWaitExitCode(command string, err error, stderr io.Writer) int {

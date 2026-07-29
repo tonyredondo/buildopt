@@ -23,6 +23,7 @@ const (
 	helperExitEnvironment          = "GO_BUILDOPT_HELPER_EXIT"
 	helperStderrEnvironment        = "GO_BUILDOPT_HELPER_STDERR"
 	passthroughEnvironment         = "WS001_PASSTHROUGH_VALUE"
+	bypassEnvironment              = "BUILDOPT_BYPASS"
 	pluginAttemptEnvironment       = "BUILDOPT_PLUGIN_ATTEMPT_ID"
 	pluginSocketEnvironment        = "BUILDOPT_PLUGIN_EVENT_SOCKET"
 	pluginTokenEnvironment         = "BUILDOPT_PLUGIN_EVENT_TOKEN"
@@ -52,10 +53,14 @@ type helperObservation struct {
 	GatewayReady               int      `json:"gatewayReady"`
 	GatewayRejected            int      `json:"gatewayRejected"`
 	ReadyGeneration            string   `json:"readyGeneration"`
+	BypassPresent              bool     `json:"bypassPresent"`
+	ServerURLPresent           bool     `json:"serverUrlPresent"`
+	ServerTokenPresent         bool     `json:"serverTokenPresent"`
 	BuildSessionContextPresent bool     `json:"buildSessionContextPresent"`
 }
 
 func TestBuildoptCLI(t *testing.T) {
+	t.Setenv(bypassEnvironment, "")
 	t.Setenv(serverURLEnvironment, "")
 	t.Setenv(serverTokenEnvironment, "")
 	t.Setenv(buildSessionContextEnvironment, "")
@@ -212,6 +217,103 @@ func TestBuildoptCLI(t *testing.T) {
 		}
 	})
 
+	t.Run("bypass preserves the child and skips all product integration", func(t *testing.T) {
+		helperBinary, err := os.Executable()
+		if err != nil {
+			t.Fatalf("resolve helper executable: %v", err)
+		}
+		workingDirectory := t.TempDir()
+		input := "bypass stdin\n"
+		arguments := []string{"", "two words", "*", "$HOME"}
+		commandArguments := []string{
+			"run",
+			"--",
+			helperBinary,
+			"-test.run=^TestBuildoptChildHelper$",
+			"--",
+		}
+		commandArguments = append(commandArguments, arguments...)
+
+		command := exec.Command(buildoptBinary, commandArguments...)
+		command.Dir = workingDirectory
+		command.Env = append(
+			os.Environ(),
+			helperModeEnvironment+"=1",
+			helperExitEnvironment+"=38",
+			helperStderrEnvironment+"=bypass child stderr",
+			passthroughEnvironment+"=still inherited",
+			bypassEnvironment+"=1",
+			pluginAttemptEnvironment+"=untrusted-parent-attempt",
+			pluginSocketEnvironment+"=/tmp/untrusted-parent.sock",
+			pluginTokenEnvironment+"=parent-token",
+			gatewayURLEnvironment+"=http://127.0.0.1:1",
+			gatewayUserEnvironment+"=parent-user",
+			gatewayPassEnvironment+"=parent-password",
+			gatewayGenEnvironment+"=parent-generation",
+			serverURLEnvironment+"=https://control-plane.invalid",
+			serverTokenEnvironment+"=parent-server-token",
+			buildSessionContextEnvironment+"={invalid-json",
+		)
+		command.Stdin = strings.NewReader(input)
+
+		var stdout bytes.Buffer
+		var stderr bytes.Buffer
+		command.Stdout = &stdout
+		command.Stderr = &stderr
+
+		err = command.Run()
+		if exitCode := processExitCode(t, err); exitCode != 38 {
+			t.Fatalf("exit code = %d, want 38", exitCode)
+		}
+		if stderr.String() != "bypass child stderr\n" {
+			t.Fatalf(
+				"stderr = %q, want only the child marker",
+				stderr.String(),
+			)
+		}
+
+		var observation helperObservation
+		if err := json.Unmarshal(stdout.Bytes(), &observation); err != nil {
+			t.Fatalf("decode child observation %q: %v", stdout.String(), err)
+		}
+		if !slices.Equal(observation.Arguments, arguments) {
+			t.Errorf("arguments = %#v, want %#v", observation.Arguments, arguments)
+		}
+		if observation.WorkingDirectory != workingDirectory {
+			t.Errorf(
+				"working directory = %q, want %q",
+				observation.WorkingDirectory,
+				workingDirectory,
+			)
+		}
+		if observation.StandardInput != input {
+			t.Errorf("stdin = %q, want %q", observation.StandardInput, input)
+		}
+		if observation.EnvironmentValue != "still inherited" {
+			t.Errorf(
+				"environment value = %q, want inherited value",
+				observation.EnvironmentValue,
+			)
+		}
+		if observation.BypassPresent ||
+			observation.PluginAttemptID != "" ||
+			observation.PluginEventSocket != "" ||
+			observation.PluginTokenLength != 0 ||
+			observation.GatewayURL != "" ||
+			observation.GatewayGeneration != "" ||
+			observation.GatewayReady != 0 ||
+			observation.GatewayRejected != 0 ||
+			observation.ReadyGeneration != "" ||
+			observation.ServerURLPresent ||
+			observation.ServerTokenPresent ||
+			observation.BuildSessionContextPresent {
+			t.Errorf(
+				"bypassed child received product integration context: %+v",
+				observation,
+			)
+		}
+	})
+
 	t.Run("returns zero for a successful child", func(t *testing.T) {
 		helperBinary, err := os.Executable()
 		if err != nil {
@@ -356,19 +458,22 @@ func TestBuildoptChildHelper(t *testing.T) {
 	}
 
 	observation := helperObservation{
-		Argv0:             os.Args[0],
-		Arguments:         os.Args[separator+1:],
-		WorkingDirectory:  workingDirectory,
-		StandardInput:     string(input),
-		EnvironmentValue:  os.Getenv(passthroughEnvironment),
-		PluginAttemptID:   os.Getenv(pluginAttemptEnvironment),
-		PluginEventSocket: os.Getenv(pluginSocketEnvironment),
-		PluginTokenLength: len(os.Getenv(pluginTokenEnvironment)),
-		GatewayURL:        os.Getenv(gatewayURLEnvironment),
-		GatewayGeneration: os.Getenv(gatewayGenEnvironment),
-		GatewayReady:      gatewayReady,
-		GatewayRejected:   gatewayRejected,
-		ReadyGeneration:   readyGeneration,
+		Argv0:              os.Args[0],
+		Arguments:          os.Args[separator+1:],
+		WorkingDirectory:   workingDirectory,
+		StandardInput:      string(input),
+		EnvironmentValue:   os.Getenv(passthroughEnvironment),
+		PluginAttemptID:    os.Getenv(pluginAttemptEnvironment),
+		PluginEventSocket:  os.Getenv(pluginSocketEnvironment),
+		PluginTokenLength:  len(os.Getenv(pluginTokenEnvironment)),
+		GatewayURL:         os.Getenv(gatewayURLEnvironment),
+		GatewayGeneration:  os.Getenv(gatewayGenEnvironment),
+		GatewayReady:       gatewayReady,
+		GatewayRejected:    gatewayRejected,
+		ReadyGeneration:    readyGeneration,
+		BypassPresent:      os.Getenv(bypassEnvironment) != "",
+		ServerURLPresent:   os.Getenv(serverURLEnvironment) != "",
+		ServerTokenPresent: os.Getenv(serverTokenEnvironment) != "",
 		BuildSessionContextPresent: os.Getenv(
 			buildSessionContextEnvironment,
 		) != "",
@@ -391,6 +496,9 @@ func TestBuildoptChildHelper(t *testing.T) {
 
 func observeLocalGateway() (int, int, string, error) {
 	endpoint := os.Getenv(gatewayURLEnvironment)
+	if endpoint == "" {
+		return 0, 0, "", nil
+	}
 	username := os.Getenv(gatewayUserEnvironment)
 	password := os.Getenv(gatewayPassEnvironment)
 

@@ -32,6 +32,7 @@ type signalProcessObservation struct {
 }
 
 func TestBuildoptForwardsSignalsToChildProcessGroup(t *testing.T) {
+	t.Setenv(bypassEnvironment, "")
 	t.Setenv(serverURLEnvironment, "")
 	t.Setenv(serverTokenEnvironment, "")
 	t.Setenv(buildSessionContextEnvironment, "")
@@ -44,6 +45,7 @@ func TestBuildoptForwardsSignalsToChildProcessGroup(t *testing.T) {
 		signal       syscall.Signal
 		childExit    int
 		cleanupDelay time.Duration
+		bypass       bool
 	}{
 		{
 			name:         "SIGINT",
@@ -56,6 +58,13 @@ func TestBuildoptForwardsSignalsToChildProcessGroup(t *testing.T) {
 			signal:       syscall.SIGTERM,
 			childExit:    42,
 			cleanupDelay: 150 * time.Millisecond,
+		},
+		{
+			name:         "SIGTERM bypass preserves process-group cleanup",
+			signal:       syscall.SIGTERM,
+			childExit:    43,
+			cleanupDelay: 150 * time.Millisecond,
+			bypass:       true,
 		},
 	}
 
@@ -79,6 +88,15 @@ func TestBuildoptForwardsSignalsToChildProcessGroup(t *testing.T) {
 				leaderExitCodeEnvironment+"="+strconv.Itoa(testCase.childExit),
 				leaderCleanupDelayEnvironment+"="+testCase.cleanupDelay.String(),
 			)
+			if testCase.bypass {
+				command.Env = append(
+					command.Env,
+					bypassEnvironment+"=1",
+					serverURLEnvironment+"=https://control-plane.invalid",
+					serverTokenEnvironment+"=parent-server-token",
+					buildSessionContextEnvironment+"={invalid-json",
+				)
+			}
 			var stdout bytes.Buffer
 			var stderr bytes.Buffer
 			command.Stdout = &stdout
@@ -151,6 +169,7 @@ func TestBuildoptForwardsSignalsToChildProcessGroup(t *testing.T) {
 }
 
 func TestBuildoptReturnsConventionalStatusForUnhandledSignal(t *testing.T) {
+	t.Setenv(bypassEnvironment, "")
 	t.Setenv(serverURLEnvironment, "")
 	t.Setenv(serverTokenEnvironment, "")
 	t.Setenv(buildSessionContextEnvironment, "")
