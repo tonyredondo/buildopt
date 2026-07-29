@@ -51,6 +51,16 @@ The optional explicit form is equivalent:
 ./dev/run --toolchain temurin-jdk-21 -- java -version
 ```
 
+## JVM release validation
+
+Build and inspect the neutral Gradle plugin and JVM agent artifacts:
+
+```bash
+./dev/run -- ./dev/check-jvm-release
+```
+
+The check compiles both modules with the locked JDK 21, verifies every packaged class is Java 17 bytecode (major 61), validates the agent manifest, and starts a JVM with the packaged no-op agent. It does not activate the plugin handshake or agent instrumentation behavior reserved for later gates.
+
 ## Doctor
 
 `dev/doctor` inventories the active workstation without changing files, installing packages, starting services, or downloading artifacts. It reports:

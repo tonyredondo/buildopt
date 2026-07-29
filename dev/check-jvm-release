@@ -1,0 +1,189 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+
+for buildopt_command in awk find grep jar java javap tr unzip; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required JVM verification command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_java_settings=$(java -XshowSettings:properties -version 2>&1)
+buildopt_java_major=$(
+    awk -F'= ' '
+        /^[[:space:]]*java.version = / {
+            split($2, version, ".")
+            print version[1]
+            exit
+        }
+    ' <<<"${buildopt_java_settings}"
+)
+if [[ "${buildopt_java_major}" != "21" ]]; then
+    printf 'ENV-004 verification requires Java 21 through dev/run; found major %s\n' \
+        "${buildopt_java_major:-unknown}" >&2
+    exit 1
+fi
+
+buildopt_build_files=(
+    "${buildopt_repo_root}/jvm/gradle-plugin/build.gradle.kts"
+    "${buildopt_repo_root}/jvm/jvm-agent/build.gradle.kts"
+)
+for buildopt_build_file in "${buildopt_build_files[@]}"; do
+    if ! grep -Fqx \
+        '        languageVersion = JavaLanguageVersion.of(21)' \
+        "${buildopt_build_file}" ||
+        ! grep -Fqx \
+            '        vendor = JvmVendorSpec.ADOPTIUM' \
+            "${buildopt_build_file}" ||
+        ! grep -Fqx \
+            '    options.release = 17' \
+            "${buildopt_build_file}" ||
+        ! grep -Fqx \
+            '    options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))' \
+            "${buildopt_build_file}"; then
+        printf 'JVM build does not enforce the ENV-004 compiler contract: %s\n' \
+            "${buildopt_build_file}" >&2
+        exit 1
+    fi
+done
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p -- "${GRADLE_USER_HOME}"
+
+"${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --stacktrace \
+    --warning-mode=fail \
+    :jvm:gradle-plugin:clean \
+    :jvm:jvm-agent:clean \
+    :jvm:gradle-plugin:check \
+    :jvm:jvm-agent:check \
+    :jvm:gradle-plugin:jar \
+    :jvm:jvm-agent:jar
+
+buildopt_find_jar() {
+    local buildopt_directory=$1
+    local buildopt_pattern=$2
+    local -a buildopt_jars
+
+    mapfile -d '' buildopt_jars < <(
+        find "${buildopt_directory}" \
+            -maxdepth 1 \
+            -type f \
+            -name "${buildopt_pattern}" \
+            ! -name '*-javadoc.jar' \
+            ! -name '*-sources.jar' \
+            -print0
+    )
+    if ((${#buildopt_jars[@]} != 1)); then
+        printf 'expected one %s under %s, found %s\n' \
+            "${buildopt_pattern}" \
+            "${buildopt_directory}" \
+            "${#buildopt_jars[@]}" >&2
+        return 1
+    fi
+    printf '%s\n' "${buildopt_jars[0]}"
+}
+
+buildopt_plugin_jar=$(
+    buildopt_find_jar \
+        "${buildopt_repo_root}/jvm/gradle-plugin/build/libs" \
+        'buildopt-gradle-plugin-*.jar'
+)
+buildopt_agent_jar=$(
+    buildopt_find_jar \
+        "${buildopt_repo_root}/jvm/jvm-agent/build/libs" \
+        'buildopt-jvm-agent-*.jar'
+)
+
+buildopt_verify_jar_classes() {
+    local buildopt_label=$1
+    local buildopt_jar=$2
+    local buildopt_entry
+    local buildopt_class
+    local buildopt_major
+    local -a buildopt_classes
+
+    mapfile -t buildopt_classes < <(
+        jar tf "${buildopt_jar}" |
+            awk '/[.]class$/ {print}'
+    )
+    if ((${#buildopt_classes[@]} == 0)); then
+        printf '%s contains no classes: %s\n' \
+            "${buildopt_label}" \
+            "${buildopt_jar}" >&2
+        return 1
+    fi
+
+    for buildopt_entry in "${buildopt_classes[@]}"; do
+        buildopt_class=${buildopt_entry%.class}
+        buildopt_class=${buildopt_class//\//.}
+        buildopt_major=$(
+            javap -classpath "${buildopt_jar}" -verbose "${buildopt_class}" |
+                awk '/major version:/ {print $3; exit}'
+        )
+        if [[ "${buildopt_major}" != "61" ]]; then
+            printf '%s class %s has major %s instead of Java 17 major 61\n' \
+                "${buildopt_label}" \
+                "${buildopt_class}" \
+                "${buildopt_major:-unknown}" >&2
+            return 1
+        fi
+    done
+
+    printf '%s bytecode OK: %s classes at major 61\n' \
+        "${buildopt_label}" \
+        "${#buildopt_classes[@]}"
+}
+
+if ! jar tf "${buildopt_plugin_jar}" |
+    grep -Fqx 'dev/buildopt/gradle/BuildOptProjectPlugin.class'; then
+    printf 'Gradle plugin entry point is missing from %s\n' \
+        "${buildopt_plugin_jar}" >&2
+    exit 1
+fi
+if ! jar tf "${buildopt_agent_jar}" |
+    grep -Fqx 'dev/buildopt/agent/BuildOptAgent.class'; then
+    printf 'JVM agent entry point is missing from %s\n' \
+        "${buildopt_agent_jar}" >&2
+    exit 1
+fi
+
+buildopt_verify_jar_classes "Gradle plugin" "${buildopt_plugin_jar}"
+buildopt_verify_jar_classes "JVM agent" "${buildopt_agent_jar}"
+
+buildopt_agent_manifest=$(
+    unzip -p "${buildopt_agent_jar}" META-INF/MANIFEST.MF |
+        tr -d '\r'
+)
+if ! grep -Fqx 'Premain-Class: dev.buildopt.agent.BuildOptAgent' \
+    <<<"${buildopt_agent_manifest}"; then
+    printf 'JVM agent manifest has no verified Premain-Class\n' >&2
+    exit 1
+fi
+if ! grep -Fqx 'Can-Redefine-Classes: false' \
+    <<<"${buildopt_agent_manifest}"; then
+    printf 'JVM agent manifest unexpectedly enables class redefinition\n' >&2
+    exit 1
+fi
+if ! grep -Fqx 'Can-Retransform-Classes: false' \
+    <<<"${buildopt_agent_manifest}"; then
+    printf 'JVM agent manifest unexpectedly enables class retransformation\n' >&2
+    exit 1
+fi
+
+java -javaagent:"${buildopt_agent_jar}" -version >/dev/null 2>&1
+
+printf 'ENV-004 JVM release OK: Java 21 compiler, --release 17 bytecode, and loadable agent\n'

@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — `ENV-003` closed with a verified, project-local JDK 21; `ENV-004` is the next block<br>
+**Overall status:** `DOING` — `ENV-004` closed with Java 17 plugin/agent artifacts; `ENV-005` is the next block<br>
 **Current phase:** Phase 0 — contracts, fixtures, and walking skeleton<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
 **Last updated:** 2026-07-29<br>
@@ -86,11 +86,12 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 3 | `ENV-001` | Toolchain and checksum manifest created | `DONE` | Codex |
 | 4 | `ENV-002` | `dev/doctor` reproduces the host inventory | `DONE` | Codex |
 | 5 | `ENV-003` | JDK 21 available alongside and isolated from global JDK 25 | `DONE` | Codex |
-| 6 | `ENV-004` | Plugin/agent compilation verified with `--release 17` | `TODO` | — |
-| 7 | `F0-010` | `contracts/`, `specs/`, `benchmarks/`, and `adr/` structure created | `WAITING` | — |
-| 8 | `F0-011` | First normative schema: `BUILD_SESSION v1` | `WAITING` | — |
-| 9 | `WS-001` | `buildopt run` → `BUILD_SESSION` vertical slice started | `TODO` | — |
-| 10 | `SPK-001` | Task → cache key → PUT spike on the golden lane | `WAITING` | — |
+| 6 | `ENV-004` | Plugin/agent compilation verified with `--release 17` | `DONE` | Codex |
+| 7 | `ENV-005` | Locked Go toolchain validated for the core | `TODO` | — |
+| 8 | `F0-010` | `contracts/`, `specs/`, `benchmarks/`, and `adr/` structure created | `WAITING` | — |
+| 9 | `F0-011` | First normative schema: `BUILD_SESSION v1` | `WAITING` | — |
+| 10 | `WS-001` | `buildopt run` → `BUILD_SESSION` vertical slice started | `TODO` | — |
+| 11 | `SPK-001` | Task → cache key → PUT spike on the golden lane | `WAITING` | — |
 
 ---
 
@@ -185,7 +186,7 @@ Initial 4-vCPU workstation installation:
 | `ENV-001` | Create `dev/toolchains.lock.yaml` and update policy | `F0-001`, `F0-002` | `DONE` | Codex | `E-010`: portable lock, validator, and update policy |
 | `ENV-002` | Implement read-only `dev/doctor` | `ENV-001` | `DONE` | Codex | `E-011`: JSON/human reports, live inventory, and deterministic exit-code fixtures |
 | `ENV-003` | Provision JDK 21 alongside JDK 25 without global replacement | `ENV-001` | `DONE` | Codex | `E-012`: verified, idempotent provisioning and isolated `dev/run` |
-| `ENV-004` | Verify plugin/agent compilation with `--release 17` | `ENV-003` | `TODO` | — | Bytecode/API compatibility test |
+| `ENV-004` | Verify plugin/agent compilation with `--release 17` | `ENV-003` | `DONE` | Codex | `E-013`: separate JARs, major 61, agent load, and golden-image build |
 | `ENV-005` | Validate and pin Go for the core | `ENV-001` | `TODO` | — | `go.mod`/toolchain + passing doctor |
 | `ENV-006` | Provision `protoc` and decide/adopt Buf | `F0-019`, `ENV-001` | `WAITING` | — | Reproducible lint/generate/round trip |
 | `ENV-007` | Pin Gradle Wrapper 9.6.1 and verify checksum | `F0-002` | `DONE` | Codex | `E-007`: Wrapper 9.6.1 and checksums verified |
@@ -482,6 +483,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Go unit/integration | Launcher/gateway/server | Not run | — | — |
 | Gradle TestKit | Plugin/adapters | Not run | — | — |
 | Real Gradle Wrapper | Wrapper 9.6.1, Kotlin DSL fixture, and Configuration Cache | Strict gate passed on the nominal 4 vCPU/16 GiB host and a container with 4 CPU/16 GiB cgroups; bytecode major 61; Configuration Cache reused; `compileJava FROM-CACHE`; negative 2-CPU fixture rejected | 2026-07-29 | `E-008` |
+| JVM release compatibility | Gradle plugin and JVM agent | Locked JDK 21 compilation with `--release 17`; every packaged class verified as major 61; reproducible JARs; agent loaded on Java 17 and 21; complete build passed in the pinned golden image | 2026-07-29 | `E-013` |
 | Cache conformance | HttpBuildCache + internal control | Not run | — | — |
 | Fault injection | Cache/orchestration/recovery | Not run | — | — |
 | Hermetic harness | Rust helper/process tree/coverage | Not run | — | — |
@@ -516,6 +518,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-010` | 2026-07-29 | `ENV-001` | [`dev/toolchains.lock.yaml`](./dev/toolchains.lock.yaml), static validator, and update policy; eight GitHub release digests reverified against official release metadata plus official Go archive and Rust channel-manifest metadata; Bash syntax, lock validation, ShellCheck, layout, golden-lane static checks, and the Java 21 smoke build passed on the non-golden 12-CPU host | `DONE`: one host-independent `linux-amd64` lock now unblocks `ENV-002`, `ENV-003`, `ENV-005`, `ENV-009`, and `ENV-010` |
 | `E-011` | 2026-07-29 | `ENV-002` | [`dev/doctor`](./dev/doctor), [`dev/test-doctor`](./dev/test-doctor), documented `buildopt.dev/doctor-report/v1`, live human/JSON inventory on the 12-CPU workstation, isolated JDK 21/25 active-path matches, deterministic missing-command and internal-error fixtures, Bash syntax, ShellCheck 0.11.0, read-only Git-state comparison, and exit codes `0/1/64/70` | `DONE`: workstations now share one active-path comparison contract without global-tool assumptions; `ENV-008` is unblocked |
 | `E-012` | 2026-07-29 | `ENV-003` | [`dev/bootstrap`](./dev/bootstrap), [`dev/run`](./dev/run), and [`dev/test-jdk-toolchain`](./dev/test-jdk-toolchain); official Temurin 21.0.12+8 bytes matched lock SHA-256 `e4446ff06a276155697597cc0f1b15da004ff083f4964a35271ecee567177370`; first and idempotent second provisioning passed; synthetic global JDK 25 isolation, real global JDK 17 preservation, doctor `MATCH`, and Gradle 9.6.1 smoke with Java 17 bytecode passed on the non-golden 12-CPU host | `DONE`: JDK 21 is reproducibly available through `dev/run` without replacing global Java; `ENV-004` is unblocked |
+| `E-013` | 2026-07-29 | `ENV-004` | [`dev/check-jvm-release`](./dev/check-jvm-release), separate Gradle plugin and JVM agent builds, locked Temurin 21.0.12+8 compiler with `--release 17`, `-Xlint:all`, and `-Werror`; all packaged classes verified at major 61; constrained `Premain-Class` loaded on project Java 21 and host Java 17.0.19; clean rebuild hashes matched; root smoke passed locally and in the digest-pinned golden image | `DONE`: Java 17 artifact compatibility is executable without activating the `WS-003` handshake or `SPK-002` instrumentation behavior; `ENV-005` is next |
 
 ---
 
@@ -523,6 +526,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-29 | Closed `ENV-004`: added neutral Gradle plugin/JVM agent artifacts, enforced `--release 17`, verified major 61 and agent loading, and passed local plus pinned-image builds | Codex |
 | 2026-07-29 | Closed `ENV-003`: added checksum-verified, atomic JDK 21 provisioning and project-local execution without replacing global Java; unblocked `ENV-004` | Codex |
 | 2026-07-29 | Closed `ENV-002`: added read-only human/JSON host inventory, stable exit codes, active-path toolchain drift reporting, Docker/capability/resource probes, and deterministic fixtures | Codex |
 | 2026-07-29 | Closed `ENV-001`: added the portable toolchain lock, static validation, update policy, and dependency evidence without adopting candidate or optional tools | Codex |

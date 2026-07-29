@@ -6,14 +6,20 @@ plugins {
 
 tasks.named("assemble") {
     dependsOn(":fixtures:golden-lane:assemble")
+    dependsOn(":jvm:gradle-plugin:assemble")
+    dependsOn(":jvm:jvm-agent:assemble")
 }
 
 tasks.named("check") {
     dependsOn(":fixtures:golden-lane:check")
+    dependsOn(":jvm:gradle-plugin:check")
+    dependsOn(":jvm:jvm-agent:check")
 }
 
 tasks.named("clean") {
     dependsOn(":fixtures:golden-lane:clean")
+    dependsOn(":jvm:gradle-plugin:clean")
+    dependsOn(":jvm:jvm-agent:clean")
 }
 
 tasks.named<Wrapper>("wrapper") {

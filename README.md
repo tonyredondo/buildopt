@@ -54,10 +54,11 @@ From the repository root:
 ./dev/doctor
 ./dev/test-doctor
 ./dev/test-jdk-toolchain
+./dev/run -- ./dev/check-jvm-release
 ./dev/check-golden-lane --static
 ```
 
-The commands validate the repository layout, portable toolchain lock, host inventory contract, isolated JDK provisioning, and golden lane configuration and checksums.
+The commands validate the repository layout, portable toolchain lock, host inventory contract, isolated JDK provisioning, Java 17 JVM artifacts, and golden lane configuration and checksums.
 
 Local smoke test with JDK 21:
 
