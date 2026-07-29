@@ -1,0 +1,212 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+unset BUILDOPT_SERVER_URL BUILDOPT_SERVER_INGEST_TOKEN
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_test_root=$(mktemp -d)
+buildopt_server_pid=
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_server_pid}" ]] &&
+        kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        kill -TERM "${buildopt_server_pid}" 2>/dev/null || true
+        wait "${buildopt_server_pid}" 2>/dev/null || true
+    fi
+    rm -rf -- "${buildopt_test_root}"
+}
+trap buildopt_cleanup EXIT
+
+cd -- "${buildopt_repo_root}"
+buildopt_before_status=$(
+    git status --porcelain=v1 --untracked-files=all 2>/dev/null || true
+)
+
+buildopt_launcher=${BUILDOPT_GOLDEN_LANE_LAUNCHER_BINARY:-}
+buildopt_server=${BUILDOPT_GOLDEN_LANE_SERVER_BINARY:-}
+if [[ -n "${buildopt_launcher}" || -n "${buildopt_server}" ]]; then
+    if [[ ! -x "${buildopt_launcher}" || ! -x "${buildopt_server}" ]]; then
+        printf 'supplied golden-lane ingest binaries are incomplete\n' >&2
+        exit 1
+    fi
+else
+    "${buildopt_script_dir}/run" \
+        --toolchain go \
+        -- go test -race -count=1 \
+        ./cmd/buildopt \
+        ./cmd/buildopt-server \
+        ./internal/launcher \
+        ./internal/sessioningest
+
+    buildopt_launcher="${buildopt_test_root}/buildopt"
+    buildopt_server="${buildopt_test_root}/buildopt-server"
+    "${buildopt_script_dir}/run" \
+        --toolchain go \
+        -- go build \
+        -buildvcs=false \
+        -trimpath \
+        -o "${buildopt_launcher}" \
+        ./cmd/buildopt
+    "${buildopt_script_dir}/run" \
+        --toolchain go \
+        -- go build \
+        -buildvcs=false \
+        -trimpath \
+        -o "${buildopt_server}" \
+        ./cmd/buildopt-server
+fi
+
+buildopt_token=0123456789abcdefghijklmnopqrstuvwxyzABCDEFG
+buildopt_server_log="${buildopt_test_root}/server.log"
+BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+    "${buildopt_server}" serve --listen 127.0.0.1:0 \
+    >"${buildopt_server_log}" 2>&1 &
+buildopt_server_pid=$!
+
+buildopt_endpoint=
+for _ in {1..100}; do
+    buildopt_endpoint=$(
+        sed -n \
+            's/^buildopt-server: listening on \(http:\/\/127[.]0[.]0[.]1:[0-9][0-9]*\)$/\1/p' \
+            "${buildopt_server_log}" |
+            head -n 1
+    )
+    if [[ -n "${buildopt_endpoint}" ]]; then
+        break
+    fi
+    if ! kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        printf 'buildopt-server exited before readiness\n' >&2
+        cat "${buildopt_server_log}" >&2
+        exit 1
+    fi
+    sleep 0.05
+done
+if [[ -z "${buildopt_endpoint}" ]]; then
+    printf 'buildopt-server did not report a loopback endpoint\n' >&2
+    cat "${buildopt_server_log}" >&2
+    exit 1
+fi
+
+buildopt_run_case() {
+    local buildopt_name=$1
+    local buildopt_expected_exit=$2
+    local buildopt_log="${buildopt_test_root}/${buildopt_name}.log"
+
+    set +e
+    # The child shell, not this checker, must inspect the reserved variables.
+    # shellcheck disable=SC2016
+    BUILDOPT_SERVER_URL="${buildopt_endpoint}" \
+    BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+        "${buildopt_launcher}" run -- \
+        /bin/sh -c '
+            test -z "${BUILDOPT_SERVER_URL+x}" || exit 97
+            test -z "${BUILDOPT_SERVER_INGEST_TOKEN+x}" || exit 98
+            exit "$1"
+        ' buildopt-session-ingest "${buildopt_expected_exit}" \
+        >"${buildopt_log}" 2>&1
+    local buildopt_exit=$?
+    set -e
+
+    if ((buildopt_exit != buildopt_expected_exit)) ||
+        ! grep -Eq \
+            '^buildopt: buildopt-server accepted session [^[:space:]]+$' \
+            "${buildopt_log}"; then
+        printf 'session ingest case %s failed with exit %s\n' \
+            "${buildopt_name}" \
+            "${buildopt_exit}" >&2
+        cat "${buildopt_log}" >&2
+        exit 1
+    fi
+}
+
+buildopt_run_case success 0
+buildopt_run_case failure 37
+
+buildopt_bypass_log="${buildopt_test_root}/bypass.log"
+# The child shell, not this checker, must inspect the reserved variables.
+# shellcheck disable=SC2016
+if ! "${buildopt_launcher}" run -- \
+    /bin/sh -c '
+        test -z "${BUILDOPT_SERVER_URL+x}"
+        test -z "${BUILDOPT_SERVER_INGEST_TOKEN+x}"
+    ' >"${buildopt_bypass_log}" 2>&1; then
+    printf 'server-free local bypass failed\n' >&2
+    cat "${buildopt_bypass_log}" >&2
+    exit 1
+fi
+if grep -Fq 'buildopt-server' "${buildopt_bypass_log}"; then
+    printf 'server-free local bypass contacted the control plane\n' >&2
+    cat "${buildopt_bypass_log}" >&2
+    exit 1
+fi
+
+buildopt_unavailable_log="${buildopt_test_root}/unavailable.log"
+set +e
+BUILDOPT_SERVER_URL=http://127.0.0.1:1 \
+BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+    "${buildopt_launcher}" run -- /bin/sh -c 'exit 23' \
+    >"${buildopt_unavailable_log}" 2>&1
+buildopt_unavailable_exit=$?
+set -e
+if ((buildopt_unavailable_exit != 23)) ||
+    ! grep -Fq 'buildopt-server session ingest unavailable:' \
+        "${buildopt_unavailable_log}"; then
+    printf 'unavailable server did not preserve the child result\n' >&2
+    cat "${buildopt_unavailable_log}" >&2
+    exit 1
+fi
+
+for _ in {1..100}; do
+    buildopt_accepted_count=$(
+        grep -c '^buildopt-server: accepted session ' \
+            "${buildopt_server_log}" || true
+    )
+    if ((buildopt_accepted_count == 2)); then
+        break
+    fi
+    sleep 0.05
+done
+if ((buildopt_accepted_count != 2)) ||
+    ! grep -Eq \
+        '^buildopt-server: accepted session [^[:space:]]+ outcome=SUCCESS exit=0$' \
+        "${buildopt_server_log}" ||
+    ! grep -Eq \
+        '^buildopt-server: accepted session [^[:space:]]+ outcome=BUILD_FAILURE exit=37$' \
+        "${buildopt_server_log}"; then
+    printf 'buildopt-server did not receive both expected sessions\n' >&2
+    cat "${buildopt_server_log}" >&2
+    exit 1
+fi
+
+if grep -Fq -- "${buildopt_token}" "${buildopt_test_root}"/*.log; then
+    printf 'session ingest credential appeared in diagnostics\n' >&2
+    exit 1
+fi
+
+kill -TERM "${buildopt_server_pid}"
+set +e
+wait "${buildopt_server_pid}"
+buildopt_server_exit=$?
+set -e
+buildopt_server_pid=
+if ((buildopt_server_exit != 0)); then
+    printf 'buildopt-server graceful stop returned %s\n' \
+        "${buildopt_server_exit}" >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git status --porcelain=v1 --untracked-files=all 2>/dev/null || true
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'session ingest checker changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'WS-005 session ingest OK: authenticated real-binary delivery, idempotent server, outcome preservation, credential isolation, and local bypass\n'

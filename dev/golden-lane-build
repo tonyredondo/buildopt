@@ -112,7 +112,8 @@ if [[ "${buildopt_marker}" != "golden-lane-v1" ]]; then
 fi
 
 "${buildopt_script_dir}/check-gradle-plugin-handshake"
+"${buildopt_script_dir}/check-session-ingest"
 "${buildopt_script_dir}/check-gradle-correlation-fixture"
 "${buildopt_script_dir}/check-gradle-correlation-spike" --gradle-9-only
 
-printf 'Golden lane build OK: Gradle 9.6.1, Java 21, bytecode major 61, and authenticated local rendezvous\n'
+printf 'Golden lane build OK: Gradle 9.6.1, Java 21, bytecode major 61, authenticated local rendezvous, and server ingest\n'

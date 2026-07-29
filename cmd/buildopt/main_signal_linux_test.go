@@ -32,6 +32,9 @@ type signalProcessObservation struct {
 }
 
 func TestBuildoptForwardsSignalsToChildProcessGroup(t *testing.T) {
+	t.Setenv(serverURLEnvironment, "")
+	t.Setenv(serverTokenEnvironment, "")
+
 	buildoptBinary := buildBuildopt(t)
 	signalHelper := buildSignalHelper(t)
 
@@ -147,6 +150,9 @@ func TestBuildoptForwardsSignalsToChildProcessGroup(t *testing.T) {
 }
 
 func TestBuildoptReturnsConventionalStatusForUnhandledSignal(t *testing.T) {
+	t.Setenv(serverURLEnvironment, "")
+	t.Setenv(serverTokenEnvironment, "")
+
 	buildoptBinary := buildBuildopt(t)
 	signalHelper := buildSignalHelper(t)
 	ready := filepath.Join(t.TempDir(), "passive-ready.json")

@@ -1,6 +1,7 @@
 package launcher
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -9,6 +10,9 @@ import (
 	"os/exec"
 	"os/signal"
 	"syscall"
+	"time"
+
+	"github.com/tonyredondo/buildopt/internal/sessioningest"
 )
 
 const (
@@ -19,8 +23,9 @@ const (
 )
 
 // Run executes the WS-001 passthrough command with the WS-002 process contract,
-// exposes the neutral authenticated WS-003/WS-004 local rendezvous, and returns
-// the child process exit status.
+// exposes the neutral authenticated WS-003/WS-004 local rendezvous, delivers
+// the WS-005 session ingest when configured, and returns the child process exit
+// status.
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	if isHelp(args) {
 		_, _ = io.WriteString(stdout, usage)
@@ -32,6 +37,16 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	}
 
 	childArgs := args[2:]
+	startedAt := time.Now()
+	serverClient, serverConfigured, serverErr :=
+		sessioningest.ClientFromEnvironment(os.Getenv)
+	if serverErr != nil {
+		_, _ = fmt.Fprintf(
+			stderr,
+			"buildopt: buildopt-server session ingest unavailable: %v\n",
+			serverErr,
+		)
+	}
 	gateway, gatewayErr := startLocalGateway()
 	if gatewayErr != nil {
 		_, _ = fmt.Fprintf(
@@ -88,6 +103,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	go forwardSignals(command.Process.Pid, signals, stopForwarding, forwardingStopped, stderr)
 
 	err = command.Wait()
+	completedAt := time.Now()
 	signal.Stop(signals)
 	close(stopForwarding)
 	<-forwardingStopped
@@ -95,10 +111,40 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	if handshake != nil {
 		reportPluginHandshake(handshake.finish(), stderr)
 	}
+	exitCode := childWaitExitCode(childArgs[0], err, stderr)
+	if serverConfigured && gateway != nil && handshake != nil {
+		outcome := sessioningest.OutcomeBuildFailure
+		if exitCode == 0 {
+			outcome = sessioningest.OutcomeSuccess
+		}
+		record := sessioningest.NewRecord(
+			handshake.attemptID,
+			gateway.generation,
+			startedAt,
+			completedAt,
+			outcome,
+			exitCode,
+		)
+		ingestContext, cancel := context.WithTimeout(
+			context.Background(),
+			2*time.Second,
+		)
+		result, ingestErr := gateway.deliverSession(
+			ingestContext,
+			serverClient,
+			record,
+		)
+		cancel()
+		reportSessionIngest(record.SessionID, result, ingestErr, stderr)
+	}
 	if gateway != nil {
 		reportLocalGatewayClose(gateway.close(), stderr)
 	}
 
+	return exitCode
+}
+
+func childWaitExitCode(command string, err error, stderr io.Writer) int {
 	if err == nil {
 		return 0
 	}
@@ -114,12 +160,12 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		_, _ = fmt.Fprintf(
 			stderr,
 			"buildopt: command %q terminated without an exit code\n",
-			childArgs[0],
+			command,
 		)
 		return 1
 	}
 
-	return launchErrorExitCode(childArgs[0], err, stderr)
+	return launchErrorExitCode(command, err, stderr)
 }
 
 func reportLocalGatewayClose(err error, stderr io.Writer) {

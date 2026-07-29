@@ -12,4 +12,9 @@ cache data or upstream route yet; later lifecycle, policy, cache, and
 observation behavior must extend this boundary without replacing contract
 sources.
 
+`sessioningest/` contains the provisional `WS-005` gateway-to-server record,
+strict authenticated HTTP transport, and concurrency-safe in-memory acceptance
+store. It is an internal walking-skeleton boundary rather than the normative
+`BUILD_SESSION`; `WS-006` owns that export and its schema validation.
+
 No type in this directory replaces the normative schemas, OpenAPI, or Protobuf definitions in `contracts/`.

@@ -162,6 +162,8 @@ if ((${#buildopt_smoke_calls[@]} != 5)) ||
     [[ "${buildopt_smoke_calls[4]}" != \
         *$'\t--env\tBUILDOPT_GOLDEN_LANE_LAUNCHER_BINARY=/buildopt-host-tools/buildopt'* ]] ||
     [[ "${buildopt_smoke_calls[4]}" != \
+        *$'\t--env\tBUILDOPT_GOLDEN_LANE_SERVER_BINARY=/buildopt-host-tools/buildopt-server'* ]] ||
+    [[ "${buildopt_smoke_calls[4]}" != \
         *$'\t--env\tBUILDOPT_GOLDEN_LANE_USE_ACTIVE_JAVA=1'* ]] ||
     [[ "${buildopt_smoke_calls[4]}" != \
         *$'\t--volume\t'*':/buildopt-host-tools:ro'* ]] ||

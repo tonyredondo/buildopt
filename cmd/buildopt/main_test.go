@@ -30,6 +30,8 @@ const (
 	gatewayUserEnvironment   = "BUILDOPT_GATEWAY_USERNAME"
 	gatewayPassEnvironment   = "BUILDOPT_GATEWAY_PASSWORD"
 	gatewayGenEnvironment    = "BUILDOPT_GATEWAY_CONNECTION_GENERATION"
+	serverURLEnvironment     = "BUILDOPT_SERVER_URL"
+	serverTokenEnvironment   = "BUILDOPT_SERVER_INGEST_TOKEN"
 	gatewayReadyPath         = "/_buildopt/ready"
 	gatewayGenerationHeader  = "BuildOpt-Gateway-Connection-Generation"
 	expectedUsage            = "usage: buildopt run -- <command> [args...]\n"
@@ -52,6 +54,9 @@ type helperObservation struct {
 }
 
 func TestBuildoptCLI(t *testing.T) {
+	t.Setenv(serverURLEnvironment, "")
+	t.Setenv(serverTokenEnvironment, "")
+
 	buildoptBinary := buildBuildopt(t)
 
 	t.Run("preserves process contract and nonzero exit", func(t *testing.T) {

@@ -6,6 +6,8 @@ if (($# != 0)); then
     exit 64
 fi
 
+unset BUILDOPT_SERVER_URL BUILDOPT_SERVER_INGEST_TOKEN
+
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_fixture_source="${buildopt_repo_root}/fixtures/gradle-handshake"

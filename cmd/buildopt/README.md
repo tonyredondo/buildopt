@@ -100,3 +100,31 @@ after Configuration Cache reuse.
 
 Cache GET/PUT behavior, upstream credentials, retained task-event streaming,
 observability export, and every optimization remain inactive.
+
+## WS-005 server ingest
+
+When both `BUILDOPT_SERVER_URL` and `BUILDOPT_SERVER_INGEST_TOKEN` are present,
+the launcher captures the neutral session boundaries and child outcome, then
+asks the active local gateway to deliver one provisional internal record to
+`buildopt-server`. The walking skeleton accepts only a validated
+`http://127.0.0.1:<port>` server endpoint, disables proxies and redirects, uses
+a Bearer token plus the session ID as the idempotency key, and binds the record
+to the active `gatewayConnectionGeneration`.
+
+The server URL and token are launcher-only inputs. They are removed from the
+child environment and never enter Gradle, logs, or the session body. Missing,
+invalid, rejected, or unavailable server ingest remains fail-open and never
+replaces the child exit code. With both variables absent, local bypass does not
+contact the server.
+
+Run the real-binary ingest fixture with:
+
+```bash
+./dev/check-session-ingest
+```
+
+This block carries only session identity, gateway generation, neutral
+timestamps/duration, outcome, and exit code. `WS-006` owns construction and
+schema validation of the complete immutable `BUILD_SESSION v1`; durable
+storage, JSONL export, retries/spooling, cancellation classification, cache
+payloads, and optimization remain inactive.

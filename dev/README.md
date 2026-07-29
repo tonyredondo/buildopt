@@ -125,6 +125,25 @@ credential, and generation; concurrent slots receive distinct identities and
 reject each other's credentials; attacker-controlled parent values are
 replaced; and the endpoint is gone after the child exits.
 
+## Session ingest validation
+
+Build the real launcher and `buildopt-server`, exercise their authenticated
+`WS-005` integration, and run the involved packages under the race detector:
+
+```bash
+./dev/check-session-ingest
+```
+
+The checker starts the server on an operating-system-assigned loopback port,
+delivers successful and failed child sessions through the active gateway, and
+requires the server to observe the exact outcomes while the launcher preserves
+exit `0` and `37`. It proves that the server token is absent from the child and
+diagnostics, unavailable delivery remains fail-open, no server configuration
+performs a contact-free local bypass, and `SIGTERM` shuts down the server
+cleanly. Unit coverage adds strict JSON/authentication/size negatives,
+generation binding, idempotent replay, conflicting duplicate rejection, and
+concurrent acceptance.
+
 ## Gradle plugin handshake validation
 
 Build the packaged `dev.buildopt` plugin and exercise its neutral authenticated
@@ -280,7 +299,7 @@ Produce strict 4-CPU/16-GiB runner evidence on a host with sufficient resources:
 ./dev/run-golden-lane-container --require-runner-class
 ```
 
-The runner resolves the immutable image index by digest, requires its unique Linux AMD64 manifest to equal the recorded platform digest, pulls that exact reference, and verifies the local image operating system, architecture, and repository digest. It also builds the walking-skeleton launcher with the locked Go toolchain and `CGO_ENABLED=0` into a temporary read-only mount, so the JDK-only image can execute the real authenticated rendezvous without adding an unpinned compiler or `jq`. The subsequent container uses `--pull never`, checks the exact Java patch from the runner specification, and in strict mode verifies effective cgroup v2 CPU and memory limits from inside the container. It never treats the readable source tag as executable identity.
+The runner resolves the immutable image index by digest, requires its unique Linux AMD64 manifest to equal the recorded platform digest, pulls that exact reference, and verifies the local image operating system, architecture, and repository digest. It also builds the walking-skeleton launcher and server with the locked Go toolchain and `CGO_ENABLED=0` into a temporary read-only mount, so the JDK-only image can execute the real authenticated rendezvous and session ingest without adding an unpinned compiler or `jq`. The subsequent container uses `--pull never`, checks the exact Java patch from the runner specification, and in strict mode verifies effective cgroup v2 CPU and memory limits from inside the container. It never treats the readable source tag as executable identity.
 
 Invalid usage exits `64`, an unavailable daemon or image/build verification failure exits `1`, and a host that cannot enforce the strict runner class exits `2`. The child container's other nonzero status is preserved.
 

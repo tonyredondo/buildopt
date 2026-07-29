@@ -261,6 +261,8 @@ var reservedChildEnvironment = []string{
 	gatewayUsernameEnvironment,
 	gatewayPasswordEnvironment,
 	gatewayGenerationEnvironment,
+	serverURLEnvironment,
+	serverTokenEnvironment,
 }
 
 func replaceEnvironment(
