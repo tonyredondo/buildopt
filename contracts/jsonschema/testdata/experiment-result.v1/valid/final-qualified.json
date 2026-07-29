@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "EXPERIMENT_RESULT",
+  "experimentId": "experiment-cache-01",
+  "resultVersion": 2,
+  "supersedesResultVersion": 1,
+  "status": "FINAL",
+  "asOf": "2026-07-28T00:00:00Z",
+  "window": {
+    "startedAt": "2026-07-21T00:00:00Z",
+    "endedAt": "2026-07-28T00:00:00Z"
+  },
+  "effectScope": "ACTION_INCREMENTAL",
+  "actionIds": [
+    "action-cache-01"
+  ],
+  "measurementEpoch": 3,
+  "baselineDefinitionDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "controlDefinitionDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+  "metricDefinitionVersion": "build-impact-v1",
+  "measurementPolicyVersion": "beta-measurement-v1",
+  "population": {
+    "cohortId": "cohort-pr-linux-amd64",
+    "analysisUnit": "BUILD_SESSION",
+    "assignmentUnit": "CI_JOB",
+    "estimand": "SUCCESSFUL_BUILD_SESSION_LATENCY",
+    "requiredStrata": [
+      "environment",
+      "pipelineClass",
+      "runnerClass",
+      "outcome",
+      "workUnitsFingerprint",
+      "measurementEpoch"
+    ]
+  },
+  "samples": {
+    "assigned": {
+      "candidate": 124,
+      "control": 123
+    },
+    "analyzed": {
+      "candidate": 120,
+      "control": 120
+    },
+    "outcomes": {
+      "candidate": {
+        "SUCCESS": 120,
+        "BUILD_FAILURE": 2,
+        "INFRA_FAILURE": 1,
+        "CANCELLED": 1
+      },
+      "control": {
+        "SUCCESS": 120,
+        "BUILD_FAILURE": 1,
+        "INFRA_FAILURE": 1,
+        "CANCELLED": 1
+      }
+    },
+    "excludedSampleSize": 7,
+    "exclusions": [
+      {
+        "reason": "PREDECLARED_INFRA_FAILURE",
+        "count": 2
+      },
+      {
+        "reason": "MISSING_WORK_UNITS_FINGERPRINT",
+        "count": 5
+      }
+    ],
+    "measurementCoverageRatio": 0.972
+  },
+  "method": {
+    "analysisMethod": "PAIRED_BOOTSTRAP",
+    "effectStatistic": "PAIRED_MEAN_DELTA",
+    "intervalType": "ONE_SIDED_95"
+  },
+  "effects": {
+    "observedNetBuildTimeSavedMs": 1680,
+    "observedNetBuildTimeSavedInterval95Ms": [
+      720,
+      2490
+    ],
+    "observedBuildTimeReductionRatio": 0.061,
+    "observedBuildTimeReductionInterval95": [
+      0.026,
+      0.09
+    ],
+    "buildFailureRateDelta": 0,
+    "customerVisibleBuildP95DeltaMs": -810,
+    "customerVisibleBuildP95DeltaInterval95Ms": [
+      -1520,
+      210
+    ],
+    "customerVisibleFeedbackP95DeltaMs": -700,
+    "customerVisibleFeedbackP95DeltaInterval95Ms": [
+      -1400,
+      300
+    ],
+    "ciQueueP95DeltaMs": 80,
+    "ciQueueP95DeltaInterval95Ms": [
+      -100,
+      300
+    ],
+    "incrementalActionOverheadMs": 120,
+    "additionalRunnerOccupiedMsPerEligibleSession": 2200,
+    "requiredDeliverableDivergenceRate": 0,
+    "productAttributableFailureRate": 0
+  },
+  "economics": {
+    "grain": "PER_ELIGIBLE_SESSION",
+    "currency": "EUR",
+    "priceModelVersion": "ci-price-2026-07",
+    "buildComputeCostAvoided": 0.84,
+    "productRuntimeCost": 0.01,
+    "validationAndControlComputeCost": 0.08,
+    "incrementalStorageCost": 0.004,
+    "incrementalNetworkCost": 0.006,
+    "netInfrastructureValue": 0.74
+  },
+  "gateEvaluation": {
+    "windowMet": true,
+    "sampleMet": true,
+    "benefitMet": true,
+    "p95Met": true,
+    "p99State": "INSUFFICIENT_SAMPLE",
+    "correctnessMet": true,
+    "economicsMet": true,
+    "comparisonValid": true
+  },
+  "decision": {
+    "state": "PROMOTE",
+    "promotionClass": "DIRECT_REVERSIBLE",
+    "evaluatedAt": "2026-07-28T00:00:00Z",
+    "reasons": [
+      "All direct reversible beta gates passed"
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "EXPERIMENT_RESULT",
+  "experimentId": "experiment-invalid-03",
+  "resultVersion": 1,
+  "status": "PRELIMINARY",
+  "asOf": "2026-07-22T00:00:00Z",
+  "window": {
+    "startedAt": "2026-07-21T00:00:00Z",
+    "endedAt": "2026-07-22T00:00:00Z"
+  },
+  "effectScope": "ACTION_INCREMENTAL",
+  "measurementEpoch": 1,
+  "baselineDefinitionDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "controlDefinitionDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+  "metricDefinitionVersion": "build-impact-v1",
+  "measurementPolicyVersion": "beta-measurement-v1",
+  "population": {
+    "cohortId": "cohort-invalid",
+    "analysisUnit": "BUILD_SESSION",
+    "assignmentUnit": "CI_JOB",
+    "estimand": "SUCCESSFUL_BUILD_SESSION_LATENCY",
+    "requiredStrata": ["environment", "pipelineClass", "runnerClass", "outcome", "workUnitsFingerprint", "measurementEpoch"]
+  },
+  "samples": {
+    "assigned": {"candidate": 10, "control": 10},
+    "analyzed": {"candidate": 10, "control": 10},
+    "outcomes": {
+      "candidate": {"SUCCESS": 10, "BUILD_FAILURE": 0, "INFRA_FAILURE": 0, "CANCELLED": 0},
+      "control": {"SUCCESS": 10, "BUILD_FAILURE": 0, "INFRA_FAILURE": 0, "CANCELLED": 0}
+    },
+    "excludedSampleSize": 0,
+    "exclusions": [],
+    "measurementCoverageRatio": 1
+  },
+  "method": {
+    "analysisMethod": "PAIRED_BOOTSTRAP",
+    "effectStatistic": "PAIRED_MEAN_DELTA",
+    "intervalType": "CONFIDENCE_95"
+  },
+  "effects": {
+    "observedNetBuildTimeSavedMs": 100,
+    "observedNetBuildTimeSavedInterval95Ms": [-50, 250],
+    "observedBuildTimeReductionRatio": 0.01,
+    "observedBuildTimeReductionInterval95": [-0.01, 0.02],
+    "buildFailureRateDelta": 0,
+    "customerVisibleBuildP95DeltaMs": 0,
+    "customerVisibleBuildP95DeltaInterval95Ms": [-100, 100],
+    "incrementalActionOverheadMs": 25,
+    "requiredDeliverableDivergenceRate": 0,
+    "productAttributableFailureRate": 0
+  },
+  "decision": {
+    "state": "PRELIMINARY",
+    "promotionClass": "DIRECT_REVERSIBLE",
+    "evaluatedAt": "2026-07-22T00:00:00Z",
+    "reasons": ["Action identifier is missing"]
+  }
+}

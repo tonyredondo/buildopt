@@ -1,0 +1,4 @@
+{
+  "experimentResult": "../../experiment-result.v1/valid/invalidated-result.json",
+  "actionRecord": "../../action-record.v1/valid/rollback-invalidated.json"
+}

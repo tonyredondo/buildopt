@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "EXPERIMENT_RESULT",
+  "experimentId": "experiment-cache-01",
+  "resultVersion": 1,
+  "status": "PRELIMINARY",
+  "asOf": "2026-07-22T00:00:00Z",
+  "window": {
+    "startedAt": "2026-07-21T00:00:00Z",
+    "endedAt": "2026-07-22T00:00:00Z"
+  },
+  "effectScope": "ACTION_INCREMENTAL",
+  "actionIds": [
+    "action-cache-01"
+  ],
+  "measurementEpoch": 3,
+  "baselineDefinitionDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "controlDefinitionDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+  "metricDefinitionVersion": "build-impact-v1",
+  "measurementPolicyVersion": "beta-measurement-v1",
+  "population": {
+    "cohortId": "cohort-pr-linux-amd64",
+    "analysisUnit": "BUILD_SESSION",
+    "assignmentUnit": "CI_JOB",
+    "estimand": "SUCCESSFUL_BUILD_SESSION_LATENCY",
+    "requiredStrata": [
+      "environment",
+      "pipelineClass",
+      "runnerClass",
+      "outcome",
+      "workUnitsFingerprint",
+      "measurementEpoch"
+    ]
+  },
+  "samples": {
+    "assigned": {
+      "candidate": 22,
+      "control": 21
+    },
+    "analyzed": {
+      "candidate": 20,
+      "control": 20
+    },
+    "outcomes": {
+      "candidate": {
+        "SUCCESS": 20,
+        "BUILD_FAILURE": 1,
+        "INFRA_FAILURE": 1,
+        "CANCELLED": 0
+      },
+      "control": {
+        "SUCCESS": 20,
+        "BUILD_FAILURE": 1,
+        "INFRA_FAILURE": 0,
+        "CANCELLED": 0
+      }
+    },
+    "excludedSampleSize": 3,
+    "exclusions": [
+      {
+        "reason": "PREDECLARED_INFRA_FAILURE",
+        "count": 1
+      },
+      {
+        "reason": "MISSING_WORK_UNITS_FINGERPRINT",
+        "count": 2
+      }
+    ],
+    "measurementCoverageRatio": 0.93
+  },
+  "method": {
+    "analysisMethod": "PAIRED_BOOTSTRAP",
+    "effectStatistic": "PAIRED_MEAN_DELTA",
+    "intervalType": "CONFIDENCE_95"
+  },
+  "effects": {
+    "observedNetBuildTimeSavedMs": 650,
+    "observedNetBuildTimeSavedInterval95Ms": [
+      -150,
+      1420
+    ],
+    "observedBuildTimeReductionRatio": 0.024,
+    "observedBuildTimeReductionInterval95": [
+      -0.006,
+      0.051
+    ],
+    "buildFailureRateDelta": 0,
+    "customerVisibleBuildP95DeltaMs": -420,
+    "customerVisibleBuildP95DeltaInterval95Ms": [
+      -1300,
+      590
+    ],
+    "incrementalActionOverheadMs": 90,
+    "requiredDeliverableDivergenceRate": 0,
+    "productAttributableFailureRate": 0
+  },
+  "decision": {
+    "state": "PRELIMINARY",
+    "promotionClass": "DIRECT_REVERSIBLE",
+    "evaluatedAt": "2026-07-22T00:00:00Z",
+    "reasons": [
+      "The learning sample is below the beta promotion minimum"
+    ]
+  }
+}

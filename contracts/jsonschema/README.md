@@ -34,4 +34,51 @@ The product-side model remains dependency-free; the checker builds the
 isolated validator as a separate executable and injects it into the pinned
 JDK-only golden container.
 
+## EXPERIMENT_RESULT and ACTION_RECORD v1
+
+[`experiment-result.v1.schema.json`](./experiment-result.v1.schema.json) and
+[`action-record.v1.schema.json`](./action-record.v1.schema.json) are the
+normative `F0-012` contracts. Their canonical identifiers end in
+`experiment-result.v1.schema.json` and `action-record.v1.schema.json`; both
+start at `schemaVersion: 1.0`.
+
+- `EXPERIMENT_RESULT` is an immutable, append-only aggregate over an explicit
+  window and population. Every later version names its immediate predecessor.
+  It records samples, all assigned outcomes, exclusions, method, intervals,
+  metric/policy versions, and one of `PRELIMINARY | FINAL | INVALIDATED`.
+- A preliminary result can publish measured effects but cannot claim a
+  promotion. A final result publishes gate evaluation. A `PROMOTE` decision
+  requires the beta sample floor and affirmative benefit, p95, correctness,
+  economics, and comparison gates; insufficient p99 data remains explicit.
+- An invalidation is a new result version. It identifies the invalidated
+  predecessor and supporting evidence without rewriting that result or
+  republishing its effects as current.
+- `ACTION_RECORD` is one append-only action-rollout transition with an exact
+  prior-state/sequence precondition, source and policy binding, evidence, and
+  authorization basis. It never embeds aggregate observed effects.
+- `ACTIVATE_IN_CI` and `ACTIVATE_LOCALLY` require a referenced `FINAL` result.
+  Cross-record validation additionally requires that exact linked result to
+  say `PROMOTE`. A preliminary, inconclusive, invalidated, mismatched, or stale
+  result cannot authorize activation.
+- A record is audit evidence, not an executable command. Consumers still need
+  the separately authenticated policy and state precondition before changing
+  runtime behavior.
+
+JSON Schema enforces each document's closed shape and local state conditions.
+The lifecycle checker adds invariants that Draft 2020-12 cannot express:
+timestamp and interval order, immediate version ancestry, count
+reconciliation, state/sequence agreement, authorization timing, action
+membership, and exact result-reference linkage.
+
+Run all individual and cross-record fixtures with:
+
+```bash
+./dev/check-experiment-action-schemas
+```
+
+The command validates four valid and four invalid aggregate records, six valid
+and four invalid transition records, and three valid and three invalid linked
+lifecycle vectors. All values are synthetic. The test remains in the isolated
+schema-validator Go module and is also executed by the base CI core lane.
+
 Future schemas must retain the same explicit identifier, compatibility, required-field, unknown-field, format, bound, and positive/negative fixture policy. Signed commands additionally fail closed on unknown fields.

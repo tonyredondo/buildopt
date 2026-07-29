@@ -1,0 +1,1040 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/experiment-result.v1.schema.json",
+  "title": "BuildOpt EXPERIMENT_RESULT v1",
+  "description": "Normative append-only aggregate experiment result for OBS-002 and MEASURE-001. It is computed after BUILD_SESSION records close and never mutates those records.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "experimentId",
+    "resultVersion",
+    "status",
+    "asOf",
+    "window",
+    "effectScope",
+    "measurementEpoch",
+    "baselineDefinitionDigest",
+    "controlDefinitionDigest",
+    "metricDefinitionVersion",
+    "measurementPolicyVersion",
+    "population",
+    "samples",
+    "method",
+    "decision"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "recordType": {
+      "const": "EXPERIMENT_RESULT"
+    },
+    "experimentId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "resultVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647
+    },
+    "supersedesResultVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647,
+      "description": "Immediately preceding immutable result version. Producers must make this lower than resultVersion."
+    },
+    "status": {
+      "enum": [
+        "PRELIMINARY",
+        "FINAL",
+        "INVALIDATED"
+      ]
+    },
+    "asOf": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "window": {
+      "$ref": "#/$defs/window"
+    },
+    "effectScope": {
+      "enum": [
+        "PRODUCT_TOTAL",
+        "ACTION_INCREMENTAL"
+      ]
+    },
+    "actionIds": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/identifier"
+      },
+      "minItems": 1,
+      "maxItems": 256,
+      "uniqueItems": true
+    },
+    "measurementEpoch": {
+      "$ref": "#/$defs/nonNegativeInteger"
+    },
+    "baselineDefinitionDigest": {
+      "$ref": "#/$defs/sha256Digest"
+    },
+    "controlDefinitionDigest": {
+      "$ref": "#/$defs/sha256Digest"
+    },
+    "metricDefinitionVersion": {
+      "const": "build-impact-v1"
+    },
+    "measurementPolicyVersion": {
+      "const": "beta-measurement-v1"
+    },
+    "population": {
+      "$ref": "#/$defs/population"
+    },
+    "samples": {
+      "$ref": "#/$defs/samples"
+    },
+    "method": {
+      "$ref": "#/$defs/method"
+    },
+    "effects": {
+      "$ref": "#/$defs/effects"
+    },
+    "economics": {
+      "$ref": "#/$defs/economics"
+    },
+    "gateEvaluation": {
+      "$ref": "#/$defs/gateEvaluation"
+    },
+    "decision": {
+      "$ref": "#/$defs/decision"
+    },
+    "invalidation": {
+      "$ref": "#/$defs/invalidation"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "resultVersion": {
+            "minimum": 2
+          }
+        },
+        "required": [
+          "resultVersion"
+        ]
+      },
+      "then": {
+        "required": [
+          "supersedesResultVersion"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "supersedesResultVersion"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "effectScope": {
+            "const": "ACTION_INCREMENTAL"
+          }
+        },
+        "required": [
+          "effectScope"
+        ]
+      },
+      "then": {
+        "required": [
+          "actionIds"
+        ],
+        "properties": {
+          "effects": {
+            "required": [
+              "incrementalActionOverheadMs"
+            ],
+            "properties": {
+              "productSynchronousOverheadMs": false,
+              "productSynchronousOverheadRatio": false
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "effects": {
+            "required": [
+              "productSynchronousOverheadMs",
+              "productSynchronousOverheadRatio"
+            ],
+            "properties": {
+              "incrementalActionOverheadMs": false
+            }
+          }
+        },
+        "not": {
+          "required": [
+            "actionIds"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "PRELIMINARY"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "effects"
+        ],
+        "properties": {
+          "decision": {
+            "properties": {
+              "state": {
+                "const": "PRELIMINARY"
+              }
+            }
+          }
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "gateEvaluation"
+              ]
+            },
+            {
+              "required": [
+                "invalidation"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "FINAL"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "effects",
+          "gateEvaluation"
+        ],
+        "properties": {
+          "decision": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "PROMOTE",
+                  "DO_NOT_PROMOTE",
+                  "INCONCLUSIVE"
+                ]
+              }
+            }
+          }
+        },
+        "not": {
+          "required": [
+            "invalidation"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "INVALIDATED"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "invalidation"
+        ],
+        "properties": {
+          "decision": {
+            "properties": {
+              "state": {
+                "const": "INVALIDATED"
+              }
+            }
+          },
+          "effects": false,
+          "economics": false,
+          "gateEvaluation": false
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "decision": {
+            "properties": {
+              "state": {
+                "const": "PROMOTE"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          }
+        },
+        "required": [
+          "decision"
+        ]
+      },
+      "then": {
+        "required": [
+          "economics"
+        ],
+        "properties": {
+          "status": {
+            "const": "FINAL"
+          },
+          "gateEvaluation": {
+            "properties": {
+              "windowMet": {
+                "const": true
+              },
+              "sampleMet": {
+                "const": true
+              },
+              "benefitMet": {
+                "const": true
+              },
+              "p95Met": {
+                "const": true
+              },
+              "p99State": {
+                "enum": [
+                  "PASSED",
+                  "INSUFFICIENT_SAMPLE"
+                ]
+              },
+              "correctnessMet": {
+                "const": true
+              },
+              "economicsMet": {
+                "const": true
+              },
+              "comparisonValid": {
+                "const": true
+              }
+            }
+          },
+          "effects": {
+            "required": [
+              "customerVisibleFeedbackP95DeltaMs",
+              "customerVisibleFeedbackP95DeltaInterval95Ms",
+              "ciQueueP95DeltaMs",
+              "ciQueueP95DeltaInterval95Ms"
+            ],
+            "properties": {
+              "requiredDeliverableDivergenceRate": {
+                "const": 0
+              },
+              "productAttributableFailureRate": {
+                "const": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "decision": {
+            "properties": {
+              "state": {
+                "const": "PROMOTE"
+              },
+              "promotionClass": {
+                "const": "DIRECT_REVERSIBLE"
+              }
+            },
+            "required": [
+              "state",
+              "promotionClass"
+            ]
+          }
+        },
+        "required": [
+          "decision"
+        ]
+      },
+      "then": {
+        "properties": {
+          "samples": {
+            "properties": {
+              "analyzed": {
+                "properties": {
+                  "candidate": {
+                    "minimum": 100
+                  },
+                  "control": {
+                    "minimum": 100
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "decision": {
+            "properties": {
+              "state": {
+                "const": "PROMOTE"
+              },
+              "promotionClass": {
+                "const": "PROOF_GATED"
+              }
+            },
+            "required": [
+              "state",
+              "promotionClass"
+            ]
+          }
+        },
+        "required": [
+          "decision"
+        ]
+      },
+      "then": {
+        "properties": {
+          "samples": {
+            "properties": {
+              "analyzed": {
+                "properties": {
+                  "candidate": {
+                    "minimum": 200
+                  },
+                  "control": {
+                    "minimum": 200
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/@+-]{0,255}$"
+    },
+    "sha256Digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.[0-9]{1,9})?Z$"
+    },
+    "nonNegativeInteger": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "signedMilliseconds": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "signedRatio": {
+      "type": "number",
+      "minimum": -1000000,
+      "maximum": 1000000
+    },
+    "rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "startedAt",
+        "endedAt"
+      ],
+      "properties": {
+        "startedAt": {
+          "$ref": "#/$defs/utcTimestamp"
+        },
+        "endedAt": {
+          "$ref": "#/$defs/utcTimestamp"
+        }
+      }
+    },
+    "population": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cohortId",
+        "analysisUnit",
+        "assignmentUnit",
+        "estimand",
+        "requiredStrata"
+      ],
+      "properties": {
+        "cohortId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "analysisUnit": {
+          "const": "BUILD_SESSION"
+        },
+        "assignmentUnit": {
+          "enum": [
+            "BUILD_SESSION",
+            "CI_JOB"
+          ]
+        },
+        "estimand": {
+          "enum": [
+            "SUCCESSFUL_BUILD_SESSION_LATENCY",
+            "INTENTION_TO_TREAT_OUTCOMES"
+          ]
+        },
+        "requiredStrata": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "environment"
+            },
+            {
+              "const": "pipelineClass"
+            },
+            {
+              "const": "runnerClass"
+            },
+            {
+              "const": "outcome"
+            },
+            {
+              "const": "workUnitsFingerprint"
+            },
+            {
+              "const": "measurementEpoch"
+            }
+          ],
+          "items": false,
+          "minItems": 6,
+          "maxItems": 6
+        }
+      }
+    },
+    "armCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate",
+        "control"
+      ],
+      "properties": {
+        "candidate": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "control": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        }
+      }
+    },
+    "outcomeCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "SUCCESS",
+        "BUILD_FAILURE",
+        "INFRA_FAILURE",
+        "CANCELLED"
+      ],
+      "properties": {
+        "SUCCESS": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "BUILD_FAILURE": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "INFRA_FAILURE": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "CANCELLED": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        }
+      }
+    },
+    "outcomesByArm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate",
+        "control"
+      ],
+      "properties": {
+        "candidate": {
+          "$ref": "#/$defs/outcomeCounts"
+        },
+        "control": {
+          "$ref": "#/$defs/outcomeCounts"
+        }
+      }
+    },
+    "exclusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reason",
+        "count"
+      ],
+      "properties": {
+        "reason": {
+          "enum": [
+            "PREDECLARED_INFRA_FAILURE",
+            "MISSING_WORK_UNITS_FINGERPRINT",
+            "CROSS_ARM_CONTAMINATION",
+            "INELIGIBLE",
+            "OTHER_PREDECLARED"
+          ]
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "samples": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assigned",
+        "analyzed",
+        "outcomes",
+        "excludedSampleSize",
+        "exclusions",
+        "measurementCoverageRatio"
+      ],
+      "properties": {
+        "assigned": {
+          "$ref": "#/$defs/armCounts"
+        },
+        "analyzed": {
+          "$ref": "#/$defs/armCounts"
+        },
+        "outcomes": {
+          "$ref": "#/$defs/outcomesByArm"
+        },
+        "excludedSampleSize": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/exclusion"
+          },
+          "maxItems": 64
+        },
+        "measurementCoverageRatio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "method": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "analysisMethod",
+        "effectStatistic",
+        "intervalType"
+      ],
+      "properties": {
+        "analysisMethod": {
+          "enum": [
+            "PAIRED_BOOTSTRAP",
+            "STRATIFIED_CLUSTER_BOOTSTRAP",
+            "FIXED_COHORT_COMPARISON"
+          ]
+        },
+        "effectStatistic": {
+          "enum": [
+            "PAIRED_MEAN_DELTA",
+            "STRATIFIED_MEAN_DELTA"
+          ]
+        },
+        "intervalType": {
+          "enum": [
+            "CONFIDENCE_95",
+            "ONE_SIDED_95"
+          ]
+        }
+      }
+    },
+    "signedMillisecondsInterval": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "$ref": "#/$defs/signedMilliseconds"
+        },
+        {
+          "$ref": "#/$defs/signedMilliseconds"
+        }
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "signedRatioInterval": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "$ref": "#/$defs/signedRatio"
+        },
+        {
+          "$ref": "#/$defs/signedRatio"
+        }
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "effects": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observedNetBuildTimeSavedMs",
+        "observedNetBuildTimeSavedInterval95Ms",
+        "observedBuildTimeReductionRatio",
+        "observedBuildTimeReductionInterval95",
+        "buildFailureRateDelta",
+        "customerVisibleBuildP95DeltaMs",
+        "customerVisibleBuildP95DeltaInterval95Ms",
+        "requiredDeliverableDivergenceRate",
+        "productAttributableFailureRate"
+      ],
+      "properties": {
+        "observedNetBuildTimeSavedMs": {
+          "$ref": "#/$defs/signedMilliseconds"
+        },
+        "observedNetBuildTimeSavedInterval95Ms": {
+          "$ref": "#/$defs/signedMillisecondsInterval"
+        },
+        "observedBuildTimeReductionRatio": {
+          "$ref": "#/$defs/signedRatio"
+        },
+        "observedBuildTimeReductionInterval95": {
+          "$ref": "#/$defs/signedRatioInterval"
+        },
+        "buildFailureRateDelta": {
+          "$ref": "#/$defs/signedRatio"
+        },
+        "customerVisibleBuildP95DeltaMs": {
+          "$ref": "#/$defs/signedMilliseconds"
+        },
+        "customerVisibleBuildP95DeltaInterval95Ms": {
+          "$ref": "#/$defs/signedMillisecondsInterval"
+        },
+        "customerVisibleBuildP99DeltaMs": {
+          "$ref": "#/$defs/signedMilliseconds"
+        },
+        "customerVisibleBuildP99DeltaInterval95Ms": {
+          "$ref": "#/$defs/signedMillisecondsInterval"
+        },
+        "customerVisibleFeedbackP95DeltaMs": {
+          "$ref": "#/$defs/signedMilliseconds"
+        },
+        "customerVisibleFeedbackP95DeltaInterval95Ms": {
+          "$ref": "#/$defs/signedMillisecondsInterval"
+        },
+        "customerVisibleFeedbackP99DeltaMs": {
+          "$ref": "#/$defs/signedMilliseconds"
+        },
+        "customerVisibleFeedbackP99DeltaInterval95Ms": {
+          "$ref": "#/$defs/signedMillisecondsInterval"
+        },
+        "ciQueueP95DeltaMs": {
+          "$ref": "#/$defs/signedMilliseconds"
+        },
+        "ciQueueP95DeltaInterval95Ms": {
+          "$ref": "#/$defs/signedMillisecondsInterval"
+        },
+        "ciQueueP99DeltaMs": {
+          "$ref": "#/$defs/signedMilliseconds"
+        },
+        "ciQueueP99DeltaInterval95Ms": {
+          "$ref": "#/$defs/signedMillisecondsInterval"
+        },
+        "productSynchronousOverheadMs": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "productSynchronousOverheadRatio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "incrementalActionOverheadMs": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "additionalRunnerOccupiedMsPerEligibleSession": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "requiredDeliverableDivergenceRate": {
+          "$ref": "#/$defs/rate"
+        },
+        "productAttributableFailureRate": {
+          "$ref": "#/$defs/rate"
+        }
+      },
+      "dependentRequired": {
+        "customerVisibleBuildP99DeltaMs": [
+          "customerVisibleBuildP99DeltaInterval95Ms"
+        ],
+        "customerVisibleBuildP99DeltaInterval95Ms": [
+          "customerVisibleBuildP99DeltaMs"
+        ],
+        "customerVisibleFeedbackP95DeltaMs": [
+          "customerVisibleFeedbackP95DeltaInterval95Ms"
+        ],
+        "customerVisibleFeedbackP95DeltaInterval95Ms": [
+          "customerVisibleFeedbackP95DeltaMs"
+        ],
+        "customerVisibleFeedbackP99DeltaMs": [
+          "customerVisibleFeedbackP99DeltaInterval95Ms"
+        ],
+        "customerVisibleFeedbackP99DeltaInterval95Ms": [
+          "customerVisibleFeedbackP99DeltaMs"
+        ],
+        "ciQueueP95DeltaMs": [
+          "ciQueueP95DeltaInterval95Ms"
+        ],
+        "ciQueueP95DeltaInterval95Ms": [
+          "ciQueueP95DeltaMs"
+        ],
+        "ciQueueP99DeltaMs": [
+          "ciQueueP99DeltaInterval95Ms"
+        ],
+        "ciQueueP99DeltaInterval95Ms": [
+          "ciQueueP99DeltaMs"
+        ]
+      }
+    },
+    "economics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "grain",
+        "currency",
+        "priceModelVersion",
+        "buildComputeCostAvoided",
+        "productRuntimeCost",
+        "validationAndControlComputeCost",
+        "incrementalStorageCost",
+        "incrementalNetworkCost",
+        "netInfrastructureValue"
+      ],
+      "properties": {
+        "grain": {
+          "const": "PER_ELIGIBLE_SESSION"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "priceModelVersion": {
+          "$ref": "#/$defs/identifier"
+        },
+        "buildComputeCostAvoided": {
+          "type": "number"
+        },
+        "productRuntimeCost": {
+          "type": "number",
+          "minimum": 0
+        },
+        "validationAndControlComputeCost": {
+          "type": "number",
+          "minimum": 0
+        },
+        "incrementalStorageCost": {
+          "type": "number",
+          "minimum": 0
+        },
+        "incrementalNetworkCost": {
+          "type": "number",
+          "minimum": 0
+        },
+        "netInfrastructureValue": {
+          "type": "number"
+        }
+      }
+    },
+    "gateEvaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "windowMet",
+        "sampleMet",
+        "benefitMet",
+        "p95Met",
+        "p99State",
+        "correctnessMet",
+        "economicsMet",
+        "comparisonValid"
+      ],
+      "properties": {
+        "windowMet": {
+          "type": "boolean"
+        },
+        "sampleMet": {
+          "type": "boolean"
+        },
+        "benefitMet": {
+          "type": "boolean"
+        },
+        "p95Met": {
+          "type": "boolean"
+        },
+        "p99State": {
+          "enum": [
+            "PASSED",
+            "FAILED",
+            "INSUFFICIENT_SAMPLE"
+          ]
+        },
+        "correctnessMet": {
+          "type": "boolean"
+        },
+        "economicsMet": {
+          "type": "boolean"
+        },
+        "comparisonValid": {
+          "type": "boolean"
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "promotionClass",
+        "evaluatedAt",
+        "reasons"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "PRELIMINARY",
+            "PROMOTE",
+            "DO_NOT_PROMOTE",
+            "INCONCLUSIVE",
+            "INVALIDATED"
+          ]
+        },
+        "promotionClass": {
+          "enum": [
+            "DIRECT_REVERSIBLE",
+            "PROOF_GATED"
+          ]
+        },
+        "evaluatedAt": {
+          "$ref": "#/$defs/utcTimestamp"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true
+        }
+      }
+    },
+    "evidenceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenceId",
+        "digest"
+      ],
+      "properties": {
+        "evidenceId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256Digest"
+        }
+      }
+    },
+    "invalidation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "invalidatedResultVersion",
+        "invalidatedAt",
+        "reason",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "invalidatedResultVersion": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "invalidatedAt": {
+          "$ref": "#/$defs/utcTimestamp"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceReference"
+          },
+          "minItems": 1,
+          "maxItems": 256
+        }
+      }
+    }
+  }
+}

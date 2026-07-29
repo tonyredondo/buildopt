@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "EXPERIMENT_RESULT",
+  "experimentId": "experiment-invalid-01",
+  "resultVersion": 1,
+  "status": "PRELIMINARY",
+  "asOf": "2026-07-22T00:00:00Z",
+  "window": {
+    "startedAt": "2026-07-21T00:00:00Z",
+    "endedAt": "2026-07-22T00:00:00Z"
+  },
+  "effectScope": "PRODUCT_TOTAL",
+  "measurementEpoch": 1,
+  "baselineDefinitionDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "controlDefinitionDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+  "metricDefinitionVersion": "build-impact-v1",
+  "measurementPolicyVersion": "beta-measurement-v1",
+  "population": {
+    "cohortId": "cohort-invalid",
+    "analysisUnit": "BUILD_SESSION",
+    "assignmentUnit": "CI_JOB",
+    "estimand": "SUCCESSFUL_BUILD_SESSION_LATENCY",
+    "requiredStrata": ["environment", "pipelineClass", "runnerClass", "outcome", "workUnitsFingerprint", "measurementEpoch"]
+  },
+  "samples": {
+    "assigned": {"candidate": 10, "control": 10},
+    "analyzed": {"candidate": 10, "control": 10},
+    "outcomes": {
+      "candidate": {"SUCCESS": 10, "BUILD_FAILURE": 0, "INFRA_FAILURE": 0, "CANCELLED": 0},
+      "control": {"SUCCESS": 10, "BUILD_FAILURE": 0, "INFRA_FAILURE": 0, "CANCELLED": 0}
+    },
+    "excludedSampleSize": 0,
+    "exclusions": [],
+    "measurementCoverageRatio": 1
+  },
+  "method": {
+    "analysisMethod": "PAIRED_BOOTSTRAP",
+    "effectStatistic": "PAIRED_MEAN_DELTA",
+    "intervalType": "CONFIDENCE_95"
+  },
+  "effects": {
+    "observedNetBuildTimeSavedMs": 600,
+    "observedNetBuildTimeSavedInterval95Ms": [100, 900],
+    "observedBuildTimeReductionRatio": 0.03,
+    "observedBuildTimeReductionInterval95": [0.01, 0.05],
+    "buildFailureRateDelta": 0,
+    "customerVisibleBuildP95DeltaMs": -400,
+    "customerVisibleBuildP95DeltaInterval95Ms": [-700, 100],
+    "productSynchronousOverheadMs": 100,
+    "productSynchronousOverheadRatio": 0.005,
+    "requiredDeliverableDivergenceRate": 0,
+    "productAttributableFailureRate": 0
+  },
+  "decision": {
+    "state": "PROMOTE",
+    "promotionClass": "DIRECT_REVERSIBLE",
+    "evaluatedAt": "2026-07-22T00:00:00Z",
+    "reasons": ["Invalid preliminary promotion"]
+  }
+}

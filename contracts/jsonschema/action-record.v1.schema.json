@@ -1,0 +1,754 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/action-record.v1.schema.json",
+  "title": "BuildOpt ACTION_RECORD v1",
+  "description": "Normative append-only action rollout transition for OBS-002. The record audits a state change and its authorization; it is not itself an instruction to execute an optimization.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "eventId",
+    "actionId",
+    "sequence",
+    "occurredAt",
+    "repositoryId",
+    "actionType",
+    "target",
+    "effectScope",
+    "stateType",
+    "transition",
+    "fromState",
+    "toState",
+    "precondition",
+    "actor",
+    "source",
+    "policy",
+    "evidenceRefs",
+    "authorization",
+    "validation",
+    "rollbackAvailable",
+    "idempotencyKey"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "recordType": {
+      "const": "ACTION_RECORD"
+    },
+    "eventId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "actionId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647
+    },
+    "occurredAt": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "repositoryId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "actionType": {
+      "enum": [
+        "ENABLE_REMOTE_CACHE",
+        "ENABLE_CONFIGURATION_CACHE",
+        "ADJUST_WORKERS",
+        "ADJUST_HEAP",
+        "ENABLE_TASK_CACHE",
+        "APPLY_PATCH"
+      ]
+    },
+    "target": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "effectScope": {
+      "enum": [
+        "PRODUCT_TOTAL",
+        "ACTION_INCREMENTAL"
+      ]
+    },
+    "stateType": {
+      "const": "ACTION_ROLLOUT"
+    },
+    "transition": {
+      "enum": [
+        "PROPOSE",
+        "BEGIN_SHADOW",
+        "BEGIN_CI_CANARY",
+        "ACTIVATE_IN_CI",
+        "ACTIVATE_LOCALLY",
+        "SUSPEND",
+        "ROLLBACK"
+      ]
+    },
+    "fromState": {
+      "$ref": "#/$defs/actionState"
+    },
+    "toState": {
+      "$ref": "#/$defs/actionState"
+    },
+    "precondition": {
+      "$ref": "#/$defs/precondition"
+    },
+    "actor": {
+      "$ref": "#/$defs/identifier"
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "policy": {
+      "$ref": "#/$defs/policy"
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidenceReference"
+      },
+      "minItems": 1,
+      "maxItems": 256
+    },
+    "authorization": {
+      "$ref": "#/$defs/authorization"
+    },
+    "validation": {
+      "enum": [
+        "PASSED",
+        "INCONCLUSIVE",
+        "FAILED"
+      ]
+    },
+    "rollbackAvailable": {
+      "type": "boolean"
+    },
+    "idempotencyKey": {
+      "$ref": "#/$defs/identifier"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "authorization": {
+            "properties": {
+              "basis": {
+                "const": "EXPERIMENT_RESULT"
+              }
+            },
+            "required": [
+              "basis"
+            ]
+          }
+        },
+        "required": [
+          "authorization"
+        ]
+      },
+      "then": {
+        "properties": {
+          "authorization": {
+            "required": [
+              "experimentResultRef"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transition": {
+            "const": "PROPOSE"
+          }
+        },
+        "required": [
+          "transition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "fromState": {
+            "const": "ABSENT"
+          },
+          "toState": {
+            "const": "PROPOSED"
+          },
+          "precondition": {
+            "properties": {
+              "expectedState": {
+                "const": "ABSENT"
+              },
+              "expectedSequence": {
+                "const": 0
+              }
+            }
+          },
+          "authorization": {
+            "properties": {
+              "basis": {
+                "const": "POLICY"
+              },
+              "decision": {
+                "const": "APPROVE_TRANSITION"
+              }
+            },
+            "not": {
+              "required": [
+                "experimentResultRef"
+              ]
+            }
+          },
+          "validation": {
+            "const": "INCONCLUSIVE"
+          },
+          "rollbackAvailable": {
+            "const": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transition": {
+            "const": "BEGIN_SHADOW"
+          }
+        },
+        "required": [
+          "transition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "fromState": {
+            "const": "PROPOSED"
+          },
+          "toState": {
+            "const": "SHADOW"
+          },
+          "precondition": {
+            "properties": {
+              "expectedState": {
+                "const": "PROPOSED"
+              }
+            }
+          },
+          "authorization": {
+            "properties": {
+              "basis": {
+                "const": "POLICY"
+              },
+              "decision": {
+                "const": "APPROVE_TRANSITION"
+              }
+            },
+            "not": {
+              "required": [
+                "experimentResultRef"
+              ]
+            }
+          },
+          "validation": {
+            "const": "INCONCLUSIVE"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transition": {
+            "const": "BEGIN_CI_CANARY"
+          }
+        },
+        "required": [
+          "transition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "fromState": {
+            "const": "SHADOW"
+          },
+          "toState": {
+            "const": "CI_CANARY"
+          },
+          "precondition": {
+            "properties": {
+              "expectedState": {
+                "const": "SHADOW"
+              }
+            }
+          },
+          "authorization": {
+            "properties": {
+              "basis": {
+                "enum": [
+                  "POLICY",
+                  "EXPERIMENT_RESULT"
+                ]
+              },
+              "decision": {
+                "const": "APPROVE_TRANSITION"
+              },
+              "experimentResultRef": {
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PRELIMINARY",
+                      "FINAL"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transition": {
+            "enum": [
+              "ACTIVATE_IN_CI",
+              "ACTIVATE_LOCALLY"
+            ]
+          }
+        },
+        "required": [
+          "transition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "authorization": {
+            "properties": {
+              "basis": {
+                "const": "EXPERIMENT_RESULT"
+              },
+              "decision": {
+                "const": "APPROVE_TRANSITION"
+              },
+              "experimentResultRef": {
+                "properties": {
+                  "status": {
+                    "const": "FINAL"
+                  }
+                }
+              }
+            },
+            "required": [
+              "experimentResultRef"
+            ]
+          },
+          "validation": {
+            "const": "PASSED"
+          },
+          "rollbackAvailable": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transition": {
+            "const": "ACTIVATE_IN_CI"
+          }
+        },
+        "required": [
+          "transition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "fromState": {
+            "const": "CI_CANARY"
+          },
+          "toState": {
+            "const": "ACTIVE_IN_CI"
+          },
+          "precondition": {
+            "properties": {
+              "expectedState": {
+                "const": "CI_CANARY"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transition": {
+            "const": "ACTIVATE_LOCALLY"
+          }
+        },
+        "required": [
+          "transition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "fromState": {
+            "const": "ACTIVE_IN_CI"
+          },
+          "toState": {
+            "const": "ACTIVE_LOCALLY"
+          },
+          "precondition": {
+            "properties": {
+              "expectedState": {
+                "const": "ACTIVE_IN_CI"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transition": {
+            "const": "SUSPEND"
+          }
+        },
+        "required": [
+          "transition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "fromState": {
+            "enum": [
+              "PROPOSED",
+              "SHADOW",
+              "CI_CANARY",
+              "ACTIVE_IN_CI",
+              "ACTIVE_LOCALLY"
+            ]
+          },
+          "toState": {
+            "const": "SUSPENDED"
+          },
+          "precondition": {
+            "properties": {
+              "expectedState": {
+                "enum": [
+                  "PROPOSED",
+                  "SHADOW",
+                  "CI_CANARY",
+                  "ACTIVE_IN_CI",
+                  "ACTIVE_LOCALLY"
+                ]
+              }
+            }
+          },
+          "authorization": {
+            "properties": {
+              "basis": {
+                "const": "SAFETY"
+              },
+              "decision": {
+                "const": "SUSPEND"
+              }
+            }
+          },
+          "validation": {
+            "enum": [
+              "INCONCLUSIVE",
+              "FAILED"
+            ]
+          },
+          "rollbackAvailable": {
+            "const": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transition": {
+            "const": "ROLLBACK"
+          }
+        },
+        "required": [
+          "transition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "fromState": {
+            "enum": [
+              "CI_CANARY",
+              "ACTIVE_IN_CI",
+              "ACTIVE_LOCALLY"
+            ]
+          },
+          "toState": {
+            "const": "ROLLED_BACK"
+          },
+          "precondition": {
+            "properties": {
+              "expectedState": {
+                "enum": [
+                  "CI_CANARY",
+                  "ACTIVE_IN_CI",
+                  "ACTIVE_LOCALLY"
+                ]
+              }
+            }
+          },
+          "authorization": {
+            "properties": {
+              "basis": {
+                "enum": [
+                  "SAFETY",
+                  "EXPERIMENT_RESULT"
+                ]
+              },
+              "decision": {
+                "const": "ROLLBACK"
+              },
+              "experimentResultRef": {
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "FINAL",
+                      "INVALIDATED"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "validation": {
+            "enum": [
+              "INCONCLUSIVE",
+              "FAILED"
+            ]
+          },
+          "rollbackAvailable": {
+            "const": false
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/@+-]{0,255}$"
+    },
+    "sha256Digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "hmacSha256Digest": {
+      "type": "string",
+      "pattern": "^hmac-sha256:[0-9a-f]{64}$"
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.[0-9]{1,9})?Z$"
+    },
+    "actionState": {
+      "enum": [
+        "ABSENT",
+        "PROPOSED",
+        "SHADOW",
+        "CI_CANARY",
+        "ACTIVE_IN_CI",
+        "ACTIVE_LOCALLY",
+        "SUSPENDED",
+        "ROLLED_BACK"
+      ]
+    },
+    "precondition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expectedState",
+        "expectedSequence"
+      ],
+      "properties": {
+        "expectedState": {
+          "$ref": "#/$defs/actionState"
+        },
+        "expectedSequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483646
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revision",
+        "sourceStateDigest"
+      ],
+      "properties": {
+        "revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "sourceStateDigest": {
+          "$ref": "#/$defs/hmacSha256Digest"
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policyVersion",
+        "policyDigest",
+        "promotionRuleId",
+        "metricDefinitionVersion",
+        "measurementPolicyVersion"
+      ],
+      "properties": {
+        "policyVersion": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "policyDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "promotionRuleId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "metricDefinitionVersion": {
+          "const": "build-impact-v1"
+        },
+        "measurementPolicyVersion": {
+          "const": "beta-measurement-v1"
+        }
+      }
+    },
+    "evidenceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenceId",
+        "evidenceType",
+        "digest"
+      ],
+      "properties": {
+        "evidenceId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "evidenceType": {
+          "enum": [
+            "CONTRACT",
+            "VALIDATION",
+            "MEASUREMENT",
+            "DISCREPANCY",
+            "POLICY"
+          ]
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256Digest"
+        }
+      }
+    },
+    "experimentResultReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "experimentId",
+        "resultVersion",
+        "status",
+        "measurementPolicyVersion"
+      ],
+      "properties": {
+        "experimentId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resultVersion": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "status": {
+          "enum": [
+            "PRELIMINARY",
+            "FINAL",
+            "INVALIDATED"
+          ]
+        },
+        "measurementPolicyVersion": {
+          "const": "beta-measurement-v1"
+        }
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis",
+        "decision",
+        "authorizedAt"
+      ],
+      "properties": {
+        "basis": {
+          "enum": [
+            "POLICY",
+            "EXPERIMENT_RESULT",
+            "SAFETY"
+          ]
+        },
+        "decision": {
+          "enum": [
+            "APPROVE_TRANSITION",
+            "SUSPEND",
+            "ROLLBACK"
+          ]
+        },
+        "authorizedAt": {
+          "$ref": "#/$defs/utcTimestamp"
+        },
+        "experimentResultRef": {
+          "$ref": "#/$defs/experimentResultReference"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "basis": {
+                "const": "POLICY"
+              }
+            },
+            "required": [
+              "basis"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "experimentResultRef"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

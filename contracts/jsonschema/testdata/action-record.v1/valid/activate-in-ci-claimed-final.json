@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "ACTION_RECORD",
+  "eventId": "action-event-cache-01-4-claimed",
+  "actionId": "action-cache-01",
+  "sequence": 4,
+  "occurredAt": "2026-07-22T00:01:00Z",
+  "repositoryId": "repository-payments-platform",
+  "actionType": "ENABLE_TASK_CACHE",
+  "target": ":openapi:generateClient",
+  "effectScope": "ACTION_INCREMENTAL",
+  "stateType": "ACTION_ROLLOUT",
+  "transition": "ACTIVATE_IN_CI",
+  "fromState": "CI_CANARY",
+  "toState": "ACTIVE_IN_CI",
+  "precondition": {"expectedState": "CI_CANARY", "expectedSequence": 3},
+  "actor": "build-optimization",
+  "source": {
+    "revision": "8c74f2a",
+    "sourceStateDigest": "hmac-sha256:5555555555555555555555555555555555555555555555555555555555555555"
+  },
+  "policy": {
+    "policyVersion": 17,
+    "policyDigest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+    "promotionRuleId": "cache-low-risk-v3",
+    "metricDefinitionVersion": "build-impact-v1",
+    "measurementPolicyVersion": "beta-measurement-v1"
+  },
+  "evidenceRefs": [
+    {
+      "evidenceId": "evidence-validation-claimed",
+      "evidenceType": "VALIDATION",
+      "digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+    }
+  ],
+  "authorization": {
+    "basis": "EXPERIMENT_RESULT",
+    "decision": "APPROVE_TRANSITION",
+    "authorizedAt": "2026-07-22T00:00:30Z",
+    "experimentResultRef": {
+      "experimentId": "experiment-cache-01",
+      "resultVersion": 1,
+      "status": "FINAL",
+      "measurementPolicyVersion": "beta-measurement-v1"
+    }
+  },
+  "validation": "PASSED",
+  "rollbackAvailable": true,
+  "idempotencyKey": "action-cache-01-sequence-4-claimed"
+}

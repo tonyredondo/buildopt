@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "EXPERIMENT_RESULT",
+  "experimentId": "experiment-invalid-02",
+  "resultVersion": 1,
+  "status": "FINAL",
+  "asOf": "2026-07-28T00:00:00Z",
+  "window": {
+    "startedAt": "2026-07-21T00:00:00Z",
+    "endedAt": "2026-07-28T00:00:00Z"
+  },
+  "effectScope": "PRODUCT_TOTAL",
+  "measurementEpoch": 1,
+  "baselineDefinitionDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "controlDefinitionDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+  "metricDefinitionVersion": "build-impact-v1",
+  "measurementPolicyVersion": "beta-measurement-v1",
+  "population": {
+    "cohortId": "cohort-invalid",
+    "analysisUnit": "BUILD_SESSION",
+    "assignmentUnit": "CI_JOB",
+    "estimand": "SUCCESSFUL_BUILD_SESSION_LATENCY",
+    "requiredStrata": ["environment", "pipelineClass", "runnerClass", "outcome", "workUnitsFingerprint", "measurementEpoch"]
+  },
+  "samples": {
+    "assigned": {"candidate": 100, "control": 100},
+    "analyzed": {"candidate": 100, "control": 100},
+    "outcomes": {
+      "candidate": {"SUCCESS": 100, "BUILD_FAILURE": 0, "INFRA_FAILURE": 0, "CANCELLED": 0},
+      "control": {"SUCCESS": 100, "BUILD_FAILURE": 0, "INFRA_FAILURE": 0, "CANCELLED": 0}
+    },
+    "excludedSampleSize": 0,
+    "exclusions": [],
+    "measurementCoverageRatio": 1
+  },
+  "method": {
+    "analysisMethod": "PAIRED_BOOTSTRAP",
+    "effectStatistic": "PAIRED_MEAN_DELTA",
+    "intervalType": "ONE_SIDED_95"
+  },
+  "effects": {
+    "observedNetBuildTimeSavedMs": 600,
+    "observedNetBuildTimeSavedInterval95Ms": [500, 900],
+    "observedBuildTimeReductionRatio": 0.03,
+    "observedBuildTimeReductionInterval95": [0.02, 0.05],
+    "buildFailureRateDelta": 0,
+    "customerVisibleBuildP95DeltaMs": -400,
+    "customerVisibleBuildP95DeltaInterval95Ms": [-700, 100],
+    "customerVisibleFeedbackP95DeltaMs": -350,
+    "customerVisibleFeedbackP95DeltaInterval95Ms": [-650, 120],
+    "ciQueueP95DeltaMs": 40,
+    "ciQueueP95DeltaInterval95Ms": [-60, 180],
+    "productSynchronousOverheadMs": 100,
+    "productSynchronousOverheadRatio": 0.005,
+    "requiredDeliverableDivergenceRate": 0,
+    "productAttributableFailureRate": 0
+  },
+  "economics": {
+    "grain": "PER_ELIGIBLE_SESSION",
+    "currency": "EUR",
+    "priceModelVersion": "ci-price-2026-07",
+    "buildComputeCostAvoided": 0.84,
+    "productRuntimeCost": 0.01,
+    "validationAndControlComputeCost": 0.08,
+    "incrementalStorageCost": 0.004,
+    "incrementalNetworkCost": 0.006,
+    "netInfrastructureValue": 0.74
+  },
+  "decision": {
+    "state": "PROMOTE",
+    "promotionClass": "DIRECT_REVERSIBLE",
+    "evaluatedAt": "2026-07-28T00:00:00Z",
+    "reasons": ["Gate evaluation is missing"]
+  }
+}

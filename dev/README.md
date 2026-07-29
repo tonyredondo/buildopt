@@ -215,6 +215,24 @@ format assertions and accepts both documents; focused assertions retain the
 requested tasks, outcomes, exits, explicit unavailable observations, and
 partial failure timing.
 
+## Experiment and action lifecycle validation
+
+Validate the independent `F0-012` aggregate-result and action-transition
+contracts, including their cross-record authorization rules:
+
+```bash
+./dev/check-experiment-action-schemas
+```
+
+The isolated Draft 2020-12 validator checks every positive and negative
+`EXPERIMENT_RESULT` and `ACTION_RECORD` fixture. It then resolves bounded
+testdata-only lifecycle references and verifies version ancestry, ordered
+windows and intervals, sample reconciliation, transition preconditions, and
+exact result linkage. Activation succeeds only when the referenced immutable
+result is actually `FINAL` with decision `PROMOTE`; policy-only shadow entry
+and safety rollback remain distinct paths. The documents are audit records,
+not executable authorization messages.
+
 ## Metrics catalog validation
 
 Validate the machine-readable `F0-024` catalog and its private-beta measurement
