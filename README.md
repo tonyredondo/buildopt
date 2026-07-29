@@ -61,6 +61,7 @@ From the repository root:
 ./dev/check-build-session-export
 ./dev/check-protobuf-toolchains
 ./dev/check-task-events-proto
+./dev/check-contract-crypto
 ./dev/check-test-optimization-openapi
 ./dev/check-buildopt-cli
 ./dev/check-local-gateway

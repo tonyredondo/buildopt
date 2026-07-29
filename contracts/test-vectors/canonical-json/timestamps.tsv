@@ -1,0 +1,7 @@
+# name	outcome	value
+utc-seconds	VALID	2026-07-21T10:30:00Z
+utc-fraction	VALID	2026-07-21T10:30:00.123456789Z
+offset-not-utc	INVALID	2026-07-21T12:30:00+02:00
+lowercase-z	INVALID	2026-07-21T10:30:00z
+missing-seconds	INVALID	2026-07-21T10:30Z
+leap-second	INVALID	2026-12-31T23:59:60Z

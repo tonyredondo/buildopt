@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_classes=$(mktemp -d)
+
+buildopt_cleanup() {
+    if [[ "${buildopt_classes}" == /tmp/* ]] &&
+        [[ -d "${buildopt_classes}" ]]; then
+        rm -rf -- "${buildopt_classes}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" \
+    --toolchain go \
+    -- \
+    go test -count=1 ./internal/contractcrypto
+
+"${buildopt_script_dir}/run" \
+    -- \
+    javac \
+        --release 17 \
+        -Xlint:all \
+        -Werror \
+        -d "${buildopt_classes}" \
+        "${buildopt_script_dir}/crypto-conformance/java/dev/buildopt/contracts/CryptoConformance.java"
+
+"${buildopt_script_dir}/run" \
+    -- \
+    java \
+        -cp "${buildopt_classes}" \
+        dev.buildopt.contracts.CryptoConformance \
+        "${buildopt_repo_root}"
+
+printf 'F0-020 contract crypto OK: identical Go/Java JCS, SHA-256, timestamp, and Ed25519 vectors\n'

@@ -274,6 +274,21 @@ policy/grant references, and result identity/artifact equality with the
 originating F0-014 request. It validates structure and semantic binding;
 `F0-020` supplies real cryptographic golden vectors.
 
+## Contract cryptography validation
+
+Validate the shared `F0-020` JCS, SHA-256, UTC timestamp, and Ed25519 vectors:
+
+```bash
+./dev/check-contract-crypto
+```
+
+The command runs dependency-free Go and Java 17 consumers over the exact same
+language-neutral TSV rows. It verifies canonical UTF-8 bytes, UTF-16 member
+ordering, IEEE-754 number rendering, lowercase digests, UTC-only RFC 3339
+timestamps, and real Ed25519 verification. Negative vectors cover duplicate
+keys, malformed UTF-8, unpaired surrogates, non-finite numeric input, changed
+payloads, wrong keys, and malformed signatures.
+
 ## PatchBundle contract validation
 
 Validate the `F0-016` declarative bundle envelope and its two private-beta
