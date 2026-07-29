@@ -100,7 +100,7 @@ buildopt_capture_version() {
         buf)
             buildopt_output=$("${buildopt_path}" --version 2>&1) || return 1
             ;;
-        clang | curl | gcc | git | jq | sha256sum | sqlite3 | tar | unzip)
+        clang | curl | gcc | git | jq | sha256sum | sqlite3 | tar | unzip | xz)
             if [[ "${buildopt_id}" == unzip ]]; then
                 buildopt_output=$("${buildopt_path}" -v 2>&1) || return 1
             else
@@ -207,7 +207,8 @@ for buildopt_command in \
     df \
     getconf \
     stat \
-    uname; do
+    uname \
+    xz; do
     if [[ "${buildopt_command}" =~ ^(awk|df|getconf|stat|uname)$ ]]; then
         buildopt_path=$(command -v "${buildopt_command}" 2>/dev/null || true)
         if [[ -z "${buildopt_path}" ]]; then

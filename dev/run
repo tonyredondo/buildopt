@@ -2,7 +2,7 @@
 set -euo pipefail
 
 buildopt_usage() {
-    printf 'usage: %s [--toolchain <temurin-jdk-21|go>] -- command [args...]\n' "$0"
+    printf 'usage: %s [--toolchain <temurin-jdk-21|go|shellcheck|actionlint>] -- command [args...]\n' "$0"
 }
 
 buildopt_toolchain=temurin-jdk-21
@@ -20,7 +20,7 @@ if [[ "${1:-}" == "--toolchain" ]]; then
 fi
 
 case "${buildopt_toolchain}" in
-    go | temurin-jdk-21) ;;
+    actionlint | go | shellcheck | temurin-jdk-21) ;;
     *)
         buildopt_usage >&2
         exit 64
@@ -84,7 +84,8 @@ buildopt_manifest="${buildopt_tool_home}/.buildopt-toolchain.json"
 if [[ ! "${buildopt_id}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
     [[ ! "${buildopt_provider}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
     [[ ! "${buildopt_sha256}" =~ ^[0-9a-f]{64}$ ]] ||
-    [[ "${buildopt_kind}" != "tar.gz" ]] ||
+    [[ "${buildopt_kind}" != "tar.gz" &&
+        "${buildopt_kind}" != "tar.xz" ]] ||
     [[ "${buildopt_platform}" != "linux-amd64" ]] ||
     [[ ! "${buildopt_url}" =~ ^https:// ]]; then
     printf 'malformed toolchain identity: %s\n' "${buildopt_toolchain}" >&2
@@ -92,15 +93,33 @@ if [[ ! "${buildopt_id}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
 fi
 
 case "${buildopt_id}" in
+    actionlint)
+        if [[ "${buildopt_provider}" != "actionlint" ]] ||
+            [[ "${buildopt_kind}" != "tar.gz" ]] ||
+            [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
+            printf 'malformed actionlint toolchain identity\n' >&2
+            exit 70
+        fi
+        ;;
     go)
         if [[ "${buildopt_provider}" != "go-project" ]] ||
+            [[ "${buildopt_kind}" != "tar.gz" ]] ||
             [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+([.][0-9]+)?$ ]]; then
             printf 'malformed Go toolchain identity\n' >&2
             exit 70
         fi
         ;;
+    shellcheck)
+        if [[ "${buildopt_provider}" != "shellcheck" ]] ||
+            [[ "${buildopt_kind}" != "tar.xz" ]] ||
+            [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
+            printf 'malformed ShellCheck toolchain identity\n' >&2
+            exit 70
+        fi
+        ;;
     temurin-jdk-21)
         if [[ "${buildopt_provider}" != "eclipse-adoptium" ]] ||
+            [[ "${buildopt_kind}" != "tar.gz" ]] ||
             [[ ! "${buildopt_version}" =~ ^21([.]|$) ]]; then
             printf 'malformed JDK 21 toolchain identity\n' >&2
             exit 70
@@ -135,6 +154,26 @@ if ! jq -e \
 fi
 
 case "${buildopt_id}" in
+    actionlint)
+        if [[ ! -x "${buildopt_tool_home}/bin/actionlint" ]]; then
+            printf 'provisioned actionlint binary is unavailable: %s\n' \
+                "${buildopt_tool_home}/bin/actionlint" >&2
+            exit 1
+        fi
+        buildopt_actionlint_output=$(
+            "${buildopt_tool_home}/bin/actionlint" -version 2>&1
+        ) || {
+            printf 'provisioned actionlint failed its version probe: %s\n' \
+                "${buildopt_tool_home}/bin/actionlint" >&2
+            exit 1
+        }
+        buildopt_actionlint_version=${buildopt_actionlint_output%%$'\n'*}
+        if [[ "${buildopt_actionlint_version}" != "${buildopt_version}" ]]; then
+            printf 'provisioned actionlint binary does not match %s\n' \
+                "${buildopt_version}" >&2
+            exit 1
+        fi
+        ;;
     go)
         if [[ ! -x "${buildopt_tool_home}/bin/go" ]]; then
             printf 'provisioned Go binary is unavailable: %s\n' \
@@ -163,6 +202,32 @@ case "${buildopt_id}" in
         export GOPATH="${buildopt_tools_root}/state/go/gopath"
         export GOMODCACHE="${GOPATH}/pkg/mod"
         export GOCACHE="${buildopt_tools_root}/state/go/build-cache"
+        ;;
+    shellcheck)
+        if [[ ! -x "${buildopt_tool_home}/bin/shellcheck" ]]; then
+            printf 'provisioned ShellCheck binary is unavailable: %s\n' \
+                "${buildopt_tool_home}/bin/shellcheck" >&2
+            exit 1
+        fi
+        buildopt_shellcheck_output=$(
+            "${buildopt_tool_home}/bin/shellcheck" --version 2>&1
+        ) || {
+            printf 'provisioned ShellCheck failed its version probe: %s\n' \
+                "${buildopt_tool_home}/bin/shellcheck" >&2
+            exit 1
+        }
+        buildopt_shellcheck_version=
+        while IFS= read -r buildopt_shellcheck_line; do
+            if [[ "${buildopt_shellcheck_line}" == "version: "* ]]; then
+                buildopt_shellcheck_version=${buildopt_shellcheck_line#version: }
+                break
+            fi
+        done <<<"${buildopt_shellcheck_output}"
+        if [[ "${buildopt_shellcheck_version}" != "${buildopt_version}" ]]; then
+            printf 'provisioned ShellCheck binary does not match %s\n' \
+                "${buildopt_version}" >&2
+            exit 1
+        fi
         ;;
     temurin-jdk-21)
         if [[ ! -x "${buildopt_tool_home}/bin/java" ]] ||

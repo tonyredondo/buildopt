@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — `ENV-009` closed with an exact optional Rust toolchain; `ENV-010` is the next block<br>
+**Overall status:** `DOING` — `ENV-010` closed with exact project-local lint tools; `F0-010` is the next block<br>
 **Current phase:** Phase 0 — contracts, fixtures, and walking skeleton<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
 **Last updated:** 2026-07-29<br>
@@ -90,8 +90,8 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 7 | `ENV-005` | Locked Go toolchain validated for the core | `DONE` | Codex |
 | 8 | `ENV-008` | Docker and the golden image verified by digest | `DONE` | Codex |
 | 9 | `ENV-009` | Rust toolchain pinned for the optional hermetic helper | `DONE` | Codex |
-| 10 | `ENV-010` | ShellCheck and actionlint provisioned from the lock | `TODO` | — |
-| 11 | `F0-010` | `contracts/`, `specs/`, `benchmarks/`, and `adr/` structure created | `WAITING` | — |
+| 10 | `ENV-010` | ShellCheck and actionlint provisioned from the lock | `DONE` | Codex |
+| 11 | `F0-010` | `contracts/`, `specs/`, `benchmarks/`, and `adr/` structure created | `TODO` | — |
 | 12 | `F0-011` | First normative schema: `BUILD_SESSION v1` | `WAITING` | — |
 | 13 | `WS-001` | `buildopt run` → `BUILD_SESSION` vertical slice started | `TODO` | — |
 | 14 | `SPK-001` | Task → cache key → PUT spike on the golden lane | `WAITING` | — |
@@ -148,7 +148,7 @@ The environment must be reproducible and must not depend on unversioned global t
 - `dev/toolchains.lock.yaml` pins each toolchain's version, platform, URL/provider, and SHA-256.
 - `dev/doctor` is read-only and verifies the host, versions, paths, Docker, capabilities, and available space.
 - `dev/bootstrap` is idempotent and installs verified tools under `.tools/` by default; it does not use `sudo` or silently replace global toolchains.
-- `dev/run` sets target-specific Java or Go variables and `PATH` only for the project process.
+- `dev/run` sets target-specific variables and `PATH` only for the project process.
 - CI and workstations consume the same lock. The golden lane also uses a container image pinned by digest.
 - Do not install Gradle globally: every fixture and module uses a pinned Gradle Wrapper.
 - Rust remains optional for the core, but must be pinned for `SPK-003` and C1.
@@ -169,10 +169,10 @@ Verified snapshot from the initial 4-vCPU workstation on 2026-07-29. Manually in
 | Docker | Golden image and fixture services | Functional daemon + image by digest | Client/server 24.0.2, `overlay2` | Available | Closed by `ENV-008`; use the digest-verifying golden container runner |
 | Git | Workspace and patch workflows | Available | Git 2.54.0 | Available | Doctor records the active path/version; minimum support remains a later policy decision |
 | SQLite CLI | Diagnostics/fault fixtures | Available | SQLite 3.45.1 | Available | Doctor reports it when present; do not use it as a runtime API |
-| `jq`, `curl`, `tar`, `unzip` | Bootstrap and fixtures | Available | Installed | Available | Required host-command probes implemented in `dev/doctor` |
+| `jq`, `curl`, `tar`, `xz`, `unzip` | Bootstrap and fixtures | Available | Installed | Available | Required host-command probes implemented in `dev/doctor` |
 | C/C++ toolchain | Rust/native fault fixtures | GCC/Clang available | GCC 13.3, Clang 18.1 | Available | Doctor inventories active versions; strict verification remains in C1 |
-| `shellcheck` | Bootstrap/CI scripts | Project-local or pinned package | Isolated 0.11.0; lint smoke test passed | Available on workstation | Provision from the lock in `ENV-010` |
-| `actionlint` | GitHub workflows | Project-local and pinned | Isolated 1.7.12; workflow smoke test passed | Available on workstation | Provision from the lock in `ENV-010` |
+| `shellcheck` | Bootstrap/CI scripts | Project-local or pinned package | Repository-local 0.11.0; all executable `dev/` scripts passed | Available through `dev/bootstrap` and `dev/run` | Closed by `ENV-010`; use `dev/check-lint-toolchains` |
+| `actionlint` | GitHub workflows | Project-local and pinned | Repository-local 1.7.12; integrated workflow smoke passed | Available through `dev/bootstrap` and `dev/run` | Closed by `ENV-010`; authoritative workflows remain in `F0-004` |
 | `cosign`/`syft` | Signatures, SBOM, and provenance | Project-local and pinned | Isolated cosign 3.1.2 + Syft 1.50.0; version/SBOM smoke tests passed | Available on workstation | Provision from the lock and complete sign/verify in `F0-038` |
 
 Initial 4-vCPU workstation installation:
@@ -195,7 +195,7 @@ Initial 4-vCPU workstation installation:
 | `ENV-007` | Pin Gradle Wrapper 9.6.1 and verify checksum | `F0-002` | `DONE` | Codex | `E-007`: Wrapper 9.6.1 and checksums verified |
 | `ENV-008` | Verify Docker and golden image by digest | `F0-002`, `ENV-002` | `DONE` | Codex | `E-015`: immutable index/platform identity, strict cgroups, and container smoke |
 | `ENV-009` | Pin Rust 1.93.0 or an approved version | `ENV-001` | `DONE` | Codex | `E-016`: exact Rustup override, locked manifest, doctor match, and offline Cargo check |
-| `ENV-010` | Provision `shellcheck` and `actionlint` | `ENV-001` | `TODO` | — | Passing lint checks |
+| `ENV-010` | Provision `shellcheck` and `actionlint` | `ENV-001` | `DONE` | Codex | `E-017`: exact archives, isolated execution, and passing integrated lint smoke |
 | `ENV-011` | Provision `cosign`/`syft` for the supply chain | `ENV-001`, `F0-038` | `WAITING` | — | SBOM/sign/verify fixture |
 | `ENV-012` | Implement `dev/bootstrap`, `dev/run`, and documented cleanup | `ENV-001..011` | `WAITING` | — | Two idempotent runs + uninstall |
 
@@ -215,7 +215,7 @@ Do not mark `ENV-003`, `ENV-006`, `ENV-010`, or `ENV-011` complete because a “
 
 | ID | Deliverable | Related decision | State | Owner | Expected evidence |
 |---|---|---|---|---|---|
-| `F0-010` | Create `contracts/`, `specs/`, `benchmarks/`, and `adr/` structure | `CONTRACTS-001` | `WAITING` | — | Tree defined in RFC §29.2 |
+| `F0-010` | Create `contracts/`, `specs/`, `benchmarks/`, and `adr/` structure | `CONTRACTS-001` | `TODO` | — | Tree defined in RFC §29.2 |
 | `F0-011` | `build-session.v1.schema.json` | `OBS-002`, `METRICS-001` | `WAITING` | — | Schema + valid/invalid fixtures |
 | `F0-012` | `experiment-result.v1` and `action-record.v1` | `OBS-002`, `MEASURE-001` | `WAITING` | — | Schemas + lifecycle fixtures |
 | `F0-013` | Evidence, policy, and resource-profile schemas | `TASK-001`, `BANDIT-001` | `WAITING` | — | Schemas + golden records |
@@ -483,6 +483,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Host inventory | Platform/resources, active Java/Go/Rust/Protobuf/base-tool paths and versions, Docker, cgroups, namespaces, and available space | `dev/doctor --json` passed on the 12-CPU workstation and reported active-path drift without treating deferred provisioning as success; deterministic fixtures passed codes `0/1/64/70` and preserved the working tree | 2026-07-29 | `E-011` |
 | Go toolchain | Exact compiler, module baseline, local-only selection and caches, offline module state, and deterministic smoke build | Official Go 1.26.5 archive matched the lock; real and synthetic isolation checks passed; doctor reported the project-local binary as `MATCH`; repeated smoke binaries matched | 2026-07-29 | `E-014` |
 | Rust toolchain | Exact optional compiler/Cargo pair, repository override, locked channel manifest, isolated offline state, and Cargo smoke | Rust/Cargo 1.93.0 and the Linux AMD64 host matched; official manifest SHA-256, doctor `MATCH`, temporary-state Cargo check, global-default isolation, and deterministic negative fixtures passed | 2026-07-29 | `E-016` |
+| Lint toolchains | Exact ShellCheck/actionlint artifacts, isolated execution, repository scripts, and workflow parsing | Official ShellCheck 0.11.0 and actionlint 1.7.12 archives matched the lock; real and synthetic provisioning, doctor matching, all executable `dev/` scripts, and the integrated workflow smoke passed | 2026-07-29 | `E-017` |
 | Contract schemas | JSON Schema/OpenAPI/Protobuf | Not run | — | — |
 | Golden vectors | Go ↔ Java canonicalization/signatures | Not run | — | — |
 | Go unit/integration | Launcher/gateway/server | Not run | — | — |
@@ -528,6 +529,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-014` | 2026-07-29 | `ENV-005` | Root [`go.mod`](./go.mod), [`dev/check-go-toolchain`](./dev/check-go-toolchain), generalized [`dev/bootstrap`](./dev/bootstrap) and [`dev/run`](./dev/run), plus [`dev/test-go-toolchain`](./dev/test-go-toolchain); official Go 1.26.5 bytes matched lock SHA-256 `5c2c3b16caefa1d968a94c1daca04a7ca301a496d9b086e17ad77bb81393f053`; first and idempotent provisioning, exact Linux AMD64 compiler, `GOTOOLCHAIN=local`, disabled user Go environment, project-local caches, offline module checks, identical repeated smoke binaries, synthetic global-Go isolation, unchanged real global selection, and doctor `MATCH` passed on the non-golden 12-CPU host | `DONE`: the Go core now has a reproducible compiler/module baseline without activating product behavior; `ENV-008` became the next executable block |
 | `E-015` | 2026-07-29 | `ENV-008` | Strengthened [`dev/check-golden-lane`](./dev/check-golden-lane), [`dev/run-golden-lane-container`](./dev/run-golden-lane-container), and [`dev/golden-lane-build`](./dev/golden-lane-build), plus deterministic [`dev/test-golden-lane-container`](./dev/test-golden-lane-container); Docker 29.6.2 resolved immutable index `sha256:9d8dcf999b0bce2453e913823595a5ff2a4e8e9e5d5241b45280d0ff069818ec` to the unique Linux AMD64 platform digest `sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50`, pulled and inspected that exact image, verified Temurin 21.0.11+10, enforced 4 CPU/16 GiB and observed matching cgroup v2 limits, then passed the offline Gradle 9.6.1 build; negative fixtures covered mutable/spec drift, daemon, resources, index, local image, Java patch, usage, and child failure without starting a real container | `DONE`: Docker and the golden runtime are executable by immutable digest without making the 12-CPU host itself satisfy the 4-CPU runner class; `ENV-009` became the next executable block |
 | `E-016` | 2026-07-29 | `ENV-009` | Root [`rust-toolchain.toml`](./rust-toolchain.toml), [`dev/check-rust-toolchain`](./dev/check-rust-toolchain), deterministic [`dev/test-rust-toolchain`](./dev/test-rust-toolchain), and a read-only Rustup-aware [`dev/doctor`](./dev/doctor); official Rust 1.93.0 channel-manifest bytes matched lock SHA-256 `beb6ba4e41c84e9c11c80e6804a007497d0c8ba0810cd403fabc8f4a9c45b1f8`; the repository selected rustc 1.93.0 commit `254b59607` and Cargo 1.93.0 commit `083ac5135` for `x86_64-unknown-linux-gnu`, doctor reported `MATCH`, and a dependency-free edition-2024 crate passed `cargo check --locked --offline` with temporary Cargo home/target state; outside the repository, stable 1.96.0 remained the unchanged Rustup default; negative fixtures covered missing/mismatched tools, manifest checksum, configuration drift, usage, and Cargo failure without installing a toolchain | `DONE`: the optional helper has a reproducible compiler baseline without implementing or claiming `SPK-003` hermeticity; `ENV-010` is next |
+| `E-017` | 2026-07-29 | `ENV-010` | Generalized [`dev/bootstrap`](./dev/bootstrap) and [`dev/run`](./dev/run), [`dev/check-lint-toolchains`](./dev/check-lint-toolchains), and deterministic [`dev/test-lint-toolchains`](./dev/test-lint-toolchains); official ShellCheck 0.11.0 `tar.xz` bytes matched SHA-256 `8c3be12b05d5c177a04c29e3c78ce89ac86f1595681cab149b65b97c4e227198`, and official actionlint 1.7.12 `tar.gz` bytes matched `8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8`; atomic and idempotent provisioning normalized both upstream layouts, exact project-local versions remained isolated from global ShellCheck 0.9.0 and missing global actionlint, doctor reported both as `MATCH`, all executable `dev/` scripts passed ShellCheck, and actionlint parsed an in-memory workflow while using the locked ShellCheck for its embedded Bash; negative fixtures covered checksum and manifest drift, missing tools, usage, and child lint failures | `DONE`: reproducible lint tooling is available without creating or claiming the authoritative `F0-004` workflow; `F0-010` is next |
 
 ---
 
@@ -535,6 +537,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-29 | Closed `ENV-010`: provisioned exact repository-local ShellCheck and actionlint archives, integrated their lint smoke, preserved global selections, and added deterministic failure fixtures | Codex |
 | 2026-07-29 | Closed `ENV-009`: pinned the optional Linux AMD64 Rust 1.93.0 toolchain, verified its official channel manifest, isolated Cargo smoke state, and preserved the global Rustup default | Codex |
 | 2026-07-29 | Closed `ENV-008`: bound the golden index to its Linux AMD64 digest, verified the pulled image and exact Java patch, enforced strict cgroups, and added deterministic Docker failure fixtures | Codex |
 | 2026-07-29 | Closed `ENV-005`: added the exact root Go module/toolchain contract, checksum-verified project-local provisioning, isolated execution and caches, deterministic fixtures, doctor matching, and a reproducible offline smoke build | Codex |

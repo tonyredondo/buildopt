@@ -50,6 +50,7 @@ buildopt_fixture_commands=(
     tar
     uname
     unzip
+    xz
 )
 
 for buildopt_command in "${buildopt_fixture_commands[@]}"; do
@@ -62,8 +63,17 @@ buildopt_link_command dirname "${buildopt_internal_error_bin}"
 
 printf '%s\n' \
     '#!/usr/bin/env bash' \
+    'printf '\''1.7.12\n'\''' \
+    >"${buildopt_success_bin}/actionlint"
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
     'printf '\''rustc 1.93.0 (254b59607 2026-01-19)\n'\''' \
     >"${buildopt_success_bin}/rustc"
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf '\''ShellCheck - shell script analysis tool\n'\''' \
+    'printf '\''version: 0.11.0\n'\''' \
+    >"${buildopt_success_bin}/shellcheck"
 # The generated rustup fixture resolves the rustc next to itself.
 # shellcheck disable=SC2016
 printf '%s\n' \
@@ -86,7 +96,11 @@ printf '%s\n' \
     '        ;;' \
     'esac' \
     >"${buildopt_success_bin}/rustup"
-chmod +x "${buildopt_success_bin}/rustc" "${buildopt_success_bin}/rustup"
+chmod +x \
+    "${buildopt_success_bin}/actionlint" \
+    "${buildopt_success_bin}/rustc" \
+    "${buildopt_success_bin}/rustup" \
+    "${buildopt_success_bin}/shellcheck"
 
 buildopt_before_status=$(
     git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
@@ -107,7 +121,7 @@ jq -e '
     (.resources.cpuCount | type == "number") and
     (.resources.memoryBytes | type == "number") and
     (.resources.workspaceDiskAvailableBytes | type == "number") and
-    (.commands | length == 15) and
+    (.commands | length == 16) and
     (.toolchains.entries | length == 10) and
     (
         [
@@ -122,6 +136,19 @@ jq -e '
         .state == "MATCH" and
         .probes[0].observedVersion ==
             "rustc 1.93.0 (254b59607 2026-01-19)"
+    ) and
+    any(
+        .toolchains.entries[];
+        .id == "shellcheck" and
+        .state == "MATCH" and
+        .probes[0].observedVersion ==
+            "ShellCheck - shell script analysis tool; version: 0.11.0"
+    ) and
+    any(
+        .toolchains.entries[];
+        .id == "actionlint" and
+        .state == "MATCH" and
+        .probes[0].observedVersion == "1.7.12"
     ) and
     (
         [

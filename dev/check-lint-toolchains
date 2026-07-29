@@ -1,0 +1,143 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_lock=${BUILDOPT_TOOLCHAINS_LOCK_FILE:-"${buildopt_script_dir}/toolchains.lock.yaml"}
+buildopt_tools_root=${BUILDOPT_TOOLS_ROOT:-"${buildopt_repo_root}/.tools"}
+buildopt_run="${buildopt_script_dir}/run"
+
+for buildopt_command in find jq sort; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required lint verification command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if [[ ! -f "${buildopt_lock}" ]]; then
+    printf 'missing toolchain lock: %s\n' "${buildopt_lock}" >&2
+    exit 70
+fi
+
+if ! buildopt_lint_entries=$(
+    jq -ce '
+        [.artifacts[] | select(.id == "shellcheck" or .id == "actionlint")] |
+        if length == 2 and
+            ([.[].id] | sort) == ["actionlint", "shellcheck"]
+        then
+            .
+        else
+            error("expected exactly one ShellCheck and actionlint entry")
+        end
+    ' "${buildopt_lock}"
+); then
+    printf 'invalid lint toolchain entries in lock\n' >&2
+    exit 70
+fi
+
+buildopt_shellcheck_version=$(
+    jq -r '.[] | select(.id == "shellcheck") | .version' \
+        <<<"${buildopt_lint_entries}"
+)
+buildopt_shellcheck_sha256=$(
+    jq -r '.[] | select(.id == "shellcheck") | .sha256' \
+        <<<"${buildopt_lint_entries}"
+)
+buildopt_actionlint_version=$(
+    jq -r '.[] | select(.id == "actionlint") | .version' \
+        <<<"${buildopt_lint_entries}"
+)
+
+if [[ ! "${buildopt_shellcheck_sha256}" =~ ^[0-9a-f]{64}$ ]]; then
+    printf 'malformed ShellCheck checksum in lock\n' >&2
+    exit 70
+fi
+
+buildopt_shellcheck_path="${buildopt_tools_root}/toolchains/shellcheck-${buildopt_shellcheck_sha256:0:16}/bin/shellcheck"
+
+mapfile -d '' buildopt_shell_scripts < <(
+    find "${buildopt_script_dir}" \
+        -maxdepth 1 \
+        -type f \
+        -perm -u+x \
+        -print0 |
+        sort -z
+)
+if ((${#buildopt_shell_scripts[@]} == 0)); then
+    printf 'no executable development scripts were found for ShellCheck\n' >&2
+    exit 1
+fi
+
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_run}" \
+    --toolchain shellcheck \
+    -- \
+    shellcheck \
+    -- \
+    "${buildopt_shell_scripts[@]}"
+
+declare -a buildopt_workflows=()
+if [[ -d "${buildopt_repo_root}/.github/workflows" ]]; then
+    mapfile -d '' buildopt_workflows < <(
+        find "${buildopt_repo_root}/.github/workflows" \
+            -maxdepth 1 \
+            -type f \
+            \( -name '*.yaml' -o -name '*.yml' \) \
+            -print0 |
+            sort -z
+    )
+fi
+
+if ((${#buildopt_workflows[@]} > 0)); then
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        "${buildopt_run}" \
+        --toolchain actionlint \
+        -- \
+        actionlint \
+        -no-color \
+        -pyflakes= \
+        -shellcheck="${buildopt_shellcheck_path}" \
+        "${buildopt_workflows[@]}"
+fi
+
+buildopt_workflow_smoke=$(
+    printf '%s\n' \
+        'name: ENV-010 lint smoke' \
+        'on:' \
+        '  workflow_dispatch:' \
+        'jobs:' \
+        '  lint:' \
+        '    runs-on: ubuntu-latest' \
+        '    steps:' \
+        '      - name: Exercise embedded shell lint' \
+        '        shell: bash' \
+        '        run: |' \
+        '          set -euo pipefail' \
+        "          printf '%s\\n' 'buildopt-lint-ok'"
+)
+printf '%s\n' "${buildopt_workflow_smoke}" |
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        "${buildopt_run}" \
+        --toolchain actionlint \
+        -- \
+        actionlint \
+        -no-color \
+        -pyflakes= \
+        -shellcheck="${buildopt_shellcheck_path}" \
+        -stdin-filename .github/workflows/env-010-smoke.yml \
+        -
+
+printf 'ENV-010 lint toolchains OK: ShellCheck %s checked %s scripts; actionlint %s checked %s workflows plus smoke\n' \
+    "${buildopt_shellcheck_version}" \
+    "${#buildopt_shell_scripts[@]}" \
+    "${buildopt_actionlint_version}" \
+    "${#buildopt_workflows[@]}"

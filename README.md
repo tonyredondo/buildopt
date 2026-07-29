@@ -56,14 +56,16 @@ From the repository root:
 ./dev/test-jdk-toolchain
 ./dev/test-go-toolchain
 ./dev/test-rust-toolchain
+./dev/test-lint-toolchains
 ./dev/test-golden-lane-container
 ./dev/run --toolchain go -- ./dev/check-go-toolchain
 ./dev/check-rust-toolchain --verify-manifest
+./dev/check-lint-toolchains
 ./dev/run -- ./dev/check-jvm-release
 ./dev/check-golden-lane --static
 ```
 
-The commands validate the repository layout, portable toolchain lock, host inventory contract, isolated JDK and Go provisioning, the pinned Go module/toolchain, Java 17 JVM artifacts, and golden lane configuration and checksums.
+The commands validate the repository layout, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, and actionlint provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, repository shell scripts, an actionlint workflow smoke fixture, and golden lane configuration and checksums.
 
 Project-local smoke tests:
 
@@ -72,6 +74,9 @@ Project-local smoke tests:
 ./dev/run -- ./dev/check-golden-lane --smoke
 ./dev/bootstrap --toolchain go
 ./dev/run --toolchain go -- ./dev/check-go-toolchain
+./dev/bootstrap --toolchain shellcheck
+./dev/bootstrap --toolchain actionlint
+./dev/check-lint-toolchains
 ```
 
 Smoke test inside the pinned image:

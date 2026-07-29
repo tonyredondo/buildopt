@@ -1,0 +1,414 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_bootstrap="${buildopt_script_dir}/bootstrap"
+buildopt_run="${buildopt_script_dir}/run"
+buildopt_check="${buildopt_script_dir}/check-lint-toolchains"
+buildopt_test_root=$(mktemp -d)
+
+buildopt_cleanup() {
+    rm -rf -- "${buildopt_test_root}"
+}
+trap buildopt_cleanup EXIT
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+buildopt_payload_root="${buildopt_test_root}/payload"
+buildopt_fake_shellcheck="${buildopt_payload_root}/shellcheck-v0.11.0"
+buildopt_fake_actionlint="${buildopt_payload_root}/actionlint"
+mkdir -p \
+    "${buildopt_fake_shellcheck}" \
+    "${buildopt_fake_actionlint}/docs"
+
+# The generated fixture reads test controls when the fake binary runs.
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'if [[ "${1:-}" == "--version" ]]; then' \
+    '    printf '\''ShellCheck - shell script analysis tool\n'\''' \
+    '    printf '\''version: 0.11.0\n'\''' \
+    '    printf '\''license: GNU General Public License, version 3\n'\''' \
+    '    exit 0' \
+    'fi' \
+    'if [[ -n "${BUILDOPT_TEST_SHELLCHECK_LOG:-}" ]]; then' \
+    '    printf '\''%s\n'\'' "$*" >>"${BUILDOPT_TEST_SHELLCHECK_LOG}"' \
+    'fi' \
+    'if [[ -n "${BUILDOPT_TEST_SHELLCHECK_FAIL:-}" ]]; then' \
+    '    exit "${BUILDOPT_TEST_SHELLCHECK_FAIL}"' \
+    'fi' \
+    >"${buildopt_fake_shellcheck}/shellcheck"
+printf '%s\n' \
+    'Synthetic ShellCheck license' \
+    >"${buildopt_fake_shellcheck}/LICENSE.txt"
+chmod +x "${buildopt_fake_shellcheck}/shellcheck"
+
+# The generated fixture reads test controls when the fake binary runs.
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'if [[ "${1:-}" == "-version" ]]; then' \
+    '    printf '\''1.7.12\n'\''' \
+    '    printf '\''installed from synthetic ENV-010 fixture\n'\''' \
+    '    exit 0' \
+    'fi' \
+    'if [[ -n "${BUILDOPT_TEST_ACTIONLINT_LOG:-}" ]]; then' \
+    '    printf '\''%s\n'\'' "$*" >>"${BUILDOPT_TEST_ACTIONLINT_LOG}"' \
+    'fi' \
+    'if [[ -n "${BUILDOPT_TEST_ACTIONLINT_FAIL:-}" ]]; then' \
+    '    exit "${BUILDOPT_TEST_ACTIONLINT_FAIL}"' \
+    'fi' \
+    'buildopt_shellcheck=' \
+    'buildopt_reads_stdin=0' \
+    'for buildopt_argument in "$@"; do' \
+    '    case "${buildopt_argument}" in' \
+    '        -shellcheck=*)' \
+    '            buildopt_shellcheck=${buildopt_argument#-shellcheck=}' \
+    '            ;;' \
+    '        -)' \
+    '            buildopt_reads_stdin=1' \
+    '            ;;' \
+    '    esac' \
+    'done' \
+    'if [[ -z "${buildopt_shellcheck}" || ! -x "${buildopt_shellcheck}" ]]; then' \
+    '    exit 65' \
+    'fi' \
+    '"${buildopt_shellcheck}" --version >/dev/null' \
+    'if ((buildopt_reads_stdin != 0)); then' \
+    '    while IFS= read -r _; do :; done' \
+    'fi' \
+    >"${buildopt_fake_actionlint}/actionlint"
+printf '%s\n' \
+    'Synthetic actionlint license' \
+    >"${buildopt_fake_actionlint}/LICENSE.txt"
+printf '%s\n' \
+    'Synthetic actionlint documentation' \
+    >"${buildopt_fake_actionlint}/docs/README.md"
+chmod +x "${buildopt_fake_actionlint}/actionlint"
+
+buildopt_shellcheck_archive="${buildopt_test_root}/fake-shellcheck.tar.xz"
+buildopt_actionlint_archive="${buildopt_test_root}/fake-actionlint.tar.gz"
+tar -cJf "${buildopt_shellcheck_archive}" \
+    -C "${buildopt_payload_root}" \
+    shellcheck-v0.11.0
+tar -czf "${buildopt_actionlint_archive}" \
+    -C "${buildopt_fake_actionlint}" \
+    .
+buildopt_shellcheck_sha256=$(
+    sha256sum "${buildopt_shellcheck_archive}" | awk '{print $1}'
+)
+buildopt_actionlint_sha256=$(
+    sha256sum "${buildopt_actionlint_archive}" | awk '{print $1}'
+)
+
+buildopt_lock="${buildopt_test_root}/toolchains.lock.json"
+jq -n \
+    --arg buildopt_shellcheck_sha256 "${buildopt_shellcheck_sha256}" \
+    --arg buildopt_actionlint_sha256 "${buildopt_actionlint_sha256}" \
+    '{
+        schemaVersion: "buildopt.dev/toolchains-lock/v1",
+        platforms: [
+            {
+                id: "linux-amd64",
+                operatingSystem: "linux",
+                architecture: "amd64"
+            }
+        ],
+        artifacts: [
+            {
+                id: "shellcheck",
+                version: "0.11.0",
+                adoption: "required",
+                kind: "tar.xz",
+                platform: "linux-amd64",
+                provider: "shellcheck",
+                url: "https://example.invalid/fake-shellcheck.tar.xz",
+                sha256: $buildopt_shellcheck_sha256,
+                requiredBy: ["ENV-010"]
+            },
+            {
+                id: "actionlint",
+                version: "1.7.12",
+                adoption: "required",
+                kind: "tar.gz",
+                platform: "linux-amd64",
+                provider: "actionlint",
+                url: "https://example.invalid/fake-actionlint.tar.gz",
+                sha256: $buildopt_actionlint_sha256,
+                requiredBy: ["ENV-010"]
+            }
+        ]
+    }' >"${buildopt_lock}"
+
+buildopt_fake_host_bin="${buildopt_test_root}/fake-host-bin"
+buildopt_curl_count="${buildopt_test_root}/curl-count"
+mkdir "${buildopt_fake_host_bin}"
+# The generated fixture selects the archive from the immutable fixture URL.
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'buildopt_output=' \
+    'buildopt_url=' \
+    'while (($# > 0)); do' \
+    '    case "$1" in' \
+    '        --output)' \
+    '            buildopt_output=$2' \
+    '            shift 2' \
+    '            ;;' \
+    '        https://*)' \
+    '            buildopt_url=$1' \
+    '            shift' \
+    '            ;;' \
+    '        *)' \
+    '            shift' \
+    '            ;;' \
+    '    esac' \
+    'done' \
+    'case "${buildopt_url}" in' \
+    '    *fake-shellcheck.tar.xz)' \
+    '        buildopt_archive=${BUILDOPT_TEST_SHELLCHECK_ARCHIVE}' \
+    '        ;;' \
+    '    *fake-actionlint.tar.gz)' \
+    '        buildopt_archive=${BUILDOPT_TEST_ACTIONLINT_ARCHIVE}' \
+    '        ;;' \
+    '    *)' \
+    '        exit 64' \
+    '        ;;' \
+    'esac' \
+    'buildopt_count=0' \
+    'if [[ -f "${BUILDOPT_TEST_CURL_COUNT}" ]]; then' \
+    '    read -r buildopt_count <"${BUILDOPT_TEST_CURL_COUNT}"' \
+    'fi' \
+    'printf '\''%s\n'\'' "$((buildopt_count + 1))" >"${BUILDOPT_TEST_CURL_COUNT}"' \
+    'cp -- "${buildopt_archive}" "${buildopt_output}"' \
+    >"${buildopt_fake_host_bin}/curl"
+chmod +x "${buildopt_fake_host_bin}/curl"
+
+buildopt_tools_root="${buildopt_test_root}/tools with spaces"
+for buildopt_id in shellcheck actionlint; do
+    buildopt_bootstrap_output=$(
+        BUILDOPT_TEST_ACTIONLINT_ARCHIVE="${buildopt_actionlint_archive}" \
+        BUILDOPT_TEST_CURL_COUNT="${buildopt_curl_count}" \
+        BUILDOPT_TEST_SHELLCHECK_ARCHIVE="${buildopt_shellcheck_archive}" \
+        BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+        BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        PATH="${buildopt_fake_host_bin}:${PATH}" \
+            "${buildopt_bootstrap}" --toolchain "${buildopt_id}"
+    )
+    if [[ "${buildopt_bootstrap_output}" != *"Provisioned ${buildopt_id} "* ]]; then
+        printf 'bootstrap did not report successful %s provisioning\n' \
+            "${buildopt_id}" >&2
+        exit 1
+    fi
+done
+
+buildopt_shellcheck_home="${buildopt_tools_root}/toolchains/shellcheck-${buildopt_shellcheck_sha256:0:16}"
+buildopt_actionlint_home="${buildopt_tools_root}/toolchains/actionlint-${buildopt_actionlint_sha256:0:16}"
+if [[ ! -x "${buildopt_shellcheck_home}/bin/shellcheck" ]] ||
+    [[ ! -x "${buildopt_actionlint_home}/bin/actionlint" ]]; then
+    printf 'bootstrap did not normalize the lint tool binaries under bin/\n' >&2
+    exit 1
+fi
+
+for buildopt_id in shellcheck actionlint; do
+    buildopt_second_output=$(
+        BUILDOPT_TEST_ACTIONLINT_ARCHIVE="${buildopt_actionlint_archive}" \
+        BUILDOPT_TEST_CURL_COUNT="${buildopt_curl_count}" \
+        BUILDOPT_TEST_SHELLCHECK_ARCHIVE="${buildopt_shellcheck_archive}" \
+        BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+        BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        PATH="${buildopt_fake_host_bin}:${PATH}" \
+            "${buildopt_bootstrap}" --toolchain "${buildopt_id}"
+    )
+    if [[ "${buildopt_second_output}" != *"is already provisioned"* ]]; then
+        printf '%s bootstrap is not idempotent\n' "${buildopt_id}" >&2
+        exit 1
+    fi
+done
+if [[ "$(<"${buildopt_curl_count}")" != "2" ]]; then
+    printf 'idempotent lint bootstrap downloaded an artifact again\n' >&2
+    exit 1
+fi
+
+buildopt_global_bin="${buildopt_test_root}/global-bin"
+mkdir "${buildopt_global_bin}"
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf '\''version: 0.9.0\n'\''' \
+    >"${buildopt_global_bin}/shellcheck"
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf '\''1.6.0\n'\''' \
+    >"${buildopt_global_bin}/actionlint"
+chmod +x \
+    "${buildopt_global_bin}/shellcheck" \
+    "${buildopt_global_bin}/actionlint"
+
+buildopt_global_shellcheck=$(
+    PATH="${buildopt_global_bin}:${PATH}" shellcheck --version
+)
+buildopt_global_actionlint=$(
+    PATH="${buildopt_global_bin}:${PATH}" actionlint -version
+)
+buildopt_project_shellcheck=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    PATH="${buildopt_global_bin}:${PATH}" \
+        "${buildopt_run}" \
+        --toolchain shellcheck \
+        -- \
+        shellcheck --version
+)
+buildopt_project_actionlint=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    PATH="${buildopt_global_bin}:${PATH}" \
+        "${buildopt_run}" \
+        --toolchain actionlint \
+        -- \
+        actionlint -version
+)
+if [[ "${buildopt_global_shellcheck}" != *'0.9.0'* ]] ||
+    [[ "${buildopt_global_actionlint}" != '1.6.0' ]] ||
+    [[ "${buildopt_project_shellcheck}" != *'0.11.0'* ]] ||
+    [[ "${buildopt_project_actionlint%%$'\n'*}" != '1.7.12' ]]; then
+    printf 'dev/run did not isolate locked lint tools from global tools\n' >&2
+    exit 1
+fi
+
+buildopt_shellcheck_log="${buildopt_test_root}/shellcheck.log"
+buildopt_actionlint_log="${buildopt_test_root}/actionlint.log"
+buildopt_check_output=$(
+    BUILDOPT_TEST_ACTIONLINT_LOG="${buildopt_actionlint_log}" \
+    BUILDOPT_TEST_SHELLCHECK_LOG="${buildopt_shellcheck_log}" \
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    PATH="${buildopt_global_bin}:${PATH}" \
+        "${buildopt_check}"
+)
+if [[ "${buildopt_check_output}" != \
+    *'ENV-010 lint toolchains OK: ShellCheck 0.11.0'* ]] ||
+    ! grep -Fq "${buildopt_script_dir}/bootstrap" "${buildopt_shellcheck_log}" ||
+    ! grep -Fq "${buildopt_script_dir}/check-lint-toolchains" \
+        "${buildopt_shellcheck_log}" ||
+    ! grep -Fq -- \
+        "-shellcheck=${buildopt_shellcheck_home}/bin/shellcheck" \
+        "${buildopt_actionlint_log}" ||
+    ! grep -Fq -- \
+        '-stdin-filename .github/workflows/env-010-smoke.yml -' \
+        "${buildopt_actionlint_log}"; then
+    printf 'lint checker did not exercise the expected locked-tool paths\n' >&2
+    exit 1
+fi
+
+buildopt_manifest="${buildopt_actionlint_home}/.buildopt-toolchain.json"
+cp -- "${buildopt_manifest}" "${buildopt_manifest}.original"
+jq '.provider = "unexpected-provider"' \
+    "${buildopt_manifest}" >"${buildopt_manifest}.changed"
+mv -- "${buildopt_manifest}.changed" "${buildopt_manifest}"
+set +e
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_run}" \
+    --toolchain actionlint \
+    -- \
+    actionlint -version >/dev/null 2>&1
+buildopt_manifest_exit=$?
+set -e
+mv -- "${buildopt_manifest}.original" "${buildopt_manifest}"
+if ((buildopt_manifest_exit != 1)); then
+    printf 'dev/run accepted lint metadata that diverged from the lock\n' >&2
+    exit 1
+fi
+
+set +e
+BUILDOPT_TEST_SHELLCHECK_FAIL=41 \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_check}" >/dev/null 2>&1
+buildopt_shellcheck_exit=$?
+BUILDOPT_TEST_ACTIONLINT_FAIL=42 \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_check}" >/dev/null 2>&1
+buildopt_actionlint_exit=$?
+"${buildopt_bootstrap}" >/dev/null 2>&1
+buildopt_bootstrap_usage_exit=$?
+"${buildopt_run}" shellcheck --version >/dev/null 2>&1
+buildopt_run_usage_exit=$?
+"${buildopt_check}" invalid >/dev/null 2>&1
+buildopt_check_usage_exit=$?
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_test_root}/missing-tools" \
+    "${buildopt_run}" \
+    --toolchain shellcheck \
+    -- \
+    shellcheck --version >/dev/null 2>&1
+buildopt_missing_exit=$?
+set -e
+if ((buildopt_shellcheck_exit != 41)) ||
+    ((buildopt_actionlint_exit != 42)) ||
+    ((buildopt_bootstrap_usage_exit != 64)) ||
+    ((buildopt_run_usage_exit != 64)) ||
+    ((buildopt_check_usage_exit != 64)) ||
+    ((buildopt_missing_exit != 1)); then
+    printf 'unexpected lint error contract: %s/%s/%s/%s/%s/%s\n' \
+        "${buildopt_shellcheck_exit}" \
+        "${buildopt_actionlint_exit}" \
+        "${buildopt_bootstrap_usage_exit}" \
+        "${buildopt_run_usage_exit}" \
+        "${buildopt_check_usage_exit}" \
+        "${buildopt_missing_exit}" >&2
+    exit 1
+fi
+
+buildopt_bad_lock="${buildopt_test_root}/bad-checksum-lock.json"
+jq '(.artifacts[] | select(.id == "shellcheck") | .sha256) = ("0" * 64)' \
+    "${buildopt_lock}" >"${buildopt_bad_lock}"
+set +e
+BUILDOPT_TEST_ACTIONLINT_ARCHIVE="${buildopt_actionlint_archive}" \
+BUILDOPT_TEST_CURL_COUNT="${buildopt_test_root}/bad-curl-count" \
+BUILDOPT_TEST_SHELLCHECK_ARCHIVE="${buildopt_shellcheck_archive}" \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_bad_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_test_root}/bad-tools" \
+PATH="${buildopt_fake_host_bin}:${PATH}" \
+    "${buildopt_bootstrap}" --toolchain shellcheck >/dev/null 2>&1
+buildopt_checksum_exit=$?
+set -e
+if ((buildopt_checksum_exit != 1)); then
+    printf 'ShellCheck bootstrap accepted a checksum mismatch\n' >&2
+    exit 1
+fi
+
+buildopt_global_shellcheck_after=$(
+    PATH="${buildopt_global_bin}:${PATH}" shellcheck --version
+)
+buildopt_global_actionlint_after=$(
+    PATH="${buildopt_global_bin}:${PATH}" actionlint -version
+)
+if [[ "${buildopt_global_shellcheck_after}" != "${buildopt_global_shellcheck}" ]] ||
+    [[ "${buildopt_global_actionlint_after}" != "${buildopt_global_actionlint}" ]]; then
+    printf 'lint tool execution changed global tool state\n' >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'lint toolchain tests changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'ENV-010 lint toolchain tests OK: archives, idempotency, isolation, lint, and failures\n'

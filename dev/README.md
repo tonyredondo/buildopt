@@ -19,20 +19,22 @@ Gradle and the golden container are intentionally delegated to their existing so
 - `gradle/wrapper/gradle-wrapper.properties` owns the Gradle distribution and checksum.
 - `specs/golden-lane-runner-v1.json` owns the golden image and runner contract.
 
-Operating-system capabilities and externally supplied commands such as Docker, Git, `curl`, `jq`, `tar`, and `unzip` are host requirements, not downloadable artifacts in this lock. The read-only `dev/doctor` will report them without installing or modifying them.
+Operating-system capabilities and externally supplied commands such as Docker, Git, `curl`, `jq`, `tar`, `xz`, and `unzip` are host requirements, not downloadable artifacts in this lock. The read-only `dev/doctor` will report them without installing or modifying them.
 
 ## Bootstrap
 
-`ENV-003` introduced the exact Temurin JDK 21 artifact required by the golden lane. `ENV-005` adds the exact Go toolchain required by the core. Provision either target from the repository root:
+`ENV-003` introduced the exact Temurin JDK 21 artifact required by the golden lane. `ENV-005` added the exact Go toolchain required by the core, and `ENV-010` adds the locked lint tools used by repository scripts and future workflows. Provision a supported target from the repository root:
 
 ```bash
 ./dev/bootstrap --toolchain temurin-jdk-21
 ./dev/bootstrap --toolchain go
+./dev/bootstrap --toolchain shellcheck
+./dev/bootstrap --toolchain actionlint
 ```
 
-The bootstrap downloads the immutable URL from the lock, verifies its SHA-256 before extraction, rejects unsafe archive paths, runs target-specific version and runtime probes, and installs atomically under `.tools/toolchains/`. A second invocation verifies and reuses the existing installation without another download. It never uses `sudo` or modifies the system JDK or Go installation.
+The bootstrap downloads the immutable URL from the lock, verifies its SHA-256 before extraction, rejects unsafe archive paths, handles the locked `tar.gz` and `tar.xz` layouts, runs target-specific version and runtime probes, and installs atomically under `.tools/toolchains/`. A second invocation verifies and reuses the existing installation without another download. It never uses `sudo` or modifies global tools.
 
-Set `BUILDOPT_TOOLS_ROOT` to keep the ignored tool state in another local directory. The repository lock remains the source of truth. `ENV-012` will extend this entrypoint to the remaining adopted toolchains and add the complete cleanup contract.
+Set `BUILDOPT_TOOLS_ROOT` to keep the ignored tool state in another local directory. The repository lock remains the source of truth. `ENV-012` will extend this entrypoint to the other adopted toolchains and add the complete cleanup contract.
 
 ## Project-local execution
 
@@ -60,6 +62,15 @@ Run a command with the provisioned Go toolchain:
 ```
 
 For Go, `dev/run` verifies the locked binary and manifest, disables automatic toolchain switching and the user Go environment file, and supplies project-local module and build caches only to the child process. The parent shell and its global Go selection remain unchanged.
+
+Run either lint tool without depending on a global installation:
+
+```bash
+./dev/run --toolchain shellcheck -- shellcheck --version
+./dev/run --toolchain actionlint -- actionlint -version
+```
+
+For both tools, `dev/run` verifies the provisioned manifest and exact reported version, then prepends only that tool's repository-local `bin` directory for the child process. The parent shell and any global lint installation remain unchanged.
 
 ## Go toolchain validation
 
@@ -96,6 +107,20 @@ Revalidate the official channel manifest bytes against the repository lock when 
 ```
 
 The checker requires the exact installed compiler, Cargo release, host triple, active repository override, and locked configuration. Its dependency-free Cargo smoke uses temporary `CARGO_HOME` and target directories, disables network access, and leaves the optional helper unimplemented until `SPK-003`. The doctor resolves only an already-installed locked toolchain, so its read-only probe never triggers Rustup auto-installation.
+
+## Lint toolchain validation
+
+Provision both tools and run their integrated smoke:
+
+```bash
+./dev/bootstrap --toolchain shellcheck
+./dev/bootstrap --toolchain actionlint
+./dev/check-lint-toolchains
+```
+
+The checker runs exact ShellCheck 0.11.0 over every executable script directly under `dev/`. It then runs exact actionlint 1.7.12 over any existing `.github/workflows/*.yml` or `*.yaml` files and an in-memory valid workflow fixture. actionlint receives the exact repository-local ShellCheck path for embedded `run:` scripts and has opportunistic global Pyflakes discovery disabled.
+
+This is provisioning and lint-smoke evidence for `ENV-010`; it does not create an authoritative CI workflow or close `F0-004`.
 
 ## JVM release validation
 
@@ -170,6 +195,7 @@ Run the lock and doctor contract tests from the repository root:
 ./dev/test-jdk-toolchain
 ./dev/test-go-toolchain
 ./dev/test-rust-toolchain
+./dev/test-lint-toolchains
 ./dev/test-golden-lane-container
 ```
 
@@ -182,6 +208,8 @@ The JDK toolchain tests use a synthetic archive and isolated tool root. They exe
 The Go toolchain tests use a synthetic archive and isolated tool root. They exercise atomic provisioning, idempotency, exact-version selection, project-local `GOROOT`, `GOPATH`, module/build caches, disabled automatic toolchain switching and user configuration, global-Go isolation, missing-tool behavior, and child exit-code propagation without downloading or changing the workstation Go installation.
 
 The Rust toolchain tests use synthetic Rustup, rustc, Cargo, and channel-manifest fixtures. They exercise the exact repository override, offline isolated Cargo state, locked manifest verification, missing/mismatched tools, configuration drift, usage errors, and Cargo failure propagation without installing a toolchain or touching the global default.
+
+The lint toolchain tests use synthetic ShellCheck and actionlint archives in their real upstream layouts. They exercise checksum-verified `tar.xz` and `tar.gz` provisioning, atomic installation, idempotency, exact-version selection, repository-local `PATH`, global-tool isolation, manifest drift, lint failure propagation, usage errors, and missing-tool behavior without downloading or changing global tools.
 
 The golden container tests use a synthetic Docker client and deterministic host-resource probes. They verify index-to-platform digest binding, exact pull and run arguments, local image identity, strict cgroup settings, mutable-reference rejection, daemon/resource failures, and child exit-code propagation without contacting a registry or starting a container.
 

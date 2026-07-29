@@ -2,7 +2,7 @@
 set -euo pipefail
 
 buildopt_usage() {
-    printf 'usage: %s --toolchain <temurin-jdk-21|go>\n' "$0"
+    printf 'usage: %s --toolchain <temurin-jdk-21|go|shellcheck|actionlint>\n' "$0"
 }
 
 buildopt_toolchain=
@@ -28,7 +28,7 @@ while (($# > 0)); do
 done
 
 case "${buildopt_toolchain}" in
-    go | temurin-jdk-21) ;;
+    actionlint | go | shellcheck | temurin-jdk-21) ;;
     *)
         buildopt_usage >&2
         exit 64
@@ -45,7 +45,7 @@ if [[ -z "${buildopt_tools_root}" || "${buildopt_tools_root}" == "/" ]]; then
     exit 1
 fi
 
-for buildopt_command in curl jq sha256sum tar uname; do
+for buildopt_command in awk curl jq sha256sum tar uname xz; do
     if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
         printf 'required bootstrap command is unavailable: %s\n' \
             "${buildopt_command}" >&2
@@ -86,7 +86,8 @@ buildopt_sha256=$(jq -r '.sha256' <<<"${buildopt_entry}")
 if [[ ! "${buildopt_id}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
     [[ ! "${buildopt_provider}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
     [[ ! "${buildopt_sha256}" =~ ^[0-9a-f]{64}$ ]] ||
-    [[ "${buildopt_kind}" != "tar.gz" ]] ||
+    [[ "${buildopt_kind}" != "tar.gz" &&
+        "${buildopt_kind}" != "tar.xz" ]] ||
     [[ ! "${buildopt_url}" =~ ^https:// ]]; then
     printf 'unsupported or malformed toolchain entry: %s\n' \
         "${buildopt_toolchain}" >&2
@@ -94,15 +95,33 @@ if [[ ! "${buildopt_id}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
 fi
 
 case "${buildopt_id}" in
+    actionlint)
+        if [[ "${buildopt_provider}" != "actionlint" ]] ||
+            [[ "${buildopt_kind}" != "tar.gz" ]] ||
+            [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
+            printf 'unsupported or malformed actionlint toolchain entry\n' >&2
+            exit 70
+        fi
+        ;;
     go)
         if [[ "${buildopt_provider}" != "go-project" ]] ||
+            [[ "${buildopt_kind}" != "tar.gz" ]] ||
             [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+([.][0-9]+)?$ ]]; then
             printf 'unsupported or malformed Go toolchain entry\n' >&2
             exit 70
         fi
         ;;
+    shellcheck)
+        if [[ "${buildopt_provider}" != "shellcheck" ]] ||
+            [[ "${buildopt_kind}" != "tar.xz" ]] ||
+            [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
+            printf 'unsupported or malformed ShellCheck toolchain entry\n' >&2
+            exit 70
+        fi
+        ;;
     temurin-jdk-21)
         if [[ "${buildopt_provider}" != "eclipse-adoptium" ]] ||
+            [[ "${buildopt_kind}" != "tar.gz" ]] ||
             [[ ! "${buildopt_version}" =~ ^21([.]|$) ]]; then
             printf 'unsupported or malformed JDK 21 toolchain entry\n' >&2
             exit 70
@@ -126,11 +145,16 @@ buildopt_install_dir="${buildopt_tools_root}/toolchains/${buildopt_id}-${buildop
 
 buildopt_validate_toolchain() {
     local buildopt_tool_home=$1
+    local buildopt_actionlint_output
+    local buildopt_actionlint_version
     local buildopt_go_root
     local buildopt_go_output
     local buildopt_java_output
     local buildopt_javac_output
     local buildopt_runtime_version
+    local buildopt_shellcheck_line
+    local buildopt_shellcheck_output
+    local buildopt_shellcheck_version
 
     [[ -f "${buildopt_tool_home}/.buildopt-toolchain.json" ]] || return 1
 
@@ -150,6 +174,15 @@ buildopt_validate_toolchain() {
         ' "${buildopt_tool_home}/.buildopt-toolchain.json" >/dev/null || return 1
 
     case "${buildopt_id}" in
+        actionlint)
+            [[ -x "${buildopt_tool_home}/bin/actionlint" ]] || return 1
+            buildopt_actionlint_output=$(
+                "${buildopt_tool_home}/bin/actionlint" -version 2>&1
+            ) || return 1
+            buildopt_actionlint_version=${buildopt_actionlint_output%%$'\n'*}
+            [[ "${buildopt_actionlint_version}" == "${buildopt_version}" ]] ||
+                return 1
+            ;;
         go)
             [[ -x "${buildopt_tool_home}/bin/go" ]] || return 1
             buildopt_go_output=$(
@@ -167,6 +200,21 @@ buildopt_validate_toolchain() {
                     "${buildopt_tool_home}/bin/go" env GOROOT
             ) || return 1
             [[ "${buildopt_go_root}" == "${buildopt_tool_home}" ]] || return 1
+            ;;
+        shellcheck)
+            [[ -x "${buildopt_tool_home}/bin/shellcheck" ]] || return 1
+            buildopt_shellcheck_output=$(
+                "${buildopt_tool_home}/bin/shellcheck" --version 2>&1
+            ) || return 1
+            buildopt_shellcheck_version=
+            while IFS= read -r buildopt_shellcheck_line; do
+                if [[ "${buildopt_shellcheck_line}" == "version: "* ]]; then
+                    buildopt_shellcheck_version=${buildopt_shellcheck_line#version: }
+                    break
+                fi
+            done <<<"${buildopt_shellcheck_output}"
+            [[ "${buildopt_shellcheck_version}" == "${buildopt_version}" ]] ||
+                return 1
             ;;
         temurin-jdk-21)
             [[ -x "${buildopt_tool_home}/bin/java" ]] || return 1
@@ -246,7 +294,7 @@ if [[ -e "${buildopt_install_dir}" ]]; then
     exit 1
 fi
 
-buildopt_archive="${buildopt_download_dir}/${buildopt_id}-${buildopt_sha256}.tar.gz"
+buildopt_archive="${buildopt_download_dir}/${buildopt_id}-${buildopt_sha256}.${buildopt_kind}"
 if [[ -f "${buildopt_archive}" ]] &&
     ! printf '%s  %s\n' "${buildopt_sha256}" "${buildopt_archive}" |
         sha256sum -c - >/dev/null 2>&1; then
@@ -289,7 +337,16 @@ if ! printf '%s  %s\n' "${buildopt_sha256}" "${buildopt_archive}" |
     exit 1
 fi
 
-if ! tar -tzf "${buildopt_archive}" |
+declare -a buildopt_tar_compression=()
+case "${buildopt_kind}" in
+    tar.gz) buildopt_tar_compression=(--gzip) ;;
+    tar.xz) buildopt_tar_compression=(--xz) ;;
+esac
+
+if ! tar \
+    --list \
+    "${buildopt_tar_compression[@]}" \
+    --file "${buildopt_archive}" |
     awk '
         /^\// {
             invalid = 1
@@ -318,7 +375,7 @@ buildopt_extract_root="${buildopt_staging_root}/extract"
 mkdir -- "${buildopt_extract_root}"
 tar \
     --extract \
-    --gzip \
+    "${buildopt_tar_compression[@]}" \
     --file "${buildopt_archive}" \
     --directory "${buildopt_extract_root}" \
     --no-same-owner \
@@ -330,14 +387,43 @@ mapfile -d '' buildopt_roots < <(
         -maxdepth 1 \
         -print0
 )
-if ((${#buildopt_roots[@]} != 1)) ||
-    [[ ! -d "${buildopt_roots[0]}" ]]; then
-    printf 'toolchain archive must contain exactly one root directory: %s\n' \
-        "${buildopt_id}" >&2
-    exit 1
-fi
-
-buildopt_staged_tool=${buildopt_roots[0]}
+case "${buildopt_id}" in
+    actionlint)
+        if [[ ! -f "${buildopt_extract_root}/actionlint" ]] ||
+            [[ -e "${buildopt_extract_root}/bin" ]]; then
+            printf 'actionlint archive has an unexpected layout\n' >&2
+            exit 1
+        fi
+        mkdir -- "${buildopt_extract_root}/bin"
+        mv -- \
+            "${buildopt_extract_root}/actionlint" \
+            "${buildopt_extract_root}/bin/actionlint"
+        buildopt_staged_tool=${buildopt_extract_root}
+        ;;
+    go | temurin-jdk-21)
+        if ((${#buildopt_roots[@]} != 1)) ||
+            [[ ! -d "${buildopt_roots[0]}" ]]; then
+            printf 'toolchain archive must contain exactly one root directory: %s\n' \
+                "${buildopt_id}" >&2
+            exit 1
+        fi
+        buildopt_staged_tool=${buildopt_roots[0]}
+        ;;
+    shellcheck)
+        if ((${#buildopt_roots[@]} != 1)) ||
+            [[ ! -d "${buildopt_roots[0]}" ]] ||
+            [[ ! -f "${buildopt_roots[0]}/shellcheck" ]] ||
+            [[ -e "${buildopt_roots[0]}/bin" ]]; then
+            printf 'ShellCheck archive has an unexpected layout\n' >&2
+            exit 1
+        fi
+        mkdir -- "${buildopt_roots[0]}/bin"
+        mv -- \
+            "${buildopt_roots[0]}/shellcheck" \
+            "${buildopt_roots[0]}/bin/shellcheck"
+        buildopt_staged_tool=${buildopt_roots[0]}
+        ;;
+esac
 jq -n \
     --arg buildopt_id "${buildopt_id}" \
     --arg buildopt_version "${buildopt_version}" \
