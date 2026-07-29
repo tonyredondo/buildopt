@@ -128,6 +128,7 @@ buildopt_require_count 1 "          distribution: ${buildopt_java_distribution}"
 buildopt_require_count 1 "          java-version: '${buildopt_java_version}'"
 buildopt_require_count 1 "          check-latest: false"
 buildopt_require_count 1 "          ${buildopt_rust_toolchain}"
+buildopt_require_count 1 "            protoc \\"
 buildopt_require_count 1 "            ./dev/check-base-ci --lane core"
 buildopt_require_count 1 "        run: ./dev/check-base-ci --lane rust"
 
@@ -196,6 +197,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-ownership"
         "${buildopt_script_dir}/check-toolchains-lock"
         "${buildopt_script_dir}/check-lint-toolchains"
+        "${buildopt_script_dir}/check-generated-code"
         "${buildopt_script_dir}/run" \
             --toolchain go \
             -- \

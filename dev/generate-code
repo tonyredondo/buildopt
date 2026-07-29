@@ -1,0 +1,235 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_usage() {
+    printf 'usage: %s --artifact <local-events-v1-descriptor> [--source-root <path>] [--output-root <path>]\n' "$0"
+}
+
+buildopt_artifact=
+buildopt_source_root=
+buildopt_output_root=
+while (($# > 0)); do
+    case "$1" in
+        --artifact)
+            if (($# < 2)) || [[ -n "${buildopt_artifact}" ]]; then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_artifact=$2
+            shift 2
+            ;;
+        --source-root)
+            if (($# < 2)) || [[ -n "${buildopt_source_root}" ]]; then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_source_root=$2
+            shift 2
+            ;;
+        --output-root)
+            if (($# < 2)) || [[ -n "${buildopt_output_root}" ]]; then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_output_root=$2
+            shift 2
+            ;;
+        --help)
+            buildopt_usage
+            exit 0
+            ;;
+        *)
+            buildopt_usage >&2
+            exit 64
+            ;;
+    esac
+done
+if [[ "${buildopt_artifact}" != "local-events-v1-descriptor" ]]; then
+    buildopt_usage >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_manifest="${buildopt_script_dir}/generated-artifacts.json"
+buildopt_lock=${BUILDOPT_TOOLCHAINS_LOCK_FILE:-"${buildopt_script_dir}/toolchains.lock.yaml"}
+buildopt_tools_root=${BUILDOPT_TOOLS_ROOT:-"${buildopt_repo_root}/.tools"}
+buildopt_source_root=${buildopt_source_root:-"${buildopt_repo_root}"}
+buildopt_output_root=${buildopt_output_root:-"${buildopt_repo_root}"}
+
+for buildopt_command in jq mktemp realpath sha256sum; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required code-generation command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+if [[ ! -f "${buildopt_manifest}" ]] || [[ ! -f "${buildopt_lock}" ]]; then
+    printf 'generated-artifact manifest or toolchain lock is missing\n' >&2
+    exit 70
+fi
+if ! jq -e '
+    keys == ["artifacts", "schemaVersion"] and
+    .schemaVersion == "buildopt.dev/generated-artifacts/v1" and
+    (.artifacts | type) == "array" and
+    (.artifacts | length) > 0 and
+    ([.artifacts[].id] | unique | length) == (.artifacts | length)
+' "${buildopt_manifest}" >/dev/null; then
+    printf 'generated-artifact manifest is malformed\n' >&2
+    exit 70
+fi
+
+buildopt_source_root=$(realpath -m -- "${buildopt_source_root}")
+buildopt_output_root=$(realpath -m -- "${buildopt_output_root}")
+if [[ "${buildopt_source_root}" == "/" ]] ||
+    [[ "${buildopt_output_root}" == "/" ]]; then
+    printf 'refusing unsafe generation root\n' >&2
+    exit 1
+fi
+
+if ! buildopt_entry=$(
+    jq -ce --arg buildopt_id "${buildopt_artifact}" '
+        [
+            .artifacts[] |
+            select(.id == $buildopt_id)
+        ] |
+        if length == 1 then
+            .[0]
+        else
+            error("expected exactly one generated artifact")
+        end
+    ' "${buildopt_manifest}"
+); then
+    printf 'invalid generated-artifact entry: %s\n' \
+        "${buildopt_artifact}" >&2
+    exit 70
+fi
+if ! jq -e '
+    keys == [
+        "command",
+        "format",
+        "id",
+        "outputs",
+        "owner",
+        "owningItem",
+        "sources",
+        "toolchains"
+    ] and
+    .id == "local-events-v1-descriptor" and
+    .owningItem == "F0-019" and
+    .owner == "Contracts" and
+    .sources == [
+        "contracts/proto/local-events/v1/task_events.proto"
+    ] and
+    .outputs == [
+        "contracts/proto/local-events/v1/task_events.descriptor.textproto"
+    ] and
+    .command == "./dev/generate-code --artifact local-events-v1-descriptor" and
+    .format == "google.protobuf.FileDescriptorSet textproto" and
+    .toolchains == ["protoc"]
+' <<<"${buildopt_entry}" >/dev/null; then
+    printf 'unsupported generated-artifact contract: %s\n' \
+        "${buildopt_artifact}" >&2
+    exit 70
+fi
+
+buildopt_source_relative=$(
+    jq -r '.sources[0]' <<<"${buildopt_entry}"
+)
+buildopt_output_relative=$(
+    jq -r '.outputs[0]' <<<"${buildopt_entry}"
+)
+buildopt_source="${buildopt_source_root}/${buildopt_source_relative}"
+buildopt_output="${buildopt_output_root}/${buildopt_output_relative}"
+if [[ ! -f "${buildopt_source}" ]]; then
+    printf 'generated-artifact source is missing: %s\n' \
+        "${buildopt_source}" >&2
+    exit 1
+fi
+
+if ! buildopt_protoc_entry=$(
+    jq -ce '
+        [.artifacts[] | select(.id == "protoc")] |
+        if length == 1 and
+            .[0].adoption == "required" and
+            .[0].kind == "zip" and
+            .[0].provider == "protocol-buffers" and
+            .[0].platform == "linux-amd64"
+        then
+            .[0]
+        else
+            error("expected one adopted protoc entry")
+        end
+    ' "${buildopt_lock}"
+); then
+    printf 'invalid protoc toolchain entry for code generation\n' >&2
+    exit 70
+fi
+buildopt_protoc_version=$(jq -r '.version' <<<"${buildopt_protoc_entry}")
+buildopt_protoc_sha256=$(jq -r '.sha256' <<<"${buildopt_protoc_entry}")
+if [[ ! "${buildopt_protoc_version}" =~ ^[0-9]+[.][0-9]+([.][0-9]+)?$ ]] ||
+    [[ ! "${buildopt_protoc_sha256}" =~ ^[0-9a-f]{64}$ ]]; then
+    printf 'malformed protoc identity for code generation\n' >&2
+    exit 70
+fi
+buildopt_protoc_home="${buildopt_tools_root}/toolchains/protoc-${buildopt_protoc_sha256:0:16}"
+buildopt_protoc="${buildopt_protoc_home}/bin/protoc"
+if [[ ! -x "${buildopt_protoc}" ]] ||
+    [[ ! -f "${buildopt_protoc_home}/include/google/protobuf/descriptor.proto" ]]; then
+    printf 'protoc is not provisioned; run: ./dev/bootstrap --toolchain protoc\n' >&2
+    exit 1
+fi
+
+buildopt_test_root=$(mktemp -d)
+buildopt_output_temporary=
+buildopt_cleanup() {
+    if [[ -n "${buildopt_output_temporary}" ]] &&
+        [[ -f "${buildopt_output_temporary}" ]]; then
+        rm -f -- "${buildopt_output_temporary}"
+    fi
+    if [[ "${buildopt_test_root}" == /tmp/* ]] &&
+        [[ -d "${buildopt_test_root}" ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_descriptor="${buildopt_test_root}/descriptor.pb"
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_script_dir}/run" \
+    --toolchain protoc \
+    -- \
+    protoc \
+    --proto_path="${buildopt_source_root}/contracts/proto" \
+    --descriptor_set_out="${buildopt_descriptor}" \
+    "${buildopt_source}"
+
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+buildopt_output_temporary=$(
+    mktemp "${buildopt_output}.tmp.XXXXXX"
+)
+{
+    printf '# Code generated by ./dev/generate-code --artifact %s; DO NOT EDIT.\n' \
+        "${buildopt_artifact}"
+    printf '# Source: %s\n' "${buildopt_source_relative}"
+    printf '# Toolchain: protoc %s (%s)\n' \
+        "${buildopt_protoc_version}" \
+        "${buildopt_protoc_sha256}"
+    "${buildopt_protoc}" \
+        --proto_path="${buildopt_protoc_home}/include" \
+        --decode=google.protobuf.FileDescriptorSet \
+        google/protobuf/descriptor.proto \
+        <"${buildopt_descriptor}"
+} >"${buildopt_output_temporary}"
+chmod 0644 "${buildopt_output_temporary}"
+mv -- "${buildopt_output_temporary}" "${buildopt_output}"
+buildopt_output_temporary=
+
+buildopt_output_sha256=$(
+    sha256sum "${buildopt_output}" | awk '{print $1}'
+)
+printf 'Generated %s at %s (%s)\n' \
+    "${buildopt_artifact}" \
+    "${buildopt_output}" \
+    "${buildopt_output_sha256}"

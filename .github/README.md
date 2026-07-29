@@ -14,12 +14,12 @@ normal CI and does not run on repository pushes or pull requests.
 
 [`base-ci.yml`](./workflows/base-ci.yml) is the authoritative `F0-004`
 push/pull-request workflow. Its read-only core lane provisions the locked Go,
-JDK 21, ShellCheck, and actionlint tools, compiles Java 17 bytecode, and loads
-the agent on an exact Java 17 compatibility runtime. Its separately named Rust
-lane installs and verifies the optional locked compiler. All external Actions
-are full-commit pinned in [`base-ci.lock.json`](./base-ci.lock.json), and
-`./dev/check-base-ci --static` rejects routing, permission, runner, version, or
-pin drift.
+JDK 21, protoc, ShellCheck, and actionlint tools, rejects generated-descriptor
+drift, compiles Java 17 bytecode, and loads the agent on an exact Java 17
+compatibility runtime. Its separately named Rust lane installs and verifies the
+optional locked compiler. All external Actions are full-commit pinned in
+[`base-ci.lock.json`](./base-ci.lock.json), and `./dev/check-base-ci --static`
+rejects routing, permission, runner, version, or pin drift.
 
 `CI-ORCH-001` still owns protected validation scheduling, isolation, budgets,
 and recovery. Base CI does not claim that broader gate.

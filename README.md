@@ -54,6 +54,7 @@ From the repository root:
 ./dev/check-normative-layout
 ./dev/check-ownership
 ./dev/check-base-ci --static
+./dev/check-generated-code
 ./dev/check-build-session-schema
 ./dev/check-metrics-catalog
 ./dev/check-build-session-export

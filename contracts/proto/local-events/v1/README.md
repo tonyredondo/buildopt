@@ -3,6 +3,10 @@
 Namespace for the first version of plugin and agent events sent to the Launcher or Local Verifying Cache Gateway.
 
 [`task_events.proto`](./task_events.proto) is the normative `F0-019` channel.
+[`task_events.descriptor.textproto`](./task_events.descriptor.textproto) is its
+reviewable generated descriptor snapshot. Regenerate it only through
+`./dev/generate-code --artifact local-events-v1-descriptor`; `F0-005` CI rejects
+source or output drift.
 It preserves the exact `task_execution_id`, native cache key, completed task
 outcome, and observed PUT outcome when one task owns the operation. An
 `UnattributedCachePut` instead carries its attribution reason and an atomic

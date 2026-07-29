@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "buildopt.dev/generated-artifacts/v1",
+  "artifacts": [
+    {
+      "id": "local-events-v1-descriptor",
+      "owningItem": "F0-019",
+      "owner": "Contracts",
+      "sources": [
+        "contracts/proto/local-events/v1/task_events.proto"
+      ],
+      "outputs": [
+        "contracts/proto/local-events/v1/task_events.descriptor.textproto"
+      ],
+      "command": "./dev/generate-code --artifact local-events-v1-descriptor",
+      "format": "google.protobuf.FileDescriptorSet textproto",
+      "toolchains": [
+        "protoc"
+      ]
+    }
+  ]
+}

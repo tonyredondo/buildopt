@@ -395,11 +395,12 @@ commands without executing a build:
 ./dev/check-base-ci --static
 ```
 
-The core lane requires the locked JDK 21, Go, ShellCheck, and actionlint
-installations plus a checksum-primed Gradle Wrapper. It runs layout, ownership,
-lock, shell/workflow lint, race-enabled Go tests, Go vet, the nested schema
-validator module, Java 17 bytecode verification, and the JVM agent on both Java
-21 and the exact Java 17.0.19 compatibility runtime:
+The core lane requires the locked JDK 21, Go, protoc, ShellCheck, and
+actionlint installations plus a checksum-primed Gradle Wrapper. It runs layout,
+ownership, lock, shell/workflow lint, generated-artifact drift detection,
+race-enabled Go tests, Go vet, the nested schema validator module, Java 17
+bytecode verification, and the JVM agent on both Java 21 and the exact Java
+17.0.19 compatibility runtime:
 
 ```bash
 ./dev/run -- ./gradlew --no-daemon --version

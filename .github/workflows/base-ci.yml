@@ -42,6 +42,7 @@ jobs:
           for buildopt_toolchain in \
             temurin-jdk-21 \
             go \
+            protoc \
             shellcheck \
             actionlint; do
             ./dev/bootstrap --toolchain "${buildopt_toolchain}"

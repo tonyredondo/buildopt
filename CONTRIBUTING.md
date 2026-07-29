@@ -38,4 +38,8 @@ All repository content must be written in English. This includes code, owned ide
 
 ## Generated changes
 
-Generated files must identify their source schema or IDL and the reproducible command. CI will reject stale generated code when `F0-005` materializes that policy.
+Generated files must identify their source schema or IDL and the reproducible
+command. Follow [`GENERATED_CODE.md`](./GENERATED_CODE.md), update the normative
+source first, run the manifest-owned generator, inspect source and generated
+diffs together, and execute `./dev/check-generated-code`. CI rejects stale or
+manually edited generated output.
