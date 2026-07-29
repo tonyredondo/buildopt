@@ -126,6 +126,30 @@ work emits non-task stores, so the accepted result is the fail-closed
 `UNAVAILABLE` capability: every `UNATTRIBUTED` store aborts the complete
 attempt. See [`specs/gradle-correlation-v1.md`](../specs/gradle-correlation-v1.md).
 
+## Local task-event Protobuf validation
+
+`F0-019` materializes the correlation result as the normative
+[`task_events.proto`](../contracts/proto/local-events/v1/task_events.proto) and
+[ADR 0003](../adr/0003-local-task-event-channel.md). The check requires exact
+`protoc` 35.1 and the adopted Buf 1.72.0 on `PATH`; `ENV-006` is the next block
+and will add their repository-local provisioning through `dev/bootstrap` and
+`dev/run`.
+
+With the exact locked tools available, run:
+
+```bash
+./dev/check-task-events-proto
+```
+
+The checker runs Buf `STANDARD` lint, compares the source descriptor produced by
+Buf and `protoc` byte-for-byte, compiles the Java peer with the locked JDK as
+Java 17 bytecode, and runs the standard-library Go peer with locked Go. The two
+directions exchange conventional varint-length-delimited messages over real
+Unix sockets. They cover exact attribution, `UNATTRIBUTED`, attempt-wide
+`UNAVAILABLE`, atomic whole-attempt abort, acknowledgements, invalid semantic
+combinations, and the 1 MiB frame bound. Generated clients remain deferred to
+`F0-022`.
+
 ## Rust toolchain validation
 
 The root [`rust-toolchain.toml`](../rust-toolchain.toml) selects `1.93.0-x86_64-unknown-linux-gnu` with Rustup's minimal profile. Rust remains optional for the core, and this pin does not activate the hermetic helper or claim any sandbox capability.
@@ -172,7 +196,7 @@ Validate the namespace skeleton defined by RFC §29.2:
 ./dev/check-normative-layout
 ```
 
-The checker requires all 14 contract, vector, specification, benchmark, and ADR namespaces, their non-empty indexes, and parent directories for the 26 planned normative artifacts. It also preserves the materialized golden-lane ADR, runner contract, and `BUILD_SESSION v1` schema and rejects an empty file at any planned artifact path. F0-010 created the structure; each schema, API, IDL, vector, specification, benchmark, or ADR remains owned by its later tracker item.
+The checker requires all 14 contract, vector, specification, benchmark, and ADR namespaces, their non-empty indexes, and parent directories for the 26 planned normative artifacts. It also preserves the materialized golden-lane and local-channel ADRs, runner and Gradle-correlation specifications, `BUILD_SESSION v1` schema, and task-event Protobuf IDL, and rejects an empty file at any planned artifact path. F0-010 created the structure; each schema, API, IDL, vector, specification, benchmark, or ADR remains owned by its later tracker item.
 
 ## BUILD_SESSION schema validation
 

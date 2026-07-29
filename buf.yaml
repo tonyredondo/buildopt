@@ -1,0 +1,13 @@
+version: v2
+modules:
+  - path: contracts/proto
+lint:
+  use:
+    - STANDARD
+  except:
+    # RFC section 29.2 fixes local-events/ as the on-disk namespace while
+    # Protobuf package components use lower_snake_case.
+    - PACKAGE_DIRECTORY_MATCH
+breaking:
+  use:
+    - FILE

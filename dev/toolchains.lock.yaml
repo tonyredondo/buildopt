@@ -81,7 +81,7 @@
     {
       "id": "buf",
       "version": "1.72.0",
-      "adoption": "candidate",
+      "adoption": "required",
       "kind": "binary",
       "platform": "linux-amd64",
       "provider": "buf",

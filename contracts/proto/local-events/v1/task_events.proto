@@ -1,0 +1,143 @@
+syntax = "proto3";
+
+package buildopt.local_events.v1;
+
+option go_package = "github.com/tonyredondo/buildopt/contracts/gen/go/local_events/v1;localeventsv1";
+option java_multiple_files = true;
+option java_outer_classname = "TaskEventsProto";
+option java_package = "dev.buildopt.contracts.localevents.v1";
+
+// TaskEvent is one producer-to-receiver frame on the authenticated local
+// task-event channel. The first frame for a producer instance is a
+// ProducerHello and sequence numbers then increase strictly by one.
+message TaskEvent {
+  string attempt_id = 1;
+  string producer_instance_id = 2;
+  uint64 sequence_number = 3;
+
+  oneof payload {
+    ProducerHello producer_hello = 10;
+    CorrelationCapabilityDeclared correlation_capability_declared = 11;
+    CachePutObserved cache_put_observed = 12;
+  }
+}
+
+// TaskEventAck is the receiver-to-producer response for one TaskEvent.
+message TaskEventAck {
+  string attempt_id = 1;
+  string producer_instance_id = 2;
+  uint64 sequence_number = 3;
+  TaskEventAckStatus status = 4;
+}
+
+// ProducerHello declares the producer and protocol version before task events.
+message ProducerHello {
+  ProtocolVersion protocol_version = 1;
+  ProducerKind producer = 2;
+  string implementation_version = 3;
+}
+
+// ProtocolVersion is negotiated before the receiver accepts task observations.
+message ProtocolVersion {
+  uint32 major = 1;
+  uint32 minor = 2;
+}
+
+// CorrelationCapabilityDeclared is the final attempt-wide correlation result.
+// An exact individual observation never implies this attempt-wide capability.
+message CorrelationCapabilityDeclared {
+  CorrelationCapability capability = 1;
+  string gradle_version = 2;
+  string detail = 3;
+  WholeAttemptAbort whole_attempt_abort = 10;
+}
+
+// CachePutObserved preserves one native cache PUT and its observed outcome.
+message CachePutObserved {
+  string put_operation_id = 1;
+  string native_cache_key = 2;
+  CachePutOutcome put_outcome = 3;
+
+  oneof attribution {
+    ExactTaskAttribution exact = 10;
+    UnattributedCachePut unattributed = 11;
+  }
+}
+
+// ExactTaskAttribution binds one PUT to exactly one completed task execution.
+message ExactTaskAttribution {
+  string task_execution_id = 1;
+  TaskOutcome task_outcome = 2;
+}
+
+// UnattributedCachePut records why no unique task can own a PUT. Its abort is
+// mandatory: the receiver discards every pending write for the attempt.
+message UnattributedCachePut {
+  UnattributedReason reason = 1;
+  WholeAttemptAbort whole_attempt_abort = 2;
+}
+
+// WholeAttemptAbort makes the fail-closed scope explicit on the wire.
+message WholeAttemptAbort {
+  AttemptAbortReason reason = 1;
+  string detail = 2;
+}
+
+// ProducerKind identifies a task-event producer without using thread names or
+// task paths as attribution evidence.
+enum ProducerKind {
+  PRODUCER_KIND_UNSPECIFIED = 0;
+  PRODUCER_KIND_GRADLE_PLUGIN = 1;
+  PRODUCER_KIND_JVM_AGENT = 2;
+}
+
+// CorrelationCapability is the attempt-wide correlation result.
+enum CorrelationCapability {
+  CORRELATION_CAPABILITY_UNSPECIFIED = 0;
+  CORRELATION_CAPABILITY_EXACT = 1;
+  CORRELATION_CAPABILITY_UNAVAILABLE = 2;
+}
+
+// CachePutOutcome is the observed result of the remote cache PUT.
+enum CachePutOutcome {
+  CACHE_PUT_OUTCOME_UNSPECIFIED = 0;
+  CACHE_PUT_OUTCOME_STORED = 1;
+  CACHE_PUT_OUTCOME_REJECTED = 2;
+  CACHE_PUT_OUTCOME_FAILED = 3;
+  CACHE_PUT_OUTCOME_CANCELLED = 4;
+}
+
+// TaskOutcome is the completed task result associated with an exact PUT.
+enum TaskOutcome {
+  TASK_OUTCOME_UNSPECIFIED = 0;
+  TASK_OUTCOME_SUCCEEDED = 1;
+  TASK_OUTCOME_FAILED = 2;
+  TASK_OUTCOME_CANCELLED = 3;
+}
+
+// UnattributedReason is the supported fail-closed result from GRADLE-CORR-001.
+enum UnattributedReason {
+  UNATTRIBUTED_REASON_UNSPECIFIED = 0;
+  UNATTRIBUTED_REASON_NO_TASK_ANCESTOR = 1;
+  UNATTRIBUTED_REASON_MULTIPLE_TASK_ANCESTORS = 2;
+  UNATTRIBUTED_REASON_MISSING_TASK_OUTCOME = 3;
+  UNATTRIBUTED_REASON_OBSERVATION_MISMATCH = 4;
+}
+
+// AttemptAbortReason explains why no pending write may become stable.
+enum AttemptAbortReason {
+  ATTEMPT_ABORT_REASON_UNSPECIFIED = 0;
+  ATTEMPT_ABORT_REASON_UNATTRIBUTED_CACHE_PUT = 1;
+  ATTEMPT_ABORT_REASON_EVENT_STREAM_INCOMPLETE = 2;
+  ATTEMPT_ABORT_REASON_CORRELATION_UNAVAILABLE = 3;
+  ATTEMPT_ABORT_REASON_PROTOCOL_VIOLATION = 4;
+  ATTEMPT_ABORT_REASON_PRODUCER_FAILURE = 5;
+}
+
+// TaskEventAckStatus is the receiver's disposition of one complete frame.
+enum TaskEventAckStatus {
+  TASK_EVENT_ACK_STATUS_UNSPECIFIED = 0;
+  TASK_EVENT_ACK_STATUS_ACCEPTED = 1;
+  TASK_EVENT_ACK_STATUS_ATTEMPT_ABORTED = 2;
+  TASK_EVENT_ACK_STATUS_REJECTED = 3;
+}

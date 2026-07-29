@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — `SPK-001` closed as `UNAVAILABLE` with the tested `UNATTRIBUTED` whole-attempt fallback; `F0-019` is unblocked next<br>
+**Overall status:** `DOING` — `F0-019` encoded exact/`UNATTRIBUTED` correlation and whole-attempt abort in the local Protobuf channel; `ENV-006` is unblocked next<br>
 **Current phase:** Phase 0 — contracts, fixtures, and walking skeleton<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
 **Last updated:** 2026-07-29<br>
@@ -97,7 +97,8 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 14 | `WS-002` | Process group and signal forwarding | `DONE` | Codex |
 | 15 | `F0-040A` | First Gradle correlation fixture on the golden lane | `DONE` | Codex |
 | 16 | `SPK-001` | Task → cache key → PUT spike on the golden lane | `UNAVAILABLE` | Codex |
-| 17 | `F0-019` | Encode the tested correlation fallback in the local task-event channel | `TODO` | — |
+| 17 | `F0-019` | Encode the tested correlation fallback in the local task-event channel | `DONE` | Codex |
+| 18 | `ENV-006` | Provision exact `protoc` and adopted Buf through repository-local tooling | `TODO` | — |
 
 ---
 
@@ -167,7 +168,7 @@ Verified snapshot from the initial 4-vCPU workstation on 2026-07-29. Manually in
 | Go | Launcher, gateway, and server | Exact version in lock | Global Go 1.26.5 + isolated Go 1.26.5 | Available on workstation | Closed by `ENV-005`; use the verified repository-local Go through `dev/run --toolchain go` |
 | Rust/Cargo | C1 hermetic helper | Exact version in `rust-toolchain.toml` | Global stable 1.96.0 + repository Rust/Cargo 1.93.0 | Available, optional | Closed by `ENV-009`; the repository override leaves the global Rustup default unchanged |
 | `protoc` | Local-events Protobuf | Exact project-local version | Isolated 35.1; checksum and descriptor smoke test verified | Available on workstation | Provision from the lock in `ENV-006` |
-| Buf | Protobuf lint/breaking/codegen, if adopted | Exact project-local version | Isolated 1.72.0; `buf lint` passed | Available; contract adoption pending | Close adoption in `F0-019` before provisioning the pinned candidate |
+| Buf | Protobuf lint/breaking/codegen | Exact project-local version | Isolated 1.72.0; `buf lint` passed | Adopted by `F0-019`; repository provisioning pending | Provision the adopted locked tool in `ENV-006` |
 | Gradle | Plugin/fixtures | Gradle Wrapper 9.6.1 first; pinned 8.14.x for `SPK-001` | No global installation; Wrapper 9.6.1 + isolated 8.14.3 | Available | Keep 9.6.1 as the golden Wrapper; provision 8.14.3 only through the checksum-verified spike harness |
 | Docker | Golden image and fixture services | Functional daemon + image by digest | Client/server 24.0.2, `overlay2` | Available | Closed by `ENV-008`; use the digest-verifying golden container runner |
 | Git | Workspace and patch workflows | Available | Git 2.54.0 | Available | Doctor records the active path/version; minimum support remains a later policy decision |
@@ -194,7 +195,7 @@ Initial 4-vCPU workstation installation:
 | `ENV-003` | Provision JDK 21 alongside JDK 25 without global replacement | `ENV-001` | `DONE` | Codex | `E-012`: verified, idempotent provisioning and isolated `dev/run` |
 | `ENV-004` | Verify plugin/agent compilation with `--release 17` | `ENV-003` | `DONE` | Codex | `E-013`: separate JARs, major 61, agent load, and golden-image build |
 | `ENV-005` | Validate and pin Go for the core | `ENV-001` | `DONE` | Codex | `E-014`: exact module/toolchain, isolated execution, passing doctor and reproducible build |
-| `ENV-006` | Provision `protoc` and decide/adopt Buf | `F0-019`, `ENV-001` | `WAITING` | — | Reproducible lint/generate/round trip |
+| `ENV-006` | Provision `protoc` and adopted Buf | `F0-019`, `ENV-001` | `TODO` | — | Reproducible lint/generate/round trip |
 | `ENV-007` | Pin Gradle Wrapper 9.6.1 and verify checksum | `F0-002` | `DONE` | Codex | `E-007`: Wrapper 9.6.1 and checksums verified |
 | `ENV-008` | Verify Docker and golden image by digest | `F0-002`, `ENV-002` | `DONE` | Codex | `E-015`: immutable index/platform identity, strict cgroups, and container smoke |
 | `ENV-009` | Pin Rust 1.93.0 or an approved version | `ENV-001` | `DONE` | Codex | `E-016`: exact Rustup override, locked manifest, doctor match, and offline Cargo check |
@@ -227,7 +228,7 @@ Do not mark `ENV-003`, `ENV-006`, `ENV-010`, or `ENV-011` complete because a “
 | `F0-016` | `PatchBundle v1` schema | `PATCH-BUNDLE-001` | `WAITING` | — | Schema + bundle vectors |
 | `F0-017` | OpenAPI BuildOpt control/cache | `CONTRACTS-001`, `CACHE-008` | `WAITING` | — | Validated OpenAPI + mock server |
 | `F0-018` | OpenAPI Test Optimization | `TESTOPT-API-001` | `WAITING` | — | Producer/consumer mocks |
-| `F0-019` | Protobuf local task-event channel | `GRADLE-CORR-001` | `TODO` | — | Go/Java round-trip tests |
+| `F0-019` | Protobuf local task-event channel | `GRADLE-CORR-001` | `DONE` | Codex | `E-024`: normative IDL, ADR, descriptor parity, and Go/Java Unix round trips |
 | `F0-020` | JCS, SHA-256, timestamp, and signature vectors | `CONTRACTS-001` | `WAITING` | — | Identical Go/Java golden vectors |
 | `F0-021` | Error, deadline, retry, and idempotency contract | `CONTRACTS-001` | `WAITING` | — | Conformance fault cases |
 | `F0-022` | N/N-1 compatibility and generated Go/Java clients | `F0-011..021` | `WAITING` | — | Passing compatibility suite |
@@ -268,8 +269,8 @@ GitHub Action
 |---|---|---|---|---|---|
 | `WS-001` | `buildopt run -- <argv>` preserves argv and exit code | `F0-001`, `F0-002` | `DONE` | Codex | `E-020`: real-binary CLI integration suite |
 | `WS-002` | Process group and signal forwarding | `WS-001` | `DONE` | Codex | `E-021`: Linux process-tree signal and cancellation fixtures |
-| `WS-003` | Gradle plugin handshakes without optimizing | `F0-019`, `WS-001` | `WAITING` | — | Real Wrapper on golden lane |
-| `WS-004` | Loopback gateway with authenticated rendezvous | `F0-019`, `WS-001` | `WAITING` | — | Restart/concurrency fixture |
+| `WS-003` | Gradle plugin handshakes without optimizing | `F0-019`, `WS-001` | `TODO` | — | Real Wrapper on golden lane |
+| `WS-004` | Loopback gateway with authenticated rendezvous | `F0-019`, `WS-001` | `TODO` | — | Restart/concurrency fixture |
 | `WS-005` | `buildopt-server` receives a session | `F0-011`, `WS-004` | `WAITING` | — | Ingest integration test |
 | `WS-006` | Export valid `BUILD_SESSION v1` JSON | `WS-003`, `WS-005` | `WAITING` | — | Schema validation |
 | `WS-007` | GitHub Action pinned by SHA/checksum | `WS-001..006`, `F0-038` | `WAITING` | — | Passing workflow fixture |
@@ -491,7 +492,8 @@ This table points to the latest valid result. It does not replace reports or all
 | Rust toolchain | Exact optional compiler/Cargo pair, repository override, locked channel manifest, isolated offline state, and Cargo smoke | Rust/Cargo 1.93.0 and the Linux AMD64 host matched; official manifest SHA-256, doctor `MATCH`, temporary-state Cargo check, global-default isolation, and deterministic negative fixtures passed | 2026-07-29 | `E-016` |
 | Lint toolchains | Exact ShellCheck/actionlint artifacts, isolated execution, repository scripts, and workflow parsing | Official ShellCheck 0.11.0 and actionlint 1.7.12 archives matched the lock; real and synthetic provisioning, doctor matching, all executable `dev/` scripts, and the integrated workflow smoke passed | 2026-07-29 | `E-017` |
 | Normative package layout | RFC §29.2 namespaces, indexes, planned artifact parents, and non-empty materialized artifacts | `dev/check-normative-layout` passed for 14 namespaces and 26 planned artifacts; ShellCheck and repository layout passed | 2026-07-29 | `E-018` |
-| Contract schemas | `BUILD_SESSION v1` Draft 2020-12; later schemas, OpenAPI, and Protobuf remain pending | Pinned Go validator compiled the schema with format assertions; 4 valid fixtures passed and 7 focused invalid fixtures were rejected for their intended diagnostics | 2026-07-29 | `E-019` |
+| Contract schemas | `BUILD_SESSION v1` Draft 2020-12; later JSON Schemas and OpenAPI remain pending | Pinned Go validator compiled the schema with format assertions; 4 valid fixtures passed and 7 focused invalid fixtures were rejected for their intended diagnostics | 2026-07-29 | `E-019` |
+| Local task-event contract | Protobuf v1 payload, varint framing, exact/unattributed correlation, and attempt-wide abort | Exact protoc/Buf descriptors matched; Java 17 and Go peers passed both real Unix-socket directions, semantic negatives, frame bounds, and the Go race detector | 2026-07-29 | `E-024` |
 | Golden vectors | Go ↔ Java canonicalization/signatures | Not run | — | — |
 | Go unit/integration | Launcher CLI; gateway/server remain pending | Real `buildopt` binary preserved argv/process context and child statuses; Linux fixtures proved a distinct child group, exact SIGINT/SIGTERM delivery to a descendant, delayed cancellation cleanup, and conventional unhandled-signal status | 2026-07-29 | `E-021` |
 | Gradle correlation fixture | Gradle 9.6.1/JDK 21 golden-lane slice; Tier 1/TestKit expansion remains pending | Independent multi-project fixture produced one shared native key from two parallel equivalent tasks, then restored both from an isolated local cache while reusing Configuration Cache on host and strict container | 2026-07-29 | `E-022` |
@@ -545,6 +547,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-021` | 2026-07-29 | `WS-002` | Linux process-group and signal handling in [`internal/launcher`](./internal/launcher/run.go), real-binary [signal integration tests](./cmd/buildopt/main_signal_linux_test.go), and a nested [signal helper](./cmd/buildopt/testdata/signal-helper/main.go); the direct child became a group leader distinct from `buildopt`, its descendant inherited the group, and signals sent only to the launcher reached both processes as exact `SIGINT` and `SIGTERM`; handled cancellation waited through a 150 ms cleanup and preserved child exits `41`/`42`, while unhandled `SIGTERM` returned `143` without launcher stderr; the signal suite passed 10 consecutive runs and the race detector, full CLI tests, Go vet including the helper, the unchanged offline module/toolchain contract, repository layout, Bash syntax, and locked ShellCheck/actionlint passed | `DONE`: the launcher now preserves the Linux process-tree cancellation contract without imposing or shortening the CI provider's grace period; platform expansion and observability/lifecycle behavior remain deferred, and `SPK-001` remains dependency-gated |
 | `E-022` | 2026-07-29 | `F0-040A` | Independent [`fixtures/gradle-correlation`](./fixtures/gradle-correlation/README.md) repository and executable [`dev/check-gradle-correlation-fixture`](./dev/check-gradle-correlation-fixture), integrated into [`dev/golden-lane-build`](./dev/golden-lane-build); the real Gradle 9.6.1 Wrapper and JDK 21 compiled the Java 17 fixture plugin with all warnings as errors, then an isolated empty-cache run forced `:alpha` and `:beta` task actions to overlap through a barrier, produced byte-identical outputs, and reported the same native cache key `c0111bcb4ba8ba492a6cb273f724a55b`; the next clean invocation reused Configuration Cache and restored both tasks `FROM-CACHE`; the check passed on the 12-CPU host and in the digest-pinned 4-CPU/16-GiB container, with repository layout, Bash syntax, and locked ShellCheck/actionlint also passing | `DONE`: the first golden-lane correlation repository is reproducible without claiming task-to-PUT association; `SPK-001` now owns instrumentation plus Worker API, child-process, failure/cancellation, and Gradle 8.14.x expansion, and `F0-019` follows its exact-or-fallback result |
 | `E-023` | 2026-07-29 | `SPK-001` / `GRADLE-CORR-001` | Executable [`dev/check-gradle-correlation-spike`](./dev/check-gradle-correlation-spike), loopback [HTTP cache fixture](./fixtures/gradle-correlation/cache-server/src/main/java/dev/buildopt/fixtures/correlation/CorrelationCacheServer.java), structural [trace analyzer](./fixtures/gradle-correlation/buildSrc/src/main/java/dev/buildopt/fixtures/correlation/CorrelationTraceAnalyzer.java), and [decision specification](./specs/gradle-correlation-v1.md); Gradle 9.6.1 and checksum-pinned 8.14.3 each ran with a cold isolated Gradle home across parallel equivalent tasks, Worker API no/process isolation, a real child JVM, remote miss/hit, failure, cancellation, and Configuration Cache reuse; every task-owned remote store had exactly one `ExecuteTask` ancestor and matched an HTTP PUT, while cold Kotlin DSL/accessor compilation produced ten non-task stores on 9.6.1 and nine on 8.14.3; missing and multiple-ancestor self-tests also emitted `UNATTRIBUTED`; the complete host matrix and the 9.6.1 half inside the digest-pinned 4-CPU/16-GiB container passed | `DONE` gate with `UNAVAILABLE` capability: selective task publication is disabled for both tested combinations; any non-task, missing, or ambiguous PUT sets `attemptAborted=true` for the whole pending attempt, and `F0-019` is unblocked to encode that result |
+| `E-024` | 2026-07-29 | `F0-019` | Normative [`task_events.proto`](./contracts/proto/local-events/v1/task_events.proto), accepted [ADR 0003](./adr/0003-local-task-event-channel.md), adopted root [`buf.yaml`](./buf.yaml), and executable [`dev/check-task-events-proto`](./dev/check-task-events-proto); exact `protoc` 35.1 and Buf 1.72.0 linted the IDL and produced the identical descriptor SHA-256 `a8168a4b91824a6f195145c4fba25f9d15fe17c5faa5cd5757bc42269acf1f9e`; locked Go 1.26.5 and Temurin 21/Java 17 peers exchanged conventional length-delimited frames in both directions over real Unix sockets and validated exact task-owned PUTs, non-task `UNATTRIBUTED`, final attempt-wide `UNAVAILABLE`, matching acknowledgements, immediate whole-attempt abort, invalid cross-field combinations, unknown required enums, and the 1 MiB frame limit; the Go race detector, full Go tests/vet, CLI integration, schema suite, layouts, toolchain lock, ShellCheck/actionlint, JVM release check, golden static check, and host golden-lane build passed | `DONE`: the channel never promotes exact task-only observations when the same attempt has an unattributed PUT; Buf is adopted, generated clients remain owned by `F0-022`, and `ENV-006`, `WS-003`, and `WS-004` are unblocked |
 
 ---
 
@@ -552,6 +555,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-29 | Closed `F0-019`: materialized the versioned local Protobuf channel and ADR, adopted Buf, and proved exact plus fail-closed `UNATTRIBUTED` semantics with Go/Java Unix-socket round trips | Codex |
 | 2026-07-29 | Closed `SPK-001` as `UNAVAILABLE`: task-owned stores correlate exactly, but cold Kotlin DSL/accessor stores have no task ancestor; added the pinned 9.6.1/8.14.3 matrix and tested whole-attempt fallback, closing `GRADLE-CORR-001` and unblocking `F0-019` | Codex |
 | 2026-07-29 | Closed `F0-040A`: removed the `SPK-001`/`F0-019` dependency cycle and added the first parallel Gradle correlation fixture with cache and Configuration Cache evidence on host and strict golden container | Codex |
 | 2026-07-29 | Closed `WS-002`: isolated the Linux child process group, forwarded `SIGINT`/`SIGTERM` through the process tree, preserved cleanup and exit semantics, and added repeated cancellation fixtures | Codex |

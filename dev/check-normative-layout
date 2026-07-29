@@ -73,7 +73,9 @@ buildopt_planned_artifacts=(
 
 buildopt_materialized_artifacts=(
     "adr/0001-golden-lane.md"
+    "adr/0003-local-task-event-channel.md"
     "contracts/jsonschema/build-session.v1.schema.json"
+    "contracts/proto/local-events/v1/task_events.proto"
     "specs/gradle-correlation-v1.md"
     "specs/golden-lane-runner-v1.json"
 )

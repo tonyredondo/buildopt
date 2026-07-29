@@ -2,7 +2,7 @@
 
 Monorepo for the autonomous Gradle build optimization platform. The product observes real builds, applies only qualified and reversible optimizations, preserves Gradle behavior as the baseline, and measures net time savings inside the neutral measurement envelope.
 
-The repository is in **Phase 0**. It defines technical ownership and module boundaries, locked development toolchains, and the first executable observability contract; it does not yet contain active optimizations or distributable artifacts.
+The repository is in **Phase 0**. It defines technical ownership and module boundaries, locked development toolchains, and the initial executable observability and local-event contracts; it does not yet contain active optimizations or distributable artifacts.
 
 ## Sources of truth
 
@@ -52,6 +52,7 @@ From the repository root:
 ./dev/check-layout
 ./dev/check-normative-layout
 ./dev/check-build-session-schema
+./dev/check-task-events-proto
 ./dev/check-buildopt-cli
 ./dev/run -- ./dev/check-gradle-correlation-fixture
 ./dev/check-toolchains-lock
@@ -69,7 +70,11 @@ From the repository root:
 ./dev/check-golden-lane --static
 ```
 
-The commands validate the repository and Phase 0 normative-package layouts, the first Draft 2020-12 contract and its positive/negative fixtures, the real `buildopt run --` passthrough binary and its Linux process/signal contract, the first parallel Gradle correlation fixture, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, and actionlint provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, repository shell scripts, an actionlint workflow smoke fixture, and golden lane configuration and checksums.
+The commands validate the repository and Phase 0 normative-package layouts, the first Draft 2020-12 contract and its positive/negative fixtures, the Protobuf local task-event channel with Go/Java Unix-socket round trips, the real `buildopt run --` passthrough binary and its Linux process/signal contract, the first parallel Gradle correlation fixture, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, and actionlint provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, repository shell scripts, an actionlint workflow smoke fixture, and golden lane configuration and checksums.
+
+`check-task-events-proto` currently requires exact `protoc` 35.1 and Buf 1.72.0
+on `PATH`. `ENV-006` is the next block and will expose both through the
+repository-local bootstrap and runner.
 
 Project-local smoke tests:
 

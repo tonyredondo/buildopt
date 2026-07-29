@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_lock="${buildopt_script_dir}/toolchains.lock.yaml"
+buildopt_proto_root="${buildopt_repo_root}/contracts/proto"
+buildopt_proto="${buildopt_proto_root}/local-events/v1/task_events.proto"
+buildopt_java_source="${buildopt_script_dir}/proto-conformance/java/dev/buildopt/contracts/localevents/v1/TaskEventsRoundTrip.java"
+buildopt_test_root=$(mktemp -d)
+
+buildopt_cleanup() {
+    rm -rf -- "${buildopt_test_root}"
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in buf cmp jq protoc sha256sum uname; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf '%s is required; ENV-006 will provision the locked tool\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if [[ "$(uname -s)" != "Linux" ]]; then
+    printf 'F0-019 Unix-socket conformance requires Linux\n' >&2
+    exit 1
+fi
+if [[ ! -f "${buildopt_proto}" ]] || [[ ! -f "${buildopt_java_source}" ]]; then
+    printf 'missing F0-019 contract or Java conformance peer\n' >&2
+    exit 1
+fi
+
+buildopt_expected_protoc=$(
+    jq -er '
+        [.artifacts[] | select(.id == "protoc")] |
+        if length == 1 then .[0].version else error("protoc lock entry") end
+    ' "${buildopt_lock}"
+)
+buildopt_expected_buf=$(
+    jq -er '
+        [.artifacts[] | select(.id == "buf")] |
+        if length == 1 and .[0].adoption == "required"
+        then .[0].version
+        else error("adopted Buf lock entry")
+        end
+    ' "${buildopt_lock}"
+)
+
+buildopt_protoc=$(command -v protoc)
+buildopt_buf=$(command -v buf)
+buildopt_protoc_output=$("${buildopt_protoc}" --version)
+buildopt_buf_output=$("${buildopt_buf}" --version)
+if [[ "${buildopt_protoc_output}" != "libprotoc ${buildopt_expected_protoc}" ]]; then
+    printf 'protoc must match lock version %s, found: %s\n' \
+        "${buildopt_expected_protoc}" \
+        "${buildopt_protoc_output}" >&2
+    exit 1
+fi
+if [[ "${buildopt_buf_output}" != "${buildopt_expected_buf}" ]]; then
+    printf 'Buf must match lock version %s, found: %s\n' \
+        "${buildopt_expected_buf}" \
+        "${buildopt_buf_output}" >&2
+    exit 1
+fi
+
+"${buildopt_buf}" lint "${buildopt_repo_root}"
+
+buildopt_buf_descriptor="${buildopt_test_root}/buf-descriptor.bin"
+buildopt_protoc_descriptor="${buildopt_test_root}/protoc-descriptor.bin"
+"${buildopt_buf}" build \
+    "${buildopt_repo_root}" \
+    --as-file-descriptor-set \
+    --exclude-source-info \
+    --output "${buildopt_buf_descriptor}"
+"${buildopt_protoc}" \
+    --proto_path="${buildopt_proto_root}" \
+    --descriptor_set_out="${buildopt_protoc_descriptor}" \
+    "${buildopt_proto}"
+if ! cmp -s "${buildopt_buf_descriptor}" "${buildopt_protoc_descriptor}"; then
+    printf 'Buf and protoc produced different descriptors for task_events.proto\n' >&2
+    sha256sum "${buildopt_buf_descriptor}" "${buildopt_protoc_descriptor}" >&2
+    exit 1
+fi
+
+buildopt_class_dir="${buildopt_test_root}/java-classes"
+mkdir -p -- "${buildopt_class_dir}"
+"${buildopt_script_dir}/run" -- \
+    javac \
+    --release 17 \
+    -encoding UTF-8 \
+    -Xlint:all \
+    -Werror \
+    -d "${buildopt_class_dir}" \
+    "${buildopt_java_source}"
+
+buildopt_class_file="${buildopt_class_dir}/dev/buildopt/contracts/localevents/v1/TaskEventsRoundTrip.class"
+buildopt_class_major=$(
+    "${buildopt_script_dir}/run" -- \
+        javap -verbose "${buildopt_class_file}" |
+        awk '/major version:/ {print $3; exit}'
+)
+if [[ "${buildopt_class_major}" != "61" ]]; then
+    printf 'Java conformance peer must be Java 17 bytecode, found major %s\n' \
+        "${buildopt_class_major:-unknown}" >&2
+    exit 1
+fi
+
+buildopt_tools_root=${BUILDOPT_TOOLS_ROOT:-"${buildopt_repo_root}/.tools"}
+buildopt_jdk_sha=$(
+    jq -er '
+        [.artifacts[] | select(.id == "temurin-jdk-21")] |
+        if length == 1 then .[0].sha256 else error("JDK lock entry") end
+    ' "${buildopt_lock}"
+)
+buildopt_java="${buildopt_tools_root}/toolchains/temurin-jdk-21-${buildopt_jdk_sha:0:16}/bin/java"
+if [[ ! -x "${buildopt_java}" ]]; then
+    printf 'locked Java runtime is unavailable: %s\n' "${buildopt_java}" >&2
+    exit 1
+fi
+
+buildopt_gofmt_diff="${buildopt_test_root}/gofmt.diff"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    gofmt -d "${buildopt_script_dir}/proto-conformance" \
+    >"${buildopt_gofmt_diff}"
+if [[ -s "${buildopt_gofmt_diff}" ]]; then
+    printf 'Go Protobuf conformance sources are not formatted:\n' >&2
+    cat "${buildopt_gofmt_diff}" >&2
+    exit 1
+fi
+
+BUILDOPT_PROTO_CONFORMANCE_CLASSES="${buildopt_class_dir}" \
+BUILDOPT_PROTO_CONFORMANCE_JAVA="${buildopt_java}" \
+BUILDOPT_PROTO_CONFORMANCE_PROTOC="${buildopt_protoc}" \
+BUILDOPT_PROTO_CONFORMANCE_ROOT="${buildopt_proto_root}" \
+    "${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 ./dev/proto-conformance
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./dev/proto-conformance
+
+buildopt_descriptor_sha=$(
+    sha256sum "${buildopt_protoc_descriptor}" | awk '{print $1}'
+)
+printf 'F0-019 local task-event channel OK: protoc %s, Buf %s, descriptor %s, Go/Java Unix round trips\n' \
+    "${buildopt_expected_protoc}" \
+    "${buildopt_expected_buf}" \
+    "${buildopt_descriptor_sha}"

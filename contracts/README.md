@@ -2,7 +2,7 @@
 
 Normative source for versioned schemas, interfaces, and cross-language conformance vectors.
 
-`F0-010` owns the namespace structure defined in RFC §29.2. Each later item materializes and tests only the artifacts it owns; `F0-011` has materialized the first schema and its fixtures.
+`F0-010` owns the namespace structure defined in RFC §29.2. Each later item materializes and tests only the artifacts it owns; `F0-011` has materialized the first schema and its fixtures, and `F0-019` has materialized the local task-event IDL.
 
 | Contract path | Owning item |
 |---|---|
@@ -23,4 +23,4 @@ Normative source for versioned schemas, interfaces, and cross-language conforman
 | `openapi/test-optimization.v1.yaml` | `F0-018` |
 | `proto/local-events/v1/task_events.proto` | `F0-019` |
 
-The subdirectories reserve JSON Schema 2020-12, OpenAPI 3.1, Protobuf v3, and shared test-vector boundaries. RFC examples are explanatory and must not be copied into implementation types. See the [JSON Schema index](./jsonschema/README.md) for the normative `BUILD_SESSION v1` contract and conformance command. Generated Go and Java clients remain owned by `F0-022`.
+The subdirectories reserve JSON Schema 2020-12, OpenAPI 3.1, Protobuf v3, and shared test-vector boundaries. RFC examples are explanatory and must not be copied into implementation types. See the [JSON Schema index](./jsonschema/README.md) for the normative `BUILD_SESSION v1` contract and the [Protobuf index](./proto/README.md) for the local channel and conformance command. Generated Go and Java clients remain owned by `F0-022`.
