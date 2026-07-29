@@ -1,0 +1,192 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_manifest="${buildopt_repo_root}/rust/hermetic-helper/Cargo.toml"
+buildopt_tmp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-hermetic-spike.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_tmp}" &&
+        "${buildopt_tmp}" == "${TMPDIR:-/tmp}/buildopt-hermetic-spike."* ]]; then
+        chmod -R u+w -- "${buildopt_tmp}" 2>/dev/null || true
+        rm -rf -- "${buildopt_tmp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in cargo chmod cp grep jq mktemp rustup unshare; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required hermetic-helper command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+if [[ "$(uname -s)" != "Linux" ]] || [[ "$(uname -m)" != "x86_64" ]]; then
+    printf 'SPK-003 requires Linux x86-64\n' >&2
+    exit 1
+fi
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+"${buildopt_script_dir}/check-rust-toolchain"
+
+buildopt_cargo_home="${buildopt_tmp}/cargo-home"
+buildopt_target="${buildopt_tmp}/target"
+mkdir -p -- "${buildopt_cargo_home}"
+buildopt_cargo=(
+    env
+    "CARGO_HOME=${buildopt_cargo_home}"
+    CARGO_INCREMENTAL=0
+    CARGO_NET_OFFLINE=true
+    "CARGO_TARGET_DIR=${buildopt_target}"
+    RUSTFLAGS=-Dwarnings
+    cargo
+)
+"${buildopt_cargo[@]}" test \
+    --locked \
+    --offline \
+    --manifest-path "${buildopt_manifest}"
+"${buildopt_cargo[@]}" clippy \
+    --all-targets \
+    --locked \
+    --offline \
+    --manifest-path "${buildopt_manifest}" \
+    -- \
+    -Dwarnings
+"${buildopt_cargo[@]}" build \
+    --bins \
+    --locked \
+    --offline \
+    --manifest-path "${buildopt_manifest}"
+
+buildopt_helper="${buildopt_target}/debug/buildopt-hermetic-helper"
+buildopt_fixture_producer="${buildopt_target}/debug/hermetic-fixture-producer"
+if [[ ! -x "${buildopt_helper}" || ! -x "${buildopt_fixture_producer}" ]]; then
+    printf 'hermetic helper binaries are missing\n' >&2
+    exit 1
+fi
+
+buildopt_probe="${buildopt_tmp}/probe.json"
+"${buildopt_helper}" probe >"${buildopt_probe}"
+jq -e '
+    .schemaVersion == "buildopt.spikes/hermetic-helper-report/v1" and
+    .mode == "ENFORCE_ISOLATED" and
+    .traceComplete == false and
+    .qualification == "UNAVAILABLE" and
+    .pendingPublication == "ABORTED" and
+    .fallback == "DISCARD_CANDIDATE_AND_RUN_BASELINE" and
+    .reason == "UNMEDIATED_CLOCK_RANDOMNESS_AND_POLICY_GAPS" and
+    ([.namespaces[]] | all(type == "boolean")) and
+    ([.kernel[]] | all(type == "boolean")) and
+    .coverage.filesystem == "NAMESPACE_PROBED_NOT_ENFORCED" and
+    .coverage.processTree == "PID_NAMESPACE_PROBED_NOT_ENFORCED" and
+    .coverage.network == "NETWORK_NAMESPACE_PROBED_NOT_ENFORCED" and
+    .coverage.environment == "UNMEDIATED" and
+    .coverage.clock == "UNMEDIATED_VDSO" and
+    .coverage.randomness == "UNMEDIATED_GETRANDOM"
+' "${buildopt_probe}" >/dev/null
+
+buildopt_workspace="${buildopt_tmp}/workspace"
+buildopt_input="${buildopt_workspace}/inputs/source.txt"
+buildopt_output="${buildopt_workspace}/outputs/result.txt"
+buildopt_temporary="${buildopt_workspace}/tmp"
+buildopt_producer="${buildopt_workspace}/producer/run"
+buildopt_producer_manifest="${buildopt_workspace}/manifest.properties"
+mkdir -p -- \
+    "$(dirname -- "${buildopt_input}")" \
+    "$(dirname -- "${buildopt_output}")" \
+    "${buildopt_temporary}" \
+    "$(dirname -- "${buildopt_producer}")"
+printf 'synthetic-hermetic-input\n' >"${buildopt_input}"
+cp -- "${buildopt_fixture_producer}" "${buildopt_producer}"
+chmod 0444 "${buildopt_input}"
+chmod 0555 "${buildopt_producer}"
+printf '%s\n' \
+    'schemaVersion=buildopt.spikes/hermetic-producer-manifest/v1' \
+    'producerMode=DEDICATED_TASK' \
+    'taskExecutionId=task-spk-003' \
+    'producerId=producer-spk-003' \
+    "workspace=${buildopt_workspace}" \
+    "input=${buildopt_input}" \
+    "output=$(dirname -- "${buildopt_output}")" \
+    "temporary=${buildopt_temporary}" \
+    "command=${buildopt_producer}" \
+    'network=DENY' \
+    'clock=DENY' \
+    'randomness=DENY' \
+    >"${buildopt_producer_manifest}"
+
+buildopt_enforcement="${buildopt_tmp}/enforcement.json"
+set +e
+"${buildopt_helper}" \
+    enforce \
+    --manifest "${buildopt_producer_manifest}" \
+    -- \
+    "${buildopt_producer}" \
+    "${buildopt_input}" \
+    "${buildopt_output}" >"${buildopt_enforcement}"
+buildopt_enforcement_status=$?
+set -e
+if ((buildopt_enforcement_status != 78)) ||
+    [[ -e "${buildopt_output}" ]]; then
+    printf 'incomplete coverage did not discard the candidate before execution\n' >&2
+    exit 1
+fi
+jq -e '
+    .schemaVersion == "buildopt.spikes/hermetic-helper-report/v1" and
+    .taskExecutionId == "task-spk-003" and
+    .producerId == "producer-spk-003" and
+    .producerMode == "DEDICATED_TASK" and
+    .traceComplete == false and
+    .qualification == "UNAVAILABLE" and
+    .candidateExecuted == false and
+    .candidateDiscarded == true and
+    .pendingPublication == "ABORTED" and
+    .fallback == "DISCARD_CANDIDATE_AND_RUN_BASELINE"
+' "${buildopt_enforcement}" >/dev/null
+
+"${buildopt_producer}" "${buildopt_input}" "${buildopt_output}"
+buildopt_expected=$'FILESYSTEM=EXECUTED\nPROCESS_TREE=EXECUTED\nNATIVE_CHILD=EXECUTED\nNETWORK=EXECUTED\nENVIRONMENT=EXECUTED\nCLOCK=EXECUTED\nRANDOMNESS=EXECUTED'
+if [[ ! -f "${buildopt_output}" ]] ||
+    [[ "$(<"${buildopt_output}")" != "${buildopt_expected}" ]]; then
+    printf 'baseline producer did not execute every coverage dimension\n' >&2
+    exit 1
+fi
+
+chmod 0644 "${buildopt_input}"
+set +e
+"${buildopt_helper}" \
+    enforce \
+    --manifest "${buildopt_producer_manifest}" \
+    -- \
+    "${buildopt_producer}" >/dev/null 2>"${buildopt_tmp}/writable-input.log"
+buildopt_invalid_status=$?
+set -e
+if ((buildopt_invalid_status != 65)) ||
+    ! grep -Fq 'declared input must be read-only' \
+        "${buildopt_tmp}/writable-input.log"; then
+    printf 'writable-input manifest was not rejected\n' >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'hermetic-helper spike changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'SPK-003 UNAVAILABLE: task-specific manifest accepted, incomplete coverage prevented candidate execution\n'
+jq -r '
+    "SPK-003 probe: namespaces user=\(.namespaces.user) mount=\(.namespaces.mount) pid=\(.namespaces.pid) network=\(.namespaces.network); seccomp=\(.kernel.seccompAdvertised) landlock=\(.kernel.landlockInterfaceVisible) cgroup=\(.kernel.cgroupDelegated)"
+' "${buildopt_probe}"
+printf 'SPK-003 fallback OK: candidate discarded, pending aborted, complete baseline producer executed\n'

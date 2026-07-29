@@ -683,7 +683,27 @@ Revalidate the official channel manifest bytes against the repository lock when 
 ./dev/check-rust-toolchain --verify-manifest
 ```
 
-The checker requires the exact installed compiler, Cargo release, host triple, active repository override, and locked configuration. Its dependency-free Cargo smoke uses temporary `CARGO_HOME` and target directories, disables network access, and leaves the optional helper unimplemented until `SPK-003`. The doctor resolves only an already-installed locked toolchain, so its read-only probe never triggers Rustup auto-installation.
+The checker requires the exact installed compiler, Cargo release, host triple,
+active repository override, and locked configuration. Its dependency-free
+Cargo smoke uses temporary `CARGO_HOME` and target directories and disables
+network access. The doctor resolves only an already-installed locked
+toolchain, so its read-only probe never triggers Rustup auto-installation.
+
+## Hermetic helper spike
+
+Run the bounded Linux x86-64 producer probe and fallback fixture:
+
+```bash
+./dev/check-hermetic-helper-spike
+```
+
+The checker compiles and lints the dependency-free Rust helper offline, probes
+real user/mount/PID/network namespaces plus advertised kernel mechanisms, and
+validates a closed task-specific producer manifest. Because clock,
+randomness, environment, and kernel-policy coverage remain incomplete, the
+accepted result is `UNAVAILABLE`: the helper does not execute the candidate,
+discards it, aborts pending publication, and then proves the same producer can
+complete every coverage marker through the authoritative baseline.
 
 ## Lint toolchain validation
 

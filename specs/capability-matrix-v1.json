@@ -75,9 +75,9 @@
           "id": "HERMETIC_PRODUCER",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "SPK-003 has not completed",
+          "reason": "clock, randomness, environment, and kernel policy gaps prevent complete producer coverage",
           "fallback": "GRADLE_BASELINE",
-          "evidence": []
+          "evidence": ["specs/hermetic-helper-spike-v1.md", "dev/check-hermetic-helper-spike"]
         },
         {
           "id": "PATCH_BUNDLE_APPLIER",
@@ -160,9 +160,9 @@
           "id": "HERMETIC_PRODUCER",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "SPK-003 has not completed",
+          "reason": "clock, randomness, environment, and kernel policy gaps prevent complete producer coverage",
           "fallback": "GRADLE_BASELINE",
-          "evidence": []
+          "evidence": ["specs/hermetic-helper-spike-v1.md", "dev/check-hermetic-helper-spike"]
         },
         {
           "id": "PATCH_BUNDLE_APPLIER",
@@ -245,9 +245,9 @@
           "id": "HERMETIC_PRODUCER",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "SPK-003 has not completed",
+          "reason": "clock, randomness, environment, and kernel policy gaps prevent complete producer coverage",
           "fallback": "GRADLE_BASELINE",
-          "evidence": []
+          "evidence": ["specs/hermetic-helper-spike-v1.md", "dev/check-hermetic-helper-spike"]
         },
         {
           "id": "PATCH_BUNDLE_APPLIER",
@@ -330,9 +330,9 @@
           "id": "HERMETIC_PRODUCER",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "SPK-003 has not completed",
+          "reason": "clock, randomness, environment, and kernel policy gaps prevent complete producer coverage",
           "fallback": "GRADLE_BASELINE",
-          "evidence": []
+          "evidence": ["specs/hermetic-helper-spike-v1.md", "dev/check-hermetic-helper-spike"]
         },
         {
           "id": "PATCH_BUNDLE_APPLIER",

@@ -77,6 +77,7 @@ From the repository root:
 ./dev/check-data-lifecycle
 ./dev/check-tier1-fixtures
 ./dev/check-jvm-agent-spike
+./dev/check-hermetic-helper-spike
 ./dev/check-buildopt-cli
 ./dev/check-local-gateway
 ./dev/check-session-ingest

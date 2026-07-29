@@ -66,3 +66,9 @@ handshake. Only the golden lane retains that stronger capability.
 prototype sees class loads rather than method access or task attribution, so
 the shared safe fallback is `ABORT_PENDING`; no row may qualify a task from
 that evidence.
+
+`SPK-003` leaves `HERMETIC_PRODUCER` unavailable in every profile. The real
+Linux probe can create the required namespaces, but clock, randomness,
+environment, and kernel-policy gaps prevent complete task-producer coverage.
+The helper therefore discards the candidate, aborts pending publication, and
+retains the Gradle baseline.

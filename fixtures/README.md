@@ -45,3 +45,8 @@ remains an explicit, unproven target.
 task executes all six required access dimensions while the bounded agent,
 overflow, conflict, crash, Configuration Cache, and baseline-recovery
 scenarios run only through a real Wrapper.
+
+`hermetic-helper/` documents the synthetic task-specific producer used by
+`SPK-003`. The real Rust checker probes the host, rejects candidate execution
+when coverage is incomplete, and verifies the full producer only through the
+uninstrumented Gradle-baseline fallback.

@@ -1,0 +1,16 @@
+[package]
+name = "buildopt-hermetic-helper"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "buildopt-hermetic-helper"
+path = "src/main.rs"
+
+[[bin]]
+name = "hermetic-fixture-producer"
+path = "src/bin/fixture_producer.rs"
