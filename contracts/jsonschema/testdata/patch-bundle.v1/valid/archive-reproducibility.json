@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "PATCH_BUNDLE",
+  "contractVersion": "buildopt-patch-bundle/v1",
+  "repositoryId": "tenant-7/repo-42",
+  "actionId": "action-patch-archive-01K4YA00",
+  "bundleDigest": "sha256:941dccefc6566e6ec4a8f0bb34a1db1a656cb20f5cdefc00139074ace3c41cc1",
+  "baseRevision": "1111111111111111111111111111111111111111",
+  "baseTree": "2222222222222222222222222222222222222222",
+  "sourceStateDigest": "hmac-sha256:3333333333333333333333333333333333333333333333333333333333333333",
+  "recipe": {
+    "id": "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1",
+    "version": "1.0"
+  },
+  "createdAt": "2026-07-21T10:31:00Z",
+  "expiresAt": "2026-07-21T11:00:00Z",
+  "operations": [
+    {
+      "order": 1,
+      "type": "MODIFY",
+      "path": "build.gradle.kts",
+      "expectedMode": "100644",
+      "preimageDigest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+      "postimageDigest": "sha256:1f6aca64e244d04290601d54c1a371f5979d545ef932008ae174c316d17c3427",
+      "replacementBlob": "blobs/archive-build.gradle.kts"
+    }
+  ],
+  "blobs": [
+    {
+      "blobRef": "blobs/archive-build.gradle.kts",
+      "blobSha256": "sha256:1f6aca64e244d04290601d54c1a371f5979d545ef932008ae174c316d17c3427",
+      "sizeBytes": 186,
+      "mediaType": "text/plain",
+      "encoding": "UTF-8"
+    }
+  ],
+  "validation": {
+    "mode": "FULL_RELEVANT_VALIDATION",
+    "status": "PASSED",
+    "requestId": "request-01K4Y800",
+    "resultId": "test-result-01K4Y800",
+    "artifactSetDigest": "sha256:abababababababababababababababababababababababababababababababab",
+    "completedAt": "2026-07-21T10:30:00Z",
+    "expiresAt": "2026-07-21T11:00:00Z"
+  },
+  "delivery": {
+    "branchPrefix": "buildopt/",
+    "draftPullRequest": true,
+    "autoMerge": false,
+    "forcePush": false,
+    "modifyExistingBranch": false
+  },
+  "signature": {
+    "algorithm": "Ed25519",
+    "canonicalization": "JCS",
+    "keyId": "patch-signing-2026-q3",
+    "signedBundleDigest": "sha256:941dccefc6566e6ec4a8f0bb34a1db1a656cb20f5cdefc00139074ace3c41cc1",
+    "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  }
+}

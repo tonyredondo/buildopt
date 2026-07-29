@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "PATCH_BUNDLE",
+  "contractVersion": "buildopt-patch-bundle/v1",
+  "repositoryId": "tenant-7/repo-42",
+  "actionId": "action-patch-task-01K4YA01",
+  "bundleDigest": "sha256:a020d652a1cafff413a51192e0dd62232f05d7ba19f1b7dc3c3e0242d24ae1eb",
+  "baseRevision": "1111111111111111111111111111111111111111",
+  "baseTree": "2222222222222222222222222222222222222222",
+  "sourceStateDigest": "hmac-sha256:3333333333333333333333333333333333333333333333333333333333333333",
+  "recipe": {
+    "id": "CUSTOM_TASK_CONTRACT_JAVA_V1",
+    "version": "1.0",
+    "reviewedAdapter": {
+      "adapterId": "frontend-bundle-v2",
+      "adapterDigest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+      "evidenceRef": "evidence-01K4Y700"
+    }
+  },
+  "createdAt": "2026-07-21T10:31:00Z",
+  "expiresAt": "2026-07-21T11:00:00Z",
+  "operations": [
+    {
+      "order": 1,
+      "type": "MODIFY",
+      "path": "buildSrc/src/main/java/com/example/build/BundleFrontend.java",
+      "expectedMode": "100644",
+      "preimageDigest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+      "postimageDigest": "sha256:a44a9a12aa8db985591e0aad05d8088829aa933e32c275870c42c321c96edefc",
+      "replacementBlob": "blobs/custom-task.java"
+    }
+  ],
+  "blobs": [
+    {
+      "blobRef": "blobs/custom-task.java",
+      "blobSha256": "sha256:a44a9a12aa8db985591e0aad05d8088829aa933e32c275870c42c321c96edefc",
+      "sizeBytes": 342,
+      "mediaType": "text/plain",
+      "encoding": "UTF-8"
+    }
+  ],
+  "validation": {
+    "mode": "FULL_RELEVANT_VALIDATION",
+    "status": "PASSED",
+    "requestId": "request-01K4Y800",
+    "resultId": "test-result-01K4Y800",
+    "artifactSetDigest": "sha256:abababababababababababababababababababababababababababababababab",
+    "completedAt": "2026-07-21T10:30:00Z",
+    "expiresAt": "2026-07-21T11:00:00Z"
+  },
+  "delivery": {
+    "branchPrefix": "buildopt/",
+    "draftPullRequest": true,
+    "autoMerge": false,
+    "forcePush": false,
+    "modifyExistingBranch": false
+  },
+  "signature": {
+    "algorithm": "Ed25519",
+    "canonicalization": "JCS",
+    "keyId": "patch-signing-2026-q3",
+    "signedBundleDigest": "sha256:a020d652a1cafff413a51192e0dd62232f05d7ba19f1b7dc3c3e0242d24ae1eb",
+    "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  }
+}

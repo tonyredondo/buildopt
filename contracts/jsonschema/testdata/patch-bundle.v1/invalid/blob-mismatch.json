@@ -1,0 +1,8 @@
+{
+  "base": "../valid/archive-reproducibility.json",
+  "operation": "replace",
+  "path": ["blobs", "0", "blobSha256"],
+  "value": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+  "layer": "semantic",
+  "diagnostic": "blob"
+}

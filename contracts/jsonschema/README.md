@@ -184,3 +184,33 @@ wildcard/no-op grants, contradictory status, reversed validity windows, and
 artifact rebinding. `F0-020` owns cryptographic verification and canonical
 vectors; `F0-018` owns the OpenAPI producer/consumer, status/revocation,
 polling, retry, and compatibility fixtures needed to close `TESTOPT-API-001`.
+
+## PatchBundle v1
+
+[`patch-bundle.v1.schema.json`](./patch-bundle.v1.schema.json) is the
+normative `F0-016` envelope for the private-beta patch format.
+
+- Every bundle is bound to one repository, action, base revision/tree, source
+  state, recipe version, expiry, and successful isolated validation.
+- Ordered `ADD | MODIFY` operations name exact UTF-8 replacement blobs.
+  `MODIFY` requires a preimage digest; `ADD` forbids one. Deletes, executable
+  modes, commands, hooks, fuzzy patches, and unknown fields are rejected.
+- The only accepted recipes are
+  `ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1` and
+  `CUSTOM_TASK_CONTRACT_JAVA_V1`; the latter requires a reviewed C1 adapter.
+- Delivery is constrained to a new `buildopt/` branch and draft pull request,
+  without force-push, automatic merge, or modification of an existing branch.
+
+Run schema, blob, mutation, and digest-binding vectors with:
+
+```bash
+./dev/check-patch-bundle-schema
+```
+
+The semantic checker verifies exact blob bytes, contiguous operation order,
+unique paths and references, validation lifetime, the normative sorted
+bundle-digest input, and the signature-to-digest binding. `F0-020` still owns
+real JCS/Ed25519 cross-language vectors. The Java parser/applier, symlink and
+submodule checks, staged application, Git idempotency, and branch-without-PR
+recovery remain with `F0-034`/C4; this schema alone does not close
+`PATCH-BUNDLE-001`.

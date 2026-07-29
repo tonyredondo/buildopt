@@ -1,0 +1,8 @@
+{
+  "base": "../valid/archive-reproducibility.json",
+  "operation": "replace",
+  "path": ["bundleDigest"],
+  "value": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+  "layer": "semantic",
+  "diagnostic": "bundleDigest"
+}

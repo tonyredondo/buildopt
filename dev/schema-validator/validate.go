@@ -41,6 +41,9 @@ const TestCacheGrantSchemaID = "https://schemas.buildopt.dev/test-cache-grant.v1
 // TestValidationResultSchemaID is the canonical TEST_VALIDATION_RESULT v1 schema identifier.
 const TestValidationResultSchemaID = "https://schemas.buildopt.dev/test-validation-result.v1.schema.json"
 
+// PatchBundleSchemaID is the canonical PATCH_BUNDLE v1 schema identifier.
+const PatchBundleSchemaID = "https://schemas.buildopt.dev/patch-bundle.v1.schema.json"
+
 // ValidateBuildSessionV1 compiles the pinned Draft 2020-12 schema and validates
 // one JSON document with format assertions enabled.
 func ValidateBuildSessionV1(schemaPath string, instancePath string) error {
@@ -159,6 +162,17 @@ func ValidateTestValidationResultV1(schemaPath string, instancePath string) erro
 		instancePath,
 		TestValidationResultSchemaID,
 		"TEST_VALIDATION_RESULT",
+	)
+}
+
+// ValidatePatchBundleV1 compiles the pinned Draft 2020-12 schema and validates
+// one signed declarative patch bundle.
+func ValidatePatchBundleV1(schemaPath string, instancePath string) error {
+	return validateContract(
+		schemaPath,
+		instancePath,
+		PatchBundleSchemaID,
+		"PATCH_BUNDLE",
 	)
 }
 

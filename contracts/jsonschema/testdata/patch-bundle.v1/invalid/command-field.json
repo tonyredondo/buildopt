@@ -1,0 +1,8 @@
+{
+  "base": "../valid/archive-reproducibility.json",
+  "operation": "add",
+  "path": ["operations", "0", "command"],
+  "value": "./gradlew test",
+  "layer": "schema",
+  "diagnostic": "/operations/0"
+}

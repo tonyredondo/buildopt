@@ -1,0 +1,379 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/patch-bundle.v1.schema.json",
+  "title": "BuildOpt PatchBundle v1",
+  "description": "Signed declarative PATCH-BUNDLE-001 manifest plus replacement blob inventory. It contains no executable commands, hooks, fuzzy patches, deletes, or mode changes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "contractVersion",
+    "repositoryId",
+    "actionId",
+    "bundleDigest",
+    "baseRevision",
+    "baseTree",
+    "sourceStateDigest",
+    "recipe",
+    "createdAt",
+    "expiresAt",
+    "operations",
+    "blobs",
+    "validation",
+    "delivery",
+    "signature"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "recordType": {
+      "const": "PATCH_BUNDLE"
+    },
+    "contractVersion": {
+      "const": "buildopt-patch-bundle/v1"
+    },
+    "repositoryId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "actionId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "bundleDigest": {
+      "$ref": "#/$defs/sha256Digest"
+    },
+    "baseRevision": {
+      "$ref": "#/$defs/gitObjectId"
+    },
+    "baseTree": {
+      "$ref": "#/$defs/gitObjectId"
+    },
+    "sourceStateDigest": {
+      "$ref": "#/$defs/digest"
+    },
+    "recipe": {
+      "$ref": "#/$defs/recipe"
+    },
+    "createdAt": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "expiresAt": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "operations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/operation"
+      },
+      "minItems": 1,
+      "maxItems": 256
+    },
+    "blobs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/blob"
+      },
+      "minItems": 1,
+      "maxItems": 256
+    },
+    "validation": {
+      "$ref": "#/$defs/validation"
+    },
+    "delivery": {
+      "$ref": "#/$defs/delivery"
+    },
+    "signature": {
+      "$ref": "#/$defs/signature"
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+    },
+    "sha256Digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^(?:sha256|hmac-sha256):[0-9a-f]{64}$"
+    },
+    "gitObjectId": {
+      "type": "string",
+      "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "safePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^[^/\\x00][^\\x00]*$",
+      "not": {
+        "pattern": "(^|/)\\.\\.(/|$)|(^|/)\\.git(?:/|$)|//|/$"
+      }
+    },
+    "recipe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version"
+      ],
+      "properties": {
+        "id": {
+          "enum": [
+            "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1",
+            "CUSTOM_TASK_CONTRACT_JAVA_V1"
+          ]
+        },
+        "version": {
+          "const": "1.0"
+        },
+        "reviewedAdapter": {
+          "$ref": "#/$defs/reviewedAdapter"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "CUSTOM_TASK_CONTRACT_JAVA_V1"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "required": [
+              "reviewedAdapter"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "reviewedAdapter"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "reviewedAdapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "adapterId",
+        "adapterDigest",
+        "evidenceRef"
+      ],
+      "properties": {
+        "adapterId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "adapterDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "evidenceRef": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "order",
+        "type",
+        "path",
+        "expectedMode",
+        "postimageDigest",
+        "replacementBlob"
+      ],
+      "properties": {
+        "order": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "type": {
+          "enum": [
+            "ADD",
+            "MODIFY"
+          ]
+        },
+        "path": {
+          "$ref": "#/$defs/safePath"
+        },
+        "expectedMode": {
+          "const": "100644"
+        },
+        "preimageDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "postimageDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "replacementBlob": {
+          "$ref": "#/$defs/safePath"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "MODIFY"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "preimageDigest"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "preimageDigest"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "blob": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "blobRef",
+        "blobSha256",
+        "sizeBytes",
+        "mediaType",
+        "encoding"
+      ],
+      "properties": {
+        "blobRef": {
+          "$ref": "#/$defs/safePath"
+        },
+        "blobSha256": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        },
+        "mediaType": {
+          "const": "text/plain"
+        },
+        "encoding": {
+          "const": "UTF-8"
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "status",
+        "requestId",
+        "resultId",
+        "artifactSetDigest",
+        "completedAt",
+        "expiresAt"
+      ],
+      "properties": {
+        "mode": {
+          "const": "FULL_RELEVANT_VALIDATION"
+        },
+        "status": {
+          "const": "PASSED"
+        },
+        "requestId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resultId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "artifactSetDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "completedAt": {
+          "$ref": "#/$defs/utcTimestamp"
+        },
+        "expiresAt": {
+          "$ref": "#/$defs/utcTimestamp"
+        }
+      }
+    },
+    "delivery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "branchPrefix",
+        "draftPullRequest",
+        "autoMerge",
+        "forcePush",
+        "modifyExistingBranch"
+      ],
+      "properties": {
+        "branchPrefix": {
+          "const": "buildopt/"
+        },
+        "draftPullRequest": {
+          "const": true
+        },
+        "autoMerge": {
+          "const": false
+        },
+        "forcePush": {
+          "const": false
+        },
+        "modifyExistingBranch": {
+          "const": false
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "canonicalization",
+        "keyId",
+        "signedBundleDigest",
+        "value"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "Ed25519"
+        },
+        "canonicalization": {
+          "const": "JCS"
+        },
+        "keyId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "signedBundleDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{86}$"
+        }
+      }
+    }
+  }
+}

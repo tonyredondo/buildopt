@@ -1,0 +1,8 @@
+{
+  "base": "../valid/archive-reproducibility.json",
+  "operation": "append-copy",
+  "path": ["operations"],
+  "copyIndex": 0,
+  "layer": "semantic",
+  "diagnostic": "order"
+}

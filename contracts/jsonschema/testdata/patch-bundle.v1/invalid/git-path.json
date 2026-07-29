@@ -1,0 +1,8 @@
+{
+  "base": "../valid/archive-reproducibility.json",
+  "operation": "replace",
+  "path": ["operations", "0", "path"],
+  "value": ".git/config",
+  "layer": "schema",
+  "diagnostic": "/operations/0/path"
+}

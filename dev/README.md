@@ -274,6 +274,23 @@ policy/grant references, and result identity/artifact equality with the
 originating F0-014 request. It validates structure and semantic binding;
 `F0-020` supplies real cryptographic golden vectors.
 
+## PatchBundle contract validation
+
+Validate the `F0-016` declarative bundle envelope and its two private-beta
+recipe vectors:
+
+```bash
+./dev/check-patch-bundle-schema
+```
+
+The isolated checker compiles the strict Draft 2020-12 schema, validates exact
+UTF-8 replacement blobs and the normative sorted bundle digest, and rejects 12
+schema or semantic mutations covering paths, operations, modes, commands,
+preimages, blobs, signature binding, digest binding, and duplicate ordering.
+It does not apply a bundle to Git or execute bundle content; those parser,
+worktree, symlink/submodule, idempotency, and recovery proofs remain with
+`F0-034`/C4.
+
 ## Metrics catalog validation
 
 Validate the machine-readable `F0-024` catalog and its private-beta measurement

@@ -85,6 +85,7 @@ buildopt_materialized_artifacts=(
     "contracts/jsonschema/evidence-record.v1.schema.json"
     "contracts/jsonschema/experiment-result.v1.schema.json"
     "contracts/jsonschema/optimization-policy.v1.schema.json"
+    "contracts/jsonschema/patch-bundle.v1.schema.json"
     "contracts/jsonschema/resource-profile.v1.schema.json"
     "contracts/jsonschema/test-cache-grant.v1.schema.json"
     "contracts/jsonschema/test-validation-result.v1.schema.json"
