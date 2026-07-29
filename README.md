@@ -72,6 +72,7 @@ From the repository root:
 ./dev/check-test-optimization-openapi
 ./dev/check-test-optimization-integration
 ./dev/check-patch-bundle-spec
+./dev/check-bandit-policy
 ./dev/check-buildopt-cli
 ./dev/check-local-gateway
 ./dev/check-session-ingest

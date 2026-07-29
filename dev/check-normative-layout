@@ -69,6 +69,8 @@ buildopt_planned_artifacts=(
     "specs/ci-orchestration-v1.json"
     "specs/ci-orchestration-v1.md"
     "specs/benchmark-beta-v1.md"
+    "specs/bandit-policy-v1.json"
+    "specs/bandit-policy-v1.md"
     "specs/test-optimization-integration-v1.json"
     "specs/test-optimization-integration-v1.md"
     "specs/patch-bundle-v1.json"

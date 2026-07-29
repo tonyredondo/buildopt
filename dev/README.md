@@ -381,6 +381,19 @@ The checker verifies all immutable input bindings and prints the manifest
 digest. It does not execute the 60-minute sustained or eight-hour soak profile;
 those measured runs remain part of the later `OPS-001/A1` gate.
 
+## Bounded bandit replay validation
+
+Validate the finite resource catalog and `F0-035` epsilon-greedy policy:
+
+```bash
+./dev/check-bandit-policy
+```
+
+The deterministic replay covers A/A and sample-ratio failure, fixed-cohort
+entry, stable-control and exploration floors, shrinkage and tie handling,
+headroom, propensity, 24-hour delayed and duplicate outcomes, drift/epoch
+reset, kill switch, and guardrail rollback.
+
 ## PatchBundle contract validation
 
 Validate the `F0-016` declarative bundle envelope and its two private-beta

@@ -9,6 +9,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`benchmark-beta-v1.md`](./benchmark-beta-v1.md) | `F0-032` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`patch-bundle-v1.md`](./patch-bundle-v1.md) | `F0-034` |
+| [`bandit-policy-v1.md`](./bandit-policy-v1.md) | `F0-035` |
 | `capability-matrix-v1.md` | `F0-036` |
 | [`release-bundle-v1.md`](./release-bundle-v1.md) | `F0-038` / `DEPLOY-001` |
 | [`walking-skeleton-faults-v1.md`](./walking-skeleton-faults-v1.md) | `WS-008` |
@@ -24,5 +25,6 @@ ADR 0002.
 producer/consumer scenario corpus.
 `patch-bundle-v1.json` is the ordered F0-034 application and recovery plan
 consumed by the Java patcher spike.
+`bandit-policy-v1.json` is the deterministic F0-035 policy/replay corpus.
 
 The additional materialized contract `golden-lane-runner-v1.json` pins the first runner class, toolchain, image, and checksums consumed by validation scripts. `release-bundle-v1.md` fixes the first verifiable Linux AMD64 distribution without claiming the later install, upgrade, uninstall, revocation, or workflow lifecycle. `walking-skeleton-overhead-v1.md` fixes the first non-promotional baseline-versus-wrapper measurement without replacing the later beta benchmark.
