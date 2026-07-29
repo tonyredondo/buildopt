@@ -2,7 +2,7 @@
 set -euo pipefail
 
 buildopt_usage() {
-    printf 'usage: %s --toolchain temurin-jdk-21\n' "$0"
+    printf 'usage: %s --toolchain <temurin-jdk-21|go>\n' "$0"
 }
 
 buildopt_toolchain=
@@ -27,10 +27,13 @@ while (($# > 0)); do
     esac
 done
 
-if [[ "${buildopt_toolchain}" != "temurin-jdk-21" ]]; then
-    buildopt_usage >&2
-    exit 64
-fi
+case "${buildopt_toolchain}" in
+    go | temurin-jdk-21) ;;
+    *)
+        buildopt_usage >&2
+        exit 64
+        ;;
+esac
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
@@ -84,12 +87,28 @@ if [[ ! "${buildopt_id}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
     [[ ! "${buildopt_provider}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
     [[ ! "${buildopt_sha256}" =~ ^[0-9a-f]{64}$ ]] ||
     [[ "${buildopt_kind}" != "tar.gz" ]] ||
-    [[ ! "${buildopt_url}" =~ ^https:// ]] ||
-    [[ ! "${buildopt_version}" =~ ^21([.]|$) ]]; then
+    [[ ! "${buildopt_url}" =~ ^https:// ]]; then
     printf 'unsupported or malformed toolchain entry: %s\n' \
         "${buildopt_toolchain}" >&2
     exit 70
 fi
+
+case "${buildopt_id}" in
+    go)
+        if [[ "${buildopt_provider}" != "go-project" ]] ||
+            [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+([.][0-9]+)?$ ]]; then
+            printf 'unsupported or malformed Go toolchain entry\n' >&2
+            exit 70
+        fi
+        ;;
+    temurin-jdk-21)
+        if [[ "${buildopt_provider}" != "eclipse-adoptium" ]] ||
+            [[ ! "${buildopt_version}" =~ ^21([.]|$) ]]; then
+            printf 'unsupported or malformed JDK 21 toolchain entry\n' >&2
+            exit 70
+        fi
+        ;;
+esac
 
 buildopt_os=$(uname -s)
 buildopt_arch=$(uname -m)
@@ -103,17 +122,17 @@ if [[ "${buildopt_platform}" != "linux-amd64" ]] ||
     exit 1
 fi
 
-buildopt_runtime_version=${buildopt_version%%+*}
 buildopt_install_dir="${buildopt_tools_root}/toolchains/${buildopt_id}-${buildopt_sha256:0:16}"
 
-buildopt_validate_jdk() {
-    local buildopt_jdk_home=$1
+buildopt_validate_toolchain() {
+    local buildopt_tool_home=$1
+    local buildopt_go_root
+    local buildopt_go_output
     local buildopt_java_output
     local buildopt_javac_output
+    local buildopt_runtime_version
 
-    [[ -x "${buildopt_jdk_home}/bin/java" ]] || return 1
-    [[ -x "${buildopt_jdk_home}/bin/javac" ]] || return 1
-    [[ -f "${buildopt_jdk_home}/.buildopt-toolchain.json" ]] || return 1
+    [[ -f "${buildopt_tool_home}/.buildopt-toolchain.json" ]] || return 1
 
     jq -e \
         --arg buildopt_id "${buildopt_id}" \
@@ -128,21 +147,47 @@ buildopt_validate_jdk() {
             .provider == $buildopt_provider and
             .sha256 == $buildopt_sha256 and
             .url == $buildopt_url
-        ' "${buildopt_jdk_home}/.buildopt-toolchain.json" >/dev/null || return 1
+        ' "${buildopt_tool_home}/.buildopt-toolchain.json" >/dev/null || return 1
 
-    buildopt_java_output=$("${buildopt_jdk_home}/bin/java" -version 2>&1) ||
-        return 1
-    buildopt_javac_output=$("${buildopt_jdk_home}/bin/javac" -version 2>&1) ||
-        return 1
-
-    [[ "${buildopt_java_output}" == *"version \"${buildopt_runtime_version}\""* ]] ||
-        return 1
-    [[ "${buildopt_javac_output}" == "javac ${buildopt_runtime_version}" ]] ||
-        return 1
+    case "${buildopt_id}" in
+        go)
+            [[ -x "${buildopt_tool_home}/bin/go" ]] || return 1
+            buildopt_go_output=$(
+                GOENV=off \
+                GOROOT="${buildopt_tool_home}" \
+                GOTOOLCHAIN=local \
+                    "${buildopt_tool_home}/bin/go" version 2>&1
+            ) || return 1
+            [[ "${buildopt_go_output}" == \
+                "go version go${buildopt_version} linux/amd64" ]] || return 1
+            buildopt_go_root=$(
+                GOENV=off \
+                GOROOT="${buildopt_tool_home}" \
+                GOTOOLCHAIN=local \
+                    "${buildopt_tool_home}/bin/go" env GOROOT
+            ) || return 1
+            [[ "${buildopt_go_root}" == "${buildopt_tool_home}" ]] || return 1
+            ;;
+        temurin-jdk-21)
+            [[ -x "${buildopt_tool_home}/bin/java" ]] || return 1
+            [[ -x "${buildopt_tool_home}/bin/javac" ]] || return 1
+            buildopt_runtime_version=${buildopt_version%%+*}
+            buildopt_java_output=$(
+                "${buildopt_tool_home}/bin/java" -version 2>&1
+            ) || return 1
+            buildopt_javac_output=$(
+                "${buildopt_tool_home}/bin/javac" -version 2>&1
+            ) || return 1
+            [[ "${buildopt_java_output}" == \
+                *"version \"${buildopt_runtime_version}\""* ]] || return 1
+            [[ "${buildopt_javac_output}" == \
+                "javac ${buildopt_runtime_version}" ]] || return 1
+            ;;
+    esac
 }
 
 if [[ -e "${buildopt_install_dir}" ]]; then
-    if buildopt_validate_jdk "${buildopt_install_dir}"; then
+    if buildopt_validate_toolchain "${buildopt_install_dir}"; then
         printf '%s %s is already provisioned at %s\n' \
             "${buildopt_id}" \
             "${buildopt_version}" \
@@ -188,7 +233,7 @@ buildopt_cleanup() {
 trap buildopt_cleanup EXIT
 
 if [[ -e "${buildopt_install_dir}" ]]; then
-    if buildopt_validate_jdk "${buildopt_install_dir}"; then
+    if buildopt_validate_toolchain "${buildopt_install_dir}"; then
         printf '%s %s is already provisioned at %s\n' \
             "${buildopt_id}" \
             "${buildopt_version}" \
@@ -292,7 +337,7 @@ if ((${#buildopt_roots[@]} != 1)) ||
     exit 1
 fi
 
-buildopt_staged_jdk=${buildopt_roots[0]}
+buildopt_staged_tool=${buildopt_roots[0]}
 jq -n \
     --arg buildopt_id "${buildopt_id}" \
     --arg buildopt_version "${buildopt_version}" \
@@ -306,10 +351,10 @@ jq -n \
         provider: $buildopt_provider,
         sha256: $buildopt_sha256,
         url: $buildopt_url
-    }' >"${buildopt_staged_jdk}/.buildopt-toolchain.json"
+    }' >"${buildopt_staged_tool}/.buildopt-toolchain.json"
 
-if ! buildopt_validate_jdk "${buildopt_staged_jdk}"; then
-    printf 'extracted toolchain failed its Java smoke test: %s\n' \
+if ! buildopt_validate_toolchain "${buildopt_staged_tool}"; then
+    printf 'extracted toolchain failed its smoke test: %s\n' \
         "${buildopt_id}" >&2
     exit 1
 fi
@@ -319,9 +364,9 @@ if [[ -e "${buildopt_install_dir}" ]]; then
         "${buildopt_install_dir}" >&2
     exit 1
 fi
-mv -- "${buildopt_staged_jdk}" "${buildopt_install_dir}"
+mv -- "${buildopt_staged_tool}" "${buildopt_install_dir}"
 
-if ! buildopt_validate_jdk "${buildopt_install_dir}"; then
+if ! buildopt_validate_toolchain "${buildopt_install_dir}"; then
     printf 'installed toolchain failed final verification: %s\n' \
         "${buildopt_id}" >&2
     exit 1

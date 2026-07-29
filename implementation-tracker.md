@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — `ENV-004` closed with Java 17 plugin/agent artifacts; `ENV-005` is the next block<br>
+**Overall status:** `DOING` — `ENV-005` closed with an isolated, exact Go toolchain; `ENV-008` is the next block<br>
 **Current phase:** Phase 0 — contracts, fixtures, and walking skeleton<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
 **Last updated:** 2026-07-29<br>
@@ -87,11 +87,12 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 4 | `ENV-002` | `dev/doctor` reproduces the host inventory | `DONE` | Codex |
 | 5 | `ENV-003` | JDK 21 available alongside and isolated from global JDK 25 | `DONE` | Codex |
 | 6 | `ENV-004` | Plugin/agent compilation verified with `--release 17` | `DONE` | Codex |
-| 7 | `ENV-005` | Locked Go toolchain validated for the core | `TODO` | — |
-| 8 | `F0-010` | `contracts/`, `specs/`, `benchmarks/`, and `adr/` structure created | `WAITING` | — |
-| 9 | `F0-011` | First normative schema: `BUILD_SESSION v1` | `WAITING` | — |
-| 10 | `WS-001` | `buildopt run` → `BUILD_SESSION` vertical slice started | `TODO` | — |
-| 11 | `SPK-001` | Task → cache key → PUT spike on the golden lane | `WAITING` | — |
+| 7 | `ENV-005` | Locked Go toolchain validated for the core | `DONE` | Codex |
+| 8 | `ENV-008` | Docker and the golden image verified by digest | `TODO` | — |
+| 9 | `F0-010` | `contracts/`, `specs/`, `benchmarks/`, and `adr/` structure created | `WAITING` | — |
+| 10 | `F0-011` | First normative schema: `BUILD_SESSION v1` | `WAITING` | — |
+| 11 | `WS-001` | `buildopt run` → `BUILD_SESSION` vertical slice started | `TODO` | — |
+| 12 | `SPK-001` | Task → cache key → PUT spike on the golden lane | `WAITING` | — |
 
 ---
 
@@ -145,7 +146,7 @@ The environment must be reproducible and must not depend on unversioned global t
 - `dev/toolchains.lock.yaml` pins each toolchain's version, platform, URL/provider, and SHA-256.
 - `dev/doctor` is read-only and verifies the host, versions, paths, Docker, capabilities, and available space.
 - `dev/bootstrap` is idempotent and installs verified tools under `.tools/` by default; it does not use `sudo` or silently replace global toolchains.
-- `dev/run` or an equivalent script sets `JAVA_HOME`/`PATH` only for the project process.
+- `dev/run` sets target-specific Java or Go variables and `PATH` only for the project process.
 - CI and workstations consume the same lock. The golden lane also uses a container image pinned by digest.
 - Do not install Gradle globally: every fixture and module uses a pinned Gradle Wrapper.
 - Rust remains optional for the core, but must be pinned for `SPK-003` and C1.
@@ -158,7 +159,7 @@ Verified snapshot from the initial 4-vCPU workstation on 2026-07-29. Manually in
 |---|---|---|---|---|---|
 | Linux x86-64 | Entire MVP | Recorded kernel/capabilities | Linux 6.8 x86-64 | Available | Re-run `dev/doctor` on each workstation; C1 retains strict capability qualification |
 | JDK/Javac | Golden lane, plugin, and agent | JDK 21; `--release 17` bytecode | Global OpenJDK/Javac 25.0.3 + isolated Temurin 21.0.12+8 | Available on workstation | Closed by `ENV-003`; use the verified repository-local JDK through `dev/run` |
-| Go | Launcher, gateway, and server | Exact version in lock | Go 1.26.5 | Available without project isolation | Validate the locked toolchain in `ENV-005` |
+| Go | Launcher, gateway, and server | Exact version in lock | Global Go 1.26.5 + isolated Go 1.26.5 | Available on workstation | Closed by `ENV-005`; use the verified repository-local Go through `dev/run --toolchain go` |
 | Rust/Cargo | C1 hermetic helper | Exact version in `rust-toolchain.toml` | Rust/Cargo 1.93.0 | Available, optional | Materialize the locked channel in `ENV-009` |
 | `protoc` | Local-events Protobuf | Exact project-local version | Isolated 35.1; checksum and descriptor smoke test verified | Available on workstation | Provision from the lock in `ENV-006` |
 | Buf | Protobuf lint/breaking/codegen, if adopted | Exact project-local version | Isolated 1.72.0; `buf lint` passed | Available; contract adoption pending | Close adoption in `F0-019` before provisioning the pinned candidate |
@@ -187,7 +188,7 @@ Initial 4-vCPU workstation installation:
 | `ENV-002` | Implement read-only `dev/doctor` | `ENV-001` | `DONE` | Codex | `E-011`: JSON/human reports, live inventory, and deterministic exit-code fixtures |
 | `ENV-003` | Provision JDK 21 alongside JDK 25 without global replacement | `ENV-001` | `DONE` | Codex | `E-012`: verified, idempotent provisioning and isolated `dev/run` |
 | `ENV-004` | Verify plugin/agent compilation with `--release 17` | `ENV-003` | `DONE` | Codex | `E-013`: separate JARs, major 61, agent load, and golden-image build |
-| `ENV-005` | Validate and pin Go for the core | `ENV-001` | `TODO` | — | `go.mod`/toolchain + passing doctor |
+| `ENV-005` | Validate and pin Go for the core | `ENV-001` | `DONE` | Codex | `E-014`: exact module/toolchain, isolated execution, passing doctor and reproducible build |
 | `ENV-006` | Provision `protoc` and decide/adopt Buf | `F0-019`, `ENV-001` | `WAITING` | — | Reproducible lint/generate/round trip |
 | `ENV-007` | Pin Gradle Wrapper 9.6.1 and verify checksum | `F0-002` | `DONE` | Codex | `E-007`: Wrapper 9.6.1 and checksums verified |
 | `ENV-008` | Verify Docker and golden image by digest | `F0-002`, `ENV-002` | `TODO` | — | Container smoke test |
@@ -478,6 +479,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Repository layout | Git root, modules, and `F0-001` conventions | `dev/check-layout` and ShellCheck passed; structure included in the initial commit | 2026-07-29 | `E-006` |
 | Toolchain lock | Portable versions, platforms, providers, immutable URLs, SHA-256 values, and tracker references | `dev/check-toolchains-lock` passed for ten artifacts on `linux-amd64`; update policy recorded | 2026-07-29 | `E-010` |
 | Host inventory | Platform/resources, active Java/Go/Rust/Protobuf/base-tool paths and versions, Docker, cgroups, namespaces, and available space | `dev/doctor --json` passed on the 12-CPU workstation and reported active-path drift without treating deferred provisioning as success; deterministic fixtures passed codes `0/1/64/70` and preserved the working tree | 2026-07-29 | `E-011` |
+| Go toolchain | Exact compiler, module baseline, local-only selection and caches, offline module state, and deterministic smoke build | Official Go 1.26.5 archive matched the lock; real and synthetic isolation checks passed; doctor reported the project-local binary as `MATCH`; repeated smoke binaries matched | 2026-07-29 | `E-014` |
 | Contract schemas | JSON Schema/OpenAPI/Protobuf | Not run | — | — |
 | Golden vectors | Go ↔ Java canonicalization/signatures | Not run | — | — |
 | Go unit/integration | Launcher/gateway/server | Not run | — | — |
@@ -518,7 +520,8 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-010` | 2026-07-29 | `ENV-001` | [`dev/toolchains.lock.yaml`](./dev/toolchains.lock.yaml), static validator, and update policy; eight GitHub release digests reverified against official release metadata plus official Go archive and Rust channel-manifest metadata; Bash syntax, lock validation, ShellCheck, layout, golden-lane static checks, and the Java 21 smoke build passed on the non-golden 12-CPU host | `DONE`: one host-independent `linux-amd64` lock now unblocks `ENV-002`, `ENV-003`, `ENV-005`, `ENV-009`, and `ENV-010` |
 | `E-011` | 2026-07-29 | `ENV-002` | [`dev/doctor`](./dev/doctor), [`dev/test-doctor`](./dev/test-doctor), documented `buildopt.dev/doctor-report/v1`, live human/JSON inventory on the 12-CPU workstation, isolated JDK 21/25 active-path matches, deterministic missing-command and internal-error fixtures, Bash syntax, ShellCheck 0.11.0, read-only Git-state comparison, and exit codes `0/1/64/70` | `DONE`: workstations now share one active-path comparison contract without global-tool assumptions; `ENV-008` is unblocked |
 | `E-012` | 2026-07-29 | `ENV-003` | [`dev/bootstrap`](./dev/bootstrap), [`dev/run`](./dev/run), and [`dev/test-jdk-toolchain`](./dev/test-jdk-toolchain); official Temurin 21.0.12+8 bytes matched lock SHA-256 `e4446ff06a276155697597cc0f1b15da004ff083f4964a35271ecee567177370`; first and idempotent second provisioning passed; synthetic global JDK 25 isolation, real global JDK 17 preservation, doctor `MATCH`, and Gradle 9.6.1 smoke with Java 17 bytecode passed on the non-golden 12-CPU host | `DONE`: JDK 21 is reproducibly available through `dev/run` without replacing global Java; `ENV-004` is unblocked |
-| `E-013` | 2026-07-29 | `ENV-004` | [`dev/check-jvm-release`](./dev/check-jvm-release), separate Gradle plugin and JVM agent builds, locked Temurin 21.0.12+8 compiler with `--release 17`, `-Xlint:all`, and `-Werror`; all packaged classes verified at major 61; constrained `Premain-Class` loaded on project Java 21 and host Java 17.0.19; clean rebuild hashes matched; root smoke passed locally and in the digest-pinned golden image | `DONE`: Java 17 artifact compatibility is executable without activating the `WS-003` handshake or `SPK-002` instrumentation behavior; `ENV-005` is next |
+| `E-013` | 2026-07-29 | `ENV-004` | [`dev/check-jvm-release`](./dev/check-jvm-release), separate Gradle plugin and JVM agent builds, locked Temurin 21.0.12+8 compiler with `--release 17`, `-Xlint:all`, and `-Werror`; all packaged classes verified at major 61; constrained `Premain-Class` loaded on project Java 21 and host Java 17.0.19; clean rebuild hashes matched; root smoke passed locally and in the digest-pinned golden image | `DONE`: Java 17 artifact compatibility is executable without activating the `WS-003` handshake or `SPK-002` instrumentation behavior; `ENV-005` was unblocked |
+| `E-014` | 2026-07-29 | `ENV-005` | Root [`go.mod`](./go.mod), [`dev/check-go-toolchain`](./dev/check-go-toolchain), generalized [`dev/bootstrap`](./dev/bootstrap) and [`dev/run`](./dev/run), plus [`dev/test-go-toolchain`](./dev/test-go-toolchain); official Go 1.26.5 bytes matched lock SHA-256 `5c2c3b16caefa1d968a94c1daca04a7ca301a496d9b086e17ad77bb81393f053`; first and idempotent provisioning, exact Linux AMD64 compiler, `GOTOOLCHAIN=local`, disabled user Go environment, project-local caches, offline module checks, identical repeated smoke binaries, synthetic global-Go isolation, unchanged real global selection, and doctor `MATCH` passed on the non-golden 12-CPU host | `DONE`: the Go core now has a reproducible compiler/module baseline without activating product behavior; `ENV-008` is next |
 
 ---
 
@@ -526,6 +529,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-29 | Closed `ENV-005`: added the exact root Go module/toolchain contract, checksum-verified project-local provisioning, isolated execution and caches, deterministic fixtures, doctor matching, and a reproducible offline smoke build | Codex |
 | 2026-07-29 | Closed `ENV-004`: added neutral Gradle plugin/JVM agent artifacts, enforced `--release 17`, verified major 61 and agent loading, and passed local plus pinned-image builds | Codex |
 | 2026-07-29 | Closed `ENV-003`: added checksum-verified, atomic JDK 21 provisioning and project-local execution without replacing global Java; unblocked `ENV-004` | Codex |
 | 2026-07-29 | Closed `ENV-002`: added read-only human/JSON host inventory, stable exit codes, active-path toolchain drift reporting, Docker/capability/resource probes, and deterministic fixtures | Codex |

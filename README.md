@@ -54,17 +54,21 @@ From the repository root:
 ./dev/doctor
 ./dev/test-doctor
 ./dev/test-jdk-toolchain
+./dev/test-go-toolchain
+./dev/run --toolchain go -- ./dev/check-go-toolchain
 ./dev/run -- ./dev/check-jvm-release
 ./dev/check-golden-lane --static
 ```
 
-The commands validate the repository layout, portable toolchain lock, host inventory contract, isolated JDK provisioning, Java 17 JVM artifacts, and golden lane configuration and checksums.
+The commands validate the repository layout, portable toolchain lock, host inventory contract, isolated JDK and Go provisioning, the pinned Go module/toolchain, Java 17 JVM artifacts, and golden lane configuration and checksums.
 
-Local smoke test with JDK 21:
+Project-local smoke tests:
 
 ```bash
 ./dev/bootstrap --toolchain temurin-jdk-21
 ./dev/run -- ./dev/check-golden-lane --smoke
+./dev/bootstrap --toolchain go
+./dev/run --toolchain go -- ./dev/check-go-toolchain
 ```
 
 Smoke test inside the pinned image:

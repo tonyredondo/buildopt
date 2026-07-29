@@ -2,7 +2,7 @@
 set -euo pipefail
 
 buildopt_usage() {
-    printf 'usage: %s [--toolchain temurin-jdk-21] -- command [args...]\n' "$0"
+    printf 'usage: %s [--toolchain <temurin-jdk-21|go>] -- command [args...]\n' "$0"
 }
 
 buildopt_toolchain=temurin-jdk-21
@@ -19,8 +19,14 @@ if [[ "${1:-}" == "--toolchain" ]]; then
     shift 2
 fi
 
-if [[ "${buildopt_toolchain}" != "temurin-jdk-21" ]] ||
-    [[ "${1:-}" != "--" ]]; then
+case "${buildopt_toolchain}" in
+    go | temurin-jdk-21) ;;
+    *)
+        buildopt_usage >&2
+        exit 64
+        ;;
+esac
+if [[ "${1:-}" != "--" ]]; then
     buildopt_usage >&2
     exit 64
 fi
@@ -72,14 +78,12 @@ buildopt_platform=$(jq -r '.platform' <<<"${buildopt_entry}")
 buildopt_provider=$(jq -r '.provider' <<<"${buildopt_entry}")
 buildopt_url=$(jq -r '.url' <<<"${buildopt_entry}")
 buildopt_sha256=$(jq -r '.sha256' <<<"${buildopt_entry}")
-buildopt_runtime_version=${buildopt_version%%+*}
-buildopt_jdk_home="${buildopt_tools_root}/toolchains/${buildopt_id}-${buildopt_sha256:0:16}"
-buildopt_manifest="${buildopt_jdk_home}/.buildopt-toolchain.json"
+buildopt_tool_home="${buildopt_tools_root}/toolchains/${buildopt_id}-${buildopt_sha256:0:16}"
+buildopt_manifest="${buildopt_tool_home}/.buildopt-toolchain.json"
 
 if [[ ! "${buildopt_id}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
     [[ ! "${buildopt_provider}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
     [[ ! "${buildopt_sha256}" =~ ^[0-9a-f]{64}$ ]] ||
-    [[ ! "${buildopt_version}" =~ ^21([.]|$) ]] ||
     [[ "${buildopt_kind}" != "tar.gz" ]] ||
     [[ "${buildopt_platform}" != "linux-amd64" ]] ||
     [[ ! "${buildopt_url}" =~ ^https:// ]]; then
@@ -87,9 +91,24 @@ if [[ ! "${buildopt_id}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
     exit 70
 fi
 
-if [[ ! -x "${buildopt_jdk_home}/bin/java" ]] ||
-    [[ ! -x "${buildopt_jdk_home}/bin/javac" ]] ||
-    [[ ! -f "${buildopt_manifest}" ]]; then
+case "${buildopt_id}" in
+    go)
+        if [[ "${buildopt_provider}" != "go-project" ]] ||
+            [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+([.][0-9]+)?$ ]]; then
+            printf 'malformed Go toolchain identity\n' >&2
+            exit 70
+        fi
+        ;;
+    temurin-jdk-21)
+        if [[ "${buildopt_provider}" != "eclipse-adoptium" ]] ||
+            [[ ! "${buildopt_version}" =~ ^21([.]|$) ]]; then
+            printf 'malformed JDK 21 toolchain identity\n' >&2
+            exit 70
+        fi
+        ;;
+esac
+
+if [[ ! -f "${buildopt_manifest}" ]]; then
     printf '%s is not provisioned; run: ./dev/bootstrap --toolchain %s\n' \
         "${buildopt_id}" \
         "${buildopt_id}" >&2
@@ -111,34 +130,78 @@ if ! jq -e \
         .url == $buildopt_url
     ' "${buildopt_manifest}" >/dev/null; then
     printf 'provisioned toolchain does not match the lock: %s\n' \
-        "${buildopt_jdk_home}" >&2
+        "${buildopt_tool_home}" >&2
     exit 1
 fi
 
-buildopt_java_output=$("${buildopt_jdk_home}/bin/java" -version 2>&1) ||
-    {
-        printf 'provisioned java failed its version probe: %s\n' \
-            "${buildopt_jdk_home}/bin/java" >&2
-        exit 1
-    }
-buildopt_javac_output=$("${buildopt_jdk_home}/bin/javac" -version 2>&1) ||
-    {
-        printf 'provisioned javac failed its version probe: %s\n' \
-            "${buildopt_jdk_home}/bin/javac" >&2
-        exit 1
-    }
-if [[ "${buildopt_java_output}" != *"version \"${buildopt_runtime_version}\""* ]] ||
-    [[ "${buildopt_javac_output}" != "javac ${buildopt_runtime_version}" ]]; then
-    printf 'provisioned Java binaries do not match %s\n' \
-        "${buildopt_version}" >&2
-    exit 1
-fi
+case "${buildopt_id}" in
+    go)
+        if [[ ! -x "${buildopt_tool_home}/bin/go" ]]; then
+            printf 'provisioned Go binary is unavailable: %s\n' \
+                "${buildopt_tool_home}/bin/go" >&2
+            exit 1
+        fi
+        buildopt_go_output=$(
+            GOENV=off \
+            GOROOT="${buildopt_tool_home}" \
+            GOTOOLCHAIN=local \
+                "${buildopt_tool_home}/bin/go" version 2>&1
+        ) || {
+            printf 'provisioned Go failed its version probe: %s\n' \
+                "${buildopt_tool_home}/bin/go" >&2
+            exit 1
+        }
+        if [[ "${buildopt_go_output}" != \
+            "go version go${buildopt_version} linux/amd64" ]]; then
+            printf 'provisioned Go binary does not match %s\n' \
+                "${buildopt_version}" >&2
+            exit 1
+        fi
+        export GOENV=off
+        export GOROOT="${buildopt_tool_home}"
+        export GOTOOLCHAIN=local
+        export GOPATH="${buildopt_tools_root}/state/go/gopath"
+        export GOMODCACHE="${GOPATH}/pkg/mod"
+        export GOCACHE="${buildopt_tools_root}/state/go/build-cache"
+        ;;
+    temurin-jdk-21)
+        if [[ ! -x "${buildopt_tool_home}/bin/java" ]] ||
+            [[ ! -x "${buildopt_tool_home}/bin/javac" ]]; then
+            printf 'provisioned Java binaries are unavailable: %s\n' \
+                "${buildopt_tool_home}" >&2
+            exit 1
+        fi
+        buildopt_runtime_version=${buildopt_version%%+*}
+        buildopt_java_output=$(
+            "${buildopt_tool_home}/bin/java" -version 2>&1
+        ) || {
+            printf 'provisioned java failed its version probe: %s\n' \
+                "${buildopt_tool_home}/bin/java" >&2
+            exit 1
+        }
+        buildopt_javac_output=$(
+            "${buildopt_tool_home}/bin/javac" -version 2>&1
+        ) || {
+            printf 'provisioned javac failed its version probe: %s\n' \
+                "${buildopt_tool_home}/bin/javac" >&2
+            exit 1
+        }
+        if [[ "${buildopt_java_output}" != \
+            *"version \"${buildopt_runtime_version}\""* ]] ||
+            [[ "${buildopt_javac_output}" != \
+                "javac ${buildopt_runtime_version}" ]]; then
+            printf 'provisioned Java binaries do not match %s\n' \
+                "${buildopt_version}" >&2
+            exit 1
+        fi
+        export JAVA_HOME="${buildopt_tool_home}"
+        ;;
+esac
 
-export JAVA_HOME="${buildopt_jdk_home}"
 if [[ -n "${PATH:-}" ]]; then
-    export PATH="${JAVA_HOME}/bin:${PATH}"
+    export PATH="${buildopt_tool_home}/bin:${PATH}"
 else
-    export PATH="${JAVA_HOME}/bin"
+    export PATH="${buildopt_tool_home}/bin"
 fi
 
 exec "$@"

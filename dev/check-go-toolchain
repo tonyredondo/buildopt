@@ -1,0 +1,210 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_lock="${buildopt_script_dir}/toolchains.lock.yaml"
+buildopt_go_mod="${buildopt_repo_root}/go.mod"
+
+for buildopt_command in awk go jq mktemp sha256sum; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Go verification command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if [[ ! -f "${buildopt_lock}" || ! -f "${buildopt_go_mod}" ]]; then
+    printf 'Go lock or module is missing\n' >&2
+    exit 1
+fi
+
+buildopt_entry=$(
+    jq -ce '
+        [.artifacts[] | select(.id == "go")] |
+        if length == 1 then
+            .[0]
+        else
+            error("expected exactly one Go entry")
+        end
+    ' "${buildopt_lock}"
+)
+buildopt_version=$(jq -r '.version' <<<"${buildopt_entry}")
+buildopt_provider=$(jq -r '.provider' <<<"${buildopt_entry}")
+buildopt_sha256=$(jq -r '.sha256' <<<"${buildopt_entry}")
+buildopt_url=$(jq -r '.url' <<<"${buildopt_entry}")
+
+buildopt_go_output=$(go version)
+if [[ "${buildopt_go_output}" != \
+    "go version go${buildopt_version} linux/amd64" ]]; then
+    printf 'expected locked Go %s, found: %s\n' \
+        "${buildopt_version}" \
+        "${buildopt_go_output}" >&2
+    exit 1
+fi
+
+if [[ "${GOENV:-}" != "off" ]]; then
+    printf 'GOENV must be disabled for project-local Go execution\n' >&2
+    exit 1
+fi
+
+buildopt_go_env=$(
+    go env -json \
+        GOARCH \
+        GOCACHE \
+        GOENV \
+        GOMODCACHE \
+        GOOS \
+        GOPATH \
+        GOROOT \
+        GOTOOLCHAIN \
+        GOVERSION
+)
+if ! jq -e \
+    --arg buildopt_version "go${buildopt_version}" \
+    '
+        .GOOS == "linux" and
+        .GOARCH == "amd64" and
+        .GOVERSION == $buildopt_version and
+        .GOTOOLCHAIN == "local" and
+        .GOENV == "" and
+        (.GOROOT | type == "string" and length > 0) and
+        (.GOPATH | type == "string" and length > 0) and
+        (.GOMODCACHE | type == "string" and length > 0) and
+        (.GOCACHE | type == "string" and length > 0)
+    ' <<<"${buildopt_go_env}" >/dev/null; then
+    printf 'project Go environment does not match the locked contract\n' >&2
+    exit 1
+fi
+
+buildopt_go_root=$(jq -r '.GOROOT' <<<"${buildopt_go_env}")
+buildopt_active_go=$(command -v go)
+if [[ "${buildopt_active_go}" != "${buildopt_go_root}/bin/go" ]]; then
+    printf 'active Go does not come from GOROOT: %s vs %s\n' \
+        "${buildopt_active_go}" \
+        "${buildopt_go_root}" >&2
+    exit 1
+fi
+
+buildopt_toolchains_root=${buildopt_go_root%/*}
+buildopt_tools_root=${buildopt_toolchains_root%/*}
+buildopt_expected_gopath="${buildopt_tools_root}/state/go/gopath"
+buildopt_expected_mod_cache="${buildopt_expected_gopath}/pkg/mod"
+buildopt_expected_build_cache="${buildopt_tools_root}/state/go/build-cache"
+if ! jq -e \
+    --arg buildopt_gopath "${buildopt_expected_gopath}" \
+    --arg buildopt_mod_cache "${buildopt_expected_mod_cache}" \
+    --arg buildopt_build_cache "${buildopt_expected_build_cache}" \
+    '
+        .GOPATH == $buildopt_gopath and
+        .GOMODCACHE == $buildopt_mod_cache and
+        .GOCACHE == $buildopt_build_cache
+    ' <<<"${buildopt_go_env}" >/dev/null; then
+    printf 'project Go caches are not isolated under the tool root\n' >&2
+    exit 1
+fi
+
+buildopt_manifest="${buildopt_go_root}/.buildopt-toolchain.json"
+if [[ ! -f "${buildopt_manifest}" ]] ||
+    ! jq -e \
+        --arg buildopt_version "${buildopt_version}" \
+        --arg buildopt_provider "${buildopt_provider}" \
+        --arg buildopt_sha256 "${buildopt_sha256}" \
+        --arg buildopt_url "${buildopt_url}" \
+        '
+            .schemaVersion == "buildopt.dev/provisioned-toolchain/v1" and
+            .id == "go" and
+            .version == $buildopt_version and
+            .provider == $buildopt_provider and
+            .sha256 == $buildopt_sha256 and
+            .url == $buildopt_url
+        ' "${buildopt_manifest}" >/dev/null; then
+    printf 'active Go installation does not match the repository lock\n' >&2
+    exit 1
+fi
+
+cd -- "${buildopt_repo_root}"
+buildopt_module=$(
+    GOWORK=off \
+    GOPROXY=off \
+        go mod edit -json
+)
+if ! jq -e '
+    .Module.Path == "github.com/tonyredondo/buildopt" and
+    .Go == "1.26.0" and
+    .Toolchain == "go1.26.5"
+' <<<"${buildopt_module}" >/dev/null; then
+    printf 'go.mod does not match the ENV-005 module contract\n' >&2
+    exit 1
+fi
+
+GOWORK=off GOPROXY=off go mod tidy -diff
+GOWORK=off GOPROXY=off go mod verify >/dev/null
+buildopt_listed_module=$(
+    GOWORK=off \
+    GOPROXY=off \
+        go list -m -json
+)
+if ! jq -e '
+    .Path == "github.com/tonyredondo/buildopt" and
+    .GoVersion == "1.26.0"
+' <<<"${buildopt_listed_module}" >/dev/null; then
+    printf 'Go did not resolve the expected root module\n' >&2
+    exit 1
+fi
+
+buildopt_test_root=$(mktemp -d)
+buildopt_cleanup() {
+    rm -rf -- "${buildopt_test_root}"
+}
+trap buildopt_cleanup EXIT
+
+printf '%s\n' \
+    'module dev.buildopt/toolchain-smoke' \
+    '' \
+    'go 1.26.0' \
+    >"${buildopt_test_root}/go.mod"
+printf '%s\n' \
+    'package main' \
+    '' \
+    'import "fmt"' \
+    '' \
+    'func main() {' \
+    '    fmt.Print("buildopt-go-toolchain-ok")' \
+    '}' \
+    >"${buildopt_test_root}/main.go"
+
+(
+    cd -- "${buildopt_test_root}"
+    GOWORK=off GOPROXY=off go build \
+        -buildvcs=false \
+        -trimpath \
+        -o smoke-one \
+        .
+    GOWORK=off GOPROXY=off go build \
+        -buildvcs=false \
+        -trimpath \
+        -o smoke-two \
+        .
+)
+
+buildopt_first_sha=$(sha256sum "${buildopt_test_root}/smoke-one" | awk '{print $1}')
+buildopt_second_sha=$(sha256sum "${buildopt_test_root}/smoke-two" | awk '{print $1}')
+if [[ "${buildopt_first_sha}" != "${buildopt_second_sha}" ]]; then
+    printf 'identical Go smoke builds were not reproducible\n' >&2
+    exit 1
+fi
+
+buildopt_marker=$("${buildopt_test_root}/smoke-one")
+if [[ "${buildopt_marker}" != "buildopt-go-toolchain-ok" ]]; then
+    printf 'unexpected Go smoke output: %s\n' "${buildopt_marker}" >&2
+    exit 1
+fi
+
+printf 'ENV-005 Go toolchain OK: go%s linux/amd64, local mode, module, and reproducible build\n' \
+    "${buildopt_version}"

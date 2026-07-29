@@ -23,13 +23,14 @@ Operating-system capabilities and externally supplied commands such as Docker, G
 
 ## Bootstrap
 
-`ENV-003` introduces the first bounded bootstrap target: the exact Temurin JDK 21 artifact required by the golden lane. Provision it from the repository root:
+`ENV-003` introduced the exact Temurin JDK 21 artifact required by the golden lane. `ENV-005` adds the exact Go toolchain required by the core. Provision either target from the repository root:
 
 ```bash
 ./dev/bootstrap --toolchain temurin-jdk-21
+./dev/bootstrap --toolchain go
 ```
 
-The bootstrap downloads the immutable URL from the lock, verifies its SHA-256 before extraction, rejects unsafe archive paths, runs `java` and `javac` smoke probes, and installs atomically under `.tools/toolchains/`. A second invocation verifies and reuses the existing installation without another download. It never uses `sudo` or modifies the system JDK.
+The bootstrap downloads the immutable URL from the lock, verifies its SHA-256 before extraction, rejects unsafe archive paths, runs target-specific version and runtime probes, and installs atomically under `.tools/toolchains/`. A second invocation verifies and reuses the existing installation without another download. It never uses `sudo` or modifies the system JDK or Go installation.
 
 Set `BUILDOPT_TOOLS_ROOT` to keep the ignored tool state in another local directory. The repository lock remains the source of truth. `ENV-012` will extend this entrypoint to the remaining adopted toolchains and add the complete cleanup contract.
 
@@ -50,6 +51,27 @@ The optional explicit form is equivalent:
 ```bash
 ./dev/run --toolchain temurin-jdk-21 -- java -version
 ```
+
+Run a command with the provisioned Go toolchain:
+
+```bash
+./dev/run --toolchain go -- go version
+./dev/run --toolchain go -- ./dev/check-go-toolchain
+```
+
+For Go, `dev/run` verifies the locked binary and manifest, disables automatic toolchain switching and the user Go environment file, and supplies project-local module and build caches only to the child process. The parent shell and its global Go selection remain unchanged.
+
+## Go toolchain validation
+
+The root [`go.mod`](../go.mod) declares module `github.com/tonyredondo/buildopt`, the Go 1.26.0 language baseline, and exact `go1.26.5` toolchain. This establishes the compiler contract without activating product behavior or adding packages before their tracker items.
+
+Run the checker through the isolated toolchain:
+
+```bash
+./dev/run --toolchain go -- ./dev/check-go-toolchain
+```
+
+The checker requires Linux AMD64, exact locked provenance and version, local-only toolchain selection, disabled user Go configuration, project-local caches, and an unchanged module graph. It then builds and executes a standard-library-only smoke program twice offline and requires identical binaries.
 
 ## JVM release validation
 
@@ -104,6 +126,7 @@ Run the lock and doctor contract tests from the repository root:
 ./dev/check-toolchains-lock
 ./dev/test-doctor
 ./dev/test-jdk-toolchain
+./dev/test-go-toolchain
 ```
 
 The validator rejects malformed schema versions, duplicate identities or URLs, unknown platforms, non-HTTPS sources, invalid SHA-256 values, unsupported artifact kinds, and missing or malformed tracker references.
@@ -111,6 +134,8 @@ The validator rejects malformed schema versions, duplicate identities or URLs, u
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 
 The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.
+
+The Go toolchain tests use a synthetic archive and isolated tool root. They exercise atomic provisioning, idempotency, exact-version selection, project-local `GOROOT`, `GOPATH`, module/build caches, disabled automatic toolchain switching and user configuration, global-Go isolation, missing-tool behavior, and child exit-code propagation without downloading or changing the workstation Go installation.
 
 ## Update policy
 
