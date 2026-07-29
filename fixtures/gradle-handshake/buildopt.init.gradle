@@ -1,0 +1,14 @@
+def pluginJarPath = System.getProperty("buildopt.ws003.pluginJar")
+if (pluginJarPath == null || pluginJarPath.isBlank()) {
+    throw new GradleException("missing buildopt.ws003.pluginJar")
+}
+
+initscript {
+    dependencies {
+        classpath files(System.getProperty("buildopt.ws003.pluginJar"))
+    }
+}
+
+allprojects {
+    pluginManager.apply(dev.buildopt.gradle.BuildOptProjectPlugin)
+}

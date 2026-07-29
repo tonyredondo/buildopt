@@ -40,4 +40,32 @@ The launcher then waits for the child to finish and returns the child's ordinary
 
 The integration fixture verifies an independent process group, a nested descendant, exact `SIGINT` and `SIGTERM` delivery, delayed cleanup during cancellation, preserved handled exit statuses, and conventional unhandled-signal status. Platform expansion remains deferred until its own compatibility fixtures.
 
-Policy, gateway, plugin, observability export, token filtering, and optimization behavior remain inactive.
+## WS-003 Gradle plugin handshake
+
+Before starting the child, the launcher creates a private temporary directory,
+a Unix socket, and a fresh attempt ID. It replaces any inherited values of the
+reserved `BUILDOPT_PLUGIN_ATTEMPT_ID` and `BUILDOPT_PLUGIN_EVENT_SOCKET`
+variables before exposing that invocation-only context to the child. These
+values are local rendezvous coordinates, not credentials; authenticated
+rendezvous remains owned by `WS-004`.
+
+When the packaged `dev.buildopt` Gradle plugin is present, the launcher accepts
+exactly one version-1 `ProducerHello`, validates its attempt and producer
+identity, and returns the matching acknowledgement. The socket and temporary
+directory are removed after the child exits. A successful handshake or a
+protocol failure is reported on standard error, but handshake setup, absence,
+or rejection never replaces the child process exit status.
+
+Run the real Gradle Wrapper fixture with:
+
+```bash
+./dev/check-gradle-plugin-handshake
+```
+
+The checker proves a fresh handshake after Configuration Cache reuse with an
+up-to-date task, byte-identical output with and without the plugin, fail-open
+behavior when the receiver is missing, and preservation of an intentional
+Gradle failure.
+
+Gateway authentication, concurrent producers, task-event streaming,
+observability export, token filtering, and every optimization remain inactive.

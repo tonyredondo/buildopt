@@ -1,16 +1,37 @@
 package dev.buildopt.gradle;
 
+import javax.inject.Inject;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.provider.Provider;
+import org.gradle.build.event.BuildEventsListenerRegistry;
 
 /**
- * Neutral project-plugin entry point used to verify the Gradle API and Java 17 build contract.
+ * Project-plugin entry point for the neutral BuildOpt launcher handshake.
  *
- * <p>The handshake and all optimization behavior remain gated by later tracker items.
+ * <p>The shared service is registered as a task-completion listener so every
+ * invocation, including a Configuration Cache reuse, sends one
+ * {@code ProducerHello}. It does not change task inputs, outputs, cache policy,
+ * or execution.
  */
 public final class BuildOptProjectPlugin implements Plugin<Project> {
+    private final BuildEventsListenerRegistry listenerRegistry;
+
+    /** Creates the plugin with Gradle's configuration-cache-safe event registry. */
+    @Inject
+    public BuildOptProjectPlugin(BuildEventsListenerRegistry listenerRegistry) {
+        this.listenerRegistry = listenerRegistry;
+    }
+
     @Override
     public void apply(Project target) {
-        // ENV-004 verifies packaging only; WS-003 introduces the first handshake.
+        Provider<BuildOptHandshakeService> handshake =
+                target.getGradle()
+                        .getSharedServices()
+                        .registerIfAbsent(
+                                "buildOptPluginHandshake",
+                                BuildOptHandshakeService.class,
+                                ignored -> {});
+        listenerRegistry.onTaskCompletion(handshake);
     }
 }

@@ -1,0 +1,241 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_fixture_source="${buildopt_repo_root}/fixtures/gradle-handshake"
+buildopt_test_root=$(mktemp -d)
+
+buildopt_cleanup() {
+    rm -rf -- "${buildopt_test_root}"
+}
+trap buildopt_cleanup EXIT
+
+if [[ "$(uname -s)" != "Linux" ]]; then
+    printf 'WS-003 Unix-socket handshake requires Linux\n' >&2
+    exit 1
+fi
+
+for buildopt_command in awk find grep sha256sum; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required handshake verification command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_check_git_state=0
+buildopt_before_status=
+if command -v git >/dev/null 2>&1; then
+    buildopt_check_git_state=1
+    buildopt_before_status=$(
+        git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+    )
+fi
+
+buildopt_build_home=${GRADLE_USER_HOME:-"${buildopt_repo_root}/.tools/gradle-user-home/local"}
+mkdir -p -- "${buildopt_build_home}"
+buildopt_gradle_command=(
+    "${buildopt_script_dir}/run"
+    --
+    "${buildopt_repo_root}/gradlew"
+)
+if [[ "${BUILDOPT_WS003_USE_ACTIVE_JAVA:-0}" == "1" ]]; then
+    buildopt_gradle_command=("${buildopt_repo_root}/gradlew")
+fi
+GRADLE_USER_HOME="${buildopt_build_home}" \
+    "${buildopt_gradle_command[@]}" \
+    --no-daemon \
+    --offline \
+    --stacktrace \
+    --warning-mode=fail \
+    :jvm:gradle-plugin:jar
+
+mapfile -d '' buildopt_plugin_jars < <(
+    find "${buildopt_repo_root}/jvm/gradle-plugin/build/libs" \
+        -maxdepth 1 \
+        -type f \
+        -name 'buildopt-gradle-plugin-*.jar' \
+        ! -name '*-javadoc.jar' \
+        ! -name '*-sources.jar' \
+        -print0
+)
+if ((${#buildopt_plugin_jars[@]} != 1)); then
+    printf 'expected one packaged Gradle plugin, found %s\n' \
+        "${#buildopt_plugin_jars[@]}" >&2
+    exit 1
+fi
+buildopt_plugin_jar=${buildopt_plugin_jars[0]}
+
+if [[ -n "${BUILDOPT_WS003_BINARY:-}" ]]; then
+    buildopt_binary=${BUILDOPT_WS003_BINARY}
+    if [[ ! -f "${buildopt_binary}" || ! -x "${buildopt_binary}" ]]; then
+        printf 'supplied WS-003 launcher is not executable: %s\n' \
+            "${buildopt_binary}" >&2
+        exit 1
+    fi
+else
+    buildopt_binary="${buildopt_test_root}/buildopt"
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build \
+        -buildvcs=false \
+        -trimpath \
+        -o "${buildopt_binary}" \
+        ./cmd/buildopt
+fi
+
+buildopt_fixture="${buildopt_test_root}/fixture"
+cp -R -- "${buildopt_fixture_source}" "${buildopt_fixture}"
+buildopt_output="${buildopt_fixture}/build/ws-003/neutral.properties"
+buildopt_init_script="${buildopt_fixture}/buildopt.init.gradle"
+buildopt_expected_handshake='buildopt: Gradle plugin handshake accepted (protocol 1.0, plugin 0.1.0-SNAPSHOT)'
+
+buildopt_common_arguments=(
+    --no-daemon
+    --offline
+    --stacktrace
+    --warning-mode=fail
+    --configuration-cache
+    -p
+    "${buildopt_fixture}"
+)
+buildopt_plugin_arguments=(
+    --init-script
+    "${buildopt_init_script}"
+    "-Dbuildopt.ws003.pluginJar=${buildopt_plugin_jar}"
+)
+
+buildopt_baseline_log="${buildopt_test_root}/baseline.log"
+if ! GRADLE_USER_HOME="${buildopt_build_home}" \
+    "${buildopt_gradle_command[@]}" \
+        "${buildopt_common_arguments[@]}" \
+        neutralProbe >"${buildopt_baseline_log}" 2>&1; then
+    printf 'baseline Gradle probe failed\n' >&2
+    cat "${buildopt_baseline_log}" >&2
+    exit 1
+fi
+if [[ ! -f "${buildopt_output}" ]]; then
+    printf 'baseline Gradle probe did not produce its output\n' >&2
+    exit 1
+fi
+buildopt_baseline_sha=$(
+    sha256sum "${buildopt_output}" | awk '{print $1}'
+)
+rm -f -- "${buildopt_output}"
+
+buildopt_first_log="${buildopt_test_root}/wrapped-first.log"
+if ! BUILDOPT_PLUGIN_ATTEMPT_ID=untrusted-parent-attempt \
+    BUILDOPT_PLUGIN_EVENT_SOCKET=/tmp/untrusted-parent.sock \
+    GRADLE_USER_HOME="${buildopt_build_home}" \
+    "${buildopt_binary}" run -- \
+        "${buildopt_repo_root}/gradlew" \
+        "${buildopt_common_arguments[@]}" \
+        "${buildopt_plugin_arguments[@]}" \
+        neutralProbe >"${buildopt_first_log}" 2>&1; then
+    printf 'first wrapped Gradle build failed\n' >&2
+    cat "${buildopt_first_log}" >&2
+    exit 1
+fi
+if [[ ! -f "${buildopt_output}" ]] ||
+    [[ "$(grep -Fc "${buildopt_expected_handshake}" "${buildopt_first_log}")" != "1" ]]; then
+    printf 'first wrapped Gradle build did not complete one accepted handshake\n' >&2
+    cat "${buildopt_first_log}" >&2
+    exit 1
+fi
+buildopt_first_sha=$(
+    sha256sum "${buildopt_output}" | awk '{print $1}'
+)
+if [[ "${buildopt_first_sha}" != "${buildopt_baseline_sha}" ]]; then
+    printf 'plugin handshake changed the neutral task output\n' >&2
+    exit 1
+fi
+
+buildopt_second_log="${buildopt_test_root}/wrapped-second.log"
+if ! GRADLE_USER_HOME="${buildopt_build_home}" \
+    "${buildopt_binary}" run -- \
+        "${buildopt_repo_root}/gradlew" \
+        "${buildopt_common_arguments[@]}" \
+        "${buildopt_plugin_arguments[@]}" \
+        neutralProbe >"${buildopt_second_log}" 2>&1; then
+    printf 'second wrapped Gradle build failed\n' >&2
+    cat "${buildopt_second_log}" >&2
+    exit 1
+fi
+if [[ ! -f "${buildopt_output}" ]] ||
+    [[ "$(grep -Fc "${buildopt_expected_handshake}" "${buildopt_second_log}")" != "1" ]] ||
+    ! grep -Fq 'Configuration cache entry reused.' "${buildopt_second_log}" ||
+    ! grep -Eq '^> Task :neutralProbe UP-TO-DATE$' "${buildopt_second_log}"; then
+    printf 'up-to-date Configuration Cache reuse did not perform one fresh handshake\n' >&2
+    cat "${buildopt_second_log}" >&2
+    exit 1
+fi
+buildopt_second_sha=$(
+    sha256sum "${buildopt_output}" | awk '{print $1}'
+)
+if [[ "${buildopt_second_sha}" != "${buildopt_baseline_sha}" ]]; then
+    printf 'reused plugin handshake changed the neutral task output\n' >&2
+    exit 1
+fi
+
+buildopt_failure_log="${buildopt_test_root}/wrapped-failure.log"
+set +e
+GRADLE_USER_HOME="${buildopt_build_home}" \
+    "${buildopt_binary}" run -- \
+    "${buildopt_repo_root}/gradlew" \
+    "${buildopt_common_arguments[@]}" \
+    "${buildopt_plugin_arguments[@]}" \
+    intentionalFailure >"${buildopt_failure_log}" 2>&1
+buildopt_failure_exit=$?
+set -e
+if ((buildopt_failure_exit != 1)) ||
+    [[ "$(grep -Fc "${buildopt_expected_handshake}" "${buildopt_failure_log}")" != "1" ]] ||
+    ! grep -Fq 'WS-003 intentional baseline failure' "${buildopt_failure_log}"; then
+    printf 'wrapped Gradle failure did not preserve its baseline result\n' >&2
+    cat "${buildopt_failure_log}" >&2
+    exit 1
+fi
+
+rm -f -- "${buildopt_output}"
+buildopt_missing_log="${buildopt_test_root}/missing-receiver.log"
+BUILDOPT_PLUGIN_ATTEMPT_ID=missing-receiver-attempt \
+BUILDOPT_PLUGIN_EVENT_SOCKET="${buildopt_test_root}/missing.sock" \
+GRADLE_USER_HOME="${buildopt_build_home}" \
+    "${buildopt_gradle_command[@]}" \
+        "${buildopt_common_arguments[@]}" \
+        "${buildopt_plugin_arguments[@]}" \
+        neutralProbe >"${buildopt_missing_log}" 2>&1 || {
+    printf 'missing-receiver Gradle build failed\n' >&2
+    cat "${buildopt_missing_log}" >&2
+    exit 1
+}
+if [[ ! -f "${buildopt_output}" ]] ||
+    ! grep -Fq 'BuildOpt plugin handshake unavailable:' \
+        "${buildopt_missing_log}"; then
+    printf 'missing handshake receiver did not preserve the baseline build\n' >&2
+    cat "${buildopt_missing_log}" >&2
+    exit 1
+fi
+buildopt_missing_sha=$(
+    sha256sum "${buildopt_output}" | awk '{print $1}'
+)
+if [[ "${buildopt_missing_sha}" != "${buildopt_baseline_sha}" ]]; then
+    printf 'failed plugin handshake changed the neutral task output\n' >&2
+    exit 1
+fi
+
+if ((buildopt_check_git_state == 1)); then
+    buildopt_after_status=$(
+        git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+    )
+    if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+        printf 'Gradle plugin handshake check changed the working tree\n' >&2
+        exit 1
+    fi
+fi
+
+printf 'WS-003 Gradle plugin handshake OK: two accepted v1 hellos, Configuration Cache reuse, neutral output, and fail-open baseline\n'

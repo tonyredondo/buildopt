@@ -87,7 +87,7 @@ For both tools, `dev/run` verifies the provisioned manifest and exact reported v
 
 ## Go toolchain validation
 
-The root [`go.mod`](../go.mod) declares module `github.com/tonyredondo/buildopt`, the Go 1.26.0 language baseline, and exact `go1.26.5` toolchain. `ENV-005` established that compiler contract before product packages existed; `WS-001` and `WS-002` now provide the first dependency-free launcher behavior without changing the toolchain or module graph.
+The root [`go.mod`](../go.mod) declares module `github.com/tonyredondo/buildopt`, the Go 1.26.0 language baseline, and exact `go1.26.5` toolchain. `ENV-005` established that compiler contract before product packages existed; `WS-001` and `WS-002` provide the dependency-free process launcher, and `WS-003` adds its standard-library-only local handshake receiver without changing the toolchain or module graph.
 
 Run the checker through the isolated toolchain:
 
@@ -99,15 +99,33 @@ The checker requires Linux AMD64, exact locked provenance and version, local-onl
 
 ## `buildopt` CLI validation
 
-Build the real `buildopt` binary and run the `WS-001`/`WS-002` launcher integration suite:
+Build the real `buildopt` binary and run the `WS-001..003` launcher unit and integration suite:
 
 ```bash
 ./dev/check-buildopt-cli
 ```
 
-The checker runs with the locked Go toolchain and offline module resolution. It executes helpers through the built CLI and verifies exact argument boundaries without shell expansion, inherited working directory/environment/standard streams, zero and non-zero child statuses, usage code `64`, cannot-execute code `126`, and command-not-found code `127`.
+The checker runs with the locked Go toolchain and offline module resolution. It executes helpers through the built CLI and verifies exact argument boundaries without shell expansion, inherited working directory/environment/standard streams, fresh reserved handshake context and cleanup, zero and non-zero child statuses, usage code `64`, cannot-execute code `126`, and command-not-found code `127`. Unit coverage also validates accepted and rejected v1 frames, invocation matching, size bounds, and private socket cleanup.
 
 On Linux, the same suite verifies that the direct child leads a process group separate from the launcher, a nested descendant receives forwarded `SIGINT` and `SIGTERM`, cancellation waits for delayed cleanup without a launcher-owned deadline, handled child statuses remain authoritative, and an unhandled `SIGTERM` becomes status `143`. Other platforms remain outside the current acceptance matrix.
+
+## Gradle plugin handshake validation
+
+Build the packaged `dev.buildopt` plugin and exercise its neutral `WS-003`
+handshake through the real Gradle 9.6.1 Wrapper:
+
+```bash
+./dev/check-gradle-plugin-handshake
+```
+
+The checker compares deterministic task output against a direct baseline,
+requires one accepted v1 `ProducerHello` on two invocations, and proves that
+the second invocation reuses Configuration Cache while its task is up-to-date.
+It also verifies that inherited rendezvous values are replaced, a missing
+receiver leaves the Gradle build successful, an intentional Gradle failure
+retains exit code `1`, and, when Git is available, the working tree is
+unchanged. The same check runs inside `dev/golden-lane-build`; the pinned image
+does not contain Git, so the host run owns that last read-only assertion.
 
 ## Gradle correlation fixture validation
 
@@ -229,7 +247,7 @@ Build and inspect the neutral Gradle plugin and JVM agent artifacts:
 ./dev/run -- ./dev/check-jvm-release
 ```
 
-The check compiles both modules with the locked JDK 21, verifies every packaged class is Java 17 bytecode (major 61), validates the agent manifest, and starts a JVM with the packaged no-op agent. It does not activate the plugin handshake or agent instrumentation behavior reserved for later gates.
+The check compiles both modules with the locked JDK 21, verifies every packaged class is Java 17 bytecode (major 61), validates the `dev.buildopt` plugin marker and agent manifest, and starts a JVM with the packaged no-op agent. Handshake behavior is exercised separately by `dev/check-gradle-plugin-handshake`; agent instrumentation remains reserved for a later gate.
 
 ## Golden container validation
 
@@ -245,7 +263,7 @@ Produce strict 4-CPU/16-GiB runner evidence on a host with sufficient resources:
 ./dev/run-golden-lane-container --require-runner-class
 ```
 
-The runner resolves the immutable image index by digest, requires its unique Linux AMD64 manifest to equal the recorded platform digest, pulls that exact reference, and verifies the local image operating system, architecture, and repository digest. The subsequent container uses `--pull never`, checks the exact Java patch from the runner specification, and in strict mode verifies effective cgroup v2 CPU and memory limits from inside the container. It never treats the readable source tag as executable identity.
+The runner resolves the immutable image index by digest, requires its unique Linux AMD64 manifest to equal the recorded platform digest, pulls that exact reference, and verifies the local image operating system, architecture, and repository digest. It also builds the `WS-003` launcher with the locked Go toolchain and `CGO_ENABLED=0` into a temporary read-only mount, so the JDK-only image can execute the real handshake without adding an unpinned compiler or `jq`. The subsequent container uses `--pull never`, checks the exact Java patch from the runner specification, and in strict mode verifies effective cgroup v2 CPU and memory limits from inside the container. It never treats the readable source tag as executable identity.
 
 Invalid usage exits `64`, an unavailable daemon or image/build verification failure exits `1`, and a host that cannot enforce the strict runner class exits `2`. The child container's other nonzero status is preserved.
 

@@ -22,6 +22,14 @@ esac
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_runner_spec=${BUILDOPT_GOLDEN_LANE_SPEC_FILE:-"${buildopt_repo_root}/specs/golden-lane-runner-v1.json"}
+buildopt_launcher_root=
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_launcher_root}" ]]; then
+        rm -rf -- "${buildopt_launcher_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
 
 for buildopt_command in awk docker getconf id jq; do
     if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
@@ -170,6 +178,24 @@ printf 'Golden image digest OK: index=%s platform=%s (%s/%s)\n' \
     "${buildopt_platform_digest}" \
     "${buildopt_platform_os}" \
     "${buildopt_platform_arch}"
+
+buildopt_launcher_root=$(mktemp -d)
+buildopt_launcher_binary="${buildopt_launcher_root}/buildopt"
+if ! CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build \
+        -buildvcs=false \
+        -trimpath \
+        -o "${buildopt_launcher_binary}" \
+        ./cmd/buildopt; then
+    printf 'cannot build the locked WS-003 launcher for the golden container\n' >&2
+    exit 1
+fi
+buildopt_docker_args+=(
+    --env BUILDOPT_WS003_BINARY=/buildopt-host-tools/buildopt
+    --env BUILDOPT_WS003_USE_ACTIVE_JAVA=1
+    --volume "${buildopt_launcher_root}:/buildopt-host-tools:ro"
+)
 
 docker "${buildopt_docker_args[@]}" "${buildopt_image}" ./dev/golden-lane-build
 

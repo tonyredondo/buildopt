@@ -18,8 +18,9 @@ const (
 	usage             = "usage: buildopt run -- <command> [args...]\n"
 )
 
-// Run executes the WS-001 passthrough command with the WS-002 process contract
-// and returns the child process exit status.
+// Run executes the WS-001 passthrough command with the WS-002 process contract,
+// exposes the neutral WS-003 plugin handshake, and returns the child process
+// exit status.
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	if isHelp(args) {
 		_, _ = io.WriteString(stdout, usage)
@@ -31,11 +32,23 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	}
 
 	childArgs := args[2:]
+	handshake, handshakeErr := startPluginHandshake()
+	if handshakeErr != nil {
+		_, _ = fmt.Fprintf(
+			stderr,
+			"buildopt: Gradle plugin handshake unavailable: %v\n",
+			handshakeErr,
+		)
+	}
+
 	command := exec.Command(childArgs[0], childArgs[1:]...)
 	command.Stdin = stdin
 	command.Stdout = stdout
 	command.Stderr = stderr
 	command.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+	if handshake != nil {
+		command.Env = handshake.childEnvironment(os.Environ())
+	}
 
 	signals := make(chan os.Signal, 2)
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
@@ -43,6 +56,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	err := command.Start()
 	if err != nil {
 		signal.Stop(signals)
+		if handshake != nil {
+			_ = handshake.finish()
+		}
 		return launchErrorExitCode(childArgs[0], err, stderr)
 	}
 
@@ -54,6 +70,10 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	signal.Stop(signals)
 	close(stopForwarding)
 	<-forwardingStopped
+
+	if handshake != nil {
+		reportPluginHandshake(handshake.finish(), stderr)
+	}
 
 	if err == nil {
 		return 0
@@ -76,6 +96,25 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	}
 
 	return launchErrorExitCode(childArgs[0], err, stderr)
+}
+
+func reportPluginHandshake(result pluginHandshakeResult, stderr io.Writer) {
+	if !result.connected && result.err == nil {
+		return
+	}
+	if result.err != nil {
+		_, _ = fmt.Fprintf(
+			stderr,
+			"buildopt: Gradle plugin handshake unavailable: %v\n",
+			result.err,
+		)
+		return
+	}
+	_, _ = fmt.Fprintf(
+		stderr,
+		"buildopt: Gradle plugin handshake accepted (protocol 1.0, plugin %s)\n",
+		result.implementationVersion,
+	)
 }
 
 func forwardSignals(

@@ -114,7 +114,11 @@ printf '%s\n' \
 # shellcheck disable=SC2016
 printf '%s\n' \
     '#!/usr/bin/env bash' \
-    'printf '\''%s\n'\'' "${BUILDOPT_TEST_MEMORY_BYTES:-17179869184}"' \
+    'if [[ "$*" == *MemTotal:* ]]; then' \
+    '    printf '\''%s\n'\'' "${BUILDOPT_TEST_MEMORY_BYTES:-17179869184}"' \
+    'else' \
+    '    exec /usr/bin/awk "$@"' \
+    'fi' \
     >"${buildopt_fake_bin}/awk"
 chmod +x \
     "${buildopt_fake_bin}/awk" \
@@ -155,6 +159,12 @@ if ((${#buildopt_smoke_calls[@]} != 5)) ||
         $'image\tinspect\t'"${buildopt_image}" ]] ||
     [[ "${buildopt_smoke_calls[4]}" != \
         *$'run\t--rm\t--pull\tnever\t--platform\tlinux/amd64'* ]] ||
+    [[ "${buildopt_smoke_calls[4]}" != \
+        *$'\t--env\tBUILDOPT_WS003_BINARY=/buildopt-host-tools/buildopt'* ]] ||
+    [[ "${buildopt_smoke_calls[4]}" != \
+        *$'\t--env\tBUILDOPT_WS003_USE_ACTIVE_JAVA=1'* ]] ||
+    [[ "${buildopt_smoke_calls[4]}" != \
+        *$'\t--volume\t'*':/buildopt-host-tools:ro'* ]] ||
     [[ "${buildopt_smoke_calls[4]}" != \
         *$'\t'"${buildopt_image}"$'\t./dev/golden-lane-build' ]]; then
     printf 'golden container smoke used an unexpected Docker command sequence\n' >&2

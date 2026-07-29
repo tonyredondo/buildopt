@@ -17,19 +17,23 @@ import (
 )
 
 const (
-	helperModeEnvironment   = "GO_WANT_BUILDOPT_HELPER_PROCESS"
-	helperExitEnvironment   = "GO_BUILDOPT_HELPER_EXIT"
-	helperStderrEnvironment = "GO_BUILDOPT_HELPER_STDERR"
-	passthroughEnvironment  = "WS001_PASSTHROUGH_VALUE"
-	expectedUsage           = "usage: buildopt run -- <command> [args...]\n"
+	helperModeEnvironment    = "GO_WANT_BUILDOPT_HELPER_PROCESS"
+	helperExitEnvironment    = "GO_BUILDOPT_HELPER_EXIT"
+	helperStderrEnvironment  = "GO_BUILDOPT_HELPER_STDERR"
+	passthroughEnvironment   = "WS001_PASSTHROUGH_VALUE"
+	pluginAttemptEnvironment = "BUILDOPT_PLUGIN_ATTEMPT_ID"
+	pluginSocketEnvironment  = "BUILDOPT_PLUGIN_EVENT_SOCKET"
+	expectedUsage            = "usage: buildopt run -- <command> [args...]\n"
 )
 
 type helperObservation struct {
-	Argv0            string   `json:"argv0"`
-	Arguments        []string `json:"arguments"`
-	WorkingDirectory string   `json:"workingDirectory"`
-	StandardInput    string   `json:"standardInput"`
-	EnvironmentValue string   `json:"environmentValue"`
+	Argv0             string   `json:"argv0"`
+	Arguments         []string `json:"arguments"`
+	WorkingDirectory  string   `json:"workingDirectory"`
+	StandardInput     string   `json:"standardInput"`
+	EnvironmentValue  string   `json:"environmentValue"`
+	PluginAttemptID   string   `json:"pluginAttemptId"`
+	PluginEventSocket string   `json:"pluginEventSocket"`
 }
 
 func TestBuildoptCLI(t *testing.T) {
@@ -72,6 +76,8 @@ func TestBuildoptCLI(t *testing.T) {
 			helperExitEnvironment+"=37",
 			helperStderrEnvironment+"=child stderr",
 			passthroughEnvironment+"=inherited exactly",
+			pluginAttemptEnvironment+"=untrusted-parent-attempt",
+			pluginSocketEnvironment+"=/tmp/untrusted-parent.sock",
 		)
 		command.Stdin = strings.NewReader(input)
 
@@ -112,6 +118,26 @@ func TestBuildoptCLI(t *testing.T) {
 			t.Errorf(
 				"environment value = %q, want inherited value",
 				observation.EnvironmentValue,
+			)
+		}
+		if observation.PluginAttemptID == "" ||
+			observation.PluginAttemptID == "untrusted-parent-attempt" {
+			t.Errorf(
+				"plugin attempt ID = %q, want fresh invocation value",
+				observation.PluginAttemptID,
+			)
+		}
+		if observation.PluginEventSocket == "" ||
+			observation.PluginEventSocket == "/tmp/untrusted-parent.sock" {
+			t.Errorf(
+				"plugin event socket = %q, want fresh invocation value",
+				observation.PluginEventSocket,
+			)
+		}
+		if _, err := os.Stat(observation.PluginEventSocket); !errors.Is(err, os.ErrNotExist) {
+			t.Errorf(
+				"plugin event socket remains after child exit: %v",
+				err,
 			)
 		}
 	})
@@ -254,11 +280,13 @@ func TestBuildoptChildHelper(t *testing.T) {
 	}
 
 	observation := helperObservation{
-		Argv0:            os.Args[0],
-		Arguments:        os.Args[separator+1:],
-		WorkingDirectory: workingDirectory,
-		StandardInput:    string(input),
-		EnvironmentValue: os.Getenv(passthroughEnvironment),
+		Argv0:             os.Args[0],
+		Arguments:         os.Args[separator+1:],
+		WorkingDirectory:  workingDirectory,
+		StandardInput:     string(input),
+		EnvironmentValue:  os.Getenv(passthroughEnvironment),
+		PluginAttemptID:   os.Getenv(pluginAttemptEnvironment),
+		PluginEventSocket: os.Getenv(pluginSocketEnvironment),
 	}
 	if err := json.NewEncoder(os.Stdout).Encode(observation); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "encode helper observation: %v\n", err)

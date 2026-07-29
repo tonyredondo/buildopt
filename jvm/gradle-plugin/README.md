@@ -2,6 +2,26 @@
 
 Init/settings/project plugin and adapters built on public Gradle APIs.
 
-The first increment is a handshake without optimizations (`WS-003`). Deep instrumentation and output-semantics changes do not belong in this module without an explicit contract and gate.
+`WS-003` packages the project plugin as ID `dev.buildopt`. A
+Configuration-Cache-safe shared build service reads invocation-only launcher
+context, connects to its Unix socket, sends the v1 `ProducerHello`, validates
+the matching acknowledgement, and closes the channel. Registering the service
+with Gradle's build-events listener registry realizes it once even when every
+task is up-to-date or Configuration Cache is reused.
 
-`ENV-004` adds only a no-op project-plugin class compiled against the public Gradle API. It has no published plugin ID and performs no handshake or optimization. `WS-003` owns the first activation contract.
+The plugin logs and disables its handshake when context is incomplete, the
+receiver is missing, or the acknowledgement is invalid. These failures never
+fail the baseline Gradle build. The plugin does not modify task inputs,
+outputs, dependencies, cache policy, or execution, and it does not emit later
+task-event payloads. Authenticated rendezvous and a retained multi-producer
+channel remain owned by `WS-004`.
+
+Validate the packaged Java 17 artifact and the real Wrapper handshake with:
+
+```bash
+./dev/run -- ./dev/check-jvm-release
+./dev/check-gradle-plugin-handshake
+```
+
+Deep instrumentation and output-semantics changes do not belong in this module
+without an explicit contract and gate.

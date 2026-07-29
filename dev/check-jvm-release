@@ -154,6 +154,18 @@ if ! jar tf "${buildopt_plugin_jar}" |
         "${buildopt_plugin_jar}" >&2
     exit 1
 fi
+buildopt_plugin_descriptor=$(
+    unzip -p \
+        "${buildopt_plugin_jar}" \
+        META-INF/gradle-plugins/dev.buildopt.properties |
+        tr -d '\r'
+)
+if [[ "${buildopt_plugin_descriptor}" != \
+    'implementation-class=dev.buildopt.gradle.BuildOptProjectPlugin' ]]; then
+    printf 'Gradle plugin marker is missing or invalid in %s\n' \
+        "${buildopt_plugin_jar}" >&2
+    exit 1
+fi
 if ! jar tf "${buildopt_agent_jar}" |
     grep -Fqx 'dev/buildopt/agent/BuildOptAgent.class'; then
     printf 'JVM agent entry point is missing from %s\n' \
@@ -186,4 +198,4 @@ fi
 
 java -javaagent:"${buildopt_agent_jar}" -version >/dev/null 2>&1
 
-printf 'ENV-004 JVM release OK: Java 21 compiler, --release 17 bytecode, and loadable agent\n'
+printf 'JVM release OK: Java 21 compiler, --release 17 bytecode, Gradle plugin marker, and loadable agent\n'

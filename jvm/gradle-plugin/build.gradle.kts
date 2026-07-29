@@ -4,6 +4,7 @@ import org.gradle.jvm.toolchain.JvmVendorSpec
 
 plugins {
     `java-library`
+    `java-gradle-plugin`
 }
 
 group = "dev.buildopt"
@@ -22,6 +23,17 @@ java {
 
 dependencies {
     compileOnly(gradleApi())
+}
+
+gradlePlugin {
+    plugins {
+        create("buildOpt") {
+            id = "dev.buildopt"
+            implementationClass = "dev.buildopt.gradle.BuildOptProjectPlugin"
+            displayName = "BuildOpt Gradle Plugin"
+            description = "Neutral launcher handshake for BuildOpt"
+        }
+    }
 }
 
 tasks.withType<JavaCompile>().configureEach {

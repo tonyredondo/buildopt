@@ -118,12 +118,13 @@ Run:
 ./dev/check-task-events-proto
 ```
 
-The checker requires the exact locked `protoc` 35.1 and Buf 1.72.0 on `PATH`,
-compiles the same descriptor with both tools, runs Buf lint, and uses locked Go
-1.26.5 plus Temurin 21 with Java 17 bytecode. Java-to-Go and Go-to-Java peers
-exchange framed messages over real Unix sockets and cover exact attribution,
-`UNATTRIBUTED`, attempt-wide `UNAVAILABLE`, whole-attempt abort, acknowledgements,
-malformed semantic combinations, and the 1 MiB frame bound.
+The checker resolves exact locked `protoc` 35.1 and Buf 1.72.0 from the
+repository-local tool root, compiles the same descriptor with both tools, runs
+Buf lint, and uses locked Go 1.26.5 plus Temurin 21 with Java 17 bytecode.
+Java-to-Go and Go-to-Java peers exchange framed messages over real Unix sockets
+and cover exact attribution, `UNATTRIBUTED`, attempt-wide `UNAVAILABLE`,
+whole-attempt abort, acknowledgements, malformed semantic combinations, and the
+1 MiB frame bound.
 
 ## Sources
 
