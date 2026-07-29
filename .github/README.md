@@ -16,3 +16,8 @@ normal CI and does not run on repository pushes or pull requests.
 `F0-004` still owns reproducible authoritative checks, while `CI-ORCH-001`
 owns protected validation scheduling, isolation, budgets, and recovery. No
 workflow in this directory claims either gate.
+
+[`CODEOWNERS`](./CODEOWNERS) and [`OWNERS.md`](./OWNERS.md) define the Phase 0
+path routing, accountable repository owner, cross-workstream review lenses, and
+the boundaries that one repository principal cannot authorize alone. Validate
+them with `./dev/check-ownership`.

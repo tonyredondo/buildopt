@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — the development toolchain lifecycle is complete with guarded, idempotent uninstall and explicit cache/state purge; `F0-003` is next to define ownership and review boundaries<br>
+**Overall status:** `DOING` — repository ownership, path routing, and cross-workstream review boundaries are explicit and validated; `F0-004` is next to establish authoritative base CI<br>
 **Current phase:** Phase 0 — contracts, fixtures, and walking skeleton<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
 **Last updated:** 2026-07-29<br>
@@ -110,7 +110,8 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 27 | `F0-024` | Normative metric definitions, units, methods, and signs | `DONE` | Codex |
 | 28 | `WS-009` | Measure overhead from the neutral envelope | `DONE` | Codex |
 | 29 | `ENV-012` | Complete bootstrap cleanup and uninstall with two idempotent runs | `DONE` | Codex |
-| 30 | `F0-003` | Define ownership by workstream and review boundaries | `TODO` | — |
+| 30 | `F0-003` | Define ownership by workstream and review boundaries | `DONE` | Codex |
+| 31 | `F0-004` | Configure base CI for Go, Java 17, and optional Rust | `TODO` | — |
 
 ---
 
@@ -118,17 +119,17 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 
 | Workstream | Scope | First artifact | Owner |
 |---|---|---|---|
-| Contracts | JSON Schema, OpenAPI, Protobuf, canonicalization, and compatibility | `contracts/` + codegen | — |
-| Go core | `buildopt`, gateway, and `buildopt-server` | CLI passthrough + ingest | — |
-| Gradle | Plugin, adapters, TestKit, and capability matrix | Handshake plugin | — |
-| JVM Agent | JVM instrumentation and coverage | `SPIKE-AGENT-001` | — |
-| Hermetic helper | Rust helper and task-specific producer | `SPIKE-HERMETIC-001` | — |
-| CI/orchestration | GitHub Action, validation workflow, and lifecycle | `ci-orchestration-v1.md` | — |
-| Cache/storage | L1/L2, pending/commit, SLRU, and recovery | Atomicity ADR | — |
-| Experiments | Metrics, A/A, resource profiles, and bandit | `resource-profile.v1` | — |
-| Patch Engine | Bundle, patcher, recipes, and draft PR | `PatchBundle v1` | — |
-| Test Optimization | Grants and `FULL_RELEVANT_VALIDATION` | Integration fixtures | — |
-| Operations | Benchmark, supply chain, runbooks, and pilot | `benchmark-beta-v1.md` | — |
+| Contracts | JSON Schema, OpenAPI, Protobuf, canonicalization, and compatibility | `contracts/` + codegen | @tonyredondo |
+| Go core | `buildopt`, gateway, and `buildopt-server` | CLI passthrough + ingest | @tonyredondo |
+| Gradle | Plugin, adapters, TestKit, and capability matrix | Handshake plugin | @tonyredondo |
+| JVM Agent | JVM instrumentation and coverage | `SPIKE-AGENT-001` | @tonyredondo |
+| Hermetic helper | Rust helper and task-specific producer | `SPIKE-HERMETIC-001` | @tonyredondo |
+| CI/orchestration | GitHub Action, validation workflow, and lifecycle | `ci-orchestration-v1.md` | @tonyredondo |
+| Cache/storage | L1/L2, pending/commit, SLRU, and recovery | Atomicity ADR | @tonyredondo |
+| Experiments | Metrics, A/A, resource profiles, and bandit | `resource-profile.v1` | @tonyredondo |
+| Patch Engine | Bundle, patcher, recipes, and draft PR | `PatchBundle v1` | @tonyredondo |
+| Test Optimization | Grants and `FULL_RELEVANT_VALIDATION` | Integration fixtures | @tonyredondo |
+| Operations | Benchmark, supply chain, runbooks, and pilot | `benchmark-beta-v1.md` | @tonyredondo |
 
 ---
 
@@ -223,7 +224,7 @@ Do not mark `ENV-003`, `ENV-006`, `ENV-010`, or `ENV-011` complete because a “
 |---|---|---|---|---|---|
 | `F0-001` | Create workspace/repository, modules, and build conventions | — | `DONE` | Codex | `E-006`: initial commit + [README](./README.md) + passing `./dev/check-layout` |
 | `F0-002` | Pin golden lane and ADR `0001-golden-lane` | `F0-001` | `DONE` | Codex | `E-007`: passing ADR, contract, Wrapper, fixture, and host/container smoke tests |
-| `F0-003` | Define ownership by workstream and review boundaries | `F0-001` | `TODO` | — | Documented CODEOWNERS/owners |
+| `F0-003` | Define ownership by workstream and review boundaries | `F0-001` | `DONE` | Codex | `E-037`: validated CODEOWNERS, accountable owners, and review map |
 | `F0-004` | Configure base CI for Go, Java 17, and optional Rust | `F0-001` | `TODO` | — | Passing reproducible checks |
 | `F0-005` | Add generated-code policy and drift detection | `F0-004` | `WAITING` | — | Check fails on stale codegen |
 
@@ -498,6 +499,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Suite | Scope | Latest result | Date | Evidence |
 |---|---|---|---|---|
 | Repository layout | Git root, modules, and `F0-001` conventions | `dev/check-layout` and ShellCheck passed; structure included in the initial commit | 2026-07-29 | `E-006` |
+| Ownership boundaries | Path routing, accountable workstreams, cross-stack review, and authority limits | `dev/check-ownership` validated 16 CODEOWNERS paths, all 11 tracker workstreams, one verified repository principal, producer/consumer review, Test Optimization ownership, and the absence of an independent-approval claim | 2026-07-29 | `E-037` |
 | Toolchain lock | Portable versions, platforms, providers, immutable URLs, SHA-256 values, and tracker references | `dev/check-toolchains-lock` passed for ten artifacts on `linux-amd64`; update policy recorded | 2026-07-29 | `E-010` |
 | Toolchain lifecycle | Lock-owned bootstrap, local execution, uninstall, downloads, and build state | A temporary marked tools root passed two-run bootstrap, idempotent uninstall, cached reinstall, active-lock refusal, all-tool removal, exact download purge, explicit state purge, and unrelated/provider-managed path preservation | 2026-07-29 | `E-036` |
 | Host inventory | Platform/resources, active Java/Go/Rust/Protobuf/base-tool paths and versions, Docker, cgroups, namespaces, and available space | `dev/doctor --json` passed on the 12-CPU workstation and reported active-path drift without treating deferred provisioning as success; deterministic fixtures passed codes `0/1/64/70` and preserved the working tree | 2026-07-29 | `E-011` |
@@ -583,6 +585,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-034` | 2026-07-29 | `F0-024` | Machine-readable [`build-impact-v1`](./contracts/metrics/build-impact-v1.json) and indexed [metrics namespace](./contracts/metrics/README.md), dependency-free strict [`metricscatalog`](./internal/metricscatalog/catalog.go) package/CLI, and executable [`dev/check-metrics-catalog`](./dev/check-metrics-catalog); 35 required definitions cover neutral-envelope/session durations, non-overlapping components, causal and estimated effects, PRODUCT_TOTAL and ACTION_INCREMENTAL overhead, p95/p99 build/feedback/queue guardrails, economic value, cache drivers, correctness, and measurement coverage, with every RFC §22.9 owner/purpose/formula/unit/grain/population/denominator/source/boundary/dimension/null/quality/retention/caveat/sign/method field present; comparison rules retain positive saved/reduction, negative-improving deltas, signed overhead regressions, outcome isolation, fixed strata and paired requirements, while `beta-measurement-v1` fixes 7-day/100 and 14-day/200 gates, 500-ms/2% benefit, 500-ms/3% p95, 1-s/5% p99 after 1,000 per arm, zero correctness targets, 5% control, and 28-day compute limit; strict parsing and semantic negatives rejected unknown/trailing fields, version/required-set/duplicate drift, reversed signs, zero-filled unavailable values, unbounded dimensions, units, policy sample, and nonzero correctness; the `BUILD_SESSION` producer now imports the same version constant; full Go race/vet, schema, 15-namespace/27-artifact layout, locked ShellCheck/actionlint, deterministic container tests, the JDK-21 host golden lane, and digest-pinned strict 4-CPU/16-GiB container all passed | `DONE`: the first exportable metric vocabulary and beta decision thresholds are executable without creating `EXPERIMENT_RESULT` early or claiming causal data; `WS-009` is unblocked to record the first non-promotional overhead sample |
 | `E-035` | 2026-07-29 | `WS-009`, `F0-G03` | Executable [`walking-skeleton-overhead-v1`](./specs/walking-skeleton-overhead-v1.md), dependency-free strict [`neutralenvelope`](./internal/neutralenvelope/report.go) package/CLI, integrated [`dev/check-walking-skeleton-overhead`](./dev/check-walking-skeleton-overhead), and immutable strict [four-pair report](./benchmarks/results/ws-009-golden-lane.json) with SHA-256 `68c3d2f5fe23757d76a14298356e15a524674f57acf7539bb24434290fb172e8`; one external monotonic envelope timed native Gradle and the complete optimization-off launcher/plugin/gateway/server/export wrapper with the same Wrapper 9.6.1, fixture, shared cache context, removed output, and required deliverable; two pairs ran each order, the first pair remained in the sample, every arm exited `0`, each wrapper arm completed exactly one authenticated handshake, ingest, and export, and all eight deliverable SHA-256 values matched; strict validation bound the runner/catalog/envelope/launcher/server/plugin bytes, rejected unknown/trailing/tampered fields, invalid pair order, mismatched output, misleading runner qualification, workload or metric drift, and retained signed negative differences; the qualified 4-CPU/16-GiB sample recorded first `+236.020 ms`, nearest-rank p50 `-798.384 ms`, mean `-35.033 ms`, and p95 `+1338.013 ms`, explicitly as order-sensitive descriptive evidence with `promotionGateActive=false`; race-enabled Go tests/vet, host smoke, deterministic container tests, and the complete digest-pinned strict golden lane passed | `DONE`: RFC §29.4 criterion 6 and the complete `WS-001..009` optimization-off path are now measured and passing, closing `F0-G03` without claiming causality, savings, or a promotion decision; `ENV-012` is next |
 | `E-036` | 2026-07-29 | `ENV-012` | Guarded [`dev/uninstall-toolchains`](./dev/uninstall-toolchains), marked-root support in [`dev/bootstrap`](./dev/bootstrap), documented preserve/purge choices, and isolated [`dev/test-toolchain-lifecycle`](./dev/test-toolchain-lifecycle); two bootstrap invocations downloaded once, a default uninstall removed only the selected lock-derived installation, a second uninstall succeeded without mutation, reinstall reused the verified cache, and an active bootstrap lock rejected cleanup before deletion; all-tool cleanup ignored provider-managed Rust and unrelated files, exact downloads disappeared only with `--purge-downloads`, project-local Go/Gradle state disappeared only with `--all --purge-state`, and unsafe/unmarked roots plus invalid combinations failed closed; Bash syntax, locked ShellCheck/actionlint, layout, lifecycle fixtures, and working-tree preservation passed | `DONE`: every directly provisioned development tool now has one bounded, idempotent uninstall path without global replacement or implicit data loss; `F0-003` is next |
+| `E-037` | 2026-07-29 | `F0-003` | GitHub-native [CODEOWNERS](./.github/CODEOWNERS), explicit [ownership and review map](./.github/OWNERS.md), contribution boundary, and executable [`dev/check-ownership`](./dev/check-ownership); the verified repository owner is accountable for all 11 current workstreams without fabricating teams, while path-specific routing preserves contracts, Go, Gradle, agent, Rust, CI, patcher, fixtures, evidence, and operations boundaries; review rules require producer/consumer analysis, least-privilege and rollback review for delivery, tracker gates beyond passing tests, external Test Optimization authority, source-bound generated changes, and no unsupported independent-approval claim; locked ShellCheck/actionlint, ownership validation, layout, and working-tree checks passed | `DONE`: ownership is explicit enough to route parallel work without conflating repository accountability, product authority, or independent approval; `F0-004` is next |
 
 ---
 
@@ -590,6 +593,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-29 | Closed `F0-003`: assigned the verified repository owner across all workstreams, added path-specific CODEOWNERS, documented cross-boundary review and authority limits, and made the map executable; moved `F0-004` to the next item | Codex |
 | 2026-07-29 | Closed `ENV-012`: added a marked tools root, lock-derived idempotent uninstall, active-bootstrap exclusion, explicit download/state purge, lifecycle fixtures, and documented preservation boundaries; moved `F0-003` to the next executable item | Codex |
 | 2026-07-29 | Closed `WS-009` and `F0-G03`: added the strict neutral timing envelope, four balanced real Gradle pairs, immutable qualified report with input digests and signed differences, and host/strict-container validation; moved `ENV-012` to the next executable item | Codex |
 | 2026-07-29 | Closed `F0-024`: added the 35-definition `build-impact-v1` catalog, bounded semantic validator, fixed METRICS-001 signs and MEASURE-001 beta gates, shared producer version, and host/strict-container validation; unblocked `WS-009` | Codex |

@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_codeowners="${buildopt_repo_root}/.github/CODEOWNERS"
+buildopt_owners="${buildopt_repo_root}/.github/OWNERS.md"
+buildopt_tracker="${buildopt_repo_root}/implementation-tracker.md"
+buildopt_owner=@tonyredondo
+
+for buildopt_file in \
+    "${buildopt_codeowners}" \
+    "${buildopt_owners}" \
+    "${buildopt_tracker}"; do
+    if [[ ! -f "${buildopt_file}" ]]; then
+        printf 'missing ownership artifact: %s\n' "${buildopt_file}" >&2
+        exit 1
+    fi
+done
+
+buildopt_expected_patterns=(
+    "*"
+    "/contracts/"
+    "/specs/"
+    "/adr/"
+    "/cmd/"
+    "/internal/"
+    "/jvm/gradle-plugin/"
+    "/jvm/jvm-agent/"
+    "/jvm/patcher/"
+    "/rust/hermetic-helper/"
+    "/.github/"
+    "/action.yml"
+    "/fixtures/"
+    "/benchmarks/"
+    "/dev/"
+    "/runbooks/"
+)
+buildopt_workstreams=(
+    "Contracts"
+    "Go core"
+    "Gradle"
+    "JVM Agent"
+    "Hermetic helper"
+    "CI/orchestration"
+    "Cache/storage"
+    "Experiments"
+    "Patch Engine"
+    "Test Optimization"
+    "Operations"
+)
+
+declare -A buildopt_seen_patterns=()
+while read -r buildopt_pattern buildopt_principal buildopt_extra; do
+    if [[ -z "${buildopt_pattern}" ]] || [[ "${buildopt_pattern}" == \#* ]]; then
+        continue
+    fi
+    if [[ -n "${buildopt_extra:-}" ]] ||
+        [[ "${buildopt_principal:-}" != "${buildopt_owner}" ]]; then
+        printf 'invalid CODEOWNERS entry: %s %s%s\n' \
+            "${buildopt_pattern}" \
+            "${buildopt_principal:-<missing>}" \
+            "${buildopt_extra:+ ${buildopt_extra}}" >&2
+        exit 1
+    fi
+    if [[ -n "${buildopt_seen_patterns[${buildopt_pattern}]:-}" ]]; then
+        printf 'duplicate CODEOWNERS pattern: %s\n' \
+            "${buildopt_pattern}" >&2
+        exit 1
+    fi
+    buildopt_seen_patterns["${buildopt_pattern}"]=1
+done <"${buildopt_codeowners}"
+
+for buildopt_pattern in "${buildopt_expected_patterns[@]}"; do
+    if [[ -z "${buildopt_seen_patterns[${buildopt_pattern}]:-}" ]]; then
+        printf 'missing CODEOWNERS boundary: %s\n' \
+            "${buildopt_pattern}" >&2
+        exit 1
+    fi
+done
+
+for buildopt_workstream in "${buildopt_workstreams[@]}"; do
+    if ! grep -Fq \
+        "| ${buildopt_workstream} |" \
+        "${buildopt_owners}"; then
+        printf 'ownership document is missing workstream: %s\n' \
+            "${buildopt_workstream}" >&2
+        exit 1
+    fi
+    if ! awk \
+        -F '|' \
+        -v buildopt_workstream="${buildopt_workstream}" \
+        -v buildopt_owner="${buildopt_owner}" '
+            function trim(value) {
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", value)
+                return value
+            }
+            trim($2) == buildopt_workstream && trim($5) == buildopt_owner {
+                found = 1
+            }
+            END {
+                exit !found
+            }
+        ' "${buildopt_tracker}"; then
+        printf 'tracker owner is missing or inconsistent: %s\n' \
+            "${buildopt_workstream}" >&2
+        exit 1
+    fi
+done
+
+for buildopt_rule in \
+    "review routing, not authorization" \
+    "producer and all affected" \
+    "Test Optimization retains approval" \
+    "Independent approval is not claimed"; do
+    if ! grep -Fq "${buildopt_rule}" "${buildopt_owners}"; then
+        printf 'ownership document is missing review rule: %s\n' \
+            "${buildopt_rule}" >&2
+        exit 1
+    fi
+done
+
+printf 'F0-003 ownership OK: %s paths, %s workstreams, owner %s\n' \
+    "${#buildopt_expected_patterns[@]}" \
+    "${#buildopt_workstreams[@]}" \
+    "${buildopt_owner}"

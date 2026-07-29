@@ -1,0 +1,25 @@
+# Phase 0 has one verified repository owner. More-specific entries preserve
+# workstream routing so future teams can replace principals without redefining
+# path boundaries. CODEOWNERS routes review; it does not grant product authority.
+* @tonyredondo
+
+# Normative contracts and decisions
+/contracts/ @tonyredondo
+/specs/ @tonyredondo
+/adr/ @tonyredondo
+
+# Runtime implementations
+/cmd/ @tonyredondo
+/internal/ @tonyredondo
+/jvm/gradle-plugin/ @tonyredondo
+/jvm/jvm-agent/ @tonyredondo
+/jvm/patcher/ @tonyredondo
+/rust/hermetic-helper/ @tonyredondo
+
+# Delivery, fixtures, evidence, and operations
+/.github/ @tonyredondo
+/action.yml @tonyredondo
+/fixtures/ @tonyredondo
+/benchmarks/ @tonyredondo
+/dev/ @tonyredondo
+/runbooks/ @tonyredondo

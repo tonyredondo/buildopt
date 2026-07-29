@@ -7,6 +7,7 @@ All repository content must be written in English. This includes code, owned ide
 ## Change boundaries
 
 - Every change must cite the tracker, contract, or decision IDs it implements.
+- Name every workstream crossed and follow [the ownership and review map](./.github/OWNERS.md); `CODEOWNERS` routes review but does not grant product authority.
 - The RFC retains invariants and scope; executable details belong in contracts, specifications, benchmarks, and ADRs.
 - Do not copy structs from RFC examples. Generate Go and Java clients from the normative IDLs.
 - Build Optimization does not decide `Test` task selection, sharding, retries, or policy.
