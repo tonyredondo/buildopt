@@ -93,6 +93,29 @@ func TestNewDocumentRepresentsBuildFailureAsPartialFailureTiming(
 	}
 }
 
+func TestNewDocumentPreservesCancellation(t *testing.T) {
+	record := validExportRecord()
+	record.Outcome = sessioningest.OutcomeCancelled
+	record.ExitCode = 143
+
+	document, err := NewDocument(record)
+	if err != nil {
+		t.Fatalf("create cancelled BUILD_SESSION document: %v", err)
+	}
+	measurement := document.Performance.TimeToFirstBuildFailureMs
+	if document.Build.Outcome != sessioningest.OutcomeCancelled ||
+		document.Build.ExitCode != 143 ||
+		document.Build.RequiredDeliverablesStatus != "UNKNOWN" ||
+		document.GradleInvocations[0].Outcome !=
+			sessioningest.OutcomeCancelled ||
+		measurement.State != "UNAVAILABLE" ||
+		measurement.Method != "UNAVAILABLE" ||
+		measurement.ValueMs != nil ||
+		!strings.Contains(measurement.Reason, "cancelled") {
+		t.Fatalf("unexpected cancellation document: %+v", document)
+	}
+}
+
 func TestNewDocumentRejectsIncompleteExportInput(t *testing.T) {
 	testCases := []struct {
 		name   string

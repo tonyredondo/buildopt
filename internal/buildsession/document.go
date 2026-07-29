@@ -178,6 +178,15 @@ func NewDocument(record sessioningest.Record) (Document, error) {
 			"Only the final process failure boundary was observed",
 			"The final child exit is a conservative upper bound for the first actionable failure",
 		)
+	} else if record.Outcome == sessioningest.OutcomeCancelled {
+		timeToFailure = unavailable(
+			"The build was cancelled before a build failure was observed",
+		)
+	}
+
+	requiredDeliverablesStatus := "NOT_REQUIRED"
+	if record.Outcome == sessioningest.OutcomeCancelled {
+		requiredDeliverablesStatus = "UNKNOWN"
 	}
 
 	return Document{
@@ -192,7 +201,7 @@ func NewDocument(record sessioningest.Record) (Document, error) {
 			CompletedAt:                record.CompletedAt,
 			Outcome:                    record.Outcome,
 			ExitCode:                   record.ExitCode,
-			RequiredDeliverablesStatus: "NOT_REQUIRED",
+			RequiredDeliverablesStatus: requiredDeliverablesStatus,
 			PluginVersion:              record.GradleInvocation.PluginVersion,
 		},
 		GradleInvocations: []GradleInvocation{

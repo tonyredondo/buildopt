@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"net/http/httptest"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -13,6 +14,8 @@ import (
 	"syscall"
 	"testing"
 	"time"
+
+	"github.com/tonyredondo/buildopt/internal/sessioningest"
 )
 
 const (
@@ -26,9 +29,12 @@ const (
 )
 
 type signalProcessObservation struct {
-	PID        int `json:"pid"`
-	PGID       int `json:"pgid"`
-	ParentPGID int `json:"parentPgid"`
+	PID               int    `json:"pid"`
+	PGID              int    `json:"pgid"`
+	ParentPGID        int    `json:"parentPgid"`
+	PluginAttemptID   string `json:"pluginAttemptId"`
+	PluginEventSocket string `json:"pluginEventSocket"`
+	GatewayURL        string `json:"gatewayUrl"`
 }
 
 func TestBuildoptForwardsSignalsToChildProcessGroup(t *testing.T) {
@@ -218,6 +224,123 @@ func TestBuildoptReturnsConventionalStatusForUnhandledSignal(t *testing.T) {
 	}
 }
 
+func TestBuildoptCancellationClosesInvocationResources(t *testing.T) {
+	t.Setenv(bypassEnvironment, "")
+	t.Setenv(buildSessionContextEnvironment, "")
+
+	const token = "signal-session-token-0123456789abcdefghijkl"
+	store := sessioningest.NewStore()
+	handler, err := sessioningest.NewHandler(token, store, nil)
+	if err != nil {
+		t.Fatalf("create session ingest handler: %v", err)
+	}
+	server := httptest.NewServer(handler)
+	defer server.Close()
+
+	buildoptBinary := buildBuildopt(t)
+	signalHelper := buildSignalHelper(t)
+	testDirectory := t.TempDir()
+	leaderReady := filepath.Join(testDirectory, "leader-ready.json")
+	descendantReady := filepath.Join(testDirectory, "descendant-ready.json")
+	leaderSignal := filepath.Join(testDirectory, "leader-signal")
+	descendantSignal := filepath.Join(testDirectory, "descendant-signal")
+	cleanupComplete := filepath.Join(testDirectory, "cleanup-complete")
+
+	command := exec.Command(buildoptBinary, "run", "--", signalHelper, "tree")
+	command.Env = append(
+		os.Environ(),
+		serverURLEnvironment+"="+server.URL,
+		serverTokenEnvironment+"="+token,
+		leaderReadyEnvironment+"="+leaderReady,
+		descendantReadyEnvironment+"="+descendantReady,
+		leaderSignalEnvironment+"="+leaderSignal,
+		descendantSignalEnvironment+"="+descendantSignal,
+		cleanupCompleteEnvironment+"="+cleanupComplete,
+		leaderExitCodeEnvironment+"=42",
+		leaderCleanupDelayEnvironment+"=50ms",
+	)
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	command.Stdout = &stdout
+	command.Stderr = &stderr
+
+	if err := command.Start(); err != nil {
+		t.Fatalf("start buildopt: %v", err)
+	}
+	waitResult := make(chan error, 1)
+	go func() {
+		waitResult <- command.Wait()
+	}()
+	finished := false
+	t.Cleanup(func() {
+		if finished {
+			return
+		}
+		killObservedProcess(leaderReady)
+		killObservedProcess(descendantReady)
+		_ = command.Process.Kill()
+	})
+
+	leader := readProcessObservation(t, leaderReady, 5*time.Second)
+	descendant := readProcessObservation(t, descendantReady, 5*time.Second)
+	if leader.PluginAttemptID == "" ||
+		leader.PluginEventSocket == "" ||
+		leader.GatewayURL == "" {
+		t.Fatalf("missing active invocation observation: %+v", leader)
+	}
+	if _, err := os.Stat(leader.PluginEventSocket); err != nil {
+		t.Fatalf("active plugin attempt socket: %v", err)
+	}
+	response, err := gatewayTestClient().Get(leader.GatewayURL + gatewayReadyPath)
+	if err != nil {
+		t.Fatalf("contact active local gateway: %v", err)
+	}
+	_ = response.Body.Close()
+
+	if err := command.Process.Signal(syscall.SIGTERM); err != nil {
+		t.Fatalf("signal buildopt with SIGTERM: %v", err)
+	}
+	err = waitForCommand(t, command, waitResult, 5*time.Second)
+	finished = true
+	if exitCode := processExitCode(t, err); exitCode != 42 {
+		t.Fatalf("exit code = %d, want child cleanup exit 42", exitCode)
+	}
+
+	sessions := store.Snapshot()
+	if len(sessions) != 1 ||
+		sessions[0].Outcome != sessioningest.OutcomeCancelled ||
+		sessions[0].ExitCode != 42 ||
+		sessions[0].SessionID != leader.PluginAttemptID {
+		t.Fatalf("unexpected cancelled session records: %+v", sessions)
+	}
+	assertFileContent(t, leaderSignal, strconv.Itoa(int(syscall.SIGTERM)))
+	assertFileContent(t, descendantSignal, strconv.Itoa(int(syscall.SIGTERM)))
+	assertFileContent(t, cleanupComplete, "complete\n")
+	if _, err := os.Stat(leader.PluginEventSocket); !errors.Is(err, os.ErrNotExist) {
+		t.Errorf("plugin attempt socket remains after cancellation: %v", err)
+	}
+	if response, err := gatewayTestClient().Get(
+		leader.GatewayURL + gatewayReadyPath,
+	); err == nil {
+		_ = response.Body.Close()
+		t.Error("local gateway remains reachable after cancellation")
+	}
+	assertProcessGone(t, leader.PID)
+	assertProcessGone(t, descendant.PID)
+	if stdout.Len() != 0 {
+		t.Errorf("stdout = %q, want empty", stdout.String())
+	}
+	if !bytes.Contains(
+		stderr.Bytes(),
+		[]byte("buildopt-server accepted session "+sessions[0].SessionID),
+	) {
+		t.Fatalf("missing cancelled session acknowledgement: %q", stderr.String())
+	}
+	if bytes.Contains(stderr.Bytes(), []byte(token)) {
+		t.Fatal("cancellation diagnostics exposed the server token")
+	}
+}
+
 func buildSignalHelper(t *testing.T) string {
 	t.Helper()
 
@@ -304,4 +427,12 @@ func killObservedProcess(path string) {
 		return
 	}
 	_ = syscall.Kill(observation.PID, syscall.SIGKILL)
+}
+
+func assertProcessGone(t *testing.T, processID int) {
+	t.Helper()
+
+	if err := syscall.Kill(processID, 0); !errors.Is(err, syscall.ESRCH) {
+		t.Errorf("process %d remains after cancellation: %v", processID, err)
+	}
 }

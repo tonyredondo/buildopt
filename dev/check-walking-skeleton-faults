@@ -1,0 +1,300 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+unset \
+    BUILDOPT_BYPASS \
+    BUILDOPT_SERVER_URL \
+    BUILDOPT_SERVER_INGEST_TOKEN \
+    BUILDOPT_BUILD_SESSION_CONTEXT
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_test_root=$(mktemp -d)
+buildopt_server_pid=
+buildopt_launcher_pid=
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_launcher_pid}" ]] &&
+        kill -0 "${buildopt_launcher_pid}" 2>/dev/null; then
+        kill -KILL "${buildopt_launcher_pid}" 2>/dev/null || true
+        wait "${buildopt_launcher_pid}" 2>/dev/null || true
+    fi
+    if [[ -n "${buildopt_server_pid}" ]] &&
+        kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        kill -TERM "${buildopt_server_pid}" 2>/dev/null || true
+        wait "${buildopt_server_pid}" 2>/dev/null || true
+    fi
+    rm -rf -- "${buildopt_test_root}"
+}
+trap buildopt_cleanup EXIT
+
+if [[ "$(uname -s)" != "Linux" ]]; then
+    printf 'WS-008 process and Unix-socket faults require Linux\n' >&2
+    exit 1
+fi
+
+for buildopt_command in dirname grep head sed; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required fault-suite command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+cd -- "${buildopt_repo_root}"
+buildopt_before_status=$(
+    git status --porcelain=v1 --untracked-files=all 2>/dev/null || true
+)
+
+buildopt_launcher=${BUILDOPT_GOLDEN_LANE_LAUNCHER_BINARY:-}
+buildopt_server=${BUILDOPT_GOLDEN_LANE_SERVER_BINARY:-}
+buildopt_signal_helper=${BUILDOPT_GOLDEN_LANE_SIGNAL_HELPER_BINARY:-}
+if [[ -n "${buildopt_launcher}" ||
+    -n "${buildopt_server}" ||
+    -n "${buildopt_signal_helper}" ]]; then
+    if [[ ! -x "${buildopt_launcher}" ||
+        ! -x "${buildopt_server}" ||
+        ! -x "${buildopt_signal_helper}" ]]; then
+        printf 'supplied golden-lane fault-suite binaries are incomplete\n' >&2
+        exit 1
+    fi
+else
+    "${buildopt_script_dir}/run" \
+        --toolchain go \
+        -- go test -race -count=1 \
+        ./cmd/buildopt \
+        ./internal/buildsession \
+        ./internal/launcher \
+        ./internal/sessioningest
+
+    buildopt_launcher="${buildopt_test_root}/buildopt"
+    buildopt_server="${buildopt_test_root}/buildopt-server"
+    buildopt_signal_helper="${buildopt_test_root}/signal-helper"
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -buildvcs=false -trimpath \
+        -o "${buildopt_launcher}" ./cmd/buildopt
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -buildvcs=false -trimpath \
+        -o "${buildopt_server}" ./cmd/buildopt-server
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -buildvcs=false -trimpath \
+        -o "${buildopt_signal_helper}" \
+        ./cmd/buildopt/testdata/signal-helper
+fi
+
+buildopt_token=0123456789abcdefghijklmnopqrstuvwxyzABCDEFG
+buildopt_server_log="${buildopt_test_root}/server.log"
+BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+    "${buildopt_server}" serve --listen 127.0.0.1:0 \
+    >"${buildopt_server_log}" 2>&1 &
+buildopt_server_pid=$!
+
+buildopt_endpoint=
+for _ in {1..100}; do
+    buildopt_endpoint=$(
+        sed -n \
+            's/^buildopt-server: listening on \(http:\/\/127[.]0[.]0[.]1:[0-9][0-9]*\)$/\1/p' \
+            "${buildopt_server_log}" |
+            head -n 1
+    )
+    if [[ -n "${buildopt_endpoint}" ]]; then
+        break
+    fi
+    if ! kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        printf 'buildopt-server exited before WS-008 readiness\n' >&2
+        cat "${buildopt_server_log}" >&2
+        exit 1
+    fi
+    sleep 0.05
+done
+if [[ -z "${buildopt_endpoint}" ]]; then
+    printf 'buildopt-server did not report a WS-008 loopback endpoint\n' >&2
+    cat "${buildopt_server_log}" >&2
+    exit 1
+fi
+
+buildopt_failure_log="${buildopt_test_root}/failure.log"
+set +e
+BUILDOPT_SERVER_URL="${buildopt_endpoint}" \
+BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+    "${buildopt_launcher}" run -- /bin/sh -c 'exit 37' \
+    >"${buildopt_failure_log}" 2>&1
+buildopt_failure_exit=$?
+set -e
+if ((buildopt_failure_exit != 37)); then
+    printf 'WS-008 ordinary failure returned %s, want 37\n' \
+        "${buildopt_failure_exit}" >&2
+    cat "${buildopt_failure_log}" >&2
+    exit 1
+fi
+
+buildopt_leader_ready="${buildopt_test_root}/leader-ready.json"
+buildopt_descendant_ready="${buildopt_test_root}/descendant-ready.json"
+buildopt_leader_signal="${buildopt_test_root}/leader-signal"
+buildopt_descendant_signal="${buildopt_test_root}/descendant-signal"
+buildopt_cleanup_complete="${buildopt_test_root}/cleanup-complete"
+buildopt_cancellation_log="${buildopt_test_root}/cancellation.log"
+
+BUILDOPT_SERVER_URL="${buildopt_endpoint}" \
+BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+BUILDOPT_TEST_LEADER_READY="${buildopt_leader_ready}" \
+BUILDOPT_TEST_DESCENDANT_READY="${buildopt_descendant_ready}" \
+BUILDOPT_TEST_LEADER_SIGNAL="${buildopt_leader_signal}" \
+BUILDOPT_TEST_DESCENDANT_SIGNAL="${buildopt_descendant_signal}" \
+BUILDOPT_TEST_CLEANUP_COMPLETE="${buildopt_cleanup_complete}" \
+BUILDOPT_TEST_LEADER_EXIT_CODE=42 \
+BUILDOPT_TEST_CLEANUP_DELAY=0.05s \
+    "${buildopt_launcher}" run -- "${buildopt_signal_helper}" tree \
+    >"${buildopt_cancellation_log}" 2>&1 &
+buildopt_launcher_pid=$!
+
+for _ in {1..100}; do
+    if [[ -s "${buildopt_leader_ready}" &&
+        -s "${buildopt_descendant_ready}" ]]; then
+        break
+    fi
+    if ! kill -0 "${buildopt_launcher_pid}" 2>/dev/null; then
+        printf 'WS-008 cancellation fixture exited before readiness\n' >&2
+        cat "${buildopt_cancellation_log}" >&2
+        exit 1
+    fi
+    sleep 0.05
+done
+if [[ ! -s "${buildopt_leader_ready}" ||
+    ! -s "${buildopt_descendant_ready}" ]]; then
+    printf 'WS-008 cancellation process tree did not become ready\n' >&2
+    exit 1
+fi
+
+buildopt_attempt_id=$(
+    sed -n 's/.*"pluginAttemptId":"\([^"]*\)".*/\1/p' \
+        "${buildopt_leader_ready}"
+)
+buildopt_socket=$(
+    sed -n 's/.*"pluginEventSocket":"\([^"]*\)".*/\1/p' \
+        "${buildopt_leader_ready}"
+)
+buildopt_gateway=$(
+    sed -n 's/.*"gatewayUrl":"\([^"]*\)".*/\1/p' \
+        "${buildopt_leader_ready}"
+)
+buildopt_leader_pid=$(
+    sed -n 's/.*"pid":\([0-9][0-9]*\).*/\1/p' \
+        "${buildopt_leader_ready}"
+)
+buildopt_descendant_pid=$(
+    sed -n 's/.*"pid":\([0-9][0-9]*\).*/\1/p' \
+        "${buildopt_descendant_ready}"
+)
+buildopt_gateway_port=${buildopt_gateway##*:}
+if [[ -z "${buildopt_attempt_id}" ||
+    ! -S "${buildopt_socket}" ||
+    ! "${buildopt_gateway}" =~ ^http://127[.]0[.]0[.]1:[0-9]+$ ||
+    -z "${buildopt_leader_pid}" ||
+    -z "${buildopt_descendant_pid}" ]]; then
+    printf 'WS-008 did not observe an active isolated invocation\n' >&2
+    cat "${buildopt_leader_ready}" >&2
+    exit 1
+fi
+if ! (exec 3<>"/dev/tcp/127.0.0.1/${buildopt_gateway_port}") \
+    2>/dev/null; then
+    printf 'WS-008 local gateway was not active before cancellation\n' >&2
+    exit 1
+fi
+
+kill -TERM "${buildopt_launcher_pid}"
+set +e
+wait "${buildopt_launcher_pid}"
+buildopt_cancellation_exit=$?
+set -e
+buildopt_launcher_pid=
+if ((buildopt_cancellation_exit != 42)); then
+    printf 'WS-008 cancellation returned %s, want child cleanup exit 42\n' \
+        "${buildopt_cancellation_exit}" >&2
+    cat "${buildopt_cancellation_log}" >&2
+    exit 1
+fi
+
+if [[ "$(<"${buildopt_leader_signal}")" != "15" ||
+    "$(<"${buildopt_descendant_signal}")" != "15" ||
+    "$(<"${buildopt_cleanup_complete}")" != "complete" ]]; then
+    printf 'WS-008 cancellation did not complete the process-tree cleanup\n' >&2
+    exit 1
+fi
+if [[ -e "${buildopt_socket}" ||
+    -d "$(dirname -- "${buildopt_socket}")" ]]; then
+    printf 'WS-008 left its plugin attempt socket active\n' >&2
+    exit 1
+fi
+if (exec 3<>"/dev/tcp/127.0.0.1/${buildopt_gateway_port}") \
+    2>/dev/null; then
+    printf 'WS-008 left its local gateway active\n' >&2
+    exit 1
+fi
+if kill -0 "${buildopt_leader_pid}" 2>/dev/null ||
+    kill -0 "${buildopt_descendant_pid}" 2>/dev/null; then
+    printf 'WS-008 left a child process active\n' >&2
+    exit 1
+fi
+
+buildopt_bypass_log="${buildopt_test_root}/bypass.log"
+set +e
+BUILDOPT_BYPASS=1 \
+BUILDOPT_SERVER_URL=https://control-plane.invalid \
+BUILDOPT_SERVER_INGEST_TOKEN=parent-token \
+BUILDOPT_BUILD_SESSION_CONTEXT='{invalid-json' \
+    "${buildopt_launcher}" run -- /bin/sh -c 'exit 38' \
+    >"${buildopt_bypass_log}" 2>&1
+buildopt_bypass_exit=$?
+set -e
+if ((buildopt_bypass_exit != 38)) ||
+    [[ -s "${buildopt_bypass_log}" ]]; then
+    printf 'WS-008 bypass fault changed its baseline result\n' >&2
+    cat "${buildopt_bypass_log}" >&2
+    exit 1
+fi
+
+for _ in {1..100}; do
+    buildopt_accepted_count=$(
+        grep -c '^buildopt-server: accepted session ' \
+            "${buildopt_server_log}" || true
+    )
+    if ((buildopt_accepted_count == 2)); then
+        break
+    fi
+    sleep 0.05
+done
+if ((buildopt_accepted_count != 2)) ||
+    ! grep -Eq \
+        '^buildopt-server: accepted session [^[:space:]]+ outcome=BUILD_FAILURE exit=37$' \
+        "${buildopt_server_log}" ||
+    ! grep -Eq \
+        '^buildopt-server: accepted session [^[:space:]]+ outcome=CANCELLED exit=42$' \
+        "${buildopt_server_log}"; then
+    printf 'WS-008 server did not preserve failure/cancellation classes\n' >&2
+    cat "${buildopt_server_log}" >&2
+    exit 1
+fi
+if grep -Fq -- "${buildopt_token}" "${buildopt_test_root}"/*.log; then
+    printf 'WS-008 diagnostics exposed the server ingest token\n' >&2
+    exit 1
+fi
+
+kill -TERM "${buildopt_server_pid}"
+wait "${buildopt_server_pid}"
+buildopt_server_pid=
+
+buildopt_after_status=$(
+    git status --porcelain=v1 --untracked-files=all 2>/dev/null || true
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'walking-skeleton fault suite changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'WS-008 fault suite OK: bypass, BUILD_FAILURE/CANCELLED classification, process cleanup, zero active attempt resources, and no cache leases\n'

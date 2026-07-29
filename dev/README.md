@@ -173,6 +173,23 @@ format assertions and accepts both documents; focused assertions retain the
 requested tasks, outcomes, exits, explicit unavailable observations, and
 partial failure timing.
 
+## Walking-skeleton fault validation
+
+Exercise the complete `WS-008` bypass, failure/cancellation, and cleanup
+contract with real binaries:
+
+```bash
+./dev/check-walking-skeleton-faults
+```
+
+The checker records an ordinary exit `37` as `BUILD_FAILURE`, forwards
+`SIGTERM` through a two-process child group whose cleanup exit is `42`, records
+that invocation as `CANCELLED`, and verifies the child tree, plugin attempt
+directory/socket, and loopback gateway are all gone. The optimization-off
+walking skeleton has no cache data route, so it creates no cache lease. A final
+early-bypass case returns exit `38` without adding a server record. The same
+suite runs inside `dev/golden-lane-build` with the host-built locked binaries.
+
 ## Gradle plugin handshake validation
 
 Build the packaged `dev.buildopt` plugin and exercise its neutral authenticated
@@ -397,7 +414,7 @@ Produce strict 4-CPU/16-GiB runner evidence on a host with sufficient resources:
 ./dev/run-golden-lane-container --require-runner-class
 ```
 
-The runner resolves the immutable image index by digest, requires its unique Linux AMD64 manifest to equal the recorded platform digest, pulls that exact reference, and verifies the local image operating system, architecture, and repository digest. It also builds the walking-skeleton launcher, server, and isolated schema validator with the locked Go toolchain and `CGO_ENABLED=0` into a temporary read-only mount, so the JDK-only image can execute the real authenticated rendezvous, session ingest, and `BUILD_SESSION v1` validation without adding an unpinned compiler or `jq`. The subsequent container uses `--pull never`, checks the exact Java patch from the runner specification, and in strict mode verifies effective cgroup v2 CPU and memory limits from inside the container. It never treats the readable source tag as executable identity.
+The runner resolves the immutable image index by digest, requires its unique Linux AMD64 manifest to equal the recorded platform digest, pulls that exact reference, and verifies the local image operating system, architecture, and repository digest. It also builds the walking-skeleton launcher, server, signal helper, and isolated schema validator with the locked Go toolchain and `CGO_ENABLED=0` into a temporary read-only mount, so the JDK-only image can execute the real authenticated rendezvous, session ingest, cancellation cleanup, and `BUILD_SESSION v1` validation without adding an unpinned compiler or `jq`. The subsequent container uses `--pull never`, checks the exact Java patch from the runner specification, and in strict mode verifies effective cgroup v2 CPU and memory limits from inside the container. It never treats the readable source tag as executable identity.
 
 Invalid usage exits `64`, an unavailable daemon or image/build verification failure exits `1`, and a host that cannot enforce the strict runner class exits `2`. The child container's other nonzero status is preserved.
 

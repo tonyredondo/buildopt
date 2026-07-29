@@ -95,9 +95,16 @@ func TestRecordValidation(t *testing.T) {
 			want: "between 1 and 255",
 		},
 		{
+			name: "cancelled zero",
+			mutate: func(candidate *Record) {
+				candidate.Outcome = OutcomeCancelled
+			},
+			want: "between 1 and 255",
+		},
+		{
 			name: "unknown outcome",
 			mutate: func(candidate *Record) {
-				candidate.Outcome = "CANCELLED"
+				candidate.Outcome = "TIMED_OUT"
 			},
 			want: "unsupported session outcome",
 		},
@@ -112,6 +119,16 @@ func TestRecordValidation(t *testing.T) {
 				t.Fatalf("validation error = %v, want %q", err, testCase.want)
 			}
 		})
+	}
+}
+
+func TestRecordAcceptsCancellation(t *testing.T) {
+	record := validTestRecord()
+	record.Outcome = OutcomeCancelled
+	record.ExitCode = 143
+
+	if err := record.Validate(); err != nil {
+		t.Fatalf("validate cancelled record: %v", err)
 	}
 }
 

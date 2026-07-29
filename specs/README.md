@@ -11,6 +11,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | `patch-bundle-v1.md` | `F0-034` |
 | `capability-matrix-v1.md` | `F0-036` |
 | [`release-bundle-v1.md`](./release-bundle-v1.md) | `F0-038` / `DEPLOY-001` |
+| [`walking-skeleton-faults-v1.md`](./walking-skeleton-faults-v1.md) | `WS-008` |
 
 Each specification must link fixtures or conformance tests and the RFC decision it refines. `F0-010` reserves these paths without creating empty specifications.
 

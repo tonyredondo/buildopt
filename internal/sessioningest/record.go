@@ -18,6 +18,8 @@ const (
 	OutcomeSuccess = "SUCCESS"
 	// OutcomeBuildFailure records a child process with a nonzero exit status.
 	OutcomeBuildFailure = "BUILD_FAILURE"
+	// OutcomeCancelled records a child process stopped after cancellation.
+	OutcomeCancelled = "CANCELLED"
 
 	// ExportContextEnvironment carries predeclared non-secret BUILD_SESSION
 	// identity and workload context.
@@ -129,6 +131,12 @@ func (record Record) Validate() error {
 		if record.ExitCode < 1 || record.ExitCode > 255 {
 			return errors.New(
 				"failed session exitCode must be between 1 and 255",
+			)
+		}
+	case OutcomeCancelled:
+		if record.ExitCode < 1 || record.ExitCode > 255 {
+			return errors.New(
+				"cancelled session exitCode must be between 1 and 255",
 			)
 		}
 	default:

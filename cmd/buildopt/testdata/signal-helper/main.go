@@ -25,9 +25,12 @@ const (
 )
 
 type processObservation struct {
-	PID        int `json:"pid"`
-	PGID       int `json:"pgid"`
-	ParentPGID int `json:"parentPgid"`
+	PID               int    `json:"pid"`
+	PGID              int    `json:"pgid"`
+	ParentPGID        int    `json:"parentPgid"`
+	PluginAttemptID   string `json:"pluginAttemptId,omitempty"`
+	PluginEventSocket string `json:"pluginEventSocket,omitempty"`
+	GatewayURL        string `json:"gatewayUrl,omitempty"`
 }
 
 func main() {
@@ -168,9 +171,12 @@ func writeObservation(path string) error {
 	}
 
 	output, err := json.Marshal(processObservation{
-		PID:        os.Getpid(),
-		PGID:       processGroupID,
-		ParentPGID: parentProcessGroupID,
+		PID:               os.Getpid(),
+		PGID:              processGroupID,
+		ParentPGID:        parentProcessGroupID,
+		PluginAttemptID:   os.Getenv("BUILDOPT_PLUGIN_ATTEMPT_ID"),
+		PluginEventSocket: os.Getenv("BUILDOPT_PLUGIN_EVENT_SOCKET"),
+		GatewayURL:        os.Getenv("BUILDOPT_GATEWAY_URL"),
 	})
 	if err != nil {
 		return fmt.Errorf("encode process observation: %w", err)

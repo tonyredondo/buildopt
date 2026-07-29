@@ -124,10 +124,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	}
 	exitCode := childWaitExitCode(childArgs[0], execution.err, stderr)
 	if serverConfigured && gateway != nil && handshake != nil {
-		outcome := sessioningest.OutcomeBuildFailure
-		if exitCode == 0 {
-			outcome = sessioningest.OutcomeSuccess
-		}
+		outcome := sessionOutcome(execution, exitCode)
 		record := sessioningest.NewRecord(
 			handshake.attemptID,
 			gateway.generation,
@@ -177,6 +174,7 @@ type childExecution struct {
 	started     bool
 	startedAt   time.Time
 	completedAt time.Time
+	cancelled   bool
 	err         error
 }
 
@@ -206,11 +204,13 @@ func executeChild(
 
 	stopForwarding := make(chan struct{})
 	forwardingStopped := make(chan struct{})
+	cancellationForwarded := make(chan struct{}, 1)
 	go forwardSignals(
 		command.Process.Pid,
 		signals,
 		stopForwarding,
 		forwardingStopped,
+		cancellationForwarded,
 		stderr,
 	)
 
@@ -224,8 +224,32 @@ func executeChild(
 		started:     true,
 		startedAt:   startedAt,
 		completedAt: completedAt,
+		cancelled:   len(cancellationForwarded) > 0 || childWasCancelled(err),
 		err:         err,
 	}
+}
+
+func sessionOutcome(execution childExecution, exitCode int) string {
+	if execution.cancelled {
+		return sessioningest.OutcomeCancelled
+	}
+	if exitCode == 0 {
+		return sessioningest.OutcomeSuccess
+	}
+	return sessioningest.OutcomeBuildFailure
+}
+
+func childWasCancelled(err error) bool {
+	var exitError *exec.ExitError
+	if !errors.As(err, &exitError) {
+		return false
+	}
+	status, ok := exitError.Sys().(syscall.WaitStatus)
+	if !ok || !status.Signaled() {
+		return false
+	}
+	return status.Signal() == syscall.SIGINT ||
+		status.Signal() == syscall.SIGTERM
 }
 
 func childWaitExitCode(command string, err error, stderr io.Writer) int {
@@ -287,6 +311,7 @@ func forwardSignals(
 	signals <-chan os.Signal,
 	stop <-chan struct{},
 	stopped chan<- struct{},
+	cancellationForwarded chan<- struct{},
 	stderr io.Writer,
 ) {
 	defer close(stopped)
@@ -306,8 +331,13 @@ func forwardSignals(
 			if !ok {
 				continue
 			}
-			if err := syscall.Kill(-processGroupID, unixSignal); err != nil &&
-				!errors.Is(err, syscall.ESRCH) {
+			err := syscall.Kill(-processGroupID, unixSignal)
+			if err == nil {
+				select {
+				case cancellationForwarded <- struct{}{}:
+				default:
+				}
+			} else if !errors.Is(err, syscall.ESRCH) {
 				_, _ = fmt.Fprintf(
 					stderr,
 					"buildopt: cannot forward %s to process group %d: %v\n",
