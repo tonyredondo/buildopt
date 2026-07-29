@@ -96,6 +96,18 @@ The checker runs with the locked Go toolchain and offline module resolution. It 
 
 On Linux, the same suite verifies that the direct child leads a process group separate from the launcher, a nested descendant receives forwarded `SIGINT` and `SIGTERM`, cancellation waits for delayed cleanup without a launcher-owned deadline, handled child statuses remain authoritative, and an unhandled `SIGTERM` becomes status `143`. Other platforms remain outside the current acceptance matrix.
 
+## Gradle correlation fixture validation
+
+Run the first `F0-040` fixture with the locked JDK 21 and real Gradle 9.6.1 Wrapper:
+
+```bash
+./dev/run -- ./dev/check-gradle-correlation-fixture
+```
+
+The checker uses an isolated project cache, output tree, and local build cache. On the initial empty-cache run, two equivalent cacheable tasks in separate projects must execute concurrently and expose the same native Gradle cache key. After cleaning their outputs, the second identical run must reuse Configuration Cache and restore both tasks from the local build cache with byte-identical outputs.
+
+This is fixture evidence, not correlation evidence. `SPK-001` must still associate each task execution and outcome with the native key and cache PUT without relying on timing, thread names, or task paths.
+
 ## Rust toolchain validation
 
 The root [`rust-toolchain.toml`](../rust-toolchain.toml) selects `1.93.0-x86_64-unknown-linux-gnu` with Rustup's minimal profile. Rust remains optional for the core, and this pin does not activate the hermetic helper or claim any sandbox capability.
@@ -225,6 +237,7 @@ Run the lock and doctor contract tests from the repository root:
 ./dev/check-normative-layout
 ./dev/check-build-session-schema
 ./dev/check-buildopt-cli
+./dev/run -- ./dev/check-gradle-correlation-fixture
 ./dev/check-toolchains-lock
 ./dev/test-doctor
 ./dev/test-jdk-toolchain

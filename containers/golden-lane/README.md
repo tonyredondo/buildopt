@@ -23,3 +23,5 @@ Contractual evidence:
 ```
 
 The second command rejects hosts that cannot provide the 4 vCPU/16 GiB development runner class.
+
+Both modes run the `F0-040A` Gradle correlation fixture after the base Java artifact checks. Strict mode therefore proves its parallel miss, shared native key, two cache hits, and Configuration Cache reuse inside the pinned 4-CPU/16-GiB container as well as on the host.

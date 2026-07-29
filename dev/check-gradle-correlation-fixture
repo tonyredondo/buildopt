@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_fixture_root="${buildopt_repo_root}/fixtures/gradle-correlation"
+buildopt_fixture_tmp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-correlation.XXXXXX")
+trap 'rm -rf -- "${buildopt_fixture_tmp}"' EXIT
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p "${GRADLE_USER_HOME}"
+
+buildopt_first_log="${buildopt_fixture_tmp}/first.log"
+buildopt_second_log="${buildopt_fixture_tmp}/second.log"
+buildopt_output_root="${buildopt_fixture_tmp}/outputs"
+buildopt_cache_root="${buildopt_fixture_tmp}/build-cache"
+buildopt_project_cache="${buildopt_fixture_tmp}/project-cache"
+
+buildopt_gradle_args=(
+    --project-dir "${buildopt_fixture_root}"
+    --project-cache-dir "${buildopt_project_cache}"
+    --no-daemon
+    --offline
+    --stacktrace
+    --warning-mode=fail
+    --console=plain
+    --parallel
+    --max-workers=4
+    --build-cache
+    --configuration-cache
+    --info
+    "-PbuildoptFixtureOutputDir=${buildopt_output_root}"
+    "-PbuildoptFixtureCacheDir=${buildopt_cache_root}"
+    clean
+    correlationFixture
+)
+
+if ! "${buildopt_repo_root}/gradlew" "${buildopt_gradle_args[@]}" \
+    >"${buildopt_first_log}" 2>&1; then
+    sed -n '1,260p' "${buildopt_first_log}" >&2
+    exit 1
+fi
+
+buildopt_alpha_key=$(
+    awk \
+        '/Build cache key for task '\''\:alpha\:correlationFixture'\'' is / {
+            print $NF
+            exit
+        }' \
+        "${buildopt_first_log}"
+)
+buildopt_beta_key=$(
+    awk \
+        '/Build cache key for task '\''\:beta\:correlationFixture'\'' is / {
+            print $NF
+            exit
+        }' \
+        "${buildopt_first_log}"
+)
+
+if [[ ! "${buildopt_alpha_key}" =~ ^[0-9a-f]{32}$ ]] ||
+    [[ "${buildopt_alpha_key}" != "${buildopt_beta_key}" ]]; then
+    printf 'fixture tasks did not expose one identical native cache key: alpha=%s beta=%s\n' \
+        "${buildopt_alpha_key:-missing}" \
+        "${buildopt_beta_key:-missing}" >&2
+    grep -F 'Build cache key for task' "${buildopt_first_log}" >&2 || true
+    exit 1
+fi
+
+for buildopt_project in alpha beta; do
+    if [[ ! -f "${buildopt_output_root}/${buildopt_project}/correlation/output.txt" ]]; then
+        printf 'missing %s correlation output after first run\n' \
+            "${buildopt_project}" >&2
+        exit 1
+    fi
+    if [[ ! -f "${buildopt_output_root}/root/correlation-barrier/${buildopt_project}.ready" ]]; then
+        printf 'missing %s parallel-execution marker\n' "${buildopt_project}" >&2
+        exit 1
+    fi
+done
+
+if ! cmp -s \
+    "${buildopt_output_root}/alpha/correlation/output.txt" \
+    "${buildopt_output_root}/beta/correlation/output.txt"; then
+    printf 'fixture tasks produced different output bytes\n' >&2
+    exit 1
+fi
+if grep -Fq 'correlationFixture FROM-CACHE' "${buildopt_first_log}"; then
+    printf 'initial empty-cache run unexpectedly restored a fixture task\n' >&2
+    exit 1
+fi
+
+if ! "${buildopt_repo_root}/gradlew" "${buildopt_gradle_args[@]}" \
+    >"${buildopt_second_log}" 2>&1; then
+    sed -n '1,260p' "${buildopt_second_log}" >&2
+    exit 1
+fi
+
+grep -Fq 'Reusing configuration cache.' "${buildopt_second_log}"
+grep -Fq '> Task :alpha:correlationFixture FROM-CACHE' "${buildopt_second_log}"
+grep -Fq '> Task :beta:correlationFixture FROM-CACHE' "${buildopt_second_log}"
+
+if ! cmp -s \
+    "${buildopt_output_root}/alpha/correlation/output.txt" \
+    "${buildopt_output_root}/beta/correlation/output.txt"; then
+    printf 'cache-restored fixture outputs differ\n' >&2
+    exit 1
+fi
+
+printf 'F0-040A correlation fixture OK: shared key %s, parallel miss, two hits, Configuration Cache reused\n' \
+    "${buildopt_alpha_key}"

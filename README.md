@@ -53,6 +53,7 @@ From the repository root:
 ./dev/check-normative-layout
 ./dev/check-build-session-schema
 ./dev/check-buildopt-cli
+./dev/run -- ./dev/check-gradle-correlation-fixture
 ./dev/check-toolchains-lock
 ./dev/doctor
 ./dev/test-doctor
@@ -68,7 +69,7 @@ From the repository root:
 ./dev/check-golden-lane --static
 ```
 
-The commands validate the repository and Phase 0 normative-package layouts, the first Draft 2020-12 contract and its positive/negative fixtures, the real `buildopt run --` passthrough binary and its Linux process/signal contract, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, and actionlint provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, repository shell scripts, an actionlint workflow smoke fixture, and golden lane configuration and checksums.
+The commands validate the repository and Phase 0 normative-package layouts, the first Draft 2020-12 contract and its positive/negative fixtures, the real `buildopt run --` passthrough binary and its Linux process/signal contract, the first parallel Gradle correlation fixture, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, and actionlint provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, repository shell scripts, an actionlint workflow smoke fixture, and golden lane configuration and checksums.
 
 Project-local smoke tests:
 

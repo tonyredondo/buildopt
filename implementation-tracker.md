@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — `WS-002` closed with Linux process-group isolation, signal forwarding, and cancellation fixtures; `SPK-001` is next in sequence and remains dependency-gated<br>
+**Overall status:** `DOING` — `F0-040A` closed with the first golden-lane correlation fixture; the dependency cycle is removed and `SPK-001` is unblocked next<br>
 **Current phase:** Phase 0 — contracts, fixtures, and walking skeleton<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
 **Last updated:** 2026-07-29<br>
@@ -95,7 +95,8 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 12 | `F0-011` | First normative schema: `BUILD_SESSION v1` | `DONE` | Codex |
 | 13 | `WS-001` | `buildopt run` → `BUILD_SESSION` vertical slice started | `DONE` | Codex |
 | 14 | `WS-002` | Process group and signal forwarding | `DONE` | Codex |
-| 15 | `SPK-001` | Task → cache key → PUT spike on the golden lane | `WAITING` | — |
+| 15 | `F0-040A` | First Gradle correlation fixture on the golden lane | `DONE` | Codex |
+| 16 | `SPK-001` | Task → cache key → PUT spike on the golden lane | `TODO` | — |
 
 ---
 
@@ -232,6 +233,8 @@ Do not mark `ENV-003`, `ENV-006`, `ENV-010`, or `ENV-011` complete because a “
 | `F0-023` | Task/action/attempt state machines | `STATE-001`, `CI-ORCH-001` | `WAITING` | — | Transition vectors + recovery |
 | `F0-024` | Normative `METRICS-001` catalog | `METRICS-001`, `MEASURE-001` | `WAITING` | — | Definitions, units, and signs |
 
+`F0-019` intentionally follows `SPK-001`: its normative event vocabulary must encode either demonstrated exact correlation or the tested `UNATTRIBUTED` all-attempt fallback. The spike uses fixture-only instrumentation and does not predeclare the final inter-process contract.
+
 ### 5.4 Executable specifications and fixtures
 
 | ID | Deliverable | Related decision | State | Owner | Expected evidence |
@@ -246,6 +249,7 @@ Do not mark `ENV-003`, `ENV-006`, `ENV-010`, or `ENV-011` complete because a “
 | `F0-037` | Data lifecycle, redaction, and JSON/JSONL fixtures | `PRIVACY-001`, `EXPORT-001` | `TODO` | — | Golden export + deletion cases |
 | `F0-038` | Packaging, checksums, signatures, SBOM, and provenance | `DEPLOY-001` | `TODO` | — | Verifiable artifacts |
 | `F0-039` | Base runbooks: bypass, kill switch, rollback, and uninstall | `OPS-001` | `TODO` | — | Recorded exercises |
+| `F0-040A` | Golden-lane correlation fixture | `COMPAT-001` | `DONE` | Codex | `E-022`: parallel equivalent tasks, shared key, miss/hit, and Configuration Cache reuse |
 | `F0-040` | Tier 1 fixtures and test repositories | `COMPAT-001` | `TODO` | — | Real Wrapper + TestKit matrix |
 
 ### 5.5 Walking skeleton
@@ -275,7 +279,7 @@ GitHub Action
 
 | ID | Question to answer | Depends on | State | Owner | Outcome/evidence |
 |---|---|---|---|---|---|
-| `SPK-001` | Can we correlate task → native key → PUT exactly with parallel execution, Worker API, and child processes? | `F0-002`, `F0-019`, `F0-040` | `WAITING` | — | — |
+| `SPK-001` | Can we correlate task → native key → PUT exactly with parallel execution, Worker API, and child processes? | `F0-002`, `F0-040A` | `TODO` | — | — |
 | `SPK-002` | What coverage and overhead does the JVM Agent achieve with a real daemon and Configuration Cache? | `F0-002`, `F0-040`, `WS-003` | `WAITING` | — | — |
 | `SPK-003` | Can the Rust helper enforce a task-specific producer with complete coverage on the supported runner? | `F0-002`, `F0-040` | `WAITING` | — | — |
 | `SPK-004` | Can the patcher safely apply, repeat, reject, and recover the first two bundles? | `F0-016`, `F0-034` | `WAITING` | — | — |
@@ -489,6 +493,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Contract schemas | `BUILD_SESSION v1` Draft 2020-12; later schemas, OpenAPI, and Protobuf remain pending | Pinned Go validator compiled the schema with format assertions; 4 valid fixtures passed and 7 focused invalid fixtures were rejected for their intended diagnostics | 2026-07-29 | `E-019` |
 | Golden vectors | Go ↔ Java canonicalization/signatures | Not run | — | — |
 | Go unit/integration | Launcher CLI; gateway/server remain pending | Real `buildopt` binary preserved argv/process context and child statuses; Linux fixtures proved a distinct child group, exact SIGINT/SIGTERM delivery to a descendant, delayed cancellation cleanup, and conventional unhandled-signal status | 2026-07-29 | `E-021` |
+| Gradle correlation fixture | Gradle 9.6.1/JDK 21 golden-lane slice; Tier 1/TestKit expansion remains pending | Independent multi-project fixture produced one shared native key from two parallel equivalent tasks, then restored both from an isolated local cache while reusing Configuration Cache on host and strict container | 2026-07-29 | `E-022` |
 | Gradle TestKit | Plugin/adapters | Not run | — | — |
 | Real Gradle Wrapper | Wrapper 9.6.1, Kotlin DSL fixture, and Configuration Cache | Strict gate passed on the nominal 4 vCPU/16 GiB host and a container with 4 CPU/16 GiB cgroups; bytecode major 61; Configuration Cache reused; `compileJava FROM-CACHE`; negative 2-CPU fixture rejected | 2026-07-29 | `E-008` |
 | Golden container runtime | Docker daemon, immutable image index/platform identity, local image provenance, exact JDK patch, and cgroup limits | Docker 29.6.2 resolved the pinned index to the unique Linux AMD64 digest; strict image inspection and a 4-CPU/16-GiB container build passed; deterministic negative fixtures passed | 2026-07-29 | `E-015` |
@@ -536,6 +541,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-019` | 2026-07-29 | `F0-011` | Normative [`BUILD_SESSION v1`](./contracts/jsonschema/build-session.v1.schema.json), documented [fixture set](./contracts/jsonschema/testdata/build-session.v1/README.md), and [`dev/check-build-session-schema`](./dev/check-build-session-schema); exact `jsonschema/v6` 6.0.2 is isolated in the test module and authenticated by `go.sum`; Draft 2020-12 compilation with asserted RFC 3339 formats accepted four complete/partial, CI/local, success/failure fixtures and rejected seven focused cases for lifecycle mismatch, future aggregate effects, impossible timestamps, negative duration, missing recovery ranges, inconsistent success exit, and invented unavailable values; module tidy/verify/vet, the unchanged offline core Go toolchain check, JSON/Bash syntax, repository/normative layouts, locked ShellCheck/actionlint, and the locked-JDK Gradle build passed | `DONE`: `BUILD_SESSION` now fixes neutral-envelope boundaries, explicit metric availability/methods, pre-outcome assignment, complete/partial recovery, strict unknown fields, and OBS-002 lifecycle separation without activating generated clients or later metric catalogs; `WS-001` is next |
 | `E-020` | 2026-07-29 | `WS-001` | Dependency-free [`cmd/buildopt`](./cmd/buildopt/main.go), [`internal/launcher`](./internal/launcher/run.go), real-binary [integration tests](./cmd/buildopt/main_test.go), and [`dev/check-buildopt-cli`](./dev/check-buildopt-cli); the locked Go 1.26.5 toolchain built the executable with offline module resolution, then direct execution without a shell preserved empty, whitespace, quoted, wildcard, variable-like, literal-delimiter, Unicode, and newline arguments plus `argv[0]`, cwd, environment, stdin, stdout, and stderr; child exits `0` and `37`, usage `64`, cannot-execute `126`, and not-found `127` passed; Go formatting/vet, the unchanged offline module/toolchain contract, repository layout, Bash syntax, and locked ShellCheck/actionlint passed | `DONE`: the first walking-skeleton behavior now executes the original command and returns ordinary child statuses without activating policy, plugin, gateway, telemetry, optimization, or untested signal semantics; `WS-002` is unblocked and next |
 | `E-021` | 2026-07-29 | `WS-002` | Linux process-group and signal handling in [`internal/launcher`](./internal/launcher/run.go), real-binary [signal integration tests](./cmd/buildopt/main_signal_linux_test.go), and a nested [signal helper](./cmd/buildopt/testdata/signal-helper/main.go); the direct child became a group leader distinct from `buildopt`, its descendant inherited the group, and signals sent only to the launcher reached both processes as exact `SIGINT` and `SIGTERM`; handled cancellation waited through a 150 ms cleanup and preserved child exits `41`/`42`, while unhandled `SIGTERM` returned `143` without launcher stderr; the signal suite passed 10 consecutive runs and the race detector, full CLI tests, Go vet including the helper, the unchanged offline module/toolchain contract, repository layout, Bash syntax, and locked ShellCheck/actionlint passed | `DONE`: the launcher now preserves the Linux process-tree cancellation contract without imposing or shortening the CI provider's grace period; platform expansion and observability/lifecycle behavior remain deferred, and `SPK-001` remains dependency-gated |
+| `E-022` | 2026-07-29 | `F0-040A` | Independent [`fixtures/gradle-correlation`](./fixtures/gradle-correlation/README.md) repository and executable [`dev/check-gradle-correlation-fixture`](./dev/check-gradle-correlation-fixture), integrated into [`dev/golden-lane-build`](./dev/golden-lane-build); the real Gradle 9.6.1 Wrapper and JDK 21 compiled the Java 17 fixture plugin with all warnings as errors, then an isolated empty-cache run forced `:alpha` and `:beta` task actions to overlap through a barrier, produced byte-identical outputs, and reported the same native cache key `c0111bcb4ba8ba492a6cb273f724a55b`; the next clean invocation reused Configuration Cache and restored both tasks `FROM-CACHE`; the check passed on the 12-CPU host and in the digest-pinned 4-CPU/16-GiB container, with repository layout, Bash syntax, and locked ShellCheck/actionlint also passing | `DONE`: the first golden-lane correlation repository is reproducible without claiming task-to-PUT association; `SPK-001` now owns instrumentation plus Worker API, child-process, failure/cancellation, and Gradle 8.14.x expansion, and `F0-019` follows its exact-or-fallback result |
 
 ---
 
@@ -543,6 +549,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-29 | Closed `F0-040A`: removed the `SPK-001`/`F0-019` dependency cycle and added the first parallel Gradle correlation fixture with cache and Configuration Cache evidence on host and strict golden container | Codex |
 | 2026-07-29 | Closed `WS-002`: isolated the Linux child process group, forwarded `SIGINT`/`SIGTERM` through the process tree, preserved cleanup and exit semantics, and added repeated cancellation fixtures | Codex |
 | 2026-07-29 | Closed `WS-001`: added the dependency-free `buildopt run --` passthrough, real-binary argv/stdio/cwd/environment and exit-status integration tests, and kept signal semantics isolated for `WS-002` | Codex |
 | 2026-07-29 | Closed `F0-011`: added the strict `BUILD_SESSION v1` Draft 2020-12 contract, explicit unavailable/partial metric semantics, lifecycle isolation, positive/negative fixtures, and a pinned validator isolated from the product module | Codex |
