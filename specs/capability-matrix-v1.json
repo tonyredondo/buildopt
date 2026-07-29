@@ -1,0 +1,275 @@
+{
+  "schemaVersion": "buildopt.specs/capability-matrix/v1",
+  "operatingSystem": "linux",
+  "architecture": "amd64",
+  "unknownCombinationProfile": "UNTESTED",
+  "profiles": [
+    {
+      "id": "GOLDEN_PROVEN",
+      "capabilities": [
+        {
+          "id": "PLUGIN_HANDSHAKE",
+          "status": "EXACT",
+          "method": "authenticated real-Wrapper handshake and task execution",
+          "reason": "",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": ["dev/check-gradle-plugin-handshake"]
+        },
+        {
+          "id": "CONFIGURATION_CACHE_REUSE",
+          "status": "EXACT",
+          "method": "two real Wrapper invocations with reused configuration cache",
+          "reason": "",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": ["dev/check-gradle-plugin-handshake"]
+        },
+        {
+          "id": "TASK_OUTCOMES",
+          "status": "EXACT",
+          "method": "task execution trace with completed outcomes",
+          "reason": "",
+          "fallback": "OBSERVE",
+          "evidence": ["dev/check-gradle-correlation-spike"]
+        },
+        {
+          "id": "TASK_TO_NATIVE_PUT",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "cold Kotlin DSL and accessor stores have no unique task ancestor",
+          "fallback": "ABORT_PENDING",
+          "evidence": ["specs/gradle-correlation-v1.md"]
+        },
+        {
+          "id": "CRITICAL_PATH",
+          "status": "APPROXIMATED",
+          "method": "Tier 1 plugin task-graph interval model",
+          "reason": "",
+          "fallback": "OBSERVE",
+          "evidence": ["contracts/jsonschema/build-session.v1.schema.json"]
+        },
+        {
+          "id": "CACHE_MISS_REASONS",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "the active Gradle adapter exposes no stable detailed miss causes",
+          "fallback": "OBSERVE",
+          "evidence": ["contracts/jsonschema/build-session.v1.schema.json"]
+        },
+        {
+          "id": "MANAGED_SHARED_CACHE",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "the A0 cache backend is not implemented",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": []
+        },
+        {
+          "id": "JVM_AGENT",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "SPK-002 has not completed",
+          "fallback": "OBSERVE",
+          "evidence": []
+        },
+        {
+          "id": "HERMETIC_PRODUCER",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "SPK-003 has not completed",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": []
+        },
+        {
+          "id": "PATCH_BUNDLE_APPLIER",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "SPK-004 has not completed",
+          "fallback": "DOWNLOAD_BUNDLE_ONLY",
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "id": "CORRELATION_ONLY",
+      "capabilities": [
+        {
+          "id": "PLUGIN_HANDSHAKE",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "product plugin fixture not executed for this combination",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": []
+        },
+        {
+          "id": "CONFIGURATION_CACHE_REUSE",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "product plugin fixture not executed for this combination",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": []
+        },
+        {
+          "id": "TASK_OUTCOMES",
+          "status": "EXACT",
+          "method": "correlation spike task execution trace",
+          "reason": "",
+          "fallback": "OBSERVE",
+          "evidence": ["dev/check-gradle-correlation-spike"]
+        },
+        {
+          "id": "TASK_TO_NATIVE_PUT",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "cold Kotlin DSL stores have no unique task ancestor",
+          "fallback": "ABORT_PENDING",
+          "evidence": ["specs/gradle-correlation-v1.md"]
+        },
+        {
+          "id": "CRITICAL_PATH",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "critical-path adapter not executed for this combination",
+          "fallback": "OBSERVE",
+          "evidence": []
+        },
+        {
+          "id": "CACHE_MISS_REASONS",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "no stable detailed miss-cause adapter is proven",
+          "fallback": "OBSERVE",
+          "evidence": []
+        },
+        {
+          "id": "MANAGED_SHARED_CACHE",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "the A0 cache backend is not implemented",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": []
+        },
+        {
+          "id": "JVM_AGENT",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "SPK-002 has not completed",
+          "fallback": "OBSERVE",
+          "evidence": []
+        },
+        {
+          "id": "HERMETIC_PRODUCER",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "SPK-003 has not completed",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": []
+        },
+        {
+          "id": "PATCH_BUNDLE_APPLIER",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "SPK-004 has not completed",
+          "fallback": "DOWNLOAD_BUNDLE_ONLY",
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "id": "UNTESTED",
+      "capabilities": [
+        {
+          "id": "PLUGIN_HANDSHAKE",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "combination conformance has not executed",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": []
+        },
+        {
+          "id": "CONFIGURATION_CACHE_REUSE",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "combination conformance has not executed",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": []
+        },
+        {
+          "id": "TASK_OUTCOMES",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "combination conformance has not executed",
+          "fallback": "OBSERVE",
+          "evidence": []
+        },
+        {
+          "id": "TASK_TO_NATIVE_PUT",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "combination conformance has not executed",
+          "fallback": "ABORT_PENDING",
+          "evidence": []
+        },
+        {
+          "id": "CRITICAL_PATH",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "combination conformance has not executed",
+          "fallback": "OBSERVE",
+          "evidence": []
+        },
+        {
+          "id": "CACHE_MISS_REASONS",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "combination conformance has not executed",
+          "fallback": "OBSERVE",
+          "evidence": []
+        },
+        {
+          "id": "MANAGED_SHARED_CACHE",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "the A0 cache backend is not implemented",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": []
+        },
+        {
+          "id": "JVM_AGENT",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "SPK-002 has not completed",
+          "fallback": "OBSERVE",
+          "evidence": []
+        },
+        {
+          "id": "HERMETIC_PRODUCER",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "SPK-003 has not completed",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": []
+        },
+        {
+          "id": "PATCH_BUNDLE_APPLIER",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "SPK-004 has not completed",
+          "fallback": "DOWNLOAD_BUNDLE_ONLY",
+          "evidence": []
+        }
+      ]
+    }
+  ],
+  "combinations": [
+    {"gradle": "8.14.3", "jdk": 17, "dsl": "GROOVY", "profile": "UNTESTED"},
+    {"gradle": "8.14.3", "jdk": 17, "dsl": "KOTLIN", "profile": "UNTESTED"},
+    {"gradle": "8.14.3", "jdk": 21, "dsl": "GROOVY", "profile": "UNTESTED"},
+    {"gradle": "8.14.3", "jdk": 21, "dsl": "KOTLIN", "profile": "CORRELATION_ONLY"},
+    {"gradle": "9.6.1", "jdk": 17, "dsl": "GROOVY", "profile": "UNTESTED"},
+    {"gradle": "9.6.1", "jdk": 17, "dsl": "KOTLIN", "profile": "UNTESTED"},
+    {"gradle": "9.6.1", "jdk": 21, "dsl": "GROOVY", "profile": "UNTESTED"},
+    {"gradle": "9.6.1", "jdk": 21, "dsl": "KOTLIN", "profile": "GOLDEN_PROVEN"},
+    {"gradle": "9.6.1", "jdk": 25, "dsl": "GROOVY", "profile": "UNTESTED"},
+    {"gradle": "9.6.1", "jdk": 25, "dsl": "KOTLIN", "profile": "UNTESTED"}
+  ]
+}

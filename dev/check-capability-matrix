@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+
+cd -- "${buildopt_script_dir}/schema-validator"
+exec "${buildopt_script_dir}/run" \
+    --toolchain go \
+    -- \
+    go test \
+        -count=1 \
+        -run '^TestCapabilityMatrixV1$' \
+        .

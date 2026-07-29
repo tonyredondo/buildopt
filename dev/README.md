@@ -394,6 +394,18 @@ entry, stable-control and exploration floors, shrinkage and tie handling,
 headroom, propensity, 24-hour delayed and duplicate outcomes, drift/epoch
 reset, kill switch, and guardrail rollback.
 
+## Capability matrix validation
+
+Validate the evidence-backed `F0-036` Tier 1 target/status matrix:
+
+```bash
+./dev/check-capability-matrix
+```
+
+The checker requires all ten Gradle/JDK/DSL combinations and validates exact,
+approximated, and unavailable records with their methods, reasons, evidence,
+and safe fallbacks. Untested rows cannot inherit the golden-lane profile.
+
 ## PatchBundle contract validation
 
 Validate the `F0-016` declarative bundle envelope and its two private-beta
