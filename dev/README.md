@@ -339,6 +339,21 @@ rejection, exact idempotent replay after a lost response, payload-conflict
 rejection, cancellation, dead-owner reconciliation, and terminal-state
 safety.
 
+## CI orchestration validation
+
+Validate the `F0-030` authoritative-job, protected validation queue,
+isolation, budget, and recovery contract:
+
+```bash
+./dev/check-ci-orchestration
+```
+
+The checker cross-checks the attempt lifecycle, inspects the inert GitHub
+fixture, and interprets 12 cases. It rejects multiple authoritative arms,
+untrusted revisions, shared writable state, daily or weekly overspend, and a
+second concurrent lease; cancellation, timeout, unknown task boundaries, and
+dead owners release unused reservations without changing the normal job.
+
 ## PatchBundle contract validation
 
 Validate the `F0-016` declarative bundle envelope and its two private-beta

@@ -66,6 +66,7 @@ From the repository root:
 ./dev/check-contract-crypto
 ./dev/check-http-semantics
 ./dev/check-state-machines
+./dev/check-ci-orchestration
 ./dev/check-test-optimization-openapi
 ./dev/check-buildopt-cli
 ./dev/check-local-gateway

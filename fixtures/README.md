@@ -20,3 +20,8 @@ identities, exercises installation locally without network access, and
 provides a manual read-only hosted workflow that proves PATH/output publication
 plus argv and exit-code preservation. It does not implement authoritative CI
 or the protected validation queue.
+
+`ci-orchestration/` is the inert `F0-030` protected validation-workflow
+fixture. Its schedule, manual recovery, repository concurrency, trusted
+default-branch boundary, read-only permissions, and single-lease command are
+checked together with the executable queue/budget/recovery scenarios.
