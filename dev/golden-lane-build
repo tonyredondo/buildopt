@@ -47,9 +47,25 @@ buildopt_java_major=$(
         }
     ' <<<"${buildopt_java_settings}"
 )
+buildopt_java_runtime_version=$(
+    awk -F'= ' '
+        /^[[:space:]]*java.runtime.version = / {
+            print $2
+            exit
+        }
+    ' <<<"${buildopt_java_settings}"
+)
 
 if [[ "${buildopt_java_major}" != "21" ]]; then
     printf 'golden lane requires Java 21, found major %s\n' "${buildopt_java_major:-unknown}" >&2
+    exit 1
+fi
+if [[ -n "${BUILDOPT_EXPECT_JAVA_VERSION:-}" ]] &&
+    [[ "${buildopt_java_runtime_version}" != "${BUILDOPT_EXPECT_JAVA_VERSION}" ]] &&
+    [[ "${buildopt_java_runtime_version}" != "${BUILDOPT_EXPECT_JAVA_VERSION}-"* ]]; then
+    printf 'golden container requires Java %s, found %s\n' \
+        "${BUILDOPT_EXPECT_JAVA_VERSION}" \
+        "${buildopt_java_runtime_version:-unknown}" >&2
     exit 1
 fi
 

@@ -1,29 +1,54 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+buildopt_usage() {
+    printf 'usage: %s [--smoke|--require-runner-class]\n' "$0"
+}
+
+if (($# > 1)); then
+    buildopt_usage >&2
+    exit 64
+fi
+
 buildopt_mode=${1:---smoke}
 case "${buildopt_mode}" in
     --smoke | --require-runner-class) ;;
     *)
-        printf 'usage: %s [--smoke|--require-runner-class]\n' "$0" >&2
+        buildopt_usage >&2
         exit 64
         ;;
 esac
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
-buildopt_runner_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+buildopt_runner_spec=${BUILDOPT_GOLDEN_LANE_SPEC_FILE:-"${buildopt_repo_root}/specs/golden-lane-runner-v1.json"}
 
-"${buildopt_script_dir}/check-golden-lane" --static
+for buildopt_command in awk docker getconf id jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required golden-container command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if ! BUILDOPT_GOLDEN_LANE_SPEC_FILE="${buildopt_runner_spec}" \
+    "${buildopt_script_dir}/check-golden-lane" --static; then
+    printf 'golden lane static contract is invalid\n' >&2
+    exit 1
+fi
 
 if ! docker info >/dev/null 2>&1; then
     printf 'Docker daemon is unavailable\n' >&2
     exit 1
 fi
 
+buildopt_repository=$(jq -er '.container.repository' "${buildopt_runner_spec}")
+buildopt_index_digest=$(jq -er '.container.indexDigest' "${buildopt_runner_spec}")
+buildopt_platform_digest=$(jq -er '.container.platformDigest' "${buildopt_runner_spec}")
 buildopt_image=$(jq -er '.container.reference' "${buildopt_runner_spec}")
 buildopt_platform_os=$(jq -er '.runnerClass.operatingSystem' "${buildopt_runner_spec}")
 buildopt_platform_arch=$(jq -er '.runnerClass.architecture' "${buildopt_runner_spec}")
+buildopt_jdk_version=$(jq -er '.jdk.version' "${buildopt_runner_spec}")
 buildopt_required_cpu=$(jq -er '.runnerClass.cpuCount' "${buildopt_runner_spec}")
 buildopt_required_memory=$(jq -er '.runnerClass.memoryBytes' "${buildopt_runner_spec}")
 buildopt_minimum_memory=$(jq -er '.runnerClass.minimumObservedMemoryBytes' "${buildopt_runner_spec}")
@@ -33,8 +58,10 @@ buildopt_memory_bytes=$(awk '/MemTotal:/ {printf "%.0f", $2 * 1024}' /proc/memin
 buildopt_docker_args=(
     run
     --rm
+    --pull never
     --platform "${buildopt_platform_os}/${buildopt_platform_arch}"
     --user "$(id -u):$(id -g)"
+    --env "BUILDOPT_EXPECT_JAVA_VERSION=${buildopt_jdk_version}"
     --env HOME=/tmp/buildopt-home
     --env GRADLE_USER_HOME=/gradle-home
     --env LANG=C.UTF-8
@@ -68,4 +95,86 @@ else
     printf 'container smoke does not qualify the contractual runner class\n'
 fi
 
+buildopt_index_reference="${buildopt_repository}@${buildopt_index_digest}"
+if ! buildopt_manifest=$(
+    docker manifest inspect "${buildopt_index_reference}" 2>/dev/null
+); then
+    printf 'cannot resolve the pinned golden image index: %s\n' \
+        "${buildopt_index_reference}" >&2
+    exit 1
+fi
+if ! jq -e \
+    --arg buildopt_os "${buildopt_platform_os}" \
+    --arg buildopt_arch "${buildopt_platform_arch}" \
+    --arg buildopt_digest "${buildopt_platform_digest}" \
+    '
+        (
+            .mediaType == "application/vnd.oci.image.index.v1+json" or
+            .mediaType ==
+                "application/vnd.docker.distribution.manifest.list.v2+json"
+        ) and
+        (
+            [
+                .manifests[]? |
+                select(
+                    .platform.os == $buildopt_os and
+                    .platform.architecture == $buildopt_arch
+                )
+            ] |
+            length == 1 and
+            .[0].digest == $buildopt_digest
+        )
+    ' <<<"${buildopt_manifest}" >/dev/null; then
+    printf 'golden image index does not bind %s/%s to %s\n' \
+        "${buildopt_platform_os}" \
+        "${buildopt_platform_arch}" \
+        "${buildopt_platform_digest}" >&2
+    exit 1
+fi
+
+if ! docker pull \
+    --quiet \
+    --platform "${buildopt_platform_os}/${buildopt_platform_arch}" \
+    "${buildopt_image}" >/dev/null; then
+    printf 'cannot pull the pinned golden image: %s\n' \
+        "${buildopt_image}" >&2
+    exit 1
+fi
+if ! buildopt_image_inspect=$(docker image inspect "${buildopt_image}" 2>/dev/null); then
+    printf 'cannot inspect the pinned golden image: %s\n' \
+        "${buildopt_image}" >&2
+    exit 1
+fi
+if ! jq -e \
+    --arg buildopt_os "${buildopt_platform_os}" \
+    --arg buildopt_arch "${buildopt_platform_arch}" \
+    --arg buildopt_digest "${buildopt_platform_digest}" \
+    '
+        length == 1 and
+        .[0].Os == $buildopt_os and
+        .[0].Architecture == $buildopt_arch and
+        any(
+            .[0].RepoDigests[]?;
+            endswith("@" + $buildopt_digest)
+        )
+    ' <<<"${buildopt_image_inspect}" >/dev/null; then
+    printf 'local golden image does not match %s for %s/%s\n' \
+        "${buildopt_platform_digest}" \
+        "${buildopt_platform_os}" \
+        "${buildopt_platform_arch}" >&2
+    exit 1
+fi
+
+printf 'Golden image digest OK: index=%s platform=%s (%s/%s)\n' \
+    "${buildopt_index_digest}" \
+    "${buildopt_platform_digest}" \
+    "${buildopt_platform_os}" \
+    "${buildopt_platform_arch}"
+
 docker "${buildopt_docker_args[@]}" "${buildopt_image}" ./dev/golden-lane-build
+
+if [[ "${buildopt_mode}" == "--require-runner-class" ]]; then
+    printf 'ENV-008 golden container OK: pinned digest and 4-CPU/16-GiB cgroups\n'
+else
+    printf 'Golden container smoke OK: pinned digest on a non-contractual runner\n'
+fi

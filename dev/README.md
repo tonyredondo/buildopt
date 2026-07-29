@@ -83,6 +83,24 @@ Build and inspect the neutral Gradle plugin and JVM agent artifacts:
 
 The check compiles both modules with the locked JDK 21, verifies every packaged class is Java 17 bytecode (major 61), validates the agent manifest, and starts a JVM with the packaged no-op agent. It does not activate the plugin handshake or agent instrumentation behavior reserved for later gates.
 
+## Golden container validation
+
+Verify the pinned image and run the build without claiming the contractual runner class:
+
+```bash
+./dev/run-golden-lane-container --smoke
+```
+
+Produce strict 4-CPU/16-GiB runner evidence on a host with sufficient resources:
+
+```bash
+./dev/run-golden-lane-container --require-runner-class
+```
+
+The runner resolves the immutable image index by digest, requires its unique Linux AMD64 manifest to equal the recorded platform digest, pulls that exact reference, and verifies the local image operating system, architecture, and repository digest. The subsequent container uses `--pull never`, checks the exact Java patch from the runner specification, and in strict mode verifies effective cgroup v2 CPU and memory limits from inside the container. It never treats the readable source tag as executable identity.
+
+Invalid usage exits `64`, an unavailable daemon or image/build verification failure exits `1`, and a host that cannot enforce the strict runner class exits `2`. The child container's other nonzero status is preserved.
+
 ## Doctor
 
 `dev/doctor` inventories the active workstation without changing files, installing packages, starting services, or downloading artifacts. It reports:
@@ -127,6 +145,7 @@ Run the lock and doctor contract tests from the repository root:
 ./dev/test-doctor
 ./dev/test-jdk-toolchain
 ./dev/test-go-toolchain
+./dev/test-golden-lane-container
 ```
 
 The validator rejects malformed schema versions, duplicate identities or URLs, unknown platforms, non-HTTPS sources, invalid SHA-256 values, unsupported artifact kinds, and missing or malformed tracker references.
@@ -136,6 +155,8 @@ The doctor tests exercise successful and failed host reports, JSON shape, exit c
 The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.
 
 The Go toolchain tests use a synthetic archive and isolated tool root. They exercise atomic provisioning, idempotency, exact-version selection, project-local `GOROOT`, `GOPATH`, module/build caches, disabled automatic toolchain switching and user configuration, global-Go isolation, missing-tool behavior, and child exit-code propagation without downloading or changing the workstation Go installation.
+
+The golden container tests use a synthetic Docker client and deterministic host-resource probes. They verify index-to-platform digest binding, exact pull and run arguments, local image identity, strict cgroup settings, mutable-reference rejection, daemon/resource failures, and child exit-code propagation without contacting a registry or starting a container.
 
 ## Update policy
 

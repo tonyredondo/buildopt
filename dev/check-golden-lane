@@ -1,18 +1,27 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+buildopt_usage() {
+    printf 'usage: %s [--static|--smoke|--require-runner-class]\n' "$0"
+}
+
+if (($# > 1)); then
+    buildopt_usage >&2
+    exit 64
+fi
+
 buildopt_mode=${1:---smoke}
 case "${buildopt_mode}" in
     --static | --smoke | --require-runner-class) ;;
     *)
-        printf 'usage: %s [--static|--smoke|--require-runner-class]\n' "$0" >&2
+        buildopt_usage >&2
         exit 64
         ;;
 esac
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
-buildopt_runner_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+buildopt_runner_spec=${BUILDOPT_GOLDEN_LANE_SPEC_FILE:-"${buildopt_repo_root}/specs/golden-lane-runner-v1.json"}
 buildopt_wrapper_properties="${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.properties"
 buildopt_wrapper_jar="${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.jar"
 
@@ -25,13 +34,24 @@ jq -e '
     .runnerClass.memoryBytes == 17179869184 and
     .runnerClass.minimumObservedMemoryBytes == 16106127360 and
     .runnerClass.maximumObservedMemoryBytes == 17179869184 and
+    .container.repository == "docker.io/library/eclipse-temurin" and
+    .container.sourceTag == "21.0.11_10-jdk-jammy" and
+    (.container.indexDigest | test("^sha256:[0-9a-f]{64}$")) and
+    (.container.platformDigest | test("^sha256:[0-9a-f]{64}$")) and
+    .container.indexDigest != .container.platformDigest and
+    .container.reference ==
+        (.container.repository + "@" + .container.platformDigest) and
+    .jdk.vendor == "Eclipse Temurin" and
+    .jdk.version == "21.0.11+10" and
     .jdk.runtimeMajor == 21 and
     .jdk.compiledBytecodeRelease == 17 and
     .gradle.version == "9.6.1" and
     .gradle.networkTimeoutMillis == 30000 and
     .gradle.downloadRetries == 3 and
     .gradle.retryBackOffMillis == 1000 and
-    .gradle.dsl == "kotlin"
+    .gradle.dsl == "kotlin" and
+    .environment.locale == "C.UTF-8" and
+    .environment.timezone == "UTC"
 ' "${buildopt_runner_spec}" >/dev/null
 
 buildopt_distribution_sha=$(jq -er '.gradle.distributionSha256' "${buildopt_runner_spec}")

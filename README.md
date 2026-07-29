@@ -55,6 +55,7 @@ From the repository root:
 ./dev/test-doctor
 ./dev/test-jdk-toolchain
 ./dev/test-go-toolchain
+./dev/test-golden-lane-container
 ./dev/run --toolchain go -- ./dev/check-go-toolchain
 ./dev/run -- ./dev/check-jvm-release
 ./dev/check-golden-lane --static
@@ -75,6 +76,7 @@ Smoke test inside the pinned image:
 
 ```bash
 ./dev/run-golden-lane-container --smoke
+./dev/run-golden-lane-container --require-runner-class
 ```
 
-Only `--require-runner-class` produces evidence for the contractual 4 vCPU/16 GiB development configuration.
+The runner resolves the immutable image index, verifies its Linux AMD64 platform digest, inspects the pulled image, and executes it without tag fallback. Only `--require-runner-class` also enforces and verifies the contractual 4 vCPU/16 GiB development configuration.

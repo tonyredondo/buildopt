@@ -2,7 +2,7 @@
 
 - Status: accepted
 - Date: 2026-07-29
-- Revision: 2026-07-29 — development runner adjusted to 4 vCPU/16 GiB
+- Revision: 2026-07-29 — development runner adjusted to 4 vCPU/16 GiB; immutable runtime image verification added
 - Items: `F0-002`, `GOLDEN-LANE-001`
 
 ## Context
@@ -40,7 +40,7 @@ Four levels retain distinct results:
 1. `./dev/check-golden-lane --static` validates local contracts, properties, and checksums without running a build.
 2. `buildopt-with-jdk21 ./dev/check-golden-lane --smoke` compiles and packages on a non-contractual host, then checks Gradle, JDK, Java 17 bytecode, and the deliverable.
 3. `buildopt-with-jdk21 ./dev/check-golden-lane --require-runner-class` verifies the workstation and build directly.
-4. `./dev/run-golden-lane-container --require-runner-class` enforces 4 CPU/16 GiB, runs the image by digest, and verifies effective cgroup limits.
+4. `./dev/run-golden-lane-container --require-runner-class` resolves the immutable index, requires its Linux AMD64 platform digest, pulls and inspects that exact image, enforces 4 CPU/16 GiB, verifies the exact Java patch, and checks effective cgroup limits.
 
 `--smoke` is never recorded as runner-class evidence. A host with insufficient resources can validate the content but not the contractual gate. `GOLDEN-LANE-001` requires levels 3 and 4 to complete successfully.
 
