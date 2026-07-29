@@ -115,4 +115,4 @@ fi
 "${buildopt_script_dir}/check-gradle-correlation-fixture"
 "${buildopt_script_dir}/check-gradle-correlation-spike" --gradle-9-only
 
-printf 'Golden lane build OK: Gradle 9.6.1, Java 21, bytecode major 61, and plugin handshake\n'
+printf 'Golden lane build OK: Gradle 9.6.1, Java 21, bytecode major 61, and authenticated local rendezvous\n'

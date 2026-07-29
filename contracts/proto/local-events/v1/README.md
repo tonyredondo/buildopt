@@ -17,9 +17,10 @@ ambiguous PUT. The current Gradle 9.6.1 and 8.14.3 spike result is therefore
 The first frame is `ProducerHello`. Each later `TaskEvent` uses the next
 sequence number, and each receiver response is a matching `TaskEventAck`.
 Messages are varint-length-delimited, limited to 1 MiB, and exchanged over a
-Unix domain socket in the golden lane. Authentication and rendezvous lifecycle
-are added by `WS-004`; generated clients and N/N-1 policy remain owned by
-`F0-022`.
+Unix domain socket in the golden lane. `WS-004` authenticates the connection
+before the first frame with a fixed `BOA1` preface plus a fresh 256-bit token,
+and the receiver also verifies the local peer user. The credential is never a
+Protobuf field. Generated clients and N/N-1 policy remain owned by `F0-022`.
 
 Run the exact locked-tool descriptor comparison, Buf lint, Java 17 compilation,
 semantic negatives, and both Go/Java Unix-socket directions:

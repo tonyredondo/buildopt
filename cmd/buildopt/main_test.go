@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -14,6 +15,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 )
 
 const (
@@ -23,6 +25,13 @@ const (
 	passthroughEnvironment   = "WS001_PASSTHROUGH_VALUE"
 	pluginAttemptEnvironment = "BUILDOPT_PLUGIN_ATTEMPT_ID"
 	pluginSocketEnvironment  = "BUILDOPT_PLUGIN_EVENT_SOCKET"
+	pluginTokenEnvironment   = "BUILDOPT_PLUGIN_EVENT_TOKEN"
+	gatewayURLEnvironment    = "BUILDOPT_GATEWAY_URL"
+	gatewayUserEnvironment   = "BUILDOPT_GATEWAY_USERNAME"
+	gatewayPassEnvironment   = "BUILDOPT_GATEWAY_PASSWORD"
+	gatewayGenEnvironment    = "BUILDOPT_GATEWAY_CONNECTION_GENERATION"
+	gatewayReadyPath         = "/_buildopt/ready"
+	gatewayGenerationHeader  = "BuildOpt-Gateway-Connection-Generation"
 	expectedUsage            = "usage: buildopt run -- <command> [args...]\n"
 )
 
@@ -34,6 +43,12 @@ type helperObservation struct {
 	EnvironmentValue  string   `json:"environmentValue"`
 	PluginAttemptID   string   `json:"pluginAttemptId"`
 	PluginEventSocket string   `json:"pluginEventSocket"`
+	PluginTokenLength int      `json:"pluginTokenLength"`
+	GatewayURL        string   `json:"gatewayUrl"`
+	GatewayGeneration string   `json:"gatewayGeneration"`
+	GatewayReady      int      `json:"gatewayReady"`
+	GatewayRejected   int      `json:"gatewayRejected"`
+	ReadyGeneration   string   `json:"readyGeneration"`
 }
 
 func TestBuildoptCLI(t *testing.T) {
@@ -78,6 +93,11 @@ func TestBuildoptCLI(t *testing.T) {
 			passthroughEnvironment+"=inherited exactly",
 			pluginAttemptEnvironment+"=untrusted-parent-attempt",
 			pluginSocketEnvironment+"=/tmp/untrusted-parent.sock",
+			pluginTokenEnvironment+"=parent-token",
+			gatewayURLEnvironment+"=http://127.0.0.1:1",
+			gatewayUserEnvironment+"=parent-user",
+			gatewayPassEnvironment+"=parent-password",
+			gatewayGenEnvironment+"=parent-generation",
 		)
 		command.Stdin = strings.NewReader(input)
 
@@ -139,6 +159,44 @@ func TestBuildoptCLI(t *testing.T) {
 				"plugin event socket remains after child exit: %v",
 				err,
 			)
+		}
+		if observation.PluginTokenLength != 43 {
+			t.Errorf(
+				"encoded plugin token length = %d, want 43",
+				observation.PluginTokenLength,
+			)
+		}
+		if !strings.HasPrefix(
+			observation.GatewayURL,
+			"http://127.0.0.1:",
+		) || observation.GatewayURL == "http://127.0.0.1:1" {
+			t.Errorf(
+				"gateway URL = %q, want fresh loopback endpoint",
+				observation.GatewayURL,
+			)
+		}
+		if observation.GatewayGeneration == "" ||
+			observation.GatewayGeneration == "parent-generation" ||
+			observation.ReadyGeneration != observation.GatewayGeneration {
+			t.Errorf(
+				"gateway generation = %q/%q, want matching fresh value",
+				observation.GatewayGeneration,
+				observation.ReadyGeneration,
+			)
+		}
+		if observation.GatewayReady != http.StatusNoContent ||
+			observation.GatewayRejected != http.StatusUnauthorized {
+			t.Errorf(
+				"gateway statuses = %d/%d, want 204/401",
+				observation.GatewayReady,
+				observation.GatewayRejected,
+			)
+		}
+		if response, err := gatewayTestClient().Get(
+			observation.GatewayURL + gatewayReadyPath,
+		); err == nil {
+			_ = response.Body.Close()
+			t.Error("local gateway remains reachable after child exit")
 		}
 	})
 
@@ -278,6 +336,12 @@ func TestBuildoptChildHelper(t *testing.T) {
 		_, _ = fmt.Fprintf(os.Stderr, "read helper working directory: %v\n", err)
 		os.Exit(92)
 	}
+	gatewayReady, gatewayRejected, readyGeneration, err :=
+		observeLocalGateway()
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "probe helper gateway: %v\n", err)
+		os.Exit(93)
+	}
 
 	observation := helperObservation{
 		Argv0:             os.Args[0],
@@ -287,10 +351,16 @@ func TestBuildoptChildHelper(t *testing.T) {
 		EnvironmentValue:  os.Getenv(passthroughEnvironment),
 		PluginAttemptID:   os.Getenv(pluginAttemptEnvironment),
 		PluginEventSocket: os.Getenv(pluginSocketEnvironment),
+		PluginTokenLength: len(os.Getenv(pluginTokenEnvironment)),
+		GatewayURL:        os.Getenv(gatewayURLEnvironment),
+		GatewayGeneration: os.Getenv(gatewayGenEnvironment),
+		GatewayReady:      gatewayReady,
+		GatewayRejected:   gatewayRejected,
+		ReadyGeneration:   readyGeneration,
 	}
 	if err := json.NewEncoder(os.Stdout).Encode(observation); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "encode helper observation: %v\n", err)
-		os.Exit(93)
+		os.Exit(94)
 	}
 	if marker := os.Getenv(helperStderrEnvironment); marker != "" {
 		_, _ = fmt.Fprintln(os.Stderr, marker)
@@ -299,9 +369,60 @@ func TestBuildoptChildHelper(t *testing.T) {
 	exitCode, err := strconv.Atoi(os.Getenv(helperExitEnvironment))
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "parse helper exit code: %v\n", err)
-		os.Exit(94)
+		os.Exit(95)
 	}
 	os.Exit(exitCode)
+}
+
+func observeLocalGateway() (int, int, string, error) {
+	endpoint := os.Getenv(gatewayURLEnvironment)
+	username := os.Getenv(gatewayUserEnvironment)
+	password := os.Getenv(gatewayPassEnvironment)
+
+	readyRequest, err := http.NewRequest(
+		http.MethodGet,
+		endpoint+gatewayReadyPath,
+		nil,
+	)
+	if err != nil {
+		return 0, 0, "", err
+	}
+	readyRequest.SetBasicAuth(username, password)
+	readyResponse, err := gatewayTestClient().Do(readyRequest)
+	if err != nil {
+		return 0, 0, "", err
+	}
+	_ = readyResponse.Body.Close()
+
+	rejectedRequest, err := http.NewRequest(
+		http.MethodGet,
+		endpoint+gatewayReadyPath,
+		nil,
+	)
+	if err != nil {
+		return 0, 0, "", err
+	}
+	rejectedRequest.SetBasicAuth(username, password+"-wrong")
+	rejectedResponse, err := gatewayTestClient().Do(rejectedRequest)
+	if err != nil {
+		return 0, 0, "", err
+	}
+	_ = rejectedResponse.Body.Close()
+
+	return readyResponse.StatusCode,
+		rejectedResponse.StatusCode,
+		readyResponse.Header.Get(gatewayGenerationHeader),
+		nil
+}
+
+func gatewayTestClient() *http.Client {
+	return &http.Client{
+		Timeout: 2 * time.Second,
+		Transport: &http.Transport{
+			Proxy:             nil,
+			DisableKeepAlives: true,
+		},
+	}
 }
 
 func buildBuildopt(t *testing.T) string {

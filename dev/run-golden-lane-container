@@ -192,8 +192,8 @@ if ! CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     exit 1
 fi
 buildopt_docker_args+=(
-    --env BUILDOPT_WS003_BINARY=/buildopt-host-tools/buildopt
-    --env BUILDOPT_WS003_USE_ACTIVE_JAVA=1
+    --env BUILDOPT_GOLDEN_LANE_LAUNCHER_BINARY=/buildopt-host-tools/buildopt
+    --env BUILDOPT_GOLDEN_LANE_USE_ACTIVE_JAVA=1
     --volume "${buildopt_launcher_root}:/buildopt-host-tools:ro"
 )
 

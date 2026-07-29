@@ -19,8 +19,8 @@ const (
 )
 
 // Run executes the WS-001 passthrough command with the WS-002 process contract,
-// exposes the neutral WS-003 plugin handshake, and returns the child process
-// exit status.
+// exposes the neutral authenticated WS-003/WS-004 local rendezvous, and returns
+// the child process exit status.
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	if isHelp(args) {
 		_, _ = io.WriteString(stdout, usage)
@@ -32,6 +32,14 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	}
 
 	childArgs := args[2:]
+	gateway, gatewayErr := startLocalGateway()
+	if gatewayErr != nil {
+		_, _ = fmt.Fprintf(
+			stderr,
+			"buildopt: local gateway unavailable: %v\n",
+			gatewayErr,
+		)
+	}
 	handshake, handshakeErr := startPluginHandshake()
 	if handshakeErr != nil {
 		_, _ = fmt.Fprintf(
@@ -46,9 +54,19 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	command.Stdout = stdout
 	command.Stderr = stderr
 	command.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
-	if handshake != nil {
-		command.Env = handshake.childEnvironment(os.Environ())
+	rendezvousEnvironment := map[string]string(nil)
+	if gateway != nil && handshake != nil {
+		rendezvousEnvironment = map[string]string{
+			pluginAttemptIDEnvironment:   handshake.attemptID,
+			pluginSocketEnvironment:      handshake.listener.Addr().String(),
+			pluginTokenEnvironment:       handshake.tokenText,
+			gatewayURLEnvironment:        gateway.endpoint,
+			gatewayUsernameEnvironment:   gateway.username,
+			gatewayPasswordEnvironment:   gateway.password,
+			gatewayGenerationEnvironment: gateway.generation,
+		}
 	}
+	command.Env = replaceEnvironment(os.Environ(), rendezvousEnvironment)
 
 	signals := make(chan os.Signal, 2)
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
@@ -58,6 +76,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		signal.Stop(signals)
 		if handshake != nil {
 			_ = handshake.finish()
+		}
+		if gateway != nil {
+			_ = gateway.close()
 		}
 		return launchErrorExitCode(childArgs[0], err, stderr)
 	}
@@ -73,6 +94,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 
 	if handshake != nil {
 		reportPluginHandshake(handshake.finish(), stderr)
+	}
+	if gateway != nil {
+		reportLocalGatewayClose(gateway.close(), stderr)
 	}
 
 	if err == nil {
@@ -98,6 +122,17 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	return launchErrorExitCode(childArgs[0], err, stderr)
 }
 
+func reportLocalGatewayClose(err error, stderr io.Writer) {
+	if err == nil {
+		return
+	}
+	_, _ = fmt.Fprintf(
+		stderr,
+		"buildopt: local gateway shutdown incomplete: %v\n",
+		err,
+	)
+}
+
 func reportPluginHandshake(result pluginHandshakeResult, stderr io.Writer) {
 	if !result.connected && result.err == nil {
 		return
@@ -112,7 +147,7 @@ func reportPluginHandshake(result pluginHandshakeResult, stderr io.Writer) {
 	}
 	_, _ = fmt.Fprintf(
 		stderr,
-		"buildopt: Gradle plugin handshake accepted (protocol 1.0, plugin %s)\n",
+		"buildopt: authenticated Gradle plugin handshake accepted (protocol 1.0, plugin %s)\n",
 		result.implementationVersion,
 	)
 }

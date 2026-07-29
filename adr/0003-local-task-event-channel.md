@@ -2,7 +2,7 @@
 
 - Status: accepted
 - Date: 2026-07-29
-- Items: `F0-019`, `GRADLE-CORR-001`
+- Items: `F0-019`, `GRADLE-CORR-001`, `WS-004`
 
 ## Context
 
@@ -34,10 +34,19 @@ varint byte length followed by exactly that many serialized message bytes. A
 frame is limited to 1 MiB. Producer-to-receiver frames contain `TaskEvent`;
 receiver-to-producer frames contain `TaskEventAck`.
 
-The authenticated rendezvous, token lifecycle, and socket ownership are owned
-by `WS-004`. This ADR fixes the payload and framing consumed by that work; it
-does not put long-lived credentials in task events or treat filesystem
-permissions alone as the final authentication design.
+Before the first delimited frame, the producer writes the four-byte ASCII magic
+`BOA1` followed by the raw bytes of a fresh 256-bit invocation token. The
+Launcher passes its base64url representation only in the child environment,
+compares the raw value in constant time, verifies the Unix peer UID against its
+effective UID, and keeps the socket inside a mode-`0700` temporary directory.
+The preface is transport authentication, not a `TaskEvent`, and the credential
+never enters Protobuf or diagnostics.
+
+`WS-004` also adds a separately authenticated HTTP readiness rendezvous on
+`127.0.0.1`. Its Basic credential authorizes only that local hop and its
+`gatewayConnectionGeneration` remains stable across a gateway restart. Cache
+data and upstream credential routing remain outside this walking-skeleton
+block.
 
 ## Protocol invariants
 
@@ -98,11 +107,11 @@ client and compatibility policy remains owned by `F0-022`.
 
 ## Consequences
 
-`WS-003` can now implement the non-optimizing Gradle producer handshake and
-`WS-004` can implement the authenticated rendezvous against one stable payload
-contract. The initial Gradle combinations still declare correlation
-`UNAVAILABLE`, so selective publication stays disabled even when individual
-task-owned events are exact.
+`WS-003` implements the non-optimizing Gradle producer handshake and `WS-004`
+authenticates both its event transport and the neutral loopback gateway against
+one stable payload contract. The initial Gradle combinations still declare
+correlation `UNAVAILABLE`, so selective publication stays disabled even when
+individual task-owned events are exact.
 
 Generated clients are not checked in by this decision. `F0-022` owns generated
 Go/Java clients and N/N-1 compatibility; `F0-005` owns generated-code drift
@@ -116,6 +125,8 @@ Run:
 
 ```bash
 ./dev/check-task-events-proto
+./dev/check-local-gateway
+./dev/check-gradle-plugin-handshake
 ```
 
 The checker resolves exact locked `protoc` 35.1 and Buf 1.72.0 from the
@@ -124,7 +135,10 @@ Buf lint, and uses locked Go 1.26.5 plus Temurin 21 with Java 17 bytecode.
 Java-to-Go and Go-to-Java peers exchange framed messages over real Unix sockets
 and cover exact attribution, `UNATTRIBUTED`, attempt-wide `UNAVAILABLE`,
 whole-attempt abort, acknowledgements, malformed semantic combinations, and the
-1 MiB frame bound.
+1 MiB frame bound. The gateway checker adds token/Basic-authentication
+negatives, stable restart identity, concurrent-slot isolation, and process
+cleanup; the real Wrapper checker covers the Java peer and Configuration Cache
+reuse.
 
 ## Sources
 

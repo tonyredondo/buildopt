@@ -7,7 +7,7 @@ import org.gradle.api.provider.Provider;
 import org.gradle.build.event.BuildEventsListenerRegistry;
 
 /**
- * Project-plugin entry point for the neutral BuildOpt launcher handshake.
+ * Project-plugin entry point for the neutral authenticated BuildOpt rendezvous.
  *
  * <p>The shared service is registered as a task-completion listener so every
  * invocation, including a Configuration Cache reuse, sends one

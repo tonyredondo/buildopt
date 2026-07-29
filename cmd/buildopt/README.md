@@ -44,10 +44,8 @@ The integration fixture verifies an independent process group, a nested descenda
 
 Before starting the child, the launcher creates a private temporary directory,
 a Unix socket, and a fresh attempt ID. It replaces any inherited values of the
-reserved `BUILDOPT_PLUGIN_ATTEMPT_ID` and `BUILDOPT_PLUGIN_EVENT_SOCKET`
-variables before exposing that invocation-only context to the child. These
-values are local rendezvous coordinates, not credentials; authenticated
-rendezvous remains owned by `WS-004`.
+reserved `BUILDOPT_PLUGIN_*` variables before exposing invocation-only context
+to the child.
 
 When the packaged `dev.buildopt` Gradle plugin is present, the launcher accepts
 exactly one version-1 `ProducerHello`, validates its attempt and producer
@@ -67,5 +65,38 @@ up-to-date task, byte-identical output with and without the plugin, fail-open
 behavior when the receiver is missing, and preservation of an intentional
 Gradle failure.
 
-Gateway authentication, concurrent producers, task-event streaming,
-observability export, token filtering, and every optimization remain inactive.
+## WS-004 authenticated local rendezvous
+
+The launcher now starts a neutral HTTP gateway on an operating-system-assigned
+`127.0.0.1` port before the child. It injects a minimum-scope Basic credential
+and opaque `gatewayConnectionGeneration`; the credential authorizes only the
+local readiness endpoint and is never an upstream token. Cache data routes are
+deliberately absent in this block.
+
+The plugin requires the complete gateway and event context. It first performs
+an authenticated readiness request and verifies the returned generation. It
+then connects to the private Unix socket, sends a fixed authentication preface
+containing a fresh 256-bit token, and only afterward sends the length-delimited
+`ProducerHello`. The receiver also requires the peer process to have the
+launcher's effective user ID. Credentials never enter the Protobuf payload or
+diagnostics.
+
+All reserved parent values are removed and the complete context is injected
+atomically only when both local services are ready. The gateway and socket are
+closed after the child exits, while their setup, authentication, and shutdown
+failures remain unable to replace the child status.
+
+Run the restart/concurrency and real Wrapper fixtures with:
+
+```bash
+./dev/check-local-gateway
+./dev/check-gradle-plugin-handshake
+```
+
+The gateway fixture preserves endpoint, credential, and generation across a
+restart, rejects cross-slot credentials, and serves concurrent slots without
+identity overlap. The Wrapper fixture proves a fresh authenticated rendezvous
+after Configuration Cache reuse.
+
+Cache GET/PUT behavior, upstream credentials, retained task-event streaming,
+observability export, and every optimization remain inactive.

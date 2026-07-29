@@ -45,7 +45,7 @@ buildopt_gradle_command=(
     --
     "${buildopt_repo_root}/gradlew"
 )
-if [[ "${BUILDOPT_WS003_USE_ACTIVE_JAVA:-0}" == "1" ]]; then
+if [[ "${BUILDOPT_GOLDEN_LANE_USE_ACTIVE_JAVA:-0}" == "1" ]]; then
     buildopt_gradle_command=("${buildopt_repo_root}/gradlew")
 fi
 GRADLE_USER_HOME="${buildopt_build_home}" \
@@ -72,10 +72,10 @@ if ((${#buildopt_plugin_jars[@]} != 1)); then
 fi
 buildopt_plugin_jar=${buildopt_plugin_jars[0]}
 
-if [[ -n "${BUILDOPT_WS003_BINARY:-}" ]]; then
-    buildopt_binary=${BUILDOPT_WS003_BINARY}
+if [[ -n "${BUILDOPT_GOLDEN_LANE_LAUNCHER_BINARY:-}" ]]; then
+    buildopt_binary=${BUILDOPT_GOLDEN_LANE_LAUNCHER_BINARY}
     if [[ ! -f "${buildopt_binary}" || ! -x "${buildopt_binary}" ]]; then
-        printf 'supplied WS-003 launcher is not executable: %s\n' \
+        printf 'supplied golden-lane launcher is not executable: %s\n' \
             "${buildopt_binary}" >&2
         exit 1
     fi
@@ -93,7 +93,7 @@ buildopt_fixture="${buildopt_test_root}/fixture"
 cp -R -- "${buildopt_fixture_source}" "${buildopt_fixture}"
 buildopt_output="${buildopt_fixture}/build/ws-003/neutral.properties"
 buildopt_init_script="${buildopt_fixture}/buildopt.init.gradle"
-buildopt_expected_handshake='buildopt: Gradle plugin handshake accepted (protocol 1.0, plugin 0.1.0-SNAPSHOT)'
+buildopt_expected_handshake='buildopt: authenticated Gradle plugin handshake accepted (protocol 1.0, plugin 0.1.0-SNAPSHOT)'
 
 buildopt_common_arguments=(
     --no-daemon
@@ -131,6 +131,11 @@ rm -f -- "${buildopt_output}"
 buildopt_first_log="${buildopt_test_root}/wrapped-first.log"
 if ! BUILDOPT_PLUGIN_ATTEMPT_ID=untrusted-parent-attempt \
     BUILDOPT_PLUGIN_EVENT_SOCKET=/tmp/untrusted-parent.sock \
+    BUILDOPT_PLUGIN_EVENT_TOKEN=parent-token \
+    BUILDOPT_GATEWAY_URL=http://127.0.0.1:1 \
+    BUILDOPT_GATEWAY_USERNAME=parent-user \
+    BUILDOPT_GATEWAY_PASSWORD=parent-password \
+    BUILDOPT_GATEWAY_CONNECTION_GENERATION=parent-generation \
     GRADLE_USER_HOME="${buildopt_build_home}" \
     "${buildopt_binary}" run -- \
         "${buildopt_repo_root}/gradlew" \
@@ -204,6 +209,11 @@ rm -f -- "${buildopt_output}"
 buildopt_missing_log="${buildopt_test_root}/missing-receiver.log"
 BUILDOPT_PLUGIN_ATTEMPT_ID=missing-receiver-attempt \
 BUILDOPT_PLUGIN_EVENT_SOCKET="${buildopt_test_root}/missing.sock" \
+BUILDOPT_PLUGIN_EVENT_TOKEN=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA \
+BUILDOPT_GATEWAY_URL=http://127.0.0.1:9 \
+BUILDOPT_GATEWAY_USERNAME=buildopt \
+BUILDOPT_GATEWAY_PASSWORD=missing-gateway-password \
+BUILDOPT_GATEWAY_CONNECTION_GENERATION=missing-generation \
 GRADLE_USER_HOME="${buildopt_build_home}" \
     "${buildopt_gradle_command[@]}" \
         "${buildopt_common_arguments[@]}" \
@@ -214,9 +224,9 @@ GRADLE_USER_HOME="${buildopt_build_home}" \
     exit 1
 }
 if [[ ! -f "${buildopt_output}" ]] ||
-    ! grep -Fq 'BuildOpt plugin handshake unavailable:' \
+    ! grep -Fq 'BuildOpt authenticated rendezvous unavailable:' \
         "${buildopt_missing_log}"; then
-    printf 'missing handshake receiver did not preserve the baseline build\n' >&2
+    printf 'missing authenticated rendezvous did not preserve the baseline build\n' >&2
     cat "${buildopt_missing_log}" >&2
     exit 1
 fi
@@ -238,4 +248,4 @@ if ((buildopt_check_git_state == 1)); then
     fi
 fi
 
-printf 'WS-003 Gradle plugin handshake OK: two accepted v1 hellos, Configuration Cache reuse, neutral output, and fail-open baseline\n'
+printf 'WS-003/WS-004 authenticated Gradle rendezvous OK: two accepted v1 hellos, Configuration Cache reuse, neutral output, and fail-open baseline\n'

@@ -3,6 +3,7 @@ package launcher
 import (
 	"bufio"
 	"crypto/rand"
+	"crypto/subtle"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -10,8 +11,8 @@ import (
 	"net"
 	"os"
 	"path/filepath"
-	"strings"
 	"sync"
+	"syscall"
 	"time"
 	"unicode/utf8"
 )
@@ -19,9 +20,12 @@ import (
 const (
 	pluginAttemptIDEnvironment = "BUILDOPT_PLUGIN_ATTEMPT_ID"
 	pluginSocketEnvironment    = "BUILDOPT_PLUGIN_EVENT_SOCKET"
+	pluginTokenEnvironment     = "BUILDOPT_PLUGIN_EVENT_TOKEN"
 
 	pluginHandshakeTimeout = 5 * time.Second
 	pluginMaxFrameBytes    = 1 << 20
+	pluginTokenBytes       = 32
+	pluginAuthMagic        = "BOA1"
 
 	pluginProducerHelloField = 10
 	pluginProducerKindGradle = 1
@@ -38,6 +42,8 @@ type pluginHandshakeServer struct {
 	attemptID string
 	directory string
 	listener  *net.UnixListener
+	token     []byte
+	tokenText string
 	result    chan pluginHandshakeResult
 
 	mutex      sync.Mutex
@@ -81,11 +87,19 @@ func startPluginHandshake() (*pluginHandshakeServer, error) {
 		_ = os.RemoveAll(directory)
 		return nil, err
 	}
+	token, tokenText, err := newLocalSecret(pluginTokenBytes)
+	if err != nil {
+		_ = listener.Close()
+		_ = os.RemoveAll(directory)
+		return nil, fmt.Errorf("generate plugin event credential: %w", err)
+	}
 
 	server := &pluginHandshakeServer{
 		attemptID: attemptID,
 		directory: directory,
 		listener:  listener,
+		token:     token,
+		tokenText: tokenText,
 		result:    make(chan pluginHandshakeResult, 1),
 	}
 	go server.serve()
@@ -100,6 +114,7 @@ func (server *pluginHandshakeServer) childEnvironment(
 		map[string]string{
 			pluginAttemptIDEnvironment: server.attemptID,
 			pluginSocketEnvironment:    server.listener.Addr().String(),
+			pluginTokenEnvironment:     server.tokenText,
 		},
 	)
 }
@@ -152,6 +167,13 @@ func (server *pluginHandshakeServer) serve() {
 		}
 		return
 	}
+	if err := authenticatePluginConnection(connection, server.token); err != nil {
+		server.result <- pluginHandshakeResult{
+			connected: true,
+			err:       fmt.Errorf("authenticate ProducerHello: %w", err),
+		}
+		return
+	}
 
 	eventBytes, err := readPluginDelimited(connection)
 	if err != nil {
@@ -197,6 +219,46 @@ func (server *pluginHandshakeServer) serve() {
 		connected:             true,
 		implementationVersion: hello.implementationVersion,
 	}
+}
+
+func authenticatePluginConnection(
+	connection *net.UnixConn,
+	expectedToken []byte,
+) error {
+	rawConnection, err := connection.SyscallConn()
+	if err != nil {
+		return errors.New("inspect plugin peer")
+	}
+	var peer *syscall.Ucred
+	var credentialErr error
+	if err := rawConnection.Control(func(fileDescriptor uintptr) {
+		peer, credentialErr = syscall.GetsockoptUcred(
+			int(fileDescriptor),
+			syscall.SOL_SOCKET,
+			syscall.SO_PEERCRED,
+		)
+	}); err != nil || credentialErr != nil || peer == nil {
+		return errors.New("inspect plugin peer")
+	}
+	if peer.Uid != uint32(os.Geteuid()) {
+		return errors.New("plugin peer user does not own the launcher")
+	}
+
+	preface := make([]byte, len(pluginAuthMagic)+pluginTokenBytes)
+	if _, err := io.ReadFull(connection, preface); err != nil {
+		return errors.New("read plugin authentication preface")
+	}
+	if subtle.ConstantTimeCompare(
+		preface[:len(pluginAuthMagic)],
+		[]byte(pluginAuthMagic),
+	) != 1 ||
+		subtle.ConstantTimeCompare(
+			preface[len(pluginAuthMagic):],
+			expectedToken,
+		) != 1 {
+		return errors.New("invalid plugin event credential")
+	}
+	return nil
 }
 
 func decodePluginHello(data []byte) (pluginHello, error) {
@@ -543,27 +605,4 @@ func newPluginAttemptID() (string, error) {
 		identifier[8:10],
 		identifier[10:16],
 	), nil
-}
-
-func replaceEnvironment(
-	environment []string,
-	overrides map[string]string,
-) []string {
-	result := make([]string, 0, len(environment)+len(overrides))
-	for _, entry := range environment {
-		key, _, found := strings.Cut(entry, "=")
-		if found {
-			if _, overridden := overrides[key]; overridden {
-				continue
-			}
-		}
-		result = append(result, entry)
-	}
-	for _, key := range []string{
-		pluginAttemptIDEnvironment,
-		pluginSocketEnvironment,
-	} {
-		result = append(result, key+"="+overrides[key])
-	}
-	return result
 }

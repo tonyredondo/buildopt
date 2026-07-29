@@ -31,7 +31,7 @@ gradlePlugin {
             id = "dev.buildopt"
             implementationClass = "dev.buildopt.gradle.BuildOptProjectPlugin"
             displayName = "BuildOpt Gradle Plugin"
-            description = "Neutral launcher handshake for BuildOpt"
+            description = "Authenticated neutral launcher rendezvous for BuildOpt"
         }
     }
 }

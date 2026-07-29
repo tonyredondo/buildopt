@@ -31,6 +31,7 @@ func TestPluginHandshakeRoundTrip(t *testing.T) {
 		"PATH=/usr/bin",
 		pluginAttemptIDEnvironment + "=parent-attempt",
 		pluginSocketEnvironment + "=/tmp/parent.sock",
+		pluginTokenEnvironment + "=parent-token",
 	})
 	if value := environmentValue(environment, pluginAttemptIDEnvironment); value != server.attemptID {
 		t.Fatalf("child attempt ID = %q, want %q", value, server.attemptID)
@@ -43,9 +44,13 @@ func TestPluginHandshakeRoundTrip(t *testing.T) {
 			server.listener.Addr().String(),
 		)
 	}
+	if value := environmentValue(environment, pluginTokenEnvironment); value != server.tokenText {
+		t.Fatalf("child event token was not replaced with the invocation credential")
+	}
 	for _, key := range []string{
 		pluginAttemptIDEnvironment,
 		pluginSocketEnvironment,
+		pluginTokenEnvironment,
 	} {
 		if count := environmentKeyCount(environment, key); count != 1 {
 			t.Fatalf("child environment contains %d %s entries, want 1", count, key)
@@ -59,6 +64,7 @@ func TestPluginHandshakeRoundTrip(t *testing.T) {
 	if err := connection.SetDeadline(time.Now().Add(time.Second)); err != nil {
 		t.Fatalf("set client deadline: %v", err)
 	}
+	writeTestPluginAuthentication(t, connection, server.token)
 
 	producerInstanceID := "gradle-producer-test"
 	event := marshalTestPluginHello(
@@ -182,6 +188,7 @@ func TestPluginHandshakeRejectsWrongInvocation(t *testing.T) {
 	if err := connection.SetDeadline(time.Now().Add(time.Second)); err != nil {
 		t.Fatalf("set client deadline: %v", err)
 	}
+	writeTestPluginAuthentication(t, connection, server.token)
 	event := marshalTestPluginHello(
 		"wrong-attempt",
 		"producer",
@@ -204,6 +211,38 @@ func TestPluginHandshakeRejectsWrongInvocation(t *testing.T) {
 		result.err == nil ||
 		!strings.Contains(result.err.Error(), "does not match this invocation") {
 		t.Fatalf("unexpected mismatched-invocation result: %+v", result)
+	}
+}
+
+func TestPluginHandshakeRejectsWrongCredential(t *testing.T) {
+	server, err := startPluginHandshake()
+	if err != nil {
+		t.Fatalf("start plugin handshake: %v", err)
+	}
+
+	connection, err := net.DialTimeout(
+		"unix",
+		server.listener.Addr().String(),
+		time.Second,
+	)
+	if err != nil {
+		t.Fatalf("connect to plugin handshake: %v", err)
+	}
+	wrongToken := bytes.Repeat([]byte{0x5a}, pluginTokenBytes)
+	if err := connection.SetDeadline(time.Now().Add(time.Second)); err != nil {
+		t.Fatalf("set invalid-credential deadline: %v", err)
+	}
+	writeTestPluginAuthentication(t, connection, wrongToken)
+	if _, err := connection.Read(make([]byte, 1)); err == nil {
+		t.Fatal("invalid plugin credential did not close the connection")
+	}
+	_ = connection.Close()
+
+	result := server.finish()
+	if !result.connected ||
+		result.err == nil ||
+		!strings.Contains(result.err.Error(), "invalid plugin event credential") {
+		t.Fatalf("unexpected invalid-credential result: %+v", result)
 	}
 }
 
@@ -240,6 +279,18 @@ func TestPluginHandshakeFinishesWithoutProducer(t *testing.T) {
 	}
 	if _, err := os.Stat(directory); !errors.Is(err, os.ErrNotExist) {
 		t.Fatalf("handshake directory remains after no-producer finish: %v", err)
+	}
+}
+
+func writeTestPluginAuthentication(
+	t *testing.T,
+	connection net.Conn,
+	token []byte,
+) {
+	t.Helper()
+	preface := append([]byte(pluginAuthMagic), token...)
+	if _, err := connection.Write(preface); err != nil {
+		t.Fatalf("write plugin authentication: %v", err)
 	}
 }
 

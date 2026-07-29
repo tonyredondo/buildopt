@@ -11,7 +11,6 @@ import java.net.UnixDomainSocketAddress;
 import java.nio.channels.Channels;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,11 +23,12 @@ import org.gradle.tooling.events.FinishEvent;
 import org.gradle.tooling.events.OperationCompletionListener;
 
 /**
- * Per-invocation producer handshake with the BuildOpt launcher.
+ * Per-invocation authenticated producer handshake with the BuildOpt launcher.
  *
  * <p>The service intentionally sends only the {@code ProducerHello} frame
- * defined by {@code task_events.proto}. A missing or rejected receiver disables
- * BuildOpt for the invocation without failing the baseline Gradle build.
+ * defined by {@code task_events.proto} after verifying the local gateway and
+ * event credential. A missing or rejected receiver disables BuildOpt for the
+ * invocation without failing the baseline Gradle build.
  */
 public abstract class BuildOptHandshakeService
         implements
@@ -36,42 +36,32 @@ public abstract class BuildOptHandshakeService
                 OperationCompletionListener,
                 AutoCloseable {
     private static final Logger LOGGER = Logging.getLogger(BuildOptHandshakeService.class);
-    private static final String ATTEMPT_ID_ENVIRONMENT = "BUILDOPT_PLUGIN_ATTEMPT_ID";
-    private static final String SOCKET_ENVIRONMENT = "BUILDOPT_PLUGIN_EVENT_SOCKET";
     private static final int MAX_FRAME_BYTES = 1 << 20;
     private static final long ACK_ACCEPTED = 1;
 
     /** Creates the lazily realized service and attempts one handshake. */
     public BuildOptHandshakeService() {
-        String attemptId = System.getenv(ATTEMPT_ID_ENVIRONMENT);
-        String socketPath = System.getenv(SOCKET_ENVIRONMENT);
-        if (attemptId == null && socketPath == null) {
-            return;
-        }
-        if (isBlank(attemptId) || isBlank(socketPath)) {
-            LOGGER.warn(
-                    "BuildOpt plugin handshake unavailable: incomplete launcher context");
-            return;
-        }
-
-        String producerInstanceId = UUID.randomUUID().toString();
-        String implementationVersion = implementationVersion();
         try {
+            BuildOptRendezvousContext context =
+                    BuildOptRendezvousContext.fromEnvironment();
+            if (context == null) {
+                return;
+            }
+            context.verifyGateway();
             exchangeHello(
-                    attemptId,
-                    producerInstanceId,
-                    implementationVersion,
-                    Path.of(socketPath));
+                    context,
+                    UUID.randomUUID().toString(),
+                    implementationVersion());
         } catch (IOException | RuntimeException exception) {
             LOGGER.warn(
-                    "BuildOpt plugin handshake unavailable: {}",
+                    "BuildOpt authenticated rendezvous unavailable: {}",
                     exception.getMessage());
         }
     }
 
     @Override
     public void close() {
-        // WS-003 owns only the one-frame handshake; there is no retained channel.
+        // WS-004 owns only readiness plus one handshake; there is no retained channel.
     }
 
     @Override
@@ -80,21 +70,22 @@ public abstract class BuildOptHandshakeService
     }
 
     private static void exchangeHello(
-            String attemptId,
+            BuildOptRendezvousContext context,
             String producerInstanceId,
-            String implementationVersion,
-            Path socketPath)
+            String implementationVersion)
             throws IOException {
-        UnixDomainSocketAddress address = UnixDomainSocketAddress.of(socketPath);
+        UnixDomainSocketAddress address =
+                UnixDomainSocketAddress.of(context.socketPath());
         try (SocketChannel channel = SocketChannel.open(StandardProtocolFamily.UNIX)) {
             channel.connect(address);
             OutputStream output = Channels.newOutputStream(channel);
             InputStream input = Channels.newInputStream(channel);
 
+            context.writeEventAuthentication(output);
             byte[] hello = marshalProducerHello(1, 0, 1, implementationVersion);
             byte[] event =
                     marshalTaskEvent(
-                            attemptId,
+                            context.attemptId(),
                             producerInstanceId,
                             1,
                             10,
@@ -102,7 +93,7 @@ public abstract class BuildOptHandshakeService
             writeDelimited(output, event);
 
             TaskEventAck ack = decodeTaskEventAck(readDelimited(input));
-            if (!attemptId.equals(ack.attemptId)
+            if (!context.attemptId().equals(ack.attemptId)
                     || !producerInstanceId.equals(ack.producerInstanceId)
                     || ack.sequenceNumber != 1
                     || ack.status != ACK_ACCEPTED) {
