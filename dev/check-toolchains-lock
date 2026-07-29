@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_lock="${buildopt_script_dir}/toolchains.lock.yaml"
+buildopt_tracker="${buildopt_repo_root}/implementation-tracker.md"
+
+if ! command -v jq >/dev/null 2>&1; then
+    printf 'jq is required to validate %s\n' "${buildopt_lock}" >&2
+    exit 1
+fi
+
+if [[ ! -f "${buildopt_lock}" ]]; then
+    printf 'missing toolchain lock: %s\n' "${buildopt_lock}" >&2
+    exit 1
+fi
+
+if [[ ! -f "${buildopt_tracker}" ]]; then
+    printf 'missing implementation tracker: %s\n' "${buildopt_tracker}" >&2
+    exit 1
+fi
+
+jq -e '
+    def nonempty:
+        type == "string" and length > 0;
+    def identifier:
+        nonempty and test("^[a-z0-9][a-z0-9-]*$");
+    def gate:
+        nonempty and test("^[A-Z0-9]+(?:-[A-Z0-9]+)*(?:/[A-Z0-9]+)?$");
+    def sha256:
+        type == "string" and test("^[0-9a-f]{64}$");
+
+    . as $lock |
+    (keys == ["artifacts", "platforms", "schemaVersion"]) and
+    (.schemaVersion == "buildopt.dev/toolchains-lock/v1") and
+    (.platforms | type == "array" and length > 0) and
+    (all(.platforms[];
+        keys == ["architecture", "id", "operatingSystem"] and
+        (.id | identifier) and
+        (.operatingSystem | identifier) and
+        (.architecture | identifier)
+    )) and
+    (([.platforms[].id] | unique | length) == (.platforms | length)) and
+    (.artifacts | type == "array" and length > 0) and
+    (all(.artifacts[];
+        keys == [
+            "adoption",
+            "id",
+            "kind",
+            "platform",
+            "provider",
+            "requiredBy",
+            "sha256",
+            "url",
+            "version"
+        ] and
+        (.id | identifier) and
+        (.version | nonempty) and
+        (.adoption | IN("required", "candidate", "optional")) and
+        (.kind | IN("binary", "provider-manifest", "tar.gz", "tar.xz", "zip")) and
+        (.platform | identifier) and
+        (.provider | identifier) and
+        (.url | type == "string" and test("^https://")) and
+        (.sha256 | sha256) and
+        (.requiredBy | type == "array" and length > 0) and
+        (all(.requiredBy[]; gate)) and
+        ((.requiredBy | unique | length) == (.requiredBy | length))
+    )) and
+    (([.artifacts[].id] | unique | length) == (.artifacts | length)) and
+    (([.artifacts[].url] | unique | length) == (.artifacts | length)) and
+    (all(.artifacts[];
+        .platform as $platform |
+        any($lock.platforms[]; .id == $platform)
+    ))
+' "${buildopt_lock}" >/dev/null
+
+while IFS= read -r buildopt_required_by; do
+    printf -v buildopt_tracker_token '\x60%s\x60' "${buildopt_required_by}"
+    if ! grep -Fq "${buildopt_tracker_token}" "${buildopt_tracker}"; then
+        printf 'unknown tracker reference in toolchain lock: %s\n' \
+            "${buildopt_required_by}" >&2
+        exit 1
+    fi
+done < <(jq -r '[.artifacts[].requiredBy[]] | unique[]' "${buildopt_lock}")
+
+buildopt_platform_count=$(jq '.platforms | length' "${buildopt_lock}")
+buildopt_artifact_count=$(jq '.artifacts | length' "${buildopt_lock}")
+
+printf 'ENV-001 toolchain lock OK: %s artifacts for %s platform\n' \
+    "${buildopt_artifact_count}" \
+    "${buildopt_platform_count}"

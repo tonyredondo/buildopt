@@ -27,6 +27,14 @@ All repository content must be written in English. This includes code, owned ide
 - Record the command, result, and evidence before moving an item to `DONE`.
 - Keep the Gradle baseline and bypass functional before activating any optimization.
 
+## Toolchain changes
+
+- Follow the lock scope and update procedure in [`dev/README.md`](./dev/README.md).
+- Change a tool's version, immutable source URL, and SHA-256 together.
+- Never add workstation paths, usernames, credentials, or package-manager-specific install locations to the repository lock.
+- A pinned candidate is not adopted until its tracker decision and smoke evidence close.
+- Validate every lock change with `./dev/check-toolchains-lock`.
+
 ## Generated changes
 
 Generated files must identify their source schema or IDL and the reproducible command. CI will reject stale generated code when `F0-005` materializes that policy.

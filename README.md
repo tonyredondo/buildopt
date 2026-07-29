@@ -50,10 +50,11 @@ From the repository root:
 
 ```bash
 ./dev/check-layout
+./dev/check-toolchains-lock
 ./dev/check-golden-lane --static
 ```
 
-The first command checks that the Git repository and all module boundaries defined by `F0-001` exist. The second validates the golden lane configuration and checksums.
+The commands validate the repository layout, the portable toolchain lock, and the golden lane configuration and checksums.
 
 Local smoke test with JDK 21:
 
