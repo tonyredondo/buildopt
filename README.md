@@ -2,7 +2,7 @@
 
 Monorepo for the autonomous Gradle build optimization platform. The product observes real builds, applies only qualified and reversible optimizations, preserves Gradle behavior as the baseline, and measures net time savings inside the neutral measurement envelope.
 
-The repository is in **Phase 0**. This initial skeleton defines technical ownership and module boundaries; it does not yet contain active optimizations or distributable artifacts.
+The repository is in **Phase 0**. It defines technical ownership and module boundaries, locked development toolchains, and the first executable observability contract; it does not yet contain active optimizations or distributable artifacts.
 
 ## Sources of truth
 
@@ -51,6 +51,7 @@ From the repository root:
 ```bash
 ./dev/check-layout
 ./dev/check-normative-layout
+./dev/check-build-session-schema
 ./dev/check-toolchains-lock
 ./dev/doctor
 ./dev/test-doctor
@@ -66,7 +67,7 @@ From the repository root:
 ./dev/check-golden-lane --static
 ```
 
-The commands validate the repository and Phase 0 normative-package layouts, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, and actionlint provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, repository shell scripts, an actionlint workflow smoke fixture, and golden lane configuration and checksums.
+The commands validate the repository and Phase 0 normative-package layouts, the first Draft 2020-12 contract and its positive/negative fixtures, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, and actionlint provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, repository shell scripts, an actionlint workflow smoke fixture, and golden lane configuration and checksums.
 
 Project-local smoke tests:
 

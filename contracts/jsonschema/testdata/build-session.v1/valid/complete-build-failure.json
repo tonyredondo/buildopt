@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "BUILD_SESSION",
+  "complete": true,
+  "build": {
+    "id": "build-failure-01",
+    "repositoryId": "repository-sample",
+    "revision": "5bb41f0",
+    "startedAt": "2026-07-29T13:00:00Z",
+    "completedAt": "2026-07-29T13:00:45Z",
+    "outcome": "BUILD_FAILURE",
+    "exitCode": 1,
+    "requiredDeliverablesStatus": "NOT_AVAILABLE",
+    "launcherVersion": "0.1.0",
+    "pluginVersion": "0.1.0"
+  },
+  "gradleInvocations": [
+    {
+      "id": "gradle-invocation-failure-1",
+      "requestedTasks": [
+        "build"
+      ],
+      "startedAt": "2026-07-29T13:00:00.200Z",
+      "completedAt": "2026-07-29T13:00:44.800Z",
+      "outcome": "BUILD_FAILURE",
+      "exitCode": 1,
+      "processMs": {
+        "state": "COMPLETE",
+        "unit": "ms",
+        "method": "EXACT",
+        "valueMs": 44600
+      }
+    }
+  ],
+  "measurementMetadata": {
+    "metricDefinitionVersion": "build-impact-v1",
+    "status": "COMPLETE",
+    "durationUnit": "ms",
+    "clockSource": "MONOTONIC",
+    "timestampFormat": "RFC3339_UTC",
+    "envelopeVersion": "ci-provider-1-v1",
+    "startBoundary": "NEUTRAL_ENVELOPE_HANDOFF",
+    "endBoundary": "EXIT_CODE_AND_REQUIRED_DELIVERABLES_AVAILABLE",
+    "reconciliationToleranceMs": 5
+  },
+  "experimentAssignment": {
+    "experimentId": "experiment-failure-guardrail",
+    "cohortId": "cohort-pr-linux-amd64",
+    "candidateId": "candidate-launcher-0.1.0",
+    "measurementEpoch": 2,
+    "effectScope": "PRODUCT_TOTAL",
+    "baselineDefinitionDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "controlDefinitionDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "assignmentUnit": "CI_JOB",
+    "arm": "CANDIDATE",
+    "assignmentProbability": 0.5,
+    "assignedAt": "2026-07-29T12:59:58Z",
+    "eligibility": "ELIGIBLE"
+  },
+  "performance": {
+    "customerVisibleBuildMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 45000
+    },
+    "customerVisibleFeedbackMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 57000
+    },
+    "ciQueueMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 12000
+    },
+    "gradleProcessUnionMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 44600
+    },
+    "buildCriticalPathMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "APPROXIMATED",
+      "valueMs": 43100,
+      "methodDescription": "Tier 1 plugin task-graph interval model"
+    },
+    "timeToFirstBuildFailureMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 42000
+    }
+  },
+  "workload": {
+    "environment": "CI",
+    "pipelineClass": "pull-request",
+    "runnerClass": "linux-amd64-4c-16g-v1",
+    "workspaceState": "EPHEMERAL",
+    "daemonState": "COLD",
+    "cacheState": "WARM_REMOTE",
+    "changeClass": "IMPLEMENTATION",
+    "sourceStateDigest": "hmac-sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "requestedWorkManifestDigest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "requiredDeliverablesManifestDigest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "workUnitsFingerprint": "hmac-sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "tokenKeyVersion": "tenant-7-token-2026-q3",
+    "trustDomain": "tenant-7-production"
+  },
+  "capabilities": {
+    "measurementEnvelope": {
+      "method": "EXACT"
+    },
+    "taskOutcomes": {
+      "method": "EXACT"
+    },
+    "criticalPath": {
+      "method": "APPROXIMATED",
+      "methodDescription": "Tier 1 plugin task-graph interval model"
+    },
+    "cacheMissReasons": {
+      "method": "UNAVAILABLE",
+      "reason": "The active Gradle adapter does not expose stable miss causes"
+    },
+    "resourceUsage": {
+      "method": "UNAVAILABLE",
+      "reason": "Resource instrumentation was disabled for this fixture"
+    },
+    "productOverhead": {
+      "method": "UNAVAILABLE",
+      "reason": "Product-overhead decomposition was disabled for this fixture"
+    },
+    "costInputs": {
+      "method": "UNAVAILABLE",
+      "reason": "No pricing adapter was configured for this fixture"
+    }
+  }
+}

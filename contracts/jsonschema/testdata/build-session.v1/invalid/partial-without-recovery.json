@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "BUILD_SESSION",
+  "complete": false,
+  "build": {
+    "id": "build-invalid-missing-recovery",
+    "repositoryId": "repository-sample",
+    "revision": "a91e4dc",
+    "startedAt": "2026-07-29T12:00:00Z",
+    "completedAt": "2026-07-29T12:00:02Z",
+    "outcome": "CANCELLED",
+    "exitCode": null,
+    "requiredDeliverablesStatus": "UNKNOWN"
+  },
+  "gradleInvocations": [],
+  "measurementMetadata": {
+    "metricDefinitionVersion": "build-impact-v1",
+    "status": "PARTIAL",
+    "durationUnit": "ms",
+    "clockSource": "MONOTONIC",
+    "timestampFormat": "RFC3339_UTC",
+    "envelopeVersion": "local-envelope-v1",
+    "startBoundary": "NEUTRAL_ENVELOPE_HANDOFF",
+    "endBoundary": "EXIT_CODE_AND_REQUIRED_DELIVERABLES_AVAILABLE",
+    "reconciliationToleranceMs": 5
+  },
+  "experimentAssignment": {
+    "measurementEpoch": 0,
+    "effectScope": "PRODUCT_TOTAL",
+    "baselineDefinitionDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "assignmentUnit": "BUILD_SESSION",
+    "arm": "PASSTHROUGH",
+    "assignmentProbability": 0,
+    "assignedAt": "2026-07-29T11:59:59Z",
+    "eligibility": "EXCLUDED",
+    "exclusionReason": "No active experiment"
+  },
+  "performance": {
+    "customerVisibleBuildMs": {
+      "state": "PARTIAL",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 2000,
+      "reason": "The final export was not assembled"
+    },
+    "customerVisibleFeedbackMs": {
+      "state": "UNAVAILABLE",
+      "unit": "ms",
+      "method": "UNAVAILABLE",
+      "reason": "No authenticated CI adapter"
+    },
+    "ciQueueMs": {
+      "state": "UNAVAILABLE",
+      "unit": "ms",
+      "method": "UNAVAILABLE",
+      "reason": "No authenticated CI adapter"
+    },
+    "gradleProcessUnionMs": {
+      "state": "UNAVAILABLE",
+      "unit": "ms",
+      "method": "UNAVAILABLE",
+      "reason": "No Gradle invocation was recorded"
+    },
+    "buildCriticalPathMs": {
+      "state": "UNAVAILABLE",
+      "unit": "ms",
+      "method": "UNAVAILABLE",
+      "reason": "No critical-path adapter"
+    },
+    "timeToFirstBuildFailureMs": {
+      "state": "UNAVAILABLE",
+      "unit": "ms",
+      "method": "UNAVAILABLE",
+      "reason": "The session was cancelled"
+    }
+  },
+  "workload": {
+    "environment": "LOCAL",
+    "pipelineClass": "local-interactive",
+    "runnerClass": "linux-amd64-developer",
+    "workspaceState": "REUSED",
+    "daemonState": "UNKNOWN",
+    "cacheState": "UNKNOWN",
+    "changeClass": "IMPLEMENTATION",
+    "sourceStateDigest": "hmac-sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "requestedWorkManifestDigest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "requiredDeliverablesManifestDigest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "workUnitsFingerprint": "hmac-sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "tokenKeyVersion": "local-token-v1",
+    "trustDomain": "developer-local"
+  },
+  "capabilities": {
+    "measurementEnvelope": {
+      "method": "EXACT"
+    },
+    "taskOutcomes": {
+      "method": "UNAVAILABLE",
+      "reason": "No Gradle invocation was recorded"
+    },
+    "criticalPath": {
+      "method": "UNAVAILABLE",
+      "reason": "No critical-path adapter"
+    },
+    "cacheMissReasons": {
+      "method": "UNAVAILABLE",
+      "reason": "No cache interaction was recorded"
+    },
+    "resourceUsage": {
+      "method": "UNAVAILABLE",
+      "reason": "Resource instrumentation was disabled"
+    },
+    "productOverhead": {
+      "method": "UNAVAILABLE",
+      "reason": "Component timing events are incomplete"
+    },
+    "costInputs": {
+      "method": "UNAVAILABLE",
+      "reason": "No pricing adapter is configured"
+    }
+  }
+}

@@ -1,0 +1,237 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "BUILD_SESSION",
+  "complete": true,
+  "build": {
+    "id": "build-01K4Y7B9",
+    "repositoryId": "repository-payments-platform",
+    "revision": "8c74f2a",
+    "startedAt": "2026-07-21T10:14:02Z",
+    "completedAt": "2026-07-21T10:18:18.340Z",
+    "outcome": "SUCCESS",
+    "exitCode": 0,
+    "requiredDeliverablesStatus": "AVAILABLE",
+    "policyVersion": 17,
+    "policyDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+    "configurationPolicyDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+    "revocationEpoch": 42,
+    "launcherVersion": "1.3.0",
+    "pluginVersion": "1.3.0",
+    "cacheNamespace": "tenant-7/repo-42/stable/linux-amd64"
+  },
+  "gradleInvocations": [
+    {
+      "id": "gradle-invocation-1",
+      "requestedTasks": [
+        "assemble"
+      ],
+      "startedAt": "2026-07-21T10:14:02.205Z",
+      "completedAt": "2026-07-21T10:18:18.130Z",
+      "outcome": "SUCCESS",
+      "exitCode": 0,
+      "processMs": {
+        "state": "COMPLETE",
+        "unit": "ms",
+        "method": "EXACT",
+        "valueMs": 255925
+      }
+    }
+  ],
+  "measurementMetadata": {
+    "metricDefinitionVersion": "build-impact-v1",
+    "status": "COMPLETE",
+    "durationUnit": "ms",
+    "clockSource": "MONOTONIC",
+    "timestampFormat": "RFC3339_UTC",
+    "envelopeVersion": "ci-provider-1-v1",
+    "startBoundary": "NEUTRAL_ENVELOPE_HANDOFF",
+    "endBoundary": "EXIT_CODE_AND_REQUIRED_DELIVERABLES_AVAILABLE",
+    "reconciliationToleranceMs": 5
+  },
+  "experimentAssignment": {
+    "experimentId": "experiment-01K4Y6ZZ",
+    "cohortId": "cohort-pr-linux-amd64",
+    "candidateId": "candidate-launcher-1.3.0",
+    "measurementEpoch": 3,
+    "effectScope": "PRODUCT_TOTAL",
+    "baselineDefinitionDigest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+    "controlDefinitionDigest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+    "assignmentUnit": "CI_JOB",
+    "arm": "CANDIDATE",
+    "assignmentProbability": 0.5,
+    "assignedAt": "2026-07-21T10:13:58Z",
+    "eligibility": "ELIGIBLE"
+  },
+  "performance": {
+    "customerVisibleBuildMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 256340
+    },
+    "customerVisibleFeedbackMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 271340
+    },
+    "ciQueueMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 15000
+    },
+    "runnerOccupiedMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 256500
+    },
+    "gradleProcessUnionMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 255925
+    },
+    "launcherAndPolicyMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 210
+    },
+    "gatewayStartupMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 85
+    },
+    "gradleStartupAndInitializationMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 6495
+    },
+    "configurationMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 18420
+    },
+    "executionOrRestoreMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 230600
+    },
+    "finalizationMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 410
+    },
+    "unattributedMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 120
+    },
+    "buildCriticalPathMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "APPROXIMATED",
+      "valueMs": 228110,
+      "methodDescription": "Tier 1 plugin task-graph interval model"
+    },
+    "timeToFirstBuildFailureMs": {
+      "state": "UNAVAILABLE",
+      "unit": "ms",
+      "method": "UNAVAILABLE",
+      "reason": "The build completed successfully"
+    },
+    "testOwnedTaskExecutionMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "APPROXIMATED",
+      "valueMs": 78000,
+      "methodDescription": "Temporal sum from Test Optimization task ownership markers"
+    }
+  },
+  "model": {
+    "version": "saving-model-12",
+    "estimatedNetBuildTimeSavedMs": 267000,
+    "estimatedNetBuildTimeSavedInterval95Ms": [
+      219000,
+      306000
+    ]
+  },
+  "workload": {
+    "environment": "CI",
+    "pipelineClass": "pull-request",
+    "runnerClass": "linux-amd64-4c-16g-v1",
+    "workspaceState": "EPHEMERAL",
+    "daemonState": "COLD",
+    "cacheState": "WARM_REMOTE",
+    "changeClass": "IMPLEMENTATION",
+    "sourceStateDigest": "hmac-sha256:5555555555555555555555555555555555555555555555555555555555555555",
+    "requestedWorkManifestDigest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+    "testOptimizationPolicyDigest": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+    "requiredDeliverablesManifestDigest": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+    "workUnitsFingerprint": "hmac-sha256:9999999999999999999999999999999999999999999999999999999999999999",
+    "tokenKeyVersion": "tenant-7-token-2026-q3",
+    "trustDomain": "tenant-7-production"
+  },
+  "resources": {
+    "cpuMs": 812000,
+    "peakRssBytes": 6384218112,
+    "gcPauseMs": 3290,
+    "diskReadBytes": 921330176,
+    "diskWriteBytes": 413200384,
+    "networkBytes": 27122240
+  },
+  "observedCostInputs": {
+    "grain": "BUILD_SESSION",
+    "currency": "EUR",
+    "pricingRegion": "eu-west",
+    "priceModelVersion": "ci-price-2026-07",
+    "productRuntimeCost": 0.01,
+    "incrementalStorageCost": 0.004,
+    "incrementalNetworkCost": 0.006
+  },
+  "cache": {
+    "localHits": 12,
+    "remoteHits": 31,
+    "misses": 7,
+    "timeWeightedHitRate": 0.72,
+    "usefulHitRate": 0.68,
+    "downloadedBytes": 18423312,
+    "lookupMs": 820,
+    "restoreMs": 6130,
+    "storeMs": 940
+  },
+  "capabilities": {
+    "measurementEnvelope": {
+      "method": "EXACT"
+    },
+    "taskOutcomes": {
+      "method": "EXACT"
+    },
+    "criticalPath": {
+      "method": "APPROXIMATED",
+      "methodDescription": "Tier 1 plugin task-graph interval model"
+    },
+    "cacheMissReasons": {
+      "method": "UNAVAILABLE",
+      "reason": "The active Gradle adapter does not expose stable miss causes"
+    },
+    "resourceUsage": {
+      "method": "APPROXIMATED",
+      "methodDescription": "Runner cgroup counters sampled at session boundaries"
+    },
+    "productOverhead": {
+      "method": "EXACT"
+    },
+    "costInputs": {
+      "method": "EXACT"
+    }
+  }
+}

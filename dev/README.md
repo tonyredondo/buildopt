@@ -130,7 +130,17 @@ Validate the namespace skeleton defined by RFC §29.2:
 ./dev/check-normative-layout
 ```
 
-The checker requires all 14 contract, vector, specification, benchmark, and ADR namespaces, their non-empty indexes, and parent directories for the 26 planned normative artifacts. It also preserves the already-materialized golden-lane ADR and runner contract and rejects an empty file at any planned artifact path. F0-010 creates only this structure; each schema, API, IDL, vector, specification, benchmark, or ADR remains owned by its later tracker item.
+The checker requires all 14 contract, vector, specification, benchmark, and ADR namespaces, their non-empty indexes, and parent directories for the 26 planned normative artifacts. It also preserves the materialized golden-lane ADR, runner contract, and `BUILD_SESSION v1` schema and rejects an empty file at any planned artifact path. F0-010 created the structure; each schema, API, IDL, vector, specification, benchmark, or ADR remains owned by its later tracker item.
+
+## BUILD_SESSION schema validation
+
+Compile the normative `BUILD_SESSION v1` contract and execute every positive and negative fixture:
+
+```bash
+./dev/check-build-session-schema
+```
+
+The checker runs through the locked Go 1.26.5 toolchain. It uses the exact Draft 2020-12 validator version recorded in [`schema-validator/go.mod`](./schema-validator/go.mod) and its `go.sum`, enables date-time format assertions, and requires each invalid fixture to fail for its intended diagnostic. The isolated test module leaves the product module's offline toolchain smoke unchanged and does not depend on a workstation-global JSON Schema command.
 
 ## JVM release validation
 
@@ -201,6 +211,7 @@ Run the lock and doctor contract tests from the repository root:
 
 ```bash
 ./dev/check-normative-layout
+./dev/check-build-session-schema
 ./dev/check-toolchains-lock
 ./dev/test-doctor
 ./dev/test-jdk-toolchain

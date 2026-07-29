@@ -1,0 +1,137 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "BUILD_SESSION",
+  "complete": true,
+  "build": {
+    "id": "build-invalid-unavailable-value",
+    "repositoryId": "repository-sample",
+    "revision": "a91e4dc",
+    "startedAt": "2026-07-29T12:00:00Z",
+    "completedAt": "2026-07-29T12:00:10Z",
+    "outcome": "SUCCESS",
+    "exitCode": 0,
+    "requiredDeliverablesStatus": "AVAILABLE"
+  },
+  "gradleInvocations": [
+    {
+      "id": "gradle-invocation-1",
+      "requestedTasks": [
+        "build"
+      ],
+      "startedAt": "2026-07-29T12:00:00.100Z",
+      "completedAt": "2026-07-29T12:00:09.900Z",
+      "outcome": "SUCCESS",
+      "exitCode": 0,
+      "processMs": {
+        "state": "COMPLETE",
+        "unit": "ms",
+        "method": "EXACT",
+        "valueMs": 9800
+      }
+    }
+  ],
+  "measurementMetadata": {
+    "metricDefinitionVersion": "build-impact-v1",
+    "status": "COMPLETE",
+    "durationUnit": "ms",
+    "clockSource": "MONOTONIC",
+    "timestampFormat": "RFC3339_UTC",
+    "envelopeVersion": "local-envelope-v1",
+    "startBoundary": "NEUTRAL_ENVELOPE_HANDOFF",
+    "endBoundary": "EXIT_CODE_AND_REQUIRED_DELIVERABLES_AVAILABLE",
+    "reconciliationToleranceMs": 5
+  },
+  "experimentAssignment": {
+    "measurementEpoch": 0,
+    "effectScope": "PRODUCT_TOTAL",
+    "baselineDefinitionDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "assignmentUnit": "BUILD_SESSION",
+    "arm": "PASSTHROUGH",
+    "assignmentProbability": 0,
+    "assignedAt": "2026-07-29T11:59:59Z",
+    "eligibility": "EXCLUDED",
+    "exclusionReason": "No active experiment"
+  },
+  "performance": {
+    "customerVisibleBuildMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 10000
+    },
+    "customerVisibleFeedbackMs": {
+      "state": "UNAVAILABLE",
+      "unit": "ms",
+      "method": "UNAVAILABLE",
+      "valueMs": 10000,
+      "reason": "No authenticated CI adapter"
+    },
+    "ciQueueMs": {
+      "state": "UNAVAILABLE",
+      "unit": "ms",
+      "method": "UNAVAILABLE",
+      "reason": "No authenticated CI adapter"
+    },
+    "gradleProcessUnionMs": {
+      "state": "COMPLETE",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 9800
+    },
+    "buildCriticalPathMs": {
+      "state": "UNAVAILABLE",
+      "unit": "ms",
+      "method": "UNAVAILABLE",
+      "reason": "No critical-path adapter"
+    },
+    "timeToFirstBuildFailureMs": {
+      "state": "UNAVAILABLE",
+      "unit": "ms",
+      "method": "UNAVAILABLE",
+      "reason": "The build completed successfully"
+    }
+  },
+  "workload": {
+    "environment": "LOCAL",
+    "pipelineClass": "local-interactive",
+    "runnerClass": "linux-amd64-developer",
+    "workspaceState": "REUSED",
+    "daemonState": "WARM",
+    "cacheState": "DISABLED",
+    "changeClass": "IMPLEMENTATION",
+    "sourceStateDigest": "hmac-sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "requestedWorkManifestDigest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "requiredDeliverablesManifestDigest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "workUnitsFingerprint": "hmac-sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "tokenKeyVersion": "local-token-v1",
+    "trustDomain": "developer-local"
+  },
+  "capabilities": {
+    "measurementEnvelope": {
+      "method": "EXACT"
+    },
+    "taskOutcomes": {
+      "method": "EXACT"
+    },
+    "criticalPath": {
+      "method": "UNAVAILABLE",
+      "reason": "No critical-path adapter"
+    },
+    "cacheMissReasons": {
+      "method": "UNAVAILABLE",
+      "reason": "The managed cache was disabled"
+    },
+    "resourceUsage": {
+      "method": "UNAVAILABLE",
+      "reason": "Resource instrumentation was disabled"
+    },
+    "productOverhead": {
+      "method": "UNAVAILABLE",
+      "reason": "Product-overhead decomposition was disabled"
+    },
+    "costInputs": {
+      "method": "UNAVAILABLE",
+      "reason": "No pricing adapter is configured"
+    }
+  }
+}

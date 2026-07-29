@@ -1,0 +1,1538 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/build-session.v1.schema.json",
+  "title": "BuildOpt BUILD_SESSION v1",
+  "description": "Normative immutable build-session export for OBS-002 and METRICS-001. A BUILD_SESSION contains only facts, pre-outcome assignment, observed inputs, and per-session estimates available for this session; aggregate causal effects belong to EXPERIMENT_RESULT.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "complete",
+    "build",
+    "gradleInvocations",
+    "measurementMetadata",
+    "experimentAssignment",
+    "performance",
+    "workload",
+    "capabilities"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "description": "Schema major and minor version. Compatible additions require a new minor schema; incompatible changes require a new major schema."
+    },
+    "recordType": {
+      "const": "BUILD_SESSION"
+    },
+    "complete": {
+      "type": "boolean",
+      "description": "True only for the atomically published final session. A recovered record with missing event ranges is false."
+    },
+    "build": {
+      "$ref": "#/$defs/build"
+    },
+    "gradleInvocations": {
+      "type": "array",
+      "description": "Component Gradle processes in this session. Infra failures and cancellations may occur before the first invocation.",
+      "items": {
+        "$ref": "#/$defs/gradleInvocation"
+      },
+      "maxItems": 1024
+    },
+    "measurementMetadata": {
+      "$ref": "#/$defs/measurementMetadata"
+    },
+    "experimentAssignment": {
+      "$ref": "#/$defs/experimentAssignment"
+    },
+    "performance": {
+      "$ref": "#/$defs/performance"
+    },
+    "model": {
+      "$ref": "#/$defs/modelEstimate"
+    },
+    "workload": {
+      "$ref": "#/$defs/workload"
+    },
+    "resources": {
+      "$ref": "#/$defs/resources"
+    },
+    "observedCostInputs": {
+      "$ref": "#/$defs/observedCostInputs"
+    },
+    "cache": {
+      "$ref": "#/$defs/cacheSummary"
+    },
+    "capabilities": {
+      "$ref": "#/$defs/capabilities"
+    },
+    "recovery": {
+      "$ref": "#/$defs/recovery"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "complete": {
+            "const": true
+          }
+        },
+        "required": [
+          "complete"
+        ]
+      },
+      "then": {
+        "properties": {
+          "measurementMetadata": {
+            "properties": {
+              "status": {
+                "const": "COMPLETE"
+              }
+            }
+          },
+          "performance": {
+            "properties": {
+              "customerVisibleBuildMs": {
+                "properties": {
+                  "state": {
+                    "const": "COMPLETE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "not": {
+          "required": [
+            "recovery"
+          ]
+        }
+      },
+      "else": {
+        "properties": {
+          "measurementMetadata": {
+            "properties": {
+              "status": {
+                "const": "PARTIAL"
+              }
+            }
+          }
+        },
+        "required": [
+          "recovery"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "build": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "SUCCESS",
+                  "BUILD_FAILURE"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          }
+        },
+        "required": [
+          "build"
+        ]
+      },
+      "then": {
+        "properties": {
+          "gradleInvocations": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "build": {
+            "properties": {
+              "outcome": {
+                "const": "BUILD_FAILURE"
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          }
+        },
+        "required": [
+          "build"
+        ]
+      },
+      "then": {
+        "properties": {
+          "performance": {
+            "properties": {
+              "timeToFirstBuildFailureMs": {
+                "properties": {
+                  "state": {
+                    "enum": [
+                      "COMPLETE",
+                      "PARTIAL"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "performance": {
+            "properties": {
+              "timeToFirstBuildFailureMs": {
+                "properties": {
+                  "state": {
+                    "const": "UNAVAILABLE"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "gradleInvocations": {
+            "maxItems": 0
+          }
+        },
+        "required": [
+          "gradleInvocations"
+        ]
+      },
+      "then": {
+        "properties": {
+          "performance": {
+            "properties": {
+              "gradleProcessUnionMs": {
+                "properties": {
+                  "state": {
+                    "const": "UNAVAILABLE"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "resources"
+        ]
+      },
+      "then": {
+        "properties": {
+          "capabilities": {
+            "properties": {
+              "resourceUsage": {
+                "properties": {
+                  "method": {
+                    "enum": [
+                      "EXACT",
+                      "APPROXIMATED"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "capabilities": {
+            "properties": {
+              "resourceUsage": {
+                "properties": {
+                  "method": {
+                    "const": "UNAVAILABLE"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "observedCostInputs"
+        ]
+      },
+      "then": {
+        "properties": {
+          "capabilities": {
+            "properties": {
+              "costInputs": {
+                "properties": {
+                  "method": {
+                    "enum": [
+                      "EXACT",
+                      "APPROXIMATED"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "capabilities": {
+            "properties": {
+              "costInputs": {
+                "properties": {
+                  "method": {
+                    "const": "UNAVAILABLE"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capabilities": {
+            "properties": {
+              "criticalPath": {
+                "properties": {
+                  "method": {
+                    "const": "UNAVAILABLE"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "performance": {
+            "properties": {
+              "buildCriticalPathMs": {
+                "properties": {
+                  "state": {
+                    "const": "UNAVAILABLE"
+                  },
+                  "method": {
+                    "const": "UNAVAILABLE"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "if": {
+          "properties": {
+            "capabilities": {
+              "properties": {
+                "criticalPath": {
+                  "properties": {
+                    "method": {
+                      "const": "EXACT"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "then": {
+          "properties": {
+            "performance": {
+              "properties": {
+                "buildCriticalPathMs": {
+                  "properties": {
+                    "method": {
+                      "const": "EXACT"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "else": {
+          "properties": {
+            "performance": {
+              "properties": {
+                "buildCriticalPathMs": {
+                  "properties": {
+                    "method": {
+                      "const": "APPROXIMATED"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/@+-]{0,255}$"
+    },
+    "version": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128,
+      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+    },
+    "sha256Digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "hmacSha256Digest": {
+      "type": "string",
+      "pattern": "^hmac-sha256:[0-9a-f]{64}$"
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.[0-9]{1,9})?Z$"
+    },
+    "nonNegativeInteger": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "signedMilliseconds": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "durationMeasurement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "unit",
+        "method"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "COMPLETE",
+            "PARTIAL",
+            "UNAVAILABLE"
+          ]
+        },
+        "unit": {
+          "const": "ms"
+        },
+        "method": {
+          "enum": [
+            "EXACT",
+            "APPROXIMATED",
+            "UNAVAILABLE"
+          ]
+        },
+        "valueMs": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "methodDescription": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "UNAVAILABLE"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "method": {
+                "const": "UNAVAILABLE"
+              }
+            },
+            "required": [
+              "reason"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "valueMs"
+                  ]
+                },
+                {
+                  "required": [
+                    "methodDescription"
+                  ]
+                }
+              ]
+            }
+          },
+          "else": {
+            "properties": {
+              "method": {
+                "enum": [
+                  "EXACT",
+                  "APPROXIMATED"
+                ]
+              }
+            },
+            "required": [
+              "valueMs"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "PARTIAL"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "required": [
+              "reason"
+            ]
+          },
+          "else": {
+            "if": {
+              "properties": {
+                "state": {
+                  "const": "COMPLETE"
+                }
+              },
+              "required": [
+                "state"
+              ]
+            },
+            "then": {
+              "not": {
+                "required": [
+                  "reason"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "method": {
+                "const": "APPROXIMATED"
+              }
+            },
+            "required": [
+              "method"
+            ]
+          },
+          "then": {
+            "required": [
+              "methodDescription"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "methodDescription"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method"
+      ],
+      "properties": {
+        "method": {
+          "enum": [
+            "EXACT",
+            "APPROXIMATED",
+            "UNAVAILABLE"
+          ]
+        },
+        "methodDescription": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "method": {
+                "const": "UNAVAILABLE"
+              }
+            },
+            "required": [
+              "method"
+            ]
+          },
+          "then": {
+            "required": [
+              "reason"
+            ],
+            "not": {
+              "required": [
+                "methodDescription"
+              ]
+            }
+          },
+          "else": {
+            "not": {
+              "required": [
+                "reason"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "method": {
+                "const": "APPROXIMATED"
+              }
+            },
+            "required": [
+              "method"
+            ]
+          },
+          "then": {
+            "required": [
+              "methodDescription"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "methodDescription"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "repositoryId",
+        "revision",
+        "startedAt",
+        "completedAt",
+        "outcome",
+        "exitCode",
+        "requiredDeliverablesStatus"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "repositoryId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "startedAt": {
+          "$ref": "#/$defs/utcTimestamp",
+          "description": "UTC timestamp captured when the neutral envelope hands the session to the assigned arm."
+        },
+        "completedAt": {
+          "$ref": "#/$defs/utcTimestamp",
+          "description": "UTC timestamp captured when exit code and required deliverables become available."
+        },
+        "outcome": {
+          "enum": [
+            "SUCCESS",
+            "BUILD_FAILURE",
+            "INFRA_FAILURE",
+            "CANCELLED"
+          ]
+        },
+        "exitCode": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 255
+        },
+        "requiredDeliverablesStatus": {
+          "enum": [
+            "AVAILABLE",
+            "NOT_AVAILABLE",
+            "NOT_REQUIRED",
+            "UNKNOWN"
+          ]
+        },
+        "policyVersion": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "policyDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "configurationPolicyDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "revocationEpoch": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "launcherVersion": {
+          "$ref": "#/$defs/version"
+        },
+        "pluginVersion": {
+          "$ref": "#/$defs/version"
+        },
+        "jvmAgentVersion": {
+          "$ref": "#/$defs/version"
+        },
+        "hermeticHelperVersion": {
+          "$ref": "#/$defs/version"
+        },
+        "cacheNamespace": {
+          "$ref": "#/$defs/identifier"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "SUCCESS"
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "exitCode": {
+                "const": 0
+              },
+              "requiredDeliverablesStatus": {
+                "enum": [
+                  "AVAILABLE",
+                  "NOT_REQUIRED"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "BUILD_FAILURE"
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "exitCode": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 255
+              }
+            }
+          }
+        }
+      ]
+    },
+    "gradleInvocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "requestedTasks",
+        "startedAt",
+        "completedAt",
+        "outcome",
+        "exitCode",
+        "processMs"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "requestedTasks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "minItems": 1,
+          "maxItems": 1024,
+          "uniqueItems": true
+        },
+        "startedAt": {
+          "$ref": "#/$defs/utcTimestamp"
+        },
+        "completedAt": {
+          "$ref": "#/$defs/utcTimestamp"
+        },
+        "outcome": {
+          "enum": [
+            "SUCCESS",
+            "BUILD_FAILURE",
+            "INFRA_FAILURE",
+            "CANCELLED"
+          ]
+        },
+        "exitCode": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 255
+        },
+        "processMs": {
+          "$ref": "#/$defs/durationMeasurement"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "SUCCESS"
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "exitCode": {
+                "const": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "BUILD_FAILURE"
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "exitCode": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 255
+              }
+            }
+          }
+        }
+      ]
+    },
+    "measurementMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "metricDefinitionVersion",
+        "status",
+        "durationUnit",
+        "clockSource",
+        "timestampFormat",
+        "envelopeVersion",
+        "startBoundary",
+        "endBoundary",
+        "reconciliationToleranceMs"
+      ],
+      "properties": {
+        "metricDefinitionVersion": {
+          "$ref": "#/$defs/identifier"
+        },
+        "status": {
+          "enum": [
+            "COMPLETE",
+            "PARTIAL"
+          ],
+          "description": "Assembly state of this record, independent of individual metric availability."
+        },
+        "durationUnit": {
+          "const": "ms"
+        },
+        "clockSource": {
+          "const": "MONOTONIC"
+        },
+        "timestampFormat": {
+          "const": "RFC3339_UTC"
+        },
+        "envelopeVersion": {
+          "$ref": "#/$defs/identifier"
+        },
+        "startBoundary": {
+          "const": "NEUTRAL_ENVELOPE_HANDOFF"
+        },
+        "endBoundary": {
+          "const": "EXIT_CODE_AND_REQUIRED_DELIVERABLES_AVAILABLE"
+        },
+        "reconciliationToleranceMs": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/nonNegativeInteger"
+            },
+            {
+              "maximum": 1000
+            }
+          ]
+        }
+      }
+    },
+    "experimentAssignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "measurementEpoch",
+        "effectScope",
+        "baselineDefinitionDigest",
+        "assignmentUnit",
+        "arm",
+        "assignmentProbability",
+        "assignedAt",
+        "eligibility"
+      ],
+      "properties": {
+        "experimentId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "cohortId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "candidateId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "measurementEpoch": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "effectScope": {
+          "enum": [
+            "PRODUCT_TOTAL",
+            "ACTION_INCREMENTAL"
+          ]
+        },
+        "baselineDefinitionDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "controlDefinitionDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "assignmentUnit": {
+          "enum": [
+            "BUILD_SESSION",
+            "CI_JOB"
+          ]
+        },
+        "arm": {
+          "enum": [
+            "PASSTHROUGH",
+            "CONTROL",
+            "CANDIDATE"
+          ]
+        },
+        "assignmentProbability": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "assignedAt": {
+          "$ref": "#/$defs/utcTimestamp",
+          "description": "Persisted before the build outcome is observed."
+        },
+        "eligibility": {
+          "enum": [
+            "ELIGIBLE",
+            "EXCLUDED"
+          ]
+        },
+        "exclusionReason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "actionIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          },
+          "minItems": 1,
+          "maxItems": 256,
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "eligibility": {
+                "const": "EXCLUDED"
+              }
+            },
+            "required": [
+              "eligibility"
+            ]
+          },
+          "then": {
+            "required": [
+              "exclusionReason"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "exclusionReason"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "arm": {
+                "const": "PASSTHROUGH"
+              }
+            },
+            "required": [
+              "arm"
+            ]
+          },
+          "then": {
+            "properties": {
+              "assignmentProbability": {
+                "const": 0
+              },
+              "eligibility": {
+                "const": "EXCLUDED"
+              },
+              "effectScope": {
+                "const": "PRODUCT_TOTAL"
+              }
+            },
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "experimentId"
+                  ]
+                },
+                {
+                  "required": [
+                    "cohortId"
+                  ]
+                },
+                {
+                  "required": [
+                    "candidateId"
+                  ]
+                },
+                {
+                  "required": [
+                    "controlDefinitionDigest"
+                  ]
+                },
+                {
+                  "required": [
+                    "actionIds"
+                  ]
+                }
+              ]
+            }
+          },
+          "else": {
+            "properties": {
+              "assignmentProbability": {
+                "exclusiveMinimum": 0
+              }
+            },
+            "required": [
+              "experimentId",
+              "cohortId",
+              "controlDefinitionDigest"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "arm": {
+                "const": "CANDIDATE"
+              }
+            },
+            "required": [
+              "arm"
+            ]
+          },
+          "then": {
+            "required": [
+              "candidateId"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "effectScope": {
+                "const": "ACTION_INCREMENTAL"
+              }
+            },
+            "required": [
+              "effectScope"
+            ]
+          },
+          "then": {
+            "required": [
+              "actionIds"
+            ]
+          }
+        }
+      ]
+    },
+    "performance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "customerVisibleBuildMs",
+        "customerVisibleFeedbackMs",
+        "ciQueueMs",
+        "gradleProcessUnionMs",
+        "buildCriticalPathMs",
+        "timeToFirstBuildFailureMs"
+      ],
+      "properties": {
+        "customerVisibleBuildMs": {
+          "$ref": "#/$defs/durationMeasurement",
+          "description": "Primary session-level latency from neutral-envelope handoff until exit code and required deliverables are available."
+        },
+        "customerVisibleFeedbackMs": {
+          "$ref": "#/$defs/durationMeasurement"
+        },
+        "ciQueueMs": {
+          "$ref": "#/$defs/durationMeasurement"
+        },
+        "runnerOccupiedMs": {
+          "$ref": "#/$defs/durationMeasurement"
+        },
+        "gradleProcessUnionMs": {
+          "$ref": "#/$defs/durationMeasurement",
+          "description": "Temporal union of Gradle process intervals, never the sum of overlapping invocations."
+        },
+        "launcherAndPolicyMs": {
+          "$ref": "#/$defs/durationMeasurement"
+        },
+        "gatewayStartupMs": {
+          "$ref": "#/$defs/durationMeasurement"
+        },
+        "gradleStartupAndInitializationMs": {
+          "$ref": "#/$defs/durationMeasurement"
+        },
+        "configurationMs": {
+          "$ref": "#/$defs/durationMeasurement"
+        },
+        "executionOrRestoreMs": {
+          "$ref": "#/$defs/durationMeasurement"
+        },
+        "finalizationMs": {
+          "$ref": "#/$defs/durationMeasurement"
+        },
+        "unattributedMs": {
+          "$ref": "#/$defs/durationMeasurement",
+          "description": "Residual component used to reconcile the non-overlapping decomposition within measurementMetadata.reconciliationToleranceMs."
+        },
+        "buildCriticalPathMs": {
+          "$ref": "#/$defs/durationMeasurement"
+        },
+        "timeToFirstBuildFailureMs": {
+          "$ref": "#/$defs/durationMeasurement"
+        },
+        "testOwnedTaskExecutionMs": {
+          "$ref": "#/$defs/durationMeasurement"
+        }
+      }
+    },
+    "modelEstimate": {
+      "type": "object",
+      "description": "Optional per-session estimate. Observed or aggregate causal effects are intentionally not part of BUILD_SESSION.",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "estimatedNetBuildTimeSavedMs"
+      ],
+      "properties": {
+        "version": {
+          "$ref": "#/$defs/identifier"
+        },
+        "estimatedNetBuildTimeSavedMs": {
+          "$ref": "#/$defs/signedMilliseconds",
+          "description": "May be negative; regressions are not truncated to zero."
+        },
+        "estimatedNetBuildTimeSavedInterval95Ms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/signedMilliseconds"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      }
+    },
+    "workload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "environment",
+        "pipelineClass",
+        "runnerClass",
+        "workspaceState",
+        "daemonState",
+        "cacheState",
+        "changeClass",
+        "sourceStateDigest",
+        "requestedWorkManifestDigest",
+        "requiredDeliverablesManifestDigest",
+        "workUnitsFingerprint",
+        "tokenKeyVersion",
+        "trustDomain"
+      ],
+      "properties": {
+        "environment": {
+          "enum": [
+            "CI",
+            "LOCAL"
+          ]
+        },
+        "pipelineClass": {
+          "$ref": "#/$defs/identifier"
+        },
+        "runnerClass": {
+          "$ref": "#/$defs/identifier"
+        },
+        "workspaceState": {
+          "enum": [
+            "EPHEMERAL",
+            "REUSED",
+            "UNKNOWN"
+          ]
+        },
+        "daemonState": {
+          "enum": [
+            "COLD",
+            "WARM",
+            "DISABLED",
+            "UNKNOWN"
+          ]
+        },
+        "cacheState": {
+          "enum": [
+            "COLD",
+            "WARM_LOCAL",
+            "WARM_REMOTE",
+            "WARM_BOTH",
+            "DISABLED",
+            "UNKNOWN"
+          ]
+        },
+        "changeClass": {
+          "enum": [
+            "NO_CHANGE",
+            "IMPLEMENTATION",
+            "API",
+            "BUILD_LOGIC",
+            "DEPENDENCIES",
+            "TOOLCHAIN",
+            "GLOBAL",
+            "MULTIPLE",
+            "UNKNOWN"
+          ]
+        },
+        "sourceStateDigest": {
+          "$ref": "#/$defs/hmacSha256Digest"
+        },
+        "requestedWorkManifestDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "testOptimizationPolicyDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "requiredDeliverablesManifestDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "workUnitsFingerprint": {
+          "$ref": "#/$defs/hmacSha256Digest"
+        },
+        "tokenKeyVersion": {
+          "$ref": "#/$defs/identifier"
+        },
+        "trustDomain": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "cpuMs": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "peakRssBytes": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "gcPauseMs": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "diskReadBytes": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "diskWriteBytes": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "networkBytes": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        }
+      }
+    },
+    "observedCostInputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "grain",
+        "currency",
+        "pricingRegion",
+        "priceModelVersion",
+        "productRuntimeCost",
+        "incrementalStorageCost",
+        "incrementalNetworkCost"
+      ],
+      "properties": {
+        "grain": {
+          "const": "BUILD_SESSION"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "pricingRegion": {
+          "$ref": "#/$defs/identifier"
+        },
+        "priceModelVersion": {
+          "$ref": "#/$defs/identifier"
+        },
+        "productRuntimeCost": {
+          "type": "number",
+          "minimum": 0
+        },
+        "incrementalStorageCost": {
+          "type": "number",
+          "minimum": 0
+        },
+        "incrementalNetworkCost": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "cacheSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "localHits": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "remoteHits": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "misses": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "timeWeightedHitRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "usefulHitRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "downloadedBytes": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "lookupMs": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "restoreMs": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "storeMs": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "measurementEnvelope",
+        "taskOutcomes",
+        "criticalPath",
+        "cacheMissReasons",
+        "resourceUsage",
+        "productOverhead",
+        "costInputs"
+      ],
+      "properties": {
+        "measurementEnvelope": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/capability"
+            },
+            {
+              "properties": {
+                "method": {
+                  "const": "EXACT"
+                }
+              }
+            }
+          ]
+        },
+        "taskOutcomes": {
+          "$ref": "#/$defs/capability"
+        },
+        "criticalPath": {
+          "$ref": "#/$defs/capability"
+        },
+        "cacheMissReasons": {
+          "$ref": "#/$defs/capability"
+        },
+        "resourceUsage": {
+          "$ref": "#/$defs/capability"
+        },
+        "productOverhead": {
+          "$ref": "#/$defs/capability"
+        },
+        "costInputs": {
+          "$ref": "#/$defs/capability"
+        }
+      }
+    },
+    "recovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "recoveredAt",
+        "reason",
+        "missingSequenceRanges"
+      ],
+      "properties": {
+        "source": {
+          "enum": [
+            "LOCAL_SPOOL",
+            "EVENT_REPLAY",
+            "PARTIAL_EXPORT"
+          ]
+        },
+        "recoveredAt": {
+          "$ref": "#/$defs/utcTimestamp"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "missingSequenceRanges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "first",
+              "last"
+            ],
+            "properties": {
+              "first": {
+                "$ref": "#/$defs/nonNegativeInteger"
+              },
+              "last": {
+                "$ref": "#/$defs/nonNegativeInteger"
+              }
+            }
+          },
+          "minItems": 1,
+          "maxItems": 1024
+        }
+      }
+    }
+  }
+}

@@ -73,6 +73,7 @@ buildopt_planned_artifacts=(
 
 buildopt_materialized_artifacts=(
     "adr/0001-golden-lane.md"
+    "contracts/jsonschema/build-session.v1.schema.json"
     "specs/golden-lane-runner-v1.json"
 )
 

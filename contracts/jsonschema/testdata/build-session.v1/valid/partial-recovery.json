@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "BUILD_SESSION",
+  "complete": false,
+  "build": {
+    "id": "build-recovered-01",
+    "repositoryId": "repository-sample",
+    "revision": "a91e4dc",
+    "startedAt": "2026-07-29T11:00:00Z",
+    "completedAt": "2026-07-29T11:00:02.400Z",
+    "outcome": "CANCELLED",
+    "exitCode": null,
+    "requiredDeliverablesStatus": "UNKNOWN",
+    "launcherVersion": "0.1.0"
+  },
+  "gradleInvocations": [],
+  "measurementMetadata": {
+    "metricDefinitionVersion": "build-impact-v1",
+    "status": "PARTIAL",
+    "durationUnit": "ms",
+    "clockSource": "MONOTONIC",
+    "timestampFormat": "RFC3339_UTC",
+    "envelopeVersion": "ci-provider-1-v1",
+    "startBoundary": "NEUTRAL_ENVELOPE_HANDOFF",
+    "endBoundary": "EXIT_CODE_AND_REQUIRED_DELIVERABLES_AVAILABLE",
+    "reconciliationToleranceMs": 5
+  },
+  "experimentAssignment": {
+    "measurementEpoch": 0,
+    "effectScope": "PRODUCT_TOTAL",
+    "baselineDefinitionDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "assignmentUnit": "CI_JOB",
+    "arm": "PASSTHROUGH",
+    "assignmentProbability": 0,
+    "assignedAt": "2026-07-29T10:59:58Z",
+    "eligibility": "EXCLUDED",
+    "exclusionReason": "Optimizations were disabled for the recovery exercise"
+  },
+  "performance": {
+    "customerVisibleBuildMs": {
+      "state": "PARTIAL",
+      "unit": "ms",
+      "method": "EXACT",
+      "valueMs": 2400,
+      "reason": "The envelope duration survived but component event ranges are missing"
+    },
+    "customerVisibleFeedbackMs": {
+      "state": "UNAVAILABLE",
+      "unit": "ms",
+      "method": "UNAVAILABLE",
+      "reason": "The authenticated job-eligibility event is in a missing sequence range"
+    },
+    "ciQueueMs": {
+      "state": "UNAVAILABLE",
+      "unit": "ms",
+      "method": "UNAVAILABLE",
+      "reason": "The authenticated runner-assignment event is in a missing sequence range"
+    },
+    "gradleProcessUnionMs": {
+      "state": "UNAVAILABLE",
+      "unit": "ms",
+      "method": "UNAVAILABLE",
+      "reason": "The session was cancelled before a Gradle invocation was recorded"
+    },
+    "buildCriticalPathMs": {
+      "state": "UNAVAILABLE",
+      "unit": "ms",
+      "method": "UNAVAILABLE",
+      "reason": "No Gradle task graph was recorded"
+    },
+    "timeToFirstBuildFailureMs": {
+      "state": "UNAVAILABLE",
+      "unit": "ms",
+      "method": "UNAVAILABLE",
+      "reason": "The session was cancelled before an actionable build failure"
+    }
+  },
+  "workload": {
+    "environment": "CI",
+    "pipelineClass": "pull-request",
+    "runnerClass": "linux-amd64-4c-16g-v1",
+    "workspaceState": "EPHEMERAL",
+    "daemonState": "UNKNOWN",
+    "cacheState": "UNKNOWN",
+    "changeClass": "IMPLEMENTATION",
+    "sourceStateDigest": "hmac-sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "requestedWorkManifestDigest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "requiredDeliverablesManifestDigest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "workUnitsFingerprint": "hmac-sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "tokenKeyVersion": "tenant-7-token-2026-q3",
+    "trustDomain": "tenant-7-production"
+  },
+  "capabilities": {
+    "measurementEnvelope": {
+      "method": "EXACT"
+    },
+    "taskOutcomes": {
+      "method": "UNAVAILABLE",
+      "reason": "No Gradle invocation was recorded"
+    },
+    "criticalPath": {
+      "method": "UNAVAILABLE",
+      "reason": "No Gradle task graph was recorded"
+    },
+    "cacheMissReasons": {
+      "method": "UNAVAILABLE",
+      "reason": "No cache interaction was recorded"
+    },
+    "resourceUsage": {
+      "method": "UNAVAILABLE",
+      "reason": "Resource events are in a missing sequence range"
+    },
+    "productOverhead": {
+      "method": "UNAVAILABLE",
+      "reason": "Component timing events are in a missing sequence range"
+    },
+    "costInputs": {
+      "method": "UNAVAILABLE",
+      "reason": "The recovered session has no complete pricing inputs"
+    }
+  },
+  "recovery": {
+    "source": "EVENT_REPLAY",
+    "recoveredAt": "2026-07-29T11:05:00Z",
+    "reason": "The producer stopped after cancellation before the final record was published",
+    "missingSequenceRanges": [
+      {
+        "first": 4,
+        "last": 9
+      }
+    ]
+  }
+}
