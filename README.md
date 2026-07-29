@@ -53,15 +53,17 @@ From the repository root:
 ./dev/check-toolchains-lock
 ./dev/doctor
 ./dev/test-doctor
+./dev/test-jdk-toolchain
 ./dev/check-golden-lane --static
 ```
 
-The commands validate the repository layout, portable toolchain lock, host inventory contract, and golden lane configuration and checksums.
+The commands validate the repository layout, portable toolchain lock, host inventory contract, isolated JDK provisioning, and golden lane configuration and checksums.
 
 Local smoke test with JDK 21:
 
 ```bash
-buildopt-with-jdk21 ./dev/check-golden-lane --smoke
+./dev/bootstrap --toolchain temurin-jdk-21
+./dev/run -- ./dev/check-golden-lane --smoke
 ```
 
 Smoke test inside the pinned image:

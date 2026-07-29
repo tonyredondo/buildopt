@@ -21,6 +21,36 @@ Gradle and the golden container are intentionally delegated to their existing so
 
 Operating-system capabilities and externally supplied commands such as Docker, Git, `curl`, `jq`, `tar`, and `unzip` are host requirements, not downloadable artifacts in this lock. The read-only `dev/doctor` will report them without installing or modifying them.
 
+## Bootstrap
+
+`ENV-003` introduces the first bounded bootstrap target: the exact Temurin JDK 21 artifact required by the golden lane. Provision it from the repository root:
+
+```bash
+./dev/bootstrap --toolchain temurin-jdk-21
+```
+
+The bootstrap downloads the immutable URL from the lock, verifies its SHA-256 before extraction, rejects unsafe archive paths, runs `java` and `javac` smoke probes, and installs atomically under `.tools/toolchains/`. A second invocation verifies and reuses the existing installation without another download. It never uses `sudo` or modifies the system JDK.
+
+Set `BUILDOPT_TOOLS_ROOT` to keep the ignored tool state in another local directory. The repository lock remains the source of truth. `ENV-012` will extend this entrypoint to the remaining adopted toolchains and add the complete cleanup contract.
+
+## Project-local execution
+
+Run a command with the provisioned JDK 21:
+
+```bash
+./dev/run -- java -version
+./dev/run -- javac -version
+./dev/run -- ./dev/check-golden-lane --smoke
+```
+
+`dev/run` verifies that the provisioned manifest and Java binaries still match the lock, then sets `JAVA_HOME` and prepends the JDK `bin` directory to `PATH` only for the child process. It preserves the command arguments and exit code. The parent shell and its global `java`/`javac` selection are unchanged.
+
+The optional explicit form is equivalent:
+
+```bash
+./dev/run --toolchain temurin-jdk-21 -- java -version
+```
+
 ## Doctor
 
 `dev/doctor` inventories the active workstation without changing files, installing packages, starting services, or downloading artifacts. It reports:
@@ -63,11 +93,14 @@ Run the lock and doctor contract tests from the repository root:
 ```bash
 ./dev/check-toolchains-lock
 ./dev/test-doctor
+./dev/test-jdk-toolchain
 ```
 
 The validator rejects malformed schema versions, duplicate identities or URLs, unknown platforms, non-HTTPS sources, invalid SHA-256 values, unsupported artifact kinds, and missing or malformed tracker references.
 
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
+
+The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.
 
 ## Update policy
 

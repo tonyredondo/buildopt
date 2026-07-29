@@ -1,0 +1,333 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_usage() {
+    printf 'usage: %s --toolchain temurin-jdk-21\n' "$0"
+}
+
+buildopt_toolchain=
+while (($# > 0)); do
+    case "$1" in
+        --toolchain)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_toolchain=$2
+            shift 2
+            ;;
+        --help)
+            buildopt_usage
+            exit 0
+            ;;
+        *)
+            buildopt_usage >&2
+            exit 64
+            ;;
+    esac
+done
+
+if [[ "${buildopt_toolchain}" != "temurin-jdk-21" ]]; then
+    buildopt_usage >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_lock=${BUILDOPT_TOOLCHAINS_LOCK_FILE:-"${buildopt_script_dir}/toolchains.lock.yaml"}
+buildopt_tools_root=${BUILDOPT_TOOLS_ROOT:-"${buildopt_repo_root}/.tools"}
+
+if [[ -z "${buildopt_tools_root}" || "${buildopt_tools_root}" == "/" ]]; then
+    printf 'refusing unsafe tool root: %s\n' "${buildopt_tools_root:-<empty>}" >&2
+    exit 1
+fi
+
+for buildopt_command in curl jq sha256sum tar uname; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required bootstrap command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if [[ ! -f "${buildopt_lock}" ]]; then
+    printf 'missing toolchain lock: %s\n' "${buildopt_lock}" >&2
+    exit 70
+fi
+
+if ! buildopt_entry=$(
+    jq -ce --arg buildopt_id "${buildopt_toolchain}" '
+        [
+            .artifacts[] |
+            select(.id == $buildopt_id)
+        ] |
+        if length == 1 then
+            .[0]
+        else
+            error("expected exactly one toolchain entry")
+        end
+    ' "${buildopt_lock}"
+); then
+    printf 'invalid toolchain lock entry: %s\n' "${buildopt_toolchain}" >&2
+    exit 70
+fi
+
+buildopt_id=$(jq -r '.id' <<<"${buildopt_entry}")
+buildopt_version=$(jq -r '.version' <<<"${buildopt_entry}")
+buildopt_kind=$(jq -r '.kind' <<<"${buildopt_entry}")
+buildopt_platform=$(jq -r '.platform' <<<"${buildopt_entry}")
+buildopt_provider=$(jq -r '.provider' <<<"${buildopt_entry}")
+buildopt_url=$(jq -r '.url' <<<"${buildopt_entry}")
+buildopt_sha256=$(jq -r '.sha256' <<<"${buildopt_entry}")
+
+if [[ ! "${buildopt_id}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
+    [[ ! "${buildopt_provider}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
+    [[ ! "${buildopt_sha256}" =~ ^[0-9a-f]{64}$ ]] ||
+    [[ "${buildopt_kind}" != "tar.gz" ]] ||
+    [[ ! "${buildopt_url}" =~ ^https:// ]] ||
+    [[ ! "${buildopt_version}" =~ ^21([.]|$) ]]; then
+    printf 'unsupported or malformed toolchain entry: %s\n' \
+        "${buildopt_toolchain}" >&2
+    exit 70
+fi
+
+buildopt_os=$(uname -s)
+buildopt_arch=$(uname -m)
+if [[ "${buildopt_platform}" != "linux-amd64" ]] ||
+    [[ "${buildopt_os}" != "Linux" ]] ||
+    [[ "${buildopt_arch}" != "x86_64" ]]; then
+    printf 'toolchain %s requires linux-amd64; detected %s/%s\n' \
+        "${buildopt_id}" \
+        "${buildopt_os}" \
+        "${buildopt_arch}" >&2
+    exit 1
+fi
+
+buildopt_runtime_version=${buildopt_version%%+*}
+buildopt_install_dir="${buildopt_tools_root}/toolchains/${buildopt_id}-${buildopt_sha256:0:16}"
+
+buildopt_validate_jdk() {
+    local buildopt_jdk_home=$1
+    local buildopt_java_output
+    local buildopt_javac_output
+
+    [[ -x "${buildopt_jdk_home}/bin/java" ]] || return 1
+    [[ -x "${buildopt_jdk_home}/bin/javac" ]] || return 1
+    [[ -f "${buildopt_jdk_home}/.buildopt-toolchain.json" ]] || return 1
+
+    jq -e \
+        --arg buildopt_id "${buildopt_id}" \
+        --arg buildopt_version "${buildopt_version}" \
+        --arg buildopt_provider "${buildopt_provider}" \
+        --arg buildopt_sha256 "${buildopt_sha256}" \
+        --arg buildopt_url "${buildopt_url}" \
+        '
+            .schemaVersion == "buildopt.dev/provisioned-toolchain/v1" and
+            .id == $buildopt_id and
+            .version == $buildopt_version and
+            .provider == $buildopt_provider and
+            .sha256 == $buildopt_sha256 and
+            .url == $buildopt_url
+        ' "${buildopt_jdk_home}/.buildopt-toolchain.json" >/dev/null || return 1
+
+    buildopt_java_output=$("${buildopt_jdk_home}/bin/java" -version 2>&1) ||
+        return 1
+    buildopt_javac_output=$("${buildopt_jdk_home}/bin/javac" -version 2>&1) ||
+        return 1
+
+    [[ "${buildopt_java_output}" == *"version \"${buildopt_runtime_version}\""* ]] ||
+        return 1
+    [[ "${buildopt_javac_output}" == "javac ${buildopt_runtime_version}" ]] ||
+        return 1
+}
+
+if [[ -e "${buildopt_install_dir}" ]]; then
+    if buildopt_validate_jdk "${buildopt_install_dir}"; then
+        printf '%s %s is already provisioned at %s\n' \
+            "${buildopt_id}" \
+            "${buildopt_version}" \
+            "${buildopt_install_dir}"
+        exit 0
+    fi
+
+    printf 'existing toolchain failed verification: %s\n' \
+        "${buildopt_install_dir}" >&2
+    exit 1
+fi
+
+buildopt_download_dir="${buildopt_tools_root}/downloads"
+buildopt_toolchain_dir="${buildopt_tools_root}/toolchains"
+buildopt_temporary_dir="${buildopt_tools_root}/tmp"
+buildopt_locks_dir="${buildopt_tools_root}/locks"
+mkdir -p -- \
+    "${buildopt_download_dir}" \
+    "${buildopt_toolchain_dir}" \
+    "${buildopt_temporary_dir}" \
+    "${buildopt_locks_dir}"
+
+buildopt_lock_dir="${buildopt_locks_dir}/${buildopt_id}"
+if ! mkdir -- "${buildopt_lock_dir}" 2>/dev/null; then
+    printf 'another bootstrap is already provisioning %s\n' \
+        "${buildopt_id}" >&2
+    exit 1
+fi
+
+buildopt_download_part=
+buildopt_staging_root=
+buildopt_cleanup() {
+    if [[ -n "${buildopt_download_part}" && -f "${buildopt_download_part}" ]]; then
+        rm -f -- "${buildopt_download_part}"
+    fi
+    if [[ -n "${buildopt_staging_root}" &&
+        "${buildopt_staging_root}" == "${buildopt_temporary_dir}/"* &&
+        -d "${buildopt_staging_root}" ]]; then
+        rm -rf -- "${buildopt_staging_root}"
+    fi
+    rmdir -- "${buildopt_lock_dir}" 2>/dev/null || true
+}
+trap buildopt_cleanup EXIT
+
+if [[ -e "${buildopt_install_dir}" ]]; then
+    if buildopt_validate_jdk "${buildopt_install_dir}"; then
+        printf '%s %s is already provisioned at %s\n' \
+            "${buildopt_id}" \
+            "${buildopt_version}" \
+            "${buildopt_install_dir}"
+        exit 0
+    fi
+
+    printf 'existing toolchain failed verification: %s\n' \
+        "${buildopt_install_dir}" >&2
+    exit 1
+fi
+
+buildopt_archive="${buildopt_download_dir}/${buildopt_id}-${buildopt_sha256}.tar.gz"
+if [[ -f "${buildopt_archive}" ]] &&
+    ! printf '%s  %s\n' "${buildopt_sha256}" "${buildopt_archive}" |
+        sha256sum -c - >/dev/null 2>&1; then
+    printf 'discarding cached artifact with an invalid checksum: %s\n' \
+        "${buildopt_archive}" >&2
+    rm -f -- "${buildopt_archive}"
+fi
+
+if [[ ! -f "${buildopt_archive}" ]]; then
+    buildopt_download_part=$(
+        mktemp "${buildopt_download_dir}/.${buildopt_id}.download.XXXXXX"
+    )
+    printf 'Downloading %s %s\n' "${buildopt_id}" "${buildopt_version}"
+    curl \
+        --fail \
+        --location \
+        --proto '=https' \
+        --proto-redir '=https' \
+        --retry 3 \
+        --show-error \
+        --silent \
+        --output "${buildopt_download_part}" \
+        "${buildopt_url}"
+
+    if ! printf '%s  %s\n' "${buildopt_sha256}" "${buildopt_download_part}" |
+        sha256sum -c - >/dev/null 2>&1; then
+        printf 'checksum mismatch for downloaded toolchain: %s\n' \
+            "${buildopt_id}" >&2
+        exit 1
+    fi
+
+    mv -- "${buildopt_download_part}" "${buildopt_archive}"
+    buildopt_download_part=
+fi
+
+if ! printf '%s  %s\n' "${buildopt_sha256}" "${buildopt_archive}" |
+    sha256sum -c - >/dev/null 2>&1; then
+    printf 'checksum verification failed for cached toolchain: %s\n' \
+        "${buildopt_id}" >&2
+    exit 1
+fi
+
+if ! tar -tzf "${buildopt_archive}" |
+    awk '
+        /^\// {
+            invalid = 1
+        }
+        {
+            component_count = split($0, components, "/")
+            for (component = 1; component <= component_count; component++) {
+                if (components[component] == "..") {
+                    invalid = 1
+                }
+            }
+        }
+        END {
+            exit invalid
+        }
+    '; then
+    printf 'toolchain archive contains an unsafe path: %s\n' \
+        "${buildopt_id}" >&2
+    exit 1
+fi
+
+buildopt_staging_root=$(
+    mktemp -d "${buildopt_temporary_dir}/${buildopt_id}.XXXXXX"
+)
+buildopt_extract_root="${buildopt_staging_root}/extract"
+mkdir -- "${buildopt_extract_root}"
+tar \
+    --extract \
+    --gzip \
+    --file "${buildopt_archive}" \
+    --directory "${buildopt_extract_root}" \
+    --no-same-owner \
+    --no-same-permissions
+
+mapfile -d '' buildopt_roots < <(
+    find "${buildopt_extract_root}" \
+        -mindepth 1 \
+        -maxdepth 1 \
+        -print0
+)
+if ((${#buildopt_roots[@]} != 1)) ||
+    [[ ! -d "${buildopt_roots[0]}" ]]; then
+    printf 'toolchain archive must contain exactly one root directory: %s\n' \
+        "${buildopt_id}" >&2
+    exit 1
+fi
+
+buildopt_staged_jdk=${buildopt_roots[0]}
+jq -n \
+    --arg buildopt_id "${buildopt_id}" \
+    --arg buildopt_version "${buildopt_version}" \
+    --arg buildopt_provider "${buildopt_provider}" \
+    --arg buildopt_sha256 "${buildopt_sha256}" \
+    --arg buildopt_url "${buildopt_url}" \
+    '{
+        schemaVersion: "buildopt.dev/provisioned-toolchain/v1",
+        id: $buildopt_id,
+        version: $buildopt_version,
+        provider: $buildopt_provider,
+        sha256: $buildopt_sha256,
+        url: $buildopt_url
+    }' >"${buildopt_staged_jdk}/.buildopt-toolchain.json"
+
+if ! buildopt_validate_jdk "${buildopt_staged_jdk}"; then
+    printf 'extracted toolchain failed its Java smoke test: %s\n' \
+        "${buildopt_id}" >&2
+    exit 1
+fi
+
+if [[ -e "${buildopt_install_dir}" ]]; then
+    printf 'toolchain destination appeared during bootstrap: %s\n' \
+        "${buildopt_install_dir}" >&2
+    exit 1
+fi
+mv -- "${buildopt_staged_jdk}" "${buildopt_install_dir}"
+
+if ! buildopt_validate_jdk "${buildopt_install_dir}"; then
+    printf 'installed toolchain failed final verification: %s\n' \
+        "${buildopt_id}" >&2
+    exit 1
+fi
+
+printf 'Provisioned %s %s at %s\n' \
+    "${buildopt_id}" \
+    "${buildopt_version}" \
+    "${buildopt_install_dir}"

@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — `ENV-002` closed with a read-only, machine-readable host doctor; `ENV-003` is the next block<br>
+**Overall status:** `DOING` — `ENV-003` closed with a verified, project-local JDK 21; `ENV-004` is the next block<br>
 **Current phase:** Phase 0 — contracts, fixtures, and walking skeleton<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
 **Last updated:** 2026-07-29<br>
@@ -85,11 +85,12 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 2 | `F0-002` | Golden lane pinned through an ADR, wrapper, image, and runner class | `DONE` | Codex |
 | 3 | `ENV-001` | Toolchain and checksum manifest created | `DONE` | Codex |
 | 4 | `ENV-002` | `dev/doctor` reproduces the host inventory | `DONE` | Codex |
-| 5 | `ENV-003` | JDK 21 available alongside and isolated from global JDK 25 | `TODO` | — |
-| 6 | `F0-010` | `contracts/`, `specs/`, `benchmarks/`, and `adr/` structure created | `WAITING` | — |
-| 7 | `F0-011` | First normative schema: `BUILD_SESSION v1` | `WAITING` | — |
-| 8 | `WS-001` | `buildopt run` → `BUILD_SESSION` vertical slice started | `TODO` | — |
-| 9 | `SPK-001` | Task → cache key → PUT spike on the golden lane | `WAITING` | — |
+| 5 | `ENV-003` | JDK 21 available alongside and isolated from global JDK 25 | `DONE` | Codex |
+| 6 | `ENV-004` | Plugin/agent compilation verified with `--release 17` | `TODO` | — |
+| 7 | `F0-010` | `contracts/`, `specs/`, `benchmarks/`, and `adr/` structure created | `WAITING` | — |
+| 8 | `F0-011` | First normative schema: `BUILD_SESSION v1` | `WAITING` | — |
+| 9 | `WS-001` | `buildopt run` → `BUILD_SESSION` vertical slice started | `TODO` | — |
+| 10 | `SPK-001` | Task → cache key → PUT spike on the golden lane | `WAITING` | — |
 
 ---
 
@@ -155,7 +156,7 @@ Verified snapshot from the initial 4-vCPU workstation on 2026-07-29. Manually in
 | Dependency | Needed for | Initial target | Detected | State | Action |
 |---|---|---|---|---|---|
 | Linux x86-64 | Entire MVP | Recorded kernel/capabilities | Linux 6.8 x86-64 | Available | Re-run `dev/doctor` on each workstation; C1 retains strict capability qualification |
-| JDK/Javac | Golden lane, plugin, and agent | JDK 21; `--release 17` bytecode | Global OpenJDK/Javac 25.0.3 + isolated Temurin 21.0.12+8 | Available on workstation | Consume the lock through `dev/run` in `ENV-003` |
+| JDK/Javac | Golden lane, plugin, and agent | JDK 21; `--release 17` bytecode | Global OpenJDK/Javac 25.0.3 + isolated Temurin 21.0.12+8 | Available on workstation | Closed by `ENV-003`; use the verified repository-local JDK through `dev/run` |
 | Go | Launcher, gateway, and server | Exact version in lock | Go 1.26.5 | Available without project isolation | Validate the locked toolchain in `ENV-005` |
 | Rust/Cargo | C1 hermetic helper | Exact version in `rust-toolchain.toml` | Rust/Cargo 1.93.0 | Available, optional | Materialize the locked channel in `ENV-009` |
 | `protoc` | Local-events Protobuf | Exact project-local version | Isolated 35.1; checksum and descriptor smoke test verified | Available on workstation | Provision from the lock in `ENV-006` |
@@ -175,7 +176,7 @@ Initial 4-vCPU workstation installation:
 - Root: `/home/tonyredondo/.local/share/buildopt/toolchains` (646 MB).
 - Provenance and SHA-256 manifest: `/home/tonyredondo/.local/share/buildopt/toolchains/manifest.json`.
 - Verified artifacts retained on the portable drive: `/media/portable/.cache/buildopt-toolchains/2026-07-29` (420 MB).
-- `buildopt-with-jdk21 <command>` sets `JAVA_HOME` and `PATH` only for the child process; Java 25 remains global.
+- `buildopt-with-jdk21 <command>` set `JAVA_HOME` and `PATH` only for the child process; `ENV-003` supersedes it for repository work with `./dev/run -- <command>`.
 
 #### Bootstrap workboard
 
@@ -183,8 +184,8 @@ Initial 4-vCPU workstation installation:
 |---|---|---|---|---|---|
 | `ENV-001` | Create `dev/toolchains.lock.yaml` and update policy | `F0-001`, `F0-002` | `DONE` | Codex | `E-010`: portable lock, validator, and update policy |
 | `ENV-002` | Implement read-only `dev/doctor` | `ENV-001` | `DONE` | Codex | `E-011`: JSON/human reports, live inventory, and deterministic exit-code fixtures |
-| `ENV-003` | Provision JDK 21 alongside JDK 25 without global replacement | `ENV-001` | `TODO` | — | `java`/`javac` 21 through `dev/run` |
-| `ENV-004` | Verify plugin/agent compilation with `--release 17` | `ENV-003` | `WAITING` | — | Bytecode/API compatibility test |
+| `ENV-003` | Provision JDK 21 alongside JDK 25 without global replacement | `ENV-001` | `DONE` | Codex | `E-012`: verified, idempotent provisioning and isolated `dev/run` |
+| `ENV-004` | Verify plugin/agent compilation with `--release 17` | `ENV-003` | `TODO` | — | Bytecode/API compatibility test |
 | `ENV-005` | Validate and pin Go for the core | `ENV-001` | `TODO` | — | `go.mod`/toolchain + passing doctor |
 | `ENV-006` | Provision `protoc` and decide/adopt Buf | `F0-019`, `ENV-001` | `WAITING` | — | Reproducible lint/generate/round trip |
 | `ENV-007` | Pin Gradle Wrapper 9.6.1 and verify checksum | `F0-002` | `DONE` | Codex | `E-007`: Wrapper 9.6.1 and checksums verified |
@@ -514,6 +515,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-009` | 2026-07-29 | Repository language baseline | Repository-owned tracked content audited in English; English-only contribution policy added; translated [master RFC](./gradle-build-optimization-platform.md) SHA-256 `e97b068433128a51cab509f2f799efdf872b6950056bce308b80cbd1470ef81d` | Current English repository baseline; the 51 accepted private-beta decisions and executable golden-lane state are preserved |
 | `E-010` | 2026-07-29 | `ENV-001` | [`dev/toolchains.lock.yaml`](./dev/toolchains.lock.yaml), static validator, and update policy; eight GitHub release digests reverified against official release metadata plus official Go archive and Rust channel-manifest metadata; Bash syntax, lock validation, ShellCheck, layout, golden-lane static checks, and the Java 21 smoke build passed on the non-golden 12-CPU host | `DONE`: one host-independent `linux-amd64` lock now unblocks `ENV-002`, `ENV-003`, `ENV-005`, `ENV-009`, and `ENV-010` |
 | `E-011` | 2026-07-29 | `ENV-002` | [`dev/doctor`](./dev/doctor), [`dev/test-doctor`](./dev/test-doctor), documented `buildopt.dev/doctor-report/v1`, live human/JSON inventory on the 12-CPU workstation, isolated JDK 21/25 active-path matches, deterministic missing-command and internal-error fixtures, Bash syntax, ShellCheck 0.11.0, read-only Git-state comparison, and exit codes `0/1/64/70` | `DONE`: workstations now share one active-path comparison contract without global-tool assumptions; `ENV-008` is unblocked |
+| `E-012` | 2026-07-29 | `ENV-003` | [`dev/bootstrap`](./dev/bootstrap), [`dev/run`](./dev/run), and [`dev/test-jdk-toolchain`](./dev/test-jdk-toolchain); official Temurin 21.0.12+8 bytes matched lock SHA-256 `e4446ff06a276155697597cc0f1b15da004ff083f4964a35271ecee567177370`; first and idempotent second provisioning passed; synthetic global JDK 25 isolation, real global JDK 17 preservation, doctor `MATCH`, and Gradle 9.6.1 smoke with Java 17 bytecode passed on the non-golden 12-CPU host | `DONE`: JDK 21 is reproducibly available through `dev/run` without replacing global Java; `ENV-004` is unblocked |
 
 ---
 
@@ -521,6 +523,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-29 | Closed `ENV-003`: added checksum-verified, atomic JDK 21 provisioning and project-local execution without replacing global Java; unblocked `ENV-004` | Codex |
 | 2026-07-29 | Closed `ENV-002`: added read-only human/JSON host inventory, stable exit codes, active-path toolchain drift reporting, Docker/capability/resource probes, and deterministic fixtures | Codex |
 | 2026-07-29 | Closed `ENV-001`: added the portable toolchain lock, static validation, update policy, and dependency evidence without adopting candidate or optional tools | Codex |
 | 2026-07-29 | Established English as the repository-wide language and translated all repository-owned documentation while preserving contracts, decisions, and validated implementation state | Codex |

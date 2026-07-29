@@ -1,0 +1,308 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_bootstrap="${buildopt_script_dir}/bootstrap"
+buildopt_run="${buildopt_script_dir}/run"
+buildopt_test_root=$(mktemp -d)
+
+buildopt_cleanup() {
+    rm -rf -- "${buildopt_test_root}"
+}
+trap buildopt_cleanup EXIT
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+buildopt_payload_root="${buildopt_test_root}/payload"
+buildopt_fake_jdk="${buildopt_payload_root}/fake-temurin-21"
+mkdir -p "${buildopt_fake_jdk}/bin"
+
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf '\''openjdk version "21.0.12" 2026-07-21 LTS\n'\'' >&2' \
+    'printf '\''OpenJDK Runtime Environment Temurin-21.0.12+8\n'\'' >&2' \
+    >"${buildopt_fake_jdk}/bin/java"
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf '\''javac 21.0.12\n'\'' >&2' \
+    >"${buildopt_fake_jdk}/bin/javac"
+printf '%s\n' \
+    'JAVA_VERSION="21.0.12"' \
+    'IMPLEMENTOR="Eclipse Adoptium"' \
+    >"${buildopt_fake_jdk}/release"
+chmod +x \
+    "${buildopt_fake_jdk}/bin/java" \
+    "${buildopt_fake_jdk}/bin/javac"
+
+buildopt_archive="${buildopt_test_root}/fake-temurin-21.tar.gz"
+tar -czf "${buildopt_archive}" -C "${buildopt_payload_root}" fake-temurin-21
+buildopt_sha256=$(sha256sum "${buildopt_archive}" | awk '{print $1}')
+
+buildopt_lock="${buildopt_test_root}/toolchains.lock.json"
+jq -n \
+    --arg buildopt_sha256 "${buildopt_sha256}" \
+    '{
+        schemaVersion: "buildopt.dev/toolchains-lock/v1",
+        platforms: [
+            {
+                id: "linux-amd64",
+                operatingSystem: "linux",
+                architecture: "amd64"
+            }
+        ],
+        artifacts: [
+            {
+                id: "temurin-jdk-21",
+                version: "21.0.12+8",
+                adoption: "required",
+                kind: "tar.gz",
+                platform: "linux-amd64",
+                provider: "eclipse-adoptium",
+                url: "https://example.invalid/fake-temurin-21.tar.gz",
+                sha256: $buildopt_sha256,
+                requiredBy: ["ENV-003"]
+            }
+        ]
+    }' >"${buildopt_lock}"
+
+buildopt_fake_host_bin="${buildopt_test_root}/fake-host-bin"
+buildopt_curl_count="${buildopt_test_root}/curl-count"
+mkdir "${buildopt_fake_host_bin}"
+# The generated fixture expands these variables when the fake curl runs.
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'buildopt_output=' \
+    'while (($# > 0)); do' \
+    '    case "$1" in' \
+    '        --output)' \
+    '            buildopt_output=$2' \
+    '            shift 2' \
+    '            ;;' \
+    '        *)' \
+    '            shift' \
+    '            ;;' \
+    '    esac' \
+    'done' \
+    'if [[ -z "${buildopt_output}" ]]; then' \
+    '    exit 64' \
+    'fi' \
+    'buildopt_count=0' \
+    'if [[ -f "${BUILDOPT_TEST_CURL_COUNT}" ]]; then' \
+    '    read -r buildopt_count <"${BUILDOPT_TEST_CURL_COUNT}"' \
+    'fi' \
+    'printf '\''%s\n'\'' "$((buildopt_count + 1))" >"${BUILDOPT_TEST_CURL_COUNT}"' \
+    'cp -- "${BUILDOPT_TEST_ARCHIVE}" "${buildopt_output}"' \
+    >"${buildopt_fake_host_bin}/curl"
+chmod +x "${buildopt_fake_host_bin}/curl"
+
+buildopt_tools_root="${buildopt_test_root}/tools with spaces"
+buildopt_bootstrap_output=$(
+    BUILDOPT_TEST_ARCHIVE="${buildopt_archive}" \
+    BUILDOPT_TEST_CURL_COUNT="${buildopt_curl_count}" \
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    PATH="${buildopt_fake_host_bin}:${PATH}" \
+        "${buildopt_bootstrap}" --toolchain temurin-jdk-21
+)
+if [[ "${buildopt_bootstrap_output}" != *"Provisioned temurin-jdk-21 21.0.12+8"* ]]; then
+    printf 'bootstrap did not report a successful JDK provision\n' >&2
+    exit 1
+fi
+
+buildopt_install_dir="${buildopt_tools_root}/toolchains/temurin-jdk-21-${buildopt_sha256:0:16}"
+if [[ ! -x "${buildopt_install_dir}/bin/java" ]] ||
+    [[ ! -x "${buildopt_install_dir}/bin/javac" ]]; then
+    printf 'bootstrap did not install executable Java binaries\n' >&2
+    exit 1
+fi
+
+buildopt_second_output=$(
+    BUILDOPT_TEST_ARCHIVE="${buildopt_archive}" \
+    BUILDOPT_TEST_CURL_COUNT="${buildopt_curl_count}" \
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    PATH="${buildopt_fake_host_bin}:${PATH}" \
+        "${buildopt_bootstrap}" --toolchain temurin-jdk-21
+)
+if [[ "${buildopt_second_output}" != *"is already provisioned"* ]] ||
+    [[ "$(<"${buildopt_curl_count}")" != "1" ]]; then
+    printf 'bootstrap is not idempotent\n' >&2
+    exit 1
+fi
+
+buildopt_manifest="${buildopt_install_dir}/.buildopt-toolchain.json"
+cp -- "${buildopt_manifest}" "${buildopt_manifest}.original"
+jq '.provider = "unexpected-provider"' \
+    "${buildopt_manifest}" >"${buildopt_manifest}.changed"
+mv -- "${buildopt_manifest}.changed" "${buildopt_manifest}"
+set +e
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_run}" -- java -version >/dev/null 2>&1
+buildopt_manifest_exit=$?
+set -e
+mv -- "${buildopt_manifest}.original" "${buildopt_manifest}"
+if ((buildopt_manifest_exit != 1)); then
+    printf 'dev/run accepted provisioned metadata that diverged from the lock\n' >&2
+    exit 1
+fi
+
+buildopt_global_bin="${buildopt_test_root}/global-bin"
+mkdir "${buildopt_global_bin}"
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf '\''openjdk version "25.0.3" global\n'\'' >&2' \
+    >"${buildopt_global_bin}/java"
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf '\''javac 25.0.3 global\n'\'' >&2' \
+    >"${buildopt_global_bin}/javac"
+chmod +x "${buildopt_global_bin}/java" "${buildopt_global_bin}/javac"
+
+buildopt_global_java=$(
+    PATH="${buildopt_global_bin}:${PATH}" java -version 2>&1
+)
+if [[ "${buildopt_global_java}" != *'25.0.3'* ]]; then
+    printf 'global Java fixture is invalid\n' >&2
+    exit 1
+fi
+
+buildopt_project_java=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    PATH="${buildopt_global_bin}:${PATH}" \
+        "${buildopt_run}" -- java -version 2>&1
+)
+buildopt_project_javac=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    PATH="${buildopt_global_bin}:${PATH}" \
+        "${buildopt_run}" -- javac -version 2>&1
+)
+buildopt_explicit_java=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    PATH="${buildopt_global_bin}:${PATH}" \
+        "${buildopt_run}" \
+        --toolchain temurin-jdk-21 \
+        -- \
+        java -version 2>&1
+)
+if [[ "${buildopt_project_java}" != *'21.0.12'* ]] ||
+    [[ "${buildopt_project_java}" == *'25.0.3'* ]] ||
+    [[ "${buildopt_project_javac}" != *'21.0.12'* ]] ||
+    [[ "${buildopt_explicit_java}" != "${buildopt_project_java}" ]]; then
+    printf 'dev/run did not isolate the project JDK from global Java\n' >&2
+    exit 1
+fi
+
+buildopt_probe="${buildopt_test_root}/probe-environment"
+# The generated probe expands JAVA_HOME inside the dev/run child.
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf '\''%s\n'\'' "${JAVA_HOME}"' \
+    'command -v java' \
+    >"${buildopt_probe}"
+chmod +x "${buildopt_probe}"
+buildopt_probe_output=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    JAVA_HOME="${buildopt_test_root}/global-java-home" \
+    PATH="${buildopt_global_bin}:${PATH}" \
+        "${buildopt_run}" -- "${buildopt_probe}"
+)
+buildopt_expected_probe=$(
+    printf '%s\n%s\n' \
+        "${buildopt_install_dir}" \
+        "${buildopt_install_dir}/bin/java"
+)
+if [[ "${buildopt_probe_output}" != "${buildopt_expected_probe}" ]]; then
+    printf 'dev/run supplied an unexpected JAVA_HOME or PATH\n' >&2
+    exit 1
+fi
+
+buildopt_global_java_after=$(
+    PATH="${buildopt_global_bin}:${PATH}" java -version 2>&1
+)
+if [[ "${buildopt_global_java_after}" != "${buildopt_global_java}" ]]; then
+    printf 'dev/run changed global Java state\n' >&2
+    exit 1
+fi
+
+set +e
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_run}" -- bash -c 'exit 37'
+buildopt_child_exit=$?
+set -e
+if ((buildopt_child_exit != 37)); then
+    printf 'dev/run returned %s instead of the child exit code 37\n' \
+        "${buildopt_child_exit}" >&2
+    exit 1
+fi
+
+buildopt_bad_lock="${buildopt_test_root}/bad-checksum-lock.json"
+jq '.artifacts[0].sha256 = ("0" * 64)' \
+    "${buildopt_lock}" >"${buildopt_bad_lock}"
+set +e
+BUILDOPT_TEST_ARCHIVE="${buildopt_archive}" \
+BUILDOPT_TEST_CURL_COUNT="${buildopt_test_root}/bad-curl-count" \
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_bad_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_test_root}/bad-tools" \
+PATH="${buildopt_fake_host_bin}:${PATH}" \
+    "${buildopt_bootstrap}" --toolchain temurin-jdk-21 >/dev/null 2>&1
+buildopt_checksum_exit=$?
+set -e
+if ((buildopt_checksum_exit != 1)); then
+    printf 'bootstrap accepted a checksum mismatch\n' >&2
+    exit 1
+fi
+if find "${buildopt_test_root}/bad-tools/toolchains" \
+    -mindepth 1 \
+    -print \
+    -quit 2>/dev/null |
+    grep -q .; then
+    printf 'bootstrap left an installed toolchain after checksum failure\n' >&2
+    exit 1
+fi
+
+set +e
+"${buildopt_bootstrap}" >/dev/null 2>&1
+buildopt_bootstrap_usage_exit=$?
+"${buildopt_run}" java -version >/dev/null 2>&1
+buildopt_run_usage_exit=$?
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_test_root}/missing-tools" \
+    "${buildopt_run}" -- java -version >/dev/null 2>&1
+buildopt_missing_exit=$?
+set -e
+if ((buildopt_bootstrap_usage_exit != 64)) ||
+    ((buildopt_run_usage_exit != 64)) ||
+    ((buildopt_missing_exit != 1)); then
+    printf 'unexpected bootstrap/run error contract: %s/%s/%s\n' \
+        "${buildopt_bootstrap_usage_exit}" \
+        "${buildopt_run_usage_exit}" \
+        "${buildopt_missing_exit}" >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'JDK toolchain tests changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'ENV-003 JDK toolchain tests OK: checksum, idempotency, isolation, and exit propagation\n'
