@@ -60,6 +60,34 @@ buildopt_link_command git "${buildopt_success_bin}"
 buildopt_link_command bash "${buildopt_internal_error_bin}"
 buildopt_link_command dirname "${buildopt_internal_error_bin}"
 
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf '\''rustc 1.93.0 (254b59607 2026-01-19)\n'\''' \
+    >"${buildopt_success_bin}/rustc"
+# The generated rustup fixture resolves the rustc next to itself.
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'case "${1:-}" in' \
+    '    toolchain)' \
+    '        [[ "${2:-}" == "list" ]] || exit 64' \
+    '        printf '\''1.93.0-x86_64-unknown-linux-gnu\n'\''' \
+    '        ;;' \
+    '    which)' \
+    '        [[ "${2:-}" == "rustc" ]] || exit 64' \
+    '        [[ "${3:-}" == "--toolchain" ]] || exit 64' \
+    '        [[ "${4:-}" == "1.93.0-x86_64-unknown-linux-gnu" ]] || exit 64' \
+    '        buildopt_bin_dir=$(cd -- "$(dirname -- "$0")" && pwd)' \
+    '        printf '\''%s/rustc\n'\'' "${buildopt_bin_dir}"' \
+    '        ;;' \
+    '    *)' \
+    '        exit 64' \
+    '        ;;' \
+    'esac' \
+    >"${buildopt_success_bin}/rustup"
+chmod +x "${buildopt_success_bin}/rustc" "${buildopt_success_bin}/rustup"
+
 buildopt_before_status=$(
     git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
 )
@@ -87,6 +115,13 @@ jq -e '
             select(.id == "temurin-jdk-21") |
             .probes[].executable
         ] == ["java", "javac"]
+    ) and
+    any(
+        .toolchains.entries[];
+        .id == "rust-channel-manifest" and
+        .state == "MATCH" and
+        .probes[0].observedVersion ==
+            "rustc 1.93.0 (254b59607 2026-01-19)"
     ) and
     (
         [

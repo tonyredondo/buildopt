@@ -1,0 +1,281 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_checker="${buildopt_script_dir}/check-rust-toolchain"
+buildopt_toolchain_file="${buildopt_repo_root}/rust-toolchain.toml"
+buildopt_test_root=$(mktemp -d)
+
+buildopt_cleanup() {
+    rm -rf -- "${buildopt_test_root}"
+}
+trap buildopt_cleanup EXIT
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+buildopt_manifest="${buildopt_test_root}/channel-rust.toml"
+printf '%s\n' \
+    'manifest-version = "2"' \
+    'date = "2026-01-22"' \
+    >"${buildopt_manifest}"
+buildopt_manifest_sha=$(sha256sum "${buildopt_manifest}" | awk '{print $1}')
+
+buildopt_lock="${buildopt_test_root}/toolchains.lock.json"
+jq -n \
+    --arg buildopt_sha "${buildopt_manifest_sha}" \
+    '{
+        schemaVersion: "buildopt.dev/toolchains-lock/v1",
+        platforms: [
+            {
+                id: "linux-amd64",
+                operatingSystem: "linux",
+                architecture: "amd64"
+            }
+        ],
+        artifacts: [
+            {
+                id: "rust-channel-manifest",
+                version: "1.93.0",
+                adoption: "optional",
+                kind: "provider-manifest",
+                platform: "linux-amd64",
+                provider: "rust-project",
+                url: "https://static.rust-lang.org/dist/channel-rust-1.93.0.toml",
+                sha256: $buildopt_sha,
+                requiredBy: ["ENV-009"]
+            }
+        ]
+    }' >"${buildopt_lock}"
+
+buildopt_fake_bin="${buildopt_test_root}/fake bin"
+mkdir "${buildopt_fake_bin}"
+
+# The generated rustup fixture expands variables when the checker runs it.
+# shellcheck disable=SC1003,SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'buildopt_toolchain=1.93.0-x86_64-unknown-linux-gnu' \
+    'case "${1:-}" in' \
+    '    toolchain)' \
+    '        [[ "${2:-}" == "list" ]] || exit 64' \
+    '        printf '\''%s\n'\'' "${BUILDOPT_TEST_INSTALLED_TOOLCHAIN:-${buildopt_toolchain}}"' \
+    '        ;;' \
+    '    show)' \
+    '        [[ "${2:-}" == "active-toolchain" ]] || exit 64' \
+    '        printf '\''%s (overridden by test rust-toolchain.toml)\n'\'' \' \
+    '            "${BUILDOPT_TEST_ACTIVE_TOOLCHAIN:-${buildopt_toolchain}}"' \
+    '        ;;' \
+    '    which)' \
+    '        buildopt_binary=${2:-}' \
+    '        [[ "${3:-}" == "--toolchain" ]] || exit 64' \
+    '        [[ "${4:-}" == "${buildopt_toolchain}" ]] || exit 65' \
+    '        printf '\''%s/%s\n'\'' "${BUILDOPT_TEST_FAKE_BIN}" "${buildopt_binary}"' \
+    '        ;;' \
+    '    *)' \
+    '        exit 64' \
+    '        ;;' \
+    'esac' \
+    >"${buildopt_fake_bin}/rustup"
+
+# shellcheck disable=SC1003,SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    '[[ "${1:-}" == "--version" && "${2:-}" == "--verbose" ]] || exit 64' \
+    'buildopt_version=${BUILDOPT_TEST_RUST_VERSION:-1.93.0}' \
+    'printf '\''rustc %s (254b59607 2026-01-19)\n'\'' "${buildopt_version}"' \
+    'printf '\''binary: rustc\n'\''' \
+    'printf '\''commit-hash: 254b59607d4417e9dffbc307138ae5c86280fe4c\n'\''' \
+    'printf '\''commit-date: 2026-01-19\n'\''' \
+    'printf '\''host: %s\n'\'' "${BUILDOPT_TEST_RUST_HOST:-x86_64-unknown-linux-gnu}"' \
+    'printf '\''release: %s\n'\'' "${buildopt_version}"' \
+    >"${buildopt_fake_bin}/rustc"
+
+# The generated cargo fixture records the isolated environment and arguments.
+# shellcheck disable=SC1003,SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'if [[ "${1:-}" == "--version" && "${2:-}" == "--verbose" ]]; then' \
+    '    buildopt_version=${BUILDOPT_TEST_CARGO_VERSION:-1.93.0}' \
+    '    printf '\''cargo %s (083ac5135 2025-12-15)\n'\'' "${buildopt_version}"' \
+    '    printf '\''release: %s\n'\'' "${buildopt_version}"' \
+    '    printf '\''host: %s\n'\'' "${BUILDOPT_TEST_CARGO_HOST:-x86_64-unknown-linux-gnu}"' \
+    '    exit 0' \
+    'fi' \
+    '{' \
+    '    printf '\''home=%s\ttarget=%s\toffline=%s\trustc=%s\trustflags=%s'\'' \' \
+    '        "${CARGO_HOME:-}" \' \
+    '        "${CARGO_TARGET_DIR:-}" \' \
+    '        "${CARGO_NET_OFFLINE:-}" \' \
+    '        "${RUSTC:-}" \' \
+    '        "${RUSTFLAGS:-}"' \
+    '    for buildopt_arg in "$@"; do' \
+    '        printf '\''\t%s'\'' "${buildopt_arg}"' \
+    '    done' \
+    '    printf '\''\n'\''' \
+    '} >>"${BUILDOPT_TEST_CARGO_LOG}"' \
+    'case "${1:-}" in' \
+    '    generate-lockfile)' \
+    '        ;;' \
+    '    check)' \
+    '        exit "${BUILDOPT_TEST_CARGO_CHECK_EXIT:-0}"' \
+    '        ;;' \
+    '    metadata)' \
+    '        printf '\''%s\n'\'' \' \
+    '            '\''{"packages":[{"name":"buildopt-rust-toolchain-smoke","edition":"2024","targets":[{"kind":["lib"]}]}]}'\''' \
+    '        ;;' \
+    '    *)' \
+    '        exit 64' \
+    '        ;;' \
+    'esac' \
+    >"${buildopt_fake_bin}/cargo"
+
+# The generated curl fixture copies a deterministic manifest to --output.
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'buildopt_output=' \
+    'while (($# > 0)); do' \
+    '    case "$1" in' \
+    '        --output)' \
+    '            buildopt_output=$2' \
+    '            shift 2' \
+    '            ;;' \
+    '        *)' \
+    '            shift' \
+    '            ;;' \
+    '    esac' \
+    'done' \
+    '[[ -n "${buildopt_output}" ]] || exit 64' \
+    'printf '\''called\n'\'' >>"${BUILDOPT_TEST_CURL_LOG}"' \
+    'cp -- "${BUILDOPT_TEST_MANIFEST}" "${buildopt_output}"' \
+    >"${buildopt_fake_bin}/curl"
+
+chmod +x \
+    "${buildopt_fake_bin}/cargo" \
+    "${buildopt_fake_bin}/curl" \
+    "${buildopt_fake_bin}/rustc" \
+    "${buildopt_fake_bin}/rustup"
+
+buildopt_run_fixture() {
+    local buildopt_cargo_log=$1
+    shift
+
+    BUILDOPT_TEST_CARGO_LOG="${buildopt_cargo_log}" \
+    BUILDOPT_TEST_CURL_LOG="${BUILDOPT_TEST_CURL_LOG:-${buildopt_test_root}/curl.log}" \
+    BUILDOPT_TEST_FAKE_BIN="${buildopt_fake_bin}" \
+    BUILDOPT_TEST_MANIFEST="${buildopt_manifest}" \
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${BUILDOPT_TOOLCHAINS_LOCK_FILE:-${buildopt_lock}}" \
+    BUILDOPT_RUST_TOOLCHAIN_FILE="${BUILDOPT_RUST_TOOLCHAIN_FILE:-${buildopt_toolchain_file}}" \
+    PATH="${buildopt_fake_bin}:${PATH}" \
+        "${buildopt_checker}" "$@"
+}
+
+buildopt_offline_log="${buildopt_test_root}/offline-cargo.log"
+buildopt_offline_output=$(
+    buildopt_run_fixture "${buildopt_offline_log}"
+)
+if [[ "${buildopt_offline_output}" != \
+    *"manifest offline, cargo check"* ]] ||
+    [[ -e "${buildopt_test_root}/curl.log" ]]; then
+    printf 'offline Rust verification contacted the manifest source\n' >&2
+    exit 1
+fi
+
+mapfile -t buildopt_cargo_calls <"${buildopt_offline_log}"
+if ((${#buildopt_cargo_calls[@]} != 3)) ||
+    [[ "${buildopt_cargo_calls[0]}" != *$'\tgenerate-lockfile\t--offline'* ]] ||
+    [[ "${buildopt_cargo_calls[1]}" != *$'\tcheck\t--locked\t--offline'* ]] ||
+    [[ "${buildopt_cargo_calls[1]}" != *$'offline=true'* ]] ||
+    [[ "${buildopt_cargo_calls[1]}" != *$'rustflags=-Dwarnings'* ]] ||
+    [[ "${buildopt_cargo_calls[2]}" != *$'\tmetadata\t--format-version\t1'* ]]; then
+    printf 'Rust checker used an unexpected cargo contract\n' >&2
+    exit 1
+fi
+if [[ "${buildopt_cargo_calls[1]}" == *"/home/"* ]]; then
+    printf 'Rust cargo check leaked a user-scoped path into its state\n' >&2
+    exit 1
+fi
+
+buildopt_verified_log="${buildopt_test_root}/verified-cargo.log"
+buildopt_verified_output=$(
+    buildopt_run_fixture "${buildopt_verified_log}" --verify-manifest
+)
+if [[ "${buildopt_verified_output}" != \
+    *"manifest verified, cargo check"* ]] ||
+    [[ "$(<"${buildopt_test_root}/curl.log")" != "called" ]]; then
+    printf 'Rust manifest verification did not validate the locked bytes\n' >&2
+    exit 1
+fi
+
+buildopt_bad_lock="${buildopt_test_root}/bad-lock.json"
+jq '.artifacts[0].sha256 = ("0" * 64)' \
+    "${buildopt_lock}" >"${buildopt_bad_lock}"
+buildopt_bad_toolchain="${buildopt_test_root}/rust-toolchain.toml"
+printf '%s\n' \
+    '[toolchain]' \
+    'channel = "stable"' \
+    'profile = "minimal"' \
+    >"${buildopt_bad_toolchain}"
+
+set +e
+BUILDOPT_TEST_INSTALLED_TOOLCHAIN=1.92.0-x86_64-unknown-linux-gnu \
+    buildopt_run_fixture "${buildopt_test_root}/missing.log" \
+    >/dev/null 2>&1
+buildopt_missing_exit=$?
+BUILDOPT_TEST_RUST_VERSION=1.92.0 \
+    buildopt_run_fixture "${buildopt_test_root}/version.log" \
+    >/dev/null 2>&1
+buildopt_version_exit=$?
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_bad_lock}" \
+    buildopt_run_fixture "${buildopt_test_root}/checksum.log" \
+    --verify-manifest >/dev/null 2>&1
+buildopt_checksum_exit=$?
+BUILDOPT_RUST_TOOLCHAIN_FILE="${buildopt_bad_toolchain}" \
+    buildopt_run_fixture "${buildopt_test_root}/config.log" \
+    >/dev/null 2>&1
+buildopt_config_exit=$?
+BUILDOPT_TEST_CARGO_CHECK_EXIT=37 \
+    buildopt_run_fixture "${buildopt_test_root}/cargo-failure.log" \
+    >/dev/null 2>&1
+buildopt_cargo_exit=$?
+"${buildopt_checker}" unexpected >/dev/null 2>&1
+buildopt_usage_exit=$?
+set -e
+
+if ((buildopt_missing_exit != 1)) ||
+    ((buildopt_version_exit != 1)) ||
+    ((buildopt_checksum_exit != 1)) ||
+    ((buildopt_config_exit != 1)) ||
+    ((buildopt_cargo_exit != 37)) ||
+    ((buildopt_usage_exit != 64)); then
+    printf 'unexpected Rust verification error contract: %s/%s/%s/%s/%s/%s\n' \
+        "${buildopt_missing_exit}" \
+        "${buildopt_version_exit}" \
+        "${buildopt_checksum_exit}" \
+        "${buildopt_config_exit}" \
+        "${buildopt_cargo_exit}" \
+        "${buildopt_usage_exit}" >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'Rust toolchain tests changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'ENV-009 Rust toolchain tests OK: pin, isolation, manifest, and cargo failures\n'

@@ -1,0 +1,253 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_usage() {
+    printf 'usage: %s [--verify-manifest]\n' "$0"
+}
+
+if (($# > 1)); then
+    buildopt_usage >&2
+    exit 64
+fi
+
+buildopt_verify_manifest=false
+case "${1:-}" in
+    "") ;;
+    --verify-manifest) buildopt_verify_manifest=true ;;
+    *)
+        buildopt_usage >&2
+        exit 64
+        ;;
+esac
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_lock=${BUILDOPT_TOOLCHAINS_LOCK_FILE:-"${buildopt_script_dir}/toolchains.lock.yaml"}
+buildopt_toolchain_file=${BUILDOPT_RUST_TOOLCHAIN_FILE:-"${buildopt_repo_root}/rust-toolchain.toml"}
+
+buildopt_required_commands=(awk jq mktemp rustup uname)
+if [[ "${buildopt_verify_manifest}" == true ]]; then
+    buildopt_required_commands+=(curl sha256sum)
+fi
+for buildopt_command in "${buildopt_required_commands[@]}"; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Rust verification command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if [[ ! -f "${buildopt_lock}" || ! -f "${buildopt_toolchain_file}" ]]; then
+    printf 'Rust lock or rust-toolchain.toml is missing\n' >&2
+    exit 1
+fi
+
+if ! buildopt_entry=$(
+    jq -ce '
+        [.artifacts[] | select(.id == "rust-channel-manifest")] |
+        if length == 1 then
+            .[0]
+        else
+            error("expected exactly one Rust channel manifest")
+        end
+    ' "${buildopt_lock}"
+); then
+    printf 'invalid Rust channel entry in the toolchain lock\n' >&2
+    exit 70
+fi
+
+buildopt_version=$(jq -r '.version' <<<"${buildopt_entry}")
+buildopt_kind=$(jq -r '.kind' <<<"${buildopt_entry}")
+buildopt_platform=$(jq -r '.platform' <<<"${buildopt_entry}")
+buildopt_provider=$(jq -r '.provider' <<<"${buildopt_entry}")
+buildopt_url=$(jq -r '.url' <<<"${buildopt_entry}")
+buildopt_sha256=$(jq -r '.sha256' <<<"${buildopt_entry}")
+buildopt_target=x86_64-unknown-linux-gnu
+buildopt_toolchain="${buildopt_version}-${buildopt_target}"
+
+if [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]] ||
+    [[ "${buildopt_kind}" != "provider-manifest" ]] ||
+    [[ "${buildopt_platform}" != "linux-amd64" ]] ||
+    [[ "${buildopt_provider}" != "rust-project" ]] ||
+    [[ "${buildopt_url}" != \
+        "https://static.rust-lang.org/dist/channel-rust-${buildopt_version}.toml" ]] ||
+    [[ ! "${buildopt_sha256}" =~ ^[0-9a-f]{64}$ ]]; then
+    printf 'unsupported or malformed Rust channel entry\n' >&2
+    exit 70
+fi
+
+if [[ "$(uname -s)" != "Linux" || "$(uname -m)" != "x86_64" ]]; then
+    printf 'Rust toolchain %s requires Linux x86_64\n' \
+        "${buildopt_toolchain}" >&2
+    exit 1
+fi
+
+buildopt_expected_config=$(
+    printf '%s\n' \
+        '[toolchain]' \
+        "channel = \"${buildopt_toolchain}\"" \
+        'profile = "minimal"' \
+        "targets = [\"${buildopt_target}\"]"
+)
+buildopt_actual_config=$(<"${buildopt_toolchain_file}")
+if [[ "${buildopt_actual_config}" != "${buildopt_expected_config}" ]]; then
+    printf 'rust-toolchain.toml does not match the locked Rust channel\n' >&2
+    exit 1
+fi
+
+buildopt_installed=false
+while IFS= read -r buildopt_installed_line; do
+    if [[ "${buildopt_installed_line%% *}" == "${buildopt_toolchain}" ]]; then
+        buildopt_installed=true
+        break
+    fi
+done < <(rustup toolchain list)
+if [[ "${buildopt_installed}" != true ]]; then
+    printf 'Rust %s is not installed; run: rustup toolchain install %s --profile minimal\n' \
+        "${buildopt_version}" \
+        "${buildopt_toolchain}" >&2
+    exit 1
+fi
+
+buildopt_active_toolchain=$(rustup show active-toolchain)
+if [[ "${buildopt_active_toolchain%% *}" != "${buildopt_toolchain}" ]]; then
+    printf 'rust-toolchain.toml did not activate %s: %s\n' \
+        "${buildopt_toolchain}" \
+        "${buildopt_active_toolchain}" >&2
+    exit 1
+fi
+
+buildopt_rustc=$(
+    rustup which rustc --toolchain "${buildopt_toolchain}"
+)
+buildopt_cargo=$(
+    rustup which cargo --toolchain "${buildopt_toolchain}"
+)
+if [[ ! -x "${buildopt_rustc}" || ! -x "${buildopt_cargo}" ]]; then
+    printf 'the selected Rust toolchain lacks rustc or cargo\n' >&2
+    exit 1
+fi
+
+buildopt_rustc_output=$("${buildopt_rustc}" --version --verbose)
+buildopt_cargo_output=$("${buildopt_cargo}" --version --verbose)
+buildopt_rustc_release=$(
+    awk -F': ' '/^release:/ {print $2; exit}' <<<"${buildopt_rustc_output}"
+)
+buildopt_rustc_host=$(
+    awk -F': ' '/^host:/ {print $2; exit}' <<<"${buildopt_rustc_output}"
+)
+buildopt_cargo_release=$(
+    awk -F': ' '/^release:/ {print $2; exit}' <<<"${buildopt_cargo_output}"
+)
+buildopt_cargo_host=$(
+    awk -F': ' '/^host:/ {print $2; exit}' <<<"${buildopt_cargo_output}"
+)
+if [[ "${buildopt_rustc_release}" != "${buildopt_version}" ]] ||
+    [[ "${buildopt_cargo_release}" != "${buildopt_version}" ]] ||
+    [[ "${buildopt_rustc_host}" != "${buildopt_target}" ]] ||
+    [[ "${buildopt_cargo_host}" != "${buildopt_target}" ]]; then
+    printf 'selected Rust binaries do not match %s/%s\n' \
+        "${buildopt_version}" \
+        "${buildopt_target}" >&2
+    exit 1
+fi
+
+buildopt_test_root=$(mktemp -d)
+buildopt_cleanup() {
+    rm -rf -- "${buildopt_test_root}"
+}
+trap buildopt_cleanup EXIT
+
+if [[ "${buildopt_verify_manifest}" == true ]]; then
+    buildopt_manifest="${buildopt_test_root}/channel-rust.toml"
+    if ! curl \
+        --fail \
+        --location \
+        --proto '=https' \
+        --proto-redir '=https' \
+        --retry 3 \
+        --show-error \
+        --silent \
+        --output "${buildopt_manifest}" \
+        "${buildopt_url}"; then
+        printf 'cannot download the locked Rust channel manifest\n' >&2
+        exit 1
+    fi
+    if ! printf '%s  %s\n' "${buildopt_sha256}" "${buildopt_manifest}" |
+        sha256sum -c - >/dev/null 2>&1; then
+        printf 'Rust channel manifest checksum does not match the lock\n' >&2
+        exit 1
+    fi
+fi
+
+buildopt_smoke_root="${buildopt_test_root}/cargo-smoke"
+buildopt_cargo_home="${buildopt_test_root}/cargo-home"
+buildopt_target_dir="${buildopt_test_root}/target"
+mkdir -p "${buildopt_smoke_root}/src" "${buildopt_cargo_home}"
+printf '%s\n' \
+    '[package]' \
+    'name = "buildopt-rust-toolchain-smoke"' \
+    'version = "0.0.0"' \
+    'edition = "2024"' \
+    'publish = false' \
+    '' \
+    '[lib]' \
+    'path = "src/lib.rs"' \
+    >"${buildopt_smoke_root}/Cargo.toml"
+printf '%s\n' \
+    '#![forbid(unsafe_code)]' \
+    '' \
+    'pub const TOOLCHAIN_MARKER: &str = "buildopt-rust-toolchain-ok";' \
+    >"${buildopt_smoke_root}/src/lib.rs"
+
+cd -- "${buildopt_repo_root}"
+CARGO_HOME="${buildopt_cargo_home}" \
+CARGO_NET_OFFLINE=true \
+CARGO_TARGET_DIR="${buildopt_target_dir}" \
+RUSTC="${buildopt_rustc}" \
+RUSTFLAGS="-Dwarnings" \
+    "${buildopt_cargo}" generate-lockfile \
+        --offline \
+        --manifest-path "${buildopt_smoke_root}/Cargo.toml"
+CARGO_HOME="${buildopt_cargo_home}" \
+CARGO_INCREMENTAL=0 \
+CARGO_NET_OFFLINE=true \
+CARGO_TARGET_DIR="${buildopt_target_dir}" \
+RUSTC="${buildopt_rustc}" \
+RUSTFLAGS="-Dwarnings" \
+    "${buildopt_cargo}" check \
+        --locked \
+        --offline \
+        --quiet \
+        --target "${buildopt_target}" \
+        --manifest-path "${buildopt_smoke_root}/Cargo.toml"
+buildopt_metadata=$(
+    CARGO_HOME="${buildopt_cargo_home}" \
+    CARGO_NET_OFFLINE=true \
+    CARGO_TARGET_DIR="${buildopt_target_dir}" \
+    RUSTC="${buildopt_rustc}" \
+        "${buildopt_cargo}" metadata \
+            --format-version 1 \
+            --locked \
+            --no-deps \
+            --offline \
+            --manifest-path "${buildopt_smoke_root}/Cargo.toml"
+)
+if ! jq -e '
+    (.packages | length) == 1 and
+    .packages[0].name == "buildopt-rust-toolchain-smoke" and
+    .packages[0].edition == "2024" and
+    .packages[0].targets[0].kind == ["lib"]
+' <<<"${buildopt_metadata}" >/dev/null; then
+    printf 'cargo did not resolve the expected smoke package\n' >&2
+    exit 1
+fi
+
+buildopt_manifest_status=offline
+if [[ "${buildopt_verify_manifest}" == true ]]; then
+    buildopt_manifest_status=verified
+fi
+printf 'ENV-009 Rust toolchain OK: rustc/cargo %s, %s, manifest %s, cargo check\n' \
+    "${buildopt_version}" \
+    "${buildopt_target}" \
+    "${buildopt_manifest_status}"

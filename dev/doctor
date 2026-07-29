@@ -509,6 +509,31 @@ buildopt_toolchain_executables() {
     esac
 }
 
+buildopt_resolve_rustc() {
+    local buildopt_version=$1
+    local buildopt_rustup
+    local buildopt_rust_toolchain="${buildopt_version}-x86_64-unknown-linux-gnu"
+    local buildopt_rust_toolchain_file="${buildopt_repo_root}/rust-toolchain.toml"
+    local buildopt_installed_line
+
+    [[ -f "${buildopt_rust_toolchain_file}" ]] || return 1
+    grep -Fqx \
+        "channel = \"${buildopt_rust_toolchain}\"" \
+        "${buildopt_rust_toolchain_file}" || return 1
+    buildopt_rustup=$(command -v rustup 2>/dev/null) || return 1
+
+    while IFS= read -r buildopt_installed_line; do
+        if [[ "${buildopt_installed_line%% *}" == "${buildopt_rust_toolchain}" ]]; then
+            "${buildopt_rustup}" which \
+                rustc \
+                --toolchain "${buildopt_rust_toolchain}" 2>/dev/null
+            return
+        fi
+    done < <("${buildopt_rustup}" toolchain list 2>/dev/null)
+
+    return 1
+}
+
 while IFS=$'\t' read -r \
     buildopt_toolchain_id \
     buildopt_expected_version \
@@ -523,10 +548,18 @@ while IFS=$'\t' read -r \
         buildopt_toolchain_executables "${buildopt_toolchain_id}"
     ); then
         while IFS= read -r buildopt_executable; do
-            buildopt_toolchain_path=$(
-                command -v "${buildopt_executable}" 2>/dev/null ||
-                    true
-            )
+            if [[ "${buildopt_toolchain_id}" == "rust-channel-manifest" ]] &&
+                [[ "${buildopt_executable}" == "rustc" ]]; then
+                buildopt_toolchain_path=$(
+                    buildopt_resolve_rustc "${buildopt_expected_version}" ||
+                        true
+                )
+            else
+                buildopt_toolchain_path=$(
+                    command -v "${buildopt_executable}" 2>/dev/null ||
+                        true
+                )
+            fi
             buildopt_observed_version=
             buildopt_probe_state=UNPROBED
             buildopt_probe_expected_version=${buildopt_expected_version}

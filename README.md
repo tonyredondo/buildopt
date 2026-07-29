@@ -55,8 +55,10 @@ From the repository root:
 ./dev/test-doctor
 ./dev/test-jdk-toolchain
 ./dev/test-go-toolchain
+./dev/test-rust-toolchain
 ./dev/test-golden-lane-container
 ./dev/run --toolchain go -- ./dev/check-go-toolchain
+./dev/check-rust-toolchain --verify-manifest
 ./dev/run -- ./dev/check-jvm-release
 ./dev/check-golden-lane --static
 ```

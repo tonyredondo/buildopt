@@ -73,6 +73,30 @@ Run the checker through the isolated toolchain:
 
 The checker requires Linux AMD64, exact locked provenance and version, local-only toolchain selection, disabled user Go configuration, project-local caches, and an unchanged module graph. It then builds and executes a standard-library-only smoke program twice offline and requires identical binaries.
 
+## Rust toolchain validation
+
+The root [`rust-toolchain.toml`](../rust-toolchain.toml) selects `1.93.0-x86_64-unknown-linux-gnu` with Rustup's minimal profile. Rust remains optional for the core, and this pin does not activate the hermetic helper or claim any sandbox capability.
+
+Install the side-by-side toolchain without changing the Rustup default if it is not already available:
+
+```bash
+rustup toolchain install 1.93.0-x86_64-unknown-linux-gnu --profile minimal
+```
+
+Run the normal offline toolchain and `cargo check` contract:
+
+```bash
+./dev/check-rust-toolchain
+```
+
+Revalidate the official channel manifest bytes against the repository lock when updating or producing gate evidence:
+
+```bash
+./dev/check-rust-toolchain --verify-manifest
+```
+
+The checker requires the exact installed compiler, Cargo release, host triple, active repository override, and locked configuration. Its dependency-free Cargo smoke uses temporary `CARGO_HOME` and target directories, disables network access, and leaves the optional helper unimplemented until `SPK-003`. The doctor resolves only an already-installed locked toolchain, so its read-only probe never triggers Rustup auto-installation.
+
 ## JVM release validation
 
 Build and inspect the neutral Gradle plugin and JVM agent artifacts:
@@ -145,6 +169,7 @@ Run the lock and doctor contract tests from the repository root:
 ./dev/test-doctor
 ./dev/test-jdk-toolchain
 ./dev/test-go-toolchain
+./dev/test-rust-toolchain
 ./dev/test-golden-lane-container
 ```
 
@@ -155,6 +180,8 @@ The doctor tests exercise successful and failed host reports, JSON shape, exit c
 The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.
 
 The Go toolchain tests use a synthetic archive and isolated tool root. They exercise atomic provisioning, idempotency, exact-version selection, project-local `GOROOT`, `GOPATH`, module/build caches, disabled automatic toolchain switching and user configuration, global-Go isolation, missing-tool behavior, and child exit-code propagation without downloading or changing the workstation Go installation.
+
+The Rust toolchain tests use synthetic Rustup, rustc, Cargo, and channel-manifest fixtures. They exercise the exact repository override, offline isolated Cargo state, locked manifest verification, missing/mismatched tools, configuration drift, usage errors, and Cargo failure propagation without installing a toolchain or touching the global default.
 
 The golden container tests use a synthetic Docker client and deterministic host-resource probes. They verify index-to-platform digest binding, exact pull and run arguments, local image identity, strict cgroup settings, mutable-reference rejection, daemon/resource failures, and child exit-code propagation without contacting a registry or starting a container.
 
