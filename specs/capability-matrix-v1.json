@@ -81,11 +81,11 @@
         },
         {
           "id": "PATCH_BUNDLE_APPLIER",
-          "status": "UNAVAILABLE",
-          "method": "",
-          "reason": "SPK-004 has not completed",
+          "status": "EXACT",
+          "method": "strict Java 17 verification and detached real-Git worktree application",
+          "reason": "",
           "fallback": "DOWNLOAD_BUNDLE_ONLY",
-          "evidence": []
+          "evidence": ["specs/patch-bundle-v1.md", "dev/check-patch-bundle-applier"]
         }
       ]
     },
@@ -166,11 +166,11 @@
         },
         {
           "id": "PATCH_BUNDLE_APPLIER",
-          "status": "UNAVAILABLE",
-          "method": "",
-          "reason": "SPK-004 has not completed",
+          "status": "EXACT",
+          "method": "strict Java 17 verification and detached real-Git worktree application",
+          "reason": "",
           "fallback": "DOWNLOAD_BUNDLE_ONLY",
-          "evidence": []
+          "evidence": ["specs/patch-bundle-v1.md", "dev/check-patch-bundle-applier"]
         }
       ]
     },
@@ -251,11 +251,11 @@
         },
         {
           "id": "PATCH_BUNDLE_APPLIER",
-          "status": "UNAVAILABLE",
-          "method": "",
-          "reason": "SPK-004 has not completed",
+          "status": "EXACT",
+          "method": "strict Java 17 verification and detached real-Git worktree application",
+          "reason": "",
           "fallback": "DOWNLOAD_BUNDLE_ONLY",
-          "evidence": []
+          "evidence": ["specs/patch-bundle-v1.md", "dev/check-patch-bundle-applier"]
         }
       ]
     },
@@ -338,9 +338,9 @@
           "id": "PATCH_BUNDLE_APPLIER",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "SPK-004 has not completed",
+          "reason": "the JDK 25 runtime combination has not executed the Java patcher corpus",
           "fallback": "DOWNLOAD_BUNDLE_ONLY",
-          "evidence": []
+          "evidence": ["specs/patch-bundle-v1.md", "dev/check-patch-bundle-applier"]
         }
       ]
     }

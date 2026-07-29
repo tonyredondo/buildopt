@@ -237,6 +237,28 @@ func validateTierOneCombinations(
 		taskPut.Fallback != "ABORT_PENDING" {
 		t.Errorf("unsafe task-to-PUT capability: %+v", taskPut)
 	}
+	for profileID, profile := range profiles {
+		patcher := findCapability(
+			profile.Capabilities,
+			"PATCH_BUNDLE_APPLIER",
+		)
+		wantStatus := "EXACT"
+		if profileID == "UNTESTED" {
+			wantStatus = "UNAVAILABLE"
+		}
+		if patcher.Status != wantStatus ||
+			patcher.Fallback != "DOWNLOAD_BUNDLE_ONLY" ||
+			!slices.Contains(
+				patcher.Evidence,
+				"dev/check-patch-bundle-applier",
+			) {
+			t.Errorf(
+				"%s PatchBundle applier capability: %+v",
+				profileID,
+				patcher,
+			)
+		}
+	}
 }
 
 func findCapabilityCombination(

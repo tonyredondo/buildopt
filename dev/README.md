@@ -430,12 +430,12 @@ recipe vectors:
 ```
 
 The isolated checker compiles the strict Draft 2020-12 schema, validates exact
-UTF-8 replacement blobs and the normative sorted bundle digest, and rejects 12
+UTF-8 replacement blobs and the normative sorted bundle digest, and rejects 13
 schema or semantic mutations covering paths, operations, modes, commands,
-preimages, blobs, signature binding, digest binding, and duplicate ordering.
-It does not apply a bundle to Git or execute bundle content; those parser,
-worktree, symlink/submodule, idempotency, and recovery proofs remain with
-`F0-034`/C4.
+preimages, blobs, source-state hashing, signature binding, digest binding, and
+duplicate ordering.
+It does not apply a bundle to Git or execute bundle content; the Java
+integration checker below owns that boundary.
 
 Validate the ordered `F0-034` application and recovery plan with:
 
@@ -445,8 +445,20 @@ Validate the ordered `F0-034` application and recovery plan with:
 
 The specification checker requires strict trust/source/blob verification,
 link-safe staged application, exact pre/postimages, isolated validation, and
-new-branch/draft-PR idempotency. Its 15 cases become the executable acceptance
-matrix for the Java patcher spike.
+new-branch/draft-PR idempotency. Its 15 cases are the executable acceptance
+matrix for the Java patcher:
+
+```bash
+./dev/check-patch-bundle-applier
+```
+
+The composite check first reruns the schema, JCS/Ed25519, and application-plan
+contracts. It then executes all 15 cases in temporary real Git repositories:
+both recipes, exact replay, source divergence, expired/untrusted authority,
+traversal, symlink and gitlink boundaries, postimage rollback, immutable
+branch conflict, branch-without-PR recovery, existing draft replay, and
+interrupted staging. The checker verifies Java 17 bytecode and that no
+customer checkout/index, extra worktree, default branch, or remote is changed.
 
 ## BuildOpt OpenAPI validation
 

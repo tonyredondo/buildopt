@@ -4,10 +4,10 @@
   "contractVersion": "buildopt-patch-bundle/v1",
   "repositoryId": "tenant-7/repo-42",
   "actionId": "action-patch-task-01K4YA01",
-  "bundleDigest": "sha256:a020d652a1cafff413a51192e0dd62232f05d7ba19f1b7dc3c3e0242d24ae1eb",
+  "bundleDigest": "sha256:af634a6bbd1ab5019f5964c7bbf7aa7c9102b5dcf51aa032a5cae8553c1687f1",
   "baseRevision": "1111111111111111111111111111111111111111",
   "baseTree": "2222222222222222222222222222222222222222",
-  "sourceStateDigest": "hmac-sha256:3333333333333333333333333333333333333333333333333333333333333333",
+  "sourceStateDigest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
   "recipe": {
     "id": "CUSTOM_TASK_CONTRACT_JAVA_V1",
     "version": "1.0",
@@ -59,7 +59,7 @@
     "algorithm": "Ed25519",
     "canonicalization": "JCS",
     "keyId": "patch-signing-2026-q3",
-    "signedBundleDigest": "sha256:a020d652a1cafff413a51192e0dd62232f05d7ba19f1b7dc3c3e0242d24ae1eb",
+    "signedBundleDigest": "sha256:af634a6bbd1ab5019f5964c7bbf7aa7c9102b5dcf51aa032a5cae8553c1687f1",
     "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
   }
 }

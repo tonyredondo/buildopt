@@ -20,6 +20,16 @@ worktree:
    combinations;
 7. validate every target and blob path segment without following links.
 
+The signed bytes are exactly:
+
+```text
+JCS({"bundleDigest": <digest>, "contractVersion": "buildopt-patch-bundle/v1", "keyId": <configured key ID>})
+```
+
+The bounded source-state digest is SHA-256 over
+`git ls-tree -r -z --full-tree <baseRevision>` bytes; no checkout-local or
+locale-dependent rendering is included.
+
 An absolute, empty, NUL, repeated-separator, trailing-separator, `..`, or
 `.git` path is invalid. A symlink at the target or any parent, a Git submodule
 (`160000` gitlink), a nested repository boundary, or a resolved path outside
@@ -73,5 +83,13 @@ Run the Phase 0 specification check:
 ```
 
 This validates the phase/case completeness and composes the existing strict
-bundle schema and cryptographic corpus. It does not claim the Java applier
-complete; `SPK-004` must execute these cases against real Git worktrees.
+bundle schema and cryptographic corpus. Run the materialized Java 17 applier
+against temporary real Git worktrees with:
+
+```bash
+./dev/check-patch-bundle-applier
+```
+
+`SPK-004` passes all 15 cases and closes `PATCH-BUNDLE-001`. The draft-PR
+adapter used by the spike is local and credential-free; production remote
+workflow orchestration remains in Go.

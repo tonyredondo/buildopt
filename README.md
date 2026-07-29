@@ -72,6 +72,7 @@ From the repository root:
 ./dev/check-test-optimization-openapi
 ./dev/check-test-optimization-integration
 ./dev/check-patch-bundle-spec
+./dev/check-patch-bundle-applier
 ./dev/check-bandit-policy
 ./dev/check-capability-matrix
 ./dev/check-data-lifecycle

@@ -4,10 +4,10 @@
   "contractVersion": "buildopt-patch-bundle/v1",
   "repositoryId": "tenant-7/repo-42",
   "actionId": "action-patch-archive-01K4YA00",
-  "bundleDigest": "sha256:941dccefc6566e6ec4a8f0bb34a1db1a656cb20f5cdefc00139074ace3c41cc1",
+  "bundleDigest": "sha256:fadb90c37b81d4bf6b27bf7b3aa076446dd6d6d59c9a0ee5dcff76208eeec46b",
   "baseRevision": "1111111111111111111111111111111111111111",
   "baseTree": "2222222222222222222222222222222222222222",
-  "sourceStateDigest": "hmac-sha256:3333333333333333333333333333333333333333333333333333333333333333",
+  "sourceStateDigest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
   "recipe": {
     "id": "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1",
     "version": "1.0"
@@ -54,7 +54,7 @@
     "algorithm": "Ed25519",
     "canonicalization": "JCS",
     "keyId": "patch-signing-2026-q3",
-    "signedBundleDigest": "sha256:941dccefc6566e6ec4a8f0bb34a1db1a656cb20f5cdefc00139074ace3c41cc1",
+    "signedBundleDigest": "sha256:fadb90c37b81d4bf6b27bf7b3aa076446dd6d6d59c9a0ee5dcff76208eeec46b",
     "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
   }
 }

@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_report=$(mktemp "${TMPDIR:-/tmp}/buildopt-patcher-spike.XXXXXX.json")
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_report}" &&
+        "${buildopt_report}" == "${TMPDIR:-/tmp}/buildopt-patcher-spike."*.json ]]; then
+        rm -f -- "${buildopt_report}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in awk find git jar javap jq mktemp; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required PatchBundle applier command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+"${buildopt_script_dir}/check-patch-bundle-spec"
+
+"${buildopt_script_dir}/run" -- \
+    "${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --stacktrace \
+    --warning-mode=fail \
+    "-PbuildoptPatcherSpikeReport=${buildopt_report}" \
+    :jvm:patcher:clean \
+    :jvm:patcher:check \
+    :jvm:patcher:jar
+
+jq -e \
+    --slurpfile plan "${buildopt_repo_root}/specs/patch-bundle-v1.json" \
+    '
+        .schemaVersion == "buildopt.spikes/patcher-result/v1" and
+        .caseCount == 15 and
+        .javaRuntimeFeature == 21 and
+        .allPassed == true and
+        .realGitWorktrees == true and
+        .strictJsonDuplicateKeys == true and
+        .ed25519JcsVerified == true and
+        .bundleContentExecuted == false and
+        .customerCheckoutHooksExecuted == false and
+        .customerContentFiltersExecuted == false and
+        .remoteMutationPerformed == false and
+        ([.cases[].id] == [$plan[0].cases[].id]) and
+        ([.cases[].expected] == [$plan[0].cases[].expected]) and
+        all(.cases[]; .actual == .expected)
+    ' \
+    "${buildopt_report}" >/dev/null
+
+mapfile -d '' buildopt_jars < <(
+    find "${buildopt_repo_root}/jvm/patcher/build/libs" \
+        -maxdepth 1 \
+        -type f \
+        -name 'buildopt-patcher-*.jar' \
+        ! -name '*-sources.jar' \
+        ! -name '*-javadoc.jar' \
+        -print0
+)
+if ((${#buildopt_jars[@]} != 1)); then
+    printf 'expected exactly one BuildOpt patcher JAR, found %s\n' \
+        "${#buildopt_jars[@]}" >&2
+    exit 1
+fi
+buildopt_jar=${buildopt_jars[0]}
+
+buildopt_java_home=$(
+    "${buildopt_script_dir}/run" -- \
+        java -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.home = / {
+                print $2
+                exit
+            }
+        '
+)
+mapfile -t buildopt_classes < <(
+    "${buildopt_java_home}/bin/jar" tf "${buildopt_jar}" |
+        awk '/[.]class$/ {print}'
+)
+if ((${#buildopt_classes[@]} == 0)); then
+    printf 'BuildOpt patcher JAR contains no classes\n' >&2
+    exit 1
+fi
+for buildopt_entry in "${buildopt_classes[@]}"; do
+    buildopt_class=${buildopt_entry%.class}
+    buildopt_class=${buildopt_class//\//.}
+    buildopt_major=$(
+        "${buildopt_java_home}/bin/javap" \
+            -classpath "${buildopt_jar}" \
+            -verbose \
+            "${buildopt_class}" |
+            awk '/major version:/ {print $3; exit}'
+    )
+    if [[ "${buildopt_major}" != "61" ]]; then
+        printf 'patcher class %s has major %s instead of Java 17 major 61\n' \
+            "${buildopt_class}" \
+            "${buildopt_major:-unknown}" >&2
+        exit 1
+    fi
+done
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'PatchBundle applier check changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'SPK-004 PatchBundle applier OK: 15/15 real-Git cases, %s Java 17 classes\n' \
+    "${#buildopt_classes[@]}"

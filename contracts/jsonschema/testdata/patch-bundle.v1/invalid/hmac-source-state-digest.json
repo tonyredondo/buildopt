@@ -1,0 +1,8 @@
+{
+  "base": "../valid/archive-reproducibility.json",
+  "operation": "replace",
+  "path": ["sourceStateDigest"],
+  "value": "hmac-sha256:3333333333333333333333333333333333333333333333333333333333333333",
+  "layer": "schema",
+  "diagnostic": "/sourceStateDigest"
+}

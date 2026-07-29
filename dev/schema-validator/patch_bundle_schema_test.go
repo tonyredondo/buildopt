@@ -66,8 +66,8 @@ func TestPatchBundleV1Vectors(t *testing.T) {
 	}
 
 	mutationPaths := fixtureFiles(t, filepath.Join(fixtureRoot, "invalid"))
-	if len(mutationPaths) != 12 {
-		t.Fatalf("found %d invalid PatchBundle mutations, want 12", len(mutationPaths))
+	if len(mutationPaths) != 13 {
+		t.Fatalf("found %d invalid PatchBundle mutations, want 13", len(mutationPaths))
 	}
 	for _, mutationPath := range mutationPaths {
 		mutationPath := mutationPath

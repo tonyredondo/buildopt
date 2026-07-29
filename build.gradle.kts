@@ -9,6 +9,7 @@ tasks.named("assemble") {
     dependsOn(":jvm:gradle-plugin:assemble")
     dependsOn(":jvm:jvm-agent:assemble")
     dependsOn(":jvm:generated-client:assemble")
+    dependsOn(":jvm:patcher:assemble")
 }
 
 tasks.named("check") {
@@ -16,6 +17,7 @@ tasks.named("check") {
     dependsOn(":jvm:gradle-plugin:check")
     dependsOn(":jvm:jvm-agent:check")
     dependsOn(":jvm:generated-client:check")
+    dependsOn(":jvm:patcher:check")
 }
 
 tasks.named("clean") {
@@ -23,6 +25,7 @@ tasks.named("clean") {
     dependsOn(":jvm:gradle-plugin:clean")
     dependsOn(":jvm:jvm-agent:clean")
     dependsOn(":jvm:generated-client:clean")
+    dependsOn(":jvm:patcher:clean")
 }
 
 tasks.named<Wrapper>("wrapper") {

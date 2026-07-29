@@ -72,3 +72,10 @@ Linux probe can create the required namespaces, but clock, randomness,
 environment, and kernel-policy gaps prevent complete task-producer coverage.
 The helper therefore discards the candidate, aborts pending publication, and
 retains the Gradle baseline.
+
+`SPK-004` makes `PATCH_BUNDLE_APPLIER` exact in every executed JDK 17/21
+profile because its signed Java/Git boundary is independent of the Gradle/DSL
+observation row. The two recipe fixtures pass strict parse, JCS/Ed25519, path
+graph, pre/postimage, idempotency, rollback, and recovery checks on both real
+runtimes. The unexecuted JDK 25 profile remains `UNAVAILABLE`; every
+application failure retains the download-only fallback.

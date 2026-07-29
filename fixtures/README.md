@@ -50,3 +50,7 @@ scenarios run only through a real Wrapper.
 `SPK-003`. The real Rust checker probes the host, rejects candidate execution
 when coverage is incomplete, and verifies the full producer only through the
 uninstrumented Gradle-baseline fallback.
+
+`patcher/` documents the `SPK-004` real-Git fixture generator. Each acceptance
+case receives a private repository, signed bundle, blob directory, staging
+root, and in-memory draft-PR adapter; all of them are deleted after the case.

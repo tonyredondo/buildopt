@@ -50,7 +50,7 @@
       "$ref": "#/$defs/gitObjectId"
     },
     "sourceStateDigest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/sha256Digest"
     },
     "recipe": {
       "$ref": "#/$defs/recipe"
@@ -95,10 +95,6 @@
     "sha256Digest": {
       "type": "string",
       "pattern": "^sha256:[0-9a-f]{64}$"
-    },
-    "digest": {
-      "type": "string",
-      "pattern": "^(?:sha256|hmac-sha256):[0-9a-f]{64}$"
     },
     "gitObjectId": {
       "type": "string",
