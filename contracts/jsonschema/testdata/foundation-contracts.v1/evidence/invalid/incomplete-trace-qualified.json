@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "EVIDENCE_RECORD",
+  "evidenceId": "evidence-01K4Y701",
+  "recordedAt": "2026-07-21T09:51:00Z",
+  "task": ":frontend:bundle",
+  "sourceRevision": "8c74f2a",
+  "sourceStateDigest": "hmac-sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "taskImplementationHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+  "inputFingerprint": "hmac-sha256:3333333333333333333333333333333333333333333333333333333333333333",
+  "outputDigest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+  "workspaceClass": "ephemeral-linux-amd64",
+  "launcherVersion": "1.3.0",
+  "pluginVersion": "1.3.0",
+  "policyDigest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+  "cacheNamespace": "tenant-7/repo-42/quarantine/linux-amd64",
+  "qualificationSource": "REVIEWED_ADAPTER",
+  "qualificationState": "QUARANTINE_VALIDATED",
+  "cacheContractDigest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+  "observedReads": [
+    "frontend/src/**"
+  ],
+  "observedWrites": [
+    "build/frontend/**"
+  ],
+  "environmentInputs": [],
+  "networkAccess": false,
+  "wallClockAccess": false,
+  "randomnessObserved": false,
+  "traceComplete": false,
+  "traceCoverage": {
+    "profile": "JVM_IO_V1",
+    "filesystem": "COMPLETE",
+    "processTree": "PARTIAL",
+    "network": "PARTIAL",
+    "environment": "COMPLETE",
+    "clock": "UNAVAILABLE",
+    "randomness": "UNAVAILABLE"
+  },
+  "repeatabilityGate": {
+    "status": "PASSED",
+    "authority": "REVIEWED_IMPLEMENTATION",
+    "evidenceRefs": [
+      "repeatability-01K4Y700"
+    ]
+  },
+  "relocatabilityGate": {
+    "status": "PASSED",
+    "authority": "ISOLATED_VALIDATION",
+    "evidenceRefs": [
+      "relocatability-01K4Y700"
+    ]
+  },
+  "durationMs": 48120,
+  "outcome": "SUCCESS"
+}

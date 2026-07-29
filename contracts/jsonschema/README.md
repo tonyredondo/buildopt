@@ -82,3 +82,41 @@ lifecycle vectors. All values are synthetic. The test remains in the isolated
 schema-validator Go module and is also executed by the base CI core lane.
 
 Future schemas must retain the same explicit identifier, compatibility, required-field, unknown-field, format, bound, and positive/negative fixture policy. Signed commands additionally fail closed on unknown fields.
+
+## Evidence, policy, and resource profile v1
+
+[`evidence-record.v1.schema.json`](./evidence-record.v1.schema.json),
+[`optimization-policy.v1.schema.json`](./optimization-policy.v1.schema.json),
+and [`resource-profile.v1.schema.json`](./resource-profile.v1.schema.json) are
+the normative `F0-013` contracts.
+
+- `EVIDENCE_RECORD` binds source state, implementation, inputs, output,
+  policy, namespace, semantic cache contract, redacted observations, complete
+  coverage, and separate repeatability/relocatability gates. Observation alone
+  is never a qualification source.
+- Incomplete tracing can retain only `OBSERVING` or `SUSPENDED`. A discrepancy
+  requires `SUSPENDED`; `QUARANTINE_VALIDATED` requires complete tracing and
+  both independent gates to pass.
+- `OPTIMIZATION_POLICY` is an immutable invocation decision with separate
+  complete/configuration digests, monotonic security generations, explicit
+  actions, cache and Configuration Cache decisions, a finite resource-profile
+  reference, bounded budgets, qualified task contracts, and expiry.
+- `BYPASS` and `KILL_SWITCH` policies cannot retain actions, cache access, or
+  build enablement. The actual Ed25519 canonicalization/signature vectors
+  remain owned by `F0-020`.
+- `RESOURCE_PROFILE` defines one prevalidated finite catalog arm. Eligibility
+  requires startup, memory, and rollback gates. The golden 4-vCPU/16-GiB
+  catalog contains exactly `STABLE_CONTROL`, `W2_H3G`, `W3_H4G`, and `W4_H6G`;
+  only workers and Gradle heap vary outside identity/evidence fields.
+
+Run schema, negative, and cross-record golden checks with:
+
+```bash
+./dev/check-foundation-contract-schemas
+```
+
+The command uses the isolated pinned validator. Cross-record checks enforce
+policy/evidence identity, policy validity at observation time, exact selected
+profile binding, the fixed four-arm catalog, cgroup headroom, and the absence
+of undeclared treatment differences. Simulator/replay, A/A, propensity, drift,
+and rollback behavior still belong to the wider `BANDIT-001` gate.

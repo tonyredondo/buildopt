@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "RESOURCE_PROFILE",
+  "catalogVersion": "golden-linux-amd64-4c-16g-v1",
+  "profileId": "W4_H6G",
+  "profileDigest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "profileClass": "CANDIDATE",
+  "runnerClass": "linux-amd64-4c-16g-v1",
+  "buildClass": "LARGE",
+  "compatibilityClass": "gradle-9.6-jdk21-linux-amd64",
+  "jdk": {
+    "vendor": "temurin",
+    "version": "21.0.8+9",
+    "architecture": "linux-amd64"
+  },
+  "maxWorkers": 4,
+  "gradleHeapMb": 6144,
+  "gradleJvmArgs": [
+    "-Dfile.encoding=UTF-8"
+  ],
+  "compiler": {
+    "forking": false,
+    "maxProcesses": 1
+  },
+  "processLimits": {
+    "maxProcesses": 1024,
+    "maxOpenFiles": 65536
+  },
+  "cgroupLimits": {
+    "cpuCount": 4,
+    "memoryBytes": 17179869184,
+    "minHeadroomBytes": 2147483648
+  },
+  "eligibility": {
+    "eligible": true,
+    "startup": "PASSED",
+    "memory": "PASSED",
+    "rollback": "PASSED",
+    "validatedAt": "2026-07-20T12:00:00Z",
+    "evidenceRefs": [
+      "resource-validation-w4-h6g-v1"
+    ]
+  }
+}

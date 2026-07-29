@@ -233,6 +233,19 @@ result is actually `FINAL` with decision `PROMOTE`; policy-only shadow entry
 and safety rollback remain distinct paths. The documents are audit records,
 not executable authorization messages.
 
+## Evidence, policy, and resource-profile validation
+
+Validate the `F0-013` evidence, policy, and finite resource-profile contracts:
+
+```bash
+./dev/check-foundation-contract-schemas
+```
+
+The same isolated validator checks strict positive/negative fixtures and the
+four-arm golden-runner catalog. Cross-record checks bind policy to evidence and
+the selected profile, verify the policy time window and cgroup headroom, and
+reject treatment changes beyond workers and Gradle heap.
+
 ## Metrics catalog validation
 
 Validate the machine-readable `F0-024` catalog and its private-beta measurement

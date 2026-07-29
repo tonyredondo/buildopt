@@ -17,6 +17,15 @@ const ExperimentResultSchemaID = "https://schemas.buildopt.dev/experiment-result
 // ActionRecordSchemaID is the canonical ACTION_RECORD v1 schema identifier.
 const ActionRecordSchemaID = "https://schemas.buildopt.dev/action-record.v1.schema.json"
 
+// EvidenceRecordSchemaID is the canonical EVIDENCE_RECORD v1 schema identifier.
+const EvidenceRecordSchemaID = "https://schemas.buildopt.dev/evidence-record.v1.schema.json"
+
+// OptimizationPolicySchemaID is the canonical OPTIMIZATION_POLICY v1 schema identifier.
+const OptimizationPolicySchemaID = "https://schemas.buildopt.dev/optimization-policy.v1.schema.json"
+
+// ResourceProfileSchemaID is the canonical RESOURCE_PROFILE v1 schema identifier.
+const ResourceProfileSchemaID = "https://schemas.buildopt.dev/resource-profile.v1.schema.json"
+
 // ValidateBuildSessionV1 compiles the pinned Draft 2020-12 schema and validates
 // one JSON document with format assertions enabled.
 func ValidateBuildSessionV1(schemaPath string, instancePath string) error {
@@ -47,6 +56,39 @@ func ValidateActionRecordV1(schemaPath string, instancePath string) error {
 		instancePath,
 		ActionRecordSchemaID,
 		"ACTION_RECORD",
+	)
+}
+
+// ValidateEvidenceRecordV1 compiles the pinned Draft 2020-12 schema and
+// validates one immutable task-evidence record.
+func ValidateEvidenceRecordV1(schemaPath string, instancePath string) error {
+	return validateContract(
+		schemaPath,
+		instancePath,
+		EvidenceRecordSchemaID,
+		"EVIDENCE_RECORD",
+	)
+}
+
+// ValidateOptimizationPolicyV1 compiles the pinned Draft 2020-12 schema and
+// validates one immutable optimization policy.
+func ValidateOptimizationPolicyV1(schemaPath string, instancePath string) error {
+	return validateContract(
+		schemaPath,
+		instancePath,
+		OptimizationPolicySchemaID,
+		"OPTIMIZATION_POLICY",
+	)
+}
+
+// ValidateResourceProfileV1 compiles the pinned Draft 2020-12 schema and
+// validates one finite resource-profile catalog arm.
+func ValidateResourceProfileV1(schemaPath string, instancePath string) error {
+	return validateContract(
+		schemaPath,
+		instancePath,
+		ResourceProfileSchemaID,
+		"RESOURCE_PROFILE",
 	)
 }
 

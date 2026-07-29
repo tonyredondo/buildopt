@@ -1,0 +1,443 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/optimization-policy.v1.schema.json",
+  "title": "BuildOpt OPTIMIZATION_POLICY v1",
+  "description": "Immutable authenticated policy consumed before Gradle starts. It grants only explicit actions and binds configuration, cache, qualification, resource, budget, and revocation decisions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "policyId",
+    "policyVersion",
+    "policyDigest",
+    "configurationPolicyDigest",
+    "revocationEpoch",
+    "l1SecurityGeneration",
+    "gatewayConnectionGeneration",
+    "signatureKeyId",
+    "issuedAt",
+    "launcherVersionRange",
+    "pluginVersionRange",
+    "mode",
+    "allowedActions",
+    "remoteCache",
+    "configurationCache",
+    "resourceProfile",
+    "budgets",
+    "exportProfile",
+    "qualifiedTasks",
+    "affectedBuild",
+    "expiresAt"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "recordType": {
+      "const": "OPTIMIZATION_POLICY"
+    },
+    "policyId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "policyVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647
+    },
+    "policyDigest": {
+      "$ref": "#/$defs/sha256Digest"
+    },
+    "configurationPolicyDigest": {
+      "$ref": "#/$defs/sha256Digest"
+    },
+    "revocationEpoch": {
+      "$ref": "#/$defs/nonNegativeInteger"
+    },
+    "l1SecurityGeneration": {
+      "$ref": "#/$defs/nonNegativeInteger"
+    },
+    "gatewayConnectionGeneration": {
+      "$ref": "#/$defs/nonNegativeInteger"
+    },
+    "signatureKeyId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "issuedAt": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "launcherVersionRange": {
+      "$ref": "#/$defs/versionRange"
+    },
+    "pluginVersionRange": {
+      "$ref": "#/$defs/versionRange"
+    },
+    "mode": {
+      "enum": [
+        "OBSERVE",
+        "VERIFIED",
+        "BYPASS",
+        "KILL_SWITCH"
+      ]
+    },
+    "allowedActions": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "REMOTE_CACHE_ALLOWLISTED",
+          "CONFIGURATION_CACHE",
+          "RESOURCE_PROFILE",
+          "BUILD_IMPACT",
+          "PATCH_CANDIDATE"
+        ]
+      },
+      "maxItems": 16,
+      "uniqueItems": true
+    },
+    "remoteCache": {
+      "$ref": "#/$defs/remoteCache"
+    },
+    "configurationCache": {
+      "$ref": "#/$defs/configurationCache"
+    },
+    "testOptimizationGrant": {
+      "$ref": "#/$defs/grantRef"
+    },
+    "resourceProfile": {
+      "$ref": "#/$defs/resourceProfileRef"
+    },
+    "budgets": {
+      "$ref": "#/$defs/budgets"
+    },
+    "exportProfile": {
+      "enum": [
+        "NONE",
+        "SUMMARY",
+        "TASKS",
+        "DIAGNOSTIC"
+      ]
+    },
+    "qualifiedTasks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/qualifiedTask"
+      },
+      "maxItems": 4096
+    },
+    "affectedBuild": {
+      "$ref": "#/$defs/affectedBuild"
+    },
+    "expiresAt": {
+      "$ref": "#/$defs/utcTimestamp"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "enum": [
+              "BYPASS",
+              "KILL_SWITCH"
+            ]
+          }
+        },
+        "required": [
+          "mode"
+        ]
+      },
+      "then": {
+        "properties": {
+          "allowedActions": {
+            "maxItems": 0
+          },
+          "remoteCache": {
+            "properties": {
+              "read": {
+                "const": false
+              },
+              "write": {
+                "const": "DISABLED"
+              }
+            }
+          },
+          "configurationCache": {
+            "properties": {
+              "enabled": {
+                "const": false
+              }
+            }
+          },
+          "affectedBuild": {
+            "properties": {
+              "enabledInCi": {
+                "const": false
+              },
+              "enabledLocally": {
+                "const": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "remoteCache": {
+            "properties": {
+              "write": {
+                "const": "TRUSTED_CI_ONLY"
+              }
+            },
+            "required": [
+              "write"
+            ]
+          }
+        },
+        "required": [
+          "remoteCache"
+        ]
+      },
+      "then": {
+        "properties": {
+          "affectedBuild": {
+            "properties": {
+              "enabledInCi": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+    },
+    "sha256Digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "versionRange": {
+      "type": "string",
+      "pattern": "^(?:>=|=)[0-9]+\\.[0-9]+\\.[0-9]+(?: <[0-9]+\\.[0-9]+\\.[0-9]+)?$"
+    },
+    "nonNegativeInteger": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9223372036854775807
+    },
+    "remoteCache": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "read",
+        "write",
+        "namespace",
+        "namespaceGeneration"
+      ],
+      "properties": {
+        "read": {
+          "type": "boolean"
+        },
+        "write": {
+          "enum": [
+            "DISABLED",
+            "TRUSTED_CI_ONLY"
+          ]
+        },
+        "namespace": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._/-]{1,512}$"
+        },
+        "namespaceGeneration": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        }
+      }
+    },
+    "configurationCache": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "contractVersion"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "contractVersion": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "grantRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "digest",
+        "expiresAt"
+      ],
+      "properties": {
+        "digest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "expiresAt": {
+          "$ref": "#/$defs/utcTimestamp"
+        }
+      }
+    },
+    "resourceProfileRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "profileDigest",
+        "catalogVersion"
+      ],
+      "properties": {
+        "profileId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "profileDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "catalogVersion": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxSynchronousOverheadMs",
+        "maxSynchronousOverheadRatio",
+        "maxValidationRunnerMsPerDay"
+      ],
+      "properties": {
+        "maxSynchronousOverheadMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60000
+        },
+        "maxSynchronousOverheadRatio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.02
+        },
+        "maxValidationRunnerMsPerDay": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 86400000
+        }
+      }
+    },
+    "qualifiedTask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "implementationHash",
+        "qualificationSource",
+        "contractRef",
+        "cacheContractDigest",
+        "qualificationState",
+        "repeatabilityGate",
+        "relocatabilityGate"
+      ],
+      "properties": {
+        "implementationHash": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "qualificationSource": {
+          "enum": [
+            "OFFICIAL",
+            "REVIEWED_ADAPTER",
+            "HERMETIC_PRODUCER_PROFILE",
+            "SOURCE_PATCH"
+          ]
+        },
+        "contractRef": {
+          "$ref": "#/$defs/identifier"
+        },
+        "cacheContractDigest": {
+          "$ref": "#/$defs/sha256Digest"
+        },
+        "qualificationState": {
+          "enum": [
+            "UNKNOWN",
+            "OBSERVING",
+            "CONTRACT_QUALIFIED",
+            "QUARANTINE_VALIDATED",
+            "REJECTED",
+            "SUSPENDED"
+          ]
+        },
+        "repeatabilityGate": {
+          "enum": [
+            "PASSED",
+            "FAILED",
+            "INCONCLUSIVE",
+            "NOT_EVALUATED"
+          ]
+        },
+        "relocatabilityGate": {
+          "enum": [
+            "PASSED",
+            "FAILED",
+            "INCONCLUSIVE",
+            "NOT_EVALUATED"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "qualificationState": {
+                "const": "QUARANTINE_VALIDATED"
+              }
+            },
+            "required": [
+              "qualificationState"
+            ]
+          },
+          "then": {
+            "properties": {
+              "repeatabilityGate": {
+                "const": "PASSED"
+              },
+              "relocatabilityGate": {
+                "const": "PASSED"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "affectedBuild": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabledInCi",
+        "enabledLocally"
+      ],
+      "properties": {
+        "enabledInCi": {
+          "type": "boolean"
+        },
+        "enabledLocally": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

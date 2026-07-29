@@ -2,7 +2,7 @@
 
 Normative source for versioned schemas, interfaces, and cross-language conformance vectors.
 
-`F0-010` owns the namespace structure defined in RFC §29.2. Each later item materializes and tests only the artifacts it owns; `F0-011` materialized the immutable build-session schema, `F0-012` materialized the aggregate experiment and action-transition lifecycles, `F0-019` materialized the local task-event IDL, and `F0-024` materialized the first metric catalog.
+`F0-010` owns the namespace structure defined in RFC §29.2. Each later item materializes and tests only the artifacts it owns; `F0-011` materialized the immutable build-session schema, `F0-012` materialized the aggregate experiment and action-transition lifecycles, `F0-013` materialized evidence, policy, and finite resource-profile contracts, `F0-019` materialized the local task-event IDL, and `F0-024` materialized the first metric catalog.
 
 | Contract path | Owning item |
 |---|---|
@@ -24,4 +24,4 @@ Normative source for versioned schemas, interfaces, and cross-language conforman
 | `proto/local-events/v1/task_events.proto` | `F0-019` |
 | `metrics/build-impact-v1.json` | `F0-024` |
 
-The subdirectories reserve JSON Schema 2020-12, OpenAPI 3.1, Protobuf v3, metrics, and shared test-vector boundaries. RFC examples are explanatory and must not be copied into implementation types. See the [JSON Schema index](./jsonschema/README.md) for `BUILD_SESSION`, `EXPERIMENT_RESULT`, `ACTION_RECORD`, and their lifecycle fixtures; the [metric index](./metrics/README.md) for `build-impact-v1`; and the [Protobuf index](./proto/README.md) for the local channel and conformance command. `F0-005` tracks a reviewable generated descriptor snapshot and rejects drift under the repository [generated-code policy](../GENERATED_CODE.md); generated Go and Java clients remain owned by `F0-022`.
+The subdirectories reserve JSON Schema 2020-12, OpenAPI 3.1, Protobuf v3, metrics, and shared test-vector boundaries. RFC examples are explanatory and must not be copied into implementation types. See the [JSON Schema index](./jsonschema/README.md) for `BUILD_SESSION`, lifecycle, evidence/policy, and finite-resource contracts; the [metric index](./metrics/README.md) for `build-impact-v1`; and the [Protobuf index](./proto/README.md) for the local channel and conformance command. `F0-005` tracks a reviewable generated descriptor snapshot and rejects drift under the repository [generated-code policy](../GENERATED_CODE.md); generated Go and Java clients remain owned by `F0-022`.

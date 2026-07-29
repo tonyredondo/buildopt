@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "EVIDENCE_RECORD",
+  "evidenceId": "evidence-01K4Y700",
+  "recordedAt": "2026-07-21T09:50:00Z",
+  "task": ":frontend:bundle",
+  "sourceRevision": "8c74f2a",
+  "sourceStateDigest": "hmac-sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "taskImplementationHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+  "inputFingerprint": "hmac-sha256:3333333333333333333333333333333333333333333333333333333333333333",
+  "outputDigest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+  "workspaceClass": "ephemeral-linux-amd64",
+  "launcherVersion": "1.3.0",
+  "pluginVersion": "1.3.0",
+  "policyDigest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+  "cacheNamespace": "tenant-7/repo-42/quarantine/linux-amd64",
+  "qualificationSource": "REVIEWED_ADAPTER",
+  "qualificationState": "QUARANTINE_VALIDATED",
+  "cacheContractDigest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+  "observedReads": [
+    "frontend/src/**",
+    "package.json",
+    "package-lock.json"
+  ],
+  "observedWrites": [
+    "build/frontend/**"
+  ],
+  "environmentInputs": [
+    {
+      "name": "NODE_VERSION",
+      "classification": "PUBLIC_VERSION",
+      "valueDigest": "hmac-sha256:7777777777777777777777777777777777777777777777777777777777777777"
+    }
+  ],
+  "networkAccess": false,
+  "wallClockAccess": false,
+  "randomnessObserved": false,
+  "traceComplete": true,
+  "traceCoverage": {
+    "profile": "JVM_IO_PLUS_LINUX_PROCESS_TREE_V1",
+    "filesystem": "COMPLETE",
+    "processTree": "COMPLETE",
+    "network": "COMPLETE",
+    "environment": "COMPLETE",
+    "clock": "NOT_APPLICABLE",
+    "randomness": "NOT_APPLICABLE"
+  },
+  "repeatabilityGate": {
+    "status": "PASSED",
+    "authority": "REVIEWED_IMPLEMENTATION",
+    "evidenceRefs": [
+      "repeatability-01K4Y700"
+    ]
+  },
+  "relocatabilityGate": {
+    "status": "PASSED",
+    "authority": "ISOLATED_VALIDATION",
+    "evidenceRefs": [
+      "relocatability-01K4Y700"
+    ]
+  },
+  "durationMs": 48120,
+  "outcome": "SUCCESS"
+}

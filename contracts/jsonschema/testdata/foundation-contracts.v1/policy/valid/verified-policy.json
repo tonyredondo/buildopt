@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "OPTIMIZATION_POLICY",
+  "policyId": "repo-42/build-logic-b93/linux-jdk21",
+  "policyVersion": 17,
+  "policyDigest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+  "configurationPolicyDigest": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+  "revocationEpoch": 42,
+  "l1SecurityGeneration": 42,
+  "gatewayConnectionGeneration": 7,
+  "signatureKeyId": "policy-signing-2026-q3",
+  "issuedAt": "2026-07-21T09:45:00Z",
+  "launcherVersionRange": ">=1.3.0 <2.0.0",
+  "pluginVersionRange": ">=1.3.0 <2.0.0",
+  "mode": "VERIFIED",
+  "allowedActions": [
+    "REMOTE_CACHE_ALLOWLISTED",
+    "CONFIGURATION_CACHE",
+    "RESOURCE_PROFILE"
+  ],
+  "remoteCache": {
+    "read": true,
+    "write": "TRUSTED_CI_ONLY",
+    "namespace": "tenant-7/repo-42/quarantine/linux-amd64",
+    "namespaceGeneration": 12
+  },
+  "configurationCache": {
+    "enabled": true,
+    "contractVersion": "cc-policy-v3"
+  },
+  "testOptimizationGrant": {
+    "digest": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+    "expiresAt": "2026-07-22T00:00:00Z"
+  },
+  "resourceProfile": {
+    "profileId": "W3_H4G",
+    "profileDigest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "catalogVersion": "golden-linux-amd64-4c-16g-v1"
+  },
+  "budgets": {
+    "maxSynchronousOverheadMs": 500,
+    "maxSynchronousOverheadRatio": 0.02,
+    "maxValidationRunnerMsPerDay": 3600000
+  },
+  "exportProfile": "TASKS",
+  "qualifiedTasks": [
+    {
+      "implementationHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "qualificationSource": "REVIEWED_ADAPTER",
+      "contractRef": "frontend-bundle-v2",
+      "cacheContractDigest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+      "qualificationState": "QUARANTINE_VALIDATED",
+      "repeatabilityGate": "PASSED",
+      "relocatabilityGate": "PASSED"
+    }
+  ],
+  "affectedBuild": {
+    "enabledInCi": true,
+    "enabledLocally": false
+  },
+  "expiresAt": "2026-09-01T00:00:00Z"
+}

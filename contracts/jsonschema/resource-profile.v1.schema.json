@@ -1,0 +1,365 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/resource-profile.v1.schema.json",
+  "title": "BuildOpt RESOURCE_PROFILE v1",
+  "description": "One finite, versioned BANDIT-001 arm. The launcher materializes this profile before Gradle starts; arbitrary values and implicit scaling are forbidden.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "catalogVersion",
+    "profileId",
+    "profileDigest",
+    "profileClass",
+    "runnerClass",
+    "buildClass",
+    "compatibilityClass",
+    "jdk",
+    "maxWorkers",
+    "gradleHeapMb",
+    "compiler",
+    "processLimits",
+    "cgroupLimits",
+    "eligibility"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "recordType": {
+      "const": "RESOURCE_PROFILE"
+    },
+    "catalogVersion": {
+      "$ref": "#/$defs/identifier"
+    },
+    "profileId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "profileDigest": {
+      "$ref": "#/$defs/sha256Digest"
+    },
+    "profileClass": {
+      "enum": [
+        "STABLE_CONTROL",
+        "CANDIDATE"
+      ]
+    },
+    "runnerClass": {
+      "$ref": "#/$defs/identifier"
+    },
+    "buildClass": {
+      "$ref": "#/$defs/identifier"
+    },
+    "compatibilityClass": {
+      "$ref": "#/$defs/identifier"
+    },
+    "jdk": {
+      "$ref": "#/$defs/jdk"
+    },
+    "maxWorkers": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 256
+    },
+    "gradleHeapMb": {
+      "type": "integer",
+      "minimum": 256,
+      "maximum": 1048576
+    },
+    "gradleJvmArgs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1024
+      },
+      "maxItems": 64
+    },
+    "compiler": {
+      "$ref": "#/$defs/compiler"
+    },
+    "processLimits": {
+      "$ref": "#/$defs/processLimits"
+    },
+    "cgroupLimits": {
+      "$ref": "#/$defs/cgroupLimits"
+    },
+    "eligibility": {
+      "$ref": "#/$defs/eligibility"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "eligibility": {
+            "properties": {
+              "eligible": {
+                "const": true
+              }
+            },
+            "required": [
+              "eligible"
+            ]
+          }
+        },
+        "required": [
+          "eligibility"
+        ]
+      },
+      "then": {
+        "properties": {
+          "eligibility": {
+            "properties": {
+              "startup": {
+                "const": "PASSED"
+              },
+              "memory": {
+                "const": "PASSED"
+              },
+              "rollback": {
+                "const": "PASSED"
+              },
+              "evidenceRefs": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "profileClass": {
+            "const": "STABLE_CONTROL"
+          }
+        },
+        "required": [
+          "profileClass"
+        ]
+      },
+      "then": {
+        "properties": {
+          "profileId": {
+            "const": "STABLE_CONTROL"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+    },
+    "sha256Digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "jdk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "vendor",
+        "version",
+        "architecture"
+      ],
+      "properties": {
+        "vendor": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+(?:\\.[0-9]+){0,3}(?:[+._-][0-9A-Za-z.-]+)?$"
+        },
+        "architecture": {
+          "enum": [
+            "linux-amd64",
+            "linux-arm64"
+          ]
+        }
+      }
+    },
+    "compiler": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "forking",
+        "maxProcesses"
+      ],
+      "properties": {
+        "forking": {
+          "type": "boolean"
+        },
+        "heapMb": {
+          "type": "integer",
+          "minimum": 128,
+          "maximum": 1048576
+        },
+        "maxProcesses": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "forking": {
+                "const": true
+              }
+            },
+            "required": [
+              "forking"
+            ]
+          },
+          "then": {
+            "required": [
+              "heapMb"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "heapMb"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "processLimits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxProcesses",
+        "maxOpenFiles"
+      ],
+      "properties": {
+        "maxProcesses": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        },
+        "maxOpenFiles": {
+          "type": "integer",
+          "minimum": 64,
+          "maximum": 1048576
+        }
+      }
+    },
+    "cgroupLimits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cpuCount",
+        "memoryBytes",
+        "minHeadroomBytes"
+      ],
+      "properties": {
+        "cpuCount": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1024
+        },
+        "memoryBytes": {
+          "type": "integer",
+          "minimum": 268435456,
+          "maximum": 1125899906842624
+        },
+        "minHeadroomBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1125899906842624
+        }
+      }
+    },
+    "eligibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "eligible",
+        "startup",
+        "memory",
+        "rollback",
+        "validatedAt",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "eligible": {
+          "type": "boolean"
+        },
+        "startup": {
+          "$ref": "#/$defs/gateStatus"
+        },
+        "memory": {
+          "$ref": "#/$defs/gateStatus"
+        },
+        "rollback": {
+          "$ref": "#/$defs/gateStatus"
+        },
+        "validatedAt": {
+          "$ref": "#/$defs/utcTimestamp"
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          },
+          "maxItems": 256,
+          "uniqueItems": true
+        },
+        "ineligibleReason": {
+          "enum": [
+            "INSUFFICIENT_CGROUP_HEADROOM",
+            "STARTUP_FAILED",
+            "MEMORY_FAILED",
+            "ROLLBACK_FAILED",
+            "SUSPENDED"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "eligible": {
+                "const": false
+              }
+            },
+            "required": [
+              "eligible"
+            ]
+          },
+          "then": {
+            "required": [
+              "ineligibleReason"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "ineligibleReason"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "gateStatus": {
+      "enum": [
+        "PASSED",
+        "FAILED",
+        "INCONCLUSIVE"
+      ]
+    }
+  }
+}

@@ -1,0 +1,441 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/evidence-record.v1.schema.json",
+  "title": "BuildOpt EVIDENCE_RECORD v1",
+  "description": "Immutable task evidence. Observation can suspend a contract or support review, but never authorizes caching without an accepted qualification source and complete independent gates.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "evidenceId",
+    "recordedAt",
+    "task",
+    "sourceRevision",
+    "sourceStateDigest",
+    "taskImplementationHash",
+    "inputFingerprint",
+    "outputDigest",
+    "workspaceClass",
+    "launcherVersion",
+    "pluginVersion",
+    "policyDigest",
+    "cacheNamespace",
+    "qualificationSource",
+    "qualificationState",
+    "cacheContractDigest",
+    "observedReads",
+    "observedWrites",
+    "environmentInputs",
+    "networkAccess",
+    "wallClockAccess",
+    "randomnessObserved",
+    "traceComplete",
+    "traceCoverage",
+    "repeatabilityGate",
+    "relocatabilityGate",
+    "durationMs",
+    "outcome"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "recordType": {
+      "const": "EVIDENCE_RECORD"
+    },
+    "evidenceId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "recordedAt": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "task": {
+      "type": "string",
+      "pattern": "^:[^\\s]{1,510}$"
+    },
+    "sourceRevision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{7,64}$"
+    },
+    "sourceStateDigest": {
+      "$ref": "#/$defs/digest"
+    },
+    "taskImplementationHash": {
+      "$ref": "#/$defs/sha256Digest"
+    },
+    "inputFingerprint": {
+      "$ref": "#/$defs/digest"
+    },
+    "outputDigest": {
+      "$ref": "#/$defs/sha256Digest"
+    },
+    "workspaceClass": {
+      "$ref": "#/$defs/name"
+    },
+    "launcherVersion": {
+      "$ref": "#/$defs/semanticVersion"
+    },
+    "pluginVersion": {
+      "$ref": "#/$defs/semanticVersion"
+    },
+    "jvmAgentVersion": {
+      "$ref": "#/$defs/semanticVersion"
+    },
+    "hermeticHelperVersion": {
+      "$ref": "#/$defs/semanticVersion"
+    },
+    "policyDigest": {
+      "$ref": "#/$defs/sha256Digest"
+    },
+    "cacheNamespace": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._/-]{1,512}$"
+    },
+    "qualificationSource": {
+      "enum": [
+        "NONE",
+        "OFFICIAL",
+        "REVIEWED_ADAPTER",
+        "HERMETIC_PRODUCER_PROFILE",
+        "SOURCE_PATCH"
+      ]
+    },
+    "qualificationState": {
+      "$ref": "#/$defs/qualificationState"
+    },
+    "cacheContractDigest": {
+      "$ref": "#/$defs/sha256Digest"
+    },
+    "observedReads": {
+      "$ref": "#/$defs/pathPatterns"
+    },
+    "observedWrites": {
+      "$ref": "#/$defs/pathPatterns"
+    },
+    "environmentInputs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/environmentInput"
+      },
+      "maxItems": 256
+    },
+    "networkAccess": {
+      "type": "boolean"
+    },
+    "wallClockAccess": {
+      "type": "boolean"
+    },
+    "randomnessObserved": {
+      "type": "boolean"
+    },
+    "traceComplete": {
+      "type": "boolean"
+    },
+    "traceCoverage": {
+      "$ref": "#/$defs/traceCoverage"
+    },
+    "repeatabilityGate": {
+      "$ref": "#/$defs/gate"
+    },
+    "relocatabilityGate": {
+      "$ref": "#/$defs/gate"
+    },
+    "durationMs": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 604800000
+    },
+    "outcome": {
+      "enum": [
+        "SUCCESS",
+        "BUILD_FAILURE",
+        "INFRA_FAILURE",
+        "CANCELLED"
+      ]
+    },
+    "discrepancies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/discrepancy"
+      },
+      "maxItems": 256
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "qualificationSource": {
+            "const": "NONE"
+          }
+        },
+        "required": [
+          "qualificationSource"
+        ]
+      },
+      "then": {
+        "properties": {
+          "qualificationState": {
+            "enum": [
+              "UNKNOWN",
+              "OBSERVING",
+              "SUSPENDED"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "traceComplete": {
+            "const": false
+          }
+        },
+        "required": [
+          "traceComplete"
+        ]
+      },
+      "then": {
+        "properties": {
+          "qualificationState": {
+            "enum": [
+              "OBSERVING",
+              "SUSPENDED"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "discrepancies"
+        ],
+        "properties": {
+          "discrepancies": {
+            "minItems": 1
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "qualificationState": {
+            "const": "SUSPENDED"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "qualificationState": {
+            "const": "QUARANTINE_VALIDATED"
+          }
+        },
+        "required": [
+          "qualificationState"
+        ]
+      },
+      "then": {
+        "properties": {
+          "traceComplete": {
+            "const": true
+          },
+          "repeatabilityGate": {
+            "properties": {
+              "status": {
+                "const": "PASSED"
+              }
+            }
+          },
+          "relocatabilityGate": {
+            "properties": {
+              "status": {
+                "const": "PASSED"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "semanticVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "sha256Digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^(?:sha256|hmac-sha256):[0-9a-f]{64}$"
+    },
+    "qualificationState": {
+      "enum": [
+        "UNKNOWN",
+        "OBSERVING",
+        "CONTRACT_QUALIFIED",
+        "QUARANTINE_VALIDATED",
+        "REJECTED",
+        "SUSPENDED"
+      ]
+    },
+    "pathPatterns": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1024,
+        "not": {
+          "pattern": "(^|/)\\.\\.(/|$)|^/"
+        }
+      },
+      "maxItems": 4096,
+      "uniqueItems": true
+    },
+    "environmentInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "classification",
+        "valueDigest"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Z_][A-Z0-9_]{0,127}$"
+        },
+        "classification": {
+          "enum": [
+            "PUBLIC_VERSION",
+            "NON_SECRET_CONFIGURATION",
+            "SECRET_PRESENT"
+          ]
+        },
+        "valueDigest": {
+          "type": "string",
+          "pattern": "^hmac-sha256:[0-9a-f]{64}$"
+        }
+      }
+    },
+    "traceCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile",
+        "filesystem",
+        "processTree",
+        "network",
+        "environment",
+        "clock",
+        "randomness"
+      ],
+      "properties": {
+        "profile": {
+          "$ref": "#/$defs/name"
+        },
+        "filesystem": {
+          "$ref": "#/$defs/coverage"
+        },
+        "processTree": {
+          "$ref": "#/$defs/coverage"
+        },
+        "network": {
+          "$ref": "#/$defs/coverage"
+        },
+        "environment": {
+          "$ref": "#/$defs/coverage"
+        },
+        "clock": {
+          "$ref": "#/$defs/coverage"
+        },
+        "randomness": {
+          "$ref": "#/$defs/coverage"
+        }
+      }
+    },
+    "coverage": {
+      "enum": [
+        "COMPLETE",
+        "PARTIAL",
+        "UNAVAILABLE",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "authority",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "PASSED",
+            "FAILED",
+            "INCONCLUSIVE",
+            "NOT_EVALUATED"
+          ]
+        },
+        "authority": {
+          "enum": [
+            "OFFICIAL_GUARANTEE",
+            "REVIEWED_IMPLEMENTATION",
+            "ISOLATED_VALIDATION"
+          ]
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          },
+          "maxItems": 256,
+          "uniqueItems": true
+        }
+      }
+    },
+    "discrepancy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "redactedRef"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "UNDECLARED_READ",
+            "UNDECLARED_WRITE",
+            "UNDECLARED_PROCESS",
+            "UNDECLARED_NETWORK",
+            "NONDETERMINISM",
+            "INCOMPLETE_TRACE"
+          ]
+        },
+        "redactedRef": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    }
+  }
+}
