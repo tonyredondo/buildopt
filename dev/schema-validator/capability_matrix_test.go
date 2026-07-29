@@ -205,11 +205,29 @@ func validateTierOneCombinations(
 	if correlation.Profile != "CORRELATION_ONLY" {
 		t.Errorf("8.14.3 correlation profile = %s", correlation.Profile)
 	}
+	executed := 0
 	for _, combination := range combinations {
-		if combination != golden && combination != correlation &&
-			combination.Profile != "UNTESTED" {
-			t.Errorf("unexecuted combination claims profile: %+v", combination)
+		if combination.JDK == 25 {
+			if combination.Profile != "UNTESTED" {
+				t.Errorf("unexecuted JDK 25 combination claims profile: %+v", combination)
+			}
+			continue
 		}
+		executed++
+		if combination != golden && combination != correlation &&
+			combination.Profile != "TIER_ONE_FIXTURE_PROVEN" {
+			t.Errorf("executed fixture combination has wrong profile: %+v", combination)
+		}
+	}
+	if executed != 8 {
+		t.Errorf("executed Tier 1 rows = %d, want 8", executed)
+	}
+	fixture := findCapability(
+		profiles["TIER_ONE_FIXTURE_PROVEN"].Capabilities,
+		"CONFIGURATION_CACHE_REUSE",
+	)
+	if fixture.Status != "EXACT" {
+		t.Errorf("fixture Configuration Cache capability: %+v", fixture)
 	}
 	taskPut := findCapability(
 		profiles[golden.Profile].Capabilities,

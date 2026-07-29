@@ -1,5 +1,6 @@
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.JavaExec
 import org.gradle.jvm.toolchain.JvmVendorSpec
 
 plugins {
@@ -23,6 +24,7 @@ java {
 
 dependencies {
     compileOnly(gradleApi())
+    testImplementation(gradleTestKit())
 }
 
 gradlePlugin {
@@ -45,6 +47,38 @@ tasks.withType<JavaCompile>().configureEach {
 tasks.withType<AbstractArchiveTask>().configureEach {
     isPreserveFileTimestamps = false
     isReproducibleFileOrder = true
+}
+
+val tierOneRuntime = providers.gradleProperty("buildoptTierOneJava")
+    .map(String::toInt)
+    .orElse(21)
+val tierOneGradleHome = providers.gradleProperty("buildoptTierOneGradleHome")
+val tierOneFixtures = rootProject.layout.projectDirectory.dir("fixtures/tier1")
+
+tasks.register<JavaExec>("tierOneTestKit") {
+    group = "verification"
+    description = "Runs the Tier 1 Kotlin/Groovy fixtures through Gradle TestKit."
+    notCompatibleWithConfigurationCache("The task launches nested TestKit builds.")
+    dependsOn(tasks.named("testClasses"), tasks.named("jar"))
+    classpath = sourceSets.test.get().runtimeClasspath
+    mainClass = "dev.buildopt.gradle.TierOneTestKit"
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = tierOneRuntime.map(JavaLanguageVersion::of)
+    }
+    argumentProviders.add(
+        CommandLineArgumentProvider {
+            listOf(
+                tierOneFixtures.asFile.absolutePath,
+                tierOneGradleHome.get(),
+                tasks.jar.get().archiveFile.get().asFile.absolutePath,
+                tierOneRuntime.get().toString(),
+            )
+        },
+    )
+    inputs.dir(tierOneFixtures)
+    inputs.file(tasks.jar.flatMap { it.archiveFile })
+    inputs.property("runtime", tierOneRuntime)
+    inputs.property("gradleHome", tierOneGradleHome)
 }
 
 tasks.jar {

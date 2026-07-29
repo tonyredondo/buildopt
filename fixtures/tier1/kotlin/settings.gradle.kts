@@ -1,0 +1,5 @@
+pluginManagement {
+    includeBuild("../fixture-plugin")
+}
+
+rootProject.name = "buildopt-tier-one-kotlin"

@@ -1,0 +1,327 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_fixture_root="${buildopt_repo_root}/fixtures/tier1"
+buildopt_matrix="${buildopt_fixture_root}/matrix.v1.json"
+buildopt_tmp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-tier-one.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_tmp}" &&
+        "${buildopt_tmp}" == "${TMPDIR:-/tmp}/buildopt-tier-one."* ]]; then
+        rm -rf -- "${buildopt_tmp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in awk cp curl find grep jq mktemp readlink sed sha256sum; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Tier 1 fixture command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+jq -e '
+    .schemaVersion == "buildopt.fixtures/tier-one-matrix/v1" and
+    .platform == "linux-amd64" and
+    (.gradle == [
+        {
+            "version": "8.14.3",
+            "distribution": "https://services.gradle.org/distributions/gradle-8.14.3-bin.zip",
+            "sha256": "bd71102213493060956ec229d946beee57158dbd89d0e62b91bca0fa2c5f3531",
+            "jdks": [17, 21]
+        },
+        {
+            "version": "9.6.1",
+            "distribution": "https://services.gradle.org/distributions/gradle-9.6.1-bin.zip",
+            "sha256": "9c0f7faeeb306cb14e4279a3e084ca6b596894089a0638e68a07c945a32c9e14",
+            "jdks": [17, 21, 25]
+        }
+    ]) and
+    (.dslRepositories == [
+        {"dsl": "GROOVY", "path": "fixtures/tier1/groovy"},
+        {"dsl": "KOTLIN", "path": "fixtures/tier1/kotlin"}
+    ]) and
+    (.requiredScenarios == [
+        "PRODUCT_PLUGIN_LOAD",
+        "CUSTOM_CACHEABLE_TASK",
+        "ARTIFACT_TRANSFORM",
+        "CONFIGURATION_CACHE_REUSE",
+        "BUILD_CACHE_REUSE"
+    ])
+' "${buildopt_matrix}" >/dev/null
+
+buildopt_required_fixture_files=(
+    "fixture-plugin/build.gradle.kts"
+    "fixture-plugin/settings.gradle.kts"
+    "fixture-plugin/src/main/java/dev/buildopt/fixtures/tierone/TierOneFixturePlugin.java"
+    "groovy/build.gradle"
+    "groovy/settings.gradle"
+    "groovy/input/source.txt"
+    "kotlin/build.gradle.kts"
+    "kotlin/settings.gradle.kts"
+    "kotlin/input/source.txt"
+)
+for buildopt_relative in "${buildopt_required_fixture_files[@]}"; do
+    if [[ ! -f "${buildopt_fixture_root}/${buildopt_relative}" ]]; then
+        printf 'missing Tier 1 fixture file: %s\n' "${buildopt_relative}" >&2
+        exit 1
+    fi
+done
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p -- "${GRADLE_USER_HOME}"
+
+"${buildopt_script_dir}/run" -- \
+    "${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --no-configuration-cache \
+    --warning-mode=fail \
+    :jvm:gradle-plugin:jar
+
+buildopt_gradle_9_bin=$(
+    find \
+        "${GRADLE_USER_HOME}/wrapper/dists/gradle-9.6.1-bin" \
+        -type f \
+        -path '*/gradle-9.6.1/bin/gradle' \
+        -print \
+        -quit
+)
+buildopt_gradle_8_home="${buildopt_repo_root}/.tools/gradle-compat/gradle-8.14.3"
+if [[ -z "${buildopt_gradle_9_bin}" ||
+    ! -x "${buildopt_gradle_9_bin}" ||
+    ! -x "${buildopt_gradle_8_home}/bin/gradle" ]]; then
+    printf 'both pinned Gradle distributions must be provisioned; run the correlation spike first\n' >&2
+    exit 1
+fi
+buildopt_gradle_9_home=$(cd -- "$(dirname -- "${buildopt_gradle_9_bin}")/.." && pwd)
+
+mapfile -d '' buildopt_plugin_jars < <(
+    find "${buildopt_repo_root}/jvm/gradle-plugin/build/libs" \
+        -maxdepth 1 \
+        -type f \
+        -name 'buildopt-gradle-plugin-*.jar' \
+        ! -name '*-sources.jar' \
+        ! -name '*-javadoc.jar' \
+        -print0
+)
+if ((${#buildopt_plugin_jars[@]} != 1)); then
+    printf 'expected one packaged Gradle plugin, found %s\n' \
+        "${#buildopt_plugin_jars[@]}" >&2
+    exit 1
+fi
+buildopt_plugin_jar=${buildopt_plugin_jars[0]}
+
+buildopt_java_17=$(readlink -f "$(command -v java)")
+buildopt_java_17_home=$(cd -- "$(dirname -- "${buildopt_java_17}")/.." && pwd)
+buildopt_java_17_major=$(
+    "${buildopt_java_17}" -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.version = / {
+                split($2, version, ".")
+                print version[1]
+                exit
+            }
+        '
+)
+if [[ "${buildopt_java_17_major}" != "17" ]]; then
+    printf 'F0-040 requires an available JDK 17 runtime; active Java is %s\n' \
+        "${buildopt_java_17_major:-unknown}" >&2
+    exit 1
+fi
+
+buildopt_java_21_home=$(
+    "${buildopt_script_dir}/run" -- \
+        java -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.home = / {
+                print $2
+                exit
+            }
+        '
+)
+if [[ ! -x "${buildopt_java_21_home}/bin/java" ]]; then
+    printf 'locked JDK 21 home is unavailable\n' >&2
+    exit 1
+fi
+
+buildopt_versions=("8.14.3" "9.6.1")
+buildopt_gradle_homes=("${buildopt_gradle_8_home}" "${buildopt_gradle_9_home}")
+buildopt_java_majors=(17 21)
+buildopt_java_homes=("${buildopt_java_17_home}" "${buildopt_java_21_home}")
+
+for buildopt_index in "${!buildopt_versions[@]}"; do
+    for buildopt_java_index in "${!buildopt_java_majors[@]}"; do
+        "${buildopt_script_dir}/run" -- \
+            "${buildopt_repo_root}/gradlew" \
+            --no-daemon \
+            --offline \
+            --no-configuration-cache \
+            --stacktrace \
+            --warning-mode=fail \
+            :jvm:gradle-plugin:tierOneTestKit \
+            "-PbuildoptTierOneJava=${buildopt_java_majors[buildopt_java_index]}" \
+            "-PbuildoptTierOneGradleHome=${buildopt_gradle_homes[buildopt_index]}"
+    done
+done
+
+buildopt_compat_root="${buildopt_repo_root}/.tools/gradle-compat"
+mkdir -p -- "${buildopt_compat_root}"
+
+buildopt_distribution_archive() {
+    local buildopt_version=$1
+    local buildopt_sha=$2
+    local buildopt_url=$3
+    local buildopt_archive="${buildopt_compat_root}/gradle-${buildopt_version}-bin.zip"
+    local buildopt_download
+
+    if [[ ! -f "${buildopt_archive}" ]] ||
+        ! printf '%s  %s\n' "${buildopt_sha}" "${buildopt_archive}" |
+            sha256sum -c - >/dev/null 2>&1; then
+        buildopt_download=$(mktemp "${buildopt_tmp}/gradle-${buildopt_version}.XXXXXX")
+        curl \
+            --fail \
+            --location \
+            --proto '=https' \
+            --retry 3 \
+            --retry-delay 1 \
+            --show-error \
+            --silent \
+            --output "${buildopt_download}" \
+            "${buildopt_url}"
+        printf '%s  %s\n' "${buildopt_sha}" "${buildopt_download}" |
+            sha256sum -c - >/dev/null
+        mv -f -- "${buildopt_download}" "${buildopt_archive}"
+    fi
+    printf '%s\n' "${buildopt_archive}"
+}
+
+buildopt_gradle_8_archive=$(
+    buildopt_distribution_archive \
+        8.14.3 \
+        bd71102213493060956ec229d946beee57158dbd89d0e62b91bca0fa2c5f3531 \
+        https://services.gradle.org/distributions/gradle-8.14.3-bin.zip
+)
+buildopt_gradle_9_archive=$(
+    buildopt_distribution_archive \
+        9.6.1 \
+        9c0f7faeeb306cb14e4279a3e084ca6b596894089a0638e68a07c945a32c9e14 \
+        https://services.gradle.org/distributions/gradle-9.6.1-bin.zip
+)
+buildopt_archives=("${buildopt_gradle_8_archive}" "${buildopt_gradle_9_archive}")
+buildopt_distribution_shas=(
+    bd71102213493060956ec229d946beee57158dbd89d0e62b91bca0fa2c5f3531
+    9c0f7faeeb306cb14e4279a3e084ca6b596894089a0638e68a07c945a32c9e14
+)
+
+buildopt_wrapper_root="${buildopt_tmp}/wrapper"
+cp -R -- "${buildopt_fixture_root}" "${buildopt_wrapper_root}"
+for buildopt_dsl in kotlin groovy; do
+    cp -- "${buildopt_repo_root}/gradlew" "${buildopt_wrapper_root}/${buildopt_dsl}/gradlew"
+    mkdir -p -- "${buildopt_wrapper_root}/${buildopt_dsl}/gradle/wrapper"
+    cp -- \
+        "${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.jar" \
+        "${buildopt_wrapper_root}/${buildopt_dsl}/gradle/wrapper/gradle-wrapper.jar"
+done
+printf "initscript { dependencies { classpath files('%s') } }\nallprojects { apply plugin: dev.buildopt.gradle.BuildOptProjectPlugin }\n" \
+    "${buildopt_plugin_jar//\'/\\\'}" \
+    >"${buildopt_wrapper_root}/buildopt.init.gradle"
+
+for buildopt_version_index in "${!buildopt_versions[@]}"; do
+    buildopt_version=${buildopt_versions[buildopt_version_index]}
+    buildopt_archive=${buildopt_archives[buildopt_version_index]}
+    buildopt_sha=${buildopt_distribution_shas[buildopt_version_index]}
+    for buildopt_dsl in kotlin groovy; do
+        buildopt_project="${buildopt_wrapper_root}/${buildopt_dsl}"
+        printf '%s\n' \
+            'distributionBase=GRADLE_USER_HOME' \
+            'distributionPath=wrapper/dists' \
+            "distributionSha256Sum=${buildopt_sha}" \
+            "distributionUrl=file\\://${buildopt_archive}" \
+            'networkTimeout=30000' \
+            'validateDistributionUrl=true' \
+            'zipStoreBase=GRADLE_USER_HOME' \
+            'zipStorePath=wrapper/dists' \
+            >"${buildopt_project}/gradle/wrapper/gradle-wrapper.properties"
+        for buildopt_java_index in "${!buildopt_java_majors[@]}"; do
+            buildopt_java_major=${buildopt_java_majors[buildopt_java_index]}
+            buildopt_java_home=${buildopt_java_homes[buildopt_java_index]}
+            buildopt_run_root="${buildopt_tmp}/wrapper-${buildopt_version}-jdk-${buildopt_java_major}-${buildopt_dsl}"
+            buildopt_first_log="${buildopt_run_root}-first.log"
+            buildopt_second_log="${buildopt_run_root}-second.log"
+            buildopt_user_home="${buildopt_run_root}-gradle-home"
+            mkdir -p -- "${buildopt_user_home}"
+            buildopt_arguments=(
+                --project-dir
+                "${buildopt_project}"
+                --no-daemon
+                --offline
+                --stacktrace
+                --warning-mode=fail
+                --console=plain
+                --configuration-cache
+                --build-cache
+                --init-script
+                "${buildopt_wrapper_root}/buildopt.init.gradle"
+                clean
+                verifyTierOne
+            )
+            JAVA_HOME="${buildopt_java_home}" \
+            PATH="${buildopt_java_home}/bin:${PATH}" \
+            GRADLE_USER_HOME="${buildopt_user_home}" \
+                "${buildopt_project}/gradlew" \
+                    "${buildopt_arguments[@]}" >"${buildopt_first_log}" 2>&1 || {
+                sed -n '1,260p' "${buildopt_first_log}" >&2
+                exit 1
+            }
+            JAVA_HOME="${buildopt_java_home}" \
+            PATH="${buildopt_java_home}/bin:${PATH}" \
+            GRADLE_USER_HOME="${buildopt_user_home}" \
+                "${buildopt_project}/gradlew" \
+                    "${buildopt_arguments[@]}" >"${buildopt_second_log}" 2>&1 || {
+                sed -n '1,260p' "${buildopt_second_log}" >&2
+                exit 1
+            }
+            if ! grep -Fq 'Configuration cache entry reused.' "${buildopt_second_log}" ||
+                ! grep -Eq '^> Task :verifyTierOne (FROM-CACHE|UP-TO-DATE)$' \
+                    "${buildopt_second_log}" ||
+                [[ "$(<"${buildopt_project}/build/tier-one/verified.txt")" != \
+                    'tier-one-input|transformed|verified' ]]; then
+                printf 'Wrapper replay failed for Gradle %s / JDK %s / %s\n' \
+                    "${buildopt_version}" \
+                    "${buildopt_java_major}" \
+                    "${buildopt_dsl}" >&2
+                sed -n '1,260p' "${buildopt_second_log}" >&2
+                exit 1
+            fi
+            printf 'F0-040 Wrapper OK: Gradle %s / JDK %s / %s\n' \
+                "${buildopt_version}" \
+                "${buildopt_java_major}" \
+                "${buildopt_dsl}"
+        done
+    done
+done
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'Tier 1 fixture check changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'F0-040 Tier 1 fixtures OK: 8 target rows through TestKit and real Wrapper; JDK 25 remains explicitly unproven\n'

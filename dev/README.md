@@ -604,6 +604,22 @@ work emits non-task stores, so the accepted result is the fail-closed
 `UNAVAILABLE` capability: every `UNATTRIBUTED` store aborts the complete
 attempt. See [`specs/gradle-correlation-v1.md`](../specs/gradle-correlation-v1.md).
 
+## Tier 1 fixture matrix
+
+Run the `F0-040` consumer repositories through both TestKit and a real
+Wrapper:
+
+```bash
+./dev/check-tier1-fixtures
+```
+
+The checker executes Kotlin and Groovy DSL on Gradle 8.14.3 and 9.6.1 with
+JDK 17 and the locked JDK 21. Every row loads the packaged product plugin,
+runs a Java 17 cacheable custom task and artifact transform, then proves build
+cache and Configuration Cache reuse. Distribution archives are
+checksum-pinned and temporary Wrapper/user homes are isolated. JDK 25 remains
+explicitly unproven until its lock-owned runtime is provisioned.
+
 ## Local task-event Protobuf validation
 
 `F0-019` materializes the correlation result as the normative

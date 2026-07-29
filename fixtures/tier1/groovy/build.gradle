@@ -1,0 +1,4 @@
+plugins {
+    id 'base'
+    id 'dev.buildopt.tier1-fixture'
+}

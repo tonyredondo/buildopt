@@ -14,8 +14,10 @@ Tier 1 is Linux x86-64 with:
 
 The implementation golden lane remains Gradle 9.6.1/JDK 21/Kotlin DSL. The
 correlation spike additionally exercised Gradle 8.14.3/JDK 21/Kotlin DSL.
-Other target rows remain `UNAVAILABLE` until `F0-040`/module-specific
-conformance runs them; a target label is not evidence.
+`F0-040` executes all eight JDK 17/21 rows with the packaged product plugin,
+custom task, artifact transform, build cache, and Configuration Cache through
+both TestKit and a real Wrapper. The two JDK 25 rows remain `UNTESTED`; a
+target label is not evidence.
 
 ## Status contract
 
@@ -38,7 +40,7 @@ unattributed; the fallback aborts the whole pending attempt.
 
 ## Machine-readable matrix
 
-[`capability-matrix-v1.json`](./capability-matrix-v1.json) defines three
+[`capability-matrix-v1.json`](./capability-matrix-v1.json) defines four
 profiles and all ten Tier 1 rows. Profile reuse only deduplicates identical
 status records; each combination remains explicit.
 
@@ -49,6 +51,13 @@ Run:
 ```
 
 The checker requires the exact Tier 1 Cartesian product, validates every
-status/method/reason/fallback/evidence combination, prevents untested rows from
-claiming a capability, and cross-checks the two tested Gradle versions against
-the correlation evidence.
+status/method/reason/fallback/evidence combination, prevents the unexecuted
+JDK 25 rows from claiming a capability, and cross-checks fixture, golden-lane,
+and correlation evidence. `F0-040` itself is rerun with:
+
+```bash
+./dev/check-tier1-fixtures
+```
+
+Loading the product plugin without a launcher does not claim an authenticated
+handshake. Only the golden lane retains that stronger capability.

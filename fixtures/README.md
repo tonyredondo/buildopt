@@ -34,3 +34,9 @@ that corrupt or caller-selected paths cannot satisfy validation.
 at-least-once JSONL delivery cases, and changed-duplicate negative. All
 sensitive values are synthetic; managed golden outputs retain only keyed
 tokens.
+
+`tier1/` materializes the `F0-040` Kotlin and Groovy consumer repositories.
+Its TestKit and real-Wrapper matrix exercises the packaged product plugin, a
+Java 17 cacheable custom task, an artifact transform, build-cache replay, and
+Configuration Cache reuse on all Gradle 8.14.3/9.6.1 JDK 17/21 rows. JDK 25
+remains an explicit, unproven target.

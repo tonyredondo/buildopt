@@ -96,17 +96,17 @@
           "id": "PLUGIN_HANDSHAKE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "product plugin fixture not executed for this combination",
+          "reason": "the fixture loads the product plugin without an authenticated launcher rendezvous",
           "fallback": "GRADLE_BASELINE",
-          "evidence": []
+          "evidence": ["dev/check-tier1-fixtures"]
         },
         {
           "id": "CONFIGURATION_CACHE_REUSE",
-          "status": "UNAVAILABLE",
-          "method": "",
-          "reason": "product plugin fixture not executed for this combination",
+          "status": "EXACT",
+          "method": "TestKit and real Wrapper replay with the product plugin loaded",
+          "reason": "",
           "fallback": "GRADLE_BASELINE",
-          "evidence": []
+          "evidence": ["dev/check-tier1-fixtures"]
         },
         {
           "id": "TASK_OUTCOMES",
@@ -129,6 +129,91 @@
           "status": "UNAVAILABLE",
           "method": "",
           "reason": "critical-path adapter not executed for this combination",
+          "fallback": "OBSERVE",
+          "evidence": []
+        },
+        {
+          "id": "CACHE_MISS_REASONS",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "no stable detailed miss-cause adapter is proven",
+          "fallback": "OBSERVE",
+          "evidence": []
+        },
+        {
+          "id": "MANAGED_SHARED_CACHE",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "the A0 cache backend is not implemented",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": []
+        },
+        {
+          "id": "JVM_AGENT",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "SPK-002 has not completed",
+          "fallback": "OBSERVE",
+          "evidence": []
+        },
+        {
+          "id": "HERMETIC_PRODUCER",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "SPK-003 has not completed",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": []
+        },
+        {
+          "id": "PATCH_BUNDLE_APPLIER",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "SPK-004 has not completed",
+          "fallback": "DOWNLOAD_BUNDLE_ONLY",
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "id": "TIER_ONE_FIXTURE_PROVEN",
+      "capabilities": [
+        {
+          "id": "PLUGIN_HANDSHAKE",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "the fixture loads the product plugin without an authenticated launcher rendezvous",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": ["dev/check-tier1-fixtures"]
+        },
+        {
+          "id": "CONFIGURATION_CACHE_REUSE",
+          "status": "EXACT",
+          "method": "TestKit and real Wrapper replay with the product plugin loaded",
+          "reason": "",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": ["dev/check-tier1-fixtures"]
+        },
+        {
+          "id": "TASK_OUTCOMES",
+          "status": "EXACT",
+          "method": "TestKit task outcome and deterministic build-cache replay",
+          "reason": "",
+          "fallback": "OBSERVE",
+          "evidence": ["dev/check-tier1-fixtures"]
+        },
+        {
+          "id": "TASK_TO_NATIVE_PUT",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "the Tier 1 fixture does not expose native cache PUT attribution",
+          "fallback": "ABORT_PENDING",
+          "evidence": ["dev/check-tier1-fixtures"]
+        },
+        {
+          "id": "CRITICAL_PATH",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "the critical-path adapter is not executed by this fixture",
           "fallback": "OBSERVE",
           "evidence": []
         },
@@ -261,13 +346,13 @@
     }
   ],
   "combinations": [
-    {"gradle": "8.14.3", "jdk": 17, "dsl": "GROOVY", "profile": "UNTESTED"},
-    {"gradle": "8.14.3", "jdk": 17, "dsl": "KOTLIN", "profile": "UNTESTED"},
-    {"gradle": "8.14.3", "jdk": 21, "dsl": "GROOVY", "profile": "UNTESTED"},
+    {"gradle": "8.14.3", "jdk": 17, "dsl": "GROOVY", "profile": "TIER_ONE_FIXTURE_PROVEN"},
+    {"gradle": "8.14.3", "jdk": 17, "dsl": "KOTLIN", "profile": "TIER_ONE_FIXTURE_PROVEN"},
+    {"gradle": "8.14.3", "jdk": 21, "dsl": "GROOVY", "profile": "TIER_ONE_FIXTURE_PROVEN"},
     {"gradle": "8.14.3", "jdk": 21, "dsl": "KOTLIN", "profile": "CORRELATION_ONLY"},
-    {"gradle": "9.6.1", "jdk": 17, "dsl": "GROOVY", "profile": "UNTESTED"},
-    {"gradle": "9.6.1", "jdk": 17, "dsl": "KOTLIN", "profile": "UNTESTED"},
-    {"gradle": "9.6.1", "jdk": 21, "dsl": "GROOVY", "profile": "UNTESTED"},
+    {"gradle": "9.6.1", "jdk": 17, "dsl": "GROOVY", "profile": "TIER_ONE_FIXTURE_PROVEN"},
+    {"gradle": "9.6.1", "jdk": 17, "dsl": "KOTLIN", "profile": "TIER_ONE_FIXTURE_PROVEN"},
+    {"gradle": "9.6.1", "jdk": 21, "dsl": "GROOVY", "profile": "TIER_ONE_FIXTURE_PROVEN"},
     {"gradle": "9.6.1", "jdk": 21, "dsl": "KOTLIN", "profile": "GOLDEN_PROVEN"},
     {"gradle": "9.6.1", "jdk": 25, "dsl": "GROOVY", "profile": "UNTESTED"},
     {"gradle": "9.6.1", "jdk": 25, "dsl": "KOTLIN", "profile": "UNTESTED"}

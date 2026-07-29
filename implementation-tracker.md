@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — retention, explicit export profiles, pre-buffer HMAC redaction, at-least-once JSONL, bounded loss, and managed deletion now have executable fixtures; `F0-040` is next for the Tier 1 repositories<br>
+**Overall status:** `DOING` — all JDK 17/21 Tier 1 Gradle/DSL rows now have real TestKit and Wrapper fixtures; `SPK-002` is next for the bounded JVM Agent result<br>
 **Current phase:** Phase 0 — contracts, fixtures, and walking skeleton<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
 **Last updated:** 2026-07-29<br>
@@ -48,7 +48,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | Milestone | Objective | State | Gate progress | Dependency |
 |---|---|---:|---:|---|
 | Preparation | RFC, beta scope, and tracker closed | `DONE` | 2/2 | — |
-| Phase 0 | Toolchains, executable contracts, fixtures, spikes, and walking skeleton | `TODO` | 4/6 | Preparation |
+| Phase 0 | Toolchains, executable contracts, fixtures, spikes, and walking skeleton | `TODO` | 5/6 | Preparation |
 | MVP-A0 | Foundation and internal pilot | `WAITING` | 0/9 | Phase 0 |
 | MVP-A1 | Autonomous Cache in an isolated private beta | `WAITING` | 0/6 | A0 + `OPS-001/A1` |
 | MVP-B | Runtime Optimizer and safe learning | `WAITING` | 0/6 | A1 + `CI-ORCH-001` + `OPS-001/B` |
@@ -132,7 +132,10 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 49 | `F0-035` | Define and replay the bounded bandit policy | `DONE` | Codex |
 | 50 | `F0-036` | Materialize the exact/approximate/unavailable capability matrix | `DONE` | Codex |
 | 51 | `F0-037` | Define data lifecycle, redaction, JSON/JSONL, and deletion fixtures | `DONE` | Codex |
-| 52 | `F0-040` | Materialize the Tier 1 fixture repository matrix | `TODO` | — |
+| 52 | `F0-040` | Materialize the Tier 1 fixture repository matrix | `DONE` | Codex |
+| 53 | `SPK-002` | Bound JVM Agent coverage, overhead, and failure fallback | `TODO` | — |
+| 54 | `SPK-003` | Bound task-specific producer enforcement and fallback | `TODO` | — |
+| 55 | `SPK-004` | Exercise the Java PatchBundle parser/applier | `TODO` | — |
 
 ---
 
@@ -286,7 +289,7 @@ Do not mark `ENV-003`, `ENV-006`, `ENV-010`, or `ENV-011` complete because a “
 | `F0-038` | Packaging, checksums, signatures, SBOM, and provenance | `DEPLOY-001` | `DONE` | Codex | `E-030`: reproducible signed release bundle and fail-closed verifier |
 | `F0-039` | Base runbooks: bypass, kill switch, rollback, and uninstall | `OPS-001` | `DONE` | Codex | `E-032`: real-launcher bypass and recorded recovery exercises |
 | `F0-040A` | Golden-lane correlation fixture | `COMPAT-001` | `DONE` | Codex | `E-022`: parallel equivalent tasks, shared key, miss/hit, and Configuration Cache reuse |
-| `F0-040` | Tier 1 fixtures and test repositories | `COMPAT-001` | `TODO` | — | Real Wrapper + TestKit matrix |
+| `F0-040` | Tier 1 fixtures and test repositories | `COMPAT-001` | `DONE` | Codex | `E-059`: eight JDK 17/21 rows through real Wrapper + TestKit |
 
 ### 5.5 Walking skeleton
 
@@ -316,9 +319,9 @@ GitHub Action
 | ID | Question to answer | Depends on | State | Owner | Outcome/evidence |
 |---|---|---|---|---|---|
 | `SPK-001` | Can we correlate task → native key → PUT exactly with parallel execution, Worker API, and child processes? | `F0-002`, `F0-040A` | `UNAVAILABLE` | Codex | `E-023`: task stores exact; non-task Kotlin DSL stores force whole-attempt abort |
-| `SPK-002` | What coverage and overhead does the JVM Agent achieve with a real daemon and Configuration Cache? | `F0-002`, `F0-040`, `WS-003` | `WAITING` | — | — |
-| `SPK-003` | Can the Rust helper enforce a task-specific producer with complete coverage on the supported runner? | `F0-002`, `F0-040` | `WAITING` | — | — |
-| `SPK-004` | Can the patcher safely apply, repeat, reject, and recover the first two bundles? | `F0-016`, `F0-034` | `WAITING` | — | — |
+| `SPK-002` | What coverage and overhead does the JVM Agent achieve with a real daemon and Configuration Cache? | `F0-002`, `F0-040`, `WS-003` | `TODO` | — | — |
+| `SPK-003` | Can the Rust helper enforce a task-specific producer with complete coverage on the supported runner? | `F0-002`, `F0-040` | `TODO` | — | — |
+| `SPK-004` | Can the patcher safely apply, repeat, reject, and recover the first two bundles? | `F0-016`, `F0-034` | `TODO` | — | — |
 
 Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` with a tested fallback. An ambiguous result remains `BLOCKED` or `DOING`.
 
@@ -329,7 +332,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `F0-G01` | Private-beta decisions closed in RFC §28 | `DONE` | [RFC §28](./gradle-build-optimization-platform.md#28-product-decisions) |
 | `F0-G02` | Applicable contracts, catalog, and golden vectors validated | `DONE` | `E-040..050` |
 | `F0-G03` | Complete, passing walking skeleton on the golden lane | `DONE` | `E-020`, `E-021`, `E-026..035` |
-| `F0-G04` | Executable conformance/fixtures for the next module | `TODO` | — |
+| `F0-G04` | Executable conformance/fixtures for the next module | `DONE` | `E-059` |
 | `F0-G05` | Bypass, kill switch, and `UNAVAILABLE` exist before optimization | `DONE` | `E-023`, `E-032` |
 | `F0-G06` | Pinned toolchains and passing `dev/doctor` on host/golden image | `TODO` | — |
 
@@ -634,6 +637,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-056` | 2026-07-29 | `F0-035` / `BANDIT-001` | Versioned [`bounded bandit policy v1`](./specs/bandit-policy-v1.md), machine-readable finite [arm/feature/reward policy and replay corpus](./specs/bandit-policy-v1.json), and executable [`dev/check-bandit-policy`](./dev/check-bandit-policy); the contract binds the four validated golden-runner resource profiles, 15 pre-outcome features while explicitly forbidding actual hits/final duration/result, a primary negative customer-visible-time reward plus five explicit penalties and five non-compensable guardrails, 20 candidate outcomes, 5% stable control, 2–10% epsilon, 24-hour outcome limit, 10% trimming, and five-observation shrinkage toward control; 15 deterministic cases exercise A/A and sample-ratio failure, fixed-cohort entry, greedy/shrinkage/tie/control/exploration selection, headroom removal, valid/late/duplicate/propensity-less outcomes, epoch/drift reset, OOM rollback, and kill switch; the real resource-profile schemas plus focused/race/vet/layout/normative/lint checks passed locally | `DONE`: `BANDIT-001` can choose only prevalidated reversible profiles and can never compensate correctness failure with speed; `F0-036` is next |
 | `E-057` | 2026-07-29 | `F0-036` | Versioned [`capability matrix v1`](./specs/capability-matrix-v1.md), machine-readable [three-profile/ten-combination matrix](./specs/capability-matrix-v1.json), and executable [`dev/check-capability-matrix`](./dev/check-capability-matrix); every Gradle 8.14.3×JDK 17/21 and Gradle 9.6.1×JDK 17/21/25 row is explicit for both Groovy/Kotlin DSL, while only 9.6.1/JDK21/Kotlin carries the proven handshake/Configuration Cache/task outcomes and 8.14.3/JDK21/Kotlin carries correlation-spike task outcomes; exact and approximated capabilities require method/evidence, unavailable capabilities require reason/fallback, untested rows cannot inherit another profile, and both tested rows retain task-to-PUT `UNAVAILABLE`/whole-attempt abort; the matrix also truthfully leaves backend, agent, helper, and patcher unavailable pending their owning blocks; focused/race/vet/layout/normative/lint checks passed locally | `DONE`: Tier 1 target does not imply support and unknown combinations preserve Observe/private-L1/baseline/abort behavior; `F0-037` is next |
 | `E-058` | 2026-07-29 | `F0-037` | Versioned [`data lifecycle, redaction, and export v1`](./specs/data-lifecycle-v1.md), machine-readable [profile/retention/spool/deletion policy](./specs/data-lifecycle-v1.json), synthetic [JSON/JSONL fixtures](./fixtures/data-lifecycle/README.md), and executable [`dev/check-data-lifecycle`](./dev/check-data-lifecycle); four monotonic profiles require explicit expansion beyond summary, HMAC-SHA-256 tokenization plus key version occurs before buffering, and exact golden outputs contain no raw task path, argument, environment value, or source content; ten lifecycle classes fix 30-day stable/evidence/summary, 24-hour pending/spool, 7-day quarantine/diagnostic opt-in, metadata+7-day, and 90-day audit behavior; JSONL accepts one byte-identical duplicate, reports missing sequence 3 as partial, and rejects changed event reuse; eight cases enforce immediate logical revocation, complete managed-copy scheduling, L1 generation rotation, object-before-tombstone deletion, downstream tombstones, no silent legal hold, diagnostic opt-in, and spool purge; focused BUILD_SESSION/schema/race/vet/layout/normative/lint checks passed locally | `DONE`: Phase 0 has privacy/export fixtures without claiming downstream-copy or beta backup deletion; `F0-040` is next |
+| `E-059` | 2026-07-29 | `F0-040`, `F0-G04` | Independent Kotlin/Groovy [`Tier 1 fixtures`](./fixtures/tier1/README.md), shared Java 17 fixture plugin, cacheable custom task, real artifact transform, strict [ten-row target manifest](./fixtures/tier1/matrix.v1.json), dependency-free [TestKit runner](./jvm/gradle-plugin/src/test/java/dev/buildopt/gradle/TierOneTestKit.java), and composite [`dev/check-tier1-fixtures`](./dev/check-tier1-fixtures); Gradle 8.14.3 and 9.6.1 each passed JDK 17/21 × Kotlin/Groovy through two isolated TestKit invocations and two checksum-pinned real Wrapper invocations, with the packaged product plugin loaded, exact transformed output, build-cache replay, and Configuration Cache reuse; the capability matrix promoted only those eight rows while retaining authenticated handshake limits and leaving both JDK 25 rows untested; focused matrix, Java compilation, ShellCheck, layout, normative layout, and diff checks passed locally | `DONE`: the next-module fixture gate is closed without treating target-only JDK 25 or an unauthenticated plugin load as proven capability; `SPK-002` is next |
 
 ---
 
@@ -641,6 +645,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-29 | Closed `F0-040` and `F0-G04`: added Kotlin/Groovy custom-task and transform repositories and passed all eight Gradle 8.14.3/9.6.1 JDK 17/21 rows through isolated TestKit and real Wrapper replay; moved `SPK-002` next while keeping JDK 25 unproven | Codex |
 | 2026-07-29 | Closed `F0-037`: added four keyed-redaction golden profiles, at-least-once JSONL duplicate/gap/conflict cases, ten retention classes, bounded spool rules, and eight managed-deletion cases; moved `F0-040` next | Codex |
 | 2026-07-29 | Closed `F0-036`: materialized all ten Tier 1 target rows with evidence-backed exact/approximated/unavailable profiles and safe unknown-combination fallbacks; moved `F0-037` next without claiming unexecuted combinations supported | Codex |
 | 2026-07-29 | Closed `F0-035` and `BANDIT-001`: added the finite pre-outcome feature/reward schema and deterministic A/A, epsilon, propensity, delay, reset, headroom, kill-switch, and rollback replay; moved `F0-036` next | Codex |
