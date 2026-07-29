@@ -6,7 +6,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 |---|---|
 | [`ci-orchestration-v1.md`](./ci-orchestration-v1.md) | `F0-030` |
 | [`gradle-correlation-v1.md`](./gradle-correlation-v1.md) | `SPK-001` / `GRADLE-CORR-001` |
-| `benchmark-beta-v1.md` | `F0-032` |
+| [`benchmark-beta-v1.md`](./benchmark-beta-v1.md) | `F0-032` |
 | `test-optimization-integration-v1.md` | `F0-033` |
 | `patch-bundle-v1.md` | `F0-034` |
 | `capability-matrix-v1.md` | `F0-036` |

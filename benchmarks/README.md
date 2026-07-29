@@ -4,9 +4,13 @@ Reproducible workloads for measuring causal savings, overhead, queues, additiona
 
 Seeds, images, toolchains, runner classes, and digests are part of the evidence. A benchmark never authorizes a security capability.
 
-`F0-032` owns the planned `beta-v1.yaml` machine-readable workload, seed, budget, and fault matrix. Its interpretation belongs in `specs/benchmark-beta-v1.md`.
+[`beta-v1.yaml`](./beta-v1.yaml) is the materialized `F0-032`
+machine-readable workload, seed, budget, and fault matrix. Its interpretation
+belongs in [`specs/benchmark-beta-v1.md`](../specs/benchmark-beta-v1.md).
 
-`F0-010` reserves the benchmark namespace without inventing an unvalidated workload or empty manifest.
+The JSON-compatible YAML is validated by `./dev/check-beta-benchmark`. That
+command checks identity and completeness; it does not execute the sustained or
+soak profiles.
 
 ## Walking-skeleton overhead evidence
 

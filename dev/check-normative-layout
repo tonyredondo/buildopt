@@ -106,12 +106,14 @@ buildopt_materialized_artifacts=(
     "contracts/test-vectors/signatures/ed25519.tsv"
     "contracts/test-vectors/state-machines/state-machines.v1.json"
     "specs/commit-atomicity-v1.json"
+    "specs/benchmark-beta-v1.md"
     "specs/gradle-correlation-v1.md"
     "specs/golden-lane-runner-v1.json"
     "specs/release-bundle-v1.md"
     "specs/walking-skeleton-faults-v1.md"
     "specs/walking-skeleton-overhead-v1.md"
     "benchmarks/results/ws-009-golden-lane.json"
+    "benchmarks/beta-v1.yaml"
 )
 
 buildopt_failed=0

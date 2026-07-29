@@ -368,6 +368,19 @@ cases cover replay/conflict, invalid authority, blob and transaction crash
 points, corrupt or missing content, first-writer CAS, and independent
 `control.sqlite` reconciliation.
 
+## Private-beta benchmark contract validation
+
+Validate the `F0-032` seed, runner, object mix, load phases, Gradle fixture
+classes, fault matrix, and required result surface:
+
+```bash
+./dev/check-beta-benchmark
+```
+
+The checker verifies all immutable input bindings and prints the manifest
+digest. It does not execute the 60-minute sustained or eight-hour soak profile;
+those measured runs remain part of the later `OPS-001/A1` gate.
+
 ## PatchBundle contract validation
 
 Validate the `F0-016` declarative bundle envelope and its two private-beta

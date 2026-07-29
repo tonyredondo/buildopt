@@ -1,0 +1,177 @@
+{
+  "schemaVersion": "buildopt.benchmarks/beta/v1",
+  "seed": 2026072901,
+  "runner": {
+    "spec": "specs/golden-lane-runner-v1.json",
+    "specSha256": "sha256:26283e56aa7251152c7f051f7500bc86553669a808fc1cec5b736acf8f0733c9",
+    "runnerClass": "linux-amd64-4c-16g-v1",
+    "containerPlatformDigest": "sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50"
+  },
+  "components": {
+    "gradle": "9.6.1",
+    "jdk": "21.0.11+10",
+    "metricsCatalog": "build-impact-v1",
+    "metricsCatalogSha256": "sha256:56a146eef430f1cac2de76a57277705c8cc969ee95058f3c7e163a633357314e"
+  },
+  "clients": [1, 8, 32],
+  "objectCycleCount": 10000,
+  "objectMix": [
+    {
+      "sizeBytes": 65536,
+      "percent": 70
+    },
+    {
+      "sizeBytes": 1048576,
+      "percent": 20
+    },
+    {
+      "sizeBytes": 10485760,
+      "percent": 8
+    },
+    {
+      "sizeBytes": 104857600,
+      "percent": 2
+    }
+  ],
+  "phases": [
+    {
+      "id": "COLD",
+      "durationSeconds": 300,
+      "targetHitPercent": 0,
+      "allClientCounts": true
+    },
+    {
+      "id": "WARM_70",
+      "durationSeconds": 300,
+      "targetHitPercent": 70,
+      "allClientCounts": true
+    },
+    {
+      "id": "SUSTAINED",
+      "durationSeconds": 3600,
+      "targetHitPercent": 70,
+      "allClientCounts": true
+    },
+    {
+      "id": "SOAK",
+      "durationSeconds": 28800,
+      "targetHitPercent": 70,
+      "allClientCounts": true
+    }
+  ],
+  "gradleFixtures": [
+    {
+      "id": "TIER1_SMALL",
+      "sizeClass": "SMALL",
+      "requiredKnownOutputs": true,
+      "requiredCriticalPath": true
+    },
+    {
+      "id": "TIER1_MEDIUM",
+      "sizeClass": "MEDIUM",
+      "requiredKnownOutputs": true,
+      "requiredCriticalPath": true
+    },
+    {
+      "id": "TIER1_LARGE",
+      "sizeClass": "LARGE",
+      "requiredKnownOutputs": true,
+      "requiredCriticalPath": true
+    }
+  ],
+  "faults": [
+    {
+      "id": "GATEWAY_RESTART",
+      "expectedSafety": "RECOVER_OR_FAIL_OPEN_WITHOUT_PARTIAL_HIT"
+    },
+    {
+      "id": "SERVER_RESTART",
+      "expectedSafety": "READINESS_FALSE_UNTIL_RECONCILED"
+    },
+    {
+      "id": "MID_PUT_CANCEL",
+      "expectedSafety": "NO_VISIBLE_PARTIAL_OBJECT"
+    },
+    {
+      "id": "MID_GET_CANCEL",
+      "expectedSafety": "NO_TRUNCATED_HIT"
+    },
+    {
+      "id": "TRUNCATED_BLOB",
+      "expectedSafety": "MISS_AND_QUARANTINE"
+    },
+    {
+      "id": "CORRUPT_BLOB",
+      "expectedSafety": "MISS_AND_QUARANTINE"
+    },
+    {
+      "id": "NETWORK_LATENCY",
+      "expectedSafety": "BOUNDED_DEADLINE_AND_RECORDED_ERROR"
+    },
+    {
+      "id": "NETWORK_LOSS",
+      "expectedSafety": "BOUNDED_RETRY_OR_FAIL_OPEN"
+    },
+    {
+      "id": "SQLITE_BUSY",
+      "expectedSafety": "BOUNDED_RETRY_WITHOUT_PARTIAL_COMMIT"
+    },
+    {
+      "id": "EXPIRED_LEASE",
+      "expectedSafety": "ABORT_PENDING_AND_RELEASE_OWNER"
+    },
+    {
+      "id": "DISK_HIGH_WATERMARK",
+      "expectedSafety": "EVICT_TO_LOW_OR_STOP_PUT"
+    },
+    {
+      "id": "DISK_OUT_OF_SPACE",
+      "expectedSafety": "STOP_PUT_BEFORE_READ_CORRUPTION"
+    },
+    {
+      "id": "REVOKED_POLICY",
+      "expectedSafety": "ABORT_PENDING_AND_ROTATE_GENERATION"
+    },
+    {
+      "id": "REVOKED_GRANT",
+      "expectedSafety": "ABORT_PENDING_AND_ROTATE_GENERATION"
+    },
+    {
+      "id": "DEATH_BETWEEN_PENDING_AND_COMMIT",
+      "expectedSafety": "MISS_UNTIL_AUTHORIZED_RECONCILIATION"
+    }
+  ],
+  "requiredReportFields": [
+    "benchmarkDigest",
+    "seed",
+    "startedAt",
+    "completedAt",
+    "hardware",
+    "cgroup",
+    "components",
+    "actualObjectDistribution",
+    "p50",
+    "p95",
+    "p99",
+    "throughput",
+    "errors",
+    "bytes",
+    "recovery",
+    "readinessTransitions",
+    "faultOutcomes",
+    "deviations",
+    "rawObservations"
+  ],
+  "requiredAlerts": [
+    "DISK_QUOTA",
+    "CORRUPTION",
+    "STUCK_ATTEMPT_OR_LEASE",
+    "REVOCATION_LAG",
+    "POLICY_FRESHNESS",
+    "CIRCUIT_BREAKER",
+    "SQLITE_CONTENTION",
+    "EXPORT_BACKLOG",
+    "ACCEPTANCE_ERROR_RATE",
+    "ACCEPTANCE_LATENCY"
+  ]
+}

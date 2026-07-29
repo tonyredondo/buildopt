@@ -68,6 +68,7 @@ From the repository root:
 ./dev/check-state-machines
 ./dev/check-ci-orchestration
 ./dev/check-commit-atomicity
+./dev/check-beta-benchmark
 ./dev/check-test-optimization-openapi
 ./dev/check-buildopt-cli
 ./dev/check-local-gateway
