@@ -1,0 +1,572 @@
+{
+  "schemaVersion": "buildopt.contracts/state-machines/v1",
+  "machines": [
+    {
+      "id": "TASK_QUALIFICATION",
+      "initialState": "UNKNOWN",
+      "states": [
+        "UNKNOWN",
+        "OBSERVING",
+        "CONTRACT_QUALIFIED",
+        "QUARANTINE_VALIDATED",
+        "REJECTED",
+        "SUSPENDED"
+      ],
+      "terminalStates": [
+        "REJECTED"
+      ],
+      "transitions": [
+        {
+          "from": "UNKNOWN",
+          "event": "OBSERVE",
+          "to": "OBSERVING"
+        },
+        {
+          "from": "OBSERVING",
+          "event": "QUALIFY_CONTRACT",
+          "to": "CONTRACT_QUALIFIED"
+        },
+        {
+          "from": "CONTRACT_QUALIFIED",
+          "event": "VALIDATE_QUARANTINE",
+          "to": "QUARANTINE_VALIDATED"
+        },
+        {
+          "from": "UNKNOWN",
+          "event": "UNSUPPORTED_UNSAFE",
+          "to": "REJECTED"
+        },
+        {
+          "from": "OBSERVING",
+          "event": "UNSUPPORTED_UNSAFE",
+          "to": "REJECTED"
+        },
+        {
+          "from": "SUSPENDED",
+          "event": "REVALIDATE_NEW_CONTRACT",
+          "to": "OBSERVING"
+        },
+        {
+          "from": "*",
+          "event": "CONTRACT_DRIFT",
+          "to": "SUSPENDED"
+        },
+        {
+          "from": "*",
+          "event": "INCOMPLETE_EVIDENCE",
+          "to": "SUSPENDED"
+        }
+      ]
+    },
+    {
+      "id": "ACTION_ROLLOUT",
+      "initialState": "ABSENT",
+      "states": [
+        "ABSENT",
+        "PROPOSED",
+        "SHADOW",
+        "CI_CANARY",
+        "ACTIVE_IN_CI",
+        "ACTIVE_LOCALLY",
+        "SUSPENDED",
+        "ROLLED_BACK"
+      ],
+      "terminalStates": [
+        "ROLLED_BACK"
+      ],
+      "transitions": [
+        {
+          "from": "ABSENT",
+          "event": "PROPOSE",
+          "to": "PROPOSED"
+        },
+        {
+          "from": "PROPOSED",
+          "event": "ENTER_SHADOW",
+          "to": "SHADOW"
+        },
+        {
+          "from": "SHADOW",
+          "event": "START_CI_CANARY",
+          "to": "CI_CANARY"
+        },
+        {
+          "from": "CI_CANARY",
+          "event": "ACTIVATE_CI",
+          "to": "ACTIVE_IN_CI"
+        },
+        {
+          "from": "ACTIVE_IN_CI",
+          "event": "ACTIVATE_LOCAL",
+          "to": "ACTIVE_LOCALLY"
+        },
+        {
+          "from": "CI_CANARY",
+          "event": "ROLLBACK",
+          "to": "ROLLED_BACK"
+        },
+        {
+          "from": "ACTIVE_IN_CI",
+          "event": "ROLLBACK",
+          "to": "ROLLED_BACK"
+        },
+        {
+          "from": "ACTIVE_LOCALLY",
+          "event": "ROLLBACK",
+          "to": "ROLLED_BACK"
+        },
+        {
+          "from": "*",
+          "event": "REGRESSION",
+          "to": "SUSPENDED"
+        },
+        {
+          "from": "*",
+          "event": "POLICY_VIOLATION",
+          "to": "SUSPENDED"
+        },
+        {
+          "from": "*",
+          "event": "DEPENDENCY_SUSPENDED",
+          "to": "SUSPENDED"
+        }
+      ]
+    },
+    {
+      "id": "ATTEMPT",
+      "initialState": "CREATED",
+      "states": [
+        "CREATED",
+        "POLICY_BOUND",
+        "GRADLE_STARTED",
+        "TASK_ACTION_STARTED",
+        "VALIDATED",
+        "COMMITTED",
+        "ABORTED"
+      ],
+      "terminalStates": [
+        "COMMITTED",
+        "ABORTED"
+      ],
+      "transitions": [
+        {
+          "from": "CREATED",
+          "event": "BIND_POLICY",
+          "to": "POLICY_BOUND"
+        },
+        {
+          "from": "POLICY_BOUND",
+          "event": "START_GRADLE",
+          "to": "GRADLE_STARTED"
+        },
+        {
+          "from": "GRADLE_STARTED",
+          "event": "START_TASK_ACTION",
+          "to": "TASK_ACTION_STARTED"
+        },
+        {
+          "from": "TASK_ACTION_STARTED",
+          "event": "VALIDATE",
+          "to": "VALIDATED"
+        },
+        {
+          "from": "VALIDATED",
+          "event": "COMMIT",
+          "to": "COMMITTED"
+        },
+        {
+          "from": "*",
+          "event": "ABORT",
+          "to": "ABORTED"
+        },
+        {
+          "from": "*",
+          "event": "RECONCILE_DEAD_OWNER",
+          "to": "ABORTED"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "sourceMachine": "TASK_QUALIFICATION",
+      "sourceState": "SUSPENDED",
+      "targetMachine": "ACTION_ROLLOUT",
+      "targetEvent": "DEPENDENCY_SUSPENDED"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "task-happy-qualification",
+      "initial": {
+        "TASK_QUALIFICATION": {
+          "state": "UNKNOWN",
+          "version": 0
+        }
+      },
+      "steps": [
+        {
+          "machine": "TASK_QUALIFICATION",
+          "commandId": "task-observe-1",
+          "expectedVersion": 0,
+          "event": "OBSERVE",
+          "response": "DELIVERED",
+          "expectedResult": "APPLIED"
+        },
+        {
+          "machine": "TASK_QUALIFICATION",
+          "commandId": "task-qualify-1",
+          "expectedVersion": 1,
+          "event": "QUALIFY_CONTRACT",
+          "response": "DELIVERED",
+          "expectedResult": "APPLIED"
+        },
+        {
+          "machine": "TASK_QUALIFICATION",
+          "commandId": "task-validate-1",
+          "expectedVersion": 2,
+          "event": "VALIDATE_QUARANTINE",
+          "response": "DELIVERED",
+          "expectedResult": "APPLIED"
+        }
+      ],
+      "expected": {
+        "TASK_QUALIFICATION": {
+          "state": "QUARANTINE_VALIDATED",
+          "version": 3
+        }
+      }
+    },
+    {
+      "id": "inconclusive-never-promotes",
+      "initial": {
+        "TASK_QUALIFICATION": {
+          "state": "CONTRACT_QUALIFIED",
+          "version": 2
+        }
+      },
+      "steps": [
+        {
+          "machine": "TASK_QUALIFICATION",
+          "commandId": "task-inconclusive-1",
+          "expectedVersion": 2,
+          "event": "INCONCLUSIVE",
+          "response": "DELIVERED",
+          "expectedResult": "INCONCLUSIVE_NO_PROMOTION"
+        }
+      ],
+      "expected": {
+        "TASK_QUALIFICATION": {
+          "state": "CONTRACT_QUALIFIED",
+          "version": 2
+        }
+      }
+    },
+    {
+      "id": "task-drift-atomically-suspends-action",
+      "initial": {
+        "TASK_QUALIFICATION": {
+          "state": "QUARANTINE_VALIDATED",
+          "version": 3
+        },
+        "ACTION_ROLLOUT": {
+          "state": "ACTIVE_IN_CI",
+          "version": 4
+        }
+      },
+      "steps": [
+        {
+          "machine": "TASK_QUALIFICATION",
+          "commandId": "task-drift-1",
+          "expectedVersion": 3,
+          "event": "CONTRACT_DRIFT",
+          "response": "DELIVERED",
+          "expectedResult": "APPLIED"
+        }
+      ],
+      "expected": {
+        "TASK_QUALIFICATION": {
+          "state": "SUSPENDED",
+          "version": 4
+        },
+        "ACTION_ROLLOUT": {
+          "state": "SUSPENDED",
+          "version": 5
+        }
+      }
+    },
+    {
+      "id": "task-suspension-restarts-observation",
+      "initial": {
+        "TASK_QUALIFICATION": {
+          "state": "SUSPENDED",
+          "version": 8
+        }
+      },
+      "steps": [
+        {
+          "machine": "TASK_QUALIFICATION",
+          "commandId": "task-revalidate-1",
+          "expectedVersion": 8,
+          "event": "REVALIDATE_NEW_CONTRACT",
+          "response": "DELIVERED",
+          "expectedResult": "APPLIED"
+        }
+      ],
+      "expected": {
+        "TASK_QUALIFICATION": {
+          "state": "OBSERVING",
+          "version": 9
+        }
+      }
+    },
+    {
+      "id": "action-rolls-back-from-active",
+      "initial": {
+        "ACTION_ROLLOUT": {
+          "state": "ACTIVE_LOCALLY",
+          "version": 5
+        }
+      },
+      "steps": [
+        {
+          "machine": "ACTION_ROLLOUT",
+          "commandId": "action-rollback-1",
+          "expectedVersion": 5,
+          "event": "ROLLBACK",
+          "response": "DELIVERED",
+          "expectedResult": "APPLIED"
+        }
+      ],
+      "expected": {
+        "ACTION_ROLLOUT": {
+          "state": "ROLLED_BACK",
+          "version": 6
+        }
+      }
+    },
+    {
+      "id": "attempt-lost-response-replays-once",
+      "initial": {
+        "ATTEMPT": {
+          "state": "CREATED",
+          "version": 0
+        }
+      },
+      "steps": [
+        {
+          "machine": "ATTEMPT",
+          "commandId": "attempt-bind-1",
+          "expectedVersion": 0,
+          "event": "BIND_POLICY",
+          "response": "LOST",
+          "expectedResult": "UNKNOWN_APPLIED"
+        },
+        {
+          "machine": "ATTEMPT",
+          "commandId": "attempt-bind-1",
+          "expectedVersion": 0,
+          "event": "BIND_POLICY",
+          "response": "DELIVERED",
+          "expectedResult": "REPLAYED"
+        },
+        {
+          "machine": "ATTEMPT",
+          "commandId": "attempt-gradle-1",
+          "expectedVersion": 1,
+          "event": "START_GRADLE",
+          "response": "DELIVERED",
+          "expectedResult": "APPLIED"
+        },
+        {
+          "machine": "ATTEMPT",
+          "commandId": "attempt-task-1",
+          "expectedVersion": 2,
+          "event": "START_TASK_ACTION",
+          "response": "DELIVERED",
+          "expectedResult": "APPLIED"
+        },
+        {
+          "machine": "ATTEMPT",
+          "commandId": "attempt-validate-1",
+          "expectedVersion": 3,
+          "event": "VALIDATE",
+          "response": "DELIVERED",
+          "expectedResult": "APPLIED"
+        },
+        {
+          "machine": "ATTEMPT",
+          "commandId": "attempt-commit-1",
+          "expectedVersion": 4,
+          "event": "COMMIT",
+          "response": "DELIVERED",
+          "expectedResult": "APPLIED"
+        }
+      ],
+      "expected": {
+        "ATTEMPT": {
+          "state": "COMMITTED",
+          "version": 5
+        }
+      }
+    },
+    {
+      "id": "attempt-skipped-transition-rejected",
+      "initial": {
+        "ATTEMPT": {
+          "state": "CREATED",
+          "version": 0
+        }
+      },
+      "steps": [
+        {
+          "machine": "ATTEMPT",
+          "commandId": "attempt-skip-1",
+          "expectedVersion": 0,
+          "event": "START_GRADLE",
+          "response": "DELIVERED",
+          "expectedResult": "INVALID_TRANSITION"
+        }
+      ],
+      "expected": {
+        "ATTEMPT": {
+          "state": "CREATED",
+          "version": 0
+        }
+      }
+    },
+    {
+      "id": "attempt-stale-cas-rejected",
+      "initial": {
+        "ATTEMPT": {
+          "state": "POLICY_BOUND",
+          "version": 1
+        }
+      },
+      "steps": [
+        {
+          "machine": "ATTEMPT",
+          "commandId": "attempt-stale-1",
+          "expectedVersion": 0,
+          "event": "START_GRADLE",
+          "response": "DELIVERED",
+          "expectedResult": "STATE_PRECONDITION_FAILED"
+        }
+      ],
+      "expected": {
+        "ATTEMPT": {
+          "state": "POLICY_BOUND",
+          "version": 1
+        }
+      }
+    },
+    {
+      "id": "command-id-payload-conflict-rejected",
+      "initial": {
+        "ATTEMPT": {
+          "state": "CREATED",
+          "version": 0
+        }
+      },
+      "steps": [
+        {
+          "machine": "ATTEMPT",
+          "commandId": "attempt-command-1",
+          "expectedVersion": 0,
+          "event": "BIND_POLICY",
+          "response": "DELIVERED",
+          "expectedResult": "APPLIED"
+        },
+        {
+          "machine": "ATTEMPT",
+          "commandId": "attempt-command-1",
+          "expectedVersion": 1,
+          "event": "START_GRADLE",
+          "response": "DELIVERED",
+          "expectedResult": "IDEMPOTENCY_CONFLICT"
+        }
+      ],
+      "expected": {
+        "ATTEMPT": {
+          "state": "POLICY_BOUND",
+          "version": 1
+        }
+      }
+    },
+    {
+      "id": "attempt-cancellation-after-task-aborts",
+      "initial": {
+        "ATTEMPT": {
+          "state": "TASK_ACTION_STARTED",
+          "version": 3
+        }
+      },
+      "steps": [
+        {
+          "machine": "ATTEMPT",
+          "commandId": "attempt-abort-1",
+          "expectedVersion": 3,
+          "event": "ABORT",
+          "response": "DELIVERED",
+          "expectedResult": "APPLIED"
+        }
+      ],
+      "expected": {
+        "ATTEMPT": {
+          "state": "ABORTED",
+          "version": 4
+        }
+      }
+    },
+    {
+      "id": "dead-owner-reconciliation-aborts",
+      "initial": {
+        "ATTEMPT": {
+          "state": "GRADLE_STARTED",
+          "version": 2
+        }
+      },
+      "steps": [
+        {
+          "machine": "ATTEMPT",
+          "commandId": "attempt-reconcile-1",
+          "expectedVersion": 2,
+          "event": "RECONCILE_DEAD_OWNER",
+          "response": "DELIVERED",
+          "expectedResult": "APPLIED"
+        }
+      ],
+      "expected": {
+        "ATTEMPT": {
+          "state": "ABORTED",
+          "version": 3
+        }
+      }
+    },
+    {
+      "id": "terminal-attempt-cannot-reopen",
+      "initial": {
+        "ATTEMPT": {
+          "state": "COMMITTED",
+          "version": 5
+        }
+      },
+      "steps": [
+        {
+          "machine": "ATTEMPT",
+          "commandId": "attempt-reopen-1",
+          "expectedVersion": 5,
+          "event": "ABORT",
+          "response": "DELIVERED",
+          "expectedResult": "TERMINAL_STATE"
+        }
+      ],
+      "expected": {
+        "ATTEMPT": {
+          "state": "COMMITTED",
+          "version": 5
+        }
+      }
+    }
+  ]
+}

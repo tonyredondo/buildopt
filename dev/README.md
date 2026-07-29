@@ -322,6 +322,23 @@ all tracked outputs in isolation, compiles both clients, exercises real Go TLS
 transport/header/path safety, and runs the same N/N-1, incompatible-major, and
 unknown-field vectors in Go and Java 17.
 
+## Lifecycle state-machine validation
+
+Validate the executable `F0-023` task-qualification, action-rollout, and
+attempt state machines:
+
+```bash
+./dev/check-state-machines
+```
+
+The checker cross-checks action and attempt states against their normative
+JSON Schemas and interprets the language-neutral scenario catalog. The
+scenarios prove ordered qualification and promotion, fail-closed
+inconclusive results, atomic dependency suspension, rollback, compare-and-swap
+rejection, exact idempotent replay after a lost response, payload-conflict
+rejection, cancellation, dead-owner reconciliation, and terminal-state
+safety.
+
 ## PatchBundle contract validation
 
 Validate the `F0-016` declarative bundle envelope and its two private-beta

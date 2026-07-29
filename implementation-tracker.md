@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — drift-checked Go and Java 17 clients now expose all 13 control-plane operations and pass the same N/N-1 fail-closed compatibility corpus; `F0-023` is next for lifecycle state machines<br>
+**Overall status:** `DOING` — the complete Phase 0 contract package now has executable schemas, APIs, clients, compatibility, cryptography, HTTP semantics, and lifecycle vectors; `F0-030` is next for CI orchestration<br>
 **Current phase:** Phase 0 — contracts, fixtures, and walking skeleton<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
 **Last updated:** 2026-07-29<br>
@@ -48,7 +48,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | Milestone | Objective | State | Gate progress | Dependency |
 |---|---|---:|---:|---|
 | Preparation | RFC, beta scope, and tracker closed | `DONE` | 2/2 | — |
-| Phase 0 | Toolchains, executable contracts, fixtures, spikes, and walking skeleton | `TODO` | 3/6 | Preparation |
+| Phase 0 | Toolchains, executable contracts, fixtures, spikes, and walking skeleton | `TODO` | 4/6 | Preparation |
 | MVP-A0 | Foundation and internal pilot | `WAITING` | 0/9 | Phase 0 |
 | MVP-A1 | Autonomous Cache in an isolated private beta | `WAITING` | 0/6 | A0 + `OPS-001/A1` |
 | MVP-B | Runtime Optimizer and safe learning | `WAITING` | 0/6 | A1 + `CI-ORCH-001` + `OPS-001/B` |
@@ -123,7 +123,8 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 40 | `F0-020` | Materialize common JCS, digest, timestamp, and signature vectors | `DONE` | Codex |
 | 41 | `F0-021` | Materialize common error, deadline, retry, and idempotency conformance | `DONE` | Codex |
 | 42 | `F0-022` | Generate Go/Java clients and prove N/N-1 compatibility | `DONE` | Codex |
-| 43 | `F0-023` | Materialize task, action, and attempt state-machine vectors | `TODO` | — |
+| 43 | `F0-023` | Materialize task, action, and attempt state-machine vectors | `DONE` | Codex |
+| 44 | `F0-030` | Define executable CI scheduling, isolation, lifecycle, and recovery | `TODO` | — |
 
 ---
 
@@ -151,7 +152,7 @@ These states represent implementation and evidence, not the `Accepted` state of 
 
 | Gate | Required outcome | Blocks | State | Owner | Evidence |
 |---|---|---|---|---|---|
-| `CONTRACTS-001` | Schemas/IDLs, Go/Java clients, N/N-1, and golden vectors | A0+ integration | `TODO` | — | — |
+| `CONTRACTS-001` | Schemas/IDLs, Go/Java clients, N/N-1, and golden vectors | A0+ integration | `DONE` | Codex | `E-040..050`: complete normative package and executable conformance |
 | `GOLDEN-LANE-001` | Gradle 9.6.1, JDK 21, Linux x86-64, Kotlin DSL, pinned 4 vCPU/16 GiB development runner and image | Walking skeleton | `DONE` | Codex | `E-008`: strict host and container checks passed |
 | `CI-ORCH-001` | Authoritative normal job, validation queue, isolation, lifecycle, budget, and recovery | B, C1, and C4 | `TODO` | — | — |
 | `GRADLE-CORR-001` | Exact `taskExecutionId → cacheKey → PUT` correlation or all-attempt fallback | Selective C1 publication | `DONE` | Codex | `E-023`: non-task stores select tested all-attempt fallback |
@@ -257,7 +258,7 @@ Do not mark `ENV-003`, `ENV-006`, `ENV-010`, or `ENV-011` complete because a “
 | `F0-020` | JCS, SHA-256, timestamp, and signature vectors | `CONTRACTS-001` | `DONE` | Codex | `E-047`: identical Go/Java JCS, digest, time, and Ed25519 vectors |
 | `F0-021` | Error, deadline, retry, and idempotency contract | `CONTRACTS-001` | `DONE` | Codex | `E-048`: common catalog + nine fault cases + all-OpenAPI audit |
 | `F0-022` | N/N-1 compatibility and generated Go/Java clients | `F0-011..021` | `DONE` | Codex | `E-049`: drift-checked clients + shared nine-case compatibility suite |
-| `F0-023` | Task/action/attempt state machines | `STATE-001`, `CI-ORCH-001` | `TODO` | — | Transition vectors + recovery |
+| `F0-023` | Task/action/attempt state machines | `STATE-001`, `CI-ORCH-001` | `DONE` | Codex | `E-050`: three machines + 12 transition/recovery scenarios |
 | `F0-024` | Normative `METRICS-001` catalog | `METRICS-001`, `MEASURE-001` | `DONE` | Codex | `E-034`: 35-definition catalog, validator, and policy negatives |
 
 `F0-019` intentionally follows `SPK-001`: its normative event vocabulary must encode the demonstrated exact task-owned observations plus the tested `UNATTRIBUTED` all-attempt fallback. The spike uses fixture-only instrumentation and does not predeclare the final inter-process contract.
@@ -318,7 +319,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | ID | Criterion | State | Evidence |
 |---|---|---|---|
 | `F0-G01` | Private-beta decisions closed in RFC §28 | `DONE` | [RFC §28](./gradle-build-optimization-platform.md#28-product-decisions) |
-| `F0-G02` | Applicable contracts, catalog, and golden vectors validated | `TODO` | — |
+| `F0-G02` | Applicable contracts, catalog, and golden vectors validated | `DONE` | `E-040..050` |
 | `F0-G03` | Complete, passing walking skeleton on the golden lane | `DONE` | `E-020`, `E-021`, `E-026..035` |
 | `F0-G04` | Executable conformance/fixtures for the next module | `TODO` | — |
 | `F0-G05` | Bypass, kill switch, and `UNAVAILABLE` exist before optimization | `DONE` | `E-023`, `E-032` |
@@ -616,6 +617,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-047` | 2026-07-29 | `F0-020` | Language-neutral [canonical JSON](./contracts/test-vectors/canonical-json/README.md) and [Ed25519](./contracts/test-vectors/signatures/README.md) corpora consumed by dependency-free Go and Java 17 implementations through [`dev/check-contract-crypto`](./dev/check-contract-crypto); seven JCS rows fix exact UTF-8 canonical bytes, UTF-16 member ordering, preserved Unicode, control escaping, IEEE-754 rendering, lowercase `sha256:` digests, and stable rejection of duplicate keys, malformed UTF-8, unpaired surrogates, and non-finite input; six timestamp rows accept only parseable UTC RFC 3339 with explicit seconds and uppercase `Z`; four real Ed25519 rows use synthetic public test material and cover exact payload verification, changed content, wrong key, and malformed signature without storing a private or deployment key; both consumers passed the exact same 17 rows, root Go race/vet, Java `--release 17 -Xlint:all -Werror`, layout, normative layout, locked lint, and diff hygiene locally | `DONE`: signed bytes, digests, and time parsing now have cross-language golden truth; signed-schema unknown fields remain fail-closed, while `F0-021` is next for common endpoint failure behavior |
 | `E-048` | 2026-07-29 | `F0-021` | Machine-readable [HTTP failure-semantics v1](./contracts/test-vectors/http-semantics/http-semantics.v1.json), documented [contract](./contracts/test-vectors/http-semantics/README.md), and executable [`dev/check-http-semantics`](./dev/check-http-semantics); the catalog fixes all 16 stable codes currently exposed by the three OpenAPI documents, their default HTTP status/retry ceiling, the global 5-second maximum backoff, seven legal unknown-response actions, six fail-closed deadline outcomes, seven cancellation actions, and durable/none accepted-mutation states; nine interpreted fault cases cover retryable success, changed-payload key reuse, deadline during backoff, unknown stateful mutation, accepted cancellation, non-idempotent retry refusal, policy timeout preserving baseline, terminal invalid request, and capped server backoff; a full operation audit loads all 13 control-plane paths and rejects uncatalogued errors, recovery, deadlines, cancellation, mutation state, or excess backoff; focused and existing OpenAPI checks, both Go modules under the race detector and vet, layout, normative layout, locked lint, and diff hygiene passed locally | `DONE`: retries retain original identity/deadline, unknown writes require recovery, and failure cannot manufacture policy, grant, validation, or commit authority; `F0-022` is next for generated clients and compatibility |
 | `E-049` | 2026-07-29 | `F0-022` | Source-first [generated-code policy](./GENERATED_CODE.md) and three-entry [`generated-artifacts`](./dev/generated-artifacts.json) inventory now cover the Protobuf descriptor plus generated [Go](./internal/generated/openapi/client_v1.go) and [Java 17](./jvm/generated-client/src/main/java/dev/buildopt/generated/BuildOptClientsV1.java) single-attempt HTTPS clients; the generator extracts all 13 operation IDs, methods, paths, mutation flags, and contract versions from the three OpenAPI documents, binds output to their aggregate digest plus the [N/N-1 corpus](./contracts/test-vectors/compatibility/n-n-minus-1.tsv), formats Go with the locked toolchain, and rejects drift from each of nine individual source bindings; both clients expose explicit bearer/version/request/idempotency/precondition/deadline inputs without implicit retries, bounded response bodies, fail-closed TLS, immutable endpoint inventories, and same-major adjacent-minor negotiation; nine shared vectors cover N/N-1 both directions, adjacent future, too-old/new minors, incompatible major preserving baseline, strict signed-command unknown fields, and preserved export extensions; real Go TLS transport/header/path escaping passed under race, Java compiled with `--release 17 -Xlint:all -Werror`, the new Gradle module built reproducibly at class major 61, Java conformance passed, and layout/normative/drift checks passed locally | `DONE`: clients cannot silently widen versions, fields, transport, or retry policy; `CONTRACTS-001` remains open for lifecycle vectors, while `F0-023` is next |
+| `E-050` | 2026-07-29 | `F0-023` / `CONTRACTS-001` / `F0-G02` | Machine-readable [`state-machines.v1`](./contracts/test-vectors/state-machines/state-machines.v1.json), documented [transition contract](./contracts/test-vectors/state-machines/README.md), and executable [`dev/check-state-machines`](./dev/check-state-machines); three independent machines cover task qualification, action rollout, and durable attempts, with action/attempt state sets cross-checked against their normative JSON Schemas; 12 interpreted scenarios exercise ordered qualification, fail-closed inconclusive results, task-drift propagation to a dependent action, revalidation, rollback, exact replay after a lost response, stale compare-and-swap, command-payload conflict, skipped transitions, cancellation after task start, dead-owner reconciliation, and terminal-state safety; focused checks, linked action/attempt schema suites, both Go modules under race and vet, layout, normative layout, locked lint, and JSON parsing passed locally | `DONE`: no lifecycle can promote on inconclusive evidence, skip a durable state, fork an idempotent command, or reopen a terminal attempt; the complete normative contract package and Phase 0 contract gate are closed, while durable CI/storage implementations remain later work and `F0-030` is next |
 
 ---
 
@@ -623,6 +625,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-29 | Closed `F0-023`, `CONTRACTS-001`, and `F0-G02`: added three executable lifecycle machines and 12 CAS/replay/suspension/rollback/cancellation/reconciliation scenarios cross-checked against the normative schemas; moved `F0-030` next without claiming the durable CI or storage implementation complete | Codex |
 | 2026-07-29 | Closed `F0-022`: generated drift-checked single-attempt Go/Java 17 clients from all three OpenAPI documents, added the Java module and real Go TLS proof, and passed one shared nine-case N/N-1/major/unknown-field corpus; moved `F0-023` next without hiding retry or semantic validation in generated code | Codex |
 | 2026-07-29 | Closed `F0-021`: added the shared stable-error and failure-semantics catalog, nine executable deadline/retry/idempotency/unknown/cancellation cases, and an audit of all three OpenAPI documents; moved `F0-022` next without claiming durable service implementations complete | Codex |
 | 2026-07-29 | Closed `F0-020`: added shared JCS, SHA-256, UTC timestamp, and real Ed25519 vectors, independent dependency-free Go/Java 17 consumers, strict malformed-input negatives, and passing race/vet/lint validation; moved `F0-021` next without claiming endpoint fault or version compatibility conformance complete | Codex |

@@ -65,6 +65,7 @@ From the repository root:
 ./dev/check-task-events-proto
 ./dev/check-contract-crypto
 ./dev/check-http-semantics
+./dev/check-state-machines
 ./dev/check-test-optimization-openapi
 ./dev/check-buildopt-cli
 ./dev/check-local-gateway

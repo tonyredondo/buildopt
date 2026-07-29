@@ -101,6 +101,7 @@ buildopt_materialized_artifacts=(
     "contracts/test-vectors/compatibility/n-n-minus-1.tsv"
     "contracts/test-vectors/http-semantics/http-semantics.v1.json"
     "contracts/test-vectors/signatures/ed25519.tsv"
+    "contracts/test-vectors/state-machines/state-machines.v1.json"
     "specs/gradle-correlation-v1.md"
     "specs/golden-lane-runner-v1.json"
     "specs/release-bundle-v1.md"
