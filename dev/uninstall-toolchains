@@ -1,0 +1,242 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_usage() {
+    printf 'usage: %s (--toolchain <id> | --all) [--purge-downloads] [--purge-state]\n' "$0"
+}
+
+buildopt_selection=
+buildopt_toolchain=
+buildopt_purge_downloads=0
+buildopt_purge_state=0
+while (($# > 0)); do
+    case "$1" in
+        --toolchain)
+            if (($# < 2)) || [[ -n "${buildopt_selection}" ]]; then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_selection=toolchain
+            buildopt_toolchain=$2
+            shift 2
+            ;;
+        --all)
+            if [[ -n "${buildopt_selection}" ]]; then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_selection=all
+            shift
+            ;;
+        --purge-downloads)
+            buildopt_purge_downloads=1
+            shift
+            ;;
+        --purge-state)
+            buildopt_purge_state=1
+            shift
+            ;;
+        --help)
+            buildopt_usage
+            exit 0
+            ;;
+        *)
+            buildopt_usage >&2
+            exit 64
+            ;;
+    esac
+done
+
+if [[ -z "${buildopt_selection}" ]] ||
+    ((buildopt_purge_state == 1)) && [[ "${buildopt_selection}" != "all" ]]; then
+    buildopt_usage >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_lock=${BUILDOPT_TOOLCHAINS_LOCK_FILE:-"${buildopt_script_dir}/toolchains.lock.yaml"}
+buildopt_tools_root=${BUILDOPT_TOOLS_ROOT:-"${buildopt_repo_root}/.tools"}
+
+for buildopt_command in jq realpath; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required uninstall command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if [[ -z "${buildopt_tools_root}" ]]; then
+    printf 'refusing unsafe tool root: <empty>\n' >&2
+    exit 1
+fi
+buildopt_tools_root=$(realpath -m -- "${buildopt_tools_root}")
+if [[ "${buildopt_tools_root}" == "/" ]] ||
+    [[ "${buildopt_tools_root}" == "${buildopt_repo_root}" ]]; then
+    printf 'refusing unsafe tool root: %s\n' "${buildopt_tools_root}" >&2
+    exit 1
+fi
+if [[ ! -f "${buildopt_lock}" ]]; then
+    printf 'missing toolchain lock: %s\n' "${buildopt_lock}" >&2
+    exit 70
+fi
+
+if [[ "${buildopt_selection}" == "toolchain" ]]; then
+    if ! buildopt_entries=$(
+        jq -ce \
+            --arg buildopt_id "${buildopt_toolchain}" \
+            '
+                [
+                    .artifacts[] |
+                    select(.id == $buildopt_id) |
+                    select(
+                        .kind == "binary" or
+                        .kind == "tar.gz" or
+                        .kind == "tar.xz" or
+                        .kind == "zip"
+                    )
+                ] |
+                if length == 1 then
+                    .
+                else
+                    error("expected exactly one downloadable toolchain entry")
+                end
+            ' "${buildopt_lock}"
+    ); then
+        printf 'invalid or unsupported toolchain lock entry: %s\n' \
+            "${buildopt_toolchain}" >&2
+        exit 70
+    fi
+else
+    if ! buildopt_entries=$(
+        jq -ce '
+            [
+                .artifacts[] |
+                select(
+                    .kind == "binary" or
+                    .kind == "tar.gz" or
+                    .kind == "tar.xz" or
+                    .kind == "zip"
+                )
+            ] |
+            if length > 0 and
+                ([.[].id] | unique | length) == length
+            then
+                sort_by(.id)
+            else
+                error("expected unique downloadable toolchain entries")
+            end
+        ' "${buildopt_lock}"
+    ); then
+        printf 'invalid downloadable toolchain entries in lock\n' >&2
+        exit 70
+    fi
+fi
+
+mapfile -t buildopt_entry_list < <(jq -c '.[]' <<<"${buildopt_entries}")
+declare -a buildopt_ids=()
+declare -a buildopt_install_dirs=()
+declare -a buildopt_archives=()
+for buildopt_entry in "${buildopt_entry_list[@]}"; do
+    buildopt_id=$(jq -r '.id' <<<"${buildopt_entry}")
+    buildopt_kind=$(jq -r '.kind' <<<"${buildopt_entry}")
+    buildopt_sha256=$(jq -r '.sha256' <<<"${buildopt_entry}")
+    if [[ ! "${buildopt_id}" =~ ^[a-z0-9][a-z0-9-]*$ ]] ||
+        [[ ! "${buildopt_sha256}" =~ ^[0-9a-f]{64}$ ]] ||
+        [[ "${buildopt_kind}" != "binary" &&
+            "${buildopt_kind}" != "tar.gz" &&
+            "${buildopt_kind}" != "tar.xz" &&
+            "${buildopt_kind}" != "zip" ]]; then
+        printf 'malformed downloadable toolchain entry: %s\n' \
+            "${buildopt_id}" >&2
+        exit 70
+    fi
+    buildopt_ids+=("${buildopt_id}")
+    buildopt_install_dirs+=(
+        "${buildopt_tools_root}/toolchains/${buildopt_id}-${buildopt_sha256:0:16}"
+    )
+    buildopt_archives+=(
+        "${buildopt_tools_root}/downloads/${buildopt_id}-${buildopt_sha256}.${buildopt_kind}"
+    )
+done
+
+if [[ ! -e "${buildopt_tools_root}" ]]; then
+    for buildopt_id in "${buildopt_ids[@]}"; do
+        printf '%s is not installed under %s\n' \
+            "${buildopt_id}" \
+            "${buildopt_tools_root}"
+    done
+    exit 0
+fi
+
+buildopt_tools_marker="${buildopt_tools_root}/.buildopt-tools-root"
+if [[ ! -f "${buildopt_tools_marker}" ]] ||
+    [[ -L "${buildopt_tools_marker}" ]] ||
+    [[ "$(<"${buildopt_tools_marker}")" != "buildopt.dev/tools-root/v1" ]]; then
+    printf 'refusing unmarked BuildOpt tools root: %s\n' \
+        "${buildopt_tools_root}" >&2
+    exit 1
+fi
+
+for buildopt_index in "${!buildopt_ids[@]}"; do
+    buildopt_id=${buildopt_ids[buildopt_index]}
+    buildopt_lock_dir="${buildopt_tools_root}/locks/${buildopt_id}"
+    if [[ -e "${buildopt_lock_dir}" ]]; then
+        printf 'cannot uninstall %s while bootstrap lock exists: %s\n' \
+            "${buildopt_id}" \
+            "${buildopt_lock_dir}" >&2
+        exit 1
+    fi
+    if ((buildopt_purge_downloads == 1)) &&
+        [[ -e "${buildopt_archives[buildopt_index]}" ]] &&
+        [[ ! -f "${buildopt_archives[buildopt_index]}" ]]; then
+        printf 'refusing non-file cached artifact: %s\n' \
+            "${buildopt_archives[buildopt_index]}" >&2
+        exit 1
+    fi
+done
+
+for buildopt_index in "${!buildopt_ids[@]}"; do
+    buildopt_id=${buildopt_ids[buildopt_index]}
+    buildopt_install_dir=${buildopt_install_dirs[buildopt_index]}
+    if [[ -e "${buildopt_install_dir}" || -L "${buildopt_install_dir}" ]]; then
+        rm -rf -- "${buildopt_install_dir}"
+        printf 'Uninstalled %s from %s\n' \
+            "${buildopt_id}" \
+            "${buildopt_install_dir}"
+    else
+        printf '%s is not installed under %s\n' \
+            "${buildopt_id}" \
+            "${buildopt_tools_root}"
+    fi
+
+    if ((buildopt_purge_downloads == 1)); then
+        buildopt_archive=${buildopt_archives[buildopt_index]}
+        if [[ -e "${buildopt_archive}" || -L "${buildopt_archive}" ]]; then
+            rm -f -- "${buildopt_archive}"
+            printf 'Removed cached artifact for %s: %s\n' \
+                "${buildopt_id}" \
+                "${buildopt_archive}"
+        fi
+    fi
+done
+
+if ((buildopt_purge_state == 1)); then
+    for buildopt_state_path in \
+        "${buildopt_tools_root}/state" \
+        "${buildopt_tools_root}/gradle-user-home"; do
+        if [[ -e "${buildopt_state_path}" || -L "${buildopt_state_path}" ]]; then
+            rm -rf -- "${buildopt_state_path}"
+            printf 'Removed project-local state: %s\n' \
+                "${buildopt_state_path}"
+        fi
+    done
+fi
+
+for buildopt_empty_dir in \
+    "${buildopt_tools_root}/toolchains" \
+    "${buildopt_tools_root}/downloads" \
+    "${buildopt_tools_root}/tmp" \
+    "${buildopt_tools_root}/locks"; do
+    rmdir -- "${buildopt_empty_dir}" 2>/dev/null || true
+done

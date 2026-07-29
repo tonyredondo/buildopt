@@ -38,7 +38,49 @@ Operating-system capabilities and externally supplied commands such as Docker, G
 
 The bootstrap downloads the immutable URL from the lock, verifies its SHA-256 before extraction, rejects unsafe archive paths, handles the locked binary, ZIP, `tar.gz`, and `tar.xz` layouts, runs target-specific version and runtime probes, and installs atomically under `.tools/toolchains/`. A second invocation verifies and reuses the existing installation without another download. It never uses `sudo` or modifies global tools.
 
-Set `BUILDOPT_TOOLS_ROOT` to keep the ignored tool state in another local directory. The repository lock remains the source of truth. `ENV-012` retains ownership of the complete cleanup and uninstall contract.
+Set `BUILDOPT_TOOLS_ROOT` to keep the ignored tool state in another local directory. The repository lock remains the source of truth. Every successful bootstrap marks that root so cleanup cannot be redirected at an arbitrary existing directory.
+
+## Cleanup and uninstall
+
+Remove one locked installation while retaining its verified download and all
+project-local state:
+
+```bash
+./dev/uninstall-toolchains --toolchain go
+```
+
+Remove every toolchain managed directly by `dev/bootstrap`:
+
+```bash
+./dev/uninstall-toolchains --all
+```
+
+Both forms are idempotent. They derive exact installation names from the lock,
+refuse an unmarked or unsafe tools root, and fail before deleting anything when
+a selected tool has an active bootstrap lock. Provider-managed state such as
+the optional Rustup toolchain is outside this command.
+
+Downloads and build state are preserved by default so an uninstall does not
+silently discard caches or evidence. Purge them only with an explicit choice:
+
+```bash
+./dev/uninstall-toolchains --all --purge-downloads
+./dev/uninstall-toolchains --all --purge-downloads --purge-state
+```
+
+`--purge-downloads` removes only the exact archives named by the current lock.
+`--purge-state` is accepted only with `--all` and removes `.tools/state/` plus
+`.tools/gradle-user-home/`; it does not remove unrelated files in the tools
+root. Set the same `BUILDOPT_TOOLS_ROOT` and
+`BUILDOPT_TOOLCHAINS_LOCK_FILE` values used for provisioning when operating on
+an alternate root or test lock.
+
+Run the complete two-bootstrap, uninstall, reinstall, cache, state, and
+concurrency contract without touching the real tools root:
+
+```bash
+./dev/test-toolchain-lifecycle
+```
 
 ## Project-local execution
 

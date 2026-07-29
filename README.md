@@ -73,11 +73,13 @@ From the repository root:
 ./dev/test-rust-toolchain
 ./dev/test-lint-toolchains
 ./dev/test-supply-chain-toolchains
+./dev/test-toolchain-lifecycle
 ./dev/test-golden-lane-container
 ./dev/run --toolchain go -- ./dev/check-go-toolchain
 ./dev/check-rust-toolchain --verify-manifest
 ./dev/check-lint-toolchains
 ./dev/check-supply-chain-toolchains
+./dev/uninstall-toolchains --toolchain go
 ./dev/check-release-package
 ./dev/check-github-action
 ./dev/check-base-runbooks
@@ -104,6 +106,12 @@ Project-local smoke tests:
 ./dev/bootstrap --toolchain syft
 ./dev/check-supply-chain-toolchains
 ```
+
+Provisioning is idempotent. `./dev/uninstall-toolchains --toolchain <id>`
+removes one lock-owned installation while preserving downloads and build state;
+`--all --purge-downloads --purge-state` is the explicit full local cleanup.
+See [the development-tool contract](./dev/README.md#cleanup-and-uninstall)
+before purging state.
 
 ## GitHub Action
 

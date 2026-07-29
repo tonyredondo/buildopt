@@ -176,6 +176,34 @@ if [[ "${buildopt_platform}" != "linux-amd64" ]] ||
 fi
 
 buildopt_install_dir="${buildopt_tools_root}/toolchains/${buildopt_id}-${buildopt_sha256:0:16}"
+buildopt_download_dir="${buildopt_tools_root}/downloads"
+buildopt_toolchain_dir="${buildopt_tools_root}/toolchains"
+buildopt_temporary_dir="${buildopt_tools_root}/tmp"
+buildopt_locks_dir="${buildopt_tools_root}/locks"
+buildopt_tools_marker="${buildopt_tools_root}/.buildopt-tools-root"
+mkdir -p -- \
+    "${buildopt_download_dir}" \
+    "${buildopt_toolchain_dir}" \
+    "${buildopt_temporary_dir}" \
+    "${buildopt_locks_dir}"
+
+if [[ ! -e "${buildopt_tools_marker}" ]]; then
+    buildopt_tools_marker_temporary=$(
+        mktemp "${buildopt_tools_root}/.buildopt-tools-root.XXXXXX"
+    )
+    printf 'buildopt.dev/tools-root/v1\n' \
+        >"${buildopt_tools_marker_temporary}"
+    chmod 0600 "${buildopt_tools_marker_temporary}"
+    mv -n -- "${buildopt_tools_marker_temporary}" "${buildopt_tools_marker}"
+    rm -f -- "${buildopt_tools_marker_temporary}"
+fi
+if [[ ! -f "${buildopt_tools_marker}" ]] ||
+    [[ -L "${buildopt_tools_marker}" ]] ||
+    [[ "$(<"${buildopt_tools_marker}")" != "buildopt.dev/tools-root/v1" ]]; then
+    printf 'invalid BuildOpt tools-root marker: %s\n' \
+        "${buildopt_tools_marker}" >&2
+    exit 1
+fi
 
 buildopt_validate_toolchain() {
     local buildopt_tool_home=$1
@@ -328,16 +356,6 @@ if [[ -e "${buildopt_install_dir}" ]]; then
         "${buildopt_install_dir}" >&2
     exit 1
 fi
-
-buildopt_download_dir="${buildopt_tools_root}/downloads"
-buildopt_toolchain_dir="${buildopt_tools_root}/toolchains"
-buildopt_temporary_dir="${buildopt_tools_root}/tmp"
-buildopt_locks_dir="${buildopt_tools_root}/locks"
-mkdir -p -- \
-    "${buildopt_download_dir}" \
-    "${buildopt_toolchain_dir}" \
-    "${buildopt_temporary_dir}" \
-    "${buildopt_locks_dir}"
 
 buildopt_lock_dir="${buildopt_locks_dir}/${buildopt_id}"
 if ! mkdir -- "${buildopt_lock_dir}" 2>/dev/null; then

@@ -98,6 +98,8 @@ buildopt_required_files=(
     "dev/test-protobuf-toolchains"
     "dev/test-rust-toolchain"
     "dev/test-supply-chain-toolchains"
+    "dev/test-toolchain-lifecycle"
+    "dev/uninstall-toolchains"
     "dev/verify-release"
     "fixtures/README.md"
     "fixtures/github-actions/README.md"

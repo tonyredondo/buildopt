@@ -1,0 +1,270 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_bootstrap="${buildopt_script_dir}/bootstrap"
+buildopt_run="${buildopt_script_dir}/run"
+buildopt_uninstall="${buildopt_script_dir}/uninstall-toolchains"
+buildopt_test_root=$(mktemp -d)
+
+buildopt_cleanup() {
+    rm -rf -- "${buildopt_test_root}"
+}
+trap buildopt_cleanup EXIT
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+buildopt_fake_buf="${buildopt_test_root}/buf"
+# The generated fixture evaluates its argument when fake Buf runs.
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'if [[ "${1:-}" == "--version" ]]; then' \
+    '    printf '\''1.72.0\n'\''' \
+    '    exit 0' \
+    'fi' \
+    'exit 64' \
+    >"${buildopt_fake_buf}"
+chmod 0755 "${buildopt_fake_buf}"
+buildopt_buf_sha256=$(sha256sum "${buildopt_fake_buf}" | awk '{print $1}')
+
+buildopt_lock="${buildopt_test_root}/toolchains.lock.json"
+jq -n \
+    --arg buildopt_buf_sha256 "${buildopt_buf_sha256}" \
+    '{
+        schemaVersion: "buildopt.dev/toolchains-lock/v1",
+        platforms: [
+            {
+                id: "linux-amd64",
+                operatingSystem: "linux",
+                architecture: "amd64"
+            }
+        ],
+        artifacts: [
+            {
+                id: "buf",
+                version: "1.72.0",
+                adoption: "required",
+                kind: "binary",
+                platform: "linux-amd64",
+                provider: "buf",
+                url: "https://example.invalid/fake-buf",
+                sha256: $buildopt_buf_sha256,
+                requiredBy: ["ENV-006", "ENV-012"]
+            },
+            {
+                id: "rust-channel-manifest",
+                version: "1.93.0",
+                adoption: "optional",
+                kind: "provider-manifest",
+                platform: "linux-amd64",
+                provider: "rust-project",
+                url: "https://example.invalid/channel-rust.toml",
+                sha256: ("1" * 64),
+                requiredBy: ["ENV-009"]
+            }
+        ]
+    }' >"${buildopt_lock}"
+
+buildopt_fake_host_bin="${buildopt_test_root}/fake-host-bin"
+buildopt_curl_count="${buildopt_test_root}/curl-count"
+mkdir "${buildopt_fake_host_bin}"
+# The generated fixture reads test controls only when fake curl runs.
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'buildopt_output=' \
+    'while (($# > 0)); do' \
+    '    case "$1" in' \
+    '        --output)' \
+    '            buildopt_output=$2' \
+    '            shift 2' \
+    '            ;;' \
+    '        *)' \
+    '            shift' \
+    '            ;;' \
+    '    esac' \
+    'done' \
+    'buildopt_count=0' \
+    'if [[ -f "${BUILDOPT_TEST_CURL_COUNT}" ]]; then' \
+    '    read -r buildopt_count <"${BUILDOPT_TEST_CURL_COUNT}"' \
+    'fi' \
+    'printf '\''%s\n'\'' "$((buildopt_count + 1))" >"${BUILDOPT_TEST_CURL_COUNT}"' \
+    'cp -- "${BUILDOPT_TEST_BUF}" "${buildopt_output}"' \
+    >"${buildopt_fake_host_bin}/curl"
+chmod 0755 "${buildopt_fake_host_bin}/curl"
+
+buildopt_tools_root="${buildopt_test_root}/tools with spaces"
+buildopt_bootstrap_fixture() {
+    BUILDOPT_TEST_BUF="${buildopt_fake_buf}" \
+    BUILDOPT_TEST_CURL_COUNT="${buildopt_curl_count}" \
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    PATH="${buildopt_fake_host_bin}:${PATH}" \
+        "${buildopt_bootstrap}" --toolchain buf
+}
+
+buildopt_first_output=$(buildopt_bootstrap_fixture)
+buildopt_second_output=$(buildopt_bootstrap_fixture)
+if [[ "${buildopt_first_output}" != *"Provisioned buf 1.72.0"* ]] ||
+    [[ "${buildopt_second_output}" != *"is already provisioned"* ]] ||
+    [[ "$(<"${buildopt_curl_count}")" != "1" ]]; then
+    printf 'two-run bootstrap lifecycle was not idempotent\n' >&2
+    exit 1
+fi
+
+buildopt_install_dir="${buildopt_tools_root}/toolchains/buf-${buildopt_buf_sha256:0:16}"
+buildopt_archive="${buildopt_tools_root}/downloads/buf-${buildopt_buf_sha256}.binary"
+if [[ ! -x "${buildopt_install_dir}/bin/buf" ]] ||
+    [[ "$(<"${buildopt_tools_root}/.buildopt-tools-root")" != \
+        "buildopt.dev/tools-root/v1" ]]; then
+    printf 'bootstrap lifecycle did not create the locked install and root marker\n' >&2
+    exit 1
+fi
+
+mkdir -p \
+    "${buildopt_tools_root}/state/go" \
+    "${buildopt_tools_root}/gradle-user-home/local" \
+    "${buildopt_tools_root}/toolchains/rust-channel-manifest-1111111111111111"
+printf 'preserve\n' >"${buildopt_tools_root}/state/go/sentinel"
+printf 'preserve\n' >"${buildopt_tools_root}/gradle-user-home/local/sentinel"
+printf 'preserve\n' >"${buildopt_tools_root}/downloads/unrelated"
+printf 'preserve\n' \
+    >"${buildopt_tools_root}/toolchains/rust-channel-manifest-1111111111111111/sentinel"
+
+buildopt_uninstall_output=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        "${buildopt_uninstall}" --toolchain buf
+)
+if [[ "${buildopt_uninstall_output}" != *"Uninstalled buf"* ]] ||
+    [[ -e "${buildopt_install_dir}" ]] ||
+    [[ ! -f "${buildopt_archive}" ]] ||
+    [[ ! -f "${buildopt_tools_root}/state/go/sentinel" ]]; then
+    printf 'default uninstall did not remove only the selected installation\n' >&2
+    exit 1
+fi
+
+buildopt_uninstall_output=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        "${buildopt_uninstall}" --toolchain buf
+)
+if [[ "${buildopt_uninstall_output}" != *"buf is not installed"* ]]; then
+    printf 'second uninstall was not idempotent\n' >&2
+    exit 1
+fi
+
+set +e
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_run}" --toolchain buf -- buf --version >/dev/null 2>&1
+buildopt_missing_exit=$?
+set -e
+if ((buildopt_missing_exit != 1)); then
+    printf 'dev/run accepted an uninstalled toolchain\n' >&2
+    exit 1
+fi
+
+buildopt_bootstrap_fixture >/dev/null
+if [[ "$(<"${buildopt_curl_count}")" != "1" ]]; then
+    printf 'reprovisioning did not reuse the preserved download\n' >&2
+    exit 1
+fi
+
+mkdir "${buildopt_tools_root}/locks/buf"
+set +e
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_uninstall}" --toolchain buf >/dev/null 2>&1
+buildopt_locked_exit=$?
+set -e
+if ((buildopt_locked_exit != 1)) || [[ ! -d "${buildopt_install_dir}" ]]; then
+    printf 'uninstall did not fail closed around an active bootstrap lock\n' >&2
+    exit 1
+fi
+rmdir "${buildopt_tools_root}/locks/buf"
+
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_uninstall}" --all --purge-downloads >/dev/null
+if [[ -e "${buildopt_install_dir}" ]] ||
+    [[ -e "${buildopt_archive}" ]] ||
+    [[ ! -f "${buildopt_tools_root}/downloads/unrelated" ]] ||
+    [[ ! -f "${buildopt_tools_root}/state/go/sentinel" ]] ||
+    [[ ! -f "${buildopt_tools_root}/gradle-user-home/local/sentinel" ]] ||
+    [[ ! -f "${buildopt_tools_root}/toolchains/rust-channel-manifest-1111111111111111/sentinel" ]]; then
+    printf 'all-toolchain purge crossed a lock-owned cleanup boundary\n' >&2
+    exit 1
+fi
+
+buildopt_bootstrap_fixture >/dev/null
+if [[ "$(<"${buildopt_curl_count}")" != "2" ]]; then
+    printf 'reprovisioning did not download after explicit cache purge\n' >&2
+    exit 1
+fi
+
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_uninstall}" --all --purge-state >/dev/null
+if [[ -e "${buildopt_install_dir}" ]] ||
+    [[ -e "${buildopt_tools_root}/state" ]] ||
+    [[ -e "${buildopt_tools_root}/gradle-user-home" ]] ||
+    [[ ! -f "${buildopt_archive}" ]] ||
+    [[ ! -f "${buildopt_tools_root}/downloads/unrelated" ]]; then
+    printf 'explicit state purge did not preserve the download boundary\n' >&2
+    exit 1
+fi
+
+set +e
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_uninstall}" --toolchain buf --purge-state >/dev/null 2>&1
+buildopt_state_usage_exit=$?
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT=/ \
+    "${buildopt_uninstall}" --all >/dev/null 2>&1
+buildopt_unsafe_root_exit=$?
+mkdir "${buildopt_test_root}/unmarked-tools"
+BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+BUILDOPT_TOOLS_ROOT="${buildopt_test_root}/unmarked-tools" \
+    "${buildopt_uninstall}" --all >/dev/null 2>&1
+buildopt_unmarked_root_exit=$?
+"${buildopt_uninstall}" >/dev/null 2>&1
+buildopt_usage_exit=$?
+set -e
+if ((buildopt_state_usage_exit != 64)) ||
+    ((buildopt_unsafe_root_exit != 1)) ||
+    ((buildopt_unmarked_root_exit != 1)) ||
+    ((buildopt_usage_exit != 64)); then
+    printf 'unexpected uninstall error contract: %s/%s/%s/%s\n' \
+        "${buildopt_state_usage_exit}" \
+        "${buildopt_unsafe_root_exit}" \
+        "${buildopt_unmarked_root_exit}" \
+        "${buildopt_usage_exit}" >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'toolchain lifecycle tests changed the working tree\n' >&2
+    exit 1
+fi
+
+printf '%s\n' \
+    'ENV-012 toolchain lifecycle OK:' \
+    '- two-run bootstrap and reinstall reuse were idempotent' \
+    '- uninstall was idempotent and rejected active provisioning' \
+    '- downloads and state were preserved or purged only when explicit'
