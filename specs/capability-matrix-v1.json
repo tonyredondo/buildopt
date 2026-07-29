@@ -67,9 +67,9 @@
           "id": "JVM_AGENT",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "SPK-002 has not completed",
-          "fallback": "OBSERVE",
-          "evidence": []
+          "reason": "the prototype observes class loads, not method access or task attribution",
+          "fallback": "ABORT_PENDING",
+          "evidence": ["specs/jvm-agent-spike-v1.md", "dev/check-jvm-agent-spike"]
         },
         {
           "id": "HERMETIC_PRODUCER",
@@ -152,9 +152,9 @@
           "id": "JVM_AGENT",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "SPK-002 has not completed",
-          "fallback": "OBSERVE",
-          "evidence": []
+          "reason": "the prototype observes class loads, not method access or task attribution",
+          "fallback": "ABORT_PENDING",
+          "evidence": ["specs/jvm-agent-spike-v1.md", "dev/check-jvm-agent-spike"]
         },
         {
           "id": "HERMETIC_PRODUCER",
@@ -237,9 +237,9 @@
           "id": "JVM_AGENT",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "SPK-002 has not completed",
-          "fallback": "OBSERVE",
-          "evidence": []
+          "reason": "the prototype observes class loads, not method access or task attribution",
+          "fallback": "ABORT_PENDING",
+          "evidence": ["specs/jvm-agent-spike-v1.md", "dev/check-jvm-agent-spike"]
         },
         {
           "id": "HERMETIC_PRODUCER",
@@ -322,9 +322,9 @@
           "id": "JVM_AGENT",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "SPK-002 has not completed",
-          "fallback": "OBSERVE",
-          "evidence": []
+          "reason": "the prototype observes class loads, not method access or task attribution",
+          "fallback": "ABORT_PENDING",
+          "evidence": ["specs/jvm-agent-spike-v1.md", "dev/check-jvm-agent-spike"]
         },
         {
           "id": "HERMETIC_PRODUCER",

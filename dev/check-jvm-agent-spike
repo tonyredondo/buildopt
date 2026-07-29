@@ -1,0 +1,416 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_fixture_source="${buildopt_repo_root}/fixtures/jvm-agent"
+buildopt_tier_one_source="${buildopt_repo_root}/fixtures/tier1"
+buildopt_recorded_result="${buildopt_repo_root}/benchmarks/results/spk-002-agent.json"
+buildopt_tmp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-agent-spike.XXXXXX")
+buildopt_last_elapsed_ms=0
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_tmp}" &&
+        "${buildopt_tmp}" == "${TMPDIR:-/tmp}/buildopt-agent-spike."* ]]; then
+        rm -rf -- "${buildopt_tmp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in awk cp curl date find grep jq mktemp sed sha256sum sleep; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required JVM Agent spike command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+if [[ "$(uname -s)" != "Linux" ]] || [[ "$(uname -m)" != "x86_64" ]]; then
+    printf 'SPK-002 requires Linux x86-64\n' >&2
+    exit 1
+fi
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+jq -e '
+    .schemaVersion == "buildopt.benchmarks/jvm-agent-spike-result/v1" and
+    .environment == {
+        "operatingSystem": "linux",
+        "architecture": "amd64",
+        "gradle": "9.6.1",
+        "jdk": 21,
+        "dsl": "KOTLIN",
+        "daemon": true,
+        "configurationCacheReused": true
+    } and
+    .sample.kind == "SINGLE_WARM_DESCRIPTIVE" and
+    .sample.order == ["BASELINE", "CLASS_LOAD_AGENT"] and
+    (.sample.baselineMs > 0) and
+    (.sample.agentMs > 0) and
+    (.sample.deltaMs == (.sample.agentMs - .sample.baselineMs)) and
+    (.sample.deltaPercent | type == "number") and
+    .coverageOutcome == "UNAVAILABLE" and
+    .reason == "CLASS_LOAD_ONLY_NO_ACCESS_INSTRUMENTATION" and
+    .fallback == "ABORT_PENDING" and
+    .promotionGateActive == false
+' "${buildopt_recorded_result}" >/dev/null
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p -- "${GRADLE_USER_HOME}"
+
+"${buildopt_script_dir}/run" -- \
+    "${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --no-configuration-cache \
+    --warning-mode=fail \
+    :jvm:gradle-plugin:jar \
+    :jvm:jvm-agent:jar
+
+buildopt_java_home=$(
+    "${buildopt_script_dir}/run" -- \
+        java -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.home = / {
+                print $2
+                exit
+            }
+        '
+)
+buildopt_java_major=$(
+    "${buildopt_java_home}/bin/java" -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.version = / {
+                split($2, version, ".")
+                print version[1]
+                exit
+            }
+        '
+)
+if [[ "${buildopt_java_major}" != "21" ]]; then
+    printf 'SPK-002 requires locked JDK 21, found %s\n' \
+        "${buildopt_java_major:-unknown}" >&2
+    exit 1
+fi
+
+mapfile -d '' buildopt_agent_jars < <(
+    find "${buildopt_repo_root}/jvm/jvm-agent/build/libs" \
+        -maxdepth 1 \
+        -type f \
+        -name 'buildopt-jvm-agent-*.jar' \
+        ! -name '*-sources.jar' \
+        ! -name '*-javadoc.jar' \
+        -print0
+)
+mapfile -d '' buildopt_plugin_jars < <(
+    find "${buildopt_repo_root}/jvm/gradle-plugin/build/libs" \
+        -maxdepth 1 \
+        -type f \
+        -name 'buildopt-gradle-plugin-*.jar' \
+        ! -name '*-sources.jar' \
+        ! -name '*-javadoc.jar' \
+        -print0
+)
+if ((${#buildopt_agent_jars[@]} != 1)) ||
+    ((${#buildopt_plugin_jars[@]} != 1)); then
+    printf 'expected exactly one agent and one plugin JAR\n' >&2
+    exit 1
+fi
+buildopt_agent_jar=${buildopt_agent_jars[0]}
+buildopt_plugin_jar=${buildopt_plugin_jars[0]}
+
+buildopt_distribution_root="${buildopt_repo_root}/.tools/gradle-compat"
+buildopt_distribution_archive="${buildopt_distribution_root}/gradle-9.6.1-bin.zip"
+buildopt_distribution_sha=9c0f7faeeb306cb14e4279a3e084ca6b596894089a0638e68a07c945a32c9e14
+if [[ ! -f "${buildopt_distribution_archive}" ]] ||
+    ! printf '%s  %s\n' \
+        "${buildopt_distribution_sha}" \
+        "${buildopt_distribution_archive}" |
+        sha256sum -c - >/dev/null 2>&1; then
+    mkdir -p -- "${buildopt_distribution_root}"
+    buildopt_download=$(mktemp "${buildopt_tmp}/gradle-9.6.1.XXXXXX")
+    curl \
+        --fail \
+        --location \
+        --proto '=https' \
+        --retry 3 \
+        --retry-delay 1 \
+        --show-error \
+        --silent \
+        --output "${buildopt_download}" \
+        https://services.gradle.org/distributions/gradle-9.6.1-bin.zip
+    printf '%s  %s\n' "${buildopt_distribution_sha}" "${buildopt_download}" |
+        sha256sum -c - >/dev/null
+    mv -f -- "${buildopt_download}" "${buildopt_distribution_archive}"
+fi
+
+buildopt_prepare_scenario() {
+    local buildopt_name=$1
+    local buildopt_fault=$2
+    local buildopt_capacity=$3
+    local buildopt_instrumented=$4
+
+    buildopt_scenario_root="${buildopt_tmp}/${buildopt_name}"
+    buildopt_scenario_fixture="${buildopt_scenario_root}/fixture"
+    buildopt_scenario_home="${buildopt_scenario_root}/gradle-home"
+    buildopt_scenario_report="${buildopt_scenario_root}/agent-report.json"
+    buildopt_scenario_first_log="${buildopt_scenario_root}/first.log"
+    buildopt_scenario_second_log="${buildopt_scenario_root}/second.log"
+    mkdir -p -- "${buildopt_scenario_root}" "${buildopt_scenario_home}"
+    cp -R -- "${buildopt_fixture_source}" "${buildopt_scenario_fixture}"
+    cp -R -- "${buildopt_tier_one_source}" "${buildopt_scenario_root}/tier1"
+    cp -- "${buildopt_repo_root}/gradlew" "${buildopt_scenario_fixture}/gradlew"
+    mkdir -p -- "${buildopt_scenario_fixture}/gradle/wrapper"
+    cp -- \
+        "${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.jar" \
+        "${buildopt_scenario_fixture}/gradle/wrapper/gradle-wrapper.jar"
+    printf '%s\n' \
+        'distributionBase=GRADLE_USER_HOME' \
+        'distributionPath=wrapper/dists' \
+        "distributionSha256Sum=${buildopt_distribution_sha}" \
+        "distributionUrl=file\\://${buildopt_distribution_archive}" \
+        'networkTimeout=30000' \
+        'validateDistributionUrl=true' \
+        'zipStoreBase=GRADLE_USER_HOME' \
+        'zipStorePath=wrapper/dists' \
+        >"${buildopt_scenario_fixture}/gradle/wrapper/gradle-wrapper.properties"
+    printf '%s\n' \
+        'org.gradle.configuration-cache=true' \
+        'org.gradle.configuration-cache.problems=fail' \
+        'org.gradle.console=plain' \
+        'org.gradle.warning.mode=fail' \
+        >"${buildopt_scenario_fixture}/gradle.properties"
+    if [[ "${buildopt_instrumented}" == "yes" ]]; then
+        printf 'org.gradle.jvmargs=-javaagent:%s=report=%s,capacity=%s,fault=%s\n' \
+            "${buildopt_agent_jar}" \
+            "${buildopt_scenario_report}" \
+            "${buildopt_capacity}" \
+            "${buildopt_fault}" \
+            >>"${buildopt_scenario_fixture}/gradle.properties"
+    fi
+    printf "initscript { dependencies { classpath files('%s') } }\nallprojects { apply plugin: dev.buildopt.gradle.BuildOptProjectPlugin }\n" \
+        "${buildopt_plugin_jar//\'/\\\'}" \
+        >"${buildopt_scenario_root}/buildopt.init.gradle"
+}
+
+buildopt_run_gradle() {
+    local buildopt_log=$1
+    local buildopt_start
+    local buildopt_end
+    local buildopt_status
+    local -a buildopt_arguments=(
+        --project-dir
+        "${buildopt_scenario_fixture}"
+        --daemon
+        --offline
+        --stacktrace
+        --warning-mode=fail
+        --console=plain
+        --configuration-cache
+        --init-script
+        "${buildopt_scenario_root}/buildopt.init.gradle"
+        agentProbe
+    )
+
+    buildopt_start=$(date +%s%N)
+    if JAVA_HOME="${buildopt_java_home}" \
+        PATH="${buildopt_java_home}/bin:${PATH}" \
+        GRADLE_USER_HOME="${buildopt_scenario_home}" \
+        "${buildopt_scenario_fixture}/gradlew" \
+            "${buildopt_arguments[@]}" >"${buildopt_log}" 2>&1; then
+        buildopt_status=0
+    else
+        buildopt_status=$?
+    fi
+    buildopt_end=$(date +%s%N)
+    buildopt_last_elapsed_ms=$(((buildopt_end - buildopt_start) / 1000000))
+    return "${buildopt_status}"
+}
+
+buildopt_stop_gradle() {
+    local buildopt_status_output
+
+    JAVA_HOME="${buildopt_java_home}" \
+    PATH="${buildopt_java_home}/bin:${PATH}" \
+    GRADLE_USER_HOME="${buildopt_scenario_home}" \
+        "${buildopt_scenario_fixture}/gradlew" \
+            --project-dir "${buildopt_scenario_fixture}" \
+            --stop >/dev/null 2>&1 || true
+    for _ in {1..200}; do
+        buildopt_status_output=$(
+            JAVA_HOME="${buildopt_java_home}" \
+            PATH="${buildopt_java_home}/bin:${PATH}" \
+            GRADLE_USER_HOME="${buildopt_scenario_home}" \
+                "${buildopt_scenario_fixture}/gradlew" \
+                    --project-dir "${buildopt_scenario_fixture}" \
+                    --status 2>&1 || true
+        )
+        if grep -Fq 'No Gradle daemons are running.' \
+            <<<"${buildopt_status_output}"; then
+            return
+        fi
+        sleep 0.05
+    done
+    printf 'Gradle daemon did not stop for scenario %s\n' \
+        "${buildopt_scenario_root}" >&2
+    return 1
+}
+
+buildopt_wait_report() {
+    for _ in {1..200}; do
+        if [[ -s "${buildopt_scenario_report}" ]]; then
+            return
+        fi
+        sleep 0.05
+    done
+    printf 'agent daemon stopped without an atomic report: %s\n' \
+        "${buildopt_scenario_report}" >&2
+    return 1
+}
+
+buildopt_verify_probe() {
+    local buildopt_output="${buildopt_scenario_fixture}/build/agent/probe.txt"
+    local buildopt_expected=$'IO_NIO=EXECUTED\nENVIRONMENT_PROPERTIES=EXECUTED\nPROCESS=EXECUTED\nNETWORK=EXECUTED\nCLOCK_LOCALE_TIMEZONE=EXECUTED\nRANDOMNESS=EXECUTED'
+    if [[ ! -f "${buildopt_output}" ]] ||
+        [[ "$(<"${buildopt_output}")" != "${buildopt_expected}" ]]; then
+        printf 'agent fixture did not execute every access class\n' >&2
+        return 1
+    fi
+}
+
+buildopt_verify_common_report() {
+    jq -e '
+        .schemaVersion == "buildopt.spikes/jvm-agent-report/v1" and
+        .mode == "TRACE_OBSERVE" and
+        .traceComplete == false and
+        .qualification == "UNAVAILABLE" and
+        .taskQualificationState == "OBSERVING" and
+        .pendingPublication == "ABORTED" and
+        (.recorded == (.events | length)) and
+        (.recorded <= .capacity) and
+        ([.coverage[]] | all(. == "LOAD_ONLY" or . == "UNOBSERVED"))
+    ' "${buildopt_scenario_report}" >/dev/null
+}
+
+buildopt_prepare_scenario baseline none 0 no
+buildopt_run_gradle "${buildopt_scenario_first_log}"
+buildopt_run_gradle "${buildopt_scenario_second_log}"
+buildopt_baseline_ms=${buildopt_last_elapsed_ms}
+buildopt_stop_gradle
+buildopt_verify_probe
+if ! grep -Fq 'Configuration cache entry reused.' \
+    "${buildopt_scenario_second_log}"; then
+    printf 'baseline did not reuse Configuration Cache\n' >&2
+    exit 1
+fi
+
+buildopt_prepare_scenario observed none 4096 yes
+buildopt_run_gradle "${buildopt_scenario_first_log}"
+buildopt_run_gradle "${buildopt_scenario_second_log}"
+buildopt_agent_ms=${buildopt_last_elapsed_ms}
+buildopt_stop_gradle
+buildopt_wait_report
+buildopt_verify_probe
+if ! grep -Fq 'Configuration cache entry reused.' \
+    "${buildopt_scenario_second_log}"; then
+    printf 'instrumented daemon did not reuse Configuration Cache\n' >&2
+    exit 1
+fi
+buildopt_verify_common_report
+jq -e '
+    .configuredFault == "NONE" and
+    .reason == "CLASS_LOAD_ONLY_NO_ACCESS_INSTRUMENTATION" and
+    .fallback == "ABORT_PENDING" and
+    .dropped == 0 and
+    ([.coverage[]] | any(. == "LOAD_ONLY"))
+' "${buildopt_scenario_report}" >/dev/null
+
+buildopt_prepare_scenario overflow none 2 yes
+buildopt_run_gradle "${buildopt_scenario_first_log}"
+buildopt_run_gradle "${buildopt_scenario_second_log}"
+buildopt_stop_gradle
+buildopt_wait_report
+buildopt_verify_probe
+buildopt_verify_common_report
+jq -e '
+    .configuredFault == "NONE" and
+    .reason == "BUFFER_OVERFLOW" and
+    .fallback == "ABORT_PENDING" and
+    .capacity == 2 and
+    .dropped > 0
+' "${buildopt_scenario_report}" >/dev/null
+
+buildopt_prepare_scenario conflict conflict 4096 yes
+buildopt_run_gradle "${buildopt_scenario_first_log}"
+buildopt_run_gradle "${buildopt_scenario_second_log}"
+buildopt_stop_gradle
+buildopt_wait_report
+buildopt_verify_probe
+buildopt_verify_common_report
+jq -e '
+    .configuredFault == "CONFLICT" and
+    .reason == "TRANSFORMER_CONFLICT" and
+    .fallback == "ABORT_PENDING" and
+    .dropped == 0
+' "${buildopt_scenario_report}" >/dev/null
+
+buildopt_prepare_scenario crash crash 4096 yes
+set +e
+buildopt_run_gradle "${buildopt_scenario_first_log}"
+buildopt_crash_status=$?
+set -e
+buildopt_stop_gradle
+buildopt_wait_report
+if ((buildopt_crash_status == 0)); then
+    printf 'injected agent premain crash unexpectedly succeeded\n' >&2
+    exit 1
+fi
+buildopt_verify_common_report
+jq -e '
+    .configuredFault == "CRASH" and
+    .reason == "INJECTED_AGENT_CRASH" and
+    .fallback == "DISABLE_COMPATIBILITY_CLASS_AND_RUN_BASELINE"
+' "${buildopt_scenario_report}" >/dev/null
+
+buildopt_prepare_scenario recovered-baseline none 0 no
+buildopt_run_gradle "${buildopt_scenario_first_log}"
+buildopt_stop_gradle
+buildopt_verify_probe
+
+buildopt_delta_ms=$((buildopt_agent_ms - buildopt_baseline_ms))
+buildopt_delta_percent=$(
+    awk \
+        -v buildopt_baseline="${buildopt_baseline_ms}" \
+        -v buildopt_delta="${buildopt_delta_ms}" \
+        'BEGIN {
+            if (buildopt_baseline == 0) {
+                print "unavailable"
+            } else {
+                printf "%.1f", (buildopt_delta * 100.0) / buildopt_baseline
+            }
+        }'
+)
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'JVM Agent spike changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'SPK-002 UNAVAILABLE: class-load-only coverage; fallback ABORT_PENDING verified\n'
+printf 'SPK-002 warm Configuration Cache sample: baseline=%sms agent=%sms delta=%sms (%s%%)\n' \
+    "${buildopt_baseline_ms}" \
+    "${buildopt_agent_ms}" \
+    "${buildopt_delta_ms}" \
+    "${buildopt_delta_percent}"
+printf 'SPK-002 faults OK: overflow, transformer conflict, premain crash, and clean baseline recovery\n'

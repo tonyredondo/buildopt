@@ -22,9 +22,11 @@ java {
     }
 }
 
+val testKit = sourceSets.create("testKit")
+
 dependencies {
     compileOnly(gradleApi())
-    testImplementation(gradleTestKit())
+    add(testKit.implementationConfigurationName, gradleTestKit())
 }
 
 gradlePlugin {
@@ -59,8 +61,8 @@ tasks.register<JavaExec>("tierOneTestKit") {
     group = "verification"
     description = "Runs the Tier 1 Kotlin/Groovy fixtures through Gradle TestKit."
     notCompatibleWithConfigurationCache("The task launches nested TestKit builds.")
-    dependsOn(tasks.named("testClasses"), tasks.named("jar"))
-    classpath = sourceSets.test.get().runtimeClasspath
+    dependsOn(tasks.named(testKit.classesTaskName), tasks.named("jar"))
+    classpath = testKit.runtimeClasspath
     mainClass = "dev.buildopt.gradle.TierOneTestKit"
     javaLauncher = javaToolchains.launcherFor {
         languageVersion = tierOneRuntime.map(JavaLanguageVersion::of)

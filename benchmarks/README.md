@@ -30,3 +30,11 @@ and is subsequently validated without being rewritten:
 
 The measurement contract lives in
 [`specs/walking-skeleton-overhead-v1.md`](../specs/walking-skeleton-overhead-v1.md).
+
+## JVM Agent spike evidence
+
+[`results/spk-002-agent.json`](./results/spk-002-agent.json) records the one
+warm, order-sensitive JDK 21 sample emitted while closing `SPK-002`. It is
+descriptive only: the prototype is `UNAVAILABLE` for access tracing because it
+observes class loads rather than method calls. The result never activates an
+overhead or promotion gate.

@@ -2,6 +2,15 @@
 
 Opt-in Java agent for deep tracing inside the Gradle daemon.
 
-It is an observability backend with published coverage and overhead. It is not a sandbox and does not prove hermeticity. Its first work is bounded by `SPK-002`.
+It is an observability backend with published coverage and overhead. It is not a sandbox and does not prove hermeticity.
 
-`ENV-004` adds only the packaged `Premain-Class` and verifies that the JAR loads without installing transformers. Redefinition and retransformation remain disabled until the bounded spike defines and validates that behavior.
+`SPK-002` closes as `UNAVAILABLE`: the dependency-free prototype installs a
+bounded allowlisted `ClassFileTransformer`, but class loading is not method
+access or task attribution. Every emitted report therefore has
+`traceComplete=false`, aborts pending publication, and leaves qualification in
+`OBSERVING`.
+
+The real-daemon fixture covers Configuration Cache reuse, buffer overflow,
+transformer conflict, injected `premain` crash, and clean uninstrumented
+recovery. Redefinition and retransformation remain disabled. See
+[`specs/jvm-agent-spike-v1.md`](../../specs/jvm-agent-spike-v1.md).

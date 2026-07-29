@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "buildopt.benchmarks/jvm-agent-spike-result/v1",
+  "measuredAt": "2026-07-29",
+  "environment": {
+    "operatingSystem": "linux",
+    "architecture": "amd64",
+    "gradle": "9.6.1",
+    "jdk": 21,
+    "dsl": "KOTLIN",
+    "daemon": true,
+    "configurationCacheReused": true
+  },
+  "sample": {
+    "kind": "SINGLE_WARM_DESCRIPTIVE",
+    "order": ["BASELINE", "CLASS_LOAD_AGENT"],
+    "baselineMs": 618,
+    "agentMs": 766,
+    "deltaMs": 148,
+    "deltaPercent": 23.9
+  },
+  "coverageOutcome": "UNAVAILABLE",
+  "reason": "CLASS_LOAD_ONLY_NO_ACCESS_INSTRUMENTATION",
+  "fallback": "ABORT_PENDING",
+  "promotionGateActive": false
+}

@@ -12,6 +12,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`bandit-policy-v1.md`](./bandit-policy-v1.md) | `F0-035` |
 | [`capability-matrix-v1.md`](./capability-matrix-v1.md) | `F0-036` |
 | [`data-lifecycle-v1.md`](./data-lifecycle-v1.md) | `F0-037` |
+| [`jvm-agent-spike-v1.md`](./jvm-agent-spike-v1.md) | `SPK-002` |
 | [`release-bundle-v1.md`](./release-bundle-v1.md) | `F0-038` / `DEPLOY-001` |
 | [`walking-skeleton-faults-v1.md`](./walking-skeleton-faults-v1.md) | `WS-008` |
 | [`walking-skeleton-overhead-v1.md`](./walking-skeleton-overhead-v1.md) | `WS-009` |

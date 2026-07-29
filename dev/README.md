@@ -620,6 +620,22 @@ cache and Configuration Cache reuse. Distribution archives are
 checksum-pinned and temporary Wrapper/user homes are isolated. JDK 25 remains
 explicitly unproven until its lock-owned runtime is provisioned.
 
+## JVM Agent spike
+
+Run the bounded agent against a real Gradle daemon and Configuration Cache:
+
+```bash
+./dev/check-jvm-agent-spike
+```
+
+The checker uses the locked JDK 21 and Gradle 9.6.1 Wrapper. It executes all
+six access classes, then verifies the accepted `UNAVAILABLE` result: class
+loads are not method-level access evidence, so every report is incomplete and
+pending publication aborts. Capacity overflow and transformer conflict retain
+the task output; an injected `premain` crash fails only its isolated diagnostic
+daemon and a fresh uninstrumented daemon reproduces the baseline. The printed
+warm timing is descriptive and does not activate a promotion gate.
+
 ## Local task-event Protobuf validation
 
 `F0-019` materializes the correlation result as the normative

@@ -1,10 +1,20 @@
 package dev.buildopt.fixtures.tierone;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.SecureRandom;
+import java.time.Clock;
 import java.util.List;
+import java.util.Locale;
+import java.util.Random;
+import java.util.TimeZone;
+import java.util.concurrent.ThreadLocalRandom;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -24,6 +34,7 @@ import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.UntrackedTask;
 
 /** Shared fixture logic used from both Kotlin and Groovy DSL repositories. */
 public final class TierOneFixturePlugin implements Plugin<Project> {
@@ -64,6 +75,16 @@ public final class TierOneFixturePlugin implements Plugin<Project> {
                                                     .getBuildDirectory()
                                                     .file("tier-one/verified.txt"));
                         });
+        project.getTasks()
+                .register(
+                        "agentProbe",
+                        AgentProbeTask.class,
+                        task ->
+                                task.getOutputFile()
+                                        .set(
+                                                project.getLayout()
+                                                        .getBuildDirectory()
+                                                        .file("agent/probe.txt")));
     }
 
     /** Exact deterministic transform used to prove adapter execution. */
@@ -123,6 +144,79 @@ public final class TierOneFixturePlugin implements Plugin<Project> {
                         StandardCharsets.UTF_8);
             } catch (IOException exception) {
                 throw new IllegalStateException("cannot verify fixture input", exception);
+            }
+        }
+    }
+
+    /** Executes every access class required by the bounded JVM Agent spike. */
+    @UntrackedTask(because = "SPK-002 intentionally executes external access on every run")
+    public abstract static class AgentProbeTask extends DefaultTask {
+        /** Returns the deterministic proof that all access classes executed. */
+        @OutputFile
+        public abstract RegularFileProperty getOutputFile();
+
+        /** Performs real accesses without persisting any observed values. */
+        @TaskAction
+        public final void probe() {
+            Path temporary = getTemporaryDir().toPath().resolve("probe.txt");
+            try {
+                Files.createDirectories(temporary.getParent());
+                Files.writeString(
+                        temporary,
+                        "agent-probe\n",
+                        StandardCharsets.UTF_8);
+                Files.readString(temporary, StandardCharsets.UTF_8);
+                try (FileInputStream input = new FileInputStream(temporary.toFile())) {
+                    if (input.read() < 0) {
+                        throw new IllegalStateException("empty I/O probe");
+                    }
+                }
+
+                System.getenv("PATH");
+                System.getProperty("java.version");
+
+                Process process =
+                        new ProcessBuilder("sh", "-c", "exit 0")
+                                .redirectErrorStream(true)
+                                .start();
+                if (process.waitFor() != 0) {
+                    throw new IllegalStateException("process probe failed");
+                }
+
+                try (Socket socket = new Socket()) {
+                    try {
+                        socket.connect(new InetSocketAddress("127.0.0.1", 9), 100);
+                    } catch (IOException expected) {
+                        // A refused loopback connection still proves a real network attempt.
+                    }
+                }
+
+                Clock.systemUTC().instant();
+                Locale.getDefault();
+                TimeZone.getDefault();
+                new Random(1).nextInt();
+                new SecureRandom().nextInt();
+                ThreadLocalRandom.current().nextInt();
+
+                File output = getOutputFile().get().getAsFile();
+                Files.createDirectories(output.toPath().getParent());
+                Files.writeString(
+                        output.toPath(),
+                        String.join(
+                                        "\n",
+                                        "IO_NIO=EXECUTED",
+                                        "ENVIRONMENT_PROPERTIES=EXECUTED",
+                                        "PROCESS=EXECUTED",
+                                        "NETWORK=EXECUTED",
+                                        "CLOCK_LOCALE_TIMEZONE=EXECUTED",
+                                        "RANDOMNESS=EXECUTED")
+                                + "\n",
+                        StandardCharsets.UTF_8);
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("process probe interrupted", exception);
+            } catch (IOException exception) {
+                throw new IllegalStateException("agent access probe failed", exception);
             }
         }
     }

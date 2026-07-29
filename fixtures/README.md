@@ -40,3 +40,8 @@ Its TestKit and real-Wrapper matrix exercises the packaged product plugin, a
 Java 17 cacheable custom task, an artifact transform, build-cache replay, and
 Configuration Cache reuse on all Gradle 8.14.3/9.6.1 JDK 17/21 rows. JDK 25
 remains an explicit, unproven target.
+
+`jvm-agent/` is the real-daemon `SPK-002` access fixture. Its untracked custom
+task executes all six required access dimensions while the bounded agent,
+overflow, conflict, crash, Configuration Cache, and baseline-recovery
+scenarios run only through a real Wrapper.
