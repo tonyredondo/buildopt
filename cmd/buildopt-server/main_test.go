@@ -50,6 +50,24 @@ func TestBuildoptServerUsageAndConfiguration(t *testing.T) {
 			wantOutput: serverUsage,
 		},
 		{
+			name:       "export help",
+			args:       []string{"export", "--help"},
+			wantExit:   0,
+			wantOutput: serverUsage,
+		},
+		{
+			name: "unsupported export format",
+			args: []string{
+				"export",
+				"--export-dir",
+				"/tmp/buildopt-test-export",
+				"--format",
+				"json",
+			},
+			wantExit:   exitConfiguration,
+			wantOutput: "format jsonl",
+		},
+		{
 			name:       "unknown argument",
 			args:       []string{"serve", "extra"},
 			wantExit:   exitUsage,
@@ -478,6 +496,49 @@ func TestBuildoptServerReceivesAndStopsGracefully(t *testing.T) {
 		"accepted session server-main-test outcome=SUCCESS exit=0",
 	) {
 		t.Fatalf("missing acceptance log: %q", output.String())
+	}
+
+	var jsonl bytes.Buffer
+	stderr.Reset()
+	exitCode := run(
+		context.Background(),
+		[]string{
+			"export",
+			"--export-dir",
+			exportDirectory,
+			"--format",
+			"jsonl",
+		},
+		func(string) string { return "" },
+		&jsonl,
+		&stderr,
+	)
+	if exitCode != 0 || stderr.Len() != 0 {
+		t.Fatalf(
+			"stdout JSONL export = %d/%q",
+			exitCode,
+			stderr.String(),
+		)
+	}
+	lines := bytes.Split(
+		bytes.TrimSuffix(jsonl.Bytes(), []byte{'\n'}),
+		[]byte{'\n'},
+	)
+	if len(lines) != 2 {
+		t.Fatalf("stdout JSONL lines = %d, want 2", len(lines))
+	}
+	for index, line := range lines {
+		var event struct {
+			BuildID  string `json:"buildId"`
+			Sequence int    `json:"sequence"`
+		}
+		if err := json.Unmarshal(line, &event); err != nil {
+			t.Fatalf("decode stdout JSONL line %d: %v", index, err)
+		}
+		if event.BuildID != record.SessionID ||
+			event.Sequence != index+1 {
+			t.Fatalf("stdout JSONL event %d = %+v", index, event)
+		}
 	}
 }
 

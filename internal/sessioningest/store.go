@@ -22,8 +22,8 @@ const (
 	PutDuplicate
 )
 
-// Store is the in-memory WS-005 ingest boundary. Durable control state and
-// JSON/JSONL export remain owned by later tracker items.
+// Store is the in-memory WS-005 ingest boundary. Durable control state remains
+// separate; accepted records may be handed to the A0-008 JSON/JSONL exporter.
 type Store struct {
 	mutex    sync.RWMutex
 	sessions map[string]Record

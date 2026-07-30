@@ -25,7 +25,7 @@ import (
 const (
 	exitUsage         = 64
 	exitConfiguration = 78
-	serverUsage       = "usage: buildopt-server serve [--listen 127.0.0.1:8042] [--export-dir PATH] [--state-dir ABSOLUTE_PATH] [--cache-authority ABSOLUTE_PATH --cache-trust-root ABSOLUTE_PATH --cache-credential ABSOLUTE_PATH]\n"
+	serverUsage       = "usage: buildopt-server serve [--listen 127.0.0.1:8042] [--export-dir PATH] [--state-dir ABSOLUTE_PATH] [--cache-authority ABSOLUTE_PATH --cache-trust-root ABSOLUTE_PATH --cache-credential ABSOLUTE_PATH]\n       buildopt-server export --export-dir PATH [--format jsonl]\n"
 )
 
 func main() {
@@ -49,11 +49,20 @@ func run(
 		_, _ = io.WriteString(stdout, serverUsage)
 		return 0
 	}
-	if len(args) == 2 && args[0] == "serve" && isHelp(args[1]) {
+	if len(args) == 2 &&
+		(args[0] == "serve" || args[0] == "export") &&
+		isHelp(args[1]) {
 		_, _ = io.WriteString(stdout, serverUsage)
 		return 0
 	}
-	if len(args) == 0 || args[0] != "serve" {
+	if len(args) == 0 {
+		_, _ = io.WriteString(stderr, serverUsage)
+		return exitUsage
+	}
+	if args[0] == "export" {
+		return runExport(args[1:], stdout, stderr)
+	}
+	if args[0] != "serve" {
 		_, _ = io.WriteString(stderr, serverUsage)
 		return exitUsage
 	}
@@ -335,6 +344,60 @@ func run(
 		}
 		return 0
 	}
+}
+
+func runExport(
+	args []string,
+	stdout io.Writer,
+	stderr io.Writer,
+) int {
+	flags := flag.NewFlagSet("buildopt-server export", flag.ContinueOnError)
+	flags.SetOutput(io.Discard)
+	exportDirectory := flags.String(
+		"export-dir",
+		"",
+		"existing private BUILD_SESSION export directory",
+	)
+	format := flags.String(
+		"format",
+		"jsonl",
+		"stdout export format",
+	)
+	if err := flags.Parse(args); err != nil || flags.NArg() != 0 {
+		_, _ = io.WriteString(stderr, serverUsage)
+		return exitUsage
+	}
+	if *exportDirectory == "" || *format != "jsonl" {
+		_, _ = fmt.Fprintln(
+			stderr,
+			"buildopt-server: export requires an existing directory and format jsonl",
+		)
+		return exitConfiguration
+	}
+	if _, err := os.Lstat(*exportDirectory); err != nil {
+		_, _ = fmt.Fprintln(
+			stderr,
+			"buildopt-server: BUILD_SESSION export directory is unavailable",
+		)
+		return exitConfiguration
+	}
+	exporter, err := buildsession.NewExporter(*exportDirectory)
+	if err != nil {
+		_, _ = fmt.Fprintln(
+			stderr,
+			"buildopt-server: invalid BUILD_SESSION export configuration",
+		)
+		return exitConfiguration
+	}
+	if err := exporter.WriteJSONL(stdout); err != nil {
+		_, _ = fmt.Fprintf(
+			stderr,
+			"buildopt-server: JSONL export unavailable: %v\n",
+			err,
+		)
+		return exitConfiguration
+	}
+	return 0
 }
 
 func validateListenAddress(address string) error {

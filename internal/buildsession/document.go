@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"regexp"
+	"slices"
+	"time"
 
 	"github.com/tonyredondo/buildopt/internal/metricscatalog"
 	"github.com/tonyredondo/buildopt/internal/sessioningest"
@@ -36,6 +38,7 @@ type Document struct {
 	Performance          Performance          `json:"performance"`
 	Workload             Workload             `json:"workload"`
 	Capabilities         Capabilities         `json:"capabilities"`
+	Recovery             *Recovery            `json:"recovery,omitempty"`
 }
 
 // Build contains neutral-envelope facts for one completed build.
@@ -141,6 +144,20 @@ type Capabilities struct {
 type Capability struct {
 	Method string `json:"method"`
 	Reason string `json:"reason,omitempty"`
+}
+
+// Recovery records an immutable partial assembly and its missing event ranges.
+type Recovery struct {
+	Source                string                 `json:"source"`
+	RecoveredAt           string                 `json:"recoveredAt"`
+	Reason                string                 `json:"reason"`
+	MissingSequenceRanges []MissingSequenceRange `json:"missingSequenceRanges"`
+}
+
+// MissingSequenceRange is one inclusive gap in a per-build JSONL sequence.
+type MissingSequenceRange struct {
+	First int `json:"first"`
+	Last  int `json:"last"`
 }
 
 // NewDocument converts a complete authenticated ingest record into the
@@ -300,6 +317,84 @@ func NewDocument(record sessioningest.Record) (Document, error) {
 			),
 		},
 	}, nil
+}
+
+// RecoverPartial derives an immutable partial BUILD_SESSION from an observed
+// complete candidate when final JSONL publication events are missing. It never
+// fills missing measurements or incorporates later aggregate effects.
+func RecoverPartial(
+	candidate Document,
+	recoveredAt time.Time,
+	missing []MissingSequenceRange,
+) (Document, error) {
+	if !candidate.Complete ||
+		candidate.RecordType != recordType ||
+		candidate.SchemaVersion != schemaVersion ||
+		candidate.Recovery != nil {
+		return Document{}, errors.New(
+			"partial recovery requires a complete BUILD_SESSION candidate",
+		)
+	}
+	if recoveredAt.IsZero() ||
+		recoveredAt.Location() != time.UTC {
+		return Document{}, errors.New(
+			"partial recovery timestamp must be non-zero UTC",
+		)
+	}
+	completedAt, err := time.Parse(time.RFC3339Nano, candidate.Build.CompletedAt)
+	if err != nil || recoveredAt.Before(completedAt) {
+		return Document{}, errors.New(
+			"partial recovery timestamp precedes build completion",
+		)
+	}
+	ranges, err := validateMissingSequenceRanges(missing)
+	if err != nil {
+		return Document{}, err
+	}
+
+	candidate.Complete = false
+	candidate.MeasurementMetadata.Status = "PARTIAL"
+	measurement := &candidate.Performance.CustomerVisibleBuildMs
+	measurement.State = "PARTIAL"
+	measurement.Reason =
+		"The final BUILD_SESSION publication sequence is incomplete"
+	candidate.Recovery = &Recovery{
+		Source:      "EVENT_REPLAY",
+		RecoveredAt: recoveredAt.Format(time.RFC3339Nano),
+		Reason: "The JSONL producer stopped before the final immutable " +
+			"BUILD_SESSION publication event",
+		MissingSequenceRanges: ranges,
+	}
+	return candidate, nil
+}
+
+func validateMissingSequenceRanges(
+	missing []MissingSequenceRange,
+) ([]MissingSequenceRange, error) {
+	if len(missing) == 0 || len(missing) > 1024 {
+		return nil, errors.New(
+			"partial recovery requires between 1 and 1024 missing ranges",
+		)
+	}
+	ranges := append([]MissingSequenceRange(nil), missing...)
+	slices.SortFunc(ranges, func(left, right MissingSequenceRange) int {
+		if left.First != right.First {
+			return left.First - right.First
+		}
+		return left.Last - right.Last
+	})
+	previousLast := -1
+	for index, interval := range ranges {
+		if interval.First < 0 ||
+			interval.Last < interval.First ||
+			index > 0 && interval.First <= previousLast+1 {
+			return nil, errors.New(
+				"partial recovery ranges must be non-negative, disjoint, and non-adjacent",
+			)
+		}
+		previousLast = interval.Last
+	}
+	return ranges, nil
 }
 
 func exact(value int64) DurationMeasurement {

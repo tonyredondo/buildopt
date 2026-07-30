@@ -27,7 +27,7 @@ buildopt_cleanup() {
 }
 trap buildopt_cleanup EXIT
 
-for buildopt_command in find grep sed sha256sum stat; do
+for buildopt_command in cmp find grep jq sed sha256sum stat; do
     if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
         printf 'required BUILD_SESSION check command is unavailable: %s\n' \
             "${buildopt_command}" >&2
@@ -281,6 +281,45 @@ if ! grep -Fq '"requestedTasks": [' "${buildopt_success_export}" ||
     exit 1
 fi
 
+buildopt_jsonl_stream="${buildopt_export_directory}/buildopt-events.jsonl"
+if [[ ! -f "${buildopt_jsonl_stream}" ||
+    "$(stat -c '%a' "${buildopt_jsonl_stream}")" != "600" ]]; then
+    printf 'BUILD_SESSION JSONL stream is absent or not mode 600\n' >&2
+    exit 1
+fi
+if ! jq -s -e '
+    length == 4 and
+    all(.[];
+        keys == [
+            "buildId",
+            "emittedAt",
+            "eventId",
+            "idempotencyKey",
+            "occurredAt",
+            "payload",
+            "profile",
+            "schemaVersion",
+            "sequence"
+        ] and
+        .schemaVersion == "1.0" and
+        .profile == "SUMMARY" and
+        .idempotencyKey == (.buildId + "/" + (.sequence | tostring))
+    ) and
+    (group_by(.buildId) | length == 2) and
+    all(group_by(.buildId)[];
+        length == 2 and
+        map(.sequence) == [1, 2] and
+        .[0].payload.type == "BUILD_SESSION_OBSERVED" and
+        .[0].payload.document.complete == true and
+        .[1].payload.type == "BUILD_SESSION_PUBLISHED" and
+        (.[1].payload.documentDigest |
+            test("^sha256:[0-9a-f]{64}$"))
+    )
+' "${buildopt_jsonl_stream}" >/dev/null; then
+    printf 'BUILD_SESSION JSONL stream is malformed or incomplete\n' >&2
+    exit 1
+fi
+
 if find "${buildopt_export_directory}" \
     -maxdepth 1 \
     -name '.build-session-*.tmp' |
@@ -290,7 +329,8 @@ if find "${buildopt_export_directory}" \
 fi
 if grep -Fq -- "${buildopt_token}" \
     "${buildopt_test_root}"/*.log \
-    "${buildopt_export_directory}"/*.json; then
+    "${buildopt_export_directory}"/*.json \
+    "${buildopt_jsonl_stream}"; then
     printf 'server ingest credential appeared in BUILD_SESSION evidence\n' >&2
     exit 1
 fi
@@ -312,6 +352,63 @@ if ((buildopt_server_exit != 0)); then
     exit 1
 fi
 
+buildopt_stdout_jsonl="${buildopt_test_root}/stdout.jsonl"
+"${buildopt_server}" export \
+    --export-dir "${buildopt_export_directory}" \
+    --format jsonl >"${buildopt_stdout_jsonl}"
+if ! cmp -s "${buildopt_jsonl_stream}" "${buildopt_stdout_jsonl}"; then
+    printf 'stdout JSONL export differs from the validated stream\n' >&2
+    exit 1
+fi
+
+buildopt_recovery_directory="${buildopt_test_root}/recovery"
+mkdir -p -- "${buildopt_recovery_directory}"
+chmod 0700 -- "${buildopt_recovery_directory}"
+sed -n '1p' "${buildopt_jsonl_stream}" \
+    >"${buildopt_recovery_directory}/buildopt-events.jsonl"
+chmod 0600 -- "${buildopt_recovery_directory}/buildopt-events.jsonl"
+buildopt_recovery_stdout="${buildopt_test_root}/recovery.jsonl"
+"${buildopt_server}" export \
+    --export-dir "${buildopt_recovery_directory}" \
+    --format jsonl >"${buildopt_recovery_stdout}"
+if ! cmp -s \
+    "${buildopt_recovery_directory}/buildopt-events.jsonl" \
+    "${buildopt_recovery_stdout}"; then
+    printf 'partial recovery changed JSONL stdout bytes\n' >&2
+    exit 1
+fi
+mapfile -d '' buildopt_partial_exports < <(
+    find "${buildopt_recovery_directory}" \
+        -maxdepth 1 \
+        -type f \
+        -name 'build-session-*-partial.json' \
+        -print0
+)
+if ((${#buildopt_partial_exports[@]} != 1)); then
+    printf 'expected one recovered partial BUILD_SESSION, found %s\n' \
+        "${#buildopt_partial_exports[@]}" >&2
+    exit 1
+fi
+buildopt_partial_export=${buildopt_partial_exports[0]}
+"${buildopt_validator}" "${buildopt_schema}" "${buildopt_partial_export}"
+if ! jq -e '
+    .complete == false and
+    .measurementMetadata.status == "PARTIAL" and
+    .performance.customerVisibleBuildMs.state == "PARTIAL" and
+    .recovery.source == "EVENT_REPLAY" and
+    .recovery.missingSequenceRanges == [{"first": 2, "last": 2}]
+' "${buildopt_partial_export}" >/dev/null; then
+    printf 'recovered BUILD_SESSION does not declare the exact partial gap\n' >&2
+    exit 1
+fi
+if grep -Fq -- "${buildopt_token}" \
+    "${buildopt_stdout_jsonl}" \
+    "${buildopt_recovery_stdout}" \
+    "${buildopt_partial_export}"; then
+    printf 'stdout or partial export exposed the ingest credential\n' >&2
+    exit 1
+fi
+
 buildopt_after_status=$(
     git status --porcelain=v1 --untracked-files=all 2>/dev/null || true
 )
@@ -320,4 +417,4 @@ if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
     exit 1
 fi
 
-printf 'WS-006 BUILD_SESSION export OK: real Gradle success/failure, schema v1 validation, atomic private JSON, explicit unavailable metrics, and credential isolation\n'
+printf 'WS-006/A0-008 BUILD_SESSION export OK: real Gradle success/failure, atomic private JSON, bounded JSONL/stdout, schema-valid partial recovery, and credential isolation\n'

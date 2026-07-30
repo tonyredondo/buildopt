@@ -1,0 +1,184 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/export-gateway-v1.json"
+buildopt_tmp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-export-gateway.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_tmp}" &&
+        "${buildopt_tmp}" == "${TMPDIR:-/tmp}/buildopt-export-gateway."* ]]; then
+        rm -rf -- "${buildopt_tmp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in git jq mktemp rm; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required export-gateway command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+if ! jq -e '
+    keys == [
+        "deferred",
+        "executableEvidence",
+        "failurePolicy",
+        "filesystem",
+        "jsonl",
+        "policyId",
+        "records",
+        "recovery",
+        "schemaVersion",
+        "stdout"
+    ] and
+    .schemaVersion == "buildopt.specs/export-gateway/v1" and
+    .policyId == "EXPORT_GATEWAY_V1" and
+    .records == {
+        "produced": ["BUILD_SESSION"],
+        "buildSessionSchema":
+            "contracts/jsonschema/build-session.v1.schema.json",
+        "aggregateEffectsInBuildSession": false,
+        "experimentResultProducer": "A0-009"
+    } and
+    .filesystem == {
+        "directory":
+            "CURRENT_USER_0700_FINAL_COMPONENT_NO_SYMLINK",
+        "documents": "PRIVATE_MODE_0600_IMMUTABLE_REGULAR_FILES",
+        "completeFilename": "build-session-<sha256(buildId)>.json",
+        "partialFilename":
+            "build-session-<sha256(buildId,NUL,eventId)>-partial.json",
+        "publication": "SAME_DIRECTORY_FSYNC_FIRST_WRITER_LINK",
+        "stream": "buildopt-events.jsonl",
+        "streamMaximumBytes": 67108864,
+        "eventMaximumBytes": 1048576
+    } and
+    .jsonl.delivery == "AT_LEAST_ONCE" and
+    .jsonl.schemaVersion == "1.0" and
+    .jsonl.profile == "SUMMARY" and
+    .jsonl.envelopeFields == [
+        "eventId",
+        "buildId",
+        "sequence",
+        "occurredAt",
+        "emittedAt",
+        "schemaVersion",
+        "idempotencyKey",
+        "profile",
+        "payload"
+    ] and
+    .jsonl.identity == "SHA256_DOMAIN_BUILD_SEQUENCE_PAYLOAD" and
+    .jsonl.idempotencyKey == "<buildId>/<sequence>" and
+    .jsonl.duplicate == "BYTE_IDENTICAL_EVENT_ALLOWED" and
+    .jsonl.changedIdentityOrSequenceReuse == "CONFLICT" and
+    .jsonl.sequence == [
+        {
+            "number": 1,
+            "type": "BUILD_SESSION_OBSERVED",
+            "payload": "COMPLETE_BUILD_SESSION"
+        },
+        {
+            "number": 2,
+            "type": "BUILD_SESSION_PUBLISHED",
+            "payload": "FILENAME_AND_SHA256_DOCUMENT_DIGEST"
+        }
+    ] and
+    .recovery.truncatedTail ==
+        "REPAIR_UNTERMINATED_FINAL_LINE_ONLY" and
+    .recovery.malformedCompleteLine ==
+        "FAIL_CLOSED_WITHOUT_MODIFICATION" and
+    .recovery.completeDocumentMissingPublicationEvent ==
+        "VERIFY_AND_REPLAY_SEQUENCE_2" and
+    .recovery.observedWithoutDocumentOrPublication == {
+        "complete": false,
+        "source": "EVENT_REPLAY",
+        "measurementStatus": "PARTIAL",
+        "missingSequenceRanges": [{"first": 2, "last": 2}]
+    } and
+    .recovery.existingDocuments ==
+        "STRICTLY_VALIDATE_NEVER_OVERWRITE" and
+    .stdout == {
+        "command":
+            "buildopt-server export --export-dir PATH --format jsonl",
+        "output": "VALIDATED_JSONL_BYTES_ONLY",
+        "appendsEvents": false,
+        "directoryMutation": "STARTUP_RECOVERY_ONLY"
+    } and
+    .failurePolicy == {
+        "ingestExportFailure":
+            "DIAGNOSTIC_FAIL_OPEN_FOR_GRADLE_RESULT",
+        "unboundedBuffering": false,
+        "inventMissingFacts": false
+    } and
+    .executableEvidence.checker == "dev/check-export-gateway" and
+    (.executableEvidence.requiredCases | length) == 9 and
+    .deferred == {
+        "experimentResultProducer": "A0-009",
+        "encryptedRetrySpoolAndFaultMatrix": "A0-G04",
+        "retentionAndManagedDeletionExecution": "A1",
+        "remoteStreamingAndAdditionalSinks": "GA-D"
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'export-gateway contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_required_files=(
+    "cmd/buildopt-server/main.go"
+    "internal/buildsession/document.go"
+    "internal/buildsession/exporter.go"
+    "internal/buildsession/jsonl.go"
+    "specs/export-gateway-v1.md"
+)
+for buildopt_relative in "${buildopt_required_files[@]}"; do
+    if [[ ! -s "${buildopt_repo_root}/${buildopt_relative}" ]]; then
+        printf 'missing export-gateway file: %s\n' \
+            "${buildopt_relative}" >&2
+        exit 1
+    fi
+done
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 \
+    ./internal/buildsession \
+    ./internal/sessioningest \
+    ./cmd/buildopt-server
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet \
+    ./internal/buildsession \
+    ./internal/sessioningest \
+    ./cmd/buildopt-server
+CGO_ENABLED=0 "${buildopt_script_dir}/run" --toolchain go -- \
+    go build \
+    -mod=readonly \
+    -buildvcs=false \
+    -trimpath \
+    -o "${buildopt_tmp}/buildopt-server" \
+    ./cmd/buildopt-server
+
+"${buildopt_script_dir}/check-build-session-schema"
+"${buildopt_script_dir}/check-data-lifecycle"
+"${buildopt_script_dir}/check-build-session-export"
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'export-gateway check changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'A0-008 export gateway OK: bounded private JSONL, deterministic replay, immutable partial recovery, stdout export, and real Gradle sessions\n'

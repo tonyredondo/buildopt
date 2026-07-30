@@ -34,8 +34,10 @@ and facts from an authenticated Gradle invocation.
 `buildsession/` is the dependency-free producer for the normative
 `BUILD_SESSION v1` schema and the atomic local-file exporter. It derives only
 deterministic manifest/baseline digests, declares unobserved metrics
-unavailable, publishes mode-`0600` immutable JSON, and leaves runtime schema
-conformance to the isolated validator under `dev/schema-validator/`.
+unavailable, publishes mode-`0600` immutable complete/partial JSON, and owns a
+bounded private JSONL stream with deterministic at-least-once replay and
+startup recovery. Runtime schema conformance remains with the isolated
+validator under `dev/schema-validator/`.
 
 `localauthority/` owns the A0-006 canonical JCS/Ed25519 authority, pinned
 trust-root and private-file boundary, strict semantic validation, and durable

@@ -774,6 +774,22 @@ after the source archive is removed. Gradle 8.14.3 and 9.6.1 both run on JDK
 17 and 21; invalid, unsafe, busy, corrupt, or unsupported inputs preserve the
 unmanaged Gradle baseline.
 
+## Complete, partial, and JSONL export
+
+Validate the `A0-008` export boundary:
+
+```bash
+./dev/check-export-gateway
+```
+
+The checker proves atomic private complete JSON, a bounded mode-`0600` JSONL
+stream with two deterministic events per session, byte-identical at-least-once
+replay, conflict detection, final-line crash repair, and immutable
+schema-valid partial recovery with exact missing ranges. It also runs real
+Gradle success and failure sessions and requires the `buildopt-server export`
+stdout bytes to match the durable stream exactly. Aggregate experiment effects,
+encrypted delivery retry/DLQ, and remote sinks remain separate gates.
+
 ## JVM Agent spike
 
 Run the bounded agent against a real Gradle daemon and Configuration Cache:

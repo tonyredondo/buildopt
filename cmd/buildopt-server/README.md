@@ -39,6 +39,27 @@ under a filename derived from the SHA-256 of its session ID. An identical
 replay retains the existing bytes; different bytes for the same ID are a
 conflict. Export failure is diagnostic and fail-open for the Gradle result.
 
+`A0-008` adds a bounded private `buildopt-events.jsonl` stream. Every completed
+session appends deterministic observed and published events with per-build
+sequences `1` and `2`; identical delivery remains byte-identical and changed
+identity or sequence reuse is a conflict. The stream is capped at 64 MiB with
+1 MiB lines. Startup repairs only an unterminated final line and otherwise
+fails closed on malformed durable content.
+
+If sequence 1 survives without its complete document or sequence 2, startup
+publishes an immutable schema-valid `complete:false` recovery with the exact
+missing range. If the complete document survived, startup verifies it and
+replays the deterministic publication event instead. Existing complete and
+partial files are never overwritten.
+
+Copy the validated stream directly to stdout for a CI artifact:
+
+```bash
+buildopt-server export \
+    --export-dir /private/buildopt-exports \
+    --format jsonl
+```
+
 The document contains an exact neutral-envelope duration, an explicitly
 approximated launcher-observed Gradle-process interval, pre-outcome passthrough
 assignment, predeclared tokenized workload identity, and explicit
@@ -84,7 +105,7 @@ request, reads only verified committed objects, and writes only to the signed
 pending attempt. Omitting all three authority flags leaves the route absent;
 partial or invalid configuration prevents server startup.
 
-JSONL, bounded delivery retry, remote TLS, cache/policy APIs, hardened
+Encrypted delivery retry/DLQ, remote TLS and sinks, cache/policy APIs, hardened
 identity, and non-local workload profiles remain owned by later tracker items.
 
 Validate the handler, concurrency, real launcher/server binaries, graceful

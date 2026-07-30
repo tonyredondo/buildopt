@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "buildopt.specs/export-gateway/v1",
+  "policyId": "EXPORT_GATEWAY_V1",
+  "records": {
+    "produced": [
+      "BUILD_SESSION"
+    ],
+    "buildSessionSchema": "contracts/jsonschema/build-session.v1.schema.json",
+    "aggregateEffectsInBuildSession": false,
+    "experimentResultProducer": "A0-009"
+  },
+  "filesystem": {
+    "directory": "CURRENT_USER_0700_FINAL_COMPONENT_NO_SYMLINK",
+    "documents": "PRIVATE_MODE_0600_IMMUTABLE_REGULAR_FILES",
+    "completeFilename": "build-session-<sha256(buildId)>.json",
+    "partialFilename": "build-session-<sha256(buildId,NUL,eventId)>-partial.json",
+    "publication": "SAME_DIRECTORY_FSYNC_FIRST_WRITER_LINK",
+    "stream": "buildopt-events.jsonl",
+    "streamMaximumBytes": 67108864,
+    "eventMaximumBytes": 1048576
+  },
+  "jsonl": {
+    "delivery": "AT_LEAST_ONCE",
+    "schemaVersion": "1.0",
+    "profile": "SUMMARY",
+    "envelopeFields": [
+      "eventId",
+      "buildId",
+      "sequence",
+      "occurredAt",
+      "emittedAt",
+      "schemaVersion",
+      "idempotencyKey",
+      "profile",
+      "payload"
+    ],
+    "identity": "SHA256_DOMAIN_BUILD_SEQUENCE_PAYLOAD",
+    "idempotencyKey": "<buildId>/<sequence>",
+    "duplicate": "BYTE_IDENTICAL_EVENT_ALLOWED",
+    "changedIdentityOrSequenceReuse": "CONFLICT",
+    "sequence": [
+      {
+        "number": 1,
+        "type": "BUILD_SESSION_OBSERVED",
+        "payload": "COMPLETE_BUILD_SESSION"
+      },
+      {
+        "number": 2,
+        "type": "BUILD_SESSION_PUBLISHED",
+        "payload": "FILENAME_AND_SHA256_DOCUMENT_DIGEST"
+      }
+    ]
+  },
+  "recovery": {
+    "truncatedTail": "REPAIR_UNTERMINATED_FINAL_LINE_ONLY",
+    "malformedCompleteLine": "FAIL_CLOSED_WITHOUT_MODIFICATION",
+    "completeDocumentMissingPublicationEvent": "VERIFY_AND_REPLAY_SEQUENCE_2",
+    "observedWithoutDocumentOrPublication": {
+      "complete": false,
+      "source": "EVENT_REPLAY",
+      "measurementStatus": "PARTIAL",
+      "missingSequenceRanges": [
+        {
+          "first": 2,
+          "last": 2
+        }
+      ]
+    },
+    "existingDocuments": "STRICTLY_VALIDATE_NEVER_OVERWRITE"
+  },
+  "stdout": {
+    "command": "buildopt-server export --export-dir PATH --format jsonl",
+    "output": "VALIDATED_JSONL_BYTES_ONLY",
+    "appendsEvents": false,
+    "directoryMutation": "STARTUP_RECOVERY_ONLY"
+  },
+  "failurePolicy": {
+    "ingestExportFailure": "DIAGNOSTIC_FAIL_OPEN_FOR_GRADLE_RESULT",
+    "unboundedBuffering": false,
+    "inventMissingFacts": false
+  },
+  "executableEvidence": {
+    "checker": "dev/check-export-gateway",
+    "requiredCases": [
+      "atomic complete private JSON publication",
+      "two deterministic events per complete BUILD_SESSION",
+      "byte-identical at-least-once replay",
+      "changed event or sequence reuse conflict",
+      "bounded stream before document publication",
+      "truncated final-line repair and malformed complete-line rejection",
+      "schema-valid immutable partial recovery with exact missing range",
+      "byte-exact JSONL stdout export",
+      "real Gradle success and build-failure sessions"
+    ]
+  },
+  "deferred": {
+    "experimentResultProducer": "A0-009",
+    "encryptedRetrySpoolAndFaultMatrix": "A0-G04",
+    "retentionAndManagedDeletionExecution": "A1",
+    "remoteStreamingAndAdditionalSinks": "GA-D"
+  }
+}

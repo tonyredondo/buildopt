@@ -18,6 +18,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`pending-commit-cas-v1.md`](./pending-commit-cas-v1.md) | `A0-005` |
 | [`local-authenticated-cache-v1.md`](./local-authenticated-cache-v1.md) | `A0-006` |
 | [`gradle-bootstrap-cache-v1.md`](./gradle-bootstrap-cache-v1.md) | `A0-007` |
+| [`export-gateway-v1.md`](./export-gateway-v1.md) | `A0-008` |
 | [`jvm-agent-spike-v1.md`](./jvm-agent-spike-v1.md) | `SPK-002` |
 | [`hermetic-helper-spike-v1.md`](./hermetic-helper-spike-v1.md) | `SPK-003` |
 | [`release-bundle-v1.md`](./release-bundle-v1.md) | `F0-038` / `DEPLOY-001` |
@@ -57,5 +58,8 @@ managed Gradle `HttpBuildCache`.
 `gradle-bootstrap-cache-v1.json` is the A0-007 launcher contract for signed
 read-only dependency snapshots, per-runner writable homes and leases,
 independent Wrapper checksum verification, and native distribution reuse.
+`export-gateway-v1.json` is the A0-008 complete/partial BUILD_SESSION contract
+for private bounded JSONL, deterministic at-least-once replay, startup
+recovery, and stdout export.
 
 The additional materialized contract `golden-lane-runner-v1.json` pins the first runner class, toolchain, image, and checksums consumed by validation scripts. `release-bundle-v1.md` fixes the first verifiable Linux AMD64 distribution without claiming the later install, upgrade, uninstall, revocation, or workflow lifecycle. `walking-skeleton-overhead-v1.md` fixes the first non-promotional baseline-versus-wrapper measurement without replacing the later beta benchmark.

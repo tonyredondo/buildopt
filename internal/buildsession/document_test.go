@@ -151,6 +151,114 @@ func TestNewDocumentRejectsIncompleteExportInput(t *testing.T) {
 	}
 }
 
+func TestRecoverPartialValidatesAndCopiesMissingRanges(t *testing.T) {
+	document, err := NewDocument(validExportRecord())
+	if err != nil {
+		t.Fatalf("create complete document: %v", err)
+	}
+	recoveredAt := time.Date(2026, 7, 30, 12, 30, 0, 0, time.UTC)
+	missing := []MissingSequenceRange{
+		{First: 8, Last: 9},
+		{First: 2, Last: 3},
+	}
+	partial, err := RecoverPartial(document, recoveredAt, missing)
+	if err != nil {
+		t.Fatalf("recover partial document: %v", err)
+	}
+	missing[0].First = 100
+	if partial.Complete ||
+		partial.MeasurementMetadata.Status != "PARTIAL" ||
+		partial.Performance.CustomerVisibleBuildMs.State != "PARTIAL" ||
+		partial.Performance.CustomerVisibleBuildMs.ValueMs == nil ||
+		partial.Recovery == nil ||
+		partial.Recovery.Source != "EVENT_REPLAY" ||
+		partial.Recovery.RecoveredAt != recoveredAt.Format(time.RFC3339Nano) ||
+		len(partial.Recovery.MissingSequenceRanges) != 2 ||
+		partial.Recovery.MissingSequenceRanges[0] !=
+			(MissingSequenceRange{First: 2, Last: 3}) ||
+		partial.Recovery.MissingSequenceRanges[1] !=
+			(MissingSequenceRange{First: 8, Last: 9}) {
+		t.Fatalf("unexpected partial document: %+v", partial)
+	}
+	if !document.Complete ||
+		document.MeasurementMetadata.Status != "COMPLETE" ||
+		document.Recovery != nil {
+		t.Fatalf("source document was mutated: %+v", document)
+	}
+
+	testCases := []struct {
+		name      string
+		document  Document
+		recovered time.Time
+		missing   []MissingSequenceRange
+	}{
+		{
+			name:      "already partial",
+			document:  partial,
+			recovered: recoveredAt,
+			missing:   []MissingSequenceRange{{First: 2, Last: 2}},
+		},
+		{
+			name:      "non UTC timestamp",
+			document:  document,
+			recovered: recoveredAt.In(time.FixedZone("other", 3600)),
+			missing:   []MissingSequenceRange{{First: 2, Last: 2}},
+		},
+		{
+			name:      "before build completion",
+			document:  document,
+			recovered: time.Date(2026, 7, 29, 9, 0, 0, 0, time.UTC),
+			missing:   []MissingSequenceRange{{First: 2, Last: 2}},
+		},
+		{
+			name:      "no ranges",
+			document:  document,
+			recovered: recoveredAt,
+		},
+		{
+			name:      "negative range",
+			document:  document,
+			recovered: recoveredAt,
+			missing:   []MissingSequenceRange{{First: -1, Last: 2}},
+		},
+		{
+			name:      "reversed range",
+			document:  document,
+			recovered: recoveredAt,
+			missing:   []MissingSequenceRange{{First: 3, Last: 2}},
+		},
+		{
+			name:      "overlapping ranges",
+			document:  document,
+			recovered: recoveredAt,
+			missing: []MissingSequenceRange{
+				{First: 2, Last: 4},
+				{First: 4, Last: 5},
+			},
+		},
+		{
+			name:      "adjacent ranges",
+			document:  document,
+			recovered: recoveredAt,
+			missing: []MissingSequenceRange{
+				{First: 2, Last: 4},
+				{First: 5, Last: 6},
+			},
+		},
+	}
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			if _, err := RecoverPartial(
+				testCase.document,
+				testCase.recovered,
+				testCase.missing,
+			); err == nil {
+				t.Fatal("accepted invalid partial recovery")
+			}
+		})
+	}
+}
+
 func validExportRecord() sessioningest.Record {
 	startedAt := time.Date(2026, 7, 29, 10, 0, 0, 0, time.UTC)
 	record := sessioningest.NewRecord(
