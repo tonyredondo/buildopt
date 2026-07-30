@@ -34,6 +34,13 @@ deterministic manifest/baseline digests, declares unobserved metrics
 unavailable, publishes mode-`0600` immutable JSON, and leaves runtime schema
 conformance to the isolated validator under `dev/schema-validator/`.
 
+`sharedcache/` owns the A0-004 single-node storage substrate used by
+`buildopt-server`: private same-filesystem SHA-256 blobs, a process-lifetime
+writer lease, and independently migrated WAL-mode `cache.sqlite` and
+`control.sqlite` stores. It verifies complete bytes before returning a blob
+and treats blob presence as no authority. A0-005 owns pending publication,
+commit CAS, visibility, and reconciliation over these private interfaces.
+
 `neutralenvelope/` owns the strict `WS-009` observation and report contract. It
 pairs externally timed native and optimization-off wrapper executions,
 reconciles required-output digests, retains signed differences, and binds the

@@ -18,12 +18,13 @@ import (
 
 	"github.com/tonyredondo/buildopt/internal/buildsession"
 	"github.com/tonyredondo/buildopt/internal/sessioningest"
+	"github.com/tonyredondo/buildopt/internal/sharedcache"
 )
 
 const (
 	exitUsage         = 64
 	exitConfiguration = 78
-	serverUsage       = "usage: buildopt-server serve [--listen 127.0.0.1:8042] [--export-dir PATH]\n"
+	serverUsage       = "usage: buildopt-server serve [--listen 127.0.0.1:8042] [--export-dir PATH] [--state-dir ABSOLUTE_PATH]\n"
 )
 
 func main() {
@@ -42,7 +43,7 @@ func run(
 	getenv func(string) string,
 	stdout io.Writer,
 	stderr io.Writer,
-) int {
+) (exitCode int) {
 	if len(args) == 1 && isHelp(args[0]) {
 		_, _ = io.WriteString(stdout, serverUsage)
 		return 0
@@ -68,6 +69,11 @@ func run(
 		"",
 		"local directory for atomic BUILD_SESSION v1 JSON exports",
 	)
+	stateDirectory := flags.String(
+		"state-dir",
+		"",
+		"absolute private directory for single-node Shared storage",
+	)
 	if err := flags.Parse(args[1:]); err != nil || flags.NArg() != 0 {
 		_, _ = io.WriteString(stderr, serverUsage)
 		return exitUsage
@@ -92,11 +98,47 @@ func run(
 		exporter = configuredExporter
 	}
 
-	store := sessioningest.NewStore()
+	var sharedStorage *sharedcache.Storage
+	if *stateDirectory != "" {
+		if !filepath.IsAbs(*stateDirectory) {
+			_, _ = fmt.Fprintln(
+				stderr,
+				"buildopt-server: invalid Shared storage configuration: state directory must be absolute",
+			)
+			return exitConfiguration
+		}
+		configuredStorage, storageErr := sharedcache.Open(
+			ctx,
+			filepath.Clean(*stateDirectory),
+		)
+		if storageErr != nil {
+			_, _ = fmt.Fprintf(
+				stderr,
+				"buildopt-server: invalid Shared storage configuration: %v\n",
+				storageErr,
+			)
+			return exitConfiguration
+		}
+		sharedStorage = configuredStorage
+		defer func() {
+			if closeErr := sharedStorage.Close(); closeErr != nil {
+				_, _ = fmt.Fprintf(
+					stderr,
+					"buildopt-server: Shared storage shutdown incomplete: %v\n",
+					closeErr,
+				)
+				if exitCode == 0 {
+					exitCode = 1
+				}
+			}
+		}()
+	}
+
+	ingestStore := sessioningest.NewStore()
 	logger := log.New(stdout, "buildopt-server: ", 0)
 	handler, err := sessioningest.NewHandler(
 		getenv(sessioningest.ServerTokenEnvironment),
-		store,
+		ingestStore,
 		func(record sessioningest.Record, result sessioningest.PutResult) {
 			action := "accepted"
 			if result == sessioningest.PutDuplicate {
@@ -166,6 +208,12 @@ func run(
 		serveDone <- err
 	}()
 	logger.Printf("listening on http://%s", listener.Addr())
+	if sharedStorage != nil {
+		logger.Printf(
+			"single-node Shared storage initialized with cache/control schema %d; cache data plane remains disabled",
+			sharedcache.SchemaVersion,
+		)
+	}
 
 	select {
 	case err := <-serveDone:

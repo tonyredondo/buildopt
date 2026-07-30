@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,6 +14,7 @@ import (
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/sessioningest"
+	"github.com/tonyredondo/buildopt/internal/sharedcache"
 )
 
 const serverTestToken = "server-test-ingest-token-0123456789abcdef"
@@ -60,6 +63,19 @@ func TestBuildoptServerUsageAndConfiguration(t *testing.T) {
 			wantExit:   exitConfiguration,
 			wantOutput: "invalid session ingest configuration",
 		},
+		{
+			name: "relative Shared state",
+			args: []string{
+				"serve",
+				"--listen",
+				"127.0.0.1:0",
+				"--state-dir",
+				"relative/shared",
+			},
+			token:      serverTestToken,
+			wantExit:   exitConfiguration,
+			wantOutput: "state directory must be absolute",
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -91,6 +107,121 @@ func TestBuildoptServerUsageAndConfiguration(t *testing.T) {
 				)
 			}
 		})
+	}
+}
+
+func TestBuildoptServerOwnsSingleNodeSharedStorageLifecycle(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	stateDirectory := filepath.Join(t.TempDir(), "shared")
+	output := newNotifyingWriter()
+	var stderr bytes.Buffer
+	exited := make(chan int, 1)
+	go func() {
+		exited <- run(
+			ctx,
+			[]string{
+				"serve",
+				"--listen",
+				"127.0.0.1:0",
+				"--state-dir",
+				stateDirectory,
+			},
+			func(key string) string {
+				if key == sessioningest.ServerTokenEnvironment {
+					return serverTestToken
+				}
+				return ""
+			},
+			output,
+			&stderr,
+		)
+	}()
+
+	waitForServerOutput(
+		t,
+		output,
+		"single-node Shared storage initialized",
+	)
+	line := output.String()
+	const prefix = "buildopt-server: listening on "
+	start := strings.Index(line, prefix)
+	if start < 0 {
+		t.Fatalf("missing listen line: %q", line)
+	}
+	end := strings.IndexByte(line[start+len(prefix):], '\n')
+	if end < 0 {
+		t.Fatalf("unterminated listen line: %q", line)
+	}
+	endpoint := line[start+len(prefix) : start+len(prefix)+end]
+
+	layout := sharedcache.Layout{
+		Root:            stateDirectory,
+		Blobs:           filepath.Join(stateDirectory, "blobs", "sha256"),
+		Spool:           filepath.Join(stateDirectory, "spool"),
+		Quarantine:      filepath.Join(stateDirectory, "quarantine"),
+		CacheDatabase:   filepath.Join(stateDirectory, "cache.sqlite"),
+		ControlDatabase: filepath.Join(stateDirectory, "control.sqlite"),
+		WriterLock:      filepath.Join(stateDirectory, "writer.lock"),
+	}
+	for _, path := range []string{
+		layout.CacheDatabase,
+		layout.ControlDatabase,
+		layout.WriterLock,
+	} {
+		if info, err := os.Lstat(path); err != nil ||
+			!info.Mode().IsRegular() ||
+			info.Mode().Perm() != 0o600 {
+			t.Fatalf("server storage file %s = %v/%v", path, info, err)
+		}
+	}
+	if second, err := sharedcache.Open(
+		context.Background(),
+		stateDirectory,
+	); second != nil || !errors.Is(err, sharedcache.ErrWriterBusy) {
+		if second != nil {
+			_ = second.Close()
+		}
+		t.Fatalf("concurrent server storage = %+v/%v", second, err)
+	}
+
+	request, err := http.NewRequest(
+		http.MethodGet,
+		endpoint+"/cache/test",
+		nil,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	request.Header.Set("Authorization", "Bearer "+serverTestToken)
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		t.Fatalf("request absent cache data plane: %v", err)
+	}
+	_ = response.Body.Close()
+	if response.StatusCode != http.StatusNotFound {
+		t.Fatalf("cache data plane status = %d, want 404", response.StatusCode)
+	}
+
+	cancel()
+	select {
+	case exitCode := <-exited:
+		if exitCode != 0 {
+			t.Fatalf(
+				"server exit = %d, stderr = %q",
+				exitCode,
+				stderr.String(),
+			)
+		}
+	case <-time.After(3 * time.Second):
+		t.Fatal("server did not release Shared storage")
+	}
+	reopened, err := sharedcache.Open(context.Background(), stateDirectory)
+	if err != nil {
+		t.Fatalf("reopen server storage: %v", err)
+	}
+	if err := reopened.Close(); err != nil {
+		t.Fatalf("close reopened server storage: %v", err)
 	}
 }
 
@@ -244,4 +375,20 @@ func (writer *notifyingWriter) String() string {
 	writer.mutex.Lock()
 	defer writer.mutex.Unlock()
 	return writer.buffer.String()
+}
+
+func waitForServerOutput(
+	t *testing.T,
+	writer *notifyingWriter,
+	fragment string,
+) {
+	t.Helper()
+	deadline := time.Now().Add(3 * time.Second)
+	for time.Now().Before(deadline) {
+		if strings.Contains(writer.String(), fragment) {
+			return
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	t.Fatalf("server output never contained %q: %q", fragment, writer.String())
 }

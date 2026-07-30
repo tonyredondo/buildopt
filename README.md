@@ -79,6 +79,7 @@ From the repository root:
 ./dev/check-tier1-fixtures
 ./dev/check-tier-one-policy
 ./dev/check-managed-l1
+./dev/check-shared-storage
 ./dev/check-jvm-agent-spike
 ./dev/check-hermetic-helper-spike
 ./dev/check-buildopt-cli

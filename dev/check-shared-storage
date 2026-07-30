@@ -1,0 +1,294 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/single-node-shared-storage-v1.json"
+buildopt_tmp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-shared-storage.XXXXXX")
+buildopt_server_pid=
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_server_pid}" ]] &&
+        kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        kill -TERM "${buildopt_server_pid}" 2>/dev/null || true
+        wait "${buildopt_server_pid}" 2>/dev/null || true
+    fi
+    if [[ -n "${buildopt_tmp}" &&
+        "${buildopt_tmp}" == "${TMPDIR:-/tmp}/buildopt-shared-storage."* ]]; then
+        rm -rf -- "${buildopt_tmp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in git grep jq kill mkdir mktemp rm sed sleep stat; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Shared-storage command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+if ! jq -e '
+    keys == [
+        "activation",
+        "blobs",
+        "databases",
+        "deferred",
+        "filesystem",
+        "layout",
+        "policyId",
+        "schemaVersion",
+        "startup",
+        "writerLease"
+    ] and
+    .schemaVersion == "buildopt.specs/single-node-shared-storage/v1" and
+    .policyId == "SINGLE_NODE_SHARED_STORAGE_V1" and
+    .activation == {
+        "process": "buildopt-server",
+        "flag": "--state-dir",
+        "requiresAbsolutePath": true,
+        "cacheDataPlaneEnabled": false
+    } and
+    .layout == {
+        "writerLock": "writer.lock",
+        "blobRoot": "blobs/sha256",
+        "blobPath": "blobs/sha256/<first-2-hex>/<remaining-62-hex>",
+        "spool": "spool",
+        "quarantine": "quarantine",
+        "cacheDatabase": "cache.sqlite",
+        "controlDatabase": "control.sqlite"
+    } and
+    .filesystem == {
+        "operatingSystem": "linux",
+        "rootDirectoryMode": "0700",
+        "managedDirectoryMode": "0700",
+        "managedFileMode": "0600",
+        "currentUserOwned": true,
+        "sameLocalFilesystemRequired": true,
+        "filesystemTypePolicy": "ALLOWLIST_PROVEN_LOCAL",
+        "unknownRootEntry": "REJECT_WITHOUT_MUTATION"
+    } and
+    .writerLease == {
+        "mode": "NONBLOCKING_EXCLUSIVE",
+        "scope": "STORAGE_ROOT",
+        "lifetime": "BUILDOPT_SERVER_PROCESS"
+    } and
+    .blobs == {
+        "digest": "SHA-256",
+        "digestEncoding": "sha256:<lowercase-hex>",
+        "maximumBytes": 104857600,
+        "publication": "PRIVATE_SAME_FILESYSTEM_SPOOL_FSYNC_HARDLINK_DIRECTORY_FSYNC",
+        "collision": "VERIFY_EXISTING_EXACT_OR_CORRUPT",
+        "read": "VERIFY_COMPLETE_SIZE_AND_DIGEST_BEFORE_RETURN",
+        "authorizationFromPresence": false
+    } and
+    .databases == [
+        {
+            "role": "CACHE_VISIBILITY",
+            "file": "cache.sqlite",
+            "schemaVersion": 1,
+            "journalMode": "WAL",
+            "synchronous": "FULL",
+            "foreignKeys": true,
+            "busyTimeoutMs": 5000,
+            "tables": [
+                "schema_migrations",
+                "commit_decisions",
+                "committed_objects"
+            ],
+            "indexes": [
+                "committed_objects_blob_digest",
+                "committed_objects_last_access"
+            ]
+        },
+        {
+            "role": "CONTROL_AUDIT_INDEX",
+            "file": "control.sqlite",
+            "schemaVersion": 1,
+            "journalMode": "WAL",
+            "synchronous": "FULL",
+            "foreignKeys": true,
+            "busyTimeoutMs": 5000,
+            "tables": [
+                "schema_migrations",
+                "decision_audit_index"
+            ],
+            "indexes": [
+                "decision_audit_index_indexed_at"
+            ]
+        }
+    ] and
+    .startup == {
+        "migration": "TRANSACTIONAL_EXACT_VERSION_AND_CHECKSUM",
+        "integrityChecks": [
+            "SQLITE_QUICK_CHECK",
+            "SQLITE_FOREIGN_KEY_CHECK"
+        ],
+        "busyWriter": "FAIL_CLOSED_NO_LISTENER",
+        "unsafeFilesystem": "FAIL_CLOSED_NO_LISTENER",
+        "schemaDrift": "FAIL_CLOSED_NO_LISTENER",
+        "databaseCorruption": "FAIL_CLOSED_NO_LISTENER"
+    } and
+    .deferred == {
+        "httpHitMissPut": "A0-005",
+        "pendingAbortCommitDecisionCas": "A0-005",
+        "reconciliationAndQuarantineTransitions": "A0-005",
+        "authenticatedPolicyAndGenerations": "A0-006",
+        "quotaTtlSlruAndExternalPilot": "A1"
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'single-node Shared storage contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_required_files=(
+    "internal/sharedcache/blob.go"
+    "internal/sharedcache/blob_test.go"
+    "internal/sharedcache/platform_linux.go"
+    "internal/sharedcache/platform_other.go"
+    "internal/sharedcache/sqlite.go"
+    "internal/sharedcache/storage.go"
+    "internal/sharedcache/storage_test.go"
+    "specs/single-node-shared-storage-v1.md"
+)
+for buildopt_relative in "${buildopt_required_files[@]}"; do
+    if [[ ! -s "${buildopt_repo_root}/${buildopt_relative}" ]]; then
+        printf 'missing Shared-storage file: %s\n' "${buildopt_relative}" >&2
+        exit 1
+    fi
+done
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 ./internal/sharedcache ./cmd/buildopt-server
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/sharedcache ./cmd/buildopt-server
+CGO_ENABLED=0 "${buildopt_script_dir}/run" --toolchain go -- \
+    go build \
+    -mod=readonly \
+    -buildvcs=false \
+    -trimpath \
+    -o "${buildopt_tmp}/buildopt-server" \
+    ./cmd/buildopt-server
+
+buildopt_state="${buildopt_tmp}/state"
+buildopt_token=shared-storage-check-token-0123456789abcdef
+
+buildopt_start_server() {
+    local stdout_path=$1
+    local stderr_path=$2
+    local attempt
+
+    BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+        "${buildopt_tmp}/buildopt-server" serve \
+        --listen 127.0.0.1:0 \
+        --state-dir "${buildopt_state}" \
+        >"${stdout_path}" 2>"${stderr_path}" &
+    buildopt_server_pid=$!
+    for ((attempt = 0; attempt < 200; attempt += 1)); do
+        if grep -Fq 'single-node Shared storage initialized' \
+            "${stdout_path}"; then
+            return
+        fi
+        if ! kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+            printf 'real buildopt-server exited before Shared readiness\n' >&2
+            sed -n '1,160p' "${stdout_path}" >&2
+            sed -n '1,160p' "${stderr_path}" >&2
+            exit 1
+        fi
+        sleep 0.025
+    done
+    printf 'real buildopt-server did not report Shared readiness\n' >&2
+    exit 1
+}
+
+buildopt_stop_server() {
+    kill -TERM "${buildopt_server_pid}"
+    if ! wait "${buildopt_server_pid}"; then
+        printf 'real buildopt-server did not stop cleanly\n' >&2
+        exit 1
+    fi
+    buildopt_server_pid=
+}
+
+buildopt_start_server \
+    "${buildopt_tmp}/first.stdout" \
+    "${buildopt_tmp}/first.stderr"
+
+for buildopt_directory in \
+    "${buildopt_state}" \
+    "${buildopt_state}/blobs" \
+    "${buildopt_state}/blobs/sha256" \
+    "${buildopt_state}/spool" \
+    "${buildopt_state}/quarantine"; do
+    if [[ "$(stat -c '%F:%a' -- "${buildopt_directory}")" != \
+        "directory:700" ]]; then
+        printf 'unsafe Shared directory: %s\n' "${buildopt_directory}" >&2
+        exit 1
+    fi
+done
+for buildopt_file in \
+    "${buildopt_state}/writer.lock" \
+    "${buildopt_state}/cache.sqlite" \
+    "${buildopt_state}/control.sqlite"; do
+    if [[ ! -f "${buildopt_file}" ]] ||
+        [[ -L "${buildopt_file}" ]] ||
+        [[ "$(stat -c '%a' -- "${buildopt_file}")" != "600" ]]; then
+        printf 'unsafe Shared file: %s\n' "${buildopt_file}" >&2
+        exit 1
+    fi
+done
+
+set +e
+BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+    "${buildopt_tmp}/buildopt-server" serve \
+    --listen 127.0.0.1:0 \
+    --state-dir "${buildopt_state}" \
+    >"${buildopt_tmp}/busy.stdout" 2>"${buildopt_tmp}/busy.stderr"
+buildopt_busy_status=$?
+set -e
+if ((buildopt_busy_status != 78)) ||
+    ! grep -Fq 'single-node Shared writer is already active' \
+        "${buildopt_tmp}/busy.stderr"; then
+    printf 'second real server did not fail closed on the writer lease\n' >&2
+    exit 1
+fi
+
+buildopt_stop_server
+buildopt_start_server \
+    "${buildopt_tmp}/reopened.stdout" \
+    "${buildopt_tmp}/reopened.stderr"
+buildopt_stop_server
+
+if grep -R -Fq -- "${buildopt_token}" \
+    "${buildopt_tmp}/first.stdout" \
+    "${buildopt_tmp}/first.stderr" \
+    "${buildopt_tmp}/busy.stdout" \
+    "${buildopt_tmp}/busy.stderr" \
+    "${buildopt_tmp}/reopened.stdout" \
+    "${buildopt_tmp}/reopened.stderr"; then
+    printf 'Shared storage logs exposed the ingest credential\n' >&2
+    exit 1
+fi
+
+"${buildopt_script_dir}/check-commit-atomicity"
+"${buildopt_script_dir}/check-capability-matrix"
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'Shared-storage check changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'A0-004 single-node Shared storage OK: private local blobs, WAL-separated cache/control metadata, writer ownership, corruption checks, and real server restart\n'

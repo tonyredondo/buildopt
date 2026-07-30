@@ -46,9 +46,26 @@ assignment, predeclared tokenized workload identity, and explicit
 causes, resources, overhead decomposition, and cost. It never invents values
 or includes the ingest credential.
 
-Durable SQLite state, JSONL, bounded retry/spooling, remote TLS, cache/policy
-APIs, hardened identity, and non-local workload profiles remain owned by later
-tracker items.
+`A0-004` optionally activates the single-node Shared storage substrate:
+
+```bash
+BUILDOPT_SERVER_INGEST_TOKEN=<opaque-token> \
+    buildopt-server serve \
+    --listen 127.0.0.1:8042 \
+    --state-dir /absolute/private/buildopt-state
+```
+
+The server takes one process-lifetime writer lease, rejects network/clustered
+filesystems, and owns private content-addressed blobs plus separately migrated
+WAL-mode `cache.sqlite` and `control.sqlite`. It fails before listening when
+the root, lease, migration, or integrity check is unsafe. Cache routes remain
+absent: pending upload, `CommitDecision`, CAS, visibility, and reconciliation
+belong to A0-005.
+The state path must be a dedicated empty or already BuildOpt-owned root;
+unrelated existing entries are rejected without adding storage files.
+
+JSONL, bounded delivery retry, remote TLS, cache/policy APIs, hardened
+identity, and non-local workload profiles remain owned by later tracker items.
 
 Validate the handler, concurrency, real launcher/server binaries, graceful
 shutdown, credential isolation, child outcomes, fail-open delivery, and local
@@ -57,4 +74,5 @@ bypass with:
 ```bash
 ./dev/check-session-ingest
 ./dev/check-build-session-export
+./dev/check-shared-storage
 ```

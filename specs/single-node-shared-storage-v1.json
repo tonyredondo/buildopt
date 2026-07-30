@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "buildopt.specs/single-node-shared-storage/v1",
+  "policyId": "SINGLE_NODE_SHARED_STORAGE_V1",
+  "activation": {
+    "process": "buildopt-server",
+    "flag": "--state-dir",
+    "requiresAbsolutePath": true,
+    "cacheDataPlaneEnabled": false
+  },
+  "layout": {
+    "writerLock": "writer.lock",
+    "blobRoot": "blobs/sha256",
+    "blobPath": "blobs/sha256/<first-2-hex>/<remaining-62-hex>",
+    "spool": "spool",
+    "quarantine": "quarantine",
+    "cacheDatabase": "cache.sqlite",
+    "controlDatabase": "control.sqlite"
+  },
+  "filesystem": {
+    "operatingSystem": "linux",
+    "rootDirectoryMode": "0700",
+    "managedDirectoryMode": "0700",
+    "managedFileMode": "0600",
+    "currentUserOwned": true,
+    "sameLocalFilesystemRequired": true,
+    "filesystemTypePolicy": "ALLOWLIST_PROVEN_LOCAL",
+    "unknownRootEntry": "REJECT_WITHOUT_MUTATION"
+  },
+  "writerLease": {
+    "mode": "NONBLOCKING_EXCLUSIVE",
+    "scope": "STORAGE_ROOT",
+    "lifetime": "BUILDOPT_SERVER_PROCESS"
+  },
+  "blobs": {
+    "digest": "SHA-256",
+    "digestEncoding": "sha256:<lowercase-hex>",
+    "maximumBytes": 104857600,
+    "publication": "PRIVATE_SAME_FILESYSTEM_SPOOL_FSYNC_HARDLINK_DIRECTORY_FSYNC",
+    "collision": "VERIFY_EXISTING_EXACT_OR_CORRUPT",
+    "read": "VERIFY_COMPLETE_SIZE_AND_DIGEST_BEFORE_RETURN",
+    "authorizationFromPresence": false
+  },
+  "databases": [
+    {
+      "role": "CACHE_VISIBILITY",
+      "file": "cache.sqlite",
+      "schemaVersion": 1,
+      "journalMode": "WAL",
+      "synchronous": "FULL",
+      "foreignKeys": true,
+      "busyTimeoutMs": 5000,
+      "tables": [
+        "schema_migrations",
+        "commit_decisions",
+        "committed_objects"
+      ],
+      "indexes": [
+        "committed_objects_blob_digest",
+        "committed_objects_last_access"
+      ]
+    },
+    {
+      "role": "CONTROL_AUDIT_INDEX",
+      "file": "control.sqlite",
+      "schemaVersion": 1,
+      "journalMode": "WAL",
+      "synchronous": "FULL",
+      "foreignKeys": true,
+      "busyTimeoutMs": 5000,
+      "tables": [
+        "schema_migrations",
+        "decision_audit_index"
+      ],
+      "indexes": [
+        "decision_audit_index_indexed_at"
+      ]
+    }
+  ],
+  "startup": {
+    "migration": "TRANSACTIONAL_EXACT_VERSION_AND_CHECKSUM",
+    "integrityChecks": [
+      "SQLITE_QUICK_CHECK",
+      "SQLITE_FOREIGN_KEY_CHECK"
+    ],
+    "busyWriter": "FAIL_CLOSED_NO_LISTENER",
+    "unsafeFilesystem": "FAIL_CLOSED_NO_LISTENER",
+    "schemaDrift": "FAIL_CLOSED_NO_LISTENER",
+    "databaseCorruption": "FAIL_CLOSED_NO_LISTENER"
+  },
+  "deferred": {
+    "httpHitMissPut": "A0-005",
+    "pendingAbortCommitDecisionCas": "A0-005",
+    "reconciliationAndQuarantineTransitions": "A0-005",
+    "authenticatedPolicyAndGenerations": "A0-006",
+    "quotaTtlSlruAndExternalPilot": "A1"
+  }
+}

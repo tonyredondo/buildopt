@@ -696,6 +696,23 @@ independent regression in `./dev/check-gradle-plugin-handshake`.
 The checker does not claim an L2 backend or authenticated revocation decision;
 those remain with `A0-004..006`.
 
+## Single-node Shared storage
+
+Validate the `A0-004` server/filesystem substrate:
+
+```bash
+./dev/check-shared-storage
+```
+
+The checker validates the exact storage contract, then exercises private
+same-filesystem SHA-256 publication, concurrent deduplication, complete
+read-time integrity, cancellation and oversize cleanup, one server writer,
+separate WAL-mode `cache.sqlite`/`control.sqlite` migrations, corruption and
+schema-drift refusal, persistence, and clean restart. A final CGO-free real
+`buildopt-server` lifecycle verifies the private layout and busy-writer
+failure. The cache data plane remains absent until A0-005 implements
+pending/abort, authenticated commit CAS, visibility, and reconciliation.
+
 ## JVM Agent spike
 
 Run the bounded agent against a real Gradle daemon and Configuration Cache:

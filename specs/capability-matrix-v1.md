@@ -66,9 +66,11 @@ handshake. Only the golden lane retains that stronger capability.
 core source-set `JavaCompile` is the only task allowlist entry, while `Test`,
 custom tasks, modified actions, and transforms fail closed. `A0-003` adds a
 native managed L1 on the same rows, including generation rotation,
-Configuration Cache reuse, and L2-writer local disablement. The matrix still
-reports `MANAGED_SHARED_CACHE` as `UNAVAILABLE` because `A0-004` owns the
-shared L2 backend; local cache conformance is not a shared hit/PUT claim.
+Configuration Cache reuse, and L2-writer local disablement. `A0-004` adds the
+private local blob store and separate WAL-mode cache/control metadata
+lifecycles. The matrix still reports `MANAGED_SHARED_CACHE` as `UNAVAILABLE`
+because A0-005 owns authenticated pending/commit/CAS and the cache data plane;
+storage-substrate conformance is not a shared hit/PUT claim.
 
 `SPK-002` leaves `JVM_AGENT` unavailable in every profile. Its real-daemon
 prototype sees class loads rather than method access or task attribution, so
