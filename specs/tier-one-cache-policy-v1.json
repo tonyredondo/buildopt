@@ -15,7 +15,7 @@
     },
     {
       "gradle": "9.6.1",
-      "jdks": [17, 21],
+      "jdks": [17, 21, 25],
       "operatingSystem": "linux",
       "architecture": "amd64"
     }

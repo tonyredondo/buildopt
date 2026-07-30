@@ -396,9 +396,10 @@ func (gateway *localGateway) serveCache(
 	client := &http.Client{
 		Timeout: gatewayOperationTimeout,
 		Transport: &http.Transport{
-			Proxy:              nil,
-			DisableCompression: true,
-			DisableKeepAlives:  true,
+			Proxy:                 nil,
+			DisableCompression:    true,
+			DisableKeepAlives:     true,
+			ExpectContinueTimeout: time.Second,
 		},
 		CheckRedirect: func(
 			_ *http.Request,

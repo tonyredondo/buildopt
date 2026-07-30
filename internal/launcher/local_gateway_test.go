@@ -2,13 +2,16 @@ package launcher
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 )
@@ -385,6 +388,240 @@ func TestLocalGatewayCacheFailsClosed(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestLocalGatewayRejectsEveryUpstreamRedirect(t *testing.T) {
+	var redirectedRequests atomic.Int32
+	redirectTarget := httptest.NewServer(http.HandlerFunc(func(
+		writer http.ResponseWriter,
+		_ *http.Request,
+	) {
+		redirectedRequests.Add(1)
+		writer.WriteHeader(http.StatusNoContent)
+	}))
+	defer redirectTarget.Close()
+
+	for _, status := range []int{
+		http.StatusMovedPermanently,
+		http.StatusFound,
+		http.StatusSeeOther,
+		http.StatusTemporaryRedirect,
+		http.StatusPermanentRedirect,
+	} {
+		for _, method := range []string{http.MethodGet, http.MethodPut} {
+			t.Run(fmt.Sprintf("%s-%d", method, status), func(t *testing.T) {
+				upstream := httptest.NewServer(http.HandlerFunc(func(
+					writer http.ResponseWriter,
+					_ *http.Request,
+				) {
+					writer.Header().Set("Location", redirectTarget.URL+"/cache/key")
+					writer.WriteHeader(status)
+				}))
+				defer upstream.Close()
+				gateway := startCacheGatewayForTest(t, upstream.URL)
+				defer gateway.close()
+
+				response := serveGatewayRequestForTest(
+					t,
+					gateway,
+					context.Background(),
+					method,
+					io.NopCloser(strings.NewReader("candidate")),
+				)
+				want := http.StatusNotFound
+				if method == http.MethodPut {
+					want = http.StatusServiceUnavailable
+				}
+				if response.Code != want {
+					t.Fatalf(
+						"redirect response = %d, want %d",
+						response.Code,
+						want,
+					)
+				}
+			})
+		}
+	}
+	if redirectedRequests.Load() != 0 {
+		t.Fatalf(
+			"gateway followed %d credentialed redirects",
+			redirectedRequests.Load(),
+		)
+	}
+}
+
+func TestLocalGatewayNormalizesUpstreamTimeouts(t *testing.T) {
+	release := make(chan struct{})
+	upstream := httptest.NewServer(http.HandlerFunc(func(
+		_ http.ResponseWriter,
+		_ *http.Request,
+	) {
+		<-release
+	}))
+	var releaseOnce sync.Once
+	releaseServer := func() {
+		releaseOnce.Do(func() {
+			close(release)
+			upstream.Close()
+		})
+	}
+	t.Cleanup(releaseServer)
+	gateway := startCacheGatewayForTest(t, upstream.URL)
+	defer gateway.close()
+
+	for _, method := range []string{http.MethodGet, http.MethodPut} {
+		t.Run(method, func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(
+				context.Background(),
+				100*time.Millisecond,
+			)
+			defer cancel()
+			response := serveGatewayRequestForTest(
+				t,
+				gateway,
+				ctx,
+				method,
+				io.NopCloser(strings.NewReader("candidate")),
+			)
+			want := http.StatusNotFound
+			if method == http.MethodPut {
+				want = http.StatusServiceUnavailable
+			}
+			if response.Code != want {
+				t.Fatalf(
+					"timeout response = %d, want %d",
+					response.Code,
+					want,
+				)
+			}
+		})
+	}
+	releaseServer()
+}
+
+func TestLocalGatewayPreservesEarlyPayloadTooLarge(t *testing.T) {
+	var bodyRead atomic.Bool
+	var receivedExpect atomic.Bool
+	upstream := httptest.NewServer(http.HandlerFunc(func(
+		writer http.ResponseWriter,
+		request *http.Request,
+	) {
+		receivedExpect.Store(
+			request.Header.Get("Expect") == "100-continue",
+		)
+		writer.WriteHeader(http.StatusRequestEntityTooLarge)
+	}))
+	defer upstream.Close()
+	gateway := startCacheGatewayForTest(t, upstream.URL)
+	defer gateway.close()
+
+	requestBody := &failOnGatewayBodyRead{read: &bodyRead}
+	request := httptest.NewRequest(
+		http.MethodPut,
+		"/cache/oversized",
+		requestBody,
+	)
+	request = request.WithContext(context.Background())
+	request.ContentLength = 101 << 20
+	request.Header.Set("Expect", "100-continue")
+	request.SetBasicAuth(gateway.username, gateway.password)
+	response := httptest.NewRecorder()
+	gateway.ServeHTTP(response, request)
+	if response.Code != http.StatusRequestEntityTooLarge ||
+		bodyRead.Load() ||
+		!receivedExpect.Load() {
+		t.Fatalf(
+			"early 413 = status %d/bodyRead %t/expect %t",
+			response.Code,
+			bodyRead.Load(),
+			receivedExpect.Load(),
+		)
+	}
+}
+
+func TestLocalGatewayRejectsUnknownCacheMethodWithoutUpstreamContact(
+	t *testing.T,
+) {
+	var requests atomic.Int32
+	upstream := httptest.NewServer(http.HandlerFunc(func(
+		writer http.ResponseWriter,
+		_ *http.Request,
+	) {
+		requests.Add(1)
+		writer.WriteHeader(http.StatusNoContent)
+	}))
+	defer upstream.Close()
+	gateway := startCacheGatewayForTest(t, upstream.URL)
+	defer gateway.close()
+
+	response := serveGatewayRequestForTest(
+		t,
+		gateway,
+		context.Background(),
+		http.MethodPost,
+		nil,
+	)
+	if response.Code != http.StatusMethodNotAllowed ||
+		response.Header().Get("Allow") != "GET, PUT" ||
+		requests.Load() != 0 {
+		t.Fatalf(
+			"unknown method = %d/%q/upstream %d",
+			response.Code,
+			response.Header().Get("Allow"),
+			requests.Load(),
+		)
+	}
+}
+
+func startCacheGatewayForTest(
+	t *testing.T,
+	upstream string,
+) *localGateway {
+	t.Helper()
+	binding, err := newGatewayCacheBinding(
+		upstream,
+		bytes.Repeat([]byte{0x5a}, 32),
+		"sha256:"+strings.Repeat("e", 64),
+		"22222222-2222-4222-8222-222222222222",
+		true,
+		true,
+		time.Now().Add(time.Hour),
+	)
+	if err != nil {
+		t.Fatalf("create cache gateway binding: %v", err)
+	}
+	gateway, err := startLocalGatewayWithCache(binding)
+	if err != nil {
+		t.Fatalf("start cache gateway: %v", err)
+	}
+	return gateway
+}
+
+func serveGatewayRequestForTest(
+	t *testing.T,
+	gateway *localGateway,
+	ctx context.Context,
+	method string,
+	body io.ReadCloser,
+) *httptest.ResponseRecorder {
+	t.Helper()
+	if body == nil {
+		body = http.NoBody
+	}
+	request := httptest.NewRequest(method, "/cache/key", body).WithContext(ctx)
+	request.SetBasicAuth(gateway.username, gateway.password)
+	response := httptest.NewRecorder()
+	gateway.ServeHTTP(response, request)
+	return response
+}
+
+type failOnGatewayBodyRead struct {
+	read *atomic.Bool
+}
+
+func (reader *failOnGatewayBodyRead) Read([]byte) (int, error) {
+	reader.read.Store(true)
+	return 0, errors.New("gateway read a rejected request body")
 }
 
 func TestLocalGatewayChildEnvironment(t *testing.T) {

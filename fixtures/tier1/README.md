@@ -29,10 +29,10 @@ Run all locally available rows:
 ```
 
 The check runs each DSL twice through Gradle TestKit and twice through a
-temporary real Wrapper repository for Gradle 8.14.3 and 9.6.1. It requires the
-locked JDK 21 and uses a detected Java 17 installation when present. JDK 25 is
-left unproven until its lock-owned runtime is provisioned; missing runtimes
-never inherit another row's result.
+temporary real Wrapper repository for Gradle 8.14.3 and 9.6.1. It resolves
+the required JDK 17 installation and the locked JDK 21 and 25 runtimes. JDK 25
+is supported by Gradle 9.6.1 only; missing runtimes never inherit another
+row's result.
 
 Run the cache-policy conformance separately:
 

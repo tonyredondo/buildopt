@@ -2,7 +2,7 @@
 set -euo pipefail
 
 buildopt_usage() {
-    printf 'usage: %s [--toolchain <temurin-jdk-21|go|protoc|buf|shellcheck|actionlint|cosign|syft>] -- command [args...]\n' "$0"
+    printf 'usage: %s [--toolchain <temurin-jdk-21|temurin-jdk-25|go|protoc|buf|shellcheck|actionlint|cosign|syft>] -- command [args...]\n' "$0"
 }
 
 buildopt_toolchain=temurin-jdk-21
@@ -20,7 +20,8 @@ if [[ "${1:-}" == "--toolchain" ]]; then
 fi
 
 case "${buildopt_toolchain}" in
-    actionlint | buf | cosign | go | protoc | shellcheck | syft | temurin-jdk-21) ;;
+    actionlint | buf | cosign | go | protoc | shellcheck | syft | \
+        temurin-jdk-21 | temurin-jdk-25) ;;
     *)
         buildopt_usage >&2
         exit 64
@@ -151,11 +152,12 @@ case "${buildopt_id}" in
             exit 70
         fi
         ;;
-    temurin-jdk-21)
+    temurin-jdk-21 | temurin-jdk-25)
         if [[ "${buildopt_provider}" != "eclipse-adoptium" ]] ||
             [[ "${buildopt_kind}" != "tar.gz" ]] ||
-            [[ ! "${buildopt_version}" =~ ^21([.]|$) ]]; then
-            printf 'malformed JDK 21 toolchain identity\n' >&2
+            [[ ! "${buildopt_version}" =~ ^${buildopt_id##*-}([.]|$) ]]; then
+            printf 'malformed JDK toolchain identity: %s\n' \
+                "${buildopt_id}" >&2
             exit 70
         fi
         ;;
@@ -349,7 +351,7 @@ case "${buildopt_id}" in
             exit 1
         fi
         ;;
-    temurin-jdk-21)
+    temurin-jdk-21 | temurin-jdk-25)
         if [[ ! -x "${buildopt_tool_home}/bin/java" ]] ||
             [[ ! -x "${buildopt_tool_home}/bin/javac" ]]; then
             printf 'provisioned Java binaries are unavailable: %s\n' \

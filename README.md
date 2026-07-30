@@ -78,6 +78,7 @@ From the repository root:
 ./dev/check-data-lifecycle
 ./dev/check-tier1-fixtures
 ./dev/check-tier-one-policy
+./dev/check-tier-one-cache-conformance
 ./dev/check-managed-l1
 ./dev/check-shared-storage
 ./dev/check-pending-commit

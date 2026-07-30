@@ -61,11 +61,8 @@ public final class TierOnePolicyTestKit {
                 Path project = testRoot.resolve("tier1").resolve(dsl);
                 Path initScript = writeInitScript(testRoot, pluginJar);
                 runSafePolicy(project, initScript, gradleHome, dsl);
-                if (gradleHome.getName().equals("gradle-9.6.1")
-                        && expectedJava == 21) {
-                    runModifiedBuiltIn(project, initScript, gradleHome, dsl);
-                    runUnknownTransform(project, initScript, gradleHome, dsl);
-                }
+                runModifiedBuiltIn(project, initScript, gradleHome, dsl);
+                runUnknownTransform(project, initScript, gradleHome, dsl);
             }
         } finally {
             deleteTree(testRoot);

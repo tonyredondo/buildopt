@@ -46,9 +46,32 @@ buildopt_archive="${buildopt_test_root}/fake-temurin-21.tar.gz"
 tar -czf "${buildopt_archive}" -C "${buildopt_payload_root}" fake-temurin-21
 buildopt_sha256=$(sha256sum "${buildopt_archive}" | awk '{print $1}')
 
+buildopt_fake_jdk_25="${buildopt_payload_root}/fake-temurin-25"
+mkdir -p "${buildopt_fake_jdk_25}/bin"
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf '\''openjdk version "25.0.3" 2026-04-21\n'\'' >&2' \
+    'printf '\''OpenJDK Runtime Environment Temurin-25.0.3+9\n'\'' >&2' \
+    >"${buildopt_fake_jdk_25}/bin/java"
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf '\''javac 25.0.3\n'\'' >&2' \
+    >"${buildopt_fake_jdk_25}/bin/javac"
+printf '%s\n' \
+    'JAVA_VERSION="25.0.3"' \
+    'IMPLEMENTOR="Eclipse Adoptium"' \
+    >"${buildopt_fake_jdk_25}/release"
+chmod +x \
+    "${buildopt_fake_jdk_25}/bin/java" \
+    "${buildopt_fake_jdk_25}/bin/javac"
+buildopt_archive_25="${buildopt_test_root}/fake-temurin-25.tar.gz"
+tar -czf "${buildopt_archive_25}" -C "${buildopt_payload_root}" fake-temurin-25
+buildopt_sha256_25=$(sha256sum "${buildopt_archive_25}" | awk '{print $1}')
+
 buildopt_lock="${buildopt_test_root}/toolchains.lock.json"
 jq -n \
     --arg buildopt_sha256 "${buildopt_sha256}" \
+    --arg buildopt_sha256_25 "${buildopt_sha256_25}" \
     '{
         schemaVersion: "buildopt.dev/toolchains-lock/v1",
         platforms: [
@@ -69,6 +92,17 @@ jq -n \
                 url: "https://example.invalid/fake-temurin-21.tar.gz",
                 sha256: $buildopt_sha256,
                 requiredBy: ["ENV-003"]
+            },
+            {
+                id: "temurin-jdk-25",
+                version: "25.0.3+9",
+                adoption: "required",
+                kind: "tar.gz",
+                platform: "linux-amd64",
+                provider: "eclipse-adoptium",
+                url: "https://example.invalid/fake-temurin-25.tar.gz",
+                sha256: $buildopt_sha256_25,
+                requiredBy: ["A0-G01"]
             }
         ]
     }' >"${buildopt_lock}"
@@ -206,6 +240,38 @@ if [[ "${buildopt_project_java}" != *'21.0.12'* ]] ||
     exit 1
 fi
 
+buildopt_jdk_25_output=$(
+    BUILDOPT_TEST_ARCHIVE="${buildopt_archive_25}" \
+    BUILDOPT_TEST_CURL_COUNT="${buildopt_curl_count}" \
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    PATH="${buildopt_fake_host_bin}:${PATH}" \
+        "${buildopt_bootstrap}" --toolchain temurin-jdk-25
+)
+if [[ "${buildopt_jdk_25_output}" != \
+    *"Provisioned temurin-jdk-25 25.0.3+9"* ]] ||
+    [[ "$(<"${buildopt_curl_count}")" != "2" ]]; then
+    printf 'bootstrap did not provision the locked JDK 25\n' >&2
+    exit 1
+fi
+buildopt_install_dir_25="${buildopt_tools_root}/toolchains/temurin-jdk-25-${buildopt_sha256_25:0:16}"
+buildopt_project_java_25=$(
+    BUILDOPT_TOOLCHAINS_LOCK_FILE="${buildopt_lock}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    PATH="${buildopt_global_bin}:${PATH}" \
+        "${buildopt_run}" \
+        --toolchain temurin-jdk-25 \
+        -- \
+        java -version 2>&1
+)
+if [[ ! -x "${buildopt_install_dir_25}/bin/java" ]] ||
+    [[ ! -x "${buildopt_install_dir_25}/bin/javac" ]] ||
+    [[ "${buildopt_project_java_25}" != *'25.0.3'* ]] ||
+    [[ "${buildopt_project_java_25}" == *'global'* ]]; then
+    printf 'dev/run did not isolate the locked JDK 25\n' >&2
+    exit 1
+fi
+
 buildopt_probe="${buildopt_test_root}/probe-environment"
 # The generated probe expands JAVA_HOME inside the dev/run child.
 # shellcheck disable=SC2016
@@ -305,4 +371,4 @@ if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
     exit 1
 fi
 
-printf 'ENV-003 JDK toolchain tests OK: checksum, idempotency, isolation, and exit propagation\n'
+printf 'ENV-003 JDK toolchain tests OK: JDK 21/25 checksum, idempotency, isolation, and exit propagation\n'

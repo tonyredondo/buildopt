@@ -25,12 +25,11 @@ The versioned adapter is enabled only on Linux AMD64 for the rows actually
 executed by the repository:
 
 - Gradle 8.14.3 on JDK 17 or 21;
-- Gradle 9.6.1 on JDK 17 or 21;
+- Gradle 9.6.1 on JDK 17, 21, or 25;
 - Kotlin or Groovy DSL.
 
-The target-only JDK 25 rows and every other Gradle/JDK/platform combination
-disable the managed cache for that invocation. No row inherits another
-version's internal adapter.
+Every other Gradle/JDK/platform combination disables the managed cache for
+that invocation. No row inherits another version's internal adapter.
 
 The adapter inventories Gradle's complete project transform registry through
 the exact 8.14.3/9.6.1 internal contract. The v1 transform allowlist is empty.
@@ -71,17 +70,16 @@ machine-readable closed allowlist. Run:
 ```
 
 The checker validates the exact document and packaged plugin marker, then
-executes both DSL fixtures on all eight proven Gradle/JDK rows with isolated
+executes both DSL fixtures on all ten proven Gradle/JDK/DSL rows with isolated
 TestKit homes and Configuration Cache. It proves source-set `compileJava` and
 `compileTestJava` replay from cache while a custom cacheable task executes
-again. All four Gradle 9.6.1 rows also execute `Test` twice and prove it cannot
+again. All six Gradle 9.6.1 rows also execute `Test` twice and prove it cannot
 replay without a grant. Gradle 8.14.3 retains strict warning failure instead
 of suppressing its framework-autoload deprecation in the empty-test fixture.
-On the golden row the checker additionally proves that an added action rejects
-the built-in and that one unknown artifact transform disables the otherwise
-allowed compile task and intentionally prevents Configuration Cache reuse for
-the fail-closed build.
+Every row also proves that an added action rejects the built-in and that one
+unknown artifact transform disables the otherwise allowed compile task and
+intentionally prevents Configuration Cache reuse for the fail-closed build.
 
-This block does not close `A0-G01` because HTTP cache semantics and the backend
-are not implemented, and does not close `A0-G08` because authenticated
+`A0-G01` composes this default-deny matrix with the separate HTTP/backend fault
+checker. This block alone does not close `A0-G08` because authenticated
 `TestCacheGrant` plus root/composite coverage remain later integration work.

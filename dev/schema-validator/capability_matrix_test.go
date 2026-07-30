@@ -209,19 +209,17 @@ func validateTierOneCombinations(
 	executed := 0
 	for _, combination := range combinations {
 		if combination.JDK == 25 {
-			if combination.Profile != "UNTESTED" {
-				t.Errorf("unexecuted JDK 25 combination claims profile: %+v", combination)
+			if combination.Profile != "TIER_ONE_CACHE_PROVEN" {
+				t.Errorf("JDK 25 combination has wrong profile: %+v", combination)
 			}
-			continue
-		}
-		executed++
-		if combination != golden && combination != correlation &&
+		} else if combination != golden && combination != correlation &&
 			combination.Profile != "TIER_ONE_FIXTURE_PROVEN" {
 			t.Errorf("executed fixture combination has wrong profile: %+v", combination)
 		}
+		executed++
 	}
-	if executed != 8 {
-		t.Errorf("executed Tier 1 rows = %d, want 8", executed)
+	if executed != 10 {
+		t.Errorf("executed Tier 1 rows = %d, want 10", executed)
 	}
 	fixture := findCapability(
 		profiles["TIER_ONE_FIXTURE_PROVEN"].Capabilities,
@@ -229,6 +227,29 @@ func validateTierOneCombinations(
 	)
 	if fixture.Status != "EXACT" {
 		t.Errorf("fixture Configuration Cache capability: %+v", fixture)
+	}
+	jdk25 := profiles["TIER_ONE_CACHE_PROVEN"]
+	jdk25ConfigurationCache := findCapability(
+		jdk25.Capabilities,
+		"CONFIGURATION_CACHE_REUSE",
+	)
+	if jdk25ConfigurationCache.Status != "EXACT" ||
+		!slices.Contains(
+			jdk25ConfigurationCache.Evidence,
+			"dev/check-tier-one-cache-conformance",
+		) {
+		t.Errorf(
+			"JDK 25 Tier 1 cache capability: %+v",
+			jdk25ConfigurationCache,
+		)
+	}
+	jdk25ManagedShared := findCapability(
+		jdk25.Capabilities,
+		"MANAGED_SHARED_CACHE",
+	)
+	if jdk25ManagedShared.Status != "UNAVAILABLE" ||
+		jdk25ManagedShared.Fallback != "GRADLE_BASELINE" {
+		t.Errorf("JDK 25 managed Shared capability: %+v", jdk25ManagedShared)
 	}
 	taskPut := findCapability(
 		profiles[golden.Profile].Capabilities,
@@ -244,7 +265,8 @@ func validateTierOneCombinations(
 			"GRADLE_BOOTSTRAP_CACHE",
 		)
 		wantBootstrapStatus := "EXACT"
-		if profileID == "UNTESTED" {
+		if profileID == "UNTESTED" ||
+			profileID == "TIER_ONE_CACHE_PROVEN" {
 			wantBootstrapStatus = "UNAVAILABLE"
 		}
 		if bootstrap.Status != wantBootstrapStatus ||
@@ -260,7 +282,8 @@ func validateTierOneCombinations(
 			"PATCH_BUNDLE_APPLIER",
 		)
 		wantStatus := "EXACT"
-		if profileID == "UNTESTED" {
+		if profileID == "UNTESTED" ||
+			profileID == "TIER_ONE_CACHE_PROVEN" {
 			wantStatus = "UNAVAILABLE"
 		}
 		if patcher.Status != wantStatus ||

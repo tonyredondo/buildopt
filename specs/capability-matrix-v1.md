@@ -14,10 +14,11 @@ Tier 1 is Linux x86-64 with:
 
 The implementation golden lane remains Gradle 9.6.1/JDK 21/Kotlin DSL. The
 correlation spike additionally exercised Gradle 8.14.3/JDK 21/Kotlin DSL.
-`F0-040` executes all eight JDK 17/21 rows with the packaged product plugin,
-custom task, artifact transform, build cache, and Configuration Cache through
-both TestKit and a real Wrapper. The two JDK 25 rows remain `UNTESTED`; a
-target label is not evidence.
+`F0-040` executes all ten rows with the packaged product plugin, custom task,
+artifact transform, build cache, and Configuration Cache through both TestKit
+and a real Wrapper. `A0-G01` additionally proves the Tier 1 HTTP cache
+compatibility and fault matrix on every row, including both locked JDK 25
+runtimes.
 
 ## Status contract
 
@@ -40,7 +41,7 @@ unattributed; the fallback aborts the whole pending attempt.
 
 ## Machine-readable matrix
 
-[`capability-matrix-v1.json`](./capability-matrix-v1.json) defines four
+[`capability-matrix-v1.json`](./capability-matrix-v1.json) defines five
 profiles and all ten Tier 1 rows. Profile reuse only deduplicates identical
 status records; each combination remains explicit. `A0-007` adds
 `GRADLE_BOOTSTRAP_CACHE` without promoting unrelated Shared-cache gates.
@@ -52,9 +53,9 @@ Run:
 ```
 
 The checker requires the exact Tier 1 Cartesian product, validates every
-status/method/reason/fallback/evidence combination, prevents the unexecuted
-JDK 25 rows from claiming a capability, and cross-checks fixture, golden-lane,
-and correlation evidence. `F0-040` itself is rerun with:
+status/method/reason/fallback/evidence combination, preserves the narrower JDK
+25 evidence boundary, and cross-checks fixture, golden-lane, and correlation
+evidence. `F0-040` itself is rerun with:
 
 ```bash
 ./dev/check-tier1-fixtures
@@ -63,7 +64,7 @@ and correlation evidence. `F0-040` itself is rerun with:
 Loading the product plugin without a launcher does not claim an authenticated
 handshake. Only the golden lane retains that stronger capability.
 
-`A0-002` adds exact default-deny policy evidence to all eight JDK 17/21 rows:
+`A0-002` adds exact default-deny policy evidence to all ten rows:
 core source-set `JavaCompile` is the only task allowlist entry, while `Test`,
 custom tasks, modified actions, and transforms fail closed. `A0-003` adds a
 native managed L1 on the same rows, including generation rotation,
@@ -75,13 +76,17 @@ policy, cumulative revocation state, routable gateway/server context, and a
 golden-row Gradle `HttpBuildCache` PUT/GET. The matrix still reports
 `MANAGED_SHARED_CACHE` as `UNAVAILABLE` until the complete A0 HTTP
 compatibility/fault matrix and production commit/abort composition close; one
-golden integration row does not promote every compatibility row.
+golden integration row does not promote every compatibility row. `A0-G01`
+then proves hit, miss, PUT, early 413, redirect, timeout, corruption, retry,
+and unknown-input behavior across all ten rows. Production commit/abort
+composition remains open, so `MANAGED_SHARED_CACHE` stays `UNAVAILABLE`.
 
 `A0-007` makes `GRADLE_BOOTSTRAP_CACHE` exact for all eight JDK 17/21 rows.
 Each real Wrapper row consumes an offline read-only dependency snapshot,
 retains an independently checksum-verified distribution in a runner-private
-writable home, and reuses it after the source archive is removed. The
-unexecuted JDK 25 rows remain `UNAVAILABLE` and preserve the Gradle baseline.
+writable home, and reuses it after the source archive is removed. The JDK 25
+profile remains `UNAVAILABLE` for this separate capability because those two
+bootstrap-cache rows have not run.
 
 `SPK-002` leaves `JVM_AGENT` unavailable in every profile. Its real-daemon
 prototype sees class loads rather than method access or task attribution, so
@@ -98,5 +103,6 @@ retains the Gradle baseline.
 profile because its signed Java/Git boundary is independent of the Gradle/DSL
 observation row. The two recipe fixtures pass strict parse, JCS/Ed25519, path
 graph, pre/postimage, idempotency, rollback, and recovery checks on both real
-runtimes. The unexecuted JDK 25 profile remains `UNAVAILABLE`; every
-application failure retains the download-only fallback.
+runtimes. The JDK 25 profile remains `UNAVAILABLE` for patch application
+because its Java patcher corpus has not run; every application failure retains
+the download-only fallback.

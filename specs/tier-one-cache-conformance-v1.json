@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "buildopt.specs/tier-one-cache-conformance/v1",
+  "gateId": "A0-G01",
+  "platform": "linux-amd64",
+  "matrix": [
+    {"gradle": "8.14.3", "jdks": [17, 21], "dsls": ["GROOVY", "KOTLIN"]},
+    {"gradle": "9.6.1", "jdks": [17, 21, 25], "dsls": ["GROOVY", "KOTLIN"]}
+  ],
+  "backend": {
+    "getHit": 200,
+    "getMiss": 404,
+    "putAccepted": [200, 201],
+    "knownOversize": {
+      "status": 413,
+      "beforeBody": true,
+      "preservesExistingObject": true
+    },
+    "corruptCommittedObject": "VERIFIED_404_AND_QUARANTINE",
+    "unknownMethod": {
+      "status": 405,
+      "allow": "GET, PUT"
+    },
+    "exactRetry": "BYTE_IDENTICAL_IDEMPOTENT",
+    "concurrentCollision": "CONTENT_ADDRESSED_SINGLE_OBJECT"
+  },
+  "managedGateway": {
+    "redirectPolicy": {
+      "statuses": [301, 302, 303, 307, 308],
+      "followed": false,
+      "getResult": 404,
+      "putResult": 503
+    },
+    "timeoutPolicy": {
+      "getResult": 404,
+      "putResult": 503
+    },
+    "expectContinueTimeoutMs": 1000,
+    "early413Preserved": true,
+    "unknownMethodWithoutUpstream": 405,
+    "credentialedCrossOriginRedirects": false
+  },
+  "gradleClient": {
+    "implementation": "org.gradle.caching.http.HttpBuildCache",
+    "allMatrixRows": true,
+    "scenarios": [
+      "MISS_THEN_PUT",
+      "REMOTE_HIT",
+      "EARLY_413_BASELINE_CONTINUES",
+      "PRIOR_OBJECT_SURVIVES_413",
+      "NORMALIZED_READ_MISS",
+      "NORMALIZED_WRITE_FAILURE_BASELINE_CONTINUES"
+    ],
+    "configurationCacheReuseOnHit": true,
+    "localWriterCacheDisabled": true,
+    "gatewayCredentialAbsentFromOutput": true
+  },
+  "defaultDeny": {
+    "allMatrixRows": true,
+    "modifiedBuiltIn": "DO_NOT_CACHE",
+    "customCacheableTask": "DO_NOT_CACHE",
+    "unknownArtifactTransform": "DISABLE_MANAGED_CACHE_INVOCATION"
+  },
+  "boundaries": {
+    "closes": ["A0-G01"],
+    "doesNotClose": ["A0-G02", "A0-G03", "A0-G04", "A0-G05", "A0-G08"],
+    "directRemoteMode": "OUTSIDE_PRIVATE_BETA_MANAGED_CONFORMANCE",
+    "productionCommitAbortComposition": "A0-G02/A0-G05"
+  }
+}

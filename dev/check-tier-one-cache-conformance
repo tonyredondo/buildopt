@@ -1,0 +1,260 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/tier-one-cache-conformance-v1.json"
+
+for buildopt_command in awk find git jq mkdir readlink; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Tier 1 conformance command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+cd -- "${buildopt_repo_root}"
+buildopt_before_status=$(
+    git status --porcelain=v1 --untracked-files=all
+)
+
+if ! jq -e '
+    keys == [
+        "backend",
+        "boundaries",
+        "defaultDeny",
+        "gateId",
+        "gradleClient",
+        "managedGateway",
+        "matrix",
+        "platform",
+        "schemaVersion"
+    ] and
+    .schemaVersion == "buildopt.specs/tier-one-cache-conformance/v1" and
+    .gateId == "A0-G01" and
+    .platform == "linux-amd64" and
+    .matrix == [
+        {
+            gradle: "8.14.3",
+            jdks: [17, 21],
+            dsls: ["GROOVY", "KOTLIN"]
+        },
+        {
+            gradle: "9.6.1",
+            jdks: [17, 21, 25],
+            dsls: ["GROOVY", "KOTLIN"]
+        }
+    ] and
+    .backend == {
+        getHit: 200,
+        getMiss: 404,
+        putAccepted: [200, 201],
+        knownOversize: {
+            status: 413,
+            beforeBody: true,
+            preservesExistingObject: true
+        },
+        corruptCommittedObject: "VERIFIED_404_AND_QUARANTINE",
+        unknownMethod: {
+            status: 405,
+            allow: "GET, PUT"
+        },
+        exactRetry: "BYTE_IDENTICAL_IDEMPOTENT",
+        concurrentCollision: "CONTENT_ADDRESSED_SINGLE_OBJECT"
+    } and
+    .managedGateway.redirectPolicy == {
+        statuses: [301, 302, 303, 307, 308],
+        followed: false,
+        getResult: 404,
+        putResult: 503
+    } and
+    .managedGateway.timeoutPolicy == {
+        getResult: 404,
+        putResult: 503
+    } and
+    .managedGateway.expectContinueTimeoutMs == 1000 and
+    .managedGateway.early413Preserved == true and
+    .managedGateway.unknownMethodWithoutUpstream == 405 and
+    .managedGateway.credentialedCrossOriginRedirects == false and
+    .gradleClient.implementation ==
+        "org.gradle.caching.http.HttpBuildCache" and
+    .gradleClient.allMatrixRows == true and
+    .gradleClient.scenarios == [
+        "MISS_THEN_PUT",
+        "REMOTE_HIT",
+        "EARLY_413_BASELINE_CONTINUES",
+        "PRIOR_OBJECT_SURVIVES_413",
+        "NORMALIZED_READ_MISS",
+        "NORMALIZED_WRITE_FAILURE_BASELINE_CONTINUES"
+    ] and
+    .gradleClient.configurationCacheReuseOnHit == true and
+    .gradleClient.localWriterCacheDisabled == true and
+    .gradleClient.gatewayCredentialAbsentFromOutput == true and
+    .defaultDeny == {
+        allMatrixRows: true,
+        modifiedBuiltIn: "DO_NOT_CACHE",
+        customCacheableTask: "DO_NOT_CACHE",
+        unknownArtifactTransform:
+            "DISABLE_MANAGED_CACHE_INVOCATION"
+    } and
+    .boundaries.closes == ["A0-G01"] and
+    .boundaries.doesNotClose == [
+        "A0-G02",
+        "A0-G03",
+        "A0-G04",
+        "A0-G05",
+        "A0-G08"
+    ]
+' "${buildopt_contract}" >/dev/null; then
+    printf 'Tier 1 cache conformance contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_required_files=(
+    "internal/launcher/local_gateway.go"
+    "internal/launcher/local_gateway_test.go"
+    "internal/sharedcache/http.go"
+    "internal/sharedcache/http_test.go"
+    "jvm/gradle-plugin/src/testKit/java/dev/buildopt/gradle/TierOneCacheConformanceTestKit.java"
+    "jvm/gradle-plugin/src/testKit/java/dev/buildopt/gradle/TierOnePolicyTestKit.java"
+    "specs/tier-one-cache-conformance-v1.md"
+)
+for buildopt_relative in "${buildopt_required_files[@]}"; do
+    if [[ ! -f "${buildopt_repo_root}/${buildopt_relative}" ]]; then
+        printf 'missing Tier 1 conformance file: %s\n' \
+            "${buildopt_relative}" >&2
+        exit 1
+    fi
+done
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 \
+    ./internal/sharedcache \
+    ./internal/launcher \
+    -run \
+    'Test(BoundHTTPHandler|BlobStore|LocalGateway(RoutesOnlyCurrentAuthenticatedCacheContext|CacheFailsClosed|RejectsEveryUpstreamRedirect|NormalizesUpstreamTimeouts|PreservesEarlyPayloadTooLarge|RejectsUnknownCacheMethod))'
+
+"${buildopt_script_dir}/check-tier1-fixtures"
+"${buildopt_script_dir}/check-tier-one-policy"
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p -- "${GRADLE_USER_HOME}"
+
+buildopt_gradle_9_home=$(
+    find \
+        "${GRADLE_USER_HOME}/wrapper/dists/gradle-9.6.1-bin" \
+        -type d \
+        -path '*/gradle-9.6.1' \
+        -print \
+        -quit
+)
+buildopt_gradle_8_home="${buildopt_repo_root}/.tools/gradle-compat/gradle-8.14.3"
+if [[ -z "${buildopt_gradle_9_home}" ||
+    ! -x "${buildopt_gradle_9_home}/bin/gradle" ||
+    ! -x "${buildopt_gradle_8_home}/bin/gradle" ]]; then
+    printf 'both pinned Gradle distributions must be provisioned\n' >&2
+    exit 1
+fi
+buildopt_gradle_9_home=$(readlink -f "${buildopt_gradle_9_home}")
+buildopt_gradle_8_home=$(readlink -f "${buildopt_gradle_8_home}")
+
+buildopt_java_17=$(readlink -f "$(command -v java)")
+buildopt_java_17_home=$(cd -- "$(dirname -- "${buildopt_java_17}")/.." && pwd)
+buildopt_java_17_major=$(
+    "${buildopt_java_17}" -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.version = / {
+                split($2, version, ".")
+                print version[1]
+                exit
+            }
+        '
+)
+if [[ "${buildopt_java_17_major}" != "17" ]]; then
+    printf 'A0-G01 requires the host JDK 17 runtime\n' >&2
+    exit 1
+fi
+buildopt_java_21_home=$(
+    "${buildopt_script_dir}/run" -- \
+        java -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.home = / {
+                print $2
+                exit
+            }
+        '
+)
+buildopt_java_25_home=$(
+    "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+        java -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.home = / {
+                print $2
+                exit
+            }
+        '
+)
+for buildopt_java_home in \
+    "${buildopt_java_17_home}" \
+    "${buildopt_java_21_home}" \
+    "${buildopt_java_25_home}"; do
+    if [[ ! -x "${buildopt_java_home}/bin/java" ]]; then
+        printf 'Tier 1 JDK home is unavailable: %s\n' \
+            "${buildopt_java_home}" >&2
+        exit 1
+    fi
+done
+
+buildopt_gradle_homes=("${buildopt_gradle_8_home}" "${buildopt_gradle_9_home}")
+buildopt_gradle_versions=("8.14.3" "9.6.1")
+buildopt_java_majors=(17 21 25)
+buildopt_java_homes=(
+    "${buildopt_java_17_home}"
+    "${buildopt_java_21_home}"
+    "${buildopt_java_25_home}"
+)
+buildopt_rows=0
+for buildopt_gradle_index in "${!buildopt_gradle_homes[@]}"; do
+    for buildopt_java_index in "${!buildopt_java_majors[@]}"; do
+        if [[ "${buildopt_gradle_versions[buildopt_gradle_index]}" == "8.14.3" &&
+            "${buildopt_java_majors[buildopt_java_index]}" == "25" ]]; then
+            continue
+        fi
+        JAVA_HOME="${buildopt_java_homes[buildopt_java_index]}" \
+        PATH="${buildopt_java_homes[buildopt_java_index]}/bin:${PATH}" \
+            "${buildopt_script_dir}/run" -- \
+                "${buildopt_repo_root}/gradlew" \
+                --no-daemon \
+                --offline \
+                --no-configuration-cache \
+                --stacktrace \
+                --warning-mode=fail \
+                "-Dorg.gradle.java.installations.paths=${buildopt_java_homes[buildopt_java_index]}" \
+                :jvm:gradle-plugin:tierOneCacheConformanceTestKit \
+                "-PbuildoptTierOneJava=${buildopt_java_majors[buildopt_java_index]}" \
+                "-PbuildoptTierOneGradleHome=${buildopt_gradle_homes[buildopt_gradle_index]}"
+        ((buildopt_rows += 2))
+    done
+done
+if ((buildopt_rows != 10)); then
+    printf 'Tier 1 HTTP matrix executed %d rows, want 10\n' \
+        "${buildopt_rows}" >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'Tier 1 cache conformance changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'A0-G01 Tier 1 cache conformance OK: 10 Gradle/JDK/DSL rows, hit/miss/PUT/413, redirect/timeout/corruption normalization, and default-deny unknowns\n'

@@ -59,9 +59,9 @@
           "id": "MANAGED_SHARED_CACHE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "locally authenticated policy, revocation, and routed Shared access are proven on the golden row, but the complete A0 HTTP fault matrix and production commit/abort composition remain open",
+          "reason": "locally authenticated policy, revocation, routed Shared access, and the complete A0 HTTP fault matrix are proven, but production commit/abort composition remains open",
           "fallback": "GRADLE_BASELINE",
-          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
+          "evidence": ["dev/check-tier-one-cache-conformance", "dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
         },
         {
           "id": "GRADLE_BOOTSTRAP_CACHE",
@@ -152,9 +152,9 @@
           "id": "MANAGED_SHARED_CACHE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "locally authenticated policy, revocation, and routed Shared access are proven on the golden row, but the complete A0 HTTP fault matrix and production commit/abort composition remain open",
+          "reason": "locally authenticated policy, revocation, routed Shared access, and the complete A0 HTTP fault matrix are proven, but production commit/abort composition remains open",
           "fallback": "GRADLE_BASELINE",
-          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
+          "evidence": ["dev/check-tier-one-cache-conformance", "dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
         },
         {
           "id": "GRADLE_BOOTSTRAP_CACHE",
@@ -245,9 +245,9 @@
           "id": "MANAGED_SHARED_CACHE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "locally authenticated policy, revocation, and routed Shared access are proven on the golden row, but the complete A0 HTTP fault matrix and production commit/abort composition remain open",
+          "reason": "locally authenticated policy, revocation, routed Shared access, and the complete A0 HTTP fault matrix are proven, but production commit/abort composition remains open",
           "fallback": "GRADLE_BASELINE",
-          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
+          "evidence": ["dev/check-tier-one-cache-conformance", "dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
         },
         {
           "id": "GRADLE_BOOTSTRAP_CACHE",
@@ -278,6 +278,99 @@
           "status": "EXACT",
           "method": "strict Java 17 verification and detached real-Git worktree application",
           "reason": "",
+          "fallback": "DOWNLOAD_BUNDLE_ONLY",
+          "evidence": ["specs/patch-bundle-v1.md", "dev/check-patch-bundle-applier"]
+        }
+      ]
+    },
+    {
+      "id": "TIER_ONE_CACHE_PROVEN",
+      "capabilities": [
+        {
+          "id": "PLUGIN_HANDSHAKE",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "the fixture loads the product plugin without an authenticated launcher rendezvous",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": ["dev/check-tier1-fixtures"]
+        },
+        {
+          "id": "CONFIGURATION_CACHE_REUSE",
+          "status": "EXACT",
+          "method": "TestKit, real Wrapper, and HttpBuildCache replay with the product plugin loaded",
+          "reason": "",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": ["dev/check-tier-one-cache-conformance", "dev/check-tier1-fixtures"]
+        },
+        {
+          "id": "TASK_OUTCOMES",
+          "status": "EXACT",
+          "method": "TestKit task outcome and deterministic build-cache replay",
+          "reason": "",
+          "fallback": "OBSERVE",
+          "evidence": ["dev/check-tier1-fixtures"]
+        },
+        {
+          "id": "TASK_TO_NATIVE_PUT",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "the Tier 1 fixture does not expose native cache PUT attribution",
+          "fallback": "ABORT_PENDING",
+          "evidence": ["dev/check-tier1-fixtures"]
+        },
+        {
+          "id": "CRITICAL_PATH",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "the critical-path adapter is not executed by this fixture",
+          "fallback": "OBSERVE",
+          "evidence": []
+        },
+        {
+          "id": "CACHE_MISS_REASONS",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "no stable detailed miss-cause adapter is proven",
+          "fallback": "OBSERVE",
+          "evidence": []
+        },
+        {
+          "id": "MANAGED_SHARED_CACHE",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "locally authenticated policy, revocation, routed Shared access, and the complete A0 HTTP fault matrix are proven, but production commit/abort composition remains open",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": ["dev/check-tier-one-cache-conformance", "dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
+        },
+        {
+          "id": "GRADLE_BOOTSTRAP_CACHE",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "the JDK 25 bootstrap row has not been executed",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": ["specs/gradle-bootstrap-cache-v1.md"]
+        },
+        {
+          "id": "JVM_AGENT",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "the prototype observes class loads, not method access or task attribution",
+          "fallback": "ABORT_PENDING",
+          "evidence": ["specs/jvm-agent-spike-v1.md", "dev/check-jvm-agent-spike"]
+        },
+        {
+          "id": "HERMETIC_PRODUCER",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "clock, randomness, environment, and kernel policy gaps prevent complete producer coverage",
+          "fallback": "GRADLE_BASELINE",
+          "evidence": ["specs/hermetic-helper-spike-v1.md", "dev/check-hermetic-helper-spike"]
+        },
+        {
+          "id": "PATCH_BUNDLE_APPLIER",
+          "status": "UNAVAILABLE",
+          "method": "",
+          "reason": "the JDK 25 runtime combination has not executed the Java patcher corpus",
           "fallback": "DOWNLOAD_BUNDLE_ONLY",
           "evidence": ["specs/patch-bundle-v1.md", "dev/check-patch-bundle-applier"]
         }
@@ -386,7 +479,7 @@
     {"gradle": "9.6.1", "jdk": 17, "dsl": "KOTLIN", "profile": "TIER_ONE_FIXTURE_PROVEN"},
     {"gradle": "9.6.1", "jdk": 21, "dsl": "GROOVY", "profile": "TIER_ONE_FIXTURE_PROVEN"},
     {"gradle": "9.6.1", "jdk": 21, "dsl": "KOTLIN", "profile": "GOLDEN_PROVEN"},
-    {"gradle": "9.6.1", "jdk": 25, "dsl": "GROOVY", "profile": "UNTESTED"},
-    {"gradle": "9.6.1", "jdk": 25, "dsl": "KOTLIN", "profile": "UNTESTED"}
+    {"gradle": "9.6.1", "jdk": 25, "dsl": "GROOVY", "profile": "TIER_ONE_CACHE_PROVEN"},
+    {"gradle": "9.6.1", "jdk": 25, "dsl": "KOTLIN", "profile": "TIER_ONE_CACHE_PROVEN"}
   ]
 }

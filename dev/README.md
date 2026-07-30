@@ -651,13 +651,13 @@ Wrapper:
 ```
 
 The checker executes Kotlin and Groovy DSL on Gradle 8.14.3 and 9.6.1 with
-JDK 17 and the locked JDK 21. Every row loads the packaged product plugin,
+JDK 17 and the locked JDK 21, plus Gradle 9.6.1 with the locked JDK 25. Every
+row loads the packaged product plugin,
 runs a Java 17 cacheable custom task and artifact transform, then proves build
 cache and Configuration Cache reuse. Distribution archives are
-checksum-pinned and temporary Wrapper/user homes are isolated. JDK 25 remains
-explicitly unproven until its lock-owned runtime is provisioned.
+checksum-pinned and temporary Wrapper/user homes are isolated.
 
-Run the `A0-002` restriction-only policy across the same eight proven rows:
+Run the `A0-002` restriction-only policy across the same ten proven rows:
 
 ```bash
 ./dev/check-tier-one-policy
@@ -672,6 +672,21 @@ because its framework autoload emits a deprecation under the deliberately
 strict warning gate.
 The policy plugin never configures or enables a cache; `A0-003` owns that
 integration.
+
+Run the closed `A0-G01` HTTP cache compatibility and fault matrix across the
+same ten rows:
+
+```bash
+./dev/check-tier-one-cache-conformance
+```
+
+The checker composes the race-enabled backend and gateway cases with real
+Gradle `HttpBuildCache` clients. It proves cold miss/PUT, clean replay,
+configuration-cache reuse, early 413 without replacing an existing object,
+redirect and timeout normalization, corruption quarantine, retry safety, and
+default-deny behavior for modified built-ins, custom tasks, and unknown
+transforms. Production pending commit/abort composition remains a later A0
+gate.
 
 ## Managed native L1
 

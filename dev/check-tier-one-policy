@@ -48,7 +48,7 @@ if ! jq -e '
         },
         {
             "gradle": "9.6.1",
-            "jdks": [17, 21],
+            "jdks": [17, 21, 25],
             "operatingSystem": "linux",
             "architecture": "amd64"
         }
@@ -162,14 +162,36 @@ if [[ ! -x "${buildopt_java_21_home}/bin/java" ]]; then
     printf 'locked JDK 21 home is unavailable\n' >&2
     exit 1
 fi
+buildopt_java_25_home=$(
+    "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+        java -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.home = / {
+                print $2
+                exit
+            }
+        '
+)
+if [[ ! -x "${buildopt_java_25_home}/bin/java" ]]; then
+    printf 'locked JDK 25 home is unavailable\n' >&2
+    exit 1
+fi
 
 buildopt_versions=("8.14.3" "9.6.1")
 buildopt_gradle_homes=("${buildopt_gradle_8_home}" "${buildopt_gradle_9_home}")
-buildopt_java_majors=(17 21)
-buildopt_java_homes=("${buildopt_java_17_home}" "${buildopt_java_21_home}")
+buildopt_java_majors=(17 21 25)
+buildopt_java_homes=(
+    "${buildopt_java_17_home}"
+    "${buildopt_java_21_home}"
+    "${buildopt_java_25_home}"
+)
 
 for buildopt_version_index in "${!buildopt_versions[@]}"; do
     for buildopt_java_index in "${!buildopt_java_majors[@]}"; do
+        if [[ "${buildopt_versions[buildopt_version_index]}" == "8.14.3" &&
+            "${buildopt_java_majors[buildopt_java_index]}" == "25" ]]; then
+            continue
+        fi
         JAVA_HOME="${buildopt_java_homes[buildopt_java_index]}" \
         PATH="${buildopt_java_homes[buildopt_java_index]}/bin:${PATH}" \
             "${buildopt_script_dir}/run" -- \
@@ -179,6 +201,7 @@ for buildopt_version_index in "${!buildopt_versions[@]}"; do
                 --no-configuration-cache \
                 --stacktrace \
                 --warning-mode=fail \
+                "-Dorg.gradle.java.installations.paths=${buildopt_java_homes[buildopt_java_index]}" \
                 :jvm:gradle-plugin:tierOnePolicyTestKit \
                 "-PbuildoptTierOneJava=${buildopt_java_majors[buildopt_java_index]}" \
                 "-PbuildoptTierOneGradleHome=${buildopt_gradle_homes[buildopt_version_index]}"
@@ -219,4 +242,4 @@ if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
     exit 1
 fi
 
-printf 'A0-002 Tier 1 policy OK: 8 Gradle/JDK/DSL rows, exact JavaCompile/custom policy, Gradle 9 Test deny, modified/transform fallbacks\n'
+printf 'A0-002 Tier 1 policy OK: 10 Gradle/JDK/DSL rows, exact JavaCompile/custom policy, Gradle 9 Test deny, modified/transform fallbacks\n'

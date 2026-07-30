@@ -95,7 +95,11 @@ final class BuildOptTierOnePolicy {
             return false;
         }
         return switch (gradleVersion) {
-            case "8.14.3", "9.6.1" -> javaFeature == 17 || javaFeature == 21;
+            case "8.14.3" -> javaFeature == 17 || javaFeature == 21;
+            case "9.6.1" ->
+                    javaFeature == 17
+                            || javaFeature == 21
+                            || javaFeature == 25;
             default -> false;
         };
     }
