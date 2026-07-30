@@ -703,6 +703,20 @@ aborted pending writer leaves neither a local directory nor a remote hit.
 Gateway restart, complete spool faults, production commit fault/recovery, and
 physical deletion remain later gates.
 
+Run the closed `A0-G03` managed-gateway restart and rotation gate:
+
+```bash
+./dev/check-gateway-rotation
+```
+
+The checker starts real concurrent `buildopt` gateway processes with distinct
+transient upstream bindings and verifies policy/namespace routing,
+cross-credential rejection, and secret-free persistent state. Its golden
+Gradle 9.6.1/JDK 21 Kotlin/Groovy TestKit proves Configuration Cache reuse
+after a stable gateway restart, one invalidation when endpoint, local
+credential, and connection generation rotate together, and reuse after the
+rotated entry is stored.
+
 ## Managed native L1
 
 Run the `A0-003` launcher/settings-plugin contract across the same eight

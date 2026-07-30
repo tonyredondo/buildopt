@@ -97,3 +97,7 @@ policy, disabled writer L1, and Configuration Cache reuse.
 `./dev/check-l1-l2-revocation` composes this authority with the real pending,
 commit, revocation, and abort backend plus Gradle's native L1 lifecycle. Full
 production commit fault/recovery remains `A0-G05`.
+`./dev/check-gateway-rotation` proves the authority binding stays transient
+across real gateway restart/rotation and remains isolated between concurrent
+runner slots while Gradle handles the local identity as Configuration Cache
+input.

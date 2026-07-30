@@ -79,7 +79,10 @@ promote every compatibility row. `A0-G01` proves hit, miss, PUT, early 413,
 redirect, timeout, corruption, retry, and unknown-input behavior across all
 ten rows. `A0-G02` additionally proves the golden-lane L2-to-L1
 revocation/rotation and aborted-writer lifecycle. Complete production commit
-fault/recovery remains `A0-G05`, so
+fault/recovery remains `A0-G05`. `A0-G03` proves stable gateway restart,
+complete local-identity rotation, transient upstream credentials, and
+concurrent-slot policy/namespace isolation with Configuration Cache. The
+complete spool and commit fault gates remain `A0-G04/G05`, so
 `MANAGED_SHARED_CACHE` stays `UNAVAILABLE`.
 
 `A0-007` makes `GRADLE_BOOTSTRAP_CACHE` exact for all eight JDK 17/21 rows.

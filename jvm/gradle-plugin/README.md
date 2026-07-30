@@ -51,6 +51,12 @@ The gateway credential is local-only, and the authority, policy,
 configuration, and connection generations remain Configuration Cache inputs.
 Malformed context disables the remote cache.
 
+`A0-G03` composes this client with the managed gateway lifecycle. A stable
+gateway process restart retains the complete local identity and Configuration
+Cache entry; complete endpoint/credential/generation rotation invalidates that
+entry once. Concurrent runner slots retain distinct transient upstream
+bindings, and no upstream credential is serialized for Gradle.
+
 The plugin does not read Gradle's opaque cache files, parse signatures, receive
 the Shared credential, delete revoked generations, or force build-cache
 enablement by mutating `StartParameter` during settings evaluation. Signature,
@@ -67,6 +73,7 @@ with:
 ./dev/check-tier-one-policy
 ./dev/check-tier-one-cache-conformance
 ./dev/check-l1-l2-revocation
+./dev/check-gateway-rotation
 ./dev/check-managed-l1
 ./dev/check-local-authority
 ```

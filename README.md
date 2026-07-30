@@ -80,6 +80,7 @@ From the repository root:
 ./dev/check-tier-one-policy
 ./dev/check-tier-one-cache-conformance
 ./dev/check-l1-l2-revocation
+./dev/check-gateway-rotation
 ./dev/check-managed-l1
 ./dev/check-shared-storage
 ./dev/check-pending-commit

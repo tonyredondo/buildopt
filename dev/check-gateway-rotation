@@ -1,0 +1,181 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/gateway-rotation-v1.json"
+
+for buildopt_command in find git jq mkdir readlink uname; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required gateway-rotation command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+if [[ "$(uname -s)" != "Linux" ]]; then
+    printf 'A0-G03 gateway process conformance requires Linux\n' >&2
+    exit 1
+fi
+
+cd -- "${buildopt_repo_root}"
+buildopt_before_status=$(
+    git status --porcelain=v1 --untracked-files=all
+)
+
+if ! jq -e '
+    keys == [
+        "boundaries",
+        "concurrentSlots",
+        "configurationCache",
+        "gateId",
+        "goldenLane",
+        "persistence",
+        "processLifecycle",
+        "schemaVersion"
+    ] and
+    .schemaVersion == "buildopt.specs/gateway-rotation/v1" and
+    .gateId == "A0-G03" and
+    .goldenLane == {
+        platform: "linux-amd64",
+        gradle: "9.6.1",
+        jdk: 21,
+        dsls: ["GROOVY", "KOTLIN"]
+    } and
+    .processLifecycle.implementation ==
+        "REAL_BUILDOPT_MANAGED_GATEWAY_PROCESS" and
+    .processLifecycle.registration ==
+        "CURRENT_INVOCATION_SAME_UID_UNIX_SOCKET" and
+    .processLifecycle.stableRestart == {
+        endpoint: "REUSED",
+        localCredential: "REUSED",
+        connectionGeneration: "REUSED"
+    } and
+    .processLifecycle.rotationTrigger ==
+        "PERSISTED_ENDPOINT_BIND_FAILURE" and
+    .processLifecycle.completeRotation == [
+        "endpoint",
+        "localCredential",
+        "connectionGeneration"
+    ] and
+    .configurationCache == {
+        client: "org.gradle.caching.http.HttpBuildCache",
+        stableRestart: "REUSED",
+        completeRotation: "INVALIDATED_ONCE",
+        rotatedReplay: "REUSED",
+        cacheHitAfterRestart: true,
+        cacheHitAfterRotation: true,
+        upstreamCredentialInGradle: false
+    } and
+    .persistence == {
+        file: "gateway-state.json",
+        mode: "0600",
+        contains: [
+            "loopbackAddress",
+            "localUsername",
+            "localCredential",
+            "connectionGeneration"
+        ],
+        excludes: [
+            "upstreamEndpoint",
+            "upstreamCredential",
+            "authorityDigest",
+            "policy",
+            "namespace"
+        ]
+    } and
+    .concurrentSlots == {
+        realProcesses: 2,
+        distinctLocalIdentities: true,
+        crossLocalCredential: 401,
+        bindingIsolation: [
+            "upstreamEndpoint",
+            "upstreamCredential",
+            "authorityDigest",
+            "policy",
+            "namespace"
+        ]
+    } and
+    .boundaries == {
+        closes: ["A0-G03"],
+        doesNotClose: [
+            "A0-G04",
+            "A0-G05",
+            "A0-G06",
+            "A0-G08",
+            "A1-G04"
+        ],
+        completeSpoolFaultMatrix: "A0-G04",
+        completeCommitFaultRecovery: "A0-G05"
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'gateway restart/rotation contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_required_files=(
+    "cmd/buildopt/managed_gateway_linux_test.go"
+    "internal/launcher/managed_gateway.go"
+    "internal/launcher/local_gateway.go"
+    "jvm/gradle-plugin/src/main/java/dev/buildopt/gradle/BuildOptManagedL1Plugin.java"
+    "jvm/gradle-plugin/src/testKit/java/dev/buildopt/gradle/GatewayRotationTestKit.java"
+    "specs/gateway-rotation-v1.md"
+)
+for buildopt_relative in "${buildopt_required_files[@]}"; do
+    if [[ ! -s "${buildopt_repo_root}/${buildopt_relative}" ]]; then
+        printf 'missing gateway-rotation file: %s\n' \
+            "${buildopt_relative}" >&2
+        exit 1
+    fi
+done
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 \
+    ./cmd/buildopt \
+    -run \
+    '^TestBuildoptManagedGateway(PersistsAndRotatesSafely|EnforcesRunnerSlotLeaseAndIsolation|ConcurrentCacheBindingsRemainIsolated)$'
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/launcher ./cmd/buildopt
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p -- "${GRADLE_USER_HOME}"
+buildopt_gradle_home=$(
+    find \
+        "${GRADLE_USER_HOME}/wrapper/dists/gradle-9.6.1-bin" \
+        -type d \
+        -path '*/gradle-9.6.1' \
+        -print \
+        -quit
+)
+if [[ -z "${buildopt_gradle_home}" ||
+    ! -x "${buildopt_gradle_home}/bin/gradle" ]]; then
+    printf 'pinned Gradle 9.6.1 distribution is unavailable\n' >&2
+    exit 1
+fi
+buildopt_gradle_home=$(readlink -f "${buildopt_gradle_home}")
+"${buildopt_script_dir}/run" -- \
+    "${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --no-configuration-cache \
+    --stacktrace \
+    --warning-mode=fail \
+    :jvm:gradle-plugin:gatewayRotationTestKit \
+    -PbuildoptTierOneJava=21 \
+    "-PbuildoptTierOneGradleHome=${buildopt_gradle_home}"
+
+buildopt_after_status=$(
+    git status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'gateway restart/rotation check changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'A0-G03 gateway rotation OK: stable restart, complete identity rotation, Configuration Cache, transient upstream authority, and concurrent-slot isolation\n'

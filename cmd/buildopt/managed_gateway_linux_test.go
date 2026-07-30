@@ -4,15 +4,21 @@ package main
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"io"
 	"net"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 )
@@ -23,6 +29,36 @@ type managedGatewayStateFixture struct {
 	Username      string `json:"username"`
 	Password      string `json:"password"`
 	Generation    string `json:"gatewayConnectionGeneration"`
+}
+
+type managedGatewayCacheRegistrationFixture struct {
+	UpstreamEndpoint string `json:"upstreamEndpoint"`
+	Credential       string `json:"credential"`
+	AuthorityDigest  string `json:"authorityDigest"`
+	AllowRead        bool   `json:"allowRead"`
+	AllowWrite       bool   `json:"allowWrite"`
+	ExpiresAt        string `json:"expiresAt"`
+}
+
+type managedGatewayControlRequestFixture struct {
+	SchemaVersion int                                    `json:"schemaVersion"`
+	Operation     string                                 `json:"operation"`
+	AttemptID     string                                 `json:"attemptId"`
+	Cache         managedGatewayCacheRegistrationFixture `json:"cache"`
+}
+
+type managedGatewayControlResponseFixture struct {
+	SchemaVersion int    `json:"schemaVersion"`
+	Endpoint      string `json:"endpoint"`
+	Username      string `json:"username"`
+	Password      string `json:"password"`
+	Generation    string `json:"gatewayConnectionGeneration"`
+	Error         string `json:"error"`
+}
+
+type managedGatewayCommandFixture struct {
+	command *exec.Cmd
+	stderr  bytes.Buffer
 }
 
 func TestBuildoptManagedGatewayPersistsAndRotatesSafely(t *testing.T) {
@@ -230,6 +266,314 @@ while test ! -f "$2"; do sleep 0.01; done`,
 	}
 	waitManagedGatewayUnavailable(t, firstEndpoint, 3*time.Second)
 	waitManagedGatewayUnavailable(t, isolated.GatewayURL, 3*time.Second)
+}
+
+func TestBuildoptManagedGatewayConcurrentCacheBindingsRemainIsolated(
+	t *testing.T,
+) {
+	buildoptBinary := buildBuildopt(t)
+	stateRoot := filepath.Join(t.TempDir(), "runtime")
+	slotA := filepath.Join(stateRoot, "slots", "slot-a")
+	slotB := filepath.Join(stateRoot, "slots", "slot-b")
+	for _, directory := range []string{slotA, slotB} {
+		if err := os.MkdirAll(directory, 0o700); err != nil {
+			t.Fatalf("create managed slot directory: %v", err)
+		}
+	}
+
+	credentialA := bytes.Repeat([]byte{0xa1}, 32)
+	credentialB := bytes.Repeat([]byte{0xb2}, 32)
+	authorityA := "sha256:" + strings.Repeat("a", 64)
+	authorityB := "sha256:" + strings.Repeat("b", 64)
+	var hitsA atomic.Int32
+	var hitsB atomic.Int32
+	upstreamA := isolatedManagedUpstream(
+		credentialA,
+		authorityA,
+		"namespace-a",
+		&hitsA,
+	)
+	defer upstreamA.Close()
+	upstreamB := isolatedManagedUpstream(
+		credentialB,
+		authorityB,
+		"namespace-b",
+		&hitsB,
+	)
+	defer upstreamB.Close()
+
+	processA := startManagedGatewayCommand(
+		t,
+		buildoptBinary,
+		slotA,
+	)
+	defer stopManagedGatewayCommand(t, processA)
+	processB := startManagedGatewayCommand(
+		t,
+		buildoptBinary,
+		slotB,
+	)
+	defer stopManagedGatewayCommand(t, processB)
+
+	connectionA, gatewayA := registerManagedGatewayFixture(
+		t,
+		slotA,
+		"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+		upstreamA.URL,
+		credentialA,
+		authorityA,
+	)
+	defer connectionA.Close()
+	connectionB, gatewayB := registerManagedGatewayFixture(
+		t,
+		slotB,
+		"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+		upstreamB.URL,
+		credentialB,
+		authorityB,
+	)
+	defer connectionB.Close()
+
+	statusA, bodyA := requestManagedCacheFixture(
+		t,
+		gatewayA,
+		gatewayA.Password,
+	)
+	statusB, bodyB := requestManagedCacheFixture(
+		t,
+		gatewayB,
+		gatewayB.Password,
+	)
+	if statusA != http.StatusOK || string(bodyA) != "namespace-a" ||
+		statusB != http.StatusOK || string(bodyB) != "namespace-b" ||
+		hitsA.Load() != 1 || hitsB.Load() != 1 {
+		t.Fatalf(
+			"isolated cache routes = %d/%q/%d and %d/%q/%d",
+			statusA,
+			bodyA,
+			hitsA.Load(),
+			statusB,
+			bodyB,
+			hitsB.Load(),
+		)
+	}
+	crossStatus, crossBody := requestManagedCacheFixture(
+		t,
+		gatewayA,
+		gatewayB.Password,
+	)
+	if crossStatus != http.StatusUnauthorized || len(crossBody) != 0 {
+		t.Fatalf(
+			"cross-slot local credential = %d/%q, want 401/empty",
+			crossStatus,
+			crossBody,
+		)
+	}
+
+	for _, fixture := range []struct {
+		directory  string
+		upstream   string
+		credential []byte
+		authority  string
+	}{
+		{slotA, upstreamA.URL, credentialA, authorityA},
+		{slotB, upstreamB.URL, credentialB, authorityB},
+	} {
+		state, err := os.ReadFile(
+			filepath.Join(fixture.directory, "gateway-state.json"),
+		)
+		if err != nil {
+			t.Fatalf("read managed gateway state: %v", err)
+		}
+		upstreamCredential := base64.RawURLEncoding.EncodeToString(
+			fixture.credential,
+		)
+		for _, forbidden := range []string{
+			fixture.upstream,
+			upstreamCredential,
+			fixture.authority,
+			"namespace-a",
+			"namespace-b",
+		} {
+			if bytes.Contains(state, []byte(forbidden)) {
+				t.Fatalf(
+					"managed state serialized cache binding %q: %s",
+					forbidden,
+					state,
+				)
+			}
+		}
+	}
+}
+
+func isolatedManagedUpstream(
+	credential []byte,
+	authorityDigest string,
+	namespace string,
+	hits *atomic.Int32,
+) *httptest.Server {
+	expectedAuthorization := "Bearer " +
+		base64.RawURLEncoding.EncodeToString(credential)
+	return httptest.NewServer(http.HandlerFunc(func(
+		writer http.ResponseWriter,
+		request *http.Request,
+	) {
+		if request.Method != http.MethodGet ||
+			request.Header.Get("Authorization") != expectedAuthorization ||
+			request.Header.Get("X-BuildOpt-Authority-Digest") !=
+				authorityDigest {
+			writer.WriteHeader(http.StatusForbidden)
+			return
+		}
+		hits.Add(1)
+		_, _ = io.WriteString(writer, namespace)
+	}))
+}
+
+func startManagedGatewayCommand(
+	t *testing.T,
+	buildoptBinary string,
+	directory string,
+) *managedGatewayCommandFixture {
+	t.Helper()
+	fixture := &managedGatewayCommandFixture{}
+	fixture.command = exec.Command(
+		buildoptBinary,
+		"__managed-gateway",
+		directory,
+		"10s",
+	)
+	fixture.command.Stderr = &fixture.stderr
+	if err := fixture.command.Start(); err != nil {
+		t.Fatalf("start managed gateway command: %v", err)
+	}
+	return fixture
+}
+
+func stopManagedGatewayCommand(
+	t *testing.T,
+	fixture *managedGatewayCommandFixture,
+) {
+	t.Helper()
+	command := fixture.command
+	if command == nil || command.ProcessState != nil {
+		return
+	}
+	if err := command.Process.Signal(os.Interrupt); err != nil {
+		_ = command.Process.Kill()
+	}
+	wait := make(chan error, 1)
+	go func() {
+		wait <- command.Wait()
+	}()
+	select {
+	case err := <-wait:
+		if err != nil {
+			t.Errorf("managed gateway command exit: %v", err)
+		}
+	case <-time.After(3 * time.Second):
+		_ = command.Process.Kill()
+		<-wait
+		t.Error("managed gateway command did not stop")
+	}
+	if fixture.stderr.Len() != 0 {
+		t.Errorf("managed gateway stderr = %q", fixture.stderr.String())
+	}
+}
+
+func registerManagedGatewayFixture(
+	t *testing.T,
+	directory string,
+	attemptID string,
+	upstream string,
+	credential []byte,
+	authorityDigest string,
+) (*net.UnixConn, managedGatewayControlResponseFixture) {
+	t.Helper()
+	controlDigest := sha256.Sum256([]byte(directory))
+	controlAddress := "@buildopt-gateway-" +
+		hex.EncodeToString(controlDigest[:16])
+	deadline := time.Now().Add(5 * time.Second)
+	var connection *net.UnixConn
+	var err error
+	for {
+		connection, err = net.DialUnix(
+			"unix",
+			nil,
+			&net.UnixAddr{Name: controlAddress, Net: "unix"},
+		)
+		if err == nil {
+			break
+		}
+		if time.Now().After(deadline) {
+			t.Fatalf("connect managed gateway control: %v", err)
+		}
+		time.Sleep(20 * time.Millisecond)
+	}
+	request := managedGatewayControlRequestFixture{
+		SchemaVersion: 1,
+		Operation:     "register",
+		AttemptID:     attemptID,
+		Cache: managedGatewayCacheRegistrationFixture{
+			UpstreamEndpoint: upstream,
+			Credential: base64.RawURLEncoding.EncodeToString(
+				credential,
+			),
+			AuthorityDigest: authorityDigest,
+			AllowRead:       true,
+			AllowWrite:      false,
+			ExpiresAt: time.Now().
+				Add(time.Hour).
+				UTC().
+				Format(time.RFC3339Nano),
+		},
+	}
+	if err := json.NewEncoder(connection).Encode(request); err != nil {
+		_ = connection.Close()
+		t.Fatalf("register managed gateway fixture: %v", err)
+	}
+	var response managedGatewayControlResponseFixture
+	if err := json.NewDecoder(connection).Decode(&response); err != nil {
+		_ = connection.Close()
+		t.Fatalf("decode managed gateway registration: %v", err)
+	}
+	if response.SchemaVersion != 1 ||
+		response.Endpoint == "" ||
+		response.Username != "buildopt" ||
+		response.Password == "" ||
+		response.Generation == "" ||
+		response.Error != "" {
+		_ = connection.Close()
+		t.Fatalf("managed gateway registration = %+v", response)
+	}
+	return connection, response
+}
+
+func requestManagedCacheFixture(
+	t *testing.T,
+	gateway managedGatewayControlResponseFixture,
+	password string,
+) (int, []byte) {
+	t.Helper()
+	request, err := http.NewRequest(
+		http.MethodGet,
+		gateway.Endpoint+"/cache/concurrent-key",
+		nil,
+	)
+	if err != nil {
+		t.Fatalf("create managed cache request: %v", err)
+	}
+	request.SetBasicAuth(gateway.Username, password)
+	response, err := gatewayTestClient().Do(request)
+	if err != nil {
+		t.Fatalf("request managed cache: %v", err)
+	}
+	defer response.Body.Close()
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		t.Fatalf("read managed cache response: %v", err)
+	}
+	return response.StatusCode, body
 }
 
 func runManagedBuildoptHelper(

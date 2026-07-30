@@ -157,7 +157,8 @@ process and registers the fresh attempt over a Linux abstract Unix socket.
 Both peers verify `SO_PEERCRED` ownership before exchanging a bounded,
 versioned registration. The gateway serves readiness only while that
 connection is current; an authenticated request between invocations returns
-`503`, and all cache data paths still return `404`.
+`503`. The original neutral A0-001 registration leaves cache data paths at
+`404`; A0-006 supplies an invocation-only authenticated cache binding.
 
 The loopback address, local-only Basic credential, and
 `gatewayConnectionGeneration` are atomically stored in a mode-`0600` state
@@ -177,7 +178,9 @@ Validate the real multi-process lifecycle with:
 
 This path establishes lifecycle and trust boundaries only. L1/L2 cache
 behavior, upstream credentials, authenticated policy, revocation, and pending
-publication remain owned by later MVP-A0 blocks.
+publication remain owned by their later MVP-A0 blocks. The completed
+cross-component restart/rotation and concurrent authenticated-binding gate is
+`./dev/check-gateway-rotation`.
 
 ## A0-003 managed native L1
 
