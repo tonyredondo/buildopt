@@ -181,6 +181,7 @@ buildopt_required_files=(
     "dev/check-patch-bundle-schema"
     "dev/check-patch-bundle-applier"
     "dev/check-patch-bundle-spec"
+    "dev/check-phase-zero"
     "dev/check-protobuf-toolchains"
     "dev/check-rust-toolchain"
     "dev/check-release-package"

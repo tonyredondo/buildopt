@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_doctor_report=$(
+    mktemp "${TMPDIR:-/tmp}/buildopt-phase-zero-doctor.XXXXXX.json"
+)
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_doctor_report:-}" ]] &&
+        [[ "${buildopt_doctor_report}" == "${TMPDIR:-/tmp}/buildopt-phase-zero-doctor."*.json ]]; then
+        rm -f -- "${buildopt_doctor_report}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in git jq mktemp; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Phase 0 gate command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+"${buildopt_script_dir}/check-toolchains-lock"
+"${buildopt_script_dir}/test-doctor"
+
+if ! "${buildopt_script_dir}/doctor" --json >"${buildopt_doctor_report}"; then
+    printf 'host doctor did not pass\n' >&2
+    exit 1
+fi
+if ! jq -e '
+    .schemaVersion == "buildopt.dev/doctor-report/v1" and
+    .status == "PASS" and
+    .exitCode == 0 and
+    .platform.matchesLock == true and
+    (.resources.cpuCount | numbers) > 0 and
+    (.resources.memoryBytes | numbers) > 0 and
+    .docker.status == "PASS" and
+    .docker.daemonAvailable == true and
+    .docker.cpuQuota == true and
+    .docker.memoryLimit == true and
+    .summary.fail == 0 and
+    all(
+        .commands[] |
+        select(.required == true);
+        .status == "PASS"
+    )
+' "${buildopt_doctor_report}" >/dev/null; then
+    printf 'host doctor report does not satisfy the Phase 0 exit contract\n' >&2
+    exit 1
+fi
+
+printf 'Host doctor PASS: cpu=%s memoryBytes=%s activePathMatches=%s pending=%s\n' \
+    "$(jq -r '.resources.cpuCount' "${buildopt_doctor_report}")" \
+    "$(jq -r '.resources.memoryBytes' "${buildopt_doctor_report}")" \
+    "$(jq -r '.toolchains.matched' "${buildopt_doctor_report}")" \
+    "$(jq -r '.toolchains.pending' "${buildopt_doctor_report}")"
+
+"${buildopt_script_dir}/run" -- \
+    "${buildopt_script_dir}/check-jvm-release"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    "${buildopt_script_dir}/check-go-toolchain"
+"${buildopt_script_dir}/check-rust-toolchain" --verify-manifest
+"${buildopt_script_dir}/check-protobuf-toolchains"
+"${buildopt_script_dir}/check-lint-toolchains"
+"${buildopt_script_dir}/check-supply-chain-toolchains"
+"${buildopt_script_dir}/test-golden-lane-container"
+"${buildopt_script_dir}/run-golden-lane-container" --require-runner-class
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'Phase 0 gate changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'F0-G06 Phase 0 exit OK: locked project toolchains, host doctor, and pinned 4-CPU/16-GiB golden image\n'

@@ -221,6 +221,7 @@ case "${buildopt_lane}" in
             "${buildopt_script_dir}/run" \
             -- \
             "${buildopt_script_dir}/check-jvm-release"
+        "${buildopt_script_dir}/check-patch-bundle-applier"
         ;;
     rust)
         "${buildopt_script_dir}/test-rust-toolchain"

@@ -2,13 +2,13 @@
 
 Monorepo for the autonomous Gradle build optimization platform. The product observes real builds, applies only qualified and reversible optimizations, preserves Gradle behavior as the baseline, and measures net time savings inside the neutral measurement envelope.
 
-The repository is in **Phase 0**. It defines technical ownership and module boundaries, locked development toolchains, the initial executable observability and local-event contracts, and a verifiable Linux AMD64 release bundle; it does not yet contain active optimizations or a customer installation lifecycle.
+The repository has completed **Phase 0** and is entering **MVP-A0**. It defines technical ownership and module boundaries, locked development toolchains, the initial executable observability and local-event contracts, and a verifiable Linux AMD64 release bundle; it does not yet contain active optimizations or a customer installation lifecycle.
 
 ## Sources of truth
 
 1. [Master RFC](./gradle-build-optimization-platform.md): product intent, architecture, invariants, and gates.
 2. [Implementation tracker](./implementation-tracker.md): status, dependencies, and execution evidence.
-3. `contracts/`, `specs/`, `benchmarks/`, and `adr/`: executable contracts and technical decisions as they materialize during Phase 0.
+3. `contracts/`, `specs/`, `benchmarks/`, and `adr/`: executable contracts and technical decisions materialized in Phase 0 and extended by later milestones.
 
 An RFC example is not an executable contract. If a contract contradicts an RFC invariant, correct the contract or revise the corresponding decision first.
 
@@ -88,6 +88,7 @@ From the repository root:
 ./dev/run -- ./dev/check-gradle-correlation-fixture
 ./dev/check-toolchains-lock
 ./dev/doctor
+./dev/check-phase-zero
 ./dev/test-doctor
 ./dev/test-jdk-toolchain
 ./dev/test-go-toolchain

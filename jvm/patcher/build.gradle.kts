@@ -41,7 +41,7 @@ tasks.withType<AbstractArchiveTask>().configureEach {
 val spikeReport = providers.gradleProperty("buildoptPatcherSpikeReport")
     .orElse(layout.buildDirectory.file("reports/patcher-spike.json").map { it.asFile.absolutePath })
 
-val patcherSpike = tasks.register<JavaExec>("patcherSpike") {
+tasks.register<JavaExec>("patcherSpike") {
     group = "verification"
     description = "Executes the SPK-004 PatchBundle matrix against real Git worktrees."
     dependsOn(tasks.named(spike.classesTaskName))
@@ -51,10 +51,6 @@ val patcherSpike = tasks.register<JavaExec>("patcherSpike") {
     inputs.file(rootProject.layout.projectDirectory.file("specs/patch-bundle-v1.json"))
     inputs.dir(rootProject.layout.projectDirectory.dir("contracts/jsonschema/testdata/patch-bundle.v1/blobs"))
     outputs.file(spikeReport)
-}
-
-tasks.named("check") {
-    dependsOn(patcherSpike)
 }
 
 tasks.jar {

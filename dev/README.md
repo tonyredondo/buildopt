@@ -459,6 +459,11 @@ traversal, symlink and gitlink boundaries, postimage rollback, immutable
 branch conflict, branch-without-PR recovery, existing draft replay, and
 interrupted staging. The checker verifies Java 17 bytecode and that no
 customer checkout/index, extra worktree, default branch, or remote is changed.
+Because those integration cases require a real host Git, `patcherSpike` stays
+outside the standard Gradle `check` lifecycle. The composite checker invokes
+it explicitly, and the core base-CI lane invokes that checker; the JDK-only
+golden image still performs the standard compile, package, and check lifecycle
+without acquiring an unpinned Git installation.
 
 ## BuildOpt OpenAPI validation
 
@@ -923,6 +928,23 @@ The report schema version is `buildopt.dev/doctor-report/v1`. Exit codes are sta
 | `70` | The report could not be generated because its lock or required JSON machinery was unavailable or invalid. |
 
 The doctor deliberately probes the active `PATH` and repository state; it does not search arbitrary home directories or infer that an inactive installation is usable. `dev/run` will supply the project-local `PATH` when `ENV-003` and later provisioning items materialize it.
+
+## Phase 0 exit gate
+
+Run the complete environment exit gate on a Linux AMD64 workstation with a
+functional Docker daemon and enough memory to enforce the golden runner:
+
+```bash
+./dev/check-phase-zero
+```
+
+The gate validates the lock and deterministic doctor contract, requires a
+passing live host report, exercises every adopted project-local toolchain
+through its owning checker, and then runs the digest-pinned image with strict
+4-CPU/16-GiB cgroups. The live report continues to expose workstation-global
+`PATH` drift; it does not require two development computers to share global
+installations because the executable toolchain checks consume the verified
+repository-local copies.
 
 ## Validation
 

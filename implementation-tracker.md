@@ -1,9 +1,9 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — all bounded Phase 0 spikes and the PatchBundle gate are closed with safe fallbacks; `F0-G06` is next for the host/golden-image toolchain gate<br>
-**Current phase:** Phase 0 — contracts, fixtures, and walking skeleton<br>
+**Overall status:** `DOING` — Phase 0 is closed with all six exit gates passing; `A0-001` is next for the internal launcher/gateway production path<br>
+**Current phase:** MVP-A0 — foundation and internal pilot<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
-**Last updated:** 2026-07-29<br>
+**Last updated:** 2026-07-30<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
 **RFC baseline SHA-256:** `e97b068433128a51cab509f2f799efdf872b6950056bce308b80cbd1470ef81d`
 
@@ -48,8 +48,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | Milestone | Objective | State | Gate progress | Dependency |
 |---|---|---:|---:|---|
 | Preparation | RFC, beta scope, and tracker closed | `DONE` | 2/2 | — |
-| Phase 0 | Toolchains, executable contracts, fixtures, spikes, and walking skeleton | `TODO` | 5/6 | Preparation |
-| MVP-A0 | Foundation and internal pilot | `WAITING` | 0/9 | Phase 0 |
+| Phase 0 | Toolchains, executable contracts, fixtures, spikes, and walking skeleton | `DONE` | 6/6 | Preparation |
+| MVP-A0 | Foundation and internal pilot | `TODO` | 0/9 | Phase 0 |
 | MVP-A1 | Autonomous Cache in an isolated private beta | `WAITING` | 0/6 | A0 + `OPS-001/A1` |
 | MVP-B | Runtime Optimizer and safe learning | `WAITING` | 0/6 | A1 + `CI-ORCH-001` + `OPS-001/B` |
 | MVP-C1 | Task Intelligence, JVM Agent, and Linux hermeticity | `WAITING` | 0/9 | B |
@@ -136,6 +136,8 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 53 | `SPK-002` | Bound JVM Agent coverage, overhead, and failure fallback | `UNAVAILABLE` | Codex |
 | 54 | `SPK-003` | Bound task-specific producer enforcement and fallback | `UNAVAILABLE` | Codex |
 | 55 | `SPK-004` | Exercise the Java PatchBundle parser/applier | `DONE` | Codex |
+| 56 | `F0-G06` | Close the locked-toolchain, host-doctor, and strict golden-image gate | `DONE` | Codex |
+| 57 | `A0-001` | Move the internal launcher/gateway onto its production path | `TODO` | — |
 
 ---
 
@@ -179,7 +181,7 @@ These states represent implementation and evidence, not the `Accepted` state of 
 
 ## 5. Phase 0 — contracts, fixtures, and walking skeleton
 
-**State:** `TODO`<br>
+**State:** `DONE`<br>
 **Objective:** eliminate implementation ambiguity and prove the first end-to-end flow without active optimizations.
 
 ### 5.1 Development environment bootstrap
@@ -334,20 +336,20 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `F0-G03` | Complete, passing walking skeleton on the golden lane | `DONE` | `E-020`, `E-021`, `E-026..035` |
 | `F0-G04` | Executable conformance/fixtures for the next module | `DONE` | `E-059` |
 | `F0-G05` | Bypass, kill switch, and `UNAVAILABLE` exist before optimization | `DONE` | `E-023`, `E-032` |
-| `F0-G06` | Pinned toolchains and passing `dev/doctor` on host/golden image | `TODO` | — |
+| `F0-G06` | Pinned toolchains, passing host `dev/doctor`, and strict golden-image build | `DONE` | `E-063` |
 
 ---
 
 ## 6. MVP-A0 — foundation and internal pilot
 
-**State:** `WAITING`<br>
+**State:** `TODO`<br>
 **Entry gate:** Phase 0 closed for A0.
 
 ### 6.1 Workboard
 
 | ID | Deliverable | State | Owner | Evidence |
 |---|---|---|---|---|
-| `A0-001` | Internal launcher/gateway production path | `WAITING` | — | — |
+| `A0-001` | Internal launcher/gateway production path | `TODO` | — | — |
 | `A0-002` | Tier 1 plugin and default-deny allowlist | `WAITING` | — | — |
 | `A0-003` | Managed L1 `DirectoryBuildCache` | `WAITING` | — | — |
 | `A0-004` | Shared single-node: blobs + `cache.sqlite`/`control.sqlite` | `WAITING` | — | — |
@@ -524,7 +526,7 @@ This table points to the latest valid result. It does not replace reports or all
 |---|---|---|---|---|
 | Repository layout | Git root, modules, and `F0-001` conventions | `dev/check-layout` and ShellCheck passed; structure included in the initial commit | 2026-07-29 | `E-006` |
 | Ownership boundaries | Path routing, accountable workstreams, cross-stack review, and authority limits | `dev/check-ownership` validated 16 CODEOWNERS paths, all 11 tracker workstreams, one verified repository principal, producer/consumer review, Test Optimization ownership, and the absence of an independent-approval claim | 2026-07-29 | `E-037` |
-| Base CI | Read-only push/PR validation for Go, Java 17 compatibility, and optional Rust | Immutable checkout/setup Actions, exact Ubuntu/Java/Rust identities, locked project tools, race-enabled Go tests, vet, nested module checks, Java 17 bytecode/runtime loading, Rust manifest/smoke, ShellCheck, and actionlint passed locally and in hosted run [30481886001](https://github.com/tonyredondo/buildopt/actions/runs/30481886001) | 2026-07-29 | `E-038` |
+| Base CI | Read-only push/PR validation for Go, Java 17 compatibility, optional Rust, and host-Git integration | The immutable hosted baseline remains run [30481886001](https://github.com/tonyredondo/buildopt/actions/runs/30481886001); the current local core lane additionally passed race/vet, Java 17 loading, generated drift, locked lint, and the explicit 15-case PatchBundle checker without making the JDK-only golden image acquire Git | 2026-07-30 | `E-038`, `E-063` |
 | Generated artifacts | Source-first inventory, locked generation, reviewable output, and stale-code rejection | The local-events descriptor regenerated byte-for-byte with protoc 35.1, a temporary valid source mutation produced divergent output, unsafe/unknown generator requests failed, conformance passed, and hosted base-CI run [30482598040](https://github.com/tonyredondo/buildopt/actions/runs/30482598040) enforced the gate on a clean checkout | 2026-07-29 | `E-039` |
 | Experiment/action lifecycles | Immutable aggregate versions, action transition preconditions, and exact promotion/invalidation linkage | Draft 2020-12 accepted 4 aggregate and 6 transition positives, rejected 4 negatives for each schema, and classified 3 valid/3 invalid linked vectors; local semantic checks and hosted base-CI run [30484082786](https://github.com/tonyredondo/buildopt/actions/runs/30484082786) passed on the exact implementation SHA | 2026-07-29 | `E-040` |
 | Evidence/policy/resource contracts | Task authority gates, fail-closed invocation policy, and finite prevalidated resource arms | Draft 2020-12 accepted the bound golden records, rejected incomplete trace, active kill switch, and failed-memory eligibility, and enforced exact policy/evidence/profile linkage plus a four-arm catalog; local core and hosted base-CI run [30485226736](https://github.com/tonyredondo/buildopt/actions/runs/30485226736) passed on the exact implementation SHA | 2026-07-29 | `E-041` |
@@ -532,7 +534,8 @@ This table points to the latest valid result. It does not replace reports or all
 | Test Optimization signed contracts | Explicit cache authority and final validation verdicts owned by Test Optimization | Draft 2020-12 accepted 2 signed positives, rejected 5 structural negatives, and rejected 2 schema-valid semantic attacks for reversed grant time and candidate-artifact rebinding; policy/request linkage, local core, and hosted base-CI run [30486510411](https://github.com/tonyredondo/buildopt/actions/runs/30486510411) passed on the exact implementation SHA | 2026-07-29 | `E-043` |
 | Toolchain lock | Portable versions, platforms, providers, immutable URLs, SHA-256 values, and tracker references | `dev/check-toolchains-lock` passed for ten artifacts on `linux-amd64`; update policy recorded | 2026-07-29 | `E-010` |
 | Toolchain lifecycle | Lock-owned bootstrap, local execution, uninstall, downloads, and build state | A temporary marked tools root passed two-run bootstrap, idempotent uninstall, cached reinstall, active-lock refusal, all-tool removal, exact download purge, explicit state purge, and unrelated/provider-managed path preservation | 2026-07-29 | `E-036` |
-| Host inventory | Platform/resources, active Java/Go/Rust/Protobuf/base-tool paths and versions, Docker, cgroups, namespaces, and available space | `dev/doctor --json` passed on the 12-CPU workstation and reported active-path drift without treating deferred provisioning as success; deterministic fixtures passed codes `0/1/64/70` and preserved the working tree | 2026-07-29 | `E-011` |
+| Host inventory | Platform/resources, active Java/Go/Rust/Protobuf/base-tool paths and versions, Docker, cgroups, namespaces, and available space | `dev/doctor --json` passed again on the 12-CPU workstation with 16,659,865,600 bytes visible, a functional Docker daemon, and two active-path matches/eight explicitly reported global-path differences; deterministic fixtures retained codes `0/1/64/70` and the gate preserved the working tree | 2026-07-30 | `E-011`, `E-063` |
+| Phase 0 environment exit | Lock validity, deterministic doctor, adopted project-local tools, and strict golden runtime | [`dev/check-phase-zero`](./dev/check-phase-zero) passed the JDK 21/Java 17, Go, Rust 1.93, Protobuf/Buf, lint, Cosign/Syft, doctor, synthetic container, immutable-image, and strict 4-CPU/16-GiB checks in one read-only run | 2026-07-30 | `E-063` |
 | Go toolchain | Exact compiler, module baseline, local-only selection and caches, offline module state, and deterministic smoke build | Official Go 1.26.5 archive matched the lock; real and synthetic isolation checks passed; doctor reported the project-local binary as `MATCH`; repeated smoke binaries matched | 2026-07-29 | `E-014` |
 | Rust toolchain | Exact optional compiler/Cargo pair, repository override, locked channel manifest, isolated offline state, and Cargo smoke | Rust/Cargo 1.93.0 and the Linux AMD64 host matched; official manifest SHA-256, doctor `MATCH`, temporary-state Cargo check, global-default isolation, and deterministic negative fixtures passed | 2026-07-29 | `E-016` |
 | Lint toolchains | Exact ShellCheck/actionlint artifacts, isolated execution, repository scripts, and workflow parsing | Official ShellCheck 0.11.0 and actionlint 1.7.12 archives matched the lock; real and synthetic provisioning, doctor matching, all executable `dev/` scripts, and the integrated workflow smoke passed | 2026-07-29 | `E-017` |
@@ -555,12 +558,12 @@ This table points to the latest valid result. It does not replace reports or all
 | Gradle plugin handshake | Packaged `dev.buildopt` plugin, authenticated v1 local channel, baseline neutrality, and Configuration Cache | Two real Wrapper invocations each authenticated gateway readiness plus the event preface before one accepted `ProducerHello`; the second reused Configuration Cache with the task up-to-date; outputs matched baseline; missing rendezvous and intentional failure preserved results; host and strict-container gates passed | 2026-07-29 | `E-026`, `E-027` |
 | Gradle TestKit | Plugin/adapters | Not run | — | — |
 | Real Gradle Wrapper | Wrapper 9.6.1, Kotlin DSL fixtures, Configuration Cache, and BUILD_SESSION export | Strict gate passed on the nominal 4 vCPU/16 GiB host and a container with 4 CPU/16 GiB cgroups; bytecode major 61; correlation and neutral plugin-handshake fixtures reused Configuration Cache; real success/failure exports validated; negative 2-CPU fixture rejected | 2026-07-29 | `E-008`, `E-026`, `E-029` |
-| Golden container runtime | Docker daemon, immutable image index/platform identity, local image provenance, exact JDK patch, cgroup limits, and read-only Go-binary injection | Docker 29.6.2 resolved the pinned index to the unique Linux AMD64 digest; strict 4-CPU/16-GiB build passed; locked static launcher/server/signal-helper/schema-validator/metrics-validator/neutral-envelope binaries exercised authenticated rendezvous, ingest, cancellation cleanup, schema-valid export, catalog validation, and the four-pair overhead report inside the JDK-only image; deterministic negative fixtures passed | 2026-07-29 | `E-015`, `E-026`, `E-027`, `E-028`, `E-029`, `E-033`, `E-034`, `E-035` |
+| Golden container runtime | Docker daemon, immutable image index/platform identity, local image provenance, exact JDK patch, cgroup limits, and read-only Go-binary injection | Docker 29.6.2 resolved the pinned index to the unique Linux AMD64 digest; the current strict 4-CPU/16-GiB build ran the standard compile, package, and check lifecycle for every JVM module, including the PatchBundle patcher, before the complete rendezvous/ingest/export/fault/metric/overhead/correlation suite passed; the real-Git patcher integration remained explicitly in the host CI lane | 2026-07-30 | `E-015`, `E-026..035`, `E-063` |
 | JVM release compatibility | Gradle plugin and JVM agent | Locked JDK 21 compilation with `--release 17`; every packaged class verified as major 61; reproducible JARs; agent loaded on Java 17 and 21; complete build passed in the pinned golden image | 2026-07-29 | `E-013` |
 | Cache conformance | HttpBuildCache + internal control | Not run | — | — |
 | Fault injection | Walking-skeleton bypass/failure/cancellation and invocation cleanup; cache/orchestration faults remain pending | Ordinary failure and handled `SIGTERM` retained exits `37`/`42` and distinct `BUILD_FAILURE`/`CANCELLED` records; bypass made no contact; the child tree, plugin attempt directory/socket, and gateway were absent after cleanup on the host and strict golden container; the cache-disabled slice created no lease | 2026-07-29 | `E-033` |
 | Hermetic harness | Task-specific Rust helper, process tree, six-dimension coverage, invalid manifests, and fail-closed fallback | The Linux x86-64 probe found user/mount/PID/network namespaces and seccomp but no visible Landlock interface or cgroup delegation; vDSO clock, `getrandom`, environment, and policy gaps kept `traceComplete=false`; valid candidates were discarded before execution, writable input was rejected, and the complete producer ran only through baseline | 2026-07-29 | `E-061` |
-| Patch vectors | Strict JSON/JCS/Ed25519, exact blobs, both recipes, path graph, private staging, idempotency, and recovery | The Java 17 patcher passed all 15 plan cases in temporary real Git repositories, including duplicate-key rejection, source/tree/preimage divergence, traversal, symlink target/parent, gitlink, postimage rollback, exact replay, immutable branch conflict, branch-without-PR recovery, existing draft replay, and interruption; customer checkout/index and remote state remained unchanged | 2026-07-29 | `E-062` |
+| Patch vectors | Strict JSON/JCS/Ed25519, exact blobs, both recipes, path graph, private staging, idempotency, and recovery | The Java 17 patcher passed all 15 plan cases again through its explicit host-Git checker and the local core CI lane; the standard Gradle lifecycle still compiled, packaged, and unit-checked it in the JDK-only golden image without silently skipping the dedicated integration gate | 2026-07-30 | `E-062`, `E-063` |
 | Test Optimization | Producer/consumer compatibility | Not run | — | — |
 | Beta benchmark | Load/fault/soak | Not run | — | — |
 | Pilot metrics | Causal build-time impact | Not run | — | — |
@@ -641,6 +644,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-060` | 2026-07-29 | `SPK-002` | Bounded Java 17 [`BuildOptAgent`](./jvm/jvm-agent/src/main/java/dev/buildopt/agent/BuildOptAgent.java), real-daemon [six-dimension fixture](./fixtures/jvm-agent/README.md), accepted [`UNAVAILABLE` contract](./specs/jvm-agent-spike-v1.md), descriptive [warm sample](./benchmarks/results/spk-002-agent.json), and composite [`dev/check-jvm-agent-spike`](./dev/check-jvm-agent-spike); the locked JDK 21 and checksum-pinned Gradle 9.6.1 Wrapper executed IO/NIO, environment/properties, native child, loopback network, clock/locale/timezone, and randomness while a dedicated agent daemon reused Configuration Cache, but the allowlisted transformer observed only class loads and therefore emitted `traceComplete=false`, kept qualification `OBSERVING`, and aborted pending publication; capacity-two overflow and an injected transform conflict preserved exact task output, an injected `premain` crash failed only its isolated diagnostic daemon and recorded compatibility disablement, and a fresh uninstrumented daemon reproduced the baseline; one order-sensitive warm sample measured baseline 618 ms and agent 766 ms, delta +148 ms (+23.9%), explicitly without a promotion gate; focused real-daemon/fault checks, Java 17 compilation, capability-matrix validation, layout, normative layout, ShellCheck, and diff hygiene passed locally | `UNAVAILABLE`: class loading cannot establish method access or task attribution, so the agent remains disabled for qualification and `SPK-003` is next |
 | `E-061` | 2026-07-29 | `SPK-003`, `HERMETIC-SCOPE-001` | Dependency-free Rust 1.93 [`hermetic helper`](./rust/hermetic-helper/README.md), closed task-specific [fixture manifest](./fixtures/hermetic-helper/README.md), accepted [`UNAVAILABLE` contract](./specs/hermetic-helper-spike-v1.md), and composite [`dev/check-hermetic-helper-spike`](./dev/check-hermetic-helper-spike); the real Linux x86-64 probe found unprivileged user/mount/PID/network namespaces and advertised seccomp actions, but no visible Landlock interface or delegated cgroup, while environment, vDSO clock, and `getrandom` remained unmediated; strict manifest parsing bound a read-only input, disjoint output/tmp, exact workspace command, deny policies, and bounded task/producer identities, then `traceComplete=false` prevented candidate execution, discarded it, and aborted pending publication; the same binary subsequently exercised filesystem, native child/process tree, loopback network, environment, clock, and randomness only through baseline, while writable input and escaped command paths were rejected; four Rust unit tests, offline build, Clippy with warnings denied, ShellCheck, capability matrix, layout, normative layout, and diff hygiene passed locally | `UNAVAILABLE`: partial namespace availability is not hermetic evidence; the C1 qualification route degrades safely while official contracts/adapters/source patches remain possible, and `SPK-004` is next |
 | `E-062` | 2026-07-29 | `SPK-004`, `PATCH-BUNDLE-001` | Dependency-free Java 17 [`PatchBundleVerifier` and `PatchBundleApplier`](./jvm/patcher/README.md), temporary real-Git [fixture generator](./fixtures/patcher/README.md), exact [`PatchBundle application v1`](./specs/patch-bundle-v1.md), and composite [`dev/check-patch-bundle-applier`](./dev/check-patch-bundle-applier); strict UTF-8 JSON rejected duplicate/unknown keys, the exact JCS digest and Ed25519 payload authenticated configured repository/action/key/expiration authority before reading blobs, SHA-256 bound the recursive NUL-delimited base-tree inventory plus every replacement byte, and segment inspection rejected traversal, `.git`, symlink targets/parents, nested repositories, and gitlinks; private detached no-checkout worktrees bypassed an armed customer post-checkout hook/content filter, applied only ordered `ADD`/`MODIFY` mode-`100644` replacements with exact pre/postimages, created only an absent immutable `buildopt/<actionId>` ref, and delegated draft delivery through a credential-free interface; all 15 machine-readable cases covered both recipes, idempotent replay, divergence, authority, path boundaries, rollback, conflicting branch, branch-without-PR recovery, existing PR, and interruption while leaving customer checkout/index and remotes unchanged; the full corpus passed on the locked JDK 21 and the host OpenJDK 17.0.19, while schema, common crypto, warnings-as-errors compilation, Java 17 class-major verification, capability matrix, layout, normative layout, ShellCheck, and diff hygiene passed locally | `DONE`: the bounded customer-side applier is exact for both recipes on executed JDK 17/21 profiles; unexecuted JDK 25 and any application failure retain the download-only fallback, and `F0-G06` is the next Phase 0 gate |
+| `E-063` | 2026-07-30 | `F0-G06`, Phase 0 exit | New composite [`dev/check-phase-zero`](./dev/check-phase-zero), explicit host-Git integration in [`dev/check-base-ci`](./dev/check-base-ci), and corrected PatchBundle Gradle lifecycle ownership in [`jvm/patcher/build.gradle.kts`](./jvm/patcher/build.gradle.kts) and [`dev/check-patch-bundle-applier`](./dev/check-patch-bundle-applier); the first strict run exposed that standard `build` had inherited the real-Git spike after `SPK-004`, which failed honestly in the JDK-only image, so the spike moved outside standard `check` while remaining mandatory in its composite checker and the core CI lane; the final gate validated the ten-artifact lock, deterministic doctor exits, a live `PASS` on the 12-CPU/16,659,865,600-byte host with Docker and visible 2-match/8-drift active `PATH`, exact JDK 21/Java 17, Go 1.26.5, Rust/Cargo 1.93.0, protoc 35.1, Buf 1.72.0, ShellCheck 0.11.0, actionlint 1.7.12, Cosign 3.1.2, and Syft 1.50.0 checks, deterministic container negatives, and the immutable platform digest `sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50` under verified 4-CPU/16-GiB cgroups; the full local core CI lane reran race/vet, Java 17 loading, generated drift, lint, and all 15 real-Git patch cases | `DONE`: all six Phase 0 exit gates now pass without requiring the 4-CPU and 12-CPU workstations to share global tool installations; MVP-A0 is unblocked and `A0-001` is next |
 
 ---
 
@@ -648,6 +652,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-30 | Closed `F0-G06` and Phase 0: added one executable environment gate, kept workstation-global drift visible, passed every locked project-tool checker plus the strict 4-CPU/16-GiB image, and moved `A0-001` next | Codex |
 | 2026-07-29 | Closed `SPK-004` and `PATCH-BUNDLE-001`: the strict Java 17 parser/applier passed all 15 signed real-Git recipe, path, idempotency, rollback, immutable-branch, and draft-recovery cases without executing bundle content or mutating a remote; moved `F0-G06` next | Codex |
 | 2026-07-29 | Closed `SPK-003` and `HERMETIC-SCOPE-001` as `UNAVAILABLE`: the task-specific Rust helper probes real namespaces/kernel support but refuses incomplete environment/clock/randomness/policy coverage, discards the candidate, aborts pending publication, and proves the full producer only through baseline; moved `SPK-004` next | Codex |
 | 2026-07-29 | Closed `SPK-002` as `UNAVAILABLE`: the real JDK 21 daemon/Configuration Cache fixture proved class-load-only coverage cannot qualify access, and tested abort-pending behavior for overflow/conflict plus isolated crash and clean baseline recovery; moved `SPK-003` next | Codex |

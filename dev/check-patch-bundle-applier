@@ -41,6 +41,7 @@ buildopt_before_status=$(
     "-PbuildoptPatcherSpikeReport=${buildopt_report}" \
     :jvm:patcher:clean \
     :jvm:patcher:check \
+    :jvm:patcher:patcherSpike \
     :jvm:patcher:jar
 
 jq -e \
