@@ -790,6 +790,30 @@ Gradle success and failure sessions and requires the `buildopt-server export`
 stdout bytes to match the durable stream exactly. Aggregate experiment effects,
 encrypted delivery retry/DLQ, and remote sinks remain separate gates.
 
+## Causal internal-pilot validation
+
+Validate the `A0-009` paired assignment and aggregate-result path:
+
+```bash
+./dev/check-causal-pilot
+```
+
+The checker generates one deterministic Java workload and warms both isolated
+arms. Control uses the real BuildOpt launcher and Tier 1 policy with caching
+disabled; candidate uses the same product path with the native managed L1.
+Four pairs alternate order, persist each assignment before execution, remove
+outputs and project state, require control compilation and candidate
+`FROM-CACHE`, and retain eight schema-valid `BUILD_SESSION` documents. The
+required JARs must be byte-identical.
+
+The off-critical-path producer then recomputes a deterministic 4,096-resample
+paired bootstrap, requires a positive lower 95% saving bound with no output or
+failure regression, and publishes one schema-valid `PRELIMINARY`
+`EXPERIMENT_RESULT` as immutable mode-`0600` JSON plus bounded byte-exact
+JSONL/stdout. This closes only the internal `A0-G09` proof; no-hit overhead,
+beta promotion, external-pilot, feedback, queue, p99, and economics gates
+remain open.
+
 ## JVM Agent spike
 
 Run the bounded agent against a real Gradle daemon and Configuration Cache:

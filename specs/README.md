@@ -19,6 +19,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`local-authenticated-cache-v1.md`](./local-authenticated-cache-v1.md) | `A0-006` |
 | [`gradle-bootstrap-cache-v1.md`](./gradle-bootstrap-cache-v1.md) | `A0-007` |
 | [`export-gateway-v1.md`](./export-gateway-v1.md) | `A0-008` |
+| [`causal-pilot-v1.md`](./causal-pilot-v1.md) | `A0-009` |
 | [`jvm-agent-spike-v1.md`](./jvm-agent-spike-v1.md) | `SPK-002` |
 | [`hermetic-helper-spike-v1.md`](./hermetic-helper-spike-v1.md) | `SPK-003` |
 | [`release-bundle-v1.md`](./release-bundle-v1.md) | `F0-038` / `DEPLOY-001` |
@@ -61,5 +62,8 @@ independent Wrapper checksum verification, and native distribution reuse.
 `export-gateway-v1.json` is the A0-008 complete/partial BUILD_SESSION contract
 for private bounded JSONL, deterministic at-least-once replay, startup
 recovery, and stdout export.
+`causal-pilot-v1.json` is the A0-009 pre-outcome paired-assignment, neutral
+observation, deterministic bootstrap, preliminary result, and internal
+net-savings gate contract.
 
 The additional materialized contract `golden-lane-runner-v1.json` pins the first runner class, toolchain, image, and checksums consumed by validation scripts. `release-bundle-v1.md` fixes the first verifiable Linux AMD64 distribution without claiming the later install, upgrade, uninstall, revocation, or workflow lifecycle. `walking-skeleton-overhead-v1.md` fixes the first non-promotional baseline-versus-wrapper measurement without replacing the later beta benchmark.

@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "buildopt.specs/causal-pilot/v1",
+  "pilotId": "A0_009_MANAGED_L1",
+  "status": "INTERNAL_PRELIMINARY",
+  "treatment": {
+    "effectScope": "ACTION_INCREMENTAL",
+    "actionId": "managed-l1-cache-hit-v1",
+    "control": "BUILDOPT_TIER_ONE_WITH_BUILD_CACHE_DISABLED",
+    "candidate": "BUILDOPT_TIER_ONE_WITH_WARM_MANAGED_L1",
+    "requiredDeliverable": "libs/a0-causal-pilot.jar"
+  },
+  "assignment": {
+    "design": "PRESCRIBED_PAIRED_ALTERNATING",
+    "persistedBeforeOutcome": true,
+    "assignmentProbability": 1,
+    "firstArmByPairParity": {
+      "odd": "CONTROL",
+      "even": "CANDIDATE"
+    },
+    "excludedFutureInputs": [
+      "actual cache hits",
+      "final duration",
+      "outcome",
+      "deliverable digest"
+    ]
+  },
+  "comparability": {
+    "requiredStrata": [
+      "environment",
+      "pipelineClass",
+      "runnerClass",
+      "outcome",
+      "workUnitsFingerprint",
+      "measurementEpoch"
+    ],
+    "workspaceState": "ISOLATED_OUTPUT_REMOVED",
+    "daemonState": "SINGLE_USE",
+    "controlCacheState": "DISABLED",
+    "candidateCacheState": "WARM_MANAGED_L1",
+    "sameSourceAndRequiredWork": true,
+    "sameBuildOptLauncherAndTierOnePolicy": true
+  },
+  "outcomes": {
+    "retained": [
+      "SUCCESS",
+      "BUILD_FAILURE",
+      "INFRA_FAILURE",
+      "CANCELLED"
+    ],
+    "successfulLatencyEstimand": "SUCCESSFUL_BUILD_SESSION_LATENCY",
+    "predeclaredExclusions": [
+      "PREDECLARED_INFRA_FAILURE",
+      "MISSING_WORK_UNITS_FINGERPRINT",
+      "CROSS_ARM_CONTAMINATION"
+    ]
+  },
+  "analysis": {
+    "analysisUnit": "BUILD_SESSION",
+    "assignmentUnit": "CI_JOB",
+    "analysisMethod": "PAIRED_BOOTSTRAP",
+    "effectStatistic": "PAIRED_MEAN_DELTA",
+    "intervalType": "CONFIDENCE_95",
+    "bootstrapReplicates": 4096,
+    "savedTimeFormula": "mean(controlMs - candidateMs)",
+    "reductionRatioFormula": "sum(controlMs - candidateMs) / sum(controlMs)",
+    "p95DeltaFormula": "candidateP95Ms - controlP95Ms",
+    "minimumSuccessfulPairsForResult": 2,
+    "minimumSuccessfulPairsForA0Gate": 4
+  },
+  "result": {
+    "schema": "contracts/jsonschema/experiment-result.v1.schema.json",
+    "status": "PRELIMINARY",
+    "resultVersion": 1,
+    "promotionAuthorized": false,
+    "jsonMode": "0600",
+    "directoryMode": "0700",
+    "jsonl": {
+      "filename": "experiment-results.jsonl",
+      "maximumBytes": 67108864,
+      "maximumLineBytes": 1048576,
+      "identity": [
+        "experimentId",
+        "resultVersion"
+      ],
+      "duplicatePolicy": "BYTE_IDENTICAL_IDEMPOTENT",
+      "conflictPolicy": "REJECT",
+      "stdoutExport": "BYTE_EXACT"
+    }
+  },
+  "a0Gate": {
+    "requires": [
+      "at least four fully analyzed pairs",
+      "observedNetBuildTimeSavedMs > 0",
+      "lower 95 percent paired-bootstrap bound > 0",
+      "zero required-deliverable divergence",
+      "zero product-attributable failure",
+      "zero build-failure-rate delta"
+    ],
+    "hitRateAlonePasses": false,
+    "closes": "A0-G09",
+    "doesNotClose": [
+      "A0-G06",
+      "beta promotion",
+      "external pilot evidence"
+    ]
+  }
+}
