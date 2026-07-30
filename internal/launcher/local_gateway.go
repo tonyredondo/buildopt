@@ -44,6 +44,7 @@ type localGateway struct {
 	username   string
 	password   string
 	generation string
+	spool      *gatewaySpool
 	readiness  func() bool
 	cache      func() *gatewayCacheBinding
 	release    func() error
@@ -72,8 +73,14 @@ func startLocalGatewayWithCache(
 		_ = listener.Close()
 		return nil, err
 	}
+	spool, err := newEphemeralGatewaySpool()
+	if err != nil {
+		_ = listener.Close()
+		return nil, err
+	}
 
 	gateway := localGatewayForListener(listener, identity, nil)
+	gateway.spool = spool
 	if binding != nil {
 		staticBinding := binding.copy()
 		gateway.cache = func() *gatewayCacheBinding {
@@ -241,7 +248,10 @@ func (gateway *localGateway) close() error {
 	if gateway.release != nil {
 		return gateway.release()
 	}
-	return gateway.stopServingLocked()
+	return errors.Join(
+		gateway.stopServingLocked(),
+		gateway.spool.close(),
+	)
 }
 
 func (gateway *localGateway) startServingLocked(listener net.Listener) {
@@ -428,29 +438,46 @@ func (gateway *localGateway) serveCache(
 		writer.WriteHeader(http.StatusServiceUnavailable)
 		return
 	}
-
-	responseHeaders := []string{
-		"X-BuildOpt-Blob-Digest",
-	}
 	if request.Method == http.MethodGet {
-		responseHeaders = append(
-			responseHeaders,
-			"Content-Length",
-			"Content-Type",
-			"ETag",
-		)
-	} else {
-		writer.Header().Set("Content-Length", "0")
+		gateway.serveVerifiedCacheGET(writer, response)
+		return
 	}
-	for _, header := range responseHeaders {
-		if value := response.Header.Get(header); value != "" {
-			writer.Header().Set(header, value)
-		}
+
+	writer.Header().Set("Content-Length", "0")
+	if value := response.Header.Get("X-BuildOpt-Blob-Digest"); value != "" {
+		writer.Header().Set("X-BuildOpt-Blob-Digest", value)
 	}
 	writer.WriteHeader(response.StatusCode)
-	if request.Method == http.MethodGet {
-		_, _ = io.Copy(writer, response.Body)
+}
+
+func (gateway *localGateway) serveVerifiedCacheGET(
+	writer http.ResponseWriter,
+	response *http.Response,
+) {
+	if gateway.spool == nil {
+		writer.WriteHeader(http.StatusNotFound)
+		return
 	}
+	payload, err := gateway.spool.receive(
+		response.Request.Context(),
+		response.Body,
+		response.ContentLength,
+		response.Header.Get("ETag"),
+		response.Header.Get("X-BuildOpt-Blob-Digest"),
+	)
+	if err != nil {
+		writer.WriteHeader(http.StatusNotFound)
+		return
+	}
+	defer payload.close()
+	writer.Header().Set("Content-Length", strconv.FormatInt(payload.size, 10))
+	writer.Header().Set("ETag", `"`+payload.digest+`"`)
+	writer.Header().Set("X-BuildOpt-Blob-Digest", payload.digest)
+	if value := response.Header.Get("Content-Type"); value != "" {
+		writer.Header().Set("Content-Type", value)
+	}
+	writer.WriteHeader(http.StatusOK)
+	_, _ = io.Copy(writer, payload.file)
 }
 
 func (gateway *localGateway) writeUpstreamFailure(

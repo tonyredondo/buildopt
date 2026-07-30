@@ -3,7 +3,9 @@ package launcher
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -203,6 +205,8 @@ func TestLocalGatewayRoutesOnlyCurrentAuthenticatedCacheContext(
 	var receivedAuthorization string
 	var receivedAuthority string
 	var receivedBody []byte
+	cached := []byte("cached")
+	cachedDigest := "sha256:" + sha256Hex(cached)
 	upstream := httptest.NewServer(http.HandlerFunc(func(
 		writer http.ResponseWriter,
 		request *http.Request,
@@ -211,8 +215,8 @@ func TestLocalGatewayRoutesOnlyCurrentAuthenticatedCacheContext(
 		receivedAuthority = request.Header.Get(gatewayAuthorityHeader)
 		switch request.Method {
 		case http.MethodGet:
-			writer.Header().Set("ETag", `"payload"`)
-			_, _ = io.WriteString(writer, "cached")
+			writer.Header().Set("ETag", `"`+cachedDigest+`"`)
+			_, _ = writer.Write(cached)
 		case http.MethodPut:
 			receivedBody, _ = io.ReadAll(request.Body)
 			writer.Header().Set(
@@ -278,7 +282,8 @@ func TestLocalGatewayRoutesOnlyCurrentAuthenticatedCacheContext(
 	status, headers, body := request(http.MethodGet, "/cache/key-1", nil)
 	if status != http.StatusOK ||
 		string(body) != "cached" ||
-		headers.Get("ETag") != `"payload"` {
+		headers.Get("ETag") != `"`+cachedDigest+`"` ||
+		headers.Get("X-BuildOpt-Blob-Digest") != cachedDigest {
 		t.Fatalf("cache GET = %d/%q/%q", status, headers, body)
 	}
 	expectedCredential := base64.RawURLEncoding.EncodeToString(credential)
@@ -617,6 +622,11 @@ func serveGatewayRequestForTest(
 
 type failOnGatewayBodyRead struct {
 	read *atomic.Bool
+}
+
+func sha256Hex(content []byte) string {
+	digest := sha256.Sum256(content)
+	return hex.EncodeToString(digest[:])
 }
 
 func (reader *failOnGatewayBodyRead) Read([]byte) (int, error) {

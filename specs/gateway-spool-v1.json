@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "buildopt.specs/gateway-spool/v1",
+  "gateId": "A0-G04",
+  "limits": {
+    "maximumObjectBytes": 104857600,
+    "verifiedSpoolQuotaBytes": 209715200,
+    "knownContentLengthReservation": "EXACT_DECLARED_BYTES_WITH_DYNAMIC_ENFORCEMENT",
+    "absentContentLengthReservation": "MAXIMUM_OBJECT_BYTES",
+    "overQuota": "REJECT_BEFORE_BODY_READ"
+  },
+  "verifiedRead": {
+    "client": "org.gradle.caching.http.HttpBuildCache",
+    "upstreamSuccess": 200,
+    "digest": "SHA-256",
+    "digestBinding": "QUOTED_ETAG_WITH_OPTIONAL_MATCHING_X_BUILDOPT_BLOB_DIGEST",
+    "beforeDownstream200": [
+      "COMPLETE_BODY_RECEIVED",
+      "CONTENT_LENGTH_MATCHED",
+      "OBJECT_LIMIT_ENFORCED",
+      "SHA256_MATCHED",
+      "PRIVATE_SPOOL_FSYNCED",
+      "SPOOL_NAME_UNLINKED_AND_DIRECTORY_FSYNCED"
+    ],
+    "failureResponse": {
+      "status": 404,
+      "bodyBytes": 0
+    }
+  },
+  "spool": {
+    "directoryMode": "0700",
+    "fileMode": "0600",
+    "currentUserOwned": true,
+    "singleLinkRegularFiles": true,
+    "reservation": "ATOMIC_PROCESS_WIDE_BYTES",
+    "release": "ALL_SUCCESS_FAILURE_AND_CANCELLATION_PATHS",
+    "payloadPersistence": "UNLINK_BEFORE_DOWNSTREAM_200"
+  },
+  "faults": [
+    {
+      "id": "full-disk",
+      "injection": "SPOOL_WRITE_ENOSPC",
+      "expected": "BYTE_FREE_MISS_AND_CLEANUP"
+    },
+    {
+      "id": "concurrent-reservation",
+      "injection": "TWO_OVERLAPPING_DECLARED_PAYLOADS_EXCEED_QUOTA",
+      "expected": "ONE_ADMITTED_ONE_REJECTED_NO_OVERSUBSCRIPTION"
+    },
+    {
+      "id": "cancellation",
+      "injection": "CONTEXT_CANCEL_AFTER_PARTIAL_BODY",
+      "expected": "PARTIAL_DELETED_AND_RESERVATION_RELEASED"
+    },
+    {
+      "id": "late-checksum",
+      "injection": "COMPLETE_BODY_MISMATCHES_ETAG",
+      "expected": "NO_STATUS_OR_BYTES_BEFORE_BYTE_FREE_MISS"
+    },
+    {
+      "id": "crash-cleanup",
+      "injection": "STALE_PRIVATE_GET_SPOOL_FILE_BEFORE_REAL_PROCESS_START",
+      "expected": "REMOVED_BEFORE_REGISTRATION_AND_SERVING"
+    }
+  ],
+  "processEvidence": {
+    "implementation": "REAL_BUILDOPT_MANAGED_GATEWAY_PROCESS",
+    "startup": "CLEAN_STALE_SPOOL_BEFORE_CONTROL_REGISTRATION",
+    "postRecoveryVerifiedHit": true
+  },
+  "boundaries": {
+    "closes": [
+      "A0-G04"
+    ],
+    "doesNotClose": [
+      "A0-G05",
+      "A0-G06",
+      "A0-G08",
+      "A1-G02",
+      "A1-G04"
+    ],
+    "commitAtomicityAndRecovery": "A0-G05",
+    "floodCircuitBreakerAndSoak": "A1-G02"
+  }
+}

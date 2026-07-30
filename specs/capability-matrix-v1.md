@@ -82,8 +82,10 @@ revocation/rotation and aborted-writer lifecycle. Complete production commit
 fault/recovery remains `A0-G05`. `A0-G03` proves stable gateway restart,
 complete local-identity rotation, transient upstream credentials, and
 concurrent-slot policy/namespace isolation with Configuration Cache. The
-complete spool and commit fault gates remain `A0-G04/G05`, so
-`MANAGED_SHARED_CACHE` stays `UNAVAILABLE`.
+`A0-G04` gate additionally proves complete pre-`200` verified spooling,
+bounded concurrent reservation, disk/cancellation/late-checksum fallback, and
+managed-process crash cleanup. The commit fault/recovery gate remains
+`A0-G05`, so `MANAGED_SHARED_CACHE` stays `UNAVAILABLE`.
 
 `A0-007` makes `GRADLE_BOOTSTRAP_CACHE` exact for all eight JDK 17/21 rows.
 Each real Wrapper row consumes an offline read-only dependency snapshot,

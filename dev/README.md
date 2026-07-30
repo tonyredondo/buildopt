@@ -717,6 +717,18 @@ after a stable gateway restart, one invalidation when endpoint, local
 credential, and connection generation rotate together, and reuse after the
 rotated entry is stored.
 
+Run the closed `A0-G04` complete verified-spool fault gate:
+
+```bash
+./dev/check-gateway-spool
+```
+
+The checker proves the gateway receives, bounds, hashes, syncs, and unlinks a
+complete upstream hit before downstream `200`. Race-enabled fixtures cover
+`ENOSPC`, atomic concurrent byte reservation, partial-body cancellation, a
+checksum mismatch discovered after the complete body, and stale-spool cleanup
+before a real managed-gateway process registers and serves a verified hit.
+
 ## Managed native L1
 
 Run the `A0-003` launcher/settings-plugin contract across the same eight

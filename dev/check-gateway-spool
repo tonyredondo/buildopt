@@ -1,0 +1,141 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/gateway-spool-v1.json"
+
+for buildopt_command in git jq uname; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required gateway-spool command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+if [[ "$(uname -s)" != "Linux" ]]; then
+    printf 'A0-G04 gateway spool conformance requires Linux\n' >&2
+    exit 1
+fi
+
+cd -- "${buildopt_repo_root}"
+buildopt_before_status=$(
+    git status --porcelain=v1 --untracked-files=all
+)
+
+if ! jq -e '
+    keys == [
+        "boundaries",
+        "faults",
+        "gateId",
+        "limits",
+        "processEvidence",
+        "schemaVersion",
+        "spool",
+        "verifiedRead"
+    ] and
+    .schemaVersion == "buildopt.specs/gateway-spool/v1" and
+    .gateId == "A0-G04" and
+    .limits == {
+        maximumObjectBytes: 104857600,
+        verifiedSpoolQuotaBytes: 209715200,
+        knownContentLengthReservation:
+            "EXACT_DECLARED_BYTES_WITH_DYNAMIC_ENFORCEMENT",
+        absentContentLengthReservation: "MAXIMUM_OBJECT_BYTES",
+        overQuota: "REJECT_BEFORE_BODY_READ"
+    } and
+    .verifiedRead == {
+        client: "org.gradle.caching.http.HttpBuildCache",
+        upstreamSuccess: 200,
+        digest: "SHA-256",
+        digestBinding:
+            "QUOTED_ETAG_WITH_OPTIONAL_MATCHING_X_BUILDOPT_BLOB_DIGEST",
+        beforeDownstream200: [
+            "COMPLETE_BODY_RECEIVED",
+            "CONTENT_LENGTH_MATCHED",
+            "OBJECT_LIMIT_ENFORCED",
+            "SHA256_MATCHED",
+            "PRIVATE_SPOOL_FSYNCED",
+            "SPOOL_NAME_UNLINKED_AND_DIRECTORY_FSYNCED"
+        ],
+        failureResponse: {status: 404, bodyBytes: 0}
+    } and
+    .spool == {
+        directoryMode: "0700",
+        fileMode: "0600",
+        currentUserOwned: true,
+        singleLinkRegularFiles: true,
+        reservation: "ATOMIC_PROCESS_WIDE_BYTES",
+        release: "ALL_SUCCESS_FAILURE_AND_CANCELLATION_PATHS",
+        payloadPersistence: "UNLINK_BEFORE_DOWNSTREAM_200"
+    } and
+    [.faults[].id] == [
+        "full-disk",
+        "concurrent-reservation",
+        "cancellation",
+        "late-checksum",
+        "crash-cleanup"
+    ] and
+    [.faults[].expected] == [
+        "BYTE_FREE_MISS_AND_CLEANUP",
+        "ONE_ADMITTED_ONE_REJECTED_NO_OVERSUBSCRIPTION",
+        "PARTIAL_DELETED_AND_RESERVATION_RELEASED",
+        "NO_STATUS_OR_BYTES_BEFORE_BYTE_FREE_MISS",
+        "REMOVED_BEFORE_REGISTRATION_AND_SERVING"
+    ] and
+    .processEvidence == {
+        implementation: "REAL_BUILDOPT_MANAGED_GATEWAY_PROCESS",
+        startup: "CLEAN_STALE_SPOOL_BEFORE_CONTROL_REGISTRATION",
+        postRecoveryVerifiedHit: true
+    } and
+    .boundaries == {
+        closes: ["A0-G04"],
+        doesNotClose: ["A0-G05", "A0-G06", "A0-G08", "A1-G02", "A1-G04"],
+        commitAtomicityAndRecovery: "A0-G05",
+        floodCircuitBreakerAndSoak: "A1-G02"
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'gateway verified-spool contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_required_files=(
+    "internal/launcher/gateway_spool.go"
+    "internal/launcher/gateway_spool_test.go"
+    "internal/launcher/local_gateway.go"
+    "cmd/buildopt/managed_gateway_linux_test.go"
+    "specs/gateway-spool-v1.md"
+)
+for buildopt_relative in "${buildopt_required_files[@]}"; do
+    if [[ ! -s "${buildopt_repo_root}/${buildopt_relative}" ]]; then
+        printf 'missing gateway-spool file: %s\n' \
+            "${buildopt_relative}" >&2
+        exit 1
+    fi
+done
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 \
+    ./internal/launcher \
+    -run \
+    '^(TestLocalGatewayVerifiesCompletePayloadBeforeOK|TestLocalGatewaySpoolFullDiskBecomesByteFreeMiss|TestGatewaySpoolReservesConcurrentPayloadsAtomically|TestGatewaySpoolCancellationDeletesPartialPayload|TestLocalGatewayRejectsLateChecksumAsByteFreeMiss|TestGatewaySpoolStartupCleansCrashedPayload)$'
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 \
+    ./cmd/buildopt \
+    -run '^TestBuildoptManagedGatewayCleansCrashedSpoolBeforeServing$'
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/launcher ./cmd/buildopt
+
+buildopt_after_status=$(
+    git status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'gateway verified-spool check changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'A0-G04 gateway spool OK: complete pre-200 verification, bounded reservation, disk/cancel/checksum faults, and real-process crash cleanup\n'

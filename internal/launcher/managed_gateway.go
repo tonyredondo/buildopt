@@ -601,11 +601,22 @@ func serveManagedGateway(directory string, idleTimeout time.Duration) error {
 	}
 
 	context := &managedGatewayContext{}
+	spool, err := openGatewaySpool(
+		filepath.Join(directory, "spool"),
+		false,
+		gatewayMaximumVerifiedPayloadBytes,
+		gatewayVerifiedSpoolQuotaBytes,
+	)
+	if err != nil {
+		_ = httpListener.Close()
+		return err
+	}
 	gateway := localGatewayForListener(
 		httpListener,
 		identity,
 		context.ready,
 	)
+	gateway.spool = spool
 	gateway.cache = context.cache
 	gateway.startServingLocked(httpListener)
 	defer gateway.close()

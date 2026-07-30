@@ -406,6 +406,71 @@ func TestBuildoptManagedGatewayConcurrentCacheBindingsRemainIsolated(
 	}
 }
 
+func TestBuildoptManagedGatewayCleansCrashedSpoolBeforeServing(
+	t *testing.T,
+) {
+	buildoptBinary := buildBuildopt(t)
+	directory := filepath.Join(t.TempDir(), "slot")
+	spoolDirectory := filepath.Join(directory, "spool")
+	if err := os.MkdirAll(spoolDirectory, 0o700); err != nil {
+		t.Fatalf("create crashed spool fixture: %v", err)
+	}
+	stalePath := filepath.Join(spoolDirectory, ".get-crashed")
+	if err := os.WriteFile(
+		stalePath,
+		[]byte("incomplete upstream payload"),
+		0o600,
+	); err != nil {
+		t.Fatalf("write crashed spool fixture: %v", err)
+	}
+
+	credential := bytes.Repeat([]byte{0xc3}, 32)
+	authority := "sha256:" + strings.Repeat("c", 64)
+	var hits atomic.Int32
+	upstream := isolatedManagedUpstream(
+		credential,
+		authority,
+		"recovered",
+		&hits,
+	)
+	defer upstream.Close()
+	process := startManagedGatewayCommand(t, buildoptBinary, directory)
+	defer stopManagedGatewayCommand(t, process)
+	connection, gateway := registerManagedGatewayFixture(
+		t,
+		directory,
+		"cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+		upstream.URL,
+		credential,
+		authority,
+	)
+	defer connection.Close()
+
+	entries, err := os.ReadDir(spoolDirectory)
+	if err != nil || len(entries) != 0 {
+		t.Fatalf("recovered managed spool = %v/%v, want empty", entries, err)
+	}
+	status, body := requestManagedCacheFixture(
+		t,
+		gateway,
+		gateway.Password,
+	)
+	if status != http.StatusOK ||
+		string(body) != "recovered" ||
+		hits.Load() != 1 {
+		t.Fatalf(
+			"recovered managed gateway = %d/%q/%d",
+			status,
+			body,
+			hits.Load(),
+		)
+	}
+	entries, err = os.ReadDir(spoolDirectory)
+	if err != nil || len(entries) != 0 {
+		t.Fatalf("post-request managed spool = %v/%v, want empty", entries, err)
+	}
+}
+
 func isolatedManagedUpstream(
 	credential []byte,
 	authorityDigest string,
@@ -426,6 +491,11 @@ func isolatedManagedUpstream(
 			return
 		}
 		hits.Add(1)
+		digest := sha256.Sum256([]byte(namespace))
+		writer.Header().Set(
+			"ETag",
+			`"sha256:`+hex.EncodeToString(digest[:])+`"`,
+		)
 		_, _ = io.WriteString(writer, namespace)
 	}))
 }
