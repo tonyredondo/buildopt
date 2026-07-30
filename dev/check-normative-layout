@@ -97,6 +97,8 @@ buildopt_planned_artifacts=(
     "specs/gateway-spool-v1.md"
     "specs/shared-commit-recovery-v1.json"
     "specs/shared-commit-recovery-v1.md"
+    "specs/no-hit-overhead-v1.json"
+    "specs/no-hit-overhead-v1.md"
     "specs/gradle-bootstrap-cache-v1.json"
     "specs/gradle-bootstrap-cache-v1.md"
     "specs/export-gateway-v1.json"
@@ -164,6 +166,8 @@ buildopt_materialized_artifacts=(
     "specs/gateway-spool-v1.md"
     "specs/shared-commit-recovery-v1.json"
     "specs/shared-commit-recovery-v1.md"
+    "specs/no-hit-overhead-v1.json"
+    "specs/no-hit-overhead-v1.md"
     "specs/gradle-bootstrap-cache-v1.json"
     "specs/gradle-bootstrap-cache-v1.md"
     "specs/export-gateway-v1.json"
@@ -175,6 +179,7 @@ buildopt_materialized_artifacts=(
     "specs/walking-skeleton-faults-v1.md"
     "specs/walking-skeleton-overhead-v1.md"
     "benchmarks/results/ws-009-golden-lane.json"
+    "benchmarks/results/a0-g06-no-hit-overhead.json"
     "benchmarks/beta-v1.yaml"
 )
 

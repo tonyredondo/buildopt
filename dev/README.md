@@ -742,6 +742,22 @@ pre-commit rollback and later control-index failure, repairs audit state by
 decision digest, and makes orphaned, missing-blob, and expired-lease states
 safe misses.
 
+Run the closed `A0-G06` no-hit overhead gate:
+
+```bash
+./dev/check-no-hit-overhead
+```
+
+The host path runs two non-qualifying smoke pairs and validates the immutable
+strict report. The qualified path runs four alternating native/wrapper pairs
+in the pinned 4-CPU/16-GiB container after one warm-up per arm. Every wrapper
+long session uses a fresh managed L1 and an authenticated read-only L2 that
+returns a controlled `404`; every required JAR is byte-identical, all sessions
+last at least five seconds, and nearest-rank p95 must stay within both 500 ms
+and 2%. The separate short session omits L2 before execution and proves fewer
+than five seconds plus zero remote requests. See
+[`no-hit-overhead-v1.md`](../specs/no-hit-overhead-v1.md).
+
 ## Managed native L1
 
 Run the `A0-003` launcher/settings-plugin contract across the same eight
@@ -1141,7 +1157,7 @@ Produce strict 4-CPU/16-GiB runner evidence on a host with sufficient resources:
 ./dev/run-golden-lane-container --require-runner-class
 ```
 
-The runner resolves the immutable image index by digest, requires its unique Linux AMD64 manifest to equal the recorded platform digest, pulls that exact reference, and verifies the local image operating system, architecture, and repository digest. It also builds the walking-skeleton launcher, server, signal helper, metrics validator, and isolated schema validator with the locked Go toolchain and `CGO_ENABLED=0` into a temporary read-only mount, so the JDK-only image can execute the real authenticated rendezvous, session ingest, cancellation cleanup, metric-catalog checks, and `BUILD_SESSION v1` validation without adding an unpinned compiler or `jq`. The subsequent container uses `--pull never`, checks the exact Java patch from the runner specification, and in strict mode verifies effective cgroup v2 CPU and memory limits from inside the container. It never treats the readable source tag as executable identity.
+The runner resolves the immutable image index by digest, requires its unique Linux AMD64 manifest to equal the recorded platform digest, pulls that exact reference, and verifies the local image operating system, architecture, and repository digest. It also builds the walking-skeleton launcher, server, signal helper, no-hit miss helper, metrics validator, and isolated schema validator with the locked Go toolchain and `CGO_ENABLED=0` into a temporary read-only mount. The JDK-only image receives those binaries plus the official static `jq` 1.7.1 binary after its SHA-256 is verified, so it can execute the real authenticated rendezvous, session ingest, cancellation cleanup, metric-catalog checks, `BUILD_SESSION v1` validation, and no-hit gate without adding a compiler or package manager to the image. The subsequent container uses `--pull never`, checks the exact Java patch from the runner specification, and in strict mode verifies effective cgroup v2 CPU and memory limits from inside the container. It never treats the readable source tag as executable identity.
 
 Invalid usage exits `64`, an unavailable daemon or image/build verification failure exits `1`, and a host that cannot enforce the strict runner class exits `2`. The child container's other nonzero status is preserved.
 

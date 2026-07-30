@@ -54,3 +54,8 @@ uninstrumented Gradle-baseline fallback.
 `patcher/` documents the `SPK-004` real-Git fixture generator. Each acceptance
 case receives a private repository, signed bundle, blob directory, staging
 root, and in-memory draft-PR adapter; all of them are deleted after the case.
+
+`no-hit-overhead/` is the deterministic `A0-G06` Java 17 workload. It exposes
+long and short session tasks around one Tier 1 `JavaCompile` cache lookup,
+declares no external repositories or dependencies, and produces the required
+reproducible JAR used by the paired overhead gate.

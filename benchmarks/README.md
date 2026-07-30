@@ -31,6 +31,26 @@ and is subsequently validated without being rewritten:
 The measurement contract lives in
 [`specs/walking-skeleton-overhead-v1.md`](../specs/walking-skeleton-overhead-v1.md).
 
+## A0 no-hit overhead evidence
+
+[`results/a0-g06-no-hit-overhead.json`](./results/a0-g06-no-hit-overhead.json)
+is the qualified four-pair `A0-G06` report from the pinned
+4-CPU/16-GiB runner. It records authenticated forced L2 misses with fresh L1
+and output state for every long wrapper arm, byte-identical required JARs, and
+the independent short branch where policy omits L2 before execution and the
+miss server observes zero requests.
+
+The report binds every measurement input by SHA-256 and applies the fixed
+500-ms/2% long-session p95 limits. It is an A0 engineering gate, not causal
+savings or beta-promotion evidence. Revalidate it with:
+
+```bash
+./dev/check-no-hit-overhead
+```
+
+The measurement contract lives in
+[`specs/no-hit-overhead-v1.md`](../specs/no-hit-overhead-v1.md).
+
 ## JVM Agent spike evidence
 
 [`results/spk-002-agent.json`](./results/spk-002-agent.json) records the one

@@ -1,0 +1,714 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+unset \
+    BUILDOPT_BYPASS \
+    BUILDOPT_SERVER_URL \
+    BUILDOPT_SERVER_INGEST_TOKEN \
+    BUILDOPT_BUILD_SESSION_CONTEXT \
+    BUILDOPT_LOCAL_AUTHORITY_PATH \
+    BUILDOPT_LOCAL_TRUST_ROOT_PATH \
+    BUILDOPT_LOCAL_CACHE_CREDENTIAL_PATH \
+    BUILDOPT_SHARED_CACHE_URL \
+    BUILDOPT_GATEWAY_STATE_ROOT \
+    BUILDOPT_RUNNER_SLOT \
+    BUILDOPT_GATEWAY_IDLE_TIMEOUT \
+    BUILDOPT_L1_STATE_ROOT \
+    BUILDOPT_L1_TENANT_ID \
+    BUILDOPT_L1_REPOSITORY_ID \
+    BUILDOPT_L1_TRUST_DOMAIN \
+    BUILDOPT_L1_COMPATIBILITY_CLASS
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/no-hit-overhead-v1.json"
+buildopt_evidence_relative=benchmarks/results/a0-g06-no-hit-overhead.json
+buildopt_evidence="${buildopt_repo_root}/${buildopt_evidence_relative}"
+buildopt_test_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-no-hit.XXXXXX")
+buildopt_miss_pid=
+buildopt_server_pid=
+buildopt_gradle=
+buildopt_measurement_home="${buildopt_test_root}/gradle-home"
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_server_pid}" ]] &&
+        kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        kill -TERM "${buildopt_server_pid}" 2>/dev/null || true
+        wait "${buildopt_server_pid}" 2>/dev/null || true
+    fi
+    if [[ -n "${buildopt_miss_pid}" ]] &&
+        kill -0 "${buildopt_miss_pid}" 2>/dev/null; then
+        kill -TERM "${buildopt_miss_pid}" 2>/dev/null || true
+        wait "${buildopt_miss_pid}" 2>/dev/null || true
+    fi
+    if [[ -n "${buildopt_gradle}" && -x "${buildopt_gradle}" ]]; then
+        GRADLE_USER_HOME="${buildopt_measurement_home}" \
+            "${buildopt_gradle}" --stop >/dev/null 2>&1 || true
+    fi
+    if [[ -n "${buildopt_test_root}" &&
+        "${buildopt_test_root}" == \
+            "${TMPDIR:-/tmp}/buildopt-no-hit."* ]]; then
+        for _ in {1..20}; do
+            rm -rf -- "${buildopt_test_root}" 2>/dev/null || true
+            if [[ ! -e "${buildopt_test_root}" ]]; then
+                break
+            fi
+            sleep 0.05
+        done
+    fi
+}
+trap buildopt_cleanup EXIT
+
+if [[ "$(uname -s)" != "Linux" ]]; then
+    printf 'A0-G06 no-hit overhead requires Linux\n' >&2
+    exit 1
+fi
+for buildopt_command in \
+    chmod cmp cp dirname find grep head jq mkdir mktemp readlink rm sed \
+    sha256sum sleep stat uname wc; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required no-hit overhead command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+cd -- "${buildopt_repo_root}"
+buildopt_check_git_state=0
+buildopt_before_status=
+if command -v git >/dev/null 2>&1; then
+    buildopt_check_git_state=1
+    buildopt_before_status=$(
+        git status --porcelain=v1 --untracked-files=all |
+            sed "\\| ${buildopt_evidence_relative}\$|d"
+    )
+fi
+buildopt_evidence_before=
+if [[ -f "${buildopt_evidence}" ]]; then
+    buildopt_evidence_before=$(
+        sha256sum "${buildopt_evidence}" |
+            sed 's/[[:space:]].*$//'
+    )
+fi
+
+if ! jq -e '
+    keys == [
+        "boundaries",
+        "evidence",
+        "gateId",
+        "longSessions",
+        "measurement",
+        "runner",
+        "schemaVersion",
+        "shortSessions"
+    ] and
+    .schemaVersion == "buildopt.specs/no-hit-overhead/v1" and
+    .gateId == "A0-G06" and
+    .runner == {
+        spec: "specs/golden-lane-runner-v1.json",
+        class: "linux-amd64-4c-16g-v1",
+        strictPairCount: 4,
+        hostSmokePairCount: 2
+    } and
+    .measurement == {
+        design: "PAIRED_ALTERNATING",
+        clock: "MONOTONIC",
+        startBoundary: "NEUTRAL_ENVELOPE_HANDOFF",
+        endBoundary: "EXIT_CODE_AND_REQUIRED_DELIVERABLES_AVAILABLE",
+        firstMeasuredPairIncluded: true,
+        warmupsPerArm: 1,
+        daemonState: "WARM_SHARED_DAEMON",
+        configurationCache: true,
+        gradleOffline: false,
+        externalRepositories: 0,
+        strictLongProbeDelayMs: 25000
+    } and
+    .longSessions == {
+        minimumDurationMs: 5000,
+        maximumP95OverheadMs: 500,
+        maximumP95OverheadRatio: 0.02,
+        l2: "AUTHENTICATED_READ_ONLY",
+        upstreamResult: "FORCED_404",
+        requiredMissesPerWrapper: 1,
+        freshL1AndOutputsPerObservation: true
+    } and
+    .shortSessions == {
+        maximumDurationExclusiveMs: 5000,
+        maximumOverheadMsWhenL2Enabled: 100,
+        selectedAlternative: "L2_OMITTED_PRE_OUTCOME",
+        maximumRemoteRequests: 0
+    } and
+    .evidence == {
+        report: "benchmarks/results/a0-g06-no-hit-overhead.json",
+        recordType: "NO_HIT_OVERHEAD_GATE_REPORT",
+        promotionGateActive: false,
+        checker: "dev/check-no-hit-overhead"
+    } and
+    .boundaries == {
+        closes: ["A0-G06"],
+        doesNotClose: ["A0-G08", "A1-G02", "A1-G03", "A1-G04"]
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'no-hit overhead contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_runner_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+buildopt_metrics_catalog="${buildopt_repo_root}/contracts/metrics/build-impact-v1.json"
+buildopt_fixture_source="${buildopt_repo_root}/fixtures/no-hit-overhead"
+for buildopt_required in \
+    "${buildopt_runner_spec}" \
+    "${buildopt_metrics_catalog}" \
+    "${buildopt_fixture_source}/build.gradle.kts" \
+    "${buildopt_fixture_source}/settings.gradle.kts" \
+    "${buildopt_fixture_source}/src/main/java/dev/buildopt/fixture/NoHitOverhead.java"; do
+    if [[ ! -s "${buildopt_required}" ]]; then
+        printf 'missing no-hit overhead input: %s\n' "${buildopt_required}" >&2
+        exit 1
+    fi
+done
+
+buildopt_build_home=${GRADLE_USER_HOME:-"${buildopt_repo_root}/.tools/gradle-user-home/local"}
+mkdir -p -- "${buildopt_build_home}" "${buildopt_measurement_home}"
+buildopt_gradle_prefix=(
+    "${buildopt_script_dir}/run"
+    --
+    "${buildopt_repo_root}/gradlew"
+)
+if [[ "${BUILDOPT_GOLDEN_LANE_USE_ACTIVE_JAVA:-0}" == "1" ]]; then
+    buildopt_gradle_prefix=("${buildopt_repo_root}/gradlew")
+fi
+GRADLE_USER_HOME="${buildopt_build_home}" \
+    "${buildopt_gradle_prefix[@]}" \
+    --no-daemon \
+    --offline \
+    --no-configuration-cache \
+    --warning-mode=fail \
+    :jvm:gradle-plugin:jar
+
+mapfile -d '' buildopt_plugin_jars < <(
+    find "${buildopt_repo_root}/jvm/gradle-plugin/build/libs" \
+        -maxdepth 1 \
+        -type f \
+        -name 'buildopt-gradle-plugin-*.jar' \
+        ! -name '*-javadoc.jar' \
+        ! -name '*-sources.jar' \
+        -print0
+)
+if ((${#buildopt_plugin_jars[@]} != 1)); then
+    printf 'expected one packaged Gradle plugin, found %s\n' \
+        "${#buildopt_plugin_jars[@]}" >&2
+    exit 1
+fi
+buildopt_plugin_jar=${buildopt_plugin_jars[0]}
+
+buildopt_gradle_home=$(
+    find \
+        "${buildopt_build_home}/wrapper/dists/gradle-9.6.1-bin" \
+        -type d \
+        -path '*/gradle-9.6.1' \
+        -print \
+        -quit
+)
+if [[ -z "${buildopt_gradle_home}" ||
+    ! -x "${buildopt_gradle_home}/bin/gradle" ]]; then
+    printf 'pinned Gradle 9.6.1 distribution is unavailable\n' >&2
+    exit 1
+fi
+buildopt_gradle=$(readlink -f "${buildopt_gradle_home}/bin/gradle")
+
+buildopt_launcher=${BUILDOPT_GOLDEN_LANE_LAUNCHER_BINARY:-}
+buildopt_server=${BUILDOPT_GOLDEN_LANE_SERVER_BINARY:-}
+buildopt_envelope=${BUILDOPT_GOLDEN_LANE_ENVELOPE_BINARY:-}
+buildopt_helper=${BUILDOPT_GOLDEN_LANE_NO_HIT_HELPER_BINARY:-}
+if [[ -n "${buildopt_launcher}" ||
+    -n "${buildopt_server}" ||
+    -n "${buildopt_envelope}" ||
+    -n "${buildopt_helper}" ]]; then
+    if [[ ! -x "${buildopt_launcher}" ||
+        ! -x "${buildopt_server}" ||
+        ! -x "${buildopt_envelope}" ||
+        ! -x "${buildopt_helper}" ]]; then
+        printf 'supplied golden-lane no-hit binaries are incomplete\n' >&2
+        exit 1
+    fi
+else
+    buildopt_launcher="${buildopt_test_root}/buildopt"
+    buildopt_server="${buildopt_test_root}/buildopt-server"
+    buildopt_envelope="${buildopt_test_root}/neutral-envelope"
+    buildopt_helper="${buildopt_test_root}/no-hit-cache"
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go test -race -count=1 \
+        ./cmd/buildopt/testdata/no-hit-cache \
+        ./internal/neutralenvelope \
+        ./cmd/neutral-envelope
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+        "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -buildvcs=false -trimpath \
+        -o "${buildopt_launcher}" ./cmd/buildopt
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+        "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -buildvcs=false -trimpath \
+        -o "${buildopt_server}" ./cmd/buildopt-server
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+        "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -buildvcs=false -trimpath \
+        -o "${buildopt_envelope}" ./cmd/neutral-envelope
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+        "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -buildvcs=false -trimpath \
+        -o "${buildopt_helper}" ./cmd/buildopt/testdata/no-hit-cache
+fi
+
+buildopt_fixture_manifest="${buildopt_test_root}/fixture.manifest"
+(
+    cd -- "${buildopt_repo_root}"
+    sha256sum \
+        fixtures/no-hit-overhead/README.md \
+        fixtures/no-hit-overhead/build.gradle.kts \
+        fixtures/no-hit-overhead/settings.gradle.kts \
+        fixtures/no-hit-overhead/src/main/java/dev/buildopt/fixture/NoHitOverhead.java
+) >"${buildopt_fixture_manifest}"
+
+buildopt_authority_root="${buildopt_test_root}/authority"
+buildopt_prepare_attempt() {
+    local buildopt_sequence=$1
+    local buildopt_suffix
+    printf -v buildopt_suffix '%012d' "${buildopt_sequence}"
+    "${buildopt_helper}" prepare \
+        --root "${buildopt_authority_root}" \
+        --attempt-id "11111111-1111-4111-8111-${buildopt_suffix}"
+}
+buildopt_prepare_attempt 1
+buildopt_authority="${buildopt_authority_root}/authority.json"
+buildopt_trust_root="${buildopt_authority_root}/trust-root.json"
+buildopt_credential="${buildopt_authority_root}/credential"
+
+buildopt_miss_ready="${buildopt_test_root}/miss.ready"
+buildopt_miss_log="${buildopt_test_root}/misses.jsonl"
+"${buildopt_helper}" serve \
+    --authority "${buildopt_authority}" \
+    --trust-root "${buildopt_trust_root}" \
+    --credential "${buildopt_credential}" \
+    --ready-file "${buildopt_miss_ready}" \
+    --log "${buildopt_miss_log}" \
+    >"${buildopt_test_root}/miss-server.log" 2>&1 &
+buildopt_miss_pid=$!
+for _ in {1..100}; do
+    if [[ -s "${buildopt_miss_ready}" ]]; then
+        break
+    fi
+    if ! kill -0 "${buildopt_miss_pid}" 2>/dev/null; then
+        printf 'no-hit miss backend exited before readiness\n' >&2
+        sed -n '1,160p' "${buildopt_test_root}/miss-server.log" >&2
+        exit 1
+    fi
+    sleep 0.05
+done
+if [[ ! -s "${buildopt_miss_ready}" ]]; then
+    printf 'no-hit miss backend did not become ready\n' >&2
+    exit 1
+fi
+buildopt_miss_endpoint=$(<"${buildopt_miss_ready}")
+
+buildopt_token=0123456789abcdefghijklmnopqrstuvwxyzABCDEFG
+buildopt_exports="${buildopt_test_root}/exports"
+buildopt_server_log="${buildopt_test_root}/server.log"
+BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+    "${buildopt_server}" serve \
+    --listen 127.0.0.1:0 \
+    --export-dir "${buildopt_exports}" \
+    >"${buildopt_server_log}" 2>&1 &
+buildopt_server_pid=$!
+buildopt_server_endpoint=
+for _ in {1..100}; do
+    buildopt_server_endpoint=$(
+        sed -n \
+            's/^buildopt-server: listening on \(http:\/\/127[.]0[.]0[.]1:[0-9][0-9]*\)$/\1/p' \
+            "${buildopt_server_log}" |
+            head -n 1
+    )
+    if [[ -n "${buildopt_server_endpoint}" ]]; then
+        break
+    fi
+    if ! kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        printf 'buildopt-server exited before no-hit readiness\n' >&2
+        sed -n '1,160p' "${buildopt_server_log}" >&2
+        exit 1
+    fi
+    sleep 0.05
+done
+if [[ -z "${buildopt_server_endpoint}" ]]; then
+    printf 'buildopt-server did not become ready for no-hit measurement\n' >&2
+    exit 1
+fi
+
+buildopt_native_workspace="${buildopt_test_root}/native"
+buildopt_wrapper_workspace="${buildopt_test_root}/wrapper"
+cp -R -- "${buildopt_fixture_source}" "${buildopt_native_workspace}"
+cp -R -- "${buildopt_fixture_source}" "${buildopt_wrapper_workspace}"
+buildopt_native_project_cache="${buildopt_test_root}/native-project-cache"
+buildopt_wrapper_project_cache="${buildopt_test_root}/wrapper-project-cache"
+buildopt_l1_state="${buildopt_test_root}/l1-state"
+buildopt_gateway_state="${buildopt_test_root}/gateway-state"
+mkdir -m 0700 -- "${buildopt_gateway_state}"
+
+buildopt_plugin_quoted=${buildopt_plugin_jar//\\/\\\\}
+buildopt_plugin_quoted=${buildopt_plugin_quoted//\'/\\\'}
+buildopt_init_script="${buildopt_test_root}/managed.init.gradle"
+printf '%s\n' \
+    "initscript { dependencies { classpath files('${buildopt_plugin_quoted}') } }" \
+    'beforeSettings { settings ->' \
+    '    settings.pluginManager.apply(dev.buildopt.gradle.BuildOptManagedL1Plugin)' \
+    '}' \
+    'allprojects {' \
+    '    pluginManager.apply(dev.buildopt.gradle.BuildOptProjectPlugin)' \
+    '}' \
+    >"${buildopt_init_script}"
+
+buildopt_execution_environment=HOST_SMOKE
+buildopt_pair_count=$(jq -r '.runner.hostSmokePairCount' "${buildopt_contract}")
+buildopt_long_delay_ms=15000
+if [[ "${BUILDOPT_EXPECT_CGROUP_LIMITS:-0}" == "1" ]]; then
+    buildopt_execution_environment=STRICT_GOLDEN_CONTAINER
+    buildopt_pair_count=$(jq -r '.runner.strictPairCount' "${buildopt_contract}")
+    buildopt_long_delay_ms=$(
+        jq -r '.measurement.strictLongProbeDelayMs' "${buildopt_contract}"
+    )
+fi
+buildopt_common_arguments=(
+    --configuration-cache
+    --stacktrace
+    --warning-mode=fail
+    --console=plain
+    "-PbuildoptNoHitDelayMs=${buildopt_long_delay_ms}"
+)
+buildopt_observations="${buildopt_test_root}/observations"
+mkdir -m 0700 -- "${buildopt_observations}"
+buildopt_attempt_sequence=10
+
+buildopt_miss_count() {
+    if [[ ! -s "${buildopt_miss_log}" ]]; then
+        printf '0\n'
+        return
+    fi
+    wc -l <"${buildopt_miss_log}"
+}
+
+buildopt_run_long_arm() {
+    local buildopt_arm=$1
+    local buildopt_pair=$2
+    local buildopt_order=$3
+    local buildopt_measured=$4
+    local buildopt_arm_lower=${buildopt_arm,,}
+    local buildopt_workspace
+    local buildopt_project_cache
+    local buildopt_output
+    local buildopt_log
+    local buildopt_observation
+    local buildopt_before_misses
+    local buildopt_after_misses
+    local -a buildopt_command
+
+    if [[ "${buildopt_arm}" == "NATIVE" ]]; then
+        buildopt_workspace=${buildopt_native_workspace}
+        buildopt_project_cache=${buildopt_native_project_cache}
+    else
+        buildopt_workspace=${buildopt_wrapper_workspace}
+        buildopt_project_cache=${buildopt_wrapper_project_cache}
+    fi
+    buildopt_output="${buildopt_workspace}/build/libs/no-hit-overhead-1.0.jar"
+    buildopt_log="${buildopt_test_root}/long-${buildopt_pair}-${buildopt_order}-${buildopt_arm_lower}.log"
+    buildopt_observation="${buildopt_observations}/observation-${buildopt_pair}-${buildopt_order}-${buildopt_arm_lower}.json"
+    rm -rf -- "${buildopt_workspace}/build"
+
+    if [[ "${buildopt_arm}" == "NATIVE" ]]; then
+        buildopt_command=(
+            "${buildopt_gradle}"
+            "${buildopt_common_arguments[@]}"
+            --no-build-cache
+            --project-cache-dir "${buildopt_project_cache}"
+            -p "${buildopt_workspace}"
+            noHitLongProbe
+        )
+        if [[ "${buildopt_measured}" == "1" ]]; then
+            if ! GRADLE_USER_HOME="${buildopt_measurement_home}" \
+                "${buildopt_envelope}" observe \
+                    --arm NATIVE \
+                    --pair "${buildopt_pair}" \
+                    --order "${buildopt_order}" \
+                    --command-class gradle-no-hit-native-v1 \
+                    --deliverable "${buildopt_output}" \
+                    --output "${buildopt_observation}" \
+                    -- "${buildopt_command[@]}" >"${buildopt_log}" 2>&1; then
+                printf 'measured native no-hit arm failed\n' >&2
+                sed -n '1,240p' "${buildopt_log}" >&2
+                exit 1
+            fi
+        else
+            if ! GRADLE_USER_HOME="${buildopt_measurement_home}" \
+                "${buildopt_command[@]}" >"${buildopt_log}" 2>&1; then
+                printf 'native no-hit warm-up failed\n' >&2
+                sed -n '1,240p' "${buildopt_log}" >&2
+                exit 1
+            fi
+        fi
+        return
+    fi
+
+    buildopt_attempt_sequence=$((buildopt_attempt_sequence + 1))
+    buildopt_prepare_attempt "${buildopt_attempt_sequence}"
+    rm -rf -- "${buildopt_l1_state}"
+    mkdir -m 0700 -- "${buildopt_l1_state}"
+    buildopt_before_misses=$(buildopt_miss_count)
+    buildopt_command=(
+        "${buildopt_launcher}"
+        run
+        --
+        "${buildopt_gradle}"
+        "${buildopt_common_arguments[@]}"
+        --build-cache
+        --project-cache-dir "${buildopt_project_cache}"
+        --init-script "${buildopt_init_script}"
+        -p "${buildopt_workspace}"
+        noHitLongProbe
+    )
+    if [[ "${buildopt_measured}" == "1" ]]; then
+        if ! CI=true \
+        BUILDOPT_LOCAL_AUTHORITY_PATH="${buildopt_authority}" \
+        BUILDOPT_LOCAL_TRUST_ROOT_PATH="${buildopt_trust_root}" \
+        BUILDOPT_LOCAL_CACHE_CREDENTIAL_PATH="${buildopt_credential}" \
+        BUILDOPT_SHARED_CACHE_URL="${buildopt_miss_endpoint}" \
+        BUILDOPT_GATEWAY_STATE_ROOT="${buildopt_gateway_state}" \
+        BUILDOPT_RUNNER_SLOT=a0-g06 \
+        BUILDOPT_GATEWAY_IDLE_TIMEOUT=10m \
+        BUILDOPT_L1_STATE_ROOT="${buildopt_l1_state}" \
+        BUILDOPT_L1_TENANT_ID=tenant-internal \
+        BUILDOPT_L1_REPOSITORY_ID=tonyredondo/buildopt \
+        BUILDOPT_L1_TRUST_DOMAIN=a0-no-hit \
+        BUILDOPT_L1_COMPATIBILITY_CLASS=gradle-9.6-java-21-linux-amd64 \
+        BUILDOPT_SERVER_URL="${buildopt_server_endpoint}" \
+        BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+        BUILDOPT_BUILD_SESSION_CONTEXT='{"repositoryId":"tonyredondo-buildopt","revision":"a0-g06-no-hit-v1","requestedTasks":["noHitLongProbe"],"sourceStateDigest":"hmac-sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","workUnitsFingerprint":"hmac-sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","tokenKeyVersion":"a0-g06-v1","trustDomain":"a0-no-hit"}' \
+        GRADLE_USER_HOME="${buildopt_measurement_home}" \
+            "${buildopt_envelope}" observe \
+                --arm WRAPPER \
+                --pair "${buildopt_pair}" \
+                --order "${buildopt_order}" \
+                --command-class buildopt-gradle-no-hit-wrapper-v1 \
+                --deliverable "${buildopt_output}" \
+                --output "${buildopt_observation}" \
+                -- "${buildopt_command[@]}" >"${buildopt_log}" 2>&1; then
+            printf 'measured wrapper no-hit arm failed\n' >&2
+            grep -vF -- "${buildopt_token}" "${buildopt_log}" >&2 || true
+            exit 1
+        fi
+    else
+        if ! CI=true \
+        BUILDOPT_LOCAL_AUTHORITY_PATH="${buildopt_authority}" \
+        BUILDOPT_LOCAL_TRUST_ROOT_PATH="${buildopt_trust_root}" \
+        BUILDOPT_LOCAL_CACHE_CREDENTIAL_PATH="${buildopt_credential}" \
+        BUILDOPT_SHARED_CACHE_URL="${buildopt_miss_endpoint}" \
+        BUILDOPT_GATEWAY_STATE_ROOT="${buildopt_gateway_state}" \
+        BUILDOPT_RUNNER_SLOT=a0-g06 \
+        BUILDOPT_GATEWAY_IDLE_TIMEOUT=10m \
+        BUILDOPT_L1_STATE_ROOT="${buildopt_l1_state}" \
+        BUILDOPT_L1_TENANT_ID=tenant-internal \
+        BUILDOPT_L1_REPOSITORY_ID=tonyredondo/buildopt \
+        BUILDOPT_L1_TRUST_DOMAIN=a0-no-hit \
+        BUILDOPT_L1_COMPATIBILITY_CLASS=gradle-9.6-java-21-linux-amd64 \
+        BUILDOPT_SERVER_URL="${buildopt_server_endpoint}" \
+        BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+        BUILDOPT_BUILD_SESSION_CONTEXT='{"repositoryId":"tonyredondo-buildopt","revision":"a0-g06-no-hit-v1","requestedTasks":["noHitLongProbe"],"sourceStateDigest":"hmac-sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","workUnitsFingerprint":"hmac-sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","tokenKeyVersion":"a0-g06-v1","trustDomain":"a0-no-hit"}' \
+        GRADLE_USER_HOME="${buildopt_measurement_home}" \
+            "${buildopt_command[@]}" >"${buildopt_log}" 2>&1; then
+            printf 'wrapper no-hit warm-up failed\n' >&2
+            grep -vF -- "${buildopt_token}" "${buildopt_log}" >&2 || true
+            exit 1
+        fi
+    fi
+    if [[ "$(grep -Fc 'buildopt: authenticated Gradle plugin handshake accepted' "${buildopt_log}")" != "1" ]] ||
+        [[ "$(grep -Ec '^buildopt: buildopt-server accepted session [^[:space:]]+$' "${buildopt_log}")" != "1" ]]; then
+        printf 'no-hit wrapper did not complete one authenticated session\n' >&2
+        grep -vF -- "${buildopt_token}" "${buildopt_log}" >&2 || true
+        exit 1
+    fi
+    buildopt_after_misses=$(buildopt_miss_count)
+    if ((buildopt_after_misses <= buildopt_before_misses)); then
+        printf 'no-hit wrapper produced no authenticated remote miss\n' >&2
+        sed -n '1,200p' "${buildopt_log}" >&2
+        exit 1
+    fi
+}
+
+buildopt_run_long_arm NATIVE 0 1 0
+buildopt_run_long_arm WRAPPER 0 2 0
+buildopt_measured_miss_start=$(buildopt_miss_count)
+for ((buildopt_pair = 1; buildopt_pair <= buildopt_pair_count; buildopt_pair++)); do
+    if ((buildopt_pair % 2 == 1)); then
+        buildopt_run_long_arm NATIVE "${buildopt_pair}" 1 1
+        buildopt_run_long_arm WRAPPER "${buildopt_pair}" 2 1
+    else
+        buildopt_run_long_arm WRAPPER "${buildopt_pair}" 1 1
+        buildopt_run_long_arm NATIVE "${buildopt_pair}" 2 1
+    fi
+done
+buildopt_measured_miss_end=$(buildopt_miss_count)
+buildopt_long_misses=$((buildopt_measured_miss_end - buildopt_measured_miss_start))
+
+buildopt_short_before=$(buildopt_miss_count)
+buildopt_short_log="${buildopt_test_root}/short-wrapper.log"
+buildopt_short_observation="${buildopt_test_root}/short-observation.json"
+buildopt_short_output="${buildopt_wrapper_workspace}/build/libs/no-hit-overhead-1.0.jar"
+rm -rf -- "${buildopt_wrapper_workspace}/build"
+if ! BUILDOPT_GATEWAY_STATE_ROOT="${buildopt_gateway_state}" \
+BUILDOPT_RUNNER_SLOT=a0-g06 \
+BUILDOPT_GATEWAY_IDLE_TIMEOUT=10m \
+BUILDOPT_SERVER_URL="${buildopt_server_endpoint}" \
+BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+BUILDOPT_BUILD_SESSION_CONTEXT='{"repositoryId":"tonyredondo-buildopt","revision":"a0-g06-short-v1","requestedTasks":["noHitShortProbe"],"sourceStateDigest":"hmac-sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","workUnitsFingerprint":"hmac-sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","tokenKeyVersion":"a0-g06-v1","trustDomain":"a0-no-hit"}' \
+GRADLE_USER_HOME="${buildopt_measurement_home}" \
+    "${buildopt_envelope}" observe \
+        --arm WRAPPER \
+        --pair 1 \
+        --order 1 \
+        --command-class buildopt-gradle-no-hit-short-v1 \
+        --deliverable "${buildopt_short_output}" \
+        --output "${buildopt_short_observation}" \
+        -- "${buildopt_launcher}" run -- \
+            "${buildopt_gradle}" \
+            "${buildopt_common_arguments[@]}" \
+            --build-cache \
+            --project-cache-dir "${buildopt_wrapper_project_cache}" \
+            --init-script "${buildopt_init_script}" \
+            -p "${buildopt_wrapper_workspace}" \
+            noHitShortProbe >"${buildopt_short_log}" 2>&1; then
+    printf 'short no-hit wrapper failed\n' >&2
+    grep -vF -- "${buildopt_token}" "${buildopt_short_log}" >&2 || true
+    exit 1
+fi
+if [[ "$(grep -Fc 'buildopt: authenticated Gradle plugin handshake accepted' "${buildopt_short_log}")" != "1" ]] ||
+    [[ "$(grep -Ec '^buildopt: buildopt-server accepted session [^[:space:]]+$' "${buildopt_short_log}")" != "1" ]]; then
+    printf 'short no-hit wrapper did not complete one authenticated session\n' >&2
+    grep -vF -- "${buildopt_token}" "${buildopt_short_log}" >&2 || true
+    exit 1
+fi
+buildopt_short_after=$(buildopt_miss_count)
+buildopt_short_remote_requests=$((buildopt_short_after - buildopt_short_before))
+buildopt_short_duration_ms=$(
+    jq -r '.durationNs / 1000000' "${buildopt_short_observation}"
+)
+if ((buildopt_short_remote_requests != 0)) ||
+    ! jq -e '.durationNs > 0 and .durationNs < 5000000000' \
+        "${buildopt_short_observation}" >/dev/null; then
+    printf 'short session did not omit L2 below five seconds\n' >&2
+    printf 'durationMs=%s remoteRequests=%s\n' \
+        "${buildopt_short_duration_ms}" \
+        "${buildopt_short_remote_requests}" >&2
+    exit 1
+fi
+
+buildopt_report="${buildopt_test_root}/no-hit-report.json"
+buildopt_recorded=0
+if [[ "${buildopt_execution_environment}" == "STRICT_GOLDEN_CONTAINER" &&
+    ! -e "${buildopt_evidence}" ]]; then
+    buildopt_report="${buildopt_evidence}"
+    buildopt_recorded=1
+fi
+"${buildopt_envelope}" no-hit-report \
+    --observations "${buildopt_observations}" \
+    --execution-environment "${buildopt_execution_environment}" \
+    --runner-spec "${buildopt_runner_spec}" \
+    --metrics-catalog "${buildopt_metrics_catalog}" \
+    --envelope "${buildopt_envelope}" \
+    --launcher "${buildopt_launcher}" \
+    --server "${buildopt_server}" \
+    --plugin "${buildopt_plugin_jar}" \
+    --fixture-manifest "${buildopt_fixture_manifest}" \
+    --helper "${buildopt_helper}" \
+    --long-probe-delay-ms "${buildopt_long_delay_ms}" \
+    --long-misses "${buildopt_long_misses}" \
+    --short-duration-ms "${buildopt_short_duration_ms}" \
+    --short-remote-requests "${buildopt_short_remote_requests}" \
+    --output "${buildopt_report}"
+"${buildopt_envelope}" no-hit-validate --report "${buildopt_report}"
+
+if [[ "${buildopt_execution_environment}" == "STRICT_GOLDEN_CONTAINER" ]]; then
+    if ! jq -e '.runnerClassQualified and .gate.passed' \
+        "${buildopt_report}" >/dev/null; then
+        printf 'strict no-hit measurement missed the A0-G06 budget\n' >&2
+        jq '.summary, .gate' "${buildopt_report}" >&2
+        exit 1
+    fi
+fi
+if ((buildopt_recorded == 1)); then
+    chmod 0644 "${buildopt_evidence}"
+fi
+if [[ -f "${buildopt_evidence}" &&
+    "${buildopt_report}" != "${buildopt_evidence}" ]]; then
+    "${buildopt_envelope}" no-hit-validate --report "${buildopt_evidence}"
+    if ! jq -e '.runnerClassQualified and .gate.passed' \
+        "${buildopt_evidence}" >/dev/null; then
+        printf 'checked-in A0-G06 evidence is not a passing strict report\n' >&2
+        exit 1
+    fi
+    if ! cmp -s \
+        <(jq -S '.inputs' "${buildopt_report}") \
+        <(jq -S '.inputs' "${buildopt_evidence}"); then
+        printf 'checked-in A0-G06 evidence does not bind current inputs\n' >&2
+        exit 1
+    fi
+fi
+
+if grep -RFq -- "${buildopt_token}" \
+    "${buildopt_exports}" \
+    "${buildopt_test_root}"/*.log \
+    "${buildopt_observations}" \
+    "${buildopt_report}"; then
+    printf 'no-hit evidence or diagnostics exposed the ingest credential\n' >&2
+    exit 1
+fi
+
+if ((buildopt_check_git_state == 1)); then
+    buildopt_after_status=$(
+        git status --porcelain=v1 --untracked-files=all |
+            sed "\\| ${buildopt_evidence_relative}\$|d"
+    )
+    if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+        printf 'no-hit overhead check changed files outside its evidence report\n' >&2
+        exit 1
+    fi
+fi
+if [[ -n "${buildopt_evidence_before}" ]]; then
+    buildopt_evidence_after=$(
+        sha256sum "${buildopt_evidence}" |
+            sed 's/[[:space:]].*$//'
+    )
+    if [[ "${buildopt_evidence_after}" != "${buildopt_evidence_before}" ]]; then
+        printf 'no-hit overhead check rewrote existing evidence\n' >&2
+        exit 1
+    fi
+elif ((buildopt_recorded == 0)) &&
+    [[ -e "${buildopt_evidence}" ]]; then
+    printf 'host smoke unexpectedly created strict no-hit evidence\n' >&2
+    exit 1
+fi
+
+buildopt_p95_ms=$(jq -r '.summary.productSynchronousOverheadP95Ms' "${buildopt_report}")
+buildopt_p95_ratio=$(jq -r '.summary.productSynchronousOverheadP95Ratio' "${buildopt_report}")
+buildopt_result_label='smoke OK'
+if [[ "${buildopt_execution_environment}" == "STRICT_GOLDEN_CONTAINER" ]]; then
+    buildopt_result_label='gate OK'
+fi
+printf 'A0-G06 no-hit overhead %s: environment=%s pairs=%s p95Ms=%s p95Ratio=%s shortMs=%s L2-short-requests=0\n' \
+    "${buildopt_result_label}" \
+    "${buildopt_execution_environment}" \
+    "${buildopt_pair_count}" \
+    "${buildopt_p95_ms}" \
+    "${buildopt_p95_ratio}" \
+    "${buildopt_short_duration_ms}"

@@ -18,6 +18,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`gateway-rotation-v1.md`](./gateway-rotation-v1.md) | `A0-G03` |
 | [`gateway-spool-v1.md`](./gateway-spool-v1.md) | `A0-G04` |
 | [`shared-commit-recovery-v1.md`](./shared-commit-recovery-v1.md) | `A0-G05` |
+| [`no-hit-overhead-v1.md`](./no-hit-overhead-v1.md) | `A0-G06` |
 | [`managed-l1-v1.md`](./managed-l1-v1.md) | `A0-003` |
 | [`single-node-shared-storage-v1.md`](./single-node-shared-storage-v1.md) | `A0-004` |
 | [`pending-commit-cas-v1.md`](./pending-commit-cas-v1.md) | `A0-005` |
@@ -62,6 +63,9 @@ cleanup contract.
 `shared-commit-recovery-v1.json` is the A0-G05 real filesystem/SQLite WAL
 contract for concurrent commit CAS, all-object visibility atomicity, digest
 audit repair, and safe orphan/missing/expired recovery.
+`no-hit-overhead-v1.json` is the A0-G06 paired strict-runner contract for
+authenticated read-only L2 misses, fresh L1/output state, long-session p95
+budgets, and pre-outcome L2 omission with zero short-session requests.
 `managed-l1-v1.json` is the A0-003 launcher/settings-plugin contract for
 opaque scope binding, native retention, generation directories, exclusive
 leases, and L2-writer local disablement.

@@ -18,6 +18,8 @@ const usage = `usage:
   neutral-envelope observe --arm ARM --pair N --order N --command-class NAME --deliverable PATH --output PATH -- <command> [args...]
   neutral-envelope report --observations DIR --execution-environment NAME --runner-spec PATH --metrics-catalog PATH --envelope PATH --launcher PATH --server PATH --plugin PATH --output PATH
   neutral-envelope validate --report PATH
+  neutral-envelope no-hit-report --observations DIR --execution-environment NAME --runner-spec PATH --metrics-catalog PATH --envelope PATH --launcher PATH --server PATH --plugin PATH --fixture-manifest PATH --helper PATH --long-probe-delay-ms N --long-misses N --short-duration-ms N --short-remote-requests N --output PATH
+  neutral-envelope no-hit-validate --report PATH
   neutral-envelope pilot-assign --experiment ID --epoch N --action ID --baseline-digest SHA256 --control-digest SHA256 --cohort ID --environment NAME --pipeline NAME --runner NAME --work-units HMAC_SHA256 --required-deliverable NAME --pair N --arm ARM --output PATH
   neutral-envelope pilot-observe --assignment PATH --deliverable PATH --output PATH -- <command> [args...]
   neutral-envelope pilot-report --observations DIR --incremental-overhead-ms N --export-dir DIR
@@ -43,6 +45,10 @@ func run(args []string) int {
 		return runReport(args[1:])
 	case "validate":
 		return runValidate(args[1:])
+	case "no-hit-report":
+		return runNoHitReport(args[1:])
+	case "no-hit-validate":
+		return runNoHitValidate(args[1:])
 	case "pilot-assign":
 		return runPilotAssign(args[1:])
 	case "pilot-observe":
@@ -611,6 +617,164 @@ func runValidate(args []string) int {
 		return 1
 	}
 	return printSummary(report)
+}
+
+func runNoHitReport(args []string) int {
+	flags := flag.NewFlagSet("no-hit-report", flag.ContinueOnError)
+	flags.SetOutput(os.Stderr)
+	observationsPath := flags.String(
+		"observations",
+		"",
+		"directory containing long no-hit observations",
+	)
+	executionEnvironment := flags.String(
+		"execution-environment",
+		"",
+		"HOST_SMOKE or STRICT_GOLDEN_CONTAINER",
+	)
+	runnerSpec := flags.String("runner-spec", "", "golden runner spec")
+	metricsCatalog := flags.String("metrics-catalog", "", "metrics catalog")
+	envelope := flags.String("envelope", "", "neutral-envelope binary")
+	launcher := flags.String("launcher", "", "measured launcher binary")
+	server := flags.String("server", "", "measured server binary")
+	plugin := flags.String("plugin", "", "measured plugin JAR")
+	fixtureManifest := flags.String(
+		"fixture-manifest",
+		"",
+		"deterministic workload manifest",
+	)
+	helper := flags.String("helper", "", "no-hit cache fixture binary")
+	longProbeDelay := flags.Int64(
+		"long-probe-delay-ms",
+		0,
+		"long probe execution delay",
+	)
+	longMisses := flags.Int("long-misses", -1, "authenticated remote misses")
+	shortDuration := flags.Float64(
+		"short-duration-ms",
+		0,
+		"short wrapper session duration",
+	)
+	shortRemoteRequests := flags.Int(
+		"short-remote-requests",
+		-1,
+		"remote requests during the short session",
+	)
+	output := flags.String("output", "", "report output path")
+	if err := flags.Parse(args); err != nil || flags.NArg() != 0 {
+		return 64
+	}
+	if *observationsPath == "" ||
+		*executionEnvironment == "" ||
+		*runnerSpec == "" ||
+		*metricsCatalog == "" ||
+		*envelope == "" ||
+		*launcher == "" ||
+		*server == "" ||
+		*plugin == "" ||
+		*fixtureManifest == "" ||
+		*helper == "" ||
+		*longProbeDelay < 1 ||
+		*longMisses < 0 ||
+		*shortDuration <= 0 ||
+		*shortRemoteRequests < 0 ||
+		*output == "" {
+		_, _ = fmt.Fprint(os.Stderr, usage)
+		return 64
+	}
+
+	observations, err := loadObservations(*observationsPath)
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "neutral-envelope: %v\n", err)
+		return 1
+	}
+	report, err := neutralenvelope.BuildNoHitReport(
+		observations,
+		*executionEnvironment,
+		*runnerSpec,
+		*metricsCatalog,
+		*envelope,
+		*launcher,
+		*server,
+		*plugin,
+		*fixtureManifest,
+		*helper,
+		*longProbeDelay,
+		*longMisses,
+		*shortDuration,
+		*shortRemoteRequests,
+		now(),
+	)
+	if err != nil {
+		_, _ = fmt.Fprintf(
+			os.Stderr,
+			"neutral-envelope: build no-hit report: %v\n",
+			err,
+		)
+		return 1
+	}
+	if err := neutralenvelope.WriteJSON(*output, report); err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "neutral-envelope: %v\n", err)
+		return 1
+	}
+	return printNoHitSummary(report)
+}
+
+func runNoHitValidate(args []string) int {
+	flags := flag.NewFlagSet("no-hit-validate", flag.ContinueOnError)
+	flags.SetOutput(os.Stderr)
+	reportPath := flags.String("report", "", "A0-G06 report path")
+	if err := flags.Parse(args); err != nil ||
+		flags.NArg() != 0 ||
+		*reportPath == "" {
+		return 64
+	}
+	report, err := neutralenvelope.LoadNoHitReport(*reportPath)
+	if err != nil {
+		_, _ = fmt.Fprintf(
+			os.Stderr,
+			"neutral-envelope: invalid no-hit report: %v\n",
+			err,
+		)
+		return 1
+	}
+	return printNoHitSummary(report)
+}
+
+func printNoHitSummary(report neutralenvelope.NoHitReport) int {
+	_, _ = fmt.Fprintf(
+		os.Stdout,
+		"A0-G06 no-hit overhead valid: environment=%s pairs=%d p95Ms=%.3f p95Ratio=%.6f shortMs=%.3f l2Omitted=%t passed=%t\n",
+		report.ExecutionEnvironment,
+		report.Summary.PairCount,
+		report.Summary.ProductSynchronousOverheadP95Ms,
+		report.Summary.ProductSynchronousOverheadP95Ratio,
+		report.Workload.ShortSessionDuration,
+		report.Workload.ShortRemoteRequests == 0,
+		report.Gate.Passed,
+	)
+	return 0
+}
+
+func loadObservations(
+	directory string,
+) ([]neutralenvelope.Observation, error) {
+	paths, err := filepath.Glob(
+		filepath.Join(directory, "observation-*.json"),
+	)
+	if err != nil || len(paths) == 0 {
+		return nil, errors.New("no neutral-envelope observations found")
+	}
+	sort.Strings(paths)
+	observations := make([]neutralenvelope.Observation, 0, len(paths))
+	for _, path := range paths {
+		observation, err := neutralenvelope.LoadObservation(path)
+		if err != nil {
+			return nil, fmt.Errorf("load %s: %w", path, err)
+		}
+		observations = append(observations, observation)
+	}
+	return observations, nil
 }
 
 func printSummary(report neutralenvelope.Report) int {

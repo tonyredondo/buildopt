@@ -1,0 +1,184 @@
+{
+  "schemaVersion": "1.0",
+  "recordType": "NO_HIT_OVERHEAD_GATE_REPORT",
+  "createdAt": "2026-07-30T23:36:15.86239106Z",
+  "gateId": "A0-G06",
+  "metricDefinitionVersion": "build-impact-v1",
+  "measurementPolicyVersion": "beta-measurement-v1",
+  "measurementKind": "PAIRED_ALTERNATING_NO_HIT_BASELINE_VS_L2",
+  "observationMethod": "EXACT",
+  "effectScope": "PRODUCT_TOTAL",
+  "a0GateActive": true,
+  "promotionGateActive": false,
+  "clockSource": "MONOTONIC",
+  "durationUnit": "ms",
+  "startBoundary": "NEUTRAL_ENVELOPE_HANDOFF",
+  "endBoundary": "EXIT_CODE_AND_REQUIRED_DELIVERABLES_AVAILABLE",
+  "executionEnvironment": "STRICT_GOLDEN_CONTAINER",
+  "runnerClassQualified": true,
+  "inputs": {
+    "runnerSpecSha256": "sha256:26283e56aa7251152c7f051f7500bc86553669a808fc1cec5b736acf8f0733c9",
+    "metricsCatalogSha256": "sha256:56a146eef430f1cac2de76a57277705c8cc969ee95058f3c7e163a633357314e",
+    "envelopeSha256": "sha256:cd1cb617ab48544829e3c6c0be25d3f00db1110e5c59f8e9144b726c198dd27b",
+    "launcherSha256": "sha256:feea459cb67e68133b81bbd70711fc0a753600a79bc364343b332c8d042ae9d2",
+    "serverSha256": "sha256:99019bd056261d72bdfd368cbdf8ef543fb545c20dc0832c635df847da524e41",
+    "pluginSha256": "sha256:f6577ae14657bfa13d6602f306684c65d94c7aa42d81f190aa3d5431bdebc555",
+    "fixtureManifestSha256": "sha256:b79ba722c830a6d4a0c6c02baf5faf5f4223a73f6410896c908641358977416e",
+    "helperSha256": "sha256:89e40c9d58136a46647b6a5690caca4a8e6826d6dd31f82b0dae4460560f0981"
+  },
+  "runner": {
+    "id": "linux-amd64-4c-16g-v1",
+    "operatingSystem": "linux",
+    "architecture": "amd64",
+    "cpuCount": 4,
+    "memoryBytes": 17179869184,
+    "containerIndexDigest": "sha256:9d8dcf999b0bce2453e913823595a5ff2a4e8e9e5d5241b45280d0ff069818ec",
+    "containerPlatformDigest": "sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50",
+    "jdkVersion": "21.0.11+10",
+    "gradleVersion": "9.6.1"
+  },
+  "workload": {
+    "id": "gradle-tier-one-no-hit-v1",
+    "longTask": "noHitLongProbe",
+    "shortTask": "noHitShortProbe",
+    "pairCount": 4,
+    "alternatingOrder": true,
+    "offline": false,
+    "configurationCache": true,
+    "daemonState": "WARM_SHARED_DAEMON",
+    "warmupsPerArm": 1,
+    "longProbeDelayMs": 25000,
+    "longSessionMinimumMs": 5000,
+    "requiredDeliverable": "libs/no-hit-overhead.jar",
+    "deliverableSha256": "sha256:655450e4068380ee410c0ee78aa69da40b3e945272d44d5f650a9c69e9ee22ae",
+    "l2Path": "AUTHENTICATED_LOCAL_GATEWAY_TO_FORCED_404",
+    "longRemoteMisses": 4,
+    "shortSessionPolicy": "L2_OMITTED_PRE_OUTCOME",
+    "shortSessionDurationMs": 742.161148,
+    "shortRemoteRequests": 0,
+    "workspaceState": "OUTPUT_AND_L1_REMOVED_BEFORE_EACH_OBSERVATION",
+    "outcomeClass": "SUCCESS",
+    "measurementEpoch": "a0-g06-v1",
+    "firstExecutionIncluded": true
+  },
+  "pairs": [
+    {
+      "index": 1,
+      "firstArm": "NATIVE",
+      "native": {
+        "commandClass": "gradle-no-hit-native-v1",
+        "startedAt": "2026-07-30T23:32:48.191996732Z",
+        "completedAt": "2026-07-30T23:33:13.925220306Z",
+        "durationMs": 25733.223479,
+        "exitCode": 0,
+        "deliverableSha256": "sha256:655450e4068380ee410c0ee78aa69da40b3e945272d44d5f650a9c69e9ee22ae",
+        "deliverableSizeBytes": 996
+      },
+      "wrapper": {
+        "commandClass": "buildopt-gradle-no-hit-wrapper-v1",
+        "startedAt": "2026-07-30T23:33:14.051562067Z",
+        "completedAt": "2026-07-30T23:33:40.012637454Z",
+        "durationMs": 25961.075228,
+        "exitCode": 0,
+        "deliverableSha256": "sha256:655450e4068380ee410c0ee78aa69da40b3e945272d44d5f650a9c69e9ee22ae",
+        "deliverableSizeBytes": 996
+      },
+      "productSynchronousOverheadMs": 227.8517490000013,
+      "productSynchronousOverheadRatio": 0.008854380376634248
+    },
+    {
+      "index": 2,
+      "firstArm": "WRAPPER",
+      "native": {
+        "commandClass": "gradle-no-hit-native-v1",
+        "startedAt": "2026-07-30T23:34:06.055024431Z",
+        "completedAt": "2026-07-30T23:34:31.683992221Z",
+        "durationMs": 25628.967732,
+        "exitCode": 0,
+        "deliverableSha256": "sha256:655450e4068380ee410c0ee78aa69da40b3e945272d44d5f650a9c69e9ee22ae",
+        "deliverableSizeBytes": 996
+      },
+      "wrapper": {
+        "commandClass": "buildopt-gradle-no-hit-wrapper-v1",
+        "startedAt": "2026-07-30T23:33:40.181314704Z",
+        "completedAt": "2026-07-30T23:34:06.013194489Z",
+        "durationMs": 25831.879722,
+        "exitCode": 0,
+        "deliverableSha256": "sha256:655450e4068380ee410c0ee78aa69da40b3e945272d44d5f650a9c69e9ee22ae",
+        "deliverableSizeBytes": 996
+      },
+      "productSynchronousOverheadMs": 202.91199000000051,
+      "productSynchronousOverheadRatio": 0.007917290782907625
+    },
+    {
+      "index": 3,
+      "firstArm": "NATIVE",
+      "native": {
+        "commandClass": "gradle-no-hit-native-v1",
+        "startedAt": "2026-07-30T23:34:31.711619595Z",
+        "completedAt": "2026-07-30T23:34:57.315780127Z",
+        "durationMs": 25604.160535,
+        "exitCode": 0,
+        "deliverableSha256": "sha256:655450e4068380ee410c0ee78aa69da40b3e945272d44d5f650a9c69e9ee22ae",
+        "deliverableSizeBytes": 996
+      },
+      "wrapper": {
+        "commandClass": "buildopt-gradle-no-hit-wrapper-v1",
+        "startedAt": "2026-07-30T23:34:57.447193964Z",
+        "completedAt": "2026-07-30T23:35:23.355677511Z",
+        "durationMs": 25908.483539,
+        "exitCode": 0,
+        "deliverableSha256": "sha256:655450e4068380ee410c0ee78aa69da40b3e945272d44d5f650a9c69e9ee22ae",
+        "deliverableSizeBytes": 996
+      },
+      "productSynchronousOverheadMs": 304.3230040000017,
+      "productSynchronousOverheadRatio": 0.011885685671436198
+    },
+    {
+      "index": 4,
+      "firstArm": "WRAPPER",
+      "native": {
+        "commandClass": "gradle-no-hit-native-v1",
+        "startedAt": "2026-07-30T23:35:49.380310082Z",
+        "completedAt": "2026-07-30T23:36:15.016014116Z",
+        "durationMs": 25635.703968,
+        "exitCode": 0,
+        "deliverableSha256": "sha256:655450e4068380ee410c0ee78aa69da40b3e945272d44d5f650a9c69e9ee22ae",
+        "deliverableSizeBytes": 996
+      },
+      "wrapper": {
+        "commandClass": "buildopt-gradle-no-hit-wrapper-v1",
+        "startedAt": "2026-07-30T23:35:23.478513395Z",
+        "completedAt": "2026-07-30T23:35:49.320747329Z",
+        "durationMs": 25842.23407,
+        "exitCode": 0,
+        "deliverableSha256": "sha256:655450e4068380ee410c0ee78aa69da40b3e945272d44d5f650a9c69e9ee22ae",
+        "deliverableSizeBytes": 996
+      },
+      "productSynchronousOverheadMs": 206.530101999997,
+      "productSynchronousOverheadRatio": 0.008056346034335552
+    }
+  ],
+  "summary": {
+    "pairCount": 4,
+    "nativeP95Ms": 25733.223479,
+    "wrapperP95Ms": 25961.075228,
+    "productSynchronousOverheadP50Ms": 206.530101999997,
+    "productSynchronousOverheadP95Ms": 304.3230040000017,
+    "productSynchronousOverheadP95Ratio": 0.011885685671436198,
+    "productSynchronousOverheadMaximumMs": 304.3230040000017
+  },
+  "gate": {
+    "longMaximumP95Ms": 500,
+    "longMaximumP95Ratio": 0.02,
+    "shortMaximumDurationMs": 5000,
+    "shortAlternative": "L2_OMITTED",
+    "longPassed": true,
+    "shortPassed": true,
+    "passed": true
+  },
+  "limitations": [
+    "A0 engineering gate only; this is not beta promotion or causal savings evidence.",
+    "The four-pair strict sample uses nearest-rank p95, which is the maximum observed value."
+  ]
+}

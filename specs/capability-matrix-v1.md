@@ -87,7 +87,9 @@ bounded concurrent reservation, disk/cancellation/late-checksum fallback, and
 managed-process crash cleanup. `A0-G05` cross-checks all 14 atomicity cases
 against the real filesystem and SQLite WAL stores, including synchronized
 CAS, all-object rollback, post-commit audit repair by digest, and
-orphan/missing/expired safe misses.
+orphan/missing/expired safe misses. `A0-G06` proves the fixed no-hit overhead
+budget on the golden runner with authenticated forced misses and proves the
+short-session L2-omission branch makes zero remote requests.
 `MANAGED_SHARED_CACHE` remains `UNAVAILABLE` until `A0-G08` proves that no
 root or composite `Test` task can consume or produce entries without an
 explicit `TestCacheGrant`.

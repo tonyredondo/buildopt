@@ -31,7 +31,7 @@ buildopt_cleanup() {
 }
 trap buildopt_cleanup EXIT
 
-for buildopt_command in awk docker getconf id jq; do
+for buildopt_command in awk curl docker getconf id jq sha256sum; do
     if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
         printf 'required golden-container command is unavailable: %s\n' \
             "${buildopt_command}" >&2
@@ -180,12 +180,34 @@ printf 'Golden image digest OK: index=%s platform=%s (%s/%s)\n' \
     "${buildopt_platform_arch}"
 
 buildopt_launcher_root=$(mktemp -d)
+buildopt_jq_url=https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-amd64
+buildopt_jq_expected=5942c9b0934e510ee61eb3e30273f1b3fe2590df93933a93d7c58b81d19c8ff5
+if ! curl \
+    --fail \
+    --location \
+    --proto '=https' \
+    --tlsv1.2 \
+    --output "${buildopt_launcher_root}/jq" \
+    "${buildopt_jq_url}"; then
+    printf 'cannot download the locked static golden-container jq helper\n' >&2
+    exit 1
+fi
+buildopt_jq_actual=$(
+    sha256sum "${buildopt_launcher_root}/jq" |
+        awk '{print $1}'
+)
+if [[ "${buildopt_jq_actual}" != "${buildopt_jq_expected}" ]]; then
+    printf 'static golden-container jq helper failed SHA-256 verification\n' >&2
+    exit 1
+fi
+chmod 0755 "${buildopt_launcher_root}/jq"
 buildopt_launcher_binary="${buildopt_launcher_root}/buildopt"
 buildopt_server_binary="${buildopt_launcher_root}/buildopt-server"
 buildopt_validator_binary="${buildopt_launcher_root}/build-session-validator"
 buildopt_signal_helper_binary="${buildopt_launcher_root}/signal-helper"
 buildopt_metrics_validator_binary="${buildopt_launcher_root}/metrics-catalog-validator"
 buildopt_envelope_binary="${buildopt_launcher_root}/neutral-envelope"
+buildopt_no_hit_helper_binary="${buildopt_launcher_root}/no-hit-cache"
 if ! CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     "${buildopt_script_dir}/run" --toolchain go -- \
         go build \
@@ -236,6 +258,16 @@ if ! CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     printf 'cannot build the locked WS-009 neutral envelope for the golden container\n' >&2
     exit 1
 fi
+if ! CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build \
+        -buildvcs=false \
+        -trimpath \
+        -o "${buildopt_no_hit_helper_binary}" \
+        ./cmd/buildopt/testdata/no-hit-cache; then
+    printf 'cannot build the locked A0-G06 no-hit helper for the golden container\n' >&2
+    exit 1
+fi
 if ! (
     cd -- "${buildopt_repo_root}/dev/schema-validator"
     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
@@ -250,12 +282,14 @@ if ! (
     exit 1
 fi
 buildopt_docker_args+=(
+    --env PATH=/buildopt-host-tools:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     --env BUILDOPT_GOLDEN_LANE_LAUNCHER_BINARY=/buildopt-host-tools/buildopt
     --env BUILDOPT_GOLDEN_LANE_SERVER_BINARY=/buildopt-host-tools/buildopt-server
     --env BUILDOPT_GOLDEN_LANE_SCHEMA_VALIDATOR_BINARY=/buildopt-host-tools/build-session-validator
     --env BUILDOPT_GOLDEN_LANE_SIGNAL_HELPER_BINARY=/buildopt-host-tools/signal-helper
     --env BUILDOPT_GOLDEN_LANE_METRICS_VALIDATOR_BINARY=/buildopt-host-tools/metrics-catalog-validator
     --env BUILDOPT_GOLDEN_LANE_ENVELOPE_BINARY=/buildopt-host-tools/neutral-envelope
+    --env BUILDOPT_GOLDEN_LANE_NO_HIT_HELPER_BINARY=/buildopt-host-tools/no-hit-cache
     --env BUILDOPT_GOLDEN_LANE_USE_ACTIVE_JAVA=1
     --volume "${buildopt_launcher_root}:/buildopt-host-tools:ro"
 )

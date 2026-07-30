@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "buildopt.specs/no-hit-overhead/v1",
+  "gateId": "A0-G06",
+  "runner": {
+    "spec": "specs/golden-lane-runner-v1.json",
+    "class": "linux-amd64-4c-16g-v1",
+    "strictPairCount": 4,
+    "hostSmokePairCount": 2
+  },
+  "measurement": {
+    "design": "PAIRED_ALTERNATING",
+    "clock": "MONOTONIC",
+    "startBoundary": "NEUTRAL_ENVELOPE_HANDOFF",
+    "endBoundary": "EXIT_CODE_AND_REQUIRED_DELIVERABLES_AVAILABLE",
+    "firstMeasuredPairIncluded": true,
+    "warmupsPerArm": 1,
+    "daemonState": "WARM_SHARED_DAEMON",
+    "configurationCache": true,
+    "gradleOffline": false,
+    "externalRepositories": 0,
+    "strictLongProbeDelayMs": 25000
+  },
+  "longSessions": {
+    "minimumDurationMs": 5000,
+    "maximumP95OverheadMs": 500,
+    "maximumP95OverheadRatio": 0.02,
+    "l2": "AUTHENTICATED_READ_ONLY",
+    "upstreamResult": "FORCED_404",
+    "requiredMissesPerWrapper": 1,
+    "freshL1AndOutputsPerObservation": true
+  },
+  "shortSessions": {
+    "maximumDurationExclusiveMs": 5000,
+    "maximumOverheadMsWhenL2Enabled": 100,
+    "selectedAlternative": "L2_OMITTED_PRE_OUTCOME",
+    "maximumRemoteRequests": 0
+  },
+  "evidence": {
+    "report": "benchmarks/results/a0-g06-no-hit-overhead.json",
+    "recordType": "NO_HIT_OVERHEAD_GATE_REPORT",
+    "promotionGateActive": false,
+    "checker": "dev/check-no-hit-overhead"
+  },
+  "boundaries": {
+    "closes": [
+      "A0-G06"
+    ],
+    "doesNotClose": [
+      "A0-G08",
+      "A1-G02",
+      "A1-G03",
+      "A1-G04"
+    ]
+  }
+}

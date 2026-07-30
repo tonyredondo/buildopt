@@ -1,7 +1,7 @@
 # Neutral measurement envelope
 
-`neutral-envelope` is the dependency-free `WS-009` and `A0-009` measurement
-helper. It executes one assigned arm under an external monotonic clock,
+`neutral-envelope` is the dependency-free `WS-009`, `A0-009`, and `A0-G06`
+measurement helper. It executes one assigned arm under an external monotonic clock,
 validates the required deliverable, emits a private raw observation, combines
 complete alternating pairs, and validates existing reports.
 
@@ -16,3 +16,5 @@ contract, boundaries, qualification rules, and commands are defined in
 [`specs/walking-skeleton-overhead-v1.md`](../../specs/walking-skeleton-overhead-v1.md).
 The causal extension is defined in
 [`specs/causal-pilot-v1.md`](../../specs/causal-pilot-v1.md).
+The no-hit gate extension is defined in
+[`specs/no-hit-overhead-v1.md`](../../specs/no-hit-overhead-v1.md).

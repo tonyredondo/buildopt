@@ -260,6 +260,21 @@ func validateTierOneCombinations(
 		t.Errorf("unsafe task-to-PUT capability: %+v", taskPut)
 	}
 	for profileID, profile := range profiles {
+		managedShared := findCapability(
+			profile.Capabilities,
+			"MANAGED_SHARED_CACHE",
+		)
+		if profileID != "UNTESTED" &&
+			!slices.Contains(
+				managedShared.Evidence,
+				"dev/check-no-hit-overhead",
+			) {
+			t.Errorf(
+				"%s managed Shared capability lacks A0-G06 evidence: %+v",
+				profileID,
+				managedShared,
+			)
+		}
 		bootstrap := findCapability(
 			profile.Capabilities,
 			"GRADLE_BOOTSTRAP_CACHE",

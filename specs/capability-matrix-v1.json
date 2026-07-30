@@ -59,9 +59,9 @@
           "id": "MANAGED_SHARED_CACHE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "the A0 Shared data and commit/recovery gates are proven, but no-grant root/composite Test isolation remains open",
+          "reason": "the A0 Shared data, commit/recovery, and no-hit overhead gates are proven, but no-grant root/composite Test isolation remains open",
           "fallback": "GRADLE_BASELINE",
-          "evidence": ["dev/check-tier-one-cache-conformance", "dev/check-l1-l2-revocation", "dev/check-gateway-rotation", "dev/check-gateway-spool", "dev/check-shared-commit-recovery", "dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
+          "evidence": ["dev/check-tier-one-cache-conformance", "dev/check-l1-l2-revocation", "dev/check-gateway-rotation", "dev/check-gateway-spool", "dev/check-shared-commit-recovery", "dev/check-no-hit-overhead", "dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
         },
         {
           "id": "GRADLE_BOOTSTRAP_CACHE",
@@ -152,9 +152,9 @@
           "id": "MANAGED_SHARED_CACHE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "the A0 Shared data and commit/recovery gates are proven, but no-grant root/composite Test isolation remains open",
+          "reason": "the A0 Shared data, commit/recovery, and no-hit overhead gates are proven, but no-grant root/composite Test isolation remains open",
           "fallback": "GRADLE_BASELINE",
-          "evidence": ["dev/check-tier-one-cache-conformance", "dev/check-l1-l2-revocation", "dev/check-gateway-rotation", "dev/check-gateway-spool", "dev/check-shared-commit-recovery", "dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
+          "evidence": ["dev/check-tier-one-cache-conformance", "dev/check-l1-l2-revocation", "dev/check-gateway-rotation", "dev/check-gateway-spool", "dev/check-shared-commit-recovery", "dev/check-no-hit-overhead", "dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
         },
         {
           "id": "GRADLE_BOOTSTRAP_CACHE",
@@ -245,9 +245,9 @@
           "id": "MANAGED_SHARED_CACHE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "the A0 Shared data and commit/recovery gates are proven, but no-grant root/composite Test isolation remains open",
+          "reason": "the A0 Shared data, commit/recovery, and no-hit overhead gates are proven, but no-grant root/composite Test isolation remains open",
           "fallback": "GRADLE_BASELINE",
-          "evidence": ["dev/check-tier-one-cache-conformance", "dev/check-l1-l2-revocation", "dev/check-gateway-rotation", "dev/check-gateway-spool", "dev/check-shared-commit-recovery", "dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
+          "evidence": ["dev/check-tier-one-cache-conformance", "dev/check-l1-l2-revocation", "dev/check-gateway-rotation", "dev/check-gateway-spool", "dev/check-shared-commit-recovery", "dev/check-no-hit-overhead", "dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
         },
         {
           "id": "GRADLE_BOOTSTRAP_CACHE",
@@ -338,9 +338,9 @@
           "id": "MANAGED_SHARED_CACHE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "the A0 Shared data and commit/recovery gates are proven, but no-grant root/composite Test isolation remains open",
+          "reason": "the A0 Shared data, commit/recovery, and no-hit overhead gates are proven, but no-grant root/composite Test isolation remains open",
           "fallback": "GRADLE_BASELINE",
-          "evidence": ["dev/check-tier-one-cache-conformance", "dev/check-l1-l2-revocation", "dev/check-gateway-rotation", "dev/check-gateway-spool", "dev/check-shared-commit-recovery", "dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
+          "evidence": ["dev/check-tier-one-cache-conformance", "dev/check-l1-l2-revocation", "dev/check-gateway-rotation", "dev/check-gateway-spool", "dev/check-shared-commit-recovery", "dev/check-no-hit-overhead", "dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
         },
         {
           "id": "GRADLE_BOOTSTRAP_CACHE",

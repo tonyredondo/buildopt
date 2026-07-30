@@ -652,6 +652,20 @@ func pairObservations(observations []Observation) ([]Pair, error) {
 }
 
 func (pair Pair) validate(index int, expectedDigest string) error {
+	return pair.validateForCommands(
+		index,
+		expectedDigest,
+		"gradle-neutral-probe-native-v1",
+		"buildopt-gradle-neutral-probe-wrapper-v1",
+	)
+}
+
+func (pair Pair) validateForCommands(
+	index int,
+	expectedDigest string,
+	nativeCommandClass string,
+	wrapperCommandClass string,
+) error {
 	if pair.Index != index ||
 		(pair.FirstArm != "NATIVE" && pair.FirstArm != "WRAPPER") ||
 		(index%2 == 1 && pair.FirstArm != "NATIVE") ||
@@ -660,9 +674,8 @@ func (pair Pair) validate(index int, expectedDigest string) error {
 		pair.Wrapper.DurationMs <= 0 ||
 		pair.Native.ExitCode != 0 ||
 		pair.Wrapper.ExitCode != 0 ||
-		pair.Native.CommandClass != "gradle-neutral-probe-native-v1" ||
-		pair.Wrapper.CommandClass !=
-			"buildopt-gradle-neutral-probe-wrapper-v1" ||
+		pair.Native.CommandClass != nativeCommandClass ||
+		pair.Wrapper.CommandClass != wrapperCommandClass ||
 		pair.Native.DeliverableSHA256 != expectedDigest ||
 		pair.Wrapper.DeliverableSHA256 != expectedDigest ||
 		pair.Native.DeliverableSizeByte <= 0 ||

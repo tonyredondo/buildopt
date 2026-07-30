@@ -32,6 +32,7 @@ buildopt_index_reference="${buildopt_repository}@${buildopt_index_digest}"
 
 buildopt_fake_bin="${buildopt_test_root}/fake-bin"
 mkdir "${buildopt_fake_bin}"
+buildopt_real_sha256sum=$(command -v sha256sum)
 
 # The generated fixture expands variables when the fake Docker client runs.
 # shellcheck disable=SC1003,SC2016
@@ -120,10 +121,38 @@ printf '%s\n' \
     '    exec /usr/bin/awk "$@"' \
     'fi' \
     >"${buildopt_fake_bin}/awk"
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'buildopt_output=' \
+    'while (($# != 0)); do' \
+    '    if [[ "$1" == "--output" && $# -ge 2 ]]; then' \
+    '        buildopt_output=$2' \
+    '        shift 2' \
+    '        continue' \
+    '    fi' \
+    '    shift' \
+    'done' \
+    '[[ -n "${buildopt_output}" ]]' \
+    'printf '\''synthetic static jq\n'\'' >"${buildopt_output}"' \
+    >"${buildopt_fake_bin}/curl"
+# shellcheck disable=SC2016
+printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'set -euo pipefail' \
+    'if [[ "${1:-}" == */jq ]]; then' \
+    '    printf '\''%s  %s\n'\'' "${BUILDOPT_TEST_JQ_DIGEST:-5942c9b0934e510ee61eb3e30273f1b3fe2590df93933a93d7c58b81d19c8ff5}" "$1"' \
+    '    exit 0' \
+    'fi' \
+    'exec "${BUILDOPT_TEST_REAL_SHA256SUM}" "$@"' \
+    >"${buildopt_fake_bin}/sha256sum"
 chmod +x \
     "${buildopt_fake_bin}/awk" \
+    "${buildopt_fake_bin}/curl" \
     "${buildopt_fake_bin}/docker" \
-    "${buildopt_fake_bin}/getconf"
+    "${buildopt_fake_bin}/getconf" \
+    "${buildopt_fake_bin}/sha256sum"
 
 buildopt_run_fixture() {
     local buildopt_log=$1
@@ -134,6 +163,7 @@ buildopt_run_fixture() {
     BUILDOPT_TEST_MANIFEST_PLATFORM_DIGEST="${BUILDOPT_TEST_MANIFEST_PLATFORM_DIGEST:-${buildopt_platform_digest}}" \
     BUILDOPT_TEST_IMAGE_REFERENCE="${buildopt_image}" \
     BUILDOPT_TEST_IMAGE_DIGEST="${BUILDOPT_TEST_IMAGE_DIGEST:-${buildopt_platform_digest}}" \
+    BUILDOPT_TEST_REAL_SHA256SUM="${buildopt_real_sha256sum}" \
     PATH="${buildopt_fake_bin}:${PATH}" \
         "${buildopt_runner}" "$@"
 }
@@ -171,6 +201,10 @@ if ((${#buildopt_smoke_calls[@]} != 5)) ||
         *$'\t--env\tBUILDOPT_GOLDEN_LANE_METRICS_VALIDATOR_BINARY=/buildopt-host-tools/metrics-catalog-validator'* ]] ||
     [[ "${buildopt_smoke_calls[4]}" != \
         *$'\t--env\tBUILDOPT_GOLDEN_LANE_ENVELOPE_BINARY=/buildopt-host-tools/neutral-envelope'* ]] ||
+    [[ "${buildopt_smoke_calls[4]}" != \
+        *$'\t--env\tBUILDOPT_GOLDEN_LANE_NO_HIT_HELPER_BINARY=/buildopt-host-tools/no-hit-cache'* ]] ||
+    [[ "${buildopt_smoke_calls[4]}" != \
+        *$'\t--env\tPATH=/buildopt-host-tools:/opt/java/openjdk/bin:'* ]] ||
     [[ "${buildopt_smoke_calls[4]}" != \
         *$'\t--env\tBUILDOPT_GOLDEN_LANE_USE_ACTIVE_JAVA=1'* ]] ||
     [[ "${buildopt_smoke_calls[4]}" != \
@@ -223,6 +257,10 @@ BUILDOPT_TEST_RUN_EXIT=37 \
     buildopt_run_fixture "${buildopt_test_root}/run-failure.log" --smoke \
     >/dev/null 2>&1
 buildopt_run_exit=$?
+BUILDOPT_TEST_JQ_DIGEST="$(printf '0%.0s' {1..64})" \
+    buildopt_run_fixture "${buildopt_test_root}/jq-failure.log" --smoke \
+    >/dev/null 2>&1
+buildopt_jq_exit=$?
 "${buildopt_runner}" --smoke unexpected >/dev/null 2>&1
 buildopt_usage_exit=$?
 set -e
@@ -233,14 +271,16 @@ if ((buildopt_daemon_exit != 1)) ||
     ((buildopt_pull_exit != 1)) ||
     ((buildopt_image_exit != 1)) ||
     ((buildopt_run_exit != 37)) ||
+    ((buildopt_jq_exit != 1)) ||
     ((buildopt_usage_exit != 64)); then
-    printf 'unexpected golden container error contract: %s/%s/%s/%s/%s/%s/%s\n' \
+    printf 'unexpected golden container error contract: %s/%s/%s/%s/%s/%s/%s/%s\n' \
         "${buildopt_daemon_exit}" \
         "${buildopt_resource_exit}" \
         "${buildopt_manifest_exit}" \
         "${buildopt_pull_exit}" \
         "${buildopt_image_exit}" \
         "${buildopt_run_exit}" \
+        "${buildopt_jq_exit}" \
         "${buildopt_usage_exit}" >&2
     exit 1
 fi
