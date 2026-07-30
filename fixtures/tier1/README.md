@@ -6,6 +6,12 @@ fixture plugin, load the packaged BuildOpt plugin, run a Java 17 cacheable
 custom task, resolve a real `ArtifactTransform`, and reuse Configuration Cache
 and the build cache.
 
+`A0-002` extends the same repositories with core Java source sets, an empty
+test class, a custom cacheable negative, and switches for a modified
+`JavaCompile` or an unknown transform. The switches exist only for the
+restriction-policy conformance; the default `F0-040` transform path is
+unchanged.
+
 [`matrix.v1.json`](./matrix.v1.json) is the target matrix, not an execution
 claim. The checker reports only runtime pairs it actually executes. The
 repository's capability matrix remains authoritative about evidence at the
@@ -22,3 +28,9 @@ temporary real Wrapper repository for Gradle 8.14.3 and 9.6.1. It requires the
 locked JDK 21 and uses a detected Java 17 installation when present. JDK 25 is
 left unproven until its lock-owned runtime is provisioned; missing runtimes
 never inherit another row's result.
+
+Run the cache-policy conformance separately:
+
+```bash
+./dev/check-tier-one-policy
+```

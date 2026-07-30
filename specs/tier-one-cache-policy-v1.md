@@ -1,0 +1,87 @@
+# Tier 1 managed-cache policy v1
+
+This specification materializes `A0-002` and the default-deny part of
+`CACHE-007`/`COMPAT-001`. It constrains only a managed BuildOpt cache; it does
+not configure a cache, grant shared access, or alter the neutral
+`dev.buildopt` rendezvous.
+
+## Activation boundary
+
+The packaged restriction-only plugin is
+`dev.buildopt.tier-one-policy`. The owner of the managed cache applies it only
+after selecting that path. Applying the plugin can remove cache eligibility
+but can never add it: Gradle's own `@CacheableTask`, `cacheIf`,
+`doNotCacheIf`, enabled state, inputs, outputs, and implementation snapshot
+remain authoritative. `A0-003` owns the first cache configuration and
+`A0-006` owns authenticated policy delivery.
+
+The separate `dev.buildopt` plugin remains neutral. Baseline, bypass,
+unavailable-gateway, and ordinary customer-cache invocations therefore retain
+their original behavior.
+
+## Proven runtime adapter
+
+The versioned adapter is enabled only on Linux AMD64 for the rows actually
+executed by the repository:
+
+- Gradle 8.14.3 on JDK 17 or 21;
+- Gradle 9.6.1 on JDK 17 or 21;
+- Kotlin or Groovy DSL.
+
+The target-only JDK 25 rows and every other Gradle/JDK/platform combination
+disable the managed cache for that invocation. No row inherits another
+version's internal adapter.
+
+The adapter inventories Gradle's complete project transform registry through
+the exact 8.14.3/9.6.1 internal contract. The v1 transform allowlist is empty.
+Any registered transform, unavailable inventory, linkage drift, or provider
+failure disables the managed cache for the complete Gradle build. A transform
+is never treated as a task and the implementation does not claim a
+per-transform cache switch. The plugin also marks the selected tasks
+Configuration-Cache-incompatible in this fallback so the next invocation must
+repeat the inventory before Gradle can enable a cache; a stale serialized
+decision is never accepted.
+
+## Task allowlist
+
+The sole v1 entry is a `JavaCompile` task created for a `SourceSet` by the core
+`java` plugin from the same exact Gradle runtime. Qualification requires all
+of the following:
+
+1. the task name is a live `SourceSet.compileJavaTaskName`;
+2. the runtime implementation is exactly
+   `org.gradle.api.tasks.compile.JavaCompile_Decorated` with
+   `JavaCompile` as its direct base;
+3. the instance has exactly one action,
+   `org.gradle.api.internal.project.taskfactory.IncrementalTaskAction`.
+
+Every other task receives a named `doNotCacheIf`. This includes custom
+`@CacheableTask` types, `Test` with no grant, a source-set task whose action
+contract was modified, and a built-in registered outside its provider
+contract. A later action mutation is checked when Gradle evaluates cache
+eligibility, not only when the task is first configured.
+
+## Executable evidence
+
+[`tier-one-cache-policy-v1.json`](./tier-one-cache-policy-v1.json) is the
+machine-readable closed allowlist. Run:
+
+```bash
+./dev/check-tier-one-policy
+```
+
+The checker validates the exact document and packaged plugin marker, then
+executes both DSL fixtures on all eight proven Gradle/JDK rows with isolated
+TestKit homes and Configuration Cache. It proves source-set `compileJava` and
+`compileTestJava` replay from cache while a custom cacheable task executes
+again. All four Gradle 9.6.1 rows also execute `Test` twice and prove it cannot
+replay without a grant. Gradle 8.14.3 retains strict warning failure instead
+of suppressing its framework-autoload deprecation in the empty-test fixture.
+On the golden row the checker additionally proves that an added action rejects
+the built-in and that one unknown artifact transform disables the otherwise
+allowed compile task and intentionally prevents Configuration Cache reuse for
+the fail-closed build.
+
+This block does not close `A0-G01` because HTTP cache semantics and the backend
+are not implemented, and does not close `A0-G08` because authenticated
+`TestCacheGrant` plus root/composite coverage remain later integration work.

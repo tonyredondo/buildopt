@@ -15,6 +15,17 @@ fail the baseline Gradle build. The plugin does not modify task inputs,
 outputs, dependencies, cache policy, or execution, and it does not emit later
 task-event payloads.
 
+`A0-002` additionally packages `dev.buildopt.tier-one-policy` as a separate,
+restriction-only plugin. A managed-cache owner may apply it to install named
+`doNotCacheIf` guards. The current exact allowlist contains only core
+source-set `JavaCompile` tasks with the expected decorated implementation and
+single Gradle action. `Test`, custom tasks, modified instances, unsupported
+runtimes, unavailable transform inventory, and every registered artifact
+transform fail closed. Invocation-wide fallback disables Gradle's build cache
+and prevents Configuration Cache reuse so the transform inventory is checked
+again next time. This plugin never configures or enables a cache, so the
+neutral `dev.buildopt` path above remains behavior-preserving.
+
 `WS-004` adds the authenticated local rendezvous without placing secrets in
 Gradle configuration. On every service realization, including Configuration
 Cache reuse, the plugin reads fresh invocation context, authenticates an HTTP
@@ -30,6 +41,7 @@ with:
 ./dev/run -- ./dev/check-jvm-release
 ./dev/check-local-gateway
 ./dev/check-gradle-plugin-handshake
+./dev/check-tier-one-policy
 ```
 
 Deep instrumentation and output-semantics changes do not belong in this module

@@ -657,6 +657,22 @@ cache and Configuration Cache reuse. Distribution archives are
 checksum-pinned and temporary Wrapper/user homes are isolated. JDK 25 remains
 explicitly unproven until its lock-owned runtime is provisioned.
 
+Run the `A0-002` restriction-only policy across the same eight proven rows:
+
+```bash
+./dev/check-tier-one-policy
+```
+
+The policy checker gives every scenario its own TestKit and build-cache home.
+It proves exact core source-set `JavaCompile` replay, re-execution of `Test`
+on the Gradle 9 rows and a custom cacheable task on every row, rejection of a
+built-in with an added action, and invocation-wide managed-cache disablement
+when a transform is registered. The Gradle 8 empty-test path is not executed
+because its framework autoload emits a deprecation under the deliberately
+strict warning gate.
+The policy plugin never configures or enables a cache; `A0-003` owns that
+integration.
+
 ## JVM Agent spike
 
 Run the bounded agent against a real Gradle daemon and Configuration Cache:

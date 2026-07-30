@@ -1,4 +1,4 @@
 plugins {
-    id 'base'
+    id 'java'
     id 'dev.buildopt.tier1-fixture'
 }

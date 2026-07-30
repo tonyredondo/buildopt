@@ -1,0 +1,222 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_policy="${buildopt_repo_root}/specs/tier-one-cache-policy-v1.json"
+
+for buildopt_command in awk find git grep jar jq readlink unzip; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Tier 1 policy command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+if ! jq -e '
+    keys == [
+        "activation",
+        "artifactTransformAllowlist",
+        "defaultDeny",
+        "policyId",
+        "provenRuntimes",
+        "schemaVersion",
+        "taskAllowlist"
+    ] and
+    .schemaVersion == "buildopt.specs/tier-one-cache-policy/v1" and
+    .policyId == "TIER_ONE_CACHE_POLICY_V1" and
+    .activation == {
+        "pluginId": "dev.buildopt.tier-one-policy",
+        "effect": "RESTRICT_ONLY",
+        "cacheConfigurationOwner": "A0-003"
+    } and
+    .provenRuntimes == [
+        {
+            "gradle": "8.14.3",
+            "jdks": [17, 21],
+            "operatingSystem": "linux",
+            "architecture": "amd64"
+        },
+        {
+            "gradle": "9.6.1",
+            "jdks": [17, 21],
+            "operatingSystem": "linux",
+            "architecture": "amd64"
+        }
+    ] and
+    .taskAllowlist == [
+        {
+            "id": "CORE_JAVA_SOURCE_SET_COMPILE_V1",
+            "taskType": "org.gradle.api.tasks.compile.JavaCompile",
+            "implementation": "org.gradle.api.tasks.compile.JavaCompile_Decorated",
+            "providerPluginId": "java",
+            "providerVersion": "GRADLE_RUNTIME",
+            "sourceSetBinding": "compileJavaTaskName",
+            "actions": [
+                "org.gradle.api.internal.project.taskfactory.IncrementalTaskAction"
+            ]
+        }
+    ] and
+    .artifactTransformAllowlist == [] and
+    .defaultDeny == {
+        "disallowedTask": "DO_NOT_CACHE",
+        "testWithoutGrant": "DO_NOT_CACHE",
+        "modifiedAllowlistedTask": "DO_NOT_CACHE",
+        "unknownArtifactTransform": "DISABLE_MANAGED_CACHE_INVOCATION",
+        "unavailableTransformInventory": "DISABLE_MANAGED_CACHE_INVOCATION",
+        "unsupportedRuntime": "DISABLE_MANAGED_CACHE_INVOCATION",
+        "unavailableConfigurationCache": "DISABLE_FOR_REINSPECTION",
+        "neutralPlugin": "UNCHANGED"
+    }
+' "${buildopt_policy}" >/dev/null; then
+    printf 'Tier 1 cache policy is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_required_files=(
+    "fixtures/tier1/groovy/src/main/java/example/TierOne.java"
+    "fixtures/tier1/groovy/src/test/java/example/EmptyTest.java"
+    "fixtures/tier1/kotlin/src/main/java/example/TierOne.java"
+    "fixtures/tier1/kotlin/src/test/java/example/EmptyTest.java"
+    "jvm/gradle-plugin/src/main/java/dev/buildopt/gradle/BuildOptTierOnePolicy.java"
+    "jvm/gradle-plugin/src/main/java/dev/buildopt/gradle/BuildOptTierOnePolicyPlugin.java"
+    "jvm/gradle-plugin/src/testKit/java/dev/buildopt/gradle/TierOnePolicyTestKit.java"
+    "specs/tier-one-cache-policy-v1.md"
+)
+for buildopt_relative in "${buildopt_required_files[@]}"; do
+    if [[ ! -f "${buildopt_repo_root}/${buildopt_relative}" ]]; then
+        printf 'missing Tier 1 policy file: %s\n' "${buildopt_relative}" >&2
+        exit 1
+    fi
+done
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p -- "${GRADLE_USER_HOME}"
+
+"${buildopt_script_dir}/run" -- \
+    "${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --no-configuration-cache \
+    --warning-mode=fail \
+    :jvm:gradle-plugin:jar
+
+buildopt_gradle_9_home=$(
+    find \
+        "${GRADLE_USER_HOME}/wrapper/dists/gradle-9.6.1-bin" \
+        -type d \
+        -path '*/gradle-9.6.1' \
+        -print \
+        -quit
+)
+buildopt_gradle_8_home="${buildopt_repo_root}/.tools/gradle-compat/gradle-8.14.3"
+if [[ -z "${buildopt_gradle_9_home}" ||
+    ! -x "${buildopt_gradle_9_home}/bin/gradle" ||
+    ! -x "${buildopt_gradle_8_home}/bin/gradle" ]]; then
+    printf 'both pinned Gradle distributions must be provisioned\n' >&2
+    exit 1
+fi
+buildopt_gradle_9_home=$(readlink -f "${buildopt_gradle_9_home}")
+buildopt_gradle_8_home=$(readlink -f "${buildopt_gradle_8_home}")
+
+buildopt_java_17=$(readlink -f "$(command -v java)")
+buildopt_java_17_home=$(cd -- "$(dirname -- "${buildopt_java_17}")/.." && pwd)
+buildopt_java_17_major=$(
+    "${buildopt_java_17}" -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.version = / {
+                split($2, version, ".")
+                print version[1]
+                exit
+            }
+        '
+)
+if [[ "${buildopt_java_17_major}" != "17" ]]; then
+    printf 'A0-002 requires an available JDK 17 runtime; active Java is %s\n' \
+        "${buildopt_java_17_major:-unknown}" >&2
+    exit 1
+fi
+
+buildopt_java_21_home=$(
+    "${buildopt_script_dir}/run" -- \
+        java -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.home = / {
+                print $2
+                exit
+            }
+        '
+)
+if [[ ! -x "${buildopt_java_21_home}/bin/java" ]]; then
+    printf 'locked JDK 21 home is unavailable\n' >&2
+    exit 1
+fi
+
+buildopt_versions=("8.14.3" "9.6.1")
+buildopt_gradle_homes=("${buildopt_gradle_8_home}" "${buildopt_gradle_9_home}")
+buildopt_java_majors=(17 21)
+buildopt_java_homes=("${buildopt_java_17_home}" "${buildopt_java_21_home}")
+
+for buildopt_version_index in "${!buildopt_versions[@]}"; do
+    for buildopt_java_index in "${!buildopt_java_majors[@]}"; do
+        JAVA_HOME="${buildopt_java_homes[buildopt_java_index]}" \
+        PATH="${buildopt_java_homes[buildopt_java_index]}/bin:${PATH}" \
+            "${buildopt_script_dir}/run" -- \
+                "${buildopt_repo_root}/gradlew" \
+                --no-daemon \
+                --offline \
+                --no-configuration-cache \
+                --stacktrace \
+                --warning-mode=fail \
+                :jvm:gradle-plugin:tierOnePolicyTestKit \
+                "-PbuildoptTierOneJava=${buildopt_java_majors[buildopt_java_index]}" \
+                "-PbuildoptTierOneGradleHome=${buildopt_gradle_homes[buildopt_version_index]}"
+    done
+done
+
+mapfile -d '' buildopt_plugin_jars < <(
+    find "${buildopt_repo_root}/jvm/gradle-plugin/build/libs" \
+        -maxdepth 1 \
+        -type f \
+        -name 'buildopt-gradle-plugin-*.jar' \
+        ! -name '*-sources.jar' \
+        ! -name '*-javadoc.jar' \
+        -print0
+)
+if ((${#buildopt_plugin_jars[@]} != 1)); then
+    printf 'expected one packaged Gradle plugin, found %s\n' \
+        "${#buildopt_plugin_jars[@]}" >&2
+    exit 1
+fi
+buildopt_policy_descriptor=$(
+    unzip -p \
+        "${buildopt_plugin_jars[0]}" \
+        META-INF/gradle-plugins/dev.buildopt.tier-one-policy.properties |
+        tr -d '\r'
+)
+if [[ "${buildopt_policy_descriptor}" != \
+    'implementation-class=dev.buildopt.gradle.BuildOptTierOnePolicyPlugin' ]]; then
+    printf 'Tier 1 policy plugin marker is missing or invalid\n' >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'Tier 1 policy check changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'A0-002 Tier 1 policy OK: 8 Gradle/JDK/DSL rows, exact JavaCompile/custom policy, Gradle 9 Test deny, modified/transform fallbacks\n'

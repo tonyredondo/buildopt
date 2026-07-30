@@ -37,6 +37,12 @@ gradlePlugin {
             displayName = "BuildOpt Gradle Plugin"
             description = "Authenticated neutral launcher rendezvous for BuildOpt"
         }
+        create("buildOptTierOnePolicy") {
+            id = "dev.buildopt.tier-one-policy"
+            implementationClass = "dev.buildopt.gradle.BuildOptTierOnePolicyPlugin"
+            displayName = "BuildOpt Tier 1 Cache Policy"
+            description = "Default-deny task and transform policy for a managed BuildOpt cache"
+        }
     }
 }
 
@@ -64,6 +70,32 @@ tasks.register<JavaExec>("tierOneTestKit") {
     dependsOn(tasks.named(testKit.classesTaskName), tasks.named("jar"))
     classpath = testKit.runtimeClasspath
     mainClass = "dev.buildopt.gradle.TierOneTestKit"
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = tierOneRuntime.map(JavaLanguageVersion::of)
+    }
+    argumentProviders.add(
+        CommandLineArgumentProvider {
+            listOf(
+                tierOneFixtures.asFile.absolutePath,
+                tierOneGradleHome.get(),
+                tasks.jar.get().archiveFile.get().asFile.absolutePath,
+                tierOneRuntime.get().toString(),
+            )
+        },
+    )
+    inputs.dir(tierOneFixtures)
+    inputs.file(tasks.jar.flatMap { it.archiveFile })
+    inputs.property("runtime", tierOneRuntime)
+    inputs.property("gradleHome", tierOneGradleHome)
+}
+
+tasks.register<JavaExec>("tierOnePolicyTestKit") {
+    group = "verification"
+    description = "Runs the Tier 1 managed-cache default-deny conformance."
+    notCompatibleWithConfigurationCache("The task launches nested TestKit builds.")
+    dependsOn(tasks.named(testKit.classesTaskName), tasks.named("jar"))
+    classpath = testKit.runtimeClasspath
+    mainClass = "dev.buildopt.gradle.TierOnePolicyTestKit"
     javaLauncher = javaToolchains.launcherFor {
         languageVersion = tierOneRuntime.map(JavaLanguageVersion::of)
     }

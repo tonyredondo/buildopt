@@ -62,6 +62,13 @@ and correlation evidence. `F0-040` itself is rerun with:
 Loading the product plugin without a launcher does not claim an authenticated
 handshake. Only the golden lane retains that stronger capability.
 
+`A0-002` adds exact default-deny policy evidence to all eight JDK 17/21 rows:
+core source-set `JavaCompile` is the only task allowlist entry, while `Test`,
+custom tasks, modified actions, and transforms fail closed. The matrix still
+reports `MANAGED_SHARED_CACHE` as `UNAVAILABLE` because `A0-003` and `A0-004`
+own cache configuration and the backend; policy conformance is not a cache
+hit/PUT claim.
+
 `SPK-002` leaves `JVM_AGENT` unavailable in every profile. Its real-daemon
 prototype sees class loads rather than method access or task attribution, so
 the shared safe fallback is `ABORT_PENDING`; no row may qualify a task from

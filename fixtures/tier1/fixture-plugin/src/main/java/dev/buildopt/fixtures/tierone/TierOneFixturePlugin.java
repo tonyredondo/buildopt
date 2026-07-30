@@ -3,6 +3,8 @@ package dev.buildopt.fixtures.tierone;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.Serial;
+import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -15,9 +17,11 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.TimeZone;
 import java.util.concurrent.ThreadLocalRandom;
+import org.gradle.api.Action;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.transform.InputArtifact;
 import org.gradle.api.artifacts.transform.TransformAction;
@@ -27,14 +31,18 @@ import org.gradle.api.attributes.Attribute;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileSystemLocation;
 import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.CacheableTask;
+import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.UntrackedTask;
+import org.gradle.api.tasks.compile.JavaCompile;
+import org.gradle.api.tasks.testing.Test;
 
 /** Shared fixture logic used from both Kotlin and Groovy DSL repositories. */
 public final class TierOneFixturePlugin implements Plugin<Project> {
@@ -43,6 +51,75 @@ public final class TierOneFixturePlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
+        boolean registerTransform =
+                project.getProviders()
+                        .gradleProperty("buildoptTierOneRegisterTransform")
+                        .map(Boolean::parseBoolean)
+                        .getOrElse(true);
+        if (registerTransform) {
+            registerTransformFixture(project);
+        }
+        project.getTasks()
+                .register(
+                        "unknownCacheable",
+                        UnknownCacheableTask.class,
+                        task -> {
+                            task.getMarker().set("unknown-cacheable");
+                            task.getOutputFile()
+                                    .set(
+                                            project.getLayout()
+                                                    .getBuildDirectory()
+                                                    .file("tier-one/unknown.txt"));
+                        });
+        project.getTasks()
+                .withType(Test.class)
+                .configureEach(TierOneFixturePlugin::allowEmptyGradleNineTest);
+        project.getPluginManager()
+                .withPlugin(
+                        "java",
+                        ignored -> {
+                            boolean modifyJavaCompile =
+                                    project.getProviders()
+                                            .gradleProperty("buildoptTierOneModifyJavaCompile")
+                                            .map(Boolean::parseBoolean)
+                                            .getOrElse(false);
+                            if (modifyJavaCompile) {
+                                project.getTasks()
+                                        .named("compileJava", JavaCompile.class)
+                                        .configure(
+                                                task ->
+                                                        task.doLast(
+                                                                "Tier 1 modified built-in fixture",
+                                                                new ModifiedBuiltInAction()));
+                            }
+                        });
+        project.getTasks()
+                .register(
+                        "agentProbe",
+                        AgentProbeTask.class,
+                        task ->
+                                task.getOutputFile()
+                                        .set(
+                                                project.getLayout()
+                                                        .getBuildDirectory()
+                                                        .file("agent/probe.txt")));
+    }
+
+    private static void allowEmptyGradleNineTest(Test task) {
+        try {
+            Object property =
+                    task.getClass().getMethod("getFailOnNoDiscoveredTests").invoke(task);
+            Property.class.getMethod("set", Object.class).invoke(property, Boolean.FALSE);
+        } catch (NoSuchMethodException ignored) {
+            // Gradle 8 has no failOnNoDiscoveredTests property.
+        } catch (ReflectiveOperationException failure) {
+            throw new IllegalStateException(
+                    "cannot configure the Gradle 9 empty-test fixture",
+                    failure);
+        }
+    }
+
+    private static void registerTransformFixture(Project project) {
         project.getDependencies()
                 .registerTransform(
                         MarkerTransform.class,
@@ -61,8 +138,7 @@ public final class TierOneFixturePlugin implements Plugin<Project> {
                                             .getAttributes()
                                             .attribute(ARTIFACT_TYPE, "tier-one-marker");
                                 });
-        project.getDependencies()
-                .add(input.getName(), project.files("input/source.txt"));
+        project.getDependencies().add(input.getName(), project.files("input/source.txt"));
         project.getTasks()
                 .register(
                         "verifyTierOne",
@@ -75,16 +151,6 @@ public final class TierOneFixturePlugin implements Plugin<Project> {
                                                     .getBuildDirectory()
                                                     .file("tier-one/verified.txt"));
                         });
-        project.getTasks()
-                .register(
-                        "agentProbe",
-                        AgentProbeTask.class,
-                        task ->
-                                task.getOutputFile()
-                                        .set(
-                                                project.getLayout()
-                                                        .getBuildDirectory()
-                                                        .file("agent/probe.txt")));
     }
 
     /** Exact deterministic transform used to prove adapter execution. */
@@ -145,6 +211,44 @@ public final class TierOneFixturePlugin implements Plugin<Project> {
             } catch (IOException exception) {
                 throw new IllegalStateException("cannot verify fixture input", exception);
             }
+        }
+    }
+
+    /** Cacheable custom task that must remain outside the product allowlist. */
+    @CacheableTask
+    public abstract static class UnknownCacheableTask extends DefaultTask {
+        /** Returns the stable fixture marker. */
+        @Input
+        public abstract Property<String> getMarker();
+
+        /** Returns the output used to distinguish execution from cache replay. */
+        @OutputFile
+        public abstract RegularFileProperty getOutputFile();
+
+        /** Writes one deterministic output. */
+        @TaskAction
+        public final void writeMarker() {
+            File output = getOutputFile().get().getAsFile();
+            try {
+                Files.createDirectories(output.toPath().getParent());
+                Files.writeString(
+                        output.toPath(),
+                        getMarker().get() + "\n",
+                        StandardCharsets.UTF_8);
+            } catch (IOException exception) {
+                throw new IllegalStateException("cannot write unknown task fixture", exception);
+            }
+        }
+    }
+
+    /** Extra action used to prove that a modified built-in is rejected. */
+    public static final class ModifiedBuiltInAction
+            implements Action<Task>, Serializable {
+        @Serial private static final long serialVersionUID = 1L;
+
+        @Override
+        public void execute(Task task) {
+            // The additional action is intentionally inert; its presence changes the contract.
         }
     }
 

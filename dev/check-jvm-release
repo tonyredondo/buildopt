@@ -181,6 +181,12 @@ if ! jar tf "${buildopt_plugin_jar}" |
         "${buildopt_plugin_jar}" >&2
     exit 1
 fi
+if ! jar tf "${buildopt_plugin_jar}" |
+    grep -Fqx 'dev/buildopt/gradle/BuildOptTierOnePolicyPlugin.class'; then
+    printf 'Tier 1 policy entry point is missing from %s\n' \
+        "${buildopt_plugin_jar}" >&2
+    exit 1
+fi
 buildopt_plugin_descriptor=$(
     unzip -p \
         "${buildopt_plugin_jar}" \
@@ -190,6 +196,18 @@ buildopt_plugin_descriptor=$(
 if [[ "${buildopt_plugin_descriptor}" != \
     'implementation-class=dev.buildopt.gradle.BuildOptProjectPlugin' ]]; then
     printf 'Gradle plugin marker is missing or invalid in %s\n' \
+        "${buildopt_plugin_jar}" >&2
+    exit 1
+fi
+buildopt_policy_plugin_descriptor=$(
+    unzip -p \
+        "${buildopt_plugin_jar}" \
+        META-INF/gradle-plugins/dev.buildopt.tier-one-policy.properties |
+        tr -d '\r'
+)
+if [[ "${buildopt_policy_plugin_descriptor}" != \
+    'implementation-class=dev.buildopt.gradle.BuildOptTierOnePolicyPlugin' ]]; then
+    printf 'Tier 1 policy plugin marker is missing or invalid in %s\n' \
         "${buildopt_plugin_jar}" >&2
     exit 1
 fi

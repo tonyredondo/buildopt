@@ -12,6 +12,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`bandit-policy-v1.md`](./bandit-policy-v1.md) | `F0-035` |
 | [`capability-matrix-v1.md`](./capability-matrix-v1.md) | `F0-036` |
 | [`data-lifecycle-v1.md`](./data-lifecycle-v1.md) | `F0-037` |
+| [`tier-one-cache-policy-v1.md`](./tier-one-cache-policy-v1.md) | `A0-002` |
 | [`jvm-agent-spike-v1.md`](./jvm-agent-spike-v1.md) | `SPK-002` |
 | [`hermetic-helper-spike-v1.md`](./hermetic-helper-spike-v1.md) | `SPK-003` |
 | [`release-bundle-v1.md`](./release-bundle-v1.md) | `F0-038` / `DEPLOY-001` |
@@ -33,5 +34,7 @@ consumed by the Java patcher spike.
 status matrix.
 `data-lifecycle-v1.json` is the F0-037 retention, redaction, buffering, and
 deletion contract.
+`tier-one-cache-policy-v1.json` is the restriction-only A0-002 runtime,
+task/action, transform, and fallback allowlist.
 
 The additional materialized contract `golden-lane-runner-v1.json` pins the first runner class, toolchain, image, and checksums consumed by validation scripts. `release-bundle-v1.md` fixes the first verifiable Linux AMD64 distribution without claiming the later install, upgrade, uninstall, revocation, or workflow lifecycle. `walking-skeleton-overhead-v1.md` fixes the first non-promotional baseline-versus-wrapper measurement without replacing the later beta benchmark.
