@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "buildopt.specs/pending-commit-cas/v1",
+  "policyId": "PENDING_COMMIT_CAS_V1",
+  "storageSchema": {
+    "currentVersion": 2,
+    "upgradeFromVersions": [1],
+    "cacheTables": [
+      "schema_migrations",
+      "cache_attempts",
+      "pending_objects",
+      "commit_decisions",
+      "committed_objects",
+      "quarantine_records"
+    ],
+    "controlTables": [
+      "schema_migrations",
+      "decision_audit_index",
+      "reconciliation_runs"
+    ],
+    "migration": "TRANSACTIONAL_CONTIGUOUS_EXACT_CHECKSUM"
+  },
+  "attempt": {
+    "states": ["PENDING", "COMMITTED", "ABORTED"],
+    "maximumLeaseHours": 24,
+    "startReplay": "EXACT_FINGERPRINT_OR_IDEMPOTENCY_CONFLICT",
+    "pendingIdentity": ["attemptId", "key"],
+    "pendingAuthority": false,
+    "stateVersion": "INCREMENT_ON_NEW_PENDING_OBJECT_AND_TERMINAL_TRANSITION",
+    "abort": "DELETE_PENDING_METADATA_KEEP_BLOBS_UNAUTHORITATIVE"
+  },
+  "commitDecision": {
+    "schema": "https://schemas.buildopt.dev/commit-decision.v1.schema.json",
+    "canonicalEncoding": "JCS_EXACT_BYTES",
+    "decisionDigest": "SHA256_JCS_WITHOUT_DECISION_DIGEST_AND_SIGNATURE",
+    "signatureAlgorithm": "Ed25519",
+    "signatureEncoding": "BASE64URL_UNPADDED_64_BYTES",
+    "signaturePayload": "CONTRACT_VERSION_NUL_KEY_ID_NUL_DECISION_DIGEST",
+    "revocationEpoch": "EXACT_CURRENT",
+    "objectCoverage": "COMPLETE_STRICTLY_SORTED_PENDING_SET",
+    "maximumObjects": 4096,
+    "maximumObjectBytes": 104857600
+  },
+  "atomicCommit": {
+    "visibilityAuthority": "cache.sqlite",
+    "transactionMembers": [
+      "COMMIT_DECISION",
+      "ALL_COMMITTED_OBJECTS",
+      "ATTEMPT_COMMITTED",
+      "PENDING_RELEASE"
+    ],
+    "identity": ["tenant", "namespaceGeneration", "key"],
+    "cas": "FIRST_WRITER_WINS_ALL_OR_NOTHING",
+    "exactReplay": "IDEMPOTENT_REPLAY",
+    "changedReplay": "IDEMPOTENCY_CONFLICT",
+    "controlIndex": "POST_COMMIT_REPAIRABLE_NON_AUTHORITY"
+  },
+  "httpDataPlane": {
+    "path": "/cache/{key}",
+    "binding": [
+      "tenant",
+      "namespaceGeneration",
+      "pendingAttemptId",
+      "readAuthority",
+      "writeAuthority"
+    ],
+    "requiresPreauthenticatedContext": true,
+    "globallyRoutable": false,
+    "routingOwner": "A0-006",
+    "get": {
+      "hit": 200,
+      "miss": 404,
+      "verification": "COMPLETE_BEFORE_RESPONSE"
+    },
+    "put": {
+      "created": 201,
+      "exactReplay": 200,
+      "tooLarge": 413,
+      "durability": "BLOB_THEN_PENDING_METADATA",
+      "visibility": "PENDING_MISS"
+    },
+    "redirects": "NONE"
+  },
+  "reconciliation": {
+    "startupBlocking": true,
+    "expiredAttempt": "ABORT_THEN_ORPHAN_COLLECTION",
+    "orphanBlob": "DELETE_NEVER_AUTHORIZE",
+    "missingOrCorruptCommittedBlob": "INVALIDATE_WHOLE_DECISION_QUARANTINE_MISS",
+    "missingAuditIndex": "REPAIR_FROM_DURABLE_DECISION",
+    "record": "COMPLETE_RECONCILIATION_RUN"
+  },
+  "executableEvidence": {
+    "checker": "dev/check-pending-commit",
+    "realStores": ["LOCAL_FILESYSTEM", "SQLITE_WAL"],
+    "faultModel": "specs/commit-atomicity-v1.json",
+    "requiredCases": [
+      "PENDING_IS_MISS",
+      "TWO_OBJECT_ATOMIC_COMMIT",
+      "EXACT_REPLAY",
+      "CHANGED_REPLAY_CONFLICT",
+      "INCOMPLETE_COVERAGE_ABORT",
+      "EXPIRED_OR_REVOKED_REJECTION",
+      "TRANSACTION_ROLLBACK",
+      "CONTROL_INDEX_REPAIR",
+      "MISSING_BLOB_QUARANTINE",
+      "CORRUPT_BLOB_QUARANTINE",
+      "CAS_LOSER_ABORTS_ALL",
+      "PENDING_PUBLISH_RECONCILE_EXCLUSION",
+      "STARTUP_ORPHAN_COLLECTION",
+      "HTTP_413_BEFORE_BODY",
+      "VERIFIED_HTTP_HIT"
+    ]
+  },
+  "deferred": {
+    "localPolicyAndRevocationAuthentication": "A0-006",
+    "globalServerAndGatewayRouting": "A0-006",
+    "dependencyAndWrapperCaching": "A0-007",
+    "quotaTtlSlru": "A1-003"
+  }
+}

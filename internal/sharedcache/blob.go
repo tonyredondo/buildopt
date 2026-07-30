@@ -9,8 +9,10 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
+	"time"
 )
 
 const digestPrefix = "sha256:"
@@ -40,7 +42,15 @@ func (store *filesystemBlobStore) Put(
 		return Blob{}, false, err
 	}
 	defer finish()
+	store.owner.reconcileMutex.RLock()
+	defer store.owner.reconcileMutex.RUnlock()
+	return store.putLocked(ctx, reader)
+}
 
+func (store *filesystemBlobStore) putLocked(
+	ctx context.Context,
+	reader io.Reader,
+) (Blob, bool, error) {
 	spool, err := os.CreateTemp(store.spoolRoot, ".blob-*")
 	if err != nil {
 		return Blob{}, false, fmt.Errorf("put Shared blob: create spool: %w", err)
@@ -144,6 +154,8 @@ func (store *filesystemBlobStore) OpenVerified(
 		return nil, err
 	}
 	defer finish()
+	store.owner.reconcileMutex.RLock()
+	defer store.owner.reconcileMutex.RUnlock()
 	return store.openVerified(ctx, blob)
 }
 
@@ -232,6 +244,136 @@ func parseDigest(digest string) (string, error) {
 		return "", ErrInvalidDigest
 	}
 	return hexDigest, nil
+}
+
+func (store *filesystemBlobStore) list() ([]Blob, error) {
+	shards, err := os.ReadDir(store.blobRoot)
+	if err != nil {
+		return nil, err
+	}
+	var blobs []Blob
+	for _, shard := range shards {
+		if !shard.IsDir() ||
+			len(shard.Name()) != 2 ||
+			!isLowerHex(shard.Name()) {
+			return nil, fmt.Errorf(
+				"unexpected blob shard %q",
+				shard.Name(),
+			)
+		}
+		shardPath := filepath.Join(store.blobRoot, shard.Name())
+		if err := preparePrivateDirectory(shardPath); err != nil {
+			return nil, err
+		}
+		entries, err := os.ReadDir(shardPath)
+		if err != nil {
+			return nil, err
+		}
+		for _, entry := range entries {
+			if entry.IsDir() ||
+				len(entry.Name()) != 62 ||
+				!isLowerHex(entry.Name()) {
+				return nil, fmt.Errorf(
+					"unexpected blob entry %q",
+					filepath.Join(shard.Name(), entry.Name()),
+				)
+			}
+			digest := digestPrefix + shard.Name() + entry.Name()
+			file, err := openPrivateBlob(
+				filepath.Join(shardPath, entry.Name()),
+			)
+			if err != nil {
+				return nil, err
+			}
+			info, statErr := file.Stat()
+			closeErr := file.Close()
+			if statErr != nil {
+				return nil, statErr
+			}
+			if closeErr != nil {
+				return nil, closeErr
+			}
+			blobs = append(blobs, Blob{
+				Digest: digest,
+				Size:   info.Size(),
+			})
+		}
+	}
+	return blobs, nil
+}
+
+func (store *filesystemBlobStore) remove(blob Blob) error {
+	path, err := store.pathForDigest(blob.Digest, false)
+	if err != nil {
+		return err
+	}
+	if err := os.Remove(path); err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return nil
+		}
+		return err
+	}
+	return syncDirectory(filepath.Dir(path))
+}
+
+func (store *filesystemBlobStore) quarantine(
+	blob Blob,
+	reason string,
+	now time.Time,
+) (bool, error) {
+	source, err := store.pathForDigest(blob.Digest, false)
+	if err != nil {
+		return false, err
+	}
+	if _, err := os.Lstat(source); err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return false, nil
+		}
+		return false, err
+	}
+	hexDigest, err := parseDigest(blob.Digest)
+	if err != nil {
+		return false, err
+	}
+	base := hexDigest + "." +
+		strconv.FormatInt(now.UnixMilli(), 10) + "." +
+		strings.ToLower(reason)
+	destination := filepath.Join(store.owner.layout.Quarantine, base)
+	for suffix := 0; ; suffix++ {
+		candidate := destination
+		if suffix > 0 {
+			candidate += "." + strconv.Itoa(suffix)
+		}
+		if _, err := os.Lstat(candidate); errors.Is(err, os.ErrNotExist) {
+			destination = candidate
+			break
+		} else if err != nil {
+			return false, err
+		}
+	}
+	if err := os.Rename(source, destination); err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return false, nil
+		}
+		return false, err
+	}
+	if err := syncDirectory(filepath.Dir(source)); err != nil {
+		return false, err
+	}
+	if err := syncDirectory(store.owner.layout.Quarantine); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func isLowerHex(value string) bool {
+	for _, character := range value {
+		if (character < '0' || character > '9') &&
+			(character < 'a' || character > 'f') {
+			return false
+		}
+	}
+	return value != ""
 }
 
 type contextReader struct {

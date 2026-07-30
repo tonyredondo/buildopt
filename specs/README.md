@@ -15,6 +15,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`tier-one-cache-policy-v1.md`](./tier-one-cache-policy-v1.md) | `A0-002` |
 | [`managed-l1-v1.md`](./managed-l1-v1.md) | `A0-003` |
 | [`single-node-shared-storage-v1.md`](./single-node-shared-storage-v1.md) | `A0-004` |
+| [`pending-commit-cas-v1.md`](./pending-commit-cas-v1.md) | `A0-005` |
 | [`jvm-agent-spike-v1.md`](./jvm-agent-spike-v1.md) | `SPK-002` |
 | [`hermetic-helper-spike-v1.md`](./hermetic-helper-spike-v1.md) | `SPK-003` |
 | [`release-bundle-v1.md`](./release-bundle-v1.md) | `F0-038` / `DEPLOY-001` |
@@ -44,5 +45,8 @@ leases, and L2-writer local disablement.
 `single-node-shared-storage-v1.json` is the A0-004 server/filesystem contract
 for private immutable blobs, one process writer, separate WAL-mode
 cache/control schemas, and fail-closed startup.
+`pending-commit-cas-v1.json` is the A0-005 lifecycle contract for durable
+pending attempts, canonical Ed25519 decisions, atomic first-writer visibility,
+context-bound opaque HTTP GET/PUT, quarantine, and startup reconciliation.
 
 The additional materialized contract `golden-lane-runner-v1.json` pins the first runner class, toolchain, image, and checksums consumed by validation scripts. `release-bundle-v1.md` fixes the first verifiable Linux AMD64 distribution without claiming the later install, upgrade, uninstall, revocation, or workflow lifecycle. `walking-skeleton-overhead-v1.md` fixes the first non-promotional baseline-versus-wrapper measurement without replacing the later beta benchmark.

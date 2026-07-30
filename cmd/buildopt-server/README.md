@@ -46,7 +46,8 @@ assignment, predeclared tokenized workload identity, and explicit
 causes, resources, overhead decomposition, and cost. It never invents values
 or includes the ingest credential.
 
-`A0-004` optionally activates the single-node Shared storage substrate:
+`A0-004`/`A0-005` optionally activate the single-node Shared storage and
+publication substrate:
 
 ```bash
 BUILDOPT_SERVER_INGEST_TOKEN=<opaque-token> \
@@ -57,10 +58,12 @@ BUILDOPT_SERVER_INGEST_TOKEN=<opaque-token> \
 
 The server takes one process-lifetime writer lease, rejects network/clustered
 filesystems, and owns private content-addressed blobs plus separately migrated
-WAL-mode `cache.sqlite` and `control.sqlite`. It fails before listening when
-the root, lease, migration, or integrity check is unsafe. Cache routes remain
-absent: pending upload, `CommitDecision`, CAS, visibility, and reconciliation
-belong to A0-005.
+WAL-mode `cache.sqlite` and `control.sqlite`. Schema v2 adds the A0-005 durable
+pending/abort lifecycle, canonical Ed25519 `CommitDecision`, atomic commit CAS,
+quarantine, and startup-blocking reconciliation. The implementation also
+provides an opaque context-bound GET/PUT handler, but the server keeps the
+global cache route absent until A0-006 supplies authenticated policy,
+revocation state, and a current binding.
 The state path must be a dedicated empty or already BuildOpt-owned root;
 unrelated existing entries are rejected without adding storage files.
 
@@ -75,4 +78,5 @@ bypass with:
 ./dev/check-session-ingest
 ./dev/check-build-session-export
 ./dev/check-shared-storage
+./dev/check-pending-commit
 ```

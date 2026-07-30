@@ -210,7 +210,7 @@ func run(
 	logger.Printf("listening on http://%s", listener.Addr())
 	if sharedStorage != nil {
 		logger.Printf(
-			"single-node Shared storage initialized with cache/control schema %d; cache data plane remains disabled",
+			"single-node Shared storage initialized and reconciled with cache/control schema %d; global cache routing disabled pending A0-006",
 			sharedcache.SchemaVersion,
 		)
 	}

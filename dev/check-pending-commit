@@ -1,0 +1,211 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/pending-commit-cas-v1.json"
+buildopt_tmp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-pending-commit.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_tmp}" &&
+        "${buildopt_tmp}" == "${TMPDIR:-/tmp}/buildopt-pending-commit."* ]]; then
+        rm -rf -- "${buildopt_tmp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in git jq mktemp rm; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required pending-commit command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+if ! jq -e '
+    keys == [
+        "atomicCommit",
+        "attempt",
+        "commitDecision",
+        "deferred",
+        "executableEvidence",
+        "httpDataPlane",
+        "policyId",
+        "reconciliation",
+        "schemaVersion",
+        "storageSchema"
+    ] and
+    .schemaVersion == "buildopt.specs/pending-commit-cas/v1" and
+    .policyId == "PENDING_COMMIT_CAS_V1" and
+    .storageSchema == {
+        "currentVersion": 2,
+        "upgradeFromVersions": [1],
+        "cacheTables": [
+            "schema_migrations",
+            "cache_attempts",
+            "pending_objects",
+            "commit_decisions",
+            "committed_objects",
+            "quarantine_records"
+        ],
+        "controlTables": [
+            "schema_migrations",
+            "decision_audit_index",
+            "reconciliation_runs"
+        ],
+        "migration": "TRANSACTIONAL_CONTIGUOUS_EXACT_CHECKSUM"
+    } and
+    .attempt == {
+        "states": ["PENDING", "COMMITTED", "ABORTED"],
+        "maximumLeaseHours": 24,
+        "startReplay": "EXACT_FINGERPRINT_OR_IDEMPOTENCY_CONFLICT",
+        "pendingIdentity": ["attemptId", "key"],
+        "pendingAuthority": false,
+        "stateVersion": "INCREMENT_ON_NEW_PENDING_OBJECT_AND_TERMINAL_TRANSITION",
+        "abort": "DELETE_PENDING_METADATA_KEEP_BLOBS_UNAUTHORITATIVE"
+    } and
+    .commitDecision == {
+        "schema": "https://schemas.buildopt.dev/commit-decision.v1.schema.json",
+        "canonicalEncoding": "JCS_EXACT_BYTES",
+        "decisionDigest": "SHA256_JCS_WITHOUT_DECISION_DIGEST_AND_SIGNATURE",
+        "signatureAlgorithm": "Ed25519",
+        "signatureEncoding": "BASE64URL_UNPADDED_64_BYTES",
+        "signaturePayload": "CONTRACT_VERSION_NUL_KEY_ID_NUL_DECISION_DIGEST",
+        "revocationEpoch": "EXACT_CURRENT",
+        "objectCoverage": "COMPLETE_STRICTLY_SORTED_PENDING_SET",
+        "maximumObjects": 4096,
+        "maximumObjectBytes": 104857600
+    } and
+    .atomicCommit == {
+        "visibilityAuthority": "cache.sqlite",
+        "transactionMembers": [
+            "COMMIT_DECISION",
+            "ALL_COMMITTED_OBJECTS",
+            "ATTEMPT_COMMITTED",
+            "PENDING_RELEASE"
+        ],
+        "identity": ["tenant", "namespaceGeneration", "key"],
+        "cas": "FIRST_WRITER_WINS_ALL_OR_NOTHING",
+        "exactReplay": "IDEMPOTENT_REPLAY",
+        "changedReplay": "IDEMPOTENCY_CONFLICT",
+        "controlIndex": "POST_COMMIT_REPAIRABLE_NON_AUTHORITY"
+    } and
+    .httpDataPlane == {
+        "path": "/cache/{key}",
+        "binding": [
+            "tenant",
+            "namespaceGeneration",
+            "pendingAttemptId",
+            "readAuthority",
+            "writeAuthority"
+        ],
+        "requiresPreauthenticatedContext": true,
+        "globallyRoutable": false,
+        "routingOwner": "A0-006",
+        "get": {
+            "hit": 200,
+            "miss": 404,
+            "verification": "COMPLETE_BEFORE_RESPONSE"
+        },
+        "put": {
+            "created": 201,
+            "exactReplay": 200,
+            "tooLarge": 413,
+            "durability": "BLOB_THEN_PENDING_METADATA",
+            "visibility": "PENDING_MISS"
+        },
+        "redirects": "NONE"
+    } and
+    .reconciliation == {
+        "startupBlocking": true,
+        "expiredAttempt": "ABORT_THEN_ORPHAN_COLLECTION",
+        "orphanBlob": "DELETE_NEVER_AUTHORIZE",
+        "missingOrCorruptCommittedBlob": "INVALIDATE_WHOLE_DECISION_QUARANTINE_MISS",
+        "missingAuditIndex": "REPAIR_FROM_DURABLE_DECISION",
+        "record": "COMPLETE_RECONCILIATION_RUN"
+    } and
+    .executableEvidence.checker == "dev/check-pending-commit" and
+    .executableEvidence.realStores == [
+        "LOCAL_FILESYSTEM",
+        "SQLITE_WAL"
+    ] and
+    .executableEvidence.faultModel ==
+        "specs/commit-atomicity-v1.json" and
+    .executableEvidence.requiredCases == [
+        "PENDING_IS_MISS",
+        "TWO_OBJECT_ATOMIC_COMMIT",
+        "EXACT_REPLAY",
+        "CHANGED_REPLAY_CONFLICT",
+        "INCOMPLETE_COVERAGE_ABORT",
+        "EXPIRED_OR_REVOKED_REJECTION",
+        "TRANSACTION_ROLLBACK",
+        "CONTROL_INDEX_REPAIR",
+        "MISSING_BLOB_QUARANTINE",
+        "CORRUPT_BLOB_QUARANTINE",
+        "CAS_LOSER_ABORTS_ALL",
+        "PENDING_PUBLISH_RECONCILE_EXCLUSION",
+        "STARTUP_ORPHAN_COLLECTION",
+        "HTTP_413_BEFORE_BODY",
+        "VERIFIED_HTTP_HIT"
+    ] and
+    .deferred == {
+        "localPolicyAndRevocationAuthentication": "A0-006",
+        "globalServerAndGatewayRouting": "A0-006",
+        "dependencyAndWrapperCaching": "A0-007",
+        "quotaTtlSlru": "A1-003"
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'pending publication/commit CAS contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_required_files=(
+    "internal/sharedcache/decision.go"
+    "internal/sharedcache/http.go"
+    "internal/sharedcache/http_test.go"
+    "internal/sharedcache/lifecycle.go"
+    "internal/sharedcache/lifecycle_test.go"
+    "internal/sharedcache/reconcile.go"
+    "specs/pending-commit-cas-v1.md"
+)
+for buildopt_relative in "${buildopt_required_files[@]}"; do
+    if [[ ! -s "${buildopt_repo_root}/${buildopt_relative}" ]]; then
+        printf 'missing pending-commit file: %s\n' "${buildopt_relative}" >&2
+        exit 1
+    fi
+done
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 ./internal/sharedcache ./cmd/buildopt-server
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/sharedcache ./cmd/buildopt-server
+CGO_ENABLED=0 "${buildopt_script_dir}/run" --toolchain go -- \
+    go build \
+    -mod=readonly \
+    -buildvcs=false \
+    -trimpath \
+    -o "${buildopt_tmp}/buildopt-server" \
+    ./cmd/buildopt-server
+
+"${buildopt_script_dir}/check-commit-atomicity"
+"${buildopt_script_dir}/check-capability-matrix"
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'pending-commit check changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'A0-005 pending publication and commit CAS OK: canonical Ed25519 decisions, atomic visibility, abort, HTTP binding, quarantine, and startup reconciliation\n'

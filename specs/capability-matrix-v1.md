@@ -69,8 +69,11 @@ native managed L1 on the same rows, including generation rotation,
 Configuration Cache reuse, and L2-writer local disablement. `A0-004` adds the
 private local blob store and separate WAL-mode cache/control metadata
 lifecycles. The matrix still reports `MANAGED_SHARED_CACHE` as `UNAVAILABLE`
-because A0-005 owns authenticated pending/commit/CAS and the cache data plane;
-storage-substrate conformance is not a shared hit/PUT claim.
+after A0-005: pending/abort, canonical commit CAS, verified HTTP reads, and
+startup reconciliation now exist behind an immutable preauthenticated binding,
+but A0-006 still owns locally authenticated policy, current revocation state,
+and routable gateway/server context. Until those compose, the data-plane
+conformance is not an active managed Shared claim.
 
 `SPK-002` leaves `JVM_AGENT` unavailable in every profile. Its real-daemon
 prototype sees class loads rather than method access or task attribution, so

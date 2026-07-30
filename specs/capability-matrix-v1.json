@@ -59,9 +59,9 @@
           "id": "MANAGED_SHARED_CACHE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "the A0 default-deny policy, managed native L1, and single-node blob/WAL substrate are proven but no authenticated pending/commit/CAS data plane is implemented",
+          "reason": "the A0 pending/commit/CAS data plane is proven behind a preauthenticated binding but locally authenticated policy, revocation state, and global gateway routing are not implemented",
           "fallback": "GRADLE_BASELINE",
-          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage"]
+          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit"]
         },
         {
           "id": "JVM_AGENT",
@@ -144,9 +144,9 @@
           "id": "MANAGED_SHARED_CACHE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "the A0 default-deny policy, managed native L1, and single-node blob/WAL substrate are proven but no authenticated pending/commit/CAS data plane is implemented",
+          "reason": "the A0 pending/commit/CAS data plane is proven behind a preauthenticated binding but locally authenticated policy, revocation state, and global gateway routing are not implemented",
           "fallback": "GRADLE_BASELINE",
-          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage"]
+          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit"]
         },
         {
           "id": "JVM_AGENT",
@@ -229,9 +229,9 @@
           "id": "MANAGED_SHARED_CACHE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "the A0 default-deny policy, managed native L1, and single-node blob/WAL substrate are proven but no authenticated pending/commit/CAS data plane is implemented",
+          "reason": "the A0 pending/commit/CAS data plane is proven behind a preauthenticated binding but locally authenticated policy, revocation state, and global gateway routing are not implemented",
           "fallback": "GRADLE_BASELINE",
-          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage"]
+          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit"]
         },
         {
           "id": "JVM_AGENT",

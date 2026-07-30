@@ -9,11 +9,12 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 )
 
 const (
-	// SchemaVersion is the only cache/control metadata schema understood by A0-004.
-	SchemaVersion = 1
+	// SchemaVersion is the current cache/control metadata schema.
+	SchemaVersion = 2
 	// MaximumBlobBytes is the private-beta per-object ceiling.
 	MaximumBlobBytes int64 = 100 << 20
 )
@@ -29,6 +30,20 @@ var (
 	ErrBlobCorrupt = errors.New("Shared blob is corrupt")
 	// ErrInvalidDigest means a digest is not canonical SHA-256.
 	ErrInvalidDigest = errors.New("invalid Shared blob digest")
+	// ErrAttemptNotFound means no durable attempt owns the supplied identity.
+	ErrAttemptNotFound = errors.New("Shared cache attempt was not found")
+	// ErrAttemptConflict means an attempt cannot accept the requested operation.
+	ErrAttemptConflict = errors.New("Shared cache attempt conflicts with the request")
+	// ErrStatePrecondition means the attempt version is not the expected version.
+	ErrStatePrecondition = errors.New("Shared cache attempt state precondition failed")
+	// ErrIdempotencyConflict means an identity was reused with different bytes.
+	ErrIdempotencyConflict = errors.New("Shared cache idempotency identity conflict")
+	// ErrCommitRejected means a decision failed authorization or exact coverage.
+	ErrCommitRejected = errors.New("Shared cache commit decision was rejected")
+	// ErrCASLost means another attempt already committed at least one identity.
+	ErrCASLost = errors.New("Shared cache first-writer CAS was lost")
+	// ErrCacheMiss means no fully verified committed object may be returned.
+	ErrCacheMiss = errors.New("Shared cache miss")
 )
 
 // Layout is the complete private on-disk A0-004 layout.
@@ -54,8 +69,8 @@ type BlobStore interface {
 	OpenVerified(context.Context, Blob) (*os.File, error)
 }
 
-// MetadataStore exposes only operational schema health. A0-005 owns commit
-// operations and keeps the concrete SQLite transaction private.
+// MetadataStore exposes only operational schema health. Publication operations
+// remain Storage methods so the concrete SQLite transaction stays private.
 type MetadataStore interface {
 	Role() string
 	SchemaVersion(context.Context) (int, error)
@@ -66,12 +81,22 @@ type MetadataStore interface {
 // deliberately independent SQLite lifecycles.
 type Storage struct {
 	operationMutex sync.RWMutex
+	lifecycleMutex sync.Mutex
+	reconcileMutex sync.RWMutex
 	closed         bool
 	layout         Layout
 	writerLock     *os.File
 	blobs          *filesystemBlobStore
 	cache          *sqliteMetadata
 	control        *sqliteMetadata
+	clock          func() time.Time
+	testHooks      storageTestHooks
+}
+
+type storageTestHooks struct {
+	beforeCacheCommit  func() error
+	beforeControlIndex func() error
+	afterPendingBlob   func()
 }
 
 // Open prepares and validates one local, private, single-writer storage root.
@@ -166,6 +191,7 @@ func openWithMaximumBlobBytes(
 	storage := &Storage{
 		layout:     layout,
 		writerLock: writerLock,
+		clock:      time.Now,
 	}
 	cleanup := func(openErr error) (*Storage, error) {
 		if storage.control != nil {
@@ -209,6 +235,12 @@ func openWithMaximumBlobBytes(
 		blobRoot:         layout.Blobs,
 		spoolRoot:        layout.Spool,
 		maximumBlobBytes: maximumBlobBytes,
+	}
+	if _, err := storage.reconcile(ctx, storage.now()); err != nil {
+		return cleanup(fmt.Errorf(
+			"open single-node Shared storage: reconcile: %w",
+			err,
+		))
 	}
 	return storage, nil
 }
@@ -258,6 +290,10 @@ func (storage *Storage) CacheMetadata() MetadataStore {
 // ControlMetadata returns the independent repairable audit-index lifecycle.
 func (storage *Storage) ControlMetadata() MetadataStore {
 	return storage.control
+}
+
+func (storage *Storage) now() time.Time {
+	return storage.clock().UTC()
 }
 
 func (storage *Storage) beginOperation() (func(), error) {

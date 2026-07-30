@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — Phase 0 is closed and `A0-004` has installed the private single-node blob/WAL storage substrate; `A0-005` is next for pending publication, commit CAS, and reconciliation<br>
+**Overall status:** `DOING` — Phase 0 is closed and `A0-005` has installed durable pending publication, canonical commit CAS, verified reads, and fail-closed reconciliation; `A0-006` is next for locally authenticated policy and revocation generations<br>
 **Current phase:** MVP-A0 — foundation and internal pilot<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
 **Last updated:** 2026-07-30<br>
@@ -141,7 +141,8 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 58 | `A0-002` | Implement the Tier 1 plugin and default-deny allowlist | `DONE` | Codex |
 | 59 | `A0-003` | Implement the managed L1 `DirectoryBuildCache` | `DONE` | Codex |
 | 60 | `A0-004` | Implement Shared single-node blobs and SQLite control indexes | `DONE` | Codex |
-| 61 | `A0-005` | Implement pending/abort/`CommitDecision`/CAS/reconciliation | `TODO` | — |
+| 61 | `A0-005` | Implement pending/abort/`CommitDecision`/CAS/reconciliation | `DONE` | Codex |
+| 62 | `A0-006` | Implement locally authenticated policy and revocation generations | `TODO` | — |
 
 ---
 
@@ -357,8 +358,8 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `A0-002` | Tier 1 plugin and default-deny allowlist | `DONE` | Codex | `E-065` |
 | `A0-003` | Managed L1 `DirectoryBuildCache` | `DONE` | Codex | `E-066` |
 | `A0-004` | Shared single-node: blobs + `cache.sqlite`/`control.sqlite` | `DONE` | Codex | `E-067` |
-| `A0-005` | Pending/abort/`CommitDecision`/CAS/reconciliation | `TODO` | — | — |
-| `A0-006` | Locally authenticated policy and revocation generations | `WAITING` | — | — |
+| `A0-005` | Pending/abort/`CommitDecision`/CAS/reconciliation | `DONE` | Codex | `E-068` |
+| `A0-006` | Locally authenticated policy and revocation generations | `TODO` | — | — |
 | `A0-007` | Dependency cache and wrapper distributions | `WAITING` | — | — |
 | `A0-008` | Complete/partial JSON/JSONL export | `WAITING` | — | — |
 | `A0-009` | Neutral measurement envelope and causal pilot harness | `WAITING` | — | — |
@@ -656,12 +657,15 @@ This table points to the latest valid result. It does not replace reports or all
 
 | `E-067` | 2026-07-30 | `A0-004` | Versioned [`Single-node Shared storage v1`](./specs/single-node-shared-storage-v1.md), exact machine-readable [server/filesystem contract](./specs/single-node-shared-storage-v1.json), pinned CGO-free SQLite dependency, private [`sharedcache`](./internal/sharedcache) blob/metadata interfaces, opt-in `buildopt-server --state-dir`, and composite [`dev/check-shared-storage`](./dev/check-shared-storage); one current-user mode-`0600` non-blocking lease owns the complete mode-`0700` local root, common network/clustered Linux filesystems and cross-device subpaths fail closed, and a second server never opens a listener; streams are bounded at 100 MiB, hashed into opaque `sha256:<lowercase-hex>` addresses, fsynced in a private same-filesystem spool, atomically hard-linked beneath a two-hex shard, directory-synced, and deduplicated only after complete size/digest verification, while corruption, cancellation, oversize, reader failure, unsafe names, and post-close access return no bytes and leave no reusable spool; independently checksummed schema-v1 migrations create `cache.sqlite` as the future visibility authority and `control.sqlite` as the repairable decision-digest audit index under WAL, `synchronous=FULL`, foreign keys, five-second busy timeout, exact SQL inventories, private sidecars, and quick/foreign-key integrity checks; race-enabled tests covered 24 concurrent identical writers, schema version/definition drift, database separation/persistence, byte and foreign-key corruption, lease release, and restart, while a statically linked real server proved private files, busy-writer exit `78`, credential isolation, absent cache routes, and clean reopen; the ADR 0002 model, capability matrix, ingest/export regressions, layout/normative layout, locked ShellCheck, full local core CI lane, and reproducible signed release package all passed | `DONE`: the server now owns durable single-node storage without treating blob presence as authority or claiming hit/miss/PUT, pending visibility, commit CAS, reconciliation, authenticated generations, quota/SLRU, or any A0 exit gate; `A0-005` is next |
 
+| `E-068` | 2026-07-30 | `A0-005` | Versioned [`Pending publication, commit CAS, and reconciliation v1`](./specs/pending-commit-cas-v1.md), exact machine-readable [lifecycle/HTTP/recovery contract](./specs/pending-commit-cas-v1.json), transactional schema-v1→v2 upgrade, and composite [`dev/check-pending-commit`](./dev/check-pending-commit); durable attempts bind source/policy/owner/lease context and keep every streamed SHA-256 object invisible until authorization, exact retries retain their state version, changed identity reuse conflicts, abort/expiry releases the complete pending set, and orphan bytes never create authority; exact JCS `COMMIT_DECISION v1` bytes omit only `decisionDigest`/signature from the self-digest, use an unambiguous version/key/digest Ed25519 payload, require the exact current revocation epoch both at verification and transaction time plus complete sorted object coverage, and persist the immutable decision, every committed row, the attempt transition, and pending release in one `cache.sqlite` transaction; first-writer CAS loss aborts the complete competing attempt, precommit faults roll back all visibility, and a later `control.sqlite` index failure leaves safe cache authority plus explicit repair work; the preauthenticated context-bound opaque `/cache/{key}` handler returns pending/aborted/corrupt state as a byte-empty miss, rejects known oversize before reading, and emits `200` only after complete size/digest verification; startup reconciliation excludes in-flight publication, expires dead attempts, invalidates an entire decision for one missing/corrupt blob, moves corrupt evidence to private quarantine, records missing evidence, deletes unreferenced blobs, repairs audit rows only from durable decisions, and records each complete run; race-enabled real WAL/filesystem tests cover atomic multi-object commit, exact/conflicting replay, incomplete coverage, stale/signature/canonical rejection, transaction/control faults, CAS loss, abort, expiry, publication/reconcile exclusion, missing/corrupt quarantine, startup repair, schema upgrade, HTTP `413`, and verified HTTP hit; the A0-004 storage checker, ingest/export regressions, capability matrix, layout/normative layout, locked 83-script lint, full local core CI lane, and reproducible signed release package all passed | `DONE`: A0 now has a fail-closed pending/commit/read substrate behind preauthenticated bindings without globally routing a cache, persisting authenticated policy/revocation state, claiming an A0 exit gate, or implementing quota/SLRU; `A0-006` is next |
+
 ---
 
 ## 15. Tracker changelog
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-30 | Closed `A0-005`: added durable pending attempts, canonical Ed25519 commit decisions, all-or-nothing first-writer visibility, abort/expiry, verified context-bound HTTP GET/PUT, quarantine, orphan/audit repair, and startup-blocking reconciliation; moved `A0-006` next while keeping global routing and authenticated policy/revocation generations open | Codex |
 | 2026-07-30 | Closed `A0-004`: added private durable SHA-256 blobs, one local server writer, independently migrated WAL-mode cache/control metadata, fail-closed schema/filesystem startup, and real-server restart conformance; moved `A0-005` next while leaving the authenticated cache data plane, commit CAS, reconciliation, generations, quotas, and A0 gates open | Codex |
 | 2026-07-30 | Closed `A0-003`: added the private opaque generation-segmented native L1, child-lifetime exclusivity, Gradle-native retention, Tier 1 policy integration, Configuration Cache rotation, L2-writer local disablement, and eight-row plus real-launcher conformance; moved `A0-004` next while leaving L2, authenticated revocation, deletion, JDK 25, and `A0-G02` open | Codex |
 | 2026-07-30 | Closed `A0-002`: added the separate restriction-only Tier 1 plugin, exact source-set `JavaCompile` allowlist, named default-deny guards, no-grant `Test` denial, and invocation-wide cache/Configuration Cache fallback for unknown transforms or runtimes; moved `A0-003` next without enabling a managed cache or closing the wider A0 conformance gates | Codex |

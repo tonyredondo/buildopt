@@ -710,8 +710,28 @@ read-time integrity, cancellation and oversize cleanup, one server writer,
 separate WAL-mode `cache.sqlite`/`control.sqlite` migrations, corruption and
 schema-drift refusal, persistence, and clean restart. A final CGO-free real
 `buildopt-server` lifecycle verifies the private layout and busy-writer
-failure. The cache data plane remains absent until A0-005 implements
-pending/abort, authenticated commit CAS, visibility, and reconciliation.
+failure. This substrate checker does not claim publication authority; compose
+it with the A0-005 checker below for pending, commit CAS, visibility, and
+reconciliation.
+
+## Pending publication, commit CAS, and reconciliation
+
+Validate the `A0-005` durable visibility boundary:
+
+```bash
+./dev/check-pending-commit
+```
+
+The checker validates the exact lifecycle contract and composes the Phase 0
+atomicity model with race-enabled real filesystem/SQLite tests. Pending PUTs
+remain misses; canonical JCS/Ed25519 decisions must exactly cover the attempt;
+decision plus every committed row use one first-writer transaction; exact
+replay is idempotent; abort, lease expiry, transaction failure, and CAS loss
+publish nothing. Missing/corrupt bytes quarantine the whole decision, orphan
+blobs are collected, and a missing `control.sqlite` audit row is repaired at
+startup. The context-bound opaque HTTP handler proves early `413` and
+full-verification-before-`200` without making an unauthenticated global route.
+A0-006 must supply locally authenticated policy, revocation state, and routing.
 
 ## JVM Agent spike
 

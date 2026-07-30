@@ -21,11 +21,16 @@ const (
 )
 
 type metadataDefinition struct {
-	role        string
-	path        string
-	migration   []string
-	objects     []schemaObject
-	migrationID string
+	role       string
+	path       string
+	migrations []schemaMigration
+	objects    []schemaObject
+}
+
+type schemaMigration struct {
+	version    int
+	name       string
+	statements []string
 }
 
 type schemaObject struct {
@@ -43,11 +48,10 @@ type sqliteMetadata struct {
 var _ MetadataStore = (*sqliteMetadata)(nil)
 
 func cacheMetadataDefinition(path string) metadataDefinition {
-	definition := metadataDefinition{
-		role:        cacheMetadataRole,
-		path:        path,
-		migrationID: "cache-v1",
-		migration: []string{
+	versionOne := schemaMigration{
+		version: 1,
+		name:    "cache-v1",
+		statements: []string{
 			`CREATE TABLE schema_migrations (
     version INTEGER PRIMARY KEY CHECK (version > 0),
     name TEXT NOT NULL UNIQUE,
@@ -87,42 +91,154 @@ ON committed_objects (blob_digest)`,
 ON committed_objects (last_access_unix_ms, size_bytes)`,
 		},
 	}
+	versionTwo := schemaMigration{
+		version: 2,
+		name:    "cache-v2",
+		statements: []string{
+			`CREATE TABLE cache_attempts (
+    attempt_id TEXT PRIMARY KEY CHECK (length(attempt_id) BETWEEN 1 AND 256),
+    request_fingerprint TEXT NOT NULL
+        CHECK (
+            length(request_fingerprint) = 71
+            AND substr(request_fingerprint, 1, 7) = 'sha256:'
+            AND substr(request_fingerprint, 8) NOT GLOB '*[^0-9a-f]*'
+        ),
+    tenant_id TEXT NOT NULL CHECK (length(tenant_id) BETWEEN 1 AND 256),
+    repository_id TEXT NOT NULL CHECK (length(repository_id) BETWEEN 1 AND 256),
+    trust_domain TEXT NOT NULL CHECK (length(trust_domain) BETWEEN 1 AND 256),
+    namespace_generation INTEGER NOT NULL CHECK (namespace_generation > 0),
+    source_revision TEXT NOT NULL CHECK (length(source_revision) BETWEEN 7 AND 64),
+    source_state_digest TEXT NOT NULL CHECK (length(source_state_digest) BETWEEN 71 AND 76),
+    policy_digest TEXT NOT NULL CHECK (length(policy_digest) = 71),
+    configuration_policy_digest TEXT NOT NULL CHECK (length(configuration_policy_digest) = 71),
+    cache_contract_digest TEXT NOT NULL CHECK (length(cache_contract_digest) = 71),
+    owner_id TEXT NOT NULL CHECK (length(owner_id) BETWEEN 1 AND 256),
+    lease_id TEXT NOT NULL CHECK (length(lease_id) BETWEEN 1 AND 256),
+    lease_expires_at_unix_ms INTEGER NOT NULL CHECK (lease_expires_at_unix_ms >= 0),
+    state TEXT NOT NULL CHECK (state IN ('PENDING', 'COMMITTED', 'ABORTED')),
+    state_version INTEGER NOT NULL CHECK (state_version > 0),
+    terminal_id TEXT,
+    terminal_fingerprint TEXT,
+    decision_digest TEXT,
+    abort_reason TEXT,
+    created_at_unix_ms INTEGER NOT NULL CHECK (created_at_unix_ms >= 0),
+    updated_at_unix_ms INTEGER NOT NULL CHECK (updated_at_unix_ms >= created_at_unix_ms),
+    CHECK (
+        (state = 'PENDING' AND terminal_id IS NULL AND terminal_fingerprint IS NULL
+            AND decision_digest IS NULL AND abort_reason IS NULL)
+        OR (state = 'COMMITTED' AND terminal_id IS NOT NULL
+            AND terminal_fingerprint IS NOT NULL AND decision_digest IS NOT NULL
+            AND abort_reason IS NULL)
+        OR (state = 'ABORTED' AND terminal_id IS NOT NULL
+            AND terminal_fingerprint IS NOT NULL AND decision_digest IS NULL
+            AND abort_reason IS NOT NULL)
+    )
+)`,
+			`CREATE TABLE pending_objects (
+    attempt_id TEXT NOT NULL REFERENCES cache_attempts(attempt_id) ON DELETE CASCADE,
+    cache_key TEXT NOT NULL CHECK (length(cache_key) BETWEEN 1 AND 256),
+    blob_digest TEXT NOT NULL
+        CHECK (
+            length(blob_digest) = 71
+            AND substr(blob_digest, 1, 7) = 'sha256:'
+            AND substr(blob_digest, 8) NOT GLOB '*[^0-9a-f]*'
+        ),
+    size_bytes INTEGER NOT NULL CHECK (size_bytes >= 0 AND size_bytes <= 104857600),
+    created_at_unix_ms INTEGER NOT NULL CHECK (created_at_unix_ms >= 0),
+    PRIMARY KEY (attempt_id, cache_key)
+) WITHOUT ROWID`,
+			`CREATE TABLE quarantine_records (
+    record_id INTEGER PRIMARY KEY,
+    decision_digest TEXT,
+    attempt_id TEXT,
+    blob_digest TEXT NOT NULL
+        CHECK (
+            length(blob_digest) = 71
+            AND substr(blob_digest, 1, 7) = 'sha256:'
+            AND substr(blob_digest, 8) NOT GLOB '*[^0-9a-f]*'
+        ),
+    size_bytes INTEGER NOT NULL CHECK (size_bytes >= 0 AND size_bytes <= 104857600),
+    reason TEXT NOT NULL CHECK (reason IN ('MISSING', 'CORRUPT')),
+    quarantined_at_unix_ms INTEGER NOT NULL CHECK (quarantined_at_unix_ms >= 0)
+)`,
+			`CREATE INDEX cache_attempts_lease_state
+ON cache_attempts (state, lease_expires_at_unix_ms)`,
+			`CREATE INDEX pending_objects_blob_digest
+ON pending_objects (blob_digest)`,
+			`CREATE INDEX quarantine_records_digest
+ON quarantine_records (blob_digest, quarantined_at_unix_ms)`,
+		},
+	}
+	definition := metadataDefinition{
+		role:       cacheMetadataRole,
+		path:       path,
+		migrations: []schemaMigration{versionOne, versionTwo},
+	}
 	definition.objects = []schemaObject{
 		{
 			objectType: "index",
+			name:       "cache_attempts_lease_state",
+			statement:  versionTwo.statements[3],
+		},
+		{
+			objectType: "index",
 			name:       "committed_objects_blob_digest",
-			statement:  definition.migration[3],
+			statement:  versionOne.statements[3],
 		},
 		{
 			objectType: "index",
 			name:       "committed_objects_last_access",
-			statement:  definition.migration[4],
+			statement:  versionOne.statements[4],
+		},
+		{
+			objectType: "index",
+			name:       "pending_objects_blob_digest",
+			statement:  versionTwo.statements[4],
+		},
+		{
+			objectType: "index",
+			name:       "quarantine_records_digest",
+			statement:  versionTwo.statements[5],
+		},
+		{
+			objectType: "table",
+			name:       "cache_attempts",
+			statement:  versionTwo.statements[0],
 		},
 		{
 			objectType: "table",
 			name:       "commit_decisions",
-			statement:  definition.migration[1],
+			statement:  versionOne.statements[1],
 		},
 		{
 			objectType: "table",
 			name:       "committed_objects",
-			statement:  definition.migration[2],
+			statement:  versionOne.statements[2],
+		},
+		{
+			objectType: "table",
+			name:       "pending_objects",
+			statement:  versionTwo.statements[1],
+		},
+		{
+			objectType: "table",
+			name:       "quarantine_records",
+			statement:  versionTwo.statements[2],
 		},
 		{
 			objectType: "table",
 			name:       "schema_migrations",
-			statement:  definition.migration[0],
+			statement:  versionOne.statements[0],
 		},
 	}
 	return definition
 }
 
 func controlMetadataDefinition(path string) metadataDefinition {
-	definition := metadataDefinition{
-		role:        controlMetadataRole,
-		path:        path,
-		migrationID: "control-v1",
-		migration: []string{
+	versionOne := schemaMigration{
+		version: 1,
+		name:    "control-v1",
+		statements: []string{
 			`CREATE TABLE schema_migrations (
     version INTEGER PRIMARY KEY CHECK (version > 0),
     name TEXT NOT NULL UNIQUE,
@@ -142,21 +258,55 @@ func controlMetadataDefinition(path string) metadataDefinition {
 ON decision_audit_index (indexed_at_unix_ms)`,
 		},
 	}
+	versionTwo := schemaMigration{
+		version: 2,
+		name:    "control-v2",
+		statements: []string{
+			`CREATE TABLE reconciliation_runs (
+    run_id INTEGER PRIMARY KEY,
+    started_at_unix_ms INTEGER NOT NULL CHECK (started_at_unix_ms >= 0),
+    completed_at_unix_ms INTEGER NOT NULL CHECK (completed_at_unix_ms >= started_at_unix_ms),
+    expired_attempts INTEGER NOT NULL CHECK (expired_attempts >= 0),
+    invalidated_decisions INTEGER NOT NULL CHECK (invalidated_decisions >= 0),
+    quarantined_blobs INTEGER NOT NULL CHECK (quarantined_blobs >= 0),
+    deleted_orphan_blobs INTEGER NOT NULL CHECK (deleted_orphan_blobs >= 0),
+    repaired_audit_rows INTEGER NOT NULL CHECK (repaired_audit_rows >= 0),
+    status TEXT NOT NULL CHECK (status = 'COMPLETE')
+)`,
+			`CREATE INDEX reconciliation_runs_completed_at
+ON reconciliation_runs (completed_at_unix_ms)`,
+		},
+	}
+	definition := metadataDefinition{
+		role:       controlMetadataRole,
+		path:       path,
+		migrations: []schemaMigration{versionOne, versionTwo},
+	}
 	definition.objects = []schemaObject{
 		{
 			objectType: "index",
 			name:       "decision_audit_index_indexed_at",
-			statement:  definition.migration[2],
+			statement:  versionOne.statements[2],
+		},
+		{
+			objectType: "index",
+			name:       "reconciliation_runs_completed_at",
+			statement:  versionTwo.statements[1],
 		},
 		{
 			objectType: "table",
 			name:       "decision_audit_index",
-			statement:  definition.migration[1],
+			statement:  versionOne.statements[1],
+		},
+		{
+			objectType: "table",
+			name:       "reconciliation_runs",
+			statement:  versionTwo.statements[0],
 		},
 		{
 			objectType: "table",
 			name:       "schema_migrations",
-			statement:  definition.migration[0],
+			statement:  versionOne.statements[0],
 		},
 	}
 	return definition
@@ -228,23 +378,37 @@ func (metadata *sqliteMetadata) applyOrValidateSchema(
 	).Scan(&version); err != nil {
 		return fmt.Errorf("read schema version: %w", err)
 	}
-	switch version {
-	case 0:
-		if err := metadata.requireEmptySchema(ctx); err != nil {
-			return err
-		}
-		if err := metadata.applyInitialMigration(ctx); err != nil {
-			return err
-		}
-	case SchemaVersion:
-	default:
+	if version < 0 || version > SchemaVersion {
 		return fmt.Errorf(
 			"unsupported %s schema version %d",
 			metadata.definition.role,
 			version,
 		)
 	}
-	if err := metadata.validateMigrationRecord(ctx); err != nil {
+	if version == 0 {
+		if err := metadata.requireEmptySchema(ctx); err != nil {
+			return err
+		}
+	} else if err := metadata.validateMigrationRecords(
+		ctx,
+		version,
+	); err != nil {
+		return err
+	}
+	for version < SchemaVersion {
+		migration := metadata.definition.migrations[version]
+		if migration.version != version+1 {
+			return errors.New("non-contiguous schema migration definition")
+		}
+		if err := metadata.applyMigration(ctx, migration); err != nil {
+			return err
+		}
+		version = migration.version
+	}
+	if err := metadata.validateMigrationRecords(
+		ctx,
+		SchemaVersion,
+	); err != nil {
 		return err
 	}
 	if err := metadata.validateSchemaObjects(ctx); err != nil {
@@ -311,8 +475,9 @@ ORDER BY type, name`,
 	return rows.Err()
 }
 
-func (metadata *sqliteMetadata) applyInitialMigration(
+func (metadata *sqliteMetadata) applyMigration(
 	ctx context.Context,
+	migration schemaMigration,
 ) error {
 	transaction, err := metadata.database.BeginTx(
 		ctx,
@@ -327,9 +492,13 @@ func (metadata *sqliteMetadata) applyInitialMigration(
 			_ = transaction.Rollback()
 		}
 	}()
-	for _, statement := range metadata.definition.migration {
+	for _, statement := range migration.statements {
 		if _, err := transaction.ExecContext(ctx, statement); err != nil {
-			return fmt.Errorf("apply schema migration: %w", err)
+			return fmt.Errorf(
+				"apply schema migration %d: %w",
+				migration.version,
+				err,
+			)
 		}
 	}
 	if _, err := transaction.ExecContext(
@@ -337,16 +506,16 @@ func (metadata *sqliteMetadata) applyInitialMigration(
 		`INSERT INTO schema_migrations
     (version, name, checksum, applied_at_unix_ms)
 VALUES (?, ?, ?, ?)`,
-		SchemaVersion,
-		metadata.definition.migrationID,
-		migrationChecksum(metadata.definition),
+		migration.version,
+		migration.name,
+		migrationChecksum(metadata.definition.role, migration),
 		time.Now().UTC().UnixMilli(),
 	); err != nil {
 		return fmt.Errorf("record schema migration: %w", err)
 	}
 	if _, err := transaction.ExecContext(
 		ctx,
-		fmt.Sprintf("PRAGMA user_version = %d", SchemaVersion),
+		fmt.Sprintf("PRAGMA user_version = %d", migration.version),
 	); err != nil {
 		return fmt.Errorf("set schema version: %w", err)
 	}
@@ -357,31 +526,54 @@ VALUES (?, ?, ?, ?)`,
 	return nil
 }
 
-func (metadata *sqliteMetadata) validateMigrationRecord(
+func (metadata *sqliteMetadata) validateMigrationRecords(
 	ctx context.Context,
+	expectedVersion int,
 ) error {
-	var (
-		version  int
-		name     string
-		checksum string
-		count    int
+	rows, err := metadata.database.QueryContext(
+		ctx,
+		`SELECT version, name, checksum
+FROM schema_migrations
+ORDER BY version`,
 	)
-	if err := metadata.database.QueryRowContext(
-		ctx,
-		`SELECT version, name, checksum FROM schema_migrations`,
-	).Scan(&version, &name, &checksum); err != nil {
-		return fmt.Errorf("read migration record: %w", err)
+	if err != nil {
+		return fmt.Errorf("read migration records: %w", err)
 	}
-	if err := metadata.database.QueryRowContext(
-		ctx,
-		`SELECT count(*) FROM schema_migrations`,
-	).Scan(&count); err != nil {
-		return fmt.Errorf("count migration records: %w", err)
+	defer rows.Close()
+	count := 0
+	for rows.Next() {
+		var (
+			version  int
+			name     string
+			checksum string
+		)
+		if err := rows.Scan(&version, &name, &checksum); err != nil {
+			return fmt.Errorf("scan migration record: %w", err)
+		}
+		count++
+		if version < 1 ||
+			version > len(metadata.definition.migrations) {
+			return errors.New(
+				"schema migration identity does not match this binary",
+			)
+		}
+		migration := metadata.definition.migrations[version-1]
+		if version != count ||
+			migration.version != version ||
+			name != migration.name ||
+			checksum != migrationChecksum(
+				metadata.definition.role,
+				migration,
+			) {
+			return errors.New(
+				"schema migration identity does not match this binary",
+			)
+		}
 	}
-	if version != SchemaVersion ||
-		name != metadata.definition.migrationID ||
-		checksum != migrationChecksum(metadata.definition) ||
-		count != 1 {
+	if err := rows.Err(); err != nil {
+		return err
+	}
+	if count != expectedVersion {
 		return errors.New("schema migration identity does not match this binary")
 	}
 	return nil
@@ -426,12 +618,12 @@ ORDER BY type, name`,
 	return nil
 }
 
-func migrationChecksum(definition metadataDefinition) string {
+func migrationChecksum(role string, migration schemaMigration) string {
 	digest := sha256.New()
 	_, _ = digest.Write([]byte("buildopt-single-node-schema-v1"))
 	for _, value := range append(
-		[]string{definition.role, definition.migrationID},
-		definition.migration...,
+		[]string{role, migration.name},
+		migration.statements...,
 	) {
 		_, _ = digest.Write([]byte{0})
 		_, _ = digest.Write([]byte(value))
