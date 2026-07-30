@@ -164,6 +164,18 @@ func writeLauncherAuthorityFixture(
 	t *testing.T,
 	upstream string,
 ) (map[string]string, localauthority.Document) {
+	return writeLauncherAuthorityFixtureAt(
+		t,
+		upstream,
+		launcherAuthorityNow,
+	)
+}
+
+func writeLauncherAuthorityFixtureAt(
+	t *testing.T,
+	upstream string,
+	now time.Time,
+) (map[string]string, localauthority.Document) {
 	t.Helper()
 	root := t.TempDir()
 	stateRoot := filepath.Join(root, "state")
@@ -184,7 +196,7 @@ func writeLauncherAuthorityFixture(
 			AttemptID: "11111111-1111-4111-8111-111111111111",
 			OwnerID:   "protected-main",
 			LeaseID:   "lease-authority-1",
-			LeaseExpiresAt: launcherAuthorityNow.
+			LeaseExpiresAt: now.
 				Add(45 * time.Minute).
 				Format(time.RFC3339Nano),
 			AllowRead:  true,
@@ -201,13 +213,16 @@ func writeLauncherAuthorityFixture(
 			RevocationEpoch:             7,
 			L1SecurityGeneration:        9,
 			GatewayConnectionGeneration: 3,
-			IssuedAt: launcherAuthorityNow.
+			IssuedAt: now.
 				Add(-time.Minute).
 				Format(time.RFC3339Nano),
 			LauncherVersionRange: ">=0.1.0 <0.2.0",
 			PluginVersionRange:   ">=0.1.0 <0.2.0",
 			Mode:                 "VERIFIED",
-			AllowedActions:       []string{"REMOTE_CACHE_ALLOWLISTED"},
+			AllowedActions: []string{
+				"DEPENDENCY_CACHE",
+				"REMOTE_CACHE_ALLOWLISTED",
+			},
 			RemoteCache: localauthority.RemoteCachePolicy{
 				Read:                true,
 				Write:               "TRUSTED_CI_ONLY",
@@ -241,7 +256,7 @@ func writeLauncherAuthorityFixture(
 			AffectedBuild: localauthority.AffectedBuild{
 				EnabledInCI: true,
 			},
-			ExpiresAt: launcherAuthorityNow.
+			ExpiresAt: now.
 				Add(time.Hour).
 				Format(time.RFC3339Nano),
 		},
@@ -251,7 +266,7 @@ func writeLauncherAuthorityFixture(
 			TrustDomain:          "private-beta",
 			RevocationEpoch:      7,
 			L1SecurityGeneration: 9,
-			ValidUntil: launcherAuthorityNow.
+			ValidUntil: now.
 				Add(2 * time.Hour).
 				Format(time.RFC3339Nano),
 		},
@@ -270,7 +285,7 @@ func writeLauncherAuthorityFixture(
 		authority,
 		map[string]ed25519.PublicKey{"deployment-key-1": publicKey},
 		credential,
-		launcherAuthorityNow,
+		now,
 	)
 	if err != nil {
 		t.Fatalf("verify launcher fixture: %v", err)

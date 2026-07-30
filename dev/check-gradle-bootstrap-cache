@@ -1,0 +1,269 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/gradle-bootstrap-cache-v1.json"
+buildopt_tmp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-gradle-bootstrap.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_tmp}" &&
+        "${buildopt_tmp}" == "${TMPDIR:-/tmp}/buildopt-gradle-bootstrap."* ]]; then
+        rm -rf -- "${buildopt_tmp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in awk find git jq mktemp readlink rm; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Gradle-bootstrap command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+if ! jq -e '
+    keys == [
+        "activation",
+        "childBoundary",
+        "deferred",
+        "dependencyCache",
+        "executableEvidence",
+        "fallback",
+        "policyId",
+        "schemaVersion",
+        "testedMatrix",
+        "wrapperDistribution",
+        "writableLayer"
+    ] and
+    .schemaVersion == "buildopt.specs/gradle-bootstrap-cache/v1" and
+    .policyId == "GRADLE_BOOTSTRAP_CACHE_V1" and
+    .activation == {
+        "authorityAction": "DEPENDENCY_CACHE",
+        "configuration": "BUILDOPT_GRADLE_BOOTSTRAP_CONFIG_PATH",
+        "command": "REPOSITORY_GRADLEW_ONLY",
+        "configurationEncoding": "PRIVATE_MODE_0600_CANONICAL_JCS"
+    } and
+    .testedMatrix == {
+        "gradleVersions": ["8.14.3", "9.6.1"],
+        "jdkMajors": [17, 21],
+        "distributionKinds": ["bin", "all"]
+    } and
+    .dependencyCache == {
+        "environment": "GRADLE_RO_DEP_CACHE",
+        "layout": "<dependencyCacheRoot>/modules-2",
+        "manifest":
+            "<dependencyCacheRoot>/buildopt-dependency-cache.json",
+        "rootEntries": [
+            "buildopt-dependency-cache.json",
+            "modules-2"
+        ],
+        "treeMode":
+            "RECURSIVELY_READ_ONLY_REGULAR_FILES_AND_DIRECTORIES",
+        "sharedLocks": "REJECT",
+        "binding": [
+            "gradleVersion",
+            "compatibilityClass",
+            "configurationPolicyDigest",
+            "snapshotId"
+        ],
+        "publicationOwner":
+            "ORCHESTRATOR_OUTSIDE_GRADLE_INVOCATION"
+    } and
+    .writableLayer.environment == "GRADLE_USER_HOME" and
+    .writableLayer.mode == "CURRENT_USER_0700" and
+    .writableLayer.sharing == "NEVER_CONCURRENT" and
+    .writableLayer.lease ==
+        "NONBLOCKING_EXCLUSIVE_FOR_CHILD_LIFETIME" and
+    .writableLayer.scopeFields == [
+        "authorityScopeDigest",
+        "configurationPolicyDigest",
+        "runnerSlot",
+        "compatibilityClass",
+        "dependencyCacheRoot",
+        "dependencySnapshotId",
+        "distributionUrl",
+        "distributionDigest",
+        "wrapperJarDigest"
+    ] and
+    .writableLayer.forbiddenSharedState == [
+        "writable dependency metadata",
+        "locks",
+        "daemons",
+        "Configuration Cache"
+    ] and
+    .wrapperDistribution == {
+        "url": "CANONICAL_HTTPS",
+        "archiveVerification": "SHA-256_FROM_WRAPPER_PROPERTIES",
+        "wrapperVerification": "SHA-256_FROM_PRIVATE_CONFIG",
+        "sourceArchive": "TRUSTED_READ_ONLY_REGULAR_FILE",
+        "destination":
+            "GRADLE_USER_HOME_WRAPPER_NATIVE_URL_HASH_LAYOUT",
+        "wrapperValidation": "ENABLED",
+        "installationMarker":
+            "PRIVATE_CANONICAL_JCS_BOUND_TO_POLICY_AND_DIGESTS",
+        "reuseWithoutSourceArchive": true
+    } and
+    .childBoundary == {
+        "exposed": ["GRADLE_USER_HOME", "GRADLE_RO_DEP_CACHE"],
+        "stripped": ["BUILDOPT_GRADLE_BOOTSTRAP_CONFIG_PATH"],
+        "authorityMaterialExposed": false
+    } and
+    .fallback == {
+        "absentConfiguration": "PRESERVE_EXISTING_GRADLE_ENVIRONMENT",
+        "invalidOrUnauthorizedConfiguration":
+            "NO_MANAGED_GRADLE_OVERRIDE",
+        "unsupportedGradleVersion": "NO_MANAGED_GRADLE_OVERRIDE",
+        "unsafeDependencySnapshot": "NO_MANAGED_GRADLE_OVERRIDE",
+        "distributionVerificationFailure":
+            "NO_MANAGED_GRADLE_OVERRIDE",
+        "busyWritableLayer": "NO_MANAGED_GRADLE_OVERRIDE",
+        "corruptRetainedInstallation": "NO_MANAGED_GRADLE_OVERRIDE"
+    } and
+    .executableEvidence.checker ==
+        "dev/check-gradle-bootstrap-cache" and
+    (.executableEvidence.requiredCases | length) == 8 and
+    .deferred == {
+        "snapshotDistributionLifecycle": "DEPLOY-001",
+        "completeDependencyFaultMatrix": "A0-G01",
+        "quotaAndEviction": "A1-004",
+        "windowsAndMacos": "POST_A1"
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'Gradle bootstrap-cache contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_required_files=(
+    "internal/launcher/gradle_bootstrap_cache.go"
+    "internal/launcher/gradle_bootstrap_cache_test.go"
+    "internal/launcher/local_authority.go"
+    "internal/launcher/run.go"
+    "internal/localauthority/authority.go"
+    "specs/gradle-bootstrap-cache-v1.md"
+)
+for buildopt_relative in "${buildopt_required_files[@]}"; do
+    if [[ ! -s "${buildopt_repo_root}/${buildopt_relative}" ]]; then
+        printf 'missing Gradle bootstrap-cache file: %s\n' \
+            "${buildopt_relative}" >&2
+        exit 1
+    fi
+done
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 ./internal/launcher ./internal/localauthority
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/launcher ./internal/localauthority
+CGO_ENABLED=0 "${buildopt_script_dir}/run" --toolchain go -- \
+    go build \
+    -mod=readonly \
+    -buildvcs=false \
+    -trimpath \
+    -o "${buildopt_tmp}/buildopt" \
+    ./cmd/buildopt
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+buildopt_gradle_9_home=$(
+    find \
+        "${GRADLE_USER_HOME}/wrapper/dists/gradle-9.6.1-bin" \
+        -type d \
+        -path '*/gradle-9.6.1' \
+        -print \
+        -quit
+)
+buildopt_gradle_8_home="${buildopt_repo_root}/.tools/gradle-compat/gradle-8.14.3"
+buildopt_gradle_8_archive="${buildopt_repo_root}/.tools/gradle-compat/gradle-8.14.3-bin.zip"
+buildopt_gradle_9_archive="${buildopt_repo_root}/.tools/gradle-compat/gradle-9.6.1-bin.zip"
+if [[ -z "${buildopt_gradle_9_home}" ||
+    ! -x "${buildopt_gradle_9_home}/bin/gradle" ||
+    ! -x "${buildopt_gradle_8_home}/bin/gradle" ||
+    ! -s "${buildopt_gradle_8_archive}" ||
+    ! -s "${buildopt_gradle_9_archive}" ]]; then
+    printf 'both pinned Gradle homes and archives must be provisioned\n' >&2
+    exit 1
+fi
+buildopt_gradle_9_home=$(readlink -f "${buildopt_gradle_9_home}")
+buildopt_gradle_8_home=$(readlink -f "${buildopt_gradle_8_home}")
+
+buildopt_java_17=$(readlink -f "$(command -v java)")
+buildopt_java_17_home=$(cd -- "$(dirname -- "${buildopt_java_17}")/.." && pwd)
+buildopt_java_17_major=$(
+    "${buildopt_java_17}" -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.version = / {
+                split($2, version, ".")
+                print version[1]
+                exit
+            }
+        '
+)
+if [[ "${buildopt_java_17_major}" != "17" ]]; then
+    printf 'A0-007 requires JDK 17; active Java is %s\n' \
+        "${buildopt_java_17_major:-unknown}" >&2
+    exit 1
+fi
+
+buildopt_java_21_home=$(
+    "${buildopt_script_dir}/run" -- \
+        java -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.home = / {
+                print $2
+                exit
+            }
+        '
+)
+if [[ ! -x "${buildopt_java_21_home}/bin/java" ]]; then
+    printf 'locked JDK 21 home is unavailable\n' >&2
+    exit 1
+fi
+
+buildopt_gradle_versions=("8.14.3" "9.6.1")
+buildopt_gradle_homes=(
+    "${buildopt_gradle_8_home}"
+    "${buildopt_gradle_9_home}"
+)
+buildopt_gradle_archives=(
+    "${buildopt_gradle_8_archive}"
+    "${buildopt_gradle_9_archive}"
+)
+buildopt_java_homes=(
+    "${buildopt_java_17_home}"
+    "${buildopt_java_21_home}"
+)
+
+for buildopt_gradle_index in "${!buildopt_gradle_versions[@]}"; do
+    for buildopt_java_home in "${buildopt_java_homes[@]}"; do
+        BUILDOPT_TEST_GRADLE_VERSION="${buildopt_gradle_versions[buildopt_gradle_index]}" \
+        BUILDOPT_TEST_GRADLE_HOME="${buildopt_gradle_homes[buildopt_gradle_index]}" \
+        BUILDOPT_TEST_GRADLE_ARCHIVE="${buildopt_gradle_archives[buildopt_gradle_index]}" \
+        BUILDOPT_TEST_JAVA_HOME="${buildopt_java_home}" \
+            "${buildopt_script_dir}/run" --toolchain go -- \
+                go test \
+                -run '^TestGradleBootstrapCacheRealGradle$' \
+                -count=1 \
+                ./internal/launcher
+    done
+done
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'Gradle bootstrap-cache check changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'A0-007 Gradle bootstrap cache OK: signed read-only dependency snapshots, private writable leases, verified Wrapper reuse, and 4 Gradle/JDK rows\n'

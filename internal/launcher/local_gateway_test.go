@@ -417,6 +417,9 @@ func TestLocalGatewayChildEnvironment(t *testing.T) {
 		managedPolicyDigestEnvironment + "=untrusted-policy",
 		managedConfigurationDigestEnvironment + "=untrusted-configuration",
 		managedAuthorityContractEnvironment + "=untrusted-contract",
+		gradleBootstrapConfigPathEnvironment + "=/tmp/untrusted-gradle-bootstrap",
+		gradleUserHomeEnvironment + "=/tmp/parent-gradle-home",
+		gradleReadOnlyDependencyEnvironment + "=/tmp/parent-gradle-read-only",
 	})
 	expected := map[string]string{
 		gatewayURLEnvironment:        gateway.endpoint,
@@ -448,10 +451,40 @@ func TestLocalGatewayChildEnvironment(t *testing.T) {
 		managedPolicyDigestEnvironment,
 		managedConfigurationDigestEnvironment,
 		managedAuthorityContractEnvironment,
+		gradleBootstrapConfigPathEnvironment,
 	} {
 		if count := environmentKeyCount(environment, key); count != 0 {
 			t.Fatalf("child environment contains %d %s entries, want 0", count, key)
 		}
+	}
+	if actual := environmentValue(
+		environment,
+		gradleUserHomeEnvironment,
+	); actual != "/tmp/parent-gradle-home" {
+		t.Fatalf("parent Gradle user home = %q, want preserved value", actual)
+	}
+	if actual := environmentValue(
+		environment,
+		gradleReadOnlyDependencyEnvironment,
+	); actual != "/tmp/parent-gradle-read-only" {
+		t.Fatalf("parent read-only dependency cache = %q, want preserved value", actual)
+	}
+
+	overridden := replaceEnvironment(environment, map[string]string{
+		gradleUserHomeEnvironment:           "/tmp/managed-gradle-home",
+		gradleReadOnlyDependencyEnvironment: "/tmp/managed-gradle-read-only",
+	})
+	if actual := environmentValue(
+		overridden,
+		gradleUserHomeEnvironment,
+	); actual != "/tmp/managed-gradle-home" {
+		t.Fatalf("managed Gradle user home = %q, want override", actual)
+	}
+	if actual := environmentValue(
+		overridden,
+		gradleReadOnlyDependencyEnvironment,
+	); actual != "/tmp/managed-gradle-read-only" {
+		t.Fatalf("managed read-only dependency cache = %q, want override", actual)
 	}
 }
 

@@ -82,6 +82,7 @@ From the repository root:
 ./dev/check-shared-storage
 ./dev/check-pending-commit
 ./dev/check-local-authority
+./dev/check-gradle-bootstrap-cache
 ./dev/check-jvm-agent-spike
 ./dev/check-hermetic-helper-spike
 ./dev/check-buildopt-cli

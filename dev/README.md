@@ -755,6 +755,25 @@ through real `HttpBuildCache` PUT/GET replay and Configuration Cache reuse.
 This block does not claim the complete `A0-G01` fault/redirect/timeout matrix,
 production commit-decision finalization, or revoked-directory deletion.
 
+## Gradle dependency and Wrapper bootstrap cache
+
+Validate the `A0-007` signed bootstrap boundary across every supported
+Gradle/JDK pair:
+
+```bash
+./dev/check-gradle-bootstrap-cache
+```
+
+The checker proves that a signed `DEPENDENCY_CACHE` action exposes only a
+recursively read-only `modules-2` snapshot while each runner retains an
+exclusive private writable `GRADLE_USER_HOME`. It independently verifies the
+repository Wrapper JAR and distribution archive, installs through Gradle's
+native Wrapper URL-hash layout, resolves a real dependency offline without
+copying its artifact into the writable layer, and reuses the distribution
+after the source archive is removed. Gradle 8.14.3 and 9.6.1 both run on JDK
+17 and 21; invalid, unsafe, busy, corrupt, or unsupported inputs preserve the
+unmanaged Gradle baseline.
+
 ## JVM Agent spike
 
 Run the bounded agent against a real Gradle daemon and Configuration Cache:

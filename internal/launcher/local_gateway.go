@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -587,6 +588,7 @@ var reservedChildEnvironment = []string{
 	managedPolicyDigestEnvironment,
 	managedConfigurationDigestEnvironment,
 	managedAuthorityContractEnvironment,
+	gradleBootstrapConfigPathEnvironment,
 	serverURLEnvironment,
 	serverTokenEnvironment,
 	exportContextEnvironment,
@@ -608,13 +610,28 @@ func replaceEnvironment(
 			if _, remove := reserved[key]; remove {
 				continue
 			}
+			if _, replace := overrides[key]; replace {
+				continue
+			}
 		}
 		result = append(result, entry)
 	}
+	appended := make(map[string]struct{}, len(overrides))
 	for _, key := range reservedChildEnvironment {
 		if value, ok := overrides[key]; ok {
 			result = append(result, key+"="+value)
+			appended[key] = struct{}{}
 		}
+	}
+	extraKeys := make([]string, 0, len(overrides)-len(appended))
+	for key := range overrides {
+		if _, ok := appended[key]; !ok {
+			extraKeys = append(extraKeys, key)
+		}
+	}
+	sort.Strings(extraKeys)
+	for _, key := range extraKeys {
+		result = append(result, key+"="+overrides[key])
 	}
 	return result
 }

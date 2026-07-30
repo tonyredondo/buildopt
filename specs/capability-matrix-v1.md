@@ -42,7 +42,8 @@ unattributed; the fallback aborts the whole pending attempt.
 
 [`capability-matrix-v1.json`](./capability-matrix-v1.json) defines four
 profiles and all ten Tier 1 rows. Profile reuse only deduplicates identical
-status records; each combination remains explicit.
+status records; each combination remains explicit. `A0-007` adds
+`GRADLE_BOOTSTRAP_CACHE` without promoting unrelated Shared-cache gates.
 
 Run:
 
@@ -75,6 +76,12 @@ golden-row Gradle `HttpBuildCache` PUT/GET. The matrix still reports
 `MANAGED_SHARED_CACHE` as `UNAVAILABLE` until the complete A0 HTTP
 compatibility/fault matrix and production commit/abort composition close; one
 golden integration row does not promote every compatibility row.
+
+`A0-007` makes `GRADLE_BOOTSTRAP_CACHE` exact for all eight JDK 17/21 rows.
+Each real Wrapper row consumes an offline read-only dependency snapshot,
+retains an independently checksum-verified distribution in a runner-private
+writable home, and reuses it after the source archive is removed. The
+unexecuted JDK 25 rows remain `UNAVAILABLE` and preserve the Gradle baseline.
 
 `SPK-002` leaves `JVM_AGENT` unavailable in every profile. Its real-daemon
 prototype sees class loads rather than method access or task attribution, so

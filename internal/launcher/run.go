@@ -26,8 +26,8 @@ const (
 // Run executes the WS-001 passthrough command with the WS-002 process contract,
 // exposes the authenticated local rendezvous through either its walking-
 // skeleton or managed runner-slot lifecycle, delivers the WS-005 session
-// ingest when configured, honors the F0-039 local bypass, and returns the child
-// process exit status.
+// ingest when configured, installs the signed A0-007 Gradle bootstrap cache,
+// honors the F0-039 local bypass, and returns the child process exit status.
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	if len(args) > 0 && args[0] == managedGatewayInternalCommand {
 		return runManagedGatewayProcess(args, stderr)
@@ -86,6 +86,19 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			stderr,
 			"buildopt: local cache authority unavailable: %v\n",
 			authorityErr,
+		)
+	}
+	gradleBootstrap, _, gradleBootstrapErr :=
+		startInvocationGradleBootstrapCache(
+			childArgs,
+			authority,
+			os.Getenv,
+		)
+	if gradleBootstrapErr != nil {
+		_, _ = fmt.Fprintf(
+			stderr,
+			"buildopt: managed Gradle bootstrap cache unavailable: %v\n",
+			gradleBootstrapErr,
 		)
 	}
 
@@ -164,6 +177,14 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			childEnvironment[key] = value
 		}
 	}
+	if gradleBootstrap != nil {
+		if childEnvironment == nil {
+			childEnvironment = make(map[string]string)
+		}
+		for key, value := range gradleBootstrap.childEnvironment() {
+			childEnvironment[key] = value
+		}
+	}
 	execution := executeChild(
 		childArgs,
 		childEnvironment,
@@ -181,10 +202,20 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		if l1 != nil {
 			_ = l1.close()
 		}
+		if gradleBootstrap != nil {
+			_ = gradleBootstrap.close()
+		}
 		return launchErrorExitCode(childArgs[0], execution.err, stderr)
 	}
 	if l1 != nil {
 		reportManagedL1Close(l1.close(), stderr)
+	}
+	if gradleBootstrap != nil {
+		reportGradleBootstrapFinalize(
+			gradleBootstrap.finalize(),
+			stderr,
+		)
+		reportGradleBootstrapClose(gradleBootstrap.close(), stderr)
 	}
 
 	handshakeResult := pluginHandshakeResult{}
@@ -364,6 +395,28 @@ func reportManagedL1Close(err error, stderr io.Writer) {
 	_, _ = fmt.Fprintf(
 		stderr,
 		"buildopt: managed L1 release incomplete: %v\n",
+		err,
+	)
+}
+
+func reportGradleBootstrapFinalize(err error, stderr io.Writer) {
+	if err == nil {
+		return
+	}
+	_, _ = fmt.Fprintf(
+		stderr,
+		"buildopt: managed Gradle Wrapper installation was not retained: %v\n",
+		err,
+	)
+}
+
+func reportGradleBootstrapClose(err error, stderr io.Writer) {
+	if err == nil {
+		return
+	}
+	_, _ = fmt.Fprintf(
+		stderr,
+		"buildopt: managed Gradle writable cache release incomplete: %v\n",
 		err,
 	)
 }

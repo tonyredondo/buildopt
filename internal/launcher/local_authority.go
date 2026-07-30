@@ -31,10 +31,13 @@ const (
 )
 
 type localAuthorityContext struct {
-	attemptID        string
-	cacheBinding     *gatewayCacheBinding
-	managedL1Config  managedL1Config
-	childEnvironment map[string]string
+	attemptID                 string
+	authorityScopeDigest      string
+	configurationPolicyDigest string
+	dependencyCacheAuthorized bool
+	cacheBinding              *gatewayCacheBinding
+	managedL1Config           managedL1Config
+	childEnvironment          map[string]string
 }
 
 func localAuthorityContextFromEnvironment(
@@ -193,9 +196,12 @@ func localAuthorityContextFromEnvironment(
 		),
 	}
 	return &localAuthorityContext{
-		attemptID:       document.Attempt.AttemptID,
-		cacheBinding:    cacheBinding,
-		managedL1Config: l1Config,
+		attemptID:                 document.Attempt.AttemptID,
+		authorityScopeDigest:      localauthority.ScopeDigest(document.Repository),
+		configurationPolicyDigest: document.Policy.ConfigurationPolicyDigest,
+		dependencyCacheAuthorized: verified.AllowsAction("DEPENDENCY_CACHE"),
+		cacheBinding:              cacheBinding,
+		managedL1Config:           l1Config,
 		childEnvironment: map[string]string{
 			managedSharedModeEnvironment:      mode,
 			managedAuthorityDigestEnvironment: document.AuthorityDigest,

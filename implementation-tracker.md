@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — Phase 0 is closed and `A0-006` has installed locally authenticated policy, monotonic revocation generations, current-state Shared routing, and managed Gradle `HttpBuildCache`; `A0-007` is next for dependency cache and wrapper distributions<br>
+**Overall status:** `DOING` — Phase 0 is closed and `A0-007` has installed signed read-only dependency snapshots plus private checksum-verified Gradle Wrapper distribution reuse across the supported Gradle/JDK matrix; `A0-008` is next for complete/partial JSON/JSONL export<br>
 **Current phase:** MVP-A0 — foundation and internal pilot<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
 **Last updated:** 2026-07-30<br>
@@ -143,7 +143,8 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 60 | `A0-004` | Implement Shared single-node blobs and SQLite control indexes | `DONE` | Codex |
 | 61 | `A0-005` | Implement pending/abort/`CommitDecision`/CAS/reconciliation | `DONE` | Codex |
 | 62 | `A0-006` | Implement locally authenticated policy and revocation generations | `DONE` | Codex |
-| 63 | `A0-007` | Implement dependency cache and wrapper distributions | `TODO` | — |
+| 63 | `A0-007` | Implement dependency cache and wrapper distributions | `DONE` | Codex |
+| 64 | `A0-008` | Implement complete/partial JSON/JSONL export | `TODO` | — |
 
 ---
 
@@ -361,8 +362,8 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `A0-004` | Shared single-node: blobs + `cache.sqlite`/`control.sqlite` | `DONE` | Codex | `E-067` |
 | `A0-005` | Pending/abort/`CommitDecision`/CAS/reconciliation | `DONE` | Codex | `E-068` |
 | `A0-006` | Locally authenticated policy and revocation generations | `DONE` | Codex | `E-069` |
-| `A0-007` | Dependency cache and wrapper distributions | `TODO` | — | — |
-| `A0-008` | Complete/partial JSON/JSONL export | `WAITING` | — | — |
+| `A0-007` | Dependency cache and wrapper distributions | `DONE` | Codex | `E-070` |
+| `A0-008` | Complete/partial JSON/JSONL export | `TODO` | — | — |
 | `A0-009` | Neutral measurement envelope and causal pilot harness | `WAITING` | — | — |
 
 ### 6.2 Exit gates
@@ -663,12 +664,15 @@ This table points to the latest valid result. It does not replace reports or all
 
 | `E-069` | 2026-07-30 | `A0-006` | Versioned [`Locally authenticated cache authority v1`](./specs/local-authenticated-cache-v1.md), exact machine-readable [trust/routing contract](./specs/local-authenticated-cache-v1.json), private [`localauthority`](./internal/localauthority) verifier and monotonic state, Shared schema-v3 authority binding, invocation-only gateway translation, managed Gradle remote-cache configuration, and composite [`dev/check-local-authority`](./dev/check-local-authority); exact JCS bytes and an unambiguous Ed25519 payload bind a pinned trust root, policy/revocation generations, attempt UUID/expiry, component range, repository, build class, read/write mode, L1 security generation, gateway generation, namespace generation, upstream URL, and signing-key set, while mode-`0600` no-symlink inputs and durable private anti-rollback state reject partial, expired, future, mismatched, non-monotonic, or unauthorized local-write contexts; `buildopt-server` exposes `/cache/` only when complete authority is installed, stores current digests/generations but never the raw credential, and rechecks Bearer plus authority digest/current expiry on every request; the loopback gateway receives context only over the same-UID registration channel, translates its ephemeral local Basic credential to upstream Bearer, strips authority secrets from Gradle, bounds forwarded headers, turns failed reads into byte-empty misses, and removes context at invocation end; the managed plugin configures only the public Gradle `HttpBuildCache`, with `push=false` for read-only and disabled native L1 for pending writers; race-enabled Go tests, vet/build, server binary integration, the golden Gradle 9.6.1/JDK 21 Kotlin/Groovy PUT→GET/FROM-CACHE/Configuration Cache fixture, the complete eight-row managed-L1 regression, 18-class Java 17 verification, capability/layout checks, locked 84-script lint, the full local core CI lane, and the reproducible signed release package passed | `DONE`: A0 now has a locally authenticated and revocation-aware cache route without exposing authority material to Gradle, persisting Shared credentials, claiming the complete HTTP/fault/commit conformance gates, deleting revoked L1 data, or implementing quota/SLRU; `A0-007` is next |
 
+| `E-070` | 2026-07-30 | `A0-007` | Versioned [`Gradle bootstrap cache v1`](./specs/gradle-bootstrap-cache-v1.md), exact machine-readable [activation/isolation/fallback contract](./specs/gradle-bootstrap-cache-v1.json), launcher-owned [`gradle_bootstrap_cache.go`](./internal/launcher/gradle_bootstrap_cache.go), signed `DEPENDENCY_CACHE` authority action, and composite [`dev/check-gradle-bootstrap-cache`](./dev/check-gradle-bootstrap-cache); one private canonical mode-`0600` configuration binds the runner slot, compatibility class, recursively read-only lock-free `modules-2` snapshot, signed configuration-policy digest, repository Wrapper properties, trusted distribution archive, and Wrapper JAR digest; the launcher accepts only the repository executable `gradlew`, tested Gradle 8.14.3/9.6.1 canonical HTTPS `bin`/`all` URLs with Wrapper validation enabled, and an exact two-entry dependency root whose canonical manifest binds Gradle version, format class, snapshot ID, and current signed policy; an opaque digest of authority scope, policy, runner, snapshot, distribution, and Wrapper identities owns one mode-`0700` `GRADLE_USER_HOME` plus a non-blocking child-lifetime lease, so writable metadata, locks, daemons, and Configuration Cache are never concurrently shared; the independently SHA-256-verified archive is placed in Gradle's native Wrapper URL-hash layout, Gradle performs normal extraction/checksum validation, and a private policy-bound marker permits reuse only after the expected `.ok` and executable exist, including after the source archive is removed; only `GRADLE_USER_HOME` and `GRADLE_RO_DEP_CACHE` reach the child, raw BuildOpt configuration and authority material are stripped, and every absent/invalid/unsupported/unsafe/busy/corrupt case preserves unmanaged Gradle behavior; race-enabled unit and real-`Run` tests, vet/static build, and four real Gradle 8.14.3/9.6.1 × JDK 17/21 rows each resolved a seeded dependency offline without copying its artifact into the writable layer and reused the Wrapper installation without the source archive; the complete local-authority and eight-row managed-L1 regressions, updated capability matrix, layout/normative checks, locked 85-script lint, and full local core CI lane passed | `DONE`: all executed Tier 1 runtime rows now have signed dependency-cache and independently verified Wrapper reuse without claiming JDK 25, a shared writable home, transported Configuration Cache, snapshot distribution lifecycle, quota/SLRU, or the complete dependency fault matrix; `A0-008` is next |
+
 ---
 
 ## 15. Tracker changelog
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-30 | Closed `A0-007`: added signed recursive read-only Gradle dependency snapshots, runner-private writable homes and leases, independently verified native Wrapper distribution installation/reuse, four real Gradle/JDK rows, and baseline-preserving fallback; moved `A0-008` next while leaving JDK 25, snapshot distribution lifecycle, complete dependency faults, and quota/SLRU open | Codex |
 | 2026-07-30 | Closed `A0-006`: added canonical locally signed authority, pinned trust and monotonic anti-rollback state, current authenticated Shared routing, same-UID credential translation, signed L1 generations, and a real Gradle `HttpBuildCache` PUT/GET path; moved `A0-007` next while keeping complete cache conformance, revoked-data deletion, and quota/SLRU open | Codex |
 | 2026-07-30 | Closed `A0-005`: added durable pending attempts, canonical Ed25519 commit decisions, all-or-nothing first-writer visibility, abort/expiry, verified context-bound HTTP GET/PUT, quarantine, orphan/audit repair, and startup-blocking reconciliation; moved `A0-006` next while keeping global routing and authenticated policy/revocation generations open | Codex |
 | 2026-07-30 | Closed `A0-004`: added private durable SHA-256 blobs, one local server writer, independently migrated WAL-mode cache/control metadata, fail-closed schema/filesystem startup, and real-server restart conformance; moved `A0-005` next while leaving the authenticated cache data plane, commit CAS, reconciliation, generations, quotas, and A0 gates open | Codex |

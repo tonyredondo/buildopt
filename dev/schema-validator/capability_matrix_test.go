@@ -95,6 +95,7 @@ func validateCapabilityProfiles(
 		"CRITICAL_PATH",
 		"CACHE_MISS_REASONS",
 		"MANAGED_SHARED_CACHE",
+		"GRADLE_BOOTSTRAP_CACHE",
 		"JVM_AGENT",
 		"HERMETIC_PRODUCER",
 		"PATCH_BUNDLE_APPLIER",
@@ -238,6 +239,22 @@ func validateTierOneCombinations(
 		t.Errorf("unsafe task-to-PUT capability: %+v", taskPut)
 	}
 	for profileID, profile := range profiles {
+		bootstrap := findCapability(
+			profile.Capabilities,
+			"GRADLE_BOOTSTRAP_CACHE",
+		)
+		wantBootstrapStatus := "EXACT"
+		if profileID == "UNTESTED" {
+			wantBootstrapStatus = "UNAVAILABLE"
+		}
+		if bootstrap.Status != wantBootstrapStatus ||
+			bootstrap.Fallback != "GRADLE_BASELINE" {
+			t.Errorf(
+				"%s Gradle bootstrap-cache capability: %+v",
+				profileID,
+				bootstrap,
+			)
+		}
 		patcher := findCapability(
 			profile.Capabilities,
 			"PATCH_BUNDLE_APPLIER",

@@ -260,6 +260,13 @@ func (verified Verified) IssuedAt() time.Time {
 	return verified.issuedAt
 }
 
+// AllowsAction reports whether the authenticated policy contains one exact
+// action grant. It never treats an unknown or duplicate action as authority
+// because Verify rejects those documents before constructing Verified.
+func (verified Verified) AllowsAction(action string) bool {
+	return slices.Contains(verified.document.Policy.AllowedActions, action)
+}
+
 // SupportsComponents reports whether both exact component versions satisfy the
 // authenticated policy ranges.
 func (verified Verified) SupportsComponents(
@@ -562,6 +569,7 @@ func validateSemantics(
 func containsUniqueAllowedAction(actions []string, required string) bool {
 	allowed := map[string]struct{}{
 		"REMOTE_CACHE_ALLOWLISTED": {},
+		"DEPENDENCY_CACHE":         {},
 		"CONFIGURATION_CACHE":      {},
 		"RESOURCE_PROFILE":         {},
 		"BUILD_IMPACT":             {},

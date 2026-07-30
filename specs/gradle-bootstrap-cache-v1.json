@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "buildopt.specs/gradle-bootstrap-cache/v1",
+  "policyId": "GRADLE_BOOTSTRAP_CACHE_V1",
+  "activation": {
+    "authorityAction": "DEPENDENCY_CACHE",
+    "configuration": "BUILDOPT_GRADLE_BOOTSTRAP_CONFIG_PATH",
+    "command": "REPOSITORY_GRADLEW_ONLY",
+    "configurationEncoding": "PRIVATE_MODE_0600_CANONICAL_JCS"
+  },
+  "testedMatrix": {
+    "gradleVersions": [
+      "8.14.3",
+      "9.6.1"
+    ],
+    "jdkMajors": [
+      17,
+      21
+    ],
+    "distributionKinds": [
+      "bin",
+      "all"
+    ]
+  },
+  "dependencyCache": {
+    "environment": "GRADLE_RO_DEP_CACHE",
+    "layout": "<dependencyCacheRoot>/modules-2",
+    "manifest": "<dependencyCacheRoot>/buildopt-dependency-cache.json",
+    "rootEntries": [
+      "buildopt-dependency-cache.json",
+      "modules-2"
+    ],
+    "treeMode": "RECURSIVELY_READ_ONLY_REGULAR_FILES_AND_DIRECTORIES",
+    "sharedLocks": "REJECT",
+    "binding": [
+      "gradleVersion",
+      "compatibilityClass",
+      "configurationPolicyDigest",
+      "snapshotId"
+    ],
+    "publicationOwner": "ORCHESTRATOR_OUTSIDE_GRADLE_INVOCATION"
+  },
+  "writableLayer": {
+    "environment": "GRADLE_USER_HOME",
+    "mode": "CURRENT_USER_0700",
+    "sharing": "NEVER_CONCURRENT",
+    "lease": "NONBLOCKING_EXCLUSIVE_FOR_CHILD_LIFETIME",
+    "scopeFields": [
+      "authorityScopeDigest",
+      "configurationPolicyDigest",
+      "runnerSlot",
+      "compatibilityClass",
+      "dependencyCacheRoot",
+      "dependencySnapshotId",
+      "distributionUrl",
+      "distributionDigest",
+      "wrapperJarDigest"
+    ],
+    "forbiddenSharedState": [
+      "writable dependency metadata",
+      "locks",
+      "daemons",
+      "Configuration Cache"
+    ]
+  },
+  "wrapperDistribution": {
+    "url": "CANONICAL_HTTPS",
+    "archiveVerification": "SHA-256_FROM_WRAPPER_PROPERTIES",
+    "wrapperVerification": "SHA-256_FROM_PRIVATE_CONFIG",
+    "sourceArchive": "TRUSTED_READ_ONLY_REGULAR_FILE",
+    "destination": "GRADLE_USER_HOME_WRAPPER_NATIVE_URL_HASH_LAYOUT",
+    "wrapperValidation": "ENABLED",
+    "installationMarker": "PRIVATE_CANONICAL_JCS_BOUND_TO_POLICY_AND_DIGESTS",
+    "reuseWithoutSourceArchive": true
+  },
+  "childBoundary": {
+    "exposed": [
+      "GRADLE_USER_HOME",
+      "GRADLE_RO_DEP_CACHE"
+    ],
+    "stripped": [
+      "BUILDOPT_GRADLE_BOOTSTRAP_CONFIG_PATH"
+    ],
+    "authorityMaterialExposed": false
+  },
+  "fallback": {
+    "absentConfiguration": "PRESERVE_EXISTING_GRADLE_ENVIRONMENT",
+    "invalidOrUnauthorizedConfiguration": "NO_MANAGED_GRADLE_OVERRIDE",
+    "unsupportedGradleVersion": "NO_MANAGED_GRADLE_OVERRIDE",
+    "unsafeDependencySnapshot": "NO_MANAGED_GRADLE_OVERRIDE",
+    "distributionVerificationFailure": "NO_MANAGED_GRADLE_OVERRIDE",
+    "busyWritableLayer": "NO_MANAGED_GRADLE_OVERRIDE",
+    "corruptRetainedInstallation": "NO_MANAGED_GRADLE_OVERRIDE"
+  },
+  "executableEvidence": {
+    "checker": "dev/check-gradle-bootstrap-cache",
+    "requiredCases": [
+      "signed authority and private canonical configuration",
+      "recursive read-only dependency snapshot and no shared locks",
+      "runner-scoped writable home with exclusive lease",
+      "independent Wrapper JAR and distribution checksum verification",
+      "native Wrapper URL-hash installation layout",
+      "offline dependency resolution without writable-layer artifact copy",
+      "installed distribution reuse without source archive",
+      "Gradle 8.14.3 and 9.6.1 on JDK 17 and 21"
+    ]
+  },
+  "deferred": {
+    "snapshotDistributionLifecycle": "DEPLOY-001",
+    "completeDependencyFaultMatrix": "A0-G01",
+    "quotaAndEviction": "A1-004",
+    "windowsAndMacos": "POST_A1"
+  }
+}
