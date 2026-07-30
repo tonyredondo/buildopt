@@ -82,6 +82,7 @@ From the repository root:
 ./dev/check-l1-l2-revocation
 ./dev/check-gateway-rotation
 ./dev/check-gateway-spool
+./dev/check-shared-commit-recovery
 ./dev/check-managed-l1
 ./dev/check-shared-storage
 ./dev/check-pending-commit

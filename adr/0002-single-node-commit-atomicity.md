@@ -89,7 +89,7 @@ transaction, CAS, replay, quarantine, and reconciliation observations.
 ## Validation
 
 [`specs/commit-atomicity-v1.json`](../specs/commit-atomicity-v1.json) defines
-13 fault and replay cases. Run:
+14 fault and replay cases. Run:
 
 ```bash
 ./dev/check-commit-atomicity

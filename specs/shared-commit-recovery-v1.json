@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "buildopt.specs/shared-commit-recovery/v1",
+  "gateId": "A0-G05",
+  "phaseZeroModel": {
+    "contract": "specs/commit-atomicity-v1.json",
+    "caseCount": 14,
+    "checker": "dev/check-commit-atomicity"
+  },
+  "storage": {
+    "implementation": "REAL_LOCAL_FILESYSTEM_AND_SQLITE_WAL",
+    "visibilityAuthority": "cache.sqlite",
+    "auditIndex": "control.sqlite",
+    "transactionMembers": [
+      "COMMIT_DECISION",
+      "ALL_COMMITTED_OBJECTS",
+      "ATTEMPT_COMMITTED_STATE",
+      "PENDING_OBJECT_RELEASE"
+    ],
+    "controlDatabaseInsideVisibilityTransaction": false
+  },
+  "concurrentCas": {
+    "attempts": 2,
+    "sameTenantNamespaceAndKey": true,
+    "start": "SYNCHRONIZED_GOROUTINES",
+    "winner": "ONE_COMPLETE_COMMIT",
+    "loser": "COMPLETE_ABORT_CAS_LOST",
+    "partialLoserVisibility": 0,
+    "loserBlobs": "ORPHANED_THEN_RECONCILED"
+  },
+  "faults": [
+    {
+      "id": "before-cache-transaction-commit",
+      "objectCount": 3,
+      "expected": "NO_DECISION_NO_COMMITTED_OBJECT_ATTEMPT_REMAINS_PENDING"
+    },
+    {
+      "id": "control-index-write",
+      "objectCount": 3,
+      "expected": "COMPLETE_CACHE_COMMIT_REQUIRES_RECONCILE"
+    },
+    {
+      "id": "orphaned-blob",
+      "expected": "STARTUP_DELETE_AND_MISS"
+    },
+    {
+      "id": "committed-record-without-blob",
+      "expected": "WHOLE_DECISION_INVALIDATED_QUARANTINED_MISS"
+    },
+    {
+      "id": "expired-lease",
+      "expected": "ATTEMPT_ABORTED_PENDING_RELEASED_BLOB_DELETED_MISS"
+    }
+  ],
+  "recovery": {
+    "startupBeforeServing": true,
+    "auditRepairSource": "IMMUTABLE_CACHE_SQLITE_DECISION_DIGEST",
+    "controlFailureRevokesCommittedObjects": false,
+    "blobPresenceGrantsAuthority": false,
+    "unsafeStatesBecomeHits": 0
+  },
+  "boundaries": {
+    "closes": [
+      "A0-G05"
+    ],
+    "doesNotClose": [
+      "A0-G06",
+      "A0-G08",
+      "A1-G03",
+      "A1-G04"
+    ],
+    "quotaTtlSlru": "A1-G03",
+    "widerFailClosedRestart": "A1-G04"
+  }
+}

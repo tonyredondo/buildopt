@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -396,6 +397,190 @@ func TestFirstWriterCASAbortsTheCompleteLosingAttempt(t *testing.T) {
 	assertBlobAbsent(t, storage, secondObject.Object.Checksum)
 }
 
+func TestConcurrentCommitAttemptsPublishExactlyOneCompleteWinner(
+	t *testing.T,
+) {
+	ctx := context.Background()
+	storage := openLifecycleTestStorage(t)
+	publicKey, privateKey, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	keys := map[string]ed25519.PublicKey{testDecisionKeyID: publicKey}
+	type commitCandidate struct {
+		name      string
+		request   StartAttemptRequest
+		objects   []CommitObject
+		content   map[string]string
+		decision  VerifiedCommitDecision
+		commit    CommitResult
+		commitErr error
+	}
+	candidates := []*commitCandidate{
+		{
+			name: "first",
+			request: lifecycleAttemptRequest(
+				"attempt-concurrent-first",
+				"start-concurrent-first",
+				"owner-concurrent-first",
+				10,
+			),
+		},
+		{
+			name: "second",
+			request: lifecycleAttemptRequest(
+				"attempt-concurrent-second",
+				"start-concurrent-second",
+				"owner-concurrent-second",
+				10,
+			),
+		},
+	}
+	for _, candidate := range candidates {
+		if _, _, err := storage.StartAttempt(
+			ctx,
+			candidate.request,
+		); err != nil {
+			t.Fatal(err)
+		}
+		candidate.content = map[string]string{
+			"shared-key":             candidate.name + " shared bytes",
+			"only-" + candidate.name: candidate.name + " exclusive bytes",
+		}
+		for _, key := range []string{
+			"only-" + candidate.name,
+			"shared-key",
+		} {
+			pending, err := storage.PutPending(
+				ctx,
+				candidate.request.AttemptID,
+				key,
+				strings.NewReader(candidate.content[key]),
+			)
+			if err != nil {
+				t.Fatal(err)
+			}
+			candidate.objects = append(candidate.objects, pending.Object)
+		}
+		candidate.decision = verifyLifecycleDecision(
+			t,
+			keys,
+			signLifecycleDecision(
+				t,
+				privateKey,
+				candidate.request,
+				"decision-concurrent-"+candidate.name,
+				candidate.objects,
+				testRevocationEpoch,
+				lifecycleTestNow,
+			),
+		)
+	}
+
+	start := make(chan struct{})
+	var waitGroup sync.WaitGroup
+	for _, candidate := range candidates {
+		waitGroup.Add(1)
+		go func(candidate *commitCandidate) {
+			defer waitGroup.Done()
+			<-start
+			candidate.commit, candidate.commitErr = storage.CommitAttempt(
+				ctx,
+				3,
+				testRevocationEpoch,
+				candidate.decision,
+			)
+		}(candidate)
+	}
+	close(start)
+	waitGroup.Wait()
+
+	var winner, loser *commitCandidate
+	for _, candidate := range candidates {
+		switch {
+		case candidate.commitErr == nil &&
+			candidate.commit.Outcome == "COMMITTED" &&
+			candidate.commit.ObjectCount == 2:
+			if winner != nil {
+				t.Fatal("both concurrent attempts committed")
+			}
+			winner = candidate
+		case errors.Is(candidate.commitErr, ErrCASLost):
+			if loser != nil {
+				t.Fatal("both concurrent attempts lost CAS")
+			}
+			loser = candidate
+		default:
+			t.Fatalf(
+				"concurrent %s result = %+v/%v",
+				candidate.name,
+				candidate.commit,
+				candidate.commitErr,
+			)
+		}
+	}
+	if winner == nil || loser == nil {
+		t.Fatalf("concurrent winner/loser = %+v/%+v", winner, loser)
+	}
+	assertRowCount(t, storage.cache.database, "commit_decisions", 1)
+	assertRowCount(t, storage.cache.database, "committed_objects", 2)
+	assertRowCount(t, storage.cache.database, "pending_objects", 0)
+	assertRowCount(t, storage.control.database, "decision_audit_index", 1)
+
+	for key, want := range winner.content {
+		file, _, err := storage.OpenCommitted(
+			ctx,
+			winner.request.Repository.Tenant,
+			winner.request.NamespaceGeneration,
+			key,
+		)
+		if err != nil {
+			t.Fatalf("open winning %s: %v", key, err)
+		}
+		actual, readErr := os.ReadFile(file.Name())
+		closeErr := file.Close()
+		if readErr != nil ||
+			closeErr != nil ||
+			string(actual) != want {
+			t.Fatalf(
+				"winning %s = %q read=%v close=%v",
+				key,
+				actual,
+				readErr,
+				closeErr,
+			)
+		}
+	}
+	loserStatus, err := storage.AttemptStatus(
+		ctx,
+		loser.request.AttemptID,
+	)
+	if err != nil ||
+		loserStatus.State != AttemptAborted ||
+		loserStatus.AbortReason != "CAS_LOST" ||
+		loserStatus.PendingObjectCount != 0 {
+		t.Fatalf("concurrent loser status = %+v/%v", loserStatus, err)
+	}
+	if file, _, err := storage.OpenCommitted(
+		ctx,
+		loser.request.Repository.Tenant,
+		loser.request.NamespaceGeneration,
+		"only-"+loser.name,
+	); !errors.Is(err, ErrCacheMiss) {
+		if file != nil {
+			_ = file.Close()
+		}
+		t.Fatalf("loser exclusive key became visible: %v", err)
+	}
+	report, err := storage.Reconcile(ctx)
+	if err != nil || report.DeletedOrphanBlobs != len(loser.objects) {
+		t.Fatalf("concurrent CAS reconcile = %+v/%v", report, err)
+	}
+	for _, object := range loser.objects {
+		assertBlobAbsent(t, storage, object.Checksum)
+	}
+}
+
 func TestDecisionRejectionAbortsIncompleteCoverageAndRejectsAuthority(t *testing.T) {
 	ctx := context.Background()
 	storage := openLifecycleTestStorage(t)
@@ -603,14 +788,18 @@ func TestTransactionRollbackAndControlAuditRepair(t *testing.T) {
 	if _, _, err := storage.StartAttempt(ctx, request); err != nil {
 		t.Fatal(err)
 	}
-	pending, err := storage.PutPending(
-		ctx,
-		request.AttemptID,
-		"fault-key",
-		strings.NewReader("fault object"),
-	)
-	if err != nil {
-		t.Fatal(err)
+	var objects []CommitObject
+	for _, key := range []string{"fault-a", "fault-b", "fault-c"} {
+		pending, err := storage.PutPending(
+			ctx,
+			request.AttemptID,
+			key,
+			strings.NewReader(key+" object"),
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		objects = append(objects, pending.Object)
 	}
 	verified := verifyLifecycleDecision(
 		t,
@@ -620,7 +809,7 @@ func TestTransactionRollbackAndControlAuditRepair(t *testing.T) {
 			privateKey,
 			request,
 			"decision-fault",
-			[]CommitObject{pending.Object},
+			objects,
 			testRevocationEpoch,
 			lifecycleTestNow,
 		),
@@ -629,7 +818,7 @@ func TestTransactionRollbackAndControlAuditRepair(t *testing.T) {
 	storage.testHooks.beforeCacheCommit = func() error { return fault }
 	if _, err := storage.CommitAttempt(
 		ctx,
-		2,
+		4,
 		testRevocationEpoch,
 		verified,
 	); !errors.Is(err, fault) {
@@ -641,7 +830,7 @@ func TestTransactionRollbackAndControlAuditRepair(t *testing.T) {
 	status, err := storage.AttemptStatus(ctx, request.AttemptID)
 	if err != nil ||
 		status.State != AttemptPending ||
-		status.PendingObjectCount != 1 {
+		status.PendingObjectCount != 3 {
 		t.Fatalf("rolled-back status = %+v/%v", status, err)
 	}
 
@@ -649,18 +838,19 @@ func TestTransactionRollbackAndControlAuditRepair(t *testing.T) {
 	storage.testHooks.beforeControlIndex = func() error { return controlFault }
 	commit, err := storage.CommitAttempt(
 		ctx,
-		2,
+		4,
 		testRevocationEpoch,
 		verified,
 	)
 	if err != nil ||
 		commit.Outcome != "COMMITTED" ||
+		commit.ObjectCount != 3 ||
 		commit.AuditIndexed ||
 		!commit.RequiresReconcile {
 		t.Fatalf("cache commit/control fault = %+v/%v", commit, err)
 	}
 	storage.testHooks.beforeControlIndex = nil
-	assertRowCount(t, storage.cache.database, "committed_objects", 1)
+	assertRowCount(t, storage.cache.database, "committed_objects", 3)
 	assertRowCount(t, storage.control.database, "decision_audit_index", 0)
 	report, err := storage.Reconcile(ctx)
 	if err != nil || report.RepairedAuditRows != 1 {

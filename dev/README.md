@@ -729,6 +729,19 @@ complete upstream hit before downstream `200`. Race-enabled fixtures cover
 checksum mismatch discovered after the complete body, and stale-spool cleanup
 before a real managed-gateway process registers and serves a verified hit.
 
+Run the closed `A0-G05` production commit and recovery gate:
+
+```bash
+./dev/check-shared-commit-recovery
+```
+
+The checker cross-validates all 14 Phase 0 atomicity cases against real
+filesystem blobs and SQLite WAL. It starts competing commits together, proves
+one complete CAS winner and one complete loser, injects a three-object
+pre-commit rollback and later control-index failure, repairs audit state by
+decision digest, and makes orphaned, missing-blob, and expired-lease states
+safe misses.
+
 ## Managed native L1
 
 Run the `A0-003` launcher/settings-plugin contract across the same eight

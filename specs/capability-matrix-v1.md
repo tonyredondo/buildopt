@@ -84,8 +84,13 @@ complete local-identity rotation, transient upstream credentials, and
 concurrent-slot policy/namespace isolation with Configuration Cache. The
 `A0-G04` gate additionally proves complete pre-`200` verified spooling,
 bounded concurrent reservation, disk/cancellation/late-checksum fallback, and
-managed-process crash cleanup. The commit fault/recovery gate remains
-`A0-G05`, so `MANAGED_SHARED_CACHE` stays `UNAVAILABLE`.
+managed-process crash cleanup. `A0-G05` cross-checks all 14 atomicity cases
+against the real filesystem and SQLite WAL stores, including synchronized
+CAS, all-object rollback, post-commit audit repair by digest, and
+orphan/missing/expired safe misses.
+`MANAGED_SHARED_CACHE` remains `UNAVAILABLE` until `A0-G08` proves that no
+root or composite `Test` task can consume or produce entries without an
+explicit `TestCacheGrant`.
 
 `A0-007` makes `GRADLE_BOOTSTRAP_CACHE` exact for all eight JDK 17/21 rows.
 Each real Wrapper row consumes an offline read-only dependency snapshot,

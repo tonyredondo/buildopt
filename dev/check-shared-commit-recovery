@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/shared-commit-recovery-v1.json"
+
+for buildopt_command in git jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Shared commit-recovery command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+cd -- "${buildopt_repo_root}"
+buildopt_before_status=$(
+    git status --porcelain=v1 --untracked-files=all
+)
+
+if ! jq -e '
+    keys == [
+        "boundaries",
+        "concurrentCas",
+        "faults",
+        "gateId",
+        "phaseZeroModel",
+        "recovery",
+        "schemaVersion",
+        "storage"
+    ] and
+    .schemaVersion == "buildopt.specs/shared-commit-recovery/v1" and
+    .gateId == "A0-G05" and
+    .phaseZeroModel == {
+        contract: "specs/commit-atomicity-v1.json",
+        caseCount: 14,
+        checker: "dev/check-commit-atomicity"
+    } and
+    .storage == {
+        implementation: "REAL_LOCAL_FILESYSTEM_AND_SQLITE_WAL",
+        visibilityAuthority: "cache.sqlite",
+        auditIndex: "control.sqlite",
+        transactionMembers: [
+            "COMMIT_DECISION",
+            "ALL_COMMITTED_OBJECTS",
+            "ATTEMPT_COMMITTED_STATE",
+            "PENDING_OBJECT_RELEASE"
+        ],
+        controlDatabaseInsideVisibilityTransaction: false
+    } and
+    .concurrentCas == {
+        attempts: 2,
+        sameTenantNamespaceAndKey: true,
+        start: "SYNCHRONIZED_GOROUTINES",
+        winner: "ONE_COMPLETE_COMMIT",
+        loser: "COMPLETE_ABORT_CAS_LOST",
+        partialLoserVisibility: 0,
+        loserBlobs: "ORPHANED_THEN_RECONCILED"
+    } and
+    [.faults[].id] == [
+        "before-cache-transaction-commit",
+        "control-index-write",
+        "orphaned-blob",
+        "committed-record-without-blob",
+        "expired-lease"
+    ] and
+    [.faults[].expected] == [
+        "NO_DECISION_NO_COMMITTED_OBJECT_ATTEMPT_REMAINS_PENDING",
+        "COMPLETE_CACHE_COMMIT_REQUIRES_RECONCILE",
+        "STARTUP_DELETE_AND_MISS",
+        "WHOLE_DECISION_INVALIDATED_QUARANTINED_MISS",
+        "ATTEMPT_ABORTED_PENDING_RELEASED_BLOB_DELETED_MISS"
+    ] and
+    .recovery == {
+        startupBeforeServing: true,
+        auditRepairSource: "IMMUTABLE_CACHE_SQLITE_DECISION_DIGEST",
+        controlFailureRevokesCommittedObjects: false,
+        blobPresenceGrantsAuthority: false,
+        unsafeStatesBecomeHits: 0
+    } and
+    .boundaries == {
+        closes: ["A0-G05"],
+        doesNotClose: ["A0-G06", "A0-G08", "A1-G03", "A1-G04"],
+        quotaTtlSlru: "A1-G03",
+        widerFailClosedRestart: "A1-G04"
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'Shared commit-recovery contract is malformed\n' >&2
+    exit 1
+fi
+
+if [[ "$(jq '.cases | length' specs/commit-atomicity-v1.json)" != "14" ]]; then
+    printf 'Phase 0 commit-atomicity model no longer has 14 cases\n' >&2
+    exit 1
+fi
+
+buildopt_required_files=(
+    "adr/0002-single-node-commit-atomicity.md"
+    "internal/sharedcache/lifecycle.go"
+    "internal/sharedcache/lifecycle_test.go"
+    "internal/sharedcache/reconcile.go"
+    "specs/commit-atomicity-v1.json"
+    "specs/shared-commit-recovery-v1.md"
+)
+for buildopt_relative in "${buildopt_required_files[@]}"; do
+    if [[ ! -s "${buildopt_repo_root}/${buildopt_relative}" ]]; then
+        printf 'missing Shared commit-recovery file: %s\n' \
+            "${buildopt_relative}" >&2
+        exit 1
+    fi
+done
+
+"${buildopt_script_dir}/check-commit-atomicity"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 \
+    ./internal/sharedcache \
+    -run \
+    '^(TestPendingCommitVisibilityReplayAndExactAuthority|TestConcurrentCommitAttemptsPublishExactlyOneCompleteWinner|TestDecisionRejectionAbortsIncompleteCoverageAndRejectsAuthority|TestCommitRechecksCurrentRevocationEpochAtTransaction|TestTransactionRollbackAndControlAuditRepair|TestReconcileInvalidatesWholeDecisionOnCorruptionOrMissingBlob|TestExpiredAttemptIsAbortedBeforeOrphanCollection|TestStartupReconciliationRepairsAuditAndDeletesOrphans)$'
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/sharedcache
+
+buildopt_after_status=$(
+    git status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'Shared commit-recovery check changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'A0-G05 Shared commit recovery OK: concurrent CAS, atomic multi-object commit, digest repair, orphan/missing/expired safe misses\n'
