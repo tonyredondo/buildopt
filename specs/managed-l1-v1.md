@@ -66,8 +66,8 @@ The scope digest provides deterministic separation; it is not an authority
 signature. `A0-006` supplies authenticated monotonic
 `l1SecurityGeneration`, future/rollback rejection, and revocation-driven
 generation rotation; physical deletion remains `A1-004`. `A0-004`/`A0-005`
-own remote population and pending publication. Therefore this isolated block
-does not close `A0-G02`.
+own remote population and pending publication. This isolated block is composed
+with those owners by `A0-G02`; it does not close that gate by itself.
 
 ## Executable evidence
 
@@ -85,3 +85,5 @@ hit after the new generation is warm. The golden row also proves invalid
 context and L2-writer local disablement. A real launcher-to-Gradle sequence
 binds the two L1 layers and verifies the opaque generated path. The independent
 neutral handshake remains covered by `./dev/check-gradle-plugin-handshake`.
+The cross-component L2-to-L1 revocation and aborted-writer lifecycle runs in
+`./dev/check-l1-l2-revocation`.

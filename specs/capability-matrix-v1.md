@@ -74,12 +74,13 @@ lifecycles. `A0-005` adds pending/abort, canonical commit CAS, verified HTTP
 reads, and startup reconciliation. `A0-006` then proves locally authenticated
 policy, cumulative revocation state, routable gateway/server context, and a
 golden-row Gradle `HttpBuildCache` PUT/GET. The matrix still reports
-`MANAGED_SHARED_CACHE` as `UNAVAILABLE` until the complete A0 HTTP
-compatibility/fault matrix and production commit/abort composition close; one
-golden integration row does not promote every compatibility row. `A0-G01`
-then proves hit, miss, PUT, early 413, redirect, timeout, corruption, retry,
-and unknown-input behavior across all ten rows. Production commit/abort
-composition remains open, so `MANAGED_SHARED_CACHE` stays `UNAVAILABLE`.
+`MANAGED_SHARED_CACHE` as `UNAVAILABLE`; one golden integration row does not
+promote every compatibility row. `A0-G01` proves hit, miss, PUT, early 413,
+redirect, timeout, corruption, retry, and unknown-input behavior across all
+ten rows. `A0-G02` additionally proves the golden-lane L2-to-L1
+revocation/rotation and aborted-writer lifecycle. Complete production commit
+fault/recovery remains `A0-G05`, so
+`MANAGED_SHARED_CACHE` stays `UNAVAILABLE`.
 
 `A0-007` makes `GRADLE_BOOTSTRAP_CACHE` exact for all eight JDK 17/21 rows.
 Each real Wrapper row consumes an offline read-only dependency snapshot,

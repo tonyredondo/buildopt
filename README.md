@@ -79,6 +79,7 @@ From the repository root:
 ./dev/check-tier1-fixtures
 ./dev/check-tier-one-policy
 ./dev/check-tier-one-cache-conformance
+./dev/check-l1-l2-revocation
 ./dev/check-managed-l1
 ./dev/check-shared-storage
 ./dev/check-pending-commit

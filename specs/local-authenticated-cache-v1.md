@@ -93,3 +93,7 @@ installation, current-authority server routing, local credential translation,
 managed-process context release, and safe read/write failures. It also runs
 the golden Gradle/JDK row through a real `HttpBuildCache` PUT, GET hit, Tier 1
 policy, disabled writer L1, and Configuration Cache reuse.
+
+`./dev/check-l1-l2-revocation` composes this authority with the real pending,
+commit, revocation, and abort backend plus Gradle's native L1 lifecycle. Full
+production commit fault/recovery remains `A0-G05`.

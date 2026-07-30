@@ -14,6 +14,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`data-lifecycle-v1.md`](./data-lifecycle-v1.md) | `F0-037` |
 | [`tier-one-cache-policy-v1.md`](./tier-one-cache-policy-v1.md) | `A0-002` |
 | [`tier-one-cache-conformance-v1.md`](./tier-one-cache-conformance-v1.md) | `A0-G01` |
+| [`l1-l2-revocation-v1.md`](./l1-l2-revocation-v1.md) | `A0-G02` |
 | [`managed-l1-v1.md`](./managed-l1-v1.md) | `A0-003` |
 | [`single-node-shared-storage-v1.md`](./single-node-shared-storage-v1.md) | `A0-004` |
 | [`pending-commit-cas-v1.md`](./pending-commit-cas-v1.md) | `A0-005` |
@@ -46,6 +47,9 @@ deletion contract.
 task/action, transform, and fallback allowlist.
 `tier-one-cache-conformance-v1.json` is the A0-G01 backend, gateway, Gradle
 client, retry, corruption, and default-deny compatibility matrix.
+`l1-l2-revocation-v1.json` is the A0-G02 committed-L2/native-L1 generation,
+authenticated revocation, miss/rotation, and aborted-writer isolation
+contract.
 `managed-l1-v1.json` is the A0-003 launcher/settings-plugin contract for
 opaque scope binding, native retention, generation directories, exclusive
 leases, and L2-writer local disablement.

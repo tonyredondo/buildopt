@@ -63,22 +63,26 @@ public final class ManagedL1TestKit {
      * Runs generation rotation on every row and fail-closed modes on the golden
      * runtime.
      *
-     * @param arguments fixture root, Gradle home, plugin JAR, and Java major
+     * @param arguments fixture root, Gradle home, plugin JAR, Java major, and
+     *     optional focused mode
      * @throws IOException when a fixture cannot be copied or inspected
      */
     public static void main(String[] arguments) throws IOException {
         if (arguments.length < 4
                 || arguments.length > 5
                 || (arguments.length == 5
-                        && !arguments[4].equals("shared-only"))) {
+                        && !arguments[4].equals("shared-only")
+                        && !arguments[4].equals("lifecycle-only"))) {
             throw new IllegalArgumentException(
-                    "expected fixture root, Gradle home, plugin JAR, Java major, and optional shared-only");
+                    "expected fixture root, Gradle home, plugin JAR, Java major, and optional shared-only or lifecycle-only");
         }
         Path fixtureRoot = Path.of(arguments[0]).toAbsolutePath().normalize();
         File gradleHome = Path.of(arguments[1]).toAbsolutePath().normalize().toFile();
         Path pluginJar = Path.of(arguments[2]).toAbsolutePath().normalize();
         int expectedJava = Integer.parseInt(arguments[3]);
-        boolean sharedOnly = arguments.length == 5;
+        String requestedMode = arguments.length == 5 ? arguments[4] : "";
+        boolean sharedOnly = requestedMode.equals("shared-only");
+        boolean lifecycleOnly = requestedMode.equals("lifecycle-only");
         if (Runtime.version().feature() != expectedJava) {
             throw new IllegalStateException(
                     "TestKit Java "
@@ -99,6 +103,15 @@ public final class ManagedL1TestKit {
             Path initScript = writeInitScript(testRoot, pluginJar);
             for (String dsl : new String[] {"kotlin", "groovy"}) {
                 Path project = testRoot.resolve("tier1").resolve(dsl);
+                if (lifecycleOnly) {
+                    runL1L2Lifecycle(
+                            project,
+                            testRoot.resolve("l1-l2-state-" + dsl),
+                            initScript,
+                            gradleHome,
+                            dsl);
+                    continue;
+                }
                 if (sharedOnly) {
                     runManagedShared(
                             project,
@@ -135,7 +148,12 @@ public final class ManagedL1TestKit {
         } finally {
             deleteTree(testRoot);
         }
-        if (sharedOnly) {
+        if (lifecycleOnly) {
+            System.out.printf(
+                    "A0-G02 TestKit OK: Gradle %s / JDK %d / Kotlin+Groovy L2-to-L1 revocation and abort%n",
+                    gradleHome.getName(),
+                    expectedJava);
+        } else if (sharedOnly) {
             System.out.printf(
                     "A0-006 TestKit OK: Gradle %s / JDK %d / Kotlin+Groovy HttpBuildCache%n",
                     gradleHome.getName(),
@@ -410,6 +428,468 @@ public final class ManagedL1TestKit {
         }
     }
 
+    private static void runL1L2Lifecycle(
+            Path project,
+            Path stateRoot,
+            Path initScript,
+            File gradleHome,
+            String dsl)
+            throws IOException {
+        String scenario = dsl + "-l1-l2-lifecycle";
+        String gatewayPassword =
+                Base64.getUrlEncoder()
+                        .withoutPadding()
+                        .encodeToString(new byte[32]);
+        String basicAuthorization =
+                "Basic "
+                        + Base64.getEncoder()
+                                .encodeToString(
+                                        ("buildopt:" + gatewayPassword)
+                                                .getBytes(StandardCharsets.UTF_8));
+        Path generation50 = managedDirectory(stateRoot, 50);
+        Path generation51 = managedDirectory(stateRoot, 51);
+        Path abortedWriterGeneration = managedDirectory(stateRoot, 52);
+        Path abortReaderGeneration = managedDirectory(stateRoot, 53);
+        Files.createDirectories(generation50);
+        Files.createDirectories(generation51);
+        Files.createDirectories(abortReaderGeneration);
+        String[] buildArguments =
+                arguments(
+                        initScript,
+                        "--build-cache",
+                        "-PbuildoptTierOneRegisterTransform=false",
+                        "clean",
+                        "compileJava");
+        Path source =
+                project.resolve("src/main/java/example/TierOne.java");
+        String original = Files.readString(source, StandardCharsets.UTF_8);
+
+        try (LifecycleCacheServer server =
+                new LifecycleCacheServer(basicAuthorization)) {
+            Map<String, String> seedWriter =
+                    lifecycleEnvironment(
+                            DISABLED_L2_WRITER_MODE,
+                            "",
+                            50,
+                            "READ_WRITE",
+                            server.endpoint(),
+                            gatewayPassword,
+                            "a",
+                            "b",
+                            "c",
+                            "44444444-4444-4444-8444-444444444444");
+            server.resetCounters();
+            BuildResult seeded =
+                    run(
+                            project,
+                            gradleHome,
+                            scenario + "-seed-writer",
+                            seedWriter,
+                            buildArguments);
+            requireOutcome(
+                    seeded,
+                    ":compileJava",
+                    TaskOutcome.SUCCESS,
+                    scenario + "-seed-writer");
+            requireNoCredential(
+                    seeded,
+                    gatewayPassword,
+                    scenario + "-seed-writer");
+            if (server.puts() < 1 || server.pendingCount() < 1) {
+                throw new IllegalStateException(
+                        scenario
+                                + " trusted writer produced no pending L2 object\n"
+                                + seeded.getOutput());
+            }
+            server.commitPending();
+            if (server.stableCount() < 1 || server.pendingCount() != 0) {
+                throw new IllegalStateException(
+                        scenario + " did not commit the seeded L2 objects");
+            }
+
+            Map<String, String> generation50Reader =
+                    lifecycleEnvironment(
+                            READ_WRITE_MODE,
+                            generation50.toString(),
+                            50,
+                            "READ_ONLY",
+                            server.endpoint(),
+                            gatewayPassword,
+                            "a",
+                            "b",
+                            "c",
+                            "44444444-4444-4444-8444-444444444444");
+            server.resetCounters();
+            BuildResult remoteHit =
+                    run(
+                            project,
+                            gradleHome,
+                            scenario + "-reader",
+                            generation50Reader,
+                            buildArguments);
+            requireOutcome(
+                    remoteHit,
+                    ":compileJava",
+                    TaskOutcome.FROM_CACHE,
+                    scenario + "-remote-hit");
+            requireNoCredential(
+                    remoteHit,
+                    gatewayPassword,
+                    scenario + "-remote-hit");
+            requireCacheContent(generation50, scenario + "-remote-hit");
+            if (server.hits() < 1) {
+                throw new IllegalStateException(
+                        scenario
+                                + " did not restore the committed L2 object\n"
+                                + remoteHit.getOutput());
+            }
+
+            server.setReadsEnabled(false);
+            server.resetCounters();
+            BuildResult localHit =
+                    run(
+                            project,
+                            gradleHome,
+                            scenario + "-reader",
+                            generation50Reader,
+                            buildArguments);
+            requireOutcome(
+                    localHit,
+                    ":compileJava",
+                    TaskOutcome.FROM_CACHE,
+                    scenario + "-local-hit");
+            requireConfigurationCacheReuse(
+                    localHit,
+                    scenario + "-local-hit");
+            requireNoCredential(
+                    localHit,
+                    gatewayPassword,
+                    scenario + "-local-hit");
+
+            server.setReadsEnabled(true);
+            server.revokeStable();
+            Map<String, String> generation51Reader =
+                    lifecycleEnvironment(
+                            READ_WRITE_MODE,
+                            generation51.toString(),
+                            51,
+                            "READ_ONLY",
+                            server.endpoint(),
+                            gatewayPassword,
+                            "d",
+                            "e",
+                            "f",
+                            "55555555-5555-4555-8555-555555555555");
+            server.resetCounters();
+            BuildResult revokedMiss =
+                    run(
+                            project,
+                            gradleHome,
+                            scenario + "-reader",
+                            generation51Reader,
+                            buildArguments);
+            requireOutcome(
+                    revokedMiss,
+                    ":compileJava",
+                    TaskOutcome.SUCCESS,
+                    scenario + "-revoked-miss");
+            if (revokedMiss.getOutput().contains(
+                    "Configuration cache entry reused.")) {
+                throw new IllegalStateException(
+                        scenario
+                                + " reused Configuration Cache across authenticated revocation\n"
+                                + revokedMiss.getOutput());
+            }
+            if (server.misses() < 1) {
+                throw new IllegalStateException(
+                        scenario + " did not observe the revoked L2 miss");
+            }
+            requireNoCredential(
+                    revokedMiss,
+                    gatewayPassword,
+                    scenario + "-revoked-miss");
+            requireCacheContent(generation51, scenario + "-revoked-miss");
+
+            server.setReadsEnabled(false);
+            server.resetCounters();
+            BuildResult rotatedHit =
+                    run(
+                            project,
+                            gradleHome,
+                            scenario + "-reader",
+                            generation51Reader,
+                            buildArguments);
+            requireOutcome(
+                    rotatedHit,
+                    ":compileJava",
+                    TaskOutcome.FROM_CACHE,
+                    scenario + "-rotated-hit");
+            requireConfigurationCacheReuse(
+                    rotatedHit,
+                    scenario + "-rotated-hit");
+            requireNoCredential(
+                    rotatedHit,
+                    gatewayPassword,
+                    scenario + "-rotated-hit");
+
+            Files.writeString(
+                    source,
+                    original + "\n// a0-g02-aborted-writer\n",
+                    StandardCharsets.UTF_8);
+            server.setReadsEnabled(true);
+            Map<String, String> abortedWriter =
+                    lifecycleEnvironment(
+                            DISABLED_L2_WRITER_MODE,
+                            "",
+                            52,
+                            "READ_WRITE",
+                            server.endpoint(),
+                            gatewayPassword,
+                            "7",
+                            "8",
+                            "9",
+                            "66666666-6666-4666-8666-666666666666");
+            server.resetCounters();
+            BuildResult pending =
+                    run(
+                            project,
+                            gradleHome,
+                            scenario + "-aborted-writer",
+                            abortedWriter,
+                            buildArguments);
+            requireOutcome(
+                    pending,
+                    ":compileJava",
+                    TaskOutcome.SUCCESS,
+                    scenario + "-aborted-writer");
+            requireNoCredential(
+                    pending,
+                    gatewayPassword,
+                    scenario + "-aborted-writer");
+            if (server.puts() < 1
+                    || server.pendingCount() < 1
+                    || server.stableCount() != 0
+                    || Files.exists(abortedWriterGeneration)) {
+                throw new IllegalStateException(
+                        scenario
+                                + " aborted writer did not remain pending-only\n"
+                                + pending.getOutput());
+            }
+            server.abortPending();
+
+            Map<String, String> abortReader =
+                    lifecycleEnvironment(
+                            READ_WRITE_MODE,
+                            abortReaderGeneration.toString(),
+                            53,
+                            "READ_ONLY",
+                            server.endpoint(),
+                            gatewayPassword,
+                            "1",
+                            "2",
+                            "3",
+                            "77777777-7777-4777-8777-777777777777");
+            server.resetCounters();
+            BuildResult abortedMiss =
+                    run(
+                            project,
+                            gradleHome,
+                            scenario + "-abort-reader",
+                            abortReader,
+                            buildArguments);
+            requireOutcome(
+                    abortedMiss,
+                    ":compileJava",
+                    TaskOutcome.SUCCESS,
+                    scenario + "-abort-reader");
+            if (server.hits() != 0
+                    || server.misses() < 1
+                    || server.stableCount() != 0
+                    || server.pendingCount() != 0) {
+                throw new IllegalStateException(
+                        scenario
+                                + " exposed an aborted local or remote hit\n"
+                                + abortedMiss.getOutput());
+            }
+            requireNoCredential(
+                    abortedMiss,
+                    gatewayPassword,
+                    scenario + "-abort-reader");
+        }
+    }
+
+    private static Map<String, String> lifecycleEnvironment(
+            String localMode,
+            String localDirectory,
+            long generation,
+            String sharedMode,
+            String endpoint,
+            String gatewayPassword,
+            String authorityDigit,
+            String policyDigit,
+            String configurationDigit,
+            String gatewayGeneration) {
+        Map<String, String> environment =
+                managedEnvironment(
+                        localMode,
+                        localDirectory,
+                        generation);
+        environment.put(SHARED_MODE_ENVIRONMENT, sharedMode);
+        environment.put(
+                AUTHORITY_DIGEST_ENVIRONMENT,
+                "sha256:" + authorityDigit.repeat(64));
+        environment.put(
+                POLICY_DIGEST_ENVIRONMENT,
+                "sha256:" + policyDigit.repeat(64));
+        environment.put(
+                CONFIGURATION_DIGEST_ENVIRONMENT,
+                "sha256:" + configurationDigit.repeat(64));
+        environment.put(
+                AUTHORITY_CONTRACT_ENVIRONMENT,
+                "buildopt-local-cache-authority/v1");
+        environment.put(GATEWAY_URL_ENVIRONMENT, endpoint);
+        environment.put(GATEWAY_USERNAME_ENVIRONMENT, "buildopt");
+        environment.put(GATEWAY_PASSWORD_ENVIRONMENT, gatewayPassword);
+        environment.put(
+                GATEWAY_GENERATION_ENVIRONMENT,
+                gatewayGeneration);
+        return environment;
+    }
+
+    private static final class LifecycleCacheServer
+            implements AutoCloseable {
+        private final HttpServer server;
+        private final String authorization;
+        private final Map<String, byte[]> stable =
+                new ConcurrentHashMap<>();
+        private final Map<String, byte[]> pending =
+                new ConcurrentHashMap<>();
+        private final AtomicInteger hits = new AtomicInteger();
+        private final AtomicInteger misses = new AtomicInteger();
+        private final AtomicInteger puts = new AtomicInteger();
+        private volatile boolean readsEnabled = true;
+
+        LifecycleCacheServer(String authorization) throws IOException {
+            this.authorization = authorization;
+            server =
+                    HttpServer.create(
+                            new InetSocketAddress("127.0.0.1", 0),
+                            0);
+            server.createContext("/cache/", this::serve);
+            server.start();
+        }
+
+        String endpoint() {
+            return "http://127.0.0.1:" + server.getAddress().getPort();
+        }
+
+        void setReadsEnabled(boolean enabled) {
+            readsEnabled = enabled;
+        }
+
+        void resetCounters() {
+            hits.set(0);
+            misses.set(0);
+            puts.set(0);
+        }
+
+        int hits() {
+            return hits.get();
+        }
+
+        int misses() {
+            return misses.get();
+        }
+
+        int puts() {
+            return puts.get();
+        }
+
+        int stableCount() {
+            return stable.size();
+        }
+
+        int pendingCount() {
+            return pending.size();
+        }
+
+        void commitPending() {
+            stable.putAll(pending);
+            pending.clear();
+        }
+
+        void abortPending() {
+            pending.clear();
+        }
+
+        void revokeStable() {
+            stable.clear();
+            pending.clear();
+        }
+
+        private void serve(HttpExchange exchange) throws IOException {
+            try (exchange) {
+                if (!authorization.equals(
+                        exchange.getRequestHeaders()
+                                .getFirst("Authorization"))) {
+                    exchange.sendResponseHeaders(401, -1);
+                    return;
+                }
+                String key = exchange.getRequestURI().getPath();
+                if (!key.startsWith("/cache/")
+                        || key.length() <= "/cache/".length()) {
+                    exchange.sendResponseHeaders(404, -1);
+                    return;
+                }
+                if (exchange.getRequestMethod().equals("GET")) {
+                    serveGet(exchange, key);
+                    return;
+                }
+                if (exchange.getRequestMethod().equals("PUT")) {
+                    servePut(exchange, key);
+                    return;
+                }
+                exchange.getResponseHeaders().set("Allow", "GET, PUT");
+                exchange.sendResponseHeaders(405, -1);
+            }
+        }
+
+        private void serveGet(HttpExchange exchange, String key)
+                throws IOException {
+            byte[] payload = readsEnabled ? stable.get(key) : null;
+            if (payload == null) {
+                misses.incrementAndGet();
+                exchange.sendResponseHeaders(404, -1);
+                return;
+            }
+            hits.incrementAndGet();
+            exchange.getResponseHeaders()
+                    .set("Content-Type", "application/octet-stream");
+            exchange.sendResponseHeaders(200, payload.length);
+            exchange.getResponseBody().write(payload);
+        }
+
+        private void servePut(HttpExchange exchange, String key)
+                throws IOException {
+            puts.incrementAndGet();
+            byte[] payload = exchange.getRequestBody().readAllBytes();
+            byte[] existing = pending.putIfAbsent(key, payload);
+            if (existing != null
+                    && !java.util.Arrays.equals(existing, payload)) {
+                exchange.sendResponseHeaders(409, -1);
+                return;
+            }
+            exchange.sendResponseHeaders(
+                    existing == null ? 201 : 200,
+                    -1);
+        }
+
+        @Override
+        public void close() {
+            server.stop(0);
+        }
+    }
+
     private static void serveCache(
             HttpExchange exchange,
             String authorization,
@@ -576,6 +1056,16 @@ public final class ManagedL1TestKit {
         if (!result.getOutput().contains(reason)) {
             throw new IllegalStateException(
                     scenario + " did not report " + reason + "\n" + result.getOutput());
+        }
+    }
+
+    private static void requireNoCredential(
+            BuildResult result,
+            String gatewayPassword,
+            String scenario) {
+        if (result.getOutput().contains(gatewayPassword)) {
+            throw new IllegalStateException(
+                    scenario + " exposed the local gateway credential");
         }
     }
 

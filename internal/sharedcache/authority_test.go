@@ -259,6 +259,273 @@ func TestNewAuthoritySupersedesOldRouteAndRejectsRollback(t *testing.T) {
 	}
 }
 
+func TestLocalAuthorityCommitRevocationAndAbortLifecycle(t *testing.T) {
+	t.Run("committed L2 object is revoked by the next generation", func(
+		t *testing.T,
+	) {
+		storage := openLifecycleTestStorage(t)
+		storage.clock = func() time.Time { return sharedAuthorityNow }
+		writer, credential, privateKey, _ := sharedAuthorityFixture(
+			t,
+			func(*localauthority.Document) {},
+		)
+		writerBinding, _, err := storage.InstallLocalAuthority(
+			context.Background(),
+			writer,
+			credential,
+			sharedAuthorityNow,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		writerHandler, err := NewLocalAuthorityHTTPHandler(
+			storage,
+			writerBinding,
+			credential,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		payload := []byte("committed L2 object copied into managed L1")
+		put := authorityHTTPRequest(
+			t,
+			writerHandler,
+			http.MethodPut,
+			"/cache/l2-l1-key",
+			payload,
+			base64.RawURLEncoding.EncodeToString(credential),
+			writerBinding.AuthorityDigest,
+		)
+		if put.Code != http.StatusCreated {
+			t.Fatalf("pending PUT = %d", put.Code)
+		}
+		status, err := storage.AttemptStatus(
+			context.Background(),
+			writerBinding.AttemptID,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		document := writer.Document()
+		start := StartAttemptRequest{
+			RequestID:         document.Revocation.RequestID,
+			AttemptID:         status.AttemptID,
+			Repository:        status.Repository,
+			SourceRevision:    status.SourceRevision,
+			SourceStateDigest: status.SourceStateDigest,
+			PolicyDigest:      status.PolicyDigest,
+			ConfigurationPolicyDigest: status.
+				ConfigurationPolicyDigest,
+			CacheContractDigest: status.CacheContractDigest,
+		}
+		decision := signLifecycleDecision(
+			t,
+			privateKey,
+			start,
+			"decision-l2-l1",
+			[]CommitObject{{
+				NamespaceGeneration: status.NamespaceGeneration,
+				Key:                 "l2-l1-key",
+				Checksum: put.Header().Get(
+					"X-BuildOpt-Blob-Digest",
+				),
+				SizeBytes: int64(len(payload)),
+			}},
+			document.Revocation.RevocationEpoch,
+			sharedAuthorityNow,
+		)
+		verifiedDecision, err := VerifyCommitDecision(
+			context.Background(),
+			decision,
+			map[string]ed25519.PublicKey{
+				testDecisionKeyID: privateKey.Public().(ed25519.PublicKey),
+			},
+			document.Revocation.RevocationEpoch,
+			sharedAuthorityNow,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := storage.CommitAttempt(
+			context.Background(),
+			status.StateVersion,
+			document.Revocation.RevocationEpoch,
+			verifiedDecision,
+		); err != nil {
+			t.Fatal(err)
+		}
+		hit := authorityHTTPRequest(
+			t,
+			writerHandler,
+			http.MethodGet,
+			"/cache/l2-l1-key",
+			nil,
+			base64.RawURLEncoding.EncodeToString(credential),
+			writerBinding.AuthorityDigest,
+		)
+		if hit.Code != http.StatusOK ||
+			!bytes.Equal(hit.Body.Bytes(), payload) {
+			t.Fatalf(
+				"committed L2 hit = %d/%q",
+				hit.Code,
+				hit.Body.Bytes(),
+			)
+		}
+
+		advanced, _, _, _ := sharedAuthorityFixture(t, func(
+			next *localauthority.Document,
+		) {
+			next.Attempt.AttemptID =
+				"22222222-2222-4222-8222-222222222222"
+			next.Attempt.LeaseID = "lease-l2-l1-reader"
+			next.Attempt.AllowWrite = false
+			next.Policy.PolicyVersion++
+			next.Policy.ConfigurationPolicyDigest = "sha256:" +
+				strings.Repeat("6", 64)
+			next.Policy.RevocationEpoch++
+			next.Policy.L1SecurityGeneration++
+			next.Policy.GatewayConnectionGeneration++
+			next.Policy.RemoteCache.Write = "DISABLED"
+			next.Policy.RemoteCache.Namespace = "stable-v2"
+			next.Policy.RemoteCache.NamespaceGeneration++
+			next.Revocation.RequestID = "revocation-request-l2-l1"
+			next.Revocation.RevocationEpoch++
+			next.Revocation.L1SecurityGeneration++
+		})
+		readerBinding, changed, err := storage.InstallLocalAuthority(
+			context.Background(),
+			advanced,
+			credential,
+			sharedAuthorityNow.Add(time.Minute),
+		)
+		if err != nil || !changed {
+			t.Fatalf(
+				"install revoked generation = %+v/%t/%v",
+				readerBinding,
+				changed,
+				err,
+			)
+		}
+		stale := authorityHTTPRequest(
+			t,
+			writerHandler,
+			http.MethodGet,
+			"/cache/l2-l1-key",
+			nil,
+			base64.RawURLEncoding.EncodeToString(credential),
+			writerBinding.AuthorityDigest,
+		)
+		if stale.Code != http.StatusUnauthorized || stale.Body.Len() != 0 {
+			t.Fatalf(
+				"superseded L2 route = %d/%q, want 401/empty",
+				stale.Code,
+				stale.Body.Bytes(),
+			)
+		}
+		readerHandler, err := NewLocalAuthorityHTTPHandler(
+			storage,
+			readerBinding,
+			credential,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		miss := authorityHTTPRequest(
+			t,
+			readerHandler,
+			http.MethodGet,
+			"/cache/l2-l1-key",
+			nil,
+			base64.RawURLEncoding.EncodeToString(credential),
+			readerBinding.AuthorityDigest,
+		)
+		if miss.Code != http.StatusNotFound || miss.Body.Len() != 0 {
+			t.Fatalf(
+				"revoked-generation miss = %d/%q",
+				miss.Code,
+				miss.Body.Bytes(),
+			)
+		}
+	})
+
+	t.Run("aborted pending writer never becomes a remote hit", func(
+		t *testing.T,
+	) {
+		storage := openLifecycleTestStorage(t)
+		storage.clock = func() time.Time { return sharedAuthorityNow }
+		writer, credential, _, _ := sharedAuthorityFixture(
+			t,
+			func(*localauthority.Document) {},
+		)
+		binding, _, err := storage.InstallLocalAuthority(
+			context.Background(),
+			writer,
+			credential,
+			sharedAuthorityNow,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		handler, err := NewLocalAuthorityHTTPHandler(
+			storage,
+			binding,
+			credential,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		put := authorityHTTPRequest(
+			t,
+			handler,
+			http.MethodPut,
+			"/cache/aborted-key",
+			[]byte("aborted pending bytes"),
+			base64.RawURLEncoding.EncodeToString(credential),
+			binding.AuthorityDigest,
+		)
+		if put.Code != http.StatusCreated {
+			t.Fatalf("aborted pending PUT = %d", put.Code)
+		}
+		status, err := storage.AttemptStatus(
+			context.Background(),
+			binding.AttemptID,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		aborted, err := storage.AbortAttempt(
+			context.Background(),
+			AbortAttemptRequest{
+				RequestID:            "abort-l2-writer",
+				AttemptID:            binding.AttemptID,
+				ExpectedStateVersion: status.StateVersion,
+				Reason:               "BUILD_FAILURE",
+			},
+		)
+		if err != nil ||
+			aborted.Status.State != AttemptAborted ||
+			aborted.Status.PendingObjectCount != 0 {
+			t.Fatalf("abort writer = %+v/%v", aborted, err)
+		}
+		miss := authorityHTTPRequest(
+			t,
+			handler,
+			http.MethodGet,
+			"/cache/aborted-key",
+			nil,
+			base64.RawURLEncoding.EncodeToString(credential),
+			binding.AuthorityDigest,
+		)
+		if miss.Code != http.StatusNotFound || miss.Body.Len() != 0 {
+			t.Fatalf(
+				"aborted remote read = %d/%q",
+				miss.Code,
+				miss.Body.Bytes(),
+			)
+		}
+	})
+}
+
 func TestReadOnlyLocalAuthorityCreatesNoPendingAttempt(t *testing.T) {
 	storage := openLifecycleTestStorage(t)
 	storage.clock = func() time.Time { return sharedAuthorityNow }

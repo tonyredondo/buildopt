@@ -116,7 +116,7 @@
   },
   "deferred": {
     "fullHttpFaultMatrix": "A0-G01",
-    "commitDecisionProduction": "A0-G02/A0-G05",
+    "commitDecisionProduction": "A0-G05",
     "revokedDirectoryDeletion": "A1-004",
     "dependencyAndWrapperCaching": "A0-007"
   }

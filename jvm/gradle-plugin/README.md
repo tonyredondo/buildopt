@@ -66,6 +66,7 @@ with:
 ./dev/check-gradle-plugin-handshake
 ./dev/check-tier-one-policy
 ./dev/check-tier-one-cache-conformance
+./dev/check-l1-l2-revocation
 ./dev/check-managed-l1
 ./dev/check-local-authority
 ```

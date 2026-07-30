@@ -685,8 +685,23 @@ Gradle `HttpBuildCache` clients. It proves cold miss/PUT, clean replay,
 configuration-cache reuse, early 413 without replacing an existing object,
 redirect and timeout normalization, corruption quarantine, retry safety, and
 default-deny behavior for modified built-ins, custom tasks, and unknown
-transforms. Production pending commit/abort composition remains a later A0
-gate.
+transforms. The L2-to-L1 commit/revocation/abort composition is the separate
+gate immediately below.
+
+Run the closed `A0-G02` L2-to-L1 revocation and abort lifecycle on the golden
+Gradle/JDK lane:
+
+```bash
+./dev/check-l1-l2-revocation
+```
+
+The checker combines a real authenticated backend commit/revocation/abort
+sequence with Kotlin and Groovy TestKit builds. It proves committed L2 replay
+populates native L1, same-generation L1 works with remote reads unavailable,
+authenticated generation advance forces the next build to miss, and an
+aborted pending writer leaves neither a local directory nor a remote hit.
+Gateway restart, complete spool faults, production commit fault/recovery, and
+physical deletion remain later gates.
 
 ## Managed native L1
 
