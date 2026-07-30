@@ -31,7 +31,8 @@ BUILDOPT_BYPASS=1 buildopt run -- ./gradlew build
 The launcher consumes and removes `BUILDOPT_BYPASS`, removes every other
 launcher-only `BUILDOPT_*` credential or rendezvous value, and executes the
 original argv directly. It does not create the plugin handshake or local
-gateway and does not parse or contact configured session-ingest or policy
+gateway, acquire a managed runner-slot lease, start or contact a detached
+gateway process, or parse or contact configured session-ingest or policy
 services. Standard streams, working directory, arguments, process-group signal
 forwarding, and the child exit status remain unchanged.
 
@@ -96,8 +97,11 @@ Restore the consumer workflow before deleting any files:
 2. Remove `--init-script "$BUILDOPT_GRADLE_INIT_SCRIPT"` and every BuildOpt
    plugin, agent, server, or export variable from the Gradle step.
 3. Remove the `Setup BuildOpt` Action step and its outputs.
-4. Stop any separately started `buildopt-server` process.
-5. Run the original Gradle command and compare its requested tasks, exit status,
+4. Remove the managed-gateway environment values and wait through its configured
+   idle timeout before touching the exact state root; never remove a slot while
+   a build owns it.
+5. Stop any separately started `buildopt-server` process.
+6. Run the original Gradle command and compare its requested tasks, exit status,
    and outputs with the bypass result.
 
 The setup Action's release lives below
@@ -113,6 +117,7 @@ Current persistent-state choices are explicit:
 | Path or state | Preserve (default) | Purge |
 |---|---|---|
 | Action release root under runner temp | Not required after the job | Delete the exact verified `install-root` |
+| Explicit `BUILDOPT_GATEWAY_STATE_ROOT` | Retain only when the runner will reuse its slot identities | Remove the environment values, wait for every gateway's idle exit, verify no build owns a slot, then delete only the exact configured root |
 | `buildopt-server --export-dir` | Archive or retain the customer-selected directory | Stop the server, verify the exact directory, then delete only after explicit evidence-retention approval |
 | Any repository `.buildopt/` directory | Retain; the current launcher does not create it | Treat it as customer state and require a separately reviewed exact path |
 | In-memory `buildopt-server` ingest | Nothing survives server shutdown | No filesystem action |

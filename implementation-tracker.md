@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — Phase 0 is closed with all six exit gates passing; `A0-001` is next for the internal launcher/gateway production path<br>
+**Overall status:** `DOING` — Phase 0 is closed and `A0-001` has moved the internal launcher/gateway onto its managed runner-slot path; `A0-002` is next for the Tier 1 plugin and default-deny allowlist<br>
 **Current phase:** MVP-A0 — foundation and internal pilot<br>
 **Private beta functional target:** `A1 + B + C1 + C4`<br>
 **Last updated:** 2026-07-30<br>
@@ -49,7 +49,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 |---|---|---:|---:|---|
 | Preparation | RFC, beta scope, and tracker closed | `DONE` | 2/2 | — |
 | Phase 0 | Toolchains, executable contracts, fixtures, spikes, and walking skeleton | `DONE` | 6/6 | Preparation |
-| MVP-A0 | Foundation and internal pilot | `TODO` | 0/9 | Phase 0 |
+| MVP-A0 | Foundation and internal pilot | `DOING` | 0/9 | Phase 0 |
 | MVP-A1 | Autonomous Cache in an isolated private beta | `WAITING` | 0/6 | A0 + `OPS-001/A1` |
 | MVP-B | Runtime Optimizer and safe learning | `WAITING` | 0/6 | A1 + `CI-ORCH-001` + `OPS-001/B` |
 | MVP-C1 | Task Intelligence, JVM Agent, and Linux hermeticity | `WAITING` | 0/9 | B |
@@ -137,7 +137,8 @@ The beta target is not complete until A1, B, C1, and C4 close. A2, C2, C3, and G
 | 54 | `SPK-003` | Bound task-specific producer enforcement and fallback | `UNAVAILABLE` | Codex |
 | 55 | `SPK-004` | Exercise the Java PatchBundle parser/applier | `DONE` | Codex |
 | 56 | `F0-G06` | Close the locked-toolchain, host-doctor, and strict golden-image gate | `DONE` | Codex |
-| 57 | `A0-001` | Move the internal launcher/gateway onto its production path | `TODO` | — |
+| 57 | `A0-001` | Move the internal launcher/gateway onto its production path | `DONE` | Codex |
+| 58 | `A0-002` | Implement the Tier 1 plugin and default-deny allowlist | `TODO` | — |
 
 ---
 
@@ -342,15 +343,15 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 
 ## 6. MVP-A0 — foundation and internal pilot
 
-**State:** `TODO`<br>
+**State:** `DOING`<br>
 **Entry gate:** Phase 0 closed for A0.
 
 ### 6.1 Workboard
 
 | ID | Deliverable | State | Owner | Evidence |
 |---|---|---|---|---|
-| `A0-001` | Internal launcher/gateway production path | `TODO` | — | — |
-| `A0-002` | Tier 1 plugin and default-deny allowlist | `WAITING` | — | — |
+| `A0-001` | Internal launcher/gateway production path | `DONE` | Codex | `E-064` |
+| `A0-002` | Tier 1 plugin and default-deny allowlist | `TODO` | — | — |
 | `A0-003` | Managed L1 `DirectoryBuildCache` | `WAITING` | — | — |
 | `A0-004` | Shared single-node: blobs + `cache.sqlite`/`control.sqlite` | `WAITING` | — | — |
 | `A0-005` | Pending/abort/`CommitDecision`/CAS/reconciliation | `WAITING` | — | — |
@@ -645,6 +646,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-061` | 2026-07-29 | `SPK-003`, `HERMETIC-SCOPE-001` | Dependency-free Rust 1.93 [`hermetic helper`](./rust/hermetic-helper/README.md), closed task-specific [fixture manifest](./fixtures/hermetic-helper/README.md), accepted [`UNAVAILABLE` contract](./specs/hermetic-helper-spike-v1.md), and composite [`dev/check-hermetic-helper-spike`](./dev/check-hermetic-helper-spike); the real Linux x86-64 probe found unprivileged user/mount/PID/network namespaces and advertised seccomp actions, but no visible Landlock interface or delegated cgroup, while environment, vDSO clock, and `getrandom` remained unmediated; strict manifest parsing bound a read-only input, disjoint output/tmp, exact workspace command, deny policies, and bounded task/producer identities, then `traceComplete=false` prevented candidate execution, discarded it, and aborted pending publication; the same binary subsequently exercised filesystem, native child/process tree, loopback network, environment, clock, and randomness only through baseline, while writable input and escaped command paths were rejected; four Rust unit tests, offline build, Clippy with warnings denied, ShellCheck, capability matrix, layout, normative layout, and diff hygiene passed locally | `UNAVAILABLE`: partial namespace availability is not hermetic evidence; the C1 qualification route degrades safely while official contracts/adapters/source patches remain possible, and `SPK-004` is next |
 | `E-062` | 2026-07-29 | `SPK-004`, `PATCH-BUNDLE-001` | Dependency-free Java 17 [`PatchBundleVerifier` and `PatchBundleApplier`](./jvm/patcher/README.md), temporary real-Git [fixture generator](./fixtures/patcher/README.md), exact [`PatchBundle application v1`](./specs/patch-bundle-v1.md), and composite [`dev/check-patch-bundle-applier`](./dev/check-patch-bundle-applier); strict UTF-8 JSON rejected duplicate/unknown keys, the exact JCS digest and Ed25519 payload authenticated configured repository/action/key/expiration authority before reading blobs, SHA-256 bound the recursive NUL-delimited base-tree inventory plus every replacement byte, and segment inspection rejected traversal, `.git`, symlink targets/parents, nested repositories, and gitlinks; private detached no-checkout worktrees bypassed an armed customer post-checkout hook/content filter, applied only ordered `ADD`/`MODIFY` mode-`100644` replacements with exact pre/postimages, created only an absent immutable `buildopt/<actionId>` ref, and delegated draft delivery through a credential-free interface; all 15 machine-readable cases covered both recipes, idempotent replay, divergence, authority, path boundaries, rollback, conflicting branch, branch-without-PR recovery, existing PR, and interruption while leaving customer checkout/index and remotes unchanged; the full corpus passed on the locked JDK 21 and the host OpenJDK 17.0.19, while schema, common crypto, warnings-as-errors compilation, Java 17 class-major verification, capability matrix, layout, normative layout, ShellCheck, and diff hygiene passed locally | `DONE`: the bounded customer-side applier is exact for both recipes on executed JDK 17/21 profiles; unexecuted JDK 25 and any application failure retain the download-only fallback, and `F0-G06` is the next Phase 0 gate |
 | `E-063` | 2026-07-30 | `F0-G06`, Phase 0 exit | New composite [`dev/check-phase-zero`](./dev/check-phase-zero), explicit host-Git integration in [`dev/check-base-ci`](./dev/check-base-ci), and corrected PatchBundle Gradle lifecycle ownership in [`jvm/patcher/build.gradle.kts`](./jvm/patcher/build.gradle.kts) and [`dev/check-patch-bundle-applier`](./dev/check-patch-bundle-applier); the first strict run exposed that standard `build` had inherited the real-Git spike after `SPK-004`, which failed honestly in the JDK-only image, so the spike moved outside standard `check` while remaining mandatory in its composite checker and the core CI lane; the final gate validated the ten-artifact lock, deterministic doctor exits, a live `PASS` on the 12-CPU/16,659,865,600-byte host with Docker and visible 2-match/8-drift active `PATH`, exact JDK 21/Java 17, Go 1.26.5, Rust/Cargo 1.93.0, protoc 35.1, Buf 1.72.0, ShellCheck 0.11.0, actionlint 1.7.12, Cosign 3.1.2, and Syft 1.50.0 checks, deterministic container negatives, and the immutable platform digest `sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50` under verified 4-CPU/16-GiB cgroups; the full local core CI lane reran race/vet, Java 17 loading, generated drift, lint, and all 15 real-Git patch cases | `DONE`: all six Phase 0 exit gates now pass without requiring the 4-CPU and 12-CPU workstations to share global tool installations; MVP-A0 is unblocked and `A0-001` is next |
+| `E-064` | 2026-07-30 | `A0-001` | Opt-in managed runner-slot lifecycle in [`managed_gateway.go`](./internal/launcher/managed_gateway.go), real multi-process coverage in [`managed_gateway_linux_test.go`](./cmd/buildopt/managed_gateway_linux_test.go), and composite [`dev/check-managed-gateway`](./dev/check-managed-gateway); the launcher requires an absolute private state root plus tokenized slot identity, removes every lifecycle input from the child, takes a non-blocking exclusive invocation lease, starts or reconnects a detached idle-bounded gateway outside the workspace cwd, and registers the fresh attempt over a bounded Linux abstract Unix channel after both peers verify `SO_PEERCRED`; readiness returns `204` only with current context and `503` between invocations, while cache data routes remain absent; mode-`0700` state directories and atomic mode-`0600` identity state retain endpoint/local credential/generation across process exit and rebind, an occupied retained port rotates all three, a busy slot runs baseline without partial context, and concurrent slots reject cross-credentials; the focused race suite passed three consecutive lifecycles, the final composite passed, the full core CI lane passed all Go race/vet, generated drift, locked lint, Java 17 loading, and 15 real-Git patch cases, while the real Gradle handshake retained Configuration Cache reuse, session ingest and the updated bypass/runbook exercise passed, and layout/diff hygiene stayed clean | `DONE`: the internal pilot now has its production lifecycle and trust boundary without GET/PUT, remote credentials, policy, L1, pending publication, or a claim that `A0-G03` is closed; `A0-002` is next |
 
 ---
 
@@ -652,6 +654,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-30 | Closed `A0-001`: added a private per-slot daemon lifecycle with exclusive invocation ownership, UID-authenticated registration, context-gated readiness, restart-stable identity, complete rotation, isolation, and baseline fallback; moved `A0-002` next while leaving cache routes and `A0-G03` open | Codex |
 | 2026-07-30 | Closed `F0-G06` and Phase 0: added one executable environment gate, kept workstation-global drift visible, passed every locked project-tool checker plus the strict 4-CPU/16-GiB image, and moved `A0-001` next | Codex |
 | 2026-07-29 | Closed `SPK-004` and `PATCH-BUNDLE-001`: the strict Java 17 parser/applier passed all 15 signed real-Git recipe, path, idempotency, rollback, immutable-branch, and draft-recovery cases without executing bundle content or mutating a remote; moved `F0-G06` next | Codex |
 | 2026-07-29 | Closed `SPK-003` and `HERMETIC-SCOPE-001` as `UNAVAILABLE`: the task-specific Rust helper probes real namespaces/kernel support but refuses incomplete environment/clock/randomness/policy coverage, discards the candidate, aborts pending publication, and proves the full producer only through baseline; moved `SPK-004` next | Codex |

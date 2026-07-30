@@ -15,6 +15,7 @@ import (
 const launcherIngestTestToken = "launcher-ingest-test-token-0123456789abcdef"
 
 func TestLauncherDeliversSessionWithoutExposingServerCredential(t *testing.T) {
+	clearManagedGatewayTestEnvironment(t)
 	testCases := []struct {
 		name        string
 		childExit   int
@@ -108,6 +109,7 @@ exit "$1"
 }
 
 func TestLauncherPreservesChildExitWhenSessionIngestFails(t *testing.T) {
+	clearManagedGatewayTestEnvironment(t)
 	t.Setenv(serverURLEnvironment, "http://127.0.0.1:1")
 	t.Setenv(serverTokenEnvironment, launcherIngestTestToken)
 

@@ -97,6 +97,9 @@ for buildopt_key in \
     BUILDOPT_GATEWAY_USERNAME \
     BUILDOPT_GATEWAY_PASSWORD \
     BUILDOPT_GATEWAY_CONNECTION_GENERATION \
+    BUILDOPT_GATEWAY_STATE_ROOT \
+    BUILDOPT_RUNNER_SLOT \
+    BUILDOPT_GATEWAY_IDLE_TIMEOUT \
     BUILDOPT_SERVER_URL \
     BUILDOPT_SERVER_INGEST_TOKEN \
     BUILDOPT_BUILD_SESSION_CONTEXT; do
@@ -126,6 +129,9 @@ BUILDOPT_GATEWAY_URL=http://127.0.0.1:1 \
 BUILDOPT_GATEWAY_USERNAME=parent-user \
 BUILDOPT_GATEWAY_PASSWORD=parent-password \
 BUILDOPT_GATEWAY_CONNECTION_GENERATION=parent-generation \
+BUILDOPT_GATEWAY_STATE_ROOT=/tmp/untrusted-buildopt-state \
+BUILDOPT_RUNNER_SLOT=untrusted-slot \
+BUILDOPT_GATEWAY_IDLE_TIMEOUT=1ms \
 BUILDOPT_SERVER_URL=https://control-plane.invalid \
 BUILDOPT_SERVER_INGEST_TOKEN=parent-server-token \
 BUILDOPT_BUILD_SESSION_CONTEXT='{invalid-json' \
@@ -172,6 +178,9 @@ done
 printf "normal-child-ok\n"
 '
 BUILDOPT_BYPASS=0 \
+BUILDOPT_GATEWAY_STATE_ROOT='' \
+BUILDOPT_RUNNER_SLOT='' \
+BUILDOPT_GATEWAY_IDLE_TIMEOUT='' \
     "${buildopt_binary}" run -- \
     bash -c "${buildopt_active_child}" buildopt-normal \
     >"${buildopt_test_root}/normal.stdout" \

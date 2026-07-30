@@ -24,10 +24,14 @@ const (
 )
 
 // Run executes the WS-001 passthrough command with the WS-002 process contract,
-// exposes the neutral authenticated WS-003/WS-004 local rendezvous, delivers
-// the WS-005 session ingest when configured, honors the F0-039 local bypass,
-// and returns the child process exit status.
+// exposes the authenticated local rendezvous through either its walking-
+// skeleton or managed runner-slot lifecycle, delivers the WS-005 session
+// ingest when configured, honors the F0-039 local bypass, and returns the child
+// process exit status.
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
+	if len(args) > 0 && args[0] == managedGatewayInternalCommand {
+		return runManagedGatewayProcess(args, stderr)
+	}
 	if isHelp(args) {
 		_, _ = io.WriteString(stdout, usage)
 		return 0
@@ -71,14 +75,6 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			exportContextErr,
 		)
 	}
-	gateway, gatewayErr := startLocalGateway()
-	if gatewayErr != nil {
-		_, _ = fmt.Fprintf(
-			stderr,
-			"buildopt: local gateway unavailable: %v\n",
-			gatewayErr,
-		)
-	}
 	handshake, handshakeErr := startPluginHandshake()
 	if handshakeErr != nil {
 		_, _ = fmt.Fprintf(
@@ -86,6 +82,18 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			"buildopt: Gradle plugin handshake unavailable: %v\n",
 			handshakeErr,
 		)
+	}
+	var gateway *localGateway
+	if handshake != nil {
+		var gatewayErr error
+		gateway, gatewayErr = startInvocationGateway(handshake.attemptID)
+		if gatewayErr != nil {
+			_, _ = fmt.Fprintf(
+				stderr,
+				"buildopt: local gateway unavailable: %v\n",
+				gatewayErr,
+			)
+		}
 	}
 
 	rendezvousEnvironment := map[string]string(nil)

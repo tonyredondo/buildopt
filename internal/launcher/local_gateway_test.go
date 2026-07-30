@@ -206,6 +206,9 @@ func TestLocalGatewayChildEnvironment(t *testing.T) {
 		gatewayUsernameEnvironment + "=parent-user",
 		gatewayPasswordEnvironment + "=parent-password",
 		gatewayGenerationEnvironment + "=parent-generation",
+		managedGatewayStateRootEnvironment + "=/tmp/untrusted-state",
+		managedRunnerSlotEnvironment + "=untrusted-slot",
+		managedGatewayIdleTimeoutEnvironment + "=1ms",
 	})
 	expected := map[string]string{
 		gatewayURLEnvironment:        gateway.endpoint,
@@ -223,6 +226,15 @@ func TestLocalGatewayChildEnvironment(t *testing.T) {
 	}
 	if count := environmentKeyCount(environment, bypassEnvironment); count != 0 {
 		t.Fatalf("child environment contains %d bypass entries, want 0", count)
+	}
+	for _, key := range []string{
+		managedGatewayStateRootEnvironment,
+		managedRunnerSlotEnvironment,
+		managedGatewayIdleTimeoutEnvironment,
+	} {
+		if count := environmentKeyCount(environment, key); count != 0 {
+			t.Fatalf("child environment contains %d %s entries, want 0", count, key)
+		}
 	}
 }
 

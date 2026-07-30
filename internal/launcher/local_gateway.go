@@ -35,6 +35,8 @@ type localGateway struct {
 	username   string
 	password   string
 	generation string
+	readiness  func() bool
+	release    func() error
 
 	mutex     sync.Mutex
 	listener  net.Listener
@@ -49,30 +51,64 @@ func startLocalGateway() (*localGateway, error) {
 		return nil, fmt.Errorf("listen on loopback gateway rendezvous: %w", err)
 	}
 
-	_, password, err := newLocalSecret(32)
+	identity, err := newGatewayIdentity(listener.Addr().String())
 	if err != nil {
 		_ = listener.Close()
-		return nil, fmt.Errorf("generate local gateway credential: %w", err)
-	}
-	generation, err := newPluginAttemptID()
-	if err != nil {
-		_ = listener.Close()
-		return nil, fmt.Errorf("generate gateway connection generation: %w", err)
+		return nil, err
 	}
 
-	gateway := &localGateway{
-		address:    listener.Addr().String(),
-		endpoint:   "http://" + listener.Addr().String(),
-		username:   gatewayUsername,
-		password:   password,
-		generation: generation,
-	}
+	gateway := localGatewayForListener(listener, identity, nil)
 	gateway.startServingLocked(listener)
 	if err := gateway.probe(); err != nil {
 		_ = gateway.close()
 		return nil, fmt.Errorf("verify local gateway readiness: %w", err)
 	}
 	return gateway, nil
+}
+
+type gatewayIdentity struct {
+	address    string
+	username   string
+	password   string
+	generation string
+}
+
+func newGatewayIdentity(address string) (gatewayIdentity, error) {
+	_, password, err := newLocalSecret(32)
+	if err != nil {
+		return gatewayIdentity{}, fmt.Errorf(
+			"generate local gateway credential: %w",
+			err,
+		)
+	}
+	generation, err := newPluginAttemptID()
+	if err != nil {
+		return gatewayIdentity{}, fmt.Errorf(
+			"generate gateway connection generation: %w",
+			err,
+		)
+	}
+	return gatewayIdentity{
+		address:    address,
+		username:   gatewayUsername,
+		password:   password,
+		generation: generation,
+	}, nil
+}
+
+func localGatewayForListener(
+	listener net.Listener,
+	identity gatewayIdentity,
+	readiness func() bool,
+) *localGateway {
+	return &localGateway{
+		address:    listener.Addr().String(),
+		endpoint:   "http://" + listener.Addr().String(),
+		username:   identity.username,
+		password:   identity.password,
+		generation: identity.generation,
+		readiness:  readiness,
+	}
 }
 
 func (gateway *localGateway) childEnvironment(
@@ -95,6 +131,9 @@ func (gateway *localGateway) restart() error {
 
 	if gateway.closed {
 		return errors.New("restart closed local gateway")
+	}
+	if gateway.release != nil {
+		return errors.New("restart is owned by the managed gateway process")
 	}
 	if err := gateway.stopServingLocked(); err != nil {
 		return fmt.Errorf("stop local gateway for restart: %w", err)
@@ -120,6 +159,9 @@ func (gateway *localGateway) close() error {
 		return nil
 	}
 	gateway.closed = true
+	if gateway.release != nil {
+		return gateway.release()
+	}
 	return gateway.stopServingLocked()
 }
 
@@ -195,6 +237,10 @@ func (gateway *localGateway) ServeHTTP(
 		writer.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
+	if gateway.readiness != nil && !gateway.readiness() {
+		writer.WriteHeader(http.StatusServiceUnavailable)
+		return
+	}
 
 	writer.Header().Set(gatewayGenerationHeader, gateway.generation)
 	writer.WriteHeader(http.StatusNoContent)
@@ -262,6 +308,9 @@ var reservedChildEnvironment = []string{
 	gatewayUsernameEnvironment,
 	gatewayPasswordEnvironment,
 	gatewayGenerationEnvironment,
+	managedGatewayStateRootEnvironment,
+	managedRunnerSlotEnvironment,
+	managedGatewayIdleTimeoutEnvironment,
 	serverURLEnvironment,
 	serverTokenEnvironment,
 	exportContextEnvironment,

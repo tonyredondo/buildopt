@@ -170,13 +170,33 @@ Exercise the neutral `WS-004` gateway and real launcher with the race detector:
 ./dev/check-local-gateway
 ```
 
-The gateway binds only an operating-system-assigned `127.0.0.1` endpoint and
-exposes one authenticated readiness route. Its Basic credential is local-only,
+The unmanaged compatibility gateway binds only an operating-system-assigned
+`127.0.0.1` endpoint and exposes one authenticated readiness route. Its Basic
+credential is local-only,
 its response binds the current `gatewayConnectionGeneration`, and cache data
 routes return `404`. The checker proves that a restart retains endpoint,
 credential, and generation; concurrent slots receive distinct identities and
 reject each other's credentials; attacker-controlled parent values are
 replaced; and the endpoint is gone after the child exits.
+
+## Managed gateway lifecycle validation
+
+Exercise the internal `A0-001` production path with real launcher and detached
+gateway processes:
+
+```bash
+./dev/check-managed-gateway
+```
+
+The race-enabled checker uses private temporary state roots and proves strict
+configuration, mode-`0700` directories and mode-`0600` identity state,
+current-user control registration, exactly one active invocation per runner
+slot, baseline fallback for a busy slot, distinct concurrent slots, and
+rejected cross-slot credentials. It also proves that readiness returns `503`
+without a current context, an idle process restart retains
+endpoint/credential/generation, and an occupied retained port rotates all
+three before readiness. Cache data routes and remote credentials remain
+absent.
 
 ## Session ingest validation
 

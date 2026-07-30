@@ -34,6 +34,9 @@ const (
 	serverURLEnvironment           = "BUILDOPT_SERVER_URL"
 	serverTokenEnvironment         = "BUILDOPT_SERVER_INGEST_TOKEN"
 	buildSessionContextEnvironment = "BUILDOPT_BUILD_SESSION_CONTEXT"
+	managedStateRootEnvironment    = "BUILDOPT_GATEWAY_STATE_ROOT"
+	managedRunnerSlotEnvironment   = "BUILDOPT_RUNNER_SLOT"
+	managedIdleTimeoutEnvironment  = "BUILDOPT_GATEWAY_IDLE_TIMEOUT"
 	gatewayReadyPath               = "/_buildopt/ready"
 	gatewayGenerationHeader        = "BuildOpt-Gateway-Connection-Generation"
 	expectedUsage                  = "usage: buildopt run -- <command> [args...]\n"
@@ -64,6 +67,7 @@ func TestBuildoptCLI(t *testing.T) {
 	t.Setenv(serverURLEnvironment, "")
 	t.Setenv(serverTokenEnvironment, "")
 	t.Setenv(buildSessionContextEnvironment, "")
+	clearManagedGatewayEnvironment(t)
 
 	buildoptBinary := buildBuildopt(t)
 
@@ -428,6 +432,13 @@ func TestBuildoptCLI(t *testing.T) {
 			t.Fatalf("unexpected cannot-execute diagnostic: %q", stderr.String())
 		}
 	})
+}
+
+func clearManagedGatewayEnvironment(t *testing.T) {
+	t.Helper()
+	t.Setenv(managedStateRootEnvironment, "")
+	t.Setenv(managedRunnerSlotEnvironment, "")
+	t.Setenv(managedIdleTimeoutEnvironment, "")
 }
 
 func TestBuildoptChildHelper(t *testing.T) {

@@ -127,6 +127,58 @@ Cache GET/PUT behavior, upstream credentials, retained task-event streaming,
 and every optimization remain inactive. The first local JSON export is
 described below.
 
+## A0-001 managed runner-slot lifecycle
+
+The internal pilot can move the neutral gateway onto its managed process path
+by supplying both an absolute private state root and a runner-slot identity:
+
+```bash
+BUILDOPT_GATEWAY_STATE_ROOT=/run/user/1000/buildopt \
+BUILDOPT_RUNNER_SLOT=runner-01.internal \
+buildopt run -- ./gradlew build
+```
+
+The orchestrator must include the trust domain in the slot identity until
+authenticated policy owns that dimension. Slot identifiers contain 1–128
+ASCII letters, digits, dots, underscores, or hyphens and begin with a letter or
+digit. Both variables are launcher-only and are removed from the child. With
+both absent, the Phase 0 per-invocation gateway remains the compatibility path;
+an incomplete or invalid configuration falls back to the original command
+without exposing partial rendezvous context.
+
+The launcher creates mode-`0700`, current-user-owned state directories, hashes
+the slot into its on-disk name, and takes a non-blocking exclusive invocation
+lease. A second invocation cannot reuse an active slot: it receives no gateway
+or plugin context and runs on the baseline path. Concurrent builds must use
+different slot identities.
+
+For an available slot, `buildopt` starts or reconnects a detached gateway
+process and registers the fresh attempt over a Linux abstract Unix socket.
+Both peers verify `SO_PEERCRED` ownership before exchanging a bounded,
+versioned registration. The gateway serves readiness only while that
+connection is current; an authenticated request between invocations returns
+`503`, and all cache data paths still return `404`.
+
+The loopback address, local-only Basic credential, and
+`gatewayConnectionGeneration` are atomically stored in a mode-`0600` state
+file. A process restart rebinds and reuses the complete identity. If the
+address cannot be recovered, the gateway rotates endpoint, credential, and
+generation together before admitting the invocation. The detached process
+exits after five idle minutes by default; `BUILDOPT_GATEWAY_IDLE_TIMEOUT` can
+set a bounded `100ms`–`24h` internal-pilot lifetime and is also removed from the
+child. Removing the state root deliberately rotates the identity and must be
+done only while its slots are idle.
+
+Validate the real multi-process lifecycle with:
+
+```bash
+./dev/check-managed-gateway
+```
+
+This path establishes lifecycle and trust boundaries only. L1/L2 cache
+behavior, upstream credentials, authenticated policy, revocation, and pending
+publication remain owned by later MVP-A0 blocks.
+
 ## WS-005 server ingest
 
 When both `BUILDOPT_SERVER_URL` and `BUILDOPT_SERVER_INGEST_TOKEN` are present,

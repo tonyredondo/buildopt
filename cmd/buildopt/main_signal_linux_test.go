@@ -42,6 +42,7 @@ func TestBuildoptForwardsSignalsToChildProcessGroup(t *testing.T) {
 	t.Setenv(serverURLEnvironment, "")
 	t.Setenv(serverTokenEnvironment, "")
 	t.Setenv(buildSessionContextEnvironment, "")
+	clearManagedGatewayEnvironment(t)
 
 	buildoptBinary := buildBuildopt(t)
 	signalHelper := buildSignalHelper(t)
@@ -179,6 +180,7 @@ func TestBuildoptReturnsConventionalStatusForUnhandledSignal(t *testing.T) {
 	t.Setenv(serverURLEnvironment, "")
 	t.Setenv(serverTokenEnvironment, "")
 	t.Setenv(buildSessionContextEnvironment, "")
+	clearManagedGatewayEnvironment(t)
 
 	buildoptBinary := buildBuildopt(t)
 	signalHelper := buildSignalHelper(t)
@@ -227,6 +229,7 @@ func TestBuildoptReturnsConventionalStatusForUnhandledSignal(t *testing.T) {
 func TestBuildoptCancellationClosesInvocationResources(t *testing.T) {
 	t.Setenv(bypassEnvironment, "")
 	t.Setenv(buildSessionContextEnvironment, "")
+	clearManagedGatewayEnvironment(t)
 
 	const token = "signal-session-token-0123456789abcdefghijkl"
 	store := sessioningest.NewStore()

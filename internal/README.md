@@ -10,10 +10,13 @@ the private event socket and loopback readiness gateway, and consumes the
 `F0-039` local bypass before creating either service or parsing server
 configuration. The bypass uses the same process/signal contract and removes all
 reserved launcher state from the child. Grace-period escalation remains with
-the invoking CI environment. The gateway has no
-cache data or upstream route yet; later lifecycle, policy, cache, and
-observation behavior must extend this boundary without replacing contract
-sources.
+the invoking CI environment. The gateway has no cache data or upstream route
+yet. `A0-001` adds the opt-in managed runner-slot path: a current-user private
+state root, exclusive invocation and gateway leases, a detached idle-bounded
+process, UID-authenticated invocation registration, context-gated readiness,
+restart-stable identity, and complete rotation when the endpoint cannot be
+recovered. Later policy, cache, and observation behavior must extend this
+boundary without replacing contract sources.
 
 `sessioningest/` contains the provisional `WS-005` gateway-to-server record,
 strict authenticated HTTP transport, and concurrency-safe in-memory acceptance
