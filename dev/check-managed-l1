@@ -1,0 +1,405 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_policy="${buildopt_repo_root}/specs/managed-l1-v1.json"
+buildopt_tmp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-managed-l1.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_tmp}" &&
+        "${buildopt_tmp}" == "${TMPDIR:-/tmp}/buildopt-managed-l1."* ]]; then
+        rm -rf -- "${buildopt_tmp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in awk basename cp dirname find git grep java jq mkdir \
+    mktemp readlink rm sed stat tr unzip; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required managed-L1 command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+if ! jq -e '
+    keys == [
+        "activation",
+        "childContext",
+        "cleanup",
+        "deferredAuthority",
+        "directoryLayout",
+        "fallback",
+        "launcherInputs",
+        "lease",
+        "modes",
+        "policyId",
+        "schemaVersion",
+        "scopeDigest"
+    ] and
+    .schemaVersion == "buildopt.specs/managed-l1/v1" and
+    .policyId == "MANAGED_L1_V1" and
+    .activation == {
+        "pluginId": "dev.buildopt.managed-l1",
+        "applicationContext": "INIT_SCRIPT_BEFORE_SETTINGS",
+        "requiresBuildCacheFlag": true,
+        "taskPolicyPluginId": "dev.buildopt.tier-one-policy"
+    } and
+    .launcherInputs == {
+        "stateRoot": "BUILDOPT_L1_STATE_ROOT",
+        "scopeFields": [
+            "BUILDOPT_L1_TENANT_ID",
+            "BUILDOPT_L1_REPOSITORY_ID",
+            "BUILDOPT_L1_TRUST_DOMAIN",
+            "BUILDOPT_L1_COMPATIBILITY_CLASS"
+        ],
+        "securityGeneration": "BUILDOPT_L1_SECURITY_GENERATION",
+        "l2WriteAuthorized": "BUILDOPT_L1_L2_WRITE_AUTHORIZED"
+    } and
+    .scopeDigest == {
+        "algorithm": "SHA-256",
+        "domain": "buildopt-managed-l1-scope-v1",
+        "encoding": "DOMAIN_THEN_UINT32_BE_LENGTH_PREFIXED_UTF8",
+        "fields": [
+            "tenantId",
+            "repositoryId",
+            "trustDomain",
+            "cacheCompatibilityClass"
+        ]
+    } and
+    .childContext == {
+        "directory": "BUILDOPT_MANAGED_L1_DIRECTORY",
+        "mode": "BUILDOPT_MANAGED_L1_MODE",
+        "securityGeneration": "BUILDOPT_MANAGED_L1_SECURITY_GENERATION",
+        "retentionDays": "BUILDOPT_MANAGED_L1_RETENTION_DAYS"
+    } and
+    .directoryLayout ==
+        "l1/scopes/<scopeDigest>/generation-<l1SecurityGeneration>/cache" and
+    .cleanup == {
+        "owner": "GRADLE_NATIVE",
+        "removeUnusedEntriesAfterDays": 7,
+        "customFormatOrLru": false
+    } and
+    .modes == [
+        {
+            "id": "READ_WRITE",
+            "directoryRequired": true,
+            "localEnabled": true,
+            "localPush": true
+        },
+        {
+            "id": "DISABLED_L2_WRITER",
+            "directoryRequired": false,
+            "localEnabled": false,
+            "localPush": false
+        }
+    ] and
+    .lease == {
+        "scope": "SCOPE_DIGEST_AND_SECURITY_GENERATION",
+        "mode": "NONBLOCKING_EXCLUSIVE",
+        "lifetime": "GRADLE_CHILD"
+    } and
+    .fallback == {
+        "absentConfiguration": "NO_MANAGED_L1_CONTEXT",
+        "invalidConfiguration": "GRADLE_BASELINE_NO_MANAGED_L1",
+        "unsafeStateRoot": "GRADLE_BASELINE_NO_MANAGED_L1",
+        "busyLease": "GRADLE_BASELINE_NO_MANAGED_L1",
+        "maintenanceFailure": "GRADLE_BASELINE_NO_MANAGED_L1"
+    } and
+    .deferredAuthority == {
+        "authenticatedGeneration": "A0-006",
+        "remotePopulation": "A0-004/A0-005",
+        "revokedDirectoryDeletion": "A0-006/A1-004"
+    }
+' "${buildopt_policy}" >/dev/null; then
+    printf 'managed-L1 policy is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_required_files=(
+    "internal/launcher/managed_l1.go"
+    "internal/launcher/managed_l1_test.go"
+    "cmd/buildopt/managed_l1_linux_test.go"
+    "jvm/gradle-plugin/src/main/java/dev/buildopt/gradle/BuildOptManagedL1Plugin.java"
+    "jvm/gradle-plugin/src/testKit/java/dev/buildopt/gradle/ManagedL1TestKit.java"
+    "specs/managed-l1-v1.md"
+)
+for buildopt_relative in "${buildopt_required_files[@]}"; do
+    if [[ ! -f "${buildopt_repo_root}/${buildopt_relative}" ]]; then
+        printf 'missing managed-L1 file: %s\n' "${buildopt_relative}" >&2
+        exit 1
+    fi
+done
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 ./internal/launcher ./cmd/buildopt
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p -- "${GRADLE_USER_HOME}"
+
+"${buildopt_script_dir}/run" -- \
+    "${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --no-configuration-cache \
+    --warning-mode=fail \
+    :jvm:gradle-plugin:jar
+
+buildopt_gradle_9_home=$(
+    find \
+        "${GRADLE_USER_HOME}/wrapper/dists/gradle-9.6.1-bin" \
+        -type d \
+        -path '*/gradle-9.6.1' \
+        -print \
+        -quit
+)
+buildopt_gradle_8_home="${buildopt_repo_root}/.tools/gradle-compat/gradle-8.14.3"
+if [[ -z "${buildopt_gradle_9_home}" ||
+    ! -x "${buildopt_gradle_9_home}/bin/gradle" ||
+    ! -x "${buildopt_gradle_8_home}/bin/gradle" ]]; then
+    printf 'both pinned Gradle distributions must be provisioned\n' >&2
+    exit 1
+fi
+buildopt_gradle_9_home=$(readlink -f "${buildopt_gradle_9_home}")
+buildopt_gradle_8_home=$(readlink -f "${buildopt_gradle_8_home}")
+
+buildopt_java_17=$(readlink -f "$(command -v java)")
+buildopt_java_17_home=$(cd -- "$(dirname -- "${buildopt_java_17}")/.." && pwd)
+buildopt_java_17_major=$(
+    "${buildopt_java_17}" -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.version = / {
+                split($2, version, ".")
+                print version[1]
+                exit
+            }
+        '
+)
+if [[ "${buildopt_java_17_major}" != "17" ]]; then
+    printf 'A0-003 requires an available JDK 17 runtime; active Java is %s\n' \
+        "${buildopt_java_17_major:-unknown}" >&2
+    exit 1
+fi
+
+buildopt_java_21_home=$(
+    "${buildopt_script_dir}/run" -- \
+        java -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.home = / {
+                print $2
+                exit
+            }
+        '
+)
+if [[ ! -x "${buildopt_java_21_home}/bin/java" ]]; then
+    printf 'locked JDK 21 home is unavailable\n' >&2
+    exit 1
+fi
+
+mapfile -d '' buildopt_plugin_jars < <(
+    find "${buildopt_repo_root}/jvm/gradle-plugin/build/libs" \
+        -maxdepth 1 \
+        -type f \
+        -name 'buildopt-gradle-plugin-*.jar' \
+        ! -name '*-sources.jar' \
+        ! -name '*-javadoc.jar' \
+        -print0
+)
+if ((${#buildopt_plugin_jars[@]} != 1)); then
+    printf 'expected one packaged Gradle plugin, found %s\n' \
+        "${#buildopt_plugin_jars[@]}" >&2
+    exit 1
+fi
+buildopt_plugin_jar=${buildopt_plugin_jars[0]}
+buildopt_l1_descriptor=$(
+    unzip -p \
+        "${buildopt_plugin_jar}" \
+        META-INF/gradle-plugins/dev.buildopt.managed-l1.properties |
+        tr -d '\r'
+)
+if [[ "${buildopt_l1_descriptor}" != \
+    'implementation-class=dev.buildopt.gradle.BuildOptManagedL1Plugin' ]]; then
+    printf 'managed-L1 plugin marker is missing or invalid\n' >&2
+    exit 1
+fi
+
+buildopt_gradle_homes=("${buildopt_gradle_8_home}" "${buildopt_gradle_9_home}")
+buildopt_java_majors=(17 21)
+buildopt_java_homes=("${buildopt_java_17_home}" "${buildopt_java_21_home}")
+
+for buildopt_gradle_home in "${buildopt_gradle_homes[@]}"; do
+    for buildopt_java_index in "${!buildopt_java_majors[@]}"; do
+        JAVA_HOME="${buildopt_java_homes[buildopt_java_index]}" \
+        PATH="${buildopt_java_homes[buildopt_java_index]}/bin:${PATH}" \
+            "${buildopt_script_dir}/run" -- \
+                "${buildopt_repo_root}/gradlew" \
+                --no-daemon \
+                --offline \
+                --no-configuration-cache \
+                --stacktrace \
+                --warning-mode=fail \
+                :jvm:gradle-plugin:managedL1TestKit \
+                "-PbuildoptTierOneJava=${buildopt_java_majors[buildopt_java_index]}" \
+                "-PbuildoptTierOneGradleHome=${buildopt_gradle_home}"
+    done
+done
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go build \
+    -mod=readonly \
+    -buildvcs=false \
+    -trimpath \
+    -o "${buildopt_tmp}/buildopt" \
+    ./cmd/buildopt
+buildopt_fixture_files=0
+while IFS= read -r -d '' buildopt_relative; do
+    buildopt_target="${buildopt_tmp}/${buildopt_relative#fixtures/}"
+    mkdir -p -- "$(dirname -- "${buildopt_target}")"
+    cp -P -- \
+        "${buildopt_repo_root}/${buildopt_relative}" \
+        "${buildopt_target}"
+    ((buildopt_fixture_files += 1))
+done < <(
+    git -C "${buildopt_repo_root}" ls-files \
+        -z \
+        --cached \
+        --others \
+        --exclude-standard \
+        -- \
+        fixtures/tier1
+)
+if ((buildopt_fixture_files == 0)); then
+    printf 'managed-L1 fixture has no source files\n' >&2
+    exit 1
+fi
+buildopt_init_script="${buildopt_tmp}/buildopt-managed-l1.init.gradle"
+buildopt_plugin_jar_quoted=${buildopt_plugin_jar//\\/\\\\}
+buildopt_plugin_jar_quoted=${buildopt_plugin_jar_quoted//\'/\\\'}
+printf '%s\n' \
+    "initscript { dependencies { classpath files('${buildopt_plugin_jar_quoted}') } }" \
+    'beforeSettings { settings ->' \
+    '    settings.pluginManager.apply(dev.buildopt.gradle.BuildOptManagedL1Plugin)' \
+    '}' \
+    >"${buildopt_init_script}"
+buildopt_state_root="${buildopt_tmp}/state"
+buildopt_integrated_gradle_home="${buildopt_tmp}/gradle-user-home"
+mkdir -m 0700 -- "${buildopt_state_root}"
+
+buildopt_integrated_run() {
+    local buildopt_generation=$1
+    local buildopt_output=$2
+
+    (
+        cd -- "${buildopt_tmp}/tier1/kotlin"
+        BUILDOPT_L1_STATE_ROOT="${buildopt_state_root}" \
+        BUILDOPT_L1_TENANT_ID=tenant-7 \
+        BUILDOPT_L1_REPOSITORY_ID=tonyredondo/buildopt \
+        BUILDOPT_L1_TRUST_DOMAIN=private-beta \
+        BUILDOPT_L1_COMPATIBILITY_CLASS=gradle-9.6-java-21-linux-amd64 \
+        BUILDOPT_L1_SECURITY_GENERATION="${buildopt_generation}" \
+        BUILDOPT_L1_L2_WRITE_AUTHORIZED=0 \
+        GRADLE_USER_HOME="${buildopt_integrated_gradle_home}" \
+        JAVA_HOME="${buildopt_java_21_home}" \
+        PATH="${buildopt_java_21_home}/bin:${PATH}" \
+            "${buildopt_tmp}/buildopt" run -- \
+                "${buildopt_gradle_9_home}/bin/gradle" \
+                --no-daemon \
+                --offline \
+                --configuration-cache \
+                --build-cache \
+                --init-script "${buildopt_init_script}" \
+                --warning-mode=fail \
+                --console=plain \
+                --info \
+                -PbuildoptTierOneRegisterTransform=false \
+                clean \
+                compileJava
+    ) </dev/null >"${buildopt_output}" 2>&1
+}
+
+if ! buildopt_integrated_run 42 "${buildopt_tmp}/integrated-first.log"; then
+    printf 'first real launcher-to-Gradle managed-L1 build failed\n' >&2
+    sed -n '1,240p' "${buildopt_tmp}/integrated-first.log" >&2
+    exit 1
+fi
+if ! buildopt_integrated_run 42 "${buildopt_tmp}/integrated-replay.log"; then
+    printf 'replayed real launcher-to-Gradle managed-L1 build failed\n' >&2
+    sed -n '1,240p' "${buildopt_tmp}/integrated-replay.log" >&2
+    exit 1
+fi
+if ! grep -Fq '> Task :compileJava FROM-CACHE' \
+    "${buildopt_tmp}/integrated-replay.log" ||
+    ! grep -Fq 'Configuration cache entry reused.' \
+        "${buildopt_tmp}/integrated-replay.log"; then
+    printf 'real launcher-to-Gradle managed-L1 replay failed\n' >&2
+    sed -n '1,240p' "${buildopt_tmp}/integrated-replay.log" >&2
+    exit 1
+fi
+
+if ! buildopt_integrated_run 43 "${buildopt_tmp}/integrated-rotated.log"; then
+    printf 'rotated real launcher-to-Gradle managed-L1 build failed\n' >&2
+    sed -n '1,240p' "${buildopt_tmp}/integrated-rotated.log" >&2
+    exit 1
+fi
+if grep -Fq '> Task :compileJava FROM-CACHE' \
+    "${buildopt_tmp}/integrated-rotated.log" ||
+    grep -Fq 'Configuration cache entry reused.' \
+        "${buildopt_tmp}/integrated-rotated.log"; then
+    printf 'real launcher-to-Gradle generation rotation reused stale state\n' >&2
+    sed -n '1,240p' "${buildopt_tmp}/integrated-rotated.log" >&2
+    exit 1
+fi
+
+mapfile -t buildopt_generation_42_caches < <(
+    find "${buildopt_state_root}/l1/scopes" \
+        -type d \
+        -path '*/generation-42/cache' \
+        -print
+)
+mapfile -t buildopt_generation_43_caches < <(
+    find "${buildopt_state_root}/l1/scopes" \
+        -type d \
+        -path '*/generation-43/cache' \
+        -print
+)
+if ((${#buildopt_generation_42_caches[@]} != 1)) ||
+    ((${#buildopt_generation_43_caches[@]} != 1)); then
+    printf 'real launcher did not materialize both managed-L1 generations\n' >&2
+    exit 1
+fi
+buildopt_scope=$(
+    basename -- "$(dirname -- "$(dirname -- "${buildopt_generation_42_caches[0]}")")"
+)
+if [[ ! "${buildopt_scope}" =~ ^[0-9a-f]{64}$ ]] ||
+    [[ "${buildopt_generation_42_caches[0]}" == *tenant-7* ]] ||
+    [[ "${buildopt_generation_42_caches[0]}" == *tonyredondo* ]]; then
+    printf 'real launcher managed-L1 scope is not opaque\n' >&2
+    exit 1
+fi
+if [[ "$(stat -c '%a' -- "${buildopt_generation_42_caches[0]}")" != "700" ]] ||
+    [[ "$(stat -c '%a' -- "${buildopt_generation_43_caches[0]}")" != "700" ]]; then
+    printf 'real launcher managed-L1 directories are not private\n' >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'managed-L1 check changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'A0-003 managed L1 OK: private scoped launcher lifecycle, 8 Gradle/JDK/DSL rows, native generation rotation, Configuration Cache, and L2-writer fallback\n'

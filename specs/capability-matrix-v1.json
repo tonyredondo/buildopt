@@ -59,9 +59,9 @@
           "id": "MANAGED_SHARED_CACHE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "the A0 default-deny policy is proven but cache configuration and backend are not implemented",
+          "reason": "the A0 default-deny policy and managed native L1 are proven but the shared L2 backend is not implemented",
           "fallback": "GRADLE_BASELINE",
-          "evidence": ["dev/check-tier-one-policy"]
+          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1"]
         },
         {
           "id": "JVM_AGENT",
@@ -144,9 +144,9 @@
           "id": "MANAGED_SHARED_CACHE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "the A0 default-deny policy is proven but cache configuration and backend are not implemented",
+          "reason": "the A0 default-deny policy and managed native L1 are proven but the shared L2 backend is not implemented",
           "fallback": "GRADLE_BASELINE",
-          "evidence": ["dev/check-tier-one-policy"]
+          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1"]
         },
         {
           "id": "JVM_AGENT",
@@ -229,9 +229,9 @@
           "id": "MANAGED_SHARED_CACHE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "the A0 default-deny policy is proven but cache configuration and backend are not implemented",
+          "reason": "the A0 default-deny policy and managed native L1 are proven but the shared L2 backend is not implemented",
           "fallback": "GRADLE_BASELINE",
-          "evidence": ["dev/check-tier-one-policy"]
+          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1"]
         },
         {
           "id": "JVM_AGENT",

@@ -15,8 +15,13 @@ yet. `A0-001` adds the opt-in managed runner-slot path: a current-user private
 state root, exclusive invocation and gateway leases, a detached idle-bounded
 process, UID-authenticated invocation registration, context-gated readiness,
 restart-stable identity, and complete rotation when the endpoint cannot be
-recovered. Later policy, cache, and observation behavior must extend this
-boundary without replacing contract sources.
+recovered. `A0-003` adds the launcher-owned native L1 lifecycle: opaque
+tenant/repository/trust/compatibility scoping, generation-segmented private
+directories, an exclusive child-lifetime lease, and local-cache disablement
+for pending L2 writers. Authenticated generation authority, remote
+population, and revoked-directory deletion remain with later A0 blocks.
+Later policy, cache, and observation behavior must extend this boundary
+without replacing contract sources.
 
 `sessioningest/` contains the provisional `WS-005` gateway-to-server record,
 strict authenticated HTTP transport, and concurrency-safe in-memory acceptance

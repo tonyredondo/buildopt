@@ -34,6 +34,20 @@ generation, and writes the separate event-channel authentication preface before
 `ProducerHello`. Incomplete or rejected context remains fail-open for the
 baseline build. The gateway exposes no cache data routes yet.
 
+`A0-003` packages `dev.buildopt.managed-l1` as a settings plugin. An init
+script applies it in `beforeSettings`, and the invoker supplies Gradle's public
+`--build-cache` flag. Complete launcher context configures one native
+`DirectoryBuildCache` under the opaque scope/security-generation directory,
+enables local load/store, and delegates seven-day retention to Gradle's native
+cleanup. The plugin also applies `dev.buildopt.tier-one-policy` before each
+project. Malformed context disables the managed cache; the distinct
+`DISABLED_L2_WRITER` mode disables local load/store without taking ownership
+of the future remote cache.
+
+The plugin does not read Gradle's opaque cache files, authenticate generation
+authority, delete revoked generations, configure L2, or force build-cache
+enablement by mutating `StartParameter` during settings evaluation.
+
 Validate the packaged Java 17 artifact, gateway, and real Wrapper handshake
 with:
 
@@ -42,6 +56,7 @@ with:
 ./dev/check-local-gateway
 ./dev/check-gradle-plugin-handshake
 ./dev/check-tier-one-policy
+./dev/check-managed-l1
 ```
 
 Deep instrumentation and output-semantics changes do not belong in this module

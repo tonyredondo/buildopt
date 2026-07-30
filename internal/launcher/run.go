@@ -95,10 +95,18 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			)
 		}
 	}
+	l1, l1Err := startInvocationManagedL1()
+	if l1Err != nil {
+		_, _ = fmt.Fprintf(
+			stderr,
+			"buildopt: managed L1 unavailable: %v\n",
+			l1Err,
+		)
+	}
 
-	rendezvousEnvironment := map[string]string(nil)
+	childEnvironment := map[string]string(nil)
 	if gateway != nil && handshake != nil {
-		rendezvousEnvironment = map[string]string{
+		childEnvironment = map[string]string{
 			pluginAttemptIDEnvironment:   handshake.attemptID,
 			pluginSocketEnvironment:      handshake.listener.Addr().String(),
 			pluginTokenEnvironment:       handshake.tokenText,
@@ -108,9 +116,17 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			gatewayGenerationEnvironment: gateway.generation,
 		}
 	}
+	if l1 != nil {
+		if childEnvironment == nil {
+			childEnvironment = make(map[string]string)
+		}
+		for key, value := range l1.childEnvironment() {
+			childEnvironment[key] = value
+		}
+	}
 	execution := executeChild(
 		childArgs,
-		rendezvousEnvironment,
+		childEnvironment,
 		stdin,
 		stdout,
 		stderr,
@@ -122,7 +138,13 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		if gateway != nil {
 			_ = gateway.close()
 		}
+		if l1 != nil {
+			_ = l1.close()
+		}
 		return launchErrorExitCode(childArgs[0], execution.err, stderr)
+	}
+	if l1 != nil {
+		reportManagedL1Close(l1.close(), stderr)
 	}
 
 	handshakeResult := pluginHandshakeResult{}
@@ -291,6 +313,17 @@ func reportLocalGatewayClose(err error, stderr io.Writer) {
 	_, _ = fmt.Fprintf(
 		stderr,
 		"buildopt: local gateway shutdown incomplete: %v\n",
+		err,
+	)
+}
+
+func reportManagedL1Close(err error, stderr io.Writer) {
+	if err == nil {
+		return
+	}
+	_, _ = fmt.Fprintf(
+		stderr,
+		"buildopt: managed L1 release incomplete: %v\n",
 		err,
 	)
 }

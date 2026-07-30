@@ -673,6 +673,29 @@ strict warning gate.
 The policy plugin never configures or enables a cache; `A0-003` owns that
 integration.
 
+## Managed native L1
+
+Run the `A0-003` launcher/settings-plugin contract across the same eight
+Gradle/JDK/DSL rows:
+
+```bash
+./dev/check-managed-l1
+```
+
+The checker first validates the exact machine contract and race-enabled Go
+launcher lifecycle. It then runs Kotlin and Groovy fixtures on Gradle 8.14.3
+and 9.6.1 with JDK 17 and 21, proving native cache replay,
+default-deny custom-task re-execution, Configuration Cache reuse, and a miss
+followed by a hit after `l1SecurityGeneration` rotation. The golden row also
+proves malformed-context and L2-writer disablement. A final real
+launcher-to-Gradle sequence checks the opaque mode-`0700` directory, exclusive
+generation ownership, native cache replay, and rotation without interpreting
+Gradle's cache format. The neutral authenticated handshake remains an
+independent regression in `./dev/check-gradle-plugin-handshake`.
+
+The checker does not claim an L2 backend or authenticated revocation decision;
+those remain with `A0-004..006`.
+
 ## JVM Agent spike
 
 Run the bounded agent against a real Gradle daemon and Configuration Cache:
@@ -890,7 +913,12 @@ Validate the namespace skeleton defined by RFC §29.2:
 ./dev/check-normative-layout
 ```
 
-The checker requires all 14 contract, vector, specification, benchmark, and ADR namespaces, their non-empty indexes, and parent directories for the 26 planned normative artifacts. It also preserves the materialized golden-lane and local-channel ADRs, runner and Gradle-correlation specifications, `BUILD_SESSION v1` schema, and task-event Protobuf IDL, and rejects an empty file at any planned artifact path. F0-010 created the structure; each schema, API, IDL, vector, specification, benchmark, or ADR remains owned by its later tracker item.
+The checker requires all 16 contract, vector, specification, benchmark, and ADR
+namespaces, their non-empty indexes, and parent directories for the 43 planned
+normative artifacts. It also preserves every materialized contract, including
+the managed-L1 specification, and rejects an empty file at any planned artifact
+path. F0-010 created the structure; each schema, API, IDL, vector,
+specification, benchmark, or ADR remains owned by its tracker item.
 
 ## BUILD_SESSION schema validation
 

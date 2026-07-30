@@ -12,6 +12,11 @@ test class, a custom cacheable negative, and switches for a modified
 restriction-policy conformance; the default `F0-040` transform path is
 unchanged.
 
+`A0-003` reuses both repositories to configure a launcher-owned native
+`DirectoryBuildCache`, replay eligible Java compilation, keep the custom task
+default-denied, and rotate the directory and Configuration Cache input by
+`l1SecurityGeneration`.
+
 [`matrix.v1.json`](./matrix.v1.json) is the target matrix, not an execution
 claim. The checker reports only runtime pairs it actually executes. The
 repository's capability matrix remains authoritative about evidence at the
@@ -33,4 +38,10 @@ Run the cache-policy conformance separately:
 
 ```bash
 ./dev/check-tier-one-policy
+```
+
+Run the managed-L1 lifecycle and integration separately:
+
+```bash
+./dev/check-managed-l1
 ```

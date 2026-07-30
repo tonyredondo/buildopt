@@ -37,6 +37,17 @@ const (
 	managedStateRootEnvironment    = "BUILDOPT_GATEWAY_STATE_ROOT"
 	managedRunnerSlotEnvironment   = "BUILDOPT_RUNNER_SLOT"
 	managedIdleTimeoutEnvironment  = "BUILDOPT_GATEWAY_IDLE_TIMEOUT"
+	managedL1StateRootEnvironment  = "BUILDOPT_L1_STATE_ROOT"
+	managedL1TenantEnvironment     = "BUILDOPT_L1_TENANT_ID"
+	managedL1RepositoryEnvironment = "BUILDOPT_L1_REPOSITORY_ID"
+	managedL1TrustEnvironment      = "BUILDOPT_L1_TRUST_DOMAIN"
+	managedL1CompatEnvironment     = "BUILDOPT_L1_COMPATIBILITY_CLASS"
+	managedL1InputGenEnvironment   = "BUILDOPT_L1_SECURITY_GENERATION"
+	managedL1WriterEnvironment     = "BUILDOPT_L1_L2_WRITE_AUTHORIZED"
+	managedL1DirectoryEnvironment  = "BUILDOPT_MANAGED_L1_DIRECTORY"
+	managedL1ModeEnvironment       = "BUILDOPT_MANAGED_L1_MODE"
+	managedL1OutputGenEnvironment  = "BUILDOPT_MANAGED_L1_SECURITY_GENERATION"
+	managedL1RetentionEnvironment  = "BUILDOPT_MANAGED_L1_RETENTION_DAYS"
 	gatewayReadyPath               = "/_buildopt/ready"
 	gatewayGenerationHeader        = "BuildOpt-Gateway-Connection-Generation"
 	expectedUsage                  = "usage: buildopt run -- <command> [args...]\n"
@@ -60,6 +71,10 @@ type helperObservation struct {
 	ServerURLPresent           bool     `json:"serverUrlPresent"`
 	ServerTokenPresent         bool     `json:"serverTokenPresent"`
 	BuildSessionContextPresent bool     `json:"buildSessionContextPresent"`
+	ManagedL1Directory         string   `json:"managedL1Directory"`
+	ManagedL1Mode              string   `json:"managedL1Mode"`
+	ManagedL1Generation        string   `json:"managedL1Generation"`
+	ManagedL1Retention         string   `json:"managedL1Retention"`
 }
 
 func TestBuildoptCLI(t *testing.T) {
@@ -68,6 +83,7 @@ func TestBuildoptCLI(t *testing.T) {
 	t.Setenv(serverTokenEnvironment, "")
 	t.Setenv(buildSessionContextEnvironment, "")
 	clearManagedGatewayEnvironment(t)
+	clearManagedL1Environment(t)
 
 	buildoptBinary := buildBuildopt(t)
 
@@ -116,6 +132,10 @@ func TestBuildoptCLI(t *testing.T) {
 			gatewayPassEnvironment+"=parent-password",
 			gatewayGenEnvironment+"=parent-generation",
 			buildSessionContextEnvironment+"=untrusted-parent-context",
+			managedL1DirectoryEnvironment+"=/tmp/untrusted-l1",
+			managedL1ModeEnvironment+"=READ_WRITE",
+			managedL1OutputGenEnvironment+"=999",
+			managedL1RetentionEnvironment+"=999",
 		)
 		command.Stdin = strings.NewReader(input)
 
@@ -213,6 +233,15 @@ func TestBuildoptCLI(t *testing.T) {
 		if observation.BuildSessionContextPresent {
 			t.Error("BUILD_SESSION export context reached the child")
 		}
+		if observation.ManagedL1Directory != "" ||
+			observation.ManagedL1Mode != "" ||
+			observation.ManagedL1Generation != "" ||
+			observation.ManagedL1Retention != "" {
+			t.Errorf(
+				"unconfigured child received managed L1 context: %+v",
+				observation,
+			)
+		}
 		if response, err := gatewayTestClient().Get(
 			observation.GatewayURL + gatewayReadyPath,
 		); err == nil {
@@ -257,6 +286,17 @@ func TestBuildoptCLI(t *testing.T) {
 			serverURLEnvironment+"=https://control-plane.invalid",
 			serverTokenEnvironment+"=parent-server-token",
 			buildSessionContextEnvironment+"={invalid-json",
+			managedL1StateRootEnvironment+"=/tmp/untrusted-l1-state",
+			managedL1TenantEnvironment+"=tenant-7",
+			managedL1RepositoryEnvironment+"=tonyredondo/buildopt",
+			managedL1TrustEnvironment+"=private-beta",
+			managedL1CompatEnvironment+"=gradle-9.6-java-17-linux-amd64",
+			managedL1InputGenEnvironment+"=42",
+			managedL1WriterEnvironment+"=0",
+			managedL1DirectoryEnvironment+"=/tmp/untrusted-l1",
+			managedL1ModeEnvironment+"=READ_WRITE",
+			managedL1OutputGenEnvironment+"=999",
+			managedL1RetentionEnvironment+"=999",
 		)
 		command.Stdin = strings.NewReader(input)
 
@@ -310,7 +350,11 @@ func TestBuildoptCLI(t *testing.T) {
 			observation.ReadyGeneration != "" ||
 			observation.ServerURLPresent ||
 			observation.ServerTokenPresent ||
-			observation.BuildSessionContextPresent {
+			observation.BuildSessionContextPresent ||
+			observation.ManagedL1Directory != "" ||
+			observation.ManagedL1Mode != "" ||
+			observation.ManagedL1Generation != "" ||
+			observation.ManagedL1Retention != "" {
 			t.Errorf(
 				"bypassed child received product integration context: %+v",
 				observation,
@@ -441,6 +485,25 @@ func clearManagedGatewayEnvironment(t *testing.T) {
 	t.Setenv(managedIdleTimeoutEnvironment, "")
 }
 
+func clearManagedL1Environment(t *testing.T) {
+	t.Helper()
+	for _, key := range []string{
+		managedL1StateRootEnvironment,
+		managedL1TenantEnvironment,
+		managedL1RepositoryEnvironment,
+		managedL1TrustEnvironment,
+		managedL1CompatEnvironment,
+		managedL1InputGenEnvironment,
+		managedL1WriterEnvironment,
+		managedL1DirectoryEnvironment,
+		managedL1ModeEnvironment,
+		managedL1OutputGenEnvironment,
+		managedL1RetentionEnvironment,
+	} {
+		t.Setenv(key, "")
+	}
+}
+
 func TestBuildoptChildHelper(t *testing.T) {
 	if os.Getenv(helperModeEnvironment) != "1" {
 		return
@@ -488,6 +551,10 @@ func TestBuildoptChildHelper(t *testing.T) {
 		BuildSessionContextPresent: os.Getenv(
 			buildSessionContextEnvironment,
 		) != "",
+		ManagedL1Directory:  os.Getenv(managedL1DirectoryEnvironment),
+		ManagedL1Mode:       os.Getenv(managedL1ModeEnvironment),
+		ManagedL1Generation: os.Getenv(managedL1OutputGenEnvironment),
+		ManagedL1Retention:  os.Getenv(managedL1RetentionEnvironment),
 	}
 	if err := json.NewEncoder(os.Stdout).Encode(observation); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "encode helper observation: %v\n", err)

@@ -83,6 +83,11 @@ func TestPluginHandshakeRoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatalf("read ProducerHello acknowledgement: %v", err)
 	}
+	second, err := net.DialTimeout("unix", socketPath, time.Second)
+	if err == nil {
+		_ = second.Close()
+		t.Fatal("single-producer handshake accepted a second connection")
+	}
 	if err := connection.Close(); err != nil {
 		t.Fatalf("close handshake client: %v", err)
 	}

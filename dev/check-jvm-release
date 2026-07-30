@@ -187,6 +187,12 @@ if ! jar tf "${buildopt_plugin_jar}" |
         "${buildopt_plugin_jar}" >&2
     exit 1
 fi
+if ! jar tf "${buildopt_plugin_jar}" |
+    grep -Fqx 'dev/buildopt/gradle/BuildOptManagedL1Plugin.class'; then
+    printf 'Managed L1 entry point is missing from %s\n' \
+        "${buildopt_plugin_jar}" >&2
+    exit 1
+fi
 buildopt_plugin_descriptor=$(
     unzip -p \
         "${buildopt_plugin_jar}" \
@@ -208,6 +214,18 @@ buildopt_policy_plugin_descriptor=$(
 if [[ "${buildopt_policy_plugin_descriptor}" != \
     'implementation-class=dev.buildopt.gradle.BuildOptTierOnePolicyPlugin' ]]; then
     printf 'Tier 1 policy plugin marker is missing or invalid in %s\n' \
+        "${buildopt_plugin_jar}" >&2
+    exit 1
+fi
+buildopt_l1_plugin_descriptor=$(
+    unzip -p \
+        "${buildopt_plugin_jar}" \
+        META-INF/gradle-plugins/dev.buildopt.managed-l1.properties |
+        tr -d '\r'
+)
+if [[ "${buildopt_l1_plugin_descriptor}" != \
+    'implementation-class=dev.buildopt.gradle.BuildOptManagedL1Plugin' ]]; then
+    printf 'Managed L1 plugin marker is missing or invalid in %s\n' \
         "${buildopt_plugin_jar}" >&2
     exit 1
 fi
@@ -304,5 +322,5 @@ javac \
     dev.buildopt.contracts.ClientConformance \
     "${buildopt_repo_root}"
 
-printf 'JVM release OK: Java 21 compiler, --release 17 bytecode, Gradle plugin marker, generated client conformance, loadable agent, PatchBundle patcher, Java 17 %s\n' \
+printf 'JVM release OK: Java 21 compiler, --release 17 bytecode, product/policy/managed-L1 plugin markers, generated client conformance, loadable agent, PatchBundle patcher, Java 17 %s\n' \
     "${buildopt_java17_status}"

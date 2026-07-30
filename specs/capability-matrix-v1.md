@@ -64,10 +64,11 @@ handshake. Only the golden lane retains that stronger capability.
 
 `A0-002` adds exact default-deny policy evidence to all eight JDK 17/21 rows:
 core source-set `JavaCompile` is the only task allowlist entry, while `Test`,
-custom tasks, modified actions, and transforms fail closed. The matrix still
-reports `MANAGED_SHARED_CACHE` as `UNAVAILABLE` because `A0-003` and `A0-004`
-own cache configuration and the backend; policy conformance is not a cache
-hit/PUT claim.
+custom tasks, modified actions, and transforms fail closed. `A0-003` adds a
+native managed L1 on the same rows, including generation rotation,
+Configuration Cache reuse, and L2-writer local disablement. The matrix still
+reports `MANAGED_SHARED_CACHE` as `UNAVAILABLE` because `A0-004` owns the
+shared L2 backend; local cache conformance is not a shared hit/PUT claim.
 
 `SPK-002` leaves `JVM_AGENT` unavailable in every profile. Its real-daemon
 prototype sees class loads rather than method access or task attribution, so

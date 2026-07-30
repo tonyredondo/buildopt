@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "buildopt.specs/managed-l1/v1",
+  "policyId": "MANAGED_L1_V1",
+  "activation": {
+    "pluginId": "dev.buildopt.managed-l1",
+    "applicationContext": "INIT_SCRIPT_BEFORE_SETTINGS",
+    "requiresBuildCacheFlag": true,
+    "taskPolicyPluginId": "dev.buildopt.tier-one-policy"
+  },
+  "launcherInputs": {
+    "stateRoot": "BUILDOPT_L1_STATE_ROOT",
+    "scopeFields": [
+      "BUILDOPT_L1_TENANT_ID",
+      "BUILDOPT_L1_REPOSITORY_ID",
+      "BUILDOPT_L1_TRUST_DOMAIN",
+      "BUILDOPT_L1_COMPATIBILITY_CLASS"
+    ],
+    "securityGeneration": "BUILDOPT_L1_SECURITY_GENERATION",
+    "l2WriteAuthorized": "BUILDOPT_L1_L2_WRITE_AUTHORIZED"
+  },
+  "scopeDigest": {
+    "algorithm": "SHA-256",
+    "domain": "buildopt-managed-l1-scope-v1",
+    "encoding": "DOMAIN_THEN_UINT32_BE_LENGTH_PREFIXED_UTF8",
+    "fields": [
+      "tenantId",
+      "repositoryId",
+      "trustDomain",
+      "cacheCompatibilityClass"
+    ]
+  },
+  "childContext": {
+    "directory": "BUILDOPT_MANAGED_L1_DIRECTORY",
+    "mode": "BUILDOPT_MANAGED_L1_MODE",
+    "securityGeneration": "BUILDOPT_MANAGED_L1_SECURITY_GENERATION",
+    "retentionDays": "BUILDOPT_MANAGED_L1_RETENTION_DAYS"
+  },
+  "directoryLayout": "l1/scopes/<scopeDigest>/generation-<l1SecurityGeneration>/cache",
+  "cleanup": {
+    "owner": "GRADLE_NATIVE",
+    "removeUnusedEntriesAfterDays": 7,
+    "customFormatOrLru": false
+  },
+  "modes": [
+    {
+      "id": "READ_WRITE",
+      "directoryRequired": true,
+      "localEnabled": true,
+      "localPush": true
+    },
+    {
+      "id": "DISABLED_L2_WRITER",
+      "directoryRequired": false,
+      "localEnabled": false,
+      "localPush": false
+    }
+  ],
+  "lease": {
+    "scope": "SCOPE_DIGEST_AND_SECURITY_GENERATION",
+    "mode": "NONBLOCKING_EXCLUSIVE",
+    "lifetime": "GRADLE_CHILD"
+  },
+  "fallback": {
+    "absentConfiguration": "NO_MANAGED_L1_CONTEXT",
+    "invalidConfiguration": "GRADLE_BASELINE_NO_MANAGED_L1",
+    "unsafeStateRoot": "GRADLE_BASELINE_NO_MANAGED_L1",
+    "busyLease": "GRADLE_BASELINE_NO_MANAGED_L1",
+    "maintenanceFailure": "GRADLE_BASELINE_NO_MANAGED_L1"
+  },
+  "deferredAuthority": {
+    "authenticatedGeneration": "A0-006",
+    "remotePopulation": "A0-004/A0-005",
+    "revokedDirectoryDeletion": "A0-006/A1-004"
+  }
+}

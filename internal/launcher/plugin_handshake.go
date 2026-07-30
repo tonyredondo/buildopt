@@ -149,6 +149,10 @@ func (server *pluginHandshakeServer) serve() {
 		}
 		return
 	}
+	// This invocation accepts one producer. Close the listener as soon as that
+	// producer is selected so an accidentally repeated plugin application
+	// fails open instead of connecting to an unserviced socket.
+	_ = server.listener.Close()
 
 	server.mutex.Lock()
 	if server.closing {

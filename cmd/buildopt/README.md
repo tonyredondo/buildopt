@@ -179,6 +179,44 @@ This path establishes lifecycle and trust boundaries only. L1/L2 cache
 behavior, upstream credentials, authenticated policy, revocation, and pending
 publication remain owned by later MVP-A0 blocks.
 
+## A0-003 managed native L1
+
+The launcher can prepare one private native `DirectoryBuildCache` for a
+complete scope and security generation:
+
+```bash
+BUILDOPT_L1_STATE_ROOT=/run/user/1000/buildopt \
+BUILDOPT_L1_TENANT_ID=tenant-7 \
+BUILDOPT_L1_REPOSITORY_ID=repository-42 \
+BUILDOPT_L1_TRUST_DOMAIN=private-beta \
+BUILDOPT_L1_COMPATIBILITY_CLASS=gradle-9.6-java-21-linux-amd64 \
+BUILDOPT_L1_SECURITY_GENERATION=42 \
+BUILDOPT_L1_L2_WRITE_AUTHORIZED=0 \
+buildopt run -- ./gradlew --build-cache build
+```
+
+The matching init script must apply `dev.buildopt.managed-l1` from
+`beforeSettings`. Raw scope fields remain launcher-only. The child receives an
+opaque, generation-segmented directory plus a fixed seven-day native retention
+contract; all launcher-owned directories are current-user-owned mode `0700`.
+The launcher holds a mode-`0600`, non-blocking exclusive lease for the exact
+scope and generation until Gradle exits.
+
+Set `BUILDOPT_L1_L2_WRITE_AUTHORIZED=1` only for an invocation already
+authorized by the later L2 policy. That mode exposes no local directory and
+the settings plugin disables local load/store, so an aborted pending write
+cannot leave a reusable local hit. Incomplete configuration, an unsafe state
+root, or an occupied lease produces a diagnostic and preserves the Gradle
+baseline. `A0-006` still owns authenticated monotonic generations and
+revocation deletion.
+
+Validate the launcher, plugin, Gradle/JDK/DSL matrix, generation rotation, and
+real end-to-end handoff with:
+
+```bash
+./dev/check-managed-l1
+```
+
 ## WS-005 server ingest
 
 When both `BUILDOPT_SERVER_URL` and `BUILDOPT_SERVER_INGEST_TOKEN` are present,
