@@ -693,8 +693,9 @@ generation ownership, native cache replay, and rotation without interpreting
 Gradle's cache format. The neutral authenticated handshake remains an
 independent regression in `./dev/check-gradle-plugin-handshake`.
 
-The checker does not claim an L2 backend or authenticated revocation decision;
-those remain with `A0-004..006`.
+The checker isolates the native-L1 contract. Compose it with
+`./dev/check-local-authority` for signed generations and the managed Shared
+route.
 
 ## Single-node Shared storage
 
@@ -731,7 +732,28 @@ publish nothing. Missing/corrupt bytes quarantine the whole decision, orphan
 blobs are collected, and a missing `control.sqlite` audit row is repaired at
 startup. The context-bound opaque HTTP handler proves early `413` and
 full-verification-before-`200` without making an unauthenticated global route.
-A0-006 must supply locally authenticated policy, revocation state, and routing.
+`A0-006` composes that handler with locally authenticated policy, revocation
+state, and routing in the checker below.
+
+## Local policy, revocation, and authenticated cache routing
+
+Validate the `A0-006` trust and routing boundary:
+
+```bash
+./dev/check-local-authority
+```
+
+The checker validates the canonical machine contract and runs race-enabled Go
+tests for JCS/Ed25519 authority, mode-`0600` no-symlink files, repository and
+component binding, monotonic policy/revocation/L1/gateway/namespace state,
+schema-v3 Shared registration, current-state Bearer routing, local-to-upstream
+credential translation, managed same-UID context removal, safe read misses,
+and write failure isolation. It builds both Go binaries with the locked
+toolchain and runs the golden Gradle 9.6.1/JDK 21 Kotlin and Groovy fixtures
+through real `HttpBuildCache` PUT/GET replay and Configuration Cache reuse.
+
+This block does not claim the complete `A0-G01` fault/redirect/timeout matrix,
+production commit-decision finalization, or revoked-directory deletion.
 
 ## JVM Agent spike
 

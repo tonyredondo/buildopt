@@ -169,12 +169,39 @@ ON pending_objects (blob_digest)`,
 ON quarantine_records (blob_digest, quarantined_at_unix_ms)`,
 		},
 	}
+	versionThree := schemaMigration{
+		version: 3,
+		name:    "cache-v3",
+		statements: []string{
+			`CREATE TABLE attempt_authorities (
+    attempt_id TEXT PRIMARY KEY
+        REFERENCES cache_attempts(attempt_id) ON DELETE CASCADE,
+    authority_digest TEXT NOT NULL
+        CHECK (
+            length(authority_digest) = 71
+            AND substr(authority_digest, 1, 7) = 'sha256:'
+            AND substr(authority_digest, 8) NOT GLOB '*[^0-9a-f]*'
+        )
+) WITHOUT ROWID`,
+			`CREATE INDEX attempt_authorities_authority_digest
+ON attempt_authorities (authority_digest)`,
+		},
+	}
 	definition := metadataDefinition{
-		role:       cacheMetadataRole,
-		path:       path,
-		migrations: []schemaMigration{versionOne, versionTwo},
+		role: cacheMetadataRole,
+		path: path,
+		migrations: []schemaMigration{
+			versionOne,
+			versionTwo,
+			versionThree,
+		},
 	}
 	definition.objects = []schemaObject{
+		{
+			objectType: "index",
+			name:       "attempt_authorities_authority_digest",
+			statement:  versionThree.statements[1],
+		},
 		{
 			objectType: "index",
 			name:       "cache_attempts_lease_state",
@@ -199,6 +226,11 @@ ON quarantine_records (blob_digest, quarantined_at_unix_ms)`,
 			objectType: "index",
 			name:       "quarantine_records_digest",
 			statement:  versionTwo.statements[5],
+		},
+		{
+			objectType: "table",
+			name:       "attempt_authorities",
+			statement:  versionThree.statements[0],
 		},
 		{
 			objectType: "table",
@@ -277,16 +309,71 @@ ON decision_audit_index (indexed_at_unix_ms)`,
 ON reconciliation_runs (completed_at_unix_ms)`,
 		},
 	}
+	versionThree := schemaMigration{
+		version: 3,
+		name:    "control-v3",
+		statements: []string{
+			`CREATE TABLE local_authority_state (
+    scope_digest TEXT PRIMARY KEY CHECK (length(scope_digest) = 64),
+    tenant_id TEXT NOT NULL CHECK (length(tenant_id) BETWEEN 1 AND 256),
+    repository_id TEXT NOT NULL CHECK (length(repository_id) BETWEEN 1 AND 256),
+    trust_domain TEXT NOT NULL CHECK (length(trust_domain) BETWEEN 1 AND 256),
+    policy_id TEXT NOT NULL CHECK (length(policy_id) BETWEEN 1 AND 256),
+    policy_version INTEGER NOT NULL CHECK (policy_version > 0),
+    policy_digest TEXT NOT NULL CHECK (length(policy_digest) = 71),
+    configuration_policy_digest TEXT NOT NULL CHECK (length(configuration_policy_digest) = 71),
+    revocation_epoch INTEGER NOT NULL CHECK (revocation_epoch > 0),
+    revocation_digest TEXT NOT NULL CHECK (length(revocation_digest) = 71),
+    l1_security_generation INTEGER NOT NULL CHECK (l1_security_generation > 0),
+    gateway_connection_generation INTEGER NOT NULL CHECK (gateway_connection_generation > 0),
+    namespace TEXT NOT NULL CHECK (length(namespace) BETWEEN 1 AND 512),
+    namespace_generation INTEGER NOT NULL CHECK (namespace_generation > 0),
+    policy_expires_at_unix_ms INTEGER NOT NULL CHECK (policy_expires_at_unix_ms >= 0),
+    installed_at_unix_ms INTEGER NOT NULL CHECK (installed_at_unix_ms >= 0)
+) WITHOUT ROWID`,
+			`CREATE TABLE local_authority_documents (
+    authority_digest TEXT PRIMARY KEY CHECK (length(authority_digest) = 71),
+    scope_digest TEXT NOT NULL
+        REFERENCES local_authority_state(scope_digest),
+    attempt_id TEXT NOT NULL CHECK (length(attempt_id) BETWEEN 1 AND 256),
+    credential_digest TEXT NOT NULL CHECK (length(credential_digest) = 71),
+    allow_read INTEGER NOT NULL CHECK (allow_read IN (0, 1)),
+    allow_write INTEGER NOT NULL CHECK (allow_write IN (0, 1)),
+    canonical_document BLOB NOT NULL,
+    expires_at_unix_ms INTEGER NOT NULL CHECK (expires_at_unix_ms >= 0),
+    registered_at_unix_ms INTEGER NOT NULL CHECK (registered_at_unix_ms >= 0),
+    CHECK (allow_read = 1 OR allow_write = 1)
+) WITHOUT ROWID`,
+			`CREATE INDEX local_authority_documents_attempt
+ON local_authority_documents (attempt_id)`,
+			`CREATE INDEX local_authority_documents_expires
+ON local_authority_documents (expires_at_unix_ms)`,
+		},
+	}
 	definition := metadataDefinition{
-		role:       controlMetadataRole,
-		path:       path,
-		migrations: []schemaMigration{versionOne, versionTwo},
+		role: controlMetadataRole,
+		path: path,
+		migrations: []schemaMigration{
+			versionOne,
+			versionTwo,
+			versionThree,
+		},
 	}
 	definition.objects = []schemaObject{
 		{
 			objectType: "index",
 			name:       "decision_audit_index_indexed_at",
 			statement:  versionOne.statements[2],
+		},
+		{
+			objectType: "index",
+			name:       "local_authority_documents_attempt",
+			statement:  versionThree.statements[2],
+		},
+		{
+			objectType: "index",
+			name:       "local_authority_documents_expires",
+			statement:  versionThree.statements[3],
 		},
 		{
 			objectType: "index",
@@ -297,6 +384,16 @@ ON reconciliation_runs (completed_at_unix_ms)`,
 			objectType: "table",
 			name:       "decision_audit_index",
 			statement:  versionOne.statements[1],
+		},
+		{
+			objectType: "table",
+			name:       "local_authority_documents",
+			statement:  versionThree.statements[1],
+		},
+		{
+			objectType: "table",
+			name:       "local_authority_state",
+			statement:  versionThree.statements[0],
 		},
 		{
 			objectType: "table",

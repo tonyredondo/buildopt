@@ -14,7 +14,7 @@ import (
 
 const (
 	// SchemaVersion is the current cache/control metadata schema.
-	SchemaVersion = 2
+	SchemaVersion = 3
 	// MaximumBlobBytes is the private-beta per-object ceiling.
 	MaximumBlobBytes int64 = 100 << 20
 )
@@ -83,6 +83,7 @@ type Storage struct {
 	operationMutex sync.RWMutex
 	lifecycleMutex sync.Mutex
 	reconcileMutex sync.RWMutex
+	authorityMutex sync.RWMutex
 	closed         bool
 	layout         Layout
 	writerLock     *os.File

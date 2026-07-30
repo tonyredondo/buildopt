@@ -39,6 +39,7 @@ const (
 type StartAttemptRequest struct {
 	RequestID                 string
 	AttemptID                 string
+	AuthorityDigest           string
 	Repository                RepositoryIdentity
 	NamespaceGeneration       int64
 	SourceRevision            string
@@ -54,6 +55,7 @@ type StartAttemptRequest struct {
 // AttemptStatus is the durable state visible to retrying control clients.
 type AttemptStatus struct {
 	AttemptID                 string
+	AuthorityDigest           string
 	Repository                RepositoryIdentity
 	NamespaceGeneration       int64
 	SourceRevision            string
@@ -192,6 +194,16 @@ func (storage *Storage) StartAttempt(
 		if existing.requestFingerprint != fingerprint {
 			return AttemptStatus{}, false, ErrIdempotencyConflict
 		}
+		if err := storage.ensureAttemptAuthority(
+			ctx,
+			request.AttemptID,
+			request.AuthorityDigest,
+		); err != nil {
+			return AttemptStatus{}, false, err
+		}
+		if request.AuthorityDigest != "" {
+			existing.status.AuthorityDigest = request.AuthorityDigest
+		}
 		return existing.status, false, nil
 	}
 	record, err := storage.loadAttempt(
@@ -202,7 +214,52 @@ func (storage *Storage) StartAttempt(
 	if err != nil {
 		return AttemptStatus{}, false, err
 	}
+	if err := storage.ensureAttemptAuthority(
+		ctx,
+		request.AttemptID,
+		request.AuthorityDigest,
+	); err != nil {
+		return AttemptStatus{}, false, err
+	}
+	if request.AuthorityDigest != "" {
+		record.status.AuthorityDigest = request.AuthorityDigest
+	}
 	return record.status, true, nil
+}
+
+func (storage *Storage) ensureAttemptAuthority(
+	ctx context.Context,
+	attemptID string,
+	authorityDigest string,
+) error {
+	if authorityDigest == "" {
+		return nil
+	}
+	if _, err := storage.cache.database.ExecContext(
+		ctx,
+		`INSERT INTO attempt_authorities
+    (attempt_id, authority_digest)
+VALUES (?, ?)
+ON CONFLICT(attempt_id) DO NOTHING`,
+		attemptID,
+		authorityDigest,
+	); err != nil {
+		return err
+	}
+	var current string
+	if err := storage.cache.database.QueryRowContext(
+		ctx,
+		`SELECT authority_digest
+FROM attempt_authorities
+WHERE attempt_id = ?`,
+		attemptID,
+	).Scan(&current); err != nil {
+		return err
+	}
+	if current != authorityDigest {
+		return ErrIdempotencyConflict
+	}
+	return nil
 }
 
 func validateStartAttemptRequest(
@@ -225,6 +282,12 @@ func validateStartAttemptRequest(
 	if request.NamespaceGeneration < 1 {
 		return errors.New(
 			"start Shared cache attempt: namespace generation must be positive",
+		)
+	}
+	if request.AuthorityDigest != "" &&
+		!validSHA256Digest(request.AuthorityDigest) {
+		return errors.New(
+			"start Shared cache attempt: invalid local authority digest",
 		)
 	}
 	if !revisionPattern.MatchString(request.SourceRevision) ||
@@ -1054,13 +1117,14 @@ func (storage *Storage) loadAttempt(
 	attemptID string,
 ) (attemptRecord, error) {
 	var (
-		record         attemptRecord
-		leaseExpiresAt int64
-		createdAt      int64
-		updatedAt      int64
-		state          string
-		decisionDigest sql.NullString
-		abortReason    sql.NullString
+		record          attemptRecord
+		leaseExpiresAt  int64
+		createdAt       int64
+		updatedAt       int64
+		state           string
+		decisionDigest  sql.NullString
+		abortReason     sql.NullString
+		authorityDigest sql.NullString
 	)
 	err := queryer.QueryRowContext(
 		ctx,
@@ -1071,7 +1135,10 @@ func (storage *Storage) loadAttempt(
     lease_expires_at_unix_ms, state, state_version, terminal_id,
     terminal_fingerprint, decision_digest, abort_reason, created_at_unix_ms,
     updated_at_unix_ms,
-    (SELECT count(*) FROM pending_objects WHERE attempt_id = cache_attempts.attempt_id)
+    (SELECT count(*) FROM pending_objects WHERE attempt_id = cache_attempts.attempt_id),
+    (SELECT authority_digest
+     FROM attempt_authorities
+     WHERE attempt_id = cache_attempts.attempt_id)
 FROM cache_attempts
 WHERE attempt_id = ?`,
 		attemptID,
@@ -1099,6 +1166,7 @@ WHERE attempt_id = ?`,
 		&createdAt,
 		&updatedAt,
 		&record.status.PendingObjectCount,
+		&authorityDigest,
 	)
 	if errors.Is(err, sql.ErrNoRows) {
 		return attemptRecord{}, ErrAttemptNotFound
@@ -1112,6 +1180,7 @@ WHERE attempt_id = ?`,
 	record.status.UpdatedAt = time.UnixMilli(updatedAt).UTC()
 	record.status.DecisionDigest = decisionDigest.String
 	record.status.AbortReason = abortReason.String
+	record.status.AuthorityDigest = authorityDigest.String
 	return record, nil
 }
 

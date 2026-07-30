@@ -1,0 +1,223 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/local-authenticated-cache-v1.json"
+buildopt_tmp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-local-authority.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_tmp}" &&
+        "${buildopt_tmp}" == "${TMPDIR:-/tmp}/buildopt-local-authority."* ]]; then
+        rm -rf -- "${buildopt_tmp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in find git jq mktemp readlink rm; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required local-authority command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+if ! jq -e '
+    keys == [
+        "authority",
+        "deferred",
+        "executableEvidence",
+        "fallback",
+        "gateway",
+        "gradle",
+        "launcherInputs",
+        "monotonicState",
+        "policyId",
+        "schemaVersion",
+        "sharedServer"
+    ] and
+    .schemaVersion == "buildopt.specs/local-authenticated-cache/v1" and
+    .policyId == "LOCAL_AUTHENTICATED_CACHE_V1" and
+    .authority == {
+        "contract": "buildopt-local-cache-authority/v1",
+        "canonicalEncoding": "JCS_EXACT_BYTES",
+        "signatureAlgorithm": "Ed25519",
+        "trustRoot": "OUT_OF_BAND_PRIVATE_FILE",
+        "credential": "BASE64URL_UNPADDED_32_BYTES_PRIVATE_FILE",
+        "maximumPolicyLifetimeHours": 720,
+        "maximumAttemptLifetimeHours": 24,
+        "componentVersion": "0.1.0"
+    } and
+    .launcherInputs.configuration == "ALL_OR_NONE" and
+    .launcherInputs.files == [
+        "BUILDOPT_LOCAL_AUTHORITY_PATH",
+        "BUILDOPT_LOCAL_TRUST_ROOT_PATH",
+        "BUILDOPT_LOCAL_CACHE_CREDENTIAL_PATH"
+    ] and
+    .launcherInputs.sharedCacheUrl == "BUILDOPT_SHARED_CACHE_URL" and
+    .launcherInputs.repositoryBinding == [
+        "BUILDOPT_L1_TENANT_ID",
+        "BUILDOPT_L1_REPOSITORY_ID",
+        "BUILDOPT_L1_TRUST_DOMAIN"
+    ] and
+    .launcherInputs.stateRoot == "BUILDOPT_L1_STATE_ROOT" and
+    .launcherInputs.compatibilityClass ==
+        "BUILDOPT_L1_COMPATIBILITY_CLASS" and
+    .monotonicState.scope == [
+        "tenant",
+        "repository",
+        "trustDomain"
+    ] and
+    .monotonicState.rollback == "REJECT" and
+    .monotonicState.sameGenerationDifferentContent == "REJECT" and
+    .monotonicState.revocationAdvance == "REQUIRES_L1_ROTATION" and
+    .monotonicState.exactReplay == "ALLOW" and
+    .sharedServer.storageSchemaVersion == 3 and
+    .sharedServer.route == "/cache/{key}" and
+    .sharedServer.authentication == [
+        "BEARER_LOCAL_CACHE_CREDENTIAL",
+        "X-BuildOpt-Authority-Digest"
+    ] and
+    .sharedServer.credentialPersistence == false and
+    .sharedServer.requestStateCheck ==
+        "CURRENT_AUTHORITY_AND_UNEXPIRED" and
+    .sharedServer.writeTarget == "PENDING_ATTEMPT" and
+    .sharedServer.readTarget == "COMMITTED_ONLY" and
+    .gateway.contextChannel == "SAME_UID_UNIX_SOCKET" and
+    .gateway.persistentStateContainsUpstreamCredential == false and
+    .gateway.routeWithoutCurrentContext == "404" and
+    .gateway.getFailure == "SAFE_404_MISS" and
+    .gateway.putFailure == "503_DISABLE_REMOTE" and
+    .gateway.redirects == "REJECT" and
+    .gradle.pluginId == "dev.buildopt.managed-l1" and
+    .gradle.remoteType == "HttpBuildCache" and
+    .gradle.remoteCredential == "LOCAL_BASIC_ONLY" and
+    .gradle.readOnlyMode == "REMOTE_ENABLED_PUSH_FALSE" and
+    .gradle.readWriteMode ==
+        "REMOTE_ENABLED_PUSH_TRUE_LOCAL_DISABLED" and
+    .gradle.taskPolicy == "TIER_ONE_DEFAULT_DENY" and
+    .fallback == {
+        "absentAuthority": "PRESERVE_NEUTRAL_LAUNCHER_AND_NATIVE_ONLY_L1",
+        "invalidAuthority": "BASELINE_WITHOUT_AUTHENTICATED_CACHE",
+        "expiredAuthority": "NO_REMOTE_ROUTE",
+        "sharedReadFailure": "CACHE_MISS",
+        "sharedWriteFailure": "REMOTE_DISABLED_BUILD_CONTINUES"
+    } and
+    .executableEvidence.checker == "dev/check-local-authority" and
+    (.executableEvidence.requiredCases | length) == 8 and
+    .deferred == {
+        "fullHttpFaultMatrix": "A0-G01",
+        "commitDecisionProduction": "A0-G02/A0-G05",
+        "revokedDirectoryDeletion": "A1-004",
+        "dependencyAndWrapperCaching": "A0-007"
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'local authenticated-cache contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_required_files=(
+    "internal/localauthority/authority.go"
+    "internal/localauthority/crypto.go"
+    "internal/localauthority/files_linux.go"
+    "internal/localauthority/state.go"
+    "internal/launcher/local_authority.go"
+    "internal/launcher/local_gateway.go"
+    "internal/launcher/managed_gateway.go"
+    "internal/sharedcache/authority.go"
+    "cmd/buildopt-server/main.go"
+    "jvm/gradle-plugin/src/main/java/dev/buildopt/gradle/BuildOptManagedL1Plugin.java"
+    "jvm/gradle-plugin/src/testKit/java/dev/buildopt/gradle/ManagedL1TestKit.java"
+    "specs/local-authenticated-cache-v1.md"
+)
+for buildopt_relative in "${buildopt_required_files[@]}"; do
+    if [[ ! -s "${buildopt_repo_root}/${buildopt_relative}" ]]; then
+        printf 'missing local-authority file: %s\n' "${buildopt_relative}" >&2
+        exit 1
+    fi
+done
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 \
+    ./internal/localauthority \
+    ./internal/sharedcache \
+    ./internal/launcher \
+    ./cmd/buildopt \
+    ./cmd/buildopt-server
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet \
+    ./internal/localauthority \
+    ./internal/sharedcache \
+    ./internal/launcher \
+    ./cmd/buildopt \
+    ./cmd/buildopt-server
+CGO_ENABLED=0 "${buildopt_script_dir}/run" --toolchain go -- \
+    go build \
+    -mod=readonly \
+    -buildvcs=false \
+    -trimpath \
+    -o "${buildopt_tmp}/buildopt" \
+    ./cmd/buildopt
+CGO_ENABLED=0 "${buildopt_script_dir}/run" --toolchain go -- \
+    go build \
+    -mod=readonly \
+    -buildvcs=false \
+    -trimpath \
+    -o "${buildopt_tmp}/buildopt-server" \
+    ./cmd/buildopt-server
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p -- "${GRADLE_USER_HOME}"
+"${buildopt_script_dir}/run" -- \
+    "${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --no-configuration-cache \
+    --warning-mode=fail \
+    :jvm:gradle-plugin:jar
+
+buildopt_gradle_home=$(
+    find \
+        "${GRADLE_USER_HOME}/wrapper/dists/gradle-9.6.1-bin" \
+        -type d \
+        -path '*/gradle-9.6.1' \
+        -print \
+        -quit
+)
+if [[ -z "${buildopt_gradle_home}" ||
+    ! -x "${buildopt_gradle_home}/bin/gradle" ]]; then
+    printf 'pinned Gradle 9.6.1 distribution is unavailable\n' >&2
+    exit 1
+fi
+buildopt_gradle_home=$(readlink -f "${buildopt_gradle_home}")
+"${buildopt_script_dir}/run" -- \
+    "${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --no-configuration-cache \
+    --warning-mode=fail \
+    :jvm:gradle-plugin:managedSharedTestKit \
+    -PbuildoptTierOneJava=21 \
+    "-PbuildoptTierOneGradleHome=${buildopt_gradle_home}"
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'local-authority check changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'A0-006 local authority OK: Ed25519 policy/revocation, monotonic generations, current Shared route, credential-translating gateway, and Gradle HttpBuildCache\n'

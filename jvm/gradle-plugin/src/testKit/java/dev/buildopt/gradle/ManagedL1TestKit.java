@@ -1,7 +1,10 @@
 package dev.buildopt.gradle;
 
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpServer;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -11,6 +14,9 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Base64;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
@@ -32,6 +38,23 @@ public final class ManagedL1TestKit {
     private static final String READ_WRITE_MODE = "READ_WRITE";
     private static final String DISABLED_L2_WRITER_MODE =
             "DISABLED_L2_WRITER";
+    private static final String SHARED_MODE_ENVIRONMENT =
+            "BUILDOPT_MANAGED_SHARED_MODE";
+    private static final String AUTHORITY_DIGEST_ENVIRONMENT =
+            "BUILDOPT_MANAGED_AUTHORITY_DIGEST";
+    private static final String POLICY_DIGEST_ENVIRONMENT =
+            "BUILDOPT_MANAGED_POLICY_DIGEST";
+    private static final String CONFIGURATION_DIGEST_ENVIRONMENT =
+            "BUILDOPT_MANAGED_CONFIGURATION_POLICY_DIGEST";
+    private static final String AUTHORITY_CONTRACT_ENVIRONMENT =
+            "BUILDOPT_MANAGED_AUTHORITY_CONTRACT";
+    private static final String GATEWAY_URL_ENVIRONMENT = "BUILDOPT_GATEWAY_URL";
+    private static final String GATEWAY_USERNAME_ENVIRONMENT =
+            "BUILDOPT_GATEWAY_USERNAME";
+    private static final String GATEWAY_PASSWORD_ENVIRONMENT =
+            "BUILDOPT_GATEWAY_PASSWORD";
+    private static final String GATEWAY_GENERATION_ENVIRONMENT =
+            "BUILDOPT_GATEWAY_CONNECTION_GENERATION";
     private static final int RETENTION_DAYS = 7;
 
     private ManagedL1TestKit() {}
@@ -44,14 +67,18 @@ public final class ManagedL1TestKit {
      * @throws IOException when a fixture cannot be copied or inspected
      */
     public static void main(String[] arguments) throws IOException {
-        if (arguments.length != 4) {
+        if (arguments.length < 4
+                || arguments.length > 5
+                || (arguments.length == 5
+                        && !arguments[4].equals("shared-only"))) {
             throw new IllegalArgumentException(
-                    "expected fixture root, Gradle home, plugin JAR, and Java major");
+                    "expected fixture root, Gradle home, plugin JAR, Java major, and optional shared-only");
         }
         Path fixtureRoot = Path.of(arguments[0]).toAbsolutePath().normalize();
         File gradleHome = Path.of(arguments[1]).toAbsolutePath().normalize().toFile();
         Path pluginJar = Path.of(arguments[2]).toAbsolutePath().normalize();
         int expectedJava = Integer.parseInt(arguments[3]);
+        boolean sharedOnly = arguments.length == 5;
         if (Runtime.version().feature() != expectedJava) {
             throw new IllegalStateException(
                     "TestKit Java "
@@ -72,6 +99,14 @@ public final class ManagedL1TestKit {
             Path initScript = writeInitScript(testRoot, pluginJar);
             for (String dsl : new String[] {"kotlin", "groovy"}) {
                 Path project = testRoot.resolve("tier1").resolve(dsl);
+                if (sharedOnly) {
+                    runManagedShared(
+                            project,
+                            initScript,
+                            gradleHome,
+                            dsl);
+                    continue;
+                }
                 runGenerationRotation(
                         project,
                         testRoot.resolve("state-" + dsl),
@@ -90,15 +125,27 @@ public final class ManagedL1TestKit {
                             initScript,
                             gradleHome,
                             dsl);
+                    runManagedShared(
+                            project,
+                            initScript,
+                            gradleHome,
+                            dsl);
                 }
             }
         } finally {
             deleteTree(testRoot);
         }
-        System.out.printf(
-                "A0-003 TestKit OK: Gradle %s / JDK %d / Kotlin+Groovy%n",
-                gradleHome.getName(),
-                expectedJava);
+        if (sharedOnly) {
+            System.out.printf(
+                    "A0-006 TestKit OK: Gradle %s / JDK %d / Kotlin+Groovy HttpBuildCache%n",
+                    gradleHome.getName(),
+                    expectedJava);
+        } else {
+            System.out.printf(
+                    "A0-003 TestKit OK: Gradle %s / JDK %d / Kotlin+Groovy%n",
+                    gradleHome.getName(),
+                    expectedJava);
+        }
     }
 
     private static Path writeInitScript(Path testRoot, Path pluginJar)
@@ -259,6 +306,149 @@ public final class ManagedL1TestKit {
         BuildResult second =
                 run(project, gradleHome, scenario, environment, arguments);
         requireOutcome(second, ":compileJava", TaskOutcome.SUCCESS, scenario);
+    }
+
+    private static void runManagedShared(
+            Path project,
+            Path initScript,
+            File gradleHome,
+            String dsl)
+            throws IOException {
+        String scenario = dsl + "-managed-shared";
+        String gatewayPassword =
+                Base64.getUrlEncoder()
+                        .withoutPadding()
+                        .encodeToString(new byte[32]);
+        String basicAuthorization =
+                "Basic "
+                        + Base64.getEncoder()
+                                .encodeToString(
+                                        ("buildopt:" + gatewayPassword)
+                                                .getBytes(StandardCharsets.UTF_8));
+        Map<String, byte[]> objects = new ConcurrentHashMap<>();
+        AtomicInteger gets = new AtomicInteger();
+        AtomicInteger puts = new AtomicInteger();
+        HttpServer server =
+                HttpServer.create(
+                        new InetSocketAddress("127.0.0.1", 0),
+                        0);
+        server.createContext(
+                "/cache/",
+                exchange ->
+                        serveCache(
+                                exchange,
+                                basicAuthorization,
+                                objects,
+                                gets,
+                                puts));
+        server.start();
+        try {
+            Map<String, String> environment =
+                    managedEnvironment(DISABLED_L2_WRITER_MODE, "", 46);
+            environment.put(SHARED_MODE_ENVIRONMENT, "READ_WRITE");
+            environment.put(
+                    AUTHORITY_DIGEST_ENVIRONMENT,
+                    "sha256:" + "a".repeat(64));
+            environment.put(
+                    POLICY_DIGEST_ENVIRONMENT,
+                    "sha256:" + "b".repeat(64));
+            environment.put(
+                    CONFIGURATION_DIGEST_ENVIRONMENT,
+                    "sha256:" + "c".repeat(64));
+            environment.put(
+                    AUTHORITY_CONTRACT_ENVIRONMENT,
+                    "buildopt-local-cache-authority/v1");
+            environment.put(
+                    GATEWAY_URL_ENVIRONMENT,
+                    "http://127.0.0.1:" + server.getAddress().getPort());
+            environment.put(GATEWAY_USERNAME_ENVIRONMENT, "buildopt");
+            environment.put(GATEWAY_PASSWORD_ENVIRONMENT, gatewayPassword);
+            environment.put(
+                    GATEWAY_GENERATION_ENVIRONMENT,
+                    "11111111-1111-4111-8111-111111111111");
+            String[] arguments =
+                    arguments(
+                            initScript,
+                            "--build-cache",
+                            "-PbuildoptTierOneRegisterTransform=false",
+                            "clean",
+                            "compileJava");
+
+            BuildResult first =
+                    run(
+                            project,
+                            gradleHome,
+                            scenario,
+                            environment,
+                            arguments);
+            requireOutcome(first, ":compileJava", TaskOutcome.SUCCESS, scenario);
+            if (puts.get() == 0 || objects.isEmpty()) {
+                throw new IllegalStateException(
+                        scenario
+                                + " did not publish through HttpBuildCache\n"
+                                + first.getOutput());
+            }
+            BuildResult second =
+                    run(
+                            project,
+                            gradleHome,
+                            scenario,
+                            environment,
+                            arguments);
+            requireOutcome(
+                    second,
+                    ":compileJava",
+                    TaskOutcome.FROM_CACHE,
+                    scenario);
+            requireConfigurationCacheReuse(second, scenario);
+            if (gets.get() == 0) {
+                throw new IllegalStateException(
+                        scenario + " did not read through HttpBuildCache");
+            }
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    private static void serveCache(
+            HttpExchange exchange,
+            String authorization,
+            Map<String, byte[]> objects,
+            AtomicInteger gets,
+            AtomicInteger puts)
+            throws IOException {
+        try (exchange) {
+            if (!authorization.equals(
+                    exchange.getRequestHeaders().getFirst("Authorization"))) {
+                exchange.sendResponseHeaders(401, -1);
+                return;
+            }
+            String key = exchange.getRequestURI().getPath();
+            if (!key.startsWith("/cache/") || key.length() <= "/cache/".length()) {
+                exchange.sendResponseHeaders(404, -1);
+                return;
+            }
+            if (exchange.getRequestMethod().equals("GET")) {
+                gets.incrementAndGet();
+                byte[] payload = objects.get(key);
+                if (payload == null) {
+                    exchange.sendResponseHeaders(404, -1);
+                    return;
+                }
+                exchange.getResponseHeaders()
+                        .set("Content-Type", "application/octet-stream");
+                exchange.sendResponseHeaders(200, payload.length);
+                exchange.getResponseBody().write(payload);
+                return;
+            }
+            if (exchange.getRequestMethod().equals("PUT")) {
+                puts.incrementAndGet();
+                objects.put(key, exchange.getRequestBody().readAllBytes());
+                exchange.sendResponseHeaders(201, -1);
+                return;
+            }
+            exchange.sendResponseHeaders(405, -1);
+        }
     }
 
     private static Path managedDirectory(Path stateRoot, long generation) {

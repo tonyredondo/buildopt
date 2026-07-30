@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/buildsession"
+	"github.com/tonyredondo/buildopt/internal/localauthority"
 	"github.com/tonyredondo/buildopt/internal/sessioningest"
 	"github.com/tonyredondo/buildopt/internal/sharedcache"
 )
@@ -24,7 +25,7 @@ import (
 const (
 	exitUsage         = 64
 	exitConfiguration = 78
-	serverUsage       = "usage: buildopt-server serve [--listen 127.0.0.1:8042] [--export-dir PATH] [--state-dir ABSOLUTE_PATH]\n"
+	serverUsage       = "usage: buildopt-server serve [--listen 127.0.0.1:8042] [--export-dir PATH] [--state-dir ABSOLUTE_PATH] [--cache-authority ABSOLUTE_PATH --cache-trust-root ABSOLUTE_PATH --cache-credential ABSOLUTE_PATH]\n"
 )
 
 func main() {
@@ -73,6 +74,21 @@ func run(
 		"state-dir",
 		"",
 		"absolute private directory for single-node Shared storage",
+	)
+	cacheAuthorityPath := flags.String(
+		"cache-authority",
+		"",
+		"private canonical local cache authority document",
+	)
+	cacheTrustRootPath := flags.String(
+		"cache-trust-root",
+		"",
+		"private pinned local cache trust-root document",
+	)
+	cacheCredentialPath := flags.String(
+		"cache-credential",
+		"",
+		"private local cache data-plane credential",
 	)
 	if err := flags.Parse(args[1:]); err != nil || flags.NArg() != 0 {
 		_, _ = io.WriteString(stderr, serverUsage)
@@ -134,9 +150,73 @@ func run(
 		}()
 	}
 
+	cacheConfigurationValues := []string{
+		*cacheAuthorityPath,
+		*cacheTrustRootPath,
+		*cacheCredentialPath,
+	}
+	cacheConfigured := false
+	cacheComplete := true
+	for _, value := range cacheConfigurationValues {
+		cacheConfigured = cacheConfigured || value != ""
+		cacheComplete = cacheComplete && value != ""
+	}
+	if cacheConfigured && (!cacheComplete || sharedStorage == nil) {
+		_, _ = fmt.Fprintln(
+			stderr,
+			"buildopt-server: authenticated Shared cache requires state directory, authority, trust root, and credential",
+		)
+		return exitConfiguration
+	}
+
+	var cacheHandler http.Handler
+	if cacheConfigured {
+		now := time.Now().UTC()
+		verified, _, credential, authorityErr := localauthority.LoadFiles(
+			ctx,
+			*cacheAuthorityPath,
+			*cacheTrustRootPath,
+			*cacheCredentialPath,
+			now,
+		)
+		if authorityErr != nil {
+			_, _ = fmt.Fprintf(
+				stderr,
+				"buildopt-server: invalid local cache authority: %v\n",
+				authorityErr,
+			)
+			return exitConfiguration
+		}
+		binding, _, authorityErr := sharedStorage.InstallLocalAuthority(
+			ctx,
+			verified,
+			credential,
+			now,
+		)
+		if authorityErr == nil {
+			cacheHandler, authorityErr =
+				sharedcache.NewLocalAuthorityHTTPHandler(
+					sharedStorage,
+					binding,
+					credential,
+				)
+		}
+		for index := range credential {
+			credential[index] = 0
+		}
+		if authorityErr != nil {
+			_, _ = fmt.Fprintf(
+				stderr,
+				"buildopt-server: local cache authority unavailable: %v\n",
+				authorityErr,
+			)
+			return exitConfiguration
+		}
+	}
+
 	ingestStore := sessioningest.NewStore()
 	logger := log.New(stdout, "buildopt-server: ", 0)
-	handler, err := sessioningest.NewHandler(
+	ingestHandler, err := sessioningest.NewHandler(
 		getenv(sessioningest.ServerTokenEnvironment),
 		ingestStore,
 		func(record sessioningest.Record, result sessioningest.PutResult) {
@@ -182,6 +262,11 @@ func run(
 		)
 		return exitConfiguration
 	}
+	handler := http.NewServeMux()
+	if cacheHandler != nil {
+		handler.Handle("/cache/", cacheHandler)
+	}
+	handler.Handle("/", ingestHandler)
 
 	listener, err := net.Listen("tcp4", *listenAddress)
 	if err != nil {
@@ -209,10 +294,17 @@ func run(
 	}()
 	logger.Printf("listening on http://%s", listener.Addr())
 	if sharedStorage != nil {
-		logger.Printf(
-			"single-node Shared storage initialized and reconciled with cache/control schema %d; global cache routing disabled pending A0-006",
-			sharedcache.SchemaVersion,
-		)
+		if cacheHandler == nil {
+			logger.Printf(
+				"single-node Shared storage initialized and reconciled with cache/control schema %d; cache routing disabled without local authority",
+				sharedcache.SchemaVersion,
+			)
+		} else {
+			logger.Printf(
+				"single-node Shared storage initialized and reconciled with cache/control schema %d; authenticated cache routing enabled",
+				sharedcache.SchemaVersion,
+			)
+		}
 	}
 
 	select {

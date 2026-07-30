@@ -75,7 +75,29 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			exportContextErr,
 		)
 	}
-	handshake, handshakeErr := startPluginHandshake()
+	authority, authorityConfigured, authorityErr :=
+		localAuthorityContextFromEnvironment(
+			context.Background(),
+			os.Getenv,
+			startedAt,
+		)
+	if authorityErr != nil {
+		_, _ = fmt.Fprintf(
+			stderr,
+			"buildopt: local cache authority unavailable: %v\n",
+			authorityErr,
+		)
+	}
+
+	var handshake *pluginHandshakeServer
+	var handshakeErr error
+	if authority != nil {
+		handshake, handshakeErr = startPluginHandshakeForAttempt(
+			authority.attemptID,
+		)
+	} else {
+		handshake, handshakeErr = startPluginHandshake()
+	}
 	if handshakeErr != nil {
 		_, _ = fmt.Fprintf(
 			stderr,
@@ -86,7 +108,14 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	var gateway *localGateway
 	if handshake != nil {
 		var gatewayErr error
-		gateway, gatewayErr = startInvocationGateway(handshake.attemptID)
+		var cacheBinding *gatewayCacheBinding
+		if authority != nil {
+			cacheBinding = authority.cacheBinding
+		}
+		gateway, gatewayErr = startInvocationGatewayWithCache(
+			handshake.attemptID,
+			cacheBinding,
+		)
 		if gatewayErr != nil {
 			_, _ = fmt.Fprintf(
 				stderr,
@@ -95,7 +124,13 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			)
 		}
 	}
-	l1, l1Err := startInvocationManagedL1()
+	var l1 *managedL1
+	var l1Err error
+	if authority != nil {
+		l1, l1Err = startManagedL1(authority.managedL1Config)
+	} else if !authorityConfigured {
+		l1, l1Err = startInvocationManagedL1()
+	}
 	if l1Err != nil {
 		_, _ = fmt.Fprintf(
 			stderr,
@@ -114,6 +149,11 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			gatewayUsernameEnvironment:   gateway.username,
 			gatewayPasswordEnvironment:   gateway.password,
 			gatewayGenerationEnvironment: gateway.generation,
+		}
+		if authority != nil {
+			for key, value := range authority.childEnvironment {
+				childEnvironment[key] = value
+			}
 		}
 	}
 	if l1 != nil {

@@ -32,7 +32,7 @@ Cache reuse, the plugin reads fresh invocation context, authenticates an HTTP
 readiness probe against the loopback gateway, verifies its connection
 generation, and writes the separate event-channel authentication preface before
 `ProducerHello`. Incomplete or rejected context remains fail-open for the
-baseline build. The gateway exposes no cache data routes yet.
+baseline build. The neutral plugin still changes no cache behavior.
 
 `A0-003` packages `dev.buildopt.managed-l1` as a settings plugin. An init
 script applies it in `beforeSettings`, and the invoker supplies Gradle's public
@@ -41,12 +41,21 @@ script applies it in `beforeSettings`, and the invoker supplies Gradle's public
 enables local load/store, and delegates seven-day retention to Gradle's native
 cleanup. The plugin also applies `dev.buildopt.tier-one-policy` before each
 project. Malformed context disables the managed cache; the distinct
-`DISABLED_L2_WRITER` mode disables local load/store without taking ownership
-of the future remote cache.
+`DISABLED_L2_WRITER` mode disables local load/store.
 
-The plugin does not read Gradle's opaque cache files, authenticate generation
-authority, delete revoked generations, configure L2, or force build-cache
-enablement by mutating `StartParameter` during settings evaluation.
+`A0-006` extends that settings plugin with the public `HttpBuildCache` API.
+Only a complete launcher-owned authority/policy/configuration/gateway context
+configures the loopback remote cache. Read-only mode sets `push=false`; an
+authorized pending writer enables push while retaining the disabled native L1.
+The gateway credential is local-only, and the authority, policy,
+configuration, and connection generations remain Configuration Cache inputs.
+Malformed context disables the remote cache.
+
+The plugin does not read Gradle's opaque cache files, parse signatures, receive
+the Shared credential, delete revoked generations, or force build-cache
+enablement by mutating `StartParameter` during settings evaluation. Signature,
+anti-rollback, repository, expiration, and remote credential checks remain in
+the launcher/gateway/Shared trust boundary.
 
 Validate the packaged Java 17 artifact, gateway, and real Wrapper handshake
 with:
@@ -57,6 +66,7 @@ with:
 ./dev/check-gradle-plugin-handshake
 ./dev/check-tier-one-policy
 ./dev/check-managed-l1
+./dev/check-local-authority
 ```
 
 Deep instrumentation and output-semantics changes do not belong in this module

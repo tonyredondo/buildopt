@@ -68,12 +68,13 @@ custom tasks, modified actions, and transforms fail closed. `A0-003` adds a
 native managed L1 on the same rows, including generation rotation,
 Configuration Cache reuse, and L2-writer local disablement. `A0-004` adds the
 private local blob store and separate WAL-mode cache/control metadata
-lifecycles. The matrix still reports `MANAGED_SHARED_CACHE` as `UNAVAILABLE`
-after A0-005: pending/abort, canonical commit CAS, verified HTTP reads, and
-startup reconciliation now exist behind an immutable preauthenticated binding,
-but A0-006 still owns locally authenticated policy, current revocation state,
-and routable gateway/server context. Until those compose, the data-plane
-conformance is not an active managed Shared claim.
+lifecycles. `A0-005` adds pending/abort, canonical commit CAS, verified HTTP
+reads, and startup reconciliation. `A0-006` then proves locally authenticated
+policy, cumulative revocation state, routable gateway/server context, and a
+golden-row Gradle `HttpBuildCache` PUT/GET. The matrix still reports
+`MANAGED_SHARED_CACHE` as `UNAVAILABLE` until the complete A0 HTTP
+compatibility/fault matrix and production commit/abort composition close; one
+golden integration row does not promote every compatibility row.
 
 `SPK-002` leaves `JVM_AGENT` unavailable in every profile. Its real-daemon
 prototype sees class loads rather than method access or task attribution, so

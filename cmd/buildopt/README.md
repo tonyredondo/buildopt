@@ -207,14 +207,50 @@ authorized by the later L2 policy. That mode exposes no local directory and
 the settings plugin disables local load/store, so an aborted pending write
 cannot leave a reusable local hit. Incomplete configuration, an unsafe state
 root, or an occupied lease produces a diagnostic and preserves the Gradle
-baseline. `A0-006` still owns authenticated monotonic generations and
-revocation deletion.
+baseline. The native-only input remains available without Shared; when an
+A0-006 authority is configured, its signed monotonic generation and write
+permission replace the parent-supplied generation and writer flag.
 
 Validate the launcher, plugin, Gradle/JDK/DSL matrix, generation rotation, and
 real end-to-end handoff with:
 
 ```bash
 ./dev/check-managed-l1
+```
+
+## A0-006 locally authenticated Shared cache
+
+The launcher enables the Shared route only from a complete private local
+authority configuration:
+
+```bash
+BUILDOPT_LOCAL_AUTHORITY_PATH=/run/buildopt/authority.json \
+BUILDOPT_LOCAL_TRUST_ROOT_PATH=/run/buildopt/trust-root.json \
+BUILDOPT_LOCAL_CACHE_CREDENTIAL_PATH=/run/buildopt/cache-credential \
+BUILDOPT_SHARED_CACHE_URL=http://127.0.0.1:8042 \
+BUILDOPT_L1_STATE_ROOT=/run/user/1000/buildopt \
+BUILDOPT_L1_TENANT_ID=tenant-7 \
+BUILDOPT_L1_REPOSITORY_ID=repository-42 \
+BUILDOPT_L1_TRUST_DOMAIN=private-beta \
+BUILDOPT_L1_COMPATIBILITY_CLASS=gradle-9.6-java-21-linux-amd64 \
+CI=true \
+buildopt run -- ./gradlew --build-cache build
+```
+
+All authority files must be absolute, current-user-owned mode-`0600` regular
+files. The launcher verifies canonical JCS, Ed25519 signatures, repository and
+component binding, expiration, and durable anti-rollback state before starting
+Gradle. It sends the upstream credential only to the gateway's same-UID
+control channel. Gradle receives a distinct local Basic credential plus
+non-secret authority/configuration generation markers; the managed settings
+plugin configures `HttpBuildCache` at the loopback gateway. Invalid or partial
+authority disables the authenticated cache for that invocation without
+changing the child exit status.
+
+Validate this complete boundary with:
+
+```bash
+./dev/check-local-authority
 ```
 
 ## WS-005 server ingest

@@ -14,9 +14,10 @@ import java.util.Base64;
 /**
  * Invocation-scoped credentials for the neutral local BuildOpt rendezvous.
  *
- * <p>The gateway credential authorizes only the loopback readiness probe. The
- * event token authenticates the Unix-socket preface and is never serialized in
- * the Protobuf payload.
+ * <p>The gateway credential authorizes only the loopback gateway, including
+ * readiness and an independently authenticated managed-cache route. It is
+ * never the Shared credential. The event token authenticates the Unix-socket
+ * preface and is never serialized in the Protobuf payload.
  */
 final class BuildOptRendezvousContext {
     private static final String ATTEMPT_ID_ENVIRONMENT = "BUILDOPT_PLUGIN_ATTEMPT_ID";

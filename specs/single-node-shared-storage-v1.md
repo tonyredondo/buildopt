@@ -95,5 +95,6 @@ ownership, WAL/migration drift, database separation and persistence, atomic
 blob publication, concurrent deduplication, corruption, cancellation,
 oversize cleanup, close/reopen, and the real statically linked server
 lifecycle. It also reruns the implementation-independent ADR 0002 model and
-the capability matrix, which continues to report `MANAGED_SHARED_CACHE` as
-`UNAVAILABLE` until A0-005 supplies the authenticated data plane.
+the capability matrix. `A0-005` and `A0-006` now compose this substrate with
+pending visibility and locally authenticated routing, while the complete A0
+cache conformance gates remain open.

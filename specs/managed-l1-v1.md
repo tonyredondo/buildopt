@@ -63,10 +63,11 @@ PUT from leaving a reusable local hit.
 ## Security boundary
 
 The scope digest provides deterministic separation; it is not an authority
-signature. `A0-006` still owns authenticated monotonic
+signature. `A0-006` supplies authenticated monotonic
 `l1SecurityGeneration`, future/rollback rejection, and revocation-driven
-rotation/deletion. `A0-004`/`A0-005` own remote population and pending
-publication. Therefore this block does not close `A0-G02`.
+generation rotation; physical deletion remains `A1-004`. `A0-004`/`A0-005`
+own remote population and pending publication. Therefore this isolated block
+does not close `A0-G02`.
 
 ## Executable evidence
 

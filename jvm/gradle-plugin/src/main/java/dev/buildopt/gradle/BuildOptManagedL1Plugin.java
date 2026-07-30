@@ -2,14 +2,18 @@ package dev.buildopt.gradle;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.util.Base64;
 import java.util.regex.Pattern;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.initialization.Settings;
 import org.gradle.api.provider.ProviderFactory;
+import org.gradle.caching.http.HttpBuildCache;
 
 /**
  * Configures the native Gradle local cache from launcher-owned context.
@@ -27,16 +31,43 @@ public final class BuildOptManagedL1Plugin implements Plugin<Settings> {
             "BUILDOPT_MANAGED_L1_SECURITY_GENERATION";
     static final String RETENTION_ENVIRONMENT =
             "BUILDOPT_MANAGED_L1_RETENTION_DAYS";
+    static final String SHARED_MODE_ENVIRONMENT =
+            "BUILDOPT_MANAGED_SHARED_MODE";
+    static final String AUTHORITY_DIGEST_ENVIRONMENT =
+            "BUILDOPT_MANAGED_AUTHORITY_DIGEST";
+    static final String POLICY_DIGEST_ENVIRONMENT =
+            "BUILDOPT_MANAGED_POLICY_DIGEST";
+    static final String CONFIGURATION_DIGEST_ENVIRONMENT =
+            "BUILDOPT_MANAGED_CONFIGURATION_POLICY_DIGEST";
+    static final String AUTHORITY_CONTRACT_ENVIRONMENT =
+            "BUILDOPT_MANAGED_AUTHORITY_CONTRACT";
+    static final String GATEWAY_URL_ENVIRONMENT = "BUILDOPT_GATEWAY_URL";
+    static final String GATEWAY_USERNAME_ENVIRONMENT =
+            "BUILDOPT_GATEWAY_USERNAME";
+    static final String GATEWAY_PASSWORD_ENVIRONMENT =
+            "BUILDOPT_GATEWAY_PASSWORD";
+    static final String GATEWAY_GENERATION_ENVIRONMENT =
+            "BUILDOPT_GATEWAY_CONNECTION_GENERATION";
 
     static final String READ_WRITE_MODE = "READ_WRITE";
     static final String DISABLED_L2_WRITER_MODE = "DISABLED_L2_WRITER";
+    static final String SHARED_READ_ONLY_MODE = "READ_ONLY";
+    static final String SHARED_READ_WRITE_MODE = "READ_WRITE";
+    static final String AUTHORITY_CONTRACT =
+            "buildopt-local-cache-authority/v1";
     static final int RETENTION_DAYS = 7;
 
     private static final Pattern SCOPE_DIGEST = Pattern.compile("[0-9a-f]{64}");
+    private static final Pattern AUTHENTICATED_DIGEST =
+            Pattern.compile("sha256:[0-9a-f]{64}");
+    private static final Pattern UUID =
+            Pattern.compile(
+                    "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
 
     @Override
     public void apply(Settings settings) {
         ManagedL1Decision decision = inspect(settings.getProviders());
+        ManagedSharedDecision shared = inspectShared(settings.getProviders());
         if (decision.mode() == Mode.READ_WRITE) {
             settings.getCaches()
                     .buildCache(
@@ -47,7 +78,8 @@ public final class BuildOptManagedL1Plugin implements Plugin<Settings> {
         settings.getGradle()
                 .beforeProject(new ApplyTierOnePolicyAction());
         settings.getGradle()
-                .settingsEvaluated(new ConfigureManagedL1Action(decision));
+                .settingsEvaluated(
+                        new ConfigureManagedL1Action(decision, shared));
     }
 
     private static ManagedL1Decision inspect(ProviderFactory providers) {
@@ -85,6 +117,110 @@ public final class BuildOptManagedL1Plugin implements Plugin<Settings> {
             return parsed;
         } catch (NumberFormatException ignored) {
             return null;
+        }
+    }
+
+    private static ManagedSharedDecision inspectShared(
+            ProviderFactory providers) {
+        String mode =
+                providers.environmentVariable(SHARED_MODE_ENVIRONMENT)
+                        .getOrElse("");
+        String authorityDigest =
+                providers.environmentVariable(AUTHORITY_DIGEST_ENVIRONMENT)
+                        .getOrElse("");
+        String policyDigest =
+                providers.environmentVariable(POLICY_DIGEST_ENVIRONMENT)
+                        .getOrElse("");
+        String configurationDigest =
+                providers.environmentVariable(CONFIGURATION_DIGEST_ENVIRONMENT)
+                        .getOrElse("");
+        String authorityContract =
+                providers.environmentVariable(AUTHORITY_CONTRACT_ENVIRONMENT)
+                        .getOrElse("");
+
+        boolean absent =
+                mode.isEmpty()
+                        && authorityDigest.isEmpty()
+                        && policyDigest.isEmpty()
+                        && configurationDigest.isEmpty()
+                        && authorityContract.isEmpty();
+        if (absent) {
+            return ManagedSharedDecision.disabled();
+        }
+        String gatewayUrl =
+                providers.environmentVariable(GATEWAY_URL_ENVIRONMENT)
+                        .getOrElse("");
+        String gatewayUsername =
+                providers.environmentVariable(GATEWAY_USERNAME_ENVIRONMENT)
+                        .getOrElse("");
+        String gatewayPassword =
+                providers.environmentVariable(GATEWAY_PASSWORD_ENVIRONMENT)
+                        .getOrElse("");
+        String gatewayGeneration =
+                providers.environmentVariable(GATEWAY_GENERATION_ENVIRONMENT)
+                        .getOrElse("");
+        boolean push;
+        if (mode.equals(SHARED_READ_ONLY_MODE)) {
+            push = false;
+        } else if (mode.equals(SHARED_READ_WRITE_MODE)) {
+            push = true;
+        } else {
+            return ManagedSharedDecision.invalid();
+        }
+        URI gateway = parseLoopbackGateway(gatewayUrl);
+        if (gateway == null
+                || !gatewayUsername.equals("buildopt")
+                || !validGatewayPassword(gatewayPassword)
+                || !UUID.matcher(gatewayGeneration).matches()
+                || !AUTHENTICATED_DIGEST.matcher(authorityDigest).matches()
+                || !AUTHENTICATED_DIGEST.matcher(policyDigest).matches()
+                || !AUTHENTICATED_DIGEST.matcher(configurationDigest).matches()
+                || !authorityContract.equals(AUTHORITY_CONTRACT)) {
+            return ManagedSharedDecision.invalid();
+        }
+        return ManagedSharedDecision.enabled(
+                gateway.resolve("/cache/").toString(),
+                gatewayUsername,
+                gatewayPassword,
+                push);
+    }
+
+    private static URI parseLoopbackGateway(String value) {
+        try {
+            URI gateway = new URI(value);
+            String path = gateway.getRawPath();
+            if (!gateway.getScheme().equals("http")
+                    || !gateway.getHost().equals("127.0.0.1")
+                    || gateway.getPort() < 1
+                    || gateway.getPort() > 65535
+                    || gateway.getUserInfo() != null
+                    || gateway.getRawQuery() != null
+                    || gateway.getRawFragment() != null
+                    || !(path == null
+                            || path.isEmpty()
+                            || path.equals("/"))) {
+                return null;
+            }
+            String canonical = "http://127.0.0.1:" + gateway.getPort();
+            if (!value.equals(canonical) && !value.equals(canonical + "/")) {
+                return null;
+            }
+            return new URI(canonical + "/");
+        } catch (NullPointerException | URISyntaxException ignored) {
+            return null;
+        }
+    }
+
+    private static boolean validGatewayPassword(String value) {
+        try {
+            byte[] decoded = Base64.getUrlDecoder().decode(value);
+            return decoded.length == 32
+                    && Base64.getUrlEncoder()
+                            .withoutPadding()
+                            .encodeToString(decoded)
+                            .equals(value);
+        } catch (IllegalArgumentException ignored) {
+            return false;
         }
     }
 
@@ -138,14 +274,57 @@ public final class BuildOptManagedL1Plugin implements Plugin<Settings> {
         }
     }
 
+    private enum SharedMode {
+        ENABLED,
+        DISABLED,
+        INVALID
+    }
+
+    private record ManagedSharedDecision(
+            SharedMode mode,
+            String url,
+            String username,
+            String password,
+            boolean push)
+            implements Serializable {
+        @Serial private static final long serialVersionUID = 1L;
+
+        static ManagedSharedDecision enabled(
+                String url,
+                String username,
+                String password,
+                boolean push) {
+            return new ManagedSharedDecision(
+                    SharedMode.ENABLED,
+                    url,
+                    username,
+                    password,
+                    push);
+        }
+
+        static ManagedSharedDecision disabled() {
+            return new ManagedSharedDecision(
+                    SharedMode.DISABLED, "", "", "", false);
+        }
+
+        static ManagedSharedDecision invalid() {
+            return new ManagedSharedDecision(
+                    SharedMode.INVALID, "", "", "", false);
+        }
+    }
+
     private static final class ConfigureManagedL1Action
             implements Action<Settings>, Serializable {
         @Serial private static final long serialVersionUID = 1L;
 
         private final ManagedL1Decision decision;
+        private final ManagedSharedDecision shared;
 
-        ConfigureManagedL1Action(ManagedL1Decision decision) {
+        ConfigureManagedL1Action(
+                ManagedL1Decision decision,
+                ManagedSharedDecision shared) {
             this.decision = decision;
+            this.shared = shared;
         }
 
         @Override
@@ -178,6 +357,33 @@ public final class BuildOptManagedL1Plugin implements Plugin<Settings> {
                                         cache.setPush(false);
                                     });
                 }
+            }
+            if (shared.mode() == SharedMode.ENABLED) {
+                settings.getBuildCache()
+                        .remote(
+                                HttpBuildCache.class,
+                                cache -> {
+                                    cache.setUrl(shared.url());
+                                    cache.setEnabled(true);
+                                    cache.setPush(shared.push());
+                                    cache.setAllowInsecureProtocol(true);
+                                    cache.setUseExpectContinue(true);
+                                    cache.credentials(
+                                            credentials -> {
+                                                credentials.setUsername(
+                                                        shared.username());
+                                                credentials.setPassword(
+                                                        shared.password());
+                                            });
+                                });
+            } else {
+                settings.getBuildCache()
+                        .remote(
+                                HttpBuildCache.class,
+                                cache -> {
+                                    cache.setEnabled(false);
+                                    cache.setPush(false);
+                                });
             }
         }
     }

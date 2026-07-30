@@ -10,18 +10,21 @@ the private event socket and loopback readiness gateway, and consumes the
 `F0-039` local bypass before creating either service or parsing server
 configuration. The bypass uses the same process/signal contract and removes all
 reserved launcher state from the child. Grace-period escalation remains with
-the invoking CI environment. The gateway has no cache data or upstream route
-yet. `A0-001` adds the opt-in managed runner-slot path: a current-user private
+the invoking CI environment. `A0-001` adds the opt-in managed runner-slot path:
+a current-user private
 state root, exclusive invocation and gateway leases, a detached idle-bounded
 process, UID-authenticated invocation registration, context-gated readiness,
 restart-stable identity, and complete rotation when the endpoint cannot be
 recovered. `A0-003` adds the launcher-owned native L1 lifecycle: opaque
 tenant/repository/trust/compatibility scoping, generation-segmented private
 directories, an exclusive child-lifetime lease, and local-cache disablement
-for pending L2 writers. Authenticated generation authority, remote
-population, and revoked-directory deletion remain with later A0 blocks.
-Later policy, cache, and observation behavior must extend this boundary
-without replacing contract sources.
+for pending L2 writers. `A0-006` authenticates canonical local policy and
+cumulative revocation state before Gradle, persists anti-rollback generations,
+derives L1 authority from the signed state, and gives the gateway an
+invocation-only Shared credential over its same-UID control channel. The
+gateway translates Gradle's local Basic credential, rejects redirects, and
+routes no cache request without current context. Revoked-directory deletion
+remains later work.
 
 `sessioningest/` contains the provisional `WS-005` gateway-to-server record,
 strict authenticated HTTP transport, and concurrency-safe in-memory acceptance
@@ -34,14 +37,19 @@ deterministic manifest/baseline digests, declares unobserved metrics
 unavailable, publishes mode-`0600` immutable JSON, and leaves runtime schema
 conformance to the isolated validator under `dev/schema-validator/`.
 
-`sharedcache/` owns the A0-004/A0-005 single-node storage and publication
+`localauthority/` owns the A0-006 canonical JCS/Ed25519 authority, pinned
+trust-root and private-file boundary, strict semantic validation, and durable
+monotonic policy/revocation state used independently by launcher and Shared.
+
+`sharedcache/` owns the A0-004..A0-006 single-node storage and publication
 boundary used by `buildopt-server`: private same-filesystem SHA-256 blobs, a
 process-lifetime writer lease, independently migrated WAL-mode
 `cache.sqlite`/`control.sqlite`, durable pending attempts, canonical Ed25519
 decisions, atomic first-writer visibility, context-bound opaque HTTP GET/PUT,
-quarantine, and startup reconciliation. It verifies complete bytes before
-returning a hit and never derives authority from blob presence. A0-006 owns
-the local policy/revocation authentication that may create a routable binding.
+quarantine, startup reconciliation, and current local-authority records. It
+verifies complete bytes before returning a hit, persists no raw data-plane
+credential, rejects stale/rolled-back authority, and never derives authority
+from blob presence.
 
 `neutralenvelope/` owns the strict `WS-009` observation and report contract. It
 pairs externally timed native and optimization-off wrapper executions,

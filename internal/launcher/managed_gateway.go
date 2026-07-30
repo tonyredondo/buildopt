@@ -35,7 +35,7 @@ const (
 	managedGatewayMaximumIdleTimeout   = 24 * time.Hour
 	managedGatewayStartupTimeout       = 5 * time.Second
 	managedGatewayControlTimeout       = 5 * time.Second
-	managedGatewayMaximumControlBytes  = 4 << 10
+	managedGatewayMaximumControlBytes  = 16 << 10
 	managedGatewayMaximumStateBytes    = 4 << 10
 )
 
@@ -56,9 +56,19 @@ type managedGatewayState struct {
 }
 
 type managedGatewayControlRequest struct {
-	SchemaVersion int    `json:"schemaVersion"`
-	Operation     string `json:"operation"`
-	AttemptID     string `json:"attemptId"`
+	SchemaVersion int                              `json:"schemaVersion"`
+	Operation     string                           `json:"operation"`
+	AttemptID     string                           `json:"attemptId"`
+	Cache         *managedGatewayCacheRegistration `json:"cache,omitempty"`
+}
+
+type managedGatewayCacheRegistration struct {
+	UpstreamEndpoint string `json:"upstreamEndpoint"`
+	Credential       string `json:"credential"`
+	AuthorityDigest  string `json:"authorityDigest"`
+	AllowRead        bool   `json:"allowRead"`
+	AllowWrite       bool   `json:"allowWrite"`
+	ExpiresAt        string `json:"expiresAt"`
 }
 
 type managedGatewayControlResponse struct {
@@ -71,8 +81,9 @@ type managedGatewayControlResponse struct {
 }
 
 type managedGatewayContext struct {
-	mutex     sync.Mutex
-	attemptID string
+	mutex        sync.Mutex
+	attemptID    string
+	cacheBinding *gatewayCacheBinding
 }
 
 // managedGatewayConfigFromEnvironment keeps the Phase 0 gateway as the
@@ -151,20 +162,49 @@ func validateManagedRunnerSlot(slot string) error {
 }
 
 func startInvocationGateway(attemptID string) (*localGateway, error) {
+	return startInvocationGatewayWithCache(attemptID, nil)
+}
+
+func startInvocationGatewayWithCache(
+	attemptID string,
+	cacheBinding *gatewayCacheBinding,
+) (*localGateway, error) {
+	if cacheBinding != nil && cacheBinding.attemptID != attemptID {
+		return nil, errors.New(
+			"gateway cache binding does not match the invocation attempt",
+		)
+	}
 	config, configured, err := managedGatewayConfigFromEnvironment(os.Getenv)
 	if err != nil {
 		return nil, err
 	}
 	if !configured {
-		return startLocalGateway()
+		return startLocalGatewayWithCache(cacheBinding)
 	}
-	return startManagedInvocationGateway(config, attemptID)
+	return startManagedInvocationGatewayWithCache(
+		config,
+		attemptID,
+		cacheBinding,
+	)
 }
 
 func startManagedInvocationGateway(
 	config managedGatewayConfig,
 	attemptID string,
 ) (*localGateway, error) {
+	return startManagedInvocationGatewayWithCache(config, attemptID, nil)
+}
+
+func startManagedInvocationGatewayWithCache(
+	config managedGatewayConfig,
+	attemptID string,
+	cacheBinding *gatewayCacheBinding,
+) (*localGateway, error) {
+	if cacheBinding != nil && cacheBinding.attemptID != attemptID {
+		return nil, errors.New(
+			"managed gateway cache binding does not match the invocation attempt",
+		)
+	}
 	if err := prepareManagedGatewayDirectories(config); err != nil {
 		return nil, err
 	}
@@ -192,6 +232,7 @@ func startManagedInvocationGateway(
 	connection, response, err := registerManagedGateway(
 		config,
 		attemptID,
+		cacheBinding,
 		false,
 	)
 	if err != nil {
@@ -202,6 +243,7 @@ func startManagedInvocationGateway(
 		connection, response, err = registerManagedGateway(
 			config,
 			attemptID,
+			cacheBinding,
 			true,
 		)
 	}
@@ -337,6 +379,7 @@ func startManagedGatewayProcess(config managedGatewayConfig) error {
 func registerManagedGateway(
 	config managedGatewayConfig,
 	attemptID string,
+	cacheBinding *gatewayCacheBinding,
 	retry bool,
 ) (*net.UnixConn, managedGatewayControlResponse, error) {
 	deadline := time.Now()
@@ -348,6 +391,7 @@ func registerManagedGateway(
 		connection, response, err := requestManagedGatewayRegistration(
 			managedGatewayControlAddress(config.directory),
 			attemptID,
+			cacheBinding,
 		)
 		if err == nil {
 			return connection, response, nil
@@ -363,6 +407,7 @@ func registerManagedGateway(
 func requestManagedGatewayRegistration(
 	socketPath string,
 	attemptID string,
+	cacheBinding *gatewayCacheBinding,
 ) (*net.UnixConn, managedGatewayControlResponse, error) {
 	connection, err := net.DialUnix(
 		"unix",
@@ -390,6 +435,7 @@ func requestManagedGatewayRegistration(
 		SchemaVersion: managedGatewayControlSchemaVersion,
 		Operation:     "register",
 		AttemptID:     attemptID,
+		Cache:         managedGatewayCacheForRegistration(cacheBinding),
 	}
 	if err := json.NewEncoder(connection).Encode(request); err != nil {
 		return nil, managedGatewayControlResponse{}, err
@@ -437,6 +483,55 @@ func validateManagedGatewayControlResponse(
 		return errors.New("managed gateway returned an invalid connection generation")
 	}
 	return nil
+}
+
+func managedGatewayCacheForRegistration(
+	binding *gatewayCacheBinding,
+) *managedGatewayCacheRegistration {
+	if binding == nil {
+		return nil
+	}
+	return &managedGatewayCacheRegistration{
+		UpstreamEndpoint: binding.upstreamEndpoint,
+		Credential:       binding.credential,
+		AuthorityDigest:  binding.authorityDigest,
+		AllowRead:        binding.allowRead,
+		AllowWrite:       binding.allowWrite,
+		ExpiresAt: binding.expiresAt.UTC().Format(
+			time.RFC3339Nano,
+		),
+	}
+}
+
+func (registration *managedGatewayCacheRegistration) binding(
+	attemptID string,
+) (*gatewayCacheBinding, error) {
+	if registration == nil {
+		return nil, nil
+	}
+	credential, err := base64.RawURLEncoding.DecodeString(
+		registration.Credential,
+	)
+	if err != nil ||
+		base64.RawURLEncoding.EncodeToString(credential) !=
+			registration.Credential {
+		return nil, errors.New("managed gateway cache credential is invalid")
+	}
+	expiresAt, err := time.Parse(time.RFC3339Nano, registration.ExpiresAt)
+	if err != nil ||
+		expiresAt.Location() != time.UTC ||
+		expiresAt.Format(time.RFC3339Nano) != registration.ExpiresAt {
+		return nil, errors.New("managed gateway cache expiration is invalid")
+	}
+	return newGatewayCacheBinding(
+		registration.UpstreamEndpoint,
+		credential,
+		registration.AuthorityDigest,
+		attemptID,
+		registration.AllowRead,
+		registration.AllowWrite,
+		expiresAt,
+	)
 }
 
 func managedGatewayControlAddress(directory string) string {
@@ -511,6 +606,7 @@ func serveManagedGateway(directory string, idleTimeout time.Duration) error {
 		identity,
 		context.ready,
 	)
+	gateway.cache = context.cache
 	gateway.startServingLocked(httpListener)
 	defer gateway.close()
 
@@ -795,7 +891,18 @@ func handleManagedGatewayControl(
 		)
 		return
 	}
-	if !context.register(request.AttemptID) {
+	cacheBinding, err := request.Cache.binding(request.AttemptID)
+	if err != nil {
+		_ = writeManagedGatewayControlResponse(
+			connection,
+			managedGatewayControlResponse{
+				SchemaVersion: managedGatewayControlSchemaVersion,
+				Error:         "invalid managed gateway registration",
+			},
+		)
+		return
+	}
+	if !context.registerWithCache(request.AttemptID, cacheBinding) {
 		_ = writeManagedGatewayControlResponse(
 			connection,
 			managedGatewayControlResponse{
@@ -884,12 +991,20 @@ func verifyUnixPeerOwner(connection *net.UnixConn) error {
 }
 
 func (context *managedGatewayContext) register(attemptID string) bool {
+	return context.registerWithCache(attemptID, nil)
+}
+
+func (context *managedGatewayContext) registerWithCache(
+	attemptID string,
+	cacheBinding *gatewayCacheBinding,
+) bool {
 	context.mutex.Lock()
 	defer context.mutex.Unlock()
 	if context.attemptID != "" {
 		return false
 	}
 	context.attemptID = attemptID
+	context.cacheBinding = cacheBinding.copy()
 	return true
 }
 
@@ -898,6 +1013,7 @@ func (context *managedGatewayContext) unregister(attemptID string) {
 	defer context.mutex.Unlock()
 	if context.attemptID == attemptID {
 		context.attemptID = ""
+		context.cacheBinding = nil
 	}
 }
 
@@ -905,6 +1021,15 @@ func (context *managedGatewayContext) ready() bool {
 	context.mutex.Lock()
 	defer context.mutex.Unlock()
 	return context.attemptID != ""
+}
+
+func (context *managedGatewayContext) cache() *gatewayCacheBinding {
+	context.mutex.Lock()
+	defer context.mutex.Unlock()
+	if context.attemptID == "" {
+		return nil
+	}
+	return context.cacheBinding.copy()
 }
 
 func notifyManagedGatewayActivity(activity chan<- struct{}) {

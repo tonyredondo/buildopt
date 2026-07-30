@@ -1033,7 +1033,7 @@ LIMIT 1`,
 	_ = file.Close()
 }
 
-func TestSchemaVersionOneUpgradesTransactionallyToVersionTwo(t *testing.T) {
+func TestSchemaVersionOneUpgradesTransactionallyToCurrent(t *testing.T) {
 	root := filepath.Join(t.TempDir(), "shared")
 	if err := os.Mkdir(root, 0o700); err != nil {
 		t.Fatal(err)
@@ -1065,7 +1065,12 @@ func TestSchemaVersionOneUpgradesTransactionallyToVersionTwo(t *testing.T) {
 		).Scan(&version); err != nil || version != SchemaVersion {
 			t.Fatalf("%s version = %d/%v", name, version, err)
 		}
-		assertRowCount(t, metadata.database, "schema_migrations", 2)
+		assertRowCount(
+			t,
+			metadata.database,
+			"schema_migrations",
+			SchemaVersion,
+		)
 	}
 	assertSchemaObjects(
 		t,

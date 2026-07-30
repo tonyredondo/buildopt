@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "buildopt.specs/local-authenticated-cache/v1",
+  "policyId": "LOCAL_AUTHENTICATED_CACHE_V1",
+  "authority": {
+    "contract": "buildopt-local-cache-authority/v1",
+    "canonicalEncoding": "JCS_EXACT_BYTES",
+    "signatureAlgorithm": "Ed25519",
+    "trustRoot": "OUT_OF_BAND_PRIVATE_FILE",
+    "credential": "BASE64URL_UNPADDED_32_BYTES_PRIVATE_FILE",
+    "maximumPolicyLifetimeHours": 720,
+    "maximumAttemptLifetimeHours": 24,
+    "componentVersion": "0.1.0"
+  },
+  "launcherInputs": {
+    "files": [
+      "BUILDOPT_LOCAL_AUTHORITY_PATH",
+      "BUILDOPT_LOCAL_TRUST_ROOT_PATH",
+      "BUILDOPT_LOCAL_CACHE_CREDENTIAL_PATH"
+    ],
+    "sharedCacheUrl": "BUILDOPT_SHARED_CACHE_URL",
+    "repositoryBinding": [
+      "BUILDOPT_L1_TENANT_ID",
+      "BUILDOPT_L1_REPOSITORY_ID",
+      "BUILDOPT_L1_TRUST_DOMAIN"
+    ],
+    "stateRoot": "BUILDOPT_L1_STATE_ROOT",
+    "compatibilityClass": "BUILDOPT_L1_COMPATIBILITY_CLASS",
+    "configuration": "ALL_OR_NONE"
+  },
+  "monotonicState": {
+    "scope": ["tenant", "repository", "trustDomain"],
+    "persisted": [
+      "policyVersion",
+      "policyDigest",
+      "configurationPolicyDigest",
+      "revocationEpoch",
+      "revocationDigest",
+      "l1SecurityGeneration",
+      "gatewayConnectionGeneration",
+      "namespace",
+      "namespaceGeneration",
+      "policyExpiresAt"
+    ],
+    "rollback": "REJECT",
+    "sameGenerationDifferentContent": "REJECT",
+    "revocationAdvance": "REQUIRES_L1_ROTATION",
+    "exactReplay": "ALLOW"
+  },
+  "sharedServer": {
+    "storageSchemaVersion": 3,
+    "flags": [
+      "--cache-authority",
+      "--cache-trust-root",
+      "--cache-credential"
+    ],
+    "route": "/cache/{key}",
+    "authentication": [
+      "BEARER_LOCAL_CACHE_CREDENTIAL",
+      "X-BuildOpt-Authority-Digest"
+    ],
+    "credentialPersistence": false,
+    "requestStateCheck": "CURRENT_AUTHORITY_AND_UNEXPIRED",
+    "writeTarget": "PENDING_ATTEMPT",
+    "readTarget": "COMMITTED_ONLY"
+  },
+  "gateway": {
+    "gradleHop": "LOOPBACK_HTTP_BASIC_LOCAL_CREDENTIAL",
+    "upstreamHop": "LOOPBACK_HTTP_BEARER_AUTHORITY_CREDENTIAL",
+    "contextChannel": "SAME_UID_UNIX_SOCKET",
+    "persistentStateContainsUpstreamCredential": false,
+    "routeWithoutCurrentContext": "404",
+    "getFailure": "SAFE_404_MISS",
+    "putFailure": "503_DISABLE_REMOTE",
+    "redirects": "REJECT",
+    "forwardedResponseHeaders": [
+      "Content-Length",
+      "Content-Type",
+      "ETag",
+      "X-BuildOpt-Blob-Digest"
+    ]
+  },
+  "gradle": {
+    "pluginId": "dev.buildopt.managed-l1",
+    "remoteType": "HttpBuildCache",
+    "remoteUrl": "LOCAL_GATEWAY_CACHE_PATH",
+    "remoteCredential": "LOCAL_BASIC_ONLY",
+    "readOnlyMode": "REMOTE_ENABLED_PUSH_FALSE",
+    "readWriteMode": "REMOTE_ENABLED_PUSH_TRUE_LOCAL_DISABLED",
+    "configurationInputs": [
+      "authorityDigest",
+      "policyDigest",
+      "configurationPolicyDigest",
+      "gatewayConnectionGeneration"
+    ],
+    "taskPolicy": "TIER_ONE_DEFAULT_DENY"
+  },
+  "fallback": {
+    "absentAuthority": "PRESERVE_NEUTRAL_LAUNCHER_AND_NATIVE_ONLY_L1",
+    "invalidAuthority": "BASELINE_WITHOUT_AUTHENTICATED_CACHE",
+    "expiredAuthority": "NO_REMOTE_ROUTE",
+    "sharedReadFailure": "CACHE_MISS",
+    "sharedWriteFailure": "REMOTE_DISABLED_BUILD_CONTINUES"
+  },
+  "executableEvidence": {
+    "checker": "dev/check-local-authority",
+    "requiredCases": [
+      "CANONICAL_SIGN_AND_VERIFY",
+      "WRONG_KEY_CREDENTIAL_AND_TAMPER_REJECTION",
+      "PRIVATE_FILE_BOUNDARY",
+      "MONOTONIC_REPLAY_AND_ROLLBACK",
+      "SERVER_CURRENT_AUTHORITY_ROUTE",
+      "LOCAL_GATEWAY_CREDENTIAL_TRANSLATION",
+      "MANAGED_GATEWAY_CONTEXT_REVOCATION",
+      "GRADLE_HTTP_PUT_GET_AND_CONFIGURATION_CACHE_REUSE"
+    ]
+  },
+  "deferred": {
+    "fullHttpFaultMatrix": "A0-G01",
+    "commitDecisionProduction": "A0-G02/A0-G05",
+    "revokedDirectoryDeletion": "A1-004",
+    "dependencyAndWrapperCaching": "A0-007"
+  }
+}

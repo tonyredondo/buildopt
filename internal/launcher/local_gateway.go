@@ -11,6 +11,9 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"net/url"
+	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -24,9 +27,14 @@ const (
 
 	gatewayReadyPath        = "/_buildopt/ready"
 	gatewayGenerationHeader = "BuildOpt-Gateway-Connection-Generation"
+	gatewayAuthorityHeader  = "X-BuildOpt-Authority-Digest"
 	gatewayUsername         = "buildopt"
 
 	gatewayOperationTimeout = 5 * time.Second
+)
+
+var gatewayCacheKeyPattern = regexp.MustCompile(
+	`^[A-Za-z0-9._-]{1,256}$`,
 )
 
 type localGateway struct {
@@ -36,6 +44,7 @@ type localGateway struct {
 	password   string
 	generation string
 	readiness  func() bool
+	cache      func() *gatewayCacheBinding
 	release    func() error
 
 	mutex     sync.Mutex
@@ -46,6 +55,12 @@ type localGateway struct {
 }
 
 func startLocalGateway() (*localGateway, error) {
+	return startLocalGatewayWithCache(nil)
+}
+
+func startLocalGatewayWithCache(
+	binding *gatewayCacheBinding,
+) (*localGateway, error) {
 	listener, err := net.Listen("tcp4", "127.0.0.1:0")
 	if err != nil {
 		return nil, fmt.Errorf("listen on loopback gateway rendezvous: %w", err)
@@ -58,12 +73,75 @@ func startLocalGateway() (*localGateway, error) {
 	}
 
 	gateway := localGatewayForListener(listener, identity, nil)
+	if binding != nil {
+		staticBinding := binding.copy()
+		gateway.cache = func() *gatewayCacheBinding {
+			return staticBinding.copy()
+		}
+	}
 	gateway.startServingLocked(listener)
 	if err := gateway.probe(); err != nil {
 		_ = gateway.close()
 		return nil, fmt.Errorf("verify local gateway readiness: %w", err)
 	}
 	return gateway, nil
+}
+
+type gatewayCacheBinding struct {
+	upstreamEndpoint string
+	credential       string
+	authorityDigest  string
+	attemptID        string
+	allowRead        bool
+	allowWrite       bool
+	expiresAt        time.Time
+}
+
+func newGatewayCacheBinding(
+	upstreamEndpoint string,
+	credential []byte,
+	authorityDigest string,
+	attemptID string,
+	allowRead bool,
+	allowWrite bool,
+	expiresAt time.Time,
+) (*gatewayCacheBinding, error) {
+	endpoint, err := validateGatewayUpstreamEndpoint(upstreamEndpoint)
+	if err != nil {
+		return nil, err
+	}
+	if len(credential) != 32 {
+		return nil, errors.New("gateway upstream credential must contain 32 bytes")
+	}
+	if !validGatewayAuthorityDigest(authorityDigest) {
+		return nil, errors.New("gateway authority digest is invalid")
+	}
+	if !validPluginAttemptID(attemptID) {
+		return nil, errors.New("gateway attempt ID is invalid")
+	}
+	if !allowRead && !allowWrite {
+		return nil, errors.New("gateway cache binding grants no operation")
+	}
+	if expiresAt.IsZero() {
+		return nil, errors.New("gateway cache binding has no expiration")
+	}
+	return &gatewayCacheBinding{
+		upstreamEndpoint: endpoint,
+		credential:       base64.RawURLEncoding.EncodeToString(credential),
+		authorityDigest:  authorityDigest,
+		attemptID:        attemptID,
+		allowRead:        allowRead,
+		allowWrite:       allowWrite,
+		expiresAt:        expiresAt.UTC(),
+	}, nil
+}
+
+func (binding *gatewayCacheBinding) copy() *gatewayCacheBinding {
+	if binding == nil {
+		return nil
+	}
+	result := *binding
+	return &result
 }
 
 type gatewayIdentity struct {
@@ -228,10 +306,31 @@ func (gateway *localGateway) ServeHTTP(
 		writer.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	if request.URL.Path != gatewayReadyPath || request.URL.RawQuery != "" {
+	if request.URL.Path == gatewayReadyPath && request.URL.RawQuery == "" {
+		gateway.serveReadiness(writer, request)
+		return
+	}
+	if request.URL.RawQuery != "" {
 		writer.WriteHeader(http.StatusNotFound)
 		return
 	}
+	key, valid := strings.CutPrefix(request.URL.Path, "/cache/")
+	if !valid || !gatewayCacheKeyPattern.MatchString(key) || gateway.cache == nil {
+		writer.WriteHeader(http.StatusNotFound)
+		return
+	}
+	binding := gateway.cache()
+	if binding == nil || !binding.expiresAt.After(time.Now().UTC()) {
+		writer.WriteHeader(http.StatusNotFound)
+		return
+	}
+	gateway.serveCache(writer, request, binding)
+}
+
+func (gateway *localGateway) serveReadiness(
+	writer http.ResponseWriter,
+	request *http.Request,
+) {
 	if request.Method != http.MethodGet {
 		writer.Header().Set("Allow", http.MethodGet)
 		writer.WriteHeader(http.StatusMethodNotAllowed)
@@ -244,6 +343,163 @@ func (gateway *localGateway) ServeHTTP(
 
 	writer.Header().Set(gatewayGenerationHeader, gateway.generation)
 	writer.WriteHeader(http.StatusNoContent)
+}
+
+func (gateway *localGateway) serveCache(
+	writer http.ResponseWriter,
+	request *http.Request,
+	binding *gatewayCacheBinding,
+) {
+	switch request.Method {
+	case http.MethodGet:
+		if !binding.allowRead {
+			writer.WriteHeader(http.StatusNotFound)
+			return
+		}
+	case http.MethodPut:
+		if !binding.allowWrite {
+			writer.WriteHeader(http.StatusServiceUnavailable)
+			return
+		}
+	default:
+		writer.Header().Set("Allow", "GET, PUT")
+		writer.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	upstreamRequest, err := http.NewRequestWithContext(
+		request.Context(),
+		request.Method,
+		binding.upstreamEndpoint+request.URL.Path,
+		request.Body,
+	)
+	if err != nil {
+		gateway.writeUpstreamFailure(writer, request.Method)
+		return
+	}
+	upstreamRequest.ContentLength = request.ContentLength
+	for _, header := range []string{"Content-Type", "Expect"} {
+		if value := request.Header.Get(header); value != "" {
+			upstreamRequest.Header.Set(header, value)
+		}
+	}
+	upstreamRequest.Header.Set(
+		"Authorization",
+		"Bearer "+binding.credential,
+	)
+	upstreamRequest.Header.Set(
+		gatewayAuthorityHeader,
+		binding.authorityDigest,
+	)
+
+	client := &http.Client{
+		Timeout: gatewayOperationTimeout,
+		Transport: &http.Transport{
+			Proxy:              nil,
+			DisableCompression: true,
+			DisableKeepAlives:  true,
+		},
+		CheckRedirect: func(
+			_ *http.Request,
+			_ []*http.Request,
+		) error {
+			return http.ErrUseLastResponse
+		},
+	}
+	response, err := client.Do(upstreamRequest)
+	if err != nil {
+		gateway.writeUpstreamFailure(writer, request.Method)
+		return
+	}
+	defer response.Body.Close()
+	if response.StatusCode >= 300 && response.StatusCode < 400 {
+		gateway.writeUpstreamFailure(writer, request.Method)
+		return
+	}
+	if request.Method == http.MethodGet && response.StatusCode != http.StatusOK {
+		writer.WriteHeader(http.StatusNotFound)
+		return
+	}
+	if request.Method == http.MethodPut &&
+		(response.StatusCode < 200 || response.StatusCode >= 300) &&
+		response.StatusCode != http.StatusRequestEntityTooLarge {
+		writer.WriteHeader(http.StatusServiceUnavailable)
+		return
+	}
+
+	responseHeaders := []string{
+		"X-BuildOpt-Blob-Digest",
+	}
+	if request.Method == http.MethodGet {
+		responseHeaders = append(
+			responseHeaders,
+			"Content-Length",
+			"Content-Type",
+			"ETag",
+		)
+	} else {
+		writer.Header().Set("Content-Length", "0")
+	}
+	for _, header := range responseHeaders {
+		if value := response.Header.Get(header); value != "" {
+			writer.Header().Set(header, value)
+		}
+	}
+	writer.WriteHeader(response.StatusCode)
+	if request.Method == http.MethodGet {
+		_, _ = io.Copy(writer, response.Body)
+	}
+}
+
+func (gateway *localGateway) writeUpstreamFailure(
+	writer http.ResponseWriter,
+	method string,
+) {
+	if method == http.MethodGet {
+		writer.WriteHeader(http.StatusNotFound)
+		return
+	}
+	writer.WriteHeader(http.StatusServiceUnavailable)
+}
+
+func validateGatewayUpstreamEndpoint(value string) (string, error) {
+	parsed, err := url.Parse(value)
+	if err != nil ||
+		parsed.Scheme != "http" ||
+		parsed.Hostname() != "127.0.0.1" ||
+		parsed.User != nil ||
+		(parsed.Path != "" && parsed.Path != "/") ||
+		parsed.RawQuery != "" ||
+		parsed.Fragment != "" {
+		return "", errors.New(
+			"gateway upstream endpoint is not canonical loopback HTTP",
+		)
+	}
+	port, err := strconv.Atoi(parsed.Port())
+	if err != nil || port < 1 || port > 65535 {
+		return "", errors.New("gateway upstream endpoint has an invalid port")
+	}
+	canonical := "http://" + net.JoinHostPort(
+		"127.0.0.1",
+		strconv.Itoa(port),
+	)
+	if value != canonical && value != canonical+"/" {
+		return "", errors.New("gateway upstream endpoint is not canonical")
+	}
+	return canonical, nil
+}
+
+func validGatewayAuthorityDigest(value string) bool {
+	if !strings.HasPrefix(value, "sha256:") || len(value) != 71 {
+		return false
+	}
+	for _, character := range value[len("sha256:"):] {
+		if !(character >= '0' && character <= '9') &&
+			!(character >= 'a' && character <= 'f') {
+			return false
+		}
+	}
+	return true
 }
 
 func (gateway *localGateway) probe() error {
@@ -322,6 +578,15 @@ var reservedChildEnvironment = []string{
 	managedL1ModeChildEnvironment,
 	managedL1GenerationChildEnvironment,
 	managedL1RetentionChildEnvironment,
+	localAuthorityPathEnvironment,
+	localTrustRootPathEnvironment,
+	localCredentialPathEnvironment,
+	sharedCacheURLEnvironment,
+	managedSharedModeEnvironment,
+	managedAuthorityDigestEnvironment,
+	managedPolicyDigestEnvironment,
+	managedConfigurationDigestEnvironment,
+	managedAuthorityContractEnvironment,
 	serverURLEnvironment,
 	serverTokenEnvironment,
 	exportContextEnvironment,

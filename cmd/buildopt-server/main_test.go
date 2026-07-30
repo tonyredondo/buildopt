@@ -3,8 +3,12 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/ed25519"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -13,6 +17,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/tonyredondo/buildopt/internal/localauthority"
 	"github.com/tonyredondo/buildopt/internal/sessioningest"
 	"github.com/tonyredondo/buildopt/internal/sharedcache"
 )
@@ -75,6 +80,19 @@ func TestBuildoptServerUsageAndConfiguration(t *testing.T) {
 			token:      serverTestToken,
 			wantExit:   exitConfiguration,
 			wantOutput: "state directory must be absolute",
+		},
+		{
+			name: "incomplete cache authority",
+			args: []string{
+				"serve",
+				"--listen",
+				"127.0.0.1:0",
+				"--cache-authority",
+				"/tmp/authority.json",
+			},
+			token:      serverTestToken,
+			wantExit:   exitConfiguration,
+			wantOutput: "authenticated Shared cache requires",
 		},
 	}
 
@@ -225,6 +243,119 @@ func TestBuildoptServerOwnsSingleNodeSharedStorageLifecycle(t *testing.T) {
 	}
 }
 
+func TestBuildoptServerRoutesOnlyAuthenticatedCurrentCacheAuthority(
+	t *testing.T,
+) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	root := t.TempDir()
+	stateDirectory := filepath.Join(root, "shared")
+	authorityPath, trustRootPath, credentialPath, credential, authorityDigest :=
+		writeServerAuthorityFixture(t, root, time.Now().UTC())
+	output := newNotifyingWriter()
+	var stderr bytes.Buffer
+	exited := make(chan int, 1)
+	go func() {
+		exited <- run(
+			ctx,
+			[]string{
+				"serve",
+				"--listen",
+				"127.0.0.1:0",
+				"--state-dir",
+				stateDirectory,
+				"--cache-authority",
+				authorityPath,
+				"--cache-trust-root",
+				trustRootPath,
+				"--cache-credential",
+				credentialPath,
+			},
+			func(key string) string {
+				if key == sessioningest.ServerTokenEnvironment {
+					return serverTestToken
+				}
+				return ""
+			},
+			output,
+			&stderr,
+		)
+	}()
+	deadline := time.Now().Add(3 * time.Second)
+	for !strings.Contains(
+		output.String(),
+		"authenticated cache routing enabled",
+	) {
+		select {
+		case exitCode := <-exited:
+			t.Fatalf(
+				"authenticated server exited early with %d: %q",
+				exitCode,
+				stderr.String(),
+			)
+		default:
+		}
+		if time.Now().After(deadline) {
+			t.Fatalf(
+				"authenticated server did not start: %q/%q",
+				output.String(),
+				stderr.String(),
+			)
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	endpoint := serverEndpointFromOutput(t, output.String())
+
+	requestCache := func(authorized bool) int {
+		t.Helper()
+		request, err := http.NewRequest(
+			http.MethodPut,
+			endpoint+"/cache/authority-key",
+			strings.NewReader("candidate"),
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if authorized {
+			request.Header.Set(
+				"Authorization",
+				"Bearer "+
+					base64.RawURLEncoding.EncodeToString(credential),
+			)
+			request.Header.Set(
+				sharedcache.AuthorityDigestHeader,
+				authorityDigest,
+			)
+		}
+		response, err := http.DefaultClient.Do(request)
+		if err != nil {
+			t.Fatalf("request authenticated cache route: %v", err)
+		}
+		defer response.Body.Close()
+		return response.StatusCode
+	}
+	if status := requestCache(false); status != http.StatusUnauthorized {
+		t.Fatalf("unauthenticated cache status = %d, want 401", status)
+	}
+	if status := requestCache(true); status != http.StatusCreated {
+		t.Fatalf("authenticated cache status = %d, want 201", status)
+	}
+
+	cancel()
+	select {
+	case exitCode := <-exited:
+		if exitCode != 0 {
+			t.Fatalf(
+				"server exit = %d, stderr = %q",
+				exitCode,
+				stderr.String(),
+			)
+		}
+	case <-time.After(3 * time.Second):
+		t.Fatal("authenticated server did not stop")
+	}
+}
+
 func TestBuildoptServerReceivesAndStopsGracefully(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -348,6 +479,167 @@ func TestBuildoptServerReceivesAndStopsGracefully(t *testing.T) {
 	) {
 		t.Fatalf("missing acceptance log: %q", output.String())
 	}
+}
+
+func serverEndpointFromOutput(t *testing.T, output string) string {
+	t.Helper()
+	const prefix = "buildopt-server: listening on "
+	start := strings.Index(output, prefix)
+	if start < 0 {
+		t.Fatalf("missing listen line: %q", output)
+	}
+	remaining := output[start+len(prefix):]
+	end := strings.IndexByte(remaining, '\n')
+	if end < 0 {
+		return strings.TrimSpace(remaining)
+	}
+	return remaining[:end]
+}
+
+func writeServerAuthorityFixture(
+	t *testing.T,
+	root string,
+	now time.Time,
+) (
+	string,
+	string,
+	string,
+	[]byte,
+	string,
+) {
+	t.Helper()
+	credential := bytes.Repeat([]byte{0x5a}, localauthority.CredentialBytes)
+	credentialHash := sha256.Sum256(credential)
+	privateKey := ed25519.NewKeyFromSeed(bytes.Repeat([]byte{0x11}, 32))
+	publicKey := privateKey.Public().(ed25519.PublicKey)
+	document := localauthority.Document{
+		Repository: localauthority.RepositoryIdentity{
+			Tenant:      "tenant-internal",
+			Repository:  "tonyredondo/buildopt",
+			TrustDomain: "private-beta",
+		},
+		SourceRevision:      strings.Repeat("a", 40),
+		SourceStateDigest:   "hmac-sha256:" + strings.Repeat("1", 64),
+		CacheContractDigest: "sha256:" + strings.Repeat("2", 64),
+		Attempt: localauthority.AuthorityAttempt{
+			AttemptID: "22222222-2222-4222-8222-222222222222",
+			OwnerID:   "protected-main",
+			LeaseID:   "lease-server-authority-1",
+			LeaseExpiresAt: now.Add(45 * time.Minute).
+				Format(time.RFC3339Nano),
+			AllowRead:        true,
+			AllowWrite:       true,
+			CredentialDigest: fmt.Sprintf("sha256:%x", credentialHash),
+		},
+		Policy: localauthority.OptimizationPolicy{
+			SchemaVersion:               "1.0",
+			RecordType:                  "OPTIMIZATION_POLICY",
+			PolicyID:                    "internal-policy",
+			PolicyVersion:               7,
+			ConfigurationPolicyDigest:   "sha256:" + strings.Repeat("3", 64),
+			RevocationEpoch:             7,
+			L1SecurityGeneration:        9,
+			GatewayConnectionGeneration: 3,
+			IssuedAt:                    now.Add(-time.Minute).Format(time.RFC3339Nano),
+			LauncherVersionRange:        ">=0.1.0 <0.2.0",
+			PluginVersionRange:          ">=0.1.0 <0.2.0",
+			Mode:                        "VERIFIED",
+			AllowedActions:              []string{"REMOTE_CACHE_ALLOWLISTED"},
+			RemoteCache: localauthority.RemoteCachePolicy{
+				Read:                true,
+				Write:               "TRUSTED_CI_ONLY",
+				Namespace:           "stable",
+				NamespaceGeneration: 12,
+			},
+			ConfigurationCache: localauthority.ConfigurationCachePolicy{
+				Enabled:         true,
+				ContractVersion: "configuration-cache-v1",
+			},
+			ResourceProfile: localauthority.ResourceProfileReference{
+				ProfileID:      "W4_H6G",
+				ProfileDigest:  "sha256:" + strings.Repeat("4", 64),
+				CatalogVersion: "resource-catalog-v1",
+			},
+			Budgets: localauthority.PolicyBudgets{
+				MaxSynchronousOverheadMs:    500,
+				MaxSynchronousOverheadRatio: 0.02,
+				MaxValidationRunnerMsPerDay: 60000,
+			},
+			ExportProfile: "SUMMARY",
+			QualifiedTasks: []localauthority.QualifiedTask{{
+				ImplementationHash:  "sha256:" + strings.Repeat("5", 64),
+				QualificationSource: "OFFICIAL",
+				ContractRef:         "java-compile-v1",
+				CacheContractDigest: "sha256:" + strings.Repeat("2", 64),
+				QualificationState:  "CONTRACT_QUALIFIED",
+				RepeatabilityGate:   "PASSED",
+				RelocatabilityGate:  "PASSED",
+			}},
+			AffectedBuild: localauthority.AffectedBuild{
+				EnabledInCI: true,
+			},
+			ExpiresAt: now.Add(time.Hour).Format(time.RFC3339Nano),
+		},
+		Revocation: localauthority.RevocationState{
+			ContractVersion:      "buildopt-cache-control/v1",
+			RequestID:            "revocation-request-7",
+			TrustDomain:          "private-beta",
+			RevocationEpoch:      7,
+			L1SecurityGeneration: 9,
+			ValidUntil: now.Add(2 * time.Hour).
+				Format(time.RFC3339Nano),
+		},
+	}
+	authority, err := localauthority.Sign(
+		document,
+		"deployment-key-1",
+		privateKey,
+	)
+	if err != nil {
+		t.Fatalf("sign server authority: %v", err)
+	}
+	verified, err := localauthority.Verify(
+		context.Background(),
+		authority,
+		map[string]ed25519.PublicKey{"deployment-key-1": publicKey},
+		credential,
+		now,
+	)
+	if err != nil {
+		t.Fatalf("verify server authority fixture: %v", err)
+	}
+	trustRoot, err := localauthority.EncodeTrustRoot(
+		localauthority.TrustRoot{
+			Keys: []localauthority.PublicKey{{
+				KeyID: "deployment-key-1",
+				PublicKey: base64.RawURLEncoding.EncodeToString(
+					publicKey,
+				),
+			}},
+		},
+	)
+	if err != nil {
+		t.Fatalf("encode server trust root: %v", err)
+	}
+	authorityPath := filepath.Join(root, "authority.json")
+	trustRootPath := filepath.Join(root, "trust-root.json")
+	credentialPath := filepath.Join(root, "credential")
+	for path, content := range map[string][]byte{
+		authorityPath: authority,
+		trustRootPath: trustRoot,
+		credentialPath: []byte(
+			base64.RawURLEncoding.EncodeToString(credential),
+		),
+	} {
+		if err := os.WriteFile(path, content, 0o600); err != nil {
+			t.Fatalf("write server authority fixture: %v", err)
+		}
+	}
+	return authorityPath,
+		trustRootPath,
+		credentialPath,
+		credential,
+		verified.Document().AuthorityDigest
 }
 
 type notifyingWriter struct {

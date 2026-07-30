@@ -59,9 +59,9 @@
           "id": "MANAGED_SHARED_CACHE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "the A0 pending/commit/CAS data plane is proven behind a preauthenticated binding but locally authenticated policy, revocation state, and global gateway routing are not implemented",
+          "reason": "locally authenticated policy, revocation, and routed Shared access are proven on the golden row, but the complete A0 HTTP fault matrix and production commit/abort composition remain open",
           "fallback": "GRADLE_BASELINE",
-          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit"]
+          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
         },
         {
           "id": "JVM_AGENT",
@@ -144,9 +144,9 @@
           "id": "MANAGED_SHARED_CACHE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "the A0 pending/commit/CAS data plane is proven behind a preauthenticated binding but locally authenticated policy, revocation state, and global gateway routing are not implemented",
+          "reason": "locally authenticated policy, revocation, and routed Shared access are proven on the golden row, but the complete A0 HTTP fault matrix and production commit/abort composition remain open",
           "fallback": "GRADLE_BASELINE",
-          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit"]
+          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
         },
         {
           "id": "JVM_AGENT",
@@ -229,9 +229,9 @@
           "id": "MANAGED_SHARED_CACHE",
           "status": "UNAVAILABLE",
           "method": "",
-          "reason": "the A0 pending/commit/CAS data plane is proven behind a preauthenticated binding but locally authenticated policy, revocation state, and global gateway routing are not implemented",
+          "reason": "locally authenticated policy, revocation, and routed Shared access are proven on the golden row, but the complete A0 HTTP fault matrix and production commit/abort composition remain open",
           "fallback": "GRADLE_BASELINE",
-          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit"]
+          "evidence": ["dev/check-tier-one-policy", "dev/check-managed-l1", "dev/check-shared-storage", "dev/check-pending-commit", "dev/check-local-authority"]
         },
         {
           "id": "JVM_AGENT",

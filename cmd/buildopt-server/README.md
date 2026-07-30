@@ -60,12 +60,29 @@ The server takes one process-lifetime writer lease, rejects network/clustered
 filesystems, and owns private content-addressed blobs plus separately migrated
 WAL-mode `cache.sqlite` and `control.sqlite`. Schema v2 adds the A0-005 durable
 pending/abort lifecycle, canonical Ed25519 `CommitDecision`, atomic commit CAS,
-quarantine, and startup-blocking reconciliation. The implementation also
-provides an opaque context-bound GET/PUT handler, but the server keeps the
-global cache route absent until A0-006 supplies authenticated policy,
-revocation state, and a current binding.
+quarantine, and startup-blocking reconciliation.
 The state path must be a dedicated empty or already BuildOpt-owned root;
 unrelated existing entries are rejected without adding storage files.
+
+`A0-006` activates the cache route only from a complete private authority:
+
+```bash
+BUILDOPT_SERVER_INGEST_TOKEN=<opaque-token> \
+    buildopt-server serve \
+    --listen 127.0.0.1:8042 \
+    --state-dir /absolute/private/buildopt-state \
+    --cache-authority /run/buildopt/authority.json \
+    --cache-trust-root /run/buildopt/trust-root.json \
+    --cache-credential /run/buildopt/cache-credential
+```
+
+Schema v3 persists the highest signed policy/revocation generations, canonical
+authority documents, and attempt bindings without persisting the raw
+credential. `/cache/{key}` requires both the exact Bearer credential and
+`X-BuildOpt-Authority-Digest`, rechecks current unexpired state on every
+request, reads only verified committed objects, and writes only to the signed
+pending attempt. Omitting all three authority flags leaves the route absent;
+partial or invalid configuration prevents server startup.
 
 JSONL, bounded delivery retry, remote TLS, cache/policy APIs, hardened
 identity, and non-local workload profiles remain owned by later tracker items.
@@ -79,4 +96,5 @@ bypass with:
 ./dev/check-build-session-export
 ./dev/check-shared-storage
 ./dev/check-pending-commit
+./dev/check-local-authority
 ```

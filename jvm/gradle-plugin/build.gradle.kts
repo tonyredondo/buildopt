@@ -147,6 +147,33 @@ tasks.register<JavaExec>("managedL1TestKit") {
     inputs.property("gradleHome", tierOneGradleHome)
 }
 
+tasks.register<JavaExec>("managedSharedTestKit") {
+    group = "verification"
+    description = "Runs the locally authenticated HttpBuildCache conformance."
+    notCompatibleWithConfigurationCache("The task launches nested TestKit builds.")
+    dependsOn(tasks.named(testKit.classesTaskName), tasks.named("jar"))
+    classpath = testKit.runtimeClasspath
+    mainClass = "dev.buildopt.gradle.ManagedL1TestKit"
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = tierOneRuntime.map(JavaLanguageVersion::of)
+    }
+    argumentProviders.add(
+        CommandLineArgumentProvider {
+            listOf(
+                tierOneFixtures.asFile.absolutePath,
+                tierOneGradleHome.get(),
+                tasks.jar.get().archiveFile.get().asFile.absolutePath,
+                tierOneRuntime.get().toString(),
+                "shared-only",
+            )
+        },
+    )
+    inputs.dir(tierOneFixtures)
+    inputs.file(tasks.jar.flatMap { it.archiveFile })
+    inputs.property("runtime", tierOneRuntime)
+    inputs.property("gradleHome", tierOneGradleHome)
+}
+
 tasks.jar {
     manifest {
         attributes(

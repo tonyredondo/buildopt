@@ -245,7 +245,9 @@ func TestOpenRejectsUnsafeOrDriftedStorage(t *testing.T) {
 			t.Fatal(err)
 		}
 		database := openTestSQLite(t, cachePath)
-		if _, err := database.Exec("PRAGMA user_version = 3"); err != nil {
+		if _, err := database.Exec(
+			"PRAGMA user_version = 4",
+		); err != nil {
 			t.Fatal(err)
 		}
 		if err := database.Close(); err != nil {

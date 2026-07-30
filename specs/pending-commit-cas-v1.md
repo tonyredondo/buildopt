@@ -4,9 +4,9 @@ This specification materializes `A0-005` over the private single-node storage
 installed by `A0-004`. It makes pending uploads durable without making them
 readable, validates canonical authenticated `CommitDecision` documents,
 performs all visibility changes in one first-writer transaction, and blocks
-startup until reconciliation completes. Locally authenticated policy delivery,
-revocation-state persistence, and global gateway/server routing remain
-`A0-006`.
+startup until reconciliation completes. `A0-006` now composes these primitives
+with locally authenticated policy, revocation-state persistence, and
+gateway/server routing without changing this lifecycle contract.
 
 ## Durable attempt lifecycle
 
@@ -51,9 +51,9 @@ does not exactly cover the attempt's sorted pending set and immutable
 bindings.
 
 The public verifier requires the caller's exact current revocation epoch and
-key set. A0-005 does not invent global credentials: only a context already
-authenticated by the future A0-006 boundary can construct a bound HTTP data
-plane or submit a verified decision.
+key set. A0-005 does not invent global credentials: only a context
+authenticated by the A0-006 boundary can construct a bound HTTP data plane or
+submit a verified decision.
 
 ## Atomic visibility and CAS
 
@@ -89,10 +89,10 @@ one immutable, preauthenticated binding:
   and `413` before reading a known-oversized body.
 - The handler never redirects and never parses or logs a credential.
 
-There is deliberately no globally routable cache path in
-`buildopt-server` yet. A0-006 must establish local credentials, current policy
-and revocation state, then bind the handler. This prevents an unauthenticated
-route from appearing merely because storage exists.
+The A0-005 handler itself remains context-bound and credential-agnostic.
+A0-006 places it behind `buildopt-server` only after establishing local
+credentials plus current policy and revocation state. Storage presence alone
+still creates no route.
 
 ## Fail-closed reconciliation
 

@@ -67,6 +67,19 @@ type pluginHello struct {
 }
 
 func startPluginHandshake() (*pluginHandshakeServer, error) {
+	attemptID, err := newPluginAttemptID()
+	if err != nil {
+		return nil, err
+	}
+	return startPluginHandshakeForAttempt(attemptID)
+}
+
+func startPluginHandshakeForAttempt(
+	attemptID string,
+) (*pluginHandshakeServer, error) {
+	if !validPluginAttemptID(attemptID) {
+		return nil, errors.New("invalid plugin attempt ID")
+	}
 	directory, err := os.MkdirTemp("", "buildopt-handshake-")
 	if err != nil {
 		return nil, fmt.Errorf("create private handshake directory: %w", err)
@@ -82,12 +95,6 @@ func startPluginHandshake() (*pluginHandshakeServer, error) {
 		return nil, fmt.Errorf("listen for plugin handshake: %w", err)
 	}
 
-	attemptID, err := newPluginAttemptID()
-	if err != nil {
-		_ = listener.Close()
-		_ = os.RemoveAll(directory)
-		return nil, err
-	}
 	token, tokenText, err := newLocalSecret(pluginTokenBytes)
 	if err != nil {
 		_ = listener.Close()

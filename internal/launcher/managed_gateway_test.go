@@ -1,6 +1,7 @@
 package launcher
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"strings"
@@ -150,6 +151,45 @@ func TestManagedGatewayContextAllowsOneCurrentInvocation(t *testing.T) {
 	context.unregister("first")
 	if context.ready() {
 		t.Fatal("managed gateway context remained ready after release")
+	}
+}
+
+func TestManagedGatewayContextCarriesOnlyTheActiveCacheBinding(t *testing.T) {
+	binding, err := newGatewayCacheBinding(
+		"http://127.0.0.1:8042",
+		bytes.Repeat([]byte{0x31}, 32),
+		"sha256:"+strings.Repeat("d", 64),
+		"11111111-1111-4111-8111-111111111111",
+		true,
+		false,
+		time.Now().Add(time.Hour),
+	)
+	if err != nil {
+		t.Fatalf("create cache binding: %v", err)
+	}
+	registration := managedGatewayCacheForRegistration(binding)
+	decoded, err := registration.binding(binding.attemptID)
+	if err != nil {
+		t.Fatalf("decode cache registration: %v", err)
+	}
+
+	context := &managedGatewayContext{}
+	if !context.registerWithCache(binding.attemptID, decoded) {
+		t.Fatal("register cache binding")
+	}
+	current := context.cache()
+	if current == nil ||
+		current.authorityDigest != binding.authorityDigest ||
+		current.credential != binding.credential {
+		t.Fatalf("current cache binding = %+v", current)
+	}
+	current.credential = "mutated"
+	if context.cache().credential != binding.credential {
+		t.Fatal("managed gateway exposed mutable cache context")
+	}
+	context.unregister(binding.attemptID)
+	if context.cache() != nil {
+		t.Fatal("managed gateway retained cache context after EOF")
 	}
 }
 
