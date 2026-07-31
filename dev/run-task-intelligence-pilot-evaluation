@@ -48,7 +48,7 @@ run_arm() {
     local buildopt_start buildopt_end buildopt_duration buildopt_digest buildopt_outcome
     rm -f -- "${buildopt_workspace}/build/pilot/manifest.txt"
     buildopt_start=$(date +%s%3N)
-    if ! GRADLE_USER_HOME="${buildopt_home}" "${buildopt_workspace}/gradlew" --console=plain --build-cache generatePilotManifest >"${buildopt_log}" 2>&1; then
+    if ! GRADLE_USER_HOME="${buildopt_home}" "${buildopt_workspace}/gradlew" --project-dir "${buildopt_workspace}" --console=plain --build-cache generatePilotManifest >"${buildopt_log}" 2>&1; then
         sed -n '1,200p' "${buildopt_log}" >&2
         printf 'Gradle failed for %s\n' "${buildopt_arm}" >&2
         return 1
