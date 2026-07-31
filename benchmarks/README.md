@@ -13,7 +13,9 @@ executable result path is validated by
 `./dev/check-beta-benchmark-harness`, whose real-HTTP `SMOKE` profile is
 explicitly non-qualifying. Those two commands do not claim the long profiles;
 `./dev/check-beta-sustained --qualify` and
-`./dev/check-beta-soak --qualify` own their exact evidence independently.
+`./dev/check-beta-soak --qualify` own their exact load evidence independently.
+`./dev/check-beta-gradle-fixtures` owns the bounded small/medium/large Gradle
+build matrix and makes no performance claim.
 
 ## Walking-skeleton overhead evidence
 

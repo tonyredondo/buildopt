@@ -1,0 +1,276 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/beta-gradle-fixtures-v1.json"
+buildopt_manifest="${buildopt_repo_root}/benchmarks/beta-v1.yaml"
+buildopt_tmp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-beta-gradle-fixtures.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_tmp}" &&
+        "${buildopt_tmp}" == "${TMPDIR:-/tmp}/buildopt-beta-gradle-fixtures."* ]]; then
+        rm -rf -- "${buildopt_tmp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in awk find git jq mkdir mktemp readlink rm sha256sum stat uname; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required beta Gradle fixture command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+if [[ "$(uname -s)" != "Linux" || "$(uname -m)" != "x86_64" ]]; then
+    printf 'private-beta Gradle fixture matrix requires Linux AMD64\n' >&2
+    exit 1
+fi
+
+cd -- "${buildopt_repo_root}"
+buildopt_before_status=$(
+    git status --porcelain=v1 --untracked-files=all
+)
+
+if ! jq -e '
+    keys == [
+        "boundaries",
+        "execution",
+        "exitGateId",
+        "fixtures",
+        "gateId",
+        "goldenLane",
+        "manifest",
+        "schemaVersion"
+    ] and
+    .schemaVersion == "buildopt.specs/beta-gradle-fixtures/v1" and
+    .gateId == "OPS-001/A1" and
+    .exitGateId == "A1-G02" and
+    .manifest == {
+        path: "benchmarks/beta-v1.yaml",
+        sha256: "sha256:cf032b976164e8162a782a2266b1ae8bed3c0b876d3699083c636c87bd299d3d"
+    } and
+    .goldenLane == {
+        gradle: "9.6.1",
+        jdk: 21,
+        platform: "linux-amd64",
+        dsl: "KOTLIN",
+        performanceQualification: false
+    } and
+    .fixtures == [
+        {
+            id: "TIER1_SMALL",
+            sizeClass: "SMALL",
+            projects: 2,
+            sourcesPerProject: 4,
+            sourceFiles: 8,
+            expectedValue: 8,
+            criticalPath: {
+                taskPattern: ":module-%03d:compileJava",
+                taskCount: 2,
+                dependencyOrder: "LINEAR"
+            }
+        },
+        {
+            id: "TIER1_MEDIUM",
+            sizeClass: "MEDIUM",
+            projects: 8,
+            sourcesPerProject: 8,
+            sourceFiles: 64,
+            expectedValue: 64,
+            criticalPath: {
+                taskPattern: ":module-%03d:compileJava",
+                taskCount: 8,
+                dependencyOrder: "LINEAR"
+            }
+        },
+        {
+            id: "TIER1_LARGE",
+            sizeClass: "LARGE",
+            projects: 24,
+            sourcesPerProject: 16,
+            sourceFiles: 384,
+            expectedValue: 384,
+            criticalPath: {
+                taskPattern: ":module-%03d:compileJava",
+                taskCount: 24,
+                dependencyOrder: "LINEAR"
+            }
+        }
+    ] and
+    .execution == {
+        repositoryMaterialization: "DETERMINISTIC_PRIVATE_TEMPORARY",
+        managedCache: "BUILDOPT_NATIVE_L1_READ_WRITE",
+        coldCriticalPathOutcome: "SUCCESS",
+        replayCriticalPathOutcome: "FROM_CACHE",
+        configurationCacheReplay: true,
+        knownOutput: "FINAL_STATIC_VALUE_AND_EXACT_CLASS_COUNT",
+        reportMode: "0600",
+        containsSecrets: false
+    } and
+    .boundaries == {
+        closes: ["OPS-001/A1-GRADLE-FIXTURE-SIZE-MATRIX"],
+        doesNotClose: ["OPS-001/A1", "A1-G02", "EIGHT_HOUR_SOAK"]
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'private-beta Gradle fixture contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_manifest_digest=$(
+    sha256sum "${buildopt_manifest}" | awk '{print "sha256:" $1}'
+)
+if [[ "${buildopt_manifest_digest}" != \
+    "$(jq -r '.manifest.sha256' "${buildopt_contract}")" ]]; then
+    printf 'private-beta Gradle fixture benchmark digest drifted\n' >&2
+    exit 1
+fi
+if ! jq -e --slurpfile buildopt_contract "${buildopt_contract}" '
+    [.gradleFixtures[] | {id, sizeClass}] ==
+        [$buildopt_contract[0].fixtures[] | {id, sizeClass}]
+' "${buildopt_manifest}" >/dev/null; then
+    printf 'private-beta Gradle fixtures do not match the benchmark manifest\n' >&2
+    exit 1
+fi
+
+buildopt_required_files=(
+    "jvm/gradle-plugin/src/main/java/dev/buildopt/gradle/BuildOptManagedL1Plugin.java"
+    "jvm/gradle-plugin/src/main/java/dev/buildopt/gradle/BuildOptTierOnePolicyPlugin.java"
+    "jvm/gradle-plugin/src/testKit/java/dev/buildopt/gradle/BetaFixtureSizeMatrixTestKit.java"
+    "specs/beta-gradle-fixtures-v1.md"
+)
+for buildopt_relative in "${buildopt_required_files[@]}"; do
+    if [[ ! -s "${buildopt_repo_root}/${buildopt_relative}" ]]; then
+        printf 'missing beta Gradle fixture file: %s\n' \
+            "${buildopt_relative}" >&2
+        exit 1
+    fi
+done
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p -- "${GRADLE_USER_HOME}"
+buildopt_gradle_home=$(
+    find \
+        "${GRADLE_USER_HOME}/wrapper/dists/gradle-9.6.1-bin" \
+        -type d \
+        -path '*/gradle-9.6.1' \
+        -print \
+        -quit
+)
+if [[ -z "${buildopt_gradle_home}" ||
+    ! -x "${buildopt_gradle_home}/bin/gradle" ]]; then
+    printf 'pinned Gradle 9.6.1 distribution is unavailable\n' >&2
+    exit 1
+fi
+buildopt_gradle_home=$(readlink -f "${buildopt_gradle_home}")
+buildopt_profiles=$(
+    jq -r '
+        [.fixtures[] |
+            [
+                .id,
+                .sizeClass,
+                (.projects | tostring),
+                (.sourcesPerProject | tostring),
+                (.expectedValue | tostring)
+            ] | join("|")
+        ] | join(";")
+    ' "${buildopt_contract}"
+)
+buildopt_report="${buildopt_tmp}/result.json"
+
+"${buildopt_script_dir}/run" -- \
+    "${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --no-configuration-cache \
+    --stacktrace \
+    --warning-mode=fail \
+    :jvm:gradle-plugin:betaFixtureSizeMatrixTestKit \
+    "-PbuildoptTierOneGradleHome=${buildopt_gradle_home}" \
+    "-PbuildoptBetaFixtureResult=${buildopt_report}" \
+    "-PbuildoptBetaFixtureBenchmarkDigest=${buildopt_manifest_digest}" \
+    "-PbuildoptBetaFixtureProfiles=${buildopt_profiles}"
+
+if [[ "$(stat -c '%a' "${buildopt_report}")" != "600" ]]; then
+    printf 'private-beta Gradle fixture report is not mode 0600\n' >&2
+    exit 1
+fi
+if ! jq -e --slurpfile buildopt_contract "${buildopt_contract}" '
+    ($buildopt_contract[0]) as $contract |
+    . as $result |
+    keys == [
+        "benchmarkDigest",
+        "boundaries",
+        "containsSecrets",
+        "fixtures",
+        "gradle",
+        "jdk",
+        "platform",
+        "schemaVersion"
+    ] and
+    .schemaVersion == "buildopt.evidence/beta-gradle-fixtures/v1" and
+    .benchmarkDigest == $contract.manifest.sha256 and
+    .gradle == $contract.goldenLane.gradle and
+    .jdk == $contract.goldenLane.jdk and
+    .platform == $contract.goldenLane.platform and
+    .containsSecrets == false and
+    .boundaries == $contract.boundaries and
+    (.fixtures | length) == ($contract.fixtures | length) and
+    all(range(0; ($contract.fixtures | length));
+        . as $index |
+        ($contract.fixtures[$index]) as $expected |
+        ($result.fixtures[$index]) as $actual |
+        ($actual | keys) == [
+            "actualValue",
+            "coldOutcome",
+            "configurationCacheReused",
+            "criticalPath",
+            "dsl",
+            "expectedValue",
+            "id",
+            "managedL1Populated",
+            "projects",
+            "replayOutcome",
+            "sizeClass",
+            "sourceFiles"
+        ] and
+        $actual.id == $expected.id and
+        $actual.sizeClass == $expected.sizeClass and
+        $actual.dsl == $contract.goldenLane.dsl and
+        $actual.projects == $expected.projects and
+        $actual.sourceFiles == $expected.sourceFiles and
+        $actual.expectedValue == $expected.expectedValue and
+        $actual.actualValue == $expected.expectedValue and
+        $actual.coldOutcome == $contract.execution.coldCriticalPathOutcome and
+        $actual.replayOutcome == $contract.execution.replayCriticalPathOutcome and
+        $actual.configurationCacheReused == true and
+        $actual.managedL1Populated == true and
+        ($actual.criticalPath | length) == $expected.criticalPath.taskCount and
+        all(range(0; $expected.projects);
+            . as $task |
+            $actual.criticalPath[$task] ==
+                (":module-" + (("000" + ($task | tostring))[-3:]) + ":compileJava")
+        )
+    )
+' "${buildopt_report}" >/dev/null; then
+    printf 'private-beta Gradle fixture report is invalid\n' >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'private-beta Gradle fixture checker changed the working tree\n' >&2
+    exit 1
+fi
+
+printf '%s\n' \
+    'OPS-001/A1 Gradle fixture matrix OK: SMALL/MEDIUM/LARGE known outputs and critical paths replayed from managed L1'

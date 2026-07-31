@@ -68,6 +68,9 @@ val tierOneRuntime = providers.gradleProperty("buildoptTierOneJava")
     .orElse(21)
 val tierOneGradleHome = providers.gradleProperty("buildoptTierOneGradleHome")
 val tierOneFixtures = rootProject.layout.projectDirectory.dir("fixtures/tier1")
+val betaFixtureResult = providers.gradleProperty("buildoptBetaFixtureResult")
+val betaFixtureProfiles = providers.gradleProperty("buildoptBetaFixtureProfiles")
+val betaFixtureBenchmarkDigest = providers.gradleProperty("buildoptBetaFixtureBenchmarkDigest")
 
 tasks.register<JavaExec>("tierOneTestKit") {
     group = "verification"
@@ -252,6 +255,35 @@ tasks.register<JavaExec>("circuitBreakerTestKit") {
     inputs.dir(tierOneFixtures)
     inputs.file(tasks.jar.flatMap { it.archiveFile })
     inputs.property("gradleHome", tierOneGradleHome)
+}
+
+tasks.register<JavaExec>("betaFixtureSizeMatrixTestKit") {
+    group = "verification"
+    description = "Runs the private-beta small/medium/large Gradle fixture matrix."
+    notCompatibleWithConfigurationCache("The task launches nested TestKit builds.")
+    dependsOn(tasks.named(testKit.classesTaskName), tasks.named("jar"))
+    classpath = testKit.runtimeClasspath
+    mainClass = "dev.buildopt.gradle.BetaFixtureSizeMatrixTestKit"
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    argumentProviders.add(
+        CommandLineArgumentProvider {
+            listOf(
+                tierOneGradleHome.get(),
+                tasks.jar.get().archiveFile.get().asFile.absolutePath,
+                "21",
+                betaFixtureResult.get(),
+                betaFixtureBenchmarkDigest.get(),
+                betaFixtureProfiles.get(),
+            )
+        },
+    )
+    inputs.file(tasks.jar.flatMap { it.archiveFile })
+    inputs.property("gradleHome", tierOneGradleHome)
+    inputs.property("benchmarkDigest", betaFixtureBenchmarkDigest)
+    inputs.property("profiles", betaFixtureProfiles)
+    outputs.file(betaFixtureResult)
 }
 
 tasks.register<JavaExec>("gatewayRotationTestKit") {

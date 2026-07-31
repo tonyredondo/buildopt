@@ -1254,8 +1254,9 @@ unverified, and must be rejected by the production validator. Qualification
 runs 1/8/32 clients for 9,600 seconds each, emits 30,000 exact-size
 observations, and enforces the golden runner, zero-error, duration, and
 boundary-specific p95 contracts. A green run closes only the eight-hour soak;
-the Gradle fixture and circuit-breaker matrices, `A1-G02`, and complete
-`OPS-001/A1` gate remain separate.
+the already bounded Gradle fixture and circuit-breaker matrices remain separate
+evidence inputs. With those inputs green, the soak is the final evidence needed
+for `A1-G02` and the complete `OPS-001/A1` gate.
 
 ## Private-beta circuit breaker
 
@@ -1270,9 +1271,25 @@ oversized-object `413`, proves private durable per-runner cooldown state and
 automatic recovery, and runs the real Gradle 9.6.1/JDK 21 Kotlin and Groovy
 fixtures with Shared omitted. Each fallback build succeeds, writes the native
 managed L1, and replays `FROM_CACHE` with Configuration Cache reused. This
-closes only the circuit-breaker slice; the eight-hour qualification, the
-small/medium/large Gradle fixture matrix, `A1-G02`, and complete operational
-gate remain open.
+closes only the circuit-breaker slice; the eight-hour qualification and
+small/medium/large Gradle fixture matrix remain separate boundaries.
+
+## Private-beta Gradle fixture sizes
+
+Exercise the bounded small, medium, and large golden-lane build matrix:
+
+```bash
+./dev/check-beta-gradle-fixtures
+```
+
+The checker materializes three private Kotlin DSL multi-project repositories
+with 8, 64, and 384 Java sources and linear critical paths of 2, 8, and 24
+`compileJava` tasks. Gradle 9.6.1/JDK 21 must produce each exact known output,
+then restore every critical-path task `FROM_CACHE` through the native managed
+L1 while reusing Configuration Cache. It writes a mode-`0600` result, validates
+it against the benchmark manifest, and removes it. This closes only the
+fixture-size matrix; the eight-hour soak remains before `A1-G02` and the full
+operational profile can close.
 
 ## Private-beta benchmark harness
 

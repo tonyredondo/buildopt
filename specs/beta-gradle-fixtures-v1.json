@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "buildopt.specs/beta-gradle-fixtures/v1",
+  "gateId": "OPS-001/A1",
+  "exitGateId": "A1-G02",
+  "manifest": {
+    "path": "benchmarks/beta-v1.yaml",
+    "sha256": "sha256:cf032b976164e8162a782a2266b1ae8bed3c0b876d3699083c636c87bd299d3d"
+  },
+  "goldenLane": {
+    "gradle": "9.6.1",
+    "jdk": 21,
+    "platform": "linux-amd64",
+    "dsl": "KOTLIN",
+    "performanceQualification": false
+  },
+  "fixtures": [
+    {
+      "id": "TIER1_SMALL",
+      "sizeClass": "SMALL",
+      "projects": 2,
+      "sourcesPerProject": 4,
+      "sourceFiles": 8,
+      "expectedValue": 8,
+      "criticalPath": {
+        "taskPattern": ":module-%03d:compileJava",
+        "taskCount": 2,
+        "dependencyOrder": "LINEAR"
+      }
+    },
+    {
+      "id": "TIER1_MEDIUM",
+      "sizeClass": "MEDIUM",
+      "projects": 8,
+      "sourcesPerProject": 8,
+      "sourceFiles": 64,
+      "expectedValue": 64,
+      "criticalPath": {
+        "taskPattern": ":module-%03d:compileJava",
+        "taskCount": 8,
+        "dependencyOrder": "LINEAR"
+      }
+    },
+    {
+      "id": "TIER1_LARGE",
+      "sizeClass": "LARGE",
+      "projects": 24,
+      "sourcesPerProject": 16,
+      "sourceFiles": 384,
+      "expectedValue": 384,
+      "criticalPath": {
+        "taskPattern": ":module-%03d:compileJava",
+        "taskCount": 24,
+        "dependencyOrder": "LINEAR"
+      }
+    }
+  ],
+  "execution": {
+    "repositoryMaterialization": "DETERMINISTIC_PRIVATE_TEMPORARY",
+    "managedCache": "BUILDOPT_NATIVE_L1_READ_WRITE",
+    "coldCriticalPathOutcome": "SUCCESS",
+    "replayCriticalPathOutcome": "FROM_CACHE",
+    "configurationCacheReplay": true,
+    "knownOutput": "FINAL_STATIC_VALUE_AND_EXACT_CLASS_COUNT",
+    "reportMode": "0600",
+    "containsSecrets": false
+  },
+  "boundaries": {
+    "closes": [
+      "OPS-001/A1-GRADLE-FIXTURE-SIZE-MATRIX"
+    ],
+    "doesNotClose": [
+      "OPS-001/A1",
+      "A1-G02",
+      "EIGHT_HOUR_SOAK"
+    ]
+  }
+}

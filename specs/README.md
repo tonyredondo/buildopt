@@ -14,6 +14,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`beta-sustained-v1.md`](./beta-sustained-v1.md) | `OPS-001/A1` |
 | [`beta-soak-v1.md`](./beta-soak-v1.md) | `OPS-001/A1` |
 | [`beta-circuit-breaker-v1.md`](./beta-circuit-breaker-v1.md) | `OPS-001/A1` / `A1-G02` |
+| [`beta-gradle-fixtures-v1.md`](./beta-gradle-fixtures-v1.md) | `OPS-001/A1` / `A1-G02` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`patch-bundle-v1.md`](./patch-bundle-v1.md) | `F0-034` |
 | [`bandit-policy-v1.md`](./bandit-policy-v1.md) | `F0-035` |
@@ -115,6 +116,10 @@ through one long-lived managed gateway, Shared store, and authority, with
 disk-pressure circuit slice: private per-slot state suppresses Shared between
 invocations, preserves writable managed L1, and proves Kotlin/Groovy Gradle
 fallback and replay without claiming the separate soak or fixture-size matrix.
+`beta-gradle-fixtures-v1.json` is the benchmark-bound small/medium/large
+Kotlin DSL build matrix: deterministic multi-project repositories prove exact
+known outputs, ordered critical paths, managed-L1 replay, and Configuration
+Cache reuse without claiming performance qualification or the separate soak.
 `managed-l1-v1.json` is the A0-003 launcher/settings-plugin contract for
 opaque scope binding, native retention, generation directories, exclusive
 leases, and L2-writer local disablement.
