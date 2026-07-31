@@ -128,6 +128,7 @@ From the repository root:
 ./dev/check-deployment-lifecycle
 ./dev/check-ops-readiness
 ./dev/check-ops-alerts
+./dev/check-beta-benchmark-harness
 ./dev/check-github-action
 ./dev/check-base-runbooks
 ./dev/run -- ./dev/check-jvm-release

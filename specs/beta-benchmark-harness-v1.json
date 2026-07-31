@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "buildopt.specs/beta-benchmark-harness/v1",
+  "gateId": "OPS-001/A1",
+  "manifest": "benchmarks/beta-v1.yaml",
+  "commands": {
+    "smoke": "beta-benchmark smoke --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH",
+    "validate": "beta-benchmark validate --manifest PATH --result PATH"
+  },
+  "smoke": {
+    "qualification": "SMOKE",
+    "clients": [
+      1,
+      8,
+      32
+    ],
+    "phases": [
+      "COLD",
+      "WARM_70",
+      "SUSTAINED",
+      "SOAK"
+    ],
+    "operationsPerStratum": 100,
+    "strata": 12,
+    "rawObservations": 1200,
+    "scaledSizesBytes": [
+      4096,
+      65536,
+      524288,
+      1048576
+    ],
+    "percentages": [
+      70,
+      20,
+      8,
+      2
+    ],
+    "warmHitPercent": 70
+  },
+  "execution": {
+    "transport": "REAL_LOOPBACK_HTTP",
+    "storage": "REAL_SINGLE_NODE_SHARED",
+    "coldPublication": "PENDING_THEN_ED25519_COMMIT",
+    "readVerification": "STATUS_AND_COMPLETE_BODY_LENGTH",
+    "rawFormat": "PRIVATE_JSONL",
+    "summaryFormat": "PRIVATE_JSON",
+    "manifestDigestBound": true,
+    "rawDigestBound": true,
+    "unknownFieldsRejected": true,
+    "tamperRejected": true
+  },
+  "boundaries": {
+    "closes": [
+      "OPS-001/A1-BENCHMARK-HARNESS-SMOKE"
+    ],
+    "doesNotClose": [
+      "OPS-001/A1",
+      "BENCHMARK_FULL_PROFILE",
+      "FAULT_MATRIX",
+      "EIGHT_HOUR_SOAK",
+      "GOLDEN_LANE_RESULT"
+    ]
+  }
+}

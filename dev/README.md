@@ -1139,6 +1139,23 @@ The race-enabled fixture activates and recovers all ten RFC classes. External
 paging and the full benchmark/fault/soak evidence are not claimed; see
 [`specs/ops-alerts-v1.md`](../specs/ops-alerts-v1.md).
 
+## Private-beta benchmark harness
+
+Exercise the non-qualifying real-data-plane smoke profile:
+
+```bash
+./dev/check-beta-benchmark-harness
+```
+
+The harness strictly loads `benchmarks/beta-v1.yaml`, runs all four named
+phases with 1/8/32 concurrent workers through real Shared HTTP PUT/GET paths,
+commits cold pending objects with an exact Ed25519 decision, and emits 1,200
+private raw JSONL observations before its digest-bound JSON summary. The smoke
+cycle keeps the exact 70/20/8/2 distribution and 70% read-hit target while
+scaling sizes and omitting qualifying durations, Gradle fixtures, and faults.
+Validation rejects result or raw-stream tampering; the full operational gate
+remains open.
+
 ## GitHub Action validation
 
 Exercise the Action metadata, immutable fixture lock, offline installer, and

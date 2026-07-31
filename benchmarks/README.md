@@ -8,9 +8,11 @@ Seeds, images, toolchains, runner classes, and digests are part of the evidence.
 machine-readable workload, seed, budget, and fault matrix. Its interpretation
 belongs in [`specs/benchmark-beta-v1.md`](../specs/benchmark-beta-v1.md).
 
-The JSON-compatible YAML is validated by `./dev/check-beta-benchmark`. That
-command checks identity and completeness; it does not execute the sustained or
-soak profiles.
+The JSON-compatible YAML is validated by `./dev/check-beta-benchmark`. The
+executable result path is validated by
+`./dev/check-beta-benchmark-harness`, whose real-HTTP `SMOKE` profile is
+explicitly non-qualifying. Neither command claims the sustained or soak
+profiles have run.
 
 ## Walking-skeleton overhead evidence
 

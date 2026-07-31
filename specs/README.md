@@ -7,6 +7,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`ci-orchestration-v1.md`](./ci-orchestration-v1.md) | `F0-030` |
 | [`gradle-correlation-v1.md`](./gradle-correlation-v1.md) | `SPK-001` / `GRADLE-CORR-001` |
 | [`benchmark-beta-v1.md`](./benchmark-beta-v1.md) | `F0-032` |
+| [`beta-benchmark-harness-v1.md`](./beta-benchmark-harness-v1.md) | `OPS-001/A1` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`patch-bundle-v1.md`](./patch-bundle-v1.md) | `F0-034` |
 | [`bandit-policy-v1.md`](./bandit-policy-v1.md) | `F0-035` |
@@ -82,6 +83,9 @@ authority reload within 60 seconds.
 `ops-alerts-v1.json` is the OPS-001/A1 ten-class local alert contract for
 bounded storage, authority, export, and acceptance signals plus deterministic
 activation/recovery without exposing sensitive values.
+`beta-benchmark-harness-v1.json` is the OPS-001/A1 executable smoke contract
+for all phase/client strata, real Shared HTTP publication/read paths, private
+raw observations, digest-bound summaries, and explicit non-qualification.
 `managed-l1-v1.json` is the A0-003 launcher/settings-plugin contract for
 opaque scope binding, native retention, generation directories, exclusive
 leases, and L2-writer local disablement.
