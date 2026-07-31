@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/owner-poc-evaluation-v1.json"
+buildopt_evidence="${buildopt_repo_root}/benchmarks/results/a1-006-owner-poc-evaluation.json"
+
+if ! jq -e '
+    .schemaVersion == "buildopt.specs/owner-poc-evaluation/v1" and
+    .workItem == "A1-006" and
+    .repositories == [
+      {nameWithOwner: "tonyredondo/buildopt-pilot", revision: "e79a7bcc5eb31e838d4d886245d514fcdef3fc73", dsl: "KOTLIN"},
+      {nameWithOwner: "tonyredondo/buildopt-pilot-groovy", revision: "f6aea79262766a71701f10da0b20ce10582b2a69", dsl: "GROOVY"}
+    ] and
+    .measurement == {
+      task: ":app:distZip",
+      requiredDeliverable: "app/build/distributions/app-1.0.0.zip",
+      design: "PRESCRIBED_PAIRED_ALTERNATING",
+      pairsPerRepository: 4,
+      control: "BUILDOPT_TIER_ONE_WITH_BUILD_CACHE_DISABLED",
+      candidate: "BUILDOPT_TIER_ONE_WITH_WARM_MANAGED_L1"
+    } and
+    .acceptance.minimumRepositories == 2 and
+    .acceptance.observedNetBuildTimeSavedMs == "POSITIVE" and
+    .acceptance.lower95PairedBootstrapBoundMs == "POSITIVE" and
+    .acceptance.customerVisibleBuildP95DeltaMs == "NON_POSITIVE" and
+    .acceptance.requiredDeliverableDivergenceRate == 0 and
+    .acceptance.productAttributableFailureRate == 0 and
+    .acceptance.buildFailureRateDelta == 0 and
+    .boundaries == {
+      closes: ["A1-006", "A1-G06"],
+      doesNotClose: ["EIGHT_HOUR_SOAK", "EXTERNAL_DESIGN_PARTNER_EVIDENCE"],
+      ownerOperatedProofOfConcept: true,
+      productionPromotionAuthorized: false
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'owner POC evaluation contract is malformed\n' >&2
+    exit 1
+fi
+
+if ! jq -e '
+    .schemaVersion == "buildopt.evidence/owner-poc-evaluation/v1" and
+    .capturedOn == "2026-07-31" and
+    .workItem == "A1-006" and
+    .buildoptRevision == "dada1841290d2a75607dcce49f91b2e640500eb4" and
+    .workflow == {
+      name: "Owner POC Evaluation",
+      runId: 30669246675,
+      url: "https://github.com/tonyredondo/buildopt/actions/runs/30669246675",
+      runner: "ubuntu-24.04"
+    } and
+    [.repositories[].nameWithOwner] == ["tonyredondo/buildopt-pilot", "tonyredondo/buildopt-pilot-groovy"] and
+    [.repositories[].dsl] == ["KOTLIN", "GROOVY"] and
+    [.repositories[].revision] == ["e79a7bcc5eb31e838d4d886245d514fcdef3fc73", "f6aea79262766a71701f10da0b20ce10582b2a69"] and
+    all(.repositories[].result;
+      .schemaVersion == "1.0" and
+      .recordType == "EXPERIMENT_RESULT" and
+      .status == "PRELIMINARY" and
+      .effectScope == "ACTION_INCREMENTAL" and
+      .actionIds == ["managed-l1-cache-hit-v1"] and
+      .samples.assigned == {candidate: 4, control: 4} and
+      .samples.analyzed == .samples.assigned and
+      .samples.outcomes.candidate.SUCCESS == 4 and
+      .samples.outcomes.control.SUCCESS == 4 and
+      .samples.excludedSampleSize == 0 and
+      .samples.measurementCoverageRatio == 1 and
+      .method.analysisMethod == "PAIRED_BOOTSTRAP" and
+      .effects.observedNetBuildTimeSavedMs > 0 and
+      .effects.observedNetBuildTimeSavedInterval95Ms[0] > 0 and
+      .effects.customerVisibleBuildP95DeltaMs <= 0 and
+      .effects.requiredDeliverableDivergenceRate == 0 and
+      .effects.productAttributableFailureRate == 0 and
+      .effects.buildFailureRateDelta == 0 and
+      .decision.state == "PRELIMINARY" and
+      .decision.promotionClass == "DIRECT_REVERSIBLE") and
+    .gate == {
+      state: "PASSED",
+      closes: ["A1-006", "A1-G06"],
+      productionPromotionAuthorized: false
+    }
+' "${buildopt_evidence}" >/dev/null; then
+    printf 'owner POC evaluation evidence is malformed or fails its gates\n' >&2
+    exit 1
+fi
+
+printf 'A1-006/A1-G06 owner POC evaluation OK: Kotlin saved 2391ms (lower95 2372ms), Groovy saved 2264ms (lower95 1947ms), safe p95 and identical distributions\n'

@@ -1,0 +1,228 @@
+{
+  "schemaVersion": "buildopt.evidence/owner-poc-evaluation/v1",
+  "capturedOn": "2026-07-31",
+  "workItem": "A1-006",
+  "buildoptRevision": "dada1841290d2a75607dcce49f91b2e640500eb4",
+  "workflow": {
+    "name": "Owner POC Evaluation",
+    "runId": 30669246675,
+    "url": "https://github.com/tonyredondo/buildopt/actions/runs/30669246675",
+    "runner": "ubuntu-24.04"
+  },
+  "repositories": [
+    {
+      "nameWithOwner": "tonyredondo/buildopt-pilot",
+      "revision": "e79a7bcc5eb31e838d4d886245d514fcdef3fc73",
+      "dsl": "KOTLIN",
+      "result": {
+        "schemaVersion": "1.0",
+        "recordType": "EXPERIMENT_RESULT",
+        "experimentId": "a1-006-tonyredondo-buildopt-pilot",
+        "resultVersion": 1,
+        "status": "PRELIMINARY",
+        "asOf": "2026-07-31T22:17:33.266907709Z",
+        "window": {
+          "startedAt": "2026-07-31T22:16:33.773971664Z",
+          "endedAt": "2026-07-31T22:17:33.255059722Z"
+        },
+        "effectScope": "ACTION_INCREMENTAL",
+        "actionIds": [
+          "managed-l1-cache-hit-v1"
+        ],
+        "measurementEpoch": 1,
+        "baselineDefinitionDigest": "sha256:37d0bf928e5b2e6063e6d430041b1f19ac36e5b5946e0f976b092cd51a275aa8",
+        "controlDefinitionDigest": "sha256:e0bd7e0b395166abde29e079488633e10f8c50bbfb95b46d8aa5b28dbc11ee12",
+        "metricDefinitionVersion": "build-impact-v1",
+        "measurementPolicyVersion": "beta-measurement-v1",
+        "population": {
+          "cohortId": "owner-controlled-public-poc",
+          "analysisUnit": "BUILD_SESSION",
+          "assignmentUnit": "CI_JOB",
+          "estimand": "SUCCESSFUL_BUILD_SESSION_LATENCY",
+          "requiredStrata": [
+            "environment",
+            "pipelineClass",
+            "runnerClass",
+            "outcome",
+            "workUnitsFingerprint",
+            "measurementEpoch"
+          ]
+        },
+        "samples": {
+          "assigned": {
+            "candidate": 4,
+            "control": 4
+          },
+          "analyzed": {
+            "candidate": 4,
+            "control": 4
+          },
+          "outcomes": {
+            "candidate": {
+              "SUCCESS": 4,
+              "BUILD_FAILURE": 0,
+              "INFRA_FAILURE": 0,
+              "CANCELLED": 0
+            },
+            "control": {
+              "SUCCESS": 4,
+              "BUILD_FAILURE": 0,
+              "INFRA_FAILURE": 0,
+              "CANCELLED": 0
+            }
+          },
+          "excludedSampleSize": 0,
+          "exclusions": [],
+          "measurementCoverageRatio": 1
+        },
+        "method": {
+          "analysisMethod": "PAIRED_BOOTSTRAP",
+          "effectStatistic": "PAIRED_MEAN_DELTA",
+          "intervalType": "CONFIDENCE_95"
+        },
+        "effects": {
+          "observedNetBuildTimeSavedMs": 2391,
+          "observedNetBuildTimeSavedInterval95Ms": [
+            2372,
+            2409
+          ],
+          "observedBuildTimeReductionRatio": 0.2778617083091226,
+          "observedBuildTimeReductionInterval95": [
+            0.2743651338366507,
+            0.2814714218233349
+          ],
+          "buildFailureRateDelta": 0,
+          "customerVisibleBuildP95DeltaMs": -2413,
+          "customerVisibleBuildP95DeltaInterval95Ms": [
+            -2413,
+            -2384
+          ],
+          "incrementalActionOverheadMs": 0,
+          "requiredDeliverableDivergenceRate": 0,
+          "productAttributableFailureRate": 0
+        },
+        "decision": {
+          "state": "PRELIMINARY",
+          "promotionClass": "DIRECT_REVERSIBLE",
+          "evaluatedAt": "2026-07-31T22:17:33.266907709Z",
+          "reasons": [
+            "The internal sample is below the beta promotion minimum",
+            "Feedback and CI queue effects are unavailable in the local pilot",
+            "A PRELIMINARY result cannot authorize promotion"
+          ]
+        }
+      }
+    },
+    {
+      "nameWithOwner": "tonyredondo/buildopt-pilot-groovy",
+      "revision": "f6aea79262766a71701f10da0b20ce10582b2a69",
+      "dsl": "GROOVY",
+      "result": {
+        "schemaVersion": "1.0",
+        "recordType": "EXPERIMENT_RESULT",
+        "experimentId": "a1-006-tonyredondo-buildopt-pilot-groovy",
+        "resultVersion": 1,
+        "status": "PRELIMINARY",
+        "asOf": "2026-07-31T22:19:29.706351754Z",
+        "window": {
+          "startedAt": "2026-07-31T22:18:31.257564009Z",
+          "endedAt": "2026-07-31T22:19:29.694794736Z"
+        },
+        "effectScope": "ACTION_INCREMENTAL",
+        "actionIds": [
+          "managed-l1-cache-hit-v1"
+        ],
+        "measurementEpoch": 1,
+        "baselineDefinitionDigest": "sha256:920686f5a1b78a2be9267121f8cbd75069c91a710828f3cf8aa4dfcf55735124",
+        "controlDefinitionDigest": "sha256:c3c2398e28eb161890231aafb4411139e01bc4c4e11ca41c714d1ce610b5a735",
+        "metricDefinitionVersion": "build-impact-v1",
+        "measurementPolicyVersion": "beta-measurement-v1",
+        "population": {
+          "cohortId": "owner-controlled-public-poc",
+          "analysisUnit": "BUILD_SESSION",
+          "assignmentUnit": "CI_JOB",
+          "estimand": "SUCCESSFUL_BUILD_SESSION_LATENCY",
+          "requiredStrata": [
+            "environment",
+            "pipelineClass",
+            "runnerClass",
+            "outcome",
+            "workUnitsFingerprint",
+            "measurementEpoch"
+          ]
+        },
+        "samples": {
+          "assigned": {
+            "candidate": 4,
+            "control": 4
+          },
+          "analyzed": {
+            "candidate": 4,
+            "control": 4
+          },
+          "outcomes": {
+            "candidate": {
+              "SUCCESS": 4,
+              "BUILD_FAILURE": 0,
+              "INFRA_FAILURE": 0,
+              "CANCELLED": 0
+            },
+            "control": {
+              "SUCCESS": 4,
+              "BUILD_FAILURE": 0,
+              "INFRA_FAILURE": 0,
+              "CANCELLED": 0
+            }
+          },
+          "excludedSampleSize": 0,
+          "exclusions": [],
+          "measurementCoverageRatio": 1
+        },
+        "method": {
+          "analysisMethod": "PAIRED_BOOTSTRAP",
+          "effectStatistic": "PAIRED_MEAN_DELTA",
+          "intervalType": "CONFIDENCE_95"
+        },
+        "effects": {
+          "observedNetBuildTimeSavedMs": 2264,
+          "observedNetBuildTimeSavedInterval95Ms": [
+            1947,
+            2608
+          ],
+          "observedBuildTimeReductionRatio": 0.2692250527629975,
+          "observedBuildTimeReductionInterval95": [
+            0.23487383557927105,
+            0.30501140284193906
+          ],
+          "buildFailureRateDelta": 0,
+          "customerVisibleBuildP95DeltaMs": -2132,
+          "customerVisibleBuildP95DeltaInterval95Ms": [
+            -2540,
+            -1863
+          ],
+          "incrementalActionOverheadMs": 0,
+          "requiredDeliverableDivergenceRate": 0,
+          "productAttributableFailureRate": 0
+        },
+        "decision": {
+          "state": "PRELIMINARY",
+          "promotionClass": "DIRECT_REVERSIBLE",
+          "evaluatedAt": "2026-07-31T22:19:29.706351754Z",
+          "reasons": [
+            "The internal sample is below the beta promotion minimum",
+            "Feedback and CI queue effects are unavailable in the local pilot",
+            "A PRELIMINARY result cannot authorize promotion"
+          ]
+        }
+      }
+    }
+  ],
+  "gate": {
+    "state": "PASSED",
+    "closes": [
+      "A1-006",
+      "A1-G06"
+    ],
+    "productionPromotionAuthorized": false
+  }
+}

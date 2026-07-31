@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — the first owner-controlled A1 deployment is complete while causal owner evaluation remains pending<br>
-**Current phase:** execute `A1-006` owner-operated causal evaluation; `C4-004` waits for C1 and `C4-G06` waits for one accepted owner patch<br>
+**Overall status:** `DOING` — MVP-A1 is complete; owner-operated B validation is next<br>
+**Current phase:** execute `B-G01` owner A/A and `B-G03` causal autotuning evidence; C1 and the custom-task patch follow<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Last updated:** 2026-07-31<br>
@@ -53,8 +53,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | Preparation | RFC, beta scope, and tracker closed | `DONE` | 2/2 | — |
 | Phase 0 | Toolchains, executable contracts, fixtures, spikes, and walking skeleton | `DONE` | 6/6 | Preparation |
 | MVP-A0 | Foundation and internal pilot | `DONE` | 9/9 | Phase 0 |
-| MVP-A1 | Autonomous Cache in an owner-operated POC | `DOING` | 5/6 | A0 + POC operational profile |
-| MVP-B | Runtime Optimizer and safe learning | `DOING` | 4/6 | Activation still requires owner-operated A1 + valid A/A; implementation may proceed |
+| MVP-A1 | Autonomous Cache in an owner-operated POC | `DONE` | 6/6 | A0 + POC operational profile |
+| MVP-B | Runtime Optimizer and safe learning | `DOING` | 4/6 | Owner-operated A1 is closed; valid A/A and autotuning evidence remain |
 | MVP-C1 | Task Intelligence, JVM Agent, and Linux hermeticity | `WAITING` | 0/9 | B |
 | MVP-C4 | PR-only Patch Autopilot | `DOING` | 7/7 | B; C1 for custom tasks; Test Optimization where applicable |
 | MVP-A2 | Self-hosted single-node | `DEFERRED` | 0/1 | A1 |
@@ -413,7 +413,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `A1-003` | Quotas, TTL, watermarks, and byte-based SLRU | `DONE` | Codex | `E-084..085` |
 | `A1-004` | Data lifecycle, redaction, deletion, and diagnostic opt-in | `DONE` | Codex | `E-093` |
 | `A1-005` | Exercised health/readiness, circuit breaker, and runbooks | `DONE` | Codex | `E-094` |
-| `A1-006` | Owner-operated POC evaluation across controlled repositories | `TODO` | — | `A1-001` closed; causal execution is next |
+| `A1-006` | Owner-operated POC evaluation across controlled repositories | `DONE` | Codex | `E-114` |
 
 ### 7.2 Exit gates
 
@@ -424,7 +424,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `A1-G03` | SLRU/watermarks/pools behave according to contract | `DONE` | `E-084..085` |
 | `A1-G04` | Fail-closed restart/recovery and correct rotations | `DONE` | `E-087` |
 | `A1-G05` | Export/redaction/deletion cover managed copies | `DONE` | `E-093` |
-| `A1-G06` | Owner-operated repositories demonstrate causal benefit and safe p95 | `TODO` | — |
+| `A1-G06` | Owner-operated repositories demonstrate causal benefit and safe p95 | `DONE` | `E-114` |
 
 ---
 
@@ -752,6 +752,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-111` | 2026-07-31 | `C4-008` | Versioned [`Patch delivery recovery v1`](./specs/patch-delivery-recovery-v1.md), exact machine-readable [identity/state/retry contract](./specs/patch-delivery-recovery-v1.json), and composite [`dev/check-patch-delivery-recovery`](./dev/check-patch-delivery-recovery); six states bind repository/action/bundle identity and the sole buildopt action branch: absent creates branch then draft, exact branch without PR creates only the missing draft, exact delivery replays, divergent head or PR returns PROPOSED, and lookup/create failure preserves the branch for explicit workflow_dispatch recovery; every run makes at most one create attempt and never rebases, force-pushes, overwrites/deletes a branch, writes default, marks ready, or merges; protected workflow checks, Test Optimization contracts, exact idempotency/recovery cases, all 15 real-Git cases, and 45 Java 17 classes passed | `DONE`: C4-008 is closed without a real token or remote mutation and without closing post-merge/causal gates; C4-009 is next |
 | `E-112` | 2026-07-31 | `C4-009`, `C4-G05` | Versioned [`Post-merge patch monitor v1`](./specs/post-merge-patch-monitor-v1.md), exact machine-readable [observation/causal/regression/inverse contract](./specs/post-merge-patch-monitor-v1.json), production Java 17 [`PostMergePatchMonitor`](./jvm/patcher/src/main/java/dev/buildopt/patcher/PostMergePatchMonitor.java) and [`ExactRevertBundleGenerator`](./jvm/patcher/src/main/java/dev/buildopt/patcher/ExactRevertBundleGenerator.java), focused [classification cases](./jvm/patcher/src/spike/java/dev/buildopt/patcher/PostMergePatchMonitorSpike.java), and composite [`dev/check-post-merge-patch-monitor`](./dev/check-post-merge-patch-monitor); bounded natural/inverse observations bind exact repository/action/revision/epoch/work/runner/policy context, retain failures/cancellations, require distinct isolation, classify absent/inexact controls as contextual and fewer than four exact pairs as inconclusive, and use 4,096 deterministic paired-bootstrap replicates plus p95 and non-compensable failure/artifact guardrails; the MODIFY-only archive inverse reads signed base preimages without checkout, requires current merged postimages, creates a new JCS/Ed25519 bundle, and passes the production verifier/applier into only an immutable draft revert while preserving default; improvement, regression, crossing interval, contextual, inexact, insufficient, failure/divergence, changed-postimage, ADD rejection, all 15 real-Git cases, and 58 Java 17 classes passed | `DONE`: C4-009 and C4-G05 are closed without claiming Git percentage rollout, mutating a remote, supporting an inexact inverse, implementing C4-004, or claiming the accepted-patch causal gate C4-G06 |
 | `E-113` | 2026-07-31 | `A1-001` | Versioned [`Owner-controlled pilot deployment v1`](./specs/owner-controlled-pilot-deployment-v1.md), exact machine-readable [repository/release/workload/boundary contract](./specs/owner-controlled-pilot-deployment-v1.json), immutable non-secret [deployment result](./benchmarks/results/a1-001-owner-controlled-pilot.json), public [`tonyredondo/buildopt-pilot`](https://github.com/tonyredondo/buildopt-pilot) repository at `e79a7bcc5eb31e838d4d886245d514fcdef3fc73`, and composite [`dev/check-owner-controlled-pilot-deployment`](./dev/check-owner-controlled-pilot-deployment); the synthetic Gradle 9.6.1/Java 17 workload contains eight linearly dependent projects, 64 main classes, eight passing test classes, one custom task, and three reproducible deliverables; signed BuildOpt `0.1.0-pilot.1` at source `5f4105a78dac26dd077ad886e8aa15549423c1fc` was independently verified with SBOM/provenance and installed outside Git; two real installed launcher/plugin/native-L1 runs completed successfully, emitted two schema-valid BUILD_SESSION records, retained byte-identical distribution SHA-256 `b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c`, restored all eight main `compileJava` tasks from managed L1 on replay, and executed the custom task under Tier 1 default deny; the read-only credential-free GitHub workflow retained its initial pre-step billing block, then passed all seven steps in 84 seconds on attempt 2 after the synthetic repository became public | `DONE`: A1-001 is closed without publishing secrets, adding workflow credentials, activating signed Shared authority, claiming causal benefit or external-user evidence, or running the deferred eight-hour soak; A1-006/A1-G06 are next |
+| `E-114` | 2026-07-31 | `A1-006`, `A1-G06` | Versioned [`Owner-operated POC evaluation v1`](./specs/owner-poc-evaluation-v1.md), exact machine-readable [multi-repository causal contract](./specs/owner-poc-evaluation-v1.json), public Kotlin and Groovy pilot repositories at immutable revisions, reusable [`run-owner-poc-causal`](./dev/run-owner-poc-causal) paired harness, hosted [`Owner POC Evaluation`](./.github/workflows/owner-poc-evaluation.yml), immutable [run evidence](./benchmarks/results/a1-006-owner-poc-evaluation.json), and composite [`dev/check-owner-poc-evaluation`](./dev/check-owner-poc-evaluation); four pre-assigned alternating pairs per repository used isolated control/candidate workspaces, authenticated identical BuildOpt paths, disabled cache control versus warm managed-L1 candidate, removed outputs/project cache before every run, and retained byte-identical distributions; public run `30669246675` on BuildOpt `dada1841290d2a75607dcce49f91b2e640500eb4` measured Kotlin savings 2,391 ms with lower95 2,372 ms and p95 delta -2,413 ms, plus Groovy savings 2,264 ms with lower95 1,947 ms and p95 delta -2,132 ms, with zero exclusions, build-failure delta, product-attributable failures, or deliverable divergence | `DONE`: A1-006/A1-G06 and MVP-A1 are closed for the owner-operated POC without claiming external design-partner evidence, running the deferred eight-hour soak, or authorizing production promotion; B-G01/B-G03 are next |
 
 ---
 
@@ -759,6 +760,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-31 | Closed `A1-006`, `A1-G06`, and MVP-A1: two immutable public owner-operated Kotlin/Groovy repositories passed four-pair causal managed-L1 evaluation with positive lower 95% bounds, non-regressive p95, identical distributions, and zero failures/divergence; moved to B owner evidence without the deferred soak or external-partner claim | Codex |
 | 2026-07-31 | Reconciled `A1-001` after the owner-controlled synthetic repository became public: the same read-only credential-free workflow reran on the pinned revision and passed all seven steps in 84 seconds; retained the initial billing block as attempt history rather than a code failure | Codex |
 | 2026-07-31 | Closed `A1-001`: created the private owner-controlled synthetic Gradle pilot, bound it to a verified signed installed BuildOpt release, and recorded two successful authenticated runs with schema-valid sessions, reproducible deliverables, managed-L1 replay, custom-task default deny, and the hosted CI billing boundary; moved `A1-006`/`A1-G06` next without a causal or soak claim | Codex |
 | 2026-07-31 | Closed `C4-009` and `C4-G05`: added bounded natural/inverse post-merge evidence, deterministic paired intervals and guardrails, exact signed archive inverse generation, and draft-only revert application without default-branch mutation; C4 autonomous infrastructure is complete while C4-004 and C4-G06 retain their real dependencies | Codex |

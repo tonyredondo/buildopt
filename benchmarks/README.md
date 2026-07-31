@@ -35,6 +35,23 @@ its immutable contract with:
 ./dev/check-owner-controlled-pilot-deployment
 ```
 
+## Owner-operated causal POC evidence
+
+[`results/a1-006-owner-poc-evaluation.json`](./results/a1-006-owner-poc-evaluation.json)
+records four paired alternating measurements on each immutable public Kotlin and
+Groovy pilot. Both repositories have positive lower 95% paired-bootstrap bounds,
+non-regressive p95, byte-identical distributions, and zero excluded/failing
+outcomes. Revalidate the checked-in artifact without rerunning builds:
+
+```bash
+./dev/check-owner-poc-evaluation
+```
+
+This closes the owner-operated POC gate only; the result remains PRELIMINARY,
+does not authorize production promotion, and does not claim the deferred soak
+or external design-partner evidence.
+
+
 ## Walking-skeleton overhead evidence
 
 [`results/ws-009-golden-lane.json`](./results/ws-009-golden-lane.json) is the
