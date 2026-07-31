@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `DOING` — owner-operated A1 evidence remains pending while noninteractive MVP-B implementation advances<br>
-**Current phase:** MVP-B technical implementation; `B-008` follows completed `B-007`<br>
+**Current phase:** MVP-B technical implementation complete; owner-operated `B-G01` and `B-G03` evidence remains pending<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Last updated:** 2026-07-31<br>
@@ -159,7 +159,7 @@ The POC target is not complete until A1, B, C1, and C4 close. The eight-hour soa
 | 73 | `B-005` | Implement allowlisted invocation merging and policy prefetch | `DONE` | Codex |
 | 74 | `B-006` | Implement A/A and fixed cohorts with propensities | `DONE` | Codex |
 | 75 | `B-007` | Implement contextual epsilon-greedy and replay simulator | `DONE` | Codex |
-| 76 | `B-008` | Implement budget, canary, fallback, rollback, and kill switch | `TODO` | — |
+| 76 | `B-008` | Implement budget, canary, fallback, rollback, and kill switch | `DONE` | Codex |
 
 ---
 
@@ -442,18 +442,18 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `B-005` | Allowlisted invocation merging and policy prefetch | `DONE` | Codex | `E-101` |
 | `B-006` | A/A and fixed cohorts with propensities | `DONE` | Codex | `E-102` |
 | `B-007` | Contextual epsilon-greedy and replay simulator | `DONE` | Codex | `E-103` |
-| `B-008` | Budget, canary, fallback, rollback, and kill switch | `TODO` | — | — |
+| `B-008` | Budget, canary, fallback, rollback, and kill switch | `DONE` | Codex | `E-104` |
 
 ### 8.2 Exit gates
 
 | ID | Summarized criterion | State | Evidence |
 |---|---|---|---|
 | `B-G01` | Valid A/A, sample ratio, delayed reward, and propensities | `WAITING` | — |
-| `B-G02` | Intentional candidate/control contamination does not reach stable | `WAITING` | — |
+| `B-G02` | Intentional candidate/control contamination does not reach stable | `DONE` | `E-104` |
 | `B-G03` | Autotuning reduces build time without breaking p95/p99/queue/OOM | `WAITING` | — |
 | `B-G04` | Merge/clean pass failure/finalizer/side-effect fixtures | `DONE` | `E-101` |
 | `B-G05` | Bandit selects only safe runtime arms | `DONE` | `E-103` |
-| `B-G06` | Permanent control/revalidation and suspension on drift | `WAITING` | — |
+| `B-G06` | Permanent control/revalidation and suspension on drift | `DONE` | `E-104` |
 
 ---
 
@@ -740,6 +740,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-101` | 2026-07-31 | `B-005`, `B-G04` | Versioned [`Invocation merging and policy prefetch v1`](./specs/invocation-merge-prefetch-v1.md), exact machine-readable [merge/prefetch/gate contract](./specs/invocation-merge-prefetch-v1.json), fail-closed [`EvaluateInvocationMerge`](./internal/runtimeoptimizer/invocation_merge.go), authority-neutral single-flight [`PolicyPrefetchCache`](./internal/runtimeoptimizer/policy_prefetch.go), and composite [`dev/check-invocation-merge-prefetch`](./dev/check-invocation-merge-prefetch); merging requires exact repository/revision/workspace/toolchain/daemon/environment/credential/cache identity, versioned transitive subsumption, semantic equivalence, no consumers/effects/barriers, and a passing isolated control, while prefetch verifies payload digest and caller authority before caching and rechecks exact binding, expiry, and revocation; race-enabled concurrency plus merging and clean failure/finalizer/side-effect/barrier fixtures passed | `DONE`: `B-005` and the complete merge/clean fixture gate `B-G04` are closed without activating a pipeline, claiming causal savings, or treating prefetched bytes as authority |
 | `E-102` | 2026-07-31 | `B-006` | Versioned [`Fixed cohort assignment v1`](./specs/fixed-cohort-assignment-v1.md), exact machine-readable [assignment/A/A/sample-ratio contract](./specs/fixed-cohort-assignment-v1.json), private durable [`runtimeoptimizer.CohortLedger`](./internal/runtimeoptimizer/fixed_cohorts.go), and composite [`dev/check-fixed-cohort-assignment`](./dev/check-fixed-cohort-assignment); every idempotent assignment binds its repository, measurement epoch, pre-outcome bucket/context, deterministic seed, policy/catalog, cohort, finite resource arm, integer-basis-point propensity, and random point before execution; A/A compares two labels over identical `STABLE_CONTROL`, the fixed policy preserves at least 5% control and rejects undeclared arms, and Pearson sample-ratio fixtures use declared non-50/50 probabilities while missing propensity, duplicates, insufficient cells, and policy mismatch remain inconclusive; private-state reopen, race, vet, exact-contract, and ratio negative fixtures passed | `DONE`: `B-006` is closed behind disabled actions without processing outcomes, claiming owner-operated A/A, or closing `B-G01`/`B-G03`/`B-G05`/`B-G06` |
 | `E-103` | 2026-07-31 | `B-007`, `B-G05` | Versioned [`Bounded bandit engine v1`](./specs/bandit-engine-v1.md), exact machine-readable [bucket/selection/outcome contract](./specs/bandit-engine-v1.json), private durable [`runtimeoptimizer.BanditEngine`](./internal/runtimeoptimizer/bandit.go), and composite [`dev/check-bandit-engine`](./dev/check-bandit-engine); exact repository/epoch/policy/catalog/feature buckets require 20 valid outcomes for every eligible candidate, selection uses 10% trimming plus five control pseudo-observations, ties retain control, exploration stays within 2–10%, and permanent control receives at least 5%; fixed-cohort ingestion and bandit outcomes revalidate assignment, bucket, propensity, completeness, and the inclusive 24-hour window before exactly-once learning; all 15 Phase 0 cases replay through the production selector, and exhaustive enumeration of 10,000 random points proved observed counts equal declared propensities and every selection belongs to the four-arm catalog; focused race, durable reopen, era reset, delayed/duplicate/partial negative, existing schema replay, and vet suites passed | `DONE`: `B-007` and finite safe-arm gate `B-G05` are closed without enabling a repository, claiming valid owner-operated A/A, or closing `B-G01`/`B-G03`/`B-G06` |
+| `E-104` | 2026-07-31 | `B-008`, `B-G02`, `B-G06` | Versioned [`Runtime rollout control v1`](./specs/runtime-rollout-control-v1.md), exact machine-readable [budget/stage/fallback/kill-switch contract](./specs/runtime-rollout-control-v1.json), private durable [`runtimeoptimizer.RolloutController`](./internal/runtimeoptimizer/rollout.go), and composite [`dev/check-runtime-rollout-control`](./dev/check-runtime-rollout-control); idempotent reservations enforce one concurrent additional validation, no borrowing, actual-time charging, repository-tightenable zero-to-5% rolling seven-day and zero-to-10% 24-hour limits; direct rollout advances exactly 5→25→50→95%, proof-gated rollout shadow→1→5→25→50→95%, and every one-step advance requires correctness, sample, budget, complete telemetry, revalidation, plus contract/quarantine where applicable; exhaustive terminal selection proves exact 95/5 candidate/control, while local/release/urgent/effectful/undeclared-arm contexts stay stable; drift, regression, incomplete telemetry and all non-compensable guardrails suspend, explicit rollback restores control, after-effects fallback preserves unsafe failures, Ed25519 pinned-key directives are time-bounded, idempotent, strictly monotonic, durable, and disabling never bypasses revalidation; intentional candidate and control stable-write contamination both fail isolation; CI budget, B-001 isolation, focused race, semantic reopen, signature tamper/stale, vet, and exact-contract suites passed | `DONE`: `B-008`, `B-G02`, and `B-G06` are closed without activating a repository or claiming owner-operated A/A or causal performance, so `B-G01` and `B-G03` remain pending |
 
 ---
 
@@ -747,6 +748,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-31 | Closed `B-008`, `B-G02`, and `B-G06`: added rolling learning budgets, exact progressive stages and permanent control, bounded fallback/rollback, signed monotonic kill switch, and intentional stable-contamination rejection; MVP-B technical implementation is complete while owner evidence remains pending | Codex |
 | 2026-07-31 | Closed `B-007` and `B-G05`: added durable exact-bucket epsilon-greedy learning, exact-once delayed outcomes, the production 15-case replay, and exhaustive 10,000-point safe-arm propensity proof; moved `B-008` next | Codex |
 | 2026-07-31 | Closed `B-006`: added durable deterministic A/A and fixed-cohort assignment, exact propensities, finite-arm enforcement, and declared-ratio validation; moved `B-007` next without claiming owner-operated A/A evidence | Codex |
 | 2026-07-31 | Closed `B-005` and `B-G04`: added all-or-nothing two-invocation semantic merging plus exact-bound, digest-checked, authority-verified, revocation-aware single-flight policy prefetch; composed clean/merge failure/finalizer/side-effect/barrier fixtures | Codex |

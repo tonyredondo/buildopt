@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.specs/runtime-rollout-control/v1",
+  "trackerId": "B-008",
+  "budget": {
+    "rollingSevenDayMaximumPercent": 5,
+    "rollingTwentyFourHourMaximumPercent": 10,
+    "maximumConcurrentValidationPerRepository": 1,
+    "naturalAssignmentCharged": false,
+    "borrowingAllowed": false,
+    "repositoryMayOnlyReduce": true
+  },
+  "rollout": {
+    "directReversibleBasisPoints": [500, 2500, 5000, 9500],
+    "proofGatedStages": ["SHADOW", "CANARY_1", "CANARY_5", "CANARY_25", "CANARY_50", "ACTIVE_95"],
+    "permanentControlBasisPoints": 500,
+    "maximumStageAdvancePerDecision": 1,
+    "excludedContexts": ["LOCAL", "RELEASE", "URGENT", "EXTERNAL_EFFECTS", "UNDECLARED_ARM"]
+  },
+  "suspendOn": ["INCOMPLETE_TELEMETRY", "DRIFT", "ARTIFACT_DIVERGENCE", "ATTRIBUTABLE_FAILURE", "OOM", "SUSTAINED_SWAPPING", "P95_REGRESSION", "QUEUE_REGRESSION"],
+  "fallback": {
+    "beforeTaskActions": "RETRY_IMMUTABLE_ORIGINAL_ONCE",
+    "afterTaskActions": "ISOLATED_BASELINE_OR_PROVEN_NO_EFFECTS_ONLY",
+    "unsafeRetry": "PRESERVE_FAILURE_AND_REQUIRE_KILL_SWITCH"
+  },
+  "killSwitch": {
+    "schemaVersion": "buildopt.runtime-kill-switch/v1",
+    "signature": "ED25519_PINNED_KEY",
+    "generation": "STRICTLY_MONOTONIC",
+    "enableDisposition": "SUSPEND_ALL_AND_STABLE_CONTROL",
+    "disableDisposition": "REVALIDATION_REQUIRED"
+  },
+  "closesGates": ["B-G02", "B-G06"],
+  "doesNotClose": ["A1-001", "A1-006", "A1-G06", "B-G01", "B-G03"]
+}
