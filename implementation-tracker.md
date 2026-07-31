@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `DOING` — owner-operated A1 evidence remains pending while noninteractive MVP-B implementation advances<br>
-**Current phase:** MVP-B technical implementation; `B-002` follows completed `B-001`<br>
+**Current phase:** MVP-B technical implementation; `B-004` follows completed `B-002`<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Last updated:** 2026-07-31<br>
@@ -153,7 +153,8 @@ The POC target is not complete until A1, B, C1, and C4 close. The eight-hour soa
 | 67 | `OPS-001/A1` | Qualify the bounded POC benchmark, faults, sustained load, readiness, revocation, and runbook profile | `DONE` | Codex |
 | 68 | `A1-001` | Deploy `PRIVATE_BETA_ISOLATED` on one owner-controlled repository | `TODO` | — |
 | 69 | `B-001` | Implement isolated candidate/control/stable paths and durable validation scheduling | `DONE` | Codex |
-| 70 | `B-002` | Implement local-only Configuration Cache policy | `TODO` | — |
+| 70 | `B-002` | Implement local-only Configuration Cache policy | `DONE` | Codex |
+| 71 | `B-004` | Implement contractual removal of `clean` | `TODO` | — |
 
 ---
 
@@ -430,9 +431,9 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | ID | Deliverable | State | Owner | Evidence |
 |---|---|---|---|---|
 | `B-001` | Isolated candidate/control/stable paths and validation scheduler | `DONE` | Codex | `E-097` |
-| `B-002` | Local Configuration Cache policy; never distributed entries | `TODO` | — | — |
+| `B-002` | Local Configuration Cache policy; never distributed entries | `DONE` | Codex | `E-098` |
 | `B-003` | Autotuning with four initial resource profiles | `WAITING` | — | — |
-| `B-004` | Contractual removal of `clean` | `WAITING` | — | — |
+| `B-004` | Contractual removal of `clean` | `TODO` | — | — |
 | `B-005` | Allowlisted invocation merging and policy prefetch | `WAITING` | — | — |
 | `B-006` | A/A and fixed cohorts with propensities | `WAITING` | — | — |
 | `B-007` | Contextual epsilon-greedy and replay simulator | `WAITING` | — | — |
@@ -728,6 +729,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-095` | 2026-07-31 | `OPS-001/B` | Versioned [`GitHub queue adapter v1`](./specs/github-queue-adapter-v1.md), exact machine-readable [authentication/lifecycle/measurement contract](./specs/github-queue-adapter-v1.json), authenticated [`workflow_job` handler](./internal/githubqueue/adapter.go), durable schema-v6 [`control.sqlite` lifecycle and delivery ledger](./internal/sharedcache/github_queue.go), opt-in private-secret server routing, and composite [`dev/check-github-queue-adapter`](./dev/check-github-queue-adapter); HMAC-SHA256 covers the unchanged bounded body, delivery replay is idempotent and conflicting reuse fails closed, immutable repository/run/attempt/job/revision identity survives queued→in-progress→completed and out-of-order redelivery, and `ciQueueMs` is exactly provider `created_at→started_at` with runner group/runner/labels retained; pre-runner cancellation is explicitly `UNAVAILABLE` rather than inferred; focused adapter, Shared migration/persistence, and server regressions passed | `DONE`: `OPS-001/B` is closed without claiming the unexecuted eight-hour soak, `OPS-001/A1`, `A1-G02`, A1 pilot operation, valid A/A evidence, or MVP-B entry |
 | `E-096` | 2026-07-31 | POC validation scope and `OPS-001/A1` | Explicit owner decision in this tracker plus existing executed evidence `E-081..091` and `E-094` | `DONE` for POC: the bounded operational profile unblocks owner-operated repository testing; the eight-hour soak and external design-partner validation remain documented as `DEFERRED` productization work |
 | `E-097` | 2026-07-31 | `B-001` | Versioned [`Runtime validation isolation v1`](./specs/runtime-validation-isolation-v1.md), exact machine-readable [scheduler/variant contract](./specs/runtime-validation-isolation-v1.json), durable private [`runtimeoptimizer.Scheduler`](./internal/runtimeoptimizer/scheduler.go), and composite [`dev/check-runtime-validation-isolation`](./dev/check-runtime-validation-isolation); idempotent requests survive reopen, one live lease per repository recovers after expiry, candidate/control paths and credentials are disjoint, candidate writes only quarantine, control is authoritative and read-only, and neither validation arm writes stable | `DONE`: `B-001` is closed without activating an action, publishing candidate bytes, claiming owner-operated A1/A/A evidence, or closing `B-G01`/`B-G02` |
+| `E-098` | 2026-07-31 | `B-002` | Versioned [`Configuration Cache policy v1`](./specs/configuration-cache-policy-v1.md), exact machine-readable [adoption/distribution/launcher contract](./specs/configuration-cache-policy-v1.json), idempotent [`runtimeoptimizer` rollout and local identity engine](./internal/runtimeoptimizer/configuration_cache.go), signed [launcher argv enforcement](./internal/launcher/configuration_cache.go), and composite [`dev/check-configuration-cache-policy`](./dev/check-configuration-cache-policy); strict noncritical CI canaries count only correct natural reuses, redelivery cannot inflate promotion, ephemeral workspaces remain compatibility-only, attributable failure suspends and changes the digest/generation, promotion metadata preserves a compatible digest, enabled launch uses strict failure mode, disabled launch forces the fallback, and the distributed decision contains no entry bytes, workspace path, or encryption key; focused race and vet suites passed | `DONE`: `B-002` is closed without transporting Configuration Cache entries, activating an owner repository, claiming causal savings, or closing `B-G01`/`B-G02` |
 
 ---
 
@@ -735,6 +737,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-31 | Closed `B-002`: added strict noncritical-CI adoption, idempotent natural-hit promotion, attributable-failure suspension and digest invalidation, local workspace/host/key identity, and signed launcher enforcement without distributing entries | Codex |
 | 2026-07-31 | Closed `B-001`: added durable idempotent validation scheduling with one repository lease and physically distinct candidate/control resources, quarantine-only candidate writes, authoritative read-only control, and zero validation writes to stable | Codex |
 | 2026-07-31 | Re-scoped the tracker to an owner-operated POC: existing bounded operational evidence closes `OPS-001/A1` and `A1-G02` for POC use, while the eight-hour soak and external design-partner validation move intact to deferred productization | Codex |
 | 2026-07-31 | Closed `OPS-001/B`: authenticated and durably deduplicated GitHub `workflow_job` events now produce exact created-to-start queue measurements with runner-pool dimensions and explicit unavailable cancellation, without running or claiming the soak | Codex |

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "buildopt.specs/configuration-cache-policy/v1",
+  "trackerId": "B-002",
+  "adoption": {
+    "initialCohort": "NONCRITICAL_CI",
+    "problemMode": "FAIL",
+    "promotionEvidence": "CORRECT_NATURAL_HIT",
+    "attributableFailure": "SUSPEND_DISABLE_INVALIDATE",
+    "ephemeralDisposition": "COMPATIBILITY_ONLY"
+  },
+  "distribution": {
+    "surface": ["enabled", "contractVersion", "configurationPolicyDigest", "invalidationGeneration"],
+    "entryBytes": "FORBIDDEN",
+    "workspacePath": "FORBIDDEN",
+    "encryptionKey": "FORBIDDEN",
+    "sharedCacheTransport": "FORBIDDEN"
+  },
+  "launcher": {
+    "enabledArguments": ["--configuration-cache", "--configuration-cache-problems=fail"],
+    "disabledArgument": "--no-configuration-cache",
+    "declaredInputs": ["buildopt.configuration-policy.digest", "buildopt.configuration-contract.version"]
+  },
+  "doesNotClose": ["A1-001", "A1-006", "A1-G06", "B-G01", "B-G02"]
+}

@@ -187,6 +187,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			childEnvironment[key] = value
 		}
 	}
+	childArgs = applyConfigurationCachePolicy(childArgs, authority)
 	execution := executeChild(
 		childArgs,
 		childEnvironment,

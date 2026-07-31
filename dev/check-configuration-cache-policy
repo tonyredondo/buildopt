@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/configuration-cache-policy/v1" and
+  .trackerId == "B-002" and
+  .adoption.initialCohort == "NONCRITICAL_CI" and
+  .adoption.problemMode == "FAIL" and
+  .adoption.promotionEvidence == "CORRECT_NATURAL_HIT" and
+  .adoption.attributableFailure == "SUSPEND_DISABLE_INVALIDATE" and
+  .distribution.surface == ["enabled", "contractVersion", "configurationPolicyDigest", "invalidationGeneration"] and
+  .distribution.entryBytes == "FORBIDDEN" and
+  .distribution.sharedCacheTransport == "FORBIDDEN" and
+  .launcher.enabledArguments == ["--configuration-cache", "--configuration-cache-problems=fail"] and
+  .launcher.disabledArgument == "--no-configuration-cache" and
+  .doesNotClose == ["A1-001", "A1-006", "A1-G06", "B-G01", "B-G02"]
+' specs/configuration-cache-policy-v1.json >/dev/null
+
+go test -race ./internal/runtimeoptimizer ./internal/launcher
+go vet ./internal/runtimeoptimizer ./internal/launcher
+printf 'B-002 Configuration Cache policy OK: strict CI canary, natural-hit promotion, failure invalidation, local-only entries\n'
