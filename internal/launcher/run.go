@@ -187,6 +187,12 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			childEnvironment[key] = value
 		}
 	}
+	profiledArgs, resourceProfileErr := applyAuthorizedResourceProfile(childArgs, authority, os.Getenv)
+	if resourceProfileErr != nil {
+		_, _ = fmt.Fprintf(stderr, "buildopt: resource profile unavailable: %v\n", resourceProfileErr)
+	} else {
+		childArgs = profiledArgs
+	}
 	childArgs = applyConfigurationCachePolicy(childArgs, authority)
 	execution := executeChild(
 		childArgs,

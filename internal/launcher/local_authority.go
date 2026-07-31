@@ -37,6 +37,8 @@ type localAuthorityContext struct {
 	configurationPolicyDigest  string
 	configurationCacheEnabled  bool
 	configurationCacheContract string
+	resourceProfileAuthorized  bool
+	resourceProfile            localauthority.ResourceProfileReference
 	dependencyCacheAuthorized  bool
 	cacheBinding               *gatewayCacheBinding
 	managedL1Config            managedL1Config
@@ -219,6 +221,8 @@ func localAuthorityContextFromEnvironment(
 		configurationPolicyDigest:  document.Policy.ConfigurationPolicyDigest,
 		configurationCacheEnabled:  document.Policy.ConfigurationCache.Enabled,
 		configurationCacheContract: document.Policy.ConfigurationCache.ContractVersion,
+		resourceProfileAuthorized:  verified.AllowsAction("RESOURCE_PROFILE"),
+		resourceProfile:            document.Policy.ResourceProfile,
 		dependencyCacheAuthorized:  verified.AllowsAction("DEPENDENCY_CACHE"),
 		cacheBinding:               cacheBinding,
 		managedL1Config:            l1Config,

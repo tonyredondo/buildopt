@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "buildopt.specs/runtime-resource-profiles/v1",
+  "trackerId": "B-003",
+  "catalogVersion": "golden-linux-amd64-4c-16g-v1",
+  "runnerClass": "linux-amd64-4c-16g-v1",
+  "buildClass": "LARGE",
+  "compatibilityClass": "gradle-9.6-jdk21-linux-amd64",
+  "arms": [
+    {"id": "STABLE_CONTROL", "maxWorkers": 2, "gradleHeapMb": 4096},
+    {"id": "W2_H3G", "maxWorkers": 2, "gradleHeapMb": 3072},
+    {"id": "W3_H4G", "maxWorkers": 3, "gradleHeapMb": 4096},
+    {"id": "W4_H6G", "maxWorkers": 4, "gradleHeapMb": 6144}
+  ],
+  "fixedAcrossArms": ["jdk", "gradleJvmArgs", "compiler", "processLimits", "cgroupLimits"],
+  "eligibility": ["STARTUP_PASSED", "MEMORY_PASSED", "ROLLBACK_PASSED", "CGROUP_EXACT", "HEADROOM_AVAILABLE"],
+  "launcher": {
+    "authorityAction": "RESOURCE_PROFILE",
+    "changedInputs": ["--max-workers", "org.gradle.jvmargs.Xmx"],
+    "ineligibleDisposition": "PRESERVE_ORIGINAL_ARGV"
+  },
+  "doesNotClose": ["A1-001", "A1-006", "A1-G06", "B-G01", "B-G02", "B-G03"]
+}

@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `DOING` — owner-operated A1 evidence remains pending while noninteractive MVP-B implementation advances<br>
-**Current phase:** MVP-B technical implementation; `B-003` follows completed `B-004`<br>
+**Current phase:** MVP-B technical implementation; `B-005` follows completed `B-003`<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Last updated:** 2026-07-31<br>
@@ -155,7 +155,8 @@ The POC target is not complete until A1, B, C1, and C4 close. The eight-hour soa
 | 69 | `B-001` | Implement isolated candidate/control/stable paths and durable validation scheduling | `DONE` | Codex |
 | 70 | `B-002` | Implement local-only Configuration Cache policy | `DONE` | Codex |
 | 71 | `B-004` | Implement contractual removal of `clean` | `DONE` | Codex |
-| 72 | `B-003` | Implement autotuning with four initial resource profiles | `TODO` | — |
+| 72 | `B-003` | Implement autotuning with four initial resource profiles | `DONE` | Codex |
+| 73 | `B-005` | Implement allowlisted invocation merging and policy prefetch | `TODO` | — |
 
 ---
 
@@ -433,9 +434,9 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 |---|---|---|---|---|
 | `B-001` | Isolated candidate/control/stable paths and validation scheduler | `DONE` | Codex | `E-097` |
 | `B-002` | Local Configuration Cache policy; never distributed entries | `DONE` | Codex | `E-098` |
-| `B-003` | Autotuning with four initial resource profiles | `TODO` | — | — |
+| `B-003` | Autotuning with four initial resource profiles | `DONE` | Codex | `E-100` |
 | `B-004` | Contractual removal of `clean` | `DONE` | Codex | `E-099` |
-| `B-005` | Allowlisted invocation merging and policy prefetch | `WAITING` | — | — |
+| `B-005` | Allowlisted invocation merging and policy prefetch | `TODO` | — | — |
 | `B-006` | A/A and fixed cohorts with propensities | `WAITING` | — | — |
 | `B-007` | Contextual epsilon-greedy and replay simulator | `WAITING` | — | — |
 | `B-008` | Budget, canary, fallback, rollback, and kill switch | `WAITING` | — | — |
@@ -732,6 +733,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-097` | 2026-07-31 | `B-001` | Versioned [`Runtime validation isolation v1`](./specs/runtime-validation-isolation-v1.md), exact machine-readable [scheduler/variant contract](./specs/runtime-validation-isolation-v1.json), durable private [`runtimeoptimizer.Scheduler`](./internal/runtimeoptimizer/scheduler.go), and composite [`dev/check-runtime-validation-isolation`](./dev/check-runtime-validation-isolation); idempotent requests survive reopen, one live lease per repository recovers after expiry, candidate/control paths and credentials are disjoint, candidate writes only quarantine, control is authoritative and read-only, and neither validation arm writes stable | `DONE`: `B-001` is closed without activating an action, publishing candidate bytes, claiming owner-operated A1/A/A evidence, or closing `B-G01`/`B-G02` |
 | `E-098` | 2026-07-31 | `B-002` | Versioned [`Configuration Cache policy v1`](./specs/configuration-cache-policy-v1.md), exact machine-readable [adoption/distribution/launcher contract](./specs/configuration-cache-policy-v1.json), idempotent [`runtimeoptimizer` rollout and local identity engine](./internal/runtimeoptimizer/configuration_cache.go), signed [launcher argv enforcement](./internal/launcher/configuration_cache.go), and composite [`dev/check-configuration-cache-policy`](./dev/check-configuration-cache-policy); strict noncritical CI canaries count only correct natural reuses, redelivery cannot inflate promotion, ephemeral workspaces remain compatibility-only, attributable failure suspends and changes the digest/generation, promotion metadata preserves a compatible digest, enabled launch uses strict failure mode, disabled launch forces the fallback, and the distributed decision contains no entry bytes, workspace path, or encryption key; focused race and vet suites passed | `DONE`: `B-002` is closed without transporting Configuration Cache entries, activating an owner repository, claiming causal savings, or closing `B-G01`/`B-G02` |
 | `E-099` | 2026-07-31 | `B-004` | Versioned [`Contractual clean removal v1`](./specs/clean-removal-policy-v1.md), exact machine-readable [argv/model/lifecycle contract](./specs/clean-removal-policy-v1.json), fail-closed [`runtimeoptimizer.EvaluateCleanRemoval`](./internal/runtimeoptimizer/clean_removal.go), and composite [`dev/check-clean-removal-policy`](./dev/check-clean-removal-policy); immutable Wrapper argv is rewritten only at model-declared task positions, every clean task must be an allowlisted uncustomized core Delete over declared outputs with no added actions, dependencies, finalizers, side effects, or observed failure semantics, new workspaces require verified emptiness, persistent workspaces require stale-safe lifecycle proof, multiple clean tasks are all-or-nothing, clean-only invocations skip without running default tasks, and unavailable/incomplete models, CI barriers, releases, and reproducibility validation preserve the entire command; focused race/vet plus B-001/B-002 regressions, ownership, layout, and diff hygiene passed | `DONE`: `B-004` is closed as a disabled action without activating a repository, claiming causal savings, implementing invocation merging, or closing `B-G04` |
+| `E-100` | 2026-07-31 | `B-003` | Versioned [`Runtime resource profiles v1`](./specs/runtime-resource-profiles-v1.md), exact machine-readable [catalog/eligibility/launcher contract](./specs/runtime-resource-profiles-v1.json), finite [`runtimeoptimizer` selector/materializer](./internal/runtimeoptimizer/resource_profiles.go), authorized [launcher integration](./internal/launcher/resource_profile.go), and composite [`dev/check-runtime-resource-profiles`](./dev/check-runtime-resource-profiles); the catalog contains only `STABLE_CONTROL`, `W2_H3G`, `W3_H4G`, and `W4_H6G`, varies only workers and Gradle heap, rejects arbitrary arms and runner/JDK/cgroup drift, requires live memory headroom plus startup/memory/rollback eligibility, and preserves original argv on any inapplicability; focused race/vet, real `cmd/buildopt` regression, ownership, layout, and diff hygiene passed | `DONE`: `B-003` is closed without extrapolating to another runner class, activating a repository, claiming causal improvement, or closing `B-G03` |
 
 ---
 
@@ -739,6 +741,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-31 | Closed `B-003`: materialized the exact four-arm golden resource catalog, bounded selection to signed identity/cgroup/headroom, and applied only workers/daemon heap before Gradle with baseline fallback | Codex |
 | 2026-07-31 | Closed `B-004`: added all-or-nothing modeled `clean` removal with immutable argv, verified empty/proven persistent workspace gates, clean-only skip semantics, and fail-closed failure/finalizer/side-effect/barrier/release fixtures | Codex |
 | 2026-07-31 | Closed `B-002`: added strict noncritical-CI adoption, idempotent natural-hit promotion, attributable-failure suspension and digest invalidation, local workspace/host/key identity, and signed launcher enforcement without distributing entries | Codex |
 | 2026-07-31 | Closed `B-001`: added durable idempotent validation scheduling with one repository lease and physically distinct candidate/control resources, quarantine-only candidate writes, authoritative read-only control, and zero validation writes to stable | Codex |
