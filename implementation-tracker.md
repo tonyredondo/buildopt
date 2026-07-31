@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `DOING` — owner-operated A1/B evidence remains pending while noninteractive C4 implementation advances<br>
-**Current phase:** C4 technical implementation; `C4-002` follows completed `C4-001` while owner-operated B gates remain pending<br>
+**Current phase:** C4 technical implementation; `C4-003` follows completed `C4-002` while owner-operated B gates remain pending<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Last updated:** 2026-07-31<br>
@@ -56,7 +56,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | MVP-A1 | Autonomous Cache in an owner-operated POC | `TODO` | 5/6 | A0 + POC operational profile |
 | MVP-B | Runtime Optimizer and safe learning | `DOING` | 4/6 | Activation still requires owner-operated A1 + valid A/A; implementation may proceed |
 | MVP-C1 | Task Intelligence, JVM Agent, and Linux hermeticity | `WAITING` | 0/9 | B |
-| MVP-C4 | PR-only Patch Autopilot | `DOING` | 0/7 | B; C1 for custom tasks; Test Optimization where applicable |
+| MVP-C4 | PR-only Patch Autopilot | `DOING` | 1/7 | B; C1 for custom tasks; Test Optimization where applicable |
 | MVP-A2 | Self-hosted single-node | `DEFERRED` | 0/1 | A1 |
 | MVP-C2 | Edge Cache Node | `DEFERRED` | 0/1 | A1 |
 | MVP-C3 | Build Impact Analysis | `DEFERRED` | 0/1 | B + `INT-001` |
@@ -161,6 +161,7 @@ The POC target is not complete until A1, B, C1, and C4 close. The eight-hour soa
 | 75 | `B-007` | Implement contextual epsilon-greedy and replay simulator | `DONE` | Codex |
 | 76 | `B-008` | Implement budget, canary, fallback, rollback, and kill switch | `DONE` | Codex |
 | 77 | `C4-001` | Implement `PatchBundle v1` signer/verifier | `DONE` | Codex |
+| 78 | `C4-002` | Implement exact, idempotent, path-safe Java patcher | `DONE` | Codex |
 
 ---
 
@@ -503,8 +504,8 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | ID | Deliverable | State | Owner | Evidence |
 |---|---|---|---|---|
 | `C4-001` | `PatchBundle v1` signer/verifier | `DONE` | Codex | `E-105` |
-| `C4-002` | Exact, idempotent, path-safe Java patcher | `TODO` | — | — |
-| `C4-003` | Recipe `ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1` | `WAITING` | — | — |
+| `C4-002` | Exact, idempotent, path-safe Java patcher | `DONE` | Codex | `E-106` |
+| `C4-003` | Recipe `ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1` | `TODO` | — | — |
 | `C4-004` | Recipe `CUSTOM_TASK_CONTRACT_JAVA_V1` | `WAITING` | — | — |
 | `C4-005` | Candidate/control and artifact validation | `WAITING` | — | — |
 | `C4-006` | `FULL_RELEVANT_VALIDATION` integration | `WAITING` | — | — |
@@ -522,7 +523,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `C4-G04` | `PRELIMINARY` is not counted as confirmed impact | `WAITING` | — |
 | `C4-G05` | Post-merge does not fake rollout and creates a revert PR on regression | `WAITING` | — |
 | `C4-G06` | First accepted patch saves time causally | `WAITING` | — |
-| `C4-G07` | Patcher passes golden/negative/idempotency/recovery vectors | `WAITING` | — |
+| `C4-G07` | Patcher passes golden/negative/idempotency/recovery vectors | `DONE` | `E-106` |
 
 ---
 
@@ -743,6 +744,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-103` | 2026-07-31 | `B-007`, `B-G05` | Versioned [`Bounded bandit engine v1`](./specs/bandit-engine-v1.md), exact machine-readable [bucket/selection/outcome contract](./specs/bandit-engine-v1.json), private durable [`runtimeoptimizer.BanditEngine`](./internal/runtimeoptimizer/bandit.go), and composite [`dev/check-bandit-engine`](./dev/check-bandit-engine); exact repository/epoch/policy/catalog/feature buckets require 20 valid outcomes for every eligible candidate, selection uses 10% trimming plus five control pseudo-observations, ties retain control, exploration stays within 2–10%, and permanent control receives at least 5%; fixed-cohort ingestion and bandit outcomes revalidate assignment, bucket, propensity, completeness, and the inclusive 24-hour window before exactly-once learning; all 15 Phase 0 cases replay through the production selector, and exhaustive enumeration of 10,000 random points proved observed counts equal declared propensities and every selection belongs to the four-arm catalog; focused race, durable reopen, era reset, delayed/duplicate/partial negative, existing schema replay, and vet suites passed | `DONE`: `B-007` and finite safe-arm gate `B-G05` are closed without enabling a repository, claiming valid owner-operated A/A, or closing `B-G01`/`B-G03`/`B-G06` |
 | `E-104` | 2026-07-31 | `B-008`, `B-G02`, `B-G06` | Versioned [`Runtime rollout control v1`](./specs/runtime-rollout-control-v1.md), exact machine-readable [budget/stage/fallback/kill-switch contract](./specs/runtime-rollout-control-v1.json), private durable [`runtimeoptimizer.RolloutController`](./internal/runtimeoptimizer/rollout.go), and composite [`dev/check-runtime-rollout-control`](./dev/check-runtime-rollout-control); idempotent reservations enforce one concurrent additional validation, no borrowing, actual-time charging, repository-tightenable zero-to-5% rolling seven-day and zero-to-10% 24-hour limits; direct rollout advances exactly 5→25→50→95%, proof-gated rollout shadow→1→5→25→50→95%, and every one-step advance requires correctness, sample, budget, complete telemetry, revalidation, plus contract/quarantine where applicable; exhaustive terminal selection proves exact 95/5 candidate/control, while local/release/urgent/effectful/undeclared-arm contexts stay stable; drift, regression, incomplete telemetry and all non-compensable guardrails suspend, explicit rollback restores control, after-effects fallback preserves unsafe failures, Ed25519 pinned-key directives are time-bounded, idempotent, strictly monotonic, durable, and disabling never bypasses revalidation; intentional candidate and control stable-write contamination both fail isolation; CI budget, B-001 isolation, focused race, semantic reopen, signature tamper/stale, vet, and exact-contract suites passed | `DONE`: `B-008`, `B-G02`, and `B-G06` are closed without activating a repository or claiming owner-operated A/A or causal performance, so `B-G01` and `B-G03` remain pending |
 | `E-105` | 2026-07-31 | `C4-001` | Versioned [`PatchBundle signing v1`](./specs/patch-bundle-signing-v1.md), exact machine-readable [signer/verifier contract](./specs/patch-bundle-signing-v1.json), production Java 17 [`PatchBundleSigner`](./jvm/patcher/src/main/java/dev/buildopt/patcher/PatchBundleSigner.java), existing independent [`PatchBundleVerifier`](./jvm/patcher/src/main/java/dev/buildopt/patcher/PatchBundleVerifier.java), and composite [`dev/check-patch-bundle-signing`](./dev/check-patch-bundle-signing); the signer accepts only the complete unsigned field set, bounds input at 2 MiB, rejects malformed/duplicate JSON, identity or key drift, computes the closed JCS manifest plus sorted-blob-inventory SHA-256, signs the digest/contract/key-ID tuple with Ed25519, and returns defensive canonical bytes; all 15 real-Git cases now create bundles through the production signer before the independent verifier checks caller identity, time, blobs, operations, paths, and delivery; deterministic repeated signing, defensive output, incomplete input rejection, shared crypto vectors, Java 17 class-major inspection, and full applier matrix passed | `DONE`: `C4-001` is closed without activating delivery, creating a remote branch/PR, or closing later C4 blocks/gates |
+| `E-106` | 2026-07-31 | `C4-002`, `C4-G07` | Versioned [`Exact Java patcher runtime v1`](./specs/patcher-runtime-v1.md), exact machine-readable [trust/staging/operation/recovery contract](./specs/patcher-runtime-v1.json), production Java 17 [`PatchBundleVerifier`](./jvm/patcher/src/main/java/dev/buildopt/patcher/PatchBundleVerifier.java) and [`PatchBundleApplier`](./jvm/patcher/src/main/java/dev/buildopt/patcher/PatchBundleApplier.java), and composite [`dev/check-patcher-runtime`](./dev/check-patcher-runtime); only an opaque verified bundle reaches a private detached no-checkout worktree, exact base revision/tree/source state, path graph, mode, preimages, postimages, and complete staged path set are checked before a deterministic commit and absent `buildopt/` ref CAS; exact retry, branch-without-PR, matching-draft, divergent-ref, and interrupted-staging outcomes preserve idempotency without hooks, filters, content execution, fuzzy matching, deletes, symlink/submodule traversal, rebase, force push, default-branch write, ready marking, or merge; schema/spec/signing composition, all 15 real-Git golden/negative/recovery cases, unchanged customer checkout/remote, and 22 Java 17 classes passed | `DONE`: `C4-002` and `C4-G07` are closed without claiming the not-yet-implemented remote workflow or later recipe/validation gates |
 
 ---
 
@@ -750,6 +752,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-31 | Closed `C4-002` and `C4-G07`: promoted the exact Java 17 verifier/applier to the C4 runtime baseline and composed all 15 real-Git golden, negative, idempotency, and recovery cases; moved `C4-003` next | Codex |
 | 2026-07-31 | Closed `C4-001`: added the production JCS/Ed25519 PatchBundle signer and routed all 15 real-Git verifier/applier cases through it; moved `C4-002` next without activating remote delivery | Codex |
 | 2026-07-31 | Closed `B-008`, `B-G02`, and `B-G06`: added rolling learning budgets, exact progressive stages and permanent control, bounded fallback/rollback, signed monotonic kill switch, and intentional stable-contamination rejection; MVP-B technical implementation is complete while owner evidence remains pending | Codex |
 | 2026-07-31 | Closed `B-007` and `B-G05`: added durable exact-bucket epsilon-greedy learning, exact-once delayed outcomes, the production 15-case replay, and exhaustive 10,000-point safe-arm propensity proof; moved `B-008` next | Codex |

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/patcher-runtime/v1" and
+  .trackerId == "C4-002" and
+  .implementation == "JAVA_17_MAIN_SOURCE" and
+  .trustedInput == "OPAQUE_VERIFIED_PATCH_BUNDLE" and
+  .staging == "PRIVATE_DETACHED_NO_CHECKOUT_WORKTREE" and
+  .operations == ["ADD_EXACT_REPLACEMENT", "MODIFY_EXACT_REPLACEMENT"] and
+  .checks == ["BASE_REVISION", "BASE_TREE", "SOURCE_STATE", "PATH_GRAPH", "MODE_100644", "PREIMAGE", "POSTIMAGE", "COMPLETE_STAGED_PATH_SET"] and
+  .idempotencyKey == ["repositoryId", "actionId", "bundleDigest"] and
+  .branch == {"prefix": "buildopt/", "creation": "ABSENT_REF_COMPARE_AND_SET", "divergence": "PROPOSED"} and
+  .recovery == ["EXACT_REPEAT", "BRANCH_WITHOUT_PR", "EXISTING_MATCHING_DRAFT", "INTERRUPTED_STAGING"] and
+  .realGitCases == 15 and
+  .closesGate == "C4-G07" and
+  .doesNotClose == ["C4-003", "C4-004", "C4-005", "C4-006", "C4-007", "C4-008", "C4-009", "C4-G01", "C4-G02", "C4-G03", "C4-G04", "C4-G05", "C4-G06"]
+' specs/patcher-runtime-v1.json >/dev/null
+
+test -f jvm/patcher/src/main/java/dev/buildopt/patcher/PatchBundleVerifier.java
+test -f jvm/patcher/src/main/java/dev/buildopt/patcher/PatchBundleApplier.java
+./dev/check-patch-bundle-signing
+printf 'C4-002 patcher runtime OK: 15 real-Git exact/path-safe/idempotent/recovery cases; C4-G07 closed\n'

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "buildopt.specs/patcher-runtime/v1",
+  "trackerId": "C4-002",
+  "implementation": "JAVA_17_MAIN_SOURCE",
+  "trustedInput": "OPAQUE_VERIFIED_PATCH_BUNDLE",
+  "staging": "PRIVATE_DETACHED_NO_CHECKOUT_WORKTREE",
+  "operations": ["ADD_EXACT_REPLACEMENT", "MODIFY_EXACT_REPLACEMENT"],
+  "checks": ["BASE_REVISION", "BASE_TREE", "SOURCE_STATE", "PATH_GRAPH", "MODE_100644", "PREIMAGE", "POSTIMAGE", "COMPLETE_STAGED_PATH_SET"],
+  "idempotencyKey": ["repositoryId", "actionId", "bundleDigest"],
+  "branch": {"prefix": "buildopt/", "creation": "ABSENT_REF_COMPARE_AND_SET", "divergence": "PROPOSED"},
+  "recovery": ["EXACT_REPEAT", "BRANCH_WITHOUT_PR", "EXISTING_MATCHING_DRAFT", "INTERRUPTED_STAGING"],
+  "forbidden": ["EXECUTE_BUNDLE_CONTENT", "CHECKOUT_HOOKS", "CONTENT_FILTERS", "FUZZY_PATCH", "DELETE", "CHANGE_MODE", "FOLLOW_SYMLINK", "ENTER_SUBMODULE", "AUTO_REBASE", "MODIFY_EXISTING_BRANCH", "FORCE_PUSH", "WRITE_DEFAULT_BRANCH", "AUTO_MERGE", "MARK_PR_READY"],
+  "realGitCases": 15,
+  "closesGate": "C4-G07",
+  "doesNotClose": ["C4-003", "C4-004", "C4-005", "C4-006", "C4-007", "C4-008", "C4-009", "C4-G01", "C4-G02", "C4-G03", "C4-G04", "C4-G05", "C4-G06"]
+}
