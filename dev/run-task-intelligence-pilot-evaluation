@@ -56,9 +56,9 @@ run_arm() {
     buildopt_end=$(date +%s%3N)
     buildopt_duration=$((buildopt_end - buildopt_start))
     buildopt_digest=$(sha256sum "${buildopt_workspace}/build/pilot/manifest.txt" | cut -d' ' -f1)
-    if rg -q '^> Task :generatePilotManifest FROM-CACHE$' "${buildopt_log}"; then
+    if grep -q '^> Task :generatePilotManifest FROM-CACHE$' "${buildopt_log}"; then
         buildopt_outcome=FROM_CACHE
-    elif rg -q '^> Task :generatePilotManifest$' "${buildopt_log}"; then
+    elif grep -q '^> Task :generatePilotManifest$' "${buildopt_log}"; then
         buildopt_outcome=EXECUTED
     else
         sed -n '1,160p' "${buildopt_log}" >&2
