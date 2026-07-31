@@ -187,6 +187,44 @@ ON quarantine_records (blob_digest, quarantined_at_unix_ms)`,
 ON attempt_authorities (authority_digest)`,
 		},
 	}
+	versionFour := schemaMigration{
+		version: 4,
+		name:    "cache-v4",
+		statements: []string{
+			`CREATE TABLE storage_entries (
+    tenant_id TEXT NOT NULL CHECK (length(tenant_id) BETWEEN 1 AND 256),
+    namespace_generation INTEGER NOT NULL CHECK (namespace_generation > 0),
+    cache_key TEXT NOT NULL CHECK (length(cache_key) BETWEEN 1 AND 512),
+    repository_id TEXT NOT NULL CHECK (length(repository_id) BETWEEN 1 AND 256),
+    trust_domain TEXT NOT NULL CHECK (length(trust_domain) BETWEEN 1 AND 256),
+    expires_at_unix_ms INTEGER NOT NULL CHECK (expires_at_unix_ms >= 0),
+    segment TEXT NOT NULL CHECK (segment IN ('PROBATION', 'PROTECTED')),
+    PRIMARY KEY (tenant_id, namespace_generation, cache_key),
+    FOREIGN KEY (tenant_id, namespace_generation, cache_key)
+        REFERENCES committed_objects
+            (tenant_id, namespace_generation, cache_key)
+        ON DELETE CASCADE
+) WITHOUT ROWID`,
+			`INSERT INTO storage_entries (
+    tenant_id, namespace_generation, cache_key, repository_id, trust_domain,
+    expires_at_unix_ms, segment
+)
+SELECT object.tenant_id, object.namespace_generation, object.cache_key,
+       attempt.repository_id, attempt.trust_domain,
+       object.committed_at_unix_ms + 2592000000, 'PROBATION'
+FROM committed_objects AS object
+JOIN commit_decisions AS decision
+  ON decision.decision_digest = object.decision_digest
+JOIN cache_attempts AS attempt
+  ON attempt.attempt_id = decision.attempt_id`,
+			`CREATE INDEX storage_entries_expires
+ON storage_entries (expires_at_unix_ms)`,
+			`CREATE INDEX storage_entries_scope_segment
+ON storage_entries (
+    tenant_id, repository_id, trust_domain, namespace_generation, segment
+)`,
+		},
+	}
 	definition := metadataDefinition{
 		role: cacheMetadataRole,
 		path: path,
@@ -194,6 +232,7 @@ ON attempt_authorities (authority_digest)`,
 			versionOne,
 			versionTwo,
 			versionThree,
+			versionFour,
 		},
 	}
 	definition.objects = []schemaObject{
@@ -226,6 +265,16 @@ ON attempt_authorities (authority_digest)`,
 			objectType: "index",
 			name:       "quarantine_records_digest",
 			statement:  versionTwo.statements[5],
+		},
+		{
+			objectType: "index",
+			name:       "storage_entries_expires",
+			statement:  versionFour.statements[2],
+		},
+		{
+			objectType: "index",
+			name:       "storage_entries_scope_segment",
+			statement:  versionFour.statements[3],
 		},
 		{
 			objectType: "table",
@@ -261,6 +310,11 @@ ON attempt_authorities (authority_digest)`,
 			objectType: "table",
 			name:       "schema_migrations",
 			statement:  versionOne.statements[0],
+		},
+		{
+			objectType: "table",
+			name:       "storage_entries",
+			statement:  versionFour.statements[0],
 		},
 	}
 	return definition
@@ -350,6 +404,29 @@ ON local_authority_documents (attempt_id)`,
 ON local_authority_documents (expires_at_unix_ms)`,
 		},
 	}
+	versionFour := schemaMigration{
+		version: 4,
+		name:    "control-v4",
+		statements: []string{
+			`CREATE TABLE storage_maintenance_runs (
+    run_id INTEGER PRIMARY KEY,
+    started_at_unix_ms INTEGER NOT NULL CHECK (started_at_unix_ms >= 0),
+    completed_at_unix_ms INTEGER NOT NULL CHECK (completed_at_unix_ms >= started_at_unix_ms),
+    stable_bytes_before INTEGER NOT NULL CHECK (stable_bytes_before >= 0),
+    stable_bytes_after INTEGER NOT NULL CHECK (stable_bytes_after >= 0),
+    expired_objects INTEGER NOT NULL CHECK (expired_objects >= 0),
+    evicted_probation INTEGER NOT NULL CHECK (evicted_probation >= 0),
+    evicted_protected INTEGER NOT NULL CHECK (evicted_protected >= 0),
+    demoted_protected INTEGER NOT NULL CHECK (demoted_protected >= 0),
+    expired_attempts INTEGER NOT NULL CHECK (expired_attempts >= 0),
+    expired_quarantine INTEGER NOT NULL CHECK (expired_quarantine >= 0),
+    deleted_unreferenced_blobs INTEGER NOT NULL CHECK (deleted_unreferenced_blobs >= 0),
+    status TEXT NOT NULL CHECK (status = 'COMPLETE')
+)`,
+			`CREATE INDEX storage_maintenance_runs_completed_at
+ON storage_maintenance_runs (completed_at_unix_ms)`,
+		},
+	}
 	definition := metadataDefinition{
 		role: controlMetadataRole,
 		path: path,
@@ -357,6 +434,7 @@ ON local_authority_documents (expires_at_unix_ms)`,
 			versionOne,
 			versionTwo,
 			versionThree,
+			versionFour,
 		},
 	}
 	definition.objects = []schemaObject{
@@ -379,6 +457,11 @@ ON local_authority_documents (expires_at_unix_ms)`,
 			objectType: "index",
 			name:       "reconciliation_runs_completed_at",
 			statement:  versionTwo.statements[1],
+		},
+		{
+			objectType: "index",
+			name:       "storage_maintenance_runs_completed_at",
+			statement:  versionFour.statements[1],
 		},
 		{
 			objectType: "table",
@@ -404,6 +487,11 @@ ON local_authority_documents (expires_at_unix_ms)`,
 			objectType: "table",
 			name:       "schema_migrations",
 			statement:  versionOne.statements[0],
+		},
+		{
+			objectType: "table",
+			name:       "storage_maintenance_runs",
+			statement:  versionFour.statements[0],
 		},
 	}
 	return definition

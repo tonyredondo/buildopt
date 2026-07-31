@@ -16,6 +16,7 @@ import (
 const (
 	operationalAlertsPath          = "/ops/v1/alerts"
 	storageAlertInterval           = 30 * time.Second
+	storageMaintenanceInterval     = 5 * time.Minute
 	revocationLagBudget            = 60 * time.Second
 	policyFreshnessBudget          = 60 * time.Second
 	sqliteContentionBudget         = 250 * time.Millisecond
@@ -211,6 +212,9 @@ func (monitor *operationalAlertMonitor) sampleStorage(
 			snapshot.DiskTotalBytes/
 				(100/diskAvailableThresholdPercent)
 	}
+	diskAlert = diskAlert ||
+		snapshot.CapacityHighWatermark ||
+		snapshot.CapacityAdmissionBlock
 	monitor.setLocked("DISK_QUOTA", diskAlert, now)
 	monitor.setLocked(
 		"CORRUPTION",
@@ -356,21 +360,35 @@ func watchStorageAlerts(
 	monitor *operationalAlertMonitor,
 	interval time.Duration,
 ) {
-	sample := func() {
+	sample := func(maintain bool) {
 		probeContext, cancel := context.WithTimeout(ctx, 2*time.Second)
 		defer cancel()
+		if maintain {
+			_, maintenanceErr := storage.MaintainCapacity(probeContext)
+			if maintenanceErr != nil {
+				monitor.sampleStorage(
+					sharedcache.OperationalSnapshot{},
+					maintenanceErr,
+				)
+				return
+			}
+		}
 		snapshot, err := storage.OperationalSnapshot(probeContext)
 		monitor.sampleStorage(snapshot, err)
 	}
-	sample()
-	ticker := time.NewTicker(interval)
-	defer ticker.Stop()
+	sample(true)
+	alertTicker := time.NewTicker(interval)
+	defer alertTicker.Stop()
+	maintenanceTicker := time.NewTicker(storageMaintenanceInterval)
+	defer maintenanceTicker.Stop()
 	for {
 		select {
 		case <-ctx.Done():
 			return
-		case <-ticker.C:
-			sample()
+		case <-alertTicker.C:
+			sample(false)
+		case <-maintenanceTicker.C:
+			sample(true)
 		}
 	}
 }

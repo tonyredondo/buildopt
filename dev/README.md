@@ -1139,6 +1139,23 @@ The race-enabled fixture activates and recovers all ten RFC classes. External
 paging and the full benchmark/fault/soak evidence are not claimed; see
 [`specs/ops-alerts-v1.md`](../specs/ops-alerts-v1.md).
 
+## Shared capacity and byte SLRU
+
+Exercise the `A1-003`/`A1-G03` storage-capacity substrate:
+
+```bash
+./dev/check-shared-capacity-slru
+```
+
+The checker proves exact and unknown-length admission before body reads,
+atomic overlapping reservations, simulated disk exhaustion, tenant/repository/
+trust/namespace limits, and HTTP `413` fallback. Real schema-v4 storage then
+proves probation-first byte eviction from 85% to 75%, verified-hit promotion,
+protected-target demotion, durable 30-day TTL, physical orphan cleanup,
+transactional v3 migration, and operational quota signals. Phase-sequenced
+closure still requires consuming it in the broader fault benchmark; the soak
+also remains separate.
+
 ## Private-beta benchmark harness
 
 Exercise the non-qualifying real-data-plane smoke profile:
@@ -1217,7 +1234,7 @@ Validate the namespace skeleton defined by RFC §29.2:
 ```
 
 The checker requires all 16 contract, vector, specification, benchmark, and ADR
-namespaces, their non-empty indexes, and parent directories for the 71 planned
+namespaces, their non-empty indexes, and parent directories for the 79 planned
 normative artifacts. It also preserves every materialized contract, including
 the deployment lifecycle, and rejects an empty file at any planned artifact
 path. F0-010 created the structure; each schema, API, IDL, vector,

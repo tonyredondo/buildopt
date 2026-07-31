@@ -388,6 +388,9 @@ func (storage *Storage) quarantinePendingRecord(
 		return err
 	}
 	rollback = false
+	if record.status.PendingObjectCount > 0 {
+		storage.blobCleanupPending = true
+	}
 	return nil
 }
 
@@ -461,6 +464,7 @@ func (storage *Storage) invalidateDecision(
 		return 0, err
 	}
 	rollback = false
+	storage.blobCleanupPending = true
 	return len(invalidBlobs), nil
 }
 

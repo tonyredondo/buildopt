@@ -20,6 +20,10 @@ type OperationalSnapshot struct {
 	IntegrityHealthy       bool
 	SQLiteProbeSucceeded   bool
 	SQLiteProbeDuration    time.Duration
+	StableLogicalBytes     int64
+	PendingPoolBytes       int64
+	CapacityHighWatermark  bool
+	CapacityAdmissionBlock bool
 }
 
 // OperationalSnapshot probes disk, lifecycle, and metadata health without
@@ -42,7 +46,7 @@ func (storage *Storage) OperationalSnapshot(
 		CapturedAt:       storage.now(),
 		IntegrityHealthy: true,
 	}
-	total, available, err := storageDiskCapacity(storage.layout.Root)
+	total, available, err := storage.diskCapacity()
 	if err == nil {
 		snapshot.DiskTotalBytes = total
 		snapshot.DiskAvailableBytes = available
@@ -71,6 +75,20 @@ WHERE state = 'PENDING'`,
 	}
 	if probeErr == nil {
 		probeErr = storage.control.integrityCheck(ctx)
+	}
+	if probeErr == nil {
+		storage.lifecycleMutex.Lock()
+		capacity, capacityErr := storage.capacitySnapshotLocked(ctx)
+		storage.lifecycleMutex.Unlock()
+		if capacityErr != nil {
+			probeErr = capacityErr
+		} else {
+			snapshot.StableLogicalBytes = capacity.StableBytes
+			snapshot.PendingPoolBytes = capacity.PendingBytes +
+				capacity.QuarantineBytes + capacity.ReservedBytes
+			snapshot.CapacityHighWatermark = capacity.HighWatermarkReached
+			snapshot.CapacityAdmissionBlock = capacity.AdmissionBlocked
+		}
 	}
 	snapshot.SQLiteProbeDuration = time.Since(probeStarted)
 	snapshot.SQLiteProbeSucceeded = probeErr == nil

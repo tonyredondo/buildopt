@@ -373,6 +373,19 @@ func (storage *Storage) PutPending(
 	key string,
 	reader io.Reader,
 ) (PendingObjectResult, error) {
+	return storage.PutPendingSized(ctx, attemptID, key, -1, reader)
+}
+
+// PutPendingSized reserves a declared body before reading it. A negative size
+// is an explicitly unknown length and conservatively reserves the complete
+// configured object limit.
+func (storage *Storage) PutPendingSized(
+	ctx context.Context,
+	attemptID string,
+	key string,
+	declaredBytes int64,
+	reader io.Reader,
+) (PendingObjectResult, error) {
 	if ctx == nil {
 		return PendingObjectResult{}, errors.New(
 			"put pending Shared object: nil context",
@@ -386,6 +399,11 @@ func (storage *Storage) PutPending(
 	if reader == nil {
 		return PendingObjectResult{}, errors.New(
 			"put pending Shared object: nil reader",
+		)
+	}
+	if declaredBytes < -1 {
+		return PendingObjectResult{}, errors.New(
+			"put pending Shared object: invalid declared size",
 		)
 	}
 	finish, err := storage.beginOperation()
@@ -425,10 +443,48 @@ func (storage *Storage) PutPending(
 		return PendingObjectResult{}, ErrAttemptConflict
 	}
 	generation := record.status.NamespaceGeneration
-	storage.lifecycleMutex.Unlock()
-
-	blob, blobCreated, err := storage.blobs.putLocked(ctx, reader)
+	reservation, err := storage.reservePendingLocked(
+		ctx,
+		capacityScope{
+			tenant:              record.status.Repository.Tenant,
+			repository:          record.status.Repository.Repository,
+			trustDomain:         record.status.Repository.TrustDomain,
+			namespaceGeneration: record.status.NamespaceGeneration,
+		},
+		declaredBytes,
+	)
 	if err != nil {
+		storage.lifecycleMutex.Unlock()
+		return PendingObjectResult{}, err
+	}
+	storage.lifecycleMutex.Unlock()
+	defer storage.releasePendingReservation(reservation)
+
+	reservedReader := &reservationReader{
+		ctx:         ctx,
+		storage:     storage,
+		reservation: reservation,
+		reader:      reader,
+	}
+	blob, blobCreated, err := storage.blobs.putLocked(ctx, reservedReader)
+	if err != nil {
+		return PendingObjectResult{}, err
+	}
+	needsBlobCleanup := blobCreated
+	defer func() {
+		if !needsBlobCleanup {
+			return
+		}
+		storage.lifecycleMutex.Lock()
+		storage.blobCleanupPending = true
+		storage.lifecycleMutex.Unlock()
+	}()
+	if err := storage.resizePendingReservationLocked(
+		ctx,
+		reservation,
+		blob.Size,
+		blob.Size,
+	); err != nil {
 		return PendingObjectResult{}, err
 	}
 	if storage.testHooks.afterPendingBlob != nil {
@@ -492,6 +548,7 @@ WHERE attempt_id = ? AND cache_key = ?`,
 			return PendingObjectResult{}, err
 		}
 		rollback = false
+		needsBlobCleanup = false
 		return PendingObjectResult{
 			Object: CommitObject{
 				NamespaceGeneration: generation,
@@ -536,6 +593,7 @@ WHERE attempt_id = ? AND state = 'PENDING'`,
 		return PendingObjectResult{}, err
 	}
 	rollback = false
+	needsBlobCleanup = false
 	return PendingObjectResult{
 		Object: CommitObject{
 			NamespaceGeneration: generation,
@@ -637,6 +695,9 @@ func (storage *Storage) AbortAttempt(
 		return AbortResult{}, err
 	}
 	rollback = false
+	if record.status.PendingObjectCount > 0 {
+		storage.blobCleanupPending = true
+	}
 	record, err = storage.loadAttempt(
 		ctx,
 		storage.cache.database,
@@ -855,6 +916,9 @@ func (storage *Storage) CommitAttempt(
 				return CommitResult{}, err
 			}
 			rollback = false
+			if record.status.PendingObjectCount > 0 {
+				storage.blobCleanupPending = true
+			}
 			return CommitResult{}, ErrCASLost
 		}
 	}
@@ -888,6 +952,39 @@ VALUES (?, ?, ?, ?)`,
 		); err != nil {
 			return CommitResult{}, err
 		}
+		if _, err := transaction.ExecContext(
+			ctx,
+			`INSERT INTO storage_entries (
+    tenant_id, namespace_generation, cache_key, repository_id, trust_domain,
+    expires_at_unix_ms, segment
+) VALUES (?, ?, ?, ?, ?, ?, 'PROBATION')`,
+			record.status.Repository.Tenant,
+			object.NamespaceGeneration,
+			object.Key,
+			record.status.Repository.Repository,
+			record.status.Repository.TrustDomain,
+			now.Add(storage.capacity.StableTTL).UnixMilli(),
+		); err != nil {
+			return CommitResult{}, err
+		}
+	}
+	evictedProbation, evictedProtected, err :=
+		storage.enforceCommitCapacityTx(
+			ctx,
+			transaction,
+			capacityScope{
+				tenant:              record.status.Repository.Tenant,
+				repository:          record.status.Repository.Repository,
+				trustDomain:         record.status.Repository.TrustDomain,
+				namespaceGeneration: record.status.NamespaceGeneration,
+			},
+			decision.DecisionDigest,
+		)
+	if err != nil {
+		return CommitResult{}, err
+	}
+	if evictedProbation > 0 || evictedProtected > 0 {
+		storage.blobCleanupPending = true
 	}
 	if _, err := transaction.ExecContext(
 		ctx,
@@ -1056,12 +1153,22 @@ func (storage *Storage) OpenCommitted(
 		NamespaceGeneration: namespaceGeneration,
 		Key:                 key,
 	}
+	var (
+		expiresAt  int64
+		segment    string
+		lastAccess int64
+	)
 	if err := storage.cache.database.QueryRowContext(
 		ctx,
-		`SELECT object.blob_digest, object.size_bytes, object.decision_digest
+		`SELECT object.blob_digest, object.size_bytes, object.decision_digest,
+       entry.expires_at_unix_ms, entry.segment, object.last_access_unix_ms
 FROM committed_objects AS object
 JOIN commit_decisions AS decision
     ON decision.decision_digest = object.decision_digest
+JOIN storage_entries AS entry
+    ON entry.tenant_id = object.tenant_id
+   AND entry.namespace_generation = object.namespace_generation
+   AND entry.cache_key = object.cache_key
 WHERE object.tenant_id = ?
   AND object.namespace_generation = ?
   AND object.cache_key = ?`,
@@ -1072,11 +1179,29 @@ WHERE object.tenant_id = ?
 		&object.Blob.Digest,
 		&object.Blob.Size,
 		&object.DecisionDigest,
+		&expiresAt,
+		&segment,
+		&lastAccess,
 	); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, CommittedObject{}, ErrCacheMiss
 		}
 		return nil, CommittedObject{}, err
+	}
+	now := storage.now()
+	if expiresAt <= now.UnixMilli() {
+		if _, err := storage.cache.database.ExecContext(
+			ctx,
+			`DELETE FROM committed_objects
+WHERE tenant_id = ? AND namespace_generation = ? AND cache_key = ?`,
+			tenant,
+			namespaceGeneration,
+			key,
+		); err != nil {
+			return nil, CommittedObject{}, err
+		}
+		storage.blobCleanupPending = true
+		return nil, CommittedObject{}, ErrCacheMiss
 	}
 	file, err := storage.blobs.openVerified(ctx, object.Blob)
 	if err != nil {
@@ -1091,15 +1216,14 @@ WHERE object.tenant_id = ?
 		)
 		return nil, CommittedObject{}, ErrCacheMiss
 	}
-	if _, err := storage.cache.database.ExecContext(
+	if err := storage.promoteAndBatchAccess(
 		ctx,
-		`UPDATE committed_objects
-SET last_access_unix_ms = ?
-WHERE tenant_id = ? AND namespace_generation = ? AND cache_key = ?`,
-		storage.now().UnixMilli(),
 		tenant,
 		namespaceGeneration,
 		key,
+		segment,
+		lastAccess,
+		now,
 	); err != nil {
 		_ = file.Close()
 		return nil, CommittedObject{}, err
@@ -1330,6 +1454,9 @@ func (storage *Storage) abortRejectedAttempt(
 		return err
 	}
 	rollback = false
+	if record.status.PendingObjectCount > 0 {
+		storage.blobCleanupPending = true
+	}
 	return nil
 }
 

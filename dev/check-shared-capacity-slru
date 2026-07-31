@@ -1,0 +1,143 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/shared-capacity-slru-v1.json"
+
+for buildopt_command in git jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Shared capacity command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if ! jq -e '
+    keys == [
+        "admission",
+        "boundaries",
+        "defaults",
+        "deliverableId",
+        "executableEvidence",
+        "gateId",
+        "quarantine",
+        "schemaVersion",
+        "scope",
+        "slru",
+        "startupAndOperations",
+        "storageSchemaVersion"
+    ] and
+    .schemaVersion == "buildopt.specs/shared-capacity-slru/v1" and
+    .deliverableId == "A1-003" and
+    .gateId == "A1-G03" and
+    .storageSchemaVersion == 4 and
+    .defaults == {
+        maximumObjectBytes: 104857600,
+        maximumRepositoryBytes: 107374182400,
+        maximumDeploymentBytes: 536870912000,
+        deploymentUsableVolumePercent: 50,
+        installerMinimumBytes: 21474836480,
+        stableTtlDays: 30,
+        quarantineTtlDays: 7,
+        highWatermarkPercent: 85,
+        lowWatermarkPercent: 75,
+        pendingQuarantinePercent: 10,
+        protectedTargetOfLowPercent: 80,
+        accessUpdateMinimumSeconds: 60
+    } and
+    .scope == {
+        repository: ["tenant", "repository", "trustDomain"],
+        namespace: [
+            "tenant",
+            "repository",
+            "trustDomain",
+            "namespaceGeneration"
+        ],
+        logicalAccounting: true,
+        blobDeduplicationGrantsExtraQuota: false
+    } and
+    .admission.knownLength == "RESERVE_EXACT_BEFORE_BODY" and
+    .admission.unknownLength == "RESERVE_MAXIMUM_OBJECT_BEFORE_BODY" and
+    .admission.concurrentReservationsAtomic == true and
+    .admission.rejectionHttpStatus == 413 and
+    .admission.rejectedBodyRead == false and
+    .admission.pendingCanEvictStable == false and
+    .admission.checks == [
+        "MAXIMUM_OBJECT",
+        "PENDING_QUARANTINE_POOL",
+        "NAMESPACE_LIMIT",
+        "REPOSITORY_LIMIT",
+        "DEPLOYMENT_LIMIT",
+        "CURRENT_DISK_AVAILABILITY"
+    ] and
+    .quarantine == {
+        retentionDays: 7,
+        safetyInsertionCanCrossAdmissionCeiling: true,
+        overCeiling: "BLOCK_NEW_PUTS_AND_PRESERVE_STABLE",
+        activeEvidenceCompaction: "A1-004"
+    } and
+    .slru == {
+        units: "BYTES",
+        segments: ["PROBATION", "PROTECTED"],
+        newEntry: "PROBATION",
+        authenticatedVerifiedHit: "PROMOTE_TO_PROTECTED",
+        protectedOverflow: "DEMOTE_LEAST_RECENT_TO_PROBATION",
+        pressureOrder: [
+            "EXPIRED",
+            "PROBATION_LEAST_RECENT",
+            "PROTECTED_LEAST_RECENT"
+        ],
+        highAction: "EVICT_UNTIL_LOW",
+        logicalDeletionBeforePhysicalDeletion: true,
+        blobPresenceIsAuthority: false
+    } and
+    .startupAndOperations == {
+        migration: "TRANSACTIONAL_V3_TO_V4_PROBATION_DEFAULT_TTL_THEN_MONOTONIC_POLICY_CLAMP",
+        reconciliationBeforeMaintenance: true,
+        maintenanceBeforeReadiness: true,
+        periodicMaintenanceSeconds: 300,
+        capacitySignalsFeedDiskQuotaAlert: true
+    } and
+    (.executableEvidence.requiredCases | length) == 13 and
+    .boundaries.closes == ["OPS-001/A1-CAPACITY-SUBSTRATE"] and
+    .boundaries.doesNotClose == [
+        "A1-003",
+        "A1-G03",
+        "A1-004",
+        "A1-G02",
+        "A1-G04",
+        "OPS-001/A1"
+    ]
+' "${buildopt_contract}" >/dev/null; then
+    printf 'Shared capacity/SLRU contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 \
+    ./internal/sharedcache \
+    ./cmd/buildopt-server \
+    -run \
+    '^(TestCapacityPolicyCannotExpandPrivateBetaBounds|TestPendingAdmissionReservesBeforeReading|TestPendingAdmissionStopsBeforeDiskExhaustion|TestConcurrentReservationsCannotOversubscribePendingPool|TestAbortedPendingBlobIsCollectedByCapacityMaintenance|TestByteSLRUWatermarksAndStableTTL|TestSchemaThreeCommittedEntriesUpgradeIntoProbation|TestOperationalSnapshotReportsBoundedStorageHealth|TestOperationalAlertsExposeExactClassesAndRecover)$'
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/sharedcache ./cmd/buildopt-server
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'Shared capacity/SLRU checker changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'OPS-001/A1 Shared capacity substrate OK: atomic admission, scoped quotas, 85/75 byte eviction, promotion/demotion, TTL, migration, and disk signals\n'

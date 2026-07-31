@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "buildopt.specs/shared-capacity-slru/v1",
+  "deliverableId": "A1-003",
+  "gateId": "A1-G03",
+  "storageSchemaVersion": 4,
+  "defaults": {
+    "maximumObjectBytes": 104857600,
+    "maximumRepositoryBytes": 107374182400,
+    "maximumDeploymentBytes": 536870912000,
+    "deploymentUsableVolumePercent": 50,
+    "installerMinimumBytes": 21474836480,
+    "stableTtlDays": 30,
+    "quarantineTtlDays": 7,
+    "highWatermarkPercent": 85,
+    "lowWatermarkPercent": 75,
+    "pendingQuarantinePercent": 10,
+    "protectedTargetOfLowPercent": 80,
+    "accessUpdateMinimumSeconds": 60
+  },
+  "scope": {
+    "repository": [
+      "tenant",
+      "repository",
+      "trustDomain"
+    ],
+    "namespace": [
+      "tenant",
+      "repository",
+      "trustDomain",
+      "namespaceGeneration"
+    ],
+    "logicalAccounting": true,
+    "blobDeduplicationGrantsExtraQuota": false
+  },
+  "admission": {
+    "knownLength": "RESERVE_EXACT_BEFORE_BODY",
+    "unknownLength": "RESERVE_MAXIMUM_OBJECT_BEFORE_BODY",
+    "concurrentReservationsAtomic": true,
+    "checks": [
+      "MAXIMUM_OBJECT",
+      "PENDING_QUARANTINE_POOL",
+      "NAMESPACE_LIMIT",
+      "REPOSITORY_LIMIT",
+      "DEPLOYMENT_LIMIT",
+      "CURRENT_DISK_AVAILABILITY"
+    ],
+    "rejectionHttpStatus": 413,
+    "rejectedBodyRead": false,
+    "pendingCanEvictStable": false
+  },
+  "quarantine": {
+    "retentionDays": 7,
+    "safetyInsertionCanCrossAdmissionCeiling": true,
+    "overCeiling": "BLOCK_NEW_PUTS_AND_PRESERVE_STABLE",
+    "activeEvidenceCompaction": "A1-004"
+  },
+  "slru": {
+    "units": "BYTES",
+    "segments": [
+      "PROBATION",
+      "PROTECTED"
+    ],
+    "newEntry": "PROBATION",
+    "authenticatedVerifiedHit": "PROMOTE_TO_PROTECTED",
+    "protectedOverflow": "DEMOTE_LEAST_RECENT_TO_PROBATION",
+    "pressureOrder": [
+      "EXPIRED",
+      "PROBATION_LEAST_RECENT",
+      "PROTECTED_LEAST_RECENT"
+    ],
+    "highAction": "EVICT_UNTIL_LOW",
+    "logicalDeletionBeforePhysicalDeletion": true,
+    "blobPresenceIsAuthority": false
+  },
+  "startupAndOperations": {
+    "migration": "TRANSACTIONAL_V3_TO_V4_PROBATION_DEFAULT_TTL_THEN_MONOTONIC_POLICY_CLAMP",
+    "reconciliationBeforeMaintenance": true,
+    "maintenanceBeforeReadiness": true,
+    "periodicMaintenanceSeconds": 300,
+    "capacitySignalsFeedDiskQuotaAlert": true
+  },
+  "executableEvidence": {
+    "checker": "dev/check-shared-capacity-slru",
+    "requiredCases": [
+      "PRIVATE_BETA_LIMIT_EXPANSION_REJECTED",
+      "KNOWN_LENGTH_REJECTED_BEFORE_READ",
+      "UNKNOWN_LENGTH_MAXIMUM_RESERVATION",
+      "FALSE_LENGTH_DYNAMIC_RESERVATION",
+      "CONCURRENT_RESERVATION_NO_OVERSUBSCRIPTION",
+      "ABORTED_PENDING_PHYSICAL_COLLECTION",
+      "DISK_OUT_OF_SPACE_REJECTED_BEFORE_READ",
+      "PROBATION_FIRST_BYTE_EVICTION_TO_LOW",
+      "VERIFIED_HIT_PROMOTION",
+      "PROTECTED_TARGET_DEMOTION",
+      "STABLE_TTL_LOGICAL_AND_PHYSICAL_DELETION",
+      "SCHEMA_V3_COMMITTED_ENTRY_MIGRATION",
+      "OPERATIONAL_HIGH_WATERMARK_AND_ADMISSION_SIGNALS"
+    ]
+  },
+  "boundaries": {
+    "closes": [
+      "OPS-001/A1-CAPACITY-SUBSTRATE"
+    ],
+    "doesNotClose": [
+      "A1-003",
+      "A1-G03",
+      "A1-004",
+      "A1-G02",
+      "A1-G04",
+      "OPS-001/A1"
+    ],
+    "fairShareReservedMinima": "POST_PRIVATE_BETA",
+    "externalPilot": "A1-G06"
+  }
+}

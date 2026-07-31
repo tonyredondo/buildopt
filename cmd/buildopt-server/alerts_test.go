@@ -19,8 +19,9 @@ func TestOperationalAlertsExposeExactClassesAndRecover(t *testing.T) {
 	})
 	monitor.sampleStorage(sharedcache.OperationalSnapshot{
 		DiskTotalBytes:         100,
-		DiskAvailableBytes:     5,
+		DiskAvailableBytes:     50,
 		DiskProbeSucceeded:     true,
+		CapacityHighWatermark:  true,
 		ExpiredPendingAttempts: 1,
 		QuarantineRecords:      1,
 		IntegrityHealthy:       false,

@@ -14,7 +14,7 @@ import (
 
 const (
 	// SchemaVersion is the current cache/control metadata schema.
-	SchemaVersion = 3
+	SchemaVersion = 4
 	// MaximumBlobBytes is the private-beta per-object ceiling.
 	MaximumBlobBytes int64 = 100 << 20
 )
@@ -44,6 +44,9 @@ var (
 	ErrCASLost = errors.New("Shared cache first-writer CAS was lost")
 	// ErrCacheMiss means no fully verified committed object may be returned.
 	ErrCacheMiss = errors.New("Shared cache miss")
+	// ErrCapacityExceeded means admission cannot complete within a hard pool,
+	// repository, deployment, or currently available disk boundary.
+	ErrCapacityExceeded = errors.New("Shared cache capacity exceeded")
 )
 
 // Layout is the complete private on-disk A0-004 layout.
@@ -80,35 +83,77 @@ type MetadataStore interface {
 // Storage owns the process-wide writer lease, immutable blobs, and the two
 // deliberately independent SQLite lifecycles.
 type Storage struct {
-	operationMutex sync.RWMutex
-	lifecycleMutex sync.Mutex
-	reconcileMutex sync.RWMutex
-	authorityMutex sync.RWMutex
-	closed         bool
-	layout         Layout
-	writerLock     *os.File
-	blobs          *filesystemBlobStore
-	cache          *sqliteMetadata
-	control        *sqliteMetadata
-	clock          func() time.Time
-	testHooks      storageTestHooks
+	operationMutex           sync.RWMutex
+	lifecycleMutex           sync.Mutex
+	reconcileMutex           sync.RWMutex
+	authorityMutex           sync.RWMutex
+	capacityMutex            sync.Mutex
+	closed                   bool
+	layout                   Layout
+	writerLock               *os.File
+	blobs                    *filesystemBlobStore
+	cache                    *sqliteMetadata
+	control                  *sqliteMetadata
+	capacity                 CapacityPolicy
+	reservations             map[*pendingReservation]struct{}
+	blobCleanupPending       bool
+	quarantineCleanupPending bool
+	clock                    func() time.Time
+	testHooks                storageTestHooks
 }
 
 type storageTestHooks struct {
 	beforeCacheCommit  func() error
 	beforeControlIndex func() error
 	afterPendingBlob   func()
+	diskCapacity       func(string) (uint64, uint64, error)
 }
 
 // Open prepares and validates one local, private, single-writer storage root.
 func Open(ctx context.Context, root string) (*Storage, error) {
-	return openWithMaximumBlobBytes(ctx, root, MaximumBlobBytes)
+	return openWithConfiguration(
+		ctx,
+		root,
+		MaximumBlobBytes,
+		CapacityPolicy{},
+	)
 }
 
 func openWithMaximumBlobBytes(
 	ctx context.Context,
 	root string,
 	maximumBlobBytes int64,
+) (*Storage, error) {
+	return openWithConfiguration(
+		ctx,
+		root,
+		maximumBlobBytes,
+		CapacityPolicy{},
+	)
+}
+
+// OpenWithCapacity prepares storage with an explicit reduced private-beta
+// capacity policy. It exists for controlled deployments and fault tests;
+// zero-valued policies are rejected rather than silently defaulted.
+func OpenWithCapacity(
+	ctx context.Context,
+	root string,
+	maximumBlobBytes int64,
+	capacity CapacityPolicy,
+) (*Storage, error) {
+	if capacity == (CapacityPolicy{}) {
+		return nil, errors.New(
+			"open single-node Shared storage: explicit capacity policy is empty",
+		)
+	}
+	return openWithConfiguration(ctx, root, maximumBlobBytes, capacity)
+}
+
+func openWithConfiguration(
+	ctx context.Context,
+	root string,
+	maximumBlobBytes int64,
+	capacity CapacityPolicy,
 ) (*Storage, error) {
 	if ctx == nil {
 		return nil, errors.New("open single-node Shared storage: nil context")
@@ -170,6 +215,25 @@ func openWithMaximumBlobBytes(
 			err,
 		)
 	}
+	if capacity == (CapacityPolicy{}) {
+		derivedCapacity, err := defaultCapacityPolicy(
+			layout.Root,
+			maximumBlobBytes,
+		)
+		if err != nil {
+			return nil, fmt.Errorf(
+				"open single-node Shared storage: derive capacity: %w",
+				err,
+			)
+		}
+		capacity = derivedCapacity
+	}
+	if err := validateCapacityPolicy(capacity, maximumBlobBytes); err != nil {
+		return nil, fmt.Errorf(
+			"open single-node Shared storage: invalid capacity: %w",
+			err,
+		)
+	}
 
 	writerLock, err := openPrivateLock(layout.WriterLock)
 	if err != nil {
@@ -190,9 +254,11 @@ func openWithMaximumBlobBytes(
 	}
 
 	storage := &Storage{
-		layout:     layout,
-		writerLock: writerLock,
-		clock:      time.Now,
+		layout:       layout,
+		writerLock:   writerLock,
+		capacity:     capacity,
+		reservations: make(map[*pendingReservation]struct{}),
+		clock:        time.Now,
 	}
 	cleanup := func(openErr error) (*Storage, error) {
 		if storage.control != nil {
@@ -231,6 +297,12 @@ func openWithMaximumBlobBytes(
 		))
 	}
 	storage.control = control
+	if err := storage.applyCapacityPolicy(ctx); err != nil {
+		return cleanup(fmt.Errorf(
+			"open single-node Shared storage: apply capacity policy: %w",
+			err,
+		))
+	}
 	storage.blobs = &filesystemBlobStore{
 		owner:            storage,
 		blobRoot:         layout.Blobs,
@@ -240,6 +312,12 @@ func openWithMaximumBlobBytes(
 	if _, err := storage.reconcile(ctx, storage.now()); err != nil {
 		return cleanup(fmt.Errorf(
 			"open single-node Shared storage: reconcile: %w",
+			err,
+		))
+	}
+	if _, err := storage.maintainCapacityLocked(ctx, storage.now()); err != nil {
+		return cleanup(fmt.Errorf(
+			"open single-node Shared storage: capacity maintenance: %w",
 			err,
 		))
 	}
@@ -281,6 +359,22 @@ func (storage *Storage) Layout() Layout {
 // Blobs returns the immutable content-addressed implementation boundary.
 func (storage *Storage) Blobs() BlobStore {
 	return storage.blobs
+}
+
+// MaximumObjectBytes is the configured hard limit accepted by this storage.
+func (storage *Storage) MaximumObjectBytes() int64 {
+	if storage == nil || storage.blobs == nil {
+		return 0
+	}
+	return storage.blobs.maximumBlobBytes
+}
+
+// CapacityPolicy returns the immutable effective policy for this process.
+func (storage *Storage) CapacityPolicy() CapacityPolicy {
+	if storage == nil {
+		return CapacityPolicy{}
+	}
+	return storage.capacity
 }
 
 // CacheMetadata returns the sole future visibility-authority lifecycle.

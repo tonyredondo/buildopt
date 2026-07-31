@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -275,7 +276,7 @@ func TestOpenRejectsUnsafeOrDriftedStorage(t *testing.T) {
 		}
 		database := openTestSQLite(t, cachePath)
 		if _, err := database.Exec(
-			"PRAGMA user_version = 4",
+			fmt.Sprintf("PRAGMA user_version = %d", SchemaVersion+1),
 		); err != nil {
 			t.Fatal(err)
 		}

@@ -325,7 +325,7 @@ buildopt_start_server() {
         "${buildopt_endpoint}" \
         "${buildopt_server_pid}" ||
         ! grep -Fq \
-            'single-node Shared storage initialized and reconciled with cache/control schema 3' \
+            'single-node Shared storage initialized and reconciled with cache/control schema 4' \
             "${buildopt_server_log}"; then
         printf 'packaged server did not initialize the modular monolith\n' >&2
         grep -vF -- "${buildopt_token}" "${buildopt_server_log}" >&2 || true

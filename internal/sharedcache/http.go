@@ -151,19 +151,21 @@ func servePendingPUT(
 		writeCacheStatus(response, http.StatusConflict)
 		return
 	}
-	if request.ContentLength > MaximumBlobBytes {
+	if request.ContentLength > storage.MaximumObjectBytes() {
 		writeCacheStatus(response, http.StatusRequestEntityTooLarge)
 		return
 	}
-	result, err := storage.PutPending(
+	result, err := storage.PutPendingSized(
 		ctx,
 		binding.PendingAttemptID,
 		key,
+		request.ContentLength,
 		request.Body,
 	)
 	if err != nil {
 		switch {
-		case errors.Is(err, ErrBlobTooLarge):
+		case errors.Is(err, ErrBlobTooLarge),
+			errors.Is(err, ErrCapacityExceeded):
 			writeCacheStatus(response, http.StatusRequestEntityTooLarge)
 		case errors.Is(err, ErrAttemptNotFound):
 			writeCacheStatus(response, http.StatusNotFound)

@@ -19,6 +19,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`gateway-rotation-v1.md`](./gateway-rotation-v1.md) | `A0-G03` |
 | [`gateway-spool-v1.md`](./gateway-spool-v1.md) | `A0-G04` |
 | [`shared-commit-recovery-v1.md`](./shared-commit-recovery-v1.md) | `A0-G05` |
+| [`shared-capacity-slru-v1.md`](./shared-capacity-slru-v1.md) | `A1-003` / `A1-G03` |
 | [`no-hit-overhead-v1.md`](./no-hit-overhead-v1.md) | `A0-G06` |
 | [`test-cache-isolation-v1.md`](./test-cache-isolation-v1.md) | `A0-G08` |
 | [`managed-l1-v1.md`](./managed-l1-v1.md) | `A0-003` |
@@ -68,6 +69,8 @@ cleanup contract.
 `shared-commit-recovery-v1.json` is the A0-G05 real filesystem/SQLite WAL
 contract for concurrent commit CAS, all-object visibility atomicity, digest
 audit repair, and safe orphan/missing/expired recovery.
+`shared-capacity-slru-v1.json` is the A1-003/A1-G03 hard-quota, durable TTL,
+byte-weighted SLRU, conservative reservation, and high/low watermark contract.
 `no-hit-overhead-v1.json` is the A0-G06 paired strict-runner contract for
 authenticated read-only L2 misses, fresh L1/output state, long-session p95
 budgets, and pre-outcome L2 omission with zero short-session requests.
