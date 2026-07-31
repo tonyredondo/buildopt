@@ -210,6 +210,270 @@ func TestPendingCommitVisibilityReplayAndExactAuthority(t *testing.T) {
 	assertRowCount(t, storage.control.database, "decision_audit_index", 1)
 }
 
+func TestOpenCommittedVerifiesConcurrentlyAndBlocksMetadataMutation(
+	t *testing.T,
+) {
+	ctx := context.Background()
+	storage := openLifecycleTestStorage(t)
+	request := lifecycleAttemptRequest(
+		"attempt-parallel-read",
+		"start-parallel-read",
+		"owner-parallel-read",
+		13,
+	)
+	if _, _, err := storage.StartAttempt(ctx, request); err != nil {
+		t.Fatal(err)
+	}
+	pending, err := storage.PutPending(
+		ctx,
+		request.AttemptID,
+		"parallel-object",
+		bytes.NewReader(bytes.Repeat([]byte("verified"), 1<<12)),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	publicKey, privateKey, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	verified := verifyLifecycleDecision(
+		t,
+		map[string]ed25519.PublicKey{testDecisionKeyID: publicKey},
+		signLifecycleDecision(
+			t,
+			privateKey,
+			request,
+			"decision-parallel-read",
+			[]CommitObject{pending.Object},
+			testRevocationEpoch,
+			lifecycleTestNow,
+		),
+	)
+	if _, err := storage.CommitAttempt(
+		ctx,
+		2,
+		testRevocationEpoch,
+		verified,
+	); err != nil {
+		t.Fatal(err)
+	}
+
+	entered := make(chan struct{}, 2)
+	release := make(chan struct{})
+	storage.testHooks.beforeCommittedBlobVerify = func() {
+		entered <- struct{}{}
+		<-release
+	}
+	results := make(chan error, 2)
+	for range 2 {
+		go func() {
+			file, _, openErr := storage.OpenCommitted(
+				ctx,
+				request.Repository.Tenant,
+				request.NamespaceGeneration,
+				pending.Object.Key,
+			)
+			if file != nil {
+				_ = file.Close()
+			}
+			results <- openErr
+		}()
+	}
+	for range 2 {
+		select {
+		case <-entered:
+		case <-time.After(2 * time.Second):
+			close(release)
+			t.Fatal("committed blob verification remained globally serialized")
+		}
+	}
+	close(release)
+	for range 2 {
+		if err := <-results; err != nil {
+			t.Fatalf("parallel committed read = %v", err)
+		}
+	}
+
+	storage.clock = func() time.Time {
+		return lifecycleTestNow.Add(2 * time.Minute)
+	}
+	entered = make(chan struct{}, 2)
+	release = make(chan struct{})
+	storage.testHooks.beforeCommittedBlobVerify = func() {
+		entered <- struct{}{}
+		<-release
+	}
+	batches := make(chan int, 2)
+	flushed := make(chan error, 2)
+	storage.testHooks.beforeProtectedAccessBatch = func(size int) error {
+		batches <- size
+		return nil
+	}
+	storage.testHooks.afterProtectedAccessBatch = func(err error) {
+		flushed <- err
+	}
+	results = make(chan error, 2)
+	for range 2 {
+		go func() {
+			file, _, openErr := storage.OpenCommitted(
+				ctx,
+				request.Repository.Tenant,
+				request.NamespaceGeneration,
+				pending.Object.Key,
+			)
+			if file != nil {
+				_ = file.Close()
+			}
+			results <- openErr
+		}()
+	}
+	for range 2 {
+		select {
+		case <-entered:
+		case <-time.After(2 * time.Second):
+			close(release)
+			t.Fatal("stale protected reads did not verify concurrently")
+		}
+	}
+	close(release)
+	for range 2 {
+		if err := <-results; err != nil {
+			t.Fatalf("batched protected read = %v", err)
+		}
+	}
+	select {
+	case size := <-batches:
+		if size != 1 {
+			t.Fatalf("deduplicated protected access batch size = %d", size)
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("protected accesses did not start a batch")
+	}
+	select {
+	case err := <-flushed:
+		if err != nil {
+			t.Fatalf("flush protected access batch: %v", err)
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("protected access batch did not finish")
+	}
+	select {
+	case size := <-batches:
+		t.Fatalf("protected accesses used a second batch of size %d", size)
+	default:
+	}
+	storage.testHooks.beforeProtectedAccessBatch = nil
+	storage.testHooks.afterProtectedAccessBatch = nil
+	file, object, err := storage.OpenCommitted(
+		ctx,
+		request.Repository.Tenant,
+		request.NamespaceGeneration,
+		pending.Object.Key,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_ = file.Close()
+	storage.clock = func() time.Time {
+		return lifecycleTestNow.Add(4 * time.Minute)
+	}
+	flushed = make(chan error, 1)
+	storage.testHooks.afterProtectedAccessBatch = func(err error) {
+		flushed <- err
+	}
+	storage.lifecycleMutex.RLock()
+	if err := storage.batchProtectedAccess(
+		ctx,
+		object,
+		storage.now(),
+	); err != nil {
+		storage.lifecycleMutex.RUnlock()
+		t.Fatal(err)
+	}
+	select {
+	case err := <-flushed:
+		if err != nil {
+			storage.lifecycleMutex.RUnlock()
+			t.Fatalf("flush beside verified reader = %v", err)
+		}
+	case <-time.After(2 * time.Second):
+		storage.lifecycleMutex.RUnlock()
+		t.Fatal("protected access flush waited for unrelated verified reader")
+	}
+	storage.lifecycleMutex.RUnlock()
+	storage.testHooks.afterProtectedAccessBatch = nil
+
+	entered = make(chan struct{}, 1)
+	release = make(chan struct{})
+	storage.testHooks.beforeCommittedBlobVerify = func() {
+		entered <- struct{}{}
+		<-release
+	}
+	result := make(chan error, 1)
+	go func() {
+		file, _, openErr := storage.OpenCommitted(
+			ctx,
+			request.Repository.Tenant,
+			request.NamespaceGeneration,
+			pending.Object.Key,
+		)
+		if file != nil {
+			_ = file.Close()
+		}
+		result <- openErr
+	}()
+	select {
+	case <-entered:
+	case <-time.After(2 * time.Second):
+		close(release)
+		t.Fatal("committed blob read did not reach verification")
+	}
+	mutated := make(chan error, 1)
+	go func() {
+		storage.lifecycleMutex.Lock()
+		_, mutationErr := storage.cache.database.ExecContext(
+			ctx,
+			`DELETE FROM committed_objects
+WHERE tenant_id = ? AND namespace_generation = ? AND cache_key = ?`,
+			request.Repository.Tenant,
+			request.NamespaceGeneration,
+			pending.Object.Key,
+		)
+		storage.lifecycleMutex.Unlock()
+		mutated <- mutationErr
+	}()
+	select {
+	case mutationErr := <-mutated:
+		close(release)
+		t.Fatalf(
+			"metadata mutated during verified read: %v",
+			mutationErr,
+		)
+	case <-time.After(100 * time.Millisecond):
+	}
+	close(release)
+	if err := <-result; err != nil {
+		t.Fatalf("protected committed read = %v", err)
+	}
+	if err := <-mutated; err != nil {
+		t.Fatal(err)
+	}
+	storage.testHooks.beforeCommittedBlobVerify = nil
+	file, _, err = storage.OpenCommitted(
+		ctx,
+		request.Repository.Tenant,
+		request.NamespaceGeneration,
+		pending.Object.Key,
+	)
+	if file != nil {
+		_ = file.Close()
+	}
+	if !errors.Is(err, ErrCacheMiss) {
+		t.Fatalf("read after metadata removal = %v", err)
+	}
+}
+
 func TestAbortIsIdempotentAndReconciliationDeletesReleasedBlob(t *testing.T) {
 	ctx := context.Background()
 	storage := openLifecycleTestStorage(t)

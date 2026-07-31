@@ -89,10 +89,14 @@ type DiskCapacityProbe func(root string) (total uint64, available uint64, err er
 // deliberately independent SQLite lifecycles.
 type Storage struct {
 	operationMutex           sync.RWMutex
-	lifecycleMutex           sync.Mutex
+	lifecycleMutex           sync.RWMutex
 	reconcileMutex           sync.RWMutex
 	authorityMutex           sync.RWMutex
+	currentAuthorityDigests  map[string]string
 	capacityMutex            sync.Mutex
+	accessBatchMutex         sync.Mutex
+	currentAccessBatch       *protectedAccessBatch
+	protectedAccessError     error
 	closed                   bool
 	layout                   Layout
 	writerLock               *os.File
@@ -108,10 +112,13 @@ type Storage struct {
 }
 
 type storageTestHooks struct {
-	beforeCacheCommit  func() error
-	beforeControlIndex func() error
-	afterPendingBlob   func()
-	diskCapacity       func(string) (uint64, uint64, error)
+	beforeCacheCommit          func() error
+	beforeControlIndex         func() error
+	beforeCommittedBlobVerify  func()
+	beforeProtectedAccessBatch func(int) error
+	afterProtectedAccessBatch  func(error)
+	afterPendingBlob           func()
+	diskCapacity               func(string) (uint64, uint64, error)
 }
 
 // Open prepares and validates one local, private, single-writer storage root.
@@ -287,11 +294,12 @@ func openWithConfiguration(
 	}
 
 	storage := &Storage{
-		layout:       layout,
-		writerLock:   writerLock,
-		capacity:     capacity,
-		reservations: make(map[*pendingReservation]struct{}),
-		clock:        time.Now,
+		layout:                  layout,
+		writerLock:              writerLock,
+		capacity:                capacity,
+		reservations:            make(map[*pendingReservation]struct{}),
+		currentAuthorityDigests: make(map[string]string),
+		clock:                   time.Now,
 	}
 	cleanup := func(openErr error) (*Storage, error) {
 		if storage.control != nil {
@@ -446,6 +454,9 @@ func (storage *Storage) Close() error {
 	storage.closed = true
 
 	var closeErrors []error
+	storage.accessBatchMutex.Lock()
+	closeErrors = append(closeErrors, storage.protectedAccessError)
+	storage.accessBatchMutex.Unlock()
 	if storage.control != nil {
 		closeErrors = append(closeErrors, storage.control.close())
 	}

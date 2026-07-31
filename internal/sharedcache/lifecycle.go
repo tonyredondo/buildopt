@@ -1145,9 +1145,117 @@ func (storage *Storage) OpenCommitted(
 		return nil, CommittedObject{}, err
 	}
 	defer finish()
-	storage.lifecycleMutex.Lock()
-	defer storage.lifecycleMutex.Unlock()
+	storage.reconcileMutex.RLock()
+	defer storage.reconcileMutex.RUnlock()
 
+	storage.lifecycleMutex.RLock()
+	object, segment, lastAccess, expiresAt, now, err :=
+		storage.loadCommittedObjectReadLocked(
+			ctx,
+			tenant,
+			namespaceGeneration,
+			key,
+		)
+	if err != nil {
+		storage.lifecycleMutex.RUnlock()
+		return nil, CommittedObject{}, err
+	}
+	if expiresAt <= now.UnixMilli() {
+		storage.lifecycleMutex.RUnlock()
+		storage.lifecycleMutex.Lock()
+		err := storage.deleteExpiredCommittedObjectLocked(
+			ctx,
+			tenant,
+			namespaceGeneration,
+			key,
+			now,
+		)
+		storage.lifecycleMutex.Unlock()
+		if err != nil {
+			return nil, CommittedObject{}, err
+		}
+		return nil, CommittedObject{}, ErrCacheMiss
+	}
+	if storage.testHooks.beforeCommittedBlobVerify != nil {
+		storage.testHooks.beforeCommittedBlobVerify()
+	}
+	file, err := storage.blobs.openVerified(ctx, object.Blob)
+	if err != nil {
+		storage.lifecycleMutex.RUnlock()
+		storage.lifecycleMutex.Lock()
+		_, _ = storage.invalidateDecision(
+			ctx,
+			object.DecisionDigest,
+			[]invalidBlob{{
+				blob: object.Blob,
+				err:  err,
+			}},
+			storage.now(),
+		)
+		storage.lifecycleMutex.Unlock()
+		return nil, CommittedObject{}, ErrCacheMiss
+	}
+	if !storage.accessUpdateRequired(segment, lastAccess, now) {
+		storage.lifecycleMutex.RUnlock()
+		return file, object, nil
+	}
+	storage.lifecycleMutex.RUnlock()
+	if segment == segmentProtected {
+		if err := storage.batchProtectedAccess(ctx, object, now); err != nil {
+			_ = file.Close()
+			return nil, CommittedObject{}, err
+		}
+		return file, object, nil
+	}
+
+	storage.lifecycleMutex.Lock()
+	current, segment, lastAccess, expiresAt, now, err :=
+		storage.loadCommittedObjectReadLocked(
+			ctx,
+			tenant,
+			namespaceGeneration,
+			key,
+		)
+	if err == nil && expiresAt <= now.UnixMilli() {
+		err = storage.deleteExpiredCommittedObjectLocked(
+			ctx,
+			tenant,
+			namespaceGeneration,
+			key,
+			now,
+		)
+		if err == nil {
+			err = ErrCacheMiss
+		}
+	}
+	if err == nil && current != object {
+		err = ErrCacheMiss
+	}
+	if err == nil {
+		err = storage.promoteAndBatchAccess(
+			ctx,
+			tenant,
+			namespaceGeneration,
+			key,
+			segment,
+			lastAccess,
+			now,
+		)
+	}
+	storage.lifecycleMutex.Unlock()
+	if err != nil {
+		_ = file.Close()
+		return nil, CommittedObject{}, err
+	}
+	return file, object, nil
+}
+
+func (storage *Storage) loadCommittedObjectReadLocked(
+	ctx context.Context,
+	tenant string,
+	namespaceGeneration int64,
+	key string,
+) (CommittedObject, string, int64, int64, time.Time, error) {
 	object := CommittedObject{
 		RepositoryTenant:    tenant,
 		NamespaceGeneration: namespaceGeneration,
@@ -1184,51 +1292,52 @@ WHERE object.tenant_id = ?
 		&lastAccess,
 	); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, CommittedObject{}, ErrCacheMiss
+			return CommittedObject{}, "", 0, 0, time.Time{}, ErrCacheMiss
 		}
-		return nil, CommittedObject{}, err
+		return CommittedObject{}, "", 0, 0, time.Time{}, err
 	}
 	now := storage.now()
-	if expiresAt <= now.UnixMilli() {
-		if _, err := storage.cache.database.ExecContext(
-			ctx,
-			`DELETE FROM committed_objects
-WHERE tenant_id = ? AND namespace_generation = ? AND cache_key = ?`,
-			tenant,
-			namespaceGeneration,
-			key,
-		); err != nil {
-			return nil, CommittedObject{}, err
-		}
-		storage.blobCleanupPending = true
-		return nil, CommittedObject{}, ErrCacheMiss
-	}
-	file, err := storage.blobs.openVerified(ctx, object.Blob)
-	if err != nil {
-		_, _ = storage.invalidateDecision(
-			ctx,
-			object.DecisionDigest,
-			[]invalidBlob{{
-				blob: object.Blob,
-				err:  err,
-			}},
-			storage.now(),
-		)
-		return nil, CommittedObject{}, ErrCacheMiss
-	}
-	if err := storage.promoteAndBatchAccess(
+	return object, segment, lastAccess, expiresAt, now, nil
+}
+
+func (storage *Storage) deleteExpiredCommittedObjectLocked(
+	ctx context.Context,
+	tenant string,
+	namespaceGeneration int64,
+	key string,
+	now time.Time,
+) error {
+	result, err := storage.cache.database.ExecContext(
 		ctx,
+		`DELETE FROM committed_objects
+WHERE tenant_id = ? AND namespace_generation = ? AND cache_key = ?
+  AND EXISTS (
+      SELECT 1
+      FROM storage_entries
+      WHERE tenant_id = ?
+        AND namespace_generation = ?
+        AND cache_key = ?
+        AND expires_at_unix_ms <= ?
+  )`,
 		tenant,
 		namespaceGeneration,
 		key,
-		segment,
-		lastAccess,
-		now,
-	); err != nil {
-		_ = file.Close()
-		return nil, CommittedObject{}, err
+		tenant,
+		namespaceGeneration,
+		key,
+		now.UnixMilli(),
+	)
+	if err != nil {
+		return err
 	}
-	return file, object, nil
+	deleted, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if deleted > 0 {
+		storage.blobCleanupPending = true
+	}
+	return nil
 }
 
 type rowQueryer interface {

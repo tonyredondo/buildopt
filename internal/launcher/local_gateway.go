@@ -39,15 +39,16 @@ var gatewayCacheKeyPattern = regexp.MustCompile(
 )
 
 type localGateway struct {
-	address    string
-	endpoint   string
-	username   string
-	password   string
-	generation string
-	spool      *gatewaySpool
-	readiness  func() bool
-	cache      func() *gatewayCacheBinding
-	release    func() error
+	address     string
+	endpoint    string
+	username    string
+	password    string
+	generation  string
+	spool       *gatewaySpool
+	readiness   func() bool
+	cache       func() *gatewayCacheBinding
+	cacheClient *http.Client
+	release     func() error
 
 	mutex     sync.Mutex
 	listener  net.Listener
@@ -188,12 +189,34 @@ func localGatewayForListener(
 	readiness func() bool,
 ) *localGateway {
 	return &localGateway{
-		address:    listener.Addr().String(),
-		endpoint:   "http://" + listener.Addr().String(),
-		username:   identity.username,
-		password:   identity.password,
-		generation: identity.generation,
-		readiness:  readiness,
+		address:     listener.Addr().String(),
+		endpoint:    "http://" + listener.Addr().String(),
+		username:    identity.username,
+		password:    identity.password,
+		generation:  identity.generation,
+		readiness:   readiness,
+		cacheClient: newGatewayCacheClient(),
+	}
+}
+
+func newGatewayCacheClient() *http.Client {
+	return &http.Client{
+		Timeout: gatewayOperationTimeout,
+		Transport: &http.Transport{
+			Proxy:                 nil,
+			DisableCompression:    true,
+			MaxIdleConns:          32,
+			MaxIdleConnsPerHost:   32,
+			MaxConnsPerHost:       32,
+			IdleConnTimeout:       15 * time.Second,
+			ExpectContinueTimeout: time.Second,
+		},
+		CheckRedirect: func(
+			_ *http.Request,
+			_ []*http.Request,
+		) error {
+			return http.ErrUseLastResponse
+		},
 	}
 }
 
@@ -248,6 +271,7 @@ func (gateway *localGateway) close() error {
 	if gateway.release != nil {
 		return gateway.release()
 	}
+	gateway.cacheClient.CloseIdleConnections()
 	return errors.Join(
 		gateway.stopServingLocked(),
 		gateway.spool.close(),
@@ -403,22 +427,7 @@ func (gateway *localGateway) serveCache(
 		binding.authorityDigest,
 	)
 
-	client := &http.Client{
-		Timeout: gatewayOperationTimeout,
-		Transport: &http.Transport{
-			Proxy:                 nil,
-			DisableCompression:    true,
-			DisableKeepAlives:     true,
-			ExpectContinueTimeout: time.Second,
-		},
-		CheckRedirect: func(
-			_ *http.Request,
-			_ []*http.Request,
-		) error {
-			return http.ErrUseLastResponse
-		},
-	}
-	response, err := client.Do(upstreamRequest)
+	response, err := gateway.cacheClient.Do(upstreamRequest)
 	if err != nil {
 		gateway.writeUpstreamFailure(writer, request.Method)
 		return

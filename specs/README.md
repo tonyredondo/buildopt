@@ -11,6 +11,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`beta-disk-faults-v1.md`](./beta-disk-faults-v1.md) | `A1-003` / `A1-G03` |
 | [`beta-shared-faults-v1.md`](./beta-shared-faults-v1.md) | `OPS-001/A1` |
 | [`beta-system-faults-v1.md`](./beta-system-faults-v1.md) | `OPS-001/A1` / `A1-G04` |
+| [`beta-sustained-v1.md`](./beta-sustained-v1.md) | `OPS-001/A1` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`patch-bundle-v1.md`](./patch-bundle-v1.md) | `F0-034` |
 | [`bandit-policy-v1.md`](./bandit-policy-v1.md) | `F0-035` |
@@ -101,6 +102,10 @@ slice with 17 private trigger/recovery observations.
 `beta-system-faults-v1.json` is the exact benchmark-bound gateway/server
 restart, network latency/loss, and signed policy/grant revocation slice with
 18 private trigger/recovery observations.
+`beta-sustained-v1.json` is the exact one-hour 1/8/32-client benchmark slice
+through the real managed gateway and Shared data plane, with 30,000 private
+observations, strict golden-runner qualification, and boundary-specific p95
+targets.
 `managed-l1-v1.json` is the A0-003 launcher/settings-plugin contract for
 opaque scope binding, native retention, generation directories, exclusive
 leases, and L2-writer local disablement.

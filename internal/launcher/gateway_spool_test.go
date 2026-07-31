@@ -179,6 +179,56 @@ func TestGatewaySpoolReservesConcurrentPayloadsAtomically(t *testing.T) {
 	assertGatewaySpoolEmpty(t, spool)
 }
 
+func TestGatewaySpoolCoalescesConcurrentDirectorySync(t *testing.T) {
+	const requests = 32
+	spool := openGatewaySpoolForTest(t, 64, 128)
+	joined := make(chan struct{}, requests)
+	releaseLeader := make(chan struct{})
+	spool.testAfterDirectorySyncJoin = func(leader bool) {
+		joined <- struct{}{}
+		if leader {
+			<-releaseLeader
+		}
+	}
+	var callsMutex sync.Mutex
+	calls := 0
+	spool.testSyncDirectory = func(string) error {
+		callsMutex.Lock()
+		calls++
+		callsMutex.Unlock()
+		return nil
+	}
+
+	start := make(chan struct{})
+	results := make(chan error, requests)
+	for range requests {
+		go func() {
+			<-start
+			results <- spool.syncUnlinkedDirectory()
+		}()
+	}
+	close(start)
+	for range requests {
+		select {
+		case <-joined:
+		case <-time.After(2 * time.Second):
+			close(releaseLeader)
+			t.Fatal("concurrent directory sync did not join its batch")
+		}
+	}
+	close(releaseLeader)
+	for range requests {
+		if err := <-results; err != nil {
+			t.Fatalf("coalesced directory sync: %v", err)
+		}
+	}
+	callsMutex.Lock()
+	defer callsMutex.Unlock()
+	if calls != 1 {
+		t.Fatalf("directory sync calls = %d, want 1", calls)
+	}
+}
+
 func TestGatewaySpoolCancellationDeletesPartialPayload(t *testing.T) {
 	spool := openGatewaySpoolForTest(t, 64, 128)
 	ctx, cancel := context.WithCancel(context.Background())

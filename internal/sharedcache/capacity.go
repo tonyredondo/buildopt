@@ -15,15 +15,17 @@ import (
 )
 
 const (
-	privateBetaDeploymentLimit int64 = 500 << 30
-	privateBetaRepositoryLimit int64 = 100 << 30
-	privateBetaStableTTL             = 30 * 24 * time.Hour
-	privateBetaQuarantineTTL         = 7 * 24 * time.Hour
-	capacityHighPercent        int64 = 85
-	capacityLowPercent         int64 = 75
-	protectedTargetPercent     int64 = 80
-	pendingPoolPercent         int64 = 10
-	accessUpdateInterval             = time.Minute
+	privateBetaDeploymentLimit  int64 = 500 << 30
+	privateBetaRepositoryLimit  int64 = 100 << 30
+	privateBetaStableTTL              = 30 * 24 * time.Hour
+	privateBetaQuarantineTTL          = 7 * 24 * time.Hour
+	capacityHighPercent         int64 = 85
+	capacityLowPercent          int64 = 75
+	protectedTargetPercent      int64 = 80
+	pendingPoolPercent          int64 = 10
+	accessUpdateInterval              = time.Minute
+	protectedAccessBatchWindow        = 2 * time.Millisecond
+	protectedAccessBatchTimeout       = 5 * time.Second
 )
 
 const (
@@ -108,6 +110,20 @@ type evictionCandidate struct {
 	key                 string
 	size                int64
 	segment             string
+}
+
+type protectedAccessKey struct {
+	tenant              string
+	namespaceGeneration int64
+	key                 string
+	blobDigest          string
+	sizeBytes           int64
+	decisionDigest      string
+}
+
+type protectedAccessBatch struct {
+	entries map[protectedAccessKey]time.Time
+	err     error
 }
 
 func defaultCapacityPolicy(
@@ -516,6 +532,15 @@ func (storage *Storage) CapacitySnapshot(
 func (storage *Storage) capacitySnapshotLocked(
 	ctx context.Context,
 ) (CapacitySnapshot, error) {
+	storage.accessBatchMutex.Lock()
+	accessErr := storage.protectedAccessError
+	storage.accessBatchMutex.Unlock()
+	if accessErr != nil {
+		return CapacitySnapshot{}, fmt.Errorf(
+			"persist Shared protected access metadata: %w",
+			accessErr,
+		)
+	}
 	usage, err := storage.capacityUsage(
 		ctx,
 		storage.cache.database,
@@ -923,9 +948,7 @@ func (storage *Storage) promoteAndBatchAccess(
 	lastAccess int64,
 	now time.Time,
 ) error {
-	updateAccess := segment == segmentProbation ||
-		lastAccess <= now.Add(-storage.capacity.AccessUpdateInterval).UnixMilli()
-	if !updateAccess {
+	if !storage.accessUpdateRequired(segment, lastAccess, now) {
 		return nil
 	}
 	transaction, err := storage.cache.database.BeginTx(
@@ -977,6 +1000,160 @@ WHERE tenant_id = ? AND namespace_generation = ? AND cache_key = ?`,
 	}
 	rollback = false
 	return nil
+}
+
+func (storage *Storage) batchProtectedAccess(
+	ctx context.Context,
+	object CommittedObject,
+	now time.Time,
+) error {
+	key := protectedAccessKey{
+		tenant:              object.RepositoryTenant,
+		namespaceGeneration: object.NamespaceGeneration,
+		key:                 object.Key,
+		blobDigest:          object.Blob.Digest,
+		sizeBytes:           object.Blob.Size,
+		decisionDigest:      object.DecisionDigest,
+	}
+	storage.accessBatchMutex.Lock()
+	batch := storage.currentAccessBatch
+	leader := batch == nil
+	var finish func()
+	if leader {
+		batch = &protectedAccessBatch{
+			entries: make(map[protectedAccessKey]time.Time),
+		}
+		storage.currentAccessBatch = batch
+		var err error
+		finish, err = storage.beginOperation()
+		if err != nil {
+			storage.currentAccessBatch = nil
+			storage.accessBatchMutex.Unlock()
+			return err
+		}
+	}
+	if previous, exists := batch.entries[key]; !exists || now.After(previous) {
+		batch.entries[key] = now
+	}
+	storage.accessBatchMutex.Unlock()
+
+	if leader {
+		go func() {
+			defer finish()
+			timer := time.NewTimer(protectedAccessBatchWindow)
+			<-timer.C
+			storage.accessBatchMutex.Lock()
+			if storage.currentAccessBatch == batch {
+				storage.currentAccessBatch = nil
+			}
+			storage.accessBatchMutex.Unlock()
+			storage.flushProtectedAccessBatch(batch)
+			storage.accessBatchMutex.Lock()
+			if batch.err != nil {
+				storage.protectedAccessError = errors.Join(
+					storage.protectedAccessError,
+					batch.err,
+				)
+			}
+			storage.accessBatchMutex.Unlock()
+			if storage.testHooks.afterProtectedAccessBatch != nil {
+				storage.testHooks.afterProtectedAccessBatch(batch.err)
+			}
+		}()
+	}
+	return ctx.Err()
+}
+
+func (storage *Storage) flushProtectedAccessBatch(
+	batch *protectedAccessBatch,
+) {
+	ctx, cancel := context.WithTimeout(
+		context.Background(),
+		protectedAccessBatchTimeout,
+	)
+	defer cancel()
+	// Protected access time is eviction metadata, not cache authority. The
+	// conditional transaction serializes with lifecycle writers in SQLite and
+	// fails closed if authority, identity, expiry, or segment changed, without
+	// forcing unrelated verified readers to drain first.
+	if storage.testHooks.beforeProtectedAccessBatch != nil {
+		if err := storage.testHooks.beforeProtectedAccessBatch(
+			len(batch.entries),
+		); err != nil {
+			batch.err = err
+			return
+		}
+	}
+	transaction, err := storage.cache.database.BeginTx(
+		ctx,
+		&sql.TxOptions{Isolation: sql.LevelSerializable},
+	)
+	if err != nil {
+		batch.err = err
+		return
+	}
+	rollback := true
+	defer func() {
+		if rollback {
+			_ = transaction.Rollback()
+		}
+	}()
+	for key, accessedAt := range batch.entries {
+		validAt := storage.now().UnixMilli()
+		result, updateErr := transaction.ExecContext(
+			ctx,
+			`UPDATE committed_objects
+SET last_access_unix_ms = ?
+WHERE tenant_id = ?
+  AND namespace_generation = ?
+  AND cache_key = ?
+  AND blob_digest = ?
+  AND size_bytes = ?
+  AND decision_digest = ?
+  AND EXISTS (
+      SELECT 1
+      FROM storage_entries AS entry
+      WHERE entry.tenant_id = committed_objects.tenant_id
+        AND entry.namespace_generation =
+            committed_objects.namespace_generation
+        AND entry.cache_key = committed_objects.cache_key
+        AND entry.segment = 'PROTECTED'
+        AND entry.expires_at_unix_ms > ?
+  )`,
+			accessedAt.UnixMilli(),
+			key.tenant,
+			key.namespaceGeneration,
+			key.key,
+			key.blobDigest,
+			key.sizeBytes,
+			key.decisionDigest,
+			validAt,
+		)
+		if updateErr != nil {
+			batch.err = updateErr
+			return
+		}
+		if _, updateErr := result.RowsAffected(); updateErr != nil {
+			batch.err = updateErr
+			return
+		}
+	}
+	if err := transaction.Commit(); err != nil {
+		batch.err = err
+		return
+	}
+	rollback = false
+}
+
+func (storage *Storage) accessUpdateRequired(
+	segment string,
+	lastAccess int64,
+	now time.Time,
+) bool {
+	return segment == segmentProbation ||
+		lastAccess <= now.Add(
+			-storage.capacity.AccessUpdateInterval,
+		).UnixMilli()
 }
 
 func (storage *Storage) enforceProtectedTargetTx(

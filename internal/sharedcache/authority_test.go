@@ -574,6 +574,70 @@ func TestReadOnlyLocalAuthorityCreatesNoPendingAttempt(t *testing.T) {
 	}
 }
 
+func TestLocalAuthorityHotPathDoesNotWaitForControlDatabase(t *testing.T) {
+	storage := openLifecycleTestStorage(t)
+	storage.clock = func() time.Time { return sharedAuthorityNow }
+	verified, credential, _, _ := sharedAuthorityFixture(t, func(
+		document *localauthority.Document,
+	) {
+		document.Attempt.AllowWrite = false
+		document.Policy.RemoteCache.Write = "DISABLED"
+		document.Policy.AffectedBuild.EnabledInCI = false
+		document.Policy.AffectedBuild.EnabledLocally = true
+	})
+	binding, _, err := storage.InstallLocalAuthority(
+		context.Background(),
+		verified,
+		credential,
+		sharedAuthorityNow,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler, err := NewLocalAuthorityHTTPHandler(
+		storage,
+		binding,
+		credential,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	transaction, err := storage.control.database.Begin()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer transaction.Rollback()
+
+	response := make(chan *httptest.ResponseRecorder, 1)
+	go func() {
+		request := httptest.NewRequest(
+			http.MethodGet,
+			"/cache/missing",
+			nil,
+		)
+		request.Header.Set(
+			"Authorization",
+			"Bearer "+base64.RawURLEncoding.EncodeToString(credential),
+		)
+		request.Header.Set(
+			AuthorityDigestHeader,
+			binding.AuthorityDigest,
+		)
+		recorder := httptest.NewRecorder()
+		handler.ServeHTTP(recorder, request)
+		response <- recorder
+	}()
+	select {
+	case actual := <-response:
+		if actual.Code != http.StatusNotFound {
+			t.Fatalf("hot-path authority response = %d", actual.Code)
+		}
+	case <-time.After(2 * time.Second):
+		_ = transaction.Rollback()
+		t.Fatal("authority hot path waited for the control database")
+	}
+}
+
 func sharedAuthorityFixture(
 	t *testing.T,
 	mutate func(*localauthority.Document),

@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -36,6 +37,39 @@ func newSystemAuthorityFixture(
 	allowWrite bool,
 	withGrant bool,
 ) (systemAuthorityFixture, error) {
+	return newSystemAuthorityFixtureWithDurations(
+		ctx,
+		root,
+		manifestDigest,
+		now,
+		ordinal,
+		allowWrite,
+		withGrant,
+		30*time.Minute,
+		time.Hour,
+		2*time.Hour,
+	)
+}
+
+func newSystemAuthorityFixtureWithDurations(
+	ctx context.Context,
+	root string,
+	manifestDigest string,
+	now time.Time,
+	ordinal int,
+	allowWrite bool,
+	withGrant bool,
+	leaseDuration time.Duration,
+	policyDuration time.Duration,
+	revocationDuration time.Duration,
+) (systemAuthorityFixture, error) {
+	if leaseDuration <= 0 ||
+		policyDuration <= 0 ||
+		revocationDuration <= 0 {
+		return systemAuthorityFixture{}, errors.New(
+			"system authority durations must be positive",
+		)
+	}
 	privateKey := benchmarkSigningKey(manifestDigest)
 	publicKey := privateKey.Public().(ed25519.PublicKey)
 	credentialSeed := sha256.Sum256([]byte(fmt.Sprintf(
@@ -45,7 +79,7 @@ func newSystemAuthorityFixture(
 	)))
 	credential := credentialSeed[:]
 	credentialDigest := sha256.Sum256(credential)
-	policyExpiresAt := now.UTC().Add(time.Hour)
+	policyExpiresAt := now.UTC().Add(policyDuration)
 	document := localauthority.Document{
 		Repository: localauthority.RepositoryIdentity{
 			Tenant:      "beta-smoke",
@@ -65,7 +99,7 @@ func newSystemAuthorityFixture(
 			),
 			OwnerID: "protected-main",
 			LeaseID: fmt.Sprintf("beta-system-lease-%d", ordinal),
-			LeaseExpiresAt: now.UTC().Add(30 * time.Minute).
+			LeaseExpiresAt: now.UTC().Add(leaseDuration).
 				Format(time.RFC3339Nano),
 			AllowRead:        true,
 			AllowWrite:       allowWrite,
@@ -128,7 +162,7 @@ func newSystemAuthorityFixture(
 			TrustDomain:          "local-benchmark",
 			RevocationEpoch:      7,
 			L1SecurityGeneration: 9,
-			ValidUntil: now.UTC().Add(2 * time.Hour).
+			ValidUntil: now.UTC().Add(revocationDuration).
 				Format(time.RFC3339Nano),
 		},
 	}
@@ -137,8 +171,9 @@ func newSystemAuthorityFixture(
 	}
 	if withGrant {
 		document.Policy.TestOptimizationGrant = &localauthority.GrantReference{
-			Digest:    "sha256:" + strings.Repeat("6", 64),
-			ExpiresAt: now.UTC().Add(2 * time.Hour).Format(time.RFC3339Nano),
+			Digest: "sha256:" + strings.Repeat("6", 64),
+			ExpiresAt: now.UTC().Add(revocationDuration).
+				Format(time.RFC3339Nano),
 		}
 	}
 	canonical, err := localauthority.Sign(

@@ -137,6 +137,7 @@ type rawObservation struct {
 	SizeBytes     int64  `json:"sizeBytes"`
 	ExpectedHit   bool   `json:"expectedHit"`
 	Status        int    `json:"status"`
+	ReadyNs       int64  `json:"readyNs,omitempty"`
 	DurationNs    int64  `json:"durationNs"`
 	RequestBytes  int64  `json:"requestBytes"`
 	ResponseBytes int64  `json:"responseBytes"`

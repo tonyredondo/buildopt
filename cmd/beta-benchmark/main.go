@@ -12,7 +12,7 @@ import (
 	"github.com/tonyredondo/buildopt/internal/betabenchmark"
 )
 
-const usage = "usage: beta-benchmark smoke --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark disk-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark shared-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark system-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH --buildopt ABSOLUTE_PATH --server ABSOLUTE_PATH\n       beta-benchmark validate --manifest PATH --result PATH\n       beta-benchmark validate-disk-faults --manifest PATH --result PATH\n       beta-benchmark validate-shared-faults --manifest PATH --result PATH\n       beta-benchmark validate-system-faults --manifest PATH --result PATH\n"
+const usage = "usage: beta-benchmark smoke --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark disk-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark shared-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark system-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH --buildopt ABSOLUTE_PATH --server ABSOLUTE_PATH\n       beta-benchmark sustained --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH --buildopt ABSOLUTE_PATH\n       beta-benchmark sustained-trial --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH --buildopt ABSOLUTE_PATH\n       beta-benchmark validate --manifest PATH --result PATH\n       beta-benchmark validate-disk-faults --manifest PATH --result PATH\n       beta-benchmark validate-shared-faults --manifest PATH --result PATH\n       beta-benchmark validate-system-faults --manifest PATH --result PATH\n       beta-benchmark validate-sustained --manifest PATH --result PATH\n       beta-benchmark validate-sustained-trial --manifest PATH --result PATH\n"
 
 func main() {
 	ctx, stop := signal.NotifyContext(
@@ -149,8 +149,72 @@ func run(
 			result,
 		)
 		return 0
+	case "sustained", "sustained-trial":
+		flags := flag.NewFlagSet(
+			"beta-benchmark "+args[0],
+			flag.ContinueOnError,
+		)
+		flags.SetOutput(io.Discard)
+		manifest := flags.String("manifest", "", "benchmark manifest")
+		stateDirectory := flags.String(
+			"state-dir",
+			"",
+			"private sustained state directory",
+		)
+		outputDirectory := flags.String(
+			"output-dir",
+			"",
+			"empty private result directory",
+		)
+		buildoptExecutable := flags.String(
+			"buildopt",
+			"",
+			"absolute buildopt executable",
+		)
+		if err := flags.Parse(args[1:]); err != nil ||
+			flags.NArg() != 0 ||
+			*manifest == "" ||
+			*stateDirectory == "" ||
+			*outputDirectory == "" ||
+			*buildoptExecutable == "" {
+			_, _ = io.WriteString(stderr, usage)
+			return 64
+		}
+		var (
+			result string
+			err    error
+		)
+		if args[0] == "sustained" {
+			result, err = betabenchmark.RunSustained(
+				ctx,
+				*manifest,
+				*stateDirectory,
+				*outputDirectory,
+				*buildoptExecutable,
+			)
+		} else {
+			result, err = betabenchmark.RunSustainedTrial(
+				ctx,
+				*manifest,
+				*stateDirectory,
+				*outputDirectory,
+				*buildoptExecutable,
+			)
+		}
+		if err != nil {
+			_, _ = fmt.Fprintf(stderr, "beta-benchmark: %v\n", err)
+			return 1
+		}
+		_, _ = fmt.Fprintf(
+			stdout,
+			"benchmark %s result: %s\n",
+			args[0],
+			result,
+		)
+		return 0
 	case "validate", "validate-disk-faults", "validate-shared-faults",
-		"validate-system-faults":
+		"validate-system-faults", "validate-sustained",
+		"validate-sustained-trial":
 		flags := flag.NewFlagSet(
 			"beta-benchmark "+args[0],
 			flag.ContinueOnError,
@@ -175,6 +239,10 @@ func run(
 			err = betabenchmark.ValidateSharedFaultResult(*manifest, *result)
 		case "validate-system-faults":
 			err = betabenchmark.ValidateSystemFaultResult(*manifest, *result)
+		case "validate-sustained":
+			err = betabenchmark.ValidateSustainedResult(*manifest, *result)
+		case "validate-sustained-trial":
+			err = betabenchmark.ValidateSustainedTrial(*manifest, *result)
 		}
 		if err != nil {
 			_, _ = fmt.Fprintf(stderr, "beta-benchmark: %v\n", err)

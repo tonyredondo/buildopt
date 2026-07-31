@@ -9,7 +9,66 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
+
+func TestCloseWaitsForAndReportsProtectedAccessBatchFailure(t *testing.T) {
+	ctx := context.Background()
+	storage, err := Open(ctx, filepath.Join(t.TempDir(), "shared"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	fault := errors.New("protected access persistence fault")
+	entered := make(chan struct{})
+	release := make(chan struct{})
+	storage.testHooks.beforeProtectedAccessBatch = func(int) error {
+		close(entered)
+		<-release
+		return fault
+	}
+	if err := storage.batchProtectedAccess(
+		ctx,
+		CommittedObject{
+			RepositoryTenant:    "tenant-test",
+			NamespaceGeneration: 1,
+			Key:                 "key-test",
+			Blob: Blob{
+				Digest: "sha256:" + strings.Repeat("a", 64),
+				Size:   1,
+			},
+			DecisionDigest: "sha256:" + strings.Repeat("b", 64),
+		},
+		time.Now().UTC(),
+	); err != nil {
+		t.Fatal(err)
+	}
+	select {
+	case <-entered:
+	case <-time.After(2 * time.Second):
+		close(release)
+		_ = storage.Close()
+		t.Fatal("protected access batch did not start")
+	}
+	closed := make(chan error, 1)
+	go func() {
+		closed <- storage.Close()
+	}()
+	select {
+	case err := <-closed:
+		close(release)
+		t.Fatalf("storage closed before access batch finished: %v", err)
+	case <-time.After(100 * time.Millisecond):
+	}
+	close(release)
+	select {
+	case err := <-closed:
+		if !errors.Is(err, fault) {
+			t.Fatalf("storage close error = %v, want %v", err, fault)
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("storage did not close after access batch finished")
+	}
+}
 
 func TestOperationalSnapshotReportsBoundedStorageHealth(t *testing.T) {
 	ctx := context.Background()
@@ -37,6 +96,57 @@ func TestOperationalSnapshotReportsBoundedStorageHealth(t *testing.T) {
 		!snapshot.SQLiteProbeSucceeded ||
 		snapshot.SQLiteProbeDuration < 0 {
 		t.Fatalf("operational snapshot = %+v", snapshot)
+	}
+}
+
+func TestCacheMetadataUsesBoundedConcurrentWALConnections(t *testing.T) {
+	ctx := context.Background()
+	storage, err := Open(ctx, filepath.Join(t.TempDir(), "shared"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer storage.Close()
+	if actual := storage.cache.database.Stats().MaxOpenConnections; actual !=
+		cacheMetadataConnections {
+		t.Fatalf(
+			"cache metadata connection limit = %d, want %d",
+			actual,
+			cacheMetadataConnections,
+		)
+	}
+	if actual := storage.control.database.Stats().MaxOpenConnections; actual !=
+		controlMetadataConnections {
+		t.Fatalf(
+			"control metadata connection limit = %d, want %d",
+			actual,
+			controlMetadataConnections,
+		)
+	}
+
+	connections := make([]*sql.Conn, 0, cacheMetadataConnections-1)
+	defer func() {
+		for _, connection := range connections {
+			_ = connection.Close()
+		}
+	}()
+	for range cacheMetadataConnections - 1 {
+		connection, err := storage.cache.database.Conn(ctx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		connections = append(connections, connection)
+	}
+	queryContext, cancel := context.WithTimeout(ctx, time.Second)
+	defer cancel()
+	var count int
+	if err := storage.cache.database.QueryRowContext(
+		queryContext,
+		"SELECT count(*) FROM committed_objects",
+	).Scan(&count); err != nil {
+		t.Fatalf("concurrent cache metadata reader: %v", err)
+	}
+	if count != 0 {
+		t.Fatalf("committed object count = %d, want 0", count)
 	}
 }
 

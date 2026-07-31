@@ -18,6 +18,9 @@ import (
 const (
 	cacheMetadataRole   = "CACHE_VISIBILITY"
 	controlMetadataRole = "CONTROL_AUDIT_INDEX"
+
+	cacheMetadataConnections   = 32
+	controlMetadataConnections = 1
 )
 
 type metadataDefinition struct {
@@ -513,8 +516,14 @@ func openSQLiteMetadata(
 	if err != nil {
 		return nil, err
 	}
-	database.SetMaxOpenConns(1)
-	database.SetMaxIdleConns(1)
+	connectionLimit := controlMetadataConnections
+	if definition.role == cacheMetadataRole {
+		// WAL permits data-plane readers to proceed concurrently while
+		// lifecycle and access writers remain transactionally serialized.
+		connectionLimit = cacheMetadataConnections
+	}
+	database.SetMaxOpenConns(connectionLimit)
+	database.SetMaxIdleConns(connectionLimit)
 	metadata := &sqliteMetadata{
 		owner:      owner,
 		definition: definition,

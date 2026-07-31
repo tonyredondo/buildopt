@@ -110,6 +110,8 @@ func (storage *Storage) InstallLocalAuthority(
 	if err != nil {
 		return LocalAuthorityBinding{}, false, err
 	}
+	storage.currentAuthorityDigests[binding.scopeDigest] =
+		binding.AuthorityDigest
 
 	if binding.AllowWrite {
 		status, created, err := storage.StartAttempt(
@@ -169,8 +171,10 @@ func (storage *Storage) InstallLocalAuthority(
 }
 
 // NewLocalAuthorityHTTPHandler creates the authenticated server-side
-// Gradle-compatible route for one installed authority. It rejects stale state
-// before delegating to the already context-bound cache handler.
+// Gradle-compatible route for one installed authority. The durable tables are
+// validated at installation; the hot path rejects superseded state through
+// the matching monotonic in-process projection before delegating to the
+// already context-bound cache handler.
 func NewLocalAuthorityHTTPHandler(
 	storage *Storage,
 	binding LocalAuthorityBinding,
@@ -373,84 +377,11 @@ func (storage *Storage) localAuthorityCurrentLocked(
 	if ctx == nil || !binding.ExpiresAt.After(now.UTC()) {
 		return false, nil
 	}
-	finish, err := storage.beginOperation()
-	if err != nil {
+	if err := ctx.Err(); err != nil {
 		return false, err
 	}
-	defer finish()
-
-	current, found, err := loadLocalAuthorityState(
-		ctx,
-		storage.control.database,
-		binding.scopeDigest,
-	)
-	if err != nil || !found {
-		return false, err
-	}
-	if !sameAuthorityState(current, binding.state) {
-		return false, nil
-	}
-
-	var (
-		scopeDigest      string
-		attemptID        string
-		credentialDigest string
-		allowRead        int
-		allowWrite       int
-		canonical        []byte
-		expiresAt        int64
-	)
-	err = storage.control.database.QueryRowContext(
-		ctx,
-		`SELECT scope_digest, attempt_id, credential_digest, allow_read,
-       allow_write, canonical_document, expires_at_unix_ms
-FROM local_authority_documents
-WHERE authority_digest = ?`,
-		binding.AuthorityDigest,
-	).Scan(
-		&scopeDigest,
-		&attemptID,
-		&credentialDigest,
-		&allowRead,
-		&allowWrite,
-		&canonical,
-		&expiresAt,
-	)
-	if errors.Is(err, sql.ErrNoRows) {
-		return false, nil
-	}
-	if err != nil {
-		return false, err
-	}
-	if scopeDigest != binding.scopeDigest ||
-		attemptID != binding.AttemptID ||
-		credentialDigest != binding.credentialDigest ||
-		(allowRead == 1) != binding.AllowRead ||
-		(allowWrite == 1) != binding.AllowWrite ||
-		!bytes.Equal(canonical, binding.canonical) ||
-		expiresAt != binding.ExpiresAt.UnixMilli() {
-		return false, nil
-	}
-	if binding.AllowWrite {
-		var authorityDigest string
-		err := storage.cache.database.QueryRowContext(
-			ctx,
-			`SELECT authority_digest
-FROM attempt_authorities
-WHERE attempt_id = ?`,
-			binding.AttemptID,
-		).Scan(&authorityDigest)
-		if errors.Is(err, sql.ErrNoRows) {
-			return false, nil
-		}
-		if err != nil {
-			return false, err
-		}
-		if authorityDigest != binding.AuthorityDigest {
-			return false, nil
-		}
-	}
-	return true, nil
+	current, found := storage.currentAuthorityDigests[binding.scopeDigest]
+	return found && current == binding.AuthorityDigest, nil
 }
 
 type localAuthorityStateQuery interface {

@@ -1207,8 +1207,32 @@ deadline and byte-free fail-open behavior through the real gateway, and signed
 policy/grant revocation that rejects stale routes and late commits while
 rotating generation and clearing pending bytes. Eighteen mode-`0600`
 observations are manifest- and digest-bound. Together with the disk and Shared
-slices, all 15 fault rows and `A1-G04` are closed; sustained load, soak,
-`A1-G02`, and the complete operational gate remain open.
+slices, all 15 fault rows and `A1-G04` are closed. The sustained checker below
+owns the 60-minute load slice; soak, `A1-G02`, and the complete operational
+gate remain separate.
+
+## Private-beta sustained load
+
+Exercise the real data plane with the CI-safe non-qualifying trial:
+
+```bash
+./dev/check-beta-sustained
+```
+
+Run the exact one-hour qualification only in the pinned 4-CPU/16-GiB cgroup:
+
+```bash
+./dev/check-beta-sustained --qualify
+```
+
+Both paths use the real managed gateway, authenticated Shared storage, the
+exact 70/20/8/2 object mix, and strict raw/result validation. The trial emits
+300 observations, marks its runner unverified, and must be rejected by the
+production validator. The qualifying path runs 1/8/32 clients for 1,200
+seconds each, emits 30,000 observations, and enforces the golden-runner and
+boundary-specific p95 targets. A green qualification closes only the
+60-minute sustained slice; the eight-hour soak, Gradle fixture preservation,
+`A1-G02`, and complete `OPS-001/A1` gate remain open.
 
 ## Private-beta benchmark harness
 

@@ -32,6 +32,10 @@ escape the reservation or object limit.
 Every commit creates a durable `PROBATION` entry with a 30-day expiry. A
 complete authenticated and checksum-verified hit promotes it to `PROTECTED`.
 Access timestamps coalesce to at most one write per minute after promotion.
+Concurrent stale protected accesses are deduplicated into bounded asynchronous
+transactions, and any deferred write failure is surfaced by the operational
+snapshot and shutdown. The cache WAL admits up to 32 data-plane connections
+while the control database retains its single-connection boundary.
 Protected data targets 80% of the deployment low watermark; its least-recent
 entry returns to probation when that target is exceeded.
 
@@ -68,7 +72,7 @@ Run:
 
 The race-enabled checker exercises admission before body reads, overlapping
 reservations, simulated disk exhaustion, promotion/demotion, byte eviction,
-TTL deletion, schema migration, and operational signals. Phase-sequenced
-`A1-003`/`A1-G03` remain open until the exact benchmark fault evidence consumes
-this substrate; this also does not close the broader soak, beta restart gate,
-managed-copy data lifecycle, or external pilot.
+TTL deletion, schema migration, concurrent WAL reads, asynchronous access
+coalescing, and operational signals. Exact benchmark fault evidence closes
+`A1-003`/`A1-G03`; this substrate and its sustained-load use do not close the
+broader soak, managed-copy data lifecycle, or external pilot.

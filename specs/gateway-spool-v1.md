@@ -24,6 +24,12 @@ mode-`0700` spool directory. Missing or inconsistent metadata, quota pressure,
 I/O failure, cancellation, truncation, or corruption becomes a byte-free
 `404`, preserving Gradle's safe cache-miss fallback.
 
+Concurrent verified reads may share one directory fsync only after every
+participating pathname has been unlinked. Every participant waits for that
+shared durability boundary before downstream `200`; file sync, digest
+verification, private permissions, unlinking, and error handling remain
+per-object.
+
 ## Fault and recovery evidence
 
 The race-enabled conformance suite proves:

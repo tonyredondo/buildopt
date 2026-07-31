@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "buildopt.specs/beta-sustained/v1",
+  "gateId": "OPS-001/A1",
+  "manifest": "benchmarks/beta-v1.yaml",
+  "commands": {
+    "trial": "dev/check-beta-sustained",
+    "qualify": "dev/check-beta-sustained --qualify",
+    "validate": "beta-benchmark validate-sustained --manifest PATH --result PATH"
+  },
+  "production": {
+    "qualification": "SUSTAINED_SLICE",
+    "phase": "SUSTAINED",
+    "totalDurationSeconds": 3600,
+    "clients": [
+      1,
+      8,
+      32
+    ],
+    "minimumSecondsPerClientStratum": 1200,
+    "logicalOperationsPerStratum": 10000,
+    "rawObservations": 30000,
+    "objectIdentityCount": 100,
+    "logicalCycleRepeats": 100,
+    "objectSizesBytes": [
+      65536,
+      1048576,
+      10485760,
+      104857600
+    ],
+    "objectPercentages": [
+      70,
+      20,
+      8,
+      2
+    ],
+    "hitPercent": 70,
+    "maximumManagedGatewayInFlightBytes": 209715200,
+    "authorityValiditySeconds": 7200,
+    "runner": "linux-amd64-4c-16g-v1",
+    "cpuMax": "400000 100000",
+    "memoryMax": "17179869184"
+  },
+  "trial": {
+    "qualification": "TRIAL",
+    "totalDurationMilliseconds": 900,
+    "logicalOperationsPerStratum": 100,
+    "rawObservations": 300,
+    "scaledSizesBytes": [
+      4096,
+      65536,
+      524288,
+      1048576
+    ],
+    "runnerVerified": false,
+    "qualifying": false
+  },
+  "execution": {
+    "transport": "REAL_MANAGED_GATEWAY_LOOPBACK_HTTP",
+    "storage": "REAL_SINGLE_NODE_SHARED",
+    "preload": "100_COMPLETE_PENDING_PUTS_THEN_ED25519_COMMIT",
+    "payloads": "DETERMINISTIC_NON_SPARSE_BYTES",
+    "scheduler": "DETERMINISTIC_PACED_BATCHES_BOUNDED_BY_CLIENTS_AND_GATEWAY_BYTES",
+    "errorsAllowed": 0,
+    "rawFormat": "PRIVATE_JSONL",
+    "summaryFormat": "PRIVATE_JSON",
+    "latencyMeasurements": {
+      "gatewayMiss": "REQUEST_START_TO_RESPONSE_HEADERS",
+      "verifiedHitReady": "REQUEST_START_TO_VERIFIED_RESPONSE_HEADERS",
+      "downstreamMaterialization": "RESPONSE_HEADERS_TO_COMPLETE_BODY"
+    },
+    "manifestDigestBound": true,
+    "rawDigestBound": true,
+    "unknownFieldsRejected": true,
+    "tamperRejected": true,
+    "trialRejectedByProductionValidator": true
+  },
+  "p95TargetsMilliseconds": {
+    "miss": 50,
+    "verifiedHitUpTo1MiB": 150,
+    "verifiedHitUpTo10MiB": 400,
+    "verifiedHitUpTo100MiB": 2500,
+    "downstreamBaseMilliseconds": 150,
+    "downstreamBytesPerSecond": 209715200
+  },
+  "boundaries": {
+    "closesAfterQualifyingRun": [
+      "OPS-001/A1-SUSTAINED-60-MINUTES"
+    ],
+    "doesNotClose": [
+      "OPS-001/A1",
+      "A1-G02",
+      "EIGHT_HOUR_SOAK",
+      "GRADLE_FIXTURE_MATRIX"
+    ]
+  }
+}

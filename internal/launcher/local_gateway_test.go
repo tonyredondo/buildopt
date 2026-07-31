@@ -315,6 +315,55 @@ func TestLocalGatewayRoutesOnlyCurrentAuthenticatedCacheContext(
 	}
 }
 
+func TestLocalGatewayReusesAuthenticatedUpstreamConnection(t *testing.T) {
+	cached := []byte("cached")
+	cachedDigest := "sha256:" + sha256Hex(cached)
+	var addressesMutex sync.Mutex
+	var remoteAddresses []string
+	upstream := httptest.NewServer(http.HandlerFunc(func(
+		writer http.ResponseWriter,
+		request *http.Request,
+	) {
+		addressesMutex.Lock()
+		remoteAddresses = append(remoteAddresses, request.RemoteAddr)
+		addressesMutex.Unlock()
+		writer.Header().Set("ETag", `"`+cachedDigest+`"`)
+		_, _ = writer.Write(cached)
+	}))
+	defer upstream.Close()
+	gateway := startCacheGatewayForTest(t, upstream.URL)
+	defer gateway.close()
+
+	for range 2 {
+		response := serveGatewayRequestForTest(
+			t,
+			gateway,
+			context.Background(),
+			http.MethodGet,
+			nil,
+		)
+		if response.Code != http.StatusOK ||
+			!bytes.Equal(response.Body.Bytes(), cached) {
+			t.Fatalf(
+				"cache GET = %d/%q, want 200/%q",
+				response.Code,
+				response.Body.Bytes(),
+				cached,
+			)
+		}
+	}
+
+	addressesMutex.Lock()
+	defer addressesMutex.Unlock()
+	if len(remoteAddresses) != 2 ||
+		remoteAddresses[0] != remoteAddresses[1] {
+		t.Fatalf(
+			"upstream connections = %q, want one reused connection",
+			remoteAddresses,
+		)
+	}
+}
+
 func TestLocalGatewayCacheFailsClosed(t *testing.T) {
 	tests := []struct {
 		name           string

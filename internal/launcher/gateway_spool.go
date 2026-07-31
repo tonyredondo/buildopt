@@ -12,12 +12,14 @@ import (
 	"strings"
 	"sync"
 	"syscall"
+	"time"
 )
 
 const (
 	gatewayMaximumVerifiedPayloadBytes int64 = 100 << 20
 	gatewayVerifiedSpoolQuotaBytes     int64 = 200 << 20
 	gatewaySpoolFilePrefix                   = ".get-"
+	gatewayDirectorySyncBatchWindow          = 2 * time.Millisecond
 )
 
 var errGatewaySpoolUnavailable = errors.New(
@@ -25,15 +27,24 @@ var errGatewaySpoolUnavailable = errors.New(
 )
 
 type gatewaySpool struct {
-	root             string
-	maximumBytes     int64
-	quotaBytes       int64
-	removeRoot       bool
-	mutex            sync.Mutex
-	reservedBytes    int64
-	closed           bool
-	testWrite        func(*os.File, []byte) (int, error)
-	testAfterReserve func()
+	root                       string
+	maximumBytes               int64
+	quotaBytes                 int64
+	removeRoot                 bool
+	mutex                      sync.Mutex
+	reservedBytes              int64
+	closed                     bool
+	directoryMutex             sync.Mutex
+	directoryBatch             *gatewayDirectorySyncBatch
+	testWrite                  func(*os.File, []byte) (int, error)
+	testAfterReserve           func()
+	testAfterDirectorySyncJoin func(bool)
+	testSyncDirectory          func(string) error
+}
+
+type gatewayDirectorySyncBatch struct {
+	done chan struct{}
+	err  error
 }
 
 type gatewaySpoolReservation struct {
@@ -204,7 +215,7 @@ func (spool *gatewaySpool) receive(
 		)
 	}
 	remove = false
-	if err := syncGatewaySpoolDirectory(spool.root); err != nil {
+	if err := spool.syncUnlinkedDirectory(); err != nil {
 		return verifiedGatewayPayload{}, fmt.Errorf(
 			"%w: sync directory: %v",
 			errGatewaySpoolUnavailable,
@@ -219,6 +230,39 @@ func (spool *gatewaySpool) receive(
 		size:        size,
 		digest:      actualDigest,
 	}, nil
+}
+
+func (spool *gatewaySpool) syncUnlinkedDirectory() error {
+	spool.directoryMutex.Lock()
+	batch := spool.directoryBatch
+	leader := batch == nil
+	if leader {
+		batch = &gatewayDirectorySyncBatch{done: make(chan struct{})}
+		spool.directoryBatch = batch
+	}
+	spool.directoryMutex.Unlock()
+	if spool.testAfterDirectorySyncJoin != nil {
+		spool.testAfterDirectorySyncJoin(leader)
+	}
+
+	if leader {
+		timer := time.NewTimer(gatewayDirectorySyncBatchWindow)
+		<-timer.C
+		spool.directoryMutex.Lock()
+		if spool.directoryBatch == batch {
+			spool.directoryBatch = nil
+		}
+		spool.directoryMutex.Unlock()
+		if spool.testSyncDirectory != nil {
+			batch.err = spool.testSyncDirectory(spool.root)
+		} else {
+			batch.err = syncGatewaySpoolDirectory(spool.root)
+		}
+		close(batch.done)
+	} else {
+		<-batch.done
+	}
+	return batch.err
 }
 
 func (payload *verifiedGatewayPayload) close() error {

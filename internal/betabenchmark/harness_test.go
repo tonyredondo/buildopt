@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"testing"
+	"time"
 )
 
 func TestRunSmokeExercisesEveryPhaseAndClientStratum(t *testing.T) {
@@ -267,6 +268,170 @@ func TestRunSystemFaultsProducesBoundTamperEvidentEvidence(t *testing.T) {
 	}
 	if err := ValidateSystemFaultResult(manifestPath, resultPath); err == nil {
 		t.Fatal("tampered system-fault observations passed validation")
+	}
+}
+
+func TestRunSustainedTrialUsesManagedGatewayAndRejectsTampering(
+	t *testing.T,
+) {
+	root := t.TempDir()
+	workingDirectory, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	repositoryRoot, err := filepath.Abs(filepath.Join(workingDirectory, "..", ".."))
+	if err != nil {
+		t.Fatal(err)
+	}
+	manifestPath := filepath.Join(repositoryRoot, "benchmarks", "beta-v1.yaml")
+	buildoptExecutable := buildSystemFaultExecutable(
+		t,
+		repositoryRoot,
+		root,
+		"buildopt",
+		"./cmd/buildopt",
+	)
+	resultPath, err := RunSustainedTrial(
+		context.Background(),
+		manifestPath,
+		filepath.Join(root, "state"),
+		filepath.Join(root, "output"),
+		buildoptExecutable,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateSustainedTrial(manifestPath, resultPath); err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateSustainedResult(manifestPath, resultPath); err == nil {
+		t.Fatal("trial passed one-hour sustained validation")
+	}
+	result, err := os.ReadFile(resultPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	unknownResult := bytes.Replace(
+		result,
+		[]byte("{\n"),
+		[]byte("{\n  \"unknown\": true,\n"),
+		1,
+	)
+	if err := os.WriteFile(resultPath, unknownResult, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateSustainedTrial(manifestPath, resultPath); err == nil {
+		t.Fatal("unknown sustained result field passed validation")
+	}
+	if err := os.WriteFile(resultPath, result, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	observationsPath := filepath.Join(
+		filepath.Dir(resultPath),
+		observationsFilename,
+	)
+	observations, err := os.ReadFile(observationsPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	observations[len(observations)-2] ^= 1
+	if err := os.WriteFile(observationsPath, observations, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateSustainedTrial(manifestPath, resultPath); err == nil {
+		t.Fatal("tampered sustained observations passed validation")
+	}
+}
+
+func TestGoldenRunnerCgroupRequiresExactLimits(t *testing.T) {
+	if !goldenRunnerCgroup(cgroupIdentity{
+		CPUQuota:    "400000 100000",
+		MemoryLimit: "17179869184",
+	}) {
+		t.Fatal("exact golden cgroup was rejected")
+	}
+	if goldenRunnerCgroup(cgroupIdentity{
+		CPUQuota:    "1200000 100000",
+		MemoryLimit: "17179869184",
+	}) {
+		t.Fatal("non-golden CPU quota passed")
+	}
+}
+
+func TestSustainedAuthorityCoversQualificationWindow(t *testing.T) {
+	now := time.Date(2026, 7, 30, 12, 0, 0, 0, time.UTC)
+	fixture, err := newSystemAuthorityFixtureWithDurations(
+		context.Background(),
+		t.TempDir(),
+		"sha256:"+string(bytes.Repeat([]byte{'1'}, 64)),
+		now,
+		941,
+		false,
+		false,
+		sustainedAuthorityLifetime,
+		sustainedAuthorityLifetime,
+		sustainedAuthorityLifetime,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got, want := fixture.verified.ExpiresAt(), now.Add(
+		sustainedAuthorityLifetime,
+	); !got.Equal(want) {
+		t.Fatalf("sustained authority expiry = %s, want %s", got, want)
+	}
+}
+
+func TestSustainedLatencyTargetsSeparateReadyAndMaterialization(
+	t *testing.T,
+) {
+	targets := summarizeSustainedLatencyTargets(
+		[]rawObservation{
+			{
+				Clients:     1,
+				SizeBytes:   1 << 20,
+				ExpectedHit: false,
+				ReadyNs:     (40 * time.Millisecond).Nanoseconds(),
+				DurationNs:  (41 * time.Millisecond).Nanoseconds(),
+			},
+			{
+				Clients:     1,
+				SizeBytes:   1 << 20,
+				ExpectedHit: true,
+				ReadyNs:     (100 * time.Millisecond).Nanoseconds(),
+				DurationNs:  (200 * time.Millisecond).Nanoseconds(),
+			},
+		},
+		[]int{1},
+	)
+	if len(targets) != 3 {
+		t.Fatalf("latency target count = %d, want 3", len(targets))
+	}
+	expected := []struct {
+		metric  string
+		p95     time.Duration
+		maximum time.Duration
+	}{
+		{"GATEWAY_MISS", 40 * time.Millisecond, 50 * time.Millisecond},
+		{
+			"VERIFIED_HIT_READY",
+			100 * time.Millisecond,
+			150 * time.Millisecond,
+		},
+		{
+			"DOWNSTREAM_MATERIALIZATION",
+			100 * time.Millisecond,
+			155 * time.Millisecond,
+		},
+	}
+	for index, want := range expected {
+		got := targets[index]
+		if got.Metric != want.metric ||
+			got.P95Ns != want.p95.Nanoseconds() ||
+			got.MaximumP95Ns != want.maximum.Nanoseconds() ||
+			got.Status != "PASSED" {
+			t.Fatalf("latency target[%d] = %+v, want %+v", index, got, want)
+		}
 	}
 }
 
