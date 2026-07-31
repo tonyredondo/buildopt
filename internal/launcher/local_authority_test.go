@@ -41,6 +41,19 @@ func TestLauncherInstallsAuthenticatedCacheContext(t *testing.T) {
 		t,
 		upstream.URL,
 	)
+	remoteToken := bytes.Repeat([]byte{0x6b}, localauthority.CredentialBytes)
+	remoteTokenPath := filepath.Join(
+		filepath.Dir(environment[localCredentialPathEnvironment]),
+		"remote-token",
+	)
+	if err := os.WriteFile(
+		remoteTokenPath,
+		[]byte(base64.RawURLEncoding.EncodeToString(remoteToken)),
+		0o600,
+	); err != nil {
+		t.Fatalf("write remote token: %v", err)
+	}
+	environment[sharedCacheTokenPathEnvironment] = remoteTokenPath
 
 	actual, configured, err := localAuthorityContextFromEnvironment(
 		context.Background(),
@@ -66,6 +79,9 @@ func TestLauncherInstallsAuthenticatedCacheContext(t *testing.T) {
 		actual.childEnvironment[managedAuthorityContractEnvironment] !=
 			localauthority.AuthorityContractVersion {
 		t.Fatalf("unexpected launcher authority context: %+v", actual)
+	}
+	if actual.cacheBinding.credential != base64.RawURLEncoding.EncodeToString(remoteToken) {
+		t.Fatal("gateway did not use the separate remote beta token")
 	}
 	if strings.Contains(
 		strings.Join(mapValues(actual.childEnvironment), "\n"),
@@ -120,9 +136,9 @@ func TestLauncherAuthorityFailsClosed(t *testing.T) {
 			},
 		},
 		{
-			name: "nonloopback Shared endpoint",
+			name: "insecure remote Shared endpoint",
 			mutate: func(environment map[string]string) {
-				environment[sharedCacheURLEnvironment] = "https://cache.example"
+				environment[sharedCacheURLEnvironment] = "http://cache.example"
 			},
 		},
 	}

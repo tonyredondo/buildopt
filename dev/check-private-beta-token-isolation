@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/private-beta-token-isolation-v1.json"
+buildopt_fixture="${buildopt_repo_root}/fixtures/ci-orchestration/private-beta-token-isolation.yml"
+
+for buildopt_command in awk git grep go jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required token-isolation command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if ! jq -e '
+    keys == [
+        "boundaries",
+        "gateId",
+        "gateway",
+        "github",
+        "revocation",
+        "schemaVersion",
+        "scope",
+        "token",
+        "workItem"
+    ] and
+    .schemaVersion == "buildopt.specs/private-beta-token-isolation/v1" and
+    .workItem == "A1-002" and
+    .gateId == "A1-G01" and
+    .token == {
+        bytes: 32,
+        encoding: "BASE64URL_NO_PADDING",
+        digest: "SHA256_DOMAIN_SEPARATED",
+        rawPersistence: "FORBIDDEN",
+        store: "control.sqlite/beta_cache_tokens",
+        maximumLifetimeSeconds: 2592000,
+        provisioning: "MANUAL"
+    } and
+    .scope.fields == [
+        "tenant",
+        "repository",
+        "trustDomain",
+        "namespace",
+        "namespaceGeneration",
+        "plane",
+        "access"
+    ] and
+    .scope.planes == ["STABLE", "QUARANTINE", "CONTROL"] and
+    .scope.access == ["READ", "READ_WRITE"] and
+    .scope.stableWrites == "PROTECTED_WORKFLOW_ONLY" and
+    .revocation == {
+        lookup: "EVERY_REMOTE_REQUEST",
+        effective: "BEFORE_NEXT_BUILD",
+        rotation: "ISSUE_DISTINCT_THEN_REVOKE_OLD"
+    } and
+    .gateway == {
+        localCredentialIsRemoteToken: false,
+        remoteTransport: "TLS_REQUIRED_OUTSIDE_LOOPBACK",
+        tokenVisibleToGradle: false,
+        tokenPathEnvironment: "BUILDOPT_SHARED_CACHE_TOKEN_PATH"
+    } and
+    .github == {
+        fixture: "fixtures/ci-orchestration/private-beta-token-isolation.yml",
+        pullRequestTargetAllowed: false,
+        fork: "NO_TOKEN_BASELINE",
+        sameRepositoryPullRequest: "STABLE_READ",
+        protectedMain: "STABLE_READ_WRITE"
+    } and
+    .boundaries.closes == ["A1-002", "A1-G01"] and
+    .boundaries.doesNotClose == [
+        "A1-001",
+        "A1-004",
+        "A1-005",
+        "A1-006",
+        "A1-G02",
+        "A1-G05",
+        "A1-G06",
+        "OPS-001/A1"
+    ]
+' "${buildopt_spec}" >/dev/null; then
+    printf 'private-beta token isolation spec is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_fork_block=$(awk '
+    /^  fork-baseline:/ { capture = 1 }
+    /^  internal-read:/ { capture = 0 }
+    capture { print }
+' "${buildopt_fixture}")
+buildopt_internal_block=$(awk '
+    /^  internal-read:/ { capture = 1 }
+    /^  protected-stable:/ { capture = 0 }
+    capture { print }
+' "${buildopt_fixture}")
+buildopt_protected_block=$(awk '
+    /^  protected-stable:/ { capture = 1 }
+    capture { print }
+' "${buildopt_fixture}")
+
+if [[ -z "${buildopt_fork_block}" ]] ||
+    grep -Eq 'secrets[.]|BUILDOPT_SHARED_CACHE_TOKEN_PATH|buildopt run' \
+        <<<"${buildopt_fork_block}" ||
+    ! grep -Fq "head.repo.full_name != github.repository" \
+        <<<"${buildopt_fork_block}"; then
+    printf 'fork job can receive or invoke BuildOpt with a token\n' >&2
+    exit 1
+fi
+if ! grep -Fq 'secrets.BUILDOPT_CACHE_READ_TOKEN' \
+    <<<"${buildopt_internal_block}" ||
+    grep -Fq 'READ_WRITE' <<<"${buildopt_internal_block}" ||
+    ! grep -Fq 'head.repo.full_name == github.repository' \
+        <<<"${buildopt_internal_block}"; then
+    printf 'same-repository pull request is not read-only\n' >&2
+    exit 1
+fi
+if ! grep -Fq "github.ref == 'refs/heads/main'" \
+    <<<"${buildopt_protected_block}" ||
+    ! grep -Fq 'environment: buildopt-private-beta' \
+        <<<"${buildopt_protected_block}" ||
+    ! grep -Fq 'secrets.BUILDOPT_CACHE_READ_WRITE_TOKEN' \
+        <<<"${buildopt_protected_block}"; then
+    printf 'stable write token is not limited to the protected workflow\n' >&2
+    exit 1
+fi
+if grep -Fq 'pull_request_target:' "${buildopt_fixture}" ||
+    [[ "$(grep -Fc 'secrets.BUILDOPT_CACHE_' "${buildopt_fixture}")" != "2" ]]; then
+    printf 'GitHub token fixture has an unsafe trigger or secret count\n' >&2
+    exit 1
+fi
+
+"${buildopt_script_dir}/run" \
+    --toolchain actionlint \
+    -- \
+    actionlint \
+    -no-color \
+    -pyflakes= \
+    "${buildopt_fixture}"
+
+go test ./internal/sharedcache -run '^TestBetaToken' -count=1
+go test ./internal/launcher -run \
+    '^(TestLauncherInstallsAuthenticatedCacheContext|TestLauncherAuthorityFailsClosed|TestGatewayUpstreamEndpointRequiresTLSOutsideLoopback|TestLocalGatewayChildEnvironment)$' \
+    -count=1
+go test ./cmd/buildopt-server -run '^TestBetaTokenCLI' -count=1
+
+printf 'A1-G01 private-beta token isolation OK: hashed scoped tokens, per-request revocation, TLS remote hop, Gradle secrecy, and zero fork tokens\n'

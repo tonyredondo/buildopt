@@ -12,10 +12,11 @@ import (
 )
 
 const (
-	localAuthorityPathEnvironment  = "BUILDOPT_LOCAL_AUTHORITY_PATH"
-	localTrustRootPathEnvironment  = "BUILDOPT_LOCAL_TRUST_ROOT_PATH"
-	localCredentialPathEnvironment = "BUILDOPT_LOCAL_CACHE_CREDENTIAL_PATH"
-	sharedCacheURLEnvironment      = "BUILDOPT_SHARED_CACHE_URL"
+	localAuthorityPathEnvironment   = "BUILDOPT_LOCAL_AUTHORITY_PATH"
+	localTrustRootPathEnvironment   = "BUILDOPT_LOCAL_TRUST_ROOT_PATH"
+	localCredentialPathEnvironment  = "BUILDOPT_LOCAL_CACHE_CREDENTIAL_PATH"
+	sharedCacheTokenPathEnvironment = "BUILDOPT_SHARED_CACHE_TOKEN_PATH"
+	sharedCacheURLEnvironment       = "BUILDOPT_SHARED_CACHE_URL"
 
 	managedSharedModeEnvironment          = "BUILDOPT_MANAGED_SHARED_MODE"
 	managedAuthorityDigestEnvironment     = "BUILDOPT_MANAGED_AUTHORITY_DIGEST"
@@ -48,6 +49,7 @@ func localAuthorityContextFromEnvironment(
 	authorityPath := getenv(localAuthorityPathEnvironment)
 	trustRootPath := getenv(localTrustRootPathEnvironment)
 	credentialPath := getenv(localCredentialPathEnvironment)
+	remoteTokenPath := getenv(sharedCacheTokenPathEnvironment)
 	sharedCacheURL := getenv(sharedCacheURLEnvironment)
 	primary := []string{
 		authorityPath,
@@ -120,6 +122,20 @@ func localAuthorityContextFromEnvironment(
 		return nil, true, err
 	}
 	defer clearBytes(credential)
+	upstreamCredential := credential
+	if remoteTokenPath != "" {
+		encoded, readErr := localauthority.ReadPrivateFile(remoteTokenPath, 128)
+		if readErr != nil {
+			return nil, true, fmt.Errorf("read remote cache token: %w", readErr)
+		}
+		remoteToken, parseErr := localauthority.ParseCredential(encoded)
+		clearBytes(encoded)
+		if parseErr != nil {
+			return nil, true, fmt.Errorf("parse remote cache token: %w", parseErr)
+		}
+		defer clearBytes(remoteToken)
+		upstreamCredential = remoteToken
+	}
 	if !verified.SupportsComponents(
 		launcherComponentVersion,
 		pluginComponentVersion,
@@ -164,7 +180,7 @@ func localAuthorityContextFromEnvironment(
 	}
 	cacheBinding, err := newGatewayCacheBinding(
 		sharedCacheURL,
-		credential,
+		upstreamCredential,
 		document.AuthorityDigest,
 		document.Attempt.AttemptID,
 		document.Attempt.AllowRead,

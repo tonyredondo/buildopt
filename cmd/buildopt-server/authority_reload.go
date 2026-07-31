@@ -22,6 +22,7 @@ type authorityPaths struct {
 	document   string
 	trustRoot  string
 	credential string
+	betaTokens bool
 }
 
 type loadedAuthority struct {
@@ -61,11 +62,16 @@ func loadServerAuthority(
 	if err != nil {
 		return loadedAuthority{}, err
 	}
-	handler, err := sharedcache.NewLocalAuthorityHTTPHandler(
-		storage,
-		binding,
-		credential,
-	)
+	var handler http.Handler
+	if paths.betaTokens {
+		handler, err = sharedcache.NewBetaTokenHTTPHandler(
+			storage,
+			binding,
+			sharedcache.BetaTokenPlaneStable,
+		)
+	} else {
+		handler, err = sharedcache.NewLocalAuthorityHTTPHandler(storage, binding, credential)
+	}
 	if err != nil {
 		return loadedAuthority{}, err
 	}

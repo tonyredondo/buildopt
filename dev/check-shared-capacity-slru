@@ -36,7 +36,7 @@ if ! jq -e '
     .schemaVersion == "buildopt.specs/shared-capacity-slru/v1" and
     .deliverableId == "A1-003" and
     .gateId == "A1-G03" and
-    .storageSchemaVersion == 4 and
+    .storageSchemaVersion == 5 and
     .defaults == {
         maximumObjectBytes: 104857600,
         maximumRepositoryBytes: 107374182400,

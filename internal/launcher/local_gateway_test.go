@@ -639,6 +639,28 @@ func TestLocalGatewayRejectsUnknownCacheMethodWithoutUpstreamContact(
 	}
 }
 
+func TestGatewayUpstreamEndpointRequiresTLSOutsideLoopback(t *testing.T) {
+	for _, endpoint := range []string{
+		"http://127.0.0.1:8042",
+		"https://cache.example",
+		"https://cache.example:8443/",
+	} {
+		if _, err := validateGatewayUpstreamEndpoint(endpoint); err != nil {
+			t.Errorf("valid upstream %q: %v", endpoint, err)
+		}
+	}
+	for _, endpoint := range []string{
+		"http://cache.example",
+		"http://localhost:8042",
+		"https://user@cache.example",
+		"https://cache.example/path",
+		"https://cache.example?token=unsafe",
+	} {
+		if _, err := validateGatewayUpstreamEndpoint(endpoint); err == nil {
+			t.Errorf("accepted unsafe upstream %q", endpoint)
+		}
+	}
+}
 func startCacheGatewayForTest(
 	t *testing.T,
 	upstream string,
@@ -719,6 +741,7 @@ func TestLocalGatewayChildEnvironment(t *testing.T) {
 		localAuthorityPathEnvironment + "=/tmp/untrusted-authority",
 		localTrustRootPathEnvironment + "=/tmp/untrusted-root",
 		localCredentialPathEnvironment + "=/tmp/untrusted-credential",
+		sharedCacheTokenPathEnvironment + "=/tmp/untrusted-remote-token",
 		sharedCacheURLEnvironment + "=http://127.0.0.1:2",
 		managedSharedModeEnvironment + "=READ_WRITE",
 		managedAuthorityDigestEnvironment + "=untrusted-authority",
@@ -753,6 +776,7 @@ func TestLocalGatewayChildEnvironment(t *testing.T) {
 		localAuthorityPathEnvironment,
 		localTrustRootPathEnvironment,
 		localCredentialPathEnvironment,
+		sharedCacheTokenPathEnvironment,
 		sharedCacheURLEnvironment,
 		managedSharedModeEnvironment,
 		managedAuthorityDigestEnvironment,

@@ -250,6 +250,14 @@ plugin configures `HttpBuildCache` at the loopback gateway. Invalid or partial
 authority disables the authenticated cache for that invocation without
 changing the child exit status.
 
+For `A1-002`, set `BUILDOPT_SHARED_CACHE_TOKEN_PATH` to a separate absolute,
+current-user-owned mode-`0600` file containing the provisioned opaque remote
+token. The signed local credential continues to bind policy and attempt, while
+the gateway substitutes only the remote token on upstream requests and removes
+both token paths before Gradle starts. `BUILDOPT_SHARED_CACHE_URL` may use
+canonical HTTPS for the beta backend; plaintext HTTP remains accepted only for
+canonical `127.0.0.1` loopback.
+
 Validate this complete boundary with:
 
 ```bash

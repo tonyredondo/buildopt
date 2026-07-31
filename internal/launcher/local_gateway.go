@@ -522,25 +522,35 @@ func (gateway *localGateway) writeUpstreamFailure(
 
 func validateGatewayUpstreamEndpoint(value string) (string, error) {
 	parsed, err := url.Parse(value)
-	if err != nil ||
-		parsed.Scheme != "http" ||
-		parsed.Hostname() != "127.0.0.1" ||
+	if err != nil || parsed.Hostname() == "" ||
 		parsed.User != nil ||
 		(parsed.Path != "" && parsed.Path != "/") ||
 		parsed.RawQuery != "" ||
 		parsed.Fragment != "" {
 		return "", errors.New(
-			"gateway upstream endpoint is not canonical loopback HTTP",
+			"gateway upstream endpoint is not canonical HTTP(S)",
 		)
 	}
-	port, err := strconv.Atoi(parsed.Port())
-	if err != nil || port < 1 || port > 65535 {
-		return "", errors.New("gateway upstream endpoint has an invalid port")
+	loopbackHTTP := parsed.Scheme == "http" &&
+		parsed.Hostname() == "127.0.0.1"
+	remoteTLS := parsed.Scheme == "https"
+	if !loopbackHTTP && !remoteTLS {
+		return "", errors.New(
+			"gateway upstream endpoint requires TLS outside loopback",
+		)
 	}
-	canonical := "http://" + net.JoinHostPort(
-		"127.0.0.1",
-		strconv.Itoa(port),
-	)
+	port := parsed.Port()
+	if port != "" {
+		numericPort, portErr := strconv.Atoi(port)
+		if portErr != nil || numericPort < 1 || numericPort > 65535 {
+			return "", errors.New("gateway upstream endpoint has an invalid port")
+		}
+	}
+	host := parsed.Hostname()
+	if port != "" {
+		host = net.JoinHostPort(host, port)
+	}
+	canonical := parsed.Scheme + "://" + host
 	if value != canonical && value != canonical+"/" {
 		return "", errors.New("gateway upstream endpoint is not canonical")
 	}
@@ -639,6 +649,7 @@ var reservedChildEnvironment = []string{
 	localAuthorityPathEnvironment,
 	localTrustRootPathEnvironment,
 	localCredentialPathEnvironment,
+	sharedCacheTokenPathEnvironment,
 	sharedCacheURLEnvironment,
 	managedSharedModeEnvironment,
 	managedAuthorityDigestEnvironment,

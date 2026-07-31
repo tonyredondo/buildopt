@@ -1149,7 +1149,7 @@ Exercise the `A1-003`/`A1-G03` storage-capacity substrate:
 
 The checker proves exact and unknown-length admission before body reads,
 atomic overlapping reservations, simulated disk exhaustion, tenant/repository/
-trust/namespace limits, and HTTP `413` fallback. Real schema-v4 storage then
+trust/namespace limits, and HTTP `413` fallback. Real schema-v5 storage then
 proves probation-first byte eviction from 85% to 75%, verified-hit promotion,
 protected-target demotion, durable 30-day TTL, physical orphan cleanup,
 transactional v3 migration, and operational quota signals. Phase-sequenced
@@ -1307,6 +1307,24 @@ cycle keeps the exact 70/20/8/2 distribution and 70% read-hit target while
 scaling sizes and omitting qualifying durations, Gradle fixtures, and faults.
 Validation rejects result or raw-stream tampering; the full operational gate
 remains open.
+
+## Private-beta token isolation
+
+Exercise the complete `A1-002`/`A1-G01` negative gate:
+
+```bash
+./dev/check-private-beta-token-isolation
+```
+
+The checker proves that only domain-separated token hashes reach
+`control.sqlite`; repository, namespace, generation, plane, and operation
+crossings fail closed; read-only tokens cannot `PUT`; expiry and a live
+`buildopt-server token revoke` take effect before the next request. It also
+proves that the remote token differs from the signed local authority
+credential, stays inside the gateway, requires TLS outside loopback, and is
+removed before Gradle. The inert GitHub composition gives forks no token,
+same-repository pull requests only stable reads, and protected `main` the
+distinct stable read-write token. This closes only `A1-002` and `A1-G01`.
 
 ## GitHub Action validation
 

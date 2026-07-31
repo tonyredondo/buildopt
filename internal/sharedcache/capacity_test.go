@@ -470,6 +470,9 @@ func TestSchemaThreeCommittedEntriesUpgradeIntoProbation(t *testing.T) {
 		"DROP TABLE storage_entries",
 	})
 	downgradeCapacitySchemaForTest(t, layout.ControlDatabase, []string{
+		"DROP INDEX beta_cache_tokens_expires",
+		"DROP INDEX beta_cache_tokens_scope",
+		"DROP TABLE beta_cache_tokens",
 		"DROP INDEX storage_maintenance_runs_completed_at",
 		"DROP TABLE storage_maintenance_runs",
 	})
@@ -643,7 +646,7 @@ func downgradeCapacitySchemaForTest(
 		}
 	}
 	if _, err := database.Exec(
-		"DELETE FROM schema_migrations WHERE version = 4",
+		"DELETE FROM schema_migrations WHERE version >= 4",
 	); err != nil {
 		_ = database.Close()
 		t.Fatal(err)

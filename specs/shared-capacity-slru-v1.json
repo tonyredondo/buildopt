@@ -2,7 +2,7 @@
   "schemaVersion": "buildopt.specs/shared-capacity-slru/v1",
   "deliverableId": "A1-003",
   "gateId": "A1-G03",
-  "storageSchemaVersion": 4,
+  "storageSchemaVersion": 5,
   "defaults": {
     "maximumObjectBytes": 104857600,
     "maximumRepositoryBytes": 107374182400,

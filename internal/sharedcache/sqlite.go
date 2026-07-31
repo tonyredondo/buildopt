@@ -228,6 +228,11 @@ ON storage_entries (
 )`,
 		},
 	}
+	versionFive := schemaMigration{
+		version:    5,
+		name:       "cache-v5",
+		statements: []string{`SELECT 1`},
+	}
 	definition := metadataDefinition{
 		role: cacheMetadataRole,
 		path: path,
@@ -236,6 +241,7 @@ ON storage_entries (
 			versionTwo,
 			versionThree,
 			versionFour,
+			versionFive,
 		},
 	}
 	definition.objects = []schemaObject{
@@ -430,6 +436,39 @@ ON local_authority_documents (expires_at_unix_ms)`,
 ON storage_maintenance_runs (completed_at_unix_ms)`,
 		},
 	}
+	versionFive := schemaMigration{
+		version: 5,
+		name:    "control-v5",
+		statements: []string{
+			`CREATE TABLE beta_cache_tokens (
+    token_id TEXT PRIMARY KEY CHECK (length(token_id) = 32),
+    token_digest TEXT NOT NULL UNIQUE
+        CHECK (
+            length(token_digest) = 71
+            AND substr(token_digest, 1, 7) = 'sha256:'
+            AND substr(token_digest, 8) NOT GLOB '*[^0-9a-f]*'
+        ),
+    tenant_id TEXT NOT NULL CHECK (length(tenant_id) BETWEEN 1 AND 256),
+    repository_id TEXT NOT NULL CHECK (length(repository_id) BETWEEN 1 AND 256),
+    trust_domain TEXT NOT NULL CHECK (length(trust_domain) BETWEEN 1 AND 256),
+    namespace TEXT NOT NULL CHECK (length(namespace) BETWEEN 1 AND 512),
+    namespace_generation INTEGER NOT NULL CHECK (namespace_generation > 0),
+    plane TEXT NOT NULL CHECK (plane IN ('STABLE', 'QUARANTINE', 'CONTROL')),
+    access TEXT NOT NULL CHECK (access IN ('READ', 'READ_WRITE')),
+    issued_at_unix_ms INTEGER NOT NULL CHECK (issued_at_unix_ms >= 0),
+    expires_at_unix_ms INTEGER NOT NULL CHECK (expires_at_unix_ms > issued_at_unix_ms),
+    revoked_at_unix_ms INTEGER,
+    CHECK (revoked_at_unix_ms IS NULL OR revoked_at_unix_ms >= issued_at_unix_ms)
+) WITHOUT ROWID`,
+			`CREATE INDEX beta_cache_tokens_scope
+ON beta_cache_tokens (
+    tenant_id, repository_id, trust_domain, namespace,
+    namespace_generation, plane, access
+)`,
+			`CREATE INDEX beta_cache_tokens_expires
+ON beta_cache_tokens (expires_at_unix_ms)`,
+		},
+	}
 	definition := metadataDefinition{
 		role: controlMetadataRole,
 		path: path,
@@ -438,9 +477,20 @@ ON storage_maintenance_runs (completed_at_unix_ms)`,
 			versionTwo,
 			versionThree,
 			versionFour,
+			versionFive,
 		},
 	}
 	definition.objects = []schemaObject{
+		{
+			objectType: "index",
+			name:       "beta_cache_tokens_expires",
+			statement:  versionFive.statements[2],
+		},
+		{
+			objectType: "index",
+			name:       "beta_cache_tokens_scope",
+			statement:  versionFive.statements[1],
+		},
 		{
 			objectType: "index",
 			name:       "decision_audit_index_indexed_at",
@@ -465,6 +515,11 @@ ON storage_maintenance_runs (completed_at_unix_ms)`,
 			objectType: "index",
 			name:       "storage_maintenance_runs_completed_at",
 			statement:  versionFour.statements[1],
+		},
+		{
+			objectType: "table",
+			name:       "beta_cache_tokens",
+			statement:  versionFive.statements[0],
 		},
 		{
 			objectType: "table",

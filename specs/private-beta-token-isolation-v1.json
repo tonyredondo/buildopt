@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "buildopt.specs/private-beta-token-isolation/v1",
+  "workItem": "A1-002",
+  "gateId": "A1-G01",
+  "token": {
+    "bytes": 32,
+    "encoding": "BASE64URL_NO_PADDING",
+    "digest": "SHA256_DOMAIN_SEPARATED",
+    "rawPersistence": "FORBIDDEN",
+    "store": "control.sqlite/beta_cache_tokens",
+    "maximumLifetimeSeconds": 2592000,
+    "provisioning": "MANUAL"
+  },
+  "scope": {
+    "fields": [
+      "tenant",
+      "repository",
+      "trustDomain",
+      "namespace",
+      "namespaceGeneration",
+      "plane",
+      "access"
+    ],
+    "planes": [
+      "STABLE",
+      "QUARANTINE",
+      "CONTROL"
+    ],
+    "access": [
+      "READ",
+      "READ_WRITE"
+    ],
+    "stableWrites": "PROTECTED_WORKFLOW_ONLY"
+  },
+  "revocation": {
+    "lookup": "EVERY_REMOTE_REQUEST",
+    "effective": "BEFORE_NEXT_BUILD",
+    "rotation": "ISSUE_DISTINCT_THEN_REVOKE_OLD"
+  },
+  "gateway": {
+    "localCredentialIsRemoteToken": false,
+    "remoteTransport": "TLS_REQUIRED_OUTSIDE_LOOPBACK",
+    "tokenVisibleToGradle": false,
+    "tokenPathEnvironment": "BUILDOPT_SHARED_CACHE_TOKEN_PATH"
+  },
+  "github": {
+    "fixture": "fixtures/ci-orchestration/private-beta-token-isolation.yml",
+    "pullRequestTargetAllowed": false,
+    "fork": "NO_TOKEN_BASELINE",
+    "sameRepositoryPullRequest": "STABLE_READ",
+    "protectedMain": "STABLE_READ_WRITE"
+  },
+  "boundaries": {
+    "closes": [
+      "A1-002",
+      "A1-G01"
+    ],
+    "doesNotClose": [
+      "A1-001",
+      "A1-004",
+      "A1-005",
+      "A1-006",
+      "A1-G02",
+      "A1-G05",
+      "A1-G06",
+      "OPS-001/A1"
+    ]
+  }
+}

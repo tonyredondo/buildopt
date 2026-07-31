@@ -1,0 +1,54 @@
+name: Private beta token isolation fixture
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  fork-baseline:
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Run the untrusted baseline without BuildOpt
+        shell: bash
+        run: ./gradlew build
+
+  internal-read:
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Materialize the stable read token
+        shell: bash
+        env:
+          BUILDOPT_CACHE_TOKEN: ${{ secrets.BUILDOPT_CACHE_READ_TOKEN }}
+        run: |
+          install -m 0600 /dev/null "$RUNNER_TEMP/buildopt-cache-read-token"
+          printf '%s' "$BUILDOPT_CACHE_TOKEN" >"$RUNNER_TEMP/buildopt-cache-read-token"
+      - name: Run the internal pull request with stable reads only
+        shell: bash
+        env:
+          BUILDOPT_SHARED_CACHE_TOKEN_PATH: ${{ runner.temp }}/buildopt-cache-read-token
+        run: buildopt run -- ./gradlew build
+
+  protected-stable:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: buildopt-private-beta
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Materialize the stable read-write token
+        shell: bash
+        env:
+          BUILDOPT_CACHE_TOKEN: ${{ secrets.BUILDOPT_CACHE_READ_WRITE_TOKEN }}
+        run: |
+          install -m 0600 /dev/null "$RUNNER_TEMP/buildopt-cache-read-write-token"
+          printf '%s' "$BUILDOPT_CACHE_TOKEN" >"$RUNNER_TEMP/buildopt-cache-read-write-token"
+      - name: Run the protected workflow with stable writes
+        shell: bash
+        env:
+          BUILDOPT_SHARED_CACHE_TOKEN_PATH: ${{ runner.temp }}/buildopt-cache-read-write-token
+        run: buildopt run -- ./gradlew build

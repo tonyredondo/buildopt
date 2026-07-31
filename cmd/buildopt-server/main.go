@@ -24,7 +24,7 @@ import (
 const (
 	exitUsage         = 64
 	exitConfiguration = 78
-	serverUsage       = "usage: buildopt-server serve [--listen 127.0.0.1:8042] [--export-dir PATH] [--state-dir ABSOLUTE_PATH] [--cache-authority ABSOLUTE_PATH --cache-trust-root ABSOLUTE_PATH --cache-credential ABSOLUTE_PATH]\n       buildopt-server export --export-dir PATH [--format jsonl]\n"
+	serverUsage       = "usage: buildopt-server serve [--listen 127.0.0.1:8042] [--export-dir PATH] [--state-dir ABSOLUTE_PATH] [--cache-authority ABSOLUTE_PATH --cache-trust-root ABSOLUTE_PATH --cache-credential ABSOLUTE_PATH] [--cache-token-auth]\n       buildopt-server export --export-dir PATH [--format jsonl]\n       buildopt-server token issue --state-dir ABSOLUTE_PATH --tenant ID --repository ID --trust-domain ID --namespace ID --namespace-generation N --plane stable|quarantine|control --access read|read-write --expires-at RFC3339\n       buildopt-server token revoke --state-dir ABSOLUTE_PATH --token-id ID\n"
 )
 
 var openSharedStorage = sharedcache.Open
@@ -63,6 +63,9 @@ func run(
 	if args[0] == "export" {
 		return runExport(args[1:], stdout, stderr)
 	}
+	if args[0] == "token" {
+		return runBetaToken(ctx, args[1:], stdout, stderr)
+	}
 	if args[0] != "serve" {
 		_, _ = io.WriteString(stderr, serverUsage)
 		return exitUsage
@@ -99,6 +102,11 @@ func run(
 		"cache-credential",
 		"",
 		"private local cache data-plane credential",
+	)
+	cacheTokenAuth := flags.Bool(
+		"cache-token-auth",
+		false,
+		"authenticate remote cache requests with scoped beta tokens",
 	)
 	if err := flags.Parse(args[1:]); err != nil || flags.NArg() != 0 {
 		_, _ = io.WriteString(stderr, serverUsage)
@@ -146,6 +154,13 @@ func run(
 		_, _ = fmt.Fprintln(
 			stderr,
 			"buildopt-server: authenticated Shared cache requires state directory, authority, trust root, and credential",
+		)
+		return exitConfiguration
+	}
+	if *cacheTokenAuth && !cacheConfigured {
+		_, _ = fmt.Fprintln(
+			stderr,
+			"buildopt-server: beta token authentication requires authenticated Shared cache configuration",
 		)
 		return exitConfiguration
 	}
@@ -269,6 +284,7 @@ func run(
 			document:   *cacheAuthorityPath,
 			trustRoot:  *cacheTrustRootPath,
 			credential: *cacheCredentialPath,
+			betaTokens: *cacheTokenAuth,
 		}
 		loaded, authorityErr := loadServerAuthority(
 			ctx,

@@ -105,8 +105,39 @@ request, reads only verified committed objects, and writes only to the signed
 pending attempt. Omitting all three authority flags leaves the route absent;
 partial or invalid configuration prevents server startup.
 
-Encrypted delivery retry/DLQ, remote TLS and sinks, cache/policy APIs, hardened
-identity, and non-local workload profiles remain owned by later tracker items.
+`A1-002` adds schema v5 and the manual scoped-token registry. Provision a
+token while the server remains active (SQLite WAL serializes the update):
+
+```bash
+buildopt-server token issue \
+    --state-dir /absolute/private/buildopt-state \
+    --tenant tenant-7 \
+    --repository owner/repository \
+    --trust-domain private-beta \
+    --namespace stable \
+    --namespace-generation 12 \
+    --plane stable \
+    --access read-write \
+    --expires-at <RFC3339-within-30-days>
+```
+
+The JSON response exposes the opaque token once; only its domain-separated
+SHA-256 digest, exact scope, expiry, and revocation state persist. Enable the
+stable data-plane authenticator with `serve --cache-token-auth` plus the normal
+authority flags. Revoke by the non-secret ID:
+
+```bash
+buildopt-server token revoke \
+    --state-dir /absolute/private/buildopt-state \
+    --token-id <32-lowercase-hex-id>
+```
+
+Each request consults `control.sqlite`, so revocation is effective before the
+next request/build. Stable, quarantine, and control tokens are not
+interchangeable; a read token cannot `PUT`.
+
+Encrypted delivery retry/DLQ, deployed TLS termination and sinks, cache/policy
+APIs, hardened identity, and non-local profiles remain owned by later items.
 
 Validate the handler, concurrency, real launcher/server binaries, graceful
 shutdown, credential isolation, child outcomes, fail-open delivery, and local

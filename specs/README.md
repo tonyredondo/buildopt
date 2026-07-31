@@ -15,6 +15,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`beta-soak-v1.md`](./beta-soak-v1.md) | `OPS-001/A1` |
 | [`beta-circuit-breaker-v1.md`](./beta-circuit-breaker-v1.md) | `OPS-001/A1` / `A1-G02` |
 | [`beta-gradle-fixtures-v1.md`](./beta-gradle-fixtures-v1.md) | `OPS-001/A1` / `A1-G02` |
+| [`private-beta-token-isolation-v1.md`](./private-beta-token-isolation-v1.md) | `A1-002` / `A1-G01` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`patch-bundle-v1.md`](./patch-bundle-v1.md) | `F0-034` |
 | [`bandit-policy-v1.md`](./bandit-policy-v1.md) | `F0-035` |
@@ -93,6 +94,10 @@ authority reload within 60 seconds.
 `ops-alerts-v1.json` is the OPS-001/A1 ten-class local alert contract for
 bounded storage, authority, export, and acceptance signals plus deterministic
 activation/recovery without exposing sensitive values.
+`private-beta-token-isolation-v1.json` is the A1-002/A1-G01 contract for
+hashed 30-day credentials, exact repository/namespace/plane/operation scopes,
+per-request revocation, remote TLS, gateway-only token handling, and GitHub
+fork isolation.
 `beta-benchmark-harness-v1.json` is the OPS-001/A1 executable smoke contract
 for all phase/client strata, real Shared HTTP publication/read paths, private
 raw observations, digest-bound summaries, and explicit non-qualification.
