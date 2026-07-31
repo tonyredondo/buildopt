@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/runtime-validation-isolation/v1" and
+  .trackerId == "B-001" and
+  .scheduler.durable == true and
+  .scheduler.maximumActiveLeasesPerRepository == 1 and
+  .variants.stableRead == "stable/{platform}/{cacheCompatibilityClass}" and
+  .variants.candidateWrite == "quarantine/{actionId}/{attemptId}" and
+  .variants.controlWrite == "DISABLED" and
+  .variants.stableWriteFromValidation == "FORBIDDEN" and
+  .variants.authoritativeResult == "CONTROL" and
+  .doesNotClose == ["A1-001", "A1-006", "A1-G06", "B-G01", "B-G02"]
+' specs/runtime-validation-isolation-v1.json >/dev/null
+
+go test -race ./internal/runtimeoptimizer
+go vet ./internal/runtimeoptimizer
+printf 'B-001 runtime validation isolation OK: durable idempotent scheduler, one repository lease, disjoint arms, zero stable writes\n'

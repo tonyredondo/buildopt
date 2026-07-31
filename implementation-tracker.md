@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — the POC operational profile is closed and owner-operated A1 evaluation is next<br>
-**Current phase:** MVP-A1 owner-operated POC deployment ready<br>
+**Overall status:** `DOING` — owner-operated A1 evidence remains pending while noninteractive MVP-B implementation advances<br>
+**Current phase:** MVP-B technical implementation; `B-002` follows completed `B-001`<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Last updated:** 2026-07-31<br>
@@ -54,7 +54,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | Phase 0 | Toolchains, executable contracts, fixtures, spikes, and walking skeleton | `DONE` | 6/6 | Preparation |
 | MVP-A0 | Foundation and internal pilot | `DONE` | 9/9 | Phase 0 |
 | MVP-A1 | Autonomous Cache in an owner-operated POC | `TODO` | 5/6 | A0 + POC operational profile |
-| MVP-B | Runtime Optimizer and safe learning | `WAITING` | 0/6 | A1 + `CI-ORCH-001` + `OPS-001/B` |
+| MVP-B | Runtime Optimizer and safe learning | `DOING` | 0/6 | Activation still requires owner-operated A1 + valid A/A; implementation may proceed |
 | MVP-C1 | Task Intelligence, JVM Agent, and Linux hermeticity | `WAITING` | 0/9 | B |
 | MVP-C4 | PR-only Patch Autopilot | `WAITING` | 0/7 | B; C1 for custom tasks; Test Optimization where applicable |
 | MVP-A2 | Self-hosted single-node | `DEFERRED` | 0/1 | A1 |
@@ -152,6 +152,8 @@ The POC target is not complete until A1, B, C1, and C4 close. The eight-hour soa
 | 66 | `DEPLOY-001` | Complete install, upgrade, uninstall, and end-to-end deployment lifecycle | `DONE` | Codex |
 | 67 | `OPS-001/A1` | Qualify the bounded POC benchmark, faults, sustained load, readiness, revocation, and runbook profile | `DONE` | Codex |
 | 68 | `A1-001` | Deploy `PRIVATE_BETA_ISOLATED` on one owner-controlled repository | `TODO` | — |
+| 69 | `B-001` | Implement isolated candidate/control/stable paths and durable validation scheduling | `DONE` | Codex |
+| 70 | `B-002` | Implement local-only Configuration Cache policy | `TODO` | — |
 
 ---
 
@@ -420,15 +422,15 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 
 ## 8. MVP-B — Runtime Optimizer
 
-**State:** `WAITING`<br>
-**Entry gate:** stable A1 + valid A/A + `CI-ORCH-001` + `OPS-001/B`.
+**State:** `DOING`<br>
+**Activation gate:** owner-operated A1 plus valid A/A remain required before promotion; POC implementation may proceed behind disabled actions. `CI-ORCH-001` and `OPS-001/B` are closed.
 
 ### 8.1 Workboard
 
 | ID | Deliverable | State | Owner | Evidence |
 |---|---|---|---|---|
-| `B-001` | Isolated candidate/control/stable paths and validation scheduler | `WAITING` | — | — |
-| `B-002` | Local Configuration Cache policy; never distributed entries | `WAITING` | — | — |
+| `B-001` | Isolated candidate/control/stable paths and validation scheduler | `DONE` | Codex | `E-097` |
+| `B-002` | Local Configuration Cache policy; never distributed entries | `TODO` | — | — |
 | `B-003` | Autotuning with four initial resource profiles | `WAITING` | — | — |
 | `B-004` | Contractual removal of `clean` | `WAITING` | — | — |
 | `B-005` | Allowlisted invocation merging and policy prefetch | `WAITING` | — | — |
@@ -725,6 +727,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-094` | 2026-07-31 | `A1-005` | Versioned [`Private-beta operations v1`](./specs/private-beta-operations-v1.md), exact machine-readable [component/runbook/exercise/boundary contract](./specs/private-beta-operations-v1.json), operator-facing [isolated operations runbook](./runbooks/private-beta-operations.md), and composite [`dev/check-private-beta-operations`](./dev/check-private-beta-operations); the runbook fixes preflight/admission, live-before-ready observation, ten-class alert triage, monotonic signed authority revocation, five-minute runner circuit fallback, independent local/CI bypass, graceful shutdown/reconciliation, immutable rollback, and preserve-by-default uninstall without manual SQLite/authority/circuit-state edits; the strict checker composed the existing real readiness/revocation and alert race suites, all `FLOOD`/`OBJECT_TOO_LARGE`/`DISK_PRESSURE` Gradle 9.6.1/JDK 21 Kotlin+Groovy fallback/replay fixtures, and guarded base recovery exercises; syntax, exact JSON, locked ShellCheck, 16-namespace/99-artifact layout, component exercises, and diff hygiene passed | `DONE`: `A1-005` is closed without claiming a per-pilot deployment, external paging, external operation/causal benefit, the unexecuted eight-hour soak, `A1-G02`, `A1-G06`, or complete `OPS-001/A1` |
 | `E-095` | 2026-07-31 | `OPS-001/B` | Versioned [`GitHub queue adapter v1`](./specs/github-queue-adapter-v1.md), exact machine-readable [authentication/lifecycle/measurement contract](./specs/github-queue-adapter-v1.json), authenticated [`workflow_job` handler](./internal/githubqueue/adapter.go), durable schema-v6 [`control.sqlite` lifecycle and delivery ledger](./internal/sharedcache/github_queue.go), opt-in private-secret server routing, and composite [`dev/check-github-queue-adapter`](./dev/check-github-queue-adapter); HMAC-SHA256 covers the unchanged bounded body, delivery replay is idempotent and conflicting reuse fails closed, immutable repository/run/attempt/job/revision identity survives queued→in-progress→completed and out-of-order redelivery, and `ciQueueMs` is exactly provider `created_at→started_at` with runner group/runner/labels retained; pre-runner cancellation is explicitly `UNAVAILABLE` rather than inferred; focused adapter, Shared migration/persistence, and server regressions passed | `DONE`: `OPS-001/B` is closed without claiming the unexecuted eight-hour soak, `OPS-001/A1`, `A1-G02`, A1 pilot operation, valid A/A evidence, or MVP-B entry |
 | `E-096` | 2026-07-31 | POC validation scope and `OPS-001/A1` | Explicit owner decision in this tracker plus existing executed evidence `E-081..091` and `E-094` | `DONE` for POC: the bounded operational profile unblocks owner-operated repository testing; the eight-hour soak and external design-partner validation remain documented as `DEFERRED` productization work |
+| `E-097` | 2026-07-31 | `B-001` | Versioned [`Runtime validation isolation v1`](./specs/runtime-validation-isolation-v1.md), exact machine-readable [scheduler/variant contract](./specs/runtime-validation-isolation-v1.json), durable private [`runtimeoptimizer.Scheduler`](./internal/runtimeoptimizer/scheduler.go), and composite [`dev/check-runtime-validation-isolation`](./dev/check-runtime-validation-isolation); idempotent requests survive reopen, one live lease per repository recovers after expiry, candidate/control paths and credentials are disjoint, candidate writes only quarantine, control is authoritative and read-only, and neither validation arm writes stable | `DONE`: `B-001` is closed without activating an action, publishing candidate bytes, claiming owner-operated A1/A/A evidence, or closing `B-G01`/`B-G02` |
 
 ---
 
@@ -732,6 +735,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-31 | Closed `B-001`: added durable idempotent validation scheduling with one repository lease and physically distinct candidate/control resources, quarantine-only candidate writes, authoritative read-only control, and zero validation writes to stable | Codex |
 | 2026-07-31 | Re-scoped the tracker to an owner-operated POC: existing bounded operational evidence closes `OPS-001/A1` and `A1-G02` for POC use, while the eight-hour soak and external design-partner validation move intact to deferred productization | Codex |
 | 2026-07-31 | Closed `OPS-001/B`: authenticated and durably deduplicated GitHub `workflow_job` events now produce exact created-to-start queue measurements with runner-pool dimensions and explicit unavailable cancellation, without running or claiming the soak | Codex |
 | 2026-07-31 | Closed `A1-005`: composed readiness/revocation, all ten local alerts, runner circuit fallback, bypass, rollback, uninstall, and restart into one strict isolated-profile runbook and real bounded exercise without running or claiming the eight-hour soak | Codex |

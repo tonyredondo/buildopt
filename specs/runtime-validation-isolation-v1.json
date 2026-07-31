@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "buildopt.specs/runtime-validation-isolation/v1",
+  "trackerId": "B-001",
+  "scheduler": {
+    "durable": true,
+    "idempotency": "requestId",
+    "maximumActiveLeasesPerRepository": 1,
+    "expiredLeaseDisposition": "RECOVERABLE"
+  },
+  "variants": {
+    "isolatedResources": ["workspace", "outputs", "gradleUserHome", "credential", "namespace"],
+    "stableRead": "stable/{platform}/{cacheCompatibilityClass}",
+    "candidateWrite": "quarantine/{actionId}/{attemptId}",
+    "controlRead": "control/action/{policyDigest}",
+    "controlWrite": "DISABLED",
+    "stableWriteFromValidation": "FORBIDDEN",
+    "authoritativeResult": "CONTROL"
+  },
+  "doesNotClose": ["A1-001", "A1-006", "A1-G06", "B-G01", "B-G02"]
+}
