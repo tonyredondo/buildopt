@@ -5,7 +5,7 @@
   "repository": {
     "nameWithOwner": "tonyredondo/buildopt-pilot",
     "url": "https://github.com/tonyredondo/buildopt-pilot",
-    "visibility": "PRIVATE",
+    "visibility": "PUBLIC",
     "defaultBranch": "main",
     "revision": "e79a7bcc5eb31e838d4d886245d514fcdef3fc73"
   },

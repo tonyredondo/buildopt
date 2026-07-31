@@ -2,7 +2,7 @@
 
 This specification closes `A1-001` by binding one immutable synthetic Gradle
 repository to one signed and installed `PRIVATE_BETA_ISOLATED` BuildOpt release.
-The repository is private and controlled by the project owner, so it supplies
+The repository is public and controlled by the project owner, so it supplies
 repeatable POC evidence without importing another project's code or requiring
 an external design partner.
 
@@ -41,11 +41,11 @@ Validate the repository-owned contract and result with:
 ./dev/check-owner-controlled-pilot-deployment
 ```
 
-The hosted GitHub job was blocked before executing any step by the account's
-billing/spending-limit state. That external pre-execution condition is
-recorded separately from the locally passing workflow and product evidence;
-it is not reported as a source-code failure or silently avoided by making the
-private repository public.
+The first hosted GitHub attempt was blocked before executing any step by the
+account's billing/spending-limit state. After the synthetic repository became
+public, attempt 2 completed all seven job steps in 84 seconds on the same source
+revision. The evidence retains both states and does not report the initial
+account condition as a source-code failure.
 
 This deployment does not activate signed Shared authority, run the deferred
 eight-hour soak, establish external-user evidence, or claim causal savings.

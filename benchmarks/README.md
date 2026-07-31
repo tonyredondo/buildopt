@@ -20,12 +20,12 @@ build matrix and makes no performance claim.
 ## Owner-controlled pilot deployment evidence
 
 [`results/a1-001-owner-controlled-pilot.json`](./results/a1-001-owner-controlled-pilot.json)
-records the first signed installed release on the private synthetic
+records the first signed installed release on the public synthetic
 `tonyredondo/buildopt-pilot` repository. Two successful authenticated runs
 produced schema-valid sessions, byte-identical distributions, and eight native
 managed-L1 `compileJava` hits on replay while the custom task remained under
-Tier 1 default deny. The GitHub job's pre-execution account-billing block is
-recorded separately from the passing local evidence.
+Tier 1 default deny. The initial GitHub billing block and the successful public
+runner retry are both retained in the immutable evidence.
 
 This result closes the deployment item only. It makes no causal-savings,
 signed-Shared-authority, external-user, or eight-hour-soak claim. Revalidate

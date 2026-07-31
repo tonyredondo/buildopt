@@ -38,7 +38,7 @@ if ! jq -e '
     .repository == {
         nameWithOwner: "tonyredondo/buildopt-pilot",
         url: "https://github.com/tonyredondo/buildopt-pilot",
-        visibility: "PRIVATE",
+        visibility: "PUBLIC",
         defaultBranch: "main",
         revision: "e79a7bcc5eb31e838d4d886245d514fcdef3fc73"
     } and
@@ -117,7 +117,7 @@ if ! jq -e '
     .capturedOn == "2026-07-31" and
     .workItem == "A1-001" and
     .profile == "PRIVATE_BETA_ISOLATED" and
-    .repository.visibility == "PRIVATE" and
+    .repository.visibility == "PUBLIC" and
     .repository.revision == "e79a7bcc5eb31e838d4d886245d514fcdef3fc73" and
     .buildopt == {
         revision: "5f4105a78dac26dd077ad886e8aa15549423c1fc",
@@ -158,9 +158,17 @@ if ! jq -e '
     .githubWorkflow.headRevision == .repository.revision and
     .githubWorkflow.permissions == "READ_ONLY" and
     .githubWorkflow.buildoptCredentialsPresent == false and
-    .githubWorkflow.state == "BLOCKED_PRE_EXECUTION" and
-    .githubWorkflow.blockingReason == "ACCOUNT_BILLING_OR_SPENDING_LIMIT" and
-    .githubWorkflow.executedSteps == 0 and
+    .githubWorkflow.initialAttempt == {
+        state: "BLOCKED_PRE_EXECUTION",
+        blockingReason: "ACCOUNT_BILLING_OR_SPENDING_LIMIT",
+        executedSteps: 0
+    } and
+    .githubWorkflow.successfulAttempt == {
+        attempt: 2,
+        state: "PASSED",
+        completedSteps: 7,
+        durationSeconds: 84
+    } and
     .githubWorkflow.sourceCodeFailureObserved == false and
     .boundaries == {
         causalBenefitClaimed: false,
@@ -202,4 +210,4 @@ if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
     exit 1
 fi
 
-printf 'A1-001 owner-controlled pilot OK: private synthetic repository, signed installed release, two valid sessions, eight managed-L1 compile hits, and explicit non-causal boundaries\n'
+printf 'A1-001 owner-controlled pilot OK: public synthetic repository, signed installed release, two valid sessions, eight managed-L1 compile hits, and explicit non-causal boundaries\n'

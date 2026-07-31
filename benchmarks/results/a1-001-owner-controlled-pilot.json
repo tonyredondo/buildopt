@@ -6,7 +6,7 @@
   "repository": {
     "nameWithOwner": "tonyredondo/buildopt-pilot",
     "url": "https://github.com/tonyredondo/buildopt-pilot",
-    "visibility": "PRIVATE",
+    "visibility": "PUBLIC",
     "defaultBranch": "main",
     "revision": "e79a7bcc5eb31e838d4d886245d514fcdef3fc73"
   },
@@ -62,9 +62,17 @@
     "headRevision": "e79a7bcc5eb31e838d4d886245d514fcdef3fc73",
     "permissions": "READ_ONLY",
     "buildoptCredentialsPresent": false,
-    "state": "BLOCKED_PRE_EXECUTION",
-    "blockingReason": "ACCOUNT_BILLING_OR_SPENDING_LIMIT",
-    "executedSteps": 0,
+    "initialAttempt": {
+      "state": "BLOCKED_PRE_EXECUTION",
+      "blockingReason": "ACCOUNT_BILLING_OR_SPENDING_LIMIT",
+      "executedSteps": 0
+    },
+    "successfulAttempt": {
+      "attempt": 2,
+      "state": "PASSED",
+      "completedSteps": 7,
+      "durationSeconds": 84
+    },
     "sourceCodeFailureObserved": false
   },
   "boundaries": {

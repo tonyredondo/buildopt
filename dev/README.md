@@ -1386,12 +1386,13 @@ Validate the immutable `A1-001` deployment record:
 ./dev/check-owner-controlled-pilot-deployment
 ```
 
-The checker binds the private synthetic pilot revision to the exact signed
+The checker binds the public synthetic pilot revision to the exact signed
 BuildOpt release, repository workload, two authenticated installed runs, two
 schema-valid `BUILD_SESSION` records, reproducible deliverables, eight native
 managed-L1 `compileJava` replay hits, and custom-task default deny. It also
-retains the hosted workflow's account-billing pre-execution block as an
-external limitation rather than a code failure. The checker never contacts
+retains both the hosted workflow's initial account-billing block and its
+successful public-runner retry without misclassifying either as a code failure.
+The checker never contacts
 GitHub or private machine state and makes no causal, signed-Shared-authority,
 external-user, or eight-hour-soak claim. `A1-006` and `A1-G06` remain open.
 
