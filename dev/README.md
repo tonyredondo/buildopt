@@ -1396,6 +1396,19 @@ The checker never contacts
 GitHub or private machine state and makes no causal, signed-Shared-authority,
 external-user, or eight-hour-soak claim. `A1-006` and `A1-G06` remain open.
 
+## Task Intelligence pilot evaluation
+
+Run the focused state, coverage, exact-correlation, quarantine, source-patch,
+and accepted-pilot evidence contract with:
+
+```bash
+./dev/check-task-intelligence-poc
+```
+
+The diagnostic Agent and Linux helper remain fail-closed `UNAVAILABLE`; the
+reviewed source-patch route is the only active pilot route. Revalidate the exact
+Java recipe separately with `./dev/check-custom-task-contract-recipe`.
+
 ## Runtime owner evaluation
 
 On the exact 4-CPU/16-GiB runner, execute real A/A and resource-profile

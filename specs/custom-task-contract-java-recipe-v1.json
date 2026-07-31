@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "buildopt.specs/custom-task-contract-java-recipe/v1",
+  "workItem": "C4-004",
+  "recipeId": "CUSTOM_TASK_CONTRACT_JAVA_V1",
+  "version": "1.0",
+  "path": "buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java",
+  "preconditions": ["EXACT_PATH", "UTF8_LF_FINAL_NEWLINE", "ONE_REVIEWED_CLASS", "TWO_INTERNAL_PROPERTIES", "NO_EXISTING_CACHE_CONTRACT"],
+  "transformation": ["CACHEABLE_TASK", "INPUT_ENTRIES", "OUTPUT_FILE", "REVERSIBLE_SOURCE_DIGEST"],
+  "safety": ["FULL_FILE_EXACT_REPLACEMENT", "IDEMPOTENT_EXACT_ENVELOPE", "DEFENSIVE_BYTES", "AMBIGUITY_PROPOSED", "NO_SOURCE_EXECUTION"],
+  "pilot": {
+    "repository": "tonyredondo/buildopt-pilot",
+    "baseRevision": "fead91a55581d25d0b8a5c9680bd19792f55792e",
+    "headRevision": "ede88482aeec2a2acfb2117025788ba9512dc2c0",
+    "acceptedRevision": "dcb4ff429d8b00b8d7030ef164fa73d2b4bc57d3",
+    "pullRequest": "https://github.com/tonyredondo/buildopt-pilot/pull/1",
+    "preimageDigest": "sha256:392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083",
+    "postimageDigest": "sha256:79fa100a4e2d962dd506259311f90ecb92ad62500391d140065b6f157a172a2b"
+  },
+  "boundaries": {
+    "closes": ["C4-004"],
+    "doesNotCloseWithoutCausalEvidence": ["C4-G06"],
+    "productionPromotionAuthorized": false
+  }
+}

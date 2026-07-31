@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/custom-task-contract-java-recipe/v1" and
+  .workItem == "C4-004" and .recipeId == "CUSTOM_TASK_CONTRACT_JAVA_V1" and .version == "1.0" and
+  .path == "buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java" and
+  .transformation == ["CACHEABLE_TASK", "INPUT_ENTRIES", "OUTPUT_FILE", "REVERSIBLE_SOURCE_DIGEST"] and
+  .pilot.repository == "tonyredondo/buildopt-pilot" and
+  .pilot.baseRevision == "fead91a55581d25d0b8a5c9680bd19792f55792e" and
+  .pilot.headRevision == "ede88482aeec2a2acfb2117025788ba9512dc2c0" and
+  .pilot.acceptedRevision == "dcb4ff429d8b00b8d7030ef164fa73d2b4bc57d3" and
+  .pilot.preimageDigest == "sha256:392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083" and
+  .pilot.postimageDigest == "sha256:79fa100a4e2d962dd506259311f90ecb92ad62500391d140065b6f157a172a2b" and
+  .boundaries == {closes:["C4-004"], doesNotCloseWithoutCausalEvidence:["C4-G06"], productionPromotionAuthorized:false}
+' specs/custom-task-contract-java-recipe-v1.json >/dev/null
+
+test -x dev/apply-custom-task-contract-recipe
+test -f jvm/patcher/src/main/java/dev/buildopt/patcher/CustomTaskContractJavaRecipe.java
+./dev/run -- ./gradlew --no-daemon --offline --no-configuration-cache --warning-mode=fail :jvm:patcher:patcherSpike >/dev/null
+printf 'C4-004 custom-task Java recipe OK: exact reviewed path, reversible digest, idempotent and fail-closed negatives\n'

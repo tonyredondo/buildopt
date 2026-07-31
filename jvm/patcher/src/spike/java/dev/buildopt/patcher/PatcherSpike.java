@@ -77,6 +77,7 @@ public final class PatcherSpike {
             spike.assertDuplicateKeysRejected();
             spike.assertSignerRejectsIncompleteManifest();
             spike.assertArchiveRecipeSafety();
+            CustomTaskContractRecipeSpike.assertConformance();
             PatchCandidateValidationSpike.assertConformance();
             FullRelevantValidationSpike.assertConformance();
             PostMergePatchMonitorSpike.assertConformance();

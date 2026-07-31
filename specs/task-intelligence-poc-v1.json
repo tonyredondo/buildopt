@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "buildopt.specs/task-intelligence-poc/v1",
+  "workItems": ["C1-001", "C1-002", "C1-003", "C1-004", "C1-005", "C1-006", "C1-007", "C1-008", "C1-009"],
+  "qualificationRoutes": {
+    "supported": ["OFFICIAL_CONTRACT", "REVIEWED_SOURCE_PATCH", "HERMETIC_PRODUCER_PROFILE"],
+    "pilot": "REVIEWED_SOURCE_PATCH",
+    "history": "NEVER_QUALIFIES",
+    "jvmAgent": "UNAVAILABLE_FAIL_CLOSED",
+    "linuxHelper": "UNAVAILABLE_FAIL_CLOSED"
+  },
+  "traceCoverage": {
+    "required": ["FILESYSTEM", "ENVIRONMENT", "PROCESS_TREE", "NETWORK", "CLOCK", "RANDOMNESS", "NATIVE_EXECUTABLE"],
+    "incomplete": "INCONCLUSIVE_ABORT_PENDING",
+    "droppedOrFaulted": "INCONCLUSIVE_ABORT_PENDING"
+  },
+  "states": ["UNKNOWN", "OBSERVING", "CONTRACT_QUALIFIED", "QUARANTINE_VALIDATED", "ACTIVE", "SUSPENDED"],
+  "quarantine": ["EVERY_INPUT_MUTATION_CHANGES_KEY", "REPEATABLE", "RELOCATABLE", "ARTIFACTS_EXACT", "FULL_RELEVANT_VALIDATION"],
+  "correlation": {
+    "exact": ["TASK_EXECUTION_ID", "NATIVE_CACHE_KEY", "TASK_OUTCOME", "COMPLETED_PUT"],
+    "unattributed": "ABORT_WHOLE_ATTEMPT",
+    "nonActiveTask": "ABORT_WHOLE_ATTEMPT"
+  },
+  "exclusions": ["GRADLE_TEST_TASK"],
+  "faults": {
+    "discrepancy": "SUSPEND_AND_ABORT_PENDING_BASELINE_AUTHORITATIVE",
+    "agentOrHelperCrash": "DISABLE_COMPATIBILITY_CLASS_ABORT_PENDING_BASELINE_AUTHORITATIVE"
+  },
+  "pilot": {
+    "repository": "tonyredondo/buildopt-pilot",
+    "task": "generatePilotManifest",
+    "taskType": "GeneratePilotManifest",
+    "baseRevision": "fead91a55581d25d0b8a5c9680bd19792f55792e",
+    "acceptedRevision": "dcb4ff429d8b00b8d7030ef164fa73d2b4bc57d3",
+    "pullRequest": "https://github.com/tonyredondo/buildopt-pilot/pull/1",
+    "pairs": 4,
+    "design": "PRESCRIBED_PAIRED_ALTERNATING"
+  },
+  "boundaries": {
+    "closes": ["C1-001", "C1-002", "C1-003", "C1-004", "C1-005", "C1-006", "C1-007", "C1-008", "C1-009", "C1-G01", "C1-G02", "C1-G03", "C1-G04", "C1-G05", "C1-G06", "C1-G07", "C1-G08", "C1-G09"],
+    "doesNotClose": ["EIGHT_HOUR_SOAK", "PRODUCTION_PROMOTION"],
+    "ownerOperatedProofOfConcept": true
+  }
+}

@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 5)); then
+    printf 'usage: %s OUTPUT_JSON PILOT_REPOSITORY BASE_REVISION ACCEPTED_REVISION WORKFLOW_RUN_ID\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_output=$1
+buildopt_pilot=$2
+buildopt_base=$3
+buildopt_accepted=$4
+buildopt_run_id=$5
+buildopt_tmp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-task-intelligence.XXXXXX")
+trap 'rm -rf -- "${buildopt_tmp}"' EXIT
+
+mkdir -p "${buildopt_tmp}/control" "${buildopt_tmp}/candidate"
+git -C "${buildopt_pilot}" archive "${buildopt_base}" | tar -x -C "${buildopt_tmp}/control"
+git -C "${buildopt_pilot}" archive "${buildopt_accepted}" | tar -x -C "${buildopt_tmp}/candidate"
+
+buildopt_control_ms=()
+buildopt_candidate_ms=()
+buildopt_oom_before=$(awk '$1 == "oom" {print $2}' /sys/fs/cgroup/memory.events)
+buildopt_control_sha=()
+buildopt_candidate_sha=()
+buildopt_control_outcomes=()
+buildopt_candidate_outcomes=()
+
+run_arm() {
+    local buildopt_arm=$1
+    local buildopt_workspace="${buildopt_tmp}/${buildopt_arm}"
+    local buildopt_home="${buildopt_tmp}/${buildopt_arm}-home"
+    local buildopt_log="${buildopt_tmp}/${buildopt_arm}.log"
+    local buildopt_start buildopt_end buildopt_duration buildopt_digest buildopt_outcome
+    rm -f -- "${buildopt_workspace}/build/pilot/manifest.txt"
+    buildopt_start=$(date +%s%3N)
+    GRADLE_USER_HOME="${buildopt_home}" "${buildopt_workspace}/gradlew" --console=plain --build-cache generatePilotManifest >"${buildopt_log}" 2>&1
+    buildopt_end=$(date +%s%3N)
+    buildopt_duration=$((buildopt_end - buildopt_start))
+    buildopt_digest=$(sha256sum "${buildopt_workspace}/build/pilot/manifest.txt" | cut -d' ' -f1)
+    if rg -q '^> Task :generatePilotManifest FROM-CACHE$' "${buildopt_log}"; then
+        buildopt_outcome=FROM_CACHE
+    elif rg -q '^> Task :generatePilotManifest$' "${buildopt_log}"; then
+        buildopt_outcome=EXECUTED
+    else
+        sed -n '1,160p' "${buildopt_log}" >&2
+        printf 'unexpected task outcome for %s\n' "${buildopt_arm}" >&2
+        exit 1
+    fi
+    if [[ "${buildopt_arm}" == control ]]; then
+        buildopt_control_ms+=("${buildopt_duration}")
+        buildopt_control_sha+=("${buildopt_digest}")
+        buildopt_control_outcomes+=("${buildopt_outcome}")
+    else
+        buildopt_candidate_ms+=("${buildopt_duration}")
+        buildopt_candidate_sha+=("${buildopt_digest}")
+        buildopt_candidate_outcomes+=("${buildopt_outcome}")
+    fi
+}
+
+# Warm both isolated daemons and populate only the candidate's declared task cache.
+run_arm control
+run_arm candidate
+buildopt_control_ms=(); buildopt_candidate_ms=(); buildopt_control_sha=(); buildopt_candidate_sha=(); buildopt_control_outcomes=(); buildopt_candidate_outcomes=()
+
+for buildopt_pair in 1 2 3 4; do
+    if ((buildopt_pair % 2 == 1)); then run_arm control; run_arm candidate; else run_arm candidate; run_arm control; fi
+done
+buildopt_oom_after=$(awk '$1 == "oom" {print $2}' /sys/fs/cgroup/memory.events)
+
+buildopt_input="${buildopt_tmp}/input.json"
+jq -n \
+    --arg revision "$(git -C "${buildopt_repo_root}" rev-parse HEAD)" \
+    --argjson runId "${buildopt_run_id}" \
+    --arg base "${buildopt_base}" --arg accepted "${buildopt_accepted}" \
+    --argjson memory "$(awk '/MemTotal/ {print $2 * 1024}' /proc/meminfo | cut -d. -f1)" \
+    --argjson oomBefore "${buildopt_oom_before}" --argjson oomAfter "${buildopt_oom_after}" \
+    --argjson controlMs "$(printf '%s\n' "${buildopt_control_ms[@]}" | jq -s 'map(tonumber)')" \
+    --argjson candidateMs "$(printf '%s\n' "${buildopt_candidate_ms[@]}" | jq -s 'map(tonumber)')" \
+    --argjson controlSha "$(printf '%s\n' "${buildopt_control_sha[@]}" | jq -Rsc 'split("\n")[:-1]')" \
+    --argjson candidateSha "$(printf '%s\n' "${buildopt_candidate_sha[@]}" | jq -Rsc 'split("\n")[:-1]')" \
+    --argjson controlOutcomes "$(printf '%s\n' "${buildopt_control_outcomes[@]}" | jq -Rsc 'split("\n")[:-1]')" \
+    --argjson candidateOutcomes "$(printf '%s\n' "${buildopt_candidate_outcomes[@]}" | jq -Rsc 'split("\n")[:-1]')" \
+    '{schemaVersion:"buildopt.task-intelligence-evaluation/input/v1",buildoptRevision:$revision,workflow:{name:"Task Intelligence Pilot Evaluation",runId:$runId,url:("https://github.com/tonyredondo/buildopt/actions/runs/"+($runId|tostring))},runner:{class:"linux-amd64-4c-16g-v1",cpuCount:4,memoryBytes:$memory,oomBefore:$oomBefore,oomAfter:$oomAfter},pilot:{repository:"tonyredondo/buildopt-pilot",baseRevision:$base,acceptedRevision:$accepted,pullRequest:1,pullRequestUrl:"https://github.com/tonyredondo/buildopt-pilot/pull/1"},controlMs:$controlMs,candidateMs:$candidateMs,controlSha256:$controlSha,candidateSha256:$candidateSha,controlOutcomes:$controlOutcomes,candidateOutcomes:$candidateOutcomes}' >"${buildopt_input}"
+
+go run ./cmd/task-intelligence-evaluation "${buildopt_input}" "${buildopt_output}"
+chmod 0644 "${buildopt_output}"
+jq '{measurement,outcomes,gate}' "${buildopt_output}"

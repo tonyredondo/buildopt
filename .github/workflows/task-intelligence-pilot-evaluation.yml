@@ -1,0 +1,35 @@
+name: Task Intelligence Pilot Evaluation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: tonyredondo/buildopt-pilot
+          path: pilot
+          fetch-depth: 0
+      - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - uses: actions/setup-java@7a445ee88d4e23b52c33fdc7601e402fa97c270c
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Evaluate accepted custom-task patch
+        run: ./dev/run-task-intelligence-pilot-evaluation "$RUNNER_TEMP/task-intelligence-pilot.json" pilot fead91a55581d25d0b8a5c9680bd19792f55792e dcb4ff429d8b00b8d7030ef164fa73d2b4bc57d3 "$GITHUB_RUN_ID"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: task-intelligence-pilot-evaluation
+          path: ${{ runner.temp }}/task-intelligence-pilot.json
+          if-no-files-found: error
+          retention-days: 90
