@@ -80,7 +80,7 @@ buildopt_control_ms=(); buildopt_candidate_ms=(); buildopt_control_sha=(); build
 for buildopt_pair in 1 2 3 4; do
     if ((buildopt_pair % 2 == 1)); then run_arm control; run_arm candidate; else run_arm candidate; run_arm control; fi
 done
-buildopt_oom_after=1000 4 24 27 30 46 100 111 122 984 992 1000buildopt_read_oom)
+buildopt_oom_after=$(buildopt_read_oom)
 
 buildopt_input="${buildopt_tmp}/input.json"
 jq -n \
