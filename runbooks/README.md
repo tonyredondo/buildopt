@@ -8,9 +8,13 @@ work extends them without silently changing the Phase 0 safety boundary.
 - [`base-recovery.md`](./base-recovery.md): local bypass, CI kill switch,
   immutable version rollback, uninstall, state preservation or purge, and
   partial patch-branch recovery for `F0-039`.
+- [`private-beta-operations.md`](./private-beta-operations.md): preflight,
+  health/readiness, alert triage, revocation, circuit fallback, shutdown,
+  restart, rollback, and recovery for `A1-005`.
 
-Run the recorded Phase 0 exercises from the repository root:
+Run the recorded exercises from the repository root:
 
 ```bash
 ./dev/check-base-runbooks
+./dev/check-private-beta-operations
 ```

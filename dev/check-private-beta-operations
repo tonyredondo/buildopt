@@ -1,0 +1,161 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/private-beta-operations-v1.json"
+buildopt_runbook="${buildopt_repo_root}/runbooks/private-beta-operations.md"
+
+for buildopt_command in git grep jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required private-beta operations command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if ! jq -e '
+    keys == [
+        "boundaries",
+        "components",
+        "exercise",
+        "profile",
+        "runbook",
+        "schemaVersion",
+        "workItem"
+    ] and
+    .schemaVersion == "buildopt.specs/private-beta-operations/v1" and
+    .workItem == "A1-005" and
+    .profile == "PRIVATE_BETA_ISOLATED" and
+    .components == [
+        {
+            id: "HEALTH_READINESS_REVOCATION",
+            contract: "specs/ops-readiness-v1.json",
+            exercise: "dev/check-ops-readiness"
+        },
+        {
+            id: "LOCAL_ALERT_SURFACE",
+            contract: "specs/ops-alerts-v1.json",
+            exercise: "dev/check-ops-alerts"
+        },
+        {
+            id: "RUNNER_CIRCUIT_BREAKER",
+            contract: "specs/beta-circuit-breaker-v1.json",
+            exercise: "dev/check-beta-circuit-breaker"
+        },
+        {
+            id: "BYPASS_ROLLBACK_UNINSTALL",
+            contract: "runbooks/base-recovery.md",
+            exercise: "dev/check-base-runbooks"
+        }
+    ] and
+    .runbook == {
+        path: "runbooks/private-beta-operations.md",
+        requiredProcedures: [
+            "PREFLIGHT_AND_STARTUP",
+            "HEALTH_AND_READINESS",
+            "ALERT_TRIAGE",
+            "AUTHORITY_REVOCATION",
+            "CIRCUIT_BREAKER",
+            "BYPASS_AND_KILL_SWITCH",
+            "SHUTDOWN_AND_RESTART",
+            "ROLLBACK_AND_UNINSTALL",
+            "RECORDED_EXERCISE"
+        ],
+        manualStateEdits: false,
+        externalPagingClaimed: false
+    } and
+    .exercise == {
+        command: "./dev/check-private-beta-operations",
+        composes: [
+            "dev/check-ops-readiness",
+            "dev/check-ops-alerts",
+            "dev/check-beta-circuit-breaker",
+            "dev/check-base-runbooks"
+        ],
+        mutatesWorkingTree: false,
+        runsEightHourSoak: false
+    } and
+    .boundaries == {
+        closes: ["A1-005"],
+        doesNotClose: [
+            "A1-001",
+            "A1-006",
+            "A1-G02",
+            "A1-G06",
+            "OPS-001/A1",
+            "EIGHT_HOUR_SOAK",
+            "EXTERNAL_PAGING_INTEGRATION",
+            "EXTERNAL_PILOT_OPERATION"
+        ]
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'private-beta operations contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_required_headings=(
+    '## Preflight and startup'
+    '## Health and readiness'
+    '## Alert triage'
+    '## Authority revocation'
+    '## Circuit breaker'
+    '## Bypass and kill switch'
+    '## Shutdown and restart'
+    '## Rollback and uninstall'
+    '## Recorded exercise'
+)
+for buildopt_heading in "${buildopt_required_headings[@]}"; do
+    if [[ "$(grep -Fxc -- "${buildopt_heading}" "${buildopt_runbook}")" != "1" ]]; then
+        printf 'private-beta operations runbook is missing: %s\n' \
+            "${buildopt_heading}" >&2
+        exit 1
+    fi
+done
+
+buildopt_required_references=(
+    '/livez'
+    '/readyz'
+    '/ops/v1/alerts'
+    'BUILDOPT_BYPASS=1'
+    'BUILDOPT_EMERGENCY_BYPASS=1'
+    'circuit-breaker.json'
+    './dev/manage-deployment rollback'
+    './dev/check-private-beta-operations'
+)
+for buildopt_reference in "${buildopt_required_references[@]}"; do
+    if ! grep -Fq -- "${buildopt_reference}" "${buildopt_runbook}"; then
+        printf 'private-beta operations runbook lacks reference: %s\n' \
+            "${buildopt_reference}" >&2
+        exit 1
+    fi
+done
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+buildopt_component_checks=(
+    "check-ops-readiness"
+    "check-ops-alerts"
+    "check-beta-circuit-breaker"
+    "check-base-runbooks"
+)
+for buildopt_check in "${buildopt_component_checks[@]}"; do
+    "${buildopt_script_dir}/${buildopt_check}"
+done
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'private-beta operations checker changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'A1-005 operations OK: readiness/revocation, ten alerts, circuit fallback, and recovery runbooks exercised without the eight-hour soak\n'

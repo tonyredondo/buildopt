@@ -17,6 +17,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`beta-gradle-fixtures-v1.md`](./beta-gradle-fixtures-v1.md) | `OPS-001/A1` / `A1-G02` |
 | [`private-beta-token-isolation-v1.md`](./private-beta-token-isolation-v1.md) | `A1-002` / `A1-G01` |
 | [`private-beta-data-lifecycle-v1.md`](./private-beta-data-lifecycle-v1.md) | `A1-004` / `A1-G05` |
+| [`private-beta-operations-v1.md`](./private-beta-operations-v1.md) | `A1-005` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`patch-bundle-v1.md`](./patch-bundle-v1.md) | `F0-034` |
 | [`bandit-policy-v1.md`](./bandit-policy-v1.md) | `F0-035` |
@@ -103,6 +104,10 @@ fork isolation.
 pre-persistence HMAC redaction, explicit bounded diagnostic profiles,
 logical-before-physical whole-deployment deletion, active managed leases,
 tokenized downstream obligations, and enforced Shared/L1 generation floors.
+`private-beta-operations-v1.json` is the A1-005 composition contract for the
+isolated profile's readiness/revocation, ten-class local alert surface,
+runner circuit fallback, and bypass/rollback/uninstall procedures. Its bounded
+exercise explicitly excludes the eight-hour soak and external pilot evidence.
 `beta-benchmark-harness-v1.json` is the OPS-001/A1 executable smoke contract
 for all phase/client strata, real Shared HTTP publication/read paths, private
 raw observations, digest-bound summaries, and explicit non-qualification.

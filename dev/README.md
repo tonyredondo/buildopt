@@ -1306,6 +1306,25 @@ it against the benchmark manifest, and removes it. This closes only the
 fixture-size matrix; the eight-hour soak remains before `A1-G02` and the full
 operational profile can close.
 
+## Private-beta operational closure
+
+Exercise the complete bounded `A1-005` operator path:
+
+```bash
+./dev/check-private-beta-operations
+```
+
+The composite checker validates the isolated-profile operations contract and
+runbook, then runs the real readiness/revocation, ten-class local alert,
+runner-circuit/Gradle-preservation, and base bypass/kill-switch/rollback/
+uninstall drills. The runbook defines preflight, admission, triage, authority
+rotation, circuit cooldown, shutdown/restart, and recovery stop conditions
+without manual SQLite, authority, or circuit-state edits. Every child exercise
+must leave the working tree unchanged. This closes only `A1-005`; the
+per-pilot deployment, external operation and causal-benefit evidence, exact
+eight-hour soak, `A1-G02`, `A1-G06`, and complete `OPS-001/A1` profile
+remain open.
+
 ## Private-beta benchmark harness
 
 Exercise the non-qualifying real-data-plane smoke profile:
@@ -1402,7 +1421,7 @@ Validate the namespace skeleton defined by RFC §29.2:
 ```
 
 The checker requires all 16 contract, vector, specification, benchmark, and ADR
-namespaces, their non-empty indexes, and parent directories for the 79 planned
+namespaces, their non-empty indexes, and parent directories for the 99 planned
 normative artifacts. It also preserves every materialized contract, including
 the deployment lifecycle, and rejects an empty file at any planned artifact
 path. F0-010 created the structure; each schema, API, IDL, vector,

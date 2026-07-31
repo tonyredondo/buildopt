@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "buildopt.specs/private-beta-operations/v1",
+  "workItem": "A1-005",
+  "profile": "PRIVATE_BETA_ISOLATED",
+  "components": [
+    {
+      "id": "HEALTH_READINESS_REVOCATION",
+      "contract": "specs/ops-readiness-v1.json",
+      "exercise": "dev/check-ops-readiness"
+    },
+    {
+      "id": "LOCAL_ALERT_SURFACE",
+      "contract": "specs/ops-alerts-v1.json",
+      "exercise": "dev/check-ops-alerts"
+    },
+    {
+      "id": "RUNNER_CIRCUIT_BREAKER",
+      "contract": "specs/beta-circuit-breaker-v1.json",
+      "exercise": "dev/check-beta-circuit-breaker"
+    },
+    {
+      "id": "BYPASS_ROLLBACK_UNINSTALL",
+      "contract": "runbooks/base-recovery.md",
+      "exercise": "dev/check-base-runbooks"
+    }
+  ],
+  "runbook": {
+    "path": "runbooks/private-beta-operations.md",
+    "requiredProcedures": [
+      "PREFLIGHT_AND_STARTUP",
+      "HEALTH_AND_READINESS",
+      "ALERT_TRIAGE",
+      "AUTHORITY_REVOCATION",
+      "CIRCUIT_BREAKER",
+      "BYPASS_AND_KILL_SWITCH",
+      "SHUTDOWN_AND_RESTART",
+      "ROLLBACK_AND_UNINSTALL",
+      "RECORDED_EXERCISE"
+    ],
+    "manualStateEdits": false,
+    "externalPagingClaimed": false
+  },
+  "exercise": {
+    "command": "./dev/check-private-beta-operations",
+    "composes": [
+      "dev/check-ops-readiness",
+      "dev/check-ops-alerts",
+      "dev/check-beta-circuit-breaker",
+      "dev/check-base-runbooks"
+    ],
+    "mutatesWorkingTree": false,
+    "runsEightHourSoak": false
+  },
+  "boundaries": {
+    "closes": [
+      "A1-005"
+    ],
+    "doesNotClose": [
+      "A1-001",
+      "A1-006",
+      "A1-G02",
+      "A1-G06",
+      "OPS-001/A1",
+      "EIGHT_HOUR_SOAK",
+      "EXTERNAL_PAGING_INTEGRATION",
+      "EXTERNAL_PILOT_OPERATION"
+    ]
+  }
+}

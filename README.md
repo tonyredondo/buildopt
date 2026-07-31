@@ -133,6 +133,7 @@ From the repository root:
 ./dev/check-beta-soak
 ./dev/check-beta-circuit-breaker
 ./dev/check-beta-gradle-fixtures
+./dev/check-private-beta-operations
 ./dev/check-github-action
 ./dev/check-base-runbooks
 ./dev/run -- ./dev/check-jvm-release
