@@ -140,7 +140,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	var l1 *managedL1
 	var l1Err error
 	if authority != nil {
-		l1, l1Err = startManagedL1(authority.managedL1Config)
+		l1, l1Err = startManagedL1(
+			managedL1ConfigForInvocation(authority, gateway),
+		)
 	} else if !authorityConfigured {
 		l1, l1Err = startInvocationManagedL1()
 	}
@@ -163,7 +165,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			gatewayPasswordEnvironment:   gateway.password,
 			gatewayGenerationEnvironment: gateway.generation,
 		}
-		if authority != nil {
+		if managedSharedAuthorityEnabled(authority, gateway) {
 			for key, value := range authority.childEnvironment {
 				childEnvironment[key] = value
 			}
@@ -269,6 +271,24 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	}
 
 	return exitCode
+}
+
+func managedL1ConfigForInvocation(
+	authority *localAuthorityContext,
+	gateway *localGateway,
+) managedL1Config {
+	config := authority.managedL1Config
+	if gateway != nil && gateway.cacheSuppressed {
+		config.l2WriteAuthorized = false
+	}
+	return config
+}
+
+func managedSharedAuthorityEnabled(
+	authority *localAuthorityContext,
+	gateway *localGateway,
+) bool {
+	return authority != nil && gateway != nil && !gateway.cacheSuppressed
 }
 
 type childExecution struct {

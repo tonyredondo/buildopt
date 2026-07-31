@@ -72,9 +72,10 @@ public final class ManagedL1TestKit {
                 || arguments.length > 5
                 || (arguments.length == 5
                         && !arguments[4].equals("shared-only")
-                        && !arguments[4].equals("lifecycle-only"))) {
+                        && !arguments[4].equals("lifecycle-only")
+                        && !arguments[4].equals("circuit-only"))) {
             throw new IllegalArgumentException(
-                    "expected fixture root, Gradle home, plugin JAR, Java major, and optional shared-only or lifecycle-only");
+                    "expected fixture root, Gradle home, plugin JAR, Java major, and optional shared-only, lifecycle-only, or circuit-only");
         }
         Path fixtureRoot = Path.of(arguments[0]).toAbsolutePath().normalize();
         File gradleHome = Path.of(arguments[1]).toAbsolutePath().normalize().toFile();
@@ -83,6 +84,7 @@ public final class ManagedL1TestKit {
         String requestedMode = arguments.length == 5 ? arguments[4] : "";
         boolean sharedOnly = requestedMode.equals("shared-only");
         boolean lifecycleOnly = requestedMode.equals("lifecycle-only");
+        boolean circuitOnly = requestedMode.equals("circuit-only");
         if (Runtime.version().feature() != expectedJava) {
             throw new IllegalStateException(
                     "TestKit Java "
@@ -103,6 +105,15 @@ public final class ManagedL1TestKit {
             Path initScript = writeInitScript(testRoot, pluginJar);
             for (String dsl : new String[] {"kotlin", "groovy"}) {
                 Path project = testRoot.resolve("tier1").resolve(dsl);
+                if (circuitOnly) {
+                    runCircuitBreakerFallback(
+                            project,
+                            testRoot.resolve("circuit-state-" + dsl),
+                            initScript,
+                            gradleHome,
+                            dsl);
+                    continue;
+                }
                 if (lifecycleOnly) {
                     runL1L2Lifecycle(
                             project,
@@ -148,7 +159,12 @@ public final class ManagedL1TestKit {
         } finally {
             deleteTree(testRoot);
         }
-        if (lifecycleOnly) {
+        if (circuitOnly) {
+            System.out.printf(
+                    "A1-G02 circuit fallback TestKit OK: Gradle %s / JDK %d / Kotlin+Groovy / flood+large-object+full-disk%n",
+                    gradleHome.getName(),
+                    expectedJava);
+        } else if (lifecycleOnly) {
             System.out.printf(
                     "A0-G02 TestKit OK: Gradle %s / JDK %d / Kotlin+Groovy L2-to-L1 revocation and abort%n",
                     gradleHome.getName(),
@@ -163,6 +179,74 @@ public final class ManagedL1TestKit {
                     "A0-003 TestKit OK: Gradle %s / JDK %d / Kotlin+Groovy%n",
                     gradleHome.getName(),
                     expectedJava);
+        }
+    }
+
+    private static void runCircuitBreakerFallback(
+            Path project,
+            Path stateRoot,
+            Path initScript,
+            File gradleHome,
+            String dsl)
+            throws IOException {
+        Path source = project.resolve("src/main/java/example/TierOne.java");
+        String original = Files.readString(source, StandardCharsets.UTF_8);
+        String[] reasons = {"FLOOD", "OBJECT_TOO_LARGE", "DISK_PRESSURE"};
+        String[] arguments =
+                arguments(
+                        initScript,
+                        "--build-cache",
+                        "-PbuildoptTierOneRegisterTransform=false",
+                        "clean",
+                        "compileJava");
+
+        try {
+            for (int index = 0; index < reasons.length; index++) {
+                String reason = reasons[index];
+                long generation = 60L + index;
+                Path directory = managedDirectory(stateRoot, generation);
+                Files.createDirectories(directory);
+                Files.writeString(
+                        source,
+                        original + "\n// a1-g02-" + reason.toLowerCase() + "\n",
+                        StandardCharsets.UTF_8);
+                String scenario =
+                        dsl
+                                + "-circuit-"
+                                + reason.toLowerCase().replace('_', '-');
+                Map<String, String> environment =
+                        readWriteEnvironment(directory, generation);
+
+                BuildResult fallback =
+                        run(
+                                project,
+                                gradleHome,
+                                scenario,
+                                environment,
+                                arguments);
+                requireOutcome(
+                        fallback,
+                        ":compileJava",
+                        TaskOutcome.SUCCESS,
+                        scenario + "-fallback");
+                requireCacheContent(directory, scenario + "-fallback");
+
+                BuildResult replay =
+                        run(
+                                project,
+                                gradleHome,
+                                scenario,
+                                environment,
+                                arguments);
+                requireOutcome(
+                        replay,
+                        ":compileJava",
+                        TaskOutcome.FROM_CACHE,
+                        scenario + "-replay");
+                requireConfigurationCacheReuse(replay, scenario + "-replay");
+            }
+        } finally {
+            Files.writeString(source, original, StandardCharsets.UTF_8);
         }
     }
 

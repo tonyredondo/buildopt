@@ -48,12 +48,13 @@ type managedGatewayControlRequestFixture struct {
 }
 
 type managedGatewayControlResponseFixture struct {
-	SchemaVersion int    `json:"schemaVersion"`
-	Endpoint      string `json:"endpoint"`
-	Username      string `json:"username"`
-	Password      string `json:"password"`
-	Generation    string `json:"gatewayConnectionGeneration"`
-	Error         string `json:"error"`
+	SchemaVersion   int    `json:"schemaVersion"`
+	Endpoint        string `json:"endpoint"`
+	Username        string `json:"username"`
+	Password        string `json:"password"`
+	Generation      string `json:"gatewayConnectionGeneration"`
+	CacheSuppressed bool   `json:"cacheSuppressed"`
+	Error           string `json:"error"`
 }
 
 type managedGatewayCommandFixture struct {

@@ -11,8 +11,9 @@ belongs in [`specs/benchmark-beta-v1.md`](../specs/benchmark-beta-v1.md).
 The JSON-compatible YAML is validated by `./dev/check-beta-benchmark`. The
 executable result path is validated by
 `./dev/check-beta-benchmark-harness`, whose real-HTTP `SMOKE` profile is
-explicitly non-qualifying. Neither command claims the sustained or soak
-profiles have run.
+explicitly non-qualifying. Those two commands do not claim the long profiles;
+`./dev/check-beta-sustained --qualify` and
+`./dev/check-beta-soak --qualify` own their exact evidence independently.
 
 ## Walking-skeleton overhead evidence
 

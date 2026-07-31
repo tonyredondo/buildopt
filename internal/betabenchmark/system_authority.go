@@ -43,6 +43,7 @@ func newSystemAuthorityFixture(
 		manifestDigest,
 		now,
 		ordinal,
+		12,
 		allowWrite,
 		withGrant,
 		30*time.Minute,
@@ -57,17 +58,19 @@ func newSystemAuthorityFixtureWithDurations(
 	manifestDigest string,
 	now time.Time,
 	ordinal int,
+	namespaceGeneration int64,
 	allowWrite bool,
 	withGrant bool,
 	leaseDuration time.Duration,
 	policyDuration time.Duration,
 	revocationDuration time.Duration,
 ) (systemAuthorityFixture, error) {
-	if leaseDuration <= 0 ||
+	if namespaceGeneration < 1 ||
+		leaseDuration <= 0 ||
 		policyDuration <= 0 ||
 		revocationDuration <= 0 {
 		return systemAuthorityFixture{}, errors.New(
-			"system authority durations must be positive",
+			"system authority namespace and durations are invalid",
 		)
 	}
 	privateKey := benchmarkSigningKey(manifestDigest)
@@ -124,7 +127,7 @@ func newSystemAuthorityFixtureWithDurations(
 				Read:                true,
 				Write:               "DISABLED",
 				Namespace:           "stable",
-				NamespaceGeneration: 12,
+				NamespaceGeneration: namespaceGeneration,
 			},
 			ConfigurationCache: localauthority.ConfigurationCachePolicy{
 				Enabled:         true,

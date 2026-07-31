@@ -47,8 +47,11 @@ type localGateway struct {
 	spool       *gatewaySpool
 	readiness   func() bool
 	cache       func() *gatewayCacheBinding
+	openCircuit func(gatewayCircuitReason)
 	cacheClient *http.Client
 	release     func() error
+
+	cacheSuppressed bool
 
 	mutex     sync.Mutex
 	listener  net.Listener
@@ -401,7 +404,6 @@ func (gateway *localGateway) serveCache(
 		writer.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-
 	upstreamRequest, err := http.NewRequestWithContext(
 		request.Context(),
 		request.Method,
@@ -447,6 +449,10 @@ func (gateway *localGateway) serveCache(
 		writer.WriteHeader(http.StatusServiceUnavailable)
 		return
 	}
+	if request.Method == http.MethodPut &&
+		response.StatusCode == http.StatusRequestEntityTooLarge {
+		gateway.tripCircuit(gatewayCircuitObjectTooLarge)
+	}
 	if request.Method == http.MethodGet {
 		gateway.serveVerifiedCacheGET(writer, response)
 		return
@@ -475,6 +481,14 @@ func (gateway *localGateway) serveVerifiedCacheGET(
 		response.Header.Get("X-BuildOpt-Blob-Digest"),
 	)
 	if err != nil {
+		switch {
+		case errors.Is(err, errGatewaySpoolFlood):
+			gateway.tripCircuit(gatewayCircuitFlood)
+		case errors.Is(err, errGatewaySpoolObjectTooLarge):
+			gateway.tripCircuit(gatewayCircuitObjectTooLarge)
+		case errors.Is(err, errGatewaySpoolDiskPressure):
+			gateway.tripCircuit(gatewayCircuitDiskPressure)
+		}
 		writer.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -487,6 +501,12 @@ func (gateway *localGateway) serveVerifiedCacheGET(
 	}
 	writer.WriteHeader(http.StatusOK)
 	_, _ = io.Copy(writer, payload.file)
+}
+
+func (gateway *localGateway) tripCircuit(reason gatewayCircuitReason) {
+	if gateway.openCircuit != nil {
+		gateway.openCircuit(reason)
+	}
 }
 
 func (gateway *localGateway) writeUpstreamFailure(

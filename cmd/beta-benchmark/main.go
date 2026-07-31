@@ -12,7 +12,7 @@ import (
 	"github.com/tonyredondo/buildopt/internal/betabenchmark"
 )
 
-const usage = "usage: beta-benchmark smoke --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark disk-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark shared-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark system-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH --buildopt ABSOLUTE_PATH --server ABSOLUTE_PATH\n       beta-benchmark sustained --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH --buildopt ABSOLUTE_PATH\n       beta-benchmark sustained-trial --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH --buildopt ABSOLUTE_PATH\n       beta-benchmark validate --manifest PATH --result PATH\n       beta-benchmark validate-disk-faults --manifest PATH --result PATH\n       beta-benchmark validate-shared-faults --manifest PATH --result PATH\n       beta-benchmark validate-system-faults --manifest PATH --result PATH\n       beta-benchmark validate-sustained --manifest PATH --result PATH\n       beta-benchmark validate-sustained-trial --manifest PATH --result PATH\n"
+const usage = "usage: beta-benchmark smoke --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark disk-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark shared-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark system-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH --buildopt ABSOLUTE_PATH --server ABSOLUTE_PATH\n       beta-benchmark sustained --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH --buildopt ABSOLUTE_PATH\n       beta-benchmark sustained-trial --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH --buildopt ABSOLUTE_PATH\n       beta-benchmark soak --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH --buildopt ABSOLUTE_PATH\n       beta-benchmark soak-trial --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH --buildopt ABSOLUTE_PATH\n       beta-benchmark validate --manifest PATH --result PATH\n       beta-benchmark validate-disk-faults --manifest PATH --result PATH\n       beta-benchmark validate-shared-faults --manifest PATH --result PATH\n       beta-benchmark validate-system-faults --manifest PATH --result PATH\n       beta-benchmark validate-sustained --manifest PATH --result PATH\n       beta-benchmark validate-sustained-trial --manifest PATH --result PATH\n       beta-benchmark validate-soak --manifest PATH --result PATH\n       beta-benchmark validate-soak-trial --manifest PATH --result PATH\n"
 
 func main() {
 	ctx, stop := signal.NotifyContext(
@@ -149,7 +149,7 @@ func run(
 			result,
 		)
 		return 0
-	case "sustained", "sustained-trial":
+	case "sustained", "sustained-trial", "soak", "soak-trial":
 		flags := flag.NewFlagSet(
 			"beta-benchmark "+args[0],
 			flag.ContinueOnError,
@@ -184,7 +184,8 @@ func run(
 			result string
 			err    error
 		)
-		if args[0] == "sustained" {
+		switch args[0] {
+		case "sustained":
 			result, err = betabenchmark.RunSustained(
 				ctx,
 				*manifest,
@@ -192,8 +193,24 @@ func run(
 				*outputDirectory,
 				*buildoptExecutable,
 			)
-		} else {
+		case "sustained-trial":
 			result, err = betabenchmark.RunSustainedTrial(
+				ctx,
+				*manifest,
+				*stateDirectory,
+				*outputDirectory,
+				*buildoptExecutable,
+			)
+		case "soak":
+			result, err = betabenchmark.RunSoak(
+				ctx,
+				*manifest,
+				*stateDirectory,
+				*outputDirectory,
+				*buildoptExecutable,
+			)
+		case "soak-trial":
+			result, err = betabenchmark.RunSoakTrial(
 				ctx,
 				*manifest,
 				*stateDirectory,
@@ -214,7 +231,8 @@ func run(
 		return 0
 	case "validate", "validate-disk-faults", "validate-shared-faults",
 		"validate-system-faults", "validate-sustained",
-		"validate-sustained-trial":
+		"validate-sustained-trial", "validate-soak",
+		"validate-soak-trial":
 		flags := flag.NewFlagSet(
 			"beta-benchmark "+args[0],
 			flag.ContinueOnError,
@@ -243,6 +261,10 @@ func run(
 			err = betabenchmark.ValidateSustainedResult(*manifest, *result)
 		case "validate-sustained-trial":
 			err = betabenchmark.ValidateSustainedTrial(*manifest, *result)
+		case "validate-soak":
+			err = betabenchmark.ValidateSoakResult(*manifest, *result)
+		case "validate-soak-trial":
+			err = betabenchmark.ValidateSoakTrial(*manifest, *result)
 		}
 		if err != nil {
 			_, _ = fmt.Fprintf(stderr, "beta-benchmark: %v\n", err)

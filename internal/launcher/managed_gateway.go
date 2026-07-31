@@ -72,18 +72,20 @@ type managedGatewayCacheRegistration struct {
 }
 
 type managedGatewayControlResponse struct {
-	SchemaVersion int    `json:"schemaVersion"`
-	Endpoint      string `json:"endpoint,omitempty"`
-	Username      string `json:"username,omitempty"`
-	Password      string `json:"password,omitempty"`
-	Generation    string `json:"gatewayConnectionGeneration,omitempty"`
-	Error         string `json:"error,omitempty"`
+	SchemaVersion   int    `json:"schemaVersion"`
+	Endpoint        string `json:"endpoint,omitempty"`
+	Username        string `json:"username,omitempty"`
+	Password        string `json:"password,omitempty"`
+	Generation      string `json:"gatewayConnectionGeneration,omitempty"`
+	CacheSuppressed bool   `json:"cacheSuppressed,omitempty"`
+	Error           string `json:"error,omitempty"`
 }
 
 type managedGatewayContext struct {
 	mutex        sync.Mutex
 	attemptID    string
 	cacheBinding *gatewayCacheBinding
+	circuit      *managedGatewayCircuitBreaker
 }
 
 // managedGatewayConfigFromEnvironment keeps the Phase 0 gateway as the
@@ -253,11 +255,12 @@ func startManagedInvocationGatewayWithCache(
 	}
 
 	gateway := &localGateway{
-		address:    strings.TrimPrefix(response.Endpoint, "http://"),
-		endpoint:   response.Endpoint,
-		username:   response.Username,
-		password:   response.Password,
-		generation: response.Generation,
+		address:         strings.TrimPrefix(response.Endpoint, "http://"),
+		endpoint:        response.Endpoint,
+		username:        response.Username,
+		password:        response.Password,
+		generation:      response.Generation,
+		cacheSuppressed: response.CacheSuppressed,
 		release: func() error {
 			return errors.Join(
 				connection.Close(),
@@ -600,7 +603,8 @@ func serveManagedGateway(directory string, idleTimeout time.Duration) error {
 		}
 	}
 
-	context := &managedGatewayContext{}
+	circuit := newManagedGatewayCircuitBreaker(directory)
+	context := &managedGatewayContext{circuit: circuit}
 	spool, err := openGatewaySpool(
 		filepath.Join(directory, "spool"),
 		false,
@@ -618,6 +622,7 @@ func serveManagedGateway(directory string, idleTimeout time.Duration) error {
 	)
 	gateway.spool = spool
 	gateway.cache = context.cache
+	gateway.openCircuit = context.tripCircuit
 	gateway.startServingLocked(httpListener)
 	defer gateway.close()
 
@@ -913,7 +918,11 @@ func handleManagedGatewayControl(
 		)
 		return
 	}
-	if !context.registerWithCache(request.AttemptID, cacheBinding) {
+	registered, cacheSuppressed := context.registerWithCacheStatus(
+		request.AttemptID,
+		cacheBinding,
+	)
+	if !registered {
 		_ = writeManagedGatewayControlResponse(
 			connection,
 			managedGatewayControlResponse{
@@ -929,11 +938,12 @@ func handleManagedGatewayControl(
 	notifyManagedGatewayActivity(activity)
 
 	response := managedGatewayControlResponse{
-		SchemaVersion: managedGatewayControlSchemaVersion,
-		Endpoint:      "http://" + identity.address,
-		Username:      identity.username,
-		Password:      identity.password,
-		Generation:    identity.generation,
+		SchemaVersion:   managedGatewayControlSchemaVersion,
+		Endpoint:        "http://" + identity.address,
+		Username:        identity.username,
+		Password:        identity.password,
+		Generation:      identity.generation,
+		CacheSuppressed: cacheSuppressed,
 	}
 	if err := writeManagedGatewayControlResponse(connection, response); err != nil {
 		return
@@ -1009,14 +1019,38 @@ func (context *managedGatewayContext) registerWithCache(
 	attemptID string,
 	cacheBinding *gatewayCacheBinding,
 ) bool {
+	registered, _ := context.registerWithCacheStatus(attemptID, cacheBinding)
+	return registered
+}
+
+func (context *managedGatewayContext) registerWithCacheStatus(
+	attemptID string,
+	cacheBinding *gatewayCacheBinding,
+) (bool, bool) {
 	context.mutex.Lock()
 	defer context.mutex.Unlock()
 	if context.attemptID != "" {
-		return false
+		return false, false
 	}
+	cacheSuppressed := cacheBinding != nil &&
+		context.circuit != nil &&
+		context.circuit.cacheSuppressed()
 	context.attemptID = attemptID
-	context.cacheBinding = cacheBinding.copy()
-	return true
+	if !cacheSuppressed {
+		context.cacheBinding = cacheBinding.copy()
+	}
+	return true, cacheSuppressed
+}
+
+func (context *managedGatewayContext) tripCircuit(
+	reason gatewayCircuitReason,
+) {
+	if context.circuit != nil {
+		_ = context.circuit.trip(reason)
+	}
+	context.mutex.Lock()
+	context.cacheBinding = nil
+	context.mutex.Unlock()
 }
 
 func (context *managedGatewayContext) unregister(attemptID string) {

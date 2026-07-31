@@ -1,0 +1,179 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/beta-circuit-breaker-v1.json"
+
+for buildopt_command in find git jq mkdir readlink uname; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required circuit-breaker command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+if [[ "$(uname -s)" != "Linux" ]]; then
+    printf 'A1-G02 circuit-breaker conformance requires Linux\n' >&2
+    exit 1
+fi
+
+cd -- "${buildopt_repo_root}"
+buildopt_before_status=$(
+    git status --porcelain=v1 --untracked-files=all
+)
+
+if ! jq -e '
+    keys == [
+        "boundaries",
+        "exitGateId",
+        "gateId",
+        "gradlePreservation",
+        "implementation",
+        "schemaVersion",
+        "transition",
+        "triggers",
+        "validation"
+    ] and
+    .schemaVersion == "buildopt.specs/beta-circuit-breaker/v1" and
+    .gateId == "OPS-001/A1" and
+    .exitGateId == "A1-G02" and
+    .implementation == {
+        scope: "MANAGED_RUNNER_SLOT",
+        stateFile: "circuit-breaker.json",
+        stateMode: "0600",
+        stateSchemaVersion: 1,
+        cooldownSeconds: 300,
+        reasons: ["FLOOD", "OBJECT_TOO_LARGE", "DISK_PRESSURE"],
+        containsSecrets: false,
+        invalidState: "SUPPRESS_L2"
+    } and
+    .triggers == [
+        {
+            reason: "FLOOD",
+            signal: "VERIFIED_SPOOL_QUOTA_EXHAUSTED",
+            currentRequest: "BYTE_FREE_404"
+        },
+        {
+            reason: "OBJECT_TOO_LARGE",
+            signal: "VERIFIED_GET_OVER_100_MIB_OR_UPSTREAM_PUT_413",
+            currentRequest: "BYTE_FREE_404_OR_PRESERVED_413"
+        },
+        {
+            reason: "DISK_PRESSURE",
+            signal: "VERIFIED_SPOOL_ENOSPC_OR_EDQUOT",
+            currentRequest: "BYTE_FREE_404"
+        }
+    ] and
+    .transition == {
+        activeL2Binding: "REMOVED_IMMEDIATELY",
+        nextInvocationSharedAuthority: "OMITTED",
+        nextInvocationL1: "READ_WRITE",
+        upstreamCredentialPersisted: false,
+        gatewayIdentityRotated: false,
+        afterCooldown: "REMOVE_STATE_DURABLY_AND_RETRY_L2"
+    } and
+    .gradlePreservation == {
+        gradle: "9.6.1",
+        jdk: 21,
+        platform: "linux-amd64",
+        dsls: ["GROOVY", "KOTLIN"],
+        reasons: ["FLOOD", "OBJECT_TOO_LARGE", "DISK_PRESSURE"],
+        fallbackBuild: "SUCCESS",
+        localReplay: "FROM_CACHE",
+        configurationCacheReplay: true,
+        sharedAuthorityPresent: false
+    } and
+    .validation == {
+        goRace: true,
+        strictStateDecoding: true,
+        restartPersistence: true,
+        tamperedStateFailsClosed: true,
+        cooldownRecovery: true,
+        realGradleTestKit: true
+    } and
+    .boundaries == {
+        closes: ["OPS-001/A1-CIRCUIT-BREAKER-MATRIX"],
+        doesNotClose: [
+            "OPS-001/A1",
+            "A1-G02",
+            "EIGHT_HOUR_SOAK",
+            "GRADLE_FIXTURE_SIZE_MATRIX"
+        ]
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'private-beta circuit-breaker contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_required_files=(
+    "internal/launcher/gateway_circuit_breaker.go"
+    "internal/launcher/gateway_circuit_breaker_test.go"
+    "internal/launcher/gateway_spool.go"
+    "internal/launcher/gateway_spool_test.go"
+    "internal/launcher/local_gateway.go"
+    "internal/launcher/local_gateway_test.go"
+    "internal/launcher/managed_gateway.go"
+    "internal/launcher/run.go"
+    "jvm/gradle-plugin/src/testKit/java/dev/buildopt/gradle/ManagedL1TestKit.java"
+    "specs/beta-circuit-breaker-v1.md"
+)
+for buildopt_relative in "${buildopt_required_files[@]}"; do
+    if [[ ! -s "${buildopt_repo_root}/${buildopt_relative}" ]]; then
+        printf 'missing circuit-breaker file: %s\n' \
+            "${buildopt_relative}" >&2
+        exit 1
+    fi
+done
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 \
+    ./internal/launcher \
+    -run \
+    'Test(ManagedGatewayCircuit|ManagedGatewayContext|LocalGatewayPreservesEarlyPayloadTooLarge|LocalGatewaySpool(FullDisk|Flood)|GatewaySpoolReservesConcurrentPayloadsAtomically)'
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/launcher ./cmd/buildopt
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p -- "${GRADLE_USER_HOME}"
+buildopt_gradle_home=$(
+    find \
+        "${GRADLE_USER_HOME}/wrapper/dists/gradle-9.6.1-bin" \
+        -type d \
+        -path '*/gradle-9.6.1' \
+        -print \
+        -quit
+)
+if [[ -z "${buildopt_gradle_home}" ||
+    ! -x "${buildopt_gradle_home}/bin/gradle" ]]; then
+    printf 'pinned Gradle 9.6.1 distribution is unavailable\n' >&2
+    exit 1
+fi
+buildopt_gradle_home=$(readlink -f "${buildopt_gradle_home}")
+
+"${buildopt_script_dir}/run" -- \
+    "${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --no-configuration-cache \
+    --stacktrace \
+    --warning-mode=fail \
+    :jvm:gradle-plugin:circuitBreakerTestKit \
+    -PbuildoptTierOneJava=21 \
+    "-PbuildoptTierOneGradleHome=${buildopt_gradle_home}"
+
+buildopt_after_status=$(
+    git status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'circuit-breaker check changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'A1-G02 circuit slice OK: flood, large object, and disk pressure suppress L2 while Kotlin+Groovy builds continue through managed L1\n'

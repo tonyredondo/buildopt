@@ -94,6 +94,10 @@ func TestLocalGatewaySpoolFullDiskBecomesByteFreeMiss(t *testing.T) {
 		return 0, syscall.ENOSPC
 	}
 	gateway.spool = spool
+	opened := make(chan gatewayCircuitReason, 1)
+	gateway.openCircuit = func(reason gatewayCircuitReason) {
+		opened <- reason
+	}
 	if err := originalSpool.close(); err != nil {
 		t.Fatal(err)
 	}
@@ -108,6 +112,14 @@ func TestLocalGatewaySpoolFullDiskBecomesByteFreeMiss(t *testing.T) {
 	)
 	if err != nil || status != http.StatusNotFound || len(body) != 0 {
 		t.Fatalf("full disk response = %d/%q/%v", status, body, err)
+	}
+	select {
+	case reason := <-opened:
+		if reason != gatewayCircuitDiskPressure {
+			t.Fatalf("full disk circuit reason = %q", reason)
+		}
+	default:
+		t.Fatal("full disk did not open the gateway circuit")
 	}
 	assertGatewaySpoolReleased(t, spool)
 	assertGatewaySpoolEmpty(t, spool)
@@ -151,7 +163,9 @@ func TestGatewaySpoolReservesConcurrentPayloadsAtomically(t *testing.T) {
 		int64(len(secondContent)),
 		`"`+secondDigest+`"`,
 		"",
-	); err == nil || payload.file != nil {
+	); err == nil ||
+		!errors.Is(err, errGatewaySpoolFlood) ||
+		payload.file != nil {
 		if payload.file != nil {
 			_ = payload.close()
 		}
@@ -177,6 +191,57 @@ func TestGatewaySpoolReservesConcurrentPayloadsAtomically(t *testing.T) {
 	}
 	assertGatewaySpoolReleased(t, spool)
 	assertGatewaySpoolEmpty(t, spool)
+}
+
+func TestLocalGatewaySpoolFloodOpensCircuitAsByteFreeMiss(t *testing.T) {
+	content := []byte("abcdef")
+	digest := "sha256:" + sha256Hex(content)
+	upstream := httptest.NewServer(http.HandlerFunc(func(
+		writer http.ResponseWriter,
+		_ *http.Request,
+	) {
+		writer.Header().Set("ETag", `"`+digest+`"`)
+		writer.Header().Set("Content-Length", "6")
+		_, _ = writer.Write(content)
+	}))
+	defer upstream.Close()
+	gateway := startCacheGatewayForTest(t, upstream.URL)
+	originalSpool := gateway.spool
+	spool := openGatewaySpoolForTest(t, 8, 10)
+	gateway.spool = spool
+	if err := originalSpool.close(); err != nil {
+		t.Fatal(err)
+	}
+	defer gateway.close()
+
+	reservation, err := spool.reserve(6)
+	if err != nil {
+		t.Fatalf("reserve flood fixture: %v", err)
+	}
+	defer reservation.release()
+	opened := make(chan gatewayCircuitReason, 1)
+	gateway.openCircuit = func(reason gatewayCircuitReason) {
+		opened <- reason
+	}
+
+	status, _, body, err := requestLocalGateway(
+		gateway.endpoint,
+		gateway.username,
+		gateway.password,
+		http.MethodGet,
+		"/cache/flood",
+	)
+	if err != nil || status != http.StatusNotFound || len(body) != 0 {
+		t.Fatalf("flood response = %d/%q/%v", status, body, err)
+	}
+	select {
+	case reason := <-opened:
+		if reason != gatewayCircuitFlood {
+			t.Fatalf("flood circuit reason = %q", reason)
+		}
+	default:
+		t.Fatal("spool flood did not open the gateway circuit")
+	}
 }
 
 func TestGatewaySpoolCoalescesConcurrentDirectorySync(t *testing.T) {

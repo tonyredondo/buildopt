@@ -1234,6 +1234,46 @@ boundary-specific p95 targets. A green qualification closes only the
 60-minute sustained slice; the eight-hour soak, Gradle fixture preservation,
 `A1-G02`, and complete `OPS-001/A1` gate remain open.
 
+## Private-beta eight-hour soak
+
+Exercise the long-lived real data plane with the CI-safe non-qualifying trial:
+
+```bash
+./dev/check-beta-soak
+```
+
+Run the exact eight-hour qualification only in the pinned 4-CPU/16-GiB cgroup:
+
+```bash
+./dev/check-beta-soak --qualify
+```
+
+Both paths retain one managed gateway, Shared store, and signed authority for
+the whole execution. The trial emits 300 scaled observations, marks its runner
+unverified, and must be rejected by the production validator. Qualification
+runs 1/8/32 clients for 9,600 seconds each, emits 30,000 exact-size
+observations, and enforces the golden runner, zero-error, duration, and
+boundary-specific p95 contracts. A green run closes only the eight-hour soak;
+the Gradle fixture and circuit-breaker matrices, `A1-G02`, and complete
+`OPS-001/A1` gate remain separate.
+
+## Private-beta circuit breaker
+
+Exercise the bounded circuit and Gradle-preservation matrix:
+
+```bash
+./dev/check-beta-circuit-breaker
+```
+
+The checker injects verified-spool quota exhaustion, `ENOSPC`, and an
+oversized-object `413`, proves private durable per-runner cooldown state and
+automatic recovery, and runs the real Gradle 9.6.1/JDK 21 Kotlin and Groovy
+fixtures with Shared omitted. Each fallback build succeeds, writes the native
+managed L1, and replays `FROM_CACHE` with Configuration Cache reused. This
+closes only the circuit-breaker slice; the eight-hour qualification, the
+small/medium/large Gradle fixture matrix, `A1-G02`, and complete operational
+gate remain open.
+
 ## Private-beta benchmark harness
 
 Exercise the non-qualifying real-data-plane smoke profile:

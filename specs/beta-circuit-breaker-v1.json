@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "buildopt.specs/beta-circuit-breaker/v1",
+  "gateId": "OPS-001/A1",
+  "exitGateId": "A1-G02",
+  "implementation": {
+    "scope": "MANAGED_RUNNER_SLOT",
+    "stateFile": "circuit-breaker.json",
+    "stateMode": "0600",
+    "stateSchemaVersion": 1,
+    "cooldownSeconds": 300,
+    "reasons": [
+      "FLOOD",
+      "OBJECT_TOO_LARGE",
+      "DISK_PRESSURE"
+    ],
+    "containsSecrets": false,
+    "invalidState": "SUPPRESS_L2"
+  },
+  "triggers": [
+    {
+      "reason": "FLOOD",
+      "signal": "VERIFIED_SPOOL_QUOTA_EXHAUSTED",
+      "currentRequest": "BYTE_FREE_404"
+    },
+    {
+      "reason": "OBJECT_TOO_LARGE",
+      "signal": "VERIFIED_GET_OVER_100_MIB_OR_UPSTREAM_PUT_413",
+      "currentRequest": "BYTE_FREE_404_OR_PRESERVED_413"
+    },
+    {
+      "reason": "DISK_PRESSURE",
+      "signal": "VERIFIED_SPOOL_ENOSPC_OR_EDQUOT",
+      "currentRequest": "BYTE_FREE_404"
+    }
+  ],
+  "transition": {
+    "activeL2Binding": "REMOVED_IMMEDIATELY",
+    "nextInvocationSharedAuthority": "OMITTED",
+    "nextInvocationL1": "READ_WRITE",
+    "upstreamCredentialPersisted": false,
+    "gatewayIdentityRotated": false,
+    "afterCooldown": "REMOVE_STATE_DURABLY_AND_RETRY_L2"
+  },
+  "gradlePreservation": {
+    "gradle": "9.6.1",
+    "jdk": 21,
+    "platform": "linux-amd64",
+    "dsls": [
+      "GROOVY",
+      "KOTLIN"
+    ],
+    "reasons": [
+      "FLOOD",
+      "OBJECT_TOO_LARGE",
+      "DISK_PRESSURE"
+    ],
+    "fallbackBuild": "SUCCESS",
+    "localReplay": "FROM_CACHE",
+    "configurationCacheReplay": true,
+    "sharedAuthorityPresent": false
+  },
+  "validation": {
+    "goRace": true,
+    "strictStateDecoding": true,
+    "restartPersistence": true,
+    "tamperedStateFailsClosed": true,
+    "cooldownRecovery": true,
+    "realGradleTestKit": true
+  },
+  "boundaries": {
+    "closes": [
+      "OPS-001/A1-CIRCUIT-BREAKER-MATRIX"
+    ],
+    "doesNotClose": [
+      "OPS-001/A1",
+      "A1-G02",
+      "EIGHT_HOUR_SOAK",
+      "GRADLE_FIXTURE_SIZE_MATRIX"
+    ]
+  }
+}

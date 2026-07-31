@@ -26,6 +26,18 @@ var errGatewaySpoolUnavailable = errors.New(
 	"local gateway verified spool is unavailable",
 )
 
+var (
+	errGatewaySpoolFlood = errors.New(
+		"local gateway verified spool capacity is exhausted",
+	)
+	errGatewaySpoolObjectTooLarge = errors.New(
+		"local gateway verified object exceeds the maximum size",
+	)
+	errGatewaySpoolDiskPressure = errors.New(
+		"local gateway verified spool has no disk capacity",
+	)
+)
+
 type gatewaySpool struct {
 	root                       string
 	maximumBytes               int64
@@ -135,11 +147,7 @@ func (spool *gatewaySpool) receive(
 
 	file, err := os.CreateTemp(spool.root, gatewaySpoolFilePrefix+"*")
 	if err != nil {
-		return verifiedGatewayPayload{}, fmt.Errorf(
-			"%w: create: %v",
-			errGatewaySpoolUnavailable,
-			err,
-		)
+		return verifiedGatewayPayload{}, gatewaySpoolIOError("create", err)
 	}
 	path := file.Name()
 	remove := true
@@ -170,14 +178,22 @@ func (spool *gatewaySpool) receive(
 		),
 	)
 	if err != nil {
+		if errors.Is(err, errGatewaySpoolObjectTooLarge) ||
+			errors.Is(err, errGatewaySpoolFlood) ||
+			errors.Is(err, errGatewaySpoolDiskPressure) {
+			return verifiedGatewayPayload{}, err
+		}
 		return verifiedGatewayPayload{}, fmt.Errorf(
-			"%w: write: %v",
+			"%w: write: %w",
 			errGatewaySpoolUnavailable,
 			err,
 		)
 	}
 	if size > spool.maximumBytes {
-		return verifiedGatewayPayload{}, errGatewaySpoolUnavailable
+		return verifiedGatewayPayload{}, errors.Join(
+			errGatewaySpoolUnavailable,
+			errGatewaySpoolObjectTooLarge,
+		)
 	}
 	if contentLength >= 0 && size != contentLength {
 		return verifiedGatewayPayload{}, errGatewaySpoolUnavailable
@@ -194,11 +210,7 @@ func (spool *gatewaySpool) receive(
 		return verifiedGatewayPayload{}, errGatewaySpoolUnavailable
 	}
 	if err := file.Sync(); err != nil {
-		return verifiedGatewayPayload{}, fmt.Errorf(
-			"%w: sync: %v",
-			errGatewaySpoolUnavailable,
-			err,
-		)
+		return verifiedGatewayPayload{}, gatewaySpoolIOError("sync", err)
 	}
 	if _, err := file.Seek(0, io.SeekStart); err != nil {
 		return verifiedGatewayPayload{}, fmt.Errorf(
@@ -208,17 +220,12 @@ func (spool *gatewaySpool) receive(
 		)
 	}
 	if err := os.Remove(path); err != nil {
-		return verifiedGatewayPayload{}, fmt.Errorf(
-			"%w: unlink: %v",
-			errGatewaySpoolUnavailable,
-			err,
-		)
+		return verifiedGatewayPayload{}, gatewaySpoolIOError("unlink", err)
 	}
 	remove = false
 	if err := spool.syncUnlinkedDirectory(); err != nil {
-		return verifiedGatewayPayload{}, fmt.Errorf(
-			"%w: sync directory: %v",
-			errGatewaySpoolUnavailable,
+		return verifiedGatewayPayload{}, gatewaySpoolIOError(
+			"sync directory",
 			err,
 		)
 	}
@@ -306,13 +313,22 @@ func (spool *gatewaySpool) reserve(
 		reserved = spool.maximumBytes
 	}
 	if reserved > spool.maximumBytes {
-		return nil, errGatewaySpoolUnavailable
+		return nil, errors.Join(
+			errGatewaySpoolUnavailable,
+			errGatewaySpoolObjectTooLarge,
+		)
 	}
 	spool.mutex.Lock()
-	if spool.closed ||
-		reserved > spool.quotaBytes-spool.reservedBytes {
+	if spool.closed {
 		spool.mutex.Unlock()
 		return nil, errGatewaySpoolUnavailable
+	}
+	if reserved > spool.quotaBytes-spool.reservedBytes {
+		spool.mutex.Unlock()
+		return nil, errors.Join(
+			errGatewaySpoolUnavailable,
+			errGatewaySpoolFlood,
+		)
 	}
 	spool.reservedBytes += reserved
 	spool.mutex.Unlock()
@@ -335,11 +351,20 @@ func (reservation *gatewaySpoolReservation) ensure(size int64) error {
 	spool.mutex.Lock()
 	defer spool.mutex.Unlock()
 	additional := size - reservation.reserved
-	if reservation.released ||
-		spool.closed ||
-		size > spool.maximumBytes ||
-		additional > spool.quotaBytes-spool.reservedBytes {
+	if reservation.released || spool.closed {
 		return errGatewaySpoolUnavailable
+	}
+	if size > spool.maximumBytes {
+		return errors.Join(
+			errGatewaySpoolUnavailable,
+			errGatewaySpoolObjectTooLarge,
+		)
+	}
+	if additional > spool.quotaBytes-spool.reservedBytes {
+		return errors.Join(
+			errGatewaySpoolUnavailable,
+			errGatewaySpoolFlood,
+		)
 	}
 	spool.reservedBytes += additional
 	reservation.reserved = size
@@ -383,7 +408,28 @@ func (writer *gatewaySpoolWriter) Write(content []byte) (int, error) {
 		written, err = writer.file.Write(content)
 	}
 	writer.written += int64(written)
+	if err != nil {
+		return written, gatewaySpoolIOError("write", err)
+	}
 	return written, err
+}
+
+func gatewaySpoolIOError(operation string, err error) error {
+	if errors.Is(err, syscall.ENOSPC) || errors.Is(err, syscall.EDQUOT) {
+		return fmt.Errorf(
+			"%w: %w: %s: %w",
+			errGatewaySpoolUnavailable,
+			errGatewaySpoolDiskPressure,
+			operation,
+			err,
+		)
+	}
+	return fmt.Errorf(
+		"%w: %s: %w",
+		errGatewaySpoolUnavailable,
+		operation,
+		err,
+	)
 }
 
 type gatewayContextReader struct {

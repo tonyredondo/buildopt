@@ -274,6 +274,33 @@ func TestRunSystemFaultsProducesBoundTamperEvidentEvidence(t *testing.T) {
 func TestRunSustainedTrialUsesManagedGatewayAndRejectsTampering(
 	t *testing.T,
 ) {
+	exercisePacedLoadTrial(
+		t,
+		"sustained",
+		RunSustainedTrial,
+		ValidateSustainedTrial,
+		ValidateSustainedResult,
+	)
+}
+
+func TestRunSoakTrialUsesManagedGatewayAndRejectsTampering(t *testing.T) {
+	exercisePacedLoadTrial(
+		t,
+		"soak",
+		RunSoakTrial,
+		ValidateSoakTrial,
+		ValidateSoakResult,
+	)
+}
+
+func exercisePacedLoadTrial(
+	t *testing.T,
+	phaseID string,
+	run func(context.Context, string, string, string, string) (string, error),
+	validateTrial func(string, string) error,
+	validateProduction func(string, string) error,
+) {
+	t.Helper()
 	root := t.TempDir()
 	workingDirectory, err := os.Getwd()
 	if err != nil {
@@ -291,7 +318,7 @@ func TestRunSustainedTrialUsesManagedGatewayAndRejectsTampering(
 		"buildopt",
 		"./cmd/buildopt",
 	)
-	resultPath, err := RunSustainedTrial(
+	resultPath, err := run(
 		context.Background(),
 		manifestPath,
 		filepath.Join(root, "state"),
@@ -301,11 +328,11 @@ func TestRunSustainedTrialUsesManagedGatewayAndRejectsTampering(
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := ValidateSustainedTrial(manifestPath, resultPath); err != nil {
+	if err := validateTrial(manifestPath, resultPath); err != nil {
 		t.Fatal(err)
 	}
-	if err := ValidateSustainedResult(manifestPath, resultPath); err == nil {
-		t.Fatal("trial passed one-hour sustained validation")
+	if err := validateProduction(manifestPath, resultPath); err == nil {
+		t.Fatalf("%s trial passed production validation", phaseID)
 	}
 	result, err := os.ReadFile(resultPath)
 	if err != nil {
@@ -320,8 +347,8 @@ func TestRunSustainedTrialUsesManagedGatewayAndRejectsTampering(
 	if err := os.WriteFile(resultPath, unknownResult, 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if err := ValidateSustainedTrial(manifestPath, resultPath); err == nil {
-		t.Fatal("unknown sustained result field passed validation")
+	if err := validateTrial(manifestPath, resultPath); err == nil {
+		t.Fatalf("unknown %s result field passed validation", phaseID)
 	}
 	if err := os.WriteFile(resultPath, result, 0o600); err != nil {
 		t.Fatal(err)
@@ -338,8 +365,8 @@ func TestRunSustainedTrialUsesManagedGatewayAndRejectsTampering(
 	if err := os.WriteFile(observationsPath, observations, 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if err := ValidateSustainedTrial(manifestPath, resultPath); err == nil {
-		t.Fatal("tampered sustained observations passed validation")
+	if err := validateTrial(manifestPath, resultPath); err == nil {
+		t.Fatalf("tampered %s observations passed validation", phaseID)
 	}
 }
 
@@ -366,6 +393,7 @@ func TestSustainedAuthorityCoversQualificationWindow(t *testing.T) {
 		"sha256:"+string(bytes.Repeat([]byte{'1'}, 64)),
 		now,
 		941,
+		12,
 		false,
 		false,
 		sustainedAuthorityLifetime,
@@ -379,6 +407,32 @@ func TestSustainedAuthorityCoversQualificationWindow(t *testing.T) {
 		sustainedAuthorityLifetime,
 	); !got.Equal(want) {
 		t.Fatalf("sustained authority expiry = %s, want %s", got, want)
+	}
+}
+
+func TestSoakAuthorityCoversQualificationWindow(t *testing.T) {
+	now := time.Date(2026, 7, 31, 12, 0, 0, 0, time.UTC)
+	const lifetime = 10 * time.Hour
+	fixture, err := newSystemAuthorityFixtureWithDurations(
+		context.Background(),
+		t.TempDir(),
+		"sha256:"+string(bytes.Repeat([]byte{'2'}, 64)),
+		now,
+		951,
+		13,
+		false,
+		false,
+		lifetime,
+		lifetime,
+		lifetime,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got, want := fixture.verified.ExpiresAt(), now.Add(
+		lifetime,
+	); !got.Equal(want) {
+		t.Fatalf("soak authority expiry = %s, want %s", got, want)
 	}
 }
 

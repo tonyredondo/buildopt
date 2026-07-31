@@ -19,16 +19,25 @@ import (
 const (
 	sustainedResultSchemaVersion = "buildopt.benchmarks/sustained-result/v1"
 	sustainedResultFilename      = "sustained-result.json"
+	soakResultSchemaVersion      = "buildopt.benchmarks/soak-result/v1"
+	soakResultFilename           = "soak-result.json"
 	maximumSustainedRawBytes     = 32 << 20
 )
 
 type sustainedRunOptions struct {
-	qualification   string
-	objectMix       []objectMix
-	cycleCount      int
-	totalDuration   time.Duration
-	requireRunner   bool
-	expectedRawRows int64
+	phaseID             string
+	qualification       string
+	resultSchemaVersion string
+	resultFilename      string
+	objectMix           []objectMix
+	cycleCount          int
+	totalDuration       time.Duration
+	authorityLifetime   time.Duration
+	operationSeedOffset int64
+	namespaceGeneration int64
+	authorityOrdinal    int
+	requireRunner       bool
+	expectedRawRows     int64
 }
 
 type sustainedResult struct {
@@ -69,41 +78,108 @@ type sustainedLatencyTarget struct {
 }
 
 func productionSustainedOptions(loaded manifest) sustainedRunOptions {
-	duration := time.Duration(0)
-	for _, current := range loaded.Phases {
-		if current.ID == "SUSTAINED" {
-			duration = time.Duration(current.DurationSeconds) * time.Second
-		}
-	}
 	return sustainedRunOptions{
-		qualification:   "SUSTAINED_SLICE",
-		objectMix:       slices.Clone(loaded.ObjectMix),
-		cycleCount:      loaded.ObjectCycleCount / 100,
-		totalDuration:   duration,
-		requireRunner:   true,
-		expectedRawRows: int64(loaded.ObjectCycleCount * len(loaded.Clients)),
+		phaseID:             "SUSTAINED",
+		qualification:       "SUSTAINED_SLICE",
+		resultSchemaVersion: sustainedResultSchemaVersion,
+		resultFilename:      sustainedResultFilename,
+		objectMix:           slices.Clone(loaded.ObjectMix),
+		cycleCount:          loaded.ObjectCycleCount / 100,
+		totalDuration:       manifestPhaseDuration(loaded, "SUSTAINED"),
+		authorityLifetime:   2 * time.Hour,
+		operationSeedOffset: 500,
+		namespaceGeneration: 12,
+		authorityOrdinal:    940,
+		requireRunner:       true,
+		expectedRawRows: int64(
+			loaded.ObjectCycleCount * len(loaded.Clients),
+		),
 	}
 }
 
 func trialSustainedOptions() sustainedRunOptions {
 	return sustainedRunOptions{
-		qualification:   "TRIAL",
-		objectMix:       slices.Clone(smokeObjectMix),
-		cycleCount:      1,
-		totalDuration:   900 * time.Millisecond,
-		requireRunner:   false,
-		expectedRawRows: 300,
+		phaseID:             "SUSTAINED",
+		qualification:       "TRIAL",
+		resultSchemaVersion: sustainedResultSchemaVersion,
+		resultFilename:      sustainedResultFilename,
+		objectMix:           slices.Clone(smokeObjectMix),
+		cycleCount:          1,
+		totalDuration:       900 * time.Millisecond,
+		authorityLifetime:   2 * time.Hour,
+		operationSeedOffset: 500,
+		namespaceGeneration: 12,
+		authorityOrdinal:    940,
+		requireRunner:       false,
+		expectedRawRows:     300,
 	}
 }
 
+func productionSoakOptions(loaded manifest) sustainedRunOptions {
+	return sustainedRunOptions{
+		phaseID:             "SOAK",
+		qualification:       "SOAK_SLICE",
+		resultSchemaVersion: soakResultSchemaVersion,
+		resultFilename:      soakResultFilename,
+		objectMix:           slices.Clone(loaded.ObjectMix),
+		cycleCount:          loaded.ObjectCycleCount / 100,
+		totalDuration:       manifestPhaseDuration(loaded, "SOAK"),
+		authorityLifetime:   10 * time.Hour,
+		operationSeedOffset: 600,
+		namespaceGeneration: 13,
+		authorityOrdinal:    950,
+		requireRunner:       true,
+		expectedRawRows: int64(
+			loaded.ObjectCycleCount * len(loaded.Clients),
+		),
+	}
+}
+
+func trialSoakOptions() sustainedRunOptions {
+	return sustainedRunOptions{
+		phaseID:             "SOAK",
+		qualification:       "SOAK_TRIAL",
+		resultSchemaVersion: soakResultSchemaVersion,
+		resultFilename:      soakResultFilename,
+		objectMix:           slices.Clone(smokeObjectMix),
+		cycleCount:          1,
+		totalDuration:       900 * time.Millisecond,
+		authorityLifetime:   10 * time.Hour,
+		operationSeedOffset: 600,
+		namespaceGeneration: 13,
+		authorityOrdinal:    950,
+		requireRunner:       false,
+		expectedRawRows:     300,
+	}
+}
+
+func manifestPhaseDuration(loaded manifest, phaseID string) time.Duration {
+	for _, current := range loaded.Phases {
+		if current.ID == phaseID {
+			return time.Duration(current.DurationSeconds) * time.Second
+		}
+	}
+	return 0
+}
+
 func sustainedDeviations(options sustainedRunOptions) []string {
-	if options.qualification == "TRIAL" {
+	if !options.requireRunner {
+		phaseDeviation := "TRIAL_DURATION_AND_SCALED_SIZES"
+		if options.phaseID == "SOAK" {
+			phaseDeviation = "SOAK_TRIAL_DURATION_AND_SCALED_SIZES"
+		}
 		return []string{
-			"TRIAL_DURATION_AND_SCALED_SIZES",
+			phaseDeviation,
 			"RUNNER_QUALIFICATION_NOT_CLAIMED",
 			"COLD_WARM_SETUP_ONLY",
 			"GRADLE_FIXTURES_NOT_RUN",
 			"SOAK_NOT_RUN",
+		}
+	}
+	if options.phaseID == "SOAK" {
+		return []string{
+			"COLD_WARM_SUSTAINED_NOT_RUN",
+			"GRADLE_FIXTURES_NOT_RUN",
 		}
 	}
 	return []string{
@@ -116,6 +192,7 @@ func sustainedDeviations(options sustainedRunOptions) []string {
 func writeSustainedResult(
 	outputDirectory string,
 	result sustainedResult,
+	options sustainedRunOptions,
 ) (string, error) {
 	content, err := json.MarshalIndent(result, "", "  ")
 	if err != nil {
@@ -146,7 +223,7 @@ func writeSustainedResult(
 	if err := temporary.Close(); err != nil {
 		return "", err
 	}
-	target := filepath.Join(outputDirectory, sustainedResultFilename)
+	target := filepath.Join(outputDirectory, options.resultFilename)
 	if err := os.Rename(temporaryPath, target); err != nil {
 		return "", err
 	}
@@ -188,6 +265,29 @@ func ValidateSustainedTrial(manifestPath string, resultPath string) error {
 	)
 }
 
+// ValidateSoakResult verifies an exact eight-hour result and its bound raw
+// stream. Trial results are intentionally rejected by this entrypoint.
+func ValidateSoakResult(manifestPath string, resultPath string) error {
+	loaded, _, _, err := loadManifest(manifestPath)
+	if err != nil {
+		return err
+	}
+	return validateSustainedResult(
+		manifestPath,
+		resultPath,
+		productionSoakOptions(loaded),
+	)
+}
+
+// ValidateSoakTrial verifies only the short non-qualifying CI execution.
+func ValidateSoakTrial(manifestPath string, resultPath string) error {
+	return validateSustainedResult(
+		manifestPath,
+		resultPath,
+		trialSoakOptions(),
+	)
+}
+
 func validateSustainedResult(
 	manifestPath string,
 	resultPath string,
@@ -211,7 +311,7 @@ func validateSustainedResult(
 	if err := decoder.Decode(&extra); !errors.Is(err, io.EOF) {
 		return errors.New("benchmark sustained result contains trailing JSON")
 	}
-	if result.SchemaVersion != sustainedResultSchemaVersion ||
+	if result.SchemaVersion != options.resultSchemaVersion ||
 		result.Qualification != options.qualification ||
 		result.BenchmarkDigest != manifestDigest ||
 		result.Seed != loaded.Seed ||
@@ -364,19 +464,23 @@ func validateSustainedRaw(
 	}
 	summaries := make(map[int]*stratumSummary, len(loaded.Clients))
 	for _, clients := range loaded.Clients {
-		summary := newStratumSummary("SUSTAINED", clients)
+		summary := newStratumSummary(options.phaseID, clients)
 		summary.startedAt = time.Unix(0, 0)
 		summaries[clients] = summary
 	}
-	objects := makeSustainedObjects(options.objectMix, loaded.Seed)
+	objects := makeSustainedObjects(
+		options.objectMix,
+		loaded.Seed,
+		options.phaseID,
+	)
 	expectedOperations := repeatSustainedOperations(
 		makeSmokeOperations(
 			objects,
 			phase{
-				ID:               "SUSTAINED",
+				ID:               options.phaseID,
 				TargetHitPercent: 70,
 			},
-			loaded.Seed+500,
+			loaded.Seed+options.operationSeedOffset,
 		),
 		options.cycleCount,
 	)
@@ -385,7 +489,7 @@ func validateSustainedRaw(
 		expectedOperation := expectedOperations[index%len(expectedOperations)]
 		if observation.SchemaVersion != observationSchemaVersion ||
 			observation.Sequence != int64(index+1) ||
-			observation.Phase != "SUSTAINED" ||
+			observation.Phase != options.phaseID ||
 			clientIndex >= len(loaded.Clients) ||
 			observation.Clients != loaded.Clients[clientIndex] ||
 			observation.Operation != "GET" ||
@@ -580,7 +684,7 @@ func validateSustainedThroughput(
 		expectedBytesPerSecond := float64(
 			byteSummary.RequestBytes+byteSummary.ResponseBytes,
 		) / durationSeconds
-		if rate.Phase != "SUSTAINED" ||
+		if rate.Phase != options.phaseID ||
 			rate.Clients != clients ||
 			duration < minimumDuration ||
 			rate.OperationsPerSecond != expectedOperationsPerSecond ||

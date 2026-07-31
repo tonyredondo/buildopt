@@ -568,6 +568,10 @@ func TestLocalGatewayPreservesEarlyPayloadTooLarge(t *testing.T) {
 	defer upstream.Close()
 	gateway := startCacheGatewayForTest(t, upstream.URL)
 	defer gateway.close()
+	opened := make(chan gatewayCircuitReason, 1)
+	gateway.openCircuit = func(reason gatewayCircuitReason) {
+		opened <- reason
+	}
 
 	requestBody := &failOnGatewayBodyRead{read: &bodyRead}
 	request := httptest.NewRequest(
@@ -590,6 +594,14 @@ func TestLocalGatewayPreservesEarlyPayloadTooLarge(t *testing.T) {
 			bodyRead.Load(),
 			receivedExpect.Load(),
 		)
+	}
+	select {
+	case reason := <-opened:
+		if reason != gatewayCircuitObjectTooLarge {
+			t.Fatalf("oversized object circuit reason = %q", reason)
+		}
+	default:
+		t.Fatal("oversized object did not open the gateway circuit")
 	}
 }
 

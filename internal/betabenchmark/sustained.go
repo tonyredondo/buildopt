@@ -69,6 +69,48 @@ func RunSustainedTrial(
 	)
 }
 
+// RunSoak executes the exact eight-hour SOAK phase. It refuses to produce
+// qualifying evidence outside the pinned 4-CPU/16-GiB cgroup.
+func RunSoak(
+	ctx context.Context,
+	manifestPath string,
+	stateDirectory string,
+	outputDirectory string,
+	buildoptExecutable string,
+) (string, error) {
+	loaded, _, _, err := loadManifest(manifestPath)
+	if err != nil {
+		return "", err
+	}
+	return runSustained(
+		ctx,
+		manifestPath,
+		stateDirectory,
+		outputDirectory,
+		buildoptExecutable,
+		productionSoakOptions(loaded),
+	)
+}
+
+// RunSoakTrial exercises the same managed-gateway scheduler with a short,
+// scaled and explicitly non-qualifying SOAK workload for CI.
+func RunSoakTrial(
+	ctx context.Context,
+	manifestPath string,
+	stateDirectory string,
+	outputDirectory string,
+	buildoptExecutable string,
+) (string, error) {
+	return runSustained(
+		ctx,
+		manifestPath,
+		stateDirectory,
+		outputDirectory,
+		buildoptExecutable,
+		trialSoakOptions(),
+	)
+}
+
 func runSustained(
 	ctx context.Context,
 	manifestPath string,
@@ -118,7 +160,11 @@ func runSustained(
 			sink.abort()
 		}
 	}()
-	objects := makeSustainedObjects(options.objectMix, loaded.Seed)
+	objects := makeSustainedObjects(
+		options.objectMix,
+		loaded.Seed,
+		options.phaseID,
+	)
 	fixture, err := prepareSustainedFixture(
 		ctx,
 		filepath.Join(stateDirectory, "data-plane"),
@@ -126,6 +172,7 @@ func runSustained(
 		manifestDigest,
 		loaded.Seed,
 		objects,
+		options,
 	)
 	if err != nil {
 		return "", err
@@ -133,13 +180,13 @@ func runSustained(
 	defer fixture.close()
 
 	phase := phase{
-		ID:               "SUSTAINED",
+		ID:               options.phaseID,
 		TargetHitPercent: 70,
 	}
 	baseOperations := makeSmokeOperations(
 		objects,
 		phase,
-		loaded.Seed+500,
+		loaded.Seed+options.operationSeedOffset,
 	)
 	operations := repeatSustainedOperations(
 		baseOperations,
@@ -157,6 +204,7 @@ func runSustained(
 			operations,
 			segmentDuration,
 			sink,
+			options.phaseID,
 		)
 		if err != nil {
 			return "", err
@@ -184,7 +232,7 @@ func runSustained(
 		return "", err
 	}
 	result := sustainedResult{
-		SchemaVersion:            sustainedResultSchemaVersion,
+		SchemaVersion:            options.resultSchemaVersion,
 		Qualification:            options.qualification,
 		BenchmarkDigest:          manifestDigest,
 		Seed:                     loaded.Seed,
@@ -210,7 +258,11 @@ func runSustained(
 		Deviations:      sustainedDeviations(options),
 		RawObservations: rawIdentity,
 	}
-	resultPath, err := writeSustainedResult(outputDirectory, result)
+	resultPath, err := writeSustainedResult(
+		outputDirectory,
+		result,
+		options,
+	)
 	if err != nil {
 		return "", err
 	}
@@ -231,6 +283,7 @@ func prepareSustainedFixture(
 	manifestDigest string,
 	seed int64,
 	objects []workloadObject,
+	options sustainedRunOptions,
 ) (*sustainedFixture, error) {
 	storage, err := sharedcache.Open(ctx, filepath.Join(root, "shared"))
 	if err != nil {
@@ -248,6 +301,7 @@ func prepareSustainedFixture(
 		manifestDigest,
 		seed,
 		objects,
+		options,
 	); err != nil {
 		return nil, err
 	}
@@ -257,12 +311,13 @@ func prepareSustainedFixture(
 		filepath.Join(root, "authority"),
 		manifestDigest,
 		now,
-		940,
+		options.authorityOrdinal,
+		options.namespaceGeneration,
 		false,
 		false,
-		sustainedAuthorityLifetime,
-		sustainedAuthorityLifetime,
-		sustainedAuthorityLifetime,
+		options.authorityLifetime,
+		options.authorityLifetime,
+		options.authorityLifetime,
 	)
 	if err != nil {
 		return nil, err
@@ -299,7 +354,7 @@ func prepareSustainedFixture(
 				upstream:  upstream,
 			},
 			filepath.Join(root, "managed"),
-			"sustained-load",
+			strings.ToLower(options.phaseID)+"-load",
 		),
 	)
 	if err != nil {
@@ -332,11 +387,12 @@ func publishSustainedObjects(
 	manifestDigest string,
 	seed int64,
 	objects []workloadObject,
+	options sustainedRunOptions,
 ) error {
 	request := benchmarkAttemptRequest(
 		manifestDigest,
-		12,
-		940,
+		options.namespaceGeneration,
+		options.authorityOrdinal,
 		time.Now().UTC(),
 	)
 	if _, _, err := storage.StartAttempt(ctx, request); err != nil {
@@ -412,7 +468,11 @@ func publishSustainedObjects(
 	return err
 }
 
-func makeSustainedObjects(mix []objectMix, seed int64) []workloadObject {
+func makeSustainedObjects(
+	mix []objectMix,
+	seed int64,
+	phaseID string,
+) []workloadObject {
 	objects := make([]workloadObject, 0, 100)
 	index := 0
 	for _, item := range mix {
@@ -420,12 +480,16 @@ func makeSustainedObjects(mix []objectMix, seed int64) []workloadObject {
 			objects = append(objects, workloadObject{
 				index: index,
 				size:  item.SizeBytes,
-				key:   fmt.Sprintf("sustained-%05d", index),
+				key: fmt.Sprintf(
+					"%s-%05d",
+					strings.ToLower(phaseID),
+					index,
+				),
 			})
 			index++
 		}
 	}
-	shuffleObjects(objects, uint64(seed)^hashString("SUSTAINED"))
+	shuffleObjects(objects, uint64(seed)^hashString(phaseID))
 	return objects
 }
 
@@ -451,8 +515,9 @@ func runPacedSustainedStratum(
 	operations []workloadOperation,
 	duration time.Duration,
 	sink *observationSink,
+	phaseID string,
 ) (*stratumSummary, error) {
-	summary := newStratumSummary("SUSTAINED", clients)
+	summary := newStratumSummary(phaseID, clients)
 	summary.startedAt = time.Now()
 	client := benchmarkHTTPClient(clients)
 	defer client.CloseIdleConnections()
@@ -475,7 +540,7 @@ func runPacedSustainedStratum(
 		}
 		workers.Wait()
 		for _, observation := range results {
-			observation.Phase = "SUSTAINED"
+			observation.Phase = phaseID
 			observation.Clients = clients
 			if err := sink.append(observation); err != nil {
 				return nil, err
@@ -496,7 +561,8 @@ func runPacedSustainedStratum(
 	summary.completedAt = time.Now()
 	if len(summary.errors) != 0 {
 		return nil, fmt.Errorf(
-			"benchmark SUSTAINED/%d observed errors: %v",
+			"benchmark %s/%d observed errors: %v",
+			phaseID,
 			clients,
 			summary.errors,
 		)
