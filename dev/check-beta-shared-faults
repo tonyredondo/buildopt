@@ -1,0 +1,186 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/beta-shared-faults-v1.json"
+buildopt_manifest="${buildopt_repo_root}/benchmarks/beta-v1.yaml"
+
+for buildopt_command in git jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required beta Shared-fault command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if ! jq -e '
+    . == {
+        schemaVersion: "buildopt.specs/beta-shared-faults/v1",
+        gateId: "OPS-001/A1",
+        manifest: "benchmarks/beta-v1.yaml",
+        commands: {
+            run: "beta-benchmark shared-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH",
+            validate: "beta-benchmark validate-shared-faults --manifest PATH --result PATH"
+        },
+        faults: [
+            {
+                id: "MID_PUT_CANCEL",
+                expectedSafety: "NO_VISIBLE_PARTIAL_OBJECT",
+                triggerSequence: 1,
+                events: [
+                    "PARTIAL_PUT_STARTED",
+                    "CANCELLED_WITHOUT_PARTIAL_AUTHORITY",
+                    "COMPLETE_RETRY_ACCEPTED"
+                ],
+                recovery: "COMPLETE_RETRY_ACCEPTED"
+            },
+            {
+                id: "MID_GET_CANCEL",
+                expectedSafety: "NO_TRUNCATED_HIT",
+                triggerSequence: 4,
+                events: [
+                    "GET_CANCELLED_AFTER_PARTIAL_READ",
+                    "COMPLETE_RETRY_VERIFIED"
+                ],
+                recovery: "COMPLETE_RETRY_VERIFIED"
+            },
+            {
+                id: "TRUNCATED_BLOB",
+                expectedSafety: "MISS_AND_QUARANTINE",
+                triggerSequence: 6,
+                events: [
+                    "BLOB_TRUNCATED",
+                    "MISS_AND_QUARANTINE"
+                ],
+                recovery: "MISS_AND_QUARANTINED"
+            },
+            {
+                id: "CORRUPT_BLOB",
+                expectedSafety: "MISS_AND_QUARANTINE",
+                triggerSequence: 8,
+                events: [
+                    "BLOB_CORRUPTED",
+                    "MISS_AND_QUARANTINE"
+                ],
+                recovery: "MISS_AND_QUARANTINED"
+            },
+            {
+                id: "SQLITE_BUSY",
+                expectedSafety: "BOUNDED_RETRY_WITHOUT_PARTIAL_COMMIT",
+                triggerSequence: 10,
+                events: [
+                    "SQLITE_WRITE_LOCK_HELD",
+                    "SQLITE_BUSY_WITHOUT_PARTIAL_VISIBILITY",
+                    "COMMIT_RECOVERED_AFTER_LOCK_RELEASE"
+                ],
+                recovery: "COMMITTED_AFTER_LOCK_RELEASE"
+            },
+            {
+                id: "EXPIRED_LEASE",
+                expectedSafety: "ABORT_PENDING_AND_RELEASE_OWNER",
+                triggerSequence: 13,
+                events: [
+                    "LEASE_EXPIRED_WITH_PENDING_OBJECT",
+                    "ABORTED_AND_OWNER_RELEASED"
+                ],
+                recovery: "ABORTED_AND_OWNER_RELEASED"
+            },
+            {
+                id: "DEATH_BETWEEN_PENDING_AND_COMMIT",
+                expectedSafety: "MISS_UNTIL_AUTHORIZED_RECONCILIATION",
+                triggerSequence: 15,
+                events: [
+                    "PROCESS_DIED_WITH_PENDING_OBJECT",
+                    "RESTARTED_PENDING_REMAINS_MISS",
+                    "AUTHORIZED_COMMIT_RECOVERED"
+                ],
+                recovery: "AUTHORIZED_COMMIT_RECOVERED"
+            }
+        ],
+        execution: {
+            qualification: "FAULT_SLICE",
+            transport: "REAL_LOOPBACK_HTTP",
+            storage: "REAL_SINGLE_NODE_SHARED",
+            partialPutDeclaredBytes: 1000,
+            partialPutSentBytes: 100,
+            canceledGetObjectBytes: 1048576,
+            canceledGetReadBytes: 4096,
+            integrityObjectBytes: 1000,
+            truncatedBlobBytes: 999,
+            sqliteCommittedWhileLocked: 0,
+            leaseExpiryMilliseconds: 250,
+            deathPendingBytes: 100
+        },
+        evidence: {
+            rawSchema: "buildopt.benchmarks/shared-fault-observation/v1",
+            resultSchema: "buildopt.benchmarks/shared-fault-result/v1",
+            rawObservations: 17,
+            privateMode: "0600",
+            manifestDigestBound: true,
+            rawDigestBound: true,
+            unknownFieldsRejected: true,
+            tamperRejected: true
+        },
+        boundaries: {
+            closes: [
+                "OPS-001/A1-SHARED-FAULTS"
+            ],
+            doesNotClose: [
+                "OPS-001/A1",
+                "A1-G02",
+                "A1-G04",
+                "FAULT_MATRIX_REMAINING_6",
+                "SUSTAINED_60_MINUTES",
+                "EIGHT_HOUR_SOAK",
+                "GOLDEN_LANE_RESULT"
+            ]
+        }
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'beta Shared-fault contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+buildopt_temp_root=$(mktemp -d)
+trap 'rm -rf -- "${buildopt_temp_root}"' EXIT
+buildopt_state="${buildopt_temp_root}/state"
+buildopt_output="${buildopt_temp_root}/output"
+buildopt_result="${buildopt_output}/shared-fault-result.json"
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./cmd/beta-benchmark shared-faults \
+    --manifest "${buildopt_manifest}" \
+    --state-dir "${buildopt_state}" \
+    --output-dir "${buildopt_output}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./cmd/beta-benchmark validate-shared-faults \
+    --manifest "${buildopt_manifest}" \
+    --result "${buildopt_result}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 \
+    ./internal/betabenchmark \
+    ./internal/sharedcache \
+    -run \
+    "^(TestRunSharedFaultsProducesBoundTamperEvidentEvidence|TestBoundHTTPHandlerKeepsPendingInvisibleAndServesVerifiedCommit|TestBlobStoreRejectsCorruptionAndUnsafeDigests|TestAbortIsIdempotentAndReconciliationDeletesReleasedBlob|TestReconcileInvalidatesWholeDecisionOnCorruptionOrMissingBlob)$"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/betabenchmark ./cmd/beta-benchmark ./internal/sharedcache
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'beta Shared-fault checker changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'OPS-001/A1 Shared faults OK: 7 faults, 17 private observations, no partial visibility, complete bounded recovery\n'

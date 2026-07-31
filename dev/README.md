@@ -1171,8 +1171,26 @@ loopback PUT sees only 50 bytes available, returns `413` for a declared
 60-byte body before the transport reads any body byte, leaves no partial
 authority, and recovers to `201` after availability returns. Eight raw private
 observations and their summary are bound to the benchmark digest and checked
-for strict decoding and tamper rejection. The other 13 faults, sustained load,
-soak, and complete operational gate remain open.
+for strict decoding and tamper rejection. The following Shared slice owns seven
+more faults; six restart, network, and revocation rows plus sustained load,
+soak, and the complete operational gate remain open afterward.
+
+## Private-beta Shared faults
+
+Execute cancellation, integrity, SQLite, lease, and pending/commit death rows:
+
+```bash
+./dev/check-beta-shared-faults
+```
+
+The checker uses real loopback HTTP and fresh Shared roots to prove that
+cancelled PUT/GET streams never become partial hits, truncated or same-length
+corrupt blobs become byte-free quarantined misses, an external SQLite write
+lock exposes no partial commit, expired pending authority is aborted and
+collected, and process death preserves a miss until the verified decision is
+applied after restart. Seventeen mode-`0600` observations are manifest- and
+digest-bound. Six restart, network, and revocation faults plus sustained load,
+soak, and the complete operational gate remain open.
 
 ## Private-beta benchmark harness
 

@@ -12,7 +12,7 @@ import (
 	"github.com/tonyredondo/buildopt/internal/betabenchmark"
 )
 
-const usage = "usage: beta-benchmark smoke --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark disk-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark validate --manifest PATH --result PATH\n       beta-benchmark validate-disk-faults --manifest PATH --result PATH\n"
+const usage = "usage: beta-benchmark smoke --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark disk-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark shared-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark validate --manifest PATH --result PATH\n       beta-benchmark validate-disk-faults --manifest PATH --result PATH\n       beta-benchmark validate-shared-faults --manifest PATH --result PATH\n"
 
 func main() {
 	ctx, stop := signal.NotifyContext(
@@ -35,7 +35,7 @@ func run(
 		return 64
 	}
 	switch args[0] {
-	case "smoke", "disk-faults":
+	case "smoke", "disk-faults", "shared-faults":
 		flags := flag.NewFlagSet("beta-benchmark "+args[0], flag.ContinueOnError)
 		flags.SetOutput(io.Discard)
 		manifest := flags.String("manifest", "", "benchmark manifest")
@@ -61,15 +61,23 @@ func run(
 			result string
 			err    error
 		)
-		if args[0] == "smoke" {
+		switch args[0] {
+		case "smoke":
 			result, err = betabenchmark.RunSmoke(
 				ctx,
 				*manifest,
 				*stateDirectory,
 				*outputDirectory,
 			)
-		} else {
+		case "disk-faults":
 			result, err = betabenchmark.RunDiskFaults(
+				ctx,
+				*manifest,
+				*stateDirectory,
+				*outputDirectory,
+			)
+		case "shared-faults":
+			result, err = betabenchmark.RunSharedFaults(
 				ctx,
 				*manifest,
 				*stateDirectory,
@@ -87,7 +95,7 @@ func run(
 			result,
 		)
 		return 0
-	case "validate", "validate-disk-faults":
+	case "validate", "validate-disk-faults", "validate-shared-faults":
 		flags := flag.NewFlagSet(
 			"beta-benchmark "+args[0],
 			flag.ContinueOnError,
@@ -103,10 +111,13 @@ func run(
 			return 64
 		}
 		var err error
-		if args[0] == "validate" {
+		switch args[0] {
+		case "validate":
 			err = betabenchmark.ValidateResult(*manifest, *result)
-		} else {
+		case "validate-disk-faults":
 			err = betabenchmark.ValidateDiskFaultResult(*manifest, *result)
+		case "validate-shared-faults":
+			err = betabenchmark.ValidateSharedFaultResult(*manifest, *result)
 		}
 		if err != nil {
 			_, _ = fmt.Fprintf(stderr, "beta-benchmark: %v\n", err)

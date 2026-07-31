@@ -128,6 +128,71 @@ func TestRunDiskFaultsProducesBoundTamperEvidentEvidence(t *testing.T) {
 	}
 }
 
+func TestRunSharedFaultsProducesBoundTamperEvidentEvidence(t *testing.T) {
+	root := t.TempDir()
+	workingDirectory, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	manifestPath := filepath.Join(
+		workingDirectory,
+		"..",
+		"..",
+		"benchmarks",
+		"beta-v1.yaml",
+	)
+	manifestPath, err = filepath.Abs(manifestPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resultPath, err := RunSharedFaults(
+		context.Background(),
+		manifestPath,
+		filepath.Join(root, "state"),
+		filepath.Join(root, "output"),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateSharedFaultResult(manifestPath, resultPath); err != nil {
+		t.Fatal(err)
+	}
+	result, err := os.ReadFile(resultPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	unknownResult := bytes.Replace(
+		result,
+		[]byte("{\n"),
+		[]byte("{\n  \"unknown\": true,\n"),
+		1,
+	)
+	if err := os.WriteFile(resultPath, unknownResult, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateSharedFaultResult(manifestPath, resultPath); err == nil {
+		t.Fatal("unknown Shared-fault result field passed validation")
+	}
+	if err := os.WriteFile(resultPath, result, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	observationsPath := filepath.Join(
+		filepath.Dir(resultPath),
+		sharedFaultRawFilename,
+	)
+	observations, err := os.ReadFile(observationsPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	observations[len(observations)-2] ^= 1
+	if err := os.WriteFile(observationsPath, observations, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateSharedFaultResult(manifestPath, resultPath); err == nil {
+		t.Fatal("tampered Shared-fault observations passed validation")
+	}
+}
+
 func TestDeterministicReaderIsStableAndSizeBounded(t *testing.T) {
 	read := func(seed int64, index int, size int64) []byte {
 		t.Helper()
