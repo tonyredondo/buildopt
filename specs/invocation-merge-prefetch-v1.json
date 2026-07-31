@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "buildopt.specs/invocation-merge-prefetch/v1",
+  "trackerId": "B-005",
+  "merge": {
+    "owner": "CI_INTEGRATION",
+    "arity": 2,
+    "proof": "VERSIONED_TRANSITIVE_SUBSUMPTION_AND_ISOLATED_CONTROL",
+    "identity": ["repository", "revision", "workingDirectory", "wrapper", "jdk", "jvmArgs", "gradleUserHome", "gradleProperties", "systemProperties", "environment", "credentials", "initScripts", "cachePolicy"],
+    "preserveOn": ["FAILURE_SEMANTICS", "RETRY_SEMANTICS", "CONTINUE_SEMANTICS", "EXCLUSIONS", "FINALIZERS", "ORDER", "INTERMEDIATE_CONSUMER", "SIDE_EFFECTS", "CI_BARRIER", "CONTROL_DIVERGED", "RELEASE_CONTRACT"]
+  },
+  "prefetch": {
+    "authority": "CALLER_VERIFIED",
+    "singleFlightKey": ["repository", "revision", "pipelineClass", "compatibilityClass"],
+    "maximumPayloadBytes": 1048576,
+    "useChecks": ["PAYLOAD_DIGEST", "EXACT_BINDING", "EXPIRY", "MINIMUM_REVOCATION_EPOCH"],
+    "failureDisposition": "NORMAL_AUTHENTICATED_POLICY_PATH"
+  },
+  "closesGate": "B-G04",
+  "doesNotClose": ["A1-001", "A1-006", "A1-G06", "B-G01", "B-G02", "B-G03"]
+}
