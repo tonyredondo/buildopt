@@ -21,7 +21,7 @@ jobs:
         with:
           go-version-file: go.mod
           cache: false
-      - uses: actions/setup-java@7a445ee88d4e23b52c33fdc7601e402fa97c270c
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
         with:
           distribution: temurin
           java-version: '17'
