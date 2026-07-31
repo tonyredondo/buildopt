@@ -15,7 +15,7 @@ jq -e '
   .input == {
     "path": "build.gradle.kts",
     "minimumBytes": 1,
-    "maximumBytes": 1048576,
+    "maximumBytes": 1048389,
     "encoding": "STRICT_UTF8",
     "lineEnding": "LF",
     "finalNewlineRequired": true

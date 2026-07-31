@@ -3,7 +3,8 @@
 This POC contract closes C4-003 with one production Java 17 recipe:
 ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1 version 1.0.
 
-The recipe accepts only a non-empty root build.gradle.kts of at most 1 MiB,
+The recipe accepts only a non-empty root build.gradle.kts of at most 1,048,389 bytes (1 MiB minus the exact generated
+recipe envelope),
 encoded as strict UTF-8 with LF endings and a final newline. It generates one
 exact full-file replacement: the AbstractArchiveTask import, the unchanged
 original source, and a configureEach block that enables reproducible file

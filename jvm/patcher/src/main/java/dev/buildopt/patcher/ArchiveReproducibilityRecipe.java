@@ -10,7 +10,7 @@ import java.security.GeneralSecurityException;
 public final class ArchiveReproducibilityRecipe {
     public static final String RECIPE_ID = "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1";
     public static final String RECIPE_VERSION = "1.0";
-    private static final int MAXIMUM_SOURCE_BYTES = 1024 * 1024;
+    private static final int MAXIMUM_POSTIMAGE_BYTES = 1024 * 1024;
     private static final String IMPORT =
             "import org.gradle.api.tasks.bundling.AbstractArchiveTask\n";
     private static final String CONFIGURATION =
@@ -20,6 +20,8 @@ public final class ArchiveReproducibilityRecipe {
                     + "}\n";
     private static final int GENERATED_OVERHEAD_BYTES =
             (IMPORT + "\n\n" + CONFIGURATION).getBytes(StandardCharsets.UTF_8).length;
+    private static final int MAXIMUM_SOURCE_BYTES =
+            MAXIMUM_POSTIMAGE_BYTES - GENERATED_OVERHEAD_BYTES;
 
     private ArchiveReproducibilityRecipe() {
     }
@@ -50,7 +52,7 @@ public final class ArchiveReproducibilityRecipe {
             return result(input, input, false);
         }
         if (source.length > MAXIMUM_SOURCE_BYTES) {
-            reject("archive recipe source exceeds the 1 MiB input limit");
+            reject("archive recipe source exceeds the bounded input limit");
         }
         if (text.startsWith("@file:")
                 || text.contains("AbstractArchiveTask")

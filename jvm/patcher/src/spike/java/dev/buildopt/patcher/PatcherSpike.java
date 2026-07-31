@@ -574,7 +574,7 @@ public final class PatcherSpike {
                         && repeated.preimageDigest().equals(repeated.postimageDigest())
                         && Arrays.equals(repeated.postimage(), first.postimage()),
                 "archive recipe idempotency");
-        byte[] maximumSource = new byte[1024 * 1024];
+        byte[] maximumSource = new byte[1024 * 1024 - 187];
         Arrays.fill(maximumSource, (byte) ' ');
         maximumSource[maximumSource.length - 1] = '\n';
         ArchiveReproducibilityRecipe.Result maximum =
@@ -583,8 +583,15 @@ public final class PatcherSpike {
                 ArchiveReproducibilityRecipe.apply(
                         "build.gradle.kts", maximum.postimage());
         require(!maximumRepeated.changed()
+                        && maximum.postimage().length == 1024 * 1024
                         && Arrays.equals(maximum.postimage(), maximumRepeated.postimage()),
                 "archive recipe maximum-size idempotency");
+        byte[] oversizedSource = new byte[1024 * 1024 - 186];
+        Arrays.fill(oversizedSource, (byte) ' ');
+        oversizedSource[oversizedSource.length - 1] = '\n';
+        expectFailure(PatchFailure.Status.PROPOSED,
+                () -> ArchiveReproducibilityRecipe.apply(
+                        "build.gradle.kts", oversizedSource));
         byte[] defensive = first.postimage();
         defensive[0] ^= 1;
         require(!Arrays.equals(defensive, first.postimage()),
