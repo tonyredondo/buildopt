@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `DOING` — owner-operated A1 evidence remains pending while noninteractive MVP-B implementation advances<br>
-**Current phase:** MVP-B technical implementation; `B-007` follows completed `B-006`<br>
+**Current phase:** MVP-B technical implementation; `B-008` follows completed `B-007`<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Last updated:** 2026-07-31<br>
@@ -158,6 +158,8 @@ The POC target is not complete until A1, B, C1, and C4 close. The eight-hour soa
 | 72 | `B-003` | Implement autotuning with four initial resource profiles | `DONE` | Codex |
 | 73 | `B-005` | Implement allowlisted invocation merging and policy prefetch | `DONE` | Codex |
 | 74 | `B-006` | Implement A/A and fixed cohorts with propensities | `DONE` | Codex |
+| 75 | `B-007` | Implement contextual epsilon-greedy and replay simulator | `DONE` | Codex |
+| 76 | `B-008` | Implement budget, canary, fallback, rollback, and kill switch | `TODO` | — |
 
 ---
 
@@ -439,8 +441,8 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `B-004` | Contractual removal of `clean` | `DONE` | Codex | `E-099` |
 | `B-005` | Allowlisted invocation merging and policy prefetch | `DONE` | Codex | `E-101` |
 | `B-006` | A/A and fixed cohorts with propensities | `DONE` | Codex | `E-102` |
-| `B-007` | Contextual epsilon-greedy and replay simulator | `TODO` | — | — |
-| `B-008` | Budget, canary, fallback, rollback, and kill switch | `WAITING` | — | — |
+| `B-007` | Contextual epsilon-greedy and replay simulator | `DONE` | Codex | `E-103` |
+| `B-008` | Budget, canary, fallback, rollback, and kill switch | `TODO` | — | — |
 
 ### 8.2 Exit gates
 
@@ -450,7 +452,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `B-G02` | Intentional candidate/control contamination does not reach stable | `WAITING` | — |
 | `B-G03` | Autotuning reduces build time without breaking p95/p99/queue/OOM | `WAITING` | — |
 | `B-G04` | Merge/clean pass failure/finalizer/side-effect fixtures | `DONE` | `E-101` |
-| `B-G05` | Bandit selects only safe runtime arms | `WAITING` | — |
+| `B-G05` | Bandit selects only safe runtime arms | `DONE` | `E-103` |
 | `B-G06` | Permanent control/revalidation and suspension on drift | `WAITING` | — |
 
 ---
@@ -737,6 +739,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-100` | 2026-07-31 | `B-003` | Versioned [`Runtime resource profiles v1`](./specs/runtime-resource-profiles-v1.md), exact machine-readable [catalog/eligibility/launcher contract](./specs/runtime-resource-profiles-v1.json), finite [`runtimeoptimizer` selector/materializer](./internal/runtimeoptimizer/resource_profiles.go), authorized [launcher integration](./internal/launcher/resource_profile.go), and composite [`dev/check-runtime-resource-profiles`](./dev/check-runtime-resource-profiles); the catalog contains only `STABLE_CONTROL`, `W2_H3G`, `W3_H4G`, and `W4_H6G`, varies only workers and Gradle heap, rejects arbitrary arms and runner/JDK/cgroup drift, requires live memory headroom plus startup/memory/rollback eligibility, and preserves original argv on any inapplicability; focused race/vet, real `cmd/buildopt` regression, ownership, layout, and diff hygiene passed | `DONE`: `B-003` is closed without extrapolating to another runner class, activating a repository, claiming causal improvement, or closing `B-G03` |
 | `E-101` | 2026-07-31 | `B-005`, `B-G04` | Versioned [`Invocation merging and policy prefetch v1`](./specs/invocation-merge-prefetch-v1.md), exact machine-readable [merge/prefetch/gate contract](./specs/invocation-merge-prefetch-v1.json), fail-closed [`EvaluateInvocationMerge`](./internal/runtimeoptimizer/invocation_merge.go), authority-neutral single-flight [`PolicyPrefetchCache`](./internal/runtimeoptimizer/policy_prefetch.go), and composite [`dev/check-invocation-merge-prefetch`](./dev/check-invocation-merge-prefetch); merging requires exact repository/revision/workspace/toolchain/daemon/environment/credential/cache identity, versioned transitive subsumption, semantic equivalence, no consumers/effects/barriers, and a passing isolated control, while prefetch verifies payload digest and caller authority before caching and rechecks exact binding, expiry, and revocation; race-enabled concurrency plus merging and clean failure/finalizer/side-effect/barrier fixtures passed | `DONE`: `B-005` and the complete merge/clean fixture gate `B-G04` are closed without activating a pipeline, claiming causal savings, or treating prefetched bytes as authority |
 | `E-102` | 2026-07-31 | `B-006` | Versioned [`Fixed cohort assignment v1`](./specs/fixed-cohort-assignment-v1.md), exact machine-readable [assignment/A/A/sample-ratio contract](./specs/fixed-cohort-assignment-v1.json), private durable [`runtimeoptimizer.CohortLedger`](./internal/runtimeoptimizer/fixed_cohorts.go), and composite [`dev/check-fixed-cohort-assignment`](./dev/check-fixed-cohort-assignment); every idempotent assignment binds its repository, measurement epoch, pre-outcome bucket/context, deterministic seed, policy/catalog, cohort, finite resource arm, integer-basis-point propensity, and random point before execution; A/A compares two labels over identical `STABLE_CONTROL`, the fixed policy preserves at least 5% control and rejects undeclared arms, and Pearson sample-ratio fixtures use declared non-50/50 probabilities while missing propensity, duplicates, insufficient cells, and policy mismatch remain inconclusive; private-state reopen, race, vet, exact-contract, and ratio negative fixtures passed | `DONE`: `B-006` is closed behind disabled actions without processing outcomes, claiming owner-operated A/A, or closing `B-G01`/`B-G03`/`B-G05`/`B-G06` |
+| `E-103` | 2026-07-31 | `B-007`, `B-G05` | Versioned [`Bounded bandit engine v1`](./specs/bandit-engine-v1.md), exact machine-readable [bucket/selection/outcome contract](./specs/bandit-engine-v1.json), private durable [`runtimeoptimizer.BanditEngine`](./internal/runtimeoptimizer/bandit.go), and composite [`dev/check-bandit-engine`](./dev/check-bandit-engine); exact repository/epoch/policy/catalog/feature buckets require 20 valid outcomes for every eligible candidate, selection uses 10% trimming plus five control pseudo-observations, ties retain control, exploration stays within 2–10%, and permanent control receives at least 5%; fixed-cohort ingestion and bandit outcomes revalidate assignment, bucket, propensity, completeness, and the inclusive 24-hour window before exactly-once learning; all 15 Phase 0 cases replay through the production selector, and exhaustive enumeration of 10,000 random points proved observed counts equal declared propensities and every selection belongs to the four-arm catalog; focused race, durable reopen, era reset, delayed/duplicate/partial negative, existing schema replay, and vet suites passed | `DONE`: `B-007` and finite safe-arm gate `B-G05` are closed without enabling a repository, claiming valid owner-operated A/A, or closing `B-G01`/`B-G03`/`B-G06` |
 
 ---
 
@@ -744,6 +747,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-31 | Closed `B-007` and `B-G05`: added durable exact-bucket epsilon-greedy learning, exact-once delayed outcomes, the production 15-case replay, and exhaustive 10,000-point safe-arm propensity proof; moved `B-008` next | Codex |
 | 2026-07-31 | Closed `B-006`: added durable deterministic A/A and fixed-cohort assignment, exact propensities, finite-arm enforcement, and declared-ratio validation; moved `B-007` next without claiming owner-operated A/A evidence | Codex |
 | 2026-07-31 | Closed `B-005` and `B-G04`: added all-or-nothing two-invocation semantic merging plus exact-bound, digest-checked, authority-verified, revocation-aware single-flight policy prefetch; composed clean/merge failure/finalizer/side-effect/barrier fixtures | Codex |
 | 2026-07-31 | Closed `B-003`: materialized the exact four-arm golden resource catalog, bounded selection to signed identity/cgroup/headroom, and applied only workers/daemon heap before Gradle with baseline fallback | Codex |

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/bandit-engine/v1" and
+  .trackerId == "B-007" and
+  .policyVersion == "beta-bandit-v1" and
+  .catalogVersion == "golden-linux-amd64-4c-16g-v1" and
+  .finiteArms == ["STABLE_CONTROL", "W2_H3G", "W3_H4G", "W4_H6G"] and
+  .bucketIdentity == ["repositoryId", "measurementEpoch", "policyVersion", "catalogVersion", "bucketDigest"] and
+  .minimumValidOutcomesPerCandidate == 20 and
+  .minimumStableControlBasisPoints == 500 and
+  .epsilonBasisPoints == {"minimum": 200, "maximum": 1000} and
+  .prediction == {"trimPercent": 10, "controlPseudoObservations": 5, "tieDisposition": "STABLE_CONTROL"} and
+  .assignmentTiming == "PERSISTED_BEFORE_EXECUTION" and
+  .propensityProof == "EXHAUSTIVE_10000_POINT_ENUMERATION" and
+  .outcome.maximumDelayHoursInclusive == 24 and
+  .outcome.cardinality == "EXACTLY_ONCE_PER_ASSIGNMENT" and
+  .outcome.invalidDisposition == "INCONCLUSIVE" and
+  .outcome.guardrailDisposition == "SUSPENDED_ROLLBACK" and
+  .closesGate == "B-G05" and
+  .doesNotClose == ["A1-001", "A1-006", "A1-G06", "B-G01", "B-G02", "B-G03", "B-G06"]
+' specs/bandit-engine-v1.json >/dev/null
+
+./dev/check-bandit-policy
+go test -race ./internal/runtimeoptimizer -run 'Test(ReplayBoundedBandit|Bandit|RecordFixed)'
+go vet ./internal/runtimeoptimizer
+printf 'B-007 bandit engine OK: 15-case replay, durable exact-bucket learning, exhaustive safe-arm propensities\n'

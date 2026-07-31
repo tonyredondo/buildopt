@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "buildopt.specs/bandit-engine/v1",
+  "trackerId": "B-007",
+  "policyVersion": "beta-bandit-v1",
+  "catalogVersion": "golden-linux-amd64-4c-16g-v1",
+  "finiteArms": ["STABLE_CONTROL", "W2_H3G", "W3_H4G", "W4_H6G"],
+  "bucketIdentity": ["repositoryId", "measurementEpoch", "policyVersion", "catalogVersion", "bucketDigest"],
+  "minimumValidOutcomesPerCandidate": 20,
+  "minimumStableControlBasisPoints": 500,
+  "epsilonBasisPoints": {"minimum": 200, "maximum": 1000},
+  "prediction": {"trimPercent": 10, "controlPseudoObservations": 5, "tieDisposition": "STABLE_CONTROL"},
+  "assignmentTiming": "PERSISTED_BEFORE_EXECUTION",
+  "propensityProof": "EXHAUSTIVE_10000_POINT_ENUMERATION",
+  "outcome": {
+    "maximumDelayHoursInclusive": 24,
+    "cardinality": "EXACTLY_ONCE_PER_ASSIGNMENT",
+    "requiredBindings": ["assignmentId", "bucket", "propensityBasisPoints"],
+    "invalidDisposition": "INCONCLUSIVE",
+    "guardrailDisposition": "SUSPENDED_ROLLBACK"
+  },
+  "reward": [
+    "BASELINE_MINUS_CUSTOMER_VISIBLE_BUILD_MS",
+    "RUNNER_OCCUPIED_PENALTY_MS",
+    "ADDITIONAL_RUNNER_PENALTY_MS",
+    "CI_QUEUE_PENALTY_MS",
+    "CUSTOMER_VISIBLE_FEEDBACK_PENALTY_MS",
+    "COST_EQUIVALENT_PENALTY_MS"
+  ],
+  "closesGate": "B-G05",
+  "doesNotClose": ["A1-001", "A1-006", "A1-G06", "B-G01", "B-G02", "B-G03", "B-G06"]
+}
