@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/contractcrypto"
+	"github.com/tonyredondo/buildopt/internal/datalifecycle"
 )
 
 const (
@@ -1554,6 +1555,93 @@ func openLifecycleTestStorage(t *testing.T) *Storage {
 		}
 	})
 	return storage
+}
+
+func TestSharedRejectsGenerationsPredatingManagedDeletion(t *testing.T) {
+	root := filepath.Join(t.TempDir(), "deployment-data")
+	if err := os.Mkdir(root, 0o700); err != nil {
+		t.Fatalf("create managed root: %v", err)
+	}
+	marker, err := json.Marshal(map[string]string{
+		"deploymentRoot": filepath.Join(filepath.Dir(root), "deployment"),
+		"schemaVersion":  "buildopt.dev/deployment-data/v1",
+	})
+	if err != nil {
+		t.Fatalf("encode managed root marker: %v", err)
+	}
+	if err := os.WriteFile(
+		filepath.Join(root, ".buildopt-deployment-data.json"),
+		append(marker, '\n'),
+		0o600,
+	); err != nil {
+		t.Fatalf("write managed root marker: %v", err)
+	}
+	key := make([]byte, datalifecycle.RedactionKeyBytes)
+	for index := range key {
+		key[index] = byte(index + 1)
+	}
+	if _, err := datalifecycle.DeleteManagedData(
+		context.Background(),
+		datalifecycle.DeletionRequest{
+			DataRoot:                 root,
+			DeletionID:               "shared-generation-floor",
+			Tenant:                   "tenant-test",
+			Repository:               "repository-test",
+			TrustDomain:              "trust-test",
+			NextNamespaceGeneration:  8,
+			NextL1SecurityGeneration: 12,
+			TokenKey:                 key,
+			TokenKeyVersion:          "shared-floor-v1",
+			RequestedAt:              lifecycleTestNow,
+		},
+	); err != nil {
+		t.Fatalf("establish managed deletion boundary: %v", err)
+	}
+	storage, err := Open(context.Background(), filepath.Join(root, "shared"))
+	if err != nil {
+		t.Fatalf("open Shared after completed deletion: %v", err)
+	}
+	t.Cleanup(func() {
+		_ = storage.Close()
+	})
+	storage.clock = func() time.Time { return lifecycleTestNow.Add(time.Hour) }
+	if storage.minimumNamespaceGeneration != 8 {
+		t.Fatalf(
+			"minimum namespace generation = %d",
+			storage.minimumNamespaceGeneration,
+		)
+	}
+	request := lifecycleAttemptRequest(
+		"attempt-before-deletion",
+		"request-before-deletion",
+		"owner-before-deletion",
+		7,
+	)
+	request.LeaseExpiresAt = storage.now().Add(time.Hour)
+	if _, _, err := storage.StartAttempt(
+		context.Background(),
+		request,
+	); err == nil || !strings.Contains(err.Error(), "predates managed deletion") {
+		t.Fatalf("stale attempt error = %v", err)
+	}
+	if _, err := storage.IssueBetaToken(
+		context.Background(),
+		BetaTokenIssueRequest{
+			Scope: BetaTokenScope{
+				Tenant:              "tenant-test",
+				Repository:          "repository-test",
+				TrustDomain:         "trust-test",
+				Namespace:           "stable",
+				NamespaceGeneration: 7,
+				Plane:               BetaTokenPlaneStable,
+			},
+			Access:    BetaTokenRead,
+			ExpiresAt: storage.now().Add(time.Hour),
+		},
+		storage.now(),
+	); err == nil || !strings.Contains(err.Error(), "predates managed deletion") {
+		t.Fatalf("stale token error = %v", err)
+	}
 }
 
 func lifecycleAttemptRequest(

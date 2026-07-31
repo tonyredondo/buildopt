@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"syscall"
+
+	"github.com/tonyredondo/buildopt/internal/datalifecycle"
 )
 
 const (
@@ -51,6 +53,7 @@ type managedL1 struct {
 	mode               string
 	securityGeneration uint64
 	lease              *os.File
+	lifecycleLease     *datalifecycle.ManagedLease
 }
 
 func managedL1ConfigFromEnvironment(
@@ -185,11 +188,31 @@ func startInvocationManagedL1() (*managedL1, error) {
 }
 
 func startManagedL1(config managedL1Config) (*managedL1, error) {
+	lifecycleLease, boundary, err := datalifecycle.AcquireManagedLease(
+		config.stateRoot,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("inspect managed L1 lifecycle: %w", err)
+	}
+	keepLifecycleLease := false
+	defer func() {
+		if !keepLifecycleLease {
+			_ = lifecycleLease.Close()
+		}
+	}()
+	if config.securityGeneration < boundary.MinimumL1SecurityGeneration {
+		return nil, errors.New(
+			"managed L1 security generation predates managed deletion",
+		)
+	}
 	if config.l2WriteAuthorized {
-		return &managedL1{
+		l1 := &managedL1{
 			mode:               managedL1DisabledWriterMode,
 			securityGeneration: config.securityGeneration,
-		}, nil
+			lifecycleLease:     lifecycleLease,
+		}
+		keepLifecycleLease = true
+		return l1, nil
 	}
 
 	l1Root := filepath.Join(config.stateRoot, "l1")
@@ -233,12 +256,15 @@ func startManagedL1(config managedL1Config) (*managedL1, error) {
 		return nil, fmt.Errorf("acquire managed L1 lease: %w", err)
 	}
 
-	return &managedL1{
+	l1 := &managedL1{
 		directory:          directory,
 		mode:               managedL1ReadWriteMode,
 		securityGeneration: config.securityGeneration,
 		lease:              lease,
-	}, nil
+		lifecycleLease:     lifecycleLease,
+	}
+	keepLifecycleLease = true
+	return l1, nil
 }
 
 func (l1 *managedL1) childEnvironment() map[string]string {
@@ -254,10 +280,16 @@ func (l1 *managedL1) childEnvironment() map[string]string {
 }
 
 func (l1 *managedL1) close() error {
-	if l1 == nil || l1.lease == nil {
+	if l1 == nil {
 		return nil
 	}
-	lease := l1.lease
-	l1.lease = nil
-	return releaseManagedLock(lease)
+	var leaseErr error
+	if l1.lease != nil {
+		lease := l1.lease
+		l1.lease = nil
+		leaseErr = releaseManagedLock(lease)
+	}
+	lifecycleErr := l1.lifecycleLease.Close()
+	l1.lifecycleLease = nil
+	return errors.Join(leaseErr, lifecycleErr)
 }

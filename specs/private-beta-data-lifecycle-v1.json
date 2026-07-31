@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "buildopt.specs/private-beta-data-lifecycle/v1",
+  "workItem": "A1-004",
+  "gateId": "A1-G05",
+  "scope": {
+    "deployment": "PRIVATE_BETA_ISOLATED",
+    "deletionUnit": "COMPLETE_MARKED_DATA_ROOT",
+    "unknownRootEntries": "FAIL_CLOSED"
+  },
+  "export": {
+    "defaultProfile": "SUMMARY",
+    "profiles": ["SUMMARY", "TASKS", "EVIDENCE", "DIAGNOSTIC"],
+    "expandedProfileAuthorization": "EXPLICIT",
+    "diagnosticDefault": "DISABLED",
+    "diagnosticMaximumSeconds": 604800,
+    "redaction": {
+      "algorithm": "HMAC-SHA-256",
+      "keyBytes": 32,
+      "keyMode": "0600",
+      "keyVersionPersisted": true,
+      "beforePersistence": true,
+      "summaryTaskShape": "KEYED_TASK_SET",
+      "taskProfileShape": "KEYED_TASK_IDENTIFIERS",
+      "rawRepositoryTaskTrustDomain": "FORBIDDEN"
+    }
+  },
+  "deletion": {
+    "ordering": ["ACTIVE_LEASE_CHECK", "LOGICAL_REVOCATION", "PHYSICAL_REMOVAL", "COMPLETE_TOMBSTONE"],
+    "managedClasses": [
+      "STABLE_PENDING_QUARANTINE_METADATA",
+      "MANAGED_L1",
+      "SUMMARY_DIAGNOSTIC_TELEMETRY",
+      "OPTIMIZATION_EVIDENCE",
+      "LOCAL_SPOOL_DLQ"
+    ],
+    "activeLease": "REFUSE_BEFORE_REVOCATION",
+    "logicalRevocation": "DURABLE_BEFORE_PHYSICAL_REMOVAL",
+    "physicalRemoval": "KNOWN_COMPONENTS_ONLY",
+    "replay": "EXACT_IDEMPOTENT",
+    "retentionHold": "EXPLICIT_CONSENT_REASON_EXPIRY_ONLY",
+    "tombstoneRetentionSeconds": 604800,
+    "externalCopies": "TOKENIZED_TOMBSTONE_OBLIGATION"
+  },
+  "generation": {
+    "sharedNamespaceFloor": "PERSISTED_AND_ENFORCED",
+    "managedL1SecurityFloor": "PERSISTED_AND_ENFORCED",
+    "revokedRootOpen": "FAIL_CLOSED"
+  },
+  "boundaries": {
+    "closes": ["A1-004", "A1-G05"],
+    "doesNotClose": [
+      "A1-001",
+      "A1-005",
+      "A1-006",
+      "A1-G02",
+      "A1-G06",
+      "OPS-001/A1"
+    ]
+  }
+}

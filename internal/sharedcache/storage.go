@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"sync"
 	"time"
+
+	"github.com/tonyredondo/buildopt/internal/datalifecycle"
 )
 
 const (
@@ -88,27 +90,29 @@ type DiskCapacityProbe func(root string) (total uint64, available uint64, err er
 // Storage owns the process-wide writer lease, immutable blobs, and the two
 // deliberately independent SQLite lifecycles.
 type Storage struct {
-	operationMutex           sync.RWMutex
-	lifecycleMutex           sync.RWMutex
-	reconcileMutex           sync.RWMutex
-	authorityMutex           sync.RWMutex
-	currentAuthorityDigests  map[string]string
-	capacityMutex            sync.Mutex
-	accessBatchMutex         sync.Mutex
-	currentAccessBatch       *protectedAccessBatch
-	protectedAccessError     error
-	closed                   bool
-	layout                   Layout
-	writerLock               *os.File
-	blobs                    *filesystemBlobStore
-	cache                    *sqliteMetadata
-	control                  *sqliteMetadata
-	capacity                 CapacityPolicy
-	reservations             map[*pendingReservation]struct{}
-	blobCleanupPending       bool
-	quarantineCleanupPending bool
-	clock                    func() time.Time
-	testHooks                storageTestHooks
+	operationMutex             sync.RWMutex
+	lifecycleMutex             sync.RWMutex
+	reconcileMutex             sync.RWMutex
+	authorityMutex             sync.RWMutex
+	currentAuthorityDigests    map[string]string
+	capacityMutex              sync.Mutex
+	accessBatchMutex           sync.Mutex
+	currentAccessBatch         *protectedAccessBatch
+	protectedAccessError       error
+	closed                     bool
+	layout                     Layout
+	writerLock                 *os.File
+	blobs                      *filesystemBlobStore
+	cache                      *sqliteMetadata
+	control                    *sqliteMetadata
+	capacity                   CapacityPolicy
+	reservations               map[*pendingReservation]struct{}
+	blobCleanupPending         bool
+	quarantineCleanupPending   bool
+	minimumNamespaceGeneration int64
+	lifecycleLease             *datalifecycle.ManagedLease
+	clock                      func() time.Time
+	testHooks                  storageTestHooks
 }
 
 type storageTestHooks struct {
@@ -210,6 +214,19 @@ func openWithConfiguration(
 	}
 
 	root = filepath.Clean(root)
+	lifecycleLease, boundary, err := datalifecycle.AcquireManagedLease(root)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"open single-node Shared storage: inspect managed lifecycle: %w",
+			err,
+		)
+	}
+	keepLifecycleLease := false
+	defer func() {
+		if !keepLifecycleLease {
+			_ = lifecycleLease.Close()
+		}
+	}()
 	layout := Layout{
 		Root:            root,
 		Blobs:           filepath.Join(root, "blobs", "sha256"),
@@ -294,12 +311,14 @@ func openWithConfiguration(
 	}
 
 	storage := &Storage{
-		layout:                  layout,
-		writerLock:              writerLock,
-		capacity:                capacity,
-		reservations:            make(map[*pendingReservation]struct{}),
-		currentAuthorityDigests: make(map[string]string),
-		clock:                   time.Now,
+		layout:                     layout,
+		writerLock:                 writerLock,
+		capacity:                   capacity,
+		reservations:               make(map[*pendingReservation]struct{}),
+		currentAuthorityDigests:    make(map[string]string),
+		minimumNamespaceGeneration: boundary.MinimumNamespaceGeneration,
+		lifecycleLease:             lifecycleLease,
+		clock:                      time.Now,
 	}
 	cleanup := func(openErr error) (*Storage, error) {
 		if storage.control != nil {
@@ -310,6 +329,7 @@ func openWithConfiguration(
 		}
 		_ = releaseExclusiveLock(writerLock)
 		_ = writerLock.Close()
+		_ = storage.lifecycleLease.Close()
 		return nil, openErr
 	}
 
@@ -362,6 +382,7 @@ func openWithConfiguration(
 			err,
 		))
 	}
+	keepLifecycleLease = true
 	return storage, nil
 }
 
@@ -470,6 +491,10 @@ func (storage *Storage) Close() error {
 			storage.writerLock.Close(),
 		)
 		storage.writerLock = nil
+	}
+	if storage.lifecycleLease != nil {
+		closeErrors = append(closeErrors, storage.lifecycleLease.Close())
+		storage.lifecycleLease = nil
 	}
 	return errors.Join(closeErrors...)
 }

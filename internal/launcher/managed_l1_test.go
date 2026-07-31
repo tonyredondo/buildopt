@@ -1,12 +1,17 @@
 package launcher
 
 import (
+	"context"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
+
+	"github.com/tonyredondo/buildopt/internal/datalifecycle"
 )
 
 func TestManagedL1ConfigurationAndScopeBinding(t *testing.T) {
@@ -218,6 +223,70 @@ func TestManagedL1DisablesLocalCacheForL2Writer(t *testing.T) {
 	}
 	if _, present := environment[managedL1DirectoryChildEnvironment]; present {
 		t.Fatal("L2 writer child context exposed a local directory")
+	}
+}
+
+func TestManagedL1RejectsGenerationPredatingManagedDeletion(t *testing.T) {
+	root := filepath.Join(t.TempDir(), "deployment-data")
+	if err := os.Mkdir(root, 0o700); err != nil {
+		t.Fatalf("create managed root: %v", err)
+	}
+	marker, err := json.Marshal(map[string]string{
+		"deploymentRoot": filepath.Join(filepath.Dir(root), "deployment"),
+		"schemaVersion":  "buildopt.dev/deployment-data/v1",
+	})
+	if err != nil {
+		t.Fatalf("encode managed root marker: %v", err)
+	}
+	if err := os.WriteFile(
+		filepath.Join(root, ".buildopt-deployment-data.json"),
+		append(marker, '\n'),
+		0o600,
+	); err != nil {
+		t.Fatalf("write managed root marker: %v", err)
+	}
+	key := make([]byte, datalifecycle.RedactionKeyBytes)
+	for index := range key {
+		key[index] = byte(index + 1)
+	}
+	if _, err := datalifecycle.DeleteManagedData(
+		context.Background(),
+		datalifecycle.DeletionRequest{
+			DataRoot:                 root,
+			DeletionID:               "l1-generation-floor",
+			Tenant:                   "tenant-7",
+			Repository:               "tonyredondo/buildopt",
+			TrustDomain:              "private-beta",
+			NextNamespaceGeneration:  8,
+			NextL1SecurityGeneration: 43,
+			TokenKey:                 key,
+			TokenKeyVersion:          "l1-floor-v1",
+			RequestedAt: time.Date(
+				2026,
+				time.July,
+				31,
+				12,
+				0,
+				0,
+				0,
+				time.UTC,
+			),
+		},
+	); err != nil {
+		t.Fatalf("establish managed deletion boundary: %v", err)
+	}
+	config := managedL1TestConfig(root)
+	if _, err := startManagedL1(config); err == nil ||
+		!strings.Contains(err.Error(), "predates managed deletion") {
+		t.Fatalf("stale managed L1 error = %v", err)
+	}
+	config.securityGeneration = 43
+	current, err := startManagedL1(config)
+	if err != nil {
+		t.Fatalf("start rotated managed L1: %v", err)
+	}
+	if err := current.close(); err != nil {
+		t.Fatalf("close rotated managed L1: %v", err)
 	}
 }
 

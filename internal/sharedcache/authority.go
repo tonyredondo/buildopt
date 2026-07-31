@@ -64,6 +64,12 @@ func (storage *Storage) InstallLocalAuthority(
 			"install local cache authority: invalid verified binding",
 		)
 	}
+	if document.Policy.RemoteCache.NamespaceGeneration <
+		storage.minimumNamespaceGeneration {
+		return LocalAuthorityBinding{}, false, errors.New(
+			"install local cache authority: namespace generation predates managed deletion",
+		)
+	}
 
 	next := localauthority.StateFromVerified(verified, now.UTC())
 	binding := LocalAuthorityBinding{

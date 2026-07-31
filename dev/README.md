@@ -440,6 +440,21 @@ managed golden output for raw sensitive values, validates at-least-once
 deduplication and partial sequence recovery, rejects changed event reuse, and
 executes eight deletion-order/boundary cases.
 
+## Private-beta managed data lifecycle
+
+Exercise the implemented A1-004/A1-G05 boundary:
+
+    ./dev/check-private-beta-data-lifecycle
+
+The checker proves that BUILD_SESSION exports apply deployment-keyed HMAC
+redaction before JSON/JSONL persistence, SUMMARY is the default, wider
+profiles require explicit authorization, and DIAGNOSTIC expires within seven
+days. It also exercises the operator deletion command across Shared, managed
+L1, exports, evidence, and spool: active leases refuse deletion, logical
+revocation precedes physical removal, the retained tombstone contains no raw
+scope or destination identities, exact retries are idempotent, and the
+persisted Shared/L1 generation floors reject stale recreation.
+
 ## PatchBundle contract validation
 
 Validate the `F0-016` declarative bundle envelope and its two private-beta

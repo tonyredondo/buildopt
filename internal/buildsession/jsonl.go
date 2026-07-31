@@ -16,11 +16,12 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/tonyredondo/buildopt/internal/datalifecycle"
 )
 
 const (
 	exportEventSchemaVersion  = "1.0"
-	exportEventProfile        = "SUMMARY"
 	exportJSONLMaximumBytes   = 64 << 20
 	exportJSONLMaximumLine    = 1 << 20
 	observedEventSequence     = 1
@@ -63,8 +64,9 @@ type publishedEventPayload struct {
 }
 
 type jsonlStream struct {
-	path         string
-	maximumBytes int64
+	path              string
+	maximumBytes      int64
+	authorizedProfile datalifecycle.ExportProfile
 }
 
 type storedExportEvent struct {
@@ -76,6 +78,7 @@ func newBuildSessionEvents(
 	document Document,
 	target string,
 	documentBytes []byte,
+	profile datalifecycle.ExportProfile,
 ) ([2]exportEvent, error) {
 	observedPayload, err := json.Marshal(observedEventPayload{
 		Type:     observedEventPayloadType,
@@ -104,12 +107,14 @@ func newBuildSessionEvents(
 			observedEventSequence,
 			occurredAt,
 			observedPayload,
+			profile,
 		),
 		newExportEvent(
 			document.Build.ID,
 			publishedEventSequence,
 			occurredAt,
 			publishedPayload,
+			profile,
 		),
 	}, nil
 }
@@ -119,6 +124,7 @@ func newExportEvent(
 	sequence int,
 	occurredAt string,
 	payload []byte,
+	profile datalifecycle.ExportProfile,
 ) exportEvent {
 	sum := sha256.New()
 	_, _ = sum.Write([]byte("buildopt-export-event-v1"))
@@ -137,7 +143,7 @@ func newExportEvent(
 		SchemaVersion: exportEventSchemaVersion,
 		IdempotencyKey: buildID + "/" +
 			strconv.Itoa(sequence),
-		Profile: exportEventProfile,
+		Profile: string(profile),
 		Payload: append(json.RawMessage(nil), payload...),
 	}
 }
@@ -267,7 +273,7 @@ func (stream *jsonlStream) load(
 		}
 		raw = raw[:validLength]
 	}
-	events, err := decodeJSONLEvents(raw)
+	events, err := decodeJSONLEvents(raw, stream.authorizedProfile)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -305,6 +311,7 @@ func trustedJSONLFile(
 
 func decodeJSONLEvents(
 	raw []byte,
+	authorizedProfile datalifecycle.ExportProfile,
 ) (map[string]map[int]storedExportEvent, error) {
 	byEventID := make(map[string][]byte)
 	byBuild := make(map[string]map[int]storedExportEvent)
@@ -315,6 +322,12 @@ func decodeJSONLEvents(
 		event, err := decodeExportEvent(line)
 		if err != nil {
 			return nil, err
+		}
+		if exportProfileRank(datalifecycle.ExportProfile(event.Profile)) >
+			exportProfileRank(authorizedProfile) {
+			return nil, errors.New(
+				"JSONL export profile exceeds current authorization",
+			)
 		}
 		if previous, exists := byEventID[event.EventID]; exists {
 			if !bytes.Equal(previous, line) {
@@ -366,6 +379,7 @@ func decodeExportEvent(line []byte) (exportEvent, error) {
 		event.Sequence,
 		event.OccurredAt,
 		event.Payload,
+		datalifecycle.ExportProfile(event.Profile),
 	)
 	if event.EventID != expected.EventID ||
 		event.IdempotencyKey != expected.IdempotencyKey ||
@@ -381,7 +395,7 @@ func validateExportEvent(event exportEvent) error {
 	if !exportEventIdentifierPattern.MatchString(event.EventID) ||
 		!exportEventIdentifierPattern.MatchString(event.BuildID) ||
 		event.SchemaVersion != exportEventSchemaVersion ||
-		event.Profile != exportEventProfile ||
+		exportProfileRank(datalifecycle.ExportProfile(event.Profile)) < 0 ||
 		event.Sequence < observedEventSequence ||
 		event.Sequence > publishedEventSequence ||
 		event.IdempotencyKey != event.BuildID+"/"+
@@ -422,6 +436,21 @@ func validateExportEvent(event exportEvent) error {
 		}
 	}
 	return nil
+}
+
+func exportProfileRank(profile datalifecycle.ExportProfile) int {
+	switch profile {
+	case datalifecycle.ExportSummary:
+		return 0
+	case datalifecycle.ExportTasks:
+		return 1
+	case datalifecycle.ExportEvidence:
+		return 2
+	case datalifecycle.ExportDiagnostic:
+		return 3
+	default:
+		return -1
+	}
 }
 
 func isSHA256Digest(value string) bool {
@@ -523,6 +552,7 @@ func (exporter *Exporter) recoverPartialDocuments() error {
 				observedPayload.Document,
 				completePath,
 				completeContent,
+				datalifecycle.ExportProfile(observed.event.Profile),
 			)
 			if err != nil {
 				return err

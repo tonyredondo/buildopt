@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/private-beta-data-lifecycle-v1.json"
+
+for buildopt_command in go jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required data-lifecycle command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if ! jq -e '
+    keys == [
+        "boundaries",
+        "deletion",
+        "export",
+        "gateId",
+        "generation",
+        "schemaVersion",
+        "scope",
+        "workItem"
+    ] and
+    .schemaVersion == "buildopt.specs/private-beta-data-lifecycle/v1" and
+    .workItem == "A1-004" and
+    .gateId == "A1-G05" and
+    .scope == {
+        deployment: "PRIVATE_BETA_ISOLATED",
+        deletionUnit: "COMPLETE_MARKED_DATA_ROOT",
+        unknownRootEntries: "FAIL_CLOSED"
+    } and
+    .export.defaultProfile == "SUMMARY" and
+    .export.profiles == ["SUMMARY", "TASKS", "EVIDENCE", "DIAGNOSTIC"] and
+    .export.expandedProfileAuthorization == "EXPLICIT" and
+    .export.diagnosticDefault == "DISABLED" and
+    .export.diagnosticMaximumSeconds == 604800 and
+    .export.redaction == {
+        algorithm: "HMAC-SHA-256",
+        keyBytes: 32,
+        keyMode: "0600",
+        keyVersionPersisted: true,
+        beforePersistence: true,
+        summaryTaskShape: "KEYED_TASK_SET",
+        taskProfileShape: "KEYED_TASK_IDENTIFIERS",
+        rawRepositoryTaskTrustDomain: "FORBIDDEN"
+    } and
+    .deletion.ordering == [
+        "ACTIVE_LEASE_CHECK",
+        "LOGICAL_REVOCATION",
+        "PHYSICAL_REMOVAL",
+        "COMPLETE_TOMBSTONE"
+    ] and
+    .deletion.managedClasses == [
+        "STABLE_PENDING_QUARANTINE_METADATA",
+        "MANAGED_L1",
+        "SUMMARY_DIAGNOSTIC_TELEMETRY",
+        "OPTIMIZATION_EVIDENCE",
+        "LOCAL_SPOOL_DLQ"
+    ] and
+    .deletion.activeLease == "REFUSE_BEFORE_REVOCATION" and
+    .deletion.logicalRevocation == "DURABLE_BEFORE_PHYSICAL_REMOVAL" and
+    .deletion.physicalRemoval == "KNOWN_COMPONENTS_ONLY" and
+    .deletion.replay == "EXACT_IDEMPOTENT" and
+    .deletion.retentionHold == "EXPLICIT_CONSENT_REASON_EXPIRY_ONLY" and
+    .deletion.tombstoneRetentionSeconds == 604800 and
+    .deletion.externalCopies == "TOKENIZED_TOMBSTONE_OBLIGATION" and
+    .generation == {
+        sharedNamespaceFloor: "PERSISTED_AND_ENFORCED",
+        managedL1SecurityFloor: "PERSISTED_AND_ENFORCED",
+        revokedRootOpen: "FAIL_CLOSED"
+    } and
+    .boundaries.closes == ["A1-004", "A1-G05"] and
+    .boundaries.doesNotClose == [
+        "A1-001",
+        "A1-005",
+        "A1-006",
+        "A1-G02",
+        "A1-G06",
+        "OPS-001/A1"
+    ]
+' "${buildopt_spec}" >/dev/null; then
+    printf 'private-beta data lifecycle spec is malformed\n' >&2
+    exit 1
+fi
+
+go test ./internal/datalifecycle -count=1
+go test ./internal/buildsession -run '^(TestExporterPublishesPrivateImmutableJSON|TestExporterDoesNotReopenAboveCurrentProfileAuthorization|TestDiagnosticExporterStopsAtItsAuthorizedExpiry)$' -count=1
+go test ./internal/sharedcache -run '^TestSharedRejectsGenerationsPredatingManagedDeletion$' -count=1
+go test ./internal/launcher -run '^TestManagedL1RejectsGenerationPredatingManagedDeletion$' -count=1
+go test ./cmd/buildopt-server -run '^(TestRunDataLifecycleDeletesManagedCopiesAndReplays|TestParseExportPolicyRequiresBoundedDiagnosticOptIn)$' -count=1
+
+printf 'A1-G05 private-beta data lifecycle OK: HMAC redaction, bounded diagnostics, coordinated deletion, managed leases, and generation floors\n'

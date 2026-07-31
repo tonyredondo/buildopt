@@ -149,6 +149,11 @@ func (storage *Storage) StartAttempt(
 	if err := validateStartAttemptRequest(request, now); err != nil {
 		return AttemptStatus{}, false, err
 	}
+	if request.NamespaceGeneration < storage.minimumNamespaceGeneration {
+		return AttemptStatus{}, false, errors.New(
+			"start Shared cache attempt: namespace generation predates managed deletion",
+		)
+	}
 	fingerprint, err := fingerprintValue(request)
 	if err != nil {
 		return AttemptStatus{}, false, err

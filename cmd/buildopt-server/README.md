@@ -136,6 +136,33 @@ Each request consults `control.sqlite`, so revocation is effective before the
 next request/build. Stable, quarantine, and control tokens are not
 interchangeable; a read token cannot `PUT`.
 
+`A1-004` makes SUMMARY the default export profile and HMAC-tokenizes
+repository, trust-domain, and task identities before JSON or JSONL reaches
+disk. TASKS/EVIDENCE require `--authorize-expanded-export`; DIAGNOSTIC also
+requires `--diagnostic-until <UTC-RFC3339>` within seven days. The same
+authorization must be supplied when copying a wider existing stream.
+
+Delete every managed copy beneath one marked isolated deployment root with:
+
+```bash
+buildopt-server data delete \
+    --data-root /absolute/private/deployment-data \
+    --deletion-id delete-001 \
+    --tenant tenant-7 \
+    --repository owner/repository \
+    --trust-domain private-beta \
+    --next-namespace-generation 13 \
+    --next-l1-security-generation 51 \
+    --token-key /absolute/private/deletion-hmac.key \
+    --token-key-version deletion-key-v1
+```
+
+The command refuses active Shared/export/L1 leases, writes logical revocation
+before removing known managed components, emits only a tokenized tombstone,
+and makes exact retries idempotent. Customer-controlled copies can be listed
+with repeated `--external-destination` flags; they retain their own
+tombstone-consumption obligation.
+
 Encrypted delivery retry/DLQ, deployed TLS termination and sinks, cache/policy
 APIs, hardened identity, and non-local profiles remain owned by later items.
 
@@ -149,6 +176,7 @@ bypass with:
 ./dev/check-shared-storage
 ./dev/check-pending-commit
 ./dev/check-local-authority
+./dev/check-private-beta-data-lifecycle
 ```
 
 `DEPLOY-001` additionally packages the real server, launcher, and Gradle plugin

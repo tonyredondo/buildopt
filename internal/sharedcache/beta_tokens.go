@@ -15,6 +15,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/tonyredondo/buildopt/internal/datalifecycle"
 )
 
 const (
@@ -79,7 +81,9 @@ type IssuedBetaToken struct {
 // revocation against control.sqlite. It never opens cache.sqlite or the Shared
 // writer lease.
 type BetaTokenRegistry struct {
-	metadata *sqliteMetadata
+	metadata                   *sqliteMetadata
+	minimumNamespaceGeneration int64
+	lifecycleLease             *datalifecycle.ManagedLease
 }
 
 // OpenBetaTokenRegistry opens only the private control database. A running
@@ -92,10 +96,19 @@ func OpenBetaTokenRegistry(
 		filepath.Clean(stateRoot) != stateRoot {
 		return nil, errors.New("open beta token registry: invalid state root")
 	}
+	lifecycleLease, boundary, err := datalifecycle.AcquireManagedLease(stateRoot)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"open beta token registry: inspect managed lifecycle: %w",
+			err,
+		)
+	}
 	if err := preparePrivateDirectory(stateRoot); err != nil {
+		_ = lifecycleLease.Close()
 		return nil, fmt.Errorf("open beta token registry: %w", err)
 	}
 	if err := validateStorageRootEntries(stateRoot); err != nil {
+		_ = lifecycleLease.Close()
 		return nil, fmt.Errorf("open beta token registry: %w", err)
 	}
 	metadata, err := openSQLiteMetadata(
@@ -104,9 +117,14 @@ func OpenBetaTokenRegistry(
 		controlMetadataDefinition(filepath.Join(stateRoot, "control.sqlite")),
 	)
 	if err != nil {
+		_ = lifecycleLease.Close()
 		return nil, fmt.Errorf("open beta token registry: %w", err)
 	}
-	return &BetaTokenRegistry{metadata: metadata}, nil
+	return &BetaTokenRegistry{
+		metadata:                   metadata,
+		minimumNamespaceGeneration: boundary.MinimumNamespaceGeneration,
+		lifecycleLease:             lifecycleLease,
+	}, nil
 }
 
 // Close releases the operator database connection.
@@ -114,7 +132,11 @@ func (registry *BetaTokenRegistry) Close() error {
 	if registry == nil || registry.metadata == nil {
 		return nil
 	}
-	return registry.metadata.close()
+	metadataErr := registry.metadata.close()
+	registry.metadata = nil
+	leaseErr := registry.lifecycleLease.Close()
+	registry.lifecycleLease = nil
+	return errors.Join(metadataErr, leaseErr)
 }
 
 // Issue generates one opaque token and persists only its domain-separated
@@ -126,6 +148,12 @@ func (registry *BetaTokenRegistry) Issue(
 ) (IssuedBetaToken, error) {
 	if registry == nil || registry.metadata == nil {
 		return IssuedBetaToken{}, errors.New("issue beta token: closed registry")
+	}
+	if request.Scope.NamespaceGeneration <
+		registry.minimumNamespaceGeneration {
+		return IssuedBetaToken{}, errors.New(
+			"issue beta token: namespace generation predates managed deletion",
+		)
 	}
 	return issueBetaToken(ctx, registry.metadata.database, request, now)
 }
@@ -150,6 +178,12 @@ func (storage *Storage) IssueBetaToken(
 ) (IssuedBetaToken, error) {
 	if storage == nil {
 		return IssuedBetaToken{}, errors.New("issue beta token: nil storage")
+	}
+	if request.Scope.NamespaceGeneration <
+		storage.minimumNamespaceGeneration {
+		return IssuedBetaToken{}, errors.New(
+			"issue beta token: namespace generation predates managed deletion",
+		)
 	}
 	finish, err := storage.beginOperation()
 	if err != nil {

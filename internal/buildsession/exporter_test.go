@@ -6,9 +6,11 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
+	"github.com/tonyredondo/buildopt/internal/datalifecycle"
 	"github.com/tonyredondo/buildopt/internal/sessioningest"
 )
 
@@ -44,6 +46,15 @@ func TestExporterPublishesPrivateImmutableJSON(t *testing.T) {
 	if document.Build.ID != record.SessionID {
 		t.Fatalf("export build ID = %q", document.Build.ID)
 	}
+	if document.Build.RepositoryID == record.ExportContext.RepositoryID ||
+		document.Workload.TrustDomain == record.ExportContext.TrustDomain ||
+		document.GradleInvocations[0].RequestedTasks[0] ==
+			record.ExportContext.RequestedTasks[0] {
+		t.Fatal("export retained a raw sensitive identifier")
+	}
+	if document.Workload.TokenKeyVersion == record.ExportContext.TokenKeyVersion {
+		t.Fatal("export retained the caller-provided token key version")
+	}
 
 	replayedPath, replayedCreated, err := exporter.Export(record)
 	if err != nil {
@@ -71,8 +82,19 @@ func TestExporterPublishesPrivateImmutableJSON(t *testing.T) {
 	if err != nil {
 		t.Fatalf("list export directory: %v", err)
 	}
-	if len(entries) != 2 {
+	if len(entries) != 3 {
 		t.Fatalf("unexpected export directory entries: %+v", entries)
+	}
+	keyInfo, err := os.Stat(filepath.Join(
+		filepath.Dir(path),
+		exportRedactionKeyName,
+	))
+	if err != nil {
+		t.Fatalf("stat redaction key: %v", err)
+	}
+	if keyInfo.Mode().Perm() != 0o600 ||
+		keyInfo.Size() != datalifecycle.RedactionKeyBytes {
+		t.Fatalf("redaction key mode/size = %o/%d", keyInfo.Mode().Perm(), keyInfo.Size())
 	}
 	streamPath := filepath.Join(filepath.Dir(path), "buildopt-events.jsonl")
 	streamInfo, err := os.Stat(streamPath)
@@ -85,6 +107,16 @@ func TestExporterPublishesPrivateImmutableJSON(t *testing.T) {
 	var stream bytes.Buffer
 	if err := exporter.WriteJSONL(&stream); err != nil {
 		t.Fatalf("copy JSONL stream: %v", err)
+	}
+	managedOutput := append(append([]byte(nil), content...), stream.Bytes()...)
+	for _, raw := range []string{
+		record.ExportContext.RepositoryID,
+		record.ExportContext.TrustDomain,
+		record.ExportContext.RequestedTasks[0],
+	} {
+		if bytes.Contains(managedOutput, []byte(raw)) {
+			t.Fatalf("managed output contains raw identifier %q", raw)
+		}
 	}
 	lines := bytes.Split(bytes.TrimSuffix(stream.Bytes(), []byte{'\n'}), []byte{'\n'})
 	if len(lines) != 4 {
@@ -114,6 +146,70 @@ func TestNewExporterRejectsFilePath(t *testing.T) {
 	}
 	if _, err := NewExporter(path); err == nil {
 		t.Fatal("accepted a file as the export directory")
+	}
+}
+
+func TestExporterDoesNotReopenAboveCurrentProfileAuthorization(t *testing.T) {
+	directory := filepath.Join(t.TempDir(), "exports")
+	exporter, err := NewExporterWithPolicy(
+		directory,
+		datalifecycle.ExportPolicy{
+			Profile:              datalifecycle.ExportTasks,
+			ExplicitlyAuthorized: true,
+		},
+	)
+	if err != nil {
+		t.Fatalf("create TASKS exporter: %v", err)
+	}
+	record := validExportRecord()
+	if _, _, err := exporter.Export(record); err != nil {
+		t.Fatalf("export TASKS profile: %v", err)
+	}
+	if _, err := NewExporter(directory); err == nil ||
+		!strings.Contains(err.Error(), "exceeds current authorization") {
+		t.Fatalf("SUMMARY reopened TASKS stream: %v", err)
+	}
+	reopened, err := NewExporterWithPolicy(
+		directory,
+		datalifecycle.ExportPolicy{
+			Profile:              datalifecycle.ExportEvidence,
+			ExplicitlyAuthorized: true,
+		},
+	)
+	if err != nil {
+		t.Fatalf("reopen TASKS stream with EVIDENCE ceiling: %v", err)
+	}
+	if reopened.profile != datalifecycle.ExportEvidence {
+		t.Fatalf("reopened profile = %q", reopened.profile)
+	}
+}
+
+func TestDiagnosticExporterStopsAtItsAuthorizedExpiry(t *testing.T) {
+	directory := filepath.Join(t.TempDir(), "exports")
+	now := time.Date(2026, 7, 31, 12, 0, 0, 0, time.UTC)
+	exporter, err := newExporterWithPolicy(
+		directory,
+		datalifecycle.ExportPolicy{
+			Profile:              datalifecycle.ExportDiagnostic,
+			ExplicitlyAuthorized: true,
+			DiagnosticUntil:      now.Add(time.Hour),
+		},
+		func() time.Time {
+			return now
+		},
+	)
+	if err != nil {
+		t.Fatalf("create DIAGNOSTIC exporter: %v", err)
+	}
+	if _, _, err := exporter.Export(validExportRecord()); err != nil {
+		t.Fatalf("export before diagnostic expiry: %v", err)
+	}
+	now = now.Add(time.Hour)
+	if _, _, err := exporter.Export(validExportRecord()); err == nil {
+		t.Fatal("exported at diagnostic expiry")
+	}
+	if err := exporter.WriteJSONL(&bytes.Buffer{}); err == nil {
+		t.Fatal("copied diagnostic stream at diagnostic expiry")
 	}
 }
 
@@ -324,6 +420,7 @@ func TestExporterRejectsConflictingJSONLSequence(t *testing.T) {
 		observedEventSequence,
 		events[0].OccurredAt,
 		changedPayload,
+		datalifecycle.ExportSummary,
 	)
 	if err := exporter.stream.append(conflicting); err != nil {
 		t.Fatalf("append individually valid conflicting event: %v", err)
@@ -374,7 +471,7 @@ func exportFixture(
 	record sessioningest.Record,
 ) (Document, []byte, [2]exportEvent) {
 	t.Helper()
-	document, err := NewDocument(record)
+	document, err := exporter.newDocument(record)
 	if err != nil {
 		t.Fatalf("create fixture document: %v", err)
 	}
@@ -387,6 +484,7 @@ func exportFixture(
 		document,
 		filepath.Join(exporter.directory, exportFilename(record.SessionID)),
 		content,
+		exporter.profile,
 	)
 	if err != nil {
 		t.Fatalf("create fixture events: %v", err)

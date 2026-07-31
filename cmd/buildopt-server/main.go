@@ -13,10 +13,12 @@ import (
 	"os/signal"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/buildsession"
+	"github.com/tonyredondo/buildopt/internal/datalifecycle"
 	"github.com/tonyredondo/buildopt/internal/sessioningest"
 	"github.com/tonyredondo/buildopt/internal/sharedcache"
 )
@@ -24,7 +26,7 @@ import (
 const (
 	exitUsage         = 64
 	exitConfiguration = 78
-	serverUsage       = "usage: buildopt-server serve [--listen 127.0.0.1:8042] [--export-dir PATH] [--state-dir ABSOLUTE_PATH] [--cache-authority ABSOLUTE_PATH --cache-trust-root ABSOLUTE_PATH --cache-credential ABSOLUTE_PATH] [--cache-token-auth]\n       buildopt-server export --export-dir PATH [--format jsonl]\n       buildopt-server token issue --state-dir ABSOLUTE_PATH --tenant ID --repository ID --trust-domain ID --namespace ID --namespace-generation N --plane stable|quarantine|control --access read|read-write --expires-at RFC3339\n       buildopt-server token revoke --state-dir ABSOLUTE_PATH --token-id ID\n"
+	serverUsage       = "usage: buildopt-server serve [--listen 127.0.0.1:8042] [--export-dir PATH] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]] [--state-dir ABSOLUTE_PATH] [--cache-authority ABSOLUTE_PATH --cache-trust-root ABSOLUTE_PATH --cache-credential ABSOLUTE_PATH] [--cache-token-auth]\n       buildopt-server export --export-dir PATH [--format jsonl] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]]\n       buildopt-server data delete --data-root ABSOLUTE_PATH --deletion-id ID --tenant ID --repository ID --trust-domain ID --next-namespace-generation N --next-l1-security-generation N --token-key ABSOLUTE_PATH --token-key-version ID [--external-destination ID]\n       buildopt-server token issue --state-dir ABSOLUTE_PATH --tenant ID --repository ID --trust-domain ID --namespace ID --namespace-generation N --plane stable|quarantine|control --access read|read-write --expires-at RFC3339\n       buildopt-server token revoke --state-dir ABSOLUTE_PATH --token-id ID\n"
 )
 
 var openSharedStorage = sharedcache.Open
@@ -66,6 +68,9 @@ func run(
 	if args[0] == "token" {
 		return runBetaToken(ctx, args[1:], stdout, stderr)
 	}
+	if args[0] == "data" {
+		return runDataLifecycle(ctx, args[1:], stdout, stderr)
+	}
 	if args[0] != "serve" {
 		_, _ = io.WriteString(stderr, serverUsage)
 		return exitUsage
@@ -82,6 +87,21 @@ func run(
 		"export-dir",
 		"",
 		"local directory for atomic BUILD_SESSION v1 JSON exports",
+	)
+	exportProfile := flags.String(
+		"export-profile",
+		"summary",
+		"maximum authorized export profile",
+	)
+	authorizeExpandedExport := flags.Bool(
+		"authorize-expanded-export",
+		false,
+		"explicitly authorize a non-summary export profile",
+	)
+	diagnosticUntil := flags.String(
+		"diagnostic-until",
+		"",
+		"UTC RFC3339 expiry for diagnostic opt-in",
 	)
 	stateDirectory := flags.String(
 		"state-dir",
@@ -118,9 +138,33 @@ func run(
 	}
 
 	var exporter *buildsession.Exporter
+	if *exportDirectory == "" &&
+		(*exportProfile != "summary" ||
+			*authorizeExpandedExport ||
+			*diagnosticUntil != "") {
+		_, _ = fmt.Fprintln(
+			stderr,
+			"buildopt-server: export policy requires an export directory",
+		)
+		return exitConfiguration
+	}
 	if *exportDirectory != "" {
-		configuredExporter, exportErr := buildsession.NewExporter(
+		exportPolicy, policyErr := parseExportPolicy(
+			*exportProfile,
+			*authorizeExpandedExport,
+			*diagnosticUntil,
+			time.Now().UTC(),
+		)
+		if policyErr != nil {
+			_, _ = fmt.Fprintln(
+				stderr,
+				"buildopt-server: invalid BUILD_SESSION export policy",
+			)
+			return exitConfiguration
+		}
+		configuredExporter, exportErr := buildsession.NewExporterWithPolicy(
 			*exportDirectory,
+			exportPolicy,
 		)
 		if exportErr != nil {
 			_, _ = fmt.Fprintln(
@@ -130,6 +174,7 @@ func run(
 			return exitConfiguration
 		}
 		exporter = configuredExporter
+		defer exporter.Close()
 	}
 
 	if *stateDirectory != "" && !filepath.IsAbs(*stateDirectory) {
@@ -399,6 +444,21 @@ func runExport(
 		"jsonl",
 		"stdout export format",
 	)
+	exportProfile := flags.String(
+		"export-profile",
+		"summary",
+		"maximum authorized export profile",
+	)
+	authorizeExpandedExport := flags.Bool(
+		"authorize-expanded-export",
+		false,
+		"explicitly authorize a non-summary export profile",
+	)
+	diagnosticUntil := flags.String(
+		"diagnostic-until",
+		"",
+		"UTC RFC3339 expiry for diagnostic opt-in",
+	)
 	if err := flags.Parse(args); err != nil || flags.NArg() != 0 {
 		_, _ = io.WriteString(stderr, serverUsage)
 		return exitUsage
@@ -417,7 +477,23 @@ func runExport(
 		)
 		return exitConfiguration
 	}
-	exporter, err := buildsession.NewExporter(*exportDirectory)
+	exportPolicy, err := parseExportPolicy(
+		*exportProfile,
+		*authorizeExpandedExport,
+		*diagnosticUntil,
+		time.Now().UTC(),
+	)
+	if err != nil {
+		_, _ = fmt.Fprintln(
+			stderr,
+			"buildopt-server: invalid BUILD_SESSION export policy",
+		)
+		return exitConfiguration
+	}
+	exporter, err := buildsession.NewExporterWithPolicy(
+		*exportDirectory,
+		exportPolicy,
+	)
 	if err != nil {
 		_, _ = fmt.Fprintln(
 			stderr,
@@ -425,6 +501,7 @@ func runExport(
 		)
 		return exitConfiguration
 	}
+	defer exporter.Close()
 	if err := exporter.WriteJSONL(stdout); err != nil {
 		_, _ = fmt.Fprintf(
 			stderr,
@@ -434,6 +511,31 @@ func runExport(
 		return exitConfiguration
 	}
 	return 0
+}
+
+func parseExportPolicy(
+	profile string,
+	authorized bool,
+	diagnosticUntil string,
+	now time.Time,
+) (datalifecycle.ExportPolicy, error) {
+	policy := datalifecycle.ExportPolicy{
+		Profile:              datalifecycle.ExportProfile(strings.ToUpper(profile)),
+		ExplicitlyAuthorized: authorized,
+	}
+	if diagnosticUntil != "" {
+		until, err := time.Parse(time.RFC3339, diagnosticUntil)
+		if err != nil || until.Location() != time.UTC {
+			return datalifecycle.ExportPolicy{}, errors.New(
+				"diagnostic expiry must be UTC RFC3339",
+			)
+		}
+		policy.DiagnosticUntil = until
+	}
+	if err := datalifecycle.ValidateExportPolicy(policy, now); err != nil {
+		return datalifecycle.ExportPolicy{}, err
+	}
+	return policy, nil
 }
 
 func validateListenAddress(address string) error {

@@ -23,8 +23,9 @@ cumulative revocation state before Gradle, persists anti-rollback generations,
 derives L1 authority from the signed state, and gives the gateway an
 invocation-only Shared credential over its same-UID control channel. The
 gateway translates Gradle's local Basic credential, rejects redirects, and
-routes no cache request without current context. Revoked-directory deletion
-remains later work.
+routes no cache request without current context. A1-004 adds a shared
+deployment-lifecycle lease and rejects L1 generations below a completed
+deletion tombstone.
 
 `sessioningest/` contains the provisional `WS-005` gateway-to-server record,
 strict authenticated HTTP transport, and concurrency-safe in-memory acceptance
@@ -36,8 +37,15 @@ and facts from an authenticated Gradle invocation.
 deterministic manifest/baseline digests, declares unobserved metrics
 unavailable, publishes mode-`0600` immutable complete/partial JSON, and owns a
 bounded private JSONL stream with deterministic at-least-once replay and
-startup recovery. Runtime schema conformance remains with the isolated
+startup recovery. A1-004 applies keyed repository/trust/task redaction before
+either durable form and enforces explicit bounded profile authorization.
+Runtime schema conformance remains with the isolated
 validator under `dev/schema-validator/`.
+
+`datalifecycle/` owns the isolated private-beta profile policy, HMAC
+tokenization, shared lifecycle leases, durable logical revocation, coordinated
+known-component removal, tokenized tombstones, and post-deletion generation
+floors consumed by Shared, managed L1, and export.
 
 `localauthority/` owns the A0-006 canonical JCS/Ed25519 authority, pinned
 trust-root and private-file boundary, strict semantic validation, and durable
