@@ -528,6 +528,18 @@ actions, minimal job permissions, one-step token exposure, exact signed-bundle
 identity, complete PR narrative, PRELIMINARY labeling, and the absence of
 rebase, force-push, default-branch write, ready, or merge operations.
 
+### Patch delivery recovery
+
+Validate exact retries and branch-without-PR recovery with:
+
+```bash
+./dev/check-patch-delivery-recovery
+```
+
+The six-state contract preserves an exact action branch after PR failure,
+creates only the missing draft on retry, reuses an exact draft, and rejects
+every identity/head/PR conflict without overwrite, deletion, rebase, or merge.
+
 ## BuildOpt OpenAPI validation
 
 Validate the `F0-017` BuildOpt control and internal cache-control APIs:

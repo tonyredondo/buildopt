@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/patch-delivery-recovery/v1" and
+  .trackerId == "C4-008" and
+  .identity == ["repositoryId", "actionId", "bundleDigest"] and
+  .branch == "buildopt/<actionId>" and
+  .states == [
+    {"id":"ABSENT","outcome":"CREATE_BRANCH_THEN_DRAFT_PR"},
+    {"id":"EXACT_BRANCH_WITHOUT_PR","outcome":"CREATE_MISSING_DRAFT_PR_ONLY"},
+    {"id":"EXACT_BRANCH_AND_DRAFT_PR","outcome":"RETURN_EXISTING_DRAFT_PR"},
+    {"id":"DIFFERENT_BRANCH_HEAD","outcome":"PROPOSED"},
+    {"id":"DIFFERENT_OR_NON_DRAFT_PR","outcome":"PROPOSED"},
+    {"id":"PR_LOOKUP_OR_CREATE_FAILURE","outcome":"UNCHANGED_BRANCH_RETRYABLE"}
+  ] and
+  .retry.trigger == "WORKFLOW_DISPATCH" and
+  .retry.sameIdentityRequired == true and
+  .retry.exactHeadAndTreeRequired == true and
+  .retry.maximumCreateAttemptsPerRun == 1 and
+  .retry.branchDeletedOnFailure == false and
+  .retry.prDuplicated == false and
+  .forbidden == ["REBASE", "FORCE_PUSH", "BRANCH_OVERWRITE", "BRANCH_DELETE", "DEFAULT_BRANCH_WRITE", "MARK_READY", "MERGE"] and
+  .remoteMutationPerformedByConformance == false and
+  .doesNotClose == ["C4-004", "C4-009", "C4-G05", "C4-G06"]
+' specs/patch-delivery-recovery-v1.json >/dev/null
+
+jq -e '
+  [.cases[] | select(
+    .id == "exact-repeat-is-idempotent" or
+    .id == "branch-without-pr-is-recovered" or
+    .id == "existing-branch-with-different-marker-conflicts" or
+    .id == "existing-matching-pr-replays"
+  )] | length == 4
+' specs/patch-bundle-v1.json >/dev/null
+
+./dev/check-customer-patch-workflow
+printf 'C4-008 patch delivery recovery OK: six-state exact idempotency and branch-without-PR recovery\n'

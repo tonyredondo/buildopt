@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "buildopt.specs/patch-delivery-recovery/v1",
+  "trackerId": "C4-008",
+  "identity": ["repositoryId", "actionId", "bundleDigest"],
+  "branch": "buildopt/<actionId>",
+  "states": [
+    {"id": "ABSENT", "outcome": "CREATE_BRANCH_THEN_DRAFT_PR"},
+    {"id": "EXACT_BRANCH_WITHOUT_PR", "outcome": "CREATE_MISSING_DRAFT_PR_ONLY"},
+    {"id": "EXACT_BRANCH_AND_DRAFT_PR", "outcome": "RETURN_EXISTING_DRAFT_PR"},
+    {"id": "DIFFERENT_BRANCH_HEAD", "outcome": "PROPOSED"},
+    {"id": "DIFFERENT_OR_NON_DRAFT_PR", "outcome": "PROPOSED"},
+    {"id": "PR_LOOKUP_OR_CREATE_FAILURE", "outcome": "UNCHANGED_BRANCH_RETRYABLE"}
+  ],
+  "retry": {
+    "trigger": "WORKFLOW_DISPATCH",
+    "sameIdentityRequired": true,
+    "exactHeadAndTreeRequired": true,
+    "maximumCreateAttemptsPerRun": 1,
+    "branchDeletedOnFailure": false,
+    "prDuplicated": false
+  },
+  "forbidden": ["REBASE", "FORCE_PUSH", "BRANCH_OVERWRITE", "BRANCH_DELETE", "DEFAULT_BRANCH_WRITE", "MARK_READY", "MERGE"],
+  "remoteMutationPerformedByConformance": false,
+  "doesNotClose": ["C4-004", "C4-009", "C4-G05", "C4-G06"]
+}
