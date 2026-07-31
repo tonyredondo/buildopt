@@ -19,6 +19,8 @@ jobs:
     name: Two public owner-operated repositories
     runs-on: ubuntu-24.04
     timeout-minutes: 45
+    env:
+      GRADLE_USER_HOME: ${{ github.workspace }}/.tools/gradle-user-home/local
     steps:
       - name: Check out BuildOpt
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
