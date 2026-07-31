@@ -54,6 +54,10 @@ jq -e \
         .realGitWorktrees == true and
         .strictJsonDuplicateKeys == true and
         .ed25519JcsVerified == true and
+        .productionSignerUsed == true and
+        .signerDeterministic == true and
+        .signerRejectsIncomplete == true and
+        .signerOutputDefensive == true and
         .bundleContentExecuted == false and
         .customerCheckoutHooksExecuted == false and
         .customerContentFiltersExecuted == false and

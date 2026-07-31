@@ -16,11 +16,10 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.Signature;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Base64;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -76,6 +75,7 @@ public final class PatcherSpike {
         try {
             PatcherSpike spike = new PatcherSpike(repositoryRoot, temporaryRoot);
             spike.assertDuplicateKeysRejected();
+            spike.assertSignerRejectsIncompleteManifest();
             List<CaseDefinition> definitions = spike.readPlan();
             List<CaseResult> results = new ArrayList<>();
             for (CaseDefinition definition : definitions) {
@@ -554,6 +554,19 @@ public final class PatcherSpike {
                 fault);
     }
 
+    private void assertSignerRejectsIncompleteManifest() throws Exception {
+        try {
+            PatchBundleSigner.sign(
+                    "{}".getBytes(StandardCharsets.UTF_8),
+                    KEY_ID,
+                    signingKey.getPrivate());
+            throw new AssertionError("incomplete unsigned manifest was signed");
+        } catch (PatchFailure failure) {
+            require(failure.status() == PatchFailure.Status.REJECTED,
+                    "incomplete signer input status");
+        }
+    }
+
     private void assertDuplicateKeysRejected() {
         try {
             StrictJson.parse(
@@ -585,6 +598,10 @@ public final class PatcherSpike {
         root.put("realGitWorktrees", true);
         root.put("strictJsonDuplicateKeys", true);
         root.put("ed25519JcsVerified", true);
+        root.put("productionSignerUsed", true);
+        root.put("signerDeterministic", true);
+        root.put("signerRejectsIncomplete", true);
+        root.put("signerOutputDefensive", true);
         root.put("bundleContentExecuted", false);
         root.put("customerCheckoutHooksExecuted", false);
         root.put("customerContentFiltersExecuted", false);
@@ -798,30 +815,26 @@ public final class PatcherSpike {
             rootValue.put("blobs", blobValues);
             rootValue.put("validation", validation);
             rootValue.put("delivery", delivery);
-
-            Map<String, Object> parsed = object(StrictJson.parse(
-                    StrictJson.canonicalBytes(rootValue)));
-            String bundleDigest = PatchBundleVerifier.calculateBundleDigest(parsed);
-            parsed.put("bundleDigest", bundleDigest);
-
-            Map<String, Object> signature = new LinkedHashMap<>();
-            signature.put("algorithm", "Ed25519");
-            signature.put("canonicalization", "JCS");
-            signature.put("keyId", KEY_ID);
-            signature.put("signedBundleDigest", bundleDigest);
-            Signature signer = Signature.getInstance("Ed25519");
-            signer.initSign(signingKey.getPrivate());
-            signer.update(PatchBundleVerifier.signaturePayload(
-                    bundleDigest,
-                    "buildopt-patch-bundle/v1",
-                    KEY_ID));
-            signature.put(
-                    "value",
-                    Base64.getUrlEncoder().withoutPadding().encodeToString(signer.sign()));
-            parsed.put("signature", signature);
-
+            byte[] unsignedManifest = StrictJson.canonicalBytes(rootValue);
+            PatchBundleSigner.SignedPatchBundle signed = PatchBundleSigner.sign(
+                    unsignedManifest,
+                    KEY_ID,
+                    signingKey.getPrivate());
+            PatchBundleSigner.SignedPatchBundle repeated = PatchBundleSigner.sign(
+                    unsignedManifest,
+                    KEY_ID,
+                    signingKey.getPrivate());
+            require(signed.bundleDigest().equals(repeated.bundleDigest())
+                            && Arrays.equals(
+                                    signed.canonicalManifest(),
+                                    repeated.canonicalManifest()),
+                    "signer determinism");
+            byte[] defensive = signed.canonicalManifest();
+            defensive[0] ^= 1;
+            require(!Arrays.equals(defensive, signed.canonicalManifest()),
+                    "signer defensive output");
             Path manifest = root.resolve("manifest.json");
-            Files.write(manifest, StrictJson.canonicalBytes(parsed));
+            Files.write(manifest, signed.canonicalManifest());
             return new BundleFile(root, manifest, actionId);
         }
     }

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/patch-bundle-signing/v1" and
+  .trackerId == "C4-001" and
+  .contractVersion == "buildopt-patch-bundle/v1" and
+  .input == "COMPLETE_UNSIGNED_MANIFEST_WITHOUT_DIGEST_OR_SIGNATURE" and
+  .maximumManifestBytes == 2097152 and
+  .canonicalization == "JCS" and
+  .digest == "SHA256_MANIFEST_AND_SORTED_BLOB_INVENTORY" and
+  .signature == "ED25519_DIGEST_CONTRACT_AND_KEY_ID" and
+  .output == "IMMUTABLE_CANONICAL_SIGNED_MANIFEST" and
+  .customerAuthority == "INDEPENDENT_PINNED_KEY_VERIFIER" and
+  .signerChecks == ["STRICT_JSON", "EXACT_TOP_LEVEL_FIELDS", "IDENTITY_CONSTANTS", "KEY_ID", "ED25519_PRIVATE_KEY"] and
+  .verifierChecks == ["DIGEST", "SIGNATURE", "REPOSITORY_AND_ACTION", "EXPIRATION", "BLOBS", "OPERATIONS", "PATHS", "DELIVERY"]
+' specs/patch-bundle-signing-v1.json >/dev/null
+
+./dev/check-patch-bundle-applier
+printf 'C4-001 PatchBundle signing OK: production JCS/Ed25519 signer plus independent verifier across 15 real-Git cases\n'

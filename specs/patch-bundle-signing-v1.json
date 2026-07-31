@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "buildopt.specs/patch-bundle-signing/v1",
+  "trackerId": "C4-001",
+  "contractVersion": "buildopt-patch-bundle/v1",
+  "input": "COMPLETE_UNSIGNED_MANIFEST_WITHOUT_DIGEST_OR_SIGNATURE",
+  "maximumManifestBytes": 2097152,
+  "canonicalization": "JCS",
+  "digest": "SHA256_MANIFEST_AND_SORTED_BLOB_INVENTORY",
+  "signature": "ED25519_DIGEST_CONTRACT_AND_KEY_ID",
+  "output": "IMMUTABLE_CANONICAL_SIGNED_MANIFEST",
+  "customerAuthority": "INDEPENDENT_PINNED_KEY_VERIFIER",
+  "signerChecks": ["STRICT_JSON", "EXACT_TOP_LEVEL_FIELDS", "IDENTITY_CONSTANTS", "KEY_ID", "ED25519_PRIVATE_KEY"],
+  "verifierChecks": ["DIGEST", "SIGNATURE", "REPOSITORY_AND_ACTION", "EXPIRATION", "BLOBS", "OPERATIONS", "PATHS", "DELIVERY"],
+  "doesNotClose": ["C4-002", "C4-003", "C4-004", "C4-005", "C4-006", "C4-007", "C4-008", "C4-009", "C4-G01", "C4-G02", "C4-G03", "C4-G04", "C4-G05", "C4-G06", "C4-G07"]
+}

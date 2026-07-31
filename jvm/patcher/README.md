@@ -2,7 +2,7 @@
 
 Customer-side Java artifact that validates and materializes a `PatchBundle` without executing bundle content.
 
-`SPK-004` implements the bounded Java 17 parser/applier without external
+`SPK-004` established the bounded Java 17 parser/applier and `C4-001` adds the production canonical signer, all without external
 libraries. It:
 
 - rejects malformed UTF-8, duplicate JSON keys, unknown fields, unsupported
