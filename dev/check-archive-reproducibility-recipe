@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/archive-reproducibility-recipe/v1" and
+  .trackerId == "C4-003" and
+  .recipe == {
+    "id": "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1",
+    "version": "1.0",
+    "implementation": "JAVA_17_MAIN_SOURCE"
+  } and
+  .input == {
+    "path": "build.gradle.kts",
+    "minimumBytes": 1,
+    "maximumBytes": 1048576,
+    "encoding": "STRICT_UTF8",
+    "lineEnding": "LF",
+    "finalNewlineRequired": true
+  } and
+  .output.operation == "MODIFY_EXACT_REPLACEMENT" and
+  .output.digests == ["PREIMAGE_SHA256", "POSTIMAGE_SHA256"] and
+  .output.ownership == "DEFENSIVE_BYTES" and
+  .idempotency == "EXACT_GENERATED_ENVELOPE_ONLY" and
+  .realGitCases == 15 and
+  .doesNotClose == ["C4-004", "C4-005", "C4-006", "C4-007", "C4-008", "C4-009", "C4-G01", "C4-G02", "C4-G03", "C4-G04", "C4-G05", "C4-G06"]
+' specs/archive-reproducibility-recipe-v1.json >/dev/null
+
+test -f jvm/patcher/src/main/java/dev/buildopt/patcher/ArchiveReproducibilityRecipe.java
+rg -q 'public static final String RECIPE_ID = "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1"' \
+  jvm/patcher/src/main/java/dev/buildopt/patcher/ArchiveReproducibilityRecipe.java
+./dev/check-patcher-runtime
+printf 'C4-003 archive reproducibility recipe OK: exact, idempotent, fail-closed, and signed into 15 real-Git cases\n'

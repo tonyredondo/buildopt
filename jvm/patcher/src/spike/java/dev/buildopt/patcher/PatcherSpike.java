@@ -76,6 +76,7 @@ public final class PatcherSpike {
             PatcherSpike spike = new PatcherSpike(repositoryRoot, temporaryRoot);
             spike.assertDuplicateKeysRejected();
             spike.assertSignerRejectsIncompleteManifest();
+            spike.assertArchiveRecipeSafety();
             List<CaseDefinition> definitions = spike.readPlan();
             List<CaseResult> results = new ArrayList<>();
             for (CaseDefinition definition : definitions) {
@@ -149,6 +150,11 @@ public final class PatcherSpike {
         try (Fixture fixture = fixture("apply-archive")) {
             fixture.installExplosiveCheckoutMechanisms();
             Snapshot before = fixture.snapshot();
+            ArchiveReproducibilityRecipe.Result expected =
+                    ArchiveReproducibilityRecipe.apply(
+                            "build.gradle.kts",
+                            Files.readAllBytes(
+                                    fixture.repository.resolve("build.gradle.kts")));
             BundleFile bundle = archiveBundle(fixture, "archive-apply").write();
             PatchBundleApplier.Result result = apply(
                     fixture,
@@ -157,10 +163,7 @@ public final class PatcherSpike {
             require(result.outcome() == Outcome.DRAFT_PR_CREATED, "archive draft PR");
             require(
                     fixture.show(result.branch(), "build.gradle.kts")
-                            .equals(new String(
-                                    Files.readAllBytes(
-                                            contractBlobs.resolve("archive-build.gradle.kts")),
-                                    StandardCharsets.UTF_8)),
+                            .equals(new String(expected.postimage(), StandardCharsets.UTF_8)),
                     "archive exact branch bytes");
             fixture.assertCheckoutUnchanged(before);
             fixture.assertOnlyCustomerWorktree();
@@ -500,13 +503,16 @@ public final class PatcherSpike {
                 fixture,
                 action,
                 "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1");
-        byte[] content = Files.readAllBytes(
-                contractBlobs.resolve("archive-build.gradle.kts"));
+        ArchiveReproducibilityRecipe.Result recipe =
+                ArchiveReproducibilityRecipe.apply(
+                        "build.gradle.kts",
+                        Files.readAllBytes(
+                                fixture.repository.resolve("build.gradle.kts")));
         builder.modify(
                 "build.gradle.kts",
-                sha(Files.readAllBytes(fixture.repository.resolve("build.gradle.kts"))),
+                recipe.preimageDigest(),
                 "blobs/archive-build.gradle.kts",
-                content);
+                recipe.postimage());
         return builder;
     }
 
@@ -552,6 +558,61 @@ public final class PatcherSpike {
                 fixture.staging,
                 fixture.pullRequests,
                 fault);
+    }
+
+    private void assertArchiveRecipeSafety() throws Exception {
+        byte[] source = "plugins { base }\n".getBytes(StandardCharsets.UTF_8);
+        ArchiveReproducibilityRecipe.Result first =
+                ArchiveReproducibilityRecipe.apply("build.gradle.kts", source);
+        require(first.changed()
+                        && new String(first.postimage(), StandardCharsets.UTF_8)
+                                .contains("isPreserveFileTimestamps = false"),
+                "archive recipe exact output");
+        ArchiveReproducibilityRecipe.Result repeated =
+                ArchiveReproducibilityRecipe.apply("build.gradle.kts", first.postimage());
+        require(!repeated.changed()
+                        && repeated.preimageDigest().equals(repeated.postimageDigest())
+                        && Arrays.equals(repeated.postimage(), first.postimage()),
+                "archive recipe idempotency");
+        byte[] maximumSource = new byte[1024 * 1024];
+        Arrays.fill(maximumSource, (byte) ' ');
+        maximumSource[maximumSource.length - 1] = '\n';
+        ArchiveReproducibilityRecipe.Result maximum =
+                ArchiveReproducibilityRecipe.apply("build.gradle.kts", maximumSource);
+        ArchiveReproducibilityRecipe.Result maximumRepeated =
+                ArchiveReproducibilityRecipe.apply(
+                        "build.gradle.kts", maximum.postimage());
+        require(!maximumRepeated.changed()
+                        && Arrays.equals(maximum.postimage(), maximumRepeated.postimage()),
+                "archive recipe maximum-size idempotency");
+        byte[] defensive = first.postimage();
+        defensive[0] ^= 1;
+        require(!Arrays.equals(defensive, first.postimage()),
+                "archive recipe defensive output");
+        expectFailure(PatchFailure.Status.PROPOSED,
+                () -> ArchiveReproducibilityRecipe.apply(
+                        "build.gradle", source));
+        expectFailure(PatchFailure.Status.PROPOSED,
+                () -> ArchiveReproducibilityRecipe.apply(
+                        "build.gradle.kts",
+                        "isReproducibleFileOrder = true\n"
+                                .getBytes(StandardCharsets.UTF_8)));
+        expectFailure(PatchFailure.Status.PROPOSED,
+                () -> ArchiveReproducibilityRecipe.apply(
+                        "build.gradle.kts",
+                        "@file:Suppress(\"unused\")\nplugins { base }\n"
+                                .getBytes(StandardCharsets.UTF_8)));
+        expectFailure(PatchFailure.Status.PROPOSED,
+                () -> ArchiveReproducibilityRecipe.apply(
+                        "build.gradle.kts",
+                        "plugins { base }\r\n".getBytes(StandardCharsets.UTF_8)));
+        expectFailure(PatchFailure.Status.PROPOSED,
+                () -> ArchiveReproducibilityRecipe.apply(
+                        "build.gradle.kts",
+                        new byte[] {'x', 0, '\n'}));
+        expectFailure(PatchFailure.Status.PROPOSED,
+                () -> ArchiveReproducibilityRecipe.apply(
+                        "build.gradle.kts", new byte[] {(byte) 0xc3, (byte) 0x28}));
     }
 
     private void assertSignerRejectsIncompleteManifest() throws Exception {
@@ -602,6 +663,9 @@ public final class PatcherSpike {
         root.put("signerDeterministic", true);
         root.put("signerRejectsIncomplete", true);
         root.put("signerOutputDefensive", true);
+        root.put("archiveRecipeGenerated", true);
+        root.put("archiveRecipeIdempotent", true);
+        root.put("archiveRecipeFailClosed", true);
         root.put("bundleContentExecuted", false);
         root.put("customerCheckoutHooksExecuted", false);
         root.put("customerContentFiltersExecuted", false);

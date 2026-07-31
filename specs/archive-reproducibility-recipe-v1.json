@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "buildopt.specs/archive-reproducibility-recipe/v1",
+  "trackerId": "C4-003",
+  "recipe": {
+    "id": "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1",
+    "version": "1.0",
+    "implementation": "JAVA_17_MAIN_SOURCE"
+  },
+  "input": {
+    "path": "build.gradle.kts",
+    "minimumBytes": 1,
+    "maximumBytes": 1048576,
+    "encoding": "STRICT_UTF8",
+    "lineEnding": "LF",
+    "finalNewlineRequired": true
+  },
+  "output": {
+    "operation": "MODIFY_EXACT_REPLACEMENT",
+    "import": "import org.gradle.api.tasks.bundling.AbstractArchiveTask",
+    "configuration": [
+      "tasks.withType<AbstractArchiveTask>().configureEach {",
+      "    isReproducibleFileOrder = true",
+      "    isPreserveFileTimestamps = false",
+      "}"
+    ],
+    "digests": ["PREIMAGE_SHA256", "POSTIMAGE_SHA256"],
+    "ownership": "DEFENSIVE_BYTES"
+  },
+  "idempotency": "EXACT_GENERATED_ENVELOPE_ONLY",
+  "failClosed": ["NON_ROOT_OR_GROOVY_PATH", "EMPTY_OR_OVERSIZE", "INVALID_UTF8", "CR_OR_NUL", "MISSING_FINAL_NEWLINE", "FILE_ANNOTATION", "EXISTING_ARCHIVE_TASK_REFERENCE", "EXISTING_REPRODUCIBLE_ORDER_PROPERTY", "EXISTING_TIMESTAMP_PROPERTY"],
+  "forbidden": ["EVALUATE_GRADLE", "EXECUTE_CUSTOMER_CONTENT", "FUZZY_EDIT", "NESTED_BUILD_REWRITE", "MERGE_EXISTING_CONFIGURATION", "REMOTE_MUTATION"],
+  "runtimeIntegration": ["PATCH_BUNDLE_SIGNER", "PATCH_BUNDLE_VERIFIER", "PATCH_BUNDLE_APPLIER"],
+  "realGitCases": 15,
+  "doesNotClose": ["C4-004", "C4-005", "C4-006", "C4-007", "C4-008", "C4-009", "C4-G01", "C4-G02", "C4-G03", "C4-G04", "C4-G05", "C4-G06"]
+}

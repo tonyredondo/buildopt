@@ -58,6 +58,9 @@ jq -e \
         .signerDeterministic == true and
         .signerRejectsIncomplete == true and
         .signerOutputDefensive == true and
+        .archiveRecipeGenerated == true and
+        .archiveRecipeIdempotent == true and
+        .archiveRecipeFailClosed == true and
         .bundleContentExecuted == false and
         .customerCheckoutHooksExecuted == false and
         .customerContentFiltersExecuted == false and

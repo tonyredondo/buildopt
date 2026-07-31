@@ -78,6 +78,7 @@ From the repository root:
 ./dev/check-test-optimization-integration
 ./dev/check-patch-bundle-spec
 ./dev/check-patch-bundle-applier
+./dev/check-archive-reproducibility-recipe
 ./dev/check-bandit-policy
 ./dev/check-capability-matrix
 ./dev/check-data-lifecycle
