@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "buildopt.specs/runtime-owner-evaluation/v1",
+  "workItems": ["B-G01", "B-G03"],
+  "runner": {
+    "class": "linux-amd64-4c-16g-v1",
+    "cpuCount": 4,
+    "memoryBytesMinimum": 15032385536,
+    "memoryBytesMaximum": 19327352832
+  },
+  "aa": {
+    "design": "PRESCRIBED_PAIRED_ALTERNATING",
+    "measuredPairs": 4,
+    "durableAssignments": 200,
+    "cohorts": ["A", "B"],
+    "resourceProfile": "STABLE_CONTROL",
+    "propensityBasisPoints": 5000,
+    "rewardDelaySeconds": 3600,
+    "sampleRatioStatus": "VALID",
+    "duplicateOutcomeUpdates": false
+  },
+  "autotuning": {
+    "design": "PRESCRIBED_PAIRED_ALTERNATING",
+    "measuredPairs": 4,
+    "task": "runtimeBundle",
+    "controlProfile": "STABLE_CONTROL",
+    "candidateProfile": "W4_H6G",
+    "buildCache": false,
+    "configurationCache": false,
+    "parallelExecution": true
+  },
+  "acceptance": {
+    "aaAbsoluteMeanDeltaMaximum": "MAX_250_MS_OR_5_PERCENT_CONTROL",
+    "aaAbsoluteP95DeltaMaximumMs": 500,
+    "autotuningMeanDeltaMs": "POSITIVE",
+    "autotuningLower95ExhaustiveBootstrapMs": "POSITIVE",
+    "autotuningP95DeltaMs": "NON_POSITIVE",
+    "autotuningP99DeltaMs": "NON_POSITIVE",
+    "additionalComputeMs": "NON_POSITIVE",
+    "ciQueueDeltaMs": 0,
+    "oomDelta": 0,
+    "artifactDivergence": false
+  },
+  "boundaries": {
+    "closes": ["B-G01", "B-G03"],
+    "doesNotClose": ["EIGHT_HOUR_SOAK", "PRODUCTION_PROMOTION"],
+    "ownerOperatedProofOfConcept": true
+  }
+}

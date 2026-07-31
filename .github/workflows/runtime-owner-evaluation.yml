@@ -1,0 +1,55 @@
+name: Runtime Owner Evaluation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: runtime-owner-evaluation-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  evaluate:
+    name: A/A and resource autotuning
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GRADLE_USER_HOME: ${{ github.workspace }}/.tools/gradle-user-home/local
+    steps:
+      - name: Check out BuildOpt
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Provision locked toolchains
+        run: |
+          set -euo pipefail
+          for buildopt_toolchain in temurin-jdk-21 go shellcheck; do
+            ./dev/bootstrap --toolchain "${buildopt_toolchain}"
+          done
+
+      - name: Validate the evaluation implementation
+        run: |
+          ./dev/run --toolchain go -- \
+            go test -race -count=1 ./cmd/runtime-evaluation ./internal/runtimeoptimizer
+          ./dev/run --toolchain shellcheck -- \
+            shellcheck ./dev/run-runtime-owner-evaluation
+
+      - name: Run A/A and autotuning evaluation
+        run: |
+          ./dev/run-runtime-owner-evaluation \
+            "${RUNNER_TEMP}/runtime-owner-evidence"
+
+      - name: Upload immutable evaluation evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: runtime-owner-evaluation
+          path: ${{ runner.temp }}/runtime-owner-evidence/runtime-owner-evaluation.json
+          if-no-files-found: error
+          retention-days: 30

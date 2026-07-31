@@ -1396,6 +1396,22 @@ The checker never contacts
 GitHub or private machine state and makes no causal, signed-Shared-authority,
 external-user, or eight-hour-soak claim. `A1-006` and `A1-G06` remain open.
 
+## Runtime owner evaluation
+
+On the exact 4-CPU/16-GiB runner, execute real A/A and resource-profile
+autotuning evidence:
+
+```bash
+./dev/run-runtime-owner-evaluation /tmp/buildopt-runtime-evidence
+```
+
+The command compiles an eight-project, 2,048-source parallel Gradle fixture in
+four alternating pairs. It also drives 200 durable pre-outcome A/A assignments
+and one-hour delayed exactly-once rewards through the production cohort/bandit
+engine. The result must preserve p95/p99, queue, OOM, compute, and exact ZIP
+guardrails; a cache hit or synthetic reward alone cannot pass.
+
+
 ## Owner-operated causal POC evaluation
 
 Run both immutable public pilots through the paired causal harness:
