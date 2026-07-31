@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "buildopt.evidence/task-intelligence-pilot/v1",
+  "capturedOn": "2026-07-31",
+  "buildoptRevision": "ba67f7207b6e58b211c728123ba0d52277000708",
+  "workflow": {
+    "name": "Task Intelligence Pilot Evaluation",
+    "runId": 30671750689,
+    "url": "https://github.com/tonyredondo/buildopt/actions/runs/30671750689"
+  },
+  "runner": {
+    "class": "linux-amd64-4c-16g-v1",
+    "cpuCount": 4,
+    "memoryBytes": 16765386752,
+    "oomBefore": 0,
+    "oomAfter": 0
+  },
+  "pilot": {
+    "repository": "tonyredondo/buildopt-pilot",
+    "baseRevision": "fead91a55581d25d0b8a5c9680bd19792f55792e",
+    "acceptedRevision": "dcb4ff429d8b00b8d7030ef164fa73d2b4bc57d3",
+    "pullRequest": 1,
+    "pullRequestUrl": "https://github.com/tonyredondo/buildopt-pilot/pull/1"
+  },
+  "task": {
+    "path": "buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java",
+    "type": "GeneratePilotManifest",
+    "recipe": "CUSTOM_TASK_CONTRACT_JAVA_V1",
+    "preimageDigest": "sha256:392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083",
+    "postimageDigest": "sha256:79fa100a4e2d962dd506259311f90ecb92ad62500391d140065b6f157a172a2b"
+  },
+  "qualification": {
+    "route": "REVIEWED_SOURCE_PATCH",
+    "states": [
+      "UNKNOWN",
+      "OBSERVING",
+      "CONTRACT_QUALIFIED",
+      "QUARANTINE_VALIDATED",
+      "ACTIVE"
+    ],
+    "agentRoute": "UNAVAILABLE_FAIL_CLOSED",
+    "helperRoute": "UNAVAILABLE_FAIL_CLOSED",
+    "incompleteCoverage": "INCONCLUSIVE_ABORT_PENDING",
+    "unattributedPublication": "ABORT_WHOLE_ATTEMPT",
+    "testTasks": "EXCLUDED"
+  },
+  "measurement": {
+    "pairs": 4,
+    "controlMs": [
+      930,
+      732,
+      746,
+      678
+    ],
+    "candidateMs": [
+      609,
+      569,
+      548,
+      546
+    ],
+    "meanSavedMs": 203,
+    "interval95Ms": [
+      147,
+      281
+    ],
+    "p95DeltaMs": -321,
+    "p99DeltaMs": -321,
+    "reductionRatio": 0.26377187297472454,
+    "artifactDivergence": false
+  },
+  "outcomes": {
+    "control": [
+      "EXECUTED",
+      "EXECUTED",
+      "EXECUTED",
+      "EXECUTED"
+    ],
+    "candidate": [
+      "FROM_CACHE",
+      "FROM_CACHE",
+      "FROM_CACHE",
+      "FROM_CACHE"
+    ]
+  },
+  "gate": {
+    "state": "PASSED",
+    "closes": [
+      "C1-001",
+      "C1-002",
+      "C1-003",
+      "C1-004",
+      "C1-005",
+      "C1-006",
+      "C1-007",
+      "C1-008",
+      "C1-009",
+      "C1-G01",
+      "C1-G02",
+      "C1-G03",
+      "C1-G04",
+      "C1-G05",
+      "C1-G06",
+      "C1-G07",
+      "C1-G08",
+      "C1-G09",
+      "C4-004",
+      "C4-G06"
+    ],
+    "productionPromotionAuthorized": false
+  }
+}

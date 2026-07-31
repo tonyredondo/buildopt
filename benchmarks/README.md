@@ -68,6 +68,22 @@ This closes the owner-operated POC gates `B-G01` and `B-G03`; it does not run
 the deferred eight-hour soak or authorize production promotion.
 
 
+## Task Intelligence accepted-patch evidence
+
+[`results/c1-task-intelligence-pilot.json`](./results/c1-task-intelligence-pilot.json)
+binds the reviewed custom-task source patch, accepted public PR, exact state path,
+and four alternating post-merge causal pairs. All control arms executed, all
+candidate arms restored `FROM-CACHE`, the output bytes matched, and the mean
+saving was 203 ms with a positive 147-ms lower 95% bound.
+
+```bash
+./dev/check-task-intelligence-poc
+```
+
+The Agent and helper remain fail-closed unavailable routes; only the reviewed
+source contract is active. This is POC evidence, not the deferred soak or
+production-promotion authority.
+
 ## Walking-skeleton overhead evidence
 
 [`results/ws-009-golden-lane.json`](./results/ws-009-golden-lane.json) is the

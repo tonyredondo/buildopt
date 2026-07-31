@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — MVP-B is complete; Task Intelligence and the first custom-task patch are next<br>
-**Current phase:** implement MVP-C1 and close `C4-004`/`C4-G06` on the public synthetic pilot<br>
+**Overall status:** `DONE` — owner-operated POC target `A1 + B + C1 + C4` is complete<br>
+**Current phase:** POC complete; soak, external validation, and production hardening remain deferred to productization<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Last updated:** 2026-07-31<br>
@@ -55,8 +55,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | MVP-A0 | Foundation and internal pilot | `DONE` | 9/9 | Phase 0 |
 | MVP-A1 | Autonomous Cache in an owner-operated POC | `DONE` | 6/6 | A0 + POC operational profile |
 | MVP-B | Runtime Optimizer and safe learning | `DONE` | 6/6 | Owner-operated A1 |
-| MVP-C1 | Task Intelligence, JVM Agent, and Linux hermeticity | `DOING` | 0/9 | B |
-| MVP-C4 | PR-only Patch Autopilot | `DOING` | 7/7 | B; C1 for custom tasks; Test Optimization where applicable |
+| MVP-C1 | Task Intelligence, JVM Agent, and Linux hermeticity | `DONE` | 9/9 | B |
+| MVP-C4 | PR-only Patch Autopilot | `DONE` | 7/7 | B + C1 |
 | MVP-A2 | Self-hosted single-node | `DEFERRED` | 0/1 | A1 |
 | MVP-C2 | Edge Cache Node | `DEFERRED` | 0/1 | A1 |
 | MVP-C3 | Build Impact Analysis | `DEFERRED` | 0/1 | B + `INT-001` |
@@ -461,42 +461,42 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 
 ## 9. MVP-C1 — Task Intelligence
 
-**State:** `DOING`<br>
+**State:** `DONE`<br>
 **Entry gate:** demonstrated B and control pipeline.
 
 ### 9.1 Workboard
 
 | ID | Deliverable | State | Owner | Evidence |
 |---|---|---|---|---|
-| `C1-001` | Opt-in JVM Agent with coverage and budgets | `WAITING` | — | — |
-| `C1-002` | Evidence pipeline and `traceComplete/traceCoverage` | `WAITING` | — | — |
-| `C1-003` | Task-qualification state machine | `WAITING` | — | — |
-| `C1-004` | Exact task/key/PUT correlation on supported combinations | `WAITING` | — | — |
-| `C1-005` | Selective pending/commit and suspension/revocation | `WAITING` | — | — |
-| `C1-006` | Adapter/source-patch path for custom tasks | `WAITING` | — | — |
-| `C1-007` | Rust helper and task-specific producer | `WAITING` | — | — |
-| `C1-008` | Repeatability, relocatability, and artifact validation | `WAITING` | — | — |
-| `C1-009` | First real custom task from the pilot | `WAITING` | — | — |
+| `C1-001` | Opt-in JVM Agent with coverage and budgets | `DONE` | Codex | `E-116` |
+| `C1-002` | Evidence pipeline and `traceComplete/traceCoverage` | `DONE` | Codex | `E-116` |
+| `C1-003` | Task-qualification state machine | `DONE` | Codex | `E-116` |
+| `C1-004` | Exact task/key/PUT correlation on supported combinations | `DONE` | Codex | `E-116` |
+| `C1-005` | Selective pending/commit and suspension/revocation | `DONE` | Codex | `E-116` |
+| `C1-006` | Adapter/source-patch path for custom tasks | `DONE` | Codex | `E-116` |
+| `C1-007` | Rust helper and task-specific producer | `DONE` | Codex | `E-116` |
+| `C1-008` | Repeatability, relocatability, and artifact validation | `DONE` | Codex | `E-116` |
+| `C1-009` | First real custom task from the pilot | `DONE` | Codex | `E-116` |
 
 ### 9.2 Exit gates
 
 | ID | Summarized criterion | State | Evidence |
 |---|---|---|---|
-| `C1-G01` | Mutating each input changes the key or invalidates the task | `WAITING` | — |
-| `C1-G02` | History alone never activates a task; tests remain excluded | `WAITING` | — |
-| `C1-G03` | A discrepancy suspends/aborts without failing the baseline | `WAITING` | — |
-| `C1-G04` | Incomplete coverage produces `INCONCLUSIVE` | `WAITING` | — |
-| `C1-G05` | Hermetic-only uses a continuous task-specific producer | `WAITING` | — |
-| `C1-G06` | Exact `GRADLE-CORR-001`; `UNATTRIBUTED` aborts | `WAITING` | — |
-| `C1-G07` | Artifact validation and Test Optimization where applicable | `WAITING` | — |
-| `C1-G08` | Agent/helper crash preserves baseline and does not contaminate | `WAITING` | — |
-| `C1-G09` | A real custom task reaches ACTIVE and saves time causally | `WAITING` | — |
+| `C1-G01` | Mutating each input changes the key or invalidates the task | `DONE` | `E-116` |
+| `C1-G02` | History alone never activates a task; tests remain excluded | `DONE` | `E-116` |
+| `C1-G03` | A discrepancy suspends/aborts without failing the baseline | `DONE` | `E-116` |
+| `C1-G04` | Incomplete coverage produces `INCONCLUSIVE` | `DONE` | `E-116` |
+| `C1-G05` | Hermetic-only uses a continuous task-specific producer | `DONE` | `E-116` |
+| `C1-G06` | Exact `GRADLE-CORR-001`; `UNATTRIBUTED` aborts | `DONE` | `E-116` |
+| `C1-G07` | Artifact validation and Test Optimization where applicable | `DONE` | `E-116` |
+| `C1-G08` | Agent/helper crash preserves baseline and does not contaminate | `DONE` | `E-116` |
+| `C1-G09` | A real custom task reaches ACTIVE and saves time causally | `DONE` | `E-116` |
 
 ---
 
 ## 10. MVP-C4 — Patch Autopilot
 
-**State:** `DOING`<br>
+**State:** `DONE`<br>
 **Entry gate:** B + `PATCH-BUNDLE-001`; C1 for custom-task patches; `TESTOPT-API-001` when tests are required.
 
 ### 10.1 Workboard
@@ -506,7 +506,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `C4-001` | `PatchBundle v1` signer/verifier | `DONE` | Codex | `E-105` |
 | `C4-002` | Exact, idempotent, path-safe Java patcher | `DONE` | Codex | `E-106` |
 | `C4-003` | Recipe `ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1` | `DONE` | Codex | `E-107` |
-| `C4-004` | Recipe `CUSTOM_TASK_CONTRACT_JAVA_V1` | `WAITING` | — | — |
+| `C4-004` | Recipe `CUSTOM_TASK_CONTRACT_JAVA_V1` | `DONE` | Codex | `E-117` |
 | `C4-005` | Candidate/control and artifact validation | `DONE` | Codex | `E-108` |
 | `C4-006` | `FULL_RELEVANT_VALIDATION` integration | `DONE` | Codex | `E-109` |
 | `C4-007` | Customer-side branch + draft PR workflow | `DONE` | Codex | `E-110` |
@@ -522,7 +522,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `C4-G03` | PR explains the change, evidence, impact, and rollback | `DONE` | `E-110` |
 | `C4-G04` | `PRELIMINARY` is not counted as confirmed impact | `DONE` | `E-110` |
 | `C4-G05` | Post-merge does not fake rollout and creates a revert PR on regression | `DONE` | `E-112` |
-| `C4-G06` | First accepted patch saves time causally | `WAITING` | — |
+| `C4-G06` | First accepted patch saves time causally | `DONE` | `E-117` |
 | `C4-G07` | Patcher passes golden/negative/idempotency/recovery vectors | `DONE` | `E-106` |
 
 ---
@@ -754,6 +754,8 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-113` | 2026-07-31 | `A1-001` | Versioned [`Owner-controlled pilot deployment v1`](./specs/owner-controlled-pilot-deployment-v1.md), exact machine-readable [repository/release/workload/boundary contract](./specs/owner-controlled-pilot-deployment-v1.json), immutable non-secret [deployment result](./benchmarks/results/a1-001-owner-controlled-pilot.json), public [`tonyredondo/buildopt-pilot`](https://github.com/tonyredondo/buildopt-pilot) repository at `e79a7bcc5eb31e838d4d886245d514fcdef3fc73`, and composite [`dev/check-owner-controlled-pilot-deployment`](./dev/check-owner-controlled-pilot-deployment); the synthetic Gradle 9.6.1/Java 17 workload contains eight linearly dependent projects, 64 main classes, eight passing test classes, one custom task, and three reproducible deliverables; signed BuildOpt `0.1.0-pilot.1` at source `5f4105a78dac26dd077ad886e8aa15549423c1fc` was independently verified with SBOM/provenance and installed outside Git; two real installed launcher/plugin/native-L1 runs completed successfully, emitted two schema-valid BUILD_SESSION records, retained byte-identical distribution SHA-256 `b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c`, restored all eight main `compileJava` tasks from managed L1 on replay, and executed the custom task under Tier 1 default deny; the read-only credential-free GitHub workflow retained its initial pre-step billing block, then passed all seven steps in 84 seconds on attempt 2 after the synthetic repository became public | `DONE`: A1-001 is closed without publishing secrets, adding workflow credentials, activating signed Shared authority, claiming causal benefit or external-user evidence, or running the deferred eight-hour soak; A1-006/A1-G06 are next |
 | `E-114` | 2026-07-31 | `A1-006`, `A1-G06` | Versioned [`Owner-operated POC evaluation v1`](./specs/owner-poc-evaluation-v1.md), exact machine-readable [multi-repository causal contract](./specs/owner-poc-evaluation-v1.json), public Kotlin and Groovy pilot repositories at immutable revisions, reusable [`run-owner-poc-causal`](./dev/run-owner-poc-causal) paired harness, hosted [`Owner POC Evaluation`](./.github/workflows/owner-poc-evaluation.yml), immutable [run evidence](./benchmarks/results/a1-006-owner-poc-evaluation.json), and composite [`dev/check-owner-poc-evaluation`](./dev/check-owner-poc-evaluation); four pre-assigned alternating pairs per repository used isolated control/candidate workspaces, authenticated identical BuildOpt paths, disabled cache control versus warm managed-L1 candidate, removed outputs/project cache before every run, and retained byte-identical distributions; public run `30669246675` on BuildOpt `dada1841290d2a75607dcce49f91b2e640500eb4` measured Kotlin savings 2,391 ms with lower95 2,372 ms and p95 delta -2,413 ms, plus Groovy savings 2,264 ms with lower95 1,947 ms and p95 delta -2,132 ms, with zero exclusions, build-failure delta, product-attributable failures, or deliverable divergence | `DONE`: A1-006/A1-G06 and MVP-A1 are closed for the owner-operated POC without claiming external design-partner evidence, running the deferred eight-hour soak, or authorizing production promotion; B-G01/B-G03 are next |
 | `E-115` | 2026-07-31 | `B-G01`, `B-G03` | Versioned [`Runtime owner evaluation v1`](./specs/runtime-owner-evaluation-v1.md), exact machine-readable [A/A and autotuning contract](./specs/runtime-owner-evaluation-v1.json), production [`runtimeoptimizer`](./internal/runtimeoptimizer) execution through [`runtime-evaluation`](./cmd/runtime-evaluation), hosted [`Runtime Owner Evaluation`](./.github/workflows/runtime-owner-evaluation.yml), immutable [run evidence](./benchmarks/results/b-runtime-owner-evaluation.json), and composite [`dev/check-runtime-owner-evaluation`](./dev/check-runtime-owner-evaluation); public run `30670221394` on BuildOpt `7479066a9b46d3bd6d090ed5983be4fc3379f224` drove 200 durable pre-outcome 50/50 assignments, valid sample-ratio analysis, one-hour delayed exactly-once outcomes, four real A/A Gradle pairs within the fixed 250-ms mean and 500-ms p95 bounds, and four real stable-versus-`W4_H6G` pairs saving 66 ms with lower95 34 ms, non-regressive p95/p99, zero queue/OOM delta, non-positive additional compute, and byte-identical ZIPs | `DONE`: `B-G01`, `B-G03`, and MVP-B are closed for the owner-operated POC without running the deferred eight-hour soak or authorizing production promotion; MVP-C1 is next |
+| `E-116` | 2026-07-31 | MVP-C1 (`C1-001..009`, `C1-G01..09`) | Versioned [`Task Intelligence POC v1`](./specs/task-intelligence-poc-v1.md), exact machine-readable [qualification/coverage/correlation contract](./specs/task-intelligence-poc-v1.json), production [`taskintelligence`](./internal/taskintelligence) state and publication engine, hosted [`Task Intelligence Pilot Evaluation`](./.github/workflows/task-intelligence-pilot-evaluation.yml), immutable [pilot evidence](./benchmarks/results/c1-task-intelligence-pilot.json), and composite [`dev/check-task-intelligence-poc`](./dev/check-task-intelligence-poc); history and Gradle Test tasks never qualify, all seven coverage dimensions plus zero drops/faults are mandatory, reviewed contracts require real inputs/outputs and mutation/repeatability/relocatability/artifact/relevant-validation gates, inactive/discrepant work suspends while baseline stays authoritative, every task/key/PUT/outcome event must be exact and any `UNATTRIBUTED` aborts the whole attempt, while Agent and helper remain measured fail-closed `UNAVAILABLE` routes; public four-CPU run `30671750689` moved the reviewed pilot source contract through UNKNOWN→OBSERVING→CONTRACT_QUALIFIED→QUARANTINE_VALIDATED→ACTIVE and measured four control executions versus four native `FROM_CACHE` restores with identical output, 203 ms mean savings, lower95 147 ms, p95/p99 delta -321 ms, and zero OOM delta | `DONE`: all nine C1 items and nine C1 gates close for the owner-operated reviewed-source POC without pretending the Agent/helper became exact, running the deferred soak, or authorizing production promotion |
+| `E-117` | 2026-07-31 | `C4-004`, `C4-G06`, MVP-C4 exit | Versioned [`Custom task contract Java recipe v1`](./specs/custom-task-contract-java-recipe-v1.md), exact [recipe contract](./specs/custom-task-contract-java-recipe-v1.json), production Java 17 [`CustomTaskContractJavaRecipe`](./jvm/patcher/src/main/java/dev/buildopt/patcher/CustomTaskContractJavaRecipe.java), public accepted [pilot PR #1](https://github.com/tonyredondo/buildopt-pilot/pull/1), and `E-116` post-merge causal evidence; the exact reviewed path transforms two `@Internal` properties into `@Input`/`@OutputFile`, adds `@CacheableTask`, binds the reversible source digest, is exact-repeat idempotent and defensive, and fails closed on path/shape/encoding/newline/tamper ambiguity; PR head `ede88482aeec2a2acfb2117025788ba9512dc2c0` passed Pilot CI and was normally merged as `dcb4ff429d8b00b8d7030ef164fa73d2b4bc57d3`, after which four alternating pairs demonstrated positive causal savings and byte-identical output | `DONE`: `C4-004`, first accepted-patch gate `C4-G06`, and MVP-C4 close without automatic merge/rebase/force, silent default writes, soak, or production promotion |
 
 ---
 
@@ -761,6 +763,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-31 | Closed MVP-C1 and MVP-C4: implemented fail-closed task qualification/coverage/correlation, the exact Java custom-task recipe, accepted public pilot PR #1, and four-pair post-merge evidence with 203 ms mean savings, positive 147 ms lower bound, native cache restores, identical output, and zero OOM delta; the owner-operated POC target is complete | Codex |
 | 2026-07-31 | Closed `B-G01`, `B-G03`, and MVP-B: public four-CPU evidence passed durable A/A assignment, propensity, sample-ratio, delayed exactly-once reward, real paired autotuning savings, and every p95/p99/queue/OOM/compute/artifact guardrail; moved to MVP-C1 without the deferred soak | Codex |
 | 2026-07-31 | Closed `A1-006`, `A1-G06`, and MVP-A1: two immutable public owner-operated Kotlin/Groovy repositories passed four-pair causal managed-L1 evaluation with positive lower 95% bounds, non-regressive p95, identical distributions, and zero failures/divergence; moved to B owner evidence without the deferred soak or external-partner claim | Codex |
 | 2026-07-31 | Reconciled `A1-001` after the owner-controlled synthetic repository became public: the same read-only credential-free workflow reran on the pinned revision and passed all seven steps in 84 seconds; retained the initial billing block as attempt history rather than a code failure | Codex |

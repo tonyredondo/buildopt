@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/task-intelligence-poc-v1.json"
+buildopt_evidence="${buildopt_repo_root}/benchmarks/results/c1-task-intelligence-pilot.json"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/task-intelligence-poc/v1" and
+  (.workItems | length) == 9 and
+  .qualificationRoutes.pilot == "REVIEWED_SOURCE_PATCH" and
+  .qualificationRoutes.history == "NEVER_QUALIFIES" and
+  .qualificationRoutes.jvmAgent == "UNAVAILABLE_FAIL_CLOSED" and
+  .qualificationRoutes.linuxHelper == "UNAVAILABLE_FAIL_CLOSED" and
+  (.traceCoverage.required | length) == 7 and
+  .traceCoverage.incomplete == "INCONCLUSIVE_ABORT_PENDING" and
+  .states == ["UNKNOWN", "OBSERVING", "CONTRACT_QUALIFIED", "QUARANTINE_VALIDATED", "ACTIVE", "SUSPENDED"] and
+  (.quarantine | length) == 5 and
+  .correlation.unattributed == "ABORT_WHOLE_ATTEMPT" and
+  .exclusions == ["GRADLE_TEST_TASK"] and
+  .pilot.acceptedRevision == "dcb4ff429d8b00b8d7030ef164fa73d2b4bc57d3" and
+  .boundaries.ownerOperatedProofOfConcept == true and
+  .boundaries.doesNotClose == ["EIGHT_HOUR_SOAK", "PRODUCTION_PROMOTION"]
+' "${buildopt_spec}" >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/task-intelligence-pilot/v1" and
+  .capturedOn == "2026-07-31" and
+  .buildoptRevision == "ba67f7207b6e58b211c728123ba0d52277000708" and
+  .workflow == {name:"Task Intelligence Pilot Evaluation",runId:30671750689,url:"https://github.com/tonyredondo/buildopt/actions/runs/30671750689"} and
+  .runner.class == "linux-amd64-4c-16g-v1" and .runner.cpuCount == 4 and
+  (.runner.memoryBytes >= 15032385536 and .runner.memoryBytes <= 19327352832) and
+  .runner.oomBefore == .runner.oomAfter and
+  .pilot == {repository:"tonyredondo/buildopt-pilot",baseRevision:"fead91a55581d25d0b8a5c9680bd19792f55792e",acceptedRevision:"dcb4ff429d8b00b8d7030ef164fa73d2b4bc57d3",pullRequest:1,pullRequestUrl:"https://github.com/tonyredondo/buildopt-pilot/pull/1"} and
+  .task.recipe == "CUSTOM_TASK_CONTRACT_JAVA_V1" and
+  .task.preimageDigest == "sha256:392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083" and
+  .task.postimageDigest == "sha256:79fa100a4e2d962dd506259311f90ecb92ad62500391d140065b6f157a172a2b" and
+  .qualification.route == "REVIEWED_SOURCE_PATCH" and
+  .qualification.states == ["UNKNOWN", "OBSERVING", "CONTRACT_QUALIFIED", "QUARANTINE_VALIDATED", "ACTIVE"] and
+  .qualification.agentRoute == "UNAVAILABLE_FAIL_CLOSED" and
+  .qualification.helperRoute == "UNAVAILABLE_FAIL_CLOSED" and
+  .qualification.incompleteCoverage == "INCONCLUSIVE_ABORT_PENDING" and
+  .qualification.unattributedPublication == "ABORT_WHOLE_ATTEMPT" and
+  .qualification.testTasks == "EXCLUDED" and
+  .measurement.pairs == 4 and .measurement.meanSavedMs > 0 and
+  .measurement.interval95Ms[0] > 0 and .measurement.p95DeltaMs <= 0 and
+  .measurement.p99DeltaMs <= 0 and .measurement.artifactDivergence == false and
+  .outcomes.control == ["EXECUTED", "EXECUTED", "EXECUTED", "EXECUTED"] and
+  .outcomes.candidate == ["FROM_CACHE", "FROM_CACHE", "FROM_CACHE", "FROM_CACHE"] and
+  .gate.state == "PASSED" and (.gate.closes | length) == 20 and
+  (.gate.closes | index("C1-G09")) != null and (.gate.closes | index("C4-G06")) != null and
+  .gate.productionPromotionAuthorized == false
+' "${buildopt_evidence}" >/dev/null
+
+cd "${buildopt_repo_root}"
+go test -race -count=1 ./internal/taskintelligence ./cmd/task-intelligence-evaluation
+./dev/check-custom-task-contract-recipe
+printf 'MVP-C1/C4 pilot evidence OK: 4/4 native cache restores, 203ms mean saved, lower95 147ms, identical output\n'
