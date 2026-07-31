@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/github-queue-adapter/v1" and
+  .gateId == "OPS-001/B" and
+  .webhook.signature == "HMAC_SHA256_RAW_BODY" and
+  .measurement.metric == "ciQueueMs" and
+  .measurement.availability == "EXACT" and
+  .measurement.start == "workflow_job.created_at" and
+  .measurement.end == "workflow_job.started_at" and
+  .unassignedCancellation.availability == "UNAVAILABLE" and
+  .storage == "control.sqlite/schema-v6" and
+  .doesNotClose == ["OPS-001/A1", "A1-G02", "MVP-B"]
+' specs/github-queue-adapter-v1.json >/dev/null
+
+go test ./internal/githubqueue ./internal/sharedcache ./cmd/buildopt-server
+printf 'OPS-001/B GitHub queue adapter OK: authenticated durable lifecycle, exact created-to-start queue, pool dimensions, cancellation unavailable\n'

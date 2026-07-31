@@ -470,6 +470,10 @@ func TestSchemaThreeCommittedEntriesUpgradeIntoProbation(t *testing.T) {
 		"DROP TABLE storage_entries",
 	})
 	downgradeCapacitySchemaForTest(t, layout.ControlDatabase, []string{
+		"DROP INDEX github_webhook_deliveries_job",
+		"DROP INDEX github_workflow_jobs_run",
+		"DROP TABLE github_webhook_deliveries",
+		"DROP TABLE github_workflow_jobs",
 		"DROP INDEX beta_cache_tokens_expires",
 		"DROP INDEX beta_cache_tokens_scope",
 		"DROP TABLE beta_cache_tokens",

@@ -233,6 +233,11 @@ ON storage_entries (
 		name:       "cache-v5",
 		statements: []string{`SELECT 1`},
 	}
+	versionSix := schemaMigration{
+		version:    6,
+		name:       "cache-v6",
+		statements: []string{`SELECT 1`},
+	}
 	definition := metadataDefinition{
 		role: cacheMetadataRole,
 		path: path,
@@ -242,6 +247,7 @@ ON storage_entries (
 			versionThree,
 			versionFour,
 			versionFive,
+			versionSix,
 		},
 	}
 	definition.objects = []schemaObject{
@@ -469,6 +475,44 @@ ON beta_cache_tokens (
 ON beta_cache_tokens (expires_at_unix_ms)`,
 		},
 	}
+	versionSix := schemaMigration{
+		version: 6,
+		name:    "control-v6",
+		statements: []string{
+			`CREATE TABLE github_workflow_jobs (
+    job_id INTEGER PRIMARY KEY CHECK (job_id > 0),
+    repository_id INTEGER NOT NULL CHECK (repository_id > 0),
+    repository_name TEXT NOT NULL CHECK (length(repository_name) BETWEEN 3 AND 256),
+    run_id INTEGER NOT NULL CHECK (run_id > 0),
+    run_attempt INTEGER NOT NULL CHECK (run_attempt > 0),
+    head_sha TEXT NOT NULL CHECK (length(head_sha) = 40),
+    name TEXT NOT NULL CHECK (length(name) BETWEEN 1 AND 256),
+    status TEXT NOT NULL CHECK (status IN ("queued", "in_progress", "completed")),
+    conclusion TEXT NOT NULL,
+    created_at_unix_ms INTEGER NOT NULL CHECK (created_at_unix_ms >= 0),
+    started_at_unix_ms INTEGER,
+    completed_at_unix_ms INTEGER,
+    runner_id INTEGER,
+    runner_name TEXT,
+    runner_group_id INTEGER,
+    runner_group_name TEXT,
+    labels_json TEXT NOT NULL CHECK (json_valid(labels_json)),
+    updated_at_unix_ms INTEGER NOT NULL CHECK (updated_at_unix_ms >= created_at_unix_ms),
+    CHECK (started_at_unix_ms IS NULL OR started_at_unix_ms >= created_at_unix_ms),
+    CHECK (completed_at_unix_ms IS NULL OR completed_at_unix_ms >= started_at_unix_ms)
+)`,
+			`CREATE UNIQUE INDEX github_workflow_jobs_run
+ON github_workflow_jobs (repository_id, run_id, run_attempt, job_id)`,
+			`CREATE TABLE github_webhook_deliveries (
+    delivery_id TEXT PRIMARY KEY CHECK (length(delivery_id) BETWEEN 1 AND 128),
+    body_digest TEXT NOT NULL CHECK (length(body_digest) = 71),
+    job_id INTEGER NOT NULL REFERENCES github_workflow_jobs(job_id),
+    received_at_unix_ms INTEGER NOT NULL CHECK (received_at_unix_ms >= 0)
+) WITHOUT ROWID`,
+			`CREATE INDEX github_webhook_deliveries_job
+ON github_webhook_deliveries (job_id, received_at_unix_ms)`,
+		},
+	}
 	definition := metadataDefinition{
 		role: controlMetadataRole,
 		path: path,
@@ -478,6 +522,7 @@ ON beta_cache_tokens (expires_at_unix_ms)`,
 			versionThree,
 			versionFour,
 			versionFive,
+			versionSix,
 		},
 	}
 	definition.objects = []schemaObject{
@@ -495,6 +540,16 @@ ON beta_cache_tokens (expires_at_unix_ms)`,
 			objectType: "index",
 			name:       "decision_audit_index_indexed_at",
 			statement:  versionOne.statements[2],
+		},
+		{
+			objectType: "index",
+			name:       "github_webhook_deliveries_job",
+			statement:  versionSix.statements[3],
+		},
+		{
+			objectType: "index",
+			name:       "github_workflow_jobs_run",
+			statement:  versionSix.statements[1],
 		},
 		{
 			objectType: "index",
@@ -525,6 +580,16 @@ ON beta_cache_tokens (expires_at_unix_ms)`,
 			objectType: "table",
 			name:       "decision_audit_index",
 			statement:  versionOne.statements[1],
+		},
+		{
+			objectType: "table",
+			name:       "github_webhook_deliveries",
+			statement:  versionSix.statements[2],
+		},
+		{
+			objectType: "table",
+			name:       "github_workflow_jobs",
+			statement:  versionSix.statements[0],
 		},
 		{
 			objectType: "table",

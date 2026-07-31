@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"flag"
@@ -19,6 +20,8 @@ import (
 
 	"github.com/tonyredondo/buildopt/internal/buildsession"
 	"github.com/tonyredondo/buildopt/internal/datalifecycle"
+	"github.com/tonyredondo/buildopt/internal/githubqueue"
+	"github.com/tonyredondo/buildopt/internal/localauthority"
 	"github.com/tonyredondo/buildopt/internal/sessioningest"
 	"github.com/tonyredondo/buildopt/internal/sharedcache"
 )
@@ -26,7 +29,7 @@ import (
 const (
 	exitUsage         = 64
 	exitConfiguration = 78
-	serverUsage       = "usage: buildopt-server serve [--listen 127.0.0.1:8042] [--export-dir PATH] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]] [--state-dir ABSOLUTE_PATH] [--cache-authority ABSOLUTE_PATH --cache-trust-root ABSOLUTE_PATH --cache-credential ABSOLUTE_PATH] [--cache-token-auth]\n       buildopt-server export --export-dir PATH [--format jsonl] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]]\n       buildopt-server data delete --data-root ABSOLUTE_PATH --deletion-id ID --tenant ID --repository ID --trust-domain ID --next-namespace-generation N --next-l1-security-generation N --token-key ABSOLUTE_PATH --token-key-version ID [--external-destination ID]\n       buildopt-server token issue --state-dir ABSOLUTE_PATH --tenant ID --repository ID --trust-domain ID --namespace ID --namespace-generation N --plane stable|quarantine|control --access read|read-write --expires-at RFC3339\n       buildopt-server token revoke --state-dir ABSOLUTE_PATH --token-id ID\n"
+	serverUsage       = "usage: buildopt-server serve [--listen 127.0.0.1:8042] [--export-dir PATH] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]] [--state-dir ABSOLUTE_PATH] [--cache-authority ABSOLUTE_PATH --cache-trust-root ABSOLUTE_PATH --cache-credential ABSOLUTE_PATH] [--cache-token-auth] [--github-webhook-secret ABSOLUTE_PATH]\n       buildopt-server export --export-dir PATH [--format jsonl] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]]\n       buildopt-server data delete --data-root ABSOLUTE_PATH --deletion-id ID --tenant ID --repository ID --trust-domain ID --next-namespace-generation N --next-l1-security-generation N --token-key ABSOLUTE_PATH --token-key-version ID [--external-destination ID]\n       buildopt-server token issue --state-dir ABSOLUTE_PATH --tenant ID --repository ID --trust-domain ID --namespace ID --namespace-generation N --plane stable|quarantine|control --access read|read-write --expires-at RFC3339\n       buildopt-server token revoke --state-dir ABSOLUTE_PATH --token-id ID\n"
 )
 
 var openSharedStorage = sharedcache.Open
@@ -128,6 +131,11 @@ func run(
 		false,
 		"authenticate remote cache requests with scoped beta tokens",
 	)
+	githubWebhookSecretPath := flags.String(
+		"github-webhook-secret",
+		"",
+		"private GitHub workflow_job webhook secret",
+	)
 	if err := flags.Parse(args[1:]); err != nil || flags.NArg() != 0 {
 		_, _ = io.WriteString(stderr, serverUsage)
 		return exitUsage
@@ -208,6 +216,23 @@ func run(
 			"buildopt-server: beta token authentication requires authenticated Shared cache configuration",
 		)
 		return exitConfiguration
+	}
+	if *githubWebhookSecretPath != "" && (*stateDirectory == "" || !filepath.IsAbs(*githubWebhookSecretPath)) {
+		_, _ = fmt.Fprintln(stderr, "buildopt-server: GitHub queue adapter requires state directory and absolute webhook secret path")
+		return exitConfiguration
+	}
+	var githubWebhookSecret []byte
+	if *githubWebhookSecretPath != "" {
+		secretBytes, secretErr := localauthority.ReadPrivateFile(*githubWebhookSecretPath, 4096)
+		if secretErr != nil {
+			_, _ = fmt.Fprintln(stderr, "buildopt-server: invalid GitHub webhook secret")
+			return exitConfiguration
+		}
+		githubWebhookSecret = bytes.TrimSpace(secretBytes)
+		if len(githubWebhookSecret) < 32 {
+			_, _ = fmt.Fprintln(stderr, "buildopt-server: invalid GitHub webhook secret")
+			return exitConfiguration
+		}
 	}
 
 	ingestStore := sessioningest.NewStore()
@@ -320,6 +345,16 @@ func run(
 		}()
 	}
 
+	var githubQueueHandler http.Handler
+	if len(githubWebhookSecret) != 0 {
+		configuredQueueHandler, queueErr := githubqueue.NewHandler(githubWebhookSecret, sharedStorage)
+		if queueErr != nil {
+			_, _ = fmt.Fprintln(stderr, "buildopt-server: invalid GitHub queue adapter configuration")
+			return exitConfiguration
+		}
+		githubQueueHandler = configuredQueueHandler
+	}
+
 	var cacheHandler http.Handler
 	var cacheSwitch *switchableHandler
 	var cacheAuthority loadedAuthority
@@ -353,6 +388,9 @@ func run(
 	}
 
 	handler := http.NewServeMux()
+	if githubQueueHandler != nil {
+		handler.Handle(githubqueue.WebhookPath, githubQueueHandler)
+	}
 	if cacheHandler != nil {
 		handler.Handle("/cache/", cacheHandler)
 	}

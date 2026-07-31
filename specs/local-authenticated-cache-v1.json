@@ -47,7 +47,7 @@
     "exactReplay": "ALLOW"
   },
   "sharedServer": {
-    "storageSchemaVersion": 5,
+    "storageSchemaVersion": 6,
     "flags": [
       "--cache-authority",
       "--cache-trust-root",

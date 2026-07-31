@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "buildopt.specs/github-queue-adapter/v1",
+  "gateId": "OPS-001/B",
+  "provider": "GITHUB_ACTIONS",
+  "webhook": {
+    "event": "workflow_job",
+    "path": "/internal/v1/ci/github/workflow-jobs",
+    "signature": "HMAC_SHA256_RAW_BODY",
+    "idempotencyHeader": "X-GitHub-Delivery",
+    "maximumBodyBytes": 1048576,
+    "permission": "Actions:read"
+  },
+  "measurement": {
+    "metric": "ciQueueMs",
+    "availability": "EXACT",
+    "start": "workflow_job.created_at",
+    "end": "workflow_job.started_at",
+    "dimensions": ["runnerGroupId", "runnerGroupName", "runnerId", "runnerName", "labels"]
+  },
+  "unassignedCancellation": {
+    "availability": "UNAVAILABLE",
+    "reason": "CI_RUNNER_NOT_STARTED"
+  },
+  "storage": "control.sqlite/schema-v6",
+  "doesNotClose": ["OPS-001/A1", "A1-G02", "MVP-B"]
+}

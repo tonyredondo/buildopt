@@ -81,7 +81,7 @@ if ! jq -e '
     .monotonicState.sameGenerationDifferentContent == "REJECT" and
     .monotonicState.revocationAdvance == "REQUIRES_L1_ROTATION" and
     .monotonicState.exactReplay == "ALLOW" and
-    .sharedServer.storageSchemaVersion == 5 and
+    .sharedServer.storageSchemaVersion == 6 and
     .sharedServer.route == "/cache/{key}" and
     .sharedServer.authentication == [
         "BEARER_LOCAL_CACHE_CREDENTIAL",
