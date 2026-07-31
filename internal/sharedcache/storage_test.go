@@ -10,6 +10,35 @@ import (
 	"testing"
 )
 
+func TestOperationalSnapshotReportsBoundedStorageHealth(t *testing.T) {
+	ctx := context.Background()
+	storage, err := Open(ctx, filepath.Join(t.TempDir(), "shared"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		_ = storage.Close()
+	})
+
+	snapshot, err := storage.OperationalSnapshot(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if snapshot.CapturedAt.IsZero() ||
+		!snapshot.DiskProbeSucceeded ||
+		snapshot.DiskTotalBytes == 0 ||
+		snapshot.DiskAvailableBytes == 0 ||
+		snapshot.DiskAvailableBytes > snapshot.DiskTotalBytes ||
+		snapshot.PendingAttempts != 0 ||
+		snapshot.ExpiredPendingAttempts != 0 ||
+		snapshot.QuarantineRecords != 0 ||
+		!snapshot.IntegrityHealthy ||
+		!snapshot.SQLiteProbeSucceeded ||
+		snapshot.SQLiteProbeDuration < 0 {
+		t.Fatalf("operational snapshot = %+v", snapshot)
+	}
+}
+
 func TestOpenCreatesPrivateWALStorageAndOwnsWriter(t *testing.T) {
 	ctx := context.Background()
 	root := filepath.Join(t.TempDir(), "shared")

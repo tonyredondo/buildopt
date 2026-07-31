@@ -47,6 +47,10 @@ func validateLocalStorageFilesystem(...string) error {
 	return errUnsupportedStoragePlatform
 }
 
+func storageDiskCapacity(string) (uint64, uint64, error) {
+	return 0, 0, errUnsupportedStoragePlatform
+}
+
 func isSupportedLocalFilesystemType(int64) bool {
 	return false
 }

@@ -1118,8 +1118,26 @@ race-enabled fixture atomically publishes a higher signed revocation epoch,
 observes propagation within the 60-second limit, rejects the old authority
 with `401`, and serves the new authority only as a safe miss. Invalid, expired,
 or rolled-back state disables readiness. The full benchmark/fault/soak and
-alert profile remains open; see
+profile remains open; see
 [`specs/ops-readiness-v1.md`](../specs/ops-readiness-v1.md).
+
+## Operational alert surface
+
+Exercise the ten-class `OPS-001/A1` alert slice:
+
+```bash
+./dev/check-ops-alerts
+```
+
+The loopback `GET|HEAD /ops/v1/alerts` endpoint remains available while
+readiness is false and returns deterministic `OK|FIRING` state without paths,
+identities, digests, credentials, or error text. Runtime signals cover
+filesystem capacity, quarantine, expired pending leases, SQLite integrity and
+probe latency, signed authority reload/freshness, fail-closed routing,
+immutable-export backlog, and bounded build-session acceptance errors/p95.
+The race-enabled fixture activates and recovers all ten RFC classes. External
+paging and the full benchmark/fault/soak evidence are not claimed; see
+[`specs/ops-alerts-v1.md`](../specs/ops-alerts-v1.md).
 
 ## GitHub Action validation
 

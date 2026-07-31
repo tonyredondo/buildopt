@@ -95,6 +95,7 @@ func watchServerAuthority(
 	operational *operationalRouter,
 	application http.Handler,
 	logger *log.Logger,
+	alerts *operationalAlertMonitor,
 	interval time.Duration,
 ) {
 	ticker := time.NewTicker(interval)
@@ -115,6 +116,7 @@ func watchServerAuthority(
 
 			operational.deactivate()
 			cache.set(nil)
+			alerts.authorityReloadStarted(now.UTC())
 			next, loadErr := loadServerAuthority(
 				ctx,
 				storage,
@@ -134,6 +136,7 @@ func watchServerAuthority(
 			}
 			cache.set(next.handler)
 			operational.activate(application)
+			alerts.authorityLoaded(next.expiresAt)
 			if next.digest != active.digest {
 				logger.Printf(
 					"local cache authority reloaded: %s",

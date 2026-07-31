@@ -150,6 +150,7 @@ func TestServerIsLiveButNotReadyDuringSharedReconciliation(t *testing.T) {
 		endpoint+readinessPath,
 		http.StatusServiceUnavailable,
 	)
+	requireServerStatus(t, endpoint+operationalAlertsPath, http.StatusOK)
 	requireServerStatus(
 		t,
 		endpoint+"/cache/not-ready",

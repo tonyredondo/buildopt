@@ -152,7 +152,8 @@ func run(
 
 	ingestStore := sessioningest.NewStore()
 	logger := log.New(stdout, "buildopt-server: ", 0)
-	ingestHandler, err := sessioningest.NewHandler(
+	alerts := newOperationalAlertMonitor(time.Now)
+	rawIngestHandler, err := sessioningest.NewHandler(
 		getenv(sessioningest.ServerTokenEnvironment),
 		ingestStore,
 		func(record sessioningest.Record, result sessioningest.PutResult) {
@@ -170,7 +171,9 @@ func run(
 			if exporter == nil {
 				return
 			}
+			alerts.exportStarted()
 			path, created, exportErr := exporter.Export(record)
+			alerts.exportFinished(exportErr)
 			if exportErr != nil {
 				logger.Printf(
 					"BUILD_SESSION export unavailable for session %s: %v",
@@ -198,6 +201,7 @@ func run(
 		)
 		return exitConfiguration
 	}
+	ingestHandler := alerts.instrumentAcceptance(rawIngestHandler)
 
 	listener, err := net.Listen("tcp4", *listenAddress)
 	if err != nil {
@@ -206,7 +210,7 @@ func run(
 	}
 	defer listener.Close()
 
-	operational := &operationalRouter{}
+	operational := &operationalRouter{alerts: alerts}
 	server := &http.Server{
 		Handler:           operational,
 		ReadHeaderTimeout: 2 * time.Second,
@@ -281,6 +285,7 @@ func run(
 			return exitConfiguration
 		}
 		cacheAuthority = loaded
+		alerts.authorityLoaded(loaded.expiresAt)
 		cacheSwitch = &switchableHandler{}
 		cacheSwitch.set(loaded.handler)
 		cacheHandler = cacheSwitch
@@ -294,6 +299,14 @@ func run(
 	operational.activate(handler)
 	reloadContext, cancelReload := context.WithCancel(ctx)
 	defer cancelReload()
+	if sharedStorage != nil {
+		go watchStorageAlerts(
+			reloadContext,
+			sharedStorage,
+			alerts,
+			storageAlertInterval,
+		)
+	}
 	if cacheSwitch != nil {
 		go watchServerAuthority(
 			reloadContext,
@@ -304,6 +317,7 @@ func run(
 			operational,
 			handler,
 			logger,
+			alerts,
 			authorityReloadInterval,
 		)
 	}

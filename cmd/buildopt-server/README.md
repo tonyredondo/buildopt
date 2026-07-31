@@ -143,3 +143,16 @@ Validate the live-before-ready lifecycle and measured revocation propagation:
 ```bash
 ./dev/check-ops-readiness
 ```
+
+The same loopback listener exposes `GET|HEAD /ops/v1/alerts`. Its bounded JSON
+contains every required RFC alert class, current `OK|FIRING` state, firing
+time, observation time, and readiness without including tenant, repository,
+cache-key, digest, path, credential, policy, or error details. Storage is
+sampled every 30 seconds; authority, export, and valid session-acceptance
+signals are updated on their runtime paths.
+
+Validate exact alert activation, recovery, and the read-only endpoint:
+
+```bash
+./dev/check-ops-alerts
+```

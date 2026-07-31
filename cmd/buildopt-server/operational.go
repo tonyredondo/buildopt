@@ -17,6 +17,7 @@ type operationalRouter struct {
 	mutex       sync.RWMutex
 	application http.Handler
 	ready       bool
+	alerts      *operationalAlertMonitor
 }
 
 type switchableHandler struct {
@@ -41,6 +42,17 @@ func (router *operationalRouter) ServeHTTP(
 			status = http.StatusOK
 		}
 		writeOperationalStatus(response, request, status)
+		return
+	case operationalAlertsPath:
+		router.mutex.RLock()
+		ready := router.ready
+		alerts := router.alerts
+		router.mutex.RUnlock()
+		if alerts == nil {
+			http.NotFound(response, request)
+			return
+		}
+		alerts.serve(response, request, ready)
 		return
 	}
 

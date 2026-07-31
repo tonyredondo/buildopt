@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/ops-alerts-v1.json"
+
+if ! command -v jq >/dev/null 2>&1; then
+    printf 'jq is required to validate the operations alert contract\n' >&2
+    exit 1
+fi
+if ! jq -e '
+    keys == [
+        "alerts",
+        "boundaries",
+        "endpoint",
+        "gateId",
+        "schemaVersion",
+        "signals",
+        "thresholds"
+    ] and
+    .schemaVersion == "buildopt.specs/ops-alerts/v1" and
+    .gateId == "OPS-001/A1" and
+    .endpoint == {
+        path: "/ops/v1/alerts",
+        methods: ["GET", "HEAD"],
+        listener: "CANONICAL_IPV4_LOOPBACK",
+        cacheControl: "no-store",
+        states: ["OK", "FIRING"],
+        sensitiveValues: false
+    } and
+    .alerts == [
+        "DISK_QUOTA",
+        "CORRUPTION",
+        "STUCK_ATTEMPT_OR_LEASE",
+        "REVOCATION_LAG",
+        "POLICY_FRESHNESS",
+        "CIRCUIT_BREAKER",
+        "SQLITE_CONTENTION",
+        "EXPORT_BACKLOG",
+        "ACCEPTANCE_ERROR_RATE",
+        "ACCEPTANCE_LATENCY"
+    ] and
+    .thresholds == {
+        diskAvailablePercentAtOrBelow: 10,
+        revocationLagSecondsAbove: 60,
+        policyExpiresWithinSeconds: 60,
+        sqliteProbeMillisecondsAbove: 250,
+        exportPendingAbove: 16,
+        acceptanceWindowMaximum: 100,
+        acceptanceMinimumSamples: 20,
+        acceptanceServerErrorPercentAtOrAbove: 5,
+        acceptanceP95MillisecondsAbove: 500
+    } and
+    .signals == {
+        storage: [
+            "FILESYSTEM_CAPACITY",
+            "QUARANTINE_RECORDS",
+            "EXPIRED_PENDING_ATTEMPTS",
+            "SQLITE_QUICK_AND_FOREIGN_KEY_CHECKS",
+            "SQLITE_PROBE_DURATION"
+        ],
+        authority: [
+            "SIGNED_SOURCE_RELOAD_DURATION",
+            "SIGNED_POLICY_EXPIRATION",
+            "FAIL_CLOSED_ROUTE_DISABLEMENT"
+        ],
+        export: ["IN_FLIGHT_COUNT", "LATEST_RESULT"],
+        acceptance: [
+            "VALID_BUILD_SESSION_POST_SERVER_ERRORS",
+            "VALID_BUILD_SESSION_POST_LATENCY"
+        ]
+    } and
+    .boundaries == {
+        closes: ["OPS-001/A1-ALERT-SURFACE"],
+        doesNotClose: [
+            "OPS-001/A1",
+            "BENCHMARK_FULL_PROFILE",
+            "FAULT_MATRIX",
+            "EIGHT_HOUR_SOAK",
+            "EXTERNAL_PAGING_INTEGRATION"
+        ]
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'operations alert contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test \
+    -count=1 \
+    -race \
+    -run '^TestOperationalSnapshotReportsBoundedStorageHealth$' \
+    ./internal/sharedcache
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test \
+    -count=1 \
+    -race \
+    -run \
+    '^(TestOperationalAlertsExposeExactClassesAndRecover|TestAcceptanceInstrumentationRecordsServerErrors|TestOperationalAlertEndpointSupportsReadOnlyAccess|TestServerIsLiveButNotReadyDuringSharedReconciliation)$' \
+    ./cmd/buildopt-server
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/sharedcache ./cmd/buildopt-server
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'operations alert checker changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'OPS-001/A1 alerts OK: exact ten-class loopback surface, real runtime signals, activation, and recovery\n'

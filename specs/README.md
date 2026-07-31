@@ -32,6 +32,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`release-bundle-v1.md`](./release-bundle-v1.md) | `F0-038` / `DEPLOY-001` |
 | [`deployment-lifecycle-v1.md`](./deployment-lifecycle-v1.md) | `DEPLOY-001` |
 | [`ops-readiness-v1.md`](./ops-readiness-v1.md) | `OPS-001/A1` |
+| [`ops-alerts-v1.md`](./ops-alerts-v1.md) | `OPS-001/A1` |
 | [`walking-skeleton-faults-v1.md`](./walking-skeleton-faults-v1.md) | `WS-008` |
 | [`walking-skeleton-overhead-v1.md`](./walking-skeleton-overhead-v1.md) | `WS-009` |
 
@@ -78,6 +79,9 @@ install/upgrade/rollback/uninstall lifecycle.
 `ops-readiness-v1.json` is the first OPS-001/A1 slice for live-before-ready
 startup, fail-closed application routing, shutdown draining, and signed
 authority reload within 60 seconds.
+`ops-alerts-v1.json` is the OPS-001/A1 ten-class local alert contract for
+bounded storage, authority, export, and acceptance signals plus deterministic
+activation/recovery without exposing sensitive values.
 `managed-l1-v1.json` is the A0-003 launcher/settings-plugin contract for
 opaque scope binding, native retention, generation directories, exclusive
 leases, and L2-writer local disablement.

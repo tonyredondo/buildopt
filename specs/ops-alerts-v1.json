@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "buildopt.specs/ops-alerts/v1",
+  "gateId": "OPS-001/A1",
+  "endpoint": {
+    "path": "/ops/v1/alerts",
+    "methods": [
+      "GET",
+      "HEAD"
+    ],
+    "listener": "CANONICAL_IPV4_LOOPBACK",
+    "cacheControl": "no-store",
+    "states": [
+      "OK",
+      "FIRING"
+    ],
+    "sensitiveValues": false
+  },
+  "alerts": [
+    "DISK_QUOTA",
+    "CORRUPTION",
+    "STUCK_ATTEMPT_OR_LEASE",
+    "REVOCATION_LAG",
+    "POLICY_FRESHNESS",
+    "CIRCUIT_BREAKER",
+    "SQLITE_CONTENTION",
+    "EXPORT_BACKLOG",
+    "ACCEPTANCE_ERROR_RATE",
+    "ACCEPTANCE_LATENCY"
+  ],
+  "thresholds": {
+    "diskAvailablePercentAtOrBelow": 10,
+    "revocationLagSecondsAbove": 60,
+    "policyExpiresWithinSeconds": 60,
+    "sqliteProbeMillisecondsAbove": 250,
+    "exportPendingAbove": 16,
+    "acceptanceWindowMaximum": 100,
+    "acceptanceMinimumSamples": 20,
+    "acceptanceServerErrorPercentAtOrAbove": 5,
+    "acceptanceP95MillisecondsAbove": 500
+  },
+  "signals": {
+    "storage": [
+      "FILESYSTEM_CAPACITY",
+      "QUARANTINE_RECORDS",
+      "EXPIRED_PENDING_ATTEMPTS",
+      "SQLITE_QUICK_AND_FOREIGN_KEY_CHECKS",
+      "SQLITE_PROBE_DURATION"
+    ],
+    "authority": [
+      "SIGNED_SOURCE_RELOAD_DURATION",
+      "SIGNED_POLICY_EXPIRATION",
+      "FAIL_CLOSED_ROUTE_DISABLEMENT"
+    ],
+    "export": [
+      "IN_FLIGHT_COUNT",
+      "LATEST_RESULT"
+    ],
+    "acceptance": [
+      "VALID_BUILD_SESSION_POST_SERVER_ERRORS",
+      "VALID_BUILD_SESSION_POST_LATENCY"
+    ]
+  },
+  "boundaries": {
+    "closes": [
+      "OPS-001/A1-ALERT-SURFACE"
+    ],
+    "doesNotClose": [
+      "OPS-001/A1",
+      "BENCHMARK_FULL_PROFILE",
+      "FAULT_MATRIX",
+      "EIGHT_HOUR_SOAK",
+      "EXTERNAL_PAGING_INTEGRATION"
+    ]
+  }
+}

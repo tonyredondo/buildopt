@@ -176,6 +176,15 @@ func validateLocalStorageFilesystem(paths ...string) error {
 	return nil
 }
 
+func storageDiskCapacity(path string) (uint64, uint64, error) {
+	var statfs unix.Statfs_t
+	if err := unix.Statfs(path, &statfs); err != nil {
+		return 0, 0, err
+	}
+	blockSize := uint64(statfs.Bsize)
+	return statfs.Blocks * blockSize, statfs.Bavail * blockSize, nil
+}
+
 func isSupportedLocalFilesystemType(filesystemType int64) bool {
 	switch filesystemType {
 	case bcachefsMagic,
