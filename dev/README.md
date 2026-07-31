@@ -515,6 +515,19 @@ deadline-aware polling, and pinned JCS/Ed25519 result verification. Only a
 trusted current PASSED result allows promotion; every failure or inconclusive
 condition blocks without remote mutation.
 
+### Customer patch workflow
+
+Validate the inert protected-branch workflow and draft-only delivery boundary:
+
+```bash
+./dev/check-customer-patch-workflow
+```
+
+The checker enforces explicit dispatch, a fork/default-branch guard, pinned
+actions, minimal job permissions, one-step token exposure, exact signed-bundle
+identity, complete PR narrative, PRELIMINARY labeling, and the absence of
+rebase, force-push, default-branch write, ready, or merge operations.
+
 ## BuildOpt OpenAPI validation
 
 Validate the `F0-017` BuildOpt control and internal cache-control APIs:

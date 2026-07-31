@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2016 # GitHub expression literals are matched verbatim.
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+buildopt_fixture="${buildopt_repo_root}/fixtures/patcher/github-materialize.yml"
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/customer-patch-workflow/v1" and
+  .trackerId == "C4-007" and
+  .trigger == "WORKFLOW_DISPATCH" and
+  .trustedDefaultBranchOnly == true and
+  .forksAllowed == false and
+  .permissions.workflowDefault == "NONE" and
+  .permissions.job == ["ACTIONS_READ", "CONTENTS_WRITE", "PULL_REQUESTS_WRITE"] and
+  .permissions.tokenExposure == "MATERIALIZE_STEP_ONLY" and
+  .artifact.source == "EXACT_WORKFLOW_RUN_AND_NAME" and
+  .artifact.signedBundleRequired == true and
+  .artifact.callerSourceAllowed == false and
+  .delivery.branch == "buildopt/<actionId>" and
+  .delivery.pullRequest == "DRAFT_ONLY" and
+  .delivery.idempotency == "actionId:bundleDigest" and
+  .delivery.bodySections == ["CHANGE", "EVIDENCE", "RISK", "VALIDATION", "EXPECTED_IMPACT", "ROLLBACK"] and
+  .delivery.impactStates == ["PRELIMINARY", "FINAL"] and
+  .delivery.preliminaryCountsAsConfirmed == false and
+  .forbidden == ["PULL_REQUEST_TARGET", "PUSH_TRIGGER", "SCHEDULE_TRIGGER", "AUTOMATIC_REBASE", "FORCE_PUSH", "DEFAULT_BRANCH_WRITE", "MARK_READY", "AUTOMATIC_MERGE"] and
+  .remoteMutationPerformedByConformance == false and
+  .closesGates == ["C4-G01", "C4-G03", "C4-G04"] and
+  .doesNotClose == ["C4-004", "C4-008", "C4-009", "C4-G05", "C4-G06"]
+' specs/customer-patch-workflow-v1.json >/dev/null
+
+for buildopt_required in \
+    '  workflow_dispatch:' \
+    'permissions: {}' \
+    'group: buildopt-patch-${{ github.repository }}' \
+    'cancel-in-progress: false' \
+    'github.event.repository.fork == false' \
+    "github.event.repository.default_branch" \
+    'actions: read' \
+    'contents: write' \
+    'pull-requests: write' \
+    'persist-credentials: false' \
+    'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' \
+    'actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16' \
+    'GITHUB_TOKEN: ${{ github.token }}' \
+    'buildopt patch materialize' \
+    '--impact-status PRELIMINARY' \
+    '--draft-only'; do
+    grep -Fq -- "${buildopt_required}" "${buildopt_fixture}"
+done
+
+for buildopt_forbidden in \
+    'pull_request_target:' \
+    'pull_request:' \
+    'push:' \
+    'schedule:' \
+    'git rebase' \
+    'git push --force' \
+    'gh pr ready' \
+    'gh pr merge'; do
+    if grep -Fq -- "${buildopt_forbidden}" "${buildopt_fixture}"; then
+        printf 'forbidden workflow operation: %s\n' "${buildopt_forbidden}" >&2
+        exit 1
+    fi
+done
+
+if [[ $(grep -Fc 'GITHUB_TOKEN:' "${buildopt_fixture}") -ne 1 ]]; then
+    printf 'GITHUB_TOKEN must be exposed to exactly one step\n' >&2
+    exit 1
+fi
+
+./dev/run --toolchain actionlint -- actionlint -no-color -pyflakes= "${buildopt_fixture}"
+./dev/check-full-relevant-validation
+printf 'C4-007 customer patch workflow OK: protected dispatch, minimal token scope, immutable branch, and draft-only PR contract\n'

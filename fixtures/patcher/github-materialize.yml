@@ -1,0 +1,72 @@
+name: BuildOpt patch materialization
+
+on:
+  workflow_dispatch:
+    inputs:
+      source-run-id:
+        description: Trusted validation workflow run containing the signed bundle
+        required: true
+        type: string
+      bundle-artifact-name:
+        description: Exact signed PatchBundle artifact name
+        required: true
+        type: string
+      action-id:
+        description: Action identity bound into the signed bundle
+        required: true
+        type: string
+      trusted-revision:
+        description: Full validated source revision bound into the signed bundle
+        required: true
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: buildopt-patch-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  materialize-draft:
+    if: >-
+      github.event.repository.fork == false &&
+      github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Check out protected workflow revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Download exact signed bundle
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
+        with:
+          name: ${{ inputs['bundle-artifact-name'] }}
+          path: ${{ runner.temp }}/buildopt-patch-bundle
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs['source-run-id'] }}
+      - name: Materialize immutable branch and draft pull request
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          BUILDOPT_PATCH_PUBLIC_KEY_X509: ${{ vars.BUILDOPT_PATCH_PUBLIC_KEY_X509 }}
+          BUILDOPT_ACTION_ID: ${{ inputs['action-id'] }}
+          BUILDOPT_TRUSTED_REVISION: ${{ inputs['trusted-revision'] }}
+        run: |
+          set -euo pipefail
+          buildopt patch materialize \
+            --bundle-root "$RUNNER_TEMP/buildopt-patch-bundle" \
+            --repository "$GITHUB_WORKSPACE" \
+            --repository-id "$GITHUB_REPOSITORY_ID" \
+            --github-repository "$GITHUB_REPOSITORY" \
+            --default-branch "$GITHUB_REF_NAME" \
+            --action-id "$BUILDOPT_ACTION_ID" \
+            --trusted-revision "$BUILDOPT_TRUSTED_REVISION" \
+            --impact-status PRELIMINARY \
+            --draft-only

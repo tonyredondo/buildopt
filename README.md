@@ -81,6 +81,7 @@ From the repository root:
 ./dev/check-archive-reproducibility-recipe
 ./dev/check-patch-candidate-validation
 ./dev/check-full-relevant-validation
+./dev/check-customer-patch-workflow
 ./dev/check-bandit-policy
 ./dev/check-capability-matrix
 ./dev/check-data-lifecycle

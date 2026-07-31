@@ -10,3 +10,9 @@ candidate commits, and action refs. Its local `DraftPullRequests` adapter
 models only immutable draft-delivery state; it has no network or credentials.
 Every case verifies that the customer checkout/index remains unchanged and no
 private worktree leaks.
+
+`github-materialize.yml` is the inert C4-007 customer workflow. It is defined
+for protected-default-branch dispatch, consumes an exact signed-bundle
+artifact, and grants the short-lived GitHub token only to draft-only
+materialization. The fixture is validated as data and performs no remote
+mutation in this repository.

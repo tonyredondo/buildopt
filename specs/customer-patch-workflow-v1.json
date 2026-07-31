@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "buildopt.specs/customer-patch-workflow/v1",
+  "trackerId": "C4-007",
+  "trigger": "WORKFLOW_DISPATCH",
+  "trustedDefaultBranchOnly": true,
+  "forksAllowed": false,
+  "permissions": {
+    "workflowDefault": "NONE",
+    "job": ["ACTIONS_READ", "CONTENTS_WRITE", "PULL_REQUESTS_WRITE"],
+    "tokenExposure": "MATERIALIZE_STEP_ONLY"
+  },
+  "artifact": {
+    "source": "EXACT_WORKFLOW_RUN_AND_NAME",
+    "signedBundleRequired": true,
+    "callerSourceAllowed": false
+  },
+  "delivery": {
+    "branch": "buildopt/<actionId>",
+    "pullRequest": "DRAFT_ONLY",
+    "idempotency": "actionId:bundleDigest",
+    "bodySections": ["CHANGE", "EVIDENCE", "RISK", "VALIDATION", "EXPECTED_IMPACT", "ROLLBACK"],
+    "impactStates": ["PRELIMINARY", "FINAL"],
+    "preliminaryCountsAsConfirmed": false
+  },
+  "forbidden": ["PULL_REQUEST_TARGET", "PUSH_TRIGGER", "SCHEDULE_TRIGGER", "AUTOMATIC_REBASE", "FORCE_PUSH", "DEFAULT_BRANCH_WRITE", "MARK_READY", "AUTOMATIC_MERGE"],
+  "remoteMutationPerformedByConformance": false,
+  "closesGates": ["C4-G01", "C4-G03", "C4-G04"],
+  "doesNotClose": ["C4-004", "C4-008", "C4-009", "C4-G05", "C4-G06"]
+}
