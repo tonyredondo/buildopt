@@ -1153,8 +1153,26 @@ trust/namespace limits, and HTTP `413` fallback. Real schema-v4 storage then
 proves probation-first byte eviction from 85% to 75%, verified-hit promotion,
 protected-target demotion, durable 30-day TTL, physical orphan cleanup,
 transactional v3 migration, and operational quota signals. Phase-sequenced
-closure still requires consuming it in the broader fault benchmark; the soak
-also remains separate.
+closure is supplied by the benchmark-bound disk-fault checker below; the soak
+remains separate.
+
+## Private-beta disk faults
+
+Execute the high-watermark and out-of-space rows from the pinned benchmark:
+
+```bash
+./dev/check-beta-disk-faults
+```
+
+The checker publishes nine real HTTP objects into a 1,000-byte Shared store,
+crosses the 850-byte high mark, and proves probation authority and physical
+bytes are evicted to 700 bytes below the 750-byte low mark. A separate
+loopback PUT sees only 50 bytes available, returns `413` for a declared
+60-byte body before the transport reads any body byte, leaves no partial
+authority, and recovers to `201` after availability returns. Eight raw private
+observations and their summary are bound to the benchmark digest and checked
+for strict decoding and tamper rejection. The other 13 faults, sustained load,
+soak, and complete operational gate remain open.
 
 ## Private-beta benchmark harness
 

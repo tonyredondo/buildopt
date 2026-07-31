@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "buildopt.specs/beta-disk-faults/v1",
+  "gateId": "OPS-001/A1",
+  "deliverableId": "A1-003",
+  "exitGateId": "A1-G03",
+  "manifest": "benchmarks/beta-v1.yaml",
+  "commands": {
+    "run": "beta-benchmark disk-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH",
+    "validate": "beta-benchmark validate-disk-faults --manifest PATH --result PATH"
+  },
+  "faults": [
+    {
+      "id": "DISK_HIGH_WATERMARK",
+      "expectedSafety": "EVICT_TO_LOW_OR_STOP_PUT",
+      "triggerSequence": 1,
+      "events": [
+        "PROJECTED_HIGH_WATERMARK",
+        "EVICTED_TO_LOW_WATERMARK",
+        "AUTHORITY_REMOVED_BEFORE_BLOB_CLEANUP",
+        "PHYSICAL_ORPHANS_COLLECTED"
+      ],
+      "recovery": "EVICTED_TO_LOW_AND_VERIFIED"
+    },
+    {
+      "id": "DISK_OUT_OF_SPACE",
+      "expectedSafety": "STOP_PUT_BEFORE_READ_CORRUPTION",
+      "triggerSequence": 5,
+      "events": [
+        "DISK_AVAILABILITY_BELOW_REQUEST",
+        "PUT_REJECTED_BEFORE_BODY_READ",
+        "NO_PARTIAL_AUTHORITY",
+        "PUT_RECOVERED_AFTER_AVAILABILITY"
+      ],
+      "recovery": "PUT_ACCEPTED_AFTER_DISK_RECOVERY"
+    }
+  ],
+  "execution": {
+    "qualification": "FAULT_SLICE",
+    "transport": "REAL_LOOPBACK_HTTP",
+    "storage": "REAL_SINGLE_NODE_SHARED",
+    "capacityBytes": 1000,
+    "objectBytes": 100,
+    "highWatermarkBytes": 850,
+    "lowWatermarkBytes": 750,
+    "stableBytesBeforeTrigger": 800,
+    "stableBytesAfterEviction": 700,
+    "physicallyCollectedBlobs": 2,
+    "outOfSpaceAvailableBytes": 50,
+    "outOfSpaceRequestBytes": 60,
+    "outOfSpaceHttpStatus": 413,
+    "rejectedBodyReadBytes": 0,
+    "recoveryHttpStatus": 201
+  },
+  "evidence": {
+    "rawSchema": "buildopt.benchmarks/disk-fault-observation/v1",
+    "resultSchema": "buildopt.benchmarks/disk-fault-result/v1",
+    "rawObservations": 8,
+    "privateMode": "0600",
+    "manifestDigestBound": true,
+    "rawDigestBound": true,
+    "unknownFieldsRejected": true,
+    "tamperRejected": true
+  },
+  "boundaries": {
+    "closes": [
+      "OPS-001/A1-DISK-FAULTS",
+      "A1-003",
+      "A1-G03"
+    ],
+    "doesNotClose": [
+      "OPS-001/A1",
+      "A1-G02",
+      "A1-G04",
+      "FAULT_MATRIX_REMAINING_13",
+      "SUSTAINED_60_MINUTES",
+      "EIGHT_HOUR_SOAK",
+      "GOLDEN_LANE_RESULT"
+    ]
+  }
+}

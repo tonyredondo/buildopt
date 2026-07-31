@@ -552,12 +552,13 @@ func benchmarkHTTPClient(clients int) *http.Client {
 	return &http.Client{
 		Timeout: 30 * time.Second,
 		Transport: &http.Transport{
-			Proxy:               nil,
-			DialContext:         (&net.Dialer{Timeout: 2 * time.Second}).DialContext,
-			MaxIdleConns:        clients,
-			MaxIdleConnsPerHost: clients,
-			MaxConnsPerHost:     clients,
-			IdleConnTimeout:     30 * time.Second,
+			Proxy:                 nil,
+			DialContext:           (&net.Dialer{Timeout: 2 * time.Second}).DialContext,
+			MaxIdleConns:          clients,
+			MaxIdleConnsPerHost:   clients,
+			MaxConnsPerHost:       clients,
+			IdleConnTimeout:       30 * time.Second,
+			ExpectContinueTimeout: time.Second,
 		},
 		CheckRedirect: func(
 			_ *http.Request,

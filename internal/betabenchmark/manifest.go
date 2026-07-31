@@ -1,5 +1,6 @@
-// Package betabenchmark executes and validates the reproducible private-beta
-// workload without promoting smoke evidence to the full operational gate.
+// Package betabenchmark executes and validates reproducible private-beta
+// workload slices without promoting partial evidence to the full operational
+// gate.
 package betabenchmark
 
 import (

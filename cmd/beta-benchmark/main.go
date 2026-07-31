@@ -12,7 +12,7 @@ import (
 	"github.com/tonyredondo/buildopt/internal/betabenchmark"
 )
 
-const usage = "usage: beta-benchmark smoke --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark validate --manifest PATH --result PATH\n"
+const usage = "usage: beta-benchmark smoke --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark disk-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH\n       beta-benchmark validate --manifest PATH --result PATH\n       beta-benchmark validate-disk-faults --manifest PATH --result PATH\n"
 
 func main() {
 	ctx, stop := signal.NotifyContext(
@@ -35,8 +35,8 @@ func run(
 		return 64
 	}
 	switch args[0] {
-	case "smoke":
-		flags := flag.NewFlagSet("beta-benchmark smoke", flag.ContinueOnError)
+	case "smoke", "disk-faults":
+		flags := flag.NewFlagSet("beta-benchmark "+args[0], flag.ContinueOnError)
 		flags.SetOutput(io.Discard)
 		manifest := flags.String("manifest", "", "benchmark manifest")
 		stateDirectory := flags.String(
@@ -57,21 +57,39 @@ func run(
 			_, _ = io.WriteString(stderr, usage)
 			return 64
 		}
-		result, err := betabenchmark.RunSmoke(
-			ctx,
-			*manifest,
-			*stateDirectory,
-			*outputDirectory,
+		var (
+			result string
+			err    error
 		)
+		if args[0] == "smoke" {
+			result, err = betabenchmark.RunSmoke(
+				ctx,
+				*manifest,
+				*stateDirectory,
+				*outputDirectory,
+			)
+		} else {
+			result, err = betabenchmark.RunDiskFaults(
+				ctx,
+				*manifest,
+				*stateDirectory,
+				*outputDirectory,
+			)
+		}
 		if err != nil {
 			_, _ = fmt.Fprintf(stderr, "beta-benchmark: %v\n", err)
 			return 1
 		}
-		_, _ = fmt.Fprintf(stdout, "benchmark smoke result: %s\n", result)
+		_, _ = fmt.Fprintf(
+			stdout,
+			"benchmark %s result: %s\n",
+			args[0],
+			result,
+		)
 		return 0
-	case "validate":
+	case "validate", "validate-disk-faults":
 		flags := flag.NewFlagSet(
-			"beta-benchmark validate",
+			"beta-benchmark "+args[0],
 			flag.ContinueOnError,
 		)
 		flags.SetOutput(io.Discard)
@@ -84,11 +102,17 @@ func run(
 			_, _ = io.WriteString(stderr, usage)
 			return 64
 		}
-		if err := betabenchmark.ValidateResult(*manifest, *result); err != nil {
+		var err error
+		if args[0] == "validate" {
+			err = betabenchmark.ValidateResult(*manifest, *result)
+		} else {
+			err = betabenchmark.ValidateDiskFaultResult(*manifest, *result)
+		}
+		if err != nil {
 			_, _ = fmt.Fprintf(stderr, "beta-benchmark: %v\n", err)
 			return 1
 		}
-		_, _ = io.WriteString(stdout, "benchmark smoke result valid\n")
+		_, _ = fmt.Fprintf(stdout, "benchmark %s result valid\n", args[0])
 		return 0
 	default:
 		_, _ = io.WriteString(stderr, usage)

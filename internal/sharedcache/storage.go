@@ -80,6 +80,11 @@ type MetadataStore interface {
 	IntegrityCheck(context.Context) error
 }
 
+// DiskCapacityProbe reports total and currently available bytes for one
+// storage root. Production opens use the host filesystem probe; deterministic
+// benchmark fault runs may inject a reduced availability reading at open time.
+type DiskCapacityProbe func(root string) (total uint64, available uint64, err error)
+
 // Storage owns the process-wide writer lease, immutable blobs, and the two
 // deliberately independent SQLite lifecycles.
 type Storage struct {
@@ -147,6 +152,34 @@ func OpenWithCapacity(
 		)
 	}
 	return openWithConfiguration(ctx, root, maximumBlobBytes, capacity)
+}
+
+// OpenWithCapacityProbe prepares reduced-capacity storage with an explicit
+// disk probe. It is limited to deterministic in-repository benchmark fault
+// execution; normal deployments must use Open or OpenWithCapacity.
+func OpenWithCapacityProbe(
+	ctx context.Context,
+	root string,
+	maximumBlobBytes int64,
+	capacity CapacityPolicy,
+	probe DiskCapacityProbe,
+) (*Storage, error) {
+	if probe == nil {
+		return nil, errors.New(
+			"open single-node Shared storage: disk capacity probe is nil",
+		)
+	}
+	storage, err := OpenWithCapacity(
+		ctx,
+		root,
+		maximumBlobBytes,
+		capacity,
+	)
+	if err != nil {
+		return nil, err
+	}
+	storage.testHooks.diskCapacity = probe
+	return storage, nil
 }
 
 func openWithConfiguration(

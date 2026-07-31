@@ -8,6 +8,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`gradle-correlation-v1.md`](./gradle-correlation-v1.md) | `SPK-001` / `GRADLE-CORR-001` |
 | [`benchmark-beta-v1.md`](./benchmark-beta-v1.md) | `F0-032` |
 | [`beta-benchmark-harness-v1.md`](./beta-benchmark-harness-v1.md) | `OPS-001/A1` |
+| [`beta-disk-faults-v1.md`](./beta-disk-faults-v1.md) | `A1-003` / `A1-G03` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`patch-bundle-v1.md`](./patch-bundle-v1.md) | `F0-034` |
 | [`bandit-policy-v1.md`](./bandit-policy-v1.md) | `F0-035` |
@@ -89,6 +90,9 @@ activation/recovery without exposing sensitive values.
 `beta-benchmark-harness-v1.json` is the OPS-001/A1 executable smoke contract
 for all phase/client strata, real Shared HTTP publication/read paths, private
 raw observations, digest-bound summaries, and explicit non-qualification.
+`beta-disk-faults-v1.json` is the exact benchmark-bound high-watermark and
+out-of-space fault slice with raw trigger/recovery observations, zero-body-read
+admission rejection, byte eviction to low, and tamper-evident validation.
 `managed-l1-v1.json` is the A0-003 launcher/settings-plugin contract for
 opaque scope binding, native retention, generation directories, exclusive
 leases, and L2-writer local disablement.
