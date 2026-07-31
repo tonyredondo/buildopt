@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 2)) ||
+    [[ ! "$1" =~ ^http://127[.]0[.]0[.]1:[0-9]+$ ]] ||
+    [[ ! "$2" =~ ^[1-9][0-9]*$ ]]; then
+    printf 'usage: %s http://127.0.0.1:<port> <server-pid>\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_endpoint=$1
+buildopt_server_pid=$2
+if ! command -v curl >/dev/null 2>&1; then
+    printf 'curl is required to probe buildopt-server readiness\n' >&2
+    exit 1
+fi
+
+buildopt_deadline=$((SECONDS + 60))
+while ((SECONDS < buildopt_deadline)); do
+    if ! kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        printf 'buildopt-server exited before readiness\n' >&2
+        exit 1
+    fi
+    set +e
+    buildopt_status=$(
+        curl \
+            --silent \
+            --show-error \
+            --output /dev/null \
+            --write-out '%{http_code}' \
+            --connect-timeout 1 \
+            --max-time 1 \
+            --noproxy '*' \
+            "${buildopt_endpoint}/readyz" 2>/dev/null
+    )
+    buildopt_curl_exit=$?
+    set -e
+    if ((buildopt_curl_exit == 0)) &&
+        [[ "${buildopt_status}" == "200" ]]; then
+        exit 0
+    fi
+    sleep 0.05
+done
+
+printf 'buildopt-server readiness timed out\n' >&2
+exit 1

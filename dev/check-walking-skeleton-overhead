@@ -172,6 +172,12 @@ if [[ -z "${buildopt_endpoint}" ]]; then
     grep -vF -- "${buildopt_token}" "${buildopt_server_log}" >&2 || true
     exit 1
 fi
+if ! "${buildopt_script_dir}/wait-server-ready" \
+    "${buildopt_endpoint}" \
+    "${buildopt_server_pid}"; then
+    grep -vF -- "${buildopt_token}" "${buildopt_server_log}" >&2 || true
+    exit 1
+fi
 
 buildopt_fixture="${buildopt_test_root}/fixture"
 buildopt_observations="${buildopt_test_root}/observations"

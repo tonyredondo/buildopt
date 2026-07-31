@@ -316,7 +316,14 @@ buildopt_start_server() {
         fi
         sleep 0.05
     done
-    if [[ -z "${buildopt_endpoint}" ]] ||
+    if [[ -z "${buildopt_endpoint}" ]]; then
+        printf 'packaged server did not expose its loopback endpoint\n' >&2
+        grep -vF -- "${buildopt_token}" "${buildopt_server_log}" >&2 || true
+        exit 1
+    fi
+    if ! "${buildopt_source}/dev/wait-server-ready" \
+        "${buildopt_endpoint}" \
+        "${buildopt_server_pid}" ||
         ! grep -Fq \
             'single-node Shared storage initialized and reconciled with cache/control schema 3' \
             "${buildopt_server_log}"; then

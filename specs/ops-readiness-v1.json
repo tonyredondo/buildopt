@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.specs/ops-readiness/v1",
+  "gateId": "OPS-001/A1",
+  "health": {
+    "livenessPath": "/livez",
+    "readinessPath": "/readyz",
+    "livenessDuringReconciliation": 200,
+    "readinessDuringReconciliation": 503,
+    "applicationDuringReconciliation": 503,
+    "readinessAfterReconciliation": 200,
+    "readinessDuringShutdown": 503
+  },
+  "authorityReload": {
+    "source": "EXTERNALLY_SIGNED_LOCAL_FILES",
+    "pollIntervalMilliseconds": 1000,
+    "maximumPropagationSeconds": 60,
+    "monotonic": true,
+    "oldAuthorityStatus": 401,
+    "newAuthorityMissStatus": 404,
+    "invalidOrExpiredReadiness": 503
+  },
+  "boundaries": {
+    "closes": [
+      "OPS-001/A1-READINESS-REVOCATION"
+    ],
+    "doesNotClose": [
+      "OPS-001/A1",
+      "BENCHMARK_FULL_PROFILE",
+      "FAULT_MATRIX",
+      "EIGHT_HOUR_SOAK",
+      "ALERT_DELIVERY"
+    ]
+  }
+}

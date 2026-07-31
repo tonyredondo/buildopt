@@ -126,6 +126,7 @@ From the repository root:
 ./dev/uninstall-toolchains --toolchain go
 ./dev/check-release-package
 ./dev/check-deployment-lifecycle
+./dev/check-ops-readiness
 ./dev/check-github-action
 ./dev/check-base-runbooks
 ./dev/run -- ./dev/check-jvm-release

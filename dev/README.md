@@ -1099,6 +1099,28 @@ explicit destructive choice. See
 the complete contract. Public release publication, online revocation, and the
 pilot operational profile remain later work.
 
+## Operational readiness and revocation
+
+Exercise the first `OPS-001/A1` operational slice:
+
+```bash
+./dev/check-ops-readiness
+```
+
+The server binds its loopback listener before Shared reconciliation, reports
+`200` from `/livez`, and keeps `/readyz` plus every product route at `503`
+until storage and the externally signed authority are safe. Shutdown disables
+readiness before draining.
+
+With authenticated cache routing enabled, the server fingerprints and
+revalidates the authority, trust root, and credential files every second. The
+race-enabled fixture atomically publishes a higher signed revocation epoch,
+observes propagation within the 60-second limit, rejects the old authority
+with `401`, and serves the new authority only as a safe miss. Invalid, expired,
+or rolled-back state disables readiness. The full benchmark/fault/soak and
+alert profile remains open; see
+[`specs/ops-readiness-v1.md`](../specs/ops-readiness-v1.md).
+
 ## GitHub Action validation
 
 Exercise the Action metadata, immutable fixture lock, offline installer, and

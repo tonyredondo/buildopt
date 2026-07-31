@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/ops-readiness-v1.json"
+
+if ! command -v jq >/dev/null 2>&1; then
+    printf 'jq is required to validate the operations readiness contract\n' >&2
+    exit 1
+fi
+if ! jq -e '
+    keys == [
+        "authorityReload",
+        "boundaries",
+        "gateId",
+        "health",
+        "schemaVersion"
+    ] and
+    .schemaVersion == "buildopt.specs/ops-readiness/v1" and
+    .gateId == "OPS-001/A1" and
+    .health == {
+        livenessPath: "/livez",
+        readinessPath: "/readyz",
+        livenessDuringReconciliation: 200,
+        readinessDuringReconciliation: 503,
+        applicationDuringReconciliation: 503,
+        readinessAfterReconciliation: 200,
+        readinessDuringShutdown: 503
+    } and
+    .authorityReload == {
+        source: "EXTERNALLY_SIGNED_LOCAL_FILES",
+        pollIntervalMilliseconds: 1000,
+        maximumPropagationSeconds: 60,
+        monotonic: true,
+        oldAuthorityStatus: 401,
+        newAuthorityMissStatus: 404,
+        invalidOrExpiredReadiness: 503
+    } and
+    .boundaries == {
+        closes: ["OPS-001/A1-READINESS-REVOCATION"],
+        doesNotClose: [
+            "OPS-001/A1",
+            "BENCHMARK_FULL_PROFILE",
+            "FAULT_MATRIX",
+            "EIGHT_HOUR_SOAK",
+            "ALERT_DELIVERY"
+        ]
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'operations readiness contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test \
+    -count=1 \
+    -race \
+    -run \
+    '^(TestOperationalRouterSeparatesLivenessAndReadiness|TestOperationalRouterRejectsMutationMethods|TestServerIsLiveButNotReadyDuringSharedReconciliation|TestBuildoptServerOwnsSingleNodeSharedStorageLifecycle|TestBuildoptServerRoutesOnlyAuthenticatedCurrentCacheAuthority)$' \
+    ./cmd/buildopt-server
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./cmd/buildopt-server
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'operations readiness checker changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'OPS-001/A1 readiness slice OK: live-before-ready, reconciled activation, signed reload under 60s, revoked 401, and current safe miss\n'

@@ -117,6 +117,12 @@ if [[ -z "${buildopt_endpoint}" ]]; then
     cat "${buildopt_server_log}" >&2
     exit 1
 fi
+if ! "${buildopt_script_dir}/wait-server-ready" \
+    "${buildopt_endpoint}" \
+    "${buildopt_server_pid}"; then
+    cat "${buildopt_server_log}" >&2
+    exit 1
+fi
 
 buildopt_failure_log="${buildopt_test_root}/failure.log"
 set +e

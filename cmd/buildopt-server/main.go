@@ -17,7 +17,6 @@ import (
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/buildsession"
-	"github.com/tonyredondo/buildopt/internal/localauthority"
 	"github.com/tonyredondo/buildopt/internal/sessioningest"
 	"github.com/tonyredondo/buildopt/internal/sharedcache"
 )
@@ -27,6 +26,8 @@ const (
 	exitConfiguration = 78
 	serverUsage       = "usage: buildopt-server serve [--listen 127.0.0.1:8042] [--export-dir PATH] [--state-dir ABSOLUTE_PATH] [--cache-authority ABSOLUTE_PATH --cache-trust-root ABSOLUTE_PATH --cache-credential ABSOLUTE_PATH]\n       buildopt-server export --export-dir PATH [--format jsonl]\n"
 )
+
+var openSharedStorage = sharedcache.Open
 
 func main() {
 	ctx, stop := signal.NotifyContext(
@@ -123,16 +124,112 @@ func run(
 		exporter = configuredExporter
 	}
 
+	if *stateDirectory != "" && !filepath.IsAbs(*stateDirectory) {
+		_, _ = fmt.Fprintln(
+			stderr,
+			"buildopt-server: invalid Shared storage configuration: state directory must be absolute",
+		)
+		return exitConfiguration
+	}
+	cacheConfigurationValues := []string{
+		*cacheAuthorityPath,
+		*cacheTrustRootPath,
+		*cacheCredentialPath,
+	}
+	cacheConfigured := false
+	cacheComplete := true
+	for _, value := range cacheConfigurationValues {
+		cacheConfigured = cacheConfigured || value != ""
+		cacheComplete = cacheComplete && value != ""
+	}
+	if cacheConfigured && (!cacheComplete || *stateDirectory == "") {
+		_, _ = fmt.Fprintln(
+			stderr,
+			"buildopt-server: authenticated Shared cache requires state directory, authority, trust root, and credential",
+		)
+		return exitConfiguration
+	}
+
+	ingestStore := sessioningest.NewStore()
+	logger := log.New(stdout, "buildopt-server: ", 0)
+	ingestHandler, err := sessioningest.NewHandler(
+		getenv(sessioningest.ServerTokenEnvironment),
+		ingestStore,
+		func(record sessioningest.Record, result sessioningest.PutResult) {
+			action := "accepted"
+			if result == sessioningest.PutDuplicate {
+				action = "deduplicated"
+			}
+			logger.Printf(
+				"%s session %s outcome=%s exit=%d",
+				action,
+				record.SessionID,
+				record.Outcome,
+				record.ExitCode,
+			)
+			if exporter == nil {
+				return
+			}
+			path, created, exportErr := exporter.Export(record)
+			if exportErr != nil {
+				logger.Printf(
+					"BUILD_SESSION export unavailable for session %s: %v",
+					record.SessionID,
+					exportErr,
+				)
+				return
+			}
+			exportAction := "retained"
+			if created {
+				exportAction = "published"
+			}
+			logger.Printf(
+				"%s BUILD_SESSION %s as %s",
+				exportAction,
+				record.SessionID,
+				filepath.Base(path),
+			)
+		},
+	)
+	if err != nil {
+		_, _ = fmt.Fprintln(
+			stderr,
+			"buildopt-server: invalid session ingest configuration",
+		)
+		return exitConfiguration
+	}
+
+	listener, err := net.Listen("tcp4", *listenAddress)
+	if err != nil {
+		_, _ = fmt.Fprintf(stderr, "buildopt-server: cannot listen: %v\n", err)
+		return 1
+	}
+	defer listener.Close()
+
+	operational := &operationalRouter{}
+	server := &http.Server{
+		Handler:           operational,
+		ReadHeaderTimeout: 2 * time.Second,
+		ReadTimeout:       5 * time.Second,
+		WriteTimeout:      5 * time.Second,
+		IdleTimeout:       15 * time.Second,
+		MaxHeaderBytes:    16 << 10,
+		ErrorLog:          log.New(stderr, "buildopt-server: ", 0),
+	}
+	defer server.Close()
+	serveDone := make(chan error, 1)
+	go func() {
+		serveErr := server.Serve(listener)
+		if errors.Is(serveErr, http.ErrServerClosed) {
+			serveErr = nil
+		}
+		serveDone <- serveErr
+	}()
+	logger.Printf("listening on http://%s", listener.Addr())
+
 	var sharedStorage *sharedcache.Storage
 	if *stateDirectory != "" {
-		if !filepath.IsAbs(*stateDirectory) {
-			_, _ = fmt.Fprintln(
-				stderr,
-				"buildopt-server: invalid Shared storage configuration: state directory must be absolute",
-			)
-			return exitConfiguration
-		}
-		configuredStorage, storageErr := sharedcache.Open(
+		configuredStorage, storageErr := openSharedStorage(
 			ctx,
 			filepath.Clean(*stateDirectory),
 		)
@@ -159,34 +256,21 @@ func run(
 		}()
 	}
 
-	cacheConfigurationValues := []string{
-		*cacheAuthorityPath,
-		*cacheTrustRootPath,
-		*cacheCredentialPath,
-	}
-	cacheConfigured := false
-	cacheComplete := true
-	for _, value := range cacheConfigurationValues {
-		cacheConfigured = cacheConfigured || value != ""
-		cacheComplete = cacheComplete && value != ""
-	}
-	if cacheConfigured && (!cacheComplete || sharedStorage == nil) {
-		_, _ = fmt.Fprintln(
-			stderr,
-			"buildopt-server: authenticated Shared cache requires state directory, authority, trust root, and credential",
-		)
-		return exitConfiguration
-	}
-
 	var cacheHandler http.Handler
+	var cacheSwitch *switchableHandler
+	var cacheAuthority loadedAuthority
+	var cachePaths authorityPaths
 	if cacheConfigured {
-		now := time.Now().UTC()
-		verified, _, credential, authorityErr := localauthority.LoadFiles(
+		cachePaths = authorityPaths{
+			document:   *cacheAuthorityPath,
+			trustRoot:  *cacheTrustRootPath,
+			credential: *cacheCredentialPath,
+		}
+		loaded, authorityErr := loadServerAuthority(
 			ctx,
-			*cacheAuthorityPath,
-			*cacheTrustRootPath,
-			*cacheCredentialPath,
-			now,
+			sharedStorage,
+			cachePaths,
+			time.Now().UTC(),
 		)
 		if authorityErr != nil {
 			_, _ = fmt.Fprintf(
@@ -196,112 +280,33 @@ func run(
 			)
 			return exitConfiguration
 		}
-		binding, _, authorityErr := sharedStorage.InstallLocalAuthority(
-			ctx,
-			verified,
-			credential,
-			now,
-		)
-		if authorityErr == nil {
-			cacheHandler, authorityErr =
-				sharedcache.NewLocalAuthorityHTTPHandler(
-					sharedStorage,
-					binding,
-					credential,
-				)
-		}
-		for index := range credential {
-			credential[index] = 0
-		}
-		if authorityErr != nil {
-			_, _ = fmt.Fprintf(
-				stderr,
-				"buildopt-server: local cache authority unavailable: %v\n",
-				authorityErr,
-			)
-			return exitConfiguration
-		}
+		cacheAuthority = loaded
+		cacheSwitch = &switchableHandler{}
+		cacheSwitch.set(loaded.handler)
+		cacheHandler = cacheSwitch
 	}
 
-	ingestStore := sessioningest.NewStore()
-	logger := log.New(stdout, "buildopt-server: ", 0)
-	ingestHandler, err := sessioningest.NewHandler(
-		getenv(sessioningest.ServerTokenEnvironment),
-		ingestStore,
-		func(record sessioningest.Record, result sessioningest.PutResult) {
-			action := "accepted"
-			if result == sessioningest.PutDuplicate {
-				action = "deduplicated"
-			}
-			logger.Printf(
-				"%s session %s outcome=%s exit=%d",
-				action,
-				record.SessionID,
-				record.Outcome,
-				record.ExitCode,
-			)
-			if exporter == nil {
-				return
-			}
-			path, created, err := exporter.Export(record)
-			if err != nil {
-				logger.Printf(
-					"BUILD_SESSION export unavailable for session %s: %v",
-					record.SessionID,
-					err,
-				)
-				return
-			}
-			exportAction := "retained"
-			if created {
-				exportAction = "published"
-			}
-			logger.Printf(
-				"%s BUILD_SESSION %s as %s",
-				exportAction,
-				record.SessionID,
-				filepath.Base(path),
-			)
-		},
-	)
-	if err != nil {
-		_, _ = fmt.Fprintln(
-			stderr,
-			"buildopt-server: invalid session ingest configuration",
-		)
-		return exitConfiguration
-	}
 	handler := http.NewServeMux()
 	if cacheHandler != nil {
 		handler.Handle("/cache/", cacheHandler)
 	}
 	handler.Handle("/", ingestHandler)
-
-	listener, err := net.Listen("tcp4", *listenAddress)
-	if err != nil {
-		_, _ = fmt.Fprintf(stderr, "buildopt-server: cannot listen: %v\n", err)
-		return 1
+	operational.activate(handler)
+	reloadContext, cancelReload := context.WithCancel(ctx)
+	defer cancelReload()
+	if cacheSwitch != nil {
+		go watchServerAuthority(
+			reloadContext,
+			sharedStorage,
+			cachePaths,
+			cacheAuthority,
+			cacheSwitch,
+			operational,
+			handler,
+			logger,
+			authorityReloadInterval,
+		)
 	}
-	defer listener.Close()
-
-	server := &http.Server{
-		Handler:           handler,
-		ReadHeaderTimeout: 2 * time.Second,
-		ReadTimeout:       5 * time.Second,
-		WriteTimeout:      5 * time.Second,
-		IdleTimeout:       15 * time.Second,
-		MaxHeaderBytes:    16 << 10,
-		ErrorLog:          log.New(stderr, "buildopt-server: ", 0),
-	}
-	serveDone := make(chan error, 1)
-	go func() {
-		err := server.Serve(listener)
-		if errors.Is(err, http.ErrServerClosed) {
-			err = nil
-		}
-		serveDone <- err
-	}()
-	logger.Printf("listening on http://%s", listener.Addr())
 	if sharedStorage != nil {
 		if cacheHandler == nil {
 			logger.Printf(
@@ -324,6 +329,7 @@ func run(
 		}
 		return 0
 	case <-ctx.Done():
+		operational.deactivate()
 		shutdownContext, cancel := context.WithTimeout(
 			context.Background(),
 			5*time.Second,

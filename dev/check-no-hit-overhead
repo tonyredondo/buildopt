@@ -347,6 +347,12 @@ if [[ -z "${buildopt_server_endpoint}" ]]; then
     printf 'buildopt-server did not become ready for no-hit measurement\n' >&2
     exit 1
 fi
+if ! "${buildopt_script_dir}/wait-server-ready" \
+    "${buildopt_server_endpoint}" \
+    "${buildopt_server_pid}"; then
+    sed -n '1,160p' "${buildopt_server_log}" >&2
+    exit 1
+fi
 
 buildopt_native_workspace="${buildopt_test_root}/native"
 buildopt_wrapper_workspace="${buildopt_test_root}/wrapper"

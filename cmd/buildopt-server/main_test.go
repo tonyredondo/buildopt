@@ -324,10 +324,14 @@ func TestBuildoptServerRoutesOnlyAuthenticatedCurrentCacheAuthority(
 	}
 	endpoint := serverEndpointFromOutput(t, output.String())
 
-	requestCache := func(authorized bool) int {
+	requestCache := func(
+		method string,
+		digest string,
+		authorized bool,
+	) int {
 		t.Helper()
 		request, err := http.NewRequest(
-			http.MethodPut,
+			method,
 			endpoint+"/cache/authority-key",
 			strings.NewReader("candidate"),
 		)
@@ -342,7 +346,7 @@ func TestBuildoptServerRoutesOnlyAuthenticatedCurrentCacheAuthority(
 			)
 			request.Header.Set(
 				sharedcache.AuthorityDigestHeader,
-				authorityDigest,
+				digest,
 			)
 		}
 		response, err := http.DefaultClient.Do(request)
@@ -352,11 +356,57 @@ func TestBuildoptServerRoutesOnlyAuthenticatedCurrentCacheAuthority(
 		defer response.Body.Close()
 		return response.StatusCode
 	}
-	if status := requestCache(false); status != http.StatusUnauthorized {
+	if status := requestCache(
+		http.MethodPut,
+		authorityDigest,
+		false,
+	); status != http.StatusUnauthorized {
 		t.Fatalf("unauthenticated cache status = %d, want 401", status)
 	}
-	if status := requestCache(true); status != http.StatusCreated {
+	if status := requestCache(
+		http.MethodPut,
+		authorityDigest,
+		true,
+	); status != http.StatusCreated {
 		t.Fatalf("authenticated cache status = %d, want 201", status)
+	}
+
+	reloadStarted := time.Now()
+	nextAuthorityDigest := advanceServerAuthorityFixture(
+		t,
+		authorityPath,
+		reloadStarted,
+	)
+	reloadMessage := "local cache authority reloaded: " +
+		nextAuthorityDigest
+	deadline = time.Now().Add(5 * time.Second)
+	for !strings.Contains(output.String(), reloadMessage) {
+		if time.Now().After(deadline) {
+			t.Fatalf(
+				"authority did not reload: %q/%q",
+				output.String(),
+				stderr.String(),
+			)
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	if elapsed := time.Since(reloadStarted); elapsed >= 60*time.Second {
+		t.Fatalf("authority reload took %s, want <60s", elapsed)
+	}
+	requireServerStatus(t, endpoint+readinessPath, http.StatusOK)
+	if status := requestCache(
+		http.MethodPut,
+		authorityDigest,
+		true,
+	); status != http.StatusUnauthorized {
+		t.Fatalf("revoked authority status = %d, want 401", status)
+	}
+	if status := requestCache(
+		http.MethodGet,
+		nextAuthorityDigest,
+		true,
+	); status != http.StatusNotFound {
+		t.Fatalf("current authority miss status = %d, want 404", status)
 	}
 
 	cancel()
@@ -372,6 +422,74 @@ func TestBuildoptServerRoutesOnlyAuthenticatedCurrentCacheAuthority(
 	case <-time.After(3 * time.Second):
 		t.Fatal("authenticated server did not stop")
 	}
+}
+
+func advanceServerAuthorityFixture(
+	t *testing.T,
+	authorityPath string,
+	now time.Time,
+) string {
+	t.Helper()
+	content, err := os.ReadFile(authorityPath)
+	if err != nil {
+		t.Fatalf("read authority for reload: %v", err)
+	}
+	var document localauthority.Document
+	if err := json.Unmarshal(content, &document); err != nil {
+		t.Fatalf("decode authority for reload: %v", err)
+	}
+	document.Attempt = localauthority.AuthorityAttempt{
+		AttemptID: "33333333-3333-4333-8333-333333333333",
+		OwnerID:   "protected-main",
+		LeaseID:   "lease-server-authority-2",
+		LeaseExpiresAt: now.Add(45 * time.Minute).
+			UTC().
+			Format(time.RFC3339Nano),
+		AllowRead:        true,
+		AllowWrite:       false,
+		CredentialDigest: document.Attempt.CredentialDigest,
+	}
+	document.Policy.PolicyVersion = 8
+	document.Policy.ConfigurationPolicyDigest =
+		"sha256:" + strings.Repeat("6", 64)
+	document.Policy.RevocationEpoch = 8
+	document.Policy.L1SecurityGeneration = 10
+	document.Policy.GatewayConnectionGeneration = 4
+	document.Policy.IssuedAt = now.Add(-time.Second).
+		UTC().
+		Format(time.RFC3339Nano)
+	document.Policy.RemoteCache.NamespaceGeneration = 13
+	document.Policy.ExpiresAt = now.Add(time.Hour).
+		UTC().
+		Format(time.RFC3339Nano)
+	document.Revocation.RequestID = "revocation-request-8"
+	document.Revocation.RevocationEpoch = 8
+	document.Revocation.L1SecurityGeneration = 10
+	document.Revocation.ValidUntil = now.Add(2 * time.Hour).
+		UTC().
+		Format(time.RFC3339Nano)
+
+	privateKey := ed25519.NewKeyFromSeed(bytes.Repeat([]byte{0x11}, 32))
+	authority, err := localauthority.Sign(
+		document,
+		"deployment-key-1",
+		privateKey,
+	)
+	if err != nil {
+		t.Fatalf("sign reloaded authority: %v", err)
+	}
+	var signed localauthority.Document
+	if err := json.Unmarshal(authority, &signed); err != nil {
+		t.Fatalf("decode signed reloaded authority: %v", err)
+	}
+	temporary := authorityPath + ".next"
+	if err := os.WriteFile(temporary, authority, 0o600); err != nil {
+		t.Fatalf("write reloaded authority: %v", err)
+	}
+	if err := os.Rename(temporary, authorityPath); err != nil {
+		t.Fatalf("publish reloaded authority: %v", err)
+	}
+	return signed.AuthorityDigest
 }
 
 func TestBuildoptServerReceivesAndStopsGracefully(t *testing.T) {

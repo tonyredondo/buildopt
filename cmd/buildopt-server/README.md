@@ -128,3 +128,18 @@ explicit purge with:
 ```bash
 ./dev/check-deployment-lifecycle
 ```
+
+`OPS-001/A1` separates process health from safe serving:
+
+- `GET|HEAD /livez` returns `200` while the HTTP process is responsive;
+- `GET|HEAD /readyz` returns `503` until Shared reconciliation and authority
+  loading complete, then `200`;
+- product routes return `503` whenever readiness is false;
+- a changed signed local authority is revalidated every second, with old or
+  invalid authority disabling cache routing and readiness.
+
+Validate the live-before-ready lifecycle and measured revocation propagation:
+
+```bash
+./dev/check-ops-readiness
+```
