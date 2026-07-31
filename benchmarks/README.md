@@ -51,6 +51,22 @@ This closes the owner-operated POC gate only; the result remains PRELIMINARY,
 does not authorize production promotion, and does not claim the deferred soak
 or external design-partner evidence.
 
+## Runtime owner evaluation evidence
+
+[`results/b-runtime-owner-evaluation.json`](./results/b-runtime-owner-evaluation.json)
+records the public four-CPU owner run for the Runtime Optimizer. The same run
+drives 200 durable pre-outcome A/A assignments with delayed exactly-once
+rewards, then measures four real alternating Gradle pairs for A/A and the
+finite `W4_H6G` candidate. It passes sample-ratio, p95/p99, queue, OOM,
+additional-compute, and byte-identical artifact guardrails.
+
+```bash
+./dev/check-runtime-owner-evaluation
+```
+
+This closes the owner-operated POC gates `B-G01` and `B-G03`; it does not run
+the deferred eight-hour soak or authorize production promotion.
+
 
 ## Walking-skeleton overhead evidence
 

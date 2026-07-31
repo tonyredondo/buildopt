@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/runtime-owner-evaluation-v1.json"
+buildopt_evidence="${buildopt_repo_root}/benchmarks/results/b-runtime-owner-evaluation.json"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/runtime-owner-evaluation/v1" and
+  .workItems == ["B-G01", "B-G03"] and
+  .runner == {class: "linux-amd64-4c-16g-v1", cpuCount: 4, memoryBytesMinimum: 15032385536, memoryBytesMaximum: 19327352832} and
+  .aa.measuredPairs == 4 and .aa.durableAssignments == 200 and
+  .aa.propensityBasisPoints == 5000 and .aa.rewardDelaySeconds == 3600 and
+  .aa.sampleRatioStatus == "VALID" and .aa.duplicateOutcomeUpdates == false and
+  .autotuning.measuredPairs == 4 and .autotuning.controlProfile == "STABLE_CONTROL" and
+  .autotuning.candidateProfile == "W4_H6G" and
+  .boundaries == {closes: ["B-G01", "B-G03"], doesNotClose: ["EIGHT_HOUR_SOAK", "PRODUCTION_PROMOTION"], ownerOperatedProofOfConcept: true}
+' "${buildopt_contract}" >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/runtime-owner-evaluation/v1" and
+  .capturedOn == "2026-07-31" and
+  .buildoptRevision == "7479066a9b46d3bd6d090ed5983be4fc3379f224" and
+  .workflow == {name: "Runtime Owner Evaluation", runId: 30670221394, url: "https://github.com/tonyredondo/buildopt/actions/runs/30670221394"} and
+  .runner.class == "linux-amd64-4c-16g-v1" and .runner.cpuCount == 4 and
+  (.runner.memoryBytes >= 15032385536 and .runner.memoryBytes <= 19327352832) and
+  .runner.ciQueueDeltaMs == 0 and .runner.oomBefore == .runner.oomAfter and
+  .aa.state == "PASSED" and .aa.assignments == 200 and
+  .aa.expectedPropensityBasisPoints == 5000 and .aa.sampleRatio.status == "VALID" and
+  .aa.delayedOutcomesUpdated == 200 and .aa.duplicateOutcomeUpdated == false and
+  .aa.metrics.pairs == 4 and (.aa.metrics.meanDeltaMs | fabs) <= 250 and
+  (.aa.metrics.p95DeltaMs | fabs) <= 500 and .aa.metrics.artifactDivergence == false and
+  .autotuning.state == "PASSED" and .autotuning.metrics.pairs == 4 and
+  .autotuning.metrics.meanDeltaMs > 0 and .autotuning.metrics.interval95Ms[0] > 0 and
+  .autotuning.metrics.p95DeltaMs <= 0 and .autotuning.metrics.p99DeltaMs <= 0 and
+  .autotuning.additionalComputeMs <= 0 and .autotuning.oomDelta == 0 and
+  .autotuning.metrics.artifactDivergence == false and
+  .gate == {state: "PASSED", closes: ["B-G01", "B-G03"]}
+' "${buildopt_evidence}" >/dev/null
+
+printf 'B-G01/B-G03 owner runtime evidence OK: A/A mean 77ms; autotuning saved 66ms with lower95 34ms and no guardrail regression\n'

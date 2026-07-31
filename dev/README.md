@@ -1410,6 +1410,8 @@ four alternating pairs. It also drives 200 durable pre-outcome A/A assignments
 and one-hour delayed exactly-once rewards through the production cohort/bandit
 engine. The result must preserve p95/p99, queue, OOM, compute, and exact ZIP
 guardrails; a cache hit or synthetic reward alone cannot pass.
+The hosted run is retained under `benchmarks/results` and revalidated without
+rerunning the builds with `./dev/check-runtime-owner-evaluation`.
 
 
 ## Owner-operated causal POC evaluation

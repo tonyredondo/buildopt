@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "buildopt.evidence/runtime-owner-evaluation/v1",
+  "capturedOn": "2026-07-31",
+  "buildoptRevision": "7479066a9b46d3bd6d090ed5983be4fc3379f224",
+  "workflow": {
+    "name": "Runtime Owner Evaluation",
+    "runId": 30670221394,
+    "url": "https://github.com/tonyredondo/buildopt/actions/runs/30670221394"
+  },
+  "runner": {
+    "class": "linux-amd64-4c-16g-v1",
+    "cpuCount": 4,
+    "memoryBytes": 16766423040,
+    "oomBefore": 0,
+    "oomAfter": 0,
+    "ciQueueDeltaMs": 0,
+    "queueMeasurement": "COMMON_WORKFLOW_JOB_EXACT_ZERO_INCREMENTAL"
+  },
+  "aa": {
+    "metrics": {
+      "pairs": 4,
+      "controlMs": [
+        9132,
+        9124,
+        9084,
+        8901
+      ],
+      "candidateMs": [
+        9062,
+        8866,
+        8841,
+        9162
+      ],
+      "meanDeltaMs": 77,
+      "interval95Ms": [
+        -135,
+        250
+      ],
+      "p95DeltaMs": 30,
+      "p99DeltaMs": 30,
+      "reductionRatio": 0.008553847851880467,
+      "artifactDivergence": false
+    },
+    "assignments": 200,
+    "expectedPropensityBasisPoints": 5000,
+    "sampleRatio": {
+      "status": "VALID",
+      "assignmentCount": 200,
+      "chiSquare": 2,
+      "observedByCohort": {
+        "A": 90,
+        "B": 110
+      }
+    },
+    "delayedOutcomesUpdated": 200,
+    "duplicateOutcomeUpdated": false,
+    "rewardDelaySeconds": 3600,
+    "state": "PASSED"
+  },
+  "autotuning": {
+    "metrics": {
+      "pairs": 4,
+      "controlMs": [
+        9195,
+        8879,
+        8876,
+        9047
+      ],
+      "candidateMs": [
+        9115,
+        8841,
+        8845,
+        8931
+      ],
+      "meanDeltaMs": 66,
+      "interval95Ms": [
+        34,
+        98
+      ],
+      "p95DeltaMs": -80,
+      "p99DeltaMs": -80,
+      "reductionRatio": 0.007361724588160125,
+      "artifactDivergence": false
+    },
+    "controlProfile": {
+      "id": "STABLE_CONTROL",
+      "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "arguments": [
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx4096m -Dfile.encoding=UTF-8"
+      ]
+    },
+    "candidateProfile": {
+      "id": "W4_H6G",
+      "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "arguments": [
+        "--max-workers=4",
+        "-Dorg.gradle.jvmargs=-Xmx6144m -Dfile.encoding=UTF-8"
+      ]
+    },
+    "additionalComputeMs": -265,
+    "oomDelta": 0,
+    "state": "PASSED"
+  },
+  "gate": {
+    "state": "PASSED",
+    "closes": [
+      "B-G01",
+      "B-G03"
+    ]
+  }
+}
