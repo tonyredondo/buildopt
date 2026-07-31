@@ -22,7 +22,19 @@ git -C "${buildopt_pilot}" archive "${buildopt_accepted}" | tar -x -C "${buildop
 
 buildopt_control_ms=()
 buildopt_candidate_ms=()
-buildopt_oom_before=$(awk '$1 == "oom" {print $2}' /sys/fs/cgroup/memory.events)
+buildopt_oom_file=/sys/fs/cgroup/memory.events
+buildopt_cgroup_path=$(awk -F: '$1 == "0" {print $3; exit}' /proc/self/cgroup)
+if [[ -n "${buildopt_cgroup_path}" && -f "/sys/fs/cgroup${buildopt_cgroup_path}/memory.events" ]]; then
+    buildopt_oom_file="/sys/fs/cgroup${buildopt_cgroup_path}/memory.events"
+fi
+if [[ ! -r "${buildopt_oom_file}" ]]; then
+    printf 'cgroup v2 memory.events is required for OOM evidence\n' >&2
+    exit 1
+fi
+buildopt_read_oom() {
+    awk '$1 == "oom" || $1 == "oom_kill" {total += $2} END {print total + 0}' "${buildopt_oom_file}"
+}
+buildopt_oom_before=$(buildopt_read_oom)
 buildopt_control_sha=()
 buildopt_candidate_sha=()
 buildopt_control_outcomes=()
@@ -68,7 +80,7 @@ buildopt_control_ms=(); buildopt_candidate_ms=(); buildopt_control_sha=(); build
 for buildopt_pair in 1 2 3 4; do
     if ((buildopt_pair % 2 == 1)); then run_arm control; run_arm candidate; else run_arm candidate; run_arm control; fi
 done
-buildopt_oom_after=$(awk '$1 == "oom" {print $2}' /sys/fs/cgroup/memory.events)
+buildopt_oom_after=1000 4 24 27 30 46 100 111 122 984 992 1000buildopt_read_oom)
 
 buildopt_input="${buildopt_tmp}/input.json"
 jq -n \
