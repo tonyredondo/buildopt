@@ -78,6 +78,7 @@ public final class PatcherSpike {
             spike.assertSignerRejectsIncompleteManifest();
             spike.assertArchiveRecipeSafety();
             PatchCandidateValidationSpike.assertConformance();
+            FullRelevantValidationSpike.assertConformance();
             List<CaseDefinition> definitions = spike.readPlan();
             List<CaseResult> results = new ArrayList<>();
             for (CaseDefinition definition : definitions) {
@@ -679,6 +680,10 @@ public final class PatcherSpike {
         root.put("exactArtifactAdapterValidated", true);
         root.put("candidateReproducibilityValidated", true);
         root.put("candidateValidationFailClosed", true);
+        root.put("fullRelevantValidationIntegrated", true);
+        root.put("testOptimizationSignedResultVerified", true);
+        root.put("testOptimizationPollingBounded", true);
+        root.put("testOptimizationNotRequiredNoContact", true);
         root.put("bundleContentExecuted", false);
         root.put("customerCheckoutHooksExecuted", false);
         root.put("customerContentFiltersExecuted", false);

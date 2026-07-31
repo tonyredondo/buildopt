@@ -80,6 +80,7 @@ From the repository root:
 ./dev/check-patch-bundle-applier
 ./dev/check-archive-reproducibility-recipe
 ./dev/check-patch-candidate-validation
+./dev/check-full-relevant-validation
 ./dev/check-bandit-policy
 ./dev/check-capability-matrix
 ./dev/check-data-lifecycle

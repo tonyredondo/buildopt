@@ -66,6 +66,10 @@ jq -e \
         .exactArtifactAdapterValidated == true and
         .candidateReproducibilityValidated == true and
         .candidateValidationFailClosed == true and
+        .fullRelevantValidationIntegrated == true and
+        .testOptimizationSignedResultVerified == true and
+        .testOptimizationPollingBounded == true and
+        .testOptimizationNotRequiredNoContact == true and
         .bundleContentExecuted == false and
         .customerCheckoutHooksExecuted == false and
         .customerContentFiltersExecuted == false and

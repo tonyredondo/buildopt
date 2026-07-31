@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/full-relevant-validation-gate/v1" and
+  .trackerId == "C4-006" and
+  .localPrerequisite == "C4-005_PASSED" and
+  .applicability == {
+    "evidenceDigestRequired": true,
+    "required": "FULL_RELEVANT_VALIDATION",
+    "notRequired": "PASS_WITHOUT_REMOTE_CONTACT"
+  } and
+  .request.endpoint == "SUBMIT_TEST_BUILD_VALIDATION" and
+  .request.pollEndpoint == "GET_TEST_BUILD_VALIDATION" and
+  .request.artifactSetDigestMustEqualLocalCandidate == true and
+  .request.artifactRetrievalKinds == ["CUSTOMER_CHANNEL", "EPHEMERAL_HTTPS"] and
+  .request.callerFilesystemPathsRejected == true and
+  .request.idempotencyKey == "actionId:artifactSetDigest" and
+  .transport == {
+    "generatedClient": true,
+    "exactRetryCount": 1,
+    "sameBodyIdempotencyKeyAndDeadline": true,
+    "maximumPolls": 128,
+    "maximumPollDelayMs": 5000,
+    "maximumOriginalDeadlineHours": 24,
+    "stableJitter": true,
+    "responseRequestIdRequired": true
+  } and
+  .result.signature == "Ed25519" and
+  .result.canonicalization == "JCS" and
+  .result.exactContextAndArtifactsRequired == true and
+  .result.passed == "ALLOW_ACTION" and
+  .result.failed == "BLOCK_ACTION" and
+  .result.inconclusive == "BLOCK_ACTION" and
+  .remoteMutationPerformed == false and
+  .closesGate == "C4-G02" and
+  .doesNotClose == ["C4-004", "C4-007", "C4-008", "C4-009", "C4-G01", "C4-G03", "C4-G04", "C4-G05", "C4-G06"]
+' specs/full-relevant-validation-gate-v1.json >/dev/null
+
+test -f jvm/patcher/src/main/java/dev/buildopt/patcher/FullRelevantValidationGate.java
+./dev/check-test-optimization-integration
+./dev/check-patch-candidate-validation
+printf 'C4-006 full relevant validation OK: local gate, generated client, exact retry, bounded polling, and signed fail-closed result\n'

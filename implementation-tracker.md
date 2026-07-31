@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `DOING` — owner-operated A1/B evidence remains pending while noninteractive C4 implementation advances<br>
-**Current phase:** C4 technical implementation; `C4-006` follows completed `C4-005` on the archive path while `C4-004` waits for C1<br>
+**Current phase:** C4 technical implementation; `C4-007` follows completed `C4-006` on the archive path while `C4-004` waits for C1<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Last updated:** 2026-07-31<br>
@@ -56,7 +56,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | MVP-A1 | Autonomous Cache in an owner-operated POC | `TODO` | 5/6 | A0 + POC operational profile |
 | MVP-B | Runtime Optimizer and safe learning | `DOING` | 4/6 | Activation still requires owner-operated A1 + valid A/A; implementation may proceed |
 | MVP-C1 | Task Intelligence, JVM Agent, and Linux hermeticity | `WAITING` | 0/9 | B |
-| MVP-C4 | PR-only Patch Autopilot | `DOING` | 3/7 | B; C1 for custom tasks; Test Optimization where applicable |
+| MVP-C4 | PR-only Patch Autopilot | `DOING` | 4/7 | B; C1 for custom tasks; Test Optimization where applicable |
 | MVP-A2 | Self-hosted single-node | `DEFERRED` | 0/1 | A1 |
 | MVP-C2 | Edge Cache Node | `DEFERRED` | 0/1 | A1 |
 | MVP-C3 | Build Impact Analysis | `DEFERRED` | 0/1 | B + `INT-001` |
@@ -508,8 +508,8 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `C4-003` | Recipe `ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1` | `DONE` | Codex | `E-107` |
 | `C4-004` | Recipe `CUSTOM_TASK_CONTRACT_JAVA_V1` | `WAITING` | — | — |
 | `C4-005` | Candidate/control and artifact validation | `DONE` | Codex | `E-108` |
-| `C4-006` | `FULL_RELEVANT_VALIDATION` integration | `TODO` | — | — |
-| `C4-007` | Customer-side branch + draft PR workflow | `WAITING` | — | — |
+| `C4-006` | `FULL_RELEVANT_VALIDATION` integration | `DONE` | Codex | `E-109` |
+| `C4-007` | Customer-side branch + draft PR workflow | `TODO` | — | — |
 | `C4-008` | Branch-without-PR recovery and idempotent retries | `WAITING` | — | — |
 | `C4-009` | Post-merge measurement and revert-PR path | `WAITING` | — | — |
 
@@ -518,7 +518,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | ID | Summarized criterion | State | Evidence |
 |---|---|---|---|
 | `C4-G01` | No automatic rebase, default-branch write, or automatic merge | `WAITING` | — |
-| `C4-G02` | Candidate/control pass correctness checks and validation | `WAITING` | — |
+| `C4-G02` | Candidate/control pass correctness checks and validation | `DONE` | `E-109` |
 | `C4-G03` | PR explains the change, evidence, impact, and rollback | `WAITING` | — |
 | `C4-G04` | `PRELIMINARY` is not counted as confirmed impact | `WAITING` | — |
 | `C4-G05` | Post-merge does not fake rollout and creates a revert PR on regression | `WAITING` | — |
@@ -747,6 +747,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-106` | 2026-07-31 | `C4-002`, `C4-G07` | Versioned [`Exact Java patcher runtime v1`](./specs/patcher-runtime-v1.md), exact machine-readable [trust/staging/operation/recovery contract](./specs/patcher-runtime-v1.json), production Java 17 [`PatchBundleVerifier`](./jvm/patcher/src/main/java/dev/buildopt/patcher/PatchBundleVerifier.java) and [`PatchBundleApplier`](./jvm/patcher/src/main/java/dev/buildopt/patcher/PatchBundleApplier.java), and composite [`dev/check-patcher-runtime`](./dev/check-patcher-runtime); only an opaque verified bundle reaches a private detached no-checkout worktree, exact base revision/tree/source state, path graph, mode, preimages, postimages, and complete staged path set are checked before a deterministic commit and absent `buildopt/` ref CAS; exact retry, branch-without-PR, matching-draft, divergent-ref, and interrupted-staging outcomes preserve idempotency without hooks, filters, content execution, fuzzy matching, deletes, symlink/submodule traversal, rebase, force push, default-branch write, ready marking, or merge; schema/spec/signing composition, all 15 real-Git golden/negative/recovery cases, unchanged customer checkout/remote, and 22 Java 17 classes passed | `DONE`: `C4-002` and `C4-G07` are closed without claiming the not-yet-implemented remote workflow or later recipe/validation gates |
 | `E-107` | 2026-07-31 | `C4-003` | Versioned [`Archive reproducibility Kotlin DSL recipe v1`](./specs/archive-reproducibility-recipe-v1.md), exact machine-readable [input/output/failure contract](./specs/archive-reproducibility-recipe-v1.json), production Java 17 [`ArchiveReproducibilityRecipe`](./jvm/patcher/src/main/java/dev/buildopt/patcher/ArchiveReproducibilityRecipe.java), and composite [`dev/check-archive-reproducibility-recipe`](./dev/check-archive-reproducibility-recipe); the root-only strict UTF-8/LF recipe emits one exact import-plus-source-plus-`configureEach` replacement, preserves original source bytes, binds defensive preimage/postimage SHA-256 values into the production signer and applier, recognizes only its exact prior envelope as idempotent, and fails closed on Groovy/nested paths, file annotations, existing archive references or properties, CR/NUL, invalid UTF-8, missing final newline, empty, and oversized inputs; exact generation, repeat idempotency, defensive output, shared signing/runtime composition, all 15 real-Git application/recovery cases, and 24 Java 17 classes passed | `DONE`: `C4-003` is closed without evaluating customer code, merging ambiguous configuration, activating a repository, performing remote mutation, or closing later C4 blocks/gates; `C4-004` remains C1-gated and `C4-005` is next on the archive path |
 | `E-108` | 2026-07-31 | `C4-005` | Versioned [`Patch candidate validation v1`](./specs/patch-candidate-validation-v1.md), exact machine-readable [six-run/artifact contract](./specs/patch-candidate-validation-v1.json), production Java 17 [`PatchCandidateValidator`](./jvm/patcher/src/main/java/dev/buildopt/patcher/PatchCandidateValidator.java), focused [conformance cases](./jvm/patcher/src/spike/java/dev/buildopt/patcher/PatchCandidateValidationSpike.java), and composite [`dev/check-patch-candidate-validation`](./dev/check-patch-candidate-validation); exactly candidate/control × clean/incremental/relocated runs require one context, six isolation keys, successful exits, and Configuration Cache stored/reused/stored; every bounded artifact set must exactly match the deliverables manifest; the finite archive adapter compares sorted safe ZIP-family entry paths, directory markers, expanded sizes, and content SHA-256 independent of timestamp/compression/order, while the custom-task adapter is byte-exact but does not implement its C1-gated recipe; every logical set must match control-clean and all three candidate raw sets must match each other; success, archive timestamp/order drift, exact adapter, candidate non-reproducibility, logical divergence, missing run/artifact, shared isolation, context drift, failed arm/cache, unsafe archive, unsupported mapping, defensive bytes, all 15 real-Git patcher cases, and 35 Java 17 classes passed | `DONE`: `C4-005` is closed without running a customer build, selecting tests, implementing C4-004, accepting incomplete evidence, performing remote mutation, or closing `C4-G02`; `C4-006` is next |
+| `E-109` | 2026-07-31 | `C4-006`, `C4-G02` | Versioned [`Full relevant validation gate v1`](./specs/full-relevant-validation-gate-v1.md), exact machine-readable [applicability/request/transport/result contract](./specs/full-relevant-validation-gate-v1.json), production Java 17 [`FullRelevantValidationGate`](./jvm/patcher/src/main/java/dev/buildopt/patcher/FullRelevantValidationGate.java), focused [conformance cases](./jvm/patcher/src/spike/java/dev/buildopt/patcher/FullRelevantValidationSpike.java), and composite [`dev/check-full-relevant-validation`](./dev/check-full-relevant-validation); local C4-005 PASSED is mandatory, explicit NOT_REQUIRED makes no remote contact, REQUIRED binds the exact candidate artifact set to a generated-client FULL_RELEVANT_VALIDATION request, one exact retry preserves body/key/deadline, delayed results use bounded deadline-aware polling, and only a current pinned JCS/Ed25519 PASSED result with exact context and artifacts allows the action; signed failed/inconclusive, untrusted/expired/rebound results, request/operation drift, timeout, caller paths, and local failure all block; Test Optimization contracts, all 15 real-Git cases, and 45 Java 17 classes passed | `DONE`: `C4-006` and `C4-G02` are closed without running a customer build, performing remote mutation, implementing C4-004, or closing PR/post-merge gates; `C4-007` is next |
 
 ---
 
@@ -754,6 +755,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-31 | Closed `C4-006` and `C4-G02`: composed local candidate correctness with generated Test Optimization submission, exact retry, bounded polling, pinned signed result verification, and no-contact NOT_REQUIRED; moved `C4-007` next | Codex |
 | 2026-07-31 | Closed `C4-005`: added six-run isolated candidate/control validation, finite archive-content and byte-exact adapters, manifest-closed artifact comparison, and candidate reproducibility proof; moved `C4-006` next without claiming Test Optimization authority | Codex |
 | 2026-07-31 | Closed `C4-003`: added the exact fail-closed Kotlin DSL archive reproducibility recipe and routed generated bytes through the production signed PatchBundle runtime; moved the archive path to `C4-005` while `C4-004` remains C1-gated | Codex |
 | 2026-07-31 | Closed `C4-002` and `C4-G07`: promoted the exact Java 17 verifier/applier to the C4 runtime baseline and composed all 15 real-Git golden, negative, idempotency, and recovery cases; moved `C4-003` next | Codex |

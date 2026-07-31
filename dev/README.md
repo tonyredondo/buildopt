@@ -500,6 +500,21 @@ it explicitly, and the core base-CI lane invokes that checker; the JDK-only
 golden image still performs the standard compile, package, and check lifecycle
 without acquiring an unpinned Git installation.
 
+### Full relevant validation gate
+
+Validate the C4-006 composition of local patch correctness and the generated
+Test Optimization client with:
+
+```bash
+./dev/check-full-relevant-validation
+```
+
+The checker proves explicit policy applicability, no-contact NOT_REQUIRED, an
+artifact-bound FULL_RELEVANT_VALIDATION request, one exact retry, bounded
+deadline-aware polling, and pinned JCS/Ed25519 result verification. Only a
+trusted current PASSED result allows promotion; every failure or inconclusive
+condition blocks without remote mutation.
+
 ## BuildOpt OpenAPI validation
 
 Validate the `F0-017` BuildOpt control and internal cache-control APIs:

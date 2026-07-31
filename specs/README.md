@@ -19,6 +19,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`private-beta-data-lifecycle-v1.md`](./private-beta-data-lifecycle-v1.md) | `A1-004` / `A1-G05` |
 | [`private-beta-operations-v1.md`](./private-beta-operations-v1.md) | `A1-005` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
+| [`full-relevant-validation-gate-v1.md`](./full-relevant-validation-gate-v1.md) | `C4-006` / `C4-G02` |
 | [`patch-bundle-v1.md`](./patch-bundle-v1.md) | `F0-034` |
 | [`bandit-policy-v1.md`](./bandit-policy-v1.md) | `F0-035` |
 | [`capability-matrix-v1.md`](./capability-matrix-v1.md) | `F0-036` |

@@ -24,7 +24,9 @@ java {
 val spike = sourceSets.create("spike")
 
 dependencies {
+    api(project(":jvm:generated-client"))
     add(spike.implementationConfigurationName, sourceSets.main.get().output)
+    add(spike.implementationConfigurationName, project(":jvm:generated-client"))
 }
 
 tasks.withType<JavaCompile>().configureEach {
