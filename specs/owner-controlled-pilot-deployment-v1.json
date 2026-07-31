@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "buildopt.specs/owner-controlled-pilot-deployment/v1",
+  "workItem": "A1-001",
+  "profile": "PRIVATE_BETA_ISOLATED",
+  "repository": {
+    "nameWithOwner": "tonyredondo/buildopt-pilot",
+    "url": "https://github.com/tonyredondo/buildopt-pilot",
+    "visibility": "PRIVATE",
+    "defaultBranch": "main",
+    "revision": "e79a7bcc5eb31e838d4d886245d514fcdef3fc73"
+  },
+  "buildopt": {
+    "revision": "5f4105a78dac26dd077ad886e8aa15549423c1fc",
+    "version": "0.1.0-pilot.1",
+    "releaseProfile": "PRIVATE_BETA_ISOLATED",
+    "platform": "linux-amd64",
+    "externallySigned": true,
+    "sbomRequired": true,
+    "provenanceRequired": true
+  },
+  "workload": {
+    "command": [
+      "./gradlew",
+      "--no-daemon",
+      "clean",
+      "pilotBuild"
+    ],
+    "gradle": "9.6.1",
+    "jdk": 17,
+    "projects": 8,
+    "mainClasses": 64,
+    "testClasses": 8,
+    "customTasks": [
+      "generatePilotManifest"
+    ],
+    "requiredDeliverables": [
+      "app/build/libs/app-1.0.0.jar",
+      "app/build/distributions/app-1.0.0.zip",
+      "build/pilot/manifest.txt"
+    ]
+  },
+  "deployment": {
+    "ownerControlled": true,
+    "repositoryStateIsImmutable": true,
+    "releaseInstalledOutsideRepository": true,
+    "secretsStoredOutsideRepository": true,
+    "nativeManagedL1Enabled": true,
+    "signedSharedAuthorityEnabled": false,
+    "githubBuildOptCredentialsPresent": false
+  },
+  "exercise": {
+    "repositoryCheck": "./dev/check",
+    "buildoptCommand": "buildopt run -- ./gradlew --no-daemon clean pilotBuild",
+    "runs": 2,
+    "requiresAuthenticatedHandshake": true,
+    "requiresSchemaValidBuildSessions": 2,
+    "requiresReproducibleDeliverables": true,
+    "requiresNativeL1CompileHitsOnReplay": 8,
+    "requiresCustomTaskDefaultDeny": true,
+    "evidence": "benchmarks/results/a1-001-owner-controlled-pilot.json",
+    "checker": "./dev/check-owner-controlled-pilot-deployment"
+  },
+  "boundaries": {
+    "closes": [
+      "A1-001"
+    ],
+    "doesNotClose": [
+      "A1-006",
+      "A1-G06",
+      "EIGHT_HOUR_SOAK",
+      "EXTERNAL_DESIGN_PARTNER_EVIDENCE",
+      "SIGNED_SHARED_AUTHORITY_ACTIVATION"
+    ],
+    "causalBenefitClaimed": false
+  }
+}

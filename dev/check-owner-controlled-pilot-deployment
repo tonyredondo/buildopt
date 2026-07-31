@@ -1,0 +1,205 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/owner-controlled-pilot-deployment-v1.json"
+buildopt_evidence="${buildopt_repo_root}/benchmarks/results/a1-001-owner-controlled-pilot.json"
+buildopt_spec="${buildopt_repo_root}/specs/owner-controlled-pilot-deployment-v1.md"
+
+for buildopt_command in git grep jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required owner-controlled pilot command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if ! jq -e '
+    keys == [
+        "boundaries",
+        "buildopt",
+        "deployment",
+        "exercise",
+        "profile",
+        "repository",
+        "schemaVersion",
+        "workItem",
+        "workload"
+    ] and
+    .schemaVersion == "buildopt.specs/owner-controlled-pilot-deployment/v1" and
+    .workItem == "A1-001" and
+    .profile == "PRIVATE_BETA_ISOLATED" and
+    .repository == {
+        nameWithOwner: "tonyredondo/buildopt-pilot",
+        url: "https://github.com/tonyredondo/buildopt-pilot",
+        visibility: "PRIVATE",
+        defaultBranch: "main",
+        revision: "e79a7bcc5eb31e838d4d886245d514fcdef3fc73"
+    } and
+    .buildopt == {
+        revision: "5f4105a78dac26dd077ad886e8aa15549423c1fc",
+        version: "0.1.0-pilot.1",
+        releaseProfile: "PRIVATE_BETA_ISOLATED",
+        platform: "linux-amd64",
+        externallySigned: true,
+        sbomRequired: true,
+        provenanceRequired: true
+    } and
+    .workload.command == ["./gradlew", "--no-daemon", "clean", "pilotBuild"] and
+    .workload.gradle == "9.6.1" and
+    .workload.jdk == 17 and
+    .workload.projects == 8 and
+    .workload.mainClasses == 64 and
+    .workload.testClasses == 8 and
+    .workload.customTasks == ["generatePilotManifest"] and
+    .workload.requiredDeliverables == [
+        "app/build/libs/app-1.0.0.jar",
+        "app/build/distributions/app-1.0.0.zip",
+        "build/pilot/manifest.txt"
+    ] and
+    .deployment == {
+        ownerControlled: true,
+        repositoryStateIsImmutable: true,
+        releaseInstalledOutsideRepository: true,
+        secretsStoredOutsideRepository: true,
+        nativeManagedL1Enabled: true,
+        signedSharedAuthorityEnabled: false,
+        githubBuildOptCredentialsPresent: false
+    } and
+    .exercise == {
+        repositoryCheck: "./dev/check",
+        buildoptCommand: "buildopt run -- ./gradlew --no-daemon clean pilotBuild",
+        runs: 2,
+        requiresAuthenticatedHandshake: true,
+        requiresSchemaValidBuildSessions: 2,
+        requiresReproducibleDeliverables: true,
+        requiresNativeL1CompileHitsOnReplay: 8,
+        requiresCustomTaskDefaultDeny: true,
+        evidence: "benchmarks/results/a1-001-owner-controlled-pilot.json",
+        checker: "./dev/check-owner-controlled-pilot-deployment"
+    } and
+    .boundaries == {
+        closes: ["A1-001"],
+        doesNotClose: [
+            "A1-006",
+            "A1-G06",
+            "EIGHT_HOUR_SOAK",
+            "EXTERNAL_DESIGN_PARTNER_EVIDENCE",
+            "SIGNED_SHARED_AUTHORITY_ACTIVATION"
+        ],
+        causalBenefitClaimed: false
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'owner-controlled pilot deployment contract is malformed\n' >&2
+    exit 1
+fi
+
+if ! jq -e '
+    keys == [
+        "boundaries",
+        "buildopt",
+        "capturedOn",
+        "githubWorkflow",
+        "installedExercise",
+        "profile",
+        "repository",
+        "repositoryConformance",
+        "schemaVersion",
+        "workItem"
+    ] and
+    .schemaVersion == "buildopt.evidence/owner-controlled-pilot-deployment/v1" and
+    .capturedOn == "2026-07-31" and
+    .workItem == "A1-001" and
+    .profile == "PRIVATE_BETA_ISOLATED" and
+    .repository.visibility == "PRIVATE" and
+    .repository.revision == "e79a7bcc5eb31e838d4d886245d514fcdef3fc73" and
+    .buildopt == {
+        revision: "5f4105a78dac26dd077ad886e8aa15549423c1fc",
+        version: "0.1.0-pilot.1",
+        platform: "linux-amd64",
+        bundleSha256: "1b838c4a984af825e10e7a9197de7aa104faa290351c68b2d55feaa91f31d1da",
+        signatureVerified: true,
+        sbomVerified: true,
+        provenanceVerified: true,
+        installed: true
+    } and
+    .repositoryConformance == {
+        command: "./dev/check",
+        outcome: "PASSED",
+        projects: 8,
+        mainClasses: 64,
+        testClasses: 8,
+        testsPassed: 8,
+        reproducibleDistribution: true,
+        localCacheReplayObserved: true,
+        worktreeUnchanged: true
+    } and
+    .installedExercise.runs == 2 and
+    .installedExercise.successfulRuns == 2 and
+    .installedExercise.customerVisibleBuildMs == [39735, 9337] and
+    .installedExercise.authenticatedGradleHandshakes == 2 and
+    .installedExercise.schemaValidBuildSessions == 2 and
+    .installedExercise.nativeL1CompileJavaHitsOnReplay == 8 and
+    .installedExercise.customTask == {
+        path: ":generatePilotManifest",
+        cacheOutcome: "DEFAULT_DENY_EXECUTED"
+    } and
+    .installedExercise.distributionSha256 == "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c" and
+    .installedExercise.reproducibleDeliverables == true and
+    ([.installedExercise.evidenceDigests[] | test("^[0-9a-f]{64}$")] | all) and
+    .githubWorkflow.name == "Pilot CI" and
+    .githubWorkflow.runId == 30664663167 and
+    .githubWorkflow.headRevision == .repository.revision and
+    .githubWorkflow.permissions == "READ_ONLY" and
+    .githubWorkflow.buildoptCredentialsPresent == false and
+    .githubWorkflow.state == "BLOCKED_PRE_EXECUTION" and
+    .githubWorkflow.blockingReason == "ACCOUNT_BILLING_OR_SPENDING_LIMIT" and
+    .githubWorkflow.executedSteps == 0 and
+    .githubWorkflow.sourceCodeFailureObserved == false and
+    .boundaries == {
+        causalBenefitClaimed: false,
+        eightHourSoakExecuted: false,
+        externalDesignPartnerClaimed: false,
+        signedSharedAuthorityEnabled: false,
+        closes: ["A1-001"],
+        doesNotClose: ["A1-006", "A1-G06"]
+    }
+' "${buildopt_evidence}" >/dev/null; then
+    printf 'owner-controlled pilot deployment evidence is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_required_references=(
+    'tonyredondo/buildopt-pilot'
+    '0.1.0-pilot.1'
+    './dev/check-owner-controlled-pilot-deployment'
+    'A1-006'
+    'A1-G06'
+    'billing/spending-limit'
+)
+for buildopt_reference in "${buildopt_required_references[@]}"; do
+    if ! grep -Fq -- "${buildopt_reference}" "${buildopt_spec}"; then
+        printf 'owner-controlled pilot specification lacks reference: %s\n' \
+            "${buildopt_reference}" >&2
+        exit 1
+    fi
+done
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'owner-controlled pilot checker changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'A1-001 owner-controlled pilot OK: private synthetic repository, signed installed release, two valid sessions, eight managed-L1 compile hits, and explicit non-causal boundaries\n'

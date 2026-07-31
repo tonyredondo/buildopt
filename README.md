@@ -2,12 +2,13 @@
 
 Monorepo for the autonomous Gradle build optimization platform. The product observes real builds, applies only qualified and reversible optimizations, preserves Gradle behavior as the baseline, and measures net time savings inside the neutral measurement envelope.
 
-The repository has completed **MVP-A0** and is preparing the isolated
-**MVP-A1** private beta. It contains the internal managed-cache path, exact
-Tier 1 safety and lifecycle gates, causal measurement, locked toolchains, and
-a verifiable Linux AMD64 release bundle plus its local install, upgrade,
-rollback, and uninstall lifecycle; it does not yet contain the external pilot
-or its complete operational readiness profile.
+The repository has completed **MVP-A0** and is executing the owner-operated
+**MVP-A1** POC. It contains the internal managed-cache path, exact Tier 1
+safety and lifecycle gates, causal measurement, locked toolchains, a
+verifiable Linux AMD64 release lifecycle, and the first signed deployment on
+an immutable owner-controlled synthetic repository. Multi-repository causal
+evaluation remains open; external design-partner evidence and the eight-hour
+soak are deferred to productization.
 
 ## Sources of truth
 

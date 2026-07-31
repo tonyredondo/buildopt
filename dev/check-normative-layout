@@ -99,6 +99,8 @@ buildopt_planned_artifacts=(
     "specs/private-beta-data-lifecycle-v1.md"
     "specs/private-beta-operations-v1.json"
     "specs/private-beta-operations-v1.md"
+    "specs/owner-controlled-pilot-deployment-v1.json"
+    "specs/owner-controlled-pilot-deployment-v1.md"
     "specs/shared-capacity-slru-v1.json"
     "specs/shared-capacity-slru-v1.md"
     "specs/ops-alerts-v1.json"
@@ -244,6 +246,7 @@ buildopt_materialized_artifacts=(
     "specs/walking-skeleton-overhead-v1.md"
     "benchmarks/results/ws-009-golden-lane.json"
     "benchmarks/results/a0-g06-no-hit-overhead.json"
+    "benchmarks/results/a1-001-owner-controlled-pilot.json"
     "benchmarks/beta-v1.yaml"
 )
 

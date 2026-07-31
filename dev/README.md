@@ -1374,10 +1374,26 @@ runner-circuit/Gradle-preservation, and base bypass/kill-switch/rollback/
 uninstall drills. The runbook defines preflight, admission, triage, authority
 rotation, circuit cooldown, shutdown/restart, and recovery stop conditions
 without manual SQLite, authority, or circuit-state edits. Every child exercise
-must leave the working tree unchanged. This closes only `A1-005`; the
-per-pilot deployment, external operation and causal-benefit evidence, exact
-eight-hour soak, `A1-G02`, `A1-G06`, and complete `OPS-001/A1` profile
-remain open.
+must leave the working tree unchanged.
+This closes only `A1-005`; the owner-controlled pilot deployment is exercised
+and recorded independently below.
+
+## Owner-controlled pilot deployment
+
+Validate the immutable `A1-001` deployment record:
+
+```bash
+./dev/check-owner-controlled-pilot-deployment
+```
+
+The checker binds the private synthetic pilot revision to the exact signed
+BuildOpt release, repository workload, two authenticated installed runs, two
+schema-valid `BUILD_SESSION` records, reproducible deliverables, eight native
+managed-L1 `compileJava` replay hits, and custom-task default deny. It also
+retains the hosted workflow's account-billing pre-execution block as an
+external limitation rather than a code failure. The checker never contacts
+GitHub or private machine state and makes no causal, signed-Shared-authority,
+external-user, or eight-hour-soak claim. `A1-006` and `A1-G06` remain open.
 
 ## Private-beta benchmark harness
 

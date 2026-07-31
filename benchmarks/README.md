@@ -17,6 +17,24 @@ explicitly non-qualifying. Those two commands do not claim the long profiles;
 `./dev/check-beta-gradle-fixtures` owns the bounded small/medium/large Gradle
 build matrix and makes no performance claim.
 
+## Owner-controlled pilot deployment evidence
+
+[`results/a1-001-owner-controlled-pilot.json`](./results/a1-001-owner-controlled-pilot.json)
+records the first signed installed release on the private synthetic
+`tonyredondo/buildopt-pilot` repository. Two successful authenticated runs
+produced schema-valid sessions, byte-identical distributions, and eight native
+managed-L1 `compileJava` hits on replay while the custom task remained under
+Tier 1 default deny. The GitHub job's pre-execution account-billing block is
+recorded separately from the passing local evidence.
+
+This result closes the deployment item only. It makes no causal-savings,
+signed-Shared-authority, external-user, or eight-hour-soak claim. Revalidate
+its immutable contract with:
+
+```bash
+./dev/check-owner-controlled-pilot-deployment
+```
+
 ## Walking-skeleton overhead evidence
 
 [`results/ws-009-golden-lane.json`](./results/ws-009-golden-lane.json) is the

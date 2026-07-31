@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "buildopt.evidence/owner-controlled-pilot-deployment/v1",
+  "capturedOn": "2026-07-31",
+  "workItem": "A1-001",
+  "profile": "PRIVATE_BETA_ISOLATED",
+  "repository": {
+    "nameWithOwner": "tonyredondo/buildopt-pilot",
+    "url": "https://github.com/tonyredondo/buildopt-pilot",
+    "visibility": "PRIVATE",
+    "defaultBranch": "main",
+    "revision": "e79a7bcc5eb31e838d4d886245d514fcdef3fc73"
+  },
+  "buildopt": {
+    "revision": "5f4105a78dac26dd077ad886e8aa15549423c1fc",
+    "version": "0.1.0-pilot.1",
+    "platform": "linux-amd64",
+    "bundleSha256": "1b838c4a984af825e10e7a9197de7aa104faa290351c68b2d55feaa91f31d1da",
+    "signatureVerified": true,
+    "sbomVerified": true,
+    "provenanceVerified": true,
+    "installed": true
+  },
+  "repositoryConformance": {
+    "command": "./dev/check",
+    "outcome": "PASSED",
+    "projects": 8,
+    "mainClasses": 64,
+    "testClasses": 8,
+    "testsPassed": 8,
+    "reproducibleDistribution": true,
+    "localCacheReplayObserved": true,
+    "worktreeUnchanged": true
+  },
+  "installedExercise": {
+    "command": "buildopt run -- ./gradlew --no-daemon clean pilotBuild",
+    "runs": 2,
+    "successfulRuns": 2,
+    "customerVisibleBuildMs": [
+      39735,
+      9337
+    ],
+    "authenticatedGradleHandshakes": 2,
+    "schemaValidBuildSessions": 2,
+    "nativeL1CompileJavaHitsOnReplay": 8,
+    "customTask": {
+      "path": ":generatePilotManifest",
+      "cacheOutcome": "DEFAULT_DENY_EXECUTED"
+    },
+    "distributionSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c",
+    "reproducibleDeliverables": true,
+    "evidenceDigests": {
+      "warmLogSha256": "c5f0367e295414625d442f23bec4af44f2358928cdd7d98ecbd239d675c2134a",
+      "replayLogSha256": "74f5826ea34937b3b9fd3fa5ba1445b61d09a09718c1fdd832f7b15e1ae2e0f6",
+      "warmBuildSessionSha256": "3d432d6a62fe920e9d654be7146276a793526732638d129755c80e9cd5abf5ed",
+      "replayBuildSessionSha256": "db7ae4f9d1657787c5a47b0d81c79f9ccc343de729c3645b51c85b857a453e52"
+    }
+  },
+  "githubWorkflow": {
+    "name": "Pilot CI",
+    "runId": 30664663167,
+    "url": "https://github.com/tonyredondo/buildopt-pilot/actions/runs/30664663167",
+    "headRevision": "e79a7bcc5eb31e838d4d886245d514fcdef3fc73",
+    "permissions": "READ_ONLY",
+    "buildoptCredentialsPresent": false,
+    "state": "BLOCKED_PRE_EXECUTION",
+    "blockingReason": "ACCOUNT_BILLING_OR_SPENDING_LIMIT",
+    "executedSteps": 0,
+    "sourceCodeFailureObserved": false
+  },
+  "boundaries": {
+    "causalBenefitClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerClaimed": false,
+    "signedSharedAuthorityEnabled": false,
+    "closes": [
+      "A1-001"
+    ],
+    "doesNotClose": [
+      "A1-006",
+      "A1-G06"
+    ]
+  }
+}
