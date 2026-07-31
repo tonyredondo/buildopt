@@ -83,6 +83,7 @@ From the repository root:
 ./dev/check-full-relevant-validation
 ./dev/check-customer-patch-workflow
 ./dev/check-patch-delivery-recovery
+./dev/check-post-merge-patch-monitor
 ./dev/check-bandit-policy
 ./dev/check-capability-matrix
 ./dev/check-data-lifecycle

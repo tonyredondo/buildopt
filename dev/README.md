@@ -540,6 +540,20 @@ The six-state contract preserves an exact action branch after PR failure,
 creates only the missing draft on retry, reuses an exact draft, and rejects
 every identity/head/PR conflict without overwrite, deletion, rebase, or merge.
 
+### Post-merge patch monitoring
+
+Validate contextual/causal post-merge classification and the signed inverse
+draft-revert path with:
+
+```bash
+./dev/check-post-merge-patch-monitor
+```
+
+The checker retains natural failures, runs only budgeted exact inverse controls,
+uses deterministic paired intervals plus p95 and correctness guardrails, and
+passes an exact MODIFY-only inverse through the production signer, verifier,
+path-safe applier, and immutable draft workflow without touching default.
+
 ## BuildOpt OpenAPI validation
 
 Validate the `F0-017` BuildOpt control and internal cache-control APIs:

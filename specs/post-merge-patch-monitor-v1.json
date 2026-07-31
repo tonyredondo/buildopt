@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "buildopt.specs/post-merge-patch-monitor/v1",
+  "trackerId": "C4-009",
+  "context": ["repositoryId", "actionId", "mergedRevision", "measurementEpoch", "workUnitsFingerprint", "runnerClass", "policyDigest"],
+  "observations": {
+    "arms": ["PATCHED_NATURAL", "INVERSE_CONTROL"],
+    "maximum": 4096,
+    "distinctObservationAndIsolationKeys": true,
+    "failedAndCancelledOutcomesRetained": true,
+    "requiredArtifactDigestCompared": true
+  },
+  "causal": {
+    "minimumExactPairs": 4,
+    "effect": "patchedNaturalMs-inverseControlMs",
+    "bootstrapReplicates": 4096,
+    "interval": "95_PERCENT_DETERMINISTIC_PAIRED",
+    "p95Guardrail": true,
+    "noComparableControl": "CONTEXTUAL",
+    "inexactInverse": "CONTEXTUAL",
+    "insufficientPairs": "INCONCLUSIVE"
+  },
+  "regression": {
+    "positiveLower95": "CREATE_DRAFT_REVERT_PR",
+    "positiveMeanAndP95": "CREATE_DRAFT_REVERT_PR",
+    "patchedFailureOrCancellation": "CREATE_DRAFT_REVERT_PR",
+    "artifactDivergence": "CREATE_DRAFT_REVERT_PR"
+  },
+  "inverseBundle": {
+    "recipe": "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1@1.0",
+    "operations": "MODIFY_ONLY",
+    "requiresCurrentExactPostimages": true,
+    "restoresSignedBasePreimages": true,
+    "newSignedPatchBundle": true,
+    "actionId": "revert-<originalBundleSha256>",
+    "productionVerifierAndApplier": true,
+    "delivery": "NEW_DRAFT_REVERT_PR",
+    "fallback": "PRECISE_REVERT_INSTRUCTION"
+  },
+  "forbidden": ["PERCENTAGE_ROLLOUT_CLAIM", "SILENT_PUSH", "DEFAULT_BRANCH_WRITE", "AUTOMATIC_REBASE", "FORCE_PUSH", "AUTOMATIC_MERGE"],
+  "remoteMutationPerformedByConformance": false,
+  "closesGate": "C4-G05",
+  "doesNotClose": ["C4-004", "C4-G06"]
+}

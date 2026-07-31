@@ -79,6 +79,8 @@ public final class PatcherSpike {
             spike.assertArchiveRecipeSafety();
             PatchCandidateValidationSpike.assertConformance();
             FullRelevantValidationSpike.assertConformance();
+            PostMergePatchMonitorSpike.assertConformance();
+            spike.assertExactPostMergeRevert();
             List<CaseDefinition> definitions = spike.readPlan();
             List<CaseResult> results = new ArrayList<>();
             for (CaseDefinition definition : definitions) {
@@ -495,6 +497,90 @@ public final class PatcherSpike {
         }
     }
 
+    private void assertExactPostMergeRevert() throws Exception {
+        try (Fixture fixture = fixture("post-merge-revert")) {
+            String path = "build.gradle.kts";
+            String originalSource = fixture.show(fixture.baseRevision, path);
+            BundleFile originalFile = archiveBundle(fixture, "post-merge").write();
+            VerifiedPatchBundle original = verify(originalFile, signingKey);
+            PatchBundleApplier.Result applied = apply(fixture, original, Fault.NONE);
+            fixture.git("update-ref", "refs/heads/main", applied.headCommit());
+            String mergedMain = fixture.git("rev-parse", "refs/heads/main");
+
+            ExactRevertBundleGenerator.Validation validation =
+                    new ExactRevertBundleGenerator.Validation(
+                            "request-revert-spk",
+                            "result-revert-spk",
+                            "sha256:" + "c".repeat(64),
+                            NOW.minusSeconds(120),
+                            NOW.plusSeconds(3600));
+            ExactRevertBundleGenerator.GeneratedRevert generated =
+                    ExactRevertBundleGenerator.generate(
+                            original,
+                            fixture.repository,
+                            applied.headCommit(),
+                            validation,
+                            NOW.minusSeconds(60),
+                            NOW.plusSeconds(1800),
+                            KEY_ID,
+                            signingKey.getPrivate());
+            Path revertRoot = fixture.bundles.resolve("generated-revert");
+            Path manifest = generated.write(revertRoot);
+            VerifiedPatchBundle verifiedRevert = PatchBundleVerifier.verify(
+                    manifest,
+                    revertRoot,
+                    REPOSITORY_ID,
+                    generated.actionId(),
+                    KEY_ID,
+                    signingKey.getPublic(),
+                    NOW);
+            PatchBundleApplier.Result reverted = apply(
+                    fixture,
+                    verifiedRevert,
+                    Fault.NONE);
+            require(reverted.outcome() == Outcome.DRAFT_PR_CREATED,
+                    "regression creates a draft revert PR");
+            require(fixture.show(reverted.branch(), path).equals(originalSource),
+                    "revert branch restores the exact original bytes");
+            require(fixture.git("rev-parse", "refs/heads/main").equals(mergedMain),
+                    "revert path does not modify the default branch");
+
+            expectFailure(
+                    PatchFailure.Status.PROPOSED,
+                    () -> ExactRevertBundleGenerator.generate(
+                            original,
+                            fixture.repository,
+                            fixture.baseRevision,
+                            validation,
+                            NOW.minusSeconds(60),
+                            NOW.plusSeconds(1800),
+                            KEY_ID,
+                            signingKey.getPrivate()));
+
+            BundleBuilder addBuilder = bundle(
+                    fixture,
+                    "add-only-post-merge",
+                    "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1");
+            addBuilder.add(
+                    "new-file.txt",
+                    "blobs/new-file.txt",
+                    "new file\n".getBytes(StandardCharsets.UTF_8));
+            VerifiedPatchBundle addBundle = verify(addBuilder.write(), signingKey);
+            expectFailure(
+                    PatchFailure.Status.PROPOSED,
+                    () -> ExactRevertBundleGenerator.generate(
+                            addBundle,
+                            fixture.repository,
+                            fixture.baseRevision,
+                            validation,
+                            NOW.minusSeconds(60),
+                            NOW.plusSeconds(1800),
+                            KEY_ID,
+                            signingKey.getPrivate()));
+            fixture.assertOnlyCustomerWorktree();
+        }
+    }
+
     private Fixture fixture(String name) throws Exception {
         return new Fixture(temporaryRoot.resolve(name));
     }
@@ -684,6 +770,11 @@ public final class PatcherSpike {
         root.put("testOptimizationSignedResultVerified", true);
         root.put("testOptimizationPollingBounded", true);
         root.put("testOptimizationNotRequiredNoContact", true);
+        root.put("postMergeEvidenceClassified", true);
+        root.put("contextualImpactNotPromoted", true);
+        root.put("exactInverseBundleGenerated", true);
+        root.put("draftRevertPathValidated", true);
+        root.put("defaultBranchPreservedAfterRegression", true);
         root.put("bundleContentExecuted", false);
         root.put("customerCheckoutHooksExecuted", false);
         root.put("customerContentFiltersExecuted", false);

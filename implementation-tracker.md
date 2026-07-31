@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DOING` — owner-operated A1/B evidence remains pending while noninteractive C4 implementation advances<br>
-**Current phase:** C4 technical implementation; `C4-009` follows completed `C4-008` on the archive path while `C4-004` waits for C1<br>
+**Overall status:** `DOING` — owner-operated A1/B evidence remains pending while the autonomous C4 technical path is complete<br>
+**Current phase:** C4 autonomous technical path complete; `C4-004` waits for C1 and `C4-G06` waits for one accepted owner patch<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Last updated:** 2026-07-31<br>
@@ -56,7 +56,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | MVP-A1 | Autonomous Cache in an owner-operated POC | `TODO` | 5/6 | A0 + POC operational profile |
 | MVP-B | Runtime Optimizer and safe learning | `DOING` | 4/6 | Activation still requires owner-operated A1 + valid A/A; implementation may proceed |
 | MVP-C1 | Task Intelligence, JVM Agent, and Linux hermeticity | `WAITING` | 0/9 | B |
-| MVP-C4 | PR-only Patch Autopilot | `DOING` | 6/7 | B; C1 for custom tasks; Test Optimization where applicable |
+| MVP-C4 | PR-only Patch Autopilot | `DOING` | 7/7 | B; C1 for custom tasks; Test Optimization where applicable |
 | MVP-A2 | Self-hosted single-node | `DEFERRED` | 0/1 | A1 |
 | MVP-C2 | Edge Cache Node | `DEFERRED` | 0/1 | A1 |
 | MVP-C3 | Build Impact Analysis | `DEFERRED` | 0/1 | B + `INT-001` |
@@ -511,7 +511,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `C4-006` | `FULL_RELEVANT_VALIDATION` integration | `DONE` | Codex | `E-109` |
 | `C4-007` | Customer-side branch + draft PR workflow | `DONE` | Codex | `E-110` |
 | `C4-008` | Branch-without-PR recovery and idempotent retries | `DONE` | Codex | `E-111` |
-| `C4-009` | Post-merge measurement and revert-PR path | `TODO` | — | — |
+| `C4-009` | Post-merge measurement and revert-PR path | `DONE` | Codex | `E-112` |
 
 ### 10.2 Exit gates
 
@@ -521,7 +521,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `C4-G02` | Candidate/control pass correctness checks and validation | `DONE` | `E-109` |
 | `C4-G03` | PR explains the change, evidence, impact, and rollback | `DONE` | `E-110` |
 | `C4-G04` | `PRELIMINARY` is not counted as confirmed impact | `DONE` | `E-110` |
-| `C4-G05` | Post-merge does not fake rollout and creates a revert PR on regression | `WAITING` | — |
+| `C4-G05` | Post-merge does not fake rollout and creates a revert PR on regression | `DONE` | `E-112` |
 | `C4-G06` | First accepted patch saves time causally | `WAITING` | — |
 | `C4-G07` | Patcher passes golden/negative/idempotency/recovery vectors | `DONE` | `E-106` |
 
@@ -750,6 +750,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-109` | 2026-07-31 | `C4-006`, `C4-G02` | Versioned [`Full relevant validation gate v1`](./specs/full-relevant-validation-gate-v1.md), exact machine-readable [applicability/request/transport/result contract](./specs/full-relevant-validation-gate-v1.json), production Java 17 [`FullRelevantValidationGate`](./jvm/patcher/src/main/java/dev/buildopt/patcher/FullRelevantValidationGate.java), focused [conformance cases](./jvm/patcher/src/spike/java/dev/buildopt/patcher/FullRelevantValidationSpike.java), and composite [`dev/check-full-relevant-validation`](./dev/check-full-relevant-validation); local C4-005 PASSED is mandatory, explicit NOT_REQUIRED makes no remote contact, REQUIRED binds the exact candidate artifact set to a generated-client FULL_RELEVANT_VALIDATION request, one exact retry preserves body/key/deadline, delayed results use bounded deadline-aware polling, and only a current pinned JCS/Ed25519 PASSED result with exact context and artifacts allows the action; signed failed/inconclusive, untrusted/expired/rebound results, request/operation drift, timeout, caller paths, and local failure all block; Test Optimization contracts, all 15 real-Git cases, and 45 Java 17 classes passed | `DONE`: `C4-006` and `C4-G02` are closed without running a customer build, performing remote mutation, implementing C4-004, or closing PR/post-merge gates; `C4-007` is next |
 | `E-110` | 2026-07-31 | `C4-007`, `C4-G01`, `C4-G03`, `C4-G04` | Versioned [`Customer patch workflow v1`](./specs/customer-patch-workflow-v1.md), exact machine-readable [trigger/permission/artifact/delivery contract](./specs/customer-patch-workflow-v1.json), inert customer-owned [`github-materialize.yml`](./fixtures/patcher/github-materialize.yml), and composite [`dev/check-customer-patch-workflow`](./dev/check-customer-patch-workflow); explicit dispatch from the protected default branch rejects forks, starts with no permissions, scopes actions-read plus contents/pull-requests write to one bounded job, exposes GITHUB_TOKEN only to the materialization step, downloads an exact run/name artifact through SHA-pinned actions, and invokes only immutable buildopt action-branch plus draft-only delivery; the required PR narrative includes change/evidence/risk/validation/expected impact/rollback, PRELIMINARY is explicitly non-confirmed, and triggers/operations for pull_request_target, push, schedule, rebase, force, default writes, ready, or merge are absent; actionlint, exact policy checks, Test Optimization contracts, all 15 real-Git cases, and 45 Java 17 classes passed | `DONE`: C4-007 and its draft-delivery gates are closed without installing the fixture, using a real token, mutating a remote, assuming recursive checks, or closing recovery/post-merge gates; C4-008 is next |
 | `E-111` | 2026-07-31 | `C4-008` | Versioned [`Patch delivery recovery v1`](./specs/patch-delivery-recovery-v1.md), exact machine-readable [identity/state/retry contract](./specs/patch-delivery-recovery-v1.json), and composite [`dev/check-patch-delivery-recovery`](./dev/check-patch-delivery-recovery); six states bind repository/action/bundle identity and the sole buildopt action branch: absent creates branch then draft, exact branch without PR creates only the missing draft, exact delivery replays, divergent head or PR returns PROPOSED, and lookup/create failure preserves the branch for explicit workflow_dispatch recovery; every run makes at most one create attempt and never rebases, force-pushes, overwrites/deletes a branch, writes default, marks ready, or merges; protected workflow checks, Test Optimization contracts, exact idempotency/recovery cases, all 15 real-Git cases, and 45 Java 17 classes passed | `DONE`: C4-008 is closed without a real token or remote mutation and without closing post-merge/causal gates; C4-009 is next |
+| `E-112` | 2026-07-31 | `C4-009`, `C4-G05` | Versioned [`Post-merge patch monitor v1`](./specs/post-merge-patch-monitor-v1.md), exact machine-readable [observation/causal/regression/inverse contract](./specs/post-merge-patch-monitor-v1.json), production Java 17 [`PostMergePatchMonitor`](./jvm/patcher/src/main/java/dev/buildopt/patcher/PostMergePatchMonitor.java) and [`ExactRevertBundleGenerator`](./jvm/patcher/src/main/java/dev/buildopt/patcher/ExactRevertBundleGenerator.java), focused [classification cases](./jvm/patcher/src/spike/java/dev/buildopt/patcher/PostMergePatchMonitorSpike.java), and composite [`dev/check-post-merge-patch-monitor`](./dev/check-post-merge-patch-monitor); bounded natural/inverse observations bind exact repository/action/revision/epoch/work/runner/policy context, retain failures/cancellations, require distinct isolation, classify absent/inexact controls as contextual and fewer than four exact pairs as inconclusive, and use 4,096 deterministic paired-bootstrap replicates plus p95 and non-compensable failure/artifact guardrails; the MODIFY-only archive inverse reads signed base preimages without checkout, requires current merged postimages, creates a new JCS/Ed25519 bundle, and passes the production verifier/applier into only an immutable draft revert while preserving default; improvement, regression, crossing interval, contextual, inexact, insufficient, failure/divergence, changed-postimage, ADD rejection, all 15 real-Git cases, and 58 Java 17 classes passed | `DONE`: C4-009 and C4-G05 are closed without claiming Git percentage rollout, mutating a remote, supporting an inexact inverse, implementing C4-004, or claiming the accepted-patch causal gate C4-G06 |
 
 ---
 
@@ -757,6 +758,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-31 | Closed `C4-009` and `C4-G05`: added bounded natural/inverse post-merge evidence, deterministic paired intervals and guardrails, exact signed archive inverse generation, and draft-only revert application without default-branch mutation; C4 autonomous infrastructure is complete while C4-004 and C4-G06 retain their real dependencies | Codex |
 | 2026-07-31 | Closed `C4-008`: fixed the six-state exact delivery retry contract, preserved branch-without-PR for explicit recovery, reused exact drafts, and rejected divergent branch/PR state without overwrite or cleanup; moved `C4-009` next | Codex |
 | 2026-07-31 | Closed `C4-007`, `C4-G01`, `C4-G03`, and `C4-G04`: added the protected explicit-dispatch workflow, minimal one-step token boundary, immutable draft-only materialization contract, complete PR narrative, and non-confirmed PRELIMINARY semantics; moved `C4-008` next | Codex |
 | 2026-07-31 | Closed `C4-006` and `C4-G02`: composed local candidate correctness with generated Test Optimization submission, exact retry, bounded polling, pinned signed result verification, and no-contact NOT_REQUIRED; moved `C4-007` next | Codex |

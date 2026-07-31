@@ -22,6 +22,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`full-relevant-validation-gate-v1.md`](./full-relevant-validation-gate-v1.md) | `C4-006` / `C4-G02` |
 | [`customer-patch-workflow-v1.md`](./customer-patch-workflow-v1.md) | `C4-007` / `C4-G01` / `C4-G03` / `C4-G04` |
 | [`patch-delivery-recovery-v1.md`](./patch-delivery-recovery-v1.md) | `C4-008` |
+| [`post-merge-patch-monitor-v1.md`](./post-merge-patch-monitor-v1.md) | `C4-009` / `C4-G05` |
 | [`patch-bundle-v1.md`](./patch-bundle-v1.md) | `F0-034` |
 | [`bandit-policy-v1.md`](./bandit-policy-v1.md) | `F0-035` |
 | [`capability-matrix-v1.md`](./capability-matrix-v1.md) | `F0-036` |

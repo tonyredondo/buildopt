@@ -70,6 +70,11 @@ jq -e \
         .testOptimizationSignedResultVerified == true and
         .testOptimizationPollingBounded == true and
         .testOptimizationNotRequiredNoContact == true and
+        .postMergeEvidenceClassified == true and
+        .contextualImpactNotPromoted == true and
+        .exactInverseBundleGenerated == true and
+        .draftRevertPathValidated == true and
+        .defaultBranchPreservedAfterRegression == true and
         .bundleContentExecuted == false and
         .customerCheckoutHooksExecuted == false and
         .customerContentFiltersExecuted == false and

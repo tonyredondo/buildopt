@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/post-merge-patch-monitor/v1" and
+  .trackerId == "C4-009" and
+  .observations.arms == ["PATCHED_NATURAL", "INVERSE_CONTROL"] and
+  .observations.maximum == 4096 and
+  .observations.distinctObservationAndIsolationKeys == true and
+  .observations.failedAndCancelledOutcomesRetained == true and
+  .observations.requiredArtifactDigestCompared == true and
+  .causal.minimumExactPairs == 4 and
+  .causal.effect == "patchedNaturalMs-inverseControlMs" and
+  .causal.bootstrapReplicates == 4096 and
+  .causal.interval == "95_PERCENT_DETERMINISTIC_PAIRED" and
+  .causal.p95Guardrail == true and
+  .causal.noComparableControl == "CONTEXTUAL" and
+  .causal.inexactInverse == "CONTEXTUAL" and
+  .causal.insufficientPairs == "INCONCLUSIVE" and
+  .regression == {
+    "positiveLower95": "CREATE_DRAFT_REVERT_PR",
+    "positiveMeanAndP95": "CREATE_DRAFT_REVERT_PR",
+    "patchedFailureOrCancellation": "CREATE_DRAFT_REVERT_PR",
+    "artifactDivergence": "CREATE_DRAFT_REVERT_PR"
+  } and
+  .inverseBundle.recipe == "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1@1.0" and
+  .inverseBundle.operations == "MODIFY_ONLY" and
+  .inverseBundle.requiresCurrentExactPostimages == true and
+  .inverseBundle.restoresSignedBasePreimages == true and
+  .inverseBundle.newSignedPatchBundle == true and
+  .inverseBundle.actionId == "revert-<originalBundleSha256>" and
+  .inverseBundle.productionVerifierAndApplier == true and
+  .inverseBundle.delivery == "NEW_DRAFT_REVERT_PR" and
+  .inverseBundle.fallback == "PRECISE_REVERT_INSTRUCTION" and
+  .forbidden == ["PERCENTAGE_ROLLOUT_CLAIM", "SILENT_PUSH", "DEFAULT_BRANCH_WRITE", "AUTOMATIC_REBASE", "FORCE_PUSH", "AUTOMATIC_MERGE"] and
+  .remoteMutationPerformedByConformance == false and
+  .closesGate == "C4-G05" and
+  .doesNotClose == ["C4-004", "C4-G06"]
+' specs/post-merge-patch-monitor-v1.json >/dev/null
+
+test -f jvm/patcher/src/main/java/dev/buildopt/patcher/PostMergePatchMonitor.java
+test -f jvm/patcher/src/main/java/dev/buildopt/patcher/ExactRevertBundleGenerator.java
+./dev/check-patch-delivery-recovery
+printf 'C4-009 post-merge patch monitor OK: causal/contextual classification and exact signed draft revert path; C4-G05 closed\n'
