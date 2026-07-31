@@ -1396,6 +1396,25 @@ The checker never contacts
 GitHub or private machine state and makes no causal, signed-Shared-authority,
 external-user, or eight-hour-soak claim. `A1-006` and `A1-G06` remain open.
 
+## Owner-operated causal POC evaluation
+
+Run both immutable public pilots through the paired causal harness:
+
+```bash
+./dev/run-owner-poc-evaluation \
+  /tmp/buildopt-owner-poc-evidence \
+  ../buildopt-pilot \
+  ../buildopt-pilot-groovy
+```
+
+Each repository receives four pre-assigned alternating pairs with isolated
+control/candidate workspaces. The command requires positive mean savings and a
+positive lower 95% paired-bootstrap bound, non-regressive p95, identical ZIPs,
+and zero product/build-failure divergence. The hosted workflow repeats the
+measurement on `ubuntu-24.04`; `./dev/check-owner-poc-evaluation` validates the
+checked-in evidence without rerunning the expensive builds.
+
+
 ## Private-beta benchmark harness
 
 Exercise the non-qualifying real-data-plane smoke profile:

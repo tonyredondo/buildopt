@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 3)); then
+    printf 'usage: %s OUTPUT_DIR KOTLIN_REPOSITORY GROOVY_REPOSITORY\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_kotlin_root=$2
+buildopt_groovy_root=$3
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/owner-poc-evaluation-v1.json"
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-owner-poc-evaluation.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ "${buildopt_temp}" == "${TMPDIR:-/tmp}/buildopt-owner-poc-evaluation."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ]]; then
+    printf 'OUTPUT_DIR must be an absent absolute path\n' >&2
+    exit 64
+fi
+
+buildopt_kotlin_revision=$(jq -er '.repositories[] | select(.dsl == "KOTLIN") | .revision' "${buildopt_contract}")
+buildopt_groovy_revision=$(jq -er '.repositories[] | select(.dsl == "GROOVY") | .revision' "${buildopt_contract}")
+
+"${buildopt_script_dir}/run-owner-poc-causal" \
+    "${buildopt_kotlin_root}" \
+    tonyredondo/buildopt-pilot \
+    "${buildopt_kotlin_revision}" \
+    KOTLIN \
+    "${buildopt_temp}/kotlin"
+"${buildopt_script_dir}/run-owner-poc-causal" \
+    "${buildopt_groovy_root}" \
+    tonyredondo/buildopt-pilot-groovy \
+    "${buildopt_groovy_revision}" \
+    GROOVY \
+    "${buildopt_temp}/groovy"
+
+mkdir -m 0700 -- "${buildopt_output}"
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_run_url=
+if [[ -n "${GITHUB_SERVER_URL:-}" && -n "${GITHUB_REPOSITORY:-}" && -n "${GITHUB_RUN_ID:-}" ]]; then
+    buildopt_run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+fi
+
+jq -n \
+    --arg capturedOn "$(date -u +%F)" \
+    --arg buildoptRevision "${buildopt_revision}" \
+    --arg workflowRunUrl "${buildopt_run_url}" \
+    --argjson workflowRunId "${GITHUB_RUN_ID:-0}" \
+    --slurpfile kotlin "${buildopt_temp}/kotlin/experiment-result.json" \
+    --slurpfile groovy "${buildopt_temp}/groovy/experiment-result.json" \
+    '{
+      schemaVersion: "buildopt.evidence/owner-poc-evaluation/v1",
+      capturedOn: $capturedOn,
+      workItem: "A1-006",
+      buildoptRevision: $buildoptRevision,
+      workflow: {
+        name: "Owner POC Evaluation",
+        runId: $workflowRunId,
+        url: $workflowRunUrl,
+        runner: "ubuntu-24.04"
+      },
+      repositories: [
+        {
+          nameWithOwner: "tonyredondo/buildopt-pilot",
+          revision: "e79a7bcc5eb31e838d4d886245d514fcdef3fc73",
+          dsl: "KOTLIN",
+          result: $kotlin[0]
+        },
+        {
+          nameWithOwner: "tonyredondo/buildopt-pilot-groovy",
+          revision: "f6aea79262766a71701f10da0b20ce10582b2a69",
+          dsl: "GROOVY",
+          result: $groovy[0]
+        }
+      ],
+      gate: {
+        state: "PASSED",
+        closes: ["A1-006", "A1-G06"],
+        productionPromotionAuthorized: false
+      }
+    }' >"${buildopt_output}/owner-poc-evaluation.json"
+chmod 0600 "${buildopt_output}/owner-poc-evaluation.json"
+
+if ! jq -e '
+    .repositories | length == 2 and
+    all(.[].result;
+        .samples.assigned == {candidate: 4, control: 4} and
+        .samples.analyzed == .samples.assigned and
+        .effects.observedNetBuildTimeSavedMs > 0 and
+        .effects.observedNetBuildTimeSavedInterval95Ms[0] > 0 and
+        .effects.customerVisibleBuildP95DeltaMs <= 0 and
+        .effects.requiredDeliverableDivergenceRate == 0 and
+        .effects.productAttributableFailureRate == 0 and
+        .effects.buildFailureRateDelta == 0)
+' "${buildopt_output}/owner-poc-evaluation.json" >/dev/null; then
+    printf 'owner POC evaluation did not meet A1 acceptance\n' >&2
+    exit 1
+fi
+
+printf 'A1-006 owner POC evaluation OK: two public owner-operated repositories passed causal and p95 gates\n'

@@ -1,0 +1,72 @@
+name: Owner POC Evaluation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: owner-poc-evaluation-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  evaluate:
+    name: Two public owner-operated repositories
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out BuildOpt
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Install Java 17 for pilot toolchains
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
+        with:
+          distribution: temurin
+          java-version: '17.0.19+10'
+          check-latest: false
+
+      - name: Provision locked BuildOpt toolchains
+        run: |
+          set -euo pipefail
+          for buildopt_toolchain in temurin-jdk-21 go shellcheck; do
+            ./dev/bootstrap --toolchain "${buildopt_toolchain}"
+          done
+
+      - name: Prime the checksum-pinned Gradle distribution
+        run: ./dev/run -- ./gradlew --no-daemon --version
+
+      - name: Check out immutable public pilots
+        run: |
+          set -euo pipefail
+          git clone --filter=blob:none --no-checkout \
+            https://github.com/tonyredondo/buildopt-pilot.git \
+            "${RUNNER_TEMP}/buildopt-pilot"
+          git -C "${RUNNER_TEMP}/buildopt-pilot" checkout --detach \
+            e79a7bcc5eb31e838d4d886245d514fcdef3fc73
+          git clone --filter=blob:none --no-checkout \
+            https://github.com/tonyredondo/buildopt-pilot-groovy.git \
+            "${RUNNER_TEMP}/buildopt-pilot-groovy"
+          git -C "${RUNNER_TEMP}/buildopt-pilot-groovy" checkout --detach \
+            f6aea79262766a71701f10da0b20ce10582b2a69
+
+      - name: Run causal multi-repository evaluation
+        run: |
+          BUILDOPT_JAVA17_HOME="${JAVA_HOME}" ./dev/run-owner-poc-evaluation \
+            "${RUNNER_TEMP}/owner-poc-evidence" \
+            "${RUNNER_TEMP}/buildopt-pilot" \
+            "${RUNNER_TEMP}/buildopt-pilot-groovy"
+
+      - name: Upload immutable evaluation evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: owner-poc-evaluation
+          path: ${{ runner.temp }}/owner-poc-evidence/owner-poc-evaluation.json
+          if-no-files-found: error
+          retention-days: 30

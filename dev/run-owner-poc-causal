@@ -1,0 +1,641 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 5)); then
+    printf 'usage: %s REPOSITORY_ROOT REPOSITORY_ID REVISION DSL OUTPUT_DIR\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_pilot_root=$1
+buildopt_repository_id=$2
+buildopt_revision=$3
+buildopt_dsl=$4
+buildopt_requested_output=$5
+
+if [[ ! -d "${buildopt_pilot_root}/.git" ]] ||
+    [[ ! "${buildopt_repository_id}" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] ||
+    [[ ! "${buildopt_revision}" =~ ^[0-9a-f]{40}$ ]] ||
+    [[ "${buildopt_dsl}" != "KOTLIN" && "${buildopt_dsl}" != "GROOVY" ]] ||
+    [[ "${buildopt_requested_output}" != /* || -e "${buildopt_requested_output}" ]]; then
+    printf 'invalid owner POC causal input\n' >&2
+    exit 64
+fi
+buildopt_pilot_root=$(cd -- "${buildopt_pilot_root}" && pwd)
+
+unset \
+    BUILDOPT_BYPASS \
+    BUILDOPT_SERVER_URL \
+    BUILDOPT_SERVER_INGEST_TOKEN \
+    BUILDOPT_BUILD_SESSION_CONTEXT \
+    BUILDOPT_L1_STATE_ROOT \
+    BUILDOPT_L1_TENANT_ID \
+    BUILDOPT_L1_REPOSITORY_ID \
+    BUILDOPT_L1_TRUST_DOMAIN \
+    BUILDOPT_L1_COMPATIBILITY_CLASS \
+    BUILDOPT_L1_SECURITY_GENERATION \
+    BUILDOPT_L1_L2_WRITE_AUTHORIZED
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_result_schema="${buildopt_repo_root}/contracts/jsonschema/experiment-result.v1.schema.json"
+buildopt_session_schema="${buildopt_repo_root}/contracts/jsonschema/build-session.v1.schema.json"
+buildopt_test_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-owner-poc-causal.XXXXXX")
+buildopt_server_pid=
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_server_pid}" ]] &&
+        kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        kill -TERM "${buildopt_server_pid}" 2>/dev/null || true
+        wait "${buildopt_server_pid}" 2>/dev/null || true
+    fi
+    if [[ -n "${buildopt_test_root}" &&
+        "${buildopt_test_root}" == \
+            "${TMPDIR:-/tmp}/buildopt-owner-poc-causal."* ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+if [[ "$(uname -s)" != "Linux" ]]; then
+    printf 'A0-009 causal pilot requires Linux\n' >&2
+    exit 1
+fi
+
+for buildopt_command in awk chmod cmp cp dirname find git grep head jq mkdir mktemp \
+    readlink rm sed sha256sum sleep stat tar uname wc; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required causal-pilot command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+cd -- "${buildopt_repo_root}"
+buildopt_before_status=$(
+    git status --porcelain=v1 --untracked-files=all
+)
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 \
+    ./internal/neutralenvelope \
+    ./cmd/neutral-envelope
+
+buildopt_launcher="${buildopt_test_root}/buildopt"
+buildopt_server="${buildopt_test_root}/buildopt-server"
+buildopt_envelope="${buildopt_test_root}/neutral-envelope"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go build -buildvcs=false -trimpath \
+    -o "${buildopt_launcher}" ./cmd/buildopt
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go build -buildvcs=false -trimpath \
+    -o "${buildopt_server}" ./cmd/buildopt-server
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go build -buildvcs=false -trimpath \
+    -o "${buildopt_envelope}" ./cmd/neutral-envelope
+
+(
+    cd -- "${buildopt_repo_root}/dev/schema-validator"
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go test -count=1 \
+        ./cmd/build-session-validator \
+        ./cmd/experiment-result-validator
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -trimpath \
+        -o "${buildopt_test_root}/build-session-validator" \
+        ./cmd/build-session-validator
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -trimpath \
+        -o "${buildopt_test_root}/experiment-result-validator" \
+        ./cmd/experiment-result-validator
+)
+
+buildopt_build_home=${GRADLE_USER_HOME:-"${buildopt_repo_root}/.tools/gradle-user-home/local"}
+mkdir -p -- "${buildopt_build_home}"
+"${buildopt_script_dir}/run" -- \
+    "${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --no-configuration-cache \
+    --warning-mode=fail \
+    :jvm:gradle-plugin:jar
+
+buildopt_plugin_jar="${buildopt_repo_root}/jvm/gradle-plugin/build/libs/buildopt-gradle-plugin-0.1.0-SNAPSHOT.jar"
+if [[ ! -f "${buildopt_plugin_jar}" ]]; then
+    printf 'current checkout Gradle plugin JAR is unavailable\n' >&2
+    exit 1
+fi
+
+buildopt_gradle_home=$(
+    find \
+        "${buildopt_build_home}/wrapper/dists/gradle-9.6.1-bin" \
+        -type d \
+        -path '*/gradle-9.6.1' \
+        -print \
+        -quit
+)
+if [[ -z "${buildopt_gradle_home}" ||
+    ! -x "${buildopt_gradle_home}/bin/gradle" ]]; then
+    printf 'pinned Gradle 9.6.1 distribution is unavailable\n' >&2
+    exit 1
+fi
+buildopt_gradle=$(readlink -f "${buildopt_gradle_home}/bin/gradle")
+buildopt_java_home=$(
+    "${buildopt_script_dir}/run" -- \
+        java -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.home = / {
+                print $2
+                exit
+            }
+        '
+)
+if [[ ! -x "${buildopt_java_home}/bin/java" ]]; then
+    printf 'locked JDK 21 is unavailable\n' >&2
+    exit 1
+fi
+
+buildopt_fixture_source="${buildopt_test_root}/fixture-source"
+mkdir -p -- "${buildopt_fixture_source}"
+if [[ "$(git -C "${buildopt_pilot_root}" rev-parse "${buildopt_revision}^{commit}")" != "${buildopt_revision}" ]]; then
+    printf 'owner POC revision is unavailable: %s\n' "${buildopt_revision}" >&2
+    exit 1
+fi
+git -C "${buildopt_pilot_root}" archive --format=tar "${buildopt_revision}" |
+    tar -xf - -C "${buildopt_fixture_source}"
+buildopt_control_workspace="${buildopt_test_root}/control"
+buildopt_candidate_workspace="${buildopt_test_root}/candidate"
+cp -R -- "${buildopt_fixture_source}" "${buildopt_control_workspace}"
+cp -R -- "${buildopt_fixture_source}" "${buildopt_candidate_workspace}"
+buildopt_control_gradle_home="${buildopt_test_root}/control-gradle-home"
+buildopt_candidate_gradle_home="${buildopt_test_root}/candidate-gradle-home"
+buildopt_l1_state="${buildopt_test_root}/l1-state"
+mkdir -m 0700 -- \
+    "${buildopt_control_gradle_home}" \
+    "${buildopt_candidate_gradle_home}" \
+    "${buildopt_l1_state}"
+
+buildopt_plugin_jar_quoted=${buildopt_plugin_jar//\\/\\\\}
+buildopt_plugin_jar_quoted=${buildopt_plugin_jar_quoted//\'/\\\'}
+buildopt_control_init="${buildopt_test_root}/control.init.gradle"
+buildopt_candidate_init="${buildopt_test_root}/candidate.init.gradle"
+printf '%s\n' \
+    "initscript { dependencies { classpath files('${buildopt_plugin_jar_quoted}') } }" \
+    'allprojects {' \
+    '    pluginManager.apply(dev.buildopt.gradle.BuildOptTierOnePolicyPlugin)' \
+    '    pluginManager.apply(dev.buildopt.gradle.BuildOptProjectPlugin)' \
+    '}' \
+    >"${buildopt_control_init}"
+printf '%s\n' \
+    "initscript { dependencies { classpath files('${buildopt_plugin_jar_quoted}') } }" \
+    'beforeSettings { settings ->' \
+    '    settings.pluginManager.apply(dev.buildopt.gradle.BuildOptManagedL1Plugin)' \
+    '}' \
+    'allprojects {' \
+    '    pluginManager.apply(dev.buildopt.gradle.BuildOptProjectPlugin)' \
+    '}' \
+    >"${buildopt_candidate_init}"
+
+buildopt_task=":app:distZip"
+buildopt_deliverable="app/build/distributions/app-1.0.0.zip"
+buildopt_repository_slug=${buildopt_repository_id//\//-}
+buildopt_experiment="a1-006-${buildopt_repository_slug}"
+
+if [[ -n "${BUILDOPT_JAVA17_HOME:-}" && ! -x "${BUILDOPT_JAVA17_HOME}/bin/java" ]]; then
+    printf 'BUILDOPT_JAVA17_HOME is invalid\n' >&2
+    exit 1
+fi
+
+buildopt_common_gradle_arguments=(
+    --no-daemon
+    --offline
+    --no-configuration-cache
+    --stacktrace
+    --warning-mode=fail
+    --console=plain
+    --info
+)
+if [[ -n "${BUILDOPT_JAVA17_HOME:-}" ]]; then
+    buildopt_common_gradle_arguments+=(
+        "-Dorg.gradle.java.installations.paths=${BUILDOPT_JAVA17_HOME}"
+    )
+fi
+
+
+buildopt_warm_arm() {
+    local buildopt_arm=$1
+    local buildopt_log=$2
+    local buildopt_workspace
+    local buildopt_gradle_user_home
+    local buildopt_init
+    local buildopt_cache_flag
+    local buildopt_project_cache
+
+    if [[ "${buildopt_arm}" == "CONTROL" ]]; then
+        buildopt_workspace=${buildopt_control_workspace}
+        buildopt_gradle_user_home=${buildopt_control_gradle_home}
+        buildopt_init=${buildopt_control_init}
+        buildopt_cache_flag=--no-build-cache
+    else
+        buildopt_workspace=${buildopt_candidate_workspace}
+        buildopt_gradle_user_home=${buildopt_candidate_gradle_home}
+        buildopt_init=${buildopt_candidate_init}
+        buildopt_cache_flag=--build-cache
+    fi
+    buildopt_project_cache="${buildopt_test_root}/warm-${buildopt_arm,,}-project-cache"
+    find "${buildopt_workspace}" -type d -name build -prune -exec rm -rf -- {} +
+    rm -rf -- "${buildopt_project_cache}"
+
+    if [[ "${buildopt_arm}" == "CANDIDATE" ]]; then
+        BUILDOPT_L1_STATE_ROOT="${buildopt_l1_state}" \
+        BUILDOPT_L1_TENANT_ID=internal \
+        BUILDOPT_L1_REPOSITORY_ID="${buildopt_repository_id}" \
+        BUILDOPT_L1_TRUST_DOMAIN=owner-poc \
+        BUILDOPT_L1_COMPATIBILITY_CLASS=gradle-9.6-java-21-linux-amd64 \
+        BUILDOPT_L1_SECURITY_GENERATION=1 \
+        BUILDOPT_L1_L2_WRITE_AUTHORIZED=0 \
+        GRADLE_USER_HOME="${buildopt_gradle_user_home}" \
+        JAVA_HOME="${buildopt_java_home}" \
+        PATH="${buildopt_java_home}/bin:${PATH}" \
+            "${buildopt_launcher}" run -- \
+                "${buildopt_gradle}" \
+                "${buildopt_common_gradle_arguments[@]}" \
+                "${buildopt_cache_flag}" \
+                --project-cache-dir "${buildopt_project_cache}" \
+                --init-script "${buildopt_init}" \
+                -p "${buildopt_workspace}" \
+                "${buildopt_task}" >"${buildopt_log}" 2>&1
+        return
+    fi
+    GRADLE_USER_HOME="${buildopt_gradle_user_home}" \
+    JAVA_HOME="${buildopt_java_home}" \
+    PATH="${buildopt_java_home}/bin:${PATH}" \
+        "${buildopt_launcher}" run -- \
+            "${buildopt_gradle}" \
+            "${buildopt_common_gradle_arguments[@]}" \
+            "${buildopt_cache_flag}" \
+            --project-cache-dir "${buildopt_project_cache}" \
+            --init-script "${buildopt_init}" \
+            -p "${buildopt_workspace}" \
+            "${buildopt_task}" >"${buildopt_log}" 2>&1
+}
+
+if ! buildopt_warm_arm CONTROL "${buildopt_test_root}/warm-control.log"; then
+    printf 'causal-pilot control warm-up failed\n' >&2
+    sed -n '1,240p' "${buildopt_test_root}/warm-control.log" >&2
+    exit 1
+fi
+if ! buildopt_warm_arm CANDIDATE "${buildopt_test_root}/warm-candidate.log"; then
+    printf 'causal-pilot candidate warm-up failed\n' >&2
+    sed -n '1,240p' "${buildopt_test_root}/warm-candidate.log" >&2
+    exit 1
+fi
+
+buildopt_token=0123456789abcdefghijklmnopqrstuvwxyzABCDEFG
+buildopt_session_exports="${buildopt_test_root}/session-exports"
+buildopt_server_log="${buildopt_test_root}/server.log"
+BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+    "${buildopt_server}" serve \
+    --listen 127.0.0.1:0 \
+    --export-dir "${buildopt_session_exports}" \
+    >"${buildopt_server_log}" 2>&1 &
+buildopt_server_pid=$!
+
+buildopt_endpoint=
+for _ in {1..100}; do
+    buildopt_endpoint=$(
+        sed -n \
+            's/^buildopt-server: listening on \(http:\/\/127[.]0[.]0[.]1:[0-9][0-9]*\)$/\1/p' \
+            "${buildopt_server_log}" |
+            head -n 1
+    )
+    if [[ -n "${buildopt_endpoint}" ]]; then
+        break
+    fi
+    if ! kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        printf 'buildopt-server exited before causal-pilot readiness\n' >&2
+        sed -n '1,240p' "${buildopt_server_log}" >&2
+        exit 1
+    fi
+    sleep 0.05
+done
+if [[ -z "${buildopt_endpoint}" ]]; then
+    printf 'buildopt-server did not report its causal-pilot endpoint\n' >&2
+    sed -n '1,240p' "${buildopt_server_log}" >&2
+    exit 1
+fi
+if ! "${buildopt_script_dir}/wait-server-ready" \
+    "${buildopt_endpoint}" \
+    "${buildopt_server_pid}"; then
+    sed -n '1,240p' "${buildopt_server_log}" >&2
+    exit 1
+fi
+
+buildopt_assignments="${buildopt_test_root}/assignments"
+buildopt_observations="${buildopt_test_root}/observations"
+buildopt_result_exports="${buildopt_test_root}/result-exports"
+mkdir -m 0700 -- \
+    "${buildopt_assignments}" \
+    "${buildopt_observations}" \
+    "${buildopt_result_exports}"
+buildopt_baseline_digest="sha256:$(
+    printf '%s' "buildopt:a1-006:${buildopt_repository_id}:${buildopt_revision}:baseline:v1" |
+        sha256sum |
+        sed 's/[[:space:]].*$//'
+)"
+buildopt_control_digest="sha256:$(
+    printf '%s' "buildopt:a1-006:${buildopt_repository_id}:${buildopt_revision}:control:v1" |
+        sha256sum |
+        sed 's/[[:space:]].*$//'
+)"
+buildopt_source_state=$(printf '%s' "${buildopt_repository_id}:${buildopt_revision}" | sha256sum | sed 's/[[:space:]].*$//')
+buildopt_work_units_value=$(printf '%s' "${buildopt_repository_id}:${buildopt_revision}:${buildopt_task}" | sha256sum | sed 's/[[:space:]].*$//')
+buildopt_work_units="hmac-sha256:${buildopt_work_units_value}"
+buildopt_context=$(printf '{"repositoryId":"%s","revision":"%s","requestedTasks":["%s"],"sourceStateDigest":"hmac-sha256:%s","workUnitsFingerprint":"%s","tokenKeyVersion":"owner-poc-v1","trustDomain":"owner-poc"}' "${buildopt_repository_slug}" "${buildopt_revision}" "${buildopt_task}" "${buildopt_source_state}" "${buildopt_work_units}")
+buildopt_expected_handshake='buildopt: authenticated Gradle plugin handshake accepted'
+
+buildopt_measure_arm() {
+    local buildopt_arm=$1
+    local buildopt_pair=$2
+    local buildopt_order=$3
+    local buildopt_label
+    local buildopt_arm_lower
+    local buildopt_workspace
+    local buildopt_gradle_user_home
+    local buildopt_init
+    local buildopt_cache_flag
+    local buildopt_output
+    local buildopt_project_cache
+    local buildopt_assignment
+    local buildopt_observation
+    local buildopt_log
+
+    printf -v buildopt_label '%02d' "${buildopt_pair}"
+    buildopt_arm_lower=${buildopt_arm,,}
+    if [[ "${buildopt_arm}" == "CONTROL" ]]; then
+        buildopt_workspace=${buildopt_control_workspace}
+        buildopt_gradle_user_home=${buildopt_control_gradle_home}
+        buildopt_init=${buildopt_control_init}
+        buildopt_cache_flag=--no-build-cache
+    else
+        buildopt_workspace=${buildopt_candidate_workspace}
+        buildopt_gradle_user_home=${buildopt_candidate_gradle_home}
+        buildopt_init=${buildopt_candidate_init}
+        buildopt_cache_flag=--build-cache
+    fi
+    buildopt_output="${buildopt_workspace}/${buildopt_deliverable}"
+    buildopt_project_cache="${buildopt_test_root}/pair-${buildopt_label}-${buildopt_arm_lower}-project-cache"
+    buildopt_assignment="${buildopt_assignments}/assignment-${buildopt_label}-${buildopt_order}-${buildopt_arm_lower}.json"
+    buildopt_observation="${buildopt_observations}/observation-${buildopt_label}-${buildopt_order}-${buildopt_arm_lower}.json"
+    buildopt_log="${buildopt_test_root}/pair-${buildopt_label}-${buildopt_order}-${buildopt_arm_lower}.log"
+
+    find "${buildopt_workspace}" -type d -name build -prune -exec rm -rf -- {} +
+    rm -rf -- "${buildopt_project_cache}"
+    "${buildopt_envelope}" pilot-assign \
+        --experiment "${buildopt_experiment}" \
+        --epoch 1 \
+        --action managed-l1-cache-hit-v1 \
+        --baseline-digest "${buildopt_baseline_digest}" \
+        --control-digest "${buildopt_control_digest}" \
+        --cohort owner-controlled-public-poc \
+        --environment GITHUB_ACTIONS \
+        --pipeline owner-public-poc \
+        --runner github-ubuntu-24.04 \
+        --work-units "${buildopt_work_units}" \
+        --required-deliverable "${buildopt_deliverable}" \
+        --pair "${buildopt_pair}" \
+        --arm "${buildopt_arm}" \
+        --output "${buildopt_assignment}"
+
+    if [[ "${buildopt_arm}" == "CANDIDATE" ]]; then
+        BUILDOPT_SERVER_URL="${buildopt_endpoint}" \
+        BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+        BUILDOPT_BUILD_SESSION_CONTEXT="${buildopt_context}" \
+        BUILDOPT_L1_STATE_ROOT="${buildopt_l1_state}" \
+        BUILDOPT_L1_TENANT_ID=internal \
+        BUILDOPT_L1_REPOSITORY_ID="${buildopt_repository_id}" \
+        BUILDOPT_L1_TRUST_DOMAIN=owner-poc \
+        BUILDOPT_L1_COMPATIBILITY_CLASS=gradle-9.6-java-21-linux-amd64 \
+        BUILDOPT_L1_SECURITY_GENERATION=1 \
+        BUILDOPT_L1_L2_WRITE_AUTHORIZED=0 \
+        GRADLE_USER_HOME="${buildopt_gradle_user_home}" \
+        JAVA_HOME="${buildopt_java_home}" \
+        PATH="${buildopt_java_home}/bin:${PATH}" \
+            "${buildopt_envelope}" pilot-observe \
+                --assignment "${buildopt_assignment}" \
+                --deliverable "${buildopt_output}" \
+                --output "${buildopt_observation}" \
+                -- "${buildopt_launcher}" run -- \
+                    "${buildopt_gradle}" \
+                    "${buildopt_common_gradle_arguments[@]}" \
+                    "${buildopt_cache_flag}" \
+                    --project-cache-dir "${buildopt_project_cache}" \
+                    --init-script "${buildopt_init}" \
+                    -p "${buildopt_workspace}" \
+                    "${buildopt_task}" >"${buildopt_log}" 2>&1
+    else
+        BUILDOPT_SERVER_URL="${buildopt_endpoint}" \
+        BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+        BUILDOPT_BUILD_SESSION_CONTEXT="${buildopt_context}" \
+        GRADLE_USER_HOME="${buildopt_gradle_user_home}" \
+        JAVA_HOME="${buildopt_java_home}" \
+        PATH="${buildopt_java_home}/bin:${PATH}" \
+            "${buildopt_envelope}" pilot-observe \
+                --assignment "${buildopt_assignment}" \
+                --deliverable "${buildopt_output}" \
+                --output "${buildopt_observation}" \
+                -- "${buildopt_launcher}" run -- \
+                    "${buildopt_gradle}" \
+                    "${buildopt_common_gradle_arguments[@]}" \
+                    "${buildopt_cache_flag}" \
+                    --project-cache-dir "${buildopt_project_cache}" \
+                    --init-script "${buildopt_init}" \
+                    -p "${buildopt_workspace}" \
+                    "${buildopt_task}" >"${buildopt_log}" 2>&1
+    fi
+
+    if ! grep -Fq "${buildopt_expected_handshake}" "${buildopt_log}"; then
+        printf 'causal-pilot %s arm lacks authenticated handshake\n' \
+            "${buildopt_arm}" >&2
+        sed -n '1,240p' "${buildopt_log}" >&2
+        exit 1
+    fi
+    if [[ "${buildopt_arm}" == "CANDIDATE" ]]; then
+        if ! grep -Fq ':compileJava FROM-CACHE' "${buildopt_log}"; then
+            printf 'causal-pilot candidate did not consume managed L1\n' >&2
+            sed -n '1,240p' "${buildopt_log}" >&2
+            exit 1
+        fi
+    elif grep -Fq ':compileJava FROM-CACHE' "${buildopt_log}" ||
+        ! grep -Fq ':compileJava' "${buildopt_log}"; then
+        printf 'causal-pilot control did not execute compileJava\n' >&2
+        sed -n '1,240p' "${buildopt_log}" >&2
+        exit 1
+    fi
+}
+
+for buildopt_pair in 1 2 3 4; do
+    if ((buildopt_pair % 2 == 1)); then
+        buildopt_measure_arm CONTROL "${buildopt_pair}" 1
+        buildopt_measure_arm CANDIDATE "${buildopt_pair}" 2
+    else
+        buildopt_measure_arm CANDIDATE "${buildopt_pair}" 1
+        buildopt_measure_arm CONTROL "${buildopt_pair}" 2
+    fi
+done
+
+if [[ "$(find "${buildopt_assignments}" -maxdepth 1 -type f -name 'assignment-*.json' | wc -l)" != "8" ]] ||
+    [[ "$(find "${buildopt_observations}" -maxdepth 1 -type f -name 'observation-*.json' | wc -l)" != "8" ]]; then
+    printf 'causal pilot did not retain all assignments and outcomes\n' >&2
+    exit 1
+fi
+if find "${buildopt_assignments}" "${buildopt_observations}" \
+    -type f ! -perm 0600 -print -quit |
+    grep -q .; then
+    printf 'causal-pilot input records are not private\n' >&2
+    exit 1
+fi
+
+buildopt_report_output="${buildopt_test_root}/pilot-report.log"
+if ! "${buildopt_envelope}" pilot-report \
+    --observations "${buildopt_observations}" \
+    --incremental-overhead-ms 0 \
+    --export-dir "${buildopt_result_exports}" \
+    >"${buildopt_report_output}" 2>&1; then
+    printf 'causal-pilot result production failed\n' >&2
+    sed -n '1,240p' "${buildopt_report_output}" >&2
+    exit 1
+fi
+if ! grep -Fq 'preliminary=true netSavings=true' \
+    "${buildopt_report_output}"; then
+    printf 'causal-pilot result did not demonstrate net savings\n' >&2
+    sed -n '1,240p' "${buildopt_report_output}" >&2
+    exit 1
+fi
+
+mapfile -t buildopt_results < <(
+    find "${buildopt_result_exports}" \
+        -maxdepth 1 \
+        -type f \
+        -name 'experiment-result-*.json' \
+        -print
+)
+if ((${#buildopt_results[@]} != 1)); then
+    printf 'expected one immutable EXPERIMENT_RESULT, found %s\n' \
+        "${#buildopt_results[@]}" >&2
+    exit 1
+fi
+buildopt_result=${buildopt_results[0]}
+"${buildopt_test_root}/experiment-result-validator" \
+    "${buildopt_result_schema}" \
+    "${buildopt_result}"
+"${buildopt_envelope}" pilot-validate \
+    --result "${buildopt_result}" \
+    --observations "${buildopt_observations}"
+
+if ! jq -e --arg experiment "${buildopt_experiment}" '
+    .schemaVersion == "1.0" and
+    .recordType == "EXPERIMENT_RESULT" and
+    .experimentId == $experiment and
+    .resultVersion == 1 and
+    .status == "PRELIMINARY" and
+    .effectScope == "ACTION_INCREMENTAL" and
+    .actionIds == ["managed-l1-cache-hit-v1"] and
+    .samples.assigned == {candidate: 4, control: 4} and
+    .samples.analyzed == .samples.assigned and
+    .samples.outcomes.candidate.SUCCESS == 4 and
+    .samples.outcomes.control.SUCCESS == 4 and
+    .samples.excludedSampleSize == 0 and
+    .samples.exclusions == [] and
+    .method == {
+        analysisMethod: "PAIRED_BOOTSTRAP",
+        effectStatistic: "PAIRED_MEAN_DELTA",
+        intervalType: "CONFIDENCE_95"
+    } and
+    .effects.observedNetBuildTimeSavedMs > 0 and
+    .effects.observedNetBuildTimeSavedInterval95Ms[0] > 0 and
+    .effects.observedBuildTimeReductionRatio > 0 and
+    .effects.incrementalActionOverheadMs == 0 and
+    .effects.requiredDeliverableDivergenceRate == 0 and
+    .effects.productAttributableFailureRate == 0 and
+    .effects.buildFailureRateDelta == 0 and
+    .effects.customerVisibleBuildP95DeltaMs <= 0 and
+    .decision.state == "PRELIMINARY" and
+    .decision.promotionClass == "DIRECT_REVERSIBLE" and
+    (has("gateEvaluation") | not) and
+    (has("economics") | not) and
+    (has("invalidation") | not)
+' "${buildopt_result}" >/dev/null; then
+    printf 'causal-pilot EXPERIMENT_RESULT is semantically incomplete\n' >&2
+    jq . "${buildopt_result}" >&2
+    exit 1
+fi
+
+buildopt_result_stream="${buildopt_result_exports}/experiment-results.jsonl"
+buildopt_stdout_stream="${buildopt_test_root}/experiment-results.stdout.jsonl"
+"${buildopt_envelope}" pilot-export \
+    --export-dir "${buildopt_result_exports}" \
+    >"${buildopt_stdout_stream}"
+if ! cmp -s -- "${buildopt_result_stream}" "${buildopt_stdout_stream}"; then
+    printf 'causal-pilot stdout does not match durable JSONL\n' >&2
+    exit 1
+fi
+if [[ "$(wc -l <"${buildopt_result_stream}")" != "1" ]] ||
+    [[ "$(stat -c '%a' -- "${buildopt_result_exports}")" != "700" ]] ||
+    [[ "$(stat -c '%a' -- "${buildopt_result}")" != "600" ]] ||
+    [[ "$(stat -c '%a' -- "${buildopt_result_stream}")" != "600" ]]; then
+    printf 'causal-pilot result storage is not bounded private output\n' >&2
+    exit 1
+fi
+
+mapfile -t buildopt_sessions < <(
+    find "${buildopt_session_exports}" \
+        -maxdepth 1 \
+        -type f \
+        -name 'build-session-*.json' \
+        -print
+)
+if ((${#buildopt_sessions[@]} != 8)); then
+    printf 'expected eight measured BUILD_SESSION documents, found %s\n' \
+        "${#buildopt_sessions[@]}" >&2
+    exit 1
+fi
+for buildopt_session in "${buildopt_sessions[@]}"; do
+    "${buildopt_test_root}/build-session-validator" \
+        "${buildopt_session_schema}" \
+        "${buildopt_session}" >/dev/null
+done
+mapfile -t buildopt_token_leaks < <(
+    {
+        grep -R -l -F -- \
+            "${buildopt_token}" \
+            "${buildopt_assignments}" \
+            "${buildopt_observations}" \
+            "${buildopt_result_exports}" \
+            "${buildopt_session_exports}" || true
+        grep -l -F -- \
+            "${buildopt_token}" \
+            "${buildopt_test_root}"/*.log || true
+    }
+)
+if ((${#buildopt_token_leaks[@]} != 0)); then
+    printf 'causal-pilot ingest credential reached a durable artifact or log\n' >&2
+    printf 'matched file: %s\n' "${buildopt_token_leaks[@]}" >&2
+    exit 1
+fi
+
+mkdir -m 0700 -- "${buildopt_requested_output}"
+cp -- "${buildopt_result}" "${buildopt_requested_output}/experiment-result.json"
+chmod 0600 "${buildopt_requested_output}/experiment-result.json"
+buildopt_after_status=$(
+    git status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'causal-pilot check changed the working tree\n' >&2
+    exit 1
+fi
+
+buildopt_saved_ms=$(jq -r '.effects.observedNetBuildTimeSavedMs' "${buildopt_result}")
+buildopt_lower_ms=$(jq -r '.effects.observedNetBuildTimeSavedInterval95Ms[0]' "${buildopt_result}")
+printf 'Owner POC causal evaluation OK: 4 paired BuildOpt Gradle builds, managed-L1 hits, identical distributions, saved=%sms lower95=%sms, PRELIMINARY EXPERIMENT_RESULT JSON/JSONL\n' \
+    "${buildopt_saved_ms}" \
+    "${buildopt_lower_ms}"

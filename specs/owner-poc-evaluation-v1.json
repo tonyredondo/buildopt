@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "buildopt.specs/owner-poc-evaluation/v1",
+  "workItem": "A1-006",
+  "repositories": [
+    {
+      "nameWithOwner": "tonyredondo/buildopt-pilot",
+      "revision": "e79a7bcc5eb31e838d4d886245d514fcdef3fc73",
+      "dsl": "KOTLIN"
+    },
+    {
+      "nameWithOwner": "tonyredondo/buildopt-pilot-groovy",
+      "revision": "f6aea79262766a71701f10da0b20ce10582b2a69",
+      "dsl": "GROOVY"
+    }
+  ],
+  "measurement": {
+    "task": ":app:distZip",
+    "requiredDeliverable": "app/build/distributions/app-1.0.0.zip",
+    "design": "PRESCRIBED_PAIRED_ALTERNATING",
+    "pairsPerRepository": 4,
+    "control": "BUILDOPT_TIER_ONE_WITH_BUILD_CACHE_DISABLED",
+    "candidate": "BUILDOPT_TIER_ONE_WITH_WARM_MANAGED_L1"
+  },
+  "acceptance": {
+    "minimumRepositories": 2,
+    "observedNetBuildTimeSavedMs": "POSITIVE",
+    "lower95PairedBootstrapBoundMs": "POSITIVE",
+    "customerVisibleBuildP95DeltaMs": "NON_POSITIVE",
+    "requiredDeliverableDivergenceRate": 0,
+    "productAttributableFailureRate": 0,
+    "buildFailureRateDelta": 0
+  },
+  "boundaries": {
+    "closes": ["A1-006", "A1-G06"],
+    "doesNotClose": ["EIGHT_HOUR_SOAK", "EXTERNAL_DESIGN_PARTNER_EVIDENCE"],
+    "ownerOperatedProofOfConcept": true,
+    "productionPromotionAuthorized": false
+  }
+}

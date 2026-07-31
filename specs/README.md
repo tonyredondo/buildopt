@@ -19,6 +19,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`private-beta-data-lifecycle-v1.md`](./private-beta-data-lifecycle-v1.md) | `A1-004` / `A1-G05` |
 | [`private-beta-operations-v1.md`](./private-beta-operations-v1.md) | `A1-005` |
 | [`owner-controlled-pilot-deployment-v1.md`](./owner-controlled-pilot-deployment-v1.md) | `A1-001` |
+| [`owner-poc-evaluation-v1.md`](./owner-poc-evaluation-v1.md) | `A1-006` / `A1-G06` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`full-relevant-validation-gate-v1.md`](./full-relevant-validation-gate-v1.md) | `C4-006` / `C4-G02` |
 | [`customer-patch-workflow-v1.md`](./customer-patch-workflow-v1.md) | `C4-007` / `C4-G01` / `C4-G03` / `C4-G04` |
@@ -117,6 +118,9 @@ exercise explicitly excludes the eight-hour soak and external pilot evidence.
 repository, signed installed release, deterministic workload, authenticated
 managed-L1 replay, schema-valid sessions, and explicit non-causal boundary
 that closes A1-001 without closing A1-006 or A1-G06.
+`owner-poc-evaluation-v1.json` binds the two immutable public pilot revisions,
+the paired alternating design, exact required distribution, causal lower bound,
+p95 limit, and zero-divergence/failure acceptance used to close A1-006/A1-G06.
 `beta-benchmark-harness-v1.json` is the OPS-001/A1 executable smoke contract
 for all phase/client strata, real Shared HTTP publication/read paths, private
 raw observations, digest-bound summaries, and explicit non-qualification.
