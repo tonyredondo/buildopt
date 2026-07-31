@@ -532,6 +532,7 @@ func TestBuildoptServerReceivesAndStopsGracefully(t *testing.T) {
 		t.Fatalf("missing listen line: %q", line)
 	}
 	endpoint := strings.TrimSpace(line[start+len(prefix):])
+	waitForServerReady(t, endpoint)
 
 	client, err := sessioningest.NewClient(endpoint, serverTestToken)
 	if err != nil {
@@ -862,4 +863,21 @@ func waitForServerOutput(
 		time.Sleep(10 * time.Millisecond)
 	}
 	t.Fatalf("server output never contained %q: %q", fragment, writer.String())
+}
+
+func waitForServerReady(t *testing.T, endpoint string) {
+	t.Helper()
+	client := &http.Client{Timeout: 250 * time.Millisecond}
+	deadline := time.Now().Add(3 * time.Second)
+	for time.Now().Before(deadline) {
+		response, err := client.Get(endpoint + readinessPath)
+		if err == nil {
+			_ = response.Body.Close()
+			if response.StatusCode == http.StatusOK {
+				return
+			}
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	t.Fatalf("server at %s never became ready", endpoint)
 }
