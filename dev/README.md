@@ -758,6 +758,20 @@ and 2%. The separate short session omits L2 before execution and proves fewer
 than five seconds plus zero remote requests. See
 [`no-hit-overhead-v1.md`](../specs/no-hit-overhead-v1.md).
 
+Run the closed `A0-G08` no-grant `Test` cache-isolation gate:
+
+```bash
+./dev/check-test-cache-isolation
+```
+
+The checker runs the Gradle 9.6.1/JDK 21 Kotlin fixture through an
+authenticated observable `HttpBuildCache`. Its unguarded control stores and
+restores the root, actual `buildSrc`, and included-plugin `Test` tasks. It then
+applies the packaged Tier 1 policy through the init-script boundary and proves
+all three execute without a grant, report the explicit no-grant reason, reuse
+Configuration Cache, and make exactly zero remote `GET`/`PUT` requests. The
+gate does not activate a positive signed grant.
+
 ## Managed native L1
 
 Run the `A0-003` launcher/settings-plugin contract across the same eight

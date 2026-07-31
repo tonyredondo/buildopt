@@ -14,6 +14,7 @@ import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.compile.JavaCompile;
+import org.gradle.api.tasks.testing.Test;
 
 /** Exact, fail-closed cache policy for the currently proven Tier 1 rows. */
 final class BuildOptTierOnePolicy {
@@ -21,6 +22,8 @@ final class BuildOptTierOnePolicy {
             "BuildOpt managed cache is disabled for this invocation";
     static final String TASK_DEFAULT_DENY_REASON =
             "BuildOpt Tier 1 default-deny allowlist rejected this task";
+    static final String TEST_WITHOUT_GRANT_REASON =
+            "BuildOpt Test task has no TestCacheGrant";
 
     private static final String JAVA_COMPILE_DECORATED =
             "org.gradle.api.tasks.compile.JavaCompile_Decorated";
@@ -85,6 +88,10 @@ final class BuildOptTierOnePolicy {
         return false;
     }
 
+    static boolean isTestTask(Task task) {
+        return task instanceof Test;
+    }
+
     private static boolean isProvenRuntime(
             String gradleVersion,
             int javaFeature,
@@ -133,19 +140,39 @@ final class BuildOptTierOnePolicy {
         @Serial private static final long serialVersionUID = 1L;
 
         private final boolean allowlistedIdentity;
+        private final boolean testTask;
 
-        TaskDefaultDenySpec(boolean allowlistedIdentity) {
+        TaskDefaultDenySpec(boolean allowlistedIdentity, boolean testTask) {
             this.allowlistedIdentity = allowlistedIdentity;
+            this.testTask = testTask;
         }
 
         @Override
         public boolean isSatisfiedBy(Task task) {
+            if (testTask) {
+                return false;
+            }
             if (!allowlistedIdentity) {
                 return true;
             }
             List<Action<? super Task>> actions = task.getActions();
             return actions.size() != 1
                     || !actions.get(0).getClass().getName().equals(INCREMENTAL_TASK_ACTION);
+        }
+    }
+
+    static final class TestWithoutGrantSpec implements Spec<Task>, Serializable {
+        @Serial private static final long serialVersionUID = 1L;
+
+        private final boolean testTask;
+
+        TestWithoutGrantSpec(boolean testTask) {
+            this.testTask = testTask;
+        }
+
+        @Override
+        public boolean isSatisfiedBy(Task task) {
+            return testTask;
         }
     }
 }

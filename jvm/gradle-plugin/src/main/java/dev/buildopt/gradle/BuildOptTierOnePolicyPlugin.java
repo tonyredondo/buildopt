@@ -41,6 +41,8 @@ public final class BuildOptTierOnePolicyPlugin implements Plugin<Project> {
                                                     boolean allowlistedIdentity =
                                                             BuildOptTierOnePolicy
                                                                     .isAllowlistedIdentity(task);
+                                                    boolean testTask =
+                                                            BuildOptTierOnePolicy.isTestTask(task);
                                                     if (!invocation.managedCacheEnabled()) {
                                                         task.notCompatibleWithConfigurationCache(
                                                                 globalDisableReason);
@@ -58,7 +60,15 @@ public final class BuildOptTierOnePolicyPlugin implements Plugin<Project> {
                                                                             .TASK_DEFAULT_DENY_REASON,
                                                                     new BuildOptTierOnePolicy
                                                                             .TaskDefaultDenySpec(
-                                                                            allowlistedIdentity));
+                                                                            allowlistedIdentity,
+                                                                            testTask));
+                                                    task.getOutputs()
+                                                            .doNotCacheIf(
+                                                                    BuildOptTierOnePolicy
+                                                                            .TEST_WITHOUT_GRANT_REASON,
+                                                                    new BuildOptTierOnePolicy
+                                                                            .TestWithoutGrantSpec(
+                                                                            testTask));
                                                 });
                             }
                         });

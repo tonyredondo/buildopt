@@ -121,6 +121,33 @@ tasks.register<JavaExec>("tierOnePolicyTestKit") {
     inputs.property("gradleHome", tierOneGradleHome)
 }
 
+tasks.register<JavaExec>("testCacheIsolationTestKit") {
+    group = "verification"
+    description = "Runs A0-G08 no-grant Test cache isolation."
+    notCompatibleWithConfigurationCache("The task launches nested TestKit builds.")
+    dependsOn(tasks.named(testKit.classesTaskName), tasks.named("jar"))
+    classpath = testKit.runtimeClasspath
+    mainClass = "dev.buildopt.gradle.TestCacheIsolationTestKit"
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    argumentProviders.add(
+        CommandLineArgumentProvider {
+            listOf(
+                rootProject.layout.projectDirectory
+                    .dir("fixtures/test-cache-isolation")
+                    .asFile.absolutePath,
+                tierOneGradleHome.get(),
+                tasks.jar.get().archiveFile.get().asFile.absolutePath,
+                "21",
+            )
+        },
+    )
+    inputs.dir(rootProject.layout.projectDirectory.dir("fixtures/test-cache-isolation"))
+    inputs.file(tasks.jar.flatMap { it.archiveFile })
+    inputs.property("gradleHome", tierOneGradleHome)
+}
+
 tasks.register<JavaExec>("managedL1TestKit") {
     group = "verification"
     description = "Runs the generation-segmented native managed L1 conformance."

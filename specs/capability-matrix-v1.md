@@ -89,10 +89,14 @@ against the real filesystem and SQLite WAL stores, including synchronized
 CAS, all-object rollback, post-commit audit repair by digest, and
 orphan/missing/expired safe misses. `A0-G06` proves the fixed no-hit overhead
 budget on the golden runner with authenticated forced misses and proves the
-short-session L2-omission branch makes zero remote requests.
-`MANAGED_SHARED_CACHE` remains `UNAVAILABLE` until `A0-G08` proves that no
-root or composite `Test` task can consume or produce entries without an
-explicit `TestCacheGrant`.
+short-session L2-omission branch makes zero remote requests. `A0-G08` proves
+that no root, actual `buildSrc`, or included plugin `Test` task consumes or
+produces entries without an explicit `TestCacheGrant`.
+
+Together, `A0-G01..06` and `A0-G08` make `MANAGED_SHARED_CACHE` exact for all
+ten executed Tier 1 rows. This promotion covers the fail-closed no-grant A0
+path; signed positive grant activation and the deployable Test Optimization
+integration remain later work.
 
 `A0-007` makes `GRADLE_BOOTSTRAP_CACHE` exact for all eight JDK 17/21 rows.
 Each real Wrapper row consumes an offline read-only dependency snapshot,

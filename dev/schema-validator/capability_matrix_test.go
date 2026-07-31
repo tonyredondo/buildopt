@@ -247,7 +247,7 @@ func validateTierOneCombinations(
 		jdk25.Capabilities,
 		"MANAGED_SHARED_CACHE",
 	)
-	if jdk25ManagedShared.Status != "UNAVAILABLE" ||
+	if jdk25ManagedShared.Status != "EXACT" ||
 		jdk25ManagedShared.Fallback != "GRADLE_BASELINE" {
 		t.Errorf("JDK 25 managed Shared capability: %+v", jdk25ManagedShared)
 	}
@@ -264,13 +264,29 @@ func validateTierOneCombinations(
 			profile.Capabilities,
 			"MANAGED_SHARED_CACHE",
 		)
+		wantManagedStatus := "EXACT"
+		if profileID == "UNTESTED" {
+			wantManagedStatus = "UNAVAILABLE"
+		}
+		if managedShared.Status != wantManagedStatus ||
+			managedShared.Fallback != "GRADLE_BASELINE" {
+			t.Errorf(
+				"%s managed Shared capability: %+v",
+				profileID,
+				managedShared,
+			)
+		}
 		if profileID != "UNTESTED" &&
-			!slices.Contains(
+			(!slices.Contains(
 				managedShared.Evidence,
 				"dev/check-no-hit-overhead",
-			) {
+			) ||
+				!slices.Contains(
+					managedShared.Evidence,
+					"dev/check-test-cache-isolation",
+				)) {
 			t.Errorf(
-				"%s managed Shared capability lacks A0-G06 evidence: %+v",
+				"%s managed Shared capability lacks A0 gate evidence: %+v",
 				profileID,
 				managedShared,
 			)

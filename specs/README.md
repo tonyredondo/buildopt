@@ -19,6 +19,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`gateway-spool-v1.md`](./gateway-spool-v1.md) | `A0-G04` |
 | [`shared-commit-recovery-v1.md`](./shared-commit-recovery-v1.md) | `A0-G05` |
 | [`no-hit-overhead-v1.md`](./no-hit-overhead-v1.md) | `A0-G06` |
+| [`test-cache-isolation-v1.md`](./test-cache-isolation-v1.md) | `A0-G08` |
 | [`managed-l1-v1.md`](./managed-l1-v1.md) | `A0-003` |
 | [`single-node-shared-storage-v1.md`](./single-node-shared-storage-v1.md) | `A0-004` |
 | [`pending-commit-cas-v1.md`](./pending-commit-cas-v1.md) | `A0-005` |
@@ -66,6 +67,9 @@ audit repair, and safe orphan/missing/expired recovery.
 `no-hit-overhead-v1.json` is the A0-G06 paired strict-runner contract for
 authenticated read-only L2 misses, fresh L1/output state, long-session p95
 budgets, and pre-outcome L2 omission with zero short-session requests.
+`test-cache-isolation-v1.json` is the A0-G08 fail-closed no-grant contract for
+root, actual `buildSrc`, and included-plugin `Test` tasks, including a usable
+authenticated remote-cache control and exact zero-request guarded proof.
 `managed-l1-v1.json` is the A0-003 launcher/settings-plugin contract for
 opaque scope binding, native retention, generation directories, exclusive
 leases, and L2-writer local disablement.

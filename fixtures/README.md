@@ -59,3 +59,8 @@ root, and in-memory draft-PR adapter; all of them are deleted after the case.
 long and short session tasks around one Tier 1 `JavaCompile` cache lookup,
 declares no external repositories or dependencies, and produces the required
 reproducible JAR used by the paired overhead gate.
+
+`test-cache-isolation/` is the `A0-G08` root/composite boundary. Its root
+build, actual `buildSrc`, and included plugin each expose a cacheable `Test`
+task so the control can replay from an authenticated remote cache and the
+managed no-grant path can prove zero `GET`/`PUT` requests.

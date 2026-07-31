@@ -81,5 +81,7 @@ unknown artifact transform disables the otherwise allowed compile task and
 intentionally prevents Configuration Cache reuse for the fail-closed build.
 
 `A0-G01` composes this default-deny matrix with the separate HTTP/backend fault
-checker. This block alone does not close `A0-G08` because authenticated
-`TestCacheGrant` plus root/composite coverage remain later integration work.
+checker. `A0-G08` strengthens the `Test` branch with a dedicated no-grant
+reason and proves root, actual `buildSrc`, and included-plugin isolation
+against a usable authenticated remote cache. Positive signed
+`TestCacheGrant` activation remains later Test Optimization integration work.

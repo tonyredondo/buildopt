@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/test-cache-isolation-v1.json"
+
+for buildopt_command in find git grep jar jq readlink; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Test cache isolation command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+if ! jq -e '
+    keys == [
+        "activation",
+        "boundaries",
+        "cache",
+        "control",
+        "gateId",
+        "noGrant",
+        "runtime",
+        "schemaVersion",
+        "scopes",
+        "taskBoundary"
+    ] and
+    .schemaVersion == "buildopt.specs/test-cache-isolation/v1" and
+    .gateId == "A0-G08" and
+    .activation == {
+        pluginId: "dev.buildopt.tier-one-policy",
+        grantState: "ABSENT",
+        effect: "DO_NOT_CACHE"
+    } and
+    .taskBoundary == {
+        taskType: "org.gradle.api.tasks.testing.Test",
+        match: "TYPE_HIERARCHY",
+        reason: "BuildOpt Test task has no TestCacheGrant"
+    } and
+    .scopes == [
+        "ROOT_BUILD",
+        "BUILDSRC_BUILD",
+        "INCLUDED_PLUGIN_BUILD"
+    ] and
+    .cache == {
+        type: "org.gradle.caching.http.HttpBuildCache",
+        server: "AUTHENTICATED_TEST_OBSERVER",
+        localEnabled: false,
+        push: true
+    } and
+    .runtime == {
+        gradle: "9.6.1",
+        jdk: 21,
+        operatingSystem: "linux",
+        architecture: "amd64",
+        dsl: "KOTLIN",
+        configurationCache: true
+    } and
+    .control == {
+        rootTestOutcome: "FROM_CACHE",
+        includedTestOutcome: "FROM_CACHE",
+        buildSrcTestOutcome: "FROM_CACHE",
+        provesCacheUsable: true
+    } and
+    .noGrant == {
+        rootTestOutcome: "SUCCESS",
+        includedTestOutcome: "SUCCESS",
+        buildSrcTestOutcome: "SUCCESS",
+        remoteGets: 0,
+        remotePuts: 0,
+        configurationCacheReused: true
+    } and
+    .boundaries == {
+        closes: ["A0-G08"],
+        doesNotClose: [
+            "SIGNED_TEST_CACHE_GRANT_ACTIVATION",
+            "TESTOPT_PRIVATE_BETA_INTEGRATION",
+            "A1"
+        ]
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'Test cache isolation contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_required_files=(
+    "fixtures/test-cache-isolation/README.md"
+    "fixtures/test-cache-isolation/build.gradle.kts"
+    "fixtures/test-cache-isolation/settings.gradle.kts"
+    "fixtures/test-cache-isolation/buildSrc/build.gradle.kts"
+    "fixtures/test-cache-isolation/buildSrc/settings.gradle.kts"
+    "fixtures/test-cache-isolation/included-plugin/build.gradle.kts"
+    "fixtures/test-cache-isolation/included-plugin/settings.gradle.kts"
+    "jvm/gradle-plugin/src/main/java/dev/buildopt/gradle/BuildOptTierOnePolicy.java"
+    "jvm/gradle-plugin/src/main/java/dev/buildopt/gradle/BuildOptTierOnePolicyPlugin.java"
+    "jvm/gradle-plugin/src/testKit/java/dev/buildopt/gradle/TestCacheIsolationTestKit.java"
+    "specs/test-cache-isolation-v1.md"
+)
+for buildopt_relative in "${buildopt_required_files[@]}"; do
+    if [[ ! -s "${buildopt_repo_root}/${buildopt_relative}" ]]; then
+        printf 'missing Test cache isolation file: %s\n' \
+            "${buildopt_relative}" >&2
+        exit 1
+    fi
+done
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p -- "${GRADLE_USER_HOME}"
+buildopt_gradle_home=$(
+    find \
+        "${GRADLE_USER_HOME}/wrapper/dists/gradle-9.6.1-bin" \
+        -type d \
+        -path '*/gradle-9.6.1' \
+        -print \
+        -quit
+)
+if [[ -z "${buildopt_gradle_home}" ||
+    ! -x "${buildopt_gradle_home}/bin/gradle" ]]; then
+    printf 'pinned Gradle 9.6.1 distribution is unavailable\n' >&2
+    exit 1
+fi
+buildopt_gradle_home=$(readlink -f "${buildopt_gradle_home}")
+
+"${buildopt_script_dir}/run" -- \
+    "${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --no-configuration-cache \
+    --warning-mode=fail \
+    "-PbuildoptTierOneGradleHome=${buildopt_gradle_home}" \
+    :jvm:gradle-plugin:testCacheIsolationTestKit
+
+mapfile -d '' buildopt_plugin_jars < <(
+    find "${buildopt_repo_root}/jvm/gradle-plugin/build/libs" \
+        -maxdepth 1 \
+        -type f \
+        -name 'buildopt-gradle-plugin-*.jar' \
+        ! -name '*-javadoc.jar' \
+        ! -name '*-sources.jar' \
+        -print0
+)
+if ((${#buildopt_plugin_jars[@]} != 1)) ||
+    ! jar tf "${buildopt_plugin_jars[0]}" |
+        grep -Fxq \
+            "dev/buildopt/gradle/BuildOptTierOnePolicy\$TestWithoutGrantSpec.class"; then
+    printf 'packaged plugin lacks the no-grant Test policy\n' >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'Test cache isolation check changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'A0-G08 gate OK: root, buildSrc, and included plugin Test tasks made zero no-grant cache requests\n'

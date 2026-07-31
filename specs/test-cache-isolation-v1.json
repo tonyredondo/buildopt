@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "buildopt.specs/test-cache-isolation/v1",
+  "gateId": "A0-G08",
+  "activation": {
+    "pluginId": "dev.buildopt.tier-one-policy",
+    "grantState": "ABSENT",
+    "effect": "DO_NOT_CACHE"
+  },
+  "taskBoundary": {
+    "taskType": "org.gradle.api.tasks.testing.Test",
+    "match": "TYPE_HIERARCHY",
+    "reason": "BuildOpt Test task has no TestCacheGrant"
+  },
+  "scopes": [
+    "ROOT_BUILD",
+    "BUILDSRC_BUILD",
+    "INCLUDED_PLUGIN_BUILD"
+  ],
+  "cache": {
+    "type": "org.gradle.caching.http.HttpBuildCache",
+    "server": "AUTHENTICATED_TEST_OBSERVER",
+    "localEnabled": false,
+    "push": true
+  },
+  "runtime": {
+    "gradle": "9.6.1",
+    "jdk": 21,
+    "operatingSystem": "linux",
+    "architecture": "amd64",
+    "dsl": "KOTLIN",
+    "configurationCache": true
+  },
+  "control": {
+    "rootTestOutcome": "FROM_CACHE",
+    "includedTestOutcome": "FROM_CACHE",
+    "buildSrcTestOutcome": "FROM_CACHE",
+    "provesCacheUsable": true
+  },
+  "noGrant": {
+    "rootTestOutcome": "SUCCESS",
+    "includedTestOutcome": "SUCCESS",
+    "buildSrcTestOutcome": "SUCCESS",
+    "remoteGets": 0,
+    "remotePuts": 0,
+    "configurationCacheReused": true
+  },
+  "boundaries": {
+    "closes": [
+      "A0-G08"
+    ],
+    "doesNotClose": [
+      "SIGNED_TEST_CACHE_GRANT_ACTIVATION",
+      "TESTOPT_PRIVATE_BETA_INTEGRATION",
+      "A1"
+    ]
+  }
+}

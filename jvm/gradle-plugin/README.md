@@ -57,6 +57,14 @@ Cache entry; complete endpoint/credential/generation rotation invalidates that
 entry once. Concurrent runner slots retain distinct transient upstream
 bindings, and no upstream credential is serialized for Gradle.
 
+`A0-G08` gives every `Test` task an explicit no-grant `doNotCacheIf` guard.
+The type-hierarchy rule applies independently in root, actual `buildSrc`, and
+included plugin builds. A control first proves all three can store and restore
+through the authenticated remote cache; the guarded path then executes all
+three without a grant, reuses Configuration Cache, and makes zero remote
+`GET`/`PUT` requests. Positive signed-grant activation remains a later Test
+Optimization integration.
+
 The plugin does not read Gradle's opaque cache files, parse signatures, receive
 the Shared credential, delete revoked generations, or force build-cache
 enablement by mutating `StartParameter` during settings evaluation. Signature,
@@ -72,6 +80,7 @@ with:
 ./dev/check-gradle-plugin-handshake
 ./dev/check-tier-one-policy
 ./dev/check-tier-one-cache-conformance
+./dev/check-test-cache-isolation
 ./dev/check-l1-l2-revocation
 ./dev/check-gateway-rotation
 ./dev/check-managed-l1
