@@ -5,8 +5,9 @@ Monorepo for the autonomous Gradle build optimization platform. The product obse
 The repository has completed **MVP-A0** and is preparing the isolated
 **MVP-A1** private beta. It contains the internal managed-cache path, exact
 Tier 1 safety and lifecycle gates, causal measurement, locked toolchains, and
-a verifiable Linux AMD64 release bundle; it does not yet contain the external
-pilot deployment or its complete installation and operational lifecycle.
+a verifiable Linux AMD64 release bundle plus its local install, upgrade,
+rollback, and uninstall lifecycle; it does not yet contain the external pilot
+or its complete operational readiness profile.
 
 ## Sources of truth
 
@@ -124,13 +125,14 @@ From the repository root:
 ./dev/check-supply-chain-toolchains
 ./dev/uninstall-toolchains --toolchain go
 ./dev/check-release-package
+./dev/check-deployment-lifecycle
 ./dev/check-github-action
 ./dev/check-base-runbooks
 ./dev/run -- ./dev/check-jvm-release
 ./dev/check-golden-lane --static
 ```
 
-The commands validate the repository and Phase 0 normative-package layouts, the independent `BUILD_SESSION`, `EXPERIMENT_RESULT`, and `ACTION_RECORD` Draft 2020-12 contracts with positive, negative, and linked lifecycle fixtures, the versioned METRICS-001/MEASURE-001 catalog with fixed units and signs, reproducible project-local Protobuf tooling and the local task-event channel with Go/Java Unix-socket round trips, generated-artifact policy and source/output drift, the real `buildopt run --` passthrough binary and its Linux process/signal contract, the control-plane-independent local bypass and base recovery exercises, the authenticated loopback gateway and managed runner-slot lifecycle, the bounded fully verified gateway GET spool and its fault recovery, locally signed policy and cumulative revocation generations, the current-authority Shared route, Gradle `HttpBuildCache` credential translation and Configuration Cache inputs, the Gradle plugin handshake, Tier 1 default-deny cache policy, and private generation-segmented native L1, authenticated idempotent session ingest into the real `buildopt-server`, preserved failure/cancellation classification with complete invocation cleanup, atomic schema-valid `BUILD_SESSION v1` JSON, bounded deterministic JSONL/stdout delivery, immutable schema-valid partial recovery, and a pre-outcome paired managed-L1 pilot with deterministic bootstrap and a preliminary immutable `EXPERIMENT_RESULT`, the first external neutral-envelope baseline-versus-wrapper overhead report, the strict A0 no-hit overhead budget with authenticated forced misses and a pre-outcome L2-omission short path, the first parallel Gradle correlation fixture, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, actionlint, Cosign, and Syft provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, read-only push/PR base CI for Go, Java 17, and optional Rust, deterministic signed release bundles with SPDX and provenance, the full-SHA/checksum-pinned Linux x64 setup Action, repository shell scripts and workflow fixtures, and golden lane configuration and checksums.
+The commands validate the repository and Phase 0 normative-package layouts, the independent `BUILD_SESSION`, `EXPERIMENT_RESULT`, and `ACTION_RECORD` Draft 2020-12 contracts with positive, negative, and linked lifecycle fixtures, the versioned METRICS-001/MEASURE-001 catalog with fixed units and signs, reproducible project-local Protobuf tooling and the local task-event channel with Go/Java Unix-socket round trips, generated-artifact policy and source/output drift, the real `buildopt run --` passthrough binary and its Linux process/signal contract, the control-plane-independent local bypass and base recovery exercises, the authenticated loopback gateway and managed runner-slot lifecycle, the bounded fully verified gateway GET spool and its fault recovery, locally signed policy and cumulative revocation generations, the current-authority Shared route, Gradle `HttpBuildCache` credential translation and Configuration Cache inputs, the Gradle plugin handshake, Tier 1 default-deny cache policy, and private generation-segmented native L1, authenticated idempotent session ingest into the real `buildopt-server`, preserved failure/cancellation classification with complete invocation cleanup, atomic schema-valid `BUILD_SESSION v1` JSON, bounded deterministic JSONL/stdout delivery, immutable schema-valid partial recovery, and a pre-outcome paired managed-L1 pilot with deterministic bootstrap and a preliminary immutable `EXPERIMENT_RESULT`, the first external neutral-envelope baseline-versus-wrapper overhead report, the strict A0 no-hit overhead budget with authenticated forced misses and a pre-outcome L2-omission short path, the first parallel Gradle correlation fixture, portable toolchain lock, host inventory contract, isolated JDK, Go, ShellCheck, actionlint, Cosign, and Syft provisioning, pinned Go and Rust toolchains, Java 17 JVM artifacts, read-only push/PR base CI for Go, Java 17, and optional Rust, deterministic signed release bundles with SPDX and provenance, fail-closed side-by-side deployment with upgrade/rollback and explicit preserve-or-purge uninstall, the full-SHA/checksum-pinned Linux x64 setup Action, repository shell scripts and workflow fixtures, and golden lane configuration and checksums.
 
 Project-local smoke tests:
 

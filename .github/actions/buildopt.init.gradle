@@ -5,7 +5,7 @@ if (pluginJarPath == null || pluginJarPath.isBlank()) {
 
 initscript {
     dependencies {
-        classpath files(pluginJarPath)
+        classpath files(System.getenv("BUILDOPT_GRADLE_PLUGIN_JAR"))
     }
 }
 

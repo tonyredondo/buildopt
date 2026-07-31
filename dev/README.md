@@ -1074,6 +1074,31 @@ Exercise the complete `F0-038` bundle twice and run tamper cases:
 
 The checker snapshots the current source into a temporary clean Git repository, builds the Linux AMD64 launcher/server and versioned Java 17 plugin/agent twice, and requires byte-identical TAR, SPDX, SLSA provenance, release manifest, and checksum manifest. Both Cosign signatures must bind the same digest. Verification rejects modified payloads, modified signatures, an unpinned public key, and extra files. See [`specs/release-bundle-v1.md`](../specs/release-bundle-v1.md) for the production command and trust boundary.
 
+## Deployment lifecycle validation
+
+Exercise signed installation, upgrade, rollback, and both uninstall policies:
+
+```bash
+./dev/check-deployment-lifecycle
+```
+
+The `DEPLOY-001` checker packages two real Release Bundle v1 versions from one
+clean source revision and consumes them through `dev/manage-deployment`.
+Versions remain immutable and side by side, selection is an atomic manifest
+rename, and every install or rollback revalidates the complete signed bundle
+against an externally supplied public key. The fixture starts the packaged
+server, runs the packaged launcher with the packaged Gradle plugin, and proves
+that Shared state and immutable exports survive idempotent upgrade, version
+upgrade, rollback, default uninstall, and reinstall.
+
+Unsafe roots, unmarked data, a tampered bundle or installed payload, the wrong
+trust root, and uninstall while the Shared writer lock is held all fail closed.
+Default uninstall preserves the separate data root; `--purge-data` is the
+explicit destructive choice. See
+[`specs/deployment-lifecycle-v1.md`](../specs/deployment-lifecycle-v1.md) for
+the complete contract. Public release publication, online revocation, and the
+pilot operational profile remain later work.
+
 ## GitHub Action validation
 
 Exercise the Action metadata, immutable fixture lock, offline installer, and
@@ -1095,9 +1120,12 @@ commit, the BuildOpt commit contains the exact Action and archive, the raw
 archive URL is bound to that commit, the SHA-256 matches its Git object, the
 workflow is manual-only with `contents: read`, and locked
 ShellCheck/actionlint accept all scripts and the hosted fixture. The hosted run
-is dispatched separately for GitHub-runner evidence. This closes `WS-007`, not
-`F0-004`, `CI-ORCH-001`, release publication, token/fork policy, or the full
-`DEPLOY-001` lifecycle.
+is dispatched separately for GitHub-runner evidence. The immutable WS-007
+fixture remains pinned to its historical Action bytes; the current init script
+is additionally exercised with a real packaged Gradle invocation by
+`dev/check-deployment-lifecycle`. This closes `WS-007`, not `F0-004`,
+`CI-ORCH-001`, release publication, token/fork policy, or operational
+readiness.
 
 ## Base recovery runbook validation
 
@@ -1119,8 +1147,9 @@ remain unchanged.
 
 The operator procedure and Phase 0 limitations are in
 [`runbooks/base-recovery.md`](../runbooks/base-recovery.md). Online revocation,
-durable attempt/lease cleanup, and the complete install/upgrade/uninstall
-lifecycle remain with `OPS-001/A1`, `WS-008`, and `DEPLOY-001`.
+durable attempt/lease cleanup, and the complete pilot fault/soak profile remain
+with `OPS-001/A1` and `WS-008`; the signed local deployment lifecycle is
+covered separately by `dev/check-deployment-lifecycle`.
 
 ## Normative package validation
 
@@ -1131,9 +1160,9 @@ Validate the namespace skeleton defined by RFC §29.2:
 ```
 
 The checker requires all 16 contract, vector, specification, benchmark, and ADR
-namespaces, their non-empty indexes, and parent directories for the 43 planned
+namespaces, their non-empty indexes, and parent directories for the 71 planned
 normative artifacts. It also preserves every materialized contract, including
-the managed-L1 specification, and rejects an empty file at any planned artifact
+the deployment lifecycle, and rejects an empty file at any planned artifact
 path. F0-010 created the structure; each schema, API, IDL, vector,
 specification, benchmark, or ADR remains owned by its tracker item.
 

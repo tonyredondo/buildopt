@@ -2,9 +2,9 @@
 
 This runbook implements `F0-039` and the local safety boundary accepted in
 `OPS-001`. It covers the current Linux AMD64 launcher and checksum-pinned
-GitHub Action. It does not claim the online revocation deadline, durable
-attempt/lease cleanup, a production release channel, or the installation
-lifecycle owned by `OPS-001/A1`, `WS-008`, and `DEPLOY-001`.
+GitHub Action plus the signed local deployment lifecycle. It does not claim
+the online revocation deadline, durable attempt/lease cleanup, a production
+release channel, or the pilot fault/soak profile owned by `OPS-001/A1`.
 
 ## Choose the smallest recovery action
 
@@ -66,6 +66,23 @@ does not revoke an already-running invocation and does not satisfy the
 control-plane propagation guarantee of at most 60 seconds; that remains an
 `OPS-001/A1` gate.
 
+## Signed deployment rollback
+
+For a deployment created by `dev/manage-deployment`, inspect and select an
+already stored version without changing persistent data:
+
+```bash
+./dev/manage-deployment status --root /exact/private/deployment-root
+./dev/manage-deployment rollback \
+  --root /exact/private/deployment-root \
+  --key /trusted/buildopt-release.pub
+```
+
+Use `--version <version>` only when deliberately selecting a specific retained
+version. The manager revalidates the stored six-file signed bundle and exact
+installed payload before atomically changing the current manifest. A wrong
+trust root or modified payload is rejected.
+
 ## Immutable version rollback
 
 1. Select a previously exercised tuple from deployment evidence:
@@ -103,6 +120,17 @@ Restore the consumer workflow before deleting any files:
 5. Stop any separately started `buildopt-server` process.
 6. Run the original Gradle command and compare its requested tasks, exit status,
    and outputs with the bypass result.
+
+For a deployment owned by `dev/manage-deployment`, stop `buildopt-server` and
+then use the recorded root:
+
+```bash
+./dev/manage-deployment uninstall --root /exact/private/deployment-root
+```
+
+This preserves the separate marked data root. Only an explicit retention
+decision should add `--purge-data`; the manager refuses either operation while
+the Shared writer lock is active.
 
 The setup Action's release lives below
 `$RUNNER_TEMP/buildopt-action/buildopt-<version>-linux-amd64` and is normally

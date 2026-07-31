@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "buildopt.specs/deployment-lifecycle/v1",
+  "gateId": "DEPLOY-001",
+  "platform": {
+    "operatingSystem": "linux",
+    "architecture": "amd64"
+  },
+  "release": {
+    "contract": "buildopt.dev/release-bundle/v1",
+    "verification": "EXTERNAL_PINNED_KEY_BEFORE_EXECUTION",
+    "layout": "SIDE_BY_SIDE_IMMUTABLE_VERSIONS",
+    "activation": "ATOMIC_CURRENT_MANIFEST"
+  },
+  "data": {
+    "layout": "DISJOINT_MARKED_ROOT",
+    "defaultUninstall": "PRESERVE",
+    "explicitUninstall": "PURGE",
+    "activeWriter": "REFUSE"
+  },
+  "lifecycle": [
+    "INSTALL",
+    "IDEMPOTENT_UPGRADE",
+    "UPGRADE",
+    "ROLLBACK",
+    "UNINSTALL_PRESERVE",
+    "REINSTALL",
+    "UNINSTALL_PURGE"
+  ],
+  "fixture": {
+    "versions": [
+      "0.1.0-deploy.1",
+      "0.1.0-deploy.2"
+    ],
+    "server": "REAL_PACKAGED_BUILDOPT_SERVER",
+    "launcher": "REAL_PACKAGED_BUILDOPT",
+    "sharedState": "PRESERVED_ACROSS_UPGRADE_ROLLBACK_REINSTALL",
+    "export": "PRESERVED_AND_EXTENDED",
+    "externalPublication": false
+  },
+  "boundaries": {
+    "closes": [
+      "DEPLOY-001"
+    ],
+    "doesNotClose": [
+      "A1-001",
+      "OPS-001/A1",
+      "PUBLIC_RELEASE_PUBLICATION",
+      "ONLINE_REVOCATION"
+    ]
+  }
+}

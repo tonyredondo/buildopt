@@ -119,3 +119,12 @@ bypass with:
 ./dev/check-pending-commit
 ./dev/check-local-authority
 ```
+
+`DEPLOY-001` additionally packages the real server, launcher, and Gradle plugin
+into two signed versions, starts each selected deployment against the same
+Shared/export roots, and proves upgrade, rollback, preserve/reinstall, and
+explicit purge with:
+
+```bash
+./dev/check-deployment-lifecycle
+```

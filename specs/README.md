@@ -30,6 +30,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`jvm-agent-spike-v1.md`](./jvm-agent-spike-v1.md) | `SPK-002` |
 | [`hermetic-helper-spike-v1.md`](./hermetic-helper-spike-v1.md) | `SPK-003` |
 | [`release-bundle-v1.md`](./release-bundle-v1.md) | `F0-038` / `DEPLOY-001` |
+| [`deployment-lifecycle-v1.md`](./deployment-lifecycle-v1.md) | `DEPLOY-001` |
 | [`walking-skeleton-faults-v1.md`](./walking-skeleton-faults-v1.md) | `WS-008` |
 | [`walking-skeleton-overhead-v1.md`](./walking-skeleton-overhead-v1.md) | `WS-009` |
 
@@ -70,6 +71,9 @@ budgets, and pre-outcome L2 omission with zero short-session requests.
 `test-cache-isolation-v1.json` is the A0-G08 fail-closed no-grant contract for
 root, actual `buildSrc`, and included-plugin `Test` tasks, including a usable
 authenticated remote-cache control and exact zero-request guarded proof.
+`deployment-lifecycle-v1.json` is the DEPLOY-001 contract for externally
+verified immutable versions, atomic selection, persistent data, and the
+install/upgrade/rollback/uninstall lifecycle.
 `managed-l1-v1.json` is the A0-003 launcher/settings-plugin contract for
 opaque scope binding, native retention, generation directories, exclusive
 leases, and L2-writer local disablement.
@@ -93,4 +97,4 @@ recovery, and stdout export.
 observation, deterministic bootstrap, preliminary result, and internal
 net-savings gate contract.
 
-The additional materialized contract `golden-lane-runner-v1.json` pins the first runner class, toolchain, image, and checksums consumed by validation scripts. `release-bundle-v1.md` fixes the first verifiable Linux AMD64 distribution without claiming the later install, upgrade, uninstall, revocation, or workflow lifecycle. `walking-skeleton-overhead-v1.md` fixes the first non-promotional baseline-versus-wrapper measurement without replacing the later beta benchmark.
+The additional materialized contract `golden-lane-runner-v1.json` pins the first runner class, toolchain, image, and checksums consumed by validation scripts. `release-bundle-v1.md` fixes the first verifiable Linux AMD64 distribution; `deployment-lifecycle-v1.md` owns its local install, upgrade, rollback, and uninstall behavior without claiming publication or online revocation. `walking-skeleton-overhead-v1.md` fixes the first non-promotional baseline-versus-wrapper measurement without replacing the later beta benchmark.

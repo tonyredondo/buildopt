@@ -15,10 +15,9 @@ components that exist at this Phase 0 gate:
 - the `dev.buildopt` Gradle plugin JAR;
 - the opt-in JVM agent JAR.
 
-The Rust helper, patcher JAR, workflows, installation lifecycle, release
-revocation, and upgrade/uninstall commands remain absent until their owning
-gates materialize them. An omitted component is never represented by a
-placeholder artifact.
+The Rust helper, patcher JAR, workflows, and release revocation remain absent
+until their owning gates materialize them. The separate `DEPLOY-001` lifecycle
+consumes this bundle without adding placeholder payloads to it.
 
 ## Bundle layout
 
@@ -174,5 +173,6 @@ six-file bundle and its pinned public key. An archive and checksum retrieved
 from the same unauthenticated source are not sufficient provenance.
 
 `WS-007` proves this setup boundary with a synthetic layout-compatible archive.
-Publishing real release assets plus install/upgrade/uninstall and revocation
-remain in `DEPLOY-001`.
+`DEPLOY-001` proves signed install, upgrade, rollback, and uninstall locally
+through `dev/check-deployment-lifecycle`. Public release publication and online
+revocation remain later operational work.

@@ -1,0 +1,591 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+unset \
+    BUILDOPT_SERVER_URL \
+    BUILDOPT_SERVER_INGEST_TOKEN \
+    BUILDOPT_BUILD_SESSION_CONTEXT
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/deployment-lifecycle-v1.json"
+buildopt_tools_root=${BUILDOPT_TOOLS_ROOT:-"${buildopt_repo_root}/.tools"}
+buildopt_gradle_home=${GRADLE_USER_HOME:-"${buildopt_repo_root}/.tools/gradle-user-home/local"}
+buildopt_version_one=0.1.0-deploy.1
+buildopt_version_two=0.1.0-deploy.2
+
+for buildopt_command in \
+    awk \
+    chmod \
+    cp \
+    find \
+    git \
+    grep \
+    head \
+    jq \
+    kill \
+    mkdir \
+    mktemp \
+    readlink \
+    rm \
+    rmdir \
+    sed \
+    sha256sum \
+    sleep \
+    sort \
+    wc; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required deployment-lifecycle command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if ! jq -e '
+    keys == [
+        "boundaries",
+        "data",
+        "fixture",
+        "gateId",
+        "lifecycle",
+        "platform",
+        "release",
+        "schemaVersion"
+    ] and
+    .schemaVersion == "buildopt.specs/deployment-lifecycle/v1" and
+    .gateId == "DEPLOY-001" and
+    .platform == {
+        operatingSystem: "linux",
+        architecture: "amd64"
+    } and
+    .release == {
+        contract: "buildopt.dev/release-bundle/v1",
+        verification: "EXTERNAL_PINNED_KEY_BEFORE_EXECUTION",
+        layout: "SIDE_BY_SIDE_IMMUTABLE_VERSIONS",
+        activation: "ATOMIC_CURRENT_MANIFEST"
+    } and
+    .data == {
+        layout: "DISJOINT_MARKED_ROOT",
+        defaultUninstall: "PRESERVE",
+        explicitUninstall: "PURGE",
+        activeWriter: "REFUSE"
+    } and
+    .lifecycle == [
+        "INSTALL",
+        "IDEMPOTENT_UPGRADE",
+        "UPGRADE",
+        "ROLLBACK",
+        "UNINSTALL_PRESERVE",
+        "REINSTALL",
+        "UNINSTALL_PURGE"
+    ] and
+    .fixture == {
+        versions: ["0.1.0-deploy.1", "0.1.0-deploy.2"],
+        server: "REAL_PACKAGED_BUILDOPT_SERVER",
+        launcher: "REAL_PACKAGED_BUILDOPT",
+        sharedState: "PRESERVED_ACROSS_UPGRADE_ROLLBACK_REINSTALL",
+        export: "PRESERVED_AND_EXTENDED",
+        externalPublication: false
+    } and
+    .boundaries == {
+        closes: ["DEPLOY-001"],
+        doesNotClose: [
+            "A1-001",
+            "OPS-001/A1",
+            "PUBLIC_RELEASE_PUBLICATION",
+            "ONLINE_REVOCATION"
+        ]
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'deployment lifecycle contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+buildopt_test_root=$(mktemp -d)
+buildopt_server_pid=
+buildopt_cleanup() {
+    if [[ -n "${buildopt_server_pid}" ]] &&
+        kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        kill -TERM "${buildopt_server_pid}" 2>/dev/null || true
+        wait "${buildopt_server_pid}" 2>/dev/null || true
+    fi
+    if [[ -n "${buildopt_test_root:-}" ]] &&
+        [[ "${buildopt_test_root}" == /tmp/* ]] &&
+        [[ -d "${buildopt_test_root}" ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_source="${buildopt_test_root}/source"
+mkdir "${buildopt_source}"
+while IFS= read -r -d '' buildopt_path; do
+    if [[ ! -e "${buildopt_repo_root}/${buildopt_path}" ]] &&
+        [[ ! -L "${buildopt_repo_root}/${buildopt_path}" ]]; then
+        continue
+    fi
+    mkdir -p -- "${buildopt_source}/$(dirname -- "${buildopt_path}")"
+    cp -a -- \
+        "${buildopt_repo_root}/${buildopt_path}" \
+        "${buildopt_source}/${buildopt_path}"
+done < <(
+    git -C "${buildopt_repo_root}" \
+        ls-files -z --cached --others --exclude-standard
+)
+git -C "${buildopt_source}" init --quiet
+git -C "${buildopt_source}" add -A
+GIT_AUTHOR_DATE='2026-07-30T00:00:00Z' \
+GIT_COMMITTER_DATE='2026-07-30T00:00:00Z' \
+    git -C "${buildopt_source}" \
+    -c user.name=BuildOpt \
+    -c user.email=buildopt@example.invalid \
+    commit --quiet -m 'DEPLOY-001 lifecycle fixture'
+
+COSIGN_PASSWORD='buildopt-deploy-001-test-only' \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_source}/dev/run" --toolchain cosign -- \
+    cosign generate-key-pair \
+    --output-key-prefix "${buildopt_test_root}/release" >/dev/null
+COSIGN_PASSWORD='buildopt-deploy-001-wrong-key' \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_source}/dev/run" --toolchain cosign -- \
+    cosign generate-key-pair \
+    --output-key-prefix "${buildopt_test_root}/wrong" >/dev/null
+
+buildopt_package() {
+    local buildopt_version=$1
+    local buildopt_output=$2
+
+    COSIGN_PASSWORD='buildopt-deploy-001-test-only' \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_source}/dev/package-release" \
+        --version "${buildopt_version}" \
+        --output "${buildopt_output}" \
+        --signing-key "${buildopt_test_root}/release.key" \
+        --verification-key "${buildopt_test_root}/release.pub" >/dev/null
+}
+
+buildopt_bundle_one="${buildopt_test_root}/bundle-one"
+buildopt_bundle_two="${buildopt_test_root}/bundle-two"
+buildopt_package "${buildopt_version_one}" "${buildopt_bundle_one}"
+buildopt_package "${buildopt_version_two}" "${buildopt_bundle_two}"
+buildopt_gradle_fixture="${buildopt_test_root}/gradle-fixture"
+cp -R -- \
+    "${buildopt_source}/fixtures/gradle-handshake" \
+    "${buildopt_gradle_fixture}"
+buildopt_gradle_init="${buildopt_source}/.github/actions/buildopt.init.gradle"
+
+buildopt_manager="${buildopt_source}/dev/manage-deployment"
+buildopt_deployment_root="${buildopt_test_root}/deployment"
+buildopt_data_root="${buildopt_test_root}/data"
+
+set +e
+"${buildopt_manager}" >/dev/null 2>&1
+buildopt_usage_exit=$?
+"${buildopt_manager}" status --root / >/dev/null 2>&1
+buildopt_root_exit=$?
+set -e
+if ((buildopt_usage_exit != 64)) || ((buildopt_root_exit != 1)); then
+    printf 'deployment manager usage/root safety returned %s/%s\n' \
+        "${buildopt_usage_exit}" \
+        "${buildopt_root_exit}" >&2
+    exit 1
+fi
+
+buildopt_tampered_bundle="${buildopt_test_root}/tampered-bundle"
+cp -a -- "${buildopt_bundle_one}" "${buildopt_tampered_bundle}"
+printf 'tamper\n' >>"${buildopt_tampered_bundle}/buildopt-${buildopt_version_one}-linux-amd64.tar.gz"
+set +e
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_manager}" install \
+    --bundle "${buildopt_tampered_bundle}" \
+    --key "${buildopt_test_root}/release.pub" \
+    --root "${buildopt_test_root}/rejected-deployment" \
+    --data-root "${buildopt_test_root}/rejected-data" >/dev/null 2>&1
+buildopt_tampered_bundle_exit=$?
+set -e
+if ((buildopt_tampered_bundle_exit != 1)) ||
+    [[ -e "${buildopt_test_root}/rejected-deployment" ]] ||
+    [[ -e "${buildopt_test_root}/rejected-data" ]]; then
+    printf 'tampered install was not rejected before publication\n' >&2
+    exit 1
+fi
+
+buildopt_unmarked_data="${buildopt_test_root}/unmarked-data"
+mkdir "${buildopt_unmarked_data}"
+set +e
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_manager}" install \
+    --bundle "${buildopt_bundle_one}" \
+    --key "${buildopt_test_root}/release.pub" \
+    --root "${buildopt_test_root}/unmarked-deployment" \
+    --data-root "${buildopt_unmarked_data}" >/dev/null 2>&1
+buildopt_unmarked_data_exit=$?
+set -e
+if ((buildopt_unmarked_data_exit != 1)) ||
+    [[ -e "${buildopt_test_root}/unmarked-deployment" ]] ||
+    [[ ! -d "${buildopt_unmarked_data}" ]]; then
+    printf 'unmarked data root was not rejected without collateral deletion\n' >&2
+    exit 1
+fi
+rmdir -- "${buildopt_unmarked_data}"
+
+buildopt_release_root=$(
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        "${buildopt_manager}" install \
+        --bundle "${buildopt_bundle_one}" \
+        --key "${buildopt_test_root}/release.pub" \
+        --root "${buildopt_deployment_root}" \
+        --data-root "${buildopt_data_root}"
+)
+
+buildopt_require_status() {
+    local buildopt_expected_current=$1
+    local buildopt_expected_previous=$2
+    local buildopt_status
+
+    buildopt_status=$(
+        "${buildopt_manager}" status --root "${buildopt_deployment_root}"
+    )
+    if ! jq -e \
+        --arg buildopt_current "${buildopt_expected_current}" \
+        --arg buildopt_previous "${buildopt_expected_previous}" \
+        --arg buildopt_data_root "${buildopt_data_root}" \
+        '
+            .current.version == $buildopt_current and
+            (
+                if $buildopt_previous == "" then
+                    .previous == null
+                else
+                    .previous.version == $buildopt_previous
+                end
+            ) and
+            .dataRoot == $buildopt_data_root and
+            (.releaseRoot | endswith(
+                "/buildopt-" + $buildopt_current + "-linux-amd64/release"
+            ))
+        ' <<<"${buildopt_status}" >/dev/null; then
+        printf 'deployment status does not select %s/%s\n' \
+            "${buildopt_expected_current}" \
+            "${buildopt_expected_previous}" >&2
+        exit 1
+    fi
+}
+
+buildopt_server_log=
+buildopt_endpoint=
+buildopt_token=0123456789abcdefghijklmnopqrstuvwxyzDEPLOY001
+buildopt_start_server() {
+    local buildopt_root=$1
+    local buildopt_label=$2
+
+    buildopt_server_log="${buildopt_test_root}/server-${buildopt_label}.log"
+    BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+        "${buildopt_root}/bin/buildopt-server" serve \
+        --listen 127.0.0.1:0 \
+        --state-dir "${buildopt_data_root}/shared" \
+        --export-dir "${buildopt_data_root}/exports" \
+        >"${buildopt_server_log}" 2>&1 &
+    buildopt_server_pid=$!
+    buildopt_endpoint=
+    for _ in {1..100}; do
+        buildopt_endpoint=$(
+            sed -n \
+                's/^buildopt-server: listening on \(http:\/\/127[.]0[.]0[.]1:[0-9][0-9]*\)$/\1/p' \
+                "${buildopt_server_log}" |
+                head -n 1
+        )
+        if [[ -n "${buildopt_endpoint}" ]]; then
+            break
+        fi
+        if ! kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+            printf 'packaged server exited before readiness: %s\n' \
+                "${buildopt_label}" >&2
+            grep -vF -- "${buildopt_token}" "${buildopt_server_log}" >&2 ||
+                true
+            exit 1
+        fi
+        sleep 0.05
+    done
+    if [[ -z "${buildopt_endpoint}" ]] ||
+        ! grep -Fq \
+            'single-node Shared storage initialized and reconciled with cache/control schema 3' \
+            "${buildopt_server_log}"; then
+        printf 'packaged server did not initialize the modular monolith\n' >&2
+        grep -vF -- "${buildopt_token}" "${buildopt_server_log}" >&2 || true
+        exit 1
+    fi
+}
+
+buildopt_stop_server() {
+    kill -TERM "${buildopt_server_pid}"
+    set +e
+    wait "${buildopt_server_pid}"
+    local buildopt_exit=$?
+    set -e
+    buildopt_server_pid=
+    if ((buildopt_exit != 0)); then
+        printf 'packaged server shutdown returned %s\n' \
+            "${buildopt_exit}" >&2
+        exit 1
+    fi
+}
+
+buildopt_run_session() {
+    local buildopt_root=$1
+    local buildopt_label=$2
+    local buildopt_expected_exit=$3
+    local buildopt_fingerprint
+    local buildopt_context
+    local buildopt_log="${buildopt_test_root}/launcher-${buildopt_label}.log"
+    local buildopt_plugin
+
+    buildopt_fingerprint=$(
+        printf '%s' "${buildopt_label}" | sha256sum | awk '{print $1}'
+    )
+    printf -v buildopt_context \
+        '{"repositoryId":"deployment-lifecycle-fixture","revision":"synthetic-%s","requestedTasks":["neutralProbe"],"sourceStateDigest":"hmac-sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","workUnitsFingerprint":"hmac-sha256:%s","tokenKeyVersion":"deployment-fixture-v1","trustDomain":"fixture-local"}' \
+        "${buildopt_label}" \
+        "${buildopt_fingerprint}"
+    buildopt_plugin=$(
+        find "${buildopt_root}/lib" \
+            -maxdepth 1 \
+            -type f \
+            -name 'buildopt-gradle-plugin-*.jar' \
+            -print \
+            -quit
+    )
+    if [[ -z "${buildopt_plugin}" ]]; then
+        printf 'packaged Gradle plugin is unavailable: %s\n' \
+            "${buildopt_label}" >&2
+        exit 1
+    fi
+    set +e
+    BUILDOPT_SERVER_URL="${buildopt_endpoint}" \
+    BUILDOPT_SERVER_INGEST_TOKEN="${buildopt_token}" \
+    BUILDOPT_BUILD_SESSION_CONTEXT="${buildopt_context}" \
+    BUILDOPT_GRADLE_PLUGIN_JAR="${buildopt_plugin}" \
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_root}/bin/buildopt" run -- \
+        "${buildopt_source}/gradlew" \
+        --no-daemon \
+        --offline \
+        --stacktrace \
+        --warning-mode=fail \
+        --configuration-cache \
+        -p "${buildopt_gradle_fixture}" \
+        --init-script "${buildopt_gradle_init}" \
+        neutralProbe >"${buildopt_log}" 2>&1
+    local buildopt_exit=$?
+    set -e
+    if ((buildopt_exit != buildopt_expected_exit)) ||
+        ! grep -Eq \
+            '^buildopt: buildopt-server accepted session [^[:space:]]+$' \
+            "${buildopt_log}" ||
+        grep -Fq -- "${buildopt_token}" "${buildopt_log}"; then
+        printf 'packaged launcher session failed: %s/%s\n' \
+            "${buildopt_label}" \
+            "${buildopt_exit}" >&2
+        grep -vF -- "${buildopt_token}" "${buildopt_log}" >&2 || true
+        exit 1
+    fi
+}
+
+buildopt_export_count() {
+    find "${buildopt_data_root}/exports" \
+        -maxdepth 1 \
+        -type f \
+        -name 'build-session-*.json' |
+        wc -l
+}
+
+buildopt_require_status "${buildopt_version_one}" ""
+buildopt_start_server "${buildopt_release_root}" v1
+buildopt_run_session "${buildopt_release_root}" v1-success 0
+buildopt_stop_server
+if [[ "$(buildopt_export_count)" != "1" ]]; then
+    printf 'version 1 did not produce one durable export\n' >&2
+    grep -vF -- "${buildopt_token}" "${buildopt_server_log}" >&2 || true
+    find "${buildopt_data_root}" -maxdepth 3 -printf '%P %y\n' |
+        sort >&2
+    exit 1
+fi
+buildopt_first_export=$(
+    find "${buildopt_data_root}/exports" \
+        -maxdepth 1 \
+        -type f \
+        -name 'build-session-*.json' \
+        -print \
+        -quit
+)
+buildopt_first_export_sha256=$(sha256sum "${buildopt_first_export}" | awk '{print $1}')
+
+buildopt_idempotent_root=$(
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        "${buildopt_manager}" upgrade \
+        --bundle "${buildopt_bundle_one}" \
+        --key "${buildopt_test_root}/release.pub" \
+        --root "${buildopt_deployment_root}"
+)
+if [[ "${buildopt_idempotent_root}" != "${buildopt_release_root}" ]]; then
+    printf 'idempotent upgrade changed the selected release\n' >&2
+    exit 1
+fi
+buildopt_require_status "${buildopt_version_one}" ""
+
+buildopt_release_root_two=$(
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        "${buildopt_manager}" upgrade \
+        --bundle "${buildopt_bundle_two}" \
+        --key "${buildopt_test_root}/release.pub" \
+        --root "${buildopt_deployment_root}"
+)
+buildopt_require_status "${buildopt_version_two}" "${buildopt_version_one}"
+buildopt_start_server "${buildopt_release_root_two}" v2
+buildopt_run_session "${buildopt_release_root_two}" v2-success 0
+buildopt_stop_server
+if [[ "$(buildopt_export_count)" != "2" ]] ||
+    [[ "$(sha256sum "${buildopt_first_export}" | awk '{print $1}')" != \
+        "${buildopt_first_export_sha256}" ]]; then
+    printf 'upgrade did not preserve and extend durable exports\n' >&2
+    grep -vF -- "${buildopt_token}" "${buildopt_server_log}" >&2 || true
+    exit 1
+fi
+
+buildopt_release_root=$(
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        "${buildopt_manager}" rollback \
+        --key "${buildopt_test_root}/release.pub" \
+        --root "${buildopt_deployment_root}"
+)
+buildopt_require_status "${buildopt_version_one}" "${buildopt_version_two}"
+
+set +e
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_manager}" rollback \
+    --key "${buildopt_test_root}/wrong.pub" \
+    --root "${buildopt_deployment_root}" \
+    --version "${buildopt_version_two}" >/dev/null 2>&1
+buildopt_wrong_key_exit=$?
+set -e
+if ((buildopt_wrong_key_exit != 1)); then
+    printf 'rollback accepted the wrong trust root\n' >&2
+    exit 1
+fi
+buildopt_require_status "${buildopt_version_one}" "${buildopt_version_two}"
+
+buildopt_start_server "${buildopt_release_root}" rollback
+set +e
+"${buildopt_manager}" uninstall \
+    --root "${buildopt_deployment_root}" >/dev/null 2>&1
+buildopt_active_uninstall_exit=$?
+set -e
+if ((buildopt_active_uninstall_exit != 1)); then
+    printf 'uninstall did not refuse the active Shared writer\n' >&2
+    exit 1
+fi
+buildopt_stop_server
+
+"${buildopt_manager}" uninstall \
+    --root "${buildopt_deployment_root}" >/dev/null
+if [[ -e "${buildopt_deployment_root}" ]] ||
+    [[ ! -d "${buildopt_data_root}" ]] ||
+    [[ "$(buildopt_export_count)" != "2" ]]; then
+    printf 'default uninstall did not preserve only persistent data\n' >&2
+    exit 1
+fi
+"${buildopt_manager}" uninstall \
+    --root "${buildopt_deployment_root}" >/dev/null
+
+buildopt_release_root_two=$(
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        "${buildopt_manager}" install \
+        --bundle "${buildopt_bundle_two}" \
+        --key "${buildopt_test_root}/release.pub" \
+        --root "${buildopt_deployment_root}" \
+        --data-root "${buildopt_data_root}"
+)
+buildopt_require_status "${buildopt_version_two}" ""
+buildopt_start_server "${buildopt_release_root_two}" reinstall
+buildopt_run_session "${buildopt_release_root_two}" reinstalled-success 0
+buildopt_stop_server
+if [[ "$(buildopt_export_count)" != "3" ]] ||
+    [[ "$(sha256sum "${buildopt_first_export}" | awk '{print $1}')" != \
+        "${buildopt_first_export_sha256}" ]]; then
+    printf 'reinstall did not reopen and extend preserved data\n' >&2
+    grep -vF -- "${buildopt_token}" "${buildopt_server_log}" >&2 || true
+    exit 1
+fi
+
+buildopt_installed_binary="${buildopt_release_root_two}/bin/buildopt"
+buildopt_binary_backup="${buildopt_test_root}/buildopt.backup"
+cp -- "${buildopt_installed_binary}" "${buildopt_binary_backup}"
+printf 'tamper\n' >>"${buildopt_installed_binary}"
+set +e
+"${buildopt_manager}" status \
+    --root "${buildopt_deployment_root}" >/dev/null 2>&1
+buildopt_tamper_exit=$?
+set -e
+if ((buildopt_tamper_exit != 1)); then
+    printf 'deployment status accepted a modified payload\n' >&2
+    exit 1
+fi
+cp -- "${buildopt_binary_backup}" "${buildopt_installed_binary}"
+chmod 0755 "${buildopt_installed_binary}"
+buildopt_require_status "${buildopt_version_two}" ""
+
+chmod 0644 "${buildopt_installed_binary}"
+set +e
+"${buildopt_manager}" status \
+    --root "${buildopt_deployment_root}" >/dev/null 2>&1
+buildopt_mode_tamper_exit=$?
+set -e
+if ((buildopt_mode_tamper_exit != 1)); then
+    printf 'deployment status accepted an unsafe executable mode\n' >&2
+    exit 1
+fi
+chmod 0755 "${buildopt_installed_binary}"
+
+rm -- "${buildopt_installed_binary}"
+ln -s -- "${buildopt_binary_backup}" "${buildopt_installed_binary}"
+set +e
+"${buildopt_manager}" status \
+    --root "${buildopt_deployment_root}" >/dev/null 2>&1
+buildopt_symlink_tamper_exit=$?
+set -e
+if ((buildopt_symlink_tamper_exit != 1)); then
+    printf 'deployment status accepted a symlinked executable\n' >&2
+    exit 1
+fi
+rm -- "${buildopt_installed_binary}"
+cp -- "${buildopt_binary_backup}" "${buildopt_installed_binary}"
+chmod 0755 "${buildopt_installed_binary}"
+buildopt_require_status "${buildopt_version_two}" ""
+
+"${buildopt_manager}" uninstall \
+    --root "${buildopt_deployment_root}" \
+    --purge-data >/dev/null
+if [[ -e "${buildopt_deployment_root}" ]] ||
+    [[ -e "${buildopt_data_root}" ]]; then
+    printf 'explicit uninstall did not purge exact deployment/data roots\n' >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'deployment lifecycle check changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'DEPLOY-001 lifecycle OK: signed install, upgrade, rollback, preserve/reinstall, active-writer refusal, and explicit purge\n'

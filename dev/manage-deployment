@@ -1,0 +1,831 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_usage() {
+    printf '%s\n' \
+        "usage: $0 install --bundle <directory> --key <cosign.pub> --root <absolute-directory> --data-root <absolute-directory>" \
+        "       $0 upgrade --bundle <directory> --key <cosign.pub> --root <absolute-directory>" \
+        "       $0 rollback --key <cosign.pub> --root <absolute-directory> [--version <semver>]" \
+        "       $0 status --root <absolute-directory>" \
+        "       $0 uninstall --root <absolute-directory> [--purge-data]"
+}
+
+buildopt_command=${1:-}
+if [[ -z "${buildopt_command}" ]]; then
+    buildopt_usage >&2
+    exit 64
+fi
+shift
+
+buildopt_bundle=
+buildopt_key=
+buildopt_root=
+buildopt_data_root=
+buildopt_version=
+buildopt_purge_data=0
+while (($# > 0)); do
+    case "$1" in
+        --bundle)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_bundle=$2
+            shift 2
+            ;;
+        --key)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_key=$2
+            shift 2
+            ;;
+        --root)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_root=$2
+            shift 2
+            ;;
+        --data-root)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_data_root=$2
+            shift 2
+            ;;
+        --version)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            buildopt_version=$2
+            shift 2
+            ;;
+        --purge-data)
+            buildopt_purge_data=1
+            shift
+            ;;
+        --help)
+            buildopt_usage
+            exit 0
+            ;;
+        *)
+            buildopt_usage >&2
+            exit 64
+            ;;
+    esac
+done
+
+buildopt_semver='^(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)(-[0-9A-Za-z][0-9A-Za-z.-]*)?([+][0-9A-Za-z][0-9A-Za-z.-]*)?$'
+case "${buildopt_command}" in
+    install)
+        if [[ -z "${buildopt_bundle}" ]] ||
+            [[ -z "${buildopt_key}" ]] ||
+            [[ -z "${buildopt_root}" ]] ||
+            [[ -z "${buildopt_data_root}" ]] ||
+            [[ -n "${buildopt_version}" ]] ||
+            ((buildopt_purge_data != 0)); then
+            buildopt_usage >&2
+            exit 64
+        fi
+        ;;
+    upgrade)
+        if [[ -z "${buildopt_bundle}" ]] ||
+            [[ -z "${buildopt_key}" ]] ||
+            [[ -z "${buildopt_root}" ]] ||
+            [[ -n "${buildopt_data_root}" ]] ||
+            [[ -n "${buildopt_version}" ]] ||
+            ((buildopt_purge_data != 0)); then
+            buildopt_usage >&2
+            exit 64
+        fi
+        ;;
+    rollback)
+        if [[ -n "${buildopt_bundle}" ]] ||
+            [[ -z "${buildopt_key}" ]] ||
+            [[ -z "${buildopt_root}" ]] ||
+            [[ -n "${buildopt_data_root}" ]] ||
+            ((buildopt_purge_data != 0)) ||
+            { [[ -n "${buildopt_version}" ]] &&
+                [[ ! "${buildopt_version}" =~ ${buildopt_semver} ]]; }; then
+            buildopt_usage >&2
+            exit 64
+        fi
+        ;;
+    status)
+        if [[ -n "${buildopt_bundle}" ]] ||
+            [[ -n "${buildopt_key}" ]] ||
+            [[ -z "${buildopt_root}" ]] ||
+            [[ -n "${buildopt_data_root}" ]] ||
+            [[ -n "${buildopt_version}" ]] ||
+            ((buildopt_purge_data != 0)); then
+            buildopt_usage >&2
+            exit 64
+        fi
+        ;;
+    uninstall)
+        if [[ -n "${buildopt_bundle}" ]] ||
+            [[ -n "${buildopt_key}" ]] ||
+            [[ -z "${buildopt_root}" ]] ||
+            [[ -n "${buildopt_data_root}" ]] ||
+            [[ -n "${buildopt_version}" ]]; then
+            buildopt_usage >&2
+            exit 64
+        fi
+        ;;
+    *)
+        buildopt_usage >&2
+        exit 64
+        ;;
+esac
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_verify="${buildopt_script_dir}/verify-release"
+umask 077
+for buildopt_required_command in \
+    awk \
+    chmod \
+    cmp \
+    cp \
+    dirname \
+    find \
+    flock \
+    jq \
+    mkdir \
+    mktemp \
+    mv \
+    realpath \
+    rm \
+    rmdir \
+    sha256sum \
+    sort \
+    stat \
+    tar; do
+    if ! command -v "${buildopt_required_command}" >/dev/null 2>&1; then
+        printf 'required deployment command is unavailable: %s\n' \
+            "${buildopt_required_command}" >&2
+        exit 1
+    fi
+done
+if [[ ! -x "${buildopt_verify}" ]]; then
+    printf 'release verifier is unavailable\n' >&2
+    exit 1
+fi
+
+if [[ "${buildopt_root}" != /* ]] ||
+    [[ "${buildopt_root}" == "/" ]] ||
+    [[ "${buildopt_root}" == *$'\n'* ]] ||
+    [[ "${buildopt_root}" == *$'\r'* ]]; then
+    printf 'deployment root must be an absolute non-root path\n' >&2
+    exit 1
+fi
+buildopt_root=$(realpath -m -- "${buildopt_root}")
+buildopt_manifest="${buildopt_root}/.buildopt-deployment.json"
+buildopt_lock="${buildopt_root}/.buildopt-deployment.lock"
+buildopt_versions="${buildopt_root}/versions"
+
+buildopt_expect_private_directory() {
+    local buildopt_path=$1
+
+    [[ -d "${buildopt_path}" ]] &&
+        [[ ! -L "${buildopt_path}" ]] &&
+        [[ "$(stat -c '%a' -- "${buildopt_path}")" == "700" ]]
+}
+
+buildopt_expect_private_file() {
+    local buildopt_path=$1
+
+    [[ -f "${buildopt_path}" ]] &&
+        [[ ! -L "${buildopt_path}" ]] &&
+        [[ "$(stat -c '%a' -- "${buildopt_path}")" == "600" ]]
+}
+
+buildopt_expect_path_mode() {
+    local buildopt_path=$1
+    local buildopt_kind=$2
+    local buildopt_mode=$3
+
+    [[ ! -L "${buildopt_path}" ]] &&
+        [[ "$(stat -c '%F' -- "${buildopt_path}")" == "${buildopt_kind}" ]] &&
+        [[ "$(stat -c '%a' -- "${buildopt_path}")" == "${buildopt_mode}" ]]
+}
+
+buildopt_safe_remove_tree() {
+    local buildopt_target=$1
+    local buildopt_marker=$2
+    local buildopt_expected_schema=$3
+
+    if [[ "${buildopt_target}" != /* ]] ||
+        [[ "${buildopt_target}" == "/" ]] ||
+        [[ ! -d "${buildopt_target}" ]] ||
+        [[ -L "${buildopt_target}" ]] ||
+        [[ "${buildopt_marker}" != "${buildopt_target}/"* ]] ||
+        [[ ! -f "${buildopt_marker}" ]] ||
+        [[ -L "${buildopt_marker}" ]] ||
+        [[ "$(jq -r '.schemaVersion // ""' "${buildopt_marker}")" != \
+            "${buildopt_expected_schema}" ]]; then
+        printf 'refusing to remove an unverified BuildOpt tree: %s\n' \
+            "${buildopt_target}" >&2
+        return 1
+    fi
+    rm -rf -- "${buildopt_target}"
+}
+
+buildopt_validate_data_root() {
+    local buildopt_path=$1
+    local buildopt_data_marker="${buildopt_path}/.buildopt-deployment-data.json"
+
+    if ! buildopt_expect_private_directory "${buildopt_path}" ||
+        ! buildopt_expect_private_file "${buildopt_data_marker}" ||
+        ! jq -e \
+            --arg buildopt_root "${buildopt_root}" \
+            '
+                keys == ["deploymentRoot", "schemaVersion"] and
+                .schemaVersion == "buildopt.dev/deployment-data/v1" and
+                .deploymentRoot == $buildopt_root
+            ' "${buildopt_data_marker}" >/dev/null; then
+        printf 'deployment data root is not owned by this deployment\n' >&2
+        return 1
+    fi
+}
+
+buildopt_check_server_stopped() {
+    local buildopt_path=$1
+    local buildopt_writer_lock="${buildopt_path}/shared/writer.lock"
+
+    if [[ ! -e "${buildopt_writer_lock}" ]]; then
+        return 0
+    fi
+    if [[ ! -f "${buildopt_writer_lock}" ]] ||
+        [[ -L "${buildopt_writer_lock}" ]]; then
+        printf 'deployment data writer lock is unsafe\n' >&2
+        return 1
+    fi
+    exec 8<>"${buildopt_writer_lock}"
+    if ! flock -n 8; then
+        printf 'buildopt-server still owns the deployment data root\n' >&2
+        exec 8>&-
+        return 1
+    fi
+    flock -u 8
+    exec 8>&-
+}
+
+buildopt_write_manifest() {
+    local buildopt_current_version=$1
+    local buildopt_current_base=$2
+    local buildopt_previous_version=$3
+    local buildopt_previous_base=$4
+    local buildopt_data_path=$5
+    local buildopt_temporary
+
+    buildopt_temporary=$(mktemp "${buildopt_root}/.deployment-manifest.XXXXXX")
+    jq -n -S \
+        --arg buildopt_current_version "${buildopt_current_version}" \
+        --arg buildopt_current_base "${buildopt_current_base}" \
+        --arg buildopt_previous_version "${buildopt_previous_version}" \
+        --arg buildopt_previous_base "${buildopt_previous_base}" \
+        --arg buildopt_data_path "${buildopt_data_path}" \
+        '
+            {
+                schemaVersion: "buildopt.dev/deployment/v1",
+                platform: {
+                    operatingSystem: "linux",
+                    architecture: "amd64"
+                },
+                current: {
+                    version: $buildopt_current_version,
+                    base: $buildopt_current_base
+                },
+                previous: (
+                    if $buildopt_previous_version == "" then
+                        null
+                    else
+                        {
+                            version: $buildopt_previous_version,
+                            base: $buildopt_previous_base
+                        }
+                    end
+                ),
+                dataRoot: $buildopt_data_path
+            }
+        ' >"${buildopt_temporary}"
+    chmod 0600 "${buildopt_temporary}"
+    mv -T -- "${buildopt_temporary}" "${buildopt_manifest}"
+}
+
+buildopt_validate_manifest() {
+    if ! buildopt_expect_private_directory "${buildopt_root}" ||
+        ! buildopt_expect_private_directory "${buildopt_versions}" ||
+        ! buildopt_expect_private_file "${buildopt_manifest}" ||
+        ! buildopt_expect_private_file "${buildopt_lock}" ||
+        ! jq -e \
+            --arg buildopt_root "${buildopt_root}" \
+            '
+                keys == [
+                    "current",
+                    "dataRoot",
+                    "platform",
+                    "previous",
+                    "schemaVersion"
+                ] and
+                .schemaVersion == "buildopt.dev/deployment/v1" and
+                .platform == {
+                    operatingSystem: "linux",
+                    architecture: "amd64"
+                } and
+                (.current | keys == ["base", "version"]) and
+                (.current.version |
+                    test("^(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)(-[0-9A-Za-z][0-9A-Za-z.-]*)?([+][0-9A-Za-z][0-9A-Za-z.-]*)?$")) and
+                .current.base ==
+                    ("buildopt-" + .current.version + "-linux-amd64") and
+                (
+                    .previous == null or
+                    (
+                        (.previous | keys == ["base", "version"]) and
+                        (.previous.version |
+                            test("^(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)(-[0-9A-Za-z][0-9A-Za-z.-]*)?([+][0-9A-Za-z][0-9A-Za-z.-]*)?$")) and
+                        .previous.base ==
+                            ("buildopt-" + .previous.version + "-linux-amd64")
+                    )
+                ) and
+                (
+                    .dataRoot as $buildopt_data_root |
+                    ($buildopt_data_root |
+                        type == "string" and startswith("/")) and
+                    $buildopt_data_root != "/" and
+                    $buildopt_data_root != $buildopt_root and
+                    ($buildopt_data_root |
+                        startswith($buildopt_root + "/") | not) and
+                    ($buildopt_root |
+                        startswith($buildopt_data_root + "/") | not)
+                )
+            ' "${buildopt_manifest}" >/dev/null; then
+        printf 'deployment manifest or root layout is invalid\n' >&2
+        return 1
+    fi
+    buildopt_data_root=$(jq -r '.dataRoot' "${buildopt_manifest}")
+    if [[ "$(realpath -m -- "${buildopt_data_root}")" != \
+        "${buildopt_data_root}" ]]; then
+        printf 'deployment data root is not canonical\n' >&2
+        return 1
+    fi
+    buildopt_validate_data_root "${buildopt_data_root}"
+}
+
+buildopt_verify_payload() {
+    local buildopt_base=$1
+    local buildopt_version_path="${buildopt_versions}/${buildopt_base}"
+    local buildopt_release_root="${buildopt_version_path}/release"
+    local buildopt_payload_checksums="${buildopt_version_path}/payload.sha256"
+    local buildopt_version_manifest="${buildopt_version_path}/version.json"
+    local buildopt_archive="${buildopt_version_path}/bundle/${buildopt_base}.tar.gz"
+    local buildopt_version
+    local buildopt_expected_entries
+    local buildopt_actual_entries
+
+    if ! buildopt_expect_private_directory "${buildopt_version_path}" ||
+        ! buildopt_expect_private_directory \
+            "${buildopt_version_path}/bundle" ||
+        ! buildopt_expect_private_directory "${buildopt_release_root}" ||
+        ! buildopt_expect_private_file "${buildopt_payload_checksums}" ||
+        ! buildopt_expect_private_file "${buildopt_version_manifest}" ||
+        ! jq -e \
+            --arg buildopt_base "${buildopt_base}" \
+            '
+                keys == [
+                    "archiveSha256",
+                    "base",
+                    "publicKeySha256",
+                    "schemaVersion",
+                    "sourceRevision",
+                    "version"
+                ] and
+                .schemaVersion == "buildopt.dev/deployment-version/v1" and
+                .base == $buildopt_base and
+                .base == ("buildopt-" + .version + "-linux-amd64") and
+                (.archiveSha256 | test("^[0-9a-f]{64}$")) and
+                (.publicKeySha256 | test("^[0-9a-f]{64}$")) and
+                (.sourceRevision | test("^[0-9a-f]{40}$"))
+            ' "${buildopt_version_manifest}" >/dev/null; then
+        printf 'installed deployment version is malformed: %s\n' \
+            "${buildopt_base}" >&2
+        return 1
+    fi
+    buildopt_version=$(jq -r '.version' "${buildopt_version_manifest}")
+    if ! buildopt_expect_path_mode \
+        "${buildopt_release_root}/bin" directory 755 ||
+        ! buildopt_expect_path_mode \
+            "${buildopt_release_root}/lib" directory 755 ||
+        ! buildopt_expect_path_mode \
+            "${buildopt_release_root}/bin/buildopt" "regular file" 755 ||
+        ! buildopt_expect_path_mode \
+            "${buildopt_release_root}/bin/buildopt-server" \
+            "regular file" \
+            755 ||
+        ! buildopt_expect_path_mode \
+            "${buildopt_release_root}/lib/buildopt-gradle-plugin-${buildopt_version}.jar" \
+            "regular file" \
+            644 ||
+        ! buildopt_expect_path_mode \
+            "${buildopt_release_root}/lib/buildopt-jvm-agent-${buildopt_version}.jar" \
+            "regular file" \
+            644 ||
+        ! buildopt_expect_private_file "${buildopt_archive}" ||
+        [[ "$(sha256sum "${buildopt_archive}" | awk '{print $1}')" != \
+            "$(jq -r '.archiveSha256' "${buildopt_version_manifest}")" ]]; then
+        printf 'installed deployment modes or archive changed: %s\n' \
+            "${buildopt_base}" >&2
+        return 1
+    fi
+    buildopt_expected_entries=$(
+        printf '%s\n' \
+            "bin" \
+            "bin/buildopt" \
+            "bin/buildopt-server" \
+            "lib" \
+            "lib/buildopt-gradle-plugin-${buildopt_version}.jar" \
+            "lib/buildopt-jvm-agent-${buildopt_version}.jar" |
+            sort
+    )
+    buildopt_actual_entries=$(
+        find "${buildopt_release_root}" -mindepth 1 -printf '%P\n' | sort
+    )
+    if [[ "${buildopt_actual_entries}" != "${buildopt_expected_entries}" ]]; then
+        printf 'installed release layout changed: %s\n' \
+            "${buildopt_base}" >&2
+        return 1
+    fi
+    (
+        cd -- "${buildopt_release_root}"
+        sha256sum --check --status "${buildopt_payload_checksums}"
+    )
+}
+
+buildopt_verify_stored_bundle() {
+    local buildopt_base=$1
+    local buildopt_key_path=$2
+    local buildopt_version_path="${buildopt_versions}/${buildopt_base}"
+    local buildopt_version_manifest="${buildopt_version_path}/version.json"
+
+    "${buildopt_verify}" \
+        --bundle "${buildopt_version_path}/bundle" \
+        --key "${buildopt_key_path}" >/dev/null
+    if [[ "$(sha256sum "${buildopt_key_path}" | awk '{print $1}')" != \
+        "$(jq -r '.publicKeySha256' "${buildopt_version_manifest}")" ]]; then
+        printf 'stored deployment version has a different trust root\n' >&2
+        return 1
+    fi
+}
+
+buildopt_publish_bundle() {
+    local buildopt_bundle_path=$1
+    local buildopt_key_path=$2
+    local buildopt_release_manifest
+    local buildopt_release_version
+    local buildopt_release_base
+    local buildopt_archive
+    local buildopt_target
+    local buildopt_stage_root
+    local buildopt_stage_version
+
+    "${buildopt_verify}" \
+        --bundle "${buildopt_bundle_path}" \
+        --key "${buildopt_key_path}" >/dev/null
+    buildopt_release_manifest=$(
+        find "${buildopt_bundle_path}" \
+            -mindepth 1 \
+            -maxdepth 1 \
+            -type f \
+            -name 'buildopt-*.release.json' \
+            -print \
+            -quit
+    )
+    buildopt_release_version=$(jq -r '.version' "${buildopt_release_manifest}")
+    buildopt_release_base="buildopt-${buildopt_release_version}-linux-amd64"
+    buildopt_archive="${buildopt_bundle_path}/${buildopt_release_base}.tar.gz"
+    buildopt_target="${buildopt_versions}/${buildopt_release_base}"
+
+    if [[ -e "${buildopt_target}" ]] || [[ -L "${buildopt_target}" ]]; then
+        if ! buildopt_verify_payload "${buildopt_release_base}" ||
+            ! buildopt_verify_stored_bundle \
+                "${buildopt_release_base}" \
+                "${buildopt_key_path}" ||
+            ! cmp -s \
+                "${buildopt_archive}" \
+                "${buildopt_target}/bundle/${buildopt_release_base}.tar.gz" ||
+            ! cmp -s \
+                "${buildopt_bundle_path}/${buildopt_release_base}.sha256" \
+                "${buildopt_target}/bundle/${buildopt_release_base}.sha256"; then
+            printf 'existing deployment version conflicts with the bundle: %s\n' \
+                "${buildopt_release_version}" >&2
+            return 1
+        fi
+        printf '%s\t%s\n' \
+            "${buildopt_release_version}" \
+            "${buildopt_release_base}"
+        return 0
+    fi
+
+    buildopt_stage_root=$(mktemp -d "${buildopt_root}/.deployment-stage.XXXXXX")
+    buildopt_stage_version="${buildopt_stage_root}/${buildopt_release_base}"
+    mkdir -p \
+        "${buildopt_stage_version}/bundle" \
+        "${buildopt_stage_version}/release"
+    chmod 0700 \
+        "${buildopt_stage_version}" \
+        "${buildopt_stage_version}/bundle"
+    cp -- "${buildopt_bundle_path}/"* \
+        "${buildopt_stage_version}/bundle/"
+    chmod 0600 "${buildopt_stage_version}/bundle/"*
+    tar -xzf "${buildopt_archive}" \
+        --directory="${buildopt_stage_version}/release" \
+        --strip-components=1 \
+        --no-same-owner \
+        --same-permissions
+    (
+        cd -- "${buildopt_stage_version}/release"
+        sha256sum \
+            bin/buildopt \
+            bin/buildopt-server \
+            "lib/buildopt-gradle-plugin-${buildopt_release_version}.jar" \
+            "lib/buildopt-jvm-agent-${buildopt_release_version}.jar" \
+            >"${buildopt_stage_version}/payload.sha256"
+    )
+    jq -n -S \
+        --arg buildopt_version "${buildopt_release_version}" \
+        --arg buildopt_base "${buildopt_release_base}" \
+        --arg buildopt_archive_sha256 \
+            "$(sha256sum "${buildopt_archive}" | awk '{print $1}')" \
+        --arg buildopt_public_key_sha256 \
+            "$(sha256sum "${buildopt_key_path}" | awk '{print $1}')" \
+        --arg buildopt_source_revision \
+            "$(jq -r '.source.revision' "${buildopt_release_manifest}")" \
+        '
+            {
+                schemaVersion: "buildopt.dev/deployment-version/v1",
+                version: $buildopt_version,
+                base: $buildopt_base,
+                archiveSha256: $buildopt_archive_sha256,
+                publicKeySha256: $buildopt_public_key_sha256,
+                sourceRevision: $buildopt_source_revision
+            }
+        ' >"${buildopt_stage_version}/version.json"
+    chmod 0600 \
+        "${buildopt_stage_version}/payload.sha256" \
+        "${buildopt_stage_version}/version.json"
+    if ! buildopt_verify_payload_from_stage; then
+        return 1
+    fi
+    mv -T -- "${buildopt_stage_version}" "${buildopt_target}"
+    rmdir "${buildopt_stage_root}"
+    if ! buildopt_verify_payload "${buildopt_release_base}"; then
+        return 1
+    fi
+    printf '%s\t%s\n' \
+        "${buildopt_release_version}" \
+        "${buildopt_release_base}"
+}
+
+buildopt_verify_payload_from_stage() {
+    local buildopt_saved_versions=${buildopt_versions}
+    local buildopt_result
+
+    buildopt_versions=$(dirname -- "${buildopt_stage_version}")
+    set +e
+    buildopt_verify_payload "${buildopt_release_base}"
+    buildopt_result=$?
+    set -e
+    buildopt_versions=${buildopt_saved_versions}
+    return "${buildopt_result}"
+}
+
+if [[ "${buildopt_command}" == "install" ]]; then
+    if [[ ! -d "${buildopt_bundle}" ]] ||
+        [[ ! -f "${buildopt_key}" ]] ||
+        [[ -L "${buildopt_key}" ]]; then
+        printf 'install requires a release bundle and external public key\n' >&2
+        exit 1
+    fi
+    buildopt_bundle=$(realpath -e -- "${buildopt_bundle}")
+    buildopt_key=$(realpath -e -- "${buildopt_key}")
+    "${buildopt_verify}" \
+        --bundle "${buildopt_bundle}" \
+        --key "${buildopt_key}" >/dev/null
+    if [[ "${buildopt_data_root}" != /* ]] ||
+        [[ "${buildopt_data_root}" == "/" ]] ||
+        [[ "${buildopt_data_root}" == *$'\n'* ]] ||
+        [[ "${buildopt_data_root}" == *$'\r'* ]]; then
+        printf 'deployment data root must be an absolute non-root path\n' >&2
+        exit 1
+    fi
+    buildopt_data_root=$(realpath -m -- "${buildopt_data_root}")
+    if [[ "${buildopt_data_root}" == "${buildopt_root}" ]] ||
+        [[ "${buildopt_data_root}" == "${buildopt_root}/"* ]] ||
+        [[ "${buildopt_root}" == "${buildopt_data_root}/"* ]]; then
+        printf 'deployment binaries and persistent data must be disjoint\n' >&2
+        exit 1
+    fi
+    if [[ -e "${buildopt_root}" ]] || [[ -L "${buildopt_root}" ]]; then
+        printf 'install requires an absent deployment root\n' >&2
+        exit 1
+    fi
+    buildopt_created_root=0
+    buildopt_created_data=0
+    buildopt_install_complete=0
+    # Invoked indirectly by the EXIT trap until install commits.
+    # shellcheck disable=SC2329
+    buildopt_install_cleanup() {
+        if ((buildopt_install_complete == 1)); then
+            return
+        fi
+        if ((buildopt_created_root == 1)) &&
+            [[ "${buildopt_root}" != "/" ]] &&
+            [[ -d "${buildopt_root}" ]] &&
+            [[ ! -L "${buildopt_root}" ]] &&
+            [[ -f "${buildopt_root}/.buildopt-deployment-initializing.json" ]] &&
+            [[ "$(jq -r '.schemaVersion // ""' \
+                "${buildopt_root}/.buildopt-deployment-initializing.json")" == \
+                "buildopt.dev/deployment-initializing/v1" ]]; then
+            rm -rf -- "${buildopt_root}"
+        fi
+        if ((buildopt_created_data == 1)) &&
+            [[ "${buildopt_data_root}" != "/" ]] &&
+            [[ -d "${buildopt_data_root}" ]] &&
+            [[ ! -L "${buildopt_data_root}" ]] &&
+            [[ -f \
+                "${buildopt_data_root}/.buildopt-deployment-data.json" ]] &&
+            [[ "$(jq -r '.schemaVersion // ""' \
+                "${buildopt_data_root}/.buildopt-deployment-data.json")" == \
+                "buildopt.dev/deployment-data/v1" ]]; then
+            rm -rf -- "${buildopt_data_root}"
+        fi
+    }
+    trap buildopt_install_cleanup EXIT
+
+    umask 077
+    mkdir -p -- "$(dirname -- "${buildopt_root}")"
+    mkdir -- "${buildopt_root}"
+    buildopt_created_root=1
+    chmod 0700 "${buildopt_root}"
+    jq -n -S \
+        '
+            {
+                schemaVersion:
+                    "buildopt.dev/deployment-initializing/v1"
+            }
+        ' >"${buildopt_root}/.buildopt-deployment-initializing.json"
+    chmod 0600 \
+        "${buildopt_root}/.buildopt-deployment-initializing.json"
+    mkdir "${buildopt_versions}"
+    chmod 0700 "${buildopt_versions}"
+    : >"${buildopt_lock}"
+    chmod 0600 "${buildopt_lock}"
+    exec 9<>"${buildopt_lock}"
+    flock -n 9
+
+    if [[ -e "${buildopt_data_root}" ]] ||
+        [[ -L "${buildopt_data_root}" ]]; then
+        buildopt_validate_data_root "${buildopt_data_root}"
+    else
+        mkdir -p -- "$(dirname -- "${buildopt_data_root}")"
+        mkdir -- "${buildopt_data_root}"
+        buildopt_created_data=1
+        chmod 0700 "${buildopt_data_root}"
+        jq -n -S \
+            --arg buildopt_root "${buildopt_root}" \
+            '
+                {
+                    schemaVersion: "buildopt.dev/deployment-data/v1",
+                    deploymentRoot: $buildopt_root
+                }
+            ' >"${buildopt_data_root}/.buildopt-deployment-data.json"
+        chmod 0600 \
+            "${buildopt_data_root}/.buildopt-deployment-data.json"
+    fi
+
+    IFS=$'\t' read -r buildopt_new_version buildopt_new_base < <(
+        buildopt_publish_bundle "${buildopt_bundle}" "${buildopt_key}"
+    )
+    buildopt_write_manifest \
+        "${buildopt_new_version}" \
+        "${buildopt_new_base}" \
+        "" \
+        "" \
+        "${buildopt_data_root}"
+    buildopt_validate_manifest
+    rm -- "${buildopt_root}/.buildopt-deployment-initializing.json"
+    buildopt_install_complete=1
+    trap - EXIT
+    printf '%s\n' "${buildopt_versions}/${buildopt_new_base}/release"
+    exit 0
+fi
+
+if [[ ! -d "${buildopt_root}" ]] || [[ -L "${buildopt_root}" ]]; then
+    if [[ "${buildopt_command}" == "uninstall" ]] &&
+        ((buildopt_purge_data == 0)); then
+        printf 'BuildOpt deployment is already absent\n'
+        exit 0
+    fi
+    printf 'BuildOpt deployment root is unavailable\n' >&2
+    exit 1
+fi
+buildopt_validate_manifest
+exec 9<>"${buildopt_lock}"
+if ! flock -n 9; then
+    printf 'another BuildOpt deployment operation is active\n' >&2
+    exit 1
+fi
+
+buildopt_current_version=$(jq -r '.current.version' "${buildopt_manifest}")
+buildopt_current_base=$(jq -r '.current.base' "${buildopt_manifest}")
+if ! buildopt_verify_payload "${buildopt_current_base}"; then
+    exit 1
+fi
+
+case "${buildopt_command}" in
+    status)
+        jq -S \
+            --arg buildopt_release_root \
+                "${buildopt_versions}/${buildopt_current_base}/release" \
+            '. + {releaseRoot: $buildopt_release_root}' \
+            "${buildopt_manifest}"
+        ;;
+    upgrade)
+        if [[ ! -d "${buildopt_bundle}" ]] ||
+            [[ ! -f "${buildopt_key}" ]] ||
+            [[ -L "${buildopt_key}" ]]; then
+            printf 'upgrade requires a release bundle and external public key\n' >&2
+            exit 1
+        fi
+        buildopt_bundle=$(realpath -e -- "${buildopt_bundle}")
+        buildopt_key=$(realpath -e -- "${buildopt_key}")
+        IFS=$'\t' read -r buildopt_new_version buildopt_new_base < <(
+            buildopt_publish_bundle "${buildopt_bundle}" "${buildopt_key}"
+        )
+        if [[ "${buildopt_new_version}" != "${buildopt_current_version}" ]]; then
+            buildopt_write_manifest \
+                "${buildopt_new_version}" \
+                "${buildopt_new_base}" \
+                "${buildopt_current_version}" \
+                "${buildopt_current_base}" \
+                "${buildopt_data_root}"
+        fi
+        buildopt_validate_manifest
+        printf '%s\n' "${buildopt_versions}/${buildopt_new_base}/release"
+        ;;
+    rollback)
+        buildopt_key=$(realpath -e -- "${buildopt_key}")
+        buildopt_target_version=${buildopt_version}
+        if [[ -z "${buildopt_target_version}" ]]; then
+            buildopt_target_version=$(
+                jq -r '.previous.version // ""' "${buildopt_manifest}"
+            )
+        fi
+        if [[ -z "${buildopt_target_version}" ]] ||
+            [[ ! "${buildopt_target_version}" =~ ${buildopt_semver} ]]; then
+            printf 'rollback target is unavailable\n' >&2
+            exit 1
+        fi
+        buildopt_target_base="buildopt-${buildopt_target_version}-linux-amd64"
+        if [[ "${buildopt_target_base}" == "${buildopt_current_base}" ]] ||
+            ! buildopt_verify_payload "${buildopt_target_base}" ||
+            ! buildopt_verify_stored_bundle \
+                "${buildopt_target_base}" \
+                "${buildopt_key}"; then
+            printf 'rollback target is invalid\n' >&2
+            exit 1
+        fi
+        buildopt_write_manifest \
+            "${buildopt_target_version}" \
+            "${buildopt_target_base}" \
+            "${buildopt_current_version}" \
+            "${buildopt_current_base}" \
+            "${buildopt_data_root}"
+        buildopt_validate_manifest
+        printf '%s\n' "${buildopt_versions}/${buildopt_target_base}/release"
+        ;;
+    uninstall)
+        buildopt_check_server_stopped "${buildopt_data_root}"
+        if ((buildopt_purge_data == 1)); then
+            buildopt_safe_remove_tree \
+                "${buildopt_data_root}" \
+                "${buildopt_data_root}/.buildopt-deployment-data.json" \
+                "buildopt.dev/deployment-data/v1"
+            printf 'BuildOpt persistent data purged: %s\n' \
+                "${buildopt_data_root}"
+        else
+            printf 'BuildOpt persistent data preserved: %s\n' \
+                "${buildopt_data_root}"
+        fi
+        exec 9>&-
+        buildopt_safe_remove_tree \
+            "${buildopt_root}" \
+            "${buildopt_manifest}" \
+            "buildopt.dev/deployment/v1"
+        ;;
+esac
