@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "buildopt.specs/patch-candidate-validation/v1",
+  "trackerId": "C4-005",
+  "runs": {
+    "arms": ["CANDIDATE", "CONTROL"],
+    "phases": ["CLEAN", "INCREMENTAL", "RELOCATED"],
+    "exactCount": 6,
+    "distinctIsolationKeys": true,
+    "identicalContext": ["repositoryId", "actionId", "revision", "sourceStateDigest", "workUnitsFingerprint", "requiredDeliverablesManifestDigest", "policyDigest", "toolchainId", "runnerClass"],
+    "exitCode": 0,
+    "configurationCache": {
+      "CLEAN": "STORED",
+      "INCREMENTAL": "REUSED",
+      "RELOCATED": "STORED"
+    }
+  },
+  "artifacts": {
+    "requiredManifest": "EXACT_PATH_SET",
+    "maximumArtifacts": 1024,
+    "maximumArtifactBytes": 67108864,
+    "maximumTotalBytes": 268435456,
+    "maximumExpandedArchiveBytes": 268435456,
+    "adapters": {
+      "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1@1.0": "ARCHIVE_CONTENTS_V1",
+      "CUSTOM_TASK_CONTRACT_JAVA_V1@1.0": "EXACT_BYTES"
+    },
+    "logicalEquality": "ALL_RUNS_EQUAL_CONTROL_CLEAN",
+    "candidateRawEquality": "CLEAN_EQUALS_INCREMENTAL_EQUALS_RELOCATED"
+  },
+  "archiveAdapter": {
+    "formats": [".zip", ".jar", ".war", ".ear", ".aar"],
+    "compares": ["ENTRY_PATH", "DIRECTORY_MARKER", "UNCOMPRESSED_SIZE", "CONTENT_SHA256"],
+    "ignores": ["ENTRY_ORDER", "TIMESTAMP", "COMPRESSION"],
+    "rejects": ["ABSOLUTE_PATH", "BACKSLASH_PATH", "DOT_SEGMENT", "DOT_DOT_SEGMENT", "EMPTY_SEGMENT", "NUL", "DUPLICATE_ENTRY", "EMPTY_ARCHIVE", "ENTRY_OVERSIZE", "EXPANSION_OVERSIZE"]
+  },
+  "statuses": {
+    "PASSED": "PROMOTION_INPUT",
+    "FAILED": "BLOCK_ACTION",
+    "INCONCLUSIVE": "BLOCK_ACTION"
+  },
+  "remoteMutationPerformed": false,
+  "doesNotClose": ["C4-004", "C4-006", "C4-007", "C4-008", "C4-009", "C4-G01", "C4-G02", "C4-G03", "C4-G04", "C4-G05", "C4-G06"]
+}

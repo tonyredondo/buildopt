@@ -77,6 +77,7 @@ public final class PatcherSpike {
             spike.assertDuplicateKeysRejected();
             spike.assertSignerRejectsIncompleteManifest();
             spike.assertArchiveRecipeSafety();
+            PatchCandidateValidationSpike.assertConformance();
             List<CaseDefinition> definitions = spike.readPlan();
             List<CaseResult> results = new ArrayList<>();
             for (CaseDefinition definition : definitions) {
@@ -673,6 +674,11 @@ public final class PatcherSpike {
         root.put("archiveRecipeGenerated", true);
         root.put("archiveRecipeIdempotent", true);
         root.put("archiveRecipeFailClosed", true);
+        root.put("candidateControlValidated", true);
+        root.put("archiveArtifactAdapterValidated", true);
+        root.put("exactArtifactAdapterValidated", true);
+        root.put("candidateReproducibilityValidated", true);
+        root.put("candidateValidationFailClosed", true);
         root.put("bundleContentExecuted", false);
         root.put("customerCheckoutHooksExecuted", false);
         root.put("customerContentFiltersExecuted", false);

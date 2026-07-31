@@ -61,6 +61,11 @@ jq -e \
         .archiveRecipeGenerated == true and
         .archiveRecipeIdempotent == true and
         .archiveRecipeFailClosed == true and
+        .candidateControlValidated == true and
+        .archiveArtifactAdapterValidated == true and
+        .exactArtifactAdapterValidated == true and
+        .candidateReproducibilityValidated == true and
+        .candidateValidationFailClosed == true and
         .bundleContentExecuted == false and
         .customerCheckoutHooksExecuted == false and
         .customerContentFiltersExecuted == false and

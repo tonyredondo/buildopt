@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/patch-candidate-validation/v1" and
+  .trackerId == "C4-005" and
+  .runs.arms == ["CANDIDATE", "CONTROL"] and
+  .runs.phases == ["CLEAN", "INCREMENTAL", "RELOCATED"] and
+  .runs.exactCount == 6 and
+  .runs.distinctIsolationKeys == true and
+  .runs.configurationCache == {
+    "CLEAN": "STORED",
+    "INCREMENTAL": "REUSED",
+    "RELOCATED": "STORED"
+  } and
+  .artifacts.requiredManifest == "EXACT_PATH_SET" and
+  .artifacts.maximumArtifacts == 1024 and
+  .artifacts.maximumArtifactBytes == 67108864 and
+  .artifacts.maximumTotalBytes == 268435456 and
+  .artifacts.maximumExpandedArchiveBytes == 268435456 and
+  .artifacts.adapters == {
+    "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1@1.0": "ARCHIVE_CONTENTS_V1",
+    "CUSTOM_TASK_CONTRACT_JAVA_V1@1.0": "EXACT_BYTES"
+  } and
+  .artifacts.logicalEquality == "ALL_RUNS_EQUAL_CONTROL_CLEAN" and
+  .artifacts.candidateRawEquality == "CLEAN_EQUALS_INCREMENTAL_EQUALS_RELOCATED" and
+  .statuses == {
+    "PASSED": "PROMOTION_INPUT",
+    "FAILED": "BLOCK_ACTION",
+    "INCONCLUSIVE": "BLOCK_ACTION"
+  } and
+  .remoteMutationPerformed == false and
+  .doesNotClose == ["C4-004", "C4-006", "C4-007", "C4-008", "C4-009", "C4-G01", "C4-G02", "C4-G03", "C4-G04", "C4-G05", "C4-G06"]
+' specs/patch-candidate-validation-v1.json >/dev/null
+
+test -f jvm/patcher/src/main/java/dev/buildopt/patcher/PatchCandidateValidator.java
+./dev/check-archive-reproducibility-recipe
+printf 'C4-005 patch candidate validation OK: six isolated runs, two finite artifact adapters, and fail-closed results\n'
