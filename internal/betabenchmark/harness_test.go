@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"testing"
 )
@@ -191,6 +192,99 @@ func TestRunSharedFaultsProducesBoundTamperEvidentEvidence(t *testing.T) {
 	if err := ValidateSharedFaultResult(manifestPath, resultPath); err == nil {
 		t.Fatal("tampered Shared-fault observations passed validation")
 	}
+}
+
+func TestRunSystemFaultsProducesBoundTamperEvidentEvidence(t *testing.T) {
+	root := t.TempDir()
+	workingDirectory, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	repositoryRoot, err := filepath.Abs(filepath.Join(workingDirectory, "..", ".."))
+	if err != nil {
+		t.Fatal(err)
+	}
+	manifestPath := filepath.Join(repositoryRoot, "benchmarks", "beta-v1.yaml")
+	executables := SystemFaultExecutables{
+		BuildOpt: buildSystemFaultExecutable(
+			t,
+			repositoryRoot,
+			root,
+			"buildopt",
+			"./cmd/buildopt",
+		),
+		Server: buildSystemFaultExecutable(
+			t,
+			repositoryRoot,
+			root,
+			"buildopt-server",
+			"./cmd/buildopt-server",
+		),
+	}
+	resultPath, err := RunSystemFaults(
+		context.Background(),
+		manifestPath,
+		filepath.Join(root, "state"),
+		filepath.Join(root, "output"),
+		executables,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateSystemFaultResult(manifestPath, resultPath); err != nil {
+		t.Fatal(err)
+	}
+	result, err := os.ReadFile(resultPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	unknownResult := bytes.Replace(
+		result,
+		[]byte("{\n"),
+		[]byte("{\n  \"unknown\": true,\n"),
+		1,
+	)
+	if err := os.WriteFile(resultPath, unknownResult, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateSystemFaultResult(manifestPath, resultPath); err == nil {
+		t.Fatal("unknown system-fault result field passed validation")
+	}
+	if err := os.WriteFile(resultPath, result, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	observationsPath := filepath.Join(
+		filepath.Dir(resultPath),
+		systemFaultRawFilename,
+	)
+	observations, err := os.ReadFile(observationsPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	observations[len(observations)-2] ^= 1
+	if err := os.WriteFile(observationsPath, observations, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateSystemFaultResult(manifestPath, resultPath); err == nil {
+		t.Fatal("tampered system-fault observations passed validation")
+	}
+}
+
+func buildSystemFaultExecutable(
+	t *testing.T,
+	repositoryRoot string,
+	outputDirectory string,
+	name string,
+	packagePath string,
+) string {
+	t.Helper()
+	path := filepath.Join(outputDirectory, name)
+	command := exec.Command("go", "build", "-o", path, packagePath)
+	command.Dir = repositoryRoot
+	if output, err := command.CombinedOutput(); err != nil {
+		t.Fatalf("build %s: %v\n%s", packagePath, err, output)
+	}
+	return path
 }
 
 func TestDeterministicReaderIsStableAndSizeBounded(t *testing.T) {

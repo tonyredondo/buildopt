@@ -1192,6 +1192,24 @@ applied after restart. Seventeen mode-`0600` observations are manifest- and
 digest-bound. Six restart, network, and revocation faults plus sustained load,
 soak, and the complete operational gate remain open.
 
+## Private-beta system faults
+
+Execute the gateway/server restart, network, and revocation rows:
+
+```bash
+./dev/check-beta-system-faults
+```
+
+The checker builds and launches real `buildopt` and `buildopt-server`
+executables. It proves stable managed-gateway identity and complete hits across
+restart, liveness without readiness during server reconciliation, bounded
+deadline and byte-free fail-open behavior through the real gateway, and signed
+policy/grant revocation that rejects stale routes and late commits while
+rotating generation and clearing pending bytes. Eighteen mode-`0600`
+observations are manifest- and digest-bound. Together with the disk and Shared
+slices, all 15 fault rows and `A1-G04` are closed; sustained load, soak,
+`A1-G02`, and the complete operational gate remain open.
+
 ## Private-beta benchmark harness
 
 Exercise the non-qualifying real-data-plane smoke profile:

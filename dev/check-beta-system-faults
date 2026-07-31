@@ -1,0 +1,201 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/beta-system-faults-v1.json"
+buildopt_manifest="${buildopt_repo_root}/benchmarks/beta-v1.yaml"
+
+for buildopt_command in git jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required beta system-fault command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if ! jq -e '
+    . == {
+        schemaVersion: "buildopt.specs/beta-system-faults/v1",
+        gateId: "OPS-001/A1",
+        exitGateId: "A1-G04",
+        manifest: "benchmarks/beta-v1.yaml",
+        commands: {
+            run: "beta-benchmark system-faults --manifest PATH --state-dir ABSOLUTE_PATH --output-dir ABSOLUTE_PATH --buildopt ABSOLUTE_PATH --server ABSOLUTE_PATH",
+            validate: "beta-benchmark validate-system-faults --manifest PATH --result PATH"
+        },
+        faults: [
+            {
+                id: "GATEWAY_RESTART",
+                expectedSafety: "RECOVER_OR_FAIL_OPEN_WITHOUT_PARTIAL_HIT",
+                triggerSequence: 2,
+                events: [
+                    "GATEWAY_COMPLETE_HIT_BEFORE_RESTART",
+                    "GATEWAY_PROCESS_RESTARTED",
+                    "GATEWAY_COMPLETE_HIT_AFTER_RESTART"
+                ],
+                recovery: "STABLE_IDENTITY_COMPLETE_HIT"
+            },
+            {
+                id: "SERVER_RESTART",
+                expectedSafety: "READINESS_FALSE_UNTIL_RECONCILED",
+                triggerSequence: 4,
+                events: [
+                    "SERVER_PROCESS_STOPPED",
+                    "RESTART_LIVE_NOT_READY",
+                    "RECONCILED_AND_READY"
+                ],
+                recovery: "READY_AFTER_RECONCILIATION"
+            },
+            {
+                id: "NETWORK_LATENCY",
+                expectedSafety: "BOUNDED_DEADLINE_AND_RECORDED_ERROR",
+                triggerSequence: 7,
+                events: [
+                    "UPSTREAM_LATENCY_INJECTED",
+                    "DEADLINE_EXCEEDED_AND_RECORDED",
+                    "COMPLETE_HIT_AFTER_LATENCY_RECOVERY"
+                ],
+                recovery: "BOUNDED_DEADLINE_THEN_COMPLETE_HIT"
+            },
+            {
+                id: "NETWORK_LOSS",
+                expectedSafety: "BOUNDED_RETRY_OR_FAIL_OPEN",
+                triggerSequence: 10,
+                events: [
+                    "UPSTREAM_CONNECTION_DROPPED",
+                    "BYTE_FREE_FAIL_OPEN_MISS",
+                    "COMPLETE_HIT_AFTER_NETWORK_RECOVERY"
+                ],
+                recovery: "FAIL_OPEN_THEN_COMPLETE_HIT"
+            },
+            {
+                id: "REVOKED_POLICY",
+                expectedSafety: "ABORT_PENDING_AND_ROTATE_GENERATION",
+                triggerSequence: 13,
+                events: [
+                    "POLICY_REVOCATION_INSTALLED",
+                    "STALE_ROUTE_REJECTED",
+                    "PENDING_ABORTED_AND_GENERATION_ROTATED"
+                ],
+                recovery: "POLICY_ABORTED_AND_ROTATED"
+            },
+            {
+                id: "REVOKED_GRANT",
+                expectedSafety: "ABORT_PENDING_AND_ROTATE_GENERATION",
+                triggerSequence: 16,
+                events: [
+                    "GRANT_REVOCATION_INSTALLED",
+                    "STALE_GRANT_ROUTE_REJECTED",
+                    "PENDING_ABORTED_AND_GENERATION_ROTATED"
+                ],
+                recovery: "GRANT_ABORTED_AND_ROTATED"
+            }
+        ],
+        execution: {
+            qualification: "FAULT_SLICE",
+            gatewayProcess: "REAL_MANAGED_BUILDOPT",
+            serverProcess: "REAL_BUILDOPT_SERVER",
+            transport: "REAL_MANAGED_GATEWAY_TO_LOOPBACK_AUTHORITY",
+            storage: "REAL_SINGLE_NODE_SHARED",
+            serverRestartOrphanBlobs: 256,
+            networkLatencyMilliseconds: 250,
+            networkDeadlineMilliseconds: 100,
+            networkLossResponseBytes: 0,
+            revocationAuthority: "SIGNED_LOCAL_AUTHORITY",
+            revocationPendingBytesAfterAbort: 0
+        },
+        evidence: {
+            rawSchema: "buildopt.benchmarks/system-fault-observation/v1",
+            resultSchema: "buildopt.benchmarks/system-fault-result/v1",
+            rawObservations: 18,
+            privateMode: "0600",
+            manifestDigestBound: true,
+            rawDigestBound: true,
+            unknownFieldsRejected: true,
+            tamperRejected: true
+        },
+        boundaries: {
+            closes: [
+                "OPS-001/A1-SYSTEM-FAULTS",
+                "FAULT_MATRIX_15_OF_15",
+                "A1-G04"
+            ],
+            doesNotClose: [
+                "OPS-001/A1",
+                "A1-G02",
+                "SUSTAINED_60_MINUTES",
+                "EIGHT_HOUR_SOAK",
+                "GOLDEN_LANE_RESULT"
+            ]
+        }
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'beta system-fault contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+buildopt_temp_root=$(mktemp -d)
+trap 'rm -rf -- "${buildopt_temp_root}"' EXIT
+buildopt_state="${buildopt_temp_root}/state"
+buildopt_output="${buildopt_temp_root}/output"
+buildopt_result="${buildopt_output}/system-fault-result.json"
+buildopt_binary="${buildopt_temp_root}/buildopt"
+buildopt_server_binary="${buildopt_temp_root}/buildopt-server"
+buildopt_benchmark_binary="${buildopt_temp_root}/beta-benchmark"
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go build -o "${buildopt_binary}" ./cmd/buildopt
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go build -o "${buildopt_server_binary}" ./cmd/buildopt-server
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go build -o "${buildopt_benchmark_binary}" ./cmd/beta-benchmark
+"${buildopt_benchmark_binary}" system-faults \
+    --manifest "${buildopt_manifest}" \
+    --state-dir "${buildopt_state}" \
+    --output-dir "${buildopt_output}" \
+    --buildopt "${buildopt_binary}" \
+    --server "${buildopt_server_binary}"
+"${buildopt_benchmark_binary}" validate-system-faults \
+    --manifest "${buildopt_manifest}" \
+    --result "${buildopt_result}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 \
+    ./internal/betabenchmark \
+    ./internal/sharedcache \
+    ./internal/localauthority \
+    -run \
+    "^(TestRunSystemFaultsProducesBoundTamperEvidentEvidence|TestLocalAuthorityCommitRevocationAndAbortLifecycle|TestCommitRechecksCurrentRevocationEpochAtTransaction|TestStateAdvanceRejectsRollbackAndGenerationRebinding)$"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 \
+    ./cmd/buildopt \
+    ./cmd/buildopt-server \
+    -run \
+    "^(TestBuildoptManagedGatewayPersistsAndRotatesSafely|TestServerIsLiveButNotReadyDuringSharedReconciliation)$"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet \
+    ./internal/betabenchmark \
+    ./cmd/beta-benchmark \
+    ./internal/sharedcache \
+    ./internal/localauthority \
+    ./cmd/buildopt \
+    ./cmd/buildopt-server
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'beta system-fault checker changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'OPS-001/A1 system faults OK: 6 faults, 18 private observations, all 15 manifest faults qualified, A1-G04 closed\n'

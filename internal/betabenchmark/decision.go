@@ -31,6 +31,31 @@ func verifyBenchmarkDecision(
 	objects []sharedcache.CommitObject,
 	now time.Time,
 ) (sharedcache.VerifiedCommitDecision, error) {
+	return verifyBenchmarkDecisionWithAuthority(
+		ctx,
+		privateKey,
+		request,
+		status,
+		objects,
+		1,
+		sharedcache.TestOptimizationGrant{
+			State:  "NOT_REQUIRED",
+			Reason: "NO_TEST_OUTPUTS",
+		},
+		now,
+	)
+}
+
+func verifyBenchmarkDecisionWithAuthority(
+	ctx context.Context,
+	privateKey ed25519.PrivateKey,
+	request sharedcache.StartAttemptRequest,
+	status sharedcache.AttemptStatus,
+	objects []sharedcache.CommitObject,
+	revocationEpoch int64,
+	grant sharedcache.TestOptimizationGrant,
+	now time.Time,
+) (sharedcache.VerifiedCommitDecision, error) {
 	decision := sharedcache.CommitDecision{
 		SchemaVersion:             "1.0",
 		RecordType:                "COMMIT_DECISION",
@@ -44,11 +69,8 @@ func verifyBenchmarkDecision(
 		PolicyDigest:              request.PolicyDigest,
 		ConfigurationPolicyDigest: request.ConfigurationPolicyDigest,
 		CacheContractDigest:       request.CacheContractDigest,
-		TestOptimizationGrant: sharedcache.TestOptimizationGrant{
-			State:  "NOT_REQUIRED",
-			Reason: "NO_TEST_OUTPUTS",
-		},
-		RevocationEpoch: 1,
+		TestOptimizationGrant:     grant,
+		RevocationEpoch:           revocationEpoch,
 		Validation: sharedcache.CommitValidation{
 			Status: "NOT_REQUIRED",
 			Reason: "ALLOWLISTED_DIRECT_ACTION",
@@ -90,7 +112,7 @@ func verifyBenchmarkDecision(
 		ctx,
 		canonical,
 		map[string]ed25519.PublicKey{benchmarkDecisionKeyID: publicKey},
-		1,
+		revocationEpoch,
 		now.UTC(),
 	)
 }
