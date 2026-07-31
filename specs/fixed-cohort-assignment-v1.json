@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "buildopt.specs/fixed-cohort-assignment/v1",
+  "trackerId": "B-006",
+  "catalogVersion": "golden-linux-amd64-4c-16g-v1",
+  "modes": ["FIXED_AA", "FIXED_COHORT"],
+  "probabilityUnit": "INTEGER_BASIS_POINTS",
+  "probabilityTotal": 10000,
+  "minimumStableControlBasisPoints": 500,
+  "assignmentTiming": "PERSISTED_BEFORE_EXECUTION",
+  "assignmentBinding": [
+    "assignmentId",
+    "repositoryId",
+    "measurementEpoch",
+    "bucketDigest",
+    "contextDigest",
+    "seedDigest",
+    "policyVersion",
+    "catalogVersion",
+    "cohort",
+    "resourceProfileId",
+    "randomBasisPoint",
+    "propensityBasisPoints"
+  ],
+  "aa": {
+    "cohorts": ["A", "B"],
+    "resourceProfileId": "STABLE_CONTROL",
+    "expectedRatioSource": "DECLARED_PROPENSITIES"
+  },
+  "sampleRatio": {
+    "method": "PEARSON_CHI_SQUARE",
+    "minimumExpectedCellAssignments": 5,
+    "inconclusiveOn": [
+      "BELOW_SAMPLE_FLOOR",
+      "MISSING_OR_INCONSISTENT_PROPENSITY",
+      "DUPLICATE_ASSIGNMENT",
+      "POLICY_OR_ERA_MISMATCH"
+    ],
+    "statuses": ["VALID", "SAMPLE_RATIO_MISMATCH", "INCONCLUSIVE"]
+  },
+  "finiteArms": ["STABLE_CONTROL", "W2_H3G", "W3_H4G", "W4_H6G"],
+  "forbiddenAssignmentFields": ["actualHits", "finalDuration", "finalResult", "outcome"],
+  "doesNotClose": ["A1-001", "A1-006", "A1-G06", "B-G01", "B-G02", "B-G03", "B-G05", "B-G06"]
+}

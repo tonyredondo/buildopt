@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/fixed-cohort-assignment/v1" and
+  .trackerId == "B-006" and
+  .catalogVersion == "golden-linux-amd64-4c-16g-v1" and
+  .modes == ["FIXED_AA", "FIXED_COHORT"] and
+  .probabilityUnit == "INTEGER_BASIS_POINTS" and
+  .probabilityTotal == 10000 and
+  .minimumStableControlBasisPoints == 500 and
+  .assignmentTiming == "PERSISTED_BEFORE_EXECUTION" and
+  .aa.cohorts == ["A", "B"] and
+  .aa.resourceProfileId == "STABLE_CONTROL" and
+  .aa.expectedRatioSource == "DECLARED_PROPENSITIES" and
+  .sampleRatio.method == "PEARSON_CHI_SQUARE" and
+  .sampleRatio.minimumExpectedCellAssignments == 5 and
+  .sampleRatio.statuses == ["VALID", "SAMPLE_RATIO_MISMATCH", "INCONCLUSIVE"] and
+  .finiteArms == ["STABLE_CONTROL", "W2_H3G", "W3_H4G", "W4_H6G"] and
+  .forbiddenAssignmentFields == ["actualHits", "finalDuration", "finalResult", "outcome"] and
+  .doesNotClose == ["A1-001", "A1-006", "A1-G06", "B-G01", "B-G02", "B-G03", "B-G05", "B-G06"]
+' specs/fixed-cohort-assignment-v1.json >/dev/null
+
+go test -race ./internal/runtimeoptimizer -run 'Test(CohortLedger|FixedAA|CohortPolicy|AnalyzeSampleRatio)'
+go vet ./internal/runtimeoptimizer
+printf 'B-006 fixed cohorts OK: durable pre-outcome assignment, exact propensities, A/A sample-ratio checks\n'

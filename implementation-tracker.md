@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `DOING` — owner-operated A1 evidence remains pending while noninteractive MVP-B implementation advances<br>
-**Current phase:** MVP-B technical implementation; `B-006` follows completed `B-005`<br>
+**Current phase:** MVP-B technical implementation; `B-007` follows completed `B-006`<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Last updated:** 2026-07-31<br>
@@ -157,7 +157,7 @@ The POC target is not complete until A1, B, C1, and C4 close. The eight-hour soa
 | 71 | `B-004` | Implement contractual removal of `clean` | `DONE` | Codex |
 | 72 | `B-003` | Implement autotuning with four initial resource profiles | `DONE` | Codex |
 | 73 | `B-005` | Implement allowlisted invocation merging and policy prefetch | `DONE` | Codex |
-| 74 | `B-006` | Implement A/A and fixed cohorts with propensities | `TODO` | — |
+| 74 | `B-006` | Implement A/A and fixed cohorts with propensities | `DONE` | Codex |
 
 ---
 
@@ -438,8 +438,8 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `B-003` | Autotuning with four initial resource profiles | `DONE` | Codex | `E-100` |
 | `B-004` | Contractual removal of `clean` | `DONE` | Codex | `E-099` |
 | `B-005` | Allowlisted invocation merging and policy prefetch | `DONE` | Codex | `E-101` |
-| `B-006` | A/A and fixed cohorts with propensities | `TODO` | — | — |
-| `B-007` | Contextual epsilon-greedy and replay simulator | `WAITING` | — | — |
+| `B-006` | A/A and fixed cohorts with propensities | `DONE` | Codex | `E-102` |
+| `B-007` | Contextual epsilon-greedy and replay simulator | `TODO` | — | — |
 | `B-008` | Budget, canary, fallback, rollback, and kill switch | `WAITING` | — | — |
 
 ### 8.2 Exit gates
@@ -736,6 +736,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-099` | 2026-07-31 | `B-004` | Versioned [`Contractual clean removal v1`](./specs/clean-removal-policy-v1.md), exact machine-readable [argv/model/lifecycle contract](./specs/clean-removal-policy-v1.json), fail-closed [`runtimeoptimizer.EvaluateCleanRemoval`](./internal/runtimeoptimizer/clean_removal.go), and composite [`dev/check-clean-removal-policy`](./dev/check-clean-removal-policy); immutable Wrapper argv is rewritten only at model-declared task positions, every clean task must be an allowlisted uncustomized core Delete over declared outputs with no added actions, dependencies, finalizers, side effects, or observed failure semantics, new workspaces require verified emptiness, persistent workspaces require stale-safe lifecycle proof, multiple clean tasks are all-or-nothing, clean-only invocations skip without running default tasks, and unavailable/incomplete models, CI barriers, releases, and reproducibility validation preserve the entire command; focused race/vet plus B-001/B-002 regressions, ownership, layout, and diff hygiene passed | `DONE`: `B-004` is closed as a disabled action without activating a repository, claiming causal savings, implementing invocation merging, or closing `B-G04` |
 | `E-100` | 2026-07-31 | `B-003` | Versioned [`Runtime resource profiles v1`](./specs/runtime-resource-profiles-v1.md), exact machine-readable [catalog/eligibility/launcher contract](./specs/runtime-resource-profiles-v1.json), finite [`runtimeoptimizer` selector/materializer](./internal/runtimeoptimizer/resource_profiles.go), authorized [launcher integration](./internal/launcher/resource_profile.go), and composite [`dev/check-runtime-resource-profiles`](./dev/check-runtime-resource-profiles); the catalog contains only `STABLE_CONTROL`, `W2_H3G`, `W3_H4G`, and `W4_H6G`, varies only workers and Gradle heap, rejects arbitrary arms and runner/JDK/cgroup drift, requires live memory headroom plus startup/memory/rollback eligibility, and preserves original argv on any inapplicability; focused race/vet, real `cmd/buildopt` regression, ownership, layout, and diff hygiene passed | `DONE`: `B-003` is closed without extrapolating to another runner class, activating a repository, claiming causal improvement, or closing `B-G03` |
 | `E-101` | 2026-07-31 | `B-005`, `B-G04` | Versioned [`Invocation merging and policy prefetch v1`](./specs/invocation-merge-prefetch-v1.md), exact machine-readable [merge/prefetch/gate contract](./specs/invocation-merge-prefetch-v1.json), fail-closed [`EvaluateInvocationMerge`](./internal/runtimeoptimizer/invocation_merge.go), authority-neutral single-flight [`PolicyPrefetchCache`](./internal/runtimeoptimizer/policy_prefetch.go), and composite [`dev/check-invocation-merge-prefetch`](./dev/check-invocation-merge-prefetch); merging requires exact repository/revision/workspace/toolchain/daemon/environment/credential/cache identity, versioned transitive subsumption, semantic equivalence, no consumers/effects/barriers, and a passing isolated control, while prefetch verifies payload digest and caller authority before caching and rechecks exact binding, expiry, and revocation; race-enabled concurrency plus merging and clean failure/finalizer/side-effect/barrier fixtures passed | `DONE`: `B-005` and the complete merge/clean fixture gate `B-G04` are closed without activating a pipeline, claiming causal savings, or treating prefetched bytes as authority |
+| `E-102` | 2026-07-31 | `B-006` | Versioned [`Fixed cohort assignment v1`](./specs/fixed-cohort-assignment-v1.md), exact machine-readable [assignment/A/A/sample-ratio contract](./specs/fixed-cohort-assignment-v1.json), private durable [`runtimeoptimizer.CohortLedger`](./internal/runtimeoptimizer/fixed_cohorts.go), and composite [`dev/check-fixed-cohort-assignment`](./dev/check-fixed-cohort-assignment); every idempotent assignment binds its repository, measurement epoch, pre-outcome bucket/context, deterministic seed, policy/catalog, cohort, finite resource arm, integer-basis-point propensity, and random point before execution; A/A compares two labels over identical `STABLE_CONTROL`, the fixed policy preserves at least 5% control and rejects undeclared arms, and Pearson sample-ratio fixtures use declared non-50/50 probabilities while missing propensity, duplicates, insufficient cells, and policy mismatch remain inconclusive; private-state reopen, race, vet, exact-contract, and ratio negative fixtures passed | `DONE`: `B-006` is closed behind disabled actions without processing outcomes, claiming owner-operated A/A, or closing `B-G01`/`B-G03`/`B-G05`/`B-G06` |
 
 ---
 
@@ -743,6 +744,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-07-31 | Closed `B-006`: added durable deterministic A/A and fixed-cohort assignment, exact propensities, finite-arm enforcement, and declared-ratio validation; moved `B-007` next without claiming owner-operated A/A evidence | Codex |
 | 2026-07-31 | Closed `B-005` and `B-G04`: added all-or-nothing two-invocation semantic merging plus exact-bound, digest-checked, authority-verified, revocation-aware single-flight policy prefetch; composed clean/merge failure/finalizer/side-effect/barrier fixtures | Codex |
 | 2026-07-31 | Closed `B-003`: materialized the exact four-arm golden resource catalog, bounded selection to signed identity/cgroup/headroom, and applied only workers/daemon heap before Gradle with baseline fallback | Codex |
 | 2026-07-31 | Closed `B-004`: added all-or-nothing modeled `clean` removal with immutable argv, verified empty/proven persistent workspace gates, clean-only skip semantics, and fail-closed failure/finalizer/side-effect/barrier/release fixtures | Codex |
