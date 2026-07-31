@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.specs/clean-removal-policy/v1",
+  "trackerId": "B-004",
+  "input": {
+    "command": "GRADLE_WRAPPER_ARGV",
+    "taskPositions": "VERSIONED_MODEL",
+    "originalArguments": "IMMUTABLE"
+  },
+  "eligibleWorkspace": ["VERIFIED_EMPTY_NEW", "PROVEN_STALE_SAFE_PERSISTENT"],
+  "taskContract": {
+    "implementationType": "org.gradle.api.tasks.Delete",
+    "coreTask": true,
+    "declaredOutputsOnly": true,
+    "addedActions": 0,
+    "dependencies": 0,
+    "finalizers": 0,
+    "sideEffects": 0,
+    "failureObserved": false
+  },
+  "preserveOn": [
+    "NOT_AUTHORIZED",
+    "MODEL_UNAVAILABLE",
+    "CLEAN_MODEL_INCOMPLETE",
+    "FAILURE_SEMANTICS",
+    "FINALIZERS",
+    "SIDE_EFFECTS",
+    "CI_BARRIER",
+    "RELEASE_CONTRACT",
+    "REPRODUCIBILITY_VALIDATION"
+  ],
+  "multipleCleanTasks": "ALL_OR_NOTHING",
+  "cleanOnlyInvocation": "SKIP_WITHOUT_DEFAULT_TASKS",
+  "doesNotClose": ["A1-001", "A1-006", "A1-G06", "B-G01", "B-G02", "B-G04"]
+}
