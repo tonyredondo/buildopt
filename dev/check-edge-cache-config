@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/edge-cache-config-v1.json"
+buildopt_example="${buildopt_repo_root}/specs/edge-cache.example.json"
+
+for buildopt_command in go jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Edge configuration command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/edge-cache-config/v1" and
+    .workItem == "C2-001" and
+    .profile == "OWNER_POC_SINGLE_NODE" and
+    .configuration.schemaVersion == "buildopt.edge-cache/config/v1" and
+    .configuration.maximumBytes == 65536 and
+    .configuration.fileMode == "0600" and
+    .shared.baseUrl == "HTTPS_OR_EXPLICIT_IPV4_LOOPBACK_HTTP_ORIGIN" and
+    .storage.minimumCapacityBytes == 1073741824 and
+    .storage.maximumCapacityBytes == 536870912000 and
+    .storage.maximumObjectBytes == 104857600 and
+    .storage.maximumStableTtlSeconds == 2592000 and
+    .storage.maximumPendingTtlSeconds == 86400 and
+    .storage.highWatermarkPercent == 85 and
+    .storage.lowWatermarkPercent == 75 and
+    .storage.protectedPercent == 80 and
+    .authority == {
+        commit: "SHARED_ONLY",
+        collision: "SHARED_ONLY",
+        offlineRead: "COMMITTED_CURRENT_REVOCATION",
+        offlineWriteVisibility: "ATTEMPT_ONLY_PENDING",
+        compression: "DISABLED_UNTIL_MEASURED"
+    } and
+    .boundaries.closes == ["C2-001"] and
+    (.boundaries.doesNotClose | index("C2-002")) != null and
+    (.boundaries.doesNotClose | index("C2-G01")) != null and
+    .boundaries.ownerOperatedProofOfConcept == true
+' "${buildopt_contract}" >/dev/null
+
+jq -e '
+    .schemaVersion == "buildopt.edge-cache/config/v1" and
+    .profile == "OWNER_POC_SINGLE_NODE" and
+    .edgeId == "edge-poc-1" and
+    .server.listen == "127.0.0.1:8043" and
+    .shared.baseUrl == "https://shared.example.test:8042" and
+    .shared.allowInsecureLoopback == false and
+    .storage.filesystemPolicy == "ALLOWLIST_PROVEN_LOCAL" and
+    .policy.commitAuthority == "SHARED_ONLY" and
+    .policy.offlineReadPolicy == "COMMITTED_CURRENT_REVOCATION" and
+    .policy.offlineWriteVisibility == "ATTEMPT_ONLY_PENDING"
+' "${buildopt_example}" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+./dev/run --toolchain go -- go test -race -count=1 ./internal/edgecache
+./dev/run --toolchain go -- go vet ./internal/edgecache
+
+printf 'C2-001 Edge configuration checks passed: strict paths, transport, limits, and Shared-only authority\n'

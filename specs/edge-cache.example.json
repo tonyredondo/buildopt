@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "buildopt.edge-cache/config/v1",
+  "profile": "OWNER_POC_SINGLE_NODE",
+  "edgeId": "edge-poc-1",
+  "server": {
+    "listen": "127.0.0.1:8043"
+  },
+  "shared": {
+    "baseUrl": "https://shared.example.test:8042",
+    "credentialPath": "/etc/buildopt/edge/shared-token",
+    "allowInsecureLoopback": false
+  },
+  "storage": {
+    "stateDirectory": "/var/lib/buildopt/edge",
+    "filesystemPolicy": "ALLOWLIST_PROVEN_LOCAL",
+    "capacityBytes": 10737418240,
+    "maximumObjectBytes": 104857600,
+    "stableTtlSeconds": 2592000,
+    "pendingTtlSeconds": 86400,
+    "highWatermarkPercent": 85,
+    "lowWatermarkPercent": 75,
+    "protectedPercent": 80
+  },
+  "authority": {
+    "trustRootPath": "/etc/buildopt/edge/trust-root.json",
+    "snapshotPath": "/etc/buildopt/edge/current-authority.json"
+  },
+  "policy": {
+    "commitAuthority": "SHARED_ONLY",
+    "collisionAuthority": "SHARED_ONLY",
+    "offlineReadPolicy": "COMMITTED_CURRENT_REVOCATION",
+    "offlineWriteVisibility": "ATTEMPT_ONLY_PENDING",
+    "compressionPolicy": "DISABLED_UNTIL_MEASURED"
+  }
+}

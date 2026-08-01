@@ -61,6 +61,13 @@ verifies complete bytes before returning a hit, persists no raw data-plane
 credential, rejects stale/rolled-back authority, and never derives authority
 from blob presence.
 
+`edgecache/` owns the optional MVP-C2 boundary. C2-001 adds the strict private
+single-node configuration, loopback listener and authenticated Shared-origin
+rules, bounded local-storage declaration, and immutable Shared-only commit and
+collision authority. Later C2 blocks own durable committed reads, byte SLRU,
+pending replication, and the executable two-node proxy proof; configuration
+alone exposes no cache route.
+
 `neutralenvelope/` owns the strict `WS-009` observation and report contract. It
 pairs externally timed native and optimization-off wrapper executions,
 reconciles required-output digests, retains signed differences, and binds the

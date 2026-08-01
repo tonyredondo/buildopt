@@ -1489,6 +1489,21 @@ The diagnostic Agent and Linux helper remain fail-closed `UNAVAILABLE`; the
 reviewed source-patch route is the only active pilot route. Revalidate the exact
 Java recipe separately with `./dev/check-custom-task-contract-recipe`.
 
+## Edge Cache configuration
+
+Validate the C2-001 owner-operated single-node Edge boundary with:
+
+```bash
+./dev/check-edge-cache-config
+```
+
+The checker loads the checked-in example through the production parser and
+rejects permissive files, unknown fields, trailing documents, remote clear-text
+Shared origins, unsafe or overlapping paths, excessive capacity/TTL/object
+limits, and any attempt to move commit, collision, offline-read, or
+offline-write authority away from the fixed fail-closed policy. This block
+does not open a listener or claim committed reads and replication.
+
 ## Build Impact manifest
 
 Validate the C3-001 customer-owned manifest boundary with:

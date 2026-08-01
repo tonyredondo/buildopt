@@ -28,6 +28,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`build-impact-promotion-gate-v1.md`](./build-impact-promotion-gate-v1.md) | `C3-004` / `BIA-002` |
 | [`build-impact-selection-v1.md`](./build-impact-selection-v1.md) | `C3-005` |
 | [`build-impact-gate-v1.md`](./build-impact-gate-v1.md) | `C3-G01` / MVP-C3 |
+| [`edge-cache-config-v1.md`](./edge-cache-config-v1.md) | `C2-001` |
 | [`custom-task-contract-java-recipe-v1.md`](./custom-task-contract-java-recipe-v1.md) | `C4-004` / `C4-G06` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`full-relevant-validation-gate-v1.md`](./full-relevant-validation-gate-v1.md) | `C4-006` / `C4-G02` |
@@ -101,6 +102,9 @@ contract for concurrent commit CAS, all-object visibility atomicity, digest
 audit repair, and safe orphan/missing/expired recovery.
 `shared-capacity-slru-v1.json` is the A1-003/A1-G03 hard-quota, durable TTL,
 byte-weighted SLRU, conservative reservation, and high/low watermark contract.
+`edge-cache-config-v1.json` is the C2-001 private single-node configuration,
+origin transport, bounded storage, and immutable Shared-only authority
+contract. It deliberately opens no Edge route yet.
 `no-hit-overhead-v1.json` is the A0-G06 paired strict-runner contract for
 authenticated read-only L2 misses, fresh L1/output state, long-session p95
 budgets, and pre-outcome L2 omission with zero short-session requests.
