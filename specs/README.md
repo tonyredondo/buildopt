@@ -28,6 +28,8 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`build-impact-promotion-gate-v1.md`](./build-impact-promotion-gate-v1.md) | `C3-004` / `BIA-002` |
 | [`build-impact-selection-v1.md`](./build-impact-selection-v1.md) | `C3-005` |
 | [`build-impact-gate-v1.md`](./build-impact-gate-v1.md) | `C3-G01` / MVP-C3 |
+| [`build-impact-automatic-v1.md`](./build-impact-automatic-v1.md) | `BIA-F4-001..003` / `BIA-F4-G01` |
+| [`platform-compatibility-v1.md`](./platform-compatibility-v1.md) | `PLAT-F5-001..004` / `PLAT-F5-G01` |
 | [`edge-cache-config-v1.md`](./edge-cache-config-v1.md) | `C2-001` |
 | [`edge-cache-committed-read-v1.md`](./edge-cache-committed-read-v1.md) | `C2-002` |
 | [`edge-cache-capacity-slru-v1.md`](./edge-cache-capacity-slru-v1.md) | `C2-003` |

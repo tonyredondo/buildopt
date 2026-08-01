@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/platform-compatibility-v1.json"
+buildopt_test_root=$(mktemp -d)
+trap 'rm -rf -- "${buildopt_test_root}"' EXIT
+
+jq -e '
+    .schemaVersion == "buildopt.specs/platform-compatibility/v1" and
+    .workItems == ["PLAT-F5-001", "PLAT-F5-002", "PLAT-F5-003", "PLAT-F5-004"] and
+    .supported.darwin.architectures == ["amd64", "arm64"] and
+    .supported.windows.architectures == ["amd64", "arm64"] and
+    .supported.windows.processTree == "WINDOWS_JOB_OBJECT_KILL_ON_CLOSE" and
+    .security.loopbackOnly == true and
+    .security.unsupportedFeatures == "FAIL_EXPLICITLY" and
+    .nativeGate.runners == ["macos-15", "windows-2025"] and
+    .productBoundary == "NO_TEST_OPTIMIZATION_BEHAVIOR"
+' "${buildopt_contract}" >/dev/null
+
+buildopt_before_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+cd "${buildopt_repo_root}"
+go test -race -count=1 ./internal/launcher ./cmd/buildopt ./internal/buildimpact ./cmd/buildopt-impact
+go vet ./internal/launcher ./cmd/buildopt ./internal/buildimpact ./cmd/buildopt-impact
+
+for buildopt_target in darwin/amd64 darwin/arm64 windows/amd64 windows/arm64; do
+    buildopt_os=${buildopt_target%/*}
+    buildopt_arch=${buildopt_target#*/}
+    buildopt_suffix=
+    [[ "${buildopt_os}" == windows ]] && buildopt_suffix=.exe
+    for buildopt_command in buildopt buildopt-impact; do
+        CGO_ENABLED=0 GOOS="${buildopt_os}" GOARCH="${buildopt_arch}" \
+            go build -mod=readonly -buildvcs=false -trimpath \
+            -o "${buildopt_test_root}/${buildopt_command}-${buildopt_os}-${buildopt_arch}${buildopt_suffix}" \
+            "./cmd/${buildopt_command}"
+    done
+done
+
+file "${buildopt_test_root}/buildopt-darwin-amd64" | grep -F 'Mach-O 64-bit x86_64' >/dev/null
+file "${buildopt_test_root}/buildopt-darwin-arm64" | grep -F 'Mach-O 64-bit arm64' >/dev/null
+file "${buildopt_test_root}/buildopt-windows-amd64.exe" | grep -F 'PE32+ executable' >/dev/null
+file "${buildopt_test_root}/buildopt-windows-arm64.exe" | grep -F 'Aarch64' >/dev/null
+
+bash -n packaging/macos/package.sh packaging/macos/install.sh packaging/macos/uninstall.sh fixtures/platform/cancel-tree.sh
+buildopt_macos_archive=$(./packaging/macos/package.sh --version 0.1.0-local-gate --output "${buildopt_test_root}/macos-package")
+mkdir -p "${buildopt_test_root}/macos-extracted" "${buildopt_test_root}/macos-install/bin"
+tar -xzf "${buildopt_macos_archive}" -C "${buildopt_test_root}/macos-extracted"
+buildopt_macos_root=$(find "${buildopt_test_root}/macos-extracted" -mindepth 1 -maxdepth 1 -type d)
+touch "${buildopt_test_root}/macos-install/bin/unrelated"
+"${buildopt_macos_root}/install.sh" --prefix "${buildopt_test_root}/macos-install"
+"${buildopt_macos_root}/install.sh" --prefix "${buildopt_test_root}/macos-install"
+"${buildopt_macos_root}/uninstall.sh" --prefix "${buildopt_test_root}/macos-install"
+test -f "${buildopt_test_root}/macos-install/bin/unrelated"
+test ! -e "${buildopt_test_root}/macos-install/bin/buildopt"
+if command -v pwsh >/dev/null 2>&1; then
+    for buildopt_script in packaging/windows/package.ps1 packaging/windows/install.ps1 packaging/windows/uninstall.ps1 fixtures/platform/cancel-tree.ps1; do
+        # $env is intentionally expanded by PowerShell.
+        # shellcheck disable=SC2016
+        BUILDOPT_PS_PATH="${buildopt_script}" \
+            pwsh -NoProfile -Command '[void][scriptblock]::Create((Get-Content -Raw $env:BUILDOPT_PS_PATH))'
+    done
+    # $env and all $ variables below are intentionally expanded by PowerShell.
+    # shellcheck disable=SC2016
+    BUILDOPT_PLATFORM_TEST_ROOT="${buildopt_test_root}" pwsh -NoProfile -Command '
+        $ErrorActionPreference = "Stop"
+        $PackageOutput = Join-Path $env:BUILDOPT_PLATFORM_TEST_ROOT "windows-package"
+        ./packaging/windows/package.ps1 -Version 0.1.0-local-gate -Output $PackageOutput
+        $Archive = Get-ChildItem "$PackageOutput/*.zip" | Select-Object -First 1
+        $Extracted = Join-Path $env:BUILDOPT_PLATFORM_TEST_ROOT "windows-extracted"
+        Expand-Archive $Archive.FullName $Extracted
+        $PackageRoot = (Get-ChildItem $Extracted -Directory | Select-Object -First 1).FullName
+        $Prefix = Join-Path $env:BUILDOPT_PLATFORM_TEST_ROOT "windows-install"
+        & "$PackageRoot/install.ps1" -Prefix $Prefix
+        & "$PackageRoot/install.ps1" -Prefix $Prefix
+        [System.IO.File]::WriteAllText((Join-Path $Prefix "bin/unrelated"), "preserve")
+        & "$PackageRoot/uninstall.ps1" -Prefix $Prefix
+        if (-not (Test-Path (Join-Path $Prefix "bin/unrelated"))) { throw "uninstall removed an unrelated file" }
+        if (Test-Path (Join-Path $Prefix "bin/buildopt.exe")) { throw "uninstall retained buildopt.exe" }
+    '
+fi
+
+for buildopt_marker in \
+    'runs-on: macos-15' \
+    'runs-on: windows-2025' \
+    'Test Optimization boundary'; do
+    grep -F "${buildopt_marker}" .github/workflows/platform-ci.yml >/dev/null
+done
+
+buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'platform compatibility checker mutated the source tree\n' >&2
+    exit 1
+fi
+printf 'PLAT-F5 platform gate passed: portable CLIs, native packages, and pinned native CI inventory\n'

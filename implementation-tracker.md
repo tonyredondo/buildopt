@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `FUNCTIONAL EXPANSION ACTIVE` — the completed owner-operated POC is being extended with local UX, Patch Autopilot, GitLab CI, Build Impact automation, and macOS/Windows compatibility; productization remains deferred<br>
-**Current phase:** `BIA-F4` — GitLab CI is closed; `BIA-F4-001` conservative Gradle discovery is next<br>
+**Overall status:** `FUNCTIONAL EXPANSION ACTIVE` — automatic Build Impact is closed and native macOS/Windows acceptance is running; productization remains deferred<br>
+**Current phase:** `PLAT-F5` — portable implementation and packaging are closed; hosted native macOS/Windows evidence is next<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use project-owned synthetic fixtures and repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -66,8 +66,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | UX-F1 | Local build history and embedded operator dashboard | `DONE` | 1/1 | `E-139` |
 | PA-F2 | Broader safe Patch Autopilot recipe catalog and rollback proof | `DONE` | 1/1 | `E-142` |
 | CI-F3 | First-class GitLab CI installation, events, and synthetic proof | `DONE` | 1/1 | `E-145` |
-| BIA-F4 | Automatic Gradle graph discovery and generated impact manifest | `TODO` | 0/1 | MVP-C3 |
-| PLAT-F5 | Supported macOS and Windows build/runtime paths | `TODO` | 0/1 | UX-F1 + CI-F3 |
+| BIA-F4 | Automatic Gradle graph discovery and generated impact manifest | `DONE` | 1/1 | `E-146` |
+| PLAT-F5 | Supported macOS and Windows build/runtime paths | `DOING` | 0/1 | `E-147` local + hosted native evidence |
 | GA-D | Production-ready hardening | `DEFERRED` | 0/1 | Functional beta with demonstrated value |
 
 Design baseline: 51 private-beta decisions are accepted in the RFC; their artifacts and tests remain pending as recorded in this tracker.
@@ -549,8 +549,8 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | UX-F1 | Authenticated local history API, embedded dashboard, and synthetic accessibility proof | `DONE` | `E-139` current-tree and host-browser gate |
 | PA-F2 | Versioned safe recipe registry, additional allowlisted recipes, candidate validation, and exact revert | `DONE` | `E-142` current-tree composite gate |
 | CI-F3 | GitLab CI installer/template, job-event adapter, and owner-controlled end-to-end fixture | `DONE` | `E-145` current-tree synthetic gate |
-| BIA-F4 | Conservative Gradle graph discovery, generated manifest, drift handling, and selection proof | `TODO` | CI-F3 |
-| PLAT-F5 | Cross-compilation inventory, portable transports/process control, packaging, and native CI | `TODO` | BIA-F4 |
+| BIA-F4 | Conservative Gradle graph discovery, generated manifest, drift handling, and selection proof | `DONE` | `E-146` current-tree composite gate |
+| PLAT-F5 | Cross-compilation inventory, portable transports/process control, packaging, and native CI | `DOING` | `E-147` local gate; hosted native run pending |
 | MVP-C2 | Edge proxy, SLRU, and offline committed reads | `DONE` | `E-134` current-tree composite gate |
 | MVP-C3 | Conservative BIA and `BIA-002` gate | `DONE` | `E-128` current-tree composite gate |
 | POC-O1 | Standalone Edge runtime, signed reload, local status, bundle, and systemd unit | `DONE` | `E-135` current-tree composite gate |
@@ -680,22 +680,22 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 
 | ID | Deliverable | State | Owner | Evidence |
 |---|---|---|---|---|
-| `BIA-F4-001` | Conservative Gradle project/task/dependency discovery with explicit global and unknown fallbacks | `TODO` | Codex | — |
-| `BIA-F4-002` | Deterministic generated impact manifest and graph with repository-visible review and drift detection | `TODO` | Codex | — |
-| `BIA-F4-003` | Synthetic full-versus-selected proof preserving deliverables and Build-owned checks while leaving Test-owned checks untouched | `TODO` | Codex | — |
+| `BIA-F4-001` | Conservative Gradle project/task/dependency discovery with explicit global and unknown fallbacks | `DONE` | Codex | `E-146` |
+| `BIA-F4-002` | Deterministic generated impact manifest and graph with repository-visible review and drift detection | `DONE` | Codex | `E-146` |
+| `BIA-F4-003` | Synthetic full-versus-selected proof preserving deliverables and Build-owned checks while leaving Test-owned checks untouched | `DONE` | Codex | `E-146` |
 
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
-| `BIA-F4-G01` | Generated state may reduce manual setup but cannot authorize omission under ambiguity, drift, incomplete coverage, or failed `BIA-002` | `TODO` | — |
+| `BIA-F4-G01` | Generated state may reduce manual setup but cannot authorize omission under ambiguity, drift, incomplete coverage, or failed `BIA-002` | `DONE` | `E-146` |
 
 #### PLAT-F5 — macOS and Windows
 
 | ID | Deliverable | State | Owner | Evidence |
 |---|---|---|---|---|
-| `PLAT-F5-001` | Cross-compile and dependency inventory for supported macOS and Windows targets | `TODO` | Codex | — |
-| `PLAT-F5-002` | Portable local transport, path, locking, signal/process-tree, and private-file abstractions | `TODO` | Codex | — |
-| `PLAT-F5-003` | Platform-native release packaging, launch/service integration, and uninstall behavior | `TODO` | Codex | — |
-| `PLAT-F5-004` | Native GitHub CI matrix and synthetic Gradle smoke on macOS and Windows | `TODO` | Codex | — |
+| `PLAT-F5-001` | Cross-compile and dependency inventory for supported macOS and Windows targets | `DONE` | Codex | `E-147` |
+| `PLAT-F5-002` | Portable local transport, path, locking, signal/process-tree, and private-file abstractions | `DONE` | Codex | `E-147` |
+| `PLAT-F5-003` | Platform-native release packaging, launch/service integration, and uninstall behavior | `DONE` | Codex | `E-147` |
+| `PLAT-F5-004` | Native GitHub CI matrix and synthetic Gradle smoke on macOS and Windows | `DOING` | Codex | workflow committed; hosted result pending |
 
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
@@ -951,6 +951,8 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-143` | 2026-08-01 | `CI-F3-001` | Versioned [`GitLab CI component v1`](./specs/gitlab-ci-component-v1.md), machine-readable [pin/install/fork contract](./specs/gitlab-ci-component-v1.json), reusable [component](./.gitlab/buildopt-component.yml), and private [setup](./.gitlab/setup-buildopt); consumers pin the component commit plus exact release version/HTTPS URL/SHA-256, reuse the strict Release Bundle installer, run the repository Gradle wrapper, retain seven-day artifacts, and disable remote behavior for cross-project merge requests without requesting credentials | `DONE`: Linux AMD64 component/install boundary is closed without publishing a component or mutating a remote |
 | `E-144` | 2026-08-01 | `CI-F3-002` | Versioned [`GitLab CI job event v1`](./specs/gitlab-ci-job-event-v1.md), machine-readable [identity/outcome/publication contract](./specs/gitlab-ci-job-event-v1.json), and [event adapter](./.gitlab/buildopt-job-event); success, failure, cancellation, skipped, and manual outcomes map explicitly into an atomic mode-0600 fixed-path JSON record, exact replay is idempotent, divergence fails closed, forks are project-ID bound, and raw environment/URLs/tokens are never serialized | `DONE`: event semantics close without treating unavailable as success or consuming credentials |
 | `E-145` | 2026-08-01 | `CI-F3-003`, `CI-F3-G01`, CI-F3 exit | Versioned [`GitLab CI synthetic proof v1`](./specs/gitlab-ci-synthetic-v1.md), exact [proof matrix](./specs/gitlab-ci-synthetic-v1.json), user [guide](./.gitlab/README.md), and composite [`check-gitlab-ci`](./dev/check-gitlab-ci); Ruby/Psych parsed the component, the deterministic HTTPS transport installed and idempotently reused the checksum-pinned release, the wrapper preserved exact argv and exit 37, five event cases covered success/failure/cancellation/unavailable/fork plus exact replay, every event was private and credential-free, and the source tree remained unchanged | `DONE`: CI-F3 closes with owner-controlled local evidence, no real GitLab pipeline publication, remote mutation, external credential, or Test Optimization change |
+| `E-146` | 2026-08-01 | `BIA-F4-001..003`, `BIA-F4-G01`, BIA-F4 exit | Versioned [`Automatic Build Impact v1`](./specs/build-impact-automatic-v1.md), exact [discovery/generation/fallback contract](./specs/build-impact-automatic-v1.json), embedded real-Gradle discovery, deterministic [`buildopt-impact`](./cmd/buildopt-impact), committed generated graph/manifest, drift checking, and composite [`check-build-impact-automatic`](./dev/check-build-impact-automatic); the synthetic three-project build regenerated byte-identically, the selected service-a artifact and Test-owned marker matched the full build, and only unrelated service-b output was omitted | `DONE`: automation remains subordinate to the customer manifest and BIA-002; ambiguity, incomplete discovery, drift, global paths, unsupported tasks, included builds, and Test-owned work preserve the original full graph |
+| `E-147` | 2026-08-01 | `PLAT-F5-001..003`, PLAT-F5 local evidence | Versioned [`Platform compatibility v1`](./specs/platform-compatibility-v1.md), exact [target/transport/process/package/boundary contract](./specs/platform-compatibility-v1.json), Darwin/Windows portable launcher implementations, macOS tar and Windows ZIP lifecycle packages, cancellation fixtures, and [`check-platform-compatibility`](./dev/check-platform-compatibility); race/vet passed on Linux, both CLIs cross-built as real Mach-O/PE AMD64 and ARM64 files, package and shell/PowerShell syntax checks passed, and the native workflow inventory was lint-ready | `DONE` locally for PLAT-F5-001..003; PLAT-F5-004 and the exit gate remain open until the hosted native runners execute the complete lifecycle |
 
 ---
 
@@ -958,6 +960,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-01 | Closed `BIA-F4-001..003`, `BIA-F4-G01`, and BIA-F4 with real Gradle discovery, deterministic reviewable generation, exact drift rejection, conservative fallback, and full-versus-selected artifact parity; completed local `PLAT-F5-001..003` portability, packaging, and cross-build evidence while leaving native hosted acceptance open | Codex |
 | 2026-08-01 | Closed `CI-F3-001..003`, `CI-F3-G01`, and CI-F3: added a full-SHA/checksum-pinned GitLab component, private shared-release setup, explicit idempotent job events, fork credential isolation, documentation, and a synthetic success/failure/cancellation/unavailable E2E; moved `BIA-F4-001` automatic Gradle discovery next | Codex |
 | 2026-08-01 | Closed `PA-F2-003`, `PA-F2-G01`, and PA-F2: generalized exact signed MODIFY-only reversal through registry capability, retained reviewed-adapter authority, and proved all four recipes through six-run candidate/control plus real-Git forward and inverse draft paths; moved `CI-F3-001` GitLab CI template next | Codex |
 | 2026-08-01 | Closed `PA-F2-002`: added bounded exact Groovy archive-reproducibility and root build-cache-properties recipes, registered their low-risk applicability and archive validation, and proved positive, idempotent, defensive, wrong-path, and ambiguity cases; moved `PA-F2-003` candidate/control and exact-revert proof next | Codex |

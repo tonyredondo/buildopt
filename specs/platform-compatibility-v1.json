@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "buildopt.specs/platform-compatibility/v1",
+  "workItems": ["PLAT-F5-001", "PLAT-F5-002", "PLAT-F5-003", "PLAT-F5-004"],
+  "supported": {
+    "darwin": {
+      "architectures": ["amd64", "arm64"],
+      "binaries": ["buildopt", "buildopt-impact"],
+      "transport": "AUTHENTICATED_LOOPBACK_TCP",
+      "processTree": "POSIX_PROCESS_GROUP",
+      "package": "CHECKSUMMED_TAR_GZ_WITH_EXACT_RECEIPT"
+    },
+    "windows": {
+      "architectures": ["amd64", "arm64"],
+      "binaries": ["buildopt.exe", "buildopt-impact.exe"],
+      "transport": "AUTHENTICATED_LOOPBACK_TCP",
+      "processTree": "WINDOWS_JOB_OBJECT_KILL_ON_CLOSE",
+      "package": "CHECKSUMMED_ZIP_WITH_POWERSHELL_RECEIPT"
+    },
+    "jvmPlugin": {
+      "minimumJava": 17,
+      "eventTransports": ["UNIX_DOMAIN_SOCKET", "AUTHENTICATED_LOOPBACK_TCP"]
+    }
+  },
+  "unsupported": [
+    "PERSISTENT_MANAGED_GATEWAY_ON_WINDOWS",
+    "MANAGED_L1_ON_WINDOWS",
+    "MANAGED_GRADLE_BOOTSTRAP_CACHE_ON_WINDOWS",
+    "BUILDOPT_SERVER_AND_EDGE_ON_DARWIN_OR_WINDOWS",
+    "RUST_HERMETIC_HELPER_ON_DARWIN_OR_WINDOWS",
+    "NATIVE_BACKGROUND_SERVICE_INSTALLATION"
+  ],
+  "security": {
+    "loopbackOnly": true,
+    "perInvocationCredential": true,
+    "inheritedRendezvousIsReplaced": true,
+    "windowsSpool": "INVOCATION_SCOPED_NON_DURABLE",
+    "unsupportedFeatures": "FAIL_EXPLICITLY"
+  },
+  "nativeGate": {
+    "workflow": ".github/workflows/platform-ci.yml",
+    "runners": ["macos-15", "windows-2025"],
+    "proofs": ["BUILD", "PACKAGE", "INSTALL", "LAUNCH", "GRADLE_HANDSHAKE", "BUILD_IMPACT_EXPORT", "CANCELLATION", "PROCESS_TREE_CLEANUP", "UPGRADE", "UNINSTALL"]
+  },
+  "productBoundary": "NO_TEST_OPTIMIZATION_BEHAVIOR"
+}

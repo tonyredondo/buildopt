@@ -3,10 +3,14 @@ package dev.buildopt.gradle;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.StandardProtocolFamily;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
+import java.net.UnixDomainSocketAddress;
+import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Base64;
@@ -16,8 +20,8 @@ import java.util.Base64;
  *
  * <p>The gateway credential authorizes only the loopback gateway, including
  * readiness and an independently authenticated managed-cache route. It is
- * never the Shared credential. The event token authenticates the Unix-socket
- * preface and is never serialized in the Protobuf payload.
+ * never the Shared credential. The event token authenticates the private Unix
+ * socket or loopback-TCP preface and is never serialized in the Protobuf payload.
  */
 final class BuildOptRendezvousContext {
     private static final String ATTEMPT_ID_ENVIRONMENT = "BUILDOPT_PLUGIN_ATTEMPT_ID";
@@ -38,7 +42,7 @@ final class BuildOptRendezvousContext {
     private static final int TIMEOUT_MILLIS = 5_000;
 
     private final String attemptId;
-    private final Path socketPath;
+    private final String eventEndpoint;
     private final byte[] eventToken;
     private final URI gatewayUri;
     private final String gatewayUsername;
@@ -47,14 +51,14 @@ final class BuildOptRendezvousContext {
 
     private BuildOptRendezvousContext(
             String attemptId,
-            Path socketPath,
+            String eventEndpoint,
             byte[] eventToken,
             URI gatewayUri,
             String gatewayUsername,
             String gatewayPassword,
             String gatewayGeneration) {
         this.attemptId = attemptId;
-        this.socketPath = socketPath;
+        this.eventEndpoint = eventEndpoint;
         this.eventToken = eventToken.clone();
         this.gatewayUri = gatewayUri;
         this.gatewayUsername = gatewayUsername;
@@ -104,15 +108,10 @@ final class BuildOptRendezvousContext {
         }
 
         URI parsedGateway = parseGatewayUri(gatewayUrl);
-        Path parsedSocket;
-        try {
-            parsedSocket = Path.of(socket);
-        } catch (RuntimeException exception) {
-            throw new IOException("invalid plugin event socket", exception);
-        }
+        String parsedEndpoint = parseEventEndpoint(socket);
         return new BuildOptRendezvousContext(
                 attemptId,
-                parsedSocket,
+                parsedEndpoint,
                 decodedEventToken,
                 parsedGateway,
                 gatewayUsername,
@@ -124,8 +123,22 @@ final class BuildOptRendezvousContext {
         return attemptId;
     }
 
-    Path socketPath() {
-        return socketPath;
+    SocketChannel openEventChannel() throws IOException {
+        if (eventEndpoint.startsWith("tcp://")) {
+            URI endpoint;
+            try {
+                endpoint = new URI(eventEndpoint);
+            } catch (URISyntaxException exception) {
+                throw new IOException("invalid plugin event endpoint", exception);
+            }
+            return SocketChannel.open(
+                    new InetSocketAddress(endpoint.getHost(), endpoint.getPort()));
+        }
+        UnixDomainSocketAddress address =
+                UnixDomainSocketAddress.of(Path.of(eventEndpoint));
+        SocketChannel channel = SocketChannel.open(StandardProtocolFamily.UNIX);
+        channel.connect(address);
+        return channel;
     }
 
     void verifyGateway() throws IOException {
@@ -184,6 +197,37 @@ final class BuildOptRendezvousContext {
             throw new IOException("local gateway URL is not a validated loopback endpoint");
         }
         return gateway;
+    }
+
+    private static String parseEventEndpoint(String value) throws IOException {
+        if (value.startsWith("tcp://")) {
+            URI endpoint;
+            try {
+                endpoint = new URI(value);
+            } catch (URISyntaxException exception) {
+                throw new IOException("invalid plugin event endpoint", exception);
+            }
+            String path = endpoint.getRawPath();
+            if (!"tcp".equals(endpoint.getScheme())
+                    || !"127.0.0.1".equals(endpoint.getHost())
+                    || endpoint.getPort() <= 0
+                    || endpoint.getUserInfo() != null
+                    || endpoint.getRawQuery() != null
+                    || endpoint.getRawFragment() != null
+                    || !(path == null || path.isEmpty())) {
+                throw new IOException("plugin event TCP endpoint is not canonical loopback");
+            }
+            return endpoint.toString();
+        }
+        try {
+            Path path = Path.of(value);
+            if (!path.isAbsolute()) {
+                throw new IOException("plugin event socket must be absolute");
+            }
+            return path.toString();
+        } catch (RuntimeException exception) {
+            throw new IOException("invalid plugin event socket", exception);
+        }
     }
 
     private static boolean isBlank(String value) {

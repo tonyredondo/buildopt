@@ -6,8 +6,6 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.StandardProtocolFamily;
-import java.net.UnixDomainSocketAddress;
 import java.nio.channels.Channels;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
@@ -74,10 +72,7 @@ public abstract class BuildOptHandshakeService
             String producerInstanceId,
             String implementationVersion)
             throws IOException {
-        UnixDomainSocketAddress address =
-                UnixDomainSocketAddress.of(context.socketPath());
-        try (SocketChannel channel = SocketChannel.open(StandardProtocolFamily.UNIX)) {
-            channel.connect(address);
+        try (SocketChannel channel = context.openEventChannel()) {
             OutputStream output = Channels.newOutputStream(channel);
             InputStream input = Channels.newInputStream(channel);
 

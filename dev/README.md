@@ -1979,6 +1979,63 @@ through its owning checker, and then runs the digest-pinned image with strict
 installations because the executable toolchain checks consume the verified
 repository-local copies.
 
+## Automatic Build Impact
+
+Generate the conservative Gradle model, reviewable graph, and derived manifest
+for a repository with a customer-owned Build Impact manifest:
+
+```bash
+./dev/run --toolchain go -- go run ./cmd/buildopt-impact generate \
+  --repository fixtures/build-impact/synthetic-repository \
+  --manifest fixtures/build-impact/synthetic-repository/buildopt-impact-manifest.json \
+  --repository-id buildopt-synthetic \
+  --pipeline-class pull-request
+```
+
+Use `buildopt-impact check` with the same arguments in CI. It regenerates both
+documents and fails on drift. Ambiguity, global changes, incomplete coverage,
+unsupported task shapes, included builds, stale generated state, or an
+unqualified `BIA-002` result all preserve `FULL_GRAPH`. Run the complete
+fixture and real Gradle equivalence proof with:
+
+```bash
+./dev/check-build-impact-automatic
+```
+
+This command does not select, prioritize, shard, retry, or otherwise optimize
+tests.
+
+## macOS and Windows compatibility
+
+The supported portable CLI inventory is `buildopt` plus `buildopt-impact` for
+macOS and Windows on AMD64 and ARM64. Produce checksummed, self-contained user
+packages with:
+
+```bash
+./packaging/macos/package.sh --version 0.1.0 --output dist
+pwsh -NoProfile -File packaging/windows/package.ps1 -Version 0.1.0 -Output dist
+```
+
+The matching install scripts are idempotent across reinstall and upgrade, keep
+an exact private receipt, and the uninstall scripts remove only receipt-owned
+files. macOS uses POSIX process groups; Windows uses a Job Object for complete
+descendant cleanup. Linux retains its peer-credential Unix socket, while
+macOS/Windows use authenticated loopback TCP for the Gradle event channel.
+Persistent managed gateway/L1/bootstrap services and server/Edge processes
+remain explicitly unsupported on Windows; the CLI fails closed when those
+Linux-owned configurations are requested.
+
+Run the local portability inventory, cross-build, package syntax, and workflow
+gate with:
+
+```bash
+./dev/check-platform-compatibility
+```
+
+The hosted `.github/workflows/platform-ci.yml` matrix is the native acceptance
+gate for install, upgrade, Gradle handshake and Build Impact, cancellation,
+cleanup, uninstall, and artifact publication.
+
 ## Validation
 
 Run the lock and doctor contract tests from the repository root:

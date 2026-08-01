@@ -34,11 +34,20 @@ The suite covers empty, quoted, whitespace, wildcard, Unicode, newline, and lite
 
 ## WS-002 process and signal contract
 
-On the Linux x86-64 acceptance platform, the child becomes the leader of a process group distinct from `buildopt`. While that child is active, the launcher catches `SIGINT` and `SIGTERM` and forwards the same signal to the complete child group, including descendants that remain in it.
+On Linux and macOS, the child becomes the leader of a process group distinct
+from `buildopt`. While that child is active, the launcher catches `SIGINT` and
+`SIGTERM` and forwards the same signal to the complete child group, including
+descendants that remain in it. On Windows, the launcher creates a new process
+group and assigns it to a Job Object configured to terminate the complete tree
+when the launcher is cancelled or exits unexpectedly.
 
 The launcher then waits for the child to finish and returns the child's ordinary exit status unchanged. It does not impose its own termination deadline or escalate to `SIGKILL`; the CI provider retains control of its grace period and final escalation. If the child does not handle the forwarded signal, the CLI returns the conventional `128 + signal` status without adding a launcher diagnostic to the child's standard error.
 
-The integration fixture verifies an independent process group, a nested descendant, exact `SIGINT` and `SIGTERM` delivery, delayed cleanup during cancellation, preserved handled exit statuses, and conventional unhandled-signal status. Platform expansion remains deferred until its own compatibility fixtures.
+The Linux integration fixture verifies an independent process group, a nested
+descendant, exact `SIGINT` and `SIGTERM` delivery, delayed cleanup during
+cancellation, preserved handled exit statuses, and conventional
+unhandled-signal status. The native macOS and Windows workflow additionally
+verifies descendant cleanup through their platform contracts.
 
 ## F0-039 local bypass
 
@@ -68,9 +77,12 @@ drills with:
 ## WS-003 Gradle plugin handshake
 
 Before starting the child, the launcher creates a private temporary directory,
-a Unix socket, and a fresh attempt ID. It replaces any inherited values of the
-reserved `BUILDOPT_PLUGIN_*` variables before exposing invocation-only context
-to the child.
+a local authenticated event endpoint, and a fresh attempt ID. Linux uses a
+current-user-verified Unix socket; macOS and Windows use an
+operating-system-assigned `127.0.0.1` TCP endpoint whose mandatory random
+credential is verified before any event frame. It replaces any inherited
+values of the reserved `BUILDOPT_PLUGIN_*` variables before exposing
+invocation-only context to the child.
 
 When the packaged `dev.buildopt` Gradle plugin is present, the launcher accepts
 exactly one version-1 `ProducerHello`, validates its attempt and producer
@@ -100,11 +112,11 @@ deliberately absent in this block.
 
 The plugin requires the complete gateway and event context. It first performs
 an authenticated readiness request and verifies the returned generation. It
-then connects to the private Unix socket, sends a fixed authentication preface
-containing a fresh 256-bit token, and only afterward sends the length-delimited
-`ProducerHello`. The receiver also requires the peer process to have the
-launcher's effective user ID. Credentials never enter the Protobuf payload or
-diagnostics.
+then connects to the private local endpoint, sends a fixed authentication
+preface containing a fresh 256-bit token, and only afterward sends the
+length-delimited `ProducerHello`. Linux additionally requires the peer process
+to have the launcher's effective user ID. Credentials never enter the Protobuf
+payload or diagnostics.
 
 All reserved parent values are removed and the complete context is injected
 atomically only when both local services are ready. The gateway and socket are

@@ -1,0 +1,156 @@
+name: Native Platform CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: platform-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  macos:
+    name: macOS 15 ARM64
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5
+        with:
+          go-version: '1.26.5'
+          cache: false
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
+        with:
+          distribution: temurin
+          java-version: '21.0.12+8'
+      - name: Build, package, install, upgrade, and launch
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x packaging/macos/*.sh fixtures/platform/cancel-tree.sh
+          package_path=$(./packaging/macos/package.sh --version 0.1.0-platform-ci --output "$RUNNER_TEMP/package")
+          mkdir "$RUNNER_TEMP/extracted"
+          tar -xzf "$package_path" -C "$RUNNER_TEMP/extracted"
+          package_root=$(find "$RUNNER_TEMP/extracted" -mindepth 1 -maxdepth 1 -type d)
+          "$package_root/install.sh" --prefix "$RUNNER_TEMP/install"
+          "$package_root/install.sh" --prefix "$RUNNER_TEMP/install"
+          "$RUNNER_TEMP/install/bin/buildopt" --help
+          "$RUNNER_TEMP/install/bin/buildopt-impact" --help >/dev/null 2>&1 || test "$?" -eq 64
+      - name: Prove Gradle handshake and Build Impact export
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./gradlew --no-daemon --no-configuration-cache :jvm:gradle-plugin:jar
+          plugin_jar=$(find jvm/gradle-plugin/build/libs -name 'buildopt-gradle-plugin-*.jar' ! -name '*-sources.jar' ! -name '*-javadoc.jar')
+          output=$("$RUNNER_TEMP/install/bin/buildopt" run -- ./gradlew --no-daemon --no-configuration-cache -p fixtures/gradle-handshake --init-script fixtures/gradle-handshake/buildopt.init.gradle "-Dbuildopt.ws003.pluginJar=$PWD/$plugin_jar" neutralProbe 2>&1)
+          grep -F 'authenticated Gradle plugin handshake accepted' <<<"$output"
+          test -f fixtures/gradle-handshake/build/ws-003/neutral.properties
+          "$RUNNER_TEMP/install/bin/buildopt-impact" check --repository fixtures/build-impact/synthetic-repository --manifest buildopt-impact-manifest.json --repository-id tonyredondo/buildopt-impact-synthetic --pipeline-class pull-request --graph buildopt-impact-graph.generated.json --generated-manifest buildopt-impact.generated.json --gradle-command "$PWD/gradlew"
+      - name: Prove cancellation cleanup and uninstall
+        shell: bash
+        run: |
+          set -euo pipefail
+          export BUILDOPT_CANCEL_PID_FILE="$RUNNER_TEMP/cancel-child.pid"
+          "$RUNNER_TEMP/install/bin/buildopt" run -- "$PWD/fixtures/platform/cancel-tree.sh" &
+          launcher_pid=$!
+          for _ in {1..100}; do test -s "$BUILDOPT_CANCEL_PID_FILE" && break; sleep 0.1; done
+          test -s "$BUILDOPT_CANCEL_PID_FILE"
+          child_pid=$(cat "$BUILDOPT_CANCEL_PID_FILE")
+          kill -TERM "$launcher_pid"
+          wait "$launcher_pid" || true
+          if kill -0 "$child_pid" 2>/dev/null; then exit 1; fi
+          package_root=$(find "$RUNNER_TEMP/extracted" -mindepth 1 -maxdepth 1 -type d)
+          touch "$RUNNER_TEMP/install/bin/unrelated"
+          "$package_root/uninstall.sh" --prefix "$RUNNER_TEMP/install"
+          test ! -e "$RUNNER_TEMP/install/bin/buildopt"
+          test -f "$RUNNER_TEMP/install/bin/unrelated"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: buildopt-macos-15-arm64
+          path: ${{ runner.temp }}/package/*.tar.gz
+          if-no-files-found: error
+          retention-days: 14
+
+  windows:
+    name: Windows Server 2025 AMD64
+    runs-on: windows-2025
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5
+        with:
+          go-version: '1.26.5'
+          cache: false
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
+        with:
+          distribution: temurin
+          java-version: '21.0.12+8'
+      - name: Build, package, install, upgrade, and launch
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          ./packaging/windows/package.ps1 -Version 0.1.0-platform-ci -Output "$env:RUNNER_TEMP\package"
+          $Archive = Get-ChildItem "$env:RUNNER_TEMP\package\*.zip" | Select-Object -First 1
+          Expand-Archive $Archive.FullName "$env:RUNNER_TEMP\extracted"
+          $PackageRoot = (Get-ChildItem "$env:RUNNER_TEMP\extracted" -Directory | Select-Object -First 1).FullName
+          & "$PackageRoot\install.ps1" -Prefix "$env:RUNNER_TEMP\install"
+          & "$PackageRoot\install.ps1" -Prefix "$env:RUNNER_TEMP\install"
+          & "$env:RUNNER_TEMP\install\bin\buildopt.exe" --help
+          if ($LASTEXITCODE -ne 0) { throw 'installed launcher failed' }
+      - name: Prove Gradle handshake and Build Impact export
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & .\gradlew.bat --no-daemon --no-configuration-cache :jvm:gradle-plugin:jar
+          if ($LASTEXITCODE -ne 0) { throw 'plugin build failed' }
+          $PluginJar = (Get-ChildItem jvm\gradle-plugin\build\libs\buildopt-gradle-plugin-*.jar | Where-Object { $_.Name -notmatch '-(sources|javadoc)\.jar$' } | Select-Object -First 1).FullName
+          $Output = (& "$env:RUNNER_TEMP\install\bin\buildopt.exe" run -- .\gradlew.bat --no-daemon --no-configuration-cache -p fixtures\gradle-handshake --init-script fixtures\gradle-handshake\buildopt.init.gradle "-Dbuildopt.ws003.pluginJar=$PluginJar" neutralProbe 2>&1 | Out-String)
+          if ($LASTEXITCODE -ne 0 -or $Output -notmatch 'authenticated Gradle plugin handshake accepted') { throw $Output }
+          if (-not (Test-Path fixtures\gradle-handshake\build\ws-003\neutral.properties)) { throw 'Gradle output missing' }
+          & "$env:RUNNER_TEMP\install\bin\buildopt-impact.exe" check --repository fixtures\build-impact\synthetic-repository --manifest buildopt-impact-manifest.json --repository-id tonyredondo/buildopt-impact-synthetic --pipeline-class pull-request --graph buildopt-impact-graph.generated.json --generated-manifest buildopt-impact.generated.json --gradle-command "$PWD\gradlew.bat"
+          if ($LASTEXITCODE -ne 0) { throw 'Build Impact export drifted' }
+      - name: Prove cancellation cleanup and uninstall
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $env:BUILDOPT_CANCEL_PID_FILE = "$env:RUNNER_TEMP\cancel-child.pid"
+          $Launcher = Start-Process -FilePath "$env:RUNNER_TEMP\install\bin\buildopt.exe" -ArgumentList @('run', '--', 'powershell.exe', '-NoProfile', '-File', "$PWD\fixtures\platform\cancel-tree.ps1") -PassThru
+          for ($Index = 0; $Index -lt 100 -and -not (Test-Path $env:BUILDOPT_CANCEL_PID_FILE); $Index++) { Start-Sleep -Milliseconds 100 }
+          if (-not (Test-Path $env:BUILDOPT_CANCEL_PID_FILE)) { throw 'child PID was not exported' }
+          $ChildPid = [int](Get-Content $env:BUILDOPT_CANCEL_PID_FILE)
+          Stop-Process -Id $Launcher.Id -Force
+          $Launcher.WaitForExit()
+          Start-Sleep -Seconds 1
+          if (Get-Process -Id $ChildPid -ErrorAction SilentlyContinue) { throw 'Windows Job Object left a descendant' }
+          $PackageRoot = (Get-ChildItem "$env:RUNNER_TEMP\extracted" -Directory | Select-Object -First 1).FullName
+          [System.IO.File]::WriteAllText("$env:RUNNER_TEMP\install\bin\unrelated", 'preserve')
+          & "$PackageRoot\uninstall.ps1" -Prefix "$env:RUNNER_TEMP\install"
+          if (Test-Path "$env:RUNNER_TEMP\install\bin\buildopt.exe") { throw 'uninstall left buildopt.exe' }
+          if (-not (Test-Path "$env:RUNNER_TEMP\install\bin\unrelated")) { throw 'uninstall removed an unrelated file' }
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: buildopt-windows-2025-amd64
+          path: ${{ runner.temp }}/package/*.zip
+          if-no-files-found: error
+          retention-days: 14
+
+  product-boundary:
+    name: Test Optimization boundary
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Confirm platform work owns no Test Optimization behavior
+        run: jq -e '.productBoundary == "NO_TEST_OPTIMIZATION_BEHAVIOR"' specs/platform-compatibility-v1.json

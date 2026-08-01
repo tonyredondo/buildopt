@@ -12,7 +12,6 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
-	"syscall"
 	"time"
 	"unicode/utf8"
 )
@@ -42,7 +41,8 @@ type pluginHandshakeResult struct {
 type pluginHandshakeServer struct {
 	attemptID string
 	directory string
-	listener  *net.UnixListener
+	listener  net.Listener
+	endpoint  string
 	token     []byte
 	tokenText string
 	result    chan pluginHandshakeResult
@@ -86,10 +86,7 @@ func startPluginHandshakeForAttempt(
 	}
 
 	socketPath := filepath.Join(directory, "events.sock")
-	listener, err := net.ListenUnix(
-		"unix",
-		&net.UnixAddr{Name: socketPath, Net: "unix"},
-	)
+	listener, endpoint, err := newPluginHandshakeListener(socketPath)
 	if err != nil {
 		_ = os.RemoveAll(directory)
 		return nil, fmt.Errorf("listen for plugin handshake: %w", err)
@@ -106,6 +103,7 @@ func startPluginHandshakeForAttempt(
 		attemptID: attemptID,
 		directory: directory,
 		listener:  listener,
+		endpoint:  endpoint,
 		token:     token,
 		tokenText: tokenText,
 		result:    make(chan pluginHandshakeResult, 1),
@@ -121,7 +119,7 @@ func (server *pluginHandshakeServer) childEnvironment(
 		environment,
 		map[string]string{
 			pluginAttemptIDEnvironment: server.attemptID,
-			pluginSocketEnvironment:    server.listener.Addr().String(),
+			pluginSocketEnvironment:    server.endpoint,
 			pluginTokenEnvironment:     server.tokenText,
 		},
 	)
@@ -142,7 +140,7 @@ func (server *pluginHandshakeServer) finish() pluginHandshakeResult {
 }
 
 func (server *pluginHandshakeServer) serve() {
-	connection, err := server.listener.AcceptUnix()
+	connection, err := server.listener.Accept()
 	if err != nil {
 		server.mutex.Lock()
 		closing := server.closing
@@ -235,26 +233,11 @@ func (server *pluginHandshakeServer) serve() {
 }
 
 func authenticatePluginConnection(
-	connection *net.UnixConn,
+	connection net.Conn,
 	expectedToken []byte,
 ) error {
-	rawConnection, err := connection.SyscallConn()
-	if err != nil {
-		return errors.New("inspect plugin peer")
-	}
-	var peer *syscall.Ucred
-	var credentialErr error
-	if err := rawConnection.Control(func(fileDescriptor uintptr) {
-		peer, credentialErr = syscall.GetsockoptUcred(
-			int(fileDescriptor),
-			syscall.SOL_SOCKET,
-			syscall.SO_PEERCRED,
-		)
-	}); err != nil || credentialErr != nil || peer == nil {
-		return errors.New("inspect plugin peer")
-	}
-	if peer.Uid != uint32(os.Geteuid()) {
-		return errors.New("plugin peer user does not own the launcher")
+	if err := verifyPluginPeer(connection); err != nil {
+		return err
 	}
 
 	preface := make([]byte, len(pluginAuthMagic)+pluginTokenBytes)
