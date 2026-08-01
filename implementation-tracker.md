@@ -1,9 +1,10 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC COMPLETE` — the functional target plus optional MVP-A2, MVP-C2, MVP-C3, POC-O1 Edge operability, and POC-O2 synthetic consumability/CI closure are complete; productization work remains deferred<br>
-**Current phase:** no non-deferred implementation block remains; the next work requires a new owner priority or productization decision<br>
+**Overall status:** `FUNCTIONAL EXPANSION ACTIVE` — the completed owner-operated POC is being extended with local UX, Patch Autopilot, GitLab CI, Build Impact automation, and macOS/Windows compatibility; productization remains deferred<br>
+**Current phase:** `UX-F1` — `UX-F1-001` is closed; `UX-F1-002` embedded dashboard is next<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use project-owned synthetic fixtures and repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
+**Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
 **Last updated:** 2026-08-01<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
 **RFC baseline SHA-256:** `e97b068433128a51cab509f2f799efdf872b6950056bce308b80cbd1470ef81d`
@@ -62,6 +63,11 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | MVP-C3 | Build Impact Analysis | `DONE` | 1/1 | `E-128` |
 | POC-O1 | Edge process, reload, status, signed packaging, and service unit | `DONE` | 1/1 | `E-135` |
 | POC-O2 | Synthetic one-command lab, JSON evidence, and base-CI closure | `DONE` | 1/1 | `E-136` |
+| UX-F1 | Local build history and embedded operator dashboard | `DOING` | 0/1 | POC-O2 |
+| PA-F2 | Broader safe Patch Autopilot recipe catalog and rollback proof | `TODO` | 0/1 | MVP-C4 |
+| CI-F3 | First-class GitLab CI installation, events, and synthetic proof | `TODO` | 0/1 | POC-O2 |
+| BIA-F4 | Automatic Gradle graph discovery and generated impact manifest | `TODO` | 0/1 | MVP-C3 |
+| PLAT-F5 | Supported macOS and Windows build/runtime paths | `TODO` | 0/1 | UX-F1 + CI-F3 |
 | GA-D | Production-ready hardening | `DEFERRED` | 0/1 | Functional beta with demonstrated value |
 
 Design baseline: 51 private-beta decisions are accepted in the RFC; their artifacts and tests remain pending as recorded in this tracker.
@@ -80,7 +86,13 @@ Preparation
                    └─→ complete MVP-C4
 ```
 
-The owner-operated POC target and optional MVP-A2/MVP-C2/MVP-C3/POC-O1/POC-O2 extensions are complete. The eight-hour soak, external design-partner evidence, and GA-D remain deferred and do not block the completed proof of concept.
+The owner-operated POC target and optional MVP-A2/MVP-C2/MVP-C3/POC-O1/POC-O2 extensions are complete. The owner-prioritized functional expansion proceeds in this order:
+
+```text
+UX-F1 → PA-F2 → CI-F3 → BIA-F4 → PLAT-F5
+```
+
+Each track retains fail-closed behavior and project-owned synthetic evidence. Test Optimization implementation, the eight-hour soak, external design-partner evidence, and GA-D remain outside this sequence.
 
 ### 2.3 Next executable items
 
@@ -534,6 +546,11 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | Track | Minimum scope for reactivation | State | Trigger |
 |---|---|---|---|
 | MVP-A2 | Self-hosted installer, migration, and recovery | `DONE` | `E-122` current-tree composite gate |
+| UX-F1 | Authenticated local history API, embedded dashboard, and synthetic accessibility proof | `DOING` | Owner priority |
+| PA-F2 | Versioned safe recipe registry, additional allowlisted recipes, candidate validation, and exact revert | `TODO` | UX-F1 |
+| CI-F3 | GitLab CI installer/template, job-event adapter, and owner-controlled end-to-end fixture | `TODO` | PA-F2 |
+| BIA-F4 | Conservative Gradle graph discovery, generated manifest, drift handling, and selection proof | `TODO` | CI-F3 |
+| PLAT-F5 | Cross-compilation inventory, portable transports/process control, packaging, and native CI | `TODO` | BIA-F4 |
 | MVP-C2 | Edge proxy, SLRU, and offline committed reads | `DONE` | `E-134` current-tree composite gate |
 | MVP-C3 | Conservative BIA and `BIA-002` gate | `DONE` | `E-128` current-tree composite gate |
 | POC-O1 | Standalone Edge runtime, signed reload, local status, bundle, and systemd unit | `DONE` | `E-135` current-tree composite gate |
@@ -542,7 +559,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | GA-D Privacy | Residency, legal hold, and backup deletion | `DEFERRED` | Contractual requirements |
 | GA-D Export | OTLP, Prometheus, Parquet, SIEM, and webhooks | `DEFERRED` | Prioritized demand |
 | Productization validation | Execute the eight-hour soak and validate with external design partners | `DEFERRED` | POC demonstrates enough value to productize |
-| Platform expansion | macOS/Windows, Android, KMP, and native | `DEFERRED` | Stable core matrix |
+| Further platform expansion | Android, KMP, and native | `DEFERRED` | Stable macOS/Windows matrix |
 
 ### 11.1 MVP-A2 workboard
 
@@ -621,6 +638,73 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 
 ---
 
+### 11.6 Owner-prioritized functional expansion workboard
+
+#### UX-F1 — local experience
+
+| ID | Deliverable | State | Owner | Evidence |
+|---|---|---|---|---|
+| `UX-F1-001` | Authenticated loopback build-history list/detail API over immutable redacted `BUILD_SESSION` exports | `DONE` | Codex | `E-137` |
+| `UX-F1-002` | Embedded responsive dashboard with filtering, build detail, loading/empty/error states, and no raw identity exposure | `TODO` | Codex | — |
+| `UX-F1-003` | Owner-controlled synthetic UX, keyboard, responsive, and accessibility evidence | `TODO` | Codex | — |
+
+| Exit gate | Summarized criterion | State | Evidence |
+|---|---|---|---|
+| `UX-F1-G01` | One local authenticated flow exposes usable redacted history and detail without remote data transfer or a second service | `TODO` | — |
+
+#### PA-F2 — Patch Autopilot
+
+| ID | Deliverable | State | Owner | Evidence |
+|---|---|---|---|---|
+| `PA-F2-001` | Versioned recipe registry with exact applicability, risk, validation, and inverse metadata | `TODO` | Codex | — |
+| `PA-F2-002` | Additional allowlisted low-risk Gradle recipes selected from repository evidence | `TODO` | Codex | — |
+| `PA-F2-003` | Candidate/control and exact-revert proof for every added recipe through the existing signed PatchBundle path | `TODO` | Codex | — |
+
+| Exit gate | Summarized criterion | State | Evidence |
+|---|---|---|---|
+| `PA-F2-G01` | Every recipe is bounded, reproducible, validated, draft-only, and exactly reversible; unsupported builds remain unchanged | `TODO` | — |
+
+#### CI-F3 — GitLab CI
+
+| ID | Deliverable | State | Owner | Evidence |
+|---|---|---|---|---|
+| `CI-F3-001` | Checksum-pinned GitLab CI component/template and install contract for supported Linux runners | `TODO` | Codex | — |
+| `CI-F3-002` | Idempotent GitLab pipeline/job event adapter with explicit unavailable and cancellation outcomes | `TODO` | Codex | — |
+| `CI-F3-003` | Owner-controlled synthetic GitLab fixture proving install, build, export, failure, and cancellation semantics | `TODO` | Codex | — |
+
+| Exit gate | Summarized criterion | State | Evidence |
+|---|---|---|---|
+| `CI-F3-G01` | A documented GitLab pipeline consumes the same signed release and emits equivalent redacted evidence without weakening fork or credential isolation | `TODO` | — |
+
+#### BIA-F4 — automatic Build Impact
+
+| ID | Deliverable | State | Owner | Evidence |
+|---|---|---|---|---|
+| `BIA-F4-001` | Conservative Gradle project/task/dependency discovery with explicit global and unknown fallbacks | `TODO` | Codex | — |
+| `BIA-F4-002` | Deterministic generated impact manifest and graph with repository-visible review and drift detection | `TODO` | Codex | — |
+| `BIA-F4-003` | Synthetic full-versus-selected proof preserving deliverables and Build-owned checks while leaving Test-owned checks untouched | `TODO` | Codex | — |
+
+| Exit gate | Summarized criterion | State | Evidence |
+|---|---|---|---|
+| `BIA-F4-G01` | Generated state may reduce manual setup but cannot authorize omission under ambiguity, drift, incomplete coverage, or failed `BIA-002` | `TODO` | — |
+
+#### PLAT-F5 — macOS and Windows
+
+| ID | Deliverable | State | Owner | Evidence |
+|---|---|---|---|---|
+| `PLAT-F5-001` | Cross-compile and dependency inventory for supported macOS and Windows targets | `TODO` | Codex | — |
+| `PLAT-F5-002` | Portable local transport, path, locking, signal/process-tree, and private-file abstractions | `TODO` | Codex | — |
+| `PLAT-F5-003` | Platform-native release packaging, launch/service integration, and uninstall behavior | `TODO` | Codex | — |
+| `PLAT-F5-004` | Native GitHub CI matrix and synthetic Gradle smoke on macOS and Windows | `TODO` | Codex | — |
+
+| Exit gate | Summarized criterion | State | Evidence |
+|---|---|---|---|
+| `PLAT-F5-G01` | Native runners prove install, launch, build, export, cancellation, cleanup, and upgrade without Linux-only assumptions | `TODO` | — |
+
+Test Optimization is an explicit non-goal for all five tracks. They may preserve or call its existing signed grant/result boundary, but no Test Optimization behavior or contract is widened here.
+
+---
+
 ## 12. Continuous validation
 
 This table points to the latest valid result. It does not replace reports or allow gates to be marked without evidence.
@@ -647,6 +731,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Operational readiness | Separate liveness/readiness, startup reconciliation, application gating, shutdown drain, and online signed authority reload | Race-enabled real-server tests observed liveness `200` while readiness/product routes stayed `503` during blocked reconciliation, readiness `200` only after activation, and a higher signed epoch replacing the prior route in about one second; the old digest returned `401` and the current route returned a safe `404` miss | 2026-07-30 | `E-081` |
 | Edge operability | Preflighted process, signed reload, local aggregate status, durable workers, signed packaging, reproducible systemd unit, and graceful shutdown | `dev/check-edge-operability` passed under the race detector with a real loopback listener: one pending PUT replicated durably, invalid and valid rollback snapshots disabled the route with byte-free `503`, a higher signed generation recovered, status remained private/fresh and moved to `STOPPED`, the real binary built and entered the signed bundle layout, and two generated systemd units matched byte-for-byte and passed `systemd-analyze verify` | 2026-08-01 | `E-135` |
 | Synthetic owner POC lab | One-command project-owned Gradle, repeated Shared faults, two-Edge collision, Edge operability, private JSON result, and CI wiring | `dev/check-owner-poc-lab` passed three times on the 12-CPU workstation; the final checker used locked Java 21 to produce and execute Java 17 bytecode, repeated the Shared-fault slice three times under `-race`, resolved the two-Edge Shared collision online/offline, completed O1-G01, validated exact commands and a mode-`0600` atomic revision-bound report, and preserved the working tree; 21 total repeated Shared-fault runs in this session did not reproduce the earlier transient `409`, while the invariant remains strict | 2026-08-01 | `E-136` |
+| Local build history API | Independent authenticated loopback list/detail reads over immutable already-redacted BUILD_SESSION exports | `dev/check-build-history-api` passed race-enabled package and real-server integration plus vet; exact repository/outcome filters, newest-first stable cursor pagination, slash-bearing identities, independent read credentials, unsafe-file rejection, and redaction preservation passed; root `go vet ./...`, repository layout, 103-artifact normative layout, ShellCheck for 163 scripts, and actionlint for five workflows plus smoke also passed | 2026-08-01 | `E-137` |
 | Operational alerts | Ten required aggregate classes, bounded loopback status, real storage/authority/export/acceptance signals, and recovery | Race-enabled tests activated all ten `DISK_QUOTA` through `ACCEPTANCE_LATENCY` classes, verified deterministic read-only JSON without sensitive values while readiness was false, and cleared every class after healthy replacement signals; real Shared probing reported disk, quarantine, expired leases, SQLite integrity, and bounded probe duration | 2026-07-30 | `E-082` |
 | Private-beta operational closure | One isolated-profile runbook composing admission, observation, revocation, circuit fallback, shutdown, bypass, rollback, and uninstall | The strict composition contract and operator runbook were validated before the real readiness/revocation and ten-alert race suites, all three circuit reasons with Gradle 9.6.1/JDK 21 Kotlin+Groovy fallback/replay, and the guarded base recovery drills passed without changing the working tree or running the eight-hour soak | 2026-07-31 | `E-094` |
 | Private-beta benchmark harness | Manifest-bound real data plane, deterministic client/phase/object scheduling, raw observations, summaries, and tamper rejection | The explicit `SMOKE` profile executed all 12 phase × 1/8/32-client strata through real Shared pending PUT, Ed25519 commit, and verified hit/miss GET paths; 1,200 private observations preceded the digest-bound summary, exact scaled 70/20/8/2 distribution and 70% read hits passed, and raw tampering failed validation | 2026-07-30 | `E-083` |
@@ -658,7 +743,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Private-beta Gradle fixture sizes | Small/medium/large known outputs and ordered critical paths through the managed cache | Deterministic Kotlin DSL repositories with 2/8/24 projects and 8/64/384 Java sources produced their exact final values and class counts; all 34 ordered `compileJava` tasks ran `SUCCESS`, then replayed `FROM_CACHE` through the native managed L1 with Configuration Cache reused under Gradle 9.6.1/JDK 21 | 2026-07-31 | `E-091` |
 | GitHub Action fixture | Linux x64 composite setup Action, full commit pins, version/HTTPS/SHA-256 archive identity, safe extraction, outputs/PATH, and neutral wrapper behavior | The historical WS-007 installer and Action bytes remain pinned and its hosted run [30471969171](https://github.com/tonyredondo/buildopt/actions/runs/30471969171) passed on `ubuntu-24.04`; the current init script additionally loaded the real packaged plugin under Gradle 9.6.1 in the deployment lifecycle | 2026-07-30 | `E-031`, `E-080` |
 | Base recovery | Control-plane-independent bypass, CI kill switch, immutable rollback, uninstall, state preservation/purge, and partial patch recovery | The real launcher consumed `BUILDOPT_BYPASS=1` before invalid server configuration or local rendezvous setup, preserved argv/stdio/cwd/exit and process-group cancellation, restored the normal path when cleared, rejected a bad release digest before running the pinned known-good fixture, and exercised guarded preserve/purge uninstalls without changing the working tree; full host and strict 4-CPU/16-GiB container regression passed | 2026-07-29 | `E-032` |
-| Normative package layout | RFC §29.2 namespaces, indexes, planned artifact parents, and non-empty materialized artifacts | `dev/check-normative-layout` passed for 16 namespaces and 101 planned artifacts, including the POC-O2 machine/prose contract alongside the materialized Tier 1 cache, lifecycle, operational, benchmark, and Edge contracts; ShellCheck checked 162 scripts, actionlint checked five workflows plus its smoke, and repository layout passed | 2026-08-01 | `E-018`, `E-034`, `E-073..094`, `E-136` |
+| Normative package layout | RFC §29.2 namespaces, indexes, planned artifact parents, and non-empty materialized artifacts | `dev/check-normative-layout` passed for 16 namespaces and 103 planned artifacts, including the UX-F1-001 machine/prose contract alongside the materialized Tier 1 cache, lifecycle, operational, benchmark, Edge, and POC-O2 contracts; ShellCheck checked 163 scripts, actionlint checked five workflows plus its smoke, and repository layout passed | 2026-08-01 | `E-018`, `E-034`, `E-073..094`, `E-136`, `E-137` |
 | Contract schemas | `BUILD_SESSION v1` Draft 2020-12; later JSON Schemas and OpenAPI remain pending | Pinned Go validator compiled the schema with format assertions; 4 valid fixtures and 2 real producer exports passed, while 7 focused invalid fixtures were rejected for their intended diagnostics | 2026-07-29 | `E-019`, `E-029` |
 | Metric catalog | `build-impact-v1` definitions and `beta-measurement-v1` promotion policy | Dependency-free strict validation accepted all 35 required core metrics with complete governance fields, bounded dimensions, explicit availability/methods, and fixed saved/delta/overhead signs; semantic, missing/duplicate, null, dimension, unit, sign, sample, threshold, and correctness-policy drift fixtures were rejected on host and the strict golden container | 2026-07-29 | `E-034` |
 | Walking-skeleton overhead | External monotonic native-versus-complete-wrapper timing with required-output parity and no optimization | Four balanced alternating pairs ran in the pinned 4-CPU/16-GiB container; the first pair was retained, every wrapper arm completed one authenticated session/export, all deliverable digests matched, signed negative observations remained raw, and the report stayed explicitly non-promotional; first `+236.020 ms`, nearest-rank p50 `-798.384 ms`, mean `-35.033 ms`, and p95 `+1338.013 ms` are descriptive only | 2026-07-29 | `E-035` |
@@ -855,6 +940,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-134` | 2026-08-01 | `C2-G01`, MVP-C2 exit | Versioned [`Edge Cache gate v1`](./specs/edge-cache-gate-v1.md), exact machine-readable [constituent/criterion/boundary contract](./specs/edge-cache-gate-v1.json), and source-preserving composite [`check-edge-cache-gate`](./dev/check-edge-cache-gate); the gate directly validated all five current contract identities and ran the nested C2-005 runtime checker, composing strict private configuration, fully verified Shared commits with current revocation and offline restart, committed-plus-pending hard byte accounting and byte-SLRU, exact-attempt pending TTL/retry/restart with no promotion, two real loopback proxy listeners, and the owner-controlled Shared-only collision/commit winner online and offline | `DONE`: `C2-G01` and optional owner-operated MVP-C2 close without running the deferred soak, using external partners, installing an OS service, hot reloading authority, or claiming production readiness |
 | `E-135` | 2026-08-01 | `O1-001..004`, `O1-G01`, POC-O1 exit | Versioned [`Edge operability v1`](./specs/edge-operability-v1.md), exact machine-readable [runtime/reload/status/service/gate contract](./specs/edge-operability-v1.json), standalone [`buildopt-edge`](./cmd/buildopt-edge/main.go), composed [`runtime`](./internal/edgecache/runtime.go), owner [`runbook`](./runbooks/edge-cache.md), deterministic [`systemd generator`](./dev/render-edge-service), signed release integration, and source-preserving composite [`check-edge-operability`](./dev/check-edge-operability); the current-tree race proof preflighted signed authority before listening, accepted and durably replicated a real loopback PUT, disabled all cache traffic for invalid and valid rollback snapshots, recovered with a higher fully verified generation, emitted fresh aggregate status without credential/path/key/repository values or HTTP admin routes, passed graceful stop, built the actual command, rendered two byte-identical private hardened units, passed `systemd-analyze verify`, locked ShellCheck for all 159 scripts, repository/normative layouts, vet, and the focused build | `DONE`: POC-O1 closes owner-operated Edge process operability while Shared remains sole commit/collision authority; it does not run the deferred soak, use external partners, provide HA/backups/enterprise identity/non-Linux platforms, mutate systemd, or claim production readiness |
 | `E-136` | 2026-08-01 | `O2-001..004`, `O2-G01`, POC-O2 exit | Versioned [`Owner-operated POC lab v1`](./specs/owner-poc-lab-v1.md), exact machine-readable [constituent/report/CI/boundary contract](./specs/owner-poc-lab-v1.json), minimal [`synthetic Gradle smoke`](./dev/check-synthetic-gradle-smoke), JSON-producing [`one-command runner`](./dev/run-owner-poc-lab), strict [`composite checker`](./dev/check-owner-poc-lab), and explicit read-only [base-CI step](./.github/workflows/base-ci.yml); three complete final gate runs produced the Java 17 executable fixture through locked Java 21, repeated tamper-evident Shared faults under `-race`, resolved the real two-Edge Shared-only collision and offline winner, completed the process/reload/status/service lifecycle, wrote a revision-bound mode-`0600` report atomically, and preserved the working tree; the prior intermittent Shared `409` did not reproduce across 21 accumulated race-enabled runs and remains a strict failure rather than an accepted retry; the broad-smoke investigation also repaired the stale BUILD_SESSION checker to require HMAC-redacted task sets, an unchanged private redaction key across shutdown, same-key partial recovery, semantic outcomes, exact JSONL bytes, and no raw task or credential exposure | `DONE`: POC-O2 closes owner-independent synthetic consumability and CI wiring without running the deferred soak, using external design partners or owner repositories, adding production infrastructure, or authorizing production promotion |
+| `E-137` | 2026-08-01 | `UX-F1-001` | Versioned [`Build history API v1`](./specs/build-history-api-v1.md), exact machine-readable [source/transport/operation/failure/boundary contract](./specs/build-history-api-v1.json), bounded fail-closed [`buildhistory`](./internal/buildhistory) read model and HTTP handler, optional [`buildopt-server`](./cmd/buildopt-server/main.go) integration, and composite [`check-build-history-api`](./dev/check-build-history-api); the independent bearer-protected loopback API lists newest-first redacted summaries with exact repository/outcome filters and stable opaque cursors, resolves exact slash-bearing session identities, reads only regular mode-`0600` filename-bound strict BUILD_SESSION documents below 1 MiB from the private mode-`0700` exporter root, and emits generic no-store failures for unsafe/corrupt input; targeted package plus real-server tests passed under `-race`, focused and full-root vet passed, repository and 103-artifact normative layouts passed, and locked ShellCheck/actionlint covered 163 scripts and five workflows plus smoke | `DONE`: UX-F1-001 closes the local read boundary without a dashboard, remote exposure, raw identity recovery, export mutation, dependency addition, or any Test Optimization change; the broader root race suite was intentionally stopped after affected packages passed when it entered the unrelated long beta benchmark and is not claimed |
 
 ---
 
@@ -862,6 +948,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-01 | Activated the owner-prioritized `UX-F1 → PA-F2 → CI-F3 → BIA-F4 → PLAT-F5` functional expansion with Test Optimization explicitly separate; closed `UX-F1-001` through an independent authenticated loopback history API over immutable redacted BUILD_SESSION exports, stable filters/cursors, strict private-file validation, and targeted race/server evidence; moved `UX-F1-002` embedded dashboard next | Codex |
 | 2026-08-01 | Closed `O2-001..004`, `O2-G01`, and POC-O2: added a one-command synthetic lab with locked-JDK Gradle deliverable, repeated strict Shared-fault race evidence, real two-Edge Shared collision, complete Edge operability, atomic private JSON report, and explicit base-CI execution; repaired BUILD_SESSION integration to validate HMAC-redacted tasks and same-key partial recovery; retained the real `409` invariant and all deferred soak, external-partner, and productization boundaries | Codex |
 | 2026-08-01 | Closed `O1-001..004`, `O1-G01`, and POC-O1: added the standalone preflighted Edge process, durable workers and graceful shutdown, signed fail-closed hot reload with rollback denial, private fresh aggregate status, signed release payload, reproducible hardened systemd unit, and owner runbook; retained Shared-only commit/collision authority and all deferred productization boundaries | Codex |
 | 2026-08-01 | Closed `C2-G01` and optional owner-operated MVP-C2: composed all five current-tree Edge contracts and the real two-node runtime proof, preserving exact current-revocation committed reads, attempt-only pending visibility, hard byte SLRU, durable replication recovery, and Shared-only commit/collision authority; no non-deferred implementation block remains | Codex |

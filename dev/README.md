@@ -1621,6 +1621,25 @@ strictly validates the contract and result; base CI runs it on a clean checkout.
 It does not run the eight-hour soak, use external design partners, or authorize
 production promotion.
 
+## Build history API
+
+Run the UX-F1-001 contract and real-server proof with:
+
+```bash
+./dev/check-build-history-api
+```
+
+When `buildopt-server` has an export directory, setting the separate
+`BUILDOPT_HISTORY_API_TOKEN` activates authenticated `GET` operations at
+`/api/v1/build-sessions` and `/api/v1/build-session?id=...`. The collection is
+newest-first, filters exact redacted repository/outcome values, and uses a
+stable opaque cursor with a default 25 and maximum 100 items. The detail
+operation returns the immutable already-redacted BUILD_SESSION document.
+
+The route is absent without the independent read token. It never accepts the
+ingest credential, mutates exports, reconstructs raw identities, or changes
+the separate Test Optimization integration.
+
 ## Build Impact manifest
 
 Validate the C3-001 customer-owned manifest boundary with:

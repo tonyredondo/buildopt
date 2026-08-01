@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -17,6 +18,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/tonyredondo/buildopt/internal/buildhistory"
 	"github.com/tonyredondo/buildopt/internal/localauthority"
 	"github.com/tonyredondo/buildopt/internal/selfhosted"
 	"github.com/tonyredondo/buildopt/internal/sessioningest"
@@ -24,14 +26,16 @@ import (
 )
 
 const serverTestToken = "server-test-ingest-token-0123456789abcdef"
+const serverHistoryTestToken = "server-test-history-token-0123456789abcdef"
 
 func TestBuildoptServerUsageAndConfiguration(t *testing.T) {
 	testCases := []struct {
-		name       string
-		args       []string
-		token      string
-		wantExit   int
-		wantOutput string
+		name         string
+		args         []string
+		token        string
+		historyToken string
+		wantExit     int
+		wantOutput   string
 	}{
 		{
 			name:       "help",
@@ -88,6 +92,14 @@ func TestBuildoptServerUsageAndConfiguration(t *testing.T) {
 			wantOutput: "invalid session ingest configuration",
 		},
 		{
+			name:         "history without exports",
+			args:         []string{"serve", "--listen", "127.0.0.1:0"},
+			token:        serverTestToken,
+			historyToken: serverHistoryTestToken,
+			wantExit:     exitConfiguration,
+			wantOutput:   "history API requires an export directory",
+		},
+		{
 			name: "relative Shared state",
 			args: []string{
 				"serve",
@@ -120,6 +132,9 @@ func TestBuildoptServerUsageAndConfiguration(t *testing.T) {
 			getenv := func(key string) string {
 				if key == sessioningest.ServerTokenEnvironment {
 					return testCase.token
+				}
+				if key == buildhistory.TokenEnvironment {
+					return testCase.historyToken
 				}
 				return ""
 			}
@@ -593,6 +608,9 @@ func TestBuildoptServerReceivesAndStopsGracefully(t *testing.T) {
 				if key == sessioningest.ServerTokenEnvironment {
 					return serverTestToken
 				}
+				if key == buildhistory.TokenEnvironment {
+					return serverHistoryTestToken
+				}
 				return ""
 			},
 			output,
@@ -675,6 +693,68 @@ func TestBuildoptServerReceivesAndStopsGracefully(t *testing.T) {
 		exported.RecordType != "BUILD_SESSION" ||
 		exported.Build.ID != record.SessionID {
 		t.Fatalf("unexpected BUILD_SESSION export: %+v", exported)
+	}
+
+	historyRequest, err := http.NewRequest(
+		http.MethodGet,
+		endpoint+buildhistory.ListPath+"?outcome=SUCCESS&limit=1",
+		nil,
+	)
+	if err != nil {
+		t.Fatalf("create history list request: %v", err)
+	}
+	historyRequest.Header.Set("Authorization", "Bearer "+serverHistoryTestToken)
+	historyResponse, err := http.DefaultClient.Do(historyRequest)
+	if err != nil {
+		t.Fatalf("request build history: %v", err)
+	}
+	defer historyResponse.Body.Close()
+	var historyPage buildhistory.ListResponse
+	if historyResponse.StatusCode != http.StatusOK ||
+		json.NewDecoder(historyResponse.Body).Decode(&historyPage) != nil ||
+		historyPage.MatchedCount != 1 || len(historyPage.Items) != 1 ||
+		historyPage.Items[0].ID != record.SessionID ||
+		!strings.HasPrefix(historyPage.Items[0].RepositoryID, "hmac-sha256:") {
+		t.Fatalf("unexpected build history response: %d/%+v", historyResponse.StatusCode, historyPage)
+	}
+
+	detailRequest, err := http.NewRequest(
+		http.MethodGet,
+		endpoint+buildhistory.DetailPath+"?id="+url.QueryEscape(record.SessionID),
+		nil,
+	)
+	if err != nil {
+		t.Fatalf("create history detail request: %v", err)
+	}
+	detailRequest.Header.Set("Authorization", "Bearer "+serverHistoryTestToken)
+	detailResponse, err := http.DefaultClient.Do(detailRequest)
+	if err != nil {
+		t.Fatalf("request build history detail: %v", err)
+	}
+	defer detailResponse.Body.Close()
+	var historyDetail buildhistory.DetailResponse
+	if detailResponse.StatusCode != http.StatusOK ||
+		json.NewDecoder(detailResponse.Body).Decode(&historyDetail) != nil ||
+		historyDetail.Session.Build.ID != record.SessionID {
+		t.Fatalf("unexpected build history detail: %d/%+v", detailResponse.StatusCode, historyDetail)
+	}
+
+	wrongCredential, err := http.NewRequest(
+		http.MethodGet,
+		endpoint+buildhistory.ListPath,
+		nil,
+	)
+	if err != nil {
+		t.Fatalf("create wrong-credential request: %v", err)
+	}
+	wrongCredential.Header.Set("Authorization", "Bearer "+serverTestToken)
+	wrongResponse, err := http.DefaultClient.Do(wrongCredential)
+	if err != nil {
+		t.Fatalf("request history with ingest credential: %v", err)
+	}
+	defer wrongResponse.Body.Close()
+	if wrongResponse.StatusCode != http.StatusUnauthorized {
+		t.Fatalf("ingest credential history status = %d", wrongResponse.StatusCode)
 	}
 
 	cancel()

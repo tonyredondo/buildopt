@@ -52,6 +52,33 @@ missing range. If the complete document survived, startup verifies it and
 replays the deterministic publication event instead. Existing complete and
 partial files are never overwritten.
 
+`UX-F1-001` optionally exposes the immutable redacted exports to a local user
+interface through a separate read credential:
+
+```bash
+BUILDOPT_SERVER_INGEST_TOKEN=<write-only-ingest-token> \
+BUILDOPT_HISTORY_API_TOKEN=<independent-read-token> \
+    buildopt-server serve \
+        --listen 127.0.0.1:8042 \
+        --export-dir /private/buildopt-exports
+```
+
+The existing canonical IPv4 loopback listener then serves:
+
+```text
+GET /api/v1/build-sessions?repository=TOKEN&outcome=SUCCESS&limit=25&cursor=OPAQUE
+GET /api/v1/build-session?id=SESSION_ID
+```
+
+Both routes authenticate before routing, emit `Cache-Control: no-store`, read
+only mode-`0600` filename-bound `BUILD_SESSION v1` documents from the private
+mode-`0700` export root, and return only the identities already HMAC-redacted
+by the exporter. The collection is newest-first and capped at 100 items per
+page; the opaque cursor binds the last completed timestamp and session ID.
+Unsafe or malformed history fails closed without exposing paths. Omitting the
+history token leaves both routes absent, and the ingest token is not accepted
+for reads.
+
 Copy the validated stream directly to stdout for a CI artifact:
 
 ```bash

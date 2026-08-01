@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "buildopt.specs/build-history-api/v1",
+  "workItem": "UX-F1-001",
+  "source": {
+    "recordType": "BUILD_SESSION",
+    "schemaVersion": "1.0",
+    "redaction": "EXPORTER_OWNED_BEFORE_PERSISTENCE",
+    "directoryMode": "0700",
+    "documentMode": "0600",
+    "maximumDocuments": 10000,
+    "maximumDocumentBytes": 1048576
+  },
+  "transport": {
+    "listener": "EXISTING_CANONICAL_IPV4_LOOPBACK_SERVER",
+    "authentication": "INDEPENDENT_BEARER",
+    "tokenEnvironment": "BUILDOPT_HISTORY_API_TOKEN",
+    "cacheControl": "no-store",
+    "contentType": "application/json"
+  },
+  "operations": [
+    {
+      "id": "listBuildSessions",
+      "method": "GET",
+      "path": "/api/v1/build-sessions",
+      "filters": ["repository", "outcome"],
+      "pagination": {
+        "defaultLimit": 25,
+        "maximumLimit": 100,
+        "order": "COMPLETED_AT_DESC_ID_ASC",
+        "cursor": "OPAQUE_LAST_IDENTITY"
+      },
+      "responseSchemaVersion": "buildopt.api/build-session-history/v1"
+    },
+    {
+      "id": "getBuildSession",
+      "method": "GET",
+      "path": "/api/v1/build-session?id=SESSION_ID",
+      "responseSchemaVersion": "buildopt.api/build-session-detail/v1"
+    }
+  ],
+  "failurePolicy": {
+    "authenticateBeforeRouting": true,
+    "unknownOrDuplicateQuery": 400,
+    "absentIdentity": 404,
+    "unsafeOrCorruptHistory": 500,
+    "unsupportedMethod": 405,
+    "invalidCredential": 401,
+    "exposesInternalPaths": false
+  },
+  "boundaries": {
+    "readOnly": true,
+    "dashboardIncluded": false,
+    "remoteExposure": false,
+    "rawIdentityRecovery": false,
+    "testOptimizationModified": false,
+    "closes": ["UX-F1-001"],
+    "doesNotClose": ["UX-F1-002", "UX-F1-G01", "REMOTE_HISTORY_API", "TEST_SELECTION"]
+  }
+}

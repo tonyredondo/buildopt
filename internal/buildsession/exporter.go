@@ -228,6 +228,15 @@ func infoSyscallStat(info os.FileInfo) (*syscall.Stat_t, bool) {
 	return stat, ok
 }
 
+// Directory returns the canonical private export root for in-process,
+// read-only consumers such as the local build-history API.
+func (exporter *Exporter) Directory() string {
+	if exporter == nil {
+		return ""
+	}
+	return exporter.directory
+}
+
 // Export atomically publishes one immutable JSON document. An identical
 // replay returns created=false without rewriting the existing file.
 func (exporter *Exporter) Export(

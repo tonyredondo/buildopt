@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/build-history-api-v1.json"
+
+jq -e '
+    .schemaVersion == "buildopt.specs/build-history-api/v1" and
+    .workItem == "UX-F1-001" and
+    .source == {
+        recordType: "BUILD_SESSION",
+        schemaVersion: "1.0",
+        redaction: "EXPORTER_OWNED_BEFORE_PERSISTENCE",
+        directoryMode: "0700",
+        documentMode: "0600",
+        maximumDocuments: 10000,
+        maximumDocumentBytes: 1048576
+    } and
+    .transport.authentication == "INDEPENDENT_BEARER" and
+    .transport.tokenEnvironment == "BUILDOPT_HISTORY_API_TOKEN" and
+    [.operations[].id] == ["listBuildSessions", "getBuildSession"] and
+    [.operations[].method] == ["GET", "GET"] and
+    [.operations[].path] == [
+        "/api/v1/build-sessions",
+        "/api/v1/build-session?id=SESSION_ID"
+    ] and
+    .operations[0].pagination == {
+        defaultLimit: 25,
+        maximumLimit: 100,
+        order: "COMPLETED_AT_DESC_ID_ASC",
+        cursor: "OPAQUE_LAST_IDENTITY"
+    } and
+    .failurePolicy == {
+        authenticateBeforeRouting: true,
+        unknownOrDuplicateQuery: 400,
+        absentIdentity: 404,
+        unsafeOrCorruptHistory: 500,
+        unsupportedMethod: 405,
+        invalidCredential: 401,
+        exposesInternalPaths: false
+    } and
+    .boundaries.readOnly == true and
+    .boundaries.dashboardIncluded == false and
+    .boundaries.remoteExposure == false and
+    .boundaries.rawIdentityRecovery == false and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.closes == ["UX-F1-001"] and
+    (.boundaries.doesNotClose | index("TEST_SELECTION")) != null
+' "${buildopt_contract}" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 \
+    ./internal/buildhistory \
+    ./internal/buildsession \
+    ./cmd/buildopt-server
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet \
+    ./internal/buildhistory \
+    ./internal/buildsession \
+    ./cmd/buildopt-server
+
+printf 'UX-F1-001 build history API passed: independent auth, redacted list/detail, stable pagination, and fail-closed files\n'

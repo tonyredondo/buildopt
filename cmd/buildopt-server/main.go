@@ -18,6 +18,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/tonyredondo/buildopt/internal/buildhistory"
 	"github.com/tonyredondo/buildopt/internal/buildsession"
 	"github.com/tonyredondo/buildopt/internal/datalifecycle"
 	"github.com/tonyredondo/buildopt/internal/githubqueue"
@@ -220,6 +221,27 @@ func run(
 		}
 		exporter = configuredExporter
 		defer exporter.Close()
+	}
+
+	historyToken := getenv(buildhistory.TokenEnvironment)
+	var historyHandler http.Handler
+	if historyToken != "" {
+		if exporter == nil {
+			_, _ = fmt.Fprintln(
+				stderr,
+				"buildopt-server: history API requires an export directory",
+			)
+			return exitConfiguration
+		}
+		configuredHistory, historyErr := buildhistory.NewHandler(
+			historyToken,
+			exporter.Directory(),
+		)
+		if historyErr != nil {
+			_, _ = fmt.Fprintln(stderr, "buildopt-server: invalid history API configuration")
+			return exitConfiguration
+		}
+		historyHandler = configuredHistory
 	}
 
 	if *stateDirectory != "" && !filepath.IsAbs(*stateDirectory) {
@@ -444,6 +466,10 @@ func run(
 	handler := http.NewServeMux()
 	if githubQueueHandler != nil {
 		handler.Handle(githubqueue.WebhookPath, githubQueueHandler)
+	}
+	if historyHandler != nil {
+		handler.Handle(buildhistory.ListPath, historyHandler)
+		handler.Handle(buildhistory.DetailPath, historyHandler)
 	}
 	if cacheHandler != nil {
 		handler.Handle("/cache/", cacheHandler)
