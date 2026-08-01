@@ -97,10 +97,14 @@ func TestEdgeReadThroughUsesRealCommittedSharedRouteAndSurvivesOfflineRestart(t 
 			AllowInsecureLoopback: true,
 		},
 		Storage: edgecache.Storage{
-			StateDirectory:     root,
-			FilesystemPolicy:   edgecache.FilesystemPolicy,
-			MaximumObjectBytes: edgecache.MaximumObjectBytes,
-			StableTTLSeconds:   int64(edgecache.MaximumStableTTL / time.Second),
+			StateDirectory:       root,
+			FilesystemPolicy:     edgecache.FilesystemPolicy,
+			CapacityBytes:        edgecache.MinimumCapacityBytes,
+			MaximumObjectBytes:   edgecache.MaximumObjectBytes,
+			StableTTLSeconds:     int64(edgecache.MaximumStableTTL / time.Second),
+			HighWatermarkPercent: edgecache.HighWatermarkPercent,
+			LowWatermarkPercent:  edgecache.LowWatermarkPercent,
+			ProtectedPercent:     edgecache.ProtectedPercent,
 		},
 	}
 	edge, err := edgecache.OpenStore(config)

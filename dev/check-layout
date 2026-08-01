@@ -419,6 +419,8 @@ buildopt_required_files=(
     "internal/edgecache/client.go"
     "internal/edgecache/store.go"
     "internal/edgecache/store_test.go"
+    "internal/edgecache/capacity.go"
+    "internal/edgecache/capacity_test.go"
     "internal/contractcrypto/conformance_test.go"
     "internal/contractcrypto/jcs.go"
     "internal/generated/openapi/client_v1.go"

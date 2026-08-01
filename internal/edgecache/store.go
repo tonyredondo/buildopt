@@ -17,7 +17,10 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-const edgeEntrySchema = "buildopt.edge-cache/committed-entry/v1"
+const (
+	edgeEntrySchema          = "buildopt.edge-cache/committed-entry/v1"
+	currentEdgeSchemaVersion = 2
+)
 
 type Store struct {
 	mutex              sync.RWMutex
@@ -27,6 +30,11 @@ type Store struct {
 	writerLock         *os.File
 	stableTTL          time.Duration
 	maximumObjectBytes int64
+	capacityBytes      int64
+	highWatermarkBytes int64
+	lowWatermarkBytes  int64
+	protectedBytes     int64
+	reservedBytes      int64
 	closed             bool
 }
 
@@ -47,15 +55,22 @@ type storedEntry struct {
 	L1SecurityGeneration int64
 	CachedAtUnixMillis   int64
 	ExpiresAtUnixMillis  int64
+	Segment              string
+	LastAccessUnixMillis int64
 }
 
 // OpenStore prepares one private durable Edge committed-object store.
 func OpenStore(config Config) (*Store, error) {
 	root := config.Storage.StateDirectory
 	if !absoluteCleanNonRoot(root) || config.Storage.FilesystemPolicy != FilesystemPolicy ||
+		config.Storage.CapacityBytes < MinimumCapacityBytes ||
+		config.Storage.CapacityBytes > MaximumCapacityBytes ||
 		config.Storage.MaximumObjectBytes < 1 || config.Storage.MaximumObjectBytes > MaximumObjectBytes ||
 		config.Storage.StableTTLSeconds < 1 ||
-		config.Storage.StableTTLSeconds > int64(MaximumStableTTL/time.Second) {
+		config.Storage.StableTTLSeconds > int64(MaximumStableTTL/time.Second) ||
+		config.Storage.HighWatermarkPercent != HighWatermarkPercent ||
+		config.Storage.LowWatermarkPercent != LowWatermarkPercent ||
+		config.Storage.ProtectedPercent != ProtectedPercent {
 		return nil, errors.New("open Edge store: invalid storage configuration")
 	}
 	if err := preparePrivateRoot(root); err != nil {
@@ -111,6 +126,10 @@ func OpenStore(config Config) (*Store, error) {
 		writerLock:         lock,
 		stableTTL:          time.Duration(config.Storage.StableTTLSeconds) * time.Second,
 		maximumObjectBytes: config.Storage.MaximumObjectBytes,
+		capacityBytes:      config.Storage.CapacityBytes,
+		highWatermarkBytes: percentage(config.Storage.CapacityBytes, HighWatermarkPercent),
+		lowWatermarkBytes:  percentage(config.Storage.CapacityBytes, LowWatermarkPercent),
+		protectedBytes:     percentage(config.Storage.CapacityBytes, ProtectedPercent),
 	}
 	if err := store.initialize(); err != nil {
 		_ = store.Close()
@@ -138,10 +157,14 @@ func (store *Store) initialize() error {
 	if err := store.database.QueryRow("PRAGMA user_version").Scan(&version); err != nil {
 		return fmt.Errorf("initialize Edge metadata: %w", err)
 	}
-	if version != 0 && version != 1 {
+	if version < 0 || version > currentEdgeSchemaVersion {
 		return errors.New("initialize Edge metadata: unsupported schema version")
 	}
 	if version == 0 {
+		transaction, err := store.database.Begin()
+		if err != nil {
+			return err
+		}
 		for _, statement := range []string{
 			`CREATE TABLE IF NOT EXISTS edge_entries (
     tenant_id TEXT NOT NULL,
@@ -160,14 +183,41 @@ func (store *Store) initialize() error {
     l1_security_generation INTEGER NOT NULL,
     cached_at_unix_ms INTEGER NOT NULL,
     expires_at_unix_ms INTEGER NOT NULL,
+	segment TEXT NOT NULL CHECK (segment IN ('PROBATION', 'PROTECTED')),
+	last_access_unix_ms INTEGER NOT NULL,
     PRIMARY KEY (tenant_id, repository_id, trust_domain, namespace,
                  namespace_generation, cache_key)
 ) STRICT`,
-			"PRAGMA user_version=1",
+			"PRAGMA user_version=2",
 		} {
-			if _, err := store.database.Exec(statement); err != nil {
+			if _, err := transaction.Exec(statement); err != nil {
+				_ = transaction.Rollback()
 				return fmt.Errorf("initialize Edge metadata: %w", err)
 			}
+		}
+		if err := transaction.Commit(); err != nil {
+			return err
+		}
+		version = currentEdgeSchemaVersion
+	}
+	if version == 1 {
+		transaction, err := store.database.Begin()
+		if err != nil {
+			return err
+		}
+		for _, statement := range []string{
+			"ALTER TABLE edge_entries ADD COLUMN segment TEXT NOT NULL DEFAULT 'PROBATION' CHECK (segment IN ('PROBATION', 'PROTECTED'))",
+			"ALTER TABLE edge_entries ADD COLUMN last_access_unix_ms INTEGER NOT NULL DEFAULT 0",
+			"UPDATE edge_entries SET last_access_unix_ms = cached_at_unix_ms WHERE last_access_unix_ms = 0",
+			"PRAGMA user_version=2",
+		} {
+			if _, err := transaction.Exec(statement); err != nil {
+				_ = transaction.Rollback()
+				return fmt.Errorf("migrate Edge metadata: %w", err)
+			}
+		}
+		if err := transaction.Commit(); err != nil {
+			return err
 		}
 	}
 	var integrity string
@@ -178,7 +228,8 @@ func (store *Store) initialize() error {
     schema_version, tenant_id, repository_id, trust_domain, namespace,
     namespace_generation, cache_key, blob_digest, size_bytes,
     decision_digest, authority_digest, revocation_epoch, revocation_digest,
-    l1_security_generation, cached_at_unix_ms, expires_at_unix_ms
+    l1_security_generation, cached_at_unix_ms, expires_at_unix_ms,
+    segment, last_access_unix_ms
 FROM edge_entries LIMIT 0`)
 	if err != nil {
 		return fmt.Errorf("initialize Edge metadata: schema drift: %w", err)
@@ -235,6 +286,12 @@ func (store *Store) ReadThrough(
 	if err != nil {
 		return nil, err
 	}
+	reservation, err := store.reserve(ctx, fetched.size)
+	if err != nil {
+		_ = fetched.body.Close()
+		return nil, err
+	}
+	defer store.release(reservation)
 	if err := store.persistFetched(ctx, authority, key, fetched, now); err != nil {
 		return nil, err
 	}
@@ -280,6 +337,10 @@ func (store *Store) OpenCommitted(
 		}
 		store.deleteEntry(ctx, entry)
 		return nil, ErrCacheMiss
+	}
+	if err := store.recordHit(ctx, entry, now); err != nil {
+		_ = file.Close()
+		return nil, err
 	}
 	return file, nil
 }
@@ -372,8 +433,10 @@ func (store *Store) persistFetched(
 		L1SecurityGeneration: authority.l1SecurityGeneration,
 		CachedAtUnixMillis:   now.UTC().UnixMilli(),
 		ExpiresAtUnixMillis:  now.UTC().Add(store.stableTTL).UnixMilli(),
+		Segment:              segmentProbation,
+		LastAccessUnixMillis: now.UTC().UnixMilli(),
 	}
-	if err := store.upsertEntry(ctx, entry); err != nil {
+	if err := store.publishEntryWithCapacityLocked(ctx, entry); err != nil {
 		return err
 	}
 	keep = true
@@ -389,7 +452,8 @@ func (store *Store) loadEntry(ctx context.Context, authority ReadAuthority, key 
     schema_version, tenant_id, repository_id, trust_domain, namespace,
     namespace_generation, cache_key, blob_digest, size_bytes,
     decision_digest, authority_digest, revocation_epoch, revocation_digest,
-    l1_security_generation, cached_at_unix_ms, expires_at_unix_ms
+    l1_security_generation, cached_at_unix_ms, expires_at_unix_ms,
+    segment, last_access_unix_ms
 FROM edge_entries
 WHERE tenant_id = ? AND repository_id = ? AND trust_domain = ?
   AND namespace = ? AND namespace_generation = ? AND cache_key = ?`,
@@ -401,39 +465,12 @@ WHERE tenant_id = ? AND repository_id = ? AND trust_domain = ?
 		&entry.SizeBytes, &entry.DecisionDigest, &entry.AuthorityDigest,
 		&entry.RevocationEpoch, &entry.RevocationDigest, &entry.L1SecurityGeneration,
 		&entry.CachedAtUnixMillis, &entry.ExpiresAtUnixMillis,
+		&entry.Segment, &entry.LastAccessUnixMillis,
 	)
 	if errors.Is(err, sql.ErrNoRows) {
 		return storedEntry{}, ErrCacheMiss
 	}
 	return entry, err
-}
-
-func (store *Store) upsertEntry(ctx context.Context, entry storedEntry) error {
-	_, err := store.database.ExecContext(ctx, `INSERT INTO edge_entries (
-    tenant_id, repository_id, trust_domain, namespace, namespace_generation,
-    cache_key, schema_version, blob_digest, size_bytes, decision_digest,
-    authority_digest, revocation_epoch, revocation_digest,
-    l1_security_generation, cached_at_unix_ms, expires_at_unix_ms
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-ON CONFLICT (tenant_id, repository_id, trust_domain, namespace,
-             namespace_generation, cache_key) DO UPDATE SET
-    schema_version = excluded.schema_version,
-    blob_digest = excluded.blob_digest,
-    size_bytes = excluded.size_bytes,
-    decision_digest = excluded.decision_digest,
-    authority_digest = excluded.authority_digest,
-    revocation_epoch = excluded.revocation_epoch,
-    revocation_digest = excluded.revocation_digest,
-    l1_security_generation = excluded.l1_security_generation,
-    cached_at_unix_ms = excluded.cached_at_unix_ms,
-    expires_at_unix_ms = excluded.expires_at_unix_ms`,
-		entry.Tenant, entry.Repository, entry.TrustDomain, entry.Namespace,
-		entry.NamespaceGeneration, entry.Key, entry.SchemaVersion, entry.BlobDigest,
-		entry.SizeBytes, entry.DecisionDigest, entry.AuthorityDigest,
-		entry.RevocationEpoch, entry.RevocationDigest, entry.L1SecurityGeneration,
-		entry.CachedAtUnixMillis, entry.ExpiresAtUnixMillis,
-	)
-	return err
 }
 
 func (store *Store) deleteEntry(ctx context.Context, entry storedEntry) {

@@ -66,9 +66,11 @@ single-node configuration, loopback listener and authenticated Shared-origin
 rules, bounded local-storage declaration, and immutable Shared-only commit and
 collision authority. C2-002 adds authenticated Shared-only committed read-
 through, complete content-address verification before SQLite publication, and
-per-read exact current-revocation authorization across offline restart. Later
-C2 blocks own byte SLRU, pending replication, and the executable two-node proxy
-proof; no Edge server route exists yet.
+per-read exact current-revocation authorization across offline restart. C2-003
+adds conservative byte reservations, hard quota admission, durable TTL,
+probation/protected byte-SLRU, 85/75 pressure maintenance, and transactional v1
+metadata migration. Later C2 blocks own pending replication and the executable
+two-node proxy proof; no Edge server route exists yet.
 
 `neutralenvelope/` owns the strict `WS-009` observation and report contract. It
 pairs externally timed native and optimization-off wrapper executions,

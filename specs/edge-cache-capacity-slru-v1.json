@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "buildopt.specs/edge-cache-capacity-slru/v1",
+  "workItem": "C2-003",
+  "accounting": {
+    "unit": "BYTES",
+    "capacity": "COMMITTED_LOGICAL_PLUS_OUTSTANDING_RESERVATIONS",
+    "reservation": "EXACT_DECLARED_CONTENT_LENGTH_BEFORE_BODY_READ",
+    "hardQuota": "TRANSACTIONALLY_RECHECKED_BEFORE_PUBLICATION",
+    "replacement": "SAME_AUTHORITY_BOUND_KEY_SIZE_SUBTRACTED",
+    "oversubscription": "REJECT_BYTE_FREE"
+  },
+  "slru": {
+    "newEntrySegment": "PROBATION",
+    "verifiedHitSegment": "PROTECTED",
+    "highWatermarkPercent": 85,
+    "lowWatermarkPercent": 75,
+    "protectedTargetPercent": 80,
+    "pressureOrder": [
+      "OLDEST_PROBATION",
+      "OLDEST_PROTECTED"
+    ],
+    "pressureTarget": "AT_OR_BELOW_LOW_WATERMARK",
+    "publishingEntrySelfEviction": "FORBIDDEN",
+    "protectedOverflow": "DEMOTE_OLDEST_TO_PROBATION"
+  },
+  "maintenance": {
+    "ordering": [
+      "DELETE_EXPIRED_LOGICAL_METADATA",
+      "ENFORCE_PRESSURE_WATERMARKS",
+      "ENFORCE_PROTECTED_TARGET",
+      "DELETE_UNREFERENCED_PHYSICAL_BLOBS"
+    ],
+    "deduplicatedBlob": "PRESERVE_WHILE_REFERENCED",
+    "reporting": [
+      "LOGICAL_BYTES",
+      "SEGMENT_BYTES",
+      "RESERVED_BYTES",
+      "OBJECTS",
+      "EXPIRATIONS",
+      "EVICTIONS",
+      "DEMOTIONS",
+      "PHYSICAL_DELETIONS"
+    ]
+  },
+  "metadata": {
+    "currentSchemaVersion": 2,
+    "versionOneMigration": "TRANSACTIONAL_TO_PROBATION_WITH_CACHED_TIME",
+    "futureSchema": "REJECT"
+  },
+  "testing": {
+    "productionCapacityRangeGiB": [
+      1,
+      500
+    ],
+    "reducedCapacityFixture": "PACKAGE_PRIVATE_DETERMINISTIC_TEST_ONLY",
+    "raceDetector": true
+  },
+  "boundaries": {
+    "closes": [
+      "C2-003"
+    ],
+    "doesNotClose": [
+      "C2-004",
+      "C2-005",
+      "C2-G01",
+      "EIGHT_HOUR_SOAK",
+      "PRODUCTION_HARDENING"
+    ],
+    "sharedSoleCommitAuthority": true,
+    "edgeCollisionAuthority": false,
+    "pendingWrites": false
+  }
+}

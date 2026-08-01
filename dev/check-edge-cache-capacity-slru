@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/edge-cache-capacity-slru-v1.json"
+
+for buildopt_command in go jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Edge capacity command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/edge-cache-capacity-slru/v1" and
+    .workItem == "C2-003" and
+    .accounting.unit == "BYTES" and
+    .accounting.capacity == "COMMITTED_LOGICAL_PLUS_OUTSTANDING_RESERVATIONS" and
+    .accounting.reservation == "EXACT_DECLARED_CONTENT_LENGTH_BEFORE_BODY_READ" and
+    .accounting.hardQuota == "TRANSACTIONALLY_RECHECKED_BEFORE_PUBLICATION" and
+    .accounting.oversubscription == "REJECT_BYTE_FREE" and
+    .slru.newEntrySegment == "PROBATION" and
+    .slru.verifiedHitSegment == "PROTECTED" and
+    .slru.highWatermarkPercent == 85 and
+    .slru.lowWatermarkPercent == 75 and
+    .slru.protectedTargetPercent == 80 and
+    .slru.pressureOrder == ["OLDEST_PROBATION", "OLDEST_PROTECTED"] and
+    .slru.pressureTarget == "AT_OR_BELOW_LOW_WATERMARK" and
+    .slru.publishingEntrySelfEviction == "FORBIDDEN" and
+    .maintenance.ordering[0] == "DELETE_EXPIRED_LOGICAL_METADATA" and
+    .maintenance.ordering[3] == "DELETE_UNREFERENCED_PHYSICAL_BLOBS" and
+    .metadata.currentSchemaVersion == 2 and
+    .metadata.versionOneMigration == "TRANSACTIONAL_TO_PROBATION_WITH_CACHED_TIME" and
+    .boundaries.closes == ["C2-003"] and
+    (.boundaries.doesNotClose | index("C2-004")) != null and
+    .boundaries.sharedSoleCommitAuthority == true and
+    .boundaries.edgeCollisionAuthority == false and
+    .boundaries.pendingWrites == false
+' "${buildopt_contract}" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+./dev/check-edge-cache-config
+./dev/run --toolchain go -- go test -race -count=1 ./internal/edgecache
+./dev/run --toolchain go -- go test -race -count=1 ./internal/sharedcache \
+    -run '^TestEdgeReadThroughUsesRealCommittedSharedRouteAndSurvivesOfflineRestart$'
+./dev/run --toolchain go -- go vet ./internal/edgecache ./internal/sharedcache
+
+printf 'C2-003 Edge capacity checks passed: hard byte quota, reservations, TTL, and byte-SLRU pressure maintenance\n'

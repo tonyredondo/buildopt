@@ -1521,6 +1521,21 @@ Negative cases cover pending/malformed/corrupt responses, policy or revocation
 drift, TTL, local corruption, and a competing writer. SLRU and writes remain
 separate later blocks.
 
+## Edge Cache capacity and byte-SLRU
+
+Run the C2-003 hard-capacity and local pressure proof with:
+
+```bash
+./dev/check-edge-cache-capacity-slru
+```
+
+The checker composes strict Edge configuration with the complete Edge race
+suite and the real Shared committed-read regression. Deterministic reduced-size
+fixtures prove exact reservations, no hard-quota oversubscription, new-entry
+probation, hit promotion, protected-byte demotion, probation-first 85/75
+pressure eviction, logical-before-physical TTL cleanup, and metadata v1-to-v2
+migration. Pending writes and replication remain a separate later block.
+
 ## Build Impact manifest
 
 Validate the C3-001 customer-owned manifest boundary with:

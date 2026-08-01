@@ -37,10 +37,14 @@ func testReadAuthority() ReadAuthority {
 func testStoreConfig(root, sharedURL string) Config {
 	return Config{
 		Storage: Storage{
-			StateDirectory:     root,
-			FilesystemPolicy:   FilesystemPolicy,
-			MaximumObjectBytes: MaximumObjectBytes,
-			StableTTLSeconds:   int64(MaximumStableTTL / time.Second),
+			StateDirectory:       root,
+			FilesystemPolicy:     FilesystemPolicy,
+			CapacityBytes:        MinimumCapacityBytes,
+			MaximumObjectBytes:   MaximumObjectBytes,
+			StableTTLSeconds:     int64(MaximumStableTTL / time.Second),
+			HighWatermarkPercent: HighWatermarkPercent,
+			LowWatermarkPercent:  LowWatermarkPercent,
+			ProtectedPercent:     ProtectedPercent,
 		},
 		Shared: Shared{
 			BaseURL:               sharedURL,
@@ -278,7 +282,7 @@ func TestOpenStoreRejectsFutureMetadataAndSymlinkState(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := store.database.Exec("PRAGMA user_version=2"); err != nil {
+	if _, err := store.database.Exec("PRAGMA user_version=3"); err != nil {
 		t.Fatal(err)
 	}
 	if err := store.Close(); err != nil {
