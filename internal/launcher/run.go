@@ -156,7 +156,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	if gateway != nil && handshake != nil {
 		childEnvironment = map[string]string{
 			pluginAttemptIDEnvironment:   handshake.attemptID,
-			pluginSocketEnvironment:      handshake.listener.Addr().String(),
+			pluginSocketEnvironment:      handshake.endpoint,
 			pluginTokenEnvironment:       handshake.tokenText,
 			gatewayURLEnvironment:        gateway.endpoint,
 			gatewayUsernameEnvironment:   gateway.username,
