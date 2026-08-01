@@ -1503,6 +1503,21 @@ unsafe paths and symlinks, ambiguous ownership, unknown fields, trailing
 documents, and every unknown-change policy except `FULL_GRAPH`. Passing this
 checker does not authorize selection or satisfy the separate `BIA-002` gate.
 
+## Build Impact declared graph
+
+Run the C3-002 conservative decision matrix with:
+
+```bash
+./dev/check-build-impact-declared-graph
+```
+
+The checker composes C3-001 with a manifest-digest-bound Gradle graph and
+proves reverse-dependent expansion, complete artifact/check coverage,
+Test-owned check preservation, static/manifest/adapter global fallbacks, and
+strict rejection of missing security fields, cycles, unknown references, and
+Test-containing alternatives. Execution stays on the original entrypoints;
+the calculated alternative is shadow-only.
+
 ## Runtime owner evaluation
 
 On the exact 4-CPU/16-GiB runner, execute real A/A and resource-profile

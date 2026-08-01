@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/build-impact-declared-graph-v1.json"
+
+for buildopt_command in go jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required declared-graph command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/build-impact-declared-graph/v1" and
+    .workItem == "C3-002" and
+    .graph.schemaVersion == "buildopt.build-impact/declared-graph/v1" and
+    .graph.authority == "GRADLE_DECLARED_GRAPH_PLUS_CUSTOMER_MANIFEST" and
+    .graph.history == "NEVER_AUTHORIZES_OMISSION" and
+    .graph.unknownRelationships == "FULL_GRAPH" and
+    .decision.execution == "ORIGINAL_ENTRYPOINTS" and
+    .decision.predictionModes == ["FULL_GRAPH", "SHADOW_ALTERNATIVE"] and
+    .decision.selectionAuthorized == false and
+    (.decision.candidateRequirements | length) == 6 and
+    (.decision.fallbacks | index("UNKNOWN_CHANGE_PATH")) != null and
+    .decision.testOptimizationChecks == "PRESERVED_UNCHANGED" and
+    .globalRules.outcome == "FULL_GRAPH" and
+    .boundaries.closes == ["C3-002"] and
+    (.boundaries.doesNotClose | index("BIA-002")) != null
+' "${buildopt_contract}" >/dev/null
+
+"${buildopt_script_dir}/check-build-impact-manifest"
+cd "${buildopt_repo_root}"
+go test -race -count=1 ./internal/buildimpact
+go vet ./internal/buildimpact
+printf 'C3-002 declared-graph checks passed: conservative shadow prediction with original execution\n'

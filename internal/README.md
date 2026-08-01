@@ -70,8 +70,12 @@ runner, metric catalog, envelope, launcher, server, and plugin inputs.
 only bounded, strict, repository-contained customer manifests bound to one
 repository and pipeline class, digests their canonical form, and rejects
 inferred entrypoints, ambiguous ownership, unsafe paths, symlinks, and any
-unknown-change policy other than `FULL_GRAPH`. A valid manifest does not yet
-authorize selection; declared-graph and BIA-002 gates remain mandatory.
+unknown-change policy other than `FULL_GRAPH`. C3-002 binds a complete
+Gradle-declared graph to that digest, maps source changes through transitive
+reverse dependents, and predicts only customer-enumerated alternatives that
+cover every affected project, artifact, and Build-owned check. Test-owned work
+is preserved and execution remains on the original entrypoints; shadow and
+BIA-002 gates remain mandatory.
 
 No type in this directory replaces the normative schemas, OpenAPI, or Protobuf definitions in `contracts/`.
 

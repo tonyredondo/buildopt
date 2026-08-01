@@ -23,6 +23,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`runtime-owner-evaluation-v1.md`](./runtime-owner-evaluation-v1.md) | `B-G01` / `B-G03` |
 | [`task-intelligence-poc-v1.md`](./task-intelligence-poc-v1.md) | `MVP-C1` |
 | [`build-impact-manifest-v1.md`](./build-impact-manifest-v1.md) | `C3-001` |
+| [`build-impact-declared-graph-v1.md`](./build-impact-declared-graph-v1.md) | `C3-002` |
 | [`custom-task-contract-java-recipe-v1.md`](./custom-task-contract-java-recipe-v1.md) | `C4-004` / `C4-G06` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`full-relevant-validation-gate-v1.md`](./full-relevant-validation-gate-v1.md) | `C4-006` / `C4-G02` |
@@ -182,6 +183,11 @@ manual restore all pass together.
 boundary for repository/pipeline binding, enumerated original and alternative
 entrypoint sets, required artifacts/checks, global paths, and mandatory
 `FULL_GRAPH` fallback.
+`build-impact-declared-graph-v1.json` is the C3-002 strict
+manifest-digest-bound Gradle graph and shadow decision contract: affected
+projects include reverse dependents, every required artifact/Build-owned check
+must remain reachable, Test-owned checks stay untouched, and all unknown or
+global cases run the original full graph.
 `pending-commit-cas-v1.json` is the A0-005 lifecycle contract for durable
 pending attempts, canonical Ed25519 decisions, atomic first-writer visibility,
 context-bound opaque HTTP GET/PUT, quarantine, and startup reconciliation.

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "buildopt.specs/build-impact-declared-graph/v1",
+  "workItem": "C3-002",
+  "graph": {
+    "schemaVersion": "buildopt.build-impact/declared-graph/v1",
+    "bindings": ["repositoryId", "pipelineClass", "manifestDigest", "adapterVersion"],
+    "authority": "GRADLE_DECLARED_GRAPH_PLUS_CUSTOMER_MANIFEST",
+    "history": "NEVER_AUTHORIZES_OMISSION",
+    "maximumBytes": 2097152,
+    "unknownRelationships": "FULL_GRAPH",
+    "incomplete": "FULL_GRAPH"
+  },
+  "decision": {
+    "execution": "ORIGINAL_ENTRYPOINTS",
+    "predictionModes": ["FULL_GRAPH", "SHADOW_ALTERNATIVE"],
+    "selectionAuthorized": false,
+    "affectedProjects": "CHANGED_PLUS_TRANSITIVE_REVERSE_DEPENDENTS",
+    "candidateRequirements": [
+      "CUSTOMER_ENUMERATED_ENTRYPOINT_SET",
+      "ALL_AFFECTED_PROJECTS_REACHED",
+      "ALL_REQUIRED_ARTIFACTS_REACHED",
+      "ALL_BUILD_OWNED_CHECKS_REACHED",
+      "NO_TEST_TASKS",
+      "NO_UNKNOWN_RELATIONSHIPS"
+    ],
+    "fallbacks": [
+      "GLOBAL_CHANGE",
+      "UNKNOWN_CHANGE_PATH",
+      "INVALID_CHANGE_PATH",
+      "GRAPH_INVALID",
+      "GRAPH_INCOMPLETE",
+      "UNKNOWN_RELATIONSHIP",
+      "NO_AUTHORIZED_ALTERNATIVE"
+    ],
+    "testOptimizationChecks": "PRESERVED_UNCHANGED"
+  },
+  "globalRules": {
+    "union": ["STATIC_BUILD_LOGIC_PATHS", "MANIFEST_GLOBAL_PATHS", "GRAPH_GLOBAL_PATHS"],
+    "outcome": "FULL_GRAPH"
+  },
+  "boundaries": {
+    "closes": ["C3-002"],
+    "doesNotClose": ["C3-003", "C3-004", "C3-005", "C3-G01", "BIA-002", "ACTIVE_SELECTION", "TEST_SELECTION", "EIGHT_HOUR_SOAK", "PRODUCTION_PROMOTION"],
+    "ownerOperatedProofOfConcept": true
+  }
+}

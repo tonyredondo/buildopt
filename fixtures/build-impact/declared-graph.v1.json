@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "buildopt.build-impact/declared-graph/v1",
+  "repositoryId": "tonyredondo/buildopt",
+  "pipelineClass": "pull-request",
+  "manifestDigest": "sha256:2c55a3d6de6d75f34bf5c07f6464d0bb9ac54631352a1f3132220d99e69ba2c0",
+  "adapterVersion": "gradle-declared-v1",
+  "complete": true,
+  "projects": [
+    {
+      "path": ":fixtures:golden-lane",
+      "sourcePaths": ["fixtures/golden-lane/**"],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":jvm:generated-client",
+      "sourcePaths": ["jvm/generated-client/**"],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":jvm:gradle-plugin",
+      "sourcePaths": ["jvm/gradle-plugin/**"],
+      "dependsOn": [":jvm:generated-client"],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":jvm:jvm-agent",
+      "sourcePaths": ["jvm/jvm-agent/**"],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":jvm:patcher",
+      "sourcePaths": ["jvm/patcher/**"],
+      "dependsOn": [],
+      "unknownRelationships": false
+    }
+  ],
+  "entrypoints": [
+    {
+      "name": "assemble",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [":fixtures:golden-lane", ":jvm:generated-client", ":jvm:gradle-plugin", ":jvm:jvm-agent", ":jvm:patcher"],
+      "artifactIds": ["gradle-plugin-jar", "patcher-jar"],
+      "checkIds": [],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    },
+    {
+      "name": ":jvm:generated-client:assemble",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [":jvm:generated-client"],
+      "artifactIds": [],
+      "checkIds": [],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    },
+    {
+      "name": ":jvm:gradle-plugin:assemble",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [":jvm:generated-client", ":jvm:gradle-plugin"],
+      "artifactIds": ["gradle-plugin-jar"],
+      "checkIds": [],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    },
+    {
+      "name": ":jvm:jvm-agent:assemble",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [":jvm:jvm-agent"],
+      "artifactIds": [],
+      "checkIds": [],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    },
+    {
+      "name": ":jvm:patcher:assemble",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [":jvm:patcher"],
+      "artifactIds": ["patcher-jar"],
+      "checkIds": [],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    }
+  ],
+  "globalChangePaths": [
+    "contracts/**",
+    "gradle-build-optimization-platform.md"
+  ]
+}
