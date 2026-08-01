@@ -128,7 +128,9 @@ fi
 buildopt_required_files=(
     "internal/localauthority/authority.go"
     "internal/localauthority/crypto.go"
-    "internal/localauthority/files_linux.go"
+    "internal/localauthority/files.go"
+    "internal/localauthority/files_platform_unix.go"
+    "internal/localauthority/files_platform_windows.go"
     "internal/localauthority/state.go"
     "internal/launcher/local_authority.go"
     "internal/launcher/local_gateway.go"

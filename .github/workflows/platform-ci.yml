@@ -51,7 +51,7 @@ jobs:
           "$RUNNER_TEMP/install/bin/buildopt-impact" --help >/dev/null 2>&1 || test "$?" -eq 64
           "$RUNNER_TEMP/install/bin/buildopt-server" --help >/dev/null
           "$RUNNER_TEMP/install/bin/buildopt-edge" --help >/dev/null
-          doctor=$($RUNNER_TEMP/install/bin/buildopt doctor)
+          doctor=$("$RUNNER_TEMP/install/bin/buildopt" doctor)
           jq -e '.operatingSystem == "darwin" and .persistentGateway and .managedL1 and .managedGradleBootstrap and .server and .edge and .backgroundService == "LAUNCHD"' <<<"$doctor" >/dev/null
       - name: Prove Gradle handshake and Build Impact export
         shell: bash
@@ -76,11 +76,11 @@ jobs:
           export BUILDOPT_L1_TRUST_DOMAIN=native-ci
           export BUILDOPT_L1_COMPATIBILITY_CLASS=gradle-9.6.1-jdk-21-darwin-arm64
           export BUILDOPT_L1_SECURITY_GENERATION=1
-          first=$($RUNNER_TEMP/install/bin/buildopt run -- /usr/bin/env)
+          first=$("$RUNNER_TEMP/install/bin/buildopt" run -- /usr/bin/env)
           grep -F 'BUILDOPT_MANAGED_L1_MODE=READ_WRITE' <<<"$first"
           state=$(find "$RUNNER_TEMP/runtime/slots" -name gateway-state.json -type f)
           generation=$(jq -r .gatewayConnectionGeneration "$state")
-          second=$($RUNNER_TEMP/install/bin/buildopt run -- /usr/bin/env)
+          second=$("$RUNNER_TEMP/install/bin/buildopt" run -- /usr/bin/env)
           grep -F 'BUILDOPT_MANAGED_L1_MODE=READ_WRITE' <<<"$second"
           test "$(jq -r .gatewayConnectionGeneration "$state")" = "$generation"
           touch "$RUNNER_TEMP/server.json"

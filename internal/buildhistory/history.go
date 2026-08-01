@@ -110,8 +110,7 @@ func NewStore(directory string) (*Store, error) {
 		return nil, errors.New("resolve build history export directory")
 	}
 	info, err := os.Lstat(absolute)
-	if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 ||
-		info.Mode().Perm() != 0o700 {
+	if err != nil || !privateHistoryDirectoryInfo(info) {
 		return nil, errors.New("build history export directory is not private")
 	}
 	return &Store{directory: absolute}, nil
@@ -238,8 +237,7 @@ func (store *Store) load() ([]loadedDocument, error) {
 func (store *Store) loadFile(name string) (loadedDocument, error) {
 	path := filepath.Join(store.directory, name)
 	info, err := os.Lstat(path)
-	if err != nil || !info.Mode().IsRegular() ||
-		info.Mode()&os.ModeSymlink != 0 || info.Mode().Perm() != 0o600 ||
+	if err != nil || !privateHistoryFileInfo(info) ||
 		info.Size() < 1 || info.Size() > maximumFileBytes {
 		return loadedDocument{}, errors.New("build history contains an unsafe document")
 	}
