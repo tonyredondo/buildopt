@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `FULL RUNTIME PARITY IN PROGRESS` — the complete macOS/Windows runtime is implemented locally; hosted native acceptance remains open<br>
-**Current phase:** `PLAT-F6-004` — execute the full runtime and service lifecycle on hosted macOS and Windows runners<br>
+**Overall status:** `FUNCTIONAL EXPANSION COMPLETE` — full Build Optimization runtime parity is proven on Linux, macOS, and Windows<br>
+**Current phase:** `NO NON-DEFERRED IMPLEMENTATION BLOCK REMAINS` — productization hardening and long/external validation stay explicitly deferred<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use project-owned synthetic fixtures and repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -68,7 +68,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | CI-F3 | First-class GitLab CI installation, events, and synthetic proof | `DONE` | 1/1 | `E-145` |
 | BIA-F4 | Automatic Gradle graph discovery and generated impact manifest | `DONE` | 1/1 | `E-146` |
 | PLAT-F5 | Supported macOS and Windows build/runtime paths | `DONE` | 1/1 | `E-148` |
-| PLAT-F6 | Full persistent runtime parity on macOS and Windows | `DOING` | 0/1 | `E-149` local; hosted gate pending |
+| PLAT-F6 | Full persistent runtime parity on macOS and Windows | `DONE` | 1/1 | `E-150` |
 | GA-D | Production-ready hardening | `DEFERRED` | 0/1 | Functional beta with demonstrated value |
 
 Design baseline: 51 private-beta decisions are accepted in the RFC; their artifacts and tests remain pending as recorded in this tracker.
@@ -87,7 +87,7 @@ Preparation
                    └─→ complete MVP-C4
 ```
 
-The owner-operated POC target and optional MVP-A2/MVP-C2/MVP-C3/POC-O1/POC-O2 extensions are complete. The owner-prioritized functional expansion proceeds in this order:
+The owner-operated POC target, optional MVP-A2/MVP-C2/MVP-C3/POC-O1/POC-O2 extensions, and owner-prioritized functional expansion are complete in this order:
 
 ```text
 UX-F1 → PA-F2 → CI-F3 → BIA-F4 → PLAT-F5 → PLAT-F6
@@ -552,7 +552,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | CI-F3 | GitLab CI installer/template, job-event adapter, and owner-controlled end-to-end fixture | `DONE` | `E-145` current-tree synthetic gate |
 | BIA-F4 | Conservative Gradle graph discovery, generated manifest, drift handling, and selection proof | `DONE` | `E-146` current-tree composite gate |
 | PLAT-F5 | Cross-compilation inventory, portable transports/process control, packaging, and native CI | `DONE` | `E-148` hosted native gate |
-| PLAT-F6 | Persistent gateway/L1/bootstrap, server/Edge storage, native services, doctor, and full native CI | `DOING` | `E-149` local gate; hosted native gate pending |
+| PLAT-F6 | Persistent gateway/L1/bootstrap, server/Edge storage, native services, doctor, and full native CI | `DONE` | `E-150` hosted native and base gates |
 | MVP-C2 | Edge proxy, SLRU, and offline committed reads | `DONE` | `E-134` current-tree composite gate |
 | MVP-C3 | Conservative BIA and `BIA-002` gate | `DONE` | `E-128` current-tree composite gate |
 | POC-O1 | Standalone Edge runtime, signed reload, local status, bundle, and systemd unit | `DONE` | `E-135` current-tree composite gate |
@@ -710,11 +710,11 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `PLAT-F6-001` | Portable persistent gateway, managed L1, local authority, and Gradle bootstrap cache | `DONE` | Codex | `E-149` |
 | `PLAT-F6-002` | Portable Shared/Edge storage and server/Edge binaries for macOS and Windows | `DONE` | Codex | `E-149` |
 | `PLAT-F6-003` | Complete native packages, machine-readable doctor, launchd integration, and SCM-aware Windows Service lifecycle | `DONE` | Codex | `E-149` |
-| `PLAT-F6-004` | Hosted native runtime, storage, package, persistent-service, and install/remove proof | `DOING` | Codex | Native workflow pending |
+| `PLAT-F6-004` | Hosted native runtime, storage, package, persistent-service, and install/remove proof | `DONE` | Codex | `E-150` |
 
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
-| `PLAT-F6-G01` | macOS and Windows execute the complete Build Optimization runtime without silent platform degradation | `DOING` | Hosted native workflow pending |
+| `PLAT-F6-G01` | macOS and Windows execute the complete Build Optimization runtime without silent platform degradation | `DONE` | `E-150` |
 
 Test Optimization is an explicit non-goal for all five tracks. They may preserve or call its existing signed grant/result boundary, but no Test Optimization behavior or contract is widened here.
 
@@ -729,6 +729,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Repository layout | Git root, modules, and `F0-001` conventions | `dev/check-layout` and ShellCheck passed; structure included in the initial commit | 2026-07-29 | `E-006` |
 | Ownership boundaries | Path routing, accountable workstreams, cross-stack review, and authority limits | `dev/check-ownership` validated 16 CODEOWNERS paths, all 11 tracker workstreams, one verified repository principal, producer/consumer review, Test Optimization ownership, and the absence of an independent-approval claim | 2026-07-29 | `E-037` |
 | Base CI | Read-only push/PR validation for Go, Java 17 compatibility, optional Rust, and host-Git integration | The immutable hosted baseline remains run [30481886001](https://github.com/tonyredondo/buildopt/actions/runs/30481886001); the current local core lane passed 104 locked shell scripts, generated drift, all Go race/vet packages, Java 17 loading for all 19 Gradle-plugin classes, contract crypto, and the explicit 15-case PatchBundle checker; the optional Rust lane also passed | 2026-07-30 | `E-038`, `E-063`, `E-073..087` |
+| Full native runtime parity | Complete Build Optimization runtime, storage, package, Gradle/Build Impact, persistent gateway/L1, native services, cancellation, exact uninstall, and product boundary | Hosted Native Platform CI run [30721884722](https://github.com/tonyredondo/buildopt/actions/runs/30721884722) passed macOS 15 ARM64 and Windows Server 2025 AMD64 on exact SHA `56bc21c61fc2a0f15fa88b640fb8bfe735d878d0`; hosted Base CI run [30721884751](https://github.com/tonyredondo/buildopt/actions/runs/30721884751) passed the same SHA, including reproducible Go/Java checks, the owner POC lab, and optional Rust | 2026-08-01 | `E-150` |
 | Generated artifacts | Source-first inventory, locked generation, reviewable output, and stale-code rejection | The local-events descriptor regenerated byte-for-byte with protoc 35.1, a temporary valid source mutation produced divergent output, unsafe/unknown generator requests failed, conformance passed, and hosted base-CI run [30482598040](https://github.com/tonyredondo/buildopt/actions/runs/30482598040) enforced the gate on a clean checkout | 2026-07-29 | `E-039` |
 | Experiment/action lifecycles | Immutable aggregate versions, action transition preconditions, and exact promotion/invalidation linkage | Draft 2020-12 accepted 4 aggregate and 6 transition positives, rejected 4 negatives for each schema, and classified 3 valid/3 invalid linked vectors; local semantic checks and hosted base-CI run [30484082786](https://github.com/tonyredondo/buildopt/actions/runs/30484082786) passed on the exact implementation SHA | 2026-07-29 | `E-040` |
 | Evidence/policy/resource contracts | Task authority gates, fail-closed invocation policy, and finite prevalidated resource arms | Draft 2020-12 accepted the bound golden records, rejected incomplete trace, active kill switch, and failed-memory eligibility, and enforced exact policy/evidence/profile linkage plus a four-arm catalog; local core and hosted base-CI run [30485226736](https://github.com/tonyredondo/buildopt/actions/runs/30485226736) passed on the exact implementation SHA | 2026-07-29 | `E-041` |
@@ -970,6 +971,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-147` | 2026-08-01 | `PLAT-F5-001..003`, PLAT-F5 local evidence | Versioned [`Platform compatibility v1`](./specs/platform-compatibility-v1.md), exact [target/transport/process/package/boundary contract](./specs/platform-compatibility-v1.json), Darwin/Windows portable launcher implementations, macOS tar and Windows ZIP lifecycle packages, cancellation fixtures, and [`check-platform-compatibility`](./dev/check-platform-compatibility); race/vet passed on Linux, both CLIs cross-built as real Mach-O/PE AMD64 and ARM64 files, package and shell/PowerShell syntax checks passed, and the native workflow inventory was lint-ready | `DONE` locally for PLAT-F5-001..003; PLAT-F5-004 and the exit gate remain open until the hosted native runners execute the complete lifecycle |
 | `E-148` | 2026-08-01 | `PLAT-F5-004`, `PLAT-F5-G01`, PLAT-F5 exit | Hosted [Native Platform CI run 30714600404](https://github.com/tonyredondo/buildopt/actions/runs/30714600404) passed on exact implementation SHA `e80d3afea03b8a0b05de5f35c6cb0ef92e564686`; macOS 15 ARM64 and Windows Server 2025 AMD64 each built and packaged both CLIs, installed twice, launched, completed the real authenticated Gradle handshake and automatic Build Impact drift check, terminated descendants on cancellation, preserved an unrelated file during exact uninstall, and uploaded the native archive; the independent product-boundary job also passed | `DONE`: PLAT-F5 and the owner-prioritized functional expansion close without enabling Linux-only persistent services, running the deferred soak, or implementing Test Optimization |
 | `E-149` | 2026-08-01 | `PLAT-F6-001..003`, PLAT-F6 local evidence | Versioned [`Full runtime parity v2`](./specs/platform-runtime-parity-v2.md), exact [capability/security/resource/service contract](./specs/platform-runtime-parity-v2.json), shared Unix/Windows file locks, portable private storage and lifecycle layers, authenticated Windows loopback gateway control, common managed L1/local authority/Gradle bootstrap, cross-platform server/Edge, four-binary macOS package, five-binary Windows package with SCM wrapper, launchd/Windows Service installers, machine-readable [`buildopt doctor`](./internal/launcher/doctor.go), expanded native workflow, and [`check-platform-compatibility`](./dev/check-platform-compatibility); the local gate passed race tests for all touched runtime packages, focused vet, Mach-O/PE AMD64 and ARM64 builds, package upgrade/uninstall receipts, service-script syntax, and a source-clean diff check | `DONE` locally for PLAT-F6-001..003; PLAT-F6-004 and the exit gate remain open until hosted native runners execute the complete runtime lifecycle |
+| `E-150` | 2026-08-01 | `PLAT-F6-004`, `PLAT-F6-G01`, PLAT-F6 exit | Hosted [Native Platform CI run 30721884722](https://github.com/tonyredondo/buildopt/actions/runs/30721884722) passed on exact implementation SHA `56bc21c61fc2a0f15fa88b640fb8bfe735d878d0`: macOS 15 ARM64 and Windows Server 2025 AMD64 ran the complete native runtime suites, built all binaries, packaged and installed twice, reported exact doctor capabilities, completed the authenticated Gradle handshake and automatic Build Impact check, reused the persistent gateway and managed L1, installed/removed launchd or Windows SCM service definitions, terminated descendants, uninstalled exactly, preserved unrelated files, and uploaded both archives; the independent Test Optimization boundary passed, and [Base CI run 30721884751](https://github.com/tonyredondo/buildopt/actions/runs/30721884751) passed reproducible Go/Java, owner POC lab, and optional Rust on the same SHA | `DONE`: PLAT-F6 and the complete owner-prioritized Build Optimization functional expansion close without running the deferred eight-hour soak, using external design partners, entering GA-D productization, or implementing Test Optimization |
 
 ---
 
@@ -977,6 +979,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-01 | Closed `PLAT-F6-004`, `PLAT-F6-G01`, PLAT-F6, and the complete owner-prioritized functional expansion after exact-SHA hosted macOS/Windows runtime, storage, package, Gradle/Build Impact, persistent gateway/L1, launchd/SCM, cancellation/uninstall, Base CI, owner-lab, and product-boundary evidence passed | Codex |
 | 2026-08-01 | Activated PLAT-F6 full runtime parity and closed `PLAT-F6-001..003` locally: added portable persistence, locking, authority, bootstrap, Shared/Edge storage, all runtime binaries, explicit doctor semantics, launchd and SCM-aware Windows Service integration, complete packages, and cross-platform race/build/package evidence; left only hosted native acceptance open | Codex |
 | 2026-08-01 | Closed `PLAT-F5-004`, `PLAT-F5-G01`, PLAT-F5, and the owner-prioritized functional expansion after hosted macOS 15 ARM64 and Windows Server 2025 AMD64 proved the complete native package, launcher, Gradle handshake, Build Impact, cancellation, cleanup, uninstall, artifact, and Test Optimization-boundary lifecycle | Codex |
 | 2026-08-01 | Closed `BIA-F4-001..003`, `BIA-F4-G01`, and BIA-F4 with real Gradle discovery, deterministic reviewable generation, exact drift rejection, conservative fallback, and full-versus-selected artifact parity; completed local `PLAT-F5-001..003` portability, packaging, and cross-build evidence while leaving native hosted acceptance open | Codex |
