@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 2)); then
+    printf 'usage: %s <gitlab-job-status> <output>\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_status=$1
+buildopt_output=$2
+buildopt_project_dir=${CI_PROJECT_DIR:?missing CI_PROJECT_DIR}
+buildopt_project_id=${CI_PROJECT_ID:?missing CI_PROJECT_ID}
+buildopt_project_path=${CI_PROJECT_PATH:?missing CI_PROJECT_PATH}
+buildopt_pipeline_id=${CI_PIPELINE_ID:?missing CI_PIPELINE_ID}
+buildopt_job_id=${CI_JOB_ID:?missing CI_JOB_ID}
+buildopt_job_name=${CI_JOB_NAME:?missing CI_JOB_NAME}
+buildopt_revision=${CI_COMMIT_SHA:?missing CI_COMMIT_SHA}
+buildopt_source_project_id=${CI_MERGE_REQUEST_SOURCE_PROJECT_ID:-${buildopt_project_id}}
+buildopt_started_at=${CI_JOB_STARTED_AT:?missing CI_JOB_STARTED_AT}
+buildopt_completed_at=${BUILDOPT_EVENT_COMPLETED_AT:-}
+
+if [[ "${GITLAB_CI:-}" != "true" ]] ||
+    [[ ! "${buildopt_project_id}" =~ ^[1-9][0-9]*$ ]] ||
+    [[ ! "${buildopt_source_project_id}" =~ ^[1-9][0-9]*$ ]] ||
+    [[ ! "${buildopt_pipeline_id}" =~ ^[1-9][0-9]*$ ]] ||
+    [[ ! "${buildopt_job_id}" =~ ^[1-9][0-9]*$ ]] ||
+    [[ ! "${buildopt_project_path}" =~ ^[A-Za-z0-9][A-Za-z0-9._/-]{0,255}$ ]] ||
+    [[ ! "${buildopt_job_name}" =~ ^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$ ]] ||
+    [[ ! "${buildopt_revision}" =~ ^([0-9a-f]{40}|[0-9a-f]{64})$ ]] ||
+    [[ ! "${buildopt_started_at}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-5][0-9]Z$ ]]; then
+    printf 'GitLab job metadata is invalid\n' >&2
+    exit 1
+fi
+if [[ -z "${buildopt_completed_at}" ]]; then
+    buildopt_completed_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+fi
+if [[ ! "${buildopt_completed_at}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-5][0-9]Z$ ]]; then
+    printf 'GitLab completion timestamp is invalid\n' >&2
+    exit 1
+fi
+
+case "${buildopt_status}" in
+    success)
+        buildopt_outcome=SUCCESS
+        ;;
+    failed)
+        buildopt_outcome=FAILED
+        ;;
+    canceled)
+        buildopt_outcome=CANCELLED
+        ;;
+    skipped | manual)
+        buildopt_outcome=UNAVAILABLE
+        ;;
+    *)
+        printf 'unsupported GitLab job status\n' >&2
+        exit 1
+        ;;
+esac
+
+buildopt_project_dir=$(realpath -m -- "${buildopt_project_dir}")
+buildopt_expected_output="${buildopt_project_dir}/.buildopt/gitlab-job-event.json"
+if [[ "$(realpath -m -- "${buildopt_output}")" != "${buildopt_expected_output}" ]]; then
+    printf 'GitLab event output must use the fixed private artifact path\n' >&2
+    exit 1
+fi
+umask 077
+mkdir -p -- "${buildopt_project_dir}/.buildopt"
+if [[ -L "${buildopt_project_dir}/.buildopt" ]]; then
+    printf 'GitLab event directory must not be a symlink\n' >&2
+    exit 1
+fi
+
+buildopt_fork=false
+if [[ "${buildopt_source_project_id}" != "${buildopt_project_id}" ]]; then
+    buildopt_fork=true
+fi
+buildopt_temporary=$(mktemp "${buildopt_project_dir}/.buildopt/.gitlab-event.XXXXXX")
+trap 'rm -f -- "${buildopt_temporary}"' EXIT
+jq -S -n --arg projectId "${buildopt_project_id}" --arg projectPath "${buildopt_project_path}" --arg pipelineId "${buildopt_pipeline_id}" --arg jobId "${buildopt_job_id}" --arg jobName "${buildopt_job_name}" --arg revision "${buildopt_revision}" --arg outcome "${buildopt_outcome}" --arg startedAt "${buildopt_started_at}" --arg completedAt "${buildopt_completed_at}" --argjson fork "${buildopt_fork}" '{schemaVersion:"buildopt.ci-job-event/v1", provider:"GITLAB",
+      projectId:$projectId, projectPath:$projectPath, pipelineId:$pipelineId,
+      jobId:$jobId, jobName:$jobName, revision:$revision, outcome:$outcome,
+      startedAt:$startedAt, completedAt:$completedAt, fork:$fork,
+      credentialsConsumed:false}' >"${buildopt_temporary}"
+chmod 0600 "${buildopt_temporary}"
+if [[ -e "${buildopt_output}" ]]; then
+    if cmp -s "${buildopt_temporary}" "${buildopt_output}"; then
+        exit 0
+    fi
+    printf 'GitLab event already exists with different content\n' >&2
+    exit 1
+fi
+mv -- "${buildopt_temporary}" "${buildopt_output}"
+trap - EXIT

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "buildopt.specs/gitlab-ci-synthetic/v1",
+  "trackerId": "CI-F3-003",
+  "fixture": "OWNER_CONTROLLED_LOCAL_GITLAB_ENVIRONMENT",
+  "release": {
+    "version": "0.0.0-ws007",
+    "sha256": "d15319d6a9c08bb02587a68a93ea49803678a57d137fb812676f7f614682dcc9"
+  },
+  "proof": [
+    "COMPONENT_YAML",
+    "CHECKSUM_PINNED_INSTALL",
+    "IDEMPOTENT_INSTALL_REUSE",
+    "ARGV_PRESERVATION",
+    "CHILD_FAILURE_PRESERVATION",
+    "SUCCESS_EVENT",
+    "FAILED_EVENT",
+    "CANCELLED_EVENT",
+    "UNAVAILABLE_EVENT",
+    "EXACT_EVENT_REPLAY",
+    "FORK_WITHOUT_CREDENTIAL"
+  ],
+  "forbidden": [
+    "CI_JOB_TOKEN",
+    "PRIVATE_TOKEN",
+    "BUILDOPT_TOKEN",
+    "REMOTE_MUTATION",
+    "RAW_ENVIRONMENT_EXPORT"
+  ],
+  "testOptimizationChanged": false,
+  "remoteMutationPerformed": false
+}

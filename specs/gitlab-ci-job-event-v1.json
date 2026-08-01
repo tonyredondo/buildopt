@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "buildopt.specs/gitlab-ci-job-event/v1",
+  "trackerId": "CI-F3-002",
+  "record": "buildopt.ci-job-event/v1",
+  "provider": "GITLAB",
+  "identity": [
+    "projectId",
+    "pipelineId",
+    "jobId"
+  ],
+  "outcomes": {
+    "success": "SUCCESS",
+    "failed": "FAILED",
+    "canceled": "CANCELLED",
+    "skipped": "UNAVAILABLE",
+    "manual": "UNAVAILABLE"
+  },
+  "publication": {
+    "path": ".buildopt/gitlab-job-event.json",
+    "mode": "0600",
+    "atomic": true,
+    "idempotentExactReplay": true,
+    "divergence": "REJECT"
+  },
+  "fork": {
+    "detectedByProjectId": true,
+    "credentialsConsumed": false
+  },
+  "rawEnvironmentIncluded": false,
+  "remoteMutationPerformed": false
+}

@@ -1,0 +1,43 @@
+spec:
+  inputs:
+    job-name:
+      default: buildopt-gradle
+    stage:
+      default: build
+    image:
+      default: eclipse-temurin:21-jdk
+    version:
+    archive-url:
+    archive-sha256:
+    gradle-tasks:
+      default: build
+---
+"$[[ inputs.job-name ]]":
+  stage: "$[[ inputs.stage ]]"
+  image: "$[[ inputs.image ]]"
+  timeout: 30m
+  variables:
+    BUILDOPT_VERSION: "$[[ inputs.version ]]"
+    BUILDOPT_ARCHIVE_URL: "$[[ inputs.archive-url ]]"
+    BUILDOPT_ARCHIVE_SHA256: "$[[ inputs.archive-sha256 ]]"
+    BUILDOPT_GRADLE_TASKS: "$[[ inputs.gradle-tasks ]]"
+    BUILDOPT_EVENT_PATH: ".buildopt/gitlab-job-event.json"
+  before_script:
+    - ./.gitlab/setup-buildopt
+    - source .buildopt/release.env
+  script:
+    - read -r -a buildopt_tasks <<< "$BUILDOPT_GRADLE_TASKS"
+    - buildopt run -- ./gradlew --no-daemon -I "$BUILDOPT_GRADLE_INIT_SCRIPT" "${buildopt_tasks[@]}"
+  after_script:
+    - ./.gitlab/buildopt-job-event "$CI_JOB_STATUS" "$BUILDOPT_EVENT_PATH"
+  artifacts:
+    when: always
+    expire_in: 7 days
+    paths:
+      - .buildopt/gitlab-job-event.json
+      - .buildopt/exports/
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_SOURCE_PROJECT_ID != $CI_PROJECT_ID'
+      variables:
+        BUILDOPT_REMOTE_ENABLED: "false"
+    - when: on_success

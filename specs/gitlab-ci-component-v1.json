@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "buildopt.specs/gitlab-ci-component/v1",
+  "trackerId": "CI-F3-001",
+  "component": ".gitlab/buildopt-component.yml",
+  "consumerPin": "FULL_COMMIT_SHA",
+  "runner": "linux-amd64",
+  "release": {
+    "version": "EXACT_SEMVER",
+    "archiveUrl": "HTTPS_ONLY",
+    "archiveSha256": "LOWERCASE_SHA256",
+    "installer": ".github/actions/install-buildopt",
+    "archiveLayout": "RELEASE_BUNDLE_V1"
+  },
+  "job": {
+    "gradleWrapper": "./gradlew",
+    "initScript": ".github/actions/buildopt.init.gradle",
+    "artifactsWhen": "always",
+    "artifactRetention": "7 days"
+  },
+  "forkPolicy": {
+    "remoteEnabled": false,
+    "credentialsConsumed": []
+  },
+  "outputs": [
+    "BUILDOPT_PATH",
+    "BUILDOPT_SERVER_PATH",
+    "BUILDOPT_GRADLE_PLUGIN_JAR",
+    "BUILDOPT_JVM_AGENT_JAR",
+    "BUILDOPT_GRADLE_INIT_SCRIPT"
+  ],
+  "remoteMutationPerformed": false
+}

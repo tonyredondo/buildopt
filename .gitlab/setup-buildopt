@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_version=${BUILDOPT_VERSION:?missing BUILDOPT_VERSION}
+buildopt_archive_url=${BUILDOPT_ARCHIVE_URL:?missing BUILDOPT_ARCHIVE_URL}
+buildopt_archive_sha256=${BUILDOPT_ARCHIVE_SHA256:?missing BUILDOPT_ARCHIVE_SHA256}
+buildopt_project_dir=${CI_PROJECT_DIR:?missing CI_PROJECT_DIR}
+
+if [[ "${GITLAB_CI:-}" != "true" ]] ||
+    [[ "$(uname -s)" != "Linux" ]] ||
+    [[ "$(uname -m)" != "x86_64" ]]; then
+    printf 'BuildOpt GitLab component v1 supports Linux x86_64 runners only\n' >&2
+    exit 1
+fi
+for buildopt_value in "${buildopt_project_dir}" "${buildopt_repo_root}"; do
+    if [[ -z "${buildopt_value}" ]] ||
+        [[ "${buildopt_value}" == *$'\n'* ]] ||
+        [[ "${buildopt_value}" == *$'\r'* ]]; then
+        printf 'GitLab supplied an unsafe filesystem path\n' >&2
+        exit 1
+    fi
+done
+if [[ "$(realpath -m -- "${buildopt_project_dir}")" != "${buildopt_repo_root}" ]]; then
+    printf 'GitLab project directory does not match the checked-out component\n' >&2
+    exit 1
+fi
+
+umask 077
+mkdir -p -- "${buildopt_project_dir}/.buildopt"
+buildopt_install_root=$(
+    "${buildopt_repo_root}/.github/actions/install-buildopt" --version "${buildopt_version}" --archive-url "${buildopt_archive_url}" --archive-sha256 "${buildopt_archive_sha256}" --install-dir "${buildopt_project_dir}/.buildopt/install"
+)
+buildopt_binary="${buildopt_install_root}/bin/buildopt"
+buildopt_server="${buildopt_install_root}/bin/buildopt-server"
+buildopt_plugin="${buildopt_install_root}/lib/buildopt-gradle-plugin-${buildopt_version}.jar"
+buildopt_agent="${buildopt_install_root}/lib/buildopt-jvm-agent-${buildopt_version}.jar"
+buildopt_init_script="${buildopt_repo_root}/.github/actions/buildopt.init.gradle"
+for buildopt_file in "${buildopt_binary}" "${buildopt_server}" "${buildopt_plugin}" "${buildopt_agent}" "${buildopt_init_script}"; do
+    if [[ ! -f "${buildopt_file}" ]] || [[ -L "${buildopt_file}" ]]; then
+        printf 'BuildOpt GitLab component output is missing or unsafe\n' >&2
+        exit 1
+    fi
+done
+
+buildopt_env="${buildopt_project_dir}/.buildopt/release.env"
+{
+    printf 'export PATH=%q\n' "${buildopt_install_root}/bin:${PATH}"
+    printf 'export BUILDOPT_RELEASE_ROOT=%q\n' "${buildopt_install_root}"
+    printf 'export BUILDOPT_PATH=%q\n' "${buildopt_binary}"
+    printf 'export BUILDOPT_SERVER_PATH=%q\n' "${buildopt_server}"
+    printf 'export BUILDOPT_GRADLE_PLUGIN_JAR=%q\n' "${buildopt_plugin}"
+    printf 'export BUILDOPT_JVM_AGENT_JAR=%q\n' "${buildopt_agent}"
+    printf 'export BUILDOPT_GRADLE_INIT_SCRIPT=%q\n' "${buildopt_init_script}"
+} >"${buildopt_env}"
+chmod 0600 "${buildopt_env}"
+printf 'BuildOpt GitLab component installed version %s for linux-amd64\n' "${buildopt_version}"

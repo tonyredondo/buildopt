@@ -212,6 +212,16 @@ supplied by the same download location into a trust root. See the
 [WS-007 fixture](./fixtures/github-actions/README.md) for the immutable test
 pins and scope boundaries.
 
+## GitLab CI
+
+GitLab consumers include [the BuildOpt component](./.gitlab/buildopt-component.yml)
+at a full commit SHA and supply the same exact release version, HTTPS archive,
+and SHA-256 used by the GitHub Action. The Linux AMD64 job runs the repository
+Gradle wrapper, publishes a private normalized job event plus redacted BuildOpt
+exports, records failure/cancellation/unavailable outcomes explicitly, and
+forces remote behavior off for cross-project merge requests. See the
+[GitLab integration guide](./.gitlab/README.md).
+
 For immediate recovery, set `BUILDOPT_BYPASS=1` on the launcher invocation.
 The launcher consumes that value and runs the original command without the
 plugin, gateway, or configured server path. The

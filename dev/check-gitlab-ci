@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_fixture="${buildopt_repo_root}/fixtures/github-actions"
+buildopt_archive="${buildopt_fixture}/testdata/buildopt-0.0.0-ws007-linux-amd64.tar.gz"
+buildopt_url='https://example.invalid/buildopt-0.0.0-ws007-linux-amd64.tar.gz'
+buildopt_sha='d15319d6a9c08bb02587a68a93ea49803678a57d137fb812676f7f614682dcc9'
+buildopt_before=$(git status --porcelain=v1 --untracked-files=all)
+buildopt_test_root=$(mktemp -d)
+trap 'rm -rf -- "${buildopt_test_root}"' EXIT
+
+for buildopt_contract in specs/gitlab-ci-component-v1.json specs/gitlab-ci-job-event-v1.json specs/gitlab-ci-synthetic-v1.json; do
+    jq -e '.remoteMutationPerformed == false' "${buildopt_contract}" >/dev/null
+done
+jq -e '.consumerPin == "FULL_COMMIT_SHA" and .runner == "linux-amd64" and
+  .release.archiveUrl == "HTTPS_ONLY" and
+  .forkPolicy == {remoteEnabled:false,credentialsConsumed:[]}' specs/gitlab-ci-component-v1.json >/dev/null
+jq -e '.outcomes.canceled == "CANCELLED" and
+  .outcomes.skipped == "UNAVAILABLE" and
+  .publication.idempotentExactReplay == true and
+  .rawEnvironmentIncluded == false' specs/gitlab-ci-job-event-v1.json >/dev/null
+jq -e '(.proof | length) == 11 and .testOptimizationChanged == false' specs/gitlab-ci-synthetic-v1.json >/dev/null
+ruby -e 'require "yaml"; YAML.safe_load_file(ARGV.fetch(0), aliases: true)' .gitlab/buildopt-component.yml
+if rg -n 'CI_JOB_TOKEN|PRIVATE_TOKEN|BUILDOPT_TOKEN' .gitlab; then
+    printf 'GitLab component references a forbidden credential\n' >&2
+    exit 1
+fi
+
+buildopt_project="${buildopt_test_root}/project"
+mkdir -p "${buildopt_project}"
+cp -R .github .gitlab "${buildopt_project}/"
+mkdir "${buildopt_test_root}/bin"
+ln -s "${buildopt_fixture}/fake-curl" "${buildopt_test_root}/bin/curl"
+buildopt_setup() {
+    env BUILDOPT_FIXTURE_ARCHIVE="${buildopt_archive}" BUILDOPT_FIXTURE_ARCHIVE_URL="${buildopt_url}" BUILDOPT_FIXTURE_CURL_LOG="${buildopt_test_root}/curl.log" BUILDOPT_VERSION=0.0.0-ws007 BUILDOPT_ARCHIVE_URL="${buildopt_url}" BUILDOPT_ARCHIVE_SHA256="${buildopt_sha}" CI_PROJECT_DIR="${buildopt_project}" GITLAB_CI=true PATH="${buildopt_test_root}/bin:${PATH}" "${buildopt_project}/.gitlab/setup-buildopt"
+}
+buildopt_setup >/dev/null
+buildopt_setup >/dev/null
+# shellcheck disable=SC1091  # Generated private environment in the temporary fixture.
+source "${buildopt_project}/.buildopt/release.env"
+[[ "$(stat -c '%a' "${buildopt_project}/.buildopt/release.env")" == 600 ]]
+buildopt_actual=$(
+    buildopt run -- "${buildopt_fixture}/argv-probe" "" "space value" '*'
+)
+[[ "${buildopt_actual}" == $'argc=3\narg0=<>\narg1=<space value>\narg2=<*>' ]]
+set +e
+buildopt run -- "${buildopt_fixture}/argv-probe" --exit 37 >/dev/null
+buildopt_exit=$?
+set -e
+[[ "${buildopt_exit}" == 37 ]]
+
+buildopt_event_case() {
+    local buildopt_name=$1
+    local buildopt_status=$2
+    local buildopt_outcome=$3
+    local buildopt_source=${4:-42}
+    local buildopt_root="${buildopt_test_root}/${buildopt_name}"
+    local buildopt_event="${buildopt_root}/.buildopt/gitlab-job-event.json"
+    mkdir -p "${buildopt_root}"
+    local -a buildopt_environment=(
+        GITLAB_CI=true
+        CI_PROJECT_DIR="${buildopt_root}"
+        CI_PROJECT_ID=42
+        CI_PROJECT_PATH=owner/synthetic
+        CI_PIPELINE_ID=1001
+        CI_JOB_ID=2002
+        CI_JOB_NAME=buildopt-gradle
+        CI_COMMIT_SHA=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        CI_JOB_STARTED_AT=2026-08-01T10:00:00Z
+        CI_MERGE_REQUEST_SOURCE_PROJECT_ID="${buildopt_source}"
+        BUILDOPT_EVENT_COMPLETED_AT=2026-08-01T10:01:00Z
+    )
+    env "${buildopt_environment[@]}" ./.gitlab/buildopt-job-event "${buildopt_status}" "${buildopt_event}"
+    env "${buildopt_environment[@]}" ./.gitlab/buildopt-job-event "${buildopt_status}" "${buildopt_event}"
+    jq -e --arg outcome "${buildopt_outcome}" '.provider == "GITLAB" and .outcome == $outcome and
+         .credentialsConsumed == false' "${buildopt_event}" >/dev/null
+    [[ "$(stat -c '%a' "${buildopt_event}")" == 600 ]]
+}
+buildopt_event_case success success SUCCESS
+buildopt_event_case failed failed FAILED
+buildopt_event_case cancelled canceled CANCELLED
+buildopt_event_case unavailable skipped UNAVAILABLE
+buildopt_event_case fork success SUCCESS 99
+jq -e '.fork == true and .credentialsConsumed == false' "${buildopt_test_root}/fork/.buildopt/gitlab-job-event.json" >/dev/null
+
+if [[ "$(git status --porcelain=v1 --untracked-files=all)" != "${buildopt_before}" ]]; then
+    printf 'GitLab CI checker changed the source tree\n' >&2
+    exit 1
+fi
+printf 'CI-F3 GitLab CI OK: pinned install, argv/failure, events, replay, and fork isolation\n'
