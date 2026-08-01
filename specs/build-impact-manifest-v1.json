@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "buildopt.specs/build-impact-manifest/v1",
+  "workItem": "C3-001",
+  "manifest": {
+    "schemaVersion": "buildopt.build-impact/manifest/v1",
+    "ownership": "REPOSITORY_COMMITTED",
+    "bindings": [
+      "repositoryId",
+      "pipelineClass",
+      "manifestVersion"
+    ],
+    "customerAuthority": [
+      "originalEntrypoints",
+      "allowedAlternatives",
+      "requiredArtifacts",
+      "requiredChecks",
+      "globalChangePaths"
+    ],
+    "unknownChangePolicy": "FULL_GRAPH"
+  },
+  "parser": {
+    "maximumBytes": 262144,
+    "unknownFields": "REJECT",
+    "trailingDocuments": "REJECT",
+    "manifestFile": "REGULAR_REPOSITORY_CONTAINED_NO_SYMLINKS",
+    "repositoryPaths": "CLEAN_RELATIVE_FORWARD_SLASH_GLOBS",
+    "gradleEntrypoints": "CANONICAL_TASK_NAMES_ONLY",
+    "digest": "SHA256_CANONICAL_JSON"
+  },
+  "ownershipBoundary": {
+    "artifactOwner": "BUILD_OPTIMIZATION",
+    "checkOwners": [
+      "BUILD_OPTIMIZATION",
+      "TEST_OPTIMIZATION"
+    ],
+    "testSelection": "NEVER_AUTHORIZED"
+  },
+  "failClosed": [
+    "BINDING_MISMATCH",
+    "UNKNOWN_FIELD",
+    "UNSAFE_PATH",
+    "UNSAFE_ENTRYPOINT",
+    "AMBIGUOUS_ID",
+    "NON_FULL_GRAPH_UNKNOWN_POLICY"
+  ],
+  "boundaries": {
+    "closes": [
+      "C3-001"
+    ],
+    "doesNotClose": [
+      "C3-002",
+      "C3-003",
+      "C3-004",
+      "C3-005",
+      "C3-G01",
+      "BIA-002",
+      "EIGHT_HOUR_SOAK",
+      "PRODUCTION_PROMOTION"
+    ],
+    "ownerOperatedProofOfConcept": true
+  }
+}

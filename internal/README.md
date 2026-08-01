@@ -66,6 +66,13 @@ pairs externally timed native and optimization-off wrapper executions,
 reconciles required-output digests, retains signed differences, and binds the
 runner, metric catalog, envelope, launcher, server, and plugin inputs.
 
+`buildimpact/` owns the C3 conservative graph-omission boundary. C3-001 loads
+only bounded, strict, repository-contained customer manifests bound to one
+repository and pipeline class, digests their canonical form, and rejects
+inferred entrypoints, ambiguous ownership, unsafe paths, symlinks, and any
+unknown-change policy other than `FULL_GRAPH`. A valid manifest does not yet
+authorize selection; declared-graph and BIA-002 gates remain mandatory.
+
 No type in this directory replaces the normative schemas, OpenAPI, or Protobuf definitions in `contracts/`.
 
 `generated/openapi/` contains the checked-in Go transport binding derived from

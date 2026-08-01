@@ -1489,6 +1489,20 @@ The diagnostic Agent and Linux helper remain fail-closed `UNAVAILABLE`; the
 reviewed source-patch route is the only active pilot route. Revalidate the exact
 Java recipe separately with `./dev/check-custom-task-contract-recipe`.
 
+## Build Impact manifest
+
+Validate the C3-001 customer-owned manifest boundary with:
+
+```bash
+./dev/check-build-impact-manifest
+```
+
+The checker loads the repository fixture through the production parser and
+rejects repository/pipeline mismatches, inferred or unsafe Gradle entrypoints,
+unsafe paths and symlinks, ambiguous ownership, unknown fields, trailing
+documents, and every unknown-change policy except `FULL_GRAPH`. Passing this
+checker does not authorize selection or satisfy the separate `BIA-002` gate.
+
 ## Runtime owner evaluation
 
 On the exact 4-CPU/16-GiB runner, execute real A/A and resource-profile

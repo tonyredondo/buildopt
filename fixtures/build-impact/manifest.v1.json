@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "tonyredondo/buildopt",
+  "pipelineClass": "pull-request",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    "assemble"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "jvm-components",
+      "entrypoints": [
+        ":jvm:generated-client:assemble",
+        ":jvm:gradle-plugin:assemble",
+        ":jvm:jvm-agent:assemble",
+        ":jvm:patcher:assemble"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "gradle-plugin-jar",
+      "path": "jvm/gradle-plugin/build/libs/*.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "patcher-jar",
+      "path": "jvm/patcher/build/libs/*.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [
+    {
+      "id": "jvm-tests",
+      "owner": "TEST_OPTIMIZATION"
+    }
+  ],
+  "globalChangePaths": [
+    "settings.gradle.kts",
+    "build.gradle.kts",
+    "build-logic/**",
+    "gradle/**"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

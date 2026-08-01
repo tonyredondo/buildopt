@@ -22,6 +22,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`owner-poc-evaluation-v1.md`](./owner-poc-evaluation-v1.md) | `A1-006` / `A1-G06` |
 | [`runtime-owner-evaluation-v1.md`](./runtime-owner-evaluation-v1.md) | `B-G01` / `B-G03` |
 | [`task-intelligence-poc-v1.md`](./task-intelligence-poc-v1.md) | `MVP-C1` |
+| [`build-impact-manifest-v1.md`](./build-impact-manifest-v1.md) | `C3-001` |
 | [`custom-task-contract-java-recipe-v1.md`](./custom-task-contract-java-recipe-v1.md) | `C4-004` / `C4-G06` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`full-relevant-validation-gate-v1.md`](./full-relevant-validation-gate-v1.md) | `C4-006` / `C4-G02` |
@@ -177,6 +178,10 @@ rotation, atomic publication, and fail-closed admission contract.
 `self-hosted-single-node-gate-v1.json` is the A2-G01 current-source composite
 that closes MVP-A2 only when configuration, installation, upgrade/restart, and
 manual restore all pass together.
+`build-impact-manifest-v1.json` is the C3-001 strict customer-authority
+boundary for repository/pipeline binding, enumerated original and alternative
+entrypoint sets, required artifacts/checks, global paths, and mandatory
+`FULL_GRAPH` fallback.
 `pending-commit-cas-v1.json` is the A0-005 lifecycle contract for durable
 pending attempts, canonical Ed25519 decisions, atomic first-writer visibility,
 context-bound opaque HTTP GET/PUT, quarantine, and startup reconciliation.

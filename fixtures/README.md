@@ -64,3 +64,9 @@ reproducible JAR used by the paired overhead gate.
 build, actual `buildSrc`, and included plugin each expose a cacheable `Test`
 task so the control can replay from an authenticated remote cache and the
 managed no-grant path can prove zero `GET`/`PUT` requests.
+
+`build-impact/` contains the C3-001 repository-committed manifest fixture. It
+binds the repository and pull-request pipeline, enumerates one complete
+customer-owned JVM entrypoint alternative and required outputs, retains Test
+Optimization ownership of its check, and forces `FULL_GRAPH` for unknown
+changes without authorizing an omission.

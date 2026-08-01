@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/build-impact-manifest-v1.json"
+
+for buildopt_command in go jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required build-impact command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/build-impact-manifest/v1" and
+    .workItem == "C3-001" and
+    .manifest.schemaVersion == "buildopt.build-impact/manifest/v1" and
+    .manifest.ownership == "REPOSITORY_COMMITTED" and
+    .manifest.bindings == ["repositoryId", "pipelineClass", "manifestVersion"] and
+    .manifest.unknownChangePolicy == "FULL_GRAPH" and
+    .parser.maximumBytes == 262144 and
+    .parser.unknownFields == "REJECT" and
+    .parser.manifestFile == "REGULAR_REPOSITORY_CONTAINED_NO_SYMLINKS" and
+    .ownershipBoundary.artifactOwner == "BUILD_OPTIMIZATION" and
+    .ownershipBoundary.checkOwners == ["BUILD_OPTIMIZATION", "TEST_OPTIMIZATION"] and
+    .ownershipBoundary.testSelection == "NEVER_AUTHORIZED" and
+    .boundaries.closes == ["C3-001"] and
+    (.boundaries.doesNotClose | index("BIA-002")) != null and
+    .boundaries.ownerOperatedProofOfConcept == true
+' "${buildopt_contract}" >/dev/null
+
+cd "${buildopt_repo_root}"
+go test -race -count=1 ./internal/buildimpact
+printf 'C3-001 build-impact manifest checks passed: strict repository/pipeline binding and FULL_GRAPH fallback\n'
