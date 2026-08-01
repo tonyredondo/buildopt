@@ -5,6 +5,7 @@ buildopt_usage() {
     printf '%s\n' \
         "usage: $0 install --bundle DIRECTORY --key FILE --root ABSOLUTE_PATH --data-root ABSOLUTE_PATH --environment-file ABSOLUTE_PATH --authority ABSOLUTE_PATH --trust-root ABSOLUTE_PATH --credential ABSOLUTE_PATH [--listen 127.0.0.1:8042]" \
         "       $0 upgrade --bundle DIRECTORY --key FILE --root ABSOLUTE_PATH" \
+        "       $0 restore --snapshot ABSOLUTE_PATH --root ABSOLUTE_PATH --authority ABSOLUTE_PATH --trust-root ABSOLUTE_PATH --credential ABSOLUTE_PATH" \
         "       $0 status --root ABSOLUTE_PATH"
 }
 
@@ -16,6 +17,7 @@ fi
 shift
 
 buildopt_bundle=
+buildopt_snapshot=
 buildopt_key=
 buildopt_root=
 buildopt_data_root=
@@ -27,13 +29,14 @@ buildopt_listen=127.0.0.1:8042
 buildopt_listen_explicit=0
 while (($# > 0)); do
     case "$1" in
-        --bundle|--key|--root|--data-root|--environment-file|--authority|--trust-root|--credential|--listen)
+        --bundle|--snapshot|--key|--root|--data-root|--environment-file|--authority|--trust-root|--credential|--listen)
             if (($# < 2)); then
                 buildopt_usage >&2
                 exit 64
             fi
             case "$1" in
                 --bundle) buildopt_bundle=$2 ;;
+                --snapshot) buildopt_snapshot=$2 ;;
                 --key) buildopt_key=$2 ;;
                 --root) buildopt_root=$2 ;;
                 --data-root) buildopt_data_root=$2 ;;
@@ -62,6 +65,7 @@ done
 case "${buildopt_command}" in
     install)
         if [[ -z "${buildopt_bundle}" ]] ||
+            [[ -n "${buildopt_snapshot}" ]] ||
             [[ -z "${buildopt_key}" ]] ||
             [[ -z "${buildopt_root}" ]] ||
             [[ -z "${buildopt_data_root}" ]] ||
@@ -75,6 +79,7 @@ case "${buildopt_command}" in
         ;;
     upgrade)
         if [[ -z "${buildopt_bundle}" ]] ||
+            [[ -n "${buildopt_snapshot}" ]] ||
             [[ -z "${buildopt_key}" ]] ||
             [[ -z "${buildopt_root}" ]] ||
             [[ -n "${buildopt_data_root}" ]] ||
@@ -87,9 +92,25 @@ case "${buildopt_command}" in
             exit 64
         fi
         ;;
+    restore)
+        if [[ -n "${buildopt_bundle}" ]] ||
+            [[ -z "${buildopt_snapshot}" ]] ||
+            [[ -n "${buildopt_key}" ]] ||
+            [[ -z "${buildopt_root}" ]] ||
+            [[ -n "${buildopt_data_root}" ]] ||
+            [[ -n "${buildopt_environment_file}" ]] ||
+            [[ -z "${buildopt_authority}" ]] ||
+            [[ -z "${buildopt_trust_root}" ]] ||
+            [[ -z "${buildopt_credential}" ]] ||
+            ((buildopt_listen_explicit != 0)); then
+            buildopt_usage >&2
+            exit 64
+        fi
+        ;;
     status)
         if [[ -z "${buildopt_root}" ]] ||
             [[ -n "${buildopt_bundle}" ]] ||
+            [[ -n "${buildopt_snapshot}" ]] ||
             [[ -n "${buildopt_key}" ]] ||
             [[ -n "${buildopt_data_root}" ]] ||
             [[ -n "${buildopt_environment_file}" ]] ||
@@ -113,6 +134,7 @@ for buildopt_command_name in \
     chmod \
     cmp \
     cp \
+    find \
     flock \
     id \
     jq \
@@ -329,6 +351,31 @@ buildopt_restore_private_file() {
     mv -T -- "${buildopt_temporary}" "${buildopt_target}"
 }
 
+buildopt_prepare_operation_lock() {
+    buildopt_self_hosted_lock="${buildopt_root}/.buildopt-self-hosted.lock"
+    if [[ -e "${buildopt_self_hosted_lock}" ]] ||
+        [[ -L "${buildopt_self_hosted_lock}" ]]; then
+        if ! buildopt_expect_private_file "${buildopt_self_hosted_lock}"; then
+            printf 'self-hosted operation lock is unsafe\n' >&2
+            return 1
+        fi
+    else
+        buildopt_lock_temporary=$(mktemp "${buildopt_root}/.lock.XXXXXX")
+        chmod 0600 "${buildopt_lock_temporary}"
+        mv -T -- "${buildopt_lock_temporary}" "${buildopt_self_hosted_lock}"
+    fi
+    exec 7<>"${buildopt_self_hosted_lock}"
+    if ! flock -n 7; then
+        printf 'another self-hosted operation is active\n' >&2
+        return 1
+    fi
+}
+
+buildopt_release_operation_lock() {
+    flock -u 7
+    exec 7>&-
+}
+
 buildopt_load_and_validate() {
     local buildopt_deployment_status
     local buildopt_expected_unit
@@ -470,23 +517,7 @@ if [[ "${buildopt_command}" == "upgrade" ]]; then
     buildopt_load_and_validate >/dev/null
     buildopt_old_version=${buildopt_version}
     buildopt_old_release_root=${buildopt_release_root}
-    buildopt_self_hosted_lock="${buildopt_root}/.buildopt-self-hosted.lock"
-    if [[ -e "${buildopt_self_hosted_lock}" ]] ||
-        [[ -L "${buildopt_self_hosted_lock}" ]]; then
-        if ! buildopt_expect_private_file "${buildopt_self_hosted_lock}"; then
-            printf 'self-hosted upgrade lock is unsafe\n' >&2
-            exit 1
-        fi
-    else
-        buildopt_lock_temporary=$(mktemp "${buildopt_root}/.lock.XXXXXX")
-        chmod 0600 "${buildopt_lock_temporary}"
-        mv -T -- "${buildopt_lock_temporary}" "${buildopt_self_hosted_lock}"
-    fi
-    exec 7<>"${buildopt_self_hosted_lock}"
-    if ! flock -n 7; then
-        printf 'another self-hosted upgrade is active\n' >&2
-        exit 1
-    fi
+    buildopt_prepare_operation_lock
     buildopt_load_and_validate >/dev/null
     if [[ "${buildopt_version}" != "${buildopt_old_version}" ]] ||
         [[ "${buildopt_release_root}" != "${buildopt_old_release_root}" ]]; then
@@ -544,8 +575,226 @@ if [[ "${buildopt_command}" == "upgrade" ]]; then
     buildopt_upgrade_complete=1
     trap - EXIT
     rm -f -- "${buildopt_old_unit}" "${buildopt_old_manifest}"
-    flock -u 7
-    exec 7>&-
+    buildopt_release_operation_lock
+    exit 0
+fi
+
+if [[ "${buildopt_command}" == "restore" ]]; then
+    buildopt_manifest_path="${buildopt_root}/.buildopt-self-hosted.json"
+    buildopt_deployment_manifest="${buildopt_root}/.buildopt-deployment.json"
+    buildopt_unit_path="${buildopt_root}/buildopt-self-hosted.service"
+    if ! buildopt_expect_private_directory "${buildopt_root}" ||
+        ! buildopt_expect_private_directory "${buildopt_root}/versions" ||
+        ! buildopt_expect_private_file "${buildopt_manifest_path}" ||
+        ! buildopt_expect_private_file "${buildopt_deployment_manifest}" ||
+        ! buildopt_expect_private_file "${buildopt_unit_path}" ||
+        ! jq -e \
+            --arg buildopt_root "${buildopt_root}" \
+            '
+                .schemaVersion == "buildopt.dev/self-hosted-install/v1" and
+                .deploymentRoot == $buildopt_root and
+                (.dataRoot | type == "string" and startswith("/")) and
+                (.releaseRoot | type == "string" and startswith("/")) and
+                (.version | type == "string" and length > 0) and
+                (.configPath | type == "string" and startswith("/")) and
+                .unitPath == ($buildopt_root + "/buildopt-self-hosted.service")
+            ' "${buildopt_manifest_path}" >/dev/null; then
+        printf 'self-hosted restore metadata is invalid\n' >&2
+        exit 1
+    fi
+    buildopt_data_root=$(jq -r '.dataRoot' "${buildopt_manifest_path}")
+    buildopt_release_root=$(jq -r '.releaseRoot' "${buildopt_manifest_path}")
+    buildopt_version=$(jq -r '.version' "${buildopt_manifest_path}")
+    buildopt_environment_file=$(jq -r '.environmentFile' "${buildopt_manifest_path}")
+    buildopt_old_authority=$(jq -r '.authorityPath' "${buildopt_manifest_path}")
+    buildopt_old_trust_root=$(jq -r '.trustRootPath' "${buildopt_manifest_path}")
+    buildopt_old_credential=$(jq -r '.credentialPath' "${buildopt_manifest_path}")
+    buildopt_listen=$(jq -r '.listen' "${buildopt_manifest_path}")
+    buildopt_self_hosted_root="${buildopt_data_root}/self-hosted"
+    buildopt_shared_root="${buildopt_data_root}/shared"
+    buildopt_export_root="${buildopt_data_root}/exports"
+    buildopt_config_path="${buildopt_self_hosted_root}/config.json"
+    buildopt_expected_release_root=$(
+        jq -r \
+            --arg buildopt_root "${buildopt_root}" \
+            '
+                $buildopt_root + "/versions/" + .current.base + "/release"
+            ' "${buildopt_deployment_manifest}"
+    )
+    if ! jq -e \
+        --arg buildopt_data_root "${buildopt_data_root}" \
+        --arg buildopt_version "${buildopt_version}" \
+        '
+            .schemaVersion == "buildopt.dev/deployment/v1" and
+            .dataRoot == $buildopt_data_root and
+            .current.version == $buildopt_version
+        ' "${buildopt_deployment_manifest}" >/dev/null ||
+        [[ "${buildopt_release_root}" != "${buildopt_expected_release_root}" ]] ||
+        [[ ! -x "${buildopt_release_root}/bin/buildopt-server" ]] ||
+        [[ -L "${buildopt_release_root}/bin/buildopt-server" ]] ||
+        ! buildopt_canonical_safe_path "${buildopt_data_root}" ||
+        [[ -e "${buildopt_data_root}" ]] ||
+        [[ -L "${buildopt_data_root}" ]] ||
+        ! buildopt_validate_environment_file "${buildopt_environment_file}" ||
+        ! buildopt_validate_listener "${buildopt_listen}" ||
+        ! buildopt_validate_reference_file "${buildopt_old_authority}" ||
+        ! buildopt_validate_reference_file "${buildopt_old_trust_root}" ||
+        ! buildopt_validate_reference_file "${buildopt_old_credential}" ||
+        ! buildopt_validate_reference_file "${buildopt_authority}" ||
+        ! buildopt_validate_reference_file "${buildopt_trust_root}" ||
+        ! buildopt_validate_reference_file "${buildopt_credential}" ||
+        [[ "${buildopt_authority}" == "${buildopt_old_authority}" ]] ||
+        [[ "${buildopt_trust_root}" == "${buildopt_old_trust_root}" ]] ||
+        [[ "${buildopt_credential}" == "${buildopt_old_credential}" ]]; then
+        printf 'self-hosted restore inputs are invalid\n' >&2
+        exit 1
+    fi
+
+    buildopt_snapshot=$(realpath -e -- "${buildopt_snapshot}")
+    if ! buildopt_canonical_safe_path "${buildopt_snapshot}" ||
+        ! buildopt_expect_private_directory "${buildopt_snapshot}" ||
+        [[ "${buildopt_snapshot}" == "${buildopt_root}" ]] ||
+        [[ "${buildopt_snapshot}" == "${buildopt_root}/"* ]] ||
+        [[ "${buildopt_root}" == "${buildopt_snapshot}/"* ]] ||
+        [[ "${buildopt_snapshot}" == "${buildopt_data_root}" ]] ||
+        [[ "${buildopt_snapshot}" == "${buildopt_data_root}/"* ]] ||
+        [[ "${buildopt_data_root}" == "${buildopt_snapshot}/"* ]] ||
+        ! buildopt_expect_private_file \
+            "${buildopt_snapshot}/.buildopt-deployment-data.json" ||
+        ! jq -e \
+            --arg buildopt_root "${buildopt_root}" \
+            '
+                keys == ["deploymentRoot", "schemaVersion"] and
+                .schemaVersion == "buildopt.dev/deployment-data/v1" and
+                .deploymentRoot == $buildopt_root
+            ' "${buildopt_snapshot}/.buildopt-deployment-data.json" \
+            >/dev/null ||
+        ! buildopt_expect_private_directory "${buildopt_snapshot}/shared" ||
+        ! buildopt_expect_private_directory "${buildopt_snapshot}/self-hosted" ||
+        ! buildopt_expect_private_directory "${buildopt_snapshot}/exports" ||
+        ! buildopt_expect_private_file \
+            "${buildopt_snapshot}/shared/writer.lock"; then
+        printf 'self-hosted restore snapshot is invalid\n' >&2
+        exit 1
+    fi
+    buildopt_snapshot_invalid=0
+    while IFS= read -r -d '' buildopt_snapshot_path; do
+        buildopt_snapshot_type=$(stat -c '%F' -- "${buildopt_snapshot_path}")
+        buildopt_snapshot_mode=$(stat -c '%a' -- "${buildopt_snapshot_path}")
+        if [[ "$(stat -c '%u' -- "${buildopt_snapshot_path}")" != \
+            "$(id -u)" ]] ||
+            [[ -L "${buildopt_snapshot_path}" ]] ||
+            { [[ -d "${buildopt_snapshot_path}" ]] &&
+                [[ "${buildopt_snapshot_mode}" != "700" ]]; } ||
+            { [[ -f "${buildopt_snapshot_path}" ]] &&
+                [[ "${buildopt_snapshot_mode}" != "600" ]]; } ||
+            { [[ ! -d "${buildopt_snapshot_path}" ]] &&
+                [[ ! -f "${buildopt_snapshot_path}" ]]; }; then
+            printf 'unsafe self-hosted snapshot entry: %s (%s/%s)\n' \
+                "${buildopt_snapshot_path}" \
+                "${buildopt_snapshot_type}" \
+                "${buildopt_snapshot_mode}" >&2
+            buildopt_snapshot_invalid=1
+            break
+        fi
+    done < <(find "${buildopt_snapshot}" -xdev -print0)
+    if ((buildopt_snapshot_invalid != 0)); then
+        printf 'self-hosted restore snapshot tree is unsafe\n' >&2
+        exit 1
+    fi
+    exec 8<>"${buildopt_snapshot}/shared/writer.lock"
+    if ! flock -n 8; then
+        printf 'self-hosted restore snapshot writer is active\n' >&2
+        exit 1
+    fi
+
+    buildopt_old_inspection=$(
+        "${buildopt_release_root}/bin/buildopt-server" authority inspect \
+            --authority "${buildopt_old_authority}" \
+            --trust-root "${buildopt_old_trust_root}" \
+            --credential "${buildopt_old_credential}"
+    )
+    buildopt_new_inspection=$(
+        "${buildopt_release_root}/bin/buildopt-server" authority inspect \
+            --authority "${buildopt_authority}" \
+            --trust-root "${buildopt_trust_root}" \
+            --credential "${buildopt_credential}"
+    )
+    if ! jq -e \
+        --argjson buildopt_old "${buildopt_old_inspection}" \
+        '
+            .schemaVersion == "buildopt.server/authority-inspection/v1" and
+            $buildopt_old.schemaVersion ==
+                "buildopt.server/authority-inspection/v1" and
+            .repository == $buildopt_old.repository and
+            .policyId == $buildopt_old.policyId and
+            .namespace == $buildopt_old.namespace and
+            .policyVersion > $buildopt_old.policyVersion and
+            .revocationEpoch > $buildopt_old.revocationEpoch and
+            .l1SecurityGeneration > $buildopt_old.l1SecurityGeneration and
+            .namespaceGeneration > $buildopt_old.namespaceGeneration
+        ' <<<"${buildopt_new_inspection}" >/dev/null; then
+        printf 'self-hosted restore authority did not rotate every generation\n' >&2
+        exit 1
+    fi
+
+    buildopt_prepare_operation_lock
+    buildopt_old_manifest=$(mktemp "${buildopt_root}/.old-self-hosted.XXXXXX")
+    cp -- "${buildopt_manifest_path}" "${buildopt_old_manifest}"
+    chmod 0600 "${buildopt_old_manifest}"
+    buildopt_restore_parent=$(dirname -- "${buildopt_data_root}")
+    mkdir -p -- "${buildopt_restore_parent}"
+    buildopt_restore_stage=$(mktemp -d \
+        "${buildopt_restore_parent}/.buildopt-restore.XXXXXX")
+    chmod 0700 "${buildopt_restore_stage}"
+    buildopt_restore_published=0
+    buildopt_restore_manifest_changed=0
+    buildopt_restore_complete=0
+    # Invoked indirectly by the EXIT trap until restore commits.
+    # shellcheck disable=SC2329
+    buildopt_restore_cleanup() {
+        if ((buildopt_restore_complete == 0)); then
+            if ((buildopt_restore_manifest_changed == 1)); then
+                buildopt_restore_private_file \
+                    "${buildopt_old_manifest}" \
+                    "${buildopt_manifest_path}" || true
+            fi
+            if ((buildopt_restore_published == 1)) &&
+                [[ -d "${buildopt_data_root}" ]] &&
+                [[ ! -L "${buildopt_data_root}" ]] &&
+                [[ -f \
+                    "${buildopt_data_root}/.buildopt-deployment-data.json" ]] &&
+                [[ "$(jq -r '.deploymentRoot // ""' \
+                    "${buildopt_data_root}/.buildopt-deployment-data.json")" == \
+                    "${buildopt_root}" ]]; then
+                rm -rf -- "${buildopt_data_root}"
+            fi
+            if [[ -n "${buildopt_restore_stage:-}" ]] &&
+                [[ "${buildopt_restore_stage}" == \
+                    "${buildopt_restore_parent}/.buildopt-restore."* ]] &&
+                [[ -d "${buildopt_restore_stage}" ]] &&
+                [[ ! -L "${buildopt_restore_stage}" ]]; then
+                rm -rf -- "${buildopt_restore_stage}"
+            fi
+        fi
+        rm -f -- "${buildopt_old_manifest}"
+    }
+    trap buildopt_restore_cleanup EXIT
+
+    cp -a -- "${buildopt_snapshot}/." "${buildopt_restore_stage}/"
+    mv -T -- "${buildopt_restore_stage}" "${buildopt_data_root}"
+    buildopt_restore_stage=
+    buildopt_restore_published=1
+    buildopt_write_config "${buildopt_config_path}"
+    buildopt_write_manifest "${buildopt_manifest_path}" "${buildopt_version}"
+    buildopt_restore_manifest_changed=1
+    buildopt_load_and_validate
+    buildopt_restore_complete=1
+    trap - EXIT
+    rm -f -- "${buildopt_old_manifest}"
+    flock -u 8
+    exec 8>&-
+    buildopt_release_operation_lock
     exit 0
 fi
 

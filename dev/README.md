@@ -899,7 +899,7 @@ only canonical loopback, summary export, path-only secrets, beta-token
 authentication, disjoint absolute paths, a proven-local filesystem, and the
 fixed 20 GiB minimum/500 GiB maximum/50% capacity policy. The production
 storage opens before the listener. Installation, upgrade/migration, and manual
-restore remain the next A2 blocks.
+restore are covered by the separate `A2-002..004` executable contracts.
 
 ## Pending publication, commit CAS, and reconciliation
 
@@ -1217,6 +1217,22 @@ rollback, then restarts with v2. A real pending object remains `404` before,
 during, and after the upgrade, readiness returns to `200`, configuration stays
 byte-identical, and a same-version retry is idempotent. The manager rewrites
 the generated unit but never invokes the supervisor.
+
+## Self-hosted manual restore
+
+Exercise absent-target restore with mandatory authority-generation rotation:
+
+```bash
+./dev/check-self-hosted-manual-restore
+```
+
+The `A2-004` checker creates a private offline snapshot after a real pending
+write, simulates loss of the installed data root, rejects unrotated authority
+and a symlink-bearing tree without target mutation, then atomically restores
+with strictly higher policy, revocation, L1, and namespace generations. The
+packaged server verifies the recovery inputs, reaches readiness `200`, rejects
+the old token, and returns a safe miss under the new generation. This is a
+manual POC recovery proof, not backup automation or an RPO/RTO claim.
 
 ## Operational readiness and revocation
 

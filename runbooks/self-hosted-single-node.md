@@ -85,6 +85,45 @@ The persistent data and declarative configuration do not change. Startup
 reconciliation completes before readiness becomes `200`, and pending or
 partial objects remain misses rather than becoming cache hits.
 
+## Restore manually after data-root loss
+
+Stop and disable the service. Restore only when the exact installed data root
+is absent; the command never overwrites an existing path. Provide a private
+mode-`0700`, same-deployment snapshot taken while Shared was stopped, retain
+the prior still-current signed authority/trust-root/credential as recovery
+metadata, and provision a distinct current signed authority set whose policy
+version, revocation epoch, L1 security generation, and namespace generation
+are all strictly greater.
+
+```bash
+./dev/manage-self-hosted restore \
+  --snapshot /srv/buildopt-recovery/offline-data-root \
+  --root /opt/buildopt \
+  --authority /etc/buildopt/rotated/authority.json \
+  --trust-root /etc/buildopt/rotated/trust-root.json \
+  --credential /etc/buildopt/rotated/cache-credential
+
+./dev/manage-self-hosted status --root /opt/buildopt
+```
+
+The manager cryptographically verifies the prior and new authorities with the
+packaged server, rejects a live writer or unsafe tree, copies into a private
+sibling stage, atomically publishes the absent data root, and rebinds config
+to the rotated authority. It never mutates or deletes the snapshot. On failure
+it removes only a newly published marked target and restores the prior private
+manifest.
+
+After successful status, explicitly start the service and wait for readiness:
+
+```bash
+sudo systemctl start buildopt-self-hosted.service
+curl --fail --noproxy '*' http://127.0.0.1:8042/readyz
+```
+
+Old tokens and old namespace generations must remain rejected or safe misses.
+Do not reconstruct authorization from restored blobs or telemetry. This POC
+workflow is not backup automation and makes no HA or RPO/RTO promise.
+
 ## Admission and normal operation
 
 Follow [`private-beta-operations.md`](./private-beta-operations.md) for
@@ -100,5 +139,4 @@ Shared writer lease is released. For a composed rollback, run
 lower-level rollback because selection, unit, and manifest must move together.
 Use the signed deployment manager only for preserve-by-default uninstall after
 the service is stopped. Data purge remains an explicit,
-separate retention decision. The later `A2-004` procedure extends this runbook
-with manual restore and revocation-generation rotation.
+separate retention decision; restore never substitutes for a backup policy.

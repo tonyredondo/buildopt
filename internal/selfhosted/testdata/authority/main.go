@@ -21,6 +21,11 @@ func main() {
 	namespaceGeneration := flag.Int64("namespace-generation", 12, "stable namespace generation")
 	revocationEpoch := flag.Int64("revocation-epoch", 7, "revocation epoch")
 	l1SecurityGeneration := flag.Int64("l1-security-generation", 9, "L1 security generation")
+	attemptID := flag.String(
+		"attempt-id",
+		"22222222-2222-4222-8222-222222222222",
+		"authority attempt UUID",
+	)
 	flag.Parse()
 	if flag.NArg() != 0 || *root == "" || !filepath.IsAbs(*root) ||
 		*namespaceGeneration < 1 || *revocationEpoch < 1 || *l1SecurityGeneration < 1 {
@@ -48,7 +53,7 @@ func main() {
 		SourceStateDigest:   "hmac-sha256:" + strings.Repeat("1", 64),
 		CacheContractDigest: "sha256:" + strings.Repeat("2", 64),
 		Attempt: localauthority.AuthorityAttempt{
-			AttemptID:        "22222222-2222-4222-8222-222222222222",
+			AttemptID:        *attemptID,
 			OwnerID:          "protected-main",
 			LeaseID:          "lease-self-hosted-authority-1",
 			LeaseExpiresAt:   now.Add(45 * time.Minute).Format(time.RFC3339Nano),

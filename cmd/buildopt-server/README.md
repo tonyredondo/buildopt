@@ -212,6 +212,22 @@ selected for the next restart. Descriptor-composition failure rolls selection
 back to v1, and pending bytes remain invisible before, during, and after a
 successful v2 restart.
 
+`A2-004` exposes a local inspection command that returns only generation and
+scope metadata after verifying a current private authority against its pinned
+trust root and credential:
+
+```bash
+buildopt-server authority inspect \
+  --authority /etc/buildopt/authority.json \
+  --trust-root /etc/buildopt/trust-root.json \
+  --credential /etc/buildopt/cache-credential
+```
+
+`dev/manage-self-hosted restore` composes that proof with an offline private
+snapshot, strict generation rotation, absent-target publication, and an
+explicit post-restore server start. See the self-hosted runbook; no credential
+or signing material appears in the inspection output.
+
 `OPS-001/A1` separates process health from safe serving:
 
 - `GET|HEAD /livez` returns `200` while the HTTP process is responsive;

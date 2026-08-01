@@ -46,6 +46,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`self-hosted-single-node-config-v1.md`](./self-hosted-single-node-config-v1.md) | `A2-001` |
 | [`self-hosted-service-install-v1.md`](./self-hosted-service-install-v1.md) | `A2-002` |
 | [`self-hosted-upgrade-restart-v1.md`](./self-hosted-upgrade-restart-v1.md) | `A2-003` |
+| [`self-hosted-manual-restore-v1.md`](./self-hosted-manual-restore-v1.md) | `A2-004` |
 | [`pending-commit-cas-v1.md`](./pending-commit-cas-v1.md) | `A0-005` |
 | [`local-authenticated-cache-v1.md`](./local-authenticated-cache-v1.md) | `A0-006` |
 | [`gradle-bootstrap-cache-v1.md`](./gradle-bootstrap-cache-v1.md) | `A0-007` |
@@ -169,6 +170,9 @@ installation contract.
 `self-hosted-upgrade-restart-v1.json` is the A2-003 serialized signed-upgrade,
 rollback-safe descriptor composition, unchanged persistent-data restart, and
 pending-object invisibility contract.
+`self-hosted-manual-restore-v1.json` is the A2-004 absent-target offline
+snapshot, cryptographic recovery-authority comparison, strict generation
+rotation, atomic publication, and fail-closed admission contract.
 `pending-commit-cas-v1.json` is the A0-005 lifecycle contract for durable
 pending attempts, canonical Ed25519 decisions, atomic first-writer visibility,
 context-bound opaque HTTP GET/PUT, quarantine, and startup reconciliation.

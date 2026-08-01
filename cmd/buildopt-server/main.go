@@ -30,7 +30,7 @@ import (
 const (
 	exitUsage         = 64
 	exitConfiguration = 78
-	serverUsage       = "usage: buildopt-server serve [--self-hosted-config ABSOLUTE_PATH] [--listen 127.0.0.1:8042] [--export-dir PATH] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]] [--state-dir ABSOLUTE_PATH] [--cache-authority ABSOLUTE_PATH --cache-trust-root ABSOLUTE_PATH --cache-credential ABSOLUTE_PATH] [--cache-token-auth] [--github-webhook-secret ABSOLUTE_PATH]\n       buildopt-server export --export-dir PATH [--format jsonl] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]]\n       buildopt-server data delete --data-root ABSOLUTE_PATH --deletion-id ID --tenant ID --repository ID --trust-domain ID --next-namespace-generation N --next-l1-security-generation N --token-key ABSOLUTE_PATH --token-key-version ID [--external-destination ID]\n       buildopt-server token issue --state-dir ABSOLUTE_PATH --tenant ID --repository ID --trust-domain ID --namespace ID --namespace-generation N --plane stable|quarantine|control --access read|read-write --expires-at RFC3339\n       buildopt-server token revoke --state-dir ABSOLUTE_PATH --token-id ID\n"
+	serverUsage       = "usage: buildopt-server serve [--self-hosted-config ABSOLUTE_PATH] [--listen 127.0.0.1:8042] [--export-dir PATH] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]] [--state-dir ABSOLUTE_PATH] [--cache-authority ABSOLUTE_PATH --cache-trust-root ABSOLUTE_PATH --cache-credential ABSOLUTE_PATH] [--cache-token-auth] [--github-webhook-secret ABSOLUTE_PATH]\n       buildopt-server export --export-dir PATH [--format jsonl] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]]\n       buildopt-server data delete --data-root ABSOLUTE_PATH --deletion-id ID --tenant ID --repository ID --trust-domain ID --next-namespace-generation N --next-l1-security-generation N --token-key ABSOLUTE_PATH --token-key-version ID [--external-destination ID]\n       buildopt-server token issue --state-dir ABSOLUTE_PATH --tenant ID --repository ID --trust-domain ID --namespace ID --namespace-generation N --plane stable|quarantine|control --access read|read-write --expires-at RFC3339\n       buildopt-server token revoke --state-dir ABSOLUTE_PATH --token-id ID\n       buildopt-server authority inspect --authority ABSOLUTE_PATH --trust-root ABSOLUTE_PATH --credential ABSOLUTE_PATH\n"
 )
 
 var (
@@ -77,6 +77,9 @@ func run(
 	}
 	if args[0] == "data" {
 		return runDataLifecycle(ctx, args[1:], stdout, stderr)
+	}
+	if args[0] == "authority" {
+		return runAuthorityInspect(ctx, args[1:], stdout, stderr)
 	}
 	if args[0] != "serve" {
 		_, _ = io.WriteString(stderr, serverUsage)

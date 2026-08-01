@@ -1,0 +1,410 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+unset BUILDOPT_SERVER_INGEST_TOKEN BUILDOPT_SERVER_URL
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/self-hosted-manual-restore-v1.json"
+buildopt_tools_root=${BUILDOPT_TOOLS_ROOT:-"${buildopt_repo_root}/.tools"}
+buildopt_gradle_home=${GRADLE_USER_HOME:-"${buildopt_repo_root}/.tools/gradle-user-home/local"}
+
+for buildopt_command in \
+    awk \
+    chmod \
+    cp \
+    curl \
+    date \
+    dirname \
+    git \
+    jq \
+    kill \
+    ln \
+    mkdir \
+    mktemp \
+    mv \
+    rm \
+    sed \
+    sha256sum \
+    sleep; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required self-hosted restore command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if ! jq -e '
+    .schemaVersion == "buildopt.specs/self-hosted-manual-restore/v1" and
+    .itemId == "A2-004" and
+    .preconditions == {
+        server: "STOPPED_WRITER_LEASE_FREE",
+        targetDataRoot: "ABSENT",
+        snapshot: "PRIVATE_REAL_OFFLINE_SAME_DEPLOYMENT_TREE",
+        priorAuthority: "CURRENT_VERIFIED_RECOVERY_INPUT"
+    } and
+    .authority == {
+        newState: "CRYPTOGRAPHICALLY_VERIFIED",
+        scope: "EXACT_PRIOR_REPOSITORY_POLICY_NAMESPACE",
+        policyVersion: "STRICTLY_GREATER",
+        revocationEpoch: "STRICTLY_GREATER",
+        l1SecurityGeneration: "STRICTLY_GREATER",
+        namespaceGeneration: "STRICTLY_GREATER"
+    } and
+    .restore.snapshot == "PRESERVED_UNCHANGED" and
+    .restore.failure ==
+        "REMOVE_ONLY_MARKED_NEW_TARGET_AND_RESTORE_MANIFEST" and
+    .admission.readiness == "HTTP_200_REQUIRED" and
+    .admission.oldToken == "HTTP_401" and
+    .admission.restoredOldGeneration == "SAFE_MISS_ONLY" and
+    .boundaries.closes == ["A2-004"] and
+    (.boundaries.doesNotClose | index("BACKUP_RPO_RTO")) != null and
+    (.boundaries.doesNotClose | index("EIGHT_HOUR_SOAK")) != null
+' "${buildopt_contract}" >/dev/null; then
+    printf 'self-hosted manual restore contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+buildopt_test_root=$(mktemp -d)
+buildopt_server_pid=
+buildopt_cleanup() {
+    if [[ -n "${buildopt_server_pid:-}" ]] &&
+        kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        kill -TERM "${buildopt_server_pid}" 2>/dev/null || true
+        wait "${buildopt_server_pid}" 2>/dev/null || true
+    fi
+    if [[ -n "${buildopt_test_root:-}" ]] &&
+        [[ "${buildopt_test_root}" == /tmp/* ]] &&
+        [[ -d "${buildopt_test_root}" ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_source="${buildopt_test_root}/source"
+mkdir "${buildopt_source}"
+while IFS= read -r -d '' buildopt_path; do
+    if [[ ! -e "${buildopt_repo_root}/${buildopt_path}" ]] &&
+        [[ ! -L "${buildopt_repo_root}/${buildopt_path}" ]]; then
+        continue
+    fi
+    mkdir -p -- "${buildopt_source}/$(dirname -- "${buildopt_path}")"
+    cp -a -- \
+        "${buildopt_repo_root}/${buildopt_path}" \
+        "${buildopt_source}/${buildopt_path}"
+done < <(
+    git -C "${buildopt_repo_root}" \
+        ls-files -z --cached --others --exclude-standard
+)
+git -C "${buildopt_source}" init --quiet
+git -C "${buildopt_source}" add -A
+GIT_AUTHOR_DATE='2026-08-01T00:00:00Z' \
+GIT_COMMITTER_DATE='2026-08-01T00:00:00Z' \
+    git -C "${buildopt_source}" \
+    -c user.name=BuildOpt \
+    -c user.email=buildopt@example.invalid \
+    commit --quiet -m 'A2-004 self-hosted restore fixture'
+
+COSIGN_PASSWORD='buildopt-a2-004-test-only' \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_source}/dev/run" --toolchain cosign -- \
+    cosign generate-key-pair \
+    --output-key-prefix "${buildopt_test_root}/release" >/dev/null
+buildopt_bundle="${buildopt_test_root}/bundle"
+COSIGN_PASSWORD='buildopt-a2-004-test-only' \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+GRADLE_USER_HOME="${buildopt_gradle_home}" \
+    "${buildopt_source}/dev/package-release" \
+    --version 0.2.0-self-hosted.3 \
+    --output "${buildopt_bundle}" \
+    --signing-key "${buildopt_test_root}/release.key" \
+    --verification-key "${buildopt_test_root}/release.pub" >/dev/null
+
+buildopt_generate_authority() {
+    local buildopt_target=$1
+    local buildopt_namespace_generation=$2
+    local buildopt_revocation_epoch=$3
+    local buildopt_l1_generation=$4
+    local buildopt_attempt_id=$5
+
+    mkdir "${buildopt_target}"
+    chmod 0700 "${buildopt_target}"
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+        "${buildopt_source}/dev/run" --toolchain go -- \
+        go run ./internal/selfhosted/testdata/authority \
+        --root "${buildopt_target}" \
+        --namespace-generation "${buildopt_namespace_generation}" \
+        --revocation-epoch "${buildopt_revocation_epoch}" \
+        --l1-security-generation "${buildopt_l1_generation}" \
+        --attempt-id "${buildopt_attempt_id}"
+}
+
+buildopt_old_secrets="${buildopt_test_root}/old-secrets"
+buildopt_generate_authority \
+    "${buildopt_old_secrets}" \
+    12 7 9 \
+    22222222-2222-4222-8222-222222222222
+printf 'BUILDOPT_SERVER_INGEST_TOKEN=%s\n' \
+    'a2-004-synthetic-ingest-token-0123456789abcdef' \
+    >"${buildopt_old_secrets}/server.env"
+chmod 0600 "${buildopt_old_secrets}/server.env"
+
+buildopt_deployment="${buildopt_test_root}/deployment"
+buildopt_data="${buildopt_test_root}/data"
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_source}/dev/manage-self-hosted" install \
+    --bundle "${buildopt_bundle}" \
+    --key "${buildopt_test_root}/release.pub" \
+    --root "${buildopt_deployment}" \
+    --data-root "${buildopt_data}" \
+    --environment-file "${buildopt_old_secrets}/server.env" \
+    --authority "${buildopt_old_secrets}/authority.json" \
+    --trust-root "${buildopt_old_secrets}/trust-root.json" \
+    --credential "${buildopt_old_secrets}/credential" \
+    --listen 127.0.0.1:0 >/dev/null
+
+buildopt_config="${buildopt_data}/self-hosted/config.json"
+buildopt_start_server() {
+    local buildopt_status
+    local buildopt_release
+    local buildopt_deadline
+
+    buildopt_status=$(
+        "${buildopt_source}/dev/manage-self-hosted" status \
+            --root "${buildopt_deployment}"
+    )
+    buildopt_release=$(jq -r '.releaseRoot' <<<"${buildopt_status}")
+    buildopt_server_log=$(mktemp "${buildopt_test_root}/server.XXXXXX.log")
+    BUILDOPT_SERVER_INGEST_TOKEN=\
+'a2-004-synthetic-ingest-token-0123456789abcdef' \
+        "${buildopt_release}/bin/buildopt-server" serve \
+        --self-hosted-config "${buildopt_config}" \
+        >"${buildopt_server_log}" 2>&1 &
+    buildopt_server_pid=$!
+    buildopt_deadline=$((SECONDS + 60))
+    buildopt_endpoint=
+    while ((SECONDS < buildopt_deadline)); do
+        if ! kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+            printf 'restored self-hosted server exited before listening\n' >&2
+            sed -n '1,160p' "${buildopt_server_log}" >&2
+            return 1
+        fi
+        buildopt_endpoint=$(
+            sed -n \
+                's/^buildopt-server: listening on \(http:\/\/127[.]0[.]0[.]1:[0-9][0-9]*\)$/\1/p' \
+                "${buildopt_server_log}" |
+                tail -n 1
+        )
+        if [[ -n "${buildopt_endpoint}" ]]; then
+            "${buildopt_source}/dev/wait-server-ready" \
+                "${buildopt_endpoint}" "${buildopt_server_pid}"
+            return 0
+        fi
+        sleep 0.05
+    done
+    printf 'restored self-hosted server did not publish an endpoint\n' >&2
+    return 1
+}
+
+buildopt_stop_server() {
+    kill -TERM "${buildopt_server_pid}"
+    if ! wait "${buildopt_server_pid}"; then
+        printf 'self-hosted server did not stop gracefully\n' >&2
+        return 1
+    fi
+    buildopt_server_pid=
+}
+
+buildopt_issue_token() {
+    local buildopt_generation=$1
+    local buildopt_release=$2
+    local buildopt_expires_at
+
+    buildopt_expires_at=$(date -u -d '+10 minutes' '+%Y-%m-%dT%H:%M:%SZ')
+    "${buildopt_release}/bin/buildopt-server" token issue \
+        --state-dir "${buildopt_data}/shared" \
+        --tenant tenant-internal \
+        --repository tonyredondo/buildopt \
+        --trust-domain private-beta \
+        --namespace stable \
+        --namespace-generation "${buildopt_generation}" \
+        --plane stable \
+        --access read-write \
+        --expires-at "${buildopt_expires_at}" |
+        jq -er '.token'
+}
+
+buildopt_cache_status() {
+    local buildopt_token=$1
+    local buildopt_digest=$2
+    local buildopt_method=$3
+    local buildopt_body=${4:-}
+    local -a buildopt_args=(
+        --silent
+        --show-error
+        --output /dev/null
+        --write-out '%{http_code}'
+        --connect-timeout 2
+        --max-time 5
+        --noproxy '*'
+        --request "${buildopt_method}"
+        --header "Authorization: Bearer ${buildopt_token}"
+        --header "X-BuildOpt-Authority-Digest: ${buildopt_digest}"
+    )
+    if [[ -n "${buildopt_body}" ]]; then
+        buildopt_args+=(--data-binary "${buildopt_body}")
+    fi
+    curl "${buildopt_args[@]}" \
+        "${buildopt_endpoint}/cache/a2-restore-pending"
+}
+
+buildopt_start_server
+buildopt_release=$(
+    "${buildopt_source}/dev/manage-self-hosted" status \
+        --root "${buildopt_deployment}" |
+        jq -r '.releaseRoot'
+)
+buildopt_old_token=$(buildopt_issue_token 12 "${buildopt_release}")
+buildopt_old_digest=$(jq -r '.authorityDigest' \
+    "${buildopt_old_secrets}/authority.json")
+if [[ "$(buildopt_cache_status \
+    "${buildopt_old_token}" \
+    "${buildopt_old_digest}" \
+    PUT \
+    pending-before-restore)" != "201" ]] ||
+    [[ "$(buildopt_cache_status \
+        "${buildopt_old_token}" \
+        "${buildopt_old_digest}" \
+        GET)" != "404" ]]; then
+    printf 'restore fixture did not create invisible pending bytes\n' >&2
+    exit 1
+fi
+buildopt_stop_server
+
+buildopt_snapshot="${buildopt_test_root}/snapshot"
+cp -a -- "${buildopt_data}" "${buildopt_snapshot}"
+buildopt_snapshot_hashes=$(
+    sha256sum \
+        "${buildopt_snapshot}/.buildopt-deployment-data.json" \
+        "${buildopt_snapshot}/self-hosted/config.json" \
+        "${buildopt_snapshot}/shared/cache.sqlite" \
+        "${buildopt_snapshot}/shared/control.sqlite" |
+        awk '{print $1}'
+)
+mv -- "${buildopt_data}" "${buildopt_test_root}/lost-data"
+
+buildopt_unrotated="${buildopt_test_root}/unrotated-secrets"
+buildopt_generate_authority \
+    "${buildopt_unrotated}" \
+    12 7 9 \
+    33333333-3333-4333-8333-333333333333
+if "${buildopt_source}/dev/manage-self-hosted" restore \
+    --snapshot "${buildopt_snapshot}" \
+    --root "${buildopt_deployment}" \
+    --authority "${buildopt_unrotated}/authority.json" \
+    --trust-root "${buildopt_unrotated}/trust-root.json" \
+    --credential "${buildopt_unrotated}/credential" >/dev/null 2>&1; then
+    printf 'unrotated restore authority was accepted\n' >&2
+    exit 1
+fi
+if [[ -e "${buildopt_data}" ]] || [[ -L "${buildopt_data}" ]]; then
+    printf 'rejected unrotated restore created the target\n' >&2
+    exit 1
+fi
+
+buildopt_rotated="${buildopt_test_root}/rotated-secrets"
+buildopt_generate_authority \
+    "${buildopt_rotated}" \
+    13 8 10 \
+    33333333-3333-4333-8333-333333333333
+buildopt_unsafe_snapshot="${buildopt_test_root}/unsafe-snapshot"
+cp -a -- "${buildopt_snapshot}" "${buildopt_unsafe_snapshot}"
+ln -s /tmp "${buildopt_unsafe_snapshot}/unsafe-link"
+if "${buildopt_source}/dev/manage-self-hosted" restore \
+    --snapshot "${buildopt_unsafe_snapshot}" \
+    --root "${buildopt_deployment}" \
+    --authority "${buildopt_rotated}/authority.json" \
+    --trust-root "${buildopt_rotated}/trust-root.json" \
+    --credential "${buildopt_rotated}/credential" >/dev/null 2>&1; then
+    printf 'unsafe restore snapshot was accepted\n' >&2
+    exit 1
+fi
+if [[ -e "${buildopt_data}" ]] || [[ -L "${buildopt_data}" ]]; then
+    printf 'rejected unsafe snapshot created the target\n' >&2
+    exit 1
+fi
+
+buildopt_restore_status=$(
+    "${buildopt_source}/dev/manage-self-hosted" restore \
+        --snapshot "${buildopt_snapshot}" \
+        --root "${buildopt_deployment}" \
+        --authority "${buildopt_rotated}/authority.json" \
+        --trust-root "${buildopt_rotated}/trust-root.json" \
+        --credential "${buildopt_rotated}/credential"
+)
+if ! jq -e '
+    .schemaVersion == "buildopt.dev/self-hosted-status/v1" and
+    .state == "INSTALLED" and
+    .version == "0.2.0-self-hosted.3"
+' <<<"${buildopt_restore_status}" >/dev/null ||
+    [[ "$(jq -r '.cache.authorityPath' "${buildopt_config}")" != \
+        "${buildopt_rotated}/authority.json" ]] ||
+    [[ "$(jq -r '.authorityPath' \
+        "${buildopt_deployment}/.buildopt-self-hosted.json")" != \
+        "${buildopt_rotated}/authority.json" ]]; then
+    printf 'restored self-hosted metadata is invalid\n' >&2
+    exit 1
+fi
+buildopt_after_snapshot_hashes=$(
+    sha256sum \
+        "${buildopt_snapshot}/.buildopt-deployment-data.json" \
+        "${buildopt_snapshot}/self-hosted/config.json" \
+        "${buildopt_snapshot}/shared/cache.sqlite" \
+        "${buildopt_snapshot}/shared/control.sqlite" |
+        awk '{print $1}'
+)
+if [[ "${buildopt_after_snapshot_hashes}" != "${buildopt_snapshot_hashes}" ]]; then
+    printf 'manual restore mutated its source snapshot\n' >&2
+    exit 1
+fi
+
+buildopt_start_server
+buildopt_new_digest=$(jq -r '.authorityDigest' \
+    "${buildopt_rotated}/authority.json")
+if [[ "$(buildopt_cache_status \
+    "${buildopt_old_token}" \
+    "${buildopt_old_digest}" \
+    GET)" != "401" ]] ||
+    [[ "$(buildopt_cache_status \
+        "${buildopt_old_token}" \
+        "${buildopt_new_digest}" \
+        GET)" != "401" ]]; then
+    printf 'restored server accepted the old token or authority\n' >&2
+    exit 1
+fi
+buildopt_new_token=$(buildopt_issue_token 13 "${buildopt_release}")
+if [[ "$(buildopt_cache_status \
+    "${buildopt_new_token}" \
+    "${buildopt_new_digest}" \
+    GET)" != "404" ]]; then
+    printf 'old-generation restored bytes became a cache hit\n' >&2
+    exit 1
+fi
+buildopt_stop_server
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'self-hosted restore checker changed the source tree\n' >&2
+    exit 1
+fi
+
+printf 'self-hosted manual restore checks passed\n'

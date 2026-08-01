@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "buildopt.specs/self-hosted-manual-restore/v1",
+  "itemId": "A2-004",
+  "preconditions": {
+    "server": "STOPPED_WRITER_LEASE_FREE",
+    "targetDataRoot": "ABSENT",
+    "snapshot": "PRIVATE_REAL_OFFLINE_SAME_DEPLOYMENT_TREE",
+    "priorAuthority": "CURRENT_VERIFIED_RECOVERY_INPUT"
+  },
+  "authority": {
+    "newState": "CRYPTOGRAPHICALLY_VERIFIED",
+    "scope": "EXACT_PRIOR_REPOSITORY_POLICY_NAMESPACE",
+    "policyVersion": "STRICTLY_GREATER",
+    "revocationEpoch": "STRICTLY_GREATER",
+    "l1SecurityGeneration": "STRICTLY_GREATER",
+    "namespaceGeneration": "STRICTLY_GREATER"
+  },
+  "restore": {
+    "copy": "PRIVATE_SIBLING_STAGE_THEN_ATOMIC_RENAME",
+    "snapshot": "PRESERVED_UNCHANGED",
+    "configuration": "REBOUND_TO_ROTATED_AUTHORITY",
+    "failure": "REMOVE_ONLY_MARKED_NEW_TARGET_AND_RESTORE_MANIFEST"
+  },
+  "admission": {
+    "managerStatus": "VALID_BEFORE_SUCCESS",
+    "supervisorRestart": "EXPLICIT_OPERATOR_ACTION",
+    "readiness": "HTTP_200_REQUIRED",
+    "oldToken": "HTTP_401",
+    "restoredOldGeneration": "SAFE_MISS_ONLY"
+  },
+  "boundaries": {
+    "closes": [
+      "A2-004"
+    ],
+    "doesNotClose": [
+      "A2-G01",
+      "BACKUP_RPO_RTO",
+      "HIGH_AVAILABILITY",
+      "EIGHT_HOUR_SOAK",
+      "PRODUCTION_RESTORE_AUTOMATION"
+    ]
+  }
+}
