@@ -4,6 +4,7 @@ set -euo pipefail
 buildopt_usage() {
     printf '%s\n' \
         "usage: $0 install --bundle DIRECTORY --key FILE --root ABSOLUTE_PATH --data-root ABSOLUTE_PATH --environment-file ABSOLUTE_PATH --authority ABSOLUTE_PATH --trust-root ABSOLUTE_PATH --credential ABSOLUTE_PATH [--listen 127.0.0.1:8042]" \
+        "       $0 upgrade --bundle DIRECTORY --key FILE --root ABSOLUTE_PATH" \
         "       $0 status --root ABSOLUTE_PATH"
 }
 
@@ -72,6 +73,20 @@ case "${buildopt_command}" in
             exit 64
         fi
         ;;
+    upgrade)
+        if [[ -z "${buildopt_bundle}" ]] ||
+            [[ -z "${buildopt_key}" ]] ||
+            [[ -z "${buildopt_root}" ]] ||
+            [[ -n "${buildopt_data_root}" ]] ||
+            [[ -n "${buildopt_environment_file}" ]] ||
+            [[ -n "${buildopt_authority}" ]] ||
+            [[ -n "${buildopt_trust_root}" ]] ||
+            [[ -n "${buildopt_credential}" ]] ||
+            ((buildopt_listen_explicit != 0)); then
+            buildopt_usage >&2
+            exit 64
+        fi
+        ;;
     status)
         if [[ -z "${buildopt_root}" ]] ||
             [[ -n "${buildopt_bundle}" ]] ||
@@ -97,6 +112,7 @@ buildopt_deployment_manager="${buildopt_script_dir}/manage-deployment"
 for buildopt_command_name in \
     chmod \
     cmp \
+    cp \
     flock \
     id \
     jq \
@@ -299,6 +315,20 @@ buildopt_write_manifest() {
     mv -T -- "${buildopt_temporary}" "${buildopt_target}"
 }
 
+buildopt_restore_private_file() {
+    local buildopt_source=$1
+    local buildopt_target=$2
+    local buildopt_temporary
+
+    buildopt_temporary=$(mktemp "${buildopt_root}/.restore.XXXXXX")
+    if ! cp -- "${buildopt_source}" "${buildopt_temporary}"; then
+        rm -f -- "${buildopt_temporary}"
+        return 1
+    fi
+    chmod 0600 "${buildopt_temporary}"
+    mv -T -- "${buildopt_temporary}" "${buildopt_target}"
+}
+
 buildopt_load_and_validate() {
     local buildopt_deployment_status
     local buildopt_expected_unit
@@ -433,6 +463,89 @@ fi
 
 if [[ "${buildopt_command}" == "status" ]]; then
     buildopt_load_and_validate
+    exit 0
+fi
+
+if [[ "${buildopt_command}" == "upgrade" ]]; then
+    buildopt_load_and_validate >/dev/null
+    buildopt_old_version=${buildopt_version}
+    buildopt_old_release_root=${buildopt_release_root}
+    buildopt_self_hosted_lock="${buildopt_root}/.buildopt-self-hosted.lock"
+    if [[ -e "${buildopt_self_hosted_lock}" ]] ||
+        [[ -L "${buildopt_self_hosted_lock}" ]]; then
+        if ! buildopt_expect_private_file "${buildopt_self_hosted_lock}"; then
+            printf 'self-hosted upgrade lock is unsafe\n' >&2
+            exit 1
+        fi
+    else
+        buildopt_lock_temporary=$(mktemp "${buildopt_root}/.lock.XXXXXX")
+        chmod 0600 "${buildopt_lock_temporary}"
+        mv -T -- "${buildopt_lock_temporary}" "${buildopt_self_hosted_lock}"
+    fi
+    exec 7<>"${buildopt_self_hosted_lock}"
+    if ! flock -n 7; then
+        printf 'another self-hosted upgrade is active\n' >&2
+        exit 1
+    fi
+    buildopt_load_and_validate >/dev/null
+    if [[ "${buildopt_version}" != "${buildopt_old_version}" ]] ||
+        [[ "${buildopt_release_root}" != "${buildopt_old_release_root}" ]]; then
+        printf 'self-hosted installation changed before upgrade lock\n' >&2
+        exit 1
+    fi
+
+    buildopt_old_unit=$(mktemp "${buildopt_root}/.old-unit.XXXXXX")
+    buildopt_old_manifest=$(mktemp "${buildopt_root}/.old-self-hosted.XXXXXX")
+    cp -- "${buildopt_unit_path}" "${buildopt_old_unit}"
+    cp -- "${buildopt_manifest_path}" "${buildopt_old_manifest}"
+    chmod 0600 "${buildopt_old_unit}" "${buildopt_old_manifest}"
+    buildopt_upgrade_selected=0
+    buildopt_upgrade_complete=0
+    # Invoked indirectly by the EXIT trap until the composed upgrade commits.
+    # shellcheck disable=SC2329
+    buildopt_upgrade_cleanup() {
+        if ((buildopt_upgrade_complete == 0 && buildopt_upgrade_selected == 1)); then
+            if "${buildopt_deployment_manager}" rollback \
+                --key "${buildopt_key}" \
+                --root "${buildopt_root}" \
+                --version "${buildopt_old_version}" >/dev/null 2>&1; then
+                buildopt_restore_private_file \
+                    "${buildopt_old_unit}" \
+                    "${buildopt_unit_path}"
+                buildopt_restore_private_file \
+                    "${buildopt_old_manifest}" \
+                    "${buildopt_manifest_path}"
+            else
+                printf 'self-hosted upgrade rollback failed closed\n' >&2
+            fi
+        fi
+        rm -f -- "${buildopt_old_unit}" "${buildopt_old_manifest}"
+    }
+    trap buildopt_upgrade_cleanup EXIT
+
+    buildopt_release_root=$(
+        "${buildopt_deployment_manager}" upgrade \
+            --bundle "${buildopt_bundle}" \
+            --key "${buildopt_key}" \
+            --root "${buildopt_root}"
+    )
+    if [[ "${buildopt_release_root}" != "${buildopt_old_release_root}" ]]; then
+        buildopt_upgrade_selected=1
+    fi
+    buildopt_deployment_status=$(
+        "${buildopt_deployment_manager}" status --root "${buildopt_root}"
+    )
+    buildopt_version=$(jq -r '.current.version' <<<"${buildopt_deployment_status}")
+    if [[ "${buildopt_version}" != "${buildopt_old_version}" ]]; then
+        buildopt_write_unit "${buildopt_unit_path}"
+        buildopt_write_manifest "${buildopt_manifest_path}" "${buildopt_version}"
+    fi
+    buildopt_load_and_validate
+    buildopt_upgrade_complete=1
+    trap - EXIT
+    rm -f -- "${buildopt_old_unit}" "${buildopt_old_manifest}"
+    flock -u 7
+    exec 7>&-
     exit 0
 fi
 

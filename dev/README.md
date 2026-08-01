@@ -1202,6 +1202,22 @@ rejects permissive secret injection before creating deployment roots. See the
 [self-hosted runbook](../runbooks/self-hosted-single-node.md). The manager does
 not call `systemctl`; host activation stays an explicit operator action.
 
+## Self-hosted upgrade and restart
+
+Exercise signed side-by-side publication, rollback-safe descriptor composition,
+and restart over unchanged persistent data:
+
+```bash
+./dev/check-self-hosted-upgrade-restart
+```
+
+The `A2-003` checker builds two signed real releases, runs v1 while selecting
+v2, injects a post-selection unit-composition failure and proves exact v1
+rollback, then restarts with v2. A real pending object remains `404` before,
+during, and after the upgrade, readiness returns to `200`, configuration stays
+byte-identical, and a same-version retry is idempotent. The manager rewrites
+the generated unit but never invokes the supervisor.
+
 ## Operational readiness and revocation
 
 Exercise the first `OPS-001/A1` operational slice:

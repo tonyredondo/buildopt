@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "buildopt.specs/self-hosted-upgrade-restart/v1",
+  "itemId": "A2-003",
+  "upgrade": {
+    "source": "EXTERNALLY_VERIFIED_SIGNED_RELEASE",
+    "serialization": "PRIVATE_NONBLOCKING_UPGRADE_LOCK",
+    "selection": "ATOMIC_IMMUTABLE_VERSION",
+    "runningProcess": "CONTINUES_OLD_OPEN_VERSION",
+    "serviceDescriptor": "ATOMIC_NEW_VERSION_REWRITE",
+    "compositionFailure": "ROLLBACK_SELECTION_AND_DESCRIPTOR"
+  },
+  "restart": {
+    "configuration": "UNCHANGED",
+    "persistentData": "UNCHANGED",
+    "startup": "PREFLIGHT_RECONCILE_BEFORE_READY",
+    "admission": "READY_200_REQUIRED"
+  },
+  "visibility": {
+    "pendingBeforeUpgrade": "HTTP_404",
+    "pendingDuringOnlineSelection": "HTTP_404",
+    "pendingAfterNewVersionRestart": "HTTP_404",
+    "partialResponse": "NEVER_HTTP_200"
+  },
+  "boundaries": {
+    "closes": [
+      "A2-003"
+    ],
+    "doesNotClose": [
+      "A2-004",
+      "A2-G01",
+      "MANUAL_RESTORE",
+      "BACKUP_RPO_RTO",
+      "HIGH_AVAILABILITY",
+      "EIGHT_HOUR_SOAK"
+    ]
+  }
+}

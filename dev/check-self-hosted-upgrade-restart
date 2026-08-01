@@ -1,0 +1,393 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+unset BUILDOPT_SERVER_INGEST_TOKEN BUILDOPT_SERVER_URL
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/self-hosted-upgrade-restart-v1.json"
+buildopt_tools_root=${BUILDOPT_TOOLS_ROOT:-"${buildopt_repo_root}/.tools"}
+buildopt_gradle_home=${GRADLE_USER_HOME:-"${buildopt_repo_root}/.tools/gradle-user-home/local"}
+
+for buildopt_command in \
+    awk \
+    chmod \
+    cp \
+    curl \
+    date \
+    dirname \
+    git \
+    grep \
+    jq \
+    kill \
+    mkdir \
+    mktemp \
+    rm \
+    sed \
+    sha256sum \
+    sleep \
+    systemd-analyze; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required self-hosted upgrade command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if ! jq -e '
+    .schemaVersion == "buildopt.specs/self-hosted-upgrade-restart/v1" and
+    .itemId == "A2-003" and
+    .upgrade == {
+        source: "EXTERNALLY_VERIFIED_SIGNED_RELEASE",
+        serialization: "PRIVATE_NONBLOCKING_UPGRADE_LOCK",
+        selection: "ATOMIC_IMMUTABLE_VERSION",
+        runningProcess: "CONTINUES_OLD_OPEN_VERSION",
+        serviceDescriptor: "ATOMIC_NEW_VERSION_REWRITE",
+        compositionFailure: "ROLLBACK_SELECTION_AND_DESCRIPTOR"
+    } and
+    .restart.configuration == "UNCHANGED" and
+    .restart.persistentData == "UNCHANGED" and
+    .restart.admission == "READY_200_REQUIRED" and
+    .visibility.pendingBeforeUpgrade == "HTTP_404" and
+    .visibility.pendingDuringOnlineSelection == "HTTP_404" and
+    .visibility.pendingAfterNewVersionRestart == "HTTP_404" and
+    .visibility.partialResponse == "NEVER_HTTP_200" and
+    .boundaries.closes == ["A2-003"] and
+    (.boundaries.doesNotClose | index("A2-004")) != null and
+    (.boundaries.doesNotClose | index("EIGHT_HOUR_SOAK")) != null
+' "${buildopt_contract}" >/dev/null; then
+    printf 'self-hosted upgrade and restart contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+buildopt_test_root=$(mktemp -d)
+buildopt_server_pid=
+buildopt_cleanup() {
+    if [[ -n "${buildopt_server_pid:-}" ]] &&
+        kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        kill -TERM "${buildopt_server_pid}" 2>/dev/null || true
+        wait "${buildopt_server_pid}" 2>/dev/null || true
+    fi
+    if [[ -n "${buildopt_test_root:-}" ]] &&
+        [[ "${buildopt_test_root}" == /tmp/* ]] &&
+        [[ -d "${buildopt_test_root}" ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_source="${buildopt_test_root}/source"
+mkdir "${buildopt_source}"
+while IFS= read -r -d '' buildopt_path; do
+    if [[ ! -e "${buildopt_repo_root}/${buildopt_path}" ]] &&
+        [[ ! -L "${buildopt_repo_root}/${buildopt_path}" ]]; then
+        continue
+    fi
+    mkdir -p -- "${buildopt_source}/$(dirname -- "${buildopt_path}")"
+    cp -a -- \
+        "${buildopt_repo_root}/${buildopt_path}" \
+        "${buildopt_source}/${buildopt_path}"
+done < <(
+    git -C "${buildopt_repo_root}" \
+        ls-files -z --cached --others --exclude-standard
+)
+git -C "${buildopt_source}" init --quiet
+git -C "${buildopt_source}" add -A
+GIT_AUTHOR_DATE='2026-08-01T00:00:00Z' \
+GIT_COMMITTER_DATE='2026-08-01T00:00:00Z' \
+    git -C "${buildopt_source}" \
+    -c user.name=BuildOpt \
+    -c user.email=buildopt@example.invalid \
+    commit --quiet -m 'A2-003 self-hosted upgrade fixture'
+
+COSIGN_PASSWORD='buildopt-a2-003-test-only' \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_source}/dev/run" --toolchain cosign -- \
+    cosign generate-key-pair \
+    --output-key-prefix "${buildopt_test_root}/release" >/dev/null
+
+buildopt_package() {
+    local buildopt_version=$1
+    local buildopt_output=$2
+
+    COSIGN_PASSWORD='buildopt-a2-003-test-only' \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_source}/dev/package-release" \
+        --version "${buildopt_version}" \
+        --output "${buildopt_output}" \
+        --signing-key "${buildopt_test_root}/release.key" \
+        --verification-key "${buildopt_test_root}/release.pub" >/dev/null
+}
+
+buildopt_bundle_v1="${buildopt_test_root}/bundle-v1"
+buildopt_bundle_v2="${buildopt_test_root}/bundle-v2"
+buildopt_package 0.2.0-self-hosted.1 "${buildopt_bundle_v1}"
+buildopt_package 0.2.0-self-hosted.2 "${buildopt_bundle_v2}"
+
+buildopt_secrets="${buildopt_test_root}/secrets"
+mkdir "${buildopt_secrets}"
+chmod 0700 "${buildopt_secrets}"
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_source}/dev/run" --toolchain go -- \
+    go run ./internal/selfhosted/testdata/authority \
+    --root "${buildopt_secrets}"
+printf 'BUILDOPT_SERVER_INGEST_TOKEN=%s\n' \
+    'a2-003-synthetic-ingest-token-0123456789abcdef' \
+    >"${buildopt_secrets}/server.env"
+chmod 0600 "${buildopt_secrets}/server.env"
+
+buildopt_deployment="${buildopt_test_root}/deployment"
+buildopt_data="${buildopt_test_root}/data"
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_source}/dev/manage-self-hosted" install \
+    --bundle "${buildopt_bundle_v1}" \
+    --key "${buildopt_test_root}/release.pub" \
+    --root "${buildopt_deployment}" \
+    --data-root "${buildopt_data}" \
+    --environment-file "${buildopt_secrets}/server.env" \
+    --authority "${buildopt_secrets}/authority.json" \
+    --trust-root "${buildopt_secrets}/trust-root.json" \
+    --credential "${buildopt_secrets}/credential" \
+    --listen 127.0.0.1:0 >/dev/null
+
+buildopt_config="${buildopt_data}/self-hosted/config.json"
+buildopt_unit="${buildopt_deployment}/buildopt-self-hosted.service"
+buildopt_config_hash=$(sha256sum "${buildopt_config}" | awk '{print $1}')
+buildopt_authority_digest=$(jq -r '.authorityDigest' \
+    "${buildopt_secrets}/authority.json")
+if [[ ! "${buildopt_authority_digest}" =~ ^sha256:[0-9a-f]{64}$ ]]; then
+    printf 'synthetic authority digest is invalid\n' >&2
+    exit 1
+fi
+
+buildopt_start_server() {
+    local buildopt_status
+    local buildopt_release
+    local buildopt_deadline
+
+    buildopt_status=$(
+        "${buildopt_source}/dev/manage-self-hosted" status \
+            --root "${buildopt_deployment}"
+    )
+    buildopt_release=$(jq -r '.releaseRoot' <<<"${buildopt_status}")
+    buildopt_server_log=$(mktemp "${buildopt_test_root}/server.XXXXXX.log")
+    BUILDOPT_SERVER_INGEST_TOKEN=\
+'a2-003-synthetic-ingest-token-0123456789abcdef' \
+        "${buildopt_release}/bin/buildopt-server" serve \
+        --self-hosted-config "${buildopt_config}" \
+        >"${buildopt_server_log}" 2>&1 &
+    buildopt_server_pid=$!
+    buildopt_deadline=$((SECONDS + 60))
+    buildopt_endpoint=
+    while ((SECONDS < buildopt_deadline)); do
+        if ! kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+            printf 'self-hosted server exited before listening\n' >&2
+            sed -n '1,160p' "${buildopt_server_log}" >&2
+            return 1
+        fi
+        buildopt_endpoint=$(
+            sed -n \
+                's/^buildopt-server: listening on \(http:\/\/127[.]0[.]0[.]1:[0-9][0-9]*\)$/\1/p' \
+                "${buildopt_server_log}" |
+                tail -n 1
+        )
+        if [[ -n "${buildopt_endpoint}" ]]; then
+            "${buildopt_source}/dev/wait-server-ready" \
+                "${buildopt_endpoint}" "${buildopt_server_pid}"
+            return 0
+        fi
+        sleep 0.05
+    done
+    printf 'self-hosted server did not publish an endpoint\n' >&2
+    sed -n '1,160p' "${buildopt_server_log}" >&2
+    return 1
+}
+
+buildopt_stop_server() {
+    kill -TERM "${buildopt_server_pid}"
+    if ! wait "${buildopt_server_pid}"; then
+        printf 'self-hosted server did not stop gracefully\n' >&2
+        sed -n '1,160p' "${buildopt_server_log}" >&2
+        return 1
+    fi
+    buildopt_server_pid=
+}
+
+buildopt_cache_status() {
+    local buildopt_method=$1
+    local buildopt_body=${2:-}
+    local -a buildopt_args=(
+        --silent
+        --show-error
+        --output /dev/null
+        --write-out '%{http_code}'
+        --connect-timeout 2
+        --max-time 5
+        --noproxy '*'
+        --request "${buildopt_method}"
+        --header "Authorization: Bearer ${buildopt_beta_token}"
+        --header "X-BuildOpt-Authority-Digest: ${buildopt_authority_digest}"
+    )
+    if [[ -n "${buildopt_body}" ]]; then
+        buildopt_args+=(--data-binary "${buildopt_body}")
+    fi
+    curl "${buildopt_args[@]}" \
+        "${buildopt_endpoint}/cache/a2-upgrade-pending"
+}
+
+buildopt_start_server
+buildopt_v1_endpoint=${buildopt_endpoint}
+buildopt_v1_pid=${buildopt_server_pid}
+buildopt_expires_at=$(date -u -d '+10 minutes' '+%Y-%m-%dT%H:%M:%SZ')
+buildopt_v1_release=$(
+    "${buildopt_source}/dev/manage-self-hosted" status \
+        --root "${buildopt_deployment}" |
+        jq -r '.releaseRoot'
+)
+buildopt_beta_token=$(
+    "${buildopt_v1_release}/bin/buildopt-server" token issue \
+        --state-dir "${buildopt_data}/shared" \
+        --tenant tenant-internal \
+        --repository tonyredondo/buildopt \
+        --trust-domain private-beta \
+        --namespace stable \
+        --namespace-generation 12 \
+        --plane stable \
+        --access read-write \
+        --expires-at "${buildopt_expires_at}" |
+        jq -er '.token'
+)
+
+if [[ "$(buildopt_cache_status PUT pending-upgrade-bytes)" != "201" ]] ||
+    [[ "$(buildopt_cache_status GET)" != "404" ]]; then
+    printf 'pending object visibility before upgrade is unsafe\n' >&2
+    exit 1
+fi
+
+buildopt_manifest="${buildopt_deployment}/.buildopt-self-hosted.json"
+buildopt_before_failure_hashes=$(
+    sha256sum "${buildopt_unit}" "${buildopt_manifest}" | awk '{print $1}'
+)
+buildopt_failure_bin="${buildopt_test_root}/failure-bin"
+buildopt_failure_marker="${buildopt_test_root}/fail-unit-move.once"
+buildopt_real_mv=$(command -v mv)
+mkdir "${buildopt_failure_bin}"
+{
+    # The single-quoted lines intentionally write fault-wrapper variables.
+    # shellcheck disable=SC2016
+    printf '%s\n' \
+        '#!/usr/bin/env bash' \
+        'set -euo pipefail' \
+        'if [[ "${!#}" == "${BUILDOPT_FAIL_UNIT_TARGET}" ]] &&' \
+        '    [[ ! -e "${BUILDOPT_FAIL_MARKER}" ]]; then' \
+        '    : >"${BUILDOPT_FAIL_MARKER}"' \
+        '    exit 73' \
+        'fi'
+    printf 'exec %q "$@"\n' "${buildopt_real_mv}"
+} >"${buildopt_failure_bin}/mv"
+chmod 0755 "${buildopt_failure_bin}/mv"
+if PATH="${buildopt_failure_bin}:${PATH}" \
+    BUILDOPT_FAIL_UNIT_TARGET="${buildopt_unit}" \
+    BUILDOPT_FAIL_MARKER="${buildopt_failure_marker}" \
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_source}/dev/manage-self-hosted" upgrade \
+    --bundle "${buildopt_bundle_v2}" \
+    --key "${buildopt_test_root}/release.pub" \
+    --root "${buildopt_deployment}" >/dev/null 2>&1; then
+    printf 'injected descriptor composition failure was accepted\n' >&2
+    exit 1
+fi
+buildopt_rolled_back_status=$(
+    "${buildopt_source}/dev/manage-self-hosted" status \
+        --root "${buildopt_deployment}"
+)
+buildopt_after_failure_hashes=$(
+    sha256sum "${buildopt_unit}" "${buildopt_manifest}" | awk '{print $1}'
+)
+if [[ "$(jq -r '.version' <<<"${buildopt_rolled_back_status}")" != \
+    "0.2.0-self-hosted.1" ]] ||
+    [[ "${buildopt_after_failure_hashes}" != \
+        "${buildopt_before_failure_hashes}" ]] ||
+    ! kill -0 "${buildopt_v1_pid}" 2>/dev/null ||
+    [[ "$(buildopt_cache_status GET)" != "404" ]]; then
+    printf 'failed self-hosted upgrade did not roll back cleanly\n' >&2
+    exit 1
+fi
+
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_source}/dev/manage-self-hosted" upgrade \
+    --bundle "${buildopt_bundle_v2}" \
+    --key "${buildopt_test_root}/release.pub" \
+    --root "${buildopt_deployment}" >/dev/null
+buildopt_upgraded_status=$(
+    "${buildopt_source}/dev/manage-self-hosted" status \
+        --root "${buildopt_deployment}"
+)
+if ! jq -e '
+    .state == "INSTALLED" and
+    .version == "0.2.0-self-hosted.2" and
+    (.releaseRoot | contains("buildopt-0.2.0-self-hosted.2-linux-amd64"))
+' <<<"${buildopt_upgraded_status}" >/dev/null; then
+    printf 'self-hosted upgrade did not select v2\n' >&2
+    exit 1
+fi
+if [[ "$(sha256sum "${buildopt_config}" | awk '{print $1}')" != \
+    "${buildopt_config_hash}" ]] ||
+    ! grep -F \
+        'buildopt-0.2.0-self-hosted.2-linux-amd64/release/bin/buildopt-server' \
+        "${buildopt_unit}" >/dev/null; then
+    printf 'self-hosted upgrade changed config or missed the unit\n' >&2
+    exit 1
+fi
+if ! kill -0 "${buildopt_v1_pid}" 2>/dev/null ||
+    [[ "${buildopt_endpoint}" != "${buildopt_v1_endpoint}" ]] ||
+    [[ "$(curl --silent --output /dev/null --write-out '%{http_code}' \
+        --noproxy '*' "${buildopt_endpoint}/readyz")" != "200" ]] ||
+    [[ "$(buildopt_cache_status GET)" != "404" ]]; then
+    printf 'running v1 did not remain safe during online selection\n' >&2
+    exit 1
+fi
+
+buildopt_stop_server
+buildopt_start_server
+if [[ "$(buildopt_cache_status GET)" != "404" ]]; then
+    printf 'pending object became visible after v2 restart\n' >&2
+    exit 1
+fi
+if [[ "$(sha256sum "${buildopt_config}" | awk '{print $1}')" != \
+    "${buildopt_config_hash}" ]]; then
+    printf 'v2 restart changed self-hosted configuration\n' >&2
+    exit 1
+fi
+systemd-analyze verify "${buildopt_unit}" >/dev/null
+buildopt_stop_server
+
+buildopt_unit_hash=$(sha256sum "${buildopt_unit}" | awk '{print $1}')
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_source}/dev/manage-self-hosted" upgrade \
+    --bundle "${buildopt_bundle_v2}" \
+    --key "${buildopt_test_root}/release.pub" \
+    --root "${buildopt_deployment}" >/dev/null
+if [[ "$(sha256sum "${buildopt_unit}" | awk '{print $1}')" != \
+    "${buildopt_unit_hash}" ]]; then
+    printf 'same-version self-hosted upgrade changed the unit\n' >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'self-hosted upgrade checker changed the source tree\n' >&2
+    exit 1
+fi
+
+printf 'self-hosted upgrade and restart checks passed\n'

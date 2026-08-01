@@ -200,6 +200,18 @@ The installer never enables or starts the unit. Follow
 [`runbooks/self-hosted-single-node.md`](../../runbooks/self-hosted-single-node.md)
 for explicit host activation and readiness admission.
 
+`A2-003` adds serialized signed upgrade and explicit restart validation without
+changing configuration or persistent data:
+
+```bash
+./dev/check-self-hosted-upgrade-restart
+```
+
+The old process keeps serving its already-open immutable release while v2 is
+selected for the next restart. Descriptor-composition failure rolls selection
+back to v1, and pending bytes remain invisible before, during, and after a
+successful v2 restart.
+
 `OPS-001/A1` separates process health from safe serving:
 
 - `GET|HEAD /livez` returns `200` while the HTTP process is responsive;
