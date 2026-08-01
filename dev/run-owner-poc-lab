@@ -1,0 +1,165 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_usage() {
+    printf 'usage: %s [--output ABSOLUTE_PATH]\n' "$0"
+}
+
+buildopt_output=
+case $# in
+    0) ;;
+    2)
+        if [[ "$1" != "--output" ]] || [[ -z "$2" ]]; then
+            buildopt_usage >&2
+            exit 64
+        fi
+        buildopt_output=$2
+        ;;
+    *)
+        buildopt_usage >&2
+        exit 64
+        ;;
+esac
+
+if [[ -n "${buildopt_output}" ]] && [[ "${buildopt_output}" != /* ]]; then
+    printf 'POC lab output path must be absolute\n' >&2
+    exit 64
+fi
+
+for buildopt_command in cat chmod date dirname git jq mktemp mv rm; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required POC lab command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_before_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_source_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_source_tree_clean=false
+if [[ -z "${buildopt_before_status}" ]]; then
+    buildopt_source_tree_clean=true
+fi
+buildopt_started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+buildopt_test_root=$(mktemp -d)
+buildopt_steps='[]'
+
+buildopt_cleanup() {
+    if [[ "${buildopt_test_root}" == /tmp/* ]] && [[ -d "${buildopt_test_root}" ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_publish_result() {
+    local buildopt_status=$1
+    local buildopt_completed_at
+    local buildopt_result
+    local buildopt_output_parent
+    local buildopt_temporary_output
+
+    buildopt_completed_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+    buildopt_result=$(jq -cn \
+        --arg buildopt_status "${buildopt_status}" \
+        --arg buildopt_revision "${buildopt_source_revision}" \
+        --arg buildopt_started "${buildopt_started_at}" \
+        --arg buildopt_completed "${buildopt_completed_at}" \
+        --argjson buildopt_clean "${buildopt_source_tree_clean}" \
+        --argjson buildopt_steps "${buildopt_steps}" \
+        '{
+            schemaVersion: "buildopt.poc-lab/result/v1",
+            milestone: "POC-O2",
+            gateId: "O2-G01",
+            status: $buildopt_status,
+            sourceRevision: $buildopt_revision,
+            sourceTreeClean: $buildopt_clean,
+            startedAt: $buildopt_started,
+            completedAt: $buildopt_completed,
+            steps: $buildopt_steps,
+            boundaries: {
+                syntheticInputsOnly: true,
+                runsEightHourSoak: false,
+                usesExternalDesignPartners: false,
+                authorizesProductionPromotion: false
+            }
+        }')
+    if [[ -z "${buildopt_output}" ]]; then
+        jq . <<<"${buildopt_result}"
+        return
+    fi
+    buildopt_output_parent=$(dirname -- "${buildopt_output}")
+    if [[ ! -d "${buildopt_output_parent}" ]]; then
+        printf 'POC lab output parent does not exist: %s\n' \
+            "${buildopt_output_parent}" >&2
+        return 1
+    fi
+    buildopt_temporary_output=$(mktemp "${buildopt_output_parent}/.buildopt-poc-lab.XXXXXX")
+    chmod 0600 "${buildopt_temporary_output}"
+    jq . <<<"${buildopt_result}" >"${buildopt_temporary_output}"
+    mv -f -- "${buildopt_temporary_output}" "${buildopt_output}"
+}
+
+buildopt_run_step() {
+    local buildopt_id=$1
+    local buildopt_command_text=$2
+    shift 2
+    local buildopt_log="${buildopt_test_root}/${buildopt_id}.log"
+    local buildopt_exit_code=0
+    local buildopt_status=PASS
+
+    printf 'POC lab: %s\n' "${buildopt_command_text}" >&2
+    if "$@" >"${buildopt_log}" 2>&1; then
+        buildopt_exit_code=0
+    else
+        buildopt_exit_code=$?
+        buildopt_status=FAIL
+    fi
+    cat "${buildopt_log}" >&2
+    buildopt_steps=$(jq -cn \
+        --argjson buildopt_existing "${buildopt_steps}" \
+        --arg buildopt_id "${buildopt_id}" \
+        --arg buildopt_command "${buildopt_command_text}" \
+        --arg buildopt_status "${buildopt_status}" \
+        --argjson buildopt_exit_code "${buildopt_exit_code}" \
+        '$buildopt_existing + [{
+            id: $buildopt_id,
+            command: $buildopt_command,
+            status: $buildopt_status,
+            exitCode: $buildopt_exit_code
+        }]')
+    if [[ "${buildopt_status}" != PASS ]]; then
+        buildopt_publish_result FAIL
+        return "${buildopt_exit_code}"
+    fi
+}
+
+cd -- "${buildopt_repo_root}"
+buildopt_run_step \
+    O2-001 \
+    './dev/run --toolchain temurin-jdk-21 -- ./dev/check-synthetic-gradle-smoke' \
+    "${buildopt_script_dir}/run" --toolchain temurin-jdk-21 -- \
+    "${buildopt_script_dir}/check-synthetic-gradle-smoke"
+buildopt_run_step \
+    O2-002 \
+    './dev/run --toolchain go -- go test -race -count=3 ./internal/betabenchmark -run ^TestRunSharedFaultsProducesBoundTamperEvidentEvidence$' \
+    "${buildopt_script_dir}/run" --toolchain go -- go test -race -count=3 \
+    ./internal/betabenchmark \
+    -run '^TestRunSharedFaultsProducesBoundTamperEvidentEvidence$'
+buildopt_run_step \
+    O2-003 \
+    './dev/check-edge-cache-two-node-proxy' \
+    "${buildopt_script_dir}/check-edge-cache-two-node-proxy"
+buildopt_run_step \
+    O2-004 \
+    './dev/check-edge-operability' \
+    "${buildopt_script_dir}/check-edge-operability"
+
+buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'POC lab changed the source tree\n' >&2
+    buildopt_publish_result FAIL
+    exit 1
+fi
+buildopt_publish_result PASS

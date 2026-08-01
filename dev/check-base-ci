@@ -130,6 +130,7 @@ buildopt_require_count 1 "          check-latest: false"
 buildopt_require_count 1 "          ${buildopt_rust_toolchain}"
 buildopt_require_count 1 "            protoc \\"
 buildopt_require_count 1 "            ./dev/check-base-ci --lane core"
+buildopt_require_count 1 "        run: ./dev/check-owner-poc-lab"
 buildopt_require_count 1 "        run: ./dev/check-base-ci --lane rust"
 
 if grep -Eq \

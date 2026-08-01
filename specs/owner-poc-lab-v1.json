@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "buildopt.specs/owner-poc-lab/v1",
+  "milestone": "POC-O2",
+  "gateId": "O2-G01",
+  "execution": "CURRENT_SOURCE_TREE_SYNTHETIC_COMPOSITE",
+  "command": "./dev/run-owner-poc-lab [--output ABSOLUTE_PATH]",
+  "reportSchemaVersion": "buildopt.poc-lab/result/v1",
+  "constituents": [
+    {
+      "id": "O2-001",
+      "command": "./dev/run --toolchain temurin-jdk-21 -- ./dev/check-synthetic-gradle-smoke",
+      "proof": "SYNTHETIC_GRADLE_BUILD_AND_DELIVERABLE"
+    },
+    {
+      "id": "O2-002",
+      "command": "./dev/run --toolchain go -- go test -race -count=3 ./internal/betabenchmark -run ^TestRunSharedFaultsProducesBoundTamperEvidentEvidence$",
+      "proof": "REPEATED_TAMPER_EVIDENT_SHARED_FAULT_EVIDENCE"
+    },
+    {
+      "id": "O2-003",
+      "command": "./dev/check-edge-cache-two-node-proxy",
+      "proof": "TWO_EDGE_SHARED_COLLISION_ONLINE_AND_OFFLINE"
+    },
+    {
+      "id": "O2-004",
+      "command": "./dev/check-edge-operability",
+      "proof": "PROCESS_RELOAD_STATUS_PACKAGING_AND_SHUTDOWN"
+    }
+  ],
+  "continuousIntegration": {
+    "workflow": ".github/workflows/base-ci.yml",
+    "command": "./dev/check-owner-poc-lab",
+    "cleanCheckout": true,
+    "readOnly": true
+  },
+  "result": {
+    "status": "PASS",
+    "steps": 4,
+    "atomicFileOutput": true,
+    "defaultOutput": "STDOUT"
+  },
+  "boundaries": {
+    "syntheticInputsOnly": true,
+    "ownerInterventionRequired": false,
+    "runsEightHourSoak": false,
+    "usesExternalDesignPartners": false,
+    "authorizesProductionPromotion": false,
+    "closes": [
+      "O2-001",
+      "O2-002",
+      "O2-003",
+      "O2-004",
+      "O2-G01",
+      "POC-O2"
+    ]
+  }
+}

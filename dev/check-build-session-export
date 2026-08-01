@@ -27,7 +27,7 @@ buildopt_cleanup() {
 }
 trap buildopt_cleanup EXIT
 
-for buildopt_command in cmp find grep jq sed sha256sum stat; do
+for buildopt_command in awk cmp cp find grep jq sed sha256sum stat; do
     if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
         printf 'required BUILD_SESSION check command is unavailable: %s\n' \
             "${buildopt_command}" >&2
@@ -247,6 +247,18 @@ if ((buildopt_export_count != 2)); then
     exit 1
 fi
 
+buildopt_redaction_key="${buildopt_export_directory}/.buildopt-export-redaction.key"
+if [[ ! -f "${buildopt_redaction_key}" ]] ||
+    [[ "$(stat -c '%a' "${buildopt_redaction_key}")" != "600" ]] ||
+    [[ "$(stat -c '%s' "${buildopt_redaction_key}")" != "32" ]]; then
+    printf 'BUILD_SESSION redaction key is absent or not private\n' >&2
+    exit 1
+fi
+buildopt_redaction_key_digest=$(
+    sha256sum "${buildopt_redaction_key}" |
+        awk '{print $1}'
+)
+
 buildopt_success_export=$(
     grep -l \
         '"outcome": "SUCCESS"' \
@@ -276,14 +288,34 @@ for buildopt_export in \
     "${buildopt_validator}" "${buildopt_schema}" "${buildopt_export}"
 done
 
-if ! grep -Fq '"requestedTasks": [' "${buildopt_success_export}" ||
-    ! grep -Fq '"neutralProbe"' "${buildopt_success_export}" ||
-    ! grep -Fq '"exitCode": 0' "${buildopt_success_export}" ||
-    ! grep -Fq '"state": "UNAVAILABLE"' "${buildopt_success_export}" ||
-    ! grep -Fq '"intentionalFailure"' "${buildopt_failure_export}" ||
-    ! grep -Fq '"exitCode": 1' "${buildopt_failure_export}" ||
-    ! grep -Fq '"state": "PARTIAL"' "${buildopt_failure_export}"; then
-    printf 'BUILD_SESSION exports did not preserve expected observed facts\n' >&2
+if ! jq -e --arg buildopt_raw_task neutralProbe '
+    .build.outcome == "SUCCESS" and
+    .build.exitCode == 0 and
+    (.gradleInvocations | length) == 1 and
+    .gradleInvocations[0].outcome == "SUCCESS" and
+    .gradleInvocations[0].exitCode == 0 and
+    (.gradleInvocations[0].requestedTasks | length) == 1 and
+    (.gradleInvocations[0].requestedTasks[0] |
+        test("^hmac-sha256:[0-9a-f]{64}$") and
+        . != $buildopt_raw_task) and
+    .performance.timeToFirstBuildFailureMs.state == "UNAVAILABLE"
+' "${buildopt_success_export}" >/dev/null; then
+    printf 'successful BUILD_SESSION did not preserve redacted observed facts\n' >&2
+    exit 1
+fi
+if ! jq -e --arg buildopt_raw_task intentionalFailure '
+    .build.outcome == "BUILD_FAILURE" and
+    .build.exitCode == 1 and
+    (.gradleInvocations | length) == 1 and
+    .gradleInvocations[0].outcome == "BUILD_FAILURE" and
+    .gradleInvocations[0].exitCode == 1 and
+    (.gradleInvocations[0].requestedTasks | length) == 1 and
+    (.gradleInvocations[0].requestedTasks[0] |
+        test("^hmac-sha256:[0-9a-f]{64}$") and
+        . != $buildopt_raw_task) and
+    .performance.timeToFirstBuildFailureMs.state == "PARTIAL"
+' "${buildopt_failure_export}" >/dev/null; then
+    printf 'failed BUILD_SESSION did not preserve redacted observed facts\n' >&2
     exit 1
 fi
 
@@ -358,6 +390,19 @@ if ((buildopt_server_exit != 0)); then
     exit 1
 fi
 
+if [[ ! -f "${buildopt_redaction_key}" ]]; then
+    printf 'BUILD_SESSION shutdown lost the redaction key\n' >&2
+    exit 1
+fi
+buildopt_shutdown_key_digest=$(
+    sha256sum "${buildopt_redaction_key}" |
+        awk '{print $1}'
+)
+if [[ "${buildopt_shutdown_key_digest}" != "${buildopt_redaction_key_digest}" ]]; then
+    printf 'BUILD_SESSION shutdown lost or rotated the redaction key\n' >&2
+    exit 1
+fi
+
 buildopt_stdout_jsonl="${buildopt_test_root}/stdout.jsonl"
 "${buildopt_server}" export \
     --export-dir "${buildopt_export_directory}" \
@@ -370,6 +415,9 @@ fi
 buildopt_recovery_directory="${buildopt_test_root}/recovery"
 mkdir -p -- "${buildopt_recovery_directory}"
 chmod 0700 -- "${buildopt_recovery_directory}"
+cp -- "${buildopt_redaction_key}" \
+    "${buildopt_recovery_directory}/.buildopt-export-redaction.key"
+chmod 0600 -- "${buildopt_recovery_directory}/.buildopt-export-redaction.key"
 sed -n '1p' "${buildopt_jsonl_stream}" \
     >"${buildopt_recovery_directory}/buildopt-events.jsonl"
 chmod 0600 -- "${buildopt_recovery_directory}/buildopt-events.jsonl"

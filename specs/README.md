@@ -35,6 +35,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`edge-cache-two-node-proxy-v1.md`](./edge-cache-two-node-proxy-v1.md) | `C2-005` |
 | [`edge-cache-gate-v1.md`](./edge-cache-gate-v1.md) | `C2-G01` / MVP-C2 |
 | [`edge-operability-v1.md`](./edge-operability-v1.md) | `O1-001..004` / `O1-G01` / POC-O1 |
+| [`owner-poc-lab-v1.md`](./owner-poc-lab-v1.md) | `O2-001..004` / `O2-G01` / POC-O2 |
 | [`custom-task-contract-java-recipe-v1.md`](./custom-task-contract-java-recipe-v1.md) | `C4-004` / `C4-G06` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`full-relevant-validation-gate-v1.md`](./full-relevant-validation-gate-v1.md) | `C4-006` / `C4-G02` |
@@ -128,6 +129,11 @@ boundary, and final two-node runtime composition contract.
 `edge-operability-v1.json` is the POC-O1 standalone process, signed hot reload,
 private aggregate status, signed-bundle, reproducible-systemd-unit, and
 graceful-lifecycle composition contract.
+`owner-poc-lab-v1.json` composes the synthetic Gradle lane, repeated Shared
+fault evidence, two-Edge Shared collision proof, and complete Edge operability
+gate into one JSON-reporting POC-O2 command that base CI runs without owner
+repositories, external partners, or the deferred soak.
+
 `no-hit-overhead-v1.json` is the A0-G06 paired strict-runner contract for
 authenticated read-only L2 misses, fresh L1/output state, long-session p95
 budgets, and pre-outcome L2 omission with zero short-session requests.

@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/owner-poc-lab-v1.json"
+
+for buildopt_command in git jq mktemp rm stat; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required POC lab checker command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/owner-poc-lab/v1" and
+    .milestone == "POC-O2" and
+    .gateId == "O2-G01" and
+    .execution == "CURRENT_SOURCE_TREE_SYNTHETIC_COMPOSITE" and
+    .command == "./dev/run-owner-poc-lab [--output ABSOLUTE_PATH]" and
+    .reportSchemaVersion == "buildopt.poc-lab/result/v1" and
+    [.constituents[].id] == ["O2-001", "O2-002", "O2-003", "O2-004"] and
+    [.constituents[].command] == [
+        "./dev/run --toolchain temurin-jdk-21 -- ./dev/check-synthetic-gradle-smoke",
+        "./dev/run --toolchain go -- go test -race -count=3 ./internal/betabenchmark -run ^TestRunSharedFaultsProducesBoundTamperEvidentEvidence$",
+        "./dev/check-edge-cache-two-node-proxy",
+        "./dev/check-edge-operability"
+    ] and
+    [.constituents[].proof] == [
+        "SYNTHETIC_GRADLE_BUILD_AND_DELIVERABLE",
+        "REPEATED_TAMPER_EVIDENT_SHARED_FAULT_EVIDENCE",
+        "TWO_EDGE_SHARED_COLLISION_ONLINE_AND_OFFLINE",
+        "PROCESS_RELOAD_STATUS_PACKAGING_AND_SHUTDOWN"
+    ] and
+    .continuousIntegration == {
+        workflow: ".github/workflows/base-ci.yml",
+        command: "./dev/check-owner-poc-lab",
+        cleanCheckout: true,
+        readOnly: true
+    } and
+    .result == {
+        status: "PASS",
+        steps: 4,
+        atomicFileOutput: true,
+        defaultOutput: "STDOUT"
+    } and
+    .boundaries.syntheticInputsOnly == true and
+    .boundaries.ownerInterventionRequired == false and
+    .boundaries.runsEightHourSoak == false and
+    .boundaries.usesExternalDesignPartners == false and
+    .boundaries.authorizesProductionPromotion == false and
+    .boundaries.closes == [
+        "O2-001", "O2-002", "O2-003", "O2-004", "O2-G01", "POC-O2"
+    ]
+' "${buildopt_contract}" >/dev/null
+
+buildopt_before_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_test_root=$(mktemp -d)
+buildopt_cleanup() {
+    if [[ "${buildopt_test_root}" == /tmp/* ]] && [[ -d "${buildopt_test_root}" ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_result="${buildopt_test_root}/poc-lab-result.json"
+"${buildopt_script_dir}/run-owner-poc-lab" --output "${buildopt_result}"
+if [[ "$(stat -c '%a' "${buildopt_result}")" != "600" ]]; then
+    printf 'POC lab result is not mode 600\n' >&2
+    exit 1
+fi
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+
+jq -e --arg buildopt_revision "${buildopt_revision}" '
+    keys == [
+        "boundaries", "completedAt", "gateId", "milestone", "schemaVersion",
+        "sourceRevision", "sourceTreeClean", "startedAt", "status", "steps"
+    ] and
+    .schemaVersion == "buildopt.poc-lab/result/v1" and
+    .milestone == "POC-O2" and
+    .gateId == "O2-G01" and
+    .status == "PASS" and
+    .sourceRevision == $buildopt_revision and
+    (.sourceTreeClean | type) == "boolean" and
+    (.startedAt | fromdateiso8601) <= (.completedAt | fromdateiso8601) and
+    [.steps[].id] == ["O2-001", "O2-002", "O2-003", "O2-004"] and
+    ([.steps[].status] | all(. == "PASS")) and
+    ([.steps[].exitCode] | all(. == 0)) and
+    .boundaries == {
+        syntheticInputsOnly: true,
+        runsEightHourSoak: false,
+        usesExternalDesignPartners: false,
+        authorizesProductionPromotion: false
+    }
+' "${buildopt_result}" >/dev/null
+
+buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'POC lab checker changed the source tree\n' >&2
+    exit 1
+fi
+printf 'O2-G01 owner POC lab passed: synthetic Gradle, repeated Shared faults, two Edge nodes, operability, JSON report, and clean CI contract\n'

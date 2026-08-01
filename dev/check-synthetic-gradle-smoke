@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+
+for buildopt_command in awk git java javap; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required synthetic Gradle smoke command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+buildopt_java_major=$(
+    java -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '
+            /^[[:space:]]*java.version = / {
+                split($2, version, ".")
+                print version[1]
+                exit
+            }
+        '
+)
+if [[ "${buildopt_java_major}" != "21" ]]; then
+    printf 'synthetic Gradle smoke requires Java 21, found major %s\n' \
+        "${buildopt_java_major:-unknown}" >&2
+    exit 1
+fi
+
+buildopt_before_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+"${buildopt_script_dir}/check-golden-lane" --static
+"${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --stacktrace \
+    --warning-mode=fail \
+    :fixtures:golden-lane:clean \
+    :fixtures:golden-lane:build
+
+buildopt_class_file="${buildopt_repo_root}/fixtures/golden-lane/build/classes/java/main/dev/buildopt/fixture/GoldenLane.class"
+buildopt_jar_file="${buildopt_repo_root}/fixtures/golden-lane/build/libs/golden-lane-fixture-1.0.0.jar"
+if [[ ! -f "${buildopt_class_file}" ]] || [[ ! -s "${buildopt_jar_file}" ]]; then
+    printf 'synthetic golden-lane deliverables are missing\n' >&2
+    exit 1
+fi
+buildopt_class_major=$(javap -verbose "${buildopt_class_file}" | awk '/major version:/ {print $3; exit}')
+if [[ "${buildopt_class_major}" != "61" ]]; then
+    printf 'expected Java 17 bytecode major 61, found %s\n' \
+        "${buildopt_class_major:-unknown}" >&2
+    exit 1
+fi
+buildopt_marker=$(java -cp "${buildopt_jar_file}" dev.buildopt.fixture.GoldenLane)
+if [[ "${buildopt_marker}" != "golden-lane-v1" ]]; then
+    printf 'unexpected synthetic fixture output: %s\n' "${buildopt_marker}" >&2
+    exit 1
+fi
+
+buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'synthetic Gradle smoke changed the source tree\n' >&2
+    exit 1
+fi
+printf 'Synthetic Gradle smoke passed: Java 21 runtime, Java 17 bytecode, executable JAR, and preserved source tree\n'

@@ -57,6 +57,9 @@ jobs:
           BUILDOPT_JAVA17_HOME="${JAVA_HOME}" \
             ./dev/check-base-ci --lane core
 
+      - name: Run the synthetic owner POC lab
+        run: ./dev/check-owner-poc-lab
+
   rust-optional:
     name: Rust 1.93 optional helper
     runs-on: ubuntu-24.04

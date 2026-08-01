@@ -1604,6 +1604,23 @@ included in the signed Linux AMD64 release bundle. See the
 unit, HA/backups, enterprise identity, other platforms, external validation,
 and the eight-hour soak remain outside `POC-O1`.
 
+## Synthetic owner POC lab
+
+Run the complete owner-independent POC proof and emit its JSON result on
+standard output with:
+
+```bash
+./dev/run-owner-poc-lab
+```
+
+Use `--output ABSOLUTE_PATH` to publish the same result atomically. The lab
+builds the synthetic golden-lane Gradle project, repeats the Shared fault
+evidence three times under `-race`, proves the two-Edge Shared collision path,
+and runs the complete Edge operability gate. `./dev/check-owner-poc-lab`
+strictly validates the contract and result; base CI runs it on a clean checkout.
+It does not run the eight-hour soak, use external design partners, or authorize
+production promotion.
+
 ## Build Impact manifest
 
 Validate the C3-001 customer-owned manifest boundary with:
