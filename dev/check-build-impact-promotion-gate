@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/build-impact-promotion-gate-v1.json"
+buildopt_policy="${buildopt_repo_root}/fixtures/build-impact/promotion-policy.v1.json"
+
+for buildopt_command in go jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required promotion-gate command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/build-impact-promotion-gate/v1" and
+    .workItem == "C3-004" and
+    .policy.schemaVersion == "buildopt.build-impact/promotion-policy/v1" and
+    .policy.minimumShadowDays == 30 and
+    .policy.minimumEligibleDecisions == 3000 and
+    .policy.minimumControlsPerMandatoryChangeClass == 100 and
+    .policy.minimumValidationCoverage == 0.99 and
+    .policy.maximumAggregateFalseNegative == 0.001 and
+    .policy.maximumMandatoryStratumFalseNegative == 0.03 and
+    .policy.oneSidedConfidence == 0.95 and
+    .policy.knownFalseNegativeLimit == 0 and
+    .binding.bindingChange == "RESET_CURRENT_SAMPLE" and
+    .states.insufficientOrInvalidEvidence == "INCONCLUSIVE" and
+    .states.allThresholdsSatisfied == "QUALIFIED" and
+    .states.anyFalseNegative == "SUSPENDED" and
+    .confidenceBound.method == "EXACT_ONE_SIDED_ZERO_FAILURE_BINOMIAL" and
+    .proof.checkedInObservations == "INCONCLUSIVE" and
+    .proof.syntheticThresholdCorpus == "QUALIFIED" and
+    .proof.singleFalseNegativeCorpus == "SUSPENDED" and
+    .result.schemaVersion == "buildopt.build-impact/promotion-report/v1" and
+    .result.selectionAuthorized == false and
+    .boundaries.closes == ["C3-004", "BIA-002"] and
+    (.boundaries.doesNotClose | index("ACTIVE_SELECTION")) != null
+' "${buildopt_contract}" >/dev/null
+
+jq -e '
+    .schemaVersion == "buildopt.build-impact/promotion-policy/v1" and
+    .minimumShadowDays == 30 and
+    .minimumEligibleDecisions == 3000 and
+    .minimumControlsPerChangeClass == 100 and
+    .minimumValidationCoverage == 0.99 and
+    .maximumAggregateFalseNegative == 0.001 and
+    .maximumStratumFalseNegative == 0.03 and
+    .oneSidedConfidence == 0.95 and
+    .knownFalseNegativeLimit == 0
+' "${buildopt_policy}" >/dev/null
+
+"${buildopt_script_dir}/check-build-impact-shadow-validation"
+cd "${buildopt_repo_root}"
+go test -race -count=1 ./internal/buildimpact
+go vet ./internal/buildimpact
+printf 'C3-004 promotion gate passed: BIA-002 exact thresholds, reset, suspension, and honest inconclusive evidence\n'

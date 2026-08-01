@@ -1532,6 +1532,23 @@ required artifact digests/sizes and every owned check. Candidate build or
 content/check/project divergence is a false negative; infrastructure and
 invalid baseline evidence remain `INCONCLUSIVE`. No result authorizes selection.
 
+## Build Impact promotion gate
+
+Run the C3-004 BIA-002 aggregation and suspension matrix with:
+
+```bash
+./dev/check-build-impact-promotion-gate
+```
+
+The checker composes C3-001..004 and binds every result to the current
+repository, pipeline, manifest, graph, and adapter. It proves the unchanged
+30-day, 3,000-decision, 99%-coverage, 100-control-per-stratum thresholds and
+exact one-sided 95% false-negative bounds. Binding drift resets the sample,
+invalid or insufficient evidence is `INCONCLUSIVE`, and one false negative is
+`SUSPENDED`. The checked-in observations remain inconclusive; only the
+deterministic threshold corpus qualifies, and neither state authorizes active
+selection.
+
 ## Runtime owner evaluation
 
 On the exact 4-CPU/16-GiB runner, execute real A/A and resource-profile

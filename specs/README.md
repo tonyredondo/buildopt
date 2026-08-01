@@ -25,6 +25,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`build-impact-manifest-v1.md`](./build-impact-manifest-v1.md) | `C3-001` |
 | [`build-impact-declared-graph-v1.md`](./build-impact-declared-graph-v1.md) | `C3-002` |
 | [`build-impact-shadow-validation-v1.md`](./build-impact-shadow-validation-v1.md) | `C3-003` |
+| [`build-impact-promotion-gate-v1.md`](./build-impact-promotion-gate-v1.md) | `C3-004` / `BIA-002` |
 | [`custom-task-contract-java-recipe-v1.md`](./custom-task-contract-java-recipe-v1.md) | `C4-004` / `C4-G06` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`full-relevant-validation-gate-v1.md`](./full-relevant-validation-gate-v1.md) | `C4-006` / `C4-G02` |
@@ -194,6 +195,12 @@ and result contract for full-baseline shadow evidence, isolated paired
 controls, exact project/artifact/check comparison, explicit false negatives,
 and infrastructure/baseline `INCONCLUSIVE` outcomes; every result keeps active
 selection disabled.
+`build-impact-promotion-gate-v1.json` is the C3-004 exact BIA-002 evidence
+gate: current manifest/graph/adapter binding, 30-day and 3,000-decision
+minimums, 99% validation coverage, 100 controls per mandatory stratum,
+one-sided zero-failure confidence bounds, and immediate suspension on one false
+negative. Current checked-in evidence remains honestly `INCONCLUSIVE`, and a
+qualified report still cannot activate selection.
 `pending-commit-cas-v1.json` is the A0-005 lifecycle contract for durable
 pending attempts, canonical Ed25519 decisions, atomic first-writer visibility,
 context-bound opaque HTTP GET/PUT, quarantine, and startup reconciliation.

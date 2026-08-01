@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "buildopt.build-impact/promotion-policy/v1",
+  "minimumShadowDays": 30,
+  "minimumEligibleDecisions": 3000,
+  "minimumControlsPerChangeClass": 100,
+  "minimumValidationCoverage": 0.99,
+  "maximumAggregateFalseNegative": 0.001,
+  "maximumStratumFalseNegative": 0.03,
+  "oneSidedConfidence": 0.95,
+  "knownFalseNegativeLimit": 0
+}

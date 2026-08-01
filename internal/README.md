@@ -78,7 +78,12 @@ is preserved and execution remains on the original entrypoints. C3-003 records
 strict manifest/graph/adapter-bound full-baseline and paired-control
 observations, classifies candidate build/content/check/project divergence as a
 false negative, and keeps infrastructure or invalid baselines inconclusive.
-Every result disables selection; BIA-002 remains mandatory.
+C3-004 aggregates only current-binding results through the unchanged BIA-002
+minimum window, sample, coverage, per-stratum controls, and exact one-sided
+false-negative bounds. Binding drift resets the sample, insufficient evidence
+is inconclusive, and one known false negative suspends. Every validation and
+promotion result still disables selection; C3-005 owns the only later
+activation boundary.
 
 No type in this directory replaces the normative schemas, OpenAPI, or Protobuf definitions in `contracts/`.
 

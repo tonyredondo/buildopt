@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "buildopt.specs/build-impact-promotion-gate/v1",
+  "workItem": "C3-004",
+  "policy": {
+    "schemaVersion": "buildopt.build-impact/promotion-policy/v1",
+    "minimumShadowDays": 30,
+    "minimumEligibleDecisions": 3000,
+    "minimumControlsPerMandatoryChangeClass": 100,
+    "minimumValidationCoverage": 0.99,
+    "maximumAggregateFalseNegative": 0.001,
+    "maximumMandatoryStratumFalseNegative": 0.03,
+    "oneSidedConfidence": 0.95,
+    "knownFalseNegativeLimit": 0
+  },
+  "binding": {
+    "scope": ["repositoryId", "pipelineClass"],
+    "evidenceVersion": ["manifestDigest", "graphDigest", "adapterVersion"],
+    "bindingChange": "RESET_CURRENT_SAMPLE",
+    "duplicateObservation": "INCONCLUSIVE",
+    "invalidObservation": "INCONCLUSIVE"
+  },
+  "states": {
+    "insufficientOrInvalidEvidence": "INCONCLUSIVE",
+    "allThresholdsSatisfied": "QUALIFIED",
+    "anyFalseNegative": "SUSPENDED"
+  },
+  "confidenceBound": {
+    "method": "EXACT_ONE_SIDED_ZERO_FAILURE_BINOMIAL",
+    "alpha": 0.05,
+    "nonzeroFailures": "SUSPEND_BEFORE_QUALIFICATION"
+  },
+  "proof": {
+    "checkedInObservations": "INCONCLUSIVE",
+    "syntheticThresholdCorpus": "QUALIFIED",
+    "singleFalseNegativeCorpus": "SUSPENDED"
+  },
+  "result": {
+    "schemaVersion": "buildopt.build-impact/promotion-report/v1",
+    "selectionAuthorized": false
+  },
+  "boundaries": {
+    "closes": ["C3-004", "BIA-002"],
+    "doesNotClose": ["C3-005", "C3-G01", "ACTIVE_SELECTION", "TEST_SELECTION", "EIGHT_HOUR_SOAK", "PRODUCTION_PROMOTION"],
+    "ownerOperatedProofOfConcept": true
+  }
+}

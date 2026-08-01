@@ -17,5 +17,10 @@ outputs/checks were observed while only predicting `jvm-components`.
 `paired-control-observation.v1.json` adds an isolated candidate whose projects,
 artifacts, and Test-owned check exactly match the full baseline.
 
-These fixtures authorize no active omission. C3-004 must keep selection
-`INCONCLUSIVE` until the unchanged `BIA-002` evidence threshold passes.
+`promotion-policy.v1.json` pins the unchanged `BIA-002` 30-day,
+3,000-decision, 99%-coverage, 100-control-per-mandatory-class, and one-sided
+95% false-negative limits consumed by C3-004.
+
+These fixtures authorize no active omission. The two current observations are
+honestly `INCONCLUSIVE`; even threshold-qualified synthetic evidence remains
+non-authorizing until the separate C3-005 selection boundary accepts it.
