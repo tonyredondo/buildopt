@@ -47,6 +47,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`self-hosted-service-install-v1.md`](./self-hosted-service-install-v1.md) | `A2-002` |
 | [`self-hosted-upgrade-restart-v1.md`](./self-hosted-upgrade-restart-v1.md) | `A2-003` |
 | [`self-hosted-manual-restore-v1.md`](./self-hosted-manual-restore-v1.md) | `A2-004` |
+| [`self-hosted-single-node-gate-v1.md`](./self-hosted-single-node-gate-v1.md) | `A2-G01` / MVP-A2 |
 | [`pending-commit-cas-v1.md`](./pending-commit-cas-v1.md) | `A0-005` |
 | [`local-authenticated-cache-v1.md`](./local-authenticated-cache-v1.md) | `A0-006` |
 | [`gradle-bootstrap-cache-v1.md`](./gradle-bootstrap-cache-v1.md) | `A0-007` |
@@ -173,6 +174,9 @@ pending-object invisibility contract.
 `self-hosted-manual-restore-v1.json` is the A2-004 absent-target offline
 snapshot, cryptographic recovery-authority comparison, strict generation
 rotation, atomic publication, and fail-closed admission contract.
+`self-hosted-single-node-gate-v1.json` is the A2-G01 current-source composite
+that closes MVP-A2 only when configuration, installation, upgrade/restart, and
+manual restore all pass together.
 `pending-commit-cas-v1.json` is the A0-005 lifecycle contract for durable
 pending attempts, canonical Ed25519 decisions, atomic first-writer visibility,
 context-bound opaque HTTP GET/PUT, quarantine, and startup reconciliation.

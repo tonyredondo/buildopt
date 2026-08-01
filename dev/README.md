@@ -1234,6 +1234,20 @@ packaged server verifies the recovery inputs, reaches readiness `200`, rejects
 the old token, and returns a safe miss under the new generation. This is a
 manual POC recovery proof, not backup automation or an RPO/RTO claim.
 
+## Self-hosted single-node exit gate
+
+Run the complete current-tree MVP-A2 proof:
+
+```bash
+./dev/check-self-hosted-single-node-gate
+```
+
+`A2-G01` runs the A2-001 configuration/storage, A2-002 installation, A2-003
+upgrade/restart, and A2-004 restore checkers in order and requires the source
+tree to remain unchanged. It closes the owner-operated single-node POC only;
+systemd mutation, external validation, soak, HA, backup RPO/RTO, enterprise
+identity, and productionization remain outside the gate.
+
 ## Operational readiness and revocation
 
 Exercise the first `OPS-001/A1` operational slice:

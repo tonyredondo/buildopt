@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `DONE` — owner-operated POC target `A1 + B + C1 + C4` is complete<br>
-**Current phase:** MVP-A2 active after the completed POC; all self-hosted implementation blocks are complete and the integrated exit gate is next<br>
+**Current phase:** owner-operated POC plus MVP-A2 are complete; remaining tracks are explicitly deferred until the owner selects one<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Last updated:** 2026-08-01<br>
@@ -57,7 +57,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | MVP-B | Runtime Optimizer and safe learning | `DONE` | 6/6 | Owner-operated A1 |
 | MVP-C1 | Task Intelligence, JVM Agent, and Linux hermeticity | `DONE` | 9/9 | B |
 | MVP-C4 | PR-only Patch Autopilot | `DONE` | 7/7 | B + C1 |
-| MVP-A2 | Self-hosted single-node | `DOING` | 0/1 | A1 |
+| MVP-A2 | Self-hosted single-node | `DONE` | 1/1 | A1 |
 | MVP-C2 | Edge Cache Node | `DEFERRED` | 0/1 | A1 |
 | MVP-C3 | Build Impact Analysis | `DEFERRED` | 0/1 | B + `INT-001` |
 | GA-D | Production-ready hardening | `DEFERRED` | 0/1 | Functional beta with demonstrated value |
@@ -78,7 +78,7 @@ Preparation
                    └─→ complete MVP-C4
 ```
 
-The POC target is not complete until A1, B, C1, and C4 close. The eight-hour soak, external design-partner evidence, A2, C2, C3, and GA-D are deferred and do not block the POC.
+The owner-operated POC target and MVP-A2 are complete. The eight-hour soak, external design-partner evidence, C2, C3, and GA-D remain deferred and do not block either completed proof of concept.
 
 ### 2.3 Next executable items
 
@@ -531,7 +531,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 
 | Track | Minimum scope for reactivation | State | Trigger |
 |---|---|---|---|
-| MVP-A2 | Self-hosted installer, migration, and recovery | `DOING` | Stable A1 protocol + owner activation |
+| MVP-A2 | Self-hosted installer, migration, and recovery | `DONE` | `E-122` current-tree composite gate |
 | MVP-C2 | Edge proxy, SLRU, and offline committed reads | `DEFERRED` | Latency/volume justify Edge |
 | MVP-C3 | Conservative BIA and `BIA-002` gate | `DEFERRED` | Stable B + `INT-001` + demand |
 | GA-D Identity | OIDC/workload identity, SSO/RBAC, KMS/HSM | `DEFERRED` | Beta demonstrates value |
@@ -552,7 +552,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
-| `A2-G01` | Reproducible install, supported storage, safe restart/upgrade, and safe manual restore | `TODO` | `A2-002..004` |
+| `A2-G01` | Reproducible install, supported storage, safe restart/upgrade, and safe manual restore | `DONE` | `E-122` |
 
 ---
 
@@ -773,6 +773,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-119` | 2026-08-01 | `A2-002` | Versioned [`Self-hosted service installation v1`](./specs/self-hosted-service-install-v1.md), exact machine-readable [release/layout/secret/runtime contract](./specs/self-hosted-service-install-v1.json), guarded [`manage-self-hosted`](./dev/manage-self-hosted) installer/status manager, operator-facing [`self-hosted-single-node`](./runbooks/self-hosted-single-node.md) runbook, and composite [`check-self-hosted-service-install`](./dev/check-self-hosted-service-install); the checker built and signed the real Linux AMD64 release, verified it against an external pinned key, produced private persistent state/export/config roots and a deterministic hardened systemd unit without calling systemctl, reinstalled from identical fresh inputs with byte-identical config/unit/manifest hashes, verified the unit with systemd-analyze, executed the packaged server help path, and rejected a permissive environment file before root mutation | `DONE`: `A2-002` closes without enabling a host service, claiming compatible upgrade/restart, manual restore continuity, soak, HA, or productization |
 | `E-120` | 2026-08-01 | `A2-003` | Versioned [`Self-hosted upgrade and restart v1`](./specs/self-hosted-upgrade-restart-v1.md), exact machine-readable [selection/restart/visibility contract](./specs/self-hosted-upgrade-restart-v1.json), serialized rollback-capable [`manage-self-hosted upgrade`](./dev/manage-self-hosted), deterministic synthetic [`authority fixture`](./internal/selfhosted/testdata/authority/main.go), upgraded operator [`runbook`](./runbooks/self-hosted-single-node.md), and composite [`check-self-hosted-upgrade-restart`](./dev/check-self-hosted-upgrade-restart); the checker built and signed two real Linux AMD64 releases, installed v1, started its packaged server, issued a scoped read-write token, wrote real pending bytes, forced one post-selection unit-composition failure and proved exact rollback to v1, selected v2 while the v1 process remained ready, then gracefully restarted v2 over unchanged config and persistent data; readiness returned `200`, the pending key stayed `404` before selection, during online selection, and after restart, the hardened unit selected v2, and same-version upgrade was idempotent | `DONE`: `A2-003` closes without claiming manual restore/revocation continuity, supervisor mutation, soak, HA, backup RPO/RTO, or productization |
 | `E-121` | 2026-08-01 | `A2-004` | Versioned [`Self-hosted manual restore v1`](./specs/self-hosted-manual-restore-v1.md), exact machine-readable [precondition/rotation/restore/admission contract](./specs/self-hosted-manual-restore-v1.json), packaged cryptographic [`authority inspect`](./cmd/buildopt-server/authority_inspect.go), fail-closed [`manage-self-hosted restore`](./dev/manage-self-hosted), updated operator [`runbook`](./runbooks/self-hosted-single-node.md), and composite [`check-self-hosted-manual-restore`](./dev/check-self-hosted-manual-restore); the checker built and signed a real Linux AMD64 release, wrote real pending bytes, stopped Shared, created an offline private snapshot, simulated loss by moving the installed data root away, rejected unrotated generations and a symlink-bearing snapshot before target creation, then staged and atomically restored the valid snapshot without mutating it; policy version, revocation epoch, L1 security generation, and namespace generation all advanced, manager status passed, explicit packaged-server startup returned readiness `200`, the old authority/token returned `401`, and a new generation token saw only `404` | `DONE`: `A2-004` closes without overwriting an existing data root or claiming backup automation, HA, RPO/RTO, soak, or production restore |
+| `E-122` | 2026-08-01 | `A2-G01`, MVP-A2 exit | Versioned [`Self-hosted single-node gate v1`](./specs/self-hosted-single-node-gate-v1.md), exact machine-readable [current-tree constituent/boundary contract](./specs/self-hosted-single-node-gate-v1.json), and composite [`check-self-hosted-single-node-gate`](./dev/check-self-hosted-single-node-gate); one invocation validated the strict self-hosted configuration and proven-local storage preflight, built and reproducibly installed signed real releases, exercised rollback-safe online upgrade plus explicit restart with pending-object invisibility, and performed absent-target offline restore with cryptographically verified strict policy/revocation/L1/namespace rotation; all four constituent checkers preserved the source tree and passed against the same source state | `DONE`: `A2-G01` and MVP-A2 close for the owner-operated single-node POC without mutating an operator service, contacting an external repository, running the deferred soak, or claiming external validation, HA, backup RPO/RTO, enterprise identity, or production readiness |
 
 ---
 
@@ -780,6 +781,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-01 | Closed `A2-G01` and MVP-A2: composed all four current-tree self-hosted proofs into one passing gate covering supported storage, reproducible signed install, safe upgrade/restart, and generation-rotated manual restore; no non-deferred implementation block remains | Codex |
 | 2026-08-01 | Closed `A2-004`: added absent-target offline snapshot restore, packaged authority verification, strict policy/revocation/L1/namespace generation rotation, negative unrotated/symlink cases, and explicit readiness plus old-token rejection; moved `A2-G01` next without a backup, HA, RPO/RTO, or soak claim | Codex |
 | 2026-08-01 | Closed `A2-003`: added serialized signed self-hosted upgrade, atomic unit/manifest composition with exact rollback after injected failure, and real v1-to-v2 restart proof that persistent pending bytes remain invisible; moved `A2-004` next without claiming restore continuity, soak, or productization | Codex |
 | 2026-08-01 | Closed `A2-002`: composed the signed immutable release installer with private persistent roots, strict path-only configuration, external mode-0600 secrets, deterministic systemd unit generation, byte-identical fresh reinstall proof, and an operator runbook; moved `A2-003` next without starting a host service or claiming migration/restore | Codex |

@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/self-hosted-single-node-gate-v1.json"
+
+for buildopt_command in git jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required self-hosted gate command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if ! jq -e '
+    .schemaVersion == "buildopt.specs/self-hosted-single-node-gate/v1" and
+    .gateId == "A2-G01" and
+    .milestone == "MVP-A2" and
+    .execution == "CURRENT_SOURCE_TREE_COMPOSITE" and
+    .constituents == [
+        {
+            item: "A2-001",
+            command: "./dev/check-self-hosted-single-node-config",
+            proof: "STRICT_CONFIG_AND_SUPPORTED_STORAGE"
+        },
+        {
+            item: "A2-002",
+            command: "./dev/check-self-hosted-service-install",
+            proof: "REPRODUCIBLE_SIGNED_INSTALL"
+        },
+        {
+            item: "A2-003",
+            command: "./dev/check-self-hosted-upgrade-restart",
+            proof: "SAFE_ONLINE_SELECTION_AND_RESTART"
+        },
+        {
+            item: "A2-004",
+            command: "./dev/check-self-hosted-manual-restore",
+            proof: "FAIL_CLOSED_ROTATED_MANUAL_RESTORE"
+        }
+    ] and
+    .boundaries == {
+        closes: ["A2-G01", "MVP-A2"],
+        doesNotClose: [
+            "EIGHT_HOUR_SOAK",
+            "EXTERNAL_DESIGN_PARTNER_VALIDATION",
+            "HIGH_AVAILABILITY",
+            "BACKUP_RPO_RTO",
+            "ENTERPRISE_IDENTITY",
+            "PRODUCTIONIZATION"
+        ],
+        ownerOperatedProofOfConcept: true
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'self-hosted single-node gate contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+for buildopt_checker in \
+    check-self-hosted-single-node-config \
+    check-self-hosted-service-install \
+    check-self-hosted-upgrade-restart \
+    check-self-hosted-manual-restore; do
+    if [[ ! -x "${buildopt_script_dir}/${buildopt_checker}" ]]; then
+        printf 'self-hosted constituent is unavailable: %s\n' \
+            "${buildopt_checker}" >&2
+        exit 1
+    fi
+    "${buildopt_script_dir}/${buildopt_checker}"
+done
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'self-hosted single-node gate changed the source tree\n' >&2
+    exit 1
+fi
+
+printf 'A2-G01 self-hosted single-node gate passed: A2-001..004 current-tree proofs complete\n'

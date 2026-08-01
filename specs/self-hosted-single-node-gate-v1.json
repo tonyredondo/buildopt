@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "buildopt.specs/self-hosted-single-node-gate/v1",
+  "gateId": "A2-G01",
+  "milestone": "MVP-A2",
+  "execution": "CURRENT_SOURCE_TREE_COMPOSITE",
+  "constituents": [
+    {
+      "item": "A2-001",
+      "command": "./dev/check-self-hosted-single-node-config",
+      "proof": "STRICT_CONFIG_AND_SUPPORTED_STORAGE"
+    },
+    {
+      "item": "A2-002",
+      "command": "./dev/check-self-hosted-service-install",
+      "proof": "REPRODUCIBLE_SIGNED_INSTALL"
+    },
+    {
+      "item": "A2-003",
+      "command": "./dev/check-self-hosted-upgrade-restart",
+      "proof": "SAFE_ONLINE_SELECTION_AND_RESTART"
+    },
+    {
+      "item": "A2-004",
+      "command": "./dev/check-self-hosted-manual-restore",
+      "proof": "FAIL_CLOSED_ROTATED_MANUAL_RESTORE"
+    }
+  ],
+  "boundaries": {
+    "closes": [
+      "A2-G01",
+      "MVP-A2"
+    ],
+    "doesNotClose": [
+      "EIGHT_HOUR_SOAK",
+      "EXTERNAL_DESIGN_PARTNER_VALIDATION",
+      "HIGH_AVAILABILITY",
+      "BACKUP_RPO_RTO",
+      "ENTERPRISE_IDENTITY",
+      "PRODUCTIONIZATION"
+    ],
+    "ownerOperatedProofOfConcept": true
+  }
+}
