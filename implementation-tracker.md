@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `DONE` — owner-operated POC target `A1 + B + C1 + C4` is complete<br>
-**Current phase:** MVP-C3 active; `C3-G01` current-tree composite exit gate is the next executable block<br>
+**Overall status:** `DONE` — owner-operated POC target plus optional MVP-A2 and MVP-C3 extensions are complete<br>
+**Current phase:** no non-deferred implementation block remains; productization validation and hardening stay deferred<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Last updated:** 2026-08-01<br>
@@ -59,7 +59,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | MVP-C4 | PR-only Patch Autopilot | `DONE` | 7/7 | B + C1 |
 | MVP-A2 | Self-hosted single-node | `DONE` | 1/1 | A1 |
 | MVP-C2 | Edge Cache Node | `DEFERRED` | 0/1 | A1 |
-| MVP-C3 | Build Impact Analysis | `DOING` | 0/1 | B + `INT-001` |
+| MVP-C3 | Build Impact Analysis | `DONE` | 1/1 | `E-128` |
 | GA-D | Production-ready hardening | `DEFERRED` | 0/1 | Functional beta with demonstrated value |
 
 Design baseline: 51 private-beta decisions are accepted in the RFC; their artifacts and tests remain pending as recorded in this tracker.
@@ -78,7 +78,7 @@ Preparation
                    └─→ complete MVP-C4
 ```
 
-The owner-operated POC target and MVP-A2 are complete. MVP-C3 is now active as an optional owner-operated extension. The eight-hour soak, external design-partner evidence, C2, and GA-D remain deferred and do not block the completed proof of concept or conservative C3 implementation.
+The owner-operated POC target and optional MVP-A2/MVP-C3 extensions are complete. The eight-hour soak, external design-partner evidence, C2, and GA-D remain deferred and do not block the completed proof of concept.
 
 ### 2.3 Next executable items
 
@@ -533,7 +533,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 |---|---|---|---|
 | MVP-A2 | Self-hosted installer, migration, and recovery | `DONE` | `E-122` current-tree composite gate |
 | MVP-C2 | Edge proxy, SLRU, and offline committed reads | `DEFERRED` | Latency/volume justify Edge |
-| MVP-C3 | Conservative BIA and `BIA-002` gate | `DOING` | Owner reactivated on 2026-08-01; B + `INT-001` are complete |
+| MVP-C3 | Conservative BIA and `BIA-002` gate | `DONE` | `E-128` current-tree composite gate |
 | GA-D Identity | OIDC/workload identity, SSO/RBAC, KMS/HSM | `DEFERRED` | Beta demonstrates value |
 | GA-D Storage | Object store, HA metadata, backups, and RPO/RTO | `DEFERRED` | Production-ready requirements |
 | GA-D Privacy | Residency, legal hold, and backup deletion | `DEFERRED` | Contractual requirements |
@@ -568,7 +568,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
-| `C3-G01` | Only the customer manifest and declared graph authorize build-entrypoint omissions; unknown/global/Test-owned work fails closed, shadow/control discrepancies suspend, and selection cannot activate before `BIA-002` | `DOING` | `C3-001..005` |
+| `C3-G01` | Only the customer manifest and declared graph authorize build-entrypoint omissions; unknown/global/Test-owned work fails closed, shadow/control discrepancies suspend, and selection cannot activate before `BIA-002` | `DONE` | `E-128` |
 
 ---
 
@@ -795,6 +795,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-125` | 2026-08-01 | `C3-003` | Versioned [`Build Impact shadow validation v1`](./specs/build-impact-shadow-validation-v1.md), exact machine-readable [observation/comparison/result contract](./specs/build-impact-shadow-validation-v1.json), production [`shadow/control evaluator`](./internal/buildimpact/validation.go), checked-in full [`shadow`](./fixtures/build-impact/shadow-observation.v1.json) and [`paired-control`](./fixtures/build-impact/paired-control-observation.v1.json) observations, and composite [`check-build-impact-shadow-validation`](./dev/check-build-impact-shadow-validation); strict parsing bound repository, pipeline, revision, manifest, graph, adapter, change class, UTC time, explicit collections, and candidate presence, while successful baselines required exact original entrypoints, declared project reach, required artifact path/digest/size, and every owned check; shadow and paired positive fixtures emitted `SHADOW_VALIDATED` and `CONTROL_PASSED`, candidate build, entrypoint, project, artifact, and Test-owned check divergence emitted explicit `FALSE_NEGATIVE`, and infrastructure, invalid baseline, or `FULL_GRAPH` decisions remained `INCONCLUSIVE`/ineligible | `DONE`: `C3-003` closes with every result `selectionAuthorized=false`, without aggregation, `BIA-002`, active omission, test selection, soak, or production promotion |
 | `E-126` | 2026-08-01 | `C3-004`, `BIA-002` | Versioned [`Build Impact promotion gate v1`](./specs/build-impact-promotion-gate-v1.md), exact machine-readable [threshold/reset/state contract](./specs/build-impact-promotion-gate-v1.json), checked-in [`promotion policy`](./fixtures/build-impact/promotion-policy.v1.json), production [`promotion evaluator`](./internal/buildimpact/promotion.go), and composite [`check-build-impact-promotion-gate`](./dev/check-build-impact-promotion-gate); strict result validation and current repository/pipeline/manifest/graph/adapter binding excluded 3,000 pre-reset observations after drift, exact one-sided zero-failure binomial bounds qualified a deterministic 30-day, 3,000-decision, 100-controls-per-two-strata corpus at 100% coverage, and negative cases kept 29 days, 2,999 decisions, sub-99% coverage, 99 controls, duplicate/invalid evidence inconclusive while one artifact false negative suspended immediately; the two real checked-in observations remained honestly `INCONCLUSIVE` with only two decisions and one control | `DONE`: `C3-004` and initial `BIA-002` evaluation close with every report `selectionAuthorized=false`, without active omission, Test selection, soak, or production promotion |
 | `E-127` | 2026-08-01 | `C3-005` | Versioned [`Build Impact active selection v1`](./specs/build-impact-selection-v1.md), exact machine-readable [authority/fallback/proof contract](./specs/build-impact-selection-v1.json), production [`PlanSelection`](./internal/buildimpact/selection.go), owner-controlled three-project [`synthetic Gradle repository`](./fixtures/build-impact/synthetic-repository), and composite [`check-build-impact-selection`](./dev/check-build-impact-selection); the sole active boundary recalculated BIA-002 from bound observations instead of trusting a caller-built report, reverified canonical manifest/graph digests, restored original entrypoints for disabled control, local bypass, kill switch, insufficient/suspended evidence, binding drift, global/unknown changes, or invalid loaded state, and kept Test Optimization check IDs outside build selection; two isolated real offline Gradle builds proved the qualified `:service-a:assemble` plan rebuilt affected `:library-c` transitively, omitted unrelated `:service-b`, emitted a byte-identical service-a JAR, and preserved a byte-identical independently executed Test-owned marker | `DONE`: `C3-005` closes for the owner-operated synthetic POC without deriving authority from history, selecting tests, running soak, contacting an external repository, or claiming production promotion |
+| `E-128` | 2026-08-01 | `C3-G01`, MVP-C3 exit | Versioned [`Build Impact gate v1`](./specs/build-impact-gate-v1.md), exact machine-readable [constituent/criterion/boundary contract](./specs/build-impact-gate-v1.json), and current-tree composite [`check-build-impact-gate`](./dev/check-build-impact-gate); one source-preserving invocation composed C3-001..005 and required strict repository/pipeline customer manifest authority, canonical manifest-bound complete declared graph, original-entrypoint shadow plus exact paired controls, explicit false-negative suspension, unchanged BIA-002 sample/window/coverage/confidence thresholds, fail-closed control and drift handling, Test Optimization separation, and the isolated offline synthetic full-versus-selected Gradle proof with identical required bytes | `DONE`: `C3-G01` and owner-operated MVP-C3 close without treating the two checked-in observations as qualified, deriving omission authority from history, selecting tests, running the deferred soak, using external partners, or claiming production readiness |
 
 ---
 
@@ -807,6 +808,7 @@ This table points to the latest valid result. It does not replace reports or all
 | 2026-08-01 | Closed `C3-003`: added immutable shadow/paired-control observations, exact full-baseline and required project/artifact/check comparison, explicit false-negative classification, and infrastructure/baseline inconclusive handling; moved `C3-004` next with selection still disabled | Codex |
 | 2026-08-01 | Closed `C3-004` and implemented unchanged `BIA-002`: added exact current-binding aggregation, 30-day/3,000-decision/99%-coverage/100-control thresholds, one-sided false-negative bounds, reset semantics, immediate suspension, and an honest inconclusive result for the two checked-in observations; moved `C3-005` next with selection still disabled | Codex |
 | 2026-08-01 | Closed `C3-005`: added the sole active selection boundary that revalidates canonical loaded state and recalculates BIA-002 from bound results, restores original entrypoints on every control/drift/fallback path, and preserves Test-owned checks separately; two isolated offline Gradle builds proved a byte-identical service-a JAR/Test marker while selected execution omitted service-b; moved `C3-G01` next without soak, external validation, or production promotion | Codex |
+| 2026-08-01 | Closed `C3-G01` and owner-operated MVP-C3: composed all five current-tree Build Impact proofs, retained real checked-in evidence as inconclusive, required unchanged BIA-002 qualification plus explicit suspension, and reran the isolated offline full-versus-selected Gradle proof without source mutation; no non-deferred implementation block remains | Codex |
 | 2026-08-01 | Reactivated optional MVP-C3 by owner decision and decomposed conservative Build Impact Analysis into customer manifest, declared-graph decision, shadow validation, unchanged `BIA-002` evidence gate, and promoted-only selection blocks; soak and external validation remain deferred | Codex |
 | 2026-08-01 | Closed `A2-G01` and MVP-A2: composed all four current-tree self-hosted proofs into one passing gate covering supported storage, reproducible signed install, safe upgrade/restart, and generation-rotated manual restore; no non-deferred implementation block remains | Codex |
 | 2026-08-01 | Closed `A2-004`: added absent-target offline snapshot restore, packaged authority verification, strict policy/revocation/L1/namespace generation rotation, negative unrotated/symlink cases, and explicit readiness plus old-token rejection; moved `A2-G01` next without a backup, HA, RPO/RTO, or soak claim | Codex |

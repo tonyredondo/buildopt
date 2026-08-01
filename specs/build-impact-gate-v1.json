@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "buildopt.specs/build-impact-gate/v1",
+  "gateId": "C3-G01",
+  "milestone": "MVP-C3",
+  "execution": "CURRENT_SOURCE_TREE_COMPOSITE",
+  "constituents": [
+    {
+      "item": "C3-001",
+      "command": "./dev/check-build-impact-manifest",
+      "proof": "CUSTOMER_MANIFEST_AUTHORITY"
+    },
+    {
+      "item": "C3-002",
+      "command": "./dev/check-build-impact-declared-graph",
+      "proof": "CONSERVATIVE_DECLARED_GRAPH"
+    },
+    {
+      "item": "C3-003",
+      "command": "./dev/check-build-impact-shadow-validation",
+      "proof": "FULL_SHADOW_AND_PAIRED_CONTROL"
+    },
+    {
+      "item": "C3-004",
+      "command": "./dev/check-build-impact-promotion-gate",
+      "proof": "UNCHANGED_BIA_002_AND_SUSPENSION"
+    },
+    {
+      "item": "C3-005",
+      "command": "./dev/check-build-impact-selection",
+      "proof": "PROMOTED_ONLY_SYNTHETIC_SELECTION"
+    }
+  ],
+  "criteria": {
+    "omissionAuthority": "CUSTOMER_MANIFEST_PLUS_CURRENT_DECLARED_GRAPH",
+    "historyAuthority": "NEVER",
+    "globalOrUnknown": "FULL_GRAPH",
+    "testOptimization": "PRESERVED_SEPARATELY_NEVER_SELECTED",
+    "discrepancy": "SUSPEND",
+    "beforeBIA002": "FULL_GRAPH",
+    "currentCheckedInEvidence": "INCONCLUSIVE",
+    "syntheticQualifiedProof": "BYTE_IDENTICAL_REQUIRED_OUTPUTS"
+  },
+  "boundaries": {
+    "closes": ["C3-G01", "MVP-C3"],
+    "doesNotClose": [
+      "TEST_SELECTION",
+      "EIGHT_HOUR_SOAK",
+      "EXTERNAL_DESIGN_PARTNER_VALIDATION",
+      "PRODUCTION_PROMOTION",
+      "PRODUCTION_READINESS"
+    ],
+    "ownerOperatedProofOfConcept": true
+  }
+}

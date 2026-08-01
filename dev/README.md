@@ -1566,6 +1566,18 @@ selected workspace must omit unrelated service-b. Disablement, bypass, kill
 switch, binding drift, suspended/inconclusive evidence, and global/unknown
 changes all restore the original entrypoints.
 
+## Build Impact composite gate
+
+Close the owner-operated MVP-C3 current-tree proof with:
+
+```bash
+./dev/check-build-impact-gate
+```
+
+The gate composes C3-001..005 in one source-preserving invocation. It retains
+the two checked-in observations as `INCONCLUSIVE` and requires the full
+synthetic qualification, fail-closed matrix, and real offline Gradle proof.
+
 ## Runtime owner evaluation
 
 On the exact 4-CPU/16-GiB runner, execute real A/A and resource-profile
