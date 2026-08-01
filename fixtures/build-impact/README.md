@@ -31,3 +31,10 @@ maps a library-c change through service-a, and its separate Test-owned task
 remains outside Build Impact selection. Isolated offline full/selected builds
 must produce an identical service-a JAR and Test-owned marker while only the
 full build materializes service-b.
+
+`buildopt-impact generate` now discovers that repository through the real
+Gradle model and writes the reviewable `buildopt-impact-graph.generated.json`
+and `buildopt-impact.generated.json` files. `buildopt-impact check` regenerates
+both files and rejects any byte-level drift. Discovery remains advisory: an
+included build, unknown task shape, unsupported requested task, incomplete
+model, or stale generated state preserves the original full entrypoint.

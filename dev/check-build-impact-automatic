@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_fixture="${buildopt_repo_root}/fixtures/build-impact/synthetic-repository"
+
+for buildopt_command in go jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required automatic Build Impact command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/build-impact-automatic/v1" and
+    .workItems == ["BIA-F4-001", "BIA-F4-002", "BIA-F4-003"] and
+    .discovery.implementation == "buildimpact.Discover" and
+    .discovery.unknownPolicy == "FULL_GRAPH" and
+    .generatedState.driftPolicy == "FAIL_CLOSED" and
+    .selection.boundary == "buildimpact.PlanSelection" and
+    .selection.promotion == "BIA-002_UNCHANGED" and
+    .selection.testOptimization == "PRESERVED_SEPARATELY_NEVER_SELECTED" and
+    (.fallbacks | index("GENERATED_STATE_DRIFT")) != null and
+    (.fallbacks | index("BIA_002_NOT_QUALIFIED")) != null
+' "${buildopt_repo_root}/specs/build-impact-automatic-v1.json" >/dev/null
+
+buildopt_before_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+
+cd "${buildopt_repo_root}"
+go test -race -count=1 ./internal/buildimpact ./cmd/buildopt-impact
+go vet ./internal/buildimpact ./cmd/buildopt-impact
+BUILDOPT_RUN_BUILD_IMPACT_DISCOVERY_PROOF=1 \
+    go test -count=1 -run '^TestSyntheticGradleDiscoveryGeneratedStateIsCurrent$' ./internal/buildimpact
+go run ./cmd/buildopt-impact check \
+    --repository "${buildopt_fixture}" \
+    --manifest buildopt-impact-manifest.json \
+    --repository-id tonyredondo/buildopt-impact-synthetic \
+    --pipeline-class pull-request \
+    --graph buildopt-impact-graph.generated.json \
+    --generated-manifest buildopt-impact.generated.json \
+    --gradle-command "${buildopt_repo_root}/gradlew"
+BUILDOPT_RUN_BUILD_IMPACT_GRADLE_PROOF=1 \
+    go test -count=1 -run '^TestSyntheticRepositorySelectedBuildMatchesFullBuild$' ./internal/buildimpact
+
+buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'automatic Build Impact checker mutated the source tree\n' >&2
+    exit 1
+fi
+
+printf 'BIA-F4 automatic Build Impact passed: deterministic discovery, drift gate, and equivalent selected artifact\n'

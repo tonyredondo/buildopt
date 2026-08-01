@@ -174,7 +174,7 @@ func TestSyntheticRepositorySelectedBuildMatchesFullBuild(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	graphRaw, err := os.ReadFile(filepath.Join(fixtureRoot, "buildopt-impact-graph.json"))
+	graphRaw, err := os.ReadFile(filepath.Join(fixtureRoot, "buildopt-impact-graph.generated.json"))
 	if err != nil {
 		t.Fatal(err)
 	}

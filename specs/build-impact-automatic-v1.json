@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.specs/build-impact-automatic/v1",
+  "workItems": ["BIA-F4-001", "BIA-F4-002", "BIA-F4-003"],
+  "discovery": {
+    "implementation": "buildimpact.Discover",
+    "adapterVersion": "gradle-runtime-v1",
+    "source": "EVALUATED_GRADLE_PROJECT_MODEL",
+    "supportedEntrypoints": ["assemble", "jar", "classes", "compileJava", "compileKotlin"],
+    "unknownPolicy": "FULL_GRAPH"
+  },
+  "generatedState": {
+    "graphSchema": "buildopt.build-impact/declared-graph/v1",
+    "manifestSchema": "buildopt.build-impact/generated-manifest/v1",
+    "canonicalDigests": ["customerManifest", "discoverySnapshot", "generatedGraph"],
+    "repositoryReview": true,
+    "driftPolicy": "FAIL_CLOSED"
+  },
+  "selection": {
+    "boundary": "buildimpact.PlanSelection",
+    "promotion": "BIA-002_UNCHANGED",
+    "requiredProof": "FULL_VERSUS_SELECTED_ARTIFACT_EQUIVALENCE",
+    "testOptimization": "PRESERVED_SEPARATELY_NEVER_SELECTED"
+  },
+  "fallbacks": [
+    "INCLUDED_BUILDS_PRESENT",
+    "UNSUPPORTED_OR_TEST_ENTRYPOINT",
+    "DISCOVERY_FAILURE",
+    "GENERATED_STATE_DRIFT",
+    "GLOBAL_CHANGE",
+    "UNKNOWN_CHANGE_PATH",
+    "INCOMPLETE_COVERAGE",
+    "BIA_002_NOT_QUALIFIED"
+  ]
+}

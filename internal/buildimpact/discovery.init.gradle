@@ -1,0 +1,94 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.tasks.testing.Test
+
+gradle.projectsEvaluated {
+    def outputPath = System.getenv("BUILDOPT_IMPACT_DISCOVERY_OUTPUT")
+    def entrypointJSON = System.getenv("BUILDOPT_IMPACT_ENTRYPOINTS")
+    if (outputPath == null || outputPath.isBlank() || entrypointJSON == null) {
+        throw new GradleException("BuildOpt impact discovery environment is incomplete")
+    }
+    def requestedEntrypoints = new JsonSlurper().parseText(entrypointJSON)
+    if (!(requestedEntrypoints instanceof List) || requestedEntrypoints.isEmpty()) {
+        throw new GradleException("BuildOpt impact discovery requires entrypoints")
+    }
+
+    def root = gradle.rootProject
+    def includedBuilds = gradle.includedBuilds.collect { it.name }.sort()
+    def discoveredProjects = root.allprojects.findAll {
+        it != root || root.subprojects.isEmpty()
+    }.sort { left, right -> left.path <=> right.path }.collect { project ->
+        def dependencyPaths = new TreeSet<String>()
+        project.configurations.each { configuration ->
+            configuration.allDependencies.withType(ProjectDependency).each { dependency ->
+                dependencyPaths.add(dependency.path)
+            }
+        }
+        def relativeDirectory = root.projectDir.toPath().relativize(project.projectDir.toPath()).toString().replace('\\', '/')
+        def sources = relativeDirectory.isEmpty() ? ["src/**"] : [relativeDirectory + "/**"]
+        [
+            path: project.path,
+            sourcePaths: sources,
+            dependsOn: dependencyPaths as List,
+            unknownRelationships: false,
+        ]
+    }
+    def knownProjects = discoveredProjects.collect { it.path } as Set
+
+    def projectDependencies = discoveredProjects.collectEntries { project ->
+        [(project.path): project.dependsOn]
+    }
+    def conventionalBuildTasks = ["assemble", "jar", "classes", "compileJava", "compileKotlin"] as Set
+    def discoveredEntrypoints = requestedEntrypoints.collect { requestedName ->
+        def task = root.tasks.getByPath(requestedName as String)
+        def reachedProjects = new TreeSet<String>()
+        if (task.project == root && !root.subprojects.isEmpty()) {
+            reachedProjects.addAll(knownProjects)
+        } else {
+            def pendingProjects = [task.project.path] as ArrayDeque
+            while (!pendingProjects.isEmpty()) {
+                def projectPath = pendingProjects.removeFirst()
+                if (!reachedProjects.add(projectPath)) {
+                    continue
+                }
+                (projectDependencies[projectPath] ?: []).each {
+                    pendingProjects.addLast(it)
+                }
+            }
+        }
+        def containsTests = task instanceof Test || task.name.toLowerCase() in ["test", "check", "build"]
+        def unknownRelationships = !conventionalBuildTasks.contains(task.name) || containsTests
+        [
+            name: requestedName,
+            reachesProjects: reachedProjects as List,
+            containsTestTasks: containsTests,
+            unknownRelationships: reachedProjects.isEmpty() || unknownRelationships,
+        ]
+    }
+
+    def fallbackReasons = []
+    if (!includedBuilds.isEmpty()) {
+        fallbackReasons.add("INCLUDED_BUILDS_PRESENT")
+    }
+    if (discoveredEntrypoints.any { it.unknownRelationships }) {
+        fallbackReasons.add("UNSUPPORTED_OR_TEST_ENTRYPOINT")
+    }
+    def snapshot = [
+        schemaVersion: "buildopt.build-impact/gradle-discovery/v1",
+        gradleVersion: gradle.gradleVersion,
+        complete: fallbackReasons.isEmpty(),
+        fallbackReasons: fallbackReasons,
+        projects: discoveredProjects,
+        entrypoints: discoveredEntrypoints,
+    ]
+    root.tasks.register("buildoptImpactDiscovery") {
+        group = "buildopt"
+        description = "Emits a conservative BuildOpt project and task dependency snapshot"
+        doLast {
+            def output = new File(outputPath)
+            output.parentFile.mkdirs()
+            output.text = JsonOutput.toJson(snapshot) + "\n"
+        }
+    }
+}
