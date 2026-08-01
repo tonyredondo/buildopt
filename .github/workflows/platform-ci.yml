@@ -198,9 +198,17 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           $env:BUILDOPT_CANCEL_PID_FILE = "$env:RUNNER_TEMP\cancel-child.pid"
-          $Launcher = Start-Process -FilePath "$env:RUNNER_TEMP\install\bin\buildopt.exe" -ArgumentList @('run', '--', 'powershell.exe', '-NoProfile', '-File', "$PWD\fixtures\platform\cancel-tree.ps1") -PassThru
+          $LauncherStdout = "$env:RUNNER_TEMP\cancel-launcher.stdout"
+          $LauncherStderr = "$env:RUNNER_TEMP\cancel-launcher.stderr"
+          $Launcher = Start-Process -FilePath "$env:RUNNER_TEMP\install\bin\buildopt.exe" -ArgumentList @('run', '--', 'powershell.exe', '-NoProfile', '-File', "$PWD\fixtures\platform\cancel-tree.ps1") -RedirectStandardOutput $LauncherStdout -RedirectStandardError $LauncherStderr -PassThru
           for ($Index = 0; $Index -lt 100 -and -not (Test-Path $env:BUILDOPT_CANCEL_PID_FILE); $Index++) { Start-Sleep -Milliseconds 100 }
-          if (-not (Test-Path $env:BUILDOPT_CANCEL_PID_FILE)) { throw 'child PID was not exported' }
+          if (-not (Test-Path $env:BUILDOPT_CANCEL_PID_FILE)) {
+            if (-not $Launcher.HasExited) { Stop-Process -Id $Launcher.Id -Force }
+            $Launcher.WaitForExit()
+            $CapturedStdout = if (Test-Path $LauncherStdout) { Get-Content -Raw $LauncherStdout } else { '' }
+            $CapturedStderr = if (Test-Path $LauncherStderr) { Get-Content -Raw $LauncherStderr } else { '' }
+            throw "child PID was not exported; launcher exit=$($Launcher.ExitCode); stdout=$CapturedStdout; stderr=$CapturedStderr"
+          }
           $ChildPid = [int](Get-Content $env:BUILDOPT_CANCEL_PID_FILE)
           Stop-Process -Id $Launcher.Id -Force
           $Launcher.WaitForExit()
