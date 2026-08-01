@@ -13,6 +13,24 @@
       "reviewedAdapterRequired": false
     },
     {
+      "id": "ARCHIVE_REPRODUCIBILITY_GROOVY_DSL_V1",
+      "version": "1.0",
+      "applicability": "ROOT_BUILD_GRADLE",
+      "risk": "LOW",
+      "validationAdapter": "ARCHIVE_CONTENTS_V1",
+      "inverse": "UNAVAILABLE",
+      "reviewedAdapterRequired": false
+    },
+    {
+      "id": "GRADLE_BUILD_CACHE_PROPERTIES_V1",
+      "version": "1.0",
+      "applicability": "EXISTING_ROOT_GRADLE_PROPERTIES_WITHOUT_CACHING_KEY",
+      "risk": "LOW",
+      "validationAdapter": "ARCHIVE_CONTENTS_V1",
+      "inverse": "UNAVAILABLE",
+      "reviewedAdapterRequired": false
+    },
+    {
       "id": "CUSTOM_TASK_CONTRACT_JAVA_V1",
       "version": "1.0",
       "applicability": "REVIEWED_BUILD_SRC_JAVA_ADAPTER",

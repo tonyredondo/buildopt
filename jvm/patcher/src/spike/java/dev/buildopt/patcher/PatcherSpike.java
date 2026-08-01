@@ -78,6 +78,7 @@ public final class PatcherSpike {
             spike.assertDuplicateKeysRejected();
             spike.assertSignerRejectsIncompleteManifest();
             spike.assertArchiveRecipeSafety();
+            spike.assertExpandedRecipeSafety();
             CustomTaskContractRecipeSpike.assertConformance();
             PatchCandidateValidationSpike.assertConformance();
             FullRelevantValidationSpike.assertConformance();
@@ -110,7 +111,7 @@ public final class PatcherSpike {
     private void assertRecipeRegistry() {
         List<PatchAutopilotRecipeRegistry.Definition> definitions =
                 PatchAutopilotRecipeRegistry.definitions();
-        require(definitions.size() == 2, "recipe registry size");
+        require(definitions.size() == 4, "recipe registry size");
         PatchAutopilotRecipeRegistry.Definition archive =
                 PatchAutopilotRecipeRegistry.find(
                         ArchiveReproducibilityRecipe.RECIPE_ID,
@@ -132,6 +133,26 @@ public final class PatcherSpike {
                                 == PatchAutopilotRecipeRegistry.Inverse.UNAVAILABLE
                         && "EXACT_BYTES".equals(custom.validationAdapter()),
                 "custom-task registry metadata");
+        PatchAutopilotRecipeRegistry.Definition groovy =
+                PatchAutopilotRecipeRegistry.find(
+                        ArchiveReproducibilityGroovyDslRecipe.RECIPE_ID,
+                        ArchiveReproducibilityGroovyDslRecipe.RECIPE_VERSION)
+                        .orElseThrow();
+        require("ROOT_BUILD_GRADLE".equals(groovy.applicability())
+                        && "ARCHIVE_CONTENTS_V1".equals(groovy.validationAdapter())
+                        && groovy.inverse() == PatchAutopilotRecipeRegistry.Inverse.UNAVAILABLE,
+                "Groovy archive registry metadata");
+        PatchAutopilotRecipeRegistry.Definition buildCache =
+                PatchAutopilotRecipeRegistry.find(
+                        GradleBuildCachePropertiesRecipe.RECIPE_ID,
+                        GradleBuildCachePropertiesRecipe.RECIPE_VERSION)
+                        .orElseThrow();
+        require("EXISTING_ROOT_GRADLE_PROPERTIES_WITHOUT_CACHING_KEY".equals(
+                        buildCache.applicability())
+                        && "ARCHIVE_CONTENTS_V1".equals(buildCache.validationAdapter())
+                        && buildCache.inverse()
+                                == PatchAutopilotRecipeRegistry.Inverse.UNAVAILABLE,
+                "build-cache registry metadata");
         require(PatchAutopilotRecipeRegistry.find(archive.id(), "2.0").isEmpty()
                         && PatchAutopilotRecipeRegistry.find("UNKNOWN", "1.0").isEmpty(),
                 "registry rejects fallback and unknown recipes");
@@ -746,6 +767,60 @@ public final class PatcherSpike {
         expectFailure(PatchFailure.Status.PROPOSED,
                 () -> ArchiveReproducibilityRecipe.apply(
                         "build.gradle.kts", new byte[] {(byte) 0xc3, (byte) 0x28}));
+    }
+
+    private void assertExpandedRecipeSafety() throws Exception {
+        byte[] groovySource = "plugins { id 'base' }\n".getBytes(StandardCharsets.UTF_8);
+        ArchiveReproducibilityGroovyDslRecipe.Result groovy =
+                ArchiveReproducibilityGroovyDslRecipe.apply(
+                        "build.gradle", groovySource);
+        require(groovy.changed()
+                        && new String(groovy.postimage(), StandardCharsets.UTF_8)
+                                .contains("preserveFileTimestamps = false"),
+                "Groovy archive recipe exact output");
+        ArchiveReproducibilityGroovyDslRecipe.Result repeatedGroovy =
+                ArchiveReproducibilityGroovyDslRecipe.apply(
+                        "build.gradle", groovy.postimage());
+        require(!repeatedGroovy.changed()
+                        && Arrays.equals(groovy.postimage(), repeatedGroovy.postimage()),
+                "Groovy archive recipe idempotency");
+        expectFailure(PatchFailure.Status.PROPOSED,
+                () -> ArchiveReproducibilityGroovyDslRecipe.apply(
+                        "build.gradle.kts", groovySource));
+        expectFailure(PatchFailure.Status.PROPOSED,
+                () -> ArchiveReproducibilityGroovyDslRecipe.apply(
+                        "build.gradle",
+                        "preserveFileTimestamps = true\n"
+                                .getBytes(StandardCharsets.UTF_8)));
+
+        byte[] propertiesSource =
+                "org.gradle.jvmargs=-Xmx2g\n".getBytes(StandardCharsets.UTF_8);
+        GradleBuildCachePropertiesRecipe.Result buildCache =
+                GradleBuildCachePropertiesRecipe.apply(
+                        "gradle.properties", propertiesSource);
+        require(buildCache.changed()
+                        && new String(buildCache.postimage(), StandardCharsets.UTF_8)
+                                .endsWith("org.gradle.caching=true\n"),
+                "build-cache recipe exact output");
+        GradleBuildCachePropertiesRecipe.Result repeatedBuildCache =
+                GradleBuildCachePropertiesRecipe.apply(
+                        "gradle.properties", buildCache.postimage());
+        require(!repeatedBuildCache.changed()
+                        && Arrays.equals(
+                                buildCache.postimage(), repeatedBuildCache.postimage()),
+                "build-cache recipe idempotency");
+        byte[] defensive = buildCache.postimage();
+        defensive[0] ^= 1;
+        require(!Arrays.equals(defensive, buildCache.postimage()),
+                "build-cache recipe defensive output");
+        expectFailure(PatchFailure.Status.PROPOSED,
+                () -> GradleBuildCachePropertiesRecipe.apply(
+                        "gradle.properties",
+                        "# org.gradle.caching=false\n"
+                                .getBytes(StandardCharsets.UTF_8)));
+        expectFailure(PatchFailure.Status.PROPOSED,
+                () -> GradleBuildCachePropertiesRecipe.apply(
+                        "sub/gradle.properties", propertiesSource));
     }
 
     private void assertSignerRejectsIncompleteManifest() throws Exception {

@@ -15,11 +15,12 @@ The required deliverables manifest is closed: every run must contain exactly
 the declared relative paths. Inputs are bounded and content is digested inside
 the validator. The finite adapters are:
 
-- ARCHIVE_CONTENTS_V1 for ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1. ZIP-family
-  entry names, directory markers, uncompressed sizes, and content digests are
-  compared independent of timestamp, compression, and entry order. Unsafe,
-  duplicate, empty, oversized, or over-expanded archives fail.
-- EXACT_BYTES for CUSTOM_TASK_CONTRACT_JAVA_V1. It is available to the
+- ARCHIVE_CONTENTS_V1 for both archive-reproducibility DSL recipes and the
+  build-cache properties recipe. ZIP-family entry names, directory markers,
+  uncompressed sizes, and content digests are compared independent of
+  timestamp, compression, and entry order. Unsafe, duplicate, empty,
+  oversized, or over-expanded archives fail.
+- EXACT_BYTES for CUSTOM_TASK_CONTRACT_JAVA_V1. It remains available to the
   validator, but does not implement or qualify the C1-gated recipe.
 
 All six logical artifact sets must equal control-clean. In addition, all three

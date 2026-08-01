@@ -15,6 +15,22 @@ public final class PatchAutopilotRecipeRegistry {
                     Inverse.EXACT_MODIFY_ONLY,
                     false),
             new Definition(
+                    ArchiveReproducibilityGroovyDslRecipe.RECIPE_ID,
+                    ArchiveReproducibilityGroovyDslRecipe.RECIPE_VERSION,
+                    "ROOT_BUILD_GRADLE",
+                    Risk.LOW,
+                    "ARCHIVE_CONTENTS_V1",
+                    Inverse.UNAVAILABLE,
+                    false),
+            new Definition(
+                    GradleBuildCachePropertiesRecipe.RECIPE_ID,
+                    GradleBuildCachePropertiesRecipe.RECIPE_VERSION,
+                    "EXISTING_ROOT_GRADLE_PROPERTIES_WITHOUT_CACHING_KEY",
+                    Risk.LOW,
+                    "ARCHIVE_CONTENTS_V1",
+                    Inverse.UNAVAILABLE,
+                    false),
+            new Definition(
                     CustomTaskContractJavaRecipe.RECIPE_ID,
                     CustomTaskContractJavaRecipe.RECIPE_VERSION,
                     "REVIEWED_BUILD_SRC_JAVA_ADAPTER",

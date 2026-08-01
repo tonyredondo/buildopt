@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "buildopt.specs/patch-autopilot-recipes/v1",
+  "trackerId": "PA-F2-002",
+  "recipes": [
+    {
+      "id": "ARCHIVE_REPRODUCIBILITY_GROOVY_DSL_V1",
+      "version": "1.0",
+      "path": "build.gradle",
+      "maximumPostimageBytes": 1048576,
+      "transformation": "APPEND_EXACT_ABSTRACT_ARCHIVE_TASK_CONFIGURATION",
+      "validationAdapter": "ARCHIVE_CONTENTS_V1"
+    },
+    {
+      "id": "GRADLE_BUILD_CACHE_PROPERTIES_V1",
+      "version": "1.0",
+      "path": "gradle.properties",
+      "maximumPostimageBytes": 1048576,
+      "transformation": "APPEND_EXACT_ORG_GRADLE_CACHING_TRUE",
+      "validationAdapter": "ARCHIVE_CONTENTS_V1"
+    }
+  ],
+  "source": {
+    "encoding": "STRICT_UTF8",
+    "lineEnding": "LF",
+    "finalNewlineRequired": true,
+    "operation": "MODIFY_EXACT_REPLACEMENT",
+    "ownership": "DEFENSIVE_BYTES"
+  },
+  "selection": {
+    "risk": "LOW",
+    "existingOrAmbiguousConfiguration": "UNCHANGED_PROPOSED",
+    "wrongPath": "UNCHANGED_PROPOSED",
+    "unsupportedEncodingOrSize": "UNCHANGED_PROPOSED"
+  },
+  "promotion": {
+    "candidateControlRequired": true,
+    "fullRelevantValidationRequired": true,
+    "delivery": "DRAFT_ONLY",
+    "exactInverseProof": "PA-F2-003"
+  },
+  "testOptimizationChanged": false,
+  "remoteMutationPerformed": false
+}
