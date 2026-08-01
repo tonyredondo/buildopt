@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `DONE` — owner-operated POC target `A1 + B + C1 + C4` is complete<br>
-**Current phase:** owner-operated POC plus MVP-A2 are complete; remaining tracks are explicitly deferred until the owner selects one<br>
+**Current phase:** MVP-C3 active; `C3-001` customer-owned Build Impact Analysis manifest is the next executable block<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Last updated:** 2026-08-01<br>
@@ -59,7 +59,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | MVP-C4 | PR-only Patch Autopilot | `DONE` | 7/7 | B + C1 |
 | MVP-A2 | Self-hosted single-node | `DONE` | 1/1 | A1 |
 | MVP-C2 | Edge Cache Node | `DEFERRED` | 0/1 | A1 |
-| MVP-C3 | Build Impact Analysis | `DEFERRED` | 0/1 | B + `INT-001` |
+| MVP-C3 | Build Impact Analysis | `DOING` | 0/1 | B + `INT-001` |
 | GA-D | Production-ready hardening | `DEFERRED` | 0/1 | Functional beta with demonstrated value |
 
 Design baseline: 51 private-beta decisions are accepted in the RFC; their artifacts and tests remain pending as recorded in this tracker.
@@ -78,7 +78,7 @@ Preparation
                    └─→ complete MVP-C4
 ```
 
-The owner-operated POC target and MVP-A2 are complete. The eight-hour soak, external design-partner evidence, C2, C3, and GA-D remain deferred and do not block either completed proof of concept.
+The owner-operated POC target and MVP-A2 are complete. MVP-C3 is now active as an optional owner-operated extension. The eight-hour soak, external design-partner evidence, C2, and GA-D remain deferred and do not block the completed proof of concept or conservative C3 implementation.
 
 ### 2.3 Next executable items
 
@@ -533,7 +533,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 |---|---|---|---|
 | MVP-A2 | Self-hosted installer, migration, and recovery | `DONE` | `E-122` current-tree composite gate |
 | MVP-C2 | Edge proxy, SLRU, and offline committed reads | `DEFERRED` | Latency/volume justify Edge |
-| MVP-C3 | Conservative BIA and `BIA-002` gate | `DEFERRED` | Stable B + `INT-001` + demand |
+| MVP-C3 | Conservative BIA and `BIA-002` gate | `DOING` | Owner reactivated on 2026-08-01; B + `INT-001` are complete |
 | GA-D Identity | OIDC/workload identity, SSO/RBAC, KMS/HSM | `DEFERRED` | Beta demonstrates value |
 | GA-D Storage | Object store, HA metadata, backups, and RPO/RTO | `DEFERRED` | Production-ready requirements |
 | GA-D Privacy | Residency, legal hold, and backup deletion | `DEFERRED` | Contractual requirements |
@@ -553,6 +553,22 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
 | `A2-G01` | Reproducible install, supported storage, safe restart/upgrade, and safe manual restore | `DONE` | `E-122` |
+
+---
+
+### 11.2 MVP-C3 workboard
+
+| ID | Deliverable | State | Owner | Evidence |
+|---|---|---|---|---|
+| `C3-001` | Versioned customer-owned deliverables/entrypoints manifest with repository and pipeline binding | `DOING` | Codex | — |
+| `C3-002` | Conservative declared-graph impact engine with global/unknown `FULL_GRAPH` fallback and Test Optimization ownership boundary | `TODO` | Codex | — |
+| `C3-003` | Shadow evaluator comparing predicted omissions with the full graph, deliverables, and manifest checks | `TODO` | Codex | — |
+| `C3-004` | `BIA-002` evidence gate, reset semantics, false-negative suspension, and honest `INCONCLUSIVE` state | `TODO` | Codex | — |
+| `C3-005` | Selection integration limited to promoted customer alternatives plus an owner-controlled synthetic repository proof | `TODO` | Codex | — |
+
+| Exit gate | Summarized criterion | State | Evidence |
+|---|---|---|---|
+| `C3-G01` | Only the customer manifest and declared graph authorize build-entrypoint omissions; unknown/global/Test-owned work fails closed, shadow/control discrepancies suspend, and selection cannot activate before `BIA-002` | `TODO` | `C3-001..005` |
 
 ---
 
@@ -781,6 +797,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-01 | Reactivated optional MVP-C3 by owner decision and decomposed conservative Build Impact Analysis into customer manifest, declared-graph decision, shadow validation, unchanged `BIA-002` evidence gate, and promoted-only selection blocks; soak and external validation remain deferred | Codex |
 | 2026-08-01 | Closed `A2-G01` and MVP-A2: composed all four current-tree self-hosted proofs into one passing gate covering supported storage, reproducible signed install, safe upgrade/restart, and generation-rotated manual restore; no non-deferred implementation block remains | Codex |
 | 2026-08-01 | Closed `A2-004`: added absent-target offline snapshot restore, packaged authority verification, strict policy/revocation/L1/namespace generation rotation, negative unrotated/symlink cases, and explicit readiness plus old-token rejection; moved `A2-G01` next without a backup, HA, RPO/RTO, or soak claim | Codex |
 | 2026-08-01 | Closed `A2-003`: added serialized signed self-hosted upgrade, atomic unit/manifest composition with exact rollback after injected failure, and real v1-to-v2 restart proof that persistent pending bytes remain invisible; moved `A2-004` next without claiming restore continuity, soak, or productization | Codex |
