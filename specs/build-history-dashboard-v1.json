@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "buildopt.specs/build-history-dashboard/v1",
+  "workItem": "UX-F1-002",
+  "delivery": {
+    "server": "EXISTING_CANONICAL_IPV4_LOOPBACK_SERVER",
+    "path": "/buildopt/",
+    "assets": "EMBEDDED_IN_GO_BINARY",
+    "runtimeDependencies": [],
+    "externalRequests": false
+  },
+  "authentication": {
+    "api": "INDEPENDENT_BEARER",
+    "tokenEnvironment": "BUILDOPT_HISTORY_API_TOKEN",
+    "browserLifetime": "PAGE_MEMORY_ONLY",
+    "persistentBrowserStorage": false,
+    "credentialInStaticAssets": false
+  },
+  "views": [
+    "CREDENTIAL_ENTRY",
+    "LOADED_SUMMARY",
+    "EXACT_FILTERS",
+    "BUILD_HISTORY_TABLE",
+    "BUILD_DETAIL"
+  ],
+  "states": [
+    "AUTHENTICATION_REQUIRED",
+    "LOADING",
+    "READY",
+    "EMPTY",
+    "ERROR",
+    "DETAIL_LOADING",
+    "DETAIL_ERROR"
+  ],
+  "data": {
+    "listPath": "/api/v1/build-sessions",
+    "detailPath": "/api/v1/build-session?id=SESSION_ID",
+    "maximumPageSize": 100,
+    "clientSearchScope": "LOADED_ITEMS_ONLY",
+    "identityExposure": "REDACTED_EXPORT_VALUES_ONLY",
+    "summaryMetrics": [
+      "MATCHED_COUNT",
+      "LOADED_SUCCESS_COUNT",
+      "LOADED_FAILURE_COUNT",
+      "LOADED_MEDIAN_DURATION"
+    ],
+    "fabricatedAnalytics": false
+  },
+  "security": {
+    "cacheControl": "no-store",
+    "contentSecurityPolicy": true,
+    "frameAncestors": "none",
+    "referrerPolicy": "no-referrer",
+    "sameOriginAPIOnly": true,
+    "domTextRendering": "TEXT_CONTENT_ONLY"
+  },
+  "accessibility": {
+    "semanticLandmarks": true,
+    "keyboardOperable": true,
+    "visibleFocus": true,
+    "liveStatus": true,
+    "reducedMotion": true,
+    "responsive": true,
+    "contrastTarget": "WCAG_AA"
+  },
+  "boundaries": {
+    "readOnly": true,
+    "remoteExposure": false,
+    "rawIdentityRecovery": false,
+    "testOptimizationModified": false,
+    "closes": ["UX-F1-002"],
+    "doesNotClose": ["UX-F1-003", "UX-F1-G01", "REMOTE_DASHBOARD", "TEST_SELECTION"]
+  }
+}

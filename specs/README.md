@@ -37,6 +37,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`edge-operability-v1.md`](./edge-operability-v1.md) | `O1-001..004` / `O1-G01` / POC-O1 |
 | [`owner-poc-lab-v1.md`](./owner-poc-lab-v1.md) | `O2-001..004` / `O2-G01` / POC-O2 |
 | [`build-history-api-v1.md`](./build-history-api-v1.md) | `UX-F1-001` |
+| [`build-history-dashboard-v1.md`](./build-history-dashboard-v1.md) | `UX-F1-002` |
 | [`custom-task-contract-java-recipe-v1.md`](./custom-task-contract-java-recipe-v1.md) | `C4-004` / `C4-G06` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`full-relevant-validation-gate-v1.md`](./full-relevant-validation-gate-v1.md) | `C4-006` / `C4-G02` |
@@ -138,6 +139,12 @@ repositories, external partners, or the deferred soak.
 over immutable redacted BUILD_SESSION exports, including exact list/detail
 operations, filters, stable cursor pagination, private-file limits, and the
 explicit boundary that leaves Test Optimization unchanged.
+
+`build-history-dashboard-v1.json` is the UX-F1-002 embedded local interface
+contract, including memory-only API authentication, exact/loaded-only filter
+semantics, source-backed summaries/details, security headers, responsive and
+accessible states, and the explicit absence of fabricated analytics or Test
+Optimization behavior.
 
 `no-hit-overhead-v1.json` is the A0-G06 paired strict-runner contract for
 authenticated read-only L2 misses, fresh L1/output state, long-session p95

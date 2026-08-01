@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/build-history-dashboard-v1.json"
+
+jq -e '
+    .schemaVersion == "buildopt.specs/build-history-dashboard/v1" and
+    .workItem == "UX-F1-002" and
+    .delivery == {
+        server: "EXISTING_CANONICAL_IPV4_LOOPBACK_SERVER",
+        path: "/buildopt/",
+        assets: "EMBEDDED_IN_GO_BINARY",
+        runtimeDependencies: [],
+        externalRequests: false
+    } and
+    .authentication.api == "INDEPENDENT_BEARER" and
+    .authentication.browserLifetime == "PAGE_MEMORY_ONLY" and
+    .authentication.persistentBrowserStorage == false and
+    .authentication.credentialInStaticAssets == false and
+    .views == [
+        "CREDENTIAL_ENTRY",
+        "LOADED_SUMMARY",
+        "EXACT_FILTERS",
+        "BUILD_HISTORY_TABLE",
+        "BUILD_DETAIL"
+    ] and
+    .states == [
+        "AUTHENTICATION_REQUIRED",
+        "LOADING",
+        "READY",
+        "EMPTY",
+        "ERROR",
+        "DETAIL_LOADING",
+        "DETAIL_ERROR"
+    ] and
+    .data.clientSearchScope == "LOADED_ITEMS_ONLY" and
+    .data.identityExposure == "REDACTED_EXPORT_VALUES_ONLY" and
+    .data.fabricatedAnalytics == false and
+    .security.contentSecurityPolicy == true and
+    .security.sameOriginAPIOnly == true and
+    .security.domTextRendering == "TEXT_CONTENT_ONLY" and
+    .accessibility.keyboardOperable == true and
+    .accessibility.visibleFocus == true and
+    .accessibility.liveStatus == true and
+    .accessibility.reducedMotion == true and
+    .accessibility.responsive == true and
+    .boundaries.readOnly == true and
+    .boundaries.remoteExposure == false and
+    .boundaries.rawIdentityRecovery == false and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.closes == ["UX-F1-002"] and
+    (.boundaries.doesNotClose | index("TEST_SELECTION")) != null
+' "${buildopt_contract}" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 \
+    ./internal/buildhistory \
+    ./cmd/buildopt-server
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet \
+    ./internal/buildhistory \
+    ./cmd/buildopt-server
+
+printf 'UX-F1-002 build history dashboard passed: embedded assets, memory-only auth, safe DOM, responsive states, and real-server delivery\n'

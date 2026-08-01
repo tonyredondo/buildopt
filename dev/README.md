@@ -1640,6 +1640,27 @@ The route is absent without the independent read token. It never accepts the
 ingest credential, mutates exports, reconstructs raw identities, or changes
 the separate Test Optimization integration.
 
+## Build history dashboard
+
+Run the UX-F1-002 embedded-interface contract with:
+
+```bash
+./dev/check-build-history-dashboard
+```
+
+When the history API is configured, `/buildopt/` serves a dependency-free
+responsive dashboard from the existing loopback server. The credential view
+keeps the independent read token only in page memory; the loaded view provides
+real summary counts, exact repository/outcome filters, an explicitly
+loaded-row-only session/revision search, cursor loading, and immutable build
+detail.
+
+Static assets contain no credential or history data, make no external
+requests, use safe DOM text insertion for returned values, and ship with a
+same-origin-only CSP, frame denial, no-referrer, and no-store headers. The
+interface covers authentication, loading, empty, ready, and error states and
+does not add fabricated analytics or Test Optimization behavior.
+
 ## Build Impact manifest
 
 Validate the C3-001 customer-owned manifest boundary with:

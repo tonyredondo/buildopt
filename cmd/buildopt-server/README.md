@@ -79,6 +79,13 @@ Unsafe or malformed history fails closed without exposing paths. Omitting the
 history token leaves both routes absent, and the ingest token is not accepted
 for reads.
 
+The same opt-in exposes the embedded dashboard at `http://127.0.0.1:8042/buildopt/`.
+Its HTML, CSS, and JavaScript are compiled into the server, make no external
+requests, and contain no credential or history data. Enter the independent
+history token in the page; it remains only in page memory and is sent as a
+Bearer header to the same-origin API. The dashboard displays only real
+redacted BUILD_SESSION fields and labels client search as limited to loaded rows.
+
 Copy the validated stream directly to stdout for a CI artifact:
 
 ```bash

@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -755,6 +756,19 @@ func TestBuildoptServerReceivesAndStopsGracefully(t *testing.T) {
 	defer wrongResponse.Body.Close()
 	if wrongResponse.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("ingest credential history status = %d", wrongResponse.StatusCode)
+	}
+
+	dashboardResponse, err := http.Get(endpoint + buildhistory.DashboardPath)
+	if err != nil {
+		t.Fatalf("request build history dashboard: %v", err)
+	}
+	defer dashboardResponse.Body.Close()
+	dashboardBody, err := io.ReadAll(dashboardResponse.Body)
+	if err != nil || dashboardResponse.StatusCode != http.StatusOK ||
+		!bytes.Contains(dashboardBody, []byte("<title>Build history · BuildOpt</title>")) ||
+		bytes.Contains(dashboardBody, []byte(serverHistoryTestToken)) ||
+		bytes.Contains(dashboardBody, []byte(record.SessionID)) {
+		t.Fatalf("unexpected build history dashboard: %d/%v", dashboardResponse.StatusCode, err)
 	}
 
 	cancel()

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Build history · BuildOpt</title>
+  <link rel="stylesheet" href="/buildopt/app.css">
+  <script src="/buildopt/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#history">Skip to build history</a>
+  <header class="topbar">
+    <div class="brand" aria-label="BuildOpt">
+      <span class="brand-mark" aria-hidden="true">B</span>
+      <span>BuildOpt</span>
+    </div>
+    <div class="page-title">
+      <span class="divider" aria-hidden="true"></span>
+      <strong>Build history</strong>
+    </div>
+    <div class="server-state">
+      <span class="server-dot" aria-hidden="true"></span>
+      Local server
+    </div>
+  </header>
+
+  <main>
+    <section id="credential-view" class="credential-view" aria-labelledby="credential-title">
+      <div class="credential-card">
+        <p class="eyebrow">Private local history</p>
+        <h1 id="credential-title">Connect to your build history</h1>
+        <p class="credential-copy">
+          Enter the independent <code>BUILDOPT_HISTORY_API_TOKEN</code>. It is
+          kept only in this page memory and is never written to browser storage.
+        </p>
+        <form id="credential-form">
+          <label for="credential">History read token</label>
+          <div class="credential-row">
+            <input id="credential" name="credential" type="password"
+              autocomplete="off" minlength="32" maxlength="512" required
+              aria-describedby="credential-help credential-error">
+            <button class="button primary" type="submit">Open history</button>
+          </div>
+          <p id="credential-help" class="field-help">The ingest token cannot read history.</p>
+          <p id="credential-error" class="form-error" role="alert"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="dashboard" class="dashboard" hidden aria-label="Build history dashboard">
+      <div class="dashboard-heading">
+        <div>
+          <p class="eyebrow">Local workspace evidence</p>
+          <h1>Build history</h1>
+          <p id="history-context" class="muted">Newest completed builds from private exports.</p>
+        </div>
+        <button id="disconnect" class="button secondary" type="button">Forget token</button>
+      </div>
+
+      <section class="summary-grid" aria-label="Loaded build summary">
+        <article class="summary-card">
+          <span>Matching builds</span>
+          <strong id="summary-matched">—</strong>
+          <small>Across current filters</small>
+        </article>
+        <article class="summary-card success">
+          <span>Loaded successful</span>
+          <strong id="summary-success">—</strong>
+          <small>Current loaded page set</small>
+        </article>
+        <article class="summary-card failure">
+          <span>Loaded failed</span>
+          <strong id="summary-failed">—</strong>
+          <small>Current loaded page set</small>
+        </article>
+        <article class="summary-card">
+          <span>Median duration</span>
+          <strong id="summary-duration">—</strong>
+          <small>Current loaded page set</small>
+        </article>
+      </section>
+
+      <form id="filters" class="filters" aria-label="Build filters">
+        <div class="field">
+          <label for="repository-filter">Repository</label>
+          <input id="repository-filter" name="repository" type="search"
+            placeholder="Exact redacted repository token" autocomplete="off">
+        </div>
+        <div class="field compact">
+          <label for="outcome-filter">Outcome</label>
+          <select id="outcome-filter" name="outcome">
+            <option value="">All outcomes</option>
+            <option value="SUCCESS">Success</option>
+            <option value="BUILD_FAILURE">Build failure</option>
+            <option value="CANCELLED">Cancelled</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="loaded-search">Filter loaded builds</label>
+          <input id="loaded-search" type="search"
+            placeholder="Session ID or revision" autocomplete="off">
+        </div>
+        <button class="button secondary apply-filter" type="submit">Apply filters</button>
+      </form>
+
+      <div id="notice" class="notice" role="status" aria-live="polite"></div>
+
+      <div class="workspace">
+        <section id="history" class="history-panel" aria-labelledby="history-title">
+          <div class="panel-heading">
+            <div>
+              <h2 id="history-title">Recent builds</h2>
+              <p id="loaded-count" class="muted">No builds loaded</p>
+            </div>
+            <button id="refresh" class="button quiet" type="button">Refresh</button>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Outcome</th>
+                  <th scope="col">Completed</th>
+                  <th scope="col">Duration</th>
+                  <th scope="col">Revision</th>
+                  <th scope="col">Environment</th>
+                  <th scope="col">Cache state</th>
+                </tr>
+              </thead>
+              <tbody id="build-table-body"></tbody>
+            </table>
+          </div>
+
+          <div id="empty-state" class="empty-state" hidden>
+            <div class="empty-icon" aria-hidden="true">✓</div>
+            <h3>No matching builds</h3>
+            <p>Try clearing the exact repository or outcome filter.</p>
+          </div>
+
+          <div class="table-footer">
+            <span id="page-status" class="muted"></span>
+            <button id="load-more" class="button secondary" type="button" hidden>Load more</button>
+          </div>
+        </section>
+
+        <aside id="detail-panel" class="detail-panel" aria-labelledby="detail-title">
+          <div id="detail-placeholder" class="detail-placeholder">
+            <span class="detail-glyph" aria-hidden="true">↗</span>
+            <h2 id="detail-title">Select a build</h2>
+            <p>Inspect its outcome, timing, workload, measurement, and recovery facts.</p>
+          </div>
+          <div id="detail-content" hidden></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <noscript>
+    <p class="noscript">The local dashboard requires JavaScript to call the authenticated history API.</p>
+  </noscript>
+</body>
+</html>

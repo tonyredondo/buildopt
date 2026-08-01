@@ -470,6 +470,7 @@ func run(
 	if historyHandler != nil {
 		handler.Handle(buildhistory.ListPath, historyHandler)
 		handler.Handle(buildhistory.DetailPath, historyHandler)
+		handler.Handle(buildhistory.DashboardPath, buildhistory.NewDashboardHandler())
 	}
 	if cacheHandler != nil {
 		handler.Handle("/cache/", cacheHandler)
