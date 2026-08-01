@@ -169,14 +169,12 @@ public final class PatchCandidateValidator {
     }
 
     private static boolean supportedRecipe(Request request) {
-        return (ArchiveReproducibilityRecipe.RECIPE_ID.equals(request.recipeId())
-                        && ArchiveReproducibilityRecipe.RECIPE_VERSION.equals(
-                                request.recipeVersion())
-                        && request.artifactAdapter()
-                                == ArtifactAdapter.ARCHIVE_CONTENTS_V1)
-                || ("CUSTOM_TASK_CONTRACT_JAVA_V1".equals(request.recipeId())
-                        && "1.0".equals(request.recipeVersion())
-                        && request.artifactAdapter() == ArtifactAdapter.EXACT_BYTES);
+        PatchAutopilotRecipeRegistry.Definition definition =
+                PatchAutopilotRecipeRegistry.find(
+                        request.recipeId(), request.recipeVersion()).orElse(null);
+        return definition != null
+                && request.artifactAdapter() != null
+                && definition.validationAdapter().equals(request.artifactAdapter().name());
     }
 
     private static boolean validRun(Run run) {

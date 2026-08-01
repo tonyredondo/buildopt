@@ -74,6 +74,7 @@ public final class PatcherSpike {
         Path temporaryRoot = Files.createTempDirectory("buildopt-patcher-spike-");
         try {
             PatcherSpike spike = new PatcherSpike(repositoryRoot, temporaryRoot);
+            spike.assertRecipeRegistry();
             spike.assertDuplicateKeysRejected();
             spike.assertSignerRejectsIncompleteManifest();
             spike.assertArchiveRecipeSafety();
@@ -103,6 +104,42 @@ public final class PatcherSpike {
                     "SPK-004 DONE: 15/15 real-Git parser/applier cases passed");
         } finally {
             deleteRecursively(temporaryRoot);
+        }
+    }
+
+    private void assertRecipeRegistry() {
+        List<PatchAutopilotRecipeRegistry.Definition> definitions =
+                PatchAutopilotRecipeRegistry.definitions();
+        require(definitions.size() == 2, "recipe registry size");
+        PatchAutopilotRecipeRegistry.Definition archive =
+                PatchAutopilotRecipeRegistry.find(
+                        ArchiveReproducibilityRecipe.RECIPE_ID,
+                        ArchiveReproducibilityRecipe.RECIPE_VERSION)
+                        .orElseThrow();
+        require(archive.risk() == PatchAutopilotRecipeRegistry.Risk.LOW
+                        && archive.inverse()
+                                == PatchAutopilotRecipeRegistry.Inverse.EXACT_MODIFY_ONLY
+                        && "ARCHIVE_CONTENTS_V1".equals(archive.validationAdapter())
+                        && !archive.reviewedAdapterRequired(),
+                "archive registry metadata");
+        PatchAutopilotRecipeRegistry.Definition custom =
+                PatchAutopilotRecipeRegistry.find(
+                        CustomTaskContractJavaRecipe.RECIPE_ID,
+                        CustomTaskContractJavaRecipe.RECIPE_VERSION)
+                        .orElseThrow();
+        require(custom.reviewedAdapterRequired()
+                        && custom.inverse()
+                                == PatchAutopilotRecipeRegistry.Inverse.UNAVAILABLE
+                        && "EXACT_BYTES".equals(custom.validationAdapter()),
+                "custom-task registry metadata");
+        require(PatchAutopilotRecipeRegistry.find(archive.id(), "2.0").isEmpty()
+                        && PatchAutopilotRecipeRegistry.find("UNKNOWN", "1.0").isEmpty(),
+                "registry rejects fallback and unknown recipes");
+        try {
+            definitions.clear();
+            throw new IllegalStateException("recipe registry is mutable");
+        } catch (UnsupportedOperationException expected) {
+            // Immutable catalog is part of the trust boundary.
         }
     }
 

@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/patch-autopilot-recipe-registry/v1" and
+  .trackerId == "PA-F2-001" and
+  .selection == "EXACT_ID_AND_VERSION_NO_FALLBACK" and
+  (.recipes | length) == 2 and
+  .recipes[0] == {
+    id:"ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1", version:"1.0",
+    applicability:"ROOT_BUILD_GRADLE_KTS", risk:"LOW",
+    validationAdapter:"ARCHIVE_CONTENTS_V1", inverse:"EXACT_MODIFY_ONLY",
+    reviewedAdapterRequired:false
+  } and
+  .recipes[1] == {
+    id:"CUSTOM_TASK_CONTRACT_JAVA_V1", version:"1.0",
+    applicability:"REVIEWED_BUILD_SRC_JAVA_ADAPTER", risk:"LOW",
+    validationAdapter:"EXACT_BYTES", inverse:"UNAVAILABLE",
+    reviewedAdapterRequired:true
+  } and
+  .consumers == ["PATCH_BUNDLE_VERIFIER", "PATCH_CANDIDATE_VALIDATOR"] and
+  .unsupported == "REJECT_WITHOUT_VERSION_FALLBACK" and
+  .remoteMutationPerformed == false
+' specs/patch-autopilot-recipe-registry-v1.json >/dev/null
+
+test -f jvm/patcher/src/main/java/dev/buildopt/patcher/PatchAutopilotRecipeRegistry.java
+./dev/run -- ./gradlew --no-daemon --offline --no-configuration-cache \
+    --warning-mode=fail :jvm:patcher:patcherSpike >/dev/null
+printf 'PA-F2-001 recipe registry OK: exact version allowlist shared by verifier and validator\n'

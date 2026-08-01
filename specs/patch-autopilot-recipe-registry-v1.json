@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "buildopt.specs/patch-autopilot-recipe-registry/v1",
+  "trackerId": "PA-F2-001",
+  "selection": "EXACT_ID_AND_VERSION_NO_FALLBACK",
+  "recipes": [
+    {
+      "id": "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1",
+      "version": "1.0",
+      "applicability": "ROOT_BUILD_GRADLE_KTS",
+      "risk": "LOW",
+      "validationAdapter": "ARCHIVE_CONTENTS_V1",
+      "inverse": "EXACT_MODIFY_ONLY",
+      "reviewedAdapterRequired": false
+    },
+    {
+      "id": "CUSTOM_TASK_CONTRACT_JAVA_V1",
+      "version": "1.0",
+      "applicability": "REVIEWED_BUILD_SRC_JAVA_ADAPTER",
+      "risk": "LOW",
+      "validationAdapter": "EXACT_BYTES",
+      "inverse": "UNAVAILABLE",
+      "reviewedAdapterRequired": true
+    }
+  ],
+  "consumers": ["PATCH_BUNDLE_VERIFIER", "PATCH_CANDIDATE_VALIDATOR"],
+  "unsupported": "REJECT_WITHOUT_VERSION_FALLBACK",
+  "remoteMutationPerformed": false
+}

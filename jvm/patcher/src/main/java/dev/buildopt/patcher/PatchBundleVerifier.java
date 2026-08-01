@@ -273,27 +273,28 @@ public final class PatchBundleVerifier {
 
     private static Recipe parseRecipe(Map<String, Object> recipe) throws PatchFailure {
         String id = string(recipe, "id");
-        constant(recipe, "version", "1.0");
-        if ("ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1".equals(id)) {
+        String version = string(recipe, "version");
+        PatchAutopilotRecipeRegistry.Definition definition =
+                PatchAutopilotRecipeRegistry.find(id, version).orElse(null);
+        if (definition == null) {
+            reject("unsupported recipe id or version");
+        }
+        if (!definition.reviewedAdapterRequired()) {
             exactFields(recipe, "recipe", Set.of("id", "version"));
-            return new Recipe(id, "1.0", "");
+            return new Recipe(id, version, "");
         }
-        if ("CUSTOM_TASK_CONTRACT_JAVA_V1".equals(id)) {
-            exactFields(recipe, "recipe", Set.of("id", "version", "reviewedAdapter"));
-            Map<String, Object> adapter = object(
-                    recipe.get("reviewedAdapter"),
-                    "reviewedAdapter");
-            exactFields(adapter, "reviewedAdapter", Set.of(
-                    "adapterId",
-                    "adapterDigest",
-                    "evidenceRef"));
-            String adapterId = identifier(adapter, "adapterId");
-            sha256Digest(adapter, "adapterDigest");
-            identifier(adapter, "evidenceRef");
-            return new Recipe(id, "1.0", adapterId);
-        }
-        reject("unsupported recipe id");
-        throw new AssertionError("unreachable");
+        exactFields(recipe, "recipe", Set.of("id", "version", "reviewedAdapter"));
+        Map<String, Object> adapter = object(
+                recipe.get("reviewedAdapter"),
+                "reviewedAdapter");
+        exactFields(adapter, "reviewedAdapter", Set.of(
+                "adapterId",
+                "adapterDigest",
+                "evidenceRef"));
+        String adapterId = identifier(adapter, "adapterId");
+        sha256Digest(adapter, "adapterDigest");
+        identifier(adapter, "evidenceRef");
+        return new Recipe(id, version, adapterId);
     }
 
     private static void parseValidation(
@@ -797,7 +798,7 @@ public final class PatchBundleVerifier {
         }
     }
 
-    /** One of the two bounded recipe/version combinations. */
+    /** One bounded recipe/version combination from the Patch Autopilot registry. */
     public record Recipe(String id, String version, String reviewedAdapterId) {
     }
 
