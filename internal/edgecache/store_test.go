@@ -42,6 +42,7 @@ func testStoreConfig(root, sharedURL string) Config {
 			CapacityBytes:        MinimumCapacityBytes,
 			MaximumObjectBytes:   MaximumObjectBytes,
 			StableTTLSeconds:     int64(MaximumStableTTL / time.Second),
+			PendingTTLSeconds:    int64(MaximumPendingTTL / time.Second),
 			HighWatermarkPercent: HighWatermarkPercent,
 			LowWatermarkPercent:  LowWatermarkPercent,
 			ProtectedPercent:     ProtectedPercent,
@@ -282,7 +283,7 @@ func TestOpenStoreRejectsFutureMetadataAndSymlinkState(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := store.database.Exec("PRAGMA user_version=3"); err != nil {
+	if _, err := store.database.Exec("PRAGMA user_version=4"); err != nil {
 		t.Fatal(err)
 	}
 	if err := store.Close(); err != nil {

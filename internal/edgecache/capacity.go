@@ -30,6 +30,8 @@ type CapacitySnapshot struct {
 	StableBytes        int64
 	ProbationBytes     int64
 	ProtectedUsedBytes int64
+	PendingBytes       int64
+	TotalLogicalBytes  int64
 	ReservedBytes      int64
 	Objects            int64
 }
@@ -38,6 +40,7 @@ type MaintenanceReport struct {
 	StableBytesBefore int64
 	StableBytesAfter  int64
 	ExpiredObjects    int
+	ExpiredPending    int
 	EvictedProbation  int
 	EvictedProtected  int
 	DemotedProtected  int
@@ -62,7 +65,7 @@ func (store *Store) reserve(ctx context.Context, size int64) (*reservation, erro
 	if store.closed {
 		return nil, errors.New("Edge store is closed")
 	}
-	usage, err := stableBytes(ctx, store.database)
+	usage, err := logicalBytes(ctx, store.database)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +100,7 @@ func (store *Store) publishEntryWithCapacityLocked(ctx context.Context, entry st
 			_ = transaction.Rollback()
 		}
 	}()
-	usage, err := stableBytes(ctx, transaction)
+	usage, err := logicalBytes(ctx, transaction)
 	if err != nil {
 		return err
 	}
@@ -229,6 +232,14 @@ FROM edge_entries`).Scan(
 		&snapshot.ProtectedUsedBytes,
 		&snapshot.Objects,
 	)
+	if err != nil {
+		return snapshot, err
+	}
+	err = query.QueryRowContext(
+		ctx,
+		"SELECT coalesce(sum(size_bytes), 0) FROM edge_pending_objects",
+	).Scan(&snapshot.PendingBytes)
+	snapshot.TotalLogicalBytes = snapshot.StableBytes + snapshot.PendingBytes
 	return snapshot, err
 }
 
@@ -263,6 +274,21 @@ func (store *Store) Maintain(ctx context.Context, now time.Time) (MaintenanceRep
 		return report, err
 	}
 	report.ExpiredObjects = int(expired)
+	pendingResult, err := transaction.ExecContext(
+		ctx,
+		"DELETE FROM edge_pending_objects WHERE expires_at_unix_ms <= ?",
+		now.UTC().UnixMilli(),
+	)
+	if err != nil {
+		_ = transaction.Rollback()
+		return report, err
+	}
+	expiredPending, err := pendingResult.RowsAffected()
+	if err != nil {
+		_ = transaction.Rollback()
+		return report, err
+	}
+	report.ExpiredPending = int(expiredPending)
 	report.EvictedProbation, report.EvictedProtected, err = store.enforceWatermarksTx(ctx, transaction, storedEntry{})
 	if err != nil {
 		_ = transaction.Rollback()
@@ -429,6 +455,16 @@ func stableBytes(ctx context.Context, query interface {
 	return total, err
 }
 
+func logicalBytes(ctx context.Context, query interface {
+	QueryRowContext(context.Context, string, ...any) *sql.Row
+}) (int64, error) {
+	var total int64
+	err := query.QueryRowContext(ctx, `SELECT
+    (SELECT coalesce(sum(size_bytes), 0) FROM edge_entries) +
+    (SELECT coalesce(sum(size_bytes), 0) FROM edge_pending_objects)`).Scan(&total)
+	return total, err
+}
+
 func (store *Store) deleteOrphanBlobsLocked(ctx context.Context) (int, error) {
 	rows, err := store.database.QueryContext(ctx, "SELECT DISTINCT blob_digest FROM edge_entries")
 	if err != nil {
@@ -444,6 +480,24 @@ func (store *Store) deleteOrphanBlobsLocked(ctx context.Context) (int, error) {
 		referenced[digest] = true
 	}
 	if err := rows.Close(); err != nil {
+		return 0, err
+	}
+	pendingRows, err := store.database.QueryContext(
+		ctx,
+		"SELECT DISTINCT blob_digest FROM edge_pending_objects",
+	)
+	if err != nil {
+		return 0, err
+	}
+	for pendingRows.Next() {
+		var digest string
+		if err := pendingRows.Scan(&digest); err != nil {
+			_ = pendingRows.Close()
+			return 0, err
+		}
+		referenced[digest] = true
+	}
+	if err := pendingRows.Close(); err != nil {
 		return 0, err
 	}
 	deleted := 0

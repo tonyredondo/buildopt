@@ -235,4 +235,7 @@ func TestVersionOneMetadataMigratesToByteSLRU(t *testing.T) {
 	if _, err := store.database.Exec("SELECT segment, last_access_unix_ms FROM edge_entries"); err != nil {
 		t.Fatalf("migrated SLRU columns: %v", err)
 	}
+	if _, err := store.database.Exec("SELECT state, replication_attempts FROM edge_pending_objects"); err != nil {
+		t.Fatalf("migrated pending table: %v", err)
+	}
 }

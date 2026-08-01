@@ -1536,6 +1536,22 @@ probation, hit promotion, protected-byte demotion, probation-first 85/75
 pressure eviction, logical-before-physical TTL cleanup, and metadata v1-to-v2
 migration. Pending writes and replication remain a separate later block.
 
+## Edge Cache pending replication
+
+Run the C2-004 attempt-private write and real Shared replication proof with:
+
+```bash
+./dev/check-edge-cache-pending-replication
+```
+
+The checker verifies signed write-authority projection, exact reservation before
+body reads, idempotent same-byte retry, different-byte rejection, cross-attempt
+misses, shared committed-plus-pending quota accounting, pending TTL, durable
+exponential retry, interrupted-claim restart recovery, and the asynchronous
+worker. A real read-write beta token then proves the object reaches Shared only
+as pending and remains absent from both committed paths across Edge restart.
+The loopback proxy and two-node collision proof remain in C2-005.
+
 ## Build Impact manifest
 
 Validate the C3-001 customer-owned manifest boundary with:

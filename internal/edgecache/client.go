@@ -20,14 +20,66 @@ const (
 
 var (
 	ErrCacheMiss           = errors.New("Edge cache miss")
-	ErrUpstreamRejected    = errors.New("Shared rejected Edge read authority")
+	ErrUpstreamRejected    = errors.New("Shared rejected Edge authority")
 	ErrUpstreamUnavailable = errors.New("Shared is unavailable to Edge")
+	ErrUpstreamConflict    = errors.New("Shared rejected Edge pending replication")
 )
 
 type SharedClient struct {
 	baseURL    *url.URL
 	credential []byte
 	httpClient *http.Client
+}
+
+func (client *SharedClient) pushPending(
+	ctx context.Context,
+	authority WriteAuthority,
+	key string,
+	body io.Reader,
+	size int64,
+	digest string,
+	now time.Time,
+) error {
+	if client == nil || client.httpClient == nil || client.baseURL == nil ||
+		len(client.credential) == 0 || ctx == nil || body == nil ||
+		!authority.current(now) || !validCacheKey(key) || size < 0 ||
+		!validDigest(digest) {
+		return errors.New("invalid Shared pending replication")
+	}
+	requestURL := *client.baseURL
+	requestURL.Path = "/cache/" + key
+	request, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodPut,
+		requestURL.String(),
+		body,
+	)
+	if err != nil {
+		return err
+	}
+	request.ContentLength = size
+	request.Header.Set("Authorization", "Bearer "+string(client.credential))
+	request.Header.Set(sharedAuthorityDigestHeader, authority.authorityDigest)
+	response, err := client.httpClient.Do(request)
+	if err != nil {
+		return fmt.Errorf("%w: %v", ErrUpstreamUnavailable, err)
+	}
+	defer response.Body.Close()
+	_, _ = io.Copy(io.Discard, io.LimitReader(response.Body, 4096))
+	switch response.StatusCode {
+	case http.StatusOK, http.StatusCreated:
+		digests := response.Header.Values("X-BuildOpt-Blob-Digest")
+		if len(digests) != 1 || digests[0] != digest {
+			return fmt.Errorf("%w: invalid pending digest acknowledgement", ErrUpstreamUnavailable)
+		}
+		return nil
+	case http.StatusUnauthorized, http.StatusForbidden:
+		return ErrUpstreamRejected
+	case http.StatusNotFound, http.StatusConflict, http.StatusRequestEntityTooLarge:
+		return ErrUpstreamConflict
+	default:
+		return fmt.Errorf("%w: HTTP %d", ErrUpstreamUnavailable, response.StatusCode)
+	}
 }
 
 type fetchedObject struct {

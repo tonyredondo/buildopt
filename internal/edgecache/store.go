@@ -19,7 +19,7 @@ import (
 
 const (
 	edgeEntrySchema          = "buildopt.edge-cache/committed-entry/v1"
-	currentEdgeSchemaVersion = 2
+	currentEdgeSchemaVersion = 3
 )
 
 type Store struct {
@@ -29,6 +29,7 @@ type Store struct {
 	database           *sql.DB
 	writerLock         *os.File
 	stableTTL          time.Duration
+	pendingTTL         time.Duration
 	maximumObjectBytes int64
 	capacityBytes      int64
 	highWatermarkBytes int64
@@ -68,6 +69,8 @@ func OpenStore(config Config) (*Store, error) {
 		config.Storage.MaximumObjectBytes < 1 || config.Storage.MaximumObjectBytes > MaximumObjectBytes ||
 		config.Storage.StableTTLSeconds < 1 ||
 		config.Storage.StableTTLSeconds > int64(MaximumStableTTL/time.Second) ||
+		config.Storage.PendingTTLSeconds < 1 ||
+		config.Storage.PendingTTLSeconds > int64(MaximumPendingTTL/time.Second) ||
 		config.Storage.HighWatermarkPercent != HighWatermarkPercent ||
 		config.Storage.LowWatermarkPercent != LowWatermarkPercent ||
 		config.Storage.ProtectedPercent != ProtectedPercent {
@@ -125,6 +128,7 @@ func OpenStore(config Config) (*Store, error) {
 		database:           database,
 		writerLock:         lock,
 		stableTTL:          time.Duration(config.Storage.StableTTLSeconds) * time.Second,
+		pendingTTL:         time.Duration(config.Storage.PendingTTLSeconds) * time.Second,
 		maximumObjectBytes: config.Storage.MaximumObjectBytes,
 		capacityBytes:      config.Storage.CapacityBytes,
 		highWatermarkBytes: percentage(config.Storage.CapacityBytes, HighWatermarkPercent),
@@ -188,7 +192,37 @@ func (store *Store) initialize() error {
     PRIMARY KEY (tenant_id, repository_id, trust_domain, namespace,
                  namespace_generation, cache_key)
 ) STRICT`,
-			"PRAGMA user_version=2",
+			`CREATE TABLE edge_pending_objects (
+    tenant_id TEXT NOT NULL,
+    repository_id TEXT NOT NULL,
+    trust_domain TEXT NOT NULL,
+    namespace TEXT NOT NULL,
+    namespace_generation INTEGER NOT NULL,
+    attempt_id TEXT NOT NULL,
+    cache_key TEXT NOT NULL,
+    schema_version TEXT NOT NULL,
+    authority_digest TEXT NOT NULL,
+    revocation_epoch INTEGER NOT NULL,
+    revocation_digest TEXT NOT NULL,
+    l1_security_generation INTEGER NOT NULL,
+    blob_digest TEXT NOT NULL,
+    size_bytes INTEGER NOT NULL,
+    created_at_unix_ms INTEGER NOT NULL,
+    expires_at_unix_ms INTEGER NOT NULL,
+    state TEXT NOT NULL CHECK (
+        state IN ('QUEUED', 'REPLICATING', 'REPLICATED', 'REJECTED')
+    ),
+    replication_attempts INTEGER NOT NULL,
+    next_retry_unix_ms INTEGER NOT NULL,
+    last_error_class TEXT NOT NULL,
+    PRIMARY KEY (authority_digest, attempt_id, cache_key)
+) STRICT`,
+			`CREATE INDEX edge_pending_due
+ON edge_pending_objects (
+    authority_digest, attempt_id, state, next_retry_unix_ms,
+    created_at_unix_ms, cache_key
+)`,
+			"PRAGMA user_version=3",
 		} {
 			if _, err := transaction.Exec(statement); err != nil {
 				_ = transaction.Rollback()
@@ -219,6 +253,60 @@ func (store *Store) initialize() error {
 		if err := transaction.Commit(); err != nil {
 			return err
 		}
+		version = 2
+	}
+	if version == 2 {
+		transaction, err := store.database.Begin()
+		if err != nil {
+			return err
+		}
+		for _, statement := range []string{
+			`CREATE TABLE edge_pending_objects (
+    tenant_id TEXT NOT NULL,
+    repository_id TEXT NOT NULL,
+    trust_domain TEXT NOT NULL,
+    namespace TEXT NOT NULL,
+    namespace_generation INTEGER NOT NULL,
+    attempt_id TEXT NOT NULL,
+    cache_key TEXT NOT NULL,
+    schema_version TEXT NOT NULL,
+    authority_digest TEXT NOT NULL,
+    revocation_epoch INTEGER NOT NULL,
+    revocation_digest TEXT NOT NULL,
+    l1_security_generation INTEGER NOT NULL,
+    blob_digest TEXT NOT NULL,
+    size_bytes INTEGER NOT NULL,
+    created_at_unix_ms INTEGER NOT NULL,
+    expires_at_unix_ms INTEGER NOT NULL,
+    state TEXT NOT NULL CHECK (
+        state IN ('QUEUED', 'REPLICATING', 'REPLICATED', 'REJECTED')
+    ),
+    replication_attempts INTEGER NOT NULL,
+    next_retry_unix_ms INTEGER NOT NULL,
+    last_error_class TEXT NOT NULL,
+    PRIMARY KEY (authority_digest, attempt_id, cache_key)
+) STRICT`,
+			`CREATE INDEX edge_pending_due
+ON edge_pending_objects (
+    authority_digest, attempt_id, state, next_retry_unix_ms,
+    created_at_unix_ms, cache_key
+)`,
+			"PRAGMA user_version=3",
+		} {
+			if _, err := transaction.Exec(statement); err != nil {
+				_ = transaction.Rollback()
+				return fmt.Errorf("migrate Edge pending metadata: %w", err)
+			}
+		}
+		if err := transaction.Commit(); err != nil {
+			return err
+		}
+	}
+	if _, err := store.database.Exec(`UPDATE edge_pending_objects
+SET state = 'QUEUED', next_retry_unix_ms = 0,
+    last_error_class = 'INTERRUPTED'
+WHERE state = 'REPLICATING'`); err != nil {
+		return fmt.Errorf("recover Edge pending replication: %w", err)
 	}
 	var integrity string
 	if err := store.database.QueryRow("PRAGMA quick_check").Scan(&integrity); err != nil || integrity != "ok" {
@@ -235,6 +323,20 @@ FROM edge_entries LIMIT 0`)
 		return fmt.Errorf("initialize Edge metadata: schema drift: %w", err)
 	}
 	if err := rows.Close(); err != nil {
+		return err
+	}
+	pendingRows, err := store.database.Query(`SELECT
+    tenant_id, repository_id, trust_domain, namespace,
+    namespace_generation, attempt_id, cache_key, schema_version,
+    authority_digest, revocation_epoch, revocation_digest,
+    l1_security_generation, blob_digest, size_bytes,
+    created_at_unix_ms, expires_at_unix_ms, state,
+    replication_attempts, next_retry_unix_ms, last_error_class
+FROM edge_pending_objects LIMIT 0`)
+	if err != nil {
+		return fmt.Errorf("initialize Edge pending metadata: schema drift: %w", err)
+	}
+	if err := pendingRows.Close(); err != nil {
 		return err
 	}
 	return nil

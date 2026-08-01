@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "buildopt.specs/edge-cache-pending-replication/v1",
+  "workItem": "C2-004",
+  "writeAuthority": {
+    "source": "CURRENT_VERIFIED_SIGNED_AUTHORITY",
+    "writePolicy": "TRUSTED_CI_ONLY",
+    "scope": "EXACT_ATTEMPT",
+    "expiration": "MIN_AUTHORITY_AND_ATTEMPT_LEASE",
+    "stableAuthority": false
+  },
+  "localPending": {
+    "admission": "EXACT_SIZE_RESERVED_BEFORE_BODY_READ",
+    "capacity": "COMMITTED_PLUS_PENDING_PLUS_OUTSTANDING_RESERVATIONS",
+    "verification": [
+      "COMPLETE_LENGTH",
+      "COMPLETE_SHA256",
+      "REGULAR_NOFOLLOW_FILE"
+    ],
+    "idempotency": "EXACT_ATTEMPT_KEY_AND_BYTES",
+    "collision": "DIFFERENT_BYTES_REJECT",
+    "readVisibility": "EXACT_CURRENT_ATTEMPT_ONLY",
+    "committedReadFallback": "NEVER"
+  },
+  "replication": {
+    "execution": "ASYNCHRONOUS_BOUNDED_WORKER",
+    "maximumBatch": 64,
+    "method": "PUT",
+    "route": "/cache/{canonical-key}",
+    "authentication": [
+      "SCOPED_BEARER_TOKEN",
+      "EXACT_SIGNED_AUTHORITY_DIGEST"
+    ],
+    "redirects": "REJECT",
+    "success": "HTTP_200_OR_201_WITH_EXACT_BLOB_DIGEST",
+    "transientFailure": "DURABLE_EXPONENTIAL_RETRY",
+    "retryMinimumSeconds": 1,
+    "retryMaximumSeconds": 300,
+    "authorityAttemptConflictOrCapacityFailure": "REJECTED",
+    "localPromotion": "FORBIDDEN"
+  },
+  "recovery": {
+    "metadataSchemaVersion": 3,
+    "interruptedReplicating": "RESET_TO_IMMEDIATELY_DUE_QUEUED",
+    "pendingTTL": "LOGICAL_METADATA_BEFORE_PHYSICAL_ORPHAN",
+    "deduplicatedBlob": "PRESERVE_WHILE_COMMITTED_OR_PENDING_REFERENCE_EXISTS"
+  },
+  "boundaries": {
+    "closes": [
+      "C2-004"
+    ],
+    "doesNotClose": [
+      "C2-005",
+      "C2-G01",
+      "EIGHT_HOUR_SOAK",
+      "PRODUCTION_HARDENING"
+    ],
+    "sharedSoleCommitAuthority": true,
+    "sharedSoleCollisionAuthority": true,
+    "offlinePromotion": false
+  }
+}

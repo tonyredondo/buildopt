@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/edge-cache-pending-replication-v1.json"
+
+for buildopt_command in go jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Edge pending command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/edge-cache-pending-replication/v1" and
+    .workItem == "C2-004" and
+    .writeAuthority.source == "CURRENT_VERIFIED_SIGNED_AUTHORITY" and
+    .writeAuthority.writePolicy == "TRUSTED_CI_ONLY" and
+    .writeAuthority.scope == "EXACT_ATTEMPT" and
+    .writeAuthority.stableAuthority == false and
+    .localPending.admission == "EXACT_SIZE_RESERVED_BEFORE_BODY_READ" and
+    .localPending.capacity == "COMMITTED_PLUS_PENDING_PLUS_OUTSTANDING_RESERVATIONS" and
+    .localPending.idempotency == "EXACT_ATTEMPT_KEY_AND_BYTES" and
+    .localPending.readVisibility == "EXACT_CURRENT_ATTEMPT_ONLY" and
+    .localPending.committedReadFallback == "NEVER" and
+    .replication.execution == "ASYNCHRONOUS_BOUNDED_WORKER" and
+    .replication.maximumBatch == 64 and
+    .replication.authentication == [
+        "SCOPED_BEARER_TOKEN",
+        "EXACT_SIGNED_AUTHORITY_DIGEST"
+    ] and
+    .replication.redirects == "REJECT" and
+    .replication.success == "HTTP_200_OR_201_WITH_EXACT_BLOB_DIGEST" and
+    .replication.localPromotion == "FORBIDDEN" and
+    .recovery.metadataSchemaVersion == 3 and
+    .recovery.interruptedReplicating == "RESET_TO_IMMEDIATELY_DUE_QUEUED" and
+    .boundaries.closes == ["C2-004"] and
+    (.boundaries.doesNotClose | index("C2-005")) != null and
+    .boundaries.sharedSoleCommitAuthority == true and
+    .boundaries.sharedSoleCollisionAuthority == true and
+    .boundaries.offlinePromotion == false
+' "${buildopt_contract}" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+./dev/check-edge-cache-capacity-slru
+./dev/run --toolchain go -- go test -race -count=1 ./internal/edgecache
+./dev/run --toolchain go -- go test -race -count=1 ./internal/sharedcache \
+    -run '^TestEdgePendingReplicationUsesRealSharedAttemptWithoutLocalPromotion$'
+./dev/run --toolchain go -- go vet ./internal/edgecache ./internal/sharedcache
+
+printf 'C2-004 Edge pending checks passed: attempt isolation, durable retry/restart, real Shared replication, and no local promotion\n'
