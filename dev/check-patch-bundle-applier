@@ -64,6 +64,7 @@ jq -e \
         .candidateControlValidated == true and
         .archiveArtifactAdapterValidated == true and
         .exactArtifactAdapterValidated == true and
+        .expandedRecipeCandidateControlValidated == true and
         .candidateReproducibilityValidated == true and
         .candidateValidationFailClosed == true and
         .fullRelevantValidationIntegrated == true and
@@ -73,6 +74,7 @@ jq -e \
         .postMergeEvidenceClassified == true and
         .contextualImpactNotPromoted == true and
         .exactInverseBundleGenerated == true and
+        .registryRecipeInverseBundlesValidated == true and
         .draftRevertPathValidated == true and
         .defaultBranchPreservedAfterRegression == true and
         .bundleContentExecuted == false and

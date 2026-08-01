@@ -33,7 +33,7 @@ jq -e '
   .selection.risk == "LOW" and
   .promotion == {
     candidateControlRequired:true, fullRelevantValidationRequired:true,
-    delivery:"DRAFT_ONLY", exactInverseProof:"PA-F2-003"
+    delivery:"DRAFT_ONLY", exactInverseProof:"EXACT_SIGNED_MODIFY_ONLY"
   } and
   .testOptimizationChanged == false and .remoteMutationPerformed == false
 ' specs/patch-autopilot-recipes-v1.json >/dev/null

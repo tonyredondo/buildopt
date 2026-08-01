@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "buildopt.specs/patch-autopilot-validation-revert/v1",
+  "trackerId": "PA-F2-003",
+  "recipes": [
+    "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1@1.0",
+    "ARCHIVE_REPRODUCIBILITY_GROOVY_DSL_V1@1.0",
+    "GRADLE_BUILD_CACHE_PROPERTIES_V1@1.0",
+    "CUSTOM_TASK_CONTRACT_JAVA_V1@1.0"
+  ],
+  "candidateControl": {
+    "arms": ["CANDIDATE", "CONTROL"],
+    "phases": ["CLEAN", "INCREMENTAL", "RELOCATED"],
+    "exactRuns": 6,
+    "registryAdapterRequired": true,
+    "fullRelevantValidationRequired": true
+  },
+  "forwardBundle": {
+    "canonicalization": "JCS",
+    "signature": "Ed25519",
+    "application": "PRIVATE_DETACHED_NO_CHECKOUT_WORKTREE",
+    "delivery": "NEW_DRAFT_PR"
+  },
+  "inverseBundle": {
+    "registryCapability": "EXACT_MODIFY_ONLY",
+    "operations": "MODIFY_ONLY",
+    "requiresCurrentExactPostimages": true,
+    "restoresSignedBasePreimages": true,
+    "preservesReviewedAdapter": true,
+    "canonicalization": "JCS",
+    "signature": "Ed25519",
+    "delivery": "NEW_DRAFT_REVERT_PR"
+  },
+  "realGit": {
+    "recipeCount": 4,
+    "exactOriginalBytesRestored": true,
+    "defaultBranchPreserved": true,
+    "customerCheckoutPreserved": true
+  },
+  "failClosed": [
+    "UNREGISTERED_RECIPE",
+    "WRONG_ARTIFACT_ADAPTER",
+    "ADD_OPERATION",
+    "CHANGED_POSTIMAGE",
+    "INVALID_SIGNED_PREIMAGE"
+  ],
+  "testOptimizationChanged": false,
+  "remoteMutationPerformed": false
+}

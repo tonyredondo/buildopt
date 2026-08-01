@@ -17,7 +17,7 @@ configuration fails closed and leaves the repository unchanged.
 The registry marks both recipes low risk and binds them to
 `ARCHIVE_CONTENTS_V1`. A recipe can only progress through the existing six-run
 candidate/control plus `FULL_RELEVANT_VALIDATION` path and draft-only
-delivery. Exact signed inverse proof is deliberately completed by PA-F2-003,
-not inferred from reversible source text.
+delivery. PA-F2-003 supplies the exact signed MODIFY-only inverse proof;
+reversibility is never inferred from source text.
 
 Run `./dev/check-patch-autopilot-recipes`.

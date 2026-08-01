@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `FUNCTIONAL EXPANSION ACTIVE` — the completed owner-operated POC is being extended with local UX, Patch Autopilot, GitLab CI, Build Impact automation, and macOS/Windows compatibility; productization remains deferred<br>
-**Current phase:** `PA-F2` — the expanded recipe catalog is closed; `PA-F2-003` candidate/control and exact-revert proof is next<br>
+**Current phase:** `CI-F3` — Patch Autopilot is closed; `CI-F3-001` checksum-pinned GitLab CI component/template is next<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use project-owned synthetic fixtures and repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -64,7 +64,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-O1 | Edge process, reload, status, signed packaging, and service unit | `DONE` | 1/1 | `E-135` |
 | POC-O2 | Synthetic one-command lab, JSON evidence, and base-CI closure | `DONE` | 1/1 | `E-136` |
 | UX-F1 | Local build history and embedded operator dashboard | `DONE` | 1/1 | `E-139` |
-| PA-F2 | Broader safe Patch Autopilot recipe catalog and rollback proof | `TODO` | 0/1 | MVP-C4 |
+| PA-F2 | Broader safe Patch Autopilot recipe catalog and rollback proof | `DONE` | 1/1 | `E-142` |
 | CI-F3 | First-class GitLab CI installation, events, and synthetic proof | `TODO` | 0/1 | POC-O2 |
 | BIA-F4 | Automatic Gradle graph discovery and generated impact manifest | `TODO` | 0/1 | MVP-C3 |
 | PLAT-F5 | Supported macOS and Windows build/runtime paths | `TODO` | 0/1 | UX-F1 + CI-F3 |
@@ -547,7 +547,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 |---|---|---|---|
 | MVP-A2 | Self-hosted installer, migration, and recovery | `DONE` | `E-122` current-tree composite gate |
 | UX-F1 | Authenticated local history API, embedded dashboard, and synthetic accessibility proof | `DONE` | `E-139` current-tree and host-browser gate |
-| PA-F2 | Versioned safe recipe registry, additional allowlisted recipes, candidate validation, and exact revert | `TODO` | UX-F1 |
+| PA-F2 | Versioned safe recipe registry, additional allowlisted recipes, candidate validation, and exact revert | `DONE` | `E-142` current-tree composite gate |
 | CI-F3 | GitLab CI installer/template, job-event adapter, and owner-controlled end-to-end fixture | `TODO` | PA-F2 |
 | BIA-F4 | Conservative Gradle graph discovery, generated manifest, drift handling, and selection proof | `TODO` | CI-F3 |
 | PLAT-F5 | Cross-compilation inventory, portable transports/process control, packaging, and native CI | `TODO` | BIA-F4 |
@@ -658,11 +658,11 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 |---|---|---|---|---|
 | `PA-F2-001` | Versioned recipe registry with exact applicability, risk, validation, and inverse metadata | `DONE` | Codex | `E-140` |
 | `PA-F2-002` | Additional allowlisted low-risk Gradle recipes selected from repository evidence | `DONE` | Codex | `E-141` |
-| `PA-F2-003` | Candidate/control and exact-revert proof for every added recipe through the existing signed PatchBundle path | `TODO` | Codex | — |
+| `PA-F2-003` | Candidate/control and exact-revert proof for every added recipe through the existing signed PatchBundle path | `DONE` | Codex | `E-142` |
 
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
-| `PA-F2-G01` | Every recipe is bounded, reproducible, validated, draft-only, and exactly reversible; unsupported builds remain unchanged | `TODO` | — |
+| `PA-F2-G01` | Every recipe is bounded, reproducible, validated, draft-only, and exactly reversible; unsupported builds remain unchanged | `DONE` | `E-142` |
 
 #### CI-F3 — GitLab CI
 
@@ -947,6 +947,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-139` | 2026-08-01 | `UX-F1-003`, `UX-F1-G01`, UX-F1 exit | Owner-controlled host-browser evidence against committed dashboard SHA `8ad16bd`: a freshly compiled temporary server accepted one synthetic redacted BUILD_SESSION and Chromium rendered `/buildopt/` at 390×844; from the disconnected page, CDP keyboard events traversed focus to the credential input, inserted the independent token, reached `Open history`, activated it with the standard Space button gesture, loaded exactly one history row and its immutable detail, and placed focus on `loaded-search`; the resulting audit reported viewport/document width `390/390`, zero unlabeled visible controls, and zero external resources; the initial raw CDP Enter event did not activate the headless button and was not counted, while the complete rerun from disconnected state passed; the server, browser profile, export, and binary were stopped and removed | `DONE`: UX-F1 closes an owner-operated local authenticated API/dashboard flow with responsive and keyboard evidence, without adding an unpinned browser to CI, persisting credentials, exposing raw identities, contacting a remote service, running productization validation, or changing Test Optimization |
 | `E-140` | 2026-08-01 | `PA-F2-001` | Versioned [`Patch Autopilot recipe registry v1`](./specs/patch-autopilot-recipe-registry-v1.md), exact machine-readable [allowlist](./specs/patch-autopilot-recipe-registry-v1.json), production Java 17 [`PatchAutopilotRecipeRegistry`](./jvm/patcher/src/main/java/dev/buildopt/patcher/PatchAutopilotRecipeRegistry.java), and composite [`check-patch-autopilot-recipe-registry`](./dev/check-patch-autopilot-recipe-registry); exact ID/version lookup without fallback now owns applicability, low-risk classification, artifact adapter, inverse capability, and reviewed-adapter requirements, while both the signed PatchBundle verifier and six-run candidate validator resolve policy from that immutable registry; the full offline patcher spike, including all 15 real-Git cases, passed | `DONE`: PA-F2-001 closes without accepting caller-supplied policy, widening remote mutation, adding recipes, claiming an unavailable inverse, or changing Test Optimization |
 | `E-141` | 2026-08-01 | `PA-F2-002` | Versioned [`Patch Autopilot recipes v1`](./specs/patch-autopilot-recipes-v1.md), exact machine-readable [source/selection/promotion contract](./specs/patch-autopilot-recipes-v1.json), Java 17 Groovy-DSL archive and root build-cache-properties recipes, expanded immutable registry and candidate-validation adapter map, and composite [`check-patch-autopilot-recipes`](./dev/check-patch-autopilot-recipes); both recipes accept only bounded strict UTF-8/LF root files, generate defensive exact full-file replacements, are idempotent only for their own exact suffix, and fail closed for wrong paths or existing/ambiguous configuration; the complete signed patcher spike and 15 real-Git cases passed | `DONE`: PA-F2-002 closes with draft-only low-risk recipes and required candidate/full validation, without claiming exact inverse proof before PA-F2-003, mutating a remote, or changing Test Optimization |
+| `E-142` | 2026-08-01 | `PA-F2-003`, `PA-F2-G01`, PA-F2 exit | Versioned [`Patch Autopilot validation and exact revert v1`](./specs/patch-autopilot-validation-revert-v1.md), exact machine-readable [candidate/bundle/inverse contract](./specs/patch-autopilot-validation-revert-v1.json), registry-gated [`ExactRevertBundleGenerator`](./jvm/patcher/src/main/java/dev/buildopt/patcher/ExactRevertBundleGenerator.java), preserved reviewed-adapter metadata, expanded candidate conformance, four-recipe real-Git forward/inverse proof, and composite [`check-patch-autopilot-validation-revert`](./dev/check-patch-autopilot-validation-revert); every recipe resolved its registry adapter across six isolated candidate/control runs, then a JCS/Ed25519 bundle created only an immutable draft path and a second verified signed bundle restored exact base bytes while preserving the default branch and customer checkout; ADD and changed-postimage paths remained rejected | `DONE`: PA-F2 closes with four bounded, validated, draft-only, exactly reversible recipes, no version fallback or silent remote/default mutation, and no Test Optimization implementation |
 
 ---
 
@@ -954,6 +955,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-01 | Closed `PA-F2-003`, `PA-F2-G01`, and PA-F2: generalized exact signed MODIFY-only reversal through registry capability, retained reviewed-adapter authority, and proved all four recipes through six-run candidate/control plus real-Git forward and inverse draft paths; moved `CI-F3-001` GitLab CI template next | Codex |
 | 2026-08-01 | Closed `PA-F2-002`: added bounded exact Groovy archive-reproducibility and root build-cache-properties recipes, registered their low-risk applicability and archive validation, and proved positive, idempotent, defensive, wrong-path, and ambiguity cases; moved `PA-F2-003` candidate/control and exact-revert proof next | Codex |
 | 2026-08-01 | Closed `PA-F2-001`: centralized exact recipe/version selection and immutable applicability, risk, validation, inverse, and reviewed-adapter metadata for the signed verifier and candidate validator; moved `PA-F2-002` additional low-risk recipes next | Codex |
 | 2026-08-01 | Closed `UX-F1-003`, `UX-F1-G01`, and UX-F1: a fresh synthetic redacted build passed the local dashboard from disconnected state using only keyboard focus, token entry, button activation, loaded row/detail, responsive 390-pixel layout, labeled controls, and zero external resources; retained Chromium/Node as host-only POC evidence rather than adding an unpinned CI dependency; moved `PA-F2-001` recipe registry next | Codex |

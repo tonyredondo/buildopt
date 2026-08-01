@@ -7,7 +7,7 @@ production canonical signer, `C4-002` promoted the exact verifier/applier as
 the C4 runtime baseline, `PA-F2-001` centralized the exact versioned recipe
 allowlist, `PA-F2-002` added Groovy archive reproducibility and root
 build-cache properties recipes, and `C4-009` added fail-closed post-merge
-classification plus exact signed archive revert bundles. The implementation
+classification plus exact signed registry-authorized revert bundles. The implementation
 uses no external libraries. It:
 
 - rejects malformed UTF-8, duplicate JSON keys, unknown fields, unsupported

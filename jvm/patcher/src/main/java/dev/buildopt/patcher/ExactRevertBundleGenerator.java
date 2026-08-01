@@ -148,7 +148,12 @@ public final class ExactRevertBundleGenerator {
         if (!ACTION_ID.matcher(revertActionId).matches()) {
             throw new PatchFailure(PatchFailure.Status.PROPOSED, "invalid derived revert identity");
         }
-        if (!"ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1".equals(bundle.recipe().id())) {
+        PatchAutopilotRecipeRegistry.Definition definition =
+                PatchAutopilotRecipeRegistry.find(
+                        bundle.recipe().id(), bundle.recipe().version()).orElse(null);
+        if (definition == null
+                || definition.inverse()
+                        != PatchAutopilotRecipeRegistry.Inverse.EXACT_MODIFY_ONLY) {
             throw new PatchFailure(
                     PatchFailure.Status.PROPOSED,
                     "exact inverse is unavailable for this recipe");
@@ -231,6 +236,15 @@ public final class ExactRevertBundleGenerator {
         Map<String, Object> recipe = new LinkedHashMap<>();
         recipe.put("id", bundle.recipe().id());
         recipe.put("version", bundle.recipe().version());
+        if (definition.reviewedAdapterRequired()) {
+            Map<String, Object> reviewedAdapter = new LinkedHashMap<>();
+            reviewedAdapter.put("adapterId", bundle.recipe().reviewedAdapterId());
+            reviewedAdapter.put(
+                    "adapterDigest", bundle.recipe().reviewedAdapterDigest());
+            reviewedAdapter.put(
+                    "evidenceRef", bundle.recipe().reviewedAdapterEvidenceRef());
+            recipe.put("reviewedAdapter", reviewedAdapter);
+        }
         Map<String, Object> validationValue = new LinkedHashMap<>();
         validationValue.put("mode", "FULL_RELEVANT_VALIDATION");
         validationValue.put("status", "PASSED");

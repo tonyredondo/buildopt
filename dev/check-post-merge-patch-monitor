@@ -31,7 +31,14 @@ jq -e '
     "patchedFailureOrCancellation": "CREATE_DRAFT_REVERT_PR",
     "artifactDivergence": "CREATE_DRAFT_REVERT_PR"
   } and
-  .inverseBundle.recipe == "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1@1.0" and
+  .inverseBundle.registryCapability == "EXACT_MODIFY_ONLY" and
+  .inverseBundle.recipes == [
+    "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1@1.0",
+    "ARCHIVE_REPRODUCIBILITY_GROOVY_DSL_V1@1.0",
+    "GRADLE_BUILD_CACHE_PROPERTIES_V1@1.0",
+    "CUSTOM_TASK_CONTRACT_JAVA_V1@1.0"
+  ] and
+  .inverseBundle.preservesReviewedAdapter == true and
   .inverseBundle.operations == "MODIFY_ONLY" and
   .inverseBundle.requiresCurrentExactPostimages == true and
   .inverseBundle.restoresSignedBasePreimages == true and

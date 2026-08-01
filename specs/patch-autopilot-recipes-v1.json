@@ -36,7 +36,7 @@
     "candidateControlRequired": true,
     "fullRelevantValidationRequired": true,
     "delivery": "DRAFT_ONLY",
-    "exactInverseProof": "PA-F2-003"
+    "exactInverseProof": "EXACT_SIGNED_MODIFY_ONLY"
   },
   "testOptimizationChanged": false,
   "remoteMutationPerformed": false

@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/patch-autopilot-validation-revert/v1" and
+  .trackerId == "PA-F2-003" and
+  .recipes == [
+    "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1@1.0",
+    "ARCHIVE_REPRODUCIBILITY_GROOVY_DSL_V1@1.0",
+    "GRADLE_BUILD_CACHE_PROPERTIES_V1@1.0",
+    "CUSTOM_TASK_CONTRACT_JAVA_V1@1.0"
+  ] and
+  .candidateControl == {
+    arms:["CANDIDATE","CONTROL"],
+    phases:["CLEAN","INCREMENTAL","RELOCATED"],
+    exactRuns:6,
+    registryAdapterRequired:true,
+    fullRelevantValidationRequired:true
+  } and
+  .forwardBundle.signature == "Ed25519" and
+  .forwardBundle.delivery == "NEW_DRAFT_PR" and
+  .inverseBundle == {
+    registryCapability:"EXACT_MODIFY_ONLY",
+    operations:"MODIFY_ONLY",
+    requiresCurrentExactPostimages:true,
+    restoresSignedBasePreimages:true,
+    preservesReviewedAdapter:true,
+    canonicalization:"JCS",
+    signature:"Ed25519",
+    delivery:"NEW_DRAFT_REVERT_PR"
+  } and
+  .realGit == {
+    recipeCount:4,
+    exactOriginalBytesRestored:true,
+    defaultBranchPreserved:true,
+    customerCheckoutPreserved:true
+  } and
+  .testOptimizationChanged == false and .remoteMutationPerformed == false
+' specs/patch-autopilot-validation-revert-v1.json >/dev/null
+
+./dev/check-patch-candidate-validation
+./dev/check-post-merge-patch-monitor
+printf 'PA-F2-003 validation/revert OK: four recipes pass candidate control and exact signed draft reversal\n'

@@ -18,7 +18,7 @@
       "applicability": "ROOT_BUILD_GRADLE",
       "risk": "LOW",
       "validationAdapter": "ARCHIVE_CONTENTS_V1",
-      "inverse": "UNAVAILABLE",
+      "inverse": "EXACT_MODIFY_ONLY",
       "reviewedAdapterRequired": false
     },
     {
@@ -27,7 +27,7 @@
       "applicability": "EXISTING_ROOT_GRADLE_PROPERTIES_WITHOUT_CACHING_KEY",
       "risk": "LOW",
       "validationAdapter": "ARCHIVE_CONTENTS_V1",
-      "inverse": "UNAVAILABLE",
+      "inverse": "EXACT_MODIFY_ONLY",
       "reviewedAdapterRequired": false
     },
     {
@@ -36,7 +36,7 @@
       "applicability": "REVIEWED_BUILD_SRC_JAVA_ADAPTER",
       "risk": "LOW",
       "validationAdapter": "EXACT_BYTES",
-      "inverse": "UNAVAILABLE",
+      "inverse": "EXACT_MODIFY_ONLY",
       "reviewedAdapterRequired": true
     }
   ],

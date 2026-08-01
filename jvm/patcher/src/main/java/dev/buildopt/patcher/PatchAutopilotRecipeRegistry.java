@@ -20,7 +20,7 @@ public final class PatchAutopilotRecipeRegistry {
                     "ROOT_BUILD_GRADLE",
                     Risk.LOW,
                     "ARCHIVE_CONTENTS_V1",
-                    Inverse.UNAVAILABLE,
+                    Inverse.EXACT_MODIFY_ONLY,
                     false),
             new Definition(
                     GradleBuildCachePropertiesRecipe.RECIPE_ID,
@@ -28,7 +28,7 @@ public final class PatchAutopilotRecipeRegistry {
                     "EXISTING_ROOT_GRADLE_PROPERTIES_WITHOUT_CACHING_KEY",
                     Risk.LOW,
                     "ARCHIVE_CONTENTS_V1",
-                    Inverse.UNAVAILABLE,
+                    Inverse.EXACT_MODIFY_ONLY,
                     false),
             new Definition(
                     CustomTaskContractJavaRecipe.RECIPE_ID,
@@ -36,7 +36,7 @@ public final class PatchAutopilotRecipeRegistry {
                     "REVIEWED_BUILD_SRC_JAVA_ADAPTER",
                     Risk.LOW,
                     "EXACT_BYTES",
-                    Inverse.UNAVAILABLE,
+                    Inverse.EXACT_MODIFY_ONLY,
                     true));
 
     private PatchAutopilotRecipeRegistry() {

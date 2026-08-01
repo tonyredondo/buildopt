@@ -281,7 +281,7 @@ public final class PatchBundleVerifier {
         }
         if (!definition.reviewedAdapterRequired()) {
             exactFields(recipe, "recipe", Set.of("id", "version"));
-            return new Recipe(id, version, "");
+            return new Recipe(id, version, "", "", "");
         }
         exactFields(recipe, "recipe", Set.of("id", "version", "reviewedAdapter"));
         Map<String, Object> adapter = object(
@@ -292,9 +292,9 @@ public final class PatchBundleVerifier {
                 "adapterDigest",
                 "evidenceRef"));
         String adapterId = identifier(adapter, "adapterId");
-        sha256Digest(adapter, "adapterDigest");
-        identifier(adapter, "evidenceRef");
-        return new Recipe(id, version, adapterId);
+        String adapterDigest = sha256Digest(adapter, "adapterDigest");
+        String evidenceRef = identifier(adapter, "evidenceRef");
+        return new Recipe(id, version, adapterId, adapterDigest, evidenceRef);
     }
 
     private static void parseValidation(
@@ -799,7 +799,12 @@ public final class PatchBundleVerifier {
     }
 
     /** One bounded recipe/version combination from the Patch Autopilot registry. */
-    public record Recipe(String id, String version, String reviewedAdapterId) {
+    public record Recipe(
+            String id,
+            String version,
+            String reviewedAdapterId,
+            String reviewedAdapterDigest,
+            String reviewedAdapterEvidenceRef) {
     }
 
     /** An ordered exact replacement operation. */

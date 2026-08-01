@@ -26,7 +26,14 @@
     "artifactDivergence": "CREATE_DRAFT_REVERT_PR"
   },
   "inverseBundle": {
-    "recipe": "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1@1.0",
+    "registryCapability": "EXACT_MODIFY_ONLY",
+    "recipes": [
+      "ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1@1.0",
+      "ARCHIVE_REPRODUCIBILITY_GROOVY_DSL_V1@1.0",
+      "GRADLE_BUILD_CACHE_PROPERTIES_V1@1.0",
+      "CUSTOM_TASK_CONTRACT_JAVA_V1@1.0"
+    ],
+    "preservesReviewedAdapter": true,
     "operations": "MODIFY_ONLY",
     "requiresCurrentExactPostimages": true,
     "restoresSignedBasePreimages": true,

@@ -192,6 +192,22 @@ final class PatchCandidateValidationSpike {
                 exactRuns);
         requireResult(exactAdapter, Status.PASSED, "PASSED");
 
+        Request groovyRecipe = new Request(
+                ArchiveReproducibilityGroovyDslRecipe.RECIPE_ID,
+                ArchiveReproducibilityGroovyDslRecipe.RECIPE_VERSION,
+                ArtifactAdapter.ARCHIVE_CONTENTS_V1,
+                REQUIRED,
+                passingRuns);
+        requireResult(groovyRecipe, Status.PASSED, "PASSED");
+
+        Request buildCacheRecipe = new Request(
+                GradleBuildCachePropertiesRecipe.RECIPE_ID,
+                GradleBuildCachePropertiesRecipe.RECIPE_VERSION,
+                ArtifactAdapter.ARCHIVE_CONTENTS_V1,
+                REQUIRED,
+                passingRuns);
+        requireResult(buildCacheRecipe, Status.PASSED, "PASSED");
+
         Request wrongAdapter = new Request(
                 ArchiveReproducibilityRecipe.RECIPE_ID,
                 ArchiveReproducibilityRecipe.RECIPE_VERSION,

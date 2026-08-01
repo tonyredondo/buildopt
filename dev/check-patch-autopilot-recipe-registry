@@ -24,19 +24,19 @@ jq -e '
   .recipes[1] == {
     id:"ARCHIVE_REPRODUCIBILITY_GROOVY_DSL_V1", version:"1.0",
     applicability:"ROOT_BUILD_GRADLE", risk:"LOW",
-    validationAdapter:"ARCHIVE_CONTENTS_V1", inverse:"UNAVAILABLE",
+    validationAdapter:"ARCHIVE_CONTENTS_V1", inverse:"EXACT_MODIFY_ONLY",
     reviewedAdapterRequired:false
   } and
   .recipes[2] == {
     id:"GRADLE_BUILD_CACHE_PROPERTIES_V1", version:"1.0",
     applicability:"EXISTING_ROOT_GRADLE_PROPERTIES_WITHOUT_CACHING_KEY", risk:"LOW",
-    validationAdapter:"ARCHIVE_CONTENTS_V1", inverse:"UNAVAILABLE",
+    validationAdapter:"ARCHIVE_CONTENTS_V1", inverse:"EXACT_MODIFY_ONLY",
     reviewedAdapterRequired:false
   } and
   .recipes[3] == {
     id:"CUSTOM_TASK_CONTRACT_JAVA_V1", version:"1.0",
     applicability:"REVIEWED_BUILD_SRC_JAVA_ADAPTER", risk:"LOW",
-    validationAdapter:"EXACT_BYTES", inverse:"UNAVAILABLE",
+    validationAdapter:"EXACT_BYTES", inverse:"EXACT_MODIFY_ONLY",
     reviewedAdapterRequired:true
   } and
   .consumers == ["PATCH_BUNDLE_VERIFIER", "PATCH_CANDIDATE_VALIDATOR"] and

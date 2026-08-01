@@ -84,6 +84,7 @@ public final class PatcherSpike {
             FullRelevantValidationSpike.assertConformance();
             PostMergePatchMonitorSpike.assertConformance();
             spike.assertExactPostMergeRevert();
+            spike.assertExpandedRecipeReverts();
             List<CaseDefinition> definitions = spike.readPlan();
             List<CaseResult> results = new ArrayList<>();
             for (CaseDefinition definition : definitions) {
@@ -130,7 +131,7 @@ public final class PatcherSpike {
                         .orElseThrow();
         require(custom.reviewedAdapterRequired()
                         && custom.inverse()
-                                == PatchAutopilotRecipeRegistry.Inverse.UNAVAILABLE
+                                == PatchAutopilotRecipeRegistry.Inverse.EXACT_MODIFY_ONLY
                         && "EXACT_BYTES".equals(custom.validationAdapter()),
                 "custom-task registry metadata");
         PatchAutopilotRecipeRegistry.Definition groovy =
@@ -140,7 +141,8 @@ public final class PatcherSpike {
                         .orElseThrow();
         require("ROOT_BUILD_GRADLE".equals(groovy.applicability())
                         && "ARCHIVE_CONTENTS_V1".equals(groovy.validationAdapter())
-                        && groovy.inverse() == PatchAutopilotRecipeRegistry.Inverse.UNAVAILABLE,
+                        && groovy.inverse()
+                                == PatchAutopilotRecipeRegistry.Inverse.EXACT_MODIFY_ONLY,
                 "Groovy archive registry metadata");
         PatchAutopilotRecipeRegistry.Definition buildCache =
                 PatchAutopilotRecipeRegistry.find(
@@ -151,7 +153,7 @@ public final class PatcherSpike {
                         buildCache.applicability())
                         && "ARCHIVE_CONTENTS_V1".equals(buildCache.validationAdapter())
                         && buildCache.inverse()
-                                == PatchAutopilotRecipeRegistry.Inverse.UNAVAILABLE,
+                                == PatchAutopilotRecipeRegistry.Inverse.EXACT_MODIFY_ONLY,
                 "build-cache registry metadata");
         require(PatchAutopilotRecipeRegistry.find(archive.id(), "2.0").isEmpty()
                         && PatchAutopilotRecipeRegistry.find("UNKNOWN", "1.0").isEmpty(),
@@ -640,6 +642,79 @@ public final class PatcherSpike {
         }
     }
 
+    private void assertExpandedRecipeReverts() throws Exception {
+        try (Fixture fixture = fixture("groovy-post-merge-revert")) {
+            assertExactRecipeRevert(
+                    fixture,
+                    groovyArchiveBundle(fixture, "groovy-post-merge"),
+                    "build.gradle",
+                    "groovy");
+        }
+        try (Fixture fixture = fixture("build-cache-post-merge-revert")) {
+            assertExactRecipeRevert(
+                    fixture,
+                    buildCacheBundle(fixture, "build-cache-post-merge"),
+                    "gradle.properties",
+                    "build-cache");
+        }
+        try (Fixture fixture = fixture("custom-task-post-merge-revert")) {
+            assertExactRecipeRevert(
+                    fixture,
+                    customTaskBundle(fixture, "custom-task-post-merge"),
+                    "buildSrc/src/main/java/com/example/build/BundleFrontend.java",
+                    "custom-task");
+        }
+    }
+
+    private void assertExactRecipeRevert(
+            Fixture fixture,
+            BundleBuilder builder,
+            String path,
+            String label) throws Exception {
+        String originalSource = fixture.show(fixture.baseRevision, path);
+        VerifiedPatchBundle original = verify(builder.write(), signingKey);
+        PatchBundleApplier.Result applied = apply(fixture, original, Fault.NONE);
+        fixture.git("update-ref", "refs/heads/main", applied.headCommit());
+        String mergedMain = fixture.git("rev-parse", "refs/heads/main");
+        ExactRevertBundleGenerator.Validation validation =
+                new ExactRevertBundleGenerator.Validation(
+                        "request-" + label + "-revert",
+                        "result-" + label + "-revert",
+                        "sha256:" + "d".repeat(64),
+                        NOW.minusSeconds(120),
+                        NOW.plusSeconds(3600));
+        ExactRevertBundleGenerator.GeneratedRevert generated =
+                ExactRevertBundleGenerator.generate(
+                        original,
+                        fixture.repository,
+                        applied.headCommit(),
+                        validation,
+                        NOW.minusSeconds(60),
+                        NOW.plusSeconds(1800),
+                        KEY_ID,
+                        signingKey.getPrivate());
+        Path revertRoot = fixture.bundles.resolve("generated-" + label + "-revert");
+        VerifiedPatchBundle verifiedRevert = PatchBundleVerifier.verify(
+                generated.write(revertRoot),
+                revertRoot,
+                REPOSITORY_ID,
+                generated.actionId(),
+                KEY_ID,
+                signingKey.getPublic(),
+                NOW);
+        PatchBundleApplier.Result reverted = apply(
+                fixture,
+                verifiedRevert,
+                Fault.NONE);
+        require(reverted.outcome() == Outcome.DRAFT_PR_CREATED,
+                label + " regression creates a draft revert PR");
+        require(fixture.show(reverted.branch(), path).equals(originalSource),
+                label + " revert restores exact original bytes");
+        require(fixture.git("rev-parse", "refs/heads/main").equals(mergedMain),
+                label + " revert preserves the default branch");
+        fixture.assertOnlyCustomerWorktree();
+    }
+
     private Fixture fixture(String name) throws Exception {
         return new Fixture(temporaryRoot.resolve(name));
     }
@@ -659,6 +734,42 @@ public final class PatcherSpike {
                 "build.gradle.kts",
                 recipe.preimageDigest(),
                 "blobs/archive-build.gradle.kts",
+                recipe.postimage());
+        return builder;
+    }
+
+    private BundleBuilder groovyArchiveBundle(Fixture fixture, String action)
+            throws Exception {
+        BundleBuilder builder = bundle(
+                fixture,
+                action,
+                ArchiveReproducibilityGroovyDslRecipe.RECIPE_ID);
+        ArchiveReproducibilityGroovyDslRecipe.Result recipe =
+                ArchiveReproducibilityGroovyDslRecipe.apply(
+                        "build.gradle",
+                        Files.readAllBytes(fixture.repository.resolve("build.gradle")));
+        builder.modify(
+                "build.gradle",
+                recipe.preimageDigest(),
+                "blobs/archive-build.gradle",
+                recipe.postimage());
+        return builder;
+    }
+
+    private BundleBuilder buildCacheBundle(Fixture fixture, String action)
+            throws Exception {
+        BundleBuilder builder = bundle(
+                fixture,
+                action,
+                GradleBuildCachePropertiesRecipe.RECIPE_ID);
+        GradleBuildCachePropertiesRecipe.Result recipe =
+                GradleBuildCachePropertiesRecipe.apply(
+                        "gradle.properties",
+                        Files.readAllBytes(fixture.repository.resolve("gradle.properties")));
+        builder.modify(
+                "gradle.properties",
+                recipe.preimageDigest(),
+                "blobs/gradle.properties",
                 recipe.postimage());
         return builder;
     }
@@ -877,6 +988,7 @@ public final class PatcherSpike {
         root.put("candidateControlValidated", true);
         root.put("archiveArtifactAdapterValidated", true);
         root.put("exactArtifactAdapterValidated", true);
+        root.put("expandedRecipeCandidateControlValidated", true);
         root.put("candidateReproducibilityValidated", true);
         root.put("candidateValidationFailClosed", true);
         root.put("fullRelevantValidationIntegrated", true);
@@ -886,6 +998,7 @@ public final class PatcherSpike {
         root.put("postMergeEvidenceClassified", true);
         root.put("contextualImpactNotPromoted", true);
         root.put("exactInverseBundleGenerated", true);
+        root.put("registryRecipeInverseBundlesValidated", true);
         root.put("draftRevertPathValidated", true);
         root.put("defaultBranchPreservedAfterRegression", true);
         root.put("bundleContentExecuted", false);
@@ -1172,6 +1285,14 @@ public final class PatcherSpike {
             Files.writeString(
                     repository.resolve("build.gradle.kts"),
                     "plugins { base }\n",
+                    StandardCharsets.UTF_8);
+            Files.writeString(
+                    repository.resolve("build.gradle"),
+                    "plugins { id 'base' }\n",
+                    StandardCharsets.UTF_8);
+            Files.writeString(
+                    repository.resolve("gradle.properties"),
+                    "org.gradle.jvmargs=-Xmx2g\n",
                     StandardCharsets.UTF_8);
             Path customTask = repository.resolve(
                     "buildSrc/src/main/java/com/example/build/BundleFrontend.java");
