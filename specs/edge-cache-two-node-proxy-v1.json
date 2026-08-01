@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "buildopt.specs/edge-cache-two-node-proxy/v1",
+  "workItem": "C2-005",
+  "listener": {
+    "network": "TCP4",
+    "address": "127.0.0.1",
+    "routes": [
+      "GET /cache/{canonical-key}",
+      "PUT /cache/{canonical-key}"
+    ],
+    "administrativeRoutes": false
+  },
+  "put": {
+    "authority": "CURRENT_VERIFIED_EXACT_WRITE_ATTEMPT",
+    "unknownLength": "REJECT_411_BEFORE_BODY",
+    "oversizedOrCapacity": "REJECT_413_BEFORE_BODY",
+    "durability": "LOCAL_PENDING_BEFORE_200_OR_201",
+    "replication": "ASYNCHRONOUS",
+    "differentLocalBytes": "REJECT_409",
+    "stablePromotion": "FORBIDDEN"
+  },
+  "get": {
+    "order": [
+      "COMMITTED_LOCAL_OR_SHARED",
+      "EXACT_ATTEMPT_PENDING_ON_MISS_OR_UNAVAILABLE"
+    ],
+    "authorityRejectionFallback": "FORBIDDEN",
+    "states": [
+      "COMMITTED",
+      "PENDING_ATTEMPT"
+    ]
+  },
+  "twoNodeProof": {
+    "edgeRoots": 2,
+    "listeners": 2,
+    "sameAttemptDifferentBytes": true,
+    "offlinePending": "EACH_EDGE_RETURNS_OWN_ATTEMPT_BYTES",
+    "collisionDecision": "SHARED_ACCEPTS_FIRST_AND_REJECTS_SECOND",
+    "centralCommit": "CANONICAL_ED25519_DECISION",
+    "onlineCommitted": "BOTH_EDGES_RETURN_SHARED_WINNER",
+    "offlineCommitted": "BOTH_EDGES_RETURN_IDENTICAL_CACHED_WINNER"
+  },
+  "boundaries": {
+    "closes": [
+      "C2-005"
+    ],
+    "doesNotClose": [
+      "C2-G01",
+      "EIGHT_HOUR_SOAK",
+      "EXTERNAL_DESIGN_PARTNER_VALIDATION",
+      "PRODUCTION_HARDENING"
+    ],
+    "sharedSoleCommitAuthority": true,
+    "sharedSoleCollisionAuthority": true,
+    "ownerControlledProofOfConcept": true
+  }
+}

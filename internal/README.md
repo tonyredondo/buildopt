@@ -72,8 +72,9 @@ probation/protected byte-SLRU, 85/75 pressure maintenance, and transactional v1
 metadata migration. C2-004 adds a separate signed write authority, exact-attempt
 pending reads, durable queued/replicating/replicated/rejected metadata,
 authenticated asynchronous Shared PUT with retry/restart recovery, and no local
-promotion. The later C2 block owns the executable two-node proxy proof; no Edge
-server route exists yet.
+promotion. C2-005 exposes only the Gradle-compatible GET/PUT route on an
+explicit IPv4 loopback listener and proves two independent Edge roots preserve
+attempt-local candidates while Shared alone selects the committed winner.
 
 `neutralenvelope/` owns the strict `WS-009` observation and report contract. It
 pairs externally timed native and optimization-off wrapper executions,

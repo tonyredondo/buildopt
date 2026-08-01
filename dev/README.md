@@ -1552,6 +1552,23 @@ worker. A real read-write beta token then proves the object reaches Shared only
 as pending and remains absent from both committed paths across Edge restart.
 The loopback proxy and two-node collision proof remain in C2-005.
 
+## Edge Cache two-node proxy
+
+Run the C2-005 real loopback and owner-controlled collision proof with:
+
+```bash
+./dev/check-edge-cache-two-node-proxy
+```
+
+The checker opens two actual IPv4-loopback proxy listeners over independent
+Edge roots. Both accept different bytes for the same signed attempt/key, serve
+only their own candidate while Shared is unavailable, and then replicate to a
+real Shared attempt. Shared accepts the first and rejects the collision; after
+the signed central commit, both Edge nodes return the accepted bytes online and
+continue returning the same committed bytes offline. Negative tests reject
+non-loopback listeners, read-only PUT, unsafe paths/methods, and unknown-length
+writes before body consumption.
+
 ## Build Impact manifest
 
 Validate the C3-001 customer-owned manifest boundary with:

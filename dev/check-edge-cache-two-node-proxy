@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/edge-cache-two-node-proxy-v1.json"
+
+for buildopt_command in go jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Edge proxy command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/edge-cache-two-node-proxy/v1" and
+    .workItem == "C2-005" and
+    .listener.network == "TCP4" and
+    .listener.address == "127.0.0.1" and
+    .listener.routes == [
+        "GET /cache/{canonical-key}",
+        "PUT /cache/{canonical-key}"
+    ] and
+    .listener.administrativeRoutes == false and
+    .put.authority == "CURRENT_VERIFIED_EXACT_WRITE_ATTEMPT" and
+    .put.unknownLength == "REJECT_411_BEFORE_BODY" and
+    .put.replication == "ASYNCHRONOUS" and
+    .put.stablePromotion == "FORBIDDEN" and
+    .get.order == [
+        "COMMITTED_LOCAL_OR_SHARED",
+        "EXACT_ATTEMPT_PENDING_ON_MISS_OR_UNAVAILABLE"
+    ] and
+    .get.authorityRejectionFallback == "FORBIDDEN" and
+    .twoNodeProof.edgeRoots == 2 and
+    .twoNodeProof.listeners == 2 and
+    .twoNodeProof.sameAttemptDifferentBytes == true and
+    .twoNodeProof.collisionDecision == "SHARED_ACCEPTS_FIRST_AND_REJECTS_SECOND" and
+    .twoNodeProof.onlineCommitted == "BOTH_EDGES_RETURN_SHARED_WINNER" and
+    .twoNodeProof.offlineCommitted == "BOTH_EDGES_RETURN_IDENTICAL_CACHED_WINNER" and
+    .boundaries.closes == ["C2-005"] and
+    (.boundaries.doesNotClose | index("C2-G01")) != null and
+    .boundaries.sharedSoleCommitAuthority == true and
+    .boundaries.sharedSoleCollisionAuthority == true and
+    .boundaries.ownerControlledProofOfConcept == true
+' "${buildopt_contract}" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+./dev/check-edge-cache-pending-replication
+./dev/run --toolchain go -- go test -race -count=1 ./internal/edgecache
+./dev/run --toolchain go -- go test -race -count=1 ./internal/sharedcache \
+    -run '^TestTwoEdgeProxiesKeepPendingPrivateAndSharedResolvesCollision$'
+./dev/run --toolchain go -- go vet ./internal/edgecache ./internal/sharedcache
+
+printf 'C2-005 Edge proxy checks passed: real loopback listeners, private pending reads, central collision, and online/offline committed winner\n'
