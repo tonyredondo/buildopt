@@ -30,7 +30,7 @@ jobs:
       - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
         with:
           distribution: temurin
-          java-version: '21.0.12+8'
+          java-version: '21.0.12+8.0.LTS'
       - name: Build, package, install, upgrade, and launch
         shell: bash
         run: |
@@ -94,7 +94,7 @@ jobs:
       - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
         with:
           distribution: temurin
-          java-version: '21.0.12+8'
+          java-version: '21.0.12+8.0.LTS'
       - name: Build, package, install, upgrade, and launch
         shell: pwsh
         run: |
