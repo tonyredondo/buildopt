@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "buildopt.self-hosted/config/v1",
+  "profile": "PRIVATE_BETA_ISOLATED_SINGLE_NODE",
+  "server": {
+    "listen": "127.0.0.1:8042"
+  },
+  "storage": {
+    "stateDirectory": "/var/lib/buildopt/shared",
+    "filesystemPolicy": "ALLOWLIST_PROVEN_LOCAL",
+    "minimumDeploymentBytes": 21474836480,
+    "maximumDeploymentBytes": 536870912000,
+    "usableVolumePercent": 50
+  },
+  "export": {
+    "directory": "/var/lib/buildopt/exports",
+    "profile": "summary"
+  },
+  "cache": {
+    "authorityPath": "/etc/buildopt/authority.json",
+    "trustRootPath": "/etc/buildopt/trust-root.json",
+    "credentialPath": "/etc/buildopt/cache-credential",
+    "betaTokenAuthentication": true
+  }
+}

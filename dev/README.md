@@ -883,6 +883,24 @@ failure. This substrate checker does not claim publication authority; compose
 it with the A0-005 checker below for pending, commit CAS, visibility, and
 reconciliation.
 
+
+## Self-hosted single-node configuration
+
+Validate the first `A2` slice without installing a service:
+
+```bash
+./dev/check-self-hosted-single-node-config
+```
+
+The checker enforces the strict mode-`0600` declarative contract and example,
+then runs the configuration, production Shared preflight/open, and server
+integration packages with the race detector and Go vet. The profile accepts
+only canonical loopback, summary export, path-only secrets, beta-token
+authentication, disjoint absolute paths, a proven-local filesystem, and the
+fixed 20 GiB minimum/500 GiB maximum/50% capacity policy. The production
+storage opens before the listener. Installation, upgrade/migration, and manual
+restore remain the next A2 blocks.
+
 ## Pending publication, commit CAS, and reconciliation
 
 Validate the `A0-005` durable visibility boundary:

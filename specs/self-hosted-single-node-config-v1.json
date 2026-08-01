@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "buildopt.specs/self-hosted-single-node-config/v1",
+  "gateId": "A2-001",
+  "profile": "PRIVATE_BETA_ISOLATED_SINGLE_NODE",
+  "configuration": {
+    "schemaVersion": "buildopt.self-hosted/config/v1",
+    "maximumBytes": 65536,
+    "fileType": "REGULAR_NOT_SYMLINK",
+    "fileMode": "0600",
+    "decoding": "STRICT_JSON_NO_UNKNOWN_FIELDS_NO_TRAILING_DOCUMENT",
+    "activation": "--self-hosted-config ABSOLUTE_PATH",
+    "flagComposition": "EXCLUSIVE",
+    "secrets": "ABSOLUTE_PATHS_ONLY"
+  },
+  "server": {
+    "listener": "127.0.0.1:<valid-port>",
+    "preflightBeforeListener": true,
+    "exportProfile": "summary",
+    "betaTokenAuthentication": true
+  },
+  "storage": {
+    "filesystemPolicy": "ALLOWLIST_PROVEN_LOCAL",
+    "minimumDeploymentBytes": 21474836480,
+    "maximumDeploymentBytes": 536870912000,
+    "usableVolumePercent": 50,
+    "capacityFormula": "MIN(MAXIMUM_DEPLOYMENT_BYTES,FLOOR(TOTAL_VOLUME_BYTES*USABLE_VOLUME_PERCENT/100))",
+    "minimumCurrentlyAvailableBytes": 21474836480,
+    "preflightMutation": "NONE",
+    "pathPolicy": "ABSOLUTE_CLEAN_NON_ROOT_DISJOINT_NO_SYMLINK_ANCESTOR"
+  },
+  "boundaries": {
+    "closes": [
+      "A2-001"
+    ],
+    "doesNotClose": [
+      "A2-002",
+      "A2-003",
+      "A2-004",
+      "A2-G01",
+      "EIGHT_HOUR_SOAK",
+      "EXTERNAL_DESIGN_PARTNER_VALIDATION",
+      "HIGH_AVAILABILITY",
+      "BACKUP_RPO_RTO"
+    ]
+  }
+}

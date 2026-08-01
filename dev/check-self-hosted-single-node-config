@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/self-hosted-single-node-config-v1.json"
+buildopt_example="${buildopt_repo_root}/specs/self-hosted-single-node.example.json"
+
+if ! jq -e '
+    keys == [
+        "boundaries",
+        "configuration",
+        "gateId",
+        "profile",
+        "schemaVersion",
+        "server",
+        "storage"
+    ] and
+    .schemaVersion == "buildopt.specs/self-hosted-single-node-config/v1" and
+    .gateId == "A2-001" and
+    .profile == "PRIVATE_BETA_ISOLATED_SINGLE_NODE" and
+    .configuration == {
+        schemaVersion: "buildopt.self-hosted/config/v1",
+        maximumBytes: 65536,
+        fileType: "REGULAR_NOT_SYMLINK",
+        fileMode: "0600",
+        decoding: "STRICT_JSON_NO_UNKNOWN_FIELDS_NO_TRAILING_DOCUMENT",
+        activation: "--self-hosted-config ABSOLUTE_PATH",
+        flagComposition: "EXCLUSIVE",
+        secrets: "ABSOLUTE_PATHS_ONLY"
+    } and
+    .server == {
+        listener: "127.0.0.1:<valid-port>",
+        preflightBeforeListener: true,
+        exportProfile: "summary",
+        betaTokenAuthentication: true
+    } and
+    .storage == {
+        filesystemPolicy: "ALLOWLIST_PROVEN_LOCAL",
+        minimumDeploymentBytes: 21474836480,
+        maximumDeploymentBytes: 536870912000,
+        usableVolumePercent: 50,
+        capacityFormula: "MIN(MAXIMUM_DEPLOYMENT_BYTES,FLOOR(TOTAL_VOLUME_BYTES*USABLE_VOLUME_PERCENT/100))",
+        minimumCurrentlyAvailableBytes: 21474836480,
+        preflightMutation: "NONE",
+        pathPolicy: "ABSOLUTE_CLEAN_NON_ROOT_DISJOINT_NO_SYMLINK_ANCESTOR"
+    } and
+    .boundaries == {
+        closes: ["A2-001"],
+        doesNotClose: [
+            "A2-002",
+            "A2-003",
+            "A2-004",
+            "A2-G01",
+            "EIGHT_HOUR_SOAK",
+            "EXTERNAL_DESIGN_PARTNER_VALIDATION",
+            "HIGH_AVAILABILITY",
+            "BACKUP_RPO_RTO"
+        ]
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'self-hosted single-node contract is malformed\n' >&2
+    exit 1
+fi
+
+if ! jq -e '
+    .schemaVersion == "buildopt.self-hosted/config/v1" and
+    .profile == "PRIVATE_BETA_ISOLATED_SINGLE_NODE" and
+    .server.listen == "127.0.0.1:8042" and
+    .storage == {
+        stateDirectory: "/var/lib/buildopt/shared",
+        filesystemPolicy: "ALLOWLIST_PROVEN_LOCAL",
+        minimumDeploymentBytes: 21474836480,
+        maximumDeploymentBytes: 536870912000,
+        usableVolumePercent: 50
+    } and
+    .export == {
+        directory: "/var/lib/buildopt/exports",
+        profile: "summary"
+    } and
+    .cache.betaTokenAuthentication == true
+' "${buildopt_example}" >/dev/null; then
+    printf 'self-hosted single-node example is malformed\n' >&2
+    exit 1
+fi
+
+cd -- "${buildopt_repo_root}"
+./dev/run --toolchain go -- go test -race -count=1 \
+    ./internal/selfhosted \
+    ./internal/sharedcache \
+    ./cmd/buildopt-server
+./dev/run --toolchain go -- go vet \
+    ./internal/selfhosted \
+    ./internal/sharedcache \
+    ./cmd/buildopt-server
+
+printf 'self-hosted single-node configuration checks passed\n'

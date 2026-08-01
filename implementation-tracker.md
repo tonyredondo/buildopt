@@ -1,10 +1,10 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `DONE` — owner-operated POC target `A1 + B + C1 + C4` is complete<br>
-**Current phase:** POC complete; soak, external validation, and production hardening remain deferred to productization<br>
+**Current phase:** MVP-A2 active after the completed POC; declarative self-hosted configuration is complete and installation is next<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
-**Last updated:** 2026-07-31<br>
+**Last updated:** 2026-08-01<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
 **RFC baseline SHA-256:** `e97b068433128a51cab509f2f799efdf872b6950056bce308b80cbd1470ef81d`
 
@@ -57,7 +57,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | MVP-B | Runtime Optimizer and safe learning | `DONE` | 6/6 | Owner-operated A1 |
 | MVP-C1 | Task Intelligence, JVM Agent, and Linux hermeticity | `DONE` | 9/9 | B |
 | MVP-C4 | PR-only Patch Autopilot | `DONE` | 7/7 | B + C1 |
-| MVP-A2 | Self-hosted single-node | `DEFERRED` | 0/1 | A1 |
+| MVP-A2 | Self-hosted single-node | `DOING` | 0/1 | A1 |
 | MVP-C2 | Edge Cache Node | `DEFERRED` | 0/1 | A1 |
 | MVP-C3 | Build Impact Analysis | `DEFERRED` | 0/1 | B + `INT-001` |
 | GA-D | Production-ready hardening | `DEFERRED` | 0/1 | Functional beta with demonstrated value |
@@ -531,7 +531,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 
 | Track | Minimum scope for reactivation | State | Trigger |
 |---|---|---|---|
-| MVP-A2 | Self-hosted installer, migration, and recovery | `DEFERRED` | Stable A1 protocol + pilot demand |
+| MVP-A2 | Self-hosted installer, migration, and recovery | `DOING` | Stable A1 protocol + owner activation |
 | MVP-C2 | Edge proxy, SLRU, and offline committed reads | `DEFERRED` | Latency/volume justify Edge |
 | MVP-C3 | Conservative BIA and `BIA-002` gate | `DEFERRED` | Stable B + `INT-001` + demand |
 | GA-D Identity | OIDC/workload identity, SSO/RBAC, KMS/HSM | `DEFERRED` | Beta demonstrates value |
@@ -540,6 +540,19 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | GA-D Export | OTLP, Prometheus, Parquet, SIEM, and webhooks | `DEFERRED` | Prioritized demand |
 | Productization validation | Execute the eight-hour soak and validate with external design partners | `DEFERRED` | POC demonstrates enough value to productize |
 | Platform expansion | macOS/Windows, Android, KMP, and native | `DEFERRED` | Stable core matrix |
+
+### 11.1 MVP-A2 workboard
+
+| ID | Deliverable | State | Owner | Evidence |
+|---|---|---|---|---|
+| `A2-001` | Strict declarative isolated single-node configuration and pre-listener storage preflight | `DONE` | Codex | `E-118` |
+| `A2-002` | Reproducible service installation and operator runbook | `TODO` | — | — |
+| `A2-003` | Compatible restart/upgrade migration with no partial-object serving | `WAITING` | — | Depends on `A2-002` |
+| `A2-004` | Manual restore workflow with fail-closed revocation continuity and generation rotation | `WAITING` | — | Depends on `A2-003` |
+
+| Exit gate | Summarized criterion | State | Evidence |
+|---|---|---|---|
+| `A2-G01` | Reproducible install, supported storage, safe restart/upgrade, and safe manual restore | `WAITING` | `A2-002..004` |
 
 ---
 
@@ -756,6 +769,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-115` | 2026-07-31 | `B-G01`, `B-G03` | Versioned [`Runtime owner evaluation v1`](./specs/runtime-owner-evaluation-v1.md), exact machine-readable [A/A and autotuning contract](./specs/runtime-owner-evaluation-v1.json), production [`runtimeoptimizer`](./internal/runtimeoptimizer) execution through [`runtime-evaluation`](./cmd/runtime-evaluation), hosted [`Runtime Owner Evaluation`](./.github/workflows/runtime-owner-evaluation.yml), immutable [run evidence](./benchmarks/results/b-runtime-owner-evaluation.json), and composite [`dev/check-runtime-owner-evaluation`](./dev/check-runtime-owner-evaluation); public run `30670221394` on BuildOpt `7479066a9b46d3bd6d090ed5983be4fc3379f224` drove 200 durable pre-outcome 50/50 assignments, valid sample-ratio analysis, one-hour delayed exactly-once outcomes, four real A/A Gradle pairs within the fixed 250-ms mean and 500-ms p95 bounds, and four real stable-versus-`W4_H6G` pairs saving 66 ms with lower95 34 ms, non-regressive p95/p99, zero queue/OOM delta, non-positive additional compute, and byte-identical ZIPs | `DONE`: `B-G01`, `B-G03`, and MVP-B are closed for the owner-operated POC without running the deferred eight-hour soak or authorizing production promotion; MVP-C1 is next |
 | `E-116` | 2026-07-31 | MVP-C1 (`C1-001..009`, `C1-G01..09`) | Versioned [`Task Intelligence POC v1`](./specs/task-intelligence-poc-v1.md), exact machine-readable [qualification/coverage/correlation contract](./specs/task-intelligence-poc-v1.json), production [`taskintelligence`](./internal/taskintelligence) state and publication engine, hosted [`Task Intelligence Pilot Evaluation`](./.github/workflows/task-intelligence-pilot-evaluation.yml), immutable [pilot evidence](./benchmarks/results/c1-task-intelligence-pilot.json), and composite [`dev/check-task-intelligence-poc`](./dev/check-task-intelligence-poc); history and Gradle Test tasks never qualify, all seven coverage dimensions plus zero drops/faults are mandatory, reviewed contracts require real inputs/outputs and mutation/repeatability/relocatability/artifact/relevant-validation gates, inactive/discrepant work suspends while baseline stays authoritative, every task/key/PUT/outcome event must be exact and any `UNATTRIBUTED` aborts the whole attempt, while Agent and helper remain measured fail-closed `UNAVAILABLE` routes; public four-CPU run `30671750689` moved the reviewed pilot source contract through UNKNOWN→OBSERVING→CONTRACT_QUALIFIED→QUARANTINE_VALIDATED→ACTIVE and measured four control executions versus four native `FROM_CACHE` restores with identical output, 203 ms mean savings, lower95 147 ms, p95/p99 delta -321 ms, and zero OOM delta | `DONE`: all nine C1 items and nine C1 gates close for the owner-operated reviewed-source POC without pretending the Agent/helper became exact, running the deferred soak, or authorizing production promotion |
 | `E-117` | 2026-07-31 | `C4-004`, `C4-G06`, MVP-C4 exit | Versioned [`Custom task contract Java recipe v1`](./specs/custom-task-contract-java-recipe-v1.md), exact [recipe contract](./specs/custom-task-contract-java-recipe-v1.json), production Java 17 [`CustomTaskContractJavaRecipe`](./jvm/patcher/src/main/java/dev/buildopt/patcher/CustomTaskContractJavaRecipe.java), public accepted [pilot PR #1](https://github.com/tonyredondo/buildopt-pilot/pull/1), and `E-116` post-merge causal evidence; the exact reviewed path transforms two `@Internal` properties into `@Input`/`@OutputFile`, adds `@CacheableTask`, binds the reversible source digest, is exact-repeat idempotent and defensive, and fails closed on path/shape/encoding/newline/tamper ambiguity; PR head `ede88482aeec2a2acfb2117025788ba9512dc2c0` passed Pilot CI and was normally merged as `dcb4ff429d8b00b8d7030ef164fa73d2b4bc57d3`, after which four alternating pairs demonstrated positive causal savings and byte-identical output | `DONE`: `C4-004`, first accepted-patch gate `C4-G06`, and MVP-C4 close without automatic merge/rebase/force, silent default writes, soak, or production promotion |
+| `E-118` | 2026-08-01 | `A2-001` | Versioned [`Self-hosted single-node configuration v1`](./specs/self-hosted-single-node-config-v1.md), exact machine-readable [configuration/storage/boundary contract](./specs/self-hosted-single-node-config-v1.json), operator [configuration example](./specs/self-hosted-single-node.example.json), strict path-only [`selfhosted` loader](./internal/selfhosted/config.go), production Shared [20 GiB and proven-local preflight](./internal/sharedcache/self_hosted.go), exclusive `buildopt-server serve --self-hosted-config` integration, and composite [`dev/check-self-hosted-single-node-config`](./dev/check-self-hosted-single-node-config); strict JSON identity, mode/size/symlink controls, canonical loopback, summary-only export, beta-token authentication, disjoint absolute paths, fixed 20 GiB minimum/500 GiB maximum/50% volume policy, read-only preflight, and storage open before listener are covered by focused race and vet suites | `DONE`: `A2-001` closes without claiming service installation, upgrade migration, restore continuity, the eight-hour soak, external design-partner validation, HA, backups, or production RPO/RTO |
 
 ---
 
@@ -763,6 +777,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-01 | Closed `A2-001`: added one exclusive strict declarative self-hosted profile, path-only secret references, canonical loopback, fixed capacity policy, and proven-local read-only storage preflight/open before listener; moved `A2-002` next without claiming install, migration, restore, soak, or productization | Codex |
 | 2026-07-31 | Closed MVP-C1 and MVP-C4: implemented fail-closed task qualification/coverage/correlation, the exact Java custom-task recipe, accepted public pilot PR #1, and four-pair post-merge evidence with 203 ms mean savings, positive 147 ms lower bound, native cache restores, identical output, and zero OOM delta; the owner-operated POC target is complete | Codex |
 | 2026-07-31 | Closed `B-G01`, `B-G03`, and MVP-B: public four-CPU evidence passed durable A/A assignment, propensity, sample-ratio, delayed exactly-once reward, real paired autotuning savings, and every p95/p99/queue/OOM/compute/artifact guardrail; moved to MVP-C1 without the deferred soak | Codex |
 | 2026-07-31 | Closed `A1-006`, `A1-G06`, and MVP-A1: two immutable public owner-operated Kotlin/Groovy repositories passed four-pair causal managed-L1 evaluation with positive lower 95% bounds, non-regressive p95, identical distributions, and zero failures/divergence; moved to B owner evidence without the deferred soak or external-partner claim | Codex |

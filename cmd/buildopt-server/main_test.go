@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/localauthority"
+	"github.com/tonyredondo/buildopt/internal/selfhosted"
 	"github.com/tonyredondo/buildopt/internal/sessioningest"
 	"github.com/tonyredondo/buildopt/internal/sharedcache"
 )
@@ -143,6 +144,85 @@ func TestBuildoptServerUsageAndConfiguration(t *testing.T) {
 				)
 			}
 		})
+	}
+}
+
+func TestBuildoptServerConsumesSelfHostedConfigurationBeforeListening(t *testing.T) {
+	root := t.TempDir()
+	exportDirectory := filepath.Join(root, "exports")
+	if err := os.Mkdir(exportDirectory, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	configuration := selfhosted.Config{
+		SchemaVersion: selfhosted.SchemaVersion,
+		Profile:       selfhosted.Profile,
+		Server:        selfhosted.Server{Listen: "127.0.0.1:0"},
+		Storage: selfhosted.Storage{
+			StateDirectory:         filepath.Join(root, "state"),
+			FilesystemPolicy:       selfhosted.FilesystemPolicy,
+			MinimumDeploymentBytes: selfhosted.MinimumDeploymentBytes,
+			MaximumDeploymentBytes: selfhosted.MaximumDeploymentBytes,
+			UsableVolumePercent:    selfhosted.UsableVolumePercent,
+		},
+		Export: selfhosted.Export{Directory: exportDirectory, Profile: "summary"},
+		Cache: selfhosted.Cache{
+			AuthorityPath:           filepath.Join(root, "secrets", "authority.json"),
+			TrustRootPath:           filepath.Join(root, "secrets", "trust.json"),
+			CredentialPath:          filepath.Join(root, "secrets", "credential"),
+			BetaTokenAuthentication: true,
+		},
+	}
+	raw, err := json.Marshal(configuration)
+	if err != nil {
+		t.Fatal(err)
+	}
+	configurationPath := filepath.Join(root, "self-hosted.json")
+	if err := os.WriteFile(configurationPath, raw, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	previousOpen := openSelfHostedStorage
+	t.Cleanup(func() { openSelfHostedStorage = previousOpen })
+	preflightFailure := errors.New("test preflight failure")
+	openSelfHostedStorage = func(_ context.Context, stateDirectory string) (*sharedcache.Storage, error) {
+		if stateDirectory != configuration.Storage.StateDirectory {
+			t.Fatalf("state directory = %q", stateDirectory)
+		}
+		return nil, preflightFailure
+	}
+
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	exitCode := run(
+		context.Background(),
+		[]string{"serve", "--self-hosted-config", configurationPath},
+		func(key string) string {
+			if key == sessioningest.ServerTokenEnvironment {
+				return serverTestToken
+			}
+			return ""
+		},
+		&stdout,
+		&stderr,
+	)
+	if exitCode != exitConfiguration || !strings.Contains(stderr.String(), preflightFailure.Error()) {
+		t.Fatalf("run = %d, stderr = %q", exitCode, stderr.String())
+	}
+	if strings.Contains(stdout.String(), "listening on") {
+		t.Fatalf("listener opened before storage preflight: %q", stdout.String())
+	}
+
+	stdout.Reset()
+	stderr.Reset()
+	exitCode = run(
+		context.Background(),
+		[]string{"serve", "--self-hosted-config", configurationPath, "--listen", "127.0.0.1:0"},
+		func(string) string { return "" },
+		&stdout,
+		&stderr,
+	)
+	if exitCode != exitConfiguration || !strings.Contains(stderr.String(), "cannot be combined") {
+		t.Fatalf("mixed configuration = %d, stderr = %q", exitCode, stderr.String())
 	}
 }
 

@@ -22,6 +22,7 @@ import (
 	"github.com/tonyredondo/buildopt/internal/datalifecycle"
 	"github.com/tonyredondo/buildopt/internal/githubqueue"
 	"github.com/tonyredondo/buildopt/internal/localauthority"
+	"github.com/tonyredondo/buildopt/internal/selfhosted"
 	"github.com/tonyredondo/buildopt/internal/sessioningest"
 	"github.com/tonyredondo/buildopt/internal/sharedcache"
 )
@@ -29,10 +30,13 @@ import (
 const (
 	exitUsage         = 64
 	exitConfiguration = 78
-	serverUsage       = "usage: buildopt-server serve [--listen 127.0.0.1:8042] [--export-dir PATH] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]] [--state-dir ABSOLUTE_PATH] [--cache-authority ABSOLUTE_PATH --cache-trust-root ABSOLUTE_PATH --cache-credential ABSOLUTE_PATH] [--cache-token-auth] [--github-webhook-secret ABSOLUTE_PATH]\n       buildopt-server export --export-dir PATH [--format jsonl] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]]\n       buildopt-server data delete --data-root ABSOLUTE_PATH --deletion-id ID --tenant ID --repository ID --trust-domain ID --next-namespace-generation N --next-l1-security-generation N --token-key ABSOLUTE_PATH --token-key-version ID [--external-destination ID]\n       buildopt-server token issue --state-dir ABSOLUTE_PATH --tenant ID --repository ID --trust-domain ID --namespace ID --namespace-generation N --plane stable|quarantine|control --access read|read-write --expires-at RFC3339\n       buildopt-server token revoke --state-dir ABSOLUTE_PATH --token-id ID\n"
+	serverUsage       = "usage: buildopt-server serve [--self-hosted-config ABSOLUTE_PATH] [--listen 127.0.0.1:8042] [--export-dir PATH] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]] [--state-dir ABSOLUTE_PATH] [--cache-authority ABSOLUTE_PATH --cache-trust-root ABSOLUTE_PATH --cache-credential ABSOLUTE_PATH] [--cache-token-auth] [--github-webhook-secret ABSOLUTE_PATH]\n       buildopt-server export --export-dir PATH [--format jsonl] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]]\n       buildopt-server data delete --data-root ABSOLUTE_PATH --deletion-id ID --tenant ID --repository ID --trust-domain ID --next-namespace-generation N --next-l1-security-generation N --token-key ABSOLUTE_PATH --token-key-version ID [--external-destination ID]\n       buildopt-server token issue --state-dir ABSOLUTE_PATH --tenant ID --repository ID --trust-domain ID --namespace ID --namespace-generation N --plane stable|quarantine|control --access read|read-write --expires-at RFC3339\n       buildopt-server token revoke --state-dir ABSOLUTE_PATH --token-id ID\n"
 )
 
-var openSharedStorage = sharedcache.Open
+var (
+	openSharedStorage     = sharedcache.Open
+	openSelfHostedStorage = sharedcache.OpenSelfHosted
+)
 
 func main() {
 	ctx, stop := signal.NotifyContext(
@@ -81,6 +85,11 @@ func run(
 
 	flags := flag.NewFlagSet("buildopt-server serve", flag.ContinueOnError)
 	flags.SetOutput(io.Discard)
+	selfHostedConfigPath := flags.String(
+		"self-hosted-config",
+		"",
+		"private declarative isolated single-node configuration",
+	)
 	listenAddress := flags.String(
 		"listen",
 		"127.0.0.1:8042",
@@ -139,6 +148,31 @@ func run(
 	if err := flags.Parse(args[1:]); err != nil || flags.NArg() != 0 {
 		_, _ = io.WriteString(stderr, serverUsage)
 		return exitUsage
+	}
+	selfHostedMode := *selfHostedConfigPath != ""
+	if selfHostedMode {
+		visited := 0
+		flags.Visit(func(*flag.Flag) { visited++ })
+		if visited != 1 {
+			_, _ = fmt.Fprintln(stderr, "buildopt-server: self-hosted configuration cannot be combined with serve flags")
+			return exitConfiguration
+		}
+		deployment, configErr := selfhosted.Load(*selfHostedConfigPath)
+		if configErr != nil {
+			_, _ = fmt.Fprintf(stderr, "buildopt-server: invalid self-hosted configuration: %v\n", configErr)
+			return exitConfiguration
+		}
+		*listenAddress = deployment.Server.Listen
+		*exportDirectory = deployment.Export.Directory
+		*exportProfile = deployment.Export.Profile
+		*stateDirectory = deployment.Storage.StateDirectory
+		*cacheAuthorityPath = deployment.Cache.AuthorityPath
+		*cacheTrustRootPath = deployment.Cache.TrustRootPath
+		*cacheCredentialPath = deployment.Cache.CredentialPath
+		*cacheTokenAuth = deployment.Cache.BetaTokenAuthentication
+		if deployment.GitHubQueue != nil {
+			*githubWebhookSecretPath = deployment.GitHubQueue.WebhookSecretPath
+		}
 	}
 	if err := validateListenAddress(*listenAddress); err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt-server: invalid listen address: %v\n", err)
@@ -288,6 +322,41 @@ func run(
 	}
 	ingestHandler := alerts.instrumentAcceptance(rawIngestHandler)
 
+	var sharedStorage *sharedcache.Storage
+	openConfiguredStorage := func(openStorage func(context.Context, string) (*sharedcache.Storage, error)) error {
+		configuredStorage, storageErr := openStorage(ctx, filepath.Clean(*stateDirectory))
+		if storageErr != nil {
+			return storageErr
+		}
+		sharedStorage = configuredStorage
+		return nil
+	}
+	defer func() {
+		if sharedStorage == nil {
+			return
+		}
+		if closeErr := sharedStorage.Close(); closeErr != nil {
+			_, _ = fmt.Fprintf(
+				stderr,
+				"buildopt-server: Shared storage shutdown incomplete: %v\n",
+				closeErr,
+			)
+			if exitCode == 0 {
+				exitCode = 1
+			}
+		}
+	}()
+	if selfHostedMode {
+		if storageErr := openConfiguredStorage(openSelfHostedStorage); storageErr != nil {
+			_, _ = fmt.Fprintf(
+				stderr,
+				"buildopt-server: invalid Shared storage configuration: %v\n",
+				storageErr,
+			)
+			return exitConfiguration
+		}
+	}
+
 	listener, err := net.Listen("tcp4", *listenAddress)
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt-server: cannot listen: %v\n", err)
@@ -316,13 +385,8 @@ func run(
 	}()
 	logger.Printf("listening on http://%s", listener.Addr())
 
-	var sharedStorage *sharedcache.Storage
-	if *stateDirectory != "" {
-		configuredStorage, storageErr := openSharedStorage(
-			ctx,
-			filepath.Clean(*stateDirectory),
-		)
-		if storageErr != nil {
+	if *stateDirectory != "" && sharedStorage == nil {
+		if storageErr := openConfiguredStorage(openSharedStorage); storageErr != nil {
 			_, _ = fmt.Fprintf(
 				stderr,
 				"buildopt-server: invalid Shared storage configuration: %v\n",
@@ -330,19 +394,6 @@ func run(
 			)
 			return exitConfiguration
 		}
-		sharedStorage = configuredStorage
-		defer func() {
-			if closeErr := sharedStorage.Close(); closeErr != nil {
-				_, _ = fmt.Fprintf(
-					stderr,
-					"buildopt-server: Shared storage shutdown incomplete: %v\n",
-					closeErr,
-				)
-				if exitCode == 0 {
-					exitCode = 1
-				}
-			}
-		}()
 	}
 
 	var githubQueueHandler http.Handler

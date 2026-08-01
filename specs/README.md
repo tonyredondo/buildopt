@@ -43,6 +43,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`test-cache-isolation-v1.md`](./test-cache-isolation-v1.md) | `A0-G08` |
 | [`managed-l1-v1.md`](./managed-l1-v1.md) | `A0-003` |
 | [`single-node-shared-storage-v1.md`](./single-node-shared-storage-v1.md) | `A0-004` |
+| [`self-hosted-single-node-config-v1.md`](./self-hosted-single-node-config-v1.md) | `A2-001` |
 | [`pending-commit-cas-v1.md`](./pending-commit-cas-v1.md) | `A0-005` |
 | [`local-authenticated-cache-v1.md`](./local-authenticated-cache-v1.md) | `A0-006` |
 | [`gradle-bootstrap-cache-v1.md`](./gradle-bootstrap-cache-v1.md) | `A0-007` |
@@ -157,6 +158,9 @@ leases, and L2-writer local disablement.
 `single-node-shared-storage-v1.json` is the A0-004 server/filesystem contract
 for private immutable blobs, one process writer, separate WAL-mode
 cache/control schemas, and fail-closed startup.
+`self-hosted-single-node-config-v1.json` is the A2-001 strict declarative
+configuration and pre-listener storage-preflight contract for the isolated
+single-node profile.
 `pending-commit-cas-v1.json` is the A0-005 lifecycle contract for durable
 pending attempts, canonical Ed25519 decisions, atomic first-writer visibility,
 context-bound opaque HTTP GET/PUT, quarantine, and startup reconciliation.
