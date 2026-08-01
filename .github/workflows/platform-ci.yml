@@ -50,7 +50,7 @@ jobs:
           set -euo pipefail
           ./gradlew --no-daemon --no-configuration-cache :jvm:gradle-plugin:jar
           plugin_jar=$(find jvm/gradle-plugin/build/libs -name 'buildopt-gradle-plugin-*.jar' ! -name '*-sources.jar' ! -name '*-javadoc.jar')
-          output=$("$RUNNER_TEMP/install/bin/buildopt" run -- ./gradlew --no-daemon --no-configuration-cache -p fixtures/gradle-handshake --init-script fixtures/gradle-handshake/buildopt.init.gradle "-Dbuildopt.ws003.pluginJar=$PWD/$plugin_jar" neutralProbe 2>&1)
+          output=$("$RUNNER_TEMP/install/bin/buildopt" run -- ./gradlew --no-daemon --no-configuration-cache -p fixtures/gradle-handshake --init-script "$PWD/fixtures/gradle-handshake/buildopt.init.gradle" "-Dbuildopt.ws003.pluginJar=$PWD/$plugin_jar" neutralProbe 2>&1)
           grep -F 'authenticated Gradle plugin handshake accepted' <<<"$output"
           test -f fixtures/gradle-handshake/build/ws-003/neutral.properties
           "$RUNNER_TEMP/install/bin/buildopt-impact" check --repository fixtures/build-impact/synthetic-repository --manifest buildopt-impact-manifest.json --repository-id tonyredondo/buildopt-impact-synthetic --pipeline-class pull-request --graph buildopt-impact-graph.generated.json --generated-manifest buildopt-impact.generated.json --gradle-command "$PWD/gradlew"
@@ -114,7 +114,7 @@ jobs:
           & .\gradlew.bat --no-daemon --no-configuration-cache :jvm:gradle-plugin:jar
           if ($LASTEXITCODE -ne 0) { throw 'plugin build failed' }
           $PluginJar = (Get-ChildItem jvm\gradle-plugin\build\libs\buildopt-gradle-plugin-*.jar | Where-Object { $_.Name -notmatch '-(sources|javadoc)\.jar$' } | Select-Object -First 1).FullName
-          $Output = (& "$env:RUNNER_TEMP\install\bin\buildopt.exe" run -- .\gradlew.bat --no-daemon --no-configuration-cache -p fixtures\gradle-handshake --init-script fixtures\gradle-handshake\buildopt.init.gradle "-Dbuildopt.ws003.pluginJar=$PluginJar" neutralProbe 2>&1 | Out-String)
+          $Output = (& "$env:RUNNER_TEMP\install\bin\buildopt.exe" run -- .\gradlew.bat --no-daemon --no-configuration-cache -p fixtures\gradle-handshake --init-script "$PWD\fixtures\gradle-handshake\buildopt.init.gradle" "-Dbuildopt.ws003.pluginJar=$PluginJar" neutralProbe 2>&1 | Out-String)
           if ($LASTEXITCODE -ne 0 -or $Output -notmatch 'authenticated Gradle plugin handshake accepted') { throw $Output }
           if (-not (Test-Path fixtures\gradle-handshake\build\ws-003\neutral.properties)) { throw 'Gradle output missing' }
           & "$env:RUNNER_TEMP\install\bin\buildopt-impact.exe" check --repository fixtures\build-impact\synthetic-repository --manifest buildopt-impact-manifest.json --repository-id tonyredondo/buildopt-impact-synthetic --pipeline-class pull-request --graph buildopt-impact-graph.generated.json --generated-manifest buildopt-impact.generated.json --gradle-command "$PWD\gradlew.bat"
