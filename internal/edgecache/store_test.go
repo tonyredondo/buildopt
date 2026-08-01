@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync/atomic"
@@ -118,7 +119,8 @@ func TestReadThroughPersistsVerifiedCommitAndServesOfflineAfterRestart(t *testin
 	assertFileBytes(t, file, payload)
 	for _, path := range []string{root, filepath.Join(root, "blobs"), filepath.Join(root, "spool")} {
 		info, err := os.Stat(path)
-		if err != nil || info.Mode().Perm() != 0o700 {
+		if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 ||
+			runtime.GOOS != "windows" && info.Mode().Perm() != 0o700 {
 			t.Fatalf("private directory %s = %v/%v", path, info, err)
 		}
 	}

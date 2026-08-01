@@ -253,7 +253,7 @@ func (manager deletionManager) delete(
 	if err != nil {
 		return DeletionReport{}, fmt.Errorf("delete managed data: %w", err)
 	}
-	defer releasePrivateLocks(leases)
+	defer func() { releasePrivateLocks(leases) }()
 	if !exists {
 		if err := writeDeletionTombstone(request.DataRoot, expected); err != nil {
 			return DeletionReport{}, fmt.Errorf("delete managed data: %w", err)
@@ -264,6 +264,11 @@ func (manager deletionManager) delete(
 			return DeletionReport{}, err
 		}
 	}
+	// The exclusive lifecycle lock above prevents new managed writers. Release
+	// component handles after proving they are idle so Windows can rename their
+	// directories; Unix does not require this, but the ordering is equivalent.
+	releasePrivateLocks(leases)
+	leases = nil
 
 	removed := expected.RemovedComponents
 	for _, component := range managedComponents {

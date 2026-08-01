@@ -21,3 +21,7 @@ func openLifecycleTokenKey(path string) (*os.File, error) {
 func privateLifecycleTokenKeyInfo(info os.FileInfo) bool {
 	return info != nil && info.Mode().IsRegular() && info.Mode()&os.ModeSymlink == 0
 }
+
+func privateAuthoritySourceInfo(info os.FileInfo) bool {
+	return privateLifecycleTokenKeyInfo(info)
+}

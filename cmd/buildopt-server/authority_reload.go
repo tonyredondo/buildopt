@@ -168,8 +168,7 @@ func authorityFilesFingerprint(
 		if err != nil {
 			return [sha256.Size]byte{}, err
 		}
-		if !info.Mode().IsRegular() ||
-			info.Mode().Perm() != 0o600 ||
+		if !privateAuthoritySourceInfo(info) ||
 			info.Size() < 1 ||
 			info.Size() > maximumAuthorityFileSize {
 			return [sha256.Size]byte{}, fmt.Errorf(

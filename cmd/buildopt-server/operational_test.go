@@ -141,7 +141,7 @@ func TestServerIsLiveButNotReadyDuringSharedReconciliation(t *testing.T) {
 	endpoint := serverEndpointFromOutput(t, output.String())
 	select {
 	case <-reconciliationStarted:
-	case <-time.After(3 * time.Second):
+	case <-time.After(nativeTestTimeout(3 * time.Second)):
 		t.Fatal("Shared reconciliation did not start")
 	}
 	requireServerStatus(t, endpoint+livenessPath, http.StatusOK)
@@ -171,7 +171,7 @@ func TestServerIsLiveButNotReadyDuringSharedReconciliation(t *testing.T) {
 				stderr.String(),
 			)
 		}
-	case <-time.After(3 * time.Second):
+	case <-time.After(nativeTestTimeout(3 * time.Second)):
 		t.Fatal("server did not stop")
 	}
 }

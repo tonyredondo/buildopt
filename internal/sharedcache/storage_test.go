@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -321,6 +322,9 @@ func TestOpenRejectsUnsafeOrDriftedStorage(t *testing.T) {
 		}
 	})
 	t.Run("public root", func(t *testing.T) {
+		if runtime.GOOS == "windows" {
+			t.Skip("Windows privacy is enforced by native ACL and reparse checks")
+		}
 		root := filepath.Join(t.TempDir(), "shared")
 		if err := os.Mkdir(root, 0o755); err != nil {
 			t.Fatal(err)
@@ -493,6 +497,9 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
 		}
 	})
 	t.Run("unsafe database mode", func(t *testing.T) {
+		if runtime.GOOS == "windows" {
+			t.Skip("Windows privacy is enforced by native ACL and reparse checks")
+		}
 		root := filepath.Join(t.TempDir(), "shared")
 		storage, err := Open(ctx, root)
 		if err != nil {

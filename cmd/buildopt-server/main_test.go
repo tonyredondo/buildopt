@@ -302,8 +302,7 @@ func TestBuildoptServerOwnsSingleNodeSharedStorageLifecycle(t *testing.T) {
 		layout.WriterLock,
 	} {
 		if info, err := os.Lstat(path); err != nil ||
-			!info.Mode().IsRegular() ||
-			info.Mode().Perm() != 0o600 {
+			!privateLifecycleTokenKeyInfo(info) {
 			t.Fatalf("server storage file %s = %v/%v", path, info, err)
 		}
 	}
@@ -345,7 +344,7 @@ func TestBuildoptServerOwnsSingleNodeSharedStorageLifecycle(t *testing.T) {
 				stderr.String(),
 			)
 		}
-	case <-time.After(3 * time.Second):
+	case <-time.After(nativeTestTimeout(3 * time.Second)):
 		t.Fatal("server did not release Shared storage")
 	}
 	reopened, err := sharedcache.Open(context.Background(), stateDirectory)
@@ -395,7 +394,7 @@ func TestBuildoptServerRoutesOnlyAuthenticatedCurrentCacheAuthority(
 			&stderr,
 		)
 	}()
-	deadline := time.Now().Add(3 * time.Second)
+	deadline := time.Now().Add(nativeTestTimeout(3 * time.Second))
 	for !strings.Contains(
 		output.String(),
 		"authenticated cache routing enabled",
@@ -515,7 +514,7 @@ func TestBuildoptServerRoutesOnlyAuthenticatedCurrentCacheAuthority(
 				stderr.String(),
 			)
 		}
-	case <-time.After(3 * time.Second):
+	case <-time.After(nativeTestTimeout(3 * time.Second)):
 		t.Fatal("authenticated server did not stop")
 	}
 }
@@ -621,7 +620,7 @@ func TestBuildoptServerReceivesAndStopsGracefully(t *testing.T) {
 
 	select {
 	case <-output.written:
-	case <-time.After(2 * time.Second):
+	case <-time.After(nativeTestTimeout(2 * time.Second)):
 		t.Fatal("server did not report readiness")
 	}
 	line := output.String()
@@ -781,7 +780,7 @@ func TestBuildoptServerReceivesAndStopsGracefully(t *testing.T) {
 				stderr.String(),
 			)
 		}
-	case <-time.After(2 * time.Second):
+	case <-time.After(nativeTestTimeout(2 * time.Second)):
 		t.Fatal("server did not stop after cancellation")
 	}
 	if !strings.Contains(
@@ -1029,7 +1028,7 @@ func waitForServerOutput(
 	fragment string,
 ) {
 	t.Helper()
-	deadline := time.Now().Add(3 * time.Second)
+	deadline := time.Now().Add(nativeTestTimeout(3 * time.Second))
 	for time.Now().Before(deadline) {
 		if strings.Contains(writer.String(), fragment) {
 			return
@@ -1042,7 +1041,7 @@ func waitForServerOutput(
 func waitForServerReady(t *testing.T, endpoint string) {
 	t.Helper()
 	client := &http.Client{Timeout: 250 * time.Millisecond}
-	deadline := time.Now().Add(3 * time.Second)
+	deadline := time.Now().Add(nativeTestTimeout(3 * time.Second))
 	for time.Now().Before(deadline) {
 		response, err := client.Get(endpoint + readinessPath)
 		if err == nil {
