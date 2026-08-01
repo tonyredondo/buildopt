@@ -29,6 +29,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`build-impact-selection-v1.md`](./build-impact-selection-v1.md) | `C3-005` |
 | [`build-impact-gate-v1.md`](./build-impact-gate-v1.md) | `C3-G01` / MVP-C3 |
 | [`edge-cache-config-v1.md`](./edge-cache-config-v1.md) | `C2-001` |
+| [`edge-cache-committed-read-v1.md`](./edge-cache-committed-read-v1.md) | `C2-002` |
 | [`custom-task-contract-java-recipe-v1.md`](./custom-task-contract-java-recipe-v1.md) | `C4-004` / `C4-G06` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`full-relevant-validation-gate-v1.md`](./full-relevant-validation-gate-v1.md) | `C4-006` / `C4-G02` |
@@ -105,6 +106,9 @@ byte-weighted SLRU, conservative reservation, and high/low watermark contract.
 `edge-cache-config-v1.json` is the C2-001 private single-node configuration,
 origin transport, bounded storage, and immutable Shared-only authority
 contract. It deliberately opens no Edge route yet.
+`edge-cache-committed-read-v1.json` is the C2-002 authenticated Shared hit,
+complete durable publication, exact current-revocation offline-read, corruption
+fallback, and restart contract.
 `no-hit-overhead-v1.json` is the A0-G06 paired strict-runner contract for
 authenticated read-only L2 misses, fresh L1/output state, long-session p95
 budgets, and pre-outcome L2 omission with zero short-session requests.

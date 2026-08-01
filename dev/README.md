@@ -1504,6 +1504,23 @@ limits, and any attempt to move commit, collision, offline-read, or
 offline-write authority away from the fixed fail-closed policy. This block
 does not open a listener or claim committed reads and replication.
 
+## Edge Cache committed read-through
+
+Run the C2-002 real Shared-to-Edge and offline-restart proof with:
+
+```bash
+./dev/check-edge-cache-committed-read
+```
+
+The checker commits a real pending Shared object through the canonical Ed25519
+decision and SQLite transaction, reads it through the scoped token route, and
+requires Edge to verify framing, decision binding, length, and SHA-256 before
+durable metadata publication. It then shuts Shared down, reopens Edge, and
+serves the same bytes only with exact current signed revocation authority.
+Negative cases cover pending/malformed/corrupt responses, policy or revocation
+drift, TTL, local corruption, and a competing writer. SLRU and writes remain
+separate later blocks.
+
 ## Build Impact manifest
 
 Validate the C3-001 customer-owned manifest boundary with:

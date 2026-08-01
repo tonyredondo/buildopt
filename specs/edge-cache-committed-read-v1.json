@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "buildopt.specs/edge-cache-committed-read/v1",
+  "workItem": "C2-002",
+  "upstream": {
+    "method": "GET",
+    "route": "/cache/{canonical-key}",
+    "authentication": [
+      "SCOPED_BEARER_TOKEN",
+      "EXACT_SIGNED_AUTHORITY_DIGEST"
+    ],
+    "redirects": "REJECT",
+    "acceptedResponse": {
+      "status": 200,
+      "contentLength": "KNOWN_BOUNDED_EXACT",
+      "contentEncoding": "NONE",
+      "etag": "QUOTED_CANONICAL_SHA256",
+      "commitState": "COMMITTED",
+      "decisionDigest": "CANONICAL_SHA256"
+    }
+  },
+  "publication": {
+    "spool": "PRIVATE_SAME_FILESYSTEM",
+    "verification": [
+      "COMPLETE_LENGTH",
+      "COMPLETE_SHA256",
+      "REGULAR_NOFOLLOW_FILE"
+    ],
+    "blobIdentity": "SHA256_CONTENT_ADDRESS",
+    "ordering": [
+      "SYNC_COMPLETE_SPOOL",
+      "LINK_IMMUTABLE_BLOB",
+      "SYNC_BLOB_DIRECTORY",
+      "PUBLISH_SQLITE_METADATA"
+    ],
+    "metadata": "SQLITE_WAL_SYNCHRONOUS_FULL",
+    "writerModel": "ONE_NONBLOCKING_PROCESS_LEASE"
+  },
+  "offlineRead": {
+    "authority": "VERIFIED_CURRENT_SIGNED_SNAPSHOT_REQUIRED_PER_READ",
+    "exactBindings": [
+      "tenant",
+      "repository",
+      "trustDomain",
+      "namespace",
+      "namespaceGeneration",
+      "authorityDigest",
+      "revocationEpoch",
+      "revocationDigest",
+      "l1SecurityGeneration"
+    ],
+    "blobVerification": "COMPLETE_BEFORE_RETURN",
+    "restart": "DURABLE_WITHOUT_SHARED",
+    "fallback": "BYTE_FREE_MISS"
+  },
+  "failClosed": [
+    "MISSING_OR_EXPIRED_AUTHORITY",
+    "AUTHORITY_OR_REVOCATION_DRIFT",
+    "UPSTREAM_REJECTION_OR_REDIRECT",
+    "NON_COMMITTED_RESPONSE",
+    "UNKNOWN_OR_EXCESS_LENGTH",
+    "TRUNCATED_OR_CORRUPT_BODY",
+    "INVALID_METADATA",
+    "TTL_EXPIRED",
+    "BLOB_SYMLINK_SIZE_OR_DIGEST_DRIFT",
+    "SECOND_WRITER"
+  ],
+  "boundaries": {
+    "closes": [
+      "C2-002"
+    ],
+    "doesNotClose": [
+      "C2-003",
+      "C2-004",
+      "C2-005",
+      "C2-G01",
+      "EIGHT_HOUR_SOAK",
+      "PRODUCTION_HARDENING"
+    ],
+    "sharedSoleCommitAuthority": true,
+    "edgeOfflinePromotion": false
+  }
+}

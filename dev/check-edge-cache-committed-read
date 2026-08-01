@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/edge-cache-committed-read-v1.json"
+
+for buildopt_command in go jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Edge committed-read command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/edge-cache-committed-read/v1" and
+    .workItem == "C2-002" and
+    .upstream.method == "GET" and
+    .upstream.authentication == [
+        "SCOPED_BEARER_TOKEN",
+        "EXACT_SIGNED_AUTHORITY_DIGEST"
+    ] and
+    .upstream.redirects == "REJECT" and
+    .upstream.acceptedResponse.commitState == "COMMITTED" and
+    .publication.verification == [
+        "COMPLETE_LENGTH",
+        "COMPLETE_SHA256",
+        "REGULAR_NOFOLLOW_FILE"
+    ] and
+    .publication.metadata == "SQLITE_WAL_SYNCHRONOUS_FULL" and
+    .publication.writerModel == "ONE_NONBLOCKING_PROCESS_LEASE" and
+    .offlineRead.authority == "VERIFIED_CURRENT_SIGNED_SNAPSHOT_REQUIRED_PER_READ" and
+    .offlineRead.blobVerification == "COMPLETE_BEFORE_RETURN" and
+    .offlineRead.restart == "DURABLE_WITHOUT_SHARED" and
+    .offlineRead.fallback == "BYTE_FREE_MISS" and
+    .boundaries.closes == ["C2-002"] and
+    (.boundaries.doesNotClose | index("C2-003")) != null and
+    .boundaries.sharedSoleCommitAuthority == true and
+    .boundaries.edgeOfflinePromotion == false
+' "${buildopt_contract}" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+./dev/check-edge-cache-config
+./dev/run --toolchain go -- go test -race -count=1 ./internal/edgecache
+./dev/run --toolchain go -- go test -race -count=1 ./internal/sharedcache \
+    -run '^TestEdgeReadThroughUsesRealCommittedSharedRouteAndSurvivesOfflineRestart$'
+./dev/run --toolchain go -- go vet ./internal/edgecache ./internal/sharedcache
+
+printf 'C2-002 Edge committed-read checks passed: real Shared commit, durable read-through, and fail-closed offline restart\n'

@@ -9,6 +9,14 @@ import (
 	"strings"
 )
 
+const (
+	// CommitStateHeader proves that a successful remote read came from the
+	// Shared committed route rather than a pending or generic byte endpoint.
+	CommitStateHeader = "X-BuildOpt-Commit-State"
+	// DecisionDigestHeader binds the hit to Shared's durable commit decision.
+	DecisionDigestHeader = "X-BuildOpt-Decision-Digest"
+)
+
 // HTTPBinding is immutable authority already established by the local
 // verifying gateway. The handler deliberately performs no credential parsing;
 // callers must place it behind the A0-006 authenticated context boundary.
@@ -121,6 +129,8 @@ func serveCommittedGET(
 		strconv.FormatInt(object.Blob.Size, 10),
 	)
 	response.Header().Set("ETag", `"`+object.Blob.Digest+`"`)
+	response.Header().Set(CommitStateHeader, "COMMITTED")
+	response.Header().Set(DecisionDigestHeader, object.DecisionDigest)
 	response.WriteHeader(http.StatusOK)
 	_, _ = io.Copy(response, file)
 }
