@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `FUNCTIONAL EXPANSION ACTIVE` — automatic Build Impact is closed and native macOS/Windows acceptance is running; productization remains deferred<br>
-**Current phase:** `PLAT-F5` — portable implementation and packaging are closed; hosted native macOS/Windows evidence is next<br>
+**Overall status:** `FUNCTIONAL EXPANSION COMPLETE` — local UX, Patch Autopilot, GitLab CI, automatic Build Impact, and macOS/Windows CLI support are closed; productization remains deferred<br>
+**Current phase:** `FUNCTIONAL EXPANSION COMPLETE` — no non-deferred implementation block remains<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use project-owned synthetic fixtures and repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -67,7 +67,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | PA-F2 | Broader safe Patch Autopilot recipe catalog and rollback proof | `DONE` | 1/1 | `E-142` |
 | CI-F3 | First-class GitLab CI installation, events, and synthetic proof | `DONE` | 1/1 | `E-145` |
 | BIA-F4 | Automatic Gradle graph discovery and generated impact manifest | `DONE` | 1/1 | `E-146` |
-| PLAT-F5 | Supported macOS and Windows build/runtime paths | `DOING` | 0/1 | `E-147` local + hosted native evidence |
+| PLAT-F5 | Supported macOS and Windows build/runtime paths | `DONE` | 1/1 | `E-148` |
 | GA-D | Production-ready hardening | `DEFERRED` | 0/1 | Functional beta with demonstrated value |
 
 Design baseline: 51 private-beta decisions are accepted in the RFC; their artifacts and tests remain pending as recorded in this tracker.
@@ -550,7 +550,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | PA-F2 | Versioned safe recipe registry, additional allowlisted recipes, candidate validation, and exact revert | `DONE` | `E-142` current-tree composite gate |
 | CI-F3 | GitLab CI installer/template, job-event adapter, and owner-controlled end-to-end fixture | `DONE` | `E-145` current-tree synthetic gate |
 | BIA-F4 | Conservative Gradle graph discovery, generated manifest, drift handling, and selection proof | `DONE` | `E-146` current-tree composite gate |
-| PLAT-F5 | Cross-compilation inventory, portable transports/process control, packaging, and native CI | `DOING` | `E-147` local gate; hosted native run pending |
+| PLAT-F5 | Cross-compilation inventory, portable transports/process control, packaging, and native CI | `DONE` | `E-148` hosted native gate |
 | MVP-C2 | Edge proxy, SLRU, and offline committed reads | `DONE` | `E-134` current-tree composite gate |
 | MVP-C3 | Conservative BIA and `BIA-002` gate | `DONE` | `E-128` current-tree composite gate |
 | POC-O1 | Standalone Edge runtime, signed reload, local status, bundle, and systemd unit | `DONE` | `E-135` current-tree composite gate |
@@ -695,11 +695,11 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `PLAT-F5-001` | Cross-compile and dependency inventory for supported macOS and Windows targets | `DONE` | Codex | `E-147` |
 | `PLAT-F5-002` | Portable local transport, path, locking, signal/process-tree, and private-file abstractions | `DONE` | Codex | `E-147` |
 | `PLAT-F5-003` | Platform-native release packaging, launch/service integration, and uninstall behavior | `DONE` | Codex | `E-147` |
-| `PLAT-F5-004` | Native GitHub CI matrix and synthetic Gradle smoke on macOS and Windows | `DOING` | Codex | workflow committed; hosted result pending |
+| `PLAT-F5-004` | Native GitHub CI matrix and synthetic Gradle smoke on macOS and Windows | `DONE` | Codex | `E-148` |
 
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
-| `PLAT-F5-G01` | Native runners prove install, launch, build, export, cancellation, cleanup, and upgrade without Linux-only assumptions | `TODO` | — |
+| `PLAT-F5-G01` | Native runners prove install, launch, build, export, cancellation, cleanup, and upgrade without Linux-only assumptions | `DONE` | `E-148` |
 
 Test Optimization is an explicit non-goal for all five tracks. They may preserve or call its existing signed grant/result boundary, but no Test Optimization behavior or contract is widened here.
 
@@ -953,6 +953,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-145` | 2026-08-01 | `CI-F3-003`, `CI-F3-G01`, CI-F3 exit | Versioned [`GitLab CI synthetic proof v1`](./specs/gitlab-ci-synthetic-v1.md), exact [proof matrix](./specs/gitlab-ci-synthetic-v1.json), user [guide](./.gitlab/README.md), and composite [`check-gitlab-ci`](./dev/check-gitlab-ci); Ruby/Psych parsed the component, the deterministic HTTPS transport installed and idempotently reused the checksum-pinned release, the wrapper preserved exact argv and exit 37, five event cases covered success/failure/cancellation/unavailable/fork plus exact replay, every event was private and credential-free, and the source tree remained unchanged | `DONE`: CI-F3 closes with owner-controlled local evidence, no real GitLab pipeline publication, remote mutation, external credential, or Test Optimization change |
 | `E-146` | 2026-08-01 | `BIA-F4-001..003`, `BIA-F4-G01`, BIA-F4 exit | Versioned [`Automatic Build Impact v1`](./specs/build-impact-automatic-v1.md), exact [discovery/generation/fallback contract](./specs/build-impact-automatic-v1.json), embedded real-Gradle discovery, deterministic [`buildopt-impact`](./cmd/buildopt-impact), committed generated graph/manifest, drift checking, and composite [`check-build-impact-automatic`](./dev/check-build-impact-automatic); the synthetic three-project build regenerated byte-identically, the selected service-a artifact and Test-owned marker matched the full build, and only unrelated service-b output was omitted | `DONE`: automation remains subordinate to the customer manifest and BIA-002; ambiguity, incomplete discovery, drift, global paths, unsupported tasks, included builds, and Test-owned work preserve the original full graph |
 | `E-147` | 2026-08-01 | `PLAT-F5-001..003`, PLAT-F5 local evidence | Versioned [`Platform compatibility v1`](./specs/platform-compatibility-v1.md), exact [target/transport/process/package/boundary contract](./specs/platform-compatibility-v1.json), Darwin/Windows portable launcher implementations, macOS tar and Windows ZIP lifecycle packages, cancellation fixtures, and [`check-platform-compatibility`](./dev/check-platform-compatibility); race/vet passed on Linux, both CLIs cross-built as real Mach-O/PE AMD64 and ARM64 files, package and shell/PowerShell syntax checks passed, and the native workflow inventory was lint-ready | `DONE` locally for PLAT-F5-001..003; PLAT-F5-004 and the exit gate remain open until the hosted native runners execute the complete lifecycle |
+| `E-148` | 2026-08-01 | `PLAT-F5-004`, `PLAT-F5-G01`, PLAT-F5 exit | Hosted [Native Platform CI run 30714600404](https://github.com/tonyredondo/buildopt/actions/runs/30714600404) passed on exact implementation SHA `e80d3afea03b8a0b05de5f35c6cb0ef92e564686`; macOS 15 ARM64 and Windows Server 2025 AMD64 each built and packaged both CLIs, installed twice, launched, completed the real authenticated Gradle handshake and automatic Build Impact drift check, terminated descendants on cancellation, preserved an unrelated file during exact uninstall, and uploaded the native archive; the independent product-boundary job also passed | `DONE`: PLAT-F5 and the owner-prioritized functional expansion close without enabling Linux-only persistent services, running the deferred soak, or implementing Test Optimization |
 
 ---
 
@@ -960,6 +961,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-01 | Closed `PLAT-F5-004`, `PLAT-F5-G01`, PLAT-F5, and the owner-prioritized functional expansion after hosted macOS 15 ARM64 and Windows Server 2025 AMD64 proved the complete native package, launcher, Gradle handshake, Build Impact, cancellation, cleanup, uninstall, artifact, and Test Optimization-boundary lifecycle | Codex |
 | 2026-08-01 | Closed `BIA-F4-001..003`, `BIA-F4-G01`, and BIA-F4 with real Gradle discovery, deterministic reviewable generation, exact drift rejection, conservative fallback, and full-versus-selected artifact parity; completed local `PLAT-F5-001..003` portability, packaging, and cross-build evidence while leaving native hosted acceptance open | Codex |
 | 2026-08-01 | Closed `CI-F3-001..003`, `CI-F3-G01`, and CI-F3: added a full-SHA/checksum-pinned GitLab component, private shared-release setup, explicit idempotent job events, fork credential isolation, documentation, and a synthetic success/failure/cancellation/unavailable E2E; moved `BIA-F4-001` automatic Gradle discovery next | Codex |
 | 2026-08-01 | Closed `PA-F2-003`, `PA-F2-G01`, and PA-F2: generalized exact signed MODIFY-only reversal through registry capability, retained reviewed-adapter authority, and proved all four recipes through six-run candidate/control plus real-Git forward and inverse draft paths; moved `CI-F3-001` GitLab CI template next | Codex |
