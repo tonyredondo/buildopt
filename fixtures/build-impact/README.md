@@ -24,3 +24,10 @@ artifacts, and Test-owned check exactly match the full baseline.
 These fixtures authorize no active omission. The two current observations are
 honestly `INCONCLUSIVE`; even threshold-qualified synthetic evidence remains
 non-authorizing until the separate C3-005 selection boundary accepts it.
+
+`synthetic-repository/` is the C3-005 owner-controlled three-project Gradle
+proof. Its canonical manifest permits one service-a alternative, its graph
+maps a library-c change through service-a, and its separate Test-owned task
+remains outside Build Impact selection. Isolated offline full/selected builds
+must produce an identical service-a JAR and Test-owned marker while only the
+full build materializes service-b.

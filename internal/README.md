@@ -82,8 +82,11 @@ C3-004 aggregates only current-binding results through the unchanged BIA-002
 minimum window, sample, coverage, per-stratum controls, and exact one-sided
 false-negative bounds. Binding drift resets the sample, insufficient evidence
 is inconclusive, and one known false negative suspends. Every validation and
-promotion result still disables selection; C3-005 owns the only later
-activation boundary.
+promotion result still disables selection. C3-005 owns the sole active
+boundary: it revalidates loaded digests, recalculates BIA-002 from bound
+observations, selects only a customer-manifest alternative, and restores the
+original entrypoints for every disabled, bypassed, killed, drifted, unknown,
+global, unqualified, or invalid path while preserving Test-owned checks.
 
 No type in this directory replaces the normative schemas, OpenAPI, or Protobuf definitions in `contracts/`.
 

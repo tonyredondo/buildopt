@@ -1549,6 +1549,23 @@ invalid or insufficient evidence is `INCONCLUSIVE`, and one false negative is
 deterministic threshold corpus qualifies, and neither state authorizes active
 selection.
 
+## Build Impact active selection
+
+Run the C3-005 fail-closed selection matrix and real synthetic Gradle proof:
+
+```bash
+./dev/check-build-impact-selection
+```
+
+The checker composes C3-001..005, then copies the owner-controlled
+three-project fixture into two temporary workspaces. Production selection
+recomputes BIA-002 and chooses only the customer-authorized service-a
+alternative for a library-c change. Offline full and selected builds must emit
+the same service-a JAR and independently executed Test-owned marker, while the
+selected workspace must omit unrelated service-b. Disablement, bypass, kill
+switch, binding drift, suspended/inconclusive evidence, and global/unknown
+changes all restore the original entrypoints.
+
 ## Runtime owner evaluation
 
 On the exact 4-CPU/16-GiB runner, execute real A/A and resource-profile

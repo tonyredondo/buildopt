@@ -554,17 +554,17 @@ func hasDependencyCycle(projects []Project) bool {
 }
 
 func defensiveGraph(graph DeclaredGraph) DeclaredGraph {
-	graph.Projects = append([]Project(nil), graph.Projects...)
+	graph.Projects = cloneSlice(graph.Projects)
 	for index := range graph.Projects {
-		graph.Projects[index].SourcePaths = append([]string(nil), graph.Projects[index].SourcePaths...)
-		graph.Projects[index].DependsOn = append([]string(nil), graph.Projects[index].DependsOn...)
+		graph.Projects[index].SourcePaths = cloneSlice(graph.Projects[index].SourcePaths)
+		graph.Projects[index].DependsOn = cloneSlice(graph.Projects[index].DependsOn)
 	}
-	graph.Entrypoints = append([]DeclaredEntrypoint(nil), graph.Entrypoints...)
+	graph.Entrypoints = cloneSlice(graph.Entrypoints)
 	for index := range graph.Entrypoints {
-		graph.Entrypoints[index].ReachesProjects = append([]string(nil), graph.Entrypoints[index].ReachesProjects...)
-		graph.Entrypoints[index].ArtifactIDs = append([]string(nil), graph.Entrypoints[index].ArtifactIDs...)
-		graph.Entrypoints[index].CheckIDs = append([]string(nil), graph.Entrypoints[index].CheckIDs...)
+		graph.Entrypoints[index].ReachesProjects = cloneSlice(graph.Entrypoints[index].ReachesProjects)
+		graph.Entrypoints[index].ArtifactIDs = cloneSlice(graph.Entrypoints[index].ArtifactIDs)
+		graph.Entrypoints[index].CheckIDs = cloneSlice(graph.Entrypoints[index].CheckIDs)
 	}
-	graph.GlobalChangePaths = append([]string(nil), graph.GlobalChangePaths...)
+	graph.GlobalChangePaths = cloneSlice(graph.GlobalChangePaths)
 	return graph
 }

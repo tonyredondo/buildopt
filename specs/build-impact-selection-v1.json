@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "buildopt.specs/build-impact-selection/v1",
+  "workItem": "C3-005",
+  "boundary": {
+    "implementation": "buildimpact.PlanSelection",
+    "inputAuthority": [
+      "CANONICAL_CUSTOMER_MANIFEST",
+      "CANONICAL_DECLARED_GRAPH",
+      "CURRENT_BOUND_VALIDATION_RESULTS",
+      "EXPLICIT_SELECTION_CONTROLS"
+    ],
+    "promotion": "REEVALUATE_BIA_002_NEVER_TRUST_CALLER_REPORT",
+    "selectedEntrypoints": "CUSTOMER_MANIFEST_ALLOWED_ALTERNATIVE_ONLY",
+    "testOptimization": "PRESERVED_SEPARATELY_NEVER_SELECTED"
+  },
+  "modes": {
+    "fallback": "FULL_GRAPH",
+    "active": "CUSTOMER_ALTERNATIVE"
+  },
+  "fallbacks": [
+    "SELECTION_DISABLED",
+    "LOCAL_BYPASS",
+    "KILL_SWITCH_ACTIVE",
+    "MANIFEST_OR_GRAPH_INVALID",
+    "PROMOTION_BINDING_MISMATCH",
+    "PROMOTION_INCONCLUSIVE",
+    "PROMOTION_SUSPENDED",
+    "GLOBAL_CHANGE",
+    "UNKNOWN_CHANGE",
+    "UNKNOWN_RELATIONSHIP",
+    "NO_AUTHORIZED_ALTERNATIVE"
+  ],
+  "syntheticProof": {
+    "ownership": "REPOSITORY_CONTROLLED_FIXTURE",
+    "projects": [":library-c", ":service-a", ":service-b"],
+    "changedPath": "library-c/src/main/java/synthetic/LibraryC.java",
+    "fullEntrypoints": ["assemble"],
+    "selectedEntrypoints": [":service-a:assemble"],
+    "affectedProjects": [":library-c", ":service-a"],
+    "omittedProjects": [":service-b"],
+    "requiredArtifact": "BYTE_IDENTICAL_SERVICE_A_JAR",
+    "testOwnedCheck": "INDEPENDENT_AND_BYTE_IDENTICAL",
+    "network": "OFFLINE",
+    "sourceMutation": false
+  },
+  "result": {
+    "schemaVersion": "buildopt.build-impact/selection-plan/v1",
+    "selectionAuthorized": "TRUE_ONLY_FOR_QUALIFIED_CUSTOMER_ALTERNATIVE"
+  },
+  "boundaries": {
+    "closes": ["C3-005"],
+    "doesNotClose": ["C3-G01", "TEST_SELECTION", "EIGHT_HOUR_SOAK", "EXTERNAL_VALIDATION", "PRODUCTION_PROMOTION"],
+    "ownerOperatedProofOfConcept": true
+  }
+}

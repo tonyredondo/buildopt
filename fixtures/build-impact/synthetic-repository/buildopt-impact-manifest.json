@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "tonyredondo/buildopt-impact-synthetic",
+  "pipelineClass": "pull-request",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": ["assemble"],
+  "allowedAlternatives": [
+    {
+      "id": "affected-service-a",
+      "entrypoints": [":service-a:assemble"]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "service-a-jar",
+      "path": "service-a/build/libs/service-a-*.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [
+    {
+      "id": "compile-check",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "synthetic-tests",
+      "owner": "TEST_OPTIMIZATION"
+    }
+  ],
+  "globalChangePaths": ["gradle/**"],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

@@ -287,13 +287,22 @@ func readRepositoryFile(repositoryRoot, manifestPath string) ([]byte, error) {
 }
 
 func defensiveManifest(manifest Manifest) Manifest {
-	manifest.OriginalEntrypoints = append([]string(nil), manifest.OriginalEntrypoints...)
-	manifest.AllowedAlternatives = append([]EntrypointSet(nil), manifest.AllowedAlternatives...)
+	manifest.OriginalEntrypoints = cloneSlice(manifest.OriginalEntrypoints)
+	manifest.AllowedAlternatives = cloneSlice(manifest.AllowedAlternatives)
 	for index := range manifest.AllowedAlternatives {
-		manifest.AllowedAlternatives[index].Entrypoints = append([]string(nil), manifest.AllowedAlternatives[index].Entrypoints...)
+		manifest.AllowedAlternatives[index].Entrypoints = cloneSlice(manifest.AllowedAlternatives[index].Entrypoints)
 	}
-	manifest.RequiredArtifacts = append([]Artifact(nil), manifest.RequiredArtifacts...)
-	manifest.RequiredChecks = append([]Check(nil), manifest.RequiredChecks...)
-	manifest.GlobalChangePaths = append([]string(nil), manifest.GlobalChangePaths...)
+	manifest.RequiredArtifacts = cloneSlice(manifest.RequiredArtifacts)
+	manifest.RequiredChecks = cloneSlice(manifest.RequiredChecks)
+	manifest.GlobalChangePaths = cloneSlice(manifest.GlobalChangePaths)
 	return manifest
+}
+
+func cloneSlice[T any](values []T) []T {
+	if values == nil {
+		return nil
+	}
+	result := make([]T, len(values))
+	copy(result, values)
+	return result
 }

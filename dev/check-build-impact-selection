@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+unset \
+    BUILDOPT_SERVER_URL \
+    BUILDOPT_SERVER_INGEST_TOKEN \
+    BUILDOPT_BUILD_SESSION_CONTEXT
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/build-impact-selection-v1.json"
+
+for buildopt_command in git go jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required build-impact selection command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/build-impact-selection/v1" and
+    .workItem == "C3-005" and
+    .boundary.implementation == "buildimpact.PlanSelection" and
+    .boundary.promotion == "REEVALUATE_BIA_002_NEVER_TRUST_CALLER_REPORT" and
+    .boundary.selectedEntrypoints == "CUSTOMER_MANIFEST_ALLOWED_ALTERNATIVE_ONLY" and
+    .boundary.testOptimization == "PRESERVED_SEPARATELY_NEVER_SELECTED" and
+    .modes == {
+        fallback: "FULL_GRAPH",
+        active: "CUSTOMER_ALTERNATIVE"
+    } and
+    (.fallbacks | index("LOCAL_BYPASS")) != null and
+    (.fallbacks | index("KILL_SWITCH_ACTIVE")) != null and
+    (.fallbacks | index("PROMOTION_INCONCLUSIVE")) != null and
+    (.fallbacks | index("PROMOTION_SUSPENDED")) != null and
+    (.fallbacks | index("GLOBAL_CHANGE")) != null and
+    (.fallbacks | index("UNKNOWN_CHANGE")) != null and
+    .syntheticProof.ownership == "REPOSITORY_CONTROLLED_FIXTURE" and
+    .syntheticProof.projects == [":library-c", ":service-a", ":service-b"] and
+    .syntheticProof.selectedEntrypoints == [":service-a:assemble"] and
+    .syntheticProof.omittedProjects == [":service-b"] and
+    .syntheticProof.requiredArtifact == "BYTE_IDENTICAL_SERVICE_A_JAR" and
+    .syntheticProof.testOwnedCheck == "INDEPENDENT_AND_BYTE_IDENTICAL" and
+    .syntheticProof.network == "OFFLINE" and
+    .syntheticProof.sourceMutation == false and
+    .result.schemaVersion == "buildopt.build-impact/selection-plan/v1" and
+    .boundaries.closes == ["C3-005"] and
+    (.boundaries.doesNotClose | index("TEST_SELECTION")) != null
+' "${buildopt_contract}" >/dev/null
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+"${buildopt_script_dir}/check-build-impact-promotion-gate"
+cd "${buildopt_repo_root}"
+BUILDOPT_RUN_BUILD_IMPACT_GRADLE_PROOF=1 \
+    go test -count=1 \
+    -run '^TestSyntheticRepositorySelectedBuildMatchesFullBuild$' \
+    ./internal/buildimpact
+go test -race -count=1 ./internal/buildimpact
+go vet ./internal/buildimpact
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'C3-005 checker mutated the source tree\n' >&2
+    exit 1
+fi
+
+printf 'C3-005 selection passed: promoted customer alternative, byte-identical artifact, Test-owned check preserved\n'
