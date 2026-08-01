@@ -1569,6 +1569,22 @@ continue returning the same committed bytes offline. Negative tests reject
 non-loopback listeners, read-only PUT, unsafe paths/methods, and unknown-length
 writes before body consumption.
 
+## Edge Cache gate
+
+Run the final C2-G01 current-tree composition with:
+
+```bash
+./dev/check-edge-cache-gate
+```
+
+The gate validates the exact C2-001..005 contracts and runs their nested final
+runtime proof without changing the source tree. One invocation covers strict
+private configuration, verified committed read-through and offline restart,
+hard byte quota and SLRU, exact-attempt pending replication/recovery, real
+loopback HTTP, and the owner-controlled two-node central-collision winner.
+Soak, external validation, OS service management, authority hot reload, and
+production hardening remain explicitly outside this POC gate.
+
 ## Build Impact manifest
 
 Validate the C3-001 customer-owned manifest boundary with:

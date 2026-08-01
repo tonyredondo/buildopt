@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "buildopt.specs/edge-cache-gate/v1",
+  "gateId": "C2-G01",
+  "milestone": "MVP-C2",
+  "execution": "CURRENT_SOURCE_TREE_COMPOSITE",
+  "constituents": [
+    {
+      "item": "C2-001",
+      "contract": "buildopt.specs/edge-cache-config/v1",
+      "proof": "STRICT_PRIVATE_SHARED_ONLY_AUTHORITY"
+    },
+    {
+      "item": "C2-002",
+      "contract": "buildopt.specs/edge-cache-committed-read/v1",
+      "proof": "VERIFIED_COMMITTED_CURRENT_REVOCATION"
+    },
+    {
+      "item": "C2-003",
+      "contract": "buildopt.specs/edge-cache-capacity-slru/v1",
+      "proof": "HARD_BYTES_TTL_AND_BYTE_SLRU"
+    },
+    {
+      "item": "C2-004",
+      "contract": "buildopt.specs/edge-cache-pending-replication/v1",
+      "proof": "ATTEMPT_ISOLATION_DURABLE_REPLICATION_NO_PROMOTION"
+    },
+    {
+      "item": "C2-005",
+      "contract": "buildopt.specs/edge-cache-two-node-proxy/v1",
+      "proof": "LOOPBACK_TWO_NODE_SHARED_COLLISION"
+    }
+  ],
+  "runtimeProof": "./dev/check-edge-cache-two-node-proxy",
+  "criteria": {
+    "stableAuthority": "FULLY_VERIFIED_SHARED_COMMIT_UNDER_CURRENT_REVOCATION",
+    "pendingVisibility": "EXACT_CURRENT_ATTEMPT_ONLY",
+    "capacity": "COMMITTED_PLUS_PENDING_HARD_BYTES_WITH_BYTE_SLRU",
+    "replication": "DURABLE_ASYNCHRONOUS_RETRY_AND_RESTART",
+    "offlinePromotion": "NEVER",
+    "commitAuthority": "SHARED_ONLY",
+    "collisionAuthority": "SHARED_ONLY",
+    "twoNodeResult": "IDENTICAL_CENTRALLY_COMMITTED_WINNER_ONLINE_AND_OFFLINE"
+  },
+  "boundaries": {
+    "closes": [
+      "C2-G01",
+      "MVP-C2"
+    ],
+    "doesNotClose": [
+      "EIGHT_HOUR_SOAK",
+      "EXTERNAL_DESIGN_PARTNER_VALIDATION",
+      "AUTHORITY_HOT_RELOAD",
+      "OS_SERVICE_INSTALLATION",
+      "PRODUCTION_READINESS"
+    ],
+    "ownerOperatedProofOfConcept": true
+  }
+}

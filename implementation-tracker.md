@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `IN PROGRESS` — owner-operated POC target plus optional MVP-A2 and MVP-C3 extensions are complete; optional MVP-C2 is reactivated<br>
-**Current phase:** `MVP-C2 / C2-G01` — current-tree Edge authority, isolation, capacity, replication, and two-node exit gate<br>
+**Overall status:** `POC COMPLETE` — the functional target plus optional MVP-A2, MVP-C2, and MVP-C3 extensions are complete; productization work remains deferred<br>
+**Current phase:** no non-deferred implementation block remains; the next work requires a new owner priority or productization decision<br>
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Last updated:** 2026-08-01<br>
@@ -58,7 +58,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | MVP-C1 | Task Intelligence, JVM Agent, and Linux hermeticity | `DONE` | 9/9 | B |
 | MVP-C4 | PR-only Patch Autopilot | `DONE` | 7/7 | B + C1 |
 | MVP-A2 | Self-hosted single-node | `DONE` | 1/1 | A1 |
-| MVP-C2 | Edge Cache Node | `DOING` | 0/1 | A1 |
+| MVP-C2 | Edge Cache Node | `DONE` | 1/1 | `E-134` |
 | MVP-C3 | Build Impact Analysis | `DONE` | 1/1 | `E-128` |
 | GA-D | Production-ready hardening | `DEFERRED` | 0/1 | Functional beta with demonstrated value |
 
@@ -532,7 +532,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | Track | Minimum scope for reactivation | State | Trigger |
 |---|---|---|---|
 | MVP-A2 | Self-hosted installer, migration, and recovery | `DONE` | `E-122` current-tree composite gate |
-| MVP-C2 | Edge proxy, SLRU, and offline committed reads | `DOING` | Owner reactivated bounded POC on 2026-08-01 |
+| MVP-C2 | Edge proxy, SLRU, and offline committed reads | `DONE` | `E-134` current-tree composite gate |
 | MVP-C3 | Conservative BIA and `BIA-002` gate | `DONE` | `E-128` current-tree composite gate |
 | GA-D Identity | OIDC/workload identity, SSO/RBAC, KMS/HSM | `DEFERRED` | Beta demonstrates value |
 | GA-D Storage | Object store, HA metadata, backups, and RPO/RTO | `DEFERRED` | Production-ready requirements |
@@ -584,7 +584,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
-| `C2-G01` | Edge serves only fully verified Shared commits under current revocation, preserves pending isolation across offline/restart paths, applies byte SLRU safely, and never becomes commit or collision authority | `DOING` | — |
+| `C2-G01` | Edge serves only fully verified Shared commits under current revocation, preserves pending isolation across offline/restart paths, applies byte SLRU safely, and never becomes commit or collision authority | `DONE` | `E-134` |
 
 ---
 
@@ -817,6 +817,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-131` | 2026-08-01 | `C2-003` | Versioned [`Edge capacity and byte-SLRU v1`](./specs/edge-cache-capacity-slru-v1.md), exact machine-readable [accounting/SLRU/maintenance contract](./specs/edge-cache-capacity-slru-v1.json), production [`capacity engine`](./internal/edgecache/capacity.go), schema-v2 [`durable store integration`](./internal/edgecache/store.go), and composite [`check-edge-cache-capacity-slru`](./dev/check-edge-cache-capacity-slru); serialized exact-length reservations and a transactional publication recheck proved committed logical bytes plus outstanding reservations never exceed the hard quota, new entries enter probation, verified hits promote to protected, oldest protected bytes demote above target, 85% pressure evicts oldest probation before protected until at or below 75%, TTL removes authority metadata before orphan blobs, and v1 metadata migrates transactionally while future schemas fail closed | `DONE`: `C2-003` closes with the complete Edge race suite, real Shared read-through regression, focused vet, exact contract, layout, ShellCheck, and diff checks passing; deterministic sub-GiB capacity exists only in package-private tests, and Edge still has no pending replication, operator listener, final gate, soak, or production claim |
 | `E-132` | 2026-08-01 | `C2-004` | Versioned [`Edge pending replication v1`](./specs/edge-cache-pending-replication-v1.md), exact machine-readable [attempt/admission/replication/recovery contract](./specs/edge-cache-pending-replication-v1.json), sealed signed [`WriteAuthority`](./internal/edgecache/authority.go), durable [`pending store and worker`](./internal/edgecache/pending.go), authenticated Shared PUT extension, and composite [`check-edge-cache-pending-replication`](./dev/check-edge-cache-pending-replication); exact-size admission rejected over-capacity input before reading bytes, full length/SHA verification and content-address publication made same-byte retries idempotent and conflicting bytes fail, only the exact current attempt reopened pending bytes, and schema v3 preserved queued/replicated state, exponential retry, interrupted-claim recovery, TTL, and committed-plus-pending blob references; a real Shared attempt plus read-write beta token proved local writes were absent centrally before replication, became one central pending object afterward, remained absent from both committed paths, and survived Edge restart without promotion | `DONE`: `C2-004` closes with complete Edge and Shared race regressions, exact real-path integration, focused vet, contract, layout, ShellCheck, and diff checks passing; Edge still has no loopback proxy, two-node collision proof, final gate, soak, or production claim |
 | `E-133` | 2026-08-01 | `C2-005` | Versioned [`Edge two-node proxy v1`](./specs/edge-cache-two-node-proxy-v1.md), exact machine-readable [listener/GET/PUT/two-node contract](./specs/edge-cache-two-node-proxy-v1.json), loopback-only [`Proxy`](./internal/edgecache/proxy.go), negative HTTP/listener tests, owner-controlled real [`two-node proof`](./internal/sharedcache/edge_two_node_test.go), and composite [`check-edge-cache-two-node-proxy`](./dev/check-edge-cache-two-node-proxy); two actual TCP4 loopback listeners over independent Edge roots each accepted different bytes for the same signed attempt/key and, while Shared returned unavailable, served only their local attempt-private candidate; Shared then accepted the first replication and rejected the second collision, a canonical Ed25519 decision committed the winner, and both proxies fetched, verified, and served identical winner bytes online and after Shared became unavailable | `DONE`: `C2-005` closes with the complete Edge race suite, real two-node Shared collision proof, focused vet, exact contract, layout, ShellCheck, and diff checks passing; authority hot reload, OS service installation, final C2 gate, soak, external validation, and production hardening remain outside this block |
+| `E-134` | 2026-08-01 | `C2-G01`, MVP-C2 exit | Versioned [`Edge Cache gate v1`](./specs/edge-cache-gate-v1.md), exact machine-readable [constituent/criterion/boundary contract](./specs/edge-cache-gate-v1.json), and source-preserving composite [`check-edge-cache-gate`](./dev/check-edge-cache-gate); the gate directly validated all five current contract identities and ran the nested C2-005 runtime checker, composing strict private configuration, fully verified Shared commits with current revocation and offline restart, committed-plus-pending hard byte accounting and byte-SLRU, exact-attempt pending TTL/retry/restart with no promotion, two real loopback proxy listeners, and the owner-controlled Shared-only collision/commit winner online and offline | `DONE`: `C2-G01` and optional owner-operated MVP-C2 close without running the deferred soak, using external partners, installing an OS service, hot reloading authority, or claiming production readiness |
 
 ---
 
@@ -824,6 +825,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-01 | Closed `C2-G01` and optional owner-operated MVP-C2: composed all five current-tree Edge contracts and the real two-node runtime proof, preserving exact current-revocation committed reads, attempt-only pending visibility, hard byte SLRU, durable replication recovery, and Shared-only commit/collision authority; no non-deferred implementation block remains | Codex |
 | 2026-08-01 | Closed `C2-005`: added the loopback-only Gradle-compatible Edge GET/PUT proxy, committed-first/exact-attempt fallback, strict read-only/framing/path failures, and a real two-node proof where Shared rejected the colliding replica and centrally committed the sole winner served identically online/offline by both nodes; moved `C2-G01` next without soak, external validation, service installation, hot reload, or production claims | Codex |
 | 2026-08-01 | Closed `C2-004`: added signed exact-attempt write authority, byte-verified durable pending storage, attempt-private offline reads, authenticated asynchronous Shared PUT, bounded durable backoff, interrupted-claim restart recovery, pending TTL, and explicit no-local-promotion behavior; moved `C2-005` next without adding the operator proxy, soak, or production claims | Codex |
 | 2026-08-01 | Closed `C2-003`: added exact conservative byte reservations, transactional hard-quota admission, schema-v2 probation/protected accounting, hit promotion, protected demotion, deterministic probation-first 85/75 pressure eviction, and logical-before-physical TTL cleanup; moved `C2-004` next without adding pending replication, an operator listener, soak, or production claims | Codex |

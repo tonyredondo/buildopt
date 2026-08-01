@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/edge-cache-gate-v1.json"
+
+for buildopt_command in git jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Edge gate command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/edge-cache-gate/v1" and
+    .gateId == "C2-G01" and
+    .milestone == "MVP-C2" and
+    .execution == "CURRENT_SOURCE_TREE_COMPOSITE" and
+    .constituents == [
+        {
+            item: "C2-001",
+            contract: "buildopt.specs/edge-cache-config/v1",
+            proof: "STRICT_PRIVATE_SHARED_ONLY_AUTHORITY"
+        },
+        {
+            item: "C2-002",
+            contract: "buildopt.specs/edge-cache-committed-read/v1",
+            proof: "VERIFIED_COMMITTED_CURRENT_REVOCATION"
+        },
+        {
+            item: "C2-003",
+            contract: "buildopt.specs/edge-cache-capacity-slru/v1",
+            proof: "HARD_BYTES_TTL_AND_BYTE_SLRU"
+        },
+        {
+            item: "C2-004",
+            contract: "buildopt.specs/edge-cache-pending-replication/v1",
+            proof: "ATTEMPT_ISOLATION_DURABLE_REPLICATION_NO_PROMOTION"
+        },
+        {
+            item: "C2-005",
+            contract: "buildopt.specs/edge-cache-two-node-proxy/v1",
+            proof: "LOOPBACK_TWO_NODE_SHARED_COLLISION"
+        }
+    ] and
+    .runtimeProof == "./dev/check-edge-cache-two-node-proxy" and
+    .criteria == {
+        stableAuthority: "FULLY_VERIFIED_SHARED_COMMIT_UNDER_CURRENT_REVOCATION",
+        pendingVisibility: "EXACT_CURRENT_ATTEMPT_ONLY",
+        capacity: "COMMITTED_PLUS_PENDING_HARD_BYTES_WITH_BYTE_SLRU",
+        replication: "DURABLE_ASYNCHRONOUS_RETRY_AND_RESTART",
+        offlinePromotion: "NEVER",
+        commitAuthority: "SHARED_ONLY",
+        collisionAuthority: "SHARED_ONLY",
+        twoNodeResult: "IDENTICAL_CENTRALLY_COMMITTED_WINNER_ONLINE_AND_OFFLINE"
+    } and
+    .boundaries.closes == ["C2-G01", "MVP-C2"] and
+    .boundaries.ownerOperatedProofOfConcept == true
+' "${buildopt_contract}" >/dev/null
+
+for buildopt_pair in \
+    'edge-cache-config-v1.json buildopt.specs/edge-cache-config/v1' \
+    'edge-cache-committed-read-v1.json buildopt.specs/edge-cache-committed-read/v1' \
+    'edge-cache-capacity-slru-v1.json buildopt.specs/edge-cache-capacity-slru/v1' \
+    'edge-cache-pending-replication-v1.json buildopt.specs/edge-cache-pending-replication/v1' \
+    'edge-cache-two-node-proxy-v1.json buildopt.specs/edge-cache-two-node-proxy/v1'; do
+    read -r buildopt_file buildopt_schema <<<"${buildopt_pair}"
+    jq -e --arg buildopt_schema "${buildopt_schema}" \
+        '.schemaVersion == $buildopt_schema' \
+        "${buildopt_repo_root}/specs/${buildopt_file}" >/dev/null
+done
+
+if [[ ! -x "${buildopt_script_dir}/check-edge-cache-two-node-proxy" ]]; then
+    printf 'Edge gate runtime proof is unavailable\n' >&2
+    exit 1
+fi
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+"${buildopt_script_dir}/check-edge-cache-two-node-proxy"
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'Edge gate changed the source tree\n' >&2
+    exit 1
+fi
+
+printf 'C2-G01 Edge gate passed: C2-001..005 current-tree contracts and two-node proof complete\n'
