@@ -1,5 +1,3 @@
-//go:build linux || darwin
-
 package launcher
 
 import (
@@ -13,14 +11,13 @@ import (
 	"io"
 	"net"
 	"os"
-	"os/exec"
-	"os/signal"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
+
+	"github.com/tonyredondo/buildopt/internal/filelock"
 )
 
 const (
@@ -58,10 +55,11 @@ type managedGatewayState struct {
 }
 
 type managedGatewayControlRequest struct {
-	SchemaVersion int                              `json:"schemaVersion"`
-	Operation     string                           `json:"operation"`
-	AttemptID     string                           `json:"attemptId"`
-	Cache         *managedGatewayCacheRegistration `json:"cache,omitempty"`
+	SchemaVersion     int                              `json:"schemaVersion"`
+	Operation         string                           `json:"operation"`
+	AttemptID         string                           `json:"attemptId"`
+	ControlCredential string                           `json:"controlCredential,omitempty"`
+	Cache             *managedGatewayCacheRegistration `json:"cache,omitempty"`
 }
 
 type managedGatewayCacheRegistration struct {
@@ -221,13 +219,9 @@ func startManagedInvocationGatewayWithCache(
 	if err != nil {
 		return nil, fmt.Errorf("open managed runner-slot lease: %w", err)
 	}
-	if err := syscall.Flock(
-		int(invocationLock.Fd()),
-		syscall.LOCK_EX|syscall.LOCK_NB,
-	); err != nil {
+	if err := filelock.Try(invocationLock, filelock.Exclusive); err != nil {
 		_ = invocationLock.Close()
-		if errors.Is(err, syscall.EWOULDBLOCK) ||
-			errors.Is(err, syscall.EAGAIN) {
+		if errors.Is(err, filelock.ErrBusy) {
 			return nil, errManagedRunnerSlotBusy
 		}
 		return nil, fmt.Errorf("acquire managed runner-slot lease: %w", err)
@@ -290,103 +284,12 @@ func prepareManagedGatewayDirectories(config managedGatewayConfig) error {
 	return nil
 }
 
-func ensurePrivateDirectory(path string, create bool) error {
-	if create {
-		if err := os.MkdirAll(path, 0o700); err != nil {
-			return err
-		}
-	}
-	info, err := os.Lstat(path)
-	if err != nil {
-		return err
-	}
-	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
-		return fmt.Errorf("%s is not a private directory", path)
-	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok || stat.Uid != uint32(os.Geteuid()) {
-		return fmt.Errorf("%s is not owned by the current user", path)
-	}
-	if info.Mode().Perm() != 0o700 {
-		return fmt.Errorf("%s must have mode 0700", path)
-	}
-	return nil
-}
-
-func openPrivateLock(path string) (*os.File, error) {
-	file, err := os.OpenFile(
-		path,
-		os.O_CREATE|os.O_RDWR|syscall.O_NOFOLLOW,
-		0o600,
-	)
-	if err != nil {
-		return nil, err
-	}
-	info, err := file.Stat()
-	if err != nil {
-		_ = file.Close()
-		return nil, err
-	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok ||
-		stat.Uid != uint32(os.Geteuid()) ||
-		!info.Mode().IsRegular() ||
-		info.Mode().Perm() != 0o600 {
-		_ = file.Close()
-		return nil, errors.New("managed gateway lock is not a private regular file")
-	}
-	return file, nil
-}
-
-func releaseManagedLock(file *os.File) error {
-	if file == nil {
-		return nil
-	}
-	return errors.Join(
-		syscall.Flock(int(file.Fd()), syscall.LOCK_UN),
-		file.Close(),
-	)
-}
-
-func startManagedGatewayProcess(config managedGatewayConfig) error {
-	executable, err := os.Executable()
-	if err != nil {
-		return fmt.Errorf("resolve buildopt executable: %w", err)
-	}
-	null, err := os.OpenFile(os.DevNull, os.O_RDWR, 0)
-	if err != nil {
-		return fmt.Errorf("open managed gateway output sink: %w", err)
-	}
-	defer null.Close()
-
-	command := exec.Command(
-		executable,
-		managedGatewayInternalCommand,
-		config.directory,
-		config.idleTimeout.String(),
-	)
-	command.Stdin = null
-	command.Stdout = null
-	command.Stderr = null
-	command.Env = []string{}
-	command.Dir = string(filepath.Separator)
-	command.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
-	if err := command.Start(); err != nil {
-		return fmt.Errorf("start managed gateway process: %w", err)
-	}
-	if err := command.Process.Release(); err != nil {
-		_ = command.Process.Kill()
-		return fmt.Errorf("release managed gateway process: %w", err)
-	}
-	return nil
-}
-
 func registerManagedGateway(
 	config managedGatewayConfig,
 	attemptID string,
 	cacheBinding *gatewayCacheBinding,
 	retry bool,
-) (*net.UnixConn, managedGatewayControlResponse, error) {
+) (net.Conn, managedGatewayControlResponse, error) {
 	deadline := time.Now()
 	if retry {
 		deadline = deadline.Add(managedGatewayStartupTimeout)
@@ -394,7 +297,7 @@ func registerManagedGateway(
 	var lastErr error
 	for {
 		connection, response, err := requestManagedGatewayRegistration(
-			managedGatewayControlAddress(config.directory),
+			config.directory,
 			attemptID,
 			cacheBinding,
 		)
@@ -410,15 +313,11 @@ func registerManagedGateway(
 }
 
 func requestManagedGatewayRegistration(
-	socketPath string,
+	directory string,
 	attemptID string,
 	cacheBinding *gatewayCacheBinding,
-) (*net.UnixConn, managedGatewayControlResponse, error) {
-	connection, err := net.DialUnix(
-		"unix",
-		nil,
-		&net.UnixAddr{Name: socketPath, Net: "unix"},
-	)
+) (net.Conn, managedGatewayControlResponse, error) {
+	connection, controlCredential, err := dialManagedGatewayControl(directory)
 	if err != nil {
 		return nil, managedGatewayControlResponse{}, err
 	}
@@ -428,19 +327,17 @@ func requestManagedGatewayRegistration(
 			_ = connection.Close()
 		}
 	}()
-	if err := verifyUnixPeerOwner(connection); err != nil {
-		return nil, managedGatewayControlResponse{}, err
-	}
 	if err := connection.SetDeadline(
 		time.Now().Add(managedGatewayControlTimeout),
 	); err != nil {
 		return nil, managedGatewayControlResponse{}, err
 	}
 	request := managedGatewayControlRequest{
-		SchemaVersion: managedGatewayControlSchemaVersion,
-		Operation:     "register",
-		AttemptID:     attemptID,
-		Cache:         managedGatewayCacheForRegistration(cacheBinding),
+		SchemaVersion:     managedGatewayControlSchemaVersion,
+		Operation:         "register",
+		AttemptID:         attemptID,
+		ControlCredential: controlCredential,
+		Cache:             managedGatewayCacheForRegistration(cacheBinding),
 	}
 	if err := json.NewEncoder(connection).Encode(request); err != nil {
 		return nil, managedGatewayControlResponse{}, err
@@ -539,13 +436,6 @@ func (registration *managedGatewayCacheRegistration) binding(
 	)
 }
 
-func managedGatewayControlAddress(directory string) string {
-	// Linux abstract sockets avoid filesystem path limits. SO_PEERCRED, the
-	// private state directory, and the two slot leases provide the boundary.
-	digest := sha256.Sum256([]byte(directory))
-	return "@buildopt-gateway-" + hex.EncodeToString(digest[:16])
-}
-
 func runManagedGatewayProcess(args []string, stderr io.Writer) int {
 	if len(args) != 3 || args[0] != managedGatewayInternalCommand {
 		_, _ = fmt.Fprintln(stderr, "buildopt: invalid managed gateway invocation")
@@ -581,17 +471,13 @@ func serveManagedGateway(directory string, idleTimeout time.Duration) error {
 		return fmt.Errorf("open managed gateway ownership lease: %w", err)
 	}
 	defer gatewayLock.Close()
-	if err := syscall.Flock(
-		int(gatewayLock.Fd()),
-		syscall.LOCK_EX|syscall.LOCK_NB,
-	); err != nil {
-		if errors.Is(err, syscall.EWOULDBLOCK) ||
-			errors.Is(err, syscall.EAGAIN) {
+	if err := filelock.Try(gatewayLock, filelock.Exclusive); err != nil {
+		if errors.Is(err, filelock.ErrBusy) {
 			return nil
 		}
 		return fmt.Errorf("acquire managed gateway ownership lease: %w", err)
 	}
-	defer syscall.Flock(int(gatewayLock.Fd()), syscall.LOCK_UN)
+	defer filelock.Unlock(gatewayLock)
 
 	httpListener, identity, stateChanged, err :=
 		openManagedGatewayListener(directory)
@@ -628,13 +514,9 @@ func serveManagedGateway(directory string, idleTimeout time.Duration) error {
 	gateway.startServingLocked(httpListener)
 	defer gateway.close()
 
-	controlAddress := managedGatewayControlAddress(directory)
-	controlListener, err := net.ListenUnix(
-		"unix",
-		&net.UnixAddr{Name: controlAddress, Net: "unix"},
-	)
+	controlListener, controlCredential, err := listenManagedGatewayControl(directory)
 	if err != nil {
-		return fmt.Errorf("listen on managed gateway control socket: %w", err)
+		return fmt.Errorf("listen on managed gateway control endpoint: %w", err)
 	}
 	defer controlListener.Close()
 
@@ -643,14 +525,14 @@ func serveManagedGateway(directory string, idleTimeout time.Duration) error {
 		controlListener,
 		context,
 		identity,
+		controlCredential,
 		activity,
 	)
 	timer := time.NewTimer(idleTimeout)
 	defer timer.Stop()
 
-	signals := make(chan os.Signal, 2)
-	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
-	defer signal.Stop(signals)
+	signals, stopSignals := managedGatewaySignals()
+	defer stopSignals()
 
 	for {
 		select {
@@ -706,7 +588,7 @@ func openManagedGatewayListener(
 
 func readManagedGatewayState(directory string) (managedGatewayState, error) {
 	path := filepath.Join(directory, "gateway-state.json")
-	file, err := os.OpenFile(path, os.O_RDONLY|syscall.O_NOFOLLOW, 0)
+	file, err := openPrivateGatewayState(path)
 	if err != nil {
 		return managedGatewayState{}, err
 	}
@@ -715,11 +597,7 @@ func readManagedGatewayState(directory string) (managedGatewayState, error) {
 	if err != nil {
 		return managedGatewayState{}, err
 	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok ||
-		stat.Uid != uint32(os.Geteuid()) ||
-		!info.Mode().IsRegular() ||
-		info.Mode().Perm() != 0o600 ||
+	if !privateGatewayFileInfo(info) ||
 		info.Size() > managedGatewayMaximumStateBytes {
 		return managedGatewayState{}, errors.New(
 			"managed gateway state is not a private bounded regular file",
@@ -826,30 +704,26 @@ func writeManagedGatewayState(
 		return fmt.Errorf("close managed gateway state: %w", err)
 	}
 	path := filepath.Join(directory, "gateway-state.json")
-	if err := os.Rename(temporaryPath, path); err != nil {
+	if err := replaceManagedFile(temporaryPath, path); err != nil {
 		return fmt.Errorf("publish managed gateway state: %w", err)
 	}
-	directoryHandle, err := os.Open(directory)
-	if err != nil {
-		return fmt.Errorf("open managed gateway state directory: %w", err)
-	}
-	defer directoryHandle.Close()
-	if err := directoryHandle.Sync(); err != nil {
+	if err := syncManagedDirectory(directory); err != nil {
 		return fmt.Errorf("sync managed gateway state directory: %w", err)
 	}
 	return nil
 }
 
 func serveManagedGatewayControl(
-	listener *net.UnixListener,
+	listener net.Listener,
 	context *managedGatewayContext,
 	identity gatewayIdentity,
+	controlCredential string,
 	activity chan<- struct{},
 ) <-chan error {
 	done := make(chan error, 1)
 	go func() {
 		for {
-			connection, err := listener.AcceptUnix()
+			connection, err := listener.Accept()
 			if err != nil {
 				if errors.Is(err, net.ErrClosed) {
 					done <- nil
@@ -865,6 +739,7 @@ func serveManagedGatewayControl(
 				connection,
 				context,
 				identity,
+				controlCredential,
 				activity,
 			)
 		}
@@ -873,18 +748,16 @@ func serveManagedGatewayControl(
 }
 
 func handleManagedGatewayControl(
-	connection *net.UnixConn,
+	connection net.Conn,
 	context *managedGatewayContext,
 	identity gatewayIdentity,
+	controlCredential string,
 	activity chan<- struct{},
 ) {
 	defer connection.Close()
 	if err := connection.SetDeadline(
 		time.Now().Add(managedGatewayControlTimeout),
 	); err != nil {
-		return
-	}
-	if err := verifyUnixPeerOwner(connection); err != nil {
 		return
 	}
 	buffered := bufio.NewReaderSize(
@@ -907,6 +780,13 @@ func handleManagedGatewayControl(
 				Error:         "invalid managed gateway registration",
 			},
 		)
+		return
+	}
+	if err := verifyManagedGatewayControlPeer(
+		connection,
+		controlCredential,
+		request.ControlCredential,
+	); err != nil {
 		return
 	}
 	cacheBinding, err := request.Cache.binding(request.AttemptID)

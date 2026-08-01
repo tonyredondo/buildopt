@@ -14,7 +14,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/datalifecycle"
@@ -155,16 +154,16 @@ func (stream *jsonlStream) append(event exportEvent) error {
 	}
 
 	maximum := stream.maximum()
-	file, err := os.OpenFile(
+	file, err := openNoFollow(
 		stream.path,
-		os.O_CREATE|os.O_EXCL|os.O_APPEND|os.O_WRONLY|syscall.O_NOFOLLOW,
+		os.O_CREATE|os.O_EXCL|os.O_APPEND|os.O_WRONLY,
 		0o600,
 	)
 	created := err == nil
 	if errors.Is(err, fs.ErrExist) {
-		file, err = os.OpenFile(
+		file, err = openNoFollow(
 			stream.path,
-			os.O_APPEND|os.O_WRONLY|syscall.O_NOFOLLOW,
+			os.O_APPEND|os.O_WRONLY,
 			0,
 		)
 	}
@@ -232,9 +231,9 @@ func (stream *jsonlStream) load(
 	repairTrailingLine bool,
 ) ([]byte, map[string]map[int]storedExportEvent, error) {
 	maximum := stream.maximum()
-	file, err := os.OpenFile(
+	file, err := openNoFollow(
 		stream.path,
-		os.O_RDWR|syscall.O_NOFOLLOW,
+		os.O_RDWR,
 		0,
 	)
 	if errors.Is(err, fs.ErrNotExist) {
@@ -295,11 +294,7 @@ func trustedJSONLFile(
 	if err != nil {
 		return nil, errors.New("inspect JSONL export stream")
 	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok ||
-		stat.Uid != uint32(os.Geteuid()) ||
-		!info.Mode().IsRegular() ||
-		info.Mode().Perm() != 0o600 ||
+	if !privateFileInfo(info) ||
 		info.Size() < 0 ||
 		info.Size() > maximum {
 		return nil, errors.New(

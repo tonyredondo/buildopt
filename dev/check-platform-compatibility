@@ -9,6 +9,7 @@ fi
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_contract="${buildopt_repo_root}/specs/platform-compatibility-v1.json"
+buildopt_parity_contract="${buildopt_repo_root}/specs/platform-runtime-parity-v2.json"
 buildopt_test_root=$(mktemp -d)
 trap 'rm -rf -- "${buildopt_test_root}"' EXIT
 
@@ -24,30 +25,51 @@ jq -e '
     .productBoundary == "NO_TEST_OPTIMIZATION_BEHAVIOR"
 ' "${buildopt_contract}" >/dev/null
 
+jq -e '
+    .schemaVersion == "buildopt.specs/platform-runtime-parity/v2" and
+    .workItems == ["PLAT-F6-001", "PLAT-F6-002", "PLAT-F6-003", "PLAT-F6-004"] and
+    .supported.darwin.managedL1 == true and
+    .supported.darwin.managedGradleBootstrap == true and
+    .supported.windows.managedL1 == true and
+    .supported.windows.managedGradleBootstrap == true and
+    .supported.windows.backgroundService == "SCM_SERVICE_WRAPPER" and
+    .security.silentDegradation == false and
+    .productBoundary == "NO_TEST_OPTIMIZATION_BEHAVIOR"
+' "${buildopt_parity_contract}" >/dev/null
+
 buildopt_before_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
 cd "${buildopt_repo_root}"
-go test -race -count=1 ./internal/launcher ./cmd/buildopt ./internal/buildimpact ./cmd/buildopt-impact
-go vet ./internal/launcher ./cmd/buildopt ./internal/buildimpact ./cmd/buildopt-impact
+go test -race -count=1 ./internal/filelock ./internal/datalifecycle ./internal/buildsession ./internal/localauthority ./internal/sharedcache ./internal/edgecache ./internal/launcher ./cmd/buildopt ./cmd/buildopt-server ./cmd/buildopt-edge ./internal/buildimpact ./cmd/buildopt-impact
+go vet ./internal/filelock ./internal/datalifecycle ./internal/buildsession ./internal/localauthority ./internal/sharedcache ./internal/edgecache ./internal/launcher ./cmd/buildopt ./cmd/buildopt-server ./cmd/buildopt-edge ./internal/buildimpact ./cmd/buildopt-impact
 
 for buildopt_target in darwin/amd64 darwin/arm64 windows/amd64 windows/arm64; do
     buildopt_os=${buildopt_target%/*}
     buildopt_arch=${buildopt_target#*/}
     buildopt_suffix=
     [[ "${buildopt_os}" == windows ]] && buildopt_suffix=.exe
-    for buildopt_command in buildopt buildopt-impact; do
+    for buildopt_command in buildopt buildopt-impact buildopt-server buildopt-edge; do
         CGO_ENABLED=0 GOOS="${buildopt_os}" GOARCH="${buildopt_arch}" \
             go build -mod=readonly -buildvcs=false -trimpath \
             -o "${buildopt_test_root}/${buildopt_command}-${buildopt_os}-${buildopt_arch}${buildopt_suffix}" \
             "./cmd/${buildopt_command}"
     done
 done
+for buildopt_arch in amd64 arm64; do
+    CGO_ENABLED=0 GOOS=windows GOARCH="${buildopt_arch}" \
+        go build -mod=readonly -buildvcs=false -trimpath \
+        -o "${buildopt_test_root}/buildopt-service-windows-${buildopt_arch}.exe" \
+        ./cmd/buildopt-service
+done
 
 file "${buildopt_test_root}/buildopt-darwin-amd64" | grep -F 'Mach-O 64-bit x86_64' >/dev/null
 file "${buildopt_test_root}/buildopt-darwin-arm64" | grep -F 'Mach-O 64-bit arm64' >/dev/null
 file "${buildopt_test_root}/buildopt-windows-amd64.exe" | grep -F 'PE32+ executable' >/dev/null
 file "${buildopt_test_root}/buildopt-windows-arm64.exe" | grep -F 'Aarch64' >/dev/null
+file "${buildopt_test_root}/buildopt-server-darwin-arm64" | grep -F 'Mach-O 64-bit arm64' >/dev/null
+file "${buildopt_test_root}/buildopt-edge-windows-amd64.exe" | grep -F 'PE32+ executable' >/dev/null
+file "${buildopt_test_root}/buildopt-service-windows-amd64.exe" | grep -F 'PE32+ executable' >/dev/null
 
-bash -n packaging/macos/package.sh packaging/macos/install.sh packaging/macos/uninstall.sh fixtures/platform/cancel-tree.sh
+bash -n packaging/macos/package.sh packaging/macos/install.sh packaging/macos/uninstall.sh packaging/macos/install-services.sh packaging/macos/uninstall-services.sh fixtures/platform/cancel-tree.sh
 buildopt_macos_archive=$(./packaging/macos/package.sh --version 0.1.0-local-gate --output "${buildopt_test_root}/macos-package")
 mkdir -p "${buildopt_test_root}/macos-extracted" "${buildopt_test_root}/macos-install/bin"
 tar -xzf "${buildopt_macos_archive}" -C "${buildopt_test_root}/macos-extracted"
@@ -58,8 +80,9 @@ touch "${buildopt_test_root}/macos-install/bin/unrelated"
 "${buildopt_macos_root}/uninstall.sh" --prefix "${buildopt_test_root}/macos-install"
 test -f "${buildopt_test_root}/macos-install/bin/unrelated"
 test ! -e "${buildopt_test_root}/macos-install/bin/buildopt"
+test ! -e "${buildopt_test_root}/macos-install/bin/buildopt-server"
 if command -v pwsh >/dev/null 2>&1; then
-    for buildopt_script in packaging/windows/package.ps1 packaging/windows/install.ps1 packaging/windows/uninstall.ps1 fixtures/platform/cancel-tree.ps1; do
+    for buildopt_script in packaging/windows/package.ps1 packaging/windows/install.ps1 packaging/windows/uninstall.ps1 packaging/windows/install-services.ps1 packaging/windows/uninstall-services.ps1 fixtures/platform/cancel-tree.ps1; do
         # $env is intentionally expanded by PowerShell.
         # shellcheck disable=SC2016
         BUILDOPT_PS_PATH="${buildopt_script}" \
@@ -82,6 +105,7 @@ if command -v pwsh >/dev/null 2>&1; then
         & "$PackageRoot/uninstall.ps1" -Prefix $Prefix
         if (-not (Test-Path (Join-Path $Prefix "bin/unrelated"))) { throw "uninstall removed an unrelated file" }
         if (Test-Path (Join-Path $Prefix "bin/buildopt.exe")) { throw "uninstall retained buildopt.exe" }
+        if (Test-Path (Join-Path $Prefix "bin/buildopt-server.exe")) { throw "uninstall retained buildopt-server.exe" }
     '
 fi
 
@@ -97,4 +121,4 @@ if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
     printf 'platform compatibility checker mutated the source tree\n' >&2
     exit 1
 fi
-printf 'PLAT-F5 platform gate passed: portable CLIs, native packages, and pinned native CI inventory\n'
+printf 'PLAT-F6 platform gate passed: full runtime cross-builds, packages, services, and pinned native CI inventory\n'

@@ -6,7 +6,7 @@ if (-not (Test-Path -LiteralPath $ReceiptPath -PathType Leaf)) { throw 'BuildOpt
 $Receipt = Get-Content -Raw $ReceiptPath | ConvertFrom-Json
 if ($Receipt.schemaVersion -ne 'buildopt.install/v1') { throw 'BuildOpt installation receipt is invalid' }
 foreach ($Relative in $Receipt.files) {
-    if ($Relative -notin @('bin/buildopt.exe', 'bin/buildopt-impact.exe')) { throw "Unsafe receipt entry: $Relative" }
+    if ($Relative -notin @('bin/buildopt.exe', 'bin/buildopt-impact.exe', 'bin/buildopt-server.exe', 'bin/buildopt-edge.exe', 'bin/buildopt-service.exe')) { throw "Unsafe receipt entry: $Relative" }
     Remove-Item -Force -ErrorAction SilentlyContinue (Join-Path $Prefix ($Relative -replace '/', '\'))
 }
 if ($Receipt.pathUpdated) {

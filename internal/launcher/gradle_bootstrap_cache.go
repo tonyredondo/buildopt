@@ -1,5 +1,3 @@
-//go:build linux || darwin
-
 package launcher
 
 import (
@@ -20,9 +18,9 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"syscall"
 
 	"github.com/tonyredondo/buildopt/internal/contractcrypto"
+	"github.com/tonyredondo/buildopt/internal/filelock"
 	"github.com/tonyredondo/buildopt/internal/localauthority"
 )
 
@@ -271,13 +269,9 @@ func startGradleBootstrapCache(
 			err,
 		)
 	}
-	if err := syscall.Flock(
-		int(lease.Fd()),
-		syscall.LOCK_EX|syscall.LOCK_NB,
-	); err != nil {
+	if err := filelock.Try(lease, filelock.Exclusive); err != nil {
 		_ = lease.Close()
-		if errors.Is(err, syscall.EWOULDBLOCK) ||
-			errors.Is(err, syscall.EAGAIN) {
+		if errors.Is(err, filelock.ErrBusy) {
 			return nil, errGradleBootstrapBusy
 		}
 		return nil, fmt.Errorf(
@@ -751,12 +745,10 @@ func validateInstalledGradleDistribution(
 		info.Mode()&os.ModeSymlink != 0 {
 		return errors.New("Gradle distribution root is unavailable")
 	}
-	gradleExecutable := filepath.Join(location.gradleHome, "bin", "gradle")
+	gradleExecutable := gradleDistributionExecutable(location.gradleHome)
 	executableInfo, err := os.Lstat(gradleExecutable)
 	if err != nil ||
-		!executableInfo.Mode().IsRegular() ||
-		executableInfo.Mode()&os.ModeSymlink != 0 ||
-		executableInfo.Mode().Perm()&0o100 == 0 {
+		!validGradleDistributionExecutable(executableInfo) {
 		return errors.New("Gradle distribution executable is unavailable")
 	}
 	return nil
@@ -770,12 +762,7 @@ func resetPrivateDistributionRoot(path string) error {
 	if err != nil {
 		return err
 	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok ||
-		stat.Uid != uint32(os.Geteuid()) ||
-		!info.IsDir() ||
-		info.Mode()&os.ModeSymlink != 0 ||
-		info.Mode().Perm() != 0o700 {
+	if !privateManagedDirectoryInfo(info) {
 		return errors.New(
 			"partial Gradle distribution root is not private",
 		)
@@ -909,7 +896,7 @@ func openBoundedRegularFile(
 		maximumBytes < 1 {
 		return nil, nil, errors.New("invalid bounded regular file request")
 	}
-	file, err := os.OpenFile(path, os.O_RDONLY|syscall.O_NOFOLLOW, 0)
+	file, err := openTrustedManagedFile(path)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -918,13 +905,10 @@ func openBoundedRegularFile(
 		_ = file.Close()
 		return nil, nil, err
 	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok ||
-		(stat.Uid != uint32(os.Geteuid()) && stat.Uid != 0) ||
-		!info.Mode().IsRegular() ||
+	if !trustedManagedFileInfo(info) ||
 		info.Size() < 0 ||
 		info.Size() > maximumBytes ||
-		requireReadOnly && info.Mode().Perm()&0o222 != 0 {
+		requireReadOnly && !managedReadOnlyInfo(info) {
 		_ = file.Close()
 		return nil, nil, errors.New(
 			"file is not a bounded trusted regular file",
@@ -941,12 +925,7 @@ func validateReadOnlyDirectory(path string) error {
 	if err != nil {
 		return err
 	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok ||
-		(stat.Uid != uint32(os.Geteuid()) && stat.Uid != 0) ||
-		!info.IsDir() ||
-		info.Mode()&os.ModeSymlink != 0 ||
-		info.Mode().Perm()&0o222 != 0 {
+	if !trustedManagedDirectoryInfo(info) || !managedReadOnlyInfo(info) {
 		return errors.New("directory is not a trusted read-only directory")
 	}
 	return nil
@@ -965,11 +944,7 @@ func validateReadOnlyDependencyTree(root string) error {
 		if err != nil {
 			return err
 		}
-		stat, ok := info.Sys().(*syscall.Stat_t)
-		if !ok ||
-			(stat.Uid != uint32(os.Geteuid()) && stat.Uid != 0) ||
-			info.Mode()&os.ModeSymlink != 0 ||
-			info.Mode().Perm()&0o222 != 0 {
+		if !trustedManagedEntryInfo(info) || !managedReadOnlyInfo(info) {
 			return fmt.Errorf(
 				"dependency cache entry %q is not trusted and read-only",
 				path,
@@ -1022,50 +997,6 @@ func readGradleWrapperMarker(path string) (gradleWrapperMarker, error) {
 		)
 	}
 	return marker, nil
-}
-
-func writeCanonicalPrivateJSON(path string, value any) error {
-	encoded, err := json.Marshal(value)
-	if err != nil {
-		return err
-	}
-	canonical, err := contractcrypto.CanonicalizeJCS(encoded)
-	if err != nil {
-		return err
-	}
-	temporary, err := os.CreateTemp(
-		filepath.Dir(path),
-		".gradle-bootstrap-*",
-	)
-	if err != nil {
-		return err
-	}
-	temporaryPath := temporary.Name()
-	defer os.Remove(temporaryPath)
-	if err := temporary.Chmod(0o600); err != nil {
-		_ = temporary.Close()
-		return err
-	}
-	if _, err := temporary.Write(canonical); err != nil {
-		_ = temporary.Close()
-		return err
-	}
-	if err := temporary.Sync(); err != nil {
-		_ = temporary.Close()
-		return err
-	}
-	if err := temporary.Close(); err != nil {
-		return err
-	}
-	if err := os.Rename(temporaryPath, path); err != nil {
-		return err
-	}
-	directory, err := os.Open(filepath.Dir(path))
-	if err != nil {
-		return err
-	}
-	defer directory.Close()
-	return directory.Sync()
 }
 
 func decodeCanonicalJSON(raw []byte, target any) error {

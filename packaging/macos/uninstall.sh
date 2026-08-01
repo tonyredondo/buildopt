@@ -16,7 +16,7 @@ fi
 while IFS= read -r buildopt_relative; do
     [[ "${buildopt_relative}" == 'buildopt.install/v1' ]] && continue
     case "${buildopt_relative}" in
-        bin/buildopt|bin/buildopt-impact) rm -f -- "${buildopt_prefix}/${buildopt_relative}" ;;
+        bin/buildopt|bin/buildopt-impact|bin/buildopt-server|bin/buildopt-edge) rm -f -- "${buildopt_prefix}/${buildopt_relative}" ;;
         *) printf 'unsafe BuildOpt receipt entry: %s\n' "${buildopt_relative}" >&2; exit 1 ;;
     esac
 done <"${buildopt_receipt}"

@@ -1,5 +1,3 @@
-//go:build linux || darwin
-
 package launcher
 
 import (
@@ -11,9 +9,9 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"syscall"
 
 	"github.com/tonyredondo/buildopt/internal/datalifecycle"
+	"github.com/tonyredondo/buildopt/internal/filelock"
 )
 
 const (
@@ -246,13 +244,9 @@ func startManagedL1(config managedL1Config) (*managedL1, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open managed L1 lease: %w", err)
 	}
-	if err := syscall.Flock(
-		int(lease.Fd()),
-		syscall.LOCK_EX|syscall.LOCK_NB,
-	); err != nil {
+	if err := filelock.Try(lease, filelock.Exclusive); err != nil {
 		_ = lease.Close()
-		if errors.Is(err, syscall.EWOULDBLOCK) ||
-			errors.Is(err, syscall.EAGAIN) {
+		if errors.Is(err, filelock.ErrBusy) {
 			return nil, errManagedL1Busy
 		}
 		return nil, fmt.Errorf("acquire managed L1 lease: %w", err)

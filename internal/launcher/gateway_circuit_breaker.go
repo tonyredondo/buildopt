@@ -1,5 +1,3 @@
-//go:build linux || darwin
-
 package launcher
 
 import (
@@ -9,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
-	"syscall"
 	"time"
 )
 
@@ -160,7 +157,7 @@ func readManagedGatewayCircuitState(
 	directory string,
 ) (managedGatewayCircuitState, error) {
 	path := filepath.Join(directory, managedGatewayCircuitStateFile)
-	file, err := os.OpenFile(path, os.O_RDONLY|syscall.O_NOFOLLOW, 0)
+	file, err := openPrivateGatewayState(path)
 	if err != nil {
 		return managedGatewayCircuitState{}, err
 	}
@@ -169,11 +166,7 @@ func readManagedGatewayCircuitState(
 	if err != nil {
 		return managedGatewayCircuitState{}, err
 	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok ||
-		stat.Uid != uint32(os.Geteuid()) ||
-		!info.Mode().IsRegular() ||
-		info.Mode().Perm() != 0o600 ||
+	if !privateGatewayFileInfo(info) ||
 		info.Size() > managedGatewayMaximumStateBytes {
 		return managedGatewayCircuitState{}, errors.New(
 			"managed gateway circuit state is not a private bounded regular file",
@@ -217,10 +210,5 @@ func removeManagedGatewayCircuitState(directory string) error {
 	if err := os.Remove(path); err != nil && !errors.Is(err, os.ErrNotExist) {
 		return err
 	}
-	directoryHandle, err := os.Open(directory)
-	if err != nil {
-		return err
-	}
-	defer directoryHandle.Close()
-	return directoryHandle.Sync()
+	return syncManagedDirectory(directory)
 }

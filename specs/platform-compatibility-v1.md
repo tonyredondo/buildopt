@@ -1,5 +1,8 @@
 # macOS and Windows compatibility v1
 
+> Historical PLAT-F5 contract. The runtime exclusions below were removed by
+> [`platform-runtime-parity-v2`](./platform-runtime-parity-v2.md).
+
 The supported cross-platform POC surface is deliberately narrower than the
 Linux deployment surface. macOS and Windows ship the per-invocation
 `buildopt` launcher and automatic `buildopt-impact` generator. Both retain the

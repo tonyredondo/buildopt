@@ -238,10 +238,3 @@ func TestManagedGatewayStateIsPrivateStrictAndRoundTrips(t *testing.T) {
 		t.Fatal("managed gateway state accepted unknown fields")
 	}
 }
-
-func clearManagedGatewayTestEnvironment(t *testing.T) {
-	t.Helper()
-	t.Setenv(managedGatewayStateRootEnvironment, "")
-	t.Setenv(managedRunnerSlotEnvironment, "")
-	t.Setenv(managedGatewayIdleTimeoutEnvironment, "")
-}

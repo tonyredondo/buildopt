@@ -29,17 +29,16 @@ buildopt_root="${buildopt_work}/${buildopt_base}"
 mkdir -p -- "${buildopt_root}/bin"
 
 cd "${buildopt_repo_root}"
-CGO_ENABLED=0 GOOS=darwin GOARCH="${buildopt_arch}" \
-    go build -mod=readonly -buildvcs=false -trimpath \
-    -o "${buildopt_root}/bin/buildopt" ./cmd/buildopt
-CGO_ENABLED=0 GOOS=darwin GOARCH="${buildopt_arch}" \
-    go build -mod=readonly -buildvcs=false -trimpath \
-    -o "${buildopt_root}/bin/buildopt-impact" ./cmd/buildopt-impact
-cp -- packaging/macos/install.sh packaging/macos/uninstall.sh "${buildopt_root}/"
-chmod 0755 "${buildopt_root}/bin/buildopt" "${buildopt_root}/bin/buildopt-impact" "${buildopt_root}/install.sh" "${buildopt_root}/uninstall.sh"
+for buildopt_command in buildopt buildopt-impact buildopt-server buildopt-edge; do
+    CGO_ENABLED=0 GOOS=darwin GOARCH="${buildopt_arch}" \
+        go build -mod=readonly -buildvcs=false -trimpath \
+        -o "${buildopt_root}/bin/${buildopt_command}" "./cmd/${buildopt_command}"
+done
+cp -- packaging/macos/install.sh packaging/macos/uninstall.sh packaging/macos/install-services.sh packaging/macos/uninstall-services.sh "${buildopt_root}/"
+chmod 0755 "${buildopt_root}"/bin/* "${buildopt_root}"/*.sh
 (
     cd "${buildopt_root}"
-    shasum -a 256 bin/buildopt bin/buildopt-impact > SHA256SUMS
+    shasum -a 256 bin/buildopt bin/buildopt-impact bin/buildopt-server bin/buildopt-edge > SHA256SUMS
 )
 tar -C "${buildopt_work}" -czf "${buildopt_output}/${buildopt_base}.tar.gz" "${buildopt_base}"
 printf '%s\n' "${buildopt_output}/${buildopt_base}.tar.gz"

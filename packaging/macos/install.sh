@@ -16,14 +16,16 @@ fi
 
 (cd "${buildopt_package_root}" && shasum -a 256 -c SHA256SUMS >/dev/null)
 mkdir -p -- "${buildopt_prefix}/bin" "${buildopt_prefix}/share/buildopt"
-for buildopt_binary in buildopt buildopt-impact; do
+for buildopt_binary in buildopt buildopt-impact buildopt-server buildopt-edge; do
     buildopt_temporary="${buildopt_prefix}/bin/.${buildopt_binary}.new.$$"
     install -m 0755 "${buildopt_package_root}/bin/${buildopt_binary}" "${buildopt_temporary}"
     mv -f -- "${buildopt_temporary}" "${buildopt_prefix}/bin/${buildopt_binary}"
 done
 printf '%s\n' \
     'buildopt.install/v1' \
-    'bin/buildopt' \
-    'bin/buildopt-impact' \
+	'bin/buildopt' \
+	'bin/buildopt-impact' \
+	'bin/buildopt-server' \
+	'bin/buildopt-edge' \
     >"${buildopt_prefix}/share/buildopt/receipt"
 printf 'BuildOpt installed in %s/bin\n' "${buildopt_prefix}"

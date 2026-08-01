@@ -14,8 +14,9 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
-	"syscall"
 	"time"
+
+	"github.com/tonyredondo/buildopt/internal/filelock"
 )
 
 const (
@@ -140,11 +141,7 @@ func AcquireManagedLease(
 	if !boundary.Managed {
 		return lease, boundary, nil
 	}
-	file, err := os.OpenFile(
-		filepath.Join(boundary.DataRoot, lifecycleLockName),
-		os.O_CREATE|os.O_RDWR|syscall.O_NOFOLLOW,
-		0o600,
-	)
+	file, err := openPrivateLockFile(filepath.Join(boundary.DataRoot, lifecycleLockName))
 	if err != nil {
 		return nil, ManagedBoundary{}, err
 	}
@@ -152,13 +149,9 @@ func AcquireManagedLease(
 		_ = file.Close()
 		return nil, ManagedBoundary{}, err
 	}
-	if err := syscall.Flock(
-		int(file.Fd()),
-		syscall.LOCK_SH|syscall.LOCK_NB,
-	); err != nil {
+	if err := filelock.Try(file, filelock.Shared); err != nil {
 		_ = file.Close()
-		if errors.Is(err, syscall.EWOULDBLOCK) ||
-			errors.Is(err, syscall.EAGAIN) {
+		if errors.Is(err, filelock.ErrBusy) {
 			return nil, ManagedBoundary{}, ErrManagedDataBusy
 		}
 		return nil, ManagedBoundary{}, err
@@ -183,7 +176,7 @@ func (lease *ManagedLease) Close() error {
 	}
 	file := lease.file
 	lease.file = nil
-	unlockErr := syscall.Flock(int(file.Fd()), syscall.LOCK_UN)
+	unlockErr := filelock.Unlock(file)
 	closeErr := file.Close()
 	if unlockErr != nil {
 		return unlockErr
@@ -566,11 +559,7 @@ func acquireComponentLeases(root string) ([]*os.File, error) {
 }
 
 func acquirePrivateLock(path string) (*os.File, error) {
-	file, err := os.OpenFile(
-		path,
-		os.O_CREATE|os.O_RDWR|syscall.O_NOFOLLOW,
-		0o600,
-	)
+	file, err := openPrivateLockFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -578,9 +567,9 @@ func acquirePrivateLock(path string) (*os.File, error) {
 		_ = file.Close()
 		return nil, err
 	}
-	if err := syscall.Flock(int(file.Fd()), syscall.LOCK_EX|syscall.LOCK_NB); err != nil {
+	if err := filelock.Try(file, filelock.Exclusive); err != nil {
 		_ = file.Close()
-		if errors.Is(err, syscall.EWOULDBLOCK) || errors.Is(err, syscall.EAGAIN) {
+		if errors.Is(err, filelock.ErrBusy) {
 			return nil, ErrManagedDataBusy
 		}
 		return nil, err
@@ -605,7 +594,7 @@ func releasePrivateLock(file *os.File) {
 	if file == nil {
 		return
 	}
-	_ = syscall.Flock(int(file.Fd()), syscall.LOCK_UN)
+	_ = filelock.Unlock(file)
 	_ = file.Close()
 }
 
@@ -744,9 +733,7 @@ func requirePrivateDirectory(path string) error {
 	if err != nil {
 		return err
 	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok || stat.Uid != uint32(os.Geteuid()) || !info.IsDir() ||
-		info.Mode()&os.ModeSymlink != 0 || info.Mode().Perm() != 0o700 {
+	if !privateDirectoryInfo(info) {
 		return fmt.Errorf("unsafe private directory: %s", path)
 	}
 	return nil
@@ -757,9 +744,7 @@ func requirePrivateFile(path string) error {
 	if err != nil {
 		return err
 	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok || stat.Uid != uint32(os.Geteuid()) || !info.Mode().IsRegular() ||
-		info.Mode().Perm() != 0o600 {
+	if !privateFileInfo(info) {
 		return fmt.Errorf("unsafe private file: %s", path)
 	}
 	return nil
@@ -770,9 +755,7 @@ func requirePrivateOpenFile(file *os.File) error {
 	if err != nil {
 		return err
 	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok || stat.Uid != uint32(os.Geteuid()) || !info.Mode().IsRegular() ||
-		info.Mode().Perm() != 0o600 {
+	if !privateFileInfo(info) {
 		return errors.New("unsafe private lock file")
 	}
 	return nil

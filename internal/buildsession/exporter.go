@@ -13,7 +13,6 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
-	"syscall"
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/datalifecycle"
@@ -101,13 +100,8 @@ func newExporterWithPolicy(
 		return nil, errors.New("create BUILD_SESSION export directory")
 	}
 	info, err := os.Lstat(absolute)
-	stat, ownerAvailable := infoSyscallStat(info)
 	if err != nil ||
-		!info.IsDir() ||
-		info.Mode()&os.ModeSymlink != 0 ||
-		info.Mode().Perm() != 0o700 ||
-		!ownerAvailable ||
-		stat.Uid != uint32(os.Geteuid()) {
+		!privateDirectoryInfo(info) {
 		return nil, errors.New(
 			"BUILD_SESSION export path is not a private directory",
 		)
@@ -161,9 +155,9 @@ func loadOrCreateExportRedactionKey(
 		if _, randomErr := rand.Read(key); randomErr != nil {
 			return nil, "", errors.New("generate BUILD_SESSION redaction key")
 		}
-		file, createErr := os.OpenFile(
+		file, createErr := openNoFollow(
 			path,
-			os.O_CREATE|os.O_EXCL|os.O_WRONLY|syscall.O_NOFOLLOW,
+			os.O_CREATE|os.O_EXCL|os.O_WRONLY,
 			0o600,
 		)
 		if createErr != nil {
@@ -193,18 +187,14 @@ func loadOrCreateExportRedactionKey(
 }
 
 func readPrivateRedactionKey(path string) ([]byte, error) {
-	file, err := os.OpenFile(path, os.O_RDONLY|syscall.O_NOFOLLOW, 0)
+	file, err := openNoFollow(path, os.O_RDONLY, 0)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
 	info, err := file.Stat()
-	stat, ownerAvailable := infoSyscallStat(info)
 	if err != nil ||
-		!info.Mode().IsRegular() ||
-		info.Mode().Perm() != 0o600 ||
-		!ownerAvailable ||
-		stat.Uid != uint32(os.Geteuid()) ||
+		!privateFileInfo(info) ||
 		info.Size() != datalifecycle.RedactionKeyBytes {
 		return nil, errors.New(
 			"BUILD_SESSION redaction key is not a private fixed-size file",
@@ -218,14 +208,6 @@ func readPrivateRedactionKey(path string) ([]byte, error) {
 		return nil, errors.New("read BUILD_SESSION redaction key")
 	}
 	return key, nil
-}
-
-func infoSyscallStat(info os.FileInfo) (*syscall.Stat_t, bool) {
-	if info == nil {
-		return nil, false
-	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	return stat, ok
 }
 
 // Directory returns the canonical private export root for in-process,
@@ -478,16 +460,4 @@ func inspectOptionalPrivateFile(
 		return false, false, err
 	}
 	return true, identical, nil
-}
-
-func syncDirectory(path string) error {
-	directory, err := os.Open(path)
-	if err != nil {
-		return errors.New("open BUILD_SESSION export directory")
-	}
-	defer directory.Close()
-	if err := directory.Sync(); err != nil {
-		return fmt.Errorf("sync BUILD_SESSION export directory: %w", err)
-	}
-	return nil
 }

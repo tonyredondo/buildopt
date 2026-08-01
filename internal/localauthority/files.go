@@ -1,5 +1,3 @@
-//go:build linux
-
 package localauthority
 
 import (
@@ -12,10 +10,10 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"syscall"
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/contractcrypto"
+	"github.com/tonyredondo/buildopt/internal/filelock"
 )
 
 const maximumLocalAuthorityFileBytes = 4 << 20
@@ -29,7 +27,7 @@ func ReadPrivateFile(path string, maximumBytes int64) ([]byte, error) {
 		maximumBytes > maximumLocalAuthorityFileBytes {
 		return nil, errors.New("invalid private file request")
 	}
-	file, err := os.OpenFile(path, os.O_RDONLY|syscall.O_NOFOLLOW, 0)
+	file, err := openPrivateDataFile(path, os.O_RDONLY, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -38,11 +36,7 @@ func ReadPrivateFile(path string, maximumBytes int64) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok ||
-		stat.Uid != uint32(os.Geteuid()) ||
-		!info.Mode().IsRegular() ||
-		info.Mode().Perm() != 0o600 ||
+	if !privateFileInfo(info) ||
 		info.Size() < 1 ||
 		info.Size() > maximumBytes {
 		return nil, errors.New(
@@ -176,10 +170,10 @@ func (store *FileStateStore) Install(
 		return State{}, State{}, false, err
 	}
 	defer lock.Close()
-	if err := syscall.Flock(int(lock.Fd()), syscall.LOCK_EX); err != nil {
+	if err := filelock.Try(lock, filelock.Exclusive); err != nil {
 		return State{}, State{}, false, err
 	}
-	defer syscall.Flock(int(lock.Fd()), syscall.LOCK_UN)
+	defer filelock.Unlock(lock)
 
 	statePath := filepath.Join(
 		store.root,
@@ -211,23 +205,14 @@ func preparePrivateDirectory(path string) error {
 	if err != nil {
 		return err
 	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok ||
-		stat.Uid != uint32(os.Geteuid()) ||
-		!info.IsDir() ||
-		info.Mode()&os.ModeSymlink != 0 ||
-		info.Mode().Perm() != 0o700 {
+	if !privateDirectoryInfo(info) {
 		return fmt.Errorf("%s is not a private directory", path)
 	}
 	return nil
 }
 
 func openPrivateLock(path string) (*os.File, error) {
-	file, err := os.OpenFile(
-		path,
-		os.O_CREATE|os.O_RDWR|syscall.O_NOFOLLOW,
-		0o600,
-	)
+	file, err := openPrivateDataFile(path, os.O_CREATE|os.O_RDWR, 0o600)
 	if err != nil {
 		return nil, err
 	}
@@ -236,11 +221,7 @@ func openPrivateLock(path string) (*os.File, error) {
 		_ = file.Close()
 		return nil, err
 	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok ||
-		stat.Uid != uint32(os.Geteuid()) ||
-		!info.Mode().IsRegular() ||
-		info.Mode().Perm() != 0o600 {
+	if !privateFileInfo(info) {
 		_ = file.Close()
 		return nil, errors.New(
 			"local authority lock is not a private regular file",
@@ -304,12 +285,7 @@ func writeState(path string, state State) error {
 	if err := os.Rename(temporaryPath, path); err != nil {
 		return err
 	}
-	directoryHandle, err := os.Open(directory)
-	if err != nil {
-		return err
-	}
-	defer directoryHandle.Close()
-	return directoryHandle.Sync()
+	return syncPrivateDirectory(directory)
 }
 
 func equivalentState(left State, right State) bool {

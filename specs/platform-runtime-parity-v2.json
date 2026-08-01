@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "buildopt.specs/platform-runtime-parity/v2",
+  "workItems": ["PLAT-F6-001", "PLAT-F6-002", "PLAT-F6-003", "PLAT-F6-004"],
+  "supported": {
+    "darwin": {
+      "architectures": ["amd64", "arm64"],
+      "binaries": ["buildopt", "buildopt-impact", "buildopt-server", "buildopt-edge"],
+      "persistentGateway": "AUTHENTICATED_UNIX_CONTROL_AND_LOOPBACK_DATA",
+      "managedL1": true,
+      "managedGradleBootstrap": true,
+      "sharedAndEdgeStorage": "MNT_LOCAL_SAME_DEVICE",
+      "backgroundService": "LAUNCHD_USER_AGENT"
+    },
+    "windows": {
+      "architectures": ["amd64", "arm64"],
+      "binaries": ["buildopt.exe", "buildopt-impact.exe", "buildopt-server.exe", "buildopt-edge.exe", "buildopt-service.exe"],
+      "persistentGateway": "AUTHENTICATED_LOOPBACK_CONTROL_AND_DATA",
+      "managedL1": true,
+      "managedGradleBootstrap": true,
+      "sharedAndEdgeStorage": "LOCAL_VOLUME_NO_REPARSE_POINTS",
+      "backgroundService": "SCM_SERVICE_WRAPPER"
+    }
+  },
+  "security": {
+    "noSymlinkOrReparseTraversal": true,
+    "advisoryLocking": "FLOCK_OR_LOCKFILEEX",
+    "windowsControlCredentialBits": 256,
+    "unsupportedFeatures": "REPORTED_BY_DOCTOR",
+    "silentDegradation": false
+  },
+  "resourceSemantics": {
+    "linux": "CGROUP_V2_WHEN_CONFIGURED",
+    "darwin": "PROCESS_GROUP_NO_HARD_LIMIT",
+    "windows": "JOB_OBJECT"
+  },
+  "nativeGate": {
+    "workflow": ".github/workflows/platform-ci.yml",
+    "runners": ["macos-15", "windows-2025"],
+    "proofs": ["NATIVE_TESTS", "PACKAGE_ALL_BINARIES", "DOCTOR", "PERSISTENT_GATEWAY", "MANAGED_L1", "GRADLE_BOOTSTRAP", "SERVER_AND_EDGE", "BACKGROUND_SERVICE", "INSTALL_UPGRADE_UNINSTALL"]
+  },
+  "productBoundary": "NO_TEST_OPTIMIZATION_BEHAVIOR"
+}

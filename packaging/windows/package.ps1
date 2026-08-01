@@ -22,16 +22,16 @@ try {
         $env:CGO_ENABLED = '0'
         $env:GOOS = 'windows'
         $env:GOARCH = $Architecture
-        & go build -mod=readonly -buildvcs=false -trimpath -o (Join-Path $Root 'bin\buildopt.exe') ./cmd/buildopt
-        if ($LASTEXITCODE -ne 0) { throw 'buildopt build failed' }
-        & go build -mod=readonly -buildvcs=false -trimpath -o (Join-Path $Root 'bin\buildopt-impact.exe') ./cmd/buildopt-impact
-        if ($LASTEXITCODE -ne 0) { throw 'buildopt-impact build failed' }
+        foreach ($Name in @('buildopt', 'buildopt-impact', 'buildopt-server', 'buildopt-edge', 'buildopt-service')) {
+            & go build -mod=readonly -buildvcs=false -trimpath -o (Join-Path $Root "bin\$Name.exe") "./cmd/$Name"
+            if ($LASTEXITCODE -ne 0) { throw "$Name build failed" }
+        }
     } finally {
         Pop-Location
     }
-    Copy-Item (Join-Path $PSScriptRoot 'install.ps1'), (Join-Path $PSScriptRoot 'uninstall.ps1') -Destination $Root
+    Copy-Item (Join-Path $PSScriptRoot 'install.ps1'), (Join-Path $PSScriptRoot 'uninstall.ps1'), (Join-Path $PSScriptRoot 'install-services.ps1'), (Join-Path $PSScriptRoot 'uninstall-services.ps1') -Destination $Root
     $Checksums = @()
-    foreach ($Name in @('buildopt.exe', 'buildopt-impact.exe')) {
+    foreach ($Name in @('buildopt.exe', 'buildopt-impact.exe', 'buildopt-server.exe', 'buildopt-edge.exe', 'buildopt-service.exe')) {
         $Hash = (Get-FileHash -Algorithm SHA256 (Join-Path $Root "bin\$Name")).Hash.ToLowerInvariant()
         $Checksums += "$Hash  bin/$Name"
     }

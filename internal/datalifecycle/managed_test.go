@@ -8,9 +8,10 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
-	"syscall"
 	"testing"
 	"time"
+
+	"github.com/tonyredondo/buildopt/internal/filelock"
 )
 
 func TestDeleteManagedDataRevokesBeforePhysicalRemoval(t *testing.T) {
@@ -103,13 +104,10 @@ func TestDeleteManagedDataRefusesActiveLeaseBeforeRevocation(t *testing.T) {
 		t.Fatalf("open writer lease: %v", err)
 	}
 	defer writer.Close()
-	if err := syscall.Flock(
-		int(writer.Fd()),
-		syscall.LOCK_EX|syscall.LOCK_NB,
-	); err != nil {
+	if err := filelock.Try(writer, filelock.Exclusive); err != nil {
 		t.Fatalf("hold writer lease: %v", err)
 	}
-	defer syscall.Flock(int(writer.Fd()), syscall.LOCK_UN)
+	defer filelock.Unlock(writer)
 
 	_, err = DeleteManagedData(
 		context.Background(),

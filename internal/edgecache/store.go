@@ -13,7 +13,6 @@ import (
 	"sync"
 	"time"
 
-	"golang.org/x/sys/unix"
 	_ "modernc.org/sqlite"
 )
 
@@ -93,7 +92,7 @@ func OpenStore(config Config) (*Store, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := unix.Flock(int(lock.Fd()), unix.LOCK_EX|unix.LOCK_NB); err != nil {
+	if err := acquireStoreLock(lock); err != nil {
 		_ = lock.Close()
 		return nil, errors.New("open Edge store: another writer owns the state directory")
 	}
@@ -358,7 +357,7 @@ func (store *Store) Close() error {
 		databaseErr = store.database.Close()
 	}
 	if store.writerLock != nil {
-		unlockErr = unix.Flock(int(store.writerLock.Fd()), unix.LOCK_UN)
+		unlockErr = releaseStoreLock(store.writerLock)
 		lockErr = store.writerLock.Close()
 	}
 	return errors.Join(databaseErr, unlockErr, lockErr)
@@ -627,14 +626,6 @@ func preparePrivateRoot(root string) error {
 	return os.Chmod(root, 0o700)
 }
 
-func openNoFollow(path string) (*os.File, error) {
-	descriptor, err := unix.Open(path, unix.O_RDONLY|unix.O_CLOEXEC|unix.O_NOFOLLOW, 0)
-	if err != nil {
-		return nil, err
-	}
-	return os.NewFile(uintptr(descriptor), path), nil
-}
-
 func verifyOpenBlob(ctx context.Context, file *os.File, digest string, size int64) error {
 	if file == nil || ctx == nil || !validDigest(digest) || size < 0 {
 		return errors.New("invalid Edge blob verification")
@@ -655,13 +646,4 @@ func verifyOpenBlob(ctx context.Context, file *os.File, digest string, size int6
 	}
 	_, err = file.Seek(0, io.SeekStart)
 	return err
-}
-
-func syncDirectory(path string) error {
-	directory, err := os.Open(path)
-	if err != nil {
-		return err
-	}
-	defer directory.Close()
-	return directory.Sync()
 }

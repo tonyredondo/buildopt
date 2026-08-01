@@ -7,9 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"os"
 	"path/filepath"
-	"syscall"
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/datalifecycle"
@@ -129,7 +127,7 @@ func loadLifecycleTokenKey(path string) ([]byte, error) {
 	if !filepath.IsAbs(path) || filepath.Clean(path) != path {
 		return nil, errors.New("token key path must be absolute and canonical")
 	}
-	file, err := os.OpenFile(path, os.O_RDONLY|syscall.O_NOFOLLOW, 0)
+	file, err := openLifecycleTokenKey(path)
 	if err != nil {
 		return nil, err
 	}
@@ -138,11 +136,7 @@ func loadLifecycleTokenKey(path string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok ||
-		stat.Uid != uint32(os.Geteuid()) ||
-		!info.Mode().IsRegular() ||
-		info.Mode().Perm() != 0o600 ||
+	if !privateLifecycleTokenKeyInfo(info) ||
 		info.Size() != datalifecycle.RedactionKeyBytes {
 		return nil, errors.New("token key is not a private fixed-size file")
 	}

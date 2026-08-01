@@ -17,7 +17,7 @@ const (
 	exitUsage         = 64
 	exitCannotExecute = 126
 	exitNotFound      = 127
-	usage             = "usage: buildopt run -- <command> [args...]\n"
+	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt doctor\n"
 	bypassEnvironment = "BUILDOPT_BYPASS"
 )
 
@@ -29,6 +29,9 @@ const (
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	if len(args) > 0 && args[0] == managedGatewayInternalCommand {
 		return runManagedGatewayProcess(args, stderr)
+	}
+	if len(args) == 1 && args[0] == "doctor" {
+		return runDoctor(stdout, stderr)
 	}
 	if isHelp(args) {
 		_, _ = io.WriteString(stdout, usage)

@@ -12,12 +12,12 @@ if (Test-Path -LiteralPath $ReceiptPath -PathType Leaf) {
     $PreviousReceipt = Get-Content -Raw $ReceiptPath | ConvertFrom-Json
     if ($PreviousReceipt.schemaVersion -ne 'buildopt.install/v1') { throw 'Existing BuildOpt installation receipt is invalid' }
     foreach ($Relative in $PreviousReceipt.files) {
-        if ($Relative -notin @('bin/buildopt.exe', 'bin/buildopt-impact.exe')) { throw "Unsafe existing receipt entry: $Relative" }
+        if ($Relative -notin @('bin/buildopt.exe', 'bin/buildopt-impact.exe', 'bin/buildopt-server.exe', 'bin/buildopt-edge.exe', 'bin/buildopt-service.exe')) { throw "Unsafe existing receipt entry: $Relative" }
     }
     $PathUpdated = $PathUpdated -or [bool]$PreviousReceipt.pathUpdated
 }
 New-Item -ItemType Directory -Force -Path $Bin | Out-Null
-foreach ($Name in @('buildopt.exe', 'buildopt-impact.exe')) {
+foreach ($Name in @('buildopt.exe', 'buildopt-impact.exe', 'buildopt-server.exe', 'buildopt-edge.exe', 'buildopt-service.exe')) {
     $ExpectedLine = Select-String -Path (Join-Path $PackageRoot 'SHA256SUMS') -Pattern "  bin/$Name$" | Select-Object -First 1
     if ($null -eq $ExpectedLine) { throw "Missing checksum for $Name" }
     $Expected = ($ExpectedLine.Line -split '  ')[0]
@@ -28,7 +28,7 @@ foreach ($Name in @('buildopt.exe', 'buildopt-impact.exe')) {
     Copy-Item -Force $Source $Temporary
     Move-Item -Force $Temporary (Join-Path $Bin $Name)
 }
-$Receipt = [ordered]@{ schemaVersion = 'buildopt.install/v1'; files = @('bin/buildopt.exe', 'bin/buildopt-impact.exe'); pathUpdated = $PathUpdated }
+$Receipt = [ordered]@{ schemaVersion = 'buildopt.install/v1'; files = @('bin/buildopt.exe', 'bin/buildopt-impact.exe', 'bin/buildopt-server.exe', 'bin/buildopt-edge.exe', 'bin/buildopt-service.exe'); pathUpdated = $PathUpdated }
 $Receipt | ConvertTo-Json | Set-Content -Encoding utf8NoBOM $ReceiptPath
 if ($PathUpdated) {
     $Current = [Environment]::GetEnvironmentVariable('Path', 'User')
