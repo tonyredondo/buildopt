@@ -1585,6 +1585,25 @@ loopback HTTP, and the owner-controlled two-node central-collision winner.
 Soak, external validation, OS service management, authority hot reload, and
 production hardening remain explicitly outside this POC gate.
 
+## Edge Cache operability
+
+Run the complete owner-operated process, reload, status, packaging, and service
+proof with:
+
+```bash
+./dev/check-edge-operability
+```
+
+The gate builds `buildopt-edge`, starts a real IPv4-loopback runtime under the
+race detector, durably replicates a pending object, fails closed during an
+invalid authority replacement, recovers only with a verified monotonic signed
+generation, checks redacted mode-`0600` aggregate status and graceful shutdown,
+and validates a byte-reproducible hardened systemd unit. The command is also
+included in the signed Linux AMD64 release bundle. See the
+[Edge operator runbook](../runbooks/edge-cache.md). Linking or starting the
+unit, HA/backups, enterprise identity, other platforms, external validation,
+and the eight-hour soak remain outside `POC-O1`.
+
 ## Build Impact manifest
 
 Validate the C3-001 customer-owned manifest boundary with:

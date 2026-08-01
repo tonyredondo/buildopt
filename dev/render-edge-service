@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_usage() {
+    printf 'usage: %s --release-root ABSOLUTE_PATH --config ABSOLUTE_PATH --output ABSOLUTE_PATH\n' "$0"
+}
+
+buildopt_release_root=
+buildopt_config=
+buildopt_output=
+while (($# > 0)); do
+    case "$1" in
+        --release-root)
+            (($# >= 2)) || { buildopt_usage >&2; exit 64; }
+            buildopt_release_root=$2
+            shift 2
+            ;;
+        --config)
+            (($# >= 2)) || { buildopt_usage >&2; exit 64; }
+            buildopt_config=$2
+            shift 2
+            ;;
+        --output)
+            (($# >= 2)) || { buildopt_usage >&2; exit 64; }
+            buildopt_output=$2
+            shift 2
+            ;;
+        --help)
+            buildopt_usage
+            exit 0
+            ;;
+        *)
+            buildopt_usage >&2
+            exit 64
+            ;;
+    esac
+done
+
+buildopt_safe_path() {
+    local buildopt_path=$1
+    [[ "${buildopt_path}" =~ ^/[A-Za-z0-9._/-]+$ ]] &&
+        [[ "${buildopt_path}" != / ]] &&
+        [[ "${buildopt_path}" != /tmp ]] &&
+        [[ "${buildopt_path}" != /tmp/* ]] &&
+        [[ "${buildopt_path}" != /var/tmp ]] &&
+        [[ "${buildopt_path}" != /var/tmp/* ]] &&
+        [[ "$(realpath -m -- "${buildopt_path}")" == "${buildopt_path}" ]]
+}
+
+for buildopt_command in chmod dirname id jq mktemp mv realpath rm stat; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Edge service command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+if ! buildopt_safe_path "${buildopt_release_root}" ||
+    ! buildopt_safe_path "${buildopt_config}" ||
+    ! buildopt_safe_path "${buildopt_output}"; then
+    buildopt_usage >&2
+    exit 64
+fi
+
+buildopt_binary="${buildopt_release_root}/bin/buildopt-edge"
+buildopt_owner=$(id -u)
+if [[ ! -d "${buildopt_release_root}" ]] ||
+    [[ -L "${buildopt_release_root}" ]] ||
+    [[ "$(realpath -e -- "${buildopt_release_root}")" != "${buildopt_release_root}" ]] ||
+    [[ ! -f "${buildopt_binary}" ]] ||
+    [[ -L "${buildopt_binary}" ]] ||
+    [[ ! -x "${buildopt_binary}" ]] ||
+    [[ ! -f "${buildopt_config}" ]] ||
+    [[ -L "${buildopt_config}" ]] ||
+    [[ "$(stat -c '%a' -- "${buildopt_config}")" != 600 ]] ||
+    [[ "$(stat -c '%u' -- "${buildopt_config}")" != "${buildopt_owner}" ]]; then
+    printf 'Edge release or private configuration is unsafe\n' >&2
+    exit 1
+fi
+if ! "${buildopt_binary}" validate --config "${buildopt_config}" >/dev/null; then
+    printf 'Edge configuration failed production validation\n' >&2
+    exit 1
+fi
+
+buildopt_state_directory=$(jq -er '
+    select(
+        .schemaVersion == "buildopt.edge-cache/config/v1" and
+        .profile == "OWNER_POC_SINGLE_NODE" and
+        (.server.listen | test("^127[.]0[.]0[.]1:[0-9]+$"))
+    ) |
+    select(
+        .storage.filesystemPolicy == "ALLOWLIST_PROVEN_LOCAL" and
+        .policy.commitAuthority == "SHARED_ONLY" and
+        .policy.collisionAuthority == "SHARED_ONLY" and
+        .policy.offlineReadPolicy == "COMMITTED_CURRENT_REVOCATION" and
+        .policy.offlineWriteVisibility == "ATTEMPT_ONLY_PENDING" and
+        .policy.compressionPolicy == "DISABLED_UNTIL_MEASURED"
+    ) |
+    .storage.stateDirectory
+' "${buildopt_config}")
+if ! buildopt_safe_path "${buildopt_state_directory}" ||
+    [[ ! -d "${buildopt_state_directory}" ]] ||
+    [[ -L "${buildopt_state_directory}" ]] ||
+    [[ "$(realpath -e -- "${buildopt_state_directory}")" != "${buildopt_state_directory}" ]] ||
+    [[ "$(stat -c '%a' -- "${buildopt_state_directory}")" != 700 ]] ||
+    [[ "$(stat -c '%u' -- "${buildopt_state_directory}")" != "${buildopt_owner}" ]]; then
+    printf 'Edge state directory is unsafe\n' >&2
+    exit 1
+fi
+
+buildopt_output_parent=$(dirname -- "${buildopt_output}")
+if [[ ! -d "${buildopt_output_parent}" ]] ||
+    [[ -L "${buildopt_output_parent}" ]] ||
+    [[ "$(realpath -e -- "${buildopt_output_parent}")" != "${buildopt_output_parent}" ]]; then
+    printf 'Edge unit output parent is unsafe\n' >&2
+    exit 1
+fi
+
+buildopt_temporary=$(mktemp "${buildopt_output_parent}/.buildopt-edge-service.XXXXXX")
+buildopt_cleanup() {
+    rm -f -- "${buildopt_temporary}"
+}
+trap buildopt_cleanup EXIT
+{
+    printf '%s\n' \
+        '[Unit]' \
+        'Description=BuildOpt owner-operated Edge Cache' \
+        'After=network-online.target' \
+        'Wants=network-online.target' \
+        '' \
+        '[Service]' \
+        'Type=simple' \
+        "ExecStart=${buildopt_binary} serve --config ${buildopt_config}" \
+        "WorkingDirectory=${buildopt_state_directory}" \
+        'Restart=on-failure' \
+        'RestartSec=5s' \
+        'TimeoutStartSec=15s' \
+        'TimeoutStopSec=10s' \
+        'KillSignal=SIGTERM' \
+        'UMask=0077' \
+        'NoNewPrivileges=true' \
+        'PrivateTmp=true' \
+        'ProtectSystem=strict' \
+        'ProtectHome=read-only' \
+        "ReadWritePaths=${buildopt_state_directory}" \
+        '' \
+        '[Install]' \
+        'WantedBy=multi-user.target'
+} >"${buildopt_temporary}"
+chmod 0600 "${buildopt_temporary}"
+mv -T -- "${buildopt_temporary}" "${buildopt_output}"
+trap - EXIT
+printf '%s\n' "${buildopt_output}"

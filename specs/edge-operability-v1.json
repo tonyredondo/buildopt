@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "buildopt.specs/edge-operability/v1",
+  "gateId": "O1-G01",
+  "milestone": "POC-O1",
+  "execution": "CURRENT_SOURCE_TREE_COMPOSITE",
+  "constituents": [
+    {
+      "item": "O1-001",
+      "proof": "STANDALONE_PREFLIGHTED_EDGE_RUNTIME"
+    },
+    {
+      "item": "O1-002",
+      "proof": "SIGNED_HOT_RELOAD_WITH_DURABLE_ANTI_ROLLBACK"
+    },
+    {
+      "item": "O1-003",
+      "proof": "PRIVATE_AGGREGATE_STATUS_WITH_STALENESS"
+    },
+    {
+      "item": "O1-004",
+      "proof": "SIGNED_BUNDLE_AND_REPRODUCIBLE_SYSTEMD_UNIT"
+    }
+  ],
+  "runtime": {
+    "command": "buildopt-edge serve --config ABSOLUTE_PATH",
+    "preListener": [
+      "STRICT_PRIVATE_CONFIG",
+      "EXCLUSIVE_DURABLE_STORE",
+      "SIGNED_CURRENT_AUTHORITY",
+      "DURABLE_ANTI_ROLLBACK_STATE",
+      "AUTHENTICATED_SHARED_CLIENT"
+    ],
+    "workers": [
+      "AUTHORITY_RELOAD",
+      "PENDING_REPLICATION",
+      "BYTE_SLRU_MAINTENANCE",
+      "PRIVATE_STATUS_PUBLICATION"
+    ],
+    "shutdown": "SIGINT_OR_SIGTERM_GRACEFUL"
+  },
+  "reload": {
+    "intervalSeconds": 1,
+    "changedFiles": [
+      "AUTHORITY_SNAPSHOT",
+      "TRUST_ROOT",
+      "SHARED_CREDENTIAL"
+    ],
+    "transactionBoundary": "FINGERPRINT_BEFORE_AND_AFTER_FULL_VERIFICATION",
+    "rollback": "REJECT",
+    "invalidOrExpired": "DISABLE_ROUTE_503_WITHOUT_STALE_FALLBACK",
+    "recovery": "VALID_CURRENT_MONOTONIC_GENERATION"
+  },
+  "status": {
+    "command": "buildopt-edge status --config ABSOLUTE_PATH",
+    "path": "STATE_DIRECTORY/edge-status.json",
+    "mode": "0600",
+    "freshnessSeconds": 5,
+    "containsSecretsPathsKeysOrRepositoryIdentity": false,
+    "administrativeHTTPRoutes": false
+  },
+  "service": {
+    "platform": "linux-amd64-systemd",
+    "binaryInSignedReleaseBundle": true,
+    "generator": "./dev/render-edge-service",
+    "unitMode": "0600",
+    "supervisorMutation": "EXPLICIT_OPERATOR_ACTION",
+    "stateWriteScope": "CONFIGURED_EDGE_STATE_ONLY"
+  },
+  "proof": {
+    "command": "./dev/check-edge-operability",
+    "realLoopbackListener": true,
+    "durablePendingReplication": true,
+    "invalidReloadFailClosed": true,
+    "higherGenerationRecovery": true,
+    "gracefulStop": true,
+    "sourceTreePreserved": true
+  },
+  "boundaries": {
+    "closes": [
+      "O1-001",
+      "O1-002",
+      "O1-003",
+      "O1-004",
+      "O1-G01",
+      "POC-O1"
+    ],
+    "doesNotClose": [
+      "EIGHT_HOUR_SOAK",
+      "EXTERNAL_DESIGN_PARTNER_VALIDATION",
+      "HA_OR_BACKUP_RPO_RTO",
+      "ENTERPRISE_IDENTITY",
+      "NON_LINUX_PLATFORMS",
+      "PRODUCTION_READINESS"
+    ],
+    "sharedSoleCommitAuthority": true,
+    "sharedSoleCollisionAuthority": true,
+    "ownerOperatedProofOfConcept": true
+  }
+}

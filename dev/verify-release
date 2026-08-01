@@ -285,6 +285,7 @@ if ! jq -e \
             [.files[]?.fileName] |
             index("bin/buildopt") != null and
             index("bin/buildopt-server") != null and
+            index("bin/buildopt-edge") != null and
             index("lib/buildopt-gradle-plugin-" + $buildopt_version + ".jar") != null and
             index("lib/buildopt-jvm-agent-" + $buildopt_version + ".jar") != null
         )
@@ -367,6 +368,7 @@ printf '%s\n' \
     "${buildopt_base}/" \
     "${buildopt_base}/bin/" \
     "${buildopt_base}/bin/buildopt" \
+    "${buildopt_base}/bin/buildopt-edge" \
     "${buildopt_base}/bin/buildopt-server" \
     "${buildopt_base}/lib/" \
     "${buildopt_base}/lib/buildopt-gradle-plugin-${buildopt_version}.jar" \
@@ -384,7 +386,7 @@ tar -xzf \
     --same-permissions
 
 buildopt_extracted_root="${buildopt_test_root}/${buildopt_base}"
-for buildopt_binary in buildopt buildopt-server; do
+for buildopt_binary in buildopt buildopt-edge buildopt-server; do
     if [[ ! -f "${buildopt_extracted_root}/bin/${buildopt_binary}" ]] ||
         [[ -L "${buildopt_extracted_root}/bin/${buildopt_binary}" ]] ||
         [[ "$(stat -c '%a' "${buildopt_extracted_root}/bin/${buildopt_binary}")" != \

@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/edge-operability-v1.json"
+
+for buildopt_command in git go jq mktemp; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Edge operability command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/edge-operability/v1" and
+    .gateId == "O1-G01" and
+    .milestone == "POC-O1" and
+    .execution == "CURRENT_SOURCE_TREE_COMPOSITE" and
+    [.constituents[].item] == ["O1-001", "O1-002", "O1-003", "O1-004"] and
+    .runtime.command == "buildopt-edge serve --config ABSOLUTE_PATH" and
+    .runtime.workers == [
+        "AUTHORITY_RELOAD",
+        "PENDING_REPLICATION",
+        "BYTE_SLRU_MAINTENANCE",
+        "PRIVATE_STATUS_PUBLICATION"
+    ] and
+    .reload.invalidOrExpired == "DISABLE_ROUTE_503_WITHOUT_STALE_FALLBACK" and
+    .reload.rollback == "REJECT" and
+    .status.freshnessSeconds == 5 and
+    .status.containsSecretsPathsKeysOrRepositoryIdentity == false and
+    .status.administrativeHTTPRoutes == false and
+    .service.binaryInSignedReleaseBundle == true and
+    .service.supervisorMutation == "EXPLICIT_OPERATOR_ACTION" and
+    .proof.command == "./dev/check-edge-operability" and
+    .proof.realLoopbackListener == true and
+    .proof.invalidReloadFailClosed == true and
+    .proof.higherGenerationRecovery == true and
+    .proof.gracefulStop == true and
+    .boundaries.closes == [
+        "O1-001", "O1-002", "O1-003", "O1-004", "O1-G01", "POC-O1"
+    ] and
+    .boundaries.sharedSoleCommitAuthority == true and
+    .boundaries.sharedSoleCollisionAuthority == true and
+    .boundaries.ownerOperatedProofOfConcept == true
+' "${buildopt_contract}" >/dev/null
+
+buildopt_before_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_test_root=$(mktemp -d)
+buildopt_cleanup() {
+    if [[ "${buildopt_test_root}" == /tmp/* ]] && [[ -d "${buildopt_test_root}" ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+cd -- "${buildopt_repo_root}"
+./dev/run --toolchain go -- go test -race -count=1 \
+    ./internal/edgecache ./cmd/buildopt-edge
+./dev/run --toolchain go -- go vet ./internal/edgecache ./cmd/buildopt-edge
+./dev/run --toolchain go -- go build -o "${buildopt_test_root}/buildopt-edge" \
+    ./cmd/buildopt-edge
+"${buildopt_test_root}/buildopt-edge" --help >/dev/null
+./dev/check-edge-service
+
+buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'Edge operability gate changed the source tree\n' >&2
+    exit 1
+fi
+printf 'O1-G01 Edge operability gate passed: runtime, reload, status, service, and graceful lifecycle complete\n'

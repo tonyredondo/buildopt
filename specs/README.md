@@ -34,6 +34,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`edge-cache-pending-replication-v1.md`](./edge-cache-pending-replication-v1.md) | `C2-004` |
 | [`edge-cache-two-node-proxy-v1.md`](./edge-cache-two-node-proxy-v1.md) | `C2-005` |
 | [`edge-cache-gate-v1.md`](./edge-cache-gate-v1.md) | `C2-G01` / MVP-C2 |
+| [`edge-operability-v1.md`](./edge-operability-v1.md) | `O1-001..004` / `O1-G01` / POC-O1 |
 | [`custom-task-contract-java-recipe-v1.md`](./custom-task-contract-java-recipe-v1.md) | `C4-004` / `C4-G06` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`full-relevant-validation-gate-v1.md`](./full-relevant-validation-gate-v1.md) | `C4-006` / `C4-G02` |
@@ -124,6 +125,9 @@ committed-first and exact-attempt fallback, and owner-controlled two-Edge
 central-collision proof.
 `edge-cache-gate-v1.json` is the C2-G01 current-tree constituent, invariant,
 boundary, and final two-node runtime composition contract.
+`edge-operability-v1.json` is the POC-O1 standalone process, signed hot reload,
+private aggregate status, signed-bundle, reproducible-systemd-unit, and
+graceful-lifecycle composition contract.
 `no-hit-overhead-v1.json` is the A0-G06 paired strict-runner contract for
 authenticated read-only L2 misses, fresh L1/output state, long-session p95
 budgets, and pre-outcome L2 omission with zero short-session requests.

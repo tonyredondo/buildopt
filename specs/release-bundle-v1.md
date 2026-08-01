@@ -11,6 +11,7 @@ before the first GitHub Action can install `buildopt`. It packages only the
 components that exist at this Phase 0 gate:
 
 - the `buildopt` launcher and local gateway;
+- the owner-operated `buildopt-edge` cache process;
 - the `buildopt-server` modular monolith;
 - the `dev.buildopt` Gradle plugin JAR;
 - the opt-in JVM agent JAR.
@@ -38,6 +39,7 @@ The TAR has one root and no links or additional files:
 buildopt-<version>-linux-amd64/
 ├── bin/
 │   ├── buildopt
+│   ├── buildopt-edge
 │   └── buildopt-server
 └── lib/
     ├── buildopt-gradle-plugin-<version>.jar

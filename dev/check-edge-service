@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_before_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+mkdir -p "${buildopt_repo_root}/.tools"
+buildopt_test_root=$(mktemp -d "${buildopt_repo_root}/.tools/edge-service.XXXXXX")
+buildopt_cleanup() {
+    if [[ "${buildopt_test_root}" == "${buildopt_repo_root}/.tools/edge-service."* ]] &&
+        [[ -d "${buildopt_test_root}" ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_release="${buildopt_test_root}/release"
+buildopt_state="${buildopt_test_root}/state"
+buildopt_config="${buildopt_test_root}/edge.json"
+mkdir -p "${buildopt_release}/bin" "${buildopt_state}"
+chmod 0700 "${buildopt_state}"
+"${buildopt_repo_root}/dev/run" --toolchain go -- go build \
+    -o "${buildopt_release}/bin/buildopt-edge" ./cmd/buildopt-edge
+chmod 0755 "${buildopt_release}/bin/buildopt-edge"
+
+jq -n -S \
+    --arg buildopt_state "${buildopt_state}" \
+    --arg buildopt_credential "${buildopt_test_root}/credential" \
+    --arg buildopt_trust "${buildopt_test_root}/trust.json" \
+    --arg buildopt_authority "${buildopt_test_root}/authority.json" \
+    '{
+        schemaVersion: "buildopt.edge-cache/config/v1",
+        profile: "OWNER_POC_SINGLE_NODE",
+        edgeId: "edge-service-test",
+        server: {listen: "127.0.0.1:8043"},
+        shared: {
+            baseUrl: "https://shared.example.test:8042",
+            credentialPath: $buildopt_credential,
+            allowInsecureLoopback: false
+        },
+        storage: {
+            stateDirectory: $buildopt_state,
+            filesystemPolicy: "ALLOWLIST_PROVEN_LOCAL",
+            capacityBytes: 1073741824,
+            maximumObjectBytes: 104857600,
+            stableTtlSeconds: 2592000,
+            pendingTtlSeconds: 86400,
+            highWatermarkPercent: 85,
+            lowWatermarkPercent: 75,
+            protectedPercent: 80
+        },
+        authority: {
+            trustRootPath: $buildopt_trust,
+            snapshotPath: $buildopt_authority
+        },
+        policy: {
+            commitAuthority: "SHARED_ONLY",
+            collisionAuthority: "SHARED_ONLY",
+            offlineReadPolicy: "COMMITTED_CURRENT_REVOCATION",
+            offlineWriteVisibility: "ATTEMPT_ONLY_PENDING",
+            compressionPolicy: "DISABLED_UNTIL_MEASURED"
+        }
+    }' >"${buildopt_config}"
+chmod 0600 "${buildopt_config}"
+
+buildopt_unit_one="${buildopt_test_root}/buildopt-edge-one.service"
+buildopt_unit_two="${buildopt_test_root}/buildopt-edge-two.service"
+"${buildopt_script_dir}/render-edge-service" \
+    --release-root "${buildopt_release}" \
+    --config "${buildopt_config}" \
+    --output "${buildopt_unit_one}" >/dev/null
+"${buildopt_script_dir}/render-edge-service" \
+    --release-root "${buildopt_release}" \
+    --config "${buildopt_config}" \
+    --output "${buildopt_unit_two}" >/dev/null
+cmp -s "${buildopt_unit_one}" "${buildopt_unit_two}"
+systemd-analyze verify "${buildopt_unit_one}" >/dev/null
+grep -Fqx "ExecStart=${buildopt_release}/bin/buildopt-edge serve --config ${buildopt_config}" "${buildopt_unit_one}"
+grep -Fqx "ReadWritePaths=${buildopt_state}" "${buildopt_unit_one}"
+if grep -Eq 'credential|trust[.]json|authority[.]json' "${buildopt_unit_one}"; then
+    printf 'Edge unit exposed secret paths outside the private configuration\n' >&2
+    exit 1
+fi
+
+chmod 0644 "${buildopt_config}"
+if "${buildopt_script_dir}/render-edge-service" \
+    --release-root "${buildopt_release}" \
+    --config "${buildopt_config}" \
+    --output "${buildopt_test_root}/rejected.service" >/dev/null 2>&1; then
+    printf 'permissive Edge configuration was accepted\n' >&2
+    exit 1
+fi
+if [[ -e "${buildopt_test_root}/rejected.service" ]]; then
+    printf 'rejected Edge unit was published\n' >&2
+    exit 1
+fi
+
+buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'Edge service checker changed the source tree\n' >&2
+    exit 1
+fi
+printf 'Edge service rendering checks passed\n'

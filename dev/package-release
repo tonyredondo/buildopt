@@ -192,6 +192,16 @@ mkdir -p \
         -trimpath \
         -o "${buildopt_package_root}/bin/buildopt-server" \
         ./cmd/buildopt-server
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64 \
+        "${buildopt_run}" --toolchain go -- \
+        go build \
+        -mod=readonly \
+        -buildvcs=false \
+        -trimpath \
+        -o "${buildopt_package_root}/bin/buildopt-edge" \
+        ./cmd/buildopt-edge
 
     "${buildopt_run}" -- \
         "${buildopt_repo_root}/gradlew" \
@@ -226,7 +236,8 @@ chmod 0755 \
     "${buildopt_package_root}/bin" \
     "${buildopt_package_root}/lib" \
     "${buildopt_package_root}/bin/buildopt" \
-    "${buildopt_package_root}/bin/buildopt-server"
+    "${buildopt_package_root}/bin/buildopt-server" \
+    "${buildopt_package_root}/bin/buildopt-edge"
 chmod 0644 "${buildopt_package_root}/lib/"*.jar
 
 TZ=UTC tar \

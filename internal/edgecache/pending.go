@@ -34,11 +34,11 @@ type PendingWrite struct {
 }
 
 type PendingSnapshot struct {
-	Bytes      int64
-	Objects    int64
-	Queued     int64
-	Replicated int64
-	Rejected   int64
+	Bytes      int64 `json:"bytes"`
+	Objects    int64 `json:"objects"`
+	Queued     int64 `json:"queued"`
+	Replicated int64 `json:"replicated"`
+	Rejected   int64 `json:"rejected"`
 }
 
 type ReplicationReport struct {

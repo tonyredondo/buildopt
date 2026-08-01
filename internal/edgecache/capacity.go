@@ -23,28 +23,28 @@ type reservation struct {
 }
 
 type CapacitySnapshot struct {
-	CapacityBytes      int64
-	HighWatermarkBytes int64
-	LowWatermarkBytes  int64
-	ProtectedBytes     int64
-	StableBytes        int64
-	ProbationBytes     int64
-	ProtectedUsedBytes int64
-	PendingBytes       int64
-	TotalLogicalBytes  int64
-	ReservedBytes      int64
-	Objects            int64
+	CapacityBytes      int64 `json:"capacityBytes"`
+	HighWatermarkBytes int64 `json:"highWatermarkBytes"`
+	LowWatermarkBytes  int64 `json:"lowWatermarkBytes"`
+	ProtectedBytes     int64 `json:"protectedBytes"`
+	StableBytes        int64 `json:"stableBytes"`
+	ProbationBytes     int64 `json:"probationBytes"`
+	ProtectedUsedBytes int64 `json:"protectedUsedBytes"`
+	PendingBytes       int64 `json:"pendingBytes"`
+	TotalLogicalBytes  int64 `json:"totalLogicalBytes"`
+	ReservedBytes      int64 `json:"reservedBytes"`
+	Objects            int64 `json:"objects"`
 }
 
 type MaintenanceReport struct {
-	StableBytesBefore int64
-	StableBytesAfter  int64
-	ExpiredObjects    int
-	ExpiredPending    int
-	EvictedProbation  int
-	EvictedProtected  int
-	DemotedProtected  int
-	DeletedBlobs      int
+	StableBytesBefore int64 `json:"stableBytesBefore"`
+	StableBytesAfter  int64 `json:"stableBytesAfter"`
+	ExpiredObjects    int   `json:"expiredObjects"`
+	ExpiredPending    int   `json:"expiredPending"`
+	EvictedProbation  int   `json:"evictedProbation"`
+	EvictedProtected  int   `json:"evictedProtected"`
+	DemotedProtected  int   `json:"demotedProtected"`
+	DeletedBlobs      int   `json:"deletedBlobs"`
 }
 
 type evictionRow struct {

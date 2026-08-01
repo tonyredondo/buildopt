@@ -14,6 +14,9 @@ work extends them without silently changing the Phase 0 safety boundary.
 - [`self-hosted-single-node.md`](./self-hosted-single-node.md): signed install,
   private inputs, explicit systemd activation, admission, and removal for
   `A2-002`.
+- [`edge-cache.md`](./edge-cache.md): direct and systemd Edge operation,
+  aggregate status, fail-closed authority rotation, and state preservation for
+  `POC-O1`.
 
 Run the recorded exercises from the repository root:
 
@@ -21,4 +24,5 @@ Run the recorded exercises from the repository root:
 ./dev/check-base-runbooks
 ./dev/check-private-beta-operations
 ./dev/check-self-hosted-service-install
+./dev/check-edge-operability
 ```

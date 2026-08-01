@@ -2,13 +2,13 @@
 
 Monorepo for the autonomous Gradle build optimization platform. The product observes real builds, applies only qualified and reversible optimizations, preserves Gradle behavior as the baseline, and measures net time savings inside the neutral measurement envelope.
 
-The repository has completed **MVP-A0** and is executing the owner-operated
-**MVP-A1** POC. It contains the internal managed-cache path, exact Tier 1
-safety and lifecycle gates, causal measurement, locked toolchains, a
-verifiable Linux AMD64 release lifecycle, and the first signed deployment on
-an immutable owner-controlled synthetic repository. Multi-repository causal
-evaluation remains open; external design-partner evidence and the eight-hour
-soak are deferred to productization.
+The repository has completed its owner-operated proof of concept, including
+MVP-A1, Runtime Optimization, Task Intelligence, Patch Autopilot, self-hosted
+single-node, Build Impact, and the optional Edge Cache. The Edge implementation
+now ships as a preflighted Linux AMD64 process with signed fail-closed authority
+reload, durable replication/maintenance, private aggregate status, graceful
+shutdown, and reproducible systemd packaging. External design-partner evidence
+and the eight-hour soak remain deferred to productization.
 
 ## Sources of truth
 
@@ -23,6 +23,7 @@ An RFC example is not an executable contract. If a contract contradicts an RFC i
 | Path | Artifact or responsibility | Stack | First activating item |
 |---|---|---|---|
 | `cmd/buildopt/` | Launcher and Local Verifying Cache Gateway | Go | `WS-001` |
+| `cmd/buildopt-edge/` | Owner-operated Edge Cache runtime and status CLI | Go | `O1-001` |
 | `cmd/buildopt-server/` | Modular monolith for cache, policy, evidence, and export | Go | `WS-005` |
 | `internal/` | Private Go packages shared by both binaries | Go | `WS-001` |
 | `jvm/gradle-plugin/` | Gradle plugin, adapters, and handshake | Java 17 | `WS-003` |
@@ -141,6 +142,8 @@ From the repository root:
 ./dev/check-beta-circuit-breaker
 ./dev/check-beta-gradle-fixtures
 ./dev/check-private-beta-operations
+./dev/check-edge-operability
+./dev/check-edge-service
 ./dev/check-github-action
 ./dev/check-base-runbooks
 ./dev/run -- ./dev/check-jvm-release
