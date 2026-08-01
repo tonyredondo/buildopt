@@ -96,8 +96,10 @@ func TestLoadRejectsUnknownFieldsModesAndTrailingDocuments(t *testing.T) {
 	root := t.TempDir()
 	config := validConfig(root)
 	path := writeConfig(t, root, config, 0o644)
-	if _, err := Load(path); err == nil {
-		t.Fatal("permissive configuration mode accepted")
+	if runtime.GOOS != "windows" {
+		if _, err := Load(path); err == nil {
+			t.Fatal("permissive configuration mode accepted")
+		}
 	}
 	if err := os.Chmod(path, 0o600); err != nil {
 		t.Fatal(err)
@@ -200,7 +202,11 @@ func TestCheckedInExampleLoadsThroughProductionBoundary(t *testing.T) {
 		t.Fatal("test source path is unavailable")
 	}
 	repositoryRoot := filepath.Clean(filepath.Join(filepath.Dir(source), "..", ".."))
-	raw, err := os.ReadFile(filepath.Join(repositoryRoot, "specs", "edge-cache.example.json"))
+	example := "edge-cache.example.json"
+	if runtime.GOOS == "windows" {
+		example = "edge-cache.windows.example.json"
+	}
+	raw, err := os.ReadFile(filepath.Join(repositoryRoot, "specs", example))
 	if err != nil {
 		t.Fatal(err)
 	}

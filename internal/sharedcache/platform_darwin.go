@@ -20,10 +20,15 @@ func preparePrivateDirectory(path string) error {
 	if err != nil {
 		return err
 	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok || stat.Uid != uint32(os.Geteuid()) || !info.IsDir() ||
-		info.Mode()&os.ModeSymlink != 0 || info.Mode().Perm() != 0o700 {
+	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
 		return fmt.Errorf("%s is not a private directory", path)
+	}
+	stat, ok := info.Sys().(*syscall.Stat_t)
+	if !ok || stat.Uid != uint32(os.Geteuid()) {
+		return fmt.Errorf("%s is not owned by the current user", path)
+	}
+	if info.Mode().Perm() != 0o700 {
+		return fmt.Errorf("%s must have mode 0700", path)
 	}
 	return nil
 }
@@ -68,8 +73,11 @@ func validatePrivateRegularFile(file *os.File) error {
 	}
 	stat, ok := info.Sys().(*syscall.Stat_t)
 	if !ok || stat.Uid != uint32(os.Geteuid()) || !info.Mode().IsRegular() ||
-		info.Mode()&os.ModeSymlink != 0 || info.Mode().Perm() != 0o600 || stat.Nlink != 1 {
+		info.Mode()&os.ModeSymlink != 0 || stat.Nlink != 1 {
 		return errors.New("file must be private, regular, and singly linked")
+	}
+	if info.Mode().Perm() != 0o600 {
+		return errors.New("file must have mode 0600")
 	}
 	return nil
 }

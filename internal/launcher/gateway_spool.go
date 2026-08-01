@@ -66,6 +66,7 @@ type gatewaySpoolReservation struct {
 
 type verifiedGatewayPayload struct {
 	file        *os.File
+	cleanupPath string
 	reservation *gatewaySpoolReservation
 	size        int64
 	digest      string
@@ -218,7 +219,8 @@ func (spool *gatewaySpool) receive(
 			err,
 		)
 	}
-	if err := os.Remove(path); err != nil {
+	cleanupPath, err := detachGatewaySpoolFile(path)
+	if err != nil {
 		return verifiedGatewayPayload{}, gatewaySpoolIOError("unlink", err)
 	}
 	remove = false
@@ -232,6 +234,7 @@ func (spool *gatewaySpool) receive(
 	releaseReservation = false
 	return verifiedGatewayPayload{
 		file:        file,
+		cleanupPath: cleanupPath,
 		reservation: reservation,
 		size:        size,
 		digest:      actualDigest,
@@ -279,6 +282,10 @@ func (payload *verifiedGatewayPayload) close() error {
 	if payload.file != nil {
 		err = payload.file.Close()
 		payload.file = nil
+	}
+	if payload.cleanupPath != "" {
+		err = errors.Join(err, os.Remove(payload.cleanupPath))
+		payload.cleanupPath = ""
 	}
 	if payload.reservation != nil {
 		payload.reservation.release()

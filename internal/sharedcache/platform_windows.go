@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/tonyredondo/buildopt/internal/filelock"
+	"github.com/tonyredondo/buildopt/internal/platformfs"
 	"golang.org/x/sys/windows"
 )
 
@@ -100,8 +101,7 @@ func validateLocalStorageFilesystem(paths ...string) error {
 		if strings.ToUpper(filepath.VolumeName(path)) != volume {
 			return fmt.Errorf("%s is on a different volume", path)
 		}
-		resolved, err := filepath.EvalSymlinks(path)
-		if err != nil || !strings.EqualFold(filepath.Clean(resolved), filepath.Clean(path)) {
+		if err := platformfs.ValidateNoLinks(path); err != nil {
 			return fmt.Errorf("%s contains a reparse point", path)
 		}
 	}

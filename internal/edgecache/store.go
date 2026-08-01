@@ -13,6 +13,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/tonyredondo/buildopt/internal/platformfs"
+
 	_ "modernc.org/sqlite"
 )
 
@@ -601,8 +603,7 @@ func preparePrivateRoot(root string) error {
 			if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
 				return errors.New("Edge state ancestor must be a real directory")
 			}
-			resolved, err := filepath.EvalSymlinks(existing)
-			if err != nil || resolved != existing {
+			if err := platformfs.ValidateNoLinks(existing); err != nil {
 				return errors.New("Edge state ancestors must not contain symlinks")
 			}
 			break
@@ -619,8 +620,7 @@ func preparePrivateRoot(root string) error {
 	if err := os.MkdirAll(root, 0o700); err != nil {
 		return err
 	}
-	resolved, err := filepath.EvalSymlinks(root)
-	if err != nil || resolved != root {
+	if err := platformfs.ValidateNoLinks(root); err != nil {
 		return errors.New("Edge state root must not resolve through symlinks")
 	}
 	return os.Chmod(root, 0o700)

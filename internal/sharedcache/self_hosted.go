@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/tonyredondo/buildopt/internal/platformfs"
 )
 
 const SelfHostedMinimumDeploymentBytes int64 = 20 << 30
@@ -43,11 +45,7 @@ func ValidateSelfHostedStorageRoot(root string) (CapacityPolicy, error) {
 		}
 		existing = parent
 	}
-	resolved, err := filepath.EvalSymlinks(existing)
-	if err != nil {
-		return CapacityPolicy{}, err
-	}
-	if resolved != existing {
+	if err := platformfs.ValidateNoLinks(existing); err != nil {
 		return CapacityPolicy{}, errors.New("self-hosted storage ancestors must not contain symlinks")
 	}
 	if err := validateLocalStorageFilesystem(existing); err != nil {

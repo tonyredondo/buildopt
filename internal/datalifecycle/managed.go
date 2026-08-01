@@ -790,18 +790,6 @@ func decodeStrictJSON(content []byte, destination any) error {
 	return nil
 }
 
-func syncPrivateDirectory(path string) error {
-	directory, err := os.Open(path)
-	if err != nil {
-		return errors.New("open private directory for sync")
-	}
-	defer directory.Close()
-	if err := directory.Sync(); err != nil {
-		return errors.New("sync private directory")
-	}
-	return nil
-}
-
 func validSHA256(value string) bool {
 	return len(value) == 71 && strings.HasPrefix(value, "sha256:") &&
 		isLowerHex(value[7:])

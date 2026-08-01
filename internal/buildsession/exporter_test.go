@@ -32,8 +32,8 @@ func TestExporterPublishesPrivateImmutableJSON(t *testing.T) {
 	if err != nil {
 		t.Fatalf("stat export: %v", err)
 	}
-	if info.Mode().Perm() != 0o600 {
-		t.Fatalf("export mode = %o, want 600", info.Mode().Perm())
+	if !privateFileInfo(info) {
+		t.Fatalf("export is not private on this platform: %v", info.Mode())
 	}
 	content, err := os.ReadFile(path)
 	if err != nil {
@@ -92,17 +92,16 @@ func TestExporterPublishesPrivateImmutableJSON(t *testing.T) {
 	if err != nil {
 		t.Fatalf("stat redaction key: %v", err)
 	}
-	if keyInfo.Mode().Perm() != 0o600 ||
-		keyInfo.Size() != datalifecycle.RedactionKeyBytes {
-		t.Fatalf("redaction key mode/size = %o/%d", keyInfo.Mode().Perm(), keyInfo.Size())
+	if !privateFileInfo(keyInfo) || keyInfo.Size() != datalifecycle.RedactionKeyBytes {
+		t.Fatalf("redaction key privacy/size = %v/%d", keyInfo.Mode(), keyInfo.Size())
 	}
 	streamPath := filepath.Join(filepath.Dir(path), "buildopt-events.jsonl")
 	streamInfo, err := os.Stat(streamPath)
 	if err != nil {
 		t.Fatalf("stat JSONL stream: %v", err)
 	}
-	if streamInfo.Mode().Perm() != 0o600 {
-		t.Fatalf("JSONL stream mode = %o, want 600", streamInfo.Mode().Perm())
+	if !privateFileInfo(streamInfo) {
+		t.Fatalf("JSONL stream is not private on this platform: %v", streamInfo.Mode())
 	}
 	var stream bytes.Buffer
 	if err := exporter.WriteJSONL(&stream); err != nil {

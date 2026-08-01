@@ -436,7 +436,7 @@ func identicalRegularFile(path string, expected []byte) (bool, error) {
 		}
 		return false, errors.New("inspect existing BUILD_SESSION export")
 	}
-	if !info.Mode().IsRegular() || info.Mode().Perm() != 0o600 {
+	if !privateFileInfo(info) {
 		return false, errors.New(
 			"existing BUILD_SESSION export is not a private regular file",
 		)

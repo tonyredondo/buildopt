@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestPortableHandshakeUsesAuthenticatedLoopbackTCP(t *testing.T) {
@@ -28,9 +29,18 @@ func TestPortableHandshakeUsesAuthenticatedLoopbackTCP(t *testing.T) {
 	if _, err := connection.Write(make([]byte, len(pluginAuthMagic)+pluginTokenBytes)); err != nil {
 		t.Fatal(err)
 	}
+	// Wait for the server to reject the complete preface before finish closes
+	// the selected connection during cleanup.
+	if err := connection.SetReadDeadline(time.Now().Add(time.Second)); err != nil {
+		t.Fatal(err)
+	}
+	var response [1]byte
+	if _, err := connection.Read(response[:]); err == nil {
+		t.Fatal("unauthenticated portable connection remained open")
+	}
 	_ = connection.Close()
 	result := server.finish()
 	if !result.connected || result.err == nil || !strings.Contains(result.err.Error(), "credential") {
-		t.Fatalf("unauthenticated portable result = %+v", result)
+		t.Fatalf("unauthenticated portable result = %+v, err = %v", result, result.err)
 	}
 }

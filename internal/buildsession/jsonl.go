@@ -686,9 +686,7 @@ func readOptionalPrivateFile(path string) (bool, []byte, error) {
 		return false, nil, nil
 	}
 	if err != nil ||
-		!info.Mode().IsRegular() ||
-		info.Mode()&os.ModeSymlink != 0 ||
-		info.Mode().Perm() != 0o600 ||
+		!privateFileInfo(info) ||
 		info.Size() < 0 ||
 		info.Size() > exportJSONLMaximumLine {
 		return false, nil, errors.New(

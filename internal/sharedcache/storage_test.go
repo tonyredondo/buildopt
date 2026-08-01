@@ -594,9 +594,7 @@ func assertMode(
 	if err != nil {
 		t.Fatalf("stat %s: %v", path, err)
 	}
-	if info.IsDir() != directory ||
-		info.Mode()&os.ModeSymlink != 0 ||
-		info.Mode().Perm() != mode {
+	if !testPrivateMode(info, directory, mode) {
 		t.Fatalf("%s mode/type = %s, want directory=%t mode=%o", path, info.Mode(), directory, mode)
 	}
 }

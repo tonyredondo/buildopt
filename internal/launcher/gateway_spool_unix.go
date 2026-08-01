@@ -29,6 +29,10 @@ func openGatewaySpoolFile(path string) (*os.File, error) {
 	return os.OpenFile(path, os.O_RDONLY|syscall.O_NOFOLLOW, 0)
 }
 
+func detachGatewaySpoolFile(path string) (string, error) {
+	return "", os.Remove(path)
+}
+
 func syncGatewaySpoolDirectory(path string) error {
 	directory, err := os.Open(path)
 	if err != nil {

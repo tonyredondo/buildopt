@@ -25,3 +25,7 @@ func privateDirectoryInfo(info os.FileInfo) bool {
 func privateFileInfo(info os.FileInfo) bool {
 	return info.Mode().IsRegular() && info.Mode()&os.ModeSymlink == 0
 }
+
+// Windows cannot flush directory handles through os.File. File contents are
+// flushed before atomic replacement, which is the native durability boundary.
+func syncPrivateDirectory(string) error { return nil }

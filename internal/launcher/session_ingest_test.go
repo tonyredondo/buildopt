@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"net/http/httptest"
-	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -49,22 +48,9 @@ func TestLauncherDeliversSessionWithoutExposingServerCredential(t *testing.T) {
 
 			t.Setenv(serverURLEnvironment, server.URL)
 			t.Setenv(serverTokenEnvironment, launcherIngestTestToken)
-			script := `
-test -z "${BUILDOPT_SERVER_URL+x}" || exit 97
-test -z "${BUILDOPT_SERVER_INGEST_TOKEN+x}" || exit 98
-exit "$1"
-`
 			var stderr bytes.Buffer
 			exitCode := Run(
-				[]string{
-					"run",
-					"--",
-					"/bin/sh",
-					"-c",
-					script,
-					"buildopt-session-test",
-					strconv.Itoa(testCase.childExit),
-				},
+				sessionIngestChildCommand(testCase.childExit),
 				strings.NewReader(""),
 				&bytes.Buffer{},
 				&stderr,
@@ -115,7 +101,7 @@ func TestLauncherPreservesChildExitWhenSessionIngestFails(t *testing.T) {
 
 	var stderr bytes.Buffer
 	exitCode := Run(
-		[]string{"run", "--", "/bin/sh", "-c", "exit 23"},
+		sessionIngestChildCommand(23),
 		strings.NewReader(""),
 		&bytes.Buffer{},
 		&stderr,

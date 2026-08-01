@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"path/filepath"
 	"slices"
 	"strings"
 	"time"
@@ -665,9 +666,13 @@ func openSQLiteMetadata(
 }
 
 func sqliteDataSource(path string) string {
+	urlPath := filepath.ToSlash(path)
+	if filepath.VolumeName(path) != "" && !strings.HasPrefix(urlPath, "/") {
+		urlPath = "/" + urlPath
+	}
 	databaseURL := &url.URL{
 		Scheme: "file",
-		Path:   path,
+		Path:   urlPath,
 	}
 	query := url.Values{}
 	query.Set("_busy_timeout", "5000")

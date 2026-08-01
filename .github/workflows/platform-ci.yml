@@ -33,7 +33,9 @@ jobs:
           java-version: '21.0.12+8.0.LTS'
       - name: Run native runtime tests
         shell: bash
-        run: go test -count=1 ./internal/filelock ./internal/datalifecycle ./internal/buildsession ./internal/localauthority ./internal/sharedcache ./internal/edgecache ./internal/launcher ./cmd/buildopt-server ./cmd/buildopt-edge
+        run: |
+          mkdir -p "$RUNNER_TEMP/go-tmp"
+          TMPDIR="$RUNNER_TEMP/go-tmp" go test -count=1 ./internal/filelock ./internal/datalifecycle ./internal/buildsession ./internal/localauthority ./internal/sharedcache ./internal/edgecache ./internal/launcher ./cmd/buildopt-server ./cmd/buildopt-edge
       - name: Build, package, install, upgrade, and launch
         shell: bash
         run: |

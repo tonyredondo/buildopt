@@ -3,6 +3,7 @@
 package datalifecycle
 
 import (
+	"errors"
 	"os"
 	"syscall"
 
@@ -27,4 +28,16 @@ func privateFileInfo(info os.FileInfo) bool {
 	stat, ok := info.Sys().(*syscall.Stat_t)
 	return ok && stat.Uid == uint32(os.Geteuid()) && info.Mode().IsRegular() &&
 		info.Mode()&os.ModeSymlink == 0 && info.Mode().Perm() == 0o600
+}
+
+func syncPrivateDirectory(path string) error {
+	directory, err := os.Open(path)
+	if err != nil {
+		return errors.New("open private directory for sync")
+	}
+	defer directory.Close()
+	if err := directory.Sync(); err != nil {
+		return errors.New("sync private directory")
+	}
+	return nil
 }
