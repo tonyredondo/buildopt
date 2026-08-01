@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "buildopt.specs/build-impact-shadow-validation/v1",
+  "workItem": "C3-003",
+  "observation": {
+    "schemaVersion": "buildopt.build-impact/validation-observation/v1",
+    "bindings": ["repositoryId", "pipelineClass", "revision", "manifestDigest", "graphDigest", "adapterVersion", "changeClass", "observedAt"],
+    "modes": ["SHADOW", "PAIRED_CONTROL"],
+    "baseline": "COMPLETE_ORIGINAL_ENTRYPOINT_EXECUTION",
+    "candidate": "ABSENT_IN_SHADOW_REQUIRED_IN_PAIRED_CONTROL",
+    "explicitCollections": ["changedPaths", "entrypoints", "projects", "artifacts", "checks"]
+  },
+  "outcomes": {
+    "shadow": "SHADOW_VALIDATED",
+    "pairedControl": "CONTROL_PASSED",
+    "candidateBuildOrDivergence": "FALSE_NEGATIVE",
+    "infrastructureOrInvalidBaseline": "INCONCLUSIVE",
+    "fullGraphDecision": "INCONCLUSIVE_NOT_ELIGIBLE"
+  },
+  "comparison": {
+    "projects": "EXACT_DECLARED_REACH",
+    "artifacts": "EXACT_REQUIRED_ID_PATH_DIGEST_SIZE",
+    "checks": "EXACT_REQUIRED_ID_OWNER_PASSED",
+    "testOptimization": "PRESERVED_AND_COMPARED_NOT_SELECTED",
+    "history": "NEVER_AUTHORIZES_OMISSION"
+  },
+  "result": {
+    "schemaVersion": "buildopt.build-impact/validation-result/v1",
+    "selectionAuthorized": false,
+    "falseNegative": "EXPLICIT_BOOLEAN",
+    "fullControl": "TRUE_ONLY_FOR_PAIRED_CONTROL"
+  },
+  "boundaries": {
+    "closes": ["C3-003"],
+    "doesNotClose": ["C3-004", "C3-005", "C3-G01", "BIA-002", "ACTIVE_SELECTION", "EIGHT_HOUR_SOAK", "PRODUCTION_PROMOTION"],
+    "ownerOperatedProofOfConcept": true
+  }
+}

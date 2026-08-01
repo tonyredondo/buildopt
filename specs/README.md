@@ -24,6 +24,7 @@ Operational contracts connecting multiple components: CI orchestration, Gradle c
 | [`task-intelligence-poc-v1.md`](./task-intelligence-poc-v1.md) | `MVP-C1` |
 | [`build-impact-manifest-v1.md`](./build-impact-manifest-v1.md) | `C3-001` |
 | [`build-impact-declared-graph-v1.md`](./build-impact-declared-graph-v1.md) | `C3-002` |
+| [`build-impact-shadow-validation-v1.md`](./build-impact-shadow-validation-v1.md) | `C3-003` |
 | [`custom-task-contract-java-recipe-v1.md`](./custom-task-contract-java-recipe-v1.md) | `C4-004` / `C4-G06` |
 | [`test-optimization-integration-v1.md`](./test-optimization-integration-v1.md) | `F0-033` |
 | [`full-relevant-validation-gate-v1.md`](./full-relevant-validation-gate-v1.md) | `C4-006` / `C4-G02` |
@@ -188,6 +189,11 @@ manifest-digest-bound Gradle graph and shadow decision contract: affected
 projects include reverse dependents, every required artifact/Build-owned check
 must remain reachable, Test-owned checks stay untouched, and all unknown or
 global cases run the original full graph.
+`build-impact-shadow-validation-v1.json` is the C3-003 immutable observation
+and result contract for full-baseline shadow evidence, isolated paired
+controls, exact project/artifact/check comparison, explicit false negatives,
+and infrastructure/baseline `INCONCLUSIVE` outcomes; every result keeps active
+selection disabled.
 `pending-commit-cas-v1.json` is the A0-005 lifecycle contract for durable
 pending attempts, canonical Ed25519 decisions, atomic first-writer visibility,
 context-bound opaque HTTP GET/PUT, quarantine, and startup reconciliation.

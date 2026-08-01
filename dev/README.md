@@ -1518,6 +1518,20 @@ strict rejection of missing security fields, cycles, unknown references, and
 Test-containing alternatives. Execution stays on the original entrypoints;
 the calculated alternative is shadow-only.
 
+## Build Impact shadow validation
+
+Run the C3-003 observation and comparison matrix with:
+
+```bash
+./dev/check-build-impact-shadow-validation
+```
+
+The checker validates exact manifest/graph/adapter-bound shadow and paired
+control fixtures. It requires the full original baseline, exact project reach,
+required artifact digests/sizes and every owned check. Candidate build or
+content/check/project divergence is a false negative; infrastructure and
+invalid baseline evidence remain `INCONCLUSIVE`. No result authorizes selection.
+
 ## Runtime owner evaluation
 
 On the exact 4-CPU/16-GiB runner, execute real A/A and resource-profile

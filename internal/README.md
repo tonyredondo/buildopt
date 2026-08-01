@@ -74,8 +74,11 @@ unknown-change policy other than `FULL_GRAPH`. C3-002 binds a complete
 Gradle-declared graph to that digest, maps source changes through transitive
 reverse dependents, and predicts only customer-enumerated alternatives that
 cover every affected project, artifact, and Build-owned check. Test-owned work
-is preserved and execution remains on the original entrypoints; shadow and
-BIA-002 gates remain mandatory.
+is preserved and execution remains on the original entrypoints. C3-003 records
+strict manifest/graph/adapter-bound full-baseline and paired-control
+observations, classifies candidate build/content/check/project divergence as a
+false negative, and keeps infrastructure or invalid baselines inconclusive.
+Every result disables selection; BIA-002 remains mandatory.
 
 No type in this directory replaces the normative schemas, OpenAPI, or Protobuf definitions in `contracts/`.
 

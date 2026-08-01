@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "buildopt.build-impact/validation-observation/v1",
+  "observationId": "bia-control-1",
+  "repositoryId": "tonyredondo/buildopt",
+  "pipelineClass": "pull-request",
+  "revision": "2222222222222222222222222222222222222222",
+  "manifestDigest": "sha256:2c55a3d6de6d75f34bf5c07f6464d0bb9ac54631352a1f3132220d99e69ba2c0",
+  "graphDigest": "sha256:500c6387ed5ed078a94f01a82b3614b3b6c2baff33c97b96b86882696d21d6c3",
+  "adapterVersion": "gradle-declared-v1",
+  "changeClass": "production-source",
+  "observedAt": "2026-08-01T09:00:00Z",
+  "mode": "PAIRED_CONTROL",
+  "changedPaths": [
+    "jvm/patcher/src/main/java/dev/buildopt/patcher/PatchBundle.java"
+  ],
+  "baseline": {
+    "outcome": "SUCCESS",
+    "entrypoints": ["assemble"],
+    "projects": [
+      ":fixtures:golden-lane",
+      ":jvm:generated-client",
+      ":jvm:gradle-plugin",
+      ":jvm:jvm-agent",
+      ":jvm:patcher"
+    ],
+    "artifacts": [
+      {
+        "id": "gradle-plugin-jar",
+        "path": "jvm/gradle-plugin/build/libs/gradle-plugin.jar",
+        "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sizeBytes": 128
+      },
+      {
+        "id": "patcher-jar",
+        "path": "jvm/patcher/build/libs/patcher.jar",
+        "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "sizeBytes": 256
+      }
+    ],
+    "checks": [
+      {
+        "id": "jvm-tests",
+        "owner": "TEST_OPTIMIZATION",
+        "outcome": "PASSED"
+      }
+    ]
+  },
+  "candidate": {
+    "outcome": "SUCCESS",
+    "entrypoints": [
+      ":jvm:generated-client:assemble",
+      ":jvm:gradle-plugin:assemble",
+      ":jvm:jvm-agent:assemble",
+      ":jvm:patcher:assemble"
+    ],
+    "projects": [
+      ":jvm:generated-client",
+      ":jvm:gradle-plugin",
+      ":jvm:jvm-agent",
+      ":jvm:patcher"
+    ],
+    "artifacts": [
+      {
+        "id": "gradle-plugin-jar",
+        "path": "jvm/gradle-plugin/build/libs/gradle-plugin.jar",
+        "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sizeBytes": 128
+      },
+      {
+        "id": "patcher-jar",
+        "path": "jvm/patcher/build/libs/patcher.jar",
+        "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "sizeBytes": 256
+      }
+    ],
+    "checks": [
+      {
+        "id": "jvm-tests",
+        "owner": "TEST_OPTIMIZATION",
+        "outcome": "PASSED"
+      }
+    ]
+  }
+}

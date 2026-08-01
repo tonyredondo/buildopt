@@ -12,6 +12,10 @@ manifest digest. A patcher source change predicts the customer-owned
 fixture; build logic, unknown paths, missing relationships, insufficient
 coverage, and Test-containing entrypoints use `FULL_GRAPH`.
 
-The pair authorizes no active omission. C3-003 must compare shadow predictions
-with full execution, and C3-004 must keep selection `INCONCLUSIVE` until the
-unchanged `BIA-002` evidence threshold passes.
+`shadow-observation.v1.json` proves the full original entrypoints and required
+outputs/checks were observed while only predicting `jvm-components`.
+`paired-control-observation.v1.json` adds an isolated candidate whose projects,
+artifacts, and Test-owned check exactly match the full baseline.
+
+These fixtures authorize no active omission. C3-004 must keep selection
+`INCONCLUSIVE` until the unchanged `BIA-002` evidence threshold passes.
