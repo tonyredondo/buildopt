@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "buildopt.specs/self-hosted-service-install/v1",
+  "itemId": "A2-002",
+  "platform": {
+    "operatingSystem": "linux",
+    "architecture": "amd64",
+    "supervisor": "systemd"
+  },
+  "release": {
+    "source": "SIGNED_RELEASE_BUNDLE_V1",
+    "verification": "EXTERNAL_PINNED_KEY_BEFORE_INSTALL",
+    "layout": "SIDE_BY_SIDE_IMMUTABLE_VERSIONS"
+  },
+  "installation": {
+    "manager": "dev/manage-self-hosted",
+    "commands": [
+      "install",
+      "status"
+    ],
+    "roots": "ABSOLUTE_CANONICAL_PRIVATE_DISJOINT",
+    "serviceMutation": "GENERATE_PRIVATE_UNIT_WITHOUT_SYSTEMCTL",
+    "repeatability": "FRESH_IDENTICAL_INPUTS_PRODUCE_BYTE_IDENTICAL_CONFIG_UNIT_MANIFEST"
+  },
+  "secrets": {
+    "storage": "EXTERNAL_MODE_0600_FILES",
+    "ingest": "EXACT_SINGLE_VARIABLE_ENVIRONMENT_FILE",
+    "embeddedInConfigOrUnit": false
+  },
+  "runtime": {
+    "configuration": "buildopt.self-hosted/config/v1",
+    "listener": "CANONICAL_IPV4_LOOPBACK",
+    "state": "PRIVATE_PERSISTENT_DATA_ROOT",
+    "activation": "OPERATOR_ENABLES_GENERATED_UNIT"
+  },
+  "boundaries": {
+    "closes": [
+      "A2-002"
+    ],
+    "doesNotClose": [
+      "A2-003",
+      "A2-004",
+      "A2-G01",
+      "SYSTEMD_ENABLE_OR_START_ON_OPERATOR_HOST",
+      "EIGHT_HOUR_SOAK",
+      "HIGH_AVAILABILITY"
+    ]
+  }
+}

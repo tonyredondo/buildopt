@@ -11,10 +11,14 @@ work extends them without silently changing the Phase 0 safety boundary.
 - [`private-beta-operations.md`](./private-beta-operations.md): preflight,
   health/readiness, alert triage, revocation, circuit fallback, shutdown,
   restart, rollback, and recovery for `A1-005`.
+- [`self-hosted-single-node.md`](./self-hosted-single-node.md): signed install,
+  private inputs, explicit systemd activation, admission, and removal for
+  `A2-002`.
 
 Run the recorded exercises from the repository root:
 
 ```bash
 ./dev/check-base-runbooks
 ./dev/check-private-beta-operations
+./dev/check-self-hosted-service-install
 ```

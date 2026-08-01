@@ -1186,6 +1186,22 @@ explicit destructive choice. See
 the complete contract. Public release publication, online revocation, and the
 pilot operational profile remain later work.
 
+## Self-hosted service installation
+
+Compose the signed deployment with the strict isolated configuration and a
+deterministic private systemd unit:
+
+```bash
+./dev/check-self-hosted-service-install
+```
+
+The `A2-002` checker packages and signs the real Linux AMD64 release, installs
+it twice from identical clean inputs, requires byte-identical configuration,
+unit, and manifest outputs, verifies the unit with `systemd-analyze`, and
+rejects permissive secret injection before creating deployment roots. See the
+[self-hosted runbook](../runbooks/self-hosted-single-node.md). The manager does
+not call `systemctl`; host activation stays an explicit operator action.
+
 ## Operational readiness and revocation
 
 Exercise the first `OPS-001/A1` operational slice:

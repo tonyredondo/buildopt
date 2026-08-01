@@ -188,6 +188,18 @@ explicit purge with:
 ./dev/check-deployment-lifecycle
 ```
 
+`A2-002` composes that signed installation with the strict self-hosted
+configuration, external mode-`0600` secret references, persistent private
+state/export roots, and a deterministic systemd unit:
+
+```bash
+./dev/check-self-hosted-service-install
+```
+
+The installer never enables or starts the unit. Follow
+[`runbooks/self-hosted-single-node.md`](../../runbooks/self-hosted-single-node.md)
+for explicit host activation and readiness admission.
+
 `OPS-001/A1` separates process health from safe serving:
 
 - `GET|HEAD /livez` returns `200` while the HTTP process is responsive;

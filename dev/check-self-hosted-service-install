@@ -1,0 +1,205 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+unset BUILDOPT_SERVER_INGEST_TOKEN BUILDOPT_SERVER_URL
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/self-hosted-service-install-v1.json"
+buildopt_tools_root=${BUILDOPT_TOOLS_ROOT:-"${buildopt_repo_root}/.tools"}
+buildopt_gradle_home=${GRADLE_USER_HOME:-"${buildopt_repo_root}/.tools/gradle-user-home/local"}
+
+for buildopt_command in \
+    awk \
+    chmod \
+    cp \
+    dirname \
+    git \
+    jq \
+    mkdir \
+    mktemp \
+    rm \
+    sha256sum \
+    systemd-analyze; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required self-hosted install command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if ! jq -e '
+    .schemaVersion == "buildopt.specs/self-hosted-service-install/v1" and
+    .itemId == "A2-002" and
+    .platform == {
+        operatingSystem: "linux",
+        architecture: "amd64",
+        supervisor: "systemd"
+    } and
+    .release == {
+        source: "SIGNED_RELEASE_BUNDLE_V1",
+        verification: "EXTERNAL_PINNED_KEY_BEFORE_INSTALL",
+        layout: "SIDE_BY_SIDE_IMMUTABLE_VERSIONS"
+    } and
+    .installation.commands == ["install", "status"] and
+    .installation.serviceMutation == "GENERATE_PRIVATE_UNIT_WITHOUT_SYSTEMCTL" and
+    .secrets.embeddedInConfigOrUnit == false and
+    .boundaries.closes == ["A2-002"] and
+    (.boundaries.doesNotClose | index("A2-G01")) != null
+' "${buildopt_contract}" >/dev/null; then
+    printf 'self-hosted service install contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+buildopt_test_root=$(mktemp -d)
+buildopt_cleanup() {
+    if [[ -n "${buildopt_test_root:-}" ]] &&
+        [[ "${buildopt_test_root}" == /tmp/* ]] &&
+        [[ -d "${buildopt_test_root}" ]]; then
+        rm -rf -- "${buildopt_test_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_source="${buildopt_test_root}/source"
+mkdir "${buildopt_source}"
+while IFS= read -r -d '' buildopt_path; do
+    if [[ ! -e "${buildopt_repo_root}/${buildopt_path}" ]] &&
+        [[ ! -L "${buildopt_repo_root}/${buildopt_path}" ]]; then
+        continue
+    fi
+    mkdir -p -- "${buildopt_source}/$(dirname -- "${buildopt_path}")"
+    cp -a -- \
+        "${buildopt_repo_root}/${buildopt_path}" \
+        "${buildopt_source}/${buildopt_path}"
+done < <(
+    git -C "${buildopt_repo_root}" \
+        ls-files -z --cached --others --exclude-standard
+)
+git -C "${buildopt_source}" init --quiet
+git -C "${buildopt_source}" add -A
+GIT_AUTHOR_DATE='2026-08-01T00:00:00Z' \
+GIT_COMMITTER_DATE='2026-08-01T00:00:00Z' \
+    git -C "${buildopt_source}" \
+    -c user.name=BuildOpt \
+    -c user.email=buildopt@example.invalid \
+    commit --quiet -m 'A2-002 self-hosted installation fixture'
+
+COSIGN_PASSWORD='buildopt-a2-002-test-only' \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_source}/dev/run" --toolchain cosign -- \
+    cosign generate-key-pair \
+    --output-key-prefix "${buildopt_test_root}/release" >/dev/null
+buildopt_bundle="${buildopt_test_root}/bundle"
+COSIGN_PASSWORD='buildopt-a2-002-test-only' \
+BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+GRADLE_USER_HOME="${buildopt_gradle_home}" \
+    "${buildopt_source}/dev/package-release" \
+    --version 0.2.0-self-hosted.1 \
+    --output "${buildopt_bundle}" \
+    --signing-key "${buildopt_test_root}/release.key" \
+    --verification-key "${buildopt_test_root}/release.pub" >/dev/null
+
+buildopt_secrets="${buildopt_test_root}/secrets"
+mkdir "${buildopt_secrets}"
+chmod 0700 "${buildopt_secrets}"
+printf 'BUILDOPT_SERVER_INGEST_TOKEN=%s\n' \
+    'a2-002-synthetic-ingest-token-0123456789abcdef' \
+    >"${buildopt_secrets}/server.env"
+printf '%s\n' 'synthetic-authority' >"${buildopt_secrets}/authority.json"
+printf '%s\n' 'synthetic-trust-root' >"${buildopt_secrets}/trust-root.json"
+printf '%s\n' 'synthetic-cache-credential' >"${buildopt_secrets}/credential"
+chmod 0600 "${buildopt_secrets}/"*
+
+buildopt_install() {
+    BUILDOPT_TOOLS_ROOT="${buildopt_tools_root}" \
+    "${buildopt_source}/dev/manage-self-hosted" install \
+        --bundle "${buildopt_bundle}" \
+        --key "${buildopt_test_root}/release.pub" \
+        --root "${buildopt_test_root}/deployment" \
+        --data-root "${buildopt_test_root}/data" \
+        --environment-file "${buildopt_secrets}/server.env" \
+        --authority "${buildopt_secrets}/authority.json" \
+        --trust-root "${buildopt_secrets}/trust-root.json" \
+        --credential "${buildopt_secrets}/credential" \
+        --listen 127.0.0.1:8042 >/dev/null
+}
+
+buildopt_install
+buildopt_status=$(
+    "${buildopt_source}/dev/manage-self-hosted" status \
+        --root "${buildopt_test_root}/deployment"
+)
+if ! jq -e \
+    --arg buildopt_data_root "${buildopt_test_root}/data" \
+    '
+        .schemaVersion == "buildopt.dev/self-hosted-status/v1" and
+        .state == "INSTALLED" and
+        .version == "0.2.0-self-hosted.1" and
+        .dataRoot == $buildopt_data_root and
+        (.releaseRoot | endswith("/release")) and
+        (.configPath | endswith("/self-hosted/config.json")) and
+        (.unitPath | endswith("/buildopt-self-hosted.service"))
+    ' <<<"${buildopt_status}" >/dev/null; then
+    printf 'self-hosted installation status is invalid\n' >&2
+    exit 1
+fi
+buildopt_config="${buildopt_test_root}/data/self-hosted/config.json"
+buildopt_unit="${buildopt_test_root}/deployment/buildopt-self-hosted.service"
+buildopt_manifest="${buildopt_test_root}/deployment/.buildopt-self-hosted.json"
+buildopt_first_hashes=$(
+    sha256sum "${buildopt_config}" "${buildopt_unit}" "${buildopt_manifest}" |
+        awk '{print $1}'
+)
+systemd-analyze verify "${buildopt_unit}" >/dev/null
+"$(jq -r '.releaseRoot' <<<"${buildopt_status}")/bin/buildopt-server" \
+    --help >/dev/null
+
+"${buildopt_source}/dev/manage-deployment" uninstall \
+    --root "${buildopt_test_root}/deployment" \
+    --purge-data >/dev/null
+buildopt_install
+buildopt_second_hashes=$(
+    sha256sum "${buildopt_config}" "${buildopt_unit}" "${buildopt_manifest}" |
+        awk '{print $1}'
+)
+if [[ "${buildopt_second_hashes}" != "${buildopt_first_hashes}" ]]; then
+    printf 'repeated self-hosted installation is not reproducible\n' >&2
+    exit 1
+fi
+
+chmod 0644 "${buildopt_secrets}/server.env"
+if "${buildopt_source}/dev/manage-self-hosted" install \
+    --bundle "${buildopt_bundle}" \
+    --key "${buildopt_test_root}/release.pub" \
+    --root "${buildopt_test_root}/rejected-deployment" \
+    --data-root "${buildopt_test_root}/rejected-data" \
+    --environment-file "${buildopt_secrets}/server.env" \
+    --authority "${buildopt_secrets}/authority.json" \
+    --trust-root "${buildopt_secrets}/trust-root.json" \
+    --credential "${buildopt_secrets}/credential" >/dev/null 2>&1; then
+    printf 'permissive self-hosted environment file was accepted\n' >&2
+    exit 1
+fi
+if [[ -e "${buildopt_test_root}/rejected-deployment" ]] ||
+    [[ -e "${buildopt_test_root}/rejected-data" ]]; then
+    printf 'rejected self-hosted install mutated roots\n' >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'self-hosted install checker changed the source tree\n' >&2
+    exit 1
+fi
+
+printf 'self-hosted service installation checks passed\n'

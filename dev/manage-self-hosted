@@ -1,0 +1,490 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_usage() {
+    printf '%s\n' \
+        "usage: $0 install --bundle DIRECTORY --key FILE --root ABSOLUTE_PATH --data-root ABSOLUTE_PATH --environment-file ABSOLUTE_PATH --authority ABSOLUTE_PATH --trust-root ABSOLUTE_PATH --credential ABSOLUTE_PATH [--listen 127.0.0.1:8042]" \
+        "       $0 status --root ABSOLUTE_PATH"
+}
+
+buildopt_command=${1:-}
+if [[ -z "${buildopt_command}" ]]; then
+    buildopt_usage >&2
+    exit 64
+fi
+shift
+
+buildopt_bundle=
+buildopt_key=
+buildopt_root=
+buildopt_data_root=
+buildopt_environment_file=
+buildopt_authority=
+buildopt_trust_root=
+buildopt_credential=
+buildopt_listen=127.0.0.1:8042
+buildopt_listen_explicit=0
+while (($# > 0)); do
+    case "$1" in
+        --bundle|--key|--root|--data-root|--environment-file|--authority|--trust-root|--credential|--listen)
+            if (($# < 2)); then
+                buildopt_usage >&2
+                exit 64
+            fi
+            case "$1" in
+                --bundle) buildopt_bundle=$2 ;;
+                --key) buildopt_key=$2 ;;
+                --root) buildopt_root=$2 ;;
+                --data-root) buildopt_data_root=$2 ;;
+                --environment-file) buildopt_environment_file=$2 ;;
+                --authority) buildopt_authority=$2 ;;
+                --trust-root) buildopt_trust_root=$2 ;;
+                --credential) buildopt_credential=$2 ;;
+                --listen)
+                    buildopt_listen=$2
+                    buildopt_listen_explicit=1
+                    ;;
+            esac
+            shift 2
+            ;;
+        --help)
+            buildopt_usage
+            exit 0
+            ;;
+        *)
+            buildopt_usage >&2
+            exit 64
+            ;;
+    esac
+done
+
+case "${buildopt_command}" in
+    install)
+        if [[ -z "${buildopt_bundle}" ]] ||
+            [[ -z "${buildopt_key}" ]] ||
+            [[ -z "${buildopt_root}" ]] ||
+            [[ -z "${buildopt_data_root}" ]] ||
+            [[ -z "${buildopt_environment_file}" ]] ||
+            [[ -z "${buildopt_authority}" ]] ||
+            [[ -z "${buildopt_trust_root}" ]] ||
+            [[ -z "${buildopt_credential}" ]]; then
+            buildopt_usage >&2
+            exit 64
+        fi
+        ;;
+    status)
+        if [[ -z "${buildopt_root}" ]] ||
+            [[ -n "${buildopt_bundle}" ]] ||
+            [[ -n "${buildopt_key}" ]] ||
+            [[ -n "${buildopt_data_root}" ]] ||
+            [[ -n "${buildopt_environment_file}" ]] ||
+            [[ -n "${buildopt_authority}" ]] ||
+            [[ -n "${buildopt_trust_root}" ]] ||
+            [[ -n "${buildopt_credential}" ]] ||
+            ((buildopt_listen_explicit != 0)); then
+            buildopt_usage >&2
+            exit 64
+        fi
+        ;;
+    *)
+        buildopt_usage >&2
+        exit 64
+        ;;
+esac
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_deployment_manager="${buildopt_script_dir}/manage-deployment"
+for buildopt_command_name in \
+    chmod \
+    cmp \
+    flock \
+    id \
+    jq \
+    mkdir \
+    mktemp \
+    mv \
+    realpath \
+    rm \
+    stat \
+    wc; do
+    if ! command -v "${buildopt_command_name}" >/dev/null 2>&1; then
+        printf 'required self-hosted command is unavailable: %s\n' \
+            "${buildopt_command_name}" >&2
+        exit 1
+    fi
+done
+if [[ ! -x "${buildopt_deployment_manager}" ]]; then
+    printf 'signed deployment manager is unavailable\n' >&2
+    exit 1
+fi
+
+umask 077
+
+buildopt_canonical_safe_path() {
+    local buildopt_path=$1
+
+    [[ "${buildopt_path}" == /* ]] &&
+        [[ "${buildopt_path}" != "/" ]] &&
+        [[ "${buildopt_path}" =~ ^[A-Za-z0-9_./:@%+-]+$ ]] &&
+        [[ "$(realpath -m -- "${buildopt_path}")" == "${buildopt_path}" ]]
+}
+
+buildopt_expect_private_directory() {
+    local buildopt_path=$1
+
+    [[ -d "${buildopt_path}" ]] &&
+        [[ ! -L "${buildopt_path}" ]] &&
+        [[ "$(stat -c '%a' -- "${buildopt_path}")" == "700" ]] &&
+        [[ "$(stat -c '%u' -- "${buildopt_path}")" == "$(id -u)" ]]
+}
+
+buildopt_expect_private_file() {
+    local buildopt_path=$1
+
+    [[ -f "${buildopt_path}" ]] &&
+        [[ ! -L "${buildopt_path}" ]] &&
+        [[ "$(stat -c '%a' -- "${buildopt_path}")" == "600" ]] &&
+        [[ "$(stat -c '%u' -- "${buildopt_path}")" == "$(id -u)" ]]
+}
+
+buildopt_validate_reference_file() {
+    local buildopt_path=$1
+
+    buildopt_canonical_safe_path "${buildopt_path}" &&
+        buildopt_expect_private_file "${buildopt_path}"
+}
+
+buildopt_validate_environment_file() {
+    local buildopt_path=$1
+    local -a buildopt_lines=()
+    local buildopt_token
+    local buildopt_token_bytes
+
+    if ! buildopt_validate_reference_file "${buildopt_path}"; then
+        return 1
+    fi
+    mapfile -t buildopt_lines <"${buildopt_path}"
+    if ((${#buildopt_lines[@]} != 1)) ||
+        [[ "$(wc -l <"${buildopt_path}")" != "1" ]] ||
+        [[ "${buildopt_lines[0]}" != BUILDOPT_SERVER_INGEST_TOKEN=* ]]; then
+        return 1
+    fi
+    buildopt_token=${buildopt_lines[0]#BUILDOPT_SERVER_INGEST_TOKEN=}
+    buildopt_token_bytes=$(LC_ALL=C printf '%s' "${buildopt_token}" | wc -c)
+    if ((buildopt_token_bytes < 32 || buildopt_token_bytes > 512)) ||
+        [[ "${buildopt_token}" == *[[:space:][:cntrl:]]* ]]; then
+        return 1
+    fi
+}
+
+buildopt_validate_listener() {
+    local buildopt_address=$1
+    local buildopt_port
+
+    if [[ ! "${buildopt_address}" =~ ^127[.]0[.]0[.]1:([0-9]+)$ ]]; then
+        return 1
+    fi
+    buildopt_port=${BASH_REMATCH[1]}
+    ((10#${buildopt_port} >= 0 && 10#${buildopt_port} <= 65535))
+}
+
+buildopt_write_config() {
+    local buildopt_target=$1
+    local buildopt_temporary
+
+    buildopt_temporary=$(mktemp "${buildopt_self_hosted_root}/.config.XXXXXX")
+    jq -n -S \
+        --arg buildopt_listen "${buildopt_listen}" \
+        --arg buildopt_state "${buildopt_shared_root}" \
+        --arg buildopt_export "${buildopt_export_root}" \
+        --arg buildopt_authority "${buildopt_authority}" \
+        --arg buildopt_trust_root "${buildopt_trust_root}" \
+        --arg buildopt_credential "${buildopt_credential}" \
+        '
+            {
+                schemaVersion: "buildopt.self-hosted/config/v1",
+                profile: "PRIVATE_BETA_ISOLATED_SINGLE_NODE",
+                server: {listen: $buildopt_listen},
+                storage: {
+                    stateDirectory: $buildopt_state,
+                    filesystemPolicy: "ALLOWLIST_PROVEN_LOCAL",
+                    minimumDeploymentBytes: 21474836480,
+                    maximumDeploymentBytes: 536870912000,
+                    usableVolumePercent: 50
+                },
+                export: {
+                    directory: $buildopt_export,
+                    profile: "summary"
+                },
+                cache: {
+                    authorityPath: $buildopt_authority,
+                    trustRootPath: $buildopt_trust_root,
+                    credentialPath: $buildopt_credential,
+                    betaTokenAuthentication: true
+                }
+            }
+        ' >"${buildopt_temporary}"
+    chmod 0600 "${buildopt_temporary}"
+    mv -T -- "${buildopt_temporary}" "${buildopt_target}"
+}
+
+buildopt_write_unit() {
+    local buildopt_target=$1
+    local buildopt_temporary
+
+    buildopt_temporary=$(mktemp "${buildopt_root}/.unit.XXXXXX")
+    {
+        printf '%s\n' \
+            '[Unit]' \
+            'Description=BuildOpt self-hosted single-node' \
+            'After=network.target' \
+            '' \
+            '[Service]' \
+            'Type=simple' \
+            "EnvironmentFile=${buildopt_environment_file}" \
+            "ExecStart=${buildopt_release_root}/bin/buildopt-server serve --self-hosted-config ${buildopt_config_path}" \
+            "WorkingDirectory=${buildopt_data_root}" \
+            'Restart=on-failure' \
+            'RestartSec=5s' \
+            'TimeoutStopSec=10s' \
+            'KillSignal=SIGTERM' \
+            'UMask=0077' \
+            'NoNewPrivileges=true' \
+            'PrivateTmp=true' \
+            'ProtectSystem=strict' \
+            "ReadWritePaths=${buildopt_data_root}" \
+            '' \
+            '[Install]' \
+            'WantedBy=multi-user.target'
+    } >"${buildopt_temporary}"
+    chmod 0600 "${buildopt_temporary}"
+    mv -T -- "${buildopt_temporary}" "${buildopt_target}"
+}
+
+buildopt_write_manifest() {
+    local buildopt_target=$1
+    local buildopt_version=$2
+    local buildopt_temporary
+
+    buildopt_temporary=$(mktemp "${buildopt_root}/.self-hosted.XXXXXX")
+    jq -n -S \
+        --arg buildopt_root "${buildopt_root}" \
+        --arg buildopt_data_root "${buildopt_data_root}" \
+        --arg buildopt_release_root "${buildopt_release_root}" \
+        --arg buildopt_version "${buildopt_version}" \
+        --arg buildopt_config_path "${buildopt_config_path}" \
+        --arg buildopt_unit_path "${buildopt_unit_path}" \
+        --arg buildopt_environment_file "${buildopt_environment_file}" \
+        --arg buildopt_authority "${buildopt_authority}" \
+        --arg buildopt_trust_root "${buildopt_trust_root}" \
+        --arg buildopt_credential "${buildopt_credential}" \
+        --arg buildopt_listen "${buildopt_listen}" \
+        '
+            {
+                schemaVersion: "buildopt.dev/self-hosted-install/v1",
+                deploymentRoot: $buildopt_root,
+                dataRoot: $buildopt_data_root,
+                releaseRoot: $buildopt_release_root,
+                version: $buildopt_version,
+                configPath: $buildopt_config_path,
+                unitPath: $buildopt_unit_path,
+                environmentFile: $buildopt_environment_file,
+                authorityPath: $buildopt_authority,
+                trustRootPath: $buildopt_trust_root,
+                credentialPath: $buildopt_credential,
+                listen: $buildopt_listen
+            }
+        ' >"${buildopt_temporary}"
+    chmod 0600 "${buildopt_temporary}"
+    mv -T -- "${buildopt_temporary}" "${buildopt_target}"
+}
+
+buildopt_load_and_validate() {
+    local buildopt_deployment_status
+    local buildopt_expected_unit
+
+    buildopt_deployment_status=$(
+        "${buildopt_deployment_manager}" status --root "${buildopt_root}"
+    )
+    buildopt_data_root=$(jq -r '.dataRoot' <<<"${buildopt_deployment_status}")
+    buildopt_release_root=$(jq -r '.releaseRoot' <<<"${buildopt_deployment_status}")
+    buildopt_version=$(jq -r '.current.version' <<<"${buildopt_deployment_status}")
+    buildopt_self_hosted_root="${buildopt_data_root}/self-hosted"
+    buildopt_shared_root="${buildopt_data_root}/shared"
+    buildopt_export_root="${buildopt_data_root}/exports"
+    buildopt_config_path="${buildopt_self_hosted_root}/config.json"
+    buildopt_unit_path="${buildopt_root}/buildopt-self-hosted.service"
+    buildopt_manifest_path="${buildopt_root}/.buildopt-self-hosted.json"
+
+    if ! buildopt_expect_private_file "${buildopt_manifest_path}" ||
+        ! jq -e \
+            --arg buildopt_root "${buildopt_root}" \
+            --arg buildopt_data_root "${buildopt_data_root}" \
+            --arg buildopt_release_root "${buildopt_release_root}" \
+            --arg buildopt_version "${buildopt_version}" \
+            --arg buildopt_config_path "${buildopt_config_path}" \
+            --arg buildopt_unit_path "${buildopt_unit_path}" \
+            '
+                keys == [
+                    "authorityPath",
+                    "configPath",
+                    "credentialPath",
+                    "dataRoot",
+                    "deploymentRoot",
+                    "environmentFile",
+                    "listen",
+                    "releaseRoot",
+                    "schemaVersion",
+                    "trustRootPath",
+                    "unitPath",
+                    "version"
+                ] and
+                .schemaVersion == "buildopt.dev/self-hosted-install/v1" and
+                .deploymentRoot == $buildopt_root and
+                .dataRoot == $buildopt_data_root and
+                .releaseRoot == $buildopt_release_root and
+                .version == $buildopt_version and
+                .configPath == $buildopt_config_path and
+                .unitPath == $buildopt_unit_path
+            ' "${buildopt_manifest_path}" >/dev/null; then
+        printf 'self-hosted install manifest is invalid\n' >&2
+        return 1
+    fi
+    buildopt_environment_file=$(jq -r '.environmentFile' "${buildopt_manifest_path}")
+    buildopt_authority=$(jq -r '.authorityPath' "${buildopt_manifest_path}")
+    buildopt_trust_root=$(jq -r '.trustRootPath' "${buildopt_manifest_path}")
+    buildopt_credential=$(jq -r '.credentialPath' "${buildopt_manifest_path}")
+    buildopt_listen=$(jq -r '.listen' "${buildopt_manifest_path}")
+
+    if ! buildopt_expect_private_directory "${buildopt_self_hosted_root}" ||
+        ! buildopt_expect_private_directory "${buildopt_shared_root}" ||
+        ! buildopt_expect_private_directory "${buildopt_export_root}" ||
+        ! buildopt_expect_private_file "${buildopt_config_path}" ||
+        ! buildopt_expect_private_file "${buildopt_unit_path}" ||
+        ! buildopt_validate_environment_file "${buildopt_environment_file}" ||
+        ! buildopt_validate_reference_file "${buildopt_authority}" ||
+        ! buildopt_validate_reference_file "${buildopt_trust_root}" ||
+        ! buildopt_validate_reference_file "${buildopt_credential}" ||
+        ! buildopt_validate_listener "${buildopt_listen}"; then
+        printf 'self-hosted install paths or modes are invalid\n' >&2
+        return 1
+    fi
+    if ! jq -e \
+        --arg buildopt_listen "${buildopt_listen}" \
+        --arg buildopt_state "${buildopt_shared_root}" \
+        --arg buildopt_export "${buildopt_export_root}" \
+        --arg buildopt_authority "${buildopt_authority}" \
+        --arg buildopt_trust_root "${buildopt_trust_root}" \
+        --arg buildopt_credential "${buildopt_credential}" \
+        '
+            .schemaVersion == "buildopt.self-hosted/config/v1" and
+            .profile == "PRIVATE_BETA_ISOLATED_SINGLE_NODE" and
+            .server == {listen: $buildopt_listen} and
+            .storage == {
+                stateDirectory: $buildopt_state,
+                filesystemPolicy: "ALLOWLIST_PROVEN_LOCAL",
+                minimumDeploymentBytes: 21474836480,
+                maximumDeploymentBytes: 536870912000,
+                usableVolumePercent: 50
+            } and
+            .export == {directory: $buildopt_export, profile: "summary"} and
+            .cache == {
+                authorityPath: $buildopt_authority,
+                trustRootPath: $buildopt_trust_root,
+                credentialPath: $buildopt_credential,
+                betaTokenAuthentication: true
+            }
+        ' "${buildopt_config_path}" >/dev/null; then
+        printf 'self-hosted declarative configuration drifted\n' >&2
+        return 1
+    fi
+    buildopt_expected_unit=$(mktemp "${buildopt_root}/.expected-unit.XXXXXX")
+    buildopt_write_unit "${buildopt_expected_unit}"
+    if ! cmp -s "${buildopt_expected_unit}" "${buildopt_unit_path}"; then
+        rm -f -- "${buildopt_expected_unit}"
+        printf 'self-hosted service unit drifted\n' >&2
+        return 1
+    fi
+    rm -f -- "${buildopt_expected_unit}"
+
+    jq -n -S \
+        --arg buildopt_version "${buildopt_version}" \
+        --arg buildopt_release_root "${buildopt_release_root}" \
+        --arg buildopt_data_root "${buildopt_data_root}" \
+        --arg buildopt_config_path "${buildopt_config_path}" \
+        --arg buildopt_unit_path "${buildopt_unit_path}" \
+        '
+            {
+                schemaVersion: "buildopt.dev/self-hosted-status/v1",
+                state: "INSTALLED",
+                version: $buildopt_version,
+                releaseRoot: $buildopt_release_root,
+                dataRoot: $buildopt_data_root,
+                configPath: $buildopt_config_path,
+                unitPath: $buildopt_unit_path
+            }
+        '
+}
+
+if ! buildopt_canonical_safe_path "${buildopt_root}"; then
+    printf 'self-hosted deployment root must be a canonical safe absolute path\n' >&2
+    exit 1
+fi
+
+if [[ "${buildopt_command}" == "status" ]]; then
+    buildopt_load_and_validate
+    exit 0
+fi
+
+if ! buildopt_canonical_safe_path "${buildopt_data_root}" ||
+    ! buildopt_validate_listener "${buildopt_listen}" ||
+    ! buildopt_validate_environment_file "${buildopt_environment_file}" ||
+    ! buildopt_validate_reference_file "${buildopt_authority}" ||
+    ! buildopt_validate_reference_file "${buildopt_trust_root}" ||
+    ! buildopt_validate_reference_file "${buildopt_credential}"; then
+    printf 'self-hosted installation inputs are invalid\n' >&2
+    exit 1
+fi
+if [[ -e "${buildopt_root}" ]] || [[ -L "${buildopt_root}" ]] ||
+    [[ -e "${buildopt_data_root}" ]] || [[ -L "${buildopt_data_root}" ]]; then
+    printf 'self-hosted installation requires absent deployment and data roots\n' >&2
+    exit 1
+fi
+
+buildopt_install_complete=0
+buildopt_install_cleanup() {
+    if ((buildopt_install_complete == 0)) &&
+        [[ -d "${buildopt_root}" ]] &&
+        [[ ! -L "${buildopt_root}" ]]; then
+        "${buildopt_deployment_manager}" uninstall \
+            --root "${buildopt_root}" \
+            --purge-data >/dev/null 2>&1 || true
+    fi
+}
+trap buildopt_install_cleanup EXIT
+
+buildopt_release_root=$(
+    "${buildopt_deployment_manager}" install \
+        --bundle "${buildopt_bundle}" \
+        --key "${buildopt_key}" \
+        --root "${buildopt_root}" \
+        --data-root "${buildopt_data_root}"
+)
+buildopt_deployment_status=$(
+    "${buildopt_deployment_manager}" status --root "${buildopt_root}"
+)
+buildopt_version=$(jq -r '.current.version' <<<"${buildopt_deployment_status}")
+buildopt_self_hosted_root="${buildopt_data_root}/self-hosted"
+buildopt_shared_root="${buildopt_data_root}/shared"
+buildopt_export_root="${buildopt_data_root}/exports"
+buildopt_config_path="${buildopt_self_hosted_root}/config.json"
+buildopt_unit_path="${buildopt_root}/buildopt-self-hosted.service"
+buildopt_manifest_path="${buildopt_root}/.buildopt-self-hosted.json"
+mkdir "${buildopt_self_hosted_root}" "${buildopt_shared_root}" "${buildopt_export_root}"
+chmod 0700 "${buildopt_self_hosted_root}" "${buildopt_shared_root}" "${buildopt_export_root}"
+buildopt_write_config "${buildopt_config_path}"
+buildopt_write_unit "${buildopt_unit_path}"
+buildopt_write_manifest "${buildopt_manifest_path}" "${buildopt_version}"
+buildopt_load_and_validate
+buildopt_install_complete=1
+trap - EXIT
