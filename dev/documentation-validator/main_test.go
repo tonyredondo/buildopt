@@ -27,6 +27,36 @@ func TestCheckMarkdown(t *testing.T) {
 	}
 }
 
+func TestCheckRepositoryLandingPage(t *testing.T) {
+	root := t.TempDir()
+	if problems := checkRepositoryLandingPage(root); len(problems) != 0 {
+		t.Fatalf("empty repository has presentation problems: %v", problems)
+	}
+	mustWrite(t, filepath.Join(root, ".github", "README.md"), "# Automation\n")
+	problems := checkRepositoryLandingPage(root)
+	if len(problems) != 1 || !strings.Contains(problems[0], "shadows") {
+		t.Fatalf("unexpected presentation problems: %v", problems)
+	}
+}
+
+func TestReadmeHeadingRejectsTrackerID(t *testing.T) {
+	root := t.TempDir()
+	readme := filepath.Join(root, "component", "README.md")
+	mustWrite(t, readme, "# Component\n\n## WS-001 passthrough\n")
+
+	_, _, problems := checkMarkdown(root, readme)
+	if len(problems) != 1 || !strings.Contains(problems[0], "internal tracker ID") {
+		t.Fatalf("unexpected README problems: %v", problems)
+	}
+
+	guide := filepath.Join(root, "docs", "guide.md")
+	mustWrite(t, guide, "# Guide\n\n## WS-001 traceability\n")
+	_, _, problems = checkMarkdown(root, guide)
+	if len(problems) != 0 {
+		t.Fatalf("non-README traceability heading rejected: %v", problems)
+	}
+}
+
 func TestCheckGoPackageDocs(t *testing.T) {
 	root := t.TempDir()
 	mustWrite(t, filepath.Join(root, "internal", "good", "doc.go"), "// Package good is documented.\npackage good\n")

@@ -1,4 +1,4 @@
-# F0-014 attempt and commit fixtures
+# Attempt and commit fixtures
 
 Synthetic records for `ATTEMPT_STATE`, `CI_VALIDATION_REQUEST`, and
 `COMMIT_DECISION` v1.

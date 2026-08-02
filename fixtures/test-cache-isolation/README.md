@@ -1,4 +1,4 @@
-# A0-G08 test cache isolation fixture
+# Test cache isolation fixture
 
 The root Java build composes an actual `buildSrc` plugin build and an included
 plugin build. Each scope has a cacheable Gradle `Test` task with deterministic

@@ -1,26 +1,42 @@
 # BuildOpt
 
-BuildOpt is an owner-operated proof of concept for optimizing Gradle builds
-without changing the build's expected outputs. It wraps the existing Gradle
-command, records evidence, applies only qualified and reversible actions, and
-falls back to the original command whenever an optimization cannot be proven
-safe.
+BuildOpt makes Gradle builds faster without changing their expected outputs.
+It runs the existing Gradle command, observes what happened, and activates
+only optimizations that have enough evidence. If an optimization is unavailable
+or cannot be proven safe, the original build remains authoritative.
 
-The current source tree includes the launcher and local verifying gateway,
-managed local and shared caches, runtime optimization, Task Intelligence,
-Patch Autopilot, conservative Build Impact, build history, GitHub Actions and
-GitLab CI integration, a self-hosted server, and an optional Edge Cache. The
-runtime and native packages are exercised on Linux, macOS, and Windows.
+> **New here?** You do not need to read the implementation tracker, contracts,
+> or architecture documents first. On Linux, follow **Get your first result**
+> below. It uses a synthetic repository, needs no external service, and does
+> not modify one of your projects.
 
-> **Project status:** functionally complete POC, not a production-ready hosted
-> service. Long-duration soak testing, external validation, multi-tenant
-> identity, HA, and production operations are intentionally deferred. Test
+## How it fits into a build
+
+```text
+your Gradle command
+        |
+        v
+BuildOpt launcher -----> local verification and cache gateway
+        |                            |
+        v                            v
+      Gradle              optional Shared or Edge Cache
+```
+
+The launcher preserves the command, output, and exit status. BuildOpt records
+evidence around that execution and uses conservative fallbacks: a rejected
+cache entry becomes a normal cache miss, an unqualified optimization is not
+applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
+
+> **Project status:** this repository contains a functionally complete,
+> owner-operated proof of concept. It is not a production-ready hosted service.
+> Long-duration soak testing, external validation, multi-tenant identity, high
+> availability, and production operations are intentionally deferred. Test
 > Optimization is a separate product and is not implemented here.
 
-## Try the complete POC
+## Get your first result
 
-The fastest representative evaluation uses only project-owned synthetic
-repositories and produces a machine-readable result. From a Linux checkout:
+The recommended first run exercises the complete POC against project-owned
+synthetic repositories. From a Linux AMD64 checkout:
 
 ```bash
 ./dev/doctor
@@ -30,12 +46,26 @@ repositories and produces a machine-readable result. From a Linux checkout:
 jq '{status, sourceRevision, steps}' /tmp/buildopt-poc-lab-result.json
 ```
 
-A successful run reports `"status": "PASS"` and four passing steps covering a
-real Gradle build, Shared-cache fault evidence, a two-node Edge scenario, and
-the packaged Edge lifecycle. It does not run the deferred eight-hour soak.
+You are looking for `"status": "PASS"`. That result proves the checked-out
+revision completed a real Gradle build, Shared-cache fault handling, a two-node
+Edge scenario, and the packaged Edge lifecycle. It does not run the deferred
+eight-hour soak or claim a speedup for one of your own repositories.
 
-For the prerequisites, expected output, cleanup, and the shorter launcher-only
-path, follow the [quickstart](./docs/getting-started/quickstart.md).
+The [step-by-step quickstart](./docs/getting-started/quickstart.md) explains
+prerequisites, expected output, a shorter launcher-only test, running BuildOpt
+around another Gradle repository, and cleanup.
+
+## Choose what to do next
+
+| Goal | Start here |
+|---|---|
+| See the POC work | [Quickstart](./docs/getting-started/quickstart.md) |
+| Try BuildOpt on a Gradle repository | [Run around another repository](./docs/getting-started/quickstart.md#run-buildopt-around-another-gradle-repository) |
+| Add it to GitHub Actions or GitLab CI | [CI integration](./docs/guides/ci-integration.md) |
+| Understand the design | [Architecture overview](./docs/architecture/overview.md) |
+| Make a code change | [Developer onboarding](./docs/getting-started/developer-onboarding.md) |
+| Find a command or setting | [CLI](./docs/reference/cli.md) and [configuration](./docs/reference/configuration.md) references |
+| Diagnose a failure | [Troubleshooting](./docs/troubleshooting.md) |
 
 ## What BuildOpt changes
 

@@ -1,4 +1,4 @@
-# F0-015 Test Optimization contract fixtures
+# Test Optimization contract fixtures
 
 Synthetic `TestCacheGrant` and `TestValidationResult` records.
 

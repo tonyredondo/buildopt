@@ -37,7 +37,7 @@ without replacing the Gradle exit status.
 
 `BUILDOPT_BUILD_SESSION_CONTEXT` is limited to 32 KiB and contains tokenized
 identity and digests, never an HMAC key or source content. See
-[`cmd/buildopt/README.md`](../../cmd/buildopt/README.md#ws-006-build_session-export-context)
+[`cmd/buildopt/README.md`](../../cmd/buildopt/README.md#build_session-export-context)
 for the exact JSON example.
 
 ## Managed L1 and Shared cache

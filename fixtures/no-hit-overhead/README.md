@@ -1,4 +1,4 @@
-# A0-G06 no-hit overhead fixture
+# No-hit overhead fixture
 
 This deterministic Java 17 fixture provides one Tier 1 `JavaCompile` cache
 lookup plus long and short session tasks. The long task adds only a declared

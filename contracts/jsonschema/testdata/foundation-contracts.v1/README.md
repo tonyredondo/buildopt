@@ -1,4 +1,4 @@
-# F0-013 foundation contract fixtures
+# Foundation contract fixtures
 
 Synthetic golden and negative records for `EVIDENCE_RECORD`,
 `OPTIMIZATION_POLICY`, and `RESOURCE_PROFILE` v1.

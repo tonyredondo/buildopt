@@ -93,7 +93,7 @@ buildopt_required_directories=(
 buildopt_required_files=(
     ".editorconfig"
     ".gitattributes"
-    ".github/README.md"
+    ".github/AUTOMATION.md"
     ".github/CODEOWNERS"
     ".github/OWNERS.md"
     ".github/base-ci.lock.json"

@@ -4,7 +4,7 @@ Go binary installed on CI runners and workstations.
 
 Its boundary includes the launcher, neutral measurement envelope, Local Verifying Cache Gateway, and bypass to the original command.
 
-## WS-001 passthrough
+## Passthrough execution
 
 The initial executable surface is:
 
@@ -32,7 +32,7 @@ Run the real-binary integration suite with:
 
 The suite covers empty, quoted, whitespace, wildcard, Unicode, newline, and literal `--` arguments; inherited cwd, environment, and standard streams; success and non-zero child statuses; usage; launch failures; process-group isolation; signal forwarding through a child process tree; and the local bypass described below.
 
-## WS-002 process and signal contract
+## Process and signal handling
 
 On Linux and macOS, the child becomes the leader of a process group distinct
 from `buildopt`. While that child is active, the launcher catches `SIGINT` and
@@ -49,7 +49,7 @@ cancellation, preserved handled exit statuses, and conventional
 unhandled-signal status. The native macOS and Windows workflow additionally
 verifies descendant cleanup through their platform contracts.
 
-## F0-039 local bypass
+## Local bypass
 
 Set the launcher-owned bypass to the exact value `1` when the product path must
 be removed from an invocation immediately:
@@ -74,7 +74,7 @@ drills with:
 ./dev/check-base-runbooks
 ```
 
-## WS-003 Gradle plugin handshake
+## Gradle plugin handshake
 
 Before starting the child, the launcher creates a private temporary directory,
 a local authenticated event endpoint, and a fresh attempt ID. Linux uses a
@@ -102,7 +102,7 @@ up-to-date task, byte-identical output with and without the plugin, fail-open
 behavior when the receiver is missing, and preservation of an intentional
 Gradle failure.
 
-## WS-004 authenticated local rendezvous
+## Authenticated local rendezvous
 
 The launcher now starts a neutral HTTP gateway on an operating-system-assigned
 `127.0.0.1` port before the child. It injects a minimum-scope Basic credential
@@ -139,7 +139,7 @@ Cache GET/PUT behavior, upstream credentials, retained task-event streaming,
 and every optimization remain inactive. The first local JSON export is
 described below.
 
-## A0-001 managed runner-slot lifecycle
+## Managed runner-slot lifecycle
 
 The internal pilot can move the neutral gateway onto its managed process path
 by supplying both an absolute private state root and a runner-slot identity:
@@ -194,7 +194,7 @@ publication remain owned by their later MVP-A0 blocks. The completed
 cross-component restart/rotation and concurrent authenticated-binding gate is
 `./dev/check-gateway-rotation`.
 
-## A0-003 managed native L1
+## Managed native L1 cache
 
 The launcher can prepare one private native `DirectoryBuildCache` for a
 complete scope and security generation:
@@ -233,7 +233,7 @@ real end-to-end handoff with:
 ./dev/check-managed-l1
 ```
 
-## A0-006 locally authenticated Shared cache
+## Locally authenticated Shared Cache
 
 The launcher enables the Shared route only from a complete private local
 authority configuration:
@@ -276,7 +276,7 @@ Validate this complete boundary with:
 ./dev/check-local-authority
 ```
 
-## WS-005 server ingest
+## Server ingest
 
 When both `BUILDOPT_SERVER_URL` and `BUILDOPT_SERVER_INGEST_TOKEN` are present,
 the launcher captures the neutral session boundaries and child outcome, then
@@ -301,7 +301,7 @@ Run the real-binary ingest fixture with:
 Without additional context this block carries only session identity, gateway
 generation, neutral timestamps/duration, outcome, and exit code.
 
-## WS-006 BUILD_SESSION export context
+## BUILD_SESSION export context
 
 `BUILDOPT_BUILD_SESSION_CONTEXT` may predeclare the non-secret, tokenized facts
 that cannot be inferred safely from the process:

@@ -16,6 +16,7 @@ import (
 var (
 	markdownLink      = regexp.MustCompile(`!?\[[^\]]*\]\(([^)]+)\)`)
 	repositoryCommand = regexp.MustCompile(`\./(?:dev|packaging)/[A-Za-z0-9._/-]+`)
+	trackerHeading    = regexp.MustCompile(`(?m)^#{1,6}[ \t]+(?:W[0-9]{2,}|[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-[A-Z]?[0-9]{2,})\b`)
 )
 
 var requiredDocuments = []string{
@@ -47,6 +48,7 @@ func main() {
 	}
 	var problems []string
 	problems = append(problems, checkRequiredDocuments(root)...)
+	problems = append(problems, checkRepositoryLandingPage(root)...)
 	linkCount := 0
 	commandCount := 0
 	for _, path := range markdown {
@@ -111,6 +113,13 @@ func markdownFiles(root string) ([]string, error) {
 	return paths, err
 }
 
+func checkRepositoryLandingPage(root string) []string {
+	if regularFile(filepath.Join(root, ".github", "README.md")) {
+		return []string{".github/README.md shadows the repository-root README on GitHub; use a descriptive filename instead"}
+	}
+	return nil
+}
+
 func checkRequiredDocuments(root string) []string {
 	var problems []string
 	for _, relative := range requiredDocuments {
@@ -144,6 +153,11 @@ func checkMarkdown(root, path string) (int, int, []string) {
 		}
 	}
 	var problems []string
+	if strings.EqualFold(filepath.Base(path), "README.md") {
+		for _, match := range trackerHeading.FindAllStringIndex(text, -1) {
+			problems = append(problems, location(root, path, lineStarts, match[0])+": README heading starts with an internal tracker ID")
+		}
+	}
 	linkCount := 0
 	for _, match := range markdownLink.FindAllStringSubmatchIndex(text, -1) {
 		target := strings.TrimSpace(text[match[2]:match[3]])
