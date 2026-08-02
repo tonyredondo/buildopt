@@ -2,6 +2,13 @@
 
 Private implementation shared by `buildopt` and `buildopt-server`.
 
+For the component-to-package dependency map and the owning executable,
+contract, fixture, and validation path, see the
+[repository map](../docs/architecture/repository-map.md#go-package-map). Each
+package exposes a `go doc` package comment that states its authority and
+failure boundary; exported symbols should document non-obvious lifecycle,
+security, persistence, or side effects close to the code.
+
 `launcher/` contains the dependency-free `WS-001` command passthrough, the
 `WS-002` Linux process-group and signal contract, the `WS-003` plugin handshake,
 and the neutral `WS-004` authenticated local rendezvous used by `cmd/buildopt`.

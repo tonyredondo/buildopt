@@ -43,3 +43,21 @@ command. Follow [`GENERATED_CODE.md`](./GENERATED_CODE.md), update the normative
 source first, run the manifest-owned generator, inspect source and generated
 diffs together, and execute `./dev/check-generated-code`. CI rejects stale or
 manually edited generated output.
+
+## Documentation changes
+
+- Start from the [documentation portal](./docs/README.md) and update the
+  closest audience-specific guide rather than growing the root README into an
+  implementation manual.
+- Keep commands copyable and identify their platform, working directory,
+  expected result, failure behavior, and cleanup when these are not obvious.
+- Link explanatory claims to the owning contract, specification, package,
+  fixture, or executable check. Guides do not redefine normative behavior.
+- Update the [architecture overview](./docs/architecture/overview.md) and
+  [repository map](./docs/architecture/repository-map.md) when component
+  responsibility, data flow, trust boundaries, or folder ownership changes.
+- Add code comments for public/package contracts, non-obvious side effects,
+  security and lifecycle assumptions, and platform differences; avoid comments
+  that only restate syntax.
+- Run `./dev/check-documentation` after Markdown, package documentation,
+  referenced scripts, or repository navigation changes.

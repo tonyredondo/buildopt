@@ -2,6 +2,11 @@
 
 Operational contracts connecting multiple components: CI orchestration, Gradle correlation, Test Optimization integration, PatchBundle, and the capability matrix.
 
+Specifications are normative executable behavior, not the recommended learning
+path. Start with the [documentation portal](../docs/README.md) or
+[architecture overview](../docs/architecture/overview.md), then return here for
+the exact cross-component contract.
+
 | Specification | Owning item |
 |---|---|
 | [`ci-orchestration-v1.md`](./ci-orchestration-v1.md) | `F0-030` |

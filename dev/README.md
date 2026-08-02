@@ -2,6 +2,18 @@
 
 Reproducible entrypoints for bootstrap, diagnostics, and local execution.
 
+New contributors should begin with the
+[developer onboarding guide](../docs/getting-started/developer-onboarding.md).
+The [validation reference](../docs/reference/validation.md) groups the commands
+below by subsystem so a change can run the smallest useful proof.
+
+Validate documentation entry points, local links, referenced commands, and Go
+package boundaries with:
+
+```bash
+./dev/check-documentation
+```
+
 ## Toolchain lock
 
 [`toolchains.lock.yaml`](./toolchains.lock.yaml) is the source of truth for downloadable development toolchains on the initial `linux-amd64` platform. It is JSON-compatible YAML 1.2 so the Phase 0 validator can parse it with `jq` before the repository adopts a YAML library.

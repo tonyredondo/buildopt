@@ -5,7 +5,7 @@
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use project-owned synthetic fixtures and repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
-**Last updated:** 2026-08-01<br>
+**Last updated:** 2026-08-02<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
 **RFC baseline SHA-256:** `e97b068433128a51cab509f2f799efdf872b6950056bce308b80cbd1470ef81d`
 
@@ -69,6 +69,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | BIA-F4 | Automatic Gradle graph discovery and generated impact manifest | `DONE` | 1/1 | `E-146` |
 | PLAT-F5 | Supported macOS and Windows build/runtime paths | `DONE` | 1/1 | `E-148` |
 | PLAT-F6 | Full persistent runtime parity on macOS and Windows | `DONE` | 1/1 | `E-150` |
+| DOC-F7 | Complete user, operator, developer, architecture, and code documentation system | `DONE` | 1/1 | `E-151` |
 | GA-D | Production-ready hardening | `DEFERRED` | 0/1 | Functional beta with demonstrated value |
 
 Design baseline: 51 private-beta decisions are accepted in the RFC; their artifacts and tests remain pending as recorded in this tracker.
@@ -90,7 +91,7 @@ Preparation
 The owner-operated POC target, optional MVP-A2/MVP-C2/MVP-C3/POC-O1/POC-O2 extensions, and owner-prioritized functional expansion are complete in this order:
 
 ```text
-UX-F1 → PA-F2 → CI-F3 → BIA-F4 → PLAT-F5 → PLAT-F6
+UX-F1 → PA-F2 → CI-F3 → BIA-F4 → PLAT-F5 → PLAT-F6 → DOC-F7
 ```
 
 Each track retains fail-closed behavior and project-owned synthetic evidence. Test Optimization implementation, the eight-hour soak, external design-partner evidence, and GA-D remain outside this sequence.
@@ -185,6 +186,7 @@ Each track retains fail-closed behavior and project-owned synthetic evidence. Te
 | Workstream | Scope | First artifact | Owner |
 |---|---|---|---|
 | Contracts | JSON Schema, OpenAPI, Protobuf, canonicalization, and compatibility | `contracts/` + codegen | @tonyredondo |
+| Documentation | User, operator, developer, architecture, code comments, and navigation | `docs/` + documentation gate | @tonyredondo |
 | Go core | `buildopt`, gateway, and `buildopt-server` | CLI passthrough + ingest | @tonyredondo |
 | Gradle | Plugin, adapters, TestKit, and capability matrix | Handshake plugin | @tonyredondo |
 | JVM Agent | JVM instrumentation and coverage | `SPIKE-AGENT-001` | @tonyredondo |
@@ -553,6 +555,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | BIA-F4 | Conservative Gradle graph discovery, generated manifest, drift handling, and selection proof | `DONE` | `E-146` current-tree composite gate |
 | PLAT-F5 | Cross-compilation inventory, portable transports/process control, packaging, and native CI | `DONE` | `E-148` hosted native gate |
 | PLAT-F6 | Persistent gateway/L1/bootstrap, server/Edge storage, native services, doctor, and full native CI | `DONE` | `E-150` hosted native and base gates |
+| DOC-F7 | Audience-first documentation, architecture-to-code map, onboarding, reference, comments, and CI drift prevention | `DONE` | `E-151` local documentation gate |
 | MVP-C2 | Edge proxy, SLRU, and offline committed reads | `DONE` | `E-134` current-tree composite gate |
 | MVP-C3 | Conservative BIA and `BIA-002` gate | `DONE` | `E-128` current-tree composite gate |
 | POC-O1 | Standalone Edge runtime, signed reload, local status, bundle, and systemd unit | `DONE` | `E-135` current-tree composite gate |
@@ -716,7 +719,20 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 |---|---|---|---|
 | `PLAT-F6-G01` | macOS and Windows execute the complete Build Optimization runtime without silent platform degradation | `DONE` | `E-150` |
 
-Test Optimization is an explicit non-goal for all five tracks. They may preserve or call its existing signed grant/result boundary, but no Test Optimization behavior or contract is widened here.
+#### DOC-F7 — complete documentation system
+
+| ID | Deliverable | State | Owner | Evidence |
+|---|---|---|---|---|
+| `DOC-F7-001` | Audience-first root README and documentation portal with a copyable synthetic quickstart | `DONE` | Codex | `E-151` |
+| `DOC-F7-002` | Current architecture, execution/data/trust flows, platform equivalence, and exact repository-folder correspondence | `DONE` | Codex | `E-151` |
+| `DOC-F7-003` | Developer onboarding, product workflows, CI, operations, CLI/configuration/validation reference, troubleshooting, and glossary | `DONE` | Codex | `E-151` |
+| `DOC-F7-004` | Missing Go package-boundary comments plus an executable documentation gate integrated into base CI | `DONE` | Codex | `E-151` |
+
+| Exit gate | Summarized criterion | State | Evidence |
+|---|---|---|---|
+| `DOC-F7-G01` | A new evaluator can obtain a revision-bound POC result, an operator can find safe lifecycle/recovery paths, and a developer can map architecture to code while CI rejects broken entry points, links, commands, or package documentation | `DONE` | `E-151` |
+
+Test Optimization is an explicit non-goal for all functional and documentation tracks. They may preserve or call its existing signed grant/result boundary, but no Test Optimization behavior or contract is widened here.
 
 ---
 
@@ -727,6 +743,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Suite | Scope | Latest result | Date | Evidence |
 |---|---|---|---|---|
 | Repository layout | Git root, modules, and `F0-001` conventions | `dev/check-layout` and ShellCheck passed; structure included in the initial commit | 2026-07-29 | `E-006` |
+| Documentation system | Entry points, local links, referenced commands, architecture-to-code map, package boundaries, ownership, and base-CI wiring | `dev/check-documentation`, layout, ownership, Go test/vet for the validator and documented packages, lint, and base-CI static checks passed on the final documentation tree | 2026-08-02 | `E-151` |
 | Ownership boundaries | Path routing, accountable workstreams, cross-stack review, and authority limits | `dev/check-ownership` validated 16 CODEOWNERS paths, all 11 tracker workstreams, one verified repository principal, producer/consumer review, Test Optimization ownership, and the absence of an independent-approval claim | 2026-07-29 | `E-037` |
 | Base CI | Read-only push/PR validation for Go, Java 17 compatibility, optional Rust, and host-Git integration | The immutable hosted baseline remains run [30481886001](https://github.com/tonyredondo/buildopt/actions/runs/30481886001); the current local core lane passed 104 locked shell scripts, generated drift, all Go race/vet packages, Java 17 loading for all 19 Gradle-plugin classes, contract crypto, and the explicit 15-case PatchBundle checker; the optional Rust lane also passed | 2026-07-30 | `E-038`, `E-063`, `E-073..087` |
 | Full native runtime parity | Complete Build Optimization runtime, storage, package, Gradle/Build Impact, persistent gateway/L1, native services, cancellation, exact uninstall, and product boundary | Hosted Native Platform CI run [30721884722](https://github.com/tonyredondo/buildopt/actions/runs/30721884722) passed macOS 15 ARM64 and Windows Server 2025 AMD64 on exact SHA `56bc21c61fc2a0f15fa88b640fb8bfe735d878d0`; hosted Base CI run [30721884751](https://github.com/tonyredondo/buildopt/actions/runs/30721884751) passed the same SHA, including reproducible Go/Java checks, the owner POC lab, and optional Rust | 2026-08-01 | `E-150` |
@@ -972,6 +989,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-148` | 2026-08-01 | `PLAT-F5-004`, `PLAT-F5-G01`, PLAT-F5 exit | Hosted [Native Platform CI run 30714600404](https://github.com/tonyredondo/buildopt/actions/runs/30714600404) passed on exact implementation SHA `e80d3afea03b8a0b05de5f35c6cb0ef92e564686`; macOS 15 ARM64 and Windows Server 2025 AMD64 each built and packaged both CLIs, installed twice, launched, completed the real authenticated Gradle handshake and automatic Build Impact drift check, terminated descendants on cancellation, preserved an unrelated file during exact uninstall, and uploaded the native archive; the independent product-boundary job also passed | `DONE`: PLAT-F5 and the owner-prioritized functional expansion close without enabling Linux-only persistent services, running the deferred soak, or implementing Test Optimization |
 | `E-149` | 2026-08-01 | `PLAT-F6-001..003`, PLAT-F6 local evidence | Versioned [`Full runtime parity v2`](./specs/platform-runtime-parity-v2.md), exact [capability/security/resource/service contract](./specs/platform-runtime-parity-v2.json), shared Unix/Windows file locks, portable private storage and lifecycle layers, authenticated Windows loopback gateway control, common managed L1/local authority/Gradle bootstrap, cross-platform server/Edge, four-binary macOS package, five-binary Windows package with SCM wrapper, launchd/Windows Service installers, machine-readable [`buildopt doctor`](./internal/launcher/doctor.go), expanded native workflow, and [`check-platform-compatibility`](./dev/check-platform-compatibility); the local gate passed race tests for all touched runtime packages, focused vet, Mach-O/PE AMD64 and ARM64 builds, package upgrade/uninstall receipts, service-script syntax, and a source-clean diff check | `DONE` locally for PLAT-F6-001..003; PLAT-F6-004 and the exit gate remain open until hosted native runners execute the complete runtime lifecycle |
 | `E-150` | 2026-08-01 | `PLAT-F6-004`, `PLAT-F6-G01`, PLAT-F6 exit | Hosted [Native Platform CI run 30721884722](https://github.com/tonyredondo/buildopt/actions/runs/30721884722) passed on exact implementation SHA `56bc21c61fc2a0f15fa88b640fb8bfe735d878d0`: macOS 15 ARM64 and Windows Server 2025 AMD64 ran the complete native runtime suites, built all binaries, packaged and installed twice, reported exact doctor capabilities, completed the authenticated Gradle handshake and automatic Build Impact check, reused the persistent gateway and managed L1, installed/removed launchd or Windows SCM service definitions, terminated descendants, uninstalled exactly, preserved unrelated files, and uploaded both archives; the independent Test Optimization boundary passed, and [Base CI run 30721884751](https://github.com/tonyredondo/buildopt/actions/runs/30721884751) passed reproducible Go/Java, owner POC lab, and optional Rust on the same SHA | `DONE`: PLAT-F6 and the complete owner-prioritized Build Optimization functional expansion close without running the deferred eight-hour soak, using external design partners, entering GA-D productization, or implementing Test Optimization |
+| `E-151` | 2026-08-02 | `DOC-F7-001..004`, `DOC-F7-G01`, DOC-F7 exit | Replaced the monolithic root README with an audience-first product entry point; added the [`docs` portal](./docs/README.md), complete quickstart/developer/architecture/repository/workflow/CI/operations/reference/troubleshooting/glossary guides, six missing Go package-boundary comments, explicit Documentation ownership, and [`dev/check-documentation`](./dev/check-documentation) backed by a dependency-free Go validator and base-CI integration; the final tree passed documentation link/command/package checks, layout, ownership, focused Go test/vet, locked ShellCheck/actionlint, base-CI static validation, and whitespace review | `DONE`: a source evaluator can obtain a revision-bound synthetic result, users and operators can follow safe copyable paths, architecture maps directly to folders, and documentation drift now fails CI without widening Test Optimization or making production claims |
 
 ---
 
@@ -979,6 +997,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-02 | Closed `DOC-F7-001..004`, `DOC-F7-G01`, and DOC-F7 with audience-first onboarding, current architecture and repository maps, complete user/operator/developer reference, code package comments, explicit ownership, and a base-CI documentation drift gate | Codex |
 | 2026-08-01 | Closed `PLAT-F6-004`, `PLAT-F6-G01`, PLAT-F6, and the complete owner-prioritized functional expansion after exact-SHA hosted macOS/Windows runtime, storage, package, Gradle/Build Impact, persistent gateway/L1, launchd/SCM, cancellation/uninstall, Base CI, owner-lab, and product-boundary evidence passed | Codex |
 | 2026-08-01 | Activated PLAT-F6 full runtime parity and closed `PLAT-F6-001..003` locally: added portable persistence, locking, authority, bootstrap, Shared/Edge storage, all runtime binaries, explicit doctor semantics, launchd and SCM-aware Windows Service integration, complete packages, and cross-platform race/build/package evidence; left only hosted native acceptance open | Codex |
 | 2026-08-01 | Closed `PLAT-F5-004`, `PLAT-F5-G01`, PLAT-F5, and the owner-prioritized functional expansion after hosted macOS 15 ARM64 and Windows Server 2025 AMD64 proved the complete native package, launcher, Gradle handshake, Build Impact, cancellation, cleanup, uninstall, artifact, and Test Optimization-boundary lifecycle | Codex |

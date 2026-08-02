@@ -11,4 +11,5 @@ event. A differing merge-request source project ID marks the event as a fork;
 the record confirms that no credential was consumed and never serializes the
 raw environment, URLs, tokens, runner paths, or source content.
 
-Run `./dev/check-gitlab-ci-job-event`.
+Run the composed component, event, and synthetic integration proof with
+`./dev/check-gitlab-ci`.

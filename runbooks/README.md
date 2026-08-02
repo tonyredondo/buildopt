@@ -5,6 +5,10 @@ or paired with executable exercises. The runbooks describe only capabilities
 that exist in the current repository state; later deployment and control-plane
 work extends them without silently changing the Phase 0 safety boundary.
 
+Use the [operations guide](../docs/guides/operations.md) to choose a deployment
+path and learn the common lifecycle. Use the runbooks below during an actual
+preflight, recovery, upgrade, rollback, or removal.
+
 - [`base-recovery.md`](./base-recovery.md): local bypass, CI kill switch,
   immutable version rollback, uninstall, state preservation or purge, and
   partial patch-branch recovery for `F0-039`.

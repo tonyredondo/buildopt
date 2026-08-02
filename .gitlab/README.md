@@ -1,5 +1,8 @@
 # BuildOpt GitLab CI
 
+For a complete copyable integration, immutable release inputs, bypass, and
+local validation, see the [CI integration guide](../docs/guides/ci-integration.md#gitlab-ci).
+
 Include `buildopt-component.yml` at a full 40-character BuildOpt commit SHA
 and pass an exact release version, HTTPS archive URL, lowercase SHA-256, and
 Gradle tasks.

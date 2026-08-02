@@ -14,6 +14,7 @@ review, or the evidence required to move an item to `DONE`.
 | Workstream | Primary paths | Accountable repository owner | Boundary that must be reviewed |
 |---|---|---|---|
 | Contracts | `contracts/`, `specs/`, `adr/` | `@tonyredondo` | Producer and every affected consumer; RFC invariant changes are decided in the RFC first |
+| Documentation | `README.md`, `docs/`, component READMEs | `@tonyredondo` | Audience path, copyable commands, architecture-to-code correspondence, links, and normative-source accuracy |
 | Go core | `cmd/`, `internal/` | `@tonyredondo` | CLI/server behavior, local protocol consumers, process lifecycle, and exit compatibility |
 | Gradle | `jvm/gradle-plugin/`, Gradle fixtures | `@tonyredondo` | Public Gradle API use, supported-version capability, Configuration Cache, and baseline parity |
 | JVM Agent | `jvm/jvm-agent/` | `@tonyredondo` | Opt-in boundary, coverage, overhead, JVM compatibility, and failure degradation |

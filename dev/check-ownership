@@ -28,6 +28,7 @@ buildopt_expected_patterns=(
     "/contracts/"
     "/specs/"
     "/adr/"
+    "/docs/"
     "/cmd/"
     "/internal/"
     "/jvm/gradle-plugin/"
@@ -43,6 +44,7 @@ buildopt_expected_patterns=(
 )
 buildopt_workstreams=(
     "Contracts"
+    "Documentation"
     "Go core"
     "Gradle"
     "JVM Agent"

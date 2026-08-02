@@ -51,7 +51,7 @@ jobs:
       - name: Prime the checksum-pinned Gradle Wrapper
         run: ./dev/run -- ./gradlew --no-daemon --version
 
-      - name: Run reproducible Go and Java checks
+      - name: Run documentation, Go, and Java checks
         run: |
           set -euo pipefail
           BUILDOPT_JAVA17_HOME="${JAVA_HOME}" \

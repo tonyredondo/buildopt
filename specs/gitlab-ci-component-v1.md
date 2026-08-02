@@ -15,4 +15,5 @@ Merge requests from another GitLab project force remote behavior off. The
 template does not request or consume a GitLab token, deploy token, CI job
 token, or BuildOpt remote credential.
 
-Run `./dev/check-gitlab-ci-component`.
+Run the composed component, event, and synthetic integration proof with
+`./dev/check-gitlab-ci`.

@@ -24,7 +24,7 @@ credential.
 
 ## Recorded exercise
 
-The pilot repository's `./dev/check` first proves all tests, deterministic
+The pilot repository's own `dev/check` first proves all tests, deterministic
 outputs, an unchanged worktree, and local-cache replay. The installed BuildOpt
 launcher then runs the declared workload twice through the authenticated
 Gradle plugin and private native managed L1. Both runs must succeed, emit valid
