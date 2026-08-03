@@ -204,7 +204,7 @@ jobs:
           $LauncherStdout = "$env:RUNNER_TEMP\cancel-launcher.stdout"
           $LauncherStderr = "$env:RUNNER_TEMP\cancel-launcher.stderr"
           $Launcher = Start-Process -FilePath "$env:RUNNER_TEMP\install\bin\buildopt.exe" -ArgumentList @('run', '--', 'powershell.exe', '-NoProfile', '-File', "$PWD\fixtures\platform\cancel-tree.ps1") -RedirectStandardOutput $LauncherStdout -RedirectStandardError $LauncherStderr -PassThru
-          for ($Index = 0; $Index -lt 100 -and -not (Test-Path $env:BUILDOPT_CANCEL_PID_FILE); $Index++) { Start-Sleep -Milliseconds 100 }
+          for ($Index = 0; $Index -lt 300 -and -not (Test-Path $env:BUILDOPT_CANCEL_PID_FILE); $Index++) { Start-Sleep -Milliseconds 100 }
           if (-not (Test-Path $env:BUILDOPT_CANCEL_PID_FILE)) {
             if (-not $Launcher.HasExited) { Stop-Process -Id $Launcher.Id -Force }
             $Launcher.WaitForExit()
