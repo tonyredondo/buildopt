@@ -9,6 +9,10 @@ initscript {
     }
 }
 
-allprojects {
-    pluginManager.apply(dev.buildopt.gradle.BuildOptProjectPlugin)
+// Init scripts are inherited by buildSrc and included builds. The launcher
+// owns one authenticated handshake for the top-level Gradle invocation.
+if (gradle.getParent() == null) {
+    allprojects {
+        pluginManager.apply(dev.buildopt.gradle.BuildOptProjectPlugin)
+    }
 }

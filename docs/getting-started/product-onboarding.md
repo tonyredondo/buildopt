@@ -31,7 +31,7 @@ export PATH="$HOME/.local/bin:$PATH"
 buildopt doctor
 ```
 
-Use `--version 0.1.0` to pin a release or `--prefix /absolute/path` to choose
+Use `--version 0.1.1` to pin a release or `--prefix /absolute/path` to choose
 another user-owned installation. The installer detects the operating system
 and architecture, downloads the matching archive and checksum, verifies the
 complete archive, verifies its internal files again, and records only the
@@ -49,7 +49,7 @@ Invoke-WebRequest `
 buildopt doctor
 ```
 
-Open a new terminal after `-UpdatePath`. `-Version 0.1.0` pins a release and
+Open a new terminal after `-UpdatePath`. `-Version 0.1.1` pins a release and
 `-Prefix C:\absolute\path` changes the installation root.
 
 ## Run the first build
@@ -115,7 +115,7 @@ include:
 
 The component installs the matching public release into `.buildopt/runtime`,
 runs `buildopt gradle`, and retains the normalized job event and redacted
-exports. Add `version: 0.1.0` to pin the native package.
+exports. Add `version: 0.1.1` to pin the native package.
 
 ## Component ownership and configuration
 

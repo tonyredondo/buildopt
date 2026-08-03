@@ -22,7 +22,7 @@ subsequent `PATH`. To keep native bits fixed while updating workflow code:
 
 ```yaml
 with:
-  version: 0.1.0
+  version: 0.1.1
 ```
 
 `archive-url` and `archive-sha256` remain a paired compatibility override for
@@ -48,7 +48,7 @@ include:
 The component is self-contained: it resolves and verifies the native package,
 installs below `.buildopt/runtime`, runs the repository Wrapper through
 `buildopt gradle`, and publishes a normalized job event plus redacted exports.
-Set `version: 0.1.0` to pin native bits. Cross-project merge requests force
+Set `version: 0.1.1` to pin native bits. Cross-project merge requests force
 remote behavior off, and no GitLab or BuildOpt credential is requested.
 
 ## Bypass and rollback
