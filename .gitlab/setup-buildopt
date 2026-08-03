@@ -8,9 +8,9 @@ fi
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
-buildopt_version=${BUILDOPT_VERSION:?missing BUILDOPT_VERSION}
-buildopt_archive_url=${BUILDOPT_ARCHIVE_URL:?missing BUILDOPT_ARCHIVE_URL}
-buildopt_archive_sha256=${BUILDOPT_ARCHIVE_SHA256:?missing BUILDOPT_ARCHIVE_SHA256}
+buildopt_version=${BUILDOPT_VERSION:-latest}
+buildopt_archive_url=${BUILDOPT_ARCHIVE_URL:-}
+buildopt_archive_sha256=${BUILDOPT_ARCHIVE_SHA256:-}
 buildopt_project_dir=${CI_PROJECT_DIR:?missing CI_PROJECT_DIR}
 
 if [[ "${GITLAB_CI:-}" != "true" ]] ||
@@ -18,6 +18,38 @@ if [[ "${GITLAB_CI:-}" != "true" ]] ||
     [[ "$(uname -m)" != "x86_64" ]]; then
     printf 'BuildOpt GitLab component v1 supports Linux x86_64 runners only\n' >&2
     exit 1
+fi
+buildopt_native_layout=0
+if [[ -z "${buildopt_archive_url}" && -z "${buildopt_archive_sha256}" ]]; then
+    buildopt_native_layout=1
+    buildopt_release_root=https://github.com/tonyredondo/buildopt/releases
+    if [[ "${buildopt_version}" == latest ]]; then
+        buildopt_version=$(curl --fail --silent --show-error --location \
+            --proto '=https' --proto-redir '=https' --tlsv1.2 \
+            "${buildopt_release_root}/latest/download/buildopt-version.txt")
+    fi
+    if [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+([+-][0-9A-Za-z.-]+)?$ ]]; then
+        printf 'BuildOpt release version is invalid: %s\n' "${buildopt_version}" >&2
+        exit 1
+    fi
+    buildopt_archive="buildopt-${buildopt_version}-linux-amd64.tar.gz"
+    buildopt_release_url="${buildopt_release_root}/download/v${buildopt_version}"
+    buildopt_archive_url="${buildopt_release_url}/${buildopt_archive}"
+    buildopt_checksum_file=$(mktemp)
+    trap 'rm -f -- "${buildopt_checksum_file}"' EXIT
+    curl --fail --silent --show-error --location \
+        --proto '=https' --proto-redir '=https' --tlsv1.2 \
+        --output "${buildopt_checksum_file}" \
+        "${buildopt_archive_url}.sha256"
+    read -r buildopt_archive_sha256 buildopt_checksum_name <"${buildopt_checksum_file}"
+    if [[ ! "${buildopt_archive_sha256}" =~ ^[0-9a-f]{64}$ ]] ||
+        [[ "${buildopt_checksum_name}" != "${buildopt_archive}" ]]; then
+        printf 'BuildOpt release checksum is invalid\n' >&2
+        exit 1
+    fi
+elif [[ -z "${buildopt_archive_url}" || -z "${buildopt_archive_sha256}" ]]; then
+    printf 'archive-url and archive-sha256 must be set together\n' >&2
+    exit 64
 fi
 for buildopt_value in "${buildopt_project_dir}" "${buildopt_repo_root}"; do
     if [[ -z "${buildopt_value}" ]] ||
@@ -35,7 +67,12 @@ fi
 umask 077
 mkdir -p -- "${buildopt_project_dir}/.buildopt"
 buildopt_install_root=$(
-    "${buildopt_repo_root}/.github/actions/install-buildopt" --version "${buildopt_version}" --archive-url "${buildopt_archive_url}" --archive-sha256 "${buildopt_archive_sha256}" --install-dir "${buildopt_project_dir}/.buildopt/install"
+    if ((buildopt_native_layout)); then
+        buildopt_installer="${buildopt_repo_root}/.github/actions/install-native-buildopt"
+    else
+        buildopt_installer="${buildopt_repo_root}/.github/actions/install-buildopt"
+    fi
+    "${buildopt_installer}" --version "${buildopt_version}" --archive-url "${buildopt_archive_url}" --archive-sha256 "${buildopt_archive_sha256}" --install-dir "${buildopt_project_dir}/.buildopt/install"
 )
 buildopt_binary="${buildopt_install_root}/bin/buildopt"
 buildopt_server="${buildopt_install_root}/bin/buildopt-server"

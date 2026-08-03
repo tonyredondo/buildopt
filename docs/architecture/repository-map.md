@@ -16,7 +16,7 @@ buildopt/
 ├── adr/             Durable architecture decisions
 ├── fixtures/        Synthetic repositories and fault scenarios
 ├── benchmarks/      Workloads, budgets, and immutable results
-├── packaging/       Native macOS and Windows packages/services
+├── packaging/       Native Linux, macOS, and Windows packages/services
 ├── runbooks/        Operator recovery and lifecycle procedures
 ├── dev/             Bootstrap, checks, generators, packaging, labs
 ├── .github/         GitHub Actions, ownership, and CI workflows
@@ -49,7 +49,7 @@ in `internal/`; cross-process representations belong in `contracts/` first.
 
 | Package | Architectural responsibility | Closest executable/specification |
 |---|---|---|
-| `internal/launcher` | Command passthrough, signals, gateway lifecycle, L1, authority handoff, bootstrap cache, resource context | `buildopt`; launcher and cache specs |
+| `internal/launcher` | Command passthrough, packaged Gradle discovery, signals, gateway lifecycle, L1, authority handoff, bootstrap cache, resource context | `buildopt`; launcher and cache specs |
 | `internal/sessioningest` | Strict authenticated provisional session transport | `buildopt` and `buildopt-server`; `WS-005` |
 | `internal/buildsession` | `BUILD_SESSION v1` production, immutable JSON, JSONL, recovery | server export; data lifecycle specs |
 | `internal/buildhistory` | Redacted immutable history read model, API, embedded dashboard | `buildopt-server`; UX-F1 specs |
@@ -123,6 +123,8 @@ adds macOS ARM64 and Windows AMD64 runtime/package/service coverage.
 |---|---|
 | `dev/toolchains.lock.yaml` | Immutable development toolchain identities and checksums |
 | `dev/package-release`, `dev/verify-release` | Signed reproducible Linux release bundle |
+| `install.sh`, `install.ps1`, `.github/workflows/release.yml` | Public native-package download and tagged publication |
+| `packaging/linux/` | Linux archive and receipt-based install/uninstall |
 | `packaging/macos/` | Native archive, receipt-based install/uninstall, launchd agents |
 | `packaging/windows/` | Native ZIP, receipt-based install/uninstall, SCM definitions |
 | `specs/self-hosted-*.json` | Strict server config and lifecycle contracts |
@@ -144,7 +146,7 @@ dedicated, and compatible with the platform storage policy.
 | Reusable Go behavior | owning `internal/<package>/` | package tests and architecture docs |
 | Gradle behavior | `jvm/gradle-plugin/` | Tier 1 fixtures and capability matrix |
 | Patch recipe | `jvm/patcher/` | bundle/recipe specs and exact revert proof |
-| CI installation | `.github/`, `.gitlab/`, `action.yml` | release bundle and recovery runbook |
+| CI installation | `.github/`, `.gitlab/`, `action.yml` | native packages, release workflow, and recovery runbook |
 | Packaging/service lifecycle | `packaging/`, `dev/` | platform spec and operations guide |
 | Explanation or onboarding | `docs/` or closest README | documentation gate and linked source |
 

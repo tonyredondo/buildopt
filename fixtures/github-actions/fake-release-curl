@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_version=${BUILDOPT_FIXTURE_VERSION:?missing BUILDOPT_FIXTURE_VERSION}
+buildopt_archive=${BUILDOPT_FIXTURE_ARCHIVE:?missing BUILDOPT_FIXTURE_ARCHIVE}
+buildopt_sha256=${BUILDOPT_FIXTURE_ARCHIVE_SHA256:?missing BUILDOPT_FIXTURE_ARCHIVE_SHA256}
+buildopt_log=${BUILDOPT_FIXTURE_CURL_LOG:?missing BUILDOPT_FIXTURE_CURL_LOG}
+buildopt_output=
+buildopt_url=
+while (($# > 0)); do
+    case "$1" in
+        --output) buildopt_output=$2; shift 2 ;;
+        --proto|--proto-redir|--connect-timeout|--max-time|--retry) shift 2 ;;
+        --fail|--silent|--show-error|--location|--tlsv1.2|--retry-all-errors) shift ;;
+        --) shift; buildopt_url=${1:?missing URL}; shift ;;
+        https://*) buildopt_url=$1; shift ;;
+        *) printf 'unexpected fake curl argument: %s\n' "$1" >&2; exit 1 ;;
+    esac
+done
+printf '%s\n' "${buildopt_url}" >>"${buildopt_log}"
+case "${buildopt_url}" in
+    */latest/download/buildopt-version.txt)
+        printf '%s\n' "${buildopt_version}"
+        ;;
+    */buildopt-${buildopt_version}-linux-amd64.tar.gz.sha256)
+        printf '%s  buildopt-%s-linux-amd64.tar.gz\n' \
+            "${buildopt_sha256}" "${buildopt_version}" >"${buildopt_output}"
+        ;;
+    */buildopt-${buildopt_version}-linux-amd64.tar.gz)
+        cp -- "${buildopt_archive}" "${buildopt_output}"
+        ;;
+    *) printf 'unexpected fake release URL: %s\n' "${buildopt_url}" >&2; exit 1 ;;
+esac

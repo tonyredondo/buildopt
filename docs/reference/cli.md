@@ -15,6 +15,20 @@ The delimiter is mandatory. The command is started directly without a shell.
 The child inherits the working directory, standard streams, and non-reserved
 environment. Once started, its ordinary exit status wins.
 
+
+### Run Gradle with packaged integration
+
+```text
+buildopt gradle [gradle args...]
+```
+
+Run this command from a Gradle repository root. BuildOpt discovers `gradlew`
+or `gradlew.bat`, supplies the installed init script and plugin, and then uses
+the same launcher, cache and session path as `run --`. The package owns the
+internal JAR paths; users should not configure them.
+
+`BUILDOPT_BYPASS=1 buildopt gradle ...` invokes the Wrapper without the
+BuildOpt init script or plugin.
 ### Inspect platform capabilities
 
 ```text
@@ -32,6 +46,7 @@ capabilities.
 |---:|---|
 | `0` | Help/report or child success |
 | `64` | Invalid CLI usage |
+| `78` | Gradle Wrapper or packaged integration is unavailable |
 | `126` | Resolved command could not execute |
 | `127` | Command not found |
 | `128 + signal` | Child terminated by an unhandled signal on Unix |

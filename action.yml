@@ -1,16 +1,17 @@
 name: Setup BuildOpt
-description: Install a checksum-pinned BuildOpt release on a Linux x64 runner
+description: Install BuildOpt and make Gradle builds available through one command
 
 inputs:
   version:
-    description: Exact BuildOpt release version
-    required: true
+    description: BuildOpt release version, or latest
+    required: false
+    default: latest
   archive-url:
-    description: HTTPS URL of the Linux AMD64 release archive
-    required: true
+    description: Optional legacy Release Bundle URL override
+    required: false
   archive-sha256:
-    description: Lowercase SHA-256 of the release archive
-    required: true
+    description: Required SHA-256 when archive-url is set
+    required: false
 
 outputs:
   install-root:

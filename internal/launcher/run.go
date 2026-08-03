@@ -17,7 +17,8 @@ const (
 	exitUsage         = 64
 	exitCannotExecute = 126
 	exitNotFound      = 127
-	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt doctor\n"
+	exitConfiguration = 78
+	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt doctor\n"
 	bypassEnvironment = "BUILDOPT_BYPASS"
 )
 
@@ -37,6 +38,19 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		_, _ = io.WriteString(stdout, usage)
 		return 0
 	}
+	gradleEnvironment := map[string]string(nil)
+	if len(args) > 0 && args[0] == "gradle" {
+		invocation, err := prepareGradleInvocation(
+			args[1:],
+			os.Getenv(bypassEnvironment) == "1",
+		)
+		if err != nil {
+			_, _ = fmt.Fprintf(stderr, "buildopt: Gradle setup unavailable: %v\n", err)
+			return exitConfiguration
+		}
+		args = append([]string{"run", "--"}, invocation.childArgs...)
+		gradleEnvironment = invocation.environment
+	}
 	if len(args) < 3 || args[0] != "run" || args[1] != "--" {
 		_, _ = io.WriteString(stderr, usage)
 		return exitUsage
@@ -46,7 +60,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	if os.Getenv(bypassEnvironment) == "1" {
 		execution := executeChild(
 			childArgs,
-			nil,
+			gradleEnvironment,
 			stdin,
 			stdout,
 			stderr,
@@ -155,9 +169,12 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		)
 	}
 
-	childEnvironment := map[string]string(nil)
+	childEnvironment := copyEnvironment(gradleEnvironment)
 	if gateway != nil && handshake != nil {
-		childEnvironment = map[string]string{
+		if childEnvironment == nil {
+			childEnvironment = make(map[string]string)
+		}
+		for key, value := range map[string]string{
 			pluginAttemptIDEnvironment:   handshake.attemptID,
 			pluginSocketEnvironment:      handshake.endpoint,
 			pluginTokenEnvironment:       handshake.tokenText,
@@ -165,6 +182,8 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			gatewayUsernameEnvironment:   gateway.username,
 			gatewayPasswordEnvironment:   gateway.password,
 			gatewayGenerationEnvironment: gateway.generation,
+		} {
+			childEnvironment[key] = value
 		}
 		if managedSharedAuthorityEnabled(authority, gateway) {
 			for key, value := range authority.childEnvironment {

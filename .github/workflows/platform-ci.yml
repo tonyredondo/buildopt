@@ -53,6 +53,7 @@ jobs:
           "$RUNNER_TEMP/install/bin/buildopt-edge" --help >/dev/null
           doctor=$("$RUNNER_TEMP/install/bin/buildopt" doctor)
           jq -e '.operatingSystem == "darwin" and .persistentGateway and .managedL1 and .managedGradleBootstrap and .server and .edge and .backgroundService == "LAUNCHD"' <<<"$doctor" >/dev/null
+          "$RUNNER_TEMP/install/bin/buildopt" gradle --no-daemon --version >/dev/null
       - name: Prove Gradle handshake and Build Impact export
         shell: bash
         run: |
@@ -153,6 +154,8 @@ jobs:
           & "$env:RUNNER_TEMP\install\bin\buildopt-edge.exe" --help | Out-Null
           if ($LASTEXITCODE -ne 0) { throw 'installed Edge failed' }
           $Doctor = (& "$env:RUNNER_TEMP\install\bin\buildopt.exe" doctor | ConvertFrom-Json)
+          & "$env:RUNNER_TEMP\install\bin\buildopt.exe" gradle --no-daemon --version | Out-Null
+          if ($LASTEXITCODE -ne 0) { throw 'packaged Gradle onboarding failed' }
           if ($Doctor.operatingSystem -ne 'windows' -or -not $Doctor.persistentGateway -or -not $Doctor.managedL1 -or -not $Doctor.managedGradleBootstrap -or $Doctor.backgroundService -ne 'WINDOWS_SERVICE') { throw 'doctor runtime parity failed' }
       - name: Prove Gradle handshake and Build Impact export
         shell: pwsh

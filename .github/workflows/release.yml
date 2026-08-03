@@ -1,0 +1,97 @@
+name: Publish release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  package-unix:
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            script: packaging/linux/package.sh
+          - runner: macos-15
+            script: packaging/macos/package.sh
+          - runner: macos-15-intel
+            script: packaging/macos/package.sh
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5
+        with:
+          go-version: '1.26.5'
+          cache: false
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
+        with:
+          distribution: temurin
+          java-version: '21.0.12+8.0.LTS'
+      - name: Package
+        shell: bash
+        run: |
+          version=${GITHUB_REF_NAME#v}
+          if [[ "${{ runner.os }}" == Linux ]]; then
+            ./dev/bootstrap --toolchain temurin-jdk-21
+            ./dev/bootstrap --toolchain go
+          fi
+          chmod +x packaging/linux/*.sh packaging/macos/*.sh
+          "${{ matrix.script }}" --version "$version" --output "$RUNNER_TEMP/release"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-${{ matrix.runner }}
+          path: ${{ runner.temp }}/release/*
+          if-no-files-found: error
+
+  package-windows:
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5
+        with:
+          go-version: '1.26.5'
+          cache: false
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
+        with:
+          distribution: temurin
+          java-version: '21.0.12+8.0.LTS'
+      - name: Package
+        shell: pwsh
+        run: |
+          $Version = $env:GITHUB_REF_NAME.Substring(1)
+          ./packaging/windows/package.ps1 -Version $Version -Output "$env:RUNNER_TEMP\release"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-windows
+          path: ${{ runner.temp }}/release/*
+          if-no-files-found: error
+
+  publish:
+    needs: [package-unix, package-windows]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: release-*
+          path: release
+          merge-multiple: true
+      - name: Publish immutable assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=${GITHUB_REF_NAME#v}
+          printf '%s\n' "$version" > release/buildopt-version.txt
+          gh release create "$GITHUB_REF_NAME" release/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
+            --generate-notes \
+            --title "BuildOpt $version"

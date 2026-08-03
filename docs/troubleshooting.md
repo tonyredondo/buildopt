@@ -41,6 +41,15 @@ Arguments after `--` are passed directly. Shell operators such as pipes,
 redirection, and wildcard expansion are not interpreted by BuildOpt; invoke a
 reviewed shell explicitly only when that is genuinely the original command.
 
+
+## `buildopt gradle` cannot find its setup
+
+Run it from the repository root containing `gradlew` or `gradlew.bat`. A native
+installation owns the init script and plugin under its `share/buildopt`
+directory; reinstall the package if either is missing. CI integrations expose
+equivalent verified paths automatically. Manual
+`BUILDOPT_GRADLE_INIT_SCRIPT` and `BUILDOPT_GRADLE_PLUGIN_JAR` overrides are
+developer/legacy escape hatches and must be set together.
 ## Gradle succeeds but BuildOpt reports no handshake
 
 The launcher remains fail-open, so the build can still succeed. Verify that:

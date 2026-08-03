@@ -167,10 +167,13 @@ operator's read access.
 
 ## CI installer variables
 
-GitHub Action inputs and GitLab component inputs supply an exact version,
-HTTPS archive URL, and SHA-256. Installer-specific `BUILDOPT_ACTION_*` and
-GitLab `BUILDOPT_ARCHIVE_*` variables are internal to their scripts. Prefer the
-published Action/component interface instead of setting internal installer
-variables manually.
+GitHub Action and GitLab component users normally provide no installer data.
+`version` optionally pins native bits; the integration resolves the matching
+public archive and SHA-256. The Action additionally keeps the paired
+`archive-url` and `archive-sha256` inputs for legacy Release Bundle v1
+consumers. `BUILDOPT_ACTION_*`, `BUILDOPT_VERSION` and
+`BUILDOPT_ARCHIVE_*` are installer internals rather than product configuration.
+Prefer the published interfaces instead of setting them manually.
+
 
 See [CI integration](../guides/ci-integration.md).

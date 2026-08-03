@@ -1,11 +1,15 @@
 # GitHub automation
 
-The repository-root [`action.yml`](../action.yml) is the `WS-007` Linux x64
-setup Action. Consumers pin commit
-`3fe068790878420a2a9e1d84b6ae5fc83f5752c3` and independently pin a Release
-Bundle v1 archive by version, HTTPS URL, and SHA-256. The Action verifies the
-complete archive and exact safe layout before exposing `buildopt`, the server,
-plugin, agent, and Gradle init script.
+The repository-root [`action.yml`](../action.yml) installs BuildOpt on Linux
+x64 runners. Consumers pin the Action source to a reviewed commit; the normal
+path needs no inputs and resolves the latest native package plus its published
+SHA-256. `version` pins native bits, while the paired `archive-url` and
+`archive-sha256` inputs preserve the historical signed Release Bundle v1 path.
+The Action verifies the complete archive and its internal manifest before
+exposing the launcher, Build Impact, server, Edge, plugin, agent and init
+script. [`release.yml`](./workflows/release.yml) creates the native packages on
+Linux, macOS and Windows when a semantic-version tag is pushed.
+
 
 [`ws-007-fixture.yml`](./workflows/ws-007-fixture.yml) is a manual,
 read-only hosted conformance fixture. It pins every referenced Action by a full

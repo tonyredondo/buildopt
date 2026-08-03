@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 8)); then
+    printf 'usage: %s --version <semver> --archive-url <https-url> --archive-sha256 <sha256> --install-dir <directory>\n' "$0" >&2
+    exit 64
+fi
+buildopt_version=$2
+buildopt_archive_url=$4
+buildopt_archive_sha256=$6
+buildopt_install_dir=$8
+if [[ "$1" != --version || "$3" != --archive-url || "$5" != --archive-sha256 || "$7" != --install-dir ]] ||
+    [[ ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+([+-][0-9A-Za-z.-]+)?$ ]] ||
+    [[ ! "${buildopt_archive_url}" =~ ^https://[^[:space:]]+$ ]] ||
+    [[ ! "${buildopt_archive_sha256}" =~ ^[0-9a-f]{64}$ ]]; then
+    exit 64
+fi
+
+buildopt_base="buildopt-${buildopt_version}-linux-amd64"
+buildopt_install_root="${buildopt_install_dir}/${buildopt_base}"
+buildopt_verify() {
+    local buildopt_root=$1
+    [[ -x "${buildopt_root}/bin/buildopt" ]] &&
+        [[ -x "${buildopt_root}/bin/buildopt-impact" ]] &&
+        [[ -x "${buildopt_root}/bin/buildopt-server" ]] &&
+        [[ -x "${buildopt_root}/bin/buildopt-edge" ]] &&
+        [[ -f "${buildopt_root}/lib/buildopt-gradle-plugin-${buildopt_version}.jar" ]] &&
+        [[ -f "${buildopt_root}/lib/buildopt-jvm-agent-${buildopt_version}.jar" ]] &&
+        [[ -f "${buildopt_root}/lib/buildopt.init.gradle" ]] &&
+        (cd "${buildopt_root}" && sha256sum --check --status SHA256SUMS)
+}
+if [[ -d "${buildopt_install_root}" ]]; then
+    buildopt_verify "${buildopt_install_root}" || {
+        printf 'existing BuildOpt installation is invalid\n' >&2
+        exit 1
+    }
+    printf '%s\n' "${buildopt_install_root}"
+    exit 0
+fi
+
+mkdir -p -- "${buildopt_install_dir}"
+buildopt_work=$(mktemp -d "${buildopt_install_dir}/.buildopt-native.XXXXXX")
+trap 'rm -rf -- "${buildopt_work}"' EXIT
+buildopt_archive="${buildopt_work}/${buildopt_base}.tar.gz"
+curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' \
+    --tlsv1.2 --retry 3 --retry-all-errors --connect-timeout 15 --max-time 300 \
+    --output "${buildopt_archive}" -- "${buildopt_archive_url}"
+if [[ "$(sha256sum "${buildopt_archive}" | awk '{print $1}')" != "${buildopt_archive_sha256}" ]]; then
+    printf 'BuildOpt release archive checksum mismatch\n' >&2
+    exit 1
+fi
+if ! tar -tzf "${buildopt_archive}" | \
+    awk -v root="${buildopt_base}/" '$0 !~ "^" root || $0 ~ /(^|\/)\.\.\// {exit 1}'; then
+    printf 'BuildOpt release archive contains an unsafe path\n' >&2
+    exit 1
+fi
+if tar -tvzf "${buildopt_archive}" | awk 'substr($1,1,1) != "-" && substr($1,1,1) != "d" {exit 1}'; then
+    :
+else
+    printf 'BuildOpt release archive contains an unsafe entry type\n' >&2
+    exit 1
+fi
+tar -xzf "${buildopt_archive}" -C "${buildopt_work}" --no-same-owner
+buildopt_staged="${buildopt_work}/${buildopt_base}"
+buildopt_verify "${buildopt_staged}" || {
+    printf 'BuildOpt release contents failed verification\n' >&2
+    exit 1
+}
+mv -- "${buildopt_staged}" "${buildopt_install_root}"
+printf '%s\n' "${buildopt_install_root}"

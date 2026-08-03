@@ -226,7 +226,8 @@ only commit and collision authority. See the
 
 ## CI installation
 
-The GitHub Action and GitLab component verify an exact release archive and
-checksum before exposing binaries and the pinned Gradle init script. They do
-not make an unauthenticated checksum from the same download location a trust
-root. Continue with [CI integration](./ci-integration.md).
+The GitHub Action and GitLab component resolve a published native package,
+verify its complete SHA-256 and then verify the packaged files before exposing
+the binaries and Gradle integration. Pin the Action/component source revision
+and set `version` when reproducible native bits are required. Continue with
+[CI integration](./ci-integration.md).

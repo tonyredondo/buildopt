@@ -35,32 +35,37 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
 ## Get your first result
 
-The recommended first run exercises the complete POC against project-owned
-synthetic repositories. From a Linux AMD64 checkout:
+Install a published package; you do not need this source checkout or a Go
+toolchain. On Linux or macOS:
 
 ```bash
-./dev/doctor
-./dev/bootstrap --toolchain temurin-jdk-21
-./dev/bootstrap --toolchain go
-./dev/run-owner-poc-lab --output /tmp/buildopt-poc-lab-result.json
-jq '{status, sourceRevision, steps}' /tmp/buildopt-poc-lab-result.json
+curl --fail --silent --show-error --location \
+  --output buildopt-install.sh \
+  https://raw.githubusercontent.com/tonyredondo/buildopt/main/install.sh
+bash buildopt-install.sh
+export PATH="$HOME/.local/bin:$PATH"
+buildopt doctor
 ```
 
-You are looking for `"status": "PASS"`. That result proves the checked-out
-revision completed a real Gradle build, Shared-cache fault handling, a two-node
-Edge scenario, and the packaged Edge lifecycle. It does not run the deferred
-eight-hour soak or claim a speedup for one of your own repositories.
+Then open any Gradle repository that has its Wrapper:
 
-The [step-by-step quickstart](./docs/getting-started/quickstart.md) explains
-prerequisites, expected output, a shorter launcher-only test, running BuildOpt
-around another Gradle repository, and cleanup.
+```bash
+cd /path/to/your-gradle-repository
+buildopt gradle build
+```
+
+BuildOpt discovers the Wrapper and packaged Gradle integration automatically.
+The [product onboarding guide](./docs/getting-started/product-onboarding.md)
+contains Windows installation, CI snippets, component ownership and the
+recommended rollout order. Contributors who want the complete synthetic lab
+can use the [source quickstart](./docs/getting-started/quickstart.md).
 
 ## Choose what to do next
 
 | Goal | Start here |
 |---|---|
-| See the POC work | [Quickstart](./docs/getting-started/quickstart.md) |
-| Try BuildOpt on a Gradle repository | [Run around another repository](./docs/getting-started/quickstart.md#run-buildopt-around-another-gradle-repository) |
+| Install and run BuildOpt | [Product onboarding](./docs/getting-started/product-onboarding.md) |
+| Run the source-based POC lab | [Quickstart](./docs/getting-started/quickstart.md) |
 | Add it to GitHub Actions or GitLab CI | [CI integration](./docs/guides/ci-integration.md) |
 | Understand the design | [Architecture overview](./docs/architecture/overview.md) |
 | Make a code change | [Developer onboarding](./docs/getting-started/developer-onboarding.md) |
@@ -84,7 +89,7 @@ Set `BUILDOPT_BYPASS=1` to remove the optimization path immediately while
 preserving the original command and process behavior:
 
 ```bash
-BUILDOPT_BYPASS=1 buildopt run -- ./gradlew build
+BUILDOPT_BYPASS=1 buildopt gradle build
 ```
 
 ## Documentation

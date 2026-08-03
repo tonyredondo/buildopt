@@ -15,7 +15,7 @@ repository's Wrapper or build logic.
 CI job or developer shell
         |
         v
- buildopt run -- ./gradlew build
+ buildopt gradle build
         |
         +---- bypass ------------------------------> original Gradle command
         |
@@ -66,7 +66,7 @@ prove safe task behavior.
 
 ### 1. Preflight and bypass
 
-The launcher parses only `buildopt run -- <argv>`. It evaluates
+The launcher accepts raw `buildopt run -- <argv>` and packaged `buildopt gradle <args>` entrypoints. It evaluates
 `BUILDOPT_BYPASS=1` before starting any BuildOpt service. In bypass, reserved
 BuildOpt variables are removed and the original argv is executed directly.
 

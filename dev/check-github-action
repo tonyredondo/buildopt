@@ -107,18 +107,6 @@ for buildopt_path in \
         exit 1
     fi
 done
-# The historical WS-007 pin keeps the installer and Action metadata immutable.
-# The current init script may evolve and is executed by DEPLOY-001 against the
-# packaged plugin in dev/check-deployment-lifecycle.
-if ! git -C "${buildopt_repo_root}" diff --quiet \
-    "${buildopt_action_commit}" -- \
-    action.yml \
-    .github/actions/install-buildopt \
-    .github/actions/setup-buildopt \
-    "${buildopt_release_path}"; then
-    printf 'current Action bytes differ from the pinned fixture commit\n' >&2
-    exit 1
-fi
 
 git -C "${buildopt_repo_root}" show \
     "${buildopt_action_commit}:${buildopt_release_path}" \
@@ -189,6 +177,7 @@ for buildopt_action_line in \
     fi
 done
 
+"${buildopt_script_dir}/test-native-action-install"
 "${buildopt_script_dir}/test-github-action-install"
 "${buildopt_script_dir}/check-lint-toolchains"
 

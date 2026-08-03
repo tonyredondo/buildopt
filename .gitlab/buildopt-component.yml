@@ -7,8 +7,7 @@ spec:
     image:
       default: eclipse-temurin:21-jdk
     version:
-    archive-url:
-    archive-sha256:
+      default: latest
     gradle-tasks:
       default: build
 ---
@@ -18,18 +17,37 @@ spec:
   timeout: 30m
   variables:
     BUILDOPT_VERSION: "$[[ inputs.version ]]"
-    BUILDOPT_ARCHIVE_URL: "$[[ inputs.archive-url ]]"
-    BUILDOPT_ARCHIVE_SHA256: "$[[ inputs.archive-sha256 ]]"
     BUILDOPT_GRADLE_TASKS: "$[[ inputs.gradle-tasks ]]"
     BUILDOPT_EVENT_PATH: ".buildopt/gitlab-job-event.json"
   before_script:
-    - ./.gitlab/setup-buildopt
-    - source .buildopt/release.env
+    - |
+      set -euo pipefail
+      mkdir -p .buildopt
+      buildopt_version=$BUILDOPT_VERSION
+      if [[ "$buildopt_version" == latest ]]; then
+        buildopt_version=$(curl --fail --silent --show-error --location \
+          https://github.com/tonyredondo/buildopt/releases/latest/download/buildopt-version.txt)
+      fi
+      if [[ ! "$buildopt_version" =~ ^[0-9]+[.][0-9]+[.][0-9]+([+-][0-9A-Za-z.-]+)?$ ]]; then
+        printf 'invalid BuildOpt version: %s\n' "$buildopt_version" >&2
+        exit 1
+      fi
+      buildopt_source="https://raw.githubusercontent.com/tonyredondo/buildopt/v${buildopt_version}"
+      curl --fail --silent --show-error --location \
+        --output .buildopt/install.sh "$buildopt_source/install.sh"
+      curl --fail --silent --show-error --location \
+        --output .buildopt/buildopt-job-event "$buildopt_source/.gitlab/buildopt-job-event"
+      chmod 0700 .buildopt/install.sh .buildopt/buildopt-job-event
+      .buildopt/install.sh --version "$buildopt_version" --prefix "$CI_PROJECT_DIR/.buildopt/runtime"
+      printf 'export PATH=%q\n' "$CI_PROJECT_DIR/.buildopt/runtime/bin:$PATH" > .buildopt/release.env
+      printf 'export BUILDOPT_VERSION=%q\n' "$buildopt_version" >> .buildopt/release.env
+      source .buildopt/release.env
   script:
     - read -r -a buildopt_tasks <<< "$BUILDOPT_GRADLE_TASKS"
-    - buildopt run -- ./gradlew --no-daemon -I "$BUILDOPT_GRADLE_INIT_SCRIPT" "${buildopt_tasks[@]}"
+    - buildopt gradle --no-daemon "${buildopt_tasks[@]}"
   after_script:
-    - ./.gitlab/buildopt-job-event "$CI_JOB_STATUS" "$BUILDOPT_EVENT_PATH"
+    - source .buildopt/release.env
+    - .buildopt/buildopt-job-event "$CI_JOB_STATUS" "$BUILDOPT_EVENT_PATH"
   artifacts:
     when: always
     expire_in: 7 days

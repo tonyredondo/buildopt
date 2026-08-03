@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_fixture="${buildopt_repo_root}/fixtures/github-actions"
+buildopt_version=0.0.0-ws007
+buildopt_base="buildopt-${buildopt_version}-linux-amd64"
+buildopt_test_root=$(mktemp -d)
+trap 'rm -rf -- "${buildopt_test_root}"' EXIT
+cp -R "${buildopt_fixture}/testdata/package/${buildopt_base}" \
+    "${buildopt_test_root}/${buildopt_base}"
+buildopt_package="${buildopt_test_root}/${buildopt_base}"
+cp -- "${buildopt_package}/bin/buildopt" "${buildopt_package}/bin/buildopt-impact"
+cp -- "${buildopt_package}/bin/buildopt" "${buildopt_package}/bin/buildopt-edge"
+cp -- "${buildopt_repo_root}/.github/actions/buildopt.init.gradle" \
+    "${buildopt_package}/lib/buildopt.init.gradle"
+(
+    cd "${buildopt_package}"
+    sha256sum bin/* lib/* > SHA256SUMS
+)
+tar -C "${buildopt_test_root}" -czf "${buildopt_test_root}/${buildopt_base}.tar.gz" \
+    "${buildopt_base}"
+buildopt_sha256=$(sha256sum "${buildopt_test_root}/${buildopt_base}.tar.gz" | awk '{print $1}')
+mkdir "${buildopt_test_root}/bin"
+ln -s "${buildopt_fixture}/fake-release-curl" "${buildopt_test_root}/bin/curl"
+touch "${buildopt_test_root}/output" "${buildopt_test_root}/path" \
+    "${buildopt_test_root}/env" "${buildopt_test_root}/curl.log"
+
+BUILDOPT_FIXTURE_VERSION="${buildopt_version}" \
+BUILDOPT_FIXTURE_ARCHIVE="${buildopt_test_root}/${buildopt_base}.tar.gz" \
+BUILDOPT_FIXTURE_ARCHIVE_SHA256="${buildopt_sha256}" \
+BUILDOPT_FIXTURE_CURL_LOG="${buildopt_test_root}/curl.log" \
+BUILDOPT_ACTION_VERSION=latest \
+BUILDOPT_ACTION_ARCHIVE_URL='' \
+BUILDOPT_ACTION_ARCHIVE_SHA256='' \
+BUILDOPT_ACTION_INSTALL_DIR="${buildopt_test_root}/install" \
+BUILDOPT_ACTION_PATH="${buildopt_repo_root}" \
+GITHUB_OUTPUT="${buildopt_test_root}/output" \
+GITHUB_PATH="${buildopt_test_root}/path" \
+GITHUB_ENV="${buildopt_test_root}/env" \
+RUNNER_OS=Linux \
+RUNNER_ARCH=X64 \
+PATH="${buildopt_test_root}/bin:${PATH}" \
+    "${buildopt_repo_root}/.github/actions/setup-buildopt" >/dev/null
+
+[[ "$(wc -l <"${buildopt_test_root}/curl.log")" == 3 ]]
+[[ -x "${buildopt_test_root}/install/${buildopt_base}/bin/buildopt" ]]
+grep -Fqx "${buildopt_test_root}/install/${buildopt_base}/bin" \
+    "${buildopt_test_root}/path"
+printf 'Native Action default-resolution test OK\n'

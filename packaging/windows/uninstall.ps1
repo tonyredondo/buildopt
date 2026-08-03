@@ -5,8 +5,9 @@ $ReceiptPath = Join-Path $Prefix 'receipt.json'
 if (-not (Test-Path -LiteralPath $ReceiptPath -PathType Leaf)) { throw 'BuildOpt installation receipt is missing' }
 $Receipt = Get-Content -Raw $ReceiptPath | ConvertFrom-Json
 if ($Receipt.schemaVersion -ne 'buildopt.install/v1') { throw 'BuildOpt installation receipt is invalid' }
+$Allowed = @('bin/buildopt.exe', 'bin/buildopt-impact.exe', 'bin/buildopt-server.exe', 'bin/buildopt-edge.exe', 'bin/buildopt-service.exe', 'share/buildopt/buildopt.init.gradle', 'share/buildopt/buildopt-gradle-plugin.jar', 'share/buildopt/buildopt-jvm-agent.jar')
 foreach ($Relative in $Receipt.files) {
-    if ($Relative -notin @('bin/buildopt.exe', 'bin/buildopt-impact.exe', 'bin/buildopt-server.exe', 'bin/buildopt-edge.exe', 'bin/buildopt-service.exe')) { throw "Unsafe receipt entry: $Relative" }
+    if ($Allowed -notcontains $Relative) { throw "Unsafe receipt entry: $Relative" }
     Remove-Item -Force -ErrorAction SilentlyContinue (Join-Path $Prefix ($Relative -replace '/', '\'))
 }
 if ($Receipt.pathUpdated) {

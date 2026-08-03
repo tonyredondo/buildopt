@@ -8,7 +8,7 @@ before running the product.
 
 | You want to... | Start here | Continue with |
 |---|---|---|
-| Get a first trustworthy result | [Quickstart](./getting-started/quickstart.md) | [Product workflows](./guides/product-workflows.md) |
+| Install and get a first result | [Product onboarding](./getting-started/product-onboarding.md) | [Product workflows](./guides/product-workflows.md) |
 | Develop or review a change | [Developer onboarding](./getting-started/developer-onboarding.md) | [Repository map](./architecture/repository-map.md), [validation](./reference/validation.md) |
 | Understand the system | [Architecture overview](./architecture/overview.md) | [Glossary](./glossary.md), [master RFC](../gradle-build-optimization-platform.md) |
 | Add BuildOpt to CI | [CI integration](./guides/ci-integration.md) | [Configuration reference](./reference/configuration.md) |
@@ -20,7 +20,8 @@ before running the product.
 
 ### Getting started
 
-- [Quickstart](./getting-started/quickstart.md): host checks, reproducible
+- [Product onboarding](./getting-started/product-onboarding.md): package installation, first Gradle build, CI setup, component ownership, and rollout order.
+- [Quickstart](./getting-started/quickstart.md): maintainer host checks, reproducible
   bootstrap, synthetic POC lab, first result, bypass, and cleanup.
 - [Developer onboarding](./getting-started/developer-onboarding.md): local
   setup, language stacks, change workflow, generated artifacts, and review

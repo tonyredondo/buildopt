@@ -14,12 +14,27 @@ buildopt run -- <command> [args...]
 
 The delimiter is mandatory. `buildopt` starts the command directly without a shell, so every token after `--` remains a distinct child-process argument. The child inherits the launcher's working directory, environment, standard input, standard output, and standard error. An ordinary child exit status, including a non-zero status, is returned unchanged.
 
+
+## Packaged Gradle execution
+
+Installed packages add the user-facing shortcut:
+
+```bash
+buildopt gradle [gradle args...]
+```
+
+From a Gradle repository root, it discovers the platform Wrapper, resolves the
+init script and plugin relative to the installed launcher, and delegates to the
+same passthrough/gateway lifecycle. `BUILDOPT_BYPASS=1` keeps Wrapper discovery
+but omits the packaged BuildOpt integration. Missing Wrapper or package assets
+return configuration exit code `78` before a child starts.
 The CLI uses these status conventions; once a child starts, its ordinary exit status always wins:
 
 | Code | Meaning |
 |---:|---|
 | `0` | Help was printed, or the child completed successfully |
 | `64` | Invalid CLI usage |
+| `78` | Gradle Wrapper or packaged integration is unavailable |
 | `126` | The resolved command could not be executed |
 | `127` | The command could not be found |
 | `128 + signal` | The child terminated from an unhandled signal; for example, `130` for `SIGINT` and `143` for `SIGTERM` |
