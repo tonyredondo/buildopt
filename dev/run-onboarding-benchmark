@@ -1,0 +1,373 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 5)); then
+    printf 'usage: %s OUTPUT_FILE BUILDOPT_BINARY BUILDOPT_VERSION KOTLIN_REPOSITORY GROOVY_REPOSITORY\n' "$0" >&2
+    exit 64
+fi
+
+benchmark_output=$1
+benchmark_buildopt=$2
+benchmark_version=$3
+benchmark_kotlin=$4
+benchmark_groovy=$5
+
+if [[ "${benchmark_output}" != /* || -e "${benchmark_output}" ||
+    ! -x "${benchmark_buildopt}" ||
+    ! "${benchmark_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+([+-][0-9A-Za-z.-]+)?$ ]]; then
+    printf 'invalid onboarding benchmark input\n' >&2
+    exit 64
+fi
+for benchmark_repository in "${benchmark_kotlin}" "${benchmark_groovy}"; do
+    if [[ ! -d "${benchmark_repository}/.git" ]]; then
+        printf 'benchmark repository is not a Git checkout: %s\n' "${benchmark_repository}" >&2
+        exit 64
+    fi
+done
+for benchmark_command in awk date find getconf git grep java jq mkdir mktemp rm sha256sum tar uname; do
+    command -v "${benchmark_command}" >/dev/null 2>&1 || {
+        printf 'required benchmark command is unavailable: %s\n' "${benchmark_command}" >&2
+        exit 1
+    }
+done
+
+benchmark_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-onboarding-benchmark.XXXXXX")
+benchmark_raw="${benchmark_root}/observations.jsonl"
+benchmark_cleanup() {
+    if [[ "${benchmark_root}" == "${TMPDIR:-/tmp}/buildopt-onboarding-benchmark."* ]]; then
+        rm -rf -- "${benchmark_root}"
+    fi
+}
+trap benchmark_cleanup EXIT
+
+"${benchmark_buildopt}" doctor >/dev/null
+
+benchmark_duration_ms=
+benchmark_digest=
+benchmark_run_arm() {
+    local benchmark_workspace=$1
+    local benchmark_gradle_home=$2
+    local benchmark_user_cache=$3
+    local benchmark_arm=$4
+    local benchmark_log=$5
+    local benchmark_expected_cache_state=${6:-HIT}
+    local benchmark_started
+    local benchmark_completed
+    local benchmark_status
+
+    find "${benchmark_workspace}" -type d -name build -prune -exec rm -rf -- {} +
+    rm -rf -- "${benchmark_workspace}/.gradle"
+    mkdir -p -- "${benchmark_gradle_home}" "${benchmark_user_cache}"
+
+    local -a benchmark_environment=(
+        env
+        -u BUILDOPT_BYPASS
+        -u BUILDOPT_L1_STATE_ROOT
+        -u BUILDOPT_L1_TENANT_ID
+        -u BUILDOPT_L1_REPOSITORY_ID
+        -u BUILDOPT_L1_TRUST_DOMAIN
+        -u BUILDOPT_L1_COMPATIBILITY_CLASS
+        -u BUILDOPT_L1_SECURITY_GENERATION
+        -u BUILDOPT_L1_L2_WRITE_AUTHORIZED
+        "GRADLE_USER_HOME=${benchmark_gradle_home}"
+        "XDG_CACHE_HOME=${benchmark_user_cache}"
+    )
+    local -a benchmark_arguments=(
+        gradle
+        --no-daemon
+        --no-configuration-cache
+        --stacktrace
+        --warning-mode=fail
+        --console=plain
+    )
+    case "${benchmark_arm}" in
+        CACHE_OFF)
+            benchmark_environment+=("BUILDOPT_BYPASS=1")
+            benchmark_arguments+=(--no-build-cache)
+            ;;
+        NATIVE_CACHE)
+            benchmark_environment+=("BUILDOPT_BYPASS=1")
+            benchmark_arguments+=(--build-cache)
+            ;;
+        BUILDOPT)
+            ;;
+        *)
+            printf 'unknown benchmark arm: %s\n' "${benchmark_arm}" >&2
+            exit 64
+            ;;
+    esac
+    benchmark_arguments+=(clean :app:distZip)
+
+    benchmark_started=$(date +%s%N)
+    set +e
+    (
+        cd -- "${benchmark_workspace}"
+        "${benchmark_environment[@]}" "${benchmark_buildopt}" \
+            "${benchmark_arguments[@]}"
+    ) >"${benchmark_log}" 2>&1
+    benchmark_status=$?
+    set -e
+    benchmark_completed=$(date +%s%N)
+    if ((benchmark_status != 0)); then
+        printf 'benchmark arm %s failed\n' "${benchmark_arm}" >&2
+        sed -n '1,240p' "${benchmark_log}" >&2
+        exit 1
+    fi
+
+    case "${benchmark_arm}:${benchmark_expected_cache_state}" in
+        CACHE_OFF:*)
+            if grep -Fq ':compileJava FROM-CACHE' "${benchmark_log}"; then
+                printf 'cache-off control unexpectedly restored compileJava\n' >&2
+                exit 1
+            fi
+            ;;
+        NATIVE_CACHE:WARM | BUILDOPT:WARM)
+            ;;
+        NATIVE_CACHE:HIT)
+            grep -Fq ':compileJava FROM-CACHE' "${benchmark_log}" || {
+                printf 'native-cache control did not restore compileJava\n' >&2
+                sed -n '1,240p' "${benchmark_log}" >&2
+                exit 1
+            }
+            ;;
+        BUILDOPT:HIT)
+            grep -Fq ':compileJava FROM-CACHE' "${benchmark_log}" || {
+                printf 'BuildOpt candidate did not restore compileJava\n' >&2
+                sed -n '1,240p' "${benchmark_log}" >&2
+                exit 1
+            }
+            ;;
+        *)
+            printf 'unknown cache expectation: %s/%s\n' \
+                "${benchmark_arm}" "${benchmark_expected_cache_state}" >&2
+            exit 64
+            ;;
+    esac
+
+    case "${benchmark_arm}" in
+        BUILDOPT)
+            grep -Fq 'authenticated Gradle plugin handshake accepted' "${benchmark_log}" || {
+                printf 'BuildOpt candidate lacks authenticated handshake\n' >&2
+                exit 1
+            }
+            ;;
+    esac
+
+    local benchmark_deliverable="${benchmark_workspace}/app/build/distributions/app-1.0.0.zip"
+    if [[ ! -s "${benchmark_deliverable}" ]]; then
+        printf 'benchmark deliverable is absent: %s\n' "${benchmark_deliverable}" >&2
+        exit 1
+    fi
+    benchmark_duration_ms=$(((benchmark_completed - benchmark_started) / 1000000))
+    benchmark_digest=$(sha256sum "${benchmark_deliverable}" | awk '{print $1}')
+}
+
+benchmark_measure_repository() {
+    local benchmark_repository=$1
+    local benchmark_name=$2
+    local benchmark_dsl=$3
+    local benchmark_revision
+    benchmark_revision=$(git -C "${benchmark_repository}" rev-parse HEAD)
+
+    for benchmark_comparison in CACHE_OFF NATIVE_CACHE; do
+        local benchmark_comparison_root="${benchmark_root}/${benchmark_dsl,,}-${benchmark_comparison,,}"
+        local benchmark_control="${benchmark_comparison_root}/control"
+        local benchmark_candidate="${benchmark_comparison_root}/candidate"
+        mkdir -p -- "${benchmark_control}" "${benchmark_candidate}"
+        git -C "${benchmark_repository}" archive --format=tar "${benchmark_revision}" |
+            tar -xf - -C "${benchmark_control}"
+        git -C "${benchmark_repository}" archive --format=tar "${benchmark_revision}" |
+            tar -xf - -C "${benchmark_candidate}"
+
+        local benchmark_control_home="${benchmark_comparison_root}/control-gradle-home"
+        local benchmark_candidate_home="${benchmark_comparison_root}/candidate-gradle-home"
+        local benchmark_control_cache="${benchmark_comparison_root}/control-user-cache"
+        local benchmark_candidate_cache="${benchmark_comparison_root}/candidate-user-cache"
+        local benchmark_control_arm=${benchmark_comparison}
+
+        benchmark_run_arm \
+            "${benchmark_control}" \
+            "${benchmark_control_home}" \
+            "${benchmark_control_cache}" \
+            "${benchmark_control_arm}" \
+            "${benchmark_comparison_root}/warm-control.log" WARM
+        benchmark_run_arm \
+            "${benchmark_candidate}" \
+            "${benchmark_candidate_home}" \
+            "${benchmark_candidate_cache}" \
+            BUILDOPT \
+            "${benchmark_comparison_root}/warm-candidate.log" WARM
+
+        for benchmark_pair in 1 2 3 4; do
+            local benchmark_control_ms
+            local benchmark_candidate_ms
+            local benchmark_control_digest
+            local benchmark_candidate_digest
+            local benchmark_order
+            if ((benchmark_pair % 2 == 1)); then
+                benchmark_order=CONTROL_FIRST
+                benchmark_run_arm \
+                    "${benchmark_control}" \
+                    "${benchmark_control_home}" \
+                    "${benchmark_control_cache}" \
+                    "${benchmark_control_arm}" \
+                    "${benchmark_comparison_root}/pair-${benchmark_pair}-control.log"
+                benchmark_control_ms=${benchmark_duration_ms}
+                benchmark_control_digest=${benchmark_digest}
+                benchmark_run_arm \
+                    "${benchmark_candidate}" \
+                    "${benchmark_candidate_home}" \
+                    "${benchmark_candidate_cache}" \
+                    BUILDOPT \
+                    "${benchmark_comparison_root}/pair-${benchmark_pair}-candidate.log"
+                benchmark_candidate_ms=${benchmark_duration_ms}
+                benchmark_candidate_digest=${benchmark_digest}
+            else
+                benchmark_order=CANDIDATE_FIRST
+                benchmark_run_arm \
+                    "${benchmark_candidate}" \
+                    "${benchmark_candidate_home}" \
+                    "${benchmark_candidate_cache}" \
+                    BUILDOPT \
+                    "${benchmark_comparison_root}/pair-${benchmark_pair}-candidate.log"
+                benchmark_candidate_ms=${benchmark_duration_ms}
+                benchmark_candidate_digest=${benchmark_digest}
+                benchmark_run_arm \
+                    "${benchmark_control}" \
+                    "${benchmark_control_home}" \
+                    "${benchmark_control_cache}" \
+                    "${benchmark_control_arm}" \
+                    "${benchmark_comparison_root}/pair-${benchmark_pair}-control.log"
+                benchmark_control_ms=${benchmark_duration_ms}
+                benchmark_control_digest=${benchmark_digest}
+            fi
+            if [[ "${benchmark_control_digest}" != "${benchmark_candidate_digest}" ]]; then
+                printf 'benchmark deliverable diverged for %s/%s pair %d\n' \
+                    "${benchmark_name}" \
+                    "${benchmark_comparison}" \
+                    "${benchmark_pair}" >&2
+                exit 1
+            fi
+            jq -cn \
+                --arg repository "${benchmark_name}" \
+                --arg revision "${benchmark_revision}" \
+                --arg dsl "${benchmark_dsl}" \
+                --arg comparison "${benchmark_comparison}" \
+                --arg order "${benchmark_order}" \
+                --arg digest "${benchmark_candidate_digest}" \
+                --argjson pair "${benchmark_pair}" \
+                --argjson controlMs "${benchmark_control_ms}" \
+                --argjson candidateMs "${benchmark_candidate_ms}" '{
+                    repository: $repository,
+                    revision: $revision,
+                    dsl: $dsl,
+                    comparison: $comparison,
+                    pair: $pair,
+                    order: $order,
+                    controlDurationMs: $controlMs,
+                    candidateDurationMs: $candidateMs,
+                    savedMs: ($controlMs - $candidateMs),
+                    deliverableSha256: $digest
+                }' >>"${benchmark_raw}"
+            printf '%s %s pair %d: control=%dms BuildOpt=%dms saved=%dms\n' \
+                "${benchmark_dsl}" "${benchmark_comparison}" "${benchmark_pair}" \
+                "${benchmark_control_ms}" "${benchmark_candidate_ms}" \
+                "$((benchmark_control_ms - benchmark_candidate_ms))"
+        done
+    done
+}
+
+benchmark_measure_repository \
+    "${benchmark_kotlin}" \
+    tonyredondo/buildopt-pilot \
+    KOTLIN
+benchmark_measure_repository \
+    "${benchmark_groovy}" \
+    tonyredondo/buildopt-pilot-groovy \
+    GROOVY
+
+mkdir -p -- "$(dirname -- "${benchmark_output}")"
+benchmark_binary_digest=$(sha256sum "${benchmark_buildopt}" | awk '{print $1}')
+benchmark_cpu_count=$(getconf _NPROCESSORS_ONLN)
+benchmark_page_size=$(getconf PAGESIZE)
+benchmark_physical_pages=$(getconf _PHYS_PAGES)
+benchmark_memory_bytes=$((benchmark_page_size * benchmark_physical_pages))
+benchmark_java_version=$(java -version 2>&1 | awk 'NR == 1 {print; exit}')
+jq -s \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg buildoptVersion "${benchmark_version}" \
+    --arg buildoptBinarySha256 "${benchmark_binary_digest}" \
+    --arg runnerOs "$(uname -s)" \
+    --arg runnerArchitecture "$(uname -m)" \
+    --arg runnerJava "${benchmark_java_version}" \
+    --argjson runnerCpuCount "${benchmark_cpu_count}" \
+    --argjson runnerMemoryBytes "${benchmark_memory_bytes}" '
+    def summary:
+        . as $rows |
+        {
+            pairs: length,
+            controlMeanMs: ((map(.controlDurationMs) | add) / length),
+            candidateMeanMs: ((map(.candidateDurationMs) | add) / length),
+            meanSavedMs: ((map(.savedMs) | add) / length),
+            meanReductionRatio:
+                ((map(.savedMs) | add) / (map(.controlDurationMs) | add)),
+            minSavedMs: (map(.savedMs) | min),
+            maxSavedMs: (map(.savedMs) | max),
+            positivePairs: (map(select(.savedMs > 0)) | length),
+            allDeliverablesIdentical:
+                ((map(.deliverableSha256) | unique | length) == 1),
+            observations: $rows
+        };
+    {
+        schemaVersion: "buildopt.benchmarks/onboarding-performance/v1",
+        capturedAt: $capturedAt,
+        buildoptVersion: $buildoptVersion,
+        buildoptBinarySha256: $buildoptBinarySha256,
+        runner: {
+            operatingSystem: $runnerOs,
+            architecture: $runnerArchitecture,
+            cpuCount: $runnerCpuCount,
+            memoryBytes: $runnerMemoryBytes,
+            java: $runnerJava,
+            qualifiedGoldenRunner: false
+        },
+        design: {
+            pairsPerComparison: 4,
+            order: "PAIRED_ALTERNATING",
+            task: ":app:distZip",
+            configurationCache: false,
+            publicOnboardingCommand: "buildopt gradle --no-daemon --no-configuration-cache clean :app:distZip",
+            comparisons: {
+                CACHE_OFF: "Gradle with build cache disabled versus BuildOpt automatic L1",
+                NATIVE_CACHE: "Gradle native local cache versus BuildOpt automatic L1"
+            }
+        },
+        repositories:
+            (group_by(.repository) |
+             map({
+                nameWithOwner: .[0].repository,
+                revision: .[0].revision,
+                dsl: .[0].dsl,
+                comparisons:
+                    (group_by(.comparison) |
+                     map({key: .[0].comparison, value: summary}) |
+                     from_entries)
+             })),
+        boundaries: {
+            descriptivePocEvidence: true,
+            productionPromotionAuthorized: false,
+            eightHourSoakExecuted: false
+        }
+    }' "${benchmark_raw}" >"${benchmark_output}"
+chmod 0600 "${benchmark_output}"
+
+jq -e '
+    (.repositories | length) == 2 and
+    all(.repositories[];
+        (.comparisons.CACHE_OFF.pairs == 4) and
+        (.comparisons.NATIVE_CACHE.pairs == 4) and
+        .comparisons.CACHE_OFF.allDeliverablesIdentical and
+        .comparisons.NATIVE_CACHE.allDeliverablesIdentical)
+' "${benchmark_output}" >/dev/null
+
+printf 'BuildOpt onboarding benchmark written to %s\n' "${benchmark_output}"

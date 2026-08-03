@@ -31,7 +31,7 @@ export PATH="$HOME/.local/bin:$PATH"
 buildopt doctor
 ```
 
-Use `--version 0.1.1` to pin a release or `--prefix /absolute/path` to choose
+Use `--version 0.2.0` to pin a release or `--prefix /absolute/path` to choose
 another user-owned installation. The installer detects the operating system
 and architecture, downloads the matching archive and checksum, verifies the
 complete archive, verifies its internal files again, and records only the
@@ -49,7 +49,7 @@ Invoke-WebRequest `
 buildopt doctor
 ```
 
-Open a new terminal after `-UpdatePath`. `-Version 0.1.1` pins a release and
+Open a new terminal after `-UpdatePath`. `-Version 0.2.0` pins a release and
 `-Prefix C:\absolute\path` changes the installation root.
 
 ## Run the first build
@@ -58,16 +58,32 @@ Change to a Gradle repository that contains its Wrapper and run:
 
 ```bash
 cd /path/to/your-gradle-repository
-buildopt gradle build
+buildopt gradle clean build
+buildopt gradle clean build
 ```
 
 On Windows the same command discovers `gradlew.bat`; on Linux and macOS it
 discovers `gradlew`. BuildOpt supplies the packaged init script and plugin,
-starts the local optimization path, preserves Gradle output and returns the
-Gradle exit code. Any ordinary Gradle argument can follow `buildopt gradle`:
+enables a private local build cache, preserves Gradle output and returns the
+Gradle exit code. The first clean build populates qualified entries. The
+second removes project outputs again and should show qualified tasks such as
+`compileJava FROM-CACHE`.
+
+The default cache lives below the operating system's user cache directory.
+BuildOpt hashes the canonical repository path and Wrapper/platform
+compatibility into separate opaque scopes, retains entries through Gradle's
+native seven-day cleanup, and never requires a network service. Any ordinary
+Gradle argument can follow `buildopt gradle`:
 
 ```bash
 buildopt gradle --no-daemon clean assemble
+```
+
+Disable only the automatic build cache while retaining the packaged launcher
+and plugin:
+
+```bash
+buildopt gradle --no-build-cache build
 ```
 
 Immediate bypass keeps the same entrypoint while removing BuildOpt's plugin
@@ -115,7 +131,23 @@ include:
 
 The component installs the matching public release into `.buildopt/runtime`,
 runs `buildopt gradle`, and retains the normalized job event and redacted
-exports. Add `version: 0.1.1` to pin the native package.
+exports. Add `version: 0.2.0` to pin the native package.
+
+## What improvement should you expect?
+
+The checked 12-CPU local experiment ran four alternating pairs per comparison
+on immutable Kotlin and Groovy pilots. Against Gradle with its build cache
+disabled, the public command reduced mean time from 9.857 s to 7.815 s in
+Kotlin (20.7%) and from 14.226 s to 11.276 s in Groovy (20.7%). All eight
+pairs improved and every distribution digest matched.
+
+BuildOpt does not claim to beat an already warm unrestricted Gradle cache. In
+the same run it was 9.8% slower for Kotlin and 1.1% slower for Groovy because
+the safe Tier 1 allowlist reuses fewer task types and adds verification. These
+are descriptive POC results, not a universal prediction. The
+[raw observations](../../benchmarks/results/onboarding-performance-v1-local.json)
+and [measurement contract](../../specs/onboarding-performance-v1.md) retain
+both comparisons.
 
 ## Component ownership and configuration
 

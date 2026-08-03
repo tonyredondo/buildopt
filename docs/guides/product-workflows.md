@@ -69,8 +69,13 @@ The launcher-to-server context and complete server options are documented in
 
 ## Managed cache
 
-BuildOpt composes Gradle's native local cache with an authenticated loopback
-HTTP cache:
+The normal `buildopt gradle` command requires no cache configuration. It
+creates a private repository- and Wrapper-compatible native L1 below the user
+cache directory, enables Gradle's build cache, and applies the safe Tier 1 task
+policy. `--no-build-cache` is the cache-only opt-out.
+
+For an operated Shared deployment, BuildOpt composes that native local cache
+with an authenticated loopback HTTP cache:
 
 ```text
 Gradle -> managed DirectoryBuildCache (L1)
@@ -79,9 +84,9 @@ Gradle -> managed DirectoryBuildCache (L1)
        -> Shared
 ```
 
-The full configuration consists of a private signed authority, trust root,
-cache credential or scoped token, Shared URL, managed L1 scope, and compatible
-Gradle init script. Treat it as one atomic configuration group; do not invent
+The advanced Shared configuration consists of a private signed authority,
+trust root, cache credential or scoped token, Shared URL, managed L1 scope,
+and compatible Gradle init script. Treat it as one atomic group; do not invent
 partial values. The detailed environment contract is in
 [configuration reference](../reference/configuration.md#managed-l1-and-shared-cache).
 

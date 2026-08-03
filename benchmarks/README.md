@@ -17,6 +17,46 @@ explicitly non-qualifying. Those two commands do not claim the long profiles;
 `./dev/check-beta-gradle-fixtures` owns the bounded small/medium/large Gradle
 build matrix and makes no performance claim.
 
+## Public onboarding performance
+
+[The local result](./results/onboarding-performance-v1-local.json) measures the
+actual no-configuration command from the README on the immutable public Kotlin
+and Groovy pilots. Four alternating pairs compare BuildOpt separately with
+cache disabled and with Gradle's unrestricted native local cache.
+
+| Pilot | Control | Control mean | BuildOpt mean | Difference |
+|---|---|---:|---:|---:|
+| Kotlin | Cache off | 9.857 s | 7.815 s | 2.042 s faster (20.7%) |
+| Groovy | Cache off | 14.226 s | 11.276 s | 2.951 s faster (20.7%) |
+| Kotlin | Native cache | 10.762 s | 11.812 s | 1.050 s slower (9.8%) |
+| Groovy | Native cache | 10.754 s | 10.876 s | 0.123 s slower (1.1%) |
+
+All eight cache-off pairs improved, every paired distribution was
+byte-identical, and the less favorable native-cache observations remain in the
+report. The 12-CPU host is explicitly not a qualified golden runner. Validate
+the immutable result without rerunning builds:
+
+```bash
+./dev/check-onboarding-performance
+```
+
+To create a fresh report, provide an absent absolute output path, an installed
+BuildOpt binary and version, and both Git checkouts:
+
+```bash
+./dev/run-onboarding-benchmark \
+  /tmp/onboarding-performance.json \
+  "$(command -v buildopt)" \
+  0.2.0 \
+  /path/to/buildopt-pilot \
+  /path/to/buildopt-pilot-groovy
+./dev/check-onboarding-performance /tmp/onboarding-performance.json
+```
+
+The exact design and claim boundary live in
+[the onboarding performance specification](../specs/onboarding-performance-v1.md).
+
+
 ## Owner-controlled pilot deployment evidence
 
 [`results/a1-001-owner-controlled-pilot.json`](./results/a1-001-owner-controlled-pilot.json)

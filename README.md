@@ -51,14 +51,24 @@ Then open any Gradle repository that has its Wrapper:
 
 ```bash
 cd /path/to/your-gradle-repository
-buildopt gradle build
+buildopt gradle clean build
+buildopt gradle clean build
 ```
 
 BuildOpt discovers the Wrapper and packaged Gradle integration automatically.
+The first command warms a private repository-scoped local cache; the second
+clean build can restore qualified compilation outputs. No cache directory,
+plugin path, service, credential, or `--build-cache` flag is required.
 The [product onboarding guide](./docs/getting-started/product-onboarding.md)
 contains Windows installation, CI snippets, component ownership and the
 recommended rollout order. Contributors who want the complete synthetic lab
 can use the [source quickstart](./docs/getting-started/quickstart.md).
+
+The checked local onboarding benchmark measured 20.7% lower mean time than a
+cache-off control in both the Kotlin and Groovy pilots. It also retains the
+less favorable comparison with Gradle's unrestricted native cache. See the
+[raw result](./benchmarks/results/onboarding-performance-v1-local.json) and
+[measurement contract](./specs/onboarding-performance-v1.md).
 
 ## Choose what to do next
 

@@ -1,8 +1,11 @@
 package launcher
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -16,6 +19,7 @@ const (
 type gradleInvocation struct {
 	childArgs   []string
 	environment map[string]string
+	managedL1   *managedL1Config
 }
 
 func prepareGradleInvocation(args []string, bypass bool) (gradleInvocation, error) {
@@ -33,6 +37,8 @@ func prepareGradleInvocation(args []string, bypass bool) (gradleInvocation, erro
 
 	childArgs := []string{wrapper}
 	environment := map[string]string(nil)
+	var defaultManagedL1 *managedL1Config
+	buildCacheConfigured, buildCacheEnabled := gradleBuildCacheMode(args)
 	if !bypass {
 		initScript, pluginJar, assetErr := resolveGradleAssets()
 		if assetErr != nil {
@@ -40,9 +46,95 @@ func prepareGradleInvocation(args []string, bypass bool) (gradleInvocation, erro
 		}
 		childArgs = append(childArgs, "--init-script", initScript)
 		environment = map[string]string{gradlePluginJarEnvironment: pluginJar}
+		if _, configured, _ := managedL1ConfigFromEnvironment(os.Getenv); !configured &&
+			(!buildCacheConfigured || buildCacheEnabled) {
+			cacheRoot, cacheErr := os.UserCacheDir()
+			if cacheErr != nil {
+				return gradleInvocation{}, fmt.Errorf(
+					"resolve user cache directory: %w",
+					cacheErr,
+				)
+			}
+			config, configErr := defaultGradleManagedL1Config(workingDirectory, cacheRoot)
+			if configErr != nil {
+				return gradleInvocation{}, configErr
+			}
+			defaultManagedL1 = &config
+			if !buildCacheConfigured {
+				childArgs = append(childArgs, "--build-cache")
+			}
+		}
 	}
 	childArgs = append(childArgs, args...)
-	return gradleInvocation{childArgs: childArgs, environment: environment}, nil
+	return gradleInvocation{
+		childArgs: childArgs, environment: environment, managedL1: defaultManagedL1,
+	}, nil
+}
+
+func gradleBuildCacheMode(args []string) (configured bool, enabled bool) {
+	for _, argument := range args {
+		switch argument {
+		case "--build-cache":
+			configured = true
+			enabled = true
+		case "--no-build-cache":
+			configured = true
+			enabled = false
+		}
+	}
+	return configured, enabled
+}
+
+func defaultGradleManagedL1Config(repositoryRoot, cacheRoot string) (managedL1Config, error) {
+	canonicalRoot, err := filepath.EvalSymlinks(repositoryRoot)
+	if err != nil {
+		return managedL1Config{}, fmt.Errorf("resolve Gradle repository root: %w", err)
+	}
+	canonicalRoot, err = filepath.Abs(canonicalRoot)
+	if err != nil {
+		return managedL1Config{}, fmt.Errorf("make Gradle repository root absolute: %w", err)
+	}
+	cacheRoot, err = filepath.Abs(cacheRoot)
+	if err != nil {
+		return managedL1Config{}, fmt.Errorf("make user cache directory absolute: %w", err)
+	}
+
+	wrapperProperties := filepath.Join(
+		canonicalRoot,
+		"gradle",
+		"wrapper",
+		"gradle-wrapper.properties",
+	)
+	properties, err := os.Open(wrapperProperties)
+	if err != nil {
+		return managedL1Config{}, fmt.Errorf("open Gradle Wrapper properties: %w", err)
+	}
+	defer properties.Close()
+
+	repositoryDigest := sha256.Sum256([]byte(canonicalRoot))
+	compatibility := sha256.New()
+	_, _ = io.WriteString(compatibility, "buildopt-local-l1-compatibility-v1\\x00")
+	_, _ = io.WriteString(compatibility, runtime.GOOS+"\\x00"+runtime.GOARCH+"\\x00")
+	if _, err := io.Copy(compatibility, properties); err != nil {
+		return managedL1Config{}, fmt.Errorf("hash Gradle Wrapper properties: %w", err)
+	}
+
+	config := managedL1Config{
+		stateRoot:          filepath.Join(cacheRoot, "buildopt", "state"),
+		tenantID:           "local-user",
+		repositoryID:       "repository-" + hex.EncodeToString(repositoryDigest[:]),
+		trustDomain:        "local-machine",
+		compatibilityClass: "compatibility-" + hex.EncodeToString(compatibility.Sum(nil)),
+		securityGeneration: 0,
+		l2WriteAuthorized:  false,
+	}
+	config.scopeDigest = managedL1ScopeDigest(
+		config.tenantID,
+		config.repositoryID,
+		config.trustDomain,
+		config.compatibilityClass,
+	)
+	return config, nil
 }
 
 func resolveGradleAssets() (string, string, error) {

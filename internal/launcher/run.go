@@ -39,6 +39,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		return 0
 	}
 	gradleEnvironment := map[string]string(nil)
+	var gradleManagedL1 *managedL1Config
 	if len(args) > 0 && args[0] == "gradle" {
 		invocation, err := prepareGradleInvocation(
 			args[1:],
@@ -50,6 +51,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		}
 		args = append([]string{"run", "--"}, invocation.childArgs...)
 		gradleEnvironment = invocation.environment
+		gradleManagedL1 = invocation.managedL1
 	}
 	if len(args) < 3 || args[0] != "run" || args[1] != "--" {
 		_, _ = io.WriteString(stderr, usage)
@@ -159,7 +161,11 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			managedL1ConfigForInvocation(authority, gateway),
 		)
 	} else if !authorityConfigured {
-		l1, l1Err = startInvocationManagedL1()
+		if gradleManagedL1 != nil {
+			l1, l1Err = startManagedL1(*gradleManagedL1)
+		} else {
+			l1, l1Err = startInvocationManagedL1()
+		}
 	}
 	if l1Err != nil {
 		_, _ = fmt.Fprintf(

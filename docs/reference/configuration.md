@@ -44,6 +44,21 @@ for the exact JSON example.
 
 ### Managed L1 scope
 
+With no `BUILDOPT_L1_*` inputs, `buildopt gradle` enables Gradle's build
+cache and derives a safe local scope automatically. State is stored below the
+operating system user cache directory as `buildopt/state`. The canonical
+repository path is SHA-256 hashed for separation; the operating
+system/architecture and complete Wrapper properties are hashed into the
+compatibility scope. Raw paths do not enter the cache layout.
+
+`--no-build-cache` disables this automatic cache for the invocation.
+`BUILDOPT_BYPASS=1` additionally removes the BuildOpt plugin and launcher
+optimization path. A Wrapper change creates a new compatibility scope, and a
+different checkout path creates a different repository scope.
+
+The variables below are the advanced operator-owned override. Supplying any
+one prevents automatic derivation; supply the complete group.
+
 | Variable | Meaning |
 |---|---|
 | `BUILDOPT_L1_STATE_ROOT` | Absolute private L1 state root |

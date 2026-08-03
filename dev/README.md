@@ -2048,6 +2048,22 @@ The hosted `.github/workflows/platform-ci.yml` matrix is the native acceptance
 gate for install, upgrade, Gradle handshake and Build Impact, cancellation,
 cleanup, uninstall, and artifact publication.
 
+## Onboarding performance
+
+Validate the checked-in local observations without running Gradle:
+
+```bash
+./dev/check-onboarding-performance
+```
+
+The fresh-run command, required immutable pilot inputs, two controls, warming,
+four-pair alternating design and interpretation boundary are documented in
+[the benchmark index](../benchmarks/README.md#public-onboarding-performance).
+The manual `Onboarding performance` workflow installs release `0.2.0`, runs
+the same harness on `ubuntu-24.04`, validates the JSON and uploads it. It is
+manual because performance sampling is intentionally separate from ordinary
+push/PR CI and from the deferred soak.
+
 ## Validation
 
 Run the lock and doctor contract tests from the repository root:

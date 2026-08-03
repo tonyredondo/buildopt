@@ -21,6 +21,7 @@ the exact cross-component contract.
 | [`beta-circuit-breaker-v1.md`](./beta-circuit-breaker-v1.md) | `OPS-001/A1` / `A1-G02` |
 | [`beta-gradle-fixtures-v1.md`](./beta-gradle-fixtures-v1.md) | `OPS-001/A1` / `A1-G02` |
 | [`private-beta-token-isolation-v1.md`](./private-beta-token-isolation-v1.md) | `A1-002` / `A1-G01` |
+| [`onboarding-performance-v1.md`](./onboarding-performance-v1.md) | Product onboarding |
 | [`private-beta-data-lifecycle-v1.md`](./private-beta-data-lifecycle-v1.md) | `A1-004` / `A1-G05` |
 | [`private-beta-operations-v1.md`](./private-beta-operations-v1.md) | `A1-005` |
 | [`owner-controlled-pilot-deployment-v1.md`](./owner-controlled-pilot-deployment-v1.md) | `A1-001` |

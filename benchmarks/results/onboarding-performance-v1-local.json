@@ -1,0 +1,290 @@
+{
+  "schemaVersion": "buildopt.benchmarks/onboarding-performance/v1",
+  "capturedAt": "2026-08-03T19:12:06Z",
+  "buildoptVersion": "0.2.0-local",
+  "buildoptBinarySha256": "5922960a08a60e62893353547f94bfb979d89d3eba5462c9b949f49175b044ce",
+  "runner": {
+    "operatingSystem": "Linux",
+    "architecture": "x86_64",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "java": "openjdk version \"17.0.19\" 2026-04-21",
+    "qualifiedGoldenRunner": false
+  },
+  "design": {
+    "pairsPerComparison": 4,
+    "order": "PAIRED_ALTERNATING",
+    "task": ":app:distZip",
+    "configurationCache": false,
+    "publicOnboardingCommand": "buildopt gradle --no-daemon --no-configuration-cache clean :app:distZip",
+    "comparisons": {
+      "CACHE_OFF": "Gradle with build cache disabled versus BuildOpt automatic L1",
+      "NATIVE_CACHE": "Gradle native local cache versus BuildOpt automatic L1"
+    }
+  },
+  "repositories": [
+    {
+      "nameWithOwner": "tonyredondo/buildopt-pilot",
+      "revision": "6852cfc4a84fbd49d70dde957da471d6e9c279b4",
+      "dsl": "KOTLIN",
+      "comparisons": {
+        "CACHE_OFF": {
+          "pairs": 4,
+          "controlMeanMs": 9856.75,
+          "candidateMeanMs": 7814.75,
+          "meanSavedMs": 2042,
+          "meanReductionRatio": 0.20716767697263297,
+          "minSavedMs": 1330,
+          "maxSavedMs": 3236,
+          "positivePairs": 4,
+          "allDeliverablesIdentical": true,
+          "observations": [
+            {
+              "repository": "tonyredondo/buildopt-pilot",
+              "revision": "6852cfc4a84fbd49d70dde957da471d6e9c279b4",
+              "dsl": "KOTLIN",
+              "comparison": "CACHE_OFF",
+              "pair": 1,
+              "order": "CONTROL_FIRST",
+              "controlDurationMs": 9179,
+              "candidateDurationMs": 7560,
+              "savedMs": 1619,
+              "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+            },
+            {
+              "repository": "tonyredondo/buildopt-pilot",
+              "revision": "6852cfc4a84fbd49d70dde957da471d6e9c279b4",
+              "dsl": "KOTLIN",
+              "comparison": "CACHE_OFF",
+              "pair": 2,
+              "order": "CANDIDATE_FIRST",
+              "controlDurationMs": 9698,
+              "candidateDurationMs": 7715,
+              "savedMs": 1983,
+              "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+            },
+            {
+              "repository": "tonyredondo/buildopt-pilot",
+              "revision": "6852cfc4a84fbd49d70dde957da471d6e9c279b4",
+              "dsl": "KOTLIN",
+              "comparison": "CACHE_OFF",
+              "pair": 3,
+              "order": "CONTROL_FIRST",
+              "controlDurationMs": 9513,
+              "candidateDurationMs": 8183,
+              "savedMs": 1330,
+              "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+            },
+            {
+              "repository": "tonyredondo/buildopt-pilot",
+              "revision": "6852cfc4a84fbd49d70dde957da471d6e9c279b4",
+              "dsl": "KOTLIN",
+              "comparison": "CACHE_OFF",
+              "pair": 4,
+              "order": "CANDIDATE_FIRST",
+              "controlDurationMs": 11037,
+              "candidateDurationMs": 7801,
+              "savedMs": 3236,
+              "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+            }
+          ]
+        },
+        "NATIVE_CACHE": {
+          "pairs": 4,
+          "controlMeanMs": 10761.75,
+          "candidateMeanMs": 11812,
+          "meanSavedMs": -1050.25,
+          "meanReductionRatio": -0.09759100518038423,
+          "minSavedMs": -2112,
+          "maxSavedMs": -20,
+          "positivePairs": 0,
+          "allDeliverablesIdentical": true,
+          "observations": [
+            {
+              "repository": "tonyredondo/buildopt-pilot",
+              "revision": "6852cfc4a84fbd49d70dde957da471d6e9c279b4",
+              "dsl": "KOTLIN",
+              "comparison": "NATIVE_CACHE",
+              "pair": 1,
+              "order": "CONTROL_FIRST",
+              "controlDurationMs": 12128,
+              "candidateDurationMs": 12148,
+              "savedMs": -20,
+              "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+            },
+            {
+              "repository": "tonyredondo/buildopt-pilot",
+              "revision": "6852cfc4a84fbd49d70dde957da471d6e9c279b4",
+              "dsl": "KOTLIN",
+              "comparison": "NATIVE_CACHE",
+              "pair": 2,
+              "order": "CANDIDATE_FIRST",
+              "controlDurationMs": 10296,
+              "candidateDurationMs": 10819,
+              "savedMs": -523,
+              "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+            },
+            {
+              "repository": "tonyredondo/buildopt-pilot",
+              "revision": "6852cfc4a84fbd49d70dde957da471d6e9c279b4",
+              "dsl": "KOTLIN",
+              "comparison": "NATIVE_CACHE",
+              "pair": 3,
+              "order": "CONTROL_FIRST",
+              "controlDurationMs": 10314,
+              "candidateDurationMs": 12426,
+              "savedMs": -2112,
+              "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+            },
+            {
+              "repository": "tonyredondo/buildopt-pilot",
+              "revision": "6852cfc4a84fbd49d70dde957da471d6e9c279b4",
+              "dsl": "KOTLIN",
+              "comparison": "NATIVE_CACHE",
+              "pair": 4,
+              "order": "CANDIDATE_FIRST",
+              "controlDurationMs": 10309,
+              "candidateDurationMs": 11855,
+              "savedMs": -1546,
+              "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "nameWithOwner": "tonyredondo/buildopt-pilot-groovy",
+      "revision": "d4951065110cbfc2ccde7d9b4ad7bf797a79b710",
+      "dsl": "GROOVY",
+      "comparisons": {
+        "CACHE_OFF": {
+          "pairs": 4,
+          "controlMeanMs": 14226.25,
+          "candidateMeanMs": 11275.5,
+          "meanSavedMs": 2950.75,
+          "meanReductionRatio": 0.20741586855285124,
+          "minSavedMs": 1192,
+          "maxSavedMs": 4208,
+          "positivePairs": 4,
+          "allDeliverablesIdentical": true,
+          "observations": [
+            {
+              "repository": "tonyredondo/buildopt-pilot-groovy",
+              "revision": "d4951065110cbfc2ccde7d9b4ad7bf797a79b710",
+              "dsl": "GROOVY",
+              "comparison": "CACHE_OFF",
+              "pair": 1,
+              "order": "CONTROL_FIRST",
+              "controlDurationMs": 14308,
+              "candidateDurationMs": 11783,
+              "savedMs": 2525,
+              "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+            },
+            {
+              "repository": "tonyredondo/buildopt-pilot-groovy",
+              "revision": "d4951065110cbfc2ccde7d9b4ad7bf797a79b710",
+              "dsl": "GROOVY",
+              "comparison": "CACHE_OFF",
+              "pair": 2,
+              "order": "CANDIDATE_FIRST",
+              "controlDurationMs": 14447,
+              "candidateDurationMs": 10239,
+              "savedMs": 4208,
+              "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+            },
+            {
+              "repository": "tonyredondo/buildopt-pilot-groovy",
+              "revision": "d4951065110cbfc2ccde7d9b4ad7bf797a79b710",
+              "dsl": "GROOVY",
+              "comparison": "CACHE_OFF",
+              "pair": 3,
+              "order": "CONTROL_FIRST",
+              "controlDurationMs": 14787,
+              "candidateDurationMs": 10909,
+              "savedMs": 3878,
+              "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+            },
+            {
+              "repository": "tonyredondo/buildopt-pilot-groovy",
+              "revision": "d4951065110cbfc2ccde7d9b4ad7bf797a79b710",
+              "dsl": "GROOVY",
+              "comparison": "CACHE_OFF",
+              "pair": 4,
+              "order": "CANDIDATE_FIRST",
+              "controlDurationMs": 13363,
+              "candidateDurationMs": 12171,
+              "savedMs": 1192,
+              "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+            }
+          ]
+        },
+        "NATIVE_CACHE": {
+          "pairs": 4,
+          "controlMeanMs": 10753.5,
+          "candidateMeanMs": 10876.25,
+          "meanSavedMs": -122.75,
+          "meanReductionRatio": -0.011414888175942717,
+          "minSavedMs": -413,
+          "maxSavedMs": 243,
+          "positivePairs": 1,
+          "allDeliverablesIdentical": true,
+          "observations": [
+            {
+              "repository": "tonyredondo/buildopt-pilot-groovy",
+              "revision": "d4951065110cbfc2ccde7d9b4ad7bf797a79b710",
+              "dsl": "GROOVY",
+              "comparison": "NATIVE_CACHE",
+              "pair": 1,
+              "order": "CONTROL_FIRST",
+              "controlDurationMs": 10137,
+              "candidateDurationMs": 10312,
+              "savedMs": -175,
+              "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+            },
+            {
+              "repository": "tonyredondo/buildopt-pilot-groovy",
+              "revision": "d4951065110cbfc2ccde7d9b4ad7bf797a79b710",
+              "dsl": "GROOVY",
+              "comparison": "NATIVE_CACHE",
+              "pair": 2,
+              "order": "CANDIDATE_FIRST",
+              "controlDurationMs": 10492,
+              "candidateDurationMs": 10638,
+              "savedMs": -146,
+              "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+            },
+            {
+              "repository": "tonyredondo/buildopt-pilot-groovy",
+              "revision": "d4951065110cbfc2ccde7d9b4ad7bf797a79b710",
+              "dsl": "GROOVY",
+              "comparison": "NATIVE_CACHE",
+              "pair": 3,
+              "order": "CONTROL_FIRST",
+              "controlDurationMs": 11883,
+              "candidateDurationMs": 12296,
+              "savedMs": -413,
+              "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+            },
+            {
+              "repository": "tonyredondo/buildopt-pilot-groovy",
+              "revision": "d4951065110cbfc2ccde7d9b4ad7bf797a79b710",
+              "dsl": "GROOVY",
+              "comparison": "NATIVE_CACHE",
+              "pair": 4,
+              "order": "CANDIDATE_FIRST",
+              "controlDurationMs": 10502,
+              "candidateDurationMs": 10259,
+              "savedMs": 243,
+              "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "boundaries": {
+    "descriptivePocEvidence": true,
+    "productionPromotionAuthorized": false,
+    "eightHourSoakExecuted": false
+  }
+}

@@ -12,6 +12,12 @@ initscript {
 // Init scripts are inherited by buildSrc and included builds. The launcher
 // owns one authenticated handshake for the top-level Gradle invocation.
 if (gradle.getParent() == null) {
+    def managedL1Mode = System.getenv("BUILDOPT_MANAGED_L1_MODE")
+    if (managedL1Mode != null && !managedL1Mode.isBlank()) {
+        beforeSettings { settings ->
+            settings.pluginManager.apply(dev.buildopt.gradle.BuildOptManagedL1Plugin)
+        }
+    }
     allprojects {
         pluginManager.apply(dev.buildopt.gradle.BuildOptProjectPlugin)
     }
