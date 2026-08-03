@@ -135,23 +135,23 @@ exports. Add `version: 0.2.0` to pin the native package.
 
 ## What improvement should you expect?
 
-The checked 4-CPU GitHub-hosted experiment ran four alternating pairs per
-comparison on immutable Kotlin and Groovy pilots. Against Gradle with its build
-cache disabled, the public command reduced mean time from 8.916 s to 7.905 s
-in Kotlin (11.3%) and from 9.586 s to 7.625 s in Groovy (20.5%). All eight
-pairs improved and every distribution digest matched. An independent 12-CPU
-local run measured 20.7% reductions in both pilots, so the exact percentage is
-environment-dependent while the cache-off direction was consistent across all
-16 measured pairs.
+The current scorecard measures mechanisms separately so one feature cannot
+hide another's cost:
 
-BuildOpt does not claim to beat an already warm unrestricted Gradle cache. In
-the hosted run it was 8.1% slower for Kotlin and 0.3% slower for Groovy because
-the safe Tier 1 allowlist reuses fewer task types and adds verification. These
-are descriptive POC results, not a universal prediction. The
-[hosted observations](../../benchmarks/results/onboarding-performance-v1-hosted.json),
-[local observations](../../benchmarks/results/onboarding-performance-v1-local.json),
-and [measurement contract](../../specs/onboarding-performance-v1.md) retain
-both comparisons and their raw paired timings.
+| Mechanism | Measured result | What the comparison proves |
+|---|---:|---|
+| Safe cache, Kotlin | 15.9% faster than cache-off; 0.02% faster than native cache | Reuse helps and the safety layer is within the 2% native-parity guardrail |
+| Safe cache, Groovy | 13.7% faster than cache-off; 0.47% slower than native cache | Reuse helps and the safety layer is within the 2% native-parity guardrail |
+| Runtime Tuning | 0.7% faster | The bounded resource profile saved 66 ms with a positive lower 95% bound, identical artifacts and no OOM regression |
+| Build Impact | 27.6% faster | Omitting one declared unaffected project saved 2.254 s with required outputs unchanged |
+
+These are controlled POC workloads, not universal predictions, and their
+percentages must not be added. A repository that needs the full graph receives
+no Build Impact saving; an already warm native cache is a parity baseline, not
+the cache-off comparison. Run `./dev/check-build-optimization-performance` to
+validate and print the scorecard without rerunning Gradle. The
+[benchmark index](../../benchmarks/README.md#build-optimization-scorecard)
+links every raw observation and measurement contract.
 
 ## Component ownership and configuration
 

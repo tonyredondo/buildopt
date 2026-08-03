@@ -5,7 +5,7 @@
 **POC functional target:** `A1 + B + C1 + C4`<br>
 **POC validation posture:** use project-owned synthetic fixtures and repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
-**Last updated:** 2026-08-02<br>
+**Last updated:** 2026-08-03<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
 **RFC baseline SHA-256:** `e97b068433128a51cab509f2f799efdf872b6950056bce308b80cbd1470ef81d`
 
@@ -70,6 +70,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | PLAT-F5 | Supported macOS and Windows build/runtime paths | `DONE` | 1/1 | `E-148` |
 | PLAT-F6 | Full persistent runtime parity on macOS and Windows | `DONE` | 1/1 | `E-150` |
 | DOC-F7 | Complete user, operator, developer, architecture, and code documentation system | `DONE` | 1/1 | `E-151` |
+| PERF-F8 | Attributable Build Optimization value and native-cache parity | `DONE` | 1/1 | `E-154` |
 | GA-D | Production-ready hardening | `DEFERRED` | 0/1 | Functional beta with demonstrated value |
 
 Design baseline: 51 private-beta decisions are accepted in the RFC; their artifacts and tests remain pending as recorded in this tracker.
@@ -91,7 +92,7 @@ Preparation
 The owner-operated POC target, optional MVP-A2/MVP-C2/MVP-C3/POC-O1/POC-O2 extensions, and owner-prioritized functional expansion are complete in this order:
 
 ```text
-UX-F1 → PA-F2 → CI-F3 → BIA-F4 → PLAT-F5 → PLAT-F6 → DOC-F7
+UX-F1 → PA-F2 → CI-F3 → BIA-F4 → PLAT-F5 → PLAT-F6 → DOC-F7 → PERF-F8
 ```
 
 Each track retains fail-closed behavior and project-owned synthetic evidence. Test Optimization implementation, the eight-hour soak, external design-partner evidence, and GA-D remain outside this sequence.
@@ -556,6 +557,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | PLAT-F5 | Cross-compilation inventory, portable transports/process control, packaging, and native CI | `DONE` | `E-148` hosted native gate |
 | PLAT-F6 | Persistent gateway/L1/bootstrap, server/Edge storage, native services, doctor, and full native CI | `DONE` | `E-150` hosted native and base gates |
 | DOC-F7 | Audience-first documentation, architecture-to-code map, onboarding, reference, comments, and CI drift prevention | `DONE` | `E-151` local documentation gate |
+| PERF-F8 | Safe-cache parity plus attributable Runtime Tuning and Build Impact scorecard | `DONE` | `E-154` local measured evidence gate |
 | MVP-C2 | Edge proxy, SLRU, and offline committed reads | `DONE` | `E-134` current-tree composite gate |
 | MVP-C3 | Conservative BIA and `BIA-002` gate | `DONE` | `E-128` current-tree composite gate |
 | POC-O1 | Standalone Edge runtime, signed reload, local status, bundle, and systemd unit | `DONE` | `E-135` current-tree composite gate |
@@ -732,6 +734,18 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 |---|---|---|---|
 | `DOC-F7-G01` | A new evaluator can obtain a revision-bound POC result, an operator can find safe lifecycle/recovery paths, and a developer can map architecture to code while CI rejects broken entry points, links, commands, or package documentation | `DONE` | `E-151` |
 
+#### PERF-F8 — attributable Build Optimization value
+
+| ID | Deliverable | State | Owner | Evidence |
+|---|---|---|---|---|
+| `PERF-F8-001` | Cache-only launcher fast path plus cache-off savings and native-cache parity evidence | `DONE` | Codex | `E-154` |
+| `PERF-F8-002` | Build Impact paired performance proof with identical required outputs and preserved Test-owned check | `DONE` | Codex | `E-154` |
+| `PERF-F8-003` | One non-additive scorecard composing safe-cache, Runtime Tuning, and Build Impact evidence | `DONE` | Codex | `E-154` |
+
+| Exit gate | Summarized criterion | State | Evidence |
+|---|---|---|---|
+| `PERF-F8-G01` | Every claimed mechanism has an attributable control, signed timings, output-equivalence guardrails, and an explicit non-universal interpretation boundary | `DONE` | `E-154` |
+
 Test Optimization is an explicit non-goal for all functional and documentation tracks. They may preserve or call its existing signed grant/result boundary, but no Test Optimization behavior or contract is widened here.
 
 ---
@@ -744,6 +758,7 @@ This table points to the latest valid result. It does not replace reports or all
 |---|---|---|---|---|
 | Repository layout | Git root, modules, and `F0-001` conventions | `dev/check-layout` and ShellCheck passed; structure included in the initial commit | 2026-07-29 | `E-006` |
 | Documentation system | Entry points, local links, referenced commands, architecture-to-code map, package boundaries, ownership, and base-CI wiring | `dev/check-documentation`, layout, ownership, Go test/vet for the validator and documented packages, lint, and base-CI static checks passed on the final documentation tree | 2026-08-02 | `E-151` |
+| Build Optimization scorecard | Safe-cache value/parity, Runtime Tuning causal resource savings, and Build Impact avoided work | `dev/check-build-optimization-performance` validated both new paired reports plus the existing hosted runtime evidence and emitted separate non-additive results | 2026-08-03 | `E-154` |
 | Ownership boundaries | Path routing, accountable workstreams, cross-stack review, and authority limits | `dev/check-ownership` validated 16 CODEOWNERS paths, all 11 tracker workstreams, one verified repository principal, producer/consumer review, Test Optimization ownership, and the absence of an independent-approval claim | 2026-07-29 | `E-037` |
 | Base CI | Read-only push/PR validation for Go, Java 17 compatibility, optional Rust, and host-Git integration | The immutable hosted baseline remains run [30481886001](https://github.com/tonyredondo/buildopt/actions/runs/30481886001); the current local core lane passed 104 locked shell scripts, generated drift, all Go race/vet packages, Java 17 loading for all 19 Gradle-plugin classes, contract crypto, and the explicit 15-case PatchBundle checker; the optional Rust lane also passed | 2026-07-30 | `E-038`, `E-063`, `E-073..087` |
 | Full native runtime parity | Complete Build Optimization runtime, storage, package, Gradle/Build Impact, persistent gateway/L1, native services, cancellation, exact uninstall, and product boundary | Hosted Native Platform CI run [30721884722](https://github.com/tonyredondo/buildopt/actions/runs/30721884722) passed macOS 15 ARM64 and Windows Server 2025 AMD64 on exact SHA `56bc21c61fc2a0f15fa88b640fb8bfe735d878d0`; hosted Base CI run [30721884751](https://github.com/tonyredondo/buildopt/actions/runs/30721884751) passed the same SHA, including reproducible Go/Java checks, the owner POC lab, and optional Rust | 2026-08-01 | `E-150` |
@@ -992,6 +1007,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-151` | 2026-08-02 | `DOC-F7-001..004`, `DOC-F7-G01`, DOC-F7 exit | Replaced the monolithic root README with an audience-first product entry point; added the [`docs` portal](./docs/README.md), complete quickstart/developer/architecture/repository/workflow/CI/operations/reference/troubleshooting/glossary guides, six missing Go package-boundary comments, explicit Documentation ownership, and [`dev/check-documentation`](./dev/check-documentation) backed by a dependency-free Go validator and base-CI integration; the final tree passed documentation link/command/package checks, layout, ownership, focused Go test/vet, locked ShellCheck/actionlint, base-CI static validation, and whitespace review | `DONE`: a source evaluator can obtain a revision-bound synthetic result, users and operators can follow safe copyable paths, architecture maps directly to folders, and documentation drift now fails CI without widening Test Optimization or making production claims |
 | `E-152` | 2026-08-03 | Product onboarding and performance evidence | The packaged `buildopt gradle` path now derives a private repository/Wrapper/platform-separated managed L1 below the user cache, enables Gradle Build Cache without an extra flag, respects `--no-build-cache` and bypass, and applies the settings plugin before project configuration. The versioned [onboarding benchmark](./specs/onboarding-performance-v1.md), [strict validator](./dev/check-onboarding-performance), manual read-only [hosted workflow](./.github/workflows/onboarding-performance.yml), and immutable [12-CPU local result](./benchmarks/results/onboarding-performance-v1-local.json) measure the exact public command across four alternating pairs in both public pilots: cache-off controls averaged 9,856.75/14,226.25 ms versus BuildOpt 7,814.75/11,275.50 ms, saving 2,042.00 ms (20.7%) in Kotlin and 2,950.75 ms (20.7%) in Groovy with all eight pairs positive and every ZIP identical; the same report truthfully retains 1,050.25 ms (9.8%) Kotlin and 122.75 ms (1.1%) Groovy overhead versus warm unrestricted native cache | `DONE` locally: zero-configuration safe caching and comparative evidence are implemented and validated without Test Optimization, external users, golden-runner qualification, production promotion, or the deferred soak; published `v0.2.0` and hosted report remain separate remote evidence |
 | `E-153` | 2026-08-03 | Hosted onboarding and comparative performance evidence | Public [release run 30846989730](https://github.com/tonyredondo/buildopt/actions/runs/30846989730) published `v0.2.0` for Linux AMD64, macOS AMD64/ARM64, and Windows AMD64 from exact implementation SHA `7bde5bc720a21aea4379aacf5deedbb95d31e99b`. The manual read-only [hosted benchmark run 30847527166](https://github.com/tonyredondo/buildopt/actions/runs/30847527166) installed that package on an isolated 4-CPU runner and produced the checked [hosted result](./benchmarks/results/onboarding-performance-v1-hosted.json): cache-off controls averaged 8,915.50/9,586.00 ms versus BuildOpt 7,905.25/7,624.50 ms, saving 1,010.25 ms (11.3%) in Kotlin and 1,961.50 ms (20.5%) in Groovy with all eight pairs positive and every ZIP identical; it also retained 585.00 ms (8.1%) Kotlin and 25.75 ms (0.3%) Groovy overhead versus warm unrestricted native cache. Public Kotlin [run 30847504633](https://github.com/tonyredondo/buildopt-pilot/actions/runs/30847504633) and Groovy [run 30847518467](https://github.com/tonyredondo/buildopt-pilot-groovy/actions/runs/30847518467) independently installed the same release through the immutable Action, ran the README command twice, required `FROM-CACHE`, and verified deliverables | `DONE`: the public zero-configuration onboarding and its cache-off improvement are externally reproducible owner-operated POC evidence; the data explicitly does not claim an advantage over warm native cache, golden-runner qualification, production promotion, external-user validation, or the deferred soak |
+| `E-154` | 2026-08-03 | `PERF-F8-001..003`, `PERF-F8-G01`, PERF-F8 exit | Commit `f9f1773a7dbdc371d032bad2bbcc65c9cfa889c6` added a default cache-only launcher path that preserves managed L1 and Tier 1 policy while omitting unused telemetry services. The checked [cache-parity result](./benchmarks/results/cache-parity-v1-local.json) measured 15.9%/13.7% mean savings versus cache-off and +0.02%/-0.47% versus native cache, inside the 2% parity limit with identical ZIPs. The checked [Build Impact result](./benchmarks/results/build-impact-performance-v1-local.json) measured 8,180.25 ms full versus 5,926.00 ms selected, saving 2,254.25 ms (27.6%) across four positive pairs with identical service-a and preserved Test-owned outputs. [`check-build-optimization-performance`](./dev/check-build-optimization-performance) composes those reports with the existing hosted Runtime Tuning result (66 ms/0.7% saved, positive lower 95% bound, no artifact or OOM regression) without adding percentages | `DONE`: safe-cache overhead is bounded, Runtime Tuning and Build Impact expose attributable improvements, negative/noisy samples remain visible, Test Optimization is unchanged, and no universal, production, external-user, golden-runner, or soak claim is made |
 
 ---
 
@@ -999,6 +1015,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-03 | Closed PERF-F8 with a cache-only fast path, native-cache parity guardrail, Build Impact avoided-work benchmark, and one non-additive scorecard that validates safe cache, Runtime Tuning, and Build Impact with identical-output boundaries | Codex |
 | 2026-08-03 | Published and independently exercised `v0.2.0`; hosted Kotlin/Groovy pilots improved 11.3%/20.5% versus cache-off controls across eight positive pairs with identical outputs, while the checked report retained the measured warm-native-cache overhead | Codex |
 | 2026-08-03 | Added automatic safe local caching to the public `buildopt gradle` command plus a strict paired onboarding benchmark; the local Kotlin/Groovy pilots improved 20.7% versus cache-off controls with identical outputs, while the report retained the measured overhead versus unrestricted native cache and all production/soak boundaries | Codex |
 | 2026-08-02 | Closed `DOC-F7-001..004`, `DOC-F7-G01`, and DOC-F7 with audience-first onboarding, current architecture and repository maps, complete user/operator/developer reference, code package comments, explicit ownership, and a base-CI documentation drift gate | Codex |

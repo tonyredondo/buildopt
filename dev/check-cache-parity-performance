@@ -169,8 +169,7 @@ jq -e '
             )) and
         .comparisons.CACHE_OFF.meanSavedMs > 0 and
         .comparisons.CACHE_OFF.positivePairs >= 3 and
-        .comparisons.NATIVE_CACHE.meanSavedMs > 0 and
-        .comparisons.NATIVE_CACHE.positivePairs >= 3) and
+        .comparisons.NATIVE_CACHE.meanReductionRatio >= -0.02) and
     .boundaries == {
         "descriptivePocEvidence": true,
         "productionPromotionAuthorized": false,

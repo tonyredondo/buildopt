@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_cache="${buildopt_repo_root}/benchmarks/results/cache-parity-v1-local.json"
+buildopt_runtime="${buildopt_repo_root}/benchmarks/results/b-runtime-owner-evaluation.json"
+buildopt_impact="${buildopt_repo_root}/benchmarks/results/build-impact-performance-v1-local.json"
+
+"${buildopt_script_dir}/check-cache-parity-performance" "${buildopt_cache}" >/dev/null
+"${buildopt_script_dir}/check-runtime-owner-evaluation" >/dev/null
+"${buildopt_script_dir}/check-build-impact-performance" "${buildopt_impact}" >/dev/null
+
+jq -n \
+    --slurpfile cache "${buildopt_cache}" \
+    --slurpfile runtime "${buildopt_runtime}" \
+    --slurpfile impact "${buildopt_impact}" '
+    {
+        schemaVersion: "buildopt.evidence/build-optimization-scorecard/v1",
+        interpretation: "ATTRIBUTABLE_RESULTS_NOT_ADDITIVE",
+        safeCache: {
+            claim: "FASTER_THAN_CACHE_OFF_AND_WITHIN_NATIVE_CACHE_PARITY_GUARDRAIL",
+            kotlin: {
+                cacheOffReductionRatio:
+                    $cache[0].repositories[] |
+                    select(.dsl == "KOTLIN") |
+                    .comparisons.CACHE_OFF.meanReductionRatio,
+                nativeCacheReductionRatio:
+                    $cache[0].repositories[] |
+                    select(.dsl == "KOTLIN") |
+                    .comparisons.NATIVE_CACHE.meanReductionRatio
+            },
+            groovy: {
+                cacheOffReductionRatio:
+                    $cache[0].repositories[] |
+                    select(.dsl == "GROOVY") |
+                    .comparisons.CACHE_OFF.meanReductionRatio,
+                nativeCacheReductionRatio:
+                    $cache[0].repositories[] |
+                    select(.dsl == "GROOVY") |
+                    .comparisons.NATIVE_CACHE.meanReductionRatio
+            },
+            nativeCacheMaximumRegressionRatio: 0.02
+        },
+        runtimeTuning: {
+            claim: "POSITIVE_CAUSAL_RESOURCE_PROFILE_SAVINGS",
+            reductionRatio:
+                $runtime[0].autotuning.metrics.reductionRatio,
+            meanSavedMs:
+                $runtime[0].autotuning.metrics.meanDeltaMs,
+            lower95SavedMs:
+                $runtime[0].autotuning.metrics.interval95Ms[0],
+            artifactDivergence:
+                $runtime[0].autotuning.metrics.artifactDivergence,
+            oomDelta: $runtime[0].autotuning.oomDelta
+        },
+        buildImpact: {
+            claim: "POSITIVE_SAVINGS_WHEN_A_DECLARED_PROJECT_IS_UNAFFECTED",
+            reductionRatio: $impact[0].result.meanReductionRatio,
+            meanSavedMs: $impact[0].result.meanSavedMs,
+            positivePairs: $impact[0].result.positivePairs,
+            requiredOutputsIdentical:
+                $impact[0].result.requiredOutputsIdentical
+        },
+        boundaries: {
+            proofOfConcept: true,
+            universalSavingsClaim: false,
+            productionPromotionAuthorized: false,
+            eightHourSoakExecuted: false,
+            testOptimizationModified: false
+        }
+    }
+'

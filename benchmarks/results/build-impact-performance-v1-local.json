@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "buildopt.benchmarks/build-impact-performance/v1",
+  "capturedAt": "2026-08-03T22:30:00Z",
+  "buildoptRevision": "f9f1773a7dbdc371d032bad2bbcc65c9cfa889c6",
+  "runner": {
+    "operatingSystem": "Linux",
+    "architecture": "x86_64",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "qualifiedGoldenRunner": false
+  },
+  "design": {
+    "pairs": 4,
+    "order": "PAIRED_ALTERNATING",
+    "cache": false,
+    "configurationCache": false,
+    "changedPath": "library-c/src/main/java/synthetic/LibraryC.java",
+    "fullEntrypoints": [
+      "assemble",
+      "testOwnedCheck"
+    ],
+    "selectedEntrypoints": [
+      ":service-a:assemble",
+      "testOwnedCheck"
+    ],
+    "omittedProject": ":service-b",
+    "generatedSources": {
+      "libraryC": 96,
+      "serviceA": 96,
+      "serviceB": 2048
+    }
+  },
+  "result": {
+    "fullGraphMeanMs": 8180.25,
+    "selectedGraphMeanMs": 5926,
+    "meanSavedMs": 2254.25,
+    "meanReductionRatio": 0.2755722624614162,
+    "positivePairs": 4,
+    "requiredOutputsIdentical": true,
+    "observations": [
+      {
+        "pair": 1,
+        "order": "FULL_FIRST",
+        "fullGraphDurationMs": 6774,
+        "selectedGraphDurationMs": 5363,
+        "savedMs": 1411,
+        "serviceAJarSha256": "b3afb69d8ebc1703812e9d6bff7a6d4708b0738abd0679e0fb4aaa46af58fae2",
+        "preservedTestMarkerSha256": "4138524a95bfd23fb518528babe5aeff8a809bf01f4b778312d21f69c1ea26ed"
+      },
+      {
+        "pair": 2,
+        "order": "SELECTED_FIRST",
+        "fullGraphDurationMs": 8583,
+        "selectedGraphDurationMs": 5437,
+        "savedMs": 3146,
+        "serviceAJarSha256": "b3afb69d8ebc1703812e9d6bff7a6d4708b0738abd0679e0fb4aaa46af58fae2",
+        "preservedTestMarkerSha256": "4138524a95bfd23fb518528babe5aeff8a809bf01f4b778312d21f69c1ea26ed"
+      },
+      {
+        "pair": 3,
+        "order": "FULL_FIRST",
+        "fullGraphDurationMs": 8737,
+        "selectedGraphDurationMs": 6205,
+        "savedMs": 2532,
+        "serviceAJarSha256": "b3afb69d8ebc1703812e9d6bff7a6d4708b0738abd0679e0fb4aaa46af58fae2",
+        "preservedTestMarkerSha256": "4138524a95bfd23fb518528babe5aeff8a809bf01f4b778312d21f69c1ea26ed"
+      },
+      {
+        "pair": 4,
+        "order": "SELECTED_FIRST",
+        "fullGraphDurationMs": 8627,
+        "selectedGraphDurationMs": 6699,
+        "savedMs": 1928,
+        "serviceAJarSha256": "b3afb69d8ebc1703812e9d6bff7a6d4708b0738abd0679e0fb4aaa46af58fae2",
+        "preservedTestMarkerSha256": "4138524a95bfd23fb518528babe5aeff8a809bf01f4b778312d21f69c1ea26ed"
+      }
+    ]
+  },
+  "boundaries": {
+    "customerAlternativeDeclaredByManifest": true,
+    "productionPlanSelectionProvenSeparately": true,
+    "testOptimizationModified": false,
+    "descriptivePocEvidence": true,
+    "productionPromotionAuthorized": false,
+    "eightHourSoakExecuted": false
+  }
+}

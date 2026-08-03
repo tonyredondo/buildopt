@@ -2048,7 +2048,22 @@ The hosted `.github/workflows/platform-ci.yml` matrix is the native acceptance
 gate for install, upgrade, Gradle handshake and Build Impact, cancellation,
 cleanup, uninstall, and artifact publication.
 
-## Onboarding performance
+## Build Optimization performance
+
+Validate and print the current safe-cache, Runtime Tuning, and Build Impact
+scorecard without rerunning a benchmark:
+
+```bash
+./dev/check-build-optimization-performance
+```
+
+The scorecard keeps each mechanism attributable and never adds percentages
+from different workloads. Fresh cache and Build Impact evidence can be created
+with `run-cache-parity-benchmark` and `run-build-impact-performance`; each has
+a matching `check-*` command. See
+[the benchmark index](../benchmarks/README.md#build-optimization-scorecard).
+
+## Historical onboarding performance
 
 Validate the checked-in local observations without running Gradle:
 
@@ -2058,7 +2073,7 @@ Validate the checked-in local observations without running Gradle:
 
 The fresh-run command, required immutable pilot inputs, two controls, warming,
 four-pair alternating design and interpretation boundary are documented in
-[the benchmark index](../benchmarks/README.md#public-onboarding-performance).
+[the benchmark index](../benchmarks/README.md#historical-v02-public-onboarding-performance).
 The manual `Onboarding performance` workflow installs release `0.2.0`, runs
 the same harness on `ubuntu-24.04`, validates the JSON and uploads it. It is
 manual because performance sampling is intentionally separate from ordinary

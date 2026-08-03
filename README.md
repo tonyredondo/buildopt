@@ -64,13 +64,13 @@ contains Windows installation, CI snippets, component ownership and the
 recommended rollout order. Contributors who want the complete synthetic lab
 can use the [source quickstart](./docs/getting-started/quickstart.md).
 
-The checked 4-CPU hosted benchmark measured 11.3% lower mean time than a
-cache-off control in the Kotlin pilot and 20.5% in the Groovy pilot, with all
-eight pairs faster and byte-identical outputs. BuildOpt did not beat an already
-warm unrestricted Gradle cache; that overhead is retained rather than hidden.
-See the [hosted result](./benchmarks/results/onboarding-performance-v1-hosted.json),
-[local result](./benchmarks/results/onboarding-performance-v1-local.json), and
-[measurement contract](./specs/onboarding-performance-v1.md).
+The checked scorecard measures each optimization separately. Safe cache cut
+the two pilot means by 15.9% and 13.7% versus cache-off while staying within
+0.5% of an already warm native cache. Runtime Tuning saved 0.7% on its large
+four-CPU workload, and Build Impact saved 27.6% when a declared unaffected
+project could be omitted. Required outputs remained identical. These
+percentages are workload-specific and are not added together. See the
+[scorecard and raw evidence](./benchmarks/README.md#build-optimization-scorecard).
 
 ## Choose what to do next
 

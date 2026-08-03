@@ -17,10 +17,51 @@ explicitly non-qualifying. Those two commands do not claim the long profiles;
 `./dev/check-beta-gradle-fixtures` owns the bounded small/medium/large Gradle
 build matrix and makes no performance claim.
 
-## Public onboarding performance
+## Build Optimization scorecard
 
-[The hosted result](./results/onboarding-performance-v1-hosted.json) measures
-the actual no-configuration command from the README on an isolated 4-CPU
+The scorecard answers a different question for each optimization instead of
+combining unrelated percentages:
+
+| Mechanism | Control mean | Candidate mean | Result | Acceptance |
+|---|---:|---:|---:|---|
+| Safe cache, Kotlin, cache off | 9.131 s | 7.682 s | 1.449 s faster (15.9%) | Positive mean and 4/4 positive pairs |
+| Safe cache, Groovy, cache off | 12.454 s | 10.754 s | 1.700 s faster (13.7%) | Positive mean and 3/4 positive pairs |
+| Safe cache, Kotlin, native cache | 10.415 s | 10.412 s | 0.003 s faster (0.02%) | Within 2% native-cache parity guardrail |
+| Safe cache, Groovy, native cache | 10.470 s | 10.520 s | 0.050 s slower (0.47%) | Within 2% native-cache parity guardrail |
+| Runtime Tuning | 8.999 s | 8.933 s | 0.066 s faster (0.7%) | Positive lower 95% bound; artifact, OOM, queue and compute guardrails pass |
+| Build Impact | 8.180 s | 5.926 s | 2.254 s faster (27.6%) | 4/4 positive pairs and required outputs identical |
+
+Safe cache is expected to beat cache-off and remain near native cache: both
+arms use Gradle's cache engine, while BuildOpt adds repository isolation and a
+safe task policy. Runtime Tuning measures a bounded worker/heap profile on a
+large four-CPU workload. Build Impact measures avoided compilation when one
+manifest-declared project is unaffected. The Runtime Tuning percentage cannot
+be added to the cache or Build Impact percentage because the runner and
+workload differ.
+
+Validate all checked-in evidence and print the machine-readable scorecard:
+
+```bash
+./dev/check-build-optimization-performance
+```
+
+The underlying evidence and contracts are:
+
+- [safe-cache observations](./results/cache-parity-v1-local.json) and
+  [contract](../specs/cache-parity-v1.md);
+- [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
+  [contract](../specs/runtime-owner-evaluation-v1.md);
+- [Build Impact observations](./results/build-impact-performance-v1-local.json)
+  and [contract](../specs/build-impact-performance-v1.md).
+
+All three are bounded POC results. They preserve signed differences and do not
+claim universal savings, production promotion, or the deferred soak.
+
+## Historical v0.2 public onboarding performance
+
+[The hosted result](./results/onboarding-performance-v1-hosted.json) preserves
+the pre-fast-path `0.2.0` baseline. It measures the actual no-configuration
+command from the README on an isolated 4-CPU
 GitHub-hosted runner and immutable public Kotlin and Groovy pilots. Four
 alternating pairs compare BuildOpt separately with cache disabled and with
 Gradle's unrestricted native local cache.
@@ -34,8 +75,8 @@ Gradle's unrestricted native local cache.
 
 All eight hosted cache-off pairs improved and every paired distribution was
 byte-identical. The less favorable native-cache observations remain in the
-report. This is descriptive POC evidence, not a production or golden-runner
-claim.
+report. This is historical descriptive POC evidence, not the current scorecard
+or a production or golden-runner claim.
 
 [The independent local result](./results/onboarding-performance-v1-local.json)
 used the same protocol on a 12-CPU host:

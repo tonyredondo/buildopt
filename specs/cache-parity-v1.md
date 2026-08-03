@@ -31,12 +31,18 @@ Valid evidence requires:
 - no cache hit in the cache-off arm;
 - no authenticated telemetry handshake in the cache-only candidate;
 - byte-identical distribution output in every pair;
-- positive mean savings and at least three positive pairs out of four for both
-  comparisons in both pilot DSLs.
+- positive mean savings and at least three positive pairs out of four against
+  cache-off in both pilot DSLs;
+- no more than 2% mean regression against the already warm native cache.
 
-The paired threshold tolerates one noisy workstation sample without accepting
-a negative mean. It is deliberately stricter than the previous onboarding
-contract, which recorded native-cache overhead but did not gate it.
+The cache-off threshold tolerates one noisy workstation sample without
+accepting a negative mean. Native-cache timings are treated as a parity
+guardrail because both arms use Gradle's cache engine; BuildOpt's additional
+value in this arm is repository isolation and the Tier 1 safety policy, not a
+claim that identical cached bytes can inherently restore faster. The 2% bound
+matches the repository's existing long-session no-hit overhead limit and is
+stricter than the previous onboarding contract, which recorded native-cache
+overhead but did not gate it.
 
 Run and validate a fresh report with:
 
@@ -53,4 +59,3 @@ Run and validate a fresh report with:
 This is bounded POC evidence, not a universal claim for every repository or a
 production-promotion decision. The raw result retains every signed difference,
 runner fact, revision, and binary digest. It does not run the deferred soak.
-

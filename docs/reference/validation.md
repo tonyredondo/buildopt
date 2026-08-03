@@ -129,6 +129,18 @@ gate, and platform compatibility if filesystem or file-lifecycle code changed.
 Use immutable paired inputs and preserve `INCONCLUSIVE` outcomes. Do not alter
 reference data, thresholds, or held-out results merely to obtain promotion.
 
+## Build Optimization performance scorecard
+
+```bash
+./dev/check-build-optimization-performance
+```
+
+This validates the checked-in safe-cache, Runtime Tuning, and Build Impact
+evidence and prints their attributable results as JSON. It does not rerun
+Gradle and deliberately does not add percentages from different workloads.
+Use the owning benchmark runner only when the relevant implementation or
+fixture changes.
+
 ## Task Intelligence
 
 ```bash
@@ -169,6 +181,7 @@ draft-only boundary.
 ./dev/check-build-impact-selection
 ./dev/check-build-impact-gate
 ./dev/check-build-impact-automatic
+./dev/check-build-impact-performance
 ```
 
 Run the automatic check after CLI/discovery changes and the gate after any
