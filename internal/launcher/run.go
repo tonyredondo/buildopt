@@ -119,14 +119,30 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		)
 	}
 
+	localCacheFastPath := useGradleLocalCacheFastPath(
+		gradleManagedL1,
+		serverConfigured,
+		serverErr,
+		authorityConfigured,
+		authorityErr,
+	)
+	if gradleManagedL1 != nil {
+		if localCacheFastPath {
+			gradleEnvironment[gradleProjectPluginModeEnvironment] = gradleProjectPluginModeCacheOnly
+		} else {
+			gradleEnvironment[gradleProjectPluginModeEnvironment] = gradleProjectPluginModeFull
+		}
+	}
 	var handshake *pluginHandshakeServer
 	var handshakeErr error
-	if authority != nil {
-		handshake, handshakeErr = startPluginHandshakeForAttempt(
-			authority.attemptID,
-		)
-	} else {
-		handshake, handshakeErr = startPluginHandshake()
+	if !localCacheFastPath {
+		if authority != nil {
+			handshake, handshakeErr = startPluginHandshakeForAttempt(
+				authority.attemptID,
+			)
+		} else {
+			handshake, handshakeErr = startPluginHandshake()
+		}
 	}
 	if handshakeErr != nil {
 		_, _ = fmt.Fprintf(

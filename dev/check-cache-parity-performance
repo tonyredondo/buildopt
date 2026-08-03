@@ -1,0 +1,187 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/cache-parity-v1-local.json"}
+
+for buildopt_command in git jq; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required cache-parity command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+if [[ ! -f "${buildopt_result}" ]]; then
+    printf 'cache-parity result is unavailable: %s\n' \
+        "${buildopt_result}" >&2
+    exit 1
+fi
+
+buildopt_before_status=$(\
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+
+jq -e '
+    def digest:
+        type == "string" and test("^[0-9a-f]{64}$");
+    def revision:
+        type == "string" and test("^[0-9a-f]{40}$");
+    def positive_number:
+        type == "number" and . > 0;
+    def observation($repository; $dsl; $revision; $comparison):
+        keys == [
+            "candidateDurationMs",
+            "comparison",
+            "controlDurationMs",
+            "deliverableSha256",
+            "dsl",
+            "order",
+            "pair",
+            "repository",
+            "revision",
+            "savedMs"
+        ] and
+        .repository == $repository and
+        .dsl == $dsl and
+        .revision == $revision and
+        .comparison == $comparison and
+        (.pair | type == "number" and . >= 1 and . <= 4 and floor == .) and
+        (.order |
+            IN("CONTROL_FIRST", "CANDIDATE_FIRST")) and
+        .controlDurationMs > 0 and
+        .candidateDurationMs > 0 and
+        .savedMs == (.controlDurationMs - .candidateDurationMs) and
+        (.deliverableSha256 | digest);
+    def summary($repository; $dsl; $revision; $comparison):
+        . as $summary |
+        .observations as $rows |
+        keys == [
+            "allDeliverablesIdentical",
+            "candidateMeanMs",
+            "controlMeanMs",
+            "maxSavedMs",
+            "meanReductionRatio",
+            "meanSavedMs",
+            "minSavedMs",
+            "observations",
+            "pairs",
+            "positivePairs"
+        ] and
+        .pairs == 4 and
+        ($rows | type == "array" and length == 4) and
+        ([$rows[].pair] | sort) == [1, 2, 3, 4] and
+        all($rows[];
+            observation($repository; $dsl; $revision; $comparison) and
+            (if (.pair % 2) == 1
+             then .order == "CONTROL_FIRST"
+             else .order == "CANDIDATE_FIRST"
+             end)) and
+        $summary.controlMeanMs ==
+            (($rows | map(.controlDurationMs) | add) / 4) and
+        $summary.candidateMeanMs ==
+            (($rows | map(.candidateDurationMs) | add) / 4) and
+        $summary.meanSavedMs ==
+            (($rows | map(.savedMs) | add) / 4) and
+        $summary.meanReductionRatio ==
+            (($rows | map(.savedMs) | add) /
+             ($rows | map(.controlDurationMs) | add)) and
+        $summary.minSavedMs == ($rows | map(.savedMs) | min) and
+        $summary.maxSavedMs == ($rows | map(.savedMs) | max) and
+        $summary.positivePairs ==
+            ($rows | map(select(.savedMs > 0)) | length) and
+        $summary.allDeliverablesIdentical and
+        (($rows | map(.deliverableSha256) | unique | length) == 1);
+    keys == [
+        "boundaries",
+        "buildoptBinarySha256",
+        "buildoptVersion",
+        "capturedAt",
+        "design",
+        "repositories",
+        "runner",
+        "schemaVersion"
+    ] and
+    .schemaVersion == "buildopt.benchmarks/cache-parity/v1" and
+    (.capturedAt |
+        type == "string" and
+        test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$")) and
+    (.buildoptVersion |
+        type == "string" and
+        test("^[0-9]+[.][0-9]+[.][0-9]+([+-][0-9A-Za-z.-]+)?$")) and
+    (.buildoptBinarySha256 | digest) and
+    (.runner | keys == [
+        "architecture",
+        "cpuCount",
+        "java",
+        "memoryBytes",
+        "operatingSystem",
+        "qualifiedGoldenRunner"
+    ]) and
+    (.runner.operatingSystem | type == "string" and length > 0) and
+    (.runner.architecture | type == "string" and length > 0) and
+    (.runner.cpuCount | positive_number and floor == .) and
+    (.runner.memoryBytes | positive_number and floor == .) and
+    (.runner.java | type == "string" and length > 0) and
+    (.runner.qualifiedGoldenRunner == false) and
+    .design == {
+        "pairsPerComparison": 4,
+        "order": "PAIRED_ALTERNATING",
+        "task": ":app:distZip",
+        "configurationCache": false,
+        "publicOnboardingCommand":
+            "buildopt gradle --no-daemon --no-configuration-cache clean :app:distZip",
+        "comparisons": {
+            "CACHE_OFF":
+                "Gradle with build cache disabled versus BuildOpt cache-only fast path",
+            "NATIVE_CACHE":
+                "Gradle native local cache versus BuildOpt cache-only fast path"
+        }
+    } and
+    (.repositories | type == "array" and length == 2) and
+    ([.repositories[] | [.nameWithOwner, .dsl]] | sort) == [
+        ["tonyredondo/buildopt-pilot", "KOTLIN"],
+        ["tonyredondo/buildopt-pilot-groovy", "GROOVY"]
+    ] and
+    all(.repositories[];
+        . as $repository |
+        keys == ["comparisons", "dsl", "nameWithOwner", "revision"] and
+        (.revision | revision) and
+        (.comparisons | keys == ["CACHE_OFF", "NATIVE_CACHE"]) and
+        (.comparisons.CACHE_OFF |
+            summary(
+                $repository.nameWithOwner;
+                $repository.dsl;
+                $repository.revision;
+                "CACHE_OFF"
+            )) and
+        (.comparisons.NATIVE_CACHE |
+            summary(
+                $repository.nameWithOwner;
+                $repository.dsl;
+                $repository.revision;
+                "NATIVE_CACHE"
+            )) and
+        .comparisons.CACHE_OFF.meanSavedMs > 0 and
+        .comparisons.CACHE_OFF.positivePairs >= 3 and
+        .comparisons.NATIVE_CACHE.meanSavedMs > 0 and
+        .comparisons.NATIVE_CACHE.positivePairs >= 3) and
+    .boundaries == {
+        "descriptivePocEvidence": true,
+        "productionPromotionAuthorized": false,
+        "eightHourSoakExecuted": false
+    }
+' "${buildopt_result}" >/dev/null
+
+buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before_status}" != "${buildopt_after_status}" ]]; then
+    printf 'cache-parity validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'BuildOpt cache parity OK: %s\n' "${buildopt_result}"

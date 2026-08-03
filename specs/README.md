@@ -22,6 +22,7 @@ the exact cross-component contract.
 | [`beta-gradle-fixtures-v1.md`](./beta-gradle-fixtures-v1.md) | `OPS-001/A1` / `A1-G02` |
 | [`private-beta-token-isolation-v1.md`](./private-beta-token-isolation-v1.md) | `A1-002` / `A1-G01` |
 | [`onboarding-performance-v1.md`](./onboarding-performance-v1.md) | Product onboarding |
+| [`cache-parity-v1.md`](./cache-parity-v1.md) | Safe-cache performance |
 | [`private-beta-data-lifecycle-v1.md`](./private-beta-data-lifecycle-v1.md) | `A1-004` / `A1-G05` |
 | [`private-beta-operations-v1.md`](./private-beta-operations-v1.md) | `A1-005` |
 | [`owner-controlled-pilot-deployment-v1.md`](./owner-controlled-pilot-deployment-v1.md) | `A1-001` |
@@ -35,6 +36,7 @@ the exact cross-component contract.
 | [`build-impact-selection-v1.md`](./build-impact-selection-v1.md) | `C3-005` |
 | [`build-impact-gate-v1.md`](./build-impact-gate-v1.md) | `C3-G01` / MVP-C3 |
 | [`build-impact-automatic-v1.md`](./build-impact-automatic-v1.md) | `BIA-F4-001..003` / `BIA-F4-G01` |
+| [`build-impact-performance-v1.md`](./build-impact-performance-v1.md) | Build Impact performance |
 | [`platform-compatibility-v1.md`](./platform-compatibility-v1.md) | `PLAT-F5-001..004` / `PLAT-F5-G01` |
 | [`platform-runtime-parity-v2.md`](./platform-runtime-parity-v2.md) | `PLAT-F6-001..004` / `PLAT-F6-G01` |
 | [`edge-cache-config-v1.md`](./edge-cache-config-v1.md) | `C2-001` |

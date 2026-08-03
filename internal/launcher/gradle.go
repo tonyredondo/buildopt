@@ -12,8 +12,11 @@ import (
 )
 
 const (
-	gradlePluginJarEnvironment  = "BUILDOPT_GRADLE_PLUGIN_JAR"
-	gradleInitScriptEnvironment = "BUILDOPT_GRADLE_INIT_SCRIPT"
+	gradlePluginJarEnvironment         = "BUILDOPT_GRADLE_PLUGIN_JAR"
+	gradleInitScriptEnvironment        = "BUILDOPT_GRADLE_INIT_SCRIPT"
+	gradleProjectPluginModeEnvironment = "BUILDOPT_GRADLE_PROJECT_PLUGIN_MODE"
+	gradleProjectPluginModeFull        = "FULL"
+	gradleProjectPluginModeCacheOnly   = "CACHE_ONLY"
 )
 
 type gradleInvocation struct {
@@ -83,6 +86,20 @@ func gradleBuildCacheMode(args []string) (configured bool, enabled bool) {
 		}
 	}
 	return configured, enabled
+}
+
+func useGradleLocalCacheFastPath(
+	managedL1 *managedL1Config,
+	serverConfigured bool,
+	serverErr error,
+	authorityConfigured bool,
+	authorityErr error,
+) bool {
+	return managedL1 != nil &&
+		!serverConfigured &&
+		serverErr == nil &&
+		!authorityConfigured &&
+		authorityErr == nil
 }
 
 func defaultGradleManagedL1Config(repositoryRoot, cacheRoot string) (managedL1Config, error) {

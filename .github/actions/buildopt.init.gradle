@@ -18,7 +18,14 @@ if (gradle.getParent() == null) {
             settings.pluginManager.apply(dev.buildopt.gradle.BuildOptManagedL1Plugin)
         }
     }
-    allprojects {
-        pluginManager.apply(dev.buildopt.gradle.BuildOptProjectPlugin)
+    def projectPluginMode = System.getenv("BUILDOPT_GRADLE_PROJECT_PLUGIN_MODE")
+    if (projectPluginMode == null || projectPluginMode.isBlank() || projectPluginMode == "FULL") {
+        allprojects {
+            pluginManager.apply(dev.buildopt.gradle.BuildOptProjectPlugin)
+        }
+    } else if (projectPluginMode != "CACHE_ONLY") {
+        throw new GradleException(
+            "unsupported BUILDOPT_GRADLE_PROJECT_PLUGIN_MODE: ${projectPluginMode}"
+        )
     }
 }

@@ -1,0 +1,262 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s OUTPUT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+benchmark_output=$1
+benchmark_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+benchmark_repo_root=$(cd -- "${benchmark_script_dir}/.." && pwd)
+benchmark_fixture="${benchmark_repo_root}/fixtures/build-impact/synthetic-repository"
+
+if [[ "${benchmark_output}" != /* || -e "${benchmark_output}" ]]; then
+    printf 'output must be a new absolute path\n' >&2
+    exit 64
+fi
+for benchmark_command in awk date find getconf grep jq mkdir mktemp rm sha256sum tar uname; do
+    command -v "${benchmark_command}" >/dev/null 2>&1 || {
+        printf 'required Build Impact benchmark command is unavailable: %s\n' \
+            "${benchmark_command}" >&2
+        exit 1
+    }
+done
+
+benchmark_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-build-impact.XXXXXX")
+benchmark_raw="${benchmark_root}/observations.jsonl"
+benchmark_cleanup() {
+    if [[ "${benchmark_root}" == "${TMPDIR:-/tmp}/buildopt-build-impact."* ]]; then
+        rm -rf -- "${benchmark_root}"
+    fi
+}
+trap benchmark_cleanup EXIT
+
+benchmark_full="${benchmark_root}/full"
+benchmark_selected="${benchmark_root}/selected"
+mkdir -p -- "${benchmark_full}" "${benchmark_selected}"
+tar -C "${benchmark_fixture}" --exclude=.gradle --exclude='*/build' -cf - . |
+    tar -C "${benchmark_full}" -xf -
+tar -C "${benchmark_fixture}" --exclude=.gradle --exclude='*/build' -cf - . |
+    tar -C "${benchmark_selected}" -xf -
+
+benchmark_generate_sources() {
+    local benchmark_workspace=$1
+    local benchmark_project=$2
+    local benchmark_count=$3
+    local benchmark_package=$4
+    local benchmark_destination="${benchmark_workspace}/${benchmark_project}/src/main/java/${benchmark_package//.//}/generated"
+    mkdir -p -- "${benchmark_destination}"
+    local benchmark_index
+    for ((benchmark_index = 1; benchmark_index <= benchmark_count; benchmark_index++)); do
+        printf 'package %s.generated; public final class Generated%04d { public static int value() { return %d; } }\n' \
+            "${benchmark_package}" "${benchmark_index}" "${benchmark_index}" \
+            >"${benchmark_destination}/Generated$(printf '%04d' "${benchmark_index}").java"
+    done
+}
+
+for benchmark_workspace in "${benchmark_full}" "${benchmark_selected}"; do
+    benchmark_generate_sources "${benchmark_workspace}" library-c 96 synthetic.libraryc
+    benchmark_generate_sources "${benchmark_workspace}" service-a 96 synthetic.servicea
+    benchmark_generate_sources "${benchmark_workspace}" service-b 2048 synthetic.serviceb
+done
+
+benchmark_duration_ms=
+benchmark_service_a_digest=
+benchmark_test_marker_digest=
+benchmark_run_arm() {
+    local benchmark_workspace=$1
+    local benchmark_arm=$2
+    local benchmark_log=$3
+    local benchmark_started
+    local benchmark_completed
+    local benchmark_status
+    local -a benchmark_tasks
+
+    find "${benchmark_workspace}" -type d -name build -prune -exec rm -rf -- {} +
+    rm -rf -- "${benchmark_workspace}/.gradle"
+    case "${benchmark_arm}" in
+        FULL_GRAPH)
+            benchmark_tasks=(assemble testOwnedCheck)
+            ;;
+        SELECTED_GRAPH)
+            benchmark_tasks=(:service-a:assemble testOwnedCheck)
+            ;;
+        *)
+            printf 'unknown Build Impact benchmark arm: %s\n' "${benchmark_arm}" >&2
+            exit 64
+            ;;
+    esac
+
+    benchmark_started=$(date +%s%N)
+    set +e
+    GRADLE_USER_HOME="${benchmark_repo_root}/.tools/gradle-user-home/local" \
+        "${benchmark_repo_root}/gradlew" \
+        --offline \
+        --no-daemon \
+        --no-configuration-cache \
+        --no-build-cache \
+        --console=plain \
+        --warning-mode=fail \
+        -p "${benchmark_workspace}" \
+        "${benchmark_tasks[@]}" >"${benchmark_log}" 2>&1
+    benchmark_status=$?
+    set -e
+    benchmark_completed=$(date +%s%N)
+    if ((benchmark_status != 0)); then
+        printf 'Build Impact benchmark arm %s failed\n' "${benchmark_arm}" >&2
+        sed -n '1,240p' "${benchmark_log}" >&2
+        exit 1
+    fi
+
+    grep -Fq ':service-a:compileJava' "${benchmark_log}" || {
+        printf '%s did not compile service-a\n' "${benchmark_arm}" >&2
+        exit 1
+    }
+    if [[ "${benchmark_arm}" == FULL_GRAPH ]]; then
+        grep -Fq ':service-b:compileJava' "${benchmark_log}" || {
+            printf 'full graph did not compile service-b\n' >&2
+            exit 1
+        }
+    elif grep -Fq ':service-b:' "${benchmark_log}"; then
+        printf 'selected graph unexpectedly executed service-b\n' >&2
+        exit 1
+    fi
+
+    local benchmark_service_a="${benchmark_workspace}/service-a/build/libs/service-a-1.0.jar"
+    local benchmark_test_marker="${benchmark_workspace}/build/test-owned/check.txt"
+    if [[ ! -s "${benchmark_service_a}" || ! -s "${benchmark_test_marker}" ]]; then
+        printf '%s omitted a required output\n' "${benchmark_arm}" >&2
+        exit 1
+    fi
+    if [[ "${benchmark_arm}" == FULL_GRAPH ]]; then
+        local benchmark_service_b="${benchmark_workspace}/service-b/build/libs/service-b-1.0.jar"
+        if [[ ! -s "${benchmark_service_b}" ]]; then
+            printf 'full graph omitted service-b output\n' >&2
+            exit 1
+        fi
+    elif [[ -e "${benchmark_workspace}/service-b/build/libs/service-b-1.0.jar" ]]; then
+        printf 'selected graph materialized service-b output\n' >&2
+        exit 1
+    fi
+
+    benchmark_duration_ms=$(((benchmark_completed - benchmark_started) / 1000000))
+    benchmark_service_a_digest=$(sha256sum "${benchmark_service_a}" | awk '{print $1}')
+    benchmark_test_marker_digest=$(sha256sum "${benchmark_test_marker}" | awk '{print $1}')
+}
+
+benchmark_run_arm "${benchmark_full}" FULL_GRAPH "${benchmark_root}/warm-full.log"
+benchmark_run_arm "${benchmark_selected}" SELECTED_GRAPH "${benchmark_root}/warm-selected.log"
+
+for benchmark_pair in 1 2 3 4; do
+    benchmark_order=FULL_FIRST
+    if ((benchmark_pair % 2 == 0)); then
+        benchmark_order=SELECTED_FIRST
+    fi
+    if [[ "${benchmark_order}" == FULL_FIRST ]]; then
+        benchmark_run_arm "${benchmark_full}" FULL_GRAPH "${benchmark_root}/pair-${benchmark_pair}-full.log"
+        benchmark_full_ms=${benchmark_duration_ms}
+        benchmark_full_jar=${benchmark_service_a_digest}
+        benchmark_full_marker=${benchmark_test_marker_digest}
+        benchmark_run_arm "${benchmark_selected}" SELECTED_GRAPH "${benchmark_root}/pair-${benchmark_pair}-selected.log"
+        benchmark_selected_ms=${benchmark_duration_ms}
+        benchmark_selected_jar=${benchmark_service_a_digest}
+        benchmark_selected_marker=${benchmark_test_marker_digest}
+    else
+        benchmark_run_arm "${benchmark_selected}" SELECTED_GRAPH "${benchmark_root}/pair-${benchmark_pair}-selected.log"
+        benchmark_selected_ms=${benchmark_duration_ms}
+        benchmark_selected_jar=${benchmark_service_a_digest}
+        benchmark_selected_marker=${benchmark_test_marker_digest}
+        benchmark_run_arm "${benchmark_full}" FULL_GRAPH "${benchmark_root}/pair-${benchmark_pair}-full.log"
+        benchmark_full_ms=${benchmark_duration_ms}
+        benchmark_full_jar=${benchmark_service_a_digest}
+        benchmark_full_marker=${benchmark_test_marker_digest}
+    fi
+    if [[ "${benchmark_full_jar}" != "${benchmark_selected_jar}" ||
+        "${benchmark_full_marker}" != "${benchmark_selected_marker}" ]]; then
+        printf 'Build Impact required outputs diverged in pair %d\n' "${benchmark_pair}" >&2
+        exit 1
+    fi
+    jq -cn \
+        --arg order "${benchmark_order}" \
+        --arg serviceA "${benchmark_selected_jar}" \
+        --arg testMarker "${benchmark_selected_marker}" \
+        --argjson pair "${benchmark_pair}" \
+        --argjson fullMs "${benchmark_full_ms}" \
+        --argjson selectedMs "${benchmark_selected_ms}" '{
+            pair: $pair,
+            order: $order,
+            fullGraphDurationMs: $fullMs,
+            selectedGraphDurationMs: $selectedMs,
+            savedMs: ($fullMs - $selectedMs),
+            serviceAJarSha256: $serviceA,
+            preservedTestMarkerSha256: $testMarker
+        }' >>"${benchmark_raw}"
+    printf 'Build Impact pair %d: full=%dms selected=%dms saved=%dms\n' \
+        "${benchmark_pair}" "${benchmark_full_ms}" "${benchmark_selected_ms}" \
+        "$((benchmark_full_ms - benchmark_selected_ms))"
+done
+
+mkdir -p -- "$(dirname -- "${benchmark_output}")"
+benchmark_cpu_count=$(getconf _NPROCESSORS_ONLN)
+benchmark_page_size=$(getconf PAGESIZE)
+benchmark_physical_pages=$(getconf _PHYS_PAGES)
+benchmark_memory_bytes=$((benchmark_page_size * benchmark_physical_pages))
+jq -s \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg buildoptRevision "$(git -C "${benchmark_repo_root}" rev-parse HEAD)" \
+    --arg runnerOs "$(uname -s)" \
+    --arg runnerArchitecture "$(uname -m)" \
+    --argjson runnerCpuCount "${benchmark_cpu_count}" \
+    --argjson runnerMemoryBytes "${benchmark_memory_bytes}" '
+    . as $rows |
+    {
+        schemaVersion: "buildopt.benchmarks/build-impact-performance/v1",
+        capturedAt: $capturedAt,
+        buildoptRevision: $buildoptRevision,
+        runner: {
+            operatingSystem: $runnerOs,
+            architecture: $runnerArchitecture,
+            cpuCount: $runnerCpuCount,
+            memoryBytes: $runnerMemoryBytes,
+            qualifiedGoldenRunner: false
+        },
+        design: {
+            pairs: 4,
+            order: "PAIRED_ALTERNATING",
+            cache: false,
+            configurationCache: false,
+            changedPath: "library-c/src/main/java/synthetic/LibraryC.java",
+            fullEntrypoints: ["assemble", "testOwnedCheck"],
+            selectedEntrypoints: [":service-a:assemble", "testOwnedCheck"],
+            omittedProject: ":service-b",
+            generatedSources: {
+                libraryC: 96,
+                serviceA: 96,
+                serviceB: 2048
+            }
+        },
+        result: {
+            fullGraphMeanMs: ((map(.fullGraphDurationMs) | add) / length),
+            selectedGraphMeanMs: ((map(.selectedGraphDurationMs) | add) / length),
+            meanSavedMs: ((map(.savedMs) | add) / length),
+            meanReductionRatio:
+                ((map(.savedMs) | add) / (map(.fullGraphDurationMs) | add)),
+            positivePairs: (map(select(.savedMs > 0)) | length),
+            requiredOutputsIdentical:
+                ((map(.serviceAJarSha256) | unique | length) == 1 and
+                 (map(.preservedTestMarkerSha256) | unique | length) == 1),
+            observations: $rows
+        },
+        boundaries: {
+            customerAlternativeDeclaredByManifest: true,
+            productionPlanSelectionProvenSeparately: true,
+            testOptimizationModified: false,
+            descriptivePocEvidence: true,
+            productionPromotionAuthorized: false,
+            eightHourSoakExecuted: false
+        }
+    }' "${benchmark_raw}" >"${benchmark_output}"
+chmod 0600 "${benchmark_output}"
+
+printf 'BuildOpt Build Impact benchmark written to %s\n' "${benchmark_output}"

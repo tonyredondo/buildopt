@@ -1,6 +1,7 @@
 package launcher
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -134,6 +135,34 @@ func TestPrepareGradleInvocationRequiresWrapper(t *testing.T) {
 	_, err = prepareGradleInvocation(nil, true)
 	if err == nil || !strings.Contains(err.Error(), "Gradle repository root") {
 		t.Fatalf("error = %v", err)
+	}
+}
+
+func TestGradleLocalCacheFastPathRequiresUnconfiguredHealthyControlPlane(t *testing.T) {
+	config := &managedL1Config{}
+	if !useGradleLocalCacheFastPath(config, false, nil, false, nil) {
+		t.Fatal("default local cache did not select the fast path")
+	}
+	tests := []struct {
+		name                string
+		managedL1           *managedL1Config
+		serverConfigured    bool
+		serverErr           error
+		authorityConfigured bool
+		authorityErr        error
+	}{
+		{name: "no automatic cache"},
+		{name: "session ingest", managedL1: config, serverConfigured: true},
+		{name: "invalid session ingest", managedL1: config, serverErr: errors.New("invalid")},
+		{name: "local authority", managedL1: config, authorityConfigured: true},
+		{name: "invalid local authority", managedL1: config, authorityErr: errors.New("invalid")},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if useGradleLocalCacheFastPath(test.managedL1, test.serverConfigured, test.serverErr, test.authorityConfigured, test.authorityErr) {
+				t.Fatal("instrumented invocation selected the local-cache fast path")
+			}
+		})
 	}
 }
 
