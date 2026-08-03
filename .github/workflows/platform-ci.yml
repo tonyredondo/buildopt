@@ -58,7 +58,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          ./gradlew --no-daemon --no-configuration-cache :jvm:gradle-plugin:jar
+          ./gradlew --no-daemon --no-configuration-cache :jvm:gradle-plugin:clean :jvm:gradle-plugin:jar
           plugin_jar=$(find jvm/gradle-plugin/build/libs -name 'buildopt-gradle-plugin-*.jar' ! -name '*-sources.jar' ! -name '*-javadoc.jar')
           output=$("$RUNNER_TEMP/install/bin/buildopt" run -- ./gradlew --no-daemon --no-configuration-cache -p fixtures/gradle-handshake --init-script "$PWD/fixtures/gradle-handshake/buildopt.init.gradle" "-Dbuildopt.ws003.pluginJar=$PWD/$plugin_jar" neutralProbe 2>&1)
           grep -F 'authenticated Gradle plugin handshake accepted' <<<"$output"
@@ -161,7 +161,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          & .\gradlew.bat --no-daemon --no-configuration-cache :jvm:gradle-plugin:jar
+          & .\gradlew.bat --no-daemon --no-configuration-cache :jvm:gradle-plugin:clean :jvm:gradle-plugin:jar
           if ($LASTEXITCODE -ne 0) { throw 'plugin build failed' }
           $PluginJar = (Get-ChildItem jvm\gradle-plugin\build\libs\buildopt-gradle-plugin-*.jar | Where-Object { $_.Name -notmatch '-(sources|javadoc)\.jar$' } | Select-Object -First 1).FullName
           $Output = (& "$env:RUNNER_TEMP\install\bin\buildopt.exe" run -- .\gradlew.bat --no-daemon --no-configuration-cache -p fixtures\gradle-handshake --init-script "$PWD\fixtures\gradle-handshake\buildopt.init.gradle" "-Dbuildopt.ws003.pluginJar=$PluginJar" neutralProbe 2>&1 | Out-String)
