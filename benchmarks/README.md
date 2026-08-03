@@ -19,10 +19,26 @@ build matrix and makes no performance claim.
 
 ## Public onboarding performance
 
-[The local result](./results/onboarding-performance-v1-local.json) measures the
-actual no-configuration command from the README on the immutable public Kotlin
-and Groovy pilots. Four alternating pairs compare BuildOpt separately with
-cache disabled and with Gradle's unrestricted native local cache.
+[The hosted result](./results/onboarding-performance-v1-hosted.json) measures
+the actual no-configuration command from the README on an isolated 4-CPU
+GitHub-hosted runner and immutable public Kotlin and Groovy pilots. Four
+alternating pairs compare BuildOpt separately with cache disabled and with
+Gradle's unrestricted native local cache.
+
+| Pilot | Control | Control mean | BuildOpt mean | Difference |
+|---|---|---:|---:|---:|
+| Kotlin | Cache off | 8.916 s | 7.905 s | 1.010 s faster (11.3%) |
+| Groovy | Cache off | 9.586 s | 7.625 s | 1.962 s faster (20.5%) |
+| Kotlin | Native cache | 7.233 s | 7.818 s | 0.585 s slower (8.1%) |
+| Groovy | Native cache | 7.368 s | 7.394 s | 0.026 s slower (0.3%) |
+
+All eight hosted cache-off pairs improved and every paired distribution was
+byte-identical. The less favorable native-cache observations remain in the
+report. This is descriptive POC evidence, not a production or golden-runner
+claim.
+
+[The independent local result](./results/onboarding-performance-v1-local.json)
+used the same protocol on a 12-CPU host:
 
 | Pilot | Control | Control mean | BuildOpt mean | Difference |
 |---|---|---:|---:|---:|
@@ -31,13 +47,14 @@ cache disabled and with Gradle's unrestricted native local cache.
 | Kotlin | Native cache | 10.762 s | 11.812 s | 1.050 s slower (9.8%) |
 | Groovy | Native cache | 10.754 s | 10.876 s | 0.123 s slower (1.1%) |
 
-All eight cache-off pairs improved, every paired distribution was
-byte-identical, and the less favorable native-cache observations remain in the
-report. The 12-CPU host is explicitly not a qualified golden runner. Validate
-the immutable result without rerunning builds:
+Across both environments, all 16 cache-off pairs improved and every output
+matched. Validate both immutable results without rerunning builds:
 
 ```bash
-./dev/check-onboarding-performance
+./dev/check-onboarding-performance \
+  benchmarks/results/onboarding-performance-v1-hosted.json
+./dev/check-onboarding-performance \
+  benchmarks/results/onboarding-performance-v1-local.json
 ```
 
 To create a fresh report, provide an absent absolute output path, an installed

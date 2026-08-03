@@ -135,19 +135,23 @@ exports. Add `version: 0.2.0` to pin the native package.
 
 ## What improvement should you expect?
 
-The checked 12-CPU local experiment ran four alternating pairs per comparison
-on immutable Kotlin and Groovy pilots. Against Gradle with its build cache
-disabled, the public command reduced mean time from 9.857 s to 7.815 s in
-Kotlin (20.7%) and from 14.226 s to 11.276 s in Groovy (20.7%). All eight
-pairs improved and every distribution digest matched.
+The checked 4-CPU GitHub-hosted experiment ran four alternating pairs per
+comparison on immutable Kotlin and Groovy pilots. Against Gradle with its build
+cache disabled, the public command reduced mean time from 8.916 s to 7.905 s
+in Kotlin (11.3%) and from 9.586 s to 7.625 s in Groovy (20.5%). All eight
+pairs improved and every distribution digest matched. An independent 12-CPU
+local run measured 20.7% reductions in both pilots, so the exact percentage is
+environment-dependent while the cache-off direction was consistent across all
+16 measured pairs.
 
 BuildOpt does not claim to beat an already warm unrestricted Gradle cache. In
-the same run it was 9.8% slower for Kotlin and 1.1% slower for Groovy because
+the hosted run it was 8.1% slower for Kotlin and 0.3% slower for Groovy because
 the safe Tier 1 allowlist reuses fewer task types and adds verification. These
 are descriptive POC results, not a universal prediction. The
-[raw observations](../../benchmarks/results/onboarding-performance-v1-local.json)
+[hosted observations](../../benchmarks/results/onboarding-performance-v1-hosted.json),
+[local observations](../../benchmarks/results/onboarding-performance-v1-local.json),
 and [measurement contract](../../specs/onboarding-performance-v1.md) retain
-both comparisons.
+both comparisons and their raw paired timings.
 
 ## Component ownership and configuration
 
