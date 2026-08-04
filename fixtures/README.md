@@ -1,5 +1,10 @@
 # Fixtures
 
+[`poc-value`](./poc-value/README.md) contains the bounded Kotlin/Groovy
+workloads used by the strict accelerator-coverage matrix. They compare against
+optimized native Gradle and are synthetic POC evidence, not production or
+universal-performance claims.
+
 Reproducible Gradle repositories and scenarios for the golden lane, TestKit, cache conformance, failures, cancellation, and compatibility.
 
 Fixtures must declare their wrapper, JDK, plugins, seed, and expected result; they do not depend on accidental workstation state.

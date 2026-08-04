@@ -2097,6 +2097,28 @@ inside the pinned image, provide the immutable Kotlin and Groovy pilots:
   /path/to/buildopt-pilot-groovy
 ```
 
+Validate the strict `POC-VALUE-003` accelerator coverage without rerunning
+Gradle:
+
+```bash
+./dev/check-poc-value-coverage
+```
+
+The checked matrix contains eight alternating pairs for each Kotlin/Groovy
+Build Impact and exact reviewed custom-task/Patch workload. The native control
+keeps Build Cache, Configuration Cache, parallelism, and daemon enabled. To
+reproduce the bounded run inside the pinned 4-CPU/16-GiB image:
+
+```bash
+GRADLE_USER_HOME=.tools/gradle-user-home/local \
+  ./dev/run-poc-value-coverage-container \
+    /tmp/poc-value-coverage.json
+```
+
+This qualifies only the two synthetic workload classes and exact reviewed
+recipe represented by the fixtures. It does not prove the combined product,
+other Patch recipes, production readiness, or Test Optimization behavior.
+
 Validate and print the historical mechanism-development scorecard without
 rerunning a benchmark:
 

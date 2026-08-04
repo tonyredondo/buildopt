@@ -134,6 +134,7 @@ reference data, thresholds, or held-out results merely to obtain promotion.
 ```bash
 ./dev/check-poc-value-validation
 ./dev/check-poc-value-negative-mechanisms
+./dev/check-poc-value-coverage
 ./dev/check-build-optimization-performance
 ```
 

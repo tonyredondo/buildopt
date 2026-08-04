@@ -39,12 +39,24 @@ candidate: Build Cache, Configuration Cache, daemon/process policy, and parallel
 BuildOpt must win against that control, not against an intentionally unoptimized
 build.
 
+`POC-VALUE-003` fixes four cells before measurement: Build Impact and the exact
+reviewed custom-task/Patch route, each in Kotlin and Groovy. Every cell uses one
+unmeasured warm-up followed by eight alternating control/candidate pairs. Build
+outputs are removed before each arm while its isolated Gradle home, daemon,
+Configuration Cache, and Build Cache remain warm. The report keeps all signed
+differences and computes a deterministic 4,096-resample paired bootstrap with a
+fixed 32-bit LCG; the independent checker recomputes every statistic from the raw
+rows. A structurally valid unfavorable result remains valid evidence and is
+classified `NO_VALUE_NO_ACTION`; only the higher-level decision contract requires
+all four cells to pass before moving to the combined gate.
+
 ## Current decision
 
 The current state is `CONTINUE_CONDITIONALLY`. The contractual four-CPU runs in
-[`poc-value-baseline-v1.json`](../benchmarks/results/poc-value-baseline-v1.json)
-and [`poc-value-negative-mechanisms-v1.json`](../benchmarks/results/poc-value-negative-mechanisms-v1.json)
-closed `POC-VALUE-001` and `POC-VALUE-002` with these results:
+[`poc-value-baseline-v1.json`](../benchmarks/results/poc-value-baseline-v1.json),
+[`poc-value-negative-mechanisms-v1.json`](../benchmarks/results/poc-value-negative-mechanisms-v1.json),
+and [`poc-value-coverage-v1.json`](../benchmarks/results/poc-value-coverage-v1.json)
+closed `POC-VALUE-001..003` with these results:
 
 - Safe Cache did not demonstrate incremental value over Gradle's native local
   cache. It is classified `NO_VALUE_NO_ACTION`, is explicit-only through
@@ -55,18 +67,22 @@ closed `POC-VALUE-001` and `POC-VALUE-002` with these results:
   The strict `W3_H4G` run saved −512 ms (−4.3%) with a 95% interval from
   −2,818 to +1,302 ms. Only `STABLE_CONTROL` may be applied; the candidates are
   classified `NO_VALUE_NO_ACTION`.
-- Build Impact saved 1,055 ms (52.5%) on the bounded workload, with four positive
-  pairs, a positive 589 ms lower interval bound, identical required outputs, and
-  zero product-attributable failures. It clears the accelerator threshold for
-  this workload but still requires broader coverage under `POC-VALUE-003`.
-- Task Intelligence and Patch Autopilot have preliminary reviewed-source evidence;
-  Agent discovery and hermetic enforcement remain unavailable.
+- Build Impact clears the accelerator threshold for the bounded
+  `UNRELATED_NON_CACHEABLE_WORK` class in both DSLs. Eight-pair means saved
+  1,939 ms (76.0%) in Kotlin and 2,155 ms (73.5%) in Groovy; both lower 95%
+  bounds are positive and every required output is identical.
+- The exact reviewed-source `CUSTOM_TASK_CONTRACT_JAVA_V1` route clears the
+  threshold in both DSLs. Eight-pair means saved 1,369 ms (67.3%) in Kotlin and
+  2,349 ms (68.0%) in Groovy while all eight task outputs remained identical.
+  This qualifies that exact Task Intelligence/Patch route, not every Patch
+  Autopilot recipe. Agent discovery and hermetic enforcement remain unavailable.
 - The combined product path has not yet been measured against optimized native
   Gradle, so the overall value hypothesis remains open.
 
-The active order is now: broaden Build Impact and reviewed-source Task/Patch
-evidence; then benchmark the combined public path—with no unproven Safe Cache
-or Runtime profile active—and make the explicit `CONTINUE` or `STOP` decision.
+The only active value gate is now to benchmark the combined public path—with
+no unproven Safe Cache or Runtime profile active—and make the explicit
+`CONTINUE` or `STOP` decision. The qualifying percentages above are not added;
+the combined path needs its own paired experiment.
 
 Run the executable decision check with:
 

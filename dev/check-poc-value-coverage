@@ -99,10 +99,6 @@ jq -e \
             ($rows | map(select(.savedMs > 0)) | length) and
         $value.result.requiredOutputsIdentical == true and
         $value.result.productAttributableFailures == 0 and
-        $value.result.meanSavedMs >= 500 and
-        $value.result.meanReductionRatio >= 0.02 and
-        $value.result.interval95SavedMs[0] > 0 and
-        $value.classification == "THRESHOLD_MET" and
         (if $mechanism == "BUILD_IMPACT"
          then all($rows[];
              .fullExecutedUnrelated == true and
@@ -111,7 +107,13 @@ jq -e \
              .controlCacheHits == 0 and .candidateCacheHits == 8 and
              .fullExecutedUnrelated == false and
              .candidateOmittedUnrelated == false)
-         end);
+         end) and
+        ((($value.result.meanSavedMs >= 500 and
+           $value.result.meanReductionRatio >= 0.02 and
+           $value.result.interval95SavedMs[0] > 0) as $qualified |
+          $value.classification ==
+              (if $qualified then "THRESHOLD_MET"
+               else "NO_VALUE_NO_ACTION" end)));
     keys == [
         "boundaries", "buildoptRevision", "capturedAt", "fixtures", "gate",
         "methodology", "runner", "schemaVersion", "summary", "workloads"
@@ -173,18 +175,35 @@ jq -e \
     workload((.workloads[] | select(.id == "REVIEWED_TASK_GROOVY"));
         "REVIEWED_TASK_GROOVY"; "REVIEWED_TASK_PATCH";
         "REVIEWED_CUSTOM_TASK"; "GROOVY") and
+    .workloads as $workloads |
     .summary == {
-        workloadClasses: ["REVIEWED_CUSTOM_TASK", "UNRELATED_NON_CACHEABLE_WORK"],
-        dslCoverage: ["GROOVY", "KOTLIN"],
-        qualifyingWorkloads: 4,
-        buildImpactQualifiesBothDsls: true,
-        taskIntelligenceQualifiesBothDsls: true,
-        patchAutopilotQualifiesBothDsls: true
+        workloadClasses:
+            ($workloads | map(.workloadClass) | unique | sort),
+        dslCoverage: ($workloads | map(.dsl) | unique | sort),
+        qualifyingWorkloads:
+            ($workloads |
+             map(select(.classification == "THRESHOLD_MET")) | length),
+        buildImpactQualifiesBothDsls:
+            (($workloads | map(select(
+                .mechanism == "BUILD_IMPACT" and
+                .classification == "THRESHOLD_MET")) | length) == 2),
+        taskIntelligenceQualifiesBothDsls:
+            (($workloads | map(select(
+                .mechanism == "REVIEWED_TASK_PATCH" and
+                .classification == "THRESHOLD_MET")) | length) == 2),
+        patchAutopilotQualifiesBothDsls:
+            (($workloads | map(select(
+                .mechanism == "REVIEWED_TASK_PATCH" and
+                .classification == "THRESHOLD_MET")) | length) == 2)
     } and
     .gate == {
         id: "POC-VALUE-003",
-        state: "PASSED",
-        next: "POC-VALUE-004",
+        state:
+            (if ($workloads | all(.classification == "THRESHOLD_MET"))
+             then "PASSED" else "FAILED" end),
+        next:
+            (if ($workloads | all(.classification == "THRESHOLD_MET"))
+             then "POC-VALUE-004" else "POC-VALUE-003" end),
         pocValueProven: false
     } and
     .boundaries == {

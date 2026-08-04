@@ -70,9 +70,9 @@ can use the [source quickstart](./docs/getting-started/quickstart.md).
 The checked scorecard measures each optimization separately. Safe Cache and
 the tested Runtime Tuning profiles did not add defensible value over optimized
 native Gradle, so neither is active on the default path. Build Impact saved
-52.5% on the strict bounded workload and remains the only qualified accelerator
-so far. Required outputs remained identical. These percentages are
-workload-specific and are not added together.
+73.5–76.0%, while the exact reviewed custom-task/Patch route saved 67.3–68.0%
+across Kotlin and Groovy bounded workloads. Required outputs remained
+identical. These percentages are workload-specific and are not added together.
 The POC continues conditionally until the combined path beats optimized native
 Gradle across the required workload matrix. See the [POC value contract](./specs/poc-value-validation-v1.md)
 and [raw scorecard](./benchmarks/README.md#build-optimization-scorecard).

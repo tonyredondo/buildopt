@@ -140,7 +140,8 @@ hide another's cost:
 |---|---:|---|
 | Safe Cache | `NO_VALUE_NO_ACTION`; explicit-only | The default delegates to Gradle native cache, removing product overhead without claiming acceleration |
 | Runtime Tuning | `NO_VALUE_NO_ACTION`; stable control only | `W4_H6G` regressed 54.7%; `W3_H4G` regressed 4.3% with an interval crossing zero |
-| Build Impact | 52.5% faster in the strict bounded workload | Avoided work saved 1.055 s with a positive lower 95% bound and required outputs unchanged |
+| Build Impact | 73.5–76.0% faster in the strict bounded Kotlin/Groovy workloads | Avoided unrelated non-cacheable work while required outputs stayed unchanged |
+| Reviewed Task/Patch | 67.3–68.0% faster for the exact reviewed custom-task recipe | Restored all eight qualified task outputs; this does not generalize to other recipes |
 
 These are controlled POC workloads, not universal predictions, and their
 percentages must not be added. A repository that needs the full graph receives

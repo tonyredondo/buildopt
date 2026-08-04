@@ -63,15 +63,15 @@
     },
     {
       "id": "BUILD_IMPACT",
-      "classification": "THRESHOLD_MET_SINGLE_WORKLOAD",
-      "evidence": "benchmarks/results/poc-value-baseline-v1.json",
-      "claim": "ACCELERATOR_REQUIRES_BROADER_CHANGE_MATRIX"
+      "classification": "THRESHOLD_MET_REQUIRED_BREADTH",
+      "evidence": "benchmarks/results/poc-value-coverage-v1.json",
+      "claim": "QUALIFIED_FOR_UNRELATED_NON_CACHEABLE_WORK_IN_KOTLIN_AND_GROOVY"
     },
     {
       "id": "TASK_INTELLIGENCE_REVIEWED_SOURCE",
-      "classification": "PRELIMINARY",
-      "evidence": "benchmarks/results/c1-task-intelligence-pilot.json",
-      "claim": "REVIEWED_SOURCE_ROUTE_ONLY"
+      "classification": "THRESHOLD_MET_REVIEWED_CUSTOM_TASK",
+      "evidence": "benchmarks/results/poc-value-coverage-v1.json",
+      "claim": "QUALIFIED_ONLY_FOR_THE_EXACT_REVIEWED_SOURCE_ROUTE_IN_KOTLIN_AND_GROOVY"
     },
     {
       "id": "AGENT_DISCOVERY",
@@ -87,9 +87,9 @@
     },
     {
       "id": "PATCH_AUTOPILOT",
-      "classification": "PRELIMINARY",
-      "evidence": "benchmarks/results/c1-task-intelligence-pilot.json",
-      "claim": "CORRECTNESS_AND_REVERSIBILITY_PROVEN_VALUE_NOT_QUALIFIED"
+      "classification": "THRESHOLD_MET_REVIEWED_CUSTOM_TASK_RECIPE",
+      "evidence": "benchmarks/results/poc-value-coverage-v1.json",
+      "claim": "VALUE_QUALIFIED_ONLY_FOR_CUSTOM_TASK_CONTRACT_JAVA_V1_IN_KOTLIN_AND_GROOVY"
     },
     {
       "id": "COMBINED_PRODUCT_PATH",
@@ -112,7 +112,7 @@
     {
       "id": "POC-VALUE-003",
       "outcome": "BUILD_IMPACT_TASK_AND_PATCH_PASS_REQUIRED_WORKLOAD_BREADTH",
-      "state": "TODO"
+      "state": "DONE"
     },
     {
       "id": "POC-VALUE-004",

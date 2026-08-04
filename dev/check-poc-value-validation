@@ -14,6 +14,7 @@ buildopt_runtime="${buildopt_repo_root}/benchmarks/results/b-runtime-owner-evalu
 buildopt_impact="${buildopt_repo_root}/benchmarks/results/build-impact-performance-v1-local.json"
 buildopt_baseline="${buildopt_repo_root}/benchmarks/results/poc-value-baseline-v1.json"
 buildopt_negative="${buildopt_repo_root}/benchmarks/results/poc-value-negative-mechanisms-v1.json"
+buildopt_coverage="${buildopt_repo_root}/benchmarks/results/poc-value-coverage-v1.json"
 
 command -v jq >/dev/null 2>&1 || {
     printf 'required POC value command is unavailable: jq\n' >&2
@@ -25,13 +26,15 @@ command -v jq >/dev/null 2>&1 || {
 "${buildopt_script_dir}/check-build-impact-performance" "${buildopt_impact}" >/dev/null
 "${buildopt_script_dir}/check-poc-value-baseline" "${buildopt_baseline}" >/dev/null
 "${buildopt_script_dir}/check-poc-value-negative-mechanisms" "${buildopt_negative}" >/dev/null
+"${buildopt_script_dir}/check-poc-value-coverage" "${buildopt_coverage}" >/dev/null
 
 jq -e \
     --slurpfile cache "${buildopt_cache}" \
     --slurpfile runtime "${buildopt_runtime}" \
     --slurpfile impact "${buildopt_impact}" \
     --slurpfile baseline "${buildopt_baseline}" \
-    --slurpfile negative "${buildopt_negative}" '
+    --slurpfile negative "${buildopt_negative}" \
+    --slurpfile coverage "${buildopt_coverage}" '
     .schemaVersion == "buildopt.specs/poc-value-validation/v1" and
     .decision.objective == "REDUCE_CUSTOMER_VISIBLE_BUILD_TIME_AGAINST_OPTIMIZED_NATIVE_GRADLE" and
     .decision.currentVerdict == "CONTINUE_CONDITIONALLY" and
@@ -61,11 +64,13 @@ jq -e \
     ([.mechanisms[].id] | length == (unique | length)) and
     ([.mechanisms[] | select(.id == "SAFE_CACHE" and .classification == "NO_VALUE_NO_ACTION" and .evidence == "benchmarks/results/poc-value-negative-mechanisms-v1.json")] | length) == 1 and
     ([.mechanisms[] | select(.id == "RUNTIME_TUNING" and .classification == "NO_VALUE_NO_ACTION" and .evidence == "benchmarks/results/poc-value-negative-mechanisms-v1.json")] | length) == 1 and
-    ([.mechanisms[] | select(.id == "BUILD_IMPACT" and .classification == "THRESHOLD_MET_SINGLE_WORKLOAD" and .evidence == "benchmarks/results/poc-value-baseline-v1.json")] | length) == 1 and
+    ([.mechanisms[] | select(.id == "BUILD_IMPACT" and .classification == "THRESHOLD_MET_REQUIRED_BREADTH" and .evidence == "benchmarks/results/poc-value-coverage-v1.json")] | length) == 1 and
+    ([.mechanisms[] | select(.id == "TASK_INTELLIGENCE_REVIEWED_SOURCE" and .classification == "THRESHOLD_MET_REVIEWED_CUSTOM_TASK" and .evidence == "benchmarks/results/poc-value-coverage-v1.json")] | length) == 1 and
     ([.mechanisms[] | select(.id == "AGENT_DISCOVERY" and .classification == "UNAVAILABLE")] | length) == 1 and
     ([.mechanisms[] | select(.id == "HERMETIC_PRODUCER" and .classification == "UNAVAILABLE")] | length) == 1 and
+    ([.mechanisms[] | select(.id == "PATCH_AUTOPILOT" and .classification == "THRESHOLD_MET_REVIEWED_CUSTOM_TASK_RECIPE" and .evidence == "benchmarks/results/poc-value-coverage-v1.json")] | length) == 1 and
     ([.mechanisms[] | select(.id == "COMBINED_PRODUCT_PATH" and .classification == "NOT_RUN" and .evidence == null)] | length) == 1 and
-    ([.nextGates[] | select(.state == "TODO")] | length) == 2 and
+    ([.nextGates[] | select(.state == "TODO")] | length) == 1 and
     .nextGates == [
         {
             id: "POC-VALUE-001",
@@ -80,7 +85,7 @@ jq -e \
         {
             id: "POC-VALUE-003",
             outcome: "BUILD_IMPACT_TASK_AND_PATCH_PASS_REQUIRED_WORKLOAD_BREADTH",
-            state: "TODO"
+            state: "DONE"
         },
         {
             id: "POC-VALUE-004",
@@ -117,7 +122,21 @@ jq -e \
     $negative[0].runtimeTuning.activation == "STABLE_CONTROL_ONLY" and
     $negative[0].runtimeTuning.evaluatedCandidateProfile == "W3_H4G" and
     $negative[0].runtimeTuning.requiredOutputsIdentical and
-    $negative[0].runtimeTuning.productAttributableFailures == 0
+    $negative[0].runtimeTuning.productAttributableFailures == 0 and
+    $coverage[0].gate == {
+        id: "POC-VALUE-003",
+        state: "PASSED",
+        next: "POC-VALUE-004",
+        pocValueProven: false
+    } and
+    $coverage[0].summary == {
+        workloadClasses: ["REVIEWED_CUSTOM_TASK", "UNRELATED_NON_CACHEABLE_WORK"],
+        dslCoverage: ["GROOVY", "KOTLIN"],
+        qualifyingWorkloads: 4,
+        buildImpactQualifiesBothDsls: true,
+        taskIntelligenceQualifiesBothDsls: true,
+        patchAutopilotQualifiesBothDsls: true
+    }
     ' "${buildopt_contract}" >/dev/null
 
 jq -n \
@@ -126,7 +145,8 @@ jq -n \
     --slurpfile runtime "${buildopt_runtime}" \
     --slurpfile impact "${buildopt_impact}" \
     --slurpfile baseline "${buildopt_baseline}" \
-    --slurpfile negative "${buildopt_negative}" '
+    --slurpfile negative "${buildopt_negative}" \
+    --slurpfile coverage "${buildopt_coverage}" '
     {
         verdict: $contract[0].decision.currentVerdict,
         pocValueProven: $contract[0].decision.pocValueProven,
@@ -134,13 +154,18 @@ jq -n \
         safeCacheActivation: $negative[0].safeCache.activation,
         runtimeTuning: $negative[0].runtimeTuning.classification,
         runtimeTuningActivation: $negative[0].runtimeTuning.activation,
-        buildImpact: $baseline[0].mechanisms.buildImpact.classification,
+        buildImpact: "THRESHOLD_MET_REQUIRED_BREADTH",
+        reviewedTask: "THRESHOLD_MET_REVIEWED_CUSTOM_TASK",
+        reviewedPatch: "THRESHOLD_MET_REVIEWED_CUSTOM_TASK_RECIPE",
         combinedProduct: "NOT_RUN",
         nativeCacheWorstReductionRatio:
             ([$negative[0].safeCache.kotlin.meanReductionRatio,
               $negative[0].safeCache.groovy.meanReductionRatio] | min),
         runtimeSavedMs: $negative[0].runtimeTuning.meanSavedMs,
-        buildImpactSavedMs: $baseline[0].mechanisms.buildImpact.meanSavedMs,
+        qualifiedWorkloads: $coverage[0].summary.qualifyingWorkloads,
+        coverageSavedMs:
+            ($coverage[0].workloads |
+             map({key: .id, value: .result.meanSavedMs}) | from_entries),
         openGates:
             [$contract[0].nextGates[] | select(.state == "TODO") | .id]
     }

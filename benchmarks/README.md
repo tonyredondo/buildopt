@@ -17,12 +17,13 @@ small/medium/large Gradle build matrix and makes no performance claim.
 
 ## Build Optimization scorecard
 
-The current POC verdict is `CONTINUE_CONDITIONALLY`, not “value proven”. Two
-contractual 4-vCPU/16-GiB runs now close the baseline and negative-mechanism
-decisions: Safe Cache is explicit-only while the default delegates to Gradle's
-native cache; Runtime Tuning candidates `W4_H6G` and `W3_H4G` are disabled;
-Build Impact clears the threshold for one bounded workload; and the combined
-public path is still unmeasured. Validate that interpretation with:
+The current POC verdict is `CONTINUE_CONDITIONALLY`, not “value proven”. Three
+contractual 4-vCPU/16-GiB runs close the baseline, negative-mechanism decision,
+and accelerator-coverage matrix. Safe Cache is explicit-only while the default
+delegates to Gradle's native cache; Runtime Tuning candidates `W4_H6G` and
+`W3_H4G` are disabled; Build Impact and the exact reviewed Task/Patch route
+clear the threshold across Kotlin and Groovy; and the combined public path is
+still unmeasured. Validate that interpretation with:
 
 ```bash
 ./dev/check-poc-value-validation
@@ -36,7 +37,10 @@ combining unrelated percentages:
 | Default native-cache fallback, Kotlin | 79 ms faster (8.9%) | +6 to +156 ms | `NO_VALUE_NO_ACTION`; same cache mechanism, no acceleration claim |
 | Default native-cache fallback, Groovy | 1,051 ms faster (56.6%) | +486 to +1,572 ms | `NO_VALUE_NO_ACTION`; same cache mechanism, no acceleration claim |
 | Runtime Tuning `W3_H4G` | 512 ms slower (4.3%) | −2,818 to +1,302 ms | `NO_VALUE_NO_ACTION`; `STABLE_CONTROL_ONLY` |
-| Build Impact | 1,055 ms faster (52.5%) | +589 to +1,583 ms | `THRESHOLD_MET` for this workload |
+| Build Impact, Kotlin | 1,939 ms faster (76.0%) | +1,899 to +1,982 ms | `THRESHOLD_MET_REQUIRED_BREADTH` |
+| Build Impact, Groovy | 2,155 ms faster (73.5%) | +1,869 to +2,414 ms | `THRESHOLD_MET_REQUIRED_BREADTH` |
+| Reviewed Task/Patch, Kotlin | 1,369 ms faster (67.3%) | +1,142 to +1,624 ms | `THRESHOLD_MET_REVIEWED_CUSTOM_TASK` |
+| Reviewed Task/Patch, Groovy | 2,349 ms faster (68.0%) | +1,245 to +3,421 ms | `THRESHOLD_MET_REVIEWED_CUSTOM_TASK` |
 
 The reports retain all four signed pairs, including unfavorable samples. Every
 required output is identical, Runtime Tuning has zero OOM delta, and no
@@ -44,8 +48,9 @@ product-attributable failures occurred. The apparent fallback timing difference
 is not attributable to BuildOpt because control and candidate both use Gradle's
 native cache; its evidence closes regression removal only. Percentages are not
 added because the mechanisms use different controls and workloads.
-`POC-VALUE-001` and `POC-VALUE-002` are completed decision gates, not a
-combined-product success gate.
+`POC-VALUE-001..003` are completed decision gates, not a combined-product
+success gate. The reviewed Patch result applies only to
+`CUSTOM_TASK_CONTRACT_JAVA_V1`; it does not qualify unrelated recipes.
 
 Validate all checked-in evidence and print the machine-readable scorecard:
 
@@ -59,6 +64,8 @@ The underlying evidence and contracts are:
   [value contract](../specs/poc-value-validation-v1.md);
 - [negative-mechanism decisions](./results/poc-value-negative-mechanisms-v1.json),
   validated by `./dev/check-poc-value-negative-mechanisms`;
+- [accelerator coverage matrix](./results/poc-value-coverage-v1.json),
+  validated by `./dev/check-poc-value-coverage`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
