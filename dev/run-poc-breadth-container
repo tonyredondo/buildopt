@@ -134,6 +134,12 @@ docker run --rm --pull never --network none --platform linux/amd64 \
 install -m 0600 \
     "${buildopt_benchmark_dir}/output/poc-breadth.json" \
     "${buildopt_output}"
+if [[ "${BUILDOPT_POC_OVERHEAD_TRACE:-0}" == 1 ]]; then
+    printf 'BuildOpt POC-OVERHEAD-001 diagnostic evidence written to %s\n' \
+        "${buildopt_output}"
+    exit 0
+fi
+
 "${buildopt_script_dir}/check-poc-breadth" "${buildopt_output}"
 
 printf 'BuildOpt POC-BREADTH-001 strict container evidence written to %s\n' \

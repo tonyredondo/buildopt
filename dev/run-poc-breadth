@@ -43,7 +43,9 @@ buildopt_cleanup() {
         return
     fi
     if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-poc-breadth-001."* ]]; then
-        rm -rf -- "${buildopt_root}"
+        # A terminating Gradle daemon can race with deletion. The container is
+        # removed immediately, so cleanup must not overwrite benchmark status.
+        rm -rf -- "${buildopt_root}" 2>/dev/null || true
     fi
 }
 trap buildopt_cleanup EXIT

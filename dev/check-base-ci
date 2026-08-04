@@ -206,6 +206,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-value-baseline" >/dev/null
         "${buildopt_script_dir}/check-poc-value-validation" >/dev/null
         "${buildopt_script_dir}/check-poc-breadth" >/dev/null
+        "${buildopt_script_dir}/check-poc-overhead" >/dev/null
         "${buildopt_script_dir}/run" \
             --toolchain go \
             -- \

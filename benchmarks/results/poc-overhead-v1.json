@@ -1,0 +1,477 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-overhead/v1",
+  "capturedAt": "2026-08-04T16:43:00Z",
+  "buildoptRevision": "42f922addc6fc59915dc9e56d5384d624b595772",
+  "runner": {
+    "schemaVersion": "buildopt.evidence/golden-runner-observation/v1",
+    "capturedAt": "2026-08-04T16:19:43Z",
+    "id": "linux-amd64-4c-16g-v1",
+    "operatingSystem": "Linux",
+    "architecture": "x86_64",
+    "cpuCount": 4,
+    "memoryBytes": 17179869184,
+    "java": "21.0.11+10-LTS",
+    "javaVendor": "Eclipse Adoptium",
+    "runnerSpecSha256": "26283e56aa7251152c7f051f7500bc86553669a808fc1cec5b736acf8f0733c9",
+    "containerPlatformDigest": "sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50",
+    "cgroup": {
+      "cpuMax": "400000 100000",
+      "memoryMax": "17179869184"
+    },
+    "qualifiedGoldenRunner": true
+  },
+  "fixture": {
+    "id": "REALISTIC_MULTIMODULE_V1",
+    "sha256": "ce93de2e628f9ba5cfeecba89abe622a652361798c7e45961df8915721fedba8"
+  },
+  "sourceBreadthMethodology": {
+    "purpose": "TEST_VALUE_GENERALIZATION_ACROSS_CHANGE_CLASSES",
+    "pairsPerCell": 8,
+    "pairOrder": "PAIRED_ALTERNATING",
+    "confidenceInterval": "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
+    "nativeControl": {
+      "buildCache": true,
+      "configurationCache": true,
+      "parallelism": true,
+      "daemon": true
+    },
+    "candidateEntryPoints": [
+      "INSTALLED_BUILDOPT_IMPACT_CHECK",
+      "INSTALLED_BUILDOPT_GRADLE"
+    ],
+    "acceleratorThreshold": {
+      "minimumSavedMs": 500,
+      "minimumReductionRatio": 0.02,
+      "positiveLower95Bound": true
+    },
+    "parityGuardrail": {
+      "maximumRegressionRatio": 0.02
+    },
+    "percentagesAddedAcrossScenarios": false
+  },
+  "methodology": {
+    "purpose": "ATTRIBUTE_INSTALLED_PATH_PHASES_WITHOUT_PROMOTION",
+    "trace": "GRADLE_9_6_1_BUILD_OPERATION_TRACE",
+    "phaseIntervalsOverlap": false,
+    "diagnosticTraceCanPerturbTiming": true,
+    "diagnosticDurationsUsedForBreadthGate": false,
+    "candidateMode": "NATIVE_ONLY",
+    "initOrProjectPluginLoaded": false,
+    "phaseSign": "POSITIVE_CANDIDATE_MINUS_CONTROL_IS_OVERHEAD",
+    "percentagesAddedAcrossPhasesOrScenarios": false
+  },
+  "workloads": [
+    {
+      "id": "BREADTH_BUILD_LOGIC_CHANGE_GROOVY",
+      "scenario": "BUILD_LOGIC_CHANGE",
+      "successClass": "PARITY",
+      "dsl": "GROOVY",
+      "pairs": 8,
+      "candidateMode": "NATIVE_ONLY",
+      "phases": {
+        "external": {
+          "controlMeanMs": 2205.375,
+          "candidateMeanMs": 2569.5,
+          "candidateMinusControlMs": 364.125
+        },
+        "launcherAndGradleClientStartup": {
+          "controlMeanMs": 998.125,
+          "candidateMeanMs": 856,
+          "candidateMinusControlMs": -142.125
+        },
+        "initPluginSetup": {
+          "controlMeanMs": 0,
+          "candidateMeanMs": 0,
+          "candidateMinusControlMs": 0
+        },
+        "configurationBeforeTasks": {
+          "controlMeanMs": 472.875,
+          "candidateMeanMs": 868.625,
+          "candidateMinusControlMs": 395.75
+        },
+        "taskExecutionTemporal": {
+          "controlMeanMs": 669.125,
+          "candidateMeanMs": 779.875,
+          "candidateMinusControlMs": 110.75
+        },
+        "gradleFinalization": {
+          "controlMeanMs": 9.75,
+          "candidateMeanMs": 8.125,
+          "candidateMinusControlMs": -1.625
+        },
+        "launcherAndGradleClientTeardown": {
+          "controlMeanMs": 55.5,
+          "candidateMeanMs": 56.875,
+          "candidateMinusControlMs": 1.375
+        }
+      },
+      "nonTaskCandidateMinusControlMs": 253.375,
+      "reconciled": true,
+      "requiredOutputsIdentical": true,
+      "productAttributableFailures": 0
+    },
+    {
+      "id": "BREADTH_BUILD_LOGIC_CHANGE_KOTLIN",
+      "scenario": "BUILD_LOGIC_CHANGE",
+      "successClass": "PARITY",
+      "dsl": "KOTLIN",
+      "pairs": 8,
+      "candidateMode": "NATIVE_ONLY",
+      "phases": {
+        "external": {
+          "controlMeanMs": 3417.5,
+          "candidateMeanMs": 3081.75,
+          "candidateMinusControlMs": -335.75
+        },
+        "launcherAndGradleClientStartup": {
+          "controlMeanMs": 769.125,
+          "candidateMeanMs": 944.25,
+          "candidateMinusControlMs": 175.125
+        },
+        "initPluginSetup": {
+          "controlMeanMs": 0,
+          "candidateMeanMs": 0,
+          "candidateMinusControlMs": 0
+        },
+        "configurationBeforeTasks": {
+          "controlMeanMs": 1697.25,
+          "candidateMeanMs": 1464.75,
+          "candidateMinusControlMs": -232.5
+        },
+        "taskExecutionTemporal": {
+          "controlMeanMs": 879,
+          "candidateMeanMs": 609.625,
+          "candidateMinusControlMs": -269.375
+        },
+        "gradleFinalization": {
+          "controlMeanMs": 19.875,
+          "candidateMeanMs": 9.125,
+          "candidateMinusControlMs": -10.75
+        },
+        "launcherAndGradleClientTeardown": {
+          "controlMeanMs": 52.25,
+          "candidateMeanMs": 54,
+          "candidateMinusControlMs": 1.75
+        }
+      },
+      "nonTaskCandidateMinusControlMs": -66.375,
+      "reconciled": true,
+      "requiredOutputsIdentical": true,
+      "productAttributableFailures": 0
+    },
+    {
+      "id": "BREADTH_LEAF_CHANGE_GROOVY",
+      "scenario": "LEAF_CHANGE",
+      "successClass": "ACCELERATOR",
+      "dsl": "GROOVY",
+      "pairs": 8,
+      "candidateMode": "NATIVE_ONLY",
+      "phases": {
+        "external": {
+          "controlMeanMs": 2485.875,
+          "candidateMeanMs": 779,
+          "candidateMinusControlMs": -1706.875
+        },
+        "launcherAndGradleClientStartup": {
+          "controlMeanMs": 1059,
+          "candidateMeanMs": 505.25,
+          "candidateMinusControlMs": -553.75
+        },
+        "initPluginSetup": {
+          "controlMeanMs": 0,
+          "candidateMeanMs": 0,
+          "candidateMinusControlMs": 0
+        },
+        "configurationBeforeTasks": {
+          "controlMeanMs": 219.875,
+          "candidateMeanMs": 57,
+          "candidateMinusControlMs": -162.875
+        },
+        "taskExecutionTemporal": {
+          "controlMeanMs": 1130.625,
+          "candidateMeanMs": 175.25,
+          "candidateMinusControlMs": -955.375
+        },
+        "gradleFinalization": {
+          "controlMeanMs": 10.25,
+          "candidateMeanMs": 4,
+          "candidateMinusControlMs": -6.25
+        },
+        "launcherAndGradleClientTeardown": {
+          "controlMeanMs": 66.125,
+          "candidateMeanMs": 37.5,
+          "candidateMinusControlMs": -28.625
+        }
+      },
+      "nonTaskCandidateMinusControlMs": -751.5,
+      "reconciled": true,
+      "requiredOutputsIdentical": true,
+      "productAttributableFailures": 0
+    },
+    {
+      "id": "BREADTH_LEAF_CHANGE_KOTLIN",
+      "scenario": "LEAF_CHANGE",
+      "successClass": "ACCELERATOR",
+      "dsl": "KOTLIN",
+      "pairs": 8,
+      "candidateMode": "NATIVE_ONLY",
+      "phases": {
+        "external": {
+          "controlMeanMs": 1194.625,
+          "candidateMeanMs": 963.25,
+          "candidateMinusControlMs": -231.375
+        },
+        "launcherAndGradleClientStartup": {
+          "controlMeanMs": 559.625,
+          "candidateMeanMs": 576.875,
+          "candidateMinusControlMs": 17.25
+        },
+        "initPluginSetup": {
+          "controlMeanMs": 0,
+          "candidateMeanMs": 0,
+          "candidateMinusControlMs": 0
+        },
+        "configurationBeforeTasks": {
+          "controlMeanMs": 72.375,
+          "candidateMeanMs": 60.5,
+          "candidateMinusControlMs": -11.875
+        },
+        "taskExecutionTemporal": {
+          "controlMeanMs": 517.375,
+          "candidateMeanMs": 274.25,
+          "candidateMinusControlMs": -243.125
+        },
+        "gradleFinalization": {
+          "controlMeanMs": 4.375,
+          "candidateMeanMs": 4.875,
+          "candidateMinusControlMs": 0.5
+        },
+        "launcherAndGradleClientTeardown": {
+          "controlMeanMs": 40.875,
+          "candidateMeanMs": 46.75,
+          "candidateMinusControlMs": 5.875
+        }
+      },
+      "nonTaskCandidateMinusControlMs": 11.75,
+      "reconciled": true,
+      "requiredOutputsIdentical": true,
+      "productAttributableFailures": 0
+    },
+    {
+      "id": "BREADTH_NO_CHANGE_GROOVY",
+      "scenario": "NO_CHANGE",
+      "successClass": "PARITY",
+      "dsl": "GROOVY",
+      "pairs": 8,
+      "candidateMode": "NATIVE_ONLY",
+      "phases": {
+        "external": {
+          "controlMeanMs": 1305.25,
+          "candidateMeanMs": 1668.875,
+          "candidateMinusControlMs": 363.625
+        },
+        "launcherAndGradleClientStartup": {
+          "controlMeanMs": 601.375,
+          "candidateMeanMs": 966.25,
+          "candidateMinusControlMs": 364.875
+        },
+        "initPluginSetup": {
+          "controlMeanMs": 0,
+          "candidateMeanMs": 0,
+          "candidateMinusControlMs": 0
+        },
+        "configurationBeforeTasks": {
+          "controlMeanMs": 95.625,
+          "candidateMeanMs": 66.875,
+          "candidateMinusControlMs": -28.75
+        },
+        "taskExecutionTemporal": {
+          "controlMeanMs": 542,
+          "candidateMeanMs": 574.875,
+          "candidateMinusControlMs": 32.875
+        },
+        "gradleFinalization": {
+          "controlMeanMs": 7.75,
+          "candidateMeanMs": 8.125,
+          "candidateMinusControlMs": 0.375
+        },
+        "launcherAndGradleClientTeardown": {
+          "controlMeanMs": 58.5,
+          "candidateMeanMs": 52.75,
+          "candidateMinusControlMs": -5.75
+        }
+      },
+      "nonTaskCandidateMinusControlMs": 330.75,
+      "reconciled": true,
+      "requiredOutputsIdentical": true,
+      "productAttributableFailures": 0
+    },
+    {
+      "id": "BREADTH_NO_CHANGE_KOTLIN",
+      "scenario": "NO_CHANGE",
+      "successClass": "PARITY",
+      "dsl": "KOTLIN",
+      "pairs": 8,
+      "candidateMode": "NATIVE_ONLY",
+      "phases": {
+        "external": {
+          "controlMeanMs": 947.375,
+          "candidateMeanMs": 923.5,
+          "candidateMinusControlMs": -23.875
+        },
+        "launcherAndGradleClientStartup": {
+          "controlMeanMs": 519.5,
+          "candidateMeanMs": 531.75,
+          "candidateMinusControlMs": 12.25
+        },
+        "initPluginSetup": {
+          "controlMeanMs": 0,
+          "candidateMeanMs": 0,
+          "candidateMinusControlMs": 0
+        },
+        "configurationBeforeTasks": {
+          "controlMeanMs": 68.75,
+          "candidateMeanMs": 65.25,
+          "candidateMinusControlMs": -3.5
+        },
+        "taskExecutionTemporal": {
+          "controlMeanMs": 316.5,
+          "candidateMeanMs": 286.25,
+          "candidateMinusControlMs": -30.25
+        },
+        "gradleFinalization": {
+          "controlMeanMs": 5.375,
+          "candidateMeanMs": 3.25,
+          "candidateMinusControlMs": -2.125
+        },
+        "launcherAndGradleClientTeardown": {
+          "controlMeanMs": 37.25,
+          "candidateMeanMs": 37,
+          "candidateMinusControlMs": -0.25
+        }
+      },
+      "nonTaskCandidateMinusControlMs": 6.375,
+      "reconciled": true,
+      "requiredOutputsIdentical": true,
+      "productAttributableFailures": 0
+    },
+    {
+      "id": "BREADTH_SHARED_CHANGE_GROOVY",
+      "scenario": "SHARED_CHANGE",
+      "successClass": "ACCELERATOR",
+      "dsl": "GROOVY",
+      "pairs": 8,
+      "candidateMode": "NATIVE_ONLY",
+      "phases": {
+        "external": {
+          "controlMeanMs": 1975.625,
+          "candidateMeanMs": 1297.125,
+          "candidateMinusControlMs": -678.5
+        },
+        "launcherAndGradleClientStartup": {
+          "controlMeanMs": 1025.625,
+          "candidateMeanMs": 794.75,
+          "candidateMinusControlMs": -230.875
+        },
+        "initPluginSetup": {
+          "controlMeanMs": 0,
+          "candidateMeanMs": 0,
+          "candidateMinusControlMs": 0
+        },
+        "configurationBeforeTasks": {
+          "controlMeanMs": 110.5,
+          "candidateMeanMs": 110.375,
+          "candidateMinusControlMs": -0.125
+        },
+        "taskExecutionTemporal": {
+          "controlMeanMs": 783,
+          "candidateMeanMs": 327.375,
+          "candidateMinusControlMs": -455.625
+        },
+        "gradleFinalization": {
+          "controlMeanMs": 7.25,
+          "candidateMeanMs": 7.375,
+          "candidateMinusControlMs": 0.125
+        },
+        "launcherAndGradleClientTeardown": {
+          "controlMeanMs": 49.25,
+          "candidateMeanMs": 57.25,
+          "candidateMinusControlMs": 8
+        }
+      },
+      "nonTaskCandidateMinusControlMs": -222.875,
+      "reconciled": true,
+      "requiredOutputsIdentical": true,
+      "productAttributableFailures": 0
+    },
+    {
+      "id": "BREADTH_SHARED_CHANGE_KOTLIN",
+      "scenario": "SHARED_CHANGE",
+      "successClass": "ACCELERATOR",
+      "dsl": "KOTLIN",
+      "pairs": 8,
+      "candidateMode": "NATIVE_ONLY",
+      "phases": {
+        "external": {
+          "controlMeanMs": 1988.25,
+          "candidateMeanMs": 1313.875,
+          "candidateMinusControlMs": -674.375
+        },
+        "launcherAndGradleClientStartup": {
+          "controlMeanMs": 920.125,
+          "candidateMeanMs": 839.25,
+          "candidateMinusControlMs": -80.875
+        },
+        "initPluginSetup": {
+          "controlMeanMs": 0,
+          "candidateMeanMs": 0,
+          "candidateMinusControlMs": 0
+        },
+        "configurationBeforeTasks": {
+          "controlMeanMs": 107.75,
+          "candidateMeanMs": 89.25,
+          "candidateMinusControlMs": -18.5
+        },
+        "taskExecutionTemporal": {
+          "controlMeanMs": 903.25,
+          "candidateMeanMs": 337.5,
+          "candidateMinusControlMs": -565.75
+        },
+        "gradleFinalization": {
+          "controlMeanMs": 7.75,
+          "candidateMeanMs": 5.25,
+          "candidateMinusControlMs": -2.5
+        },
+        "launcherAndGradleClientTeardown": {
+          "controlMeanMs": 49.375,
+          "candidateMeanMs": 42.625,
+          "candidateMinusControlMs": -6.75
+        }
+      },
+      "nonTaskCandidateMinusControlMs": -108.625,
+      "reconciled": true,
+      "requiredOutputsIdentical": true,
+      "productAttributableFailures": 0
+    }
+  ],
+  "attribution": {
+    "initPluginAttributableOverheadMs": 0,
+    "avoidableEnvironmentDifference": "CANDIDATE_ONLY_XDG_CACHE_HOME",
+    "correction": "REMOVE_UNUSED_CANDIDATE_ONLY_XDG_CACHE_HOME",
+    "unchangedBoundaries": [
+      "BUILD_IMPACT_SELECTION",
+      "GRADLE_ARGUMENTS",
+      "GRADLE_USER_HOME_ISOLATION",
+      "TASKS",
+      "OUTPUTS",
+      "BREADTH_THRESHOLDS"
+    ]
+  },
+  "boundaries": {
+    "ownerControlledSyntheticWorkloads": true,
+    "productionReadiness": false,
+    "externalDesignPartner": false,
+    "eightHourSoak": false,
+    "testOptimization": false
+  }
+}
