@@ -176,7 +176,17 @@ jq -e \
     ' "${buildopt_result}" >/dev/null
 
 buildopt_revision=$(jq -er '.buildoptRevision' "${buildopt_result}")
-git -C "${buildopt_repo_root}" cat-file -e "${buildopt_revision}^{commit}"
+if [[ "$(git -C "${buildopt_repo_root}" rev-parse --is-shallow-repository)" == true ]]; then
+    if git -C "${buildopt_repo_root}" cat-file -e \
+        "${buildopt_revision}^{commit}" 2>/dev/null; then
+        git -C "${buildopt_repo_root}" merge-base --is-ancestor \
+            "${buildopt_revision}" HEAD
+    fi
+else
+    git -C "${buildopt_repo_root}" cat-file -e "${buildopt_revision}^{commit}"
+    git -C "${buildopt_repo_root}" merge-base --is-ancestor \
+        "${buildopt_revision}" HEAD
+fi
 
 buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
 if [[ "${buildopt_before_status}" != "${buildopt_after_status}" ]]; then
