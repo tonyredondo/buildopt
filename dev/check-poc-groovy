@@ -150,7 +150,11 @@ jq -n -e \
 ' >/dev/null
 
 buildopt_revision=$(jq -er '.buildoptRevision' "${buildopt_control}")
-git -C "${buildopt_repo_root}" merge-base --is-ancestor "${buildopt_revision}" HEAD
+if git -C "${buildopt_repo_root}" cat-file -e \
+    "${buildopt_revision}^{commit}" 2>/dev/null; then
+    git -C "${buildopt_repo_root}" merge-base --is-ancestor \
+        "${buildopt_revision}" HEAD
+fi
 buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
 if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
     printf 'POC-GROOVY-001 validation changed the working tree\n' >&2
