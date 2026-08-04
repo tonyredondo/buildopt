@@ -251,7 +251,7 @@ Every accepted RFC decision is represented below. Historical private-beta decisi
 | `DEPLOY-001` | Installable artifacts, upgrade/uninstall, and end-to-end fixture | A1 pilot | `DONE` | Codex | `E-080`: signed immutable lifecycle with real packaged server/launcher/plugin |
 | `OPS-001/POC` | Bounded faults, readiness, revocation, bypass, and runbooks required to trust measurements | POC measurements | `DONE` | Codex | `E-081..091`, `E-094`, `E-096`: bounded faults and operations passed; soak is outside POC |
 | `OPS-001/B` | GitHub adapter with an `EXACT` queue | B | `DONE` | Codex | `E-095`: authenticated durable `workflow_job` lifecycle and exact provider queue |
-| `POC-VALUE-G01` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | `TODO` | Codex | [`poc-value-validation-v1`](./specs/poc-value-validation-v1.md) and `POC-VALUE-001..004` |
+| `POC-VALUE-G01` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | `DONE` | Codex | `E-159`, [`poc-value-validation-v1`](./specs/poc-value-validation-v1.md) |
 
 ---
 
