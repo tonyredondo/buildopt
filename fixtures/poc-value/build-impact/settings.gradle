@@ -1,0 +1,3 @@
+rootProject.name = 'poc-value-build-impact-groovy'
+
+include 'library-c', 'service-a', 'service-b'

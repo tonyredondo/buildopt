@@ -1,0 +1,212 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-value-coverage-v1.json"}
+buildopt_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+buildopt_impact_fixture="${buildopt_repo_root}/fixtures/poc-value/build-impact"
+buildopt_task_fixture="${buildopt_repo_root}/fixtures/poc-value/reviewed-task"
+
+for buildopt_command in awk find git jq sha256sum sort; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC-VALUE-003 command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+if [[ ! -f "${buildopt_result}" ]]; then
+    printf 'POC-VALUE-003 result is unavailable: %s\n' "${buildopt_result}" >&2
+    exit 1
+fi
+
+buildopt_fixture_digest() {
+    local buildopt_fixture=$1
+    (
+        cd -- "${buildopt_fixture}"
+        while IFS= read -r buildopt_file; do
+            printf '%s  %s\n' \
+                "$(sha256sum "${buildopt_file}" | awk '{print $1}')" \
+                "${buildopt_file}"
+        done < <(find . -type f -print | sort)
+    ) | sha256sum | awk '{print $1}'
+}
+
+buildopt_before_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_platform_digest=$(jq -er '.container.platformDigest' "${buildopt_spec}")
+buildopt_impact_fixture_sha=$(buildopt_fixture_digest "${buildopt_impact_fixture}")
+buildopt_task_fixture_sha=$(buildopt_fixture_digest "${buildopt_task_fixture}")
+buildopt_task_preimage_sha=$(sha256sum \
+    "${buildopt_task_fixture}/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java" |
+    awk '{print $1}')
+buildopt_task_postimage_sha=$(sha256sum \
+    "${buildopt_task_fixture}/GeneratePilotManifest.patched.java" |
+    awk '{print $1}')
+
+jq -e \
+    --arg specSha256 "${buildopt_spec_sha}" \
+    --arg platformDigest "${buildopt_platform_digest}" \
+    --arg impactFixtureSha256 "${buildopt_impact_fixture_sha}" \
+    --arg taskFixtureSha256 "${buildopt_task_fixture_sha}" \
+    --arg taskPreimageSha256 "${buildopt_task_preimage_sha}" \
+    --arg taskPostimageSha256 "${buildopt_task_postimage_sha}" '
+    def digest: type == "string" and test("^[0-9a-f]{64}$");
+    def revision: type == "string" and test("^[0-9a-f]{40}$");
+    def bootstrap_mean($rows; $sample):
+        reduce range(0; 8) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $rows[((.state / 536870912) | floor)].savedMs) |
+        .sum / 8;
+    def bootstrap95($rows):
+        ([range(0; 4096) as $sample |
+          bootstrap_mean($rows; $sample)] | sort) as $replicates |
+        [$replicates[102], $replicates[3993]];
+    def observations($rows; $id; $mechanism; $class; $dsl):
+        ($rows | type == "array" and length == 8) and
+        ([$rows[].pair] | sort) == [1, 2, 3, 4, 5, 6, 7, 8] and
+        all($rows[];
+            .workloadId == $id and .mechanism == $mechanism and
+            .workloadClass == $class and .dsl == $dsl and
+            .controlDurationMs > 0 and .candidateDurationMs > 0 and
+            .savedMs == (.controlDurationMs - .candidateDurationMs) and
+            (.controlOutputSha256 | digest) and
+            (.candidateOutputSha256 | digest) and
+            .controlOutputSha256 == .candidateOutputSha256 and
+            .productAttributableFailure == false and
+            (if (.pair % 2) == 1 then .order == "CONTROL_FIRST"
+             else .order == "CANDIDATE_FIRST" end));
+    def workload($value; $id; $mechanism; $class; $dsl):
+        $value.id == $id and $value.mechanism == $mechanism and
+        $value.workloadClass == $class and $value.dsl == $dsl and
+        observations($value.result.observations; $id; $mechanism; $class; $dsl) and
+        ($value.result.observations) as $rows |
+        $value.result.pairs == 8 and
+        $value.result.controlMeanMs == (($rows | map(.controlDurationMs) | add) / 8) and
+        $value.result.candidateMeanMs == (($rows | map(.candidateDurationMs) | add) / 8) and
+        $value.result.meanSavedMs == (($rows | map(.savedMs) | add) / 8) and
+        $value.result.meanReductionRatio ==
+            (($rows | map(.savedMs) | add) /
+             ($rows | map(.controlDurationMs) | add)) and
+        $value.result.interval95SavedMs == bootstrap95($rows) and
+        $value.result.positivePairs ==
+            ($rows | map(select(.savedMs > 0)) | length) and
+        $value.result.requiredOutputsIdentical == true and
+        $value.result.productAttributableFailures == 0 and
+        $value.result.meanSavedMs >= 500 and
+        $value.result.meanReductionRatio >= 0.02 and
+        $value.result.interval95SavedMs[0] > 0 and
+        $value.classification == "THRESHOLD_MET" and
+        (if $mechanism == "BUILD_IMPACT"
+         then all($rows[];
+             .fullExecutedUnrelated == true and
+             .candidateOmittedUnrelated == true)
+         else all($rows[];
+             .controlCacheHits == 0 and .candidateCacheHits == 8 and
+             .fullExecutedUnrelated == false and
+             .candidateOmittedUnrelated == false)
+         end);
+    keys == [
+        "boundaries", "buildoptRevision", "capturedAt", "fixtures", "gate",
+        "methodology", "runner", "schemaVersion", "summary", "workloads"
+    ] and
+    .schemaVersion == "buildopt.evidence/poc-value-coverage/v1" and
+    (.capturedAt | type == "string" and
+        test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$")) and
+    (.buildoptRevision | revision) and
+    .runner.schemaVersion == "buildopt.evidence/golden-runner-observation/v1" and
+    .runner.id == "linux-amd64-4c-16g-v1" and
+    .runner.operatingSystem == "Linux" and
+    .runner.architecture == "x86_64" and
+    .runner.cpuCount == 4 and .runner.memoryBytes == 17179869184 and
+    .runner.qualifiedGoldenRunner == true and
+    .runner.runnerSpecSha256 == $specSha256 and
+    .runner.containerPlatformDigest == $platformDigest and
+    .runner.cgroup.cpuMax == "400000 100000" and
+    .runner.cgroup.memoryMax == "17179869184" and
+    .methodology == {
+        purpose: "QUALIFY_ACCELERATORS_ACROSS_DSL_AND_WORKLOAD_CLASSES",
+        pairsPerWorkload: 8,
+        pairOrder: "PAIRED_ALTERNATING",
+        confidenceInterval: "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
+        nativeControl: {
+            buildCache: true,
+            configurationCache: true,
+            parallelism: true,
+            daemon: true
+        },
+        acceleratorThreshold: {
+            minimumSavedMs: 500,
+            minimumReductionRatio: 0.02,
+            positiveLower95Bound: true,
+            requiredOutputsIdentical: true,
+            maximumProductAttributableFailures: 0
+        },
+        percentagesAddedAcrossWorkloads: false
+    } and
+    .fixtures == {
+        buildImpactSha256: $impactFixtureSha256,
+        reviewedTaskSha256: $taskFixtureSha256,
+        patchRecipe: {
+            id: "CUSTOM_TASK_CONTRACT_JAVA_V1",
+            version: "1.0",
+            preimageSha256: $taskPreimageSha256,
+            postimageSha256: $taskPostimageSha256
+        }
+    } and
+    (.workloads | length == 4) and
+    workload((.workloads[] | select(.id == "BUILD_IMPACT_KOTLIN"));
+        "BUILD_IMPACT_KOTLIN"; "BUILD_IMPACT";
+        "UNRELATED_NON_CACHEABLE_WORK"; "KOTLIN") and
+    workload((.workloads[] | select(.id == "BUILD_IMPACT_GROOVY"));
+        "BUILD_IMPACT_GROOVY"; "BUILD_IMPACT";
+        "UNRELATED_NON_CACHEABLE_WORK"; "GROOVY") and
+    workload((.workloads[] | select(.id == "REVIEWED_TASK_KOTLIN"));
+        "REVIEWED_TASK_KOTLIN"; "REVIEWED_TASK_PATCH";
+        "REVIEWED_CUSTOM_TASK"; "KOTLIN") and
+    workload((.workloads[] | select(.id == "REVIEWED_TASK_GROOVY"));
+        "REVIEWED_TASK_GROOVY"; "REVIEWED_TASK_PATCH";
+        "REVIEWED_CUSTOM_TASK"; "GROOVY") and
+    .summary == {
+        workloadClasses: ["REVIEWED_CUSTOM_TASK", "UNRELATED_NON_CACHEABLE_WORK"],
+        dslCoverage: ["GROOVY", "KOTLIN"],
+        qualifyingWorkloads: 4,
+        buildImpactQualifiesBothDsls: true,
+        taskIntelligenceQualifiesBothDsls: true,
+        patchAutopilotQualifiesBothDsls: true
+    } and
+    .gate == {
+        id: "POC-VALUE-003",
+        state: "PASSED",
+        next: "POC-VALUE-004",
+        pocValueProven: false
+    } and
+    .boundaries == {
+        syntheticOwnerControlledWorkloads: true,
+        combinedProductMeasured: false,
+        productionReadinessClaimed: false,
+        eightHourSoakExecuted: false,
+        externalDesignPartnerRequired: false,
+        testOptimizationModified: false
+    }
+    ' "${buildopt_result}" >/dev/null
+
+buildopt_revision=$(jq -er '.buildoptRevision' "${buildopt_result}")
+if git -C "${buildopt_repo_root}" cat-file -e "${buildopt_revision}^{commit}" 2>/dev/null; then
+    git -C "${buildopt_repo_root}" merge-base --is-ancestor \
+        "${buildopt_revision}" HEAD
+fi
+
+buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before_status}" != "${buildopt_after_status}" ]]; then
+    printf 'POC-VALUE-003 validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'BuildOpt POC-VALUE-003 coverage OK: %s\n' "${buildopt_result}"

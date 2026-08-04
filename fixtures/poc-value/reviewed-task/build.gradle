@@ -1,0 +1,12 @@
+import dev.buildopt.pilot.GeneratePilotManifest
+
+def manifests = (1..8).collect { index ->
+    tasks.register("generateManifest${index}", GeneratePilotManifest) {
+        entries.set((1..32).collect { "entry-${index}-${it}" })
+        outputFile.set(layout.buildDirectory.file("poc-value/manifest-${index}.txt"))
+    }
+}
+
+tasks.register('reviewedWorkload') {
+    dependsOn(manifests)
+}
