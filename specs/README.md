@@ -9,6 +9,7 @@ the exact cross-component contract.
 
 | Specification | Owning item |
 |---|---|
+| [`poc-value-validation-v1.md`](./poc-value-validation-v1.md) and [`poc-value-validation-v1.json`](./poc-value-validation-v1.json) | `POC-VALUE-001..004` / `POC-VALUE-G01` |
 | [`ci-orchestration-v1.md`](./ci-orchestration-v1.md) | `F0-030` |
 | [`gradle-correlation-v1.md`](./gradle-correlation-v1.md) | `SPK-001` / `GRADLE-CORR-001` |
 | [`benchmark-beta-v1.md`](./benchmark-beta-v1.md) | `F0-032` |
@@ -17,7 +18,7 @@ the exact cross-component contract.
 | [`beta-shared-faults-v1.md`](./beta-shared-faults-v1.md) | `OPS-001/A1` |
 | [`beta-system-faults-v1.md`](./beta-system-faults-v1.md) | `OPS-001/A1` / `A1-G04` |
 | [`beta-sustained-v1.md`](./beta-sustained-v1.md) | `OPS-001/A1` |
-| [`beta-soak-v1.md`](./beta-soak-v1.md) | `OPS-001/A1` |
+| [`beta-soak-v1.md`](./beta-soak-v1.md) | Historical productization harness; excluded from the active POC |
 | [`beta-circuit-breaker-v1.md`](./beta-circuit-breaker-v1.md) | `OPS-001/A1` / `A1-G02` |
 | [`beta-gradle-fixtures-v1.md`](./beta-gradle-fixtures-v1.md) | `OPS-001/A1` / `A1-G02` |
 | [`private-beta-token-isolation-v1.md`](./private-beta-token-isolation-v1.md) | `A1-002` / `A1-G01` |

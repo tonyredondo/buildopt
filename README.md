@@ -27,11 +27,12 @@ evidence around that execution and uses conservative fallbacks: a rejected
 cache entry becomes a normal cache miss, an unqualified optimization is not
 applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
-> **Project status:** this repository contains a functionally complete,
-> owner-operated proof of concept. It is not a production-ready hosted service.
-> Long-duration soak testing, external validation, multi-tenant identity, high
-> availability, and production operations are intentionally deferred. Test
-> Optimization is a separate product and is not implemented here.
+> **Project status:** this is an owner-operated proof of concept whose value
+> decision is still open. The mechanisms work, but BuildOpt has not yet proved
+> that its complete path consistently beats a well-configured native Gradle
+> baseline. Soak, design partners, HA, enterprise identity, multi-tenancy, and
+> production operations are intentionally outside this phase. Test Optimization
+> is a separate product and is not implemented here.
 
 ## Get your first result
 
@@ -64,13 +65,15 @@ contains Windows installation, CI snippets, component ownership and the
 recommended rollout order. Contributors who want the complete synthetic lab
 can use the [source quickstart](./docs/getting-started/quickstart.md).
 
-The checked scorecard measures each optimization separately. Safe cache cut
+The checked scorecard measures each optimization separately. Safe Cache cut
 the two pilot means by 15.9% and 13.7% versus cache-off while staying within
-0.5% of an already warm native cache. Runtime Tuning saved 0.7% on its large
-four-CPU workload, and Build Impact saved 27.6% when a declared unaffected
-project could be omitted. Required outputs remained identical. These
-percentages are workload-specific and are not added together. See the
-[scorecard and raw evidence](./benchmarks/README.md#build-optimization-scorecard).
+0.5% of an already warm native cache; that is safety/parity, not acceleration.
+Runtime Tuning saved 0.7%, below the current POC value threshold. Build Impact
+saved 27.6% on one declared-impact workload. Required outputs remained
+identical. These percentages are workload-specific and are not added together.
+The POC continues conditionally until the combined path beats optimized native
+Gradle across the required workload matrix. See the [POC value contract](./specs/poc-value-validation-v1.md)
+and [raw scorecard](./benchmarks/README.md#build-optimization-scorecard).
 
 ## Choose what to do next
 

@@ -1,13 +1,13 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `FUNCTIONAL EXPANSION COMPLETE` — full Build Optimization runtime parity is proven on Linux, macOS, and Windows<br>
-**Current phase:** `NO NON-DEFERRED IMPLEMENTATION BLOCK REMAINS` — productization hardening and long/external validation stay explicitly deferred<br>
-**POC functional target:** `A1 + B + C1 + C4`<br>
-**POC validation posture:** use project-owned synthetic fixtures and repositories controlled by the project owner; eight-hour soak and external design-partner evidence are deferred to productization<br>
+**Overall status:** `POC VALUE VALIDATION ACTIVE` — the mechanisms exist, but the combined product has not yet proved net build-time value over a well-configured native Gradle baseline<br>
+**Current phase:** `CONTINUE_CONDITIONALLY` — execute `POC-VALUE-001..004`; a workload/mechanism that does not beat or safely complement native Gradle stays disabled<br>
+**POC functional target:** measurable net build-time reduction from Safe Cache + Runtime Tuning + Build Impact + reviewed-source Task Intelligence/Patch Autopilot<br>
+**POC validation posture:** use bounded paired experiments on project-owned fixtures and repositories; compare against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
-**Last updated:** 2026-08-03<br>
+**Last updated:** 2026-08-04<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
-**RFC baseline SHA-256:** `e97b068433128a51cab509f2f799efdf872b6950056bce308b80cbd1470ef81d`
+**RFC baseline SHA-256:** `b53ee41dbbd29669050e40280a80e56ff10c1f1eb0da9ba51159c00196aa2234`
 
 ---
 
@@ -19,7 +19,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 2. decide a scope, architecture, safety-posture, or gate change in the RFC first;
 3. then update this tracker, its date, and its changelog.
 
-**POC scope overlay:** by explicit owner decision recorded in `E-096`, this tracker now sequences a proof of concept rather than a production/private-beta launch. The master RFC remains the eventual productization target; its eight-hour soak and external design-partner evidence are retained as `DEFERRED` work and do not block implementation or owner-operated validation on controlled repositories.
+**POC scope:** the RFC and this tracker now make value validation the decision boundary. Eight-hour soak, external design-partner evidence, HA, identity/RBAC, multi-tenancy, production telemetry, autonomous production promotion, and GA operations are not active POC work. They may be reconsidered only after the combined product proves repeatable net savings against optimized native Gradle.
 
 ### Allowed states
 
@@ -30,6 +30,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | `WAITING` | Waiting for a normal dependency that is not closed yet |
 | `BLOCKED` | An unresolved impediment requires action or a decision |
 | `DONE` | Criterion completed with linked evidence |
+| `PRELIMINARY` | Functionality or a bounded signal exists, but the POC value threshold or required coverage is not yet met |
+| `INCONCLUSIVE` | The evaluator ran safely but evidence is insufficient to authorize the optimization |
 | `DEFERRED` | Outside the current critical path by explicit decision |
 | `UNAVAILABLE` | A spike proves that the capability is not viable for that combination; safe degradation must exist |
 
@@ -51,53 +53,62 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 
 | Milestone | Objective | State | Gate progress | Dependency |
 |---|---|---:|---:|---|
-| Preparation | RFC, beta scope, and tracker closed | `DONE` | 2/2 | — |
+| Preparation | RFC, POC scope, value contract, and tracker aligned | `DONE` | 3/3 | — |
 | Phase 0 | Toolchains, executable contracts, fixtures, spikes, and walking skeleton | `DONE` | 6/6 | Preparation |
-| MVP-A0 | Foundation and internal pilot | `DONE` | 9/9 | Phase 0 |
-| MVP-A1 | Autonomous Cache in an owner-operated POC | `DONE` | 6/6 | A0 + POC operational profile |
-| MVP-B | Runtime Optimizer and safe learning | `DONE` | 6/6 | Owner-operated A1 |
-| MVP-C1 | Task Intelligence, JVM Agent, and Linux hermeticity | `DONE` | 9/9 | B |
-| MVP-C4 | PR-only Patch Autopilot | `DONE` | 7/7 | B + C1 |
+| POC-A0 | Foundation and internal feasibility | `DONE` | 9/9 | Phase 0 |
+| POC-A1 | Safe Cache feasibility and native-cache parity | `PRELIMINARY` | 5/6 | A0 + POC operational profile |
+| POC-B | Runtime Tuning functionality and attributable value | `PRELIMINARY` | 5/6 | POC-A1 |
+| POC-C1 | Reviewed-source Task Intelligence | `PRELIMINARY` | 7/9 | POC-B |
+| POC-C4 | Reviewable Patch Autopilot | `PRELIMINARY` | 6/7 | POC-B + reviewed-source C1 |
 | MVP-A2 | Self-hosted single-node | `DONE` | 1/1 | A1 |
 | MVP-C2 | Edge Cache Node | `DONE` | 1/1 | `E-134` |
 | MVP-C3 | Build Impact Analysis | `DONE` | 1/1 | `E-128` |
 | POC-O1 | Edge process, reload, status, signed packaging, and service unit | `DONE` | 1/1 | `E-135` |
 | POC-O2 | Synthetic one-command lab, JSON evidence, and base-CI closure | `DONE` | 1/1 | `E-136` |
-| UX-F1 | Local build history and embedded operator dashboard | `DONE` | 1/1 | `E-139` |
+| UX-F1 | Local build history and evidence UI | `DONE` | 1/1 | `E-139` |
 | PA-F2 | Broader safe Patch Autopilot recipe catalog and rollback proof | `DONE` | 1/1 | `E-142` |
 | CI-F3 | First-class GitLab CI installation, events, and synthetic proof | `DONE` | 1/1 | `E-145` |
 | BIA-F4 | Automatic Gradle graph discovery and generated impact manifest | `DONE` | 1/1 | `E-146` |
 | PLAT-F5 | Supported macOS and Windows build/runtime paths | `DONE` | 1/1 | `E-148` |
-| PLAT-F6 | Full persistent runtime parity on macOS and Windows | `DONE` | 1/1 | `E-150` |
+| PLAT-F6 | Persistent runtime portability on macOS and Windows | `DONE` | 1/1 | `E-150` |
 | DOC-F7 | Complete user, operator, developer, architecture, and code documentation system | `DONE` | 1/1 | `E-151` |
-| PERF-F8 | Attributable Build Optimization value and native-cache parity | `DONE` | 1/1 | `E-154` |
-| GA-D | Production-ready hardening | `DEFERRED` | 0/1 | Functional beta with demonstrated value |
+| PERF-F8 | Mechanism attribution and native-cache parity | `DONE` | 1/1 | `E-154` |
+| POC-VALUE | Combined value proof over optimized native Gradle | `DOING` | 0/4 | PERF-F8 |
+| GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
-Design baseline: 51 private-beta decisions are accepted in the RFC; their artifacts and tests remain pending as recorded in this tracker.
+Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
 
 ### 2.2 Critical path
 
 ```text
-Preparation
-  → Phase 0 core
-  → Walking skeleton
-  → MVP-A0
-  → MVP-A1
-  → MVP-B
-      ├─→ MVP-C1 ─→ C4 custom-task recipe
-      └─→ C4 infrastructure + archive recipe
-                   └─→ complete MVP-C4
+Optimized native Gradle baseline
+  → attributable mechanism measurements
+  → workload-level no-value/no-action decisions
+  → combined BuildOpt benchmark
+  → repeatability across Kotlin/Groovy and two workload classes
+  → CONTINUE or STOP the POC
 ```
 
-The owner-operated POC target, optional MVP-A2/MVP-C2/MVP-C3/POC-O1/POC-O2 extensions, and owner-prioritized functional expansion are complete in this order:
+The implementation history remains useful, but it is not the POC exit gate:
 
 ```text
 UX-F1 → PA-F2 → CI-F3 → BIA-F4 → PLAT-F5 → PLAT-F6 → DOC-F7 → PERF-F8
 ```
 
-Each track retains fail-closed behavior and project-owned synthetic evidence. Test Optimization implementation, the eight-hour soak, external design-partner evidence, and GA-D remain outside this sequence.
+The current sequence is `POC-VALUE-001 → 002 → 003 → 004`. Soak, design partners, GA-D, HA, identity/RBAC, multi-tenancy, and production rollout remain outside the POC. Test Optimization remains a separate product.
 
 ### 2.3 Next executable items
+
+| Order | ID | Next outcome | State | Owner |
+|---:|---|---|---|---|
+| 1 | `POC-VALUE-001` | Reproduce the optimized native-Gradle baseline and mechanism scorecard on the contractual 4-vCPU runner | `TODO` | Codex |
+| 2 | `POC-VALUE-002` | Make Runtime Tuning exceed the POC accelerator threshold on a representative workload or keep it disabled for that class | `TODO` | Codex |
+| 3 | `POC-VALUE-003` | Broaden Build Impact and reviewed-source Task/Patch evidence to two workload classes and both DSLs | `TODO` | Codex |
+| 4 | `POC-VALUE-004` | Run the combined public onboarding path against optimized native Gradle and issue the POC `CONTINUE` or `STOP` decision | `TODO` | Codex |
+
+### 2.4 Completed implementation sequence
+
+This table is historical traceability. It is not the active backlog and does not imply that the POC value gate is closed.
 
 | Order | ID | Next outcome | State | Owner |
 |---:|---|---|---|---|
@@ -205,6 +216,25 @@ Each track retains fail-closed behavior and project-owned synthetic evidence. Te
 
 These states represent implementation and evidence, not the `Accepted` state of RFC decisions.
 
+### 4.1 RFC decision traceability
+
+Every accepted RFC decision is represented below. Historical private-beta decisions remain architecture context; `POC-001` and `VALUE-001` define the active qualification boundary.
+
+| Area | Accepted decision IDs | Tracker evidence |
+|---|---|---|
+| POC decision | `POC-001`, `VALUE-001` | `POC-VALUE-001..004`, `POC-VALUE-G01`, `E-155` |
+| Contracts and measurement | `CONTRACTS-001`, `OBS-001`, `OBS-002`, `EXPORT-001`, `METRICS-001`, `MEASURE-001`, `LIMITS-001` | `F0-011..024`, `E-040..050`, `PERF-F8`, `POC-VALUE` |
+| Cache | `CACHE-001`, `CACHE-002`, `CACHE-003`, `CACHE-004`, `CACHE-005`, `CACHE-006`, `CACHE-007`, `CACHE-008` | `A0-002..007`, `A1-002..005`, `C2-001..005`, `E-065..077`, `E-129..134` |
+| Task safety and compatibility | `COMPAT-001`, `TASK-001`, `TASK-002`, `GRADLE-CORR-001`, `DIAG-001`, `HERMETIC-001`, `HERMETIC-SCOPE-001`, `ARTIFACT-001`, `SAFETY-001`, `SAFETY-002`, `STACK-001` | `F0-040`, `SPK-001..003`, `C1-001..009`, `E-023`, `E-059..061`, `E-116` |
+| Rollout and learning | `ROLLOUT-001`, `ROLLOUT-002`, `BUDGET-001`, `LEARN-001`, `BANDIT-001`, `STATE-001`, `CC-001` | `B-001..008`, `E-097..104`, `E-115` |
+| Build Impact | `BIA-001`, `BIA-002` | `C3-001..006`, `BIA-F4-001..003`, `E-123..128`, `E-146`, `POC-VALUE-003` |
+| Security, storage, and privacy | `AUTH-001`, `SEC-001`, `STORAGE-001`, `PRIVACY-001` | `A1-002..005`, `A2-001..004`, `E-092..094`, `E-118..122` |
+| Patch Autopilot | `PATCH-001`, `PATCH-BUNDLE-001` | `F0-016`, `F0-034`, `SPK-004`, `C4-001..009`, `E-044`, `E-055`, `E-062`, `E-105..112`, `E-117` |
+| Integration, delivery, and operations | `INT-001`, `TESTOPT-API-001`, `CI-001`, `CI-ORCH-001`, `DEPLOY-001`, `OPS-001`, `GOLDEN-LANE-001` | `F0-015`, `F0-018`, `F0-030`, `F0-033`, `WS-001..009`, `DEPLOY-001`, `OPS-001/POC`, `E-007..009`, `E-043`, `E-046`, `E-051`, `E-054`, `E-080..095` |
+| Scope and ecosystem | `BETA-001`, `ECOSYSTEM-001`, `MVP-001` | historical milestone sections plus active `POC-001`/`VALUE-001` qualification |
+
+### 4.2 Readiness gates
+
 | Gate | Required outcome | Blocks | State | Owner | Evidence |
 |---|---|---|---|---|---|
 | `CONTRACTS-001` | Schemas/IDLs, Go/Java clients, N/N-1, and golden vectors | A0+ integration | `DONE` | Codex | `E-040..050`: complete normative package and executable conformance |
@@ -216,8 +246,9 @@ These states represent implementation and evidence, not the `Accepted` state of 
 | `PATCH-BUNDLE-001` | Parser/applier, golden/negative vectors, and idempotency | C4 materialization | `DONE` | Codex | `E-062`: 15/15 strict Java/real-Git application cases |
 | `TESTOPT-API-001` | Producer/consumer fixtures, trust, grants, artifacts, retries, and N/N-1 | Test grants and patches with tests | `DONE` | Codex | `E-043`, `E-046..049`, `E-054` |
 | `DEPLOY-001` | Installable artifacts, upgrade/uninstall, and end-to-end fixture | A1 pilot | `DONE` | Codex | `E-080`: signed immutable lifecycle with real packaged server/launcher/plugin |
-| `OPS-001/A1` | Bounded POC benchmark/fault/sustained profile, readiness, revocation, bypass, and runbooks | Owner-operated A1 POC | `DONE` | Codex | `E-081..091`, `E-094`, `E-096`: exact sustained load, all 15 faults, circuit/Gradle matrices, and operations passed; eight-hour soak deferred to productization |
+| `OPS-001/POC` | Bounded faults, readiness, revocation, bypass, and runbooks required to trust measurements | POC measurements | `DONE` | Codex | `E-081..091`, `E-094`, `E-096`: bounded faults and operations passed; soak is outside POC |
 | `OPS-001/B` | GitHub adapter with an `EXACT` queue | B | `DONE` | Codex | `E-095`: authenticated durable `workflow_job` lifecycle and exact provider queue |
+| `POC-VALUE-G01` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | `TODO` | Codex | [`poc-value-validation-v1`](./specs/poc-value-validation-v1.md) and `POC-VALUE-001..004` |
 
 ---
 
@@ -417,10 +448,10 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 
 ---
 
-## 7. MVP-A1 — Autonomous Cache owner-operated POC
+## 7. POC-A1 — Safe Cache
 
-**State:** `DOING`<br>
-**Entry gate:** satisfied by stable A0 plus the bounded `OPS-001/A1` POC profile; production soak remains deferred.
+**State:** `PRELIMINARY`<br>
+**Entry gate:** satisfied by stable A0 and the bounded POC profile. Safe Cache is a safety enabler at native-cache parity; it is not counted as an accelerator by itself.
 
 ### 7.1 Workboard
 
@@ -442,14 +473,14 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `A1-G03` | SLRU/watermarks/pools behave according to contract | `DONE` | `E-084..085` |
 | `A1-G04` | Fail-closed restart/recovery and correct rotations | `DONE` | `E-087` |
 | `A1-G05` | Export/redaction/deletion cover managed copies | `DONE` | `E-093` |
-| `A1-G06` | Owner-operated repositories demonstrate causal benefit and safe p95 | `DONE` | `E-114` |
+| `A1-G06` | Safe Cache is non-regressive versus optimized native cache and contributes to a faster combined path | `PRELIMINARY` | `E-114`, `E-154`: parity is shown; combined value remains `POC-VALUE-004` |
 
 ---
 
-## 8. MVP-B — Runtime Optimizer
+## 8. POC-B — Runtime Tuning
 
-**State:** `DONE`<br>
-**Activation gate:** owner-operated A1 plus valid A/A are demonstrated for the POC. Production promotion remains disabled. `CI-ORCH-001` and `OPS-001/B` are closed.
+**State:** `PRELIMINARY`<br>
+**Activation gate:** functionality, A/A, rollback, and attributable measurement exist. Runtime Tuning remains disabled for a workload class until its paired result exceeds the POC accelerator threshold.
 
 ### 8.1 Workboard
 
@@ -470,29 +501,29 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 |---|---|---|---|
 | `B-G01` | Valid A/A, sample ratio, delayed reward, and propensities | `DONE` | `E-115` |
 | `B-G02` | Intentional candidate/control contamination does not reach stable | `DONE` | `E-104` |
-| `B-G03` | Autotuning reduces build time without breaking p95/p99/queue/OOM | `DONE` | `E-115` |
+| `B-G03` | Runtime Tuning exceeds the POC accelerator threshold without breaking p95/p99/queue/OOM | `PRELIMINARY` | `E-115`, `E-154`: 66 ms/0.7% is positive but below threshold; see `POC-VALUE-002` |
 | `B-G04` | Merge/clean pass failure/finalizer/side-effect fixtures | `DONE` | `E-101` |
 | `B-G05` | Bandit selects only safe runtime arms | `DONE` | `E-103` |
 | `B-G06` | Permanent control/revalidation and suspension on drift | `DONE` | `E-104` |
 
 ---
 
-## 9. MVP-C1 — Task Intelligence
+## 9. POC-C1 — reviewed-source Task Intelligence
 
-**State:** `DONE`<br>
-**Entry gate:** demonstrated B and control pipeline.
+**State:** `PRELIMINARY`<br>
+**Entry gate:** reviewed adapters/source patches and the control pipeline. Agent discovery and hermetic producer enforcement are unavailable and are not presented as implemented capabilities.
 
 ### 9.1 Workboard
 
 | ID | Deliverable | State | Owner | Evidence |
 |---|---|---|---|---|
-| `C1-001` | Opt-in JVM Agent with coverage and budgets | `DONE` | Codex | `E-116` |
+| `C1-001` | Opt-in JVM Agent with coverage and budgets | `UNAVAILABLE` | Codex | `E-060`, `E-116`: class-load evidence cannot qualify a task; safe fallback preserves baseline |
 | `C1-002` | Evidence pipeline and `traceComplete/traceCoverage` | `DONE` | Codex | `E-116` |
 | `C1-003` | Task-qualification state machine | `DONE` | Codex | `E-116` |
 | `C1-004` | Exact task/key/PUT correlation on supported combinations | `DONE` | Codex | `E-116` |
 | `C1-005` | Selective pending/commit and suspension/revocation | `DONE` | Codex | `E-116` |
 | `C1-006` | Adapter/source-patch path for custom tasks | `DONE` | Codex | `E-116` |
-| `C1-007` | Rust helper and task-specific producer | `DONE` | Codex | `E-116` |
+| `C1-007` | Rust helper and task-specific producer | `UNAVAILABLE` | Codex | `E-061`, `E-116`: complete task-specific enforcement was not demonstrated |
 | `C1-008` | Repeatability, relocatability, and artifact validation | `DONE` | Codex | `E-116` |
 | `C1-009` | First real custom task from the pilot | `DONE` | Codex | `E-116` |
 
@@ -504,17 +535,17 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `C1-G02` | History alone never activates a task; tests remain excluded | `DONE` | `E-116` |
 | `C1-G03` | A discrepancy suspends/aborts without failing the baseline | `DONE` | `E-116` |
 | `C1-G04` | Incomplete coverage produces `INCONCLUSIVE` | `DONE` | `E-116` |
-| `C1-G05` | Hermetic-only uses a continuous task-specific producer | `DONE` | `E-116` |
+| `C1-G05` | Hermetic-only uses a continuous task-specific producer | `UNAVAILABLE` | `E-061`, `E-116`; hermetic activation is disabled |
 | `C1-G06` | Exact `GRADLE-CORR-001`; `UNATTRIBUTED` aborts | `DONE` | `E-116` |
 | `C1-G07` | Artifact validation and Test Optimization where applicable | `DONE` | `E-116` |
 | `C1-G08` | Agent/helper crash preserves baseline and does not contaminate | `DONE` | `E-116` |
-| `C1-G09` | A real custom task reaches ACTIVE and saves time causally | `DONE` | `E-116` |
+| `C1-G09` | A reviewed-source custom task reaches ACTIVE and exceeds the POC value threshold | `PRELIMINARY` | `E-116`: four-pair signal only; broaden under `POC-VALUE-003` |
 
 ---
 
-## 10. MVP-C4 — Patch Autopilot
+## 10. POC-C4 — Patch Autopilot
 
-**State:** `DONE`<br>
+**State:** `PRELIMINARY`<br>
 **Entry gate:** B + `PATCH-BUNDLE-001`; C1 for custom-task patches; `TESTOPT-API-001` when tests are required.
 
 ### 10.1 Workboard
@@ -540,12 +571,12 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `C4-G03` | PR explains the change, evidence, impact, and rollback | `DONE` | `E-110` |
 | `C4-G04` | `PRELIMINARY` is not counted as confirmed impact | `DONE` | `E-110` |
 | `C4-G05` | Post-merge does not fake rollout and creates a revert PR on regression | `DONE` | `E-112` |
-| `C4-G06` | First accepted patch saves time causally | `DONE` | `E-117` |
+| `C4-G06` | Accepted patches exceed the POC value threshold across supported recipe classes | `PRELIMINARY` | `E-117`: first four-pair pilot exists; broader proof remains `POC-VALUE-003` |
 | `C4-G07` | Patcher passes golden/negative/idempotency/recovery vectors | `DONE` | `E-106` |
 
 ---
 
-## 11. Optional tracks and hardening
+## 11. Implemented supporting capabilities and deferred productization
 
 | Track | Minimum scope for reactivation | State | Trigger |
 |---|---|---|---|
@@ -559,13 +590,13 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | DOC-F7 | Audience-first documentation, architecture-to-code map, onboarding, reference, comments, and CI drift prevention | `DONE` | `E-151` local documentation gate |
 | PERF-F8 | Safe-cache parity plus attributable Runtime Tuning and Build Impact scorecard | `DONE` | `E-154` local measured evidence gate |
 | MVP-C2 | Edge proxy, SLRU, and offline committed reads | `DONE` | `E-134` current-tree composite gate |
-| MVP-C3 | Conservative BIA and `BIA-002` gate | `DONE` | `E-128` current-tree composite gate |
+| MVP-C3 | Conservative BIA engine and `BIA-002` evaluator | `DONE` | `E-128` current-tree composite gate; operational qualification remains `INCONCLUSIVE` |
 | POC-O1 | Standalone Edge runtime, signed reload, local status, bundle, and systemd unit | `DONE` | `E-135` current-tree composite gate |
 | GA-D Identity | OIDC/workload identity, SSO/RBAC, KMS/HSM | `DEFERRED` | Beta demonstrates value |
 | GA-D Storage | Object store, HA metadata, backups, and RPO/RTO | `DEFERRED` | Production-ready requirements |
 | GA-D Privacy | Residency, legal hold, and backup deletion | `DEFERRED` | Contractual requirements |
 | GA-D Export | OTLP, Prometheus, Parquet, SIEM, and webhooks | `DEFERRED` | Prioritized demand |
-| Productization validation | Execute the eight-hour soak and validate with external design partners | `DEFERRED` | POC demonstrates enough value to productize |
+| Productization validation | Soak and external design-partner validation | `DEFERRED` | Reconsider only after a positive POC continue decision |
 | Further platform expansion | Android, KMP, and native | `DEFERRED` | Stable macOS/Windows matrix |
 
 ### 11.1 MVP-A2 workboard
@@ -592,6 +623,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `C3-003` | Shadow evaluator comparing predicted omissions with the full graph, deliverables, and manifest checks | `DONE` | Codex | `E-125` |
 | `C3-004` | `BIA-002` evidence gate, reset semantics, false-negative suspension, and honest `INCONCLUSIVE` state | `DONE` | Codex | `E-126` |
 | `C3-005` | Selection integration limited to promoted customer alternatives plus an owner-controlled synthetic repository proof | `DONE` | Codex | `E-127` |
+| `C3-006` | Operational `BIA-002` qualification for each workload class | `INCONCLUSIVE` | Codex | `E-128`: evaluator is safe, but the checked observations do not meet qualification thresholds |
 
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
@@ -708,7 +740,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 |---|---|---|---|
 | `PLAT-F5-G01` | Native runners prove install, launch, build, export, cancellation, cleanup, and upgrade without Linux-only assumptions | `DONE` | `E-148` |
 
-#### PLAT-F6 — full runtime parity
+#### PLAT-F6 — persistent runtime portability
 
 | ID | Deliverable | State | Owner | Evidence |
 |---|---|---|---|---|
@@ -734,7 +766,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 |---|---|---|---|
 | `DOC-F7-G01` | A new evaluator can obtain a revision-bound POC result, an operator can find safe lifecycle/recovery paths, and a developer can map architecture to code while CI rejects broken entry points, links, commands, or package documentation | `DONE` | `E-151` |
 
-#### PERF-F8 — attributable Build Optimization value
+#### PERF-F8 — mechanism attribution and native-cache parity
 
 | ID | Deliverable | State | Owner | Evidence |
 |---|---|---|---|---|
@@ -744,7 +776,20 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
-| `PERF-F8-G01` | Every claimed mechanism has an attributable control, signed timings, output-equivalence guardrails, and an explicit non-universal interpretation boundary | `DONE` | `E-154` |
+| `PERF-F8-G01` | Every claimed mechanism has an attributable control, revision-bound digest-checked timings, output-equivalence guardrails, and an explicit non-universal interpretation boundary | `DONE` | `E-154` |
+
+#### POC-VALUE — decisive native-Gradle comparison
+
+| ID | Deliverable | State | Owner | Expected evidence |
+|---|---|---|---|---|
+| `POC-VALUE-001` | Reproduce the optimized native Gradle baseline and mechanism scorecard on the 4-vCPU contractual runner | `TODO` | Codex | Revision-bound report with raw alternating pairs, environment, outputs, failures, and confidence interval |
+| `POC-VALUE-002` | Tune Runtime Tuning against a representative workload or record `NO_VALUE_NO_ACTION` for that workload class | `TODO` | Codex | Point estimate ≥ `max(500 ms, 2%)`, positive one-sided 95% lower bound, or explicit disabled outcome |
+| `POC-VALUE-003` | Expand Build Impact and reviewed-source Task/Patch evidence across Kotlin/Groovy and two workload classes | `TODO` | Codex | At least eight valid pairs per workload, identical required outputs, zero added failures, and no Test Optimization widening |
+| `POC-VALUE-004` | Benchmark the complete public onboarding path against optimized native Gradle and issue the POC decision | `TODO` | Codex | Combined-path report; `CONTINUE` only when every required workload passes, otherwise `STOP` or narrow the supported workload claim |
+
+| Exit gate | Summarized criterion | State | Evidence |
+|---|---|---|---|
+| `POC-VALUE-G01` | The combined BuildOpt path provides repeatable net customer-visible savings over optimized native Gradle, with identical outputs and no extra product failures | `TODO` | [`poc-value-validation-v1`](./specs/poc-value-validation-v1.md) |
 
 Test Optimization is an explicit non-goal for all functional and documentation tracks. They may preserve or call its existing signed grant/result boundary, but no Test Optimization behavior or contract is widened here.
 
@@ -761,7 +806,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Build Optimization scorecard | Safe-cache value/parity, Runtime Tuning causal resource savings, and Build Impact avoided work | `dev/check-build-optimization-performance` validated both new paired reports plus the existing hosted runtime evidence and emitted separate non-additive results | 2026-08-03 | `E-154` |
 | Ownership boundaries | Path routing, accountable workstreams, cross-stack review, and authority limits | `dev/check-ownership` validated 16 CODEOWNERS paths, all 11 tracker workstreams, one verified repository principal, producer/consumer review, Test Optimization ownership, and the absence of an independent-approval claim | 2026-07-29 | `E-037` |
 | Base CI | Read-only push/PR validation for Go, Java 17 compatibility, optional Rust, and host-Git integration | The immutable hosted baseline remains run [30481886001](https://github.com/tonyredondo/buildopt/actions/runs/30481886001); the current local core lane passed 104 locked shell scripts, generated drift, all Go race/vet packages, Java 17 loading for all 19 Gradle-plugin classes, contract crypto, and the explicit 15-case PatchBundle checker; the optional Rust lane also passed | 2026-07-30 | `E-038`, `E-063`, `E-073..087` |
-| Full native runtime parity | Complete Build Optimization runtime, storage, package, Gradle/Build Impact, persistent gateway/L1, native services, cancellation, exact uninstall, and product boundary | Hosted Native Platform CI run [30721884722](https://github.com/tonyredondo/buildopt/actions/runs/30721884722) passed macOS 15 ARM64 and Windows Server 2025 AMD64 on exact SHA `56bc21c61fc2a0f15fa88b640fb8bfe735d878d0`; hosted Base CI run [30721884751](https://github.com/tonyredondo/buildopt/actions/runs/30721884751) passed the same SHA, including reproducible Go/Java checks, the owner POC lab, and optional Rust | 2026-08-01 | `E-150` |
+| Native runtime portability | Complete Build Optimization runtime, storage, package, Gradle/Build Impact, persistent gateway/L1, native services, cancellation, exact uninstall, and product boundary | Hosted Native Platform CI run [30721884722](https://github.com/tonyredondo/buildopt/actions/runs/30721884722) passed macOS 15 ARM64 and Windows Server 2025 AMD64 on exact SHA `56bc21c61fc2a0f15fa88b640fb8bfe735d878d0`; hosted Base CI run [30721884751](https://github.com/tonyredondo/buildopt/actions/runs/30721884751) passed the same SHA, including reproducible Go/Java checks, the owner POC lab, and optional Rust | 2026-08-01 | `E-150` |
 | Generated artifacts | Source-first inventory, locked generation, reviewable output, and stale-code rejection | The local-events descriptor regenerated byte-for-byte with protoc 35.1, a temporary valid source mutation produced divergent output, unsafe/unknown generator requests failed, conformance passed, and hosted base-CI run [30482598040](https://github.com/tonyredondo/buildopt/actions/runs/30482598040) enforced the gate on a clean checkout | 2026-07-29 | `E-039` |
 | Experiment/action lifecycles | Immutable aggregate versions, action transition preconditions, and exact promotion/invalidation linkage | Draft 2020-12 accepted 4 aggregate and 6 transition positives, rejected 4 negatives for each schema, and classified 3 valid/3 invalid linked vectors; local semantic checks and hosted base-CI run [30484082786](https://github.com/tonyredondo/buildopt/actions/runs/30484082786) passed on the exact implementation SHA | 2026-07-29 | `E-040` |
 | Evidence/policy/resource contracts | Task authority gates, fail-closed invocation policy, and finite prevalidated resource arms | Draft 2020-12 accepted the bound golden records, rejected incomplete trace, active kill switch, and failed-memory eligibility, and enforced exact policy/evidence/profile linkage plus a four-arm catalog; local core and hosted base-CI run [30485226736](https://github.com/tonyredondo/buildopt/actions/runs/30485226736) passed on the exact implementation SHA | 2026-07-29 | `E-041` |
@@ -788,13 +833,13 @@ This table points to the latest valid result. It does not replace reports or all
 | Private-beta Shared faults | Real data-plane cancellation, blob integrity, SQLite contention, lease expiry, and pending/commit death | Seven manifest rows emitted 17 private digest-bound observations; cancelled PUT/GET streams produced no partial hit, truncated/corrupt blobs became byte-free quarantined misses, `SQLITE_BUSY` exposed zero partial commits, an expired lease aborted and collected its pending blob, and restart preserved a miss until the verified decision was applied | 2026-07-30 | `E-086` |
 | Private-beta system faults | Real gateway/server restart, network latency/loss, and signed policy/grant revocation | Six manifest rows emitted 18 private digest-bound observations; stable managed-gateway identity served complete hits across restart, the server remained not ready until 256 orphans were reconciled, latency/loss returned no unsafe bytes, and both revocations rejected stale routes and late commits while rotating generations and clearing pending bytes | 2026-07-30 | `E-087` |
 | Private-beta sustained load | Exact one-hour 1/8/32-client workload through the real managed gateway and Shared data plane | The pinned 4-CPU/16-GiB runner completed 1,200 seconds per client stratum and 30,000 strict observations with the exact 70/20/8/2 size mix, 70% complete hits, zero errors, and verified golden-runner identity; worst verified-ready p95 was 94.90 ms at 1 client, 121.67 ms at 8, and 131.38 ms at 32, all below the 150 ms ≤1-MiB target, while every other miss, hit, and body-materialization target also passed | 2026-07-30 | `E-088` |
-| Private-beta soak runner | Exact eight-hour runner and bounded real-data-plane trial | The trial retained one managed gateway, Shared store, and authority for 300 scaled strict observations and the production validator rejected it as non-qualifying; the exact 28,800-second command is prepared but intentionally not claimed because its qualifying execution has not completed | 2026-07-31 | `E-089` |
+| Production soak | Long-duration reliability qualification | Excluded from the active POC; the existing harness is historical and will not consume POC effort unless a positive value decision justifies productization | 2026-08-04 | `POC-001`, `VALUE-001` |
 | Private-beta circuit breaker | Per-runner persistent flood/large-object/disk-pressure suppression with Gradle fallback | Quota exhaustion, oversized verified objects/upstream `413`, and `ENOSPC`/`EDQUOT` remove the active L2 binding and persist a private five-minute breaker; later invocations omit Shared, select writable managed L1, and recover after cooldown, while real Gradle 9.6.1/JDK 21 Kotlin and Groovy fallback/replay passed for all three reasons | 2026-07-31 | `E-090` |
 | Private-beta Gradle fixture sizes | Small/medium/large known outputs and ordered critical paths through the managed cache | Deterministic Kotlin DSL repositories with 2/8/24 projects and 8/64/384 Java sources produced their exact final values and class counts; all 34 ordered `compileJava` tasks ran `SUCCESS`, then replayed `FROM_CACHE` through the native managed L1 with Configuration Cache reused under Gradle 9.6.1/JDK 21 | 2026-07-31 | `E-091` |
 | GitHub Action fixture | Linux x64 composite setup Action, full commit pins, version/HTTPS/SHA-256 archive identity, safe extraction, outputs/PATH, and neutral wrapper behavior | The historical WS-007 installer and Action bytes remain pinned and its hosted run [30471969171](https://github.com/tonyredondo/buildopt/actions/runs/30471969171) passed on `ubuntu-24.04`; the current init script additionally loaded the real packaged plugin under Gradle 9.6.1 in the deployment lifecycle | 2026-07-30 | `E-031`, `E-080` |
 | Base recovery | Control-plane-independent bypass, CI kill switch, immutable rollback, uninstall, state preservation/purge, and partial patch recovery | The real launcher consumed `BUILDOPT_BYPASS=1` before invalid server configuration or local rendezvous setup, preserved argv/stdio/cwd/exit and process-group cancellation, restored the normal path when cleared, rejected a bad release digest before running the pinned known-good fixture, and exercised guarded preserve/purge uninstalls without changing the working tree; full host and strict 4-CPU/16-GiB container regression passed | 2026-07-29 | `E-032` |
 | Normative package layout | RFC §29.2 namespaces, indexes, planned artifact parents, and non-empty materialized artifacts | `dev/check-normative-layout` passed for 16 namespaces and 105 planned artifacts, including both UX-F1 machine/prose contracts alongside the materialized Tier 1 cache, lifecycle, operational, benchmark, Edge, and POC-O2 contracts; ShellCheck checked 164 scripts, actionlint checked five workflows plus its smoke, and repository layout passed | 2026-08-01 | `E-018`, `E-034`, `E-073..094`, `E-136..138` |
-| Contract schemas | `BUILD_SESSION v1` Draft 2020-12; later JSON Schemas and OpenAPI remain pending | Pinned Go validator compiled the schema with format assertions; 4 valid fixtures and 2 real producer exports passed, while 7 focused invalid fixtures were rejected for their intended diagnostics | 2026-07-29 | `E-019`, `E-029` |
+| Contract schemas | Materialized JSON Schemas, OpenAPI, Protobuf, generated clients, compatibility, and lifecycle vectors | The complete normative package and its cross-language/schema conformance passed; individual evidence is recorded in `E-019`, `E-024`, and `E-040..050` | 2026-07-30 | `E-019`, `E-024`, `E-040..050` |
 | Metric catalog | `build-impact-v1` definitions and `beta-measurement-v1` promotion policy | Dependency-free strict validation accepted all 35 required core metrics with complete governance fields, bounded dimensions, explicit availability/methods, and fixed saved/delta/overhead signs; semantic, missing/duplicate, null, dimension, unit, sign, sample, threshold, and correctness-policy drift fixtures were rejected on host and the strict golden container | 2026-07-29 | `E-034` |
 | Walking-skeleton overhead | External monotonic native-versus-complete-wrapper timing with required-output parity and no optimization | Four balanced alternating pairs ran in the pinned 4-CPU/16-GiB container; the first pair was retained, every wrapper arm completed one authenticated session/export, all deliverable digests matched, signed negative observations remained raw, and the report stayed explicitly non-promotional; first `+236.020 ms`, nearest-rank p50 `-798.384 ms`, mean `-35.033 ms`, and p95 `+1338.013 ms` are descriptive only | 2026-07-29 | `E-035` |
 | A0 no-hit overhead | Paired native/wrapper long sessions with real authenticated misses plus a pre-outcome L2-omission short path | Four alternating pairs ran in the pinned 4-CPU/16-GiB container with fresh outputs/L1 and one forced authenticated `404` per wrapper; all sessions exceeded 5 s, all JARs matched, p95 product overhead was `315.541 ms` and `1.2285%`, both below the fixed 500-ms/2% limits; the independent short wrapper finished in `798.097 ms` with L2 omitted and zero remote requests | 2026-08-01 | `E-078`, `E-136` |
@@ -802,7 +847,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Causal internal pilot | Pre-outcome paired managed-L1 assignment, complete outcome retention, required-output parity, and immutable aggregate result | Four alternating real BuildOpt/Gradle pairs retained eight assignments, observations, and schema-valid `BUILD_SESSION` records; control executed `compileJava`, candidate restored it from the warmed native managed L1, all JARs matched, and the latest complete host run measured `+1289 ms` mean saving with a strictly positive `+1072 ms` lower paired-bootstrap bound; the schema-valid result remains `PRELIMINARY` and non-promotional | 2026-07-30 | `E-072` |
 | Protobuf toolchains | Exact project-local compiler/linter, immutable artifacts, normalized layouts, and isolated execution | Official protoc 35.1 ZIP and Buf 1.72.0 binary matched the lock; real and synthetic provisioning, idempotency, isolation, failure fixtures, doctor matching, lint, descriptor parity, and round trips passed | 2026-07-29 | `E-025` |
 | Local task-event contract | Protobuf v1 payload, varint framing, exact/unattributed correlation, and attempt-wide abort | Exact protoc/Buf descriptors matched; Java 17 and Go peers passed both real Unix-socket directions, semantic negatives, frame bounds, and the Go race detector | 2026-07-29 | `E-024` |
-| Golden vectors | Go ↔ Java canonicalization/signatures | Not run | — | — |
+| Golden vectors | Go ↔ Java canonicalization, digest, timestamp, and signatures | Identical Go/Java JCS, SHA-256, timestamp, and Ed25519 vectors passed with negative mutations | 2026-07-29 | `E-047` |
 | Go unit/integration | Launcher CLI, local authority, neutral/authenticated gateway, Shared storage, server ingest, cancellation, metrics, neutral envelope, BUILD_SESSION export, and causal aggregate production | The full race-enabled suite passed; canonical authority/current-state bindings, complete pre-`200` verified cache spooling, shared directory-sync batches, pooled upstream connections, concurrent Shared WAL reads, lifecycle read concurrency, asynchronous protected-access coalescing, disk/reservation/cancellation/checksum/crash cleanup, persistent circuit opening/recovery, concurrent commit CAS, multi-object transaction rollback, digest audit repair, authenticated commit/revocation/abort, concurrent transient gateway bindings, complete local-identity rotation, corruption quarantine, redirect/timeout normalization, assignment/result/no-hit lifecycles, byte-exact export, and existing regressions remain covered | 2026-07-31 | `E-021`, `E-027..035`, `E-067..078`, `E-088..090` |
 | Local gateway rendezvous | Loopback binding, local Basic credential, connection generation, event-token preface, peer identity, Shared credential translation, verified-read spool, and per-slot circuit breaker | Real managed processes retain the complete local identity on stable restart, rotate endpoint/credential/generation together after bind failure, keep simultaneous slot bindings isolated, reuse bounded authenticated upstream connections, and clean a crashed private spool before serving; every successful GET is fully received, size/digest checked, file-synced, unlinked, and covered by a directory sync before downstream `200`, while flood, oversized object, and disk pressure become safe misses/`413`, remove L2, persist private cooldown state, and preserve Gradle through writable L1 | 2026-07-31 | `E-027`, `E-064`, `E-069`, `E-073`, `E-075`, `E-076`, `E-088..090` |
 | Server session ingest | Provisional internal record, loopback HTTP, Bearer auth, idempotency, fail-open delivery, and no child credential exposure | Real `buildopt` and `buildopt-server` binaries delivered success, exit `37`, and handled cancellation exit `42` through the active gateway; identical concurrent records deduplicated, conflicting content returned `409`, unavailable delivery preserved the child, and absent/bypass configuration made no contact | 2026-07-29 | `E-028`, `E-033` |
@@ -820,12 +865,12 @@ This table points to the latest valid result. It does not replace reports or all
 | L2-to-L1 revocation | Authenticated commit, native L1 population, generation rotation, next-build miss, and aborted-writer isolation | `dev/check-l1-l2-revocation` passed the race-enabled real Shared authority/commit/revocation/abort lifecycle plus Gradle 9.6.1/JDK 21 Kotlin/Groovy TestKit; the old route returned byte-free `401`, the new generation returned byte-free `404`, Configuration Cache invalidated once, and an aborted pending writer created neither L1 generation nor reusable remote object | 2026-07-30 | `E-074` |
 | Gateway restart and rotation | Stable rebind, complete identity rotation, transient upstream authority, Configuration Cache, and concurrent-slot isolation | `dev/check-gateway-rotation` passed three race-enabled real-process scenarios plus Gradle 9.6.1/JDK 21 Kotlin/Groovy TestKit; two live slots routed only their own policy/namespace, rejected crossed local credentials with byte-free `401`, persisted no upstream binding, reused Configuration Cache after stable restart, invalidated it once on complete rotation, and then reused the rotated entry | 2026-07-30 | `E-075` |
 | Shared commit and recovery | Concurrent first-writer CAS, all-object visibility transaction, independent audit repair, and safe invalid-state reconciliation | `dev/check-shared-commit-recovery` cross-checked all 14 Phase 0 model cases against the real filesystem and SQLite WAL stores; synchronized commits produced one complete winner and one complete `CAS_LOST` loser, a three-object pre-commit fault published nothing, a later control-index failure preserved all hits and repaired by decision digest, and orphaned, missing-blob, corrupt, or expired-lease states became misses | 2026-07-30 | `E-068`, `E-077` |
-| Fault injection | Walking-skeleton bypass/failure/cancellation and invocation cleanup plus complete A0 cache spool/commit faults; orchestration faults remain pending | Ordinary failure and handled `SIGTERM` retained exits `37`/`42`; gateway `ENOSPC`, reservation pressure, cancellation, checksum failure, and crash residue became clean misses; Shared transaction/control/orphan/missing/expiry failures never produced partial hits; CI-orchestration and beta soak remain later work | 2026-07-30 | `E-033`, `E-076`, `E-077` |
+| Fault injection | Walking-skeleton bypass/failure/cancellation, invocation cleanup, cache spool/commit, and CI orchestration faults | Ordinary failure and handled `SIGTERM` retained exits `37`/`42`; gateway and Shared failures never produced partial hits; the 12 CI scheduling/budget/recovery cases passed. Long soak is outside the POC | 2026-08-04 | `E-033`, `E-051`, `E-076`, `E-077` |
 | Hermetic harness | Task-specific Rust helper, process tree, six-dimension coverage, invalid manifests, and fail-closed fallback | The Linux x86-64 probe found user/mount/PID/network namespaces and seccomp but no visible Landlock interface or cgroup delegation; vDSO clock, `getrandom`, environment, and policy gaps kept `traceComplete=false`; valid candidates were discarded before execution, writable input was rejected, and the complete producer ran only through baseline | 2026-07-29 | `E-061` |
 | Patch vectors | Strict JSON/JCS/Ed25519, exact blobs, both recipes, path graph, private staging, idempotency, and recovery | The Java 17 patcher passed all 15 plan cases again through its explicit host-Git checker and the local core CI lane; the standard Gradle lifecycle still compiled, packaged, and unit-checked it in the JDK-only golden image without silently skipping the dedicated integration gate | 2026-07-30 | `E-062`, `E-063` |
-| Test Optimization | Producer/consumer compatibility | Not run | — | — |
+| Test Optimization boundary | Producer/consumer contract compatibility only; implementation remains out of scope | Signed grant/result, OpenAPI, retry/polling, artifact, and N/N-1 fixtures passed without adding Test Optimization behavior | 2026-07-29 | `E-043`, `E-046..049`, `E-054` |
 | POC operational profile | Bounded load, faults, readiness, recovery, Gradle preservation, and runbooks | Passed; eight-hour soak explicitly deferred to productization | 2026-07-31 | `E-083..091`, `E-094`, `E-096` |
-| Owner-operated POC metrics | Causal build-time impact and safe p95 on controlled repositories | Not run | — | — |
+| Owner-operated POC metrics | Attributable mechanism value versus optimized native Gradle | Safe Cache is native-cache parity, Runtime Tuning is positive but below the POC accelerator threshold, Build Impact shows a strong single-workload signal, and Task/Patch signals remain preliminary; combined product value is not yet proven | 2026-08-04 | `E-114..117`, `E-154`, `POC-VALUE-001..004` |
 
 ---
 
@@ -1008,6 +1053,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-152` | 2026-08-03 | Product onboarding and performance evidence | The packaged `buildopt gradle` path now derives a private repository/Wrapper/platform-separated managed L1 below the user cache, enables Gradle Build Cache without an extra flag, respects `--no-build-cache` and bypass, and applies the settings plugin before project configuration. The versioned [onboarding benchmark](./specs/onboarding-performance-v1.md), [strict validator](./dev/check-onboarding-performance), manual read-only [hosted workflow](./.github/workflows/onboarding-performance.yml), and immutable [12-CPU local result](./benchmarks/results/onboarding-performance-v1-local.json) measure the exact public command across four alternating pairs in both public pilots: cache-off controls averaged 9,856.75/14,226.25 ms versus BuildOpt 7,814.75/11,275.50 ms, saving 2,042.00 ms (20.7%) in Kotlin and 2,950.75 ms (20.7%) in Groovy with all eight pairs positive and every ZIP identical; the same report truthfully retains 1,050.25 ms (9.8%) Kotlin and 122.75 ms (1.1%) Groovy overhead versus warm unrestricted native cache | `DONE` locally: zero-configuration safe caching and comparative evidence are implemented and validated without Test Optimization, external users, golden-runner qualification, production promotion, or the deferred soak; published `v0.2.0` and hosted report remain separate remote evidence |
 | `E-153` | 2026-08-03 | Hosted onboarding and comparative performance evidence | Public [release run 30846989730](https://github.com/tonyredondo/buildopt/actions/runs/30846989730) published `v0.2.0` for Linux AMD64, macOS AMD64/ARM64, and Windows AMD64 from exact implementation SHA `7bde5bc720a21aea4379aacf5deedbb95d31e99b`. The manual read-only [hosted benchmark run 30847527166](https://github.com/tonyredondo/buildopt/actions/runs/30847527166) installed that package on an isolated 4-CPU runner and produced the checked [hosted result](./benchmarks/results/onboarding-performance-v1-hosted.json): cache-off controls averaged 8,915.50/9,586.00 ms versus BuildOpt 7,905.25/7,624.50 ms, saving 1,010.25 ms (11.3%) in Kotlin and 1,961.50 ms (20.5%) in Groovy with all eight pairs positive and every ZIP identical; it also retained 585.00 ms (8.1%) Kotlin and 25.75 ms (0.3%) Groovy overhead versus warm unrestricted native cache. Public Kotlin [run 30847504633](https://github.com/tonyredondo/buildopt-pilot/actions/runs/30847504633) and Groovy [run 30847518467](https://github.com/tonyredondo/buildopt-pilot-groovy/actions/runs/30847518467) independently installed the same release through the immutable Action, ran the README command twice, required `FROM-CACHE`, and verified deliverables | `DONE`: the public zero-configuration onboarding and its cache-off improvement are externally reproducible owner-operated POC evidence; the data explicitly does not claim an advantage over warm native cache, golden-runner qualification, production promotion, external-user validation, or the deferred soak |
 | `E-154` | 2026-08-03 | `PERF-F8-001..003`, `PERF-F8-G01`, PERF-F8 exit | Commit `f9f1773a7dbdc371d032bad2bbcc65c9cfa889c6` added a default cache-only launcher path that preserves managed L1 and Tier 1 policy while omitting unused telemetry services. The checked [cache-parity result](./benchmarks/results/cache-parity-v1-local.json) measured 15.9%/13.7% mean savings versus cache-off and +0.02%/-0.47% versus native cache, inside the 2% parity limit with identical ZIPs. The checked [Build Impact result](./benchmarks/results/build-impact-performance-v1-local.json) measured 8,180.25 ms full versus 5,926.00 ms selected, saving 2,254.25 ms (27.6%) across four positive pairs with identical service-a and preserved Test-owned outputs. [`check-build-optimization-performance`](./dev/check-build-optimization-performance) composes those reports with the existing hosted Runtime Tuning result (66 ms/0.7% saved, positive lower 95% bound, no artifact or OOM regression) without adding percentages | `DONE`: safe-cache overhead is bounded, Runtime Tuning and Build Impact expose attributable improvements, negative/noisy samples remain visible, Test Optimization is unchanged, and no universal, production, external-user, golden-runner, or soak claim is made |
+| `E-155` | 2026-08-04 | `POC-001`, `VALUE-001`, POC value rebaseline | The master RFC, tracker, machine-readable [`POC value contract`](./specs/poc-value-validation-v1.json), prose specification, and executable [`check-poc-value-validation`](./dev/check-poc-value-validation) now share one decision rule: compare against optimized native Gradle, require identical outputs and zero product failures, classify Safe Cache as parity-only, retain Runtime Tuning as below threshold, retain Build Impact as a strong preliminary single-workload signal, expose Agent/helper as `UNAVAILABLE`, and keep the combined product unproven until `POC-VALUE-001..004` close. [`check-tracker-consistency`](./dev/check-tracker-consistency) binds the RFC digest and all 53 accepted decisions to tracker traceability | `DONE`: the POC roadmap is value-first, while soak, design partners, HA, enterprise identity, multi-tenancy, autonomous production promotion, and other productization work cannot displace the native-Gradle value proof |
 
 ---
 
@@ -1015,6 +1061,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-04 | Rebased the RFC and tracker around the decisive POC question: complete BuildOpt must beat optimized native Gradle with identical outputs and no extra failures; added a machine-readable value contract, four executable value gates, truthful preliminary/unavailable states, complete decision traceability, and CI checks against RFC/tracker drift; removed soak/design partners/productization from the active path | Codex |
 | 2026-08-03 | Closed PERF-F8 with a cache-only fast path, native-cache parity guardrail, Build Impact avoided-work benchmark, and one non-additive scorecard that validates safe cache, Runtime Tuning, and Build Impact with identical-output boundaries | Codex |
 | 2026-08-03 | Published and independently exercised `v0.2.0`; hosted Kotlin/Groovy pilots improved 11.3%/20.5% versus cache-off controls across eight positive pairs with identical outputs, while the checked report retained the measured warm-native-cache overhead | Codex |
 | 2026-08-03 | Added automatic safe local caching to the public `buildopt gradle` command plus a strict paired onboarding benchmark; the local Kotlin/Groovy pilots improved 20.7% versus cache-off controls with identical outputs, while the report retained the measured overhead versus unrestricted native cache and all production/soak boundaries | Codex |

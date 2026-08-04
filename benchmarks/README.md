@@ -9,15 +9,23 @@ machine-readable workload, seed, budget, and fault matrix. Its interpretation
 belongs in [`specs/benchmark-beta-v1.md`](../specs/benchmark-beta-v1.md).
 
 The JSON-compatible YAML is validated by `./dev/check-beta-benchmark`. The
-executable result path is validated by
-`./dev/check-beta-benchmark-harness`, whose real-HTTP `SMOKE` profile is
-explicitly non-qualifying. Those two commands do not claim the long profiles;
-`./dev/check-beta-sustained --qualify` and
-`./dev/check-beta-soak --qualify` own their exact load evidence independently.
-`./dev/check-beta-gradle-fixtures` owns the bounded small/medium/large Gradle
-build matrix and makes no performance claim.
+historical load/fault harnesses remain available as engineering evidence, but
+the active POC does not run or require long soak qualification. Current effort
+goes to paired, bounded build-time experiments against an optimized native
+Gradle control. `./dev/check-beta-gradle-fixtures` owns the bounded
+small/medium/large Gradle build matrix and makes no performance claim.
 
 ## Build Optimization scorecard
+
+The current POC verdict is `CONTINUE_CONDITIONALLY`, not “value proven”. Safe
+Cache is a safety enabler at native-cache parity; Runtime Tuning is below the
+accelerator threshold; Build Impact has a strong but single-workload signal;
+and the combined public path has not yet been measured against the optimized
+native baseline. Validate that interpretation with:
+
+```bash
+./dev/check-poc-value-validation
+```
 
 The scorecard answers a different question for each optimization instead of
 combining unrelated percentages:
@@ -55,7 +63,7 @@ The underlying evidence and contracts are:
   and [contract](../specs/build-impact-performance-v1.md).
 
 All three are bounded POC results. They preserve signed differences and do not
-claim universal savings, production promotion, or the deferred soak.
+claim universal savings, combined-product value, or production readiness.
 
 ## Historical v0.2 public onboarding performance
 

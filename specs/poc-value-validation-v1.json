@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "buildopt.specs/poc-value-validation/v1",
+  "decision": {
+    "objective": "REDUCE_CUSTOMER_VISIBLE_BUILD_TIME_AGAINST_OPTIMIZED_NATIVE_GRADLE",
+    "currentVerdict": "CONTINUE_CONDITIONALLY",
+    "pocValueProven": false,
+    "noValueNoAction": true
+  },
+  "scope": {
+    "includes": [
+      "SAFE_CACHE",
+      "RUNTIME_TUNING",
+      "BUILD_IMPACT",
+      "TASK_INTELLIGENCE_REVIEWED_SOURCE",
+      "PATCH_AUTOPILOT",
+      "COMBINED_PRODUCT_PATH"
+    ],
+    "doesNotBlockPoc": [
+      "EIGHT_HOUR_SOAK",
+      "EXTERNAL_DESIGN_PARTNER",
+      "HIGH_AVAILABILITY",
+      "ENTERPRISE_IDENTITY",
+      "MULTI_TENANCY",
+      "PRODUCTION_PROMOTION_SAMPLE"
+    ]
+  },
+  "measurement": {
+    "nativeBaseline": {
+      "buildCache": true,
+      "configurationCacheWhenCompatible": true,
+      "parallelismWhenCompatible": true,
+      "sameGradleJdkAndWorkload": true
+    },
+    "explorationPairsMinimum": 4,
+    "combinedPairsPerWorkloadMinimum": 8,
+    "representativeWorkloadClassesMinimum": 2,
+    "requiredDslCoverage": ["KOTLIN", "GROOVY"],
+    "acceleratorThreshold": {
+      "minimumSavedMs": 500,
+      "minimumReductionRatio": 0.02,
+      "positiveLower95Bound": true,
+      "requiredOutputsIdentical": true,
+      "maximumProductAttributableFailures": 0
+    },
+    "safetyEnablerThreshold": {
+      "maximumAbsoluteNativeRegressionRatio": 0.02,
+      "requiredOutputsIdentical": true,
+      "mayClaimAcceleration": false
+    }
+  },
+  "mechanisms": [
+    {
+      "id": "SAFE_CACHE",
+      "classification": "PARITY_ONLY",
+      "evidence": "benchmarks/results/cache-parity-v1-local.json",
+      "claim": "SAFETY_ENABLER_NOT_STANDALONE_ACCELERATOR"
+    },
+    {
+      "id": "RUNTIME_TUNING",
+      "classification": "PRELIMINARY_BELOW_VALUE_THRESHOLD",
+      "evidence": "benchmarks/results/b-runtime-owner-evaluation.json",
+      "claim": "POSITIVE_SIGNAL_REQUIRES_STRONGER_WORKLOAD"
+    },
+    {
+      "id": "BUILD_IMPACT",
+      "classification": "PRELIMINARY_STRONG_SINGLE_WORKLOAD",
+      "evidence": "benchmarks/results/build-impact-performance-v1-local.json",
+      "claim": "ACCELERATOR_REQUIRES_BROADER_CHANGE_MATRIX"
+    },
+    {
+      "id": "TASK_INTELLIGENCE_REVIEWED_SOURCE",
+      "classification": "PRELIMINARY",
+      "evidence": "benchmarks/results/c1-task-intelligence-pilot.json",
+      "claim": "REVIEWED_SOURCE_ROUTE_ONLY"
+    },
+    {
+      "id": "AGENT_DISCOVERY",
+      "classification": "UNAVAILABLE",
+      "evidence": "benchmarks/results/spk-002-agent.json",
+      "claim": "DO_NOT_ANNOUNCE_OR_ACTIVATE"
+    },
+    {
+      "id": "HERMETIC_PRODUCER",
+      "classification": "UNAVAILABLE",
+      "evidence": "specs/hermetic-helper-spike-v1.md",
+      "claim": "DO_NOT_ANNOUNCE_OR_ACTIVATE"
+    },
+    {
+      "id": "PATCH_AUTOPILOT",
+      "classification": "PRELIMINARY",
+      "evidence": "benchmarks/results/c1-task-intelligence-pilot.json",
+      "claim": "CORRECTNESS_AND_REVERSIBILITY_PROVEN_VALUE_NOT_QUALIFIED"
+    },
+    {
+      "id": "COMBINED_PRODUCT_PATH",
+      "classification": "NOT_RUN",
+      "evidence": null,
+      "claim": "PRIMARY_POC_VALUE_GATE_OPEN"
+    }
+  ],
+  "nextGates": [
+    {
+      "id": "POC-VALUE-001",
+      "outcome": "REPRODUCE_OPTIMIZED_NATIVE_BASELINE_AND_MECHANISM_SCORECARD_ON_GOLDEN_RUNNER",
+      "state": "TODO"
+    },
+    {
+      "id": "POC-VALUE-002",
+      "outcome": "RUNTIME_TUNING_CLEARS_ACCELERATOR_THRESHOLD_OR_IS_DISABLED",
+      "state": "TODO"
+    },
+    {
+      "id": "POC-VALUE-003",
+      "outcome": "BUILD_IMPACT_TASK_AND_PATCH_PASS_REQUIRED_WORKLOAD_BREADTH",
+      "state": "TODO"
+    },
+    {
+      "id": "POC-VALUE-004",
+      "outcome": "COMBINED_PRODUCT_BEATS_OPTIMIZED_NATIVE_GRADLE_OR_POC_STOPS",
+      "state": "TODO"
+    }
+  ]
+}

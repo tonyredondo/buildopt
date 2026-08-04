@@ -197,11 +197,13 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-layout"
         "${buildopt_script_dir}/check-ownership"
         "${buildopt_script_dir}/check-documentation"
+        "${buildopt_script_dir}/check-tracker-consistency"
         "${buildopt_script_dir}/check-toolchains-lock"
         "${buildopt_script_dir}/check-lint-toolchains"
         "${buildopt_script_dir}/check-generated-code"
         "${buildopt_script_dir}/check-onboarding-performance"
         "${buildopt_script_dir}/check-build-optimization-performance" >/dev/null
+        "${buildopt_script_dir}/check-poc-value-validation" >/dev/null
         "${buildopt_script_dir}/run" \
             --toolchain go \
             -- \

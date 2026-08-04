@@ -2033,9 +2033,9 @@ an exact private receipt, and the uninstall scripts remove only receipt-owned
 files. macOS uses POSIX process groups; Windows uses a Job Object for complete
 descendant cleanup. Linux retains its peer-credential Unix socket, while
 macOS/Windows use authenticated loopback TCP for the Gradle event channel.
-Persistent managed gateway/L1/bootstrap services and server/Edge processes
-remain explicitly unsupported on Windows; the CLI fails closed when those
-Linux-owned configurations are requested.
+Persistent gateway/L1/bootstrap services and server/Edge processes have native
+package and lifecycle coverage on macOS and Windows; platform differences stay
+visible through `buildopt doctor` and native CI.
 
 Run the local portability inventory, cross-build, package syntax, and workflow
 gate with:
@@ -2050,6 +2050,13 @@ cleanup, uninstall, and artifact publication.
 
 ## Build Optimization performance
 
+Validate the current POC decision, evidence classifications, and open value
+gates without rerunning benchmarks:
+
+```bash
+./dev/check-poc-value-validation
+```
+
 Validate and print the current safe-cache, Runtime Tuning, and Build Impact
 scorecard without rerunning a benchmark:
 
@@ -2058,7 +2065,8 @@ scorecard without rerunning a benchmark:
 ```
 
 The scorecard keeps each mechanism attributable and never adds percentages
-from different workloads. Fresh cache and Build Impact evidence can be created
+from different workloads. It does not close the combined product gate. Fresh
+cache and Build Impact evidence can be created
 with `run-cache-parity-benchmark` and `run-build-impact-performance`; each has
 a matching `check-*` command. See
 [the benchmark index](../benchmarks/README.md#build-optimization-scorecard).

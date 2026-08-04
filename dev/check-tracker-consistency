@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_rfc="${buildopt_repo_root}/gradle-build-optimization-platform.md"
+buildopt_tracker="${buildopt_repo_root}/implementation-tracker.md"
+
+for buildopt_command in awk grep sed sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required tracker-consistency command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_expected_rfc_sha=$(
+    # The backticks are literal Markdown syntax.
+    # shellcheck disable=SC2016
+    sed -n 's/^\*\*RFC baseline SHA-256:\*\* `\([0-9a-f]\{64\}\)`$/\1/p' \
+        "${buildopt_tracker}"
+)
+buildopt_actual_rfc_sha=$(sha256sum "${buildopt_rfc}" | awk '{print $1}')
+if [[ -z "${buildopt_expected_rfc_sha}" ]] ||
+    [[ "${buildopt_expected_rfc_sha}" != "${buildopt_actual_rfc_sha}" ]]; then
+    printf 'tracker RFC baseline is stale: expected=%s actual=%s\n' \
+        "${buildopt_expected_rfc_sha:-missing}" "${buildopt_actual_rfc_sha}" >&2
+    exit 1
+fi
+
+buildopt_decisions=$(
+    awk -F'|' '
+        /^\| [A-Z0-9-]+ \| Accepted \|/ {
+            id = $2
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", id)
+            print id
+        }
+    ' "${buildopt_rfc}" | sort -u
+)
+buildopt_decision_count=$(wc -w <<<"${buildopt_decisions}")
+if [[ "${buildopt_decision_count}" != 53 ]]; then
+    printf 'expected 53 accepted RFC decisions, found %s\n' \
+        "${buildopt_decision_count}" >&2
+    exit 1
+fi
+
+buildopt_traceability=$(
+    awk '
+        /^### 4\.1 RFC decision traceability$/ {inside = 1; next}
+        /^### 4\.2 Readiness gates$/ {inside = 0}
+        inside {print}
+    ' "${buildopt_tracker}"
+)
+while IFS= read -r buildopt_decision; do
+    if ! grep -Fq -- "\`${buildopt_decision}\`" <<<"${buildopt_traceability}"; then
+        printf 'accepted RFC decision is absent from tracker traceability: %s\n' \
+            "${buildopt_decision}" >&2
+        exit 1
+    fi
+done <<<"${buildopt_decisions}"
+
+buildopt_required_tracker_text=(
+    "**Overall status:** \`POC VALUE VALIDATION ACTIVE\`"
+    "**Current phase:** \`CONTINUE_CONDITIONALLY\`"
+    "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
+    "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
+    "| \`A1-G06\` | Safe Cache is non-regressive versus optimized native cache"
+    "| \`B-G03\` | Runtime Tuning exceeds the POC accelerator threshold"
+    "| \`C1-001\` | Opt-in JVM Agent with coverage and budgets | \`UNAVAILABLE\`"
+    "| \`C1-007\` | Rust helper and task-specific producer | \`UNAVAILABLE\`"
+    "| \`C3-006\` | Operational \`BIA-002\` qualification for each workload class | \`INCONCLUSIVE\`"
+    "| \`C4-G06\` | Accepted patches exceed the POC value threshold"
+)
+for buildopt_required in "${buildopt_required_tracker_text[@]}"; do
+    if ! grep -Fq -- "${buildopt_required}" "${buildopt_tracker}"; then
+        printf 'tracker is missing required POC state: %s\n' \
+            "${buildopt_required}" >&2
+        exit 1
+    fi
+done
+
+buildopt_forbidden_tracker_text=(
+    'FUNCTIONAL EXPANSION COMPLETE'
+    'NO NON-DEFERRED IMPLEMENTATION BLOCK REMAINS'
+    '| Golden vectors | Go ↔ Java canonicalization/signatures | Not run |'
+    '| Test Optimization | Producer/consumer compatibility | Not run |'
+    '| Owner-operated POC metrics | Causal build-time impact and safe p95 on controlled repositories | Not run |'
+)
+for buildopt_forbidden in "${buildopt_forbidden_tracker_text[@]}"; do
+    if grep -Fq -- "${buildopt_forbidden}" "${buildopt_tracker}"; then
+        printf 'tracker retains stale status: %s\n' "${buildopt_forbidden}" >&2
+        exit 1
+    fi
+done
+
+buildopt_readiness=$(
+    awk '
+        /^### 4\.2 Readiness gates$/ {inside = 1; next}
+        /^---$/ && inside {inside = 0}
+        inside {print}
+    ' "${buildopt_tracker}"
+)
+if [[ $(grep -Fc "| \`OPS-001/B\` |" <<<"${buildopt_readiness}") != 1 ]]; then
+    printf 'tracker must contain exactly one OPS-001/B readiness row\n' >&2
+    exit 1
+fi
+
+printf 'RFC/tracker consistency OK: %s accepted decisions, POC value gate open\n' \
+    "${buildopt_decision_count}"

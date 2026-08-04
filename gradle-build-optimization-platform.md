@@ -2,8 +2,8 @@
 
 ## Product specification and technical design
 
-**Status:** master product RFC — private-beta scope defined; Phase 0 executable contracts pending materialization<br>
-**Last technical review:** July 29, 2026<br>
+**Status:** master POC architecture RFC — functional hypotheses implemented; value validation against optimized native Gradle is active<br>
+**Last technical review:** August 4, 2026<br>
 **Working name:** Gradle Build Optimization<br>
 **Scope:** autonomous optimization of Gradle builds in CI and local environments<br>
 **Relationship with Test Optimization:** complementary product with explicit ownership: Build Optimization optimizes build work; Test Optimization retains test selection, execution, and policy
@@ -73,7 +73,9 @@ The solution combines four pillars:
 
 Developers will not have to run a build twice manually. Natural builds provide observations; any additional repetitions required for validation run automatically in CI within a budget and isolated environments. Local environments consume already validated policies but create their own Configuration Cache entries.
 
-The **private beta** validates the complete functional loop, not just the cache backend: it includes runtime optimization, a safe bandit, the JVM Instrumentation Agent, contractual qualification and caching of custom tasks, experimental Linux hermetic enforcement, and a Patch Engine limited to pull requests. To accelerate learning, it narrows the operational boundary—one isolated tenant per deployment, simple credentials, and no contractual HA—instead of removing differentiating capabilities. OIDC/SSO, KMS/HSM, interoperable attestations, shared multi-tenancy, HA, and operation at scale belong to later hardening.
+The current objective is a **proof of concept**, not a private-beta or production launch. The POC must determine whether the combined BuildOpt path reduces customer-visible build time against a well-configured native Gradle baseline. Safe Cache, Runtime Tuning, Build Impact, reviewed task contracts, and Patch Autopilot are measured separately so that value is attributable; the complete path receives its own comparison because overlapping percentages are never added.
+
+An eight-hour soak, external design partners, high availability, enterprise identity, shared multi-tenancy, and production promotion samples do not block the POC. They become relevant only if the value hypothesis passes. Conversely, a feature does not justify continuing merely because it is safe or technically interesting: when it cannot demonstrate net value for a workload class, BuildOpt keeps it disabled for that class.
 
 ---
 
@@ -215,18 +217,24 @@ Test Optimization resolves internally which tests constitute `FULL_RELEVANT_VALI
 - Artifact references are content-addressed, include size and SHA-256, bind to `actionId`/repository, and resolve through a customer-owned channel or authorized ephemeral URL. Test Optimization verifies the digest before consumption and rejects arbitrary caller paths.
 - Phase 0 delivers producer/consumer fixtures for missing/expired/revoked grants, delayed results, corrupt artifacts, retries, and N/N-1 incompatibility. Both products run those fixtures in CI before declaring `FULL_RELEVANT_VALIDATION` available.
 
-### 4.4 Private-beta boundary
+### 4.4 POC boundary
 
-The private beta is a progressive program, not a general-availability promise. Its first deployment installs caching, measurement, and runtime optimizations; task intelligence and Patch Autopilot join during the same program. It is functionally complete when it demonstrates end to end:
+The POC validates technical feasibility and measurable value on project-owned synthetic repositories. It is not a private-beta qualification and must not reuse a private-beta gate name for weaker evidence without the `POC` suffix.
 
-- Remote and local cache with measured causal impact.
-- Safe runtime-configuration selection through cohorts and a bounded bandit.
-- Hidden-input discovery through the JVM Agent without blocking the baseline.
-- Custom-task qualification through a contract, adapter/source patch, or continuous hermetic profile.
-- Linux enforcement only for isolated candidates and producers, without turning experimental failure into a customer build failure.
-- Patch generation and validation, with pull requests as the only persistent delivery mechanism.
+The POC is successful only when it demonstrates end to end:
 
-The beta does not promise shared multi-tenancy, enterprise identity, a hostile backend outside the trust boundary, high availability, contractual RPO/RTO, or broad platform support. Those guarantees are added during hardening without weakening demonstrated correctness gates.
+- a native Gradle control with every applicable first-party optimization enabled;
+- a BuildOpt candidate using the same Gradle, JDK, workload, warm state, outputs, and resource boundary;
+- paired net build-time savings from the complete candidate, not a sum of mechanism estimates;
+- zero required-output divergence and zero additional product-attributable build failures;
+- attributable results for Safe Cache, Runtime Tuning, Build Impact, reviewed task contracts, and Patch Autopilot;
+- `NO_VALUE_NO_ACTION`: an optimization stays observing or disabled when its expected net value does not clear the POC threshold.
+
+Four alternating pairs are acceptable for bounded mechanism exploration. They are labeled `PRELIMINARY` and do not close a causal product gate. The combined value gate requires at least eight alternating pairs in each of two representative workload classes, Kotlin and Groovy coverage, a positive 95% lower bound, and point-estimate savings of at least `max(500 ms, 2%)`.
+
+The reviewed source-contract route may validate Task Intelligence while Agent discovery and hermetic producer enforcement remain `UNAVAILABLE`. Safe fallback is evidence of correctness, not evidence that an unavailable capability exists. Safe Cache may qualify as a safety enabler at native-cache parity, but parity is not advertised as acceleration.
+
+The POC explicitly excludes the eight-hour soak, external design-partner operation, production promotion samples, contractual SLOs, HA/RPO/RTO, enterprise identity, shared multi-tenancy, and production support. Passing the POC creates a decision point about whether productization is worth funding; it does not silently start productization.
 
 ---
 
@@ -2304,6 +2312,8 @@ Local will not be used as a laboratory for risky patches.
 
 ## 19. Product modes
 
+The following modes describe a possible product. They are not gates for the current POC. The POC exposes explicit measurement and candidate commands, retains `BUILDOPT_BYPASS=1`, and never performs autonomous production promotion. A future productization decision must materialize the mode matrix, persistence, transitions, CLI, and authorization tests before these names become customer-facing promises.
+
 ### Observe
 
 - Instruments.
@@ -2665,7 +2675,9 @@ Hit rate by count is insufficient. The following will be published for L1, L2 Sh
 
 The metric catalog is versioned. Every definition specifies owner, purpose, formula, unit, grain, population/denominator, source, time boundary, valid dimensions, null policy, quality, retention, and caveats. A semantic change increments `metricDefinitionVersion`; it does not rewrite historical series.
 
-The private beta sets an initial statistical policy so that the product can act and measure it as part of the product; it is not a universal commercial claim:
+The current POC uses the bounded decision rule in section 4.4 and [`poc-value-validation-v1`](./specs/poc-value-validation-v1.md). Mechanism exploration answers whether an idea merits more work; it does not authorize production promotion. A safety enabler may pass with no more than 2% native-baseline regression, but only an accelerator clearing `max(500 ms, 2%)` with a positive lower bound counts as build-time value. The combined product path must pass separately against optimized native Gradle.
+
+The following longer-window policy is retained only as a possible private-beta/productization gate. It does not block or relabel POC evidence:
 
 | Gate | Direct/reversible | Proof-gated or patch |
 |---|---|---|
@@ -2777,7 +2789,17 @@ Every action must answer:
 
 ## 24. Implementation roadmap
 
-Every phase has a technical gate, but the private beta is progressive: the first external pilot may begin at A1 and receive B, C1, and C4 as they pass their gates. The **complete functional beta target** is `A1 + B + C1 + C4`. A2, C2, and C3 are optional tracks and do not block that target. Production hardening occurs after value and correctness are demonstrated; it is not brought forward at the expense of differentiating capabilities.
+The active roadmap is POC-first. The functional mechanisms have been built far enough to test their hypotheses, but the POC is not complete until the combined path beats optimized native Gradle under the bounded value gate. Current priority is therefore:
+
+```text
+native Gradle baseline
+  → mechanism attribution
+  → combined product benchmark
+  → no-value disablement
+  → continue/stop decision
+```
+
+The historical Phase 0 and MVP sections below retain the architecture and possible productization gates. Their names do not describe current POC qualification. Soak, external pilots, operational scale, product modes, and GA hardening are dormant unless the POC value decision is positive.
 
 ### Phase 0: executable contracts and fixtures
 
@@ -3053,6 +3075,8 @@ This sequence is illustrative. Promotion depends on contracts and gates, not on 
 
 | ID | Status | Decision |
 |---|---|---|
+| POC-001 | Accepted | The active program is an owner-operated POC on controlled repositories; soak, external design partners, production promotion samples, HA, enterprise identity, and multi-tenancy do not block it, and private-beta milestone names are not reused for weaker POC evidence |
+| VALUE-001 | Accepted | The POC continues only when the complete BuildOpt path beats a well-configured native Gradle control with identical required outputs and no additional failures; mechanisms are measured separately, parity is not acceleration, percentages are not added, and no-value actions remain disabled |
 | CONTRACTS-001 | Accepted | Phase 0 materializes normative schemas/IDL, canonicalization, errors, idempotency, N/N-1 compatibility, generated clients, and test vectors; RFC examples are not implementation contracts |
 | BETA-001 | Accepted | The private beta reduces the operational boundary through one isolated deployment per tenant but validates the A1+B+C1+C4 functional loop; production hardening neither replaces nor blocks those capabilities |
 | CACHE-001 | Accepted | Offer a first-party Gradle-compatible Shared Cache Backend; isolated managed and self-hosted single-node private beta, with multi-tenant SaaS only after hardening |
@@ -3105,9 +3129,9 @@ This sequence is illustrative. Promotion depends on contracts and gates, not on 
 | SAFETY-002 | Accepted | Transparent retry without product only before task actions; afterward, side effects are not blindly repeated and baseline is used only if already isolated/authorized |
 | MVP-001 | Accepted | A0 is the internal pilot, A1 the first isolated external pilot, and the complete private-beta functional target is A1+B+C1+C4; A2/C2/C3 are optional and GA-D concentrates production-ready hardening |
 
-### 28.2 Deferred hardening decisions that do not block private-beta scope
+### 28.2 Deferred productization decisions outside the POC
 
-No **product-scope** decision remains open for the private beta. The executable Phase 0 contracts described in section 29 still need to be materialized and passed; therefore, A1+B+C1+C4 must not be distributed as independent modules until their normative dependencies and spikes close. The following hardening choices do not block that work:
+These choices are deliberately unresolved because they do not help answer the POC value question. A positive `VALUE-001` result may justify reopening them; a negative result stops or narrows the experiment before this work is funded.
 
 | Later gate | Deferred decision |
 |---|---|
@@ -3125,14 +3149,14 @@ No **product-scope** decision remains open for the private beta. The executable 
 
 ### 29.1 Readiness verdict
 
-This document is ready as the master product and architecture RFC and allows Phase 0 and the first walking skeleton to begin. It is not yet a collection of executable specifications that allows A1, B, C1, and C4 to be distributed across teams without coordination.
+The original Phase 0 package and walking skeleton are materialized. The current implementation truth lives in the tracker and executable checks; the active readiness question is now whether the combined path clears `POC-VALUE-G01`, not whether another production subsystem can be added.
 
 The distinction is deliberate:
 
-- Product decisions, beta scope, ownership, stack, and safety posture are closed.
-- YAML/text examples explain semantics but are not normative IDL by themselves.
-- Phase 0 must materialize schemas, APIs, state machines, vectors, and fixtures, and must resolve through spikes every capability depending on real correlation or instrumentation.
-- A P0 open item in this section does not block the first commit; it blocks declaring complete or integrating the module shown in its `Blocks` column.
+- Accepted decisions record architecture and safety; they do not prove implementation or value.
+- Schemas, APIs, state machines, vectors, fixtures, and spikes are materialized and remain regression inputs.
+- Agent discovery and hermetic producer enforcement are explicitly `UNAVAILABLE`; reviewed-source paths remain testable.
+- The only active POC blockers are the four value gates in the tracker. Productization work is not a substitute for closing them.
 
 The normative source is divided as follows: this RFC retains intent, invariants, and gates; `contracts/`, `specs/`, `benchmarks/`, and ADRs retain executable details. If a contract contradicts a safety invariant in this RFC, the contract is corrected; if the invariant needs to change, the corresponding decision is reviewed first.
 
@@ -3167,6 +3191,7 @@ contracts/
     state-machines/
     compatibility/
 specs/
+  poc-value-validation-v1.{md,json}
   ci-orchestration-v1.md
   gradle-correlation-v1.md
   benchmark-beta-v1.md

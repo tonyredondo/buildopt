@@ -226,6 +226,7 @@ filesystem, or cancellation behavior.
 ## POC and benchmark evidence
 
 ```bash
+./dev/check-poc-value-validation
 ./dev/check-owner-poc-lab
 ./dev/check-beta-benchmark-harness
 ./dev/check-beta-disk-faults
@@ -236,9 +237,9 @@ filesystem, or cancellation behavior.
 ./dev/check-beta-gradle-fixtures
 ```
 
-`./dev/check-beta-soak` is the separate eight-hour qualification path. It is
-deferred for the POC and is not part of quickstart, owner lab, or routine
-documentation validation.
+The historical eight-hour soak harness is outside the active POC. It is not a
+quickstart, owner-lab, CI, or value-gate requirement; reconsider it only after
+the POC proves enough net value to justify productization.
 
 ## Complete lanes
 

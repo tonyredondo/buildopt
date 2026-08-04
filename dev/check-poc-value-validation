@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-value-validation-v1.json"
+buildopt_cache="${buildopt_repo_root}/benchmarks/results/cache-parity-v1-local.json"
+buildopt_runtime="${buildopt_repo_root}/benchmarks/results/b-runtime-owner-evaluation.json"
+buildopt_impact="${buildopt_repo_root}/benchmarks/results/build-impact-performance-v1-local.json"
+
+command -v jq >/dev/null 2>&1 || {
+    printf 'required POC value command is unavailable: jq\n' >&2
+    exit 1
+}
+
+"${buildopt_script_dir}/check-cache-parity-performance" "${buildopt_cache}" >/dev/null
+"${buildopt_script_dir}/check-runtime-owner-evaluation" >/dev/null
+"${buildopt_script_dir}/check-build-impact-performance" "${buildopt_impact}" >/dev/null
+
+jq -e \
+    --slurpfile cache "${buildopt_cache}" \
+    --slurpfile runtime "${buildopt_runtime}" \
+    --slurpfile impact "${buildopt_impact}" '
+    .schemaVersion == "buildopt.specs/poc-value-validation/v1" and
+    .decision.objective == "REDUCE_CUSTOMER_VISIBLE_BUILD_TIME_AGAINST_OPTIMIZED_NATIVE_GRADLE" and
+    .decision.currentVerdict == "CONTINUE_CONDITIONALLY" and
+    .decision.pocValueProven == false and
+    .decision.noValueNoAction == true and
+    .scope.doesNotBlockPoc == [
+        "EIGHT_HOUR_SOAK",
+        "EXTERNAL_DESIGN_PARTNER",
+        "HIGH_AVAILABILITY",
+        "ENTERPRISE_IDENTITY",
+        "MULTI_TENANCY",
+        "PRODUCTION_PROMOTION_SAMPLE"
+    ] and
+    .measurement.nativeBaseline.buildCache == true and
+    .measurement.nativeBaseline.configurationCacheWhenCompatible == true and
+    .measurement.nativeBaseline.parallelismWhenCompatible == true and
+    .measurement.combinedPairsPerWorkloadMinimum >= 8 and
+    .measurement.representativeWorkloadClassesMinimum >= 2 and
+    .measurement.requiredDslCoverage == ["KOTLIN", "GROOVY"] and
+    .measurement.acceleratorThreshold.minimumSavedMs == 500 and
+    .measurement.acceleratorThreshold.minimumReductionRatio == 0.02 and
+    .measurement.acceleratorThreshold.positiveLower95Bound == true and
+    .measurement.acceleratorThreshold.requiredOutputsIdentical == true and
+    .measurement.acceleratorThreshold.maximumProductAttributableFailures == 0 and
+    .measurement.safetyEnablerThreshold.maximumAbsoluteNativeRegressionRatio == 0.02 and
+    .measurement.safetyEnablerThreshold.mayClaimAcceleration == false and
+    ([.mechanisms[].id] | length == (unique | length)) and
+    ([.mechanisms[] | select(.id == "SAFE_CACHE" and .classification == "PARITY_ONLY")] | length) == 1 and
+    ([.mechanisms[] | select(.id == "RUNTIME_TUNING" and .classification == "PRELIMINARY_BELOW_VALUE_THRESHOLD")] | length) == 1 and
+    ([.mechanisms[] | select(.id == "BUILD_IMPACT" and .classification == "PRELIMINARY_STRONG_SINGLE_WORKLOAD")] | length) == 1 and
+    ([.mechanisms[] | select(.id == "AGENT_DISCOVERY" and .classification == "UNAVAILABLE")] | length) == 1 and
+    ([.mechanisms[] | select(.id == "HERMETIC_PRODUCER" and .classification == "UNAVAILABLE")] | length) == 1 and
+    ([.mechanisms[] | select(.id == "COMBINED_PRODUCT_PATH" and .classification == "NOT_RUN" and .evidence == null)] | length) == 1 and
+    ([.nextGates[] | select(.state == "TODO")] | length) == 4 and
+    .nextGates == [
+        {
+            id: "POC-VALUE-001",
+            outcome: "REPRODUCE_OPTIMIZED_NATIVE_BASELINE_AND_MECHANISM_SCORECARD_ON_GOLDEN_RUNNER",
+            state: "TODO"
+        },
+        {
+            id: "POC-VALUE-002",
+            outcome: "RUNTIME_TUNING_CLEARS_ACCELERATOR_THRESHOLD_OR_IS_DISABLED",
+            state: "TODO"
+        },
+        {
+            id: "POC-VALUE-003",
+            outcome: "BUILD_IMPACT_TASK_AND_PATCH_PASS_REQUIRED_WORKLOAD_BREADTH",
+            state: "TODO"
+        },
+        {
+            id: "POC-VALUE-004",
+            outcome: "COMBINED_PRODUCT_BEATS_OPTIMIZED_NATIVE_GRADLE_OR_POC_STOPS",
+            state: "TODO"
+        }
+    ] and
+    ([
+        $cache[0].repositories[].comparisons.NATIVE_CACHE.meanReductionRatio |
+        fabs
+    ] | max) <= .measurement.safetyEnablerThreshold.maximumAbsoluteNativeRegressionRatio and
+    ($runtime[0].autotuning.metrics.meanDeltaMs > 0) and
+    ($runtime[0].autotuning.metrics.meanDeltaMs < .measurement.acceleratorThreshold.minimumSavedMs) and
+    ($runtime[0].autotuning.metrics.reductionRatio < .measurement.acceleratorThreshold.minimumReductionRatio) and
+    ($runtime[0].autotuning.metrics.artifactDivergence == false) and
+    ($runtime[0].autotuning.oomDelta == 0) and
+    ($impact[0].result.meanSavedMs >= .measurement.acceleratorThreshold.minimumSavedMs) and
+    ($impact[0].result.meanReductionRatio >= .measurement.acceleratorThreshold.minimumReductionRatio) and
+    ($impact[0].result.positivePairs == $impact[0].design.pairs) and
+    ($impact[0].result.requiredOutputsIdentical == true)
+    ' "${buildopt_contract}" >/dev/null
+
+jq -n \
+    --slurpfile contract "${buildopt_contract}" \
+    --slurpfile cache "${buildopt_cache}" \
+    --slurpfile runtime "${buildopt_runtime}" \
+    --slurpfile impact "${buildopt_impact}" '
+    {
+        verdict: $contract[0].decision.currentVerdict,
+        pocValueProven: $contract[0].decision.pocValueProven,
+        safeCache: "PARITY_ONLY",
+        runtimeTuning: "PRELIMINARY_BELOW_VALUE_THRESHOLD",
+        buildImpact: "PRELIMINARY_STRONG_SINGLE_WORKLOAD",
+        combinedProduct: "NOT_RUN",
+        nativeCacheMaximumAbsoluteDelta:
+            ([$cache[0].repositories[].comparisons.NATIVE_CACHE.meanReductionRatio | fabs] | max),
+        runtimeSavedMs: $runtime[0].autotuning.metrics.meanDeltaMs,
+        buildImpactSavedMs: $impact[0].result.meanSavedMs,
+        openGates: [$contract[0].nextGates[].id]
+    }
+    '
