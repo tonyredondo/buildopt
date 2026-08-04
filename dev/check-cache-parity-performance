@@ -169,6 +169,25 @@ jq -e --arg measurementOnly "${buildopt_measurement_only}" '
                 "NATIVE_CACHE":
                     "Gradle native local cache versus BuildOpt cache-only fast path"
             }
+        } or
+     .design == {
+            "pairsPerComparison": 4,
+            "order": "PAIRED_ALTERNATING",
+            "task": ":app:distZip",
+            "configurationCache": true,
+            "daemonPolicy": "ENABLED_SEPARATE_WARM_HOMES",
+            "profile": "OPTIMIZED_NATIVE",
+            "publicOnboardingCommand":
+                "buildopt gradle --parallel --configuration-cache clean :app:distZip",
+            "nativeControlCommand":
+                "./gradlew --parallel --configuration-cache --build-cache clean :app:distZip",
+            "candidateMode": "NATIVE_CACHE_FALLBACK",
+            "comparisons": {
+                "CACHE_OFF":
+                    "Gradle with build cache disabled versus BuildOpt native-cache fallback",
+                "NATIVE_CACHE":
+                    "Gradle native local cache versus BuildOpt native-cache fallback"
+            }
         }) and
     (.repositories | type == "array" and length == 2) and
     ([.repositories[] | [.nameWithOwner, .dsl]] | sort) == [

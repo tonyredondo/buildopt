@@ -54,6 +54,7 @@ buildopt_runtime="${buildopt_runtime_dir}/runtime-input.json"
 export BUILDOPT_BENCHMARK_GRADLE_SEED_HOME=${GRADLE_USER_HOME:-}
 
 BUILDOPT_CACHE_BENCHMARK_PROFILE=OPTIMIZED_NATIVE \
+BUILDOPT_CACHE_BENCHMARK_SAFE_CACHE=0 \
 BUILDOPT_BENCHMARK_RUNNER_FILE="${buildopt_runner}" \
 BUILDOPT_KOTLIN_BENCHMARK_REVISION="${buildopt_kotlin_revision}" \
 BUILDOPT_GROOVY_BENCHMARK_REVISION="${buildopt_groovy_revision}" \
@@ -157,9 +158,9 @@ jq -n \
             percentagesAddedAcrossMechanisms: false
         },
         safeCache: {
-            classification:
-                (if $cachePass then "PARITY_ONLY"
-                 else "REGRESSION_REQUIRES_ACTION" end),
+            classification: "NO_VALUE_NO_ACTION",
+            activation: "EXPLICIT_ONLY",
+            defaultPath: "NATIVE_GRADLE_CACHE",
             maximumRegressionRatio: 0.02,
             kotlin: $kotlinCache,
             groovy: $groovyCache

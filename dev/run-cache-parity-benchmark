@@ -13,6 +13,7 @@ benchmark_kotlin=$4
 benchmark_groovy=$5
 benchmark_profile=${BUILDOPT_CACHE_BENCHMARK_PROFILE:-LEGACY}
 benchmark_runner_file=${BUILDOPT_BENCHMARK_RUNNER_FILE:-}
+benchmark_safe_cache=${BUILDOPT_CACHE_BENCHMARK_SAFE_CACHE:-1}
 
 case "${benchmark_profile}" in
     LEGACY | OPTIMIZED_NATIVE) ;;
@@ -21,6 +22,10 @@ case "${benchmark_profile}" in
         exit 64
         ;;
 esac
+if [[ ! "${benchmark_safe_cache}" =~ ^[01]$ ]]; then
+    printf 'BUILDOPT_CACHE_BENCHMARK_SAFE_CACHE must be 0 or 1\n' >&2
+    exit 64
+fi
 if [[ -n "${benchmark_runner_file}" && ! -f "${benchmark_runner_file}" ]]; then
     printf 'cache benchmark runner observation is unavailable: %s\n' \
         "${benchmark_runner_file}" >&2
@@ -137,6 +142,7 @@ benchmark_run_arm() {
             benchmark_arguments+=(--build-cache)
             ;;
         BUILDOPT)
+            benchmark_environment+=("BUILDOPT_SAFE_CACHE=${benchmark_safe_cache}")
             ;;
         *)
             printf 'unknown benchmark arm: %s\n' "${benchmark_arm}" >&2
@@ -404,6 +410,7 @@ jq -s \
     --arg profile "${benchmark_profile}" \
     --arg daemonPolicy "${benchmark_daemon_policy}" \
     --arg publicCommand "${benchmark_public_command}" \
+    --arg safeCache "${benchmark_safe_cache}" \
     --argjson runnerCpuCount "${benchmark_cpu_count}" \
     --argjson runnerMemoryBytes "${benchmark_memory_bytes}" \
     --argjson qualifiedGoldenRunner "${benchmark_qualified}" \
@@ -452,6 +459,14 @@ jq -s \
             profile: $profile,
             nativeControlCommand:
                 "./gradlew --parallel --configuration-cache --build-cache clean :app:distZip"
+        } else {} end + if $safeCache == "0" then {
+            candidateMode: "NATIVE_CACHE_FALLBACK",
+            comparisons: {
+                CACHE_OFF:
+                    "Gradle with build cache disabled versus BuildOpt native-cache fallback",
+                NATIVE_CACHE:
+                    "Gradle native local cache versus BuildOpt native-cache fallback"
+            }
         } else {} end),
         repositories:
             (group_by(.repository) |

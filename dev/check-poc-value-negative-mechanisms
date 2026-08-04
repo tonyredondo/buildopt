@@ -102,7 +102,9 @@ jq -e \
     cache_result(.safeCache.kotlin; "KOTLIN") and
     cache_result(.safeCache.groovy; "GROOVY") and
     .safeCache.maximumRegressionRatio == 0.02 and
-    .safeCache.classification == "PARITY_ONLY" and
+    .safeCache.classification == "NO_VALUE_NO_ACTION" and
+    .safeCache.activation == "EXPLICIT_ONLY" and
+    .safeCache.defaultPath == "NATIVE_GRADLE_CACHE" and
     .safeCache.kotlin.meanReductionRatio >= -0.02 and
     .safeCache.groovy.meanReductionRatio >= -0.02 and
     (.runtimeTuning.observations) as $runtimeRows |
