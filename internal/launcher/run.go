@@ -75,6 +75,10 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		return childWaitExitCode(childArgs[0], execution.err, stderr)
 	}
 	if gradleNativeOnly {
+		if nativeGradleProcessReplacementSupported(stdin, stdout, stderr) {
+			err := replaceWithNativeGradleProcess(childArgs, gradleEnvironment)
+			return launchErrorExitCode(childArgs[0], err, stderr)
+		}
 		execution := executeChild(
 			childArgs,
 			gradleEnvironment,
