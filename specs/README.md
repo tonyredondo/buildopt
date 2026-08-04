@@ -9,6 +9,7 @@ the exact cross-component contract.
 
 | Specification | Owning item |
 |---|---|
+| [`poc-breadth-validation-v1.md`](./poc-breadth-validation-v1.md) and [`poc-breadth-validation-v1.json`](./poc-breadth-validation-v1.json) | `POC-BREADTH-001` / `POC-BREADTH-G01` |
 | [`poc-value-validation-v1.md`](./poc-value-validation-v1.md) and [`poc-value-validation-v1.json`](./poc-value-validation-v1.json) | `POC-VALUE-001..004` / `POC-VALUE-G01` |
 | [`ci-orchestration-v1.md`](./ci-orchestration-v1.md) | `F0-030` |
 | [`gradle-correlation-v1.md`](./gradle-correlation-v1.md) | `SPK-001` / `GRADLE-CORR-001` |

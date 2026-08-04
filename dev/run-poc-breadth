@@ -1,0 +1,456 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 3)); then
+    printf 'usage: %s OUTPUT_FILE BUILDOPT_REVISION INSTALL_PREFIX\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_revision=$2
+buildopt_prefix=$3
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_fixture="${buildopt_repo_root}/fixtures/poc-breadth/realistic-multimodule"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
+    ! "${buildopt_revision}" =~ ^[0-9a-f]{40}$ || "${buildopt_prefix}" != /* ]]; then
+    printf 'invalid POC-BREADTH-001 input\n' >&2
+    exit 64
+fi
+for buildopt_command in awk chmod cp date env find grep jq ln mkdir mktemp rm sed sha256sum sort; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC-BREADTH-001 command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+for buildopt_file in \
+    "${buildopt_prefix}/bin/buildopt" \
+    "${buildopt_prefix}/bin/buildopt-impact" \
+    "${buildopt_prefix}/share/buildopt/buildopt.init.gradle" \
+    "${buildopt_prefix}/share/buildopt/buildopt-gradle-plugin.jar"; do
+    [[ -s "${buildopt_file}" ]] || {
+        printf 'installed POC-BREADTH-001 artifact is unavailable: %s\n' \
+            "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-poc-breadth-001.XXXXXX")
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-poc-breadth-001."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_raw="${buildopt_root}/observations.jsonl"
+buildopt_runner="${buildopt_root}/runner.json"
+"${buildopt_script_dir}/capture-golden-runner" "${buildopt_runner}"
+
+buildopt_fixture_sha=$(
+    cd -- "${buildopt_fixture}"
+    while IFS= read -r buildopt_file; do
+        printf '%s  %s\n' "$(sha256sum "${buildopt_file}" | awk '{print $1}')" "${buildopt_file}"
+    done < <(find . -type f -not -path './.gradle/*' -not -path '*/build/*' -print | sort)
+    )
+buildopt_fixture_sha=$(printf '%s\n' "${buildopt_fixture_sha}" | sha256sum | awk '{print $1}')
+
+buildopt_distribution_home=${GRADLE_USER_HOME:-"${HOME}/.gradle"}
+if [[ ! -d "${buildopt_distribution_home}/wrapper/dists/gradle-9.6.1-bin" ]]; then
+    printf 'locked Gradle 9.6.1 distribution is unavailable in %s\n' \
+        "${buildopt_distribution_home}" >&2
+    exit 1
+fi
+
+buildopt_gradle_arguments=(
+    --offline
+    --parallel
+    --configuration-cache
+    --build-cache
+    --console=plain
+    --warning-mode=fail
+)
+if [[ -n "${BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS:-}" ]]; then
+    buildopt_gradle_arguments+=(
+        "-Dorg.gradle.java.installations.paths=${BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS}"
+    )
+fi
+
+buildopt_seed_gradle_home() {
+    local buildopt_home=$1
+    if [[ ! -e "${buildopt_home}/wrapper/dists" ]]; then
+        mkdir -p -- "${buildopt_home}/wrapper"
+        ln -s -- "${buildopt_distribution_home}/wrapper/dists" \
+            "${buildopt_home}/wrapper/dists"
+    fi
+}
+
+buildopt_prepare_workspace() {
+    local buildopt_workspace=$1 buildopt_dsl=$2
+    mkdir -p -- "${buildopt_workspace}"
+    cp -R -- "${buildopt_fixture}/." "${buildopt_workspace}/"
+    rm -rf -- "${buildopt_workspace}/.gradle" "${buildopt_workspace}/build" \
+        "${buildopt_workspace}/buildSrc/build"
+    if [[ "${buildopt_dsl}" == KOTLIN ]]; then
+        rm -f -- "${buildopt_workspace}/settings.gradle" \
+            "${buildopt_workspace}/build.gradle"
+    else
+        rm -f -- "${buildopt_workspace}/settings.gradle.kts" \
+            "${buildopt_workspace}/build.gradle.kts"
+    fi
+    cp -- "${buildopt_repo_root}/gradlew" "${buildopt_workspace}/gradlew"
+    chmod 0755 "${buildopt_workspace}/gradlew"
+    mkdir -p -- "${buildopt_workspace}/gradle/wrapper"
+    cp -- "${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.jar" \
+        "${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.properties" \
+        "${buildopt_workspace}/gradle/wrapper/"
+}
+
+buildopt_mutate_workspace() {
+    local buildopt_workspace=$1 buildopt_dsl=$2 buildopt_scenario=$3 buildopt_pair=$4
+    case "${buildopt_scenario}" in
+        NO_CHANGE) ;;
+        LEAF_CHANGE)
+            sed -i -E \
+                "s/return \"api-[^\"]*\" \+ SharedValue.value\(\);/return \"api-pair-${buildopt_pair}-\" + SharedValue.value();/" \
+                "${buildopt_workspace}/service-api/src/main/java/dev/buildopt/breadth/ServiceApi.java"
+            ;;
+        SHARED_CHANGE)
+            sed -i -E \
+                "s/return \"shared-[^\"]*\" \+ PlatformCore.platform\(\);/return \"shared-pair-${buildopt_pair}-\" + PlatformCore.platform();/" \
+                "${buildopt_workspace}/shared-lib/src/main/java/dev/buildopt/breadth/SharedValue.java"
+            ;;
+        BUILD_LOGIC_CHANGE)
+            if [[ "${buildopt_dsl}" == KOTLIN ]]; then
+                printf '\n// breadth-pair-%s\n' "${buildopt_pair}" >>"${buildopt_workspace}/build.gradle.kts"
+            else
+                printf '\n// breadth-pair-%s\n' "${buildopt_pair}" >>"${buildopt_workspace}/build.gradle"
+            fi
+            ;;
+        *)
+            printf 'unknown POC breadth scenario: %s\n' "${buildopt_scenario}" >&2
+            exit 1
+            ;;
+    esac
+}
+
+buildopt_hash_files() {
+    local buildopt_file
+    for buildopt_file in "$@"; do
+        [[ -s "${buildopt_file}" ]] || {
+            printf 'required POC breadth output is unavailable: %s\n' "${buildopt_file}" >&2
+            exit 1
+        }
+        sha256sum "${buildopt_file}" | awk '{print $1}'
+    done | sha256sum | awk '{print $1}'
+}
+
+buildopt_duration_ms=0
+buildopt_output_sha=
+buildopt_executed_verifications=0
+buildopt_configuration_cache_reused=false
+
+buildopt_run_arm() {
+    local buildopt_workspace=$1 buildopt_home=$2 buildopt_arm=$3
+    local buildopt_scenario=$4 buildopt_log=$5
+    local -a buildopt_tasks=(assemble testOwnedCheck)
+    if [[ "${buildopt_arm}" == CANDIDATE ]]; then
+        case "${buildopt_scenario}" in
+            LEAF_CHANGE) buildopt_tasks=(:service-api:assemble testOwnedCheck) ;;
+            SHARED_CHANGE) buildopt_tasks=(:service-api:assemble :service-worker:assemble testOwnedCheck) ;;
+        esac
+    fi
+    buildopt_seed_gradle_home "${buildopt_home}"
+    local buildopt_started buildopt_finished buildopt_status
+    buildopt_started=$(date +%s%N)
+    set +e
+    if [[ "${buildopt_arm}" == CONTROL ]]; then
+        (
+            cd -- "${buildopt_workspace}"
+            env GRADLE_USER_HOME="${buildopt_home}" \
+                ./gradlew "${buildopt_gradle_arguments[@]}" "${buildopt_tasks[@]}"
+        ) >"${buildopt_log}" 2>&1
+    else
+        (
+            cd -- "${buildopt_workspace}"
+            env -u BUILDOPT_SAFE_CACHE -u BUILDOPT_RUNTIME_PROFILE \
+                GRADLE_USER_HOME="${buildopt_home}" \
+                XDG_CACHE_HOME="${buildopt_home}/buildopt-user-cache" \
+                "${buildopt_prefix}/bin/buildopt" gradle \
+                "${buildopt_gradle_arguments[@]}" "${buildopt_tasks[@]}"
+        ) >"${buildopt_log}" 2>&1
+    fi
+    buildopt_status=$?
+    set -e
+    buildopt_finished=$(date +%s%N)
+    if ((buildopt_status != 0)); then
+        sed -n '1,240p' "${buildopt_log}" >&2
+        printf 'POC breadth %s/%s arm failed\n' "${buildopt_scenario}" "${buildopt_arm}" >&2
+        exit 1
+    fi
+    buildopt_duration_ms=$(((buildopt_finished - buildopt_started) / 1000000))
+    buildopt_executed_verifications=$(grep -Ec '^> Task :[^:]+:pocVerify$' "${buildopt_log}" || true)
+    buildopt_configuration_cache_reused=false
+    if grep -Fq 'Reusing configuration cache.' "${buildopt_log}"; then
+        buildopt_configuration_cache_reused=true
+    fi
+
+    case "${buildopt_scenario}" in
+        LEAF_CHANGE)
+            buildopt_output_sha=$(buildopt_hash_files \
+                "${buildopt_workspace}/service-api/build/libs/service-api-1.0.jar" \
+                "${buildopt_workspace}/service-api/build/poc-breadth/verification.txt" \
+                "${buildopt_workspace}/build/test-owned/check.txt")
+            ;;
+        SHARED_CHANGE)
+            buildopt_output_sha=$(buildopt_hash_files \
+                "${buildopt_workspace}/service-api/build/libs/service-api-1.0.jar" \
+                "${buildopt_workspace}/service-worker/build/libs/service-worker-1.0.jar" \
+                "${buildopt_workspace}/service-api/build/poc-breadth/verification.txt" \
+                "${buildopt_workspace}/service-worker/build/poc-breadth/verification.txt" \
+                "${buildopt_workspace}/build/test-owned/check.txt")
+            ;;
+        *)
+            buildopt_output_sha=$(buildopt_hash_files \
+                "${buildopt_workspace}/platform-core/build/libs/platform-core-1.0.jar" \
+                "${buildopt_workspace}/shared-lib/build/libs/shared-lib-1.0.jar" \
+                "${buildopt_workspace}/service-api/build/libs/service-api-1.0.jar" \
+                "${buildopt_workspace}/service-worker/build/libs/service-worker-1.0.jar" \
+                "${buildopt_workspace}/developer-tool/build/libs/developer-tool-1.0.jar" \
+                "${buildopt_workspace}/platform-core/build/poc-breadth/verification.txt" \
+                "${buildopt_workspace}/shared-lib/build/poc-breadth/verification.txt" \
+                "${buildopt_workspace}/service-api/build/poc-breadth/verification.txt" \
+                "${buildopt_workspace}/service-worker/build/poc-breadth/verification.txt" \
+                "${buildopt_workspace}/developer-tool/build/poc-breadth/verification.txt" \
+                "${buildopt_workspace}/build/test-owned/check.txt")
+            ;;
+    esac
+}
+
+buildopt_record_pair() {
+    local buildopt_id=$1 buildopt_scenario=$2 buildopt_change=$3 buildopt_success=$4
+    local buildopt_dsl=$5 buildopt_pair=$6 buildopt_order=$7
+    local buildopt_control_ms=$8 buildopt_candidate_ms=$9
+    local buildopt_control_sha=${10} buildopt_candidate_sha=${11}
+    local buildopt_control_executed=${12} buildopt_candidate_executed=${13}
+    local buildopt_control_cc=${14} buildopt_candidate_cc=${15}
+    jq -cn \
+        --arg workloadId "${buildopt_id}" --arg scenario "${buildopt_scenario}" \
+        --arg changeClass "${buildopt_change}" --arg successClass "${buildopt_success}" \
+        --arg dsl "${buildopt_dsl}" --arg order "${buildopt_order}" \
+        --arg controlSha256 "${buildopt_control_sha}" \
+        --arg candidateSha256 "${buildopt_candidate_sha}" \
+        --argjson pair "${buildopt_pair}" \
+        --argjson controlDurationMs "${buildopt_control_ms}" \
+        --argjson candidateDurationMs "${buildopt_candidate_ms}" \
+        --argjson controlExecutedVerifications "${buildopt_control_executed}" \
+        --argjson candidateExecutedVerifications "${buildopt_candidate_executed}" \
+        --argjson controlConfigurationCacheReused "${buildopt_control_cc}" \
+        --argjson candidateConfigurationCacheReused "${buildopt_candidate_cc}" '{
+            workloadId: $workloadId,
+            scenario: $scenario,
+            changeClass: $changeClass,
+            successClass: $successClass,
+            dsl: $dsl,
+            pair: $pair,
+            order: $order,
+            controlDurationMs: $controlDurationMs,
+            candidateDurationMs: $candidateDurationMs,
+            savedMs: ($controlDurationMs - $candidateDurationMs),
+            controlOutputSha256: $controlSha256,
+            candidateOutputSha256: $candidateSha256,
+            controlExecutedVerifications: $controlExecutedVerifications,
+            candidateExecutedVerifications: $candidateExecutedVerifications,
+            controlConfigurationCacheReused: $controlConfigurationCacheReused,
+            candidateConfigurationCacheReused: $candidateConfigurationCacheReused,
+            productAttributableFailure: false
+        }' >>"${buildopt_raw}"
+}
+
+for buildopt_dsl in KOTLIN GROOVY; do
+    buildopt_dsl_lower=${buildopt_dsl,,}
+    for buildopt_scenario in NO_CHANGE LEAF_CHANGE SHARED_CHANGE BUILD_LOGIC_CHANGE; do
+        case "${buildopt_scenario}" in
+            NO_CHANGE) buildopt_change=NONE; buildopt_success=PARITY ;;
+            LEAF_CHANGE) buildopt_change=LEAF_SOURCE; buildopt_success=ACCELERATOR ;;
+            SHARED_CHANGE) buildopt_change=SHARED_SOURCE; buildopt_success=ACCELERATOR ;;
+            BUILD_LOGIC_CHANGE) buildopt_change=GLOBAL_BUILD_LOGIC; buildopt_success=PARITY ;;
+        esac
+        buildopt_slug=${buildopt_scenario,,}
+        buildopt_control="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-control"
+        buildopt_candidate="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-candidate"
+        buildopt_control_home="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-control-home"
+        buildopt_candidate_home="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-candidate-home"
+        buildopt_prepare_workspace "${buildopt_control}" "${buildopt_dsl}"
+        buildopt_prepare_workspace "${buildopt_candidate}" "${buildopt_dsl}"
+
+        buildopt_seed_gradle_home "${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-preflight-home"
+        (
+            cd -- "${buildopt_candidate}"
+            env GRADLE_USER_HOME="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-preflight-home" \
+                "${buildopt_prefix}/bin/buildopt-impact" check \
+                --repository "${buildopt_candidate}" \
+                --manifest buildopt-impact-manifest.json \
+                --repository-id tonyredondo/buildopt-poc-breadth \
+                --pipeline-class poc-breadth \
+                --graph buildopt-impact-graph.generated.json \
+                --generated-manifest buildopt-impact.generated.json \
+                --gradle-command ./gradlew >/dev/null
+        )
+
+        buildopt_run_arm "${buildopt_control}" "${buildopt_control_home}" CONTROL \
+            "${buildopt_scenario}" "${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-warm-control.log"
+        buildopt_run_arm "${buildopt_candidate}" "${buildopt_candidate_home}" CANDIDATE \
+            "${buildopt_scenario}" "${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-warm-candidate.log"
+
+        for buildopt_pair in {1..8}; do
+            buildopt_mutate_workspace "${buildopt_control}" "${buildopt_dsl}" "${buildopt_scenario}" "${buildopt_pair}"
+            buildopt_mutate_workspace "${buildopt_candidate}" "${buildopt_dsl}" "${buildopt_scenario}" "${buildopt_pair}"
+            buildopt_order=CONTROL_FIRST
+            if ((buildopt_pair % 2 == 0)); then buildopt_order=CANDIDATE_FIRST; fi
+            for buildopt_position in FIRST SECOND; do
+                buildopt_arm=CONTROL
+                if [[ ("${buildopt_order}" == CONTROL_FIRST && "${buildopt_position}" == SECOND) ||
+                    ("${buildopt_order}" == CANDIDATE_FIRST && "${buildopt_position}" == FIRST) ]]; then
+                    buildopt_arm=CANDIDATE
+                fi
+                if [[ "${buildopt_arm}" == CONTROL ]]; then
+                    buildopt_run_arm "${buildopt_control}" "${buildopt_control_home}" CONTROL \
+                        "${buildopt_scenario}" "${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-${buildopt_pair}-control.log"
+                    buildopt_control_ms=${buildopt_duration_ms}
+                    buildopt_control_sha=${buildopt_output_sha}
+                    buildopt_control_executed=${buildopt_executed_verifications}
+                    buildopt_control_cc=${buildopt_configuration_cache_reused}
+                else
+                    buildopt_run_arm "${buildopt_candidate}" "${buildopt_candidate_home}" CANDIDATE \
+                        "${buildopt_scenario}" "${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-${buildopt_pair}-candidate.log"
+                    buildopt_candidate_ms=${buildopt_duration_ms}
+                    buildopt_candidate_sha=${buildopt_output_sha}
+                    buildopt_candidate_executed=${buildopt_executed_verifications}
+                    buildopt_candidate_cc=${buildopt_configuration_cache_reused}
+                fi
+            done
+            buildopt_record_pair "BREADTH_${buildopt_scenario}_${buildopt_dsl}" \
+                "${buildopt_scenario}" "${buildopt_change}" "${buildopt_success}" \
+                "${buildopt_dsl}" "${buildopt_pair}" "${buildopt_order}" \
+                "${buildopt_control_ms}" "${buildopt_candidate_ms}" \
+                "${buildopt_control_sha}" "${buildopt_candidate_sha}" \
+                "${buildopt_control_executed}" "${buildopt_candidate_executed}" \
+                "${buildopt_control_cc}" "${buildopt_candidate_cc}"
+            printf 'POC-BREADTH-001 %s/%s pair %d saved %dms\n' \
+                "${buildopt_scenario}" "${buildopt_dsl}" "${buildopt_pair}" \
+                "$((buildopt_control_ms - buildopt_candidate_ms))"
+        done
+    done
+done
+
+buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+buildopt_binary_sha=$(sha256sum "${buildopt_prefix}/bin/buildopt" | awk '{print $1}')
+buildopt_impact_sha=$(sha256sum "${buildopt_prefix}/bin/buildopt-impact" | awk '{print $1}')
+buildopt_plugin_sha=$(sha256sum "${buildopt_prefix}/share/buildopt/buildopt-gradle-plugin.jar" | awk '{print $1}')
+
+jq -s \
+    --arg capturedAt "${buildopt_captured_at}" \
+    --arg buildoptRevision "${buildopt_revision}" \
+    --arg fixtureSha256 "${buildopt_fixture_sha}" \
+    --arg buildoptSha256 "${buildopt_binary_sha}" \
+    --arg buildoptImpactSha256 "${buildopt_impact_sha}" \
+    --arg pluginSha256 "${buildopt_plugin_sha}" \
+    --slurpfile runner "${buildopt_runner}" '
+    def bootstrap_mean($rows; $sample):
+        reduce range(0; 8) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $rows[((.state / 536870912) | floor)].savedMs) |
+        .sum / 8;
+    def bootstrap95($rows):
+        ([range(0; 4096) as $sample | bootstrap_mean($rows; $sample)] | sort) as $values |
+        [$values[102], $values[3993]];
+    group_by(.workloadId) |
+    map(. as $rows |
+        (($rows | map(.savedMs) | add) / 8) as $meanSaved |
+        (($rows | map(.controlDurationMs) | add) / 8) as $controlMean |
+        (($rows | map(.candidateDurationMs) | add) / 8) as $candidateMean |
+        ($meanSaved / $controlMean) as $ratio |
+        (bootstrap95($rows)) as $interval |
+        ($rows | all(.controlOutputSha256 == .candidateOutputSha256)) as $outputsIdentical |
+        ($rows | map(select(.productAttributableFailure)) | length) as $failures |
+        (if $rows[0].scenario == "LEAF_CHANGE" then 1
+         elif $rows[0].scenario == "SHARED_CHANGE" then 2
+         else 5 end) as $expectedCandidateVerifications |
+        ($rows | all(.controlExecutedVerifications == 5 and
+                     .candidateExecutedVerifications == $expectedCandidateVerifications)) as $executionShapeValid |
+        ($rows | all(if .scenario == "BUILD_LOGIC_CHANGE" then
+                         (.controlConfigurationCacheReused == false and
+                          .candidateConfigurationCacheReused == false)
+                     else
+                         (.controlConfigurationCacheReused == true and
+                          .candidateConfigurationCacheReused == true)
+                     end)) as $configurationCacheValid |
+        ($outputsIdentical and $failures == 0 and $executionShapeValid and
+         $configurationCacheValid and
+         (($rows[0].successClass == "ACCELERATOR" and $meanSaved >= 500 and
+           $ratio >= 0.02 and $interval[0] > 0) or
+          ($rows[0].successClass == "PARITY" and $ratio >= -0.02))) as $qualified |
+        {
+            id: $rows[0].workloadId,
+            scenario: $rows[0].scenario,
+            changeClass: $rows[0].changeClass,
+            successClass: $rows[0].successClass,
+            dsl: $rows[0].dsl,
+            classification: (if $qualified then
+                (if $rows[0].successClass == "ACCELERATOR" then "THRESHOLD_MET" else "PARITY_GUARDRAIL_MET" end)
+                else "BREADTH_GATE_FAILED" end),
+            result: {
+                pairs: 8,
+                controlMeanMs: $controlMean,
+                candidateMeanMs: $candidateMean,
+                meanSavedMs: $meanSaved,
+                meanReductionRatio: $ratio,
+                interval95SavedMs: $interval,
+                positivePairs: ($rows | map(select(.savedMs > 0)) | length),
+                requiredOutputsIdentical: $outputsIdentical,
+                productAttributableFailures: $failures,
+                executionShapeValid: $executionShapeValid,
+                configurationCacheValid: $configurationCacheValid,
+                observations: $rows
+            }
+        }) as $workloads |
+    ($workloads | all(.classification != "BREADTH_GATE_FAILED")) as $allQualified |
+    {
+        schemaVersion: "buildopt.evidence/poc-breadth/v1",
+        capturedAt: $capturedAt,
+        buildoptRevision: $buildoptRevision,
+        runner: $runner[0],
+        publicArtifacts: {
+            buildoptSha256: $buildoptSha256,
+            buildoptImpactSha256: $buildoptImpactSha256,
+            gradlePluginSha256: $pluginSha256
+        },
+        methodology: {
+            purpose: "TEST_VALUE_GENERALIZATION_ACROSS_CHANGE_CLASSES",
+            pairsPerCell: 8,
+            pairOrder: "PAIRED_ALTERNATING",
+            confidenceInterval: "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
+            nativeControl: {buildCache: true, configurationCache: true, parallelism: true, daemon: true},
+            candidateEntryPoints: ["INSTALLED_BUILDOPT_IMPACT_CHECK", "INSTALLED_BUILDOPT_GRADLE"],
+            acceleratorThreshold: {minimumSavedMs: 500, minimumReductionRatio: 0.02, positiveLower95Bound: true},
+            parityGuardrail: {maximumRegressionRatio: 0.02},
+            percentagesAddedAcrossScenarios: false
+        },
+        fixture: {id: "REALISTIC_MULTIMODULE_V1", sha256: $fixtureSha256},
+        workloads: $workloads,
+        decision: {
+            verdict: (if $allQualified then "BROADEN_SYNTHETIC_CLAIM" else "RETAIN_QUALIFIED_SYNTHETIC_WORKLOADS_ONLY" end),
+            breadthProven: $allQualified,
+            qualifyingCells: ($workloads | map(select(.classification != "BREADTH_GATE_FAILED")) | length),
+            requiredCells: 8
+        },
+        gate: {id: "POC-BREADTH-001", state: (if $allQualified then "PASSED" else "FAILED" end)},
+        boundaries: {ownerControlledSyntheticWorkloads: true, universalSavingsClaimed: false, productionReadinessClaimed: false, eightHourSoakExecuted: false, externalDesignPartnerRequired: false, testOptimizationModified: false}
+    }' "${buildopt_raw}" >"${buildopt_output}"
+chmod 0600 "${buildopt_output}"
+
+printf 'BuildOpt POC-BREADTH-001 evidence written to %s\n' "${buildopt_output}"

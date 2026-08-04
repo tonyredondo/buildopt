@@ -1,0 +1,57 @@
+import dev.buildopt.breadth.VerificationWork
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.api.tasks.compile.JavaCompile
+
+plugins {
+    id 'base'
+}
+
+subprojects {
+    group = 'dev.buildopt.breadth'
+    version = '1.0'
+    apply plugin: 'java-library'
+
+    tasks.withType(JavaCompile).configureEach {
+        options.release = 17
+    }
+    tasks.withType(AbstractArchiveTask).configureEach {
+        preserveFileTimestamps = false
+        reproducibleFileOrder = true
+    }
+    tasks.register('pocVerify', VerificationWork) {
+        dependsOn 'classes'
+        label.set(project.path)
+        rounds.set(5_000_000)
+        outputFile.set(layout.buildDirectory.file('poc-breadth/verification.txt'))
+    }
+    tasks.named('assemble') {
+        dependsOn 'pocVerify'
+    }
+}
+
+project(':shared-lib') {
+    dependencies { api project(':platform-core') }
+}
+project(':service-api') {
+    dependencies { implementation project(':shared-lib') }
+}
+project(':service-worker') {
+    dependencies { implementation project(':shared-lib') }
+}
+project(':developer-tool') {
+    dependencies { implementation project(':platform-core') }
+}
+
+tasks.named('assemble') {
+    dependsOn ':service-api:assemble', ':service-worker:assemble', ':developer-tool:assemble'
+}
+
+tasks.register('testOwnedCheck') {
+    def marker = layout.buildDirectory.file('test-owned/check.txt')
+    outputs.file(marker)
+    doLast {
+        def file = marker.get().asFile
+        file.parentFile.mkdirs()
+        file.text = 'poc-breadth-tests-passed\n'
+    }
+}

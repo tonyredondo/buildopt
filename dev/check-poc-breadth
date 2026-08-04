@@ -1,0 +1,187 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-breadth-v1.json"}
+buildopt_contract="${buildopt_repo_root}/specs/poc-breadth-validation-v1.json"
+buildopt_runner_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+buildopt_fixture="${buildopt_repo_root}/fixtures/poc-breadth/realistic-multimodule"
+
+for buildopt_command in awk find git jq sha256sum sort; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC-BREADTH-001 command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+for buildopt_file in "${buildopt_result}" "${buildopt_contract}" "${buildopt_runner_spec}"; do
+    [[ -f "${buildopt_file}" ]] || {
+        printf 'required POC-BREADTH-001 file is unavailable: %s\n' \
+            "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_before_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_fixture_sha=$(
+    cd -- "${buildopt_fixture}"
+    while IFS= read -r buildopt_file; do
+        printf '%s  %s\n' "$(sha256sum "${buildopt_file}" | awk '{print $1}')" "${buildopt_file}"
+    done < <(find . -type f -not -path './.gradle/*' -not -path '*/build/*' -print | sort)
+)
+buildopt_fixture_sha=$(printf '%s\n' "${buildopt_fixture_sha}" | sha256sum | awk '{print $1}')
+buildopt_runner_spec_sha=$(sha256sum "${buildopt_runner_spec}" | awk '{print $1}')
+buildopt_platform_digest=$(jq -er '.container.platformDigest' "${buildopt_runner_spec}")
+
+jq -e \
+    --arg fixtureSha256 "${buildopt_fixture_sha}" \
+    --arg runnerSpecSha256 "${buildopt_runner_spec_sha}" \
+    --arg platformDigest "${buildopt_platform_digest}" '
+    def digest: type == "string" and test("^[0-9a-f]{64}$");
+    def revision: type == "string" and test("^[0-9a-f]{40}$");
+    def bootstrap_mean($rows; $sample):
+        reduce range(0; 8) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $rows[((.state / 536870912) | floor)].savedMs) |
+        .sum / 8;
+    def bootstrap95($rows):
+        ([range(0; 4096) as $sample | bootstrap_mean($rows; $sample)] | sort) as $values |
+        [$values[102], $values[3993]];
+    def expected_candidate($scenario):
+        if $scenario == "LEAF_CHANGE" then 1
+        elif $scenario == "SHARED_CHANGE" then 2
+        else 5 end;
+    def expected_change($scenario):
+        if $scenario == "NO_CHANGE" then "NONE"
+        elif $scenario == "LEAF_CHANGE" then "LEAF_SOURCE"
+        elif $scenario == "SHARED_CHANGE" then "SHARED_SOURCE"
+        else "GLOBAL_BUILD_LOGIC" end;
+    def expected_class($scenario):
+        if $scenario == "LEAF_CHANGE" or $scenario == "SHARED_CHANGE"
+        then "ACCELERATOR" else "PARITY" end;
+    def observations($rows; $id; $scenario; $dsl):
+        ($rows | type == "array" and length == 8) and
+        ([$rows[].pair] | sort) == [1, 2, 3, 4, 5, 6, 7, 8] and
+        all($rows[];
+            keys == ["candidateConfigurationCacheReused", "candidateDurationMs", "candidateExecutedVerifications", "candidateOutputSha256", "changeClass", "controlConfigurationCacheReused", "controlDurationMs", "controlExecutedVerifications", "controlOutputSha256", "dsl", "order", "pair", "productAttributableFailure", "savedMs", "scenario", "successClass", "workloadId"] and
+            .workloadId == $id and .scenario == $scenario and .dsl == $dsl and
+            .changeClass == expected_change($scenario) and
+            .successClass == expected_class($scenario) and
+            .controlDurationMs > 0 and .candidateDurationMs > 0 and
+            .savedMs == (.controlDurationMs - .candidateDurationMs) and
+            (.controlOutputSha256 | digest) and (.candidateOutputSha256 | digest) and
+            .controlOutputSha256 == .candidateOutputSha256 and
+            .controlExecutedVerifications == 5 and
+            .candidateExecutedVerifications == expected_candidate($scenario) and
+            (if $scenario == "BUILD_LOGIC_CHANGE" then
+                 .controlConfigurationCacheReused == false and
+                 .candidateConfigurationCacheReused == false
+             else
+                 .controlConfigurationCacheReused == true and
+                 .candidateConfigurationCacheReused == true
+             end) and
+            .productAttributableFailure == false and
+            (if (.pair % 2) == 1 then .order == "CONTROL_FIRST"
+             else .order == "CANDIDATE_FIRST" end));
+    def workload($value; $scenario; $dsl):
+        ("BREADTH_" + $scenario + "_" + $dsl) as $id |
+        $value.id == $id and $value.scenario == $scenario and
+        $value.changeClass == expected_change($scenario) and
+        $value.successClass == expected_class($scenario) and $value.dsl == $dsl and
+        observations($value.result.observations; $id; $scenario; $dsl) and
+        ($value.result.observations) as $rows |
+        (($rows | map(.savedMs) | add) / 8) as $meanSaved |
+        (($rows | map(.controlDurationMs) | add) / 8) as $controlMean |
+        (($rows | map(.candidateDurationMs) | add) / 8) as $candidateMean |
+        ($meanSaved / $controlMean) as $ratio |
+        (bootstrap95($rows)) as $interval |
+        ((expected_class($scenario) == "ACCELERATOR" and $meanSaved >= 500 and
+          $ratio >= 0.02 and $interval[0] > 0) or
+         (expected_class($scenario) == "PARITY" and $ratio >= -0.02)) as $timeQualified |
+        $value.result == {
+            pairs: 8,
+            controlMeanMs: $controlMean,
+            candidateMeanMs: $candidateMean,
+            meanSavedMs: $meanSaved,
+            meanReductionRatio: $ratio,
+            interval95SavedMs: $interval,
+            positivePairs: ($rows | map(select(.savedMs > 0)) | length),
+            requiredOutputsIdentical: true,
+            productAttributableFailures: 0,
+            executionShapeValid: true,
+            configurationCacheValid: true,
+            observations: $rows
+        } and
+        $value.classification == (if $timeQualified then
+            (if expected_class($scenario) == "ACCELERATOR" then "THRESHOLD_MET"
+             else "PARITY_GUARDRAIL_MET" end)
+            else "BREADTH_GATE_FAILED" end);
+    keys == ["boundaries", "buildoptRevision", "capturedAt", "decision", "fixture", "gate", "methodology", "publicArtifacts", "runner", "schemaVersion", "workloads"] and
+    .schemaVersion == "buildopt.evidence/poc-breadth/v1" and
+    (.capturedAt | type == "string" and test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$")) and
+    (.buildoptRevision | revision) and
+    (.publicArtifacts.buildoptSha256 | digest) and
+    (.publicArtifacts.buildoptImpactSha256 | digest) and
+    (.publicArtifacts.gradlePluginSha256 | digest) and
+    .runner.schemaVersion == "buildopt.evidence/golden-runner-observation/v1" and
+    .runner.id == "linux-amd64-4c-16g-v1" and
+    .runner.operatingSystem == "Linux" and .runner.architecture == "x86_64" and
+    .runner.cpuCount == 4 and .runner.memoryBytes == 17179869184 and
+    .runner.qualifiedGoldenRunner == true and
+    .runner.runnerSpecSha256 == $runnerSpecSha256 and
+    .runner.containerPlatformDigest == $platformDigest and
+    .runner.cgroup.cpuMax == "400000 100000" and
+    .runner.cgroup.memoryMax == "17179869184" and
+    .methodology == {
+        purpose: "TEST_VALUE_GENERALIZATION_ACROSS_CHANGE_CLASSES",
+        pairsPerCell: 8,
+        pairOrder: "PAIRED_ALTERNATING",
+        confidenceInterval: "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
+        nativeControl: {buildCache: true, configurationCache: true, parallelism: true, daemon: true},
+        candidateEntryPoints: ["INSTALLED_BUILDOPT_IMPACT_CHECK", "INSTALLED_BUILDOPT_GRADLE"],
+        acceleratorThreshold: {minimumSavedMs: 500, minimumReductionRatio: 0.02, positiveLower95Bound: true},
+        parityGuardrail: {maximumRegressionRatio: 0.02},
+        percentagesAddedAcrossScenarios: false
+    } and
+    .fixture == {id: "REALISTIC_MULTIMODULE_V1", sha256: $fixtureSha256} and
+    (.workloads | type == "array" and length == 8) and
+    ([.workloads[].id] | unique | length) == 8 and
+    workload((.workloads[] | select(.id == "BREADTH_NO_CHANGE_KOTLIN")); "NO_CHANGE"; "KOTLIN") and
+    workload((.workloads[] | select(.id == "BREADTH_NO_CHANGE_GROOVY")); "NO_CHANGE"; "GROOVY") and
+    workload((.workloads[] | select(.id == "BREADTH_LEAF_CHANGE_KOTLIN")); "LEAF_CHANGE"; "KOTLIN") and
+    workload((.workloads[] | select(.id == "BREADTH_LEAF_CHANGE_GROOVY")); "LEAF_CHANGE"; "GROOVY") and
+    workload((.workloads[] | select(.id == "BREADTH_SHARED_CHANGE_KOTLIN")); "SHARED_CHANGE"; "KOTLIN") and
+    workload((.workloads[] | select(.id == "BREADTH_SHARED_CHANGE_GROOVY")); "SHARED_CHANGE"; "GROOVY") and
+    workload((.workloads[] | select(.id == "BREADTH_BUILD_LOGIC_CHANGE_KOTLIN")); "BUILD_LOGIC_CHANGE"; "KOTLIN") and
+    workload((.workloads[] | select(.id == "BREADTH_BUILD_LOGIC_CHANGE_GROOVY")); "BUILD_LOGIC_CHANGE"; "GROOVY") and
+    .workloads as $workloads |
+    ($workloads | all(.classification != "BREADTH_GATE_FAILED")) as $allQualified |
+    .decision == {
+        verdict: (if $allQualified then "BROADEN_SYNTHETIC_CLAIM" else "RETAIN_QUALIFIED_SYNTHETIC_WORKLOADS_ONLY" end),
+        breadthProven: $allQualified,
+        qualifyingCells: ($workloads | map(select(.classification != "BREADTH_GATE_FAILED")) | length),
+        requiredCells: 8
+    } and
+    .gate == {id: "POC-BREADTH-001", state: (if $allQualified then "PASSED" else "FAILED" end)} and
+    .boundaries == {ownerControlledSyntheticWorkloads: true, universalSavingsClaimed: false, productionReadinessClaimed: false, eightHourSoakExecuted: false, externalDesignPartnerRequired: false, testOptimizationModified: false}
+    ' "${buildopt_result}" >/dev/null
+
+buildopt_revision=$(jq -er '.buildoptRevision' "${buildopt_result}")
+if git -C "${buildopt_repo_root}" cat-file -e "${buildopt_revision}^{commit}" 2>/dev/null; then
+    git -C "${buildopt_repo_root}" merge-base --is-ancestor "${buildopt_revision}" HEAD
+fi
+
+buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before_status}" != "${buildopt_after_status}" ]]; then
+    printf 'POC-BREADTH-001 validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'BuildOpt POC-BREADTH-001 evidence OK: %s\n' "${buildopt_result}"

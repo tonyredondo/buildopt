@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.build-impact/generated-manifest/v1",
+  "repositoryId": "tonyredondo/buildopt-poc-breadth",
+  "pipelineClass": "poc-breadth",
+  "manifestDigest": "sha256:568325af7a3eedc83b116a826488ac35013cb6b479bb97adf131ae04c4bf2802",
+  "graphDigest": "sha256:8ed94e9a1e72b29f7b96d868ec940bb65258989cf1fabe4133fe4d6462dc54a8",
+  "discoveryDigest": "sha256:e7195a9302549499a55d39849d68db2b7bc4b04ab76c7f68710074cbd9d0945e",
+  "adapterVersion": "gradle-runtime-v1",
+  "gradleVersion": "9.6.1",
+  "complete": true,
+  "fallbackReasons": []
+}

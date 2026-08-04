@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "buildopt.specs/poc-breadth-validation/v1",
+  "workItem": "POC-BREADTH-001",
+  "decision": "BROADEN_OR_RETAIN_SYNTHETIC_CLAIM",
+  "runner": "linux-amd64-4c-16g-v1",
+  "methodology": {
+    "pairsPerCell": 8,
+    "order": "PAIRED_ALTERNATING",
+    "dslCoverage": ["KOTLIN", "GROOVY"],
+    "nativeControl": {
+      "buildCache": true,
+      "configurationCacheWhenCompatible": true,
+      "parallelism": true,
+      "daemon": true
+    }
+  },
+  "scenarios": [
+    {
+      "id": "NO_CHANGE",
+      "changeClass": "NONE",
+      "candidatePolicy": "FULL_GRAPH",
+      "successClass": "PARITY",
+      "maximumRegressionRatio": 0.02
+    },
+    {
+      "id": "LEAF_CHANGE",
+      "changeClass": "LEAF_SOURCE",
+      "candidatePolicy": "SELECT_SERVICE_API",
+      "successClass": "ACCELERATOR",
+      "minimumSavedMs": 500,
+      "minimumReductionRatio": 0.02,
+      "positiveLower95Bound": true
+    },
+    {
+      "id": "SHARED_CHANGE",
+      "changeClass": "SHARED_SOURCE",
+      "candidatePolicy": "SELECT_SHARED_CONSUMERS",
+      "successClass": "ACCELERATOR",
+      "minimumSavedMs": 500,
+      "minimumReductionRatio": 0.02,
+      "positiveLower95Bound": true
+    },
+    {
+      "id": "BUILD_LOGIC_CHANGE",
+      "changeClass": "GLOBAL_BUILD_LOGIC",
+      "candidatePolicy": "FULL_GRAPH",
+      "successClass": "PARITY",
+      "maximumRegressionRatio": 0.02
+    }
+  ],
+  "guardrails": {
+    "requiredOutputsIdentical": true,
+    "maximumProductAttributableFailures": 0,
+    "fallbackScenariosMustExecuteFullGraph": true,
+    "percentagesAddedAcrossScenarios": false
+  },
+  "boundaries": {
+    "ownerControlledSyntheticWorkloads": true,
+    "productionReadiness": false,
+    "externalDesignPartner": false,
+    "eightHourSoak": false,
+    "testOptimization": false
+  }
+}

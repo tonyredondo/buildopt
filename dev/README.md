@@ -2143,6 +2143,27 @@ The resulting `CONTINUE` decision is bounded to the owner-controlled synthetic
 classes. It is not a universal-savings, production-readiness, soak, design
 partner, or Test Optimization claim.
 
+Generalize that bounded claim across realistic change shapes without rerunning
+the strict benchmark:
+
+```bash
+./dev/check-poc-breadth
+```
+
+The checked report covers no-change, leaf-source, shared-source, and global
+build-logic changes in Kotlin and Groovy. Each cell contains eight alternating
+pairs, exact task-selection or full-fallback counts, Configuration Cache state,
+byte-identical required outputs, and zero product-attributable failures. Create
+fresh revision-bound evidence inside the pinned 4-CPU/16-GiB image with:
+
+```bash
+GRADLE_USER_HOME=.tools/gradle-user-home/local \
+  ./dev/run-poc-breadth-container /tmp/poc-breadth.json
+```
+
+Both a pass and a fail are valid evidence. A fail retains the already qualified
+narrow POC claim and identifies the workload class that must not be generalized.
+
 Validate and print the historical mechanism-development scorecard without
 rerunning a benchmark:
 

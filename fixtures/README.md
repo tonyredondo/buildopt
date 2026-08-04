@@ -1,5 +1,10 @@
 # Fixtures
 
+[`poc-breadth`](./poc-breadth/README.md) is the realistic five-project
+Kotlin/Groovy POC generalization fixture. It tests no-change, leaf-source,
+shared-source, and global build-logic changes against optimized native Gradle,
+with exact selection/fallback counts and byte-identical required outputs.
+
 [`poc-value`](./poc-value/README.md) contains the bounded Kotlin/Groovy
 workloads used by the strict accelerator-coverage matrix. They compare against
 optimized native Gradle and are synthetic POC evidence, not production or

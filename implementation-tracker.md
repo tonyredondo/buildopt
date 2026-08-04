@@ -1,13 +1,13 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS` — the combined public path beats optimized native Gradle across the bounded Kotlin/Groovy matrix<br>
-**Current phase:** `CONTINUE` — `POC-VALUE-001..004` are closed; any broader POC phase requires an explicit owner decision and new workload-specific evidence<br>
+**Current phase:** `POC-BREADTH-001` — validate the bounded `CONTINUE` decision across realistic no-change, leaf, shared, and build-logic changes before broadening the synthetic claim<br>
 **POC functional target:** measurable net build-time reduction from the qualified Build Impact and exact reviewed-source Task/Patch routes; no-value Safe Cache or Runtime candidates remain disabled<br>
 **POC validation posture:** use bounded paired experiments on project-owned fixtures and repositories; compare against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
 **Last updated:** 2026-08-04<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
-**RFC baseline SHA-256:** `65ea7aba1eabd54eb009c2c852bde4c0f27c77e532ae1124fc012aa39e11a0c8`
+**RFC baseline SHA-256:** `563c4afebf8b60d9f57ad696ae4c8e74776209dcafbbb08c0574c3341de7d8ee`
 
 ---
 
@@ -74,6 +74,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | DOC-F7 | Complete user, operator, developer, architecture, and code documentation system | `DONE` | 1/1 | `E-151` |
 | PERF-F8 | Mechanism attribution and native-cache parity | `DONE` | 1/1 | `E-154` |
 | POC-VALUE | Combined value proof over optimized native Gradle | `DONE` | 4/4 | PERF-F8 |
+| POC-BREADTH | Realistic workload and change-class generalization | `DOING` | 0/1 | POC-VALUE |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -87,6 +88,8 @@ Optimized native Gradle baseline
   → combined BuildOpt benchmark
   → repeatability across Kotlin/Groovy and two workload classes
   → CONTINUE or STOP the POC
+  → realistic no-change/leaf/shared/build-logic matrix
+  → broaden or retain the qualified synthetic claim
 ```
 
 The implementation history remains useful, but it is not the POC exit gate:
@@ -108,6 +111,7 @@ rollout remain outside the POC. Test Optimization remains a separate product.
 | 2 | `POC-VALUE-002` | Return Safe Cache to the 2% native-cache parity guardrail and make Runtime Tuning exceed the accelerator threshold or remain disabled for that class | `DONE` | Codex |
 | 3 | `POC-VALUE-003` | Broaden Build Impact and reviewed-source Task/Patch evidence to two workload classes and both DSLs | `DONE` | Codex |
 | 4 | `POC-VALUE-004` | Run the combined public onboarding path against optimized native Gradle and issue the POC `CONTINUE` or `STOP` decision | `DONE` | Codex |
+| 5 | `POC-BREADTH-001` | Test the bounded claim on a realistic five-project graph across no-change, leaf, shared, and global build-logic changes | `DOING` | Codex |
 
 ### 2.4 Completed implementation sequence
 
@@ -252,6 +256,7 @@ Every accepted RFC decision is represented below. Historical private-beta decisi
 | `OPS-001/POC` | Bounded faults, readiness, revocation, bypass, and runbooks required to trust measurements | POC measurements | `DONE` | Codex | `E-081..091`, `E-094`, `E-096`: bounded faults and operations passed; soak is outside POC |
 | `OPS-001/B` | GitHub adapter with an `EXACT` queue | B | `DONE` | Codex | `E-095`: authenticated durable `workflow_job` lifecycle and exact provider queue |
 | `POC-VALUE-G01` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | `DONE` | Codex | `E-159`, [`poc-value-validation-v1`](./specs/poc-value-validation-v1.md) |
+| `POC-BREADTH-G01` | Realistic Kotlin/Groovy change-class matrix preserves parity on full-graph cases and clears the accelerator threshold on selective cases | Broader synthetic POC claim | `DOING` | Codex | [`poc-breadth-validation-v1`](./specs/poc-breadth-validation-v1.md) |
 
 ---
 
@@ -793,6 +798,16 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
 | `POC-VALUE-G01` | The combined BuildOpt path provides repeatable net customer-visible savings over optimized native Gradle, with identical outputs and no extra product failures | `DONE` | `E-159`, [`poc-value-validation-v1`](./specs/poc-value-validation-v1.md) |
+
+#### POC-BREADTH — realistic change-class generalization
+
+| ID | Deliverable | State | Owner | Expected evidence |
+|---|---|---|---|---|
+| `POC-BREADTH-001` | Compare installed BuildOpt with optimized native Gradle on a five-project Kotlin/Groovy graph under no-change, leaf-source, shared-source, and global build-logic changes | `DOING` | Codex | Revision-bound strict-runner report with eight alternating pairs per cell, exact selection/fallback counts, Configuration Cache state, identical required outputs, and zero product failures |
+
+| Exit gate | Summarized criterion | State | Evidence |
+|---|---|---|---|
+| `POC-BREADTH-G01` | Full-graph cases stay within the 2% parity boundary and selective cases save at least 500 ms and 2% with a positive paired lower bound | `DOING` | [`poc-breadth-validation-v1`](./specs/poc-breadth-validation-v1.md) |
 
 Test Optimization is an explicit non-goal for all functional and documentation tracks. They may preserve or call its existing signed grant/result boundary, but no Test Optimization behavior or contract is widened here.
 

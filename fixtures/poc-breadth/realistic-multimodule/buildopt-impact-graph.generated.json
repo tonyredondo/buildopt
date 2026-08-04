@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "buildopt.build-impact/declared-graph/v1",
+  "repositoryId": "tonyredondo/buildopt-poc-breadth",
+  "pipelineClass": "poc-breadth",
+  "manifestDigest": "sha256:568325af7a3eedc83b116a826488ac35013cb6b479bb97adf131ae04c4bf2802",
+  "adapterVersion": "gradle-runtime-v1",
+  "complete": true,
+  "projects": [
+    {
+      "path": ":developer-tool",
+      "sourcePaths": [
+        "developer-tool/**"
+      ],
+      "dependsOn": [
+        ":platform-core"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":platform-core",
+      "sourcePaths": [
+        "platform-core/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":service-api",
+      "sourcePaths": [
+        "service-api/**"
+      ],
+      "dependsOn": [
+        ":shared-lib"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":service-worker",
+      "sourcePaths": [
+        "service-worker/**"
+      ],
+      "dependsOn": [
+        ":shared-lib"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":shared-lib",
+      "sourcePaths": [
+        "shared-lib/**"
+      ],
+      "dependsOn": [
+        ":platform-core"
+      ],
+      "unknownRelationships": false
+    }
+  ],
+  "entrypoints": [
+    {
+      "name": ":service-api:assemble",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [
+        ":platform-core",
+        ":service-api",
+        ":shared-lib"
+      ],
+      "artifactIds": [
+        "service-api-jar",
+        "service-worker-jar"
+      ],
+      "checkIds": [
+        "verification-check"
+      ],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    },
+    {
+      "name": ":service-worker:assemble",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [
+        ":platform-core",
+        ":service-worker",
+        ":shared-lib"
+      ],
+      "artifactIds": [
+        "service-api-jar",
+        "service-worker-jar"
+      ],
+      "checkIds": [
+        "verification-check"
+      ],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    },
+    {
+      "name": "assemble",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [
+        ":developer-tool",
+        ":platform-core",
+        ":service-api",
+        ":service-worker",
+        ":shared-lib"
+      ],
+      "artifactIds": [
+        "service-api-jar",
+        "service-worker-jar"
+      ],
+      "checkIds": [
+        "verification-check"
+      ],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    }
+  ],
+  "globalChangePaths": []
+}

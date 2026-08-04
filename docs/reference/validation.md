@@ -136,6 +136,7 @@ reference data, thresholds, or held-out results merely to obtain promotion.
 ./dev/check-poc-value-negative-mechanisms
 ./dev/check-poc-value-coverage
 ./dev/check-poc-value-combined
+./dev/check-poc-breadth
 ./dev/check-build-optimization-performance
 ```
 

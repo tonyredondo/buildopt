@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "tonyredondo/buildopt-poc-breadth",
+  "pipelineClass": "poc-breadth",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": ["assemble"],
+  "allowedAlternatives": [
+    {
+      "id": "leaf-service-api",
+      "entrypoints": [":service-api:assemble"]
+    },
+    {
+      "id": "shared-consumers",
+      "entrypoints": [":service-api:assemble", ":service-worker:assemble"]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "service-api-jar",
+      "path": "service-api/build/libs/service-api-*.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "service-worker-jar",
+      "path": "service-worker/build/libs/service-worker-*.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [
+    {
+      "id": "verification-check",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "test-owned-check",
+      "owner": "TEST_OPTIMIZATION"
+    }
+  ],
+  "globalChangePaths": ["build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts", "gradle/**", "buildSrc/**"],
+  "unknownChangePolicy": "FULL_GRAPH"
+}
