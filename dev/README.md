@@ -2116,8 +2116,32 @@ GRADLE_USER_HOME=.tools/gradle-user-home/local \
 ```
 
 This qualifies only the two synthetic workload classes and exact reviewed
-recipe represented by the fixtures. It does not prove the combined product,
-other Patch recipes, production readiness, or Test Optimization behavior.
+recipe represented by the fixtures. It does not qualify other Patch recipes,
+production readiness, or Test Optimization behavior.
+
+Validate the strict `POC-VALUE-004` combined public-path decision without
+rerunning Gradle:
+
+```bash
+./dev/check-poc-value-combined
+```
+
+The checked report contains eight alternating pairs in the same four
+Kotlin/Groovy workload cells. The candidate uses the installed
+`buildopt-impact check` and `buildopt gradle` commands plus the packaged plugin;
+the control uses optimized native Gradle. Unproven Safe Cache and Runtime
+profiles remain disabled. Reproduce it inside the pinned 4-CPU/16-GiB image
+with:
+
+```bash
+GRADLE_USER_HOME=.tools/gradle-user-home/local \
+  ./dev/run-poc-value-combined-container \
+    /tmp/poc-value-combined.json
+```
+
+The resulting `CONTINUE` decision is bounded to the owner-controlled synthetic
+classes. It is not a universal-savings, production-readiness, soak, design
+partner, or Test Optimization claim.
 
 Validate and print the historical mechanism-development scorecard without
 rerunning a benchmark:
@@ -2127,11 +2151,11 @@ rerunning a benchmark:
 ```
 
 The historical scorecard keeps each mechanism attributable and never adds
-percentages from different workloads. Current activation decisions come from
-`check-poc-value-validation`; neither closes the combined product gate. Fresh
-cache and Build Impact evidence can be created
-with `run-cache-parity-benchmark` and `run-build-impact-performance`; each has
-a matching `check-*` command. See
+percentages from different workloads. Current activation and continuation
+decisions come from `check-poc-value-validation`; the combined result is a
+separate measured path, not the sum of the mechanisms. Fresh cache and Build
+Impact evidence can be created with `run-cache-parity-benchmark` and
+`run-build-impact-performance`; each has a matching `check-*` command. See
 [the benchmark index](../benchmarks/README.md#build-optimization-scorecard).
 
 ## Historical onboarding performance

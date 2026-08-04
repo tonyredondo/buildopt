@@ -2,8 +2,8 @@
   "schemaVersion": "buildopt.specs/poc-value-validation/v1",
   "decision": {
     "objective": "REDUCE_CUSTOMER_VISIBLE_BUILD_TIME_AGAINST_OPTIMIZED_NATIVE_GRADLE",
-    "currentVerdict": "CONTINUE_CONDITIONALLY",
-    "pocValueProven": false,
+    "currentVerdict": "CONTINUE",
+    "pocValueProven": true,
     "noValueNoAction": true
   },
   "scope": {
@@ -93,9 +93,9 @@
     },
     {
       "id": "COMBINED_PRODUCT_PATH",
-      "classification": "NOT_RUN",
-      "evidence": null,
-      "claim": "PRIMARY_POC_VALUE_GATE_OPEN"
+      "classification": "THRESHOLD_MET_REQUIRED_BREADTH",
+      "evidence": "benchmarks/results/poc-value-combined-v1.json",
+      "claim": "QUALIFIED_SYNTHETIC_WORKLOADS_ONLY"
     }
   ],
   "nextGates": [
@@ -117,7 +117,7 @@
     {
       "id": "POC-VALUE-004",
       "outcome": "COMBINED_PRODUCT_BEATS_OPTIMIZED_NATIVE_GRADLE_OR_POC_STOPS",
-      "state": "TODO"
+      "state": "DONE"
     }
   ]
 }

@@ -27,12 +27,13 @@ evidence around that execution and uses conservative fallbacks: a rejected
 cache entry becomes a normal cache miss, an unqualified optimization is not
 applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
-> **Project status:** this is an owner-operated proof of concept whose value
-> decision is still open. The mechanisms work, but BuildOpt has not yet proved
-> that its complete path consistently beats a well-configured native Gradle
-> baseline. Soak, design partners, HA, enterprise identity, multi-tenancy, and
-> production operations are intentionally outside this phase. Test Optimization
-> is a separate product and is not implemented here.
+> **Project status:** this is an owner-operated proof of concept. The combined
+> public path has beaten a well-configured native Gradle baseline across four
+> qualified synthetic Kotlin/Groovy workload cells, so the bounded decision is
+> `CONTINUE`. This does not prove universal savings or production readiness.
+> Soak, design partners, HA, enterprise identity, multi-tenancy, and production
+> operations remain outside this phase. Test Optimization is a separate product
+> and is not implemented here.
 
 ## Get your first result
 
@@ -67,15 +68,16 @@ contains Windows installation, CI snippets, component ownership and the
 recommended rollout order. Contributors who want the complete synthetic lab
 can use the [source quickstart](./docs/getting-started/quickstart.md).
 
-The checked scorecard measures each optimization separately. Safe Cache and
+The checked scorecard measures each optimization separately and then measures
+the complete public path without adding unrelated percentages. Safe Cache and
 the tested Runtime Tuning profiles did not add defensible value over optimized
-native Gradle, so neither is active on the default path. Build Impact saved
-73.5–76.0%, while the exact reviewed custom-task/Patch route saved 67.3–68.0%
-across Kotlin and Groovy bounded workloads. Required outputs remained
-identical. These percentages are workload-specific and are not added together.
-The POC continues conditionally until the combined path beats optimized native
-Gradle across the required workload matrix. See the [POC value contract](./specs/poc-value-validation-v1.md)
-and [raw scorecard](./benchmarks/README.md#build-optimization-scorecard).
+native Gradle, so neither is active on the default path. The final combined
+path saved 63.5–84.1% across four Kotlin/Groovy synthetic workload cells, with
+identical required outputs and zero product-attributable failures. The POC
+decision is therefore `CONTINUE`, qualified only for those controlled workload
+classes; it is not a universal-savings or production-readiness claim. See the
+[POC value contract](./specs/poc-value-validation-v1.md) and
+[raw scorecard](./benchmarks/README.md#build-optimization-scorecard).
 
 ## Choose what to do next
 

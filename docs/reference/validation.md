@@ -135,14 +135,16 @@ reference data, thresholds, or held-out results merely to obtain promotion.
 ./dev/check-poc-value-validation
 ./dev/check-poc-value-negative-mechanisms
 ./dev/check-poc-value-coverage
+./dev/check-poc-value-combined
 ./dev/check-build-optimization-performance
 ```
 
-The first two commands validate the current POC decision and the strict
-no-value/no-action evidence. The last preserves the earlier mechanism-development
-scorecard for historical comparison. None reruns Gradle or adds percentages
-from different workloads. Use the owning benchmark runner only when the
-relevant implementation or fixture changes.
+The commands validate the final POC decision, strict no-value/no-action
+evidence, accelerator breadth, and the combined public path. The last also
+preserves the earlier mechanism-development scorecard for historical
+comparison. None reruns Gradle or adds percentages from different workloads.
+Use the owning benchmark runner only when the relevant implementation or
+fixture changes.
 
 ## Task Intelligence
 

@@ -142,12 +142,16 @@ hide another's cost:
 | Runtime Tuning | `NO_VALUE_NO_ACTION`; stable control only | `W4_H6G` regressed 54.7%; `W3_H4G` regressed 4.3% with an interval crossing zero |
 | Build Impact | 73.5–76.0% faster in the strict bounded Kotlin/Groovy workloads | Avoided unrelated non-cacheable work while required outputs stayed unchanged |
 | Reviewed Task/Patch | 67.3–68.0% faster for the exact reviewed custom-task recipe | Restored all eight qualified task outputs; this does not generalize to other recipes |
+| Combined public path | 63.5–84.1% faster across four strict Kotlin/Groovy workload cells | The actual packaged CLIs and plugin beat optimized native Gradle with unproven mechanisms disabled |
 
-These are controlled POC workloads, not universal predictions, and their
-percentages must not be added. A repository that needs the full graph receives
+These are controlled POC workloads, not universal predictions, and the
+mechanism percentages must not be added; the combined row is measured directly.
+A repository that needs the full graph receives
 no Build Impact saving; an already warm native cache is a parity baseline, not
 the cache-off comparison. Run `./dev/check-poc-value-validation` to validate
-and print the current decision without rerunning Gradle. The
+and print the `CONTINUE` decision without rerunning Gradle. This means the idea
+merits further POC work for the qualified synthetic classes, not that it is
+production-ready. The
 [benchmark index](../../benchmarks/README.md#build-optimization-scorecard)
 links every raw observation and measurement contract.
 

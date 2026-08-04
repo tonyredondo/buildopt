@@ -52,11 +52,14 @@ all four cells to pass before moving to the combined gate.
 
 ## Current decision
 
-The current state is `CONTINUE_CONDITIONALLY`. The contractual four-CPU runs in
+The current state is `CONTINUE`. This means the idea merits further POC work for
+the qualified synthetic workload classes; it does not mean that BuildOpt has proved
+universal savings or production readiness. The contractual four-CPU runs in
 [`poc-value-baseline-v1.json`](../benchmarks/results/poc-value-baseline-v1.json),
 [`poc-value-negative-mechanisms-v1.json`](../benchmarks/results/poc-value-negative-mechanisms-v1.json),
-and [`poc-value-coverage-v1.json`](../benchmarks/results/poc-value-coverage-v1.json)
-closed `POC-VALUE-001..003` with these results:
+[`poc-value-coverage-v1.json`](../benchmarks/results/poc-value-coverage-v1.json),
+and [`poc-value-combined-v1.json`](../benchmarks/results/poc-value-combined-v1.json)
+closed `POC-VALUE-001..004` with these results:
 
 - Safe Cache did not demonstrate incremental value over Gradle's native local
   cache. It is classified `NO_VALUE_NO_ACTION`, is explicit-only through
@@ -76,13 +79,20 @@ closed `POC-VALUE-001..003` with these results:
   2,349 ms (68.0%) in Groovy while all eight task outputs remained identical.
   This qualifies that exact Task Intelligence/Patch route, not every Patch
   Autopilot recipe. Agent discovery and hermetic enforcement remain unavailable.
-- The combined product path has not yet been measured against optimized native
-  Gradle, so the overall value hypothesis remains open.
+- The combined public path was measured with unproven Safe Cache and Runtime
+  profiles disabled. Against the same optimized native Gradle control it saved
+  2,193 ms (77.5%) for Kotlin and 3,265 ms (84.1%) for Groovy in the unrelated
+  non-cacheable-work class, and 1,441 ms (67.3%) for Kotlin and 1,905 ms
+  (63.5%) for Groovy on the exact reviewed custom-task route. All four paired
+  intervals had positive lower bounds, every required output was identical, and
+  product-attributable failures remained zero. The Groovy custom-task cell keeps
+  its one negative observation rather than filtering it out.
 
-The only active value gate is now to benchmark the combined public path—with
-no unproven Safe Cache or Runtime profile active—and make the explicit
-`CONTINUE` or `STOP` decision. The qualifying percentages above are not added;
-the combined path needs its own paired experiment.
+The final claim is deliberately `QUALIFIED_SYNTHETIC_WORKLOADS_ONLY`. These
+percentages are the complete-path results and are not added to the earlier
+mechanism percentages. The owner may now decide whether another POC phase should
+broaden workload coverage; soak, design partners, HA, enterprise identity, and
+other production work are not implied or required by this result.
 
 Run the executable decision check with:
 

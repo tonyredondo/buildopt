@@ -11,15 +11,18 @@ buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_cache="${buildopt_repo_root}/benchmarks/results/cache-parity-v1-local.json"
 buildopt_runtime="${buildopt_repo_root}/benchmarks/results/b-runtime-owner-evaluation.json"
 buildopt_impact="${buildopt_repo_root}/benchmarks/results/build-impact-performance-v1-local.json"
+buildopt_combined="${buildopt_repo_root}/benchmarks/results/poc-value-combined-v1.json"
 
 "${buildopt_script_dir}/check-cache-parity-performance" "${buildopt_cache}" >/dev/null
 "${buildopt_script_dir}/check-runtime-owner-evaluation" >/dev/null
 "${buildopt_script_dir}/check-build-impact-performance" "${buildopt_impact}" >/dev/null
+"${buildopt_script_dir}/check-poc-value-combined" "${buildopt_combined}" >/dev/null
 
 jq -n \
     --slurpfile cache "${buildopt_cache}" \
     --slurpfile runtime "${buildopt_runtime}" \
-    --slurpfile impact "${buildopt_impact}" '
+    --slurpfile impact "${buildopt_impact}" \
+    --slurpfile combined "${buildopt_combined}" '
     {
         schemaVersion: "buildopt.evidence/build-optimization-scorecard/v1",
         interpretation: "ATTRIBUTABLE_RESULTS_NOT_ADDITIVE",
@@ -66,6 +69,19 @@ jq -n \
             positivePairs: $impact[0].result.positivePairs,
             requiredOutputsIdentical:
                 $impact[0].result.requiredOutputsIdentical
+        },
+        combinedPublicPath: {
+            claim: $combined[0].decision.claim,
+            verdict: $combined[0].decision.verdict,
+            pocValueProven: $combined[0].decision.pocValueProven,
+            results:
+                ($combined[0].workloads |
+                 map({key: .id, value: {
+                     meanSavedMs: .result.meanSavedMs,
+                     reductionRatio: .result.meanReductionRatio,
+                     lower95SavedMs: .result.interval95SavedMs[0],
+                     positivePairs: .result.positivePairs
+                 }}) | from_entries)
         },
         boundaries: {
             proofOfConcept: true,

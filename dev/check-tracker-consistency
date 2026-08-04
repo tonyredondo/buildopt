@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`POC VALUE VALIDATION ACTIVE\`"
-    "**Current phase:** \`CONTINUE_CONDITIONALLY\`"
+    "**Overall status:** \`POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS\`"
+    "**Current phase:** \`CONTINUE\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`A1-G06\` | Safe Cache is non-regressive versus optimized native cache"
@@ -110,5 +110,5 @@ if [[ $(grep -Fc "| \`OPS-001/B\` |" <<<"${buildopt_readiness}") != 1 ]]; then
     exit 1
 fi
 
-printf 'RFC/tracker consistency OK: %s accepted decisions, POC value gate open\n' \
+printf 'RFC/tracker consistency OK: %s accepted decisions, bounded POC value gate passed\n' \
     "${buildopt_decision_count}"

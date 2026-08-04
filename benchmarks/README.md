@@ -17,13 +17,14 @@ small/medium/large Gradle build matrix and makes no performance claim.
 
 ## Build Optimization scorecard
 
-The current POC verdict is `CONTINUE_CONDITIONALLY`, not “value proven”. Three
-contractual 4-vCPU/16-GiB runs close the baseline, negative-mechanism decision,
-and accelerator-coverage matrix. Safe Cache is explicit-only while the default
-delegates to Gradle's native cache; Runtime Tuning candidates `W4_H6G` and
-`W3_H4G` are disabled; Build Impact and the exact reviewed Task/Patch route
-clear the threshold across Kotlin and Groovy; and the combined public path is
-still unmeasured. Validate that interpretation with:
+The current POC verdict is `CONTINUE`, qualified only for the measured synthetic
+workload classes. Four contractual 4-vCPU/16-GiB runs close the baseline,
+negative-mechanism decision, accelerator-coverage matrix, and combined public
+path. Safe Cache is explicit-only while the default delegates to Gradle's native
+cache; Runtime Tuning candidates `W4_H6G` and `W3_H4G` are disabled; Build
+Impact and the exact reviewed Task/Patch route clear the threshold across Kotlin
+and Groovy; and the complete path also clears the final gate. Validate that
+interpretation with:
 
 ```bash
 ./dev/check-poc-value-validation
@@ -41,6 +42,10 @@ combining unrelated percentages:
 | Build Impact, Groovy | 2,155 ms faster (73.5%) | +1,869 to +2,414 ms | `THRESHOLD_MET_REQUIRED_BREADTH` |
 | Reviewed Task/Patch, Kotlin | 1,369 ms faster (67.3%) | +1,142 to +1,624 ms | `THRESHOLD_MET_REVIEWED_CUSTOM_TASK` |
 | Reviewed Task/Patch, Groovy | 2,349 ms faster (68.0%) | +1,245 to +3,421 ms | `THRESHOLD_MET_REVIEWED_CUSTOM_TASK` |
+| Combined Impact, Kotlin | 2,193 ms faster (77.5%) | +2,058 to +2,397 ms | `THRESHOLD_MET_REQUIRED_BREADTH` |
+| Combined Impact, Groovy | 3,265 ms faster (84.1%) | +2,518 to +3,912 ms | `THRESHOLD_MET_REQUIRED_BREADTH` |
+| Combined reviewed Task/Patch, Kotlin | 1,441 ms faster (67.3%) | +1,159 to +1,722 ms | `THRESHOLD_MET_REQUIRED_BREADTH` |
+| Combined reviewed Task/Patch, Groovy | 1,905 ms faster (63.5%) | +724 to +3,055 ms | `THRESHOLD_MET_REQUIRED_BREADTH` |
 
 The reports retain all four signed pairs, including unfavorable samples. Every
 required output is identical, Runtime Tuning has zero OOM delta, and no
@@ -48,8 +53,9 @@ product-attributable failures occurred. The apparent fallback timing difference
 is not attributable to BuildOpt because control and candidate both use Gradle's
 native cache; its evidence closes regression removal only. Percentages are not
 added because the mechanisms use different controls and workloads.
-`POC-VALUE-001..003` are completed decision gates, not a combined-product
-success gate. The reviewed Patch result applies only to
+`POC-VALUE-001..004` are completed decision gates. The final `CONTINUE` verdict
+means only that the idea merits more POC work for the qualified synthetic
+classes. The reviewed Patch result applies only to
 `CUSTOM_TASK_CONTRACT_JAVA_V1`; it does not qualify unrelated recipes.
 
 Validate all checked-in evidence and print the machine-readable scorecard:
@@ -66,6 +72,8 @@ The underlying evidence and contracts are:
   validated by `./dev/check-poc-value-negative-mechanisms`;
 - [accelerator coverage matrix](./results/poc-value-coverage-v1.json),
   validated by `./dev/check-poc-value-coverage`;
+- [combined public-path matrix](./results/poc-value-combined-v1.json),
+  validated by `./dev/check-poc-value-combined`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
@@ -73,9 +81,9 @@ The underlying evidence and contracts are:
 - [Build Impact observations](./results/build-impact-performance-v1-local.json)
   and [contract](../specs/build-impact-performance-v1.md).
 
-The three mechanism-development reports remain historical inputs. The strict
-baseline is the current decision evidence. None claims universal savings,
-combined-product value, or production readiness.
+The three mechanism-development reports remain historical inputs. The four
+strict reports are the current decision evidence. They prove bounded combined
+value, but none claims universal savings or production readiness.
 
 ## Historical v0.2 public onboarding performance
 

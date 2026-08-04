@@ -15,6 +15,7 @@ buildopt_impact="${buildopt_repo_root}/benchmarks/results/build-impact-performan
 buildopt_baseline="${buildopt_repo_root}/benchmarks/results/poc-value-baseline-v1.json"
 buildopt_negative="${buildopt_repo_root}/benchmarks/results/poc-value-negative-mechanisms-v1.json"
 buildopt_coverage="${buildopt_repo_root}/benchmarks/results/poc-value-coverage-v1.json"
+buildopt_combined="${buildopt_repo_root}/benchmarks/results/poc-value-combined-v1.json"
 
 command -v jq >/dev/null 2>&1 || {
     printf 'required POC value command is unavailable: jq\n' >&2
@@ -27,6 +28,7 @@ command -v jq >/dev/null 2>&1 || {
 "${buildopt_script_dir}/check-poc-value-baseline" "${buildopt_baseline}" >/dev/null
 "${buildopt_script_dir}/check-poc-value-negative-mechanisms" "${buildopt_negative}" >/dev/null
 "${buildopt_script_dir}/check-poc-value-coverage" "${buildopt_coverage}" >/dev/null
+"${buildopt_script_dir}/check-poc-value-combined" "${buildopt_combined}" >/dev/null
 
 jq -e \
     --slurpfile cache "${buildopt_cache}" \
@@ -34,11 +36,12 @@ jq -e \
     --slurpfile impact "${buildopt_impact}" \
     --slurpfile baseline "${buildopt_baseline}" \
     --slurpfile negative "${buildopt_negative}" \
-    --slurpfile coverage "${buildopt_coverage}" '
+    --slurpfile coverage "${buildopt_coverage}" \
+    --slurpfile combined "${buildopt_combined}" '
     .schemaVersion == "buildopt.specs/poc-value-validation/v1" and
     .decision.objective == "REDUCE_CUSTOMER_VISIBLE_BUILD_TIME_AGAINST_OPTIMIZED_NATIVE_GRADLE" and
-    .decision.currentVerdict == "CONTINUE_CONDITIONALLY" and
-    .decision.pocValueProven == false and
+    .decision.currentVerdict == "CONTINUE" and
+    .decision.pocValueProven == true and
     .decision.noValueNoAction == true and
     .scope.doesNotBlockPoc == [
         "EIGHT_HOUR_SOAK",
@@ -69,8 +72,8 @@ jq -e \
     ([.mechanisms[] | select(.id == "AGENT_DISCOVERY" and .classification == "UNAVAILABLE")] | length) == 1 and
     ([.mechanisms[] | select(.id == "HERMETIC_PRODUCER" and .classification == "UNAVAILABLE")] | length) == 1 and
     ([.mechanisms[] | select(.id == "PATCH_AUTOPILOT" and .classification == "THRESHOLD_MET_REVIEWED_CUSTOM_TASK_RECIPE" and .evidence == "benchmarks/results/poc-value-coverage-v1.json")] | length) == 1 and
-    ([.mechanisms[] | select(.id == "COMBINED_PRODUCT_PATH" and .classification == "NOT_RUN" and .evidence == null)] | length) == 1 and
-    ([.nextGates[] | select(.state == "TODO")] | length) == 1 and
+    ([.mechanisms[] | select(.id == "COMBINED_PRODUCT_PATH" and .classification == "THRESHOLD_MET_REQUIRED_BREADTH" and .evidence == "benchmarks/results/poc-value-combined-v1.json" and .claim == "QUALIFIED_SYNTHETIC_WORKLOADS_ONLY")] | length) == 1 and
+    ([.nextGates[] | select(.state == "TODO")] | length) == 0 and
     .nextGates == [
         {
             id: "POC-VALUE-001",
@@ -90,7 +93,7 @@ jq -e \
         {
             id: "POC-VALUE-004",
             outcome: "COMBINED_PRODUCT_BEATS_OPTIMIZED_NATIVE_GRADLE_OR_POC_STOPS",
-            state: "TODO"
+            state: "DONE"
         }
     ] and
     $baseline[0].gate.id == "POC-VALUE-001" and
@@ -136,6 +139,35 @@ jq -e \
         buildImpactQualifiesBothDsls: true,
         taskIntelligenceQualifiesBothDsls: true,
         patchAutopilotQualifiesBothDsls: true
+    } and
+    $combined[0].gate == {
+        id: "POC-VALUE-004",
+        state: "PASSED",
+        next: "POC_CONTINUE_DECISION"
+    } and
+    $combined[0].decision == {
+        verdict: "CONTINUE",
+        pocValueProven: true,
+        claim: "QUALIFIED_SYNTHETIC_WORKLOADS_ONLY",
+        qualifyingWorkloads: 4,
+        requiredWorkloads: 4
+    } and
+    ($combined[0].workloads | length) == 4 and
+    ($combined[0].workloads | all(
+        .result.pairs >= 8 and
+        .result.meanSavedMs >= 500 and
+        .result.meanReductionRatio >= 0.02 and
+        .result.interval95SavedMs[0] > 0 and
+        .result.requiredOutputsIdentical and
+        .result.productAttributableFailures == 0
+    )) and
+    $combined[0].boundaries == {
+        syntheticOwnerControlledWorkloads: true,
+        universalSavingsClaimed: false,
+        productionReadinessClaimed: false,
+        eightHourSoakExecuted: false,
+        externalDesignPartnerRequired: false,
+        testOptimizationModified: false
     }
     ' "${buildopt_contract}" >/dev/null
 
@@ -146,7 +178,8 @@ jq -n \
     --slurpfile impact "${buildopt_impact}" \
     --slurpfile baseline "${buildopt_baseline}" \
     --slurpfile negative "${buildopt_negative}" \
-    --slurpfile coverage "${buildopt_coverage}" '
+    --slurpfile coverage "${buildopt_coverage}" \
+    --slurpfile combined "${buildopt_combined}" '
     {
         verdict: $contract[0].decision.currentVerdict,
         pocValueProven: $contract[0].decision.pocValueProven,
@@ -157,7 +190,11 @@ jq -n \
         buildImpact: "THRESHOLD_MET_REQUIRED_BREADTH",
         reviewedTask: "THRESHOLD_MET_REVIEWED_CUSTOM_TASK",
         reviewedPatch: "THRESHOLD_MET_REVIEWED_CUSTOM_TASK_RECIPE",
-        combinedProduct: "NOT_RUN",
+        combinedProduct: "THRESHOLD_MET_REQUIRED_BREADTH",
+        combinedClaim: $combined[0].decision.claim,
+        combinedSavedMs:
+            ($combined[0].workloads |
+             map({key: .id, value: .result.meanSavedMs}) | from_entries),
         nativeCacheWorstReductionRatio:
             ([$negative[0].safeCache.kotlin.meanReductionRatio,
               $negative[0].safeCache.groovy.meanReductionRatio] | min),

@@ -328,6 +328,7 @@ buildopt_required_files=(
     "specs/private-beta-operations-v1.json"
     "specs/private-beta-operations-v1.md"
     "benchmarks/results/poc-value-baseline-v1.json"
+    "benchmarks/results/poc-value-combined-v1.json"
     "benchmarks/results/poc-value-coverage-v1.json"
     "specs/owner-controlled-pilot-deployment-v1.json"
     "specs/owner-controlled-pilot-deployment-v1.md"
