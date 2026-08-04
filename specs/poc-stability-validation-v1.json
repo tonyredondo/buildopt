@@ -10,7 +10,7 @@
       "CANDIDATE_FIRST"
     ],
     "samplesPerCell": 8,
-    "warmupPerSample": 1
+    "warmupPerCell": 1
   },
   "isolation": {
     "strictContainerPerArm": true,
@@ -18,7 +18,7 @@
     "workspaceShared": false,
     "gradleUserHomeShared": false,
     "daemonShared": false,
-    "sampleLifecycle": "RESTORE_BASELINE_RESTART_DAEMON_WARM_MUTATE_MEASURE"
+    "sampleLifecycle": "PERSISTENT_PRIVATE_DAEMON_PER_CELL"
   },
   "thresholds": {
     "acceleratorMinimumSavedMs": 500,

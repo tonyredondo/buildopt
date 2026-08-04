@@ -153,37 +153,6 @@ buildopt_mutate_workspace() {
     esac
 }
 
-buildopt_restore_workspace() {
-    local buildopt_workspace=$1 buildopt_dsl=$2 buildopt_scenario=$3
-    case "${buildopt_scenario}" in
-        NO_CHANGE) ;;
-        LEAF_CHANGE)
-            cp -- "${buildopt_fixture}/service-api/src/main/java/dev/buildopt/breadth/ServiceApi.java" \
-                "${buildopt_workspace}/service-api/src/main/java/dev/buildopt/breadth/ServiceApi.java"
-            ;;
-        SHARED_CHANGE)
-            cp -- "${buildopt_fixture}/shared-lib/src/main/java/dev/buildopt/breadth/SharedValue.java" \
-                "${buildopt_workspace}/shared-lib/src/main/java/dev/buildopt/breadth/SharedValue.java"
-            ;;
-        BUILD_LOGIC_CHANGE)
-            if [[ "${buildopt_dsl}" == KOTLIN ]]; then
-                cp -- "${buildopt_fixture}/build.gradle.kts" "${buildopt_workspace}/build.gradle.kts"
-            else
-                cp -- "${buildopt_fixture}/build.gradle" "${buildopt_workspace}/build.gradle"
-            fi
-            ;;
-    esac
-}
-
-buildopt_stop_gradle_daemons() {
-    local buildopt_workspace=$1 buildopt_home=$2
-    buildopt_seed_gradle_home "${buildopt_home}"
-    (
-        cd -- "${buildopt_workspace}"
-        env GRADLE_USER_HOME="${buildopt_home}" ./gradlew --stop >/dev/null
-    )
-}
-
 buildopt_hash_files() {
     local buildopt_file
     for buildopt_file in "$@"; do
@@ -443,13 +412,10 @@ for buildopt_dsl in KOTLIN GROOVY; do
                         --gradle-command ./gradlew >/dev/null
                 )
             fi
+            buildopt_run_arm "${buildopt_workspace}" "${buildopt_home}" \
+                "${buildopt_arm_mode}" "${buildopt_scenario}" \
+                "${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-warm-${buildopt_arm_lower}.log"
             for buildopt_pair in {1..8}; do
-                buildopt_restore_workspace "${buildopt_workspace}" "${buildopt_dsl}" \
-                    "${buildopt_scenario}"
-                buildopt_stop_gradle_daemons "${buildopt_workspace}" "${buildopt_home}"
-                buildopt_run_arm "${buildopt_workspace}" "${buildopt_home}" \
-                    "${buildopt_arm_mode}" "${buildopt_scenario}" \
-                    "${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-${buildopt_pair}-warm-${buildopt_arm_lower}.log"
                 buildopt_mutate_workspace "${buildopt_workspace}" "${buildopt_dsl}" \
                     "${buildopt_scenario}" "${buildopt_pair}"
                 buildopt_run_arm "${buildopt_workspace}" "${buildopt_home}" \
@@ -562,8 +528,8 @@ if [[ "${buildopt_arm_mode}" != BOTH ]]; then
             methodology: {
                 purpose: "ISOLATE_ONE_BREADTH_ARM",
                 samplesPerCell: 8,
-                warmupPerSample: 1,
-                sampleLifecycle: "RESTORE_BASELINE_RESTART_DAEMON_WARM_MUTATE_MEASURE",
+                warmupPerCell: 1,
+                sampleLifecycle: "PERSISTENT_PRIVATE_DAEMON_PER_CELL",
                 nativeControl: {buildCache: true, configurationCache: true, parallelism: true, daemon: true},
                 candidateEntryPoints: ["INSTALLED_BUILDOPT_IMPACT_CHECK", "INSTALLED_BUILDOPT_GRADLE"]
             },

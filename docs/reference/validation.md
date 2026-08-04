@@ -156,8 +156,8 @@ byte-identical outputs. `check-poc-overhead` independently validates the
 non-overlapping diagnostic phases and confirms that traced timings never gate
 performance. `check-poc-stability` requires the same cell classifications in
 two strict batches whose control and candidate arms have independent writable
-state, fresh per-sample lifecycles, and opposite execution order; it never
-weakens the breadth thresholds.
+state, private persistent daemon lifecycles, and opposite execution order; it
+never weakens the breadth thresholds.
 
 ## Task Intelligence
 
