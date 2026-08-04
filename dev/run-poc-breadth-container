@@ -106,6 +106,11 @@ if ! docker image inspect "${buildopt_image}" |
     exit 1
 fi
 
+buildopt_trace_environment=()
+if [[ "${BUILDOPT_POC_OVERHEAD_TRACE:-0}" == 1 ]]; then
+    buildopt_trace_environment=(--env BUILDOPT_POC_OVERHEAD_TRACE=1)
+fi
+
 docker run --rm --pull never --network none --platform linux/amd64 \
     --cpus "${buildopt_cpu}" --memory "${buildopt_memory}" \
     --user "$(id -u):$(id -g)" \
@@ -114,6 +119,7 @@ docker run --rm --pull never --network none --platform linux/amd64 \
     --env JAVA_HOME=/opt/java/openjdk \
     --env BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS=/opt/java/jdk17,/opt/java/openjdk \
     --env LANG=C.UTF-8 --env LC_ALL=C.UTF-8 --env TZ=UTC \
+    "${buildopt_trace_environment[@]}" \
     --env PATH=/benchmark/bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
     --volume "${buildopt_repo_root}:/workspace:ro" \
     --volume "${buildopt_jdk17_home}:/opt/java/jdk17:ro" \

@@ -39,6 +39,9 @@ done
 
 buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-poc-breadth-001.XXXXXX")
 buildopt_cleanup() {
+    if [[ "${BUILDOPT_POC_OVERHEAD_TRACE:-0}" == 1 ]]; then
+        return
+    fi
     if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-poc-breadth-001."* ]]; then
         rm -rf -- "${buildopt_root}"
     fi
@@ -151,6 +154,7 @@ buildopt_duration_ms=0
 buildopt_output_sha=
 buildopt_executed_verifications=0
 buildopt_configuration_cache_reused=false
+buildopt_phase_json=null
 
 buildopt_run_arm() {
     local buildopt_workspace=$1 buildopt_home=$2 buildopt_arm=$3
@@ -164,13 +168,23 @@ buildopt_run_arm() {
     fi
     buildopt_seed_gradle_home "${buildopt_home}"
     local buildopt_started buildopt_finished buildopt_status
+    local buildopt_trace_base='' buildopt_trace_log=''
+    local -a buildopt_arm_gradle_arguments=("${buildopt_gradle_arguments[@]}")
+    if [[ "${BUILDOPT_POC_OVERHEAD_TRACE:-0}" == 1 ]]; then
+        buildopt_trace_base="${buildopt_log%.log}.operations"
+        buildopt_trace_log="${buildopt_trace_base}-log.txt"
+        rm -f -- "${buildopt_trace_log}"
+        buildopt_arm_gradle_arguments+=(
+            "-Dorg.gradle.internal.operations.trace=${buildopt_trace_base}"
+        )
+    fi
     buildopt_started=$(date +%s%N)
     set +e
     if [[ "${buildopt_arm}" == CONTROL ]]; then
         (
             cd -- "${buildopt_workspace}"
             env GRADLE_USER_HOME="${buildopt_home}" \
-                ./gradlew "${buildopt_gradle_arguments[@]}" "${buildopt_tasks[@]}"
+                ./gradlew "${buildopt_arm_gradle_arguments[@]}" "${buildopt_tasks[@]}"
         ) >"${buildopt_log}" 2>&1
     else
         (
@@ -179,7 +193,7 @@ buildopt_run_arm() {
                 GRADLE_USER_HOME="${buildopt_home}" \
                 XDG_CACHE_HOME="${buildopt_home}/buildopt-user-cache" \
                 "${buildopt_prefix}/bin/buildopt" gradle \
-                "${buildopt_gradle_arguments[@]}" "${buildopt_tasks[@]}"
+                "${buildopt_arm_gradle_arguments[@]}" "${buildopt_tasks[@]}"
         ) >"${buildopt_log}" 2>&1
     fi
     buildopt_status=$?
@@ -191,6 +205,51 @@ buildopt_run_arm() {
         exit 1
     fi
     buildopt_duration_ms=$(((buildopt_finished - buildopt_started) / 1000000))
+    buildopt_phase_json=null
+    if [[ -n "${buildopt_trace_log}" ]]; then
+        [[ -s "${buildopt_trace_log}" ]] || {
+            printf 'POC breadth operation trace is unavailable: %s\n' \
+                "${buildopt_trace_log}" >&2
+            exit 1
+        }
+        buildopt_external_started_ms=$((buildopt_started / 1000000))
+        buildopt_external_finished_ms=$((buildopt_finished / 1000000))
+        buildopt_phase_json=$(jq -sc \
+            --argjson externalStartedMs "${buildopt_external_started_ms}" \
+            --argjson externalFinishedMs "${buildopt_external_finished_ms}" '
+            (map(select(.startTime != null and
+                        .detailsClassName == "org.gradle.launcher.exec.DefaultBuildTreeActionExecutor$1")) |
+             if length == 1 then .[0] else error("expected one root build operation") end) as $rootStart |
+            (map(select(.endTime != null and .id == $rootStart.id)) |
+             if length == 1 then .[0] else error("expected one root build completion") end) as $rootEnd |
+            (map(select(.startTime != null and
+                        .detailsClassName == "org.gradle.internal.buildtree.BuildOperationFiringBuildTreeWorkExecutor$1")) |
+             if length == 1 then .[0] else error("expected one main-task operation") end) as $tasksStart |
+            (map(select(.endTime != null and .id == $tasksStart.id)) |
+             if length == 1 then .[0] else error("expected one main-task completion") end) as $tasksEnd |
+            {
+                externalDurationMs: ($externalFinishedMs - $externalStartedMs),
+                launcherAndGradleClientStartupMs: ($rootStart.startTime - $externalStartedMs),
+                initPluginSetupMs: 0,
+                configurationBeforeTasksMs: ($tasksStart.startTime - $rootStart.startTime),
+                taskExecutionTemporalMs: ($tasksEnd.endTime - $tasksStart.startTime),
+                gradleFinalizationMs: ($rootEnd.endTime - $tasksEnd.endTime),
+                launcherAndGradleClientTeardownMs: ($externalFinishedMs - $rootEnd.endTime),
+                gradleRootDurationMs: ($rootEnd.endTime - $rootStart.startTime),
+                candidateMode: "NATIVE_ONLY"
+            } |
+            .reconciledDurationMs = (
+                .launcherAndGradleClientStartupMs + .initPluginSetupMs +
+                .configurationBeforeTasksMs + .taskExecutionTemporalMs +
+                .gradleFinalizationMs + .launcherAndGradleClientTeardownMs
+            ) |
+            if (.externalDurationMs - .reconciledDurationMs | fabs) <= 2 and
+               ([.launcherAndGradleClientStartupMs, .configurationBeforeTasksMs,
+                 .taskExecutionTemporalMs, .gradleFinalizationMs,
+                 .launcherAndGradleClientTeardownMs] | all(. >= 0))
+            then . else error("operation phases do not reconcile") end
+        ' "${buildopt_trace_log}")
+    fi
     buildopt_executed_verifications=$(grep -Ec '^> Task :[^:]+:pocVerify$' "${buildopt_log}" || true)
     buildopt_configuration_cache_reused=false
     if grep -Fq 'Reusing configuration cache.' "${buildopt_log}"; then
@@ -236,6 +295,7 @@ buildopt_record_pair() {
     local buildopt_control_sha=${10} buildopt_candidate_sha=${11}
     local buildopt_control_executed=${12} buildopt_candidate_executed=${13}
     local buildopt_control_cc=${14} buildopt_candidate_cc=${15}
+    local buildopt_control_phases=${16:-null} buildopt_candidate_phases=${17:-null}
     jq -cn \
         --arg workloadId "${buildopt_id}" --arg scenario "${buildopt_scenario}" \
         --arg changeClass "${buildopt_change}" --arg successClass "${buildopt_success}" \
@@ -248,7 +308,9 @@ buildopt_record_pair() {
         --argjson controlExecutedVerifications "${buildopt_control_executed}" \
         --argjson candidateExecutedVerifications "${buildopt_candidate_executed}" \
         --argjson controlConfigurationCacheReused "${buildopt_control_cc}" \
-        --argjson candidateConfigurationCacheReused "${buildopt_candidate_cc}" '{
+        --argjson candidateConfigurationCacheReused "${buildopt_candidate_cc}" \
+        --argjson controlPhases "${buildopt_control_phases}" \
+        --argjson candidatePhases "${buildopt_candidate_phases}" '{
             workloadId: $workloadId,
             scenario: $scenario,
             changeClass: $changeClass,
@@ -266,7 +328,10 @@ buildopt_record_pair() {
             controlConfigurationCacheReused: $controlConfigurationCacheReused,
             candidateConfigurationCacheReused: $candidateConfigurationCacheReused,
             productAttributableFailure: false
-        }' >>"${buildopt_raw}"
+        } + (if $controlPhases == null then {} else {
+            controlPhases: $controlPhases,
+            candidatePhases: $candidatePhases
+        } end)' >>"${buildopt_raw}"
 }
 
 for buildopt_dsl in KOTLIN GROOVY; do
@@ -323,6 +388,7 @@ for buildopt_dsl in KOTLIN GROOVY; do
                     buildopt_control_sha=${buildopt_output_sha}
                     buildopt_control_executed=${buildopt_executed_verifications}
                     buildopt_control_cc=${buildopt_configuration_cache_reused}
+                    buildopt_control_phases=${buildopt_phase_json}
                 else
                     buildopt_run_arm "${buildopt_candidate}" "${buildopt_candidate_home}" CANDIDATE \
                         "${buildopt_scenario}" "${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-${buildopt_pair}-candidate.log"
@@ -330,6 +396,7 @@ for buildopt_dsl in KOTLIN GROOVY; do
                     buildopt_candidate_sha=${buildopt_output_sha}
                     buildopt_candidate_executed=${buildopt_executed_verifications}
                     buildopt_candidate_cc=${buildopt_configuration_cache_reused}
+                    buildopt_candidate_phases=${buildopt_phase_json}
                 fi
             done
             buildopt_record_pair "BREADTH_${buildopt_scenario}_${buildopt_dsl}" \
@@ -338,7 +405,8 @@ for buildopt_dsl in KOTLIN GROOVY; do
                 "${buildopt_control_ms}" "${buildopt_candidate_ms}" \
                 "${buildopt_control_sha}" "${buildopt_candidate_sha}" \
                 "${buildopt_control_executed}" "${buildopt_candidate_executed}" \
-                "${buildopt_control_cc}" "${buildopt_candidate_cc}"
+                "${buildopt_control_cc}" "${buildopt_candidate_cc}" \
+                "${buildopt_control_phases:-null}" "${buildopt_candidate_phases:-null}"
             printf 'POC-BREADTH-001 %s/%s pair %d saved %dms\n' \
                 "${buildopt_scenario}" "${buildopt_dsl}" "${buildopt_pair}" \
                 "$((buildopt_control_ms - buildopt_candidate_ms))"
