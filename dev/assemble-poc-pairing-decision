@@ -9,6 +9,26 @@ fi
 buildopt_output=$1
 buildopt_control_first=$2
 buildopt_candidate_first=$3
+buildopt_profile=${BUILDOPT_POC_PAIRING_PROFILE:-FULL}
+
+case "${buildopt_profile}" in
+    FULL)
+        buildopt_report_schema=buildopt.evidence/poc-pairing/v1
+        buildopt_decision_schema=buildopt.evidence/poc-pairing-decision/v1
+        buildopt_gate=POC-PAIRING-G01
+        buildopt_required_cells=8
+        ;;
+    GROOVY_VALUE)
+        buildopt_report_schema=buildopt.evidence/poc-groovy/v1
+        buildopt_decision_schema=buildopt.evidence/poc-groovy-decision/v1
+        buildopt_gate=POC-GROOVY-G01
+        buildopt_required_cells=2
+        ;;
+    *)
+        printf 'invalid POC-PAIRING-001 decision profile: %s\n' "${buildopt_profile}" >&2
+        exit 64
+        ;;
+esac
 
 if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
     ! -f "${buildopt_control_first}" || ! -f "${buildopt_candidate_first}" ]]; then
@@ -31,11 +51,15 @@ jq -n \
     --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
     --arg controlFirstSha256 "${buildopt_control_first_sha}" \
     --arg candidateFirstSha256 "${buildopt_candidate_first_sha}" \
+    --arg reportSchema "${buildopt_report_schema}" \
+    --arg decisionSchema "${buildopt_decision_schema}" \
+    --arg gateId "${buildopt_gate}" \
+    --argjson requiredCells "${buildopt_required_cells}" \
     --slurpfile controlFirst "${buildopt_control_first}" \
     --slurpfile candidateFirst "${buildopt_candidate_first}" '
     if ($controlFirst | length) != 1 or ($candidateFirst | length) != 1 or
-       $controlFirst[0].schemaVersion != "buildopt.evidence/poc-pairing/v1" or
-       $candidateFirst[0].schemaVersion != "buildopt.evidence/poc-pairing/v1" or
+       $controlFirst[0].schemaVersion != $reportSchema or
+       $candidateFirst[0].schemaVersion != $reportSchema or
        $controlFirst[0].methodology.startingPairOrder != "CONTROL_FIRST" or
        $candidateFirst[0].methodology.startingPairOrder != "CANDIDATE_FIRST" or
        $controlFirst[0].buildoptRevision != $candidateFirst[0].buildoptRevision or
@@ -64,7 +88,7 @@ jq -n \
     ($controlFirst[0].decision.qualifyingCells) as $controlQualifying |
     ($candidateFirst[0].decision.qualifyingCells) as $candidateQualifying |
     {
-        schemaVersion: "buildopt.evidence/poc-pairing-decision/v1",
+        schemaVersion: $decisionSchema,
         capturedAt: $capturedAt,
         buildoptRevision: $controlFirst[0].buildoptRevision,
         reports: {
@@ -87,8 +111,8 @@ jq -n \
         decision: {
             verdict: (if $stable then "CLASSIFICATIONS_REPRODUCED"
                       else "MEASUREMENT_UNSTABLE" end),
-            breadthClaim: (if ($stable and $controlQualifying == 8 and
-                                  $candidateQualifying == 8)
+            breadthClaim: (if ($stable and $controlQualifying == $requiredCells and
+                                  $candidateQualifying == $requiredCells)
                            then "BROADEN_SYNTHETIC_CLAIM"
                            else "RETAIN_QUALIFIED_SYNTHETIC_WORKLOADS_ONLY" end),
             productChangeAuthorization: {
@@ -100,12 +124,12 @@ jq -n \
             nextExperiment: (if ($reproducedFailures | length) > 0
                              then "TARGET_REPRODUCED_VALUE_GAPS"
                              elif ($stable and $controlQualifying == 8 and
-                                     $candidateQualifying == 8)
+                                     $candidateQualifying == $requiredCells)
                              then "NONE"
                              else "STOP_AND_REVIEW_MEASUREMENT_BOUNDARY" end)
         },
         gate: {
-            id: "POC-PAIRING-G01",
+            id: $gateId,
             state: (if $stable then "PASSED" else "FAILED" end)
         },
         boundaries: {

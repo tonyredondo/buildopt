@@ -118,6 +118,50 @@ jq -e '
     }
     ' "${buildopt_root}/decision.json" >/dev/null
 
+jq -c 'select(.dsl == "GROOVY" and
+              (.scenario == "NO_CHANGE" or .scenario == "LEAF_CHANGE"))' \
+    "${buildopt_root}/control-first-observations.jsonl" \
+    >"${buildopt_root}/groovy-control-first-observations.jsonl"
+jq -c 'select(.dsl == "GROOVY" and
+              (.scenario == "NO_CHANGE" or .scenario == "LEAF_CHANGE"))' \
+    "${buildopt_root}/candidate-first-observations.jsonl" \
+    >"${buildopt_root}/groovy-candidate-first-observations.jsonl"
+BUILDOPT_POC_PAIRING_PROFILE=GROOVY_VALUE \
+    "${buildopt_script_dir}/assemble-poc-pairing" \
+    "${buildopt_root}/groovy-control-first.json" \
+    synthetic-groovy-control-first CONTROL_FIRST \
+    "${buildopt_root}/control.json" "${buildopt_root}/candidate.json" \
+    "${buildopt_root}/groovy-control-first-observations.jsonl" >/dev/null
+BUILDOPT_POC_PAIRING_PROFILE=GROOVY_VALUE \
+    "${buildopt_script_dir}/assemble-poc-pairing" \
+    "${buildopt_root}/groovy-candidate-first.json" \
+    synthetic-groovy-candidate-first CANDIDATE_FIRST \
+    "${buildopt_root}/control.json" "${buildopt_root}/candidate.json" \
+    "${buildopt_root}/groovy-candidate-first-observations.jsonl" >/dev/null
+BUILDOPT_POC_PAIRING_PROFILE=GROOVY_VALUE \
+    "${buildopt_script_dir}/assemble-poc-pairing-decision" \
+    "${buildopt_root}/groovy-decision.json" \
+    "${buildopt_root}/groovy-control-first.json" \
+    "${buildopt_root}/groovy-candidate-first.json" >/dev/null
+jq -e '
+    .schemaVersion == "buildopt.evidence/poc-groovy-decision/v1" and
+    .result.classificationReproduced and .gate == {id: "POC-GROOVY-G01", state: "PASSED"}
+    ' "${buildopt_root}/groovy-decision.json" >/dev/null
+jq -e '
+    .schemaVersion == "buildopt.evidence/poc-groovy/v1" and
+    .gate == {id: "POC-GROOVY-001", state: "RECORDED"} and
+    .decision.requiredCells == 2 and (.workloads | length) == 2 and
+    .methodology.workloadProfile == {
+        id: "GROOVY_DETERMINISTIC_VERIFICATION_V1",
+        initScript: "dev/poc-groovy-workload.init.gradle",
+        initScriptSha256: .methodology.workloadProfile.initScriptSha256,
+        verificationRoundsPerTask: 25000000,
+        taskSelectionChanged: false,
+        thresholdsChanged: false
+    } and (.methodology.workloadProfile.initScriptSha256 |
+           type == "string" and test("^[0-9a-f]{64}$"))
+    ' "${buildopt_root}/groovy-control-first.json" >/dev/null
+
 jq '
     if .arm == "CANDIDATE" and .pair == 1 and
        .scenario == "NO_CHANGE" and .dsl == "KOTLIN" then

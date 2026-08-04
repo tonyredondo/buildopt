@@ -12,6 +12,31 @@ buildopt_starting_order=$3
 buildopt_control_meta=$4
 buildopt_candidate_meta=$5
 buildopt_observations=$6
+buildopt_profile=${BUILDOPT_POC_PAIRING_PROFILE:-FULL}
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+
+case "${buildopt_profile}" in
+    FULL)
+        buildopt_expected_observations=128
+        buildopt_required_cells=8
+        buildopt_schema=buildopt.evidence/poc-pairing/v1
+        buildopt_gate=POC-PAIRING-001
+        buildopt_purpose=REMOVE_RUNNER_DRIFT_WITH_TEMPORALLY_PAIRED_ISOLATED_ARMS
+        ;;
+    GROOVY_VALUE)
+        buildopt_expected_observations=32
+        buildopt_required_cells=2
+        buildopt_schema=buildopt.evidence/poc-groovy/v1
+        buildopt_gate=POC-GROOVY-001
+        buildopt_purpose=VERIFY_GROOVY_PARITY_AND_SELECTIVE_VALUE_AFTER_NATIVE_PROCESS_REPLACEMENT
+        buildopt_workload_init_sha=$(sha256sum \
+            "${buildopt_script_dir}/poc-groovy-workload.init.gradle" | awk '{print $1}')
+        ;;
+    *)
+        printf 'invalid POC-PAIRING-001 assembly profile: %s\n' "${buildopt_profile}" >&2
+        exit 64
+        ;;
+esac
 
 if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
     ! "${buildopt_batch_id}" =~ ^[a-z0-9][a-z0-9-]{0,63}$ ||
@@ -31,6 +56,13 @@ jq -n \
     --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
     --arg batchId "${buildopt_batch_id}" \
     --arg startingOrder "${buildopt_starting_order}" \
+    --arg schemaVersion "${buildopt_schema}" \
+    --arg gateId "${buildopt_gate}" \
+    --arg purpose "${buildopt_purpose}" \
+    --arg profile "${buildopt_profile}" \
+    --arg workloadInitSha256 "${buildopt_workload_init_sha:-}" \
+    --argjson expectedObservations "${buildopt_expected_observations}" \
+    --argjson requiredCells "${buildopt_required_cells}" \
     --slurpfile control "${buildopt_control_meta}" \
     --slurpfile candidate "${buildopt_candidate_meta}" \
     --slurpfile observations "${buildopt_observations}" '
@@ -63,7 +95,7 @@ jq -n \
        $control[0].publicArtifacts != $candidate[0].publicArtifacts or
        $control[0].fixture != $candidate[0].fixture
     then error("isolated arm metadata are incompatible") else . end |
-    if ($observations | length) != 128 or
+    if ($observations | length) != $expectedObservations or
        ($observations | any(
            (.arm != "CONTROL" and .arm != "CANDIDATE") or
            (.pair < 1 or .pair > 8) or
@@ -171,14 +203,14 @@ jq -n \
          })) as $workloads |
     ($workloads | all(.classification != "BREADTH_GATE_FAILED")) as $allQualified |
     {
-        schemaVersion: "buildopt.evidence/poc-pairing/v1",
+        schemaVersion: $schemaVersion,
         capturedAt: $capturedAt,
         buildoptRevision: $control[0].buildoptRevision,
         batchId: $batchId,
         runner: $control[0].runner,
         publicArtifacts: $control[0].publicArtifacts,
-        methodology: {
-            purpose: "REMOVE_RUNNER_DRIFT_WITH_TEMPORALLY_PAIRED_ISOLATED_ARMS",
+        methodology: ({
+            purpose: $purpose,
             samplesPerCell: 8,
             warmupPerCell: 1,
             startingPairOrder: $startingOrder,
@@ -199,7 +231,16 @@ jq -n \
             acceleratorThreshold: {minimumSavedMs: 500, minimumReductionRatio: 0.02, positiveLower95Bound: true},
             parityGuardrail: {maximumRegressionRatio: 0.02},
             percentagesAddedAcrossScenarios: false
-        },
+        } + (if $profile == "GROOVY_VALUE" then {
+            workloadProfile: {
+                id: "GROOVY_DETERMINISTIC_VERIFICATION_V1",
+                initScript: "dev/poc-groovy-workload.init.gradle",
+                initScriptSha256: $workloadInitSha256,
+                verificationRoundsPerTask: 25000000,
+                taskSelectionChanged: false,
+                thresholdsChanged: false
+            }
+        } else {} end)),
         fixture: $control[0].fixture,
         workloads: $workloads,
         decision: {
@@ -208,9 +249,9 @@ jq -n \
             breadthProven: $allQualified,
             qualifyingCells: ($workloads |
                 map(select(.classification != "BREADTH_GATE_FAILED")) | length),
-            requiredCells: 8
+            requiredCells: $requiredCells
         },
-        gate: {id: "POC-PAIRING-001", state: "RECORDED"},
+        gate: {id: $gateId, state: "RECORDED"},
         boundaries: {
             ownerControlledSyntheticWorkloads: true,
             universalSavingsClaimed: false,

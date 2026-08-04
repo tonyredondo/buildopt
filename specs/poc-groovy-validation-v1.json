@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "buildopt.specs/poc-groovy-validation/v1",
+  "workItem": "POC-GROOVY-001",
+  "decision": "RESTORE_GROOVY_NO_CHANGE_PARITY_WITHOUT_LOSING_SELECTIVE_VALUE",
+  "runner": "linux-amd64-4c-16g-v1",
+  "workloads": {
+    "dsl": "GROOVY",
+    "scenarios": ["NO_CHANGE", "LEAF_CHANGE"],
+    "verificationRoundsPerTask": 25000000,
+    "taskSelectionChanged": false,
+    "thresholdsChanged": false
+  },
+  "batches": {
+    "count": 2,
+    "startingPairOrders": ["CONTROL_FIRST", "CANDIDATE_FIRST"],
+    "samplesPerCell": 8,
+    "warmupPerCell": 1,
+    "maximumInterArmIdleGapMs": 5000
+  },
+  "thresholds": {
+    "noChangeMaximumRegressionRatio": 0.02,
+    "leafMinimumSavedMs": 500,
+    "leafMinimumReductionRatio": 0.02,
+    "leafPositiveLower95Bound": true
+  },
+  "guardrails": {
+    "sameRevisionAndArtifacts": true,
+    "writableStateShared": false,
+    "workspaceShared": false,
+    "gradleUserHomeShared": false,
+    "daemonShared": false,
+    "requiredOutputsIdentical": true,
+    "maximumProductAttributableFailures": 0,
+    "executionShapeUnchanged": true,
+    "configurationCacheReused": true,
+    "oppositeOrdersMustReproduce": true
+  },
+  "boundaries": {
+    "ownerControlledSyntheticWorkloads": true,
+    "productionReadiness": false,
+    "externalDesignPartner": false,
+    "eightHourSoak": false,
+    "testOptimization": false
+  }
+}

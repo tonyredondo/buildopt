@@ -1,0 +1,11 @@
+// The generic breadth fixture deliberately stays unchanged because historical
+// reports are bound to its digest. This POC profile increases only the
+// deterministic, non-cacheable verification work so the fixed 500 ms value
+// floor can be tested without changing task selection or expected outputs.
+gradle.beforeProject { project ->
+    project.afterEvaluate {
+        project.tasks.matching { task -> task.name == 'pocVerify' }.configureEach { task ->
+            task.rounds.set(25_000_000)
+        }
+    }
+}

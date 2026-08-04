@@ -15,6 +15,7 @@ buildopt_fixture="${buildopt_repo_root}/fixtures/poc-breadth/realistic-multimodu
 buildopt_arm_mode=${BUILDOPT_POC_BREADTH_ARM:-BOTH}
 buildopt_step_mode=${BUILDOPT_POC_BREADTH_STEP:-}
 buildopt_external_state_root=${BUILDOPT_POC_BREADTH_STATE_ROOT:-}
+buildopt_workload_init=${BUILDOPT_POC_BREADTH_WORKLOAD_INIT:-}
 
 if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
     ! "${buildopt_revision}" =~ ^[0-9a-f]{40}$ || "${buildopt_prefix}" != /* ]]; then
@@ -108,6 +109,14 @@ buildopt_gradle_arguments=(
     --console=plain
     --warning-mode=fail
 )
+if [[ -n "${buildopt_workload_init}" ]]; then
+    if [[ "${buildopt_workload_init}" != /* || ! -s "${buildopt_workload_init}" ]]; then
+        printf 'invalid POC breadth workload init script: %s\n' \
+            "${buildopt_workload_init}" >&2
+        exit 64
+    fi
+    buildopt_gradle_arguments+=(--init-script "${buildopt_workload_init}")
+fi
 if [[ -n "${BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS:-}" ]]; then
     buildopt_gradle_arguments+=(
         "-Dorg.gradle.java.installations.paths=${BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS}"

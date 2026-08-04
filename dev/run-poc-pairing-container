@@ -9,6 +9,7 @@ fi
 buildopt_output=$1
 buildopt_batch_id=$2
 buildopt_starting_order=$3
+buildopt_profile=${BUILDOPT_POC_PAIRING_PROFILE:-FULL}
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
@@ -20,6 +21,22 @@ if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
     printf 'invalid POC-PAIRING-001 container input\n' >&2
     exit 64
 fi
+case "${buildopt_profile}" in
+    FULL)
+        buildopt_dsls=(KOTLIN GROOVY)
+        buildopt_scenarios=(NO_CHANGE LEAF_CHANGE SHARED_CHANGE BUILD_LOGIC_CHANGE)
+        buildopt_workload_init=
+        ;;
+    GROOVY_VALUE)
+        buildopt_dsls=(GROOVY)
+        buildopt_scenarios=(NO_CHANGE LEAF_CHANGE)
+        buildopt_workload_init=/workspace/dev/poc-groovy-workload.init.gradle
+        ;;
+    *)
+        printf 'invalid POC-PAIRING-001 profile: %s\n' "${buildopt_profile}" >&2
+        exit 64
+        ;;
+esac
 for buildopt_command in awk cp curl docker find git grep id jq mkdir mktemp sha256sum tar; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
         printf 'required POC-PAIRING-001 container command is unavailable: %s\n' \
@@ -157,6 +174,7 @@ buildopt_exec_step() {
         --env BUILDOPT_POC_BREADTH_DSL="${buildopt_dsl}" \
         --env BUILDOPT_POC_BREADTH_SCENARIO="${buildopt_scenario}" \
         --env BUILDOPT_POC_BREADTH_PAIR="${buildopt_pair}" \
+        --env BUILDOPT_POC_BREADTH_WORKLOAD_INIT="${buildopt_workload_init}" \
         "${buildopt_container}" \
         /workspace/dev/run-poc-breadth \
             "/benchmark/output/${buildopt_destination}" \
@@ -192,9 +210,9 @@ buildopt_start_arm_container CONTROL
 buildopt_start_arm_container CANDIDATE
 : >"${buildopt_root}/observations.jsonl"
 
-for buildopt_dsl in KOTLIN GROOVY; do
+for buildopt_dsl in "${buildopt_dsls[@]}"; do
     buildopt_dsl_lower=${buildopt_dsl,,}
-    for buildopt_scenario in NO_CHANGE LEAF_CHANGE SHARED_CHANGE BUILD_LOGIC_CHANGE; do
+    for buildopt_scenario in "${buildopt_scenarios[@]}"; do
         buildopt_scenario_lower=${buildopt_scenario,,}
         buildopt_warm_first=$(buildopt_first_arm_for_pair 1)
         if [[ "${buildopt_warm_first}" == CONTROL ]]; then
@@ -207,8 +225,7 @@ for buildopt_dsl in KOTLIN GROOVY; do
             buildopt_warm_file="warm-${buildopt_dsl_lower}-${buildopt_scenario_lower}.json"
             buildopt_exec_step "${buildopt_arm}" WARM "${buildopt_dsl}" \
                 "${buildopt_scenario}" 0 "${buildopt_warm_file}"
-            if [[ "${buildopt_dsl}" == KOTLIN &&
-                "${buildopt_scenario}" == NO_CHANGE ]]; then
+            if [[ ! -e "${buildopt_root}/${buildopt_arm_lower}-meta.json" ]]; then
                 cp -- "${buildopt_root}/${buildopt_arm_lower}/output/${buildopt_warm_file}" \
                     "${buildopt_root}/${buildopt_arm_lower}-meta.json"
             fi
@@ -234,7 +251,8 @@ for buildopt_dsl in KOTLIN GROOVY; do
     done
 done
 
-"${buildopt_script_dir}/assemble-poc-pairing" \
+BUILDOPT_POC_PAIRING_PROFILE="${buildopt_profile}" \
+    "${buildopt_script_dir}/assemble-poc-pairing" \
     "${buildopt_output}" "${buildopt_batch_id}" "${buildopt_starting_order}" \
     "${buildopt_root}/control-meta.json" \
     "${buildopt_root}/candidate-meta.json" \
