@@ -10,7 +10,7 @@ buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/build-impact-performance-v1-local.json"}
 
-for buildopt_command in git jq; do
+for buildopt_command in jq; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
         printf 'required Build Impact performance command is unavailable: %s\n' \
             "${buildopt_command}" >&2
@@ -23,9 +23,12 @@ if [[ ! -f "${buildopt_result}" ]]; then
     exit 1
 fi
 
-buildopt_before_status=$(\
-    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
-)
+buildopt_before_status=
+if command -v git >/dev/null 2>&1 && [[ -d "${buildopt_repo_root}/.git" ]]; then
+    buildopt_before_status=$(\
+        git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+    )
+fi
 
 jq -e '
     def digest:
@@ -153,10 +156,12 @@ jq -e '
     }
 ' "${buildopt_result}" >/dev/null
 
-buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
-if [[ "${buildopt_before_status}" != "${buildopt_after_status}" ]]; then
-    printf 'Build Impact performance validation changed the working tree\n' >&2
-    exit 1
+if command -v git >/dev/null 2>&1 && [[ -d "${buildopt_repo_root}/.git" ]]; then
+    buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+    if [[ "${buildopt_before_status}" != "${buildopt_after_status}" ]]; then
+        printf 'Build Impact performance validation changed the working tree\n' >&2
+        exit 1
+    fi
 fi
 
 printf 'BuildOpt Build Impact performance OK: %s\n' "${buildopt_result}"
