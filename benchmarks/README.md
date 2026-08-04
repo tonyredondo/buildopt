@@ -18,9 +18,9 @@ small/medium/large Gradle build matrix and makes no performance claim.
 ## Build Optimization scorecard
 
 The current POC verdict is `CONTINUE`, qualified only for the measured synthetic
-workload classes. Four contractual 4-vCPU/16-GiB runs close the baseline,
-negative-mechanism decision, accelerator-coverage matrix, and combined public
-path. Safe Cache is explicit-only while the default delegates to Gradle's native
+workload classes. Five contractual 4-vCPU/16-GiB runs cover the baseline,
+negative-mechanism decision, accelerator-coverage matrix, combined public path,
+and realistic breadth test. Safe Cache is explicit-only while the default delegates to Gradle's native
 cache; Runtime Tuning candidates `W4_H6G` and `W3_H4G` are disabled; Build
 Impact and the exact reviewed Task/Patch route clear the threshold across Kotlin
 and Groovy; and the complete path also clears the final gate. Validate that
@@ -74,6 +74,8 @@ The underlying evidence and contracts are:
   validated by `./dev/check-poc-value-coverage`;
 - [combined public-path matrix](./results/poc-value-combined-v1.json),
   validated by `./dev/check-poc-value-combined`;
+- [realistic change-class matrix](./results/poc-breadth-v1.json), validated by
+  `./dev/check-poc-breadth`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
@@ -81,9 +83,29 @@ The underlying evidence and contracts are:
 - [Build Impact observations](./results/build-impact-performance-v1-local.json)
   and [contract](../specs/build-impact-performance-v1.md).
 
-The three mechanism-development reports remain historical inputs. The four
+The three mechanism-development reports remain historical inputs. The five
 strict reports are the current decision evidence. They prove bounded combined
-value, but none claims universal savings or production readiness.
+value but do not yet prove realistic breadth; none claims universal savings or
+production readiness.
+
+### Realistic change-class result
+
+`POC-BREADTH-001` tested whether the bounded result generalizes to a five-project
+Kotlin/Groovy graph. It does not yet: 2/8 cells qualify, so the checked decision
+is `RETAIN_QUALIFIED_SYNTHETIC_WORKLOADS_ONLY`.
+
+| Change | Kotlin | Groovy |
+|---|---:|---:|
+| No change | 34 ms slower (3.7%); parity failed | 406 ms slower (31.7%); parity failed |
+| Leaf source | 361 ms faster (29.0%); below 500-ms floor | 269 ms faster (15.7%); noisy and below floor |
+| Shared source | 1,471 ms faster (64.2%); threshold met | 287 ms slower (21.9%); threshold failed |
+| Build logic | 163 ms faster (5.1%); parity met | 167 ms slower (8.2%); parity failed |
+
+Every required output was byte-identical, selection/fallback task counts were
+exact, Configuration Cache behavior matched the scenario, and no product failure
+occurred. The failure is value/performance, not correctness. Percentages are not
+added across cells. The next experiment must attribute and remove installed-path
+overhead on short and Groovy builds before rerunning this unchanged gate.
 
 ## Historical v0.2 public onboarding performance
 

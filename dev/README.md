@@ -2163,6 +2163,9 @@ GRADLE_USER_HOME=.tools/gradle-user-home/local \
 
 Both a pass and a fail are valid evidence. A fail retains the already qualified
 narrow POC claim and identifies the workload class that must not be generalized.
+The checked result currently fails breadth with 2/8 qualifying cells: shared
+Kotlin clears the accelerator threshold and Kotlin build-logic preserves parity;
+the remaining cells expose short-build and Groovy overhead for the next block.
 
 Validate and print the historical mechanism-development scorecard without
 rerunning a benchmark:

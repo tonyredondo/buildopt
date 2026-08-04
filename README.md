@@ -30,7 +30,9 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > **Project status:** this is an owner-operated proof of concept. The combined
 > public path has beaten a well-configured native Gradle baseline across four
 > qualified synthetic Kotlin/Groovy workload cells, so the bounded decision is
-> `CONTINUE`. This does not prove universal savings or production readiness.
+> `CONTINUE`. A newer realistic five-project breadth matrix qualified only 2/8
+> change/DSL cells, so the claim has not been broadened. This does not prove
+> universal savings or production readiness.
 > Soak, design partners, HA, enterprise identity, multi-tenancy, and production
 > operations remain outside this phase. Test Optimization is a separate product
 > and is not implemented here.
@@ -75,7 +77,8 @@ native Gradle, so neither is active on the default path. The final combined
 path saved 63.5–84.1% across four Kotlin/Groovy synthetic workload cells, with
 identical required outputs and zero product-attributable failures. The POC
 decision is therefore `CONTINUE`, qualified only for those controlled workload
-classes; it is not a universal-savings or production-readiness claim. See the
+classes. The realistic breadth gate retained that narrow claim after only 2/8
+cells qualified; it is not a universal-savings or production-readiness claim. See the
 [POC value contract](./specs/poc-value-validation-v1.md) and
 [raw scorecard](./benchmarks/README.md#build-optimization-scorecard).
 

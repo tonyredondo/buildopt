@@ -147,6 +147,11 @@ comparison. None reruns Gradle or adds percentages from different workloads.
 Use the owning benchmark runner only when the relevant implementation or
 fixture changes.
 
+`check-poc-breadth` accepts both a passing and a failing decision document and
+recomputes all 64 observations. The checked result retains the narrow claim:
+only 2/8 realistic change/DSL cells qualify, despite correct selection and
+byte-identical outputs.
+
 ## Task Intelligence
 
 ```bash
