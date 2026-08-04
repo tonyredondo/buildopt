@@ -106,7 +106,15 @@ jq -e '
 ' "${buildopt_report}" >/dev/null
 
 buildopt_revision=$(jq -er '.buildoptRevision' "${buildopt_report}")
-git -C "${buildopt_repo_root}" cat-file -e "${buildopt_revision}^{commit}"
+if git -C "${buildopt_repo_root}" cat-file -e \
+    "${buildopt_revision}^{commit}" 2>/dev/null; then
+    git -C "${buildopt_repo_root}" merge-base --is-ancestor \
+        "${buildopt_revision}" HEAD
+elif [[ $(git -C "${buildopt_repo_root}" rev-parse --is-shallow-repository) != true ]]; then
+    printf 'POC-OVERHEAD-001 revision is unavailable: %s\n' \
+        "${buildopt_revision}" >&2
+    exit 1
+fi
 buildopt_forbidden_xdg="XDG_CACHE_HOME=\"\${buildopt_home}/buildopt-user-cache\""
 if grep -Fq "${buildopt_forbidden_xdg}" \
     "${buildopt_repo_root}/dev/run-poc-breadth"; then
