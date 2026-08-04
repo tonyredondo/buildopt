@@ -47,7 +47,8 @@ jq -n \
        (arm_report($control[0]; "CONTROL") | not) or
        (arm_report($candidate[0]; "CANDIDATE") | not) or
        $control[0].buildoptRevision != $candidate[0].buildoptRevision or
-       $control[0].runner != $candidate[0].runner or
+       ($control[0].runner | del(.capturedAt)) !=
+           ($candidate[0].runner | del(.capturedAt)) or
        $control[0].publicArtifacts != $candidate[0].publicArtifacts or
        $control[0].fixture != $candidate[0].fixture
     then error("isolated arm reports are incompatible") else . end |
