@@ -86,16 +86,13 @@ buildopt_image=$(jq -er '.container.reference' "${buildopt_spec}")
 buildopt_platform_digest=$(jq -er '.container.platformDigest' "${buildopt_spec}")
 buildopt_cpu=$(jq -er '.runnerClass.cpuCount' "${buildopt_spec}")
 buildopt_memory=$(jq -er '.runnerClass.memoryBytes' "${buildopt_spec}")
-buildopt_jdk17_home=${BUILDOPT_JDK17_HOME:-}
-if [[ -z "${buildopt_jdk17_home}" ]]; then
-    buildopt_javac=$(command -v javac || true)
-    if [[ -n "${buildopt_javac}" ]]; then
-        buildopt_jdk17_home=$(dirname -- "$(dirname -- "$(readlink -f "${buildopt_javac}")")")
-    fi
-fi
+buildopt_jdk17_sha=$(jq -er \
+    '.artifacts[] | select(.id == "temurin-jdk-17") | .sha256' \
+    "${buildopt_repo_root}/dev/toolchains.lock.yaml")
+buildopt_jdk17_home=${BUILDOPT_JDK17_HOME:-${BUILDOPT_TOOLS_ROOT:-${buildopt_repo_root}/.tools}/toolchains/temurin-jdk-17-${buildopt_jdk17_sha:0:16}}
 if [[ ! -x "${buildopt_jdk17_home}/bin/javac" ]] ||
     ! "${buildopt_jdk17_home}/bin/java" -version 2>&1 | grep -Eq 'version "17([.]|\")'; then
-    printf 'POC value container requires a local Java 17 JDK\n' >&2
+    printf 'POC value container requires locked Temurin 17; run ./dev/bootstrap --toolchain temurin-jdk-17\n' >&2
     exit 1
 fi
 docker pull --quiet --platform linux/amd64 "${buildopt_image}" >/dev/null

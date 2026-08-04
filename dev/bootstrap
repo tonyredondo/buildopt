@@ -2,7 +2,7 @@
 set -euo pipefail
 
 buildopt_usage() {
-    printf 'usage: %s --toolchain <temurin-jdk-21|temurin-jdk-25|go|protoc|buf|shellcheck|actionlint|cosign|syft>\n' "$0"
+    printf 'usage: %s --toolchain <temurin-jdk-17|temurin-jdk-21|temurin-jdk-25|go|protoc|buf|shellcheck|actionlint|cosign|syft>\n' "$0"
 }
 
 buildopt_toolchain=
@@ -29,7 +29,7 @@ done
 
 case "${buildopt_toolchain}" in
     actionlint | buf | cosign | go | protoc | shellcheck | syft | \
-        temurin-jdk-21 | temurin-jdk-25) ;;
+        temurin-jdk-17 | temurin-jdk-21 | temurin-jdk-25) ;;
     *)
         buildopt_usage >&2
         exit 64
@@ -154,7 +154,7 @@ case "${buildopt_id}" in
             exit 70
         fi
         ;;
-    temurin-jdk-21 | temurin-jdk-25)
+    temurin-jdk-17 | temurin-jdk-21 | temurin-jdk-25)
         if [[ "${buildopt_provider}" != "eclipse-adoptium" ]] ||
             [[ "${buildopt_kind}" != "tar.gz" ]] ||
             [[ ! "${buildopt_version}" =~ ^${buildopt_id##*-}([.]|$) ]]; then
@@ -327,7 +327,7 @@ buildopt_validate_toolchain() {
             [[ "${buildopt_syft_version}" == "${buildopt_version}" ]] ||
                 return 1
             ;;
-        temurin-jdk-21 | temurin-jdk-25)
+        temurin-jdk-17 | temurin-jdk-21 | temurin-jdk-25)
             [[ -x "${buildopt_tool_home}/bin/java" ]] || return 1
             [[ -x "${buildopt_tool_home}/bin/javac" ]] || return 1
             buildopt_runtime_version=${buildopt_version%%+*}
@@ -536,7 +536,7 @@ case "${buildopt_id}" in
     buf | cosign)
         buildopt_staged_tool=${buildopt_extract_root}
         ;;
-    go | temurin-jdk-21 | temurin-jdk-25)
+    go | temurin-jdk-17 | temurin-jdk-21 | temurin-jdk-25)
         if ((${#buildopt_roots[@]} != 1)) ||
             [[ ! -d "${buildopt_roots[0]}" ]]; then
             printf 'toolchain archive must contain exactly one root directory: %s\n' \

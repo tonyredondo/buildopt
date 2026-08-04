@@ -9,6 +9,19 @@
   ],
   "artifacts": [
     {
+      "id": "temurin-jdk-17",
+      "version": "17.0.19+10",
+      "adoption": "required",
+      "kind": "tar.gz",
+      "platform": "linux-amd64",
+      "provider": "eclipse-adoptium",
+      "url": "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.19%2B10/OpenJDK17U-jdk_x64_linux_hotspot_17.0.19_10.tar.gz",
+      "sha256": "d8afc263758141a66e0e3aafc321e783f7016696f4eaea067d340a269037d331",
+      "requiredBy": [
+        "POC-VALUE-001"
+      ]
+    },
+    {
       "id": "temurin-jdk-21",
       "version": "21.0.12+8",
       "adoption": "required",

@@ -505,7 +505,7 @@ buildopt_toolchain_executables() {
         rust-channel-manifest) printf 'rustc\n' ;;
         shellcheck) printf 'shellcheck\n' ;;
         syft) printf 'syft\n' ;;
-        temurin-jdk-21 | temurin-jdk-25) printf 'java\njavac\n' ;;
+        temurin-jdk-17 | temurin-jdk-21 | temurin-jdk-25) printf 'java\njavac\n' ;;
         *) return 1 ;;
     esac
 }
