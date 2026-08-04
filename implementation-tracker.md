@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `POC VALUE VALIDATION ACTIVE` — the mechanisms exist, but the combined product has not yet proved net build-time value over a well-configured native Gradle baseline<br>
-**Current phase:** `CONTINUE_CONDITIONALLY` — execute `POC-VALUE-001..004`; a workload/mechanism that does not beat or safely complement native Gradle stays disabled<br>
+**Current phase:** `CONTINUE_CONDITIONALLY` — `POC-VALUE-001..002` closed; broaden the only qualifying accelerator before measuring the combined path<br>
 **POC functional target:** measurable net build-time reduction from Safe Cache + Runtime Tuning + Build Impact + reviewed-source Task Intelligence/Patch Autopilot<br>
 **POC validation posture:** use bounded paired experiments on project-owned fixtures and repositories; compare against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -73,7 +73,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | PLAT-F6 | Persistent runtime portability on macOS and Windows | `DONE` | 1/1 | `E-150` |
 | DOC-F7 | Complete user, operator, developer, architecture, and code documentation system | `DONE` | 1/1 | `E-151` |
 | PERF-F8 | Mechanism attribution and native-cache parity | `DONE` | 1/1 | `E-154` |
-| POC-VALUE | Combined value proof over optimized native Gradle | `DOING` | 1/4 | PERF-F8 |
+| POC-VALUE | Combined value proof over optimized native Gradle | `DOING` | 2/4 | PERF-F8 |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -95,14 +95,17 @@ The implementation history remains useful, but it is not the POC exit gate:
 UX-F1 → PA-F2 → CI-F3 → BIA-F4 → PLAT-F5 → PLAT-F6 → DOC-F7 → PERF-F8
 ```
 
-The current sequence is `POC-VALUE-001 → 002 → 003 → 004`. Soak, design partners, GA-D, HA, identity/RBAC, multi-tenancy, and production rollout remain outside the POC. Test Optimization remains a separate product.
+The remaining sequence is `POC-VALUE-003 → 004`. Safe Cache and Runtime
+Tuning candidates are no-value/no-action outcomes, not hidden prerequisites.
+Soak, design partners, GA-D, HA, identity/RBAC, multi-tenancy, and production
+rollout remain outside the POC. Test Optimization remains a separate product.
 
 ### 2.3 Next executable items
 
 | Order | ID | Next outcome | State | Owner |
 |---:|---|---|---|---|
 | 1 | `POC-VALUE-001` | Reproduce the optimized native-Gradle baseline and mechanism scorecard on the contractual 4-vCPU runner | `DONE` | Codex |
-| 2 | `POC-VALUE-002` | Return Safe Cache to the 2% native-cache parity guardrail and make Runtime Tuning exceed the accelerator threshold or remain disabled for that class | `TODO` | Codex |
+| 2 | `POC-VALUE-002` | Return Safe Cache to the 2% native-cache parity guardrail and make Runtime Tuning exceed the accelerator threshold or remain disabled for that class | `DONE` | Codex |
 | 3 | `POC-VALUE-003` | Broaden Build Impact and reviewed-source Task/Patch evidence to two workload classes and both DSLs | `TODO` | Codex |
 | 4 | `POC-VALUE-004` | Run the combined public onboarding path against optimized native Gradle and issue the POC `CONTINUE` or `STOP` decision | `TODO` | Codex |
 
@@ -473,7 +476,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `A1-G03` | SLRU/watermarks/pools behave according to contract | `DONE` | `E-084..085` |
 | `A1-G04` | Fail-closed restart/recovery and correct rotations | `DONE` | `E-087` |
 | `A1-G05` | Export/redaction/deletion cover managed copies | `DONE` | `E-093` |
-| `A1-G06` | Safe Cache is non-regressive versus optimized native cache and contributes to a faster combined path | `PRELIMINARY` | `E-156`: strict Groovy evidence regressed 3.1%, so the parity gate is open and Safe Cache requires action before `POC-VALUE-004` |
+| `A1-G06` | Safe Cache is non-regressive versus optimized native cache and contributes to a faster combined path | `INCONCLUSIVE` | `E-157`: incremental value was not demonstrated; Safe Cache is explicit-only and the default path uses native Gradle cache without claiming acceleration |
 
 ---
 
@@ -501,7 +504,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 |---|---|---|---|
 | `B-G01` | Valid A/A, sample ratio, delayed reward, and propensities | `DONE` | `E-115` |
 | `B-G02` | Intentional candidate/control contamination does not reach stable | `DONE` | `E-104` |
-| `B-G03` | Runtime Tuning exceeds the POC accelerator threshold without breaking p95/p99/queue/OOM | `PRELIMINARY` | `E-156`: strict `W4_H6G` evidence regressed 54.7% with a negative interval; it remains disabled pending `POC-VALUE-002` |
+| `B-G03` | Runtime Tuning exceeds the POC accelerator threshold without breaking p95/p99/queue/OOM | `INCONCLUSIVE` | `E-157`: `W4_H6G` regressed 54.7% and `W3_H4G` regressed 4.3% with an interval crossing zero; only `STABLE_CONTROL` remains active |
 | `B-G04` | Merge/clean pass failure/finalizer/side-effect fixtures | `DONE` | `E-101` |
 | `B-G05` | Bandit selects only safe runtime arms | `DONE` | `E-103` |
 | `B-G06` | Permanent control/revalidation and suspension on drift | `DONE` | `E-104` |
@@ -783,7 +786,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | ID | Deliverable | State | Owner | Expected evidence |
 |---|---|---|---|---|
 | `POC-VALUE-001` | Reproduce the optimized native Gradle baseline and mechanism scorecard on the 4-vCPU contractual runner | `DONE` | Codex | `E-156`: revision-bound report with raw alternating pairs, strict environment, identical outputs, zero product failures, and exact paired intervals |
-| `POC-VALUE-002` | Resolve negative mechanisms before combined measurement: return Safe Cache to native parity and tune Runtime Tuning or record `NO_VALUE_NO_ACTION` | `TODO` | Codex | Safe Cache regression ≤2%; Runtime Tuning point estimate ≥ `max(500 ms, 2%)` with positive lower 95%, or an explicit disabled outcome |
+| `POC-VALUE-002` | Resolve negative mechanisms before combined measurement: return Safe Cache to native parity and tune Runtime Tuning or record `NO_VALUE_NO_ACTION` | `DONE` | Codex | `E-157`: native-cache default fallback, Safe Cache explicit-only, Runtime candidates rejected, strict runner and output-equivalence evidence |
 | `POC-VALUE-003` | Expand Build Impact and reviewed-source Task/Patch evidence across Kotlin/Groovy and two workload classes | `TODO` | Codex | At least eight valid pairs per workload, identical required outputs, zero added failures, and no Test Optimization widening |
 | `POC-VALUE-004` | Benchmark the complete public onboarding path against optimized native Gradle and issue the POC decision | `TODO` | Codex | Combined-path report; `CONTINUE` only when every required workload passes, otherwise `STOP` or narrow the supported workload claim |
 
@@ -805,6 +808,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Documentation system | Entry points, local links, referenced commands, architecture-to-code map, package boundaries, ownership, and base-CI wiring | `dev/check-documentation`, layout, ownership, Go test/vet for the validator and documented packages, lint, and base-CI static checks passed on the final documentation tree | 2026-08-02 | `E-151` |
 | Build Optimization scorecard | Safe-cache value/parity, Runtime Tuning causal resource savings, and Build Impact avoided work | `dev/check-build-optimization-performance` validated both new paired reports plus the existing hosted runtime evidence and emitted separate non-additive results | 2026-08-03 | `E-154` |
 | Contractual POC value baseline | Optimized native Gradle versus Safe Cache, Runtime Tuning, and Build Impact on the strict 4-vCPU/16-GiB runner | `dev/check-poc-value-baseline` validated four alternating pairs per mechanism, exact paired intervals, identical required outputs and zero product failures: Safe Cache regressed 3.1% in Groovy, Runtime Tuning regressed 54.7%, and Build Impact saved 52.5% with a positive 589-ms lower bound | 2026-08-04 | `E-156` |
+| Negative-mechanism POC decision | Safe Cache fallback and Runtime Tuning candidate decisions on the strict 4-vCPU/16-GiB runner | `dev/check-poc-value-negative-mechanisms` validated default native-cache fallback within the 2% regression guardrail, explicit-only Safe Cache, rejected `W3_H4G` after −512 ms/−4.3% with an interval crossing zero, retained `STABLE_CONTROL`, identical outputs and zero product failures | 2026-08-04 | `E-157` |
 | Ownership boundaries | Path routing, accountable workstreams, cross-stack review, and authority limits | `dev/check-ownership` validated 16 CODEOWNERS paths, all 11 tracker workstreams, one verified repository principal, producer/consumer review, Test Optimization ownership, and the absence of an independent-approval claim | 2026-07-29 | `E-037` |
 | Base CI | Read-only push/PR validation for Go, Java 17 compatibility, optional Rust, and host-Git integration | The immutable hosted baseline remains run [30481886001](https://github.com/tonyredondo/buildopt/actions/runs/30481886001); the current local core lane passed 104 locked shell scripts, generated drift, all Go race/vet packages, Java 17 loading for all 19 Gradle-plugin classes, contract crypto, and the explicit 15-case PatchBundle checker; the optional Rust lane also passed | 2026-07-30 | `E-038`, `E-063`, `E-073..087` |
 | Native runtime portability | Complete Build Optimization runtime, storage, package, Gradle/Build Impact, persistent gateway/L1, native services, cancellation, exact uninstall, and product boundary | Hosted Native Platform CI run [30721884722](https://github.com/tonyredondo/buildopt/actions/runs/30721884722) passed macOS 15 ARM64 and Windows Server 2025 AMD64 on exact SHA `56bc21c61fc2a0f15fa88b640fb8bfe735d878d0`; hosted Base CI run [30721884751](https://github.com/tonyredondo/buildopt/actions/runs/30721884751) passed the same SHA, including reproducible Go/Java checks, the owner POC lab, and optional Rust | 2026-08-01 | `E-150` |
@@ -1056,6 +1060,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-154` | 2026-08-03 | `PERF-F8-001..003`, `PERF-F8-G01`, PERF-F8 exit | Commit `f9f1773a7dbdc371d032bad2bbcc65c9cfa889c6` added a default cache-only launcher path that preserves managed L1 and Tier 1 policy while omitting unused telemetry services. The checked [cache-parity result](./benchmarks/results/cache-parity-v1-local.json) measured 15.9%/13.7% mean savings versus cache-off and +0.02%/-0.47% versus native cache, inside the 2% parity limit with identical ZIPs. The checked [Build Impact result](./benchmarks/results/build-impact-performance-v1-local.json) measured 8,180.25 ms full versus 5,926.00 ms selected, saving 2,254.25 ms (27.6%) across four positive pairs with identical service-a and preserved Test-owned outputs. [`check-build-optimization-performance`](./dev/check-build-optimization-performance) composes those reports with the existing hosted Runtime Tuning result (66 ms/0.7% saved, positive lower 95% bound, no artifact or OOM regression) without adding percentages | `DONE`: safe-cache overhead is bounded, Runtime Tuning and Build Impact expose attributable improvements, negative/noisy samples remain visible, Test Optimization is unchanged, and no universal, production, external-user, golden-runner, or soak claim is made |
 | `E-155` | 2026-08-04 | `POC-001`, `VALUE-001`, POC value rebaseline | The master RFC, tracker, machine-readable [`POC value contract`](./specs/poc-value-validation-v1.json), prose specification, and executable [`check-poc-value-validation`](./dev/check-poc-value-validation) now share one decision rule: compare against optimized native Gradle, require identical outputs and zero product failures, classify Safe Cache as parity-only, retain Runtime Tuning as below threshold, retain Build Impact as a strong preliminary single-workload signal, expose Agent/helper as `UNAVAILABLE`, and keep the combined product unproven until `POC-VALUE-001..004` close. [`check-tracker-consistency`](./dev/check-tracker-consistency) binds the RFC digest and all 53 accepted decisions to tracker traceability | `DONE`: the POC roadmap is value-first, while soak, design partners, HA, enterprise identity, multi-tenancy, autonomous production promotion, and other productization work cannot displace the native-Gradle value proof |
 | `E-156` | 2026-08-04 | `POC-VALUE-001` | The revision-bound [`strict POC baseline`](./benchmarks/results/poc-value-baseline-v1.json) ran commit `a57d805f1461f2c47c195790b4b40ef289d0edaf` inside the digest-pinned Linux AMD64 image with cgroups proving 4 CPU/16 GiB and Java 21.0.11. Four paired alternating observations per mechanism retained every signed result: Safe Cache versus optimized native cache was noisy-positive in Kotlin but regressed 3.1% in Groovy; Runtime Tuning profile `W4_H6G` regressed 4,547 ms/54.7% with a wholly negative interval; Build Impact saved 1,055 ms/52.5%, passed all four pairs, and had a positive 589-ms lower interval bound. Every required output matched, OOM delta was zero, and product-attributable failures were zero | `DONE`: the measurement gate closes honestly without proving combined value; Safe Cache requires action, Runtime Tuning remains no-value/no-action for this profile/workload, Build Impact qualifies only this bounded workload, and `POC-VALUE-002..004` remain open |
+| `E-157` | 2026-08-04 | `POC-VALUE-002` | The revision-bound [`negative-mechanism decision`](./benchmarks/results/poc-value-negative-mechanisms-v1.json) ran commit `878052b5e1c45fb5d5d36cbdc7bbc07cbb15954d` inside the digest-pinned Linux AMD64 image with effective 4 CPU/16 GiB cgroups and Java 21.0.11. Four alternating native-cache fallback pairs per Kotlin/Groovy pilot preserved byte-identical outputs and remained above the −2% regression boundary; because control and candidate use the same Gradle cache mechanism, favorable deltas are not claimed as BuildOpt acceleration. Runtime candidate `W3_H4G` regressed 512 ms/4.3% with a paired interval from −2,818 to +1,302 ms, after `W4_H6G` had already regressed 54.7%. The launcher now defaults to native Gradle cache, makes Safe Cache explicit-only, and refuses every Runtime profile except `STABLE_CONTROL` | `DONE`: both mechanisms close as `NO_VALUE_NO_ACTION`; no unproven cache or resource candidate can contaminate `POC-VALUE-003..004`, combined POC value remains unproven, and no soak, design partner, production-readiness, or Test Optimization claim is made |
 
 ---
 
@@ -1063,6 +1068,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-04 | Closed `POC-VALUE-002`: moved zero-configuration caching to Gradle's native cache, retained Safe Cache only as an explicit experiment, rejected both tested Runtime Tuning candidates, and recorded strict 4-vCPU/16-GiB no-value/no-action evidence before moving to `POC-VALUE-003` | Codex |
 | 2026-08-04 | Closed `POC-VALUE-001` with revision-bound strict 4-vCPU/16-GiB evidence: preserved the Groovy Safe Cache regression and large `W4_H6G` Runtime Tuning regression as actionable no-value results, qualified Build Impact only for its bounded workload, and kept combined POC value unproven | Codex |
 | 2026-08-04 | Rebased the RFC and tracker around the decisive POC question: complete BuildOpt must beat optimized native Gradle with identical outputs and no extra failures; added a machine-readable value contract, four executable value gates, truthful preliminary/unavailable states, complete decision traceability, and CI checks against RFC/tracker drift; removed soak/design partners/productization from the active path | Codex |
 | 2026-08-03 | Closed PERF-F8 with a cache-only fast path, native-cache parity guardrail, Build Impact avoided-work benchmark, and one non-additive scorecard that validates safe cache, Runtime Tuning, and Build Impact with identical-output boundaries | Codex |

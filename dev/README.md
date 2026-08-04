@@ -2079,15 +2079,34 @@ gates without rerunning benchmarks:
 ./dev/check-poc-value-validation
 ```
 
-Validate and print the current safe-cache, Runtime Tuning, and Build Impact
-scorecard without rerunning a benchmark:
+Validate the strict `POC-VALUE-002` decisions without rerunning Gradle:
+
+```bash
+./dev/check-poc-value-negative-mechanisms
+```
+
+The checked evidence proves effective 4-CPU/16-GiB cgroups, identical outputs,
+zero product failures, default fallback to Gradle's native cache, and rejection
+of both tested Runtime Tuning candidates. To reproduce the bounded experiment
+inside the pinned image, provide the immutable Kotlin and Groovy pilots:
+
+```bash
+./dev/run-poc-value-negative-mechanisms-container \
+  /tmp/poc-value-negative-mechanisms.json \
+  /path/to/buildopt-pilot \
+  /path/to/buildopt-pilot-groovy
+```
+
+Validate and print the historical mechanism-development scorecard without
+rerunning a benchmark:
 
 ```bash
 ./dev/check-build-optimization-performance
 ```
 
-The scorecard keeps each mechanism attributable and never adds percentages
-from different workloads. It does not close the combined product gate. Fresh
+The historical scorecard keeps each mechanism attributable and never adds
+percentages from different workloads. Current activation decisions come from
+`check-poc-value-validation`; neither closes the combined product gate. Fresh
 cache and Build Impact evidence can be created
 with `run-cache-parity-benchmark` and `run-build-impact-performance`; each has
 a matching `check-*` command. See

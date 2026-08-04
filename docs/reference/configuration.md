@@ -14,6 +14,7 @@ executable specification remain authoritative for exact validation.
 | Variable | Secret | Meaning | Failure behavior |
 |---|---:|---|---|
 | `BUILDOPT_BYPASS=1` | No | Run the original argv without plugin, gateway, server, or policy | Only exact `1` activates it |
+| `BUILDOPT_SAFE_CACHE=1` | No | Explicitly evaluate the repository-scoped Safe Cache; default is Gradle native cache | Invalid values fail before Gradle; unqualified use is not automatic |
 | `BUILDOPT_GATEWAY_STATE_ROOT` | No | Absolute private persistent gateway state root | Incomplete managed pair falls back |
 | `BUILDOPT_RUNNER_SLOT` | No | Stable 1–128 character runner-slot identity | Busy/invalid slot uses baseline |
 | `BUILDOPT_GATEWAY_IDLE_TIMEOUT` | No | Managed gateway idle lifetime, `100ms`–`24h` | Invalid value disables managed path |
@@ -44,17 +45,19 @@ for the exact JSON example.
 
 ### Managed L1 scope
 
-With no `BUILDOPT_L1_*` inputs, `buildopt gradle` enables Gradle's build
-cache and derives a safe local scope automatically. State is stored below the
-operating system user cache directory as `buildopt/state`. The canonical
-repository path is SHA-256 hashed for separation; the operating
-system/architecture and complete Wrapper properties are hashed into the
-compatibility scope. Raw paths do not enter the cache layout.
+With no cache-specific inputs, `buildopt gradle` enables Gradle's native local
+Build Cache and does not start the BuildOpt plugin, gateway, or managed L1.
+`BUILDOPT_SAFE_CACHE=1` opts into the POC Safe Cache: state is then stored below
+the operating system user cache directory as `buildopt/state`; the canonical
+repository path, operating system/architecture, and complete Wrapper
+properties are hashed into opaque isolation scopes. Raw paths do not enter the
+cache layout.
 
-`--no-build-cache` disables this automatic cache for the invocation.
+`--no-build-cache` disables automatic cache activation for the invocation.
 `BUILDOPT_BYPASS=1` additionally removes the BuildOpt plugin and launcher
 optimization path. A Wrapper change creates a new compatibility scope, and a
-different checkout path creates a different repository scope.
+different checkout path creates a different repository scope when Safe Cache is
+explicitly active.
 
 The variables below are the advanced operator-owned override. Supplying any
 one prevents automatic derivation; supply the complete group.
@@ -109,9 +112,12 @@ The launcher can consume orchestrator-provided runner/build facts:
 - `BUILDOPT_RUNNER_JDK_VERSION`
 - `BUILDOPT_RUNNER_JDK_ARCHITECTURE`
 
-These facts select only a catalogued bounded profile. Invalid, missing, or
-incompatible context keeps the baseline. macOS reports resource isolation
-rather than emulating Linux cgroups; Windows uses Job Objects.
+These facts select only a catalogued bounded profile. For the active POC,
+`STABLE_CONTROL` is the only authorized profile: `W4_H6G` and `W3_H4G` failed
+the value threshold and are rejected before arguments are applied. Invalid,
+missing, incompatible, or experimental context keeps the baseline. macOS
+reports resource isolation rather than emulating Linux cgroups; Windows uses
+Job Objects.
 
 ## Server configuration
 

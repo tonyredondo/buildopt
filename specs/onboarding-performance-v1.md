@@ -1,5 +1,9 @@
 # Onboarding performance evidence
 
+> Historical `v0.2.0` contract. The current zero-configuration path delegates
+> to Gradle's native cache; Safe Cache requires `BUILDOPT_SAFE_CACHE=1`. Use
+> [`poc-value-validation-v1`](./poc-value-validation-v1.md) for current decisions.
+
 This specification measures the command shown to a first-time user, not an
 internal launcher configuration:
 
@@ -35,7 +39,7 @@ A result is valid only when:
 - every measured command succeeds;
 - candidate and native-cache samples restore `compileJava` from cache;
 - cache-off samples do not restore `compileJava`;
-- every candidate reports the authenticated Gradle plugin handshake;
+- every historical `v0.2.0` candidate reports the authenticated Gradle plugin handshake;
 - the final distribution SHA-256 is identical in both arms of every pair;
 - all raw durations, order, repository revisions, runner facts, and the exact
   BuildOpt binary digest remain in the report;
@@ -48,11 +52,9 @@ misleading success.
 
 ## Interpretation boundary
 
-This is descriptive owner-operated POC evidence. It proves that the published
-onboarding command activates the safe local cache and measures its effect on
-two controlled repositories. It does not prove savings for every repository,
-does not qualify the host as the fixed golden runner, does not run the deferred
-eight-hour soak, and does not authorize production promotion.
+This is descriptive owner-operated historical POC evidence. It proves what the
+published `v0.2.0` onboarding command did on two controlled repositories; it
+does not describe the current default or prove savings for every repository.
 
 Run the local evidence validator with:
 

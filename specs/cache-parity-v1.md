@@ -1,6 +1,10 @@
 # Safe-cache parity
 
-This contract answers whether BuildOpt's default safe local cache adds value
+> Historical mechanism-development contract: `POC-VALUE-002` supersedes its
+> activation decision. Safe Cache is now explicit-only and the default path
+> uses Gradle's native local cache.
+
+This contract answers whether BuildOpt's then-default safe local cache adds value
 when compared with both no cache and an already warm Gradle native local cache.
 The candidate is the public first-run command:
 
@@ -8,7 +12,8 @@ The candidate is the public first-run command:
 buildopt gradle --no-daemon --no-configuration-cache clean :app:distZip
 ```
 
-When no server or local authority is configured, the launcher selects a
+For this historical report, when no server or local authority is configured,
+`BUILDOPT_SAFE_CACHE=1` reproduces the measured candidate and the launcher selects a
 cache-only fast path. It keeps the repository-scoped managed L1 and Tier 1
 task policy, but does not start the session handshake, local gateway, or
 per-project telemetry listener that those absent components would consume.
@@ -47,7 +52,7 @@ overhead but did not gate it.
 Run and validate a fresh report with:
 
 ```bash
-./dev/run-cache-parity-benchmark \
+BUILDOPT_CACHE_BENCHMARK_SAFE_CACHE=1 ./dev/run-cache-parity-benchmark \
   /tmp/cache-parity.json \
   "$(command -v buildopt)" \
   0.3.0-dev \
@@ -56,6 +61,6 @@ Run and validate a fresh report with:
 ./dev/check-cache-parity-performance /tmp/cache-parity.json
 ```
 
-This is bounded POC evidence, not a universal claim for every repository or a
-production-promotion decision. The raw result retains every signed difference,
-runner fact, revision, and binary digest. It does not run the deferred soak.
+This is bounded historical POC evidence, not a current default, universal
+claim, or production-promotion decision. The raw result retains every signed
+difference, runner fact, revision, and binary digest.

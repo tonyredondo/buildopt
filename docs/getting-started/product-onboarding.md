@@ -63,24 +63,22 @@ buildopt gradle clean build
 ```
 
 On Windows the same command discovers `gradlew.bat`; on Linux and macOS it
-discovers `gradlew`. BuildOpt supplies the packaged init script and plugin,
-enables a private local build cache, preserves Gradle output and returns the
-Gradle exit code. The first clean build populates qualified entries. The
-second removes project outputs again and should show qualified tasks such as
-`compileJava FROM-CACHE`.
+discovers `gradlew`. BuildOpt enables Gradle's native local Build Cache,
+preserves Gradle output and returns the Gradle exit code. The first clean build
+populates native entries. The second removes project outputs again and should
+show reusable tasks such as `compileJava FROM-CACHE`.
 
-The default cache lives below the operating system's user cache directory.
-BuildOpt hashes the canonical repository path and Wrapper/platform
-compatibility into separate opaque scopes, retains entries through Gradle's
-native seven-day cleanup, and never requires a network service. Any ordinary
-Gradle argument can follow `buildopt gradle`:
+The default uses the same cache semantics as `./gradlew --build-cache`; this is
+intentional because the stricter BuildOpt Safe Cache did not prove additional
+speed in `POC-VALUE-002`. It remains available only for explicit POC evaluation
+with `BUILDOPT_SAFE_CACHE=1`. Any ordinary Gradle argument can follow
+`buildopt gradle`:
 
 ```bash
 buildopt gradle --no-daemon clean assemble
 ```
 
-Disable only the automatic build cache while retaining the packaged launcher
-and plugin:
+Disable only the automatic native build cache while retaining the launcher:
 
 ```bash
 buildopt gradle --no-build-cache build
@@ -140,16 +138,15 @@ hide another's cost:
 
 | Mechanism | Measured result | What the comparison proves |
 |---|---:|---|
-| Safe cache, Kotlin | 15.9% faster than cache-off; 0.02% faster than native cache | Reuse helps and the safety layer is within the 2% native-parity guardrail |
-| Safe cache, Groovy | 13.7% faster than cache-off; 0.47% slower than native cache | Reuse helps and the safety layer is within the 2% native-parity guardrail |
-| Runtime Tuning | 0.7% faster | The bounded resource profile saved 66 ms with a positive lower 95% bound, identical artifacts and no OOM regression |
-| Build Impact | 27.6% faster | Omitting one declared unaffected project saved 2.254 s with required outputs unchanged |
+| Safe Cache | `NO_VALUE_NO_ACTION`; explicit-only | The default delegates to Gradle native cache, removing product overhead without claiming acceleration |
+| Runtime Tuning | `NO_VALUE_NO_ACTION`; stable control only | `W4_H6G` regressed 54.7%; `W3_H4G` regressed 4.3% with an interval crossing zero |
+| Build Impact | 52.5% faster in the strict bounded workload | Avoided work saved 1.055 s with a positive lower 95% bound and required outputs unchanged |
 
 These are controlled POC workloads, not universal predictions, and their
 percentages must not be added. A repository that needs the full graph receives
 no Build Impact saving; an already warm native cache is a parity baseline, not
-the cache-off comparison. Run `./dev/check-build-optimization-performance` to
-validate and print the scorecard without rerunning Gradle. The
+the cache-off comparison. Run `./dev/check-poc-value-validation` to validate
+and print the current decision without rerunning Gradle. The
 [benchmark index](../../benchmarks/README.md#build-optimization-scorecard)
 links every raw observation and measurement contract.
 
@@ -160,8 +157,9 @@ justifies operating it.
 
 | Component | Installed with | Configured in | Orchestrated by | First proof |
 |---|---|---|---|---|
-| Launcher, safe local cache and Gradle plugin | Native package or CI integration | Environment; defaults work locally | `buildopt gradle` | Run the same build twice and inspect normal Gradle output |
-| Runtime tuning | No separate installed CLI; owner evaluation in this source repository | Bounded policy inputs and rollout contracts | `runtime-evaluation` and owner checks | Produce evaluation evidence before any product integration |
+| Launcher and native Gradle cache | Native package or CI integration | No configuration for the default path | `buildopt gradle` | Run the same build twice and inspect normal Gradle output |
+| Safe Cache experiment | Included in the native package | `BUILDOPT_SAFE_CACHE=1`; not a recommended default | `buildopt gradle` | Use only when collecting new paired POC evidence |
+| Runtime tuning | No active candidate; stable control only | Bounded policy inputs and evaluation contracts | `runtime-evaluation` and owner checks | A new profile must clear the value threshold before activation |
 | Task Intelligence | No separate installed CLI; owner evaluation in this source repository | Qualification evidence and trace contracts | `task-intelligence-evaluation` and owner checks | Prove qualification without publishing an optimization |
 | Build history | `buildopt-server` in the package | Server config and export directory on the server host | Service manager plus server API/dashboard | Start loopback server and inspect a redacted session |
 | Build Impact | `buildopt-impact` in the package | Manifest and generated graph committed in the target repository | CI calls `generate` during adoption and `check` afterward | Generate, review, commit, then run `check` |

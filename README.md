@@ -16,7 +16,7 @@ or cannot be proven safe, the original build remains authoritative.
 your Gradle command
         |
         v
-BuildOpt launcher -----> local verification and cache gateway
+BuildOpt launcher -----> optional verification and cache gateway
         |                            |
         v                            v
       Gradle              optional Shared or Edge Cache
@@ -57,20 +57,22 @@ buildopt gradle clean build
 ```
 
 BuildOpt discovers the Wrapper and packaged Gradle integration automatically.
-The first command warms a private repository-scoped local cache; the second
-clean build can restore qualified compilation outputs. No cache directory,
-plugin path, service, credential, or `--build-cache` flag is required.
+The default path enables Gradle's native local Build Cache; the second clean
+build can therefore restore compatible outputs without a plugin path, service,
+credential, or `--build-cache` flag. BuildOpt's stricter Safe Cache remains an
+explicit POC experiment because it has not demonstrated incremental build-time
+value over that native baseline.
 The [product onboarding guide](./docs/getting-started/product-onboarding.md)
 contains Windows installation, CI snippets, component ownership and the
 recommended rollout order. Contributors who want the complete synthetic lab
 can use the [source quickstart](./docs/getting-started/quickstart.md).
 
-The checked scorecard measures each optimization separately. Safe Cache cut
-the two pilot means by 15.9% and 13.7% versus cache-off while staying within
-0.5% of an already warm native cache; that is safety/parity, not acceleration.
-Runtime Tuning saved 0.7%, below the current POC value threshold. Build Impact
-saved 27.6% on one declared-impact workload. Required outputs remained
-identical. These percentages are workload-specific and are not added together.
+The checked scorecard measures each optimization separately. Safe Cache and
+the tested Runtime Tuning profiles did not add defensible value over optimized
+native Gradle, so neither is active on the default path. Build Impact saved
+52.5% on the strict bounded workload and remains the only qualified accelerator
+so far. Required outputs remained identical. These percentages are
+workload-specific and are not added together.
 The POC continues conditionally until the combined path beats optimized native
 Gradle across the required workload matrix. See the [POC value contract](./specs/poc-value-validation-v1.md)
 and [raw scorecard](./benchmarks/README.md#build-optimization-scorecard).

@@ -51,15 +51,15 @@
   "mechanisms": [
     {
       "id": "SAFE_CACHE",
-      "classification": "REGRESSION_REQUIRES_ACTION",
-      "evidence": "benchmarks/results/poc-value-baseline-v1.json",
-      "claim": "GROOVY_NATIVE_CACHE_GUARDRAIL_FAILED"
+      "classification": "NO_VALUE_NO_ACTION",
+      "evidence": "benchmarks/results/poc-value-negative-mechanisms-v1.json",
+      "claim": "DEFAULT_PATH_USES_NATIVE_GRADLE_CACHE_SAFE_CACHE_EXPLICIT_ONLY"
     },
     {
       "id": "RUNTIME_TUNING",
-      "classification": "BELOW_VALUE_THRESHOLD",
-      "evidence": "benchmarks/results/poc-value-baseline-v1.json",
-      "claim": "NO_VALUE_NO_ACTION_FOR_W4_H6G"
+      "classification": "NO_VALUE_NO_ACTION",
+      "evidence": "benchmarks/results/poc-value-negative-mechanisms-v1.json",
+      "claim": "STABLE_CONTROL_ONLY_W3_H4G_AND_W4_H6G_REJECTED"
     },
     {
       "id": "BUILD_IMPACT",
@@ -107,7 +107,7 @@
     {
       "id": "POC-VALUE-002",
       "outcome": "SAFE_CACHE_RETURNS_TO_PARITY_AND_RUNTIME_TUNING_CLEARS_THRESHOLD_OR_IS_DISABLED",
-      "state": "TODO"
+      "state": "DONE"
     },
     {
       "id": "POC-VALUE-003",

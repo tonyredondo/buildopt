@@ -41,16 +41,20 @@ build.
 
 ## Current decision
 
-The current state is `CONTINUE_CONDITIONALLY`. The contractual four-CPU run in
+The current state is `CONTINUE_CONDITIONALLY`. The contractual four-CPU runs in
 [`poc-value-baseline-v1.json`](../benchmarks/results/poc-value-baseline-v1.json)
-closed `POC-VALUE-001` with these signed results:
+and [`poc-value-negative-mechanisms-v1.json`](../benchmarks/results/poc-value-negative-mechanisms-v1.json)
+closed `POC-VALUE-001` and `POC-VALUE-002` with these results:
 
-- Safe Cache is not currently within the parity guardrail for every DSL. Groovy
-  measured a 3.1% regression against native cache, so the mechanism is classified
-  `REGRESSION_REQUIRES_ACTION`; Kotlin was positive but noisy.
-- Runtime Tuning profile `W4_H6G` measured a 54.7% regression with an entirely
-  negative 95% interval. It is `BELOW_VALUE_THRESHOLD` and must remain disabled
-  for this workload unless `POC-VALUE-002` finds a qualifying profile.
+- Safe Cache did not demonstrate incremental value over Gradle's native local
+  cache. It is classified `NO_VALUE_NO_ACTION`, is explicit-only through
+  `BUILDOPT_SAFE_CACHE=1`, and the zero-configuration path now delegates cache
+  reuse to Gradle. This removes the earlier Groovy regression without claiming
+  that BuildOpt accelerated the same native mechanism.
+- Runtime Tuning profiles `W4_H6G` and `W3_H4G` both failed the accelerator rule.
+  The strict `W3_H4G` run saved −512 ms (−4.3%) with a 95% interval from
+  −2,818 to +1,302 ms. Only `STABLE_CONTROL` may be applied; the candidates are
+  classified `NO_VALUE_NO_ACTION`.
 - Build Impact saved 1,055 ms (52.5%) on the bounded workload, with four positive
   pairs, a positive 589 ms lower interval bound, identical required outputs, and
   zero product-attributable failures. It clears the accelerator threshold for
@@ -60,10 +64,9 @@ closed `POC-VALUE-001` with these signed results:
 - The combined product path has not yet been measured against optimized native
   Gradle, so the overall value hypothesis remains open.
 
-The active order is now: return Safe Cache to the 2% native-cache parity
-guardrail and either qualify or disable Runtime Tuning per workload; broaden
-Build Impact and reviewed-source Task/Patch evidence; then benchmark the
-combined public path and make the explicit `CONTINUE` or `STOP` decision.
+The active order is now: broaden Build Impact and reviewed-source Task/Patch
+evidence; then benchmark the combined public path—with no unproven Safe Cache
+or Runtime profile active—and make the explicit `CONTINUE` or `STOP` decision.
 
 Run the executable decision check with:
 

@@ -17,12 +17,12 @@ small/medium/large Gradle build matrix and makes no performance claim.
 
 ## Build Optimization scorecard
 
-The current POC verdict is `CONTINUE_CONDITIONALLY`, not “value proven”. The
-contractual 4-vCPU/16-GiB run supersedes earlier mechanism-development numbers:
-Safe Cache misses the native-cache parity guardrail in Groovy, Runtime Tuning
-profile `W4_H6G` is clearly negative, Build Impact clears the threshold for one
-bounded workload, and the combined public path is still unmeasured. Validate
-that interpretation with:
+The current POC verdict is `CONTINUE_CONDITIONALLY`, not “value proven”. Two
+contractual 4-vCPU/16-GiB runs now close the baseline and negative-mechanism
+decisions: Safe Cache is explicit-only while the default delegates to Gradle's
+native cache; Runtime Tuning candidates `W4_H6G` and `W3_H4G` are disabled;
+Build Impact clears the threshold for one bounded workload; and the combined
+public path is still unmeasured. Validate that interpretation with:
 
 ```bash
 ./dev/check-poc-value-validation
@@ -33,16 +33,19 @@ combining unrelated percentages:
 
 | Mechanism | Mean result | Exact paired 95% interval | Classification |
 |---|---:|---:|---|
-| Safe Cache, Kotlin versus native | 108 ms faster (11.5%) | −19 to +338 ms | No acceleration claim; noisy |
-| Safe Cache, Groovy versus native | 25 ms slower (3.1%) | −54 to +9 ms | `REGRESSION_REQUIRES_ACTION` |
-| Runtime Tuning `W4_H6G` | 4,547 ms slower (54.7%) | −6,193 to −3,496 ms | `BELOW_VALUE_THRESHOLD` |
+| Default native-cache fallback, Kotlin | 79 ms faster (8.9%) | +6 to +156 ms | `NO_VALUE_NO_ACTION`; same cache mechanism, no acceleration claim |
+| Default native-cache fallback, Groovy | 1,051 ms faster (56.6%) | +486 to +1,572 ms | `NO_VALUE_NO_ACTION`; same cache mechanism, no acceleration claim |
+| Runtime Tuning `W3_H4G` | 512 ms slower (4.3%) | −2,818 to +1,302 ms | `NO_VALUE_NO_ACTION`; `STABLE_CONTROL_ONLY` |
 | Build Impact | 1,055 ms faster (52.5%) | +589 to +1,583 ms | `THRESHOLD_MET` for this workload |
 
-The report retains all four signed pairs, including unfavorable samples. Every
+The reports retain all four signed pairs, including unfavorable samples. Every
 required output is identical, Runtime Tuning has zero OOM delta, and no
-product-attributable failures occurred. Percentages are not added because the
-mechanisms use different controls and workloads. `POC-VALUE-001` is therefore a
-completed measurement gate, not a combined-product success gate.
+product-attributable failures occurred. The apparent fallback timing difference
+is not attributable to BuildOpt because control and candidate both use Gradle's
+native cache; its evidence closes regression removal only. Percentages are not
+added because the mechanisms use different controls and workloads.
+`POC-VALUE-001` and `POC-VALUE-002` are completed decision gates, not a
+combined-product success gate.
 
 Validate all checked-in evidence and print the machine-readable scorecard:
 
@@ -54,6 +57,8 @@ The underlying evidence and contracts are:
 
 - [contractual POC baseline](./results/poc-value-baseline-v1.json) and
   [value contract](../specs/poc-value-validation-v1.md);
+- [negative-mechanism decisions](./results/poc-value-negative-mechanisms-v1.json),
+  validated by `./dev/check-poc-value-negative-mechanisms`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
