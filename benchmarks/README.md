@@ -87,6 +87,10 @@ The underlying evidence and contracts are:
   and [candidate-first](./results/poc-pairing-v1-candidate-first.json) reports
   plus their [checked decision](./results/poc-pairing-v1-decision.json),
   validated by `./dev/check-poc-pairing`;
+- [calibrated Groovy control-first](./results/poc-groovy-v1-control-first.json)
+  and [candidate-first](./results/poc-groovy-v1-candidate-first.json) reports
+  plus their [checked decision](./results/poc-groovy-v1-decision.json),
+  validated by `./dev/check-poc-groovy`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
@@ -98,6 +102,30 @@ The three mechanism-development reports remain historical inputs. The strict
 reports are the current decision evidence. They prove bounded combined
 value but do not yet prove realistic breadth; none claims universal savings or
 production readiness.
+
+### Calibrated Groovy result
+
+`POC-GROOVY-001` attributed the reproduced no-change regression to a redundant
+launcher process on the uninstrumented native Gradle path and replaced that
+process in place on Unix. The generic fixture remains unchanged. A bounded
+Groovy profile increases only the existing deterministic non-cacheable
+verification rounds so the leaf scenario contains enough avoidable work to
+test the unchanged 500-ms threshold honestly.
+
+Both arms run consecutively in one strict 4-CPU/16-GiB container to remove
+container identity as a timing variable. They retain separate workspaces,
+installations, writable state, Gradle homes, and daemons.
+
+| Starting order | No change | Leaf source |
+|---|---:|---:|
+| Control first | 196.25 ms / 10.4% faster; parity met | 884.25 ms / 41.2% faster; threshold met |
+| Candidate first | 71.75 ms / 3.9% faster; parity met | 641.125 ms / 33.8% faster; threshold met |
+
+All 32 observations preserved byte-identical required outputs, exact execution
+shape, valid Configuration Cache behavior, and zero product-attributable
+failures. These percentages describe separate batches and are not averaged or
+added. The result broadens only the bounded Groovy no-change/leaf claim; it is
+not a universal or production claim.
 
 ### Realistic change-class result
 

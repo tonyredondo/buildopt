@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-groovy-decision/v1",
+  "capturedAt": "2026-08-04T23:49:45Z",
+  "buildoptRevision": "1c21c73092988e9b8efef087d183cf4e13586e72",
+  "reports": {
+    "controlFirstSha256": "3c74e2518ccefa00571e5c18bf0f2af4491d85e7cb5f06693a25065b8daa6cf2",
+    "candidateFirstSha256": "f00bd41f39e6a775ccdb59f9dc20d8ae2700f5ef5f6835c7b32e841539fda4bf"
+  },
+  "result": {
+    "classificationReproduced": true,
+    "reproducedCells": [
+      "BREADTH_LEAF_CHANGE_GROOVY",
+      "BREADTH_NO_CHANGE_GROOVY"
+    ],
+    "reproducedQualifiedCells": [
+      "BREADTH_LEAF_CHANGE_GROOVY",
+      "BREADTH_NO_CHANGE_GROOVY"
+    ],
+    "reproducedFailureCells": [],
+    "mismatchedCells": [],
+    "controlFirstQualifyingCells": 2,
+    "candidateFirstQualifyingCells": 2,
+    "maximumObservedInterArmIdleGapMs": 141.2224
+  },
+  "decision": {
+    "verdict": "CLASSIFICATIONS_REPRODUCED",
+    "breadthClaim": "BROADEN_SYNTHETIC_CLAIM",
+    "productChangeAuthorization": {
+      "scope": "NONE",
+      "authorizedCells": [],
+      "blockedCells": []
+    },
+    "nextExperiment": "STOP_AND_REVIEW_MEASUREMENT_BOUNDARY"
+  },
+  "gate": {
+    "id": "POC-GROOVY-G01",
+    "state": "PASSED"
+  },
+  "boundaries": {
+    "thresholdsChanged": false,
+    "universalSavingsClaimed": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

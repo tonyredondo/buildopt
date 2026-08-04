@@ -2151,6 +2151,7 @@ the strict benchmark:
 ./dev/check-poc-overhead
 ./dev/check-poc-stability
 ./dev/check-poc-pairing
+./dev/check-poc-groovy
 ./dev/test-poc-pairing
 ```
 
@@ -2225,10 +2226,39 @@ failure and does not authorize a product change.
 
 The validator recomputes every observation and verifies the checked decision.
 Classification agreement is the stability gate, not a prerequisite for keeping
-honest evidence. The checked batches qualified 0/8 versus 4/8 cells and changed
-four classifications, so the current verdict is `MEASUREMENT_UNSTABLE` and the
-gate is `FAILED`. Reproduced failures remain failures; thresholds are unchanged,
-and the stability block cannot broaden the POC claim by itself.
+honest evidence. The checked pairing batches reproduce six of eight cells;
+build-logic Kotlin and shared Kotlin remain blocked as measurement mismatches.
+The reproduced no-change and shared-source Groovy failures are the only Groovy
+cells authorized for product experiments.
+
+`POC-GROOVY-001` uses the `GROOVY_VALUE` profile to test the no-change fix and
+preserve leaf value. The generic fixture remains unchanged; an init script
+raises only its existing deterministic verification rounds for both arms. Both
+arms execute consecutively inside one strict container, while their workspaces,
+installations, writable state, Gradle homes, and daemons remain separate. Run
+and validate the two opposite-order batches with:
+
+```bash
+BUILDOPT_POC_PAIRING_PROFILE=GROOVY_VALUE \
+  ./dev/run-poc-pairing-container \
+    /tmp/poc-groovy-control-first.json groovy-control-first CONTROL_FIRST
+BUILDOPT_POC_PAIRING_PROFILE=GROOVY_VALUE \
+  ./dev/run-poc-pairing-container \
+    /tmp/poc-groovy-candidate-first.json groovy-candidate-first CANDIDATE_FIRST
+BUILDOPT_POC_PAIRING_PROFILE=GROOVY_VALUE \
+  ./dev/assemble-poc-pairing-decision \
+    /tmp/poc-groovy-decision.json \
+    /tmp/poc-groovy-control-first.json \
+    /tmp/poc-groovy-candidate-first.json
+./dev/check-poc-groovy \
+  /tmp/poc-groovy-control-first.json \
+  /tmp/poc-groovy-candidate-first.json \
+  /tmp/poc-groovy-decision.json
+```
+
+The checked reports reproduce no-change parity and leaf acceleration in both
+orders with unchanged thresholds, byte-identical outputs, and zero product
+failures. Percentages are kept separate by batch.
 
 Validate and print the historical mechanism-development scorecard without
 rerunning a benchmark:

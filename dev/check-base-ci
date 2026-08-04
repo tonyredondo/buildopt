@@ -211,6 +211,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-overhead" >/dev/null
         "${buildopt_script_dir}/check-poc-stability" >/dev/null
         "${buildopt_script_dir}/check-poc-pairing" >/dev/null
+        "${buildopt_script_dir}/check-poc-groovy" >/dev/null
         "${buildopt_script_dir}/run" \
             --toolchain go \
             -- \
