@@ -10,13 +10,10 @@ buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/build-impact-performance-v1-local.json"}
 
-for buildopt_command in jq; do
-    command -v "${buildopt_command}" >/dev/null 2>&1 || {
-        printf 'required Build Impact performance command is unavailable: %s\n' \
-            "${buildopt_command}" >&2
-        exit 1
-    }
-done
+command -v jq >/dev/null 2>&1 || {
+    printf 'required Build Impact performance command is unavailable: jq\n' >&2
+    exit 1
+}
 if [[ ! -f "${buildopt_result}" ]]; then
     printf 'Build Impact performance result is unavailable: %s\n' \
         "${buildopt_result}" >&2
