@@ -112,7 +112,10 @@ jq '
 jq -e '
     .result.classificationReproduced and
     .gate.state == "PASSED" and
-    .decision.breadthClaim == "BROADEN_SYNTHETIC_CLAIM"
+    .decision.breadthClaim == "BROADEN_SYNTHETIC_CLAIM" and
+    .decision.productChangeAuthorization == {
+        scope: "NONE", authorizedCells: [], blockedCells: []
+    }
     ' "${buildopt_root}/decision.json" >/dev/null
 
 jq '

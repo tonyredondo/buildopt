@@ -21,7 +21,8 @@ requires the same classification for every Kotlin/Groovy change cell across
 the opposite pair sequences. Reproduced failures are valid targets for the next
 POC experiment. A mismatch remains valid negative evidence: it records
 `MEASUREMENT_UNSTABLE`, retains the narrow claim, and authorizes no product
-change from these measurements.
+change for the mismatched cells. Failures reproduced in both sequences remain
+valid, explicitly scoped targets for the next POC experiment.
 
 Generate a strict batch with:
 

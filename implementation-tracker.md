@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS` — the combined public path beats optimized native Gradle across the bounded Kotlin/Groovy matrix<br>
-**Current phase:** `POC-PAIRING-001` — pair isolated arms close in time so runner drift cannot dominate the remaining realistic classifications<br>
+**Current phase:** `POC-GROOVY-001` — remove the reproduced no-change Groovy regression without changing task selection, outputs, or thresholds<br>
 **POC functional target:** measurable net build-time reduction from the qualified Build Impact and exact reviewed-source Task/Patch routes; no-value Safe Cache or Runtime candidates remain disabled<br>
 **POC validation posture:** use bounded paired experiments on project-owned fixtures and repositories; compare against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -77,7 +77,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-BREADTH | Realistic workload and change-class generalization | `PRELIMINARY` | 0/1 | POC-VALUE |
 | POC-OVERHEAD | Short-build and Groovy installed-path overhead | `DONE` | 1/1 | `E-160` |
 | POC-STABILITY | Order-independent realistic value evidence | `DONE` | 1/1 | `E-162` |
-| POC-PAIRING | Temporally paired isolated realistic value evidence | `TODO` | 0/1 | `E-162` |
+| POC-PAIRING | Temporally paired isolated realistic value evidence | `DONE` | 1/1 | `E-163` |
+| POC-GROOVY | Reproduced Groovy no-change value gap | `TODO` | 0/1 | `E-163` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -96,6 +97,7 @@ Optimized native Gradle baseline
   → attribute failed short/Groovy cells and remove overhead before rerun
   → isolate order/carryover bias before another performance-sensitive change
   → temporally pair isolated arms to remove runner drift
+  → improve only the value gaps reproduced by both paired sequences
 ```
 
 The implementation history remains useful, but it is not the POC exit gate:
@@ -120,7 +122,8 @@ rollout remain outside the POC. Test Optimization remains a separate product.
 | 5 | `POC-BREADTH-001` | Test the bounded claim on a realistic five-project graph across no-change, leaf, shared, and global build-logic changes | `DONE` | Codex |
 | 6 | `POC-OVERHEAD-001` | Attribute launcher/init/plugin/Gradle costs in the failed short and Groovy cells, remove avoidable overhead, and repeat the same gate without changing thresholds | `DONE` | Codex |
 | 7 | `POC-STABILITY-001` | Remove inter-arm carryover from the measurement design and require the remaining breadth classifications to reproduce without moving thresholds | `DONE` | Codex |
-| 8 | `POC-PAIRING-001` | Interleave isolated control/candidate microbatches close in time and require order-independent classifications without changing thresholds | `TODO` | — |
+| 8 | `POC-PAIRING-001` | Interleave isolated control/candidate microbatches close in time and require order-independent classifications without changing thresholds | `DONE` | Codex |
+| 9 | `POC-GROOVY-001` | Remove the reproduced no-change Groovy regression while preserving the qualified Groovy leaf result and every correctness guardrail | `TODO` | — |
 
 ### 2.4 Completed implementation sequence
 
@@ -838,7 +841,17 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 
 | ID | Deliverable | State | Owner | Expected evidence |
 |---|---|---|---|---|
-| `POC-PAIRING-001` | Interleave isolated control and candidate microbatches close in time while keeping writable state separate, then require the unchanged breadth classifications to reproduce across opposite pair order | `TODO` | — | Revision-bound 4-CPU/16-GiB paired report, identical outputs and execution shape, unchanged thresholds, and an explicit stable or no-value decision |
+| `POC-PAIRING-001` | Interleave isolated control and candidate microbatches close in time while keeping writable state separate, then require the unchanged breadth classifications to reproduce across opposite pair order | `DONE` | Codex | `E-163`: two revision-bound paired strict batches reduce classification mismatches from four to two, reproduce three qualified cells and three failures, and retain all correctness guardrails |
+
+| Exit gate | Summarized criterion | State | Evidence |
+|---|---|---|---|
+| `POC-PAIRING-G01` | Opposite alternating starting orders reproduce every cell classification with no pair separated by more than five seconds | `FAILED` | `E-163`: 6/8 classifications reproduce; build-logic Kotlin and shared Kotlin remain unstable |
+
+#### POC-GROOVY — remove a reproduced value regression
+
+| ID | Deliverable | State | Owner | Expected evidence |
+|---|---|---|---|---|
+| `POC-GROOVY-001` | Attribute and remove the no-change Groovy candidate regression reproduced in both paired batches, without weakening isolation, task selection, required outputs, thresholds, or the already-qualified Groovy leaf path | `TODO` | — | Strict paired Groovy evidence against optimized native Gradle; no-change returns to the 2% parity boundary, leaf remains above the accelerator threshold, outputs remain identical, and product failures remain zero |
 
 Test Optimization is an explicit non-goal for all functional and documentation tracks. They may preserve or call its existing signed grant/result boundary, but no Test Optimization behavior or contract is widened here.
 
@@ -856,6 +869,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Realistic POC breadth | No-change, leaf, shared, and build-logic changes across Kotlin/Groovy on the strict runner | `dev/check-poc-breadth` recomputed the 64-observation post-attribution repeat: all correctness guardrails passed and 4/8 value cells qualified, so the broader claim remains preliminary | 2026-08-04 | `E-161` |
 | POC installed-path attribution | Non-overlapping launcher/client, configuration, task, finalization, and teardown phases on the strict runner | `dev/check-poc-overhead` proved native-only execution with zero init/plugin setup, exact duration reconciliation, and one removed candidate-only XDG environment difference; traced durations remain diagnostic-only | 2026-08-04 | `E-161` |
 | Realistic POC stability | Opposite global arm orders with isolated writable state on the strict runner | `dev/check-poc-stability` recomputed two 64-pair reports (256 underlying arm measurements): all correctness guardrails passed, but 0/8 versus 4/8 cells qualified and four classifications changed, so the checked verdict is `MEASUREMENT_UNSTABLE` | 2026-08-04 | `E-162` |
+| Temporally paired POC breadth | Opposite alternating pair sequences across persistent isolated arm containers | `dev/check-poc-pairing` recomputed 128 temporal pairs: all correctness guardrails passed, the maximum inter-arm gap was 542 ms, and 6/8 classifications reproduced; three reproduced failures are scoped experiment targets while two mismatched Kotlin cells remain blocked | 2026-08-04 | `E-163` |
 | Contractual POC value baseline | Optimized native Gradle versus Safe Cache, Runtime Tuning, and Build Impact on the strict 4-vCPU/16-GiB runner | `dev/check-poc-value-baseline` validated four alternating pairs per mechanism, exact paired intervals, identical required outputs and zero product failures: Safe Cache regressed 3.1% in Groovy, Runtime Tuning regressed 54.7%, and Build Impact saved 52.5% with a positive 589-ms lower bound | 2026-08-04 | `E-156` |
 | Negative-mechanism POC decision | Safe Cache fallback and Runtime Tuning candidate decisions on the strict 4-vCPU/16-GiB runner | `dev/check-poc-value-negative-mechanisms` validated default native-cache fallback within the 2% regression guardrail, explicit-only Safe Cache, rejected `W3_H4G` after −512 ms/−4.3% with an interval crossing zero, retained `STABLE_CONTROL`, identical outputs and zero product failures | 2026-08-04 | `E-157` |
 | Combined POC value decision | Installed public Build Impact and Gradle paths versus optimized native Gradle on the strict 4-vCPU/16-GiB runner | `dev/check-poc-value-combined` validated 32 alternating pairs across four Kotlin/Groovy workload cells: 63.5–84.1% mean reductions, positive lower bounds, byte-identical outputs, zero product failures, and the bounded `CONTINUE` verdict | 2026-08-04 | `E-159` |
@@ -1116,6 +1130,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-160` | 2026-08-04 | `POC-BREADTH-001`, `POC-BREADTH-G01` | The revision-bound [`realistic change-class matrix`](./benchmarks/results/poc-breadth-v1.json) ran commit `aea9d1cb26c66694721cc659de8630be0e941ecf` inside the digest-pinned Linux AMD64 image with effective 4 CPU/16 GiB and Java 21.0.11. Eight alternating pairs in each of eight Kotlin/Groovy cells preserved byte-identical required outputs, exact full/leaf/shared verification counts, expected Configuration Cache reuse or invalidation, and zero product failures. Shared Kotlin saved 1,471 ms/64.2% with a +728-ms lower bound and Kotlin build-logic preserved parity. Leaf Kotlin saved 361 ms/29.0% but missed the fixed 500-ms floor; no-change Kotlin regressed 3.7%. All four Groovy cells failed their thresholds, including 31.7% no-change and 21.9% shared-source regressions | `DONE` experiment, `PRELIMINARY` breadth gate: only 2/8 cells qualify, the claim remains `QUALIFIED_SYNTHETIC_WORKLOADS_ONLY`, and `POC-OVERHEAD-001` is next; no thresholds were moved and no soak, design partner, production, universal, or Test Optimization claim is made |
 | `E-161` | 2026-08-04 | `POC-OVERHEAD-001`, `POC-BREADTH-G01` | The revision-bound [`installed-path phase report`](./benchmarks/results/poc-overhead-v1.json) decomposed all eight workloads on the digest-pinned 4-CPU/16-GiB runner into six non-overlapping intervals that reconcile external duration within 2 ms. The candidate used `NATIVE_ONLY`, loaded no init/project plugin, and therefore attributed exactly 0 ms to plugin setup; traced timings remained diagnostic and never gated promotion. Code inspection found one unused candidate-only `XDG_CACHE_HOME`, which was removed without changing task selection, Gradle arguments, isolated homes, fixture mutations, required outputs, samples, order, or thresholds. The fresh untraced [`breadth repeat`](./benchmarks/results/poc-breadth-v2.json) ran commit `27b5e80d0733a19bce5a730d13228c87fe718c4e` with 64 alternating pairs, byte-identical outputs, exact execution shape, valid Configuration Cache behavior, and zero product failures. No-change Kotlin preserved parity; leaf Kotlin saved 543 ms/38.1% with a +69-ms lower bound, shared Kotlin saved 877 ms/49.1% with a +433-ms lower bound, and leaf Groovy saved 1,309 ms/63.6% with a +900-ms lower bound. The other four cells failed, including order-sensitive global-build-logic and shared-Groovy results | `DONE` overhead block, `PRELIMINARY` breadth gate: qualification improves from 2/8 to 4/8 but remains insufficient to broaden the claim; `POC-STABILITY-001` must isolate order/carryover sensitivity before more product tuning, with no soak, design partner, production, universal, or Test Optimization claim |
 | `E-162` | 2026-08-04 | `POC-STABILITY-001`, `POC-STABILITY-G01` | Two revision-bound strict stability reports ran commit `2141ee703bf514bddf5c62fc91c70ceb7c676488` in separate digest-pinned 4-CPU/16-GiB containers per arm. The [`control-first`](./benchmarks/results/poc-stability-v1-control-first.json) batch qualified 0/8 cells; the [`candidate-first`](./benchmarks/results/poc-stability-v1-candidate-first.json) batch qualified 4/8. Across 128 matched pairs and 256 underlying arm measurements, required outputs were byte-identical, execution shape and Configuration Cache behavior were exact, product-attributable failures were zero, and thresholds were unchanged. Four classifications changed with global arm order; four failures reproduced. The [checked decision](./benchmarks/results/poc-stability-v1-decision.json) therefore records `MEASUREMENT_UNSTABLE`, retains the narrow synthetic claim, and authorizes no product change | `DONE` experiment, `FAILED` stability gate: writable-state carryover is removed but global runner drift still dominates; `POC-PAIRING-001` must interleave isolated microbatches before another performance-sensitive change, with no soak, design partner, production, universal, or Test Optimization claim |
+| `E-163` | 2026-08-04 | `POC-PAIRING-001`, `POC-PAIRING-G01` | Two revision-bound [control-first](./benchmarks/results/poc-pairing-v1-control-first.json) and [candidate-first](./benchmarks/results/poc-pairing-v1-candidate-first.json) batches ran commit `39d7fc125d37a463dc1920064479c7a56f1f23f0` with persistent separate control/candidate containers on the digest-pinned 4-CPU/16-GiB runner. Every one of 128 temporal pairs alternated arm order, began the second arm within 542 ms, preserved byte-identical required outputs, exact execution shape and Configuration Cache behavior, and produced zero product-attributable failures. Both batches qualified 4/8 cells; six classifications reproduced and mismatches fell from four to two. No-change Kotlin reproduced parity (+0.4%/+2.1%); leaf Groovy reproduced acceleration (+43.0%/+58.1%); build-logic Groovy reproduced parity. Leaf Kotlin, no-change Groovy, and shared Groovy reproduced failures. Build-logic Kotlin and shared Kotlin remain unstable. The [checked decision](./benchmarks/results/poc-pairing-v1-decision.json) scopes future changes only to reproduced failures | `DONE` experiment, `FAILED` all-cell pairing gate: open `POC-GROOVY-001` on the reproduced no-change regression; do not tune mismatched cells, move thresholds, add percentages, claim production/universal value, run soak/design-partner work, or modify Test Optimization |
 
 ---
 
@@ -1123,6 +1138,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-04 | Closed `POC-PAIRING-001` after 128 temporally paired strict comparisons reduced mismatches from four to two but did not stabilize all eight cells; scoped the next product experiment to reproduced failures and opened `POC-GROOVY-001` for the no-change Groovy regression without changing thresholds | Codex |
 | 2026-08-04 | Closed `POC-STABILITY-001` with two opposite-order strict batches and unchanged guardrails; recorded `POC-STABILITY-G01` as failed after 0/8 versus 4/8 cells qualified and four classifications changed; opened `POC-PAIRING-001` to remove runner drift without changing product code or thresholds | Codex |
 | 2026-08-04 | Closed `POC-OVERHEAD-001` with reconciled phase attribution, zero plugin cost on the native-only path, removal of one candidate-only XDG difference, and an unchanged strict breadth repeat that improved qualification from 2/8 to 4/8; opened `POC-STABILITY-001` for order/carryover isolation without weakening thresholds | Codex |
 | 2026-08-04 | Closed `POC-BREADTH-001` with 64 strict-runner pairs and retained the narrow claim after only 2/8 cells qualified; opened value-first `POC-OVERHEAD-001` for short/Groovy installed-path attribution without changing the breadth thresholds | Codex |

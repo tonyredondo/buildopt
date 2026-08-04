@@ -34,6 +34,8 @@
     "maximumProductAttributableFailures": 0,
     "classificationAgreementRequiredForStableResult": true,
     "mismatchProducesMeasurementUnstable": true,
+    "reproducedFailuresAuthorizeScopedExperiment": true,
+    "mismatchedCellsAuthorizeProductChange": false,
     "thresholdsMayMove": false
   },
   "boundaries": {

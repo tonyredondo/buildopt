@@ -83,6 +83,10 @@ The underlying evidence and contracts are:
   [candidate-first](./results/poc-stability-v1-candidate-first.json) stability
   reports plus their [checked decision](./results/poc-stability-v1-decision.json),
   validated by `./dev/check-poc-stability`;
+- [temporally paired control-first](./results/poc-pairing-v1-control-first.json)
+  and [candidate-first](./results/poc-pairing-v1-candidate-first.json) reports
+  plus their [checked decision](./results/poc-pairing-v1-decision.json),
+  validated by `./dev/check-poc-pairing`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
@@ -138,6 +142,33 @@ arm order, so the checked verdict is `MEASUREMENT_UNSTABLE` and
 authorizes another product change nor broadens the claim. The next experiment
 must interleave isolated control/candidate microbatches close in time so runner
 drift cannot dominate an otherwise isolated comparison.
+
+### Temporally paired stability result
+
+`POC-PAIRING-001` kept the isolated arm containers alive concurrently and ran
+each control/candidate pair consecutively. Pair order alternated inside every
+cell, and the second batch reversed the starting arm. All 128 pairs started the
+second arm within 542 ms while retaining private workspaces, Gradle homes,
+daemons, installs, and state.
+
+| Cell | Control-first start | Candidate-first start | Reproduced? |
+|---|---:|---:|---:|
+| No-change Kotlin | +0.4%; parity | +2.1%; parity | yes |
+| No-change Groovy | -40.1%; failed | -54.7%; failed | yes |
+| Leaf Kotlin | +31.0%; failed 500-ms floor | -6.7%; failed | yes |
+| Leaf Groovy | +43.0%; threshold met | +58.1%; threshold met | yes |
+| Shared Kotlin | +54.2%; threshold met | +8.6%; failed | no |
+| Shared Groovy | +34.3%; failed interval | +3.7%; failed | yes |
+| Build-logic Kotlin | -3.4%; failed parity | +19.0%; parity | no |
+| Build-logic Groovy | +14.5%; parity | +13.2%; parity | yes |
+
+Required outputs were byte-identical, task selection and Configuration Cache
+behavior were exact, and product-attributable failures remained zero. Both
+batches qualify 4/8 cells, but only six classifications reproduce, so
+`POC-PAIRING-G01` remains failed. The decision authorizes product experiments
+only for the reproduced failures: no-change Groovy, leaf Kotlin, and shared
+Groovy. It explicitly blocks tuning the two mismatched Kotlin cells from this
+evidence. Percentages are not added across cells.
 
 ## Historical v0.2 public onboarding performance
 

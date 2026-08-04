@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-pairing-decision/v1",
+  "capturedAt": "2026-08-04T22:30:23Z",
+  "buildoptRevision": "39d7fc125d37a463dc1920064479c7a56f1f23f0",
+  "reports": {
+    "controlFirstSha256": "938114a30aa1a673edd2c3ea3802e3215e18f0347c7719842abf5ababa90cc7a",
+    "candidateFirstSha256": "c992b5d67132f6067711a067a943f75e86b35b0594c55bddcdb4d57ccf13c53a"
+  },
+  "result": {
+    "classificationReproduced": false,
+    "reproducedCells": [
+      "BREADTH_BUILD_LOGIC_CHANGE_GROOVY",
+      "BREADTH_LEAF_CHANGE_GROOVY",
+      "BREADTH_LEAF_CHANGE_KOTLIN",
+      "BREADTH_NO_CHANGE_GROOVY",
+      "BREADTH_NO_CHANGE_KOTLIN",
+      "BREADTH_SHARED_CHANGE_GROOVY"
+    ],
+    "reproducedQualifiedCells": [
+      "BREADTH_BUILD_LOGIC_CHANGE_GROOVY",
+      "BREADTH_LEAF_CHANGE_GROOVY",
+      "BREADTH_NO_CHANGE_KOTLIN"
+    ],
+    "reproducedFailureCells": [
+      "BREADTH_LEAF_CHANGE_KOTLIN",
+      "BREADTH_NO_CHANGE_GROOVY",
+      "BREADTH_SHARED_CHANGE_GROOVY"
+    ],
+    "mismatchedCells": [
+      "BREADTH_BUILD_LOGIC_CHANGE_KOTLIN",
+      "BREADTH_SHARED_CHANGE_KOTLIN"
+    ],
+    "controlFirstQualifyingCells": 4,
+    "candidateFirstQualifyingCells": 4,
+    "maximumObservedInterArmIdleGapMs": 541.971456
+  },
+  "decision": {
+    "verdict": "MEASUREMENT_UNSTABLE",
+    "breadthClaim": "RETAIN_QUALIFIED_SYNTHETIC_WORKLOADS_ONLY",
+    "productChangeAuthorization": {
+      "scope": "REPRODUCED_FAILURE_CELLS_ONLY",
+      "authorizedCells": [
+        "BREADTH_LEAF_CHANGE_KOTLIN",
+        "BREADTH_NO_CHANGE_GROOVY",
+        "BREADTH_SHARED_CHANGE_GROOVY"
+      ],
+      "blockedCells": [
+        "BREADTH_BUILD_LOGIC_CHANGE_KOTLIN",
+        "BREADTH_SHARED_CHANGE_KOTLIN"
+      ]
+    },
+    "nextExperiment": "TARGET_REPRODUCED_VALUE_GAPS"
+  },
+  "gate": {
+    "id": "POC-PAIRING-G01",
+    "state": "FAILED"
+  },
+  "boundaries": {
+    "thresholdsChanged": false,
+    "universalSavingsClaimed": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

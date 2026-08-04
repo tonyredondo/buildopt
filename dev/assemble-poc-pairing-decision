@@ -50,6 +50,16 @@ jq -n \
     ([$a[] as $left | $b[] |
         select(.id == $left.id and .classification != $left.classification) |
         .id] | sort) as $mismatched |
+    ([$a[] as $left | $b[] |
+        select(.id == $left.id and
+               .classification == $left.classification and
+               .classification == "BREADTH_GATE_FAILED") |
+        .id] | sort) as $reproducedFailures |
+    ([$a[] as $left | $b[] |
+        select(.id == $left.id and
+               .classification == $left.classification and
+               .classification != "BREADTH_GATE_FAILED") |
+        .id] | sort) as $reproducedQualified |
     ($mismatched | length == 0) as $stable |
     ($controlFirst[0].decision.qualifyingCells) as $controlQualifying |
     ($candidateFirst[0].decision.qualifyingCells) as $candidateQualifying |
@@ -64,6 +74,8 @@ jq -n \
         result: {
             classificationReproduced: $stable,
             reproducedCells: $reproduced,
+            reproducedQualifiedCells: $reproducedQualified,
+            reproducedFailureCells: $reproducedFailures,
             mismatchedCells: $mismatched,
             controlFirstQualifyingCells: $controlQualifying,
             candidateFirstQualifyingCells: $candidateQualifying,
@@ -79,11 +91,17 @@ jq -n \
                                   $candidateQualifying == 8)
                            then "BROADEN_SYNTHETIC_CLAIM"
                            else "RETAIN_QUALIFIED_SYNTHETIC_WORKLOADS_ONLY" end),
-            productChangeAuthorized: $stable,
-            nextExperiment: (if ($stable and $controlQualifying == 8 and
+            productChangeAuthorization: {
+                scope: (if ($reproducedFailures | length) > 0
+                        then "REPRODUCED_FAILURE_CELLS_ONLY" else "NONE" end),
+                authorizedCells: $reproducedFailures,
+                blockedCells: $mismatched
+            },
+            nextExperiment: (if ($reproducedFailures | length) > 0
+                             then "TARGET_REPRODUCED_VALUE_GAPS"
+                             elif ($stable and $controlQualifying == 8 and
                                      $candidateQualifying == 8)
                              then "NONE"
-                             elif $stable then "TARGET_REPRODUCED_VALUE_GAPS"
                              else "STOP_AND_REVIEW_MEASUREMENT_BOUNDARY" end)
         },
         gate: {
