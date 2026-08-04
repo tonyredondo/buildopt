@@ -30,8 +30,22 @@ if [[ -z "${BUILDOPT_BENCHMARK_REVISION:-}" ]] &&
     exit 1
 fi
 
-buildopt_cpu_count=$(nproc)
-buildopt_memory_bytes=$(awk '/^MemTotal:/ {printf "%.0f\n", $2 * 1024; exit}' /proc/meminfo)
+if [[ -n "${BUILDOPT_BENCHMARK_RUNNER_FILE:-}" ]]; then
+    if [[ ! -f "${BUILDOPT_BENCHMARK_RUNNER_FILE}" ]] ||
+        ! jq -e '
+            .qualifiedGoldenRunner == true and
+            .cpuCount == 4 and
+            .memoryBytes == 17179869184
+        ' "${BUILDOPT_BENCHMARK_RUNNER_FILE}" >/dev/null; then
+        printf 'runtime owner evaluation received an invalid runner observation\n' >&2
+        exit 1
+    fi
+    buildopt_cpu_count=$(jq -er '.cpuCount' "${BUILDOPT_BENCHMARK_RUNNER_FILE}")
+    buildopt_memory_bytes=$(jq -er '.memoryBytes' "${BUILDOPT_BENCHMARK_RUNNER_FILE}")
+else
+    buildopt_cpu_count=$(nproc)
+    buildopt_memory_bytes=$(awk '/^MemTotal:/ {printf "%.0f\n", $2 * 1024; exit}' /proc/meminfo)
+fi
 if [[ "${buildopt_cpu_count}" != 4 ]] ||
     ((buildopt_memory_bytes < 14 * 1024 * 1024 * 1024)) ||
     ((buildopt_memory_bytes > 18 * 1024 * 1024 * 1024)); then

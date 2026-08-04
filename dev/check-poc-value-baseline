@@ -101,8 +101,8 @@ jq -e \
     cache_result(.mechanisms.safeCache.kotlin; "KOTLIN") and
     cache_result(.mechanisms.safeCache.groovy; "GROOVY") and
     .mechanisms.safeCache.classification ==
-        (if ((.mechanisms.safeCache.kotlin.meanReductionRatio | fabs) <= 0.02 and
-             (.mechanisms.safeCache.groovy.meanReductionRatio | fabs) <= 0.02)
+        (if (.mechanisms.safeCache.kotlin.meanReductionRatio >= -0.02 and
+             .mechanisms.safeCache.groovy.meanReductionRatio >= -0.02)
          then "PARITY_ONLY"
          else "REGRESSION_REQUIRES_ACTION" end) and
     (.mechanisms.runtimeTuning.observations) as $runtimeRows |

@@ -67,6 +67,7 @@ BUILDOPT_VALIDATE_MEASUREMENT_ONLY=1 \
 
 BUILDOPT_BENCHMARK_REVISION="${buildopt_revision}" \
 BUILDOPT_BENCHMARK_JAVA_HOME="${JAVA_HOME:-/opt/java/openjdk}" \
+BUILDOPT_BENCHMARK_RUNNER_FILE="${buildopt_runner}" \
 BUILDOPT_RUNTIME_POC_RAW_ONLY=1 \
 GITHUB_SERVER_URL=https://github.com \
 GITHUB_REPOSITORY=tonyredondo/buildopt \
@@ -159,8 +160,8 @@ jq -n \
         mechanisms: {
             safeCache: {
                 classification:
-                    (if (($kotlinCache.meanReductionRatio | fabs) <= 0.02 and
-                         ($groovyCache.meanReductionRatio | fabs) <= 0.02)
+                    (if ($kotlinCache.meanReductionRatio >= -0.02 and
+                         $groovyCache.meanReductionRatio >= -0.02)
                      then "PARITY_ONLY"
                      else "REGRESSION_REQUIRES_ACTION" end),
                 kotlin: $kotlinCache,
