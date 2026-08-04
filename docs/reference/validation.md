@@ -154,10 +154,13 @@ recomputes all 64 observations. The post-attribution repeat retains the narrow
 claim: 4/8 realistic change/DSL cells qualify, despite correct selection and
 byte-identical outputs. `check-poc-overhead` independently validates the
 non-overlapping diagnostic phases and confirms that traced timings never gate
-performance. `check-poc-stability` requires the same cell classifications in
-two strict batches whose control and candidate arms have independent writable
-state, private persistent daemon lifecycles, and opposite execution order; it
-never weakens the breadth thresholds.
+performance. `check-poc-stability` recomputes two strict batches whose control
+and candidate arms have independent writable state, private persistent daemon
+lifecycles, and opposite execution order. It validates either a stable result
+or an explicit negative decision without weakening the breadth thresholds. The
+checked result is `MEASUREMENT_UNSTABLE`: 0/8 cells qualified control-first,
+4/8 qualified candidate-first, and four classifications changed with global
+order.
 
 ## Task Intelligence
 

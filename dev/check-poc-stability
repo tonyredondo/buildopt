@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if (($# > 2)); then
-    printf 'usage: %s [CONTROL_FIRST_JSON] [CANDIDATE_FIRST_JSON]\n' "$0" >&2
+if (($# > 3)); then
+    printf 'usage: %s [CONTROL_FIRST_JSON] [CANDIDATE_FIRST_JSON] [DECISION_JSON]\n' "$0" >&2
     exit 64
 fi
 
@@ -10,6 +10,7 @@ buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_control_first=${1:-"${buildopt_repo_root}/benchmarks/results/poc-stability-v1-control-first.json"}
 buildopt_candidate_first=${2:-"${buildopt_repo_root}/benchmarks/results/poc-stability-v1-candidate-first.json"}
+buildopt_decision=${3:-"${buildopt_repo_root}/benchmarks/results/poc-stability-v1-decision.json"}
 buildopt_runner_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
 buildopt_fixture="${buildopt_repo_root}/fixtures/poc-breadth/realistic-multimodule"
 
@@ -21,6 +22,7 @@ for buildopt_command in awk find git jq sha256sum sort; do
     }
 done
 for buildopt_file in "${buildopt_control_first}" "${buildopt_candidate_first}" \
+    "${buildopt_decision}" \
     "${buildopt_runner_spec}"; do
     [[ -f "${buildopt_file}" ]] || {
         printf 'required POC-STABILITY-001 file is unavailable: %s\n' \
@@ -39,11 +41,15 @@ buildopt_fixture_sha=$(
 buildopt_fixture_sha=$(printf '%s\n' "${buildopt_fixture_sha}" | sha256sum | awk '{print $1}')
 buildopt_runner_spec_sha=$(sha256sum "${buildopt_runner_spec}" | awk '{print $1}')
 buildopt_platform_digest=$(jq -er '.container.platformDigest' "${buildopt_runner_spec}")
+buildopt_control_first_sha=$(sha256sum "${buildopt_control_first}" | awk '{print $1}')
+buildopt_candidate_first_sha=$(sha256sum "${buildopt_candidate_first}" | awk '{print $1}')
 
 jq -n -e \
     --arg fixtureSha256 "${buildopt_fixture_sha}" \
     --arg runnerSpecSha256 "${buildopt_runner_spec_sha}" \
     --arg platformDigest "${buildopt_platform_digest}" \
+    --arg controlFirstSha256 "${buildopt_control_first_sha}" \
+    --arg candidateFirstSha256 "${buildopt_candidate_first_sha}" \
     --slurpfile controlFirst "${buildopt_control_first}" \
     --slurpfile candidateFirst "${buildopt_candidate_first}" '
     def digest: type == "string" and test("^[0-9a-f]{64}$");
@@ -117,10 +123,18 @@ jq -n -e \
         $w.classification == expected_classification($w);
     def report($r; $order):
         $r.schemaVersion == "buildopt.evidence/poc-stability/v1" and
+        ($r.capturedAt | type == "string" and test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$")) and
         ($r.buildoptRevision | revision) and
         ($r.batchId | type == "string" and test("^[a-z0-9][a-z0-9-]{0,63}$")) and
+        $r.runner.schemaVersion == "buildopt.evidence/golden-runner-observation/v1" and
+        ($r.runner.capturedAt | type == "string" and test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$")) and
         $r.runner.id == "linux-amd64-4c-16g-v1" and
+        $r.runner.operatingSystem == "Linux" and
+        $r.runner.architecture == "x86_64" and
         $r.runner.cpuCount == 4 and $r.runner.memoryBytes == 17179869184 and
+        $r.runner.java == "21.0.11+10-LTS" and
+        $r.runner.javaVendor == "Eclipse Adoptium" and
+        $r.runner.cgroup == {cpuMax: "400000 100000", memoryMax: "17179869184"} and
         $r.runner.qualifiedGoldenRunner == true and
         $r.runner.runnerSpecSha256 == $runnerSpecSha256 and
         $r.runner.containerPlatformDigest == $platformDigest and
@@ -171,8 +185,63 @@ jq -n -e \
     $controlFirst[0].buildoptRevision == $candidateFirst[0].buildoptRevision and
     $controlFirst[0].publicArtifacts == $candidateFirst[0].publicArtifacts and
     $controlFirst[0].fixture == $candidateFirst[0].fixture and
-    ([ $controlFirst[0].workloads[] | {id, classification} ] | sort_by(.id)) ==
-        ([ $candidateFirst[0].workloads[] | {id, classification} ] | sort_by(.id))
+    ($controlFirst[0].runner | del(.capturedAt)) ==
+        ($candidateFirst[0].runner | del(.capturedAt))
+    ' >/dev/null
+
+jq -n -e \
+    --arg controlFirstSha256 "${buildopt_control_first_sha}" \
+    --arg candidateFirstSha256 "${buildopt_candidate_first_sha}" \
+    --slurpfile controlFirst "${buildopt_control_first}" \
+    --slurpfile candidateFirst "${buildopt_candidate_first}" \
+    --slurpfile decision "${buildopt_decision}" '
+    ([ $controlFirst[0].workloads[] | {id, classification} ] | sort_by(.id)) as $a |
+    ([ $candidateFirst[0].workloads[] | {id, classification} ] | sort_by(.id)) as $b |
+    ([$a[] as $left | $b[] |
+        select(.id == $left.id and .classification == $left.classification) |
+        .id] | sort) as $reproduced |
+    ([$a[] as $left | $b[] |
+        select(.id == $left.id and .classification != $left.classification) |
+        .id] | sort) as $mismatched |
+    ($mismatched | length == 0) as $stable |
+    ($controlFirst[0].decision.qualifyingCells) as $controlQualifying |
+    ($candidateFirst[0].decision.qualifyingCells) as $candidateQualifying |
+    ($decision | length == 1) and
+    $decision[0] == {
+        schemaVersion: "buildopt.evidence/poc-stability-decision/v1",
+        capturedAt: $decision[0].capturedAt,
+        buildoptRevision: $controlFirst[0].buildoptRevision,
+        reports: {
+            controlFirstSha256: $controlFirstSha256,
+            candidateFirstSha256: $candidateFirstSha256
+        },
+        result: {
+            classificationReproduced: $stable,
+            reproducedCells: $reproduced,
+            mismatchedCells: $mismatched,
+            controlFirstQualifyingCells: $controlQualifying,
+            candidateFirstQualifyingCells: $candidateQualifying
+        },
+        decision: {
+            verdict: (if $stable then "CLASSIFICATIONS_REPRODUCED" else "MEASUREMENT_UNSTABLE" end),
+            breadthClaim: (if ($stable and $controlQualifying == 8) then "BROADEN_SYNTHETIC_CLAIM" else "RETAIN_QUALIFIED_SYNTHETIC_WORKLOADS_ONLY" end),
+            productChangeAuthorized: $stable,
+            nextExperiment: (if $stable then "NONE" else "TEMPORALLY_PAIRED_ISOLATED_MICROBATCHES" end)
+        },
+        gate: {
+            id: "POC-STABILITY-G01",
+            state: (if $stable then "PASSED" else "FAILED" end)
+        },
+        boundaries: {
+            thresholdsChanged: false,
+            universalSavingsClaimed: false,
+            productionReadinessClaimed: false,
+            eightHourSoakExecuted: false,
+            externalDesignPartnerRequired: false,
+            testOptimizationModified: false
+        }
+    } and
+    ($decision[0].capturedAt | type == "string" and test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"))
     ' >/dev/null
 
 buildopt_revision=$(jq -er '.buildoptRevision' "${buildopt_control_first}")

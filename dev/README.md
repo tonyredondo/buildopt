@@ -2188,12 +2188,16 @@ GRADLE_USER_HOME=.tools/gradle-user-home/local \
     /tmp/poc-stability-candidate-first.json candidate-first CANDIDATE_FIRST
 ./dev/check-poc-stability \
   /tmp/poc-stability-control-first.json \
-  /tmp/poc-stability-candidate-first.json
+  /tmp/poc-stability-candidate-first.json \
+  benchmarks/results/poc-stability-v1-decision.json
 ```
 
-The validator requires every cell classification to reproduce across the two
-opposite arm orders. Reproduced failures remain failures; the stability block
-does not move a performance threshold or broaden the POC claim by itself.
+The validator recomputes every observation and verifies the checked decision.
+Classification agreement is the stability gate, not a prerequisite for keeping
+honest evidence. The checked batches qualified 0/8 versus 4/8 cells and changed
+four classifications, so the current verdict is `MEASUREMENT_UNSTABLE` and the
+gate is `FAILED`. Reproduced failures remain failures; thresholds are unchanged,
+and the stability block cannot broaden the POC claim by itself.
 
 Validate and print the historical mechanism-development scorecard without
 rerunning a benchmark:

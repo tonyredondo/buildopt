@@ -18,7 +18,7 @@ small/medium/large Gradle build matrix and makes no performance claim.
 ## Build Optimization scorecard
 
 The current POC verdict is `CONTINUE`, qualified only for the measured synthetic
-workload classes. Five contractual 4-vCPU/16-GiB runs cover the baseline,
+workload classes. Contractual 4-vCPU/16-GiB runs cover the baseline,
 negative-mechanism decision, accelerator-coverage matrix, combined public path,
 and realistic breadth test. Safe Cache is explicit-only while the default delegates to Gradle's native
 cache; Runtime Tuning candidates `W4_H6G` and `W3_H4G` are disabled; Build
@@ -79,6 +79,10 @@ The underlying evidence and contracts are:
   `./dev/check-poc-breadth`;
 - [installed-path phase attribution](./results/poc-overhead-v1.json), validated
   by `./dev/check-poc-overhead`;
+- [isolated control-first](./results/poc-stability-v1-control-first.json) and
+  [candidate-first](./results/poc-stability-v1-candidate-first.json) stability
+  reports plus their [checked decision](./results/poc-stability-v1-decision.json),
+  validated by `./dev/check-poc-stability`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
@@ -86,8 +90,8 @@ The underlying evidence and contracts are:
 - [Build Impact observations](./results/build-impact-performance-v1-local.json)
   and [contract](../specs/build-impact-performance-v1.md).
 
-The three mechanism-development reports remain historical inputs. The five
-strict reports are the current decision evidence. They prove bounded combined
+The three mechanism-development reports remain historical inputs. The strict
+reports are the current decision evidence. They prove bounded combined
 value but do not yet prove realistic breadth; none claims universal savings or
 production readiness.
 
@@ -111,8 +115,29 @@ repeat qualifies 4/8 cells. The checked decision remains
 Every required output was byte-identical, selection/fallback task counts were
 exact, Configuration Cache behavior matched the scenario, and no product failure
 occurred. The failure is value/performance, not correctness. Percentages are not
-added across cells. The remaining failures are strongly order-sensitive, so the
-next experiment isolates inter-arm carryover before making another product change.
+added across cells. The isolation experiment below determines whether those
+classifications survive removal of inter-arm carryover.
+
+### Isolated-arm stability result
+
+`POC-STABILITY-001` removed writable-state carryover by running control and
+candidate in separate strict containers, each with its own workspace, Gradle
+home, and daemon. Two complete batches reversed the global arm order while
+retaining the same fixture, warm-up, mutations, samples, outputs, and thresholds.
+
+| Batch | Qualifying cells | Classification changes |
+|---|---:|---:|
+| Control first | 0/8 | 4 versus candidate-first |
+| Candidate first | 4/8 | 4 versus control-first |
+
+All 256 underlying arm measurements preserved the expected execution shape,
+Configuration Cache behavior, byte-identical required outputs, and zero
+product-attributable failures. Four classifications changed solely with global
+arm order, so the checked verdict is `MEASUREMENT_UNSTABLE` and
+`POC-STABILITY-G01` is `FAILED`. This is valid negative POC evidence: it neither
+authorizes another product change nor broadens the claim. The next experiment
+must interleave isolated control/candidate microbatches close in time so runner
+drift cannot dominate an otherwise isolated comparison.
 
 ## Historical v0.2 public onboarding performance
 

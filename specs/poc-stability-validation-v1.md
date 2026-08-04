@@ -16,10 +16,12 @@ after both containers finish; no writable state or daemon crosses from one arm
 to the other.
 
 The two reports must be bound to the same commit and artifacts, use opposite arm
-orders, preserve all correctness guardrails, and produce the same classification
-for every Kotlin/Groovy change cell. A reproduced failure is valid evidence: it
-identifies a product-value limitation rather than being relabelled or hidden by a
-weaker threshold.
+orders, and preserve all correctness guardrails. A stable outcome additionally
+requires the same classification for every Kotlin/Groovy change cell. A
+classification mismatch is valid negative evidence: it records
+`MEASUREMENT_UNSTABLE`, retains the narrow claim, and forbids a product change
+until a temporally paired experiment resolves the runner drift. Reproduced
+failures likewise remain failures rather than being hidden by a weaker threshold.
 
 Validate checked evidence with:
 

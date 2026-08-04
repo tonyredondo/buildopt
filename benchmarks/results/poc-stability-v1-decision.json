@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-stability-decision/v1",
+  "capturedAt": "2026-08-04T20:47:17Z",
+  "buildoptRevision": "2141ee703bf514bddf5c62fc91c70ceb7c676488",
+  "reports": {
+    "controlFirstSha256": "4349e6f5ca338a93822b0876089ce32f3f1f5713fecf8ad62d3652283a4c8c13",
+    "candidateFirstSha256": "f1045ce86b269da50d339e4a7c6ee7f570b1f0e5fbb900fa1c3010a72d4d1ef1"
+  },
+  "result": {
+    "classificationReproduced": false,
+    "reproducedCells": [
+      "BREADTH_BUILD_LOGIC_CHANGE_GROOVY",
+      "BREADTH_LEAF_CHANGE_GROOVY",
+      "BREADTH_SHARED_CHANGE_GROOVY",
+      "BREADTH_SHARED_CHANGE_KOTLIN"
+    ],
+    "mismatchedCells": [
+      "BREADTH_BUILD_LOGIC_CHANGE_KOTLIN",
+      "BREADTH_LEAF_CHANGE_KOTLIN",
+      "BREADTH_NO_CHANGE_GROOVY",
+      "BREADTH_NO_CHANGE_KOTLIN"
+    ],
+    "controlFirstQualifyingCells": 0,
+    "candidateFirstQualifyingCells": 4
+  },
+  "decision": {
+    "verdict": "MEASUREMENT_UNSTABLE",
+    "breadthClaim": "RETAIN_QUALIFIED_SYNTHETIC_WORKLOADS_ONLY",
+    "productChangeAuthorized": false,
+    "nextExperiment": "TEMPORALLY_PAIRED_ISOLATED_MICROBATCHES"
+  },
+  "gate": {
+    "id": "POC-STABILITY-G01",
+    "state": "FAILED"
+  },
+  "boundaries": {
+    "thresholdsChanged": false,
+    "universalSavingsClaimed": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

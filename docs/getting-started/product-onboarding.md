@@ -150,8 +150,10 @@ A separate realistic five-project matrix initially qualified 2/8 cells. After
 installed-path attribution and removal of one candidate-only environment
 difference, the unchanged repeat qualified leaf Kotlin/Groovy and shared Kotlin
 acceleration plus no-change Kotlin parity (4/8 cells). Global build-logic,
-no-change Groovy, and shared Groovy remain outside the claim while
-order/carryover sensitivity is investigated.
+no-change Groovy, and shared Groovy remain outside the claim. The isolated-arm
+experiment then exposed four order-dependent classifications, so those cells
+remain outside the claim while a temporally paired, state-isolated measurement
+removes runner drift.
 A repository that needs the full graph receives
 no Build Impact saving; an already warm native cache is a parity baseline, not
 the cache-off comparison. Run `./dev/check-poc-value-validation` to validate

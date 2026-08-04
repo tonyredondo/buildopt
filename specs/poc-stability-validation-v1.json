@@ -30,7 +30,8 @@
     "sameRevisionAndArtifacts": true,
     "requiredOutputsIdentical": true,
     "maximumProductAttributableFailures": 0,
-    "classificationMustMatchAcrossBatches": true,
+    "classificationAgreementRequiredForStableResult": true,
+    "mismatchProducesMeasurementUnstable": true,
     "thresholdsMayMove": false
   },
   "boundaries": {
