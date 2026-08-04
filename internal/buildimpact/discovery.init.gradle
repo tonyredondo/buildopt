@@ -3,6 +3,9 @@ import groovy.json.JsonSlurper
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.tasks.testing.Test
 
+// Init scripts are inherited by buildSrc and included builds. Discovery owns
+// only the top-level build selected by the CLI.
+if (gradle.getParent() == null) {
 gradle.projectsEvaluated {
     def outputPath = System.getenv("BUILDOPT_IMPACT_DISCOVERY_OUTPUT")
     def entrypointJSON = System.getenv("BUILDOPT_IMPACT_ENTRYPOINTS")
@@ -91,4 +94,5 @@ gradle.projectsEvaluated {
             output.text = JsonOutput.toJson(snapshot) + "\n"
         }
     }
+}
 }

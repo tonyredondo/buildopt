@@ -99,6 +99,66 @@ func TestSyntheticGradleDiscoveryGeneratedStateIsCurrent(t *testing.T) {
 	}
 }
 
+func TestPocCombinedDiscoveryIgnoresInheritedBuildSrcInit(t *testing.T) {
+	if os.Getenv("BUILDOPT_RUN_BUILD_IMPACT_DISCOVERY_PROOF") != "1" {
+		t.Skip("real Gradle discovery proof is run by check-build-impact-automatic")
+	}
+	repositoryRoot := buildImpactRepositoryRoot(t)
+	baseRoot := filepath.Join(repositoryRoot, filepath.FromSlash("fixtures/poc-value/build-impact"))
+	overlayRoot := filepath.Join(repositoryRoot, filepath.FromSlash("fixtures/poc-value/combined-impact"))
+	for _, dsl := range []string{"kotlin", "groovy"} {
+		t.Run(dsl, func(t *testing.T) {
+			workspace := filepath.Join(t.TempDir(), "repository")
+			copyFixtureTree(t, baseRoot, workspace)
+			for _, name := range []string{
+				"build.gradle",
+				"build.gradle.kts",
+				"buildopt-impact-manifest.json",
+				"buildopt-impact-graph.generated.json",
+				"buildopt-impact.generated.json",
+			} {
+				raw, err := os.ReadFile(filepath.Join(overlayRoot, name))
+				if err != nil {
+					t.Fatal(err)
+				}
+				if err := os.WriteFile(filepath.Join(workspace, name), raw, 0o644); err != nil {
+					t.Fatal(err)
+				}
+			}
+			if dsl == "kotlin" {
+				if err := os.Remove(filepath.Join(workspace, "build.gradle")); err != nil {
+					t.Fatal(err)
+				}
+				if err := os.Remove(filepath.Join(workspace, "settings.gradle")); err != nil {
+					t.Fatal(err)
+				}
+			} else {
+				if err := os.Remove(filepath.Join(workspace, "build.gradle.kts")); err != nil {
+					t.Fatal(err)
+				}
+				if err := os.Remove(filepath.Join(workspace, "settings.gradle.kts")); err != nil {
+					t.Fatal(err)
+				}
+			}
+			ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+			defer cancel()
+			generated, err := Discover(ctx, DiscoveryOptions{
+				RepositoryRoot: workspace,
+				ManifestPath:   "buildopt-impact-manifest.json",
+				RepositoryID:   "tonyredondo/buildopt-poc-combined-impact",
+				PipelineClass:  "poc-value",
+				GradleCommand:  filepath.Join(repositoryRoot, "gradlew"),
+				GradleArgs:     []string{"--offline"},
+			})
+			if err != nil {
+				t.Fatal(err)
+			}
+			assertFixtureBytes(t, filepath.Join(overlayRoot, "buildopt-impact-graph.generated.json"), generated.GraphJSON)
+			assertFixtureBytes(t, filepath.Join(overlayRoot, "buildopt-impact.generated.json"), generated.GeneratedJSON)
+		})
+	}
+}
+
 func assertFixtureBytes(t *testing.T, path string, expected []byte) {
 	t.Helper()
 	raw, err := os.ReadFile(path)

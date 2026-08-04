@@ -1,0 +1,501 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 3)); then
+    printf 'usage: %s OUTPUT_FILE BUILDOPT_REVISION INSTALL_PREFIX\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_revision=$2
+buildopt_prefix=$3
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_impact_base="${buildopt_repo_root}/fixtures/poc-value/build-impact"
+buildopt_impact_overlay="${buildopt_repo_root}/fixtures/poc-value/combined-impact"
+buildopt_task_fixture="${buildopt_repo_root}/fixtures/poc-value/reviewed-task"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
+    ! "${buildopt_revision}" =~ ^[0-9a-f]{40}$ ||
+    "${buildopt_prefix}" != /* ]]; then
+    printf 'invalid POC-VALUE-004 input\n' >&2
+    exit 64
+fi
+for buildopt_command in awk chmod cp date env find grep jq ln mkdir mktemp rm sed sha256sum sort; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC-VALUE-004 command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+for buildopt_file in \
+    "${buildopt_prefix}/bin/buildopt" \
+    "${buildopt_prefix}/bin/buildopt-impact" \
+    "${buildopt_prefix}/share/buildopt/buildopt.init.gradle" \
+    "${buildopt_prefix}/share/buildopt/buildopt-gradle-plugin.jar"; do
+    [[ -s "${buildopt_file}" ]] || {
+        printf 'installed POC-VALUE-004 artifact is unavailable: %s\n' \
+            "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-poc-value-004.XXXXXX")
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-poc-value-004."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_raw="${buildopt_root}/observations.jsonl"
+buildopt_runner="${buildopt_root}/runner.json"
+"${buildopt_script_dir}/capture-golden-runner" "${buildopt_runner}"
+
+buildopt_fixture_digest() {
+    local buildopt_fixture=$1
+    (
+        cd -- "${buildopt_fixture}"
+        while IFS= read -r buildopt_file; do
+            printf '%s  %s\n' \
+                "$(sha256sum "${buildopt_file}" | awk '{print $1}')" \
+                "${buildopt_file}"
+        done < <(find . -type f -print | sort)
+    ) | sha256sum | awk '{print $1}'
+}
+
+buildopt_impact_base_sha=$(buildopt_fixture_digest "${buildopt_impact_base}")
+buildopt_impact_overlay_sha=$(buildopt_fixture_digest "${buildopt_impact_overlay}")
+buildopt_task_fixture_sha=$(buildopt_fixture_digest "${buildopt_task_fixture}")
+buildopt_task_preimage="${buildopt_task_fixture}/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java"
+buildopt_task_postimage="${buildopt_task_fixture}/GeneratePilotManifest.patched.java"
+buildopt_task_preimage_sha=$(sha256sum "${buildopt_task_preimage}" | awk '{print $1}')
+buildopt_task_postimage_sha=$(sha256sum "${buildopt_task_postimage}" | awk '{print $1}')
+if [[ "${buildopt_task_preimage_sha}" != 392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083 ||
+    "${buildopt_task_postimage_sha}" != 79fa100a4e2d962dd506259311f90ecb92ad62500391d140065b6f157a172a2b ]]; then
+    printf 'reviewed-source fixture drifted from the registered recipe\n' >&2
+    exit 1
+fi
+
+buildopt_distribution_home=${GRADLE_USER_HOME:-"${HOME}/.gradle"}
+if [[ ! -d "${buildopt_distribution_home}/wrapper/dists/gradle-9.6.1-bin" ]]; then
+    printf 'locked Gradle 9.6.1 distribution is unavailable in %s\n' \
+        "${buildopt_distribution_home}" >&2
+    exit 1
+fi
+
+buildopt_gradle_arguments=(
+    --offline
+    --parallel
+    --configuration-cache
+    --build-cache
+    --console=plain
+    --warning-mode=fail
+)
+if [[ -n "${BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS:-}" ]]; then
+    buildopt_gradle_arguments+=(
+        "-Dorg.gradle.java.installations.paths=${BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS}"
+    )
+fi
+
+buildopt_seed_gradle_home() {
+    local buildopt_home=$1
+    if [[ ! -e "${buildopt_home}/wrapper/dists" ]]; then
+        mkdir -p -- "${buildopt_home}/wrapper"
+        ln -s -- "${buildopt_distribution_home}/wrapper/dists" \
+            "${buildopt_home}/wrapper/dists"
+    fi
+}
+
+buildopt_prepare_workspace() {
+    local buildopt_kind=$1
+    local buildopt_workspace=$2
+    local buildopt_dsl=$3
+    mkdir -p -- "${buildopt_workspace}"
+    if [[ "${buildopt_kind}" == IMPACT ]]; then
+        cp -R -- "${buildopt_impact_base}/." "${buildopt_workspace}/"
+        cp -R -- "${buildopt_impact_overlay}/." "${buildopt_workspace}/"
+    else
+        cp -R -- "${buildopt_task_fixture}/." "${buildopt_workspace}/"
+    fi
+    if [[ "${buildopt_dsl}" == KOTLIN ]]; then
+        rm -f -- "${buildopt_workspace}/settings.gradle" \
+            "${buildopt_workspace}/build.gradle"
+    else
+        rm -f -- "${buildopt_workspace}/settings.gradle.kts" \
+            "${buildopt_workspace}/build.gradle.kts"
+    fi
+    cp -- "${buildopt_repo_root}/gradlew" "${buildopt_workspace}/gradlew"
+    chmod 0755 "${buildopt_workspace}/gradlew"
+    mkdir -p -- "${buildopt_workspace}/gradle/wrapper"
+    cp -- "${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.jar" \
+        "${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.properties" \
+        "${buildopt_workspace}/gradle/wrapper/"
+}
+
+buildopt_hash_files() {
+    local -a buildopt_files=("$@")
+    local buildopt_file
+    for buildopt_file in "${buildopt_files[@]}"; do
+        [[ -s "${buildopt_file}" ]] || {
+            printf 'required POC-VALUE-004 output is unavailable: %s\n' \
+                "${buildopt_file}" >&2
+            exit 1
+        }
+        sha256sum "${buildopt_file}" | awk '{print $1}'
+    done | sha256sum | awk '{print $1}'
+}
+
+buildopt_duration_ms=0
+buildopt_output_sha=
+buildopt_cache_hits=0
+buildopt_unrelated_executed=false
+buildopt_unrelated_omitted=false
+
+buildopt_run_gradle() {
+    local buildopt_workspace=$1
+    local buildopt_home=$2
+    local buildopt_arm=$3
+    local buildopt_log=$4
+    shift 4
+    local buildopt_started buildopt_finished buildopt_status
+    buildopt_seed_gradle_home "${buildopt_home}"
+    buildopt_started=$(date +%s%N)
+    set +e
+    if [[ "${buildopt_arm}" == CONTROL ]]; then
+        (
+            cd -- "${buildopt_workspace}"
+            env GRADLE_USER_HOME="${buildopt_home}" \
+                ./gradlew "${buildopt_gradle_arguments[@]}" "$@"
+        ) >"${buildopt_log}" 2>&1
+    else
+        (
+            cd -- "${buildopt_workspace}"
+            env -u BUILDOPT_SAFE_CACHE -u BUILDOPT_RUNTIME_PROFILE \
+                GRADLE_USER_HOME="${buildopt_home}" \
+                XDG_CACHE_HOME="${buildopt_home}/buildopt-user-cache" \
+                "${buildopt_prefix}/bin/buildopt" gradle \
+                "${buildopt_gradle_arguments[@]}" "$@"
+        ) >"${buildopt_log}" 2>&1
+    fi
+    buildopt_status=$?
+    set -e
+    buildopt_finished=$(date +%s%N)
+    if ((buildopt_status != 0)); then
+        sed -n '1,240p' "${buildopt_log}" >&2
+        printf 'combined %s arm failed\n' "${buildopt_arm}" >&2
+        exit 1
+    fi
+    buildopt_duration_ms=$(((buildopt_finished - buildopt_started) / 1000000))
+}
+
+buildopt_assert_reused_configuration_cache() {
+    local buildopt_log=$1
+    grep -Fq 'Reusing configuration cache.' "${buildopt_log}" || {
+        printf 'combined path did not reuse Configuration Cache: %s\n' \
+            "${buildopt_log}" >&2
+        exit 1
+    }
+}
+
+buildopt_run_impact_arm() {
+    local buildopt_workspace=$1
+    local buildopt_home=$2
+    local buildopt_arm=$3
+    local buildopt_log=$4
+    local buildopt_warm=$5
+    local -a buildopt_tasks
+    rm -rf -- "${buildopt_workspace}/build" \
+        "${buildopt_workspace}/library-c/build" \
+        "${buildopt_workspace}/service-a/build" \
+        "${buildopt_workspace}/service-b/build"
+    if [[ "${buildopt_arm}" == CONTROL ]]; then
+        mapfile -t buildopt_tasks < <(
+            jq -r '.originalEntrypoints[]' \
+                "${buildopt_workspace}/buildopt-impact-manifest.json"
+        )
+    else
+        mapfile -t buildopt_tasks < <(
+            jq -r '.allowedAlternatives[] |
+                select(.id == "affected-service-a") | .entrypoints[]' \
+                "${buildopt_workspace}/buildopt-impact-manifest.json"
+        )
+    fi
+    buildopt_tasks+=(testOwnedCheck)
+    buildopt_run_gradle "${buildopt_workspace}" "${buildopt_home}" \
+        "${buildopt_arm}" "${buildopt_log}" "${buildopt_tasks[@]}"
+    if [[ "${buildopt_warm}" == false ]]; then
+        buildopt_assert_reused_configuration_cache "${buildopt_log}"
+    fi
+    buildopt_unrelated_executed=false
+    buildopt_unrelated_omitted=false
+    if grep -Eq '^> Task :service-b:expensiveUnrelated$' "${buildopt_log}"; then
+        buildopt_unrelated_executed=true
+    fi
+    if ! grep -Fq ':service-b:expensiveUnrelated' "${buildopt_log}"; then
+        buildopt_unrelated_omitted=true
+    fi
+    if [[ "${buildopt_arm}" == CONTROL && "${buildopt_unrelated_executed}" != true ]]; then
+        printf 'combined full graph did not execute unrelated work\n' >&2
+        exit 1
+    fi
+    if [[ "${buildopt_arm}" == CANDIDATE && "${buildopt_unrelated_omitted}" != true ]]; then
+        printf 'combined selected graph did not omit unrelated work\n' >&2
+        exit 1
+    fi
+    buildopt_cache_hits=$(grep -Ec '^> Task :service-a:.* FROM-CACHE$' \
+        "${buildopt_log}" || true)
+    buildopt_output_sha=$(buildopt_hash_files \
+        "${buildopt_workspace}/service-a/build/libs/service-a-1.0.jar" \
+        "${buildopt_workspace}/build/test-owned/check.txt")
+}
+
+buildopt_run_task_arm() {
+    local buildopt_workspace=$1
+    local buildopt_home=$2
+    local buildopt_arm=$3
+    local buildopt_log=$4
+    local buildopt_warm=$5
+    local -a buildopt_outputs=()
+    rm -rf -- "${buildopt_workspace}/build"
+    buildopt_run_gradle "${buildopt_workspace}" "${buildopt_home}" \
+        "${buildopt_arm}" "${buildopt_log}" reviewedWorkload
+    if [[ "${buildopt_warm}" == false ]]; then
+        buildopt_assert_reused_configuration_cache "${buildopt_log}"
+    fi
+    buildopt_cache_hits=$(grep -Ec '^> Task :generateManifest[0-9]+ FROM-CACHE$' \
+        "${buildopt_log}" || true)
+    if [[ "${buildopt_arm}" == CONTROL && "${buildopt_cache_hits}" -ne 0 ]]; then
+        printf 'combined reviewed-task control unexpectedly used cache\n' >&2
+        exit 1
+    fi
+    if [[ "${buildopt_arm}" == CANDIDATE && "${buildopt_warm}" == false &&
+        "${buildopt_cache_hits}" -ne 8 ]]; then
+        printf 'combined reviewed-task candidate restored %d/8 tasks\n' \
+            "${buildopt_cache_hits}" >&2
+        exit 1
+    fi
+    mapfile -d '' buildopt_outputs < <(
+        find "${buildopt_workspace}/build/poc-value" \
+            -type f -name 'manifest-*.txt' -print0 | sort -z
+    )
+    if ((${#buildopt_outputs[@]} != 8)); then
+        printf 'combined reviewed task produced %d/8 manifests\n' \
+            "${#buildopt_outputs[@]}" >&2
+        exit 1
+    fi
+    buildopt_output_sha=$(buildopt_hash_files "${buildopt_outputs[@]}")
+    buildopt_unrelated_executed=false
+    buildopt_unrelated_omitted=false
+}
+
+buildopt_record_pair() {
+    local buildopt_id=$1 buildopt_class=$2 buildopt_dsl=$3 buildopt_pair=$4
+    local buildopt_order=$5 buildopt_control_ms=$6 buildopt_candidate_ms=$7
+    local buildopt_control_sha=$8 buildopt_candidate_sha=$9
+    local buildopt_control_hits=${10} buildopt_candidate_hits=${11}
+    local buildopt_full_executed=${12} buildopt_selected_omitted=${13}
+    jq -cn \
+        --arg workloadId "${buildopt_id}" \
+        --arg workloadClass "${buildopt_class}" \
+        --arg dsl "${buildopt_dsl}" \
+        --arg order "${buildopt_order}" \
+        --arg controlSha256 "${buildopt_control_sha}" \
+        --arg candidateSha256 "${buildopt_candidate_sha}" \
+        --argjson pair "${buildopt_pair}" \
+        --argjson controlDurationMs "${buildopt_control_ms}" \
+        --argjson candidateDurationMs "${buildopt_candidate_ms}" \
+        --argjson controlCacheHits "${buildopt_control_hits}" \
+        --argjson candidateCacheHits "${buildopt_candidate_hits}" \
+        --argjson fullExecutedUnrelated "${buildopt_full_executed}" \
+        --argjson candidateOmittedUnrelated "${buildopt_selected_omitted}" '{
+            workloadId: $workloadId,
+            workloadClass: $workloadClass,
+            dsl: $dsl,
+            pair: $pair,
+            order: $order,
+            controlDurationMs: $controlDurationMs,
+            candidateDurationMs: $candidateDurationMs,
+            savedMs: ($controlDurationMs - $candidateDurationMs),
+            controlOutputSha256: $controlSha256,
+            candidateOutputSha256: $candidateSha256,
+            controlCacheHits: $controlCacheHits,
+            candidateCacheHits: $candidateCacheHits,
+            fullExecutedUnrelated: $fullExecutedUnrelated,
+            candidateOmittedUnrelated: $candidateOmittedUnrelated,
+            productAttributableFailure: false
+        }' >>"${buildopt_raw}"
+}
+
+for buildopt_dsl in KOTLIN GROOVY; do
+    buildopt_dsl_lower=${buildopt_dsl,,}
+    buildopt_impact_control="${buildopt_root}/impact-${buildopt_dsl_lower}-control"
+    buildopt_impact_candidate="${buildopt_root}/impact-${buildopt_dsl_lower}-candidate"
+    buildopt_prepare_workspace IMPACT "${buildopt_impact_control}" "${buildopt_dsl}"
+    buildopt_prepare_workspace IMPACT "${buildopt_impact_candidate}" "${buildopt_dsl}"
+    buildopt_seed_gradle_home "${buildopt_root}/impact-${buildopt_dsl_lower}-preflight-home"
+    (
+        cd -- "${buildopt_impact_candidate}"
+        env GRADLE_USER_HOME="${buildopt_root}/impact-${buildopt_dsl_lower}-preflight-home" \
+            "${buildopt_prefix}/bin/buildopt-impact" check \
+            --repository "${buildopt_impact_candidate}" \
+            --manifest buildopt-impact-manifest.json \
+            --repository-id tonyredondo/buildopt-poc-combined-impact \
+            --pipeline-class poc-value \
+            --graph buildopt-impact-graph.generated.json \
+            --generated-manifest buildopt-impact.generated.json \
+            --gradle-command ./gradlew >/dev/null
+    )
+    buildopt_run_impact_arm "${buildopt_impact_control}" \
+        "${buildopt_root}/impact-${buildopt_dsl_lower}-control-home" CONTROL \
+        "${buildopt_root}/impact-${buildopt_dsl_lower}-warm-control.log" true
+    buildopt_run_impact_arm "${buildopt_impact_candidate}" \
+        "${buildopt_root}/impact-${buildopt_dsl_lower}-candidate-home" CANDIDATE \
+        "${buildopt_root}/impact-${buildopt_dsl_lower}-warm-candidate.log" true
+    for buildopt_pair in {1..8}; do
+        buildopt_order=CONTROL_FIRST
+        if ((buildopt_pair % 2 == 0)); then buildopt_order=CANDIDATE_FIRST; fi
+        if [[ "${buildopt_order}" == CONTROL_FIRST ]]; then
+            buildopt_run_impact_arm "${buildopt_impact_control}" "${buildopt_root}/impact-${buildopt_dsl_lower}-control-home" CONTROL "${buildopt_root}/impact-${buildopt_dsl_lower}-${buildopt_pair}-control.log" false
+            buildopt_control_ms=${buildopt_duration_ms}; buildopt_control_sha=${buildopt_output_sha}; buildopt_control_hits=${buildopt_cache_hits}; buildopt_full=${buildopt_unrelated_executed}
+            buildopt_run_impact_arm "${buildopt_impact_candidate}" "${buildopt_root}/impact-${buildopt_dsl_lower}-candidate-home" CANDIDATE "${buildopt_root}/impact-${buildopt_dsl_lower}-${buildopt_pair}-candidate.log" false
+            buildopt_candidate_ms=${buildopt_duration_ms}; buildopt_candidate_sha=${buildopt_output_sha}; buildopt_candidate_hits=${buildopt_cache_hits}; buildopt_omitted=${buildopt_unrelated_omitted}
+        else
+            buildopt_run_impact_arm "${buildopt_impact_candidate}" "${buildopt_root}/impact-${buildopt_dsl_lower}-candidate-home" CANDIDATE "${buildopt_root}/impact-${buildopt_dsl_lower}-${buildopt_pair}-candidate.log" false
+            buildopt_candidate_ms=${buildopt_duration_ms}; buildopt_candidate_sha=${buildopt_output_sha}; buildopt_candidate_hits=${buildopt_cache_hits}; buildopt_omitted=${buildopt_unrelated_omitted}
+            buildopt_run_impact_arm "${buildopt_impact_control}" "${buildopt_root}/impact-${buildopt_dsl_lower}-control-home" CONTROL "${buildopt_root}/impact-${buildopt_dsl_lower}-${buildopt_pair}-control.log" false
+            buildopt_control_ms=${buildopt_duration_ms}; buildopt_control_sha=${buildopt_output_sha}; buildopt_control_hits=${buildopt_cache_hits}; buildopt_full=${buildopt_unrelated_executed}
+        fi
+        buildopt_record_pair "COMBINED_IMPACT_${buildopt_dsl}" UNRELATED_NON_CACHEABLE_WORK "${buildopt_dsl}" "${buildopt_pair}" "${buildopt_order}" "${buildopt_control_ms}" "${buildopt_candidate_ms}" "${buildopt_control_sha}" "${buildopt_candidate_sha}" "${buildopt_control_hits}" "${buildopt_candidate_hits}" "${buildopt_full}" "${buildopt_omitted}"
+        printf 'POC-VALUE-004 Build Impact %s pair %d saved %dms\n' "${buildopt_dsl}" "${buildopt_pair}" "$((buildopt_control_ms - buildopt_candidate_ms))"
+    done
+
+    buildopt_task_control="${buildopt_root}/task-${buildopt_dsl_lower}-control"
+    buildopt_task_candidate="${buildopt_root}/task-${buildopt_dsl_lower}-candidate"
+    buildopt_prepare_workspace TASK "${buildopt_task_control}" "${buildopt_dsl}"
+    buildopt_prepare_workspace TASK "${buildopt_task_candidate}" "${buildopt_dsl}"
+    cp -- "${buildopt_task_candidate}/GeneratePilotManifest.patched.java" \
+        "${buildopt_task_candidate}/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java"
+    rm -f -- "${buildopt_task_control}/GeneratePilotManifest.patched.java" \
+        "${buildopt_task_candidate}/GeneratePilotManifest.patched.java"
+    buildopt_run_task_arm "${buildopt_task_control}" "${buildopt_root}/task-${buildopt_dsl_lower}-control-home" CONTROL "${buildopt_root}/task-${buildopt_dsl_lower}-warm-control.log" true
+    buildopt_run_task_arm "${buildopt_task_candidate}" "${buildopt_root}/task-${buildopt_dsl_lower}-candidate-home" CANDIDATE "${buildopt_root}/task-${buildopt_dsl_lower}-warm-candidate.log" true
+    for buildopt_pair in {1..8}; do
+        buildopt_order=CONTROL_FIRST
+        if ((buildopt_pair % 2 == 0)); then buildopt_order=CANDIDATE_FIRST; fi
+        if [[ "${buildopt_order}" == CONTROL_FIRST ]]; then
+            buildopt_run_task_arm "${buildopt_task_control}" "${buildopt_root}/task-${buildopt_dsl_lower}-control-home" CONTROL "${buildopt_root}/task-${buildopt_dsl_lower}-${buildopt_pair}-control.log" false
+            buildopt_control_ms=${buildopt_duration_ms}; buildopt_control_sha=${buildopt_output_sha}; buildopt_control_hits=${buildopt_cache_hits}
+            buildopt_run_task_arm "${buildopt_task_candidate}" "${buildopt_root}/task-${buildopt_dsl_lower}-candidate-home" CANDIDATE "${buildopt_root}/task-${buildopt_dsl_lower}-${buildopt_pair}-candidate.log" false
+            buildopt_candidate_ms=${buildopt_duration_ms}; buildopt_candidate_sha=${buildopt_output_sha}; buildopt_candidate_hits=${buildopt_cache_hits}
+        else
+            buildopt_run_task_arm "${buildopt_task_candidate}" "${buildopt_root}/task-${buildopt_dsl_lower}-candidate-home" CANDIDATE "${buildopt_root}/task-${buildopt_dsl_lower}-${buildopt_pair}-candidate.log" false
+            buildopt_candidate_ms=${buildopt_duration_ms}; buildopt_candidate_sha=${buildopt_output_sha}; buildopt_candidate_hits=${buildopt_cache_hits}
+            buildopt_run_task_arm "${buildopt_task_control}" "${buildopt_root}/task-${buildopt_dsl_lower}-control-home" CONTROL "${buildopt_root}/task-${buildopt_dsl_lower}-${buildopt_pair}-control.log" false
+            buildopt_control_ms=${buildopt_duration_ms}; buildopt_control_sha=${buildopt_output_sha}; buildopt_control_hits=${buildopt_cache_hits}
+        fi
+        buildopt_record_pair "COMBINED_REVIEWED_TASK_${buildopt_dsl}" REVIEWED_CUSTOM_TASK "${buildopt_dsl}" "${buildopt_pair}" "${buildopt_order}" "${buildopt_control_ms}" "${buildopt_candidate_ms}" "${buildopt_control_sha}" "${buildopt_candidate_sha}" "${buildopt_control_hits}" "${buildopt_candidate_hits}" false false
+        printf 'POC-VALUE-004 reviewed task %s pair %d saved %dms\n' "${buildopt_dsl}" "${buildopt_pair}" "$((buildopt_control_ms - buildopt_candidate_ms))"
+    done
+done
+
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+jq -s \
+    --slurpfile runner "${buildopt_runner}" \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg buildoptRevision "${buildopt_revision}" \
+    --arg buildoptSha256 "$(sha256sum "${buildopt_prefix}/bin/buildopt" | awk '{print $1}')" \
+    --arg buildoptImpactSha256 "$(sha256sum "${buildopt_prefix}/bin/buildopt-impact" | awk '{print $1}')" \
+    --arg pluginSha256 "$(sha256sum "${buildopt_prefix}/share/buildopt/buildopt-gradle-plugin.jar" | awk '{print $1}')" \
+    --arg impactBaseSha256 "${buildopt_impact_base_sha}" \
+    --arg impactOverlaySha256 "${buildopt_impact_overlay_sha}" \
+    --arg taskFixtureSha256 "${buildopt_task_fixture_sha}" \
+    --arg taskPreimageSha256 "${buildopt_task_preimage_sha}" \
+    --arg taskPostimageSha256 "${buildopt_task_postimage_sha}" '
+    def bootstrap_mean($rows; $sample):
+        reduce range(0; 8) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $rows[((.state / 536870912) | floor)].savedMs) |
+        .sum / 8;
+    def bootstrap95($rows):
+        ([range(0; 4096) as $sample | bootstrap_mean($rows; $sample)] | sort) as $replicates |
+        [$replicates[102], $replicates[3993]];
+    group_by(.workloadId) |
+    map(. as $rows |
+        (($rows | map(.savedMs) | add) / 8) as $meanSaved |
+        (($rows | map(.savedMs) | add) / ($rows | map(.controlDurationMs) | add)) as $ratio |
+        bootstrap95($rows) as $interval |
+        (all($rows[]; .controlOutputSha256 == .candidateOutputSha256 and .productAttributableFailure == false)) as $sameOutputs |
+        ($meanSaved >= 500 and $ratio >= 0.02 and $interval[0] > 0 and $sameOutputs and
+         (if $rows[0].workloadClass == "UNRELATED_NON_CACHEABLE_WORK"
+          then all($rows[]; .fullExecutedUnrelated and .candidateOmittedUnrelated)
+          else all($rows[]; .controlCacheHits == 0 and .candidateCacheHits == 8)
+          end)) as $qualified |
+        {
+            id: $rows[0].workloadId,
+            workloadClass: $rows[0].workloadClass,
+            dsl: $rows[0].dsl,
+            classification: (if $qualified then "THRESHOLD_MET" else "NO_VALUE_NO_ACTION" end),
+            appliedOptimizations:
+                (if $rows[0].workloadClass == "UNRELATED_NON_CACHEABLE_WORK"
+                 then ["NATIVE_GRADLE_CACHE", "BUILD_IMPACT"]
+                 else ["NATIVE_GRADLE_CACHE", "REVIEWED_TASK_PATCH"] end),
+            disabledOptimizations: ["SAFE_CACHE", "RUNTIME_TUNING"],
+            result: {
+                pairs: 8,
+                controlMeanMs: (($rows | map(.controlDurationMs) | add) / 8),
+                candidateMeanMs: (($rows | map(.candidateDurationMs) | add) / 8),
+                meanSavedMs: $meanSaved,
+                meanReductionRatio: $ratio,
+                interval95SavedMs: $interval,
+                positivePairs: ($rows | map(select(.savedMs > 0)) | length),
+                requiredOutputsIdentical: $sameOutputs,
+                productAttributableFailures: ($rows | map(select(.productAttributableFailure)) | length),
+                observations: $rows
+            }
+        }) as $workloads |
+    ($workloads | all(.classification == "THRESHOLD_MET")) as $allQualified |
+    {
+        schemaVersion: "buildopt.evidence/poc-value-combined/v1",
+        capturedAt: $capturedAt,
+        buildoptRevision: $buildoptRevision,
+        runner: $runner[0],
+        publicArtifacts: {
+            buildoptSha256: $buildoptSha256,
+            buildoptImpactSha256: $buildoptImpactSha256,
+            gradlePluginSha256: $pluginSha256
+        },
+        methodology: {
+            purpose: "DECIDE_COMBINED_PUBLIC_POC_VALUE",
+            pairsPerWorkload: 8,
+            pairOrder: "PAIRED_ALTERNATING",
+            confidenceInterval: "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
+            nativeControl: {buildCache: true, configurationCache: true, parallelism: true, daemon: true},
+            candidateEntryPoint: "INSTALLED_BUILDOPT_GRADLE",
+            buildImpactStateCheck: "INSTALLED_BUILDOPT_IMPACT_CHECK_BEFORE_MEASUREMENT",
+            patchApplication: "REVIEWED_EXACT_SOURCE_APPLIED_BEFORE_MEASUREMENT",
+            staticOnboardingAndInstallationExcludedFromBuildTiming: true,
+            acceleratorThreshold: {minimumSavedMs: 500, minimumReductionRatio: 0.02, positiveLower95Bound: true, requiredOutputsIdentical: true, maximumProductAttributableFailures: 0},
+            percentagesAddedAcrossWorkloads: false
+        },
+        fixtures: {
+            impactBaseSha256: $impactBaseSha256,
+            impactOverlaySha256: $impactOverlaySha256,
+            reviewedTaskSha256: $taskFixtureSha256,
+            patchRecipe: {id: "CUSTOM_TASK_CONTRACT_JAVA_V1", version: "1.0", preimageSha256: $taskPreimageSha256, postimageSha256: $taskPostimageSha256}
+        },
+        workloads: $workloads,
+        decision: {
+            verdict: (if $allQualified then "CONTINUE" else "STOP" end),
+            pocValueProven: $allQualified,
+            claim: (if $allQualified then "QUALIFIED_SYNTHETIC_WORKLOADS_ONLY" else "COMBINED_PUBLIC_PATH_DID_NOT_CLEAR_VALUE_GATE" end),
+            qualifyingWorkloads: ($workloads | map(select(.classification == "THRESHOLD_MET")) | length),
+            requiredWorkloads: 4
+        },
+        gate: {id: "POC-VALUE-004", state: (if $allQualified then "PASSED" else "FAILED" end), next: (if $allQualified then "POC_CONTINUE_DECISION" else "POC_STOP_DECISION" end)},
+        boundaries: {syntheticOwnerControlledWorkloads: true, universalSavingsClaimed: false, productionReadinessClaimed: false, eightHourSoakExecuted: false, externalDesignPartnerRequired: false, testOptimizationModified: false}
+    }' "${buildopt_raw}" >"${buildopt_output}"
+chmod 0600 "${buildopt_output}"
+
+printf 'BuildOpt POC-VALUE-004 combined evidence written to %s\n' "${buildopt_output}"

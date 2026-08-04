@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "buildopt.build-impact/declared-graph/v1",
+  "repositoryId": "tonyredondo/buildopt-poc-combined-impact",
+  "pipelineClass": "poc-value",
+  "manifestDigest": "sha256:5f361a376978283b4116a1bbda98a2a32aa3df996de06df6d3c481e0a91a88c8",
+  "adapterVersion": "gradle-runtime-v1",
+  "complete": true,
+  "projects": [
+    {
+      "path": ":library-c",
+      "sourcePaths": [
+        "library-c/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":service-a",
+      "sourcePaths": [
+        "service-a/**"
+      ],
+      "dependsOn": [
+        ":library-c"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":service-b",
+      "sourcePaths": [
+        "service-b/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    }
+  ],
+  "entrypoints": [
+    {
+      "name": ":service-a:assemble",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [
+        ":library-c",
+        ":service-a"
+      ],
+      "artifactIds": [
+        "service-a-jar"
+      ],
+      "checkIds": [
+        "compile-check"
+      ],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    },
+    {
+      "name": "assemble",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [
+        ":library-c",
+        ":service-a",
+        ":service-b"
+      ],
+      "artifactIds": [
+        "service-a-jar"
+      ],
+      "checkIds": [
+        "compile-check"
+      ],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    }
+  ],
+  "globalChangePaths": []
+}
