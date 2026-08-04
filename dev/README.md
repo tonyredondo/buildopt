@@ -2174,8 +2174,10 @@ global-build-logic failures are order-sensitive and stay outside the claim.
 `check-poc-stability` compares two revision-bound strict batches. Each batch
 runs control and candidate in separate 4-CPU/16-GiB containers with independent
 writable workspaces, Gradle homes, and daemons; the second batch reverses which
-complete arm runs first. Fixture, warm-up, tasks, eight samples, outputs, and
-thresholds remain unchanged. Create the two reports with:
+complete arm runs first. Every sample receives a fresh workspace, Gradle home,
+daemon lifecycle, and one unmeasured warm-up before its single mutation and
+measurement. Fixture, tasks, eight samples, outputs, and thresholds remain
+unchanged. Create the two reports with:
 
 ```bash
 GRADLE_USER_HOME=.tools/gradle-user-home/local \

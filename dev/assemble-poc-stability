@@ -143,6 +143,7 @@ jq -n \
         methodology: {
             purpose: "REPRODUCE_BREADTH_CLASSIFICATIONS_WITH_ISOLATED_ARMS",
             samplesPerCell: 8,
+            warmupPerSample: 1,
             armExecutionOrder: $armExecutionOrder,
             pairing: "MATCHED_MUTATION_INDEX_ACROSS_ISOLATED_ARM_CONTAINERS",
             confidenceInterval: "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
@@ -151,7 +152,8 @@ jq -n \
                 writableStateShared: false,
                 workspaceShared: false,
                 gradleUserHomeShared: false,
-                daemonShared: false
+                daemonShared: false,
+                sampleLifecycle: "FRESH_WORKSPACE_HOME_DAEMON_PER_SAMPLE"
             },
             nativeControl: {buildCache: true, configurationCache: true, parallelism: true, daemon: true},
             candidateEntryPoints: ["INSTALLED_BUILDOPT_IMPACT_CHECK", "INSTALLED_BUILDOPT_GRADLE"],

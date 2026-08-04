@@ -9,14 +9,16 @@
       "CONTROL_FIRST",
       "CANDIDATE_FIRST"
     ],
-    "samplesPerCell": 8
+    "samplesPerCell": 8,
+    "warmupPerSample": 1
   },
   "isolation": {
     "strictContainerPerArm": true,
     "writableStateShared": false,
     "workspaceShared": false,
     "gradleUserHomeShared": false,
-    "daemonShared": false
+    "daemonShared": false,
+    "sampleLifecycle": "FRESH_WORKSPACE_HOME_DAEMON_PER_SAMPLE"
   },
   "thresholds": {
     "acceleratorMinimumSavedMs": 500,

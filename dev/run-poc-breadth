@@ -392,16 +392,15 @@ for buildopt_dsl in KOTLIN GROOVY; do
         buildopt_candidate_home="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-candidate-home"
         if [[ "${buildopt_arm_mode}" != BOTH ]]; then
             buildopt_arm_lower=${buildopt_arm_mode,,}
-            buildopt_workspace="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-${buildopt_arm_lower}"
-            buildopt_home="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-${buildopt_arm_lower}-home"
-            buildopt_prepare_workspace "${buildopt_workspace}" "${buildopt_dsl}"
             if [[ "${buildopt_arm_mode}" == CANDIDATE ]]; then
+                buildopt_preflight_workspace="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-candidate-preflight"
+                buildopt_prepare_workspace "${buildopt_preflight_workspace}" "${buildopt_dsl}"
                 buildopt_seed_gradle_home "${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-preflight-home"
                 (
-                    cd -- "${buildopt_workspace}"
+                    cd -- "${buildopt_preflight_workspace}"
                     env GRADLE_USER_HOME="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-preflight-home" \
                         "${buildopt_prefix}/bin/buildopt-impact" check \
-                        --repository "${buildopt_workspace}" \
+                        --repository "${buildopt_preflight_workspace}" \
                         --manifest buildopt-impact-manifest.json \
                         --repository-id tonyredondo/buildopt-poc-breadth \
                         --pipeline-class poc-breadth \
@@ -410,10 +409,13 @@ for buildopt_dsl in KOTLIN GROOVY; do
                         --gradle-command ./gradlew >/dev/null
                 )
             fi
-            buildopt_run_arm "${buildopt_workspace}" "${buildopt_home}" \
-                "${buildopt_arm_mode}" "${buildopt_scenario}" \
-                "${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-warm-${buildopt_arm_lower}.log"
             for buildopt_pair in {1..8}; do
+                buildopt_workspace="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-${buildopt_arm_lower}-${buildopt_pair}"
+                buildopt_home="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-${buildopt_arm_lower}-home-${buildopt_pair}"
+                buildopt_prepare_workspace "${buildopt_workspace}" "${buildopt_dsl}"
+                buildopt_run_arm "${buildopt_workspace}" "${buildopt_home}" \
+                    "${buildopt_arm_mode}" "${buildopt_scenario}" \
+                    "${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-${buildopt_pair}-warm-${buildopt_arm_lower}.log"
                 buildopt_mutate_workspace "${buildopt_workspace}" "${buildopt_dsl}" \
                     "${buildopt_scenario}" "${buildopt_pair}"
                 buildopt_run_arm "${buildopt_workspace}" "${buildopt_home}" \
@@ -526,7 +528,8 @@ if [[ "${buildopt_arm_mode}" != BOTH ]]; then
             methodology: {
                 purpose: "ISOLATE_ONE_BREADTH_ARM",
                 samplesPerCell: 8,
-                warmupPerCell: 1,
+                warmupPerSample: 1,
+                sampleLifecycle: "FRESH_WORKSPACE_HOME_DAEMON_PER_SAMPLE",
                 nativeControl: {buildCache: true, configurationCache: true, parallelism: true, daemon: true},
                 candidateEntryPoints: ["INSTALLED_BUILDOPT_IMPACT_CHECK", "INSTALLED_BUILDOPT_GRADLE"]
             },

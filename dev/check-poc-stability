@@ -130,10 +130,11 @@ jq -n -e \
         $r.methodology == {
             purpose: "REPRODUCE_BREADTH_CLASSIFICATIONS_WITH_ISOLATED_ARMS",
             samplesPerCell: 8,
+            warmupPerSample: 1,
             armExecutionOrder: $order,
             pairing: "MATCHED_MUTATION_INDEX_ACROSS_ISOLATED_ARM_CONTAINERS",
             confidenceInterval: "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
-            isolation: {strictContainerPerArm: true, writableStateShared: false, workspaceShared: false, gradleUserHomeShared: false, daemonShared: false},
+            isolation: {strictContainerPerArm: true, writableStateShared: false, workspaceShared: false, gradleUserHomeShared: false, daemonShared: false, sampleLifecycle: "FRESH_WORKSPACE_HOME_DAEMON_PER_SAMPLE"},
             nativeControl: {buildCache: true, configurationCache: true, parallelism: true, daemon: true},
             candidateEntryPoints: ["INSTALLED_BUILDOPT_IMPACT_CHECK", "INSTALLED_BUILDOPT_GRADLE"],
             acceleratorThreshold: {minimumSavedMs: 500, minimumReductionRatio: 0.02, positiveLower95Bound: true},
