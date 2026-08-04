@@ -108,6 +108,11 @@ benchmark_run_arm() {
     else
         benchmark_arguments+=(--no-daemon --no-configuration-cache)
     fi
+    if [[ -n "${BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS:-}" ]]; then
+        benchmark_arguments+=(
+            "-Dorg.gradle.java.installations.paths=${BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS}"
+        )
+    fi
     case "${benchmark_arm}" in
         CACHE_OFF)
             benchmark_environment+=("BUILDOPT_BYPASS=1")

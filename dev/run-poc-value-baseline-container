@@ -18,7 +18,7 @@ if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
     printf 'invalid POC value container input\n' >&2
     exit 64
 fi
-for buildopt_command in awk curl docker git id jq mkdir mktemp sha256sum tar; do
+for buildopt_command in awk curl dirname docker git grep id jq mkdir mktemp readlink sha256sum tar; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
         printf 'required POC value container command is unavailable: %s\n' \
             "${buildopt_command}" >&2
@@ -86,6 +86,18 @@ buildopt_image=$(jq -er '.container.reference' "${buildopt_spec}")
 buildopt_platform_digest=$(jq -er '.container.platformDigest' "${buildopt_spec}")
 buildopt_cpu=$(jq -er '.runnerClass.cpuCount' "${buildopt_spec}")
 buildopt_memory=$(jq -er '.runnerClass.memoryBytes' "${buildopt_spec}")
+buildopt_jdk17_home=${BUILDOPT_JDK17_HOME:-}
+if [[ -z "${buildopt_jdk17_home}" ]]; then
+    buildopt_javac=$(command -v javac || true)
+    if [[ -n "${buildopt_javac}" ]]; then
+        buildopt_jdk17_home=$(dirname -- "$(dirname -- "$(readlink -f "${buildopt_javac}")")")
+    fi
+fi
+if [[ ! -x "${buildopt_jdk17_home}/bin/javac" ]] ||
+    ! "${buildopt_jdk17_home}/bin/java" -version 2>&1 | grep -Eq 'version "17([.]|\")'; then
+    printf 'POC value container requires a local Java 17 JDK\n' >&2
+    exit 1
+fi
 docker pull --quiet --platform linux/amd64 "${buildopt_image}" >/dev/null
 if ! docker image inspect "${buildopt_image}" |
     jq -e --arg digest "${buildopt_platform_digest}" '
@@ -102,10 +114,12 @@ docker run --rm --pull never --network none --platform linux/amd64 \
     --env HOME=/benchmark/home \
     --env GRADLE_USER_HOME=/benchmark/gradle-home \
     --env JAVA_HOME=/opt/java/openjdk \
+    --env BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS=/opt/java/jdk17,/opt/java/openjdk \
     --env LANG=C.UTF-8 --env LC_ALL=C.UTF-8 --env TZ=UTC \
     --env PATH=/benchmark/bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
     --volume "${buildopt_repo_root}:/workspace:ro" \
     --volume "${buildopt_prefix}:/buildopt:ro" \
+    --volume "${buildopt_jdk17_home}:/opt/java/jdk17:ro" \
     --volume "${buildopt_kotlin}:/inputs/kotlin:ro" \
     --volume "${buildopt_groovy}:/inputs/groovy:ro" \
     --volume "${buildopt_benchmark_dir}:/benchmark" \

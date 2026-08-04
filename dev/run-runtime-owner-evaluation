@@ -159,6 +159,11 @@ buildopt_common=(
     --warning-mode=fail
     --console=plain
 )
+if [[ -n "${BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS:-}" ]]; then
+    buildopt_common+=(
+        "-Dorg.gradle.java.installations.paths=${BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS}"
+    )
+fi
 
 buildopt_run_arm() {
     local buildopt_arm=$1

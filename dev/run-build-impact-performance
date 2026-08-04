@@ -114,6 +114,11 @@ benchmark_run_arm() {
     else
         benchmark_gradle_arguments+=(--no-daemon --no-configuration-cache)
     fi
+    if [[ -n "${BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS:-}" ]]; then
+        benchmark_gradle_arguments+=(
+            "-Dorg.gradle.java.installations.paths=${BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS}"
+        )
+    fi
     GRADLE_USER_HOME="${GRADLE_USER_HOME:-${benchmark_repo_root}/.tools/gradle-user-home/local}" \
         "${benchmark_repo_root}/gradlew" \
         "${benchmark_gradle_arguments[@]}" \
