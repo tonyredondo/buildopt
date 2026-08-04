@@ -1,0 +1,164 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-value-negative-mechanisms-v1.json"}
+buildopt_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+buildopt_baseline="${buildopt_repo_root}/benchmarks/results/poc-value-baseline-v1.json"
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC-VALUE-002 command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+if [[ ! -f "${buildopt_result}" ]]; then
+    printf 'POC-VALUE-002 result is unavailable: %s\n' "${buildopt_result}" >&2
+    exit 1
+fi
+
+buildopt_before_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_platform_digest=$(jq -er '.container.platformDigest' "${buildopt_spec}")
+buildopt_baseline_sha=$(sha256sum "${buildopt_baseline}" | awk '{print $1}')
+
+jq -e \
+    --arg specSha256 "${buildopt_spec_sha}" \
+    --arg platformDigest "${buildopt_platform_digest}" \
+    --arg baselineSha256 "${buildopt_baseline_sha}" '
+    def digest: type == "string" and test("^[0-9a-f]{64}$");
+    def revision: type == "string" and test("^[0-9a-f]{40}$");
+    def exact_bootstrap95($rows):
+        ([range(0; 256) as $sample |
+          ([1, 4, 16, 64] |
+           map($rows[((($sample / .) | floor) % 4)].savedMs) |
+           add / 4)] | sort) as $replicates |
+        [$replicates[6], $replicates[249]];
+    def generic_observations($rows):
+        ($rows | type == "array" and length == 4) and
+        ([$rows[].pair] | sort) == [1, 2, 3, 4] and
+        all($rows[];
+            .controlDurationMs > 0 and .candidateDurationMs > 0 and
+            .savedMs == (.controlDurationMs - .candidateDurationMs) and
+            (if (.pair % 2) == 1
+             then .order == "CONTROL_FIRST"
+             else .order == "CANDIDATE_FIRST" end));
+    def cache_result($value; $dsl):
+        $value.dsl == $dsl and ($value.revision | revision) and
+        generic_observations($value.observations) and
+        all($value.observations[]; (.deliverableSha256 | digest)) and
+        $value.meanSavedMs ==
+            (($value.observations | map(.savedMs) | add) / 4) and
+        $value.meanReductionRatio ==
+            (($value.observations | map(.savedMs) | add) /
+             ($value.observations | map(.controlDurationMs) | add)) and
+        $value.interval95SavedMs == exact_bootstrap95($value.observations) and
+        $value.positivePairs ==
+            ($value.observations | map(select(.savedMs > 0)) | length) and
+        $value.requiredOutputsIdentical and
+        ([$value.observations[].deliverableSha256] | unique | length) == 1 and
+        $value.productAttributableFailures == 0;
+    keys == [
+        "boundaries", "buildoptRevision", "capturedAt", "gate",
+        "methodology", "runner", "runtimeTuning", "safeCache",
+        "schemaVersion"
+    ] and
+    .schemaVersion == "buildopt.evidence/poc-value-negative-mechanisms/v1" and
+    (.capturedAt |
+        type == "string" and
+        test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$")) and
+    (.buildoptRevision | revision) and
+    .runner.schemaVersion == "buildopt.evidence/golden-runner-observation/v1" and
+    .runner.id == "linux-amd64-4c-16g-v1" and
+    .runner.operatingSystem == "Linux" and
+    .runner.architecture == "x86_64" and
+    .runner.cpuCount == 4 and .runner.memoryBytes == 17179869184 and
+    .runner.qualifiedGoldenRunner == true and
+    .runner.runnerSpecSha256 == $specSha256 and
+    .runner.containerPlatformDigest == $platformDigest and
+    .runner.cgroup.cpuMax == "400000 100000" and
+    .runner.cgroup.memoryMax == "17179869184" and
+    .methodology == {
+        purpose: "RESOLVE_NEGATIVE_MECHANISMS_AGAINST_OPTIMIZED_NATIVE_GRADLE",
+        pairOrder: "PAIRED_ALTERNATING",
+        pairsPerMechanism: 4,
+        confidenceInterval:
+            "EXACT_PAIRED_NONPARAMETRIC_BOOTSTRAP_256_RESAMPLES_TWO_SIDED_95",
+        nativeControl: {
+            buildCache: true,
+            configurationCache: true,
+            parallelism: true,
+            daemon: true
+        },
+        percentagesAddedAcrossMechanisms: false
+    } and
+    cache_result(.safeCache.kotlin; "KOTLIN") and
+    cache_result(.safeCache.groovy; "GROOVY") and
+    .safeCache.maximumRegressionRatio == 0.02 and
+    .safeCache.classification == "PARITY_ONLY" and
+    .safeCache.kotlin.meanReductionRatio >= -0.02 and
+    .safeCache.groovy.meanReductionRatio >= -0.02 and
+    (.runtimeTuning.observations) as $runtimeRows |
+    generic_observations($runtimeRows) and
+    .runtimeTuning.controlProfile == "STABLE_CONTROL" and
+    .runtimeTuning.evaluatedCandidateProfile == "W3_H4G" and
+    .runtimeTuning.previouslyRejectedProfile.profile == "W4_H6G" and
+    .runtimeTuning.previouslyRejectedProfile.evidenceSha256 == $baselineSha256 and
+    .runtimeTuning.previouslyRejectedProfile.meanSavedMs < 0 and
+    .runtimeTuning.previouslyRejectedProfile.meanReductionRatio < 0 and
+    .runtimeTuning.previouslyRejectedProfile.interval95SavedMs[1] < 0 and
+    .runtimeTuning.meanSavedMs ==
+        (($runtimeRows | map(.savedMs) | add) / 4) and
+    .runtimeTuning.meanReductionRatio ==
+        (($runtimeRows | map(.savedMs) | add) /
+         ($runtimeRows | map(.controlDurationMs) | add)) and
+    .runtimeTuning.interval95SavedMs == exact_bootstrap95($runtimeRows) and
+    all($runtimeRows[];
+        (.controlSha256 | digest) and (.candidateSha256 | digest) and
+        .controlSha256 == .candidateSha256) and
+    .runtimeTuning.requiredOutputsIdentical and
+    .runtimeTuning.productAttributableFailures == 0 and
+    .runtimeTuning.oomDelta == 0 and
+    (if (.runtimeTuning.meanSavedMs >= 500 and
+         .runtimeTuning.meanReductionRatio >= 0.02 and
+         .runtimeTuning.interval95SavedMs[0] > 0)
+     then .runtimeTuning.classification == "THRESHOLD_MET" and
+          .runtimeTuning.activation == "W3_H4G"
+     else .runtimeTuning.classification == "NO_VALUE_NO_ACTION" and
+          .runtimeTuning.activation == "STABLE_CONTROL_ONLY" end) and
+    .gate == {
+        id: "POC-VALUE-002",
+        state: "PASSED",
+        next: "POC-VALUE-003",
+        pocValueProven: false
+    } and
+    .boundaries == {
+        mechanismExplorationOnly: true,
+        combinedProductMeasured: false,
+        productionReadinessClaimed: false,
+        eightHourSoakExecuted: false,
+        externalDesignPartnerRequired: false,
+        testOptimizationModified: false
+    }
+    ' "${buildopt_result}" >/dev/null
+
+buildopt_revision=$(jq -er '.buildoptRevision' "${buildopt_result}")
+if git -C "${buildopt_repo_root}" cat-file -e "${buildopt_revision}^{commit}" 2>/dev/null; then
+    git -C "${buildopt_repo_root}" merge-base --is-ancestor \
+        "${buildopt_revision}" HEAD
+fi
+
+buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before_status}" != "${buildopt_after_status}" ]]; then
+    printf 'POC-VALUE-002 validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'BuildOpt POC-VALUE-002 negative mechanisms OK: %s\n' "${buildopt_result}"

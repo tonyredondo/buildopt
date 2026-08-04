@@ -1,0 +1,216 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 8)); then
+    printf 'usage: %s OUTPUT_FILE BUILDOPT_PREFIX BUILDOPT_VERSION KOTLIN_REPOSITORY KOTLIN_REVISION GROOVY_REPOSITORY GROOVY_REVISION BUILDOPT_REVISION\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_prefix=$2
+buildopt_version=$3
+buildopt_kotlin=$4
+buildopt_kotlin_revision=$5
+buildopt_groovy=$6
+buildopt_groovy_revision=$7
+buildopt_revision=$8
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_baseline="${buildopt_repo_root}/benchmarks/results/poc-value-baseline-v1.json"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
+    ! -x "${buildopt_prefix}/bin/buildopt" ||
+    ! "${buildopt_version}" =~ ^[0-9]+[.][0-9]+[.][0-9]+([+-][0-9A-Za-z.-]+)?$ ||
+    ! "${buildopt_kotlin_revision}" =~ ^[0-9a-f]{40}$ ||
+    ! "${buildopt_groovy_revision}" =~ ^[0-9a-f]{40}$ ||
+    ! "${buildopt_revision}" =~ ^[0-9a-f]{40}$ ||
+    ! -f "${buildopt_baseline}" ]]; then
+    printf 'invalid POC-VALUE-002 input\n' >&2
+    exit 64
+fi
+for buildopt_command in jq mkdir mktemp rm sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC-VALUE-002 command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-poc-value-002.XXXXXX")
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-poc-value-002."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_runner="${buildopt_root}/runner.json"
+buildopt_cache="${buildopt_root}/cache.json"
+buildopt_runtime_dir="${buildopt_root}/runtime"
+buildopt_runtime="${buildopt_runtime_dir}/runtime-input.json"
+
+"${buildopt_script_dir}/capture-golden-runner" "${buildopt_runner}"
+"${buildopt_repo_root}/gradlew" --no-daemon --version >/dev/null
+export BUILDOPT_BENCHMARK_GRADLE_SEED_HOME=${GRADLE_USER_HOME:-}
+
+BUILDOPT_CACHE_BENCHMARK_PROFILE=OPTIMIZED_NATIVE \
+BUILDOPT_BENCHMARK_RUNNER_FILE="${buildopt_runner}" \
+BUILDOPT_KOTLIN_BENCHMARK_REVISION="${buildopt_kotlin_revision}" \
+BUILDOPT_GROOVY_BENCHMARK_REVISION="${buildopt_groovy_revision}" \
+    "${buildopt_script_dir}/run-cache-parity-benchmark" \
+        "${buildopt_cache}" \
+        "${buildopt_prefix}/bin/buildopt" \
+        "${buildopt_version}" \
+        "${buildopt_kotlin}" \
+        "${buildopt_groovy}"
+BUILDOPT_VALIDATE_MEASUREMENT_ONLY=1 \
+    "${buildopt_script_dir}/check-cache-parity-performance" "${buildopt_cache}"
+
+BUILDOPT_BENCHMARK_REVISION="${buildopt_revision}" \
+BUILDOPT_BENCHMARK_JAVA_HOME="${JAVA_HOME:-/opt/java/openjdk}" \
+BUILDOPT_BENCHMARK_RUNNER_FILE="${buildopt_runner}" \
+BUILDOPT_RUNTIME_CANDIDATE_PROFILE=W3_H4G \
+BUILDOPT_RUNTIME_POC_RAW_ONLY=1 \
+GITHUB_SERVER_URL=https://github.com \
+GITHUB_REPOSITORY=tonyredondo/buildopt \
+GITHUB_RUN_ID=2 \
+    "${buildopt_script_dir}/run-runtime-owner-evaluation" \
+        "${buildopt_runtime_dir}"
+
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+buildopt_baseline_sha=$(sha256sum "${buildopt_baseline}" | awk '{print $1}')
+jq -n \
+    --slurpfile runner "${buildopt_runner}" \
+    --slurpfile cache "${buildopt_cache}" \
+    --slurpfile runtime "${buildopt_runtime}" \
+    --slurpfile baseline "${buildopt_baseline}" \
+    --arg buildoptRevision "${buildopt_revision}" \
+    --arg baselineSha256 "${buildopt_baseline_sha}" '
+    def exact_bootstrap95($rows):
+        ([range(0; 256) as $sample |
+          ([1, 4, 16, 64] |
+           map($rows[((($sample / .) | floor) % 4)].savedMs) |
+           add / 4)] | sort) as $replicates |
+        [$replicates[6], $replicates[249]];
+    def cache_result($dsl):
+        ($cache[0].repositories[] | select(.dsl == $dsl)) as $repository |
+        $repository.comparisons.NATIVE_CACHE.observations as $rows |
+        {
+            repository: $repository.nameWithOwner,
+            revision: $repository.revision,
+            dsl: $dsl,
+            meanSavedMs: $repository.comparisons.NATIVE_CACHE.meanSavedMs,
+            meanReductionRatio:
+                $repository.comparisons.NATIVE_CACHE.meanReductionRatio,
+            interval95SavedMs: exact_bootstrap95($rows),
+            positivePairs:
+                $repository.comparisons.NATIVE_CACHE.positivePairs,
+            requiredOutputsIdentical:
+                $repository.comparisons.NATIVE_CACHE.allDeliverablesIdentical,
+            productAttributableFailures: 0,
+            observations: $rows
+        };
+    ($runtime[0].autotuning.controlMs | length) as $runtimePairs |
+    [range(0; $runtimePairs) as $index | {
+        pair: ($index + 1),
+        order:
+            (if (($index + 1) % 2) == 1
+             then "CONTROL_FIRST" else "CANDIDATE_FIRST" end),
+        controlDurationMs: $runtime[0].autotuning.controlMs[$index],
+        candidateDurationMs: $runtime[0].autotuning.candidateMs[$index],
+        savedMs:
+            ($runtime[0].autotuning.controlMs[$index] -
+             $runtime[0].autotuning.candidateMs[$index]),
+        controlSha256: $runtime[0].autotuning.controlSha256[$index],
+        candidateSha256: $runtime[0].autotuning.candidateSha256[$index]
+    }] as $runtimeRows |
+    cache_result("KOTLIN") as $kotlinCache |
+    cache_result("GROOVY") as $groovyCache |
+    (($runtimeRows | map(.savedMs) | add) / $runtimePairs) as $runtimeMean |
+    (($runtimeRows | map(.savedMs) | add) /
+     ($runtimeRows | map(.controlDurationMs) | add)) as $runtimeRatio |
+    exact_bootstrap95($runtimeRows) as $runtimeInterval |
+    (all($runtimeRows[]; .controlSha256 == .candidateSha256) and
+     ([$runtimeRows[].controlSha256] | unique | length) == 1) as $sameRuntimeOutput |
+    ($runtimeMean >= 500 and $runtimeRatio >= 0.02 and
+     $runtimeInterval[0] > 0 and $sameRuntimeOutput and
+     ($runtime[0].runner.oomAfter - $runtime[0].runner.oomBefore) == 0) as $runtimePass |
+    ($kotlinCache.meanReductionRatio >= -0.02 and
+     $groovyCache.meanReductionRatio >= -0.02) as $cachePass |
+    {
+        schemaVersion: "buildopt.evidence/poc-value-negative-mechanisms/v1",
+        capturedAt: $runner[0].capturedAt,
+        buildoptRevision: $buildoptRevision,
+        runner: $runner[0],
+        methodology: {
+            purpose: "RESOLVE_NEGATIVE_MECHANISMS_AGAINST_OPTIMIZED_NATIVE_GRADLE",
+            pairOrder: "PAIRED_ALTERNATING",
+            pairsPerMechanism: 4,
+            confidenceInterval:
+                "EXACT_PAIRED_NONPARAMETRIC_BOOTSTRAP_256_RESAMPLES_TWO_SIDED_95",
+            nativeControl: {
+                buildCache: true,
+                configurationCache: true,
+                parallelism: true,
+                daemon: true
+            },
+            percentagesAddedAcrossMechanisms: false
+        },
+        safeCache: {
+            classification:
+                (if $cachePass then "PARITY_ONLY"
+                 else "REGRESSION_REQUIRES_ACTION" end),
+            maximumRegressionRatio: 0.02,
+            kotlin: $kotlinCache,
+            groovy: $groovyCache
+        },
+        runtimeTuning: {
+            classification:
+                (if $runtimePass then "THRESHOLD_MET"
+                 else "NO_VALUE_NO_ACTION" end),
+            activation:
+                (if $runtimePass then "W3_H4G"
+                 else "STABLE_CONTROL_ONLY" end),
+            controlProfile: "STABLE_CONTROL",
+            evaluatedCandidateProfile: "W3_H4G",
+            previouslyRejectedProfile: {
+                profile: "W4_H6G",
+                evidenceSha256: $baselineSha256,
+                meanSavedMs:
+                    $baseline[0].mechanisms.runtimeTuning.meanSavedMs,
+                meanReductionRatio:
+                    $baseline[0].mechanisms.runtimeTuning.meanReductionRatio,
+                interval95SavedMs:
+                    $baseline[0].mechanisms.runtimeTuning.interval95SavedMs
+            },
+            meanSavedMs: $runtimeMean,
+            meanReductionRatio: $runtimeRatio,
+            interval95SavedMs: $runtimeInterval,
+            requiredOutputsIdentical: $sameRuntimeOutput,
+            productAttributableFailures: 0,
+            oomDelta:
+                ($runtime[0].runner.oomAfter - $runtime[0].runner.oomBefore),
+            observations: $runtimeRows
+        },
+        gate: {
+            id: "POC-VALUE-002",
+            state:
+                (if $cachePass then "PASSED" else "FAILED" end),
+            next:
+                (if $cachePass then "POC-VALUE-003"
+                 else "POC-VALUE-002" end),
+            pocValueProven: false
+        },
+        boundaries: {
+            mechanismExplorationOnly: true,
+            combinedProductMeasured: false,
+            productionReadinessClaimed: false,
+            eightHourSoakExecuted: false,
+            externalDesignPartnerRequired: false,
+            testOptimizationModified: false
+        }
+    }
+    ' >"${buildopt_output}"
+chmod 0600 "${buildopt_output}"
+
+printf 'BuildOpt POC-VALUE-002 evidence written to %s\n' "${buildopt_output}"

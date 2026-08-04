@@ -11,6 +11,22 @@ buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-runtime-owner.XXXXXX")
 
+buildopt_candidate_profile=${BUILDOPT_RUNTIME_CANDIDATE_PROFILE:-W4_H6G}
+case "${buildopt_candidate_profile}" in
+    W3_H4G)
+        buildopt_candidate_workers=3
+        buildopt_candidate_heap=4096
+        ;;
+    W4_H6G)
+        buildopt_candidate_workers=4
+        buildopt_candidate_heap=6144
+        ;;
+    *)
+        printf 'BUILDOPT_RUNTIME_CANDIDATE_PROFILE must be W3_H4G or W4_H6G\n' >&2
+        exit 64
+        ;;
+esac
+
 buildopt_cleanup() {
     if [[ "${buildopt_temp}" == "${TMPDIR:-/tmp}/buildopt-runtime-owner."* ]]; then
         rm -rf -- "${buildopt_temp}"
@@ -218,8 +234,8 @@ for buildopt_arm in aa-a aa-b control candidate; do
     buildopt_workers=2
     buildopt_heap=4096
     if [[ "${buildopt_arm}" == candidate ]]; then
-        buildopt_workers=4
-        buildopt_heap=6144
+        buildopt_workers=${buildopt_candidate_workers}
+        buildopt_heap=${buildopt_candidate_heap}
     fi
     buildopt_run_arm "${buildopt_arm}" "${buildopt_workers}" "${buildopt_heap}" "warm-${buildopt_arm}"
 done
@@ -244,8 +260,8 @@ for buildopt_pair in 1 2 3 4; do
         buildopt_workers=2
         buildopt_heap=4096
         if [[ "${buildopt_arm}" == candidate ]]; then
-            buildopt_workers=4
-            buildopt_heap=6144
+            buildopt_workers=${buildopt_candidate_workers}
+            buildopt_heap=${buildopt_candidate_heap}
         fi
         buildopt_run_arm "${buildopt_arm}" "${buildopt_workers}" "${buildopt_heap}" \
             "pair-${buildopt_pair}-${buildopt_arm}"
@@ -332,4 +348,5 @@ else
         "${buildopt_output}/runtime-owner-evaluation.json"
 fi
 
-printf 'B owner evaluation OK: A/A valid and W4_H6G causal autotuning passed p95/p99/queue/OOM/artifact gates\n'
+printf 'B owner evaluation OK: A/A valid and %s causal autotuning passed p95/p99/queue/OOM/artifact gates\n' \
+    "${buildopt_candidate_profile}"
