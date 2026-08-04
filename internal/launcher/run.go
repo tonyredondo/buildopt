@@ -40,6 +40,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	}
 	gradleEnvironment := map[string]string(nil)
 	var gradleManagedL1 *managedL1Config
+	gradleNativeOnly := false
 	if len(args) > 0 && args[0] == "gradle" {
 		invocation, err := prepareGradleInvocation(
 			args[1:],
@@ -52,6 +53,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		args = append([]string{"run", "--"}, invocation.childArgs...)
 		gradleEnvironment = invocation.environment
 		gradleManagedL1 = invocation.managedL1
+		gradleNativeOnly = invocation.nativeOnly
 	}
 	if len(args) < 3 || args[0] != "run" || args[1] != "--" {
 		_, _ = io.WriteString(stderr, usage)
@@ -60,6 +62,19 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 
 	childArgs := args[2:]
 	if os.Getenv(bypassEnvironment) == "1" {
+		execution := executeChild(
+			childArgs,
+			gradleEnvironment,
+			stdin,
+			stdout,
+			stderr,
+		)
+		if !execution.started {
+			return launchErrorExitCode(childArgs[0], execution.err, stderr)
+		}
+		return childWaitExitCode(childArgs[0], execution.err, stderr)
+	}
+	if gradleNativeOnly {
 		execution := executeChild(
 			childArgs,
 			gradleEnvironment,

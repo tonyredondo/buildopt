@@ -4,9 +4,12 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/tonyredondo/buildopt/internal/sessioningest"
 )
 
 func TestPrepareGradleInvocation(t *testing.T) {
@@ -30,6 +33,7 @@ func TestPrepareGradleInvocation(t *testing.T) {
 	t.Cleanup(func() { _ = os.Chdir(previous) })
 	t.Setenv(gradleInitScriptEnvironment, initScript)
 	t.Setenv(gradlePluginJarEnvironment, pluginJar)
+	t.Setenv(gradleSafeCacheEnvironment, "1")
 
 	invocation, err := prepareGradleInvocation([]string{"--no-daemon", "build"}, false)
 	if err != nil {
@@ -47,6 +51,9 @@ func TestPrepareGradleInvocation(t *testing.T) {
 		invocation.managedL1.repositoryID == "" ||
 		invocation.managedL1.compatibilityClass == "" {
 		t.Fatalf("default managed L1 = %+v", invocation.managedL1)
+	}
+	if invocation.nativeOnly {
+		t.Fatal("explicit Safe Cache selected native-only execution")
 	}
 	t.Setenv(managedL1StateRootEnvironment, filepath.Join(root, "explicit-l1"))
 	explicit, err := prepareGradleInvocation([]string{"build"}, false)
@@ -71,6 +78,63 @@ func TestPrepareGradleInvocation(t *testing.T) {
 	if !slicesContain(disabled.childArgs, "--no-build-cache") ||
 		slicesContain(disabled.childArgs, "--build-cache") {
 		t.Fatalf("disabled cache args = %q", disabled.childArgs)
+	}
+}
+
+func TestPrepareGradleInvocationDefaultsToNativeCacheOnly(t *testing.T) {
+	root := t.TempDir()
+	wrapper := filepath.Join(root, gradleWrapperName(runtime.GOOS))
+	writeGradleTestFile(t, wrapper)
+	writeGradleWrapperProperties(t, root, "distributionUrl=gradle-9.6.1-bin.zip\n")
+	clearGradleManagedL1Inputs(t)
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chdir(root); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+	t.Setenv(gradleInitScriptEnvironment, "")
+	t.Setenv(gradlePluginJarEnvironment, "")
+
+	invocation, err := prepareGradleInvocation([]string{"--parallel", "build"}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []string{wrapper, "--build-cache", "--parallel", "build"}
+	if !reflect.DeepEqual(invocation.childArgs, want) ||
+		!invocation.nativeOnly || invocation.environment != nil || invocation.managedL1 != nil {
+		t.Fatalf("native invocation = %+v, want args %q", invocation, want)
+	}
+
+	disabled, err := prepareGradleInvocation([]string{"--no-build-cache", "build"}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !disabled.nativeOnly || slicesContain(disabled.childArgs, "--build-cache") {
+		t.Fatalf("native cache opt-out = %+v", disabled)
+	}
+}
+
+func TestPrepareGradleInvocationRejectsInvalidSafeCacheMode(t *testing.T) {
+	root := t.TempDir()
+	writeGradleTestFile(t, filepath.Join(root, gradleWrapperName(runtime.GOOS)))
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chdir(root); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+	clearGradleManagedL1Inputs(t)
+	t.Setenv(gradleSafeCacheEnvironment, "yes")
+
+	if _, err := prepareGradleInvocation([]string{"build"}, false); err == nil ||
+		!strings.Contains(err.Error(), "must be 0 or 1") {
+		t.Fatalf("invalid Safe Cache error = %v", err)
 	}
 }
 
@@ -219,6 +283,16 @@ func writeGradleWrapperProperties(t *testing.T, root, contents string) {
 func clearGradleManagedL1Inputs(t *testing.T) {
 	t.Helper()
 	for _, key := range []string{
+		gradleSafeCacheEnvironment,
+		sessioningest.ServerURLEnvironment,
+		sessioningest.ServerTokenEnvironment,
+		sessioningest.ExportContextEnvironment,
+		localAuthorityPathEnvironment,
+		localTrustRootPathEnvironment,
+		localCredentialPathEnvironment,
+		sharedCacheTokenPathEnvironment,
+		sharedCacheURLEnvironment,
+		gradleBootstrapConfigPathEnvironment,
 		managedL1StateRootEnvironment,
 		managedL1TenantEnvironment,
 		managedL1RepositoryEnvironment,

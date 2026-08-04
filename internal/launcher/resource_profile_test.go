@@ -11,7 +11,7 @@ import (
 )
 
 func TestApplyAuthorizedResourceProfileBeforeGradle(t *testing.T) {
-	profile := runtimeoptimizer.GoldenResourceProfiles()[2]
+	profile := runtimeoptimizer.GoldenResourceProfiles()[0]
 	authority := &localAuthorityContext{
 		resourceProfileAuthorized: true,
 		resourceProfile: localauthority.ResourceProfileReference{
@@ -24,9 +24,25 @@ func TestApplyAuthorizedResourceProfileBeforeGradle(t *testing.T) {
 		authority,
 		resourceProfileTestEnvironment,
 	)
-	want := []string{"./gradlew", "--max-workers=3", "-Dorg.gradle.jvmargs=-Xmx4096m -Dfile.encoding=UTF-8", "assemble"}
+	want := []string{"./gradlew", "--max-workers=2", "-Dorg.gradle.jvmargs=-Xmx4096m -Dfile.encoding=UTF-8", "assemble"}
 	if err != nil || !reflect.DeepEqual(got, want) {
 		t.Fatalf("args = %#v/%v", got, err)
+	}
+}
+
+func TestApplyAuthorizedResourceProfileRejectsUnprovenCandidate(t *testing.T) {
+	original := []string{"./gradlew", "assemble"}
+	profile := runtimeoptimizer.GoldenResourceProfiles()[2]
+	authority := &localAuthorityContext{
+		resourceProfileAuthorized: true,
+		resourceProfile: localauthority.ResourceProfileReference{
+			ProfileID: profile.ProfileID, ProfileDigest: profile.ProfileDigest, CatalogVersion: profile.CatalogVersion,
+		},
+		managedL1Config: managedL1Config{compatibilityClass: runtimeoptimizer.GoldenCompatibilityClass},
+	}
+	got, err := applyAuthorizedResourceProfile(original, authority, resourceProfileTestEnvironment)
+	if err == nil || !reflect.DeepEqual(got, original) {
+		t.Fatalf("unproven candidate = %#v/%v, want unchanged arguments and error", got, err)
 	}
 }
 

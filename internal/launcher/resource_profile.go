@@ -26,6 +26,11 @@ func applyAuthorizedResourceProfile(childArgs []string, authority *localAuthorit
 	if getenv == nil {
 		return childArgs, errors.New("resource profile: environment reader is unavailable")
 	}
+	if authority.resourceProfile.ProfileID != "STABLE_CONTROL" {
+		return childArgs, errors.New(
+			"resource profile: experimental profiles are disabled because no candidate has POC value evidence",
+		)
+	}
 	cpuCount, err := parsePositiveResourceInt(getenv(resourceCgroupCPUEnvironment), resourceCgroupCPUEnvironment)
 	if err != nil {
 		return childArgs, err

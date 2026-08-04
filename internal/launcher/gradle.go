@@ -9,6 +9,8 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+
+	"github.com/tonyredondo/buildopt/internal/sessioningest"
 )
 
 const (
@@ -17,12 +19,14 @@ const (
 	gradleProjectPluginModeEnvironment = "BUILDOPT_GRADLE_PROJECT_PLUGIN_MODE"
 	gradleProjectPluginModeFull        = "FULL"
 	gradleProjectPluginModeCacheOnly   = "CACHE_ONLY"
+	gradleSafeCacheEnvironment         = "BUILDOPT_SAFE_CACHE"
 )
 
 type gradleInvocation struct {
 	childArgs   []string
 	environment map[string]string
 	managedL1   *managedL1Config
+	nativeOnly  bool
 }
 
 func prepareGradleInvocation(args []string, bypass bool) (gradleInvocation, error) {
@@ -43,13 +47,21 @@ func prepareGradleInvocation(args []string, bypass bool) (gradleInvocation, erro
 	var defaultManagedL1 *managedL1Config
 	buildCacheConfigured, buildCacheEnabled := gradleBuildCacheMode(args)
 	if !bypass {
-		initScript, pluginJar, assetErr := resolveGradleAssets()
-		if assetErr != nil {
-			return gradleInvocation{}, assetErr
+		safeCacheEnabled, activationErr := gradleSafeCacheEnabled(os.Getenv)
+		if activationErr != nil {
+			return gradleInvocation{}, activationErr
 		}
-		childArgs = append(childArgs, "--init-script", initScript)
-		environment = map[string]string{gradlePluginJarEnvironment: pluginJar}
-		if _, configured, _ := managedL1ConfigFromEnvironment(os.Getenv); !configured &&
+		_, managedConfigured, _ := managedL1ConfigFromEnvironment(os.Getenv)
+		instrumented := safeCacheEnabled || gradleInstrumentationRequested(os.Getenv)
+		if instrumented {
+			initScript, pluginJar, assetErr := resolveGradleAssets()
+			if assetErr != nil {
+				return gradleInvocation{}, assetErr
+			}
+			childArgs = append(childArgs, "--init-script", initScript)
+			environment = map[string]string{gradlePluginJarEnvironment: pluginJar}
+		}
+		if safeCacheEnabled && !managedConfigured &&
 			(!buildCacheConfigured || buildCacheEnabled) {
 			cacheRoot, cacheErr := os.UserCacheDir()
 			if cacheErr != nil {
@@ -66,12 +78,64 @@ func prepareGradleInvocation(args []string, bypass bool) (gradleInvocation, erro
 			if !buildCacheConfigured {
 				childArgs = append(childArgs, "--build-cache")
 			}
+		} else if !managedConfigured && !buildCacheConfigured {
+			childArgs = append(childArgs, "--build-cache")
 		}
+		childArgs = append(childArgs, args...)
+		return gradleInvocation{
+			childArgs: childArgs, environment: environment,
+			managedL1: defaultManagedL1, nativeOnly: !instrumented,
+		}, nil
 	}
 	childArgs = append(childArgs, args...)
 	return gradleInvocation{
 		childArgs: childArgs, environment: environment, managedL1: defaultManagedL1,
 	}, nil
+}
+
+func gradleSafeCacheEnabled(getenv func(string) string) (bool, error) {
+	if getenv == nil {
+		return false, errors.New("resolve BUILDOPT_SAFE_CACHE: environment reader is unavailable")
+	}
+	switch getenv(gradleSafeCacheEnvironment) {
+	case "", "0":
+		return false, nil
+	case "1":
+		return true, nil
+	default:
+		return false, errors.New("BUILDOPT_SAFE_CACHE must be 0 or 1")
+	}
+}
+
+func gradleInstrumentationRequested(getenv func(string) string) bool {
+	if getenv == nil {
+		return false
+	}
+	for _, name := range []string{
+		gradleInitScriptEnvironment,
+		gradlePluginJarEnvironment,
+		sessioningest.ServerURLEnvironment,
+		sessioningest.ServerTokenEnvironment,
+		sessioningest.ExportContextEnvironment,
+		localAuthorityPathEnvironment,
+		localTrustRootPathEnvironment,
+		localCredentialPathEnvironment,
+		sharedCacheTokenPathEnvironment,
+		sharedCacheURLEnvironment,
+		managedL1StateRootEnvironment,
+		managedL1TenantEnvironment,
+		managedL1RepositoryEnvironment,
+		managedL1TrustDomainEnvironment,
+		managedL1CompatibilityEnvironment,
+		managedL1GenerationEnvironment,
+		managedL1L2WriterEnvironment,
+		gradleBootstrapConfigPathEnvironment,
+	} {
+		if getenv(name) != "" {
+			return true
+		}
+	}
+	return false
 }
 
 func gradleBuildCacheMode(args []string) (configured bool, enabled bool) {
