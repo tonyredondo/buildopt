@@ -9,10 +9,12 @@ Each batch runs the control and candidate in separate digest-pinned strict
 containers. The containers receive different writable workspaces,
 `GRADLE_USER_HOME` directories, daemon lifecycles, and installed prefixes. One
 batch runs the complete control arm first; the other runs the complete candidate
-arm first. Every measured sample starts from a fresh workspace, Gradle home, and
-daemon lifecycle, performs one unmeasured warm-up, applies one mutation, and
-then measures exactly one build. Corresponding mutation indices are paired only
-after both containers finish.
+arm first. Before every measured sample the private workspace is restored to the
+same baseline, the private Gradle daemon is restarted, one unmeasured warm-up is
+performed, one mutation is applied, and exactly one build is measured. The
+private Gradle cache remains warm, matching normal use without carrying daemon
+cycles or source mutations between samples. Corresponding mutation indices are
+paired only after both containers finish.
 
 The two reports must be bound to the same commit and artifacts, use opposite arm
 orders, preserve all correctness guardrails, and produce the same classification

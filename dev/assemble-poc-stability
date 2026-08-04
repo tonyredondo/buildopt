@@ -153,7 +153,7 @@ jq -n \
                 workspaceShared: false,
                 gradleUserHomeShared: false,
                 daemonShared: false,
-                sampleLifecycle: "FRESH_WORKSPACE_HOME_DAEMON_PER_SAMPLE"
+                sampleLifecycle: "RESTORE_BASELINE_RESTART_DAEMON_WARM_MUTATE_MEASURE"
             },
             nativeControl: {buildCache: true, configurationCache: true, parallelism: true, daemon: true},
             candidateEntryPoints: ["INSTALLED_BUILDOPT_IMPACT_CHECK", "INSTALLED_BUILDOPT_GRADLE"],
