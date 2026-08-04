@@ -1,0 +1,226 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 6)); then
+    printf 'usage: %s OUTPUT_FILE BATCH_ID STARTING_ORDER CONTROL_META CANDIDATE_META OBSERVATIONS_JSONL\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_batch_id=$2
+buildopt_starting_order=$3
+buildopt_control_meta=$4
+buildopt_candidate_meta=$5
+buildopt_observations=$6
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
+    ! "${buildopt_batch_id}" =~ ^[a-z0-9][a-z0-9-]{0,63}$ ||
+    ("${buildopt_starting_order}" != CONTROL_FIRST &&
+     "${buildopt_starting_order}" != CANDIDATE_FIRST) ||
+    ! -f "${buildopt_control_meta}" || ! -f "${buildopt_candidate_meta}" ||
+    ! -s "${buildopt_observations}" ]]; then
+    printf 'invalid POC-PAIRING-001 assembly input\n' >&2
+    exit 64
+fi
+command -v jq >/dev/null 2>&1 || {
+    printf 'required POC-PAIRING-001 command is unavailable: jq\n' >&2
+    exit 1
+}
+
+jq -n \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg batchId "${buildopt_batch_id}" \
+    --arg startingOrder "${buildopt_starting_order}" \
+    --slurpfile control "${buildopt_control_meta}" \
+    --slurpfile candidate "${buildopt_candidate_meta}" \
+    --slurpfile observations "${buildopt_observations}" '
+    def bootstrap_mean($rows; $sample):
+        reduce range(0; 8) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $rows[((.state / 536870912) | floor)].savedMs) |
+        .sum / 8;
+    def bootstrap95($rows):
+        ([range(0; 4096) as $sample | bootstrap_mean($rows; $sample)] | sort) as $values |
+        [$values[102], $values[3993]];
+    def meta($report; $arm):
+        $report.schemaVersion == "buildopt.evidence/poc-pairing-arm-meta/v1" and
+        $report.arm == $arm and
+        ($report.buildoptRevision | type == "string" and test("^[0-9a-f]{40}$")) and
+        $report.fixture.id == "REALISTIC_MULTIMODULE_V1" and
+        $report.isolation == {
+            writableStateShared: false,
+            workspaceShared: false,
+            gradleUserHomeShared: false,
+            daemonShared: false
+        };
+    if ($control | length) != 1 or ($candidate | length) != 1 or
+       (meta($control[0]; "CONTROL") | not) or
+       (meta($candidate[0]; "CANDIDATE") | not) or
+       $control[0].buildoptRevision != $candidate[0].buildoptRevision or
+       ($control[0].runner | del(.capturedAt)) !=
+           ($candidate[0].runner | del(.capturedAt)) or
+       $control[0].publicArtifacts != $candidate[0].publicArtifacts or
+       $control[0].fixture != $candidate[0].fixture
+    then error("isolated arm metadata are incompatible") else . end |
+    if ($observations | length) != 128 or
+       ($observations | any(
+           (.arm != "CONTROL" and .arm != "CANDIDATE") or
+           (.pair < 1 or .pair > 8) or
+           ((.startedAtNs | type) != "number") or
+           ((.finishedAtNs | type) != "number") or
+           .finishedAtNs <= .startedAtNs))
+    then error("paired observations are incomplete") else . end |
+    ($observations |
+     group_by([.workloadId, .pair]) |
+     map(if length != 2 or
+            ([.[].arm] | sort) != ["CANDIDATE", "CONTROL"] or
+            .[0].scenario != .[1].scenario or .[0].changeClass != .[1].changeClass or
+            .[0].successClass != .[1].successClass or .[0].dsl != .[1].dsl
+         then error("paired observations are incompatible")
+         else
+             (map(select(.arm == "CONTROL"))[0]) as $c |
+             (map(select(.arm == "CANDIDATE"))[0]) as $b |
+             (if $c.startedAtNs < $b.startedAtNs then "CONTROL_FIRST"
+              else "CANDIDATE_FIRST" end) as $order |
+             (if ($c.pair % 2) == 1 then $startingOrder
+              elif $startingOrder == "CONTROL_FIRST" then "CANDIDATE_FIRST"
+              else "CONTROL_FIRST" end) as $expectedOrder |
+             (if $order == "CONTROL_FIRST"
+              then (($b.startedAtNs - $c.finishedAtNs) / 1000000)
+              else (($c.startedAtNs - $b.finishedAtNs) / 1000000) end) as $idleGapMs |
+             if $order != $expectedOrder or $idleGapMs < 0 or $idleGapMs > 5000
+             then error("paired arm order or temporal gap is invalid")
+             else {
+                 workloadId: $c.workloadId,
+                 scenario: $c.scenario,
+                 changeClass: $c.changeClass,
+                 successClass: $c.successClass,
+                 dsl: $c.dsl,
+                 pair: $c.pair,
+                 order: $order,
+                 controlDurationMs: $c.durationMs,
+                 candidateDurationMs: $b.durationMs,
+                 savedMs: ($c.durationMs - $b.durationMs),
+                 interArmIdleGapMs: $idleGapMs,
+                 controlStartedAtNs: $c.startedAtNs,
+                 controlFinishedAtNs: $c.finishedAtNs,
+                 candidateStartedAtNs: $b.startedAtNs,
+                 candidateFinishedAtNs: $b.finishedAtNs,
+                 controlOutputSha256: $c.outputSha256,
+                 candidateOutputSha256: $b.outputSha256,
+                 controlExecutedVerifications: $c.executedVerifications,
+                 candidateExecutedVerifications: $b.executedVerifications,
+                 controlConfigurationCacheReused: $c.configurationCacheReused,
+                 candidateConfigurationCacheReused: $b.configurationCacheReused,
+                 productAttributableFailure: ($c.productAttributableFailure or
+                                              $b.productAttributableFailure)
+             } end
+         end)) as $paired |
+    ($paired | group_by(.workloadId) |
+     map(. as $rows |
+         (($rows | map(.savedMs) | add) / 8) as $meanSaved |
+         (($rows | map(.controlDurationMs) | add) / 8) as $controlMean |
+         (($rows | map(.candidateDurationMs) | add) / 8) as $candidateMean |
+         ($meanSaved / $controlMean) as $ratio |
+         (bootstrap95($rows)) as $interval |
+         ($rows | all(.controlOutputSha256 == .candidateOutputSha256)) as $outputsIdentical |
+         ($rows | map(select(.productAttributableFailure)) | length) as $failures |
+         (if $rows[0].scenario == "LEAF_CHANGE" then 1
+          elif $rows[0].scenario == "SHARED_CHANGE" then 2
+          else 5 end) as $expectedCandidateVerifications |
+         ($rows | all(.controlExecutedVerifications == 5 and
+                      .candidateExecutedVerifications == $expectedCandidateVerifications)) as $executionShapeValid |
+         ($rows | all(if .scenario == "BUILD_LOGIC_CHANGE" then
+                          (.controlConfigurationCacheReused == false and
+                           .candidateConfigurationCacheReused == false)
+                      else
+                          (.controlConfigurationCacheReused == true and
+                           .candidateConfigurationCacheReused == true)
+                      end)) as $configurationCacheValid |
+         ($outputsIdentical and $failures == 0 and $executionShapeValid and
+          $configurationCacheValid and
+          (($rows[0].successClass == "ACCELERATOR" and $meanSaved >= 500 and
+            $ratio >= 0.02 and $interval[0] > 0) or
+           ($rows[0].successClass == "PARITY" and $ratio >= -0.02))) as $qualified |
+         {
+             id: $rows[0].workloadId,
+             scenario: $rows[0].scenario,
+             changeClass: $rows[0].changeClass,
+             successClass: $rows[0].successClass,
+             dsl: $rows[0].dsl,
+             classification: (if $qualified then
+                 (if $rows[0].successClass == "ACCELERATOR"
+                  then "THRESHOLD_MET" else "PARITY_GUARDRAIL_MET" end)
+                 else "BREADTH_GATE_FAILED" end),
+             result: {
+                 pairs: 8,
+                 controlMeanMs: $controlMean,
+                 candidateMeanMs: $candidateMean,
+                 meanSavedMs: $meanSaved,
+                 meanReductionRatio: $ratio,
+                 interval95SavedMs: $interval,
+                 positivePairs: ($rows | map(select(.savedMs > 0)) | length),
+                 maximumInterArmIdleGapMs: ($rows | map(.interArmIdleGapMs) | max),
+                 requiredOutputsIdentical: $outputsIdentical,
+                 productAttributableFailures: $failures,
+                 executionShapeValid: $executionShapeValid,
+                 configurationCacheValid: $configurationCacheValid,
+                 observations: $rows
+             }
+         })) as $workloads |
+    ($workloads | all(.classification != "BREADTH_GATE_FAILED")) as $allQualified |
+    {
+        schemaVersion: "buildopt.evidence/poc-pairing/v1",
+        capturedAt: $capturedAt,
+        buildoptRevision: $control[0].buildoptRevision,
+        batchId: $batchId,
+        runner: $control[0].runner,
+        publicArtifacts: $control[0].publicArtifacts,
+        methodology: {
+            purpose: "REMOVE_RUNNER_DRIFT_WITH_TEMPORALLY_PAIRED_ISOLATED_ARMS",
+            samplesPerCell: 8,
+            warmupPerCell: 1,
+            startingPairOrder: $startingOrder,
+            pairOrder: "ALTERNATING_OPPOSITE_SEQUENCE",
+            pairing: "CONSECUTIVE_DOCKER_EXEC_ACROSS_PERSISTENT_ARM_CONTAINERS",
+            maximumInterArmIdleGapMs: 5000,
+            confidenceInterval: "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
+            isolation: {
+                strictContainerPerArm: true,
+                writableStateShared: false,
+                workspaceShared: false,
+                gradleUserHomeShared: false,
+                daemonShared: false,
+                sampleLifecycle: "PERSISTENT_PRIVATE_DAEMON_PER_CELL"
+            },
+            nativeControl: {buildCache: true, configurationCache: true, parallelism: true, daemon: true},
+            candidateEntryPoints: ["INSTALLED_BUILDOPT_IMPACT_CHECK", "INSTALLED_BUILDOPT_GRADLE"],
+            acceleratorThreshold: {minimumSavedMs: 500, minimumReductionRatio: 0.02, positiveLower95Bound: true},
+            parityGuardrail: {maximumRegressionRatio: 0.02},
+            percentagesAddedAcrossScenarios: false
+        },
+        fixture: $control[0].fixture,
+        workloads: $workloads,
+        decision: {
+            verdict: (if $allQualified then "BROADEN_SYNTHETIC_CLAIM"
+                      else "RETAIN_QUALIFIED_SYNTHETIC_WORKLOADS_ONLY" end),
+            breadthProven: $allQualified,
+            qualifyingCells: ($workloads |
+                map(select(.classification != "BREADTH_GATE_FAILED")) | length),
+            requiredCells: 8
+        },
+        gate: {id: "POC-PAIRING-001", state: "RECORDED"},
+        boundaries: {
+            ownerControlledSyntheticWorkloads: true,
+            universalSavingsClaimed: false,
+            productionReadinessClaimed: false,
+            eightHourSoakExecuted: false,
+            externalDesignPartnerRequired: false,
+            testOptimizationModified: false
+        }
+    }
+    ' >"${buildopt_output}"
+chmod 0600 "${buildopt_output}"
+
+printf 'BuildOpt POC-PAIRING-001 batch assembled: %s\n' "${buildopt_output}"

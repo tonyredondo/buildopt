@@ -13,6 +13,8 @@ buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_fixture="${buildopt_repo_root}/fixtures/poc-breadth/realistic-multimodule"
 buildopt_arm_mode=${BUILDOPT_POC_BREADTH_ARM:-BOTH}
+buildopt_step_mode=${BUILDOPT_POC_BREADTH_STEP:-}
+buildopt_external_state_root=${BUILDOPT_POC_BREADTH_STATE_ROOT:-}
 
 if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
     ! "${buildopt_revision}" =~ ^[0-9a-f]{40}$ || "${buildopt_prefix}" != /* ]]; then
@@ -29,6 +31,13 @@ esac
 if [[ "${buildopt_arm_mode}" != BOTH && "${BUILDOPT_POC_OVERHEAD_TRACE:-0}" == 1 ]]; then
     printf 'isolated POC breadth arms do not support diagnostic tracing\n' >&2
     exit 64
+fi
+if [[ -n "${buildopt_step_mode}" ]]; then
+    if [[ "${buildopt_arm_mode}" == BOTH || "${buildopt_external_state_root}" != /* ||
+        ("${buildopt_step_mode}" != WARM && "${buildopt_step_mode}" != SAMPLE) ]]; then
+        printf 'invalid POC-PAIRING-001 step configuration\n' >&2
+        exit 64
+    fi
 fi
 for buildopt_command in awk chmod cp date env find grep jq ln mkdir mktemp rm sed sha256sum sort; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
@@ -49,8 +58,16 @@ for buildopt_file in \
     }
 done
 
-buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-poc-breadth-001.XXXXXX")
+if [[ -n "${buildopt_external_state_root}" ]]; then
+    buildopt_root=${buildopt_external_state_root}
+    mkdir -p -- "${buildopt_root}"
+else
+    buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-poc-breadth-001.XXXXXX")
+fi
 buildopt_cleanup() {
+    if [[ -n "${buildopt_external_state_root}" ]]; then
+        return
+    fi
     if [[ "${BUILDOPT_POC_OVERHEAD_TRACE:-0}" == 1 ]]; then
         return
     fi
@@ -64,7 +81,9 @@ trap buildopt_cleanup EXIT
 
 buildopt_raw="${buildopt_root}/observations.jsonl"
 buildopt_runner="${buildopt_root}/runner.json"
-"${buildopt_script_dir}/capture-golden-runner" "${buildopt_runner}"
+if [[ ! -e "${buildopt_runner}" ]]; then
+    "${buildopt_script_dir}/capture-golden-runner" "${buildopt_runner}"
+fi
 
 buildopt_fixture_sha=$(
     cd -- "${buildopt_fixture}"
@@ -169,6 +188,8 @@ buildopt_output_sha=
 buildopt_executed_verifications=0
 buildopt_configuration_cache_reused=false
 buildopt_phase_json=null
+buildopt_started_ns=0
+buildopt_finished_ns=0
 
 buildopt_run_arm() {
     local buildopt_workspace=$1 buildopt_home=$2 buildopt_arm=$3
@@ -212,6 +233,8 @@ buildopt_run_arm() {
     buildopt_status=$?
     set -e
     buildopt_finished=$(date +%s%N)
+    buildopt_started_ns=${buildopt_started}
+    buildopt_finished_ns=${buildopt_finished}
     if ((buildopt_status != 0)); then
         sed -n '1,240p' "${buildopt_log}" >&2
         printf 'POC breadth %s/%s arm failed\n' "${buildopt_scenario}" "${buildopt_arm}" >&2
@@ -352,6 +375,7 @@ buildopt_record_arm() {
     local buildopt_dsl=$5 buildopt_pair=$6 buildopt_arm=$7
     local buildopt_duration=$8 buildopt_sha=$9 buildopt_executed=${10}
     local buildopt_cc=${11}
+    local buildopt_started=${12:-null} buildopt_finished=${13:-null}
     jq -cn \
         --arg workloadId "${buildopt_id}" --arg scenario "${buildopt_scenario}" \
         --arg changeClass "${buildopt_change}" --arg successClass "${buildopt_success}" \
@@ -360,7 +384,9 @@ buildopt_record_arm() {
         --argjson pair "${buildopt_pair}" \
         --argjson durationMs "${buildopt_duration}" \
         --argjson executedVerifications "${buildopt_executed}" \
-        --argjson configurationCacheReused "${buildopt_cc}" '{
+        --argjson configurationCacheReused "${buildopt_cc}" \
+        --argjson startedAtNs "${buildopt_started}" \
+        --argjson finishedAtNs "${buildopt_finished}" '{
             workloadId: $workloadId,
             scenario: $scenario,
             changeClass: $changeClass,
@@ -373,8 +399,149 @@ buildopt_record_arm() {
             executedVerifications: $executedVerifications,
             configurationCacheReused: $configurationCacheReused,
             productAttributableFailure: false
-        }' >>"${buildopt_raw}"
+        } + (if $startedAtNs == null then {} else {
+            startedAtNs: $startedAtNs,
+            finishedAtNs: $finishedAtNs
+        } end)' >>"${buildopt_raw}"
 }
+
+if [[ -n "${buildopt_step_mode}" ]]; then
+    buildopt_step_dsl=${BUILDOPT_POC_BREADTH_DSL:-}
+    buildopt_step_scenario=${BUILDOPT_POC_BREADTH_SCENARIO:-}
+    buildopt_step_pair=${BUILDOPT_POC_BREADTH_PAIR:-0}
+    case "${buildopt_step_dsl}" in
+        KOTLIN | GROOVY) ;;
+        *)
+            printf 'invalid POC-PAIRING-001 DSL: %s\n' "${buildopt_step_dsl}" >&2
+            exit 64
+            ;;
+    esac
+    case "${buildopt_step_scenario}" in
+        NO_CHANGE) buildopt_step_change=NONE; buildopt_step_success=PARITY ;;
+        LEAF_CHANGE) buildopt_step_change=LEAF_SOURCE; buildopt_step_success=ACCELERATOR ;;
+        SHARED_CHANGE) buildopt_step_change=SHARED_SOURCE; buildopt_step_success=ACCELERATOR ;;
+        BUILD_LOGIC_CHANGE) buildopt_step_change=GLOBAL_BUILD_LOGIC; buildopt_step_success=PARITY ;;
+        *)
+            printf 'invalid POC-PAIRING-001 scenario: %s\n' "${buildopt_step_scenario}" >&2
+            exit 64
+            ;;
+    esac
+    if [[ "${buildopt_step_mode}" == SAMPLE &&
+        ! "${buildopt_step_pair}" =~ ^[1-8]$ ]]; then
+        printf 'invalid POC-PAIRING-001 sample index: %s\n' "${buildopt_step_pair}" >&2
+        exit 64
+    fi
+
+    buildopt_step_dsl_lower=${buildopt_step_dsl,,}
+    buildopt_step_slug=${buildopt_step_scenario,,}
+    buildopt_step_cell="${buildopt_root}/cells/${buildopt_step_dsl_lower}-${buildopt_step_slug}"
+    buildopt_step_workspace="${buildopt_step_cell}/workspace"
+    buildopt_step_home="${buildopt_step_cell}/gradle-home"
+    buildopt_step_marker="${buildopt_step_cell}/.warmed"
+    mkdir -p -- "${buildopt_step_cell}/logs"
+
+    if [[ "${buildopt_step_mode}" == WARM ]]; then
+        if [[ -e "${buildopt_step_marker}" ]]; then
+            printf 'POC-PAIRING-001 cell is already warm: %s/%s/%s\n' \
+                "${buildopt_arm_mode}" "${buildopt_step_dsl}" \
+                "${buildopt_step_scenario}" >&2
+            exit 1
+        fi
+        buildopt_prepare_workspace "${buildopt_step_workspace}" "${buildopt_step_dsl}"
+        if [[ "${buildopt_arm_mode}" == CANDIDATE ]]; then
+            buildopt_step_preflight="${buildopt_step_cell}/preflight"
+            buildopt_prepare_workspace "${buildopt_step_preflight}" "${buildopt_step_dsl}"
+            buildopt_seed_gradle_home "${buildopt_step_cell}/preflight-home"
+            (
+                cd -- "${buildopt_step_preflight}"
+                env GRADLE_USER_HOME="${buildopt_step_cell}/preflight-home" \
+                    "${buildopt_prefix}/bin/buildopt-impact" check \
+                    --repository "${buildopt_step_preflight}" \
+                    --manifest buildopt-impact-manifest.json \
+                    --repository-id tonyredondo/buildopt-poc-breadth \
+                    --pipeline-class poc-breadth \
+                    --graph buildopt-impact-graph.generated.json \
+                    --generated-manifest buildopt-impact.generated.json \
+                    --gradle-command ./gradlew >/dev/null
+            )
+        fi
+        buildopt_run_arm "${buildopt_step_workspace}" "${buildopt_step_home}" \
+            "${buildopt_arm_mode}" "${buildopt_step_scenario}" \
+            "${buildopt_step_cell}/logs/warm.log"
+        printf '%s\n' "${buildopt_revision}" >"${buildopt_step_marker}"
+
+        read -r buildopt_step_binary_sha _ < <(sha256sum "${buildopt_prefix}/bin/buildopt")
+        read -r buildopt_step_impact_sha _ < <(sha256sum "${buildopt_prefix}/bin/buildopt-impact")
+        read -r buildopt_step_plugin_sha _ < <(
+            sha256sum "${buildopt_prefix}/share/buildopt/buildopt-gradle-plugin.jar"
+        )
+        jq -n \
+            --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg buildoptRevision "${buildopt_revision}" \
+            --arg arm "${buildopt_arm_mode}" \
+            --arg dsl "${buildopt_step_dsl}" \
+            --arg scenario "${buildopt_step_scenario}" \
+            --arg fixtureSha256 "${buildopt_fixture_sha}" \
+            --arg buildoptSha256 "${buildopt_step_binary_sha}" \
+            --arg buildoptImpactSha256 "${buildopt_step_impact_sha}" \
+            --arg pluginSha256 "${buildopt_step_plugin_sha}" \
+            --argjson warmupDurationMs "${buildopt_duration_ms}" \
+            --slurpfile runner "${buildopt_runner}" '{
+                schemaVersion: "buildopt.evidence/poc-pairing-arm-meta/v1",
+                capturedAt: $capturedAt,
+                buildoptRevision: $buildoptRevision,
+                arm: $arm,
+                runner: $runner[0],
+                publicArtifacts: {
+                    buildoptSha256: $buildoptSha256,
+                    buildoptImpactSha256: $buildoptImpactSha256,
+                    gradlePluginSha256: $pluginSha256
+                },
+                fixture: {id: "REALISTIC_MULTIMODULE_V1", sha256: $fixtureSha256},
+                cell: {dsl: $dsl, scenario: $scenario},
+                warmupDurationMs: $warmupDurationMs,
+                isolation: {
+                    writableStateShared: false,
+                    workspaceShared: false,
+                    gradleUserHomeShared: false,
+                    daemonShared: false
+                }
+            }' >"${buildopt_output}"
+        chmod 0600 "${buildopt_output}"
+        printf 'POC-PAIRING-001 %s/%s %s warm-up: %dms\n' \
+            "${buildopt_step_scenario}" "${buildopt_step_dsl}" \
+            "${buildopt_arm_mode}" "${buildopt_duration_ms}"
+        exit 0
+    fi
+
+    if [[ ! -f "${buildopt_step_marker}" ]] ||
+        [[ "$(<"${buildopt_step_marker}")" != "${buildopt_revision}" ]]; then
+        printf 'POC-PAIRING-001 cell is not warm: %s/%s/%s\n' \
+            "${buildopt_arm_mode}" "${buildopt_step_dsl}" \
+            "${buildopt_step_scenario}" >&2
+        exit 1
+    fi
+    buildopt_mutate_workspace "${buildopt_step_workspace}" "${buildopt_step_dsl}" \
+        "${buildopt_step_scenario}" "${buildopt_step_pair}"
+    buildopt_run_arm "${buildopt_step_workspace}" "${buildopt_step_home}" \
+        "${buildopt_arm_mode}" "${buildopt_step_scenario}" \
+        "${buildopt_step_cell}/logs/sample-${buildopt_step_pair}.log"
+    buildopt_raw=${buildopt_output}
+    buildopt_record_arm "BREADTH_${buildopt_step_scenario}_${buildopt_step_dsl}" \
+        "${buildopt_step_scenario}" "${buildopt_step_change}" \
+        "${buildopt_step_success}" "${buildopt_step_dsl}" \
+        "${buildopt_step_pair}" "${buildopt_arm_mode}" \
+        "${buildopt_duration_ms}" "${buildopt_output_sha}" \
+        "${buildopt_executed_verifications}" \
+        "${buildopt_configuration_cache_reused}" \
+        "${buildopt_started_ns}" "${buildopt_finished_ns}"
+    chmod 0600 "${buildopt_output}"
+    printf 'POC-PAIRING-001 %s/%s %s sample %d: %dms\n' \
+        "${buildopt_step_scenario}" "${buildopt_step_dsl}" \
+        "${buildopt_arm_mode}" "${buildopt_step_pair}" \
+        "${buildopt_duration_ms}"
+    exit 0
+fi
 
 for buildopt_dsl in KOTLIN GROOVY; do
     buildopt_dsl_lower=${buildopt_dsl,,}

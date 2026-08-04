@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 3)); then
+    printf 'usage: %s OUTPUT_FILE CONTROL_FIRST_JSON CANDIDATE_FIRST_JSON\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_control_first=$2
+buildopt_candidate_first=$3
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
+    ! -f "${buildopt_control_first}" || ! -f "${buildopt_candidate_first}" ]]; then
+    printf 'invalid POC-PAIRING-001 decision input\n' >&2
+    exit 64
+fi
+command -v jq >/dev/null 2>&1 || {
+    printf 'required POC-PAIRING-001 decision command is unavailable: jq\n' >&2
+    exit 1
+}
+command -v sha256sum >/dev/null 2>&1 || {
+    printf 'required POC-PAIRING-001 decision command is unavailable: sha256sum\n' >&2
+    exit 1
+}
+
+buildopt_control_first_sha=$(sha256sum "${buildopt_control_first}" | awk '{print $1}')
+buildopt_candidate_first_sha=$(sha256sum "${buildopt_candidate_first}" | awk '{print $1}')
+
+jq -n \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg controlFirstSha256 "${buildopt_control_first_sha}" \
+    --arg candidateFirstSha256 "${buildopt_candidate_first_sha}" \
+    --slurpfile controlFirst "${buildopt_control_first}" \
+    --slurpfile candidateFirst "${buildopt_candidate_first}" '
+    if ($controlFirst | length) != 1 or ($candidateFirst | length) != 1 or
+       $controlFirst[0].schemaVersion != "buildopt.evidence/poc-pairing/v1" or
+       $candidateFirst[0].schemaVersion != "buildopt.evidence/poc-pairing/v1" or
+       $controlFirst[0].methodology.startingPairOrder != "CONTROL_FIRST" or
+       $candidateFirst[0].methodology.startingPairOrder != "CANDIDATE_FIRST" or
+       $controlFirst[0].buildoptRevision != $candidateFirst[0].buildoptRevision or
+       $controlFirst[0].publicArtifacts != $candidateFirst[0].publicArtifacts or
+       $controlFirst[0].fixture != $candidateFirst[0].fixture
+    then error("paired reports are incompatible") else . end |
+    ([ $controlFirst[0].workloads[] | {id, classification} ] | sort_by(.id)) as $a |
+    ([ $candidateFirst[0].workloads[] | {id, classification} ] | sort_by(.id)) as $b |
+    ([$a[] as $left | $b[] |
+        select(.id == $left.id and .classification == $left.classification) |
+        .id] | sort) as $reproduced |
+    ([$a[] as $left | $b[] |
+        select(.id == $left.id and .classification != $left.classification) |
+        .id] | sort) as $mismatched |
+    ($mismatched | length == 0) as $stable |
+    ($controlFirst[0].decision.qualifyingCells) as $controlQualifying |
+    ($candidateFirst[0].decision.qualifyingCells) as $candidateQualifying |
+    {
+        schemaVersion: "buildopt.evidence/poc-pairing-decision/v1",
+        capturedAt: $capturedAt,
+        buildoptRevision: $controlFirst[0].buildoptRevision,
+        reports: {
+            controlFirstSha256: $controlFirstSha256,
+            candidateFirstSha256: $candidateFirstSha256
+        },
+        result: {
+            classificationReproduced: $stable,
+            reproducedCells: $reproduced,
+            mismatchedCells: $mismatched,
+            controlFirstQualifyingCells: $controlQualifying,
+            candidateFirstQualifyingCells: $candidateQualifying,
+            maximumObservedInterArmIdleGapMs: ([
+                $controlFirst[0].workloads[].result.maximumInterArmIdleGapMs,
+                $candidateFirst[0].workloads[].result.maximumInterArmIdleGapMs
+            ] | max)
+        },
+        decision: {
+            verdict: (if $stable then "CLASSIFICATIONS_REPRODUCED"
+                      else "MEASUREMENT_UNSTABLE" end),
+            breadthClaim: (if ($stable and $controlQualifying == 8 and
+                                  $candidateQualifying == 8)
+                           then "BROADEN_SYNTHETIC_CLAIM"
+                           else "RETAIN_QUALIFIED_SYNTHETIC_WORKLOADS_ONLY" end),
+            productChangeAuthorized: $stable,
+            nextExperiment: (if ($stable and $controlQualifying == 8 and
+                                     $candidateQualifying == 8)
+                             then "NONE"
+                             elif $stable then "TARGET_REPRODUCED_VALUE_GAPS"
+                             else "STOP_AND_REVIEW_MEASUREMENT_BOUNDARY" end)
+        },
+        gate: {
+            id: "POC-PAIRING-G01",
+            state: (if $stable then "PASSED" else "FAILED" end)
+        },
+        boundaries: {
+            thresholdsChanged: false,
+            universalSavingsClaimed: false,
+            productionReadinessClaimed: false,
+            eightHourSoakExecuted: false,
+            externalDesignPartnerRequired: false,
+            testOptimizationModified: false
+        }
+    }
+    ' >"${buildopt_output}"
+chmod 0600 "${buildopt_output}"
+
+printf 'BuildOpt POC-PAIRING-001 decision assembled: %s\n' "${buildopt_output}"

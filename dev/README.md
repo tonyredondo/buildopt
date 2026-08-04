@@ -2150,6 +2150,8 @@ the strict benchmark:
 ./dev/check-poc-breadth
 ./dev/check-poc-overhead
 ./dev/check-poc-stability
+./dev/check-poc-pairing
+./dev/test-poc-pairing
 ```
 
 The checked report covers no-change, leaf-source, shared-source, and global
@@ -2191,6 +2193,35 @@ GRADLE_USER_HOME=.tools/gradle-user-home/local \
   /tmp/poc-stability-candidate-first.json \
   benchmarks/results/poc-stability-v1-decision.json
 ```
+
+`check-poc-pairing` removes the remaining long runner-time separation without
+sharing writable state. Two strict containers stay alive concurrently, one per
+arm. Every workload cell is warmed privately and then measured as eight
+consecutive cross-container pairs with alternating arm order. A second batch
+reverses the starting order. Every pair records timestamps and must keep the
+inter-arm idle gap at or below five seconds. Tasks, fixture, samples, outputs,
+thresholds, and correctness guardrails remain unchanged.
+
+Run the two strict batches, assemble their decision, and validate them with:
+
+```bash
+./dev/run-poc-pairing-container \
+  /tmp/poc-pairing-control-first.json paired-control-first CONTROL_FIRST
+./dev/run-poc-pairing-container \
+  /tmp/poc-pairing-candidate-first.json paired-candidate-first CANDIDATE_FIRST
+./dev/assemble-poc-pairing-decision \
+  /tmp/poc-pairing-decision.json \
+  /tmp/poc-pairing-control-first.json \
+  /tmp/poc-pairing-candidate-first.json
+./dev/check-poc-pairing \
+  /tmp/poc-pairing-control-first.json \
+  /tmp/poc-pairing-candidate-first.json \
+  /tmp/poc-pairing-decision.json
+```
+
+A stable negative classification is useful POC evidence and authorizes work on
+that reproduced value gap. A classification mismatch remains a measurement
+failure and does not authorize a product change.
 
 The validator recomputes every observation and verifies the checked decision.
 Classification agreement is the stability gate, not a prerequisite for keeping

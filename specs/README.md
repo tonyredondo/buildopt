@@ -10,6 +10,7 @@ the exact cross-component contract.
 | Specification | Owning item |
 |---|---|
 | [`poc-stability-validation-v1.md`](./poc-stability-validation-v1.md) and [`poc-stability-validation-v1.json`](./poc-stability-validation-v1.json) | `POC-STABILITY-001` |
+| [`poc-pairing-validation-v1.md`](./poc-pairing-validation-v1.md) and [`poc-pairing-validation-v1.json`](./poc-pairing-validation-v1.json) | `POC-PAIRING-001` |
 | [`poc-overhead-attribution-v1.md`](./poc-overhead-attribution-v1.md) and [`poc-overhead-attribution-v1.json`](./poc-overhead-attribution-v1.json) | `POC-OVERHEAD-001` |
 | [`poc-breadth-validation-v1.md`](./poc-breadth-validation-v1.md) and [`poc-breadth-validation-v1.json`](./poc-breadth-validation-v1.json) | `POC-BREADTH-001` / `POC-BREADTH-G01` |
 | [`poc-value-validation-v1.md`](./poc-value-validation-v1.md) and [`poc-value-validation-v1.json`](./poc-value-validation-v1.json) | `POC-VALUE-001..004` / `POC-VALUE-G01` |

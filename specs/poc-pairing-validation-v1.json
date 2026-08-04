@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "buildopt.specs/poc-pairing-validation/v1",
+  "workItem": "POC-PAIRING-001",
+  "decision": "REPRODUCE_CLASSIFICATIONS_WITH_TEMPORALLY_PAIRED_ISOLATED_ARMS",
+  "runner": "linux-amd64-4c-16g-v1",
+  "batches": {
+    "count": 2,
+    "startingPairOrders": [
+      "CONTROL_FIRST",
+      "CANDIDATE_FIRST"
+    ],
+    "pairOrder": "ALTERNATING_OPPOSITE_SEQUENCE",
+    "samplesPerCell": 8,
+    "warmupPerCell": 1,
+    "maximumInterArmIdleGapMs": 5000
+  },
+  "isolation": {
+    "strictContainerPerArm": true,
+    "writableStateShared": false,
+    "workspaceShared": false,
+    "gradleUserHomeShared": false,
+    "daemonShared": false,
+    "sampleLifecycle": "PERSISTENT_PRIVATE_DAEMON_PER_CELL"
+  },
+  "thresholds": {
+    "acceleratorMinimumSavedMs": 500,
+    "acceleratorMinimumReductionRatio": 0.02,
+    "acceleratorPositiveLower95Bound": true,
+    "parityMaximumRegressionRatio": 0.02
+  },
+  "guardrails": {
+    "sameRevisionAndArtifacts": true,
+    "requiredOutputsIdentical": true,
+    "maximumProductAttributableFailures": 0,
+    "classificationAgreementRequiredForStableResult": true,
+    "mismatchProducesMeasurementUnstable": true,
+    "thresholdsMayMove": false
+  },
+  "boundaries": {
+    "ownerControlledSyntheticWorkloads": true,
+    "productionReadiness": false,
+    "externalDesignPartner": false,
+    "eightHourSoak": false,
+    "testOptimization": false
+  }
+}

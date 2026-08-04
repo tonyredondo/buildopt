@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+for buildopt_command in jq mktemp rm; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC-PAIRING-001 test command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-poc-pairing-test.XXXXXX")
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-poc-pairing-test."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_arm in CONTROL CANDIDATE; do
+    jq -n --arg arm "${buildopt_arm}" '{
+        schemaVersion: "buildopt.evidence/poc-pairing-arm-meta/v1",
+        capturedAt: "2026-08-04T00:00:00Z",
+        buildoptRevision: ("a" * 40),
+        arm: $arm,
+        runner: {id: "synthetic", capturedAt: "2026-08-04T00:00:00Z"},
+        publicArtifacts: {
+            buildoptSha256: ("b" * 64),
+            buildoptImpactSha256: ("c" * 64),
+            gradlePluginSha256: ("d" * 64)
+        },
+        fixture: {id: "REALISTIC_MULTIMODULE_V1", sha256: ("e" * 64)},
+        cell: {dsl: "KOTLIN", scenario: "NO_CHANGE"},
+        warmupDurationMs: 1,
+        isolation: {
+            writableStateShared: false,
+            workspaceShared: false,
+            gradleUserHomeShared: false,
+            daemonShared: false
+        }
+    }' >"${buildopt_root}/${buildopt_arm,,}.json"
+done
+
+jq -cn '
+    ["KOTLIN", "GROOVY"][] as $dsl |
+    ["NO_CHANGE", "LEAF_CHANGE", "SHARED_CHANGE", "BUILD_LOGIC_CHANGE"][] as $scenario |
+    range(1; 9) as $pair |
+    ["CONTROL", "CANDIDATE"][] as $arm |
+    (($pair - 1) * 20000000000 +
+     (if (($pair % 2) == 1) == ($arm == "CONTROL")
+      then 0 else 2000000000 end)) as $started |
+    {
+        workloadId: ("BREADTH_" + $scenario + "_" + $dsl),
+        scenario: $scenario,
+        changeClass: (if $scenario == "NO_CHANGE" then "NONE"
+                      elif $scenario == "LEAF_CHANGE" then "LEAF_SOURCE"
+                      elif $scenario == "SHARED_CHANGE" then "SHARED_SOURCE"
+                      else "GLOBAL_BUILD_LOGIC" end),
+        successClass: (if ($scenario == "LEAF_CHANGE" or $scenario == "SHARED_CHANGE")
+                       then "ACCELERATOR" else "PARITY" end),
+        dsl: $dsl,
+        pair: $pair,
+        arm: $arm,
+        durationMs: (if $arm == "CONTROL" then 2000 else 1000 end),
+        outputSha256: ("f" * 64),
+        executedVerifications: (if $arm == "CONTROL" then 5
+                                elif $scenario == "LEAF_CHANGE" then 1
+                                elif $scenario == "SHARED_CHANGE" then 2
+                                else 5 end),
+        configurationCacheReused: ($scenario != "BUILD_LOGIC_CHANGE"),
+        productAttributableFailure: false,
+        startedAtNs: $started,
+        finishedAtNs: ($started + 1000000000)
+    }
+    ' >"${buildopt_root}/control-first-observations.jsonl"
+
+"${buildopt_script_dir}/assemble-poc-pairing" \
+    "${buildopt_root}/control-first.json" synthetic-control-first CONTROL_FIRST \
+    "${buildopt_root}/control.json" "${buildopt_root}/candidate.json" \
+    "${buildopt_root}/control-first-observations.jsonl" >/dev/null
+
+jq '
+    if (.pair % 2) == 1 then
+        if .arm == "CONTROL" then
+            .startedAtNs += 2000000000 | .finishedAtNs += 2000000000
+        else
+            .startedAtNs -= 2000000000 | .finishedAtNs -= 2000000000
+        end
+    else
+        if .arm == "CONTROL" then
+            .startedAtNs -= 2000000000 | .finishedAtNs -= 2000000000
+        else
+            .startedAtNs += 2000000000 | .finishedAtNs += 2000000000
+        end
+    end
+    ' "${buildopt_root}/control-first-observations.jsonl" \
+    >"${buildopt_root}/candidate-first-observations.jsonl"
+"${buildopt_script_dir}/assemble-poc-pairing" \
+    "${buildopt_root}/candidate-first.json" synthetic-candidate-first CANDIDATE_FIRST \
+    "${buildopt_root}/control.json" "${buildopt_root}/candidate.json" \
+    "${buildopt_root}/candidate-first-observations.jsonl" >/dev/null
+"${buildopt_script_dir}/assemble-poc-pairing-decision" \
+    "${buildopt_root}/decision.json" \
+    "${buildopt_root}/control-first.json" \
+    "${buildopt_root}/candidate-first.json" >/dev/null
+jq -e '
+    .result.classificationReproduced and
+    .gate.state == "PASSED" and
+    .decision.breadthClaim == "BROADEN_SYNTHETIC_CLAIM"
+    ' "${buildopt_root}/decision.json" >/dev/null
+
+jq '
+    if .arm == "CANDIDATE" and .pair == 1 and
+       .scenario == "NO_CHANGE" and .dsl == "KOTLIN" then
+        .startedAtNs += 6000000000 | .finishedAtNs += 6000000000
+    else . end
+    ' "${buildopt_root}/control-first-observations.jsonl" \
+    >"${buildopt_root}/gap.jsonl"
+if "${buildopt_script_dir}/assemble-poc-pairing" \
+    "${buildopt_root}/gap-report.json" synthetic-gap CONTROL_FIRST \
+    "${buildopt_root}/control.json" "${buildopt_root}/candidate.json" \
+    "${buildopt_root}/gap.jsonl" >/dev/null 2>&1; then
+    printf 'POC-PAIRING-001 excessive-gap fixture unexpectedly passed\n' >&2
+    exit 1
+fi
+
+jq '
+    if .arm == "CONTROL" and .pair == 1 and
+       .scenario == "NO_CHANGE" and .dsl == "KOTLIN" then
+        .startedAtNs += 4000000000 | .finishedAtNs += 4000000000
+    else . end
+    ' "${buildopt_root}/control-first-observations.jsonl" \
+    >"${buildopt_root}/order.jsonl"
+if "${buildopt_script_dir}/assemble-poc-pairing" \
+    "${buildopt_root}/order-report.json" synthetic-order CONTROL_FIRST \
+    "${buildopt_root}/control.json" "${buildopt_root}/candidate.json" \
+    "${buildopt_root}/order.jsonl" >/dev/null 2>&1; then
+    printf 'POC-PAIRING-001 wrong-order fixture unexpectedly passed\n' >&2
+    exit 1
+fi
+
+printf 'BuildOpt POC-PAIRING-001 synthetic contracts OK\n'
