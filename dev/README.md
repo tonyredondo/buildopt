@@ -2149,6 +2149,7 @@ the strict benchmark:
 ```bash
 ./dev/check-poc-breadth
 ./dev/check-poc-overhead
+./dev/check-poc-stability
 ```
 
 The checked report covers no-change, leaf-source, shared-source, and global
@@ -2169,6 +2170,28 @@ Kotlin preserves parity, and leaf Kotlin, shared Kotlin, and leaf Groovy clear
 the accelerator threshold. The diagnostic phase report proves the measured
 candidate is native-only and loads no init/project plugin. Remaining Groovy and
 global-build-logic failures are order-sensitive and stay outside the claim.
+
+`check-poc-stability` compares two revision-bound strict batches. Each batch
+runs control and candidate in separate 4-CPU/16-GiB containers with independent
+writable workspaces, Gradle homes, and daemons; the second batch reverses which
+complete arm runs first. Fixture, warm-up, tasks, eight samples, outputs, and
+thresholds remain unchanged. Create the two reports with:
+
+```bash
+GRADLE_USER_HOME=.tools/gradle-user-home/local \
+  ./dev/run-poc-stability-container \
+    /tmp/poc-stability-control-first.json control-first CONTROL_FIRST
+GRADLE_USER_HOME=.tools/gradle-user-home/local \
+  ./dev/run-poc-stability-container \
+    /tmp/poc-stability-candidate-first.json candidate-first CANDIDATE_FIRST
+./dev/check-poc-stability \
+  /tmp/poc-stability-control-first.json \
+  /tmp/poc-stability-candidate-first.json
+```
+
+The validator requires every cell classification to reproduce across the two
+opposite arm orders. Reproduced failures remain failures; the stability block
+does not move a performance threshold or broaden the POC claim by itself.
 
 Validate and print the historical mechanism-development scorecard without
 rerunning a benchmark:

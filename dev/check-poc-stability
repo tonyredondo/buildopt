@@ -1,0 +1,189 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 2)); then
+    printf 'usage: %s [CONTROL_FIRST_JSON] [CANDIDATE_FIRST_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_control_first=${1:-"${buildopt_repo_root}/benchmarks/results/poc-stability-v1-control-first.json"}
+buildopt_candidate_first=${2:-"${buildopt_repo_root}/benchmarks/results/poc-stability-v1-candidate-first.json"}
+buildopt_runner_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+buildopt_fixture="${buildopt_repo_root}/fixtures/poc-breadth/realistic-multimodule"
+
+for buildopt_command in awk find git jq sha256sum sort; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC-STABILITY-001 command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+for buildopt_file in "${buildopt_control_first}" "${buildopt_candidate_first}" \
+    "${buildopt_runner_spec}"; do
+    [[ -f "${buildopt_file}" ]] || {
+        printf 'required POC-STABILITY-001 file is unavailable: %s\n' \
+            "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_before_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_fixture_sha=$(
+    cd -- "${buildopt_fixture}"
+    while IFS= read -r buildopt_file; do
+        printf '%s  %s\n' "$(sha256sum "${buildopt_file}" | awk '{print $1}')" "${buildopt_file}"
+    done < <(find . -type f -not -path './.gradle/*' -not -path '*/build/*' -print | sort)
+)
+buildopt_fixture_sha=$(printf '%s\n' "${buildopt_fixture_sha}" | sha256sum | awk '{print $1}')
+buildopt_runner_spec_sha=$(sha256sum "${buildopt_runner_spec}" | awk '{print $1}')
+buildopt_platform_digest=$(jq -er '.container.platformDigest' "${buildopt_runner_spec}")
+
+jq -n -e \
+    --arg fixtureSha256 "${buildopt_fixture_sha}" \
+    --arg runnerSpecSha256 "${buildopt_runner_spec_sha}" \
+    --arg platformDigest "${buildopt_platform_digest}" \
+    --slurpfile controlFirst "${buildopt_control_first}" \
+    --slurpfile candidateFirst "${buildopt_candidate_first}" '
+    def digest: type == "string" and test("^[0-9a-f]{64}$");
+    def revision: type == "string" and test("^[0-9a-f]{40}$");
+    def bootstrap_mean($rows; $sample):
+        reduce range(0; 8) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $rows[((.state / 536870912) | floor)].savedMs) |
+        .sum / 8;
+    def bootstrap95($rows):
+        ([range(0; 4096) as $sample | bootstrap_mean($rows; $sample)] | sort) as $values |
+        [$values[102], $values[3993]];
+    def expected_classification($w):
+        ($w.result.observations) as $rows |
+        (($rows | map(.savedMs) | add) / 8) as $meanSaved |
+        (($rows | map(.controlDurationMs) | add) / 8) as $controlMean |
+        ($meanSaved / $controlMean) as $ratio |
+        (bootstrap95($rows)) as $interval |
+        ($rows | all(.controlOutputSha256 == .candidateOutputSha256)) as $outputsIdentical |
+        ($rows | map(select(.productAttributableFailure)) | length) as $failures |
+        (if $w.scenario == "LEAF_CHANGE" then 1
+         elif $w.scenario == "SHARED_CHANGE" then 2
+         else 5 end) as $expectedCandidateVerifications |
+        ($rows | all(.controlExecutedVerifications == 5 and
+                     .candidateExecutedVerifications == $expectedCandidateVerifications)) as $executionShapeValid |
+        ($rows | all(if .scenario == "BUILD_LOGIC_CHANGE" then
+                         (.controlConfigurationCacheReused == false and
+                          .candidateConfigurationCacheReused == false)
+                     else
+                         (.controlConfigurationCacheReused == true and
+                          .candidateConfigurationCacheReused == true)
+                     end)) as $configurationCacheValid |
+        ($outputsIdentical and $failures == 0 and $executionShapeValid and
+         $configurationCacheValid and
+         (($w.successClass == "ACCELERATOR" and $meanSaved >= 500 and
+           $ratio >= 0.02 and $interval[0] > 0) or
+          ($w.successClass == "PARITY" and $ratio >= -0.02))) as $qualified |
+        if $qualified then
+            (if $w.successClass == "ACCELERATOR" then "THRESHOLD_MET" else "PARITY_GUARDRAIL_MET" end)
+        else "BREADTH_GATE_FAILED" end;
+    def workload($w; $scenario; $dsl; $order):
+        ($w.id == ("BREADTH_" + $scenario + "_" + $dsl)) and
+        $w.scenario == $scenario and $w.dsl == $dsl and
+        $w.changeClass == (if $scenario == "NO_CHANGE" then "NONE"
+                           elif $scenario == "LEAF_CHANGE" then "LEAF_SOURCE"
+                           elif $scenario == "SHARED_CHANGE" then "SHARED_SOURCE"
+                           else "GLOBAL_BUILD_LOGIC" end) and
+        $w.successClass == (if ($scenario == "LEAF_CHANGE" or $scenario == "SHARED_CHANGE")
+                            then "ACCELERATOR" else "PARITY" end) and
+        ($w.result.observations | type == "array" and length == 8) and
+        ([$w.result.observations[].pair] | sort == [1,2,3,4,5,6,7,8]) and
+        ($w.result.observations | all(
+            .workloadId == $w.id and .scenario == $scenario and .dsl == $dsl and
+            .order == ("ISOLATED_" + $order) and
+            (.controlDurationMs | type == "number" and . > 0) and
+            (.candidateDurationMs | type == "number" and . > 0) and
+            .savedMs == (.controlDurationMs - .candidateDurationMs) and
+            (.controlOutputSha256 | digest) and (.candidateOutputSha256 | digest) and
+            .productAttributableFailure == false)) and
+        (($w.result.observations | map(.controlDurationMs) | add) / 8) == $w.result.controlMeanMs and
+        (($w.result.observations | map(.candidateDurationMs) | add) / 8) == $w.result.candidateMeanMs and
+        (($w.result.observations | map(.savedMs) | add) / 8) == $w.result.meanSavedMs and
+        $w.result.meanReductionRatio == ($w.result.meanSavedMs / $w.result.controlMeanMs) and
+        $w.result.interval95SavedMs == bootstrap95($w.result.observations) and
+        $w.result.positivePairs == ($w.result.observations | map(select(.savedMs > 0)) | length) and
+        $w.result.requiredOutputsIdentical == ($w.result.observations | all(.controlOutputSha256 == .candidateOutputSha256)) and
+        $w.result.productAttributableFailures == 0 and
+        $w.result.executionShapeValid == true and
+        $w.result.configurationCacheValid == true and
+        $w.classification == expected_classification($w);
+    def report($r; $order):
+        $r.schemaVersion == "buildopt.evidence/poc-stability/v1" and
+        ($r.buildoptRevision | revision) and
+        ($r.batchId | type == "string" and test("^[a-z0-9][a-z0-9-]{0,63}$")) and
+        $r.runner.id == "linux-amd64-4c-16g-v1" and
+        $r.runner.cpuCount == 4 and $r.runner.memoryBytes == 17179869184 and
+        $r.runner.qualifiedGoldenRunner == true and
+        $r.runner.runnerSpecSha256 == $runnerSpecSha256 and
+        $r.runner.containerPlatformDigest == $platformDigest and
+        ($r.publicArtifacts.buildoptSha256 | digest) and
+        ($r.publicArtifacts.buildoptImpactSha256 | digest) and
+        ($r.publicArtifacts.gradlePluginSha256 | digest) and
+        $r.methodology == {
+            purpose: "REPRODUCE_BREADTH_CLASSIFICATIONS_WITH_ISOLATED_ARMS",
+            samplesPerCell: 8,
+            armExecutionOrder: $order,
+            pairing: "MATCHED_MUTATION_INDEX_ACROSS_ISOLATED_ARM_CONTAINERS",
+            confidenceInterval: "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
+            isolation: {strictContainerPerArm: true, writableStateShared: false, workspaceShared: false, gradleUserHomeShared: false, daemonShared: false},
+            nativeControl: {buildCache: true, configurationCache: true, parallelism: true, daemon: true},
+            candidateEntryPoints: ["INSTALLED_BUILDOPT_IMPACT_CHECK", "INSTALLED_BUILDOPT_GRADLE"],
+            acceleratorThreshold: {minimumSavedMs: 500, minimumReductionRatio: 0.02, positiveLower95Bound: true},
+            parityGuardrail: {maximumRegressionRatio: 0.02},
+            percentagesAddedAcrossScenarios: false
+        } and
+        $r.fixture == {id: "REALISTIC_MULTIMODULE_V1", sha256: $fixtureSha256} and
+        ($r.workloads | type == "array" and length == 8) and
+        workload(($r.workloads[] | select(.id == "BREADTH_NO_CHANGE_KOTLIN")); "NO_CHANGE"; "KOTLIN"; $order) and
+        workload(($r.workloads[] | select(.id == "BREADTH_NO_CHANGE_GROOVY")); "NO_CHANGE"; "GROOVY"; $order) and
+        workload(($r.workloads[] | select(.id == "BREADTH_LEAF_CHANGE_KOTLIN")); "LEAF_CHANGE"; "KOTLIN"; $order) and
+        workload(($r.workloads[] | select(.id == "BREADTH_LEAF_CHANGE_GROOVY")); "LEAF_CHANGE"; "GROOVY"; $order) and
+        workload(($r.workloads[] | select(.id == "BREADTH_SHARED_CHANGE_KOTLIN")); "SHARED_CHANGE"; "KOTLIN"; $order) and
+        workload(($r.workloads[] | select(.id == "BREADTH_SHARED_CHANGE_GROOVY")); "SHARED_CHANGE"; "GROOVY"; $order) and
+        workload(($r.workloads[] | select(.id == "BREADTH_BUILD_LOGIC_CHANGE_KOTLIN")); "BUILD_LOGIC_CHANGE"; "KOTLIN"; $order) and
+        workload(($r.workloads[] | select(.id == "BREADTH_BUILD_LOGIC_CHANGE_GROOVY")); "BUILD_LOGIC_CHANGE"; "GROOVY"; $order) and
+        ($r.workloads | all(.result.requiredOutputsIdentical and
+                            .result.productAttributableFailures == 0 and
+                            .result.executionShapeValid and .result.configurationCacheValid)) and
+        ($r.workloads | all(.classification != "BREADTH_GATE_FAILED")) as $allQualified |
+        $r.decision == {
+            verdict: (if $allQualified then "BROADEN_SYNTHETIC_CLAIM" else "RETAIN_QUALIFIED_SYNTHETIC_WORKLOADS_ONLY" end),
+            breadthProven: $allQualified,
+            qualifyingCells: ($r.workloads | map(select(.classification != "BREADTH_GATE_FAILED")) | length),
+            requiredCells: 8
+        } and
+        $r.gate == {id: "POC-STABILITY-001", state: "RECORDED"} and
+        $r.boundaries == {ownerControlledSyntheticWorkloads: true, universalSavingsClaimed: false, productionReadinessClaimed: false, eightHourSoakExecuted: false, externalDesignPartnerRequired: false, testOptimizationModified: false};
+    ($controlFirst | length == 1) and ($candidateFirst | length == 1) and
+    report($controlFirst[0]; "CONTROL_FIRST") and
+    report($candidateFirst[0]; "CANDIDATE_FIRST") and
+    $controlFirst[0].batchId != $candidateFirst[0].batchId and
+    $controlFirst[0].capturedAt != $candidateFirst[0].capturedAt and
+    $controlFirst[0].buildoptRevision == $candidateFirst[0].buildoptRevision and
+    $controlFirst[0].publicArtifacts == $candidateFirst[0].publicArtifacts and
+    $controlFirst[0].fixture == $candidateFirst[0].fixture and
+    ([ $controlFirst[0].workloads[] | {id, classification} ] | sort_by(.id)) ==
+        ([ $candidateFirst[0].workloads[] | {id, classification} ] | sort_by(.id))
+    ' >/dev/null
+
+buildopt_revision=$(jq -er '.buildoptRevision' "${buildopt_control_first}")
+if git -C "${buildopt_repo_root}" cat-file -e "${buildopt_revision}^{commit}" 2>/dev/null; then
+    git -C "${buildopt_repo_root}" merge-base --is-ancestor "${buildopt_revision}" HEAD
+fi
+
+buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before_status}" != "${buildopt_after_status}" ]]; then
+    printf 'POC-STABILITY-001 validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'BuildOpt POC-STABILITY-001 evidence OK: %s + %s\n' \
+    "${buildopt_control_first}" "${buildopt_candidate_first}"

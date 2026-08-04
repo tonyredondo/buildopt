@@ -138,6 +138,7 @@ reference data, thresholds, or held-out results merely to obtain promotion.
 ./dev/check-poc-value-combined
 ./dev/check-poc-breadth
 ./dev/check-poc-overhead
+./dev/check-poc-stability
 ./dev/check-build-optimization-performance
 ```
 
@@ -153,7 +154,9 @@ recomputes all 64 observations. The post-attribution repeat retains the narrow
 claim: 4/8 realistic change/DSL cells qualify, despite correct selection and
 byte-identical outputs. `check-poc-overhead` independently validates the
 non-overlapping diagnostic phases and confirms that traced timings never gate
-performance.
+performance. `check-poc-stability` requires the same cell classifications in
+two strict batches whose control and candidate arms have independent writable
+state and opposite execution order; it never weakens the breadth thresholds.
 
 ## Task Intelligence
 

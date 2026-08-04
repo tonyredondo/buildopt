@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "buildopt.specs/poc-stability-validation/v1",
+  "workItem": "POC-STABILITY-001",
+  "decision": "REPRODUCE_CLASSIFICATIONS_WITHOUT_INTER_ARM_CARRYOVER",
+  "runner": "linux-amd64-4c-16g-v1",
+  "batches": {
+    "count": 2,
+    "armExecutionOrders": [
+      "CONTROL_FIRST",
+      "CANDIDATE_FIRST"
+    ],
+    "samplesPerCell": 8
+  },
+  "isolation": {
+    "strictContainerPerArm": true,
+    "writableStateShared": false,
+    "workspaceShared": false,
+    "gradleUserHomeShared": false,
+    "daemonShared": false
+  },
+  "thresholds": {
+    "acceleratorMinimumSavedMs": 500,
+    "acceleratorMinimumReductionRatio": 0.02,
+    "acceleratorPositiveLower95Bound": true,
+    "parityMaximumRegressionRatio": 0.02
+  },
+  "guardrails": {
+    "sameRevisionAndArtifacts": true,
+    "requiredOutputsIdentical": true,
+    "maximumProductAttributableFailures": 0,
+    "classificationMustMatchAcrossBatches": true,
+    "thresholdsMayMove": false
+  },
+  "boundaries": {
+    "ownerControlledSyntheticWorkloads": true,
+    "productionReadiness": false,
+    "externalDesignPartner": false,
+    "eightHourSoak": false,
+    "testOptimization": false
+  }
+}

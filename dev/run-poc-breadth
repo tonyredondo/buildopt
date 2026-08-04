@@ -12,10 +12,22 @@ buildopt_prefix=$3
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_fixture="${buildopt_repo_root}/fixtures/poc-breadth/realistic-multimodule"
+buildopt_arm_mode=${BUILDOPT_POC_BREADTH_ARM:-BOTH}
 
 if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
     ! "${buildopt_revision}" =~ ^[0-9a-f]{40}$ || "${buildopt_prefix}" != /* ]]; then
     printf 'invalid POC-BREADTH-001 input\n' >&2
+    exit 64
+fi
+case "${buildopt_arm_mode}" in
+    BOTH | CONTROL | CANDIDATE) ;;
+    *)
+        printf 'invalid POC-BREADTH-001 arm mode: %s\n' "${buildopt_arm_mode}" >&2
+        exit 64
+        ;;
+esac
+if [[ "${buildopt_arm_mode}" != BOTH && "${BUILDOPT_POC_OVERHEAD_TRACE:-0}" == 1 ]]; then
+    printf 'isolated POC breadth arms do not support diagnostic tracing\n' >&2
     exit 64
 fi
 for buildopt_command in awk chmod cp date env find grep jq ln mkdir mktemp rm sed sha256sum sort; do
@@ -335,6 +347,35 @@ buildopt_record_pair() {
         } end)' >>"${buildopt_raw}"
 }
 
+buildopt_record_arm() {
+    local buildopt_id=$1 buildopt_scenario=$2 buildopt_change=$3 buildopt_success=$4
+    local buildopt_dsl=$5 buildopt_pair=$6 buildopt_arm=$7
+    local buildopt_duration=$8 buildopt_sha=$9 buildopt_executed=${10}
+    local buildopt_cc=${11}
+    jq -cn \
+        --arg workloadId "${buildopt_id}" --arg scenario "${buildopt_scenario}" \
+        --arg changeClass "${buildopt_change}" --arg successClass "${buildopt_success}" \
+        --arg dsl "${buildopt_dsl}" --arg arm "${buildopt_arm}" \
+        --arg outputSha256 "${buildopt_sha}" \
+        --argjson pair "${buildopt_pair}" \
+        --argjson durationMs "${buildopt_duration}" \
+        --argjson executedVerifications "${buildopt_executed}" \
+        --argjson configurationCacheReused "${buildopt_cc}" '{
+            workloadId: $workloadId,
+            scenario: $scenario,
+            changeClass: $changeClass,
+            successClass: $successClass,
+            dsl: $dsl,
+            pair: $pair,
+            arm: $arm,
+            durationMs: $durationMs,
+            outputSha256: $outputSha256,
+            executedVerifications: $executedVerifications,
+            configurationCacheReused: $configurationCacheReused,
+            productAttributableFailure: false
+        }' >>"${buildopt_raw}"
+}
+
 for buildopt_dsl in KOTLIN GROOVY; do
     buildopt_dsl_lower=${buildopt_dsl,,}
     for buildopt_scenario in NO_CHANGE LEAF_CHANGE SHARED_CHANGE BUILD_LOGIC_CHANGE; do
@@ -349,6 +390,46 @@ for buildopt_dsl in KOTLIN GROOVY; do
         buildopt_candidate="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-candidate"
         buildopt_control_home="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-control-home"
         buildopt_candidate_home="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-candidate-home"
+        if [[ "${buildopt_arm_mode}" != BOTH ]]; then
+            buildopt_arm_lower=${buildopt_arm_mode,,}
+            buildopt_workspace="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-${buildopt_arm_lower}"
+            buildopt_home="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-${buildopt_arm_lower}-home"
+            buildopt_prepare_workspace "${buildopt_workspace}" "${buildopt_dsl}"
+            if [[ "${buildopt_arm_mode}" == CANDIDATE ]]; then
+                buildopt_seed_gradle_home "${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-preflight-home"
+                (
+                    cd -- "${buildopt_workspace}"
+                    env GRADLE_USER_HOME="${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-preflight-home" \
+                        "${buildopt_prefix}/bin/buildopt-impact" check \
+                        --repository "${buildopt_workspace}" \
+                        --manifest buildopt-impact-manifest.json \
+                        --repository-id tonyredondo/buildopt-poc-breadth \
+                        --pipeline-class poc-breadth \
+                        --graph buildopt-impact-graph.generated.json \
+                        --generated-manifest buildopt-impact.generated.json \
+                        --gradle-command ./gradlew >/dev/null
+                )
+            fi
+            buildopt_run_arm "${buildopt_workspace}" "${buildopt_home}" \
+                "${buildopt_arm_mode}" "${buildopt_scenario}" \
+                "${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-warm-${buildopt_arm_lower}.log"
+            for buildopt_pair in {1..8}; do
+                buildopt_mutate_workspace "${buildopt_workspace}" "${buildopt_dsl}" \
+                    "${buildopt_scenario}" "${buildopt_pair}"
+                buildopt_run_arm "${buildopt_workspace}" "${buildopt_home}" \
+                    "${buildopt_arm_mode}" "${buildopt_scenario}" \
+                    "${buildopt_root}/${buildopt_dsl_lower}-${buildopt_slug}-${buildopt_pair}-${buildopt_arm_lower}.log"
+                buildopt_record_arm "BREADTH_${buildopt_scenario}_${buildopt_dsl}" \
+                    "${buildopt_scenario}" "${buildopt_change}" "${buildopt_success}" \
+                    "${buildopt_dsl}" "${buildopt_pair}" "${buildopt_arm_mode}" \
+                    "${buildopt_duration_ms}" "${buildopt_output_sha}" \
+                    "${buildopt_executed_verifications}" "${buildopt_configuration_cache_reused}"
+                printf 'POC-STABILITY-001 %s/%s %s sample %d: %dms\n' \
+                    "${buildopt_scenario}" "${buildopt_dsl}" "${buildopt_arm_mode}" \
+                    "${buildopt_pair}" "${buildopt_duration_ms}"
+            done
+            continue
+        fi
         buildopt_prepare_workspace "${buildopt_control}" "${buildopt_dsl}"
         buildopt_prepare_workspace "${buildopt_candidate}" "${buildopt_dsl}"
 
@@ -421,6 +502,42 @@ read -r buildopt_impact_sha _ < <(sha256sum "${buildopt_prefix}/bin/buildopt-imp
 read -r buildopt_plugin_sha _ < <(
     sha256sum "${buildopt_prefix}/share/buildopt/buildopt-gradle-plugin.jar"
 )
+
+if [[ "${buildopt_arm_mode}" != BOTH ]]; then
+    jq -s \
+        --arg capturedAt "${buildopt_captured_at}" \
+        --arg buildoptRevision "${buildopt_revision}" \
+        --arg arm "${buildopt_arm_mode}" \
+        --arg fixtureSha256 "${buildopt_fixture_sha}" \
+        --arg buildoptSha256 "${buildopt_binary_sha}" \
+        --arg buildoptImpactSha256 "${buildopt_impact_sha}" \
+        --arg pluginSha256 "${buildopt_plugin_sha}" \
+        --slurpfile runner "${buildopt_runner}" '{
+            schemaVersion: "buildopt.evidence/poc-breadth-arm/v1",
+            capturedAt: $capturedAt,
+            buildoptRevision: $buildoptRevision,
+            arm: $arm,
+            runner: $runner[0],
+            publicArtifacts: {
+                buildoptSha256: $buildoptSha256,
+                buildoptImpactSha256: $buildoptImpactSha256,
+                gradlePluginSha256: $pluginSha256
+            },
+            methodology: {
+                purpose: "ISOLATE_ONE_BREADTH_ARM",
+                samplesPerCell: 8,
+                warmupPerCell: 1,
+                nativeControl: {buildCache: true, configurationCache: true, parallelism: true, daemon: true},
+                candidateEntryPoints: ["INSTALLED_BUILDOPT_IMPACT_CHECK", "INSTALLED_BUILDOPT_GRADLE"]
+            },
+            fixture: {id: "REALISTIC_MULTIMODULE_V1", sha256: $fixtureSha256},
+            observations: sort_by(.workloadId, .pair)
+        }' "${buildopt_raw}" >"${buildopt_output}"
+    chmod 0600 "${buildopt_output}"
+    printf 'BuildOpt POC-STABILITY-001 %s arm evidence written to %s\n' \
+        "${buildopt_arm_mode}" "${buildopt_output}"
+    exit 0
+fi
 
 jq -s \
     --arg capturedAt "${buildopt_captured_at}" \

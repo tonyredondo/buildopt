@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 3)); then
+    printf 'usage: %s OUTPUT_FILE BATCH_ID ARM_ORDER\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_batch_id=$2
+buildopt_arm_order=$3
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
+    ! "${buildopt_batch_id}" =~ ^[a-z0-9][a-z0-9-]{0,63}$ ||
+    ("${buildopt_arm_order}" != CONTROL_FIRST && "${buildopt_arm_order}" != CANDIDATE_FIRST) ]]; then
+    printf 'invalid POC-STABILITY-001 container input\n' >&2
+    exit 64
+fi
+for buildopt_command in awk cp curl docker find git grep id jq mkdir mktemp sha256sum tar; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC-STABILITY-001 container command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+if [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)" ]]; then
+    printf 'POC-STABILITY-001 container requires a clean revision-bound checkout\n' >&2
+    exit 1
+fi
+if ! docker info >/dev/null 2>&1; then
+    printf 'Docker daemon is unavailable\n' >&2
+    exit 1
+fi
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-poc-stability-001-container.XXXXXX")
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-poc-stability-001-container."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_release="${buildopt_root}/release"
+mkdir -p -- "${buildopt_release}"
+buildopt_archive=$("${buildopt_repo_root}/packaging/linux/package.sh" \
+    --version 0.3.0-stability001 --output "${buildopt_release}")
+
+buildopt_host_gradle_home=${GRADLE_USER_HOME:-"${buildopt_repo_root}/.tools/gradle-user-home/local"}
+if [[ ! -d "${buildopt_host_gradle_home}/wrapper/dists/gradle-9.6.1-bin" ]]; then
+    printf 'locked Gradle 9.6.1 distribution is unavailable in %s\n' \
+        "${buildopt_host_gradle_home}" >&2
+    exit 1
+fi
+
+buildopt_jq_url=https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-amd64
+buildopt_jq_expected=5942c9b0934e510ee61eb3e30273f1b3fe2590df93933a93d7c58b81d19c8ff5
+curl --fail --location --proto '=https' --tlsv1.2 \
+    --output "${buildopt_root}/jq" "${buildopt_jq_url}"
+buildopt_jq_actual=$(sha256sum "${buildopt_root}/jq" | awk '{print $1}')
+if [[ "${buildopt_jq_actual}" != "${buildopt_jq_expected}" ]]; then
+    printf 'locked POC-STABILITY-001 jq helper failed SHA-256 verification\n' >&2
+    exit 1
+fi
+chmod 0755 "${buildopt_root}/jq"
+
+buildopt_image=$(jq -er '.container.reference' "${buildopt_spec}")
+buildopt_platform_digest=$(jq -er '.container.platformDigest' "${buildopt_spec}")
+buildopt_cpu=$(jq -er '.runnerClass.cpuCount' "${buildopt_spec}")
+buildopt_memory=$(jq -er '.runnerClass.memoryBytes' "${buildopt_spec}")
+buildopt_jdk17_sha=$(jq -er \
+    '.artifacts[] | select(.id == "temurin-jdk-17") | .sha256' \
+    "${buildopt_repo_root}/dev/toolchains.lock.yaml")
+buildopt_jdk17_home=${BUILDOPT_JDK17_HOME:-${BUILDOPT_TOOLS_ROOT:-${buildopt_repo_root}/.tools}/toolchains/temurin-jdk-17-${buildopt_jdk17_sha:0:16}}
+if [[ ! -x "${buildopt_jdk17_home}/bin/javac" ]] ||
+    ! "${buildopt_jdk17_home}/bin/java" -version 2>&1 | grep -Eq 'version "17([.]|\")'; then
+    printf 'POC-STABILITY-001 requires locked Temurin 17\n' >&2
+    exit 1
+fi
+
+docker pull --quiet --platform linux/amd64 "${buildopt_image}" >/dev/null
+if ! docker image inspect "${buildopt_image}" |
+    jq -e --arg digest "${buildopt_platform_digest}" '
+        length == 1 and .[0].Os == "linux" and .[0].Architecture == "amd64" and
+        any(.[0].RepoDigests[]?; endswith("@" + $digest))
+    ' >/dev/null; then
+    printf 'local POC-STABILITY-001 image does not match the golden platform digest\n' >&2
+    exit 1
+fi
+
+buildopt_prepare_arm() {
+    local buildopt_arm=$1
+    local buildopt_arm_lower=${buildopt_arm,,}
+    local buildopt_dir="${buildopt_root}/${buildopt_arm_lower}"
+    mkdir -p -- "${buildopt_dir}/bin" "${buildopt_dir}/output" \
+        "${buildopt_dir}/gradle-home/wrapper" "${buildopt_dir}/home" \
+        "${buildopt_dir}/package"
+    cp -R -- "${buildopt_host_gradle_home}/wrapper/dists" \
+        "${buildopt_dir}/gradle-home/wrapper/"
+    cp -- "${buildopt_root}/jq" "${buildopt_dir}/bin/jq"
+    tar -xzf "${buildopt_archive}" -C "${buildopt_dir}/package"
+    local buildopt_package_root
+    buildopt_package_root=$(find "${buildopt_dir}/package" \
+        -mindepth 1 -maxdepth 1 -type d \
+        -name 'buildopt-0.3.0-stability001-linux-amd64')
+    if [[ -z "${buildopt_package_root}" ]]; then
+        printf 'POC-STABILITY-001 package layout is unavailable for %s\n' \
+            "${buildopt_arm}" >&2
+        exit 1
+    fi
+    "${buildopt_package_root}/install.sh" \
+        --prefix "${buildopt_dir}/install" >/dev/null
+    "${buildopt_dir}/install/bin/buildopt" doctor >/dev/null
+}
+
+buildopt_run_arm_container() {
+    local buildopt_arm=$1
+    local buildopt_arm_lower=${buildopt_arm,,}
+    local buildopt_dir="${buildopt_root}/${buildopt_arm_lower}"
+    docker run --rm --pull never --network none --platform linux/amd64 \
+        --cpus "${buildopt_cpu}" --memory "${buildopt_memory}" \
+        --user "$(id -u):$(id -g)" \
+        --env HOME=/benchmark/home \
+        --env GRADLE_USER_HOME=/benchmark/gradle-home \
+        --env JAVA_HOME=/opt/java/openjdk \
+        --env BUILDOPT_POC_BREADTH_ARM="${buildopt_arm}" \
+        --env BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS=/opt/java/jdk17,/opt/java/openjdk \
+        --env LANG=C.UTF-8 --env LC_ALL=C.UTF-8 --env TZ=UTC \
+        --env PATH=/benchmark/bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+        --volume "${buildopt_repo_root}:/workspace:ro" \
+        --volume "${buildopt_jdk17_home}:/opt/java/jdk17:ro" \
+        --volume "${buildopt_dir}:/benchmark" \
+        --workdir /workspace \
+        "${buildopt_image}" \
+        /workspace/dev/run-poc-breadth \
+            "/benchmark/output/${buildopt_arm_lower}.json" \
+            "${buildopt_revision}" \
+            /benchmark/install
+}
+
+buildopt_prepare_arm CONTROL
+buildopt_prepare_arm CANDIDATE
+if [[ "${buildopt_arm_order}" == CONTROL_FIRST ]]; then
+    buildopt_run_arm_container CONTROL
+    buildopt_run_arm_container CANDIDATE
+else
+    buildopt_run_arm_container CANDIDATE
+    buildopt_run_arm_container CONTROL
+fi
+
+"${buildopt_script_dir}/assemble-poc-stability" \
+    "${buildopt_output}" "${buildopt_batch_id}" "${buildopt_arm_order}" \
+    "${buildopt_root}/control/output/control.json" \
+    "${buildopt_root}/candidate/output/candidate.json"
+
+printf 'BuildOpt POC-STABILITY-001 strict batch written to %s\n' "${buildopt_output}"
