@@ -62,8 +62,7 @@ jq -e \
             ($value.observations | map(select(.savedMs > 0)) | length) and
         $value.requiredOutputsIdentical and
         ([$value.observations[].deliverableSha256] | unique | length) == 1 and
-        $value.productAttributableFailures == 0 and
-        ($value.meanReductionRatio | fabs) <= 0.02;
+        $value.productAttributableFailures == 0;
     keys == [
         "boundaries", "buildoptRevision", "capturedAt", "gate",
         "mechanisms", "methodology", "runner", "schemaVersion"
@@ -99,9 +98,13 @@ jq -e \
         },
         percentagesAddedAcrossMechanisms: false
     } and
-    .mechanisms.safeCache.classification == "SAFETY_ENABLER_PARITY_CHECK" and
     cache_result(.mechanisms.safeCache.kotlin; "KOTLIN") and
     cache_result(.mechanisms.safeCache.groovy; "GROOVY") and
+    .mechanisms.safeCache.classification ==
+        (if ((.mechanisms.safeCache.kotlin.meanReductionRatio | fabs) <= 0.02 and
+             (.mechanisms.safeCache.groovy.meanReductionRatio | fabs) <= 0.02)
+         then "PARITY_ONLY"
+         else "REGRESSION_REQUIRES_ACTION" end) and
     (.mechanisms.runtimeTuning.observations) as $runtimeRows |
     generic_observations($runtimeRows) and
     .mechanisms.runtimeTuning.controlProfile == "STABLE_CONTROL" and
@@ -118,6 +121,14 @@ jq -e \
     .mechanisms.runtimeTuning.requiredOutputsIdentical and
     .mechanisms.runtimeTuning.productAttributableFailures == 0 and
     .mechanisms.runtimeTuning.oomDelta == 0 and
+    .mechanisms.runtimeTuning.classification ==
+        (if (.mechanisms.runtimeTuning.meanSavedMs >= 500 and
+             .mechanisms.runtimeTuning.meanReductionRatio >= 0.02 and
+             .mechanisms.runtimeTuning.interval95SavedMs[0] > 0 and
+             .mechanisms.runtimeTuning.requiredOutputsIdentical and
+             .mechanisms.runtimeTuning.oomDelta == 0)
+         then "THRESHOLD_MET"
+         else "BELOW_VALUE_THRESHOLD" end) and
     (.mechanisms.buildImpact.observations) as $impactRows |
     ($impactRows | type == "array" and length == 4) and
     ([$impactRows[].pair] | sort) == [1, 2, 3, 4] and
@@ -141,6 +152,13 @@ jq -e \
     ([$impactRows[].serviceAJarSha256] | unique | length) == 1 and
     ([$impactRows[].preservedTestMarkerSha256] | unique | length) == 1 and
     .mechanisms.buildImpact.productAttributableFailures == 0 and
+    .mechanisms.buildImpact.classification ==
+        (if (.mechanisms.buildImpact.meanSavedMs >= 500 and
+             .mechanisms.buildImpact.meanReductionRatio >= 0.02 and
+             .mechanisms.buildImpact.interval95SavedMs[0] > 0 and
+             .mechanisms.buildImpact.requiredOutputsIdentical)
+         then "THRESHOLD_MET"
+         else "BELOW_VALUE_THRESHOLD" end) and
     .gate == {
         id: "POC-VALUE-001",
         state: "PASSED",

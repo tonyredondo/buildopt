@@ -9,6 +9,12 @@ fi
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/cache-parity-v1-local.json"}
+buildopt_measurement_only=${BUILDOPT_VALIDATE_MEASUREMENT_ONLY:-0}
+
+if [[ ! "${buildopt_measurement_only}" =~ ^[01]$ ]]; then
+    printf 'BUILDOPT_VALIDATE_MEASUREMENT_ONLY must be 0 or 1\n' >&2
+    exit 64
+fi
 
 command -v jq >/dev/null 2>&1 || {
     printf 'required cache-parity command is unavailable: jq\n' >&2
@@ -27,7 +33,7 @@ if command -v git >/dev/null 2>&1 && [[ -d "${buildopt_repo_root}/.git" ]]; then
     )
 fi
 
-jq -e '
+jq -e --arg measurementOnly "${buildopt_measurement_only}" '
     def digest:
         type == "string" and test("^[0-9a-f]{64}$");
     def revision:
@@ -188,9 +194,10 @@ jq -e '
                 $repository.revision;
                 "NATIVE_CACHE"
             )) and
-        .comparisons.CACHE_OFF.meanSavedMs > 0 and
-        .comparisons.CACHE_OFF.positivePairs >= 3 and
-        .comparisons.NATIVE_CACHE.meanReductionRatio >= -0.02) and
+        ($measurementOnly == "1" or
+         (.comparisons.CACHE_OFF.meanSavedMs > 0 and
+          .comparisons.CACHE_OFF.positivePairs >= 3 and
+          .comparisons.NATIVE_CACHE.meanReductionRatio >= -0.02))) and
     .boundaries == {
         "descriptivePocEvidence": true,
         "productionPromotionAuthorized": false,

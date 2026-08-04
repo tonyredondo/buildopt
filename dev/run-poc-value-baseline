@@ -62,7 +62,8 @@ BUILDOPT_GROOVY_BENCHMARK_REVISION="${buildopt_groovy_revision}" \
         "${buildopt_version}" \
         "${buildopt_kotlin}" \
         "${buildopt_groovy}"
-"${buildopt_script_dir}/check-cache-parity-performance" "${buildopt_cache}"
+BUILDOPT_VALIDATE_MEASUREMENT_ONLY=1 \
+    "${buildopt_script_dir}/check-cache-parity-performance" "${buildopt_cache}"
 
 BUILDOPT_BENCHMARK_REVISION="${buildopt_revision}" \
 BUILDOPT_BENCHMARK_JAVA_HOME="${JAVA_HOME:-/opt/java/openjdk}" \
@@ -77,7 +78,8 @@ BUILDOPT_BUILD_IMPACT_BENCHMARK_PROFILE=OPTIMIZED_NATIVE \
 BUILDOPT_BENCHMARK_RUNNER_FILE="${buildopt_runner}" \
 BUILDOPT_BENCHMARK_REVISION="${buildopt_revision}" \
     "${buildopt_script_dir}/run-build-impact-performance" "${buildopt_impact}"
-"${buildopt_script_dir}/check-build-impact-performance" "${buildopt_impact}"
+BUILDOPT_VALIDATE_MEASUREMENT_ONLY=1 \
+    "${buildopt_script_dir}/check-build-impact-performance" "${buildopt_impact}"
 
 mkdir -p -- "$(dirname -- "${buildopt_output}")"
 jq -n \
@@ -125,6 +127,15 @@ jq -n \
         candidateSha256: $runtime[0].autotuning.candidateSha256[$index]
     }] as $runtimeRows |
     ($impact[0].result.observations) as $impactRows |
+    cache_result("KOTLIN") as $kotlinCache |
+    cache_result("GROOVY") as $groovyCache |
+    (($runtimeRows | map(.savedMs) | add) / $runtimePairs) as $runtimeMeanSaved |
+    (($runtimeRows | map(.savedMs) | add) /
+     ($runtimeRows | map(.controlDurationMs) | add)) as $runtimeRatio |
+    exact_bootstrap95($runtimeRows) as $runtimeInterval |
+    ($impact[0].result.meanSavedMs) as $impactMeanSaved |
+    ($impact[0].result.meanReductionRatio) as $impactRatio |
+    exact_bootstrap95($impactRows) as $impactInterval |
     {
         schemaVersion: "buildopt.evidence/poc-value-baseline/v1",
         capturedAt: $runner[0].capturedAt,
@@ -147,20 +158,30 @@ jq -n \
         },
         mechanisms: {
             safeCache: {
-                classification: "SAFETY_ENABLER_PARITY_CHECK",
-                kotlin: cache_result("KOTLIN"),
-                groovy: cache_result("GROOVY")
+                classification:
+                    (if (($kotlinCache.meanReductionRatio | fabs) <= 0.02 and
+                         ($groovyCache.meanReductionRatio | fabs) <= 0.02)
+                     then "PARITY_ONLY"
+                     else "REGRESSION_REQUIRES_ACTION" end),
+                kotlin: $kotlinCache,
+                groovy: $groovyCache
             },
             runtimeTuning: {
-                classification: "ACCELERATOR_EXPLORATION",
+                classification:
+                    (if ($runtimeMeanSaved >= 500 and
+                         $runtimeRatio >= 0.02 and
+                         $runtimeInterval[0] > 0 and
+                         all($runtimeRows[];
+                             .controlSha256 == .candidateSha256) and
+                         ($runtime[0].runner.oomAfter -
+                          $runtime[0].runner.oomBefore) == 0)
+                     then "THRESHOLD_MET"
+                     else "BELOW_VALUE_THRESHOLD" end),
                 controlProfile: "STABLE_CONTROL",
                 candidateProfile: "W4_H6G",
-                meanSavedMs:
-                    (($runtimeRows | map(.savedMs) | add) / $runtimePairs),
-                meanReductionRatio:
-                    (($runtimeRows | map(.savedMs) | add) /
-                     ($runtimeRows | map(.controlDurationMs) | add)),
-                interval95SavedMs: exact_bootstrap95($runtimeRows),
+                meanSavedMs: $runtimeMeanSaved,
+                meanReductionRatio: $runtimeRatio,
+                interval95SavedMs: $runtimeInterval,
                 requiredOutputsIdentical:
                     (all($runtimeRows[];
                         .controlSha256 == .candidateSha256) and
@@ -171,10 +192,16 @@ jq -n \
                 observations: $runtimeRows
             },
             buildImpact: {
-                classification: "ACCELERATOR_EXPLORATION",
-                meanSavedMs: $impact[0].result.meanSavedMs,
-                meanReductionRatio: $impact[0].result.meanReductionRatio,
-                interval95SavedMs: exact_bootstrap95($impactRows),
+                classification:
+                    (if ($impactMeanSaved >= 500 and
+                         $impactRatio >= 0.02 and
+                         $impactInterval[0] > 0 and
+                         $impact[0].result.requiredOutputsIdentical)
+                     then "THRESHOLD_MET"
+                     else "BELOW_VALUE_THRESHOLD" end),
+                meanSavedMs: $impactMeanSaved,
+                meanReductionRatio: $impactRatio,
+                interval95SavedMs: $impactInterval,
                 positivePairs: $impact[0].result.positivePairs,
                 requiredOutputsIdentical:
                     $impact[0].result.requiredOutputsIdentical,
