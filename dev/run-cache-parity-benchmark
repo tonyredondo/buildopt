@@ -76,7 +76,9 @@ benchmark_run_arm() {
     local benchmark_completed
     local benchmark_status
 
-    find "${benchmark_workspace}" -type d -name build -prune -exec rm -rf -- {} +
+    find "${benchmark_workspace}" -type d -name build \
+        ! -path "${benchmark_workspace}/buildSrc/build" \
+        -prune -exec rm -rf -- {} +
     if [[ "${benchmark_profile}" == LEGACY ]]; then
         rm -rf -- "${benchmark_workspace}/.gradle"
     fi
