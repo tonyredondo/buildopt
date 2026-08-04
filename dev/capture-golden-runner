@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)) || [[ "$1" != /* || -e "$1" ]]; then
+    printf 'usage: %s ABSENT_ABSOLUTE_OUTPUT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+
+for buildopt_command in awk date jq sha256sum uname; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required golden-runner command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+if [[ ! -r /sys/fs/cgroup/cpu.max || ! -r /sys/fs/cgroup/memory.max ]]; then
+    printf 'golden runner requires cgroup v2 CPU and memory limits\n' >&2
+    exit 1
+fi
+
+buildopt_runner_id=$(jq -er '.runnerClass.id' "${buildopt_spec}")
+buildopt_expected_cpu=$(jq -er '.runnerClass.cpuCount' "${buildopt_spec}")
+buildopt_expected_memory=$(jq -er '.runnerClass.memoryBytes' "${buildopt_spec}")
+buildopt_expected_os=$(jq -er '.runnerClass.operatingSystem' "${buildopt_spec}")
+buildopt_expected_arch=$(jq -er '.runnerClass.architecture' "${buildopt_spec}")
+buildopt_expected_java=$(jq -er '.jdk.version' "${buildopt_spec}")
+buildopt_platform_digest=$(jq -er '.container.platformDigest' "${buildopt_spec}")
+read -r buildopt_cpu_quota buildopt_cpu_period </sys/fs/cgroup/cpu.max
+buildopt_memory_limit=$(</sys/fs/cgroup/memory.max)
+
+if [[ "${buildopt_cpu_quota}" == max ]] ||
+    ((buildopt_cpu_quota != buildopt_expected_cpu * buildopt_cpu_period)); then
+    printf 'golden runner expected %s CPUs, found cgroup quota %s/%s\n' \
+        "${buildopt_expected_cpu}" "${buildopt_cpu_quota}" "${buildopt_cpu_period}" >&2
+    exit 1
+fi
+if [[ "${buildopt_memory_limit}" != "${buildopt_expected_memory}" ]]; then
+    printf 'golden runner expected memory.max=%s, found %s\n' \
+        "${buildopt_expected_memory}" "${buildopt_memory_limit}" >&2
+    exit 1
+fi
+
+buildopt_os=$(uname -s)
+buildopt_arch=$(uname -m)
+if [[ "${buildopt_expected_os}/${buildopt_expected_arch}" != linux/amd64 ||
+    "${buildopt_os}/${buildopt_arch}" != Linux/x86_64 ]]; then
+    printf 'golden runner platform mismatch: expected %s/%s, found %s/%s\n' \
+        "${buildopt_expected_os}" "${buildopt_expected_arch}" \
+        "${buildopt_os}" "${buildopt_arch}" >&2
+    exit 1
+fi
+
+buildopt_java_settings=$(java -XshowSettings:properties -version 2>&1)
+buildopt_java_version=$(awk -F'= ' \
+    '/^[[:space:]]*java.runtime.version = / {print $2; exit}' \
+    <<<"${buildopt_java_settings}")
+buildopt_java_vendor=$(awk -F'= ' \
+    '/^[[:space:]]*java.vendor = / {print $2; exit}' \
+    <<<"${buildopt_java_settings}")
+if [[ "${buildopt_java_version}" != "${buildopt_expected_java}" &&
+    "${buildopt_java_version}" != "${buildopt_expected_java}-"* ]]; then
+    printf 'golden runner expected Java %s, found %s\n' \
+        "${buildopt_expected_java}" "${buildopt_java_version:-unknown}" >&2
+    exit 1
+fi
+
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+jq -n \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg id "${buildopt_runner_id}" \
+    --arg os "${buildopt_os}" \
+    --arg architecture "${buildopt_arch}" \
+    --arg java "${buildopt_java_version}" \
+    --arg javaVendor "${buildopt_java_vendor}" \
+    --arg specSha256 "${buildopt_spec_sha}" \
+    --arg platformDigest "${buildopt_platform_digest}" \
+    --arg cpuMax "${buildopt_cpu_quota} ${buildopt_cpu_period}" \
+    --arg memoryMax "${buildopt_memory_limit}" \
+    --argjson cpuCount "${buildopt_expected_cpu}" \
+    --argjson memoryBytes "${buildopt_expected_memory}" '{
+        schemaVersion: "buildopt.evidence/golden-runner-observation/v1",
+        capturedAt: $capturedAt,
+        id: $id,
+        operatingSystem: $os,
+        architecture: $architecture,
+        cpuCount: $cpuCount,
+        memoryBytes: $memoryBytes,
+        java: $java,
+        javaVendor: $javaVendor,
+        runnerSpecSha256: $specSha256,
+        containerPlatformDigest: $platformDigest,
+        cgroup: {cpuMax: $cpuMax, memoryMax: $memoryMax},
+        qualifiedGoldenRunner: true
+    }' >"${buildopt_output}"
+chmod 0600 "${buildopt_output}"
+
+printf 'BuildOpt golden runner captured: %s\n' "${buildopt_runner_id}"

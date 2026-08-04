@@ -128,21 +128,42 @@ jq -e '
     (.runner.cpuCount | positive_number and floor == .) and
     (.runner.memoryBytes | positive_number and floor == .) and
     (.runner.java | type == "string" and length > 0) and
-    (.runner.qualifiedGoldenRunner == false) and
-    .design == {
-        "pairsPerComparison": 4,
-        "order": "PAIRED_ALTERNATING",
-        "task": ":app:distZip",
-        "configurationCache": false,
-        "publicOnboardingCommand":
-            "buildopt gradle --no-daemon --no-configuration-cache clean :app:distZip",
-        "comparisons": {
-            "CACHE_OFF":
-                "Gradle with build cache disabled versus BuildOpt cache-only fast path",
-            "NATIVE_CACHE":
-                "Gradle native local cache versus BuildOpt cache-only fast path"
-        }
-    } and
+    (if .runner.qualifiedGoldenRunner
+     then .runner.cpuCount == 4 and .runner.memoryBytes == 17179869184
+     else true
+     end) and
+    (.design == {
+            "pairsPerComparison": 4,
+            "order": "PAIRED_ALTERNATING",
+            "task": ":app:distZip",
+            "configurationCache": false,
+            "publicOnboardingCommand":
+                "buildopt gradle --no-daemon --no-configuration-cache clean :app:distZip",
+            "comparisons": {
+                "CACHE_OFF":
+                    "Gradle with build cache disabled versus BuildOpt cache-only fast path",
+                "NATIVE_CACHE":
+                    "Gradle native local cache versus BuildOpt cache-only fast path"
+            }
+        } or
+     .design == {
+            "pairsPerComparison": 4,
+            "order": "PAIRED_ALTERNATING",
+            "task": ":app:distZip",
+            "configurationCache": true,
+            "daemonPolicy": "ENABLED_SEPARATE_WARM_HOMES",
+            "profile": "OPTIMIZED_NATIVE",
+            "publicOnboardingCommand":
+                "buildopt gradle --parallel --configuration-cache clean :app:distZip",
+            "nativeControlCommand":
+                "./gradlew --parallel --configuration-cache --build-cache clean :app:distZip",
+            "comparisons": {
+                "CACHE_OFF":
+                    "Gradle with build cache disabled versus BuildOpt cache-only fast path",
+                "NATIVE_CACHE":
+                    "Gradle native local cache versus BuildOpt cache-only fast path"
+            }
+        }) and
     (.repositories | type == "array" and length == 2) and
     ([.repositories[] | [.nameWithOwner, .dsl]] | sort) == [
         ["tonyredondo/buildopt-pilot", "KOTLIN"],

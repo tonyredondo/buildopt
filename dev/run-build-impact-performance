@@ -10,6 +10,22 @@ benchmark_output=$1
 benchmark_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 benchmark_repo_root=$(cd -- "${benchmark_script_dir}/.." && pwd)
 benchmark_fixture="${benchmark_repo_root}/fixtures/build-impact/synthetic-repository"
+benchmark_profile=${BUILDOPT_BUILD_IMPACT_BENCHMARK_PROFILE:-LEGACY}
+benchmark_runner_file=${BUILDOPT_BENCHMARK_RUNNER_FILE:-}
+
+case "${benchmark_profile}" in
+    LEGACY | OPTIMIZED_NATIVE) ;;
+    *)
+        printf 'unknown Build Impact benchmark profile: %s\n' \
+            "${benchmark_profile}" >&2
+        exit 64
+        ;;
+esac
+if [[ -n "${benchmark_runner_file}" && ! -f "${benchmark_runner_file}" ]]; then
+    printf 'Build Impact runner observation is unavailable: %s\n' \
+        "${benchmark_runner_file}" >&2
+    exit 64
+fi
 
 if [[ "${benchmark_output}" != /* || -e "${benchmark_output}" ]]; then
     printf 'output must be a new absolute path\n' >&2
@@ -74,7 +90,9 @@ benchmark_run_arm() {
     local -a benchmark_tasks
 
     find "${benchmark_workspace}" -type d -name build -prune -exec rm -rf -- {} +
-    rm -rf -- "${benchmark_workspace}/.gradle"
+    if [[ "${benchmark_profile}" == LEGACY ]]; then
+        rm -rf -- "${benchmark_workspace}/.gradle"
+    fi
     case "${benchmark_arm}" in
         FULL_GRAPH)
             benchmark_tasks=(assemble testOwnedCheck)
@@ -90,11 +108,15 @@ benchmark_run_arm() {
 
     benchmark_started=$(date +%s%N)
     set +e
-    GRADLE_USER_HOME="${benchmark_repo_root}/.tools/gradle-user-home/local" \
+    local -a benchmark_gradle_arguments=(--offline)
+    if [[ "${benchmark_profile}" == OPTIMIZED_NATIVE ]]; then
+        benchmark_gradle_arguments+=(--parallel --configuration-cache)
+    else
+        benchmark_gradle_arguments+=(--no-daemon --no-configuration-cache)
+    fi
+    GRADLE_USER_HOME="${GRADLE_USER_HOME:-${benchmark_repo_root}/.tools/gradle-user-home/local}" \
         "${benchmark_repo_root}/gradlew" \
-        --offline \
-        --no-daemon \
-        --no-configuration-cache \
+        "${benchmark_gradle_arguments[@]}" \
         --no-build-cache \
         --console=plain \
         --warning-mode=fail \
@@ -121,6 +143,14 @@ benchmark_run_arm() {
     elif grep -Fq ':service-b:' "${benchmark_log}"; then
         printf 'selected graph unexpectedly executed service-b\n' >&2
         exit 1
+    fi
+    if [[ "${benchmark_profile}" == OPTIMIZED_NATIVE &&
+        "${benchmark_log}" != *warm-* ]]; then
+        grep -Fq 'Reusing configuration cache.' "${benchmark_log}" || {
+            printf '%s did not reuse Configuration Cache\n' "${benchmark_arm}" >&2
+            sed -n '1,240p' "${benchmark_log}" >&2
+            exit 1
+        }
     fi
 
     local benchmark_service_a="${benchmark_workspace}/service-a/build/libs/service-a-1.0.jar"
@@ -202,13 +232,41 @@ benchmark_cpu_count=$(getconf _NPROCESSORS_ONLN)
 benchmark_page_size=$(getconf PAGESIZE)
 benchmark_physical_pages=$(getconf _PHYS_PAGES)
 benchmark_memory_bytes=$((benchmark_page_size * benchmark_physical_pages))
+benchmark_revision=${BUILDOPT_BENCHMARK_REVISION:-}
+if [[ -z "${benchmark_revision}" ]]; then
+    if ! command -v git >/dev/null 2>&1; then
+        printf 'Build Impact benchmark requires git or BUILDOPT_BENCHMARK_REVISION\n' >&2
+        exit 1
+    fi
+    benchmark_revision=$(git -C "${benchmark_repo_root}" rev-parse HEAD)
+fi
+if [[ ! "${benchmark_revision}" =~ ^[0-9a-f]{40}$ ]]; then
+    printf 'invalid Build Impact benchmark revision: %s\n' "${benchmark_revision}" >&2
+    exit 64
+fi
+benchmark_qualified=false
+benchmark_configuration_cache=false
+benchmark_daemon_policy=DISABLED
+if [[ "${benchmark_profile}" == OPTIMIZED_NATIVE ]]; then
+    benchmark_configuration_cache=true
+    benchmark_daemon_policy=ENABLED_SEPARATE_WARM_WORKSPACES
+fi
+if [[ -n "${benchmark_runner_file}" ]]; then
+    benchmark_cpu_count=$(jq -er '.cpuCount' "${benchmark_runner_file}")
+    benchmark_memory_bytes=$(jq -er '.memoryBytes' "${benchmark_runner_file}")
+    benchmark_qualified=$(jq -er '.qualifiedGoldenRunner' "${benchmark_runner_file}")
+fi
 jq -s \
     --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-    --arg buildoptRevision "$(git -C "${benchmark_repo_root}" rev-parse HEAD)" \
+    --arg buildoptRevision "${benchmark_revision}" \
     --arg runnerOs "$(uname -s)" \
     --arg runnerArchitecture "$(uname -m)" \
+    --arg profile "${benchmark_profile}" \
+    --arg daemonPolicy "${benchmark_daemon_policy}" \
     --argjson runnerCpuCount "${benchmark_cpu_count}" \
-    --argjson runnerMemoryBytes "${benchmark_memory_bytes}" '
+    --argjson runnerMemoryBytes "${benchmark_memory_bytes}" \
+    --argjson qualifiedGoldenRunner "${benchmark_qualified}" \
+    --argjson configurationCache "${benchmark_configuration_cache}" '
     . as $rows |
     {
         schemaVersion: "buildopt.benchmarks/build-impact-performance/v1",
@@ -219,13 +277,13 @@ jq -s \
             architecture: $runnerArchitecture,
             cpuCount: $runnerCpuCount,
             memoryBytes: $runnerMemoryBytes,
-            qualifiedGoldenRunner: false
+            qualifiedGoldenRunner: $qualifiedGoldenRunner
         },
-        design: {
+        design: ({
             pairs: 4,
             order: "PAIRED_ALTERNATING",
             cache: false,
-            configurationCache: false,
+            configurationCache: $configurationCache,
             changedPath: "library-c/src/main/java/synthetic/LibraryC.java",
             fullEntrypoints: ["assemble", "testOwnedCheck"],
             selectedEntrypoints: [":service-a:assemble", "testOwnedCheck"],
@@ -235,7 +293,12 @@ jq -s \
                 serviceA: 96,
                 serviceB: 2048
             }
-        },
+        } + if $profile == "OPTIMIZED_NATIVE" then {
+            daemonPolicy: $daemonPolicy,
+            profile: $profile,
+            fullControlCommand:
+                "./gradlew --parallel --configuration-cache --no-build-cache assemble testOwnedCheck"
+        } else {} end),
         result: {
             fullGraphMeanMs: ((map(.fullGraphDurationMs) | add) / length),
             selectedGraphMeanMs: ((map(.selectedGraphDurationMs) | add) / length),

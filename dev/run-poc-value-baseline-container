@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 3)); then
+    printf 'usage: %s OUTPUT_FILE KOTLIN_REPOSITORY GROOVY_REPOSITORY\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_kotlin=$2
+buildopt_groovy=$3
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
+    ! -d "${buildopt_kotlin}/.git" || ! -d "${buildopt_groovy}/.git" ]]; then
+    printf 'invalid POC value container input\n' >&2
+    exit 64
+fi
+for buildopt_command in awk curl docker git id jq mkdir mktemp sha256sum tar; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC value container command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+if [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)" ]]; then
+    printf 'POC value container requires a clean revision-bound checkout\n' >&2
+    exit 1
+fi
+if ! docker info >/dev/null 2>&1; then
+    printf 'Docker daemon is unavailable\n' >&2
+    exit 1
+fi
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-poc-value-container.XXXXXX")
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-poc-value-container."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_kotlin_revision=$(git -C "${buildopt_kotlin}" rev-parse HEAD)
+buildopt_groovy_revision=$(git -C "${buildopt_groovy}" rev-parse HEAD)
+buildopt_version=0.3.0-poc001
+buildopt_package_dir="${buildopt_root}/package"
+buildopt_extract_dir="${buildopt_root}/extract"
+buildopt_prefix="${buildopt_root}/prefix"
+buildopt_benchmark_dir="${buildopt_root}/benchmark"
+mkdir -p -- "${buildopt_package_dir}" "${buildopt_extract_dir}" \
+    "${buildopt_prefix}" "${buildopt_benchmark_dir}/bin" \
+    "${buildopt_benchmark_dir}/output" "${buildopt_benchmark_dir}/gradle-home"
+
+"${buildopt_repo_root}/packaging/linux/package.sh" \
+    --version "${buildopt_version}" --output "${buildopt_package_dir}" >/dev/null
+buildopt_archive="${buildopt_package_dir}/buildopt-${buildopt_version}-linux-amd64.tar.gz"
+tar -xzf "${buildopt_archive}" -C "${buildopt_extract_dir}"
+"${buildopt_extract_dir}/buildopt-${buildopt_version}-linux-amd64/install.sh" \
+    --prefix "${buildopt_prefix}" >/dev/null
+
+buildopt_jq_url=https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-amd64
+buildopt_jq_expected=5942c9b0934e510ee61eb3e30273f1b3fe2590df93933a93d7c58b81d19c8ff5
+curl --fail --location --proto '=https' --tlsv1.2 \
+    --output "${buildopt_benchmark_dir}/bin/jq" "${buildopt_jq_url}"
+buildopt_jq_actual=$(sha256sum "${buildopt_benchmark_dir}/bin/jq" | awk '{print $1}')
+if [[ "${buildopt_jq_actual}" != "${buildopt_jq_expected}" ]]; then
+    printf 'locked POC value jq helper failed SHA-256 verification\n' >&2
+    exit 1
+fi
+chmod 0755 "${buildopt_benchmark_dir}/bin/jq"
+
+buildopt_image=$(jq -er '.container.reference' "${buildopt_spec}")
+buildopt_platform_digest=$(jq -er '.container.platformDigest' "${buildopt_spec}")
+buildopt_cpu=$(jq -er '.runnerClass.cpuCount' "${buildopt_spec}")
+buildopt_memory=$(jq -er '.runnerClass.memoryBytes' "${buildopt_spec}")
+docker pull --quiet --platform linux/amd64 "${buildopt_image}" >/dev/null
+if ! docker image inspect "${buildopt_image}" |
+    jq -e --arg digest "${buildopt_platform_digest}" '
+        length == 1 and .[0].Os == "linux" and .[0].Architecture == "amd64" and
+        any(.[0].RepoDigests[]?; endswith("@" + $digest))
+    ' >/dev/null; then
+    printf 'local POC value image does not match the golden platform digest\n' >&2
+    exit 1
+fi
+
+docker run --rm --pull never --network none --platform linux/amd64 \
+    --cpus "${buildopt_cpu}" --memory "${buildopt_memory}" \
+    --user "$(id -u):$(id -g)" \
+    --env HOME=/benchmark/home \
+    --env GRADLE_USER_HOME=/benchmark/gradle-home \
+    --env JAVA_HOME=/opt/java/openjdk \
+    --env LANG=C.UTF-8 --env LC_ALL=C.UTF-8 --env TZ=UTC \
+    --env PATH=/benchmark/bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+    --volume "${buildopt_repo_root}:/workspace:ro" \
+    --volume "${buildopt_prefix}:/buildopt:ro" \
+    --volume "${buildopt_kotlin}:/inputs/kotlin:ro" \
+    --volume "${buildopt_groovy}:/inputs/groovy:ro" \
+    --volume "${buildopt_benchmark_dir}:/benchmark" \
+    --workdir /workspace \
+    "${buildopt_image}" \
+    /workspace/dev/run-poc-value-baseline \
+        /benchmark/output/poc-value-baseline.json \
+        /buildopt "${buildopt_version}" \
+        /inputs/kotlin "${buildopt_kotlin_revision}" \
+        /inputs/groovy "${buildopt_groovy_revision}" \
+        "${buildopt_revision}"
+
+install -m 0600 \
+    "${buildopt_benchmark_dir}/output/poc-value-baseline.json" \
+    "${buildopt_output}"
+"${buildopt_script_dir}/check-poc-value-baseline" "${buildopt_output}"
+
+printf 'BuildOpt POC-VALUE-001 strict container evidence written to %s\n' \
+    "${buildopt_output}"

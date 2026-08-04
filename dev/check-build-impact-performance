@@ -59,22 +59,44 @@ jq -e '
     (.runner.architecture | type == "string" and length > 0) and
     (.runner.cpuCount | type == "number" and . > 0 and floor == .) and
     (.runner.memoryBytes | type == "number" and . > 0 and floor == .) and
-    .runner.qualifiedGoldenRunner == false and
-    .design == {
-        "pairs": 4,
-        "order": "PAIRED_ALTERNATING",
-        "cache": false,
-        "configurationCache": false,
-        "changedPath": "library-c/src/main/java/synthetic/LibraryC.java",
-        "fullEntrypoints": ["assemble", "testOwnedCheck"],
-        "selectedEntrypoints": [":service-a:assemble", "testOwnedCheck"],
-        "omittedProject": ":service-b",
-        "generatedSources": {
-            "libraryC": 96,
-            "serviceA": 96,
-            "serviceB": 2048
-        }
-    } and
+    (if .runner.qualifiedGoldenRunner
+     then .runner.cpuCount == 4 and .runner.memoryBytes == 17179869184
+     else true
+     end) and
+    (.design == {
+            "pairs": 4,
+            "order": "PAIRED_ALTERNATING",
+            "cache": false,
+            "configurationCache": false,
+            "changedPath": "library-c/src/main/java/synthetic/LibraryC.java",
+            "fullEntrypoints": ["assemble", "testOwnedCheck"],
+            "selectedEntrypoints": [":service-a:assemble", "testOwnedCheck"],
+            "omittedProject": ":service-b",
+            "generatedSources": {
+                "libraryC": 96,
+                "serviceA": 96,
+                "serviceB": 2048
+            }
+        } or
+     .design == {
+            "pairs": 4,
+            "order": "PAIRED_ALTERNATING",
+            "cache": false,
+            "configurationCache": true,
+            "changedPath": "library-c/src/main/java/synthetic/LibraryC.java",
+            "fullEntrypoints": ["assemble", "testOwnedCheck"],
+            "selectedEntrypoints": [":service-a:assemble", "testOwnedCheck"],
+            "omittedProject": ":service-b",
+            "generatedSources": {
+                "libraryC": 96,
+                "serviceA": 96,
+                "serviceB": 2048
+            },
+            "daemonPolicy": "ENABLED_SEPARATE_WARM_WORKSPACES",
+            "profile": "OPTIMIZED_NATIVE",
+            "fullControlCommand":
+                "./gradlew --parallel --configuration-cache --no-build-cache assemble testOwnedCheck"
+        }) and
     (.result | keys == [
         "fullGraphMeanMs",
         "meanReductionRatio",

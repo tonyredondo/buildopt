@@ -11,6 +11,21 @@ benchmark_buildopt=$2
 benchmark_version=$3
 benchmark_kotlin=$4
 benchmark_groovy=$5
+benchmark_profile=${BUILDOPT_CACHE_BENCHMARK_PROFILE:-LEGACY}
+benchmark_runner_file=${BUILDOPT_BENCHMARK_RUNNER_FILE:-}
+
+case "${benchmark_profile}" in
+    LEGACY | OPTIMIZED_NATIVE) ;;
+    *)
+        printf 'unknown cache benchmark profile: %s\n' "${benchmark_profile}" >&2
+        exit 64
+        ;;
+esac
+if [[ -n "${benchmark_runner_file}" && ! -f "${benchmark_runner_file}" ]]; then
+    printf 'cache benchmark runner observation is unavailable: %s\n' \
+        "${benchmark_runner_file}" >&2
+    exit 64
+fi
 
 if [[ "${benchmark_output}" != /* || -e "${benchmark_output}" ||
     ! -x "${benchmark_buildopt}" ||
@@ -19,17 +34,23 @@ if [[ "${benchmark_output}" != /* || -e "${benchmark_output}" ||
     exit 64
 fi
 for benchmark_repository in "${benchmark_kotlin}" "${benchmark_groovy}"; do
-    if [[ ! -d "${benchmark_repository}/.git" ]]; then
-        printf 'benchmark repository is not a Git checkout: %s\n' "${benchmark_repository}" >&2
+    if [[ ! -d "${benchmark_repository}" ]]; then
+        printf 'benchmark repository is unavailable: %s\n' "${benchmark_repository}" >&2
         exit 64
     fi
 done
-for benchmark_command in awk date find getconf git grep java jq mkdir mktemp rm sha256sum tar uname; do
+for benchmark_command in awk date find getconf grep java jq mkdir mktemp rm sha256sum tar uname; do
     command -v "${benchmark_command}" >/dev/null 2>&1 || {
         printf 'required benchmark command is unavailable: %s\n' "${benchmark_command}" >&2
         exit 1
     }
 done
+if ! command -v git >/dev/null 2>&1 &&
+    { [[ -z "${BUILDOPT_KOTLIN_BENCHMARK_REVISION:-}" ]] ||
+        [[ -z "${BUILDOPT_GROOVY_BENCHMARK_REVISION:-}" ]]; }; then
+    printf 'cache benchmark requires git or explicit pilot revisions\n' >&2
+    exit 1
+fi
 
 benchmark_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-cache-parity.XXXXXX")
 benchmark_raw="${benchmark_root}/observations.jsonl"
@@ -56,8 +77,17 @@ benchmark_run_arm() {
     local benchmark_status
 
     find "${benchmark_workspace}" -type d -name build -prune -exec rm -rf -- {} +
-    rm -rf -- "${benchmark_workspace}/.gradle"
+    if [[ "${benchmark_profile}" == LEGACY ]]; then
+        rm -rf -- "${benchmark_workspace}/.gradle"
+    fi
     mkdir -p -- "${benchmark_gradle_home}" "${benchmark_user_cache}"
+    if [[ -n "${BUILDOPT_BENCHMARK_GRADLE_SEED_HOME:-}" &&
+        -d "${BUILDOPT_BENCHMARK_GRADLE_SEED_HOME}/wrapper/dists" &&
+        ! -d "${benchmark_gradle_home}/wrapper/dists" ]]; then
+        mkdir -p -- "${benchmark_gradle_home}/wrapper"
+        cp -R -- "${BUILDOPT_BENCHMARK_GRADLE_SEED_HOME}/wrapper/dists" \
+            "${benchmark_gradle_home}/wrapper/"
+    fi
 
     local -a benchmark_environment=(
         env
@@ -72,14 +102,12 @@ benchmark_run_arm() {
         "GRADLE_USER_HOME=${benchmark_gradle_home}"
         "XDG_CACHE_HOME=${benchmark_user_cache}"
     )
-    local -a benchmark_arguments=(
-        gradle
-        --no-daemon
-        --no-configuration-cache
-        --stacktrace
-        --warning-mode=fail
-        --console=plain
-    )
+    local -a benchmark_arguments=(--stacktrace --warning-mode=fail --console=plain)
+    if [[ "${benchmark_profile}" == OPTIMIZED_NATIVE ]]; then
+        benchmark_arguments+=(--parallel --configuration-cache)
+    else
+        benchmark_arguments+=(--no-daemon --no-configuration-cache)
+    fi
     case "${benchmark_arm}" in
         CACHE_OFF)
             benchmark_environment+=("BUILDOPT_BYPASS=1")
@@ -98,11 +126,18 @@ benchmark_run_arm() {
     esac
     benchmark_arguments+=(clean :app:distZip)
 
+    local -a benchmark_command
+    if [[ "${benchmark_arm}" == BUILDOPT ]]; then
+        benchmark_command=("${benchmark_buildopt}" gradle)
+    else
+        benchmark_command=("${benchmark_workspace}/gradlew")
+    fi
+
     benchmark_started=$(date +%s%N)
     set +e
     (
         cd -- "${benchmark_workspace}"
-        "${benchmark_environment[@]}" "${benchmark_buildopt}" \
+        "${benchmark_environment[@]}" "${benchmark_command[@]}" \
             "${benchmark_arguments[@]}"
     ) >"${benchmark_log}" 2>&1
     benchmark_status=$?
@@ -149,6 +184,14 @@ benchmark_run_arm() {
         printf 'BuildOpt cache-only candidate unexpectedly enabled telemetry\n' >&2
         exit 1
     fi
+    if [[ "${benchmark_profile}" == OPTIMIZED_NATIVE &&
+        "${benchmark_expected_cache_state}" == HIT ]]; then
+        grep -Fq 'Reusing configuration cache.' "${benchmark_log}" || {
+            printf '%s did not reuse Configuration Cache\n' "${benchmark_arm}" >&2
+            sed -n '1,240p' "${benchmark_log}" >&2
+            exit 1
+        }
+    fi
 
     local benchmark_deliverable="${benchmark_workspace}/app/build/distributions/app-1.0.0.zip"
     if [[ ! -s "${benchmark_deliverable}" ]]; then
@@ -164,17 +207,40 @@ benchmark_measure_repository() {
     local benchmark_name=$2
     local benchmark_dsl=$3
     local benchmark_revision
-    benchmark_revision=$(git -C "${benchmark_repository}" rev-parse HEAD)
+    if [[ "${benchmark_dsl}" == KOTLIN &&
+        -n "${BUILDOPT_KOTLIN_BENCHMARK_REVISION:-}" ]]; then
+        benchmark_revision=${BUILDOPT_KOTLIN_BENCHMARK_REVISION}
+    elif [[ "${benchmark_dsl}" == GROOVY &&
+        -n "${BUILDOPT_GROOVY_BENCHMARK_REVISION:-}" ]]; then
+        benchmark_revision=${BUILDOPT_GROOVY_BENCHMARK_REVISION}
+    else
+        benchmark_revision=$(git -C "${benchmark_repository}" rev-parse HEAD)
+    fi
+    if [[ ! "${benchmark_revision}" =~ ^[0-9a-f]{40}$ ]]; then
+        printf 'invalid %s pilot revision: %s\n' \
+            "${benchmark_dsl}" "${benchmark_revision}" >&2
+        exit 64
+    fi
 
     for benchmark_comparison in CACHE_OFF NATIVE_CACHE; do
         local benchmark_comparison_root="${benchmark_root}/${benchmark_dsl,,}-${benchmark_comparison,,}"
         local benchmark_control="${benchmark_comparison_root}/control"
         local benchmark_candidate="${benchmark_comparison_root}/candidate"
         mkdir -p -- "${benchmark_control}" "${benchmark_candidate}"
-        git -C "${benchmark_repository}" archive --format=tar "${benchmark_revision}" |
-            tar -xf - -C "${benchmark_control}"
-        git -C "${benchmark_repository}" archive --format=tar "${benchmark_revision}" |
-            tar -xf - -C "${benchmark_candidate}"
+        if command -v git >/dev/null 2>&1 &&
+            [[ -d "${benchmark_repository}/.git" ]]; then
+            git -C "${benchmark_repository}" archive --format=tar "${benchmark_revision}" |
+                tar -xf - -C "${benchmark_control}"
+            git -C "${benchmark_repository}" archive --format=tar "${benchmark_revision}" |
+                tar -xf - -C "${benchmark_candidate}"
+        else
+            tar -C "${benchmark_repository}" \
+                --exclude=.git --exclude=.gradle --exclude='*/build' -cf - . |
+                tar -xf - -C "${benchmark_control}"
+            tar -C "${benchmark_repository}" \
+                --exclude=.git --exclude=.gradle --exclude='*/build' -cf - . |
+                tar -xf - -C "${benchmark_candidate}"
+        fi
 
         local benchmark_control_home="${benchmark_comparison_root}/control-gradle-home"
         local benchmark_candidate_home="${benchmark_comparison_root}/candidate-gradle-home"
@@ -290,6 +356,21 @@ benchmark_page_size=$(getconf PAGESIZE)
 benchmark_physical_pages=$(getconf _PHYS_PAGES)
 benchmark_memory_bytes=$((benchmark_page_size * benchmark_physical_pages))
 benchmark_java_version=$(java -version 2>&1 | awk 'NR == 1 {print; exit}')
+benchmark_qualified=false
+benchmark_configuration_cache=false
+benchmark_daemon_policy=DISABLED
+benchmark_public_command='buildopt gradle --no-daemon --no-configuration-cache clean :app:distZip'
+if [[ "${benchmark_profile}" == OPTIMIZED_NATIVE ]]; then
+    benchmark_configuration_cache=true
+    benchmark_daemon_policy=ENABLED_SEPARATE_WARM_HOMES
+    benchmark_public_command='buildopt gradle --parallel --configuration-cache clean :app:distZip'
+fi
+if [[ -n "${benchmark_runner_file}" ]]; then
+    benchmark_cpu_count=$(jq -er '.cpuCount' "${benchmark_runner_file}")
+    benchmark_memory_bytes=$(jq -er '.memoryBytes' "${benchmark_runner_file}")
+    benchmark_java_version=$(jq -er '.java' "${benchmark_runner_file}")
+    benchmark_qualified=$(jq -er '.qualifiedGoldenRunner' "${benchmark_runner_file}")
+fi
 jq -s \
     --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
     --arg buildoptVersion "${benchmark_version}" \
@@ -297,8 +378,13 @@ jq -s \
     --arg runnerOs "$(uname -s)" \
     --arg runnerArchitecture "$(uname -m)" \
     --arg runnerJava "${benchmark_java_version}" \
+    --arg profile "${benchmark_profile}" \
+    --arg daemonPolicy "${benchmark_daemon_policy}" \
+    --arg publicCommand "${benchmark_public_command}" \
     --argjson runnerCpuCount "${benchmark_cpu_count}" \
-    --argjson runnerMemoryBytes "${benchmark_memory_bytes}" '
+    --argjson runnerMemoryBytes "${benchmark_memory_bytes}" \
+    --argjson qualifiedGoldenRunner "${benchmark_qualified}" \
+    --argjson configurationCache "${benchmark_configuration_cache}" '
     def summary:
         . as $rows |
         {
@@ -326,19 +412,24 @@ jq -s \
             cpuCount: $runnerCpuCount,
             memoryBytes: $runnerMemoryBytes,
             java: $runnerJava,
-            qualifiedGoldenRunner: false
+            qualifiedGoldenRunner: $qualifiedGoldenRunner
         },
-        design: {
+        design: ({
             pairsPerComparison: 4,
             order: "PAIRED_ALTERNATING",
             task: ":app:distZip",
-            configurationCache: false,
-            publicOnboardingCommand: "buildopt gradle --no-daemon --no-configuration-cache clean :app:distZip",
+            configurationCache: $configurationCache,
+            publicOnboardingCommand: $publicCommand,
             comparisons: {
                 CACHE_OFF: "Gradle with build cache disabled versus BuildOpt cache-only fast path",
                 NATIVE_CACHE: "Gradle native local cache versus BuildOpt cache-only fast path"
             }
-        },
+        } + if $profile == "OPTIMIZED_NATIVE" then {
+            daemonPolicy: $daemonPolicy,
+            profile: $profile,
+            nativeControlCommand:
+                "./gradlew --parallel --configuration-cache --build-cache clean :app:distZip"
+        } else {} end),
         repositories:
             (group_by(.repository) |
              map({

@@ -18,12 +18,17 @@ buildopt_cleanup() {
 }
 trap buildopt_cleanup EXIT
 
-for buildopt_command in awk cp date find git jq mkdir nproc rm sha256sum; do
+for buildopt_command in awk cp date find jq mkdir nproc rm sha256sum; do
     if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
         printf 'required runtime evaluation command is unavailable: %s\n' "${buildopt_command}" >&2
         exit 1
     fi
 done
+if [[ -z "${BUILDOPT_BENCHMARK_REVISION:-}" ]] &&
+    ! command -v git >/dev/null 2>&1; then
+    printf 'runtime evaluation requires git or BUILDOPT_BENCHMARK_REVISION\n' >&2
+    exit 1
+fi
 
 buildopt_cpu_count=$(nproc)
 buildopt_memory_bytes=$(awk '/^MemTotal:/ {printf "%.0f\n", $2 * 1024; exit}' /proc/meminfo)
@@ -49,9 +54,16 @@ buildopt_read_oom() {
 
 buildopt_gradle_home=${GRADLE_USER_HOME:-"${buildopt_repo_root}/.tools/gradle-user-home/local"}
 mkdir -p -- "${buildopt_gradle_home}"
-GRADLE_USER_HOME="${buildopt_gradle_home}" \
-    "${buildopt_script_dir}/run" -- \
-    "${buildopt_repo_root}/gradlew" --no-daemon --version >/dev/null
+if [[ -n "${BUILDOPT_BENCHMARK_JAVA_HOME:-}" ]]; then
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        JAVA_HOME="${BUILDOPT_BENCHMARK_JAVA_HOME}" \
+        PATH="${BUILDOPT_BENCHMARK_JAVA_HOME}/bin:${PATH}" \
+        "${buildopt_repo_root}/gradlew" --no-daemon --version >/dev/null
+else
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_script_dir}/run" -- \
+        "${buildopt_repo_root}/gradlew" --no-daemon --version >/dev/null
+fi
 buildopt_gradle=$(find \
     "${buildopt_gradle_home}/wrapper/dists/gradle-9.6.1-bin" \
     -type f -path '*/gradle-9.6.1/bin/gradle' -print -quit)
@@ -59,9 +71,13 @@ if [[ -z "${buildopt_gradle}" || ! -x "${buildopt_gradle}" ]]; then
     printf 'pinned Gradle 9.6.1 executable is unavailable\n' >&2
     exit 1
 fi
-buildopt_java_home=$("${buildopt_script_dir}/run" -- \
-    java -XshowSettings:properties -version 2>&1 | \
-    awk -F'= ' '/^[[:space:]]*java.home = / {print $2; exit}')
+if [[ -n "${BUILDOPT_BENCHMARK_JAVA_HOME:-}" ]]; then
+    buildopt_java_home=${BUILDOPT_BENCHMARK_JAVA_HOME}
+else
+    buildopt_java_home=$("${buildopt_script_dir}/run" -- \
+        java -XshowSettings:properties -version 2>&1 | \
+        awk -F'= ' '/^[[:space:]]*java.home = / {print $2; exit}')
+fi
 
 buildopt_fixture="${buildopt_temp}/fixture"
 mkdir -p -- "${buildopt_fixture}"
@@ -244,8 +260,9 @@ buildopt_json_strings() {
 }
 
 buildopt_input="${buildopt_temp}/runtime-input.json"
+buildopt_revision=${BUILDOPT_BENCHMARK_REVISION:-$(git -C "${buildopt_repo_root}" rev-parse HEAD)}
 jq -n \
-    --arg revision "$(git -C "${buildopt_repo_root}" rev-parse HEAD)" \
+    --arg revision "${buildopt_revision}" \
     --arg runUrl "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
     --argjson runId "${GITHUB_RUN_ID}" \
     --argjson cpu "${buildopt_cpu_count}" \
@@ -279,9 +296,21 @@ jq -n \
     }' >"${buildopt_input}"
 
 mkdir -m 0700 -- "${buildopt_output}"
-"${buildopt_script_dir}/run" --toolchain go -- \
-    go run ./cmd/runtime-evaluation \
-    "${buildopt_input}" \
-    "${buildopt_output}/runtime-owner-evaluation.json"
+if [[ "${BUILDOPT_RUNTIME_POC_RAW_ONLY:-0}" == 1 ]]; then
+    cp -- "${buildopt_input}" "${buildopt_output}/runtime-input.json"
+    chmod 0600 "${buildopt_output}/runtime-input.json"
+    printf 'BuildOpt runtime POC observations written without applying the legacy promotion gate\n'
+    exit 0
+fi
+if [[ -n "${BUILDOPT_RUNTIME_EVALUATOR:-}" ]]; then
+    "${BUILDOPT_RUNTIME_EVALUATOR}" \
+        "${buildopt_input}" \
+        "${buildopt_output}/runtime-owner-evaluation.json"
+else
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go run ./cmd/runtime-evaluation \
+        "${buildopt_input}" \
+        "${buildopt_output}/runtime-owner-evaluation.json"
+fi
 
 printf 'B owner evaluation OK: A/A valid and W4_H6G causal autotuning passed p95/p99/queue/OOM/artifact gates\n'
