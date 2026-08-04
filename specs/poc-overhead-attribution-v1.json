@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "buildopt.specs/poc-overhead-attribution/v1",
+  "workItem": "POC-OVERHEAD-001",
+  "runner": "linux-amd64-4c-16g-v1",
+  "sourceGate": "POC-BREADTH-001",
+  "phases": [
+    "launcherAndGradleClientStartup",
+    "initPluginSetup",
+    "configurationBeforeTasks",
+    "taskExecutionTemporal",
+    "gradleFinalization",
+    "launcherAndGradleClientTeardown"
+  ],
+  "sign": "POSITIVE_CANDIDATE_MINUS_CONTROL_IS_OVERHEAD",
+  "requirements": {
+    "nonOverlappingIntervals": true,
+    "reconciledExternalDuration": true,
+    "diagnosticTraceDoesNotGatePerformance": true,
+    "removeOnlyAttributedDifferences": true,
+    "repeatBreadthGateUnchanged": true
+  },
+  "guardrails": {
+    "requiredOutputsIdentical": true,
+    "maximumProductAttributableFailures": 0,
+    "percentagesAddedAcrossPhasesOrScenarios": false
+  },
+  "boundaries": {
+    "productionReadiness": false,
+    "externalDesignPartner": false,
+    "eightHourSoak": false,
+    "testOptimization": false
+  }
+}

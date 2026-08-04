@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 2)); then
+    printf 'usage: %s TRACED_BREADTH_REPORT OUTPUT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_input=$1
+buildopt_output=$2
+if [[ ! -s "${buildopt_input}" || "${buildopt_output}" != /* || -e "${buildopt_output}" ]]; then
+    printf 'invalid POC-OVERHEAD-001 summary input\n' >&2
+    exit 64
+fi
+
+jq '
+    def mean($values): ($values | add) / ($values | length);
+    def phase_summary($rows; $name):
+        (mean([$rows[].controlPhases[$name]])) as $control |
+        (mean([$rows[].candidatePhases[$name]])) as $candidate |
+        {
+            controlMeanMs: $control,
+            candidateMeanMs: $candidate,
+            candidateMinusControlMs: ($candidate - $control)
+        };
+    def summarize($workload):
+        ($workload.result.observations) as $rows |
+        {
+            id: $workload.id,
+            scenario: $workload.scenario,
+            successClass: $workload.successClass,
+            dsl: $workload.dsl,
+            pairs: ($rows | length),
+            candidateMode: "NATIVE_ONLY",
+            phases: {
+                external: phase_summary($rows; "externalDurationMs"),
+                launcherAndGradleClientStartup: phase_summary($rows; "launcherAndGradleClientStartupMs"),
+                initPluginSetup: phase_summary($rows; "initPluginSetupMs"),
+                configurationBeforeTasks: phase_summary($rows; "configurationBeforeTasksMs"),
+                taskExecutionTemporal: phase_summary($rows; "taskExecutionTemporalMs"),
+                gradleFinalization: phase_summary($rows; "gradleFinalizationMs"),
+                launcherAndGradleClientTeardown: phase_summary($rows; "launcherAndGradleClientTeardownMs")
+            },
+            nonTaskCandidateMinusControlMs: (
+                (mean([$rows[].candidatePhases.externalDurationMs]) -
+                 mean([$rows[].controlPhases.externalDurationMs])) -
+                (mean([$rows[].candidatePhases.taskExecutionTemporalMs]) -
+                 mean([$rows[].controlPhases.taskExecutionTemporalMs]))
+            ),
+            reconciled: ($rows | all(
+                (.controlPhases.externalDurationMs - .controlPhases.reconciledDurationMs | fabs) <= 2 and
+                (.candidatePhases.externalDurationMs - .candidatePhases.reconciledDurationMs | fabs) <= 2
+            )),
+            requiredOutputsIdentical: $workload.result.requiredOutputsIdentical,
+            productAttributableFailures: $workload.result.productAttributableFailures
+        };
+    {
+        schemaVersion: "buildopt.evidence/poc-overhead/v1",
+        capturedAt: .capturedAt,
+        buildoptRevision: .buildoptRevision,
+        runner: .runner,
+        fixture: .fixture,
+        sourceBreadthMethodology: .methodology,
+        methodology: {
+            purpose: "ATTRIBUTE_INSTALLED_PATH_PHASES_WITHOUT_PROMOTION",
+            trace: "GRADLE_9_6_1_BUILD_OPERATION_TRACE",
+            phaseIntervalsOverlap: false,
+            diagnosticTraceCanPerturbTiming: true,
+            diagnosticDurationsUsedForBreadthGate: false,
+            candidateMode: "NATIVE_ONLY",
+            initOrProjectPluginLoaded: false,
+            phaseSign: "POSITIVE_CANDIDATE_MINUS_CONTROL_IS_OVERHEAD",
+            percentagesAddedAcrossPhasesOrScenarios: false
+        },
+        workloads: [.workloads[] | summarize(.)],
+        attribution: {
+            initPluginAttributableOverheadMs: 0,
+            avoidableEnvironmentDifference: "CANDIDATE_ONLY_XDG_CACHE_HOME",
+            correction: "REMOVE_UNUSED_CANDIDATE_ONLY_XDG_CACHE_HOME",
+            unchangedBoundaries: [
+                "BUILD_IMPACT_SELECTION",
+                "GRADLE_ARGUMENTS",
+                "GRADLE_USER_HOME_ISOLATION",
+                "TASKS",
+                "OUTPUTS",
+                "BREADTH_THRESHOLDS"
+            ]
+        },
+        boundaries: {
+            ownerControlledSyntheticWorkloads: true,
+            productionReadiness: false,
+            externalDesignPartner: false,
+            eightHourSoak: false,
+            testOptimization: false
+        }
+    }
+' "${buildopt_input}" >"${buildopt_output}"
+
+printf 'BuildOpt POC-OVERHEAD-001 phase summary written to %s\n' "${buildopt_output}"

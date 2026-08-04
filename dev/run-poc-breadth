@@ -191,7 +191,6 @@ buildopt_run_arm() {
             cd -- "${buildopt_workspace}"
             env -u BUILDOPT_SAFE_CACHE -u BUILDOPT_RUNTIME_PROFILE \
                 GRADLE_USER_HOME="${buildopt_home}" \
-                XDG_CACHE_HOME="${buildopt_home}/buildopt-user-cache" \
                 "${buildopt_prefix}/bin/buildopt" gradle \
                 "${buildopt_arm_gradle_arguments[@]}" "${buildopt_tasks[@]}"
         ) >"${buildopt_log}" 2>&1
@@ -415,9 +414,11 @@ for buildopt_dsl in KOTLIN GROOVY; do
 done
 
 buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-buildopt_binary_sha=$(sha256sum "${buildopt_prefix}/bin/buildopt" | awk '{print $1}')
-buildopt_impact_sha=$(sha256sum "${buildopt_prefix}/bin/buildopt-impact" | awk '{print $1}')
-buildopt_plugin_sha=$(sha256sum "${buildopt_prefix}/share/buildopt/buildopt-gradle-plugin.jar" | awk '{print $1}')
+read -r buildopt_binary_sha _ < <(sha256sum "${buildopt_prefix}/bin/buildopt")
+read -r buildopt_impact_sha _ < <(sha256sum "${buildopt_prefix}/bin/buildopt-impact")
+read -r buildopt_plugin_sha _ < <(
+    sha256sum "${buildopt_prefix}/share/buildopt/buildopt-gradle-plugin.jar"
+)
 
 jq -s \
     --arg capturedAt "${buildopt_captured_at}" \

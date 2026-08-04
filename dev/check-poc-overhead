@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [REPORT]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_report=${1:-"${buildopt_repo_root}/benchmarks/results/poc-overhead-v1.json"}
+buildopt_contract="${buildopt_repo_root}/specs/poc-overhead-attribution-v1.json"
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC-OVERHEAD-001 command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+for buildopt_file in "${buildopt_report}" "${buildopt_contract}"; do
+    [[ -s "${buildopt_file}" ]] || {
+        printf 'required POC-OVERHEAD-001 file is unavailable: %s\n' \
+            "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-overhead-attribution/v1" and
+    .workItem == "POC-OVERHEAD-001" and
+    .runner == "linux-amd64-4c-16g-v1" and
+    .sourceGate == "POC-BREADTH-001" and
+    .phases == [
+        "launcherAndGradleClientStartup",
+        "initPluginSetup",
+        "configurationBeforeTasks",
+        "taskExecutionTemporal",
+        "gradleFinalization",
+        "launcherAndGradleClientTeardown"
+    ] and
+    .sign == "POSITIVE_CANDIDATE_MINUS_CONTROL_IS_OVERHEAD" and
+    .requirements == {
+        nonOverlappingIntervals: true,
+        reconciledExternalDuration: true,
+        diagnosticTraceDoesNotGatePerformance: true,
+        removeOnlyAttributedDifferences: true,
+        repeatBreadthGateUnchanged: true
+    } and
+    .guardrails.requiredOutputsIdentical == true and
+    .guardrails.maximumProductAttributableFailures == 0 and
+    .guardrails.percentagesAddedAcrossPhasesOrScenarios == false and
+    .boundaries == {
+        productionReadiness: false,
+        externalDesignPartner: false,
+        eightHourSoak: false,
+        testOptimization: false
+    }
+' "${buildopt_contract}" >/dev/null
+
+jq -e '
+    def valid_phase:
+        (.controlMeanMs | numbers) and
+        (.candidateMeanMs | numbers) and
+        (.candidateMinusControlMs | numbers);
+    .schemaVersion == "buildopt.evidence/poc-overhead/v1" and
+    (.capturedAt | strings | test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T")) and
+    (.buildoptRevision | strings | test("^[0-9a-f]{40}$")) and
+    .runner.id == "linux-amd64-4c-16g-v1" and
+    .runner.cpuCount == 4 and
+    .runner.memoryBytes == 17179869184 and
+    .runner.qualifiedGoldenRunner == true and
+    .methodology.phaseIntervalsOverlap == false and
+    .methodology.diagnosticTraceCanPerturbTiming == true and
+    .methodology.diagnosticDurationsUsedForBreadthGate == false and
+    .methodology.candidateMode == "NATIVE_ONLY" and
+    .methodology.initOrProjectPluginLoaded == false and
+    .methodology.phaseSign == "POSITIVE_CANDIDATE_MINUS_CONTROL_IS_OVERHEAD" and
+    .methodology.percentagesAddedAcrossPhasesOrScenarios == false and
+    (.workloads | length) == 8 and
+    ([.workloads[].id] | unique | length) == 8 and
+    all(.workloads[];
+        .pairs == 8 and .candidateMode == "NATIVE_ONLY" and
+        .reconciled == true and .requiredOutputsIdentical == true and
+        .productAttributableFailures == 0 and
+        (.nonTaskCandidateMinusControlMs | numbers) and
+        (.phases.external | valid_phase) and
+        (.phases.launcherAndGradleClientStartup | valid_phase) and
+        (.phases.initPluginSetup | valid_phase) and
+        .phases.initPluginSetup.controlMeanMs == 0 and
+        .phases.initPluginSetup.candidateMeanMs == 0 and
+        (.phases.configurationBeforeTasks | valid_phase) and
+        (.phases.taskExecutionTemporal | valid_phase) and
+        (.phases.gradleFinalization | valid_phase) and
+        (.phases.launcherAndGradleClientTeardown | valid_phase)
+    ) and
+    .attribution.initPluginAttributableOverheadMs == 0 and
+    .attribution.avoidableEnvironmentDifference == "CANDIDATE_ONLY_XDG_CACHE_HOME" and
+    .attribution.correction == "REMOVE_UNUSED_CANDIDATE_ONLY_XDG_CACHE_HOME" and
+    .boundaries.productionReadiness == false and
+    .boundaries.externalDesignPartner == false and
+    .boundaries.eightHourSoak == false and
+    .boundaries.testOptimization == false
+' "${buildopt_report}" >/dev/null
+
+buildopt_revision=$(jq -er '.buildoptRevision' "${buildopt_report}")
+git -C "${buildopt_repo_root}" cat-file -e "${buildopt_revision}^{commit}"
+buildopt_forbidden_xdg="XDG_CACHE_HOME=\"\${buildopt_home}/buildopt-user-cache\""
+if grep -Fq "${buildopt_forbidden_xdg}" \
+    "${buildopt_repo_root}/dev/run-poc-breadth"; then
+    printf 'POC-OVERHEAD-001 candidate-only XDG cache difference remains\n' >&2
+    exit 1
+fi
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'POC-OVERHEAD-001 validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'BuildOpt POC-OVERHEAD-001 evidence OK: %s (%s)\n' \
+    "${buildopt_report}" "$(sha256sum "${buildopt_report}" | awk '{print $1}')"
