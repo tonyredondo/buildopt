@@ -57,9 +57,11 @@ buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-poc-pairing-001-container.XX
 buildopt_container_prefix="buildopt-poc-pairing-${buildopt_batch_id}-$$"
 buildopt_control_container="${buildopt_container_prefix}-control"
 buildopt_candidate_container="${buildopt_container_prefix}-candidate"
+buildopt_shared_container="${buildopt_container_prefix}-shared"
 buildopt_cleanup() {
     docker rm --force "${buildopt_control_container}" \
-        "${buildopt_candidate_container}" >/dev/null 2>&1 || true
+        "${buildopt_candidate_container}" "${buildopt_shared_container}" \
+        >/dev/null 2>&1 || true
     if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-poc-pairing-001-container."* ]]; then
         rm -rf -- "${buildopt_root}"
     fi
@@ -163,23 +165,48 @@ buildopt_start_arm_container() {
         /bin/sh -c 'while :; do sleep 3600; done' >/dev/null
 }
 
+buildopt_start_shared_container() {
+    docker run --detach --pull never --network none --platform linux/amd64 \
+        --name "${buildopt_shared_container}" \
+        --cpus "${buildopt_cpu}" --memory "${buildopt_memory}" \
+        --user "$(id -u):$(id -g)" \
+        --env JAVA_HOME=/opt/java/openjdk \
+        --env BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS=/opt/java/jdk17,/opt/java/openjdk \
+        --env LANG=C.UTF-8 --env LC_ALL=C.UTF-8 --env TZ=UTC \
+        --volume "${buildopt_repo_root}:/workspace:ro" \
+        --volume "${buildopt_jdk17_home}:/opt/java/jdk17:ro" \
+        --volume "${buildopt_root}:/benchmark" \
+        --workdir /workspace \
+        "${buildopt_image}" \
+        /bin/sh -c 'while :; do sleep 3600; done' >/dev/null
+}
+
 buildopt_exec_step() {
     local buildopt_arm=$1 buildopt_step=$2 buildopt_dsl=$3
     local buildopt_scenario=$4 buildopt_pair=$5 buildopt_destination=$6
     local buildopt_arm_lower=${buildopt_arm,,}
     local buildopt_container="${buildopt_container_prefix}-${buildopt_arm_lower}"
+    local buildopt_container_root=/benchmark
+    if [[ "${buildopt_profile}" == GROOVY_VALUE ]]; then
+        buildopt_container=${buildopt_shared_container}
+        buildopt_container_root="/benchmark/${buildopt_arm_lower}"
+    fi
     docker exec \
+        --env HOME="${buildopt_container_root}/home" \
+        --env GRADLE_USER_HOME="${buildopt_container_root}/gradle-home" \
+        --env BUILDOPT_POC_BREADTH_ARM="${buildopt_arm}" \
         --env BUILDOPT_POC_BREADTH_STEP="${buildopt_step}" \
-        --env BUILDOPT_POC_BREADTH_STATE_ROOT=/benchmark/state \
+        --env BUILDOPT_POC_BREADTH_STATE_ROOT="${buildopt_container_root}/state" \
         --env BUILDOPT_POC_BREADTH_DSL="${buildopt_dsl}" \
         --env BUILDOPT_POC_BREADTH_SCENARIO="${buildopt_scenario}" \
         --env BUILDOPT_POC_BREADTH_PAIR="${buildopt_pair}" \
         --env BUILDOPT_POC_BREADTH_WORKLOAD_INIT="${buildopt_workload_init}" \
+        --env PATH="${buildopt_container_root}/bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
         "${buildopt_container}" \
         /workspace/dev/run-poc-breadth \
-            "/benchmark/output/${buildopt_destination}" \
+            "${buildopt_container_root}/output/${buildopt_destination}" \
             "${buildopt_revision}" \
-            /benchmark/install
+            "${buildopt_container_root}/install"
 }
 
 buildopt_append_observation() {
@@ -206,8 +233,12 @@ buildopt_first_arm_for_pair() {
 
 buildopt_prepare_arm CONTROL
 buildopt_prepare_arm CANDIDATE
-buildopt_start_arm_container CONTROL
-buildopt_start_arm_container CANDIDATE
+if [[ "${buildopt_profile}" == GROOVY_VALUE ]]; then
+    buildopt_start_shared_container
+else
+    buildopt_start_arm_container CONTROL
+    buildopt_start_arm_container CANDIDATE
+fi
 : >"${buildopt_root}/observations.jsonl"
 
 for buildopt_dsl in "${buildopt_dsls[@]}"; do

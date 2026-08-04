@@ -151,6 +151,8 @@ jq -e '
     .schemaVersion == "buildopt.evidence/poc-groovy/v1" and
     .gate == {id: "POC-GROOVY-001", state: "RECORDED"} and
     .decision.requiredCells == 2 and (.workloads | length) == 2 and
+    .methodology.isolation.strictContainerPerArm == false and
+    .methodology.isolation.sharedStrictContainer == true and
     .methodology.workloadProfile == {
         id: "GROOVY_DETERMINISTIC_VERIFICATION_V1",
         initScript: "dev/poc-groovy-workload.init.gradle",

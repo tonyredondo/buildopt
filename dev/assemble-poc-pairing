@@ -215,17 +215,20 @@ jq -n \
             warmupPerCell: 1,
             startingPairOrder: $startingOrder,
             pairOrder: "ALTERNATING_OPPOSITE_SEQUENCE",
-            pairing: "CONSECUTIVE_DOCKER_EXEC_ACROSS_PERSISTENT_ARM_CONTAINERS",
+            pairing: (if $profile == "GROOVY_VALUE"
+                      then "CONSECUTIVE_DOCKER_EXEC_WITHIN_SHARED_STRICT_CONTAINER"
+                      else "CONSECUTIVE_DOCKER_EXEC_ACROSS_PERSISTENT_ARM_CONTAINERS" end),
             maximumInterArmIdleGapMs: 5000,
             confidenceInterval: "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
-            isolation: {
-                strictContainerPerArm: true,
+            isolation: ({
+                strictContainerPerArm: ($profile != "GROOVY_VALUE"),
+                sharedStrictContainer: ($profile == "GROOVY_VALUE"),
                 writableStateShared: false,
                 workspaceShared: false,
                 gradleUserHomeShared: false,
                 daemonShared: false,
                 sampleLifecycle: "PERSISTENT_PRIVATE_DAEMON_PER_CELL"
-            },
+            } | if $profile == "GROOVY_VALUE" then . else del(.sharedStrictContainer) end),
             nativeControl: {buildCache: true, configurationCache: true, parallelism: true, daemon: true},
             candidateEntryPoints: ["INSTALLED_BUILDOPT_IMPACT_CHECK", "INSTALLED_BUILDOPT_GRADLE"],
             acceleratorThreshold: {minimumSavedMs: 500, minimumReductionRatio: 0.02, positiveLower95Bound: true},

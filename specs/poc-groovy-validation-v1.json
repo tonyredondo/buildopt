@@ -25,6 +25,7 @@
   },
   "guardrails": {
     "sameRevisionAndArtifacts": true,
+    "sharedStrictContainer": true,
     "writableStateShared": false,
     "workspaceShared": false,
     "gradleUserHomeShared": false,

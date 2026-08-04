@@ -15,9 +15,11 @@ critical path, so it could not honestly test the unchanged 500 ms accelerator
 floor. The profile changes neither requested/selected tasks nor required
 outputs.
 
-Two strict 4-CPU/16-GiB batches use persistent but fully isolated control and
-candidate containers. Pair order alternates within each batch and the second
-batch reverses the starting order. Both reports must classify `NO_CHANGE` as
+Two strict 4-CPU/16-GiB batches run both arms sequentially in one persistent
+container, removing container identity as a timing variable while retaining
+separate workspaces, installations, writable state, Gradle homes and daemons.
+Pair order alternates within each batch and the second batch reverses the
+starting order. Both reports must classify `NO_CHANGE` as
 `PARITY_GUARDRAIL_MET` and `LEAF_CHANGE` as `THRESHOLD_MET`; all outputs,
 execution shape, Configuration Cache behavior and zero-failure guardrails must
 hold in every observation.
