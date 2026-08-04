@@ -54,7 +54,19 @@ fi
 
 benchmark_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-cache-parity.XXXXXX")
 benchmark_raw="${benchmark_root}/observations.jsonl"
+declare -a benchmark_gradle_homes=()
 benchmark_cleanup() {
+    local benchmark_home
+    local benchmark_gradle
+    for benchmark_home in "${benchmark_gradle_homes[@]}"; do
+        benchmark_gradle=$(find \
+            "${benchmark_home}/wrapper/dists" \
+            -type f -path '*/bin/gradle' -print -quit 2>/dev/null || true)
+        if [[ -n "${benchmark_gradle}" ]]; then
+            GRADLE_USER_HOME="${benchmark_home}" \
+                "${benchmark_gradle}" --stop >/dev/null 2>&1 || true
+        fi
+    done
     if [[ "${benchmark_root}" == "${TMPDIR:-/tmp}/buildopt-cache-parity."* ]]; then
         rm -rf -- "${benchmark_root}"
     fi
@@ -254,6 +266,10 @@ benchmark_measure_repository() {
         local benchmark_control_cache="${benchmark_comparison_root}/control-user-cache"
         local benchmark_candidate_cache="${benchmark_comparison_root}/candidate-user-cache"
         local benchmark_control_arm=${benchmark_comparison}
+        benchmark_gradle_homes+=(
+            "${benchmark_control_home}"
+            "${benchmark_candidate_home}"
+        )
 
         benchmark_run_arm \
             "${benchmark_control}" \
