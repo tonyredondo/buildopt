@@ -17,11 +17,12 @@ small/medium/large Gradle build matrix and makes no performance claim.
 
 ## Build Optimization scorecard
 
-The current POC verdict is `CONTINUE_CONDITIONALLY`, not “value proven”. Safe
-Cache is a safety enabler at native-cache parity; Runtime Tuning is below the
-accelerator threshold; Build Impact has a strong but single-workload signal;
-and the combined public path has not yet been measured against the optimized
-native baseline. Validate that interpretation with:
+The current POC verdict is `CONTINUE_CONDITIONALLY`, not “value proven”. The
+contractual 4-vCPU/16-GiB run supersedes earlier mechanism-development numbers:
+Safe Cache misses the native-cache parity guardrail in Groovy, Runtime Tuning
+profile `W4_H6G` is clearly negative, Build Impact clears the threshold for one
+bounded workload, and the combined public path is still unmeasured. Validate
+that interpretation with:
 
 ```bash
 ./dev/check-poc-value-validation
@@ -30,22 +31,18 @@ native baseline. Validate that interpretation with:
 The scorecard answers a different question for each optimization instead of
 combining unrelated percentages:
 
-| Mechanism | Control mean | Candidate mean | Result | Acceptance |
-|---|---:|---:|---:|---|
-| Safe cache, Kotlin, cache off | 9.131 s | 7.682 s | 1.449 s faster (15.9%) | Positive mean and 4/4 positive pairs |
-| Safe cache, Groovy, cache off | 12.454 s | 10.754 s | 1.700 s faster (13.7%) | Positive mean and 3/4 positive pairs |
-| Safe cache, Kotlin, native cache | 10.415 s | 10.412 s | 0.003 s faster (0.02%) | Within 2% native-cache parity guardrail |
-| Safe cache, Groovy, native cache | 10.470 s | 10.520 s | 0.050 s slower (0.47%) | Within 2% native-cache parity guardrail |
-| Runtime Tuning | 8.999 s | 8.933 s | 0.066 s faster (0.7%) | Positive lower 95% bound; artifact, OOM, queue and compute guardrails pass |
-| Build Impact | 8.180 s | 5.926 s | 2.254 s faster (27.6%) | 4/4 positive pairs and required outputs identical |
+| Mechanism | Mean result | Exact paired 95% interval | Classification |
+|---|---:|---:|---|
+| Safe Cache, Kotlin versus native | 108 ms faster (11.5%) | −19 to +338 ms | No acceleration claim; noisy |
+| Safe Cache, Groovy versus native | 25 ms slower (3.1%) | −54 to +9 ms | `REGRESSION_REQUIRES_ACTION` |
+| Runtime Tuning `W4_H6G` | 4,547 ms slower (54.7%) | −6,193 to −3,496 ms | `BELOW_VALUE_THRESHOLD` |
+| Build Impact | 1,055 ms faster (52.5%) | +589 to +1,583 ms | `THRESHOLD_MET` for this workload |
 
-Safe cache is expected to beat cache-off and remain near native cache: both
-arms use Gradle's cache engine, while BuildOpt adds repository isolation and a
-safe task policy. Runtime Tuning measures a bounded worker/heap profile on a
-large four-CPU workload. Build Impact measures avoided compilation when one
-manifest-declared project is unaffected. The Runtime Tuning percentage cannot
-be added to the cache or Build Impact percentage because the runner and
-workload differ.
+The report retains all four signed pairs, including unfavorable samples. Every
+required output is identical, Runtime Tuning has zero OOM delta, and no
+product-attributable failures occurred. Percentages are not added because the
+mechanisms use different controls and workloads. `POC-VALUE-001` is therefore a
+completed measurement gate, not a combined-product success gate.
 
 Validate all checked-in evidence and print the machine-readable scorecard:
 
@@ -55,6 +52,8 @@ Validate all checked-in evidence and print the machine-readable scorecard:
 
 The underlying evidence and contracts are:
 
+- [contractual POC baseline](./results/poc-value-baseline-v1.json) and
+  [value contract](../specs/poc-value-validation-v1.md);
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
@@ -62,8 +61,9 @@ The underlying evidence and contracts are:
 - [Build Impact observations](./results/build-impact-performance-v1-local.json)
   and [contract](../specs/build-impact-performance-v1.md).
 
-All three are bounded POC results. They preserve signed differences and do not
-claim universal savings, combined-product value, or production readiness.
+The three mechanism-development reports remain historical inputs. The strict
+baseline is the current decision evidence. None claims universal savings,
+combined-product value, or production readiness.
 
 ## Historical v0.2 public onboarding performance
 

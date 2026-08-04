@@ -2050,6 +2050,28 @@ cleanup, uninstall, and artifact publication.
 
 ## Build Optimization performance
 
+Validate the revision-bound strict-runner baseline without rerunning builds:
+
+```bash
+./dev/check-poc-value-baseline
+```
+
+Generate fresh evidence from clean Kotlin and Groovy pilot checkouts. This
+builds the current package and runs the digest-pinned container with effective
+4-CPU/16-GiB cgroups; it is a bounded benchmark, not a soak:
+
+```bash
+GRADLE_USER_HOME=.tools/gradle-user-home/local \
+  ./dev/run-poc-value-baseline-container \
+    /tmp/poc-value-baseline.json \
+    /path/to/buildopt-pilot \
+    /path/to/buildopt-pilot-groovy
+```
+
+The capture accepts favorable and unfavorable measurements, then classifies
+them. This is intentional: a POC must preserve regressions rather than reject
+the report that contains them.
+
 Validate the current POC decision, evidence classifications, and open value
 gates without rerunning benchmarks:
 

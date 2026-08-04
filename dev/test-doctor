@@ -122,7 +122,14 @@ jq -e '
     (.resources.memoryBytes | type == "number") and
     (.resources.workspaceDiskAvailableBytes | type == "number") and
     (.commands | length == 16) and
-    (.toolchains.entries | length == 10) and
+    (.toolchains.entries | length == 11) and
+    (
+        [
+            .toolchains.entries[] |
+            select(.id == "temurin-jdk-17") |
+            .probes[].executable
+        ] == ["java", "javac"]
+    ) and
     (
         [
             .toolchains.entries[] |

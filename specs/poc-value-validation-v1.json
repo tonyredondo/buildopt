@@ -51,20 +51,20 @@
   "mechanisms": [
     {
       "id": "SAFE_CACHE",
-      "classification": "PARITY_ONLY",
-      "evidence": "benchmarks/results/cache-parity-v1-local.json",
-      "claim": "SAFETY_ENABLER_NOT_STANDALONE_ACCELERATOR"
+      "classification": "REGRESSION_REQUIRES_ACTION",
+      "evidence": "benchmarks/results/poc-value-baseline-v1.json",
+      "claim": "GROOVY_NATIVE_CACHE_GUARDRAIL_FAILED"
     },
     {
       "id": "RUNTIME_TUNING",
-      "classification": "PRELIMINARY_BELOW_VALUE_THRESHOLD",
-      "evidence": "benchmarks/results/b-runtime-owner-evaluation.json",
-      "claim": "POSITIVE_SIGNAL_REQUIRES_STRONGER_WORKLOAD"
+      "classification": "BELOW_VALUE_THRESHOLD",
+      "evidence": "benchmarks/results/poc-value-baseline-v1.json",
+      "claim": "NO_VALUE_NO_ACTION_FOR_W4_H6G"
     },
     {
       "id": "BUILD_IMPACT",
-      "classification": "PRELIMINARY_STRONG_SINGLE_WORKLOAD",
-      "evidence": "benchmarks/results/build-impact-performance-v1-local.json",
+      "classification": "THRESHOLD_MET_SINGLE_WORKLOAD",
+      "evidence": "benchmarks/results/poc-value-baseline-v1.json",
       "claim": "ACCELERATOR_REQUIRES_BROADER_CHANGE_MATRIX"
     },
     {
@@ -102,11 +102,11 @@
     {
       "id": "POC-VALUE-001",
       "outcome": "REPRODUCE_OPTIMIZED_NATIVE_BASELINE_AND_MECHANISM_SCORECARD_ON_GOLDEN_RUNNER",
-      "state": "TODO"
+      "state": "DONE"
     },
     {
       "id": "POC-VALUE-002",
-      "outcome": "RUNTIME_TUNING_CLEARS_ACCELERATOR_THRESHOLD_OR_IS_DISABLED",
+      "outcome": "SAFE_CACHE_RETURNS_TO_PARITY_AND_RUNTIME_TUNING_CLEARS_THRESHOLD_OR_IS_DISABLED",
       "state": "TODO"
     },
     {

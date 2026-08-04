@@ -41,21 +41,29 @@ build.
 
 ## Current decision
 
-The current state is `CONTINUE_CONDITIONALLY`:
+The current state is `CONTINUE_CONDITIONALLY`. The contractual four-CPU run in
+[`poc-value-baseline-v1.json`](../benchmarks/results/poc-value-baseline-v1.json)
+closed `POC-VALUE-001` with these signed results:
 
-- Safe Cache is a proven safety enabler at native-cache parity, not a standalone
-  accelerator.
-- Runtime Tuning has a positive but sub-threshold preliminary result.
-- Build Impact has a strong preliminary single-workload result and justifies broader testing.
+- Safe Cache is not currently within the parity guardrail for every DSL. Groovy
+  measured a 3.1% regression against native cache, so the mechanism is classified
+  `REGRESSION_REQUIRES_ACTION`; Kotlin was positive but noisy.
+- Runtime Tuning profile `W4_H6G` measured a 54.7% regression with an entirely
+  negative 95% interval. It is `BELOW_VALUE_THRESHOLD` and must remain disabled
+  for this workload unless `POC-VALUE-002` finds a qualifying profile.
+- Build Impact saved 1,055 ms (52.5%) on the bounded workload, with four positive
+  pairs, a positive 589 ms lower interval bound, identical required outputs, and
+  zero product-attributable failures. It clears the accelerator threshold for
+  this workload but still requires broader coverage under `POC-VALUE-003`.
 - Task Intelligence and Patch Autopilot have preliminary reviewed-source evidence;
   Agent discovery and hermetic enforcement remain unavailable.
 - The combined product path has not yet been measured against optimized native
   Gradle, so the overall value hypothesis remains open.
 
-The active order is: reproduce the baseline and scorecard on the contractual
-runner; either qualify or disable Runtime Tuning per workload; broaden Build
-Impact and reviewed-source Task/Patch evidence; then benchmark the combined
-public path and make the explicit `CONTINUE` or `STOP` decision.
+The active order is now: return Safe Cache to the 2% native-cache parity
+guardrail and either qualify or disable Runtime Tuning per workload; broaden
+Build Impact and reviewed-source Task/Patch evidence; then benchmark the
+combined public path and make the explicit `CONTINUE` or `STOP` decision.
 
 Run the executable decision check with:
 

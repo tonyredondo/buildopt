@@ -1,0 +1,286 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-value-baseline/v1",
+  "capturedAt": "2026-08-04T09:33:41Z",
+  "buildoptRevision": "a57d805f1461f2c47c195790b4b40ef289d0edaf",
+  "runner": {
+    "schemaVersion": "buildopt.evidence/golden-runner-observation/v1",
+    "capturedAt": "2026-08-04T09:33:41Z",
+    "id": "linux-amd64-4c-16g-v1",
+    "operatingSystem": "Linux",
+    "architecture": "x86_64",
+    "cpuCount": 4,
+    "memoryBytes": 17179869184,
+    "java": "21.0.11+10-LTS",
+    "javaVendor": "Eclipse Adoptium",
+    "runnerSpecSha256": "26283e56aa7251152c7f051f7500bc86553669a808fc1cec5b736acf8f0733c9",
+    "containerPlatformDigest": "sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50",
+    "cgroup": {
+      "cpuMax": "400000 100000",
+      "memoryMax": "17179869184"
+    },
+    "qualifiedGoldenRunner": true
+  },
+  "methodology": {
+    "purpose": "REPRODUCE_MECHANISM_SCORECARD_AGAINST_OPTIMIZED_NATIVE_GRADLE",
+    "pairOrder": "PAIRED_ALTERNATING",
+    "pairsPerMechanism": 4,
+    "confidenceInterval": "EXACT_PAIRED_NONPARAMETRIC_BOOTSTRAP_256_RESAMPLES_TWO_SIDED_95",
+    "warmState": "ONE_UNMEASURED_WARMUP_PER_ARM_WITH_SEPARATE_HOMES",
+    "nativeControl": {
+      "buildCache": true,
+      "configurationCache": true,
+      "parallelism": true,
+      "daemon": true
+    },
+    "percentagesAddedAcrossMechanisms": false
+  },
+  "mechanisms": {
+    "safeCache": {
+      "classification": "REGRESSION_REQUIRES_ACTION",
+      "kotlin": {
+        "repository": "tonyredondo/buildopt-pilot",
+        "revision": "22135dc1ca237e848d4bdd093ca3e4af813414e2",
+        "dsl": "KOTLIN",
+        "meanSavedMs": 108.25,
+        "meanReductionRatio": 0.11512895506514224,
+        "interval95SavedMs": [
+          -18.75,
+          337.5
+        ],
+        "positivePairs": 2,
+        "requiredOutputsIdentical": true,
+        "productAttributableFailures": 0,
+        "observations": [
+          {
+            "repository": "tonyredondo/buildopt-pilot",
+            "revision": "22135dc1ca237e848d4bdd093ca3e4af813414e2",
+            "dsl": "KOTLIN",
+            "comparison": "NATIVE_CACHE",
+            "pair": 1,
+            "order": "CONTROL_FIRST",
+            "controlDurationMs": 954,
+            "candidateDurationMs": 942,
+            "savedMs": 12,
+            "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+          },
+          {
+            "repository": "tonyredondo/buildopt-pilot",
+            "revision": "22135dc1ca237e848d4bdd093ca3e4af813414e2",
+            "dsl": "KOTLIN",
+            "comparison": "NATIVE_CACHE",
+            "pair": 2,
+            "order": "CANDIDATE_FIRST",
+            "controlDurationMs": 797,
+            "candidateDurationMs": 797,
+            "savedMs": 0,
+            "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+          },
+          {
+            "repository": "tonyredondo/buildopt-pilot",
+            "revision": "22135dc1ca237e848d4bdd093ca3e4af813414e2",
+            "dsl": "KOTLIN",
+            "comparison": "NATIVE_CACHE",
+            "pair": 3,
+            "order": "CONTROL_FIRST",
+            "controlDurationMs": 775,
+            "candidateDurationMs": 804,
+            "savedMs": -29,
+            "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+          },
+          {
+            "repository": "tonyredondo/buildopt-pilot",
+            "revision": "22135dc1ca237e848d4bdd093ca3e4af813414e2",
+            "dsl": "KOTLIN",
+            "comparison": "NATIVE_CACHE",
+            "pair": 4,
+            "order": "CANDIDATE_FIRST",
+            "controlDurationMs": 1235,
+            "candidateDurationMs": 785,
+            "savedMs": 450,
+            "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+          }
+        ]
+      },
+      "groovy": {
+        "repository": "tonyredondo/buildopt-pilot-groovy",
+        "revision": "ba0101af2dcf96d91db315f023e2a14909434798",
+        "dsl": "GROOVY",
+        "meanSavedMs": -24.75,
+        "meanReductionRatio": -0.03081232492997199,
+        "interval95SavedMs": [
+          -54,
+          9.25
+        ],
+        "positivePairs": 1,
+        "requiredOutputsIdentical": true,
+        "productAttributableFailures": 0,
+        "observations": [
+          {
+            "repository": "tonyredondo/buildopt-pilot-groovy",
+            "revision": "ba0101af2dcf96d91db315f023e2a14909434798",
+            "dsl": "GROOVY",
+            "comparison": "NATIVE_CACHE",
+            "pair": 1,
+            "order": "CONTROL_FIRST",
+            "controlDurationMs": 951,
+            "candidateDurationMs": 926,
+            "savedMs": 25,
+            "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+          },
+          {
+            "repository": "tonyredondo/buildopt-pilot-groovy",
+            "revision": "ba0101af2dcf96d91db315f023e2a14909434798",
+            "dsl": "GROOVY",
+            "comparison": "NATIVE_CACHE",
+            "pair": 2,
+            "order": "CANDIDATE_FIRST",
+            "controlDurationMs": 781,
+            "candidateDurationMs": 802,
+            "savedMs": -21,
+            "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+          },
+          {
+            "repository": "tonyredondo/buildopt-pilot-groovy",
+            "revision": "ba0101af2dcf96d91db315f023e2a14909434798",
+            "dsl": "GROOVY",
+            "comparison": "NATIVE_CACHE",
+            "pair": 3,
+            "order": "CONTROL_FIRST",
+            "controlDurationMs": 747,
+            "candidateDurationMs": 812,
+            "savedMs": -65,
+            "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+          },
+          {
+            "repository": "tonyredondo/buildopt-pilot-groovy",
+            "revision": "ba0101af2dcf96d91db315f023e2a14909434798",
+            "dsl": "GROOVY",
+            "comparison": "NATIVE_CACHE",
+            "pair": 4,
+            "order": "CANDIDATE_FIRST",
+            "controlDurationMs": 734,
+            "candidateDurationMs": 772,
+            "savedMs": -38,
+            "deliverableSha256": "b38c665022b7007982b00f7dc380ef99295975df71958646684989109bfc6f7c"
+          }
+        ]
+      }
+    },
+    "runtimeTuning": {
+      "classification": "BELOW_VALUE_THRESHOLD",
+      "controlProfile": "STABLE_CONTROL",
+      "candidateProfile": "W4_H6G",
+      "meanSavedMs": -4547.25,
+      "meanReductionRatio": -0.5473009568514172,
+      "interval95SavedMs": [
+        -6192.5,
+        -3496.25
+      ],
+      "requiredOutputsIdentical": true,
+      "productAttributableFailures": 0,
+      "oomDelta": 0,
+      "observations": [
+        {
+          "pair": 1,
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 8128,
+          "candidateDurationMs": 12222,
+          "savedMs": -4094,
+          "controlSha256": "9923f14bbc6759f99ea3b1a3a7fe8a9cdc105fffde028d51e6d0b3c146fd9101",
+          "candidateSha256": "9923f14bbc6759f99ea3b1a3a7fe8a9cdc105fffde028d51e6d0b3c146fd9101"
+        },
+        {
+          "pair": 2,
+          "order": "CANDIDATE_FIRST",
+          "controlDurationMs": 8173,
+          "candidateDurationMs": 11985,
+          "savedMs": -3812,
+          "controlSha256": "9923f14bbc6759f99ea3b1a3a7fe8a9cdc105fffde028d51e6d0b3c146fd9101",
+          "candidateSha256": "9923f14bbc6759f99ea3b1a3a7fe8a9cdc105fffde028d51e6d0b3c146fd9101"
+        },
+        {
+          "pair": 3,
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 9692,
+          "candidateDurationMs": 12989,
+          "savedMs": -3297,
+          "controlSha256": "9923f14bbc6759f99ea3b1a3a7fe8a9cdc105fffde028d51e6d0b3c146fd9101",
+          "candidateSha256": "9923f14bbc6759f99ea3b1a3a7fe8a9cdc105fffde028d51e6d0b3c146fd9101"
+        },
+        {
+          "pair": 4,
+          "order": "CANDIDATE_FIRST",
+          "controlDurationMs": 7241,
+          "candidateDurationMs": 14227,
+          "savedMs": -6986,
+          "controlSha256": "9923f14bbc6759f99ea3b1a3a7fe8a9cdc105fffde028d51e6d0b3c146fd9101",
+          "candidateSha256": "9923f14bbc6759f99ea3b1a3a7fe8a9cdc105fffde028d51e6d0b3c146fd9101"
+        }
+      ]
+    },
+    "buildImpact": {
+      "classification": "THRESHOLD_MET",
+      "meanSavedMs": 1055.25,
+      "meanReductionRatio": 0.5248694354638149,
+      "interval95SavedMs": [
+        589,
+        1583
+      ],
+      "positivePairs": 4,
+      "requiredOutputsIdentical": true,
+      "productAttributableFailures": 0,
+      "observations": [
+        {
+          "pair": 1,
+          "order": "FULL_FIRST",
+          "fullGraphDurationMs": 2710,
+          "selectedGraphDurationMs": 845,
+          "savedMs": 1865,
+          "serviceAJarSha256": "028bebd22b1cb060f0dfe583d1fc11f74ab7a72af70240f47c82d92bccb004ec",
+          "preservedTestMarkerSha256": "4138524a95bfd23fb518528babe5aeff8a809bf01f4b778312d21f69c1ea26ed"
+        },
+        {
+          "pair": 2,
+          "order": "SELECTED_FIRST",
+          "fullGraphDurationMs": 1891,
+          "selectedGraphDurationMs": 1154,
+          "savedMs": 737,
+          "serviceAJarSha256": "028bebd22b1cb060f0dfe583d1fc11f74ab7a72af70240f47c82d92bccb004ec",
+          "preservedTestMarkerSha256": "4138524a95bfd23fb518528babe5aeff8a809bf01f4b778312d21f69c1ea26ed"
+        },
+        {
+          "pair": 3,
+          "order": "FULL_FIRST",
+          "fullGraphDurationMs": 1852,
+          "selectedGraphDurationMs": 674,
+          "savedMs": 1178,
+          "serviceAJarSha256": "028bebd22b1cb060f0dfe583d1fc11f74ab7a72af70240f47c82d92bccb004ec",
+          "preservedTestMarkerSha256": "4138524a95bfd23fb518528babe5aeff8a809bf01f4b778312d21f69c1ea26ed"
+        },
+        {
+          "pair": 4,
+          "order": "SELECTED_FIRST",
+          "fullGraphDurationMs": 1589,
+          "selectedGraphDurationMs": 1148,
+          "savedMs": 441,
+          "serviceAJarSha256": "028bebd22b1cb060f0dfe583d1fc11f74ab7a72af70240f47c82d92bccb004ec",
+          "preservedTestMarkerSha256": "4138524a95bfd23fb518528babe5aeff8a809bf01f4b778312d21f69c1ea26ed"
+        }
+      ]
+    }
+  },
+  "gate": {
+    "id": "POC-VALUE-001",
+    "state": "PASSED",
+    "next": "POC-VALUE-002",
+    "pocValueProven": false
+  },
+  "boundaries": {
+    "mechanismExplorationOnly": true,
+    "combinedProductMeasured": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}
