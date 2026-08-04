@@ -2148,6 +2148,7 @@ the strict benchmark:
 
 ```bash
 ./dev/check-poc-breadth
+./dev/check-poc-overhead
 ```
 
 The checked report covers no-change, leaf-source, shared-source, and global
@@ -2163,9 +2164,11 @@ GRADLE_USER_HOME=.tools/gradle-user-home/local \
 
 Both a pass and a fail are valid evidence. A fail retains the already qualified
 narrow POC claim and identifies the workload class that must not be generalized.
-The checked result currently fails breadth with 2/8 qualifying cells: shared
-Kotlin clears the accelerator threshold and Kotlin build-logic preserves parity;
-the remaining cells expose short-build and Groovy overhead for the next block.
+The checked repeat currently fails breadth with 4/8 qualifying cells: no-change
+Kotlin preserves parity, and leaf Kotlin, shared Kotlin, and leaf Groovy clear
+the accelerator threshold. The diagnostic phase report proves the measured
+candidate is native-only and loads no init/project plugin. Remaining Groovy and
+global-build-logic failures are order-sensitive and stay outside the claim.
 
 Validate and print the historical mechanism-development scorecard without
 rerunning a benchmark:

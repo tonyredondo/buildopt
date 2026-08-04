@@ -137,6 +137,7 @@ reference data, thresholds, or held-out results merely to obtain promotion.
 ./dev/check-poc-value-coverage
 ./dev/check-poc-value-combined
 ./dev/check-poc-breadth
+./dev/check-poc-overhead
 ./dev/check-build-optimization-performance
 ```
 
@@ -148,9 +149,11 @@ Use the owning benchmark runner only when the relevant implementation or
 fixture changes.
 
 `check-poc-breadth` accepts both a passing and a failing decision document and
-recomputes all 64 observations. The checked result retains the narrow claim:
-only 2/8 realistic change/DSL cells qualify, despite correct selection and
-byte-identical outputs.
+recomputes all 64 observations. The post-attribution repeat retains the narrow
+claim: 4/8 realistic change/DSL cells qualify, despite correct selection and
+byte-identical outputs. `check-poc-overhead` independently validates the
+non-overlapping diagnostic phases and confirms that traced timings never gate
+performance.
 
 ## Task Intelligence
 

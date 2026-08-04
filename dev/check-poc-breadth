@@ -8,7 +8,7 @@ fi
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
-buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-breadth-v1.json"}
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-breadth-v2.json"}
 buildopt_contract="${buildopt_repo_root}/specs/poc-breadth-validation-v1.json"
 buildopt_runner_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
 buildopt_fixture="${buildopt_repo_root}/fixtures/poc-breadth/realistic-multimodule"

@@ -74,8 +74,11 @@ The underlying evidence and contracts are:
   validated by `./dev/check-poc-value-coverage`;
 - [combined public-path matrix](./results/poc-value-combined-v1.json),
   validated by `./dev/check-poc-value-combined`;
-- [realistic change-class matrix](./results/poc-breadth-v1.json), validated by
+- [initial realistic change-class matrix](./results/poc-breadth-v1.json) and
+  [post-attribution repeat](./results/poc-breadth-v2.json), validated by
   `./dev/check-poc-breadth`;
+- [installed-path phase attribution](./results/poc-overhead-v1.json), validated
+  by `./dev/check-poc-overhead`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
@@ -91,21 +94,25 @@ production readiness.
 ### Realistic change-class result
 
 `POC-BREADTH-001` tested whether the bounded result generalizes to a five-project
-Kotlin/Groovy graph. It does not yet: 2/8 cells qualify, so the checked decision
-is `RETAIN_QUALIFIED_SYNTHETIC_WORKLOADS_ONLY`.
+Kotlin/Groovy graph. The initial report qualified 2/8 cells. `POC-OVERHEAD-001`
+then proved that the installed candidate used the native-only path, loaded no
+init/project plugin, and had one avoidable candidate-only `XDG_CACHE_HOME`.
+After removing only that asymmetry and leaving every threshold unchanged, the
+repeat qualifies 4/8 cells. The checked decision remains
+`RETAIN_QUALIFIED_SYNTHETIC_WORKLOADS_ONLY`.
 
 | Change | Kotlin | Groovy |
 |---|---:|---:|
-| No change | 34 ms slower (3.7%); parity failed | 406 ms slower (31.7%); parity failed |
-| Leaf source | 361 ms faster (29.0%); below 500-ms floor | 269 ms faster (15.7%); noisy and below floor |
-| Shared source | 1,471 ms faster (64.2%); threshold met | 287 ms slower (21.9%); threshold failed |
-| Build logic | 163 ms faster (5.1%); parity met | 167 ms slower (8.2%); parity failed |
+| No change | 45 ms faster (4.9%); parity met | 168 ms slower (12.1%); parity failed |
+| Leaf source | 543 ms faster (38.1%); threshold met | 1,309 ms faster (63.6%); threshold met |
+| Shared source | 877 ms faster (49.1%); threshold met | 938 ms slower (95.8%); threshold failed |
+| Build logic | 679 ms slower (27.0%); parity failed | 119 ms slower (5.4%); parity failed |
 
 Every required output was byte-identical, selection/fallback task counts were
 exact, Configuration Cache behavior matched the scenario, and no product failure
 occurred. The failure is value/performance, not correctness. Percentages are not
-added across cells. The next experiment must attribute and remove installed-path
-overhead on short and Groovy builds before rerunning this unchanged gate.
+added across cells. The remaining failures are strongly order-sensitive, so the
+next experiment isolates inter-arm carryover before making another product change.
 
 ## Historical v0.2 public onboarding performance
 

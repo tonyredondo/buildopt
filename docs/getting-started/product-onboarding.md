@@ -146,10 +146,12 @@ hide another's cost:
 
 These are controlled POC workloads, not universal predictions, and the
 mechanism percentages must not be added; the combined row is measured directly.
-A separate realistic five-project matrix qualified only shared-source Kotlin
-acceleration and Kotlin build-logic parity (2/8 cells). Short/no-change and all
-Groovy cells did not clear their thresholds, so BuildOpt currently retains the
-narrow workload claim rather than promising these gains generally.
+A separate realistic five-project matrix initially qualified 2/8 cells. After
+installed-path attribution and removal of one candidate-only environment
+difference, the unchanged repeat qualified leaf Kotlin/Groovy and shared Kotlin
+acceleration plus no-change Kotlin parity (4/8 cells). Global build-logic,
+no-change Groovy, and shared Groovy remain outside the claim while
+order/carryover sensitivity is investigated.
 A repository that needs the full graph receives
 no Build Impact saving; an already warm native cache is a parity baseline, not
 the cache-off comparison. Run `./dev/check-poc-value-validation` to validate
