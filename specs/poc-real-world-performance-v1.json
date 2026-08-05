@@ -103,8 +103,7 @@
           "mockito-core/build/classes",
           "mockito-extensions/mockito-junit-jupiter/build/classes",
           "mockito-extensions/mockito-subclass/build/resources/main",
-          "mockito-extensions/mockito-proxy/build/classes",
-          "mockito-extensions/mockito-errorprone/build/classes"
+          "mockito-extensions/mockito-proxy/build/resources/main"
         ],
         "LEAF_SOURCE_CHANGE": [
           "mockito-extensions/mockito-junit-jupiter/build/classes"

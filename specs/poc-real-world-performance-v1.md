@@ -43,11 +43,13 @@ The public claim broadens only if both cells qualify in all three repositories.
 Any other outcome retains the bounded synthetic claim and records the exact
 failed or unstable cells without authorizing product tuning by itself.
 
-Before the first Mockito timing, the preregistration was amended once to hash
-`mockito-subclass`'s real resource output instead of a nonexistent classes
-directory. The failed preflight produced no Mockito sample; the complete
-matrix is restarted from zero. Tasks, mutations, thresholds, pair ordering,
-and decision rules are unchanged.
+Before the first Mockito timing, the preregistration was amended to hash the
+real outputs discovered by its preflight: `mockito-subclass` and
+`mockito-proxy` contain resources rather than production classes, while
+`mockito-errorprone` is an empty aggregation module at the pinned revision.
+The failed preflights produced no Mockito sample; after each correction the
+complete matrix is restarted from zero. Tasks, mutations, thresholds, pair
+ordering, and decision rules are unchanged.
 
 Validate the frozen contract or checked evidence with:
 
