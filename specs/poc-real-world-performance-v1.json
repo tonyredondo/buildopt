@@ -139,14 +139,13 @@
         "NO_CHANGE": [
           "spotbugs/build/classes",
           "spotbugs-ant/build/classes",
-          "spotbugs-tests/build/classes",
           "test-harness-jupiter/build/classes"
         ],
         "LEAF_SOURCE_CHANGE": [
           "spotbugs-ant/build/classes"
         ]
       },
-      "candidateMustOmitTask": ":spotbugs-tests:compileJava"
+      "candidateMustOmitTask": ":test-harness-jupiter:compileJava"
     }
   ],
   "scenarios": [

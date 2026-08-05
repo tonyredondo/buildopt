@@ -48,8 +48,15 @@ real outputs discovered by its preflight: `mockito-subclass` and
 `mockito-proxy` contain resources rather than production classes, while
 `mockito-errorprone` is an empty aggregation module at the pinned revision.
 The failed preflights produced no Mockito sample; after each correction the
-complete matrix is restarted from zero. Tasks, mutations, thresholds, pair
-ordering, and decision rules are unchanged.
+complete matrix is restarted from zero. Mockito tasks, mutations, thresholds,
+pair ordering, and decision rules are unchanged.
+
+The same pre-measurement output audit found that `spotbugs-tests` contains
+test sources but no production classes at the pinned revision. Its nonexistent
+classes root was removed, and the omission proof now uses the real unrelated
+task `test-harness-jupiter:compileJava`. No SpotBugs sample existed before this
+correction; the complete matrix is again restarted from zero. Entrypoints,
+mutation, thresholds, pair ordering, and decision rules remain unchanged.
 
 Validate the frozen contract or checked evidence with:
 
