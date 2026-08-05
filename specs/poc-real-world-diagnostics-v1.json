@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "buildopt.specs/poc-real-world-diagnostics/v1",
+  "workItem": "POC-REALWORLD-DIAGNOSTICS-001",
+  "decision": "PREREGISTER_GENERIC_VALUE_HYPOTHESES",
+  "runner": "linux-amd64-4c-16g-v1",
+  "inputs": {
+    "compatibilitySpecSha256": "d335fae27a477f2c4c290a541c321385de0d560a8c8e3c178aa6ca0981f71e59",
+    "compatibilityEvidenceSha256": "99c2dcfd0c00eb45d13f64b75103655e472bbee6662d38bc4e28af188633133a",
+    "performanceSpecSha256": "9a157960da757ffb77affc032c7020d6b0014938aefa22c6421bb9376996485e",
+    "performanceEvidenceSha256": "3b188c96f8d472c3042fa6b367b842544ba37ce765cbc67d1c4c1265d7d35a8e",
+    "requiredPerformanceVerdict": "RETAIN_BOUNDED_SYNTHETIC_CLAIM"
+  },
+  "repositories": [
+    {
+      "id": "SPOTLESS",
+      "nameWithOwner": "diffplug/spotless",
+      "url": "https://github.com/diffplug/spotless.git",
+      "ref": "gradle/8.9.0",
+      "revision": "cbd01c4e4b91cea538691d4fe6a8f929d75c27c6",
+      "gradleVersion": "9.4.1",
+      "workflow": {
+        "id": "CI_SANITY",
+        "sourcePath": ".github/workflows/ci.yml",
+        "sourceSha256": "b471d950d35126f1817ad4940bea5b7289b59827706964d91dcfdad8106f7564",
+        "commands": [
+          ["spotlessCheck", "--no-scan"],
+          ["assemble", "testClasses", "--no-scan", "-PSPOTLESS_EXCLUDE_MAVEN=true"]
+        ],
+        "testExecutionPolicy": "NO_TEST_TASK_REQUESTED"
+      },
+      "nativeCapabilities": {
+        "parallel": true,
+        "buildCache": true,
+        "configurationCache": true,
+        "gradlePropertiesSha256": "62674840ac3f6c19be92011fbc01e442777d6d2190ec8ac70be010c14c64d593"
+      },
+      "audit": {
+        "mainSourceFiles": 382,
+        "testSourceFiles": 221,
+        "buildFiles": 6
+      }
+    },
+    {
+      "id": "MOCKITO",
+      "nameWithOwner": "mockito/mockito",
+      "url": "https://github.com/mockito/mockito.git",
+      "ref": "v5.23.0",
+      "revision": "a231205b240e7884a63bf0f63440012867a4da21",
+      "gradleVersion": "8.14.2",
+      "workflow": {
+        "id": "CI_BUILD_AND_COVERAGE",
+        "sourcePath": ".github/workflows/ci.yml",
+        "sourceSha256": "b8cc8276982f85141461cbce35b5c88a209964d60786a589175f799cbf0ff1d1",
+        "environment": {
+          "MOCK_MAKER": "mock-maker-default",
+          "MEMBER_ACCESSOR": "member-accessor-module"
+        },
+        "commands": [
+          ["spotlessCheck", "--stacktrace", "--no-scan"],
+          ["-Pmockito.test.java=21", "build", "--stacktrace", "--no-scan"],
+          ["-Pmockito.test.java=21", "coverageReport", "--stacktrace", "--no-scan"]
+        ],
+        "testExecutionPolicy": "PRESERVE_ALL_WORKFLOW_TESTS"
+      },
+      "nativeCapabilities": {
+        "parallel": true,
+        "buildCache": true,
+        "configurationCache": false,
+        "configurationCacheBlocker": "BND_JAR_EXECUTION_ACCESSES_TASK_PROJECT_AND_DISCARDS_THE_ENTRY",
+        "gradlePropertiesSha256": "57b55fc43b1a8e56459a2785924ccedadeba50dbcee9b346b2bf40c8b8f1b306"
+      },
+      "audit": {
+        "mainSourceFiles": 496,
+        "testSourceFiles": 482,
+        "buildFiles": 25
+      }
+    },
+    {
+      "id": "SPOTBUGS",
+      "nameWithOwner": "spotbugs/spotbugs",
+      "url": "https://github.com/spotbugs/spotbugs.git",
+      "ref": "4.10.3",
+      "revision": "8d5cad4536ae263448c09181268bbca70f0c0712",
+      "gradleVersion": "9.6.1",
+      "workflow": {
+        "id": "CONTRIBUTOR_DETECTOR_REGRESSION",
+        "sourcePath": ".github/copilot-instructions.md",
+        "sourceSha256": "768ffd6873c96c50ee4bfa6dca9671876a16fdf194c65758e600758dc904dded",
+        "commands": [
+          ["--configure-on-demand", ":spotbugs-tests:test", "--no-scan", "--stacktrace"]
+        ],
+        "testExecutionPolicy": "PRESERVE_ALL_REQUESTED_TESTS"
+      },
+      "nativeCapabilities": {
+        "parallel": true,
+        "buildCache": false,
+        "configurationCache": false,
+        "configurationCacheBlocker": "UPDATE_MANIFEST_TASK_FAILS_WHEN_CONFIGURATION_CACHE_IS_ENABLED",
+        "gradlePropertiesSha256": "906336464155b68291fe62da3af140495fb9b08f05f10b4557b18e8425756c98"
+      },
+      "audit": {
+        "mainSourceFiles": 1073,
+        "testSourceFiles": 314,
+        "buildFiles": 12
+      }
+    }
+  ],
+  "measurement": {
+    "purpose": "PROFILE_REAL_WORKFLOW_COST_BEFORE_PRODUCT_CHANGES",
+    "preflight": "ONLINE_UNMEASURED_EXACT_WORKFLOW",
+    "measuredNetwork": "DISCONNECTED",
+    "measuredDependencyMode": "GRADLE_OFFLINE",
+    "measuredEntrypoint": "GRADLE_WRAPPER",
+    "measuredRunsPerRepository": 1,
+    "profile": "GRADLE_NATIVE_HTML_PROFILE_PER_COMMAND",
+    "buildCache": false,
+    "rerunTasks": true,
+    "daemon": true,
+    "parallelism": "REPOSITORY_DECLARED",
+    "configurationCache": "REPOSITORY_DECLARED",
+    "workspace": "DISPOSABLE_PINNED_CHECKOUT",
+    "gradleUserHome": "PRIVATE_PERSISTENT_BETWEEN_PREFLIGHT_AND_PROFILE",
+    "cleaning": "DELETE_REPOSITORY_BUILD_DIRECTORIES_AND_PROJECT_DOT_GRADLE_BEFORE_PROFILE",
+    "taskDurationsMayOverlap": true,
+    "taskDurationsMayBeSummedAsWallClockSavings": false,
+    "performanceComparisonClaimed": false
+  },
+  "hypothesisPolicy": {
+    "allowedStates": ["CONTROL_ONLY", "PREREGISTER_NEXT_EXPERIMENT", "NO_GENERIC_OPPORTUNITY"],
+    "mustBeGenericAcrossRepositoriesOrMechanisms": true,
+    "mustNameOptimizedNativeGradleControl": true,
+    "mustPreserveRequiredOutputs": true,
+    "mustPreserveAllRequestedTests": true,
+    "mustDeclareOwningBuildOptFeature": true,
+    "mustDeclareFailureAndFallback": true,
+    "mayClaimSavingsFromThisDiagnostic": false,
+    "repositorySpecificHardCodingAllowed": false,
+    "thresholdsMayMoveAfterObservation": false
+  },
+  "boundaries": {
+    "publicSourceOnly": true,
+    "proofOfConcept": true,
+    "productImplementationChanged": false,
+    "performanceClaimAuthorized": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

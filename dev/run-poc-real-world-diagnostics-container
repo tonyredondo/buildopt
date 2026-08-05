@@ -1,0 +1,458 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s OUTPUT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-real-world-diagnostics-v1.json"
+buildopt_compatibility_contract="${buildopt_repo_root}/specs/poc-real-world-compatibility-v1.json"
+buildopt_runner_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ]]; then
+    printf 'invalid POC real-world diagnostics output path\n' >&2
+    exit 64
+fi
+for buildopt_command in awk cp date docker find git grep jq mkdir mktemp \
+    sed sha256sum sort; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC real-world diagnostics command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+if [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)" ]]; then
+    printf 'POC real-world diagnostics require a clean revision-bound checkout\n' >&2
+    exit 1
+fi
+if ! docker info >/dev/null 2>&1; then
+    printf 'Docker daemon is unavailable\n' >&2
+    exit 1
+fi
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-poc-realworld-diagnostics.XXXXXX")
+buildopt_containers=()
+buildopt_cleanup() {
+    local buildopt_container
+    for buildopt_container in "${buildopt_containers[@]}"; do
+        docker rm -f "${buildopt_container}" >/dev/null 2>&1 || true
+    done
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-poc-realworld-diagnostics."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+mkdir -p -- "${buildopt_root}/repositories" "${buildopt_root}/results"
+chmod 0700 "${buildopt_root}"
+
+"${buildopt_script_dir}/check-poc-real-world-diagnostics" --spec-only >/dev/null
+buildopt_spec_sha=$(sha256sum "${buildopt_contract}" | awk '{print $1}')
+buildopt_runner_spec_sha=$(sha256sum "${buildopt_runner_spec}" | awk '{print $1}')
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_image=$(jq -er '.container.reference' "${buildopt_runner_spec}")
+buildopt_platform_digest=$(jq -er '.container.platformDigest' "${buildopt_runner_spec}")
+buildopt_cpu=$(jq -er '.runnerClass.cpuCount' "${buildopt_runner_spec}")
+buildopt_memory=$(jq -er '.runnerClass.memoryBytes' "${buildopt_runner_spec}")
+
+docker pull --quiet --platform linux/amd64 "${buildopt_image}" >/dev/null
+if ! docker image inspect "${buildopt_image}" |
+    jq -e --arg digest "${buildopt_platform_digest}" '
+        length == 1 and .[0].Os == "linux" and .[0].Architecture == "amd64" and
+        any(.[0].RepoDigests[]?; endswith("@" + $digest))
+    ' >/dev/null; then
+    printf 'diagnostics image does not match the pinned platform digest\n' >&2
+    exit 1
+fi
+
+buildopt_environment=(
+    -u CI
+    -u ANDROID_HOME
+    -u GITHUB_TOKEN
+    -u GH_TOKEN
+    -u DEVELOCITY_ACCESS_KEY
+    -u GRADLE_ENTERPRISE_ACCESS_KEY
+    -u SONAR_LOGIN
+    -u ORG_GRADLE_PROJECT_keystorepass
+    -u ORG_GRADLE_PROJECT_signingKey
+    -u ORG_GRADLE_PROJECT_signingPassword
+    -u buildcacheuser
+    -u buildcachepass
+)
+
+buildopt_duration_ms() {
+    awk -v value="$1" '
+        BEGIN {
+            gsub(/[[:space:]]/, "", value)
+            total = 0
+            if (value ~ /ms$/) {
+                sub(/ms$/, "", value)
+                printf "%d\n", value + 0
+                exit
+            }
+            if (index(value, "h") > 0) {
+                split(value, parts, "h")
+                total += parts[1] * 3600000
+                value = parts[2]
+            }
+            if (index(value, "m") > 0) {
+                split(value, parts, "m")
+                total += parts[1] * 60000
+                value = parts[2]
+            }
+            sub(/s$/, "", value)
+            total += value * 1000
+            printf "%d\n", total + 0.5
+        }
+    '
+}
+
+buildopt_profile_value() {
+    local buildopt_profile=$1
+    local buildopt_label=$2
+    local buildopt_value
+    buildopt_value=$(awk -v label="${buildopt_label}" '
+        index($0, "<td>" label "</td>") {
+            getline
+            gsub(/<[^>]*>/, "")
+            print
+            exit
+        }
+    ' "${buildopt_profile}")
+    [[ -n "${buildopt_value}" ]] || {
+        printf 'profile field is unavailable: %s\n' "${buildopt_label}" >&2
+        return 1
+    }
+    buildopt_duration_ms "${buildopt_value}"
+}
+
+buildopt_profile_tasks() {
+    local buildopt_profile=$1
+    local buildopt_tsv=$2
+    awk '
+        /<h2>Task Execution<\/h2>/ { in_tasks = 1; next }
+        in_tasks && /<\/table>/ { exit }
+        in_tasks && /<td class="indentPath">/ {
+            task = $0
+            gsub(/<[^>]*>/, "", task)
+            getline
+            duration = $0
+            gsub(/<[^>]*>/, "", duration)
+            getline
+            outcome = $0
+            gsub(/<[^>]*>/, "", outcome)
+            gsub(/&gt;/, ">", task)
+            gsub(/&lt;/, "<", task)
+            gsub(/&amp;/, "\\&", task)
+            print task "\t" duration "\t" outcome
+        }
+    ' "${buildopt_profile}" >"${buildopt_tsv}"
+    [[ -s "${buildopt_tsv}" ]] || {
+        printf 'profile contains no task rows: %s\n' "${buildopt_profile}" >&2
+        return 1
+    }
+}
+
+buildopt_run_command() {
+    local buildopt_container=$1
+    local buildopt_log=$2
+    local buildopt_measured=$3
+    shift 3
+    local -a buildopt_command=(./gradlew --daemon --console=plain "$@")
+    if [[ "${buildopt_measured}" == true ]]; then
+        buildopt_command+=(--offline --no-build-cache --rerun-tasks --profile)
+    fi
+    if ! docker exec --workdir /repo "${buildopt_container}" \
+        /usr/bin/env "${buildopt_environment[@]}" "${buildopt_command[@]}" \
+        >"${buildopt_log}" 2>&1; then
+        tail -n 160 "${buildopt_log}" >&2
+        printf 'real-world workflow command failed\n' >&2
+        return 1
+    fi
+    grep -Fq 'BUILD SUCCESSFUL' "${buildopt_log}" || {
+        printf 'real-world workflow lacks Gradle success marker\n' >&2
+        return 1
+    }
+    if grep -Eq '^> Task .*:(publish|upload|release|sign)([A-Z:]|$)' \
+        "${buildopt_log}"; then
+        printf 'real-world workflow executed a forbidden release task\n' >&2
+        return 1
+    fi
+    if grep -Eq 'Publishing build scan|Build scan published|https://gradle[.]com/s/' \
+        "${buildopt_log}"; then
+        printf 'real-world workflow published a forbidden build scan\n' >&2
+        return 1
+    fi
+}
+
+for buildopt_repository_index in 0 1 2; do
+    buildopt_id=$(jq -er ".repositories[${buildopt_repository_index}].id" \
+        "${buildopt_contract}")
+    buildopt_name=$(jq -er ".repositories[${buildopt_repository_index}].nameWithOwner" \
+        "${buildopt_contract}")
+    buildopt_url=$(jq -er ".repositories[${buildopt_repository_index}].url" \
+        "${buildopt_contract}")
+    buildopt_ref=$(jq -er ".repositories[${buildopt_repository_index}].ref" \
+        "${buildopt_contract}")
+    buildopt_expected_revision=$(jq -er \
+        ".repositories[${buildopt_repository_index}].revision" "${buildopt_contract}")
+    buildopt_repository_root="${buildopt_root}/repositories/${buildopt_id}"
+    buildopt_checkout="${buildopt_repository_root}/checkout"
+    buildopt_home="${buildopt_repository_root}/home"
+    buildopt_gradle_home="${buildopt_repository_root}/gradle-home"
+    buildopt_results="${buildopt_root}/results/${buildopt_id}"
+    mkdir -p -- "${buildopt_repository_root}" "${buildopt_home}" \
+        "${buildopt_gradle_home}" "${buildopt_results}"
+    chmod 0700 "${buildopt_home}" "${buildopt_gradle_home}"
+
+    GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null GIT_TERMINAL_PROMPT=0 \
+        git clone --quiet --depth 1 --branch "${buildopt_ref}" --single-branch \
+        "${buildopt_url}" "${buildopt_checkout}"
+    buildopt_actual_revision=$(git -C "${buildopt_checkout}" rev-parse HEAD)
+    if [[ "${buildopt_actual_revision}" != "${buildopt_expected_revision}" ]]; then
+        printf 'diagnostics revision mismatch for %s\n' "${buildopt_name}" >&2
+        exit 1
+    fi
+    buildopt_source_archive_sha=$(git -C "${buildopt_checkout}" archive --format=tar HEAD |
+        sha256sum | awk '{print $1}')
+    buildopt_source_path=$(jq -er \
+        ".repositories[${buildopt_repository_index}].workflow.sourcePath" \
+        "${buildopt_contract}")
+    buildopt_expected_source_sha=$(jq -er \
+        ".repositories[${buildopt_repository_index}].workflow.sourceSha256" \
+        "${buildopt_contract}")
+    buildopt_actual_source_sha=$(sha256sum "${buildopt_checkout}/${buildopt_source_path}" |
+        awk '{print $1}')
+    if [[ "${buildopt_actual_source_sha}" != "${buildopt_expected_source_sha}" ]]; then
+        printf 'diagnostics workflow source drifted for %s\n' "${buildopt_name}" >&2
+        exit 1
+    fi
+    buildopt_properties="${buildopt_checkout}/gradle.properties"
+    buildopt_expected_properties_sha=$(jq -er \
+        ".repositories[${buildopt_repository_index}].nativeCapabilities.gradlePropertiesSha256" \
+        "${buildopt_contract}")
+    if [[ "$(sha256sum "${buildopt_properties}" | awk '{print $1}')" != \
+        "${buildopt_expected_properties_sha}" ]]; then
+        printf 'diagnostics Gradle properties drifted for %s\n' "${buildopt_name}" >&2
+        exit 1
+    fi
+
+    buildopt_compatibility_index=$(jq -r --arg id "${buildopt_id}" \
+        '.repositories | map(.id) | index($id)' "${buildopt_compatibility_contract}")
+    [[ "${buildopt_compatibility_index}" != null ]] || {
+        printf 'compatibility input is unavailable for %s\n' "${buildopt_name}" >&2
+        exit 1
+    }
+    buildopt_checksum_injection=$(jq -r \
+        ".repositories[${buildopt_compatibility_index}].wrapper.checksumInjectionRequired" \
+        "${buildopt_compatibility_contract}")
+    buildopt_distribution_sha=$(jq -er \
+        ".repositories[${buildopt_compatibility_index}].wrapper.distributionSha256" \
+        "${buildopt_compatibility_contract}")
+    if [[ "${buildopt_checksum_injection}" == true ]]; then
+        printf '\ndistributionSha256Sum=%s\n' "${buildopt_distribution_sha}" \
+            >>"${buildopt_checkout}/gradle/wrapper/gradle-wrapper.properties"
+    fi
+
+    buildopt_nonce=$(basename "${buildopt_root}" | tr -cd 'a-zA-Z0-9' | tail -c 8)
+    buildopt_container="buildopt-rwd-${buildopt_id,,}-${buildopt_nonce}"
+    docker create --name "${buildopt_container}" --platform linux/amd64 \
+        --cpus "${buildopt_cpu}" --memory "${buildopt_memory}" \
+        --user "$(id -u):$(id -g)" \
+        --env HOME=/benchmark/home \
+        --env GRADLE_USER_HOME=/benchmark/gradle-home \
+        --env LANG=C.UTF-8 --env LC_ALL=C.UTF-8 --env TZ=UTC \
+        --volume "${buildopt_checkout}:/repo" \
+        --volume "${buildopt_home}:/benchmark/home" \
+        --volume "${buildopt_gradle_home}:/benchmark/gradle-home" \
+        --workdir /repo "${buildopt_image}" \
+        /bin/sh -c 'while :; do sleep 3600; done' >/dev/null
+    buildopt_containers+=("${buildopt_container}")
+    docker start "${buildopt_container}" >/dev/null
+
+    mapfile -t buildopt_workflow_environment < <(jq -r \
+        ".repositories[${buildopt_repository_index}].workflow.environment // {} | to_entries[] | \"\\(.key)=\\(.value)\"" \
+        "${buildopt_contract}")
+    if ((${#buildopt_workflow_environment[@]} > 0)); then
+        buildopt_environment+=("${buildopt_workflow_environment[@]}")
+    fi
+    buildopt_command_count=$(jq -r \
+        ".repositories[${buildopt_repository_index}].workflow.commands | length" \
+        "${buildopt_contract}")
+    for ((buildopt_command_index = 0; buildopt_command_index < buildopt_command_count; buildopt_command_index++)); do
+        mapfile -t buildopt_arguments < <(jq -r \
+            ".repositories[${buildopt_repository_index}].workflow.commands[${buildopt_command_index}][]" \
+            "${buildopt_contract}")
+        buildopt_run_command "${buildopt_container}" \
+            "${buildopt_results}/preflight-${buildopt_command_index}.log" false \
+            "${buildopt_arguments[@]}"
+    done
+
+    find "${buildopt_checkout}" -type d -name build -prune -exec rm -rf -- {} +
+    rm -rf -- "${buildopt_checkout}/.gradle"
+    docker network disconnect bridge "${buildopt_container}"
+
+    buildopt_command_fragments=()
+    for ((buildopt_command_index = 0; buildopt_command_index < buildopt_command_count; buildopt_command_index++)); do
+        mapfile -t buildopt_arguments < <(jq -r \
+            ".repositories[${buildopt_repository_index}].workflow.commands[${buildopt_command_index}][]" \
+            "${buildopt_contract}")
+        buildopt_log="${buildopt_results}/measured-${buildopt_command_index}.log"
+        buildopt_run_command "${buildopt_container}" "${buildopt_log}" true \
+            "${buildopt_arguments[@]}"
+        buildopt_profile=$(find "${buildopt_checkout}/build/reports/profile" \
+            -type f -name 'profile-*.html' -printf '%T@ %p\n' 2>/dev/null |
+            sort -n | tail -n 1 | sed 's/^[^ ]* //')
+        [[ -n "${buildopt_profile}" ]] || {
+            printf 'Gradle profile is unavailable for %s command %d\n' \
+                "${buildopt_name}" "${buildopt_command_index}" >&2
+            exit 1
+        }
+        buildopt_profile_copy="${buildopt_results}/profile-${buildopt_command_index}.html"
+        cp -- "${buildopt_profile}" "${buildopt_profile_copy}"
+        buildopt_tasks_tsv="${buildopt_results}/tasks-${buildopt_command_index}.tsv"
+        buildopt_profile_tasks "${buildopt_profile_copy}" "${buildopt_tasks_tsv}"
+        buildopt_tasks_json="${buildopt_results}/tasks-${buildopt_command_index}.json"
+        while IFS=$'\t' read -r buildopt_task buildopt_duration buildopt_outcome; do
+            jq -nc --arg path "${buildopt_task}" \
+                --argjson durationMs "$(buildopt_duration_ms "${buildopt_duration}")" \
+                --arg outcome "${buildopt_outcome}" \
+                '{path: $path, durationMs: $durationMs, outcome: $outcome}'
+        done <"${buildopt_tasks_tsv}" | jq -s . >"${buildopt_tasks_json}"
+        buildopt_total_ms=$(buildopt_profile_value "${buildopt_profile_copy}" 'Total Build Time')
+        buildopt_startup_ms=$(buildopt_profile_value "${buildopt_profile_copy}" 'Startup')
+        buildopt_settings_ms=$(buildopt_profile_value "${buildopt_profile_copy}" 'Settings and buildSrc')
+        buildopt_loading_ms=$(buildopt_profile_value "${buildopt_profile_copy}" 'Loading Projects')
+        buildopt_configuring_ms=$(buildopt_profile_value "${buildopt_profile_copy}" 'Configuring Projects')
+        buildopt_task_execution_ms=$(buildopt_profile_value "${buildopt_profile_copy}" 'Task Execution')
+        buildopt_actionable_tasks=$(awk '/actionable tasks:/ {print $1}' "${buildopt_log}" | tail -n 1)
+        [[ "${buildopt_actionable_tasks}" =~ ^[0-9]+$ ]] || {
+            printf 'actionable task count is unavailable for %s command %d\n' \
+                "${buildopt_name}" "${buildopt_command_index}" >&2
+            exit 1
+        }
+        buildopt_fragment="${buildopt_results}/command-${buildopt_command_index}.json"
+        jq -n \
+            --argjson index "${buildopt_command_index}" \
+            --argjson arguments "$(jq ".repositories[${buildopt_repository_index}].workflow.commands[${buildopt_command_index}]" "${buildopt_contract}")" \
+            --arg profileSha256 "$(sha256sum "${buildopt_profile_copy}" | awk '{print $1}')" \
+            --arg taskRowsSha256 "$(sha256sum "${buildopt_tasks_tsv}" | awk '{print $1}')" \
+            --argjson totalBuildMs "${buildopt_total_ms}" \
+            --argjson startupMs "${buildopt_startup_ms}" \
+            --argjson settingsAndBuildSrcMs "${buildopt_settings_ms}" \
+            --argjson loadingProjectsMs "${buildopt_loading_ms}" \
+            --argjson configuringProjectsMs "${buildopt_configuring_ms}" \
+            --argjson taskExecutionMs "${buildopt_task_execution_ms}" \
+            --argjson actionableTasks "${buildopt_actionable_tasks}" \
+            --slurpfile tasks "${buildopt_tasks_json}" '
+            {
+                index: $index,
+                arguments: $arguments,
+                profileSha256: $profileSha256,
+                taskRowsSha256: $taskRowsSha256,
+                totalBuildMs: $totalBuildMs,
+                startupMs: $startupMs,
+                settingsAndBuildSrcMs: $settingsAndBuildSrcMs,
+                loadingProjectsMs: $loadingProjectsMs,
+                configuringProjectsMs: $configuringProjectsMs,
+                taskExecutionMs: $taskExecutionMs,
+                actionableTasks: $actionableTasks,
+                profiledTaskRows: ($tasks[0] | length),
+                testTaskPaths: [$tasks[0][] | select(.path | test("(^|:)(test|[A-Za-z0-9_-]*Test)$"; "i")) | .path],
+                topTasks: ($tasks[0] | sort_by(-.durationMs)[:10]),
+                success: true,
+                forbiddenReleaseTaskExecuted: false,
+                buildScanPublished: false
+            }
+            ' >"${buildopt_fragment}"
+        buildopt_command_fragments+=("${buildopt_fragment}")
+    done
+
+    jq -s . "${buildopt_command_fragments[@]}" >"${buildopt_results}/commands.json"
+    jq -n \
+        --arg id "${buildopt_id}" \
+        --arg nameWithOwner "${buildopt_name}" \
+        --arg revision "${buildopt_actual_revision}" \
+        --arg sourceArchiveSha256 "${buildopt_source_archive_sha}" \
+        --arg workflowSourceSha256 "${buildopt_actual_source_sha}" \
+        --argjson audit "$(jq ".repositories[${buildopt_repository_index}].audit" "${buildopt_contract}")" \
+        --argjson commands "$(cat "${buildopt_results}/commands.json")" '
+        {
+            id: $id,
+            nameWithOwner: $nameWithOwner,
+            revision: $revision,
+            sourceArchiveSha256: $sourceArchiveSha256,
+            workflowSourceSha256: $workflowSourceSha256,
+            audit: $audit,
+            preflightSuccess: true,
+            commands: $commands,
+            workflowTotalBuildMs: ([$commands[].totalBuildMs] | add),
+            workflowConfigurationMs: ([$commands[] |
+                .settingsAndBuildSrcMs + .loadingProjectsMs + .configuringProjectsMs] | add),
+            productAttributableFailures: 0,
+            hypotheses: []
+        }
+        ' >"${buildopt_root}/results/${buildopt_id}.json"
+    buildopt_environment=(
+        -u CI -u ANDROID_HOME -u GITHUB_TOKEN -u GH_TOKEN
+        -u DEVELOCITY_ACCESS_KEY -u GRADLE_ENTERPRISE_ACCESS_KEY
+        -u SONAR_LOGIN -u ORG_GRADLE_PROJECT_keystorepass
+        -u ORG_GRADLE_PROJECT_signingKey -u ORG_GRADLE_PROJECT_signingPassword
+        -u buildcacheuser -u buildcachepass
+    )
+done
+
+jq -n \
+    --arg specSha256 "${buildopt_spec_sha}" \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg buildoptRevision "${buildopt_revision}" \
+    --arg runnerSpecSha256 "${buildopt_runner_spec_sha}" \
+    --arg image "${buildopt_image}" \
+    --arg platformDigest "${buildopt_platform_digest}" \
+    --argjson cpuCount "${buildopt_cpu}" \
+    --argjson memoryBytes "${buildopt_memory}" \
+    --argjson methodology "$(jq '.measurement' "${buildopt_contract}")" \
+    --slurpfile spotless "${buildopt_root}/results/SPOTLESS.json" \
+    --slurpfile mockito "${buildopt_root}/results/MOCKITO.json" \
+    --slurpfile spotbugs "${buildopt_root}/results/SPOTBUGS.json" '
+    {
+        schemaVersion: "buildopt.evidence/poc-real-world-diagnostics/v1",
+        specSha256: $specSha256,
+        capturedAt: $capturedAt,
+        buildoptRevision: $buildoptRevision,
+        runner: {
+            id: "linux-amd64-4c-16g-v1",
+            specSha256: $runnerSpecSha256,
+            image: $image,
+            platformDigest: $platformDigest,
+            cpuCount: $cpuCount,
+            memoryBytes: $memoryBytes
+        },
+        methodology: $methodology,
+        repositories: [$spotless[0], $mockito[0], $spotbugs[0]],
+        decision: {
+            verdict: "PENDING_HYPOTHESIS_REVIEW",
+            performanceMeasured: false,
+            savingsClaimed: false
+        },
+        gate: {id: "POC-REALWORLD-G03", state: "PENDING"},
+        boundaries: {
+            publicSourceOnly: true,
+            proofOfConcept: true,
+            productImplementationChanged: false,
+            performanceClaimAuthorized: false,
+            productionReadinessClaimed: false,
+            eightHourSoakExecuted: false,
+            externalDesignPartnerRequired: false,
+            testOptimizationModified: false
+        }
+    }
+    ' >"${buildopt_root}/result.json"
+
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+cp -- "${buildopt_root}/result.json" "${buildopt_output}"
+printf 'POC real-world diagnostics captured: %s\n' "${buildopt_output}"

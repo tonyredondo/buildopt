@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS; PUBLIC REPLICATION RETAINED THE BOUNDED CLAIM` — one of three public repositories qualified, so no general public-repository claim is authorized<br>
-**Current phase:** `POC REAL-WORLD REPLICATION COMPLETE` — the current hypothesis has a terminal result; another experiment requires a separately preregistered value hypothesis<br>
+**Overall status:** `POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS; PUBLIC WORKFLOW DIAGNOSTICS ACTIVE` — the bounded public-repository claim remains unchanged while real workflows are profiled for generic value hypotheses<br>
+**Current phase:** `POC REAL-WORLD DIAGNOSTICS` — exact upstream workflows are preregistered before profiling; this phase authorizes no savings claim or repository-specific product tuning<br>
 **POC functional target:** measurable net build-time reduction from the qualified Build Impact and exact reviewed-source Task/Patch routes; no-value Safe Cache or Runtime candidates remain disabled<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -85,6 +85,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-KOTLIN-BOUNDARY | Stop-or-replicate decision for unstable Kotlin cells | `DONE` | 1/1 | `E-168` |
 | POC-REALWORLD-COMPAT | Pinned public-repository native/BuildOpt compatibility | `DONE` | 1/1 | `E-169` |
 | POC-REALWORLD-VALUE | Paired value replication on compatible public repositories | `DONE` | 1/1 | `E-170` |
+| POC-REALWORLD-DIAGNOSTICS | Profile actual public-repository workflows and preregister generic follow-up hypotheses | `DOING` | 0/1 | `E-170` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -111,6 +112,7 @@ Optimized native Gradle baseline
   → audit fixed public repositories and prove native/installed compatibility without timing claims
   → preregister and run paired public-repository value measurements
   → retain the bounded synthetic claim after only 1/3 public repositories qualifies
+  → profile actual public workflows before choosing any new generic value hypothesis
 ```
 
 The implementation history remains useful, but it is not the POC exit gate:
@@ -144,10 +146,11 @@ than partners. Test Optimization remains a separate product.
 | 13 | `POC-KOTLIN-BOUNDARY-001` | Review the failed stability evidence and choose STOP or one final preregistered replication without changing product, workload, or thresholds | `DONE` | Codex |
 | 14 | `POC-REALWORLD-001` | Pin, audit, and execute representative native/installed tasks on Spotless, Mockito, and SpotBugs with identical required outputs | `DONE` | Codex |
 | 15 | `POC-REALWORLD-002` | Run the preregistered paired performance matrix on every repository admitted by `POC-REALWORLD-G01` | `DONE` | Codex |
+| 16 | `POC-REALWORLD-DIAGNOSTICS-001` | Profile exact Spotless, Mockito, and SpotBugs workflows and preregister only generic hypotheses that preserve outputs and every requested test | `DOING` | Codex |
 
-There is no active executable item in the current POC. New work requires a
-new, preregistered value hypothesis; the failed public cells do not authorize
-an unchanged rerun, product tuning, or threshold movement.
+The diagnostic block is the only active executable item. It may open a new,
+separately preregistered experiment, but cannot itself authorize product
+tuning, an unchanged rerun, threshold movement, or a performance claim.
 
 ### 2.4 Completed implementation sequence
 
@@ -295,6 +298,7 @@ Every accepted RFC decision is represented below. Historical private-beta decisi
 | `POC-BREADTH-G01` | Realistic Kotlin/Groovy change-class matrix preserves parity on full-graph cases and clears the accelerator threshold on selective cases | Broader synthetic POC claim | `PRELIMINARY` | Codex | `E-161`: 4/8 cells qualified after attribution; claim retained narrowly |
 | `POC-REALWORLD-G01` | Three fixed public repositories pass representative native and installed-BuildOpt tasks with identical non-empty outputs, no scans/publication, and zero product failures | Public-repository performance matrix | `DONE` | Codex | `E-169`, [`poc-real-world-compatibility-v1`](./specs/poc-real-world-compatibility-v1.md) |
 | `POC-REALWORLD-G02` | Execute the preregistered public-repository matrix and issue the terminal broaden-or-retain decision without moving thresholds | Public-repository POC claim decision | `DONE` | Codex | `E-170`, [`poc-real-world-performance-v1`](./specs/poc-real-world-performance-v1.md) |
+| `POC-REALWORLD-G03` | Profile exact upstream workflows on the strict runner and preregister only generic, output-preserving, test-preserving follow-up hypotheses without treating task-duration sums as wall-clock savings | Next public-repository value experiment | `DOING` | Codex | [`poc-real-world-diagnostics-v1`](./specs/poc-real-world-diagnostics-v1.md) |
 
 ---
 

@@ -69,6 +69,8 @@ buildopt_planned_artifacts=(
     "specs/poc-value-validation-v1.md"
     "specs/poc-real-world-performance-v1.json"
     "specs/poc-real-world-performance-v1.md"
+    "specs/poc-real-world-diagnostics-v1.json"
+    "specs/poc-real-world-diagnostics-v1.md"
     "specs/gradle-correlation-v1.md"
     "specs/ci-orchestration-v1.json"
     "specs/ci-orchestration-v1.md"

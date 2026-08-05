@@ -1,0 +1,206 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-real-world-diagnostics-v1.json"
+buildopt_compatibility_spec="${buildopt_repo_root}/specs/poc-real-world-compatibility-v1.json"
+buildopt_compatibility_evidence="${buildopt_repo_root}/benchmarks/results/poc-real-world-compatibility-v1.json"
+buildopt_performance_spec="${buildopt_repo_root}/specs/poc-real-world-performance-v1.json"
+buildopt_performance_evidence="${buildopt_repo_root}/benchmarks/results/poc-real-world-performance-v1.json"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-real-world-diagnostics-v1.json"}
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC real-world diagnostics command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_compatibility_spec_sha=$(sha256sum "${buildopt_compatibility_spec}" | awk '{print $1}')
+buildopt_compatibility_evidence_sha=$(sha256sum "${buildopt_compatibility_evidence}" | awk '{print $1}')
+buildopt_performance_spec_sha=$(sha256sum "${buildopt_performance_spec}" | awk '{print $1}')
+buildopt_performance_evidence_sha=$(sha256sum "${buildopt_performance_evidence}" | awk '{print $1}')
+
+jq -e \
+    --arg compatibilitySpecSha "${buildopt_compatibility_spec_sha}" \
+    --arg compatibilityEvidenceSha "${buildopt_compatibility_evidence_sha}" \
+    --arg performanceSpecSha "${buildopt_performance_spec_sha}" \
+    --arg performanceEvidenceSha "${buildopt_performance_evidence_sha}" '
+    .schemaVersion == "buildopt.specs/poc-real-world-diagnostics/v1" and
+    .workItem == "POC-REALWORLD-DIAGNOSTICS-001" and
+    .decision == "PREREGISTER_GENERIC_VALUE_HYPOTHESES" and
+    .runner == "linux-amd64-4c-16g-v1" and
+    .inputs == {
+        compatibilitySpecSha256: $compatibilitySpecSha,
+        compatibilityEvidenceSha256: $compatibilityEvidenceSha,
+        performanceSpecSha256: $performanceSpecSha,
+        performanceEvidenceSha256: $performanceEvidenceSha,
+        requiredPerformanceVerdict: "RETAIN_BOUNDED_SYNTHETIC_CLAIM"
+    } and
+    (.repositories | length) == 3 and
+    ([.repositories[].id] | sort) == ["MOCKITO", "SPOTBUGS", "SPOTLESS"] and
+    (all(.repositories[];
+        (.revision | test("^[0-9a-f]{40}$")) and
+        (.ref | length > 0) and
+        (.workflow.sourcePath | test("^[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)+$")) and
+        (.workflow.sourceSha256 | test("^[0-9a-f]{64}$")) and
+        (.workflow.commands | length >= 1) and
+        (all(.workflow.commands[]; length >= 2)) and
+        (.nativeCapabilities.gradlePropertiesSha256 | test("^[0-9a-f]{64}$")) and
+        .audit.mainSourceFiles > 0 and .audit.testSourceFiles > 0 and
+        .audit.buildFiles > 0)) and
+    (.repositories | map({key: .id, value: .workflow.id}) | from_entries) == {
+        SPOTLESS: "CI_SANITY",
+        MOCKITO: "CI_BUILD_AND_COVERAGE",
+        SPOTBUGS: "CONTRIBUTOR_DETECTOR_REGRESSION"
+    } and
+    .repositories[0].workflow.commands == [
+        ["spotlessCheck", "--no-scan"],
+        ["assemble", "testClasses", "--no-scan", "-PSPOTLESS_EXCLUDE_MAVEN=true"]
+    ] and
+    .repositories[1].workflow.commands == [
+        ["spotlessCheck", "--stacktrace", "--no-scan"],
+        ["-Pmockito.test.java=21", "build", "--stacktrace", "--no-scan"],
+        ["-Pmockito.test.java=21", "coverageReport", "--stacktrace", "--no-scan"]
+    ] and
+    .repositories[2].workflow.commands == [
+        ["--configure-on-demand", ":spotbugs-tests:test", "--no-scan", "--stacktrace"]
+    ] and
+    .measurement.purpose == "PROFILE_REAL_WORKFLOW_COST_BEFORE_PRODUCT_CHANGES" and
+    .measurement.preflight == "ONLINE_UNMEASURED_EXACT_WORKFLOW" and
+    .measurement.measuredNetwork == "DISCONNECTED" and
+    .measurement.measuredDependencyMode == "GRADLE_OFFLINE" and
+    .measurement.measuredEntrypoint == "GRADLE_WRAPPER" and
+    .measurement.measuredRunsPerRepository == 1 and
+    .measurement.buildCache == false and
+    .measurement.rerunTasks == true and
+    .measurement.taskDurationsMayOverlap == true and
+    .measurement.taskDurationsMayBeSummedAsWallClockSavings == false and
+    .measurement.performanceComparisonClaimed == false and
+    .hypothesisPolicy.mustBeGenericAcrossRepositoriesOrMechanisms == true and
+    .hypothesisPolicy.mustNameOptimizedNativeGradleControl == true and
+    .hypothesisPolicy.mustPreserveRequiredOutputs == true and
+    .hypothesisPolicy.mustPreserveAllRequestedTests == true and
+    .hypothesisPolicy.repositorySpecificHardCodingAllowed == false and
+    .hypothesisPolicy.mayClaimSavingsFromThisDiagnostic == false and
+    .boundaries == {
+        publicSourceOnly: true,
+        proofOfConcept: true,
+        productImplementationChanged: false,
+        performanceClaimAuthorized: false,
+        productionReadinessClaimed: false,
+        eightHourSoakExecuted: false,
+        externalDesignPartnerRequired: false,
+        testOptimizationModified: false
+    }
+    ' "${buildopt_spec}" >/dev/null
+
+if [[ "${1:-}" == --spec-only ]]; then
+    printf 'BuildOpt real-world diagnostics specification OK: %s\n' "${buildopt_spec}"
+    exit 0
+fi
+
+if [[ ! -s "${buildopt_result}" ]]; then
+    printf 'POC real-world diagnostics evidence is unavailable: %s\n' \
+        "${buildopt_result}" >&2
+    exit 1
+fi
+
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+
+jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
+    def command_valid($command; $expected; $index):
+        $command.index == $index and
+        $command.arguments == $expected and
+        ($command.profileSha256 | test("^[0-9a-f]{64}$")) and
+        ($command.taskRowsSha256 | test("^[0-9a-f]{64}$")) and
+        ($command.totalBuildMs | type == "number" and . > 0) and
+        ($command.startupMs | type == "number" and . >= 0) and
+        ($command.settingsAndBuildSrcMs | type == "number" and . >= 0) and
+        ($command.loadingProjectsMs | type == "number" and . >= 0) and
+        ($command.configuringProjectsMs | type == "number" and . >= 0) and
+        ($command.taskExecutionMs | type == "number" and . >= 0) and
+        ($command.actionableTasks | type == "number" and . > 0) and
+        ($command.profiledTaskRows | type == "number" and . > 0) and
+        ($command.testTaskPaths | type == "array") and
+        ($command.topTasks | length >= 1 and length <= 10) and
+        (all($command.topTasks[];
+            (.path | startswith(":")) and
+            (.durationMs | type == "number" and . >= 0) and
+            (.outcome | type == "string"))) and
+        $command.success == true and
+        $command.forbiddenReleaseTaskExecuted == false and
+        $command.buildScanPublished == false;
+    def hypothesis_valid($hypothesis):
+        ($hypothesis.id | test("^[A-Z0-9-]+$")) and
+        ($hypothesis.mechanism | IN(
+            "SAFE_CACHE", "INVOCATION_FUSION", "CONFIGURATION_CACHE_REPAIR",
+            "BUILD_IMPACT", "RUNTIME_TUNING")) and
+        ($hypothesis.state | IN(
+            "CONTROL_ONLY", "PREREGISTER_NEXT_EXPERIMENT", "NO_GENERIC_OPPORTUNITY")) and
+        ($hypothesis.observations | length >= 1) and
+        (all($hypothesis.observations[]; type == "string" and length > 0)) and
+        ($hypothesis.optimizedNativeControl | type == "string" and length > 0) and
+        $hypothesis.valueMetric == "PAIRED_WALL_CLOCK_WITH_IDENTICAL_OUTPUTS" and
+        $hypothesis.requiredOutputs == "BYTE_IDENTICAL" and
+        $hypothesis.requestedTests == "PRESERVE_ALL" and
+        ($hypothesis.failureSignal | type == "string" and length > 0) and
+        ($hypothesis.fallback | type == "string" and length > 0) and
+        $hypothesis.claim == "NONE_DIAGNOSTIC_ONLY" and
+        $hypothesis.nextExperiment == ($hypothesis.state == "PREREGISTER_NEXT_EXPERIMENT");
+    def repository_valid($repository; $expected):
+        $repository.id == $expected.id and
+        $repository.nameWithOwner == $expected.nameWithOwner and
+        $repository.revision == $expected.revision and
+        ($repository.sourceArchiveSha256 | test("^[0-9a-f]{64}$")) and
+        $repository.workflowSourceSha256 == $expected.workflow.sourceSha256 and
+        $repository.audit == $expected.audit and
+        $repository.preflightSuccess == true and
+        ($repository.commands | length) == ($expected.workflow.commands | length) and
+        ([range(0; ($repository.commands | length))] |
+            all(.[]; . as $index |
+                command_valid($repository.commands[$index];
+                    $expected.workflow.commands[$index]; $index))) and
+        $repository.workflowTotalBuildMs == ([$repository.commands[].totalBuildMs] | add) and
+        $repository.workflowConfigurationMs == ([$repository.commands[] |
+            .settingsAndBuildSrcMs + .loadingProjectsMs + .configuringProjectsMs] | add) and
+        $repository.productAttributableFailures == 0 and
+        ($repository.hypotheses | length >= 1) and
+        (all($repository.hypotheses[]; hypothesis_valid(.)));
+    .schemaVersion == "buildopt.evidence/poc-real-world-diagnostics/v1" and
+    .specSha256 == $specSha and
+    (.capturedAt | fromdateiso8601) and
+    (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+    .runner.id == "linux-amd64-4c-16g-v1" and
+    (.runner.specSha256 | test("^[0-9a-f]{64}$")) and
+    .runner.image == "docker.io/library/eclipse-temurin@sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50" and
+    .runner.platformDigest == "sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50" and
+    .runner.cpuCount == 4 and .runner.memoryBytes == 17179869184 and
+    .methodology == $spec[0].measurement and
+    (.repositories | length) == 3 and
+    .repositories as $repositories |
+    ([range(0; 3)] | all(.[]; . as $index |
+        repository_valid($repositories[$index]; $spec[0].repositories[$index]))) and
+    ([.repositories[].hypotheses[] | select(.state == "PREREGISTER_NEXT_EXPERIMENT")] | length >= 1) and
+    .decision.verdict == "PREREGISTER_GENERIC_FOLLOW_UP_EXPERIMENTS" and
+    .decision.performanceMeasured == false and
+    .decision.savingsClaimed == false and
+    (.decision.prioritizedHypotheses | length >= 1) and
+    (all(.decision.prioritizedHypotheses[];
+        .repositoryId | IN("SPOTLESS", "MOCKITO", "SPOTBUGS") and
+        (.hypothesisId | test("^[A-Z0-9-]+$")) and
+        (.priority | type == "number" and . >= 1))) and
+    .gate == {id: "POC-REALWORLD-G03", state: "PASSED"} and
+    .boundaries == $spec[0].boundaries
+    ' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'POC real-world diagnostics validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'BuildOpt real-world diagnostics evidence OK: %s\n' "${buildopt_result}"
