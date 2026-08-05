@@ -91,6 +91,10 @@ The underlying evidence and contracts are:
   and [candidate-first](./results/poc-groovy-v1-candidate-first.json) reports
   plus their [checked decision](./results/poc-groovy-v1-decision.json),
   validated by `./dev/check-poc-groovy`;
+- [shared-source Groovy control-first](./results/poc-shared-groovy-v1-control-first.json)
+  and [candidate-first](./results/poc-shared-groovy-v1-candidate-first.json)
+  reports plus their [checked decision](./results/poc-shared-groovy-v1-decision.json),
+  validated by `./dev/check-poc-shared-groovy`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
@@ -126,6 +130,20 @@ shape, valid Configuration Cache behavior, and zero product-attributable
 failures. These percentages describe separate batches and are not averaged or
 added. The result broadens only the bounded Groovy no-change/leaf claim; it is
 not a universal or production claim.
+
+The same calibrated boundary was then applied to the historical shared-source
+Groovy failure. No additional product change was required:
+
+| Starting order | Shared source |
+|---|---:|
+| Control first | 814.125 ms / 40.1% faster; +639.25 ms lower bound |
+| Candidate first | 619.75 ms / 33.1% faster; +380.75 ms lower bound |
+
+Build Impact executed exactly two affected verifications instead of the five
+executed by the optimized native control. All 16 pairs preserved byte-identical
+required outputs, Configuration Cache reuse, and zero product failures. The
+historical failure is therefore attributed to the already corrected launcher
+and measurement boundary, not to a remaining shared-source product defect.
 
 ### Realistic change-class result
 

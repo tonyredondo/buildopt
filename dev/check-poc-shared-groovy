@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 3)); then
+    printf 'usage: %s [CONTROL_FIRST_JSON] [CANDIDATE_FIRST_JSON] [DECISION_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_control=${1:-"${buildopt_repo_root}/benchmarks/results/poc-shared-groovy-v1-control-first.json"}
+buildopt_candidate=${2:-"${buildopt_repo_root}/benchmarks/results/poc-shared-groovy-v1-candidate-first.json"}
+buildopt_decision=${3:-"${buildopt_repo_root}/benchmarks/results/poc-shared-groovy-v1-decision.json"}
+buildopt_contract="${buildopt_repo_root}/specs/poc-shared-groovy-validation-v1.json"
+buildopt_init="${buildopt_repo_root}/dev/poc-groovy-workload.init.gradle"
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC-SHARED-GROOVY-001 command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+for buildopt_file in "${buildopt_control}" "${buildopt_candidate}" \
+    "${buildopt_decision}" "${buildopt_contract}" "${buildopt_init}"; do
+    [[ -s "${buildopt_file}" ]] || {
+        printf 'required POC-SHARED-GROOVY-001 file is unavailable: %s\n' \
+            "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_init_sha=$(sha256sum "${buildopt_init}" | awk '{print $1}')
+buildopt_control_sha=$(sha256sum "${buildopt_control}" | awk '{print $1}')
+buildopt_candidate_sha=$(sha256sum "${buildopt_candidate}" | awk '{print $1}')
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-shared-groovy-validation/v1" and
+    .workItem == "POC-SHARED-GROOVY-001" and
+    .decision == "QUALIFY_OR_REJECT_SHARED_SOURCE_GROOVY_VALUE" and
+    .runner == "linux-amd64-4c-16g-v1" and
+    .workloads == {dsl: "GROOVY", scenarios: ["SHARED_CHANGE"], verificationRoundsPerTask: 25000000, taskSelectionChanged: false, thresholdsChanged: false} and
+    .batches == {count: 2, startingPairOrders: ["CONTROL_FIRST", "CANDIDATE_FIRST"], samplesPerCell: 8, warmupPerCell: 1, maximumInterArmIdleGapMs: 5000} and
+    .thresholds == {minimumSavedMs: 500, minimumReductionRatio: 0.02, positiveLower95Bound: true} and
+    .guardrails == {sameRevisionAndArtifacts: true, sharedStrictContainer: true, writableStateShared: false, workspaceShared: false, gradleUserHomeShared: false, daemonShared: false, requiredOutputsIdentical: true, maximumProductAttributableFailures: 0, controlExecutedVerifications: 5, candidateExecutedVerifications: 2, configurationCacheReused: true, oppositeOrdersMustReproduce: true} and
+    .boundaries == {ownerControlledSyntheticWorkloads: true, productionReadiness: false, externalDesignPartner: false, eightHourSoak: false, testOptimization: false}
+' "${buildopt_contract}" >/dev/null
+
+jq -n -e \
+    --arg initSha "${buildopt_init_sha}" \
+    --slurpfile control "${buildopt_control}" \
+    --slurpfile candidate "${buildopt_candidate}" '
+    def digest: type == "string" and test("^[0-9a-f]{64}$");
+    def revision: type == "string" and test("^[0-9a-f]{40}$");
+    def bootstrap_mean($rows; $sample):
+        reduce range(0; 8) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $rows[((.state / 536870912) | floor)].savedMs) |
+        .sum / 8;
+    def bootstrap95($rows):
+        ([range(0; 4096) as $sample | bootstrap_mean($rows; $sample)] | sort) as $values |
+        [$values[102], $values[3993]];
+    def workload($w; $starting):
+        ($w.result.observations) as $rows |
+        (($rows | map(.savedMs) | add) / 8) as $meanSaved |
+        (($rows | map(.controlDurationMs) | add) / 8) as $controlMean |
+        (($rows | map(.candidateDurationMs) | add) / 8) as $candidateMean |
+        ($meanSaved / $controlMean) as $ratio |
+        (bootstrap95($rows)) as $interval |
+        $w.id == "BREADTH_SHARED_CHANGE_GROOVY" and
+        $w.scenario == "SHARED_CHANGE" and $w.changeClass == "SHARED_SOURCE" and
+        $w.successClass == "ACCELERATOR" and $w.dsl == "GROOVY" and
+        ($rows | length) == 8 and
+        ([$rows[].pair] | sort == [1,2,3,4,5,6,7,8]) and
+        ($rows | all(
+            .order == (if (.pair % 2) == 1 then $starting elif $starting == "CONTROL_FIRST" then "CANDIDATE_FIRST" else "CONTROL_FIRST" end) and
+            .savedMs == (.controlDurationMs - .candidateDurationMs) and
+            .interArmIdleGapMs >= 0 and .interArmIdleGapMs <= 5000 and
+            .controlOutputSha256 == .candidateOutputSha256 and
+            .controlExecutedVerifications == 5 and
+            .candidateExecutedVerifications == 2 and
+            .controlConfigurationCacheReused == true and
+            .candidateConfigurationCacheReused == true and
+            .productAttributableFailure == false)) and
+        $w.result.controlMeanMs == $controlMean and
+        $w.result.candidateMeanMs == $candidateMean and
+        $w.result.meanSavedMs == $meanSaved and
+        $w.result.meanReductionRatio == $ratio and
+        $w.result.interval95SavedMs == $interval and
+        $w.result.requiredOutputsIdentical == true and
+        $w.result.productAttributableFailures == 0 and
+        $w.result.executionShapeValid == true and
+        $w.result.configurationCacheValid == true and
+        $meanSaved >= 500 and $ratio >= 0.02 and $interval[0] > 0 and
+        $w.classification == "THRESHOLD_MET";
+    def report($r; $starting):
+        $r.schemaVersion == "buildopt.evidence/poc-shared-groovy/v1" and
+        ($r.buildoptRevision | revision) and
+        $r.runner.id == "linux-amd64-4c-16g-v1" and
+        $r.runner.cpuCount == 4 and $r.runner.memoryBytes == 17179869184 and
+        $r.runner.qualifiedGoldenRunner == true and
+        ($r.publicArtifacts.buildoptSha256 | digest) and
+        $r.methodology.startingPairOrder == $starting and
+        $r.methodology.pairing == "CONSECUTIVE_DOCKER_EXEC_WITHIN_SHARED_STRICT_CONTAINER" and
+        $r.methodology.isolation == {strictContainerPerArm: false, sharedStrictContainer: true, writableStateShared: false, workspaceShared: false, gradleUserHomeShared: false, daemonShared: false, sampleLifecycle: "PERSISTENT_PRIVATE_DAEMON_PER_CELL"} and
+        $r.methodology.acceleratorThreshold == {minimumSavedMs: 500, minimumReductionRatio: 0.02, positiveLower95Bound: true} and
+        $r.methodology.workloadProfile == {id: "GROOVY_DETERMINISTIC_VERIFICATION_V1", initScript: "dev/poc-groovy-workload.init.gradle", initScriptSha256: $initSha, verificationRoundsPerTask: 25000000, taskSelectionChanged: false, thresholdsChanged: false} and
+        ($r.workloads | length) == 1 and
+        workload($r.workloads[0]; $starting) and
+        $r.decision == {verdict: "BROADEN_SYNTHETIC_CLAIM", breadthProven: true, qualifyingCells: 1, requiredCells: 1} and
+        $r.gate == {id: "POC-SHARED-GROOVY-001", state: "RECORDED"} and
+        $r.boundaries == {ownerControlledSyntheticWorkloads: true, universalSavingsClaimed: false, productionReadinessClaimed: false, eightHourSoakExecuted: false, externalDesignPartnerRequired: false, testOptimizationModified: false};
+    ($control | length) == 1 and ($candidate | length) == 1 and
+    report($control[0]; "CONTROL_FIRST") and
+    report($candidate[0]; "CANDIDATE_FIRST") and
+    $control[0].buildoptRevision == $candidate[0].buildoptRevision and
+    $control[0].publicArtifacts == $candidate[0].publicArtifacts and
+    $control[0].fixture == $candidate[0].fixture
+' >/dev/null
+
+jq -n -e \
+    --arg controlSha "${buildopt_control_sha}" \
+    --arg candidateSha "${buildopt_candidate_sha}" \
+    --slurpfile control "${buildopt_control}" \
+    --slurpfile decision "${buildopt_decision}" '
+    ($decision | length) == 1 and
+    $decision[0].schemaVersion == "buildopt.evidence/poc-shared-groovy-decision/v1" and
+    $decision[0].buildoptRevision == $control[0].buildoptRevision and
+    $decision[0].reports == {controlFirstSha256: $controlSha, candidateFirstSha256: $candidateSha} and
+    $decision[0].result == {classificationReproduced: true, reproducedCells: ["BREADTH_SHARED_CHANGE_GROOVY"], reproducedQualifiedCells: ["BREADTH_SHARED_CHANGE_GROOVY"], reproducedFailureCells: [], mismatchedCells: [], controlFirstQualifyingCells: 1, candidateFirstQualifyingCells: 1, maximumObservedInterArmIdleGapMs: $decision[0].result.maximumObservedInterArmIdleGapMs} and
+    $decision[0].decision == {verdict: "CLASSIFICATIONS_REPRODUCED", breadthClaim: "BROADEN_SYNTHETIC_CLAIM", productChangeAuthorization: {scope: "NONE", authorizedCells: [], blockedCells: []}, nextExperiment: "NONE"} and
+    $decision[0].gate == {id: "POC-SHARED-GROOVY-G01", state: "PASSED"} and
+    $decision[0].boundaries == {thresholdsChanged: false, universalSavingsClaimed: false, productionReadinessClaimed: false, eightHourSoakExecuted: false, externalDesignPartnerRequired: false, testOptimizationModified: false}
+' >/dev/null
+
+buildopt_revision=$(jq -er '.buildoptRevision' "${buildopt_control}")
+if git -C "${buildopt_repo_root}" cat-file -e \
+    "${buildopt_revision}^{commit}" 2>/dev/null; then
+    git -C "${buildopt_repo_root}" merge-base --is-ancestor \
+        "${buildopt_revision}" HEAD
+fi
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'POC-SHARED-GROOVY-001 validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'BuildOpt POC-SHARED-GROOVY-001 evidence OK: %s + %s\n' \
+    "${buildopt_control}" "${buildopt_candidate}"

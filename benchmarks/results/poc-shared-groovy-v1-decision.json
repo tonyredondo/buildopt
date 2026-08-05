@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-shared-groovy-decision/v1",
+  "capturedAt": "2026-08-05T05:19:53Z",
+  "buildoptRevision": "cf9d0d0baa85d740b624ef638bd0a765d2ef324d",
+  "reports": {
+    "controlFirstSha256": "0325acce33018add19a8fe7c8343fdcd8e314be897f3b7d387297fa3012da9b8",
+    "candidateFirstSha256": "f36724e51eb8c233522a52d6e12e8529fe41d3c938648235a26900d53503981c"
+  },
+  "result": {
+    "classificationReproduced": true,
+    "reproducedCells": [
+      "BREADTH_SHARED_CHANGE_GROOVY"
+    ],
+    "reproducedQualifiedCells": [
+      "BREADTH_SHARED_CHANGE_GROOVY"
+    ],
+    "reproducedFailureCells": [],
+    "mismatchedCells": [],
+    "controlFirstQualifyingCells": 1,
+    "candidateFirstQualifyingCells": 1,
+    "maximumObservedInterArmIdleGapMs": 159.599616
+  },
+  "decision": {
+    "verdict": "CLASSIFICATIONS_REPRODUCED",
+    "breadthClaim": "BROADEN_SYNTHETIC_CLAIM",
+    "productChangeAuthorization": {
+      "scope": "NONE",
+      "authorizedCells": [],
+      "blockedCells": []
+    },
+    "nextExperiment": "NONE"
+  },
+  "gate": {
+    "id": "POC-SHARED-GROOVY-G01",
+    "state": "PASSED"
+  },
+  "boundaries": {
+    "thresholdsChanged": false,
+    "universalSavingsClaimed": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

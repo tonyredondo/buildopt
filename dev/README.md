@@ -2152,6 +2152,7 @@ the strict benchmark:
 ./dev/check-poc-stability
 ./dev/check-poc-pairing
 ./dev/check-poc-groovy
+./dev/check-poc-shared-groovy
 ./dev/test-poc-pairing
 ```
 
@@ -2259,6 +2260,32 @@ BUILDOPT_POC_PAIRING_PROFILE=GROOVY_VALUE \
 The checked reports reproduce no-change parity and leaf acceleration in both
 orders with unchanged thresholds, byte-identical outputs, and zero product
 failures. Percentages are kept separate by batch.
+
+Measure the shared-source Groovy cell on the same calibrated boundary with:
+
+```bash
+BUILDOPT_POC_PAIRING_PROFILE=GROOVY_SHARED_VALUE \
+  ./dev/run-poc-pairing-container \
+    /tmp/poc-shared-groovy-control-first.json \
+    shared-groovy-control-first CONTROL_FIRST
+BUILDOPT_POC_PAIRING_PROFILE=GROOVY_SHARED_VALUE \
+  ./dev/run-poc-pairing-container \
+    /tmp/poc-shared-groovy-candidate-first.json \
+    shared-groovy-candidate-first CANDIDATE_FIRST
+BUILDOPT_POC_PAIRING_PROFILE=GROOVY_SHARED_VALUE \
+  ./dev/assemble-poc-pairing-decision \
+    /tmp/poc-shared-groovy-decision.json \
+    /tmp/poc-shared-groovy-control-first.json \
+    /tmp/poc-shared-groovy-candidate-first.json
+./dev/check-poc-shared-groovy \
+  /tmp/poc-shared-groovy-control-first.json \
+  /tmp/poc-shared-groovy-candidate-first.json \
+  /tmp/poc-shared-groovy-decision.json
+```
+
+The checked reports require five control verifications, two affected candidate
+verifications, unchanged thresholds, identical outputs, and classification
+agreement across both starting orders.
 
 Validate and print the historical mechanism-development scorecard without
 rerunning a benchmark:
