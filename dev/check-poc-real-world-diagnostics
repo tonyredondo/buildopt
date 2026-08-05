@@ -198,7 +198,7 @@ jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
     .decision.savingsClaimed == false and
     (.decision.prioritizedHypotheses | length >= 1) and
     (all(.decision.prioritizedHypotheses[];
-        .repositoryId | IN("SPOTLESS", "MOCKITO", "SPOTBUGS") and
+        (.repositoryId | IN("SPOTLESS", "MOCKITO", "SPOTBUGS")) and
         (.hypothesisId | test("^[A-Z0-9-]+$")) and
         (.priority | type == "number" and . >= 1))) and
     .gate == {id: "POC-REALWORLD-G03", state: "PASSED"} and

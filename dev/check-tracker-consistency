@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS; PUBLIC REPLICATION RETAINED THE BOUNDED CLAIM\`"
-    "**Current phase:** \`POC REAL-WORLD REPLICATION COMPLETE\`"
+    "**Overall status:** \`POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS; ONE PUBLIC FOLLOW-UP AUTHORIZED\`"
+    "**Current phase:** \`POC SPOTLESS BUILD IMPACT PREREGISTRATION\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"
@@ -91,6 +91,10 @@ buildopt_required_tracker_text=(
     "| \`POC-REALWORLD-002\` | Run the preregistered paired performance matrix on every repository admitted by \`POC-REALWORLD-G01\` | \`DONE\`"
     "| \`POC-REALWORLD-G01\` | Three fixed public repositories pass representative native and installed-BuildOpt tasks with identical non-empty outputs, no scans/publication, and zero product failures | Public-repository performance matrix | \`DONE\`"
     "| \`POC-REALWORLD-G02\` | Execute the preregistered public-repository matrix and issue the terminal broaden-or-retain decision without moving thresholds | Public-repository POC claim decision | \`DONE\`"
+    "| \`POC-REALWORLD-DIAGNOSTICS-001\` | Profile exact Spotless, Mockito, and SpotBugs workflows and preregister only generic hypotheses that preserve outputs and every requested test | \`DONE\`"
+    "| \`POC-REALWORLD-G03\` | Profile exact upstream workflows on the strict runner and preregister only generic, output-preserving, test-preserving follow-up hypotheses without treating task-duration sums as wall-clock savings | Next public-repository value experiment | \`DONE\`"
+    "| \`POC-SPOTLESS-IMPACT-001\` | Preregister and run a paired leaf-project Build Impact experiment on the exact Spotless workflow with unchanged thresholds and optimized native Gradle control | \`TODO\`"
+    "| \`POC-SPOTLESS-IMPACT-G01\` | Beat the unchanged accelerator threshold on a preregistered Spotless leaf-project change against its optimized native Gradle workflow, with byte-identical required outputs and every requested test preserved | Public-workflow Build Impact decision | \`TODO\`"
     "| \`A1-G06\` | Safe Cache is non-regressive versus optimized native cache"
     "| \`B-G03\` | Runtime Tuning exceeds the POC accelerator threshold"
     "| \`C1-001\` | Opt-in JVM Agent with coverage and budgets | \`UNAVAILABLE\`"
@@ -132,5 +136,5 @@ if [[ $(grep -Fc "| \`OPS-001/B\` |" <<<"${buildopt_readiness}") != 1 ]]; then
     exit 1
 fi
 
-printf 'RFC/tracker consistency OK: %s accepted decisions, public-repository replication retains the bounded claim\n' \
+printf 'RFC/tracker consistency OK: %s accepted decisions, one public-workflow follow-up authorized\n' \
     "${buildopt_decision_count}"

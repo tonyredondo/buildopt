@@ -2,7 +2,7 @@
 
 ## Product specification and technical design
 
-**Status:** master POC architecture RFC — bounded synthetic value passed; public-repository replication retained the bounded claim<br>
+**Status:** master POC architecture RFC — bounded synthetic value passed; public workflows narrowed the next experiment to Spotless Build Impact<br>
 **Last technical review:** August 5, 2026<br>
 **Working name:** Gradle Build Optimization<br>
 **Scope:** autonomous optimization of Gradle builds in CI and local environments<br>
@@ -78,6 +78,8 @@ The current objective is a **proof of concept**, not a private-beta or productio
 The result authorizes a `CONTINUE` decision for further POC exploration only. It does not prove universal savings or production readiness. The initial realistic change-class matrix in [`poc-breadth-validation-v1`](./specs/poc-breadth-validation-v1.md) qualified 2/8 cells. Attribution and calibrated paired experiments reproduced the bounded Groovy and leaf Kotlin value cells, while shared-source and build-logic Kotlin remained order-sensitive. The terminal decision therefore retained the qualified synthetic claim and prohibited more unchanged replication or product tuning against noisy evidence.
 
 The bounded signal was then tested on fixed public repositories. Compatibility was established before timing: source revisions, wrapper/settings files, Gradle distributions, representative tasks, excluded integrations, required outputs, and the installed BuildOpt entry point were pinned and checked. Spotless, Mockito, and SpotBugs entered a preregistered paired comparison against optimized native Gradle. Only Mockito retained no-change parity and cleared the unchanged leaf-source accelerator threshold; Spotless and SpotBugs did not. The terminal result therefore retains the qualified synthetic claim and does not authorize a general public-repository claim, new tuning, or threshold movement. An eight-hour soak, design partners, high availability, enterprise identity, shared multi-tenancy, and production promotion samples are not required. A feature does not justify activation merely because it is safe or technically interesting: when it cannot demonstrate net value for a workload class, BuildOpt keeps it disabled for that class.
+
+A subsequent diagnostic profiled the exact upstream workflows once on the same strict runner without making a performance comparison. Spotless took 165.173 seconds, of which startup plus configuration was only 1.55%; Mockito took 629.165 seconds with 0.47% in those phases; SpotBugs took 271.920 seconds and its main test task alone occupied 242.120 seconds. These facts reject invocation fusion and Configuration Cache repair as primary levers for the measured workflows. They also reject BuildOpt-specific tuning of Mockito and SpotBugs while all requested tests remain in scope. Only one generic follow-up is authorized for preregistration: change-aware Build Impact on Spotless, whose expensive formatting, compilation, and Javadoc work spans independent projects even though its native parallelism, build cache, and Configuration Cache are already enabled. The diagnostic claims no savings; the follow-up must still beat the optimized native control under the unchanged value gate with byte-identical required outputs.
 
 ---
 
@@ -2819,6 +2821,15 @@ hypothesis: no unchanged rerun, product tuning, or broader claim follows from
 it. Another experiment requires a separately preregistered value hypothesis,
 not a retrospective change to workloads or thresholds.
 
+The exact-workflow diagnostic supplied that separate hypothesis without moving
+the gate. Startup and configuration were below 1.6% for all three repositories;
+Mockito and SpotBugs are test-heavy and receive no BuildOpt performance action
+under the product boundary. The only next experiment is a preregistered
+Spotless leaf-project Build Impact comparison against its optimized native
+Gradle configuration. It must preserve required outputs, preserve every
+requested test, and fall back to the complete upstream workflow on any
+uncertainty.
+
 Public repositories are evidence inputs, not design partners. Their build code
 runs only from exact revisions in disposable homes without host credentials,
 build scans, publishing tasks, or repository-specific CI opt-ins.
@@ -3171,14 +3182,14 @@ These choices are deliberately unresolved because they do not help answer the PO
 
 ### 29.1 Readiness verdict
 
-The original Phase 0 package and walking skeleton are materialized. The combined path cleared `POC-VALUE-G01` on the qualified synthetic workload matrix. `POC-BREADTH-001` initially completed with 2/8 realistic change/DSL cells qualifying. Attribution and calibrated paired experiments raised bounded coverage while the terminal Kotlin decision retained unstable shared/build-logic cells outside the claim. Public-repository replication then qualified only Mockito out of Spotless, Mockito, and SpotBugs, so the bounded synthetic claim remains unchanged. The current implementation truth lives in the tracker and executable checks; no active value block follows from the completed hypothesis.
+The original Phase 0 package and walking skeleton are materialized. The combined path cleared `POC-VALUE-G01` on the qualified synthetic workload matrix. `POC-BREADTH-001` initially completed with 2/8 realistic change/DSL cells qualifying. Attribution and calibrated paired experiments raised bounded coverage while the terminal Kotlin decision retained unstable shared/build-logic cells outside the claim. Public-repository replication then qualified only Mockito out of Spotless, Mockito, and SpotBugs, so the bounded synthetic claim remains unchanged. Exact-workflow profiling rejected generic follow-up work for the test-heavy Mockito and SpotBugs workflows and authorized only preregistration of a Spotless Build Impact experiment. The current implementation truth lives in the tracker and executable checks.
 
 The distinction is deliberate:
 
 - Accepted decisions record architecture and safety; they do not prove implementation or value.
 - Schemas, APIs, state machines, vectors, fixtures, and spikes are materialized and remain regression inputs.
 - Agent discovery and hermetic producer enforcement are explicitly `UNAVAILABLE`; reviewed-source paths remain testable.
-- All synthetic POC value and terminal measurement gates are closed. `POC-BREADTH-G01` remains preliminary and the claim stays bounded. `POC-REALWORLD-001` must prove pinned public-source compatibility before `POC-REALWORLD-002` may measure value. Productization remains a separate decision and is not implied by either the bounded `CONTINUE` verdict or public-source replication.
+- All synthetic POC value and terminal measurement gates are closed. `POC-BREADTH-G01` remains preliminary and the claim stays bounded. `POC-REALWORLD-001..002` proved pinned compatibility and retained the bounded claim; `POC-REALWORLD-DIAGNOSTICS-001` now permits only a separately preregistered Spotless Build Impact experiment. Productization remains a separate decision and is not implied by either the bounded `CONTINUE` verdict or public-source replication.
 
 The normative source is divided as follows: this RFC retains intent, invariants, and gates; `contracts/`, `specs/`, `benchmarks/`, and ADRs retain executable details. If a contract contradicts a safety invariant in this RFC, the contract is corrected; if the invariant needs to change, the corresponding decision is reviewed first.
 

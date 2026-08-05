@@ -2445,6 +2445,19 @@ push/PR CI and from the deferred soak.
 
 ## Validation
 
+Validate the revision-bound public-workflow profiles and their generic
+hypothesis decision without rerunning the long diagnostic:
+
+```bash
+./dev/check-poc-real-world-diagnostics
+```
+
+The fresh capture command is
+`./dev/run-poc-real-world-diagnostics-container <output.json>`. It runs exact
+upstream workflows in disposable checkouts on the digest-pinned 4-CPU/16-GiB
+runner. The output is diagnostic only: task durations can overlap and are
+never summed into a savings claim.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

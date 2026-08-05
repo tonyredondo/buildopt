@@ -1,0 +1,683 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-real-world-diagnostics/v1",
+  "specSha256": "8b2a46d1d83fc56cdf251c4bcb93a6d908af8b682419732bf85526471c3e88c7",
+  "capturedAt": "2026-08-05T15:51:53Z",
+  "buildoptRevision": "eb5c929b37d844ec6818b58c0439c18fefba7fcd",
+  "runner": {
+    "id": "linux-amd64-4c-16g-v1",
+    "specSha256": "26283e56aa7251152c7f051f7500bc86553669a808fc1cec5b736acf8f0733c9",
+    "image": "docker.io/library/eclipse-temurin@sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50",
+    "platformDigest": "sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50",
+    "cpuCount": 4,
+    "memoryBytes": 17179869184
+  },
+  "methodology": {
+    "purpose": "PROFILE_REAL_WORKFLOW_COST_BEFORE_PRODUCT_CHANGES",
+    "preflight": "ONLINE_UNMEASURED_EXACT_WORKFLOW",
+    "measuredNetwork": "PER_REPOSITORY_EXPLICIT",
+    "measuredDependencyMode": "GRADLE_OFFLINE",
+    "measuredEntrypoint": "GRADLE_WRAPPER",
+    "measuredRunsPerRepository": 1,
+    "profile": "GRADLE_NATIVE_HTML_PROFILE_PER_COMMAND",
+    "buildCache": false,
+    "rerunTasks": true,
+    "daemon": true,
+    "parallelism": "REPOSITORY_DECLARED",
+    "configurationCache": "REPOSITORY_DECLARED",
+    "workspace": "DISPOSABLE_PINNED_CHECKOUT",
+    "gradleUserHome": "PRIVATE_PERSISTENT_BETWEEN_PREFLIGHT_AND_PROFILE",
+    "cleaning": "DELETE_REPOSITORY_BUILD_DIRECTORIES_AND_PROJECT_DOT_GRADLE_BEFORE_PROFILE",
+    "taskDurationsMayOverlap": true,
+    "taskDurationsMayBeSummedAsWallClockSavings": false,
+    "performanceComparisonClaimed": false
+  },
+  "repositories": [
+    {
+      "id": "SPOTLESS",
+      "nameWithOwner": "diffplug/spotless",
+      "revision": "cbd01c4e4b91cea538691d4fe6a8f929d75c27c6",
+      "sourceArchiveSha256": "289371172901867bacd3f76b13b9dd6cfb95c07ec45a31db7262271afc1e857b",
+      "workflowSourceSha256": "b471d950d35126f1817ad4940bea5b7289b59827706964d91dcfdad8106f7564",
+      "measuredNetwork": "DISCONNECTED",
+      "audit": {
+        "mainSourceFiles": 382,
+        "testSourceFiles": 221,
+        "buildFiles": 6
+      },
+      "preflightSuccess": true,
+      "commands": [
+        {
+          "index": 0,
+          "arguments": [
+            "spotlessCheck",
+            "--no-scan"
+          ],
+          "profileSha256": "4a540718f6c37fb97d67d34d9a0f3726d69cab163e4c270e1db959f44de2098b",
+          "taskRowsSha256": "72a8d693a1a763d7ee650847512df8c42d200dc3582b2fb238aa3780b65bb634",
+          "totalBuildMs": 54313,
+          "startupMs": 534,
+          "settingsAndBuildSrcMs": 49,
+          "loadingProjectsMs": 32,
+          "configuringProjectsMs": 844,
+          "taskExecutionMs": 64720,
+          "actionableTasks": 40,
+          "profiledTaskRows": 47,
+          "testTaskPaths": [],
+          "topTasks": [
+            {
+              "path": ":plugin-maven:spotlessFreshmark",
+              "durationMs": 45859,
+              "outcome": ""
+            },
+            {
+              "path": ":spotlessGroovyGradle",
+              "durationMs": 5805,
+              "outcome": ""
+            },
+            {
+              "path": ":lib:spotlessGroovyGradle",
+              "durationMs": 3112,
+              "outcome": ""
+            },
+            {
+              "path": ":lib-extra:spotlessGroovyGradle",
+              "durationMs": 2822,
+              "outcome": ""
+            },
+            {
+              "path": ":lib:spotlessJava",
+              "durationMs": 1962,
+              "outcome": ""
+            },
+            {
+              "path": ":plugin-gradle:spotlessGroovyGradle",
+              "durationMs": 1140,
+              "outcome": ""
+            },
+            {
+              "path": ":plugin-gradle:spotlessFreshmark",
+              "durationMs": 968,
+              "outcome": ""
+            },
+            {
+              "path": ":plugin-maven:spotlessJava",
+              "durationMs": 958,
+              "outcome": ""
+            },
+            {
+              "path": ":plugin-maven:spotlessGroovyGradle",
+              "durationMs": 627,
+              "outcome": ""
+            },
+            {
+              "path": ":testlib:spotlessJava",
+              "durationMs": 501,
+              "outcome": ""
+            }
+          ],
+          "success": true,
+          "forbiddenReleaseTaskExecuted": false,
+          "buildScanPublished": false
+        },
+        {
+          "index": 1,
+          "arguments": [
+            "assemble",
+            "testClasses",
+            "--no-scan",
+            "-PSPOTLESS_EXCLUDE_MAVEN=true"
+          ],
+          "profileSha256": "4345ef2a7a4bf29b016fcda98abf549f180fa36e029a417ca5754d486ec1548c",
+          "taskRowsSha256": "0ad5f15db3024e3ea47766ed00d30ae9d813957a2ca2d06127bde5700201c1b5",
+          "totalBuildMs": 110860,
+          "startupMs": 476,
+          "settingsAndBuildSrcMs": 36,
+          "loadingProjectsMs": 18,
+          "configuringProjectsMs": 572,
+          "taskExecutionMs": 393590,
+          "actionableTasks": 52,
+          "profiledTaskRows": 83,
+          "testTaskPaths": [],
+          "topTasks": [
+            {
+              "path": ":lib:javadoc",
+              "durationMs": 31599,
+              "outcome": ""
+            },
+            {
+              "path": ":testlib:compileTestJava",
+              "durationMs": 27871,
+              "outcome": ""
+            },
+            {
+              "path": ":lib-extra:compileGroovyJava",
+              "durationMs": 27282,
+              "outcome": ""
+            },
+            {
+              "path": ":plugin-gradle:javadoc",
+              "durationMs": 27183,
+              "outcome": ""
+            },
+            {
+              "path": ":plugin-gradle:compileJava",
+              "durationMs": 23105,
+              "outcome": ""
+            },
+            {
+              "path": ":plugin-gradle:compileTestJava",
+              "durationMs": 22696,
+              "outcome": ""
+            },
+            {
+              "path": ":lib-extra:javadoc",
+              "durationMs": 20190,
+              "outcome": ""
+            },
+            {
+              "path": ":lib:compileTestJava",
+              "durationMs": 16182,
+              "outcome": ""
+            },
+            {
+              "path": ":lib:compileJava",
+              "durationMs": 16064,
+              "outcome": ""
+            },
+            {
+              "path": ":lib-extra:compileTestJava",
+              "durationMs": 13327,
+              "outcome": ""
+            }
+          ],
+          "success": true,
+          "forbiddenReleaseTaskExecuted": false,
+          "buildScanPublished": false
+        }
+      ],
+      "workflowTotalBuildMs": 165173,
+      "workflowConfigurationMs": 1551,
+      "productAttributableFailures": 0,
+      "hypotheses": [
+        {
+          "id": "SPOTLESS-BUILD-IMPACT",
+          "mechanism": "BUILD_IMPACT",
+          "state": "PREREGISTER_NEXT_EXPERIMENT",
+          "observations": [
+            "The exact two-command workflow took 165173 ms; startup plus configuration accounted for 2561 ms (1.55% of wall time), so invocation fusion is not the primary lever.",
+            "The 54313-ms formatting command was dominated by :plugin-maven:spotlessFreshmark at 45859 ms, while the 110860-ms assembly command was dominated by compile and Javadoc work across multiple projects.",
+            "Native parallel execution, build cache, and configuration cache are already enabled, leaving change-aware project scoping as the generic BuildOpt-owned hypothesis."
+          ],
+          "optimizedNativeControl": "Gradle 9.4.1 with the upstream parallel, build-cache, and configuration-cache settings enabled, executing the complete exact workflow for the same preregistered leaf-project change.",
+          "valueMetric": "PAIRED_WALL_CLOCK_WITH_IDENTICAL_OUTPUTS",
+          "requiredOutputs": "BYTE_IDENTICAL",
+          "requestedTests": "PRESERVE_ALL",
+          "failureSignal": "The unchanged accelerator threshold is missed, the paired saving interval crosses zero, a required output differs, or any requested test is omitted.",
+          "fallback": "Execute the complete upstream workflow with its native Gradle capabilities and no BuildOpt project narrowing.",
+          "claim": "NONE_DIAGNOSTIC_ONLY",
+          "nextExperiment": true
+        }
+      ]
+    },
+    {
+      "id": "MOCKITO",
+      "nameWithOwner": "mockito/mockito",
+      "revision": "a231205b240e7884a63bf0f63440012867a4da21",
+      "sourceArchiveSha256": "11b79e41dca3390383f4243e11648025f9c42fae2e59a7e8f27c072256d3d7a6",
+      "workflowSourceSha256": "b8cc8276982f85141461cbce35b5c88a209964d60786a589175f799cbf0ff1d1",
+      "measuredNetwork": "BRIDGE_REQUIRED_BY_UPSTREAM_JAVADOC_LINKS",
+      "audit": {
+        "mainSourceFiles": 496,
+        "testSourceFiles": 482,
+        "buildFiles": 25
+      },
+      "preflightSuccess": true,
+      "commands": [
+        {
+          "index": 0,
+          "arguments": [
+            "spotlessCheck",
+            "--stacktrace",
+            "--no-scan"
+          ],
+          "profileSha256": "de8d6732a0de0b607c9edc6b9ed78c3efa02d3d2c55dcdb144c80f581ff7e5ab",
+          "taskRowsSha256": "8e880941e65f874f6798edba8bf6864878b1c2cf155c4c2821cb230b9781a0d8",
+          "totalBuildMs": 17987,
+          "startupMs": 601,
+          "settingsAndBuildSrcMs": 3,
+          "loadingProjectsMs": 11,
+          "configuringProjectsMs": 405,
+          "taskExecutionMs": 23352,
+          "actionableTasks": 94,
+          "profiledTaskRows": 119,
+          "testTaskPaths": [],
+          "topTasks": [
+            {
+              "path": ":compileKotlin",
+              "durationMs": 9277,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-core:spotlessJava",
+              "durationMs": 5160,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-integration-tests:inline-mocks-tests:spotlessJava",
+              "durationMs": 1295,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-extensions:mockito-junit-jupiter:spotlessJava",
+              "durationMs": 1274,
+              "outcome": ""
+            },
+            {
+              "path": ":generatePrecompiledScriptPluginAccessors",
+              "durationMs": 1082,
+              "outcome": ""
+            },
+            {
+              "path": ":compilePluginsBlocks",
+              "durationMs": 978,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-integration-tests:module-tests:spotlessJava",
+              "durationMs": 632,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-integration-tests:extensions-tests:spotlessJava",
+              "durationMs": 493,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-extensions:mockito-errorprone:spotlessJava",
+              "durationMs": 454,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-integration-tests:java-21-tests:spotlessJava",
+              "durationMs": 289,
+              "outcome": ""
+            }
+          ],
+          "success": true,
+          "forbiddenReleaseTaskExecuted": false,
+          "buildScanPublished": false
+        },
+        {
+          "index": 1,
+          "arguments": [
+            "-Pmockito.test.java=21",
+            "build",
+            "--stacktrace",
+            "--no-scan"
+          ],
+          "profileSha256": "a639751dbf60759709be14dc34d07071037c618d01ffb94608bfabcb8458d808",
+          "taskRowsSha256": "01b539757d50ddb9328d10b5ef566efc1d49d936c032699819bf3fbfcfd2829b",
+          "totalBuildMs": 593290,
+          "startupMs": 597,
+          "settingsAndBuildSrcMs": 2,
+          "loadingProjectsMs": 11,
+          "configuringProjectsMs": 385,
+          "taskExecutionMs": 2122660,
+          "actionableTasks": 159,
+          "profiledTaskRows": 395,
+          "testTaskPaths": [
+            ":mockito-core:test",
+            ":mockito-core:checkstyleTest",
+            ":mockito-core:licenseTest",
+            ":mockito-core:retryTest",
+            ":mockito-integration-tests:inline-mocks-tests:test",
+            ":mockito-integration-tests:inline-mocks-tests:licenseTest",
+            ":mockito-extensions:mockito-errorprone:test",
+            ":mockito-extensions:mockito-errorprone:checkstyleTest",
+            ":mockito-extensions:mockito-errorprone:licenseTest",
+            ":mockito-extensions:mockito-errorprone:retryTest",
+            ":mockito-integration-tests:java-21-tests:test",
+            ":mockito-integration-tests:java-21-tests:licenseTest",
+            ":mockito-extensions:mockito-junit-jupiter:test",
+            ":mockito-extensions:mockito-junit-jupiter:checkstyleTest",
+            ":mockito-extensions:mockito-junit-jupiter:licenseTest",
+            ":mockito-extensions:mockito-junit-jupiter:retryTest",
+            ":mockito-integration-tests:memory-tests:test",
+            ":mockito-integration-tests:memory-tests:licenseTest",
+            ":mockito-extensions:mockito-subclass:test",
+            ":mockito-extensions:mockito-subclass:checkstyleTest",
+            ":mockito-extensions:mockito-subclass:licenseTest",
+            ":mockito-extensions:mockito-subclass:retryTest",
+            ":mockito-integration-tests:groovy-inline-tests:test",
+            ":mockito-integration-tests:groovy-inline-tests:licenseTest",
+            ":mockito-integration-tests:groovy-tests:test",
+            ":mockito-integration-tests:groovy-tests:licenseTest",
+            ":mockito-integration-tests:kotlin-tests:test",
+            ":mockito-integration-tests:kotlin-tests:licenseTest",
+            ":mockito-integration-tests:osgi-tests:test",
+            ":mockito-integration-tests:osgi-tests:licenseTest",
+            ":mockito-integration-tests:module-tests:test",
+            ":mockito-integration-tests:module-tests:licenseTest",
+            ":mockito-integration-tests:module-named-tests:test",
+            ":mockito-integration-tests:module-named-tests:licenseTest",
+            ":mockito-integration-tests:kotlin-release-coroutines-tests:test",
+            ":mockito-integration-tests:kotlin-release-coroutines-tests:licenseTest",
+            ":mockito-integration-tests:junit-jupiter-inline-mock-maker-extension-tests:test",
+            ":mockito-integration-tests:junit-jupiter-inline-mock-maker-extension-tests:licenseTest",
+            ":mockito-integration-tests:extensions-tests:test",
+            ":mockito-integration-tests:extensions-tests:licenseTest",
+            ":mockito-integration-tests:junit-jupiter-parallel-tests:test",
+            ":mockito-integration-tests:junit-jupiter-parallel-tests:licenseTest",
+            ":mockito-integration-tests:junit-jupiter-extension-tests:test",
+            ":mockito-integration-tests:junit-jupiter-extension-tests:licenseTest",
+            ":mockito-integration-tests:programmatic-tests:test",
+            ":mockito-integration-tests:programmatic-tests:licenseTest",
+            ":mockito-extensions:mockito-proxy:test",
+            ":mockito-extensions:mockito-proxy:checkstyleTest",
+            ":mockito-extensions:mockito-proxy:licenseTest",
+            ":mockito-extensions:mockito-proxy:retryTest",
+            ":mockito-integration-tests:graalvm-tests:test",
+            ":mockito-integration-tests:graalvm-tests:licenseTest"
+          ],
+          "topTasks": [
+            {
+              "path": ":mockito-core:compileTestJava",
+              "durationMs": 242690,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-core:test",
+              "durationMs": 239810,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-integration-tests:inline-mocks-tests:test",
+              "durationMs": 224280,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-integration-tests:memory-tests:test",
+              "durationMs": 125660,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-extensions:mockito-junit-jupiter:test",
+              "durationMs": 72430,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-extensions:mockito-subclass:generatePomFileForMockitoLibraryPublication",
+              "durationMs": 59904,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-core:checkstyleMain",
+              "durationMs": 57462,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-extensions:mockito-errorprone:test",
+              "durationMs": 51311,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-integration-tests:osgi-tests:test",
+              "durationMs": 45902,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-integration-tests:groovy-tests:test",
+              "durationMs": 43801,
+              "outcome": ""
+            }
+          ],
+          "success": true,
+          "forbiddenReleaseTaskExecuted": false,
+          "buildScanPublished": false
+        },
+        {
+          "index": 2,
+          "arguments": [
+            "-Pmockito.test.java=21",
+            "coverageReport",
+            "--stacktrace",
+            "--no-scan"
+          ],
+          "profileSha256": "659cff0674c6f135443fd05b7c2ef67d2c0a95b30d64d9830a7545344ab849f6",
+          "taskRowsSha256": "6ce8ec35a4131f84d7d86b3de43d15ae2ed237def04260fb2162fff84ef41531",
+          "totalBuildMs": 17888,
+          "startupMs": 559,
+          "settingsAndBuildSrcMs": 2,
+          "loadingProjectsMs": 11,
+          "configuringProjectsMs": 370,
+          "taskExecutionMs": 17896,
+          "actionableTasks": 18,
+          "profiledTaskRows": 87,
+          "testTaskPaths": [],
+          "topTasks": [
+            {
+              "path": ":compileKotlin",
+              "durationMs": 6170,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-core:compileJava",
+              "durationMs": 6150,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-core:mockitoCoverage",
+              "durationMs": 1374,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-extensions:mockito-errorprone:compileJava",
+              "durationMs": 1166,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-extensions:mockito-junit-jupiter:compileJava",
+              "durationMs": 1083,
+              "outcome": ""
+            },
+            {
+              "path": ":compilePluginsBlocks",
+              "durationMs": 708,
+              "outcome": ""
+            },
+            {
+              "path": ":generatePrecompiledScriptPluginAccessors",
+              "durationMs": 595,
+              "outcome": ""
+            },
+            {
+              "path": ":mockito-core:jar",
+              "durationMs": 465,
+              "outcome": ""
+            },
+            {
+              "path": ":jar",
+              "durationMs": 106,
+              "outcome": ""
+            },
+            {
+              "path": ":generateExternalPluginSpecBuilders",
+              "durationMs": 36,
+              "outcome": ""
+            }
+          ],
+          "success": true,
+          "forbiddenReleaseTaskExecuted": false,
+          "buildScanPublished": false
+        }
+      ],
+      "workflowTotalBuildMs": 629165,
+      "workflowConfigurationMs": 1200,
+      "productAttributableFailures": 0,
+      "hypotheses": [
+        {
+          "id": "MOCKITO-FULL-WORKFLOW-NO-GENERIC-OPPORTUNITY",
+          "mechanism": "RUNTIME_TUNING",
+          "state": "NO_GENERIC_OPPORTUNITY",
+          "observations": [
+            "The exact three-command workflow took 629165 ms; startup plus configuration accounted for 2957 ms (0.47% of wall time), so invocation fusion and configuration-cache repair cannot materially explain the total.",
+            "The build command alone took 593290 ms; :mockito-core:compileTestJava and multiple complete test tasks dominated the profile while every requested test path remained in scope.",
+            "Parallel execution and build cache are already enabled; without omitting tests or using repository-specific rules, this diagnostic does not establish a generic BuildOpt advantage over an optimized native resource configuration."
+          ],
+          "optimizedNativeControl": "Gradle 8.14.2 using the best compatible native max-workers and JVM-memory configuration on the same 4-CPU/16-GiB runner, with all three commands and every requested test unchanged.",
+          "valueMetric": "PAIRED_WALL_CLOCK_WITH_IDENTICAL_OUTPUTS",
+          "requiredOutputs": "BYTE_IDENTICAL",
+          "requestedTests": "PRESERVE_ALL",
+          "failureSignal": "Any proposed candidate cannot clear the unchanged accelerator threshold against the optimized native control without omitting a requested test or changing a required output.",
+          "fallback": "Keep BuildOpt performance actions disabled for this full workflow and execute the upstream native Gradle commands unchanged.",
+          "claim": "NONE_DIAGNOSTIC_ONLY",
+          "nextExperiment": false
+        }
+      ]
+    },
+    {
+      "id": "SPOTBUGS",
+      "nameWithOwner": "spotbugs/spotbugs",
+      "revision": "8d5cad4536ae263448c09181268bbca70f0c0712",
+      "sourceArchiveSha256": "15cc11ecdbb9bb697afc926fd3df87393e6d6492b9af0ec557172f8ae07849bb",
+      "workflowSourceSha256": "768ffd6873c96c50ee4bfa6dca9671876a16fdf194c65758e600758dc904dded",
+      "measuredNetwork": "DISCONNECTED",
+      "audit": {
+        "mainSourceFiles": 1073,
+        "testSourceFiles": 314,
+        "buildFiles": 12
+      },
+      "preflightSuccess": true,
+      "commands": [
+        {
+          "index": 0,
+          "arguments": [
+            "--configure-on-demand",
+            ":spotbugs-tests:test",
+            "--no-scan",
+            "--stacktrace"
+          ],
+          "profileSha256": "3041aeeea5aeb6eaf92d55622ddb326cb8c54625cee3be95de5fc2e54b98ac44",
+          "taskRowsSha256": "b9fb1713d3dcc268efa03bd4d258068c91d4265bf8f253f4461631f851187260",
+          "totalBuildMs": 271920,
+          "startupMs": 594,
+          "settingsAndBuildSrcMs": 0,
+          "loadingProjectsMs": 9,
+          "configuringProjectsMs": 1187,
+          "taskExecutionMs": 281600,
+          "actionableTasks": 36,
+          "profiledTaskRows": 66,
+          "testTaskPaths": [
+            ":spotbugs-tests:test",
+            ":spotbugsTestCases:spotbugsTest",
+            ":spotbugsTestCases:test"
+          ],
+          "topTasks": [
+            {
+              "path": ":spotbugs-tests:test",
+              "durationMs": 242120,
+              "outcome": ""
+            },
+            {
+              "path": ":spotbugsTestCases:exportClasspath",
+              "durationMs": 9201,
+              "outcome": ""
+            },
+            {
+              "path": ":spotbugs:compileJava",
+              "durationMs": 7165,
+              "outcome": ""
+            },
+            {
+              "path": ":compileKotlin",
+              "durationMs": 5773,
+              "outcome": ""
+            },
+            {
+              "path": ":spotbugsTestCases:compileJava",
+              "durationMs": 3697,
+              "outcome": ""
+            },
+            {
+              "path": ":spotbugsTestCases:compileGroovy",
+              "durationMs": 3249,
+              "outcome": ""
+            },
+            {
+              "path": ":spotbugs-tests:jacocoTestReport",
+              "durationMs": 3016,
+              "outcome": ""
+            },
+            {
+              "path": ":spotbugs:compileGuiJava",
+              "durationMs": 1527,
+              "outcome": ""
+            },
+            {
+              "path": ":spotbugs-tests:compileTestJava",
+              "durationMs": 1119,
+              "outcome": ""
+            },
+            {
+              "path": ":compilePluginsBlocks",
+              "durationMs": 906,
+              "outcome": ""
+            }
+          ],
+          "success": true,
+          "forbiddenReleaseTaskExecuted": false,
+          "buildScanPublished": false
+        }
+      ],
+      "workflowTotalBuildMs": 271920,
+      "workflowConfigurationMs": 1196,
+      "productAttributableFailures": 0,
+      "hypotheses": [
+        {
+          "id": "SPOTBUGS-FULL-WORKFLOW-NO-GENERIC-OPPORTUNITY",
+          "mechanism": "BUILD_IMPACT",
+          "state": "NO_GENERIC_OPPORTUNITY",
+          "observations": [
+            "The exact workflow took 271920 ms and :spotbugs-tests:test alone occupied 242120 ms (89.0% of wall time).",
+            "Startup plus configuration accounted for 1790 ms (0.66% of wall time), so configuration-cache repair cannot deliver the required material value on this workflow.",
+            "All three requested test paths must remain in scope and Test Optimization is out of bounds; the remaining build-owned work does not establish a generic accelerator hypothesis from this diagnostic."
+          ],
+          "optimizedNativeControl": "Gradle 9.6.1 with configure-on-demand and the best compatible native resource settings, executing all three requested test paths and producing the same required outputs.",
+          "valueMetric": "PAIRED_WALL_CLOCK_WITH_IDENTICAL_OUTPUTS",
+          "requiredOutputs": "BYTE_IDENTICAL",
+          "requestedTests": "PRESERVE_ALL",
+          "failureSignal": "A candidate requires omitting a requested test, changes a required output, or cannot clear the unchanged accelerator threshold against the optimized native control.",
+          "fallback": "Keep BuildOpt performance actions disabled for this full workflow and execute the upstream native Gradle command unchanged.",
+          "claim": "NONE_DIAGNOSTIC_ONLY",
+          "nextExperiment": false
+        }
+      ]
+    }
+  ],
+  "decision": {
+    "verdict": "PREREGISTER_GENERIC_FOLLOW_UP_EXPERIMENTS",
+    "performanceMeasured": false,
+    "savingsClaimed": false,
+    "prioritizedHypotheses": [
+      {
+        "repositoryId": "SPOTLESS",
+        "hypothesisId": "SPOTLESS-BUILD-IMPACT",
+        "priority": 1
+      }
+    ]
+  },
+  "gate": {
+    "id": "POC-REALWORLD-G03",
+    "state": "PASSED"
+  },
+  "boundaries": {
+    "publicSourceOnly": true,
+    "proofOfConcept": true,
+    "productImplementationChanged": false,
+    "performanceClaimAuthorized": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

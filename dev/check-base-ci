@@ -218,7 +218,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-kotlin-boundary" >/dev/null
         "${buildopt_script_dir}/check-poc-real-world-compatibility" >/dev/null
         "${buildopt_script_dir}/check-poc-real-world-performance" >/dev/null
-        "${buildopt_script_dir}/check-poc-real-world-diagnostics" --spec-only >/dev/null
+        "${buildopt_script_dir}/check-poc-real-world-diagnostics" >/dev/null
         "${buildopt_script_dir}/run" \
             --toolchain go \
             -- \

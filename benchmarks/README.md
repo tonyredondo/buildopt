@@ -109,6 +109,8 @@ The underlying evidence and contracts are:
   validated by `./dev/check-poc-real-world-compatibility`;
 - [public-repository performance evidence](./results/poc-real-world-performance-v1.json),
   validated by `./dev/check-poc-real-world-performance`;
+- [public-workflow diagnostic evidence](./results/poc-real-world-diagnostics-v1.json),
+  validated by `./dev/check-poc-real-world-diagnostics`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
@@ -143,6 +145,28 @@ avoidable work to clear the threshold; SpotBugs neither retained no-change
 parity nor produced stable absolute leaf savings. The terminal verdict is
 `RETAIN_BOUNDED_SYNTHETIC_CLAIM`: no thresholds move, percentages are not
 combined, and no general public-repository claim is authorized.
+
+### Public-workflow diagnostic result
+
+`POC-REALWORLD-DIAGNOSTICS-001` profiles the exact upstream workflows once;
+it is not a candidate-versus-control benchmark and claims no savings. The
+digest-pinned 4-CPU/16-GiB run records wall time and native Gradle profile
+phases without summing overlapping task durations.
+
+| Repository | Exact workflow wall time | Startup + configuration | Diagnostic decision |
+|---|---:|---:|---|
+| Spotless | 165.173 s | 2.561 s (1.55%) | Preregister Build Impact on a leaf-project change |
+| Mockito | 629.165 s | 2.957 s (0.47%) | No generic BuildOpt opportunity for the full workflow |
+| SpotBugs | 271.920 s | 1.790 s (0.66%) | No generic BuildOpt opportunity while all tests remain requested |
+
+Spotless already enables native parallel execution, build cache, and
+Configuration Cache. Its expensive work spans independent projects, so the
+only follow-up supported by the profile is change-aware project scoping with
+byte-identical required outputs. Mockito is dominated by compilation and its
+complete test matrix. SpotBugs spends 242.120 s (89.0% of wall time) in
+`:spotbugs-tests:test`. Test selection remains outside BuildOpt, so neither
+test-heavy workflow receives a repository-specific workaround or a speculative
+performance claim.
 
 ### Calibrated Groovy result
 
