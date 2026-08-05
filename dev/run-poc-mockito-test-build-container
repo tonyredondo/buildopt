@@ -318,6 +318,25 @@ buildopt_assert_cache_replay() {
         return 1
     fi
 }
+buildopt_diagnose_candidate_cache() {
+    local buildopt_diagnostic_log="${buildopt_logs}/candidate-cache-diagnostic.log"
+    local -a buildopt_spec_arguments=()
+
+    mapfile -t buildopt_spec_arguments < <(
+        jq -r '.experiments[1].candidateCommands[0][]' "${buildopt_spec}"
+    )
+    buildopt_reset_outputs "${buildopt_candidate_checkout}"
+    docker exec --user "$(id -u):$(id -g)" --workdir /repo \
+        "${buildopt_candidate_container}" /usr/bin/env "${buildopt_environment[@]}" \
+        BUILDOPT_SAFE_CACHE=1 \
+        /benchmark/install/bin/buildopt gradle --daemon --parallel \
+        --no-configuration-cache --console=plain --stacktrace --info \
+        "${buildopt_spec_arguments[@]}" --offline \
+        >"${buildopt_diagnostic_log}" 2>&1 || true
+    grep -n -A 8 -B 3 -E \
+        "${buildopt_required_task}|BuildOpt managed cache|Caching disabled" \
+        "${buildopt_diagnostic_log}" >&2 || true
+}
 buildopt_run_sequence CONTROL "${buildopt_control_container}" \
     "${buildopt_logs}/preflight-control" false
 buildopt_run_sequence CANDIDATE "${buildopt_candidate_container}" \
@@ -331,7 +350,10 @@ buildopt_reset_outputs "${buildopt_candidate_checkout}"
 buildopt_run_sequence CANDIDATE "${buildopt_candidate_container}" \
     "${buildopt_logs}/warm-candidate" true
 buildopt_assert_cache_replay CONTROL "${buildopt_logs}/warm-control"
-buildopt_assert_cache_replay CANDIDATE "${buildopt_logs}/warm-candidate"
+if ! buildopt_assert_cache_replay CANDIDATE "${buildopt_logs}/warm-candidate"; then
+    buildopt_diagnose_candidate_cache
+    exit 1
+fi
 
 buildopt_raw="${buildopt_root}/observations.jsonl"
 : >"${buildopt_raw}"
