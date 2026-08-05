@@ -64,6 +64,9 @@ jq -e \
     .repositories[0].workflow.requiredGitRefs == ["origin/main"] and
     .repositories[1].workflow.requiredGitRefs == [] and
     .repositories[2].workflow.requiredGitRefs == [] and
+    .repositories[0].workflow.measuredNetwork == "DISCONNECTED" and
+    .repositories[1].workflow.measuredNetwork == "BRIDGE_REQUIRED_BY_UPSTREAM_JAVADOC_LINKS" and
+    .repositories[2].workflow.measuredNetwork == "DISCONNECTED" and
     .repositories[1].workflow.commands == [
         ["spotlessCheck", "--stacktrace", "--no-scan"],
         ["-Pmockito.test.java=21", "build", "--stacktrace", "--no-scan"],
@@ -74,7 +77,7 @@ jq -e \
     ] and
     .measurement.purpose == "PROFILE_REAL_WORKFLOW_COST_BEFORE_PRODUCT_CHANGES" and
     .measurement.preflight == "ONLINE_UNMEASURED_EXACT_WORKFLOW" and
-    .measurement.measuredNetwork == "DISCONNECTED" and
+    .measurement.measuredNetwork == "PER_REPOSITORY_EXPLICIT" and
     .measurement.measuredDependencyMode == "GRADLE_OFFLINE" and
     .measurement.measuredEntrypoint == "GRADLE_WRAPPER" and
     .measurement.measuredRunsPerRepository == 1 and
@@ -161,6 +164,7 @@ jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
         $repository.revision == $expected.revision and
         ($repository.sourceArchiveSha256 | test("^[0-9a-f]{64}$")) and
         $repository.workflowSourceSha256 == $expected.workflow.sourceSha256 and
+        $repository.measuredNetwork == $expected.workflow.measuredNetwork and
         $repository.audit == $expected.audit and
         $repository.preflightSuccess == true and
         ($repository.commands | length) == ($expected.workflow.commands | length) and

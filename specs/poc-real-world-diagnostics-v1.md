@@ -27,14 +27,25 @@ by the original broad publishing guard before any Mockito profile existed.
 The local-only exception above is now explicit and the matrix again restarts
 from zero without changing the workflow or measurement method.
 
+Mockito's measured `build` then failed in `Javadoc` with the network removed:
+its committed Javadoc configuration resolves external JUnit API links on JDK
+21. No successful Mockito profile was accepted. The diagnostic therefore
+keeps bridge networking only for Mockito and records that boundary explicitly;
+Spotless and SpotBugs remain disconnected. This is acceptable for a diagnostic
+that claims no savings. Any later paired value experiment must give both arms
+the same network policy or precache the immutable documentation input before
+timing.
+
 ## Measurement boundary
 
 An unmeasured online preflight resolves public dependencies for the exact
 workflow. Generated `build/` directories and the checkout-local `.gradle`
-directory are then removed. The measured workflow runs once, offline, in the
-digest-pinned 4-CPU/16-GiB container with the repository's Wrapper and native
-Gradle profiler. Build cache is disabled and tasks are rerun so the report
-reveals actual task work rather than a cache-hit benchmark.
+directory are then removed. The measured workflow runs once with Gradle
+dependency resolution offline in the digest-pinned 4-CPU/16-GiB container with
+the repository's Wrapper and native Gradle profiler. Build cache is disabled
+and tasks are rerun so the report reveals actual task work rather than a
+cache-hit benchmark. Mockito retains bridge networking only for its upstream
+Javadoc links; the other two measured workflows are disconnected.
 
 Every Gradle invocation produces its own profile. The evidence records wall
 time, configuration phases, task-execution phase, task outcomes, and the most

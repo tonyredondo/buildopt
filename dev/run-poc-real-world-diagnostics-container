@@ -317,7 +317,17 @@ for buildopt_repository_index in 0 1 2; do
 
     find "${buildopt_checkout}" -type d -name build -prune -exec rm -rf -- {} +
     rm -rf -- "${buildopt_checkout}/.gradle"
-    docker network disconnect bridge "${buildopt_container}"
+    buildopt_measured_network=$(jq -er \
+        ".repositories[${buildopt_repository_index}].workflow.measuredNetwork" \
+        "${buildopt_contract}")
+    if [[ "${buildopt_measured_network}" == DISCONNECTED ]]; then
+        docker network disconnect bridge "${buildopt_container}"
+    elif [[ "${buildopt_measured_network}" != \
+        BRIDGE_REQUIRED_BY_UPSTREAM_JAVADOC_LINKS ]]; then
+        printf 'unsupported measured network policy for %s\n' \
+            "${buildopt_name}" >&2
+        exit 1
+    fi
 
     buildopt_command_fragments=()
     for ((buildopt_command_index = 0; buildopt_command_index < buildopt_command_count; buildopt_command_index++)); do
@@ -402,6 +412,7 @@ for buildopt_repository_index in 0 1 2; do
         --arg revision "${buildopt_actual_revision}" \
         --arg sourceArchiveSha256 "${buildopt_source_archive_sha}" \
         --arg workflowSourceSha256 "${buildopt_actual_source_sha}" \
+        --arg measuredNetwork "${buildopt_measured_network}" \
         --argjson audit "$(jq ".repositories[${buildopt_repository_index}].audit" "${buildopt_contract}")" \
         --argjson commands "$(cat "${buildopt_results}/commands.json")" '
         {
@@ -410,6 +421,7 @@ for buildopt_repository_index in 0 1 2; do
             revision: $revision,
             sourceArchiveSha256: $sourceArchiveSha256,
             workflowSourceSha256: $workflowSourceSha256,
+            measuredNetwork: $measuredNetwork,
             audit: $audit,
             preflightSuccess: true,
             commands: $commands,
