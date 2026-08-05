@@ -648,12 +648,12 @@ jq -s \
             cpuCount: $cpuCount,
             memoryBytes: $memoryBytes
         },
-        methodology: $spec[0].measurement + {
+        methodology: ($spec[0].measurement + {
             batches: $spec[0].batches,
             nativeControl: $spec[0].nativeControl,
             candidate: $spec[0].candidate,
             scenarios: $spec[0].scenarios
-        },
+        }),
         repositories: $repositories,
         decision: {
             verdict:

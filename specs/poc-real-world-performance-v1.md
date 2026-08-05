@@ -64,6 +64,12 @@ No SpotBugs evidence was accepted. Verification now runs after both arms in a
 pair, while the same five-second start gap remains enforced; the entire matrix
 is restarted from zero without changing samples, thresholds, or decisions.
 
+After all 96 samples completed, the evidence aggregation filter failed to
+compile because an object merge lacked parentheses. No result document was
+accepted. The filter is corrected and compile-checked independently; the full
+matrix is restarted once more so the final evidence is produced atomically by
+one successful end-to-end execution.
+
 Validate the frozen contract or checked evidence with:
 
 ```bash
