@@ -38,7 +38,7 @@ final class BuildOptTierOnePolicy {
             "org.jetbrains.kotlin.gradle.internal.transforms."
                     + "BuildToolsApiClasspathEntrySnapshotTransform";
     private static final String KOTLIN_GRADLE_PLUGIN_ARTIFACT =
-            "kotlin-gradle-plugin-2.2.0-gradle82.jar";
+            "kotlin-gradle-plugin-2.2.0-gradle813.jar";
 
     private BuildOptTierOnePolicy() {}
 

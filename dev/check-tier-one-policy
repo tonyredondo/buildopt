@@ -87,8 +87,8 @@ if ! jq -e '
             "implementation": "org.jetbrains.kotlin.gradle.internal.transforms.BuildToolsApiClasspathEntrySnapshotTransform",
             "providerPluginId": "org.jetbrains.kotlin.jvm",
             "providerVersion": "2.2.0",
-            "artifactName": "kotlin-gradle-plugin-2.2.0-gradle82.jar",
-            "artifactSha256": "36fdac8a57c3f8c60a23e927f9a47e3d69cfdb243f55ca0b665cf03f35e2cba0",
+            "artifactName": "kotlin-gradle-plugin-2.2.0-gradle813.jar",
+            "artifactSha256": "835c4dc18a07325f5793050c7f2e765d235c596749568e47b597b449d867968d",
             "sourceRevision": "631e9fdbe59cc92ac1e88e6ff3bbf4418b3ab9da"
         }
     ] and
