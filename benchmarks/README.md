@@ -111,6 +111,8 @@ The underlying evidence and contracts are:
   validated by `./dev/check-poc-real-world-performance`;
 - [public-workflow diagnostic evidence](./results/poc-real-world-diagnostics-v1.json),
   validated by `./dev/check-poc-real-world-diagnostics`;
+- [Spring Framework diagnostic evidence](./results/poc-spring-diagnostic-v1.json),
+  validated by `./dev/check-poc-spring-diagnostic`;
 - [Spotless exact-workflow Build Impact evidence](./results/poc-spotless-impact-v1.json),
   validated by `./dev/check-poc-spotless-impact`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
@@ -211,6 +213,27 @@ of `[-498.5, 1109.25]` ms. This misses the frozen 500-ms floor and positive
 lower bound, so the terminal decision is
 `STOP_SAFE_CACHE_FOR_MOCKITO_TEST_BUILD`. The complete Mockito workflow was
 therefore not run, and no savings claim or unchanged rerun is authorized.
+
+### Spring Framework diagnostic
+
+`POC-SPRING-DIAGNOSTIC-001` profiles a pinned Spring Framework revision on the
+local Linux AMD64 host with all 12 CPUs and Temurin 25. The online preflight is
+excluded from measurement. Each offline cell starts with clean project outputs
+and the exact same post-preflight native Gradle cache seed.
+
+| Cell | Wall clock | Executed / cache hits | Configuration phases | Tests |
+|---|---:|---:|---:|---:|
+| `assemble` | 33.320 s | 45 / 38 | 15.882 s | 4 implicit `buildSrc` tests |
+| `testClasses` | 31.850 s | 67 / 83 | 13.860 s | 4 implicit `buildSrc` tests |
+| `check` | 73.290 s | 118 / 176 | 12.918 s | 41,276; 0 failed; 208 skipped |
+
+The profile shows two distinct opportunities. `spring-jms:compileJava` remains
+real changed-project work, while `assemble` and `testClasses` still configure
+the full 27-project graph despite a leaf change. That authorizes a paired Build
+Impact experiment. The complete `check` run is dominated by the 52.374-second
+`checkstyleNohttp` task and retains every test, so only Runtime Tuning is
+authorized there. Task durations overlap and are not added into a wall-clock
+savings claim. This is diagnostic evidence, not proof that BuildOpt is faster.
 
 ### Calibrated Groovy result
 

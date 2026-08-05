@@ -1,0 +1,427 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-spring-diagnostic/v1",
+  "workItem": "POC-SPRING-DIAGNOSTIC-001",
+  "specSha256": "48241abf563a198fb503136fd22f1cd6e69c41c01e7b16124c013dcc61b23052",
+  "capturedAt": "2026-08-05T22:32:38Z",
+  "buildoptRevision": "52425134a8796b997db39b6d0eb13d2b993c9af8",
+  "repository": {
+    "nameWithOwner": "spring-projects/spring-framework",
+    "revision": "4b5c92703c63966c3471242c621c4a63b382638d",
+    "sourceArchiveSha256": "e3fa4258e5e568c0b0e6f1605956cd743cff847b9df7c82ce86b2d2f1109db16"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12,
+    "javaVersion": "openjdk version \"25.0.3\" 2026-04-21 LTS"
+  },
+  "preparation": {
+    "onlinePreflightMeasured": false,
+    "onlinePreflightSuccess": true,
+    "onlinePreflightWallClockMs": 680261,
+    "measuredNetwork": "DISCONNECTED",
+    "dependencyMode": "GRADLE_OFFLINE",
+    "buildCacheSeedSha256": "3178ff4802cc9e9c00a5bf864af6821cc7a7d4465b982a56afe554c6e9888b57",
+    "cacheSeedRestoredBeforeEveryCell": true,
+    "projectOutputsCleanedBeforeEveryCell": true
+  },
+  "change": {
+    "path": "spring-jms/src/main/java/org/springframework/jms/JmsException.java",
+    "originalSourceSha256": "61098f8411fd6a379cedb20c2cfed267979eff8ef3f6af7cd5c0fe5bb7b33138",
+    "mutatedSourceSha256": "ed2ec44a59dbf1e1e1455ab4416a5f12252b41d0af07c56babca5bf575245789",
+    "mutation": "APPEND_PAIR_COMMENT"
+  },
+  "cells": [
+    {
+      "id": "BUILD_OUTPUTS",
+      "arguments": [
+        "assemble",
+        "--no-scan",
+        "--stacktrace",
+        "--max-workers=12"
+      ],
+      "wallClockMs": 33320,
+      "userCpuMs": 163230,
+      "systemCpuMs": 8850,
+      "maximumResidentSetKb": 847840,
+      "profile": {
+        "totalBuildMs": 32961,
+        "startupMs": 6770,
+        "settingsAndBuildSrcMs": 5,
+        "loadingProjectsMs": 987,
+        "configuringProjectsMs": 8120,
+        "taskExecutionMs": 28280,
+        "sha256": "f18298a39d960530f7e757a3278c7c27d34ac74089adac5b2d8864b2dbdef444"
+      },
+      "tasks": {
+        "actionable": 93,
+        "executed": 45,
+        "fromCache": 38,
+        "upToDate": 10,
+        "profiledRows": 181,
+        "topByDuration": [
+          {
+            "path": ":spring-jms:compileJava",
+            "durationMs": 10600,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-context:jar",
+            "durationMs": 1209,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-web:compileJava",
+            "durationMs": 1194,
+            "outcome": "FROM-CACHE"
+          },
+          {
+            "path": ":spring-web:compileKotlin",
+            "durationMs": 1125,
+            "outcome": "FROM-CACHE"
+          },
+          {
+            "path": ":spring-messaging:compileKotlin",
+            "durationMs": 717,
+            "outcome": "FROM-CACHE"
+          },
+          {
+            "path": ":spring-jdbc:compileKotlin",
+            "durationMs": 696,
+            "outcome": "FROM-CACHE"
+          },
+          {
+            "path": ":spring-context:compileJava",
+            "durationMs": 602,
+            "outcome": "FROM-CACHE"
+          },
+          {
+            "path": ":spring-messaging:jar",
+            "durationMs": 597,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-jdbc:jar",
+            "durationMs": 567,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-core:jar",
+            "durationMs": 552,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-instrument:jar",
+            "durationMs": 541,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-context-indexer:jar",
+            "durationMs": 532,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-r2dbc:jar",
+            "durationMs": 402,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-tx:jar",
+            "durationMs": 392,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-web:jar",
+            "durationMs": 365,
+            "outcome": "EXECUTED"
+          }
+        ]
+      },
+      "requiredOutputs": {
+        "fileCount": 8513,
+        "manifestSha256": "8d80ffe8114edcffa88ef87769bbed29bf2a4240f37768b3307e4c43ec8e5ce7"
+      },
+      "tests": {
+        "caseCount": 4,
+        "failed": 0,
+        "skipped": 0,
+        "evidenceSha256": "196171668cf32196af72c8b369adc63d4174598cb13d7cfa7bfa2221983d15e6"
+      },
+      "success": true
+    },
+    {
+      "id": "TEST_PREPARATION",
+      "arguments": [
+        "testClasses",
+        "--no-scan",
+        "--stacktrace",
+        "--max-workers=12"
+      ],
+      "wallClockMs": 31850,
+      "userCpuMs": 2000,
+      "systemCpuMs": 240,
+      "maximumResidentSetKb": 122120,
+      "profile": {
+        "totalBuildMs": 31129,
+        "startupMs": 5867,
+        "settingsAndBuildSrcMs": 1,
+        "loadingProjectsMs": 253,
+        "configuringProjectsMs": 7739,
+        "taskExecutionMs": 53418,
+        "sha256": "733dd3d58a76166a2b138ab84161fd77376d9d1ab3b037e3009bc786b4fdb338"
+      },
+      "tasks": {
+        "actionable": 160,
+        "executed": 67,
+        "fromCache": 83,
+        "upToDate": 10,
+        "profiledRows": 298,
+        "topByDuration": [
+          {
+            "path": ":spring-jms:compileJava",
+            "durationMs": 9778,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-web:jar",
+            "durationMs": 1674,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-context:compileTestJava",
+            "durationMs": 1461,
+            "outcome": "FROM-CACHE"
+          },
+          {
+            "path": ":spring-context:processTestResources",
+            "durationMs": 1318,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-core:compileKotlin",
+            "durationMs": 1273,
+            "outcome": "FROM-CACHE"
+          },
+          {
+            "path": ":spring-web:compileTestKotlin",
+            "durationMs": 1043,
+            "outcome": "FROM-CACHE"
+          },
+          {
+            "path": ":spring-webflux:compileTestKotlin",
+            "durationMs": 854,
+            "outcome": "FROM-CACHE"
+          },
+          {
+            "path": ":spring-webmvc:jar",
+            "durationMs": 852,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-core:jar",
+            "durationMs": 848,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-webflux:jar",
+            "durationMs": 801,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-test:compileKotlin",
+            "durationMs": 783,
+            "outcome": "FROM-CACHE"
+          },
+          {
+            "path": ":spring-webflux:compileKotlin",
+            "durationMs": 772,
+            "outcome": "FROM-CACHE"
+          },
+          {
+            "path": ":spring-context-indexer:processTestResources",
+            "durationMs": 765,
+            "outcome": "NO-SOURCE"
+          },
+          {
+            "path": ":spring-test:compileJava",
+            "durationMs": 731,
+            "outcome": "FROM-CACHE"
+          },
+          {
+            "path": ":spring-core:compileJava",
+            "durationMs": 717,
+            "outcome": "FROM-CACHE"
+          }
+        ]
+      },
+      "requiredOutputs": {
+        "fileCount": 23544,
+        "manifestSha256": "83c9827fd70833ea2609c54dc4874b92924f82f0b59b4166a3ab3285e72d5993"
+      },
+      "tests": {
+        "caseCount": 4,
+        "failed": 0,
+        "skipped": 0,
+        "evidenceSha256": "196171668cf32196af72c8b369adc63d4174598cb13d7cfa7bfa2221983d15e6"
+      },
+      "success": true
+    },
+    {
+      "id": "FULL_VERIFICATION",
+      "arguments": [
+        "check",
+        "--no-scan",
+        "--stacktrace",
+        "--max-workers=12"
+      ],
+      "wallClockMs": 73290,
+      "userCpuMs": 2430,
+      "systemCpuMs": 330,
+      "maximumResidentSetKb": 124712,
+      "profile": {
+        "totalBuildMs": 72520,
+        "startupMs": 5930,
+        "settingsAndBuildSrcMs": 1,
+        "loadingProjectsMs": 257,
+        "configuringProjectsMs": 6730,
+        "taskExecutionMs": 251540,
+        "sha256": "f6cf41fa4d592c63bf289ca2b66f0d1375407d9bda69d461fbecc0f002e38eb0"
+      },
+      "tasks": {
+        "actionable": 304,
+        "executed": 118,
+        "fromCache": 176,
+        "upToDate": 10,
+        "profiledRows": 618,
+        "topByDuration": [
+          {
+            "path": ":checkstyleNohttp",
+            "durationMs": 52374,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-jms:compileJava",
+            "durationMs": 20833,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-core:checkArchitectureMain",
+            "durationMs": 10301,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-web:checkArchitectureMain",
+            "durationMs": 9031,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-jms:checkstyleMain",
+            "durationMs": 8838,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-context:checkArchitectureMain",
+            "durationMs": 8389,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-beans:checkArchitectureMain",
+            "durationMs": 6830,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-test:checkArchitectureMain",
+            "durationMs": 5390,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-webmvc:checkArchitectureMain",
+            "durationMs": 5146,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-webflux:checkArchitectureMain",
+            "durationMs": 4996,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-messaging:checkArchitectureMain",
+            "durationMs": 3939,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-expression:checkArchitectureMain",
+            "durationMs": 3747,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-websocket:checkArchitectureMain",
+            "durationMs": 3713,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-jdbc:checkArchitectureMain",
+            "durationMs": 3444,
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":spring-core-test:checkArchitectureMain",
+            "durationMs": 3385,
+            "outcome": "EXECUTED"
+          }
+        ]
+      },
+      "requiredOutputs": {
+        "fileCount": 23680,
+        "manifestSha256": "542306ab6f041fd106a5f5bd6e834325ee12536ef8bf1072464ce2a8a46857a0"
+      },
+      "tests": {
+        "caseCount": 41276,
+        "failed": 0,
+        "skipped": 208,
+        "evidenceSha256": "e63391178e8d09bd7767e15676488f3287becf3f1954746a470be28af1d5b1a3"
+      },
+      "success": true
+    }
+  ],
+  "observations": {
+    "taskDurationsMayOverlap": true,
+    "taskDurationsSummedAsWallClockSavings": false,
+    "performanceComparisonClaimed": false,
+    "savingsClaimed": false,
+    "fullVerificationPreservedEveryObservedTest": true
+  },
+  "nextHypotheses": [
+    {
+      "cell": "BUILD_OUTPUTS",
+      "mechanism": "BUILD_IMPACT",
+      "state": "AUTHORIZED_FOR_PAIRED_EXPERIMENT",
+      "reason": "Measure whether selecting the changed project and reviewed reverse dependents reduces wall clock beyond the optimized native cache."
+    },
+    {
+      "cell": "TEST_PREPARATION",
+      "mechanism": "BUILD_IMPACT",
+      "state": "AUTHORIZED_FOR_PAIRED_EXPERIMENT",
+      "reason": "Measure build-owned test compilation only; no Gradle Test task may be omitted or changed."
+    },
+    {
+      "cell": "FULL_VERIFICATION",
+      "mechanism": "RUNTIME_TUNING",
+      "state": "AUTHORIZED_FOR_PAIRED_EXPERIMENT",
+      "reason": "Measure resource settings while preserving the exact test inventory and outcomes."
+    }
+  ],
+  "decision": {
+    "verdict": "RUN_GENERIC_PAIRED_SPRING_EXPERIMENTS",
+    "performanceMeasured": false,
+    "savingsClaimed": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

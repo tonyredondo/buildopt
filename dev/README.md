@@ -2519,7 +2519,9 @@ same cache seed before the offline `assemble`, `testClasses`, and `check`
 cells. It records wall clock, Gradle profile phases, critical tasks, memory,
 required outputs, and exact test-case outcomes. The diagnostic authorizes
 follow-up hypotheses but never turns overlapping task durations into a savings
-claim. Validate checked-in evidence without rerunning Spring with:
+claim. Spring's four implicit `buildSrc` tests are retained in every cell; the
+top-level `assemble` and `testClasses` requests still select no product `Test`
+task. Validate checked-in evidence without rerunning Spring with:
 
 ```bash
 ./dev/check-poc-spring-diagnostic

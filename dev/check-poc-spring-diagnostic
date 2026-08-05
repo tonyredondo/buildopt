@@ -91,9 +91,10 @@ jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
     (.cells | length) == 3 and
     ([range(0; 3)] | all(.[]; . as $index |
         cell_valid($root.cells[$index]; $spec[0].diagnostic.commands[$index]))) and
-    .cells[0].tests.caseCount == 0 and
-    .cells[1].tests.caseCount == 0 and
-    .cells[2].tests.caseCount > 10000 and
+    .cells[0].tests.caseCount == 4 and
+    .cells[1].tests.caseCount == 4 and
+    .cells[0].tests.evidenceSha256 == .cells[1].tests.evidenceSha256 and
+    .cells[2].tests.caseCount > 40000 and
     .observations == {
         taskDurationsMayOverlap: true,
         taskDurationsSummedAsWallClockSavings: false,

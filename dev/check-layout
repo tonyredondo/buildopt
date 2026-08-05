@@ -374,6 +374,7 @@ buildopt_required_files=(
     "benchmarks/results/poc-pairing-v1-control-first.json"
     "benchmarks/results/poc-pairing-v1-candidate-first.json"
     "benchmarks/results/poc-pairing-v1-decision.json"
+    "benchmarks/results/poc-spring-diagnostic-v1.json"
     "benchmarks/results/poc-groovy-v1-control-first.json"
     "benchmarks/results/poc-groovy-v1-candidate-first.json"
     "benchmarks/results/poc-groovy-v1-decision.json"
