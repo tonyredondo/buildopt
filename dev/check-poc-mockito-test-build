@@ -33,6 +33,11 @@ jq -e '
         controlCache: "OPTIMIZED_NATIVE_GRADLE_LOCAL_CACHE",
         candidateCache: "BUILDOPT_PRIVATE_L1_WITH_TIER_ONE_POLICY",
         candidateEnvironment: {BUILDOPT_SAFE_CACHE: "1"},
+        repositoryRequirements: {
+            gitVersion: "2.34.1",
+            configurationCache: false,
+            configurationCacheReason: "UPSTREAM_CREATE_TEST_RESOURCES_ACCESSES_TASK_PROJECT_AT_EXECUTION_TIME"
+        },
         requiredOutputs: ["mockito-core/build/classes/java/test"],
         candidateMustExecuteTask: ":mockito-core:compileTestJava",
         requestedTestTasks: [],
@@ -90,6 +95,9 @@ jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
     .runner.id == "linux-amd64-4c-16g-v1" and
     .runner.cpuCount == 4 and
     .runner.memoryBytes == 17179869184 and
+    (.runner.toolingImageId | test("^sha256:[0-9a-f]{64}$")) and
+    .runner.gitVersion == "2.34.1" and
+    .runner.configurationCacheEnabled == false and
     .methodology.measurement == $spec[0].measurement and
     .methodology.valueGate == $spec[0].valueGate and
     .repository == {
@@ -110,8 +118,8 @@ jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
         (.candidateCommandDurationsMs | length) == 1 and
         (all(.controlCommandDurationsMs[]; . > 0)) and
         (all(.candidateCommandDurationsMs[]; . > 0)) and
-        .controlConfigurationCacheReuseCount == 1 and
-        .candidateConfigurationCacheReuseCount == 1 and
+        .controlConfigurationCacheReuseCount == 0 and
+        .candidateConfigurationCacheReuseCount == 0 and
         .controlOutputSha256 == .candidateOutputSha256 and
         (.controlOutputSha256 | test("^[0-9a-f]{64}$")) and
         .outputFileCount > 0 and

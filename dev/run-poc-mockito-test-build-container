@@ -40,11 +40,15 @@ docker info >/dev/null 2>&1 || {
 
 buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-poc-mockito.XXXXXX")
 buildopt_containers=()
+buildopt_tooling_image=
 buildopt_cleanup() {
     local buildopt_container
     for buildopt_container in "${buildopt_containers[@]}"; do
         docker rm -f "${buildopt_container}" >/dev/null 2>&1 || true
     done
+    if [[ -n "${buildopt_tooling_image}" ]]; then
+        docker image rm -f "${buildopt_tooling_image}" >/dev/null 2>&1 || true
+    fi
     if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-poc-mockito."* ]]; then
         rm -rf -- "${buildopt_root}"
     fi
@@ -70,6 +74,22 @@ docker image inspect "${buildopt_image}" |
         printf 'Mockito test-build image does not match the pinned platform digest\n' >&2
         exit 1
     }
+
+buildopt_tooling_tag="buildopt-poc-mockito-git:$(basename "${buildopt_root}" | tr -cd 'a-zA-Z0-9')"
+printf 'FROM %s\nRUN apt-get update && apt-get install -y --no-install-recommends git=%s git-man=%s && rm -rf /var/lib/apt/lists/*\n' \
+    "${buildopt_image}" '1:2.34.1-1ubuntu1.17' '1:2.34.1-1ubuntu1.17' \
+    >"${buildopt_root}/Dockerfile.git"
+docker build --quiet --platform linux/amd64 --pull=false \
+    --tag "${buildopt_tooling_tag}" --file "${buildopt_root}/Dockerfile.git" \
+    "${buildopt_root}" >/dev/null
+buildopt_tooling_image=$(docker image inspect "${buildopt_tooling_tag}" --format '{{.Id}}')
+buildopt_git_version=$(docker run --rm --platform linux/amd64 \
+    "${buildopt_tooling_tag}" git --version | awk '{print $3}')
+[[ "${buildopt_git_version}" == 2.34.1 ]] || {
+    printf 'Mockito tooling image has unexpected Git version: %s\n' \
+        "${buildopt_git_version}" >&2
+    exit 1
+}
 
 buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
 buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
@@ -147,7 +167,7 @@ buildopt_start_container() {
         --volume "${buildopt_arm_root}/gradle:/benchmark/gradle-home" \
         --volume "${buildopt_arm_root}/xdg:/benchmark/xdg-cache" \
         --volume "${buildopt_root}/install:/benchmark/install:ro" \
-        --workdir /repo "${buildopt_image}" \
+        --workdir /repo "${buildopt_tooling_tag}" \
         /bin/sh -c 'while :; do sleep 3600; done' >/dev/null
     buildopt_containers+=("${buildopt_name}")
     docker start "${buildopt_name}" >/dev/null
@@ -196,10 +216,10 @@ buildopt_run_sequence() {
         mapfile -t buildopt_spec_arguments < <(jq -r '.[]' <<<"${buildopt_command_json}")
         if [[ "${buildopt_arm}" == CONTROL ]]; then
             buildopt_command=(./gradlew --build-cache --daemon --parallel \
-                --configuration-cache --console=plain --stacktrace)
+                --no-configuration-cache --console=plain --stacktrace)
         else
             buildopt_command=(/benchmark/install/bin/buildopt gradle --daemon --parallel \
-                --configuration-cache --console=plain --stacktrace)
+                --no-configuration-cache --console=plain --stacktrace)
             buildopt_arm_environment+=(BUILDOPT_SAFE_CACHE=1)
         fi
         buildopt_command+=("${buildopt_spec_arguments[@]}")
@@ -407,6 +427,7 @@ jq -n \
     --arg runnerId "${buildopt_runner_id}" \
     --argjson cpu "${buildopt_cpu}" --argjson memory "${buildopt_memory}" \
     --arg image "${buildopt_image}" --arg runnerSpecSha "${buildopt_runner_spec_sha}" \
+    --arg toolingImage "${buildopt_tooling_image}" --arg gitVersion "${buildopt_git_version}" \
     --arg repositoryRevision "${buildopt_expected_revision}" \
     --arg sourceSha "${buildopt_source_archive_sha}" \
     --slurpfile spec "${buildopt_spec}" \
@@ -444,7 +465,10 @@ jq -n \
             cpuCount: $cpu,
             memoryBytes: $memory,
             image: $image,
-            runnerSpecSha256: $runnerSpecSha
+            runnerSpecSha256: $runnerSpecSha,
+            toolingImageId: $toolingImage,
+            gitVersion: $gitVersion,
+            configurationCacheEnabled: false
         },
         methodology: {
             measurement: $spec[0].measurement,

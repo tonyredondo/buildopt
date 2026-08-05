@@ -129,6 +129,11 @@
       "candidateEnvironment": {
         "BUILDOPT_SAFE_CACHE": "1"
       },
+      "repositoryRequirements": {
+        "gitVersion": "2.34.1",
+        "configurationCache": false,
+        "configurationCacheReason": "UPSTREAM_CREATE_TEST_RESOURCES_ACCESSES_TASK_PROJECT_AT_EXECUTION_TIME"
+      },
       "requiredOutputs": [
         "mockito-core/build/classes/java/test"
       ],

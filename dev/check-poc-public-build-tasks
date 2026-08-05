@@ -102,6 +102,11 @@ jq -e \
     .experiments[1].controlCache == "OPTIMIZED_NATIVE_GRADLE_LOCAL_CACHE" and
     .experiments[1].candidateCache == "BUILDOPT_PRIVATE_L1_WITH_TIER_ONE_POLICY" and
     .experiments[1].candidateEnvironment == {BUILDOPT_SAFE_CACHE: "1"} and
+    .experiments[1].repositoryRequirements == {
+        gitVersion: "2.34.1",
+        configurationCache: false,
+        configurationCacheReason: "UPSTREAM_CREATE_TEST_RESOURCES_ACCESSES_TASK_PROJECT_AT_EXECUTION_TIME"
+    } and
     .experiments[1].requiredOutputs == ["mockito-core/build/classes/java/test"] and
     .experiments[1].candidateMustExecuteTask == ":mockito-core:compileTestJava" and
     .experiments[1].requestedTestTasks == [] and
