@@ -1,0 +1,480 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s OUTPUT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-public-build-tasks-v1.json"
+buildopt_compatibility_spec="${buildopt_repo_root}/specs/poc-real-world-compatibility-v1.json"
+buildopt_compatibility_evidence="${buildopt_repo_root}/benchmarks/results/poc-real-world-compatibility-v1.json"
+buildopt_runner_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ]]; then
+    printf 'invalid Spotless impact output path\n' >&2
+    exit 64
+fi
+for buildopt_command in awk cp date docker find git grep jq mkdir mktemp sed \
+    sha256sum sort tar; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Spotless impact command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+if [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)" ]]; then
+    printf 'Spotless impact measurement requires a clean revision-bound checkout\n' >&2
+    exit 1
+fi
+docker info >/dev/null 2>&1 || {
+    printf 'Docker daemon is unavailable\n' >&2
+    exit 1
+}
+
+"${buildopt_script_dir}/check-poc-spotless-impact" --spec-only >/dev/null
+"${buildopt_script_dir}/check-poc-real-world-compatibility" >/dev/null
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-poc-spotless.XXXXXX")
+buildopt_containers=()
+buildopt_cleanup() {
+    local buildopt_container
+    for buildopt_container in "${buildopt_containers[@]}"; do
+        docker rm -f "${buildopt_container}" >/dev/null 2>&1 || true
+    done
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-poc-spotless."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+chmod 0700 "${buildopt_root}"
+mkdir -p -- "${buildopt_root}/release" "${buildopt_root}/package" \
+    "${buildopt_root}/install" "${buildopt_root}/repository"
+
+buildopt_image=$(jq -er '.container.reference' "${buildopt_runner_spec}")
+buildopt_platform_digest=$(jq -er '.container.platformDigest' "${buildopt_runner_spec}")
+buildopt_cpu=$(jq -er '.runnerClass.cpuCount' "${buildopt_runner_spec}")
+buildopt_memory=$(jq -er '.runnerClass.memoryBytes' "${buildopt_runner_spec}")
+buildopt_runner_id=$(jq -er '.runnerClass.id' "${buildopt_runner_spec}")
+buildopt_runner_spec_sha=$(sha256sum "${buildopt_runner_spec}" | awk '{print $1}')
+
+docker pull --quiet --platform linux/amd64 "${buildopt_image}" >/dev/null
+docker image inspect "${buildopt_image}" |
+    jq -e --arg digest "${buildopt_platform_digest}" '
+        length == 1 and .[0].Os == "linux" and .[0].Architecture == "amd64" and
+        any(.[0].RepoDigests[]?; endswith("@" + $digest))
+    ' >/dev/null || {
+        printf 'Spotless impact image does not match the pinned platform digest\n' >&2
+        exit 1
+    }
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+"${buildopt_repo_root}/dev/run" -- ./gradlew --no-daemon \
+    :jvm:gradle-plugin:clean :jvm:jvm-agent:clean >/dev/null
+buildopt_archive=$("${buildopt_repo_root}/packaging/linux/package.sh" \
+    --version 0.3.0-spotless-impact --output "${buildopt_root}/release")
+tar -xzf "${buildopt_archive}" -C "${buildopt_root}/package"
+buildopt_package_root=$(find "${buildopt_root}/package" -mindepth 1 -maxdepth 1 \
+    -type d -name 'buildopt-0.3.0-spotless-impact-linux-amd64' -print -quit)
+[[ -n "${buildopt_package_root}" ]] || {
+    printf 'Spotless impact package layout is unavailable\n' >&2
+    exit 1
+}
+"${buildopt_package_root}/install.sh" --prefix "${buildopt_root}/install" >/dev/null
+"${buildopt_root}/install/bin/buildopt" doctor >/dev/null
+buildopt_executable_sha=$(sha256sum "${buildopt_root}/install/bin/buildopt" | awk '{print $1}')
+buildopt_plugin="${buildopt_root}/install/share/buildopt/buildopt-gradle-plugin.jar"
+[[ -s "${buildopt_plugin}" ]] || {
+    printf 'installed Gradle plugin is unavailable\n' >&2
+    exit 1
+}
+buildopt_plugin_sha=$(sha256sum "${buildopt_plugin}" | awk '{print $1}')
+
+buildopt_url=$(jq -er '.repositories[] | select(.id == "SPOTLESS") | .url' \
+    "${buildopt_compatibility_spec}")
+buildopt_ref=$(jq -er '.repositories[] | select(.id == "SPOTLESS") | .ref' \
+    "${buildopt_compatibility_spec}")
+buildopt_expected_revision=$(jq -er '.experiments[0].revision' "${buildopt_spec}")
+buildopt_base="${buildopt_root}/repository/base"
+GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null GIT_TERMINAL_PROMPT=0 \
+    git clone --quiet --depth 1 --branch "${buildopt_ref}" --single-branch \
+    "${buildopt_url}" "${buildopt_base}"
+[[ "$(git -C "${buildopt_base}" rev-parse HEAD)" == "${buildopt_expected_revision}" ]] || {
+    printf 'Spotless revision mismatch\n' >&2
+    exit 1
+}
+buildopt_source_archive_sha=$(git -C "${buildopt_base}" archive --format=tar HEAD |
+    sha256sum | awk '{print $1}')
+buildopt_expected_source_sha=$(jq -er \
+    '.repositories[] | select(.id == "SPOTLESS") | .sourceArchiveSha256' \
+    "${buildopt_compatibility_evidence}")
+[[ "${buildopt_source_archive_sha}" == "${buildopt_expected_source_sha}" ]] || {
+    printf 'Spotless source archive drifted\n' >&2
+    exit 1
+}
+
+buildopt_control_checkout="${buildopt_root}/repository/control"
+buildopt_candidate_checkout="${buildopt_root}/repository/candidate"
+cp -a -- "${buildopt_base}" "${buildopt_control_checkout}"
+cp -a -- "${buildopt_base}" "${buildopt_candidate_checkout}"
+
+buildopt_environment=(
+    -u CI -u GITHUB_TOKEN -u GH_TOKEN -u DEVELOCITY_ACCESS_KEY
+    -u GRADLE_ENTERPRISE_ACCESS_KEY -u ORG_GRADLE_PROJECT_signingKey
+    -u ORG_GRADLE_PROJECT_signingPassword -u buildcacheuser -u buildcachepass
+)
+
+buildopt_start_container() {
+    local buildopt_name=$1
+    local buildopt_checkout=$2
+    local buildopt_arm_root=$3
+    mkdir -p -- "${buildopt_arm_root}/home" "${buildopt_arm_root}/gradle" \
+        "${buildopt_arm_root}/xdg"
+    chmod 0700 "${buildopt_arm_root}/home" "${buildopt_arm_root}/gradle" \
+        "${buildopt_arm_root}/xdg"
+    docker create --name "${buildopt_name}" --platform linux/amd64 \
+        --cpus "${buildopt_cpu}" --memory "${buildopt_memory}" \
+        --user "$(id -u):$(id -g)" \
+        --env HOME=/benchmark/home --env GRADLE_USER_HOME=/benchmark/gradle-home \
+        --env XDG_CACHE_HOME=/benchmark/xdg-cache \
+        --env LANG=C.UTF-8 --env LC_ALL=C.UTF-8 --env TZ=UTC \
+        --volume "${buildopt_checkout}:/repo" \
+        --volume "${buildopt_arm_root}/home:/benchmark/home" \
+        --volume "${buildopt_arm_root}/gradle:/benchmark/gradle-home" \
+        --volume "${buildopt_arm_root}/xdg:/benchmark/xdg-cache" \
+        --volume "${buildopt_root}/install:/benchmark/install:ro" \
+        --workdir /repo "${buildopt_image}" \
+        /bin/sh -c 'while :; do sleep 3600; done' >/dev/null
+    buildopt_containers+=("${buildopt_name}")
+    docker start "${buildopt_name}" >/dev/null
+}
+
+buildopt_nonce=$(basename "${buildopt_root}" | tr -cd 'a-zA-Z0-9' | tail -c 10)
+buildopt_control_container="buildopt-spotless-control-${buildopt_nonce}"
+buildopt_candidate_container="buildopt-spotless-candidate-${buildopt_nonce}"
+buildopt_start_container "${buildopt_control_container}" "${buildopt_control_checkout}" \
+    "${buildopt_root}/repository/control-runtime"
+buildopt_start_container "${buildopt_candidate_container}" "${buildopt_candidate_checkout}" \
+    "${buildopt_root}/repository/candidate-runtime"
+
+buildopt_duration_ms=0
+buildopt_started_ns=0
+buildopt_finished_ns=0
+buildopt_cc_reuse_count=0
+buildopt_command_durations_json='[]'
+
+buildopt_run_sequence() {
+    local buildopt_arm=$1
+    local buildopt_container=$2
+    local buildopt_log_prefix=$3
+    local buildopt_offline=$4
+    local buildopt_index
+    local buildopt_log
+    local buildopt_command_json
+    local buildopt_command_started
+    local buildopt_command_finished
+    local buildopt_status
+    local -a buildopt_spec_arguments=()
+    local -a buildopt_command=()
+    local -a buildopt_durations=()
+
+    buildopt_started_ns=$(date +%s%N)
+    buildopt_cc_reuse_count=0
+    for buildopt_index in 0 1; do
+        buildopt_command_json=$(jq -c \
+            ".experiments[0].$(tr '[:upper:]' '[:lower:]' <<<"${buildopt_arm}")Commands[${buildopt_index}]" \
+            "${buildopt_spec}")
+        mapfile -t buildopt_spec_arguments < <(jq -r '.[]' <<<"${buildopt_command_json}")
+        if [[ "${buildopt_arm}" == CONTROL ]]; then
+            buildopt_command=(./gradlew --build-cache --daemon --parallel \
+                --configuration-cache --console=plain --stacktrace)
+        else
+            buildopt_command=(/benchmark/install/bin/buildopt gradle --daemon --parallel \
+                --configuration-cache --console=plain --stacktrace)
+        fi
+        buildopt_command+=("${buildopt_spec_arguments[@]}")
+        if [[ "${buildopt_offline}" == true ]]; then
+            buildopt_command+=(--offline)
+        fi
+        buildopt_log="${buildopt_log_prefix}-command-$((buildopt_index + 1)).log"
+        buildopt_command_started=$(date +%s%N)
+        set +e
+        docker exec --user "$(id -u):$(id -g)" --workdir /repo \
+            "${buildopt_container}" /usr/bin/env "${buildopt_environment[@]}" \
+            "${buildopt_command[@]}" >"${buildopt_log}" 2>&1
+        buildopt_status=$?
+        set -e
+        buildopt_command_finished=$(date +%s%N)
+        buildopt_durations+=("$(((buildopt_command_finished - buildopt_command_started) / 1000000))")
+        if ((buildopt_status != 0)); then
+            tail -n 160 "${buildopt_log}" >&2
+            printf 'Spotless %s command %s failed\n' "${buildopt_arm}" "$((buildopt_index + 1))" >&2
+            return 1
+        fi
+        grep -Fq 'BUILD SUCCESSFUL' "${buildopt_log}" || {
+            printf 'Spotless %s command lacks Gradle success marker\n' "${buildopt_arm}" >&2
+            return 1
+        }
+        if grep -Eq '^> Task .*:(publish|upload|release|sign)([A-Z:]|$)' "${buildopt_log}" ||
+            grep -Eq 'Publishing build scan|Build scan published|https://gradle[.]com/s/' \
+                "${buildopt_log}"; then
+            printf 'Spotless experiment attempted a forbidden external action\n' >&2
+            return 1
+        fi
+        if grep -Eq '^> Task (:[^ ]+)*:test([[:space:]]|$)' "${buildopt_log}"; then
+            printf 'Spotless experiment executed a Gradle Test task\n' >&2
+            return 1
+        fi
+        if [[ "${buildopt_arm}" == CANDIDATE ]] &&
+            grep -Eiq 'BuildOpt.*(unavailable|authentication failed|handshake failed|broken pipe)' \
+                "${buildopt_log}"; then
+            printf 'Spotless candidate observed a BuildOpt product warning\n' >&2
+            return 1
+        fi
+        if grep -Fq 'Reusing configuration cache.' "${buildopt_log}"; then
+            buildopt_cc_reuse_count=$((buildopt_cc_reuse_count + 1))
+        fi
+    done
+    buildopt_finished_ns=$(date +%s%N)
+    buildopt_duration_ms=$(((buildopt_finished_ns - buildopt_started_ns) / 1000000))
+    buildopt_command_durations_json=$(printf '%s\n' "${buildopt_durations[@]}" | jq -sc 'map(tonumber)')
+}
+
+buildopt_hash_outputs() {
+    local buildopt_checkout=$1
+    local buildopt_manifest=$2
+    local buildopt_root_path
+    local buildopt_file
+    : >"${buildopt_manifest}"
+    while IFS= read -r buildopt_root_path; do
+        [[ -d "${buildopt_checkout}/${buildopt_root_path}" ]] || {
+            printf 'required Spotless output is unavailable: %s\n' "${buildopt_root_path}" >&2
+            return 1
+        }
+        while IFS= read -r -d '' buildopt_file; do
+            printf '%s  %s\n' "$(sha256sum "${buildopt_file}" | awk '{print $1}')" \
+                "${buildopt_file#"${buildopt_checkout}/"}" >>"${buildopt_manifest}"
+        done < <(find "${buildopt_checkout}/${buildopt_root_path}" -type f -print0 | sort -z)
+    done < <(jq -r '.experiments[0].requiredOutputs[]' "${buildopt_spec}")
+    [[ -s "${buildopt_manifest}" ]] || {
+        printf 'Spotless experiment produced no required output files\n' >&2
+        return 1
+    }
+}
+
+buildopt_logs="${buildopt_root}/logs"
+mkdir -p -- "${buildopt_logs}"
+buildopt_run_sequence CONTROL "${buildopt_control_container}" \
+    "${buildopt_logs}/preflight-control" false
+buildopt_run_sequence CANDIDATE "${buildopt_candidate_container}" \
+    "${buildopt_logs}/preflight-candidate" false
+docker network disconnect bridge "${buildopt_control_container}"
+docker network disconnect bridge "${buildopt_candidate_container}"
+buildopt_run_sequence CONTROL "${buildopt_control_container}" \
+    "${buildopt_logs}/warm-control" true
+buildopt_run_sequence CANDIDATE "${buildopt_candidate_container}" \
+    "${buildopt_logs}/warm-candidate" true
+
+buildopt_source_path=$(jq -er '.experiments[0].sourceChange.path' "${buildopt_spec}")
+buildopt_omitted_task=$(jq -er '.experiments[0].candidateMustOmitTask' "${buildopt_spec}")
+buildopt_raw="${buildopt_root}/observations.jsonl"
+: >"${buildopt_raw}"
+
+for buildopt_pair in {1..8}; do
+    printf '\n// buildopt-poc-spotless-impact-pair-%s\n' "${buildopt_pair}" \
+        >>"${buildopt_control_checkout}/${buildopt_source_path}"
+    printf '\n// buildopt-poc-spotless-impact-pair-%s\n' "${buildopt_pair}" \
+        >>"${buildopt_candidate_checkout}/${buildopt_source_path}"
+    buildopt_control_source_sha=$(sha256sum \
+        "${buildopt_control_checkout}/${buildopt_source_path}" | awk '{print $1}')
+    buildopt_candidate_source_sha=$(sha256sum \
+        "${buildopt_candidate_checkout}/${buildopt_source_path}" | awk '{print $1}')
+    [[ "${buildopt_control_source_sha}" == "${buildopt_candidate_source_sha}" ]] || {
+        printf 'Spotless source mutation mismatch\n' >&2
+        exit 1
+    }
+
+    buildopt_order=CANDIDATE_FIRST
+    if ((buildopt_pair <= 4 && buildopt_pair % 2 == 1)) ||
+        ((buildopt_pair > 4 && buildopt_pair % 2 == 0)); then
+        buildopt_order=CONTROL_FIRST
+    fi
+    buildopt_control_log="${buildopt_logs}/pair-${buildopt_pair}-control"
+    buildopt_candidate_log="${buildopt_logs}/pair-${buildopt_pair}-candidate"
+    if [[ "${buildopt_order}" == CONTROL_FIRST ]]; then
+        buildopt_run_sequence CONTROL "${buildopt_control_container}" \
+            "${buildopt_control_log}" true
+        buildopt_control_duration=${buildopt_duration_ms}
+        buildopt_control_durations=${buildopt_command_durations_json}
+        buildopt_control_cc=${buildopt_cc_reuse_count}
+        buildopt_first_finished=${buildopt_finished_ns}
+        buildopt_run_sequence CANDIDATE "${buildopt_candidate_container}" \
+            "${buildopt_candidate_log}" true
+        buildopt_candidate_duration=${buildopt_duration_ms}
+        buildopt_candidate_durations=${buildopt_command_durations_json}
+        buildopt_candidate_cc=${buildopt_cc_reuse_count}
+        buildopt_gap_ms=$(((buildopt_started_ns - buildopt_first_finished) / 1000000))
+    else
+        buildopt_run_sequence CANDIDATE "${buildopt_candidate_container}" \
+            "${buildopt_candidate_log}" true
+        buildopt_candidate_duration=${buildopt_duration_ms}
+        buildopt_candidate_durations=${buildopt_command_durations_json}
+        buildopt_candidate_cc=${buildopt_cc_reuse_count}
+        buildopt_first_finished=${buildopt_finished_ns}
+        buildopt_run_sequence CONTROL "${buildopt_control_container}" \
+            "${buildopt_control_log}" true
+        buildopt_control_duration=${buildopt_duration_ms}
+        buildopt_control_durations=${buildopt_command_durations_json}
+        buildopt_control_cc=${buildopt_cc_reuse_count}
+        buildopt_gap_ms=$(((buildopt_started_ns - buildopt_first_finished) / 1000000))
+    fi
+
+    buildopt_control_manifest="${buildopt_root}/control-${buildopt_pair}.sha256"
+    buildopt_candidate_manifest="${buildopt_root}/candidate-${buildopt_pair}.sha256"
+    buildopt_hash_outputs "${buildopt_control_checkout}" "${buildopt_control_manifest}"
+    buildopt_hash_outputs "${buildopt_candidate_checkout}" "${buildopt_candidate_manifest}"
+    cmp -s "${buildopt_control_manifest}" "${buildopt_candidate_manifest}" || {
+        printf 'Spotless required outputs differ in pair %s\n' "${buildopt_pair}" >&2
+        exit 1
+    }
+    buildopt_output_sha=$(sha256sum "${buildopt_control_manifest}" | awk '{print $1}')
+    buildopt_output_count=$(wc -l <"${buildopt_control_manifest}")
+    buildopt_control_combined="${buildopt_control_log}-combined.log"
+    buildopt_candidate_combined="${buildopt_candidate_log}-combined.log"
+    cat "${buildopt_control_log}"-command-*.log >"${buildopt_control_combined}"
+    cat "${buildopt_candidate_log}"-command-*.log >"${buildopt_candidate_combined}"
+    grep -Fq "> Task ${buildopt_omitted_task}" "${buildopt_control_combined}" || {
+        printf 'Spotless control did not expose declared omitted task: %s\n' \
+            "${buildopt_omitted_task}" >&2
+        exit 1
+    }
+    buildopt_candidate_omitted=true
+    if grep -Fq "> Task ${buildopt_omitted_task}" "${buildopt_candidate_combined}"; then
+        buildopt_candidate_omitted=false
+    fi
+
+    jq -cn \
+        --argjson pair "${buildopt_pair}" --arg order "${buildopt_order}" \
+        --argjson control "${buildopt_control_duration}" \
+        --argjson candidate "${buildopt_candidate_duration}" \
+        --argjson gap "${buildopt_gap_ms}" \
+        --argjson controlDurations "${buildopt_control_durations}" \
+        --argjson candidateDurations "${buildopt_candidate_durations}" \
+        --argjson controlCc "${buildopt_control_cc}" \
+        --argjson candidateCc "${buildopt_candidate_cc}" \
+        --arg outputSha "${buildopt_output_sha}" \
+        --argjson outputCount "${buildopt_output_count}" \
+        --arg sourceSha "${buildopt_control_source_sha}" \
+        --argjson omitted "${buildopt_candidate_omitted}" '
+        {
+            pair: $pair,
+            order: $order,
+            controlDurationMs: $control,
+            candidateDurationMs: $candidate,
+            savedMs: ($control - $candidate),
+            interArmIdleGapMs: $gap,
+            controlCommandDurationsMs: $controlDurations,
+            candidateCommandDurationsMs: $candidateDurations,
+            controlConfigurationCacheReuseCount: $controlCc,
+            candidateConfigurationCacheReuseCount: $candidateCc,
+            controlOutputSha256: $outputSha,
+            candidateOutputSha256: $outputSha,
+            outputFileCount: $outputCount,
+            controlSourceSha256: $sourceSha,
+            candidateSourceSha256: $sourceSha,
+            candidateOmittedDeclaredTask: $omitted,
+            requestedTestTaskExecuted: false,
+            productAttributableFailure: false
+        }' >>"${buildopt_raw}"
+done
+
+jq -s '.' "${buildopt_raw}" >"${buildopt_root}/observations.json"
+buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+jq -n \
+    --arg capturedAt "${buildopt_captured_at}" \
+    --arg specSha "${buildopt_spec_sha}" \
+    --arg revision "${buildopt_revision}" \
+    --arg executableSha "${buildopt_executable_sha}" \
+    --arg pluginSha "${buildopt_plugin_sha}" \
+    --arg runnerId "${buildopt_runner_id}" \
+    --argjson cpu "${buildopt_cpu}" --argjson memory "${buildopt_memory}" \
+    --arg image "${buildopt_image}" --arg runnerSpecSha "${buildopt_runner_spec_sha}" \
+    --arg repositoryRevision "${buildopt_expected_revision}" \
+    --arg sourceSha "${buildopt_source_archive_sha}" \
+    --slurpfile spec "${buildopt_spec}" \
+    --slurpfile rows "${buildopt_root}/observations.json" '
+    def bootstrap_mean($data; $sample):
+        reduce range(0; 8) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $data[((.state / 536870912) | floor)].savedMs) |
+        .sum / 8;
+    def bootstrap95($data):
+        ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
+        [$r[102], $r[3993]];
+    $rows[0] as $data |
+    (($data | map(.controlDurationMs) | add) / 8) as $controlMean |
+    (($data | map(.candidateDurationMs) | add) / 8) as $candidateMean |
+    (($data | map(.savedMs) | add) / 8) as $mean |
+    (($data | map(.savedMs) | add) / ($data | map(.controlDurationMs) | add)) as $ratio |
+    bootstrap95($data) as $interval |
+    ($data | map(select(.savedMs > 0)) | length) as $positive |
+    ($mean >= $spec[0].valueGate.minimumSavedMs and
+     $ratio >= $spec[0].valueGate.minimumReductionRatio and
+     $interval[0] > 0 and all($data[]; .candidateOmittedDeclaredTask)) as $qualified |
+    {
+        schemaVersion: "buildopt.evidence/poc-spotless-impact/v1",
+        capturedAt: $capturedAt,
+        specSha256: $specSha,
+        buildopt: {
+            revision: $revision,
+            executableSha256: $executableSha,
+            gradlePluginSha256: $pluginSha
+        },
+        runner: {
+            id: $runnerId,
+            cpuCount: $cpu,
+            memoryBytes: $memory,
+            image: $image,
+            runnerSpecSha256: $runnerSpecSha
+        },
+        methodology: {
+            measurement: $spec[0].measurement,
+            valueGate: $spec[0].valueGate
+        },
+        repository: {
+            nameWithOwner: "diffplug/spotless",
+            revision: $repositoryRevision,
+            sourceArchiveSha256: $sourceSha
+        },
+        observations: $data,
+        result: {
+            pairs: 8,
+            controlMeanMs: $controlMean,
+            candidateMeanMs: $candidateMean,
+            meanSavedMs: $mean,
+            meanReductionRatio: $ratio,
+            interval95SavedMs: $interval,
+            positivePairs: $positive,
+            requiredOutputsIdentical: true,
+            requestedTestTasksExecuted: 0,
+            productAttributableFailures: 0
+        },
+        decision: {
+            verdict: (if $qualified then "QUALIFY_SPOTLESS_EXACT_WORKFLOW" else "STOP_SPOTLESS_ALTERNATIVE" end),
+            performanceMeasured: true,
+            savingsClaimed: $qualified
+        },
+        gate: {
+            id: "POC-SPOTLESS-IMPACT-G01",
+            state: (if $qualified then "PASSED" else "FAILED" end)
+        },
+        boundaries: $spec[0].boundaries
+    }' >"${buildopt_root}/result.json"
+
+install -m 0600 "${buildopt_root}/result.json" "${buildopt_output}"
+"${buildopt_script_dir}/check-poc-spotless-impact" "${buildopt_output}"

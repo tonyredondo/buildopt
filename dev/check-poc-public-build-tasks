@@ -87,6 +87,7 @@ jq -e \
         "plugin-gradle/build/classes/java/main",
         "plugin-gradle/build/classes/java/test"
     ] and
+    .experiments[0].candidateMustOmitTask == ":lib-extra:compileTestJava" and
     .experiments[0].requestedTestTasks == [] and
     .experiments[1].controlCommands == .experiments[1].candidateCommands and
     .experiments[1].controlCommands == [[

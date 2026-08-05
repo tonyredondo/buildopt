@@ -101,7 +101,7 @@
         "plugin-gradle/build/classes/java/main",
         "plugin-gradle/build/classes/java/test"
       ],
-      "candidateMustOmitTask": ":testlib:compileJava",
+      "candidateMustOmitTask": ":lib-extra:compileTestJava",
       "requestedTestTasks": [],
       "terminalDecision": "QUALIFY_EXACT_WORKFLOW_OR_STOP_THIS_ALTERNATIVE"
     },

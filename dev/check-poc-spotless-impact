@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-public-build-tasks-v1.json"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-spotless-impact-v1.json"}
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Spotless impact command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+"${buildopt_script_dir}/check-poc-public-build-tasks" >/dev/null
+
+jq -e '
+    .experiments[0] == {
+        id: "SPOTLESS-EXACT-WORKFLOW-BUILD-IMPACT",
+        workItem: "POC-SPOTLESS-IMPACT-001",
+        repository: "diffplug/spotless",
+        revision: "cbd01c4e4b91cea538691d4fe6a8f929d75c27c6",
+        mechanism: "BUILD_IMPACT",
+        changeClass: "LEAF_PRODUCTION_SOURCE",
+        sourceChange: {
+            path: "plugin-gradle/src/main/java/com/diffplug/gradle/spotless/SpotlessPluginRedirect.java",
+            kind: "APPEND_PAIR_COMMENT"
+        },
+        controlCommands: [
+            ["spotlessCheck", "--no-scan"],
+            ["assemble", "testClasses", "--no-scan", "-PSPOTLESS_EXCLUDE_MAVEN=true"]
+        ],
+        candidateCommands: [
+            ["spotlessCheck", "--no-scan"],
+            [":plugin-gradle:assemble", ":plugin-gradle:testClasses", "--no-scan", "-PSPOTLESS_EXCLUDE_MAVEN=true"]
+        ],
+        requiredOutputs: [
+            "plugin-gradle/build/classes/java/main",
+            "plugin-gradle/build/classes/java/test"
+        ],
+        candidateMustOmitTask: ":lib-extra:compileTestJava",
+        requestedTestTasks: [],
+        terminalDecision: "QUALIFY_EXACT_WORKFLOW_OR_STOP_THIS_ALTERNATIVE"
+    } and
+    .measurement.pairsPerExperiment == 8 and
+    .measurement.pairOrder == "ALTERNATING_WITH_OPPOSITE_BATCH_START" and
+    .valueGate.minimumSavedMs == 500 and
+    .valueGate.minimumReductionRatio == 0.02 and
+    .valueGate.positiveLower95Bound == true and
+    .valueGate.thresholdsMayMoveAfterMeasurement == false
+    ' "${buildopt_spec}" >/dev/null
+
+if [[ "${1:-}" == --spec-only ]]; then
+    printf 'BuildOpt Spotless impact specification OK: %s\n' "${buildopt_spec}"
+    exit 0
+fi
+if [[ ! -s "${buildopt_result}" ]]; then
+    printf 'Spotless impact evidence is unavailable: %s\n' "${buildopt_result}" >&2
+    exit 1
+fi
+
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+
+jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
+    def bootstrap_mean($rows; $sample):
+        reduce range(0; 8) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $rows[((.state / 536870912) | floor)].savedMs) |
+        .sum / 8;
+    def bootstrap95($rows):
+        ([range(0; 4096) as $sample | bootstrap_mean($rows; $sample)] | sort) as $replicates |
+        [$replicates[102], $replicates[3993]];
+    def expected_order($pair):
+        if ($pair <= 4 and ($pair % 2) == 1) or
+           ($pair > 4 and ($pair % 2) == 0)
+        then "CONTROL_FIRST" else "CANDIDATE_FIRST" end;
+    .observations as $rows |
+    (($rows | map(.savedMs) | add) / 8) as $mean |
+    (($rows | map(.savedMs) | add) / ($rows | map(.controlDurationMs) | add)) as $ratio |
+    bootstrap95($rows) as $interval |
+    ($rows | map(select(.savedMs > 0)) | length) as $positive |
+    ($mean >= $spec[0].valueGate.minimumSavedMs and
+     $ratio >= $spec[0].valueGate.minimumReductionRatio and
+     $interval[0] > 0) as $qualified |
+    .schemaVersion == "buildopt.evidence/poc-spotless-impact/v1" and
+    .specSha256 == $specSha and
+    (.capturedAt | fromdateiso8601) and
+    (.buildopt.revision | test("^[0-9a-f]{40}$")) and
+    (.buildopt.executableSha256 | test("^[0-9a-f]{64}$")) and
+    (.buildopt.gradlePluginSha256 | test("^[0-9a-f]{64}$")) and
+    .runner.id == "linux-amd64-4c-16g-v1" and
+    .runner.cpuCount == 4 and
+    .runner.memoryBytes == 17179869184 and
+    .methodology.measurement == $spec[0].measurement and
+    .methodology.valueGate == $spec[0].valueGate and
+    .repository == {
+        nameWithOwner: "diffplug/spotless",
+        revision: "cbd01c4e4b91cea538691d4fe6a8f929d75c27c6",
+        sourceArchiveSha256: .repository.sourceArchiveSha256
+    } and
+    (.repository.sourceArchiveSha256 | test("^[0-9a-f]{64}$")) and
+    ($rows | length) == 8 and
+    ([$rows[].pair] | sort) == [1,2,3,4,5,6,7,8] and
+    (all($rows[];
+        .order == expected_order(.pair) and
+        (.controlDurationMs | type == "number" and . > 0) and
+        (.candidateDurationMs | type == "number" and . > 0) and
+        .savedMs == (.controlDurationMs - .candidateDurationMs) and
+        (.interArmIdleGapMs | type == "number" and . >= 0 and . <= 5000) and
+        (.controlCommandDurationsMs | length) == 2 and
+        (.candidateCommandDurationsMs | length) == 2 and
+        (all(.controlCommandDurationsMs[]; . > 0)) and
+        (all(.candidateCommandDurationsMs[]; . > 0)) and
+        .controlConfigurationCacheReuseCount == 2 and
+        .candidateConfigurationCacheReuseCount == 2 and
+        .controlOutputSha256 == .candidateOutputSha256 and
+        (.controlOutputSha256 | test("^[0-9a-f]{64}$")) and
+        .outputFileCount > 0 and
+        .controlSourceSha256 == .candidateSourceSha256 and
+        .candidateOmittedDeclaredTask == true and
+        .requestedTestTaskExecuted == false and
+        .productAttributableFailure == false)) and
+    .result == {
+        pairs: 8,
+        controlMeanMs: (($rows | map(.controlDurationMs) | add) / 8),
+        candidateMeanMs: (($rows | map(.candidateDurationMs) | add) / 8),
+        meanSavedMs: $mean,
+        meanReductionRatio: $ratio,
+        interval95SavedMs: $interval,
+        positivePairs: $positive,
+        requiredOutputsIdentical: true,
+        requestedTestTasksExecuted: 0,
+        productAttributableFailures: 0
+    } and
+    .decision == {
+        verdict: (if $qualified then "QUALIFY_SPOTLESS_EXACT_WORKFLOW" else "STOP_SPOTLESS_ALTERNATIVE" end),
+        performanceMeasured: true,
+        savingsClaimed: $qualified
+    } and
+    .gate == {
+        id: "POC-SPOTLESS-IMPACT-G01",
+        state: (if $qualified then "PASSED" else "FAILED" end)
+    } and
+    .boundaries == $spec[0].boundaries
+    ' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'Spotless impact validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'BuildOpt Spotless impact evidence OK: %s\n' "${buildopt_result}"
