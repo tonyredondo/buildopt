@@ -13,6 +13,12 @@ sanity workflow, Mockito exercises formatting, build, and coverage as three
 separate invocations, and SpotBugs exercises its documented detector-regression
 task without selecting individual tests.
 
+Spotless also resolves changed files against `origin/main`. Its disposable
+checkout therefore fetches that named reference while keeping `HEAD` and every
+profiled source byte fixed to the preregistered revision. The first shallow
+preflight discovered this requirement and stopped before any profile existed;
+the complete matrix restarts from zero after this explicit input was added.
+
 ## Measurement boundary
 
 An unmeasured online preflight resolves public dependencies for the exact

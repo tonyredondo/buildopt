@@ -217,6 +217,22 @@ for buildopt_repository_index in 0 1 2; do
         printf 'diagnostics revision mismatch for %s\n' "${buildopt_name}" >&2
         exit 1
     fi
+    while IFS= read -r buildopt_required_ref; do
+        buildopt_remote_ref=${buildopt_required_ref#origin/}
+        GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null GIT_TERMINAL_PROMPT=0 \
+            git -C "${buildopt_checkout}" fetch --quiet --depth 1 origin \
+            "${buildopt_remote_ref}:refs/remotes/${buildopt_required_ref}"
+        git -C "${buildopt_checkout}" rev-parse --verify \
+            "refs/remotes/${buildopt_required_ref}^{commit}" >/dev/null
+        if [[ "$(git -C "${buildopt_checkout}" rev-parse HEAD)" != \
+            "${buildopt_expected_revision}" ]]; then
+            printf 'diagnostics helper ref changed HEAD for %s\n' \
+                "${buildopt_name}" >&2
+            exit 1
+        fi
+    done < <(jq -r \
+        ".repositories[${buildopt_repository_index}].workflow.requiredGitRefs[]" \
+        "${buildopt_contract}")
     buildopt_source_archive_sha=$(git -C "${buildopt_checkout}" archive --format=tar HEAD |
         sha256sum | awk '{print $1}')
     buildopt_source_path=$(jq -er \

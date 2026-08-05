@@ -22,6 +22,7 @@
         "id": "CI_SANITY",
         "sourcePath": ".github/workflows/ci.yml",
         "sourceSha256": "b471d950d35126f1817ad4940bea5b7289b59827706964d91dcfdad8106f7564",
+        "requiredGitRefs": ["origin/main"],
         "commands": [
           ["spotlessCheck", "--no-scan"],
           ["assemble", "testClasses", "--no-scan", "-PSPOTLESS_EXCLUDE_MAVEN=true"]
@@ -51,6 +52,7 @@
         "id": "CI_BUILD_AND_COVERAGE",
         "sourcePath": ".github/workflows/ci.yml",
         "sourceSha256": "b8cc8276982f85141461cbce35b5c88a209964d60786a589175f799cbf0ff1d1",
+        "requiredGitRefs": [],
         "environment": {
           "MOCK_MAKER": "mock-maker-default",
           "MEMBER_ACCESSOR": "member-accessor-module"
@@ -86,6 +88,7 @@
         "id": "CONTRIBUTOR_DETECTOR_REGRESSION",
         "sourcePath": ".github/copilot-instructions.md",
         "sourceSha256": "768ffd6873c96c50ee4bfa6dca9671876a16fdf194c65758e600758dc904dded",
+        "requiredGitRefs": [],
         "commands": [
           ["--configure-on-demand", ":spotbugs-tests:test", "--no-scan", "--stacktrace"]
         ],

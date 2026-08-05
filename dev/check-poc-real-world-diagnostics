@@ -46,6 +46,7 @@ jq -e \
         (.ref | length > 0) and
         (.workflow.sourcePath | test("^[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)+$")) and
         (.workflow.sourceSha256 | test("^[0-9a-f]{64}$")) and
+        (.workflow.requiredGitRefs | type == "array") and
         (.workflow.commands | length >= 1) and
         (all(.workflow.commands[]; length >= 2)) and
         (.nativeCapabilities.gradlePropertiesSha256 | test("^[0-9a-f]{64}$")) and
@@ -60,6 +61,9 @@ jq -e \
         ["spotlessCheck", "--no-scan"],
         ["assemble", "testClasses", "--no-scan", "-PSPOTLESS_EXCLUDE_MAVEN=true"]
     ] and
+    .repositories[0].workflow.requiredGitRefs == ["origin/main"] and
+    .repositories[1].workflow.requiredGitRefs == [] and
+    .repositories[2].workflow.requiredGitRefs == [] and
     .repositories[1].workflow.commands == [
         ["spotlessCheck", "--stacktrace", "--no-scan"],
         ["-Pmockito.test.java=21", "build", "--stacktrace", "--no-scan"],
