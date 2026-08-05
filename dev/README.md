@@ -2507,6 +2507,24 @@ enabled. No result may be transferred to OpenTelemetry unless it clears the
 unchanged 500-ms, 2%, and positive-lower-bound gate with identical outputs and
 all requested tests preserved.
 
+Capture the revision-bound Spring diagnostic on the local 12-CPU POC host:
+
+```bash
+./dev/run-poc-spring-diagnostic /absolute/path/to/result.json
+```
+
+The runner downloads and verifies the pinned archive, performs an unmeasured
+online preflight, freezes the resulting native Gradle cache, and restores that
+same cache seed before the offline `assemble`, `testClasses`, and `check`
+cells. It records wall clock, Gradle profile phases, critical tasks, memory,
+required outputs, and exact test-case outcomes. The diagnostic authorizes
+follow-up hypotheses but never turns overlapping task durations into a savings
+claim. Validate checked-in evidence without rerunning Spring with:
+
+```bash
+./dev/check-poc-spring-diagnostic
+```
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

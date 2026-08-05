@@ -161,7 +161,7 @@ than partners. Test Optimization remains a separate product.
 | 18 | `POC-SPOTLESS-IMPACT-001` | Run the frozen paired leaf-project Build Impact experiment on the exact Spotless workflow, including `testClasses` | `DONE` | Codex |
 | 19 | `POC-MOCKITO-TEST-BUILD-001` | Run the frozen paired `:mockito-core:testClasses` Safe Cache experiment against optimized native Gradle | `DONE` | Codex |
 | 20 | `POC-SPRING-PREREG-001` | Freeze Spring Framework revision, native Gradle control, 12-CPU runner, workload cells, ownership boundaries, outputs, tests, and unchanged value gate | `DONE` | Codex |
-| 21 | `POC-SPRING-DIAGNOSTIC-001` | Run unmeasured setup and offline diagnostics for `assemble`, `testClasses`, and `check` without summing task durations into savings | `TODO` | Codex |
+| 21 | `POC-SPRING-DIAGNOSTIC-001` | Run unmeasured setup and offline diagnostics for `assemble`, `testClasses`, and `check` without summing task durations into savings | `DOING` | Codex |
 | 22 | `POC-SPRING-VALUE-001` | Implement only generic hypotheses supported by the diagnostic and run eight paired measurements against optimized native Gradle | `WAITING` | Codex |
 | 23 | `POC-OTEL-TRANSFER-001` | Apply a Spring-qualified mechanism unchanged to OpenTelemetry Java Instrumentation and repeat the same gate | `WAITING` | Codex |
 

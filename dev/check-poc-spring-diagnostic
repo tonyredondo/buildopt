@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-spring-framework-v1.json"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-spring-diagnostic-v1.json"}
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Spring diagnostic validator is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -s "${buildopt_result}" ]] || {
+    printf 'Spring diagnostic evidence is unavailable: %s\n' "${buildopt_result}" >&2
+    exit 1
+}
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
+    def sha256: test("^[0-9a-f]{64}$");
+    def duration: type == "number" and . >= 0;
+    def cell_valid($cell; $expected):
+        $cell.id == $expected.id and
+        $cell.arguments == $expected.arguments and
+        ($cell.wallClockMs | type == "number" and . > 0) and
+        ($cell.userCpuMs | duration) and
+        ($cell.systemCpuMs | duration) and
+        ($cell.maximumResidentSetKb | type == "number" and . > 0) and
+        ($cell.profile.totalBuildMs | type == "number" and . > 0) and
+        ($cell.profile.startupMs | duration) and
+        ($cell.profile.settingsAndBuildSrcMs | duration) and
+        ($cell.profile.loadingProjectsMs | duration) and
+        ($cell.profile.configuringProjectsMs | duration) and
+        ($cell.profile.taskExecutionMs | duration) and
+        ($cell.profile.sha256 | sha256) and
+        ($cell.tasks.actionable | type == "number" and . > 0) and
+        ($cell.tasks.executed | duration) and
+        ($cell.tasks.fromCache | duration) and
+        ($cell.tasks.upToDate | duration) and
+        ($cell.tasks.profiledRows | type == "number" and . > 0) and
+        ($cell.tasks.topByDuration | length == 15) and
+        (all($cell.tasks.topByDuration[];
+            (.path | startswith(":")) and
+            (.durationMs | duration) and
+            (.outcome | type == "string" and length > 0))) and
+        ($cell.requiredOutputs.fileCount | type == "number" and . > 0) and
+        ($cell.requiredOutputs.manifestSha256 | sha256) and
+        ($cell.tests.caseCount | duration) and
+        $cell.tests.failed == 0 and
+        ($cell.tests.skipped | duration) and
+        ($cell.tests.evidenceSha256 | sha256) and
+        $cell.success == true;
+    . as $root |
+    .schemaVersion == "buildopt.evidence/poc-spring-diagnostic/v1" and
+    .workItem == "POC-SPRING-DIAGNOSTIC-001" and
+    .specSha256 == $specSha and
+    (.capturedAt | fromdateiso8601) and
+    (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+    .repository == {
+        nameWithOwner: $spec[0].repository.nameWithOwner,
+        revision: $spec[0].repository.revision,
+        sourceArchiveSha256: $spec[0].repository.sourceArchiveSha256
+    } and
+    .runner.id == $spec[0].primaryRunner.id and
+    .runner.cpuCount == 12 and
+    .runner.memoryBytes == $spec[0].primaryRunner.memoryBytes and
+    .runner.maxWorkers == 12 and
+    (.runner.javaVersion | contains("25.0.3")) and
+    .preparation.onlinePreflightMeasured == false and
+    .preparation.onlinePreflightSuccess == true and
+    (.preparation.onlinePreflightWallClockMs | type == "number" and . > 0) and
+    .preparation.measuredNetwork == "DISCONNECTED" and
+    .preparation.dependencyMode == "GRADLE_OFFLINE" and
+    (.preparation.buildCacheSeedSha256 | sha256) and
+    .preparation.cacheSeedRestoredBeforeEveryCell == true and
+    .preparation.projectOutputsCleanedBeforeEveryCell == true and
+    .change.path == $spec[0].change.path and
+    .change.originalSourceSha256 == $spec[0].change.originalSha256 and
+    (.change.mutatedSourceSha256 | sha256) and
+    .change.mutatedSourceSha256 != .change.originalSourceSha256 and
+    .change.mutation == $spec[0].change.mutation and
+    (.cells | length) == 3 and
+    ([range(0; 3)] | all(.[]; . as $index |
+        cell_valid($root.cells[$index]; $spec[0].diagnostic.commands[$index]))) and
+    .cells[0].tests.caseCount == 0 and
+    .cells[1].tests.caseCount == 0 and
+    .cells[2].tests.caseCount > 10000 and
+    .observations == {
+        taskDurationsMayOverlap: true,
+        taskDurationsSummedAsWallClockSavings: false,
+        performanceComparisonClaimed: false,
+        savingsClaimed: false,
+        fullVerificationPreservedEveryObservedTest: true
+    } and
+    [.nextHypotheses[].cell] == [
+        "BUILD_OUTPUTS", "TEST_PREPARATION", "FULL_VERIFICATION"
+    ] and
+    [.nextHypotheses[].mechanism] == [
+        "BUILD_IMPACT", "BUILD_IMPACT", "RUNTIME_TUNING"
+    ] and
+    (all(.nextHypotheses[];
+        .state == "AUTHORIZED_FOR_PAIRED_EXPERIMENT" and
+        (.reason | type == "string" and length > 0))) and
+    .decision == {
+        verdict: "RUN_GENERIC_PAIRED_SPRING_EXPERIMENTS",
+        performanceMeasured: false,
+        savingsClaimed: false
+    } and
+    .boundaries == {
+        proofOfConcept: true,
+        productionReadinessClaimed: false,
+        eightHourSoakExecuted: false,
+        externalDesignPartnerRequired: false,
+        testOptimizationModified: false
+    }
+' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'Spring diagnostic validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'Spring Framework diagnostic evidence OK: %s\n' "${buildopt_result}"

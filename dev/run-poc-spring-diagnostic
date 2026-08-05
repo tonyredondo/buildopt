@@ -1,0 +1,500 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s OUTPUT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-spring-framework-v1.json"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ]]; then
+    printf 'invalid Spring diagnostic output path\n' >&2
+    exit 64
+fi
+for buildopt_command in awk cp curl date find git jq mkdir mktemp nproc \
+    sed sha256sum sort tar; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Spring diagnostic command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -x /usr/bin/time ]] || {
+    printf 'required Spring diagnostic command is unavailable: /usr/bin/time\n' >&2
+    exit 1
+}
+if [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)" ]]; then
+    printf 'Spring diagnostics require a clean revision-bound checkout\n' >&2
+    exit 1
+fi
+
+"${buildopt_script_dir}/check-poc-spring-framework" >/dev/null
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-spring-diagnostic.XXXXXX")
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-spring-diagnostic."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+chmod 0700 "${buildopt_root}"
+mkdir -p -- "${buildopt_root}/checkout" "${buildopt_root}/gradle-home" \
+    "${buildopt_root}/results"
+chmod 0700 "${buildopt_root}/gradle-home"
+
+buildopt_archive="${buildopt_root}/spring-framework.tar.gz"
+buildopt_archive_url=$(jq -er '.repository.sourceArchiveUrl' "${buildopt_spec}")
+buildopt_archive_sha=$(jq -er '.repository.sourceArchiveSha256' "${buildopt_spec}")
+curl --fail --location --proto '=https' --tlsv1.2 --silent --show-error \
+    --output "${buildopt_archive}" "${buildopt_archive_url}"
+if [[ "$(sha256sum "${buildopt_archive}" | awk '{print $1}')" != "${buildopt_archive_sha}" ]]; then
+    printf 'Spring source archive checksum mismatch\n' >&2
+    exit 1
+fi
+tar -xzf "${buildopt_archive}" --strip-components=1 -C "${buildopt_root}/checkout"
+buildopt_checkout="${buildopt_root}/checkout"
+buildopt_gradle_home="${buildopt_root}/gradle-home"
+
+buildopt_verify_sha() {
+    local buildopt_path=$1
+    local buildopt_expected=$2
+    if [[ "$(sha256sum "${buildopt_checkout}/${buildopt_path}" | awk '{print $1}')" != \
+        "${buildopt_expected}" ]]; then
+        printf 'Spring input checksum mismatch: %s\n' "${buildopt_path}" >&2
+        return 1
+    fi
+}
+
+buildopt_verify_sha gradle/wrapper/gradle-wrapper.jar \
+    "$(jq -er '.repository.wrapperJarSha256' "${buildopt_spec}")"
+buildopt_verify_sha gradle/wrapper/gradle-wrapper.properties \
+    "$(jq -er '.repository.wrapperPropertiesSha256' "${buildopt_spec}")"
+buildopt_verify_sha settings.gradle \
+    "$(jq -er '.repository.settingsSha256' "${buildopt_spec}")"
+buildopt_verify_sha gradle.properties \
+    "$(jq -er '.repository.gradlePropertiesSha256' "${buildopt_spec}")"
+buildopt_change_path=$(jq -er '.change.path' "${buildopt_spec}")
+buildopt_change_sha=$(jq -er '.change.originalSha256' "${buildopt_spec}")
+buildopt_verify_sha "${buildopt_change_path}" "${buildopt_change_sha}"
+cp -- "${buildopt_checkout}/${buildopt_change_path}" \
+    "${buildopt_root}/changed-source.original"
+
+buildopt_gradle() {
+    env GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+        ./gradlew "$@"
+}
+
+buildopt_preflight_log="${buildopt_root}/results/preflight.log"
+buildopt_preflight_start=$(date +%s%N)
+if ! (cd -- "${buildopt_checkout}" && buildopt_gradle --no-daemon \
+    --max-workers=12 --no-scan --stacktrace assemble testClasses check) \
+    >"${buildopt_preflight_log}" 2>&1; then
+    tail -n 160 "${buildopt_preflight_log}" >&2
+    printf 'Spring online preflight failed; no diagnostic sample was accepted\n' >&2
+    exit 1
+fi
+buildopt_preflight_end=$(date +%s%N)
+grep -Fq 'BUILD SUCCESSFUL' "${buildopt_preflight_log}" || {
+    printf 'Spring preflight lacks the success marker\n' >&2
+    exit 1
+}
+
+buildopt_cache_seed="${buildopt_root}/build-cache-seed.tar.gz"
+tar -C "${buildopt_gradle_home}/caches" -czf "${buildopt_cache_seed}" build-cache-1
+buildopt_cache_seed_sha=$(sha256sum "${buildopt_cache_seed}" | awk '{print $1}')
+
+buildopt_duration_ms() {
+    awk -v value="$1" '
+        BEGIN {
+            gsub(/[[:space:]]/, "", value)
+            total = 0
+            if (value ~ /ms$/) {
+                sub(/ms$/, "", value)
+                printf "%d\n", value + 0
+                exit
+            }
+            if (index(value, "h") > 0) {
+                split(value, parts, "h")
+                total += parts[1] * 3600000
+                value = parts[2]
+            }
+            if (index(value, "m") > 0) {
+                split(value, parts, "m")
+                total += parts[1] * 60000
+                value = parts[2]
+            }
+            sub(/s$/, "", value)
+            total += value * 1000
+            printf "%d\n", total + 0.5
+        }
+    '
+}
+
+buildopt_profile_value() {
+    local buildopt_profile=$1
+    local buildopt_label=$2
+    local buildopt_value
+    buildopt_value=$(awk -v label="${buildopt_label}" '
+        index($0, "<td>" label "</td>") {
+            getline
+            gsub(/<[^>]*>/, "")
+            print
+            exit
+        }
+    ' "${buildopt_profile}")
+    [[ -n "${buildopt_value}" ]] || {
+        printf 'Spring profile field is unavailable: %s\n' "${buildopt_label}" >&2
+        return 1
+    }
+    buildopt_duration_ms "${buildopt_value}"
+}
+
+buildopt_profile_tasks() {
+    local buildopt_profile=$1
+    local buildopt_tsv=$2
+    awk '
+        /<h2>Task Execution<\/h2>/ { in_tasks = 1; next }
+        in_tasks && /<\/table>/ { exit }
+        in_tasks && /<td class="indentPath">/ {
+            task = $0
+            gsub(/<[^>]*>/, "", task)
+            getline
+            duration = $0
+            gsub(/<[^>]*>/, "", duration)
+            getline
+            outcome = $0
+            gsub(/<[^>]*>/, "", outcome)
+            gsub(/&gt;/, ">", task)
+            gsub(/&lt;/, "<", task)
+            gsub(/&amp;/, "\\&", task)
+            if (outcome == "") outcome = "EXECUTED"
+            print task "\t" duration "\t" outcome
+        }
+    ' "${buildopt_profile}" >"${buildopt_tsv}"
+    [[ -s "${buildopt_tsv}" ]] || {
+        printf 'Spring profile contains no task rows\n' >&2
+        return 1
+    }
+}
+
+buildopt_output_manifest() {
+    local buildopt_manifest=$1
+    while IFS= read -r -d '' buildopt_file; do
+        buildopt_relative=${buildopt_file#"${buildopt_checkout}/"}
+        printf '%s\t%s\n' "${buildopt_relative}" \
+            "$(sha256sum "${buildopt_file}" | awk '{print $1}')"
+    done < <(find "${buildopt_checkout}" -type f \
+        \( -path '*/build/classes/*' -o -path '*/build/resources/*' \
+        -o -path '*/build/libs/*.jar' \) -print0 | sort -z) >"${buildopt_manifest}"
+    [[ -s "${buildopt_manifest}" ]] || {
+        printf 'Spring required-output manifest is empty\n' >&2
+        return 1
+    }
+}
+
+buildopt_test_evidence() {
+    local buildopt_evidence=$1
+    mapfile -d '' buildopt_xml_files < <(find "${buildopt_checkout}" -type f \
+        -path '*/build/test-results/*/TEST-*.xml' -print0 | sort -z)
+    : >"${buildopt_evidence}"
+    if ((${#buildopt_xml_files[@]} == 0)); then
+        return
+    fi
+    awk -v root="${buildopt_checkout}/" '
+        function attr(line, key, marker, rest, ending) {
+            marker = key "=\""
+            rest = substr(line, index(line, marker) + length(marker))
+            ending = index(rest, "\"")
+            return substr(rest, 1, ending - 1)
+        }
+        FNR == 1 {
+            relative = FILENAME
+            sub("^" root, "", relative)
+            project = relative
+            sub("/build/test-results/.*$", "", project)
+            task = relative
+            sub("^.*?/build/test-results/", "", task)
+            sub("/.*$", "", task)
+            gsub("/", ":", project)
+            task_path = ":" project ":" task
+        }
+        /<testcase / {
+            class_name = attr($0, "classname")
+            test_name = attr($0, "name")
+            outcome = "PASSED"
+            in_case = 1
+            if ($0 ~ /<skipped/) outcome = "SKIPPED"
+            if ($0 ~ /<failure/) outcome = "FAILED"
+            if ($0 ~ /<error/) outcome = "ERROR"
+            if ($0 ~ /\/>/) {
+                print task_path "\t" class_name "\t" test_name "\t" outcome
+                in_case = 0
+            }
+            next
+        }
+        in_case && /<skipped/ { outcome = "SKIPPED" }
+        in_case && /<failure/ { outcome = "FAILED" }
+        in_case && /<error/ { outcome = "ERROR" }
+        in_case && /<\/testcase>/ {
+            print task_path "\t" class_name "\t" test_name "\t" outcome
+            in_case = 0
+        }
+    ' "${buildopt_xml_files[@]}" | sort >"${buildopt_evidence}"
+}
+
+buildopt_cell_fragments=()
+buildopt_command_count=$(jq -r '.diagnostic.commands | length' "${buildopt_spec}")
+for ((buildopt_index = 0; buildopt_index < buildopt_command_count; buildopt_index++)); do
+    buildopt_id=$(jq -er ".diagnostic.commands[${buildopt_index}].id" "${buildopt_spec}")
+    mapfile -t buildopt_arguments < <(jq -r \
+        ".diagnostic.commands[${buildopt_index}].arguments[]" "${buildopt_spec}")
+    buildopt_result="${buildopt_root}/results/${buildopt_id}"
+    mkdir -p -- "${buildopt_result}"
+
+    cp -- "${buildopt_root}/changed-source.original" \
+        "${buildopt_checkout}/${buildopt_change_path}"
+    (cd -- "${buildopt_checkout}" && buildopt_gradle --no-daemon --offline \
+        --quiet clean) >"${buildopt_result}/clean.log" 2>&1
+    printf '\n// buildopt-poc-paired-mutation\n' \
+        >>"${buildopt_checkout}/${buildopt_change_path}"
+
+    mv -- "${buildopt_gradle_home}/caches/build-cache-1" \
+        "${buildopt_root}/build-cache-after-${buildopt_id}"
+    tar -C "${buildopt_gradle_home}/caches" -xzf "${buildopt_cache_seed}"
+
+    buildopt_log="${buildopt_result}/run.log"
+    buildopt_time="${buildopt_result}/time.txt"
+    if ! (cd -- "${buildopt_checkout}" && /usr/bin/time \
+        -f 'wallSeconds=%e\nuserSeconds=%U\nsystemSeconds=%S\nmaxRssKb=%M\nexitCode=%x' \
+        -o "${buildopt_time}" env GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+        ./gradlew --no-daemon --offline --profile "${buildopt_arguments[@]}") \
+        >"${buildopt_log}" 2>&1; then
+        tail -n 160 "${buildopt_log}" >&2
+        printf 'Spring diagnostic cell failed: %s\n' "${buildopt_id}" >&2
+        exit 1
+    fi
+    grep -Fq 'BUILD SUCCESSFUL' "${buildopt_log}" || {
+        printf 'Spring diagnostic cell lacks the success marker: %s\n' \
+            "${buildopt_id}" >&2
+        exit 1
+    }
+
+    buildopt_profile=$(find "${buildopt_checkout}/build/reports/profile" \
+        -type f -name 'profile-*.html' -printf '%T@ %p\n' | sort -n | tail -n 1 | \
+        sed 's/^[^ ]* //')
+    [[ -n "${buildopt_profile}" ]] || {
+        printf 'Spring Gradle profile is unavailable: %s\n' "${buildopt_id}" >&2
+        exit 1
+    }
+    cp -- "${buildopt_profile}" "${buildopt_result}/profile.html"
+    buildopt_tasks_tsv="${buildopt_result}/tasks.tsv"
+    buildopt_profile_tasks "${buildopt_profile}" "${buildopt_tasks_tsv}"
+    while IFS=$'\t' read -r buildopt_task buildopt_duration buildopt_outcome; do
+        jq -nc --arg path "${buildopt_task}" \
+            --argjson durationMs "$(buildopt_duration_ms "${buildopt_duration}")" \
+            --arg outcome "${buildopt_outcome}" \
+            '{path: $path, durationMs: $durationMs, outcome: $outcome}'
+    done <"${buildopt_tasks_tsv}" | jq -s . >"${buildopt_result}/tasks.json"
+
+    buildopt_output_manifest_file="${buildopt_result}/outputs.tsv"
+    buildopt_output_manifest "${buildopt_output_manifest_file}"
+    buildopt_test_evidence_file="${buildopt_result}/tests.tsv"
+    buildopt_test_evidence "${buildopt_test_evidence_file}"
+    buildopt_test_count=$(wc -l <"${buildopt_test_evidence_file}")
+    buildopt_test_failed=$(awk -F '\t' '$4 == "FAILED" || $4 == "ERROR" {count++} END {print count + 0}' \
+        "${buildopt_test_evidence_file}")
+    buildopt_test_skipped=$(awk -F '\t' '$4 == "SKIPPED" {count++} END {print count + 0}' \
+        "${buildopt_test_evidence_file}")
+    buildopt_wall_ms=$(awk -F= '$1 == "wallSeconds" {printf "%d\n", $2 * 1000 + 0.5}' \
+        "${buildopt_time}")
+    buildopt_user_ms=$(awk -F= '$1 == "userSeconds" {printf "%d\n", $2 * 1000 + 0.5}' \
+        "${buildopt_time}")
+    buildopt_system_ms=$(awk -F= '$1 == "systemSeconds" {printf "%d\n", $2 * 1000 + 0.5}' \
+        "${buildopt_time}")
+    buildopt_max_rss=$(awk -F= '$1 == "maxRssKb" {print $2}' "${buildopt_time}")
+    buildopt_actionable=$(awk '/actionable tasks:/ {print $1}' "${buildopt_log}" | tail -n 1)
+    buildopt_from_cache=$(awk '/actionable tasks:/ {
+        for (i = 1; i <= NF; i++) if ($i == "from" && $(i + 1) == "cache,") print $(i - 1)
+    }' "${buildopt_log}" | tail -n 1)
+    buildopt_executed=$(awk '/actionable tasks:/ {
+        for (i = 1; i <= NF; i++) if ($i == "executed," || $i == "executed") print $(i - 1)
+    }' "${buildopt_log}" | tail -n 1)
+    buildopt_up_to_date=$(awk '/actionable tasks:/ {
+        for (i = 1; i <= NF; i++) if ($i == "up-to-date") print $(i - 1)
+    }' "${buildopt_log}" | tail -n 1)
+    : "${buildopt_from_cache:=0}" "${buildopt_executed:=0}" "${buildopt_up_to_date:=0}"
+
+    buildopt_fragment="${buildopt_result}/cell.json"
+    jq -n \
+        --arg id "${buildopt_id}" \
+        --argjson arguments "$(jq ".diagnostic.commands[${buildopt_index}].arguments" "${buildopt_spec}")" \
+        --argjson wallClockMs "${buildopt_wall_ms}" \
+        --argjson userCpuMs "${buildopt_user_ms}" \
+        --argjson systemCpuMs "${buildopt_system_ms}" \
+        --argjson maximumResidentSetKb "${buildopt_max_rss}" \
+        --argjson profileTotalBuildMs "$(buildopt_profile_value "${buildopt_profile}" 'Total Build Time')" \
+        --argjson startupMs "$(buildopt_profile_value "${buildopt_profile}" 'Startup')" \
+        --argjson settingsAndBuildSrcMs "$(buildopt_profile_value "${buildopt_profile}" 'Settings and buildSrc')" \
+        --argjson loadingProjectsMs "$(buildopt_profile_value "${buildopt_profile}" 'Loading Projects')" \
+        --argjson configuringProjectsMs "$(buildopt_profile_value "${buildopt_profile}" 'Configuring Projects')" \
+        --argjson taskExecutionMs "$(buildopt_profile_value "${buildopt_profile}" 'Task Execution')" \
+        --argjson actionableTasks "${buildopt_actionable}" \
+        --argjson executedTasks "${buildopt_executed}" \
+        --argjson fromCacheTasks "${buildopt_from_cache}" \
+        --argjson upToDateTasks "${buildopt_up_to_date}" \
+        --arg outputManifestSha256 "$(sha256sum "${buildopt_output_manifest_file}" | awk '{print $1}')" \
+        --argjson outputFileCount "$(wc -l <"${buildopt_output_manifest_file}")" \
+        --arg testEvidenceSha256 "$(sha256sum "${buildopt_test_evidence_file}" | awk '{print $1}')" \
+        --argjson testCaseCount "${buildopt_test_count}" \
+        --argjson failedTestCaseCount "${buildopt_test_failed}" \
+        --argjson skippedTestCaseCount "${buildopt_test_skipped}" \
+        --arg profileSha256 "$(sha256sum "${buildopt_profile}" | awk '{print $1}')" \
+        --slurpfile tasks "${buildopt_result}/tasks.json" '
+        {
+            id: $id,
+            arguments: $arguments,
+            wallClockMs: $wallClockMs,
+            userCpuMs: $userCpuMs,
+            systemCpuMs: $systemCpuMs,
+            maximumResidentSetKb: $maximumResidentSetKb,
+            profile: {
+                totalBuildMs: $profileTotalBuildMs,
+                startupMs: $startupMs,
+                settingsAndBuildSrcMs: $settingsAndBuildSrcMs,
+                loadingProjectsMs: $loadingProjectsMs,
+                configuringProjectsMs: $configuringProjectsMs,
+                taskExecutionMs: $taskExecutionMs,
+                sha256: $profileSha256
+            },
+            tasks: {
+                actionable: $actionableTasks,
+                executed: $executedTasks,
+                fromCache: $fromCacheTasks,
+                upToDate: $upToDateTasks,
+                profiledRows: ($tasks[0] | length),
+                topByDuration: ($tasks[0] | sort_by(-.durationMs)[:15])
+            },
+            requiredOutputs: {
+                fileCount: $outputFileCount,
+                manifestSha256: $outputManifestSha256
+            },
+            tests: {
+                caseCount: $testCaseCount,
+                failed: $failedTestCaseCount,
+                skipped: $skippedTestCaseCount,
+                evidenceSha256: $testEvidenceSha256
+            },
+            success: true
+        }
+        ' >"${buildopt_fragment}"
+    buildopt_cell_fragments+=("${buildopt_fragment}")
+done
+
+cp -- "${buildopt_root}/changed-source.original" \
+    "${buildopt_checkout}/${buildopt_change_path}"
+jq -s . "${buildopt_cell_fragments[@]}" >"${buildopt_root}/results/cells.json"
+buildopt_memory_bytes=$(awk '/^MemTotal:/ {printf "%.0f\n", $2 * 1024}' /proc/meminfo)
+buildopt_java_version=$("${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+    java -version 2>&1 | head -n 1)
+jq -n \
+    --arg specSha256 "$(sha256sum "${buildopt_spec}" | awk '{print $1}')" \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg buildoptRevision "$(git -C "${buildopt_repo_root}" rev-parse HEAD)" \
+    --arg repositoryRevision "$(jq -er '.repository.revision' "${buildopt_spec}")" \
+    --arg sourceArchiveSha256 "${buildopt_archive_sha}" \
+    --arg javaVersion "${buildopt_java_version}" \
+    --argjson cpuCount "$(nproc)" \
+    --argjson memoryBytes "${buildopt_memory_bytes}" \
+    --argjson maxWorkers "$(jq -er '.primaryRunner.maxWorkers' "${buildopt_spec}")" \
+    --argjson preflightWallClockMs "$(((buildopt_preflight_end - buildopt_preflight_start) / 1000000))" \
+    --arg cacheSeedSha256 "${buildopt_cache_seed_sha}" \
+    --arg changePath "${buildopt_change_path}" \
+    --arg originalSourceSha256 "${buildopt_change_sha}" \
+    --arg mutatedSourceSha256 "$(printf '\n// buildopt-poc-paired-mutation\n' | \
+        cat "${buildopt_root}/changed-source.original" - | sha256sum | awk '{print $1}')" \
+    --slurpfile cells "${buildopt_root}/results/cells.json" '
+    {
+        schemaVersion: "buildopt.evidence/poc-spring-diagnostic/v1",
+        workItem: "POC-SPRING-DIAGNOSTIC-001",
+        specSha256: $specSha256,
+        capturedAt: $capturedAt,
+        buildoptRevision: $buildoptRevision,
+        repository: {
+            nameWithOwner: "spring-projects/spring-framework",
+            revision: $repositoryRevision,
+            sourceArchiveSha256: $sourceArchiveSha256
+        },
+        runner: {
+            id: "linux-amd64-12c-16659865600b-v1",
+            cpuCount: $cpuCount,
+            memoryBytes: $memoryBytes,
+            maxWorkers: $maxWorkers,
+            javaVersion: $javaVersion
+        },
+        preparation: {
+            onlinePreflightMeasured: false,
+            onlinePreflightSuccess: true,
+            onlinePreflightWallClockMs: $preflightWallClockMs,
+            measuredNetwork: "DISCONNECTED",
+            dependencyMode: "GRADLE_OFFLINE",
+            buildCacheSeedSha256: $cacheSeedSha256,
+            cacheSeedRestoredBeforeEveryCell: true,
+            projectOutputsCleanedBeforeEveryCell: true
+        },
+        change: {
+            path: $changePath,
+            originalSourceSha256: $originalSourceSha256,
+            mutatedSourceSha256: $mutatedSourceSha256,
+            mutation: "APPEND_PAIR_COMMENT"
+        },
+        cells: $cells[0],
+        observations: {
+            taskDurationsMayOverlap: true,
+            taskDurationsSummedAsWallClockSavings: false,
+            performanceComparisonClaimed: false,
+            savingsClaimed: false,
+            fullVerificationPreservedEveryObservedTest: true
+        },
+        nextHypotheses: [
+            {
+                cell: "BUILD_OUTPUTS",
+                mechanism: "BUILD_IMPACT",
+                state: "AUTHORIZED_FOR_PAIRED_EXPERIMENT",
+                reason: "Measure whether selecting the changed project and reviewed reverse dependents reduces wall clock beyond the optimized native cache."
+            },
+            {
+                cell: "TEST_PREPARATION",
+                mechanism: "BUILD_IMPACT",
+                state: "AUTHORIZED_FOR_PAIRED_EXPERIMENT",
+                reason: "Measure build-owned test compilation only; no Gradle Test task may be omitted or changed."
+            },
+            {
+                cell: "FULL_VERIFICATION",
+                mechanism: "RUNTIME_TUNING",
+                state: "AUTHORIZED_FOR_PAIRED_EXPERIMENT",
+                reason: "Measure resource settings while preserving the exact test inventory and outcomes."
+            }
+        ],
+        decision: {
+            verdict: "RUN_GENERIC_PAIRED_SPRING_EXPERIMENTS",
+            performanceMeasured: false,
+            savingsClaimed: false
+        },
+        boundaries: {
+            proofOfConcept: true,
+            productionReadinessClaimed: false,
+            eightHourSoakExecuted: false,
+            externalDesignPartnerRequired: false,
+            testOptimizationModified: false
+        }
+    }
+    ' >"${buildopt_output}"
+
+"${buildopt_script_dir}/check-poc-spring-diagnostic" "${buildopt_output}"
+printf 'Spring Framework diagnostic captured: %s\n' "${buildopt_output}"
