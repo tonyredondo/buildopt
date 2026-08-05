@@ -1,13 +1,13 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS` — the combined public path beats optimized native Gradle across the bounded Kotlin/Groovy matrix<br>
-**Current phase:** `POC COMPLETE` — bounded value is proven, unstable Kotlin cells remain outside the claim, and no active implementation or measurement block remains inside the current POC<br>
+**Overall status:** `POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS; PUBLIC REPLICATION ACTIVE` — the bounded synthetic claim is retained while fixed public repositories test external validity<br>
+**Current phase:** `POC REAL-WORLD COMPATIBILITY` — Spotless, Mockito, and SpotBugs must pass pinned native/BuildOpt tasks with identical outputs before timing begins<br>
 **POC functional target:** measurable net build-time reduction from the qualified Build Impact and exact reviewed-source Task/Patch routes; no-value Safe Cache or Runtime candidates remain disabled<br>
-**POC validation posture:** use bounded paired experiments on project-owned fixtures and repositories; compare against optimized native Gradle with identical required outputs and zero additional product failures<br>
+**POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
 **Last updated:** 2026-08-05<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
-**RFC baseline SHA-256:** `30c23b74e0c9439fc845bd062fc7618c429d5d5e1c67d3fa1e9d1f2b7eb73c05`
+**RFC baseline SHA-256:** `2b1fbd516bb512e3918067e1c3b5a8885cfcb0053f27ca40b94232ee04ae584f`
 
 ---
 
@@ -83,6 +83,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-LEAF-KOTLIN | Reproduced Kotlin leaf-source value gap | `DONE` | 1/1 | `E-166` |
 | POC-KOTLIN-STABILITY | Remaining Kotlin shared-source/build-logic classification mismatches | `DONE` | 1/1 | `E-167` |
 | POC-KOTLIN-BOUNDARY | Stop-or-replicate decision for unstable Kotlin cells | `DONE` | 1/1 | `E-168` |
+| POC-REALWORLD-COMPAT | Pinned public-repository native/BuildOpt compatibility | `DOING` | 0/1 | POC-KOTLIN-BOUNDARY |
+| POC-REALWORLD-VALUE | Paired value replication on compatible public repositories | `WAITING` | 0/1 | POC-REALWORLD-COMPAT |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -106,6 +108,8 @@ Optimized native Gradle baseline
   → measure the remaining reproduced leaf-source Kotlin failure on an equivalent calibrated boundary
   → resolve the remaining shared-source/build-logic Kotlin measurement mismatches before any product tuning
   → stop and retain the bounded claim; do not tune product or repeat against unstable evidence
+  → audit fixed public repositories and prove native/installed compatibility without timing claims
+  → preregister and run paired public-repository value measurements
 ```
 
 The implementation history remains useful, but it is not the POC exit gate:
@@ -117,7 +121,8 @@ UX-F1 → PA-F2 → CI-F3 → BIA-F4 → PLAT-F5 → PLAT-F6 → DOC-F7 → PERF
 The sequence `POC-VALUE-001 → 004` is complete. Safe Cache and Runtime
 Tuning candidates remain no-value/no-action outcomes, not hidden successes.
 Soak, design partners, GA-D, HA, identity/RBAC, multi-tenancy, and production
-rollout remain outside the POC. Test Optimization remains a separate product.
+rollout remain outside the POC. Public repositories are evidence inputs rather
+than partners. Test Optimization remains a separate product.
 
 ### 2.3 Next executable items
 
@@ -136,6 +141,8 @@ rollout remain outside the POC. Test Optimization remains a separate product.
 | 11 | `POC-LEAF-KOTLIN-001` | Measure the remaining reproduced leaf-source Kotlin failure on an equivalent calibrated profile and remove only a stable product-attributable value gap | `DONE` | Codex |
 | 12 | `POC-KOTLIN-STABILITY-001` | Re-run shared-source and build-logic Kotlin on the calibrated paired boundary and require order-independent classifications before authorizing product work | `DONE` | Codex |
 | 13 | `POC-KOTLIN-BOUNDARY-001` | Review the failed stability evidence and choose STOP or one final preregistered replication without changing product, workload, or thresholds | `DONE` | Codex |
+| 14 | `POC-REALWORLD-001` | Pin, audit, and execute representative native/installed tasks on Spotless, Mockito, and SpotBugs with identical required outputs | `DOING` | Codex |
+| 15 | `POC-REALWORLD-002` | Run the preregistered paired performance matrix on every repository admitted by `POC-REALWORLD-G01` | `WAITING` | Codex |
 
 ### 2.4 Completed implementation sequence
 
@@ -281,6 +288,7 @@ Every accepted RFC decision is represented below. Historical private-beta decisi
 | `OPS-001/B` | GitHub adapter with an `EXACT` queue | B | `DONE` | Codex | `E-095`: authenticated durable `workflow_job` lifecycle and exact provider queue |
 | `POC-VALUE-G01` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | `DONE` | Codex | `E-159`, [`poc-value-validation-v1`](./specs/poc-value-validation-v1.md) |
 | `POC-BREADTH-G01` | Realistic Kotlin/Groovy change-class matrix preserves parity on full-graph cases and clears the accelerator threshold on selective cases | Broader synthetic POC claim | `PRELIMINARY` | Codex | `E-161`: 4/8 cells qualified after attribution; claim retained narrowly |
+| `POC-REALWORLD-G01` | Three fixed public repositories pass representative native and installed-BuildOpt tasks with identical non-empty outputs, no scans/publication, and zero product failures | Public-repository performance matrix | `DOING` | Codex | [`poc-real-world-compatibility-v1`](./specs/poc-real-world-compatibility-v1.md) |
 
 ---
 

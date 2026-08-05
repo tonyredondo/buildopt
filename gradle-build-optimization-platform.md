@@ -2,8 +2,8 @@
 
 ## Product specification and technical design
 
-**Status:** master POC architecture RFC — bounded value hypothesis passed; continue decision recorded for qualified synthetic workloads<br>
-**Last technical review:** August 4, 2026<br>
+**Status:** master POC architecture RFC — bounded synthetic value passed; public-repository replication is active<br>
+**Last technical review:** August 5, 2026<br>
 **Working name:** Gradle Build Optimization<br>
 **Scope:** autonomous optimization of Gradle builds in CI and local environments<br>
 **Relationship with Test Optimization:** complementary product with explicit ownership: Build Optimization optimizes build work; Test Optimization retains test selection, execution, and policy
@@ -75,7 +75,9 @@ Developers will not have to run a build twice manually. Natural builds provide o
 
 The current objective is a **proof of concept**, not a private-beta or production launch. The combined BuildOpt path has demonstrated customer-visible build-time reduction against a well-configured native Gradle baseline across the qualified synthetic Kotlin/Groovy workload matrix. Safe Cache, Runtime Tuning, Build Impact, reviewed task contracts, and Patch Autopilot are measured separately so that value is attributable; the complete path receives its own comparison because overlapping percentages are never added.
 
-The result authorizes a `CONTINUE` decision for further POC exploration only. It does not prove universal savings or production readiness. The initial realistic change-class matrix in [`poc-breadth-validation-v1`](./specs/poc-breadth-validation-v1.md) qualified 2/8 cells. `POC-OVERHEAD-001` then proved that the installed candidate used the native-only path, loaded no init/project plugin, removed one unused candidate-only `XDG_CACHE_HOME`, and repeated the unchanged gate. The repeat qualifies no-change Kotlin parity plus leaf Kotlin, shared Kotlin, and leaf Groovy acceleration: 4/8 cells. Global build-logic and the remaining Groovy cells still fail their predeclared thresholds, so the claim remains limited to the previously qualified synthetic workloads. The next experiment must isolate the observed control/candidate order and carryover sensitivity before another performance-sensitive product change. An eight-hour soak, external design partners, high availability, enterprise identity, shared multi-tenancy, and production promotion samples are not required. Conversely, a feature does not justify activation merely because it is safe or technically interesting: when it cannot demonstrate net value for a workload class, BuildOpt keeps it disabled for that class.
+The result authorizes a `CONTINUE` decision for further POC exploration only. It does not prove universal savings or production readiness. The initial realistic change-class matrix in [`poc-breadth-validation-v1`](./specs/poc-breadth-validation-v1.md) qualified 2/8 cells. Attribution and calibrated paired experiments reproduced the bounded Groovy and leaf Kotlin value cells, while shared-source and build-logic Kotlin remained order-sensitive. The terminal decision therefore retained the qualified synthetic claim and prohibited more unchanged replication or product tuning against noisy evidence.
+
+The next POC extension tests whether that bounded signal survives on fixed public repositories. Compatibility is established before any timing claim: source revisions, wrapper/settings files, Gradle distributions, representative tasks, excluded integrations, required outputs, and the installed BuildOpt entry point are all pinned and checked. Only compatible repositories enter a preregistered paired comparison against optimized native Gradle. An eight-hour soak, design partners, high availability, enterprise identity, shared multi-tenancy, and production promotion samples are not required. Conversely, a feature does not justify activation merely because it is safe or technically interesting: when it cannot demonstrate net value for a workload class, BuildOpt keeps it disabled for that class.
 
 ---
 
@@ -2801,6 +2803,20 @@ native Gradle baseline
 
 The historical Phase 0 and MVP sections below retain the architecture and possible productization gates. Their names do not describe current POC qualification. The positive result supports another explicitly chosen POC phase, but does not automatically activate soak, external pilots, operational scale, product modes, or GA hardening.
 
+The explicitly chosen next phase is public-repository replication:
+
+```text
+pin and audit released public repositories
+  → prove native and installed-BuildOpt compatibility with identical outputs
+  → preregister representative no-change and source-change comparisons
+  → run paired optimized-native versus BuildOpt measurements
+  → broaden the claim only for repositories and change classes that reproduce value
+```
+
+Public repositories are evidence inputs, not design partners. Their build code
+runs only from exact revisions in disposable homes without host credentials,
+build scans, publishing tasks, or repository-specific CI opt-ins.
+
 ### Phase 0: executable contracts and fixtures
 
 **Deliverables:**
@@ -3149,14 +3165,14 @@ These choices are deliberately unresolved because they do not help answer the PO
 
 ### 29.1 Readiness verdict
 
-The original Phase 0 package and walking skeleton are materialized. The combined path cleared `POC-VALUE-G01` on the qualified synthetic workload matrix. `POC-BREADTH-001` initially completed with 2/8 realistic change/DSL cells qualifying. `POC-OVERHEAD-001` attributed the installed path, removed one unused candidate-only environment difference, and repeated the unchanged gate with 4/8 cells qualifying. `POC-BREADTH-G01` remains preliminary and the claim is not broadened. `POC-STABILITY-001` is the next value-first experiment because the remaining cells expose strong order/carryover sensitivity. The current implementation truth lives in the tracker and executable checks; these experiments do not automatically add production subsystems.
+The original Phase 0 package and walking skeleton are materialized. The combined path cleared `POC-VALUE-G01` on the qualified synthetic workload matrix. `POC-BREADTH-001` initially completed with 2/8 realistic change/DSL cells qualifying. Attribution and calibrated paired experiments raised bounded coverage while the terminal Kotlin decision retained unstable shared/build-logic cells outside the claim. The current implementation truth lives in the tracker and executable checks; the active public-repository replication phase tests external validity without adding production subsystems.
 
 The distinction is deliberate:
 
 - Accepted decisions record architecture and safety; they do not prove implementation or value.
 - Schemas, APIs, state machines, vectors, fixtures, and spikes are materialized and remain regression inputs.
 - Agent discovery and hermetic producer enforcement are explicitly `UNAVAILABLE`; reviewed-source paths remain testable.
-- All four initial POC value gates are closed. `POC-BREADTH-001` and `POC-OVERHEAD-001` are complete, but `POC-BREADTH-G01` remains preliminary after 4/8 cells qualified in the repeat. Productization work remains a separate decision and is not implied by either the bounded `CONTINUE` verdict or breadth evidence.
+- All synthetic POC value and terminal measurement gates are closed. `POC-BREADTH-G01` remains preliminary and the claim stays bounded. `POC-REALWORLD-001` must prove pinned public-source compatibility before `POC-REALWORLD-002` may measure value. Productization remains a separate decision and is not implied by either the bounded `CONTINUE` verdict or public-source replication.
 
 The normative source is divided as follows: this RFC retains intent, invariants, and gates; `contracts/`, `specs/`, `benchmarks/`, and ADRs retain executable details. If a contract contradicts a safety invariant in this RFC, the contract is corrected; if the invariant needs to change, the corresponding decision is reviewed first.
 

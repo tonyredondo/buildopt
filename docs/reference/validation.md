@@ -139,6 +139,7 @@ reference data, thresholds, or held-out results merely to obtain promotion.
 ./dev/check-poc-breadth
 ./dev/check-poc-overhead
 ./dev/check-poc-stability
+./dev/check-poc-real-world-compatibility
 ./dev/check-build-optimization-performance
 ```
 
@@ -148,6 +149,13 @@ preserves the earlier mechanism-development scorecard for historical
 comparison. None reruns Gradle or adds percentages from different workloads.
 Use the owning benchmark runner only when the relevant implementation or
 fixture changes.
+
+`check-poc-real-world-compatibility` binds Spotless, Mockito, and SpotBugs to
+exact released commits plus wrapper, settings, and distribution hashes. Its
+evidence proves only that native Gradle and the installed BuildOpt entry point
+complete representative tasks with identical outputs and no publication,
+scan, or product failure. Timing those repositories belongs to the subsequent
+preregistered performance gate.
 
 `check-poc-breadth` accepts both a passing and a failing decision document and
 recomputes all 64 observations. The post-attribution repeat retains the narrow

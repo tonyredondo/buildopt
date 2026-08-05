@@ -2356,6 +2356,31 @@ and requires `STOP_RETAIN_BOUNDED_CLAIM`. No further unchanged replication,
 threshold movement, pair discard, or product tuning is authorized inside the
 current POC.
 
+## Public-repository compatibility
+
+Validate the pinned repository manifest without network access:
+
+```bash
+./dev/check-poc-real-world-compatibility --spec-only
+```
+
+Create strict compatibility evidence by cloning the three exact public
+revisions and running their representative tasks through both native Gradle and
+the installed BuildOpt entry point:
+
+```bash
+./dev/run-poc-real-world-compatibility-container \
+  /tmp/poc-real-world-compatibility.json
+```
+
+The runner uses disposable checkouts and separate empty homes on the pinned
+4-CPU/16-GiB image. It removes CI, Android, signing, cache, and scan credentials
+from the child environment; disables build scans; rejects publishing tasks; and
+requires byte-identical non-empty outputs. The run resolves only public source,
+plugins, wrappers, and dependencies. It records compatibility, not performance.
+Only a passing checked document authorizes the paired real-world performance
+matrix.
+
 Validate and print the historical mechanism-development scorecard without
 rerunning a benchmark:
 

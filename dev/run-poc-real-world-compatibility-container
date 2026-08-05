@@ -1,0 +1,423 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s OUTPUT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-real-world-compatibility-v1.json"
+buildopt_runner_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ]]; then
+    printf 'invalid POC-REALWORLD-001 output path\n' >&2
+    exit 64
+fi
+for buildopt_command in awk cp docker find git grep jq mkdir mktemp sed sha256sum sort tar; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC-REALWORLD-001 command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+if [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)" ]]; then
+    printf 'POC-REALWORLD-001 requires a clean revision-bound checkout\n' >&2
+    exit 1
+fi
+if ! docker info >/dev/null 2>&1; then
+    printf 'Docker daemon is unavailable\n' >&2
+    exit 1
+fi
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-poc-realworld-001.XXXXXX")
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-poc-realworld-001."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+mkdir -p -- "${buildopt_root}/release" "${buildopt_root}/package" \
+    "${buildopt_root}/install" "${buildopt_root}/results"
+chmod 0700 "${buildopt_root}"
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_spec_sha=$(sha256sum "${buildopt_contract}" | awk '{print $1}')
+buildopt_runner_spec_sha=$(sha256sum "${buildopt_runner_spec}" | awk '{print $1}')
+buildopt_image=$(jq -er '.container.reference' "${buildopt_runner_spec}")
+buildopt_platform_digest=$(jq -er '.container.platformDigest' "${buildopt_runner_spec}")
+buildopt_cpu=$(jq -er '.runnerClass.cpuCount' "${buildopt_runner_spec}")
+buildopt_memory=$(jq -er '.runnerClass.memoryBytes' "${buildopt_runner_spec}")
+
+docker pull --quiet --platform linux/amd64 "${buildopt_image}" >/dev/null
+if ! docker image inspect "${buildopt_image}" |
+    jq -e --arg digest "${buildopt_platform_digest}" '
+        length == 1 and .[0].Os == "linux" and .[0].Architecture == "amd64" and
+        any(.[0].RepoDigests[]?; endswith("@" + $digest))
+    ' >/dev/null; then
+    printf 'POC-REALWORLD-001 image does not match the pinned platform digest\n' >&2
+    exit 1
+fi
+
+buildopt_archive=$("${buildopt_repo_root}/packaging/linux/package.sh" \
+    --version 0.3.0-realworld001 --output "${buildopt_root}/release")
+tar -xzf "${buildopt_archive}" -C "${buildopt_root}/package"
+buildopt_package_root=$(find "${buildopt_root}/package" -mindepth 1 -maxdepth 1 \
+    -type d -name 'buildopt-0.3.0-realworld001-linux-amd64' -print -quit)
+if [[ -z "${buildopt_package_root}" ]]; then
+    printf 'POC-REALWORLD-001 package layout is unavailable\n' >&2
+    exit 1
+fi
+"${buildopt_package_root}/install.sh" \
+    --prefix "${buildopt_root}/install" >/dev/null
+"${buildopt_root}/install/bin/buildopt" doctor >/dev/null
+
+buildopt_executable_sha=$(sha256sum \
+    "${buildopt_root}/install/bin/buildopt" | awk '{print $1}')
+buildopt_plugin=$(find "${buildopt_root}/install" -type f \
+    -name 'buildopt-gradle-plugin-*.jar' -print)
+if [[ $(wc -w <<<"${buildopt_plugin}") != 1 ]]; then
+    printf 'POC-REALWORLD-001 installed Gradle plugin is ambiguous\n' >&2
+    exit 1
+fi
+buildopt_plugin_sha=$(sha256sum "${buildopt_plugin}" | awk '{print $1}')
+
+buildopt_hash_outputs() {
+    local buildopt_checkout=$1
+    local buildopt_repository_index=$2
+    local buildopt_manifest=$3
+    local buildopt_root_path
+    local buildopt_file
+    local buildopt_relative
+
+    : >"${buildopt_manifest}"
+    while IFS= read -r buildopt_root_path; do
+        if [[ ! -d "${buildopt_checkout}/${buildopt_root_path}" ]]; then
+            printf 'required POC-REALWORLD-001 output root is unavailable: %s\n' \
+                "${buildopt_root_path}" >&2
+            return 1
+        fi
+        while IFS= read -r -d '' buildopt_file; do
+            buildopt_relative=${buildopt_file#"${buildopt_checkout}/"}
+            printf '%s  %s\n' \
+                "$(sha256sum "${buildopt_file}" | awk '{print $1}')" \
+                "${buildopt_relative}" >>"${buildopt_manifest}"
+        done < <(find "${buildopt_checkout}/${buildopt_root_path}" \
+            -type f -print0 | sort -z)
+    done < <(jq -r ".repositories[${buildopt_repository_index}].target.outputRoots[]" \
+        "${buildopt_contract}")
+
+    if [[ ! -s "${buildopt_manifest}" ]]; then
+        printf 'POC-REALWORLD-001 produced no required output files\n' >&2
+        return 1
+    fi
+}
+
+buildopt_run_arm() {
+    local buildopt_repository_index=$1
+    local buildopt_checkout=$2
+    local buildopt_arm=$3
+    local buildopt_log=$4
+    local buildopt_home=$5
+    local buildopt_gradle_home=$6
+    local buildopt_xdg_cache=$7
+    local -a buildopt_arguments=()
+    local -a buildopt_environment=()
+    local -a buildopt_command=()
+    local buildopt_excluded
+
+    mkdir -p -- "${buildopt_home}" "${buildopt_gradle_home}" "${buildopt_xdg_cache}"
+    chmod 0700 "${buildopt_home}" "${buildopt_gradle_home}" "${buildopt_xdg_cache}"
+    mapfile -t buildopt_arguments < <(
+        jq -r ".repositories[${buildopt_repository_index}].target.arguments[]" \
+            "${buildopt_contract}"
+    )
+    buildopt_environment=(
+        -u CI
+        -u ANDROID_HOME
+        -u GITHUB_TOKEN
+        -u GH_TOKEN
+        -u DEVELOCITY_ACCESS_KEY
+        -u GRADLE_ENTERPRISE_ACCESS_KEY
+        -u ORG_GRADLE_PROJECT_signingKey
+        -u ORG_GRADLE_PROJECT_signingPassword
+        -u buildcacheuser
+        -u buildcachepass
+    )
+    while IFS= read -r buildopt_excluded; do
+        buildopt_environment+=(-u "${buildopt_excluded}")
+    done < <(jq -r ".repositories[${buildopt_repository_index}].excludedEnvironment[]" \
+        "${buildopt_contract}")
+
+    if [[ "${buildopt_arm}" == native ]]; then
+        buildopt_command=(./gradlew --build-cache "${buildopt_arguments[@]}")
+    else
+        buildopt_command=(/benchmark/install/bin/buildopt gradle \
+            "${buildopt_arguments[@]}")
+    fi
+
+    if ! docker run --rm --pull never --network bridge --platform linux/amd64 \
+        --cpus "${buildopt_cpu}" --memory "${buildopt_memory}" \
+        --user "$(id -u):$(id -g)" \
+        --env HOME=/benchmark/home \
+        --env GRADLE_USER_HOME=/benchmark/gradle-home \
+        --env XDG_CACHE_HOME=/benchmark/xdg-cache \
+        --env LANG=C.UTF-8 --env LC_ALL=C.UTF-8 --env TZ=UTC \
+        --volume "${buildopt_checkout}:/repo" \
+        --volume "${buildopt_home}:/benchmark/home" \
+        --volume "${buildopt_gradle_home}:/benchmark/gradle-home" \
+        --volume "${buildopt_xdg_cache}:/benchmark/xdg-cache" \
+        --volume "${buildopt_root}/install:/benchmark/install:ro" \
+        --workdir /repo \
+        "${buildopt_image}" \
+        /usr/bin/env "${buildopt_environment[@]}" "${buildopt_command[@]}" \
+        >"${buildopt_log}" 2>&1; then
+        tail -n 120 "${buildopt_log}" >&2
+        printf 'POC-REALWORLD-001 %s arm failed\n' "${buildopt_arm}" >&2
+        return 1
+    fi
+    if ! grep -Fq 'BUILD SUCCESSFUL' "${buildopt_log}"; then
+        printf 'POC-REALWORLD-001 %s arm lacks Gradle success marker\n' \
+            "${buildopt_arm}" >&2
+        return 1
+    fi
+    if grep -Eq '^> Task .*:(publish|upload|release|sign)([A-Z:]|$)' \
+        "${buildopt_log}"; then
+        printf 'POC-REALWORLD-001 executed a forbidden release task\n' >&2
+        return 1
+    fi
+    if grep -Eq 'Publishing build scan|Build scan published|https://gradle[.]com/s/' \
+        "${buildopt_log}"; then
+        printf 'POC-REALWORLD-001 published a forbidden build scan\n' >&2
+        return 1
+    fi
+    if [[ "${buildopt_arm}" == candidate ]] &&
+        grep -Eiq 'BuildOpt.*(unavailable|authentication failed|handshake failed|broken pipe)' \
+            "${buildopt_log}"; then
+        printf 'POC-REALWORLD-001 observed a BuildOpt product warning\n' >&2
+        return 1
+    fi
+}
+
+for buildopt_repository_index in 0 1 2; do
+    buildopt_id=$(jq -er ".repositories[${buildopt_repository_index}].id" \
+        "${buildopt_contract}")
+    buildopt_name=$(jq -er ".repositories[${buildopt_repository_index}].nameWithOwner" \
+        "${buildopt_contract}")
+    buildopt_url=$(jq -er ".repositories[${buildopt_repository_index}].url" \
+        "${buildopt_contract}")
+    buildopt_ref=$(jq -er ".repositories[${buildopt_repository_index}].ref" \
+        "${buildopt_contract}")
+    buildopt_expected_revision=$(jq -er ".repositories[${buildopt_repository_index}].revision" \
+        "${buildopt_contract}")
+    buildopt_repository_root="${buildopt_root}/repositories/${buildopt_id}"
+    buildopt_native_checkout="${buildopt_repository_root}/native"
+    buildopt_candidate_checkout="${buildopt_repository_root}/candidate"
+    mkdir -p -- "${buildopt_repository_root}"
+
+    GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null GIT_TERMINAL_PROMPT=0 \
+        git clone --quiet --depth 1 --branch "${buildopt_ref}" --single-branch \
+        "${buildopt_url}" "${buildopt_native_checkout}"
+    buildopt_actual_revision=$(git -C "${buildopt_native_checkout}" rev-parse HEAD)
+    if [[ "${buildopt_actual_revision}" != "${buildopt_expected_revision}" ]]; then
+        printf 'POC-REALWORLD-001 revision mismatch for %s\n' "${buildopt_name}" >&2
+        exit 1
+    fi
+
+    buildopt_wrapper_jar="${buildopt_native_checkout}/gradle/wrapper/gradle-wrapper.jar"
+    buildopt_wrapper_properties="${buildopt_native_checkout}/gradle/wrapper/gradle-wrapper.properties"
+    if [[ -f "${buildopt_native_checkout}/settings.gradle.kts" ]]; then
+        buildopt_settings="${buildopt_native_checkout}/settings.gradle.kts"
+    else
+        buildopt_settings="${buildopt_native_checkout}/settings.gradle"
+    fi
+    for buildopt_hash_field in jar properties settings; do
+        case "${buildopt_hash_field}" in
+            jar) buildopt_hash_file=${buildopt_wrapper_jar} ;;
+            properties) buildopt_hash_file=${buildopt_wrapper_properties} ;;
+            settings) buildopt_hash_file=${buildopt_settings} ;;
+        esac
+        buildopt_expected_hash=$(jq -er \
+            ".repositories[${buildopt_repository_index}].wrapper.${buildopt_hash_field}Sha256" \
+            "${buildopt_contract}")
+        buildopt_actual_hash=$(sha256sum "${buildopt_hash_file}" | awk '{print $1}')
+        if [[ "${buildopt_actual_hash}" != "${buildopt_expected_hash}" ]]; then
+            printf 'POC-REALWORLD-001 %s hash mismatch for %s\n' \
+                "${buildopt_hash_field}" "${buildopt_name}" >&2
+            exit 1
+        fi
+    done
+
+    buildopt_distribution_url=$(sed -n \
+        's/^distributionUrl=//p' "${buildopt_wrapper_properties}" | sed 's/\\:/:/g')
+    buildopt_expected_distribution_url=$(jq -er \
+        ".repositories[${buildopt_repository_index}].wrapper.distributionUrl" \
+        "${buildopt_contract}")
+    buildopt_distribution_sha=$(jq -er \
+        ".repositories[${buildopt_repository_index}].wrapper.distributionSha256" \
+        "${buildopt_contract}")
+    if [[ "${buildopt_distribution_url}" != "${buildopt_expected_distribution_url}" ]]; then
+        printf 'POC-REALWORLD-001 distribution URL mismatch for %s\n' \
+            "${buildopt_name}" >&2
+        exit 1
+    fi
+
+    buildopt_source_archive_sha=$(git -C "${buildopt_native_checkout}" \
+        archive --format=tar HEAD | sha256sum | awk '{print $1}')
+    cp -a -- "${buildopt_native_checkout}" "${buildopt_candidate_checkout}"
+
+    buildopt_checksum_injection=$(jq -er \
+        ".repositories[${buildopt_repository_index}].wrapper.checksumInjectionRequired" \
+        "${buildopt_contract}")
+    for buildopt_checkout in "${buildopt_native_checkout}" "${buildopt_candidate_checkout}"; do
+        buildopt_properties="${buildopt_checkout}/gradle/wrapper/gradle-wrapper.properties"
+        buildopt_recorded_distribution_sha=$(sed -n \
+            's/^distributionSha256Sum=//p' "${buildopt_properties}")
+        if [[ "${buildopt_checksum_injection}" == true ]]; then
+            if [[ -n "${buildopt_recorded_distribution_sha}" ]]; then
+                printf 'POC-REALWORLD-001 unexpected checksum already present for %s\n' \
+                    "${buildopt_name}" >&2
+                exit 1
+            fi
+            printf '\ndistributionSha256Sum=%s\n' "${buildopt_distribution_sha}" \
+                >>"${buildopt_properties}"
+        elif [[ "${buildopt_recorded_distribution_sha}" != "${buildopt_distribution_sha}" ]]; then
+            printf 'POC-REALWORLD-001 distribution checksum mismatch for %s\n' \
+                "${buildopt_name}" >&2
+            exit 1
+        fi
+    done
+
+    buildopt_native_log="${buildopt_repository_root}/native.log"
+    buildopt_candidate_log="${buildopt_repository_root}/candidate.log"
+    buildopt_run_arm "${buildopt_repository_index}" "${buildopt_native_checkout}" \
+        native "${buildopt_native_log}" "${buildopt_repository_root}/native-home" \
+        "${buildopt_repository_root}/native-gradle" \
+        "${buildopt_repository_root}/native-xdg"
+    buildopt_run_arm "${buildopt_repository_index}" "${buildopt_candidate_checkout}" \
+        candidate "${buildopt_candidate_log}" "${buildopt_repository_root}/candidate-home" \
+        "${buildopt_repository_root}/candidate-gradle" \
+        "${buildopt_repository_root}/candidate-xdg"
+
+    buildopt_native_manifest="${buildopt_repository_root}/native.outputs"
+    buildopt_candidate_manifest="${buildopt_repository_root}/candidate.outputs"
+    buildopt_hash_outputs "${buildopt_native_checkout}" \
+        "${buildopt_repository_index}" "${buildopt_native_manifest}"
+    buildopt_hash_outputs "${buildopt_candidate_checkout}" \
+        "${buildopt_repository_index}" "${buildopt_candidate_manifest}"
+    buildopt_native_output_sha=$(sha256sum "${buildopt_native_manifest}" | awk '{print $1}')
+    buildopt_candidate_output_sha=$(sha256sum "${buildopt_candidate_manifest}" | awk '{print $1}')
+    buildopt_native_output_count=$(wc -l <"${buildopt_native_manifest}")
+    buildopt_candidate_output_count=$(wc -l <"${buildopt_candidate_manifest}")
+    if [[ "${buildopt_native_output_sha}" != "${buildopt_candidate_output_sha}" ]] ||
+        [[ "${buildopt_native_output_count}" != "${buildopt_candidate_output_count}" ]]; then
+        diff -u "${buildopt_native_manifest}" "${buildopt_candidate_manifest}" >&2 || true
+        printf 'POC-REALWORLD-001 output mismatch for %s\n' "${buildopt_name}" >&2
+        exit 1
+    fi
+
+    buildopt_native_tasks=$(awk '/actionable tasks:/ {print $1}' \
+        "${buildopt_native_log}" | tail -n 1)
+    buildopt_candidate_tasks=$(awk '/actionable tasks:/ {print $1}' \
+        "${buildopt_candidate_log}" | tail -n 1)
+    if [[ ! "${buildopt_native_tasks}" =~ ^[0-9]+$ ]] ||
+        [[ ! "${buildopt_candidate_tasks}" =~ ^[0-9]+$ ]]; then
+        printf 'POC-REALWORLD-001 task summary is unavailable for %s\n' \
+            "${buildopt_name}" >&2
+        exit 1
+    fi
+
+    jq -n \
+        --arg id "${buildopt_id}" \
+        --arg nameWithOwner "${buildopt_name}" \
+        --arg revision "${buildopt_actual_revision}" \
+        --arg sourceArchiveSha256 "${buildopt_source_archive_sha}" \
+        --argjson wrapper "$(jq ".repositories[${buildopt_repository_index}].wrapper" \
+            "${buildopt_contract}")" \
+        --argjson nativeTasks "${buildopt_native_tasks}" \
+        --argjson candidateTasks "${buildopt_candidate_tasks}" \
+        --argjson outputFileCount "${buildopt_native_output_count}" \
+        --arg nativeOutputSha256 "${buildopt_native_output_sha}" \
+        --arg candidateOutputSha256 "${buildopt_candidate_output_sha}" '
+        {
+            id: $id,
+            nameWithOwner: $nameWithOwner,
+            revision: $revision,
+            sourceArchiveSha256: $sourceArchiveSha256,
+            wrapper: $wrapper,
+            native: {
+                success: true,
+                actionableTasks: $nativeTasks,
+                outputFileCount: $outputFileCount,
+                outputSha256: $nativeOutputSha256
+            },
+            candidate: {
+                success: true,
+                actionableTasks: $candidateTasks,
+                outputFileCount: $outputFileCount,
+                outputSha256: $candidateOutputSha256
+            },
+            productAttributableFailures: 0,
+            classification: "COMPATIBLE_FOR_PERFORMANCE_MATRIX"
+        }
+        ' >"${buildopt_root}/results/${buildopt_id}.json"
+
+    printf 'POC-REALWORLD-001 %s compatible: native=%s tasks candidate=%s tasks outputs=%s\n' \
+        "${buildopt_name}" "${buildopt_native_tasks}" \
+        "${buildopt_candidate_tasks}" "${buildopt_native_output_count}"
+done
+
+jq -s '.' "${buildopt_root}/results/"*.json >"${buildopt_root}/repositories.json"
+buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+jq -n \
+    --arg capturedAt "${buildopt_captured_at}" \
+    --arg specSha256 "${buildopt_spec_sha}" \
+    --arg buildoptRevision "${buildopt_revision}" \
+    --arg executableSha256 "${buildopt_executable_sha}" \
+    --arg gradlePluginSha256 "${buildopt_plugin_sha}" \
+    --arg runnerSpecSha256 "${buildopt_runner_spec_sha}" \
+    --arg image "${buildopt_image}" \
+    --arg platformDigest "${buildopt_platform_digest}" \
+    --argjson cpuCount "${buildopt_cpu}" \
+    --argjson memoryBytes "${buildopt_memory}" \
+    --slurpfile contract "${buildopt_contract}" \
+    --slurpfile repositories "${buildopt_root}/repositories.json" '
+    {
+        schemaVersion: "buildopt.evidence/poc-real-world-compatibility/v1",
+        capturedAt: $capturedAt,
+        specSha256: $specSha256,
+        buildopt: {
+            revision: $buildoptRevision,
+            executableSha256: $executableSha256,
+            gradlePluginSha256: $gradlePluginSha256
+        },
+        runner: {
+            id: "linux-amd64-4c-16g-v1",
+            image: $image,
+            platformDigest: $platformDigest,
+            runnerSpecSha256: $runnerSpecSha256,
+            cpuCount: $cpuCount,
+            memoryBytes: $memoryBytes
+        },
+        methodology: $contract[0].methodology,
+        repositories: $repositories[0],
+        decision: {
+            verdict: "AUTHORIZE_POC_REALWORLD_002",
+            compatibleRepositories: ($repositories[0] | length),
+            requiredRepositories: 3,
+            performanceMeasured: false
+        },
+        gate: {id: "POC-REALWORLD-G01", state: "PASSED"},
+        boundaries: $contract[0].boundaries
+    }
+    ' >"${buildopt_root}/poc-real-world-compatibility.json"
+
+install -m 0600 "${buildopt_root}/poc-real-world-compatibility.json" \
+    "${buildopt_output}"
+"${buildopt_script_dir}/check-poc-real-world-compatibility" "${buildopt_output}"
+
+printf 'BuildOpt POC-REALWORLD-001 strict evidence written to %s\n' \
+    "${buildopt_output}"

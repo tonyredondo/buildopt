@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "buildopt.specs/poc-real-world-compatibility/v1",
+  "workItem": "POC-REALWORLD-001",
+  "decision": "AUTHORIZE_OR_REJECT_REAL_WORLD_PERFORMANCE_MATRIX",
+  "runner": "linux-amd64-4c-16g-v1",
+  "repositories": [
+    {
+      "id": "SPOTLESS",
+      "nameWithOwner": "diffplug/spotless",
+      "url": "https://github.com/diffplug/spotless.git",
+      "ref": "gradle/8.9.0",
+      "revision": "cbd01c4e4b91cea538691d4fe6a8f929d75c27c6",
+      "license": "Apache-2.0",
+      "dsl": "GROOVY",
+      "gradleVersion": "9.4.1",
+      "wrapper": {
+        "jarSha256": "55243ef57851f12b070ad14f7f5bb8302daceeebc5bce5ece5fa6edb23e1145c",
+        "propertiesSha256": "032a71c92fc7f3c1cadf8880f0554b71aa6beb411f97ac253aa93932cb3784d5",
+        "settingsSha256": "6f08562db3948e3f84c891a4ce43f5642877191d0752c2e28fec81b8a9af2fb2",
+        "distributionUrl": "https://services.gradle.org/distributions/gradle-9.4.1-bin.zip",
+        "distributionSha256": "2ab2958f2a1e51120c326cad6f385153bb11ee93b3c216c5fccebfdfbb7ec6cb",
+        "checksumInjectionRequired": false
+      },
+      "target": {
+        "arguments": [
+          "--no-daemon",
+          "--no-scan",
+          "--stacktrace",
+          "-PSPOTLESS_EXCLUDE_MAVEN=true",
+          ":plugin-gradle:testClasses"
+        ],
+        "outputRoots": ["plugin-gradle/build/classes"]
+      },
+      "excludedEnvironment": ["CI", "buildcacheuser", "buildcachepass"]
+    },
+    {
+      "id": "MOCKITO",
+      "nameWithOwner": "mockito/mockito",
+      "url": "https://github.com/mockito/mockito.git",
+      "ref": "v5.23.0",
+      "revision": "a231205b240e7884a63bf0f63440012867a4da21",
+      "license": "MIT",
+      "dsl": "KOTLIN",
+      "gradleVersion": "8.14.2",
+      "wrapper": {
+        "jarSha256": "7d3a4ac4de1c32b59bc6a4eb8ecb8e612ccd0cf1ae1e99f66902da64df296172",
+        "propertiesSha256": "03a5cbeb07e440336d2a529e6852f93ffa3ffd3084ecd46261bf641a3514d8b1",
+        "settingsSha256": "85bfea1e2989629c5d23b29652ae965f8a39244913aebc514edd75ac04c1c5e7",
+        "distributionUrl": "https://services.gradle.org/distributions/gradle-8.14.2-bin.zip",
+        "distributionSha256": "7197a12f450794931532469d4ff21a59ea2c1cd59a3ec3f89c035c3c420a6999",
+        "checksumInjectionRequired": false
+      },
+      "target": {
+        "arguments": [
+          "--no-daemon",
+          "--no-scan",
+          "--stacktrace",
+          ":mockito-extensions:mockito-junit-jupiter:testClasses"
+        ],
+        "outputRoots": [
+          "mockito-extensions/mockito-junit-jupiter/build/classes"
+        ]
+      },
+      "excludedEnvironment": ["CI", "ANDROID_HOME"]
+    },
+    {
+      "id": "SPOTBUGS",
+      "nameWithOwner": "spotbugs/spotbugs",
+      "url": "https://github.com/spotbugs/spotbugs.git",
+      "ref": "4.10.3",
+      "revision": "8d5cad4536ae263448c09181268bbca70f0c0712",
+      "license": "LGPL-2.1",
+      "dsl": "MIXED_KOTLIN_SETTINGS_GROOVY_PROJECTS",
+      "gradleVersion": "9.6.1",
+      "wrapper": {
+        "jarSha256": "497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7",
+        "propertiesSha256": "c94d41b634a5e0ff8a2f812023697b1337eebac18e9962610356a1793f72896d",
+        "settingsSha256": "533c0cb063f2aa5c9eb2488882208dc278afea740a493d787e87ad69c74effee",
+        "distributionUrl": "https://services.gradle.org/distributions/gradle-9.6.1-bin.zip",
+        "distributionSha256": "9c0f7faeeb306cb14e4279a3e084ca6b596894089a0638e68a07c945a32c9e14",
+        "checksumInjectionRequired": true
+      },
+      "target": {
+        "arguments": [
+          "--no-daemon",
+          "--no-scan",
+          "--stacktrace",
+          ":spotbugs-tests:testClasses"
+        ],
+        "outputRoots": ["spotbugs-tests/build/classes"]
+      },
+      "excludedEnvironment": ["CI"]
+    }
+  ],
+  "methodology": {
+    "purpose": "CONFIRM_PINNED_PUBLIC_REPOSITORY_COMPATIBILITY",
+    "arms": ["OPTIMIZED_NATIVE_GRADLE", "INSTALLED_BUILDOPT"],
+    "performanceMeasured": false,
+    "networkPolicy": "PUBLIC_SOURCE_AND_DEPENDENCY_RESOLUTION_ONLY",
+    "sourcePolicy": "PINNED_REVISION_DISPOSABLE_CHECKOUT",
+    "environmentPolicy": "EMPTY_HOME_NO_HOST_CREDENTIALS_EXCLUDED_VARIABLES_ABSENT",
+    "candidateEntryPoint": "buildopt gradle",
+    "requiredOutputDigest": "SORTED_RELATIVE_PATH_AND_SHA256"
+  },
+  "guardrails": {
+    "requiredRepositories": 3,
+    "exactRevisionRequired": true,
+    "wrapperAndSettingsHashesRequired": true,
+    "distributionChecksumRequired": true,
+    "buildScanDisabled": true,
+    "publishingTasksForbidden": true,
+    "requiredOutputsNonEmpty": true,
+    "requiredOutputsIdentical": true,
+    "maximumProductAttributableFailures": 0
+  },
+  "boundaries": {
+    "publicSourceOnly": true,
+    "performanceClaimAuthorized": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}
