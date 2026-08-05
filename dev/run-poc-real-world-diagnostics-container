@@ -179,6 +179,10 @@ buildopt_run_command() {
     }
     while IFS= read -r buildopt_task_path; do
         buildopt_task_name=${buildopt_task_path##*:}
+        if [[ "${buildopt_task_name}" == *ToLocalRepository ||
+            "${buildopt_task_name}" == *ToMavenLocal ]]; then
+            continue
+        fi
         if [[ "${buildopt_task_name}" =~ ^(publish|upload|release|sign)([A-Z].*)?$ ]]; then
             printf 'real-world workflow executed a forbidden release task: %s\n' \
                 "${buildopt_task_path}" >&2

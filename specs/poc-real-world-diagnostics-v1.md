@@ -7,8 +7,12 @@ into generic BuildOpt hypotheses. It is not a candidate-versus-control
 benchmark and cannot claim savings.
 
 The workflow commands come from files committed by each upstream repository.
-Build scans, publishing, credentials, and external CI services are removed,
-but the Gradle tasks remain unchanged. Spotless exercises its two-command
+Build scans, external publishing entrypoints, credentials, and external CI
+services are removed, but the Gradle tasks remain unchanged. Mockito's
+`build` transitively publishes test fixtures to its disposable local
+repository; the guard permits only final tasks ending in `ToLocalRepository`
+or `ToMavenLocal` and continues to reject every external publication task.
+Spotless exercises its two-command
 sanity workflow, Mockito exercises formatting, build, and coverage as three
 separate invocations, and SpotBugs exercises its documented detector-regression
 task without selecting individual tests.
@@ -18,6 +22,10 @@ checkout therefore fetches that named reference while keeping `HEAD` and every
 profiled source byte fixed to the preregistered revision. The first shallow
 preflight discovered this requirement and stopped before any profile existed;
 the complete matrix restarts from zero after this explicit input was added.
+The next preflight reached Mockito's local fixture publication and was rejected
+by the original broad publishing guard before any Mockito profile existed.
+The local-only exception above is now explicit and the matrix again restarts
+from zero without changing the workflow or measurement method.
 
 ## Measurement boundary
 
