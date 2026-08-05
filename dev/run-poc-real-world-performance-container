@@ -491,18 +491,12 @@ for buildopt_repository_index in 0 1 2; do
                 buildopt_control_ms=${buildopt_duration_ms}
                 buildopt_control_finished=${buildopt_finished_ns}
                 buildopt_control_cc=${buildopt_configuration_cache_reused}
-                buildopt_hash_outputs "${buildopt_control_checkout}" \
-                    "${buildopt_repository_index}" "${buildopt_scenario}" \
-                    "${buildopt_scenario_root}/pair-${buildopt_pair}-control.outputs"
                 buildopt_run_arm "${buildopt_repository_index}" "${buildopt_scenario}" \
                     CANDIDATE "${buildopt_candidate_container}" "${buildopt_candidate_log}" true true
                 buildopt_candidate_ms=${buildopt_duration_ms}
                 buildopt_gap_ms=$(((buildopt_started_ns - buildopt_control_finished) / 1000000))
                 buildopt_candidate_cc=${buildopt_configuration_cache_reused}
                 buildopt_candidate_omitted=${buildopt_omitted_declared_task}
-                buildopt_hash_outputs "${buildopt_candidate_checkout}" \
-                    "${buildopt_repository_index}" "${buildopt_scenario}" \
-                    "${buildopt_scenario_root}/pair-${buildopt_pair}-candidate.outputs"
             else
                 buildopt_run_arm "${buildopt_repository_index}" "${buildopt_scenario}" \
                     CANDIDATE "${buildopt_candidate_container}" "${buildopt_candidate_log}" true true
@@ -510,18 +504,22 @@ for buildopt_repository_index in 0 1 2; do
                 buildopt_candidate_finished=${buildopt_finished_ns}
                 buildopt_candidate_cc=${buildopt_configuration_cache_reused}
                 buildopt_candidate_omitted=${buildopt_omitted_declared_task}
-                buildopt_hash_outputs "${buildopt_candidate_checkout}" \
-                    "${buildopt_repository_index}" "${buildopt_scenario}" \
-                    "${buildopt_scenario_root}/pair-${buildopt_pair}-candidate.outputs"
                 buildopt_run_arm "${buildopt_repository_index}" "${buildopt_scenario}" \
                     CONTROL "${buildopt_control_container}" "${buildopt_control_log}" true true
                 buildopt_control_ms=${buildopt_duration_ms}
                 buildopt_gap_ms=$(((buildopt_started_ns - buildopt_candidate_finished) / 1000000))
                 buildopt_control_cc=${buildopt_configuration_cache_reused}
-                buildopt_hash_outputs "${buildopt_control_checkout}" \
-                    "${buildopt_repository_index}" "${buildopt_scenario}" \
-                    "${buildopt_scenario_root}/pair-${buildopt_pair}-control.outputs"
             fi
+
+            # Keep verification outside the inter-arm interval: large real-world
+            # output trees can take seconds to hash, but hashing is not part of
+            # either Gradle invocation and must not delay the paired arm.
+            buildopt_hash_outputs "${buildopt_control_checkout}" \
+                "${buildopt_repository_index}" "${buildopt_scenario}" \
+                "${buildopt_scenario_root}/pair-${buildopt_pair}-control.outputs"
+            buildopt_hash_outputs "${buildopt_candidate_checkout}" \
+                "${buildopt_repository_index}" "${buildopt_scenario}" \
+                "${buildopt_scenario_root}/pair-${buildopt_pair}-candidate.outputs"
 
             buildopt_control_manifest="${buildopt_scenario_root}/pair-${buildopt_pair}-control.outputs"
             buildopt_candidate_manifest="${buildopt_scenario_root}/pair-${buildopt_pair}-candidate.outputs"

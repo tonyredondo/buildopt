@@ -58,6 +58,12 @@ task `test-harness-jupiter:compileJava`. No SpotBugs sample existed before this
 correction; the complete matrix is again restarted from zero. Entrypoints,
 mutation, thresholds, pair ordering, and decision rules remain unchanged.
 
+The first SpotBugs pair exposed a harness-ordering defect: output hashing ran
+between the two timed arms and itself exceeded the five-second inter-arm bound.
+No SpotBugs evidence was accepted. Verification now runs after both arms in a
+pair, while the same five-second start gap remains enforced; the entire matrix
+is restarted from zero without changing samples, thresholds, or decisions.
+
 Validate the frozen contract or checked evidence with:
 
 ```bash
