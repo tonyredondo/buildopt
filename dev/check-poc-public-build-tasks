@@ -83,6 +83,12 @@ jq -e \
         ["spotlessCheck", "--no-scan"],
         [":plugin-gradle:assemble", ":plugin-gradle:testClasses", "--no-scan", "-PSPOTLESS_EXCLUDE_MAVEN=true"]
     ] and
+    .experiments[0].preMeasurementNormalization == {
+        path: "plugin-gradle/src/main/java/com/diffplug/gradle/spotless/SpotlessPluginRedirect.java",
+        reason: "COPYRIGHT_YEAR_REQUIRED_BY_SPOTLESS_AT_MEASUREMENT_TIME",
+        from: "Copyright 2020-2025 DiffPlug",
+        to: "Copyright 2020-2026 DiffPlug"
+    } and
     .experiments[0].requiredOutputs == [
         "plugin-gradle/build/classes/java/main",
         "plugin-gradle/build/classes/java/test"

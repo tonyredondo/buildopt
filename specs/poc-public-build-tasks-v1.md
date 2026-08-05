@@ -27,6 +27,11 @@ The Spotless experiment preserves both commands from its real sanity workflow,
 including `testClasses`. The candidate may replace only the second command
 with the preregistered affected-project alternative. It must produce identical
 main and test classes and must still run the full `spotlessCheck` command.
+The pinned 2025 source is normalized identically in both arms to the 2026
+copyright header required by Spotless at measurement time, and its mutable
+`origin/main` ratchet name is anchored to the pinned revision. The original
+source-archive digest and normalized source digest are both recorded; this
+preflight correction happens before warm-up and never enters a timed pair.
 
 The Mockito experiment isolates build preparation with
 `:mockito-core:testClasses`. Both arms execute the same task graph after an

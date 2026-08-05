@@ -107,11 +107,10 @@ GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null GIT_TERMINAL_PROMPT=0 \
     printf 'Spotless revision mismatch\n' >&2
     exit 1
 }
-# Spotless' exact spotlessCheck workflow ratchets against origin/main. The tag
-# checkout is deliberately shallow, so materialize only that required ref.
-GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null GIT_TERMINAL_PROMPT=0 \
-    git -C "${buildopt_base}" fetch --quiet --depth 1 origin \
-    main:refs/remotes/origin/main
+# Spotless' workflow ratchets against origin/main. Anchor that name to the exact
+# pinned revision so a mutable live branch cannot change the experiment.
+git -C "${buildopt_base}" update-ref refs/remotes/origin/main \
+    "${buildopt_expected_revision}"
 git -C "${buildopt_base}" rev-parse --verify refs/remotes/origin/main >/dev/null
 buildopt_source_archive_sha=$(git -C "${buildopt_base}" archive --format=tar HEAD |
     sha256sum | awk '{print $1}')
@@ -122,6 +121,21 @@ buildopt_expected_source_sha=$(jq -er \
     printf 'Spotless source archive drifted\n' >&2
     exit 1
 }
+buildopt_normalization_path=$(jq -er \
+    '.experiments[0].preMeasurementNormalization.path' "${buildopt_spec}")
+buildopt_normalization_from=$(jq -er \
+    '.experiments[0].preMeasurementNormalization.from' "${buildopt_spec}")
+buildopt_normalization_to=$(jq -er \
+    '.experiments[0].preMeasurementNormalization.to' "${buildopt_spec}")
+grep -Fq "${buildopt_normalization_from}" \
+    "${buildopt_base}/${buildopt_normalization_path}" || {
+        printf 'Spotless normalization input is unavailable\n' >&2
+        exit 1
+    }
+sed -i "s/${buildopt_normalization_from}/${buildopt_normalization_to}/" \
+    "${buildopt_base}/${buildopt_normalization_path}"
+buildopt_normalized_source_sha=$(sha256sum \
+    "${buildopt_base}/${buildopt_normalization_path}" | awk '{print $1}')
 
 buildopt_control_checkout="${buildopt_root}/repository/control"
 buildopt_candidate_checkout="${buildopt_root}/repository/candidate"
@@ -411,6 +425,7 @@ jq -n \
     --arg image "${buildopt_image}" --arg runnerSpecSha "${buildopt_runner_spec_sha}" \
     --arg repositoryRevision "${buildopt_expected_revision}" \
     --arg sourceSha "${buildopt_source_archive_sha}" \
+    --arg normalizedSourceSha "${buildopt_normalized_source_sha}" \
     --slurpfile spec "${buildopt_spec}" \
     --slurpfile rows "${buildopt_root}/observations.json" '
     def bootstrap_mean($data; $sample):
@@ -455,7 +470,10 @@ jq -n \
         repository: {
             nameWithOwner: "diffplug/spotless",
             revision: $repositoryRevision,
-            sourceArchiveSha256: $sourceSha
+            sourceArchiveSha256: $sourceSha,
+            normalization: ($spec[0].experiments[0].preMeasurementNormalization + {
+                normalizedSourceSha256: $normalizedSourceSha
+            })
         },
         observations: $data,
         result: {
