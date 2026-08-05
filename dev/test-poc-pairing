@@ -209,6 +209,51 @@ jq -e '
     }
     ' "${buildopt_root}/shared-groovy-control-first.json" >/dev/null
 
+jq -c 'select(.dsl == "KOTLIN" and .scenario == "LEAF_CHANGE")' \
+    "${buildopt_root}/control-first-observations.jsonl" \
+    >"${buildopt_root}/leaf-kotlin-control-first-observations.jsonl"
+jq -c 'select(.dsl == "KOTLIN" and .scenario == "LEAF_CHANGE")' \
+    "${buildopt_root}/candidate-first-observations.jsonl" \
+    >"${buildopt_root}/leaf-kotlin-candidate-first-observations.jsonl"
+BUILDOPT_POC_PAIRING_PROFILE=KOTLIN_LEAF_VALUE \
+    "${buildopt_script_dir}/assemble-poc-pairing" \
+    "${buildopt_root}/leaf-kotlin-control-first.json" \
+    synthetic-leaf-kotlin-control-first CONTROL_FIRST \
+    "${buildopt_root}/control.json" "${buildopt_root}/candidate.json" \
+    "${buildopt_root}/leaf-kotlin-control-first-observations.jsonl" >/dev/null
+BUILDOPT_POC_PAIRING_PROFILE=KOTLIN_LEAF_VALUE \
+    "${buildopt_script_dir}/assemble-poc-pairing" \
+    "${buildopt_root}/leaf-kotlin-candidate-first.json" \
+    synthetic-leaf-kotlin-candidate-first CANDIDATE_FIRST \
+    "${buildopt_root}/control.json" "${buildopt_root}/candidate.json" \
+    "${buildopt_root}/leaf-kotlin-candidate-first-observations.jsonl" >/dev/null
+BUILDOPT_POC_PAIRING_PROFILE=KOTLIN_LEAF_VALUE \
+    "${buildopt_script_dir}/assemble-poc-pairing-decision" \
+    "${buildopt_root}/leaf-kotlin-decision.json" \
+    "${buildopt_root}/leaf-kotlin-control-first.json" \
+    "${buildopt_root}/leaf-kotlin-candidate-first.json" >/dev/null
+jq -e '
+    .schemaVersion == "buildopt.evidence/poc-leaf-kotlin-decision/v1" and
+    .result.classificationReproduced and
+    .gate == {id: "POC-LEAF-KOTLIN-G01", state: "PASSED"}
+    ' "${buildopt_root}/leaf-kotlin-decision.json" >/dev/null
+jq -e '
+    .schemaVersion == "buildopt.evidence/poc-leaf-kotlin/v1" and
+    .gate == {id: "POC-LEAF-KOTLIN-001", state: "RECORDED"} and
+    .decision.requiredCells == 1 and (.workloads | length) == 1 and
+    .workloads[0].scenario == "LEAF_CHANGE" and
+    .workloads[0].dsl == "KOTLIN" and
+    .workloads[0].result.executionShapeValid == true and
+    .methodology.workloadProfile == {
+        id: "KOTLIN_DETERMINISTIC_VERIFICATION_V1",
+        initScript: "dev/poc-kotlin-workload.init.gradle",
+        initScriptSha256: .methodology.workloadProfile.initScriptSha256,
+        verificationRoundsPerTask: 25000000,
+        taskSelectionChanged: false,
+        thresholdsChanged: false
+    }
+    ' "${buildopt_root}/leaf-kotlin-control-first.json" >/dev/null
+
 jq '
     if .arm == "CANDIDATE" and .pair == 1 and
        .scenario == "NO_CHANGE" and .dsl == "KOTLIN" then

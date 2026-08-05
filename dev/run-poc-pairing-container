@@ -13,6 +13,7 @@ buildopt_profile=${BUILDOPT_POC_PAIRING_PROFILE:-FULL}
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_spec="${buildopt_repo_root}/specs/golden-lane-runner-v1.json"
+buildopt_shared_container=false
 
 if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
     ! "${buildopt_batch_id}" =~ ^[a-z0-9][a-z0-9-]{0,63}$ ||
@@ -28,14 +29,22 @@ case "${buildopt_profile}" in
         buildopt_workload_init=
         ;;
     GROOVY_VALUE)
+        buildopt_shared_container=true
         buildopt_dsls=(GROOVY)
         buildopt_scenarios=(NO_CHANGE LEAF_CHANGE)
         buildopt_workload_init=/workspace/dev/poc-groovy-workload.init.gradle
         ;;
     GROOVY_SHARED_VALUE)
+        buildopt_shared_container=true
         buildopt_dsls=(GROOVY)
         buildopt_scenarios=(SHARED_CHANGE)
         buildopt_workload_init=/workspace/dev/poc-groovy-workload.init.gradle
+        ;;
+    KOTLIN_LEAF_VALUE)
+        buildopt_shared_container=true
+        buildopt_dsls=(KOTLIN)
+        buildopt_scenarios=(LEAF_CHANGE)
+        buildopt_workload_init=/workspace/dev/poc-kotlin-workload.init.gradle
         ;;
     *)
         printf 'invalid POC-PAIRING-001 profile: %s\n' "${buildopt_profile}" >&2
@@ -192,8 +201,7 @@ buildopt_exec_step() {
     local buildopt_arm_lower=${buildopt_arm,,}
     local buildopt_container="${buildopt_container_prefix}-${buildopt_arm_lower}"
     local buildopt_container_root=/benchmark
-    if [[ "${buildopt_profile}" == GROOVY_VALUE ||
-        "${buildopt_profile}" == GROOVY_SHARED_VALUE ]]; then
+    if [[ "${buildopt_shared_container}" == true ]]; then
         buildopt_container=${buildopt_shared_container}
         buildopt_container_root="/benchmark/${buildopt_arm_lower}"
     fi
@@ -239,8 +247,7 @@ buildopt_first_arm_for_pair() {
 
 buildopt_prepare_arm CONTROL
 buildopt_prepare_arm CANDIDATE
-if [[ "${buildopt_profile}" == GROOVY_VALUE ||
-    "${buildopt_profile}" == GROOVY_SHARED_VALUE ]]; then
+if [[ "${buildopt_shared_container}" == true ]]; then
     buildopt_start_shared_container
 else
     buildopt_start_arm_container CONTROL

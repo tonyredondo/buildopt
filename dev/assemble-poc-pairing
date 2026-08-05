@@ -15,6 +15,8 @@ buildopt_observations=$6
 buildopt_profile=${BUILDOPT_POC_PAIRING_PROFILE:-FULL}
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_shared_container=false
+buildopt_workload_profile_id=
+buildopt_workload_init_path=
 
 case "${buildopt_profile}" in
     FULL)
@@ -26,6 +28,8 @@ case "${buildopt_profile}" in
         ;;
     GROOVY_VALUE)
         buildopt_shared_container=true
+        buildopt_workload_profile_id=GROOVY_DETERMINISTIC_VERIFICATION_V1
+        buildopt_workload_init_path=dev/poc-groovy-workload.init.gradle
         buildopt_expected_observations=32
         buildopt_required_cells=2
         buildopt_schema=buildopt.evidence/poc-groovy/v1
@@ -36,6 +40,8 @@ case "${buildopt_profile}" in
         ;;
     GROOVY_SHARED_VALUE)
         buildopt_shared_container=true
+        buildopt_workload_profile_id=GROOVY_DETERMINISTIC_VERIFICATION_V1
+        buildopt_workload_init_path=dev/poc-groovy-workload.init.gradle
         buildopt_expected_observations=16
         buildopt_required_cells=1
         buildopt_schema=buildopt.evidence/poc-shared-groovy/v1
@@ -43,6 +49,18 @@ case "${buildopt_profile}" in
         buildopt_purpose=VERIFY_SHARED_SOURCE_GROOVY_VALUE_ON_CALIBRATED_BOUNDARY
         buildopt_workload_init_sha=$(sha256sum \
             "${buildopt_script_dir}/poc-groovy-workload.init.gradle" | awk '{print $1}')
+        ;;
+    KOTLIN_LEAF_VALUE)
+        buildopt_shared_container=true
+        buildopt_workload_profile_id=KOTLIN_DETERMINISTIC_VERIFICATION_V1
+        buildopt_workload_init_path=dev/poc-kotlin-workload.init.gradle
+        buildopt_expected_observations=16
+        buildopt_required_cells=1
+        buildopt_schema=buildopt.evidence/poc-leaf-kotlin/v1
+        buildopt_gate=POC-LEAF-KOTLIN-001
+        buildopt_purpose=VERIFY_LEAF_SOURCE_KOTLIN_VALUE_ON_CALIBRATED_BOUNDARY
+        buildopt_workload_init_sha=$(sha256sum \
+            "${buildopt_script_dir}/poc-kotlin-workload.init.gradle" | awk '{print $1}')
         ;;
     *)
         printf 'invalid POC-PAIRING-001 assembly profile: %s\n' "${buildopt_profile}" >&2
@@ -72,6 +90,8 @@ jq -n \
     --arg gateId "${buildopt_gate}" \
     --arg purpose "${buildopt_purpose}" \
     --arg profile "${buildopt_profile}" \
+    --arg workloadProfileId "${buildopt_workload_profile_id}" \
+    --arg workloadInitPath "${buildopt_workload_init_path}" \
     --arg workloadInitSha256 "${buildopt_workload_init_sha:-}" \
     --argjson sharedContainer "${buildopt_shared_container}" \
     --argjson expectedObservations "${buildopt_expected_observations}" \
@@ -249,8 +269,8 @@ jq -n \
             percentagesAddedAcrossScenarios: false
         } + (if $sharedContainer then {
             workloadProfile: {
-                id: "GROOVY_DETERMINISTIC_VERIFICATION_V1",
-                initScript: "dev/poc-groovy-workload.init.gradle",
+                id: $workloadProfileId,
+                initScript: $workloadInitPath,
                 initScriptSha256: $workloadInitSha256,
                 verificationRoundsPerTask: 25000000,
                 taskSelectionChanged: false,
