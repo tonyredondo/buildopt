@@ -1,0 +1,236 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-real-world-performance-v1.json"
+buildopt_compatibility_spec="${buildopt_repo_root}/specs/poc-real-world-compatibility-v1.json"
+buildopt_compatibility_evidence="${buildopt_repo_root}/benchmarks/results/poc-real-world-compatibility-v1.json"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-real-world-performance-v1.json"}
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC-REALWORLD-002 command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+for buildopt_file in "${buildopt_spec}" "${buildopt_compatibility_spec}" \
+    "${buildopt_compatibility_evidence}"; do
+    [[ -s "${buildopt_file}" ]] || {
+        printf 'required POC-REALWORLD-002 file is unavailable: %s\n' \
+            "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_compatibility_spec_sha=$(sha256sum "${buildopt_compatibility_spec}" | awk '{print $1}')
+buildopt_compatibility_evidence_sha=$(sha256sum "${buildopt_compatibility_evidence}" | awk '{print $1}')
+
+jq -e \
+    --arg compatibilitySpecSha "${buildopt_compatibility_spec_sha}" \
+    --arg compatibilityEvidenceSha "${buildopt_compatibility_evidence_sha}" '
+    .schemaVersion == "buildopt.specs/poc-real-world-performance/v1" and
+    .workItem == "POC-REALWORLD-002" and
+    .decision == "BROADEN_OR_RETAIN_BOUNDED_POC_CLAIM" and
+    .runner == "linux-amd64-4c-16g-v1" and
+    .inputs == {
+        compatibilitySpecSha256: $compatibilitySpecSha,
+        compatibilityEvidenceSha256: $compatibilityEvidenceSha,
+        requiredCompatibilityVerdict: "AUTHORIZE_POC_REALWORLD_002"
+    } and
+    .batches == {
+        count: 2,
+        pairsPerBatch: 4,
+        pairsPerScenario: 8,
+        startingPairOrders: ["CONTROL_FIRST", "CANDIDATE_FIRST"],
+        pairOrder: "ALTERNATING_WITH_OPPOSITE_BATCH_START",
+        warmupPerScenario: 1,
+        maximumInterArmIdleGapMs: 5000,
+        confidenceInterval: "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95"
+    } and
+    .nativeControl == {
+        entryPoint: "GRADLE_WRAPPER",
+        buildCache: true,
+        parallelism: true,
+        daemon: true,
+        configurationCacheWhenCompatible: true
+    } and
+    .candidate == {
+        entryPoint: "INSTALLED_BUILDOPT_GRADLE",
+        safeCache: "DEFAULT_NATIVE_L1",
+        runtimeTuning: "DISABLED_BY_EXISTING_NO_VALUE_DECISION",
+        sourceChangePolicy: "PREREGISTERED_BUILD_IMPACT_ALTERNATIVE",
+        selectionState: "POC_EXPERIMENT_ONLY_NOT_PRODUCT_PROMOTION"
+    } and
+    (.repositories | length) == 3 and
+    ([.repositories[].id] | sort) == ["MOCKITO", "SPOTBUGS", "SPOTLESS"] and
+    (all(.repositories[];
+        (.revision | test("^[0-9a-f]{40}$")) and
+        (.repositoryArguments | length >= 1) and
+        (.originalEntrypoints | length >= 2) and
+        (.selectedEntrypoints | length >= 1) and
+        (.selectedEntrypoints != .originalEntrypoints) and
+        (.sourceChange.kind == "APPEND_PAIR_COMMENT") and
+        (.sourceChange.changeClass == "LEAF_SOURCE") and
+        (.sourceChange.path | test("^[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)+$")) and
+        (.requiredOutputs.NO_CHANGE | length >= 2) and
+        (.requiredOutputs.LEAF_SOURCE_CHANGE | length >= 1) and
+        (.candidateMustOmitTask | startswith(":")))) and
+    (.repositories | map({key: .id, value: .configurationCache}) | from_entries) == {
+        SPOTLESS: true, MOCKITO: false, SPOTBUGS: false
+    } and
+    .scenarios == [
+        {
+            id: "NO_CHANGE",
+            changeClass: "NONE",
+            candidatePolicy: "FULL_GRAPH",
+            successClass: "PARITY",
+            maximumRegressionRatio: 0.02
+        },
+        {
+            id: "LEAF_SOURCE_CHANGE",
+            changeClass: "LEAF_SOURCE",
+            candidatePolicy: "PREREGISTERED_BUILD_IMPACT_ALTERNATIVE",
+            successClass: "ACCELERATOR",
+            minimumSavedMs: 500,
+            minimumReductionRatio: 0.02,
+            positiveLower95Bound: true
+        }
+    ] and
+    .measurement.measuredNetwork == "DISCONNECTED" and
+    .measurement.measuredDependencyMode == "GRADLE_OFFLINE" and
+    .measurement.percentagesAddedAcrossRepositoriesOrScenarios == false and
+    .guardrails.requiredRepositories == 3 and
+    .guardrails.requiredScenariosPerRepository == 2 and
+    .guardrails.requiredOutputsIdentical == true and
+    .guardrails.maximumProductAttributableFailures == 0 and
+    .guardrails.thresholdsMayMoveAfterMeasurement == false and
+    .guardrails.failedCellAuthorizesProductTuning == false and
+    .decisionRules.allRepositoriesMustQualify == true and
+    .decisionRules.negativeResultStopsUniversalization == true and
+    .boundaries == {
+        publicSourceOnly: true,
+        proofOfConcept: true,
+        universalSavingsClaimAuthorized: false,
+        productionReadinessClaimed: false,
+        eightHourSoakExecuted: false,
+        externalDesignPartnerRequired: false,
+        testOptimizationModified: false
+    }
+    ' "${buildopt_spec}" >/dev/null
+
+if [[ "${1:-}" == --spec-only ]]; then
+    printf 'BuildOpt POC-REALWORLD-002 specification OK: %s\n' "${buildopt_spec}"
+    exit 0
+fi
+if [[ ! -s "${buildopt_result}" ]]; then
+    printf 'POC-REALWORLD-002 evidence is unavailable: %s\n' \
+        "${buildopt_result}" >&2
+    exit 1
+fi
+
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+
+jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
+    def bootstrap_mean($rows; $sample):
+        reduce range(0; 8) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $rows[((.state / 536870912) | floor)].savedMs) |
+        .sum / 8;
+    def bootstrap95($rows):
+        ([range(0; 4096) as $sample | bootstrap_mean($rows; $sample)] | sort) as $replicates |
+        [$replicates[102], $replicates[3993]];
+    def expected_order($pair):
+        if ($pair <= 4 and ($pair % 2) == 1) or
+           ($pair > 4 and ($pair % 2) == 0)
+        then "CONTROL_FIRST" else "CANDIDATE_FIRST" end;
+    def scenario_valid($repo; $scenario; $specRepo):
+        ($scenario.result.observations) as $rows |
+        (($rows | map(.savedMs) | add) / 8) as $mean |
+        (($rows | map(.savedMs) | add) / ($rows | map(.controlDurationMs) | add)) as $ratio |
+        bootstrap95($rows) as $interval |
+        ($rows | map(select(.savedMs > 0)) | length) as $positive |
+        ($scenario.id == "NO_CHANGE") as $parity |
+        (($parity and $ratio >= -0.02) or
+         (($parity | not) and $mean >= 500 and $ratio >= 0.02 and $interval[0] > 0 and
+          all($rows[]; .candidateOmittedDeclaredTask))) as $qualified |
+        ($rows | length) == 8 and
+        ([ $rows[].pair ] | sort) == [1,2,3,4,5,6,7,8] and
+        (all($rows[];
+            .order == expected_order(.pair) and
+            (.controlDurationMs | type == "number" and . > 0) and
+            (.candidateDurationMs | type == "number" and . > 0) and
+            .savedMs == (.controlDurationMs - .candidateDurationMs) and
+            (.interArmIdleGapMs | type == "number" and . >= 0 and . <= 5000) and
+            (.controlOutputSha256 | test("^[0-9a-f]{64}$")) and
+            .controlOutputSha256 == .candidateOutputSha256 and
+            .outputFileCount > 0 and
+            .controlSourceSha256 == .candidateSourceSha256 and
+            .productAttributableFailure == false and
+            .controlConfigurationCacheReused == $specRepo.configurationCache and
+            .candidateConfigurationCacheReused == $specRepo.configurationCache and
+            (if $parity then
+                .controlEntrypoints == $specRepo.originalEntrypoints and
+                .candidateEntrypoints == $specRepo.originalEntrypoints and
+                .candidateOmittedDeclaredTask == false
+             else
+                .controlEntrypoints == $specRepo.originalEntrypoints and
+                .candidateEntrypoints == $specRepo.selectedEntrypoints
+             end))) and
+        $scenario.result.pairs == 8 and
+        $scenario.result.controlMeanMs == (($rows | map(.controlDurationMs) | add) / 8) and
+        $scenario.result.candidateMeanMs == (($rows | map(.candidateDurationMs) | add) / 8) and
+        $scenario.result.meanSavedMs == $mean and
+        $scenario.result.meanReductionRatio == $ratio and
+        $scenario.result.interval95SavedMs == $interval and
+        $scenario.result.positivePairs == $positive and
+        $scenario.result.requiredOutputsIdentical == true and
+        $scenario.result.productAttributableFailures == 0 and
+        $scenario.classification == (if $qualified then
+            (if $parity then "PARITY" else "THRESHOLD_MET" end)
+        else "NO_VALUE_NO_ACTION" end);
+    .schemaVersion == "buildopt.evidence/poc-real-world-performance/v1" and
+    .specSha256 == $specSha and
+    (.capturedAt | fromdateiso8601) and
+    (.buildopt.revision | test("^[0-9a-f]{40}$")) and
+    (.buildopt.executableSha256 | test("^[0-9a-f]{64}$")) and
+    (.buildopt.gradlePluginSha256 | test("^[0-9a-f]{64}$")) and
+    .runner.id == "linux-amd64-4c-16g-v1" and
+    .runner.cpuCount == 4 and .runner.memoryBytes == 17179869184 and
+    .methodology == $spec[0].measurement + {
+        batches: $spec[0].batches,
+        nativeControl: $spec[0].nativeControl,
+        candidate: $spec[0].candidate,
+        scenarios: $spec[0].scenarios
+    } and
+    (.repositories | length) == 3 and
+    (all(.repositories[] as $repo |
+        ($spec[0].repositories[] | select(.id == $repo.id)) as $specRepo |
+        $repo.nameWithOwner == $specRepo.nameWithOwner and
+        $repo.revision == $specRepo.revision and
+        ($repo.scenarios | length) == 2 and
+        (all($repo.scenarios[]; scenario_valid($repo; .; $specRepo))) and
+        $repo.classification ==
+            (if all($repo.scenarios[]; .classification == "PARITY" or .classification == "THRESHOLD_MET")
+             then "QUALIFIED" else "RETAIN_BOUNDED_CLAIM" end))) and
+    ([.repositories[].classification] | map(select(. == "QUALIFIED")) | length) as $qualifiedRepos |
+    .decision.qualifyingRepositories == $qualifiedRepos and
+    .decision.requiredRepositories == 3 and
+    .decision.verdict ==
+        (if $qualifiedRepos == 3 then "BROADEN_CLAIM_TO_QUALIFIED_PUBLIC_REPOSITORIES"
+         else "RETAIN_BOUNDED_SYNTHETIC_CLAIM" end) and
+    .decision.performanceMeasured == true and
+    .gate == {id: "POC-REALWORLD-G02", state: "PASSED"} and
+    .boundaries == $spec[0].boundaries
+    ' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'POC-REALWORLD-002 validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'BuildOpt POC-REALWORLD-002 evidence OK: %s\n' "${buildopt_result}"

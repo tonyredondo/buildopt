@@ -84,7 +84,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-KOTLIN-STABILITY | Remaining Kotlin shared-source/build-logic classification mismatches | `DONE` | 1/1 | `E-167` |
 | POC-KOTLIN-BOUNDARY | Stop-or-replicate decision for unstable Kotlin cells | `DONE` | 1/1 | `E-168` |
 | POC-REALWORLD-COMPAT | Pinned public-repository native/BuildOpt compatibility | `DONE` | 1/1 | `E-169` |
-| POC-REALWORLD-VALUE | Paired value replication on compatible public repositories | `TODO` | 0/1 | `E-169` |
+| POC-REALWORLD-VALUE | Paired value replication on compatible public repositories | `DOING` | 0/1 | `E-169` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -142,7 +142,7 @@ than partners. Test Optimization remains a separate product.
 | 12 | `POC-KOTLIN-STABILITY-001` | Re-run shared-source and build-logic Kotlin on the calibrated paired boundary and require order-independent classifications before authorizing product work | `DONE` | Codex |
 | 13 | `POC-KOTLIN-BOUNDARY-001` | Review the failed stability evidence and choose STOP or one final preregistered replication without changing product, workload, or thresholds | `DONE` | Codex |
 | 14 | `POC-REALWORLD-001` | Pin, audit, and execute representative native/installed tasks on Spotless, Mockito, and SpotBugs with identical required outputs | `DONE` | Codex |
-| 15 | `POC-REALWORLD-002` | Run the preregistered paired performance matrix on every repository admitted by `POC-REALWORLD-G01` | `TODO` | Codex |
+| 15 | `POC-REALWORLD-002` | Run the preregistered paired performance matrix on every repository admitted by `POC-REALWORLD-G01` | `DOING` | Codex |
 
 ### 2.4 Completed implementation sequence
 
@@ -289,6 +289,7 @@ Every accepted RFC decision is represented below. Historical private-beta decisi
 | `POC-VALUE-G01` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | `DONE` | Codex | `E-159`, [`poc-value-validation-v1`](./specs/poc-value-validation-v1.md) |
 | `POC-BREADTH-G01` | Realistic Kotlin/Groovy change-class matrix preserves parity on full-graph cases and clears the accelerator threshold on selective cases | Broader synthetic POC claim | `PRELIMINARY` | Codex | `E-161`: 4/8 cells qualified after attribution; claim retained narrowly |
 | `POC-REALWORLD-G01` | Three fixed public repositories pass representative native and installed-BuildOpt tasks with identical non-empty outputs, no scans/publication, and zero product failures | Public-repository performance matrix | `DONE` | Codex | `E-169`, [`poc-real-world-compatibility-v1`](./specs/poc-real-world-compatibility-v1.md) |
+| `POC-REALWORLD-G02` | No-change retains native parity and a preregistered leaf-source Build Impact alternative clears the unchanged accelerator threshold on all compatible public repositories | Public-repository POC claim decision | `DOING` | Codex | [`poc-real-world-performance-v1`](./specs/poc-real-world-performance-v1.md) |
 
 ---
 
@@ -1213,6 +1214,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-05 | Preregistered `POC-REALWORLD-002` before timing: three exact public revisions, no-change parity and leaf-source accelerator cells, eight pairs in opposite-start batches, persistent private daemons, offline measured execution, unchanged 500-ms/2%/positive-bound thresholds, exact outputs, and a terminal broaden-or-retain decision | Codex |
 | 2026-08-05 | Closed `POC-REALWORLD-001` and `POC-REALWORLD-G01`: three exact public revisions passed native and installed BuildOpt representative tasks with 646 byte-identical required outputs, no scans/publication, and zero product failures; opened preregistered paired value block `POC-REALWORLD-002` without treating cold compatibility runs as performance evidence | Codex |
 | 2026-08-05 | Closed `POC-KOTLIN-BOUNDARY-001` and `POC-KOTLIN-BOUNDARY-G01` with `STOP_RETAIN_BOUNDED_CLAIM`: four batches per blocked Kotlin cell contain no reproduced negative classification, correctness defect, product failure, or new causal hypothesis; prohibited another unchanged replication, product tuning, threshold movement, and pair discard, leaving no active block inside the current POC | Codex |
 | 2026-08-05 | Closed `POC-KOTLIN-STABILITY-001` with exact negative evidence and left `POC-KOTLIN-STABILITY-G01` failed: shared-source and build-logic both changed classification across opposite-order calibrated batches despite identical outputs, exact execution, correct Configuration Cache behavior, and zero product failures; authorized no product tuning and opened terminal stop-or-replicate decision `POC-KOTLIN-BOUNDARY-001` | Codex |

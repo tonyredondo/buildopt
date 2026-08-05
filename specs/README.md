@@ -10,6 +10,7 @@ the exact cross-component contract.
 | Specification | Owning item |
 |---|---|
 | [`poc-real-world-compatibility-v1.md`](./poc-real-world-compatibility-v1.md) and [`poc-real-world-compatibility-v1.json`](./poc-real-world-compatibility-v1.json) | `POC-REALWORLD-001` / `POC-REALWORLD-G01` |
+| [`poc-real-world-performance-v1.md`](./poc-real-world-performance-v1.md) and [`poc-real-world-performance-v1.json`](./poc-real-world-performance-v1.json) | `POC-REALWORLD-002` / `POC-REALWORLD-G02` |
 | [`poc-stability-validation-v1.md`](./poc-stability-validation-v1.md) and [`poc-stability-validation-v1.json`](./poc-stability-validation-v1.json) | `POC-STABILITY-001` |
 | [`poc-pairing-validation-v1.md`](./poc-pairing-validation-v1.md) and [`poc-pairing-validation-v1.json`](./poc-pairing-validation-v1.json) | `POC-PAIRING-001` |
 | [`poc-groovy-validation-v1.md`](./poc-groovy-validation-v1.md) and [`poc-groovy-validation-v1.json`](./poc-groovy-validation-v1.json) | `POC-GROOVY-001` |

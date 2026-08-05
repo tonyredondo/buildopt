@@ -1,0 +1,212 @@
+{
+  "schemaVersion": "buildopt.specs/poc-real-world-performance/v1",
+  "workItem": "POC-REALWORLD-002",
+  "decision": "BROADEN_OR_RETAIN_BOUNDED_POC_CLAIM",
+  "runner": "linux-amd64-4c-16g-v1",
+  "inputs": {
+    "compatibilitySpecSha256": "d335fae27a477f2c4c290a541c321385de0d560a8c8e3c178aa6ca0981f71e59",
+    "compatibilityEvidenceSha256": "99c2dcfd0c00eb45d13f64b75103655e472bbee6662d38bc4e28af188633133a",
+    "requiredCompatibilityVerdict": "AUTHORIZE_POC_REALWORLD_002"
+  },
+  "batches": {
+    "count": 2,
+    "pairsPerBatch": 4,
+    "pairsPerScenario": 8,
+    "startingPairOrders": [
+      "CONTROL_FIRST",
+      "CANDIDATE_FIRST"
+    ],
+    "pairOrder": "ALTERNATING_WITH_OPPOSITE_BATCH_START",
+    "warmupPerScenario": 1,
+    "maximumInterArmIdleGapMs": 5000,
+    "confidenceInterval": "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95"
+  },
+  "nativeControl": {
+    "entryPoint": "GRADLE_WRAPPER",
+    "buildCache": true,
+    "parallelism": true,
+    "daemon": true,
+    "configurationCacheWhenCompatible": true
+  },
+  "candidate": {
+    "entryPoint": "INSTALLED_BUILDOPT_GRADLE",
+    "safeCache": "DEFAULT_NATIVE_L1",
+    "runtimeTuning": "DISABLED_BY_EXISTING_NO_VALUE_DECISION",
+    "sourceChangePolicy": "PREREGISTERED_BUILD_IMPACT_ALTERNATIVE",
+    "selectionState": "POC_EXPERIMENT_ONLY_NOT_PRODUCT_PROMOTION"
+  },
+  "repositories": [
+    {
+      "id": "SPOTLESS",
+      "nameWithOwner": "diffplug/spotless",
+      "revision": "cbd01c4e4b91cea538691d4fe6a8f929d75c27c6",
+      "dsl": "GROOVY",
+      "configurationCache": true,
+      "repositoryArguments": [
+        "--no-scan",
+        "-PSPOTLESS_EXCLUDE_MAVEN=true"
+      ],
+      "originalEntrypoints": [
+        ":lib:classes",
+        ":lib-extra:classes",
+        ":testlib:classes",
+        ":plugin-gradle:classes"
+      ],
+      "selectedEntrypoints": [
+        ":plugin-gradle:classes"
+      ],
+      "sourceChange": {
+        "path": "plugin-gradle/src/main/java/com/diffplug/gradle/spotless/SpotlessPluginRedirect.java",
+        "kind": "APPEND_PAIR_COMMENT",
+        "changeClass": "LEAF_SOURCE"
+      },
+      "requiredOutputs": {
+        "NO_CHANGE": [
+          "lib/build/classes",
+          "lib-extra/build/classes",
+          "testlib/build/classes",
+          "plugin-gradle/build/classes"
+        ],
+        "LEAF_SOURCE_CHANGE": [
+          "plugin-gradle/build/classes"
+        ]
+      },
+      "candidateMustOmitTask": ":testlib:compileJava"
+    },
+    {
+      "id": "MOCKITO",
+      "nameWithOwner": "mockito/mockito",
+      "revision": "a231205b240e7884a63bf0f63440012867a4da21",
+      "dsl": "KOTLIN",
+      "configurationCache": false,
+      "configurationCacheReason": "BND_JAR_EXECUTION_ACCESSES_TASK_PROJECT_AND_DISCARDS_THE_ENTRY",
+      "repositoryArguments": [
+        "--no-scan"
+      ],
+      "originalEntrypoints": [
+        ":mockito-core:classes",
+        ":mockito-extensions:mockito-junit-jupiter:classes",
+        ":mockito-extensions:mockito-subclass:classes",
+        ":mockito-extensions:mockito-proxy:classes",
+        ":mockito-extensions:mockito-errorprone:classes"
+      ],
+      "selectedEntrypoints": [
+        ":mockito-extensions:mockito-junit-jupiter:classes"
+      ],
+      "sourceChange": {
+        "path": "mockito-extensions/mockito-junit-jupiter/src/main/java/org/mockito/junit/jupiter/MockitoSettings.java",
+        "kind": "APPEND_PAIR_COMMENT",
+        "changeClass": "LEAF_SOURCE"
+      },
+      "requiredOutputs": {
+        "NO_CHANGE": [
+          "mockito-core/build/classes",
+          "mockito-extensions/mockito-junit-jupiter/build/classes",
+          "mockito-extensions/mockito-subclass/build/classes",
+          "mockito-extensions/mockito-proxy/build/classes",
+          "mockito-extensions/mockito-errorprone/build/classes"
+        ],
+        "LEAF_SOURCE_CHANGE": [
+          "mockito-extensions/mockito-junit-jupiter/build/classes"
+        ]
+      },
+      "candidateMustOmitTask": ":mockito-extensions:mockito-subclass:compileJava"
+    },
+    {
+      "id": "SPOTBUGS",
+      "nameWithOwner": "spotbugs/spotbugs",
+      "revision": "8d5cad4536ae263448c09181268bbca70f0c0712",
+      "dsl": "MIXED_KOTLIN_SETTINGS_GROOVY_PROJECTS",
+      "configurationCache": false,
+      "configurationCacheReason": "UPDATE_MANIFEST_TASK_FAILS_WHEN_CONFIGURATION_CACHE_IS_ENABLED",
+      "repositoryArguments": [
+        "--no-scan"
+      ],
+      "originalEntrypoints": [
+        ":spotbugs:classes",
+        ":spotbugs-ant:classes",
+        ":spotbugs-tests:classes",
+        ":test-harness-jupiter:classes"
+      ],
+      "selectedEntrypoints": [
+        ":spotbugs-ant:classes"
+      ],
+      "sourceChange": {
+        "path": "spotbugs-ant/src/main/java/edu/umd/cs/findbugs/anttask/SetBugDatabaseInfoTask.java",
+        "kind": "APPEND_PAIR_COMMENT",
+        "changeClass": "LEAF_SOURCE"
+      },
+      "requiredOutputs": {
+        "NO_CHANGE": [
+          "spotbugs/build/classes",
+          "spotbugs-ant/build/classes",
+          "spotbugs-tests/build/classes",
+          "test-harness-jupiter/build/classes"
+        ],
+        "LEAF_SOURCE_CHANGE": [
+          "spotbugs-ant/build/classes"
+        ]
+      },
+      "candidateMustOmitTask": ":spotbugs-tests:compileJava"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "NO_CHANGE",
+      "changeClass": "NONE",
+      "candidatePolicy": "FULL_GRAPH",
+      "successClass": "PARITY",
+      "maximumRegressionRatio": 0.02
+    },
+    {
+      "id": "LEAF_SOURCE_CHANGE",
+      "changeClass": "LEAF_SOURCE",
+      "candidatePolicy": "PREREGISTERED_BUILD_IMPACT_ALTERNATIVE",
+      "successClass": "ACCELERATOR",
+      "minimumSavedMs": 500,
+      "minimumReductionRatio": 0.02,
+      "positiveLower95Bound": true
+    }
+  ],
+  "measurement": {
+    "preflight": "ONLINE_UNMEASURED_PER_ARM",
+    "measuredNetwork": "DISCONNECTED",
+    "measuredDependencyMode": "GRADLE_OFFLINE",
+    "workspaceState": "PERSISTENT_PRIVATE_PER_ARM_AND_SCENARIO",
+    "gradleUserHome": "PERSISTENT_PRIVATE_PER_ARM_AND_SCENARIO",
+    "daemon": "PERSISTENT_PRIVATE_PER_ARM_AND_SCENARIO",
+    "writableStateShared": false,
+    "workspaceShared": false,
+    "gradleUserHomeShared": false,
+    "daemonShared": false,
+    "requiredOutputDigest": "SORTED_RELATIVE_PATH_AND_SHA256",
+    "percentagesAddedAcrossRepositoriesOrScenarios": false
+  },
+  "guardrails": {
+    "requiredRepositories": 3,
+    "requiredScenariosPerRepository": 2,
+    "requiredOutputsIdentical": true,
+    "requiredOutputsNonEmpty": true,
+    "maximumProductAttributableFailures": 0,
+    "candidateAlternativeMustOmitDeclaredTask": true,
+    "noChangeMustRetainOriginalEntrypoints": true,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedCellAuthorizesProductTuning": false
+  },
+  "decisionRules": {
+    "broadenVerdict": "BROADEN_CLAIM_TO_QUALIFIED_PUBLIC_REPOSITORIES",
+    "retainVerdict": "RETAIN_BOUNDED_SYNTHETIC_CLAIM",
+    "allRepositoriesMustQualify": true,
+    "failedOrUnstableCellsRemainExplicit": true,
+    "negativeResultStopsUniversalization": true
+  },
+  "boundaries": {
+    "publicSourceOnly": true,
+    "proofOfConcept": true,
+    "universalSavingsClaimAuthorized": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

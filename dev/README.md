@@ -2381,6 +2381,27 @@ plugins, wrappers, and dependencies. It records compatibility, not performance.
 Only a passing checked document authorizes the paired real-world performance
 matrix.
 
+## Public-repository performance replication
+
+Validate the preregistered matrix before observing any timings:
+
+```bash
+./dev/check-poc-real-world-performance --spec-only
+```
+
+Run the complete paired matrix in the pinned 4-CPU/16-GiB image:
+
+```bash
+./dev/run-poc-real-world-performance-container \
+  /tmp/poc-real-world-performance.json
+```
+
+The runner performs an unmeasured online preflight, disconnects both arm
+containers, warms their private persistent daemons offline, and records eight
+temporally paired observations for `NO_CHANGE` and `LEAF_SOURCE_CHANGE` in
+each compatible public repository. It never adds percentages across cells and
+accepts a negative terminal decision as valid evidence.
+
 Validate and print the historical mechanism-development scorecard without
 rerunning a benchmark:
 
