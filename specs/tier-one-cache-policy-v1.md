@@ -33,11 +33,13 @@ Every other Gradle/JDK/platform combination disables the managed cache for
 that invocation. No row inherits another version's internal adapter.
 
 The adapter inventories Gradle's complete project transform registry through
-the exact 8.14.2/8.14.3/9.6.1 internal contract. The two POC transform entries
+the exact 8.14.2/8.14.3/9.6.1 internal contract. The three POC transform entries
 are GraalVM Native Build Tools 0.11.1
 `org.graalvm.buildtools.gradle.tasks.scanner.JarAnalyzerTransform` and Kotlin
 Gradle Plugin 2.2.0
-`org.jetbrains.kotlin.gradle.internal.transforms.BuildToolsApiClasspathEntrySnapshotTransform`.
+`org.jetbrains.kotlin.gradle.internal.transforms.BuildToolsApiClasspathEntrySnapshotTransform`
+and
+`org.jetbrains.kotlin.gradle.scripting.internal.DiscoverScriptExtensionsTransformAction`.
 Each entry is bound to the exact provider, artifact name, public artifact
 SHA-256, and source revision recorded in the machine-readable policy. Runtime
 activation requires both the implementation name and the versioned artifact

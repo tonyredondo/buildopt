@@ -90,6 +90,15 @@ if ! jq -e '
             "artifactName": "kotlin-gradle-plugin-2.2.0-gradle813.jar",
             "artifactSha256": "835c4dc18a07325f5793050c7f2e765d235c596749568e47b597b449d867968d",
             "sourceRevision": "631e9fdbe59cc92ac1e88e6ff3bbf4418b3ab9da"
+        },
+        {
+            "id": "KOTLIN_SCRIPT_EXTENSIONS_2_2_0",
+            "implementation": "org.jetbrains.kotlin.gradle.scripting.internal.DiscoverScriptExtensionsTransformAction",
+            "providerPluginId": "org.jetbrains.kotlin.jvm",
+            "providerVersion": "2.2.0",
+            "artifactName": "kotlin-gradle-plugin-2.2.0-gradle813.jar",
+            "artifactSha256": "835c4dc18a07325f5793050c7f2e765d235c596749568e47b597b449d867968d",
+            "sourceRevision": "631e9fdbe59cc92ac1e88e6ff3bbf4418b3ab9da"
         }
     ] and
     .defaultDeny == {

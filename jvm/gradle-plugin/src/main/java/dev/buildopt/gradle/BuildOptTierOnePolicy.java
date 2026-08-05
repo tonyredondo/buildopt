@@ -3,6 +3,7 @@ package dev.buildopt.gradle;
 import java.io.Serial;
 import java.io.Serializable;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import org.gradle.api.Action;
@@ -37,6 +38,9 @@ final class BuildOptTierOnePolicy {
     private static final String KOTLIN_BUILDTOOLS_SNAPSHOT_TRANSFORM =
             "org.jetbrains.kotlin.gradle.internal.transforms."
                     + "BuildToolsApiClasspathEntrySnapshotTransform";
+    private static final String KOTLIN_SCRIPT_EXTENSIONS_TRANSFORM =
+            "org.jetbrains.kotlin.gradle.scripting.internal."
+                    + "DiscoverScriptExtensionsTransformAction";
     private static final String KOTLIN_GRADLE_PLUGIN_ARTIFACT =
             "kotlin-gradle-plugin-2.2.0-gradle813.jar";
 
@@ -58,6 +62,7 @@ final class BuildOptTierOnePolicy {
         }
 
         try {
+            List<String> unknownTransforms = new ArrayList<>();
             for (Project project : rootProject.getAllprojects()) {
                 ProjectInternal internal = (ProjectInternal) project;
                 VariantTransformRegistry registry =
@@ -71,9 +76,14 @@ final class BuildOptTierOnePolicy {
                     if (isAllowlistedArtifactTransform(implementation)) {
                         continue;
                     }
-                    return InvocationDecision.disabled(
-                            "unknown artifact transform " + implementation.getName());
+                    if (!unknownTransforms.contains(implementation.getName())) {
+                        unknownTransforms.add(implementation.getName());
+                    }
                 }
+            }
+            if (!unknownTransforms.isEmpty()) {
+                return InvocationDecision.disabled(
+                        "unknown artifact transforms " + String.join(",", unknownTransforms));
             }
         } catch (LinkageError | RuntimeException failure) {
             return InvocationDecision.disabled("artifact transform inventory unavailable");
@@ -85,6 +95,7 @@ final class BuildOptTierOnePolicy {
         String expectedArtifact = switch (implementation.getName()) {
             case GRAALVM_JAR_ANALYZER_TRANSFORM -> GRAALVM_NATIVE_PLUGIN_ARTIFACT;
             case KOTLIN_BUILDTOOLS_SNAPSHOT_TRANSFORM -> KOTLIN_GRADLE_PLUGIN_ARTIFACT;
+            case KOTLIN_SCRIPT_EXTENSIONS_TRANSFORM -> KOTLIN_GRADLE_PLUGIN_ARTIFACT;
             default -> "";
         };
         if (expectedArtifact.isEmpty()) {
