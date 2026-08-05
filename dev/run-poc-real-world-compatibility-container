@@ -79,10 +79,9 @@ fi
 
 buildopt_executable_sha=$(sha256sum \
     "${buildopt_root}/install/bin/buildopt" | awk '{print $1}')
-buildopt_plugin=$(find "${buildopt_root}/install" -type f \
-    -name 'buildopt-gradle-plugin-*.jar' -print)
-if [[ $(wc -w <<<"${buildopt_plugin}") != 1 ]]; then
-    printf 'POC-REALWORLD-001 installed Gradle plugin is ambiguous\n' >&2
+buildopt_plugin="${buildopt_root}/install/share/buildopt/buildopt-gradle-plugin.jar"
+if [[ ! -f "${buildopt_plugin}" ]]; then
+    printf 'POC-REALWORLD-001 installed Gradle plugin is unavailable\n' >&2
     exit 1
 fi
 buildopt_plugin_sha=$(sha256sum "${buildopt_plugin}" | awk '{print $1}')
