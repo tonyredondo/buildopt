@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "buildopt.specs/poc-kotlin-stability-validation/v1",
+  "workItem": "POC-KOTLIN-STABILITY-001",
+  "decision": "RESOLVE_REMAINING_KOTLIN_CLASSIFICATION_MISMATCHES",
+  "runner": "linux-amd64-4c-16g-v1",
+  "workloads": {
+    "dsl": "KOTLIN",
+    "scenarios": [
+      "SHARED_CHANGE",
+      "BUILD_LOGIC_CHANGE"
+    ],
+    "verificationRoundsPerTask": 25000000,
+    "taskSelectionChanged": false,
+    "thresholdsChanged": false
+  },
+  "batches": {
+    "count": 2,
+    "startingPairOrders": [
+      "CONTROL_FIRST",
+      "CANDIDATE_FIRST"
+    ],
+    "samplesPerCell": 8,
+    "warmupPerCell": 1,
+    "maximumInterArmIdleGapMs": 5000
+  },
+  "thresholds": {
+    "acceleratorMinimumSavedMs": 500,
+    "acceleratorMinimumReductionRatio": 0.02,
+    "acceleratorPositiveLower95Bound": true,
+    "parityMaximumRegressionRatio": 0.02
+  },
+  "guardrails": {
+    "sameRevisionAndArtifacts": true,
+    "sharedStrictContainer": true,
+    "writableStateShared": false,
+    "workspaceShared": false,
+    "gradleUserHomeShared": false,
+    "daemonShared": false,
+    "requiredOutputsIdentical": true,
+    "maximumProductAttributableFailures": 0,
+    "controlExecutedVerifications": 5,
+    "candidateExecutedVerifications": {
+      "SHARED_CHANGE": 2,
+      "BUILD_LOGIC_CHANGE": 5
+    },
+    "configurationCacheReused": {
+      "SHARED_CHANGE": true,
+      "BUILD_LOGIC_CHANGE": false
+    },
+    "oppositeOrdersMustReproduce": true,
+    "mismatchedCellsAuthorizeProductChange": false
+  },
+  "boundaries": {
+    "ownerControlledSyntheticWorkloads": true,
+    "productionReadiness": false,
+    "externalDesignPartner": false,
+    "eightHourSoak": false,
+    "testOptimization": false
+  }
+}

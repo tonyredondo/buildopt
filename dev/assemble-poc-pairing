@@ -62,6 +62,18 @@ case "${buildopt_profile}" in
         buildopt_workload_init_sha=$(sha256sum \
             "${buildopt_script_dir}/poc-kotlin-workload.init.gradle" | awk '{print $1}')
         ;;
+    KOTLIN_STABILITY_VALUE)
+        buildopt_shared_container=true
+        buildopt_workload_profile_id=KOTLIN_DETERMINISTIC_VERIFICATION_V1
+        buildopt_workload_init_path=dev/poc-kotlin-workload.init.gradle
+        buildopt_expected_observations=32
+        buildopt_required_cells=2
+        buildopt_schema=buildopt.evidence/poc-kotlin-stability/v1
+        buildopt_gate=POC-KOTLIN-STABILITY-001
+        buildopt_purpose=RESOLVE_REMAINING_KOTLIN_CLASSIFICATION_MISMATCHES
+        buildopt_workload_init_sha=$(sha256sum \
+            "${buildopt_script_dir}/poc-kotlin-workload.init.gradle" | awk '{print $1}')
+        ;;
     *)
         printf 'invalid POC-PAIRING-001 assembly profile: %s\n' "${buildopt_profile}" >&2
         exit 64

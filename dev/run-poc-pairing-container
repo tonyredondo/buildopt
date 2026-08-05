@@ -46,6 +46,12 @@ case "${buildopt_profile}" in
         buildopt_scenarios=(LEAF_CHANGE)
         buildopt_workload_init=/workspace/dev/poc-kotlin-workload.init.gradle
         ;;
+    KOTLIN_STABILITY_VALUE)
+        buildopt_shared_container=true
+        buildopt_dsls=(KOTLIN)
+        buildopt_scenarios=(SHARED_CHANGE BUILD_LOGIC_CHANGE)
+        buildopt_workload_init=/workspace/dev/poc-kotlin-workload.init.gradle
+        ;;
     *)
         printf 'invalid POC-PAIRING-001 profile: %s\n' "${buildopt_profile}" >&2
         exit 64

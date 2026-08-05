@@ -36,6 +36,12 @@ case "${buildopt_profile}" in
         buildopt_gate=POC-LEAF-KOTLIN-G01
         buildopt_required_cells=1
         ;;
+    KOTLIN_STABILITY_VALUE)
+        buildopt_report_schema=buildopt.evidence/poc-kotlin-stability/v1
+        buildopt_decision_schema=buildopt.evidence/poc-kotlin-stability-decision/v1
+        buildopt_gate=POC-KOTLIN-STABILITY-G01
+        buildopt_required_cells=2
+        ;;
     *)
         printf 'invalid POC-PAIRING-001 decision profile: %s\n' "${buildopt_profile}" >&2
         exit 64

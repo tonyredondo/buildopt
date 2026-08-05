@@ -254,6 +254,62 @@ jq -e '
     }
     ' "${buildopt_root}/leaf-kotlin-control-first.json" >/dev/null
 
+jq -c 'select(.dsl == "KOTLIN" and
+              (.scenario == "SHARED_CHANGE" or
+               .scenario == "BUILD_LOGIC_CHANGE"))' \
+    "${buildopt_root}/control-first-observations.jsonl" \
+    >"${buildopt_root}/kotlin-stability-control-first-observations.jsonl"
+jq -c 'select(.dsl == "KOTLIN" and
+              (.scenario == "SHARED_CHANGE" or
+               .scenario == "BUILD_LOGIC_CHANGE"))' \
+    "${buildopt_root}/candidate-first-observations.jsonl" \
+    >"${buildopt_root}/kotlin-stability-candidate-first-observations.jsonl"
+BUILDOPT_POC_PAIRING_PROFILE=KOTLIN_STABILITY_VALUE \
+    "${buildopt_script_dir}/assemble-poc-pairing" \
+    "${buildopt_root}/kotlin-stability-control-first.json" \
+    synthetic-kotlin-stability-control-first CONTROL_FIRST \
+    "${buildopt_root}/control.json" "${buildopt_root}/candidate.json" \
+    "${buildopt_root}/kotlin-stability-control-first-observations.jsonl" >/dev/null
+BUILDOPT_POC_PAIRING_PROFILE=KOTLIN_STABILITY_VALUE \
+    "${buildopt_script_dir}/assemble-poc-pairing" \
+    "${buildopt_root}/kotlin-stability-candidate-first.json" \
+    synthetic-kotlin-stability-candidate-first CANDIDATE_FIRST \
+    "${buildopt_root}/control.json" "${buildopt_root}/candidate.json" \
+    "${buildopt_root}/kotlin-stability-candidate-first-observations.jsonl" >/dev/null
+BUILDOPT_POC_PAIRING_PROFILE=KOTLIN_STABILITY_VALUE \
+    "${buildopt_script_dir}/assemble-poc-pairing-decision" \
+    "${buildopt_root}/kotlin-stability-decision.json" \
+    "${buildopt_root}/kotlin-stability-control-first.json" \
+    "${buildopt_root}/kotlin-stability-candidate-first.json" >/dev/null
+jq -e '
+    .schemaVersion == "buildopt.evidence/poc-kotlin-stability-decision/v1" and
+    .result.classificationReproduced and
+    .result.reproducedQualifiedCells == [
+        "BREADTH_BUILD_LOGIC_CHANGE_KOTLIN",
+        "BREADTH_SHARED_CHANGE_KOTLIN"
+    ] and
+    .gate == {id: "POC-KOTLIN-STABILITY-G01", state: "PASSED"}
+    ' "${buildopt_root}/kotlin-stability-decision.json" >/dev/null
+jq -e '
+    .schemaVersion == "buildopt.evidence/poc-kotlin-stability/v1" and
+    .gate == {id: "POC-KOTLIN-STABILITY-001", state: "RECORDED"} and
+    .decision.requiredCells == 2 and (.workloads | length) == 2 and
+    ([.workloads[].scenario] | sort) == [
+        "BUILD_LOGIC_CHANGE", "SHARED_CHANGE"
+    ] and
+    (.workloads | all(.dsl == "KOTLIN" and
+                      .result.executionShapeValid == true and
+                      .result.configurationCacheValid == true)) and
+    .methodology.workloadProfile == {
+        id: "KOTLIN_DETERMINISTIC_VERIFICATION_V1",
+        initScript: "dev/poc-kotlin-workload.init.gradle",
+        initScriptSha256: .methodology.workloadProfile.initScriptSha256,
+        verificationRoundsPerTask: 25000000,
+        taskSelectionChanged: false,
+        thresholdsChanged: false
+    }
+    ' "${buildopt_root}/kotlin-stability-control-first.json" >/dev/null
+
 jq '
     if .arm == "CANDIDATE" and .pair == 1 and
        .scenario == "NO_CHANGE" and .dsl == "KOTLIN" then
