@@ -13,6 +13,7 @@ the exact cross-component contract.
 | [`poc-real-world-performance-v1.md`](./poc-real-world-performance-v1.md) and [`poc-real-world-performance-v1.json`](./poc-real-world-performance-v1.json) | `POC-REALWORLD-002` / `POC-REALWORLD-G02` |
 | [`poc-real-world-diagnostics-v1.md`](./poc-real-world-diagnostics-v1.md) and [`poc-real-world-diagnostics-v1.json`](./poc-real-world-diagnostics-v1.json) | `POC-REALWORLD-DIAGNOSTICS-001` / `POC-REALWORLD-G03` |
 | [`poc-public-build-tasks-v1.md`](./poc-public-build-tasks-v1.md) and [`poc-public-build-tasks-v1.json`](./poc-public-build-tasks-v1.json) | `POC-PUBLIC-BUILD-TASKS-001` / `POC-PUBLIC-BUILD-TASKS-G01` |
+| [`poc-mockito-test-build-v1.json`](./poc-mockito-test-build-v1.json) | `POC-MOCKITO-TEST-BUILD-001` / `POC-MOCKITO-TEST-BUILD-G01` |
 | [`poc-stability-validation-v1.md`](./poc-stability-validation-v1.md) and [`poc-stability-validation-v1.json`](./poc-stability-validation-v1.json) | `POC-STABILITY-001` |
 | [`poc-pairing-validation-v1.md`](./poc-pairing-validation-v1.md) and [`poc-pairing-validation-v1.json`](./poc-pairing-validation-v1.json) | `POC-PAIRING-001` |
 | [`poc-groovy-validation-v1.md`](./poc-groovy-validation-v1.md) and [`poc-groovy-validation-v1.json`](./poc-groovy-validation-v1.json) | `POC-GROOVY-001` |

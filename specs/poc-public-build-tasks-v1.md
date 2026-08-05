@@ -48,7 +48,10 @@ The pinned Mockito build invokes Git and rejects Configuration Cache because
 therefore provisions Git 2.34.1 identically for both arms and explicitly uses
 `--no-configuration-cache`; daemon, parallelism and native build cache remain
 enabled. This repository constraint was discovered during unmeasured preflight
-and frozen before accepting any timing sample.
+and frozen before accepting any timing sample. The original shared
+preregistration remains byte-identical for the completed Spotless evidence;
+[`poc-mockito-test-build-v1.json`](./poc-mockito-test-build-v1.json) is the
+immutable Mockito-specific amendment bound by its measured result.
 
 No Gradle `Test` task is requested by either mechanism experiment. This is not
 a way to select or omit tests; it measures only production of the classes and

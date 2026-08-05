@@ -72,6 +72,7 @@ buildopt_planned_artifacts=(
     "specs/poc-real-world-diagnostics-v1.json"
     "specs/poc-real-world-diagnostics-v1.md"
     "specs/poc-public-build-tasks-v1.json"
+    "specs/poc-mockito-test-build-v1.json"
     "specs/poc-public-build-tasks-v1.md"
     "specs/gradle-correlation-v1.md"
     "specs/ci-orchestration-v1.json"

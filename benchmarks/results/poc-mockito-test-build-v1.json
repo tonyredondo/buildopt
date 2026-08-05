@@ -1,0 +1,282 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-mockito-test-build/v1",
+  "capturedAt": "2026-08-05T20:16:24Z",
+  "specSha256": "76949a5c41a827aa952d9106dd07cf624370e90550c6041da54646d5427a301b",
+  "buildopt": {
+    "revision": "d0a94ad9e952abe8eeab3af104f0aae7e3fd75c2",
+    "executableSha256": "90de5b90842eed1427d9cb87441ced6a0dec23bbab1a5141918b8af0bf707c6d",
+    "gradlePluginSha256": "f5c2d1005e8f00aaa81cca2e4109f0d028a861d842613a4c05b25e45f7fa94aa"
+  },
+  "runner": {
+    "id": "linux-amd64-4c-16g-v1",
+    "cpuCount": 4,
+    "memoryBytes": 17179869184,
+    "image": "docker.io/library/eclipse-temurin@sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50",
+    "runnerSpecSha256": "26283e56aa7251152c7f051f7500bc86553669a808fc1cec5b736acf8f0733c9",
+    "toolingImageId": "sha256:63a47b068629c310427e285d243d9e8fb2c2a9113be08e76dcbde783254b928c",
+    "gitVersion": "2.34.1",
+    "configurationCacheEnabled": false
+  },
+  "methodology": {
+    "measurement": {
+      "preflight": "ONLINE_UNMEASURED_PER_ARM",
+      "measuredNetwork": "DISCONNECTED",
+      "measuredDependencyMode": "GRADLE_OFFLINE",
+      "workspaceState": "PERSISTENT_PRIVATE_PER_ARM_AND_SCENARIO",
+      "gradleUserHome": "PERSISTENT_PRIVATE_PER_ARM_AND_SCENARIO",
+      "daemon": "PERSISTENT_PRIVATE_PER_ARM_AND_SCENARIO",
+      "pairOrder": "ALTERNATING_WITH_OPPOSITE_BATCH_START",
+      "batches": 2,
+      "pairsPerBatch": 4,
+      "pairsPerExperiment": 8,
+      "warmupPerExperiment": 1,
+      "maximumInterArmIdleGapMs": 5000,
+      "confidenceInterval": "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
+      "requiredOutputDigest": "SORTED_RELATIVE_PATH_AND_SHA256",
+      "taskDurationsMayBeSummedAsWallClockSavings": false
+    },
+    "valueGate": {
+      "minimumSavedMs": 500,
+      "minimumReductionRatio": 0.02,
+      "positiveLower95Bound": true,
+      "requiredOutputsIdentical": true,
+      "requiredOutputsNonEmpty": true,
+      "maximumProductAttributableFailures": 0,
+      "thresholdsMayMoveAfterMeasurement": false,
+      "parityAloneCountsAsValue": false
+    }
+  },
+  "repository": {
+    "nameWithOwner": "mockito/mockito",
+    "revision": "a231205b240e7884a63bf0f63440012867a4da21",
+    "sourceArchiveSha256": "11b79e41dca3390383f4243e11648025f9c42fae2e59a7e8f27c072256d3d7a6"
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 1663,
+      "candidateDurationMs": 2392,
+      "savedMs": -729,
+      "interArmIdleGapMs": 4,
+      "controlCommandDurationsMs": [
+        1636
+      ],
+      "candidateCommandDurationsMs": [
+        2336
+      ],
+      "controlConfigurationCacheReuseCount": 0,
+      "candidateConfigurationCacheReuseCount": 0,
+      "controlOutputSha256": "ec22c0fe706c407e2c88c6bb98536257d4123c475978f12a13f2d9653286bf4b",
+      "candidateOutputSha256": "ec22c0fe706c407e2c88c6bb98536257d4123c475978f12a13f2d9653286bf4b",
+      "outputFileCount": 1260,
+      "controlCompileTestJavaFromCache": true,
+      "candidateCompileTestJavaFromCache": true,
+      "candidateExecutedDeclaredTask": true,
+      "requestedTestTaskExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 1834,
+      "candidateDurationMs": 1883,
+      "savedMs": -49,
+      "interArmIdleGapMs": 5,
+      "controlCommandDurationsMs": [
+        1812
+      ],
+      "candidateCommandDurationsMs": [
+        1860
+      ],
+      "controlConfigurationCacheReuseCount": 0,
+      "candidateConfigurationCacheReuseCount": 0,
+      "controlOutputSha256": "ec22c0fe706c407e2c88c6bb98536257d4123c475978f12a13f2d9653286bf4b",
+      "candidateOutputSha256": "ec22c0fe706c407e2c88c6bb98536257d4123c475978f12a13f2d9653286bf4b",
+      "outputFileCount": 1260,
+      "controlCompileTestJavaFromCache": true,
+      "candidateCompileTestJavaFromCache": true,
+      "candidateExecutedDeclaredTask": true,
+      "requestedTestTaskExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 1959,
+      "candidateDurationMs": 1869,
+      "savedMs": 90,
+      "interArmIdleGapMs": 5,
+      "controlCommandDurationsMs": [
+        1937
+      ],
+      "candidateCommandDurationsMs": [
+        1813
+      ],
+      "controlConfigurationCacheReuseCount": 0,
+      "candidateConfigurationCacheReuseCount": 0,
+      "controlOutputSha256": "ec22c0fe706c407e2c88c6bb98536257d4123c475978f12a13f2d9653286bf4b",
+      "candidateOutputSha256": "ec22c0fe706c407e2c88c6bb98536257d4123c475978f12a13f2d9653286bf4b",
+      "outputFileCount": 1260,
+      "controlCompileTestJavaFromCache": true,
+      "candidateCompileTestJavaFromCache": true,
+      "candidateExecutedDeclaredTask": true,
+      "requestedTestTaskExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 2008,
+      "candidateDurationMs": 1640,
+      "savedMs": 368,
+      "interArmIdleGapMs": 5,
+      "controlCommandDurationsMs": [
+        1984
+      ],
+      "candidateCommandDurationsMs": [
+        1617
+      ],
+      "controlConfigurationCacheReuseCount": 0,
+      "candidateConfigurationCacheReuseCount": 0,
+      "controlOutputSha256": "ec22c0fe706c407e2c88c6bb98536257d4123c475978f12a13f2d9653286bf4b",
+      "candidateOutputSha256": "ec22c0fe706c407e2c88c6bb98536257d4123c475978f12a13f2d9653286bf4b",
+      "outputFileCount": 1260,
+      "controlCompileTestJavaFromCache": true,
+      "candidateCompileTestJavaFromCache": true,
+      "candidateExecutedDeclaredTask": true,
+      "requestedTestTaskExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 5,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 2086,
+      "candidateDurationMs": 1552,
+      "savedMs": 534,
+      "interArmIdleGapMs": 5,
+      "controlCommandDurationsMs": [
+        2064
+      ],
+      "candidateCommandDurationsMs": [
+        1530
+      ],
+      "controlConfigurationCacheReuseCount": 0,
+      "candidateConfigurationCacheReuseCount": 0,
+      "controlOutputSha256": "ec22c0fe706c407e2c88c6bb98536257d4123c475978f12a13f2d9653286bf4b",
+      "candidateOutputSha256": "ec22c0fe706c407e2c88c6bb98536257d4123c475978f12a13f2d9653286bf4b",
+      "outputFileCount": 1260,
+      "controlCompileTestJavaFromCache": true,
+      "candidateCompileTestJavaFromCache": true,
+      "candidateExecutedDeclaredTask": true,
+      "requestedTestTaskExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 6,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 3899,
+      "candidateDurationMs": 2626,
+      "savedMs": 1273,
+      "interArmIdleGapMs": 20,
+      "controlCommandDurationsMs": [
+        3851
+      ],
+      "candidateCommandDurationsMs": [
+        2557
+      ],
+      "controlConfigurationCacheReuseCount": 0,
+      "candidateConfigurationCacheReuseCount": 0,
+      "controlOutputSha256": "ec22c0fe706c407e2c88c6bb98536257d4123c475978f12a13f2d9653286bf4b",
+      "candidateOutputSha256": "ec22c0fe706c407e2c88c6bb98536257d4123c475978f12a13f2d9653286bf4b",
+      "outputFileCount": 1260,
+      "controlCompileTestJavaFromCache": true,
+      "candidateCompileTestJavaFromCache": true,
+      "candidateExecutedDeclaredTask": true,
+      "requestedTestTaskExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 7,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 3946,
+      "candidateDurationMs": 1462,
+      "savedMs": 2484,
+      "interArmIdleGapMs": 4,
+      "controlCommandDurationsMs": [
+        3925
+      ],
+      "candidateCommandDurationsMs": [
+        1440
+      ],
+      "controlConfigurationCacheReuseCount": 0,
+      "candidateConfigurationCacheReuseCount": 0,
+      "controlOutputSha256": "ec22c0fe706c407e2c88c6bb98536257d4123c475978f12a13f2d9653286bf4b",
+      "candidateOutputSha256": "ec22c0fe706c407e2c88c6bb98536257d4123c475978f12a13f2d9653286bf4b",
+      "outputFileCount": 1260,
+      "controlCompileTestJavaFromCache": true,
+      "candidateCompileTestJavaFromCache": true,
+      "candidateExecutedDeclaredTask": true,
+      "requestedTestTaskExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 8,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 1685,
+      "candidateDurationMs": 3405,
+      "savedMs": -1720,
+      "interArmIdleGapMs": 22,
+      "controlCommandDurationsMs": [
+        1637
+      ],
+      "candidateCommandDurationsMs": [
+        3327
+      ],
+      "controlConfigurationCacheReuseCount": 0,
+      "candidateConfigurationCacheReuseCount": 0,
+      "controlOutputSha256": "ec22c0fe706c407e2c88c6bb98536257d4123c475978f12a13f2d9653286bf4b",
+      "candidateOutputSha256": "ec22c0fe706c407e2c88c6bb98536257d4123c475978f12a13f2d9653286bf4b",
+      "outputFileCount": 1260,
+      "controlCompileTestJavaFromCache": true,
+      "candidateCompileTestJavaFromCache": true,
+      "candidateExecutedDeclaredTask": true,
+      "requestedTestTaskExecuted": false,
+      "productAttributableFailure": false
+    }
+  ],
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 2385,
+    "candidateMeanMs": 2103.625,
+    "meanSavedMs": 281.375,
+    "meanReductionRatio": 0.1179769392033543,
+    "interval95SavedMs": [
+      -498.5,
+      1109.25
+    ],
+    "positivePairs": 5,
+    "requiredOutputsIdentical": true,
+    "requestedTestTasksExecuted": 0,
+    "productAttributableFailures": 0
+  },
+  "decision": {
+    "verdict": "STOP_SAFE_CACHE_FOR_MOCKITO_TEST_BUILD",
+    "performanceMeasured": true,
+    "savingsClaimed": false
+  },
+  "gate": {
+    "id": "POC-MOCKITO-TEST-BUILD-G01",
+    "state": "FAILED"
+  },
+  "boundaries": {
+    "publicSourceOnly": true,
+    "proofOfConcept": true,
+    "performanceMeasuredByThisContract": false,
+    "savingsClaimedByThisContract": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

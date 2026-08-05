@@ -2481,6 +2481,18 @@ average, but missed the fixed 500-ms floor and its 95% interval crossed zero.
 To create a fresh preregistered capture from a clean checkout, use
 `./dev/run-poc-spotless-impact-container <output.json>`.
 
+Validate the completed Mockito test-build experiment without rerunning it:
+
+```bash
+./dev/check-poc-mockito-test-build
+```
+
+The checked result stops this alternative: BuildOpt restored the exact same
+1,260 test-class outputs and averaged 11.80% faster, but saved only 281.375 ms
+and its 95% interval crossed zero. The gated complete Mockito workflow was not
+run. To create a fresh preregistered capture from a clean checkout, use
+`./dev/run-poc-mockito-test-build-container <output.json>`.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

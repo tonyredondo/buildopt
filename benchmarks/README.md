@@ -195,6 +195,23 @@ The control averaged 7,030.875 ms and the candidate 6,734.5 ms: 296.375 ms
 so the terminal decision is `STOP_SPOTLESS_ALTERNATIVE`. The signed samples
 remain evidence, but no savings claim or exact-workflow activation is allowed.
 
+### Mockito test-build Safe Cache result
+
+`POC-MOCKITO-TEST-BUILD-001` measured eight offline, alternating pairs on the
+exact Mockito revision in the digest-pinned 4-CPU/16-GiB runner. Both arms ran
+the unchanged `:mockito-core:testClasses` graph with Gradle 8.14.2/JDK 21 and
+restored `:mockito-core:compileTestJava`; BuildOpt used its private Tier One L1
+while control used Gradle's optimized native local cache. Every pair produced
+the same 1,260 test-class files, executed no Gradle `Test`, and had no product
+failure.
+
+Control averaged 2,385 ms and BuildOpt 2,103.625 ms: an apparent 281.375 ms
+(11.80%) saving, with 5/8 positive pairs and a paired-bootstrap 95% interval
+of `[-498.5, 1109.25]` ms. This misses the frozen 500-ms floor and positive
+lower bound, so the terminal decision is
+`STOP_SAFE_CACHE_FOR_MOCKITO_TEST_BUILD`. The complete Mockito workflow was
+therefore not run, and no savings claim or unchanged rerun is authorized.
+
 ### Calibrated Groovy result
 
 `POC-GROOVY-001` attributed the reproduced no-change regression to a redundant

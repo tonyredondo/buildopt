@@ -3,7 +3,7 @@ set -euo pipefail
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
-buildopt_spec="${buildopt_repo_root}/specs/poc-public-build-tasks-v1.json"
+buildopt_spec="${buildopt_repo_root}/specs/poc-mockito-test-build-v1.json"
 buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-mockito-test-build-v1.json"}
 
 for buildopt_command in git jq sha256sum; do
