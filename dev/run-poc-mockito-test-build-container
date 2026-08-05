@@ -301,6 +301,23 @@ buildopt_reset_outputs() {
     local buildopt_checkout=$1
     rm -rf -- "${buildopt_checkout:?}/${buildopt_required_output}"
 }
+buildopt_assert_cache_replay() {
+    local buildopt_arm=$1
+    local buildopt_log_prefix=$2
+    local buildopt_combined="${buildopt_log_prefix}-combined.log"
+
+    cat "${buildopt_log_prefix}"-command-*.log >"${buildopt_combined}"
+    if ! grep -Fq "> Task ${buildopt_required_task} FROM-CACHE" \
+        "${buildopt_combined}"; then
+        printf 'Mockito %s did not restore declared task: %s\n' \
+            "${buildopt_arm}" "${buildopt_required_task}" >&2
+        grep -n -A 8 -B 3 -E \
+            "${buildopt_required_task}|BuildOpt managed cache|Caching disabled" \
+            "${buildopt_combined}" >&2 || true
+        tail -n 160 "${buildopt_combined}" >&2
+        return 1
+    fi
+}
 buildopt_run_sequence CONTROL "${buildopt_control_container}" \
     "${buildopt_logs}/preflight-control" false
 buildopt_run_sequence CANDIDATE "${buildopt_candidate_container}" \
@@ -313,6 +330,8 @@ buildopt_run_sequence CONTROL "${buildopt_control_container}" \
 buildopt_reset_outputs "${buildopt_candidate_checkout}"
 buildopt_run_sequence CANDIDATE "${buildopt_candidate_container}" \
     "${buildopt_logs}/warm-candidate" true
+buildopt_assert_cache_replay CONTROL "${buildopt_logs}/warm-control"
+buildopt_assert_cache_replay CANDIDATE "${buildopt_logs}/warm-candidate"
 
 buildopt_raw="${buildopt_root}/observations.jsonl"
 : >"${buildopt_raw}"
@@ -370,18 +389,8 @@ for buildopt_pair in {1..8}; do
     buildopt_candidate_combined="${buildopt_candidate_log}-combined.log"
     cat "${buildopt_control_log}"-command-*.log >"${buildopt_control_combined}"
     cat "${buildopt_candidate_log}"-command-*.log >"${buildopt_candidate_combined}"
-    grep -Fq "> Task ${buildopt_required_task} FROM-CACHE" \
-        "${buildopt_control_combined}" || {
-        printf 'Mockito native control did not restore declared task: %s\n' \
-            "${buildopt_required_task}" >&2
-        exit 1
-    }
-    grep -Fq "> Task ${buildopt_required_task} FROM-CACHE" \
-        "${buildopt_candidate_combined}" || {
-        printf 'Mockito BuildOpt candidate did not restore declared task: %s\n' \
-            "${buildopt_required_task}" >&2
-        exit 1
-    }
+    buildopt_assert_cache_replay CONTROL "${buildopt_control_log}"
+    buildopt_assert_cache_replay CANDIDATE "${buildopt_candidate_log}"
 
     jq -cn \
         --argjson pair "${buildopt_pair}" --arg order "${buildopt_order}" \
