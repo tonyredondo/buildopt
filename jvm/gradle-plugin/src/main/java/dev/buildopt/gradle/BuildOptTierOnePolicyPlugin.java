@@ -43,6 +43,9 @@ public final class BuildOptTierOnePolicyPlugin implements Plugin<Project> {
                                                                     .isAllowlistedIdentity(task);
                                                     boolean testTask =
                                                             BuildOptTierOnePolicy.isTestTask(task);
+                                                    boolean errorPronePluginApplied =
+                                                            BuildOptTierOnePolicy
+                                                                    .isErrorPronePluginApplied(task);
                                                     if (!invocation.managedCacheEnabled()) {
                                                         task.notCompatibleWithConfigurationCache(
                                                                 globalDisableReason);
@@ -61,7 +64,8 @@ public final class BuildOptTierOnePolicyPlugin implements Plugin<Project> {
                                                                     new BuildOptTierOnePolicy
                                                                             .TaskDefaultDenySpec(
                                                                             allowlistedIdentity,
-                                                                            testTask));
+                                                                            testTask,
+                                                                            errorPronePluginApplied));
                                                     task.getOutputs()
                                                             .doNotCacheIf(
                                                                     BuildOptTierOnePolicy

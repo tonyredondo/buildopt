@@ -65,8 +65,18 @@ of the following:
 2. the runtime implementation is exactly
    `org.gradle.api.tasks.compile.JavaCompile_Decorated` with
    `JavaCompile` as its direct base;
-3. the instance has exactly one action,
-   `org.gradle.api.internal.project.taskfactory.IncrementalTaskAction`.
+3. the instance either has exactly one Gradle
+   `org.gradle.api.internal.project.taskfactory.IncrementalTaskAction`, or the
+   exact Error Prone 4.3.0 augmentation recorded in the machine-readable
+   policy: one named wrapper before that built-in action plus the exact
+   compiler and JVM argument-provider classes loaded from the versioned
+   plugin artifact.
+
+The Error Prone exception exists only for the Mockito POC path. It is bound to
+plugin id, version, action order and display name, both provider classes,
+public artifact SHA-256, and source revision. Copying the action display name
+without the exact providers remains denied. Gradle's implementation snapshot,
+declared inputs, outputs, and native cache key remain authoritative.
 
 Every other task receives a named `doNotCacheIf`. This includes custom
 `@CacheableTask` types, `Test` with no grant, a source-set task whose action
@@ -90,9 +100,11 @@ TestKit homes and Configuration Cache. It proves source-set `compileJava` and
 again. All six Gradle 9.6.1 rows also execute `Test` twice and prove it cannot
 replay without a grant. Gradle 8.14.3 retains strict warning failure instead
 of suppressing its framework-autoload deprecation in the empty-test fixture.
-Every row also proves that an added action rejects the built-in and that one
-unknown artifact transform disables the otherwise allowed compile task and
-intentionally prevents Configuration Cache reuse for the fail-closed build.
+Every row also proves that an added action using the allowlisted Error Prone
+display name but lacking its exact providers still rejects the built-in, and
+that one unknown artifact transform disables the otherwise allowed compile
+task and intentionally prevents Configuration Cache reuse for the fail-closed
+build.
 The Mockito preflight separately proves the allowlisted GraalVM transform with
 the real provider before any performance samples are accepted.
 The 8.14.2/JDK 21 rows exist solely to validate the public-repository POC path

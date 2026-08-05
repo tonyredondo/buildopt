@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import org.gradle.api.Action;
+import org.gradle.api.Describable;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.internal.artifacts.TransformRegistration;
@@ -31,6 +32,17 @@ final class BuildOptTierOnePolicy {
             "org.gradle.api.tasks.compile.JavaCompile_Decorated";
     private static final String INCREMENTAL_TASK_ACTION =
             "org.gradle.api.internal.project.taskfactory.IncrementalTaskAction";
+    private static final String TASK_ACTION_WRAPPER =
+            "org.gradle.api.internal.AbstractTask$TaskActionWrapper";
+    private static final String ERROR_PRONE_PLUGIN_ID = "net.ltgt.errorprone";
+    private static final String ERROR_PRONE_ACTION_DISPLAY_NAME =
+            "Execute Configure forking for errorprone";
+    private static final String ERROR_PRONE_COMPILER_ARGUMENT_PROVIDER =
+            "net.ltgt.gradle.errorprone.ErrorProneCompilerArgumentProvider";
+    private static final String ERROR_PRONE_JVM_ARGUMENT_PROVIDER =
+            "net.ltgt.gradle.errorprone.ErrorProneJvmArgumentProvider";
+    private static final String ERROR_PRONE_PLUGIN_ARTIFACT =
+            "gradle-errorprone-plugin-4.3.0.jar";
     private static final String GRAALVM_JAR_ANALYZER_TRANSFORM =
             "org.graalvm.buildtools.gradle.tasks.scanner.JarAnalyzerTransform";
     private static final String GRAALVM_NATIVE_PLUGIN_ARTIFACT =
@@ -115,6 +127,54 @@ final class BuildOptTierOnePolicy {
         }
     }
 
+    private static boolean isClassFromArtifact(
+            Object value, String className, String artifactName) {
+        if (!value.getClass().getName().equals(className)) {
+            return false;
+        }
+        try {
+            Path codeSource =
+                    Path.of(
+                            value.getClass()
+                                    .getProtectionDomain()
+                                    .getCodeSource()
+                                    .getLocation()
+                                    .toURI());
+            return codeSource.getFileName().toString().equals(artifactName);
+        } catch (Exception failure) {
+            return false;
+        }
+    }
+
+    private static boolean hasAllowlistedActions(Task task, boolean errorPronePluginApplied) {
+        List<Action<? super Task>> actions = task.getActions();
+        if (actions.size() == 1) {
+            return actions.get(0).getClass().getName().equals(INCREMENTAL_TASK_ACTION);
+        }
+        if (actions.size() != 2
+                || !errorPronePluginApplied
+                || !actions.get(0).getClass().getName().equals(TASK_ACTION_WRAPPER)
+                || !(actions.get(0) instanceof Describable describable)
+                || !describable.getDisplayName().equals(ERROR_PRONE_ACTION_DISPLAY_NAME)
+                || !actions.get(1).getClass().getName().equals(INCREMENTAL_TASK_ACTION)
+                || !(task instanceof JavaCompile javaCompile)) {
+            return false;
+        }
+        List<?> compilerArgumentProviders = javaCompile.getOptions().getCompilerArgumentProviders();
+        List<?> jvmArgumentProviders =
+                javaCompile.getOptions().getForkOptions().getJvmArgumentProviders();
+        return compilerArgumentProviders.size() == 1
+                && isClassFromArtifact(
+                        compilerArgumentProviders.get(0),
+                        ERROR_PRONE_COMPILER_ARGUMENT_PROVIDER,
+                        ERROR_PRONE_PLUGIN_ARTIFACT)
+                && jvmArgumentProviders.size() == 1
+                && isClassFromArtifact(
+                        jvmArgumentProviders.get(0),
+                        ERROR_PRONE_JVM_ARGUMENT_PROVIDER,
+                        ERROR_PRONE_PLUGIN_ARTIFACT);
+    }
+
     static boolean isAllowlistedIdentity(Task task) {
         if (!task.getClass().getName().equals(JAVA_COMPILE_DECORATED)
                 || task.getClass().getSuperclass() != JavaCompile.class
@@ -136,6 +196,10 @@ final class BuildOptTierOnePolicy {
 
     static boolean isTestTask(Task task) {
         return task instanceof Test;
+    }
+
+    static boolean isErrorPronePluginApplied(Task task) {
+        return task.getProject().getPluginManager().hasPlugin(ERROR_PRONE_PLUGIN_ID);
     }
 
     private static boolean isProvenRuntime(
@@ -188,10 +252,15 @@ final class BuildOptTierOnePolicy {
 
         private final boolean allowlistedIdentity;
         private final boolean testTask;
+        private final boolean errorPronePluginApplied;
 
-        TaskDefaultDenySpec(boolean allowlistedIdentity, boolean testTask) {
+        TaskDefaultDenySpec(
+                boolean allowlistedIdentity,
+                boolean testTask,
+                boolean errorPronePluginApplied) {
             this.allowlistedIdentity = allowlistedIdentity;
             this.testTask = testTask;
+            this.errorPronePluginApplied = errorPronePluginApplied;
         }
 
         @Override
@@ -202,9 +271,7 @@ final class BuildOptTierOnePolicy {
             if (!allowlistedIdentity) {
                 return true;
             }
-            List<Action<? super Task>> actions = task.getActions();
-            return actions.size() != 1
-                    || !actions.get(0).getClass().getName().equals(INCREMENTAL_TASK_ACTION);
+            return !hasAllowlistedActions(task, errorPronePluginApplied);
         }
     }
 

@@ -39,6 +39,20 @@
       ]
     }
   ],
+  "taskAugmentationAllowlist": [
+    {
+      "id": "ERROR_PRONE_JAVA_COMPILE_4_3_0",
+      "providerPluginId": "net.ltgt.errorprone",
+      "providerVersion": "4.3.0",
+      "actionWrapper": "org.gradle.api.internal.AbstractTask$TaskActionWrapper",
+      "actionDisplayName": "Execute Configure forking for errorprone",
+      "compilerArgumentProvider": "net.ltgt.gradle.errorprone.ErrorProneCompilerArgumentProvider",
+      "jvmArgumentProvider": "net.ltgt.gradle.errorprone.ErrorProneJvmArgumentProvider",
+      "artifactName": "gradle-errorprone-plugin-4.3.0.jar",
+      "artifactSha256": "42f89c1f582ecd09459586d3d19c0fa92a332035e4a70b5699a8ec6a81aec32c",
+      "sourceRevision": "a9b65160f37e1f4bac5b08d373e5e9b12a5081ed"
+    }
+  ],
   "artifactTransformAllowlist": [
     {
       "id": "GRAALVM_JAR_ANALYZER_0_11_1",

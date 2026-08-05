@@ -89,7 +89,7 @@ public final class TierOneFixturePlugin implements Plugin<Project> {
                                         .configure(
                                                 task ->
                                                         task.doLast(
-                                                                "Tier 1 modified built-in fixture",
+                                                                "Configure forking for errorprone",
                                                                 new ModifiedBuiltInAction()));
                             }
                         });
