@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-kotlin-boundary/v1",
+  "capturedAt": "2026-08-05T07:35:16Z",
+  "workItem": "POC-KOTLIN-BOUNDARY-001",
+  "sourceEvidence": {
+    "pairing": {
+      "id": "E-163",
+      "revision": "39d7fc125d37a463dc1920064479c7a56f1f23f0",
+      "controlFirstSha256": "938114a30aa1a673edd2c3ea3802e3215e18f0347c7719842abf5ababa90cc7a",
+      "candidateFirstSha256": "c992b5d67132f6067711a067a943f75e86b35b0594c55bddcdb4d57ccf13c53a",
+      "decisionSha256": "7d05d02f8d72881570dcbd75b9a3eed6f561ec669c77776bc7ac15bf3e737ca0"
+    },
+    "stability": {
+      "id": "E-167",
+      "revision": "9ea74078670480e30e02321bdeab665ea6bfe014",
+      "controlFirstSha256": "3f04037c773c828858e322569fe89fc31de265a62883751f87b2b2d57e3a26d1",
+      "candidateFirstSha256": "57dba6c77d5125be217c0c06b34f41fdd49650f89de168a8bc4e42eb5d0f2a4b",
+      "decisionSha256": "7f5be90e24caa9e8a197118166bc2f7b44ed92e86bfa469ee7660b2bab4bc559"
+    }
+  },
+  "analysis": {
+    "batchesPerCell": 4,
+    "pairsPerBatch": 8,
+    "thresholdsChanged": false,
+    "newMeasurementsCollected": false,
+    "cells": [
+      {
+        "id": "BREADTH_BUILD_LOGIC_CHANGE_KOTLIN",
+        "classificationHistory": [
+          "BREADTH_GATE_FAILED",
+          "PARITY_GUARDRAIL_MET",
+          "PARITY_GUARDRAIL_MET",
+          "BREADTH_GATE_FAILED"
+        ],
+        "meanSavedMsHistory": [
+          -88.75,
+          514,
+          -21.375,
+          -137.625
+        ],
+        "meanReductionRatioHistory": [
+          -0.0343492985002419,
+          0.18956297252443297,
+          -0.006464783940115686,
+          -0.0410468627670283
+        ],
+        "parityMarginRatioHistory": [
+          -0.014349298500241896,
+          0.20956297252443296,
+          0.013535216059884315,
+          -0.021046862767028298
+        ],
+        "qualifyingBatches": 2,
+        "positivePairs": 15,
+        "totalPairs": 32,
+        "controlExecutedVerifications": 5,
+        "candidateExecutedVerifications": 5,
+        "reproducedNegativeClassification": false,
+        "productActionableFailure": false,
+        "reason": "NO_REDUCIBLE_WORK_AND_ORDER_SENSITIVE_PARITY"
+      },
+      {
+        "id": "BREADTH_SHARED_CHANGE_KOTLIN",
+        "classificationHistory": [
+          "THRESHOLD_MET",
+          "BREADTH_GATE_FAILED",
+          "THRESHOLD_MET",
+          "BREADTH_GATE_FAILED"
+        ],
+        "meanSavedMsHistory": [
+          944.375,
+          114.75,
+          963.75,
+          468.125
+        ],
+        "absoluteFloorMarginMsHistory": [
+          444.375,
+          -385.25,
+          463.75,
+          -31.875
+        ],
+        "meanReductionRatioHistory": [
+          0.5418100975329891,
+          0.08614864864864864,
+          0.452332062188325,
+          0.27184959349593496
+        ],
+        "positiveLowerBoundHistory": [
+          true,
+          false,
+          true,
+          true
+        ],
+        "qualifyingBatches": 2,
+        "positivePairs": 29,
+        "totalPairs": 32,
+        "controlExecutedVerifications": 5,
+        "candidateExecutedVerifications": 2,
+        "reproducedNegativeClassification": false,
+        "productActionableFailure": false,
+        "reason": "DIRECTIONAL_VALUE_WITH_THRESHOLD_SENSITIVE_MAGNITUDE"
+      }
+    ],
+    "allRequiredOutputsIdentical": true,
+    "allExecutionShapesValid": true,
+    "allConfigurationCacheStatesValid": true,
+    "productAttributableFailures": 0,
+    "preregisterableCausalHypothesis": null,
+    "additionalUnchangedReplicationWouldBeOptionalStopping": true
+  },
+  "decision": {
+    "verdict": "STOP_RETAIN_BOUNDED_CLAIM",
+    "retainedClaims": [
+      "QUALIFIED_SYNTHETIC_WORKLOADS_ONLY"
+    ],
+    "blockedCells": [
+      "BREADTH_BUILD_LOGIC_CHANGE_KOTLIN",
+      "BREADTH_SHARED_CHANGE_KOTLIN"
+    ],
+    "productChangeAuthorization": "NONE",
+    "additionalReplicationAuthorization": "NONE",
+    "nextAction": "NONE_WITHIN_CURRENT_POC"
+  },
+  "gate": {
+    "id": "POC-KOTLIN-BOUNDARY-G01",
+    "state": "PASSED"
+  },
+  "boundaries": {
+    "universalSavingsClaimed": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

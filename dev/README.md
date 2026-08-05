@@ -2155,6 +2155,7 @@ the strict benchmark:
 ./dev/check-poc-shared-groovy
 ./dev/check-poc-leaf-kotlin
 ./dev/check-poc-kotlin-stability
+./dev/check-poc-kotlin-boundary
 ./dev/test-poc-pairing
 ```
 
@@ -2341,6 +2342,19 @@ The checked evidence deliberately retains the failed stability gate: both
 shared-source and global-build-logic change classification between batches,
 despite exact correctness and execution guardrails. It authorizes no product
 change and requires a measurement-boundary decision before another rerun.
+
+Validate the terminal measurement-boundary decision without collecting a new
+sample:
+
+```bash
+./dev/check-poc-kotlin-boundary
+```
+
+The checker binds the decision to the exact `E-163` and `E-167` report hashes,
+recomputes four-batch classification and threshold histories for both cells,
+and requires `STOP_RETAIN_BOUNDED_CLAIM`. No further unchanged replication,
+threshold movement, pair discard, or product tuning is authorized inside the
+current POC.
 
 Validate and print the historical mechanism-development scorecard without
 rerunning a benchmark:

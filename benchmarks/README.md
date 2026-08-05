@@ -103,6 +103,8 @@ The underlying evidence and contracts are:
   and [candidate-first](./results/poc-kotlin-stability-v1-candidate-first.json)
   reports plus their [checked decision](./results/poc-kotlin-stability-v1-decision.json),
   validated by `./dev/check-poc-kotlin-stability`;
+- [terminal Kotlin boundary decision](./results/poc-kotlin-boundary-v1.json),
+  validated by `./dev/check-poc-kotlin-boundary`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
@@ -181,6 +183,20 @@ absolute floor by 31.875 ms. Build-logic retained exact five-versus-five
 execution but crossed the −2% parity boundary. The checked verdict is therefore
 `MEASUREMENT_UNSTABLE`, not a product regression, and authorizes no product
 change or broader claim.
+
+The terminal boundary review uses all four recorded batches per remaining
+Kotlin cell. Shared-source classifications alternate `PASS/FAIL/PASS/FAIL`;
+the latest failed batch still has 8/8 positive pairs and 27.2% mean savings,
+but misses the unchanged 500-ms floor by 31.875 ms. Build-logic alternates
+`FAIL/PASS/PASS/FAIL`, executes five verifications in both arms, and has no
+stable attributable regression. Every batch preserves correctness and records
+zero product failures.
+
+Because no new causal hypothesis remains, another unchanged repetition could
+only sample which side of a fixed threshold the noise lands on. The checked
+terminal verdict is therefore `STOP_RETAIN_BOUNDED_CLAIM`: retain previously
+qualified synthetic claims, keep these two cells outside generalization, and
+authorize neither product tuning nor another replication in the current POC.
 
 ### Realistic change-class result
 

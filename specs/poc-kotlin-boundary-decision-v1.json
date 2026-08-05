@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "buildopt.specs/poc-kotlin-boundary-decision/v1",
+  "workItem": "POC-KOTLIN-BOUNDARY-001",
+  "decision": "STOP_OR_PREREGISTER_ONE_FINAL_REPLICATION",
+  "inputs": {
+    "pairingEvidence": "E-163",
+    "stabilityEvidence": "E-167",
+    "cells": [
+      "BREADTH_BUILD_LOGIC_CHANGE_KOTLIN",
+      "BREADTH_SHARED_CHANGE_KOTLIN"
+    ],
+    "batchesPerCell": 4,
+    "pairsPerBatch": 8
+  },
+  "unchangedThresholds": {
+    "acceleratorMinimumSavedMs": 500,
+    "acceleratorMinimumReductionRatio": 0.02,
+    "acceleratorPositiveLower95Bound": true,
+    "parityMaximumRegressionRatio": 0.02
+  },
+  "stopCriteria": {
+    "noReproducedNegativeClassification": true,
+    "noProductAttributableFailures": true,
+    "noUnresolvedCorrectnessFailure": true,
+    "noPreregisterableCausalHypothesis": true,
+    "additionalUnchangedReplicationWouldBeOptionalStopping": true
+  },
+  "allowedDecisions": [
+    "STOP_RETAIN_BOUNDED_CLAIM",
+    "PREREGISTER_ONE_FINAL_TERMINAL_REPLICATION"
+  ],
+  "selectedDecision": "STOP_RETAIN_BOUNDED_CLAIM",
+  "prohibitions": {
+    "productTuningAuthorized": false,
+    "thresholdChangesAuthorized": false,
+    "pairDiscardAuthorized": false,
+    "additionalReplicationAuthorized": false,
+    "universalClaimAuthorized": false
+  },
+  "boundaries": {
+    "ownerControlledSyntheticWorkloads": true,
+    "productionReadiness": false,
+    "externalDesignPartner": false,
+    "eightHourSoak": false,
+    "testOptimization": false
+  }
+}

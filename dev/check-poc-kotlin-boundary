@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [DECISION_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_evidence=${1:-"${buildopt_repo_root}/benchmarks/results/poc-kotlin-boundary-v1.json"}
+buildopt_contract="${buildopt_repo_root}/specs/poc-kotlin-boundary-decision-v1.json"
+buildopt_pair_control="${buildopt_repo_root}/benchmarks/results/poc-pairing-v1-control-first.json"
+buildopt_pair_candidate="${buildopt_repo_root}/benchmarks/results/poc-pairing-v1-candidate-first.json"
+buildopt_pair_decision="${buildopt_repo_root}/benchmarks/results/poc-pairing-v1-decision.json"
+buildopt_stability_control="${buildopt_repo_root}/benchmarks/results/poc-kotlin-stability-v1-control-first.json"
+buildopt_stability_candidate="${buildopt_repo_root}/benchmarks/results/poc-kotlin-stability-v1-candidate-first.json"
+buildopt_stability_decision="${buildopt_repo_root}/benchmarks/results/poc-kotlin-stability-v1-decision.json"
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC-KOTLIN-BOUNDARY-001 command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+for buildopt_file in "${buildopt_evidence}" "${buildopt_contract}" \
+    "${buildopt_pair_control}" "${buildopt_pair_candidate}" \
+    "${buildopt_pair_decision}" "${buildopt_stability_control}" \
+    "${buildopt_stability_candidate}" "${buildopt_stability_decision}"; do
+    [[ -s "${buildopt_file}" ]] || {
+        printf 'required POC-KOTLIN-BOUNDARY-001 file is unavailable: %s\n' \
+            "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_pair_control_sha=$(sha256sum "${buildopt_pair_control}" | awk '{print $1}')
+buildopt_pair_candidate_sha=$(sha256sum "${buildopt_pair_candidate}" | awk '{print $1}')
+buildopt_pair_decision_sha=$(sha256sum "${buildopt_pair_decision}" | awk '{print $1}')
+buildopt_stability_control_sha=$(sha256sum "${buildopt_stability_control}" | awk '{print $1}')
+buildopt_stability_candidate_sha=$(sha256sum "${buildopt_stability_candidate}" | awk '{print $1}')
+buildopt_stability_decision_sha=$(sha256sum "${buildopt_stability_decision}" | awk '{print $1}')
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-kotlin-boundary-decision/v1" and
+    .workItem == "POC-KOTLIN-BOUNDARY-001" and
+    .decision == "STOP_OR_PREREGISTER_ONE_FINAL_REPLICATION" and
+    .inputs == {pairingEvidence: "E-163", stabilityEvidence: "E-167", cells: ["BREADTH_BUILD_LOGIC_CHANGE_KOTLIN", "BREADTH_SHARED_CHANGE_KOTLIN"], batchesPerCell: 4, pairsPerBatch: 8} and
+    .unchangedThresholds == {acceleratorMinimumSavedMs: 500, acceleratorMinimumReductionRatio: 0.02, acceleratorPositiveLower95Bound: true, parityMaximumRegressionRatio: 0.02} and
+    .stopCriteria == {noReproducedNegativeClassification: true, noProductAttributableFailures: true, noUnresolvedCorrectnessFailure: true, noPreregisterableCausalHypothesis: true, additionalUnchangedReplicationWouldBeOptionalStopping: true} and
+    .allowedDecisions == ["STOP_RETAIN_BOUNDED_CLAIM", "PREREGISTER_ONE_FINAL_TERMINAL_REPLICATION"] and
+    .selectedDecision == "STOP_RETAIN_BOUNDED_CLAIM" and
+    .prohibitions == {productTuningAuthorized: false, thresholdChangesAuthorized: false, pairDiscardAuthorized: false, additionalReplicationAuthorized: false, universalClaimAuthorized: false} and
+    .boundaries == {ownerControlledSyntheticWorkloads: true, productionReadiness: false, externalDesignPartner: false, eightHourSoak: false, testOptimization: false}
+' "${buildopt_contract}" >/dev/null
+
+jq -n -e \
+    --arg pairControlSha "${buildopt_pair_control_sha}" \
+    --arg pairCandidateSha "${buildopt_pair_candidate_sha}" \
+    --arg pairDecisionSha "${buildopt_pair_decision_sha}" \
+    --arg stabilityControlSha "${buildopt_stability_control_sha}" \
+    --arg stabilityCandidateSha "${buildopt_stability_candidate_sha}" \
+    --arg stabilityDecisionSha "${buildopt_stability_decision_sha}" \
+    --slurpfile pairControl "${buildopt_pair_control}" \
+    --slurpfile pairCandidate "${buildopt_pair_candidate}" \
+    --slurpfile pairDecision "${buildopt_pair_decision}" \
+    --slurpfile stabilityControl "${buildopt_stability_control}" \
+    --slurpfile stabilityCandidate "${buildopt_stability_candidate}" \
+    --slurpfile stabilityDecision "${buildopt_stability_decision}" \
+    --slurpfile evidence "${buildopt_evidence}" '
+    def cell($report; $id): $report.workloads[] | select(.id == $id);
+    def history($id; $field):
+        [cell($pairControl[0]; $id), cell($pairCandidate[0]; $id),
+         cell($stabilityControl[0]; $id), cell($stabilityCandidate[0]; $id)] |
+        map(if $field == "classification" then .classification
+            elif $field == "saved" then .result.meanSavedMs
+            elif $field == "ratio" then .result.meanReductionRatio
+            elif $field == "positive" then (.result.observations | map(select(.savedMs > 0)) | length)
+            elif $field == "lowerPositive" then (.result.interval95SavedMs[0] > 0)
+            else error("unknown history field") end);
+    def all_cells:
+        [$pairControl[0], $pairCandidate[0], $stabilityControl[0], $stabilityCandidate[0]] |
+        map([cell(.; "BREADTH_BUILD_LOGIC_CHANGE_KOTLIN"), cell(.; "BREADTH_SHARED_CHANGE_KOTLIN")]) |
+        add;
+    ($evidence | length) == 1 and
+    ($pairDecision | length) == 1 and ($stabilityDecision | length) == 1 and
+    $evidence[0].schemaVersion == "buildopt.evidence/poc-kotlin-boundary/v1" and
+    ($evidence[0].capturedAt | type == "string" and test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$")) and
+    $evidence[0].workItem == "POC-KOTLIN-BOUNDARY-001" and
+    $evidence[0].sourceEvidence == {
+        pairing: {id: "E-163", revision: $pairControl[0].buildoptRevision, controlFirstSha256: $pairControlSha, candidateFirstSha256: $pairCandidateSha, decisionSha256: $pairDecisionSha},
+        stability: {id: "E-167", revision: $stabilityControl[0].buildoptRevision, controlFirstSha256: $stabilityControlSha, candidateFirstSha256: $stabilityCandidateSha, decisionSha256: $stabilityDecisionSha}
+    } and
+    $pairControl[0].buildoptRevision == $pairCandidate[0].buildoptRevision and
+    $stabilityControl[0].buildoptRevision == $stabilityCandidate[0].buildoptRevision and
+    $pairDecision[0].decision.verdict == "MEASUREMENT_UNSTABLE" and
+    $stabilityDecision[0].decision.verdict == "MEASUREMENT_UNSTABLE" and
+    $pairDecision[0].result.mismatchedCells == ["BREADTH_BUILD_LOGIC_CHANGE_KOTLIN", "BREADTH_SHARED_CHANGE_KOTLIN"] and
+    $stabilityDecision[0].result.mismatchedCells == ["BREADTH_BUILD_LOGIC_CHANGE_KOTLIN", "BREADTH_SHARED_CHANGE_KOTLIN"] and
+    ($evidence[0].analysis.cells | length) == 2 and
+    ($evidence[0].analysis.cells[] | select(.id == "BREADTH_BUILD_LOGIC_CHANGE_KOTLIN")) as $buildLogic |
+    ($evidence[0].analysis.cells[] | select(.id == "BREADTH_SHARED_CHANGE_KOTLIN")) as $shared |
+    $buildLogic.classificationHistory == history("BREADTH_BUILD_LOGIC_CHANGE_KOTLIN"; "classification") and
+    $buildLogic.meanSavedMsHistory == history("BREADTH_BUILD_LOGIC_CHANGE_KOTLIN"; "saved") and
+    $buildLogic.meanReductionRatioHistory == history("BREADTH_BUILD_LOGIC_CHANGE_KOTLIN"; "ratio") and
+    $buildLogic.parityMarginRatioHistory == (history("BREADTH_BUILD_LOGIC_CHANGE_KOTLIN"; "ratio") | map(. + 0.02)) and
+    $buildLogic.qualifyingBatches == (history("BREADTH_BUILD_LOGIC_CHANGE_KOTLIN"; "classification") | map(select(. == "PARITY_GUARDRAIL_MET")) | length) and
+    $buildLogic.positivePairs == (history("BREADTH_BUILD_LOGIC_CHANGE_KOTLIN"; "positive") | add) and
+    $buildLogic.totalPairs == 32 and
+    $buildLogic.controlExecutedVerifications == 5 and $buildLogic.candidateExecutedVerifications == 5 and
+    $buildLogic.reproducedNegativeClassification == false and $buildLogic.productActionableFailure == false and
+    $buildLogic.reason == "NO_REDUCIBLE_WORK_AND_ORDER_SENSITIVE_PARITY" and
+    $shared.classificationHistory == history("BREADTH_SHARED_CHANGE_KOTLIN"; "classification") and
+    $shared.meanSavedMsHistory == history("BREADTH_SHARED_CHANGE_KOTLIN"; "saved") and
+    $shared.absoluteFloorMarginMsHistory == (history("BREADTH_SHARED_CHANGE_KOTLIN"; "saved") | map(. - 500)) and
+    $shared.meanReductionRatioHistory == history("BREADTH_SHARED_CHANGE_KOTLIN"; "ratio") and
+    $shared.positiveLowerBoundHistory == history("BREADTH_SHARED_CHANGE_KOTLIN"; "lowerPositive") and
+    $shared.qualifyingBatches == (history("BREADTH_SHARED_CHANGE_KOTLIN"; "classification") | map(select(. == "THRESHOLD_MET")) | length) and
+    $shared.positivePairs == (history("BREADTH_SHARED_CHANGE_KOTLIN"; "positive") | add) and
+    $shared.totalPairs == 32 and
+    $shared.controlExecutedVerifications == 5 and $shared.candidateExecutedVerifications == 2 and
+    $shared.reproducedNegativeClassification == false and $shared.productActionableFailure == false and
+    $shared.reason == "DIRECTIONAL_VALUE_WITH_THRESHOLD_SENSITIVE_MAGNITUDE" and
+    (all_cells | all(.result.requiredOutputsIdentical == true and .result.executionShapeValid == true and .result.configurationCacheValid == true and .result.productAttributableFailures == 0)) and
+    $evidence[0].analysis.batchesPerCell == 4 and $evidence[0].analysis.pairsPerBatch == 8 and
+    $evidence[0].analysis.thresholdsChanged == false and $evidence[0].analysis.newMeasurementsCollected == false and
+    $evidence[0].analysis.allRequiredOutputsIdentical == true and
+    $evidence[0].analysis.allExecutionShapesValid == true and
+    $evidence[0].analysis.allConfigurationCacheStatesValid == true and
+    $evidence[0].analysis.productAttributableFailures == 0 and
+    $evidence[0].analysis.preregisterableCausalHypothesis == null and
+    $evidence[0].analysis.additionalUnchangedReplicationWouldBeOptionalStopping == true and
+    $evidence[0].decision == {verdict: "STOP_RETAIN_BOUNDED_CLAIM", retainedClaims: ["QUALIFIED_SYNTHETIC_WORKLOADS_ONLY"], blockedCells: ["BREADTH_BUILD_LOGIC_CHANGE_KOTLIN", "BREADTH_SHARED_CHANGE_KOTLIN"], productChangeAuthorization: "NONE", additionalReplicationAuthorization: "NONE", nextAction: "NONE_WITHIN_CURRENT_POC"} and
+    $evidence[0].gate == {id: "POC-KOTLIN-BOUNDARY-G01", state: "PASSED"} and
+    $evidence[0].boundaries == {universalSavingsClaimed: false, productionReadinessClaimed: false, eightHourSoakExecuted: false, externalDesignPartnerRequired: false, testOptimizationModified: false}
+' >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'POC-KOTLIN-BOUNDARY-001 validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'BuildOpt POC-KOTLIN-BOUNDARY-001 decision OK: %s\n' "${buildopt_evidence}"

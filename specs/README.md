@@ -15,6 +15,7 @@ the exact cross-component contract.
 | [`poc-shared-groovy-validation-v1.md`](./poc-shared-groovy-validation-v1.md) and [`poc-shared-groovy-validation-v1.json`](./poc-shared-groovy-validation-v1.json) | `POC-SHARED-GROOVY-001` |
 | [`poc-leaf-kotlin-validation-v1.md`](./poc-leaf-kotlin-validation-v1.md) and [`poc-leaf-kotlin-validation-v1.json`](./poc-leaf-kotlin-validation-v1.json) | `POC-LEAF-KOTLIN-001` |
 | [`poc-kotlin-stability-validation-v1.md`](./poc-kotlin-stability-validation-v1.md) and [`poc-kotlin-stability-validation-v1.json`](./poc-kotlin-stability-validation-v1.json) | `POC-KOTLIN-STABILITY-001` |
+| [`poc-kotlin-boundary-decision-v1.md`](./poc-kotlin-boundary-decision-v1.md) and [`poc-kotlin-boundary-decision-v1.json`](./poc-kotlin-boundary-decision-v1.json) | `POC-KOTLIN-BOUNDARY-001` |
 | [`poc-overhead-attribution-v1.md`](./poc-overhead-attribution-v1.md) and [`poc-overhead-attribution-v1.json`](./poc-overhead-attribution-v1.json) | `POC-OVERHEAD-001` |
 | [`poc-breadth-validation-v1.md`](./poc-breadth-validation-v1.md) and [`poc-breadth-validation-v1.json`](./poc-breadth-validation-v1.json) | `POC-BREADTH-001` / `POC-BREADTH-G01` |
 | [`poc-value-validation-v1.md`](./poc-value-validation-v1.md) and [`poc-value-validation-v1.json`](./poc-value-validation-v1.json) | `POC-VALUE-001..004` / `POC-VALUE-G01` |
