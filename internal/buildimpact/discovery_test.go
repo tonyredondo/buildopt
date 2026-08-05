@@ -97,6 +97,13 @@ func TestSyntheticGradleDiscoveryGeneratedStateIsCurrent(t *testing.T) {
 	if !generated.Graph.Graph.Complete || !reflect.DeepEqual(generated.Graph.Graph.Projects[1].DependsOn, []string{":library-c"}) {
 		t.Fatalf("generated fixture graph = %+v", generated.Graph.Graph)
 	}
+	for _, project := range generated.Graph.Graph.Projects {
+		for _, dependency := range project.DependsOn {
+			if dependency == project.Path {
+				t.Fatalf("generated self dependency for %s", project.Path)
+			}
+		}
+	}
 }
 
 func TestPocCombinedDiscoveryIgnoresInheritedBuildSrcInit(t *testing.T) {
