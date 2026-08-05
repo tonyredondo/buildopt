@@ -62,6 +62,8 @@ if ! docker image inspect "${buildopt_image}" |
     exit 1
 fi
 
+"${buildopt_repo_root}/dev/run" -- ./gradlew --no-daemon \
+    :jvm:gradle-plugin:clean :jvm:jvm-agent:clean >/dev/null
 buildopt_archive=$("${buildopt_repo_root}/packaging/linux/package.sh" \
     --version 0.3.0-realworld001 --output "${buildopt_root}/release")
 tar -xzf "${buildopt_archive}" -C "${buildopt_root}/package"
