@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-real-world-compatibility/v1",
+  "capturedAt": "2026-08-05T08:51:46Z",
+  "specSha256": "d335fae27a477f2c4c290a541c321385de0d560a8c8e3c178aa6ca0981f71e59",
+  "buildopt": {
+    "revision": "f550cd82814768e09e75bb6a07e0d1c60ad567f5",
+    "executableSha256": "90de5b90842eed1427d9cb87441ced6a0dec23bbab1a5141918b8af0bf707c6d",
+    "gradlePluginSha256": "906e6d7d6d22d601074d68345d11da5e1cd2fa63454d248a73b18dd5c87196b2"
+  },
+  "runner": {
+    "id": "linux-amd64-4c-16g-v1",
+    "image": "docker.io/library/eclipse-temurin@sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50",
+    "platformDigest": "sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50",
+    "runnerSpecSha256": "26283e56aa7251152c7f051f7500bc86553669a808fc1cec5b736acf8f0733c9",
+    "cpuCount": 4,
+    "memoryBytes": 17179869184
+  },
+  "methodology": {
+    "purpose": "CONFIRM_PINNED_PUBLIC_REPOSITORY_COMPATIBILITY",
+    "arms": [
+      "OPTIMIZED_NATIVE_GRADLE",
+      "INSTALLED_BUILDOPT"
+    ],
+    "performanceMeasured": false,
+    "networkPolicy": "PUBLIC_SOURCE_AND_DEPENDENCY_RESOLUTION_ONLY",
+    "sourcePolicy": "PINNED_REVISION_DISPOSABLE_CHECKOUT",
+    "environmentPolicy": "EMPTY_HOME_NO_HOST_CREDENTIALS_EXCLUDED_VARIABLES_ABSENT",
+    "candidateEntryPoint": "buildopt gradle",
+    "requiredOutputDigest": "SORTED_RELATIVE_PATH_AND_SHA256"
+  },
+  "repositories": [
+    {
+      "id": "MOCKITO",
+      "nameWithOwner": "mockito/mockito",
+      "revision": "a231205b240e7884a63bf0f63440012867a4da21",
+      "sourceArchiveSha256": "11b79e41dca3390383f4243e11648025f9c42fae2e59a7e8f27c072256d3d7a6",
+      "wrapper": {
+        "jarSha256": "7d3a4ac4de1c32b59bc6a4eb8ecb8e612ccd0cf1ae1e99f66902da64df296172",
+        "propertiesSha256": "03a5cbeb07e440336d2a529e6852f93ffa3ffd3084ecd46261bf641a3514d8b1",
+        "settingsSha256": "85bfea1e2989629c5d23b29652ae965f8a39244913aebc514edd75ac04c1c5e7",
+        "distributionUrl": "https://services.gradle.org/distributions/gradle-8.14.2-bin.zip",
+        "distributionSha256": "7197a12f450794931532469d4ff21a59ea2c1cd59a3ec3f89c035c3c420a6999",
+        "checksumInjectionRequired": false
+      },
+      "native": {
+        "success": true,
+        "actionableTasks": 15,
+        "outputFileCount": 88,
+        "outputSha256": "5d6ae1b75bf461079b54bd8b6d5dc01e7e81767128919062d28fd6fbdfe975f3"
+      },
+      "candidate": {
+        "success": true,
+        "actionableTasks": 15,
+        "outputFileCount": 88,
+        "outputSha256": "5d6ae1b75bf461079b54bd8b6d5dc01e7e81767128919062d28fd6fbdfe975f3"
+      },
+      "productAttributableFailures": 0,
+      "classification": "COMPATIBLE_FOR_PERFORMANCE_MATRIX"
+    },
+    {
+      "id": "SPOTBUGS",
+      "nameWithOwner": "spotbugs/spotbugs",
+      "revision": "8d5cad4536ae263448c09181268bbca70f0c0712",
+      "sourceArchiveSha256": "15cc11ecdbb9bb697afc926fd3df87393e6d6492b9af0ec557172f8ae07849bb",
+      "wrapper": {
+        "jarSha256": "497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7",
+        "propertiesSha256": "c94d41b634a5e0ff8a2f812023697b1337eebac18e9962610356a1793f72896d",
+        "settingsSha256": "533c0cb063f2aa5c9eb2488882208dc278afea740a493d787e87ad69c74effee",
+        "distributionUrl": "https://services.gradle.org/distributions/gradle-9.6.1-bin.zip",
+        "distributionSha256": "9c0f7faeeb306cb14e4279a3e084ca6b596894089a0638e68a07c945a32c9e14",
+        "checksumInjectionRequired": true
+      },
+      "native": {
+        "success": true,
+        "actionableTasks": 24,
+        "outputFileCount": 349,
+        "outputSha256": "29f7d1f2f468698eac0865b4bd800aa8f1991a74906b7634ca7e1f5984e5e808"
+      },
+      "candidate": {
+        "success": true,
+        "actionableTasks": 24,
+        "outputFileCount": 349,
+        "outputSha256": "29f7d1f2f468698eac0865b4bd800aa8f1991a74906b7634ca7e1f5984e5e808"
+      },
+      "productAttributableFailures": 0,
+      "classification": "COMPATIBLE_FOR_PERFORMANCE_MATRIX"
+    },
+    {
+      "id": "SPOTLESS",
+      "nameWithOwner": "diffplug/spotless",
+      "revision": "cbd01c4e4b91cea538691d4fe6a8f929d75c27c6",
+      "sourceArchiveSha256": "289371172901867bacd3f76b13b9dd6cfb95c07ec45a31db7262271afc1e857b",
+      "wrapper": {
+        "jarSha256": "55243ef57851f12b070ad14f7f5bb8302daceeebc5bce5ece5fa6edb23e1145c",
+        "propertiesSha256": "032a71c92fc7f3c1cadf8880f0554b71aa6beb411f97ac253aa93932cb3784d5",
+        "settingsSha256": "6f08562db3948e3f84c891a4ce43f5642877191d0752c2e28fec81b8a9af2fb2",
+        "distributionUrl": "https://services.gradle.org/distributions/gradle-9.4.1-bin.zip",
+        "distributionSha256": "2ab2958f2a1e51120c326cad6f385153bb11ee93b3c216c5fccebfdfbb7ec6cb",
+        "checksumInjectionRequired": false
+      },
+      "native": {
+        "success": true,
+        "actionableTasks": 10,
+        "outputFileCount": 209,
+        "outputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17"
+      },
+      "candidate": {
+        "success": true,
+        "actionableTasks": 10,
+        "outputFileCount": 209,
+        "outputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17"
+      },
+      "productAttributableFailures": 0,
+      "classification": "COMPATIBLE_FOR_PERFORMANCE_MATRIX"
+    }
+  ],
+  "decision": {
+    "verdict": "AUTHORIZE_POC_REALWORLD_002",
+    "compatibleRepositories": 3,
+    "requiredRepositories": 3,
+    "performanceMeasured": false
+  },
+  "gate": {
+    "id": "POC-REALWORLD-G01",
+    "state": "PASSED"
+  },
+  "boundaries": {
+    "publicSourceOnly": true,
+    "performanceClaimAuthorized": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

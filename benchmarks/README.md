@@ -105,6 +105,8 @@ The underlying evidence and contracts are:
   validated by `./dev/check-poc-kotlin-stability`;
 - [terminal Kotlin boundary decision](./results/poc-kotlin-boundary-v1.json),
   validated by `./dev/check-poc-kotlin-boundary`;
+- [public-repository compatibility evidence](./results/poc-real-world-compatibility-v1.json),
+  validated by `./dev/check-poc-real-world-compatibility`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
@@ -113,9 +115,10 @@ The underlying evidence and contracts are:
   and [contract](../specs/build-impact-performance-v1.md).
 
 The three mechanism-development reports remain historical inputs. The strict
-reports are the current decision evidence. They prove bounded combined
-value but do not yet prove realistic breadth; none claims universal savings or
-production readiness.
+synthetic reports prove bounded combined value, while the public-repository
+report proves compatibility only. No public-repository timing result exists
+yet, and none of these documents claims universal savings or production
+readiness.
 
 ### Calibrated Groovy result
 

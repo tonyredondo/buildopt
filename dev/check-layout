@@ -366,6 +366,7 @@ buildopt_required_files=(
     "benchmarks/results/poc-kotlin-stability-v1-candidate-first.json"
     "benchmarks/results/poc-kotlin-stability-v1-decision.json"
     "benchmarks/results/poc-kotlin-boundary-v1.json"
+    "benchmarks/results/poc-real-world-compatibility-v1.json"
     "specs/deployment-lifecycle-v1.json"
     "specs/deployment-lifecycle-v1.md"
     "specs/beta-benchmark-harness-v1.json"
