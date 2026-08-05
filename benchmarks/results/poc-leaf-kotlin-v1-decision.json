@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-leaf-kotlin-decision/v1",
+  "capturedAt": "2026-08-05T05:46:06Z",
+  "buildoptRevision": "948d579d3ba4344730bd1c1c5f6a3d9014191e9f",
+  "reports": {
+    "controlFirstSha256": "bfd267590540ba3cf3b7fc0e508bbb72eddfd20880f36aabbafef042ddbc5225",
+    "candidateFirstSha256": "bb4aff0d985e58ccde8a4d0a6c7d276224fc1e94c4e930940561574e927da6ea"
+  },
+  "result": {
+    "classificationReproduced": true,
+    "reproducedCells": [
+      "BREADTH_LEAF_CHANGE_KOTLIN"
+    ],
+    "reproducedQualifiedCells": [
+      "BREADTH_LEAF_CHANGE_KOTLIN"
+    ],
+    "reproducedFailureCells": [],
+    "mismatchedCells": [],
+    "controlFirstQualifyingCells": 1,
+    "candidateFirstQualifyingCells": 1,
+    "maximumObservedInterArmIdleGapMs": 121.475328
+  },
+  "decision": {
+    "verdict": "CLASSIFICATIONS_REPRODUCED",
+    "breadthClaim": "BROADEN_SYNTHETIC_CLAIM",
+    "productChangeAuthorization": {
+      "scope": "NONE",
+      "authorizedCells": [],
+      "blockedCells": []
+    },
+    "nextExperiment": "NONE"
+  },
+  "gate": {
+    "id": "POC-LEAF-KOTLIN-G01",
+    "state": "PASSED"
+  },
+  "boundaries": {
+    "thresholdsChanged": false,
+    "universalSavingsClaimed": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

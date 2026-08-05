@@ -95,6 +95,10 @@ The underlying evidence and contracts are:
   and [candidate-first](./results/poc-shared-groovy-v1-candidate-first.json)
   reports plus their [checked decision](./results/poc-shared-groovy-v1-decision.json),
   validated by `./dev/check-poc-shared-groovy`;
+- [leaf-source Kotlin control-first](./results/poc-leaf-kotlin-v1-control-first.json)
+  and [candidate-first](./results/poc-leaf-kotlin-v1-candidate-first.json)
+  reports plus their [checked decision](./results/poc-leaf-kotlin-v1-decision.json),
+  validated by `./dev/check-poc-leaf-kotlin`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
@@ -144,6 +148,20 @@ executed by the optimized native control. All 16 pairs preserved byte-identical
 required outputs, Configuration Cache reuse, and zero product failures. The
 historical failure is therefore attributed to the already corrected launcher
 and measurement boundary, not to a remaining shared-source product defect.
+
+The equivalent calibrated Kotlin boundary also resolves the historical
+leaf-source mismatch without another product change:
+
+| Starting order | Leaf source |
+|---|---:|
+| Control first | 1,112.875 ms / 49.6% faster; +870.5 ms lower bound |
+| Candidate first | 833.75 ms / 39.4% faster; +601.25 ms lower bound |
+
+Build Impact executed exactly one affected verification instead of the five
+executed by the optimized native control. All 16 pairs were positive and
+preserved byte-identical required outputs, Configuration Cache reuse, and zero
+product failures. The percentages remain separate by batch and broaden only
+this bounded synthetic Kotlin leaf cell.
 
 ### Realistic change-class result
 

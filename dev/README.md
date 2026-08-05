@@ -2153,6 +2153,7 @@ the strict benchmark:
 ./dev/check-poc-pairing
 ./dev/check-poc-groovy
 ./dev/check-poc-shared-groovy
+./dev/check-poc-leaf-kotlin
 ./dev/test-poc-pairing
 ```
 
@@ -2285,6 +2286,32 @@ BUILDOPT_POC_PAIRING_PROFILE=GROOVY_SHARED_VALUE \
 
 The checked reports require five control verifications, two affected candidate
 verifications, unchanged thresholds, identical outputs, and classification
+agreement across both starting orders.
+
+Measure the leaf-source Kotlin cell on its equivalent calibrated boundary with:
+
+```bash
+BUILDOPT_POC_PAIRING_PROFILE=KOTLIN_LEAF_VALUE \
+  ./dev/run-poc-pairing-container \
+    /tmp/poc-leaf-kotlin-control-first.json \
+    leaf-kotlin-control-first CONTROL_FIRST
+BUILDOPT_POC_PAIRING_PROFILE=KOTLIN_LEAF_VALUE \
+  ./dev/run-poc-pairing-container \
+    /tmp/poc-leaf-kotlin-candidate-first.json \
+    leaf-kotlin-candidate-first CANDIDATE_FIRST
+BUILDOPT_POC_PAIRING_PROFILE=KOTLIN_LEAF_VALUE \
+  ./dev/assemble-poc-pairing-decision \
+    /tmp/poc-leaf-kotlin-decision.json \
+    /tmp/poc-leaf-kotlin-control-first.json \
+    /tmp/poc-leaf-kotlin-candidate-first.json
+./dev/check-poc-leaf-kotlin \
+  /tmp/poc-leaf-kotlin-control-first.json \
+  /tmp/poc-leaf-kotlin-candidate-first.json \
+  /tmp/poc-leaf-kotlin-decision.json
+```
+
+The checked reports require five control verifications, one affected candidate
+verification, unchanged thresholds, identical outputs, and classification
 agreement across both starting orders.
 
 Validate and print the historical mechanism-development scorecard without
