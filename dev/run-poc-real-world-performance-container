@@ -198,6 +198,7 @@ buildopt_run_arm() {
     local buildopt_container=$4
     local buildopt_log=$5
     local buildopt_offline=$6
+    local buildopt_require_cc_reuse=$7
     local buildopt_declared_task
     local buildopt_configuration_cache
     local buildopt_status
@@ -278,7 +279,7 @@ buildopt_run_arm() {
     if grep -Fq 'Reusing configuration cache.' "${buildopt_log}"; then
         buildopt_configuration_cache_reused=true
     fi
-    if [[ "${buildopt_offline}" == true &&
+    if [[ "${buildopt_require_cc_reuse}" == true &&
         "${buildopt_configuration_cache}" != "${buildopt_configuration_cache_reused}" ]]; then
         printf 'POC-REALWORLD-002 Configuration Cache state mismatch\n' >&2
         return 1
@@ -433,18 +434,18 @@ for buildopt_repository_index in 0 1 2; do
 
         buildopt_run_arm "${buildopt_repository_index}" "${buildopt_scenario}" \
             CONTROL "${buildopt_control_container}" \
-            "${buildopt_scenario_root}/preflight-control.log" false
+            "${buildopt_scenario_root}/preflight-control.log" false false
         buildopt_run_arm "${buildopt_repository_index}" "${buildopt_scenario}" \
             CANDIDATE "${buildopt_candidate_container}" \
-            "${buildopt_scenario_root}/preflight-candidate.log" false
+            "${buildopt_scenario_root}/preflight-candidate.log" false false
         docker network disconnect bridge "${buildopt_control_container}"
         docker network disconnect bridge "${buildopt_candidate_container}"
         buildopt_run_arm "${buildopt_repository_index}" "${buildopt_scenario}" \
             CONTROL "${buildopt_control_container}" \
-            "${buildopt_scenario_root}/warm-control.log" true
+            "${buildopt_scenario_root}/warm-control.log" true false
         buildopt_run_arm "${buildopt_repository_index}" "${buildopt_scenario}" \
             CANDIDATE "${buildopt_candidate_container}" \
-            "${buildopt_scenario_root}/warm-candidate.log" true
+            "${buildopt_scenario_root}/warm-candidate.log" true false
 
         buildopt_source_path=$(jq -er \
             ".repositories[${buildopt_repository_index}].sourceChange.path" \
@@ -486,7 +487,7 @@ for buildopt_repository_index in 0 1 2; do
 
             if [[ "${buildopt_order}" == CONTROL_FIRST ]]; then
                 buildopt_run_arm "${buildopt_repository_index}" "${buildopt_scenario}" \
-                    CONTROL "${buildopt_control_container}" "${buildopt_control_log}" true
+                    CONTROL "${buildopt_control_container}" "${buildopt_control_log}" true true
                 buildopt_control_ms=${buildopt_duration_ms}
                 buildopt_control_finished=${buildopt_finished_ns}
                 buildopt_control_cc=${buildopt_configuration_cache_reused}
@@ -494,7 +495,7 @@ for buildopt_repository_index in 0 1 2; do
                     "${buildopt_repository_index}" "${buildopt_scenario}" \
                     "${buildopt_scenario_root}/pair-${buildopt_pair}-control.outputs"
                 buildopt_run_arm "${buildopt_repository_index}" "${buildopt_scenario}" \
-                    CANDIDATE "${buildopt_candidate_container}" "${buildopt_candidate_log}" true
+                    CANDIDATE "${buildopt_candidate_container}" "${buildopt_candidate_log}" true true
                 buildopt_candidate_ms=${buildopt_duration_ms}
                 buildopt_gap_ms=$(((buildopt_started_ns - buildopt_control_finished) / 1000000))
                 buildopt_candidate_cc=${buildopt_configuration_cache_reused}
@@ -504,7 +505,7 @@ for buildopt_repository_index in 0 1 2; do
                     "${buildopt_scenario_root}/pair-${buildopt_pair}-candidate.outputs"
             else
                 buildopt_run_arm "${buildopt_repository_index}" "${buildopt_scenario}" \
-                    CANDIDATE "${buildopt_candidate_container}" "${buildopt_candidate_log}" true
+                    CANDIDATE "${buildopt_candidate_container}" "${buildopt_candidate_log}" true true
                 buildopt_candidate_ms=${buildopt_duration_ms}
                 buildopt_candidate_finished=${buildopt_finished_ns}
                 buildopt_candidate_cc=${buildopt_configuration_cache_reused}
@@ -513,7 +514,7 @@ for buildopt_repository_index in 0 1 2; do
                     "${buildopt_repository_index}" "${buildopt_scenario}" \
                     "${buildopt_scenario_root}/pair-${buildopt_pair}-candidate.outputs"
                 buildopt_run_arm "${buildopt_repository_index}" "${buildopt_scenario}" \
-                    CONTROL "${buildopt_control_container}" "${buildopt_control_log}" true
+                    CONTROL "${buildopt_control_container}" "${buildopt_control_log}" true true
                 buildopt_control_ms=${buildopt_duration_ms}
                 buildopt_gap_ms=$(((buildopt_started_ns - buildopt_candidate_finished) / 1000000))
                 buildopt_control_cc=${buildopt_configuration_cache_reused}
