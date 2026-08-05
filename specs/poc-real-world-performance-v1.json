@@ -102,7 +102,7 @@
         "NO_CHANGE": [
           "mockito-core/build/classes",
           "mockito-extensions/mockito-junit-jupiter/build/classes",
-          "mockito-extensions/mockito-subclass/build/classes",
+          "mockito-extensions/mockito-subclass/build/resources/main",
           "mockito-extensions/mockito-proxy/build/classes",
           "mockito-extensions/mockito-errorprone/build/classes"
         ],
