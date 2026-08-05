@@ -10,7 +10,7 @@ buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_policy="${buildopt_repo_root}/specs/tier-one-cache-policy-v1.json"
 
-for buildopt_command in awk find git grep jar jq readlink unzip; do
+for buildopt_command in awk curl find git grep jar jq mktemp mv readlink rmdir sha256sum unzip; do
     if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
         printf 'required Tier 1 policy command is unavailable: %s\n' \
             "${buildopt_command}" >&2
@@ -40,6 +40,12 @@ if ! jq -e '
         "cacheConfigurationOwner": "A0-003"
     } and
     .provenRuntimes == [
+        {
+            "gradle": "8.14.2",
+            "jdks": [21],
+            "operatingSystem": "linux",
+            "architecture": "amd64"
+        },
         {
             "gradle": "8.14.3",
             "jdks": [17, 21],
@@ -110,6 +116,7 @@ mkdir -p -- "${GRADLE_USER_HOME}"
     --offline \
     --no-configuration-cache \
     --warning-mode=fail \
+    :jvm:gradle-plugin:clean \
     :jvm:gradle-plugin:jar
 
 buildopt_gradle_9_home=$(
@@ -120,14 +127,67 @@ buildopt_gradle_9_home=$(
         -print \
         -quit
 )
+buildopt_compat_root="${buildopt_repo_root}/.tools/gradle-compat"
+buildopt_gradle_8142_home="${buildopt_compat_root}/gradle-8.14.2"
 buildopt_gradle_8_home="${buildopt_repo_root}/.tools/gradle-compat/gradle-8.14.3"
+
+buildopt_provision_compat_gradle() {
+    local buildopt_version=$1
+    local buildopt_sha=$2
+    local buildopt_url=$3
+    local buildopt_archive="${buildopt_compat_root}/gradle-${buildopt_version}-bin.zip"
+    local buildopt_home="${buildopt_compat_root}/gradle-${buildopt_version}"
+    local buildopt_download
+    local buildopt_extract
+
+    mkdir -p -- "${buildopt_compat_root}"
+    if [[ ! -f "${buildopt_archive}" ]] ||
+        ! printf '%s  %s\n' "${buildopt_sha}" "${buildopt_archive}" |
+            sha256sum -c - >/dev/null 2>&1; then
+        buildopt_download=$(mktemp "${buildopt_compat_root}/gradle-${buildopt_version}.XXXXXX")
+        curl \
+            --fail \
+            --location \
+            --proto '=https' \
+            --retry 3 \
+            --retry-delay 1 \
+            --show-error \
+            --silent \
+            --output "${buildopt_download}" \
+            "${buildopt_url}"
+        printf '%s  %s\n' "${buildopt_sha}" "${buildopt_download}" |
+            sha256sum -c - >/dev/null
+        mv -f -- "${buildopt_download}" "${buildopt_archive}"
+    fi
+    if [[ ! -x "${buildopt_home}/bin/gradle" ]]; then
+        buildopt_extract=$(mktemp -d "${buildopt_compat_root}/extract-${buildopt_version}.XXXXXX")
+        unzip -q "${buildopt_archive}" -d "${buildopt_extract}"
+        if [[ ! -x "${buildopt_extract}/gradle-${buildopt_version}/bin/gradle" ]]; then
+            printf 'Gradle %s archive has an unexpected layout\n' "${buildopt_version}" >&2
+            exit 1
+        fi
+        mv -- "${buildopt_extract}/gradle-${buildopt_version}" "${buildopt_home}"
+        rmdir -- "${buildopt_extract}"
+    fi
+}
+
+buildopt_provision_compat_gradle \
+    8.14.2 \
+    7197a12f450794931532469d4ff21a59ea2c1cd59a3ec3f89c035c3c420a6999 \
+    https://services.gradle.org/distributions/gradle-8.14.2-bin.zip
+buildopt_provision_compat_gradle \
+    8.14.3 \
+    bd71102213493060956ec229d946beee57158dbd89d0e62b91bca0fa2c5f3531 \
+    https://services.gradle.org/distributions/gradle-8.14.3-bin.zip
 if [[ -z "${buildopt_gradle_9_home}" ||
     ! -x "${buildopt_gradle_9_home}/bin/gradle" ||
+    ! -x "${buildopt_gradle_8142_home}/bin/gradle" ||
     ! -x "${buildopt_gradle_8_home}/bin/gradle" ]]; then
-    printf 'both pinned Gradle distributions must be provisioned\n' >&2
+    printf 'all pinned Gradle distributions must be provisioned\n' >&2
     exit 1
 fi
 buildopt_gradle_9_home=$(readlink -f "${buildopt_gradle_9_home}")
+buildopt_gradle_8142_home=$(readlink -f "${buildopt_gradle_8142_home}")
 buildopt_gradle_8_home=$(readlink -f "${buildopt_gradle_8_home}")
 
 buildopt_java_17=$(readlink -f "$(command -v java)")
@@ -177,8 +237,8 @@ if [[ ! -x "${buildopt_java_25_home}/bin/java" ]]; then
     exit 1
 fi
 
-buildopt_versions=("8.14.3" "9.6.1")
-buildopt_gradle_homes=("${buildopt_gradle_8_home}" "${buildopt_gradle_9_home}")
+buildopt_versions=("8.14.2" "8.14.3" "9.6.1")
+buildopt_gradle_homes=("${buildopt_gradle_8142_home}" "${buildopt_gradle_8_home}" "${buildopt_gradle_9_home}")
 buildopt_java_majors=(17 21 25)
 buildopt_java_homes=(
     "${buildopt_java_17_home}"
@@ -188,6 +248,10 @@ buildopt_java_homes=(
 
 for buildopt_version_index in "${!buildopt_versions[@]}"; do
     for buildopt_java_index in "${!buildopt_java_majors[@]}"; do
+        if [[ "${buildopt_versions[buildopt_version_index]}" == "8.14.2" &&
+            "${buildopt_java_majors[buildopt_java_index]}" != "21" ]]; then
+            continue
+        fi
         if [[ "${buildopt_versions[buildopt_version_index]}" == "8.14.3" &&
             "${buildopt_java_majors[buildopt_java_index]}" == "25" ]]; then
             continue
@@ -242,4 +306,4 @@ if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
     exit 1
 fi
 
-printf 'A0-002 Tier 1 policy OK: 10 Gradle/JDK/DSL rows, exact JavaCompile/custom policy, Gradle 9 Test deny, modified/transform fallbacks\n'
+printf 'A0-002 Tier 1 policy OK: 12 Gradle/JDK/DSL rows, exact JavaCompile/custom policy, Gradle 9 Test deny, modified/transform fallbacks\n'

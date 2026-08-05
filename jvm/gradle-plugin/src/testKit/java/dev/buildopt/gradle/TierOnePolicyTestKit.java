@@ -292,9 +292,28 @@ public final class TierOnePolicyTestKit {
     }
 
     private static void deleteTree(Path root) throws IOException {
-        if (!Files.exists(root)) {
-            return;
+        IOException lastFailure = null;
+        for (int attempt = 0; attempt < 20; attempt++) {
+            if (!Files.exists(root)) {
+                return;
+            }
+            try {
+                deleteTreeOnce(root);
+                return;
+            } catch (IOException failure) {
+                lastFailure = failure;
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException interrupted) {
+                    Thread.currentThread().interrupt();
+                    throw new IOException("interrupted while deleting " + root, interrupted);
+                }
+            }
         }
+        throw lastFailure;
+    }
+
+    private static void deleteTreeOnce(Path root) throws IOException {
         Files.walkFileTree(
                 root,
                 new SimpleFileVisitor<>() {

@@ -8,6 +8,12 @@
   },
   "provenRuntimes": [
     {
+      "gradle": "8.14.2",
+      "jdks": [21],
+      "operatingSystem": "linux",
+      "architecture": "amd64"
+    },
+    {
       "gradle": "8.14.3",
       "jdks": [17, 21],
       "operatingSystem": "linux",

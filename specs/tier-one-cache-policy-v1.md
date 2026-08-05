@@ -24,6 +24,7 @@ their original behavior.
 The versioned adapter is enabled only on Linux AMD64 for the rows actually
 executed by the repository:
 
+- Gradle 8.14.2 on JDK 21, limited to the policy/private-L1 POC path;
 - Gradle 8.14.3 on JDK 17 or 21;
 - Gradle 9.6.1 on JDK 17, 21, or 25;
 - Kotlin or Groovy DSL.
@@ -32,7 +33,8 @@ Every other Gradle/JDK/platform combination disables the managed cache for
 that invocation. No row inherits another version's internal adapter.
 
 The adapter inventories Gradle's complete project transform registry through
-the exact 8.14.3/9.6.1 internal contract. The v1 transform allowlist is empty.
+the exact 8.14.2/8.14.3/9.6.1 internal contract. The v1 transform allowlist is
+empty.
 Any registered transform, unavailable inventory, linkage drift, or provider
 failure disables the managed cache for the complete Gradle build. A transform
 is never treated as a task and the implementation does not claim a
@@ -70,7 +72,7 @@ machine-readable closed allowlist. Run:
 ```
 
 The checker validates the exact document and packaged plugin marker, then
-executes both DSL fixtures on all ten proven Gradle/JDK/DSL rows with isolated
+executes both DSL fixtures on all twelve proven Gradle/JDK/DSL rows with isolated
 TestKit homes and Configuration Cache. It proves source-set `compileJava` and
 `compileTestJava` replay from cache while a custom cacheable task executes
 again. All six Gradle 9.6.1 rows also execute `Test` twice and prove it cannot
@@ -79,6 +81,9 @@ of suppressing its framework-autoload deprecation in the empty-test fixture.
 Every row also proves that an added action rejects the built-in and that one
 unknown artifact transform disables the otherwise allowed compile task and
 intentionally prevents Configuration Cache reuse for the fail-closed build.
+The 8.14.2/JDK 21 rows exist solely to validate the public-repository POC path
+discovered through Mockito; they do not promote that runtime into the broader
+capability matrix.
 
 `A0-G01` composes this default-deny matrix with the separate HTTP/backend fault
 checker. `A0-G08` strengthens the `Test` branch with a dedicated no-grant
