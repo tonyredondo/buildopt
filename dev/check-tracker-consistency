@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS; PUBLIC BUILD-TASK EXPERIMENTS CLOSED\`"
-    "**Current phase:** \`POC PUBLIC VALUE DECISION COMPLETE\`"
+    "**Overall status:** \`POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS; SPRING REAL-WORLD ITERATION PREREGISTERED\`"
+    "**Current phase:** \`POC SPRING BASELINE\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"
@@ -99,6 +99,10 @@ buildopt_required_tracker_text=(
     "| \`POC-SPOTLESS-IMPACT-G01\` | Beat the unchanged accelerator threshold on the frozen Spotless leaf-project change against its optimized native Gradle workflow, with byte-identical main/test classes and the complete \`spotlessCheck\` command | Public-workflow Build Impact decision | \`FAILED\`"
     "| \`POC-MOCKITO-TEST-BUILD-001\` | Run the frozen paired \`:mockito-core:testClasses\` Safe Cache experiment against optimized native Gradle | \`DONE\`"
     "| \`POC-MOCKITO-TEST-BUILD-G01\` | Beat the unchanged accelerator threshold for \`:mockito-core:testClasses\` against optimized native cache, then reproduce net value in the exact workflow with every requested test unchanged | Public test-build Safe Cache decision | \`FAILED\`"
+    "| \`POC-SPRING-PREREG-001\` | Freeze Spring Framework revision, native Gradle control, 12-CPU runner, workload cells, ownership boundaries, outputs, tests, and unchanged value gate | \`DONE\`"
+    "| \`POC-SPRING-DIAGNOSTIC-001\` | Run unmeasured setup and offline diagnostics for \`assemble\`, \`testClasses\`, and \`check\` without summing task durations into savings | \`TODO\`"
+    "| \`POC-SPRING-PREREG-G01\` | Freeze a substantial Spring Framework experiment against its existing cache-enabled, parallel Gradle control before any local timing | Spring value-iteration boundary | \`DONE\`"
+    "| \`POC-SPRING-VALUE-G01\` | At least one generic Spring mechanism clears the unchanged 500-ms/2%/positive-bound gate with identical outputs and all requested tests preserved | OpenTelemetry transfer | \`WAITING\`"
     "| \`A1-G06\` | Safe Cache is non-regressive versus optimized native cache"
     "| \`B-G03\` | Runtime Tuning exceeds the POC accelerator threshold"
     "| \`C1-001\` | Opt-in JVM Agent with coverage and budgets | \`UNAVAILABLE\`"
@@ -140,5 +144,5 @@ if [[ $(grep -Fc "| \`OPS-001/B\` |" <<<"${buildopt_readiness}") != 1 ]]; then
     exit 1
 fi
 
-printf 'RFC/tracker consistency OK: %s accepted decisions, public build-task experiments closed\n' \
+printf 'RFC/tracker consistency OK: %s accepted decisions, Spring baseline preregistered\n' \
     "${buildopt_decision_count}"

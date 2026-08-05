@@ -2493,6 +2493,20 @@ and its 95% interval crossed zero. The gated complete Mockito workflow was not
 run. To create a fresh preregistered capture from a clean checkout, use
 `./dev/run-poc-mockito-test-build-container <output.json>`.
 
+Validate the Spring Framework value-iteration contract before running its
+long baseline or observing any local timing:
+
+```bash
+./dev/check-poc-spring-framework
+```
+
+The contract pins a public revision with green upstream CI, Gradle 9.6.1,
+Temurin 25, the 12-CPU local runner, and separate `assemble`, `testClasses`,
+and `check` cells. Spring's native Build Cache and parallel execution remain
+enabled. No result may be transferred to OpenTelemetry unless it clears the
+unchanged 500-ms, 2%, and positive-lower-bound gate with identical outputs and
+all requested tests preserved.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

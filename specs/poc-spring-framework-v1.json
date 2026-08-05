@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "buildopt.specs/poc-spring-framework/v1",
+  "workItem": "POC-SPRING-PREREG-001",
+  "decision": "PREREGISTER_OPTIMIZED_NATIVE_SPRING_VALUE_ITERATION",
+  "repository": {
+    "nameWithOwner": "spring-projects/spring-framework",
+    "revision": "4b5c92703c63966c3471242c621c4a63b382638d",
+    "sourceArchiveUrl": "https://codeload.github.com/spring-projects/spring-framework/tar.gz/4b5c92703c63966c3471242c621c4a63b382638d",
+    "sourceArchiveSha256": "e3fa4258e5e568c0b0e6f1605956cd743cff847b9df7c82ce86b2d2f1109db16",
+    "wrapperJarSha256": "497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7",
+    "wrapperPropertiesSha256": "c94d41b634a5e0ff8a2f812023697b1337eebac18e9962610356a1793f72896d",
+    "settingsSha256": "6ec3ec6edae99fd4962c3c883753ad299ee9a6a84b189b0b6c19a9b13bb699ad",
+    "gradlePropertiesSha256": "1d9b83934806d82172d67695cabcb4ea675b67d83eaaa4bbc9ba15bb49201ad9",
+    "gradleVersion": "9.6.1",
+    "java": "TEMURIN_25_0_3_PLUS_9",
+    "projectCount": 27
+  },
+  "upstreamControl": {
+    "workflow": "Build Pull Request",
+    "runId": 30990220928,
+    "runUrl": "https://github.com/spring-projects/spring-framework/actions/runs/30990220928",
+    "command": ["check", "antora"],
+    "observedBuildStepMs": 756000,
+    "buildCacheEnabled": true,
+    "parallelEnabled": true,
+    "configurationCacheEnabled": false,
+    "secretsRequired": false
+  },
+  "primaryRunner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12,
+    "runnerIsContractualFourCpuClass": false,
+    "resourceFactsRecordedInEvidence": true
+  },
+  "change": {
+    "class": "LEAF_PRODUCTION_SOURCE",
+    "path": "spring-jms/src/main/java/org/springframework/jms/JmsException.java",
+    "originalSha256": "61098f8411fd6a379cedb20c2cfed267979eff8ef3f6af7cd5c0fe5bb7b33138",
+    "mutation": "APPEND_PAIR_COMMENT",
+    "project": ":spring-jms"
+  },
+  "diagnostic": {
+    "workItem": "POC-SPRING-DIAGNOSTIC-001",
+    "onlinePreflightMeasured": false,
+    "measuredNetwork": "DISCONNECTED",
+    "dependencyMode": "GRADLE_OFFLINE",
+    "commands": [
+      {
+        "id": "BUILD_OUTPUTS",
+        "arguments": ["assemble", "--no-scan", "--stacktrace", "--max-workers=12"]
+      },
+      {
+        "id": "TEST_PREPARATION",
+        "arguments": ["testClasses", "--no-scan", "--stacktrace", "--max-workers=12"]
+      },
+      {
+        "id": "FULL_VERIFICATION",
+        "arguments": ["check", "--no-scan", "--stacktrace", "--max-workers=12"]
+      }
+    ],
+    "taskDurationsMayBeSummedAsWallClockSavings": false,
+    "savingsClaimed": false
+  },
+  "mechanismBoundaries": {
+    "BUILD_OUTPUTS": {
+      "allowedMechanism": "BUILD_IMPACT",
+      "testTasksRequested": false,
+      "candidateMayOmitUnaffectedBuildProjects": true
+    },
+    "TEST_PREPARATION": {
+      "allowedMechanism": "SAFE_CACHE_OR_BUILD_IMPACT_FOR_BUILD_OWNED_TASKS",
+      "testTasksRequested": false,
+      "candidateMayOmitTestTasks": false
+    },
+    "FULL_VERIFICATION": {
+      "allowedMechanism": "RUNTIME_TUNING_WITH_UNCHANGED_TEST_SET",
+      "testTasksRequested": true,
+      "candidateMayOmitTestTasks": false
+    }
+  },
+  "followUpMeasurement": {
+    "authorization": "ONLY_GENERIC_HYPOTHESES_SUPPORTED_BY_DIAGNOSTIC",
+    "workspaceState": "PERSISTENT_PRIVATE_PER_ARM_AND_CELL",
+    "gradleUserHome": "PERSISTENT_PRIVATE_PER_ARM_AND_CELL",
+    "daemon": "PERSISTENT_PRIVATE_PER_ARM_AND_CELL",
+    "warmupsPerCell": 1,
+    "batches": 2,
+    "pairsPerBatch": 4,
+    "pairsPerCell": 8,
+    "pairOrder": "ALTERNATING_WITH_OPPOSITE_BATCH_START",
+    "maximumInterArmIdleGapMs": 5000,
+    "confidenceInterval": "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
+    "requiredOutputDigest": "SORTED_RELATIVE_PATH_AND_SHA256",
+    "requiredTestEvidence": "SORTED_TASK_PATH_TEST_CASE_AND_OUTCOME",
+    "controlMustRetainUpstreamBuildCache": true,
+    "controlMustRetainUpstreamParallelism": true
+  },
+  "valueGate": {
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "requiredOutputsIdentical": true,
+    "requiredOutputsNonEmpty": true,
+    "allRequestedTestsIdentical": true,
+    "maximumProductAttributableFailures": 0,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedPairsMayBeDiscarded": false,
+    "parityAloneCountsAsValue": false
+  },
+  "transfer": {
+    "repository": "open-telemetry/opentelemetry-java-instrumentation",
+    "authorizedOnlyAfterSpringQualifies": true,
+    "repositorySpecificProductChangesAllowed": false,
+    "sameMechanismAndGateRequired": true
+  },
+  "boundaries": {
+    "publicSourceOnly": true,
+    "proofOfConcept": true,
+    "performanceMeasuredByThisContract": false,
+    "savingsClaimedByThisContract": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}
