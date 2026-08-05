@@ -2,6 +2,7 @@ package dev.buildopt.gradle;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import org.gradle.api.Action;
@@ -29,6 +30,10 @@ final class BuildOptTierOnePolicy {
             "org.gradle.api.tasks.compile.JavaCompile_Decorated";
     private static final String INCREMENTAL_TASK_ACTION =
             "org.gradle.api.internal.project.taskfactory.IncrementalTaskAction";
+    private static final String GRAALVM_JAR_ANALYZER_TRANSFORM =
+            "org.graalvm.buildtools.gradle.tasks.scanner.JarAnalyzerTransform";
+    private static final String GRAALVM_NATIVE_PLUGIN_ARTIFACT =
+            "native-gradle-plugin-0.11.1.jar";
 
     private BuildOptTierOnePolicy() {}
 
@@ -53,20 +58,40 @@ final class BuildOptTierOnePolicy {
                 VariantTransformRegistry registry =
                         internal.getServices().get(VariantTransformRegistry.class);
                 for (TransformRegistration registration : registry.getRegistrations()) {
-                    String implementation =
+                    Class<?> implementation =
                             registration
                                     .getTransformStep()
                                     .getTransform()
-                                    .getImplementationClass()
-                                    .getName();
+                                    .getImplementationClass();
+                    if (isAllowlistedArtifactTransform(implementation)) {
+                        continue;
+                    }
                     return InvocationDecision.disabled(
-                            "unknown artifact transform " + implementation);
+                            "unknown artifact transform " + implementation.getName());
                 }
             }
         } catch (LinkageError | RuntimeException failure) {
             return InvocationDecision.disabled("artifact transform inventory unavailable");
         }
         return InvocationDecision.enabled();
+    }
+
+    private static boolean isAllowlistedArtifactTransform(Class<?> implementation) {
+        if (!implementation.getName().equals(GRAALVM_JAR_ANALYZER_TRANSFORM)) {
+            return false;
+        }
+        try {
+            Path codeSource =
+                    Path.of(
+                            implementation
+                                    .getProtectionDomain()
+                                    .getCodeSource()
+                                    .getLocation()
+                                    .toURI());
+            return codeSource.getFileName().toString().equals(GRAALVM_NATIVE_PLUGIN_ARTIFACT);
+        } catch (Exception failure) {
+            return false;
+        }
     }
 
     static boolean isAllowlistedIdentity(Task task) {

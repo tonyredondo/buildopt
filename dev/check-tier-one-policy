@@ -72,7 +72,17 @@ if ! jq -e '
             ]
         }
     ] and
-    .artifactTransformAllowlist == [] and
+    .artifactTransformAllowlist == [
+        {
+            "id": "GRAALVM_JAR_ANALYZER_0_11_1",
+            "implementation": "org.graalvm.buildtools.gradle.tasks.scanner.JarAnalyzerTransform",
+            "providerPluginId": "org.graalvm.buildtools.native",
+            "providerVersion": "0.11.1",
+            "artifactName": "native-gradle-plugin-0.11.1.jar",
+            "artifactSha256": "2157468a5c3571e5f99db4ed9d4d3890826bd9f34dab940e3b66fa4665e2c842",
+            "sourceRevision": "65456319db1a15b6bf57e2fb143447b2f7839483"
+        }
+    ] and
     .defaultDeny == {
         "disallowedTask": "DO_NOT_CACHE",
         "testWithoutGrant": "DO_NOT_CACHE",

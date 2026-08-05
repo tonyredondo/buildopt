@@ -33,11 +33,18 @@ Every other Gradle/JDK/platform combination disables the managed cache for
 that invocation. No row inherits another version's internal adapter.
 
 The adapter inventories Gradle's complete project transform registry through
-the exact 8.14.2/8.14.3/9.6.1 internal contract. The v1 transform allowlist is
-empty.
-Any registered transform, unavailable inventory, linkage drift, or provider
-failure disables the managed cache for the complete Gradle build. A transform
-is never treated as a task and the implementation does not claim a
+the exact 8.14.2/8.14.3/9.6.1 internal contract. The sole POC transform entry
+is GraalVM Native Build Tools 0.11.1
+`org.graalvm.buildtools.gradle.tasks.scanner.JarAnalyzerTransform`, bound to
+the exact provider, artifact name, public artifact SHA-256, and source
+revision recorded in the machine-readable policy. Runtime activation requires
+both the implementation name and the versioned artifact name; Gradle's native
+implementation snapshot and input model remain authoritative for its cache
+key, and BuildOpt's L1 remains private to the repository/Wrapper scope.
+
+Any other registered transform, unavailable inventory, linkage drift, or
+provider failure disables the managed cache for the complete Gradle build. A
+transform is never treated as a task and the implementation does not claim a
 per-transform cache switch. The plugin also marks the selected tasks
 Configuration-Cache-incompatible in this fallback so the next invocation must
 repeat the inventory before Gradle can enable a cache; a stale serialized
@@ -81,6 +88,8 @@ of suppressing its framework-autoload deprecation in the empty-test fixture.
 Every row also proves that an added action rejects the built-in and that one
 unknown artifact transform disables the otherwise allowed compile task and
 intentionally prevents Configuration Cache reuse for the fail-closed build.
+The Mockito preflight separately proves the allowlisted GraalVM transform with
+the real provider before any performance samples are accepted.
 The 8.14.2/JDK 21 rows exist solely to validate the public-repository POC path
 discovered through Mockito; they do not promote that runtime into the broader
 capability matrix.
