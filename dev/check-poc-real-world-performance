@@ -207,7 +207,8 @@ jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
         scenarios: $spec[0].scenarios
     } and
     (.repositories | length) == 3 and
-    (all(.repositories[] as $repo |
+    (all(.repositories[];
+        . as $repo |
         ($spec[0].repositories[] | select(.id == $repo.id)) as $specRepo |
         $repo.nameWithOwner == $specRepo.nameWithOwner and
         $repo.revision == $specRepo.revision and

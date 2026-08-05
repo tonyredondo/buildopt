@@ -70,6 +70,13 @@ accepted. The filter is corrected and compile-checked independently; the full
 matrix is restarted once more so the final evidence is produced atomically by
 one successful end-to-end execution.
 
+That execution produced all 96 samples and the final JSON, then exposed a
+separate validator bug: the one-argument `all` form changed jq's input context
+before repository lookup. The checker now uses the explicit generator form.
+Because the revision-bound result was already written atomically and contains
+all expected samples, it is retained only if the corrected independent checker
+accepts every raw observation and recomputes the same classifications.
+
 Validate the frozen contract or checked evidence with:
 
 ```bash
