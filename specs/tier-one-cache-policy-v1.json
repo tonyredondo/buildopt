@@ -48,6 +48,15 @@
       "artifactName": "native-gradle-plugin-0.11.1.jar",
       "artifactSha256": "2157468a5c3571e5f99db4ed9d4d3890826bd9f34dab940e3b66fa4665e2c842",
       "sourceRevision": "65456319db1a15b6bf57e2fb143447b2f7839483"
+    },
+    {
+      "id": "KOTLIN_BUILDTOOLS_CLASSPATH_SNAPSHOT_2_2_0",
+      "implementation": "org.jetbrains.kotlin.gradle.internal.transforms.BuildToolsApiClasspathEntrySnapshotTransform",
+      "providerPluginId": "org.jetbrains.kotlin.jvm",
+      "providerVersion": "2.2.0",
+      "artifactName": "kotlin-gradle-plugin-2.2.0-gradle82.jar",
+      "artifactSha256": "36fdac8a57c3f8c60a23e927f9a47e3d69cfdb243f55ca0b665cf03f35e2cba0",
+      "sourceRevision": "631e9fdbe59cc92ac1e88e6ff3bbf4418b3ab9da"
     }
   ],
   "defaultDeny": {

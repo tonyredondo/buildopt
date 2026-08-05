@@ -34,6 +34,11 @@ final class BuildOptTierOnePolicy {
             "org.graalvm.buildtools.gradle.tasks.scanner.JarAnalyzerTransform";
     private static final String GRAALVM_NATIVE_PLUGIN_ARTIFACT =
             "native-gradle-plugin-0.11.1.jar";
+    private static final String KOTLIN_BUILDTOOLS_SNAPSHOT_TRANSFORM =
+            "org.jetbrains.kotlin.gradle.internal.transforms."
+                    + "BuildToolsApiClasspathEntrySnapshotTransform";
+    private static final String KOTLIN_GRADLE_PLUGIN_ARTIFACT =
+            "kotlin-gradle-plugin-2.2.0-gradle82.jar";
 
     private BuildOptTierOnePolicy() {}
 
@@ -77,7 +82,12 @@ final class BuildOptTierOnePolicy {
     }
 
     private static boolean isAllowlistedArtifactTransform(Class<?> implementation) {
-        if (!implementation.getName().equals(GRAALVM_JAR_ANALYZER_TRANSFORM)) {
+        String expectedArtifact = switch (implementation.getName()) {
+            case GRAALVM_JAR_ANALYZER_TRANSFORM -> GRAALVM_NATIVE_PLUGIN_ARTIFACT;
+            case KOTLIN_BUILDTOOLS_SNAPSHOT_TRANSFORM -> KOTLIN_GRADLE_PLUGIN_ARTIFACT;
+            default -> "";
+        };
+        if (expectedArtifact.isEmpty()) {
             return false;
         }
         try {
@@ -88,7 +98,7 @@ final class BuildOptTierOnePolicy {
                                     .getCodeSource()
                                     .getLocation()
                                     .toURI());
-            return codeSource.getFileName().toString().equals(GRAALVM_NATIVE_PLUGIN_ARTIFACT);
+            return codeSource.getFileName().toString().equals(expectedArtifact);
         } catch (Exception failure) {
             return false;
         }
