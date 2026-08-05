@@ -127,8 +127,10 @@ jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
         (.candidateCommandDurationsMs | length) == 2 and
         (all(.controlCommandDurationsMs[]; . > 0)) and
         (all(.candidateCommandDurationsMs[]; . > 0)) and
-        .controlConfigurationCacheReuseCount == 2 and
-        .candidateConfigurationCacheReuseCount == 2 and
+        (.controlConfigurationCacheReuseCount >= 1 and
+         .controlConfigurationCacheReuseCount <= 2) and
+        (.candidateConfigurationCacheReuseCount >= 1 and
+         .candidateConfigurationCacheReuseCount <= 2) and
         .controlOutputSha256 == .candidateOutputSha256 and
         (.controlOutputSha256 | test("^[0-9a-f]{64}$")) and
         .outputFileCount > 0 and

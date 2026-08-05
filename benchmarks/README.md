@@ -111,6 +111,8 @@ The underlying evidence and contracts are:
   validated by `./dev/check-poc-real-world-performance`;
 - [public-workflow diagnostic evidence](./results/poc-real-world-diagnostics-v1.json),
   validated by `./dev/check-poc-real-world-diagnostics`;
+- [Spotless exact-workflow Build Impact evidence](./results/poc-spotless-impact-v1.json),
+  validated by `./dev/check-poc-spotless-impact`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
@@ -177,6 +179,21 @@ Neither preregistration claims savings. Spotless must preserve both production
 and test classes. Mockito must beat, not merely match, the optimized native
 cache before the mechanism may be tested in the complete workflow with every
 requested test unchanged.
+
+### Spotless exact-workflow Build Impact result
+
+`POC-SPOTLESS-IMPACT-001` measured eight offline, alternating pairs in the
+digest-pinned 4-CPU/16-GiB runner. Both arms ran the complete
+`spotlessCheck`; only the second command differed between the root aggregate
+and the affected `plugin-gradle` subgraph. The candidate omitted
+`:lib-extra:compileTestJava`, produced the same 209 required class files and
+executed no Gradle `Test` task.
+
+The control averaged 7,030.875 ms and the candidate 6,734.5 ms: 296.375 ms
+(4.22%) saved, with 5/8 positive pairs and a paired-bootstrap 95% interval of
+`[-55.5, 662]` ms. This fails the frozen 500-ms and positive-lower-bound gates,
+so the terminal decision is `STOP_SPOTLESS_ALTERNATIVE`. The signed samples
+remain evidence, but no savings claim or exact-workflow activation is allowed.
 
 ### Calibrated Groovy result
 

@@ -1,0 +1,302 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-spotless-impact/v1",
+  "capturedAt": "2026-08-05T17:24:33Z",
+  "specSha256": "177510fa7420c7986c66aa4ebd59c90252f961bca1dc1d4fc9193728d12887ee",
+  "buildopt": {
+    "revision": "17daf3209b03a753ae8a14a9dfb17e21198c83c6",
+    "executableSha256": "90de5b90842eed1427d9cb87441ced6a0dec23bbab1a5141918b8af0bf707c6d",
+    "gradlePluginSha256": "314b9a62ee1920e483f40be1290a1d5399574f69531c9945debed497cd9ddbeb"
+  },
+  "runner": {
+    "id": "linux-amd64-4c-16g-v1",
+    "cpuCount": 4,
+    "memoryBytes": 17179869184,
+    "image": "docker.io/library/eclipse-temurin@sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50",
+    "runnerSpecSha256": "26283e56aa7251152c7f051f7500bc86553669a808fc1cec5b736acf8f0733c9"
+  },
+  "methodology": {
+    "measurement": {
+      "preflight": "ONLINE_UNMEASURED_PER_ARM",
+      "measuredNetwork": "DISCONNECTED",
+      "measuredDependencyMode": "GRADLE_OFFLINE",
+      "workspaceState": "PERSISTENT_PRIVATE_PER_ARM_AND_SCENARIO",
+      "gradleUserHome": "PERSISTENT_PRIVATE_PER_ARM_AND_SCENARIO",
+      "daemon": "PERSISTENT_PRIVATE_PER_ARM_AND_SCENARIO",
+      "pairOrder": "ALTERNATING_WITH_OPPOSITE_BATCH_START",
+      "batches": 2,
+      "pairsPerBatch": 4,
+      "pairsPerExperiment": 8,
+      "warmupPerExperiment": 1,
+      "maximumInterArmIdleGapMs": 5000,
+      "confidenceInterval": "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
+      "requiredOutputDigest": "SORTED_RELATIVE_PATH_AND_SHA256",
+      "taskDurationsMayBeSummedAsWallClockSavings": false
+    },
+    "valueGate": {
+      "minimumSavedMs": 500,
+      "minimumReductionRatio": 0.02,
+      "positiveLower95Bound": true,
+      "requiredOutputsIdentical": true,
+      "requiredOutputsNonEmpty": true,
+      "maximumProductAttributableFailures": 0,
+      "thresholdsMayMoveAfterMeasurement": false,
+      "parityAloneCountsAsValue": false
+    }
+  },
+  "repository": {
+    "nameWithOwner": "diffplug/spotless",
+    "revision": "cbd01c4e4b91cea538691d4fe6a8f929d75c27c6",
+    "sourceArchiveSha256": "289371172901867bacd3f76b13b9dd6cfb95c07ec45a31db7262271afc1e857b",
+    "normalization": {
+      "path": "plugin-gradle/src/main/java/com/diffplug/gradle/spotless/SpotlessPluginRedirect.java",
+      "reason": "COPYRIGHT_YEAR_REQUIRED_BY_SPOTLESS_AT_MEASUREMENT_TIME",
+      "from": "Copyright 2020-2025 DiffPlug",
+      "to": "Copyright 2020-2026 DiffPlug",
+      "normalizedSourceSha256": "4ae4de60b8c4c85ef4ec22b7a691df14bf4796446ae96342ad328520d0202a1e"
+    }
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 7492,
+      "candidateDurationMs": 7009,
+      "savedMs": 483,
+      "interArmIdleGapMs": 4,
+      "controlCommandDurationsMs": [
+        3172,
+        4279
+      ],
+      "candidateCommandDurationsMs": [
+        3040,
+        3922
+      ],
+      "controlConfigurationCacheReuseCount": 1,
+      "candidateConfigurationCacheReuseCount": 1,
+      "controlOutputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17",
+      "candidateOutputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17",
+      "outputFileCount": 209,
+      "controlSourceSha256": "5b969fce54629e015a41c2322cc75a1ef1eef61eb9402630afd1df5f3f748a43",
+      "candidateSourceSha256": "5b969fce54629e015a41c2322cc75a1ef1eef61eb9402630afd1df5f3f748a43",
+      "candidateOmittedDeclaredTask": true,
+      "requestedTestTaskExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 6765,
+      "candidateDurationMs": 6949,
+      "savedMs": -184,
+      "interArmIdleGapMs": 4,
+      "controlCommandDurationsMs": [
+        2652,
+        4078
+      ],
+      "candidateCommandDurationsMs": [
+        2780,
+        4132
+      ],
+      "controlConfigurationCacheReuseCount": 1,
+      "candidateConfigurationCacheReuseCount": 1,
+      "controlOutputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17",
+      "candidateOutputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17",
+      "outputFileCount": 209,
+      "controlSourceSha256": "06e381a6358b88e6eec83e61e1a3e72463533c59f86ead66cbc32d98ca60e9d6",
+      "candidateSourceSha256": "06e381a6358b88e6eec83e61e1a3e72463533c59f86ead66cbc32d98ca60e9d6",
+      "candidateOmittedDeclaredTask": true,
+      "requestedTestTaskExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 7991,
+      "candidateDurationMs": 7123,
+      "savedMs": 868,
+      "interArmIdleGapMs": 8,
+      "controlCommandDurationsMs": [
+        3938,
+        4011
+      ],
+      "candidateCommandDurationsMs": [
+        2605,
+        4472
+      ],
+      "controlConfigurationCacheReuseCount": 1,
+      "candidateConfigurationCacheReuseCount": 1,
+      "controlOutputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17",
+      "candidateOutputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17",
+      "outputFileCount": 209,
+      "controlSourceSha256": "0b0adca849cacb340ab20e3b860d1056de60a11e43d58df1580f0b7e8d0d6123",
+      "candidateSourceSha256": "0b0adca849cacb340ab20e3b860d1056de60a11e43d58df1580f0b7e8d0d6123",
+      "candidateOmittedDeclaredTask": true,
+      "requestedTestTaskExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 6658,
+      "candidateDurationMs": 6559,
+      "savedMs": 99,
+      "interArmIdleGapMs": 4,
+      "controlCommandDurationsMs": [
+        2582,
+        4036
+      ],
+      "candidateCommandDurationsMs": [
+        2544,
+        3977
+      ],
+      "controlConfigurationCacheReuseCount": 1,
+      "candidateConfigurationCacheReuseCount": 1,
+      "controlOutputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17",
+      "candidateOutputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17",
+      "outputFileCount": 209,
+      "controlSourceSha256": "625ceef198ca3858277a4acb9c9cc4aede593484c42edf1131d85c28a0f0b23d",
+      "candidateSourceSha256": "625ceef198ca3858277a4acb9c9cc4aede593484c42edf1131d85c28a0f0b23d",
+      "candidateOmittedDeclaredTask": true,
+      "requestedTestTaskExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 5,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 7433,
+      "candidateDurationMs": 6620,
+      "savedMs": 813,
+      "interArmIdleGapMs": 15,
+      "controlCommandDurationsMs": [
+        3379,
+        3995
+      ],
+      "candidateCommandDurationsMs": [
+        2478,
+        4079
+      ],
+      "controlConfigurationCacheReuseCount": 1,
+      "candidateConfigurationCacheReuseCount": 1,
+      "controlOutputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17",
+      "candidateOutputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17",
+      "outputFileCount": 209,
+      "controlSourceSha256": "4351542090a4bed7afdf769988788db740ff47fbb3996a52810252984b86fefe",
+      "candidateSourceSha256": "4351542090a4bed7afdf769988788db740ff47fbb3996a52810252984b86fefe",
+      "candidateOmittedDeclaredTask": true,
+      "requestedTestTaskExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 6,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 6317,
+      "candidateDurationMs": 6478,
+      "savedMs": -161,
+      "interArmIdleGapMs": 5,
+      "controlCommandDurationsMs": [
+        2258,
+        4025
+      ],
+      "candidateCommandDurationsMs": [
+        2406,
+        4031
+      ],
+      "controlConfigurationCacheReuseCount": 1,
+      "candidateConfigurationCacheReuseCount": 1,
+      "controlOutputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17",
+      "candidateOutputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17",
+      "outputFileCount": 209,
+      "controlSourceSha256": "30aae0b59429930fcd5667b0a242a8d78d2b686ea0204ade2891f2702b2bef9d",
+      "candidateSourceSha256": "30aae0b59429930fcd5667b0a242a8d78d2b686ea0204ade2891f2702b2bef9d",
+      "candidateOmittedDeclaredTask": true,
+      "requestedTestTaskExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 7,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 7221,
+      "candidateDurationMs": 6266,
+      "savedMs": 955,
+      "interArmIdleGapMs": 8,
+      "controlCommandDurationsMs": [
+        3270,
+        3910
+      ],
+      "candidateCommandDurationsMs": [
+        2299,
+        3926
+      ],
+      "controlConfigurationCacheReuseCount": 1,
+      "candidateConfigurationCacheReuseCount": 1,
+      "controlOutputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17",
+      "candidateOutputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17",
+      "outputFileCount": 209,
+      "controlSourceSha256": "549b770e783b2da8e0830ecdfc1c1faf603a4f8b3c0527b04eca28916f6c74c5",
+      "candidateSourceSha256": "549b770e783b2da8e0830ecdfc1c1faf603a4f8b3c0527b04eca28916f6c74c5",
+      "candidateOmittedDeclaredTask": true,
+      "requestedTestTaskExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 8,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 6370,
+      "candidateDurationMs": 6872,
+      "savedMs": -502,
+      "interArmIdleGapMs": 5,
+      "controlCommandDurationsMs": [
+        2216,
+        4118
+      ],
+      "candidateCommandDurationsMs": [
+        2813,
+        4019
+      ],
+      "controlConfigurationCacheReuseCount": 1,
+      "candidateConfigurationCacheReuseCount": 1,
+      "controlOutputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17",
+      "candidateOutputSha256": "c6afae886b0e1b9d4dc19c79e8fa2f324e79788b7e6044d6d252ba790467af17",
+      "outputFileCount": 209,
+      "controlSourceSha256": "72768fb2a0a533df1e59c5ee07490d9c5808a8d89169d364d74f4b0b68734e83",
+      "candidateSourceSha256": "72768fb2a0a533df1e59c5ee07490d9c5808a8d89169d364d74f4b0b68734e83",
+      "candidateOmittedDeclaredTask": true,
+      "requestedTestTaskExecuted": false,
+      "productAttributableFailure": false
+    }
+  ],
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 7030.875,
+    "candidateMeanMs": 6734.5,
+    "meanSavedMs": 296.375,
+    "meanReductionRatio": 0.04215335929027326,
+    "interval95SavedMs": [
+      -55.5,
+      662
+    ],
+    "positivePairs": 5,
+    "requiredOutputsIdentical": true,
+    "requestedTestTasksExecuted": 0,
+    "productAttributableFailures": 0
+  },
+  "decision": {
+    "verdict": "STOP_SPOTLESS_ALTERNATIVE",
+    "performanceMeasured": true,
+    "savingsClaimed": false
+  },
+  "gate": {
+    "id": "POC-SPOTLESS-IMPACT-G01",
+    "state": "FAILED"
+  },
+  "boundaries": {
+    "publicSourceOnly": true,
+    "proofOfConcept": true,
+    "performanceMeasuredByThisContract": false,
+    "savingsClaimedByThisContract": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

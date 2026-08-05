@@ -2470,6 +2470,17 @@ Mockito's Tier 1 `compileTestJava` eligibility, both public revisions, the
 optimized native controls, exact outputs and unchanged value thresholds before
 any new timing is observed.
 
+Validate the completed Spotless exact-workflow experiment without rerunning it:
+
+```bash
+./dev/check-poc-spotless-impact
+```
+
+The checked result stops this alternative: it saved 296.375 ms/4.22% on
+average, but missed the fixed 500-ms floor and its 95% interval crossed zero.
+To create a fresh preregistered capture from a clean checkout, use
+`./dev/run-poc-spotless-impact-container <output.json>`.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash
