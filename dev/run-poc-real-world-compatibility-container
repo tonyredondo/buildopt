@@ -270,7 +270,7 @@ for buildopt_repository_index in 0 1 2; do
         archive --format=tar HEAD | sha256sum | awk '{print $1}')
     cp -a -- "${buildopt_native_checkout}" "${buildopt_candidate_checkout}"
 
-    buildopt_checksum_injection=$(jq -er \
+    buildopt_checksum_injection=$(jq -r \
         ".repositories[${buildopt_repository_index}].wrapper.checksumInjectionRequired" \
         "${buildopt_contract}")
     for buildopt_checkout in "${buildopt_native_checkout}" "${buildopt_candidate_checkout}"; do
