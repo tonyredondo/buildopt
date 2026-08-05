@@ -432,6 +432,7 @@ for buildopt_repository_index in 0 1 2; do
             hypotheses: []
         }
         ' >"${buildopt_root}/results/${buildopt_id}.json"
+    docker stop "${buildopt_container}" >/dev/null
     buildopt_environment=(
         -u CI -u ANDROID_HOME -u GITHUB_TOKEN -u GH_TOKEN
         -u DEVELOCITY_ACCESS_KEY -u GRADLE_ENTERPRISE_ACCESS_KEY
