@@ -99,6 +99,10 @@ The underlying evidence and contracts are:
   and [candidate-first](./results/poc-leaf-kotlin-v1-candidate-first.json)
   reports plus their [checked decision](./results/poc-leaf-kotlin-v1-decision.json),
   validated by `./dev/check-poc-leaf-kotlin`;
+- [remaining Kotlin control-first](./results/poc-kotlin-stability-v1-control-first.json)
+  and [candidate-first](./results/poc-kotlin-stability-v1-candidate-first.json)
+  reports plus their [checked decision](./results/poc-kotlin-stability-v1-decision.json),
+  validated by `./dev/check-poc-kotlin-stability`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
@@ -162,6 +166,21 @@ executed by the optimized native control. All 16 pairs were positive and
 preserved byte-identical required outputs, Configuration Cache reuse, and zero
 product failures. The percentages remain separate by batch and broaden only
 this bounded synthetic Kotlin leaf cell.
+
+The remaining shared-source and build-logic Kotlin cells were then repeated on
+the same calibrated boundary. Correctness remained exact, but classification
+did not reproduce:
+
+| Starting order | Shared source | Build logic |
+|---|---:|---:|
+| Control first | +963.75 ms / 45.2%; threshold met | −21.375 ms / −0.65%; parity met |
+| Candidate first | +468.125 ms / 27.2%; 500-ms floor missed | −137.625 ms / −4.1%; parity missed |
+
+Shared-source stayed faster in all 16 pairs, but one batch missed the unchanged
+absolute floor by 31.875 ms. Build-logic retained exact five-versus-five
+execution but crossed the −2% parity boundary. The checked verdict is therefore
+`MEASUREMENT_UNSTABLE`, not a product regression, and authorizes no product
+change or broader claim.
 
 ### Realistic change-class result
 

@@ -214,6 +214,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-groovy" >/dev/null
         "${buildopt_script_dir}/check-poc-shared-groovy" >/dev/null
         "${buildopt_script_dir}/check-poc-leaf-kotlin" >/dev/null
+        "${buildopt_script_dir}/check-poc-kotlin-stability" >/dev/null
         "${buildopt_script_dir}/run" \
             --toolchain go \
             -- \

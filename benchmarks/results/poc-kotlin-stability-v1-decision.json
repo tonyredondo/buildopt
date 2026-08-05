@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-kotlin-stability-decision/v1",
+  "capturedAt": "2026-08-05T07:13:20Z",
+  "buildoptRevision": "9ea74078670480e30e02321bdeab665ea6bfe014",
+  "reports": {
+    "controlFirstSha256": "3f04037c773c828858e322569fe89fc31de265a62883751f87b2b2d57e3a26d1",
+    "candidateFirstSha256": "57dba6c77d5125be217c0c06b34f41fdd49650f89de168a8bc4e42eb5d0f2a4b"
+  },
+  "result": {
+    "classificationReproduced": false,
+    "reproducedCells": [],
+    "reproducedQualifiedCells": [],
+    "reproducedFailureCells": [],
+    "mismatchedCells": [
+      "BREADTH_BUILD_LOGIC_CHANGE_KOTLIN",
+      "BREADTH_SHARED_CHANGE_KOTLIN"
+    ],
+    "controlFirstQualifyingCells": 2,
+    "candidateFirstQualifyingCells": 0,
+    "maximumObservedInterArmIdleGapMs": 133.85728
+  },
+  "decision": {
+    "verdict": "MEASUREMENT_UNSTABLE",
+    "breadthClaim": "RETAIN_QUALIFIED_SYNTHETIC_WORKLOADS_ONLY",
+    "productChangeAuthorization": {
+      "scope": "NONE",
+      "authorizedCells": [],
+      "blockedCells": [
+        "BREADTH_BUILD_LOGIC_CHANGE_KOTLIN",
+        "BREADTH_SHARED_CHANGE_KOTLIN"
+      ]
+    },
+    "nextExperiment": "STOP_AND_REVIEW_MEASUREMENT_BOUNDARY"
+  },
+  "gate": {
+    "id": "POC-KOTLIN-STABILITY-G01",
+    "state": "FAILED"
+  },
+  "boundaries": {
+    "thresholdsChanged": false,
+    "universalSavingsClaimed": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

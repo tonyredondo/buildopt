@@ -2154,6 +2154,7 @@ the strict benchmark:
 ./dev/check-poc-groovy
 ./dev/check-poc-shared-groovy
 ./dev/check-poc-leaf-kotlin
+./dev/check-poc-kotlin-stability
 ./dev/test-poc-pairing
 ```
 
@@ -2313,6 +2314,33 @@ BUILDOPT_POC_PAIRING_PROFILE=KOTLIN_LEAF_VALUE \
 The checked reports require five control verifications, one affected candidate
 verification, unchanged thresholds, identical outputs, and classification
 agreement across both starting orders.
+
+Recheck the two remaining Kotlin classification mismatches with:
+
+```bash
+BUILDOPT_POC_PAIRING_PROFILE=KOTLIN_STABILITY_VALUE \
+  ./dev/run-poc-pairing-container \
+    /tmp/poc-kotlin-stability-control-first.json \
+    kotlin-stability-control-first CONTROL_FIRST
+BUILDOPT_POC_PAIRING_PROFILE=KOTLIN_STABILITY_VALUE \
+  ./dev/run-poc-pairing-container \
+    /tmp/poc-kotlin-stability-candidate-first.json \
+    kotlin-stability-candidate-first CANDIDATE_FIRST
+BUILDOPT_POC_PAIRING_PROFILE=KOTLIN_STABILITY_VALUE \
+  ./dev/assemble-poc-pairing-decision \
+    /tmp/poc-kotlin-stability-decision.json \
+    /tmp/poc-kotlin-stability-control-first.json \
+    /tmp/poc-kotlin-stability-candidate-first.json
+./dev/check-poc-kotlin-stability \
+  /tmp/poc-kotlin-stability-control-first.json \
+  /tmp/poc-kotlin-stability-candidate-first.json \
+  /tmp/poc-kotlin-stability-decision.json
+```
+
+The checked evidence deliberately retains the failed stability gate: both
+shared-source and global-build-logic change classification between batches,
+despite exact correctness and execution guardrails. It authorizes no product
+change and requires a measurement-boundary decision before another rerun.
 
 Validate and print the historical mechanism-development scorecard without
 rerunning a benchmark:
