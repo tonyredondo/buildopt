@@ -1,13 +1,13 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS; ONE PUBLIC FOLLOW-UP AUTHORIZED` — exact public workflows retain the bounded claim and narrow the next experiment to Spotless Build Impact<br>
-**Current phase:** `POC SPOTLESS BUILD IMPACT PREREGISTRATION` — the diagnostic authorizes one new paired experiment, not product activation, threshold movement, or a savings claim<br>
+**Overall status:** `POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS; TWO PUBLIC BUILD-TASK EXPERIMENTS PREREGISTERED` — exact public workflows retain the bounded claim while Spotless Build Impact and Mockito test-build value remain unproven<br>
+**Current phase:** `POC PUBLIC BUILD-TASK VALUE EXECUTION` — execute the frozen Spotless and Mockito comparisons without changing tasks, outputs, thresholds, or Test Optimization policy<br>
 **POC functional target:** measurable net build-time reduction from the qualified Build Impact and exact reviewed-source Task/Patch routes; no-value Safe Cache or Runtime candidates remain disabled<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
 **Last updated:** 2026-08-05<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
-**RFC baseline SHA-256:** `7f99644aad75b3e70d41f28fccf35c2cd3304975ab7ef3470c1a729802223cfb`
+**RFC baseline SHA-256:** `963eb08cc43d82d35366edc834b014c079d1470e14e16a60ef28c3ab1dcbd861`
 
 ---
 
@@ -86,7 +86,9 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-REALWORLD-COMPAT | Pinned public-repository native/BuildOpt compatibility | `DONE` | 1/1 | `E-169` |
 | POC-REALWORLD-VALUE | Paired value replication on compatible public repositories | `DONE` | 1/1 | `E-170` |
 | POC-REALWORLD-DIAGNOSTICS | Profile actual public-repository workflows and preregister generic follow-up hypotheses | `DONE` | 1/1 | `E-171` |
-| POC-REALWORLD-SPOTLESS | Test change-aware Build Impact on the exact Spotless workflow against optimized native Gradle | `TODO` | 0/1 | `E-171` |
+| POC-REALWORLD-BUILD-TASKS | Correct the test-build ownership decision and freeze public build-task value experiments | `DONE` | 1/1 | `E-172` |
+| POC-REALWORLD-SPOTLESS | Test change-aware Build Impact on the exact Spotless workflow against optimized native Gradle | `TODO` | 0/1 | `E-172` |
+| POC-REALWORLD-MOCKITO-TEST-BUILD | Test Safe Cache value for Mockito test compilation against optimized native Gradle | `TODO` | 0/1 | `E-172` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -114,6 +116,8 @@ Optimized native Gradle baseline
   → preregister and run paired public-repository value measurements
   → retain the bounded synthetic claim after only 1/3 public repositories qualifies
   → profile actual public workflows before choosing any new generic value hypothesis
+  → distinguish build-owned test preparation from Test-owned execution
+  → execute the frozen Spotless exact-workflow and Mockito test-build value experiments
 ```
 
 The implementation history remains useful, but it is not the POC exit gate:
@@ -148,13 +152,17 @@ than partners. Test Optimization remains a separate product.
 | 14 | `POC-REALWORLD-001` | Pin, audit, and execute representative native/installed tasks on Spotless, Mockito, and SpotBugs with identical required outputs | `DONE` | Codex |
 | 15 | `POC-REALWORLD-002` | Run the preregistered paired performance matrix on every repository admitted by `POC-REALWORLD-G01` | `DONE` | Codex |
 | 16 | `POC-REALWORLD-DIAGNOSTICS-001` | Profile exact Spotless, Mockito, and SpotBugs workflows and preregister only generic hypotheses that preserve outputs and every requested test | `DONE` | Codex |
-| 17 | `POC-SPOTLESS-IMPACT-001` | Preregister and run a paired leaf-project Build Impact experiment on the exact Spotless workflow with unchanged thresholds and optimized native Gradle control | `TODO` | Codex |
+| 17 | `POC-PUBLIC-BUILD-TASKS-001` | Correct the test-build ownership interpretation and preregister Spotless and Mockito value experiments without changing the raw diagnostic | `DONE` | Codex |
+| 18 | `POC-SPOTLESS-IMPACT-001` | Run the frozen paired leaf-project Build Impact experiment on the exact Spotless workflow, including `testClasses` | `TODO` | Codex |
+| 19 | `POC-MOCKITO-TEST-BUILD-001` | Run the frozen paired `:mockito-core:testClasses` Safe Cache experiment against optimized native Gradle | `TODO` | Codex |
 
-The diagnostic block is closed. It rejected generic follow-up work for the
-test-heavy Mockito and SpotBugs workflows and opened only
-`POC-SPOTLESS-IMPACT-001`. That experiment must be preregistered before timing
-and cannot move thresholds, omit requested tests, or redefine required outputs
-after observing results.
+The raw diagnostic block is closed and unchanged. `E-172` corrects its
+ownership interpretation: Mockito's 242.690-second `compileTestJava` is
+build-owned even though the surrounding workflow is test-heavy. Spotless and
+Mockito now have frozen value experiments; SpotBugs retains no action because
+its visible build-owned test compilation occupied only 1.119 seconds. Neither
+experiment may move thresholds, omit requested test tasks, or redefine required
+outputs after observing results.
 
 ### 2.4 Completed implementation sequence
 
@@ -303,7 +311,9 @@ Every accepted RFC decision is represented below. Historical private-beta decisi
 | `POC-REALWORLD-G01` | Three fixed public repositories pass representative native and installed-BuildOpt tasks with identical non-empty outputs, no scans/publication, and zero product failures | Public-repository performance matrix | `DONE` | Codex | `E-169`, [`poc-real-world-compatibility-v1`](./specs/poc-real-world-compatibility-v1.md) |
 | `POC-REALWORLD-G02` | Execute the preregistered public-repository matrix and issue the terminal broaden-or-retain decision without moving thresholds | Public-repository POC claim decision | `DONE` | Codex | `E-170`, [`poc-real-world-performance-v1`](./specs/poc-real-world-performance-v1.md) |
 | `POC-REALWORLD-G03` | Profile exact upstream workflows on the strict runner and preregister only generic, output-preserving, test-preserving follow-up hypotheses without treating task-duration sums as wall-clock savings | Next public-repository value experiment | `DONE` | Codex | `E-171`, [`poc-real-world-diagnostics-v1`](./specs/poc-real-world-diagnostics-v1.md) |
-| `POC-SPOTLESS-IMPACT-G01` | Beat the unchanged accelerator threshold on a preregistered Spotless leaf-project change against its optimized native Gradle workflow, with byte-identical required outputs and every requested test preserved | Public-workflow Build Impact decision | `TODO` | Codex | `E-171` |
+| `POC-PUBLIC-BUILD-TASKS-G01` | Distinguish build-owned test preparation from Test-owned execution and freeze both public value experiments before timing | Public build-task experiment boundary | `DONE` | Codex | `E-172`, [`poc-public-build-tasks-v1`](./specs/poc-public-build-tasks-v1.md) |
+| `POC-SPOTLESS-IMPACT-G01` | Beat the unchanged accelerator threshold on the frozen Spotless leaf-project change against its optimized native Gradle workflow, with byte-identical main/test classes and the complete `spotlessCheck` command | Public-workflow Build Impact decision | `TODO` | Codex | `E-172` |
+| `POC-MOCKITO-TEST-BUILD-G01` | Beat the unchanged accelerator threshold for `:mockito-core:testClasses` against optimized native cache, then reproduce net value in the exact workflow with every requested test unchanged | Public test-build Safe Cache decision | `TODO` | Codex | `E-172` |
 
 ---
 
@@ -1223,6 +1233,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-169` | 2026-08-05 | `POC-REALWORLD-001`, `POC-REALWORLD-G01` | The revision-bound [public-repository compatibility evidence](./benchmarks/results/poc-real-world-compatibility-v1.json) ran BuildOpt `f550cd82814768e09e75bb6a07e0d1c60ad567f5` in the digest-pinned 4-CPU/16-GiB image against exact Spotless `cbd01c4e`, Mockito `a231205b`, and SpotBugs `8d5cad45` revisions. Native Gradle and installed `buildopt gradle` each executed the same representative target from separate clean checkouts and empty homes. Spotless completed 10/10 actionable tasks with 209 identical outputs; Mockito completed 15/15 with 88; SpotBugs completed 24/24 with 349. Source archives, wrapper JARs/properties, settings, and distributions were hash-bound; SpotBugs received only the declared Gradle checksum injection. `CI`, Android, signing, scan, and cache credentials were absent; build scans and publishing tasks were rejected; product-attributable failures were zero | `DONE`: all three repositories are `COMPATIBLE_FOR_PERFORMANCE_MATRIX`, authorizing only preregistration and execution of `POC-REALWORLD-002`; no timing, savings, universal, production, soak, design-partner, or Test Optimization claim is made |
 | `E-170` | 2026-08-05 | `POC-REALWORLD-002`, `POC-REALWORLD-G02` | The revision-bound [public-repository performance evidence](./benchmarks/results/poc-real-world-performance-v1.json) ran BuildOpt `5af22ccd9435265d8c623ecbf5668b73722e5feb` for 48 preregistered pairs and 96 measured builds in the digest-pinned 4-CPU/16-GiB runner. Every cell used opposite starting orders, a maximum 5-second inter-arm gap, persistent private daemons, offline execution, exact required outputs, and unchanged 2% parity plus 500-ms/2%/positive-bound accelerator thresholds. Mockito retained no-change parity and saved 744.25 ms/18.22% on leaf source with interval +77..+1,526.25 ms, qualifying the repository. Spotless retained no-change parity but saved only 31.125 ms/1.89% on leaf source. SpotBugs regressed 72.75 ms/3.06% on no-change and its 384.125-ms/14.23% leaf saving had interval −659.25..+1,459.125 ms. All required outputs were byte-identical and product-attributable failures were zero | `DONE` experiment and decision: only 1/3 repositories qualifies, so select `RETAIN_BOUNDED_SYNTHETIC_CLAIM`; authorize no threshold movement, unchanged rerun, product tuning, general public-repository claim, production, soak, design-partner, or Test Optimization work |
 | `E-171` | 2026-08-05 | `POC-REALWORLD-DIAGNOSTICS-001`, `POC-REALWORLD-G03` | The revision-bound [public-workflow diagnostic evidence](./benchmarks/results/poc-real-world-diagnostics-v1.json) ran BuildOpt `eb5c929b37d844ec6818b58c0439c18fefba7fcd` on the digest-pinned 4-CPU/16-GiB runner after an unmeasured exact-workflow preflight. Spotless's two commands took 165.173 s, with only 2.561 s/1.55% in startup plus configuration; its expensive Freshmark, compilation, and Javadoc work spans projects while native parallelism, build cache, and Configuration Cache are already enabled. Mockito's three commands took 629.165 s, with only 2.957 s/0.47% in startup plus configuration; the 593.290-s build is dominated by compilation and its complete requested test matrix. SpotBugs took 271.920 s, with 242.120 s/89.0% in `:spotbugs-tests:test` and 1.790 s/0.66% in startup plus configuration. Task durations were retained only as overlapping diagnostics and never summed as potential wall savings; product-attributable failures were zero | `DONE` diagnostic, no savings claim: preregister only generic Spotless Build Impact against optimized native Gradle; record no generic performance opportunity for the exact Mockito and SpotBugs workflows without Test Optimization or repository-specific rules; keep the bounded public claim unchanged |
+| `E-172` | 2026-08-05 | `POC-PUBLIC-BUILD-TASKS-001`, `POC-PUBLIC-BUILD-TASKS-G01` | The checked [public build-task contract](./specs/poc-public-build-tasks-v1.md) leaves every raw `E-171` observation unchanged but corrects its ownership decision. Mockito's 593.290-s build spent 242.690 s/40.91% in `:mockito-core:compileTestJava`, a Tier 1 core-source-set `JavaCompile` over 402 test sources; Build Optimization owns that preparation even though Test Optimization owns later `Test` execution. The contract freezes two eight-pair, opposite-start experiments before timing: Spotless must preserve its complete `spotlessCheck` command plus byte-identical plugin main/test classes while Build Impact narrows only the second exact-workflow command; Mockito must execute the identical `:mockito-core:testClasses` graph and beat optimized native cache with BuildOpt's private Tier 1 L1, because parity alone is not value. Only a qualifying Mockito mechanism may proceed to the full three-command workflow with every requested test unchanged. SpotBugs retains no action because its visible `compileTestJava` cost was 1.119 s/0.41% while the requested `Test` task occupied 242.120 s | `DONE` boundary correction and preregistration, no savings claim: execute `POC-SPOTLESS-IMPACT-001` and `POC-MOCKITO-TEST-BUILD-001` without moving the 500-ms/2%/positive-bound gate, changing outputs, or modifying Test Optimization |
 
 ---
 
@@ -1230,6 +1241,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-05 | Corrected the `E-171` ownership interpretation without rewriting its raw evidence: test compilation and preparation remain Build Optimization work; froze separate Spotless exact-workflow and Mockito `testClasses` value experiments, while retaining no action for SpotBugs and making no savings claim | Codex |
 | 2026-08-05 | Closed `POC-REALWORLD-DIAGNOSTICS-001` and `POC-REALWORLD-G03`: exact public workflows showed startup/configuration below 1.6% everywhere, Mockito and SpotBugs dominated by requested test work, and only Spotless supported a generic Build Impact follow-up; opened `POC-SPOTLESS-IMPACT-001` without claiming savings or moving thresholds | Codex |
 | 2026-08-05 | Closed `POC-REALWORLD-002` and `POC-REALWORLD-G02` after 48 preregistered pairs: Mockito qualified with no-change parity and 744.25-ms/18.22% stable leaf savings, while Spotless and SpotBugs did not clear the unchanged gates; retained the bounded synthetic claim and ended the current public-repository hypothesis without tuning or moving thresholds | Codex |
 | 2026-08-05 | Preregistered `POC-REALWORLD-002` before timing: three exact public revisions, no-change parity and leaf-source accelerator cells, eight pairs in opposite-start batches, persistent private daemons, offline measured execution, unchanged 500-ms/2%/positive-bound thresholds, exact outputs, and a terminal broaden-or-retain decision | Codex |

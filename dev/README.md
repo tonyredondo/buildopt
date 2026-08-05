@@ -2458,6 +2458,18 @@ upstream workflows in disposable checkouts on the digest-pinned 4-CPU/16-GiB
 runner. The output is diagnostic only: task durations can overlap and are
 never summed into a savings claim.
 
+Validate the corrected build-task ownership boundary and frozen Spotless and
+Mockito test-build value experiments with:
+
+```bash
+./dev/check-poc-public-build-tasks
+```
+
+This check does not run a benchmark. It binds the unchanged diagnostic,
+Mockito's Tier 1 `compileTestJava` eligibility, both public revisions, the
+optimized native controls, exact outputs and unchanged value thresholds before
+any new timing is observed.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-public-build-tasks-v1.json"
+buildopt_diagnostic_spec="${buildopt_repo_root}/specs/poc-real-world-diagnostics-v1.json"
+buildopt_diagnostic_evidence="${buildopt_repo_root}/benchmarks/results/poc-real-world-diagnostics-v1.json"
+buildopt_tier_one_policy="${buildopt_repo_root}/specs/tier-one-cache-policy-v1.json"
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required public build-task command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_diagnostic_spec_sha=$(sha256sum "${buildopt_diagnostic_spec}" | awk '{print $1}')
+buildopt_diagnostic_evidence_sha=$(sha256sum "${buildopt_diagnostic_evidence}" | awk '{print $1}')
+buildopt_tier_one_policy_sha=$(sha256sum "${buildopt_tier_one_policy}" | awk '{print $1}')
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+
+jq -e \
+    --arg diagnosticSpecSha "${buildopt_diagnostic_spec_sha}" \
+    --arg diagnosticEvidenceSha "${buildopt_diagnostic_evidence_sha}" \
+    --arg tierOnePolicySha "${buildopt_tier_one_policy_sha}" '
+    .schemaVersion == "buildopt.specs/poc-public-build-tasks/v1" and
+    .workItem == "POC-PUBLIC-BUILD-TASKS-001" and
+    .decision == "PREREGISTER_BUILD_OWNED_TEST_PREPARATION_VALUE" and
+    .runner == "linux-amd64-4c-16g-v1" and
+    .inputs == {
+        diagnosticSpecSha256: $diagnosticSpecSha,
+        diagnosticEvidenceSha256: $diagnosticEvidenceSha,
+        tierOnePolicySha256: $tierOnePolicySha
+    } and
+    .ownership.testTasksMayBeOmitted == false and
+    .ownership.testTasksMayBeCachedWithoutGrant == false and
+    (.ownership.buildOptimizationOwns | index("MAIN_AND_TEST_SOURCE_COMPILATION")) != null and
+    (.ownership.testOptimizationOwns | index("TEST_SELECTION")) != null and
+    (.ownership.testOptimizationOwns | index("TEST_EXECUTION")) != null and
+    .diagnosticCorrection.rawEvidenceChanged == false and
+    .diagnosticCorrection.mockito == {
+        workflowTotalMs: 629165,
+        buildCommandMs: 593290,
+        compileTestJavaMs: 242690,
+        compileTestJavaPercentOfBuildCommand: 40.91,
+        mockitoCoreTestSourceFiles: 402,
+        sampleSource: "mockito-core/src/test/java/org/mockito/ArgumentCaptorTest.java",
+        sampleSourceSha256: "a7c03fc760053340720a59aab4fdb060e60309084a39068c5037f549e270df9e",
+        tierOneTaskClass: "CORE_SOURCE_SET_JAVA_COMPILE",
+        decision: "PREREGISTER_TEST_BUILD_VALUE_EXPERIMENT"
+    } and
+    .diagnosticCorrection.spotbugs == {
+        workflowTotalMs: 271920,
+        testTaskMs: 242120,
+        compileTestJavaMs: 1119,
+        compileTestJavaPercentOfWorkflow: 0.41,
+        decision: "NO_MATERIAL_BUILD_PREPARATION_HYPOTHESIS"
+    } and
+    .measurement.batches == 2 and
+    .measurement.pairsPerBatch == 4 and
+    .measurement.pairsPerExperiment == 8 and
+    .measurement.pairOrder == "ALTERNATING_WITH_OPPOSITE_BATCH_START" and
+    .measurement.taskDurationsMayBeSummedAsWallClockSavings == false and
+    .valueGate.minimumSavedMs == 500 and
+    .valueGate.minimumReductionRatio == 0.02 and
+    .valueGate.positiveLower95Bound == true and
+    .valueGate.requiredOutputsIdentical == true and
+    .valueGate.maximumProductAttributableFailures == 0 and
+    .valueGate.thresholdsMayMoveAfterMeasurement == false and
+    .valueGate.parityAloneCountsAsValue == false and
+    (.experiments | length) == 2 and
+    [.experiments[].id] == [
+        "SPOTLESS-EXACT-WORKFLOW-BUILD-IMPACT",
+        "MOCKITO-CORE-TEST-BUILD-SAFE-CACHE"
+    ] and
+    .experiments[0].controlCommands == [
+        ["spotlessCheck", "--no-scan"],
+        ["assemble", "testClasses", "--no-scan", "-PSPOTLESS_EXCLUDE_MAVEN=true"]
+    ] and
+    .experiments[0].candidateCommands == [
+        ["spotlessCheck", "--no-scan"],
+        [":plugin-gradle:assemble", ":plugin-gradle:testClasses", "--no-scan", "-PSPOTLESS_EXCLUDE_MAVEN=true"]
+    ] and
+    .experiments[0].requiredOutputs == [
+        "plugin-gradle/build/classes/java/main",
+        "plugin-gradle/build/classes/java/test"
+    ] and
+    .experiments[0].requestedTestTasks == [] and
+    .experiments[1].controlCommands == .experiments[1].candidateCommands and
+    .experiments[1].controlCommands == [[
+        "-Pmockito.test.java=21", ":mockito-core:testClasses", "--stacktrace", "--no-scan"
+    ]] and
+    .experiments[1].controlCache == "OPTIMIZED_NATIVE_GRADLE_LOCAL_CACHE" and
+    .experiments[1].candidateCache == "BUILDOPT_PRIVATE_L1_WITH_TIER_ONE_POLICY" and
+    .experiments[1].candidateEnvironment == {BUILDOPT_SAFE_CACHE: "1"} and
+    .experiments[1].requiredOutputs == ["mockito-core/build/classes/java/test"] and
+    .experiments[1].candidateMustExecuteTask == ":mockito-core:compileTestJava" and
+    .experiments[1].requestedTestTasks == [] and
+    .experiments[1].wholeWorkflowFollowUp.requiredOnlyAfterMechanismQualifies == true and
+    .experiments[1].wholeWorkflowFollowUp.preserveAllRequestedTests == true and
+    .boundaries == {
+        publicSourceOnly: true,
+        proofOfConcept: true,
+        performanceMeasuredByThisContract: false,
+        savingsClaimedByThisContract: false,
+        productionReadinessClaimed: false,
+        eightHourSoakExecuted: false,
+        externalDesignPartnerRequired: false,
+        testOptimizationModified: false
+    }
+    ' "${buildopt_spec}" >/dev/null
+
+jq -e '
+    .repositories[] | select(.id == "MOCKITO") |
+    .workflowTotalBuildMs == 629165 and
+    .commands[1].totalBuildMs == 593290 and
+    ([.commands[1].topTasks[] |
+        select(.path == ":mockito-core:compileTestJava")][0].durationMs == 242690) and
+    .productAttributableFailures == 0
+    ' "${buildopt_diagnostic_evidence}" >/dev/null
+
+jq -e '
+    .repositories[] | select(.id == "SPOTBUGS") |
+    .workflowTotalBuildMs == 271920 and
+    ([.commands[0].topTasks[] |
+        select(.path == ":spotbugs-tests:test")][0].durationMs == 242120) and
+    ([.commands[0].topTasks[] |
+        select(.path == ":spotbugs-tests:compileTestJava")][0].durationMs == 1119) and
+    .productAttributableFailures == 0
+    ' "${buildopt_diagnostic_evidence}" >/dev/null
+
+jq -e '
+    .taskAllowlist == [{
+        id: "CORE_JAVA_SOURCE_SET_COMPILE_V1",
+        taskType: "org.gradle.api.tasks.compile.JavaCompile",
+        implementation: "org.gradle.api.tasks.compile.JavaCompile_Decorated",
+        providerPluginId: "java",
+        providerVersion: "GRADLE_RUNTIME",
+        sourceSetBinding: "compileJavaTaskName",
+        actions: ["org.gradle.api.internal.project.taskfactory.IncrementalTaskAction"]
+    }]
+    ' "${buildopt_tier_one_policy}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'public build-task validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'BuildOpt public build-task preregistration OK: %s\n' "${buildopt_spec}"

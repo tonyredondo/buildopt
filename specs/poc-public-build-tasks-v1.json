@@ -1,0 +1,153 @@
+{
+  "schemaVersion": "buildopt.specs/poc-public-build-tasks/v1",
+  "workItem": "POC-PUBLIC-BUILD-TASKS-001",
+  "decision": "PREREGISTER_BUILD_OWNED_TEST_PREPARATION_VALUE",
+  "runner": "linux-amd64-4c-16g-v1",
+  "inputs": {
+    "diagnosticSpecSha256": "8b2a46d1d83fc56cdf251c4bcb93a6d908af8b682419732bf85526471c3e88c7",
+    "diagnosticEvidenceSha256": "8763c1492e725fd4275e91e1d79d0efbca5e81b24672cac675d620f6aa9c99e4",
+    "tierOnePolicySha256": "7caf84181f74efa165e759889f046f45834b038ed1eb281f7c1934c370cbf738"
+  },
+  "ownership": {
+    "buildOptimizationOwns": [
+      "MAIN_AND_TEST_SOURCE_COMPILATION",
+      "TEST_FIXTURE_COMPILATION",
+      "RESOURCE_PROCESSING",
+      "CODE_GENERATION",
+      "PACKAGING",
+      "SAFE_CACHE_REUSE",
+      "BUILD_IMPACT_FOR_BUILD_OWNED_TASKS"
+    ],
+    "testOptimizationOwns": [
+      "TEST_SELECTION",
+      "TEST_ORDERING",
+      "TEST_SHARDING",
+      "TEST_RETRIES",
+      "TEST_EXECUTION",
+      "TEST_EXECUTION_POLICY"
+    ],
+    "testTasksMayBeOmitted": false,
+    "testTasksMayBeCachedWithoutGrant": false
+  },
+  "diagnosticCorrection": {
+    "rawEvidenceChanged": false,
+    "mockito": {
+      "workflowTotalMs": 629165,
+      "buildCommandMs": 593290,
+      "compileTestJavaMs": 242690,
+      "compileTestJavaPercentOfBuildCommand": 40.91,
+      "mockitoCoreTestSourceFiles": 402,
+      "sampleSource": "mockito-core/src/test/java/org/mockito/ArgumentCaptorTest.java",
+      "sampleSourceSha256": "a7c03fc760053340720a59aab4fdb060e60309084a39068c5037f549e270df9e",
+      "tierOneTaskClass": "CORE_SOURCE_SET_JAVA_COMPILE",
+      "decision": "PREREGISTER_TEST_BUILD_VALUE_EXPERIMENT"
+    },
+    "spotbugs": {
+      "workflowTotalMs": 271920,
+      "testTaskMs": 242120,
+      "compileTestJavaMs": 1119,
+      "compileTestJavaPercentOfWorkflow": 0.41,
+      "decision": "NO_MATERIAL_BUILD_PREPARATION_HYPOTHESIS"
+    }
+  },
+  "measurement": {
+    "preflight": "ONLINE_UNMEASURED_PER_ARM",
+    "measuredNetwork": "DISCONNECTED",
+    "measuredDependencyMode": "GRADLE_OFFLINE",
+    "workspaceState": "PERSISTENT_PRIVATE_PER_ARM_AND_SCENARIO",
+    "gradleUserHome": "PERSISTENT_PRIVATE_PER_ARM_AND_SCENARIO",
+    "daemon": "PERSISTENT_PRIVATE_PER_ARM_AND_SCENARIO",
+    "pairOrder": "ALTERNATING_WITH_OPPOSITE_BATCH_START",
+    "batches": 2,
+    "pairsPerBatch": 4,
+    "pairsPerExperiment": 8,
+    "warmupPerExperiment": 1,
+    "maximumInterArmIdleGapMs": 5000,
+    "confidenceInterval": "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
+    "requiredOutputDigest": "SORTED_RELATIVE_PATH_AND_SHA256",
+    "taskDurationsMayBeSummedAsWallClockSavings": false
+  },
+  "valueGate": {
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "requiredOutputsIdentical": true,
+    "requiredOutputsNonEmpty": true,
+    "maximumProductAttributableFailures": 0,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "parityAloneCountsAsValue": false
+  },
+  "experiments": [
+    {
+      "id": "SPOTLESS-EXACT-WORKFLOW-BUILD-IMPACT",
+      "workItem": "POC-SPOTLESS-IMPACT-001",
+      "repository": "diffplug/spotless",
+      "revision": "cbd01c4e4b91cea538691d4fe6a8f929d75c27c6",
+      "mechanism": "BUILD_IMPACT",
+      "changeClass": "LEAF_PRODUCTION_SOURCE",
+      "sourceChange": {
+        "path": "plugin-gradle/src/main/java/com/diffplug/gradle/spotless/SpotlessPluginRedirect.java",
+        "kind": "APPEND_PAIR_COMMENT"
+      },
+      "controlCommands": [
+        ["spotlessCheck", "--no-scan"],
+        ["assemble", "testClasses", "--no-scan", "-PSPOTLESS_EXCLUDE_MAVEN=true"]
+      ],
+      "candidateCommands": [
+        ["spotlessCheck", "--no-scan"],
+        [":plugin-gradle:assemble", ":plugin-gradle:testClasses", "--no-scan", "-PSPOTLESS_EXCLUDE_MAVEN=true"]
+      ],
+      "requiredOutputs": [
+        "plugin-gradle/build/classes/java/main",
+        "plugin-gradle/build/classes/java/test"
+      ],
+      "candidateMustOmitTask": ":testlib:compileJava",
+      "requestedTestTasks": [],
+      "terminalDecision": "QUALIFY_EXACT_WORKFLOW_OR_STOP_THIS_ALTERNATIVE"
+    },
+    {
+      "id": "MOCKITO-CORE-TEST-BUILD-SAFE-CACHE",
+      "workItem": "POC-MOCKITO-TEST-BUILD-001",
+      "repository": "mockito/mockito",
+      "revision": "a231205b240e7884a63bf0f63440012867a4da21",
+      "mechanism": "SAFE_CACHE",
+      "changeClass": "CLEAN_OUTPUT_REPLAY",
+      "controlCommands": [
+        ["-Pmockito.test.java=21", ":mockito-core:testClasses", "--stacktrace", "--no-scan"]
+      ],
+      "candidateCommands": [
+        ["-Pmockito.test.java=21", ":mockito-core:testClasses", "--stacktrace", "--no-scan"]
+      ],
+      "controlCache": "OPTIMIZED_NATIVE_GRADLE_LOCAL_CACHE",
+      "candidateCache": "BUILDOPT_PRIVATE_L1_WITH_TIER_ONE_POLICY",
+      "candidateEnvironment": {
+        "BUILDOPT_SAFE_CACHE": "1"
+      },
+      "requiredOutputs": [
+        "mockito-core/build/classes/java/test"
+      ],
+      "candidateMustExecuteTask": ":mockito-core:compileTestJava",
+      "requestedTestTasks": [],
+      "wholeWorkflowFollowUp": {
+        "requiredOnlyAfterMechanismQualifies": true,
+        "commands": [
+          ["spotlessCheck", "--stacktrace", "--no-scan"],
+          ["-Pmockito.test.java=21", "build", "--stacktrace", "--no-scan"],
+          ["-Pmockito.test.java=21", "coverageReport", "--stacktrace", "--no-scan"]
+        ],
+        "preserveAllRequestedTests": true
+      },
+      "terminalDecision": "ACCELERATE_OR_STOP_SAFE_CACHE_FOR_THIS_TEST_BUILD"
+    }
+  ],
+  "boundaries": {
+    "publicSourceOnly": true,
+    "proofOfConcept": true,
+    "performanceMeasuredByThisContract": false,
+    "savingsClaimedByThisContract": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

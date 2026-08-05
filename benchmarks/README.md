@@ -155,18 +155,28 @@ phases without summing overlapping task durations.
 
 | Repository | Exact workflow wall time | Startup + configuration | Diagnostic decision |
 |---|---:|---:|---|
-| Spotless | 165.173 s | 2.561 s (1.55%) | Preregister Build Impact on a leaf-project change |
-| Mockito | 629.165 s | 2.957 s (0.47%) | No generic BuildOpt opportunity for the full workflow |
-| SpotBugs | 271.920 s | 1.790 s (0.66%) | No generic BuildOpt opportunity while all tests remain requested |
+| Spotless | 165.173 s | 2.561 s (1.55%) | Preregister Build Impact on the exact workflow, including `testClasses` |
+| Mockito | 629.165 s | 2.957 s (0.47%) | Preregister value measurement for build-owned `compileTestJava` |
+| SpotBugs | 271.920 s | 1.790 s (0.66%) | No material build-preparation hypothesis; requested `Test` execution dominates |
 
 Spotless already enables native parallel execution, build cache, and
 Configuration Cache. Its expensive work spans independent projects, so the
-only follow-up supported by the profile is change-aware project scoping with
-byte-identical required outputs. Mockito is dominated by compilation and its
-complete test matrix. SpotBugs spends 242.120 s (89.0% of wall time) in
-`:spotbugs-tests:test`. Test selection remains outside BuildOpt, so neither
-test-heavy workflow receives a repository-specific workaround or a speculative
-performance claim.
+supported follow-up is change-aware project scoping with byte-identical main
+and test classes. The original `E-171` decision treated Mockito's test-heavy
+workflow as if all of that cost were outside BuildOpt.
+[`poc-public-build-tasks-v1`](../specs/poc-public-build-tasks-v1.md) corrects
+that interpretation without changing the raw profile: the 593.290-second
+Mockito build spends 242.690 seconds (40.91%) in the build-owned
+`:mockito-core:compileTestJava` task over 402 sources. It now receives a
+separate test-build value experiment against optimized native Gradle. SpotBugs
+spends 242.120 seconds (89.0% of wall time) in `:spotbugs-tests:test`, while
+its visible `compileTestJava` cost is only 1.119 seconds, so no material
+build-preparation hypothesis is registered for that workflow.
+
+Neither preregistration claims savings. Spotless must preserve both production
+and test classes. Mockito must beat, not merely match, the optimized native
+cache before the mechanism may be tested in the complete workflow with every
+requested test unchanged.
 
 ### Calibrated Groovy result
 
