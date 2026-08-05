@@ -24,6 +24,12 @@ case "${buildopt_profile}" in
         buildopt_gate=POC-GROOVY-G01
         buildopt_required_cells=2
         ;;
+    GROOVY_SHARED_VALUE)
+        buildopt_report_schema=buildopt.evidence/poc-shared-groovy/v1
+        buildopt_decision_schema=buildopt.evidence/poc-shared-groovy-decision/v1
+        buildopt_gate=POC-SHARED-GROOVY-G01
+        buildopt_required_cells=1
+        ;;
     *)
         printf 'invalid POC-PAIRING-001 decision profile: %s\n' "${buildopt_profile}" >&2
         exit 64
@@ -123,7 +129,7 @@ jq -n \
             },
             nextExperiment: (if ($reproducedFailures | length) > 0
                              then "TARGET_REPRODUCED_VALUE_GAPS"
-                             elif ($stable and $controlQualifying == 8 and
+                             elif ($stable and $controlQualifying == $requiredCells and
                                      $candidateQualifying == $requiredCells)
                              then "NONE"
                              else "STOP_AND_REVIEW_MEASUREMENT_BOUNDARY" end)

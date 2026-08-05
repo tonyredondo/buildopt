@@ -14,6 +14,7 @@ buildopt_candidate_meta=$5
 buildopt_observations=$6
 buildopt_profile=${BUILDOPT_POC_PAIRING_PROFILE:-FULL}
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_shared_container=false
 
 case "${buildopt_profile}" in
     FULL)
@@ -24,11 +25,22 @@ case "${buildopt_profile}" in
         buildopt_purpose=REMOVE_RUNNER_DRIFT_WITH_TEMPORALLY_PAIRED_ISOLATED_ARMS
         ;;
     GROOVY_VALUE)
+        buildopt_shared_container=true
         buildopt_expected_observations=32
         buildopt_required_cells=2
         buildopt_schema=buildopt.evidence/poc-groovy/v1
         buildopt_gate=POC-GROOVY-001
         buildopt_purpose=VERIFY_GROOVY_PARITY_AND_SELECTIVE_VALUE_AFTER_NATIVE_PROCESS_REPLACEMENT
+        buildopt_workload_init_sha=$(sha256sum \
+            "${buildopt_script_dir}/poc-groovy-workload.init.gradle" | awk '{print $1}')
+        ;;
+    GROOVY_SHARED_VALUE)
+        buildopt_shared_container=true
+        buildopt_expected_observations=16
+        buildopt_required_cells=1
+        buildopt_schema=buildopt.evidence/poc-shared-groovy/v1
+        buildopt_gate=POC-SHARED-GROOVY-001
+        buildopt_purpose=VERIFY_SHARED_SOURCE_GROOVY_VALUE_ON_CALIBRATED_BOUNDARY
         buildopt_workload_init_sha=$(sha256sum \
             "${buildopt_script_dir}/poc-groovy-workload.init.gradle" | awk '{print $1}')
         ;;
@@ -61,6 +73,7 @@ jq -n \
     --arg purpose "${buildopt_purpose}" \
     --arg profile "${buildopt_profile}" \
     --arg workloadInitSha256 "${buildopt_workload_init_sha:-}" \
+    --argjson sharedContainer "${buildopt_shared_container}" \
     --argjson expectedObservations "${buildopt_expected_observations}" \
     --argjson requiredCells "${buildopt_required_cells}" \
     --slurpfile control "${buildopt_control_meta}" \
@@ -215,26 +228,26 @@ jq -n \
             warmupPerCell: 1,
             startingPairOrder: $startingOrder,
             pairOrder: "ALTERNATING_OPPOSITE_SEQUENCE",
-            pairing: (if $profile == "GROOVY_VALUE"
+            pairing: (if $sharedContainer
                       then "CONSECUTIVE_DOCKER_EXEC_WITHIN_SHARED_STRICT_CONTAINER"
                       else "CONSECUTIVE_DOCKER_EXEC_ACROSS_PERSISTENT_ARM_CONTAINERS" end),
             maximumInterArmIdleGapMs: 5000,
             confidenceInterval: "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
             isolation: ({
-                strictContainerPerArm: ($profile != "GROOVY_VALUE"),
-                sharedStrictContainer: ($profile == "GROOVY_VALUE"),
+                strictContainerPerArm: ($sharedContainer | not),
+                sharedStrictContainer: $sharedContainer,
                 writableStateShared: false,
                 workspaceShared: false,
                 gradleUserHomeShared: false,
                 daemonShared: false,
                 sampleLifecycle: "PERSISTENT_PRIVATE_DAEMON_PER_CELL"
-            } | if $profile == "GROOVY_VALUE" then . else del(.sharedStrictContainer) end),
+            } | if $sharedContainer then . else del(.sharedStrictContainer) end),
             nativeControl: {buildCache: true, configurationCache: true, parallelism: true, daemon: true},
             candidateEntryPoints: ["INSTALLED_BUILDOPT_IMPACT_CHECK", "INSTALLED_BUILDOPT_GRADLE"],
             acceleratorThreshold: {minimumSavedMs: 500, minimumReductionRatio: 0.02, positiveLower95Bound: true},
             parityGuardrail: {maximumRegressionRatio: 0.02},
             percentagesAddedAcrossScenarios: false
-        } + (if $profile == "GROOVY_VALUE" then {
+        } + (if $sharedContainer then {
             workloadProfile: {
                 id: "GROOVY_DETERMINISTIC_VERIFICATION_V1",
                 initScript: "dev/poc-groovy-workload.init.gradle",

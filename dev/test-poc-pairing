@@ -164,6 +164,51 @@ jq -e '
            type == "string" and test("^[0-9a-f]{64}$"))
     ' "${buildopt_root}/groovy-control-first.json" >/dev/null
 
+jq -c 'select(.dsl == "GROOVY" and .scenario == "SHARED_CHANGE")' \
+    "${buildopt_root}/control-first-observations.jsonl" \
+    >"${buildopt_root}/shared-groovy-control-first-observations.jsonl"
+jq -c 'select(.dsl == "GROOVY" and .scenario == "SHARED_CHANGE")' \
+    "${buildopt_root}/candidate-first-observations.jsonl" \
+    >"${buildopt_root}/shared-groovy-candidate-first-observations.jsonl"
+BUILDOPT_POC_PAIRING_PROFILE=GROOVY_SHARED_VALUE \
+    "${buildopt_script_dir}/assemble-poc-pairing" \
+    "${buildopt_root}/shared-groovy-control-first.json" \
+    synthetic-shared-groovy-control-first CONTROL_FIRST \
+    "${buildopt_root}/control.json" "${buildopt_root}/candidate.json" \
+    "${buildopt_root}/shared-groovy-control-first-observations.jsonl" >/dev/null
+BUILDOPT_POC_PAIRING_PROFILE=GROOVY_SHARED_VALUE \
+    "${buildopt_script_dir}/assemble-poc-pairing" \
+    "${buildopt_root}/shared-groovy-candidate-first.json" \
+    synthetic-shared-groovy-candidate-first CANDIDATE_FIRST \
+    "${buildopt_root}/control.json" "${buildopt_root}/candidate.json" \
+    "${buildopt_root}/shared-groovy-candidate-first-observations.jsonl" >/dev/null
+BUILDOPT_POC_PAIRING_PROFILE=GROOVY_SHARED_VALUE \
+    "${buildopt_script_dir}/assemble-poc-pairing-decision" \
+    "${buildopt_root}/shared-groovy-decision.json" \
+    "${buildopt_root}/shared-groovy-control-first.json" \
+    "${buildopt_root}/shared-groovy-candidate-first.json" >/dev/null
+jq -e '
+    .schemaVersion == "buildopt.evidence/poc-shared-groovy-decision/v1" and
+    .result.classificationReproduced and
+    .gate == {id: "POC-SHARED-GROOVY-G01", state: "PASSED"}
+    ' "${buildopt_root}/shared-groovy-decision.json" >/dev/null
+jq -e '
+    .schemaVersion == "buildopt.evidence/poc-shared-groovy/v1" and
+    .gate == {id: "POC-SHARED-GROOVY-001", state: "RECORDED"} and
+    .decision.requiredCells == 1 and (.workloads | length) == 1 and
+    .workloads[0].scenario == "SHARED_CHANGE" and
+    .workloads[0].result.executionShapeValid == true and
+    .methodology.isolation == {
+        strictContainerPerArm: false,
+        sharedStrictContainer: true,
+        writableStateShared: false,
+        workspaceShared: false,
+        gradleUserHomeShared: false,
+        daemonShared: false,
+        sampleLifecycle: "PERSISTENT_PRIVATE_DAEMON_PER_CELL"
+    }
+    ' "${buildopt_root}/shared-groovy-control-first.json" >/dev/null
+
 jq '
     if .arm == "CANDIDATE" and .pair == 1 and
        .scenario == "NO_CHANGE" and .dsl == "KOTLIN" then

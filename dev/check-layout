@@ -330,6 +330,8 @@ buildopt_required_files=(
     "specs/poc-pairing-validation-v1.md"
     "specs/poc-groovy-validation-v1.json"
     "specs/poc-groovy-validation-v1.md"
+    "specs/poc-shared-groovy-validation-v1.json"
+    "specs/poc-shared-groovy-validation-v1.md"
     "benchmarks/results/poc-stability-v1-control-first.json"
     "benchmarks/results/poc-stability-v1-candidate-first.json"
     "benchmarks/results/poc-stability-v1-decision.json"

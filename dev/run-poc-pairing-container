@@ -32,6 +32,11 @@ case "${buildopt_profile}" in
         buildopt_scenarios=(NO_CHANGE LEAF_CHANGE)
         buildopt_workload_init=/workspace/dev/poc-groovy-workload.init.gradle
         ;;
+    GROOVY_SHARED_VALUE)
+        buildopt_dsls=(GROOVY)
+        buildopt_scenarios=(SHARED_CHANGE)
+        buildopt_workload_init=/workspace/dev/poc-groovy-workload.init.gradle
+        ;;
     *)
         printf 'invalid POC-PAIRING-001 profile: %s\n' "${buildopt_profile}" >&2
         exit 64
@@ -187,7 +192,8 @@ buildopt_exec_step() {
     local buildopt_arm_lower=${buildopt_arm,,}
     local buildopt_container="${buildopt_container_prefix}-${buildopt_arm_lower}"
     local buildopt_container_root=/benchmark
-    if [[ "${buildopt_profile}" == GROOVY_VALUE ]]; then
+    if [[ "${buildopt_profile}" == GROOVY_VALUE ||
+        "${buildopt_profile}" == GROOVY_SHARED_VALUE ]]; then
         buildopt_container=${buildopt_shared_container}
         buildopt_container_root="/benchmark/${buildopt_arm_lower}"
     fi
@@ -233,7 +239,8 @@ buildopt_first_arm_for_pair() {
 
 buildopt_prepare_arm CONTROL
 buildopt_prepare_arm CANDIDATE
-if [[ "${buildopt_profile}" == GROOVY_VALUE ]]; then
+if [[ "${buildopt_profile}" == GROOVY_VALUE ||
+    "${buildopt_profile}" == GROOVY_SHARED_VALUE ]]; then
     buildopt_start_shared_container
 else
     buildopt_start_arm_container CONTROL
