@@ -2,7 +2,7 @@
 
 ## Product specification and technical design
 
-**Status:** master POC architecture RFC — bounded synthetic value passed; public-repository replication is active<br>
+**Status:** master POC architecture RFC — bounded synthetic value passed; public-repository replication retained the bounded claim<br>
 **Last technical review:** August 5, 2026<br>
 **Working name:** Gradle Build Optimization<br>
 **Scope:** autonomous optimization of Gradle builds in CI and local environments<br>
@@ -77,7 +77,7 @@ The current objective is a **proof of concept**, not a private-beta or productio
 
 The result authorizes a `CONTINUE` decision for further POC exploration only. It does not prove universal savings or production readiness. The initial realistic change-class matrix in [`poc-breadth-validation-v1`](./specs/poc-breadth-validation-v1.md) qualified 2/8 cells. Attribution and calibrated paired experiments reproduced the bounded Groovy and leaf Kotlin value cells, while shared-source and build-logic Kotlin remained order-sensitive. The terminal decision therefore retained the qualified synthetic claim and prohibited more unchanged replication or product tuning against noisy evidence.
 
-The next POC extension tests whether that bounded signal survives on fixed public repositories. Compatibility is established before any timing claim: source revisions, wrapper/settings files, Gradle distributions, representative tasks, excluded integrations, required outputs, and the installed BuildOpt entry point are all pinned and checked. Only compatible repositories enter a preregistered paired comparison against optimized native Gradle. An eight-hour soak, design partners, high availability, enterprise identity, shared multi-tenancy, and production promotion samples are not required. Conversely, a feature does not justify activation merely because it is safe or technically interesting: when it cannot demonstrate net value for a workload class, BuildOpt keeps it disabled for that class.
+The bounded signal was then tested on fixed public repositories. Compatibility was established before timing: source revisions, wrapper/settings files, Gradle distributions, representative tasks, excluded integrations, required outputs, and the installed BuildOpt entry point were pinned and checked. Spotless, Mockito, and SpotBugs entered a preregistered paired comparison against optimized native Gradle. Only Mockito retained no-change parity and cleared the unchanged leaf-source accelerator threshold; Spotless and SpotBugs did not. The terminal result therefore retains the qualified synthetic claim and does not authorize a general public-repository claim, new tuning, or threshold movement. An eight-hour soak, design partners, high availability, enterprise identity, shared multi-tenancy, and production promotion samples are not required. A feature does not justify activation merely because it is safe or technically interesting: when it cannot demonstrate net value for a workload class, BuildOpt keeps it disabled for that class.
 
 ---
 
@@ -2801,9 +2801,9 @@ native Gradle baseline
   → continue/stop decision
 ```
 
-The historical Phase 0 and MVP sections below retain the architecture and possible productization gates. Their names do not describe current POC qualification. The positive result supports another explicitly chosen POC phase, but does not automatically activate soak, external pilots, operational scale, product modes, or GA hardening.
+The historical Phase 0 and MVP sections below retain the architecture and possible productization gates. Their names do not describe current POC qualification. The positive synthetic result supported one explicitly chosen public-repository replication phase, but did not automatically activate soak, external pilots, operational scale, product modes, or GA hardening.
 
-The explicitly chosen next phase is public-repository replication:
+That public-repository replication is complete:
 
 ```text
 pin and audit released public repositories
@@ -2812,6 +2812,12 @@ pin and audit released public repositories
   → run paired optimized-native versus BuildOpt measurements
   → broaden the claim only for repositories and change classes that reproduce value
 ```
+
+The matrix qualified Mockito but not Spotless or SpotBugs, so the decision is
+`RETAIN_BOUNDED_SYNTHETIC_CLAIM`. This is a terminal POC result for the current
+hypothesis: no unchanged rerun, product tuning, or broader claim follows from
+it. Another experiment requires a separately preregistered value hypothesis,
+not a retrospective change to workloads or thresholds.
 
 Public repositories are evidence inputs, not design partners. Their build code
 runs only from exact revisions in disposable homes without host credentials,
@@ -3165,7 +3171,7 @@ These choices are deliberately unresolved because they do not help answer the PO
 
 ### 29.1 Readiness verdict
 
-The original Phase 0 package and walking skeleton are materialized. The combined path cleared `POC-VALUE-G01` on the qualified synthetic workload matrix. `POC-BREADTH-001` initially completed with 2/8 realistic change/DSL cells qualifying. Attribution and calibrated paired experiments raised bounded coverage while the terminal Kotlin decision retained unstable shared/build-logic cells outside the claim. The current implementation truth lives in the tracker and executable checks; the active public-repository replication phase tests external validity without adding production subsystems.
+The original Phase 0 package and walking skeleton are materialized. The combined path cleared `POC-VALUE-G01` on the qualified synthetic workload matrix. `POC-BREADTH-001` initially completed with 2/8 realistic change/DSL cells qualifying. Attribution and calibrated paired experiments raised bounded coverage while the terminal Kotlin decision retained unstable shared/build-logic cells outside the claim. Public-repository replication then qualified only Mockito out of Spotless, Mockito, and SpotBugs, so the bounded synthetic claim remains unchanged. The current implementation truth lives in the tracker and executable checks; no active value block follows from the completed hypothesis.
 
 The distinction is deliberate:
 

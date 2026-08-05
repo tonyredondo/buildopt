@@ -1,13 +1,13 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS; PUBLIC REPLICATION ACTIVE` — the bounded synthetic claim is retained while fixed public repositories test external validity<br>
-**Current phase:** `POC REAL-WORLD PERFORMANCE` — Spotless, Mockito, and SpotBugs are compatible; the next block must preregister and run paired value measurements<br>
+**Overall status:** `POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS; PUBLIC REPLICATION RETAINED THE BOUNDED CLAIM` — one of three public repositories qualified, so no general public-repository claim is authorized<br>
+**Current phase:** `POC REAL-WORLD REPLICATION COMPLETE` — the current hypothesis has a terminal result; another experiment requires a separately preregistered value hypothesis<br>
 **POC functional target:** measurable net build-time reduction from the qualified Build Impact and exact reviewed-source Task/Patch routes; no-value Safe Cache or Runtime candidates remain disabled<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
 **Last updated:** 2026-08-05<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
-**RFC baseline SHA-256:** `2b1fbd516bb512e3918067e1c3b5a8885cfcb0053f27ca40b94232ee04ae584f`
+**RFC baseline SHA-256:** `178644f2a98319e5095151081e6af5b9016fe1677ebcb17f7dbd704c3122fdab`
 
 ---
 
@@ -84,7 +84,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-KOTLIN-STABILITY | Remaining Kotlin shared-source/build-logic classification mismatches | `DONE` | 1/1 | `E-167` |
 | POC-KOTLIN-BOUNDARY | Stop-or-replicate decision for unstable Kotlin cells | `DONE` | 1/1 | `E-168` |
 | POC-REALWORLD-COMPAT | Pinned public-repository native/BuildOpt compatibility | `DONE` | 1/1 | `E-169` |
-| POC-REALWORLD-VALUE | Paired value replication on compatible public repositories | `DOING` | 0/1 | `E-169` |
+| POC-REALWORLD-VALUE | Paired value replication on compatible public repositories | `DONE` | 1/1 | `E-170` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -110,6 +110,7 @@ Optimized native Gradle baseline
   → stop and retain the bounded claim; do not tune product or repeat against unstable evidence
   → audit fixed public repositories and prove native/installed compatibility without timing claims
   → preregister and run paired public-repository value measurements
+  → retain the bounded synthetic claim after only 1/3 public repositories qualifies
 ```
 
 The implementation history remains useful, but it is not the POC exit gate:
@@ -142,7 +143,11 @@ than partners. Test Optimization remains a separate product.
 | 12 | `POC-KOTLIN-STABILITY-001` | Re-run shared-source and build-logic Kotlin on the calibrated paired boundary and require order-independent classifications before authorizing product work | `DONE` | Codex |
 | 13 | `POC-KOTLIN-BOUNDARY-001` | Review the failed stability evidence and choose STOP or one final preregistered replication without changing product, workload, or thresholds | `DONE` | Codex |
 | 14 | `POC-REALWORLD-001` | Pin, audit, and execute representative native/installed tasks on Spotless, Mockito, and SpotBugs with identical required outputs | `DONE` | Codex |
-| 15 | `POC-REALWORLD-002` | Run the preregistered paired performance matrix on every repository admitted by `POC-REALWORLD-G01` | `DOING` | Codex |
+| 15 | `POC-REALWORLD-002` | Run the preregistered paired performance matrix on every repository admitted by `POC-REALWORLD-G01` | `DONE` | Codex |
+
+There is no active executable item in the current POC. New work requires a
+new, preregistered value hypothesis; the failed public cells do not authorize
+an unchanged rerun, product tuning, or threshold movement.
 
 ### 2.4 Completed implementation sequence
 
@@ -289,7 +294,7 @@ Every accepted RFC decision is represented below. Historical private-beta decisi
 | `POC-VALUE-G01` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | `DONE` | Codex | `E-159`, [`poc-value-validation-v1`](./specs/poc-value-validation-v1.md) |
 | `POC-BREADTH-G01` | Realistic Kotlin/Groovy change-class matrix preserves parity on full-graph cases and clears the accelerator threshold on selective cases | Broader synthetic POC claim | `PRELIMINARY` | Codex | `E-161`: 4/8 cells qualified after attribution; claim retained narrowly |
 | `POC-REALWORLD-G01` | Three fixed public repositories pass representative native and installed-BuildOpt tasks with identical non-empty outputs, no scans/publication, and zero product failures | Public-repository performance matrix | `DONE` | Codex | `E-169`, [`poc-real-world-compatibility-v1`](./specs/poc-real-world-compatibility-v1.md) |
-| `POC-REALWORLD-G02` | No-change retains native parity and a preregistered leaf-source Build Impact alternative clears the unchanged accelerator threshold on all compatible public repositories | Public-repository POC claim decision | `DOING` | Codex | [`poc-real-world-performance-v1`](./specs/poc-real-world-performance-v1.md) |
+| `POC-REALWORLD-G02` | Execute the preregistered public-repository matrix and issue the terminal broaden-or-retain decision without moving thresholds | Public-repository POC claim decision | `DONE` | Codex | `E-170`, [`poc-real-world-performance-v1`](./specs/poc-real-world-performance-v1.md) |
 
 ---
 
@@ -1207,6 +1212,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-167` | 2026-08-05 | `POC-KOTLIN-STABILITY-001`, `POC-KOTLIN-STABILITY-G01` | Opposite-order [control-first](./benchmarks/results/poc-kotlin-stability-v1-control-first.json) and [candidate-first](./benchmarks/results/poc-kotlin-stability-v1-candidate-first.json) strict batches ran revision `9ea74078670480e30e02321bdeab665ea6bfe014` inside one digest-pinned 4-CPU/16-GiB container with separate workspaces, installations, writable state, Gradle homes, and daemons. Both arms reused the frozen 25-million-round Kotlin profile without changing tasks, outputs, or thresholds. Shared-source retained exact five-versus-two execution and all 16 signed pairs were positive, but control-first saved 963.75 ms/45.2% with interval +825.625..+1,140.625 ms while candidate-first saved 468.125 ms/27.2% with interval +377.625..+568.25 ms and missed the unchanged 500-ms floor by 31.875 ms. Build-logic retained five-versus-five execution and Configuration Cache invalidation; control-first regressed 21.375 ms/0.65% within parity, while candidate-first regressed 137.625 ms/4.1% outside the −2% guardrail. All 32 pairs retained byte-identical required outputs, exact execution shape, valid Configuration Cache behavior, at most 133.9 ms inter-arm idle gap, and zero product-attributable failures. The [checked decision](./benchmarks/results/poc-kotlin-stability-v1-decision.json) records both cells as mismatched | `DONE` experiment, `FAILED` stability gate: authorize no product change, retain the bounded synthetic claim, and require `POC-KOTLIN-BOUNDARY-001` to choose STOP or one final preregistered terminal experiment without moving thresholds, discarding pairs, repeatedly rerunning, or making production, universal, soak, design-partner, or Test Optimization claims |
 | `E-168` | 2026-08-05 | `POC-KOTLIN-BOUNDARY-001`, `POC-KOTLIN-BOUNDARY-G01` | The machine-readable [terminal decision](./benchmarks/results/poc-kotlin-boundary-v1.json) binds the exact six `E-163`/`E-167` report hashes and recomputes four eight-pair batches for each blocked Kotlin cell. Shared-source alternates `PASS/FAIL/PASS/FAIL`: 29/32 pairs are positive and the latest failed batch still saves 468.125 ms/27.2% with a positive interval, but misses the unchanged 500-ms floor by 31.875 ms. Build-logic alternates `FAIL/PASS/PASS/FAIL`, runs five verifications in both arms, and has 15/32 positive pairs with no stable attributable regression. Across all 64 pairs, required outputs, execution shape, and Configuration Cache state remain exact and product failures are zero. There is no unresolved correctness defect, reproduced negative classification, or preregistrable causal hypothesis; another unchanged run could only exploit threshold noise | `DONE`: select `STOP_RETAIN_BOUNDED_CLAIM`, keep both cells blocked from generalization, authorize no product change or further replication, and close the current POC without production, universal, soak, design-partner, or Test Optimization claims |
 | `E-169` | 2026-08-05 | `POC-REALWORLD-001`, `POC-REALWORLD-G01` | The revision-bound [public-repository compatibility evidence](./benchmarks/results/poc-real-world-compatibility-v1.json) ran BuildOpt `f550cd82814768e09e75bb6a07e0d1c60ad567f5` in the digest-pinned 4-CPU/16-GiB image against exact Spotless `cbd01c4e`, Mockito `a231205b`, and SpotBugs `8d5cad45` revisions. Native Gradle and installed `buildopt gradle` each executed the same representative target from separate clean checkouts and empty homes. Spotless completed 10/10 actionable tasks with 209 identical outputs; Mockito completed 15/15 with 88; SpotBugs completed 24/24 with 349. Source archives, wrapper JARs/properties, settings, and distributions were hash-bound; SpotBugs received only the declared Gradle checksum injection. `CI`, Android, signing, scan, and cache credentials were absent; build scans and publishing tasks were rejected; product-attributable failures were zero | `DONE`: all three repositories are `COMPATIBLE_FOR_PERFORMANCE_MATRIX`, authorizing only preregistration and execution of `POC-REALWORLD-002`; no timing, savings, universal, production, soak, design-partner, or Test Optimization claim is made |
+| `E-170` | 2026-08-05 | `POC-REALWORLD-002`, `POC-REALWORLD-G02` | The revision-bound [public-repository performance evidence](./benchmarks/results/poc-real-world-performance-v1.json) ran BuildOpt `5af22ccd9435265d8c623ecbf5668b73722e5feb` for 48 preregistered pairs and 96 measured builds in the digest-pinned 4-CPU/16-GiB runner. Every cell used opposite starting orders, a maximum 5-second inter-arm gap, persistent private daemons, offline execution, exact required outputs, and unchanged 2% parity plus 500-ms/2%/positive-bound accelerator thresholds. Mockito retained no-change parity and saved 744.25 ms/18.22% on leaf source with interval +77..+1,526.25 ms, qualifying the repository. Spotless retained no-change parity but saved only 31.125 ms/1.89% on leaf source. SpotBugs regressed 72.75 ms/3.06% on no-change and its 384.125-ms/14.23% leaf saving had interval −659.25..+1,459.125 ms. All required outputs were byte-identical and product-attributable failures were zero | `DONE` experiment and decision: only 1/3 repositories qualifies, so select `RETAIN_BOUNDED_SYNTHETIC_CLAIM`; authorize no threshold movement, unchanged rerun, product tuning, general public-repository claim, production, soak, design-partner, or Test Optimization work |
 
 ---
 
@@ -1214,6 +1220,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-05 | Closed `POC-REALWORLD-002` and `POC-REALWORLD-G02` after 48 preregistered pairs: Mockito qualified with no-change parity and 744.25-ms/18.22% stable leaf savings, while Spotless and SpotBugs did not clear the unchanged gates; retained the bounded synthetic claim and ended the current public-repository hypothesis without tuning or moving thresholds | Codex |
 | 2026-08-05 | Preregistered `POC-REALWORLD-002` before timing: three exact public revisions, no-change parity and leaf-source accelerator cells, eight pairs in opposite-start batches, persistent private daemons, offline measured execution, unchanged 500-ms/2%/positive-bound thresholds, exact outputs, and a terminal broaden-or-retain decision | Codex |
 | 2026-08-05 | Closed `POC-REALWORLD-001` and `POC-REALWORLD-G01`: three exact public revisions passed native and installed BuildOpt representative tasks with 646 byte-identical required outputs, no scans/publication, and zero product failures; opened preregistered paired value block `POC-REALWORLD-002` without treating cold compatibility runs as performance evidence | Codex |
 | 2026-08-05 | Closed `POC-KOTLIN-BOUNDARY-001` and `POC-KOTLIN-BOUNDARY-G01` with `STOP_RETAIN_BOUNDED_CLAIM`: four batches per blocked Kotlin cell contain no reproduced negative classification, correctness defect, product failure, or new causal hypothesis; prohibited another unchanged replication, product tuning, threshold movement, and pair discard, leaving no active block inside the current POC | Codex |

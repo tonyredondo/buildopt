@@ -107,6 +107,8 @@ The underlying evidence and contracts are:
   validated by `./dev/check-poc-kotlin-boundary`;
 - [public-repository compatibility evidence](./results/poc-real-world-compatibility-v1.json),
   validated by `./dev/check-poc-real-world-compatibility`;
+- [public-repository performance evidence](./results/poc-real-world-performance-v1.json),
+  validated by `./dev/check-poc-real-world-performance`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and
   [contract](../specs/cache-parity-v1.md);
 - [Runtime Tuning observations](./results/b-runtime-owner-evaluation.json) and
@@ -115,10 +117,32 @@ The underlying evidence and contracts are:
   and [contract](../specs/build-impact-performance-v1.md).
 
 The three mechanism-development reports remain historical inputs. The strict
-synthetic reports prove bounded combined value, while the public-repository
-report proves compatibility only. No public-repository timing result exists
-yet, and none of these documents claims universal savings or production
-readiness.
+synthetic reports prove bounded combined value. The public-repository
+compatibility and performance reports test whether that claim generalizes; the
+answer is currently **no**. None of these documents claims universal savings
+or production readiness.
+
+### Public-repository performance result
+
+`POC-REALWORLD-002` ran 48 preregistered pairs (96 measured builds) on exact
+Spotless, Mockito, and SpotBugs revisions in the digest-pinned 4-CPU/16-GiB
+runner. Native Gradle and installed BuildOpt used separate homes, persistent
+private daemons, offline execution, opposite starting orders, byte-identical
+required outputs, and the unchanged 2% parity and 500-ms/2%/positive-bound
+accelerator thresholds.
+
+| Repository | No change | Leaf source | Repository decision |
+|---|---:|---:|---|
+| Mockito | 239.25 ms / 9.74% faster; parity | 744.25 ms / 18.22% faster; 95% interval `[77, 1526.25]` ms | `QUALIFIED` |
+| SpotBugs | 72.75 ms / 3.06% slower; outside parity | 384.125 ms / 14.23% faster; 95% interval `[-659.25, 1459.125]` ms | `RETAIN_BOUNDED_CLAIM` |
+| Spotless | 7.375 ms / 1.02% slower; parity | 31.125 ms / 1.89% faster; 95% interval `[-6.375, 69.5]` ms | `RETAIN_BOUNDED_CLAIM` |
+
+All required outputs were identical and product-attributable failures were
+zero. Only Mockito qualified. Spotless omitted work but did not contain enough
+avoidable work to clear the threshold; SpotBugs neither retained no-change
+parity nor produced stable absolute leaf savings. The terminal verdict is
+`RETAIN_BOUNDED_SYNTHETIC_CLAIM`: no thresholds move, percentages are not
+combined, and no general public-repository claim is authorized.
 
 ### Calibrated Groovy result
 

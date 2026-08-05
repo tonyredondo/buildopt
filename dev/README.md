@@ -2402,6 +2402,16 @@ temporally paired observations for `NO_CHANGE` and `LEAF_SOURCE_CHANGE` in
 each compatible public repository. It never adds percentages across cells and
 accepts a negative terminal decision as valid evidence.
 
+Validate the checked-in result without rerunning Gradle:
+
+```bash
+./dev/check-poc-real-world-performance
+```
+
+The terminal evidence qualifies Mockito but not Spotless or SpotBugs, so it
+retains the bounded synthetic claim and authorizes no unchanged rerun, product
+tuning, or broader public-repository claim.
+
 Validate and print the historical mechanism-development scorecard without
 rerunning a benchmark:
 

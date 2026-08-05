@@ -1,0 +1,1697 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-real-world-performance/v1",
+  "capturedAt": "2026-08-05T12:56:06Z",
+  "specSha256": "9a157960da757ffb77affc032c7020d6b0014938aefa22c6421bb9376996485e",
+  "buildopt": {
+    "revision": "5af22ccd9435265d8c623ecbf5668b73722e5feb",
+    "executableSha256": "90de5b90842eed1427d9cb87441ced6a0dec23bbab1a5141918b8af0bf707c6d",
+    "gradlePluginSha256": "2db6bc4ea04e98d0e042f5080707be5dba6c31071aac358dd709aca5e6101638"
+  },
+  "runner": {
+    "id": "linux-amd64-4c-16g-v1",
+    "image": "docker.io/library/eclipse-temurin@sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50",
+    "platformDigest": "sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50",
+    "runnerSpecSha256": "26283e56aa7251152c7f051f7500bc86553669a808fc1cec5b736acf8f0733c9",
+    "cpuCount": 4,
+    "memoryBytes": 17179869184
+  },
+  "methodology": {
+    "preflight": "ONLINE_UNMEASURED_PER_ARM",
+    "measuredNetwork": "DISCONNECTED",
+    "measuredDependencyMode": "GRADLE_OFFLINE",
+    "workspaceState": "PERSISTENT_PRIVATE_PER_ARM_AND_SCENARIO",
+    "gradleUserHome": "PERSISTENT_PRIVATE_PER_ARM_AND_SCENARIO",
+    "daemon": "PERSISTENT_PRIVATE_PER_ARM_AND_SCENARIO",
+    "writableStateShared": false,
+    "workspaceShared": false,
+    "gradleUserHomeShared": false,
+    "daemonShared": false,
+    "requiredOutputDigest": "SORTED_RELATIVE_PATH_AND_SHA256",
+    "percentagesAddedAcrossRepositoriesOrScenarios": false,
+    "batches": {
+      "count": 2,
+      "pairsPerBatch": 4,
+      "pairsPerScenario": 8,
+      "startingPairOrders": [
+        "CONTROL_FIRST",
+        "CANDIDATE_FIRST"
+      ],
+      "pairOrder": "ALTERNATING_WITH_OPPOSITE_BATCH_START",
+      "warmupPerScenario": 1,
+      "maximumInterArmIdleGapMs": 5000,
+      "confidenceInterval": "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95"
+    },
+    "nativeControl": {
+      "entryPoint": "GRADLE_WRAPPER",
+      "buildCache": true,
+      "parallelism": true,
+      "daemon": true,
+      "configurationCacheWhenCompatible": true
+    },
+    "candidate": {
+      "entryPoint": "INSTALLED_BUILDOPT_GRADLE",
+      "safeCache": "DEFAULT_NATIVE_L1",
+      "runtimeTuning": "DISABLED_BY_EXISTING_NO_VALUE_DECISION",
+      "sourceChangePolicy": "PREREGISTERED_BUILD_IMPACT_ALTERNATIVE",
+      "selectionState": "POC_EXPERIMENT_ONLY_NOT_PRODUCT_PROMOTION"
+    },
+    "scenarios": [
+      {
+        "id": "NO_CHANGE",
+        "changeClass": "NONE",
+        "candidatePolicy": "FULL_GRAPH",
+        "successClass": "PARITY",
+        "maximumRegressionRatio": 0.02
+      },
+      {
+        "id": "LEAF_SOURCE_CHANGE",
+        "changeClass": "LEAF_SOURCE",
+        "candidatePolicy": "PREREGISTERED_BUILD_IMPACT_ALTERNATIVE",
+        "successClass": "ACCELERATOR",
+        "minimumSavedMs": 500,
+        "minimumReductionRatio": 0.02,
+        "positiveLower95Bound": true
+      }
+    ]
+  },
+  "repositories": [
+    {
+      "id": "MOCKITO",
+      "nameWithOwner": "mockito/mockito",
+      "revision": "a231205b240e7884a63bf0f63440012867a4da21",
+      "dsl": "KOTLIN",
+      "scenarios": [
+        {
+          "id": "LEAF_SOURCE_CHANGE",
+          "changeClass": "LEAF_SOURCE",
+          "successClass": "ACCELERATOR",
+          "classification": "THRESHOLD_MET",
+          "result": {
+            "pairs": 8,
+            "controlMeanMs": 4084.875,
+            "candidateMeanMs": 3340.625,
+            "meanSavedMs": 744.25,
+            "meanReductionRatio": 0.18219651764129868,
+            "interval95SavedMs": [
+              77,
+              1526.25
+            ],
+            "positivePairs": 6,
+            "requiredOutputsIdentical": true,
+            "productAttributableFailures": 0,
+            "observations": [
+              {
+                "repositoryId": "MOCKITO",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 1,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 3314,
+                "candidateDurationMs": 4070,
+                "savedMs": -756,
+                "interArmIdleGapMs": 89,
+                "controlOutputSha256": "e0c1aa943bfc3686fb39ee595b50aeda8cd13f2512be0c0ccbc94f9925ea0c82",
+                "candidateOutputSha256": "e0c1aa943bfc3686fb39ee595b50aeda8cd13f2512be0c0ccbc94f9925ea0c82",
+                "outputFileCount": 6,
+                "controlSourceSha256": "dce7e5c5e2090ad2aa57caf35cf6339791c8b4016ee494816700653c98969833",
+                "candidateSourceSha256": "dce7e5c5e2090ad2aa57caf35cf6339791c8b4016ee494816700653c98969833",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":mockito-extensions:mockito-junit-jupiter:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "MOCKITO",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 2,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 4520,
+                "candidateDurationMs": 4205,
+                "savedMs": 315,
+                "interArmIdleGapMs": 19,
+                "controlOutputSha256": "e0c1aa943bfc3686fb39ee595b50aeda8cd13f2512be0c0ccbc94f9925ea0c82",
+                "candidateOutputSha256": "e0c1aa943bfc3686fb39ee595b50aeda8cd13f2512be0c0ccbc94f9925ea0c82",
+                "outputFileCount": 6,
+                "controlSourceSha256": "cae6f9e19ad790e80f595a5421dbef82159cdf14d845e120e55f43d4dabb254f",
+                "candidateSourceSha256": "cae6f9e19ad790e80f595a5421dbef82159cdf14d845e120e55f43d4dabb254f",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":mockito-extensions:mockito-junit-jupiter:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "MOCKITO",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 3,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 3244,
+                "candidateDurationMs": 3281,
+                "savedMs": -37,
+                "interArmIdleGapMs": 86,
+                "controlOutputSha256": "e0c1aa943bfc3686fb39ee595b50aeda8cd13f2512be0c0ccbc94f9925ea0c82",
+                "candidateOutputSha256": "e0c1aa943bfc3686fb39ee595b50aeda8cd13f2512be0c0ccbc94f9925ea0c82",
+                "outputFileCount": 6,
+                "controlSourceSha256": "94e5a5439363951c85609e23c035621527a18cd77c1d2f5379acb6e7a77bec54",
+                "candidateSourceSha256": "94e5a5439363951c85609e23c035621527a18cd77c1d2f5379acb6e7a77bec54",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":mockito-extensions:mockito-junit-jupiter:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "MOCKITO",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 4,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 4600,
+                "candidateDurationMs": 4159,
+                "savedMs": 441,
+                "interArmIdleGapMs": 20,
+                "controlOutputSha256": "e0c1aa943bfc3686fb39ee595b50aeda8cd13f2512be0c0ccbc94f9925ea0c82",
+                "candidateOutputSha256": "e0c1aa943bfc3686fb39ee595b50aeda8cd13f2512be0c0ccbc94f9925ea0c82",
+                "outputFileCount": 6,
+                "controlSourceSha256": "89c3b132035f54ba6688db133a7a4c71b84804ef9030d5202fa8d1bd5e2bc574",
+                "candidateSourceSha256": "89c3b132035f54ba6688db133a7a4c71b84804ef9030d5202fa8d1bd5e2bc574",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":mockito-extensions:mockito-junit-jupiter:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "MOCKITO",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 5,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 4314,
+                "candidateDurationMs": 2187,
+                "savedMs": 2127,
+                "interArmIdleGapMs": 94,
+                "controlOutputSha256": "e0c1aa943bfc3686fb39ee595b50aeda8cd13f2512be0c0ccbc94f9925ea0c82",
+                "candidateOutputSha256": "e0c1aa943bfc3686fb39ee595b50aeda8cd13f2512be0c0ccbc94f9925ea0c82",
+                "outputFileCount": 6,
+                "controlSourceSha256": "5d0d2d358dc3fe16fcfd35db79d4a36839916b390466f3092a457cb8fd8affab",
+                "candidateSourceSha256": "5d0d2d358dc3fe16fcfd35db79d4a36839916b390466f3092a457cb8fd8affab",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":mockito-extensions:mockito-junit-jupiter:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "MOCKITO",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 6,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 4524,
+                "candidateDurationMs": 3938,
+                "savedMs": 586,
+                "interArmIdleGapMs": 18,
+                "controlOutputSha256": "e0c1aa943bfc3686fb39ee595b50aeda8cd13f2512be0c0ccbc94f9925ea0c82",
+                "candidateOutputSha256": "e0c1aa943bfc3686fb39ee595b50aeda8cd13f2512be0c0ccbc94f9925ea0c82",
+                "outputFileCount": 6,
+                "controlSourceSha256": "0d0a4fe459b8f6aa75ebe7f3e7e59fa4fb6d0439fcad6a8f2e44a469e97a08c3",
+                "candidateSourceSha256": "0d0a4fe459b8f6aa75ebe7f3e7e59fa4fb6d0439fcad6a8f2e44a469e97a08c3",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":mockito-extensions:mockito-junit-jupiter:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "MOCKITO",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 7,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 4634,
+                "candidateDurationMs": 2009,
+                "savedMs": 2625,
+                "interArmIdleGapMs": 20,
+                "controlOutputSha256": "e0c1aa943bfc3686fb39ee595b50aeda8cd13f2512be0c0ccbc94f9925ea0c82",
+                "candidateOutputSha256": "e0c1aa943bfc3686fb39ee595b50aeda8cd13f2512be0c0ccbc94f9925ea0c82",
+                "outputFileCount": 6,
+                "controlSourceSha256": "2f099e53efb0da456e77988031244ec545137d0970e35af09b33247b66e68138",
+                "candidateSourceSha256": "2f099e53efb0da456e77988031244ec545137d0970e35af09b33247b66e68138",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":mockito-extensions:mockito-junit-jupiter:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "MOCKITO",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 8,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 3529,
+                "candidateDurationMs": 2876,
+                "savedMs": 653,
+                "interArmIdleGapMs": 87,
+                "controlOutputSha256": "e0c1aa943bfc3686fb39ee595b50aeda8cd13f2512be0c0ccbc94f9925ea0c82",
+                "candidateOutputSha256": "e0c1aa943bfc3686fb39ee595b50aeda8cd13f2512be0c0ccbc94f9925ea0c82",
+                "outputFileCount": 6,
+                "controlSourceSha256": "591a8659949079d16e17dd68a9a4b9be5105acd84736acfaea121a6c9f3d795c",
+                "candidateSourceSha256": "591a8659949079d16e17dd68a9a4b9be5105acd84736acfaea121a6c9f3d795c",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":mockito-extensions:mockito-junit-jupiter:classes"
+                ],
+                "productAttributableFailure": false
+              }
+            ]
+          }
+        },
+        {
+          "id": "NO_CHANGE",
+          "changeClass": "NONE",
+          "successClass": "PARITY",
+          "classification": "PARITY",
+          "result": {
+            "pairs": 8,
+            "controlMeanMs": 2456.25,
+            "candidateMeanMs": 2217,
+            "meanSavedMs": 239.25,
+            "meanReductionRatio": 0.09740458015267175,
+            "interval95SavedMs": [
+              -927.5,
+              1384.5
+            ],
+            "positivePairs": 4,
+            "requiredOutputsIdentical": true,
+            "productAttributableFailures": 0,
+            "observations": [
+              {
+                "repositoryId": "MOCKITO",
+                "scenarioId": "NO_CHANGE",
+                "pair": 1,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 1554,
+                "candidateDurationMs": 1953,
+                "savedMs": -399,
+                "interArmIdleGapMs": 20,
+                "controlOutputSha256": "7519b8cf8e1973201b2f03a7e346f0607a681e059ac7d479f64ce790a423fd96",
+                "candidateOutputSha256": "7519b8cf8e1973201b2f03a7e346f0607a681e059ac7d479f64ce790a423fd96",
+                "outputFileCount": 595,
+                "controlSourceSha256": "14de46b06aa37b7e19f09e6b57681ab0e335bb5804d55f4e5d8bb1965add9348",
+                "candidateSourceSha256": "14de46b06aa37b7e19f09e6b57681ab0e335bb5804d55f4e5d8bb1965add9348",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "MOCKITO",
+                "scenarioId": "NO_CHANGE",
+                "pair": 2,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 3582,
+                "candidateDurationMs": 1442,
+                "savedMs": 2140,
+                "interArmIdleGapMs": 22,
+                "controlOutputSha256": "7519b8cf8e1973201b2f03a7e346f0607a681e059ac7d479f64ce790a423fd96",
+                "candidateOutputSha256": "7519b8cf8e1973201b2f03a7e346f0607a681e059ac7d479f64ce790a423fd96",
+                "outputFileCount": 595,
+                "controlSourceSha256": "14de46b06aa37b7e19f09e6b57681ab0e335bb5804d55f4e5d8bb1965add9348",
+                "candidateSourceSha256": "14de46b06aa37b7e19f09e6b57681ab0e335bb5804d55f4e5d8bb1965add9348",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "MOCKITO",
+                "scenarioId": "NO_CHANGE",
+                "pair": 3,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 3937,
+                "candidateDurationMs": 1623,
+                "savedMs": 2314,
+                "interArmIdleGapMs": 18,
+                "controlOutputSha256": "7519b8cf8e1973201b2f03a7e346f0607a681e059ac7d479f64ce790a423fd96",
+                "candidateOutputSha256": "7519b8cf8e1973201b2f03a7e346f0607a681e059ac7d479f64ce790a423fd96",
+                "outputFileCount": 595,
+                "controlSourceSha256": "14de46b06aa37b7e19f09e6b57681ab0e335bb5804d55f4e5d8bb1965add9348",
+                "candidateSourceSha256": "14de46b06aa37b7e19f09e6b57681ab0e335bb5804d55f4e5d8bb1965add9348",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "MOCKITO",
+                "scenarioId": "NO_CHANGE",
+                "pair": 4,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 3026,
+                "candidateDurationMs": 1359,
+                "savedMs": 1667,
+                "interArmIdleGapMs": 23,
+                "controlOutputSha256": "7519b8cf8e1973201b2f03a7e346f0607a681e059ac7d479f64ce790a423fd96",
+                "candidateOutputSha256": "7519b8cf8e1973201b2f03a7e346f0607a681e059ac7d479f64ce790a423fd96",
+                "outputFileCount": 595,
+                "controlSourceSha256": "14de46b06aa37b7e19f09e6b57681ab0e335bb5804d55f4e5d8bb1965add9348",
+                "candidateSourceSha256": "14de46b06aa37b7e19f09e6b57681ab0e335bb5804d55f4e5d8bb1965add9348",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "MOCKITO",
+                "scenarioId": "NO_CHANGE",
+                "pair": 5,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 1450,
+                "candidateDurationMs": 3912,
+                "savedMs": -2462,
+                "interArmIdleGapMs": 19,
+                "controlOutputSha256": "7519b8cf8e1973201b2f03a7e346f0607a681e059ac7d479f64ce790a423fd96",
+                "candidateOutputSha256": "7519b8cf8e1973201b2f03a7e346f0607a681e059ac7d479f64ce790a423fd96",
+                "outputFileCount": 595,
+                "controlSourceSha256": "14de46b06aa37b7e19f09e6b57681ab0e335bb5804d55f4e5d8bb1965add9348",
+                "candidateSourceSha256": "14de46b06aa37b7e19f09e6b57681ab0e335bb5804d55f4e5d8bb1965add9348",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "MOCKITO",
+                "scenarioId": "NO_CHANGE",
+                "pair": 6,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 2277,
+                "candidateDurationMs": 2558,
+                "savedMs": -281,
+                "interArmIdleGapMs": 92,
+                "controlOutputSha256": "7519b8cf8e1973201b2f03a7e346f0607a681e059ac7d479f64ce790a423fd96",
+                "candidateOutputSha256": "7519b8cf8e1973201b2f03a7e346f0607a681e059ac7d479f64ce790a423fd96",
+                "outputFileCount": 595,
+                "controlSourceSha256": "14de46b06aa37b7e19f09e6b57681ab0e335bb5804d55f4e5d8bb1965add9348",
+                "candidateSourceSha256": "14de46b06aa37b7e19f09e6b57681ab0e335bb5804d55f4e5d8bb1965add9348",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "MOCKITO",
+                "scenarioId": "NO_CHANGE",
+                "pair": 7,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 2079,
+                "candidateDurationMs": 1364,
+                "savedMs": 715,
+                "interArmIdleGapMs": 23,
+                "controlOutputSha256": "7519b8cf8e1973201b2f03a7e346f0607a681e059ac7d479f64ce790a423fd96",
+                "candidateOutputSha256": "7519b8cf8e1973201b2f03a7e346f0607a681e059ac7d479f64ce790a423fd96",
+                "outputFileCount": 595,
+                "controlSourceSha256": "14de46b06aa37b7e19f09e6b57681ab0e335bb5804d55f4e5d8bb1965add9348",
+                "candidateSourceSha256": "14de46b06aa37b7e19f09e6b57681ab0e335bb5804d55f4e5d8bb1965add9348",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "MOCKITO",
+                "scenarioId": "NO_CHANGE",
+                "pair": 8,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 1745,
+                "candidateDurationMs": 3525,
+                "savedMs": -1780,
+                "interArmIdleGapMs": 92,
+                "controlOutputSha256": "7519b8cf8e1973201b2f03a7e346f0607a681e059ac7d479f64ce790a423fd96",
+                "candidateOutputSha256": "7519b8cf8e1973201b2f03a7e346f0607a681e059ac7d479f64ce790a423fd96",
+                "outputFileCount": 595,
+                "controlSourceSha256": "14de46b06aa37b7e19f09e6b57681ab0e335bb5804d55f4e5d8bb1965add9348",
+                "candidateSourceSha256": "14de46b06aa37b7e19f09e6b57681ab0e335bb5804d55f4e5d8bb1965add9348",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":mockito-core:classes",
+                  ":mockito-extensions:mockito-junit-jupiter:classes",
+                  ":mockito-extensions:mockito-subclass:classes",
+                  ":mockito-extensions:mockito-proxy:classes",
+                  ":mockito-extensions:mockito-errorprone:classes"
+                ],
+                "productAttributableFailure": false
+              }
+            ]
+          }
+        }
+      ],
+      "classification": "QUALIFIED"
+    },
+    {
+      "id": "SPOTBUGS",
+      "nameWithOwner": "spotbugs/spotbugs",
+      "revision": "8d5cad4536ae263448c09181268bbca70f0c0712",
+      "dsl": "MIXED_KOTLIN_SETTINGS_GROOVY_PROJECTS",
+      "scenarios": [
+        {
+          "id": "LEAF_SOURCE_CHANGE",
+          "changeClass": "LEAF_SOURCE",
+          "successClass": "ACCELERATOR",
+          "classification": "NO_VALUE_NO_ACTION",
+          "result": {
+            "pairs": 8,
+            "controlMeanMs": 2699,
+            "candidateMeanMs": 2314.875,
+            "meanSavedMs": 384.125,
+            "meanReductionRatio": 0.14232123008521674,
+            "interval95SavedMs": [
+              -659.25,
+              1459.125
+            ],
+            "positivePairs": 4,
+            "requiredOutputsIdentical": true,
+            "productAttributableFailures": 0,
+            "observations": [
+              {
+                "repositoryId": "SPOTBUGS",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 1,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 2119,
+                "candidateDurationMs": 3220,
+                "savedMs": -1101,
+                "interArmIdleGapMs": 89,
+                "controlOutputSha256": "113f78e41c767728630f1e1a878bdfe74a02f94deae3deea9c0b160e61a355c6",
+                "candidateOutputSha256": "113f78e41c767728630f1e1a878bdfe74a02f94deae3deea9c0b160e61a355c6",
+                "outputFileCount": 13,
+                "controlSourceSha256": "a05f8a23cf9dc6c6ce938b692273f7d5200bd0886fc0d704cb6021bbfbf83940",
+                "candidateSourceSha256": "a05f8a23cf9dc6c6ce938b692273f7d5200bd0886fc0d704cb6021bbfbf83940",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":spotbugs-ant:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTBUGS",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 2,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 2396,
+                "candidateDurationMs": 2662,
+                "savedMs": -266,
+                "interArmIdleGapMs": 96,
+                "controlOutputSha256": "113f78e41c767728630f1e1a878bdfe74a02f94deae3deea9c0b160e61a355c6",
+                "candidateOutputSha256": "113f78e41c767728630f1e1a878bdfe74a02f94deae3deea9c0b160e61a355c6",
+                "outputFileCount": 13,
+                "controlSourceSha256": "11fe2b5216fced718a8e3a88db7cbeffe118d5496c1f5de26cba56ac492153f8",
+                "candidateSourceSha256": "11fe2b5216fced718a8e3a88db7cbeffe118d5496c1f5de26cba56ac492153f8",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":spotbugs-ant:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTBUGS",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 3,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 3304,
+                "candidateDurationMs": 1826,
+                "savedMs": 1478,
+                "interArmIdleGapMs": 86,
+                "controlOutputSha256": "113f78e41c767728630f1e1a878bdfe74a02f94deae3deea9c0b160e61a355c6",
+                "candidateOutputSha256": "113f78e41c767728630f1e1a878bdfe74a02f94deae3deea9c0b160e61a355c6",
+                "outputFileCount": 13,
+                "controlSourceSha256": "d7daa8d99e64e8c40f3a4e5b0fca772b4e39157fd33c9b8805d2855b77e3f624",
+                "candidateSourceSha256": "d7daa8d99e64e8c40f3a4e5b0fca772b4e39157fd33c9b8805d2855b77e3f624",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":spotbugs-ant:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTBUGS",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 4,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 2829,
+                "candidateDurationMs": 2427,
+                "savedMs": 402,
+                "interArmIdleGapMs": 101,
+                "controlOutputSha256": "113f78e41c767728630f1e1a878bdfe74a02f94deae3deea9c0b160e61a355c6",
+                "candidateOutputSha256": "113f78e41c767728630f1e1a878bdfe74a02f94deae3deea9c0b160e61a355c6",
+                "outputFileCount": 13,
+                "controlSourceSha256": "23dfa49e7b48a9c40d62b6e5eaec0b9a36320f93f646b36e00300f6c79009946",
+                "candidateSourceSha256": "23dfa49e7b48a9c40d62b6e5eaec0b9a36320f93f646b36e00300f6c79009946",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":spotbugs-ant:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTBUGS",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 5,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 3552,
+                "candidateDurationMs": 1314,
+                "savedMs": 2238,
+                "interArmIdleGapMs": 100,
+                "controlOutputSha256": "113f78e41c767728630f1e1a878bdfe74a02f94deae3deea9c0b160e61a355c6",
+                "candidateOutputSha256": "113f78e41c767728630f1e1a878bdfe74a02f94deae3deea9c0b160e61a355c6",
+                "outputFileCount": 13,
+                "controlSourceSha256": "535bd65b2d13d70306b84cd2183204254ce6bf665b18be68f7c132968a250ef0",
+                "candidateSourceSha256": "535bd65b2d13d70306b84cd2183204254ce6bf665b18be68f7c132968a250ef0",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":spotbugs-ant:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTBUGS",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 6,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 2239,
+                "candidateDurationMs": 2317,
+                "savedMs": -78,
+                "interArmIdleGapMs": 88,
+                "controlOutputSha256": "113f78e41c767728630f1e1a878bdfe74a02f94deae3deea9c0b160e61a355c6",
+                "candidateOutputSha256": "113f78e41c767728630f1e1a878bdfe74a02f94deae3deea9c0b160e61a355c6",
+                "outputFileCount": 13,
+                "controlSourceSha256": "197e1737381e143a5672eb2b0eb99f6a121fda6a9274b80b7d51cebc34bb21a0",
+                "candidateSourceSha256": "197e1737381e143a5672eb2b0eb99f6a121fda6a9274b80b7d51cebc34bb21a0",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":spotbugs-ant:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTBUGS",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 7,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 3773,
+                "candidateDurationMs": 1163,
+                "savedMs": 2610,
+                "interArmIdleGapMs": 23,
+                "controlOutputSha256": "113f78e41c767728630f1e1a878bdfe74a02f94deae3deea9c0b160e61a355c6",
+                "candidateOutputSha256": "113f78e41c767728630f1e1a878bdfe74a02f94deae3deea9c0b160e61a355c6",
+                "outputFileCount": 13,
+                "controlSourceSha256": "39c2f63f29afb31039ea948b17488f9ff56ec34fbd0e1a44845caa0b1e5985cc",
+                "candidateSourceSha256": "39c2f63f29afb31039ea948b17488f9ff56ec34fbd0e1a44845caa0b1e5985cc",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":spotbugs-ant:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTBUGS",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 8,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 1380,
+                "candidateDurationMs": 3590,
+                "savedMs": -2210,
+                "interArmIdleGapMs": 18,
+                "controlOutputSha256": "113f78e41c767728630f1e1a878bdfe74a02f94deae3deea9c0b160e61a355c6",
+                "candidateOutputSha256": "113f78e41c767728630f1e1a878bdfe74a02f94deae3deea9c0b160e61a355c6",
+                "outputFileCount": 13,
+                "controlSourceSha256": "634a62d7578f6c70903f51c42d6ac15963957d32490d4d0bd28026868c21b92b",
+                "candidateSourceSha256": "634a62d7578f6c70903f51c42d6ac15963957d32490d4d0bd28026868c21b92b",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":spotbugs-ant:classes"
+                ],
+                "productAttributableFailure": false
+              }
+            ]
+          }
+        },
+        {
+          "id": "NO_CHANGE",
+          "changeClass": "NONE",
+          "successClass": "PARITY",
+          "classification": "NO_VALUE_NO_ACTION",
+          "result": {
+            "pairs": 8,
+            "controlMeanMs": 2380.25,
+            "candidateMeanMs": 2453,
+            "meanSavedMs": -72.75,
+            "meanReductionRatio": -0.030564016384833526,
+            "interval95SavedMs": [
+              -1204.125,
+              1092.125
+            ],
+            "positivePairs": 4,
+            "requiredOutputsIdentical": true,
+            "productAttributableFailures": 0,
+            "observations": [
+              {
+                "repositoryId": "SPOTBUGS",
+                "scenarioId": "NO_CHANGE",
+                "pair": 1,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 1772,
+                "candidateDurationMs": 3372,
+                "savedMs": -1600,
+                "interArmIdleGapMs": 87,
+                "controlOutputSha256": "867367683564376114ddf11359d22e37974fd5cded5e7fa6c633d74b0a65a4e3",
+                "candidateOutputSha256": "867367683564376114ddf11359d22e37974fd5cded5e7fa6c633d74b0a65a4e3",
+                "outputFileCount": 1589,
+                "controlSourceSha256": "af5ccee8012ea7dc3fe51db9b32a6a3b398555d60808586fab71e6fc536e8acd",
+                "candidateSourceSha256": "af5ccee8012ea7dc3fe51db9b32a6a3b398555d60808586fab71e6fc536e8acd",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTBUGS",
+                "scenarioId": "NO_CHANGE",
+                "pair": 2,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 1631,
+                "candidateDurationMs": 3840,
+                "savedMs": -2209,
+                "interArmIdleGapMs": 20,
+                "controlOutputSha256": "867367683564376114ddf11359d22e37974fd5cded5e7fa6c633d74b0a65a4e3",
+                "candidateOutputSha256": "867367683564376114ddf11359d22e37974fd5cded5e7fa6c633d74b0a65a4e3",
+                "outputFileCount": 1589,
+                "controlSourceSha256": "af5ccee8012ea7dc3fe51db9b32a6a3b398555d60808586fab71e6fc536e8acd",
+                "candidateSourceSha256": "af5ccee8012ea7dc3fe51db9b32a6a3b398555d60808586fab71e6fc536e8acd",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTBUGS",
+                "scenarioId": "NO_CHANGE",
+                "pair": 3,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 3773,
+                "candidateDurationMs": 1426,
+                "savedMs": 2347,
+                "interArmIdleGapMs": 52,
+                "controlOutputSha256": "867367683564376114ddf11359d22e37974fd5cded5e7fa6c633d74b0a65a4e3",
+                "candidateOutputSha256": "867367683564376114ddf11359d22e37974fd5cded5e7fa6c633d74b0a65a4e3",
+                "outputFileCount": 1589,
+                "controlSourceSha256": "af5ccee8012ea7dc3fe51db9b32a6a3b398555d60808586fab71e6fc536e8acd",
+                "candidateSourceSha256": "af5ccee8012ea7dc3fe51db9b32a6a3b398555d60808586fab71e6fc536e8acd",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTBUGS",
+                "scenarioId": "NO_CHANGE",
+                "pair": 4,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 2113,
+                "candidateDurationMs": 3135,
+                "savedMs": -1022,
+                "interArmIdleGapMs": 93,
+                "controlOutputSha256": "867367683564376114ddf11359d22e37974fd5cded5e7fa6c633d74b0a65a4e3",
+                "candidateOutputSha256": "867367683564376114ddf11359d22e37974fd5cded5e7fa6c633d74b0a65a4e3",
+                "outputFileCount": 1589,
+                "controlSourceSha256": "af5ccee8012ea7dc3fe51db9b32a6a3b398555d60808586fab71e6fc536e8acd",
+                "candidateSourceSha256": "af5ccee8012ea7dc3fe51db9b32a6a3b398555d60808586fab71e6fc536e8acd",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTBUGS",
+                "scenarioId": "NO_CHANGE",
+                "pair": 5,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 1349,
+                "candidateDurationMs": 3054,
+                "savedMs": -1705,
+                "interArmIdleGapMs": 21,
+                "controlOutputSha256": "867367683564376114ddf11359d22e37974fd5cded5e7fa6c633d74b0a65a4e3",
+                "candidateOutputSha256": "867367683564376114ddf11359d22e37974fd5cded5e7fa6c633d74b0a65a4e3",
+                "outputFileCount": 1589,
+                "controlSourceSha256": "af5ccee8012ea7dc3fe51db9b32a6a3b398555d60808586fab71e6fc536e8acd",
+                "candidateSourceSha256": "af5ccee8012ea7dc3fe51db9b32a6a3b398555d60808586fab71e6fc536e8acd",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTBUGS",
+                "scenarioId": "NO_CHANGE",
+                "pair": 6,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 3277,
+                "candidateDurationMs": 1973,
+                "savedMs": 1304,
+                "interArmIdleGapMs": 19,
+                "controlOutputSha256": "867367683564376114ddf11359d22e37974fd5cded5e7fa6c633d74b0a65a4e3",
+                "candidateOutputSha256": "867367683564376114ddf11359d22e37974fd5cded5e7fa6c633d74b0a65a4e3",
+                "outputFileCount": 1589,
+                "controlSourceSha256": "af5ccee8012ea7dc3fe51db9b32a6a3b398555d60808586fab71e6fc536e8acd",
+                "candidateSourceSha256": "af5ccee8012ea7dc3fe51db9b32a6a3b398555d60808586fab71e6fc536e8acd",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTBUGS",
+                "scenarioId": "NO_CHANGE",
+                "pair": 7,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 1897,
+                "candidateDurationMs": 1258,
+                "savedMs": 639,
+                "interArmIdleGapMs": 20,
+                "controlOutputSha256": "867367683564376114ddf11359d22e37974fd5cded5e7fa6c633d74b0a65a4e3",
+                "candidateOutputSha256": "867367683564376114ddf11359d22e37974fd5cded5e7fa6c633d74b0a65a4e3",
+                "outputFileCount": 1589,
+                "controlSourceSha256": "af5ccee8012ea7dc3fe51db9b32a6a3b398555d60808586fab71e6fc536e8acd",
+                "candidateSourceSha256": "af5ccee8012ea7dc3fe51db9b32a6a3b398555d60808586fab71e6fc536e8acd",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTBUGS",
+                "scenarioId": "NO_CHANGE",
+                "pair": 8,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 3230,
+                "candidateDurationMs": 1566,
+                "savedMs": 1664,
+                "interArmIdleGapMs": 95,
+                "controlOutputSha256": "867367683564376114ddf11359d22e37974fd5cded5e7fa6c633d74b0a65a4e3",
+                "candidateOutputSha256": "867367683564376114ddf11359d22e37974fd5cded5e7fa6c633d74b0a65a4e3",
+                "outputFileCount": 1589,
+                "controlSourceSha256": "af5ccee8012ea7dc3fe51db9b32a6a3b398555d60808586fab71e6fc536e8acd",
+                "candidateSourceSha256": "af5ccee8012ea7dc3fe51db9b32a6a3b398555d60808586fab71e6fc536e8acd",
+                "controlConfigurationCacheReused": false,
+                "candidateConfigurationCacheReused": false,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":spotbugs:classes",
+                  ":spotbugs-ant:classes",
+                  ":spotbugs-tests:classes",
+                  ":test-harness-jupiter:classes"
+                ],
+                "productAttributableFailure": false
+              }
+            ]
+          }
+        }
+      ],
+      "classification": "RETAIN_BOUNDED_CLAIM"
+    },
+    {
+      "id": "SPOTLESS",
+      "nameWithOwner": "diffplug/spotless",
+      "revision": "cbd01c4e4b91cea538691d4fe6a8f929d75c27c6",
+      "dsl": "GROOVY",
+      "scenarios": [
+        {
+          "id": "LEAF_SOURCE_CHANGE",
+          "changeClass": "LEAF_SOURCE",
+          "successClass": "ACCELERATOR",
+          "classification": "NO_VALUE_NO_ACTION",
+          "result": {
+            "pairs": 8,
+            "controlMeanMs": 1642.625,
+            "candidateMeanMs": 1611.5,
+            "meanSavedMs": 31.125,
+            "meanReductionRatio": 0.018948329655277377,
+            "interval95SavedMs": [
+              -6.375,
+              69.5
+            ],
+            "positivePairs": 6,
+            "requiredOutputsIdentical": true,
+            "productAttributableFailures": 0,
+            "observations": [
+              {
+                "repositoryId": "SPOTLESS",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 1,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 1803,
+                "candidateDurationMs": 1789,
+                "savedMs": 14,
+                "interArmIdleGapMs": 22,
+                "controlOutputSha256": "03f341c25681a51a2b17a72e816fb81721bf2dea1297c445ee05315125edab87",
+                "candidateOutputSha256": "03f341c25681a51a2b17a72e816fb81721bf2dea1297c445ee05315125edab87",
+                "outputFileCount": 116,
+                "controlSourceSha256": "71d6c6291e0fcacf1e97f4406ebc6791ed5ed90b2a8e318864a56531389871ca",
+                "candidateSourceSha256": "71d6c6291e0fcacf1e97f4406ebc6791ed5ed90b2a8e318864a56531389871ca",
+                "controlConfigurationCacheReused": true,
+                "candidateConfigurationCacheReused": true,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":plugin-gradle:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTLESS",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 2,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 1674,
+                "candidateDurationMs": 1634,
+                "savedMs": 40,
+                "interArmIdleGapMs": 25,
+                "controlOutputSha256": "03f341c25681a51a2b17a72e816fb81721bf2dea1297c445ee05315125edab87",
+                "candidateOutputSha256": "03f341c25681a51a2b17a72e816fb81721bf2dea1297c445ee05315125edab87",
+                "outputFileCount": 116,
+                "controlSourceSha256": "ec4103a6c688b3156cf7ff804aaff9dbcbad2acd5631e13de5876f3b183e967e",
+                "candidateSourceSha256": "ec4103a6c688b3156cf7ff804aaff9dbcbad2acd5631e13de5876f3b183e967e",
+                "controlConfigurationCacheReused": true,
+                "candidateConfigurationCacheReused": true,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":plugin-gradle:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTLESS",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 3,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 1605,
+                "candidateDurationMs": 1629,
+                "savedMs": -24,
+                "interArmIdleGapMs": 18,
+                "controlOutputSha256": "03f341c25681a51a2b17a72e816fb81721bf2dea1297c445ee05315125edab87",
+                "candidateOutputSha256": "03f341c25681a51a2b17a72e816fb81721bf2dea1297c445ee05315125edab87",
+                "outputFileCount": 116,
+                "controlSourceSha256": "eb6d444af075b53df5b1ace48acea9ce01247cad6d67bf580e7b862416e65d0c",
+                "candidateSourceSha256": "eb6d444af075b53df5b1ace48acea9ce01247cad6d67bf580e7b862416e65d0c",
+                "controlConfigurationCacheReused": true,
+                "candidateConfigurationCacheReused": true,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":plugin-gradle:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTLESS",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 4,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 1665,
+                "candidateDurationMs": 1553,
+                "savedMs": 112,
+                "interArmIdleGapMs": 22,
+                "controlOutputSha256": "03f341c25681a51a2b17a72e816fb81721bf2dea1297c445ee05315125edab87",
+                "candidateOutputSha256": "03f341c25681a51a2b17a72e816fb81721bf2dea1297c445ee05315125edab87",
+                "outputFileCount": 116,
+                "controlSourceSha256": "859290e9ebcf612b00428d0a1d002145daeb194d8f599e0800cadd1951c88bf9",
+                "candidateSourceSha256": "859290e9ebcf612b00428d0a1d002145daeb194d8f599e0800cadd1951c88bf9",
+                "controlConfigurationCacheReused": true,
+                "candidateConfigurationCacheReused": true,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":plugin-gradle:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTLESS",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 5,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 1571,
+                "candidateDurationMs": 1532,
+                "savedMs": 39,
+                "interArmIdleGapMs": 20,
+                "controlOutputSha256": "03f341c25681a51a2b17a72e816fb81721bf2dea1297c445ee05315125edab87",
+                "candidateOutputSha256": "03f341c25681a51a2b17a72e816fb81721bf2dea1297c445ee05315125edab87",
+                "outputFileCount": 116,
+                "controlSourceSha256": "0808469d5855bfc25b1c134b5717bd0dfda9df85efb71cbc6e16389f18df1aa8",
+                "candidateSourceSha256": "0808469d5855bfc25b1c134b5717bd0dfda9df85efb71cbc6e16389f18df1aa8",
+                "controlConfigurationCacheReused": true,
+                "candidateConfigurationCacheReused": true,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":plugin-gradle:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTLESS",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 6,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 1639,
+                "candidateDurationMs": 1628,
+                "savedMs": 11,
+                "interArmIdleGapMs": 23,
+                "controlOutputSha256": "03f341c25681a51a2b17a72e816fb81721bf2dea1297c445ee05315125edab87",
+                "candidateOutputSha256": "03f341c25681a51a2b17a72e816fb81721bf2dea1297c445ee05315125edab87",
+                "outputFileCount": 116,
+                "controlSourceSha256": "36fdfdeeecca0e273522e55dbdbe17a84ee093501797615e00519391a81eb15a",
+                "candidateSourceSha256": "36fdfdeeecca0e273522e55dbdbe17a84ee093501797615e00519391a81eb15a",
+                "controlConfigurationCacheReused": true,
+                "candidateConfigurationCacheReused": true,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":plugin-gradle:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTLESS",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 7,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 1542,
+                "candidateDurationMs": 1597,
+                "savedMs": -55,
+                "interArmIdleGapMs": 19,
+                "controlOutputSha256": "03f341c25681a51a2b17a72e816fb81721bf2dea1297c445ee05315125edab87",
+                "candidateOutputSha256": "03f341c25681a51a2b17a72e816fb81721bf2dea1297c445ee05315125edab87",
+                "outputFileCount": 116,
+                "controlSourceSha256": "083bb2d3341df59a8248787200bc5f79b5b02c36cfc16c120bce98d28c5ed064",
+                "candidateSourceSha256": "083bb2d3341df59a8248787200bc5f79b5b02c36cfc16c120bce98d28c5ed064",
+                "controlConfigurationCacheReused": true,
+                "candidateConfigurationCacheReused": true,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":plugin-gradle:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTLESS",
+                "scenarioId": "LEAF_SOURCE_CHANGE",
+                "pair": 8,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 1642,
+                "candidateDurationMs": 1530,
+                "savedMs": 112,
+                "interArmIdleGapMs": 19,
+                "controlOutputSha256": "03f341c25681a51a2b17a72e816fb81721bf2dea1297c445ee05315125edab87",
+                "candidateOutputSha256": "03f341c25681a51a2b17a72e816fb81721bf2dea1297c445ee05315125edab87",
+                "outputFileCount": 116,
+                "controlSourceSha256": "2ccec3f8e82ec83e7f882b52507cfe944baec0b7e43694e10736cc85ca6f89ec",
+                "candidateSourceSha256": "2ccec3f8e82ec83e7f882b52507cfe944baec0b7e43694e10736cc85ca6f89ec",
+                "controlConfigurationCacheReused": true,
+                "candidateConfigurationCacheReused": true,
+                "candidateOmittedDeclaredTask": true,
+                "controlEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":plugin-gradle:classes"
+                ],
+                "productAttributableFailure": false
+              }
+            ]
+          }
+        },
+        {
+          "id": "NO_CHANGE",
+          "changeClass": "NONE",
+          "successClass": "PARITY",
+          "classification": "PARITY",
+          "result": {
+            "pairs": 8,
+            "controlMeanMs": 721.625,
+            "candidateMeanMs": 729,
+            "meanSavedMs": -7.375,
+            "meanReductionRatio": -0.01021998960679023,
+            "interval95SavedMs": [
+              -30.625,
+              15.5
+            ],
+            "positivePairs": 3,
+            "requiredOutputsIdentical": true,
+            "productAttributableFailures": 0,
+            "observations": [
+              {
+                "repositoryId": "SPOTLESS",
+                "scenarioId": "NO_CHANGE",
+                "pair": 1,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 774,
+                "candidateDurationMs": 733,
+                "savedMs": 41,
+                "interArmIdleGapMs": 19,
+                "controlOutputSha256": "7f5f5c36e2bac87021d12f7b55005ea86777996f7fbe4610c427ae3d3aa264e1",
+                "candidateOutputSha256": "7f5f5c36e2bac87021d12f7b55005ea86777996f7fbe4610c427ae3d3aa264e1",
+                "outputFileCount": 519,
+                "controlSourceSha256": "f0f0e6afee8ab57b3de35f9c6a629f01106f43335bb09efd5ac956a1f4bf62e7",
+                "candidateSourceSha256": "f0f0e6afee8ab57b3de35f9c6a629f01106f43335bb09efd5ac956a1f4bf62e7",
+                "controlConfigurationCacheReused": true,
+                "candidateConfigurationCacheReused": true,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTLESS",
+                "scenarioId": "NO_CHANGE",
+                "pair": 2,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 753,
+                "candidateDurationMs": 777,
+                "savedMs": -24,
+                "interArmIdleGapMs": 23,
+                "controlOutputSha256": "7f5f5c36e2bac87021d12f7b55005ea86777996f7fbe4610c427ae3d3aa264e1",
+                "candidateOutputSha256": "7f5f5c36e2bac87021d12f7b55005ea86777996f7fbe4610c427ae3d3aa264e1",
+                "outputFileCount": 519,
+                "controlSourceSha256": "f0f0e6afee8ab57b3de35f9c6a629f01106f43335bb09efd5ac956a1f4bf62e7",
+                "candidateSourceSha256": "f0f0e6afee8ab57b3de35f9c6a629f01106f43335bb09efd5ac956a1f4bf62e7",
+                "controlConfigurationCacheReused": true,
+                "candidateConfigurationCacheReused": true,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTLESS",
+                "scenarioId": "NO_CHANGE",
+                "pair": 3,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 725,
+                "candidateDurationMs": 702,
+                "savedMs": 23,
+                "interArmIdleGapMs": 18,
+                "controlOutputSha256": "7f5f5c36e2bac87021d12f7b55005ea86777996f7fbe4610c427ae3d3aa264e1",
+                "candidateOutputSha256": "7f5f5c36e2bac87021d12f7b55005ea86777996f7fbe4610c427ae3d3aa264e1",
+                "outputFileCount": 519,
+                "controlSourceSha256": "f0f0e6afee8ab57b3de35f9c6a629f01106f43335bb09efd5ac956a1f4bf62e7",
+                "candidateSourceSha256": "f0f0e6afee8ab57b3de35f9c6a629f01106f43335bb09efd5ac956a1f4bf62e7",
+                "controlConfigurationCacheReused": true,
+                "candidateConfigurationCacheReused": true,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTLESS",
+                "scenarioId": "NO_CHANGE",
+                "pair": 4,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 676,
+                "candidateDurationMs": 743,
+                "savedMs": -67,
+                "interArmIdleGapMs": 22,
+                "controlOutputSha256": "7f5f5c36e2bac87021d12f7b55005ea86777996f7fbe4610c427ae3d3aa264e1",
+                "candidateOutputSha256": "7f5f5c36e2bac87021d12f7b55005ea86777996f7fbe4610c427ae3d3aa264e1",
+                "outputFileCount": 519,
+                "controlSourceSha256": "f0f0e6afee8ab57b3de35f9c6a629f01106f43335bb09efd5ac956a1f4bf62e7",
+                "candidateSourceSha256": "f0f0e6afee8ab57b3de35f9c6a629f01106f43335bb09efd5ac956a1f4bf62e7",
+                "controlConfigurationCacheReused": true,
+                "candidateConfigurationCacheReused": true,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTLESS",
+                "scenarioId": "NO_CHANGE",
+                "pair": 5,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 701,
+                "candidateDurationMs": 704,
+                "savedMs": -3,
+                "interArmIdleGapMs": 23,
+                "controlOutputSha256": "7f5f5c36e2bac87021d12f7b55005ea86777996f7fbe4610c427ae3d3aa264e1",
+                "candidateOutputSha256": "7f5f5c36e2bac87021d12f7b55005ea86777996f7fbe4610c427ae3d3aa264e1",
+                "outputFileCount": 519,
+                "controlSourceSha256": "f0f0e6afee8ab57b3de35f9c6a629f01106f43335bb09efd5ac956a1f4bf62e7",
+                "candidateSourceSha256": "f0f0e6afee8ab57b3de35f9c6a629f01106f43335bb09efd5ac956a1f4bf62e7",
+                "controlConfigurationCacheReused": true,
+                "candidateConfigurationCacheReused": true,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTLESS",
+                "scenarioId": "NO_CHANGE",
+                "pair": 6,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 716,
+                "candidateDurationMs": 752,
+                "savedMs": -36,
+                "interArmIdleGapMs": 21,
+                "controlOutputSha256": "7f5f5c36e2bac87021d12f7b55005ea86777996f7fbe4610c427ae3d3aa264e1",
+                "candidateOutputSha256": "7f5f5c36e2bac87021d12f7b55005ea86777996f7fbe4610c427ae3d3aa264e1",
+                "outputFileCount": 519,
+                "controlSourceSha256": "f0f0e6afee8ab57b3de35f9c6a629f01106f43335bb09efd5ac956a1f4bf62e7",
+                "candidateSourceSha256": "f0f0e6afee8ab57b3de35f9c6a629f01106f43335bb09efd5ac956a1f4bf62e7",
+                "controlConfigurationCacheReused": true,
+                "candidateConfigurationCacheReused": true,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTLESS",
+                "scenarioId": "NO_CHANGE",
+                "pair": 7,
+                "order": "CANDIDATE_FIRST",
+                "controlDurationMs": 726,
+                "candidateDurationMs": 702,
+                "savedMs": 24,
+                "interArmIdleGapMs": 21,
+                "controlOutputSha256": "7f5f5c36e2bac87021d12f7b55005ea86777996f7fbe4610c427ae3d3aa264e1",
+                "candidateOutputSha256": "7f5f5c36e2bac87021d12f7b55005ea86777996f7fbe4610c427ae3d3aa264e1",
+                "outputFileCount": 519,
+                "controlSourceSha256": "f0f0e6afee8ab57b3de35f9c6a629f01106f43335bb09efd5ac956a1f4bf62e7",
+                "candidateSourceSha256": "f0f0e6afee8ab57b3de35f9c6a629f01106f43335bb09efd5ac956a1f4bf62e7",
+                "controlConfigurationCacheReused": true,
+                "candidateConfigurationCacheReused": true,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "productAttributableFailure": false
+              },
+              {
+                "repositoryId": "SPOTLESS",
+                "scenarioId": "NO_CHANGE",
+                "pair": 8,
+                "order": "CONTROL_FIRST",
+                "controlDurationMs": 702,
+                "candidateDurationMs": 719,
+                "savedMs": -17,
+                "interArmIdleGapMs": 20,
+                "controlOutputSha256": "7f5f5c36e2bac87021d12f7b55005ea86777996f7fbe4610c427ae3d3aa264e1",
+                "candidateOutputSha256": "7f5f5c36e2bac87021d12f7b55005ea86777996f7fbe4610c427ae3d3aa264e1",
+                "outputFileCount": 519,
+                "controlSourceSha256": "f0f0e6afee8ab57b3de35f9c6a629f01106f43335bb09efd5ac956a1f4bf62e7",
+                "candidateSourceSha256": "f0f0e6afee8ab57b3de35f9c6a629f01106f43335bb09efd5ac956a1f4bf62e7",
+                "controlConfigurationCacheReused": true,
+                "candidateConfigurationCacheReused": true,
+                "candidateOmittedDeclaredTask": false,
+                "controlEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "candidateEntrypoints": [
+                  ":lib:classes",
+                  ":lib-extra:classes",
+                  ":testlib:classes",
+                  ":plugin-gradle:classes"
+                ],
+                "productAttributableFailure": false
+              }
+            ]
+          }
+        }
+      ],
+      "classification": "RETAIN_BOUNDED_CLAIM"
+    }
+  ],
+  "decision": {
+    "verdict": "RETAIN_BOUNDED_SYNTHETIC_CLAIM",
+    "qualifyingRepositories": 1,
+    "requiredRepositories": 3,
+    "performanceMeasured": true
+  },
+  "gate": {
+    "id": "POC-REALWORLD-G02",
+    "state": "PASSED"
+  },
+  "boundaries": {
+    "publicSourceOnly": true,
+    "proofOfConcept": true,
+    "universalSavingsClaimAuthorized": false,
+    "productionReadinessClaimed": false,
+    "eightHourSoakExecuted": false,
+    "externalDesignPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}
