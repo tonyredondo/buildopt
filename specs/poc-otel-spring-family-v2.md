@@ -48,6 +48,17 @@ and conservative. Failure bundles also retain the three checked discovery
 documents outside measured regions. Control, intended candidate, outputs,
 resources, pair order and value gate remain unchanged.
 
+Protocol revision 6 was recorded after both warmups and all four observations
+completed, including exact output comparison, but before a result was emitted.
+The global fallback itself correctly retained all 53 entrypoints with
+`IMPACT_GLOBAL_CHANGE` and completed successfully; the runner still asserted
+the less precise `IMPACT_UNKNOWN_CHANGE_PATH` from revision 3 and therefore
+stopped. The console timings are diagnostic only and are not reconstructed.
+Revision 6 expects and emits the mandatory global reason and retains completed
+row documents in future failure bundles. Product implementation, control,
+candidate, outputs, measurement, resources, pair order and value gate are
+unchanged; the full experiment must rerun.
+
 The accepted measurement will use an installed package and four alternating
 pairs. Both arms receive the same offline dependencies, native-cache seed,
 fixed source mutation, clean outputs, 12 workers and Gradle optimizations. The

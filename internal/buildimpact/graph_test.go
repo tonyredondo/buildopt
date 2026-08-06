@@ -117,6 +117,7 @@ func TestGlobalAndUnknownChangesAlwaysUseFullGraph(t *testing.T) {
 	}{
 		{path: "settings.gradle.kts", reason: "GLOBAL_CHANGE"},
 		{path: "gradle/libs.versions.toml", reason: "GLOBAL_CHANGE"},
+		{path: "gradle.properties", reason: "GLOBAL_CHANGE"},
 		{path: "conventions/java/compiler.conf", reason: "GLOBAL_CHANGE"},
 		{path: "unowned/file.txt", reason: "UNKNOWN_CHANGE_PATH"},
 		{path: "../outside", reason: "INVALID_CHANGE_PATH"},

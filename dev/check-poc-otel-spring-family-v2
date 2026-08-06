@@ -56,16 +56,18 @@ jq -e --arg taskSha "${buildopt_task_sha}" '
     .workItem == "POC-OTEL-SPRING-FAMILY-PREREG-001" and
     .decision == "PREREGISTER_NEW_STABLE_RELEASE_AND_UPSTREAM_SPRING_FAMILY" and
     .protocolRevision == {
-        from: 4,
-        to: 5,
-        reason: "NESTED_PROJECT_DIRECTORY_GLOBS_PREVENTED_POC_ALTERNATIVE_SELECTION",
-        acceptedWarmupsBeforeRevision: 0,
+        from: 5,
+        to: 6,
+        reason: "FALLBACK_ASSERTION_EXPECTED_UNKNOWN_INSTEAD_OF_MANDATORY_GLOBAL_REASON",
+        acceptedWarmupsBeforeRevision: 2,
         completedControlWarmupsBeforeRevision: 1,
-        completedCandidateWarmupsBeforeRevision: 0,
-        completedFullGraphCandidateBuildsBeforeRevision: 1,
+        completedCandidateWarmupsBeforeRevision: 1,
+        completedObservationsBeforeRevision: 4,
         acceptedObservationsBeforeRevision: 0,
-        change: "RESOLVE_NESTED_SOURCE_OWNERS_BY_MOST_SPECIFIC_DECLARED_GLOB_IN_POC_ONLY",
-        implementationChanged: true,
+        priorConsoleTimingsAccepted: false,
+        change: "EXPECT_AND_EMIT_MANDATORY_GLOBAL_CHANGE_REASON_AND_PRESERVE_COMPLETED_ROWS_ON_FAILURE",
+        implementationChanged: false,
+        runnerChanged: true,
         failureDiagnosticsChanged: true,
         productionSelectionChanged: false,
         controlChanged: false,
@@ -146,7 +148,7 @@ jq -e --arg taskSha "${buildopt_task_sha}" '
         parityAloneCountsAsValue: false
     } and
     .fallback.expectedMode == "FULL_GRAPH" and
-    .fallback.expectedReason == "IMPACT_UNKNOWN_CHANGE_PATH" and
+    .fallback.expectedReason == "IMPACT_GLOBAL_CHANGE" and
     .fallback.performanceClaim == false and
     .boundaries.proofOfConcept == true and
     .boundaries.productionReadinessClaimed == false and

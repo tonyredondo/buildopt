@@ -468,6 +468,8 @@ for buildopt_pair in {1..4}; do
         "$((buildopt_control_duration - buildopt_candidate_duration))" "${buildopt_order}"
 done
 
+cp -- "${buildopt_rows}" "${buildopt_root}/logs/completed-observations.jsonl"
+
 buildopt_reset_arm candidate "${buildopt_candidate_checkout}" \
     "${buildopt_candidate_home}" fallback
 printf '\n# buildopt-poc-global-fallback\n' \
@@ -493,7 +495,7 @@ if ! (
     printf 'OpenTelemetry Spring-family global fallback failed\n' >&2
     exit 1
 fi
-grep -Fq 'buildopt: Build Impact POC retained the full graph (IMPACT_UNKNOWN_CHANGE_PATH)' \
+grep -Fq 'buildopt: Build Impact POC retained the full graph (IMPACT_GLOBAL_CHANGE)' \
     "${buildopt_fallback_log}" || {
     printf 'OpenTelemetry global change did not retain the full Spring-family graph\n' >&2
     exit 1
@@ -588,7 +590,7 @@ jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revi
         fallback: {
             changePath: $spec[0].fallback.changePath,
             mode: "FULL_GRAPH",
-            reason: "IMPACT_UNKNOWN_CHANGE_PATH",
+            reason: "IMPACT_GLOBAL_CHANGE",
             entrypointsFileSha256: $spec[0].control.entrypointsFileSha256,
             outsideCandidateEntrypointObserved: ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:testClasses",
             buildSuccessful: true,
