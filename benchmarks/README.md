@@ -68,6 +68,23 @@ Validate the installed-path evidence with:
 The complete report is
 [`poc-spring-installed-impact-v1.json`](./results/poc-spring-installed-impact-v1.json).
 
+The preregistered installed breadth matrix then tested two additional Spring
+scopes. `WEBMVC_LEAF` reduced the mean from 15,962 to 13,807.5 ms, saving
+2,154.5 ms/13.50% with interval +880.5..+3,428.5 ms and 4/4 positive pairs.
+`CORE_TO_JMS_SHARED` reduced the mean from 16,435.75 to 14,645.25 ms, saving
+1,790.5 ms/10.89% with interval +378..+3,128.5 ms, but one of four pairs was
+380 ms slower. The shared cell therefore failed the frozen 4/4-positive rule.
+The global `gradle.properties` cell correctly retained root `testClasses`.
+The terminal decision is `RETAIN_SINGLE_INSTALLED_SPRING_SCOPE`: the matrix
+does not authorize a broad shared-change claim, even though the webmvc cell
+qualified and the shared mean was favorable.
+
+Validate the full matrix with:
+
+```bash
+./dev/check-poc-spring-impact-breadth
+```
+
 | Mechanism | Mean result | Exact paired 95% interval | Classification |
 |---|---:|---:|---|
 | Default native-cache fallback, Kotlin | 79 ms faster (8.9%) | +6 to +156 ms | `NO_VALUE_NO_ACTION`; same cache mechanism, no acceleration claim |

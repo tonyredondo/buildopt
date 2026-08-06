@@ -169,6 +169,7 @@ hide another's cost:
 |---|---:|---|
 | Safe Cache | `NO_VALUE_NO_ACTION`; explicit-only | The default delegates to Gradle native cache, removing product overhead without claiming acceleration |
 | Installed Spring Build Impact | 15.76% faster; 1,260.125 ms saved; 8/8 positive pairs | The packaged command beats optimized native Gradle for one reviewed Spring output scope with identical declared outputs |
+| Installed Spring breadth | `spring-webmvc` 13.50% faster and qualified; shared `spring-core` scope averaged 10.89% faster but failed 4/4 stability | The POC remains output-scope-specific and does not promise acceleration for every change |
 | Runtime Tuning | `NO_VALUE_NO_ACTION`; stable control only | `W4_H6G` regressed 54.7%; `W3_H4G` regressed 4.3% with an interval crossing zero |
 | Build Impact | 73.5–76.0% faster in the strict bounded Kotlin/Groovy workloads | Avoided unrelated non-cacheable work while required outputs stayed unchanged |
 | Reviewed Task/Patch | 67.3–68.0% faster for the exact reviewed custom-task recipe | Restored all eight qualified task outputs; this does not generalize to other recipes |

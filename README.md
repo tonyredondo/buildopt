@@ -80,6 +80,11 @@ Framework workload, direct discovery saved 28.72%; the installed command still
 saved 15.76% after package, launcher, manifest and graph-validation overhead,
 with 8/8 positive pairs and identical declared outputs. See the
 [Build Impact workflow](./docs/guides/product-workflows.md#build-impact).
+An additional installed Spring matrix qualified `spring-webmvc` at 13.50%
+faster, while a shared `spring-core` to `spring-jms` scope averaged 10.89%
+faster but failed the preregistered 4/4-positive stability rule. BuildOpt
+therefore keeps a bounded output-scope claim rather than generalizing to every
+change.
 
 The checked scorecard measures each optimization separately and then measures
 the complete public path without adding unrelated percentages. Safe Cache and
