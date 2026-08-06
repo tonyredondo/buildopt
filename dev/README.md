@@ -2744,6 +2744,27 @@ This is a new stable-release and control-boundary experiment. It neither
 retries nor reinterprets the earlier terminal result, and it changes no test
 selection, production authority, public release, soak or design-partner scope.
 
+The optimized terminal protocol keeps that native control and frozen value
+gate, but replaces the aggregate candidate with four typed compile producers
+and requires an exact-bound hot-state hit in every measured candidate arm.
+Validate the preregistration before timing with:
+
+```bash
+./dev/check-poc-otel-optimization-v1
+```
+
+After committing the preregistration revision, execute and independently
+validate the one accepted terminal measurement with:
+
+```bash
+./dev/run-poc-otel-optimization-v1 /absolute/path/to/new-result.json
+./dev/check-poc-otel-optimization-v1-result /absolute/path/to/new-result.json
+```
+
+The runner stops on any arm failure, output mismatch, missing hot-state hit,
+unsafe fallback or excessive inter-arm gap. It never discards a measured pair
+or moves the frozen 500-ms, 2%, positive-bound and 4/4-pair gate.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

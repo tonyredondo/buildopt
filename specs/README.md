@@ -23,6 +23,7 @@ the exact cross-component contract.
 | [`build-impact-poc-phase-timings-v1.md`](./build-impact-poc-phase-timings-v1.md) | `POC-OTEL-OVERHEAD-001` |
 | [`poc-otel-graph-reduction-v1.md`](./poc-otel-graph-reduction-v1.md) | `POC-OTEL-GRAPH-001` |
 | [`build-impact-poc-hot-state-v1.md`](./build-impact-poc-hot-state-v1.md) | `POC-OTEL-HOT-PATH-001` |
+| [`poc-otel-optimization-v1.md`](./poc-otel-optimization-v1.md) and [`poc-otel-optimization-v1.json`](./poc-otel-optimization-v1.json) | `POC-OTEL-STABILITY-001` |
 | [`poc-stability-validation-v1.md`](./poc-stability-validation-v1.md) and [`poc-stability-validation-v1.json`](./poc-stability-validation-v1.json) | `POC-STABILITY-001` |
 | [`poc-pairing-validation-v1.md`](./poc-pairing-validation-v1.md) and [`poc-pairing-validation-v1.json`](./poc-pairing-validation-v1.json) | `POC-PAIRING-001` |
 | [`poc-groovy-validation-v1.md`](./poc-groovy-validation-v1.md) and [`poc-groovy-validation-v1.json`](./poc-groovy-validation-v1.json) | `POC-GROOVY-001` |
