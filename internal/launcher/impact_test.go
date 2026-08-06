@@ -82,7 +82,7 @@ func TestImpactRunActivatesExplicitStandardJarCache(t *testing.T) {
 	observation := filepath.Join(repositoryRoot, "jar-cache.env")
 	contents := "#!/bin/sh\nprintf '%s\\n' \"$BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS\" > jar-cache.env\n"
 	if runtime.GOOS == "windows" {
-		contents = "@echo off\r\necho %BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS%>jar-cache.env\r\n"
+		contents = "@echo off\r\nset BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS>jar-cache.env\r\n"
 	}
 	if err := os.WriteFile(wrapper, []byte(contents), 0o755); err != nil {
 		t.Fatal(err)
@@ -103,7 +103,11 @@ func TestImpactRunActivatesExplicitStandardJarCache(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if strings.ReplaceAll(string(raw), "\r\n", "\n") != "1\n" {
+	want := "1\n"
+	if runtime.GOOS == "windows" {
+		want = gradleStandardJarCacheEnvironment + "=1\n"
+	}
+	if strings.ReplaceAll(string(raw), "\r\n", "\n") != want {
 		t.Fatalf("standard Jar cache child environment = %q", raw)
 	}
 }

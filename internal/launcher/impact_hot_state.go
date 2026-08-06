@@ -14,6 +14,7 @@ import (
 	"regexp"
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
+	"github.com/tonyredondo/buildopt/internal/platformfs"
 )
 
 const impactHotStateSchemaVersion = "buildopt.build-impact/poc-hot-state/v1"
@@ -70,8 +71,8 @@ func prepareImpactHotState(options impactHotStateOptions) (impactHotState, error
 	if err := os.MkdirAll(options.StateDirectory, 0o700); err != nil {
 		return impactHotState{}, fmt.Errorf("create Build Impact hot-state directory: %w", err)
 	}
-	resolved, err := filepath.EvalSymlinks(options.StateDirectory)
-	if err != nil || filepath.Clean(resolved) != filepath.Clean(options.StateDirectory) {
+	resolved := filepath.Clean(options.StateDirectory)
+	if err := platformfs.ValidateNoLinks(resolved); err != nil {
 		return impactHotState{}, errors.New("Build Impact hot-state directory must contain no symlink components")
 	}
 	stateInfo, err := os.Stat(resolved)
