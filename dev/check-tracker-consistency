@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS; SPRING DIAGNOSTIC COMPLETE\`"
-    "**Current phase:** \`POC SPRING PAIRED VALUE\`"
+    "**Overall status:** \`POC BUILD IMPACT VALUE QUALIFIED ON SPRING; INSTALLED-PATH VALIDATION ACTIVE\`"
+    "**Current phase:** \`POC INSTALLED SPRING VALUE\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"
@@ -107,9 +107,12 @@ buildopt_required_tracker_text=(
     "| \`POC-SPRING-SELECTIVE-TEST-RUNTIME-001\` | Reject selective two-fork tuning after it regresses and fails the stable six-worker native control | \`DONE\`"
     "| \`POC-SPRING-TEST-PREPARATION-001\` | Evaluate generic Build Impact for the build-owned Spring \`testClasses\` graph without executing root-build tests or changing common build-logic tests | \`DONE\`"
     "| \`POC-OTEL-TRANSFER-001\` | Apply the Spring-qualified Build Impact mechanism unchanged to OpenTelemetry Java Instrumentation and repeat the same gate | \`DONE\`"
+    "| \`POC-INSTALLED-IMPACT-001\` | Expose the qualified Build Impact idea through one installed explicit POC command while retaining full-graph fallback and leaving production promotion unchanged | \`DONE\`"
+    "| \`POC-SPRING-INSTALLED-IMPACT-001\` | Run the unchanged Spring value gate through an isolated installed native package so launcher and validation overhead are included | \`DOING\`"
     "| \`POC-OTEL-TRANSFER-G01\` | The unchanged Spring-qualified Build Impact mechanism clears the full eight-pair gate on fixed OpenTelemetry with identical outputs and no failed observation | Broader public-repository value claim | \`FAILED\`"
     "| \`POC-SPRING-PREREG-G01\` | Freeze a substantial Spring Framework experiment against its existing cache-enabled, parallel Gradle control before any local timing | Spring value-iteration boundary | \`DONE\`"
     "| \`POC-SPRING-VALUE-G01\` | At least one generic Spring mechanism clears the unchanged 500-ms/2%/positive-bound gate with identical outputs and all requested tests preserved | OpenTelemetry transfer | \`DONE\`"
+    "| \`POC-SPRING-INSTALLED-IMPACT-G01\` | The installed candidate clears the unchanged Spring 500-ms/2%/positive-bound gate with exact outputs and all launcher overhead included | Onboarding value claim for Build Impact | \`DOING\`"
     "| \`A1-G06\` | Safe Cache is non-regressive versus optimized native cache"
     "| \`B-G03\` | Runtime Tuning exceeds the POC accelerator threshold"
     "| \`C1-001\` | Opt-in JVM Agent with coverage and budgets | \`UNAVAILABLE\`"

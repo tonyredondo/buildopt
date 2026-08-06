@@ -1,0 +1,142 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-spring-installed-impact-v1.json"
+buildopt_base_spec="${buildopt_repo_root}/specs/poc-spring-test-preparation-v2.json"
+buildopt_runner="${buildopt_script_dir}/run-poc-spring-installed-impact"
+buildopt_guard="${buildopt_script_dir}/poc-spring-test-preparation.guard.init.gradle"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-spring-installed-impact-v1.json"}
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Spring test-preparation validator is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -s "${buildopt_result}" ]] || {
+    printf 'Spring test-preparation evidence is unavailable: %s\n' \
+        "${buildopt_result}" >&2
+    exit 1
+}
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_base_spec_sha=$(sha256sum "${buildopt_base_spec}" | awk '{print $1}')
+buildopt_runner_sha=$(sha256sum "${buildopt_runner}" | awk '{print $1}')
+buildopt_guard_sha=$(sha256sum "${buildopt_guard}" | awk '{print $1}')
+jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sha}" \
+    --arg guardSha "${buildopt_guard_sha}" --arg baseSpecSha "${buildopt_base_spec_sha}" \
+    --slurpfile spec "${buildopt_spec}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    def gitsha: type == "string" and test("^[0-9a-f]{40}$");
+    def bootstrap_mean($data; $sample):
+        reduce range(0; 8) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $data[((.state / 536870912) | floor)].savedMs) |
+        .sum / 8;
+    def bootstrap95($data):
+        ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
+        [$r[102], $r[3993]];
+    .observations as $data |
+    (($data | map(.controlDurationMs) | add) / 8) as $controlMean |
+    (($data | map(.candidateDurationMs) | add) / 8) as $candidateMean |
+    (($data | map(.savedMs) | add) / 8) as $mean |
+    (($data | map(.savedMs) | add) /
+        ($data | map(.controlDurationMs) | add)) as $ratio |
+    bootstrap95($data) as $interval |
+    ($data | map(select(.savedMs > 0)) | length) as $positive |
+    ($mean >= $spec[0].valueGate.minimumSavedMs and
+     $ratio >= $spec[0].valueGate.minimumReductionRatio and
+     $interval[0] > 0 and
+     all($data[]; .requiredOutputCount > 0 and
+         (.rootBuildGradleTestTasksExecuted | not) and
+         (.productAttributableFailure | not))) as $qualified |
+    .schemaVersion == "buildopt.evidence/poc-spring-installed-impact/v1" and
+    .workItem == "POC-SPRING-INSTALLED-IMPACT-001" and
+    (.capturedAt | fromdateiso8601) and
+    (.buildopt.revision | gitsha) and
+    (.buildopt.executableSha256 | sha256) and
+    (.buildopt.packageSha256 | sha256) and
+    .buildopt.packageVersion == $spec[0].package.version and
+    .buildopt.candidateCommand == $spec[0].measurement.candidateCommand and
+    .buildopt.launcherOverheadIncluded == true and
+    .buildopt.runnerScriptSha256 == $runnerSha and
+    .buildopt.testGuardScriptSha256 == $guardSha and
+    .specSha256 == $specSha and
+    $spec[0].baseProtocol.sha256 == $baseSpecSha and
+    .repository == {
+        nameWithOwner: $spec[0].repository.nameWithOwner,
+        revision: $spec[0].repository.revision,
+        sourceArchiveSha256: $spec[0].repository.sourceArchiveSha256
+    } and
+    .runner == $spec[0].runner and
+    .preparation.onlinePreflightMeasured == false and
+    .preparation.onlinePreflightSuccess == true and
+    (.preparation.onlinePreflightWallClockMs | type == "number" and . > 0) and
+    .preparation.measuredNetwork == "DISCONNECTED" and
+    .preparation.dependencyMode == "GRADLE_OFFLINE" and
+    (.preparation.buildCacheSeedSha256 | sha256) and
+    .preparation.preflightDaemonStoppedBeforeArmSetup == true and
+    .preparation.cacheSeedRestoredBeforeEveryArm == true and
+    .preparation.outputsRemovedBeforeEveryArm == true and
+    .preparation.fixedMutationAppliedAfterCacheRestore == true and
+    .discovery.complete == true and
+    .discovery.containsTestTasks == false and
+    (.discovery.graphSha256 | sha256) and
+    .discovery.controlEntrypoints == $spec[0].measurement.controlEntrypoints and
+    .discovery.candidateEntrypoints == $spec[0].measurement.candidateEntrypoints and
+    ($data | length) == 8 and
+    [$data[].pair] == [1, 2, 3, 4, 5, 6, 7, 8] and
+    [$data[].order] == [
+        "CONTROL_FIRST", "CANDIDATE_FIRST", "CONTROL_FIRST", "CANDIDATE_FIRST",
+        "CONTROL_FIRST", "CANDIDATE_FIRST", "CONTROL_FIRST", "CANDIDATE_FIRST"
+    ] and
+    all($data[];
+        (.controlDurationMs | type == "number" and . > 0) and
+        (.candidateDurationMs | type == "number" and . > 0) and
+        .savedMs == (.controlDurationMs - .candidateDurationMs) and
+        (.interArmIdleGapMs | type == "number" and . >= 0 and
+            . <= $spec[0].measurement.maximumInterArmIdleGapMs) and
+        (.controlMaximumResidentSetKb | type == "number" and . > 0) and
+        (.candidateMaximumResidentSetKb | type == "number" and . > 0) and
+        (.requiredOutputSha256 | sha256) and
+        .requiredOutputCount == 378 and
+        .controlEntrypoints == $spec[0].measurement.controlEntrypoints and
+        .candidateEntrypoints == $spec[0].measurement.candidateEntrypoints and
+        .rootBuildGradleTestTasksExecuted == false and
+        .commonBuildLogicTestTask == $spec[0].measurement.commonBuildLogicTestTask and
+        .commonBuildLogicTestOutcome == $spec[0].measurement.commonBuildLogicTestOutcome and
+        .productAttributableFailure == false) and
+    ([$data[].requiredOutputSha256] | unique | length) == 1 and
+    .result == {
+        pairs: 8,
+        controlMeanMs: $controlMean,
+        candidateMeanMs: $candidateMean,
+        meanSavedMs: $mean,
+        reductionRatio: $ratio,
+        interval95SavedMs: $interval,
+        positivePairs: $positive,
+        qualified: $qualified,
+        decision: (if $qualified then
+            "QUALIFIED_INSTALLED_BUILD_IMPACT"
+            else "STOP_INSTALLED_BUILD_IMPACT" end)
+    } and
+    .boundaries == $spec[0].boundaries
+' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'Spring test-preparation validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'Spring installed Build Impact evidence OK: %s\n' "${buildopt_result}"

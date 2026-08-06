@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC VALUE PROVEN FOR QUALIFIED SYNTHETIC WORKLOADS; SPRING DIAGNOSTIC COMPLETE` — the large-repository profile authorizes paired Build Impact and Runtime Tuning experiments beyond optimized native Gradle<br>
-**Current phase:** `POC SPRING PAIRED VALUE` — implement only the generic hypotheses supported by the fixed 12-CPU diagnostic and evaluate them against unchanged thresholds<br>
+**Overall status:** `POC BUILD IMPACT VALUE QUALIFIED ON SPRING; INSTALLED-PATH VALIDATION ACTIVE` — the generic mechanism beat optimized native Gradle and is now being measured through the package users execute<br>
+**Current phase:** `POC INSTALLED SPRING VALUE` — include launcher and state-validation overhead in the unchanged eight-pair Spring experiment before making an onboarding value claim<br>
 **POC functional target:** measurable net build-time reduction from the qualified Build Impact and exact reviewed-source Task/Patch routes; no-value Safe Cache or Runtime candidates remain disabled<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -92,6 +92,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-SPRING-VALUE | Qualify generic BuildOpt value on a substantial Spring Framework build before transfer to OpenTelemetry | `DONE` | 3/3 | `E-175`, `E-176`, `E-182` |
 | POC-OTEL-TRANSFER | Transfer the qualified mechanism unchanged to OpenTelemetry Java Instrumentation | `DONE` | 3/3 | `E-183..185` |
 | POC-INSTALLED-IMPACT | One-command installed Build Impact candidate with exact fallback and POC-only authority | `DONE` | 1/1 | `E-186` |
+| POC-SPRING-INSTALLED-IMPACT | Measure the installed command on the qualified Spring workload against optimized native Gradle | `DOING` | 0/1 | Preregistered contract |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -174,6 +175,7 @@ than partners. Test Optimization remains a separate product.
 | 29 | `POC-OTEL-PREREG-001` | Freeze the exact OpenTelemetry source, optimized native control, discovered graph, mutation, outputs, resources, pair order, and unchanged value gate before accepted timing | `DONE` | Codex |
 | 30 | `POC-OTEL-TRANSFER-001` | Apply the Spring-qualified Build Impact mechanism unchanged to OpenTelemetry Java Instrumentation and repeat the same gate | `DONE` | Codex |
 | 31 | `POC-INSTALLED-IMPACT-001` | Expose the qualified Build Impact idea through one installed explicit POC command while retaining full-graph fallback and leaving production promotion unchanged | `DONE` | Codex |
+| 32 | `POC-SPRING-INSTALLED-IMPACT-001` | Run the unchanged Spring value gate through an isolated installed native package so launcher and validation overhead are included | `DOING` | Codex |
 
 The raw diagnostic block is closed and unchanged. `E-172` corrects its
 ownership interpretation: Mockito's 242.690-second `compileTestJava` is
@@ -352,6 +354,7 @@ Every accepted RFC decision is represented below. Historical private-beta decisi
 | `POC-SPRING-VALUE-G01` | At least one generic Spring mechanism clears the unchanged 500-ms/2%/positive-bound gate with identical outputs and all requested tests preserved | OpenTelemetry transfer | `DONE` | Codex | `E-182`, [`poc-spring-test-preparation-v2`](./specs/poc-spring-test-preparation-v2.json) |
 | `POC-OTEL-TRANSFER-G01` | The unchanged Spring-qualified Build Impact mechanism clears the full eight-pair gate on fixed OpenTelemetry with identical outputs and no failed observation | Broader public-repository value claim | `FAILED` | Codex | `E-185`: native control failed in pair 7; no retry or partial qualification |
 | `POC-INSTALLED-IMPACT-G01` | The installed command selects only a reviewed manifest alternative, restores the full graph for unknown paths and bypass, rejects drift before Gradle, and preserves required Build/Test-owned evidence | Usable owner-operated Build Impact POC | `DONE` | Codex | `E-186`, [`build-impact-poc-onboarding-v1`](./specs/build-impact-poc-onboarding-v1.md) |
+| `POC-SPRING-INSTALLED-IMPACT-G01` | The installed candidate clears the unchanged Spring 500-ms/2%/positive-bound gate with exact outputs and all launcher overhead included | Onboarding value claim for Build Impact | `DOING` | Codex | [`poc-spring-installed-impact-v1`](./specs/poc-spring-installed-impact-v1.md) |
 
 ---
 
@@ -992,6 +995,16 @@ Test Optimization is an explicit non-goal for all functional and documentation t
 |---|---|---|---|
 | `POC-INSTALLED-IMPACT-G01` | The POC candidate is one command, repository-authorized, exact-state bound, full-graph safe on ambiguity/bypass, and explicitly non-production | `DONE` | `E-186` |
 
+#### POC-SPRING-INSTALLED-IMPACT — measure the user-facing path
+
+| ID | Deliverable | State | Owner | Expected evidence |
+|---|---|---|---|---|
+| `POC-SPRING-INSTALLED-IMPACT-001` | Package and install BuildOpt locally, invoke `buildopt impact` for the fixed Spring mutation, and compare eight alternating pairs with the unchanged optimized native control | `DOING` | Codex | Versioned result with package/executable/runner digests, exact candidate marker, byte-identical affected classes, preserved build-logic test, no root-build tests, and unchanged gate |
+
+| Exit gate | Summarized criterion | State | Evidence |
+|---|---|---|---|
+| `POC-SPRING-INSTALLED-IMPACT-G01` | The net installed path still saves at least 500 ms and 2%, has a positive 95% lower bound, and introduces no product failure | `DOING` | Preregistered [`poc-spring-installed-impact-v1`](./specs/poc-spring-installed-impact-v1.md) |
+
 ---
 
 ## 12. Continuous validation
@@ -1305,6 +1318,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-06 | Preregistered the installed-path Spring value experiment: package and install BuildOpt locally, include manifest/graph/change evaluation and launcher overhead, retain the exact optimized native control, eight pairs, outputs, build-logic test and unchanged value gate | Codex |
 | 2026-08-06 | Added one-command installed Build Impact POC execution over reviewed manifest/graph state, exact changed paths, safe full-graph fallback, drift rejection and bypass restoration; retained `BIA-002` and Test Optimization unchanged | Codex |
 | 2026-08-06 | Corrected only OpenTelemetry temporary cleanup before accepted timing after upstream Thrift generation left four UID-nobody files; pinned a network-disabled golden-image fallback over the validated mktemp root, with zero accepted pairs and no measurement or value-gate change | Codex |
 | 2026-08-06 | Preserved compact OpenTelemetry failure logs and applied the same pinned, network-disabled cleanup only to the four UID-nobody Thrift outputs before each native `clean`; both corrections occurred before any accepted pair and changed neither measurement nor value gate | Codex |

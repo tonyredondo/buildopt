@@ -16,6 +16,7 @@ the exact cross-component contract.
 | [`poc-mockito-test-build-v1.json`](./poc-mockito-test-build-v1.json) | `POC-MOCKITO-TEST-BUILD-001` / `POC-MOCKITO-TEST-BUILD-G01` |
 | [`poc-spring-framework-v1.md`](./poc-spring-framework-v1.md) and [`poc-spring-framework-v1.json`](./poc-spring-framework-v1.json) | `POC-SPRING-PREREG-001` / `POC-SPRING-PREREG-G01` |
 | [`poc-spring-test-preparation-v2.json`](./poc-spring-test-preparation-v2.json) | `POC-SPRING-TEST-PREPARATION-001` |
+| [`poc-spring-installed-impact-v1.md`](./poc-spring-installed-impact-v1.md) and [`poc-spring-installed-impact-v1.json`](./poc-spring-installed-impact-v1.json) | `POC-SPRING-INSTALLED-IMPACT-001` |
 | [`poc-otel-test-preparation-v1.json`](./poc-otel-test-preparation-v1.json) | `POC-OTEL-TRANSFER-001` |
 | [`poc-stability-validation-v1.md`](./poc-stability-validation-v1.md) and [`poc-stability-validation-v1.json`](./poc-stability-validation-v1.json) | `POC-STABILITY-001` |
 | [`poc-pairing-validation-v1.md`](./poc-pairing-validation-v1.md) and [`poc-pairing-validation-v1.json`](./poc-pairing-validation-v1.json) | `POC-PAIRING-001` |
