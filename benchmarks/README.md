@@ -151,6 +151,26 @@ filtered as if they qualified.
   benchmarks/results/poc-otel-optimization-v1.json
 ```
 
+Task attribution then identified Gradle's repeated non-cacheable standard
+`:testing-common:jar` packaging as the dominant candidate tail. The explicit
+POC adapter makes only an unmodified standard `Jar` eligible for Gradle's
+native cache; custom `Jar`, `Copy`, arbitrary and Test tasks remain unchanged.
+The newly preregistered installed-path experiment used one shared hot Gradle
+runtime and completed all four pairs at `+6158`, `+3661`, `+4004`, and `+3684`
+ms. Native Gradle averaged 10,964.75 ms and BuildOpt 6,588 ms: a 4,376.75-ms
+or 39.92% mean saving. The paired interval was +3,672.5..+5,539.5 ms and all
+4/4 pairs were positive. Every pair preserved the same 125-file digest, zero
+product failures occurred, and the global change restored all 53 entrypoints.
+
+```bash
+./dev/check-poc-otel-optimization-v2-result \
+  benchmarks/results/poc-otel-optimization-v2.json
+```
+
+This qualifies stable POC value for the exact OpenTelemetry Spring-family
+build-preparation workload. It is not a production-wide Jar policy or a claim
+that unrelated builds receive the same percentage.
+
 | Mechanism | Mean result | Exact paired 95% interval | Classification |
 |---|---:|---:|---|
 | Default native-cache fallback, Kotlin | 79 ms faster (8.9%) | +6 to +156 ms | `NO_VALUE_NO_ACTION`; same cache mechanism, no acceleration claim |

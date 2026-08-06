@@ -12,17 +12,20 @@ buildopt_cache="${buildopt_repo_root}/benchmarks/results/cache-parity-v1-local.j
 buildopt_runtime="${buildopt_repo_root}/benchmarks/results/b-runtime-owner-evaluation.json"
 buildopt_impact="${buildopt_repo_root}/benchmarks/results/build-impact-performance-v1-local.json"
 buildopt_combined="${buildopt_repo_root}/benchmarks/results/poc-value-combined-v1.json"
+buildopt_otel="${buildopt_repo_root}/benchmarks/results/poc-otel-optimization-v2.json"
 
 "${buildopt_script_dir}/check-cache-parity-performance" "${buildopt_cache}" >/dev/null
 "${buildopt_script_dir}/check-runtime-owner-evaluation" >/dev/null
 "${buildopt_script_dir}/check-build-impact-performance" "${buildopt_impact}" >/dev/null
 "${buildopt_script_dir}/check-poc-value-combined" "${buildopt_combined}" >/dev/null
+"${buildopt_script_dir}/check-poc-otel-optimization-v2-result" "${buildopt_otel}" >/dev/null
 
 jq -n \
     --slurpfile cache "${buildopt_cache}" \
     --slurpfile runtime "${buildopt_runtime}" \
     --slurpfile impact "${buildopt_impact}" \
-    --slurpfile combined "${buildopt_combined}" '
+    --slurpfile combined "${buildopt_combined}" \
+    --slurpfile otel "${buildopt_otel}" '
     {
         schemaVersion: "buildopt.evidence/build-optimization-scorecard/v1",
         interpretation: "ATTRIBUTABLE_RESULTS_NOT_ADDITIVE",
@@ -81,7 +84,18 @@ jq -n \
                      reductionRatio: .result.meanReductionRatio,
                      lower95SavedMs: .result.interval95SavedMs[0],
                      positivePairs: .result.positivePairs
-                 }}) | from_entries)
+                }}) | from_entries)
+        },
+        substantialPublicPath: {
+            claim: "QUALIFIED_OPENTELEMETRY_SPRING_FAMILY_POC_VALUE",
+            meanSavedMs: $otel[0].result.meanSavedMs,
+            reductionRatio: $otel[0].result.reductionRatio,
+            interval95SavedMs: $otel[0].result.interval95SavedMs,
+            positivePairs: $otel[0].result.positivePairs,
+            requiredOutputCount:
+                $otel[0].observations[0].requiredOutputCount,
+            safeFallback: $otel[0].fallback.buildSuccessful,
+            decision: $otel[0].result.decision
         },
         boundaries: {
             proofOfConcept: true,

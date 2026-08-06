@@ -166,6 +166,13 @@ with `./dev/check-poc-otel-test-preparation-result`; six completed positive
 pairs remain diagnostic-only and are not a substitute for the preregistered
 eight-pair gate.
 
+The later installed-path iteration is separate from that unchanged transfer.
+After task attribution, typed graph reduction and exact-bound hot state, the
+explicit standard-`Jar` adapter passed the new four-pair OpenTelemetry gate at
+39.92% mean saving with 4/4 positive pairs and exact outputs. Validate the
+checked evidence with `./dev/check-poc-otel-optimization-v2-result`; this
+qualifies only the POC workload and does not widen production cache policy.
+
 `check-poc-breadth` accepts both a passing and a failing decision document and
 recomputes all 64 observations. The post-attribution repeat retains the narrow
 claim: 4/8 realistic change/DSL cells qualify, despite correct selection and
