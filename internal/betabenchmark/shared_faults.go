@@ -997,7 +997,10 @@ func runExpiredLeaseFault(
 		1,
 		time.Now().UTC(),
 	)
-	request.LeaseExpiresAt = time.Now().UTC().Add(250 * time.Millisecond)
+	// Leave enough time for the deliberately staged PUT to complete under the
+	// race detector and contended CI hosts; the fault begins only after the
+	// explicit wait below observes this lease as expired.
+	request.LeaseExpiresAt = time.Now().UTC().Add(2 * time.Second)
 	if _, _, err := storage.StartAttempt(ctx, request); err != nil {
 		return faultOutcome{}, sharedFaultTrigger{}, recoveryObservation{}, err
 	}
