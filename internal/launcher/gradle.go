@@ -20,6 +20,7 @@ const (
 	gradleProjectPluginModeFull        = "FULL"
 	gradleProjectPluginModeCacheOnly   = "CACHE_ONLY"
 	gradleSafeCacheEnvironment         = "BUILDOPT_SAFE_CACHE"
+	gradleStandardJarCacheEnvironment  = "BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS"
 	gradleCheckstyleHeapEnvironment    = "BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP"
 	gradleCheckstyleHeap2G             = "2g"
 	gradleCheckstyleMinimumMemoryBytes = int64(14 * 1024 * 1024 * 1024)
@@ -34,6 +35,14 @@ type gradleInvocation struct {
 }
 
 func prepareGradleInvocation(args []string, bypass bool) (gradleInvocation, error) {
+	return prepareGradleInvocationWithEnvironment(args, bypass, os.Getenv)
+}
+
+func prepareGradleInvocationWithEnvironment(
+	args []string,
+	bypass bool,
+	getenv func(string) string,
+) (gradleInvocation, error) {
 	workingDirectory, err := os.Getwd()
 	if err != nil {
 		return gradleInvocation{}, fmt.Errorf("resolve working directory: %w", err)
@@ -51,17 +60,25 @@ func prepareGradleInvocation(args []string, bypass bool) (gradleInvocation, erro
 	var defaultManagedL1 *managedL1Config
 	buildCacheConfigured, buildCacheEnabled := gradleBuildCacheMode(args)
 	if !bypass {
-		checkstyleHeap, tuningErr := gradleCheckstyleHeap(os.Getenv)
+		checkstyleHeap, tuningErr := gradleCheckstyleHeap(getenv)
 		if tuningErr != nil {
 			return gradleInvocation{}, tuningErr
 		}
-		safeCacheEnabled, activationErr := gradleSafeCacheEnabled(os.Getenv)
+		safeCacheEnabled, activationErr := gradleSafeCacheEnabled(getenv)
 		if activationErr != nil {
 			return gradleInvocation{}, activationErr
 		}
-		_, managedConfigured, _ := managedL1ConfigFromEnvironment(os.Getenv)
-		externalInstrumentation := gradleInstrumentationRequested(os.Getenv)
-		instrumented := safeCacheEnabled || externalInstrumentation || checkstyleHeap != ""
+		standardJarCache, jarErr := gradleStandardJarCacheEnabled(getenv)
+		if jarErr != nil {
+			return gradleInvocation{}, jarErr
+		}
+		if standardJarCache && buildCacheConfigured && !buildCacheEnabled {
+			return gradleInvocation{}, errors.New("BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS is incompatible with --no-build-cache")
+		}
+		_, managedConfigured, _ := managedL1ConfigFromEnvironment(getenv)
+		externalInstrumentation := gradleInstrumentationRequested(getenv)
+		runtimeIntegration := gradleRuntimeIntegrationRequested(getenv)
+		instrumented := safeCacheEnabled || standardJarCache || externalInstrumentation || checkstyleHeap != ""
 		if instrumented {
 			initScript, pluginJar, assetErr := resolveGradleAssets()
 			if assetErr != nil {
@@ -72,7 +89,11 @@ func prepareGradleInvocation(args []string, bypass bool) (gradleInvocation, erro
 			if checkstyleHeap != "" {
 				environment[gradleCheckstyleHeapEnvironment] = checkstyleHeap
 			}
-			if checkstyleHeap != "" && !safeCacheEnabled && !externalInstrumentation {
+			if standardJarCache {
+				environment[gradleStandardJarCacheEnvironment] = "1"
+			}
+			if (checkstyleHeap != "" && !externalInstrumentation ||
+				standardJarCache && !runtimeIntegration) && !safeCacheEnabled {
 				environment[gradleProjectPluginModeEnvironment] = gradleProjectPluginModeCacheOnly
 			}
 		}
@@ -100,13 +121,28 @@ func prepareGradleInvocation(args []string, bypass bool) (gradleInvocation, erro
 		return gradleInvocation{
 			childArgs: childArgs, environment: environment,
 			managedL1: defaultManagedL1, nativeOnly: !instrumented,
-			localOnly: checkstyleHeap != "" && !safeCacheEnabled && !externalInstrumentation,
+			localOnly: (checkstyleHeap != "" && !externalInstrumentation ||
+				standardJarCache && !runtimeIntegration) && !safeCacheEnabled,
 		}, nil
 	}
 	childArgs = append(childArgs, args...)
 	return gradleInvocation{
 		childArgs: childArgs, environment: environment, managedL1: defaultManagedL1,
 	}, nil
+}
+
+func gradleStandardJarCacheEnabled(getenv func(string) string) (bool, error) {
+	if getenv == nil {
+		return false, errors.New("resolve BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS: environment reader is unavailable")
+	}
+	switch getenv(gradleStandardJarCacheEnvironment) {
+	case "", "0":
+		return false, nil
+	case "1":
+		return true, nil
+	default:
+		return false, errors.New("BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS must be 0 or 1")
+	}
 }
 
 func gradleCheckstyleHeap(getenv func(string) string) (string, error) {
@@ -151,9 +187,18 @@ func gradleInstrumentationRequested(getenv func(string) string) bool {
 	if getenv == nil {
 		return false
 	}
+	if getenv(gradleInitScriptEnvironment) != "" ||
+		getenv(gradlePluginJarEnvironment) != "" {
+		return true
+	}
+	return gradleRuntimeIntegrationRequested(getenv)
+}
+
+func gradleRuntimeIntegrationRequested(getenv func(string) string) bool {
+	if getenv == nil {
+		return false
+	}
 	for _, name := range []string{
-		gradleInitScriptEnvironment,
-		gradlePluginJarEnvironment,
 		sessioningest.ServerURLEnvironment,
 		sessioningest.ServerTokenEnvironment,
 		sessioningest.ExportContextEnvironment,

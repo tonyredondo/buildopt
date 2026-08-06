@@ -40,11 +40,14 @@ func TestImpactInvocationSelectsCandidateAndFallsBackToFullGraph(t *testing.T) {
 		"--pipeline-class", "pull-request",
 		"--changes-file", "changed.txt",
 		"--gradle-option=--no-daemon",
+		"--cache-standard-jar-producers",
 	}, false)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !candidate.plan.CandidateSelected || candidate.plan.ProductionAuthorized || strings.Join(candidate.gradleArgs, " ") != "--no-daemon :service-a:assemble" {
+	if !candidate.plan.CandidateSelected || candidate.plan.ProductionAuthorized ||
+		!candidate.standardJarCache ||
+		strings.Join(candidate.gradleArgs, " ") != "--no-daemon :service-a:assemble" {
 		t.Fatalf("candidate invocation = %+v", candidate)
 	}
 
@@ -60,6 +63,48 @@ func TestImpactInvocationSelectsCandidateAndFallsBackToFullGraph(t *testing.T) {
 	}
 	if fallback.plan.CandidateSelected || fallback.plan.ProductionAuthorized || strings.Join(fallback.gradleArgs, " ") != "assemble" || fallback.plan.Reason != "IMPACT_UNKNOWN_CHANGE_PATH" {
 		t.Fatalf("fallback invocation = %+v", fallback)
+	}
+}
+
+func TestImpactRunActivatesExplicitStandardJarCache(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	t.Chdir(repositoryRoot)
+	clearGradleManagedL1Inputs(t)
+	initScript := filepath.Join(repositoryRoot, "buildopt.init.gradle")
+	pluginJar := filepath.Join(repositoryRoot, "buildopt-gradle-plugin.jar")
+	writeGradleTestFile(t, initScript)
+	writeGradleTestFile(t, pluginJar)
+	t.Setenv(gradleInitScriptEnvironment, initScript)
+	t.Setenv(gradlePluginJarEnvironment, pluginJar)
+	writeGradleWrapperProperties(t, repositoryRoot, "distributionUrl=gradle-9.6.1-bin.zip\n")
+
+	wrapper := filepath.Join(repositoryRoot, gradleWrapperName(runtime.GOOS))
+	observation := filepath.Join(repositoryRoot, "jar-cache.env")
+	contents := "#!/bin/sh\nprintf '%s\\n' \"$BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS\" > jar-cache.env\n"
+	if runtime.GOOS == "windows" {
+		contents = "@echo off\r\necho %BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS%>jar-cache.env\r\n"
+	}
+	if err := os.WriteFile(wrapper, []byte(contents), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	code := Run([]string{
+		"impact",
+		"--repository-id", "tonyredondo/buildopt-impact-synthetic",
+		"--changes-file", "changed.txt",
+		"--cache-standard-jar-producers",
+	}, strings.NewReader(""), &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("impact exit code = %d, stderr = %q", code, stderr.String())
+	}
+	raw, err := os.ReadFile(observation)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.ReplaceAll(string(raw), "\r\n", "\n") != "1\n" {
+		t.Fatalf("standard Jar cache child environment = %q", raw)
 	}
 }
 

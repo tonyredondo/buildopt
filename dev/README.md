@@ -2765,6 +2765,18 @@ The runner stops on any arm failure, output mismatch, missing hot-state hit,
 unsafe fallback or excessive inter-arm gap. It never discards a measured pair
 or moves the frozen 500-ms, 2%, positive-bound and 4/4-pair gate.
 
+The follow-up repeated-work POC enables native-cache eligibility only for an
+exact unmodified standard Gradle `Jar` producer:
+
+```bash
+./dev/check-poc-standard-jar-cache
+```
+
+Its TestKit proof requires the standard `Jar` to replay byte-identically while
+a custom `Jar` with an extra action and a `Copy` task execute normally. This
+adapter is explicit on `buildopt impact`; it does not widen the managed Tier 1
+safe-cache policy.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

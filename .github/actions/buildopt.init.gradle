@@ -40,6 +40,16 @@ if (gradle.getParent() == null) {
             settings.pluginManager.apply(dev.buildopt.gradle.BuildOptManagedL1Plugin)
         }
     }
+    def standardJarCache = System.getenv("BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS")
+    if (standardJarCache == "1") {
+        allprojects {
+            pluginManager.apply(dev.buildopt.gradle.BuildOptStandardJarCachePlugin)
+        }
+    } else if (standardJarCache != null && !standardJarCache.isBlank() && standardJarCache != "0") {
+        throw new GradleException(
+            "unsupported BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS: ${standardJarCache}"
+        )
+    }
     def projectPluginMode = System.getenv("BUILDOPT_GRADLE_PROJECT_PLUGIN_MODE")
     if (projectPluginMode == null || projectPluginMode.isBlank() || projectPluginMode == "FULL") {
         allprojects {

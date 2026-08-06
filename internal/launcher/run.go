@@ -68,6 +68,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 	var gradleManagedL1 *managedL1Config
 	gradleNativeOnly := false
 	gradleLocalOnly := false
+	impactStandardJarCache := false
 	if len(args) > 0 && args[0] == "impact" {
 		impactStartedAt := time.Now()
 		impact, err := prepareImpactInvocation(
@@ -114,13 +115,26 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		if impact.hotStateHit {
 			_, _ = fmt.Fprintln(stderr, "buildopt: exact-bound Build Impact POC hot state reused")
 		}
+		impactStandardJarCache = impact.standardJarCache
 		args = append([]string{"gradle"}, impact.gradleArgs...)
 	}
 	if len(args) > 0 && args[0] == "gradle" {
 		gradleSetupStartedAt := time.Now()
-		invocation, err := prepareGradleInvocation(
+		getenv := os.Getenv
+		if impactStandardJarCache {
+			getenv = func(name string) string {
+				switch name {
+				case gradleStandardJarCacheEnvironment:
+					return "1"
+				default:
+					return os.Getenv(name)
+				}
+			}
+		}
+		invocation, err := prepareGradleInvocationWithEnvironment(
 			args[1:],
 			os.Getenv(bypassEnvironment) == "1",
+			getenv,
 		)
 		if err != nil {
 			_, _ = fmt.Fprintf(stderr, "buildopt: Gradle setup unavailable: %v\n", err)

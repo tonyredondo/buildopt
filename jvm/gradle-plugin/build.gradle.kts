@@ -49,6 +49,12 @@ gradlePlugin {
             displayName = "BuildOpt Managed L1"
             description = "Native generation-segmented DirectoryBuildCache configuration"
         }
+        create("buildOptStandardJarCache") {
+            id = "dev.buildopt.standard-jar-cache"
+            implementationClass = "dev.buildopt.gradle.BuildOptStandardJarCachePlugin"
+            displayName = "BuildOpt POC Standard Jar Cache"
+            description = "Explicit cache eligibility for unmodified standard Gradle Jar producers"
+        }
     }
 }
 
@@ -174,6 +180,28 @@ tasks.register<JavaExec>("managedL1TestKit") {
     inputs.dir(tierOneFixtures)
     inputs.file(tasks.jar.flatMap { it.archiveFile })
     inputs.property("runtime", tierOneRuntime)
+    inputs.property("gradleHome", tierOneGradleHome)
+}
+
+tasks.register<JavaExec>("standardJarCacheTestKit") {
+    group = "verification"
+    description = "Proves the explicit POC cache adapter for standard Jar producers."
+    notCompatibleWithConfigurationCache("The task launches a nested TestKit build.")
+    dependsOn(tasks.named(testKit.classesTaskName), tasks.named("jar"))
+    classpath = testKit.runtimeClasspath
+    mainClass = "dev.buildopt.gradle.StandardJarCacheTestKit"
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    argumentProviders.add(
+        CommandLineArgumentProvider {
+            listOf(
+                tierOneGradleHome.get(),
+                tasks.jar.get().archiveFile.get().asFile.absolutePath,
+            )
+        },
+    )
+    inputs.file(tasks.jar.flatMap { it.archiveFile })
     inputs.property("gradleHome", tierOneGradleHome)
 }
 

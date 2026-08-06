@@ -138,6 +138,49 @@ func TestPrepareGradleInvocationRejectsInvalidSafeCacheMode(t *testing.T) {
 	}
 }
 
+func TestPrepareGradleInvocationEnablesExplicitStandardJarCache(t *testing.T) {
+	root := t.TempDir()
+	wrapper := filepath.Join(root, gradleWrapperName(runtime.GOOS))
+	writeGradleTestFile(t, wrapper)
+	writeGradleWrapperProperties(t, root, "distributionUrl=gradle-9.6.1-bin.zip\n")
+	clearGradleManagedL1Inputs(t)
+	initScript := filepath.Join(root, "buildopt.init.gradle")
+	pluginJar := filepath.Join(root, "buildopt-gradle-plugin.jar")
+	writeGradleTestFile(t, initScript)
+	writeGradleTestFile(t, pluginJar)
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chdir(root); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+	t.Setenv(gradleInitScriptEnvironment, initScript)
+	t.Setenv(gradlePluginJarEnvironment, pluginJar)
+	t.Setenv(gradleStandardJarCacheEnvironment, "1")
+
+	invocation, err := prepareGradleInvocation([]string{"build"}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if invocation.managedL1 != nil || invocation.nativeOnly || !invocation.localOnly ||
+		invocation.environment[gradleStandardJarCacheEnvironment] != "1" {
+		t.Fatalf("standard Jar cache invocation = %+v", invocation)
+	}
+
+	if _, err := prepareGradleInvocation([]string{"--no-build-cache", "build"}, false); err == nil ||
+		!strings.Contains(err.Error(), "incompatible with --no-build-cache") {
+		t.Fatalf("disabled build cache error = %v", err)
+	}
+	t.Setenv(gradleStandardJarCacheEnvironment, "yes")
+	if _, err := prepareGradleInvocation([]string{"build"}, false); err == nil ||
+		!strings.Contains(err.Error(), "must be 0 or 1") {
+		t.Fatalf("invalid standard Jar cache error = %v", err)
+	}
+}
+
 func TestPrepareGradleInvocationSelectsLocalCheckstyleTuning(t *testing.T) {
 	root := t.TempDir()
 	wrapper := filepath.Join(root, gradleWrapperName(runtime.GOOS))
@@ -336,6 +379,7 @@ func clearGradleManagedL1Inputs(t *testing.T) {
 	t.Helper()
 	for _, key := range []string{
 		gradleSafeCacheEnvironment,
+		gradleStandardJarCacheEnvironment,
 		gradleCheckstyleHeapEnvironment,
 		sessioningest.ServerURLEnvironment,
 		sessioningest.ServerTokenEnvironment,

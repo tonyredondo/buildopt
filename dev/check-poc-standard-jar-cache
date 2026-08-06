@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-standard-jar-cache-v1.md"
+
+for buildopt_command in find grep mkdir readlink; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required standard-Jar POC command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -s "${buildopt_spec}" ]] || {
+    printf 'standard-Jar POC specification is unavailable\n' >&2
+    exit 1
+}
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/launcher ./cmd/buildopt
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p -- "${GRADLE_USER_HOME}"
+
+buildopt_gradle_home=$(
+    find \
+        "${GRADLE_USER_HOME}/wrapper/dists/gradle-9.6.1-bin" \
+        -type d \
+        -path '*/gradle-9.6.1' \
+        -print \
+        -quit
+)
+if [[ -z "${buildopt_gradle_home}" ||
+    ! -x "${buildopt_gradle_home}/bin/gradle" ]]; then
+    printf 'pinned Gradle 9.6.1 must be provisioned\n' >&2
+    exit 1
+fi
+buildopt_gradle_home=$(readlink -f "${buildopt_gradle_home}")
+
+"${buildopt_script_dir}/run" -- \
+    "${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --no-configuration-cache \
+    --warning-mode=fail \
+    "-PbuildoptTierOneGradleHome=${buildopt_gradle_home}" \
+    :jvm:gradle-plugin:standardJarCacheTestKit
+
+grep -Fq -- '--cache-standard-jar-producers' \
+    "${buildopt_repo_root}/internal/launcher/impact.go"
+grep -Fq 'BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS' \
+    "${buildopt_repo_root}/.github/actions/buildopt.init.gradle"
+
+printf 'POC standard Jar cache OK: exact replay and conservative denials passed\n'
