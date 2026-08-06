@@ -138,6 +138,58 @@ func TestPrepareGradleInvocationRejectsInvalidSafeCacheMode(t *testing.T) {
 	}
 }
 
+func TestPrepareGradleInvocationSelectsLocalCheckstyleTuning(t *testing.T) {
+	root := t.TempDir()
+	wrapper := filepath.Join(root, gradleWrapperName(runtime.GOOS))
+	writeGradleTestFile(t, wrapper)
+	writeGradleWrapperProperties(t, root, "distributionUrl=gradle-9.6.1-bin.zip\n")
+	clearGradleManagedL1Inputs(t)
+	initScript := filepath.Join(root, "buildopt.init.gradle")
+	pluginJar := filepath.Join(root, "buildopt-gradle-plugin.jar")
+	writeGradleTestFile(t, initScript)
+	writeGradleTestFile(t, pluginJar)
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chdir(root); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+	t.Setenv(gradleInitScriptEnvironment, initScript)
+	t.Setenv(gradlePluginJarEnvironment, pluginJar)
+	t.Setenv(gradleCheckstyleHeapEnvironment, gradleCheckstyleHeap2G)
+	t.Setenv(resourceAvailableMemoryEnvironment, "16659865600")
+
+	invocation, err := prepareGradleInvocation([]string{"check"}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if invocation.localOnly || invocation.nativeOnly || invocation.managedL1 != nil {
+		t.Fatalf("runtime tuning invocation = %+v", invocation)
+	}
+	if invocation.environment[gradleCheckstyleHeapEnvironment] != gradleCheckstyleHeap2G {
+		t.Fatalf("runtime tuning environment = %q", invocation.environment)
+	}
+	if !slicesContain(invocation.childArgs, "--init-script") ||
+		!slicesContain(invocation.childArgs, "--build-cache") {
+		t.Fatalf("runtime tuning args = %q", invocation.childArgs)
+	}
+
+	t.Setenv(gradleCheckstyleHeapEnvironment, "4g")
+	if _, err := prepareGradleInvocation([]string{"check"}, false); err == nil ||
+		!strings.Contains(err.Error(), "must be empty or 2g") {
+		t.Fatalf("invalid Checkstyle heap error = %v", err)
+	}
+	t.Setenv(gradleCheckstyleHeapEnvironment, gradleCheckstyleHeap2G)
+	t.Setenv(resourceAvailableMemoryEnvironment, "15032385535")
+	if _, err := prepareGradleInvocation([]string{"check"}, false); err == nil ||
+		!strings.Contains(err.Error(), "at least 14 GiB") {
+		t.Fatalf("insufficient Checkstyle memory error = %v", err)
+	}
+}
+
 func TestPrepareGradleInvocationBypassNeedsNoAssets(t *testing.T) {
 	root := t.TempDir()
 	wrapper := filepath.Join(root, gradleWrapperName(runtime.GOOS))
@@ -284,6 +336,7 @@ func clearGradleManagedL1Inputs(t *testing.T) {
 	t.Helper()
 	for _, key := range []string{
 		gradleSafeCacheEnvironment,
+		gradleCheckstyleHeapEnvironment,
 		sessioningest.ServerURLEnvironment,
 		sessioningest.ServerTokenEnvironment,
 		sessioningest.ExportContextEnvironment,

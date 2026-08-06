@@ -80,6 +80,31 @@
       "candidateMayOmitTestTasks": false
     }
   },
+  "runtimeTuningHypothesis": {
+    "status": "PREREGISTERED_AFTER_DIAGNOSTIC_BEFORE_ACCEPTED_TIMING",
+    "taskType": "org.gradle.api.plugins.quality.Checkstyle",
+    "taskName": "checkstyleNohttp",
+    "controlMaxHeap": "1g",
+    "candidateMaxHeap": "2g",
+    "activationEnvironment": [
+      "BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP=2g",
+      "BUILDOPT_RUNNER_AVAILABLE_MEMORY_BYTES=16659865600"
+    ],
+    "minimumRunnerMemoryBytes": 15032385536,
+    "requiresExactExistingHeap": "1g",
+    "otherExistingHeapIsPreserved": true,
+    "testTasksChanged": false,
+    "taskInputsChanged": false,
+    "taskOutputsChanged": false,
+    "taskActionsChanged": false,
+    "isolatedProbe": {
+      "buildCacheUsedForTiming": false,
+      "controlMs": 35290,
+      "candidateMs": 31880,
+      "candidate4gMs": 31610,
+      "candidate4gRejectedReason": "NEGLIGIBLE_INCREMENTAL_GAIN_FOR_ADDITIONAL_MEMORY"
+    }
+  },
   "followUpMeasurement": {
     "authorization": "ONLY_GENERIC_HYPOTHESES_SUPPORTED_BY_DIAGNOSTIC",
     "workspaceState": "PERSISTENT_PRIVATE_PER_ARM_AND_CELL",
@@ -94,6 +119,10 @@
     "confidenceInterval": "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
     "requiredOutputDigest": "SORTED_RELATIVE_PATH_AND_SHA256",
     "requiredTestEvidence": "SORTED_TASK_PATH_TEST_CASE_AND_OUTCOME",
+    "cacheSeed": "SAME_ORIGINAL_SOURCE_NATIVE_CACHE_RESTORED_BEFORE_EACH_ARM",
+    "outputsRemovedBeforeTiming": true,
+    "fixedMutationAppliedAfterCacheRestore": true,
+    "mutatedCheckstyleKeyMustExecuteInBothArms": true,
     "controlMustRetainUpstreamBuildCache": true,
     "controlMustRetainUpstreamParallelism": true
   },

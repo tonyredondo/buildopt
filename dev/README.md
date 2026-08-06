@@ -2507,6 +2507,18 @@ enabled. No result may be transferred to OpenTelemetry unless it clears the
 unchanged 500-ms, 2%, and positive-lower-bound gate with identical outputs and
 all requested tests preserved.
 
+The post-diagnostic candidate is an explicit Runtime Tuning profile. On a
+runner with at least 14 GiB available, setting
+`BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP=2g` raises only a standard Gradle
+`Checkstyle` task named `checkstyleNohttp` whose repository-owned heap is
+exactly `1g`. Other task types, task actions, inputs, outputs, cache policy,
+worker count, and repository-owned heap values remain unchanged. Validate the
+launcher and init-script boundary with:
+
+```bash
+./dev/check-gradle-runtime-tuning
+```
+
 Capture the revision-bound Spring diagnostic on the local 12-CPU POC host:
 
 ```bash

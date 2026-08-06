@@ -20,6 +20,9 @@ const (
 	gradleProjectPluginModeFull        = "FULL"
 	gradleProjectPluginModeCacheOnly   = "CACHE_ONLY"
 	gradleSafeCacheEnvironment         = "BUILDOPT_SAFE_CACHE"
+	gradleCheckstyleHeapEnvironment    = "BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP"
+	gradleCheckstyleHeap2G             = "2g"
+	gradleCheckstyleMinimumMemoryBytes = int64(14 * 1024 * 1024 * 1024)
 )
 
 type gradleInvocation struct {
@@ -27,6 +30,7 @@ type gradleInvocation struct {
 	environment map[string]string
 	managedL1   *managedL1Config
 	nativeOnly  bool
+	localOnly   bool
 }
 
 func prepareGradleInvocation(args []string, bypass bool) (gradleInvocation, error) {
@@ -47,12 +51,17 @@ func prepareGradleInvocation(args []string, bypass bool) (gradleInvocation, erro
 	var defaultManagedL1 *managedL1Config
 	buildCacheConfigured, buildCacheEnabled := gradleBuildCacheMode(args)
 	if !bypass {
+		checkstyleHeap, tuningErr := gradleCheckstyleHeap(os.Getenv)
+		if tuningErr != nil {
+			return gradleInvocation{}, tuningErr
+		}
 		safeCacheEnabled, activationErr := gradleSafeCacheEnabled(os.Getenv)
 		if activationErr != nil {
 			return gradleInvocation{}, activationErr
 		}
 		_, managedConfigured, _ := managedL1ConfigFromEnvironment(os.Getenv)
-		instrumented := safeCacheEnabled || gradleInstrumentationRequested(os.Getenv)
+		externalInstrumentation := gradleInstrumentationRequested(os.Getenv)
+		instrumented := safeCacheEnabled || externalInstrumentation || checkstyleHeap != ""
 		if instrumented {
 			initScript, pluginJar, assetErr := resolveGradleAssets()
 			if assetErr != nil {
@@ -60,6 +69,12 @@ func prepareGradleInvocation(args []string, bypass bool) (gradleInvocation, erro
 			}
 			childArgs = append(childArgs, "--init-script", initScript)
 			environment = map[string]string{gradlePluginJarEnvironment: pluginJar}
+			if checkstyleHeap != "" {
+				environment[gradleCheckstyleHeapEnvironment] = checkstyleHeap
+			}
+			if checkstyleHeap != "" && !safeCacheEnabled && !externalInstrumentation {
+				environment[gradleProjectPluginModeEnvironment] = gradleProjectPluginModeCacheOnly
+			}
 		}
 		if safeCacheEnabled && !managedConfigured &&
 			(!buildCacheConfigured || buildCacheEnabled) {
@@ -85,12 +100,37 @@ func prepareGradleInvocation(args []string, bypass bool) (gradleInvocation, erro
 		return gradleInvocation{
 			childArgs: childArgs, environment: environment,
 			managedL1: defaultManagedL1, nativeOnly: !instrumented,
+			localOnly: checkstyleHeap != "" && !safeCacheEnabled && !externalInstrumentation,
 		}, nil
 	}
 	childArgs = append(childArgs, args...)
 	return gradleInvocation{
 		childArgs: childArgs, environment: environment, managedL1: defaultManagedL1,
 	}, nil
+}
+
+func gradleCheckstyleHeap(getenv func(string) string) (string, error) {
+	if getenv == nil {
+		return "", errors.New("resolve BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP: environment reader is unavailable")
+	}
+	switch getenv(gradleCheckstyleHeapEnvironment) {
+	case "":
+		return "", nil
+	case gradleCheckstyleHeap2G:
+		availableBytes, err := parsePositiveResourceInt64(
+			getenv(resourceAvailableMemoryEnvironment),
+			resourceAvailableMemoryEnvironment,
+		)
+		if err != nil {
+			return "", err
+		}
+		if availableBytes < gradleCheckstyleMinimumMemoryBytes {
+			return "", errors.New("BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP requires at least 14 GiB available memory")
+		}
+		return gradleCheckstyleHeap2G, nil
+	default:
+		return "", errors.New("BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP must be empty or 2g")
+	}
 }
 
 func gradleSafeCacheEnabled(getenv func(string) string) (bool, error) {

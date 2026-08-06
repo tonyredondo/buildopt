@@ -25,10 +25,26 @@ The experiment keeps different optimization mechanisms separate:
   settings. Every requested test task, test case, outcome, and required output
   must remain identical.
 
+The post-diagnostic Runtime Tuning hypothesis is frozen before accepted paired
+timing. Spring configures the global `checkstyleNohttp` task with a 1 GiB heap.
+An isolated, non-gating full-scan probe took 35.29 seconds at 1 GiB, 31.88
+seconds at 2 GiB, and 31.61 seconds at 4 GiB. The candidate therefore raises
+only that standard Gradle `Checkstyle` task from exactly `1g` to `2g` when the
+runner has at least 14 GiB of memory. It preserves repository-owned values other
+than exactly `1g`, and it does not change task inputs, outputs, actions, cache
+policy, requested tests, or worker count. The 4 GiB arm is rejected before
+paired timing because another 2 GiB bought only 270 milliseconds in the
+diagnostic probe.
+
 An online preflight may download dependencies and discover incompatibilities,
 but it is not a timing sample. Accepted measurements run offline in isolated
 control and candidate homes, use eight alternating pairs, and retain Spring's
-native cache and parallelism in the control.
+native cache and parallelism in the control. Before each measured arm, the
+harness restores the same original-source native-cache seed, removes outputs
+outside timing, and then applies the same fixed source mutation. This keeps
+private daemons and dependency state warm while forcing the mutated
+`checkstyleNohttp` key to execute in both arms instead of accepting a cached
+result as Runtime Tuning evidence.
 
 Each cell must save at least 500 milliseconds and 2%, have a positive lower
 95% paired-bootstrap bound, preserve non-empty required outputs, preserve all

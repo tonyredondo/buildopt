@@ -252,6 +252,7 @@ buildopt_required_files=(
     "dev/check-gradle-correlation-fixture"
     "dev/check-gradle-correlation-spike"
     "dev/check-gradle-plugin-handshake"
+    "dev/check-gradle-runtime-tuning"
     "dev/check-generated-code"
     "dev/check-generated-clients"
     "dev/check-github-action"

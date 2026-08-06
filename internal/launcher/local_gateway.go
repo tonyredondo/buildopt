@@ -660,6 +660,8 @@ var reservedChildEnvironment = []string{
 	serverURLEnvironment,
 	serverTokenEnvironment,
 	exportContextEnvironment,
+	gradleCheckstyleHeapEnvironment,
+	resourceAvailableMemoryEnvironment,
 }
 
 func replaceEnvironment(

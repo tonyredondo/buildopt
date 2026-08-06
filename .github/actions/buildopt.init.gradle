@@ -12,6 +12,28 @@ initscript {
 // Init scripts are inherited by buildSrc and included builds. The launcher
 // owns one authenticated handshake for the top-level Gradle invocation.
 if (gradle.getParent() == null) {
+    def checkstyleMaxHeap = System.getenv("BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP")
+    if (checkstyleMaxHeap != null && !checkstyleMaxHeap.isBlank()) {
+        if (checkstyleMaxHeap != "2g") {
+            throw new GradleException(
+                "unsupported BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP: ${checkstyleMaxHeap}"
+            )
+        }
+        gradle.projectsEvaluated {
+            rootProject.allprojects { project ->
+                project.tasks
+                    .withType(org.gradle.api.plugins.quality.Checkstyle)
+                    .matching { task -> task.name == "checkstyleNohttp" }
+                    .configureEach { task ->
+                        // Preserve repository-owned sizing unless it is the
+                        // exact 1 GiB profile qualified by the POC.
+                        if (task.maxHeapSize.getOrNull() == "1g") {
+                            task.maxHeapSize.set(checkstyleMaxHeap)
+                        }
+                    }
+            }
+        }
+    }
     def managedL1Mode = System.getenv("BUILDOPT_MANAGED_L1_MODE")
     if (managedL1Mode != null && !managedL1Mode.isBlank()) {
         beforeSettings { settings ->
