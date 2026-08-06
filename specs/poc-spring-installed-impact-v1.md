@@ -47,6 +47,9 @@ than the bound test-preparation protocol, producing JSON `null`. The runner now
 reads only the manifest from the bound protocol; source URL and original-file
 checksum remain sourced from the unchanged repository specification. This
 pre-timing correction changes neither the measurement nor the value gate.
+The runner also reports the exact conservative fallback reason if the installed
+command does not select the bound candidate during warmup; this diagnostic is
+outside accepted timing.
 
 Run the preregistered experiment with:
 

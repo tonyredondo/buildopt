@@ -240,8 +240,14 @@ buildopt_run_arm() {
     buildopt_max_rss_kb=$(awk -F= '$1 == "maxRssKb" {print $2 + 0}' "${buildopt_time}")
     grep -Fq 'BUILD SUCCESSFUL' "${buildopt_log}" || return 1
     if [[ "${buildopt_arm}" == candidate ]]; then
-        grep -Fq 'explicit Build Impact POC candidate spring-jms-affected-test-classes selected' \
-            "${buildopt_log}" || return 1
+        if ! grep -Fq \
+            'explicit Build Impact POC candidate spring-jms-affected-test-classes selected' \
+            "${buildopt_log}"; then
+            grep -F 'buildopt: Build Impact POC' "${buildopt_log}" >&2 ||
+                tail -n 80 "${buildopt_log}" >&2
+            printf 'Spring installed Build Impact warmup did not select the bound candidate\n' >&2
+            return 1
+        fi
     fi
     grep -Eq '^> Task :spring-jms:compileJava$' "${buildopt_log}" || {
         printf 'Spring %s arm did not execute changed compileJava\n' "${buildopt_arm}" >&2

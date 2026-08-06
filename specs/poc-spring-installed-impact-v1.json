@@ -148,6 +148,7 @@
     "acceptedPairsBeforeCorrection": 0,
     "failure": "MANIFEST_SOURCE_WAS_NULL",
     "change": "READ_MANIFEST_FROM_BOUND_BASE_PROTOCOL",
+    "diagnosticChange": "REPORT_CONSERVATIVE_FALLBACK_REASON_BEFORE_TIMING",
     "measurementChanged": false,
     "valueGateChanged": false
   },
