@@ -8,12 +8,18 @@ fi
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
-buildopt_spec="${buildopt_repo_root}/specs/poc-spring-test-preparation-v1.json"
+buildopt_spec="${buildopt_repo_root}/specs/poc-spring-test-preparation-v2.json"
 
 jq -e '
-    .schemaVersion == "buildopt.specs/poc-spring-test-preparation/v1" and
+    .schemaVersion == "buildopt.specs/poc-spring-test-preparation/v2" and
     .workItem == "POC-SPRING-TEST-PREPARATION-001" and
-    .decision == "PREREGISTER_BUILD_IMPACT_FOR_BUILD_OWNED_TEST_PREPARATION" and
+    .decision == "PREREGISTER_ROOT_BUILD_IMPACT_WITH_COMMON_BUILD_LOGIC_PRESERVED" and
+    .protocolRevision == {
+        from: 1,
+        reason: "PRE_MEASUREMENT_BUILDSRC_TEST_TASK_OUTSIDE_ROOT_DISCOVERY_SCOPE",
+        acceptedPairsBeforeRevision: 0,
+        valueThresholdsChanged: false
+    } and
     .repository.nameWithOwner == "spring-projects/spring-framework" and
     (.repository.revision | test("^[0-9a-f]{40}$")) and
     (.repository.sourceArchiveSha256 | test("^[0-9a-f]{64}$")) and
@@ -47,7 +53,9 @@ jq -e '
     .measurement.warmupsPerArm == 1 and .measurement.pairs == 8 and
     .measurement.maximumInterArmIdleGapMs == 5000 and
     .measurement.requiredOutputRoots == ["spring-jms/build/classes"] and
-    .measurement.forbiddenTaskType == "org.gradle.api.tasks.testing.Test" and
+    .measurement.forbiddenRootBuildTaskType == "org.gradle.api.tasks.testing.Test" and
+    .measurement.commonBuildLogicTestTask == ":buildSrc:test" and
+    .measurement.commonBuildLogicTestOutcome == "UP-TO-DATE" and
     .valueGate.minimumSavedMs == 500 and
     .valueGate.minimumReductionRatio == 0.02 and
     .valueGate.positiveLower95Bound == true and
@@ -57,7 +65,8 @@ jq -e '
     .valueGate.failedPairsMayBeDiscarded == false and
     .boundaries == {
         buildOwnedTestPreparationOnly: true,
-        gradleTestTasksExecuted: false,
+        rootBuildGradleTestTasksExecuted: false,
+        commonBuildLogicTestTaskPreservedAcrossArms: true,
         testSelectionChanged: false,
         testOptimizationModified: false,
         proofOfConcept: true,

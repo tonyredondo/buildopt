@@ -1281,6 +1281,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-06 | Revised the Spring test-preparation protocol before accepted timing after the structural guard confirmed the already-recorded common `:buildSrc:test` outside the root discovery graph; v2 forbids every root-build `Test`, requires the build-logic task to remain `UP-TO-DATE` in both arms, and leaves all value thresholds, outputs, pair rules, and Test Optimization boundaries unchanged | Codex |
 | 2026-08-06 | Corrected the Spring paired harness before accepting any pair after its unmeasured warmup exposed a still-active preflight daemon; the harness now stops that daemon before creating isolated arms while leaving workload, candidate, outputs, tests, pair order, and thresholds unchanged | Codex |
 | 2026-08-06 | Stopped the frozen Spring Checkstyle candidate before accepted pairs: the isolated 3,410-ms saving cannot exceed 0.625% of the 546-second control warmup, and that warmup exposed a non-product `java24Test` timing failure; no threshold, pair, test, or output contract moved | Codex |
 | 2026-08-06 | Rejected global two-fork Spring test tuning after the stable six-worker native control completed 41,276 tests in 523.858 seconds while the candidate retained the same tests/outputs but failed in 649.929 seconds, a 24.07% regression | Codex |

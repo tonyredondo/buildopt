@@ -103,7 +103,7 @@ omit unaffected build-owned `testClasses` work, but it may not execute, select,
 filter, omit, retry, or reorder any Gradle `Test` task.
 
 The test-preparation follow-up is preregistered in
-[`poc-spring-test-preparation-v1.json`](./poc-spring-test-preparation-v1.json).
+[`poc-spring-test-preparation-v2.json`](./poc-spring-test-preparation-v2.json).
 Build Impact discovery now treats `testClasses` as build-owned only after the
 resolved task graph proves it contains no Gradle `Test`; all discovered tasks
 are disabled before execution. The fixed Spring graph resolves the original

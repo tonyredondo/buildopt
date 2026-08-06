@@ -1,7 +1,13 @@
 {
-  "schemaVersion": "buildopt.specs/poc-spring-test-preparation/v1",
+  "schemaVersion": "buildopt.specs/poc-spring-test-preparation/v2",
   "workItem": "POC-SPRING-TEST-PREPARATION-001",
-  "decision": "PREREGISTER_BUILD_IMPACT_FOR_BUILD_OWNED_TEST_PREPARATION",
+  "decision": "PREREGISTER_ROOT_BUILD_IMPACT_WITH_COMMON_BUILD_LOGIC_PRESERVED",
+  "protocolRevision": {
+    "from": 1,
+    "reason": "PRE_MEASUREMENT_BUILDSRC_TEST_TASK_OUTSIDE_ROOT_DISCOVERY_SCOPE",
+    "acceptedPairsBeforeRevision": 0,
+    "valueThresholdsChanged": false
+  },
   "repository": {
     "nameWithOwner": "spring-projects/spring-framework",
     "revision": "4b5c92703c63966c3471242c621c4a63b382638d",
@@ -90,7 +96,9 @@
     "requiredOutputRoots": [
       "spring-jms/build/classes"
     ],
-    "forbiddenTaskType": "org.gradle.api.tasks.testing.Test"
+    "forbiddenRootBuildTaskType": "org.gradle.api.tasks.testing.Test",
+    "commonBuildLogicTestTask": ":buildSrc:test",
+    "commonBuildLogicTestOutcome": "UP-TO-DATE"
   },
   "valueGate": {
     "minimumSavedMs": 500,
@@ -105,7 +113,8 @@
   },
   "boundaries": {
     "buildOwnedTestPreparationOnly": true,
-    "gradleTestTasksExecuted": false,
+    "rootBuildGradleTestTasksExecuted": false,
+    "commonBuildLogicTestTaskPreservedAcrossArms": true,
     "testSelectionChanged": false,
     "testOptimizationModified": false,
     "proofOfConcept": true,

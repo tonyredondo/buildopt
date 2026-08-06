@@ -2600,7 +2600,7 @@ build-owned `testClasses` graph; no Gradle `Test` task may be changed or run by
 that Build Impact experiment.
 
 The next experiment is frozen in
-`specs/poc-spring-test-preparation-v1.json`. Validate its ownership, exact
+`specs/poc-spring-test-preparation-v2.json`. Validate its ownership, exact
 entrypoints, eight-pair design, outputs, and unchanged gate with:
 
 ```bash
@@ -2608,10 +2608,15 @@ entrypoints, eight-pair design, outputs, and unchanged gate with:
 ./dev/check-build-impact-automatic
 ```
 
-The discovery adapter resolves the Gradle task graph, detects any real `Test`,
-then disables every requested/dependency task before the discovery action runs.
-Only a complete, Test-free graph may compare native `testClasses` with
-`:spring-jms:testClasses`; unknown or test-containing graphs remain full-build.
+The discovery adapter resolves the root-build Gradle task graph, detects any
+real root-build `Test`, then disables every requested/dependency task before the
+discovery action runs. Only a complete, root-Test-free graph may compare native
+`testClasses` with `:spring-jms:testClasses`; unknown or test-containing graphs
+remain full-build. A pre-measurement dry run found Spring's unavoidable
+`:buildSrc:test` task outside that root graph. Protocol v2 therefore requires
+that common build-logic task to remain `UP-TO-DATE` in both arms while still
+forbidding every root-build `Test`; no accepted pair or value threshold existed
+when that scope correction was frozen.
 
 After committing the runner so its SHA is immutable, capture the eight paired
 observations on the declared 12-CPU host with:
@@ -2623,9 +2628,10 @@ observations on the declared 12-CPU host with:
 The runner downloads the fixed Spring revision, performs networked dependency
 preparation outside the measured region, stops that daemon, and then measures
 offline control/candidate arms with separate Gradle homes and the same restored
-native cache seed. It executes no Gradle `Test` task, compares the non-empty
+native cache seed. It executes no root-build Gradle `Test`, requires the same
+`:buildSrc:test UP-TO-DATE` outcome in both arms, compares the non-empty
 `spring-jms/build/classes` manifests byte for byte, retains all eight pairs,
-and applies the preregistered 500 ms, 2%, positive-lower-bound value gate.
+and applies the unchanged 500 ms, 2%, positive-lower-bound value gate.
 
 Run the lock and doctor contract tests from the repository root:
 

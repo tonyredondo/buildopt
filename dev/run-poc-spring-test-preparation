@@ -9,7 +9,7 @@ fi
 buildopt_output=$1
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
-buildopt_spec="${buildopt_repo_root}/specs/poc-spring-test-preparation-v1.json"
+buildopt_spec="${buildopt_repo_root}/specs/poc-spring-test-preparation-v2.json"
 buildopt_base_spec="${buildopt_repo_root}/specs/poc-spring-framework-v1.json"
 
 if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ]]; then
@@ -62,21 +62,12 @@ chmod 0700 "${buildopt_root}"
 mkdir -p -- "${buildopt_root}/source" "${buildopt_root}/preflight-home" \
     "${buildopt_root}/logs"
 chmod 0700 "${buildopt_root}/preflight-home"
-buildopt_test_guard="${buildopt_root}/reject-gradle-test-tasks.init.gradle"
-printf '%s\n' \
-    'import org.gradle.api.tasks.testing.Test' \
-    '' \
-    'gradle.taskGraph.whenReady { graph ->' \
-    '    def forbidden = graph.allTasks.findAll { it instanceof Test }' \
-    '    if (!forbidden.isEmpty()) {' \
-    '        throw new GradleException("forbidden Gradle Test task(s): " +' \
-    '            forbidden.collect { it.path }.sort().join(", "))' \
-    '    }' \
-    '}' >"${buildopt_test_guard}"
+buildopt_test_guard="${buildopt_script_dir}/poc-spring-test-preparation.guard.init.gradle"
 
 buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
 buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
 buildopt_runner_sha=$(sha256sum "${BASH_SOURCE[0]}" | awk '{print $1}')
+buildopt_test_guard_sha=$(sha256sum "${buildopt_test_guard}" | awk '{print $1}')
 (
     cd "${buildopt_repo_root}"
     "${buildopt_script_dir}/run" --toolchain go -- go build -trimpath \
@@ -217,7 +208,12 @@ buildopt_run_arm() {
         printf 'Spring %s arm did not execute changed compileJava\n' "${buildopt_arm}" >&2
         return 1
     }
-    ! grep -Fq 'forbidden Gradle Test task(s):' "${buildopt_log}" || return 1
+    ! grep -Fq 'forbidden root-build Gradle Test task(s):' "${buildopt_log}" || return 1
+    grep -Fq '> Task :buildSrc:test UP-TO-DATE' "${buildopt_log}" || {
+        printf 'Spring %s arm did not preserve the common buildSrc test outcome\n' \
+            "${buildopt_arm}" >&2
+        return 1
+    }
     if grep -Eq '^> Task .*:(publish|upload|release|sign)([A-Z:]|$)' "${buildopt_log}" ||
         grep -Eq 'Publishing build scan|Build scan published|https://gradle[.]com/s/' \
             "${buildopt_log}"; then
@@ -313,7 +309,9 @@ for buildopt_pair in {1..8}; do
             requiredOutputCount: $outputCount,
             controlEntrypoints: ["testClasses"],
             candidateEntrypoints: [":spring-jms:testClasses"],
-            gradleTestTasksExecuted: false,
+            rootBuildGradleTestTasksExecuted: false,
+            commonBuildLogicTestTask: ":buildSrc:test",
+            commonBuildLogicTestOutcome: "UP-TO-DATE",
             productAttributableFailure: false
         }' >>"${buildopt_rows}"
     printf 'Spring test-preparation pair %s/8: control=%sms candidate=%sms saved=%sms order=%s\n' \
@@ -325,6 +323,7 @@ jq -s '.' "${buildopt_rows}" >"${buildopt_root}/observations.json"
 buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revision}" \
     --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sha}" \
+    --arg testGuardSha "${buildopt_test_guard_sha}" \
     --arg executableSha "${buildopt_executable_sha}" --arg sourceSha "${buildopt_source_sha}" \
     --arg cacheSha "${buildopt_cache_seed_sha}" --arg graphSha "${buildopt_graph_sha}" \
     --argjson preflightMs \
@@ -350,16 +349,17 @@ jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revi
      $ratio >= $spec[0].valueGate.minimumReductionRatio and
      $interval[0] > 0 and
      all($data[]; .requiredOutputCount > 0 and
-         (.gradleTestTasksExecuted | not) and
+         (.rootBuildGradleTestTasksExecuted | not) and
          (.productAttributableFailure | not))) as $qualified |
     {
-        schemaVersion: "buildopt.evidence/poc-spring-test-preparation/v1",
+        schemaVersion: "buildopt.evidence/poc-spring-test-preparation/v2",
         workItem: "POC-SPRING-TEST-PREPARATION-001",
         capturedAt: $capturedAt,
         buildopt: {
             revision: $revision,
             executableSha256: $executableSha,
-            runnerScriptSha256: $runnerSha
+            runnerScriptSha256: $runnerSha,
+            testGuardScriptSha256: $testGuardSha
         },
         specSha256: $specSha,
         repository: {
