@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "buildopt.specs/poc-spring-impact-breadth/v1",
+  "workItem": "POC-SPRING-IMPACT-BREADTH-001",
+  "decision": "PREREGISTER_TWO_SELECTIVE_SCOPES_AND_ONE_CONSERVATIVE_FALLBACK",
+  "repository": {
+    "nameWithOwner": "spring-projects/spring-framework",
+    "revision": "4b5c92703c63966c3471242c621c4a63b382638d",
+    "sourceArchiveUrl": "https://github.com/spring-projects/spring-framework/archive/4b5c92703c63966c3471242c621c4a63b382638d.tar.gz",
+    "sourceArchiveSha256": "e3fa4258e5e568c0b0e6f1605956cd743cff847b9df7c82ce86b2d2f1109db16"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12
+  },
+  "selectiveCells": [
+    {
+      "id": "WEBMVC_LEAF",
+      "changeClass": "LEAF_PRODUCTION_SOURCE",
+      "changePath": "spring-webmvc/src/main/java/org/springframework/web/servlet/DispatcherServlet.java",
+      "changeOriginalSha256": "768903db4d5f06da9fa6abe796c33e72553084b7a2de5d7ff7e817a1a34d68af",
+      "changedProject": ":spring-webmvc",
+      "pipelineClass": "poc-spring-breadth-webmvc",
+      "alternativeId": "spring-webmvc-test-classes",
+      "candidateEntrypoints": [":spring-webmvc:testClasses"],
+      "requiredOutputRoots": ["spring-webmvc/build/classes"],
+      "requiredArtifactId": "spring-webmvc-test-preparation",
+      "expectedReachedProjectCount": 15,
+      "expectedGraphSha256": "f6d9e1a11c8d273c53b77fa6f187d5444ed17a54360a8ac44cc5872a2d66c9e3"
+    },
+    {
+      "id": "CORE_TO_JMS_SHARED",
+      "changeClass": "SHARED_PRODUCTION_SOURCE",
+      "changePath": "spring-core/src/main/java/org/springframework/aot/AotDetector.java",
+      "changeOriginalSha256": "4c0d5e8e8ace8f200a8c72ea34d9de396873dc2462cd025eb6dbf830c66e6da1",
+      "changedProject": ":spring-core",
+      "pipelineClass": "poc-spring-breadth-core-jms",
+      "alternativeId": "spring-core-to-jms-test-classes",
+      "candidateEntrypoints": [":spring-jms:testClasses"],
+      "requiredOutputRoots": ["spring-jms/build/classes"],
+      "requiredArtifactId": "spring-jms-test-preparation",
+      "expectedReachedProjectCount": 12,
+      "expectedGraphSha256": "06c743439316f999cab1e2d2ad439be96d182cff5dca0d75e97ceda80567e8f5"
+    }
+  ],
+  "fallbackCell": {
+    "id": "BUILD_LOGIC_GLOBAL",
+    "changeClass": "GLOBAL_BUILD_LOGIC",
+    "changePath": "gradle.properties",
+    "pipelineClass": "poc-spring-breadth-webmvc",
+    "expectedMode": "FULL_GRAPH",
+    "expectedReason": "IMPACT_GLOBAL_CHANGE",
+    "expectedEntrypoints": ["testClasses"],
+    "performanceClaim": false
+  },
+  "manifestTemplate": {
+    "schemaVersion": "buildopt.build-impact/manifest/v1",
+    "manifestVersion": 1,
+    "repositoryId": "spring-projects/spring-framework",
+    "ownership": "REPOSITORY_COMMITTED",
+    "originalEntrypoints": ["testClasses"],
+    "requiredChecks": [],
+    "globalChangePaths": ["gradle/**"],
+    "unknownChangePolicy": "FULL_GRAPH"
+  },
+  "measurement": {
+    "controlEntrypoints": ["testClasses"],
+    "commonArguments": [
+      "--daemon",
+      "--offline",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--max-workers=12",
+      "--no-scan",
+      "--stacktrace"
+    ],
+    "onlinePreflightMeasured": false,
+    "preflightDaemonStoppedBeforeArmSetup": true,
+    "sameNativeCacheSeedRestoredBeforeEveryArm": true,
+    "outputsRemovedBeforeEveryArm": true,
+    "fixedMutationAppliedAfterCacheRestore": true,
+    "warmupsPerArm": 1,
+    "pairsPerSelectiveCell": 4,
+    "pairOrder": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
+    "maximumInterArmIdleGapMs": 5000,
+    "forbiddenRootBuildTaskType": "org.gradle.api.tasks.testing.Test",
+    "commonBuildLogicTestTask": ":buildSrc:test",
+    "commonBuildLogicTestOutcome": "UP-TO-DATE",
+    "candidateSurface": "INSTALLED_BUILDOPT_IMPACT",
+    "launcherOverheadIncluded": true
+  },
+  "valueGate": {
+    "minimumSavedMsPerSelectiveCell": 500,
+    "minimumReductionRatioPerSelectiveCell": 0.02,
+    "positiveLower95BoundPerSelectiveCell": true,
+    "minimumPositivePairsPerSelectiveCell": 4,
+    "requiredOutputsIdentical": true,
+    "requiredOutputsNonEmpty": true,
+    "fallbackMustRemainFullGraph": true,
+    "maximumProductAttributableFailures": 0,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedPairsMayBeDiscarded": false,
+    "parityAloneCountsAsValue": false
+  },
+  "terminalDecisions": {
+    "allSelectiveCellsQualifyAndFallbackPasses": "BROADEN_INSTALLED_SPRING_IMPACT",
+    "anySelectiveCellFailsOrFallbackFails": "RETAIN_SINGLE_INSTALLED_SPRING_SCOPE"
+  },
+  "boundaries": {
+    "repositorySpecificProductRuleAdded": false,
+    "productionSelectionChanged": false,
+    "buildOwnedTestPreparationOnly": true,
+    "rootBuildGradleTestTasksExecuted": false,
+    "testSelectionChanged": false,
+    "testOptimizationModified": false,
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "installedPackage": true,
+    "publicReleaseRequired": false,
+    "previousSpringEvidenceUnchanged": true
+  }
+}

@@ -93,6 +93,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-OTEL-TRANSFER | Transfer the qualified mechanism unchanged to OpenTelemetry Java Instrumentation | `DONE` | 3/3 | `E-183..185` |
 | POC-INSTALLED-IMPACT | One-command installed Build Impact candidate with exact fallback and POC-only authority | `DONE` | 1/1 | `E-186` |
 | POC-SPRING-INSTALLED-IMPACT | Measure the installed command on the qualified Spring workload against optimized native Gradle | `DONE` | 1/1 | `E-187` |
+| POC-SPRING-IMPACT-BREADTH | Test the installed mechanism on a second Spring output scope, a shared-source change and a global fallback | `DOING` | 1/2 | `E-188` preregistration complete |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -176,6 +177,8 @@ than partners. Test Optimization remains a separate product.
 | 30 | `POC-OTEL-TRANSFER-001` | Apply the Spring-qualified Build Impact mechanism unchanged to OpenTelemetry Java Instrumentation and repeat the same gate | `DONE` | Codex |
 | 31 | `POC-INSTALLED-IMPACT-001` | Expose the qualified Build Impact idea through one installed explicit POC command while retaining full-graph fallback and leaving production promotion unchanged | `DONE` | Codex |
 | 32 | `POC-SPRING-INSTALLED-IMPACT-001` | Run the unchanged Spring value gate through an isolated installed native package so launcher and validation overhead are included | `DONE` | Codex |
+| 33 | `POC-SPRING-IMPACT-BREADTH-PREREG-001` | Freeze two additional selective Spring cells and one conservative full-graph fallback before timing | `DONE` | Codex |
+| 34 | `POC-SPRING-IMPACT-BREADTH-001` | Execute the installed Spring breadth matrix and issue its terminal broaden-or-retain decision without moving thresholds | `TODO` | Codex |
 
 The raw diagnostic block is closed and unchanged. `E-172` corrects its
 ownership interpretation: Mockito's 242.690-second `compileTestJava` is
@@ -355,6 +358,7 @@ Every accepted RFC decision is represented below. Historical private-beta decisi
 | `POC-OTEL-TRANSFER-G01` | The unchanged Spring-qualified Build Impact mechanism clears the full eight-pair gate on fixed OpenTelemetry with identical outputs and no failed observation | Broader public-repository value claim | `FAILED` | Codex | `E-185`: native control failed in pair 7; no retry or partial qualification |
 | `POC-INSTALLED-IMPACT-G01` | The installed command selects only a reviewed manifest alternative, restores the full graph for unknown paths and bypass, rejects drift before Gradle, and preserves required Build/Test-owned evidence | Usable owner-operated Build Impact POC | `DONE` | Codex | `E-186`, [`build-impact-poc-onboarding-v1`](./specs/build-impact-poc-onboarding-v1.md) |
 | `POC-SPRING-INSTALLED-IMPACT-G01` | The installed candidate clears the unchanged Spring 500-ms/2%/positive-bound gate with exact outputs and all launcher overhead included | Onboarding value claim for Build Impact | `DONE` | Codex | `E-187`, [`poc-spring-installed-impact-v1`](./specs/poc-spring-installed-impact-v1.md) |
+| `POC-SPRING-IMPACT-BREADTH-G01` | Both preregistered selective Spring cells clear the unchanged value gate and the global build-logic cell retains the full graph | Broader installed Spring claim | `TODO` | Codex | `E-188`, [`poc-spring-impact-breadth-v1`](./specs/poc-spring-impact-breadth-v1.md) |
 
 ---
 
@@ -1005,6 +1009,17 @@ Test Optimization is an explicit non-goal for all functional and documentation t
 |---|---|---|---|
 | `POC-SPRING-INSTALLED-IMPACT-G01` | The net installed path still saves at least 500 ms and 2%, has a positive 95% lower bound, and introduces no product failure | `DONE` | `E-187`: 1,260.125 ms/15.76% saved, interval +624.125..+2,019 ms, 8/8 positive |
 
+#### POC-SPRING-IMPACT-BREADTH — test more Spring scopes
+
+| ID | Deliverable | State | Owner | Expected evidence |
+|---|---|---|---|---|
+| `POC-SPRING-IMPACT-BREADTH-PREREG-001` | Freeze a `spring-webmvc` leaf-output cell, a `spring-core` to `spring-jms` shared-source cell, and a `gradle.properties` full-graph fallback before timing | `DONE` | Codex | `E-188`: exact revision, source hashes, graph hashes, tasks, outputs, 12-CPU runner, four-pair order and terminal decisions |
+| `POC-SPRING-IMPACT-BREADTH-001` | Execute both selective cells through the installed package and prove the global-change fallback | `TODO` | Codex | Versioned result with every pair, exact outputs, launcher overhead and terminal decision |
+
+| Exit gate | Summarized criterion | State | Evidence |
+|---|---|---|---|
+| `POC-SPRING-IMPACT-BREADTH-G01` | Both selective cells save at least 500 ms and 2%, have positive paired lower bounds and four positive pairs; global build logic retains full `testClasses` | `TODO` | Preregistered [`poc-spring-impact-breadth-v1`](./specs/poc-spring-impact-breadth-v1.md) |
+
 ---
 
 ## 12. Continuous validation
@@ -1313,6 +1328,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-185` | 2026-08-06 | `POC-OTEL-TRANSFER-001`, `POC-OTEL-TRANSFER-G01` | The checked [OpenTelemetry terminal evidence](./benchmarks/results/poc-otel-test-preparation-v1.json) executed the unchanged Spring-qualified mechanism on the fixed 1,026-project repository and optimized native control. Six alternating pairs completed, passed the runner's output comparison, executed no root-build Gradle `Test`, and were all positive; descriptively, native `testClasses` averaged 31,441.833 ms and the 46-project candidate averaged 12,881.167 ms, a difference of 18,560.667 ms/59.03%. Pair 7 then failed in the native control at `:instrumentation:openai:openai-java-1.1:javaagent:byteBuddyJava` with upstream `IllegalStateException: zip file closed` after 1,209 actionable tasks while Configuration Cache was reused. The failure bundle did not retain completed manifest hashes, the protocol requires eight pairs and forbids discarding a failed observation, and pair 8 was therefore not started or substituted | `DONE` terminal stop: `STOP_OTEL_TRANSFER_INCOMPLETE_UPSTREAM_CONTROL`; do not claim OpenTelemetry qualification, do not retry this fixed experiment, and retain the narrower Spring evidence without changing BuildOpt, Test Optimization, thresholds, soak, design-partner, or production scope |
 | `E-186` | 2026-08-06 | `POC-INSTALLED-IMPACT-001`, `POC-INSTALLED-IMPACT-G01` | The versioned [installed POC contract](./specs/build-impact-poc-onboarding-v1.md), production `buildimpact.PlanPOCCandidate` boundary, `buildopt impact` launcher command, focused Go negatives, and real [`check-build-impact-poc-onboarding`](./dev/check-build-impact-poc-onboarding) make Build Impact directly executable from the native package. The real offline Gradle Wrapper fixture selected only the repository-owned `:service-a:assemble` alternative for a known library change, retained full `assemble` for an unknown path, omitted only `service-b`, and produced a byte-identical required `service-a` JAR plus independent Test-owned marker. Malformed generated bindings fail before Gradle; `BUILDOPT_BYPASS=1` returns original entrypoints even when generated state is missing. The command explicitly reports that candidate selection is not production authorization and does not change `BIA-002` or Test Optimization | `DONE`: installed owner-operated POC path closed without autonomous promotion, soak, design partner, or production claim |
 | `E-187` | 2026-08-06 | `POC-SPRING-INSTALLED-IMPACT-001`, `POC-SPRING-INSTALLED-IMPACT-G01` | The checked [installed Spring evidence](./benchmarks/results/poc-spring-installed-impact-v1.json) used BuildOpt revision `30d156059987ec0e9fd5261aab9eaa293a5fadd1`, an isolated installed `0.3.0-dev` package and all 12 host CPUs. Across eight alternating offline pairs, optimized native `testClasses` averaged 7,996.125 ms and `buildopt impact` averaged 6,736 ms, saving 1,260.125 ms/15.76% with interval +624.125..+2,019 ms and 8/8 positive pairs. Every pair produced the same non-empty 378-file declared-output manifest, ran no root-build Gradle `Test`, preserved `:buildSrc:test UP-TO-DATE`, and recorded zero product failures; package, launcher, manifest and graph-validation overhead is included | `DONE`: installed Spring output-scoped POC value qualified; authorize breadth within Spring before any new repository transfer, with no production, soak, design-partner or Test Optimization claim |
+| `E-188` | 2026-08-06 | `POC-SPRING-IMPACT-BREADTH-PREREG-001` | The checked [Spring breadth contract](./specs/poc-spring-impact-breadth-v1.json) freezes the same public Spring revision and 12-CPU runner before timing. `WEBMVC_LEAF` changes a pinned `DispatcherServlet.java` and compares root `testClasses` with `:spring-webmvc:testClasses`, whose complete generated graph reaches 15/27 projects. `CORE_TO_JMS_SHARED` changes pinned `AotDetector.java` and compares root `testClasses` with `:spring-jms:testClasses`, reaching 12/27 projects while covering the directly changed shared project and required downstream outputs. Each cell gets four alternating installed-package pairs under the unchanged 500-ms/2%/positive-bound gate; a separate `gradle.properties` cell must retain full graph and makes no performance claim | `DONE` preregistration only: execute without moving cells, outputs, thresholds or pair handling; production selection and Test Optimization remain unchanged |
 
 ---
 
@@ -1320,6 +1336,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-06 | Preregistered installed Spring breadth before timing: one `spring-webmvc` leaf scope, one `spring-core` to `spring-jms` shared scope, and one global build-logic fallback, with fixed graph/source hashes, four alternating pairs per selective cell and the unchanged value gate | Codex |
 | 2026-08-06 | Qualified the installed Spring Build Impact path: optimized native Gradle averaged 7.996 seconds and the packaged command 6.736 seconds, saving 1.260 seconds/15.76% across 8/8 positive pairs with a positive paired interval and identical declared outputs; next scope is breadth within Spring, not production promotion | Codex |
 | 2026-08-06 | Limited only the explicit owner-operated Build Impact POC candidate to changed projects plus repository-declared required outputs/checks after Spring's complete reverse dependency closure rejected the previously qualified scoped alternative; production `EvaluateImpact`, `BIA-002`, thresholds and Test Optimization remain unchanged, with zero accepted installed pairs before the correction | Codex |
 | 2026-08-06 | Added an explicit pre-timing fallback diagnostic after the installed Spring warmup completed but conservatively retained the full graph; zero pairs were accepted and the diagnostic changes neither execution nor the value gate | Codex |
