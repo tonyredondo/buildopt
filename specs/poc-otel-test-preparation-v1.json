@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "buildopt.specs/poc-otel-test-preparation/v1",
+  "workItem": "POC-OTEL-TRANSFER-001",
+  "decision": "PREREGISTER_UNCHANGED_SPRING_QUALIFIED_BUILD_IMPACT",
+  "repository": {
+    "nameWithOwner": "open-telemetry/opentelemetry-java-instrumentation",
+    "revision": "2f472a7b3073eabc842540bcb1f48e71ae54825d",
+    "sourceArchiveUrl": "https://codeload.github.com/open-telemetry/opentelemetry-java-instrumentation/tar.gz/2f472a7b3073eabc842540bcb1f48e71ae54825d",
+    "sourceArchiveSha256": "94c2f00f8a08c7f057b1e3d0be8d9529c27007706610d36fea668df4e34d9c87",
+    "gradleVersion": "9.6.1",
+    "gradleWrapperJarSha256": "497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7",
+    "gradleWrapperPropertiesSha256": "89f62533208a72b7a8cc2892b6b3540c445fa6175508297d932dae57d653591a"
+  },
+  "buildopt": {
+    "minimumRevision": "bff043fb22bcaac58d96677151e5a0307ed8a228",
+    "discoveryAdapterVersion": "gradle-runtime-v1",
+    "discoveredGraphDigest": "sha256:5d868cafe8084b88fea1381cbc2ddbcd1453fba294d30ddfdca87248d7bbb90e",
+    "discoveredGraphSha256": "bba3c8f36775c53f6cf4c63d3457076e55c9fc6d2ac1fb1362d5c3f640d3170b",
+    "rootTestGuardSha256": "c892c05832defdbf6788437b22a44d07ed4709e2b029550921235b285070b466"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12,
+    "jdk": "temurin-21.0.12+8"
+  },
+  "change": {
+    "class": "LEAF_PRODUCTION_SOURCE",
+    "path": "instrumentation/spring/spring-boot-autoconfigure/src/main/java/io/opentelemetry/instrumentation/spring/autoconfigure/OpenTelemetryAutoConfiguration.java",
+    "originalSha256": "bd68a2761a21ce6a7f2f6002167783a75920d2f14f903dbcdfebe0fc9fbc4aae",
+    "project": ":instrumentation:spring:spring-boot-autoconfigure",
+    "mutation": "APPEND_PAIR_COMMENT"
+  },
+  "manifest": {
+    "schemaVersion": "buildopt.build-impact/manifest/v1",
+    "manifestVersion": 1,
+    "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+    "pipelineClass": "poc-otel-test-preparation",
+    "ownership": "REPOSITORY_COMMITTED",
+    "originalEntrypoints": [
+      "testClasses"
+    ],
+    "allowedAlternatives": [
+      {
+        "id": "otel-spring-autoconfigure-test-classes",
+        "entrypoints": [
+          ":instrumentation:spring:spring-boot-autoconfigure:testClasses"
+        ]
+      }
+    ],
+    "requiredArtifacts": [
+      {
+        "id": "otel-spring-autoconfigure-test-preparation",
+        "path": "instrumentation/spring/spring-boot-autoconfigure/build/classes/**",
+        "owner": "BUILD_OPTIMIZATION"
+      }
+    ],
+    "requiredChecks": [],
+    "globalChangePaths": [
+      "gradle/**",
+      "buildscripts/**",
+      "conventions/**"
+    ],
+    "unknownChangePolicy": "FULL_GRAPH"
+  },
+  "discovery": {
+    "mustBeComplete": true,
+    "expectedProjectCount": 1026,
+    "expectedControlReachCount": 614,
+    "expectedCandidateReachCount": 46,
+    "mustContainTestTasks": false,
+    "expectedAlternative": [
+      ":instrumentation:spring:spring-boot-autoconfigure:testClasses"
+    ],
+    "repositoryLocalIncludedBuildsAreGlobalChanges": true,
+    "unknownOrTestDependencyFallsBackToFullGraph": true
+  },
+  "measurement": {
+    "controlEntrypoints": [
+      "testClasses"
+    ],
+    "candidateEntrypoints": [
+      ":instrumentation:spring:spring-boot-autoconfigure:testClasses"
+    ],
+    "commonArguments": [
+      "--daemon",
+      "--offline",
+      "--build-cache",
+      "--parallel",
+      "--configuration-cache",
+      "--max-workers=12",
+      "--no-scan",
+      "--stacktrace"
+    ],
+    "onlinePreflightMeasured": false,
+    "preflightDaemonStoppedBeforeArmSetup": true,
+    "sharedReadOnlyDependencyCache": true,
+    "sameNativeCacheSeedRestoredBeforeEveryArm": true,
+    "outputsRemovedBeforeEveryArm": true,
+    "fixedMutationAppliedAfterCacheRestore": true,
+    "warmupsPerArm": 1,
+    "pairs": 8,
+    "pairOrder": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
+    "maximumInterArmIdleGapMs": 5000,
+    "requiredOutputRoots": [
+      "instrumentation/spring/spring-boot-autoconfigure/build/classes"
+    ],
+    "forbiddenRootBuildTaskType": "org.gradle.api.tasks.testing.Test"
+  },
+  "valueGate": {
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "requiredOutputsIdentical": true,
+    "requiredOutputsNonEmpty": true,
+    "maximumProductAttributableFailures": 0,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedPairsMayBeDiscarded": false,
+    "parityAloneCountsAsValue": false
+  },
+  "boundaries": {
+    "mechanismChangedFromSpring": false,
+    "repositorySpecificProductRuleAdded": false,
+    "buildOwnedTestPreparationOnly": true,
+    "rootBuildGradleTestTasksExecuted": false,
+    "testSelectionChanged": false,
+    "testOptimizationModified": false,
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

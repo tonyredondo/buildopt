@@ -2634,6 +2634,29 @@ native cache seed. It executes no root-build Gradle `Test`, requires the same
 `spring-jms/build/classes` manifests byte for byte, retains all eight pairs,
 and applies the unchanged 500 ms, 2%, positive-lower-bound value gate.
 
+The unchanged transfer to OpenTelemetry Java Instrumentation is frozen in
+`specs/poc-otel-test-preparation-v1.json`. It retains OpenTelemetry's native
+Build Cache, parallelism, parallel Configuration Cache, JDK 21, and all 12
+workers. The control is the native unqualified `testClasses` selector; the
+candidate is only
+`:instrumentation:spring:spring-boot-autoconfigure:testClasses`. Both arms use
+separate writable Gradle homes plus the same immutable read-only dependency
+cache and restored native build-cache seed. Every measured invocation is
+offline, executes no Gradle `Test`, and must produce the same non-empty affected
+class manifest.
+
+After this runner and contract are committed, capture the eight alternating
+pairs with:
+
+```bash
+./dev/run-poc-otel-test-preparation /absolute/path/to/result.json
+```
+
+The fixed 500 ms, 2%, positive-lower-bound gate and all eight observations are
+retained regardless of outcome. This is a POC value transfer only: it makes no
+production, soak, design-partner, universal-performance, or Test Optimization
+claim.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

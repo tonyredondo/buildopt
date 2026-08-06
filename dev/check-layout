@@ -323,6 +323,7 @@ buildopt_required_files=(
     "dev/run-poc-spring-test-runtime-discovery"
     "dev/run-poc-spring-selective-test-runtime-discovery"
     "dev/run-poc-spring-test-preparation"
+    "dev/run-poc-otel-test-preparation"
     "dev/poc-spring-test-preparation.guard.init.gradle"
     "dev/poc-spring-test-runtime.init.gradle"
     "dev/poc-spring-selective-test-runtime.init.gradle"
