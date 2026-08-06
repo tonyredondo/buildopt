@@ -2,6 +2,18 @@
   "schemaVersion": "buildopt.specs/poc-otel-spring-family/v2",
   "workItem": "POC-OTEL-SPRING-FAMILY-PREREG-001",
   "decision": "PREREGISTER_NEW_STABLE_RELEASE_AND_UPSTREAM_SPRING_FAMILY",
+  "protocolRevision": {
+    "from": 2,
+    "to": 3,
+    "reason": "RUNNER_MANIFEST_METADATA_DID_NOT_MATCH_PREREGISTERED_GRAPH",
+    "acceptedWarmupsBeforeRevision": 0,
+    "acceptedObservationsBeforeRevision": 0,
+    "change": "RESTORE_EXPLORATORY_MANIFEST_IDS_AND_CLASSIFY_UNKNOWN_GLOBAL_FALLBACK_EXACTLY",
+    "controlChanged": false,
+    "candidateChanged": false,
+    "measurementChanged": false,
+    "valueGateChanged": false
+  },
   "repository": {
     "nameWithOwner": "open-telemetry/opentelemetry-java-instrumentation",
     "releaseTag": "v2.30.0",
@@ -51,7 +63,7 @@
     "changePath": "instrumentation/spring/spring-boot-autoconfigure/src/main/java/io/opentelemetry/instrumentation/spring/autoconfigure/OpenTelemetryAutoConfiguration.java",
     "changeOriginalSha256": "bd68a2761a21ce6a7f2f6002167783a75920d2f14f903dbcdfebe0fc9fbc4aae",
     "changedProject": ":instrumentation:spring:spring-boot-autoconfigure",
-    "alternativeId": "otel-spring-autoconfigure-test-classes-v2",
+    "alternativeId": "otel-spring-autoconfigure-test-classes",
     "entrypoints": [
       ":instrumentation:spring:spring-boot-autoconfigure:testClasses"
     ],
@@ -111,7 +123,7 @@
   "fallback": {
     "changePath": "gradle.properties",
     "expectedMode": "FULL_GRAPH",
-    "expectedReason": "IMPACT_GLOBAL_CHANGE",
+    "expectedReason": "IMPACT_UNKNOWN_CHANGE_PATH",
     "expectedEntrypointsFile": "specs/poc-otel-spring-family-v2.tasks.txt",
     "performanceClaim": false
   },

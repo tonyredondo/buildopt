@@ -2713,6 +2713,13 @@ runs all measured arms offline. A failed warmup, arm, output comparison,
 fallback or timing-gap assertion stops the run; completed observations are not
 substituted.
 
+Protocol revision 3 corrects a pre-warmup graph-hash stop: the first runner
+constructed different manifest IDs and one extra global path from the exact
+manifest used during preregistration. Zero warmups and zero observations had
+started. The runner now reproduces the pinned graph byte for byte and reports
+the safe unknown-path fallback reason exactly; the experiment and thresholds
+are unchanged.
+
 This is a new stable-release and control-boundary experiment. It neither
 retries nor reinterprets the earlier terminal result, and it changes no test
 selection, production authority, public release, soak or design-partner scope.

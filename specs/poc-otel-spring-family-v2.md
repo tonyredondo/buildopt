@@ -18,6 +18,15 @@ projects, while the unchanged Spring-autoconfigure alternative reaches 46.
 Both graphs are complete, contain no test-execution tasks and have no unknown
 relationships.
 
+Protocol revision 3 was recorded before warmups or accepted observations. The
+first runner materialized different alternative/artifact IDs and an extra
+global path from the manifest used to preregister the graph, so byte-level
+graph validation stopped it after preflight. Revision 3 restores the exact
+preregistered manifest metadata. It also records the existing fail-safe reason
+for `gradle.properties` precisely as `IMPACT_UNKNOWN_CHANGE_PATH`; execution
+still retains all 53 entrypoints. Control, candidate, measurement and value
+gate are unchanged.
+
 The accepted measurement will use an installed package and four alternating
 pairs. Both arms receive the same offline dependencies, native-cache seed,
 fixed source mutation, clean outputs, 12 workers and Gradle optimizations. The

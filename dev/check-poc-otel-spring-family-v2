@@ -55,6 +55,18 @@ jq -e --arg taskSha "${buildopt_task_sha}" '
     .schemaVersion == "buildopt.specs/poc-otel-spring-family/v2" and
     .workItem == "POC-OTEL-SPRING-FAMILY-PREREG-001" and
     .decision == "PREREGISTER_NEW_STABLE_RELEASE_AND_UPSTREAM_SPRING_FAMILY" and
+    .protocolRevision == {
+        from: 2,
+        to: 3,
+        reason: "RUNNER_MANIFEST_METADATA_DID_NOT_MATCH_PREREGISTERED_GRAPH",
+        acceptedWarmupsBeforeRevision: 0,
+        acceptedObservationsBeforeRevision: 0,
+        change: "RESTORE_EXPLORATORY_MANIFEST_IDS_AND_CLASSIFY_UNKNOWN_GLOBAL_FALLBACK_EXACTLY",
+        controlChanged: false,
+        candidateChanged: false,
+        measurementChanged: false,
+        valueGateChanged: false
+    } and
     .repository.nameWithOwner == "open-telemetry/opentelemetry-java-instrumentation" and
     .repository.releaseTag == "v2.30.0" and
     .repository.revision == "080c1d32ca676ba7b0210c21b60cce8e7ac39058" and
@@ -93,6 +105,7 @@ jq -e --arg taskSha "${buildopt_task_sha}" '
     .control.expectedReachedProjectCount == 148 and
     .candidate.changeClass == "LEAF_PRODUCTION_SOURCE" and
     .candidate.changedProject == ":instrumentation:spring:spring-boot-autoconfigure" and
+    .candidate.alternativeId == "otel-spring-autoconfigure-test-classes" and
     .candidate.entrypoints == [":instrumentation:spring:spring-boot-autoconfigure:testClasses"] and
     .candidate.expectedReachedProjectCount == 46 and
     .candidate.requiredOutputRoots == ["instrumentation/spring/spring-boot-autoconfigure/build/classes"] and
@@ -127,7 +140,7 @@ jq -e --arg taskSha "${buildopt_task_sha}" '
         parityAloneCountsAsValue: false
     } and
     .fallback.expectedMode == "FULL_GRAPH" and
-    .fallback.expectedReason == "IMPACT_GLOBAL_CHANGE" and
+    .fallback.expectedReason == "IMPACT_UNKNOWN_CHANGE_PATH" and
     .fallback.performanceClaim == false and
     .boundaries.proofOfConcept == true and
     .boundaries.productionReadinessClaimed == false and

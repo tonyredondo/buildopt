@@ -179,18 +179,16 @@ jq -n --slurpfile entrypoints "${buildopt_root}/control-entrypoints.json" '
         ownership: "REPOSITORY_COMMITTED",
         originalEntrypoints: $entrypoints[0],
         allowedAlternatives: [{
-            id: "otel-spring-autoconfigure-test-classes-v2",
+            id: "otel-spring-autoconfigure-test-classes",
             entrypoints: [":instrumentation:spring:spring-boot-autoconfigure:testClasses"]
         }],
         requiredArtifacts: [{
-            id: "otel-spring-autoconfigure-test-preparation-v2",
+            id: "otel-spring-autoconfigure-test-preparation",
             path: "instrumentation/spring/spring-boot-autoconfigure/build/classes/**",
             owner: "BUILD_OPTIMIZATION"
         }],
         requiredChecks: [],
-        globalChangePaths: [
-            "gradle.properties", "gradle/**", "buildscripts/**", "conventions/**"
-        ],
+        globalChangePaths: ["gradle/**", "buildscripts/**", "conventions/**"],
         unknownChangePolicy: "FULL_GRAPH"
     }
 ' >"${buildopt_root}/buildopt-impact-manifest.json"
@@ -333,7 +331,7 @@ buildopt_run_arm() {
         return 1
     }
     if [[ "${buildopt_arm}" == candidate ]] && ! grep -Fq \
-        'explicit Build Impact POC candidate otel-spring-autoconfigure-test-classes-v2 selected' \
+        'explicit Build Impact POC candidate otel-spring-autoconfigure-test-classes selected' \
         "${buildopt_log}"; then
         grep -F 'buildopt: Build Impact POC' "${buildopt_log}" >&2 || true
         printf 'OpenTelemetry candidate did not select the preregistered alternative\n' >&2
@@ -491,7 +489,7 @@ if ! (
     printf 'OpenTelemetry Spring-family global fallback failed\n' >&2
     exit 1
 fi
-grep -Fq 'buildopt: Build Impact POC retained the full graph (IMPACT_GLOBAL_CHANGE)' \
+grep -Fq 'buildopt: Build Impact POC retained the full graph (IMPACT_UNKNOWN_CHANGE_PATH)' \
     "${buildopt_fallback_log}" || {
     printf 'OpenTelemetry global change did not retain the full Spring-family graph\n' >&2
     exit 1
@@ -586,7 +584,7 @@ jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revi
         fallback: {
             changePath: $spec[0].fallback.changePath,
             mode: "FULL_GRAPH",
-            reason: "IMPACT_GLOBAL_CHANGE",
+            reason: "IMPACT_UNKNOWN_CHANGE_PATH",
             entrypointsFileSha256: $spec[0].control.entrypointsFileSha256,
             outsideCandidateEntrypointObserved: ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:testClasses",
             buildSuccessful: true,
