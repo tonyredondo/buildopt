@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-spring-test-runtime-init.XXXXXX")
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-spring-test-runtime-init."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+mkdir -p -- "${buildopt_root}/project" "${buildopt_root}/gradle-home"
+cp -- "${buildopt_repo_root}/gradlew" "${buildopt_root}/project/gradlew"
+mkdir -p -- "${buildopt_root}/project/gradle/wrapper"
+cp -- "${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.jar" \
+    "${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.properties" \
+    "${buildopt_root}/project/gradle/wrapper/"
+cp -- "${buildopt_repo_root}/fixtures/spring-test-runtime/build.gradle" \
+    "${buildopt_repo_root}/fixtures/spring-test-runtime/settings.gradle" \
+    "${buildopt_root}/project/"
+buildopt_gradle_home=$(find \
+    "${buildopt_repo_root}/.tools/gradle-user-home/wrapper/dists/gradle-9.6.1-bin" \
+    -type d -path '*/gradle-9.6.1' -print -quit)
+if [[ -z "${buildopt_gradle_home}" || ! -x "${buildopt_gradle_home}/bin/gradle" ]]; then
+    printf 'pinned Gradle 9.6.1 distribution is unavailable\n' >&2
+    exit 1
+fi
+buildopt_gradle=$(readlink -f "${buildopt_gradle_home}/bin/gradle")
+
+if ! (
+    cd "${buildopt_root}/project"
+    env GRADLE_USER_HOME="${buildopt_root}/gradle-home" \
+        BUILDOPT_POC_TEST_MAX_PARALLEL_FORKS=2 \
+        "${buildopt_script_dir}/run" -- "${buildopt_gradle}" --no-daemon --offline \
+        -I "${buildopt_script_dir}/poc-spring-test-runtime.init.gradle" \
+        verifyTestRuntime
+) >"${buildopt_root}/positive.log" 2>&1; then
+    tail -n 120 "${buildopt_root}/positive.log" >&2
+    printf 'Spring test-runtime init positive fixture failed\n' >&2
+    exit 1
+fi
+grep -Fq 'BuildOpt POC enabled 2 forks for default Test tasks' \
+    "${buildopt_root}/positive.log" || {
+    printf 'Spring test-runtime init marker is unavailable\n' >&2
+    exit 1
+}
+
+if (
+    cd "${buildopt_root}/project"
+    env GRADLE_USER_HOME="${buildopt_root}/gradle-home" \
+        BUILDOPT_POC_TEST_MAX_PARALLEL_FORKS=3 \
+        "${buildopt_script_dir}/run" -- "${buildopt_gradle}" --no-daemon --offline \
+        -I "${buildopt_script_dir}/poc-spring-test-runtime.init.gradle" help
+) >"${buildopt_root}/negative.log" 2>&1; then
+    printf 'Spring test-runtime init accepted unsupported parallelism\n' >&2
+    exit 1
+fi
+grep -Fq 'unsupported BUILDOPT_POC_TEST_MAX_PARALLEL_FORKS: 3' \
+    "${buildopt_root}/negative.log" || {
+    printf 'Spring test-runtime init negative diagnostic is unavailable\n' >&2
+    exit 1
+}
+
+printf 'Spring test-runtime init contract OK\n'

@@ -2559,6 +2559,18 @@ exposed an upstream `java24Test` timing failure. The next authorized Spring
 experiment is test-process concurrency with the complete test set unchanged;
 the Checkstyle mechanism is not eligible for OpenTelemetry transfer.
 
+Run the non-gating test-runtime discovery with:
+
+```bash
+./dev/run-poc-spring-test-runtime-discovery /absolute/path/to/result.json
+```
+
+The discovery executes three complete offline `check` cells from the same
+native cache seed: 12 native workers, 6 native workers, and 6 workers with two
+forks for each `Test` task that retained Gradle's one-fork default. Explicit
+repository parallelism remains unchanged. The result selects a candidate for a
+later paired experiment; it cannot itself support a savings claim.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

@@ -165,7 +165,7 @@ than partners. Test Optimization remains a separate product.
 | 22 | `POC-SPRING-DISCOVERY-001` | Reject Gradle self-project dependencies as graph edges and stop the conservative Spring alternative when its diagnostic pair cannot beat native Gradle | `DONE` | Codex |
 | 23 | `POC-SPRING-RUNTIME-001` | Freeze and implement the exact `checkstyleNohttp` 1-GiB-to-2-GiB candidate without changing tests, task semantics, cache policy, or worker count | `DONE` | Codex |
 | 24 | `POC-SPRING-VALUE-001` | Stop the frozen Checkstyle candidate before accepted pairs when its full-`check` ceiling cannot reach the unchanged value gate | `DONE` | Codex |
-| 25 | `POC-SPRING-TEST-RUNTIME-001` | Profile and qualify generic test-process concurrency on the complete Spring `check` workload without changing the requested tests | `TODO` | Codex |
+| 25 | `POC-SPRING-TEST-RUNTIME-001` | Profile and qualify generic test-process concurrency on the complete Spring `check` workload without changing the requested tests | `DOING` | Codex |
 | 26 | `POC-OTEL-TRANSFER-001` | Apply a Spring-qualified mechanism unchanged to OpenTelemetry Java Instrumentation and repeat the same gate | `WAITING` | Codex |
 
 The raw diagnostic block is closed and unchanged. `E-172` corrects its

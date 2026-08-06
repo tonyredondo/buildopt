@@ -1,0 +1,14 @@
+plugins {
+    id "java"
+}
+
+tasks.register("explicitTest", Test) {
+    maxParallelForks = 4
+}
+
+tasks.register("verifyTestRuntime") {
+    doLast {
+        assert tasks.named("test", Test).get().maxParallelForks == 2
+        assert tasks.named("explicitTest", Test).get().maxParallelForks == 4
+    }
+}

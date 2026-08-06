@@ -1,0 +1,303 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s OUTPUT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-spring-framework-v1.json"
+buildopt_init_script="${buildopt_script_dir}/poc-spring-test-runtime.init.gradle"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ]]; then
+    printf 'invalid Spring test-runtime discovery output path\n' >&2
+    exit 64
+fi
+for buildopt_command in awk cp curl date find git grep jq mkdir mktemp \
+    sed sha256sum sort tar; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Spring test-runtime command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -x /usr/bin/time ]] || {
+    printf 'required Spring test-runtime command is unavailable: /usr/bin/time\n' >&2
+    exit 1
+}
+if [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)" ]]; then
+    printf 'Spring test-runtime discovery requires a clean revision-bound checkout\n' >&2
+    exit 1
+fi
+
+"${buildopt_script_dir}/check-poc-spring-framework" >/dev/null
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-spring-test-runtime.XXXXXX")
+buildopt_stop_gradle() {
+    local buildopt_checkout=$1
+    local buildopt_home=$2
+    if [[ -x "${buildopt_checkout}/gradlew" && -d "${buildopt_home}" ]]; then
+        (
+            cd "${buildopt_checkout}"
+            env GRADLE_USER_HOME="${buildopt_home}" \
+                "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+                ./gradlew --stop
+        ) >/dev/null 2>&1 || true
+    fi
+}
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-spring-test-runtime."* ]]; then
+        buildopt_stop_gradle "${buildopt_root}/source" "${buildopt_root}/preflight-home"
+        for buildopt_cell in native-12 native-6 forks-2-workers-6; do
+            buildopt_stop_gradle "${buildopt_root}/${buildopt_cell}/checkout" \
+                "${buildopt_root}/${buildopt_cell}/gradle-home"
+        done
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+chmod 0700 "${buildopt_root}"
+mkdir -p -- "${buildopt_root}/source" "${buildopt_root}/preflight-home" \
+    "${buildopt_root}/logs"
+chmod 0700 "${buildopt_root}/preflight-home"
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_init_sha=$(sha256sum "${buildopt_init_script}" | awk '{print $1}')
+buildopt_source_archive="${buildopt_root}/spring-framework.tar.gz"
+buildopt_source_url=$(jq -er '.repository.sourceArchiveUrl' "${buildopt_spec}")
+buildopt_source_sha=$(jq -er '.repository.sourceArchiveSha256' "${buildopt_spec}")
+curl --fail --location --proto '=https' --tlsv1.2 --silent --show-error \
+    --output "${buildopt_source_archive}" "${buildopt_source_url}"
+if [[ "$(sha256sum "${buildopt_source_archive}" | awk '{print $1}')" != \
+    "${buildopt_source_sha}" ]]; then
+    printf 'Spring source archive checksum mismatch\n' >&2
+    exit 1
+fi
+tar -xzf "${buildopt_source_archive}" --strip-components=1 \
+    -C "${buildopt_root}/source"
+
+buildopt_change_path=$(jq -er '.change.path' "${buildopt_spec}")
+buildopt_change_sha=$(jq -er '.change.originalSha256' "${buildopt_spec}")
+if [[ "$(sha256sum "${buildopt_root}/source/${buildopt_change_path}" | awk '{print $1}')" != \
+    "${buildopt_change_sha}" ]]; then
+    printf 'Spring fixed mutation source mismatch\n' >&2
+    exit 1
+fi
+
+buildopt_preflight_log="${buildopt_root}/logs/preflight.log"
+buildopt_preflight_started=$(date +%s%N)
+if ! (
+    cd "${buildopt_root}/source"
+    env GRADLE_USER_HOME="${buildopt_root}/preflight-home" \
+        "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+        ./gradlew --daemon --build-cache --parallel --no-configuration-cache \
+        --max-workers=6 --no-scan --stacktrace check
+) >"${buildopt_preflight_log}" 2>&1; then
+    tail -n 180 "${buildopt_preflight_log}" >&2
+    printf 'Spring test-runtime preflight failed; no discovery cell was accepted\n' >&2
+    exit 1
+fi
+buildopt_preflight_finished=$(date +%s%N)
+grep -Fq 'BUILD SUCCESSFUL' "${buildopt_preflight_log}" || {
+    printf 'Spring test-runtime preflight lacks the success marker\n' >&2
+    exit 1
+}
+buildopt_stop_gradle "${buildopt_root}/source" "${buildopt_root}/preflight-home"
+
+buildopt_cache_seed="${buildopt_root}/build-cache-seed.tar.gz"
+tar -C "${buildopt_root}/preflight-home/caches" -czf "${buildopt_cache_seed}" \
+    build-cache-1
+buildopt_cache_seed_sha=$(sha256sum "${buildopt_cache_seed}" | awk '{print $1}')
+
+for buildopt_cell in native-12 native-6 forks-2-workers-6; do
+    mkdir -p -- "${buildopt_root}/${buildopt_cell}/checkout" \
+        "${buildopt_root}/${buildopt_cell}/gradle-home"
+    tar -xzf "${buildopt_source_archive}" --strip-components=1 \
+        -C "${buildopt_root}/${buildopt_cell}/checkout"
+    cp -a -- "${buildopt_root}/preflight-home/." \
+        "${buildopt_root}/${buildopt_cell}/gradle-home/"
+    rm -rf -- "${buildopt_root}/${buildopt_cell}/gradle-home/daemon" \
+        "${buildopt_root}/${buildopt_cell}/gradle-home/.tmp"
+done
+
+buildopt_outputs() {
+    local buildopt_checkout=$1
+    local buildopt_manifest=$2
+    local buildopt_file
+    : >"${buildopt_manifest}"
+    while IFS= read -r -d '' buildopt_file; do
+        printf '%s  %s\n' "$(sha256sum "${buildopt_file}" | awk '{print $1}')" \
+            "${buildopt_file#"${buildopt_checkout}/"}" >>"${buildopt_manifest}"
+    done < <(find "${buildopt_checkout}" -type f \
+        \( -path '*/build/classes/*' -o -path '*/build/resources/*' \
+        -o -path '*/build/libs/*.jar' \) -print0 | sort -z)
+}
+
+buildopt_test_counts() {
+    local buildopt_checkout=$1
+    local buildopt_xml
+    local buildopt_cases=0
+    local buildopt_failures=0
+    local buildopt_skipped=0
+    while IFS= read -r -d '' buildopt_xml; do
+        buildopt_cases=$((buildopt_cases + $(sed -n '1s/.* tests="\([0-9][0-9]*\)".*/\1/p' "${buildopt_xml}")))
+        buildopt_failures=$((buildopt_failures + $(sed -n '1s/.* failures="\([0-9][0-9]*\)".*/\1/p' "${buildopt_xml}")))
+        buildopt_skipped=$((buildopt_skipped + $(grep -c '<skipped' "${buildopt_xml}" || true)))
+    done < <(find "${buildopt_checkout}" -type f \
+        -path '*/build/test-results/*/TEST-*.xml' -print0 | sort -z)
+    printf '%s\t%s\t%s\n' "${buildopt_cases}" "${buildopt_failures}" "${buildopt_skipped}"
+}
+
+buildopt_rows="${buildopt_root}/cells.jsonl"
+: >"${buildopt_rows}"
+for buildopt_cell in native-12 native-6 forks-2-workers-6; do
+    buildopt_checkout="${buildopt_root}/${buildopt_cell}/checkout"
+    buildopt_home="${buildopt_root}/${buildopt_cell}/gradle-home"
+    buildopt_log="${buildopt_root}/logs/${buildopt_cell}.log"
+    buildopt_time="${buildopt_root}/logs/${buildopt_cell}.time"
+    buildopt_workers=6
+    buildopt_forks=1
+    if [[ "${buildopt_cell}" == native-12 ]]; then
+        buildopt_workers=12
+    elif [[ "${buildopt_cell}" == forks-2-workers-6 ]]; then
+        buildopt_forks=2
+    fi
+
+    (
+        cd "${buildopt_checkout}"
+        env GRADLE_USER_HOME="${buildopt_home}" \
+            "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+            ./gradlew --daemon --offline --quiet --max-workers="${buildopt_workers}" clean
+    ) >"${buildopt_root}/logs/${buildopt_cell}-clean.log" 2>&1
+    rm -rf -- "${buildopt_home}/caches/build-cache-1"
+    tar -C "${buildopt_home}/caches" -xzf "${buildopt_cache_seed}"
+    printf '\n// buildopt-poc-test-runtime-mutation\n' \
+        >>"${buildopt_checkout}/${buildopt_change_path}"
+
+    buildopt_started=$(date +%s%N)
+    buildopt_success=true
+    buildopt_environment=(env GRADLE_USER_HOME="${buildopt_home}")
+    buildopt_arguments=(./gradlew)
+    if ((buildopt_forks == 2)); then
+        buildopt_environment+=(BUILDOPT_POC_TEST_MAX_PARALLEL_FORKS=2)
+        buildopt_arguments+=(-I "${buildopt_init_script}")
+    fi
+    buildopt_arguments+=(--daemon --offline --build-cache --parallel \
+        --no-configuration-cache --console=plain --max-workers="${buildopt_workers}" \
+        --no-scan --stacktrace check)
+    if ! (
+        cd "${buildopt_checkout}"
+        /usr/bin/time -f 'maxRssKb=%M' -o "${buildopt_time}" \
+            "${buildopt_environment[@]}" \
+            "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+            "${buildopt_arguments[@]}"
+    ) >"${buildopt_log}" 2>&1; then
+        buildopt_success=false
+    fi
+    buildopt_finished=$(date +%s%N)
+    buildopt_duration=$(((buildopt_finished - buildopt_started) / 1000000))
+    buildopt_max_rss=$(awk -F= '$1 == "maxRssKb" {print $2 + 0}' "${buildopt_time}")
+    buildopt_task=$(sed -n "s/^Execution failed for task '\([^']*\)'.$/\1/p" \
+        "${buildopt_log}" | head -n 1)
+    buildopt_test_stats=$(buildopt_test_counts "${buildopt_checkout}")
+    IFS=$'\t' read -r buildopt_cases buildopt_failures buildopt_skipped \
+        <<<"${buildopt_test_stats}"
+    buildopt_manifest="${buildopt_root}/${buildopt_cell}.outputs"
+    buildopt_outputs "${buildopt_checkout}" "${buildopt_manifest}"
+    buildopt_output_count=$(wc -l <"${buildopt_manifest}")
+    buildopt_output_sha=''
+    if [[ -s "${buildopt_manifest}" ]]; then
+        buildopt_output_sha=$(sha256sum "${buildopt_manifest}" | awk '{print $1}')
+    fi
+    buildopt_tuning_marker=false
+    if ((buildopt_forks == 2)); then
+        if grep -Fq 'BuildOpt POC enabled 2 forks for default Test tasks' \
+            "${buildopt_log}"; then
+            buildopt_tuning_marker=true
+        fi
+    fi
+    jq -cn --arg id "${buildopt_cell}" --argjson workers "${buildopt_workers}" \
+        --argjson forks "${buildopt_forks}" --argjson success "${buildopt_success}" \
+        --argjson duration "${buildopt_duration}" --argjson rss "${buildopt_max_rss}" \
+        --argjson cases "${buildopt_cases}" --argjson failures "${buildopt_failures}" \
+        --argjson skipped "${buildopt_skipped}" --argjson outputs "${buildopt_output_count}" \
+        --arg outputSha "${buildopt_output_sha}" --arg failedTask "${buildopt_task}" \
+        --argjson tuningMarker "${buildopt_tuning_marker}" '
+        {
+            id: $id,
+            maxWorkers: $workers,
+            defaultTestMaxParallelForks: $forks,
+            testForkTuningEnabled: $tuningMarker,
+            success: $success,
+            wallClockMs: $duration,
+            maximumResidentSetKb: $rss,
+            testCaseCount: $cases,
+            failedTestCaseCount: $failures,
+            skippedTestCaseCount: $skipped,
+            requiredOutputCount: $outputs,
+            requiredOutputManifestSha256: $outputSha,
+            failedTask: $failedTask
+        }' >>"${buildopt_rows}"
+    printf 'Spring test-runtime discovery %s: success=%s duration=%sms tests=%s failures=%s\n' \
+        "${buildopt_cell}" "${buildopt_success}" "${buildopt_duration}" \
+        "${buildopt_cases}" "${buildopt_failures}"
+    buildopt_stop_gradle "${buildopt_checkout}" "${buildopt_home}"
+done
+
+buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+jq -s '.' "${buildopt_rows}" >"${buildopt_root}/cells.json"
+jq -n --arg capturedAt "${buildopt_captured_at}" \
+    --arg revision "${buildopt_revision}" --arg specSha "${buildopt_spec_sha}" \
+    --arg initSha "${buildopt_init_sha}" --arg sourceSha "${buildopt_source_sha}" \
+    --arg cacheSha "${buildopt_cache_seed_sha}" \
+    --argjson preflightMs "$(((buildopt_preflight_finished - buildopt_preflight_started) / 1000000))" \
+    --slurpfile spec "${buildopt_spec}" --slurpfile cells "${buildopt_root}/cells.json" '
+    {
+        schemaVersion: "buildopt.evidence/poc-spring-test-runtime-discovery/v1",
+        workItem: "POC-SPRING-TEST-RUNTIME-001",
+        capturedAt: $capturedAt,
+        buildoptRevision: $revision,
+        specSha256: $specSha,
+        initScriptSha256: $initSha,
+        repository: {
+            nameWithOwner: $spec[0].repository.nameWithOwner,
+            revision: $spec[0].repository.revision,
+            sourceArchiveSha256: $sourceSha
+        },
+        runner: $spec[0].primaryRunner,
+        preparation: {
+            onlinePreflightMeasured: false,
+            onlinePreflightSuccess: true,
+            onlinePreflightWallClockMs: $preflightMs,
+            preflightMaxWorkers: 6,
+            preflightDaemonStoppedBeforeCells: true,
+            measuredNetwork: "DISCONNECTED",
+            dependencyMode: "GRADLE_OFFLINE",
+            buildCacheSeedSha256: $cacheSha,
+            cacheSeedRestoredBeforeEveryCell: true,
+            outputsRemovedBeforeEveryCell: true,
+            fixedMutationAppliedAfterCacheRestore: true
+        },
+        cells: $cells[0],
+        decision: {
+            performanceMeasured: false,
+            savingsClaimed: false,
+            purpose: "SELECT_ONE_GENERIC_TEST_RUNTIME_CANDIDATE_BEFORE_PAIRED_TIMING"
+        },
+        boundaries: {
+            requestedTestsChanged: false,
+            testFiltersChanged: false,
+            retryPolicyChanged: false,
+            testJvmHeapChanged: false,
+            repositorySourceChangedBeyondFixedMutation: false,
+            productionReadinessClaimed: false,
+            testOptimizationModified: false
+        }
+    }' >"${buildopt_root}/result.json"
+
+install -m 0600 "${buildopt_root}/result.json" "${buildopt_output}"
+printf 'Spring test-runtime discovery captured: %s\n' "${buildopt_output}"

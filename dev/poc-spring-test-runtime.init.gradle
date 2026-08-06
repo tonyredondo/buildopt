@@ -1,0 +1,24 @@
+def requestedForks = System.getenv("BUILDOPT_POC_TEST_MAX_PARALLEL_FORKS")
+if (requestedForks == null || requestedForks.isBlank()) {
+    return
+}
+if (requestedForks != "2") {
+    throw new GradleException(
+        "unsupported BUILDOPT_POC_TEST_MAX_PARALLEL_FORKS: ${requestedForks}"
+    )
+}
+
+if (gradle.getParent() == null) {
+    gradle.projectsEvaluated {
+        rootProject.allprojects { project ->
+            project.tasks.withType(org.gradle.api.tasks.testing.Test).configureEach { task ->
+                // Repository-owned explicit parallelism remains authoritative.
+                // The experiment changes only Gradle's one-fork default.
+                if (task.maxParallelForks == 1) {
+                    task.maxParallelForks = 2
+                }
+            }
+        }
+        println("BuildOpt POC enabled 2 forks for default Test tasks")
+    }
+}
