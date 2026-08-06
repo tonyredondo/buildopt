@@ -2652,6 +2652,11 @@ pairs with:
 ./dev/run-poc-otel-test-preparation /absolute/path/to/result.json
 ```
 
+If preparation or an arm fails, the runner preserves only its diagnostic logs
+beside the requested output as `<result>.failure-logs.tar.gz` before removing
+the multi-gigabyte temporary workspace. No failed or partial pair is promoted
+to evidence.
+
 The fixed 500 ms, 2%, positive-lower-bound gate and all eight observations are
 retained regardless of outcome. This is a POC value transfer only: it makes no
 production, soak, design-partner, universal-performance, or Test Optimization

@@ -34,6 +34,7 @@ if [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-fil
 fi
 
 buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-otel-test-preparation.XXXXXX")
+buildopt_completed=false
 buildopt_cleanup_image=$(jq -er '.runner.cleanupImage' "${buildopt_spec}")
 buildopt_stop_gradle() {
     local buildopt_checkout=$1
@@ -49,13 +50,20 @@ buildopt_stop_gradle() {
 }
 buildopt_cleanup() {
     if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-otel-test-preparation."* ]]; then
+        if [[ "${buildopt_completed}" != true && -d "${buildopt_root}/logs" ]]; then
+            buildopt_failure_logs="${buildopt_output}.failure-logs.tar.gz"
+            tar -C "${buildopt_root}" -czf "${buildopt_failure_logs}" logs
+            chmod 0600 "${buildopt_failure_logs}"
+            printf 'OpenTelemetry failure logs preserved: %s\n' \
+                "${buildopt_failure_logs}" >&2
+        fi
         buildopt_stop_gradle "${buildopt_root}/source" "${buildopt_root}/preflight-home"
         for buildopt_arm in control candidate; do
             buildopt_stop_gradle "${buildopt_root}/${buildopt_arm}/checkout" \
                 "${buildopt_root}/${buildopt_arm}/gradle-home"
         done
         chmod -R u+w "${buildopt_root}/readonly-dependencies" 2>/dev/null || true
-        if ! rm -rf -- "${buildopt_root}"; then
+        if ! rm -rf -- "${buildopt_root}" 2>/dev/null; then
             if [[ -d "${buildopt_root}" && ! -L "${buildopt_root}" ]]; then
                 docker run --rm --network none \
                     --mount "type=bind,src=${buildopt_root},dst=/buildopt-cleanup" \
@@ -256,13 +264,23 @@ buildopt_run_arm() {
     buildopt_finished_ns=$(date +%s%N)
     buildopt_duration_ms=$(((buildopt_finished_ns - buildopt_started_ns) / 1000000))
     buildopt_max_rss_kb=$(awk -F= '$1 == "maxRssKb" {print $2 + 0}' "${buildopt_time}")
-    grep -Fq 'BUILD SUCCESSFUL' "${buildopt_log}" || return 1
+    grep -Fq 'BUILD SUCCESSFUL' "${buildopt_log}" || {
+        tail -n 180 "${buildopt_log}" >&2
+        printf 'OpenTelemetry %s arm lacks Gradle success marker\n' \
+            "${buildopt_arm}" >&2
+        return 1
+    }
     grep -Eq '^> Task :instrumentation:spring:spring-boot-autoconfigure:compileJava$' \
         "${buildopt_log}" || {
         printf 'OpenTelemetry %s arm did not execute changed compileJava\n' "${buildopt_arm}" >&2
         return 1
     }
-    ! grep -Fq 'forbidden root-build Gradle Test task(s):' "${buildopt_log}" || return 1
+    ! grep -Fq 'forbidden root-build Gradle Test task(s):' "${buildopt_log}" || {
+        tail -n 180 "${buildopt_log}" >&2
+        printf 'OpenTelemetry %s arm violated the root Test guard\n' \
+            "${buildopt_arm}" >&2
+        return 1
+    }
     ! grep -Eq '^> Task .*:test($| )' "${buildopt_log}" || {
         printf 'OpenTelemetry %s arm executed a Gradle Test task\n' "${buildopt_arm}" >&2
         return 1
@@ -291,10 +309,16 @@ buildopt_output_manifest() {
 
 buildopt_reset_arm control "${buildopt_control_checkout}" "${buildopt_control_home}" warmup
 buildopt_reset_arm candidate "${buildopt_candidate_checkout}" "${buildopt_candidate_home}" warmup
-buildopt_run_arm control "${buildopt_control_checkout}" "${buildopt_control_home}" \
-    "${buildopt_root}/logs/warm-control.log" "${buildopt_root}/logs/warm-control.time"
-buildopt_run_arm candidate "${buildopt_candidate_checkout}" "${buildopt_candidate_home}" \
-    "${buildopt_root}/logs/warm-candidate.log" "${buildopt_root}/logs/warm-candidate.time"
+if ! buildopt_run_arm control "${buildopt_control_checkout}" "${buildopt_control_home}" \
+    "${buildopt_root}/logs/warm-control.log" "${buildopt_root}/logs/warm-control.time"; then
+    printf 'OpenTelemetry control warm-up failed before accepted measurement\n' >&2
+    exit 1
+fi
+if ! buildopt_run_arm candidate "${buildopt_candidate_checkout}" "${buildopt_candidate_home}" \
+    "${buildopt_root}/logs/warm-candidate.log" "${buildopt_root}/logs/warm-candidate.time"; then
+    printf 'OpenTelemetry candidate warm-up failed before accepted measurement\n' >&2
+    exit 1
+fi
 
 buildopt_rows="${buildopt_root}/observations.jsonl"
 : >"${buildopt_rows}"
@@ -461,4 +485,5 @@ jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revi
 ' >"${buildopt_root}/result.json"
 
 install -m 0600 "${buildopt_root}/result.json" "${buildopt_output}"
+buildopt_completed=true
 printf 'OpenTelemetry test-preparation evidence captured: %s\n' "${buildopt_output}"
