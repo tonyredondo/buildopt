@@ -85,6 +85,22 @@ Validate the full matrix with:
 ./dev/check-poc-spring-impact-breadth
 ```
 
+The subsequent stable OpenTelemetry Spring-family transfer completed all four
+installed-package pairs. Native Gradle averaged 14,961.5 ms and BuildOpt
+13,464.5 ms, a descriptive saving of 1,497 ms/10.01%, with exact non-empty
+outputs and zero product failures. It did not qualify: one pair regressed by
+465 ms and the paired interval crossed zero at -61.5..+3,671.5 ms. The separate
+global-change probe safely restored all 53 entrypoints. The terminal decision
+is `RETAIN_SPRING_ONLY_INSTALLED_EVIDENCE`; the favorable mean does not
+authorize a stable OpenTelemetry claim or another retry.
+
+Validate the terminal evidence with:
+
+```bash
+./dev/check-poc-otel-spring-family-v2-result \
+  benchmarks/results/poc-otel-spring-family-v2.json
+```
+
 | Mechanism | Mean result | Exact paired 95% interval | Classification |
 |---|---:|---:|---|
 | Default native-cache fallback, Kotlin | 79 ms faster (8.9%) | +6 to +156 ms | `NO_VALUE_NO_ACTION`; same cache mechanism, no acceleration claim |

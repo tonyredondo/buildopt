@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `POC INSTALLED BUILD IMPACT VALUE PROVEN ON BOUNDED SPRING SCOPES` — two installed leaf/output scopes beat optimized native Gradle; shared-change breadth remains unqualified<br>
-**Current phase:** `POC OTEL SPRING-FAMILY MEASUREMENT` — execute the preregistered installed candidate against OpenTelemetry's upstream Spring-family control without reusing the earlier terminal experiment<br>
+**Current phase:** `POC OTEL SPRING-FAMILY CLOSED` — retain the qualified Spring-only installed evidence after the stable OpenTelemetry transfer missed the frozen stability gate<br>
 **POC functional target:** measurable net build-time reduction from the qualified Build Impact and exact reviewed-source Task/Patch routes; no-value Safe Cache or Runtime candidates remain disabled<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -94,7 +94,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-INSTALLED-IMPACT | One-command installed Build Impact candidate with exact fallback and POC-only authority | `DONE` | 1/1 | `E-186` |
 | POC-SPRING-INSTALLED-IMPACT | Measure the installed command on the qualified Spring workload against optimized native Gradle | `DONE` | 1/1 | `E-187` |
 | POC-SPRING-IMPACT-BREADTH | Test the installed mechanism on a second Spring output scope, a shared-source change and a global fallback | `DONE` | 2/2 | `E-188..191` |
-| POC-OTEL-SPRING-FAMILY | Transfer the installed mechanism to the stable OpenTelemetry Spring-family build boundary | `DOING` | 1/2 | `E-192` |
+| POC-OTEL-SPRING-FAMILY | Transfer the installed mechanism to the stable OpenTelemetry Spring-family build boundary | `DONE` | 2/2 | `E-192`, `E-198` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -181,7 +181,7 @@ than partners. Test Optimization remains a separate product.
 | 33 | `POC-SPRING-IMPACT-BREADTH-PREREG-001` | Freeze two additional selective Spring cells and one conservative full-graph fallback before timing | `DONE` | Codex |
 | 34 | `POC-SPRING-IMPACT-BREADTH-001` | Execute the installed Spring breadth matrix and issue its terminal broaden-or-retain decision without moving thresholds | `DONE` | Codex |
 | 35 | `POC-OTEL-SPRING-FAMILY-PREREG-001` | Freeze OpenTelemetry v2.30.0, reject the over-budget root control, and preregister the upstream Spring-family control before timing | `DONE` | Codex |
-| 36 | `POC-OTEL-SPRING-FAMILY-001` | Measure the installed candidate over four alternating pairs and issue the fixed qualify-or-retain decision | `DOING` | Codex |
+| 36 | `POC-OTEL-SPRING-FAMILY-001` | Measure the installed candidate over four alternating pairs and issue the fixed qualify-or-retain decision | `DONE` | Codex |
 
 The raw diagnostic block is closed and unchanged. `E-172` corrects its
 ownership interpretation: Mockito's 242.690-second `compileTestJava` is
@@ -362,7 +362,7 @@ Every accepted RFC decision is represented below. Historical private-beta decisi
 | `POC-INSTALLED-IMPACT-G01` | The installed command selects only a reviewed manifest alternative, restores the full graph for unknown paths and bypass, rejects drift before Gradle, and preserves required Build/Test-owned evidence | Usable owner-operated Build Impact POC | `DONE` | Codex | `E-186`, [`build-impact-poc-onboarding-v1`](./specs/build-impact-poc-onboarding-v1.md) |
 | `POC-SPRING-INSTALLED-IMPACT-G01` | The installed candidate clears the unchanged Spring 500-ms/2%/positive-bound gate with exact outputs and all launcher overhead included | Onboarding value claim for Build Impact | `DONE` | Codex | `E-187`, [`poc-spring-installed-impact-v1`](./specs/poc-spring-installed-impact-v1.md) |
 | `POC-SPRING-IMPACT-BREADTH-G01` | Both preregistered selective Spring cells clear the unchanged value gate and the global build-logic cell retains the full graph | Broader installed Spring claim | `FAILED` | Codex | `E-191`: webmvc qualified; shared scope had 3/4 positive pairs; full fallback passed |
-| `POC-OTEL-SPRING-FAMILY-G01` | The installed candidate beats the complete upstream Spring-family control by 500 ms and 2%, with a positive paired lower bound, 4/4 positive pairs, exact outputs and no product failure | Stable OpenTelemetry transfer claim | `TODO` | Codex | `E-192`: protocol preregistered; measurement pending |
+| `POC-OTEL-SPRING-FAMILY-G01` | The installed candidate beats the complete upstream Spring-family control by 500 ms and 2%, with a positive paired lower bound, 4/4 positive pairs, exact outputs and no product failure | Stable OpenTelemetry transfer claim | `FAILED` | Codex | `E-198`: mean favored BuildOpt by 1,497 ms/10.01%, but the interval crossed zero and only 3/4 pairs were positive |
 
 ---
 
@@ -1029,11 +1029,11 @@ Test Optimization is an explicit non-goal for all functional and documentation t
 | ID | Deliverable | State | Owner | Expected evidence |
 |---|---|---|---|---|
 | `POC-OTEL-SPRING-FAMILY-PREREG-001` | Pin OpenTelemetry v2.30.0 and its 53-task upstream Spring-family control after rejecting root `testClasses` at the fixed 20-minute preflight budget | `DONE` | Codex | `E-192`: immutable release, inputs, discovered graph, four-pair protocol, exact output root and fallback |
-| `POC-OTEL-SPRING-FAMILY-001` | Execute the installed candidate against the optimized native Spring-family control without discarding observations or moving thresholds | `DOING` | Codex | `E-193..197`: runner corrected after a successful fallback was asserted with the wrong reason; complete rerun required |
+| `POC-OTEL-SPRING-FAMILY-001` | Execute the installed candidate against the optimized native Spring-family control without discarding observations or moving thresholds | `DONE` | Codex | `E-198`: four accepted pairs, exact outputs, safe global fallback and terminal retain decision |
 
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
-| `POC-OTEL-SPRING-FAMILY-G01` | Four alternating pairs clear 500 ms/2% with a positive paired lower bound, 4/4 positive pairs, exact non-empty outputs and zero product failures; global build logic restores all 53 entrypoints | `TODO` | `E-192`: measurement authorized but not yet executed |
+| `POC-OTEL-SPRING-FAMILY-G01` | Four alternating pairs clear 500 ms/2% with a positive paired lower bound, 4/4 positive pairs, exact non-empty outputs and zero product failures; global build logic restores all 53 entrypoints | `FAILED` | `E-198`: 1,497 ms/10.01% mean saving and 3/4 positive pairs, but interval −61.5..+3,671.5 ms; outputs/fallback passed |
 
 ---
 
@@ -1354,6 +1354,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-195` | 2026-08-06 | `POC-OTEL-SPRING-FAMILY-001` | After the corrected graph passed byte validation, one unmeasured native-control warmup completed successfully in Gradle-reported `1m9s` with 340 actionable tasks. The candidate then stopped before invoking Gradle because the shared repository-file reader applied the 256-KiB manifest bound to the 435,875-byte declared graph, whose parser already has a separate 2-MiB bound. Protocol revision 4 makes the shared reader accept the existing per-artifact bound and report the artifact name; a regression test exercises a graph above the manifest bound, while all parser bounds remain unchanged | `DOING` generic implementation correction before accepted timing: one control warmup, zero candidate warmups, zero complete warmup pairs, zero measured pairs and no performance data; control, candidate, outputs, resources, pair order and value gate unchanged |
 | `E-196` | 2026-08-06 | `POC-OTEL-SPRING-FAMILY-001` | The artifact-reader correction allowed the next run to validate the exact graph and start both arms. One native-control warmup completed; the candidate planner then returned `IMPACT_NO_AUTHORIZED_ALTERNATIVE`, safely executed the full 53-task graph, and was rejected before a complete warmup pair or any measured observation. OpenTelemetry's nested Gradle hierarchy gives automatically created container projects directory globs that overlap the leaf project's longer glob. Protocol revision 5 resolves only explicit POC ownership to the most-specific matching declared glob, retains all equal-specificity matches, leaves production evaluation conservative, and adds the exact discovery documents to future failure bundles outside measured regions | `DOING` generic POC-selection correction before accepted timing: one control warmup, one rejected full-graph candidate build, zero accepted warmup pairs, zero measured pairs and no performance data; intended candidate, control, outputs, resources, pair order and value gate unchanged |
 | `E-197` | 2026-08-06 | `POC-OTEL-SPRING-FAMILY-001` | After protocol revision 5, both warmups and all four observations completed with exact per-pair output comparison. Console differences were `+2702`, `-161`, `+3012`, and `+366` ms, but no result document was emitted and none of those timings are accepted. The final fallback correctly logged `IMPACT_GLOBAL_CHANGE`, ran the full 53-task graph including an entrypoint outside autoconfigure, and completed successfully; the runner incorrectly expected the older `IMPACT_UNKNOWN_CHANGE_PATH` literal and stopped. Protocol revision 6 fixes only that assertion/result reason and preserves completed rows in future failure bundles | `DOING` measurement-infrastructure correction: prior console timings remain diagnostic, zero accepted observations, no threshold movement or pair substitution, and a complete rerun is required with product implementation, control, candidate, outputs, resources, pair order and value gate unchanged |
+| `E-198` | 2026-08-06 | `POC-OTEL-SPRING-FAMILY-001`, `POC-OTEL-SPRING-FAMILY-G01` | The checked [OpenTelemetry Spring-family evidence](./benchmarks/results/poc-otel-spring-family-v2.json) ran installed BuildOpt `13ca8c4a2433437a1e5e20d55e49b0478ad78433` against the fixed 53-entrypoint optimized native control on the 12-CPU host. Four alternating pairs completed with differences `+4691`, `+1149`, `-465`, and `+613` ms. Native averaged 14,961.5 ms and BuildOpt 13,464.5 ms, saving 1,497 ms/10.01%; the deterministic paired interval was −61.5..+3,671.5 ms and only 3/4 pairs were positive. Every pair preserved the same non-empty 125-file output digest, no root-build Gradle `Test` ran, and zero product-attributable failures occurred. A separate `gradle.properties` change returned `IMPACT_GLOBAL_CHANGE`, restored all 53 entrypoints and completed successfully | `DONE` terminal `RETAIN_SPRING_ONLY_INSTALLED_EVIDENCE`: the mean signal is favorable, but the frozen positive-bound and 4/4 stability requirements failed, so no stable OpenTelemetry transfer claim or retry is authorized |
 
 ---
 
@@ -1361,6 +1362,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-06 | Closed the stable OpenTelemetry Spring-family transfer without qualification: BuildOpt averaged 10.01% faster with exact outputs and safe global fallback, but one pair regressed and the paired interval crossed zero; retained the narrower qualified Spring evidence without retry or threshold movement | Codex |
 | 2026-08-06 | Corrected the OpenTelemetry runner's fallback reason after the product safely returned `IMPACT_GLOBAL_CHANGE` and completed all 53 tasks; rejected reconstruction of four diagnostic console timings and recorded protocol revision 6 before a complete rerun | Codex |
 | 2026-08-06 | Corrected explicit POC ownership for nested Gradle project-directory globs after the candidate safely retained the full graph; equal-specificity ambiguity and production selection remain conservative, and protocol revision 5 precedes all measured observations | Codex |
 | 2026-08-06 | Corrected the shared Build Impact repository-file reader after it applied the manifest bound to a valid large declared graph; recorded protocol revision 4 after one control warmup but before any complete warmup pair or measured observation | Codex |

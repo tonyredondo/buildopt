@@ -2699,8 +2699,8 @@ fallback and unchanged value gate with:
 ./dev/check-poc-otel-spring-family-v2
 ```
 
-After the runner and result checker are committed, capture and validate the
-fixed installed-path experiment with:
+The runner and result checker can reproduce the fixed installed-path
+experiment with:
 
 ```bash
 ./dev/run-poc-otel-spring-family-v2 /absolute/path/to/result.json
@@ -2712,6 +2712,18 @@ pinned public source archive, prepares dependencies once outside timing, then
 runs all measured arms offline. A failed warmup, arm, output comparison,
 fallback or timing-gap assertion stops the run; completed observations are not
 substituted.
+
+The accepted terminal evidence is checked in at
+`benchmarks/results/poc-otel-spring-family-v2.json`. Native Gradle averaged
+14,961.5 ms and BuildOpt 13,464.5 ms, but the frozen value gate failed because
+one of four pairs regressed and the paired interval crossed zero. Validate that
+the complete evidence, exact outputs, global fallback and retain decision have
+not drifted with:
+
+```bash
+./dev/check-poc-otel-spring-family-v2-result \
+  benchmarks/results/poc-otel-spring-family-v2.json
+```
 
 Protocol revision 3 corrects a pre-warmup graph-hash stop: the first runner
 constructed different manifest IDs and one extra global path from the exact

@@ -59,17 +59,27 @@ row documents in future failure bundles. Product implementation, control,
 candidate, outputs, measurement, resources, pair order and value gate are
 unchanged; the full experiment must rerun.
 
-The accepted measurement will use an installed package and four alternating
-pairs. Both arms receive the same offline dependencies, native-cache seed,
-fixed source mutation, clean outputs, 12 workers and Gradle optimizations. The
-candidate must reproduce every byte below the declared autoconfigure class
-output root. A separate `gradle.properties` change must restore all 53 control
-entrypoints and makes no performance claim.
+The accepted measurement used installed BuildOpt revision
+`13ca8c4a2433437a1e5e20d55e49b0478ad78433` and four alternating pairs. Both
+arms received the same offline dependencies, native-cache seed, fixed source
+mutation, clean outputs, 12 workers and Gradle optimizations. Native Gradle
+averaged 14,961.5 ms and BuildOpt averaged 13,464.5 ms, a descriptive saving of
+1,497 ms/10.01%. The four paired differences were +4,691, +1,149, -465 and
++613 ms. All pairs reproduced the same non-empty 125-file output digest and
+reported zero product-attributable failures. The separate `gradle.properties`
+change returned `IMPACT_GLOBAL_CHANGE`, restored all 53 control entrypoints and
+completed successfully.
 
-Qualification still requires at least 500 ms and 2% mean saving, a positive
+Qualification required at least 500 ms and 2% mean saving, a positive
 paired-bootstrap lower bound, four positive pairs, identical non-empty outputs
-and zero product failures. Failed observations cannot be discarded and the
-thresholds cannot move.
+and zero product failures. The mean, outputs and product-failure conditions
+passed, but the interval was -61.5..+3,671.5 ms and only three pairs were
+positive. The frozen gate therefore failed. The terminal decision is
+`RETAIN_SPRING_ONLY_INSTALLED_EVIDENCE`; no pair was discarded, no threshold
+moved and no retry is authorized.
+
+The complete checked result is
+[`benchmarks/results/poc-otel-spring-family-v2.json`](../benchmarks/results/poc-otel-spring-family-v2.json).
 
 This experiment covers build-owned test preparation only. It does not select,
 skip, shard or reorder tests; it changes no production authority, requires no
