@@ -1,0 +1,35 @@
+def requestedThreshold = System.getenv("BUILDOPT_POC_TEST_SOURCE_THRESHOLD")
+if (requestedThreshold == null || requestedThreshold.isBlank()) {
+    return
+}
+if (requestedThreshold != "500") {
+    throw new GradleException(
+        "unsupported BUILDOPT_POC_TEST_SOURCE_THRESHOLD: ${requestedThreshold}"
+    )
+}
+
+if (gradle.getParent() == null) {
+    gradle.projectsEvaluated {
+        def threshold = Integer.parseInt(requestedThreshold)
+        def selectedTasks = []
+        rootProject.allprojects { project ->
+            def sourceCount = project.fileTree(new File(project.projectDir, "src/test")) {
+                include "**/*.java", "**/*.groovy", "**/*.kt"
+            }.files.size()
+            project.tasks.withType(org.gradle.api.tasks.testing.Test).each { task ->
+                // Only Gradle's conventional test task is eligible. Repository-owned
+                // explicit parallelism and additional test suites remain authoritative.
+                if (task.name == "test" && task.maxParallelForks == 1 &&
+                        sourceCount >= threshold) {
+                    task.maxParallelForks = 2
+                    selectedTasks.add(task.path)
+                }
+            }
+        }
+        selectedTasks.sort()
+        println(
+            "BuildOpt POC enabled 2 forks for ${selectedTasks.size()} standard Test tasks " +
+            "with at least ${threshold} test source files: ${selectedTasks.join(',')}"
+        )
+    }
+}

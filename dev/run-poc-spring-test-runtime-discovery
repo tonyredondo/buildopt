@@ -10,7 +10,22 @@ buildopt_output=$1
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_spec="${buildopt_repo_root}/specs/poc-spring-framework-v1.json"
-buildopt_init_script="${buildopt_script_dir}/poc-spring-test-runtime.init.gradle"
+buildopt_mode=${BUILDOPT_POC_TEST_RUNTIME_DISCOVERY_MODE:-global}
+case "${buildopt_mode}" in
+    global)
+        buildopt_init_script="${buildopt_script_dir}/poc-spring-test-runtime.init.gradle"
+        buildopt_cells=(native-12 native-6 forks-2-workers-6)
+        ;;
+    selective)
+        buildopt_init_script="${buildopt_script_dir}/poc-spring-selective-test-runtime.init.gradle"
+        buildopt_cells=(native-6 selective-forks-2-workers-6)
+        ;;
+    *)
+        printf 'unsupported Spring test-runtime discovery mode: %s\n' \
+            "${buildopt_mode}" >&2
+        exit 64
+        ;;
+esac
 
 if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ]]; then
     printf 'invalid Spring test-runtime discovery output path\n' >&2
@@ -51,7 +66,7 @@ buildopt_stop_gradle() {
 buildopt_cleanup() {
     if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-spring-test-runtime."* ]]; then
         buildopt_stop_gradle "${buildopt_root}/source" "${buildopt_root}/preflight-home"
-        for buildopt_cell in native-12 native-6 forks-2-workers-6; do
+        for buildopt_cell in "${buildopt_cells[@]}"; do
             buildopt_stop_gradle "${buildopt_root}/${buildopt_cell}/checkout" \
                 "${buildopt_root}/${buildopt_cell}/gradle-home"
         done
@@ -67,6 +82,7 @@ chmod 0700 "${buildopt_root}/preflight-home"
 buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
 buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
 buildopt_init_sha=$(sha256sum "${buildopt_init_script}" | awk '{print $1}')
+buildopt_runner_sha=$(sha256sum "${BASH_SOURCE[0]}" | awk '{print $1}')
 buildopt_source_archive="${buildopt_root}/spring-framework.tar.gz"
 buildopt_source_url=$(jq -er '.repository.sourceArchiveUrl' "${buildopt_spec}")
 buildopt_source_sha=$(jq -er '.repository.sourceArchiveSha256' "${buildopt_spec}")
@@ -113,7 +129,7 @@ tar -C "${buildopt_root}/preflight-home/caches" -czf "${buildopt_cache_seed}" \
     build-cache-1
 buildopt_cache_seed_sha=$(sha256sum "${buildopt_cache_seed}" | awk '{print $1}')
 
-for buildopt_cell in native-12 native-6 forks-2-workers-6; do
+for buildopt_cell in "${buildopt_cells[@]}"; do
     mkdir -p -- "${buildopt_root}/${buildopt_cell}/checkout" \
         "${buildopt_root}/${buildopt_cell}/gradle-home"
     tar -xzf "${buildopt_source_archive}" --strip-components=1 \
@@ -157,7 +173,7 @@ buildopt_test_counts() {
 
 buildopt_rows="${buildopt_root}/cells.jsonl"
 : >"${buildopt_rows}"
-for buildopt_cell in native-12 native-6 forks-2-workers-6; do
+for buildopt_cell in "${buildopt_cells[@]}"; do
     buildopt_checkout="${buildopt_root}/${buildopt_cell}/checkout"
     buildopt_home="${buildopt_root}/${buildopt_cell}/gradle-home"
     buildopt_log="${buildopt_root}/logs/${buildopt_cell}.log"
@@ -166,7 +182,8 @@ for buildopt_cell in native-12 native-6 forks-2-workers-6; do
     buildopt_forks=1
     if [[ "${buildopt_cell}" == native-12 ]]; then
         buildopt_workers=12
-    elif [[ "${buildopt_cell}" == forks-2-workers-6 ]]; then
+    elif [[ "${buildopt_cell}" == forks-2-workers-6 || \
+        "${buildopt_cell}" == selective-forks-2-workers-6 ]]; then
         buildopt_forks=2
     fi
 
@@ -185,8 +202,11 @@ for buildopt_cell in native-12 native-6 forks-2-workers-6; do
     buildopt_success=true
     buildopt_environment=(env GRADLE_USER_HOME="${buildopt_home}")
     buildopt_arguments=(./gradlew)
-    if ((buildopt_forks == 2)); then
+    if [[ "${buildopt_cell}" == forks-2-workers-6 ]]; then
         buildopt_environment+=(BUILDOPT_POC_TEST_MAX_PARALLEL_FORKS=2)
+        buildopt_arguments+=(-I "${buildopt_init_script}")
+    elif [[ "${buildopt_cell}" == selective-forks-2-workers-6 ]]; then
+        buildopt_environment+=(BUILDOPT_POC_TEST_SOURCE_THRESHOLD=500)
         buildopt_arguments+=(-I "${buildopt_init_script}")
     fi
     buildopt_arguments+=(--daemon --offline --build-cache --parallel \
@@ -217,10 +237,18 @@ for buildopt_cell in native-12 native-6 forks-2-workers-6; do
         buildopt_output_sha=$(sha256sum "${buildopt_manifest}" | awk '{print $1}')
     fi
     buildopt_tuning_marker=false
-    if ((buildopt_forks == 2)); then
-        if grep -Fq 'BuildOpt POC enabled 2 forks for default Test tasks' \
-            "${buildopt_log}"; then
+    buildopt_selected_tasks=''
+    if [[ "${buildopt_cell}" == forks-2-workers-6 ]]; then
+        if grep -Fq 'BuildOpt POC enabled 2 forks for default Test tasks' "${buildopt_log}"; then
             buildopt_tuning_marker=true
+        fi
+    elif [[ "${buildopt_cell}" == selective-forks-2-workers-6 ]]; then
+        buildopt_marker=$(grep -F \
+            'BuildOpt POC enabled 2 forks for ' "${buildopt_log}" | tail -n 1 || true)
+        if [[ "${buildopt_marker}" == \
+            'BuildOpt POC enabled 2 forks for 2 standard Test tasks with at least 500 test source files: :spring-context:test,:spring-test:test' ]]; then
+            buildopt_tuning_marker=true
+            buildopt_selected_tasks=':spring-context:test,:spring-test:test'
         fi
     fi
     jq -cn --arg id "${buildopt_cell}" --argjson workers "${buildopt_workers}" \
@@ -229,11 +257,11 @@ for buildopt_cell in native-12 native-6 forks-2-workers-6; do
         --argjson cases "${buildopt_cases}" --argjson failures "${buildopt_failures}" \
         --argjson skipped "${buildopt_skipped}" --argjson outputs "${buildopt_output_count}" \
         --arg outputSha "${buildopt_output_sha}" --arg failedTask "${buildopt_task}" \
-        --argjson tuningMarker "${buildopt_tuning_marker}" '
-        {
+        --argjson tuningMarker "${buildopt_tuning_marker}" \
+        --arg mode "${buildopt_mode}" --arg selectedTasks "${buildopt_selected_tasks}" '
+        ({
             id: $id,
             maxWorkers: $workers,
-            defaultTestMaxParallelForks: $forks,
             testForkTuningEnabled: $tuningMarker,
             success: $success,
             wallClockMs: $duration,
@@ -244,7 +272,14 @@ for buildopt_cell in native-12 native-6 forks-2-workers-6; do
             requiredOutputCount: $outputs,
             requiredOutputManifestSha256: $outputSha,
             failedTask: $failedTask
-        }' >>"${buildopt_rows}"
+        } + if $mode == "global" then {
+            defaultTestMaxParallelForks: $forks
+        } else {
+            sourceFileThreshold: 500,
+            selectedStandardTestTaskCount: (if $selectedTasks == "" then 0 else 2 end),
+            selectedStandardTestTasks: (if $selectedTasks == "" then [] else ($selectedTasks | split(",")) end),
+            selectedTaskMaxParallelForks: (if $selectedTasks == "" then 1 else 2 end)
+        } end)' >>"${buildopt_rows}"
     printf 'Spring test-runtime discovery %s: success=%s duration=%sms tests=%s failures=%s\n' \
         "${buildopt_cell}" "${buildopt_success}" "${buildopt_duration}" \
         "${buildopt_cases}" "${buildopt_failures}"
@@ -253,19 +288,30 @@ done
 
 buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 jq -s '.' "${buildopt_rows}" >"${buildopt_root}/cells.json"
+buildopt_schema='buildopt.evidence/poc-spring-test-runtime-discovery/v1'
+buildopt_work_item='POC-SPRING-TEST-RUNTIME-001'
+buildopt_purpose='SELECT_ONE_GENERIC_TEST_RUNTIME_CANDIDATE_BEFORE_PAIRED_TIMING'
+if [[ "${buildopt_mode}" == selective ]]; then
+    buildopt_schema='buildopt.evidence/poc-spring-selective-test-runtime-discovery/v1'
+    buildopt_work_item='POC-SPRING-SELECTIVE-TEST-RUNTIME-001'
+    buildopt_purpose='EVALUATE_ONE_PREREGISTERED_SIZE_QUALIFIED_TEST_RUNTIME_CANDIDATE'
+fi
 jq -n --arg capturedAt "${buildopt_captured_at}" \
     --arg revision "${buildopt_revision}" --arg specSha "${buildopt_spec_sha}" \
     --arg initSha "${buildopt_init_sha}" --arg sourceSha "${buildopt_source_sha}" \
-    --arg cacheSha "${buildopt_cache_seed_sha}" \
+    --arg runnerSha "${buildopt_runner_sha}" --arg cacheSha "${buildopt_cache_seed_sha}" \
+    --arg schema "${buildopt_schema}" --arg workItem "${buildopt_work_item}" \
+    --arg purpose "${buildopt_purpose}" \
     --argjson preflightMs "$(((buildopt_preflight_finished - buildopt_preflight_started) / 1000000))" \
     --slurpfile spec "${buildopt_spec}" --slurpfile cells "${buildopt_root}/cells.json" '
     {
-        schemaVersion: "buildopt.evidence/poc-spring-test-runtime-discovery/v1",
-        workItem: "POC-SPRING-TEST-RUNTIME-001",
+        schemaVersion: $schema,
+        workItem: $workItem,
         capturedAt: $capturedAt,
         buildoptRevision: $revision,
         specSha256: $specSha,
         initScriptSha256: $initSha,
+        runnerScriptSha256: $runnerSha,
         repository: {
             nameWithOwner: $spec[0].repository.nameWithOwner,
             revision: $spec[0].repository.revision,
@@ -289,7 +335,7 @@ jq -n --arg capturedAt "${buildopt_captured_at}" \
         decision: {
             performanceMeasured: false,
             savingsClaimed: false,
-            purpose: "SELECT_ONE_GENERIC_TEST_RUNTIME_CANDIDATE_BEFORE_PAIRED_TIMING"
+            purpose: $purpose
         },
         boundaries: {
             requestedTestsChanged: false,

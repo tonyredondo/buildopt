@@ -6,9 +6,19 @@ tasks.register("explicitTest", Test) {
     maxParallelForks = 4
 }
 
+tasks.register("java21Test", Test)
+
 tasks.register("verifyTestRuntime") {
     doLast {
         assert tasks.named("test", Test).get().maxParallelForks == 2
         assert tasks.named("explicitTest", Test).get().maxParallelForks == 4
+    }
+}
+
+tasks.register("verifySelectiveTestRuntime") {
+    doLast {
+        assert tasks.named("test", Test).get().maxParallelForks == 2
+        assert tasks.named("explicitTest", Test).get().maxParallelForks == 4
+        assert tasks.named("java21Test", Test).get().maxParallelForks == 1
     }
 }

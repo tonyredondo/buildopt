@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s OUTPUT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+export BUILDOPT_POC_TEST_RUNTIME_DISCOVERY_MODE=selective
+exec "${buildopt_script_dir}/run-poc-spring-test-runtime-discovery" "$1"

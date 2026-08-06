@@ -82,6 +82,17 @@ result is diagnostic rather than paired performance evidence and supports no
 savings claim. A follow-up may use one generic, frozen suite-size threshold to
 parallelize only large tasks; it may not encode Spring project or task names.
 
+The selective follow-up is frozen before timing. It uses the stable native
+six-worker cell as control and changes only a conventional task named `test`
+whose project contains at least 500 Java, Groovy, or Kotlin files below
+`src/test`: its one-fork Gradle default becomes two forks. Additional suites,
+including cross-JDK tasks, remain unchanged, as does any repository-owned
+explicit fork count. On the fixed Spring revision this generic rule selects
+`:spring-context:test` and `:spring-test:test`; those names are observed output,
+not policy inputs. The non-gating discovery must run one fresh native cell and
+one selective cell from the same offline cache seed before any paired value
+experiment is authorized.
+
 Validate the frozen contract with:
 
 ```bash

@@ -2579,6 +2579,18 @@ regression. The next discovery may parallelize only large default-fork suites
 through a generic predeclared size rule; the failed global policy is not a
 product candidate.
 
+The frozen selective follow-up is:
+
+```bash
+./dev/run-poc-spring-selective-test-runtime-discovery /absolute/path/to/result.json
+```
+
+It compares a fresh six-worker native cell with six workers plus two forks only
+for conventional `test` tasks whose project contains at least 500 Java, Groovy,
+or Kotlin files below `src/test`. It preserves additional test suites and every
+explicit repository fork value. The threshold and two-fork value are fixed
+before execution; this discovery is still non-gating and cannot claim savings.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

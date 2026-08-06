@@ -25,6 +25,10 @@ cp -- "${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.jar" \
 cp -- "${buildopt_repo_root}/fixtures/spring-test-runtime/build.gradle" \
     "${buildopt_repo_root}/fixtures/spring-test-runtime/settings.gradle" \
     "${buildopt_root}/project/"
+mkdir -p -- "${buildopt_root}/project/src/test/java/dev/buildopt/fixture"
+for ((buildopt_index = 1; buildopt_index <= 500; buildopt_index++)); do
+    touch -- "${buildopt_root}/project/src/test/java/dev/buildopt/fixture/Case${buildopt_index}.java"
+done
 buildopt_gradle_home=$(find \
     "${buildopt_repo_root}/.tools/gradle-user-home/wrapper/dists/gradle-9.6.1-bin" \
     -type d -path '*/gradle-9.6.1' -print -quit)
@@ -52,6 +56,24 @@ grep -Fq 'BuildOpt POC enabled 2 forks for default Test tasks' \
     exit 1
 }
 
+if ! (
+    cd "${buildopt_root}/project"
+    env GRADLE_USER_HOME="${buildopt_root}/gradle-home" \
+        BUILDOPT_POC_TEST_SOURCE_THRESHOLD=500 \
+        "${buildopt_script_dir}/run" -- "${buildopt_gradle}" --no-daemon --offline \
+        -I "${buildopt_script_dir}/poc-spring-selective-test-runtime.init.gradle" \
+        verifySelectiveTestRuntime
+) >"${buildopt_root}/selective.log" 2>&1; then
+    tail -n 120 "${buildopt_root}/selective.log" >&2
+    printf 'Spring selective test-runtime init fixture failed\n' >&2
+    exit 1
+fi
+grep -Fq 'BuildOpt POC enabled 2 forks for 1 standard Test tasks with at least 500 test source files: :test' \
+    "${buildopt_root}/selective.log" || {
+    printf 'Spring selective test-runtime init marker is unavailable\n' >&2
+    exit 1
+}
+
 if (
     cd "${buildopt_root}/project"
     env GRADLE_USER_HOME="${buildopt_root}/gradle-home" \
@@ -65,6 +87,22 @@ fi
 grep -Fq 'unsupported BUILDOPT_POC_TEST_MAX_PARALLEL_FORKS: 3' \
     "${buildopt_root}/negative.log" || {
     printf 'Spring test-runtime init negative diagnostic is unavailable\n' >&2
+    exit 1
+}
+
+if (
+    cd "${buildopt_root}/project"
+    env GRADLE_USER_HOME="${buildopt_root}/gradle-home" \
+        BUILDOPT_POC_TEST_SOURCE_THRESHOLD=499 \
+        "${buildopt_script_dir}/run" -- "${buildopt_gradle}" --no-daemon --offline \
+        -I "${buildopt_script_dir}/poc-spring-selective-test-runtime.init.gradle" help
+) >"${buildopt_root}/selective-negative.log" 2>&1; then
+    printf 'Spring selective test-runtime init accepted an unregistered threshold\n' >&2
+    exit 1
+fi
+grep -Fq 'unsupported BUILDOPT_POC_TEST_SOURCE_THRESHOLD: 499' \
+    "${buildopt_root}/selective-negative.log" || {
+    printf 'Spring selective test-runtime negative diagnostic is unavailable\n' >&2
     exit 1
 }
 
