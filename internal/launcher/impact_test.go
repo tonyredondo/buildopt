@@ -128,6 +128,25 @@ func TestImpactInvocationRejectsGraphChangingGradleOptions(t *testing.T) {
 	}
 }
 
+func TestImpactInvocationAcceptsBoundedSpringExecutionOptions(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	t.Chdir(repositoryRoot)
+	invocation, err := prepareImpactInvocation([]string{
+		"--repository-id", "tonyredondo/buildopt-impact-synthetic",
+		"--changes-file", "changed.txt",
+		"--gradle-option=--daemon",
+		"--gradle-option=--parallel",
+		"--gradle-option=--no-scan",
+		"--gradle-option=--max-workers=12",
+	}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := strings.Join(invocation.gradleArgs, " "); got != "--daemon --parallel --no-scan --max-workers=12 :service-a:assemble" {
+		t.Fatalf("Spring-compatible Gradle arguments = %q", got)
+	}
+}
+
 func TestImpactInvocationEmptyDiffRetainsFullGraph(t *testing.T) {
 	repositoryRoot := impactTestRepository(t)
 	t.Chdir(repositoryRoot)

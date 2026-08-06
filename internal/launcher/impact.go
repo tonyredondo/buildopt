@@ -36,7 +36,8 @@ func (values *repeatedStringFlag) Set(value string) error {
 
 func validImpactGradleOption(value string) bool {
 	switch value {
-	case "--offline", "--no-daemon", "--stacktrace", "--full-stacktrace",
+	case "--offline", "--daemon", "--no-daemon", "--parallel", "--no-parallel",
+		"--no-scan", "--stacktrace", "--full-stacktrace",
 		"--info", "--debug", "--warn", "--build-cache", "--no-build-cache",
 		"--configuration-cache", "--no-configuration-cache":
 		return true
