@@ -2684,7 +2684,24 @@ The accepted run stopped at pair 7 when the optimized native control failed in
 upstream OpenTelemetry Byte Buddy processing with `zip file closed`. Six
 completed pairs remain descriptive-only; they are not promoted through an
 incomplete eight-pair gate. The checked terminal evidence records that failure
-and the no-retry decision.
+and the no-retry decision, so that exact experiment remains terminal.
+
+A separate experiment on the stable OpenTelemetry `v2.30.0` release is frozen
+in `specs/poc-otel-spring-family-v2.json`. Its root `testClasses` probe was
+rejected after the fixed 20-minute budget without accepting a timing. The
+replacement control is the 53-task Spring instrumentation family already
+separated by the upstream pull-request workflow; it completed an offline
+preflight in Gradle-reported `2m45s` without executing a Gradle `Test` task.
+Validate the immutable revision, hashes, task list, graph, four-pair protocol,
+fallback and unchanged value gate with:
+
+```bash
+./dev/check-poc-otel-spring-family-v2
+```
+
+This is a new stable-release and control-boundary experiment. It neither
+retries nor reinterprets the earlier terminal result, and it changes no test
+selection, production authority, public release, soak or design-partner scope.
 
 Run the lock and doctor contract tests from the repository root:
 

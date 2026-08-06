@@ -1,0 +1,145 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-otel-spring-family-v2.json"
+buildopt_tasks="${buildopt_repo_root}/specs/poc-otel-spring-family-v2.tasks.txt"
+
+for buildopt_command in jq sha256sum sort; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required OpenTelemetry Spring-family checker is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+for buildopt_file in "${buildopt_spec}" "${buildopt_tasks}"; do
+    [[ -s "${buildopt_file}" ]] || {
+        printf 'OpenTelemetry Spring-family preregistration is unavailable: %s\n' \
+            "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_task_sha=$(sha256sum "${buildopt_tasks}" | awk '{print $1}')
+buildopt_task_count=$(awk 'NF {count++} END {print count + 0}' "${buildopt_tasks}")
+buildopt_unique_count=$(sort -u "${buildopt_tasks}" | awk 'NF {count++} END {print count + 0}')
+buildopt_sorted_tasks=$(mktemp)
+trap 'rm -f -- "${buildopt_sorted_tasks}"' EXIT
+LC_ALL=C sort "${buildopt_tasks}" >"${buildopt_sorted_tasks}"
+
+[[ "${buildopt_task_count}" == 53 && "${buildopt_unique_count}" == 53 ]] || {
+    printf 'expected 53 unique OpenTelemetry Spring-family entrypoints\n' >&2
+    exit 1
+}
+cmp -s "${buildopt_tasks}" "${buildopt_sorted_tasks}" || {
+    printf 'OpenTelemetry Spring-family entrypoints are not sorted\n' >&2
+    exit 1
+}
+awk '
+    NF && ($0 !~ /^:instrumentation:spring:/ || $0 !~ /:testClasses$/) {invalid = 1}
+    END {exit invalid}
+' "${buildopt_tasks}" || {
+    printf 'invalid OpenTelemetry Spring-family entrypoint\n' >&2
+    exit 1
+}
+
+jq -e --arg taskSha "${buildopt_task_sha}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    .schemaVersion == "buildopt.specs/poc-otel-spring-family/v2" and
+    .workItem == "POC-OTEL-SPRING-FAMILY-PREREG-001" and
+    .decision == "PREREGISTER_NEW_STABLE_RELEASE_AND_UPSTREAM_SPRING_FAMILY" and
+    .repository.nameWithOwner == "open-telemetry/opentelemetry-java-instrumentation" and
+    .repository.releaseTag == "v2.30.0" and
+    .repository.revision == "080c1d32ca676ba7b0210c21b60cce8e7ac39058" and
+    (.repository.sourceArchiveSha256 | sha256) and
+    .repository.gradleVersion == "9.6.1" and
+    (.repository.gradleWrapperJarSha256 | sha256) and
+    (.repository.gradleWrapperPropertiesSha256 | sha256) and
+    (.repository.gradlePropertiesSha256 | sha256) and
+    (.repository.upstreamPullRequestWorkflowSha256 | sha256) and
+    .supersedes == {
+        terminalExperiment: "POC-OTEL-TRANSFER-001",
+        terminalRevision: "2f472a7b3073eabc842540bcb1f48e71ae54825d",
+        reusesTerminalObservations: false,
+        reason: "NEW_RELEASE_NEW_CONTROL_BOUNDARY_NEW_PREREGISTRATION"
+    } and
+    .exploration == {
+        rootTestClassesTimeoutMs: 1200000,
+        rootTestClassesCompleted: false,
+        rootTimingAccepted: false,
+        springFamilyTaskDiscoveryCompleted: true,
+        springFamilyPreflightGradleReportedDuration: "2m45s",
+        springFamilyPreflightSuccessful: true,
+        springFamilyActionableTasks: 340,
+        springFamilyGradleTestTasksExecuted: false
+    } and
+    .runner == {
+        id: "linux-amd64-12c-16659865600b-v1",
+        cpuCount: 12,
+        memoryBytes: 16659865600,
+        maxWorkers: 12,
+        jdk: "temurin-21.0.12+8"
+    } and
+    .control.entrypointsFile == "specs/poc-otel-spring-family-v2.tasks.txt" and
+    .control.entrypointsFileSha256 == $taskSha and
+    .control.entrypointCount == 53 and
+    .control.expectedReachedProjectCount == 148 and
+    .candidate.changeClass == "LEAF_PRODUCTION_SOURCE" and
+    .candidate.changedProject == ":instrumentation:spring:spring-boot-autoconfigure" and
+    .candidate.entrypoints == [":instrumentation:spring:spring-boot-autoconfigure:testClasses"] and
+    .candidate.expectedReachedProjectCount == 46 and
+    .candidate.requiredOutputRoots == ["instrumentation/spring/spring-boot-autoconfigure/build/classes"] and
+    .discovery.expectedProjectCount == 1024 and
+    .discovery.expectedEntrypointCount == 53 and
+    .discovery.expectedGraphDigest == "sha256:b3138e60e69db05f2b06058c2fc366d996ba0c22c6084e8fd6d474e61ded9b7f" and
+    (.discovery.expectedGraphSha256 | sha256) and
+    (.discovery.expectedGeneratedManifestSha256 | sha256) and
+    .discovery.complete == true and
+    .discovery.containsTestTasks == false and
+    .discovery.unknownRelationships == false and
+    .measurement.candidateSurface == "INSTALLED_BUILDOPT_IMPACT" and
+    .measurement.launcherOverheadIncluded == true and
+    .measurement.commonArguments == [
+        "--daemon", "--offline", "--build-cache", "--parallel",
+        "--configuration-cache", "--max-workers=12", "--no-scan", "--stacktrace"
+    ] and
+    .measurement.warmupsPerArm == 1 and
+    .measurement.pairs == 4 and
+    .measurement.maximumInterArmIdleGapMs == 5000 and
+    .measurement.forbiddenRootBuildTaskType == "org.gradle.api.tasks.testing.Test" and
+    .valueGate == {
+        minimumSavedMs: 500,
+        minimumReductionRatio: 0.02,
+        positiveLower95Bound: true,
+        minimumPositivePairs: 4,
+        requiredOutputsIdentical: true,
+        requiredOutputsNonEmpty: true,
+        maximumProductAttributableFailures: 0,
+        thresholdsMayMoveAfterMeasurement: false,
+        failedPairsMayBeDiscarded: false,
+        parityAloneCountsAsValue: false
+    } and
+    .fallback.expectedMode == "FULL_GRAPH" and
+    .fallback.expectedReason == "IMPACT_GLOBAL_CHANGE" and
+    .fallback.performanceClaim == false and
+    .boundaries.proofOfConcept == true and
+    .boundaries.productionReadinessClaimed == false and
+    .boundaries.repositorySpecificProductRuleAdded == false and
+    .boundaries.productionSelectionChanged == false and
+    .boundaries.buildOwnedTestPreparationOnly == true and
+    .boundaries.testSelectionChanged == false and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false and
+    .boundaries.publicReleaseRequired == false and
+    .boundaries.previousTerminalExperimentUnchanged == true
+' "${buildopt_spec}" >/dev/null
+
+printf 'OpenTelemetry Spring-family preregistration OK\n'

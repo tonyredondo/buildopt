@@ -1,0 +1,36 @@
+# OpenTelemetry Spring-family transfer experiment
+
+This preregistered POC starts a new experiment on the stable OpenTelemetry Java
+Instrumentation `v2.30.0` release. It does not retry or reinterpret the earlier
+terminal experiment: that older revision, root control and incomplete result
+remain unchanged.
+
+The first compatibility probe rejected root `testClasses` after it exhausted a
+fixed 20-minute preflight budget. No timing from that probe is evidence. The
+replacement control is the repository's Spring instrumentation family, a
+boundary already distinguished by the upstream pull-request workflow. Gradle
+exposes 53 `testClasses` tasks under `:instrumentation:spring`; their exact,
+sorted names are checked in separately. A successful offline preflight reached
+340 actionable tasks in 2m45s without executing a Gradle `Test` task.
+
+BuildOpt discovery sees 1,024 projects. The 53 control entrypoints reach 148
+projects, while the unchanged Spring-autoconfigure alternative reaches 46.
+Both graphs are complete, contain no test-execution tasks and have no unknown
+relationships.
+
+The accepted measurement will use an installed package and four alternating
+pairs. Both arms receive the same offline dependencies, native-cache seed,
+fixed source mutation, clean outputs, 12 workers and Gradle optimizations. The
+candidate must reproduce every byte below the declared autoconfigure class
+output root. A separate `gradle.properties` change must restore all 53 control
+entrypoints and makes no performance claim.
+
+Qualification still requires at least 500 ms and 2% mean saving, a positive
+paired-bootstrap lower bound, four positive pairs, identical non-empty outputs
+and zero product failures. Failed observations cannot be discarded and the
+thresholds cannot move.
+
+This experiment covers build-owned test preparation only. It does not select,
+skip, shard or reorder tests; it changes no production authority, requires no
+public release, soak or design partner, and makes no production-readiness
+claim.

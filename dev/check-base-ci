@@ -226,6 +226,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-mockito-test-build" >/dev/null
         "${buildopt_script_dir}/check-poc-spring-test-preparation-result" >/dev/null
         "${buildopt_script_dir}/check-poc-otel-test-preparation-result" >/dev/null
+        "${buildopt_script_dir}/check-poc-otel-spring-family-v2" >/dev/null
         "${buildopt_script_dir}/run" \
             --toolchain temurin-jdk-21 \
             -- \
