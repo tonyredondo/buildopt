@@ -139,17 +139,20 @@ buildopt_outputs() {
 
 buildopt_test_counts() {
     local buildopt_checkout=$1
-    local buildopt_xml
-    local buildopt_cases=0
-    local buildopt_failures=0
-    local buildopt_skipped=0
-    while IFS= read -r -d '' buildopt_xml; do
-        buildopt_cases=$((buildopt_cases + $(sed -n '1s/.* tests="\([0-9][0-9]*\)".*/\1/p' "${buildopt_xml}")))
-        buildopt_failures=$((buildopt_failures + $(sed -n '1s/.* failures="\([0-9][0-9]*\)".*/\1/p' "${buildopt_xml}")))
-        buildopt_skipped=$((buildopt_skipped + $(grep -c '<skipped' "${buildopt_xml}" || true)))
-    done < <(find "${buildopt_checkout}" -type f \
+    local -a buildopt_xml_files=()
+    mapfile -d '' buildopt_xml_files < <(find "${buildopt_checkout}" -type f \
         -path '*/build/test-results/*/TEST-*.xml' -print0 | sort -z)
-    printf '%s\t%s\t%s\n' "${buildopt_cases}" "${buildopt_failures}" "${buildopt_skipped}"
+    if ((${#buildopt_xml_files[@]} == 0)); then
+        printf '0\t0\t0\n'
+        return
+    fi
+    awk '
+        /<testcase([ >])/ { cases++ }
+        /<failure([ >])/ { failures++ }
+        /<error([ >])/ { failures++ }
+        /<skipped([ >\/])/ { skipped++ }
+        END { printf "%d\t%d\t%d\n", cases + 0, failures + 0, skipped + 0 }
+    ' "${buildopt_xml_files[@]}"
 }
 
 buildopt_rows="${buildopt_root}/cells.jsonl"
