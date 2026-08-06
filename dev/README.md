@@ -2613,6 +2613,20 @@ then disables every requested/dependency task before the discovery action runs.
 Only a complete, Test-free graph may compare native `testClasses` with
 `:spring-jms:testClasses`; unknown or test-containing graphs remain full-build.
 
+After committing the runner so its SHA is immutable, capture the eight paired
+observations on the declared 12-CPU host with:
+
+```bash
+./dev/run-poc-spring-test-preparation /absolute/path/to/result.json
+```
+
+The runner downloads the fixed Spring revision, performs networked dependency
+preparation outside the measured region, stops that daemon, and then measures
+offline control/candidate arms with separate Gradle homes and the same restored
+native cache seed. It executes no Gradle `Test` task, compares the non-empty
+`spring-jms/build/classes` manifests byte for byte, retains all eight pairs,
+and applies the preregistered 500 ms, 2%, positive-lower-bound value gate.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

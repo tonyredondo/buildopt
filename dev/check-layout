@@ -321,6 +321,7 @@ buildopt_required_files=(
     "dev/run-poc-spring-value"
     "dev/run-poc-spring-test-runtime-discovery"
     "dev/run-poc-spring-selective-test-runtime-discovery"
+    "dev/run-poc-spring-test-preparation"
     "dev/poc-spring-test-runtime.init.gradle"
     "dev/poc-spring-selective-test-runtime.init.gradle"
     "dev/poc-groovy-workload.init.gradle"
