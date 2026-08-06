@@ -2655,7 +2655,9 @@ pairs with:
 If preparation or an arm fails, the runner preserves only its diagnostic logs
 beside the requested output as `<result>.failure-logs.tar.gz` before removing
 the multi-gigabyte temporary workspace. No failed or partial pair is promoted
-to evidence.
+to evidence. OpenTelemetry's Thrift generator creates four UID-`nobody` source
+files; before each native `clean`, the runner makes only that pinned output
+directory removable through the network-disabled cleanup image.
 
 The fixed 500 ms, 2%, positive-lower-bound gate and all eight observations are
 retained regardless of outcome. This is a POC value transfer only: it makes no

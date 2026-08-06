@@ -6,7 +6,8 @@
     "reason": "UPSTREAM_CONTAINER_GENERATED_NOBODY_OWNED_FILES_REQUIRE_PINNED_LOCAL_CLEANUP",
     "acceptedPairsBeforeCorrection": 0,
     "measurementOrValueGateChanged": false,
-    "failureLogsPreservedBeforeCleanup": true
+    "failureLogsPreservedBeforeCleanup": true,
+    "pinnedCleanupAppliedBetweenArms": true
   },
   "repository": {
     "nameWithOwner": "open-telemetry/opentelemetry-java-instrumentation",

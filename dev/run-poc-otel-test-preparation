@@ -209,6 +209,21 @@ buildopt_graph_sha=$(sha256sum "${buildopt_graph}" | awk '{print $1}')
     exit 1
 }
 
+buildopt_make_thrift_outputs_removable() {
+    local buildopt_checkout=$1
+    local buildopt_thrift_outputs="${buildopt_checkout}/instrumentation/thrift-0.13/testing/build/generated/thrift/main/custom"
+    local buildopt_resolved_outputs
+    [[ -d "${buildopt_thrift_outputs}" && ! -L "${buildopt_thrift_outputs}" ]] || return 0
+    buildopt_resolved_outputs=$(cd -- "${buildopt_thrift_outputs}" && pwd -P)
+    [[ "${buildopt_resolved_outputs}" == "${buildopt_checkout}/"* ]] || {
+        printf 'OpenTelemetry Thrift output path escaped its checkout\n' >&2
+        return 1
+    }
+    docker run --rm --network none \
+        --mount "type=bind,src=${buildopt_resolved_outputs},dst=/buildopt-thrift" \
+        "${buildopt_cleanup_image}" chmod -R a+w /buildopt-thrift >/dev/null
+}
+
 buildopt_reset_arm() {
     local buildopt_arm=$1
     local buildopt_checkout=$2
@@ -216,14 +231,20 @@ buildopt_reset_arm() {
     local buildopt_mutation=$4
     cp -- "${buildopt_root}/${buildopt_arm}/changed-source.original" \
         "${buildopt_checkout}/${buildopt_change_path}"
-    (
+    buildopt_make_thrift_outputs_removable "${buildopt_checkout}"
+    if ! (
         cd "${buildopt_checkout}"
         env -u CI GRADLE_USER_HOME="${buildopt_home}" \
             GRADLE_RO_DEP_CACHE="${buildopt_readonly_cache}" \
             "${buildopt_script_dir}/run" --toolchain temurin-jdk-21 -- \
             ./gradlew --daemon --offline --quiet --configuration-cache \
             --max-workers=12 clean
-    ) >"${buildopt_root}/logs/reset-${buildopt_arm}.log" 2>&1
+    ) >"${buildopt_root}/logs/reset-${buildopt_arm}.log" 2>&1; then
+        tail -n 180 "${buildopt_root}/logs/reset-${buildopt_arm}.log" >&2
+        printf 'OpenTelemetry %s arm reset failed before measurement\n' \
+            "${buildopt_arm}" >&2
+        return 1
+    fi
     rm -rf -- "${buildopt_home}/caches/build-cache-1"
     mkdir -p -- "${buildopt_home}/caches"
     tar -C "${buildopt_home}/caches" -xzf "${buildopt_cache_seed}"
