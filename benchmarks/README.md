@@ -33,6 +33,16 @@ interpretation with:
 The scorecard answers a different question for each optimization instead of
 combining unrelated percentages:
 
+The current substantial public-repository qualification is Spring Framework
+test preparation. Generic root-build discovery reduced native `testClasses`
+from 7,306.125 ms to 5,208 ms on average: 2,098.125 ms/28.72% saved, eight of
+eight positive pairs, and a paired bootstrap interval of +1,464.5 to +2,780 ms.
+The [checked evidence](./results/poc-spring-test-preparation-v2.json) preserves
+all 378 affected class outputs, runs no root-build `Test`, retains the common
+`:buildSrc:test UP-TO-DATE`, and records zero product failures. This qualifies
+only unchanged transfer to OpenTelemetry; it is not a general or production
+claim.
+
 | Mechanism | Mean result | Exact paired 95% interval | Classification |
 |---|---:|---:|---|
 | Default native-cache fallback, Kotlin | 79 ms faster (8.9%) | +6 to +156 ms | `NO_VALUE_NO_ACTION`; same cache mechanism, no acceleration claim |

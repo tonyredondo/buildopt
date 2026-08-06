@@ -2623,6 +2623,7 @@ observations on the declared 12-CPU host with:
 
 ```bash
 ./dev/run-poc-spring-test-preparation /absolute/path/to/result.json
+./dev/check-poc-spring-test-preparation-result /absolute/path/to/result.json
 ```
 
 The runner downloads the fixed Spring revision, performs networked dependency

@@ -304,6 +304,7 @@ buildopt_required_files=(
     "dev/check-poc-spring-test-runtime-discovery"
     "dev/check-poc-spring-selective-test-runtime-discovery"
     "dev/check-poc-spring-test-preparation"
+    "dev/check-poc-spring-test-preparation-result"
     "dev/check-spring-test-runtime-init"
     "dev/test-poc-pairing"
     "dev/assemble-poc-pairing"

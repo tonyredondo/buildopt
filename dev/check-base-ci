@@ -222,6 +222,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-public-build-tasks" >/dev/null
         "${buildopt_script_dir}/check-poc-spotless-impact" >/dev/null
         "${buildopt_script_dir}/check-poc-mockito-test-build" >/dev/null
+        "${buildopt_script_dir}/check-poc-spring-test-preparation-result" >/dev/null
         "${buildopt_script_dir}/run" \
             --toolchain go \
             -- \
