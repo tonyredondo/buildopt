@@ -71,7 +71,12 @@ type LoadedManifest struct {
 // LoadRepositoryManifest reads one regular, repository-contained manifest and
 // binds it to the repository and pipeline selected by the caller.
 func LoadRepositoryManifest(repositoryRoot, manifestPath, repositoryID, pipelineClass string) (LoadedManifest, error) {
-	raw, err := readRepositoryFile(repositoryRoot, manifestPath)
+	raw, err := readRepositoryFile(
+		repositoryRoot,
+		manifestPath,
+		maximumManifestBytes,
+		"build-impact manifest",
+	)
 	if err != nil {
 		return LoadedManifest{}, err
 	}
@@ -245,7 +250,7 @@ func setKey(values []string) string {
 	return strings.Join(copyValues, "\x00")
 }
 
-func readRepositoryFile(repositoryRoot, manifestPath string) ([]byte, error) {
+func readRepositoryFile(repositoryRoot, relativePath string, maximumBytes int64, description string) ([]byte, error) {
 	if !filepath.IsAbs(repositoryRoot) || filepath.Clean(repositoryRoot) != repositoryRoot {
 		return nil, errors.New("repository root must be absolute and clean")
 	}
@@ -253,35 +258,35 @@ func readRepositoryFile(repositoryRoot, manifestPath string) ([]byte, error) {
 	if err != nil || resolvedRoot != repositoryRoot {
 		return nil, errors.New("repository root must exist and contain no symlink components")
 	}
-	if manifestPath == "" || filepath.IsAbs(manifestPath) || filepath.Clean(manifestPath) != manifestPath || manifestPath == "." || strings.HasPrefix(manifestPath, ".."+string(filepath.Separator)) {
-		return nil, errors.New("manifest path must be clean and repository relative")
+	if relativePath == "" || filepath.IsAbs(relativePath) || filepath.Clean(relativePath) != relativePath || relativePath == "." || strings.HasPrefix(relativePath, ".."+string(filepath.Separator)) {
+		return nil, fmt.Errorf("%s path must be clean and repository relative", description)
 	}
 	current := repositoryRoot
-	for _, segment := range strings.Split(manifestPath, string(filepath.Separator)) {
+	for _, segment := range strings.Split(relativePath, string(filepath.Separator)) {
 		if segment == "" || segment == "." || segment == ".." {
-			return nil, errors.New("manifest path contains an unsafe segment")
+			return nil, fmt.Errorf("%s path contains an unsafe segment", description)
 		}
 		current = filepath.Join(current, segment)
 		info, err := os.Lstat(current)
 		if err != nil {
-			return nil, fmt.Errorf("inspect build-impact manifest path: %w", err)
+			return nil, fmt.Errorf("inspect %s path: %w", description, err)
 		}
 		if info.Mode()&os.ModeSymlink != 0 {
-			return nil, errors.New("build-impact manifest path must not contain symlinks")
+			return nil, fmt.Errorf("%s path must not contain symlinks", description)
 		}
 	}
 	info, err := os.Stat(current)
-	if err != nil || !info.Mode().IsRegular() || info.Size() <= 0 || info.Size() > maximumManifestBytes {
-		return nil, errors.New("build-impact manifest must be a bounded regular file")
+	if err != nil || !info.Mode().IsRegular() || info.Size() <= 0 || info.Size() > maximumBytes {
+		return nil, fmt.Errorf("%s must be a bounded regular file", description)
 	}
 	file, err := os.Open(current)
 	if err != nil {
-		return nil, fmt.Errorf("open build-impact manifest: %w", err)
+		return nil, fmt.Errorf("open %s: %w", description, err)
 	}
 	defer file.Close()
-	raw, err := io.ReadAll(io.LimitReader(file, maximumManifestBytes+1))
-	if err != nil || len(raw) > maximumManifestBytes {
-		return nil, errors.New("read bounded build-impact manifest")
+	raw, err := io.ReadAll(io.LimitReader(file, maximumBytes+1))
+	if err != nil || int64(len(raw)) > maximumBytes {
+		return nil, fmt.Errorf("read bounded %s", description)
 	}
 	return raw, nil
 }

@@ -56,12 +56,15 @@ jq -e --arg taskSha "${buildopt_task_sha}" '
     .workItem == "POC-OTEL-SPRING-FAMILY-PREREG-001" and
     .decision == "PREREGISTER_NEW_STABLE_RELEASE_AND_UPSTREAM_SPRING_FAMILY" and
     .protocolRevision == {
-        from: 2,
-        to: 3,
-        reason: "RUNNER_MANIFEST_METADATA_DID_NOT_MATCH_PREREGISTERED_GRAPH",
+        from: 3,
+        to: 4,
+        reason: "SHARED_REPOSITORY_READER_APPLIED_MANIFEST_BOUND_TO_DECLARED_GRAPH",
         acceptedWarmupsBeforeRevision: 0,
+        completedControlWarmupsBeforeRevision: 1,
+        completedCandidateWarmupsBeforeRevision: 0,
         acceptedObservationsBeforeRevision: 0,
-        change: "RESTORE_EXPLORATORY_MANIFEST_IDS_AND_CLASSIFY_UNKNOWN_GLOBAL_FALLBACK_EXACTLY",
+        change: "PASS_ARTIFACT_SPECIFIC_BOUNDS_TO_SHARED_REPOSITORY_FILE_READER",
+        implementationChanged: true,
         controlChanged: false,
         candidateChanged: false,
         measurementChanged: false,

@@ -1,10 +1,43 @@
 package buildimpact
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"testing"
 )
+
+func TestPlanPOCCandidateAcceptsGraphWithinGraphBoundAboveManifestBound(t *testing.T) {
+	fixtureRoot := filepath.Join(buildImpactRepositoryRoot(t), filepath.FromSlash("fixtures/build-impact/synthetic-repository"))
+	temporaryRoot := t.TempDir()
+	for _, name := range []string{"buildopt-impact-manifest.json", "buildopt-impact-graph.generated.json", "buildopt-impact.generated.json"} {
+		raw, err := os.ReadFile(filepath.Join(fixtureRoot, name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if name == "buildopt-impact-graph.generated.json" {
+			raw = append(bytes.Repeat([]byte(" "), maximumManifestBytes), raw...)
+		}
+		if err := os.WriteFile(filepath.Join(temporaryRoot, name), raw, 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	plan, err := PlanPOCCandidate(POCCandidateOptions{
+		RepositoryRoot:        temporaryRoot,
+		ManifestPath:          "buildopt-impact-manifest.json",
+		GraphPath:             "buildopt-impact-graph.generated.json",
+		GeneratedManifestPath: "buildopt-impact.generated.json",
+		RepositoryID:          "tonyredondo/buildopt-impact-synthetic",
+		PipelineClass:         "pull-request",
+		ChangedPaths:          []string{"library-c/src/main/java/synthetic/LibraryC.java"},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !plan.CandidateSelected {
+		t.Fatalf("candidate plan = %+v", plan)
+	}
+}
 
 func TestPlanPOCCandidateUsesReviewedAlternativeWithoutProductionAuthority(t *testing.T) {
 	fixtureRoot := filepath.Join(buildImpactRepositoryRoot(t), filepath.FromSlash("fixtures/build-impact/synthetic-repository"))

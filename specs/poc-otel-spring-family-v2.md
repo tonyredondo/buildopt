@@ -27,6 +27,15 @@ for `gradle.properties` precisely as `IMPACT_UNKNOWN_CHANGE_PATH`; execution
 still retains all 53 entrypoints. Control, candidate, measurement and value
 gate are unchanged.
 
+Protocol revision 4 was recorded after one control warmup completed and the
+candidate stopped before starting Gradle. Zero complete warmup pairs and zero
+measured observations were accepted. The shared repository-file reader had
+applied the 256-KiB manifest limit to the 435,875-byte declared graph even
+though the graph parser already has its own 2-MiB bound. Revision 4 passes each
+artifact's existing bound to the shared reader and gives failures an accurate
+artifact name. It does not increase any parser limit or change the control,
+candidate, outputs, measurement, resources, pair order or value gate.
+
 The accepted measurement will use an installed package and four alternating
 pairs. Both arms receive the same offline dependencies, native-cache seed,
 fixed source mutation, clean outputs, 12 workers and Gradle optimizations. The

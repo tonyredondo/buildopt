@@ -73,7 +73,12 @@ func PlanPOCCandidate(options POCCandidateOptions) (POCCandidatePlan, error) {
 		return plan, nil
 	}
 
-	graphRaw, err := readRepositoryFile(options.RepositoryRoot, options.GraphPath)
+	graphRaw, err := readRepositoryFile(
+		options.RepositoryRoot,
+		options.GraphPath,
+		maximumDeclaredGraphBytes,
+		"declared graph",
+	)
 	if err != nil {
 		return POCCandidatePlan{}, err
 	}
@@ -81,7 +86,12 @@ func PlanPOCCandidate(options POCCandidateOptions) (POCCandidatePlan, error) {
 	if err != nil {
 		return POCCandidatePlan{}, err
 	}
-	generatedRaw, err := readRepositoryFile(options.RepositoryRoot, options.GeneratedManifestPath)
+	generatedRaw, err := readRepositoryFile(
+		options.RepositoryRoot,
+		options.GeneratedManifestPath,
+		maximumGeneratedManifestBytes,
+		"generated Build Impact manifest",
+	)
 	if err != nil {
 		return POCCandidatePlan{}, err
 	}
