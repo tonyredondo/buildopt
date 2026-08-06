@@ -93,7 +93,7 @@ func PlanPOCCandidate(options POCCandidateOptions) (POCCandidatePlan, error) {
 		return POCCandidatePlan{}, err
 	}
 
-	decision := EvaluateImpact(manifest, graph.Graph, options.ChangedPaths)
+	decision := evaluatePOCImpact(manifest, graph.Graph, options.ChangedPaths)
 	plan.Reason = "IMPACT_" + decision.Reason
 	plan.AffectedProjects = cloneSlice(decision.AffectedProjects)
 	plan.OmittedProjects = cloneSlice(decision.OmittedProjects)

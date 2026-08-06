@@ -169,6 +169,31 @@ func TestAlternativeMustCoverAffectedProjectsArtifactsAndBuildChecks(t *testing.
 	}
 }
 
+func TestPOCOutputScopeDoesNotWeakenProductionAffectedClosure(t *testing.T) {
+	manifest, graph := validGraph(t)
+	graph.Projects = append(graph.Projects, Project{
+		Path: ":consumer", SourcePaths: []string{"consumer/**"},
+		DependsOn: []string{":service-b"},
+	})
+	graph.Entrypoints[0].ReachesProjects = append(
+		graph.Entrypoints[0].ReachesProjects,
+		":consumer",
+	)
+
+	changed := []string{"service-b/src/main/java/Service.java"}
+	production := EvaluateImpact(manifest, graph, changed)
+	if production.Mode != DecisionFullGraph || production.Reason != "NO_AUTHORIZED_ALTERNATIVE" {
+		t.Fatalf("production decision = %+v", production)
+	}
+	poc := evaluatePOCImpact(manifest, graph, changed)
+	if poc.Mode != DecisionShadowAlternative ||
+		poc.Reason != "CUSTOMER_ALTERNATIVE_AND_DECLARED_OUTPUT_SCOPE" ||
+		poc.PredictedAlternativeID != "service-b" ||
+		!reflect.DeepEqual(poc.AffectedProjects, []string{":consumer", ":service-b"}) {
+		t.Fatalf("POC decision = %+v", poc)
+	}
+}
+
 func TestInvalidGraphFailsClosed(t *testing.T) {
 	manifest, graph := validGraph(t)
 	graph.Projects[0].DependsOn = []string{":service-a"}

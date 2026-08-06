@@ -114,6 +114,18 @@ func ParseDeclaredGraph(raw []byte, manifest LoadedManifest) (LoadedGraph, error
 // EvaluateImpact computes a shadow prediction. The effective entrypoints stay
 // equal to the customer's originals until the later BIA-002 gate authorizes use.
 func EvaluateImpact(manifest LoadedManifest, graph DeclaredGraph, changedPaths []string) ImpactDecision {
+	return evaluateImpact(manifest, graph, changedPaths, true)
+}
+
+// evaluatePOCImpact evaluates only the repository-declared required output and
+// check scope. It is restricted to the explicit owner-operated POC path; the
+// production evaluator above continues to require the complete affected-project
+// closure.
+func evaluatePOCImpact(manifest LoadedManifest, graph DeclaredGraph, changedPaths []string) ImpactDecision {
+	return evaluateImpact(manifest, graph, changedPaths, false)
+}
+
+func evaluateImpact(manifest LoadedManifest, graph DeclaredGraph, changedPaths []string, requireAffectedClosure bool) ImpactDecision {
 	decision := fullGraphDecision(manifest.Manifest, "GRAPH_INVALID")
 	if err := validateDeclaredGraph(manifest, graph); err != nil {
 		return decision
@@ -166,6 +178,10 @@ func EvaluateImpact(manifest LoadedManifest, graph DeclaredGraph, changedPaths [
 	}
 	affected := reverseDependencyClosure(projectByPath, changedProjects)
 	decision.AffectedProjects = sortedKeys(affected)
+	requiredProjects := affected
+	if !requireAffectedClosure {
+		requiredProjects = changedProjects
+	}
 	entrypointByName := make(map[string]DeclaredEntrypoint, len(graph.Entrypoints))
 	for _, entrypoint := range graph.Entrypoints {
 		entrypointByName[entrypoint.Name] = entrypoint
@@ -193,7 +209,7 @@ func EvaluateImpact(manifest LoadedManifest, graph DeclaredGraph, changedPaths [
 			addAll(artifacts, entrypoint.ArtifactIDs)
 			addAll(checks, entrypoint.CheckIDs)
 		}
-		if eligible && containsAll(coveredProjects, affected) && containsAll(artifacts, requiredArtifacts) && containsAll(checks, requiredBuildChecks) {
+		if eligible && containsAll(coveredProjects, requiredProjects) && containsAll(artifacts, requiredArtifacts) && containsAll(checks, requiredBuildChecks) {
 			candidates = append(candidates, candidate{alternative: alternative, covered: coveredProjects})
 		}
 	}
@@ -212,6 +228,9 @@ func EvaluateImpact(manifest LoadedManifest, graph DeclaredGraph, changedPaths [
 	selected := candidates[0]
 	decision.Mode = DecisionShadowAlternative
 	decision.Reason = "CUSTOMER_ALTERNATIVE_AND_DECLARED_GRAPH"
+	if !requireAffectedClosure {
+		decision.Reason = "CUSTOMER_ALTERNATIVE_AND_DECLARED_OUTPUT_SCOPE"
+	}
 	decision.PredictedAlternativeID = selected.alternative.ID
 	decision.PredictedEntrypoints = append([]string(nil), selected.alternative.Entrypoints...)
 	for projectPath := range projectByPath {
