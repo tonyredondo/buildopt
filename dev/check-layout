@@ -389,6 +389,7 @@ buildopt_required_files=(
     "specs/poc-spring-framework-v1.md"
     "specs/poc-spring-installed-impact-v1.json"
     "specs/poc-spring-installed-impact-v1.md"
+    "benchmarks/results/poc-spring-installed-impact-v1.json"
     "benchmarks/results/poc-stability-v1-control-first.json"
     "benchmarks/results/poc-stability-v1-candidate-first.json"
     "benchmarks/results/poc-stability-v1-decision.json"

@@ -50,6 +50,24 @@ the failed pair, so pair 8 was not started and the terminal decision is
 evidence](./results/poc-otel-test-preparation-v1.json); the six-pair diagnostic
 is not an eight-pair value claim.
 
+The same fixed Spring mutation was then exercised through an isolated installed
+native package and the public `buildopt impact` command. The optimized native
+control averaged 7,996.125 ms and the installed candidate 6,736 ms, saving
+1,260.125 ms/15.76%. All eight pairs were positive, the paired bootstrap
+interval was +624.125 to +2,019 ms, all 378 declared outputs were identical,
+and launcher plus manifest/graph validation overhead was included. This is a
+POC claim for that reviewed output scope, not authorization to replace Spring's
+root `testClasses` graph generally.
+
+Validate the installed-path evidence with:
+
+```bash
+./dev/check-poc-spring-installed-impact
+```
+
+The complete report is
+[`poc-spring-installed-impact-v1.json`](./results/poc-spring-installed-impact-v1.json).
+
 | Mechanism | Mean result | Exact paired 95% interval | Classification |
 |---|---:|---:|---|
 | Default native-cache fallback, Kotlin | 79 ms faster (8.9%) | +6 to +156 ms | `NO_VALUE_NO_ACTION`; same cache mechanism, no acceleration claim |

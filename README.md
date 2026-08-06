@@ -75,7 +75,10 @@ The cache-compatible command is the zero-configuration starting point. The
 measured accelerator is Build Impact: after committing a reviewed manifest and
 generated graph, run the explicit POC candidate with `buildopt impact`. It
 selects only a repository-authorized alternative and restores the full graph
-for unknown/global changes or `BUILDOPT_BYPASS=1`. See the
+for unknown/global changes or `BUILDOPT_BYPASS=1`. On the pinned Spring
+Framework workload, direct discovery saved 28.72%; the installed command still
+saved 15.76% after package, launcher, manifest and graph-validation overhead,
+with 8/8 positive pairs and identical declared outputs. See the
 [Build Impact workflow](./docs/guides/product-workflows.md#build-impact).
 
 The checked scorecard measures each optimization separately and then measures
