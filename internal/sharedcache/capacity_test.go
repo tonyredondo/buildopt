@@ -430,6 +430,7 @@ func TestByteSLRUWatermarksAndStableTTL(t *testing.T) {
 
 func TestSchemaThreeCommittedEntriesUpgradeIntoProbation(t *testing.T) {
 	ctx := context.Background()
+	testNow := time.Now().UTC()
 	root := filepath.Join(t.TempDir(), "shared")
 	policy := CapacityPolicy{
 		DeploymentBytes:        1_000,
@@ -446,7 +447,7 @@ func TestSchemaThreeCommittedEntriesUpgradeIntoProbation(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	storage.clock = func() time.Time { return lifecycleTestNow }
+	storage.clock = func() time.Time { return testNow }
 	publicKey, privateKey, err := ed25519.GenerateKey(nil)
 	if err != nil {
 		t.Fatal(err)
@@ -457,7 +458,7 @@ func TestSchemaThreeCommittedEntriesUpgradeIntoProbation(t *testing.T) {
 		publicKey,
 		privateKey,
 		1,
-		lifecycleTestNow,
+		testNow,
 	)
 	layout := storage.Layout()
 	if err := storage.Close(); err != nil {
@@ -503,7 +504,7 @@ WHERE tenant_id = 'tenant-test'
 	}
 	if repository != "repository-test" ||
 		segment != segmentProbation ||
-		expiresAt != lifecycleTestNow.Add(7*24*time.Hour).UnixMilli() {
+		expiresAt != testNow.Add(7*24*time.Hour).UnixMilli() {
 		t.Fatalf(
 			"migrated capacity entry = %q/%q/%d",
 			repository,
