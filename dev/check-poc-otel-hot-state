@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+result="${root}/benchmarks/results/poc-otel-hot-state-v1.json"
+jq -e '
+  .schemaVersion=="buildopt.evidence/poc-otel-hot-state/v1" and
+  .workItem=="POC-OTEL-HOT-PATH-001" and .method.misses==1 and .method.hits==16 and
+  (.method.exactBindings|length)==9 and (.hitPreparationNs|length)==16 and
+  .result.hitPreparationMeanNs==([.hitPreparationNs[]]|add/length) and
+  .result.hitPreparationMinNs==([.hitPreparationNs[]]|min) and
+  .result.hitPreparationMaxNs==([.hitPreparationNs[]]|max) and
+  .result.savedMeanNs==(.missPreparationNs-.result.hitPreparationMeanNs) and
+  .result.reductionRatio==(1-(.result.hitPreparationMeanNs/.missPreparationNs)) and
+  .result.savedMeanNs>0 and .result.reductionRatio>0 and
+  .result.allHitsExact and .result.selectionIdentical and
+  all(.negativeFixtures[]; .==true) and
+  .boundaries.pocOnly and (.boundaries.productionSelectionChanged|not) and
+  (.boundaries.repositorySpecificProductRuleAdded|not) and
+  (.boundaries.testOptimizationModified|not) and (.boundaries.performanceClaim|not)
+' "$result" >/dev/null
+printf 'OpenTelemetry exact-bound hot state OK: 16 hits reduce BuildOpt preparation\n'

@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `POC INSTALLED BUILD IMPACT VALUE PROVEN; OTEL STABILITY OPTIMIZATION ACTIVE` — bounded Spring scopes qualify, while the stable OpenTelemetry transfer is being optimized against native Gradle without moving its gate<br>
-**Current phase:** `POC OTEL HOT-PATH OPTIMIZATION` — typed producers safely reduce candidate work; now reuse exact-bound validated state before the terminal 4/4 gate<br>
+**Current phase:** `POC OTEL STABILITY VALIDATION` — graph reduction and exact-bound hot state are complete; package and run the terminal 4/4 gate<br>
 **POC functional target:** measurable net build-time reduction from the qualified Build Impact and exact reviewed-source Task/Patch routes; no-value Safe Cache or Runtime candidates remain disabled<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -95,7 +95,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-SPRING-INSTALLED-IMPACT | Measure the installed command on the qualified Spring workload against optimized native Gradle | `DONE` | 1/1 | `E-187` |
 | POC-SPRING-IMPACT-BREADTH | Test the installed mechanism on a second Spring output scope, a shared-source change and a global fallback | `DONE` | 2/2 | `E-188..191` |
 | POC-OTEL-SPRING-FAMILY | Transfer the installed mechanism to the stable OpenTelemetry Spring-family build boundary | `DONE` | 2/2 | `E-192`, `E-198` |
-| POC-OTEL-OPTIMIZATION | Turn the favorable but unstable OpenTelemetry signal into a repeatable installed-path advantage | `DOING` | 2/4 | `E-199..201` |
+| POC-OTEL-OPTIMIZATION | Turn the favorable but unstable OpenTelemetry signal into a repeatable installed-path advantage | `DOING` | 3/4 | `E-199..202` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -185,8 +185,8 @@ than partners. Test Optimization remains a separate product.
 | 36 | `POC-OTEL-SPRING-FAMILY-001` | Measure the installed candidate over four alternating pairs and issue the fixed qualify-or-retain decision | `DONE` | Codex |
 | 37 | `POC-OTEL-OVERHEAD-001` | Attribute installed BuildOpt time across loading, validation, planning, launch and teardown without changing selection | `DONE` | Codex |
 | 38 | `POC-OTEL-GRAPH-001` | Reduce generic candidate work only where the declared graph and required outputs prove it unnecessary | `DONE` | Codex |
-| 39 | `POC-OTEL-HOT-PATH-001` | Reuse exact-digest-bound validated manifest, graph and plan state on hot invocations without weakening drift or fallback checks | `DOING` | Codex |
-| 40 | `POC-OTEL-STABILITY-001` | Repeat the fixed installed-path comparison and require the complete stable value gate | `WAITING` | Codex |
+| 39 | `POC-OTEL-HOT-PATH-001` | Reuse exact-digest-bound validated manifest, graph and plan state on hot invocations without weakening drift or fallback checks | `DONE` | Codex |
+| 40 | `POC-OTEL-STABILITY-001` | Repeat the fixed installed-path comparison and require the complete stable value gate | `DOING` | Codex |
 
 The raw diagnostic block is closed and unchanged. `E-172` corrects its
 ownership interpretation: Mockito's 242.690-second `compileTestJava` is
@@ -1047,14 +1047,14 @@ Test Optimization is an explicit non-goal for all functional and documentation t
 |---|---|---|---|---|
 | `POC-OTEL-OVERHEAD-001` | Emit machine-readable non-overlapping phase timings for manifest/graph loading, validation/planning, launcher preparation, Gradle execution and teardown | `DONE` | Codex | `E-200`: 16 reconciled installed-path samples over the exact 435,875-byte graph |
 | `POC-OTEL-GRAPH-001` | Remove only generically provable unnecessary candidate work; retain ambiguity/global full-graph fallback and production conservatism | `DONE` | Codex | `E-201`: typed producers remove three nodes/two executed tasks with 125 exact outputs |
-| `POC-OTEL-HOT-PATH-001` | Reuse validated POC state only when repository, manifest, graph, changes, wrapper and executable digests all match | `DOING` | Codex | Miss/hit/drift tests and measured BuildOpt-owned hot-path reduction with identical selection |
-| `POC-OTEL-STABILITY-001` | Package the optimized revision and execute four alternating offline pairs against the unchanged optimized native control | `WAITING` | Codex | Checked terminal JSON retaining every pair and the global fallback result |
+| `POC-OTEL-HOT-PATH-001` | Reuse validated POC state only when repository, manifest, graph, changes, wrapper and executable digests all match | `DONE` | Codex | `E-202`: 16 exact hits reduce preparation 46.2%; all tested drift misses |
+| `POC-OTEL-STABILITY-001` | Package the optimized revision and execute four alternating offline pairs against the unchanged optimized native control | `DOING` | Codex | Checked terminal JSON retaining every pair and the global fallback result |
 
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
 | `POC-OTEL-OPTIMIZATION-G01` | Every BuildOpt-owned phase is separately measured, totals reconcile, and instrumentation does not change selection or required outputs | `DONE` | `E-200`: 16/16 reports reconcile; candidate identity is unchanged and the real fixture preserves exact artifacts |
 | `POC-OTEL-OPTIMIZATION-G02` | Generic graph/work reduction removes executed work while preserving all declared outputs and every conservative fallback | `DONE` | `E-201`: 259 to 256 nodes and 6 to 4 executed tasks; all 125 outputs exact; arbitrary/Test/global cases fail closed |
-| `POC-OTEL-OPTIMIZATION-G03` | An exact-bound hot-path hit performs less BuildOpt-owned work than a miss and any drift fails closed without changing Gradle semantics | `TODO` | `E-199`: objective frozen; implementation pending |
+| `POC-OTEL-OPTIMIZATION-G03` | An exact-bound hot-path hit performs less BuildOpt-owned work than a miss and any drift fails closed without changing Gradle semantics | `DONE` | `E-202`: 74.97-ms miss versus 40.34-ms hit mean; exact selection and drift misses |
 | `POC-OTEL-OPTIMIZATION-G04` | Four alternating pairs save at least 500 ms/2%, have a positive paired lower bound and 4/4 positive pairs, with exact non-empty outputs, safe global fallback and zero product failures | `TODO` | `E-199`: unchanged terminal value gate; measurement pending |
 
 ---
@@ -1380,6 +1380,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-199` | 2026-08-06 | `POC-OTEL-OVERHEAD-001`, `POC-OTEL-GRAPH-001`, `POC-OTEL-HOT-PATH-001`, `POC-OTEL-STABILITY-001` | The next POC objective is frozen from the failure modes in `E-198`: measure every BuildOpt-owned phase before tuning; reduce only graph-proven unnecessary candidate work; reuse validated state only under exact repository/input/tool digests; then repeat the same optimized-native comparison. The final gate remains 500 ms/2%, positive paired lower bound, 4/4 positive pairs, exact non-empty outputs, safe global fallback and zero product failures. Intermediate timing may guide implementation but cannot authorize a claim | `DOING` POC optimization only: no repository-specific production rule, threshold movement, discarded pair, public release, soak, design partner, autonomous promotion or Test Optimization work is authorized |
 | `E-200` | 2026-08-06 | `POC-OTEL-OVERHEAD-001`, `POC-OTEL-OPTIMIZATION-G01` | The versioned phase-timing schema, installed CLI option, atomic private report, focused unit/cross-platform builds and real Gradle onboarding fixture prove non-overlapping planner/launcher attribution without changing selection or outputs. The checked [OpenTelemetry overhead evidence](./benchmarks/results/poc-otel-overhead-v1.json) retains 16 samples over the exact 435,875-byte declared graph using installed BuildOpt `190113a4252ef0d9e6a9c40c267ffe0930c85f65` and a neutral child. Preparation averaged 47.699 ms: 36.432 ms graph load/validation, 9.737 ms impact evaluation and 1.531 ms remaining preparation. Total including the neutral child averaged 49.511 ms, range 21.112..77.382 ms, with 16/16 identical candidate decisions | `DONE` attribution decision: BuildOpt-owned pre-Gradle overhead is too small to explain the 465-ms regressive pair in `E-198`; do not micro-optimize the launcher, proceed to generic selected-work and hot-state stabilization |
 | `E-201` | 2026-08-06 | `POC-OTEL-GRAPH-001`, `POC-OTEL-OPTIMIZATION-G02` | The generic Gradle adapter now recognizes `AbstractCompile` output producers by type rather than repository-specific task names while arbitrary tasks and every graph containing `Test` remain incomplete. On pinned OpenTelemetry v2.30.0, four typed producers are complete across all 1,024 projects with the same conservative 46-project reach. The checked [graph-reduction evidence](./benchmarks/results/poc-otel-graph-reduction-v1.json) records 259 to 256 task nodes, 6 to 4 executed tasks and byte-identical 125-file manifests; global changes retain the original full graph | `DONE` correctness/work reduction only: no material timing claim, production selection change, Test Optimization change or repository-specific product rule |
+| `E-202` | 2026-08-06 | `POC-OTEL-HOT-PATH-001`, `POC-OTEL-OPTIMIZATION-G03` | The installed POC can cache a validated plan only under an exact binding of repository revision, manifest, graph, generated state, changes, Wrapper, executable and Gradle options. The checked [hot-state evidence](./benchmarks/results/poc-otel-hot-state-v1.json) measures one 74.97-ms miss and 16 exact hits averaging 40.34 ms, saving 34.63 ms/46.2% with identical selection. Changes, Wrapper and revision drift miss; arbitrary tasks and `Test` remain fail-closed | `DONE` POC state reuse only: no output cache, production authority, repository-specific rule, Test Optimization change or build-time claim |
 
 ---
 

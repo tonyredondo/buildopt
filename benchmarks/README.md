@@ -129,6 +129,14 @@ generic work reduction but deliberately makes no material timing claim.
 ./dev/check-poc-otel-graph-reduction
 ```
 
+Exact-bound POC hot state then reduced BuildOpt preparation from a 74.97-ms
+miss to 40.34 ms across 16 hits (46.2%), with identical selection. Changes,
+Wrapper or revision drift all miss and re-enter the normal planner.
+
+```bash
+./dev/check-poc-otel-hot-state
+```
+
 | Mechanism | Mean result | Exact paired 95% interval | Classification |
 |---|---:|---:|---|
 | Default native-cache fallback, Kotlin | 79 ms faster (8.9%) | +6 to +156 ms | `NO_VALUE_NO_ACTION`; same cache mechanism, no acceleration claim |

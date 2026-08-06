@@ -1,0 +1,14 @@
+{
+  "schemaVersion":"buildopt.evidence/poc-otel-hot-state/v1",
+  "workItem":"POC-OTEL-HOT-PATH-001",
+  "capturedAt":"2026-08-06T20:14:29Z",
+  "buildopt":{"revision":"a29a67d2ec61af423a80a3867bbef2399ecdbfe2","executableSha256":"c3847a94341a201d37d624bbacb65caaa8f582e6671c8916d97882b62d5436ee"},
+  "repository":{"nameWithOwner":"open-telemetry/opentelemetry-java-instrumentation","revision":"080c1d32ca676ba7b0210c21b60cce8e7ac39058"},
+  "method":{"misses":1,"hits":16,"child":"NEUTRAL_TRUE_WRAPPER","exactBindings":["repositoryRevision","manifest","graph","generatedManifest","changes","wrapperJar","wrapperProperties","buildoptExecutable","gradleOptions"]},
+  "missPreparationNs":74973707,
+  "hitPreparationNs":[52394024,34592938,50658264,43898857,31740636,34355897,35697691,44069398,53235819,42976056,34774369,30831781,45322840,45971240,32584000,32374863],
+  "result":{"hitPreparationMeanNs":40342417.0625,"hitPreparationMinNs":30831781,"hitPreparationMaxNs":53235819,"savedMeanNs":34631289.9375,"reductionRatio":0.4619124666931569,"allHitsExact":true,"selectionIdentical":true},
+  "negativeFixtures":{"changesDriftMisses":true,"wrapperDriftMisses":true,"revisionDriftMisses":true,"arbitraryTaskFailsClosed":true,"gradleTestFailsClosed":true},
+  "boundaries":{"pocOnly":true,"productionSelectionChanged":false,"repositorySpecificProductRuleAdded":false,"testOptimizationModified":false,"performanceClaim":false}
+}
+
