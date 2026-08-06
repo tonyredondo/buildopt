@@ -18,6 +18,7 @@ const impactTimingSchemaVersion = "buildopt.build-impact/poc-phase-timings/v1"
 type impactTimingReport struct {
 	SchemaVersion       string                               `json:"schemaVersion"`
 	CandidateSelected   bool                                 `json:"candidateSelected"`
+	HotStateHit         bool                                 `json:"hotStateHit"`
 	AlternativeID       string                               `json:"alternativeId,omitempty"`
 	Reason              string                               `json:"reason"`
 	EntrypointCount     int                                  `json:"entrypointCount"`
@@ -47,6 +48,7 @@ func newImpactTimingState(path string, startedAt time.Time, invocation impactInv
 		report: impactTimingReport{
 			SchemaVersion:       impactTimingSchemaVersion,
 			CandidateSelected:   invocation.plan.CandidateSelected,
+			HotStateHit:         invocation.hotStateHit,
 			AlternativeID:       invocation.plan.AlternativeID,
 			Reason:              invocation.plan.Reason,
 			EntrypointCount:     len(invocation.plan.Entrypoints),

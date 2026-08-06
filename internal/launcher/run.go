@@ -111,6 +111,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 				impact.plan.Reason,
 			)
 		}
+		if impact.hotStateHit {
+			_, _ = fmt.Fprintln(stderr, "buildopt: exact-bound Build Impact POC hot state reused")
+		}
 		args = append([]string{"gradle"}, impact.gradleArgs...)
 	}
 	if len(args) > 0 && args[0] == "gradle" {

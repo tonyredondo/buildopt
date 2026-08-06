@@ -18,7 +18,7 @@ import (
 const (
 	maximumImpactChangesBytes = 1 << 20
 	maximumImpactChangedPaths = 10_000
-	impactUsage               = "usage: buildopt impact --repository-id OWNER/REPO --changes-file PATH [--pipeline-class CLASS] [--manifest PATH] [--graph PATH] [--generated-manifest PATH] [--timings-file PATH] [--gradle-option VALUE ...]\n"
+	impactUsage               = "usage: buildopt impact --repository-id OWNER/REPO --changes-file PATH [--pipeline-class CLASS] [--manifest PATH] [--graph PATH] [--generated-manifest PATH] [--timings-file PATH] [--hot-state-dir PATH --repository-revision REVISION] [--gradle-option VALUE ...]\n"
 )
 
 type repeatedStringFlag []string
@@ -61,6 +61,7 @@ type impactInvocation struct {
 	plan          buildimpact.POCCandidatePlan
 	timingsPath   string
 	preparationNs int64
+	hotStateHit   bool
 }
 
 func prepareImpactInvocation(args []string, bypass bool) (impactInvocation, error) {
@@ -74,6 +75,8 @@ func prepareImpactInvocation(args []string, bypass bool) (impactInvocation, erro
 	graphPath := flags.String("graph", "buildopt-impact-graph.generated.json", "repository-relative generated graph")
 	generatedPath := flags.String("generated-manifest", "buildopt-impact.generated.json", "repository-relative generated manifest")
 	timingsPath := flags.String("timings-file", "", "repository-relative machine-readable phase timing output")
+	hotStateDir := flags.String("hot-state-dir", "", "absolute private POC hot-state directory")
+	repositoryRevision := flags.String("repository-revision", "", "immutable repository revision bound to hot state")
 	var gradleOptions repeatedStringFlag
 	flags.Var(&gradleOptions, "gradle-option", "Gradle option passed before the selected entrypoints; repeat for multiple values")
 	if err := flags.Parse(args); err != nil || flags.NArg() != 0 || *repositoryID == "" || *changesFile == "" {
@@ -95,7 +98,7 @@ func prepareImpactInvocation(args []string, bypass bool) (impactInvocation, erro
 	if err != nil {
 		return impactInvocation{}, err
 	}
-	plan, err := buildimpact.PlanPOCCandidate(buildimpact.POCCandidateOptions{
+	planOptions := buildimpact.POCCandidateOptions{
 		RepositoryRoot:        repositoryRoot,
 		ManifestPath:          *manifestPath,
 		GraphPath:             *graphPath,
@@ -104,9 +107,34 @@ func prepareImpactInvocation(args []string, bypass bool) (impactInvocation, erro
 		PipelineClass:         *pipelineClass,
 		ChangedPaths:          changedPaths,
 		LocalBypass:           bypass,
+	}
+	hotState, err := prepareImpactHotState(impactHotStateOptions{
+		RepositoryRoot:     repositoryRoot,
+		RepositoryID:       *repositoryID,
+		PipelineClass:      *pipelineClass,
+		RepositoryRevision: *repositoryRevision,
+		ManifestPath:       *manifestPath,
+		GraphPath:          *graphPath,
+		GeneratedPath:      *generatedPath,
+		ChangesPath:        *changesFile,
+		GradleOptions:      gradleOptions,
+		StateDirectory:     *hotStateDir,
 	})
 	if err != nil {
 		return impactInvocation{}, err
+	}
+	plan, hotStateHit, err := hotState.load()
+	if err != nil {
+		return impactInvocation{}, err
+	}
+	if !hotStateHit {
+		plan, err = buildimpact.PlanPOCCandidate(planOptions)
+		if err != nil {
+			return impactInvocation{}, err
+		}
+		if err := hotState.store(plan); err != nil {
+			return impactInvocation{}, err
+		}
 	}
 	resolvedTimingsPath, err := resolveImpactTimingsPath(repositoryRoot, *timingsPath)
 	if err != nil {
@@ -119,6 +147,7 @@ func prepareImpactInvocation(args []string, bypass bool) (impactInvocation, erro
 		plan:          plan,
 		timingsPath:   resolvedTimingsPath,
 		preparationNs: time.Since(startedAt).Nanoseconds(),
+		hotStateHit:   hotStateHit,
 	}, nil
 }
 
