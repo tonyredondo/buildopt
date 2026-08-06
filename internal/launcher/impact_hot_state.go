@@ -186,10 +186,13 @@ func (state impactHotState) store(plan buildimpact.POCCandidatePlan) error {
 }
 
 func impactRegularFileDigest(root, relative string) (string, error) {
-	if relative == "" || filepath.IsAbs(relative) || filepath.Clean(relative) != relative {
+	platformRelative := filepath.FromSlash(relative)
+	if relative == "" || platformRelative == "." ||
+		!filepath.IsLocal(platformRelative) ||
+		filepath.Clean(platformRelative) != platformRelative {
 		return "", errors.New("Build Impact hot-state input path is unsafe")
 	}
-	return impactAbsoluteFileDigest(filepath.Join(root, relative))
+	return impactAbsoluteFileDigest(filepath.Join(root, platformRelative))
 }
 
 func impactAbsoluteFileDigest(path string) (string, error) {
