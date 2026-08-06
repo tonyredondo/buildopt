@@ -204,6 +204,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-onboarding-performance"
         "${buildopt_script_dir}/check-build-optimization-performance" >/dev/null
         "${buildopt_script_dir}/check-poc-spring-installed-impact" >/dev/null
+        "${buildopt_script_dir}/check-poc-spring-impact-breadth" >/dev/null
         "${buildopt_script_dir}/check-poc-value-baseline" >/dev/null
         "${buildopt_script_dir}/check-poc-value-validation" >/dev/null
         "${buildopt_script_dir}/check-poc-breadth" \

@@ -9,12 +9,17 @@ fi
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_spec="${buildopt_repo_root}/specs/poc-spring-impact-breadth-v1.json"
+buildopt_runner="${buildopt_script_dir}/run-poc-spring-impact-breadth"
+buildopt_guard="${buildopt_script_dir}/poc-spring-test-preparation.guard.init.gradle"
 buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-spring-impact-breadth-v1.json"}
 
-command -v jq >/dev/null 2>&1 || {
-    printf 'required Spring breadth validator is unavailable: jq\n' >&2
-    exit 1
-}
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Spring breadth validator is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
 
 jq -e '
     .schemaVersion == "buildopt.specs/poc-spring-impact-breadth/v1" and
@@ -55,5 +60,127 @@ if [[ ! -e "${buildopt_result}" ]]; then
     exit 0
 fi
 
-printf 'Spring Impact breadth result validation is not active until the runner is committed\n' >&2
-exit 1
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_runner_sha=$(sha256sum "${buildopt_runner}" | awk '{print $1}')
+buildopt_guard_sha=$(sha256sum "${buildopt_guard}" | awk '{print $1}')
+jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sha}" \
+    --arg guardSha "${buildopt_guard_sha}" --slurpfile spec "${buildopt_spec}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    def gitsha: type == "string" and test("^[0-9a-f]{40}$");
+    def bootstrap_mean($data; $sample):
+        reduce range(0; 4) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $data[((.state / 1073741824) | floor)].savedMs) |
+        .sum / 4;
+    def bootstrap95($data):
+        ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
+        [$r[102], $r[3993]];
+    def valid_cell($cell; $expected):
+        $cell.observations as $data |
+        (($data | map(.controlDurationMs) | add) / 4) as $controlMean |
+        (($data | map(.candidateDurationMs) | add) / 4) as $candidateMean |
+        (($data | map(.savedMs) | add) / 4) as $mean |
+        (($data | map(.savedMs) | add) /
+            ($data | map(.controlDurationMs) | add)) as $ratio |
+        bootstrap95($data) as $interval |
+        ($data | map(select(.savedMs > 0)) | length) as $positive |
+        ($mean >= $spec[0].valueGate.minimumSavedMsPerSelectiveCell and
+         $ratio >= $spec[0].valueGate.minimumReductionRatioPerSelectiveCell and
+         $interval[0] > 0 and
+         $positive >= $spec[0].valueGate.minimumPositivePairsPerSelectiveCell) as $qualified |
+        $cell.id == $expected.id and
+        $cell.changeClass == $expected.changeClass and
+        $cell.changePath == $expected.changePath and
+        $cell.candidateEntrypoints == $expected.candidateEntrypoints and
+        $cell.requiredOutputRoots == $expected.requiredOutputRoots and
+        $cell.graphSha256 == $expected.expectedGraphSha256 and
+        ($data | length) == 4 and
+        [$data[].pair] == [1, 2, 3, 4] and
+        [$data[].order] == [
+            "CONTROL_FIRST", "CANDIDATE_FIRST",
+            "CONTROL_FIRST", "CANDIDATE_FIRST"
+        ] and
+        all($data[];
+            (.controlDurationMs | type == "number" and . > 0) and
+            (.candidateDurationMs | type == "number" and . > 0) and
+            .savedMs == (.controlDurationMs - .candidateDurationMs) and
+            (.interArmIdleGapMs | type == "number" and . >= 0 and
+                . <= $spec[0].measurement.maximumInterArmIdleGapMs) and
+            (.controlMaximumResidentSetKb | type == "number" and . > 0) and
+            (.candidateMaximumResidentSetKb | type == "number" and . > 0) and
+            (.requiredOutputSha256 | sha256) and
+            (.requiredOutputCount | type == "number" and . > 0) and
+            .rootBuildGradleTestTasksExecuted == false and
+            .commonBuildLogicTestTask == $spec[0].measurement.commonBuildLogicTestTask and
+            .commonBuildLogicTestOutcome == $spec[0].measurement.commonBuildLogicTestOutcome and
+            .productAttributableFailure == false) and
+        $cell.result == {
+            pairs: 4,
+            controlMeanMs: $controlMean,
+            candidateMeanMs: $candidateMean,
+            meanSavedMs: $mean,
+            reductionRatio: $ratio,
+            interval95SavedMs: $interval,
+            positivePairs: $positive,
+            qualified: $qualified
+        };
+    .schemaVersion == "buildopt.evidence/poc-spring-impact-breadth/v1" and
+    .workItem == "POC-SPRING-IMPACT-BREADTH-001" and
+    (.capturedAt | fromdateiso8601) and
+    .specSha256 == $specSha and
+    (.buildopt.revision | gitsha) and
+    (.buildopt.executableSha256 | sha256) and
+    (.buildopt.packageSha256 | sha256) and
+    .buildopt.packageVersion == "0.3.0-dev" and
+    .buildopt.runnerScriptSha256 == $runnerSha and
+    .buildopt.testGuardScriptSha256 == $guardSha and
+    .buildopt.launcherOverheadIncluded == true and
+    .repository == {
+        nameWithOwner: $spec[0].repository.nameWithOwner,
+        revision: $spec[0].repository.revision,
+        sourceArchiveSha256: $spec[0].repository.sourceArchiveSha256
+    } and
+    .runner == $spec[0].runner and
+    .preparation.onlinePreflightMeasured == false and
+    .preparation.onlinePreflightSuccess == true and
+    (.preparation.onlinePreflightWallClockMs | type == "number" and . > 0) and
+    .preparation.measuredNetwork == "DISCONNECTED" and
+    .preparation.dependencyMode == "GRADLE_OFFLINE" and
+    (.preparation.buildCacheSeedSha256 | sha256) and
+    .preparation.preflightDaemonStoppedBeforeArmSetup == true and
+    .preparation.cacheSeedRestoredBeforeEveryArm == true and
+    .preparation.outputsRemovedBeforeEveryArm == true and
+    .preparation.fixedMutationAppliedAfterCacheRestore == true and
+    (.selectiveCells | length) == 2 and
+    valid_cell(.selectiveCells[0]; $spec[0].selectiveCells[0]) and
+    valid_cell(.selectiveCells[1]; $spec[0].selectiveCells[1]) and
+    .fallbackCell == {
+        id: $spec[0].fallbackCell.id,
+        changePath: $spec[0].fallbackCell.changePath,
+        mode: $spec[0].fallbackCell.expectedMode,
+        reason: $spec[0].fallbackCell.expectedReason,
+        entrypoints: $spec[0].fallbackCell.expectedEntrypoints,
+        outsideSelectiveScopeTaskObserved: ":spring-jms:compileJava",
+        buildSuccessful: true,
+        performanceClaim: false
+    } and
+    (.selectiveCells | map(select(.result.qualified)) | length) as $qualified |
+    .result == {
+        qualifiedSelectiveCells: $qualified,
+        fallbackPassed: true,
+        decision: (if $qualified == 2 then
+            $spec[0].terminalDecisions.allSelectiveCellsQualifyAndFallbackPasses
+            else $spec[0].terminalDecisions.anySelectiveCellFailsOrFallbackFails end)
+    } and
+    .boundaries == $spec[0].boundaries
+' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'Spring Impact breadth validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'Spring Impact breadth evidence OK: %s\n' "${buildopt_result}"

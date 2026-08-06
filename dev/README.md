@@ -2626,6 +2626,21 @@ observations on the declared 12-CPU host with:
 ./dev/check-poc-spring-test-preparation-result /absolute/path/to/result.json
 ```
 
+The installed Spring breadth experiment is frozen in
+`specs/poc-spring-impact-breadth-v1.json`. It compares two additional selective
+output scopes against optimized native Gradle and separately proves that a
+global build-logic change retains the full graph:
+
+```bash
+./dev/run-poc-spring-impact-breadth /absolute/path/to/result.json
+./dev/check-poc-spring-impact-breadth /absolute/path/to/result.json
+```
+
+The runner uses an isolated installed package, all 12 host CPUs, one unmeasured
+preflight, four alternating pairs per selective cell, byte-identical declared
+outputs and the unchanged 500-ms/2%/positive-bound gate. It is a bounded POC
+experiment, not a production or Test Optimization path.
+
 The runner downloads the fixed Spring revision, performs networked dependency
 preparation outside the measured region, stops that daemon, and then measures
 offline control/candidate arms with separate Gradle homes and the same restored

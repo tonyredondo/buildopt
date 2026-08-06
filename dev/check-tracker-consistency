@@ -114,7 +114,7 @@ buildopt_required_tracker_text=(
     "| \`POC-SPRING-VALUE-G01\` | At least one generic Spring mechanism clears the unchanged 500-ms/2%/positive-bound gate with identical outputs and all requested tests preserved | OpenTelemetry transfer | \`DONE\`"
     "| \`POC-SPRING-INSTALLED-IMPACT-G01\` | The installed candidate clears the unchanged Spring 500-ms/2%/positive-bound gate with exact outputs and all launcher overhead included | Onboarding value claim for Build Impact | \`DONE\`"
     "| \`POC-SPRING-IMPACT-BREADTH-PREREG-001\` | Freeze two additional selective Spring cells and one conservative full-graph fallback before timing | \`DONE\`"
-    "| \`POC-SPRING-IMPACT-BREADTH-001\` | Execute the installed Spring breadth matrix and issue its terminal broaden-or-retain decision without moving thresholds | \`TODO\`"
+    "| \`POC-SPRING-IMPACT-BREADTH-001\` | Execute the installed Spring breadth matrix and issue its terminal broaden-or-retain decision without moving thresholds | \`DOING\`"
     "| \`POC-SPRING-IMPACT-BREADTH-G01\` | Both preregistered selective Spring cells clear the unchanged value gate and the global build-logic cell retains the full graph | Broader installed Spring claim | \`TODO\`"
     "| \`A1-G06\` | Safe Cache is non-regressive versus optimized native cache"
     "| \`B-G03\` | Runtime Tuning exceeds the POC accelerator threshold"
