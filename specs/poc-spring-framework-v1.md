@@ -44,7 +44,9 @@ harness restores the same original-source native-cache seed, removes outputs
 outside timing, and then applies the same fixed source mutation. This keeps
 private daemons and dependency state warm while forcing the mutated
 `checkstyleNohttp` key to execute in both arms instead of accepting a cached
-result as Runtime Tuning evidence.
+result as Runtime Tuning evidence. The online preflight daemon is stopped
+before either arm is created, so it cannot consume CPU during warmups or
+accepted pairs.
 
 Each cell must save at least 500 milliseconds and 2%, have a positive lower
 95% paired-bootstrap bound, preserve non-empty required outputs, preserve all

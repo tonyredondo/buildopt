@@ -112,6 +112,7 @@ jq -e '
     .followUpMeasurement.outputsRemovedBeforeTiming == true and
     .followUpMeasurement.fixedMutationAppliedAfterCacheRestore == true and
     .followUpMeasurement.mutatedCheckstyleKeyMustExecuteInBothArms == true and
+    .followUpMeasurement.preflightDaemonStoppedBeforeArmSetup == true and
     .followUpMeasurement.controlMustRetainUpstreamBuildCache == true and
     .followUpMeasurement.controlMustRetainUpstreamParallelism == true and
     .valueGate == {

@@ -123,6 +123,7 @@
     "outputsRemovedBeforeTiming": true,
     "fixedMutationAppliedAfterCacheRestore": true,
     "mutatedCheckstyleKeyMustExecuteInBothArms": true,
+    "preflightDaemonStoppedBeforeArmSetup": true,
     "controlMustRetainUpstreamBuildCache": true,
     "controlMustRetainUpstreamParallelism": true
   },

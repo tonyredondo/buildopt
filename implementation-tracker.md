@@ -1275,6 +1275,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-06 | Corrected the Spring paired harness before accepting any pair after its unmeasured warmup exposed a still-active preflight daemon; the harness now stops that daemon before creating isolated arms while leaving workload, candidate, outputs, tests, pair order, and thresholds unchanged | Codex |
 | 2026-08-06 | Preregistered and implemented the exact Spring Runtime Tuning candidate after the diagnostic but before accepted timing: raise only `checkstyleNohttp` from 1 GiB to 2 GiB on a runner with at least 14 GiB, preserve every other task value and all semantics, and require the eight-pair full-`check` gate before claiming value | Codex |
 | 2026-08-06 | Corrected generic Gradle discovery to ignore self-project configuration dependencies; a non-gating Spring probe then rejected the conservative reverse-closure alternative after it reduced 93 tasks to 47 but regressed 450 ms with all 23,574 outputs identical | Codex |
 | 2026-08-06 | Closed the 12-CPU Spring diagnostic with exact wall clock, profile phases, cache/task counts, required-output manifests, and 41,276 test outcomes; authorized only separate paired Build Impact and Runtime Tuning hypotheses without claiming savings | Codex |

@@ -74,6 +74,7 @@ jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
     .preparation.measuredNetwork == "DISCONNECTED" and
     .preparation.dependencyMode == "GRADLE_OFFLINE" and
     (.preparation.buildCacheSeedSha256 | sha256) and
+    .preparation.preflightDaemonStoppedBeforeArmSetup == true and
     .preparation.cacheSeedRestoredBeforeEveryArm == true and
     .preparation.outputsRemovedBeforeEveryArm == true and
     .preparation.fixedMutationAppliedAfterCacheRestore == true and

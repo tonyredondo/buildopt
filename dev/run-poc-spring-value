@@ -35,8 +35,26 @@ fi
 "${buildopt_script_dir}/check-poc-spring-framework" >/dev/null
 
 buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-spring-value.XXXXXX")
+buildopt_stop_gradle() {
+    local buildopt_checkout=$1
+    local buildopt_home=$2
+    if [[ -x "${buildopt_checkout}/gradlew" && -d "${buildopt_home}" ]]; then
+        (
+            cd "${buildopt_checkout}"
+            env GRADLE_USER_HOME="${buildopt_home}" \
+                "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+                ./gradlew --stop
+        ) >/dev/null 2>&1 || true
+    fi
+}
 buildopt_cleanup() {
     if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-spring-value."* ]]; then
+        buildopt_stop_gradle "${buildopt_root}/source" \
+            "${buildopt_root}/preflight-home"
+        buildopt_stop_gradle "${buildopt_root}/control/checkout" \
+            "${buildopt_root}/control/gradle-home"
+        buildopt_stop_gradle "${buildopt_root}/candidate/checkout" \
+            "${buildopt_root}/candidate/gradle-home"
         rm -rf -- "${buildopt_root}"
     fi
 }
@@ -121,6 +139,8 @@ grep -Fq 'BUILD SUCCESSFUL' "${buildopt_preflight_log}" || {
     printf 'Spring preflight lacks the success marker\n' >&2
     exit 1
 }
+buildopt_stop_gradle "${buildopt_root}/source" \
+    "${buildopt_root}/preflight-home"
 
 buildopt_cache_seed="${buildopt_root}/build-cache-seed.tar.gz"
 tar -C "${buildopt_root}/preflight-home/caches" -czf "${buildopt_cache_seed}" \
@@ -486,6 +506,7 @@ jq -n \
             measuredNetwork: "DISCONNECTED",
             dependencyMode: "GRADLE_OFFLINE",
             buildCacheSeedSha256: $cacheSeedSha,
+            preflightDaemonStoppedBeforeArmSetup: true,
             cacheSeedRestoredBeforeEveryArm: true,
             outputsRemovedBeforeEveryArm: true,
             fixedMutationAppliedAfterCacheRestore: true
