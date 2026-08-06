@@ -21,6 +21,13 @@ The measured build outputs and native Gradle cache are not stored in this
 state. The separate global-change probe must miss the state, retain all 53
 control entrypoints with `IMPACT_GLOBAL_CHANGE`, and build successfully.
 
+Protocol revision 2 was recorded after both unmeasured warm-ups completed and
+before any observation began. The runner referenced the candidate pair log in
+its hot-state assertion before assigning that path, so Bash stopped on an
+unbound variable. Revision 2 moves the same assertion after both pair arms;
+the implementation, control, candidate, measurement, outputs and value gate
+are unchanged. The failed run contributed no accepted timing.
+
 Qualification requires all of the following without moving thresholds or
 discarding pairs: mean saving of at least 500 ms and 2%, a positive paired
 bootstrap lower bound, four positive pairs, identical non-empty outputs, zero

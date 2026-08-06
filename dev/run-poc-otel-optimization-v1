@@ -413,12 +413,6 @@ for buildopt_pair in {1..4}; do
     if ((buildopt_pair % 2 == 1)); then
         buildopt_order=CONTROL_FIRST
     fi
-    grep -Fq 'buildopt: exact-bound Build Impact POC hot state reused' \
-        "${buildopt_candidate_log}" || {
-        printf 'OpenTelemetry candidate pair %s did not reuse exact-bound hot state\n' \
-            "${buildopt_pair}" >&2
-        exit 1
-    }
     buildopt_control_log="${buildopt_root}/logs/pair-${buildopt_pair}-control.log"
     buildopt_candidate_log="${buildopt_root}/logs/pair-${buildopt_pair}-candidate.log"
     if [[ "${buildopt_order}" == CONTROL_FIRST ]]; then
@@ -442,6 +436,12 @@ for buildopt_pair in {1..4}; do
         buildopt_control_duration=${buildopt_duration_ms}
         buildopt_control_rss=${buildopt_max_rss_kb}
     fi
+    grep -Fq 'buildopt: exact-bound Build Impact POC hot state reused' \
+        "${buildopt_candidate_log}" || {
+        printf 'OpenTelemetry candidate pair %s did not reuse exact-bound hot state\n' \
+            "${buildopt_pair}" >&2
+        exit 1
+    }
     buildopt_gap_ms=$(((buildopt_started_ns - buildopt_first_finished) / 1000000))
     ((buildopt_gap_ms <= 5000)) || {
         printf 'OpenTelemetry pair %s exceeded inter-arm gap: %s ms\n' \
