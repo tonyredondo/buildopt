@@ -137,6 +137,20 @@ Wrapper or revision drift all miss and re-enter the normal planner.
 ./dev/check-poc-otel-hot-state
 ```
 
+The subsequent terminal OpenTelemetry run retained every preregistered pair.
+Typed producers and exact hot state preserved all 125 outputs and the global
+full-graph fallback, but did not stabilize wall-clock value. Native Gradle
+averaged 13,382.5 ms and BuildOpt 13,641.75 ms: BuildOpt was 259.25 ms/1.94%
+slower. Pair differences were `+2729`, `-67`, `-4019`, and `+320` ms, producing
+a paired interval of −2,934.25..+2,030 ms and only 2/4 positive pairs. The
+frozen gate therefore remains open; these measurements must not be retried or
+filtered as if they qualified.
+
+```bash
+./dev/check-poc-otel-optimization-v1-result \
+  benchmarks/results/poc-otel-optimization-v1.json
+```
+
 | Mechanism | Mean result | Exact paired 95% interval | Classification |
 |---|---:|---:|---|
 | Default native-cache fallback, Kotlin | 79 ms faster (8.9%) | +6 to +156 ms | `NO_VALUE_NO_ACTION`; same cache mechanism, no acceleration claim |

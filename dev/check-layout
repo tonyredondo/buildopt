@@ -412,6 +412,7 @@ buildopt_required_files=(
     "specs/poc-otel-optimization-v1.md"
     "benchmarks/results/poc-spring-installed-impact-v1.json"
     "benchmarks/results/poc-spring-impact-breadth-v1.json"
+    "benchmarks/results/poc-otel-optimization-v1.json"
     "benchmarks/results/poc-stability-v1-control-first.json"
     "benchmarks/results/poc-stability-v1-candidate-first.json"
     "benchmarks/results/poc-stability-v1-decision.json"

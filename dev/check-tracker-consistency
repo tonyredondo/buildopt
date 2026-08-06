@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`POC INSTALLED BUILD IMPACT VALUE PROVEN; OTEL STABILITY OPTIMIZATION ACTIVE\`"
-    "**Current phase:** \`POC OTEL STABILITY VALIDATION\`"
+    "**Overall status:** \`POC INSTALLED BUILD IMPACT VALUE PROVEN; OTEL EXECUTION VARIANCE ACTIVE\`"
+    "**Current phase:** \`POC OTEL EXECUTION ATTRIBUTION\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"
@@ -123,8 +123,10 @@ buildopt_required_tracker_text=(
     "| \`POC-OTEL-GRAPH-001\` | Reduce generic candidate work only where the declared graph and required outputs prove it unnecessary | \`DONE\`"
     "| \`POC-OTEL-HOT-PATH-001\` | Reuse exact-digest-bound validated manifest, graph and plan state on hot invocations without weakening drift or fallback checks | \`DONE\`"
     "| \`E-202\` | 2026-08-06 | \`POC-OTEL-HOT-PATH-001\`, \`POC-OTEL-OPTIMIZATION-G03\`"
+    "| \`E-203\` | 2026-08-06 | \`POC-OTEL-STABILITY-001\`, \`POC-OTEL-OPTIMIZATION-G04\`"
     "| \`E-201\` | 2026-08-06 | \`POC-OTEL-GRAPH-001\`, \`POC-OTEL-OPTIMIZATION-G02\`"
-    "| \`POC-OTEL-STABILITY-001\` | Repeat the fixed installed-path comparison and require the complete stable value gate | \`DOING\`"
+    "| \`POC-OTEL-STABILITY-001\` | Repeat the fixed installed-path comparison and require the complete stable value gate | \`DONE\`"
+    "| \`POC-OTEL-VARIANCE-001\` | Attribute the terminal regression inside Gradle task execution and define a generic corrective hypothesis before any new timing | \`DOING\`"
     "| \`POC-OTEL-OPTIMIZATION-G04\` | The optimized installed candidate clears the unchanged 500-ms/2% value gate with a positive paired lower bound, 4/4 positive pairs, exact outputs, safe fallback and zero product failures | Stable OpenTelemetry POC claim | \`TODO\`"
     "| \`A1-G06\` | Safe Cache is non-regressive versus optimized native cache"
     "| \`B-G03\` | Runtime Tuning exceeds the POC accelerator threshold"
