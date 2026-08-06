@@ -149,11 +149,14 @@
     "failure": "MANIFEST_SOURCE_WAS_NULL",
     "change": "READ_MANIFEST_FROM_BOUND_BASE_PROTOCOL",
     "diagnosticChange": "REPORT_CONSERVATIVE_FALLBACK_REASON_BEFORE_TIMING",
+    "selectionFailure": "IMPACT_NO_AUTHORIZED_ALTERNATIVE",
+    "selectionChange": "LIMIT_EXPLICIT_POC_TO_DECLARED_OUTPUT_AND_CHECK_SCOPE",
+    "productionSelectionChanged": false,
     "measurementChanged": false,
     "valueGateChanged": false
   },
   "implementation": {
-    "revision": "29ccf853aa0be2bc930b5b7fc66fc4613f515386",
+    "revision": "6e6ddeb3fffd9e1cd5e3f0ad2880ccc0b2398818",
     "command": "buildopt impact",
     "authority": "EXPLICIT_OWNER_POC_CANDIDATE",
     "productionPromotion": false

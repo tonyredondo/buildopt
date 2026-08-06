@@ -1318,6 +1318,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-06 | Limited only the explicit owner-operated Build Impact POC candidate to changed projects plus repository-declared required outputs/checks after Spring's complete reverse dependency closure rejected the previously qualified scoped alternative; production `EvaluateImpact`, `BIA-002`, thresholds and Test Optimization remain unchanged, with zero accepted installed pairs before the correction | Codex |
 | 2026-08-06 | Added an explicit pre-timing fallback diagnostic after the installed Spring warmup completed but conservatively retained the full graph; zero pairs were accepted and the diagnostic changes neither execution nor the value gate | Codex |
 | 2026-08-06 | Corrected the installed Spring runner before warmups or accepted pairs after it read a null manifest from the repository specification; the runner now reads the manifest from the bound test-preparation protocol without changing the repository, workload, pairs, outputs or value gate | Codex |
 | 2026-08-06 | Preregistered the installed-path Spring value experiment: package and install BuildOpt locally, include manifest/graph/change evaluation and launcher overhead, retain the exact optimized native control, eight pairs, outputs, build-logic test and unchanged value gate | Codex |

@@ -51,6 +51,16 @@ The runner also reports the exact conservative fallback reason if the installed
 command does not select the bound candidate during warmup; this diagnostic is
 outside accepted timing.
 
+That diagnostic reported `IMPACT_NO_AUTHORIZED_ALTERNATIVE`: the discovered
+candidate reaches 12 projects, while the complete reverse dependency closure
+also includes `:framework-api` and `:framework-docs`. Production `EvaluateImpact`
+and `BIA-002` continue to require that complete closure. Only the explicitly
+owner-operated POC candidate now uses the narrower contract already measured by
+this protocol: it must cover every directly changed project plus every declared
+required output and Build-owned check. This permits testing whether the declared
+`spring-jms` output scope has value without authorizing the same selection in
+production. Zero pairs were accepted before this implementation correction.
+
 Run the preregistered experiment with:
 
 ```bash
