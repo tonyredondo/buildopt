@@ -117,7 +117,7 @@ buildopt_required_tracker_text=(
     "| \`POC-SPRING-IMPACT-BREADTH-001\` | Execute the installed Spring breadth matrix and issue its terminal broaden-or-retain decision without moving thresholds | \`DONE\`"
     "| \`POC-SPRING-IMPACT-BREADTH-G01\` | Both preregistered selective Spring cells clear the unchanged value gate and the global build-logic cell retains the full graph | Broader installed Spring claim | \`FAILED\`"
     "| \`POC-OTEL-SPRING-FAMILY-PREREG-001\` | Freeze OpenTelemetry v2.30.0, reject the over-budget root control, and preregister the upstream Spring-family control before timing | \`DONE\`"
-    "| \`POC-OTEL-SPRING-FAMILY-001\` | Measure the installed candidate over four alternating pairs and issue the fixed qualify-or-retain decision | \`TODO\`"
+    "| \`POC-OTEL-SPRING-FAMILY-001\` | Measure the installed candidate over four alternating pairs and issue the fixed qualify-or-retain decision | \`DOING\`"
     "| \`POC-OTEL-SPRING-FAMILY-G01\` | The installed candidate beats the complete upstream Spring-family control by 500 ms and 2%, with a positive paired lower bound, 4/4 positive pairs, exact outputs and no product failure | Stable OpenTelemetry transfer claim | \`TODO\`"
     "| \`A1-G06\` | Safe Cache is non-regressive versus optimized native cache"
     "| \`B-G03\` | Runtime Tuning exceeds the POC accelerator threshold"

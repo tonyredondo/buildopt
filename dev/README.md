@@ -2699,6 +2699,20 @@ fallback and unchanged value gate with:
 ./dev/check-poc-otel-spring-family-v2
 ```
 
+After the runner and result checker are committed, capture and validate the
+fixed installed-path experiment with:
+
+```bash
+./dev/run-poc-otel-spring-family-v2 /absolute/path/to/result.json
+./dev/check-poc-otel-spring-family-v2-result /absolute/path/to/result.json
+```
+
+The runner packages and installs the current revision, downloads only the
+pinned public source archive, prepares dependencies once outside timing, then
+runs all measured arms offline. A failed warmup, arm, output comparison,
+fallback or timing-gap assertion stops the run; completed observations are not
+substituted.
+
 This is a new stable-release and control-boundary experiment. It neither
 retries nor reinterprets the earlier terminal result, and it changes no test
 selection, production authority, public release, soak or design-partner scope.
