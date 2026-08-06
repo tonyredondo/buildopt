@@ -70,6 +70,7 @@ GIT_COMMITTER_DATE='2026-07-29T00:00:00Z' \
     git -C "${buildopt_source}" \
     -c user.name=BuildOpt \
     -c user.email=buildopt@example.invalid \
+    -c commit.gpgsign=false \
     commit --quiet -m 'F0-038 release fixture'
 
 COSIGN_PASSWORD='buildopt-f0-038-test-only' \

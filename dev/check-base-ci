@@ -225,6 +225,10 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-spring-test-preparation-result" >/dev/null
         "${buildopt_script_dir}/check-poc-otel-test-preparation-result" >/dev/null
         "${buildopt_script_dir}/run" \
+            --toolchain temurin-jdk-21 \
+            -- \
+            "${buildopt_script_dir}/check-build-impact-poc-onboarding" >/dev/null
+        "${buildopt_script_dir}/run" \
             --toolchain go \
             -- \
             go test -race -count=1 ./...

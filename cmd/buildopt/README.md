@@ -45,6 +45,24 @@ Run the real-binary integration suite with:
 ./dev/check-buildopt-cli
 ```
 
+## Explicit Build Impact POC candidate
+
+The installed launcher also exposes the owner-operated candidate path:
+
+```bash
+buildopt impact \
+  --repository-id owner/repository \
+  --pipeline-class pull-request \
+  --changes-file .buildopt-changes \
+  --gradle-option=--no-daemon
+```
+
+The command validates the repository-owned manifest, generated graph and exact
+generated binding before evaluating the changed paths. It executes only a
+manifest-enumerated alternative; unknown/global changes retain the original
+entrypoints. This explicit POC command is not `BIA-002` production promotion
+and never selects or removes Test Optimization-owned checks.
+
 The suite covers empty, quoted, whitespace, wildcard, Unicode, newline, and literal `--` arguments; inherited cwd, environment, and standard streams; success and non-zero child statuses; usage; launch failures; process-group isolation; signal forwarding through a child process tree; and the local bypass described below.
 
 ## Process and signal handling

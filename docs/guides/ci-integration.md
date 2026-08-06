@@ -71,6 +71,24 @@ then use `check` in ordinary pull requests. Drift or uncertainty falls back to
 the full repository-authorized entrypoint; it never selects tests outside the
 owning workflow.
 
+After `check`, materialize the CI provider's exact base/head diff and run the
+explicit POC candidate:
+
+```bash
+git diff --name-only --diff-filter=ACMR BASE_SHA HEAD_SHA > .buildopt-changes
+buildopt impact \
+  --repository-id owner/repository \
+  --pipeline-class pull-request \
+  --changes-file .buildopt-changes \
+  --gradle-option=--no-daemon
+```
+
+Resolve `BASE_SHA` and `HEAD_SHA` from immutable provider revision fields; do
+not infer a branch name or silently accept a shallow/empty diff. Keep every
+Test-owned command as a separate unchanged workflow step. The command is an
+owner-operated POC candidate and never substitutes for `BIA-002` production
+promotion.
+
 ## Validate an integration change
 
 ```bash

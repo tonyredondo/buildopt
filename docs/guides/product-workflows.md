@@ -204,14 +204,30 @@ buildopt-impact check \
   --generated-manifest buildopt-impact.generated.json
 ```
 
-Active selection remains separate from discovery. It requires current exact
-digests, explicit enablement, and qualified validation evidence. Included
-builds, test-bearing alternatives, unsupported task types, missing projects,
-drift, unknown paths, and global changes use the original full entrypoints.
-Test Optimization-owned checks are preserved separately.
+For an owner-operated POC, execute the reviewed candidate without wiring an
+internal selection harness:
+
+```bash
+git diff --name-only --diff-filter=ACMR BASE_SHA HEAD_SHA > .buildopt-changes
+buildopt impact \
+  --repository-id owner/repository \
+  --pipeline-class pull-request \
+  --changes-file .buildopt-changes \
+  --gradle-option=--no-daemon
+```
+
+This explicit command is not autonomous production selection. It requires the
+current exact generated binding and may choose only a manifest alternative.
+Included builds, test-bearing alternatives, unsupported task types, missing
+projects, drift, unknown paths, and global changes use the original full
+entrypoints or reject invalid state before Gradle. Test Optimization-owned
+checks are preserved separately and stay in their existing workflow.
 
 Run `./dev/check-build-impact-automatic` for the bounded synthetic example and
-read [Automatic Build Impact](../../specs/build-impact-automatic-v1.md).
+`./dev/run --toolchain temurin-jdk-21 -- ./dev/check-build-impact-poc-onboarding`
+for the installed candidate/fallback proof. Read
+[Automatic Build Impact](../../specs/build-impact-automatic-v1.md) and
+[Build Impact POC onboarding](../../specs/build-impact-poc-onboarding-v1.md).
 
 ## Edge Cache
 

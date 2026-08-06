@@ -29,6 +29,33 @@ internal JAR paths; users should not configure them.
 
 `BUILDOPT_BYPASS=1 buildopt gradle ...` invokes the Wrapper without the
 BuildOpt init script or plugin.
+
+### Run an explicit Build Impact POC candidate
+
+```text
+buildopt impact \
+  --repository-id OWNER/REPO \
+  --changes-file PATH \
+  [--pipeline-class CLASS] \
+  [--manifest PATH] \
+  [--graph PATH] \
+  [--generated-manifest PATH] \
+  [--gradle-option VALUE ...]
+```
+
+`PATH` is a bounded repository-relative file with one unique changed path per
+line. The command validates all checked-in Build Impact state and then runs
+either the exact repository-owned alternative or the manifest's original full
+entrypoints. `--gradle-option` is repeatable and accepts only execution options
+that cannot add/exclude tasks or change the project root; task entrypoints come
+only from the repository manifest.
+
+This command is an explicit POC experiment, not production authorization.
+Malformed or drifted state returns code `78`; unknown and global changes safely
+execute the full graph. Existing Test-owned checks remain outside this
+build-owned selection and stay in their current workflow.
+`BUILDOPT_BYPASS=1` also restores the original full entrypoints.
+
 ### Inspect platform capabilities
 
 ```text

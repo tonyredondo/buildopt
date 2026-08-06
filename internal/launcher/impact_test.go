@@ -1,0 +1,170 @@
+package launcher
+
+import (
+	"bytes"
+	"os"
+	"path/filepath"
+	"runtime"
+	"strings"
+	"testing"
+)
+
+func TestImpactHelpAndInvalidArguments(t *testing.T) {
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	if code := Run([]string{"impact", "--help"}, strings.NewReader(""), &stdout, &stderr); code != 0 {
+		t.Fatalf("help exit code = %d, stderr = %q", code, stderr.String())
+	}
+	if stdout.String() != impactUsage || stderr.Len() != 0 {
+		t.Fatalf("help stdout = %q, stderr = %q", stdout.String(), stderr.String())
+	}
+
+	stdout.Reset()
+	stderr.Reset()
+	if code := Run([]string{"impact"}, strings.NewReader(""), &stdout, &stderr); code != exitConfiguration {
+		t.Fatalf("invalid invocation exit code = %d, stderr = %q", code, stderr.String())
+	}
+	if stdout.Len() != 0 || !strings.Contains(stderr.String(), impactUsage) {
+		t.Fatalf("invalid invocation stdout = %q, stderr = %q", stdout.String(), stderr.String())
+	}
+}
+
+func TestImpactInvocationSelectsCandidateAndFallsBackToFullGraph(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	t.Chdir(repositoryRoot)
+
+	candidate, err := prepareImpactInvocation([]string{
+		"--repository-id", "tonyredondo/buildopt-impact-synthetic",
+		"--pipeline-class", "pull-request",
+		"--changes-file", "changed.txt",
+		"--gradle-option=--no-daemon",
+	}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !candidate.plan.CandidateSelected || candidate.plan.ProductionAuthorized || strings.Join(candidate.gradleArgs, " ") != "--no-daemon :service-a:assemble" {
+		t.Fatalf("candidate invocation = %+v", candidate)
+	}
+
+	if err := os.WriteFile(filepath.Join(repositoryRoot, "changed.txt"), []byte("unowned/file.txt\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	fallback, err := prepareImpactInvocation([]string{
+		"--repository-id", "tonyredondo/buildopt-impact-synthetic",
+		"--changes-file", "changed.txt",
+	}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if fallback.plan.CandidateSelected || fallback.plan.ProductionAuthorized || strings.Join(fallback.gradleArgs, " ") != "assemble" || fallback.plan.Reason != "IMPACT_UNKNOWN_CHANGE_PATH" {
+		t.Fatalf("fallback invocation = %+v", fallback)
+	}
+}
+
+func TestImpactInvocationBypassRestoresOriginalEntrypoints(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	t.Chdir(repositoryRoot)
+	invocation, err := prepareImpactInvocation([]string{
+		"--repository-id", "tonyredondo/buildopt-impact-synthetic",
+		"--changes-file", "changed.txt",
+	}, true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if invocation.plan.CandidateSelected || invocation.plan.Reason != "LOCAL_BYPASS" || strings.Join(invocation.gradleArgs, " ") != "assemble" {
+		t.Fatalf("bypass invocation = %+v", invocation)
+	}
+}
+
+func TestImpactInvocationRejectsUnsafeChangesFiles(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	t.Chdir(repositoryRoot)
+	if err := os.WriteFile(filepath.Join(repositoryRoot, "changed.txt"), []byte("a\na\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	_, err := prepareImpactInvocation([]string{
+		"--repository-id", "tonyredondo/buildopt-impact-synthetic",
+		"--changes-file", "changed.txt",
+	}, false)
+	if err == nil {
+		t.Fatal("duplicate changed paths were accepted")
+	}
+}
+
+func TestImpactInvocationRejectsChangesFileSymlinkOutsideRepository(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("ordinary Windows users may not create symlinks")
+	}
+	repositoryRoot := impactTestRepository(t)
+	t.Chdir(repositoryRoot)
+	outside := filepath.Join(t.TempDir(), "changes.txt")
+	if err := os.WriteFile(outside, []byte("library-c/src/main/java/synthetic/LibraryC.java\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(outside, filepath.Join(repositoryRoot, "outside-changes.txt")); err != nil {
+		t.Fatal(err)
+	}
+	_, err := prepareImpactInvocation([]string{
+		"--repository-id", "tonyredondo/buildopt-impact-synthetic",
+		"--changes-file", "outside-changes.txt",
+	}, false)
+	if err == nil {
+		t.Fatal("changes file symlink outside the repository was accepted")
+	}
+}
+
+func TestImpactInvocationRejectsGraphChangingGradleOptions(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	t.Chdir(repositoryRoot)
+	for _, option := range []string{"assemble", ":service-b:assemble", "--exclude-task=:service-a:assemble", "-p"} {
+		_, err := prepareImpactInvocation([]string{
+			"--repository-id", "tonyredondo/buildopt-impact-synthetic",
+			"--changes-file", "changed.txt",
+			"--gradle-option=" + option,
+		}, false)
+		if err == nil {
+			t.Fatalf("unsafe Gradle option %q was accepted", option)
+		}
+	}
+}
+
+func TestImpactInvocationEmptyDiffRetainsFullGraph(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	t.Chdir(repositoryRoot)
+	if err := os.WriteFile(filepath.Join(repositoryRoot, "changed.txt"), nil, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	invocation, err := prepareImpactInvocation([]string{
+		"--repository-id", "tonyredondo/buildopt-impact-synthetic",
+		"--changes-file", "changed.txt",
+	}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if invocation.plan.CandidateSelected || invocation.plan.Reason != "IMPACT_NO_DECLARED_CHANGES" || strings.Join(invocation.gradleArgs, " ") != "assemble" {
+		t.Fatalf("empty-diff invocation = %+v", invocation)
+	}
+}
+
+func impactTestRepository(t *testing.T) string {
+	t.Helper()
+	_, current, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("resolve launcher test path")
+	}
+	source := filepath.Join(filepath.Dir(current), filepath.FromSlash("../../fixtures/build-impact/synthetic-repository"))
+	destination := t.TempDir()
+	for _, name := range []string{"buildopt-impact-manifest.json", "buildopt-impact-graph.generated.json", "buildopt-impact.generated.json"} {
+		raw, err := os.ReadFile(filepath.Join(source, name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(destination, name), raw, 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := os.WriteFile(filepath.Join(destination, "changed.txt"), []byte("library-c/src/main/java/synthetic/LibraryC.java\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	return destination
+}

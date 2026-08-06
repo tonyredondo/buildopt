@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "buildopt.specs/build-impact-poc-onboarding/v1",
+  "workItem": "POC-INSTALLED-IMPACT-001",
+  "command": "buildopt impact",
+  "authority": {
+    "mode": "EXPLICIT_OWNER_POC_CANDIDATE",
+    "productionPromotion": false,
+    "bia002Changed": false,
+    "manifest": "REPOSITORY_COMMITTED",
+    "generatedState": "EXACT_BINDING_REQUIRED",
+    "changedPaths": "EXPLICIT_REPOSITORY_RELATIVE_FILE"
+  },
+  "gradleOptions": "BOUNDED_NON_GRAPH_CHANGING_ALLOWLIST",
+  "selection": {
+    "candidate": "REPOSITORY_ALLOWED_ALTERNATIVE_ONLY",
+    "ambiguous": "ORIGINAL_FULL_GRAPH",
+    "global": "ORIGINAL_FULL_GRAPH",
+    "unknown": "ORIGINAL_FULL_GRAPH",
+    "noChanges": "ORIGINAL_FULL_GRAPH",
+    "localBypass": "ORIGINAL_FULL_GRAPH",
+    "incomplete": "REJECT_BEFORE_GRADLE"
+  },
+  "proof": {
+    "fixture": "fixtures/build-impact/synthetic-repository",
+    "candidateEntrypoints": [":service-a:assemble"],
+    "fullEntrypoints": ["assemble"],
+    "candidateOmittedProjects": [":service-b"],
+    "requiredArtifact": "BYTE_IDENTICAL_SERVICE_A_JAR",
+    "testOptimization": "INDEPENDENT_CHECK_UNCHANGED",
+    "network": "OFFLINE"
+  },
+  "boundaries": {
+    "pocOnly": true,
+    "autonomousProductionSelection": false,
+    "testSelection": false,
+    "soak": false,
+    "designPartner": false
+  }
+}

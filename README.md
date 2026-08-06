@@ -71,6 +71,13 @@ contains Windows installation, CI snippets, component ownership and the
 recommended rollout order. Contributors who want the complete synthetic lab
 can use the [source quickstart](./docs/getting-started/quickstart.md).
 
+The cache-compatible command is the zero-configuration starting point. The
+measured accelerator is Build Impact: after committing a reviewed manifest and
+generated graph, run the explicit POC candidate with `buildopt impact`. It
+selects only a repository-authorized alternative and restores the full graph
+for unknown/global changes or `BUILDOPT_BYPASS=1`. See the
+[Build Impact workflow](./docs/guides/product-workflows.md#build-impact).
+
 The checked scorecard measures each optimization separately and then measures
 the complete public path without adding unrelated percentages. Safe Cache and
 the tested Runtime Tuning profiles did not add defensible value over optimized

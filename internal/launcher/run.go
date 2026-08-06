@@ -18,7 +18,7 @@ const (
 	exitCannotExecute = 126
 	exitNotFound      = 127
 	exitConfiguration = 78
-	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt doctor\n"
+	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt doctor\n"
 	bypassEnvironment = "BUILDOPT_BYPASS"
 )
 
@@ -38,10 +38,39 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		_, _ = io.WriteString(stdout, usage)
 		return 0
 	}
+	if len(args) == 2 && args[0] == "impact" && isHelp(args[1:]) {
+		_, _ = io.WriteString(stdout, impactUsage)
+		return 0
+	}
 	gradleEnvironment := map[string]string(nil)
 	var gradleManagedL1 *managedL1Config
 	gradleNativeOnly := false
 	gradleLocalOnly := false
+	if len(args) > 0 && args[0] == "impact" {
+		impact, err := prepareImpactInvocation(
+			args[1:],
+			os.Getenv(bypassEnvironment) == "1",
+		)
+		if err != nil {
+			_, _ = fmt.Fprintf(stderr, "buildopt: Build Impact POC unavailable: %v\n", err)
+			_, _ = io.WriteString(stderr, impactUsage)
+			return exitConfiguration
+		}
+		if impact.plan.CandidateSelected {
+			_, _ = fmt.Fprintf(
+				stderr,
+				"buildopt: explicit Build Impact POC candidate %s selected; this is not production authorization\n",
+				impact.plan.AlternativeID,
+			)
+		} else {
+			_, _ = fmt.Fprintf(
+				stderr,
+				"buildopt: Build Impact POC retained the full graph (%s)\n",
+				impact.plan.Reason,
+			)
+		}
+		args = append([]string{"gradle"}, impact.gradleArgs...)
+	}
 	if len(args) > 0 && args[0] == "gradle" {
 		invocation, err := prepareGradleInvocation(
 			args[1:],

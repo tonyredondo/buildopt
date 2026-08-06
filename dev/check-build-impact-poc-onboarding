@@ -1,0 +1,174 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/build-impact-poc-onboarding-v1.json"
+
+for buildopt_command in git go jq rg sha256sum tar; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required Build Impact POC command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/build-impact-poc-onboarding/v1" and
+    .workItem == "POC-INSTALLED-IMPACT-001" and
+    .command == "buildopt impact" and
+    .authority.mode == "EXPLICIT_OWNER_POC_CANDIDATE" and
+    .authority.productionPromotion == false and
+    .authority.bia002Changed == false and
+    .authority.manifest == "REPOSITORY_COMMITTED" and
+    .authority.generatedState == "EXACT_BINDING_REQUIRED" and
+    .authority.changedPaths == "EXPLICIT_REPOSITORY_RELATIVE_FILE" and
+    .gradleOptions == "BOUNDED_NON_GRAPH_CHANGING_ALLOWLIST" and
+    .selection.candidate == "REPOSITORY_ALLOWED_ALTERNATIVE_ONLY" and
+    .selection.ambiguous == "ORIGINAL_FULL_GRAPH" and
+    .selection.global == "ORIGINAL_FULL_GRAPH" and
+    .selection.unknown == "ORIGINAL_FULL_GRAPH" and
+    .selection.noChanges == "ORIGINAL_FULL_GRAPH" and
+    .selection.localBypass == "ORIGINAL_FULL_GRAPH" and
+    .selection.incomplete == "REJECT_BEFORE_GRADLE" and
+    .proof.candidateEntrypoints == [":service-a:assemble"] and
+    .proof.fullEntrypoints == ["assemble"] and
+    .proof.candidateOmittedProjects == [":service-b"] and
+    .proof.requiredArtifact == "BYTE_IDENTICAL_SERVICE_A_JAR" and
+    .proof.testOptimization == "INDEPENDENT_CHECK_UNCHANGED" and
+    .proof.network == "OFFLINE" and
+    .boundaries.pocOnly == true and
+    .boundaries.autonomousProductionSelection == false and
+    .boundaries.testSelection == false and
+    .boundaries.soak == false and
+    .boundaries.designPartner == false
+' "${buildopt_contract}" >/dev/null
+
+buildopt_before_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+buildopt_workspace=$(mktemp -d /tmp/buildopt-impact-onboarding.XXXXXX)
+buildopt_cleanup() {
+    case "${buildopt_workspace}" in
+        /tmp/buildopt-impact-onboarding.*)
+            rm -rf -- "${buildopt_workspace}"
+            ;;
+        *)
+            printf 'refusing unsafe Build Impact POC cleanup: %s\n' \
+                "${buildopt_workspace}" >&2
+            ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+"${buildopt_repo_root}/dev/run" --toolchain go -- \
+    go build -o "${buildopt_workspace}/buildopt" ./cmd/buildopt
+
+git -C "${buildopt_repo_root}" archive HEAD -- \
+    fixtures/build-impact/synthetic-repository \
+    gradlew \
+    gradle/wrapper |
+    tar -xf - -C "${buildopt_workspace}"
+
+buildopt_fixture="${buildopt_workspace}/fixtures/build-impact/synthetic-repository"
+buildopt_candidate="${buildopt_workspace}/candidate"
+buildopt_full="${buildopt_workspace}/full"
+cp -a -- "${buildopt_fixture}" "${buildopt_candidate}"
+cp -a -- "${buildopt_fixture}" "${buildopt_full}"
+for buildopt_arm in "${buildopt_candidate}" "${buildopt_full}"; do
+    cp -- "${buildopt_workspace}/gradlew" "${buildopt_arm}/gradlew"
+    cp -a -- "${buildopt_workspace}/gradle" "${buildopt_arm}/gradle"
+    chmod +x "${buildopt_arm}/gradlew"
+done
+
+printf '%s\n' 'library-c/src/main/java/synthetic/LibraryC.java' > \
+    "${buildopt_candidate}/changed.txt"
+printf '%s\n' 'unowned/file.txt' > "${buildopt_full}/changed.txt"
+
+buildopt_gradle_home="${buildopt_repo_root}/.tools/gradle-user-home/local"
+if ! (
+    cd "${buildopt_candidate}"
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_workspace}/buildopt" impact \
+            --repository-id tonyredondo/buildopt-impact-synthetic \
+            --pipeline-class pull-request \
+            --changes-file changed.txt \
+            --gradle-option=--offline \
+            --gradle-option=--no-daemon \
+            --gradle-option=--console=plain \
+            >"${buildopt_workspace}/candidate.stdout" \
+            2>"${buildopt_workspace}/candidate.stderr"
+); then
+    cat "${buildopt_workspace}/candidate.stdout" >&2
+    cat "${buildopt_workspace}/candidate.stderr" >&2
+    printf 'Build Impact POC candidate execution failed\n' >&2
+    exit 1
+fi
+if ! (
+    cd "${buildopt_full}"
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_workspace}/buildopt" impact \
+            --repository-id tonyredondo/buildopt-impact-synthetic \
+            --pipeline-class pull-request \
+            --changes-file changed.txt \
+            --gradle-option=--offline \
+            --gradle-option=--no-daemon \
+            --gradle-option=--console=plain \
+            >"${buildopt_workspace}/full.stdout" \
+            2>"${buildopt_workspace}/full.stderr"
+); then
+    cat "${buildopt_workspace}/full.stdout" >&2
+    cat "${buildopt_workspace}/full.stderr" >&2
+    printf 'Build Impact POC full fallback execution failed\n' >&2
+    exit 1
+fi
+
+rg -F 'explicit Build Impact POC candidate affected-service-a selected' \
+    "${buildopt_workspace}/candidate.stderr" >/dev/null
+rg -F 'Build Impact POC retained the full graph (IMPACT_UNKNOWN_CHANGE_PATH)' \
+    "${buildopt_workspace}/full.stderr" >/dev/null
+
+buildopt_candidate_service_a="${buildopt_candidate}/service-a/build/libs/service-a-1.0.jar"
+buildopt_full_service_a="${buildopt_full}/service-a/build/libs/service-a-1.0.jar"
+buildopt_full_service_b="${buildopt_full}/service-b/build/libs/service-b-1.0.jar"
+test -s "${buildopt_candidate_service_a}"
+test -s "${buildopt_full_service_a}"
+test -s "${buildopt_full_service_b}"
+if [[ -e "${buildopt_candidate}/service-b/build/libs/service-b-1.0.jar" ]]; then
+    printf 'Build Impact POC candidate materialized omitted service-b\n' >&2
+    exit 1
+fi
+if [[ "$(sha256sum "${buildopt_candidate_service_a}" | cut -d' ' -f1)" != \
+    "$(sha256sum "${buildopt_full_service_a}" | cut -d' ' -f1)" ]]; then
+    printf 'Build Impact POC candidate service-a JAR differs from full graph\n' >&2
+    exit 1
+fi
+
+for buildopt_arm in "${buildopt_candidate}" "${buildopt_full}"; do
+    (
+        cd "${buildopt_arm}"
+        GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            ./gradlew --offline --no-daemon --console=plain testOwnedCheck \
+            >/dev/null
+    )
+done
+if [[ "$(sha256sum "${buildopt_candidate}/build/test-owned/check.txt" | cut -d' ' -f1)" != \
+    "$(sha256sum "${buildopt_full}/build/test-owned/check.txt" | cut -d' ' -f1)" ]]; then
+    printf 'independent Test Optimization-owned marker differs\n' >&2
+    exit 1
+fi
+
+buildopt_after_status=$(
+    git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all
+)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    printf 'Build Impact POC onboarding checker mutated the source tree\n' >&2
+    exit 1
+fi
+
+printf 'Build Impact POC onboarding passed: installed command, candidate/fallback, exact artifact, independent Test-owned check\n'

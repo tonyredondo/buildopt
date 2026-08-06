@@ -93,6 +93,35 @@ BUILDOPT_BYPASS=1 buildopt gradle build
 
 In PowerShell use `$env:BUILDOPT_BYPASS = '1'` for that invocation.
 
+## Try the Build Impact accelerator
+
+The default Gradle command establishes compatibility; Build Impact is the POC
+feature that has demonstrated incremental value against optimized native
+Gradle. Adopt it only after reviewing and committing the repository manifest
+and generated graph described in the
+[Build Impact workflow](../guides/product-workflows.md#build-impact).
+
+For a pull request, create an exact changed-path input and execute the explicit
+candidate:
+
+```bash
+git diff --name-only --diff-filter=ACMR BASE_SHA HEAD_SHA > .buildopt-changes
+buildopt-impact check \
+  --repository . \
+  --repository-id owner/repository \
+  --pipeline-class pull-request
+buildopt impact \
+  --repository-id owner/repository \
+  --pipeline-class pull-request \
+  --changes-file .buildopt-changes \
+  --gradle-option=--no-daemon
+```
+
+The command prints whether it selected the reviewed candidate or retained the
+full graph. It does not select tests or grant production promotion. Keep the
+existing Test-owned commands in the workflow, compare required outputs between
+candidate and full builds, and treat the measured result as POC evidence.
+
 ## Add CI
 
 ### GitHub Actions
@@ -175,7 +204,7 @@ justifies operating it.
 | Runtime tuning | No active candidate; stable control only | Bounded policy inputs and evaluation contracts | `runtime-evaluation` and owner checks | A new profile must clear the value threshold before activation |
 | Task Intelligence | No separate installed CLI; owner evaluation in this source repository | Qualification evidence and trace contracts | `task-intelligence-evaluation` and owner checks | Prove qualification without publishing an optimization |
 | Build history | `buildopt-server` in the package | Server config and export directory on the server host | Service manager plus server API/dashboard | Start loopback server and inspect a redacted session |
-| Build Impact | `buildopt-impact` in the package | Manifest and generated graph committed in the target repository | CI calls `generate` during adoption and `check` afterward | Generate, review, commit, then run `check` |
+| Build Impact | `buildopt` and `buildopt-impact` in the package | Manifest and generated graph committed in the target repository | CI calls `generate` during adoption, `check` for drift, then explicit `buildopt impact` with a changed-path file | Verify candidate/full fallback and compare required outputs before interpreting timings |
 | Patch Autopilot | Java patcher and owner workflow in this source repository; not yet a native-package CLI | Recipe registry, signing/trust material and repository policy | Owner-controlled candidate/validation workflow | Produce a draft bundle; applying remains explicit and reversible |
 | Shared Cache | `buildopt-server` | Private server config, authority and scoped credentials on operator hosts | Server service plus launcher gateway | Validate config, start loopback service, run an authorized repository |
 | Edge Cache | `buildopt-edge` | Private Edge config and authority on the Edge host | launchd, Windows SCM, or foreground process | `buildopt-edge validate`, then `serve` and `status` |

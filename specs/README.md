@@ -55,6 +55,7 @@ the exact cross-component contract.
 | [`build-impact-gate-v1.md`](./build-impact-gate-v1.md) | `C3-G01` / MVP-C3 |
 | [`build-impact-automatic-v1.md`](./build-impact-automatic-v1.md) | `BIA-F4-001..003` / `BIA-F4-G01` |
 | [`build-impact-performance-v1.md`](./build-impact-performance-v1.md) | Build Impact performance |
+| [`build-impact-poc-onboarding-v1.md`](./build-impact-poc-onboarding-v1.md) and [`build-impact-poc-onboarding-v1.json`](./build-impact-poc-onboarding-v1.json) | `POC-INSTALLED-IMPACT-001` |
 | [`platform-compatibility-v1.md`](./platform-compatibility-v1.md) | `PLAT-F5-001..004` / `PLAT-F5-G01` |
 | [`platform-runtime-parity-v2.md`](./platform-runtime-parity-v2.md) | `PLAT-F6-001..004` / `PLAT-F6-G01` |
 | [`edge-cache-config-v1.md`](./edge-cache-config-v1.md) | `C2-001` |
