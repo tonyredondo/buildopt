@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-otel-graph-reduction/v1",
+  "workItem": "POC-OTEL-GRAPH-001",
+  "capturedAt": "2026-08-06T20:04:56Z",
+  "buildoptRevision": "a75853f3b4e05b443f964c93a83eeb8e4e539dc8",
+  "discoveryInitSha256": "b07f8907bf74a003a69dbc267bda110000d742cb55521fa19ffb12ceffc01682",
+  "repository": {
+    "nameWithOwner": "open-telemetry/opentelemetry-java-instrumentation",
+    "revision": "080c1d32ca676ba7b0210c21b60cce8e7ac39058",
+    "sourceArchiveSha256": "073c707d98716944ec43cd1d8328d9c5bc47c04029d632d65fb71c1547f8c38c"
+  },
+  "discovery": {
+    "gradleVersion": "9.6.1",
+    "projectCount": 1024,
+    "reachedProjectCount": 46,
+    "manifestFileSha256": "f1997a13b9be36ea1f86f5b07785c35907c9e0c8e6af8f0a605e99b3b4477235",
+    "manifestDigest": "sha256:6f02090f5b400d134bfa243963e2bf8df347dac8bfa22ec5fd9e32ac774d28b8",
+    "graphFileSha256": "ce4dfd8f04c8ca4b9eae54fdd1e8912f35a0e46b4fa7c85ef823efc92f1e129b",
+    "graphDigest": "sha256:804d1018c588a072c8c4fd82e96cc35f10e9835de9b8ddf4bf64315701e0f971",
+    "generatedManifestFileSha256": "3edfa630af179b4655dc9944b9069db09e3c094905e1dc7f95950c7f2ab2512d",
+    "discoveryDigest": "sha256:34f2cc769d37c1fee4c300fdafdfa5e64c317fddc83f8398d280fffc06edcb90",
+    "complete": true,
+    "fallbackReasons": [],
+    "entrypoints": [
+      ":instrumentation:spring:spring-boot-autoconfigure:compileJava",
+      ":instrumentation:spring:spring-boot-autoconfigure:compileJavaSpring3Java",
+      ":instrumentation:spring:spring-boot-autoconfigure:compileJavaSpring4Java",
+      ":instrumentation:spring:spring-boot-autoconfigure:compileTestJava"
+    ],
+    "allEntrypointsContainTestTasks": false,
+    "allEntrypointsHaveUnknownRelationships": false
+  },
+  "comparison": {
+    "aggregateEntrypoint": ":instrumentation:spring:spring-boot-autoconfigure:testClasses",
+    "requiredOutputRoot": "instrumentation/spring/spring-boot-autoconfigure/build/classes/**",
+    "requiredOutputCount": 125,
+    "aggregateOutputManifestSha256": "9f6181a048baf66488186cd6bc99c21bd2e5ec9c6eda4e48356b12fdd72df7ba",
+    "producerOutputManifestSha256": "9f6181a048baf66488186cd6bc99c21bd2e5ec9c6eda4e48356b12fdd72df7ba",
+    "aggregateTaskCount": 259,
+    "producerTaskCount": 256,
+    "aggregateExecutedTaskCount": 6,
+    "producerExecutedTaskCount": 4,
+    "removedTasks": [
+      ":instrumentation:spring:spring-boot-autoconfigure:compileTestGroovy",
+      ":instrumentation:spring:spring-boot-autoconfigure:processTestResources",
+      ":instrumentation:spring:spring-boot-autoconfigure:testClasses"
+    ],
+    "performanceClaim": false
+  },
+  "negativeFixtures": {
+    "arbitraryTaskFailsClosed": true,
+    "gradleTestFailsClosed": true,
+    "globalChangeRetainsFullGraph": true
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "repositorySpecificProductRuleAdded": false,
+    "productionSelectionChanged": false,
+    "testOptimizationModified": false
+  }
+}
+

@@ -117,6 +117,18 @@ Validate all 16 samples and recomputed means with:
 ./dev/check-poc-otel-overhead
 ```
 
+The next graph probe replaced the aggregate `testClasses` candidate with four
+typed `AbstractCompile` output producers. Gradle discovery remained complete
+for all 1,024 projects and the same 46-project reach; arbitrary custom tasks
+and every `Test` dependency still fail closed. In a hot output-reset
+comparison, the producer set removed three task nodes and two executed tasks
+while preserving the exact same 125-file output manifest. This closes a real
+generic work reduction but deliberately makes no material timing claim.
+
+```bash
+./dev/check-poc-otel-graph-reduction
+```
+
 | Mechanism | Mean result | Exact paired 95% interval | Classification |
 |---|---:|---:|---|
 | Default native-cache fallback, Kotlin | 79 ms faster (8.9%) | +6 to +156 ms | `NO_VALUE_NO_ACTION`; same cache mechanism, no acceleration claim |

@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_result="${buildopt_repo_root}/benchmarks/results/poc-otel-graph-reduction-v1.json"
+
+command -v jq >/dev/null 2>&1 || {
+    printf 'jq is required to validate OpenTelemetry graph reduction\n' >&2
+    exit 1
+}
+
+jq -e '
+    .schemaVersion == "buildopt.evidence/poc-otel-graph-reduction/v1" and
+    .workItem == "POC-OTEL-GRAPH-001" and
+    .discovery.complete == true and
+    .discovery.fallbackReasons == [] and
+    .discovery.projectCount == 1024 and
+    .discovery.reachedProjectCount == 46 and
+    (.discovery.entrypoints | length) == 4 and
+    .discovery.allEntrypointsContainTestTasks == false and
+    .discovery.allEntrypointsHaveUnknownRelationships == false and
+    .comparison.requiredOutputCount == 125 and
+    .comparison.aggregateOutputManifestSha256 == .comparison.producerOutputManifestSha256 and
+    .comparison.producerTaskCount < .comparison.aggregateTaskCount and
+    .comparison.producerExecutedTaskCount < .comparison.aggregateExecutedTaskCount and
+    (.comparison.removedTasks | length) == 3 and
+    .comparison.performanceClaim == false and
+    .negativeFixtures.arbitraryTaskFailsClosed == true and
+    .negativeFixtures.gradleTestFailsClosed == true and
+    .negativeFixtures.globalChangeRetainsFullGraph == true and
+    .boundaries.repositorySpecificProductRuleAdded == false and
+    .boundaries.productionSelectionChanged == false and
+    .boundaries.testOptimizationModified == false
+' "${buildopt_result}" >/dev/null
+
+buildopt_actual_init_sha=$(sha256sum \
+    "${buildopt_repo_root}/internal/buildimpact/discovery.init.gradle" | awk '{print $1}')
+buildopt_expected_init_sha=$(jq -er '.discoveryInitSha256' "${buildopt_result}")
+[[ "${buildopt_actual_init_sha}" == "${buildopt_expected_init_sha}" ]] || {
+    printf 'OpenTelemetry graph-reduction evidence is stale\n' >&2
+    exit 1
+}
+
+printf 'OpenTelemetry graph reduction passed: typed producers remove work with 125 exact outputs\n'
