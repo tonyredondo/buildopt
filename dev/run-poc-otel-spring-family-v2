@@ -251,6 +251,10 @@ buildopt_generated_manifest="${buildopt_candidate_checkout}/buildopt-impact.gene
 jq -e --arg digest "$(jq -er '.discovery.expectedGraphDigest' "${buildopt_spec}")" \
     '.complete == true and .graphDigest == $digest and .fallbackReasons == []' \
     "${buildopt_generated_manifest}" >/dev/null
+mkdir -p -- "${buildopt_root}/logs/discovery-state"
+cp -- "${buildopt_candidate_checkout}/buildopt-impact-manifest.json" \
+    "${buildopt_graph}" "${buildopt_generated_manifest}" \
+    "${buildopt_root}/logs/discovery-state/"
 printf '%s\n' "${buildopt_change_path}" >"${buildopt_candidate_checkout}/.buildopt-changes"
 
 buildopt_reset_arm() {

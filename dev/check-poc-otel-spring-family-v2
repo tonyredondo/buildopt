@@ -56,15 +56,18 @@ jq -e --arg taskSha "${buildopt_task_sha}" '
     .workItem == "POC-OTEL-SPRING-FAMILY-PREREG-001" and
     .decision == "PREREGISTER_NEW_STABLE_RELEASE_AND_UPSTREAM_SPRING_FAMILY" and
     .protocolRevision == {
-        from: 3,
-        to: 4,
-        reason: "SHARED_REPOSITORY_READER_APPLIED_MANIFEST_BOUND_TO_DECLARED_GRAPH",
+        from: 4,
+        to: 5,
+        reason: "NESTED_PROJECT_DIRECTORY_GLOBS_PREVENTED_POC_ALTERNATIVE_SELECTION",
         acceptedWarmupsBeforeRevision: 0,
         completedControlWarmupsBeforeRevision: 1,
         completedCandidateWarmupsBeforeRevision: 0,
+        completedFullGraphCandidateBuildsBeforeRevision: 1,
         acceptedObservationsBeforeRevision: 0,
-        change: "PASS_ARTIFACT_SPECIFIC_BOUNDS_TO_SHARED_REPOSITORY_FILE_READER",
+        change: "RESOLVE_NESTED_SOURCE_OWNERS_BY_MOST_SPECIFIC_DECLARED_GLOB_IN_POC_ONLY",
         implementationChanged: true,
+        failureDiagnosticsChanged: true,
+        productionSelectionChanged: false,
         controlChanged: false,
         candidateChanged: false,
         measurementChanged: false,

@@ -164,16 +164,13 @@ func evaluateImpact(manifest LoadedManifest, graph DeclaredGraph, changedPaths [
 			decision.Reason = "GLOBAL_CHANGE"
 			return decision
 		}
-		matched := false
-		for _, project := range graph.Projects {
-			if matchesAnyGlob(project.SourcePaths, changedPath) {
-				changedProjects[project.Path] = true
-				matched = true
-			}
-		}
-		if !matched {
+		matches := matchingChangedProjects(graph.Projects, changedPath, !requireAffectedClosure)
+		if len(matches) == 0 {
 			decision.Reason = "UNKNOWN_CHANGE_PATH"
 			return decision
+		}
+		for projectPath := range matches {
+			changedProjects[projectPath] = true
 		}
 	}
 	affected := reverseDependencyClosure(projectByPath, changedProjects)
@@ -240,6 +237,40 @@ func evaluateImpact(manifest LoadedManifest, graph DeclaredGraph, changedPaths [
 	}
 	sort.Strings(decision.OmittedProjects)
 	return decision
+}
+
+// matchingChangedProjects keeps production selection conservative while the
+// explicit POC path resolves nested project-directory globs to their closest
+// declared owner. Equal-specificity matches remain ambiguous and are all kept.
+func matchingChangedProjects(projects []Project, changedPath string, mostSpecificOnly bool) map[string]bool {
+	matches := map[string]bool{}
+	bestSpecificity := -1
+	for _, project := range projects {
+		projectSpecificity := -1
+		for _, sourcePath := range project.SourcePaths {
+			if matchRepositoryGlob(sourcePath, changedPath) {
+				projectSpecificity = max(projectSpecificity, repositoryGlobSpecificity(sourcePath))
+			}
+		}
+		if projectSpecificity < 0 {
+			continue
+		}
+		if mostSpecificOnly && projectSpecificity > bestSpecificity {
+			clear(matches)
+			bestSpecificity = projectSpecificity
+		}
+		if !mostSpecificOnly || projectSpecificity == bestSpecificity {
+			matches[project.Path] = true
+		}
+	}
+	return matches
+}
+
+func repositoryGlobSpecificity(pattern string) int {
+	if wildcard := strings.IndexAny(pattern, "*?["); wildcard >= 0 {
+		return wildcard
+	}
+	return len(pattern)
 }
 
 func validateDeclaredGraph(manifest LoadedManifest, graph DeclaredGraph) error {

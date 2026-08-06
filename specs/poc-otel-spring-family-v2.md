@@ -36,6 +36,18 @@ artifact's existing bound to the shared reader and gives failures an accurate
 artifact name. It does not increase any parser limit or change the control,
 candidate, outputs, measurement, resources, pair order or value gate.
 
+Protocol revision 5 was recorded after the artifact fix allowed planning. One
+control warmup completed; the candidate then failed closed to the full graph
+with `IMPACT_NO_AUTHORIZED_ALTERNATIVE`, completed that full build, and was
+rejected by the runner before any accepted warmup pair or measured observation.
+The discovered source globs for Gradle's automatically created container
+projects overlap the leaf project's more specific directory. The explicit POC
+evaluator now keeps only the most-specific matching declared globs; equal
+specificity remains ambiguous, while production evaluation remains unchanged
+and conservative. Failure bundles also retain the three checked discovery
+documents outside measured regions. Control, intended candidate, outputs,
+resources, pair order and value gate remain unchanged.
+
 The accepted measurement will use an installed package and four alternating
 pairs. Both arms receive the same offline dependencies, native-cache seed,
 fixed source mutation, clean outputs, 12 workers and Gradle optimizations. The

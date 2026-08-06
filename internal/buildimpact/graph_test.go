@@ -194,6 +194,29 @@ func TestPOCOutputScopeDoesNotWeakenProductionAffectedClosure(t *testing.T) {
 	}
 }
 
+func TestPOCOutputScopeUsesMostSpecificNestedProjectOwner(t *testing.T) {
+	manifest, graph := validGraph(t)
+	graph.Projects[1].SourcePaths = []string{"services/service-a/**"}
+	graph.Projects = append(graph.Projects, Project{
+		Path:        ":services",
+		SourcePaths: []string{"services/**"},
+		DependsOn:   []string{},
+	})
+	graph.Entrypoints[0].ReachesProjects = append(graph.Entrypoints[0].ReachesProjects, ":services")
+
+	changed := []string{"services/service-a/src/main/java/Service.java"}
+	production := EvaluateImpact(manifest, graph, changed)
+	if production.Mode != DecisionFullGraph || production.Reason != "NO_AUTHORIZED_ALTERNATIVE" {
+		t.Fatalf("production decision = %+v", production)
+	}
+	poc := evaluatePOCImpact(manifest, graph, changed)
+	if poc.Mode != DecisionShadowAlternative ||
+		poc.Reason != "CUSTOMER_ALTERNATIVE_AND_DECLARED_OUTPUT_SCOPE" ||
+		poc.PredictedAlternativeID != "service-a" {
+		t.Fatalf("POC decision = %+v", poc)
+	}
+}
+
 func TestInvalidGraphFailsClosed(t *testing.T) {
 	manifest, graph := validGraph(t)
 	graph.Projects[0].DependsOn = []string{":service-a"}
