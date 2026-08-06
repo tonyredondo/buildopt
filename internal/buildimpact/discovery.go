@@ -29,12 +29,13 @@ const (
 var discoveryInitScript []byte
 
 type DiscoverySnapshot struct {
-	SchemaVersion   string                 `json:"schemaVersion"`
-	GradleVersion   string                 `json:"gradleVersion"`
-	Complete        bool                   `json:"complete"`
-	FallbackReasons []string               `json:"fallbackReasons"`
-	Projects        []DiscoveredProject    `json:"projects"`
-	Entrypoints     []DiscoveredEntrypoint `json:"entrypoints"`
+	SchemaVersion      string                 `json:"schemaVersion"`
+	GradleVersion      string                 `json:"gradleVersion"`
+	Complete           bool                   `json:"complete"`
+	FallbackReasons    []string               `json:"fallbackReasons"`
+	IncludedBuildPaths []string               `json:"includedBuildPaths,omitempty"`
+	Projects           []DiscoveredProject    `json:"projects"`
+	Entrypoints        []DiscoveredEntrypoint `json:"entrypoints"`
 }
 
 type DiscoveredProject struct {
@@ -157,9 +158,9 @@ func GenerateImpact(manifest LoadedManifest, raw []byte) (GeneratedImpact, error
 		ManifestDigest:    manifest.Digest,
 		AdapterVersion:    GradleDiscoveryAdapterVersion,
 		Complete:          snapshot.Complete,
-		GlobalChangePaths: []string{},
+		GlobalChangePaths: append([]string{}, snapshot.IncludedBuildPaths...),
 	}
-	for _, project := range snapshot.Projects {
+	for _, project := range normalizeDependencyCycles(snapshot.Projects) {
 		graphValue.Projects = append(graphValue.Projects, Project{
 			Path:                 project.Path,
 			SourcePaths:          cloneSlice(project.SourcePaths),
@@ -217,6 +218,96 @@ func GenerateImpact(manifest LoadedManifest, raw []byte) (GeneratedImpact, error
 	}, nil
 }
 
+// normalizeDependencyCycles preserves every declared dependency while making
+// strongly connected projects conservative peers in the acyclic selection
+// graph. Each peer receives the component's complete source boundary and its
+// external dependencies, so a change to any member affects the whole component
+// and all of its downstream consumers.
+func normalizeDependencyCycles(projects []DiscoveredProject) []DiscoveredProject {
+	byPath := make(map[string]DiscoveredProject, len(projects))
+	for _, project := range projects {
+		byPath[project.Path] = project
+	}
+	index := 0
+	indices := make(map[string]int, len(projects))
+	lowLinks := make(map[string]int, len(projects))
+	onStack := make(map[string]bool, len(projects))
+	stack := make([]string, 0, len(projects))
+	components := make([][]string, 0, len(projects))
+	var visit func(string)
+	visit = func(projectPath string) {
+		indices[projectPath] = index
+		lowLinks[projectPath] = index
+		index++
+		stack = append(stack, projectPath)
+		onStack[projectPath] = true
+		for _, dependency := range byPath[projectPath].DependsOn {
+			if _, seen := indices[dependency]; !seen {
+				visit(dependency)
+				lowLinks[projectPath] = min(lowLinks[projectPath], lowLinks[dependency])
+			} else if onStack[dependency] {
+				lowLinks[projectPath] = min(lowLinks[projectPath], indices[dependency])
+			}
+		}
+		if lowLinks[projectPath] != indices[projectPath] {
+			return
+		}
+		component := []string{}
+		for {
+			last := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			onStack[last] = false
+			component = append(component, last)
+			if last == projectPath {
+				break
+			}
+		}
+		components = append(components, component)
+	}
+	for _, project := range projects {
+		if _, seen := indices[project.Path]; !seen {
+			visit(project.Path)
+		}
+	}
+
+	normalized := make(map[string]DiscoveredProject, len(projects))
+	for _, component := range components {
+		members := make(map[string]bool, len(component))
+		sources := map[string]bool{}
+		externalDependencies := map[string]bool{}
+		unknown := false
+		for _, projectPath := range component {
+			members[projectPath] = true
+		}
+		for _, projectPath := range component {
+			project := byPath[projectPath]
+			unknown = unknown || project.UnknownRelationships
+			for _, source := range project.SourcePaths {
+				sources[source] = true
+			}
+			for _, dependency := range project.DependsOn {
+				if !members[dependency] {
+					externalDependencies[dependency] = true
+				}
+			}
+		}
+		componentSources := sortedKeys(sources)
+		componentDependencies := sortedKeys(externalDependencies)
+		for _, projectPath := range component {
+			project := byPath[projectPath]
+			project.SourcePaths = cloneSlice(componentSources)
+			project.DependsOn = cloneSlice(componentDependencies)
+			project.UnknownRelationships = unknown
+			normalized[projectPath] = project
+		}
+	}
+	result := make([]DiscoveredProject, 0, len(projects))
+	for _, project := range projects {
+		result = append(result, normalized[project.Path])
+	}
+	return result
+}
+
 func parseDiscoverySnapshot(raw []byte, manifest Manifest) (DiscoverySnapshot, string, error) {
 	if len(raw) == 0 || len(raw) > maximumDiscoveryBytes {
 		return DiscoverySnapshot{}, "", errors.New("Gradle discovery size is invalid")
@@ -235,6 +326,10 @@ func parseDiscoverySnapshot(raw []byte, manifest Manifest) (DiscoverySnapshot, s
 	}
 	if !uniqueStrings(snapshot.FallbackReasons) || (snapshot.Complete && len(snapshot.FallbackReasons) != 0) || (!snapshot.Complete && len(snapshot.FallbackReasons) == 0) {
 		return DiscoverySnapshot{}, "", errors.New("Gradle discovery completeness is inconsistent")
+	}
+	sort.Strings(snapshot.IncludedBuildPaths)
+	if len(snapshot.IncludedBuildPaths) > 256 || !uniqueSafeGlobs(snapshot.IncludedBuildPaths) {
+		return DiscoverySnapshot{}, "", errors.New("Gradle discovery included-build paths are invalid")
 	}
 	wantedEntrypoints := allManifestEntrypoints(manifest)
 	if len(snapshot.Entrypoints) != len(wantedEntrypoints) {

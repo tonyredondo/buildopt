@@ -5,7 +5,11 @@
     "implementation": "buildimpact.Discover",
     "adapterVersion": "gradle-runtime-v1",
     "source": "EVALUATED_GRADLE_PROJECT_MODEL",
-    "supportedEntrypoints": ["assemble", "jar", "classes", "compileJava", "compileKotlin"],
+    "supportedEntrypoints": ["assemble", "jar", "classes", "compileJava", "compileKotlin", "testClasses"],
+    "taskSelectors": "GRADLE_NATIVE_UNQUALIFIED_OR_EXACT_PATH",
+    "parallelConfiguration": "PROJECT_LOCAL_SNAPSHOT",
+    "cyclicProjectDependencies": "CONSERVATIVE_STRONGLY_CONNECTED_COMPONENT",
+    "repositoryLocalIncludedBuilds": "GLOBAL_CHANGE_PATH",
     "unknownPolicy": "FULL_GRAPH"
   },
   "generatedState": {
@@ -22,7 +26,7 @@
     "testOptimization": "PRESERVED_SEPARATELY_NEVER_SELECTED"
   },
   "fallbacks": [
-    "INCLUDED_BUILDS_PRESENT",
+    "INCLUDED_BUILD_OUTSIDE_REPOSITORY",
     "UNSUPPORTED_OR_TEST_ENTRYPOINT",
     "DISCOVERY_FAILURE",
     "GENERATED_STATE_DRIFT",

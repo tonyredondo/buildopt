@@ -2,10 +2,33 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.tasks.testing.Test
+import java.util.concurrent.ConcurrentHashMap
 
 // Init scripts are inherited by buildSrc and included builds. Discovery owns
 // only the top-level build selected by the CLI.
 if (gradle.getParent() == null) {
+def projectDependenciesByPath = new ConcurrentHashMap<String, List<String>>()
+gradle.projectsLoaded {
+    // Parallel configuration gives each worker exclusive access to one
+    // project's mutable model. Capture dependency declarations while that
+    // access is held; projectsEvaluated must only consume this immutable
+    // snapshot and never reach back into another project's configurations.
+    gradle.rootProject.allprojects.each { project ->
+        project.afterEvaluate {
+            def dependencyPaths = new TreeSet<String>()
+            project.configurations.each { configuration ->
+                configuration.allDependencies.withType(ProjectDependency).each { dependency ->
+                    // A project may use a self-targeted configuration without
+                    // creating an edge in the inter-project dependency graph.
+                    if (dependency.path != project.path) {
+                        dependencyPaths.add(dependency.path)
+                    }
+                }
+            }
+            projectDependenciesByPath.put(project.path, List.copyOf(dependencyPaths))
+        }
+    }
+}
 gradle.projectsEvaluated {
     def outputPath = System.getenv("BUILDOPT_IMPACT_DISCOVERY_OUTPUT")
     def entrypointJSON = System.getenv("BUILDOPT_IMPACT_ENTRYPOINTS")
@@ -18,26 +41,35 @@ gradle.projectsEvaluated {
     }
 
     def root = gradle.rootProject
-    def includedBuilds = gradle.includedBuilds.collect { it.name }.sort()
+    def rootPath = root.projectDir.toPath().toAbsolutePath().normalize()
+    def includedBuildPaths = new TreeSet<String>()
+    def externalIncludedBuild = false
+    gradle.includedBuilds.each { includedBuild ->
+        def includedPath = includedBuild.projectDir.toPath().toAbsolutePath().normalize()
+        if (!includedPath.startsWith(rootPath)) {
+            externalIncludedBuild = true
+        } else {
+            def relativePath = rootPath.relativize(includedPath).toString().replace('\\', '/')
+            if (relativePath.isEmpty()) {
+                externalIncludedBuild = true
+            } else {
+                includedBuildPaths.add(relativePath + "/**")
+            }
+        }
+    }
     def discoveredProjects = root.allprojects.findAll {
         it != root || root.subprojects.isEmpty()
     }.sort { left, right -> left.path <=> right.path }.collect { project ->
-        def dependencyPaths = new TreeSet<String>()
-        project.configurations.each { configuration ->
-            configuration.allDependencies.withType(ProjectDependency).each { dependency ->
-                // A project may use a self-targeted configuration without
-                // creating an edge in the inter-project dependency graph.
-                if (dependency.path != project.path) {
-                    dependencyPaths.add(dependency.path)
-                }
-            }
+        def dependencyPaths = projectDependenciesByPath.get(project.path)
+        if (dependencyPaths == null) {
+            throw new GradleException("BuildOpt impact discovery missed evaluated project ${project.path}")
         }
         def relativeDirectory = root.projectDir.toPath().relativize(project.projectDir.toPath()).toString().replace('\\', '/')
         def sources = relativeDirectory.isEmpty() ? ["src/**"] : [relativeDirectory + "/**"]
         [
             path: project.path,
             sourcePaths: sources,
-            dependsOn: dependencyPaths as List,
+            dependsOn: dependencyPaths,
             unknownRelationships: false,
         ]
     }
@@ -49,14 +81,27 @@ gradle.projectsEvaluated {
     def conventionalBuildTasks = [
         "assemble", "jar", "classes", "compileJava", "compileKotlin", "testClasses"
     ] as Set
-    def requestedTasks = requestedEntrypoints.collect {
-        root.tasks.getByPath(it as String)
+    def requestedTaskGroups = requestedEntrypoints.collectEntries { requestedName ->
+        def requested = requestedName as String
+        def matchingTasks
+        if (requested.contains(":")) {
+            matchingTasks = [root.tasks.getByPath(requested)]
+        } else {
+            // Gradle treats an unqualified CLI task name as a selector over
+            // the current project and its subprojects. Real repositories do
+            // not need to manufacture a root aggregate task for that form.
+            matchingTasks = root.allprojects.collect { it.tasks.findByName(requested) }.findAll { it != null }
+            if (matchingTasks.isEmpty()) {
+                throw new GradleException("Task selector '${requested}' did not match any project")
+            }
+        }
+        [(requested): matchingTasks]
     }
     def snapshot = null
     def discoveryTask = root.tasks.register("buildoptImpactDiscovery") {
         group = "buildopt"
         description = "Emits a conservative BuildOpt project and task dependency snapshot"
-        dependsOn(requestedTasks)
+        dependsOn(requestedTaskGroups.values().flatten())
         doLast {
             if (snapshot == null) {
                 throw new GradleException("BuildOpt impact discovery task graph is unavailable")
@@ -76,12 +121,15 @@ gradle.projectsEvaluated {
         // every requested task and dependency after Gradle has resolved the graph.
         graph.allTasks.findAll { it != discovery }.each { it.enabled = false }
         def discoveredEntrypoints = requestedEntrypoints.collect { requestedName ->
-            def task = root.tasks.getByPath(requestedName as String)
+            def tasks = requestedTaskGroups[requestedName as String]
             def reachedProjects = new TreeSet<String>()
-            if (task.project == root && !root.subprojects.isEmpty()) {
-                reachedProjects.addAll(knownProjects)
-            } else {
-                def pendingProjects = [task.project.path] as ArrayDeque
+            tasks.each { task ->
+                def pendingProjects
+                if (task.project == root && !root.subprojects.isEmpty()) {
+                    pendingProjects = knownProjects as ArrayDeque
+                } else {
+                    pendingProjects = [task.project.path] as ArrayDeque
+                }
                 while (!pendingProjects.isEmpty()) {
                     def projectPath = pendingProjects.removeFirst()
                     if (!reachedProjects.add(projectPath)) {
@@ -92,7 +140,7 @@ gradle.projectsEvaluated {
                     }
                 }
             }
-            def unknownRelationships = !conventionalBuildTasks.contains(task.name) || containsTests
+            def unknownRelationships = tasks.any { !conventionalBuildTasks.contains(it.name) } || containsTests
             [
                 name: requestedName,
                 reachesProjects: reachedProjects as List,
@@ -101,8 +149,8 @@ gradle.projectsEvaluated {
             ]
         }
         def fallbackReasons = []
-        if (!includedBuilds.isEmpty()) {
-            fallbackReasons.add("INCLUDED_BUILDS_PRESENT")
+        if (externalIncludedBuild) {
+            fallbackReasons.add("INCLUDED_BUILD_OUTSIDE_REPOSITORY")
         }
         if (discoveredEntrypoints.any { it.unknownRelationships }) {
             fallbackReasons.add("UNSUPPORTED_OR_TEST_ENTRYPOINT")
@@ -112,6 +160,7 @@ gradle.projectsEvaluated {
             gradleVersion: gradle.gradleVersion,
             complete: fallbackReasons.isEmpty(),
             fallbackReasons: fallbackReasons,
+            includedBuildPaths: includedBuildPaths as List,
             projects: discoveredProjects,
             entrypoints: discoveredEntrypoints,
         ]

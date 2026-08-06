@@ -17,6 +17,7 @@ func TestGenerateImpactCanonicalizesConservativeSnapshot(t *testing.T) {
   "gradleVersion":"9.6.1",
   "complete":true,
   "fallbackReasons":[],
+  "includedBuildPaths":["conventions/**"],
   "projects":[
     {"path":":service-b","sourcePaths":["service-b/**"],"dependsOn":[],"unknownRelationships":false},
     {"path":":library-c","sourcePaths":["library-c/**"],"dependsOn":[],"unknownRelationships":false},
@@ -30,6 +31,9 @@ func TestGenerateImpactCanonicalizesConservativeSnapshot(t *testing.T) {
 	generated, err := GenerateImpact(manifest, raw)
 	if err != nil {
 		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(generated.Graph.Graph.GlobalChangePaths, []string{"conventions/**"}) {
+		t.Fatalf("included-build global paths = %v", generated.Graph.Graph.GlobalChangePaths)
 	}
 	if !generated.Generated.Complete || generated.Generated.AdapterVersion != GradleDiscoveryAdapterVersion || generated.Generated.GraphDigest != generated.Graph.Digest {
 		t.Fatalf("generated manifest = %+v", generated.Generated)
@@ -58,6 +62,38 @@ func TestGenerateImpactRejectsAmbiguousCompleteness(t *testing.T) {
 }`)
 	if _, err := GenerateImpact(manifest, raw); err == nil {
 		t.Fatal("ambiguous complete discovery was accepted")
+	}
+}
+
+func TestGenerateImpactConservativelyNormalizesProjectDependencyCycles(t *testing.T) {
+	manifest := automaticDiscoveryManifest(t)
+	raw := []byte(`{
+  "schemaVersion":"buildopt.build-impact/gradle-discovery/v1",
+  "gradleVersion":"9.6.1",
+  "complete":true,
+  "fallbackReasons":[],
+  "projects":[
+    {"path":":library-c","sourcePaths":["library-c/**"],"dependsOn":[":service-a"],"unknownRelationships":false},
+    {"path":":service-a","sourcePaths":["service-a/**"],"dependsOn":[":library-c"],"unknownRelationships":false},
+    {"path":":service-b","sourcePaths":["service-b/**"],"dependsOn":[],"unknownRelationships":false}
+  ],
+  "entrypoints":[
+    {"name":"assemble","reachesProjects":[":library-c",":service-a",":service-b"],"containsTestTasks":false,"unknownRelationships":false},
+    {"name":":service-a:assemble","reachesProjects":[":library-c",":service-a"],"containsTestTasks":false,"unknownRelationships":false}
+  ]
+}`)
+	generated, err := GenerateImpact(manifest, raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, project := range generated.Graph.Graph.Projects[:2] {
+		if !reflect.DeepEqual(project.SourcePaths, []string{"library-c/**", "service-a/**"}) || len(project.DependsOn) != 0 {
+			t.Fatalf("normalized cyclic project = %+v", project)
+		}
+	}
+	decision := EvaluateImpact(manifest, generated.Graph.Graph, []string{"library-c/src/main/java/Library.java"})
+	if decision.Mode != DecisionShadowAlternative || !reflect.DeepEqual(decision.AffectedProjects, []string{":library-c", ":service-a"}) {
+		t.Fatalf("cycle-safe impact decision = %+v", decision)
 	}
 }
 
