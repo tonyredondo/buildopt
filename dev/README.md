@@ -2599,6 +2599,20 @@ Do not retry or tune the threshold. The next Spring block is the independent,
 build-owned `testClasses` graph; no Gradle `Test` task may be changed or run by
 that Build Impact experiment.
 
+The next experiment is frozen in
+`specs/poc-spring-test-preparation-v1.json`. Validate its ownership, exact
+entrypoints, eight-pair design, outputs, and unchanged gate with:
+
+```bash
+./dev/check-poc-spring-test-preparation
+./dev/check-build-impact-automatic
+```
+
+The discovery adapter resolves the Gradle task graph, detects any real `Test`,
+then disables every requested/dependency task before the discovery action runs.
+Only a complete, Test-free graph may compare native `testClasses` with
+`:spring-jms:testClasses`; unknown or test-containing graphs remain full-build.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

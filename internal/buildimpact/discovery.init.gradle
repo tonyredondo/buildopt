@@ -46,57 +46,75 @@ gradle.projectsEvaluated {
     def projectDependencies = discoveredProjects.collectEntries { project ->
         [(project.path): project.dependsOn]
     }
-    def conventionalBuildTasks = ["assemble", "jar", "classes", "compileJava", "compileKotlin"] as Set
-    def discoveredEntrypoints = requestedEntrypoints.collect { requestedName ->
-        def task = root.tasks.getByPath(requestedName as String)
-        def reachedProjects = new TreeSet<String>()
-        if (task.project == root && !root.subprojects.isEmpty()) {
-            reachedProjects.addAll(knownProjects)
-        } else {
-            def pendingProjects = [task.project.path] as ArrayDeque
-            while (!pendingProjects.isEmpty()) {
-                def projectPath = pendingProjects.removeFirst()
-                if (!reachedProjects.add(projectPath)) {
-                    continue
-                }
-                (projectDependencies[projectPath] ?: []).each {
-                    pendingProjects.addLast(it)
-                }
-            }
-        }
-        def containsTests = task instanceof Test || task.name.toLowerCase() in ["test", "check", "build"]
-        def unknownRelationships = !conventionalBuildTasks.contains(task.name) || containsTests
-        [
-            name: requestedName,
-            reachesProjects: reachedProjects as List,
-            containsTestTasks: containsTests,
-            unknownRelationships: reachedProjects.isEmpty() || unknownRelationships,
-        ]
+    def conventionalBuildTasks = [
+        "assemble", "jar", "classes", "compileJava", "compileKotlin", "testClasses"
+    ] as Set
+    def requestedTasks = requestedEntrypoints.collect {
+        root.tasks.getByPath(it as String)
     }
-
-    def fallbackReasons = []
-    if (!includedBuilds.isEmpty()) {
-        fallbackReasons.add("INCLUDED_BUILDS_PRESENT")
-    }
-    if (discoveredEntrypoints.any { it.unknownRelationships }) {
-        fallbackReasons.add("UNSUPPORTED_OR_TEST_ENTRYPOINT")
-    }
-    def snapshot = [
-        schemaVersion: "buildopt.build-impact/gradle-discovery/v1",
-        gradleVersion: gradle.gradleVersion,
-        complete: fallbackReasons.isEmpty(),
-        fallbackReasons: fallbackReasons,
-        projects: discoveredProjects,
-        entrypoints: discoveredEntrypoints,
-    ]
-    root.tasks.register("buildoptImpactDiscovery") {
+    def snapshot = null
+    def discoveryTask = root.tasks.register("buildoptImpactDiscovery") {
         group = "buildopt"
         description = "Emits a conservative BuildOpt project and task dependency snapshot"
+        dependsOn(requestedTasks)
         doLast {
+            if (snapshot == null) {
+                throw new GradleException("BuildOpt impact discovery task graph is unavailable")
+            }
             def output = new File(outputPath)
             output.parentFile.mkdirs()
             output.text = JsonOutput.toJson(snapshot) + "\n"
         }
+    }
+    gradle.taskGraph.whenReady { graph ->
+        def discovery = discoveryTask.get()
+        if (!graph.hasTask(discovery)) {
+            throw new GradleException("BuildOpt impact discovery task is absent from the graph")
+        }
+        def containsTests = graph.allTasks.any { it instanceof Test }
+        // Discovery needs the configured task graph, never task execution. Disable
+        // every requested task and dependency after Gradle has resolved the graph.
+        graph.allTasks.findAll { it != discovery }.each { it.enabled = false }
+        def discoveredEntrypoints = requestedEntrypoints.collect { requestedName ->
+            def task = root.tasks.getByPath(requestedName as String)
+            def reachedProjects = new TreeSet<String>()
+            if (task.project == root && !root.subprojects.isEmpty()) {
+                reachedProjects.addAll(knownProjects)
+            } else {
+                def pendingProjects = [task.project.path] as ArrayDeque
+                while (!pendingProjects.isEmpty()) {
+                    def projectPath = pendingProjects.removeFirst()
+                    if (!reachedProjects.add(projectPath)) {
+                        continue
+                    }
+                    (projectDependencies[projectPath] ?: []).each {
+                        pendingProjects.addLast(it)
+                    }
+                }
+            }
+            def unknownRelationships = !conventionalBuildTasks.contains(task.name) || containsTests
+            [
+                name: requestedName,
+                reachesProjects: reachedProjects as List,
+                containsTestTasks: containsTests,
+                unknownRelationships: reachedProjects.isEmpty() || unknownRelationships,
+            ]
+        }
+        def fallbackReasons = []
+        if (!includedBuilds.isEmpty()) {
+            fallbackReasons.add("INCLUDED_BUILDS_PRESENT")
+        }
+        if (discoveredEntrypoints.any { it.unknownRelationships }) {
+            fallbackReasons.add("UNSUPPORTED_OR_TEST_ENTRYPOINT")
+        }
+        snapshot = [
+            schemaVersion: "buildopt.build-impact/gradle-discovery/v1",
+            gradleVersion: gradle.gradleVersion,
+            complete: fallbackReasons.isEmpty(),
+            fallbackReasons: fallbackReasons,
+            projects: discoveredProjects,
+            entrypoints: discoveredEntrypoints,
+        ]
     }
 }
 }

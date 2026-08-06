@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-spring-test-preparation-v1.json"
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-spring-test-preparation/v1" and
+    .workItem == "POC-SPRING-TEST-PREPARATION-001" and
+    .decision == "PREREGISTER_BUILD_IMPACT_FOR_BUILD_OWNED_TEST_PREPARATION" and
+    .repository.nameWithOwner == "spring-projects/spring-framework" and
+    (.repository.revision | test("^[0-9a-f]{40}$")) and
+    (.repository.sourceArchiveSha256 | test("^[0-9a-f]{64}$")) and
+    .runner.cpuCount == 12 and .runner.maxWorkers == 12 and
+    .change.project == ":spring-jms" and
+    .manifest.originalEntrypoints == ["testClasses"] and
+    .manifest.allowedAlternatives == [{
+        id: "spring-jms-affected-test-classes",
+        entrypoints: [":spring-jms:testClasses"]
+    }] and
+    .manifest.requiredArtifacts == [{
+        id: "spring-jms-test-preparation",
+        path: "spring-jms/build/classes/**",
+        owner: "BUILD_OPTIMIZATION"
+    }] and
+    .manifest.requiredChecks == [] and
+    .manifest.unknownChangePolicy == "FULL_GRAPH" and
+    .discovery.mustBeComplete == true and
+    .discovery.mustContainTestTasks == false and
+    .discovery.expectedAlternative == [":spring-jms:testClasses"] and
+    .discovery.unknownOrTestDependencyFallsBackToFullGraph == true and
+    .measurement.controlEntrypoints == ["testClasses"] and
+    .measurement.candidateEntrypoints == [":spring-jms:testClasses"] and
+    (.measurement.commonArguments | index("--offline")) != null and
+    (.measurement.commonArguments | index("--max-workers=12")) != null and
+    .measurement.onlinePreflightMeasured == false and
+    .measurement.preflightDaemonStoppedBeforeArmSetup == true and
+    .measurement.sameNativeCacheSeedRestoredBeforeEveryArm == true and
+    .measurement.outputsRemovedBeforeEveryArm == true and
+    .measurement.fixedMutationAppliedAfterCacheRestore == true and
+    .measurement.warmupsPerArm == 1 and .measurement.pairs == 8 and
+    .measurement.maximumInterArmIdleGapMs == 5000 and
+    .measurement.requiredOutputRoots == ["spring-jms/build/classes"] and
+    .measurement.forbiddenTaskType == "org.gradle.api.tasks.testing.Test" and
+    .valueGate.minimumSavedMs == 500 and
+    .valueGate.minimumReductionRatio == 0.02 and
+    .valueGate.positiveLower95Bound == true and
+    .valueGate.requiredOutputsIdentical == true and
+    .valueGate.requiredOutputsNonEmpty == true and
+    .valueGate.thresholdsMayMoveAfterMeasurement == false and
+    .valueGate.failedPairsMayBeDiscarded == false and
+    .boundaries == {
+        buildOwnedTestPreparationOnly: true,
+        gradleTestTasksExecuted: false,
+        testSelectionChanged: false,
+        testOptimizationModified: false,
+        proofOfConcept: true,
+        productionReadinessClaimed: false,
+        soakRequired: false,
+        designPartnerRequired: false
+    }
+' "${buildopt_spec}" >/dev/null
+
+printf 'Spring test-preparation contract OK: %s\n' "${buildopt_spec}"

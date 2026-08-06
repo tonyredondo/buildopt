@@ -102,6 +102,16 @@ hypothesis returns to the independent `TEST_PREPARATION` cell: Build Impact may
 omit unaffected build-owned `testClasses` work, but it may not execute, select,
 filter, omit, retry, or reorder any Gradle `Test` task.
 
+The test-preparation follow-up is preregistered in
+[`poc-spring-test-preparation-v1.json`](./poc-spring-test-preparation-v1.json).
+Build Impact discovery now treats `testClasses` as build-owned only after the
+resolved task graph proves it contains no Gradle `Test`; all discovered tasks
+are disabled before execution. The fixed Spring graph resolves the original
+`testClasses` entrypoint as complete and the leaf-change alternative as
+`:spring-jms:testClasses`. Eight alternating pairs on all 12 workers must
+preserve non-empty `spring-jms/build/classes` output byte for byte and retain
+the unchanged 500-ms/2%/positive-bound gate.
+
 Validate the frozen contract with:
 
 ```bash

@@ -106,6 +106,56 @@ func TestSyntheticGradleDiscoveryGeneratedStateIsCurrent(t *testing.T) {
 	}
 }
 
+func TestTestPreparationDiscoveryDistinguishesBuildWorkFromTestExecution(t *testing.T) {
+	if os.Getenv("BUILDOPT_RUN_BUILD_IMPACT_DISCOVERY_PROOF") != "1" {
+		t.Skip("real Gradle discovery proof is run by check-build-impact-automatic")
+	}
+	repositoryRoot := buildImpactRepositoryRoot(t)
+	fixtureRoot := filepath.Join(repositoryRoot, filepath.FromSlash("fixtures/build-impact/test-preparation"))
+	discover := func(t *testing.T) GeneratedImpact {
+		t.Helper()
+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+		defer cancel()
+		generated, err := Discover(ctx, DiscoveryOptions{
+			RepositoryRoot: fixtureRoot,
+			ManifestPath:   "buildopt-impact-manifest.json",
+			RepositoryID:   "tonyredondo/buildopt-impact-test-preparation",
+			PipelineClass:  "pull-request",
+			GradleCommand:  filepath.Join(repositoryRoot, "gradlew"),
+			GradleArgs:     []string{"--offline"},
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return generated
+	}
+
+	generated := discover(t)
+	assertFixtureBytes(t, filepath.Join(fixtureRoot, "buildopt-impact-graph.generated.json"), generated.GraphJSON)
+	assertFixtureBytes(t, filepath.Join(fixtureRoot, "buildopt-impact.generated.json"), generated.GeneratedJSON)
+	if !generated.Generated.Complete {
+		t.Fatalf("safe test preparation was not complete: %+v", generated.Generated)
+	}
+	for _, entrypoint := range generated.Graph.Graph.Entrypoints {
+		if entrypoint.ContainsTestTasks || entrypoint.UnknownRelationships {
+			t.Fatalf("safe test preparation entrypoint = %+v", entrypoint)
+		}
+	}
+
+	t.Setenv("BUILDOPT_TEST_PREPARATION_UNSAFE", "1")
+	unsafe := discover(t)
+	if unsafe.Generated.Complete || !reflect.DeepEqual(unsafe.Generated.FallbackReasons, []string{"UNSUPPORTED_OR_TEST_ENTRYPOINT"}) {
+		t.Fatalf("Test dependency did not fail closed: %+v", unsafe.Generated)
+	}
+	foundTest := false
+	for _, entrypoint := range unsafe.Graph.Graph.Entrypoints {
+		foundTest = foundTest || entrypoint.ContainsTestTasks
+	}
+	if !foundTest {
+		t.Fatal("unsafe test preparation did not expose its Test dependency")
+	}
+}
+
 func TestPocCombinedDiscoveryIgnoresInheritedBuildSrcInit(t *testing.T) {
 	if os.Getenv("BUILDOPT_RUN_BUILD_IMPACT_DISCOVERY_PROOF") != "1" {
 		t.Skip("real Gradle discovery proof is run by check-build-impact-automatic")

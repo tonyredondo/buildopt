@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "tonyredondo/buildopt-impact-test-preparation",
+  "pipelineClass": "pull-request",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    "testClasses"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "service-a-test-preparation",
+      "entrypoints": [
+        ":service-a:testClasses"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "service-a-test-classes",
+      "path": "service-a/build/classes/**",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "gradle/**"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

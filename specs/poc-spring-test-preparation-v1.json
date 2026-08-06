@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "buildopt.specs/poc-spring-test-preparation/v1",
+  "workItem": "POC-SPRING-TEST-PREPARATION-001",
+  "decision": "PREREGISTER_BUILD_IMPACT_FOR_BUILD_OWNED_TEST_PREPARATION",
+  "repository": {
+    "nameWithOwner": "spring-projects/spring-framework",
+    "revision": "4b5c92703c63966c3471242c621c4a63b382638d",
+    "sourceArchiveSha256": "e3fa4258e5e568c0b0e6f1605956cd743cff847b9df7c82ce86b2d2f1109db16"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12
+  },
+  "change": {
+    "class": "LEAF_PRODUCTION_SOURCE",
+    "path": "spring-jms/src/main/java/org/springframework/jms/JmsException.java",
+    "project": ":spring-jms",
+    "mutation": "APPEND_PAIR_COMMENT"
+  },
+  "manifest": {
+    "schemaVersion": "buildopt.build-impact/manifest/v1",
+    "manifestVersion": 1,
+    "repositoryId": "spring-projects/spring-framework",
+    "pipelineClass": "poc-spring-test-preparation",
+    "ownership": "REPOSITORY_COMMITTED",
+    "originalEntrypoints": [
+      "testClasses"
+    ],
+    "allowedAlternatives": [
+      {
+        "id": "spring-jms-affected-test-classes",
+        "entrypoints": [
+          ":spring-jms:testClasses"
+        ]
+      }
+    ],
+    "requiredArtifacts": [
+      {
+        "id": "spring-jms-test-preparation",
+        "path": "spring-jms/build/classes/**",
+        "owner": "BUILD_OPTIMIZATION"
+      }
+    ],
+    "requiredChecks": [],
+    "globalChangePaths": [
+      "gradle/**"
+    ],
+    "unknownChangePolicy": "FULL_GRAPH"
+  },
+  "discovery": {
+    "adapterVersion": "gradle-runtime-v1",
+    "mustBeComplete": true,
+    "mustContainTestTasks": false,
+    "expectedAlternative": [
+      ":spring-jms:testClasses"
+    ],
+    "expectedAffectedProjects": [
+      ":spring-jms"
+    ],
+    "unknownOrTestDependencyFallsBackToFullGraph": true
+  },
+  "measurement": {
+    "controlEntrypoints": [
+      "testClasses"
+    ],
+    "candidateEntrypoints": [
+      ":spring-jms:testClasses"
+    ],
+    "commonArguments": [
+      "--daemon",
+      "--offline",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--max-workers=12",
+      "--no-scan",
+      "--stacktrace"
+    ],
+    "onlinePreflightMeasured": false,
+    "preflightDaemonStoppedBeforeArmSetup": true,
+    "sameNativeCacheSeedRestoredBeforeEveryArm": true,
+    "outputsRemovedBeforeEveryArm": true,
+    "fixedMutationAppliedAfterCacheRestore": true,
+    "warmupsPerArm": 1,
+    "pairs": 8,
+    "pairOrder": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
+    "maximumInterArmIdleGapMs": 5000,
+    "requiredOutputRoots": [
+      "spring-jms/build/classes"
+    ],
+    "forbiddenTaskType": "org.gradle.api.tasks.testing.Test"
+  },
+  "valueGate": {
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "requiredOutputsIdentical": true,
+    "requiredOutputsNonEmpty": true,
+    "maximumProductAttributableFailures": 0,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedPairsMayBeDiscarded": false,
+    "parityAloneCountsAsValue": false
+  },
+  "boundaries": {
+    "buildOwnedTestPreparationOnly": true,
+    "gradleTestTasksExecuted": false,
+    "testSelectionChanged": false,
+    "testOptimizationModified": false,
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

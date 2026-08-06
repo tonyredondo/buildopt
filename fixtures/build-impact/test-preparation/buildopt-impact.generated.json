@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.build-impact/generated-manifest/v1",
+  "repositoryId": "tonyredondo/buildopt-impact-test-preparation",
+  "pipelineClass": "pull-request",
+  "manifestDigest": "sha256:59f1782831f361a6ca2b1dc352af75a8065aaf24d3da3da775cb9b2e86e497af",
+  "graphDigest": "sha256:85d2ab3914f4dc9c927c8b8bc6df42ce770589e42fd91edb337d611326f39432",
+  "discoveryDigest": "sha256:ac6cd912dae4979d83df650477eb1657c16db79b8f89edc8a1faec0c49e60fdc",
+  "adapterVersion": "gradle-runtime-v1",
+  "gradleVersion": "9.6.1",
+  "complete": true,
+  "fallbackReasons": []
+}

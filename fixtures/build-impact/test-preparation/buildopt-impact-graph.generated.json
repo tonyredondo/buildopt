@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "buildopt.build-impact/declared-graph/v1",
+  "repositoryId": "tonyredondo/buildopt-impact-test-preparation",
+  "pipelineClass": "pull-request",
+  "manifestDigest": "sha256:59f1782831f361a6ca2b1dc352af75a8065aaf24d3da3da775cb9b2e86e497af",
+  "adapterVersion": "gradle-runtime-v1",
+  "complete": true,
+  "projects": [
+    {
+      "path": ":library-c",
+      "sourcePaths": [
+        "library-c/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":service-a",
+      "sourcePaths": [
+        "service-a/**"
+      ],
+      "dependsOn": [
+        ":library-c"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":service-b",
+      "sourcePaths": [
+        "service-b/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    }
+  ],
+  "entrypoints": [
+    {
+      "name": ":service-a:testClasses",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [
+        ":library-c",
+        ":service-a"
+      ],
+      "artifactIds": [
+        "service-a-test-classes"
+      ],
+      "checkIds": [],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    },
+    {
+      "name": "testClasses",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [
+        ":library-c",
+        ":service-a",
+        ":service-b"
+      ],
+      "artifactIds": [
+        "service-a-test-classes"
+      ],
+      "checkIds": [],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    }
+  ],
+  "globalChangePaths": []
+}

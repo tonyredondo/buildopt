@@ -167,7 +167,7 @@ than partners. Test Optimization remains a separate product.
 | 24 | `POC-SPRING-VALUE-001` | Stop the frozen Checkstyle candidate before accepted pairs when its full-`check` ceiling cannot reach the unchanged value gate | `DONE` | Codex |
 | 25 | `POC-SPRING-TEST-RUNTIME-001` | Reject global two-fork test concurrency after it regresses and fails against the stable six-worker native control | `DONE` | Codex |
 | 26 | `POC-SPRING-SELECTIVE-TEST-RUNTIME-001` | Reject selective two-fork tuning after it regresses and fails the stable six-worker native control | `DONE` | Codex |
-| 27 | `POC-SPRING-TEST-PREPARATION-001` | Evaluate generic Build Impact for the build-owned Spring `testClasses` graph without executing or omitting requested `Test` tasks | `TODO` | Codex |
+| 27 | `POC-SPRING-TEST-PREPARATION-001` | Evaluate generic Build Impact for the build-owned Spring `testClasses` graph without executing or omitting requested `Test` tasks | `DOING` | Codex |
 | 28 | `POC-OTEL-TRANSFER-001` | Apply a Spring-qualified mechanism unchanged to OpenTelemetry Java Instrumentation and repeat the same gate | `WAITING` | Codex |
 
 The raw diagnostic block is closed and unchanged. `E-172` corrects its
@@ -1286,6 +1286,7 @@ This table points to the latest valid result. It does not replace reports or all
 | 2026-08-06 | Rejected global two-fork Spring test tuning after the stable six-worker native control completed 41,276 tests in 523.858 seconds while the candidate retained the same tests/outputs but failed in 649.929 seconds, a 24.07% regression | Codex |
 | 2026-08-06 | Preregistered the only selective follow-up before timing: on six workers, raise only the conventional `test` task from one to two forks when its project contains at least 500 Java, Groovy, or Kotlin test sources; preserve additional suites and every repository-owned explicit fork value | Codex |
 | 2026-08-06 | Rejected the preregistered selective Spring fork rule after it regressed 8.528 seconds/1.57% and failed `:spring-test:test`; retained all cases and outputs, stopped fork tuning, and returned to build-owned test preparation | Codex |
+| 2026-08-06 | Preregistered Spring build-owned test preparation: compare native `testClasses` with the discovered `:spring-jms:testClasses` alternative for eight pairs on 12 workers, forbid every Gradle `Test`, and preserve the affected class outputs with the unchanged value gate | Codex |
 | 2026-08-06 | Preregistered and implemented the exact Spring Runtime Tuning candidate after the diagnostic but before accepted timing: raise only `checkstyleNohttp` from 1 GiB to 2 GiB on a runner with at least 14 GiB, preserve every other task value and all semantics, and require the eight-pair full-`check` gate before claiming value | Codex |
 | 2026-08-06 | Corrected generic Gradle discovery to ignore self-project configuration dependencies; a non-gating Spring probe then rejected the conservative reverse-closure alternative after it reduced 93 tasks to 47 but regressed 450 ms with all 23,574 outputs identical | Codex |
 | 2026-08-06 | Closed the 12-CPU Spring diagnostic with exact wall clock, profile phases, cache/task counts, required-output manifests, and 41,276 test outcomes; authorized only separate paired Build Impact and Runtime Tuning hypotheses without claiming savings | Codex |
