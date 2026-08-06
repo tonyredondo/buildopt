@@ -2553,6 +2553,12 @@ cache seed from the original source, and applies the fixed source mutation.
 Both arms must execute `checkstyleNohttp`; cached or failed pairs are rejected,
 not discarded.
 
+The Checkstyle candidate stopped before accepted pairs: its 3.41-second
+isolated saving could not reach 2% of the 546-second control warmup, which also
+exposed an upstream `java24Test` timing failure. The next authorized Spring
+experiment is test-process concurrency with the complete test set unchanged;
+the Checkstyle mechanism is not eligible for OpenTelemetry transfer.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

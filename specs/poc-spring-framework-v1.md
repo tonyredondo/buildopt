@@ -58,6 +58,22 @@ to `open-telemetry/opentelemetry-java-instrumentation`. The transfer may adapt
 the repository manifest and declared graph, but not product behavior or the
 gate.
 
+## Checkstyle candidate decision
+
+The frozen Checkstyle candidate was stopped before accepted pairs. Its native
+control warmup failed after 546 seconds in Spring's timing-sensitive
+`java24Test` suite; the failure was not attributable to BuildOpt and was not
+retried or discarded. More importantly, the candidate's entire isolated saving
+was 3.41 seconds. Even treating that value as an upper bound on full-build
+wall-clock saving gives only 0.625% against the elapsed control time, below the
+unchanged 2% gate. No full-workload saving is claimed and this mechanism is not
+eligible for OpenTelemetry transfer.
+
+The next Spring hypothesis may tune only test-process concurrency and Gradle
+worker allocation. It must retain every requested test case, output, cache
+setting, failure, and value threshold; it cannot alter test selection, retry
+policy, or repository source.
+
 Validate the frozen contract with:
 
 ```bash
