@@ -16,8 +16,8 @@ if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ]]; then
     printf 'invalid OpenTelemetry test-preparation output path\n' >&2
     exit 64
 fi
-for buildopt_command in awk chmod cmp cp curl date find git grep jq mkdir mktemp \
-    sed sha256sum sort tar timeout xargs; do
+for buildopt_command in awk chmod cmp cp curl date docker find git grep jq mkdir \
+    mktemp sed sha256sum sort tar timeout xargs; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
         printf 'required OpenTelemetry test-preparation command is unavailable: %s\n' \
             "${buildopt_command}" >&2
@@ -34,6 +34,7 @@ if [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-fil
 fi
 
 buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-otel-test-preparation.XXXXXX")
+buildopt_cleanup_image=$(jq -er '.runner.cleanupImage' "${buildopt_spec}")
 buildopt_stop_gradle() {
     local buildopt_checkout=$1
     local buildopt_home=$2
@@ -54,7 +55,15 @@ buildopt_cleanup() {
                 "${buildopt_root}/${buildopt_arm}/gradle-home"
         done
         chmod -R u+w "${buildopt_root}/readonly-dependencies" 2>/dev/null || true
-        rm -rf -- "${buildopt_root}"
+        if ! rm -rf -- "${buildopt_root}"; then
+            if [[ -d "${buildopt_root}" && ! -L "${buildopt_root}" ]]; then
+                docker run --rm --network none \
+                    --mount "type=bind,src=${buildopt_root},dst=/buildopt-cleanup" \
+                    "${buildopt_cleanup_image}" \
+                    find /buildopt-cleanup -mindepth 1 -delete >/dev/null
+                rmdir -- "${buildopt_root}"
+            fi
+        fi
     fi
 }
 trap buildopt_cleanup EXIT

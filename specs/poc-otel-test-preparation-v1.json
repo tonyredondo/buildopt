@@ -2,6 +2,11 @@
   "schemaVersion": "buildopt.specs/poc-otel-test-preparation/v1",
   "workItem": "POC-OTEL-TRANSFER-001",
   "decision": "PREREGISTER_UNCHANGED_SPRING_QUALIFIED_BUILD_IMPACT",
+  "preMeasurementCorrection": {
+    "reason": "UPSTREAM_CONTAINER_GENERATED_NOBODY_OWNED_FILES_REQUIRE_PINNED_LOCAL_CLEANUP",
+    "acceptedPairsBeforeCorrection": 0,
+    "measurementOrValueGateChanged": false
+  },
   "repository": {
     "nameWithOwner": "open-telemetry/opentelemetry-java-instrumentation",
     "revision": "2f472a7b3073eabc842540bcb1f48e71ae54825d",
@@ -23,7 +28,8 @@
     "cpuCount": 12,
     "memoryBytes": 16659865600,
     "maxWorkers": 12,
-    "jdk": "temurin-21.0.12+8"
+    "jdk": "temurin-21.0.12+8",
+    "cleanupImage": "docker.io/library/eclipse-temurin@sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50"
   },
   "change": {
     "class": "LEAF_PRODUCTION_SOURCE",
