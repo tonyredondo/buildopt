@@ -312,6 +312,7 @@ buildopt_required_files=(
     "dev/check-poc-otel-test-preparation-result"
     "dev/check-poc-otel-spring-family-v2"
     "dev/check-poc-otel-spring-family-v2-result"
+    "dev/check-poc-otel-overhead"
     "dev/check-spring-test-runtime-init"
     "dev/test-poc-pairing"
     "dev/assemble-poc-pairing"

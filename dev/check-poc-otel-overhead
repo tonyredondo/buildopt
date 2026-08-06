@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [result.json]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-otel-overhead-v1.json"}
+
+for buildopt_command in jq sha256sum; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required OpenTelemetry overhead command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+if [[ ! -f "${buildopt_result}" ]]; then
+    printf 'OpenTelemetry overhead evidence is unavailable: %s\n' \
+        "${buildopt_result}" >&2
+    exit 1
+fi
+
+jq -e '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    def gitsha: type == "string" and test("^[0-9a-f]{40}$");
+    def duration: type == "number" and . >= 0 and . == floor;
+    def report:
+        .schemaVersion == "buildopt.build-impact/poc-phase-timings/v1" and
+        .candidateSelected == true and
+        .alternativeId == "otel-spring-autoconfigure-test-classes" and
+        .reason == "EXPLICIT_OWNER_POC_CANDIDATE" and
+        .entrypointCount == 1 and .exitCode == 0 and
+        (.planner.manifestLoadAndValidationNs | duration) and
+        (.planner.graphLoadAndValidationNs | duration) and
+        (.planner.generatedStateLoadAndValidationNs | duration) and
+        (.planner.impactEvaluationNs | duration) and
+        (.planner.totalNs | duration) and
+        .planner.totalNs >= (
+            .planner.manifestLoadAndValidationNs +
+            .planner.graphLoadAndValidationNs +
+            .planner.generatedStateLoadAndValidationNs +
+            .planner.impactEvaluationNs
+        ) and
+        (.impactPreparationNs | duration) and (.gradleSetupNs | duration) and
+        (.runtimeSetupNs | duration) and (.gradleExecutionNs | duration) and
+        (.teardownNs | duration) and (.unattributedNs | duration) and
+        (.totalNs | duration) and
+        .planner.totalNs <= .impactPreparationNs and
+        .totalNs == (
+            .impactPreparationNs + .gradleSetupNs + .runtimeSetupNs +
+            .gradleExecutionNs + .teardownNs + .unattributedNs
+        );
+    .schemaVersion == "buildopt.evidence/poc-otel-overhead/v1" and
+    .workItem == "POC-OTEL-OVERHEAD-001" and
+    (.capturedAt | fromdateiso8601? != null) and
+    (.buildopt.revision | gitsha) and
+    (.buildopt.executableSha256 | sha256) and
+    (.buildopt.packageSha256 | sha256) and
+    .buildopt.packageVersion == "0.3.0-dev" and
+    .buildopt.surface == "INSTALLED_BUILDOPT_IMPACT" and
+    .repository.nameWithOwner == "open-telemetry/opentelemetry-java-instrumentation" and
+    .repository.revision == "080c1d32ca676ba7b0210c21b60cce8e7ac39058" and
+    .inputs.manifestSha256 == "973203e37b40eb60588b2807d265b9336af01dda31837807a3ba69c59c2ecb75" and
+    .inputs.graphSha256 == "ef148f49389658ad24aa739bc9cbbebb26af786983cbc774f44f52a41ecb38a5" and
+    .inputs.generatedManifestSha256 == "6f4886744836779bef55b2573650d87308ebc2b4982ad3d1c792ed9777ef6967" and
+    .inputs.graphBytes == 435875 and
+    .inputs.candidateEntrypoint == ":instrumentation:spring:spring-boot-autoconfigure:testClasses" and
+    .method.samples == 16 and
+    .method.gradleChild == "NEUTRAL_TRUE_WRAPPER" and
+    .method.measuredScope == "BUILDOPT_OWNED_PRE_GRADLE_AND_LAUNCHER_OVERHEAD" and
+    .method.performanceClaim == false and
+    (.samples | length) == 16 and all(.samples[]; report) and
+    .result.plannerMeanNs == ([.samples[].planner.totalNs] | add / length) and
+    .result.manifestMeanNs == ([.samples[].planner.manifestLoadAndValidationNs] | add / length) and
+    .result.graphMeanNs == ([.samples[].planner.graphLoadAndValidationNs] | add / length) and
+    .result.generatedMeanNs == ([.samples[].planner.generatedStateLoadAndValidationNs] | add / length) and
+    .result.evaluationMeanNs == ([.samples[].planner.impactEvaluationNs] | add / length) and
+    .result.impactPreparationMeanNs == ([.samples[].impactPreparationNs] | add / length) and
+    .result.gradleSetupMeanNs == ([.samples[].gradleSetupNs] | add / length) and
+    .result.runtimeSetupMeanNs == ([.samples[].runtimeSetupNs] | add / length) and
+    .result.neutralChildMeanNs == ([.samples[].gradleExecutionNs] | add / length) and
+    .result.teardownMeanNs == ([.samples[].teardownNs] | add / length) and
+    .result.totalMeanNs == ([.samples[].totalNs] | add / length) and
+    .result.totalMinNs == ([.samples[].totalNs] | min) and
+    .result.totalMaxNs == ([.samples[].totalNs] | max) and
+    .result.totalMaxNs < 100000000 and
+    .result.allCandidatesSelected == true and
+    .result.conclusion == "BUILDOPT_OVERHEAD_TOO_SMALL_TO_EXPLAIN_465MS_REGRESSIVE_PAIR" and
+    .result.nextAction == "REDUCE_AND_STABILIZE_GRADLE_CANDIDATE_WORK" and
+    .boundaries.pocOnly == true and
+    .boundaries.productionSelectionChanged == false and
+    .boundaries.repositorySpecificProductRuleAdded == false and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false
+' "${buildopt_result}" >/dev/null || {
+    printf 'OpenTelemetry overhead evidence is invalid: %s\n' \
+        "${buildopt_result}" >&2
+    exit 1
+}
+
+printf 'OpenTelemetry Build Impact overhead evidence OK: %s\n' \
+    "${buildopt_result}"

@@ -101,6 +101,22 @@ Validate the terminal evidence with:
   benchmarks/results/poc-otel-spring-family-v2.json
 ```
 
+The installed-path phase profile then isolated BuildOpt from Gradle by running
+the exact validated 435,875-byte OpenTelemetry graph through a neutral child.
+Across 16 retained samples, BuildOpt-owned preparation averaged 47.70 ms:
+36.43 ms for graph load/validation, 9.74 ms for impact evaluation and about
+1.29 ms for the remaining planner/setup work. Total launcher time including
+the neutral child averaged 49.51 ms and never exceeded 77.39 ms. This is too
+small to explain the earlier 465-ms regressive pair; the next optimization
+target is the selected Gradle work and its hot-state stability, not generic
+launcher micro-optimization. This diagnostic makes no build-time claim.
+
+Validate all 16 samples and recomputed means with:
+
+```bash
+./dev/check-poc-otel-overhead
+```
+
 | Mechanism | Mean result | Exact paired 95% interval | Classification |
 |---|---:|---:|---|
 | Default native-cache fallback, Kotlin | 79 ms faster (8.9%) | +6 to +156 ms | `NO_VALUE_NO_ACTION`; same cache mechanism, no acceleration claim |

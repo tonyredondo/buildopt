@@ -1,0 +1,409 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-otel-overhead/v1",
+  "workItem": "POC-OTEL-OVERHEAD-001",
+  "capturedAt": "2026-08-06T19:32:56Z",
+  "buildopt": {
+    "revision": "190113a4252ef0d9e6a9c40c267ffe0930c85f65",
+    "executableSha256": "4466f532e3cac553f9fe5cfc6c8518f3cfa6dcf4a081894a2a399c49560a33d8",
+    "packageSha256": "d93c157f8df14d383e552e9b9a9eaad8113dae050121e85cece14f8685587120",
+    "packageVersion": "0.3.0-dev",
+    "surface": "INSTALLED_BUILDOPT_IMPACT"
+  },
+  "repository": {
+    "nameWithOwner": "open-telemetry/opentelemetry-java-instrumentation",
+    "revision": "080c1d32ca676ba7b0210c21b60cce8e7ac39058"
+  },
+  "inputs": {
+    "manifestSha256": "973203e37b40eb60588b2807d265b9336af01dda31837807a3ba69c59c2ecb75",
+    "graphSha256": "ef148f49389658ad24aa739bc9cbbebb26af786983cbc774f44f52a41ecb38a5",
+    "generatedManifestSha256": "6f4886744836779bef55b2573650d87308ebc2b4982ad3d1c792ed9777ef6967",
+    "graphBytes": 435875,
+    "candidateEntrypoint": ":instrumentation:spring:spring-boot-autoconfigure:testClasses"
+  },
+  "method": {
+    "samples": 16,
+    "gradleChild": "NEUTRAL_TRUE_WRAPPER",
+    "measuredScope": "BUILDOPT_OWNED_PRE_GRADLE_AND_LAUNCHER_OVERHEAD",
+    "performanceClaim": false
+  },
+  "samples": [
+    {
+      "alternativeId": "otel-spring-autoconfigure-test-classes",
+      "candidateSelected": true,
+      "entrypointCount": 1,
+      "exitCode": 0,
+      "gradleExecutionNs": 1197311,
+      "gradleSetupNs": 17054,
+      "impactPreparationNs": 24436876,
+      "planner": {
+        "generatedStateLoadAndValidationNs": 74978,
+        "graphLoadAndValidationNs": 18140734,
+        "impactEvaluationNs": 5809373,
+        "manifestLoadAndValidationNs": 316151,
+        "totalNs": 24344424
+      },
+      "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+      "runtimeSetupNs": 656,
+      "schemaVersion": "buildopt.build-impact/poc-phase-timings/v1",
+      "teardownNs": 464,
+      "totalNs": 25678919,
+      "unattributedNs": 26558
+    },
+    {
+      "alternativeId": "otel-spring-autoconfigure-test-classes",
+      "candidateSelected": true,
+      "entrypointCount": 1,
+      "exitCode": 0,
+      "gradleExecutionNs": 1032630,
+      "gradleSetupNs": 10980,
+      "impactPreparationNs": 43846420,
+      "planner": {
+        "generatedStateLoadAndValidationNs": 117695,
+        "graphLoadAndValidationNs": 34134767,
+        "impactEvaluationNs": 8197416,
+        "manifestLoadAndValidationNs": 1172655,
+        "totalNs": 43626363
+      },
+      "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+      "runtimeSetupNs": 544,
+      "schemaVersion": "buildopt.build-impact/poc-phase-timings/v1",
+      "teardownNs": 378,
+      "totalNs": 44918984,
+      "unattributedNs": 28032
+    },
+    {
+      "alternativeId": "otel-spring-autoconfigure-test-classes",
+      "candidateSelected": true,
+      "entrypointCount": 1,
+      "exitCode": 0,
+      "gradleExecutionNs": 1603989,
+      "gradleSetupNs": 18730,
+      "impactPreparationNs": 41669295,
+      "planner": {
+        "generatedStateLoadAndValidationNs": 109266,
+        "graphLoadAndValidationNs": 30807214,
+        "impactEvaluationNs": 9098572,
+        "manifestLoadAndValidationNs": 1372739,
+        "totalNs": 41393311
+      },
+      "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+      "runtimeSetupNs": 823,
+      "schemaVersion": "buildopt.build-impact/poc-phase-timings/v1",
+      "teardownNs": 586,
+      "totalNs": 43335975,
+      "unattributedNs": 42552
+    },
+    {
+      "alternativeId": "otel-spring-autoconfigure-test-classes",
+      "candidateSelected": true,
+      "entrypointCount": 1,
+      "exitCode": 0,
+      "gradleExecutionNs": 2400710,
+      "gradleSetupNs": 29513,
+      "impactPreparationNs": 65795385,
+      "planner": {
+        "generatedStateLoadAndValidationNs": 165109,
+        "graphLoadAndValidationNs": 49870112,
+        "impactEvaluationNs": 14118044,
+        "manifestLoadAndValidationNs": 1348829,
+        "totalNs": 65510156
+      },
+      "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+      "runtimeSetupNs": 1435,
+      "schemaVersion": "buildopt.build-impact/poc-phase-timings/v1",
+      "teardownNs": 905,
+      "totalNs": 68298362,
+      "unattributedNs": 70414
+    },
+    {
+      "alternativeId": "otel-spring-autoconfigure-test-classes",
+      "candidateSelected": true,
+      "entrypointCount": 1,
+      "exitCode": 0,
+      "gradleExecutionNs": 1572740,
+      "gradleSetupNs": 18921,
+      "impactPreparationNs": 42700092,
+      "planner": {
+        "generatedStateLoadAndValidationNs": 101698,
+        "graphLoadAndValidationNs": 32027871,
+        "impactEvaluationNs": 9026854,
+        "manifestLoadAndValidationNs": 1265336,
+        "totalNs": 42427329
+      },
+      "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+      "runtimeSetupNs": 820,
+      "schemaVersion": "buildopt.build-impact/poc-phase-timings/v1",
+      "teardownNs": 670,
+      "totalNs": 44335516,
+      "unattributedNs": 42273
+    },
+    {
+      "alternativeId": "otel-spring-autoconfigure-test-classes",
+      "candidateSelected": true,
+      "entrypointCount": 1,
+      "exitCode": 0,
+      "gradleExecutionNs": 1028051,
+      "gradleSetupNs": 10036,
+      "impactPreparationNs": 30894580,
+      "planner": {
+        "generatedStateLoadAndValidationNs": 58538,
+        "graphLoadAndValidationNs": 24796226,
+        "impactEvaluationNs": 4469360,
+        "manifestLoadAndValidationNs": 1322628,
+        "totalNs": 30650413
+      },
+      "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+      "runtimeSetupNs": 521,
+      "schemaVersion": "buildopt.build-impact/poc-phase-timings/v1",
+      "teardownNs": 350,
+      "totalNs": 31963647,
+      "unattributedNs": 30109
+    },
+    {
+      "alternativeId": "otel-spring-autoconfigure-test-classes",
+      "candidateSelected": true,
+      "entrypointCount": 1,
+      "exitCode": 0,
+      "gradleExecutionNs": 2674303,
+      "gradleSetupNs": 32749,
+      "impactPreparationNs": 55857539,
+      "planner": {
+        "generatedStateLoadAndValidationNs": 613108,
+        "graphLoadAndValidationNs": 41655129,
+        "impactEvaluationNs": 12217745,
+        "manifestLoadAndValidationNs": 1086550,
+        "totalNs": 55580441
+      },
+      "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+      "runtimeSetupNs": 1476,
+      "schemaVersion": "buildopt.build-impact/poc-phase-timings/v1",
+      "teardownNs": 914,
+      "totalNs": 58626349,
+      "unattributedNs": 59368
+    },
+    {
+      "alternativeId": "otel-spring-autoconfigure-test-classes",
+      "candidateSelected": true,
+      "entrypointCount": 1,
+      "exitCode": 0,
+      "gradleExecutionNs": 2268239,
+      "gradleSetupNs": 30038,
+      "impactPreparationNs": 66438660,
+      "planner": {
+        "generatedStateLoadAndValidationNs": 168807,
+        "graphLoadAndValidationNs": 49324825,
+        "impactEvaluationNs": 15306053,
+        "manifestLoadAndValidationNs": 1328627,
+        "totalNs": 66137151
+      },
+      "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+      "runtimeSetupNs": 1383,
+      "schemaVersion": "buildopt.build-impact/poc-phase-timings/v1",
+      "teardownNs": 1348,
+      "totalNs": 68806125,
+      "unattributedNs": 66457
+    },
+    {
+      "alternativeId": "otel-spring-autoconfigure-test-classes",
+      "candidateSelected": true,
+      "entrypointCount": 1,
+      "exitCode": 0,
+      "gradleExecutionNs": 979879,
+      "gradleSetupNs": 10936,
+      "impactPreparationNs": 20096683,
+      "planner": {
+        "generatedStateLoadAndValidationNs": 60699,
+        "graphLoadAndValidationNs": 14862489,
+        "impactEvaluationNs": 4763292,
+        "manifestLoadAndValidationNs": 328082,
+        "totalNs": 20016956
+      },
+      "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+      "runtimeSetupNs": 562,
+      "schemaVersion": "buildopt.build-impact/poc-phase-timings/v1",
+      "teardownNs": 329,
+      "totalNs": 21112400,
+      "unattributedNs": 24011
+    },
+    {
+      "alternativeId": "otel-spring-autoconfigure-test-classes",
+      "candidateSelected": true,
+      "entrypointCount": 1,
+      "exitCode": 0,
+      "gradleExecutionNs": 3082929,
+      "gradleSetupNs": 35876,
+      "impactPreparationNs": 74192468,
+      "planner": {
+        "generatedStateLoadAndValidationNs": 862958,
+        "graphLoadAndValidationNs": 54928873,
+        "impactEvaluationNs": 17021253,
+        "manifestLoadAndValidationNs": 1080934,
+        "totalNs": 73904242
+      },
+      "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+      "runtimeSetupNs": 1520,
+      "schemaVersion": "buildopt.build-impact/poc-phase-timings/v1",
+      "teardownNs": 1269,
+      "totalNs": 77381754,
+      "unattributedNs": 67692
+    },
+    {
+      "alternativeId": "otel-spring-autoconfigure-test-classes",
+      "candidateSelected": true,
+      "entrypointCount": 1,
+      "exitCode": 0,
+      "gradleExecutionNs": 1285416,
+      "gradleSetupNs": 15223,
+      "impactPreparationNs": 60215829,
+      "planner": {
+        "generatedStateLoadAndValidationNs": 133729,
+        "graphLoadAndValidationNs": 50844139,
+        "impactEvaluationNs": 7866483,
+        "manifestLoadAndValidationNs": 1121277,
+        "totalNs": 59970832
+      },
+      "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+      "runtimeSetupNs": 623,
+      "schemaVersion": "buildopt.build-impact/poc-phase-timings/v1",
+      "teardownNs": 559,
+      "totalNs": 61557751,
+      "unattributedNs": 40101
+    },
+    {
+      "alternativeId": "otel-spring-autoconfigure-test-classes",
+      "candidateSelected": true,
+      "entrypointCount": 1,
+      "exitCode": 0,
+      "gradleExecutionNs": 1757459,
+      "gradleSetupNs": 20014,
+      "impactPreparationNs": 47943570,
+      "planner": {
+        "generatedStateLoadAndValidationNs": 122996,
+        "graphLoadAndValidationNs": 37010465,
+        "impactEvaluationNs": 9554108,
+        "manifestLoadAndValidationNs": 1020523,
+        "totalNs": 47714786
+      },
+      "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+      "runtimeSetupNs": 854,
+      "schemaVersion": "buildopt.build-impact/poc-phase-timings/v1",
+      "teardownNs": 652,
+      "totalNs": 49765223,
+      "unattributedNs": 42674
+    },
+    {
+      "alternativeId": "otel-spring-autoconfigure-test-classes",
+      "candidateSelected": true,
+      "entrypointCount": 1,
+      "exitCode": 0,
+      "gradleExecutionNs": 887151,
+      "gradleSetupNs": 10615,
+      "impactPreparationNs": 43645075,
+      "planner": {
+        "generatedStateLoadAndValidationNs": 117692,
+        "graphLoadAndValidationNs": 33923359,
+        "impactEvaluationNs": 8231772,
+        "manifestLoadAndValidationNs": 1159949,
+        "totalNs": 43437075
+      },
+      "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+      "runtimeSetupNs": 507,
+      "schemaVersion": "buildopt.build-impact/poc-phase-timings/v1",
+      "teardownNs": 334,
+      "totalNs": 44573613,
+      "unattributedNs": 29931
+    },
+    {
+      "alternativeId": "otel-spring-autoconfigure-test-classes",
+      "candidateSelected": true,
+      "entrypointCount": 1,
+      "exitCode": 0,
+      "gradleExecutionNs": 3034930,
+      "gradleSetupNs": 33507,
+      "impactPreparationNs": 62264038,
+      "planner": {
+        "generatedStateLoadAndValidationNs": 165050,
+        "graphLoadAndValidationNs": 46800760,
+        "impactEvaluationNs": 13882073,
+        "manifestLoadAndValidationNs": 1125028,
+        "totalNs": 61982589
+      },
+      "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+      "runtimeSetupNs": 1418,
+      "schemaVersion": "buildopt.build-impact/poc-phase-timings/v1",
+      "teardownNs": 1110,
+      "totalNs": 65402822,
+      "unattributedNs": 67819
+    },
+    {
+      "alternativeId": "otel-spring-autoconfigure-test-classes",
+      "candidateSelected": true,
+      "entrypointCount": 1,
+      "exitCode": 0,
+      "gradleExecutionNs": 1478792,
+      "gradleSetupNs": 18878,
+      "impactPreparationNs": 39393865,
+      "planner": {
+        "generatedStateLoadAndValidationNs": 255094,
+        "graphLoadAndValidationNs": 29511842,
+        "impactEvaluationNs": 8136216,
+        "manifestLoadAndValidationNs": 1225517,
+        "totalNs": 39134646
+      },
+      "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+      "runtimeSetupNs": 781,
+      "schemaVersion": "buildopt.build-impact/poc-phase-timings/v1",
+      "teardownNs": 593,
+      "totalNs": 40933262,
+      "unattributedNs": 40353
+    },
+    {
+      "alternativeId": "otel-spring-autoconfigure-test-classes",
+      "candidateSelected": true,
+      "entrypointCount": 1,
+      "exitCode": 0,
+      "gradleExecutionNs": 1634374,
+      "gradleSetupNs": 18885,
+      "impactPreparationNs": 43795153,
+      "planner": {
+        "generatedStateLoadAndValidationNs": 121641,
+        "graphLoadAndValidationNs": 34266607,
+        "impactEvaluationNs": 8100048,
+        "manifestLoadAndValidationNs": 1063092,
+        "totalNs": 43556460
+      },
+      "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+      "runtimeSetupNs": 843,
+      "schemaVersion": "buildopt.build-impact/poc-phase-timings/v1",
+      "teardownNs": 706,
+      "totalNs": 45489193,
+      "unattributedNs": 39232
+    }
+  ],
+  "result": {
+    "plannerMeanNs": 47461698.375,
+    "manifestMeanNs": 1083619.8125,
+    "graphMeanNs": 36431588.25,
+    "generatedMeanNs": 203066.125,
+    "evaluationMeanNs": 9737416.375,
+    "impactPreparationMeanNs": 47699095.5,
+    "gradleSetupMeanNs": 20747.1875,
+    "runtimeSetupMeanNs": 922.875,
+    "neutralChildMeanNs": 1744931.4375,
+    "teardownMeanNs": 697.9375,
+    "totalMeanNs": 49511243.4375,
+    "totalMinNs": 21112400,
+    "totalMaxNs": 77381754,
+    "allCandidatesSelected": true,
+    "conclusion": "BUILDOPT_OVERHEAD_TOO_SMALL_TO_EXPLAIN_465MS_REGRESSIVE_PAIR",
+    "nextAction": "REDUCE_AND_STABILIZE_GRADLE_CANDIDATE_WORK"
+  },
+  "boundaries": {
+    "pocOnly": true,
+    "productionSelectionChanged": false,
+    "repositorySpecificProductRuleAdded": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}
