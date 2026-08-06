@@ -77,6 +77,14 @@ func prepareImpactInvocation(args []string, bypass bool) (impactInvocation, erro
 	if err != nil {
 		return impactInvocation{}, fmt.Errorf("resolve repository root: %w", err)
 	}
+	repositoryRoot, err = filepath.EvalSymlinks(repositoryRoot)
+	if err != nil {
+		return impactInvocation{}, fmt.Errorf("canonicalize repository root: %w", err)
+	}
+	repositoryRoot, err = filepath.Abs(repositoryRoot)
+	if err != nil {
+		return impactInvocation{}, fmt.Errorf("make repository root absolute: %w", err)
+	}
 	changedPaths, err := readImpactChangedPaths(repositoryRoot, *changesFile)
 	if err != nil {
 		return impactInvocation{}, err
