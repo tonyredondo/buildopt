@@ -1318,6 +1318,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-06 | Corrected the installed Spring runner before warmups or accepted pairs after it read a null manifest from the repository specification; the runner now reads the manifest from the bound test-preparation protocol without changing the repository, workload, pairs, outputs or value gate | Codex |
 | 2026-08-06 | Preregistered the installed-path Spring value experiment: package and install BuildOpt locally, include manifest/graph/change evaluation and launcher overhead, retain the exact optimized native control, eight pairs, outputs, build-logic test and unchanged value gate | Codex |
 | 2026-08-06 | Added one-command installed Build Impact POC execution over reviewed manifest/graph state, exact changed paths, safe full-graph fallback, drift rejection and bypass restoration; retained `BIA-002` and Test Optimization unchanged | Codex |
 | 2026-08-06 | Corrected only OpenTelemetry temporary cleanup before accepted timing after upstream Thrift generation left four UID-nobody files; pinned a network-disabled golden-image fallback over the validated mktemp root, with zero accepted pairs and no measurement or value-gate change | Codex |

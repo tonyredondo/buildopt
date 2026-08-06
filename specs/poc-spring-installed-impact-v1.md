@@ -41,6 +41,13 @@ logic test outcome remains unchanged, no root-build `Test` executes, and the
 unchanged value gate passes. A failed pair is terminal and cannot be retried or
 discarded.
 
+The first invocation stopped before warmups and before any accepted pair because
+the runner read the manifest from the repository-discovery specification rather
+than the bound test-preparation protocol, producing JSON `null`. The runner now
+reads only the manifest from the bound protocol; source URL and original-file
+checksum remain sourced from the unchanged repository specification. This
+pre-timing correction changes neither the measurement nor the value gate.
+
 Run the preregistered experiment with:
 
 ```bash

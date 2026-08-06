@@ -144,6 +144,13 @@
     "pairsChanged": false,
     "repositoryChanged": false
   },
+  "preTimingCorrection": {
+    "acceptedPairsBeforeCorrection": 0,
+    "failure": "MANIFEST_SOURCE_WAS_NULL",
+    "change": "READ_MANIFEST_FROM_BOUND_BASE_PROTOCOL",
+    "measurementChanged": false,
+    "valueGateChanged": false
+  },
   "implementation": {
     "revision": "29ccf853aa0be2bc930b5b7fc66fc4613f515386",
     "command": "buildopt impact",

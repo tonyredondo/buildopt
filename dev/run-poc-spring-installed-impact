@@ -10,7 +10,8 @@ buildopt_output=$1
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_spec="${buildopt_repo_root}/specs/poc-spring-installed-impact-v1.json"
-buildopt_base_spec="${buildopt_repo_root}/specs/poc-spring-framework-v1.json"
+buildopt_base_spec="${buildopt_repo_root}/specs/poc-spring-test-preparation-v2.json"
+buildopt_repository_spec="${buildopt_repo_root}/specs/poc-spring-framework-v1.json"
 
 if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ]]; then
     printf 'invalid Spring test-preparation output path\n' >&2
@@ -88,8 +89,8 @@ buildopt_executable_sha=$(sha256sum "${buildopt_executable}" | awk '{print $1}')
 buildopt_package_sha=$(sha256sum "${buildopt_package}" | awk '{print $1}')
 
 buildopt_source_archive="${buildopt_root}/spring-framework.tar.gz"
-buildopt_source_url=$(jq -er '.repository.sourceArchiveUrl' "${buildopt_base_spec}")
-buildopt_source_sha=$(jq -er '.repository.sourceArchiveSha256' "${buildopt_base_spec}")
+buildopt_source_url=$(jq -er '.repository.sourceArchiveUrl' "${buildopt_repository_spec}")
+buildopt_source_sha=$(jq -er '.repository.sourceArchiveSha256' "${buildopt_repository_spec}")
 curl --fail --location --proto '=https' --tlsv1.2 --silent --show-error \
     --output "${buildopt_source_archive}" "${buildopt_source_url}"
 [[ "$(sha256sum "${buildopt_source_archive}" | awk '{print $1}')" == \
@@ -100,7 +101,7 @@ curl --fail --location --proto '=https' --tlsv1.2 --silent --show-error \
 tar -xzf "${buildopt_source_archive}" --strip-components=1 -C "${buildopt_root}/source"
 
 buildopt_change_path=$(jq -er '.change.path' "${buildopt_base_spec}")
-buildopt_change_sha=$(jq -er '.change.originalSha256' "${buildopt_base_spec}")
+buildopt_change_sha=$(jq -er '.change.originalSha256' "${buildopt_repository_spec}")
 [[ "$(sha256sum "${buildopt_root}/source/${buildopt_change_path}" | awk '{print $1}')" == \
     "${buildopt_change_sha}" ]] || {
     printf 'Spring fixed mutation source mismatch\n' >&2
