@@ -2591,6 +2591,14 @@ or Kotlin files below `src/test`. It preserves additional test suites and every
 explicit repository fork value. The threshold and two-fork value are fixed
 before execution; this discovery is still non-gating and cannot claim savings.
 
+The checked selective discovery rejected that final fork hypothesis. Native
+Gradle completed 41,276 tests in 541.782 seconds; the candidate retained the
+same cases and byte-identical 23,680-file output manifest but failed
+`:spring-test:test` after 550.310 seconds, an 8.528-second/1.57% regression.
+Do not retry or tune the threshold. The next Spring block is the independent,
+build-owned `testClasses` graph; no Gradle `Test` task may be changed or run by
+that Build Impact experiment.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

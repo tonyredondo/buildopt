@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-spring-selective-test-runtime-discovery/v1",
+  "workItem": "POC-SPRING-SELECTIVE-TEST-RUNTIME-001",
+  "capturedAt": "2026-08-06T07:50:46Z",
+  "buildoptRevision": "f14508539674d826c3c665d6afb52e8ad5104228",
+  "specSha256": "4c7210d4c424ef32f47ec0cd75fa6052d5bf907d0ec648b9782387145b463307",
+  "initScriptSha256": "b08be9cd8a6a20c62531e5ca8f7bdce8761c408c6a21fc1aa346573a1564d6fb",
+  "runnerScriptSha256": "59b4a1b4ff6972480d4e8636ba034a8a4aaf84ddeeed2603ffc58286ca74f1ce",
+  "repository": {
+    "nameWithOwner": "spring-projects/spring-framework",
+    "revision": "4b5c92703c63966c3471242c621c4a63b382638d",
+    "sourceArchiveSha256": "e3fa4258e5e568c0b0e6f1605956cd743cff847b9df7c82ce86b2d2f1109db16"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12,
+    "runnerIsContractualFourCpuClass": false,
+    "resourceFactsRecordedInEvidence": true
+  },
+  "preparation": {
+    "onlinePreflightMeasured": false,
+    "onlinePreflightSuccess": true,
+    "onlinePreflightWallClockMs": 629754,
+    "preflightMaxWorkers": 6,
+    "preflightDaemonStoppedBeforeCells": true,
+    "measuredNetwork": "DISCONNECTED",
+    "dependencyMode": "GRADLE_OFFLINE",
+    "buildCacheSeedSha256": "f9d8fcff8b9ac706abbbd016b4ccd5cf8c1f297dcd492b0ec814cee4e9f87a79",
+    "cacheSeedRestoredBeforeEveryCell": true,
+    "outputsRemovedBeforeEveryCell": true,
+    "fixedMutationAppliedAfterCacheRestore": true
+  },
+  "cells": [
+    {
+      "id": "native-6",
+      "maxWorkers": 6,
+      "testForkTuningEnabled": false,
+      "success": true,
+      "wallClockMs": 541782,
+      "maximumResidentSetKb": 124840,
+      "testCaseCount": 41276,
+      "failedTestCaseCount": 0,
+      "skippedTestCaseCount": 208,
+      "requiredOutputCount": 23680,
+      "requiredOutputManifestSha256": "d055a92e787f868987b30e5530695ccf79077ecf1a435ef41d54aa0fb5f96655",
+      "failedTask": "",
+      "sourceFileThreshold": 500,
+      "selectedStandardTestTaskCount": 0,
+      "selectedStandardTestTasks": [],
+      "selectedTaskMaxParallelForks": 1
+    },
+    {
+      "id": "selective-forks-2-workers-6",
+      "maxWorkers": 6,
+      "testForkTuningEnabled": true,
+      "success": false,
+      "wallClockMs": 550310,
+      "maximumResidentSetKb": 127632,
+      "testCaseCount": 41276,
+      "failedTestCaseCount": 1,
+      "skippedTestCaseCount": 208,
+      "requiredOutputCount": 23680,
+      "requiredOutputManifestSha256": "d055a92e787f868987b30e5530695ccf79077ecf1a435ef41d54aa0fb5f96655",
+      "failedTask": ":spring-test:test",
+      "sourceFileThreshold": 500,
+      "selectedStandardTestTaskCount": 2,
+      "selectedStandardTestTasks": [
+        ":spring-context:test",
+        ":spring-test:test"
+      ],
+      "selectedTaskMaxParallelForks": 2
+    }
+  ],
+  "decision": {
+    "performanceMeasured": false,
+    "savingsClaimed": false,
+    "purpose": "EVALUATE_ONE_PREREGISTERED_SIZE_QUALIFIED_TEST_RUNTIME_CANDIDATE"
+  },
+  "boundaries": {
+    "requestedTestsChanged": false,
+    "testFiltersChanged": false,
+    "retryPolicyChanged": false,
+    "testJvmHeapChanged": false,
+    "repositorySourceChangedBeyondFixedMutation": false,
+    "productionReadinessClaimed": false,
+    "testOptimizationModified": false
+  }
+}

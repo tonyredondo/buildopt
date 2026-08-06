@@ -104,7 +104,8 @@ buildopt_required_tracker_text=(
     "| \`POC-SPRING-RUNTIME-001\` | Freeze and implement the exact \`checkstyleNohttp\` 1-GiB-to-2-GiB candidate without changing tests, task semantics, cache policy, or worker count | \`DONE\`"
     "| \`POC-SPRING-VALUE-001\` | Stop the frozen Checkstyle candidate before accepted pairs when its full-\`check\` ceiling cannot reach the unchanged value gate | \`DONE\`"
     "| \`POC-SPRING-TEST-RUNTIME-001\` | Reject global two-fork test concurrency after it regresses and fails against the stable six-worker native control | \`DONE\`"
-    "| \`POC-SPRING-SELECTIVE-TEST-RUNTIME-001\` | Evaluate two forks only for conventional test tasks with at least 500 test source files against the stable six-worker native control | \`DOING\`"
+    "| \`POC-SPRING-SELECTIVE-TEST-RUNTIME-001\` | Reject selective two-fork tuning after it regresses and fails the stable six-worker native control | \`DONE\`"
+    "| \`POC-SPRING-TEST-PREPARATION-001\` | Evaluate generic Build Impact for the build-owned Spring \`testClasses\` graph without executing or omitting requested \`Test\` tasks | \`TODO\`"
     "| \`POC-SPRING-PREREG-G01\` | Freeze a substantial Spring Framework experiment against its existing cache-enabled, parallel Gradle control before any local timing | Spring value-iteration boundary | \`DONE\`"
     "| \`POC-SPRING-VALUE-G01\` | At least one generic Spring mechanism clears the unchanged 500-ms/2%/positive-bound gate with identical outputs and all requested tests preserved | OpenTelemetry transfer | \`TODO\`"
     "| \`A1-G06\` | Safe Cache is non-regressive versus optimized native cache"
@@ -148,5 +149,5 @@ if [[ $(grep -Fc "| \`OPS-001/B\` |" <<<"${buildopt_readiness}") != 1 ]]; then
     exit 1
 fi
 
-printf 'RFC/tracker consistency OK: %s accepted decisions, Spring test-runtime hypothesis next\n' \
+printf 'RFC/tracker consistency OK: %s accepted decisions, Spring test preparation next\n' \
     "${buildopt_decision_count}"

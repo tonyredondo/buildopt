@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-spring-selective-test-runtime-discovery-v1.json"}
+buildopt_spec="${buildopt_repo_root}/specs/poc-spring-framework-v1.json"
+buildopt_init="${buildopt_script_dir}/poc-spring-selective-test-runtime.init.gradle"
+buildopt_runner="${buildopt_script_dir}/run-poc-spring-test-runtime-discovery"
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required selective Spring validator is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -s "${buildopt_result}" ]] || {
+    printf 'selective Spring discovery is unavailable: %s\n' "${buildopt_result}" >&2
+    exit 1
+}
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_init_sha=$(sha256sum "${buildopt_init}" | awk '{print $1}')
+buildopt_runner_sha=$(sha256sum "${buildopt_runner}" | awk '{print $1}')
+jq -e --arg specSha "${buildopt_spec_sha}" --arg initSha "${buildopt_init_sha}" \
+    --arg runnerSha "${buildopt_runner_sha}" --slurpfile spec "${buildopt_spec}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    .schemaVersion == "buildopt.evidence/poc-spring-selective-test-runtime-discovery/v1" and
+    .workItem == "POC-SPRING-SELECTIVE-TEST-RUNTIME-001" and
+    (.capturedAt | fromdateiso8601) and
+    .buildoptRevision == "f14508539674d826c3c665d6afb52e8ad5104228" and
+    .specSha256 == $specSha and .initScriptSha256 == $initSha and
+    .runnerScriptSha256 == $runnerSha and
+    .repository == {
+        nameWithOwner: $spec[0].repository.nameWithOwner,
+        revision: $spec[0].repository.revision,
+        sourceArchiveSha256: $spec[0].repository.sourceArchiveSha256
+    } and
+    .runner == $spec[0].primaryRunner and
+    .preparation.onlinePreflightMeasured == false and
+    .preparation.onlinePreflightSuccess == true and
+    (.preparation.onlinePreflightWallClockMs | type == "number" and . > 0) and
+    .preparation.preflightMaxWorkers == 6 and
+    .preparation.preflightDaemonStoppedBeforeCells == true and
+    .preparation.measuredNetwork == "DISCONNECTED" and
+    .preparation.dependencyMode == "GRADLE_OFFLINE" and
+    (.preparation.buildCacheSeedSha256 | sha256) and
+    .preparation.cacheSeedRestoredBeforeEveryCell == true and
+    .preparation.outputsRemovedBeforeEveryCell == true and
+    .preparation.fixedMutationAppliedAfterCacheRestore == true and
+    [.cells[].id] == ["native-6", "selective-forks-2-workers-6"] and
+    (.cells | length) == 2 and
+    .cells[0].maxWorkers == 6 and .cells[0].success == true and
+    .cells[0].testForkTuningEnabled == false and
+    .cells[0].testCaseCount == 41276 and .cells[0].failedTestCaseCount == 0 and
+    .cells[0].selectedStandardTestTaskCount == 0 and
+    .cells[0].selectedStandardTestTasks == [] and
+    .cells[0].selectedTaskMaxParallelForks == 1 and
+    .cells[1].maxWorkers == 6 and .cells[1].success == false and
+    .cells[1].testForkTuningEnabled == true and
+    .cells[1].testCaseCount == .cells[0].testCaseCount and
+    .cells[1].failedTestCaseCount == 1 and
+    .cells[1].failedTask == ":spring-test:test" and
+    .cells[1].selectedStandardTestTaskCount == 2 and
+    .cells[1].selectedStandardTestTasks == [":spring-context:test", ":spring-test:test"] and
+    .cells[1].selectedTaskMaxParallelForks == 2 and
+    all(.cells[]; .sourceFileThreshold == 500 and
+        (.wallClockMs | type == "number" and . > 0) and
+        (.maximumResidentSetKb | type == "number" and . > 0) and
+        .skippedTestCaseCount == 208 and
+        .requiredOutputCount == 23680 and
+        (.requiredOutputManifestSha256 | sha256)) and
+    .cells[1].wallClockMs - .cells[0].wallClockMs == 8528 and
+    ([.cells[].requiredOutputManifestSha256] | unique | length) == 1 and
+    .decision == {
+        performanceMeasured: false,
+        savingsClaimed: false,
+        purpose: "EVALUATE_ONE_PREREGISTERED_SIZE_QUALIFIED_TEST_RUNTIME_CANDIDATE"
+    } and
+    .boundaries == {
+        requestedTestsChanged: false,
+        testFiltersChanged: false,
+        retryPolicyChanged: false,
+        testJvmHeapChanged: false,
+        repositorySourceChangedBeyondFixedMutation: false,
+        productionReadinessClaimed: false,
+        testOptimizationModified: false
+    }
+' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'selective Spring validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'Selective Spring test-runtime discovery evidence OK: %s\n' "${buildopt_result}"

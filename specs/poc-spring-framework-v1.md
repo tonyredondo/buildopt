@@ -93,6 +93,15 @@ not policy inputs. The non-gating discovery must run one fresh native cell and
 one selective cell from the same offline cache seed before any paired value
 experiment is authorized.
 
+The selective discovery also failed. Its native control completed 41,276 tests
+with no failures in 541.782 seconds. The candidate observed the same case count
+and byte-identical 23,680-file output manifest, but failed
+`:spring-test:test` and took 550.310 seconds, an 8.528-second/1.57% regression.
+No fork policy is eligible for paired timing or transfer. The next authorized
+hypothesis returns to the independent `TEST_PREPARATION` cell: Build Impact may
+omit unaffected build-owned `testClasses` work, but it may not execute, select,
+filter, omit, retry, or reorder any Gradle `Test` task.
+
 Validate the frozen contract with:
 
 ```bash
