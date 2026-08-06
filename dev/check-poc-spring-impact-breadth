@@ -24,6 +24,16 @@ done
 jq -e '
     .schemaVersion == "buildopt.specs/poc-spring-impact-breadth/v1" and
     .workItem == "POC-SPRING-IMPACT-BREADTH-001" and
+    .protocolRevision == {
+        from: 1,
+        reason: "POST_PAIR_FALLBACK_MARKER_ASSERTION_TYPO",
+        completedSelectiveObservationsBeforeRevision: 8,
+        resultEmittedBeforeRevision: false,
+        timingsEligibleAsEvidenceBeforeRevision: false,
+        change: "MATCH_EXACT_EXISTING_BUILD_IMPACT_FALLBACK_PREFIX",
+        measurementChanged: false,
+        valueGateChanged: false
+    } and
     .repository.revision == "4b5c92703c63966c3471242c621c4a63b382638d" and
     .runner.cpuCount == 12 and .runner.maxWorkers == 12 and
     [.selectiveCells[].id] == ["WEBMVC_LEAF", "CORE_TO_JMS_SHARED"] and

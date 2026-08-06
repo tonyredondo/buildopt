@@ -34,3 +34,11 @@ This experiment covers build-owned test preparation only. It executes no
 root-build Gradle `Test`, changes no test selection, adds no Spring-specific
 product heuristic, and makes no production, release, soak or design-partner
 claim.
+
+The first execution completed all eight selective observations, then the
+runner rejected the successful global fallback because its assertion expected
+the wrong fixed log prefix (`BuildOpt POC` instead of the existing
+`Build Impact POC`). Cleanup ran before a result was emitted, so none of those
+timings is accepted or reconstructed. Protocol revision 2 changes only that
+literal assertion, records the failed attempt, and requires a complete rerun;
+the repository, cells, outputs, pair order and value gate are unchanged.
