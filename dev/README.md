@@ -2563,6 +2563,7 @@ Run the non-gating test-runtime discovery with:
 
 ```bash
 ./dev/run-poc-spring-test-runtime-discovery /absolute/path/to/result.json
+./dev/check-poc-spring-test-runtime-discovery /absolute/path/to/result.json
 ```
 
 The discovery executes three complete offline `check` cells from the same
@@ -2570,6 +2571,13 @@ native cache seed: 12 native workers, 6 native workers, and 6 workers with two
 forks for each `Test` task that retained Gradle's one-fork default. Explicit
 repository parallelism remains unchanged. The result selects a candidate for a
 later paired experiment; it cannot itself support a savings claim.
+
+The checked discovery rejected global two-fork tuning. The stable native
+6-worker cell completed 41,276 tests in 523.858 seconds. Global two-fork tuning
+retained the same test count but failed after 649.929 seconds, a 24.07%
+regression. The next discovery may parallelize only large default-fork suites
+through a generic predeclared size rule; the failed global policy is not a
+product candidate.
 
 Run the lock and doctor contract tests from the repository root:
 

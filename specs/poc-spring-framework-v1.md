@@ -74,6 +74,14 @@ worker allocation. It must retain every requested test case, output, cache
 setting, failure, and value threshold; it cannot alter test selection, retry
 policy, or repository source.
 
+The first test-runtime discovery rejected a global two-fork policy. Native
+Gradle with six workers completed all 41,276 cases in 523.858 seconds. Applying
+two forks to every default-fork `Test` task retained the same case count and
+required outputs, but failed after 649.929 seconds, a 24.07% regression. This
+result is diagnostic rather than paired performance evidence and supports no
+savings claim. A follow-up may use one generic, frozen suite-size threshold to
+parallelize only large tasks; it may not encode Spring project or task names.
+
 Validate the frozen contract with:
 
 ```bash

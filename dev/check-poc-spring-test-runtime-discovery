@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-spring-framework-v1.json"
+buildopt_init="${buildopt_script_dir}/poc-spring-test-runtime.init.gradle"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-spring-test-runtime-discovery-v1.json"}
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Spring test-runtime validator is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -s "${buildopt_result}" ]] || {
+    printf 'Spring test-runtime discovery is unavailable: %s\n' \
+        "${buildopt_result}" >&2
+    exit 1
+}
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_init_sha=$(sha256sum "${buildopt_init}" | awk '{print $1}')
+jq -e --arg specSha "${buildopt_spec_sha}" --arg initSha "${buildopt_init_sha}" \
+    --slurpfile spec "${buildopt_spec}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    .schemaVersion == "buildopt.evidence/poc-spring-test-runtime-discovery/v1" and
+    .workItem == "POC-SPRING-TEST-RUNTIME-001" and
+    (.capturedAt | fromdateiso8601) and
+    (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+    .specSha256 == $specSha and
+    .initScriptSha256 == $initSha and
+    .repository == {
+        nameWithOwner: $spec[0].repository.nameWithOwner,
+        revision: $spec[0].repository.revision,
+        sourceArchiveSha256: $spec[0].repository.sourceArchiveSha256
+    } and
+    .runner == $spec[0].primaryRunner and
+    .preparation.onlinePreflightMeasured == false and
+    .preparation.onlinePreflightSuccess == true and
+    (.preparation.onlinePreflightWallClockMs | type == "number" and . > 0) and
+    .preparation.preflightMaxWorkers == 6 and
+    .preparation.preflightDaemonStoppedBeforeCells == true and
+    .preparation.measuredNetwork == "DISCONNECTED" and
+    .preparation.dependencyMode == "GRADLE_OFFLINE" and
+    (.preparation.buildCacheSeedSha256 | sha256) and
+    .preparation.cacheSeedRestoredBeforeEveryCell == true and
+    .preparation.outputsRemovedBeforeEveryCell == true and
+    .preparation.fixedMutationAppliedAfterCacheRestore == true and
+    (.cells | length) == 3 and
+    [.cells[].id] == ["native-12", "native-6", "forks-2-workers-6"] and
+    .cells[0].maxWorkers == 12 and
+    .cells[0].defaultTestMaxParallelForks == 1 and
+    .cells[0].testForkTuningEnabled == false and
+    .cells[0].success == false and
+    .cells[0].failedTestCaseCount > 0 and
+    .cells[0].failedTask != "" and
+    .cells[1].maxWorkers == 6 and
+    .cells[1].defaultTestMaxParallelForks == 1 and
+    .cells[1].testForkTuningEnabled == false and
+    .cells[1].success == true and
+    .cells[1].testCaseCount == 41276 and
+    .cells[1].failedTestCaseCount == 0 and
+    .cells[1].failedTask == "" and
+    .cells[2].maxWorkers == 6 and
+    .cells[2].defaultTestMaxParallelForks == 2 and
+    .cells[2].testForkTuningEnabled == true and
+    .cells[2].success == false and
+    .cells[2].testCaseCount == .cells[1].testCaseCount and
+    .cells[2].failedTestCaseCount > 0 and
+    .cells[2].failedTask != "" and
+    .cells[2].wallClockMs > .cells[1].wallClockMs and
+    all(.cells[];
+        (.wallClockMs | type == "number" and . > 0) and
+        (.maximumResidentSetKb | type == "number" and . > 0) and
+        (.testCaseCount | type == "number" and . > 0) and
+        (.requiredOutputCount | type == "number" and . > 0) and
+        (.requiredOutputManifestSha256 | sha256)) and
+    ([.cells[].requiredOutputCount] | unique | length) == 1 and
+    ([.cells[].requiredOutputManifestSha256] | unique | length) == 1 and
+    .decision == {
+        performanceMeasured: false,
+        savingsClaimed: false,
+        purpose: "SELECT_ONE_GENERIC_TEST_RUNTIME_CANDIDATE_BEFORE_PAIRED_TIMING"
+    } and
+    .boundaries == {
+        requestedTestsChanged: false,
+        testFiltersChanged: false,
+        retryPolicyChanged: false,
+        testJvmHeapChanged: false,
+        repositorySourceChangedBeyondFixedMutation: false,
+        productionReadinessClaimed: false,
+        testOptimizationModified: false
+    }
+' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'Spring test-runtime validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'Spring test-runtime discovery evidence OK: %s\n' "${buildopt_result}"
