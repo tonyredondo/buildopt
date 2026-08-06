@@ -76,7 +76,7 @@ func prepareImpactHotState(options impactHotStateOptions) (impactHotState, error
 		return impactHotState{}, errors.New("Build Impact hot-state directory must contain no symlink components")
 	}
 	stateInfo, err := os.Stat(resolved)
-	if err != nil || !stateInfo.IsDir() || stateInfo.Mode().Perm()&0o077 != 0 {
+	if err != nil || !impactHotStateDirectoryPrivate(stateInfo) {
 		return impactHotState{}, errors.New("Build Impact hot-state directory must be private")
 	}
 	executable, err := os.Executable()
