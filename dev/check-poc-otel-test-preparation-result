@@ -1,0 +1,156 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-otel-test-preparation-v1.json"
+buildopt_runner="${buildopt_script_dir}/run-poc-otel-test-preparation"
+buildopt_guard="${buildopt_script_dir}/poc-spring-test-preparation.guard.init.gradle"
+buildopt_failure_excerpt="${buildopt_repo_root}/benchmarks/results/poc-otel-test-preparation-v1.failure.txt"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-otel-test-preparation-v1.json"}
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required OpenTelemetry transfer validator is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+for buildopt_required_file in "${buildopt_result}" "${buildopt_failure_excerpt}"; do
+    [[ -s "${buildopt_required_file}" ]] || {
+        printf 'OpenTelemetry transfer evidence is unavailable: %s\n' \
+            "${buildopt_required_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_runner_sha=$(sha256sum "${buildopt_runner}" | awk '{print $1}')
+buildopt_guard_sha=$(sha256sum "${buildopt_guard}" | awk '{print $1}')
+buildopt_failure_sha=$(sha256sum "${buildopt_failure_excerpt}" | awk '{print $1}')
+
+jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sha}" \
+    --arg guardSha "${buildopt_guard_sha}" --arg failureSha "${buildopt_failure_sha}" \
+    --slurpfile spec "${buildopt_spec}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    .completedObservations as $data |
+    ($data | length) as $completed |
+    (($data | map(.controlDurationMs) | add) / $completed) as $controlMean |
+    (($data | map(.candidateDurationMs) | add) / $completed) as $candidateMean |
+    (($data | map(.savedMs) | add) / $completed) as $mean |
+    (($data | map(.savedMs) | add) /
+        ($data | map(.controlDurationMs) | add)) as $ratio |
+    ($data | map(select(.savedMs > 0)) | length) as $positive |
+    .schemaVersion == "buildopt.evidence/poc-otel-test-preparation/v1" and
+    .workItem == "POC-OTEL-TRANSFER-001" and
+    (.capturedAt | fromdateiso8601) and
+    .status == "INCOMPLETE_UPSTREAM_CONTROL_FAILURE" and
+    .buildopt.revision == "ea2367a6442eaf09d5552f89cb9743d58ada6447" and
+    (.buildopt.executableSha256 | sha256) and
+    .buildopt.runnerScriptSha256 == $runnerSha and
+    .buildopt.rootTestGuardScriptSha256 == $guardSha and
+    .specSha256 == $specSha and
+    .failureExcerptSha256 == $failureSha and
+    .repository == {
+        nameWithOwner: $spec[0].repository.nameWithOwner,
+        revision: $spec[0].repository.revision,
+        sourceArchiveSha256: $spec[0].repository.sourceArchiveSha256
+    } and
+    .runner == $spec[0].runner and
+    .preparation == {
+        onlinePreflightMeasured: false,
+        onlinePreflightSuccess: true,
+        onlinePreflightGradleReportedDurationSeconds: 681,
+        measuredNetwork: "DISCONNECTED",
+        dependencyMode: "GRADLE_OFFLINE_WITH_SHARED_READ_ONLY_CACHE",
+        preflightDaemonStoppedBeforeArmSetup: true,
+        cacheSeedRestoredBeforeEveryCompletedArm: true,
+        outputsRemovedBeforeEveryCompletedArm: true,
+        fixedMutationAppliedAfterCacheRestore: true,
+        cacheMetadataPreservedAfterFailure: false
+    } and
+    .discovery == {
+        complete: true,
+        containsTestTasks: false,
+        graphSha256: $spec[0].buildopt.discoveredGraphSha256,
+        graphDigest: $spec[0].buildopt.discoveredGraphDigest,
+        projectCount: $spec[0].discovery.expectedProjectCount,
+        controlReachCount: $spec[0].discovery.expectedControlReachCount,
+        candidateReachCount: $spec[0].discovery.expectedCandidateReachCount,
+        controlEntrypoints: $spec[0].measurement.controlEntrypoints,
+        candidateEntrypoints: $spec[0].measurement.candidateEntrypoints
+    } and
+    $completed == 6 and
+    [$data[].pair] == [1, 2, 3, 4, 5, 6] and
+    [$data[].order] == [
+        "CONTROL_FIRST", "CANDIDATE_FIRST", "CONTROL_FIRST",
+        "CANDIDATE_FIRST", "CONTROL_FIRST", "CANDIDATE_FIRST"
+    ] and
+    all($data[];
+        (.controlDurationMs | type == "number" and . > 0) and
+        (.candidateDurationMs | type == "number" and . > 0) and
+        .savedMs == (.controlDurationMs - .candidateDurationMs) and
+        (.controlMaximumResidentSetKb | type == "number" and . > 0) and
+        (.candidateMaximumResidentSetKb | type == "number" and . > 0) and
+        .interArmIdleGapWithinLimit == true and
+        .requiredOutputsComparedIdentical == true and
+        .requiredOutputMetadataPreserved == false and
+        .rootBuildGradleTestTasksExecuted == false and
+        .productAttributableFailure == false) and
+    .failure == {
+        pair: 7,
+        order: "CONTROL_FIRST",
+        arm: "CONTROL",
+        stage: "MEASURED_ARM_EXECUTION",
+        task: ":instrumentation:openai:openai-java-1.1:javaagent:byteBuddyJava",
+        cause: "java.lang.IllegalStateException: zip file closed",
+        commandExitCode: 1,
+        gradleReportedDurationSeconds: 23,
+        actionableTasks: 1209,
+        executedTasks: 822,
+        fromCacheTasks: 387,
+        maximumResidentSetKb: 118516,
+        configurationCacheEntryReused: true,
+        rootBuildGradleTestTasksExecuted: false,
+        externalActionAttempted: false,
+        productAttributable: false,
+        classification: "UPSTREAM_CONTROL_FAILURE",
+        retryPerformed: false
+    } and
+    .result == {
+        expectedPairs: 8,
+        completedPairs: 6,
+        failedPair: 7,
+        unstartedPairs: [8],
+        completedPairsDescriptiveOnly: true,
+        completedControlMeanMs: $controlMean,
+        completedCandidateMeanMs: $candidateMean,
+        completedMeanSavedMs: $mean,
+        completedReductionRatio: $ratio,
+        completedPositivePairs: $positive,
+        gateEvaluation: "NOT_EVALUATED_INCOMPLETE_8_PAIR_PROTOCOL",
+        qualified: false,
+        decision: "STOP_OTEL_TRANSFER_INCOMPLETE_UPSTREAM_CONTROL"
+    } and
+    .evidenceLimitations == [
+        "PAIR_7_CONTROL_FAILED_BEFORE_OUTPUT_COMPARISON",
+        "PAIR_8_NOT_STARTED",
+        "FAILURE_BUNDLE_DID_NOT_PRESERVE_COMPLETED_OUTPUT_MANIFEST_DIGESTS",
+        "COMPLETED_PAIR_TIMINGS_RECORDED_FROM_RUNNER_STDOUT_AFTER_OUTPUT_COMPARISON"
+    ] and
+    .boundaries == $spec[0].boundaries
+' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'OpenTelemetry transfer validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'OpenTelemetry transfer terminal evidence OK: %s\n' "${buildopt_result}"

@@ -41,7 +41,14 @@ The [checked evidence](./results/poc-spring-test-preparation-v2.json) preserves
 all 378 affected class outputs, runs no root-build `Test`, retains the common
 `:buildSrc:test UP-TO-DATE`, and records zero product failures. This qualifies
 only unchanged transfer to OpenTelemetry; it is not a general or production
-claim.
+claim. That transfer was executed but did not qualify: six completed
+OpenTelemetry pairs were all positive and descriptively saved 18,560.667 ms
+(59.03%) on average, then the native control failed in pair 7 inside upstream
+Byte Buddy processing with `zip file closed`. The protocol forbids discarding
+the failed pair, so pair 8 was not started and the terminal decision is
+`STOP_OTEL_TRANSFER_INCOMPLETE_UPSTREAM_CONTROL`. See the [checked terminal
+evidence](./results/poc-otel-test-preparation-v1.json); the six-pair diagnostic
+is not an eight-pair value claim.
 
 | Mechanism | Mean result | Exact paired 95% interval | Classification |
 |---|---:|---:|---|
@@ -123,6 +130,10 @@ The underlying evidence and contracts are:
   validated by `./dev/check-poc-real-world-diagnostics`;
 - [Spring Framework diagnostic evidence](./results/poc-spring-diagnostic-v1.json),
   validated by `./dev/check-poc-spring-diagnostic`;
+- [Spring Framework test-preparation evidence](./results/poc-spring-test-preparation-v2.json),
+  validated by `./dev/check-poc-spring-test-preparation-result`;
+- [OpenTelemetry terminal transfer evidence](./results/poc-otel-test-preparation-v1.json),
+  validated by `./dev/check-poc-otel-test-preparation-result`;
 - [Spotless exact-workflow Build Impact evidence](./results/poc-spotless-impact-v1.json),
   validated by `./dev/check-poc-spotless-impact`;
 - [safe-cache observations](./results/cache-parity-v1-local.json) and

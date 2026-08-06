@@ -158,6 +158,14 @@ SpotBugs did not clear the unchanged thresholds. The checked decision retains
 the bounded synthetic claim; it does not authorize a general public-repository
 claim or another unchanged run.
 
+The later substantial-repository path qualified Spring Framework test
+preparation at 28.72% over eight pairs, then transferred the unchanged
+mechanism to OpenTelemetry. That transfer stopped without qualification after
+the optimized native control failed in pair 7. Validate the terminal record
+with `./dev/check-poc-otel-test-preparation-result`; six completed positive
+pairs remain diagnostic-only and are not a substitute for the preregistered
+eight-pair gate.
+
 `check-poc-breadth` accepts both a passing and a failing decision document and
 recomputes all 64 observations. The post-attribution repeat retains the narrow
 claim: 4/8 realistic change/DSL cells qualify, despite correct selection and

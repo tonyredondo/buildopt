@@ -1,0 +1,11 @@
+OpenTelemetry test-preparation terminal failure excerpt
+pair=7
+order=CONTROL_FIRST
+arm=CONTROL
+task=:instrumentation:openai:openai-java-1.1:javaagent:byteBuddyJava
+failure=Failed to transform class io.opentelemetry.javaagent.instrumentation.openai.v1_1.OpenAiInstrumentationModule: [java.lang.IllegalStateException: zip file closed]
+gradleResult=BUILD FAILED in 23s
+tasks=1209 actionable tasks: 822 executed, 387 from cache
+configurationCache=Configuration cache entry reused.
+productAttributable=false
+retryPerformed=false

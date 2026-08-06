@@ -2650,6 +2650,7 @@ pairs with:
 
 ```bash
 ./dev/run-poc-otel-test-preparation /absolute/path/to/result.json
+./dev/check-poc-otel-test-preparation-result
 ```
 
 If preparation or an arm fails, the runner preserves only its diagnostic logs
@@ -2663,6 +2664,12 @@ The fixed 500 ms, 2%, positive-lower-bound gate and all eight observations are
 retained regardless of outcome. This is a POC value transfer only: it makes no
 production, soak, design-partner, universal-performance, or Test Optimization
 claim.
+
+The accepted run stopped at pair 7 when the optimized native control failed in
+upstream OpenTelemetry Byte Buddy processing with `zip file closed`. Six
+completed pairs remain descriptive-only; they are not promoted through an
+incomplete eight-pair gate. The checked terminal evidence records that failure
+and the no-retry decision.
 
 Run the lock and doctor contract tests from the repository root:
 

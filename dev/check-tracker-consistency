@@ -106,7 +106,8 @@ buildopt_required_tracker_text=(
     "| \`POC-SPRING-TEST-RUNTIME-001\` | Reject global two-fork test concurrency after it regresses and fails against the stable six-worker native control | \`DONE\`"
     "| \`POC-SPRING-SELECTIVE-TEST-RUNTIME-001\` | Reject selective two-fork tuning after it regresses and fails the stable six-worker native control | \`DONE\`"
     "| \`POC-SPRING-TEST-PREPARATION-001\` | Evaluate generic Build Impact for the build-owned Spring \`testClasses\` graph without executing root-build tests or changing common build-logic tests | \`DONE\`"
-    "| \`POC-OTEL-TRANSFER-001\` | Apply the Spring-qualified Build Impact mechanism unchanged to OpenTelemetry Java Instrumentation and repeat the same gate | \`TODO\`"
+    "| \`POC-OTEL-TRANSFER-001\` | Apply the Spring-qualified Build Impact mechanism unchanged to OpenTelemetry Java Instrumentation and repeat the same gate | \`DONE\`"
+    "| \`POC-OTEL-TRANSFER-G01\` | The unchanged Spring-qualified Build Impact mechanism clears the full eight-pair gate on fixed OpenTelemetry with identical outputs and no failed observation | Broader public-repository value claim | \`FAILED\`"
     "| \`POC-SPRING-PREREG-G01\` | Freeze a substantial Spring Framework experiment against its existing cache-enabled, parallel Gradle control before any local timing | Spring value-iteration boundary | \`DONE\`"
     "| \`POC-SPRING-VALUE-G01\` | At least one generic Spring mechanism clears the unchanged 500-ms/2%/positive-bound gate with identical outputs and all requested tests preserved | OpenTelemetry transfer | \`DONE\`"
     "| \`A1-G06\` | Safe Cache is non-regressive versus optimized native cache"
@@ -150,5 +151,5 @@ if [[ $(grep -Fc "| \`OPS-001/B\` |" <<<"${buildopt_readiness}") != 1 ]]; then
     exit 1
 fi
 
-printf 'RFC/tracker consistency OK: %s accepted decisions, OpenTelemetry transfer next\n' \
+printf 'RFC/tracker consistency OK: %s accepted decisions, terminal OpenTelemetry transfer recorded\n' \
     "${buildopt_decision_count}"

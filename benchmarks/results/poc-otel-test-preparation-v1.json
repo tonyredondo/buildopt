@@ -1,0 +1,195 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-otel-test-preparation/v1",
+  "workItem": "POC-OTEL-TRANSFER-001",
+  "capturedAt": "2026-08-06T11:01:17Z",
+  "status": "INCOMPLETE_UPSTREAM_CONTROL_FAILURE",
+  "buildopt": {
+    "revision": "ea2367a6442eaf09d5552f89cb9743d58ada6447",
+    "executableSha256": "9f2a6891d94c20fcb57fdcf785321f35f5978ef5d7bf10e088fa459bffcd1ebc",
+    "runnerScriptSha256": "e79366faa2f9668262658023156ad50aa30c12f48e1c9870cfe71e239d44ccac",
+    "rootTestGuardScriptSha256": "c892c05832defdbf6788437b22a44d07ed4709e2b029550921235b285070b466"
+  },
+  "specSha256": "4b47fc75ed9c19ac2b41cc9530aeda513e45b9cf10910bf3e70dfc07f4eaedf0",
+  "failureExcerptSha256": "2fb52696e2f2b516fa20bac71a608b61e9bfb47c66b7a4aa8f73ddc0629b4850",
+  "repository": {
+    "nameWithOwner": "open-telemetry/opentelemetry-java-instrumentation",
+    "revision": "2f472a7b3073eabc842540bcb1f48e71ae54825d",
+    "sourceArchiveSha256": "94c2f00f8a08c7f057b1e3d0be8d9529c27007706610d36fea668df4e34d9c87"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12,
+    "jdk": "temurin-21.0.12+8",
+    "cleanupImage": "docker.io/library/eclipse-temurin@sha256:a5418a1fcf440bb273e1db3bce5b0794eb78bfc9d044ba740de76dcbe6075f50"
+  },
+  "preparation": {
+    "onlinePreflightMeasured": false,
+    "onlinePreflightSuccess": true,
+    "onlinePreflightGradleReportedDurationSeconds": 681,
+    "measuredNetwork": "DISCONNECTED",
+    "dependencyMode": "GRADLE_OFFLINE_WITH_SHARED_READ_ONLY_CACHE",
+    "preflightDaemonStoppedBeforeArmSetup": true,
+    "cacheSeedRestoredBeforeEveryCompletedArm": true,
+    "outputsRemovedBeforeEveryCompletedArm": true,
+    "fixedMutationAppliedAfterCacheRestore": true,
+    "cacheMetadataPreservedAfterFailure": false
+  },
+  "discovery": {
+    "complete": true,
+    "containsTestTasks": false,
+    "graphSha256": "bba3c8f36775c53f6cf4c63d3457076e55c9fc6d2ac1fb1362d5c3f640d3170b",
+    "graphDigest": "sha256:5d868cafe8084b88fea1381cbc2ddbcd1453fba294d30ddfdca87248d7bbb90e",
+    "projectCount": 1026,
+    "controlReachCount": 614,
+    "candidateReachCount": 46,
+    "controlEntrypoints": [
+      "testClasses"
+    ],
+    "candidateEntrypoints": [
+      ":instrumentation:spring:spring-boot-autoconfigure:testClasses"
+    ]
+  },
+  "completedObservations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 29283,
+      "candidateDurationMs": 15282,
+      "savedMs": 14001,
+      "controlMaximumResidentSetKb": 127432,
+      "candidateMaximumResidentSetKb": 104012,
+      "interArmIdleGapWithinLimit": true,
+      "requiredOutputsComparedIdentical": true,
+      "requiredOutputMetadataPreserved": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 45394,
+      "candidateDurationMs": 12271,
+      "savedMs": 33123,
+      "controlMaximumResidentSetKb": 125672,
+      "candidateMaximumResidentSetKb": 106784,
+      "interArmIdleGapWithinLimit": true,
+      "requiredOutputsComparedIdentical": true,
+      "requiredOutputMetadataPreserved": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 31810,
+      "candidateDurationMs": 13105,
+      "savedMs": 18705,
+      "controlMaximumResidentSetKb": 130832,
+      "candidateMaximumResidentSetKb": 106048,
+      "interArmIdleGapWithinLimit": true,
+      "requiredOutputsComparedIdentical": true,
+      "requiredOutputMetadataPreserved": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 27093,
+      "candidateDurationMs": 12539,
+      "savedMs": 14554,
+      "controlMaximumResidentSetKb": 118924,
+      "candidateMaximumResidentSetKb": 109176,
+      "interArmIdleGapWithinLimit": true,
+      "requiredOutputsComparedIdentical": true,
+      "requiredOutputMetadataPreserved": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 5,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 28085,
+      "candidateDurationMs": 12764,
+      "savedMs": 15321,
+      "controlMaximumResidentSetKb": 122444,
+      "candidateMaximumResidentSetKb": 106532,
+      "interArmIdleGapWithinLimit": true,
+      "requiredOutputsComparedIdentical": true,
+      "requiredOutputMetadataPreserved": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 6,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 26986,
+      "candidateDurationMs": 11326,
+      "savedMs": 15660,
+      "controlMaximumResidentSetKb": 126912,
+      "candidateMaximumResidentSetKb": 109508,
+      "interArmIdleGapWithinLimit": true,
+      "requiredOutputsComparedIdentical": true,
+      "requiredOutputMetadataPreserved": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
+    }
+  ],
+  "failure": {
+    "pair": 7,
+    "order": "CONTROL_FIRST",
+    "arm": "CONTROL",
+    "stage": "MEASURED_ARM_EXECUTION",
+    "task": ":instrumentation:openai:openai-java-1.1:javaagent:byteBuddyJava",
+    "cause": "java.lang.IllegalStateException: zip file closed",
+    "commandExitCode": 1,
+    "gradleReportedDurationSeconds": 23,
+    "actionableTasks": 1209,
+    "executedTasks": 822,
+    "fromCacheTasks": 387,
+    "maximumResidentSetKb": 118516,
+    "configurationCacheEntryReused": true,
+    "rootBuildGradleTestTasksExecuted": false,
+    "externalActionAttempted": false,
+    "productAttributable": false,
+    "classification": "UPSTREAM_CONTROL_FAILURE",
+    "retryPerformed": false
+  },
+  "result": {
+    "expectedPairs": 8,
+    "completedPairs": 6,
+    "failedPair": 7,
+    "unstartedPairs": [
+      8
+    ],
+    "completedPairsDescriptiveOnly": true,
+    "completedControlMeanMs": 31441.833333333332,
+    "completedCandidateMeanMs": 12881.166666666666,
+    "completedMeanSavedMs": 18560.666666666668,
+    "completedReductionRatio": 0.5903175705403099,
+    "completedPositivePairs": 6,
+    "gateEvaluation": "NOT_EVALUATED_INCOMPLETE_8_PAIR_PROTOCOL",
+    "qualified": false,
+    "decision": "STOP_OTEL_TRANSFER_INCOMPLETE_UPSTREAM_CONTROL"
+  },
+  "evidenceLimitations": [
+    "PAIR_7_CONTROL_FAILED_BEFORE_OUTPUT_COMPARISON",
+    "PAIR_8_NOT_STARTED",
+    "FAILURE_BUNDLE_DID_NOT_PRESERVE_COMPLETED_OUTPUT_MANIFEST_DIGESTS",
+    "COMPLETED_PAIR_TIMINGS_RECORDED_FROM_RUNNER_STDOUT_AFTER_OUTPUT_COMPARISON"
+  ],
+  "boundaries": {
+    "mechanismChangedFromSpring": false,
+    "repositorySpecificProductRuleAdded": false,
+    "buildOwnedTestPreparationOnly": true,
+    "rootBuildGradleTestTasksExecuted": false,
+    "testSelectionChanged": false,
+    "testOptimizationModified": false,
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}
