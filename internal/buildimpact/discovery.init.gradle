@@ -1,6 +1,7 @@
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.testing.Test
 import java.util.concurrent.ConcurrentHashMap
 
@@ -140,7 +141,14 @@ gradle.projectsEvaluated {
                     }
                 }
             }
-            def unknownRelationships = tasks.any { !conventionalBuildTasks.contains(it.name) } || containsTests
+            // Source-set names are repository-defined, so safe compile tasks
+            // cannot be recognized by a fixed task-name allowlist. Gradle's
+            // AbstractCompile contract exposes declared inputs, outputs and
+            // task dependencies for Java/Groovy compilation while arbitrary
+            // custom tasks remain fail-closed.
+            def unknownRelationships = tasks.any {
+                !conventionalBuildTasks.contains(it.name) && !(it instanceof AbstractCompile)
+            } || containsTests
             [
                 name: requestedName,
                 reachesProjects: reachedProjects as List,

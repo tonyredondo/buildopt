@@ -3,6 +3,7 @@ package buildimpact
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -189,6 +190,70 @@ func TestTestPreparationDiscoveryDistinguishesBuildWorkFromTestExecution(t *test
 	}
 	if !foundTest {
 		t.Fatal("unsafe test preparation did not expose its Test dependency")
+	}
+}
+
+func TestDiscoveryAcceptsTypedCompileProducersAndRejectsArbitraryTasks(t *testing.T) {
+	if os.Getenv("BUILDOPT_RUN_BUILD_IMPACT_DISCOVERY_PROOF") != "1" {
+		t.Skip("real Gradle discovery proof is run by check-build-impact-automatic")
+	}
+	repositoryRoot := buildImpactRepositoryRoot(t)
+	workspace := t.TempDir()
+	write := func(name, contents string) {
+		t.Helper()
+		path := filepath.Join(workspace, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(contents), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	write("settings.gradle.kts", "rootProject.name = \"typed-compile-producer\"\n")
+	write("build.gradle.kts", `plugins { java }
+sourceSets.create("javaSpring3")
+tasks.register("arbitraryProducer")
+`)
+	write("src/javaSpring3/java/example/Spring3.java", "package example; public final class Spring3 {}\n")
+
+	discover := func(entrypoint string) GeneratedImpact {
+		t.Helper()
+		write("buildopt-impact-manifest.json", fmt.Sprintf(`{
+  "schemaVersion":"buildopt.build-impact/manifest/v1",
+  "manifestVersion":1,
+  "repositoryId":"tonyredondo/buildopt-typed-compile",
+  "pipelineClass":"pull-request",
+  "ownership":"REPOSITORY_COMMITTED",
+  "originalEntrypoints":["assemble"],
+  "allowedAlternatives":[{"id":"candidate","entrypoints":[%q]}],
+  "requiredArtifacts":[{"id":"classes","path":"build/classes/**","owner":"BUILD_OPTIMIZATION"}],
+  "requiredChecks":[],
+  "globalChangePaths":["gradle/**"],
+  "unknownChangePolicy":"FULL_GRAPH"
+}`, entrypoint))
+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+		defer cancel()
+		generated, err := Discover(ctx, DiscoveryOptions{
+			RepositoryRoot: workspace,
+			ManifestPath:   "buildopt-impact-manifest.json",
+			RepositoryID:   "tonyredondo/buildopt-typed-compile",
+			PipelineClass:  "pull-request",
+			GradleCommand:  filepath.Join(repositoryRoot, "gradlew"),
+			GradleArgs:     []string{"--offline"},
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return generated
+	}
+
+	typed := discover(":compileJavaSpring3Java")
+	if !typed.Generated.Complete || len(typed.Generated.FallbackReasons) != 0 {
+		t.Fatalf("typed compile producer was not accepted: %+v", typed.Generated)
+	}
+	arbitrary := discover(":arbitraryProducer")
+	if arbitrary.Generated.Complete || !reflect.DeepEqual(arbitrary.Generated.FallbackReasons, []string{"UNSUPPORTED_OR_TEST_ENTRYPOINT"}) {
+		t.Fatalf("arbitrary producer did not fail closed: %+v", arbitrary.Generated)
 	}
 }
 
