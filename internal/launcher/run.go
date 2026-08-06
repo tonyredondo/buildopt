@@ -27,7 +27,29 @@ const (
 // skeleton or managed runner-slot lifecycle, delivers the WS-005 session
 // ingest when configured, installs the signed A0-007 Gradle bootstrap cache,
 // honors the F0-039 local bypass, and returns the child process exit status.
-func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
+func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode int) {
+	var impactTiming *impactTimingState
+	execute := func(
+		childArgs []string,
+		environmentOverrides map[string]string,
+	) childExecution {
+		if impactTiming != nil {
+			return impactTiming.execute(
+				childArgs,
+				environmentOverrides,
+				stdin,
+				stdout,
+				stderr,
+			)
+		}
+		return executeChild(
+			childArgs,
+			environmentOverrides,
+			stdin,
+			stdout,
+			stderr,
+		)
+	}
 	if len(args) > 0 && args[0] == managedGatewayInternalCommand {
 		return runManagedGatewayProcess(args, stderr)
 	}
@@ -47,6 +69,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	gradleNativeOnly := false
 	gradleLocalOnly := false
 	if len(args) > 0 && args[0] == "impact" {
+		impactStartedAt := time.Now()
 		impact, err := prepareImpactInvocation(
 			args[1:],
 			os.Getenv(bypassEnvironment) == "1",
@@ -55,6 +78,25 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			_, _ = fmt.Fprintf(stderr, "buildopt: Build Impact POC unavailable: %v\n", err)
 			_, _ = io.WriteString(stderr, impactUsage)
 			return exitConfiguration
+		}
+		if impact.timingsPath != "" {
+			impactTiming = newImpactTimingState(
+				impact.timingsPath,
+				impactStartedAt,
+				impact,
+			)
+			defer func() {
+				if timingErr := impactTiming.write(runExitCode); timingErr != nil {
+					_, _ = fmt.Fprintf(
+						stderr,
+						"buildopt: Build Impact phase timing unavailable: %v\n",
+						timingErr,
+					)
+					if runExitCode == 0 {
+						runExitCode = exitConfiguration
+					}
+				}
+			}()
 		}
 		if impact.plan.CandidateSelected {
 			_, _ = fmt.Fprintf(
@@ -72,6 +114,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		args = append([]string{"gradle"}, impact.gradleArgs...)
 	}
 	if len(args) > 0 && args[0] == "gradle" {
+		gradleSetupStartedAt := time.Now()
 		invocation, err := prepareGradleInvocation(
 			args[1:],
 			os.Getenv(bypassEnvironment) == "1",
@@ -79,6 +122,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		if err != nil {
 			_, _ = fmt.Fprintf(stderr, "buildopt: Gradle setup unavailable: %v\n", err)
 			return exitConfiguration
+		}
+		if impactTiming != nil {
+			impactTiming.finishGradleSetup(gradleSetupStartedAt)
 		}
 		args = append([]string{"run", "--"}, invocation.childArgs...)
 		gradleEnvironment = invocation.environment
@@ -93,12 +139,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 
 	childArgs := args[2:]
 	if os.Getenv(bypassEnvironment) == "1" {
-		execution := executeChild(
+		execution := execute(
 			childArgs,
 			gradleEnvironment,
-			stdin,
-			stdout,
-			stderr,
 		)
 		if !execution.started {
 			return launchErrorExitCode(childArgs[0], execution.err, stderr)
@@ -106,16 +149,13 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		return childWaitExitCode(childArgs[0], execution.err, stderr)
 	}
 	if gradleNativeOnly || gradleLocalOnly {
-		if nativeGradleProcessReplacementSupported(stdin, stdout, stderr) {
+		if impactTiming == nil && nativeGradleProcessReplacementSupported(stdin, stdout, stderr) {
 			err := replaceWithNativeGradleProcess(childArgs, gradleEnvironment)
 			return launchErrorExitCode(childArgs[0], err, stderr)
 		}
-		execution := executeChild(
+		execution := execute(
 			childArgs,
 			gradleEnvironment,
-			stdin,
-			stdout,
-			stderr,
 		)
 		if !execution.started {
 			return launchErrorExitCode(childArgs[0], execution.err, stderr)
@@ -286,12 +326,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		childArgs = profiledArgs
 	}
 	childArgs = applyConfigurationCachePolicy(childArgs, authority)
-	execution := executeChild(
+	execution := execute(
 		childArgs,
 		childEnvironment,
-		stdin,
-		stdout,
-		stderr,
 	)
 	if !execution.started {
 		if handshake != nil {

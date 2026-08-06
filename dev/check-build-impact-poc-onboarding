@@ -98,6 +98,7 @@ if ! (
             --repository-id tonyredondo/buildopt-impact-synthetic \
             --pipeline-class pull-request \
             --changes-file changed.txt \
+            --timings-file candidate-timings.json \
             --gradle-option=--offline \
             --gradle-option=--no-daemon \
             --gradle-option=--console=plain \
@@ -116,6 +117,7 @@ if ! (
             --repository-id tonyredondo/buildopt-impact-synthetic \
             --pipeline-class pull-request \
             --changes-file changed.txt \
+            --timings-file fallback-timings.json \
             --gradle-option=--offline \
             --gradle-option=--no-daemon \
             --gradle-option=--console=plain \
@@ -132,6 +134,45 @@ grep -F 'explicit Build Impact POC candidate affected-service-a selected' \
     "${buildopt_workspace}/candidate.stderr" >/dev/null
 grep -F 'Build Impact POC retained the full graph (IMPACT_UNKNOWN_CHANGE_PATH)' \
     "${buildopt_workspace}/full.stderr" >/dev/null
+
+jq -e '
+    .schemaVersion == "buildopt.build-impact/poc-phase-timings/v1" and
+    .candidateSelected == true and
+    .alternativeId == "affected-service-a" and
+    .reason == "EXPLICIT_OWNER_POC_CANDIDATE" and
+    .entrypointCount == 1 and
+    .exitCode == 0 and
+    .impactPreparationNs > 0 and
+    .gradleSetupNs > 0 and
+    .gradleExecutionNs > 0 and
+    .planner.totalNs > 0 and
+    .planner.totalNs <= .impactPreparationNs and
+    .planner.totalNs >= (
+        .planner.manifestLoadAndValidationNs +
+        .planner.graphLoadAndValidationNs +
+        .planner.generatedStateLoadAndValidationNs +
+        .planner.impactEvaluationNs
+    ) and
+    .totalNs == (
+        .impactPreparationNs + .gradleSetupNs + .runtimeSetupNs +
+        .gradleExecutionNs + .teardownNs + .unattributedNs
+    )
+' "${buildopt_candidate}/candidate-timings.json" >/dev/null
+"${buildopt_script_dir}/check-build-impact-phase-timings" \
+    "${buildopt_candidate}/candidate-timings.json" >/dev/null
+jq -e '
+    .schemaVersion == "buildopt.build-impact/poc-phase-timings/v1" and
+    .candidateSelected == false and
+    .reason == "IMPACT_UNKNOWN_CHANGE_PATH" and
+    .entrypointCount == 1 and
+    .exitCode == 0 and
+    .totalNs == (
+        .impactPreparationNs + .gradleSetupNs + .runtimeSetupNs +
+        .gradleExecutionNs + .teardownNs + .unattributedNs
+    )
+' "${buildopt_full}/fallback-timings.json" >/dev/null
+"${buildopt_script_dir}/check-build-impact-phase-timings" \
+    "${buildopt_full}/fallback-timings.json" >/dev/null
 
 buildopt_candidate_service_a="${buildopt_candidate}/service-a/build/libs/service-a-1.0.jar"
 buildopt_full_service_a="${buildopt_full}/service-a/build/libs/service-a-1.0.jar"

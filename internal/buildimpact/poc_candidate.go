@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"regexp"
+	"time"
 )
 
 const (
@@ -35,22 +36,35 @@ type POCCandidateOptions struct {
 // choose an alternative already owned by the repository manifest; every
 // ambiguous or incomplete input retains the original full graph.
 type POCCandidatePlan struct {
-	SchemaVersion         string   `json:"schemaVersion"`
-	Mode                  string   `json:"mode"`
-	Reason                string   `json:"reason"`
-	Entrypoints           []string `json:"entrypoints"`
-	AlternativeID         string   `json:"alternativeId,omitempty"`
-	AffectedProjects      []string `json:"affectedProjects"`
-	OmittedProjects       []string `json:"omittedProjects"`
-	PreservedTestCheckIDs []string `json:"preservedTestCheckIds"`
-	CandidateSelected     bool     `json:"candidateSelected"`
-	ProductionAuthorized  bool     `json:"productionAuthorized"`
+	SchemaVersion         string                   `json:"schemaVersion"`
+	Mode                  string                   `json:"mode"`
+	Reason                string                   `json:"reason"`
+	Entrypoints           []string                 `json:"entrypoints"`
+	AlternativeID         string                   `json:"alternativeId,omitempty"`
+	AffectedProjects      []string                 `json:"affectedProjects"`
+	OmittedProjects       []string                 `json:"omittedProjects"`
+	PreservedTestCheckIDs []string                 `json:"preservedTestCheckIds"`
+	CandidateSelected     bool                     `json:"candidateSelected"`
+	ProductionAuthorized  bool                     `json:"productionAuthorized"`
+	PhaseTimings          POCCandidatePhaseTimings `json:"-"`
+}
+
+// POCCandidatePhaseTimings attributes the POC planner's non-overlapping work.
+// It is diagnostic evidence only and cannot affect selection or authorization.
+type POCCandidatePhaseTimings struct {
+	ManifestLoadAndValidationNs       int64 `json:"manifestLoadAndValidationNs"`
+	GraphLoadAndValidationNs          int64 `json:"graphLoadAndValidationNs"`
+	GeneratedStateLoadAndValidationNs int64 `json:"generatedStateLoadAndValidationNs"`
+	ImpactEvaluationNs                int64 `json:"impactEvaluationNs"`
+	TotalNs                           int64 `json:"totalNs"`
 }
 
 // PlanPOCCandidate validates checked-in reviewable state and evaluates one
 // explicit changed-path set. It deliberately does not call or weaken BIA-002:
 // this owner-operated POC command measures a candidate, never promotes it.
 func PlanPOCCandidate(options POCCandidateOptions) (POCCandidatePlan, error) {
+	startedAt := time.Now()
+	phaseStartedAt := startedAt
 	manifest, err := LoadRepositoryManifest(
 		options.RepositoryRoot,
 		options.ManifestPath,
@@ -60,19 +74,25 @@ func PlanPOCCandidate(options POCCandidateOptions) (POCCandidatePlan, error) {
 	if err != nil {
 		return POCCandidatePlan{}, err
 	}
+	timings := POCCandidatePhaseTimings{
+		ManifestLoadAndValidationNs: time.Since(phaseStartedAt).Nanoseconds(),
+	}
 	plan := POCCandidatePlan{
 		SchemaVersion:        POCCandidatePlanSchemaVersion,
 		Mode:                 DecisionFullGraph,
 		Reason:               "GRAPH_INVALID",
 		Entrypoints:          cloneSlice(manifest.Manifest.OriginalEntrypoints),
 		ProductionAuthorized: false,
+		PhaseTimings:         timings,
 	}
 	_, plan.PreservedTestCheckIDs = manifestCheckIDs(manifest.Manifest)
 	if options.LocalBypass {
 		plan.Reason = "LOCAL_BYPASS"
+		plan.PhaseTimings.TotalNs = time.Since(startedAt).Nanoseconds()
 		return plan, nil
 	}
 
+	phaseStartedAt = time.Now()
 	graphRaw, err := readRepositoryFile(
 		options.RepositoryRoot,
 		options.GraphPath,
@@ -86,6 +106,8 @@ func PlanPOCCandidate(options POCCandidateOptions) (POCCandidatePlan, error) {
 	if err != nil {
 		return POCCandidatePlan{}, err
 	}
+	plan.PhaseTimings.GraphLoadAndValidationNs = time.Since(phaseStartedAt).Nanoseconds()
+	phaseStartedAt = time.Now()
 	generatedRaw, err := readRepositoryFile(
 		options.RepositoryRoot,
 		options.GeneratedManifestPath,
@@ -102,13 +124,17 @@ func PlanPOCCandidate(options POCCandidateOptions) (POCCandidatePlan, error) {
 	if err := validateGeneratedManifest(generated, manifest, graph); err != nil {
 		return POCCandidatePlan{}, err
 	}
+	plan.PhaseTimings.GeneratedStateLoadAndValidationNs = time.Since(phaseStartedAt).Nanoseconds()
 
+	phaseStartedAt = time.Now()
 	decision := evaluatePOCImpact(manifest, graph.Graph, options.ChangedPaths)
+	plan.PhaseTimings.ImpactEvaluationNs = time.Since(phaseStartedAt).Nanoseconds()
 	plan.Reason = "IMPACT_" + decision.Reason
 	plan.AffectedProjects = cloneSlice(decision.AffectedProjects)
 	plan.OmittedProjects = cloneSlice(decision.OmittedProjects)
 	plan.PreservedTestCheckIDs = cloneSlice(decision.PreservedTestCheckIDs)
 	if decision.Mode != DecisionShadowAlternative {
+		plan.PhaseTimings.TotalNs = time.Since(startedAt).Nanoseconds()
 		return plan, nil
 	}
 	plan.Mode = POCCandidateMode
@@ -116,6 +142,7 @@ func PlanPOCCandidate(options POCCandidateOptions) (POCCandidatePlan, error) {
 	plan.Entrypoints = cloneSlice(decision.PredictedEntrypoints)
 	plan.AlternativeID = decision.PredictedAlternativeID
 	plan.CandidateSelected = true
+	plan.PhaseTimings.TotalNs = time.Since(startedAt).Nanoseconds()
 	return plan, nil
 }
 

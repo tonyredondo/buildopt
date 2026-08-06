@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s /absolute/path/to/timings.json\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_report=$1
+if [[ ! -f "${buildopt_report}" ]]; then
+    printf 'Build Impact phase timing report is unavailable: %s\n' \
+        "${buildopt_report}" >&2
+    exit 1
+fi
+if ! command -v jq >/dev/null 2>&1; then
+    printf 'jq is required to validate Build Impact phase timings\n' >&2
+    exit 1
+fi
+
+jq -e '
+    def duration:
+        type == "number" and . >= 0 and . == floor;
+    .schemaVersion == "buildopt.build-impact/poc-phase-timings/v1" and
+    (.candidateSelected | type == "boolean") and
+    (.reason | type == "string" and length > 0) and
+    (.entrypointCount | type == "number" and . > 0 and . == floor) and
+    (.exitCode | type == "number" and . >= 0 and . == floor) and
+    (.planner.manifestLoadAndValidationNs | duration) and
+    (.planner.graphLoadAndValidationNs | duration) and
+    (.planner.generatedStateLoadAndValidationNs | duration) and
+    (.planner.impactEvaluationNs | duration) and
+    (.planner.totalNs | duration) and
+    .planner.totalNs >= (
+        .planner.manifestLoadAndValidationNs +
+        .planner.graphLoadAndValidationNs +
+        .planner.generatedStateLoadAndValidationNs +
+        .planner.impactEvaluationNs
+    ) and
+    (.impactPreparationNs | duration) and
+    (.gradleSetupNs | duration) and
+    (.runtimeSetupNs | duration) and
+    (.gradleExecutionNs | duration) and
+    (.teardownNs | duration) and
+    (.unattributedNs | duration) and
+    (.totalNs | duration) and
+    .planner.totalNs <= .impactPreparationNs and
+    .totalNs == (
+        .impactPreparationNs + .gradleSetupNs + .runtimeSetupNs +
+        .gradleExecutionNs + .teardownNs + .unattributedNs
+    )
+' "${buildopt_report}" >/dev/null || {
+    printf 'Build Impact phase timings are invalid or do not reconcile: %s\n' \
+        "${buildopt_report}" >&2
+    exit 1
+}
+
+printf 'Build Impact phase timings OK: %s\n' "${buildopt_report}"

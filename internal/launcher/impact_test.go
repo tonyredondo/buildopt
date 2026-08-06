@@ -2,6 +2,7 @@ package launcher
 
 import (
 	"bytes"
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -162,6 +163,77 @@ func TestImpactInvocationEmptyDiffRetainsFullGraph(t *testing.T) {
 	}
 	if invocation.plan.CandidateSelected || invocation.plan.Reason != "IMPACT_NO_DECLARED_CHANGES" || strings.Join(invocation.gradleArgs, " ") != "assemble" {
 		t.Fatalf("empty-diff invocation = %+v", invocation)
+	}
+}
+
+func TestImpactRunWritesReconciledPhaseTimings(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	t.Chdir(repositoryRoot)
+	clearGradleManagedL1Inputs(t)
+	t.Setenv(gradleInitScriptEnvironment, "")
+	t.Setenv(gradlePluginJarEnvironment, "")
+	wrapper := filepath.Join(repositoryRoot, gradleWrapperName(runtime.GOOS))
+	contents := "#!/bin/sh\nexit 0\n"
+	if runtime.GOOS == "windows" {
+		contents = "@echo off\r\nexit /b 0\r\n"
+	}
+	if err := os.WriteFile(wrapper, []byte(contents), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	code := Run([]string{
+		"impact",
+		"--repository-id", "tonyredondo/buildopt-impact-synthetic",
+		"--changes-file", "changed.txt",
+		"--timings-file", "impact-timings.json",
+		"--gradle-option=--no-daemon",
+	}, strings.NewReader(""), &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("impact exit code = %d, stderr = %q", code, stderr.String())
+	}
+	raw, err := os.ReadFile(filepath.Join(repositoryRoot, "impact-timings.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var report impactTimingReport
+	if err := json.Unmarshal(raw, &report); err != nil {
+		t.Fatal(err)
+	}
+	if report.SchemaVersion != impactTimingSchemaVersion ||
+		!report.CandidateSelected || report.AlternativeID != "affected-service-a" ||
+		report.Reason != "EXPLICIT_OWNER_POC_CANDIDATE" ||
+		report.EntrypointCount != 1 || report.ExitCode != 0 {
+		t.Fatalf("phase timing identity = %+v", report)
+	}
+	attributed := report.ImpactPreparationNs + report.GradleSetupNs +
+		report.RuntimeSetupNs + report.GradleExecutionNs + report.TeardownNs +
+		report.UnattributedNs
+	if report.TotalNs <= 0 || attributed != report.TotalNs ||
+		report.GradleExecutionNs <= 0 || report.ImpactPreparationNs <= 0 {
+		t.Fatalf("top-level phase timings do not reconcile: %+v", report)
+	}
+	plannerSum := report.Planner.ManifestLoadAndValidationNs +
+		report.Planner.GraphLoadAndValidationNs +
+		report.Planner.GeneratedStateLoadAndValidationNs +
+		report.Planner.ImpactEvaluationNs
+	if plannerSum <= 0 || report.Planner.TotalNs < plannerSum ||
+		report.Planner.TotalNs > report.ImpactPreparationNs {
+		t.Fatalf("planner phase timings do not reconcile: %+v", report.Planner)
+	}
+}
+
+func TestImpactInvocationRejectsUnsafeTimingsPath(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	t.Chdir(repositoryRoot)
+	_, err := prepareImpactInvocation([]string{
+		"--repository-id", "tonyredondo/buildopt-impact-synthetic",
+		"--changes-file", "changed.txt",
+		"--timings-file", "../impact-timings.json",
+	}, false)
+	if err == nil {
+		t.Fatal("escaping timings path was accepted")
 	}
 }
 

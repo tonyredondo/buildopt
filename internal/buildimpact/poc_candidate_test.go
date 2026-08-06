@@ -59,6 +59,13 @@ func TestPlanPOCCandidateUsesReviewedAlternativeWithoutProductionAuthority(t *te
 	if len(plan.PreservedTestCheckIDs) != 1 || plan.PreservedTestCheckIDs[0] != "synthetic-tests" {
 		t.Fatalf("preserved Test Optimization checks = %#v", plan.PreservedTestCheckIDs)
 	}
+	phaseSum := plan.PhaseTimings.ManifestLoadAndValidationNs +
+		plan.PhaseTimings.GraphLoadAndValidationNs +
+		plan.PhaseTimings.GeneratedStateLoadAndValidationNs +
+		plan.PhaseTimings.ImpactEvaluationNs
+	if phaseSum <= 0 || plan.PhaseTimings.TotalNs < phaseSum {
+		t.Fatalf("planner phase timings do not reconcile: %+v", plan.PhaseTimings)
+	}
 }
 
 func TestPlanPOCCandidateRetainsFullGraphForUnknownChange(t *testing.T) {

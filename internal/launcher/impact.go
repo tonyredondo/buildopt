@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
 )
@@ -17,7 +18,7 @@ import (
 const (
 	maximumImpactChangesBytes = 1 << 20
 	maximumImpactChangedPaths = 10_000
-	impactUsage               = "usage: buildopt impact --repository-id OWNER/REPO --changes-file PATH [--pipeline-class CLASS] [--manifest PATH] [--graph PATH] [--generated-manifest PATH] [--gradle-option VALUE ...]\n"
+	impactUsage               = "usage: buildopt impact --repository-id OWNER/REPO --changes-file PATH [--pipeline-class CLASS] [--manifest PATH] [--graph PATH] [--generated-manifest PATH] [--timings-file PATH] [--gradle-option VALUE ...]\n"
 )
 
 type repeatedStringFlag []string
@@ -56,11 +57,14 @@ func validImpactGradleOption(value string) bool {
 }
 
 type impactInvocation struct {
-	gradleArgs []string
-	plan       buildimpact.POCCandidatePlan
+	gradleArgs    []string
+	plan          buildimpact.POCCandidatePlan
+	timingsPath   string
+	preparationNs int64
 }
 
 func prepareImpactInvocation(args []string, bypass bool) (impactInvocation, error) {
+	startedAt := time.Now()
 	flags := flag.NewFlagSet("buildopt impact", flag.ContinueOnError)
 	flags.SetOutput(io.Discard)
 	repositoryID := flags.String("repository-id", "", "bound owner/repository identity")
@@ -69,6 +73,7 @@ func prepareImpactInvocation(args []string, bypass bool) (impactInvocation, erro
 	manifestPath := flags.String("manifest", "buildopt-impact-manifest.json", "repository-relative customer manifest")
 	graphPath := flags.String("graph", "buildopt-impact-graph.generated.json", "repository-relative generated graph")
 	generatedPath := flags.String("generated-manifest", "buildopt-impact.generated.json", "repository-relative generated manifest")
+	timingsPath := flags.String("timings-file", "", "repository-relative machine-readable phase timing output")
 	var gradleOptions repeatedStringFlag
 	flags.Var(&gradleOptions, "gradle-option", "Gradle option passed before the selected entrypoints; repeat for multiple values")
 	if err := flags.Parse(args); err != nil || flags.NArg() != 0 || *repositoryID == "" || *changesFile == "" {
@@ -103,9 +108,18 @@ func prepareImpactInvocation(args []string, bypass bool) (impactInvocation, erro
 	if err != nil {
 		return impactInvocation{}, err
 	}
+	resolvedTimingsPath, err := resolveImpactTimingsPath(repositoryRoot, *timingsPath)
+	if err != nil {
+		return impactInvocation{}, err
+	}
 	gradleArgs := append([]string(nil), gradleOptions...)
 	gradleArgs = append(gradleArgs, plan.Entrypoints...)
-	return impactInvocation{gradleArgs: gradleArgs, plan: plan}, nil
+	return impactInvocation{
+		gradleArgs:    gradleArgs,
+		plan:          plan,
+		timingsPath:   resolvedTimingsPath,
+		preparationNs: time.Since(startedAt).Nanoseconds(),
+	}, nil
 }
 
 func readImpactChangedPaths(repositoryRoot, relativePath string) ([]string, error) {

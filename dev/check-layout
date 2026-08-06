@@ -238,6 +238,7 @@ buildopt_required_files=(
     "dev/check-buildopt-cli"
     "dev/check-build-impact-automatic"
     "dev/check-build-impact-poc-onboarding"
+    "dev/check-build-impact-phase-timings"
     "dev/check-platform-compatibility"
     "dev/check-build-history-dashboard"
     "dev/check-build-history-api"

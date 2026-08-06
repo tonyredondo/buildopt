@@ -2713,6 +2713,14 @@ runs all measured arms offline. A failed warmup, arm, output comparison,
 fallback or timing-gap assertion stops the run; completed observations are not
 substituted.
 
+For owner-operated overhead attribution, `buildopt impact` also accepts
+`--timings-file PATH`. The repository-relative destination receives a private
+canonical report whose top-level phases reconcile exactly and whose nested
+planner phases separate manifest, graph, generated-state and evaluation work.
+The option does not change selection or authorization. Validate the report
+with `./dev/check-build-impact-phase-timings PATH`; its contract is documented
+in `specs/build-impact-poc-phase-timings-v1.md`.
+
 The accepted terminal evidence is checked in at
 `benchmarks/results/poc-otel-spring-family-v2.json`. Native Gradle averaged
 14,961.5 ms and BuildOpt 13,464.5 ms, but the frozen value gate failed because
