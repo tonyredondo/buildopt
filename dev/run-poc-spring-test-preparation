@@ -62,6 +62,17 @@ chmod 0700 "${buildopt_root}"
 mkdir -p -- "${buildopt_root}/source" "${buildopt_root}/preflight-home" \
     "${buildopt_root}/logs"
 chmod 0700 "${buildopt_root}/preflight-home"
+buildopt_test_guard="${buildopt_root}/reject-gradle-test-tasks.init.gradle"
+printf '%s\n' \
+    'import org.gradle.api.tasks.testing.Test' \
+    '' \
+    'gradle.taskGraph.whenReady { graph ->' \
+    '    def forbidden = graph.allTasks.findAll { it instanceof Test }' \
+    '    if (!forbidden.isEmpty()) {' \
+    '        throw new GradleException("forbidden Gradle Test task(s): " +' \
+    '            forbidden.collect { it.path }.sort().join(", "))' \
+    '    }' \
+    '}' >"${buildopt_test_guard}"
 
 buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
 buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
@@ -191,7 +202,8 @@ buildopt_run_arm() {
             "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
             ./gradlew --daemon --offline --build-cache --parallel \
             --no-configuration-cache --console=plain --max-workers=12 \
-            --no-scan --stacktrace "${buildopt_entrypoint}"
+            --no-scan --stacktrace --init-script "${buildopt_test_guard}" \
+            "${buildopt_entrypoint}"
     ) >"${buildopt_log}" 2>&1; then
         tail -n 180 "${buildopt_log}" >&2
         printf 'Spring test-preparation %s arm failed\n' "${buildopt_arm}" >&2
@@ -205,10 +217,7 @@ buildopt_run_arm() {
         printf 'Spring %s arm did not execute changed compileJava\n' "${buildopt_arm}" >&2
         return 1
     }
-    if grep -Eq '^> Task (:[^ ]+)*:test([[:space:]]|$)' "${buildopt_log}"; then
-        printf 'Spring %s arm executed a forbidden Gradle Test task\n' "${buildopt_arm}" >&2
-        return 1
-    fi
+    ! grep -Fq 'forbidden Gradle Test task(s):' "${buildopt_log}" || return 1
     if grep -Eq '^> Task .*:(publish|upload|release|sign)([A-Z:]|$)' "${buildopt_log}" ||
         grep -Eq 'Publishing build scan|Build scan published|https://gradle[.]com/s/' \
             "${buildopt_log}"; then
