@@ -2777,6 +2777,20 @@ a custom `Jar` with an extra action and a `Copy` task execute normally. This
 adapter is explicit on `buildopt impact`; it does not widen the managed Tier 1
 safe-cache policy.
 
+The new terminal protocol measures that adapter over one shared hot Gradle
+runtime without reusing any prior observation:
+
+```bash
+./dev/check-poc-otel-optimization-v2
+./dev/run-poc-otel-optimization-v2 /absolute/path/to/new-result.json
+./dev/check-poc-otel-optimization-v2-result /absolute/path/to/new-result.json
+```
+
+The control shares the same checkout, Gradle user home and daemon but remains
+unable to consume the candidate-only standard-Jar entry. The unchanged gate
+still requires 500 ms, 2%, a positive paired lower bound, 4/4 positive pairs,
+exact outputs, zero product failures and the complete global fallback.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash
