@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-spring-framework-v1.json"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-spring-value-v1.json"}
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Spring value validator is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -s "${buildopt_result}" ]] || {
+    printf 'Spring value evidence is unavailable: %s\n' "${buildopt_result}" >&2
+    exit 1
+}
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    def bootstrap_mean($data; $sample):
+        reduce range(0; 8) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $data[((.state / 536870912) | floor)].savedMs) |
+        .sum / 8;
+    def bootstrap95($data):
+        ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
+        [$r[102], $r[3993]];
+    . as $root |
+    .observations as $data |
+    (($data | map(.controlDurationMs) | add) / 8) as $controlMean |
+    (($data | map(.candidateDurationMs) | add) / 8) as $candidateMean |
+    (($data | map(.savedMs) | add) / 8) as $mean |
+    (($data | map(.savedMs) | add) /
+        ($data | map(.controlDurationMs) | add)) as $ratio |
+    bootstrap95($data) as $interval |
+    ($data | map(select(.savedMs > 0)) | length) as $positive |
+    ($mean >= $spec[0].valueGate.minimumSavedMs and
+     $ratio >= $spec[0].valueGate.minimumReductionRatio and
+     $interval[0] > 0) as $qualified |
+    .schemaVersion == "buildopt.evidence/poc-spring-value/v1" and
+    .workItem == "POC-SPRING-VALUE-001" and
+    .specSha256 == $specSha and
+    (.capturedAt | fromdateiso8601) and
+    (.buildopt.revision | test("^[0-9a-f]{40}$")) and
+    (.buildopt.executableSha256 | sha256) and
+    (.buildopt.gradlePluginSha256 | sha256) and
+    .repository == {
+        nameWithOwner: $spec[0].repository.nameWithOwner,
+        revision: $spec[0].repository.revision,
+        sourceArchiveSha256: $spec[0].repository.sourceArchiveSha256
+    } and
+    .runner == {
+        id: $spec[0].primaryRunner.id,
+        cpuCount: 12,
+        memoryBytes: 16659865600,
+        maxWorkers: 12,
+        java: $spec[0].repository.java,
+        configurationCacheEnabled: false
+    } and
+    .preparation.onlinePreflightMeasured == false and
+    .preparation.onlinePreflightSuccess == true and
+    (.preparation.onlinePreflightWallClockMs | type == "number" and . > 0) and
+    .preparation.measuredNetwork == "DISCONNECTED" and
+    .preparation.dependencyMode == "GRADLE_OFFLINE" and
+    (.preparation.buildCacheSeedSha256 | sha256) and
+    .preparation.cacheSeedRestoredBeforeEveryArm == true and
+    .preparation.outputsRemovedBeforeEveryArm == true and
+    .preparation.fixedMutationAppliedAfterCacheRestore == true and
+    .hypothesis == $spec[0].runtimeTuningHypothesis and
+    (.observations | length) == 8 and
+    [.observations[].pair] == [1, 2, 3, 4, 5, 6, 7, 8] and
+    [.observations[].order] == [
+        "CONTROL_FIRST", "CANDIDATE_FIRST", "CONTROL_FIRST", "CANDIDATE_FIRST",
+        "CANDIDATE_FIRST", "CONTROL_FIRST", "CANDIDATE_FIRST", "CONTROL_FIRST"
+    ] and
+    all(.observations[];
+        (.controlDurationMs | type == "number" and . > 0) and
+        (.candidateDurationMs | type == "number" and . > 0) and
+        .savedMs == (.controlDurationMs - .candidateDurationMs) and
+        (.interArmIdleGapMs | type == "number" and . >= 0 and
+            . <= $spec[0].followUpMeasurement.maximumInterArmIdleGapMs) and
+        (.controlMaximumResidentSetKb | type == "number" and . > 0) and
+        (.candidateMaximumResidentSetKb | type == "number" and . > 0) and
+        (.controlOutputSha256 | sha256) and
+        .controlOutputSha256 == .candidateOutputSha256 and
+        (.outputFileCount | type == "number" and . > 0) and
+        (.controlTestEvidenceSha256 | sha256) and
+        .controlTestEvidenceSha256 == .candidateTestEvidenceSha256 and
+        (.testCaseCount | type == "number" and . > 40000) and
+        .failedTestCaseCount == 0 and
+        .controlCheckstyleNohttpExecuted == true and
+        .candidateCheckstyleNohttpExecuted == true and
+        .productAttributableFailure == false) and
+    .result == {
+        pairs: 8,
+        controlMeanMs: $controlMean,
+        candidateMeanMs: $candidateMean,
+        meanSavedMs: $mean,
+        meanReductionRatio: $ratio,
+        interval95SavedMs: $interval,
+        positivePairs: $positive,
+        requiredOutputsIdentical: true,
+        requestedTestsIdentical: true,
+        productAttributableFailures: 0
+    } and
+    .decision == {
+        verdict: (if $qualified then "QUALIFY_SPRING_RUNTIME_TUNING" else "STOP_SPRING_RUNTIME_TUNING" end),
+        performanceMeasured: true,
+        savingsClaimed: $qualified
+    } and
+    .gate == {
+        id: "POC-SPRING-VALUE-G01",
+        state: (if $qualified then "PASSED" else "FAILED" end)
+    } and
+    .boundaries == $spec[0].boundaries
+' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'Spring value validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'Spring Framework paired value evidence OK: %s\n' "${buildopt_result}"

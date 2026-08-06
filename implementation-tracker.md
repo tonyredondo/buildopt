@@ -164,7 +164,7 @@ than partners. Test Optimization remains a separate product.
 | 21 | `POC-SPRING-DIAGNOSTIC-001` | Run unmeasured setup and offline diagnostics for `assemble`, `testClasses`, and `check` without summing task durations into savings | `DONE` | Codex |
 | 22 | `POC-SPRING-DISCOVERY-001` | Reject Gradle self-project dependencies as graph edges and stop the conservative Spring alternative when its diagnostic pair cannot beat native Gradle | `DONE` | Codex |
 | 23 | `POC-SPRING-RUNTIME-001` | Freeze and implement the exact `checkstyleNohttp` 1-GiB-to-2-GiB candidate without changing tests, task semantics, cache policy, or worker count | `DONE` | Codex |
-| 24 | `POC-SPRING-VALUE-001` | Run eight paired full-`check` measurements for the frozen candidate against optimized native Gradle | `TODO` | Codex |
+| 24 | `POC-SPRING-VALUE-001` | Run eight paired full-`check` measurements for the frozen candidate against optimized native Gradle | `DOING` | Codex |
 | 25 | `POC-OTEL-TRANSFER-001` | Apply a Spring-qualified mechanism unchanged to OpenTelemetry Java Instrumentation and repeat the same gate | `WAITING` | Codex |
 
 The raw diagnostic block is closed and unchanged. `E-172` corrects its

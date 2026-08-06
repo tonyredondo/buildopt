@@ -2539,6 +2539,20 @@ task. Validate checked-in evidence without rerunning Spring with:
 ./dev/check-poc-spring-diagnostic
 ```
 
+After the Runtime Tuning candidate and measurement contract are committed,
+run the accepted full-verification comparison with:
+
+```bash
+./dev/run-poc-spring-value /absolute/path/to/result.json
+./dev/check-poc-spring-value /absolute/path/to/result.json
+```
+
+The runner performs one unmeasured warmup per arm and then eight alternating
+pairs. Before every measured arm it removes outputs, restores the same native
+cache seed from the original source, and applies the fixed source mutation.
+Both arms must execute `checkstyleNohttp`; cached or failed pairs are rejected,
+not discarded.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash
