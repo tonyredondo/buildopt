@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`POC EDGE LOCALITY QUALIFIED; THIRD-REPOSITORY TRANSFER NEXT\`"
-    "**Current phase:** \`POC-THIRD-REPOSITORY-TRANSFER-001 TODO\`"
+    "**Overall status:** \`POC PERFORMANCE ROADMAP COMPLETE\`"
+    "**Current phase:** \`POC QUALIFIED-PROFILE SYNTHESIS NEXT\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"
@@ -155,7 +155,7 @@ buildopt_required_tracker_text=(
     "| \`POC-OPTIMIZATION-OVERHEAD-ABLATION-001\` | 7 | Narrow standard-Jar registration, measure native/init-only/adapter arms, and retain the faster complete workflow without treating phase deltas as universally causal | \`DONE\` | \`E-218\`"
     "| \`POC-RUNTIME-RESEARCH-001\` | 8 | Investigate one observed worker, heap, GC, queue, configuration, dependency-resolution, or JVM-warm-up bottleneck at a time; preserve \`STABLE_CONTROL\` on no-value evidence | \`DONE\` | \`E-219..220\`"
     "| \`POC-REMOTE-CACHE-VALUE-001\` | 9 | Compare BuildOpt Shared/Edge Cache with Gradle native remote cache using controlled latency, bandwidth, object size, hit rate, and runner locality | \`DONE\` | \`E-221..222\`"
-    "| \`POC-THIRD-REPOSITORY-TRANSFER-001\` | 10 | Transfer the unchanged qualified profile to one substantial public repository only when it exercises a new workload class or tests a current assumption | \`TODO\` | priorities 2–9"
+    "| \`POC-THIRD-REPOSITORY-TRANSFER-001\` | 10 | Transfer the unchanged qualified profile to one substantial public repository only when it exercises a new workload class or tests a current assumption | \`DONE\` | \`E-223..224\`: Kafka 4.3.1 preregistration and qualified result"
     "| \`POC-THIRD-REPOSITORY-TRANSFER-001\` | 10 | Transfer the unchanged qualified profile to one substantial public repository"
     "| \`POC-PERF-NEXT-G01\` | The complete qualified profile beats optimized native Gradle by at least 500 ms and 2%"
     "| \`A1-G06\` | Safe Cache is non-regressive versus optimized native cache"
@@ -199,5 +199,5 @@ if [[ $(grep -Fc "| \`OPS-001/B\` |" <<<"${buildopt_readiness}") != 1 ]]; then
     exit 1
 fi
 
-printf 'RFC/tracker consistency OK: %s accepted decisions, Edge locality qualified and third-repository transfer next\n' \
+printf 'RFC/tracker consistency OK: %s accepted decisions, POC performance roadmap complete and profile synthesis next\n' \
     "${buildopt_decision_count}"
