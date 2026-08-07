@@ -27,6 +27,7 @@ buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
 
 jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
     def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    def git_sha: type == "string" and test("^[0-9a-f]{40}$");
     def bootstrap_mean($data; $sample):
         reduce range(0; 4) as $draw
             ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
@@ -69,11 +70,12 @@ jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
             requiredOutputCount: $data[0].requiredOutputCount,
             qualified: $qualified
         };
+    . as $evidence |
     .schemaVersion == "buildopt.evidence/poc-standard-copy-cache/v1" and
     .workItem == "POC-TASK-TAIL-ADAPTERS-001" and
     (.capturedAt | fromdateiso8601) > 0 and
     .specSha256 == $specSha and
-    (.buildopt.revision | sha256) and
+    (.buildopt.revision | git_sha) and
     (.buildopt.executableSha256 | sha256) and
     (.buildopt.packageSha256 | sha256) and
     .buildopt.packageVersion == "0.3.0-dev" and
@@ -105,8 +107,9 @@ jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
     .discovery.projectCount == 1024 and .discovery.controlReachCount == 148 and
     .discovery.candidateReachCount == 46 and
     (.observations | length) == 12 and
-    all($spec[0].measurement.comparisons[] as $name;
-        ([.observations[] | select(.comparison == $name)] | length) == 4) and
+    all($spec[0].measurement.comparisons[];
+        . as $name |
+        ([$evidence.observations[] | select(.comparison == $name)] | length) == 4) and
     all(.observations[];
         (.pair >= 1 and .pair <= 4) and
         .order == (if (.pair % 2) == 1 then "CONTROL_FIRST" else "CANDIDATE_FIRST" end) and
@@ -145,7 +148,7 @@ jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
         ($expected[] | select(.comparison == "COMPLETE_PROFILE_VS_NATIVE") | .qualified) and
     .result.decision == (if all($expected[]; .qualified) then
         "QUALIFY_STANDARD_COPY_AND_COMPLETE_PROFILE"
-        else "RETAIN_STANDARD_COPY_EVIDENCE_ONLY" end)) and
+        else "RETAIN_STANDARD_COPY_EVIDENCE_ONLY" end) and
     .fallback.mode == "FULL_GRAPH" and
     .fallback.reason == "IMPACT_GLOBAL_CHANGE" and
     .fallback.buildSuccessful and (.fallback.performanceClaim | not) and

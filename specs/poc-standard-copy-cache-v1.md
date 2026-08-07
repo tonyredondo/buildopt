@@ -86,3 +86,23 @@ cumulative value. It does not authorize a general `Copy` policy, repository-
 specific task names in product code, Hot State, Runtime Tuning, Safe/Shared/
 Edge Cache, Test Optimization, production rollout, soak testing, or design-
 partner work.
+
+## Observed result and decision
+
+The retained experiment packages BuildOpt revision
+`ae9db815057edcc4020f603533c28d2af44e06e7` and preserves the same 21,818-file
+output digest in all twelve observations.
+
+- Copy-only saves 4,284.25 ms/27.05% on average, but only 3/4 pairs are
+  positive and the interval crosses zero at -3,334.25..+8,846.5 ms.
+- Copy added to the qualified Impact + Jar profile saves 2,391.25 ms/24.90%,
+  but again only 3/4 pairs are positive and the interval crosses zero at
+  -2,568.25..+7,092 ms.
+- The directly measured complete Impact + Jar + Copy profile saves 4,377 ms or
+  52.89%, with 4/4 positive pairs and interval +4,130.25..+4,653.25 ms.
+
+The complete profile therefore confirms a real end-to-end cascade without
+adding component percentages. The terminal decision remains
+`RETAIN_STANDARD_COPY_EVIDENCE_ONLY`: Copy is not activated because its direct
+incremental authorization gate failed. A global change still restores the full
+native graph and succeeds.

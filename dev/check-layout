@@ -425,6 +425,7 @@ buildopt_required_files=(
     "specs/poc-standard-copy-cache-v1.json"
     "specs/poc-standard-copy-cache-v1.md"
     "benchmarks/results/poc-impact-generalization-v1.json"
+    "benchmarks/results/poc-standard-copy-cascade-v1.json"
     "specs/poc-otel-spring-family-v2.json"
     "specs/poc-otel-spring-family-v2.md"
     "specs/poc-otel-spring-family-v2.tasks.txt"

@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC IMPACT GENERALIZATION PARTIAL; TASK-TAIL ADAPTER NEXT` — Spring shared test preparation qualifies at 18.88%, while compilation/packaging remain native and incomplete graphs fail closed<br>
-**Current phase:** `POC-TASK-TAIL-ADAPTERS-001 TODO` — select the next exact standard Gradle task type from existing real dominant-tail traces before implementation<br>
+**Overall status:** `POC COMPLETE PROFILE QUALIFIED; COPY ADAPTER RETAINED AS EVIDENCE` — the directly measured Impact + Jar + Copy profile saves 52.89%, while Copy remains disabled because its isolated and incremental intervals cross zero<br>
+**Current phase:** `POC-TEST-BUILD-OPTIMIZATION-001 TODO` — reduce build-owned test compilation, preparation, and packaging without changing Test-owned execution<br>
 **POC functional target:** attribute stable incremental value from one qualified combined path, then generalize only the Build Impact and exact task mechanisms that continue to beat optimized native Gradle; Safe Cache and Runtime candidates remain disabled<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -198,8 +198,8 @@ than partners. Test Optimization remains a separate product.
 | 44 | `POC-FULL-PATH-ABLATION-001` | Measure optimized native Gradle and five incrementally composed qualified BuildOpt arms on Spring and OpenTelemetry | `DONE` | Codex |
 | 45 | `POC-FULL-PATH-CLEAN-001` | Measure OpenTelemetry Build Impact plus the standard Jar adapter without the regressive hot-state arm | `DONE` | Codex |
 | 46 | `POC-IMPACT-GENERALIZATION-001` | Generalize Build Impact across real change shapes and compilation, test-preparation, verification, packaging, and distribution outputs | `DONE` | Codex |
-| 47 | `POC-TASK-TAIL-ADAPTERS-001` | Select and qualify the next exact standard-task adapter from real task-attribution traces | `IN PROGRESS` | Codex |
-| 48 | `POC-TEST-BUILD-OPTIMIZATION-001` | Optimize build-owned test compilation, preparation, and packaging without selecting, skipping, or reprioritizing Test-owned execution | `WAITING` | — |
+| 47 | `POC-TASK-TAIL-ADAPTERS-001` | Select and qualify the next exact standard-task adapter from real task-attribution traces | `DONE` | Codex |
+| 48 | `POC-TEST-BUILD-OPTIMIZATION-001` | Optimize build-owned test compilation, preparation, and packaging without selecting, skipping, or reprioritizing Test-owned execution | `TODO` | Codex |
 | 49 | `POC-RUNTIME-RESEARCH-001` | Reopen Runtime Tuning only for one measured resource bottleneck and retain stable control unless it beats optimized native Gradle | `WAITING` | — |
 | 50 | `POC-REMOTE-CACHE-VALUE-001` | Compare Shared and Edge Cache end to end with Gradle's native remote cache under controlled network conditions | `WAITING` | — |
 | 51 | `POC-THIRD-REPOSITORY-TRANSFER-001` | Transfer the unchanged qualified profile to one substantial public repository representing a new workload class | `WAITING` | — |
@@ -1091,8 +1091,8 @@ incremental evidence beats optimized native Gradle.
 | `POC-FULL-PATH-ABLATION-001` | 1 | Run six preregistered arms on Spring and OpenTelemetry: optimized native Gradle; Build Impact; Impact plus exact hot state; qualified standard-task adapters; exact reviewed task patches; and the complete qualified profile | `DONE` | `E-207` |
 | `POC-FULL-PATH-CLEAN-001` | 2 | Preregister and measure OpenTelemetry Build Impact plus the standard Jar adapter without hot-state reuse under the unchanged value and correctness gates | `DONE` | `E-211` |
 | `POC-IMPACT-GENERALIZATION-001` | 3 | Extend Build Impact across leaf/shared/build-logic/global changes and compilation, test preparation, verification, packaging, and distribution outputs while retaining full-graph fallback | `DONE` | `E-214` |
-| `POC-TASK-TAIL-ADAPTERS-001` | 4 | Select the next standard Gradle task type from real dominant-tail traces, define an exact eligibility contract, measure it independently, and measure its end-to-end composition without adding component percentages | `IN PROGRESS` | `E-214` |
-| `POC-TEST-BUILD-OPTIMIZATION-001` | 5 | Reduce build-owned test compilation, preparation, and packaging without changing Test-owned selection, execution, retries, sharding, or prioritization | `WAITING` | `POC-IMPACT-GENERALIZATION-001`, `POC-TASK-TAIL-ADAPTERS-001` |
+| `POC-TASK-TAIL-ADAPTERS-001` | 4 | Select the next standard Gradle task type from real dominant-tail traces, define an exact eligibility contract, measure it independently, and measure its end-to-end composition without adding component percentages | `DONE` | `E-215` |
+| `POC-TEST-BUILD-OPTIMIZATION-001` | 5 | Reduce build-owned test compilation, preparation, and packaging without changing Test-owned selection, execution, retries, sharding, or prioritization | `TODO` | `POC-IMPACT-GENERALIZATION-001`, `POC-TASK-TAIL-ADAPTERS-001` |
 | `POC-RUNTIME-RESEARCH-001` | 6 | Investigate one observed worker, heap, GC, queue, configuration, dependency-resolution, or JVM-warm-up bottleneck at a time; preserve `STABLE_CONTROL` on no-value evidence | `WAITING` | `POC-FULL-PATH-CLEAN-001` |
 | `POC-REMOTE-CACHE-VALUE-001` | 7 | Compare BuildOpt Shared/Edge Cache with Gradle native remote cache using controlled latency, bandwidth, object size, hit rate, and runner locality | `WAITING` | `POC-FULL-PATH-CLEAN-001` |
 | `POC-THIRD-REPOSITORY-TRANSFER-001` | 8 | Transfer the unchanged qualified profile to one substantial public repository only when it exercises a new workload class or tests a current assumption | `WAITING` | priorities 2–5 |
@@ -1103,10 +1103,12 @@ incremental evidence beats optimized native Gradle.
 
 The ablation matrix kept each incremental effect attributable and exposed a
 regressive hot-state arm behind a much larger Jar-adapter gain. The clean rerun
-removed that arm and passed the unchanged terminal gate. The next block
-selects the next exact standard-task adapter from real dominant-tail traces;
-Build Impact now broadens only to the qualified shared test-preparation scope.
-No item authorizes
+removed that arm and passed the unchanged terminal gate. The next exact
+standard-task experiment then measured the cascade directly: the complete
+Impact + Jar + Copy profile qualified at 52.89%, but Copy alone and Copy's
+incremental contribution both failed the stability gate, so Copy remains
+disabled. The next block targets build-owned test compilation, preparation,
+and packaging. No item authorizes
 production rollout, soak, design-partner work, Test Optimization, or a universal
 savings claim.
 
@@ -1446,6 +1448,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-212` | 2026-08-07 | `POC-IMPACT-GENERALIZATION-001` | The versioned [generalization protocol](./specs/poc-impact-generalization-v1.md), machine-readable [matrix](./specs/poc-impact-generalization-v1.json), installed runner and independent checker freeze a real Spring Framework comparison before timing. Structural discovery found complete non-Test relationships for leaf compilation, shared test preparation and leaf packaging; each keeps the unchanged 500-ms/2%/positive-bound/4-of-4 gate. Verification and source distribution expose unknown relationships and are preregistered as exact-output full-graph fallbacks; the final reason follows graph-level evaluation as `IMPACT_GRAPH_INCOMPLETE`. Separate buildSrc and gradle.properties changes must also restore the original classes selector | `DOING` preregistered with zero accepted timing: Hot State, Runtime Tuning, Safe Cache, Shared/Edge Cache and Test Optimization remain disabled; no threshold, failed pair, production, soak or design-partner claim is authorized |
 | `E-213` | 2026-08-07 | `POC-IMPACT-GENERALIZATION-001` | The first preregistered attempt completed the excluded Spring preflight and reproduced all five frozen graph hashes, then stopped before any warm-up because the runner applied jq's one-argument all filter to the specification object rather than first projecting matrixCells. Protocol revision 2 changes only that assertion scope | `DOING` measurement-harness correction committed with zero warmups, accepted observations or emitted result; product behavior, repository, cells, outputs, ordering, fallbacks and value gates remain unchanged and the full experiment must restart |
 | `E-214` | 2026-08-07 | `POC-IMPACT-GENERALIZATION-001` | The independently checked [Spring generalization evidence](./benchmarks/results/poc-impact-generalization-v1.json) packages BuildOpt `f5708fb32a0c0b826553f741d198e2982eed0c21` and retains all twelve final observations. Shared test preparation averages 13,971.75 ms natively and 11,333.75 ms with BuildOpt, saving 2,638 ms/18.88%; all 4/4 pairs are positive and the interval is +1,516..+3,275.5 ms. Leaf compilation saves only 196.25 ms/1.33% with 3/4 positive and interval -1,722.25..+1,901 ms; packaging saves 427.25 ms/3.73% with 2/4 positive and interval -264.75..+1,433.5 ms. Every performance pair preserves exact non-empty outputs. Verification and source distribution retain exact-output `IMPACT_GRAPH_INCOMPLETE` full graphs; buildSrc and gradle.properties changes retain `IMPACT_GLOBAL_CHANGE` and the complete classes selector. The experiment also exposed and fixed the prior error-on-incomplete-state defect; all discarded attempts and the one operational setup-budget revision are explicit and no discarded observation is reused | `DONE` terminal `GENERALIZE_ONLY_QUALIFIED_CELLS`: broaden only shared test preparation; compilation and packaging remain native, incomplete scopes remain full graph, all unproven mechanisms remain disabled, and no production or Test Optimization authority changes |
+| `E-215` | 2026-08-07 | `POC-TASK-TAIL-ADAPTERS-001` | The independently checked [standard-Copy cascade evidence](./benchmarks/results/poc-standard-copy-cascade-v1.json) packages BuildOpt `ae9db815057edcc4020f603533c28d2af44e06e7` and retains all twelve observations. Copy-only saves 4,284.25 ms/27.05%, but has 3/4 positive pairs and interval -3,334.25..+8,846.5 ms. Adding Copy to the already qualified Impact + Jar profile saves 2,391.25 ms/24.90%, but also has 3/4 positive pairs and interval -2,568.25..+7,092 ms. The directly measured complete Impact + Jar + Copy profile saves 4,377 ms/52.89%, with 4/4 positive pairs and interval +4,130.25..+4,653.25 ms. Every arm preserves the same 21,818-file digest and the global fallback succeeds | `DONE` terminal `RETAIN_STANDARD_COPY_EVIDENCE_ONLY`: the complete profile proves a stable global cascade without adding component percentages, but the direct incremental authorization gate fails; keep Copy disabled and move to build-owned test optimization |
 
 ---
 
@@ -1453,6 +1456,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-07 | Closed the exact standard-Copy experiment: measured a stable 4,377-ms/52.89% complete-profile cascade directly, retained unstable isolated and incremental Copy results, kept Copy disabled, and moved next to build-owned test optimization | Codex |
 | 2026-08-07 | Completed Build Impact generalization: qualified Spring shared test preparation at 2,638 ms/18.88%, retained non-qualifying compilation/packaging evidence, proved exact fail-closed verification/distribution and global fallbacks, and moved next to trace-selected task adapters | Codex |
 | 2026-08-07 | Fixed valid incomplete generated Build Impact state to retain the full graph instead of aborting; documented and discarded every interrupted execution, corrected only the exact fallback reason and operational setup budget, and reused no observations | Codex |
 | 2026-08-07 | Corrected only the Build Impact generalization runner's graph-contract jq scope after five matching graphs but before warmups or timings; retained zero observations and required a complete restart | Codex |

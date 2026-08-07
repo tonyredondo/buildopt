@@ -87,6 +87,27 @@ the complete `classes` selector, and succeeded. The terminal decision is
 `GENERALIZE_ONLY_QUALIFIED_CELLS`: only shared test preparation broadens the
 Build Impact POC claim.
 
+### Exact standard-Copy cascade
+
+The checked [standard-Copy cascade evidence](./results/poc-standard-copy-cascade-v1.json)
+measures the next trace-selected task adapter in three separate four-pair
+comparisons. The direct complete-profile comparison captures graph reduction,
+task reuse, critical-path changes, and their interaction; component percentages
+are never added.
+
+| Comparison | Native/control mean | Candidate mean | Effect | Stability | Decision |
+|---|---:|---:|---:|---:|---|
+| Copy adapter only | 15,840.5 ms | 11,556.25 ms | 4,284.25 ms / 27.05% faster | 3/4 positive; interval -3,334.25..+8,846.5 ms | Not qualified |
+| Copy added to Impact + Jar | 9,603 ms | 7,211.75 ms | 2,391.25 ms / 24.90% faster | 3/4 positive; interval -2,568.25..+7,092 ms | Not qualified |
+| Complete Impact + Jar + Copy versus native | 8,276 ms | 3,899 ms | **4,377 ms / 52.89% faster** | 4/4 positive; interval +4,130.25..+4,653.25 ms | Complete profile qualified |
+
+All twelve observations preserve the same non-empty 21,818-file digest and the
+global-change probe completes through the full native graph. The terminal
+decision is `RETAIN_STANDARD_COPY_EVIDENCE_ONLY`: the whole profile proves a
+stable cascade, but the direct incremental gate does not authorize activating
+Copy. This prevents a fast terminal profile from concealing an unstable
+component.
+
 ```bash
 ./dev/check-poc-full-path-ablation
 ./dev/test-poc-full-path-ablation
@@ -94,6 +115,8 @@ Build Impact POC claim.
 ./dev/test-poc-otel-clean-composition-v1
 ./dev/check-poc-impact-generalization
 ./dev/test-poc-impact-generalization
+./dev/check-poc-standard-copy-cascade \
+  benchmarks/results/poc-standard-copy-cascade-v1.json
 ```
 
 The scorecard answers a different question for each optimization instead of

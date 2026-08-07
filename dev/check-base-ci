@@ -207,6 +207,9 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-spring-impact-breadth" >/dev/null
         "${buildopt_script_dir}/check-poc-impact-generalization" >/dev/null
         "${buildopt_script_dir}/test-poc-impact-generalization" >/dev/null
+        "${buildopt_script_dir}/check-poc-standard-copy-cache" --spec-only >/dev/null
+        "${buildopt_script_dir}/check-poc-standard-copy-cascade" \
+            "${buildopt_repo_root}/benchmarks/results/poc-standard-copy-cascade-v1.json" >/dev/null
         "${buildopt_script_dir}/check-poc-value-baseline" >/dev/null
         "${buildopt_script_dir}/check-poc-value-validation" >/dev/null
         "${buildopt_script_dir}/check-poc-breadth" \

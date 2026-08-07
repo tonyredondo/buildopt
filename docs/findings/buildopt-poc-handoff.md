@@ -47,7 +47,7 @@ Unknown changes, unqualified tasks, failed validation, or
 | **Build Impact** | Maps changed files to the projects and entrypoints required for declared outputs. | Incremental and up-to-date behavior inside the task graph requested by the user. | Selects a smaller repository-authorized graph before Gradle executes it, with full-graph fallback for ambiguous/global changes. This is the strongest broadly useful accelerator so far. |
 | **Task Intelligence** | Qualifies tasks only when inputs, outputs, keys, and outcomes are exact enough. | Cacheability annotations and task validation supplied by build authors/plugins. | Adds an evidence-based eligibility layer. It enables optimizations but does not directly make a build faster. |
 | **Patch Autopilot** | Produces reviewable, reversible patches for exact known task shapes. | Manual build-script/plugin changes. | Can turn a non-cacheable custom task into a safely reusable task, but only for reviewed recipes that match exactly. |
-| **Exact task adapters** | Adds bounded eligibility for an unmodified standard Gradle task type. | Native caching when a task is correctly cacheable. | Uses real task traces to close one missing cacheability gap at a time. The first standard-`Jar` adapter produced the strongest public-repository result. |
+| **Exact task adapters** | Adds bounded eligibility for an unmodified standard Gradle task type. | Native caching when a task is correctly cacheable. | Uses real task traces to close one missing cacheability gap at a time. The standard-`Jar` adapter qualified; the later standard-`Copy` adapter works exactly but remains disabled because its isolated and incremental timing was unstable. |
 | **Hot-state reuse** | Reuses a validated impact plan when every repository, graph, Wrapper, executable, and option digest still matches. | Configuration Cache and daemon reuse inside Gradle. | Reduced planning overhead, but the fresh end-to-end arm was 7.68% slower. It is disabled for this profile. |
 | **Shared / Edge Cache** | Shares committed outputs and optionally places them nearer runners. | Native Gradle remote-cache protocol and third-party cache servers. | Adds authority and pending-write controls, but has no defensible performance advantage yet. |
 | **Build History** | Stores redacted sessions, timing, cache, and optimization evidence. | Logs, Build Scans, and external observability tooling. | Provides local POC evidence and comparison. It improves diagnosis, not build time directly. |
@@ -92,6 +92,9 @@ unfavorable observations. Percentages from different rows are not additive.
 | Exact-bound hot-state reuse | BuildOpt preparation reduced from 74.97 ms to 40.34 ms (**46.2%**) | Internal planning improvement only; not a whole-build percentage. |
 | Standard-`Jar` adapter | **39.92% faster**, 4,377 ms saved, 4/4 positive pairs | Qualified installed POC value with 125 identical outputs, zero product failures, and full 53-entrypoint fallback. |
 | Clean Impact + standard-`Jar` composition | **50.40% faster**, 5,361.25 ms saved, 4/4 positive pairs | Qualified without hot state; paired interval +4,334.25..+5,937 ms, identical 125-file outputs, and successful full-graph fallback. |
+| Standard-`Copy` adapter alone | **27.05% faster on average**, 4,284.25 ms saved, 3/4 positive pairs | Not qualified: interval -3,334.25..+8,846.5 ms crosses zero. |
+| Incremental `Copy` on Impact + `Jar` | **24.90% faster on average**, 2,391.25 ms saved, 3/4 positive pairs | Not qualified: the direct incremental interval -2,568.25..+7,092 ms crosses zero. |
+| Complete Impact + `Jar` + `Copy` profile | **52.89% faster**, 4,377 ms saved, 4/4 positive pairs | The directly measured cascade qualifies globally with interval +4,130.25..+4,653.25 ms and 21,818 identical outputs; percentages were not added. Copy still remains disabled because its incremental authorization gate failed. |
 
 ## Latest Generalization and Next Work
 
@@ -115,12 +118,19 @@ qualify and remain on native Gradle. Incomplete verification and distribution
 graphs, plus build-logic and global-configuration changes, all retained the
 original full graph and completed successfully.
 
-The next block is `POC-TASK-TAIL-ADAPTERS-001`: select the next exact standard
-Gradle task adapter from real dominant-tail traces and measure it independently.
-After that, the roadmap is to optimize build-owned test preparation without
-changing Test execution, investigate Runtime Tuning only around measured
-bottlenecks, compare Shared/Edge directly with native remote cache, and finally
-transfer the unchanged profile to a third substantial public repository.
+The standard-`Copy` experiment confirms the cascade concern directly. The
+complete profile is stable at 52.89% faster, but Copy alone and Copy's direct
+incremental contribution are not stable enough to activate. This is why the
+POC measures the whole profile as well as each increment: graph reduction can
+shorten the critical path and amplify later reuse, while a favorable terminal
+profile must not conceal an unqualified component.
+
+The next block is `POC-TEST-BUILD-OPTIMIZATION-001`: optimize build-owned test
+compilation, preparation, and packaging without selecting, skipping,
+reprioritizing, retrying, or sharding Test-owned execution. After that, the
+roadmap is to investigate Runtime Tuning only around measured bottlenecks,
+compare Shared/Edge directly with native remote cache, and finally transfer the
+unchanged profile to a third substantial public repository.
 
 ## Boundaries and References
 
@@ -137,3 +147,4 @@ production operations are outside the current scope.
 - [Fresh full-path ablation](../../benchmarks/results/poc-full-path-ablation-v1/summary.json)
 - [Qualified clean OpenTelemetry composition](../../benchmarks/results/poc-otel-clean-composition-v1.json)
 - [Build Impact generalization evidence](../../benchmarks/results/poc-impact-generalization-v1.json)
+- [Standard-Copy cascade evidence](../../benchmarks/results/poc-standard-copy-cascade-v1.json)

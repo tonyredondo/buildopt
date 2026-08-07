@@ -2826,8 +2826,8 @@ cache, and no measured invocation enables exact-bound hot state. The negative
 test proves that the checker rejects both hot-state contamination and output
 drift.
 
-The next task-tail experiment adds one exact standard-`Copy` adapter selected
-from the same OpenTelemetry trace. It deliberately measures isolated and
+The completed task-tail experiment adds one exact standard-`Copy` adapter
+selected from the same OpenTelemetry trace. It deliberately measures isolated and
 cumulative effects rather than adding component percentages:
 
 ```bash
@@ -2842,6 +2842,15 @@ Copy's incremental value on top of Build Impact plus the qualified standard
 comparison has its own four alternating pairs and frozen value gate. This
 direct complete-profile measurement is the only accepted evidence for a
 cascade effect; individual percentages are never summed.
+
+The checked result confirms that cascade. The directly measured complete
+Impact + Jar + Copy profile saves 4,377 ms/52.89%, has 4/4 positive pairs and a
++4,130.25..+4,653.25-ms interval. Copy-only and incremental Copy show favorable
+means of 27.05% and 24.90%, but both have only 3/4 positive pairs and intervals
+that cross zero. All twelve observations preserve the same 21,818-file output
+digest and the global fallback succeeds. The terminal decision is therefore
+`RETAIN_STANDARD_COPY_EVIDENCE_ONLY`: keep Copy disabled while retaining the
+qualified whole-profile cascade evidence.
 
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source
