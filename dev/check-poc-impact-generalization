@@ -46,6 +46,16 @@ jq -e '
         productDefect: "VALID_GENERATED_STATE_INCOMPLETENESS_RETURNED_AN_ERROR_INSTEAD_OF_THE_DOCUMENTED_FULL_GRAPH_FALLBACK",
         measurementChanged: false,
         valueGateChanged: false
+    }, {
+        reason: "EXPECTED_FALLBACK_REASON_WAS_MORE_SPECIFIC_THAN_GRAPH_COMPLETENESS",
+        completedGraphs: 5,
+        acceptedPerformanceObservations: 8,
+        completedCapabilityFallbackCells: 0,
+        resultEmitted: false,
+        observationsReused: false,
+        productChanged: false,
+        measurementChanged: false,
+        valueGateChanged: false
     }] and
     .repository.revision == "4b5c92703c63966c3471242c621c4a63b382638d" and
     .runner.cpuCount == 12 and .runner.maxWorkers == 12 and
@@ -71,7 +81,7 @@ jq -e '
         (.originalEntrypoints | length) == 1 and
         (.requiredOutputKind == "FILE" or .requiredOutputKind == "DIRECTORY")) and
     all(.matrixCells[] | select(.performanceClaim == false);
-        .expectedReason == "IMPACT_UNKNOWN_RELATIONSHIP") and
+        .expectedReason == "IMPACT_GRAPH_INCOMPLETE") and
     [.fallbackCells[].id] == ["BUILD_LOGIC_FALLBACK", "GLOBAL_CONFIGURATION_FALLBACK"] and
     all(.fallbackCells[];
         .expectedMode == "FULL_GRAPH" and
@@ -199,7 +209,7 @@ jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sh
     [.capabilityFallbackCells[].id] == ["LEAF_VERIFICATION", "LEAF_SOURCE_DISTRIBUTION"] and
     all(.capabilityFallbackCells[];
         .mode == "FULL_GRAPH" and
-        .reason == "IMPACT_UNKNOWN_RELATIONSHIP" and
+        .reason == "IMPACT_GRAPH_INCOMPLETE" and
         .outputsIdentical == true and
         .buildSuccessful == true and
         (.requiredOutputSha256 | sha256) and

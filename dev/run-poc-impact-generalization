@@ -326,8 +326,13 @@ buildopt_run_arm() {
                 "${buildopt_log}" || return 1
         else
             buildopt_expected_reason=$(jq -er ".matrixCells[${buildopt_cell_index}].expectedReason" "${buildopt_spec}")
-            grep -Fq "buildopt: Build Impact POC retained the full graph (${buildopt_expected_reason})" \
-                "${buildopt_log}" || return 1
+            if ! grep -Fq "buildopt: Build Impact POC retained the full graph (${buildopt_expected_reason})" \
+                "${buildopt_log}"; then
+                printf 'expected Build Impact fallback reason was not observed: %s\n' \
+                    "${buildopt_expected_reason}" >&2
+                tail -n 180 "${buildopt_log}" >&2
+                return 1
+            fi
         fi
     fi
     grep -Eq "^> Task ${buildopt_entry//:/\\:}( |$)" "${buildopt_log}" || {

@@ -25,6 +25,17 @@
       "productDefect": "VALID_GENERATED_STATE_INCOMPLETENESS_RETURNED_AN_ERROR_INSTEAD_OF_THE_DOCUMENTED_FULL_GRAPH_FALLBACK",
       "measurementChanged": false,
       "valueGateChanged": false
+    },
+    {
+      "reason": "EXPECTED_FALLBACK_REASON_WAS_MORE_SPECIFIC_THAN_GRAPH_COMPLETENESS",
+      "completedGraphs": 5,
+      "acceptedPerformanceObservations": 8,
+      "completedCapabilityFallbackCells": 0,
+      "resultEmitted": false,
+      "observationsReused": false,
+      "productChanged": false,
+      "measurementChanged": false,
+      "valueGateChanged": false
     }
   ],
   "repository": {
@@ -96,7 +107,7 @@
       "expectedGraphSha256": "88ec5dec34d70dc47dd99208e3e48de507791d84112a831b6fcc3e488f417018",
       "performanceClaim": false,
       "expectedMode": "FULL_GRAPH",
-      "expectedReason": "IMPACT_UNKNOWN_RELATIONSHIP"
+      "expectedReason": "IMPACT_GRAPH_INCOMPLETE"
     },
     {
       "id": "LEAF_PACKAGING",
@@ -135,7 +146,7 @@
       "expectedGraphSha256": "5e87fc2d616a1356255f5e3188e54b2f14c56a489f10d0212034514863494c08",
       "performanceClaim": false,
       "expectedMode": "FULL_GRAPH",
-      "expectedReason": "IMPACT_UNKNOWN_RELATIONSHIP"
+      "expectedReason": "IMPACT_GRAPH_INCOMPLETE"
     }
   ],
   "fallbackCells": [

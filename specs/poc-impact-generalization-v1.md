@@ -22,7 +22,8 @@ fixed source mutation, offline dependencies, restored native-cache seed, all
 12 available CPUs, and clean outputs. The installed launcher, manifest
 validation, graph validation, and selection overhead are included.
 
-Spring's `checkstyleMain` and `sourcesJar` graphs report unknown relationships.
+Spring's `checkstyleMain` and `sourcesJar` graphs report unknown relationships,
+which makes their generated graph state incomplete.
 Those verification and distribution cells therefore make no performance claim:
 BuildOpt must retain the broad original selector and produce the same required
 output as native Gradle. The protocol freezes this limitation before any timing.
@@ -44,6 +45,12 @@ to distinguish invalid bindings, which still fail, from valid incompleteness,
 which now retains the original full graph. No observation from that interrupted
 execution is reused, and neither the measurement method nor the value gates
 changed.
+
+The next attempt correctly retained the full graph, but the harness expected
+the narrower `IMPACT_UNKNOWN_RELATIONSHIP` reason. Evaluation checks the graph's
+global completeness first and therefore reports `IMPACT_GRAPH_INCOMPLETE`.
+That attempt was also discarded, the exact expected reason was corrected, and
+the measurement method, cells, thresholds, and product remained unchanged.
 
 This experiment does not execute root-build Gradle `Test` tasks or change test
 selection, retries, sharding, prioritization, or execution. Hot State, Runtime
