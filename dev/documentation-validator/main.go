@@ -17,6 +17,8 @@ var (
 	markdownLink      = regexp.MustCompile(`!?\[[^\]]*\]\(([^)]+)\)`)
 	repositoryCommand = regexp.MustCompile(`\./(?:dev|packaging)/[A-Za-z0-9._/-]+`)
 	trackerHeading    = regexp.MustCompile(`(?m)^#{1,6}[ \t]+(?:W[0-9]{2,}|[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-[A-Z]?[0-9]{2,})\b`)
+	spanishMarker     = regexp.MustCompile(`[¿¡ñÑ]`)
+	spanishWord       = regexp.MustCompile(`(?i)(?:^|[^a-z0-9_])(?:archivo|archivos|bloque|cambio|cambios|carpeta|compilar|compilacion|comando|comandos|configuracion|datos|desarrollador|documentacion|documento|ejecutar|ejecucion|entorno|equipo|fallo|fallos|guia|instalacion|mejora|mejoras|pendiente|porque|para|prueba|pruebas|recomendacion|recomendaciones|rendimiento|repositorio|resultado|resultados|seccion|seguridad|siguiente|tabla|usuario|validacion|verificar)(?:$|[^a-z0-9_])`)
 )
 
 var requiredDocuments = []string{
@@ -46,6 +48,10 @@ func main() {
 	if err != nil {
 		fail(err)
 	}
+	json, err := jsonFiles(root)
+	if err != nil {
+		fail(err)
+	}
 	var problems []string
 	problems = append(problems, checkRequiredDocuments(root)...)
 	problems = append(problems, checkRepositoryLandingPage(root)...)
@@ -57,6 +63,9 @@ func main() {
 		commandCount += commands
 		problems = append(problems, fileProblems...)
 	}
+	for _, path := range json {
+		problems = append(problems, checkEnglishLanguage(root, path)...)
+	}
 	packageCount, packageProblems := checkGoPackageDocs(root)
 	problems = append(problems, packageProblems...)
 	if len(problems) != 0 {
@@ -67,8 +76,8 @@ func main() {
 		os.Exit(1)
 	}
 	fmt.Printf(
-		"Documentation OK: %d Markdown files, %d local links, %d repository commands, %d Go packages documented\n",
-		len(markdown), linkCount, commandCount, packageCount,
+		"Documentation OK: %d Markdown files, %d JSON files, %d local links, %d repository commands, %d Go packages documented; owned documentation is English\n",
+		len(markdown), len(json), linkCount, commandCount, packageCount,
 	)
 }
 
@@ -90,6 +99,18 @@ func repositoryRoot() (string, error) {
 }
 
 func markdownFiles(root string) ([]string, error) {
+	return repositoryFiles(root, ".md")
+}
+
+func jsonFiles(root string) ([]string, error) {
+	return repositoryFiles(root, ".json")
+}
+
+func repositoryFiles(root string, extensions ...string) ([]string, error) {
+	wanted := make(map[string]bool, len(extensions))
+	for _, extension := range extensions {
+		wanted[strings.ToLower(extension)] = true
+	}
 	var paths []string
 	err := filepath.WalkDir(root, func(path string, entry os.DirEntry, walkErr error) error {
 		if walkErr != nil {
@@ -104,7 +125,7 @@ func markdownFiles(root string) ([]string, error) {
 			}
 			return nil
 		}
-		if strings.EqualFold(filepath.Ext(path), ".md") {
+		if wanted[strings.ToLower(filepath.Ext(path))] {
 			paths = append(paths, path)
 		}
 		return nil
@@ -153,6 +174,7 @@ func checkMarkdown(root, path string) (int, int, []string) {
 		}
 	}
 	var problems []string
+	problems = append(problems, checkEnglishLanguageContent(root, path, text, lineStarts)...)
 	if strings.EqualFold(filepath.Base(path), "README.md") {
 		for _, match := range trackerHeading.FindAllStringIndex(text, -1) {
 			problems = append(problems, location(root, path, lineStarts, match[0])+": README heading starts with an internal tracker ID")
@@ -192,6 +214,35 @@ func checkMarkdown(root, path string) (int, int, []string) {
 		}
 	}
 	return linkCount, commandCount, problems
+}
+
+func checkEnglishLanguage(root, path string) []string {
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return []string{fmt.Sprintf("read %s: %v", relative(root, path), err)}
+	}
+	text := string(content)
+	lineStarts := []int{0}
+	for index, character := range text {
+		if character == '\n' {
+			lineStarts = append(lineStarts, index+1)
+		}
+	}
+	return checkEnglishLanguageContent(root, path, text, lineStarts)
+}
+
+func checkEnglishLanguageContent(root, path, text string, lineStarts []int) []string {
+	if match := spanishMarker.FindStringIndex(text); match != nil {
+		return []string{location(root, path, lineStarts, match[0]) + ": owned documentation must be written in English"}
+	}
+	normalized := strings.NewReplacer(
+		"á", "a", "é", "e", "í", "i", "ó", "o", "ú", "u",
+		"Á", "A", "É", "E", "Í", "I", "Ó", "O", "Ú", "U",
+	).Replace(text)
+	if match := spanishWord.FindStringIndex(normalized); match != nil {
+		return []string{location(root, path, lineStarts, match[0]) + ": possible Spanish text; owned documentation must be written in English"}
+	}
+	return nil
 }
 
 func checkGoPackageDocs(root string) (int, []string) {

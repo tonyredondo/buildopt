@@ -57,6 +57,29 @@ func TestReadmeHeadingRejectsTrackerID(t *testing.T) {
 	}
 }
 
+func TestCheckEnglishLanguage(t *testing.T) {
+	root := t.TempDir()
+	english := filepath.Join(root, "docs", "english.md")
+	mustWrite(t, english, "# Guide\n\nRun the validation command and review the results.\n")
+	if problems := checkEnglishLanguage(root, english); len(problems) != 0 {
+		t.Fatalf("English documentation rejected: %v", problems)
+	}
+
+	accentedSpanish := filepath.Join(root, "docs", "accented.md")
+	mustWrite(t, accentedSpanish, "# Guía\n\nEjecuta la validación.\n")
+	problems := checkEnglishLanguage(root, accentedSpanish)
+	if len(problems) != 1 || !strings.Contains(problems[0], "must be written in English") {
+		t.Fatalf("accented Spanish documentation accepted: %v", problems)
+	}
+
+	unaccentedSpanish := filepath.Join(root, "evidence.json")
+	mustWrite(t, unaccentedSpanish, "{\"summary\":\"resultados para el equipo\"}\n")
+	problems = checkEnglishLanguage(root, unaccentedSpanish)
+	if len(problems) != 1 || !strings.Contains(problems[0], "possible Spanish text") {
+		t.Fatalf("unaccented Spanish documentation accepted: %v", problems)
+	}
+}
+
 func TestCheckGoPackageDocs(t *testing.T) {
 	root := t.TempDir()
 	mustWrite(t, filepath.Join(root, "internal", "good", "doc.go"), "// Package good is documented.\npackage good\n")

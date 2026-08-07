@@ -94,5 +94,5 @@ scripts referenced by guides, or repository structure:
 ```
 
 The gate verifies required entry points, local Markdown links, referenced
-repository commands, package documentation, and navigation back to this
-portal.
+repository commands, package documentation, English-language Markdown and JSON,
+and navigation back to this portal.
