@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "buildopt.specs/poc-third-repository-transfer/v1",
+  "workItem": "POC-THIRD-REPOSITORY-TRANSFER-001",
+  "decision": "PREREGISTER_UNCHANGED_CLEAN_PROFILE_ON_APACHE_KAFKA",
+  "preregistration": {
+    "implementationRevision": "26cca65cf08e9cea4add8946cad9e6325f749d10",
+    "completedWarmupsBeforePreregistration": 0,
+    "completedObservationsBeforePreregistration": 0,
+    "acceptedObservationsBeforePreregistration": 0,
+    "diagnosticRunsReused": false,
+    "implementationChanged": false,
+    "repositorySpecificProductRuleAdded": false,
+    "controlChanged": false,
+    "valueGateChanged": false
+  },
+  "repository": {
+    "nameWithOwner": "apache/kafka",
+    "releaseTag": "4.3.1",
+    "tagObject": "a07059eb9b5bac1bfdbb1e74313f2fae4ca20fd9",
+    "revision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "sourceArchiveUrl": "https://codeload.github.com/apache/kafka/tar.gz/26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "sourceArchiveSha256": "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2",
+    "gradleVersion": "9.2.1",
+    "gradleDistributionSha256": "72f44c9f8ebcb1af43838f45ee5c4aa9c5444898b3468ab3f4af7b6076c5bc3f",
+    "gradleWrapperJarSha256": "423cb469ccc0ecc31f0e4e1c309976198ccb734cdcbb7029d4bda0f18f57e8d9",
+    "gradleWrapperPropertiesSha256": "ae9287ed83e55d3a7e1fc1475faaf03fe6cb6e216a976d64852b1c4312ae3559",
+    "gradlePropertiesSha256": "0de8cbc79425cb95e31312b8dfa898b084e67045bd0a0bbfc7c0455c3cc3c7f7",
+    "settingsSha256": "1e3f0c2e339757e2112b24c696cb227f6696252364724f041e2642e8e9c28aab",
+    "rootBuildSha256": "50b4d82988d6567b146b419c99498fb8e1b6154815f651750a5335ea905b7bd6",
+    "wrapperBuildSha256": "7ac5cc0849b211a9772d5273a8edabe2211c857a661120e4ff32f411571e1059",
+    "upstreamBuildWorkflowSha256": "708fd9219e80045305b62be8a3ba06a3f6793ac2f52000293314b03870b1e0b1"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12,
+    "jdk": "temurin-25.0.3+9"
+  },
+  "workload": {
+    "class": "MULTI_MODULE_JAVA_SCALA_TEST_PREPARATION",
+    "upstreamReference": "GitHub Compile and Check uses check releaseTarGz -x test; this cell isolates the build-owned testClasses preparation boundary",
+    "controlEntrypoints": [
+      "testClasses"
+    ],
+    "controlExpectedReachedProjectCount": 64,
+    "forbiddenTaskType": "org.gradle.api.tasks.testing.Test"
+  },
+  "candidate": {
+    "profile": "CLEAN_BUILD_IMPACT_PLUS_EXACT_STANDARD_JAR",
+    "changeClass": "PRODUCTION_SOURCE_IN_CENTRAL_JAVA_MODULE",
+    "changePath": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+    "changeOriginalSha256": "30e3d4ad29be4f6be1e34d545caf08d8520fa4341e0948968cd87fd51b8911e3",
+    "changedProject": ":clients",
+    "alternativeId": "kafka-clients-test-preparation",
+    "entrypoints": [
+      ":clients:testClasses"
+    ],
+    "expectedReachedProjectCount": 3,
+    "standardJarCache": {
+      "activation": "--cache-standard-jar-producers",
+      "expectedProducer": ":generator:jar",
+      "candidateOutcome": "FROM-CACHE",
+      "controlCacheEligible": false,
+      "managedRuntimeStarted": false
+    },
+    "requiredOutputRoots": [
+      "clients/build/classes/java/main",
+      "clients/build/classes/java/test",
+      "clients/build/resources/main",
+      "clients/build/resources/test"
+    ]
+  },
+  "discovery": {
+    "adapterVersion": "gradle-runtime-v1",
+    "pipelineClass": "poc-third-repository-test-preparation-v1",
+    "expectedProjectCount": 64,
+    "expectedEntrypointCount": 2,
+    "expectedGraphDigest": "sha256:977264c031238bef6a3ff0d66e6d0806b3afc5bc0e4d28ea7a83c8310e2ea00f",
+    "expectedGraphSha256": "1ff0220c9c34ec0c666a8edd517781969d96c3b512d0e1510f320120f5508e0e",
+    "expectedGeneratedManifestSha256": "2c5cbe661c53995cf3daa90f7f8946715edd7e20f182c4b62244ce0a38101e7b",
+    "complete": true,
+    "containsTestTasks": false,
+    "unknownRelationships": false
+  },
+  "measurement": {
+    "candidateSurface": "INSTALLED_BUILDOPT_IMPACT_STANDARD_JAR_NO_HOT_STATE",
+    "launcherOverheadIncluded": true,
+    "commonArguments": [
+      "--daemon",
+      "--offline",
+      "--build-cache",
+      "--parallel",
+      "--console=plain",
+      "--max-workers=12",
+      "--no-scan"
+    ],
+    "onlinePreparationMeasured": false,
+    "sameCandidateNativeCacheSeedRestoredBeforeEveryArm": true,
+    "sharedCheckout": true,
+    "sharedGradleUserHome": true,
+    "sharedDaemon": true,
+    "controlCannotConsumeCandidateJarEntry": true,
+    "outputsRemovedBeforeEveryArm": true,
+    "fixedMutationAppliedAfterCacheRestore": true,
+    "warmupsPerArm": 1,
+    "pairs": 4,
+    "pairOrder": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
+    "maximumInterArmIdleGapMs": 5000,
+    "requiredOutputsComparedByteForByte": true,
+    "exactBoundHotStateEnabled": false,
+    "runtimeTuningEnabled": false,
+    "copyAdapterEnabled": false,
+    "remoteCacheEnabled": false
+  },
+  "valueGate": {
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositivePairs": 4,
+    "requiredOutputsIdentical": true,
+    "requiredOutputsNonEmpty": true,
+    "maximumProductAttributableFailures": 0,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedPairsMayBeDiscarded": false,
+    "parityAloneCountsAsValue": false
+  },
+  "fallback": {
+    "changePath": "gradle.properties",
+    "expectedMode": "FULL_GRAPH",
+    "expectedReason": "IMPACT_GLOBAL_CHANGE",
+    "outsideCandidateEntrypoint": "testClasses",
+    "performanceClaim": false
+  },
+  "terminalDecisions": {
+    "qualifies": "QUALIFY_CLEAN_PROFILE_ON_THIRD_SUBSTANTIAL_REPOSITORY",
+    "failsValueGate": "RETAIN_KAFKA_COMPATIBILITY_EVIDENCE_ONLY",
+    "controlOrCandidateFails": "STOP_THIRD_REPOSITORY_TRANSFER_WITHOUT_RETRY"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "repositorySpecificProductRuleAdded": false,
+    "productionSelectionChanged": false,
+    "buildOwnedTestPreparationOnly": true,
+    "testSelectionChanged": false,
+    "testExecutionChanged": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "publicReleaseRequired": false,
+    "universalSavingsClaimed": false
+  }
+}

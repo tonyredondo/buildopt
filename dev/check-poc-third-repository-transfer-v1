@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-third-repository-transfer-v1.json"
+buildopt_runner="${buildopt_script_dir}/run-poc-third-repository-transfer-v1"
+
+for buildopt_file in "${buildopt_spec}" "${buildopt_runner}"; do
+    [[ -s "${buildopt_file}" ]] || {
+        printf 'third-repository preregistration is unavailable: %s\n' \
+            "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    def gitsha: type == "string" and test("^[0-9a-f]{40}$");
+    .schemaVersion == "buildopt.specs/poc-third-repository-transfer/v1" and
+    .workItem == "POC-THIRD-REPOSITORY-TRANSFER-001" and
+    .decision == "PREREGISTER_UNCHANGED_CLEAN_PROFILE_ON_APACHE_KAFKA" and
+    (.preregistration.implementationRevision | gitsha) and
+    .preregistration.completedWarmupsBeforePreregistration == 0 and
+    .preregistration.completedObservationsBeforePreregistration == 0 and
+    .preregistration.acceptedObservationsBeforePreregistration == 0 and
+    .preregistration.diagnosticRunsReused == false and
+    .preregistration.implementationChanged == false and
+    .preregistration.repositorySpecificProductRuleAdded == false and
+    .preregistration.controlChanged == false and
+    .preregistration.valueGateChanged == false and
+    .repository.nameWithOwner == "apache/kafka" and
+    .repository.releaseTag == "4.3.1" and
+    (.repository.tagObject | gitsha) and
+    (.repository.revision | gitsha) and
+    (.repository.sourceArchiveSha256 | sha256) and
+    .repository.gradleVersion == "9.2.1" and
+    (.repository.gradleDistributionSha256 | sha256) and
+    (.repository.gradleWrapperJarSha256 | sha256) and
+    (.repository.gradleWrapperPropertiesSha256 | sha256) and
+    (.repository.gradlePropertiesSha256 | sha256) and
+    (.repository.settingsSha256 | sha256) and
+    (.repository.rootBuildSha256 | sha256) and
+    (.repository.wrapperBuildSha256 | sha256) and
+    (.repository.upstreamBuildWorkflowSha256 | sha256) and
+    .runner == {
+        id: "linux-amd64-12c-16659865600b-v1",
+        cpuCount: 12,
+        memoryBytes: 16659865600,
+        maxWorkers: 12,
+        jdk: "temurin-25.0.3+9"
+    } and
+    .workload.class == "MULTI_MODULE_JAVA_SCALA_TEST_PREPARATION" and
+    .workload.controlEntrypoints == ["testClasses"] and
+    .workload.controlExpectedReachedProjectCount == 64 and
+    .workload.forbiddenTaskType == "org.gradle.api.tasks.testing.Test" and
+    .candidate.profile == "CLEAN_BUILD_IMPACT_PLUS_EXACT_STANDARD_JAR" and
+    .candidate.changePath == "clients/src/main/java/org/apache/kafka/clients/Metadata.java" and
+    (.candidate.changeOriginalSha256 | sha256) and
+    .candidate.changedProject == ":clients" and
+    .candidate.alternativeId == "kafka-clients-test-preparation" and
+    .candidate.entrypoints == [":clients:testClasses"] and
+    .candidate.expectedReachedProjectCount == 3 and
+    .candidate.standardJarCache == {
+        activation: "--cache-standard-jar-producers",
+        expectedProducer: ":generator:jar",
+        candidateOutcome: "FROM-CACHE",
+        controlCacheEligible: false,
+        managedRuntimeStarted: false
+    } and
+    (.candidate.requiredOutputRoots | length) == 4 and
+    .discovery.adapterVersion == "gradle-runtime-v1" and
+    .discovery.pipelineClass == "poc-third-repository-test-preparation-v1" and
+    .discovery.expectedProjectCount == 64 and
+    .discovery.expectedEntrypointCount == 2 and
+    .discovery.expectedGraphDigest ==
+        "sha256:977264c031238bef6a3ff0d66e6d0806b3afc5bc0e4d28ea7a83c8310e2ea00f" and
+    .discovery.expectedGraphSha256 ==
+        "1ff0220c9c34ec0c666a8edd517781969d96c3b512d0e1510f320120f5508e0e" and
+    .discovery.expectedGeneratedManifestSha256 ==
+        "2c5cbe661c53995cf3daa90f7f8946715edd7e20f182c4b62244ce0a38101e7b" and
+    .discovery.complete == true and .discovery.containsTestTasks == false and
+    .discovery.unknownRelationships == false and
+    .measurement.candidateSurface ==
+        "INSTALLED_BUILDOPT_IMPACT_STANDARD_JAR_NO_HOT_STATE" and
+    .measurement.launcherOverheadIncluded == true and
+    .measurement.sameCandidateNativeCacheSeedRestoredBeforeEveryArm == true and
+    .measurement.sharedCheckout == true and
+    .measurement.sharedGradleUserHome == true and
+    .measurement.sharedDaemon == true and
+    .measurement.controlCannotConsumeCandidateJarEntry == true and
+    .measurement.outputsRemovedBeforeEveryArm == true and
+    .measurement.fixedMutationAppliedAfterCacheRestore == true and
+    .measurement.warmupsPerArm == 1 and .measurement.pairs == 4 and
+    .measurement.pairOrder == "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST" and
+    .measurement.maximumInterArmIdleGapMs == 5000 and
+    .measurement.requiredOutputsComparedByteForByte == true and
+    .measurement.exactBoundHotStateEnabled == false and
+    .measurement.runtimeTuningEnabled == false and
+    .measurement.copyAdapterEnabled == false and
+    .measurement.remoteCacheEnabled == false and
+    .valueGate == {
+        minimumSavedMs: 500,
+        minimumReductionRatio: 0.02,
+        positiveLower95Bound: true,
+        minimumPositivePairs: 4,
+        requiredOutputsIdentical: true,
+        requiredOutputsNonEmpty: true,
+        maximumProductAttributableFailures: 0,
+        thresholdsMayMoveAfterMeasurement: false,
+        failedPairsMayBeDiscarded: false,
+        parityAloneCountsAsValue: false
+    } and
+    .fallback.changePath == "gradle.properties" and
+    .fallback.expectedMode == "FULL_GRAPH" and
+    .fallback.expectedReason == "IMPACT_GLOBAL_CHANGE" and
+    .terminalDecisions == {
+        qualifies: "QUALIFY_CLEAN_PROFILE_ON_THIRD_SUBSTANTIAL_REPOSITORY",
+        failsValueGate: "RETAIN_KAFKA_COMPATIBILITY_EVIDENCE_ONLY",
+        controlOrCandidateFails: "STOP_THIRD_REPOSITORY_TRANSFER_WITHOUT_RETRY"
+    } and
+    .boundaries.proofOfConcept == true and
+    .boundaries.productionReadinessClaimed == false and
+    .boundaries.repositorySpecificProductRuleAdded == false and
+    .boundaries.productionSelectionChanged == false and
+    .boundaries.buildOwnedTestPreparationOnly == true and
+    .boundaries.testSelectionChanged == false and
+    .boundaries.testExecutionChanged == false and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false and
+    .boundaries.publicReleaseRequired == false and
+    .boundaries.universalSavingsClaimed == false
+' "${buildopt_spec}" >/dev/null
+
+if grep -Fq -- '--hot-state-dir' "${buildopt_runner}" ||
+    grep -Fq -- '--cache-standard-copy-tasks' "${buildopt_runner}" ||
+    grep -Eq 'BUILDOPT_(SERVER|SHARED|EDGE|RUNTIME)' "${buildopt_runner}"; then
+    printf 'third-repository runner activates a non-qualified mechanism\n' >&2
+    exit 1
+fi
+
+printf 'third-repository transfer preregistration OK\n'

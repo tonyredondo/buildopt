@@ -324,3 +324,10 @@ observation, deterministic bootstrap, preliminary result, and internal
 net-savings gate contract.
 
 The additional materialized contract `golden-lane-runner-v1.json` pins the first runner class, toolchain, image, and checksums consumed by validation scripts. `release-bundle-v1.md` fixes the first verifiable Linux AMD64 distribution; `deployment-lifecycle-v1.md` owns its local install, upgrade, rollback, and uninstall behavior without claiming publication or online revocation. `walking-skeleton-overhead-v1.md` fixes the first non-promotional baseline-versus-wrapper measurement without replacing the later beta benchmark.
+
+`poc-third-repository-transfer-v1.json` freezes the unchanged clean Build
+Impact plus exact standard-`Jar` profile on Apache Kafka 4.3.1 before timing.
+It binds the public revision and inputs, Gradle 9.2.1/JDK 25 workload, complete
+64-project graph, central `clients` mutation, 64-to-3 project selection,
+required test-preparation outputs, full-graph fallback, four-pair budget, and
+unchanged POC value gate without adding Kafka-specific product logic.

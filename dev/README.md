@@ -2970,6 +2970,27 @@ distribution retain exact-output full-graph execution because their generated
 graphs are incomplete. The negative suite rejects output drift, fallback-reason
 drift, and false qualification.
 
+### Third substantial repository transfer
+
+Preregister and execute the unchanged clean BuildOpt profile against the pinned
+Apache Kafka 4.3.1 Java/Scala test-preparation workload:
+
+```bash
+./dev/check-poc-third-repository-transfer-v1
+./dev/run-poc-third-repository-transfer-v1 /absolute/path/to/new-result.json
+./dev/check-poc-third-repository-transfer-v1-result /absolute/path/to/new-result.json
+```
+
+The installed candidate combines only generic Build Impact and exact standard
+`Jar` caching. It compares root `testClasses` (64 reached projects) with
+`:clients:testClasses` (three reached projects) after the fixed production
+source mutation. Four alternating offline pairs share the checkout, Gradle
+home, daemon, dependency cache, and candidate-augmented native cache seed. The
+runner compares `clients` main/test classes and resources byte for byte, rejects
+any Gradle `Test` execution, and proves that a `gradle.properties` change
+restores the full graph. Hot State, Runtime Tuning, Copy, remote caches, managed
+runtime, Test Optimization, soak, and production claims remain disabled.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash
