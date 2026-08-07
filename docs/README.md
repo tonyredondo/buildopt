@@ -48,6 +48,9 @@ before running the product.
 
 ### Findings and recommendations
 
+- [BuildOpt POC handoff](./findings/buildopt-poc-handoff.md): concise product
+  idea, component map, Gradle differentiation, synthetic and public-repository
+  results, current decisions, and next work.
 - [Build Optimization performance findings](./findings/build-optimization-performance.md):
   measured contribution by component, current activation decisions, evidence
   boundaries, and the recommended experimental roadmap.
