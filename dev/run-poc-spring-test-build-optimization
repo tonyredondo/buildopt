@@ -224,10 +224,6 @@ buildopt_run_arm control "${buildopt_control_checkout}" "${buildopt_control_home
     "${buildopt_root}/logs/warm-control.log" "${buildopt_root}/logs/warm-control.time"
 buildopt_run_arm candidate "${buildopt_candidate_checkout}" "${buildopt_candidate_home}" \
     "${buildopt_root}/logs/warm-candidate.log" "${buildopt_root}/logs/warm-candidate.time"
-((buildopt_jar_hits > 0)) || {
-    printf 'Spring candidate warmup did not populate or replay a standard Jar\n' >&2
-    exit 1
-}
 
 buildopt_rows="${buildopt_root}/observations.jsonl"
 : >"${buildopt_rows}"

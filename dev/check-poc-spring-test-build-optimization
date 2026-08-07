@@ -15,6 +15,12 @@ jq -e '
     .schemaVersion == "buildopt.specs/poc-spring-test-build-optimization/v1" and
     .workItem == "POC-TEST-BUILD-OPTIMIZATION-001" and
     .decision == "PREREGISTER_EXACT_STANDARD_JAR_REUSE_WITH_UNCHANGED_TEST_EXECUTION" and
+    .protocolRevision == {
+        from: 0,
+        reason: "PRE_MEASUREMENT_WARMUP_POPULATES_STANDARD_JAR_CACHE_WITHOUT_REPLAY",
+        acceptedPairsBeforeRevision: 0,
+        valueThresholdsChanged: false
+    } and
     .repository.nameWithOwner == "spring-projects/spring-framework" and
     (.repository.revision | test("^[0-9a-f]{40}$")) and
     (.repository.sourceArchiveSha256 | test("^[0-9a-f]{64}$")) and
