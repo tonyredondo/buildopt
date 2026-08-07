@@ -26,6 +26,10 @@
   complete build **11.31% slower**. After narrowing plugin registration, a
   three-arm ablation still measured it **9.53% slower** than native. The
   activation was not promoted.
+- **Edge locality now has bounded value evidence.** The same Gradle HTTP client
+  and eight committed Shared objects averaged 6,911.25 ms over a frozen modeled
+  WAN and 4,510 ms through a prewarmed Edge: **34.74% faster**, 4/4 positive
+  pairs, identical 32-MiB outputs and zero measured upstream Edge requests.
 
 ## Product Idea
 
@@ -54,7 +58,7 @@ Unknown changes, unqualified tasks, failed validation, or
 | **Patch Autopilot** | Produces reviewable, reversible patches for exact known task shapes. | Manual build-script/plugin changes. | Can turn a non-cacheable custom task into a safely reusable task, but only for reviewed recipes that match exactly. |
 | **Exact task adapters** | Adds bounded eligibility for an unmodified standard Gradle task type. | Native caching when a task is correctly cacheable. | Uses real task traces to close one missing cacheability gap at a time. The standard-`Jar` adapter qualified; the later standard-`Copy` adapter works exactly but remains disabled because its isolated and incremental timing was unstable. |
 | **Hot-state reuse** | Reuses a validated impact plan when every repository, graph, Wrapper, executable, and option digest still matches. | Configuration Cache and daemon reuse inside Gradle. | Reduced planning overhead, but the fresh end-to-end arm was 7.68% slower. It is disabled for this profile. |
-| **Shared / Edge Cache** | Shares committed outputs and optionally places them nearer runners. | Native Gradle remote-cache protocol and third-party cache servers. | Adds authority and pending-write controls, but has no defensible performance advantage yet. |
+| **Shared / Edge Cache** | Shares committed outputs and optionally places them nearer runners. | Native Gradle remote-cache protocol and third-party cache servers. | Edge locality qualified at **34.74% faster** under the frozen 80-ms/20-MiB/s profile. Shared remains the common authoritative origin; no standalone Shared speed claim is made. |
 | **Build History** | Stores redacted sessions, timing, cache, and optimization evidence. | Logs, Build Scans, and external observability tooling. | Provides local POC evidence and comparison. It improves diagnosis, not build time directly. |
 
 ## Initial Performance Evidence
@@ -164,10 +168,16 @@ an interval of -973.5..+590.5 ms, while preserving all 378 outputs and sorted
 task outcomes. The terminal decision is `RETAIN_NATIVE_12_WORKERS`; no further
 worker search is allowed for this trace.
 
-The next block is `POC-REMOTE-CACHE-VALUE-001`: compare BuildOpt Shared/Edge
-Cache with Gradle's native remote cache under frozen latency, bandwidth, object
-size, hit-rate and runner-locality conditions. Third-repository transfer
-remains later work.
+The controlled remote-cache experiment then qualified Edge locality. Direct
+Shared reads averaged 6,911.25 ms; the same eight objects from prewarmed Edge
+averaged 4,510 ms, saving 2,401.25 ms/34.74%. All four pairs were positive,
+the paired interval was +2,260.5..+2,542 ms, all 32-MiB outputs and task
+outcomes matched, and Edge made zero measured upstream requests. The claim is
+deliberately limited to this network profile.
+
+The next block is `POC-THIRD-REPOSITORY-TRANSFER-001`: transfer the unchanged
+qualified profile to one substantial public repository representing a new
+workload class, without adding repository-specific product rules.
 
 ## Boundaries and References
 
@@ -188,3 +198,4 @@ production operations are outside the current scope.
 - [Spring test-build stop evidence](../../benchmarks/results/poc-spring-test-build-optimization-v1.json)
 - [Optimization-overhead ablation](../../benchmarks/results/poc-optimization-overhead-ablation-v1.json)
 - [Targeted Runtime decision](../../benchmarks/results/poc-runtime-research-v1.json)
+- [Controlled remote-cache locality evidence](../../benchmarks/results/poc-remote-cache-value-v1.json)

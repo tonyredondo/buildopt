@@ -181,6 +181,29 @@ outcomes, with zero product failures. The terminal decision is
 `RETAIN_NATIVE_12_WORKERS`: Runtime Tuning remains disabled for this workload,
 and the frozen protocol forbids another worker search after this result.
 
+### Controlled remote-cache locality
+
+The checked [remote-cache evidence](./results/poc-remote-cache-value-v1.json)
+isolates one variable: where Gradle reads the same eight committed Shared
+objects. Both arms use Gradle 9.6.1 `HttpBuildCache`, identical authentication,
+disabled local and Configuration caches, read-only measured runs and 32 MiB of
+byte-identical required outputs. The control reads Shared through a fixed
+80-ms/20-MiB/s modeled WAN; the candidate reads a prewarmed BuildOpt Edge on
+loopback.
+
+| Arm | Mean | Measured Shared traffic |
+|---|---:|---:|
+| Gradle HTTP cache direct to Shared | 6,911.25 ms | 8 GETs / 33,569,614 bytes per pair |
+| Gradle HTTP cache through prewarmed Edge | 4,510.00 ms | 0 GETs / 0 bytes per pair |
+
+Edge saves **2,401.25 ms/34.74%**, all four pairs are positive (+2,605,
++2,307, +2,479 and +2,214 ms), and the deterministic paired interval is
++2,260.5..+2,542 ms. All tasks are `FROM-CACHE`, required outputs and task
+outcomes are identical, and there are zero product-attributable failures. The
+terminal decision is `QUALIFY_EDGE_LOCALITY_FOR_CONTROLLED_REMOTE_CACHE_POC`.
+This is a locality result under the frozen network profile, not evidence that
+Shared storage itself is faster than another Gradle-compatible origin.
+
 ```bash
 ./dev/check-poc-full-path-ablation
 ./dev/test-poc-full-path-ablation
@@ -198,6 +221,8 @@ and the frozen protocol forbids another worker search after this result.
   benchmarks/results/poc-optimization-overhead-ablation-v1.json
 ./dev/check-poc-runtime-research \
   benchmarks/results/poc-runtime-research-v1.json
+./dev/check-poc-remote-cache-value \
+  benchmarks/results/poc-remote-cache-value-v1.json
 ```
 
 The scorecard answers a different question for each optimization instead of

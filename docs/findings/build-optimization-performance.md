@@ -28,6 +28,11 @@
   test workflow by **735.25 ms/11.31%**, so the activation was not promoted.
   A follow-up three-arm ablation narrowed plugin registration but still found
   the complete adapter **612.25 ms/9.53% slower** than native Gradle.
+- **Edge locality has controlled POC value.** Reading the same committed
+  32-MiB object set through a prewarmed loopback Edge was **34.74% faster**
+  than direct Shared reads over the frozen 80-ms/20-MiB/s link, saving
+  2,401.25 ms with 4/4 positive pairs and zero measured upstream Edge reads.
+  This qualifies Edge locality for that profile, not Shared storage generally.
 
 The current POC supports a clear decision: continue investing in mechanisms
 that avoid work or safely make expensive tasks reusable, while keeping neutral
@@ -50,7 +55,7 @@ measured on different workloads and scopes.
 | **Graph reduction** | Replaces broad aggregate task dependencies with the typed producers required for the declared outputs. | The OpenTelemetry experiment removed **3 graph nodes and 2 executed tasks** while preserving all 125 required outputs. No standalone wall-clock percentage is claimed. | Structurally valuable, but it still needs independent timing evidence before it can be presented as a separate accelerator. |
 | **Exact-bound hot-state reuse** | Reuses a previously validated Build Impact plan only when repository revision, graph, manifest, changes, Wrapper, executable, and options still match. | Reduced BuildOpt preparation from **74.97 ms to 40.34 ms**, but the fresh whole-build arm was **7.68% slower**. | **Disabled for the measured profile.** Micro-overhead reduction does not override regressive end-to-end evidence. |
 | **Standard `Jar` cache adapter** | Makes only an unmodified standard Gradle `Jar` task eligible for native caching; custom archives, `Copy`, arbitrary tasks, and `Test` remain unchanged. | OpenTelemetry Build Impact: **39.92% faster**, saving 4,376.75 ms. Direct Spring test-build use: **11.31% slower** initially; after narrowing registration, the three-arm ablation remained **9.53% slower** than native. | **Qualified only inside the measured OpenTelemetry composition.** Correct cacheability and cache hits are insufficient when the avoided work is too small. |
-| **Shared and Edge Cache** | Reuse committed outputs across machines and optionally place them nearer developers or CI runners. | No defensible build-time percentage has yet been established against Gradle's native remote-cache support. | Functionally implemented, but **performance value remains unproven**. It needs a controlled network and locality benchmark before further investment. |
+| **Shared and Edge Cache** | Reuse committed outputs across machines and optionally place them nearer developers or CI runners. | With the same eight committed Shared objects, Gradle client and 32-MiB outputs, prewarmed Edge averaged **34.74% faster** than direct Shared over a frozen 80-ms/20-MiB/s link, saving 2,401.25 ms with 4/4 positive pairs. | **Edge locality qualifies for this controlled POC profile.** Shared provides the common origin and authority semantics; no independent Shared acceleration claim is made. |
 | **Build History** | Records durations, outcomes, cache behavior, and applied optimizations so results can be inspected and compared. | **No direct build-time saving.** | Observability that helps discover and validate optimizations; not an accelerator itself. |
 | **Launcher, gateway, and telemetry** | Provide orchestration, authentication, evidence collection, and safe fallback behavior. | Add fixed overhead rather than saving work. The local-cache fast path avoids starting these components when they have no consumer. | Necessary infrastructure for instrumented flows, but it must remain off the critical path when it is not needed. |
 | **Combined qualified path** | Orchestrates Build Impact and exact task optimizations through the packaged CLI and plugin while leaving unproven mechanisms disabled. | Fresh Spring Build Impact: **30.86% faster**. Clean OpenTelemetry Impact + standard `Jar`, with hot state absent: **50.40% faster**, saving 5,361.25 ms with 4/4 positive pairs. | **Qualified for the exact measured POC workloads.** Generalize change shapes and outputs before broadening the claim. |
@@ -244,14 +249,15 @@ rescue it: the complete adapter remained 612.25 ms/9.53% slower than native.
 The next candidate must therefore come from an observed resource or
 critical-path bottleneck, not from another low-cost cacheable task.
 
-### 6. Benchmark Shared and Edge Cache only against the native alternative
+### 6. Retain Edge only where locality can pay for itself
 
-Shared and Edge Cache should not be prioritized until the experiment can model
-a real remote-cache decision. Compare them with Gradle's native remote cache
-under controlled latency, bandwidth, object size, hit rate, and runner locality.
-Measure both the full build and cache-service overhead. If BuildOpt cannot
-improve end-to-end time or provide a required safety property at acceptable
-cost, defer the component.
+The controlled experiment now answers the bounded locality question. Direct
+Shared reads averaged 6,911.25 ms; the same objects from a prewarmed Edge
+averaged 4,510 ms, saving 34.74% with exact outputs and zero measured upstream
+requests. Edge is therefore worth retaining for remote runners behind a
+material network boundary. It should not be presented as a universal win on
+low-latency networks, and the result does not establish that Shared alone is
+faster than another Gradle-compatible remote origin.
 
 ### 7. Use real repositories with substantial builds
 
@@ -280,21 +286,22 @@ exercises a different workload class or invalidates a current assumption.
 | Reviewed task patch | Enabled only for exact matching contracts | Review required | Add recipes only after independent qualification |
 | Strict Safe Cache | Disabled | Disabled | Beat or justify cost versus native Gradle cache |
 | Runtime Tuning | Disabled | Disabled | Positive incremental evidence against optimized native Gradle |
-| Shared / Edge Cache | Disabled for performance claims | Operator opt-in | Controlled native-remote-cache comparison |
+| Shared / Edge Cache | Edge qualified for the frozen locality profile | Operator opt-in | Transfer unchanged to a materially different repository and network shape before broadening |
 
 ## Recommended Next Block
 
-The next implementation block is **controlled remote-cache value research**:
+The next implementation block is **third-repository transfer**:
 
-1. compare BuildOpt Shared/Edge Cache with Gradle's native remote cache rather
-   than with cache-off;
-2. freeze latency, bandwidth, object sizes, hit rate and runner locality before
-   timing;
-3. keep the same build, outputs, cache population and cache-hit policy in both
-   arms;
-4. measure complete end-to-end build time plus cache-service overhead;
-5. retain native remote cache if BuildOpt misses the unchanged value gate and
-   does not provide a required safety property at acceptable cost.
+1. select one substantial public repository representing a workload class not
+   already covered by Spring or OpenTelemetry;
+2. freeze its revision, entrypoint, mutation, outputs and optimized native
+   control before timing;
+3. transfer only the already qualified profile without repository-specific
+   product rules or threshold changes;
+4. retain every alternating pair and fail closed on incomplete native or
+   candidate execution;
+5. decide whether the current POC evidence transfers beyond the two primary
+   real-repository laboratories.
 
 Normal-build task tails, direct test-build JAR reuse and the trace-selected
 six-worker Runtime candidate are closed for the current evidence. They should
@@ -305,8 +312,8 @@ manufacture another optimization.
 
 - Does Build Impact remain positive across full `build`, packaging, and
   verification entrypoints, not only selected test-preparation outputs?
-- Does Shared or Edge Cache improve end-to-end time over a native Gradle remote
-  cache under realistic network conditions?
+- Does the qualified Edge-locality result transfer to a different repository
+  and a network profile derived independently of this experiment?
 - Does a materially different retained trace expose a Runtime bottleneck that
   justifies one new preregistered hypothesis?
 - How much of the combined gain remains when the same qualified profile is

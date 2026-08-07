@@ -2924,7 +2924,7 @@ interval is -973.5..+590.5 ms. All pairs preserve 378 outputs and exact sorted
 task outcomes. The terminal decision is `RETAIN_NATIVE_12_WORKERS`; do not
 search another worker value for this trace.
 
-The next controlled remote-cache experiment compares the same Gradle 9.6.1
+The controlled remote-cache experiment compares the same Gradle 9.6.1
 `HttpBuildCache` client and committed Shared object set through two read paths:
 direct Shared access over a frozen 80-ms/20-MiB/s modeled WAN, and a prewarmed
 BuildOpt Edge on loopback. The eight cacheable producers restore 32 MiB in
@@ -2936,10 +2936,12 @@ every arm; local cache, Configuration Cache and measured writes are disabled:
 ./dev/check-poc-remote-cache-value /absolute/path/to/new-result.json
 ```
 
-The comparison qualifies only Edge locality if all four pairs clear the
-unchanged 500-ms/2%/positive-bound gate with identical outputs, exact
-`FROM-CACHE` outcomes and zero measured candidate requests to Shared. It cannot
-claim that Shared storage itself is faster than another remote origin.
+The checked result qualifies Edge locality under that profile. Direct Shared
+reads average 6,911.25 ms and Edge averages 4,510 ms, saving 2,401.25
+ms/34.74%. All four pairs are positive, the interval is
++2,260.5..+2,542 ms, outputs and `FROM-CACHE` outcomes are exact, and Edge
+makes zero measured Shared requests. It cannot claim that Shared storage
+itself is faster than another remote origin.
 
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source

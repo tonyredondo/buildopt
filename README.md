@@ -110,7 +110,13 @@ bounded Runtime Tuning hypothesis also failed: capping the same Spring
 `testClasses` workload from 12 to 6 workers made it 191.5 ms/2.00% slower, with
 only 2/4 favorable pairs and an interval crossing zero. BuildOpt therefore
 retains the native 12-worker control and performs no further parameter search
-for that trace. See the [POC value
+for that trace. The controlled remote-cache experiment then isolated Edge
+locality: the same eight committed Shared objects and Gradle HTTP client took
+6,911.25 ms directly over an 80-ms/20-MiB/s modeled WAN and 4,510 ms through a
+prewarmed loopback Edge. That is 2,401.25 ms/**34.74% faster**, with 4/4
+positive pairs, identical 32-MiB outputs and zero measured upstream Edge
+requests. This qualifies Edge locality only under that frozen profile; it does
+not claim that Shared alone outperforms another remote-cache origin. See the [POC value
 contract](./specs/poc-value-validation-v1.md) and
 [raw scorecard](./benchmarks/README.md#build-optimization-scorecard).
 

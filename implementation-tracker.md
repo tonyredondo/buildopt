@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC REMOTE CACHE VALUE PREREGISTERED; EDGE LOCALITY MEASUREMENT NEXT` — both arms use the same Shared objects and Gradle HTTP client; only direct modeled-WAN versus prewarmed Edge read locality changes<br>
-**Current phase:** `POC-REMOTE-CACHE-VALUE-001 DOING` — run four alternating pairs under the frozen 80-ms/20-MiB/s network profile and retain native remote cache unless Edge clears the unchanged value and correctness gate<br>
+**Overall status:** `POC EDGE LOCALITY QUALIFIED; THIRD-REPOSITORY TRANSFER NEXT` — prewarmed Edge reduced the controlled same-origin remote-cache path by 2,401.25 ms/34.74%, with 4/4 positive pairs, exact outputs and zero measured upstream requests<br>
+**Current phase:** `POC-THIRD-REPOSITORY-TRANSFER-001 TODO` — transfer the unchanged qualified profile to one substantial public repository representing a new workload class, without repository-specific product rules<br>
 **POC functional target:** attribute stable incremental value from one qualified combined path, then generalize only the Build Impact and exact task mechanisms that continue to beat optimized native Gradle; Safe Cache and Runtime candidates remain disabled<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -99,7 +99,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-PERF-NEXT | Qualified full-path composition and measured mechanism generalization | `DOING` | 1/2 | `E-207` + [performance findings](./docs/findings/build-optimization-performance.md) |
 | POC-OPTIMIZATION-OVERHEAD | Attribute standard-Jar adapter overhead and retain the faster complete workflow per qualified scope | `DONE` | 1/1 | `E-218` |
 | POC-RUNTIME-RESEARCH | Test one trace-selected worker-oversubscription hypothesis without post-result parameter search | `DONE` | 1/1 | `E-219..220` |
-| POC-REMOTE-CACHE-VALUE | Compare Gradle direct-to-Shared reads with the same committed objects served from a prewarmed BuildOpt Edge | `DOING` | 0/1 | `E-221` |
+| POC-REMOTE-CACHE-VALUE | Compare Gradle direct-to-Shared reads with the same committed objects served from a prewarmed BuildOpt Edge | `DONE` | 1/1 | `E-221..222` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -210,8 +210,8 @@ than partners. Test Optimization remains a separate product.
 | 49 | `POC-TEST-BUILD-OPTIMIZATION-001` | Optimize build-owned test compilation, preparation, and packaging without selecting, skipping, or reprioritizing Test-owned execution | `DONE` | Codex |
 | 50 | `POC-OPTIMIZATION-OVERHEAD-ABLATION-001` | Narrow standard-Jar registration, separate init/plugin and adapter cost, and retain native execution whenever the complete adapter misses the unchanged value gate | `DONE` | Codex |
 | 51 | `POC-RUNTIME-RESEARCH-001` | Reopen Runtime Tuning only for one measured resource bottleneck and retain stable control unless it beats optimized native Gradle | `DONE` | Codex |
-| 52 | `POC-REMOTE-CACHE-VALUE-001` | Compare Shared and Edge Cache end to end with Gradle's native remote cache under controlled network conditions | `DOING` | Codex |
-| 53 | `POC-THIRD-REPOSITORY-TRANSFER-001` | Transfer the unchanged qualified profile to one substantial public repository representing a new workload class | `WAITING` | — |
+| 52 | `POC-REMOTE-CACHE-VALUE-001` | Compare Shared and Edge Cache end to end with Gradle's native remote cache under controlled network conditions | `DONE` | Codex |
+| 53 | `POC-THIRD-REPOSITORY-TRANSFER-001` | Transfer the unchanged qualified profile to one substantial public repository representing a new workload class | `TODO` | Codex |
 
 The raw diagnostic block is closed and unchanged. `E-172` corrects its
 ownership interpretation: Mockito's 242.690-second `compileTestJava` is
@@ -1105,8 +1105,8 @@ incremental evidence beats optimized native Gradle.
 | `POC-TEST-BUILD-OPTIMIZATION-001` | 6 | Reduce build-owned test compilation, preparation, and packaging without changing Test-owned selection, execution, retries, sharding, or prioritization | `DONE` | `E-217` |
 | `POC-OPTIMIZATION-OVERHEAD-ABLATION-001` | 7 | Narrow standard-Jar registration, measure native/init-only/adapter arms, and retain the faster complete workflow without treating phase deltas as universally causal | `DONE` | `E-218` |
 | `POC-RUNTIME-RESEARCH-001` | 8 | Investigate one observed worker, heap, GC, queue, configuration, dependency-resolution, or JVM-warm-up bottleneck at a time; preserve `STABLE_CONTROL` on no-value evidence | `DONE` | `E-219..220` |
-| `POC-REMOTE-CACHE-VALUE-001` | 9 | Compare BuildOpt Shared/Edge Cache with Gradle native remote cache using controlled latency, bandwidth, object size, hit rate, and runner locality | `DOING` | `E-221` |
-| `POC-THIRD-REPOSITORY-TRANSFER-001` | 10 | Transfer the unchanged qualified profile to one substantial public repository only when it exercises a new workload class or tests a current assumption | `WAITING` | priorities 2–8 |
+| `POC-REMOTE-CACHE-VALUE-001` | 9 | Compare BuildOpt Shared/Edge Cache with Gradle native remote cache using controlled latency, bandwidth, object size, hit rate, and runner locality | `DONE` | `E-221..222` |
+| `POC-THIRD-REPOSITORY-TRANSFER-001` | 10 | Transfer the unchanged qualified profile to one substantial public repository only when it exercises a new workload class or tests a current assumption | `TODO` | priorities 2–9 |
 
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
@@ -1470,6 +1470,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-219` | 2026-08-07 | `POC-RUNTIME-RESEARCH-001` | The versioned [Runtime research contract](./specs/poc-runtime-research-v1.json), runner and independent checker bind three retained Spring traces by SHA-256 before timing. The selected signal is worker oversubscription: `testClasses` previously executed 67 of 160 actionable tasks at 12 workers, while the full-check discovery completed 41,276 tests at six workers after the 12-worker cell failed. The new four-pair experiment changes only `--max-workers=12` to `6`, keeps full `testClasses`, heap, cache policy, source mutation, task outcomes and required outputs fixed, and retains the 500-ms/2%/positive-bound/4-of-4 gate | `DOING` preregistered with zero accepted timings: the six-worker profile remains disabled unless the complete result qualifies; no threshold movement, discarded pair, additional parameter search, production, soak, design-partner, or Test Optimization claim is authorized |
 | `E-220` | 2026-08-07 | `POC-RUNTIME-RESEARCH-001` | The independently checked [targeted Runtime evidence](./benchmarks/results/poc-runtime-research-v1.json) retains all four alternating pairs. Native Spring `testClasses` at 12 workers averages 9,556.75 ms; the preregistered six-worker candidate averages 9,748.25 ms, losing 191.5 ms/2.00%. Pair savings are +787, -1,374, +394 and -573 ms; only 2/4 pairs are positive and the paired interval is -973.5..+590.5 ms. Every pair preserves the same 378 required outputs, exact sorted task outcomes and zero product failures | `DONE` terminal `RETAIN_NATIVE_12_WORKERS`: Runtime Tuning remains disabled for this workflow, no additional worker value is searched after the result, and controlled native-remote-cache comparison becomes the next block |
 | `E-221` | 2026-08-07 | `POC-REMOTE-CACHE-VALUE-001` | The versioned [remote-cache protocol](./specs/poc-remote-cache-value-v1.md), machine-readable contract, deterministic 32-MiB Gradle fixture, actual Shared/Edge harness and independent checker freeze one locality comparison before timing. Both arms use Gradle 9.6.1 `HttpBuildCache`, the same authenticated committed Shared objects, disabled local and Configuration caches, read-only measured runs and eight required outputs. The control traverses a fixed 80-ms/20-MiB/s modeled WAN; the candidate uses a prewarmed loopback Edge and must make zero measured upstream requests | `DOING` preregistered with zero accepted timing: qualification is limited to Edge locality under this network profile and requires the unchanged 500-ms/2%/positive-bound/4-of-4 gate; Shared alone receives no acceleration claim and no post-result network search, production, soak, design-partner, or Test Optimization claim is authorized |
+| `E-222` | 2026-08-07 | `POC-REMOTE-CACHE-VALUE-001` | The independently checked [remote-cache evidence](./benchmarks/results/poc-remote-cache-value-v1.json) retains all four alternating pairs. Direct Shared reads average 6,911.25 ms and prewarmed Edge reads average 4,510 ms, saving 2,401.25 ms/34.74%; pair savings are +2,605, +2,307, +2,479 and +2,214 ms, and the paired interval is +2,260.5..+2,542 ms. Both arms restore the same eight cacheable tasks and 32-MiB output digest from the same committed Shared object bytes; direct control performs eight measured origin GETs per pair while Edge performs zero, with zero product failures | `DONE` terminal `QUALIFY_EDGE_LOCALITY_FOR_CONTROLLED_REMOTE_CACHE_POC`: only Edge locality under the frozen 80-ms/20-MiB/s profile qualifies; Shared alone receives no acceleration claim, and third-repository transfer becomes the next block |
 
 ---
 
@@ -1477,6 +1478,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-07 | Qualified prewarmed Edge locality after it saved 2,401.25 ms/34.74% against direct same-origin Shared reads over the frozen modeled WAN, with 4/4 positive pairs, exact 32-MiB outputs and zero measured Edge upstream requests; kept the claim profile-specific and moved to third-repository transfer | Codex |
 | 2026-08-07 | Preregistered one controlled remote-cache value experiment: the same Gradle HTTP client and Shared objects read either directly over a fixed modeled WAN or from a prewarmed BuildOpt Edge, with network, cache state, outputs and terminal gate frozen before timing | Codex |
 | 2026-08-07 | Rejected the preregistered six-worker Spring Runtime candidate after it regressed native 12-worker Gradle by 191.5 ms/2.00%, with 2/4 positive pairs and an interval crossing zero; retained exact outputs/task outcomes, stopped parameter search, and moved next to controlled remote-cache value | Codex |
 | 2026-08-07 | Preregistered one trace-selected Runtime Tuning hypothesis: Spring `testClasses` at 12 versus 6 workers, changing no other build input and retaining the unchanged terminal value gate before any accepted timing | Codex |
