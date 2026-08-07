@@ -77,8 +77,9 @@ jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sh
     (($data | map(.initOnlyDurationMs) | add) / 4) as $initMean |
     (($data | map(.adapterDurationMs) | add) / 4) as $adapterMean |
     ($controlMean - $adapterMean) as $saved |
-    (($data | map(.controlDurationMs) | add) - ($data | map(.adapterDurationMs) | add)) /
-        ($data | map(.controlDurationMs) | add) as $ratio |
+    ($data | map(.controlDurationMs) | add) as $controlSum |
+    ($data | map(.adapterDurationMs) | add) as $adapterSum |
+    (($controlSum - $adapterSum) / $controlSum) as $ratio |
     bootstrap95($data) as $interval |
     ($data | map(select(.adapterSavedVsControlMs > 0)) | length) as $positive |
     ($saved >= $spec[0].valueGate.minimumSavedMs and
