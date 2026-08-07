@@ -140,6 +140,28 @@ positive pairs and a -1,449..-113-ms interval. The terminal decision is
 diagnostic-only for reproducibility, while user-facing activation remains
 limited to its already qualified Build Impact scope.
 
+### Optimization-overhead ablation
+
+The checked [three-arm Spring evidence](./results/poc-optimization-overhead-ablation-v1.json)
+measures the same filtered test workflow after narrowing standard-JAR
+registration to one root plugin and typed `Jar` task collections. Four rotated
+rounds compare optimized native Gradle, native Gradle loading only BuildOpt's
+init/plugin classpath, and the exact adapter restoring three standard JARs.
+
+| Arm | Mean | Difference |
+|---|---:|---:|
+| Optimized native Gradle | 6,422.75 ms | Control |
+| Init/plugin classpath only | 7,484.50 ms | 1,061.75 ms slower than native |
+| Exact standard-JAR adapter | 7,035.00 ms | 449.50 ms faster than init-only; **612.25 ms/9.53% slower than native** |
+
+The adapter is positive in only 2/4 rounds and its paired interval is
+-1,785.75..+235 ms. Every arm runs the same eight tests, produces the same 15
+JARs (6,728,787 bytes), and has zero product-attributable failures. The
+init-only differences vary materially with arm order, so they diagnose where
+to investigate rather than authorizing a causal fixed-cost claim. The only
+activation decision comes from the complete native comparison:
+`KEEP_NATIVE_FOR_UNQUALIFIED_STANDARD_JAR_WORKFLOW`.
+
 ```bash
 ./dev/check-poc-full-path-ablation
 ./dev/test-poc-full-path-ablation
@@ -153,6 +175,8 @@ limited to its already qualified Build Impact scope.
 ./dev/test-poc-normal-build-tail-expansion
 ./dev/check-poc-spring-test-build-optimization \
   benchmarks/results/poc-spring-test-build-optimization-v1.json
+./dev/check-poc-optimization-overhead-ablation \
+  benchmarks/results/poc-optimization-overhead-ablation-v1.json
 ```
 
 The scorecard answers a different question for each optimization instead of

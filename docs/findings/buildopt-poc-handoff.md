@@ -23,7 +23,9 @@
   source distribution correctly retained the full graph.
 - **More cache hits are not automatically valuable.** On a real Spring test
   workflow, BuildOpt restored three exact Test-fixture JARs but still made the
-  complete build **11.31% slower**. The activation was not promoted.
+  complete build **11.31% slower**. After narrowing plugin registration, a
+  three-arm ablation still measured it **9.53% slower** than native. The
+  activation was not promoted.
 
 ## Product Idea
 
@@ -82,6 +84,7 @@ unfavorable observations. Percentages from different rows are not additive.
 | Global two-fork test tuning | **24.07% slower** | Rejected. Every test was retained, but the candidate was materially worse. |
 | Selective two-fork test tuning | **1.57% slower** and `:spring-test:test` failed | Rejected and not retried. Work returned to build-owned test preparation. |
 | Exact Test-fixture JAR reuse around unchanged tests | **11.31% slower**, 735.25 ms lost, 0/4 positive pairs | Rejected. All 8 tests ran with identical cases and 15 identical JARs; three cache hits did not offset adapter overhead. |
+| Optimized JAR-adapter overhead ablation | **9.53% slower**, 612.25 ms lost, 2/4 positive rounds | Native averaged 6,422.75 ms; init/plugin-only 7,484.50 ms; adapter 7,035 ms. Hits recovered 449.50 ms versus init-only, but end-to-end value still failed. |
 | Generalized shared test preparation | **18.88% faster**, 2,638 ms saved, 4/4 positive pairs | Qualified with interval +1,516..+3,275.5 ms and 378 identical outputs. |
 | Generalized leaf compilation | **1.33% faster**, 196.25 ms saved, 3/4 positive pairs | Rejected: misses 500 ms, 2%, 4/4, and positive-bound gates. |
 | Generalized leaf packaging | **3.73% faster**, 427.25 ms saved, 2/4 positive pairs | Rejected: misses 500 ms, 4/4, and positive-bound gates. |
@@ -144,6 +147,15 @@ arm, three differential cache hits and 15 identical JARs. The POC therefore
 kept the switch diagnostic-only rather than promoting a technically correct
 but slower feature.
 
+The follow-up optimized the adapter itself: one root-plugin registration now
+targets only typed `Jar` collections instead of applying through every project
+and observing every task. A separate four-round ablation then isolated native,
+init/plugin-only, and adapter arms. The adapter recovered 449.50 ms relative
+to init-only on the mean, but remained 612.25 ms/9.53% slower than native, with
+2/4 positive rounds and an interval crossing zero. This closes the question
+for the current Spring workflow: native Gradle is the value-aware selection;
+cache-hit count cannot override the complete build result.
+
 The next block is `POC-RUNTIME-RESEARCH-001`: select one resource bottleneck
 from retained traces, preregister one bounded hypothesis and keep optimized
 native Gradle whenever it fails the same gate. Shared/Edge comparison and
@@ -166,3 +178,4 @@ production operations are outside the current scope.
 - [Build Impact generalization evidence](../../benchmarks/results/poc-impact-generalization-v1.json)
 - [Standard-Copy cascade evidence](../../benchmarks/results/poc-standard-copy-cascade-v1.json)
 - [Spring test-build stop evidence](../../benchmarks/results/poc-spring-test-build-optimization-v1.json)
+- [Optimization-overhead ablation](../../benchmarks/results/poc-optimization-overhead-ablation-v1.json)

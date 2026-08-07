@@ -24,6 +24,8 @@
 - **Direct JAR reuse did not improve the measured Spring test build.** It
   restored three exact Test-fixture JARs but regressed the complete unchanged
   test workflow by **735.25 ms/11.31%**, so the activation was not promoted.
+  A follow-up three-arm ablation narrowed plugin registration but still found
+  the complete adapter **612.25 ms/9.53% slower** than native Gradle.
 
 The current POC supports a clear decision: continue investing in mechanisms
 that avoid work or safely make expensive tasks reusable, while keeping neutral
@@ -45,7 +47,7 @@ measured on different workloads and scopes.
 | **Patch Autopilot / reviewed task patch** | Produces a reviewable and reversible patch that correctly declares inputs and outputs and enables caching for an exact custom-task shape. | Exact reviewed Java recipe: **67.3% faster in Kotlin** and **68.0% faster in Groovy**. Combined installed path: **63.5-67.3% faster**. | Highly promising for **specific reviewed task contracts**. The result must not be generalized to arbitrary tasks or recipes. |
 | **Graph reduction** | Replaces broad aggregate task dependencies with the typed producers required for the declared outputs. | The OpenTelemetry experiment removed **3 graph nodes and 2 executed tasks** while preserving all 125 required outputs. No standalone wall-clock percentage is claimed. | Structurally valuable, but it still needs independent timing evidence before it can be presented as a separate accelerator. |
 | **Exact-bound hot-state reuse** | Reuses a previously validated Build Impact plan only when repository revision, graph, manifest, changes, Wrapper, executable, and options still match. | Reduced BuildOpt preparation from **74.97 ms to 40.34 ms**, but the fresh whole-build arm was **7.68% slower**. | **Disabled for the measured profile.** Micro-overhead reduction does not override regressive end-to-end evidence. |
-| **Standard `Jar` cache adapter** | Makes only an unmodified standard Gradle `Jar` task eligible for native caching; custom archives, `Copy`, arbitrary tasks, and `Test` remain unchanged. | OpenTelemetry Build Impact: **39.92% faster**, saving 4,376.75 ms. Direct Spring test-build use: **11.31% slower**, losing 735.25 ms despite three exact hits. | **Qualified only inside the measured OpenTelemetry composition.** Correct cacheability is insufficient when the avoided work is too small. |
+| **Standard `Jar` cache adapter** | Makes only an unmodified standard Gradle `Jar` task eligible for native caching; custom archives, `Copy`, arbitrary tasks, and `Test` remain unchanged. | OpenTelemetry Build Impact: **39.92% faster**, saving 4,376.75 ms. Direct Spring test-build use: **11.31% slower** initially; after narrowing registration, the three-arm ablation remained **9.53% slower** than native. | **Qualified only inside the measured OpenTelemetry composition.** Correct cacheability and cache hits are insufficient when the avoided work is too small. |
 | **Shared and Edge Cache** | Reuse committed outputs across machines and optionally place them nearer developers or CI runners. | No defensible build-time percentage has yet been established against Gradle's native remote-cache support. | Functionally implemented, but **performance value remains unproven**. It needs a controlled network and locality benchmark before further investment. |
 | **Build History** | Records durations, outcomes, cache behavior, and applied optimizations so results can be inspected and compared. | **No direct build-time saving.** | Observability that helps discover and validate optimizations; not an accelerator itself. |
 | **Launcher, gateway, and telemetry** | Provide orchestration, authentication, evidence collection, and safe fallback behavior. | Add fixed overhead rather than saving work. The local-cache fast path avoids starting these components when they have no consumer. | Necessary infrastructure for instrumented flows, but it must remain off the critical path when it is not needed. |
@@ -78,6 +80,23 @@ The important lesson is not that every `Jar` should be changed. The lesson is
 that profiling a real build, finding a repeated expensive tail, and adding a
 small exact adapter can produce more value than applying broad configuration
 changes.
+
+### Optimize the optimizer, but gate on the complete build
+
+The Spring overhead ablation separates optimized native Gradle from loading
+only BuildOpt's init/plugin classpath and from enabling the exact JAR adapter.
+Native averages 6,422.75 ms, init/plugin-only averages 7,484.50 ms, and the
+adapter averages 7,035 ms. The three cache hits recover 449.50 ms relative to
+the init-only mean, but the complete installed arm remains 612.25 ms/9.53%
+slower than native, with only 2/4 positive rounds and an interval of
+-1,785.75..+235 ms.
+
+Those init-only differences vary substantially with arm order, so they are a
+diagnostic signal rather than a universal fixed-cost estimate. The product
+decision does not depend on assigning every millisecond: an unqualified
+workflow stays on native Gradle. BuildOpt keeps the exact adapter only in the
+OpenTelemetry Build Impact scope where the complete path independently clears
+the value gate.
 
 ### Cache safety and cache speed are different value propositions
 
@@ -208,7 +227,9 @@ Potential research areas are:
 The completed test-build experiment strengthens this priority. Reusing three
 small exact `testFixturesJar` producers did not shorten the critical path:
 native Gradle averaged 6,503.5 ms and BuildOpt 7,238.75 ms, with 0/4 positive
-pairs. The next candidate must therefore come from an observed resource or
+pairs. The follow-up registration optimization and three-arm ablation did not
+rescue it: the complete adapter remained 612.25 ms/9.53% slower than native.
+The next candidate must therefore come from an observed resource or
 critical-path bottleneck, not from another low-cost cacheable task.
 
 ### 6. Benchmark Shared and Edge Cache only against the native alternative
@@ -243,7 +264,7 @@ exercises a different workload class or invalidates a current assumption.
 | Native Gradle cache | Enabled | Enabled | Continue parity and output checks |
 | Build Impact | Enabled for qualified scopes | Explicit command | Generalize across real change and output scopes |
 | Hot-state reuse | Disabled for the measured profile | Disabled | Beat the same end-to-end control independently before reconsideration |
-| Standard `Jar` adapter | Enabled only in the qualified Build Impact scope | Not universal | Require independent end-to-end value for every new workflow; direct Spring test-build use regressed |
+| Standard `Jar` adapter | Enabled only in the qualified Build Impact scope | Not universal | Require independent end-to-end value for every new workflow; optimized direct Spring use remained 9.53% slower |
 | Reviewed task patch | Enabled only for exact matching contracts | Review required | Add recipes only after independent qualification |
 | Strict Safe Cache | Disabled | Disabled | Beat or justify cost versus native Gradle cache |
 | Runtime Tuning | Disabled | Disabled | Positive incremental evidence against optimized native Gradle |

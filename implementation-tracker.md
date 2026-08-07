@@ -1,6 +1,6 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC TEST-BUILD JAR REUSE REJECTED; TARGETED RUNTIME RESEARCH NEXT` — exact Test-fixture Jar reuse preserved all tests and outputs but regressed Spring by 735.25 ms/11.31%; the diagnostic activation was not promoted<br>
+**Overall status:** `POC OPTIMIZATION OVERHEAD ATTRIBUTED; NATIVE FALLBACK RETAINED; TARGETED RUNTIME RESEARCH NEXT` — narrowing standard-Jar registration removed broad project traversal, but the complete Spring adapter still regressed optimized native Gradle by 612.25 ms/9.53%; unqualified workflows therefore stay native<br>
 **Current phase:** `POC-RUNTIME-RESEARCH-001 TODO` — select one measured resource bottleneck and retain optimized native Gradle unless a bounded candidate clears the unchanged value gate<br>
 **POC functional target:** attribute stable incremental value from one qualified combined path, then generalize only the Build Impact and exact task mechanisms that continue to beat optimized native Gradle; Safe Cache and Runtime candidates remain disabled<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
@@ -97,6 +97,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-OTEL-SPRING-FAMILY | Transfer the installed mechanism to the stable OpenTelemetry Spring-family build boundary | `DONE` | 2/2 | `E-192`, `E-198` |
 | POC-OTEL-OPTIMIZATION | Turn the favorable but unstable OpenTelemetry signal into a repeatable installed-path advantage | `DONE` | 6/6 | `E-199..206` |
 | POC-PERF-NEXT | Qualified full-path composition and measured mechanism generalization | `DOING` | 1/2 | `E-207` + [performance findings](./docs/findings/build-optimization-performance.md) |
+| POC-OPTIMIZATION-OVERHEAD | Attribute standard-Jar adapter overhead and retain the faster complete workflow per qualified scope | `DONE` | 1/1 | `E-218` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -134,6 +135,8 @@ Optimized native Gradle baseline
   → record the next performance roadmap without activating unproven mechanisms
   → ablate the qualified full path and reject the composition when hot-state reuse regresses
   → measure the clean Impact-plus-Jar composition without hot-state reuse
+  → narrow standard-Jar registration and retain native execution where the complete adapter still regresses
+  → investigate one trace-selected Runtime Tuning bottleneck without enabling a no-value candidate
 ```
 
 The implementation history remains useful, but it is not the POC exit gate:
@@ -201,9 +204,10 @@ than partners. Test Optimization remains a separate product.
 | 47 | `POC-TASK-TAIL-ADAPTERS-001` | Select and qualify the next exact standard-task adapter from real task-attribution traces | `DONE` | Codex |
 | 48 | `POC-NORMAL-BUILD-TAIL-EXPANSION-001` | Re-evaluate the retained Spring and OpenTelemetry task tails before implementing another normal-build adapter | `DONE` | Codex |
 | 49 | `POC-TEST-BUILD-OPTIMIZATION-001` | Optimize build-owned test compilation, preparation, and packaging without selecting, skipping, or reprioritizing Test-owned execution | `DONE` | Codex |
-| 50 | `POC-RUNTIME-RESEARCH-001` | Reopen Runtime Tuning only for one measured resource bottleneck and retain stable control unless it beats optimized native Gradle | `TODO` | Codex |
-| 51 | `POC-REMOTE-CACHE-VALUE-001` | Compare Shared and Edge Cache end to end with Gradle's native remote cache under controlled network conditions | `WAITING` | — |
-| 52 | `POC-THIRD-REPOSITORY-TRANSFER-001` | Transfer the unchanged qualified profile to one substantial public repository representing a new workload class | `WAITING` | — |
+| 50 | `POC-OPTIMIZATION-OVERHEAD-ABLATION-001` | Narrow standard-Jar registration, separate init/plugin and adapter cost, and retain native execution whenever the complete adapter misses the unchanged value gate | `DONE` | Codex |
+| 51 | `POC-RUNTIME-RESEARCH-001` | Reopen Runtime Tuning only for one measured resource bottleneck and retain stable control unless it beats optimized native Gradle | `TODO` | Codex |
+| 52 | `POC-REMOTE-CACHE-VALUE-001` | Compare Shared and Edge Cache end to end with Gradle's native remote cache under controlled network conditions | `WAITING` | — |
+| 53 | `POC-THIRD-REPOSITORY-TRANSFER-001` | Transfer the unchanged qualified profile to one substantial public repository representing a new workload class | `WAITING` | — |
 
 The raw diagnostic block is closed and unchanged. `E-172` corrects its
 ownership interpretation: Mockito's 242.690-second `compileTestJava` is
@@ -1095,9 +1099,10 @@ incremental evidence beats optimized native Gradle.
 | `POC-TASK-TAIL-ADAPTERS-001` | 4 | Select the next standard Gradle task type from real dominant-tail traces, define an exact eligibility contract, measure it independently, and measure its end-to-end composition without adding component percentages | `DONE` | `E-215` |
 | `POC-NORMAL-BUILD-TAIL-EXPANSION-001` | 5 | Re-evaluate every remaining retained Spring/OpenTelemetry dominant tail against the exact-task, bounded-effects, native-cache, Test-ownership, and incremental-value gates before authorizing more normal-build code | `DONE` | `E-216` |
 | `POC-TEST-BUILD-OPTIMIZATION-001` | 6 | Reduce build-owned test compilation, preparation, and packaging without changing Test-owned selection, execution, retries, sharding, or prioritization | `DONE` | `E-217` |
-| `POC-RUNTIME-RESEARCH-001` | 7 | Investigate one observed worker, heap, GC, queue, configuration, dependency-resolution, or JVM-warm-up bottleneck at a time; preserve `STABLE_CONTROL` on no-value evidence | `TODO` | `E-217` |
-| `POC-REMOTE-CACHE-VALUE-001` | 8 | Compare BuildOpt Shared/Edge Cache with Gradle native remote cache using controlled latency, bandwidth, object size, hit rate, and runner locality | `WAITING` | `POC-FULL-PATH-CLEAN-001` |
-| `POC-THIRD-REPOSITORY-TRANSFER-001` | 9 | Transfer the unchanged qualified profile to one substantial public repository only when it exercises a new workload class or tests a current assumption | `WAITING` | priorities 2–6 |
+| `POC-OPTIMIZATION-OVERHEAD-ABLATION-001` | 7 | Narrow standard-Jar registration, measure native/init-only/adapter arms, and retain the faster complete workflow without treating phase deltas as universally causal | `DONE` | `E-218` |
+| `POC-RUNTIME-RESEARCH-001` | 8 | Investigate one observed worker, heap, GC, queue, configuration, dependency-resolution, or JVM-warm-up bottleneck at a time; preserve `STABLE_CONTROL` on no-value evidence | `TODO` | `E-218` |
+| `POC-REMOTE-CACHE-VALUE-001` | 9 | Compare BuildOpt Shared/Edge Cache with Gradle native remote cache using controlled latency, bandwidth, object size, hit rate, and runner locality | `WAITING` | `POC-FULL-PATH-CLEAN-001` |
+| `POC-THIRD-REPOSITORY-TRANSFER-001` | 10 | Transfer the unchanged qualified profile to one substantial public repository only when it exercises a new workload class or tests a current assumption | `WAITING` | priorities 2–7 |
 
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
@@ -1109,8 +1114,10 @@ removed that arm and passed the unchanged terminal gate. The next exact
 standard-task experiment then measured the cascade directly: the complete
 Impact + Jar + Copy profile qualified at 52.89%, but Copy alone and Copy's
 incremental contribution both failed the stability gate, so Copy remains
-disabled. The next block targets build-owned test compilation, preparation,
-and packaging. No item authorizes
+disabled. Test-build Jar reuse then regressed Spring, and the follow-up
+three-arm ablation showed that narrower registration did not make the complete
+adapter beat native Gradle. Unqualified Spring workflows therefore remain
+native; the next block targets one measured Runtime Tuning bottleneck. No item authorizes
 production rollout, soak, design-partner work, Test Optimization, or a universal
 savings claim.
 
@@ -1453,6 +1460,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-215` | 2026-08-07 | `POC-TASK-TAIL-ADAPTERS-001` | The independently checked [standard-Copy cascade evidence](./benchmarks/results/poc-standard-copy-cascade-v1.json) packages BuildOpt `ae9db815057edcc4020f603533c28d2af44e06e7` and retains all twelve observations. Copy-only saves 4,284.25 ms/27.05%, but has 3/4 positive pairs and interval -3,334.25..+8,846.5 ms. Adding Copy to the already qualified Impact + Jar profile saves 2,391.25 ms/24.90%, but also has 3/4 positive pairs and interval -2,568.25..+7,092 ms. The directly measured complete Impact + Jar + Copy profile saves 4,377 ms/52.89%, with 4/4 positive pairs and interval +4,130.25..+4,653.25 ms. Every arm preserves the same 21,818-file digest and the global fallback succeeds | `DONE` terminal `RETAIN_STANDARD_COPY_EVIDENCE_ONLY`: the complete profile proves a stable global cascade without adding component percentages, but the direct incremental authorization gate fails; keep Copy disabled and move to build-owned test optimization |
 | `E-216` | 2026-08-07 | `POC-NORMAL-BUILD-TAIL-EXPANSION-001` | The checked [normal-build task-tail review](./benchmarks/results/poc-normal-build-tail-expansion-v1.json) binds the existing OpenTelemetry task ranking, Copy cascade, and Spring generalization evidence by SHA-256 and applies the frozen 500-ms/exact-standard-task/bounded-effects/native-cache/Test-ownership/incremental-value gate. Standard Jar is already qualified; standard Copy fails its direct incremental gate; custom ShadowJar is 497 ms and already `FROM-CACHE`; configured JavaExec is 427 ms with unbounded external-process effects; Spring selected no new exact standard task | `DONE` terminal `STOP_NORMAL_BUILD_TASK_ADAPTER_EXPANSION_NO_ACTIONABLE_TAIL`: zero actionable candidates and no new timing or product change; wait for a materially different dominant tail and move now to build-owned test optimization |
 | `E-217` | 2026-08-07 | `POC-TEST-BUILD-OPTIMIZATION-001` | The independently checked [Spring test-build evidence](./benchmarks/results/poc-spring-test-build-optimization-v1.json) compares the same filtered `:spring-jms:test` workflow against optimized native Gradle. BuildOpt restores three exact `testFixturesJar` producers in every pair, while all four control arms execute them; every arm executes the same 8 tests with zero failures/errors/skips and preserves 15 byte-identical JARs. Native averages 6,503.5 ms and BuildOpt 7,238.75 ms: -735.25 ms/-11.31%, 0/4 positive pairs, interval -1,449..-113 ms | `DONE` terminal `STOP_STANDARD_JAR_REUSE_FOR_SPRING_TEST_BUILD`: do not promote the diagnostic test-build activation, retain standard Jar only in its qualified Build Impact scope, and move to one trace-selected Runtime Tuning bottleneck |
+| `E-218` | 2026-08-07 | `POC-OPTIMIZATION-OVERHEAD-ABLATION-001` | The independently checked [three-arm overhead ablation](./benchmarks/results/poc-optimization-overhead-ablation-v1.json) applies the standard-Jar plugin once at the root and observes only typed `Jar` tasks. Across four alternating rounds, optimized native Gradle averages 6,422.75 ms, init/plugin-only averages 7,484.5 ms, and the complete adapter averages 7,035 ms. The adapter is 449.5 ms faster than the init-only mean but remains 612.25 ms/9.53% slower than native, with interval -1,785.75..+235 ms and 2/4 positive pairs. Every arm executes the same 8 tests, preserves the same 15 JARs and 6,728,787 bytes, and reports zero product failures | `DONE` terminal `KEEP_NATIVE_FOR_UNQUALIFIED_STANDARD_JAR_WORKFLOW`: phase deltas remain diagnostic because init-only timing varies with order; activation uses only the complete adapter-versus-native gate. Spring remains native, the already-qualified OpenTelemetry scope is unchanged, and targeted Runtime Tuning is next |
 
 ---
 
@@ -1460,6 +1468,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-07 | Narrowed standard-Jar registration and completed a native/init-only/adapter ablation; the complete Spring adapter still regressed 612.25 ms/9.53%, so unqualified workflows retain native Gradle while the already-qualified OpenTelemetry scope remains unchanged | Codex |
 | 2026-08-07 | Rejected direct standard-Jar reuse for Spring test builds after it regressed 735.25 ms/11.31% despite exact cache hits, identical JARs and unchanged 8-test execution; kept the switch diagnostic-only and moved to targeted Runtime Tuning research | Codex |
 | 2026-08-07 | Closed normal-build task-adapter expansion for the current retained traces: reviewed every remaining dominant tail under the fixed gate, found zero actionable candidates, made no speculative product change, and moved to build-owned test optimization | Codex |
 | 2026-08-07 | Closed the exact standard-Copy experiment: measured a stable 4,377-ms/52.89% complete-profile cascade directly, retained unstable isolated and incremental Copy results, kept Copy disabled, and moved next to build-owned test optimization | Codex |

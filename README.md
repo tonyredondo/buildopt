@@ -102,7 +102,10 @@ interval, 125 identical outputs, Hot State disabled, and safe full-graph
 fallback. This is qualified POC value for that workload, not a universal-savings
 or production-readiness claim. A separate unchanged Spring test workflow
 rejected direct Test-fixture JAR reuse after it regressed by 11.31%, so that
-diagnostic switch is not part of the recommended path. See the [POC value
+diagnostic switch is not part of the recommended path. A subsequent three-arm
+ablation narrowed plugin registration but still found the complete adapter
+612.25 ms/9.53% slower than native; BuildOpt therefore keeps native Gradle for
+that unqualified workflow instead of treating cache hits as value. See the [POC value
 contract](./specs/poc-value-validation-v1.md) and
 [raw scorecard](./benchmarks/README.md#build-optimization-scorecard).
 

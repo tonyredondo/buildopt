@@ -2884,6 +2884,25 @@ and a -1,449..-113-ms interval. The direct `buildopt gradle` experiment option
 remains diagnostic-only for reproducibility; the standard-JAR adapter is not
 promoted beyond the Build Impact scope where it independently qualified.
 
+The follow-up overhead ablation separates the complete native workflow from
+loading the packaged init/plugin classpath without an optimization and from
+the exact standard-JAR adapter. It uses four rotated three-arm rounds, one
+warm-up per arm, independent Gradle homes, offline measured execution, the
+same eight tests, and byte-identical JARs:
+
+```bash
+./dev/check-poc-optimization-overhead-ablation
+./dev/run-poc-optimization-overhead-ablation /absolute/path/to/new-result.json
+./dev/check-poc-optimization-overhead-ablation /absolute/path/to/new-result.json
+```
+
+The retained result keeps native Gradle for this workflow. Init/plugin-only
+averaged 1,061.75 ms slower than native; the three exact hits recovered 449.5
+ms relative to that arm but the complete adapter remained 612.25 ms/9.53%
+slower than native, with only 2/4 positive rounds and an interval crossing
+zero. These phase differences are diagnostic under the recorded rotated
+orders; only the end-to-end native comparison controls activation.
+
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source
 distribution. Structural discovery freezes selective execution only where the
