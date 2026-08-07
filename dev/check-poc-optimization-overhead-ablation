@@ -15,6 +15,12 @@ jq -e '
     .schemaVersion == "buildopt.specs/poc-optimization-overhead-ablation/v1" and
     .workItem == "POC-OPTIMIZATION-OVERHEAD-ABLATION-001" and
     .decision == "PREREGISTER_NATIVE_INIT_ONLY_AND_EXACT_JAR_ARMS" and
+    .protocolRevisions == [{
+        from: 0,
+        reason: "PRE_MEASUREMENT_THREE_ARM_CLEANUP_EXCEEDED_TWO_ARM_IDLE_BUDGET",
+        acceptedRoundsBeforeRevision: 0,
+        valueThresholdsChanged: false
+    }] and
     .repository.nameWithOwner == "spring-projects/spring-framework" and
     (.repository.revision | test("^[0-9a-f]{40}$")) and
     (.repository.sourceArchiveSha256 | test("^[0-9a-f]{64}$")) and
@@ -33,7 +39,7 @@ jq -e '
         ["ADAPTER", "CONTROL", "INIT_ONLY"],
         ["CONTROL", "ADAPTER", "INIT_ONLY"]
     ] and
-    .measurement.maximumInterArmIdleGapMs == 5000 and
+    .measurement.maximumInterArmIdleGapMs == 10000 and
     .measurement.adapterMustRestoreStandardJar == true and
     .measurement.otherArmsMustExecuteStandardJar == true and
     .valueGate.minimumSavedMs == 500 and

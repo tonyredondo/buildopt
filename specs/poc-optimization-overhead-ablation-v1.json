@@ -2,6 +2,14 @@
   "schemaVersion": "buildopt.specs/poc-optimization-overhead-ablation/v1",
   "workItem": "POC-OPTIMIZATION-OVERHEAD-ABLATION-001",
   "decision": "PREREGISTER_NATIVE_INIT_ONLY_AND_EXACT_JAR_ARMS",
+  "protocolRevisions": [
+    {
+      "from": 0,
+      "reason": "PRE_MEASUREMENT_THREE_ARM_CLEANUP_EXCEEDED_TWO_ARM_IDLE_BUDGET",
+      "acceptedRoundsBeforeRevision": 0,
+      "valueThresholdsChanged": false
+    }
+  ],
   "repository": {
     "nameWithOwner": "spring-projects/spring-framework",
     "revision": "4b5c92703c63966c3471242c621c4a63b382638d",
@@ -47,7 +55,7 @@
     ],
     "sameDependencyAndNativeCacheSeedRestoredBeforeArmSetup": true,
     "outputsRemovedBeforeEveryArm": true,
-    "maximumInterArmIdleGapMs": 5000,
+    "maximumInterArmIdleGapMs": 10000,
     "adapterMustRestoreStandardJar": true,
     "otherArmsMustExecuteStandardJar": true,
     "requiredJarOutputsIdentical": true,

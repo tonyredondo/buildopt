@@ -266,7 +266,7 @@ for buildopt_round in {1..4}; do
                 ;;
         esac
     done
-    ((buildopt_maximum_gap <= 5000)) || {
+    ((buildopt_maximum_gap <= 10000)) || {
         printf 'optimization-overhead round %s exceeded inter-arm gap: %s ms\n' \
             "${buildopt_round}" "${buildopt_maximum_gap}" >&2
         exit 1
