@@ -1,0 +1,234 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-full-path-ablation/v1",
+  "workItem": "POC-FULL-PATH-ABLATION-001",
+  "capturedAt": "2026-08-07T09:57:04Z",
+  "buildoptRevision": "d497f0dfc77824f414d458465d7e2b8917838f9e",
+  "specSha256": "78918f1266c3ccd03cbcc53449975b715478144f1b4d9f2aff69a6df18d1c6e5",
+  "runnerScriptSha256": "9c3a87865259cbc51eaafcf936f88b7b1483faa1b411bd85509a135f2b7d312f",
+  "methodology": {
+    "logicalArms": [
+      "NATIVE_GRADLE",
+      "BUILD_IMPACT",
+      "BUILD_IMPACT_HOT_STATE",
+      "QUALIFIED_STANDARD_TASK_ADAPTERS",
+      "EXACT_REVIEWED_TASK_PATCHES",
+      "COMPLETE_QUALIFIED_PROFILE"
+    ],
+    "freshSourceMeasurementsRequired": true,
+    "contemporaneousNativeControlPerExecutableArm": true,
+    "crossProtocolIncrementalEffects": "DESCRIPTIVE_ONLY",
+    "unavailableArmPolicy": "RECORD_NOT_AUTHORIZED_NEVER_ZERO",
+    "completeProfileRequiresNoNegativeIncludedArm": true,
+    "maximumRegressiveIncludedArms": 0,
+    "percentagesMayBeAdded": false,
+    "failedPairsMayBeDiscarded": false
+  },
+  "sourceEvidence": [
+    {
+      "id": "SPRING_BUILD_IMPACT",
+      "file": "spring-build-impact.json",
+      "sha256": "b2d40b7e35ed137f0fccf1956779a544b96fca901588b0373544f53e67571c37"
+    },
+    {
+      "id": "OTEL_BUILD_IMPACT",
+      "file": "otel-build-impact.json",
+      "sha256": "49aa221f9fe52b1c8d518ed8dbf94cf82f7b2bc2552d00972cf771f8fe89b342"
+    },
+    {
+      "id": "OTEL_BUILD_IMPACT_HOT_STATE",
+      "file": "otel-build-impact-hot-state.json",
+      "sha256": "5a764c748e5eb8b481fad4523dfac0eeb2bc7da545b4c1dac55356bb2948a3fc"
+    },
+    {
+      "id": "OTEL_STANDARD_JAR_ADAPTER",
+      "file": "otel-standard-jar-adapter.json",
+      "sha256": "f67898c3d8a6ce6436c2c170097582380c9c6e2f501e0296236825665412bbc8"
+    }
+  ],
+  "repositories": [
+    {
+      "nameWithOwner": "spring-projects/spring-framework",
+      "revision": "4b5c92703c63966c3471242c621c4a63b382638d",
+      "arms": [
+        {
+          "id": "NATIVE_GRADLE",
+          "status": "EXECUTED_CONTROL",
+          "controlMeanMs": 8075.75
+        },
+        {
+          "id": "BUILD_IMPACT",
+          "status": "EXECUTED",
+          "source": "SPRING_BUILD_IMPACT",
+          "effect": {
+            "pairs": 8,
+            "controlMeanMs": 8075.75,
+            "candidateMeanMs": 5583.375,
+            "meanSavedMs": 2492.375,
+            "reductionRatio": 0.30862458595176917,
+            "interval95SavedMs": [
+              1688.25,
+              3242.25
+            ],
+            "positivePairs": 8,
+            "qualified": true,
+            "decision": "QUALIFIED_INSTALLED_BUILD_IMPACT"
+          }
+        },
+        {
+          "id": "BUILD_IMPACT_HOT_STATE",
+          "status": "NOT_AUTHORIZED_FOR_WORKLOAD"
+        },
+        {
+          "id": "QUALIFIED_STANDARD_TASK_ADAPTERS",
+          "status": "NOT_AUTHORIZED_FOR_WORKLOAD"
+        },
+        {
+          "id": "EXACT_REVIEWED_TASK_PATCHES",
+          "status": "NOT_AUTHORIZED_FOR_WORKLOAD"
+        },
+        {
+          "id": "COMPLETE_QUALIFIED_PROFILE",
+          "status": "ALIAS",
+          "aliasOf": "BUILD_IMPACT",
+          "effect": {
+            "pairs": 8,
+            "controlMeanMs": 8075.75,
+            "candidateMeanMs": 5583.375,
+            "meanSavedMs": 2492.375,
+            "reductionRatio": 0.30862458595176917,
+            "interval95SavedMs": [
+              1688.25,
+              3242.25
+            ],
+            "positivePairs": 8,
+            "qualified": true,
+            "decision": "QUALIFIED_INSTALLED_BUILD_IMPACT"
+          }
+        }
+      ]
+    },
+    {
+      "nameWithOwner": "open-telemetry/opentelemetry-java-instrumentation",
+      "revision": "080c1d32ca676ba7b0210c21b60cce8e7ac39058",
+      "arms": [
+        {
+          "id": "NATIVE_GRADLE",
+          "status": "EXECUTED_CONTROL",
+          "controlMeansMs": {
+            "buildImpact": 13149.25,
+            "hotState": 11618.75,
+            "standardJarAdapter": 11075.5
+          }
+        },
+        {
+          "id": "BUILD_IMPACT",
+          "status": "EXECUTED",
+          "source": "OTEL_BUILD_IMPACT",
+          "effect": {
+            "pairs": 4,
+            "controlMeanMs": 13149.25,
+            "candidateMeanMs": 12163.75,
+            "meanSavedMs": 985.5,
+            "reductionRatio": 0.07494724033690134,
+            "interval95SavedMs": [
+              -737.5,
+              2708.5
+            ],
+            "positivePairs": 3,
+            "qualified": false,
+            "decision": "RETAIN_SPRING_ONLY_INSTALLED_EVIDENCE"
+          }
+        },
+        {
+          "id": "BUILD_IMPACT_HOT_STATE",
+          "status": "EXECUTED",
+          "source": "OTEL_BUILD_IMPACT_HOT_STATE",
+          "effect": {
+            "pairs": 4,
+            "controlMeanMs": 11618.75,
+            "candidateMeanMs": 12510.75,
+            "meanSavedMs": -892,
+            "reductionRatio": -0.07677245831091985,
+            "interval95SavedMs": [
+              -1451.5,
+              111.5
+            ],
+            "positivePairs": 1,
+            "qualified": false,
+            "decision": "RETAIN_UNSTABLE_OTEL_EVIDENCE"
+          }
+        },
+        {
+          "id": "QUALIFIED_STANDARD_TASK_ADAPTERS",
+          "status": "EXECUTED",
+          "source": "OTEL_STANDARD_JAR_ADAPTER",
+          "effect": {
+            "pairs": 4,
+            "controlMeanMs": 11075.5,
+            "candidateMeanMs": 6578.75,
+            "meanSavedMs": 4496.75,
+            "reductionRatio": 0.4060087580696131,
+            "interval95SavedMs": [
+              3928.5,
+              5467.25
+            ],
+            "positivePairs": 4,
+            "qualified": true,
+            "decision": "QUALIFY_STABLE_OTEL_POC_VALUE"
+          }
+        },
+        {
+          "id": "EXACT_REVIEWED_TASK_PATCHES",
+          "status": "NOT_AUTHORIZED_FOR_WORKLOAD"
+        },
+        {
+          "id": "COMPLETE_QUALIFIED_PROFILE",
+          "status": "DISQUALIFIED_COMPOSITION",
+          "aliasOf": "QUALIFIED_STANDARD_TASK_ADAPTERS",
+          "effect": {
+            "pairs": 4,
+            "controlMeanMs": 11075.5,
+            "candidateMeanMs": 6578.75,
+            "meanSavedMs": 4496.75,
+            "reductionRatio": 0.4060087580696131,
+            "interval95SavedMs": [
+              3928.5,
+              5467.25
+            ],
+            "positivePairs": 4,
+            "qualified": true,
+            "decision": "QUALIFY_STABLE_OTEL_POC_VALUE"
+          },
+          "disqualificationReasons": [
+            "INCLUDED_BUILD_IMPACT_HOT_STATE_REGRESSED"
+          ]
+        }
+      ]
+    }
+  ],
+  "result": {
+    "completeProfilesQualified": false,
+    "qualifiedRepositoryCount": 1,
+    "regressiveIncludedArms": [
+      {
+        "repository": "open-telemetry/opentelemetry-java-instrumentation",
+        "arm": "BUILD_IMPACT_HOT_STATE",
+        "meanSavedMs": -892,
+        "reductionRatio": -0.07677245831091985
+      }
+    ],
+    "decision": "RETAIN_COMPONENT_EVIDENCE_ONLY",
+    "nextExperiment": "BUILD_IMPACT_PLUS_STANDARD_JAR_WITHOUT_HOT_STATE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "universalSavingsClaimed": false,
+    "productionPromotionAuthorized": false,
+    "runtimeTuningEnabled": false,
+    "strictSafeCacheEnabled": false,
+    "sharedOrEdgeCacheEnabled": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

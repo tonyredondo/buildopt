@@ -2,6 +2,18 @@
   "schemaVersion": "buildopt.specs/poc-full-path-ablation/v1",
   "workItem": "POC-FULL-PATH-ABLATION-001",
   "decision": "PREREGISTER_QUALIFIED_FULL_PATH_ABLATION",
+  "protocolRevision": {
+    "from": 1,
+    "to": 2,
+    "reason": "COMPLETE_PROFILE_GATE_DID_NOT_REJECT_AN_INCLUDED_REGRESSIVE_ARM",
+    "completedSourceMeasurementsBeforeRevision": 4,
+    "acceptedSourceMeasurementsBeforeRevision": 4,
+    "rawMeasurementsChanged": false,
+    "runnerChanged": true,
+    "checkerChanged": true,
+    "valueThresholdsChanged": false,
+    "decisionTightened": true
+  },
   "productRevision": "b8f4114da3ba2297c0478692a02deed3fac55422",
   "methodology": {
     "logicalArms": [
@@ -16,6 +28,8 @@
     "contemporaneousNativeControlPerExecutableArm": true,
     "crossProtocolIncrementalEffects": "DESCRIPTIVE_ONLY",
     "unavailableArmPolicy": "RECORD_NOT_AUTHORIZED_NEVER_ZERO",
+    "completeProfileRequiresNoNegativeIncludedArm": true,
+    "maximumRegressiveIncludedArms": 0,
     "percentagesMayBeAdded": false,
     "failedPairsMayBeDiscarded": false
   },
@@ -75,7 +89,8 @@
   "terminalDecisions": {
     "bothCompleteProfilesQualify": "QUALIFY_FULL_PATH_POC_VALUE",
     "anyCompleteProfileFails": "RETAIN_COMPONENT_EVIDENCE_ONLY",
-    "sourceProtocolFails": "STOP_ABLATION_WITHOUT_RETRY"
+    "sourceProtocolFails": "STOP_ABLATION_WITHOUT_RETRY",
+    "nextExperimentAfterRegressiveComposition": "BUILD_IMPACT_PLUS_STANDARD_JAR_WITHOUT_HOT_STATE"
   },
   "boundaries": {
     "proofOfConcept": true,

@@ -2798,6 +2798,7 @@ zero effects for mechanisms that are not authorized for a workload:
 ```bash
 ./dev/run-poc-full-path-ablation /absolute/path/to/poc-full-path-ablation-v1
 ./dev/check-poc-full-path-ablation /absolute/path/to/poc-full-path-ablation-v1
+./dev/test-poc-full-path-ablation
 ```
 
 Each executable arm retains its own contemporaneous optimized-native control.

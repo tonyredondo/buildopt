@@ -32,8 +32,19 @@ OpenTelemetry.
 The final POC claim requires both complete profiles to save at least 500 ms and
 2%, have a positive paired lower bound, preserve non-empty byte-identical
 required outputs, introduce zero product failures, and retain the frozen
-native/full-graph fallback. A source-protocol failure stops the run without a
-retry or discarded pair.
+native/full-graph fallback. Every included mechanism must also have a
+non-negative isolated mean effect: a faster terminal arm cannot hide a
+regressive intermediate mechanism. A source-protocol failure stops the run
+without a retry or discarded pair.
+
+Protocol revision 2 tightened only that composition rule after all four raw
+source measurements had completed. The initial aggregate checked the terminal
+Spring and OpenTelemetry aliases but failed to reject the included
+OpenTelemetry hot-state arm, which regressed by 892 ms/7.68%. No raw
+measurement, threshold, pair, or source decision was changed. The corrected
+aggregate therefore retains component evidence rather than qualifying the
+composition, and preregisters the next clean comparison as Build Impact plus
+the standard `Jar` adapter without hot-state reuse.
 
 Run the fresh ablation from a clean committed checkout:
 

@@ -320,6 +320,7 @@ buildopt_required_files=(
     "dev/check-poc-otel-optimization-v2"
     "dev/check-poc-otel-optimization-v2-result"
     "dev/check-poc-full-path-ablation"
+    "dev/test-poc-full-path-ablation"
     "dev/check-poc-standard-jar-cache"
     "dev/check-spring-test-runtime-init"
     "dev/test-poc-pairing"

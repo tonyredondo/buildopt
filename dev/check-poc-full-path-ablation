@@ -97,17 +97,26 @@ jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sh
         id: "EXACT_REVIEWED_TASK_PATCHES", status: "NOT_AUTHORIZED_FOR_WORKLOAD"
     } and
     .repositories[1].arms[5] == {
-        id: "COMPLETE_QUALIFIED_PROFILE", status: "ALIAS",
-        aliasOf: "QUALIFIED_STANDARD_TASK_ADAPTERS", effect: effect($otelJar[0])
+        id: "COMPLETE_QUALIFIED_PROFILE", status: "DISQUALIFIED_COMPOSITION",
+        aliasOf: "QUALIFIED_STANDARD_TASK_ADAPTERS", effect: effect($otelJar[0]),
+        disqualificationReasons: ["INCLUDED_BUILD_IMPACT_HOT_STATE_REGRESSED"]
     } and
     .result == {
-        completeProfilesQualified: true,
-        qualifiedRepositoryCount: 2,
-        decision: $spec[0].terminalDecisions.bothCompleteProfilesQualify
+        completeProfilesQualified: false,
+        qualifiedRepositoryCount: 1,
+        regressiveIncludedArms: [{
+            repository: $otelJar[0].repository.nameWithOwner,
+            arm: "BUILD_IMPACT_HOT_STATE",
+            meanSavedMs: $otelHot[0].result.meanSavedMs,
+            reductionRatio: $otelHot[0].result.reductionRatio
+        }],
+        decision: $spec[0].terminalDecisions.anyCompleteProfileFails,
+        nextExperiment: $spec[0].terminalDecisions.nextExperimentAfterRegressiveComposition
     } and
     .boundaries == $spec[0].boundaries and
     $spring[0].result.qualified == true and
-    $otelJar[0].result.qualified == true
+    $otelJar[0].result.qualified == true and
+    $otelHot[0].result.meanSavedMs < 0
 ' "${buildopt_summary}" >/dev/null
 
 buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)

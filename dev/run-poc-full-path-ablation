@@ -84,7 +84,11 @@ jq -n \
             pairs, controlMeanMs, candidateMeanMs, meanSavedMs, reductionRatio,
             interval95SavedMs, positivePairs, qualified, decision
         };
-    ($spring[0].result.qualified and $otelJar[0].result.qualified) as $qualified |
+    ($spring[0].result.qualified) as $springQualified |
+    ($otelJar[0].result.qualified and
+        $otelImpact[0].result.meanSavedMs >= 0 and
+        $otelHot[0].result.meanSavedMs >= 0) as $otelQualified |
+    ($springQualified and $otelQualified) as $qualified |
     {
         schemaVersion: "buildopt.evidence/poc-full-path-ablation/v1",
         workItem: $spec[0].workItem,
@@ -125,18 +129,32 @@ jq -n \
                     {id: "BUILD_IMPACT_HOT_STATE", status: "EXECUTED", source: "OTEL_BUILD_IMPACT_HOT_STATE", effect: effect($otelHot[0])},
                     {id: "QUALIFIED_STANDARD_TASK_ADAPTERS", status: "EXECUTED", source: "OTEL_STANDARD_JAR_ADAPTER", effect: effect($otelJar[0])},
                     {id: "EXACT_REVIEWED_TASK_PATCHES", status: "NOT_AUTHORIZED_FOR_WORKLOAD"},
-                    {id: "COMPLETE_QUALIFIED_PROFILE", status: "ALIAS", aliasOf: "QUALIFIED_STANDARD_TASK_ADAPTERS", effect: effect($otelJar[0])}
+                    {
+                        id: "COMPLETE_QUALIFIED_PROFILE",
+                        status: (if $otelQualified then "ALIAS" else "DISQUALIFIED_COMPOSITION" end),
+                        aliasOf: "QUALIFIED_STANDARD_TASK_ADAPTERS",
+                        effect: effect($otelJar[0]),
+                        disqualificationReasons: (if $otelQualified then [] else
+                            ["INCLUDED_BUILD_IMPACT_HOT_STATE_REGRESSED"] end)
+                    }
                 ]
             }
         ],
         result: {
             completeProfilesQualified: $qualified,
-            qualifiedRepositoryCount: (if $qualified then 2 else ([
-                $spring[0].result.qualified, $otelJar[0].result.qualified
-            ] | map(select(.)) | length) end),
+            qualifiedRepositoryCount: ([$springQualified, $otelQualified] |
+                map(select(.)) | length),
+            regressiveIncludedArms: (if $otelHot[0].result.meanSavedMs < 0 then [{
+                repository: $otelJar[0].repository.nameWithOwner,
+                arm: "BUILD_IMPACT_HOT_STATE",
+                meanSavedMs: $otelHot[0].result.meanSavedMs,
+                reductionRatio: $otelHot[0].result.reductionRatio
+            }] else [] end),
             decision: (if $qualified then
                 $spec[0].terminalDecisions.bothCompleteProfilesQualify
-            else $spec[0].terminalDecisions.anyCompleteProfileFails end)
+            else $spec[0].terminalDecisions.anyCompleteProfileFails end),
+            nextExperiment: (if $qualified then null else
+                $spec[0].terminalDecisions.nextExperimentAfterRegressiveComposition end)
         },
         boundaries: $spec[0].boundaries
     }

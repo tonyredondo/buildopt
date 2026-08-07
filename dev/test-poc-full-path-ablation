@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_source="${buildopt_repo_root}/benchmarks/results/poc-full-path-ablation-v1"
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-full-path-ablation-test.XXXXXX")
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-full-path-ablation-test."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+cp -R -- "${buildopt_source}" "${buildopt_root}/evidence"
+"${buildopt_script_dir}/check-poc-full-path-ablation" \
+    "${buildopt_root}/evidence" >/dev/null
+
+jq '.result.completeProfilesQualified = true |
+    .result.qualifiedRepositoryCount = 2 |
+    .result.decision = "QUALIFY_FULL_PATH_POC_VALUE"' \
+    "${buildopt_root}/evidence/summary.json" >"${buildopt_root}/summary.json"
+mv -- "${buildopt_root}/summary.json" "${buildopt_root}/evidence/summary.json"
+
+if "${buildopt_script_dir}/check-poc-full-path-ablation" \
+    "${buildopt_root}/evidence" >/dev/null 2>&1; then
+    printf 'full-path ablation checker accepted a regressive composition\n' >&2
+    exit 1
+fi
+
+printf 'full-path ablation negative checks OK\n'

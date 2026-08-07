@@ -12,10 +12,13 @@
 - **The Runtime Tuning profiles tested so far should remain disabled.** The
   strict comparison against optimized native Gradle regressed build time, so
   activating tuning would make the product worse rather than better.
-- **The next step should be one orchestrated experimental profile containing
-  only qualified mechanisms, measured through an ablation matrix.** We should
-  unify orchestration, not blindly enable every feature. Each component must
-  continue to prove incremental value against optimized native Gradle.
+- **The full-path ablation is complete and rejected the first composition.**
+  Spring Build Impact qualified at 30.86%, and the OpenTelemetry terminal arm
+  reached 40.60%, but its included hot-state arm regressed by 7.68%. A faster
+  adapter is not allowed to hide a slower mechanism.
+- **The next step is a clean composition experiment:** Build Impact plus the
+  standard `Jar` adapter, with hot-state reuse removed. It must repeat the same
+  optimized-native comparison and correctness/fallback gates.
 
 The current POC supports a clear decision: continue investing in mechanisms
 that avoid work or safely make expensive tasks reusable, while keeping neutral
@@ -36,12 +39,12 @@ measured on different workloads and scopes.
 | **Task Intelligence** | Observes and qualifies tasks only when their inputs, outputs, cache keys, and outcomes are exact enough to support an optimization. | No general direct saving. In the accepted pilot it enabled a qualified native-cache restore that saved **203 ms** on average. | A **safety and eligibility layer**, not a standalone accelerator. Its value is realized through a qualified cache or patch route. |
 | **Patch Autopilot / reviewed task patch** | Produces a reviewable and reversible patch that correctly declares inputs and outputs and enables caching for an exact custom-task shape. | Exact reviewed Java recipe: **67.3% faster in Kotlin** and **68.0% faster in Groovy**. Combined installed path: **63.5-67.3% faster**. | Highly promising for **specific reviewed task contracts**. The result must not be generalized to arbitrary tasks or recipes. |
 | **Graph reduction** | Replaces broad aggregate task dependencies with the typed producers required for the declared outputs. | The OpenTelemetry experiment removed **3 graph nodes and 2 executed tasks** while preserving all 125 required outputs. No standalone wall-clock percentage is claimed. | Structurally valuable, but it still needs independent timing evidence before it can be presented as a separate accelerator. |
-| **Exact-bound hot-state reuse** | Reuses a previously validated Build Impact plan only when repository revision, graph, manifest, changes, Wrapper, executable, and options still match. | Reduced BuildOpt preparation from **74.97 ms to 40.34 ms**, a **46.2% reduction in preparation overhead**. | A useful internal optimization. The 46.2% applies to BuildOpt preparation, not to the complete Gradle build. |
+| **Exact-bound hot-state reuse** | Reuses a previously validated Build Impact plan only when repository revision, graph, manifest, changes, Wrapper, executable, and options still match. | Reduced BuildOpt preparation from **74.97 ms to 40.34 ms**, but the fresh whole-build arm was **7.68% slower**. | **Disabled for the measured profile.** Micro-overhead reduction does not override regressive end-to-end evidence. |
 | **Standard `Jar` cache adapter** | Makes only an unmodified standard Gradle `Jar` task eligible for native caching; custom archives, `Copy`, arbitrary tasks, and `Test` remain unchanged. | Before the adapter, the OpenTelemetry candidate was **1.94% slower**. After the adapter it was **39.92% faster**, saving 4,376.75 ms with 4/4 positive pairs and 125 identical outputs. | **The strongest result on a substantial public repository.** It proves the value of precise standard-task adapters, not a universal policy for every archive task. |
 | **Shared and Edge Cache** | Reuse committed outputs across machines and optionally place them nearer developers or CI runners. | No defensible build-time percentage has yet been established against Gradle's native remote-cache support. | Functionally implemented, but **performance value remains unproven**. It needs a controlled network and locality benchmark before further investment. |
 | **Build History** | Records durations, outcomes, cache behavior, and applied optimizations so results can be inspected and compared. | **No direct build-time saving.** | Observability that helps discover and validate optimizations; not an accelerator itself. |
 | **Launcher, gateway, and telemetry** | Provide orchestration, authentication, evidence collection, and safe fallback behavior. | Add fixed overhead rather than saving work. The local-cache fast path avoids starting these components when they have no consumer. | Necessary infrastructure for instrumented flows, but it must remain off the critical path when it is not needed. |
-| **Combined qualified path** | Orchestrates Build Impact and exact task optimizations through the packaged CLI and plugin while leaving unproven mechanisms disabled. | Controlled synthetic workloads: **63.5-84.1% faster**. Stable installed OpenTelemetry path: **39.92% faster**. | Demonstrates meaningful combined POC value, but the result remains workload-specific rather than universal. |
+| **Combined qualified path** | Orchestrates Build Impact and exact task optimizations through the packaged CLI and plugin while leaving unproven mechanisms disabled. | Fresh Spring Build Impact: **30.86% faster**. Fresh OpenTelemetry terminal arm: **40.60% faster**, but its included hot-state arm was **7.68% slower**. | **Not yet qualified as a composition.** Re-measure Impact + `Jar` without hot state. |
 
 The early isolated Runtime Tuning experiment reported a 0.7% saving, but the
 later and stricter comparison against optimized native Gradle superseded that
@@ -87,16 +90,27 @@ Runtime Tuning should remain a research track with a hard activation rule: no
 profile is applied unless it produces repeatable incremental value for the
 current workload class.
 
+### The terminal result must not hide a regressive component
+
+The fresh ablation retained all four source reports. Spring Build Impact saved
+2,492.375 ms/30.86% with 8/8 positive pairs. OpenTelemetry Build Impact alone
+had a favorable 985.5-ms/7.49% mean but did not qualify; adding hot state made
+the build 892 ms/7.68% slower. The terminal arm with the standard `Jar`
+adapter saved 4,496.75 ms/40.60%, but the complete composition was rejected
+because it still included that regressive hot-state mechanism.
+
+This is exactly why mechanisms are ablated independently: the next experiment
+removes hot state instead of allowing the adapter's large gain to mask it.
+
 ## Recommended Direction
 
-### 1. Build one qualified full-path experiment
+### 1. Rebuild the profile without hot-state reuse
 
-We should create a single **experimental full optimization profile**, but it
-must contain only components that have already qualified for the workload:
+The first full-path composition did not qualify. Create the next experimental
+profile from only the remaining non-regressive mechanisms:
 
 - native Gradle local cache as the cache baseline;
 - Build Impact with full-graph fallback;
-- exact-bound hot-state reuse;
 - exact standard-task adapters such as the current `Jar` adapter;
 - reviewed task patches only when their contract matches exactly;
 - output equivalence, failure attribution, and immediate bypass throughout.
@@ -105,18 +119,15 @@ It should explicitly exclude Runtime Tuning, strict Safe Cache, and Edge Cache
 until they demonstrate incremental value. This is **unified orchestration**, not
 "turn every feature on."
 
-### 2. Measure the unified path with an ablation matrix
+### 2. Measure the clean composition against the same native control
 
-A single native-versus-everything comparison would show whether the package is
-faster, but it would not tell us why. Run the same preregistered mutations and
-outputs through these arms:
+A single native-versus-everything comparison still would not show why it wins.
+Run the same OpenTelemetry mutation and outputs through these arms:
 
 1. optimized native Gradle;
 2. native Gradle plus Build Impact;
-3. Build Impact plus hot-state reuse;
-4. the previous arm plus qualified standard-task adapters;
-5. the previous arm plus any exact reviewed task patch;
-6. the complete qualified experimental profile.
+3. Build Impact plus the qualified standard `Jar` adapter;
+4. the same candidate with native/full-graph fallback probes.
 
 Use Spring Framework and OpenTelemetry first because they already have stable
 protocols and meaningful build durations. Measure compilation,
@@ -211,7 +222,7 @@ exercises a different workload class or invalidates a current assumption.
 |---|---:|---:|---|
 | Native Gradle cache | Enabled | Enabled | Continue parity and output checks |
 | Build Impact | Enabled for qualified scopes | Explicit command | Generalize across real change and output scopes |
-| Hot-state reuse | Enabled with exact binding | Enabled only inside qualified Build Impact | Continue drift and fallback tests |
+| Hot-state reuse | Disabled for the measured profile | Disabled | Beat the same end-to-end control independently before reconsideration |
 | Standard `Jar` adapter | Enabled for the exact standard task type | Not universal | Replicate on another substantial public repository |
 | Reviewed task patch | Enabled only for exact matching contracts | Review required | Add recipes only after independent qualification |
 | Strict Safe Cache | Disabled | Disabled | Beat or justify cost versus native Gradle cache |
@@ -220,19 +231,21 @@ exercises a different workload class or invalidates a current assumption.
 
 ## Recommended Next Block
 
-The next implementation block should be **Qualified Full-Path Ablation**:
+The next implementation block should be **Clean Qualified-Path Composition**:
 
-1. materialize the experimental profile containing only qualified mechanisms;
-2. run the six-arm matrix on the existing Spring and OpenTelemetry protocols;
-3. report component-level and combined incremental savings without adding
-   percentages;
-4. identify the remaining dominant task and configuration tails;
-5. select the next generalization target from those traces;
-6. keep a mechanism disabled whenever it does not beat optimized native Gradle.
+1. preregister OpenTelemetry Build Impact plus the standard `Jar` adapter with
+   hot state explicitly disabled;
+2. reuse the same optimized native Gradle control, mutation, required outputs,
+   alternating order, and unchanged 500-ms/2% gate;
+3. prove `Jar` restoration, exact outputs, zero product failures, and global
+   full-graph fallback in every candidate pair;
+4. retain the result even if it regresses; do not retry or move thresholds;
+5. only after qualification, generalize Build Impact and trace the next task
+   tail.
 
-This block answers the most important remaining POC question: **does the
-coordinated BuildOpt path provide stable incremental value, and which specific
-mechanisms are responsible for that value?**
+This block answers whether the actual non-regressive composition preserves the
+large adapter gain without relying on a component already shown to hurt wall
+time.
 
 ## Open Questions
 
@@ -268,6 +281,7 @@ artifacts are:
 - [installed Spring Build Impact evidence](../../benchmarks/results/poc-spring-installed-impact-v1.json);
 - [OpenTelemetry hot-state evidence](../../benchmarks/results/poc-otel-hot-state-v1.json);
 - [final OpenTelemetry optimization evidence](../../benchmarks/results/poc-otel-optimization-v2.json).
+- [fresh full-path ablation and retained component evidence](../../benchmarks/results/poc-full-path-ablation-v1/summary.json).
 
 Validate the current scorecard with:
 

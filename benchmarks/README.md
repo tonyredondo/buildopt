@@ -33,6 +33,32 @@ interpretation with:
 ./dev/check-poc-value-validation
 ```
 
+### Fresh qualified-path ablation
+
+The preregistered Spring/OpenTelemetry ablation is stored under
+[`results/poc-full-path-ablation-v1`](./results/poc-full-path-ablation-v1).
+The percentages below are independent effects against the contemporaneous
+optimized native Gradle control; they are not additive.
+
+| Repository and arm | Mean effect | Stability | Decision |
+|---|---:|---:|---|
+| Spring Build Impact | **2,492.375 ms / 30.86% faster** | 8/8 positive; interval +1,688.25..+3,242.25 ms | Qualified |
+| OpenTelemetry Build Impact | **985.5 ms / 7.49% faster** | 3/4 positive; interval -737.5..+2,708.5 ms | Favorable but not qualified |
+| OpenTelemetry Impact + hot state | **892 ms / 7.68% slower** | 1/4 positive; interval -1,451.5..+111.5 ms | Rejected |
+| OpenTelemetry Impact + hot state + standard `Jar` adapter | **4,496.75 ms / 40.60% faster** | 4/4 positive; interval +3,928.5..+5,467.25 ms | Adapter arm qualified; composition rejected |
+
+All source protocols preserved their declared outputs and fallback contracts.
+The aggregate decision is `RETAIN_COMPONENT_EVIDENCE_ONLY`: the fast terminal
+OpenTelemetry arm cannot hide the included hot-state regression. Protocol
+revision 2 tightened this composition rule after measurements without changing
+raw reports, thresholds, pairs, or source decisions. The next experiment is
+Build Impact plus the standard `Jar` adapter **without hot-state reuse**.
+
+```bash
+./dev/check-poc-full-path-ablation
+./dev/test-poc-full-path-ablation
+```
+
 The scorecard answers a different question for each optimization instead of
 combining unrelated percentages:
 

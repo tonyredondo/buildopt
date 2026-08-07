@@ -13,9 +13,10 @@
 - **Not every feature adds value.** Safe Cache is effectively at parity with
   Gradle's native cache, and the tested Runtime Tuning profiles regressed. Both
   remain outside the default optimization path.
-- **The next experiment is a qualified full-path ablation.** It will combine
-  only proven mechanisms, then measure each incremental contribution against
-  optimized native Gradle before anything is generalized.
+- **The first full-path composition was rejected honestly.** Spring Build
+  Impact qualified at 30.86%, while OpenTelemetry's terminal adapter arm was
+  40.60% faster but included a hot-state arm that was 7.68% slower. The next
+  experiment removes hot state rather than hiding that regression.
 
 ## Product Idea
 
@@ -43,7 +44,7 @@ Unknown changes, unqualified tasks, failed validation, or
 | **Task Intelligence** | Qualifies tasks only when inputs, outputs, keys, and outcomes are exact enough. | Cacheability annotations and task validation supplied by build authors/plugins. | Adds an evidence-based eligibility layer. It enables optimizations but does not directly make a build faster. |
 | **Patch Autopilot** | Produces reviewable, reversible patches for exact known task shapes. | Manual build-script/plugin changes. | Can turn a non-cacheable custom task into a safely reusable task, but only for reviewed recipes that match exactly. |
 | **Exact task adapters** | Adds bounded eligibility for an unmodified standard Gradle task type. | Native caching when a task is correctly cacheable. | Uses real task traces to close one missing cacheability gap at a time. The first standard-`Jar` adapter produced the strongest public-repository result. |
-| **Hot-state reuse** | Reuses a validated impact plan when every repository, graph, Wrapper, executable, and option digest still matches. | Configuration Cache and daemon reuse inside Gradle. | Reduces BuildOpt-owned planning overhead; any drift returns to normal validation. |
+| **Hot-state reuse** | Reuses a validated impact plan when every repository, graph, Wrapper, executable, and option digest still matches. | Configuration Cache and daemon reuse inside Gradle. | Reduced planning overhead, but the fresh end-to-end arm was 7.68% slower. It is disabled for this profile. |
 | **Shared / Edge Cache** | Shares committed outputs and optionally places them nearer runners. | Native Gradle remote-cache protocol and third-party cache servers. | Adds authority and pending-write controls, but has no defensible performance advantage yet. |
 | **Build History** | Stores redacted sessions, timing, cache, and optimization evidence. | Logs, Build Scans, and external observability tooling. | Provides local POC evidence and comparison. It improves diagnosis, not build time directly. |
 
@@ -83,19 +84,20 @@ unfavorable observations. Percentages from different rows are not additive.
 | Exact-bound hot-state reuse | BuildOpt preparation reduced from 74.97 ms to 40.34 ms (**46.2%**) | Internal planning improvement only; not a whole-build percentage. |
 | Standard-`Jar` adapter | **39.92% faster**, 4,377 ms saved, 4/4 positive pairs | Qualified installed POC value with 125 identical outputs, zero product failures, and full 53-entrypoint fallback. |
 
-## Current Decision and Next Work
+## Latest Ablation and Next Work
 
-**Continue the POC, but activate only measured value.** Build Impact, exact hot
-state, and exact task adapters are the priority. Runtime Tuning, strict Safe
-Cache, and Shared/Edge performance claims remain disabled.
+**Continue the POC, but activate only measured value.** The fresh ablation
+qualified Spring Build Impact at 2,492.375 ms/30.86% saved with 8/8 positive
+pairs. OpenTelemetry Build Impact alone saved 985.5 ms/7.49% but did not meet
+the stability gate; adding exact hot state regressed by 892 ms/7.68%. Adding
+the standard `Jar` adapter produced a strong 4,496.75-ms/40.60% terminal gain,
+but that composition was rejected because it contained the regressive hot-state
+arm. All raw evidence and unfavorable observations were retained.
 
-The first block when work resumes is
-`POC-FULL-PATH-ABLATION-001`. It will measure six arms on Spring and
-OpenTelemetry: optimized native Gradle; Build Impact; Impact plus hot state;
-qualified standard-task adapters; exact reviewed task patches; and the complete
-qualified profile. Each acceleration claim must save at least 500 ms and 2%,
-have a positive paired lower bound, preserve byte-identical required outputs,
-introduce zero product failures, and prove native/full-graph fallback.
+The next block is `POC-FULL-PATH-CLEAN-001`: preregister and measure Build
+Impact plus the standard `Jar` adapter **without hot-state reuse**. The gate
+remains at least 500 ms/2%, a positive paired lower bound, byte-identical
+required outputs, zero product failures, and native/full-graph fallback.
 
 After that, the roadmap is to generalize Build Impact, select new task adapters
 from real dominant-tail traces, optimize build-owned test preparation without
@@ -115,3 +117,4 @@ production operations are outside the current scope.
 - [Synthetic combined evidence](../../benchmarks/results/poc-value-combined-v1.json)
 - [Installed Spring evidence](../../benchmarks/results/poc-spring-installed-impact-v1.json)
 - [Final OpenTelemetry evidence](../../benchmarks/results/poc-otel-optimization-v2.json)
+- [Fresh full-path ablation](../../benchmarks/results/poc-full-path-ablation-v1/summary.json)
