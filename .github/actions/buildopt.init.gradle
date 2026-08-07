@@ -42,8 +42,8 @@ if (gradle.getParent() == null) {
     }
     def standardJarCache = System.getenv("BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS")
     if (standardJarCache == "1") {
-        allprojects {
-            pluginManager.apply(dev.buildopt.gradle.BuildOptStandardJarCachePlugin)
+        gradle.projectsLoaded {
+            gradle.rootProject.pluginManager.apply(dev.buildopt.gradle.BuildOptStandardJarCachePlugin)
         }
     } else if (standardJarCache != null && !standardJarCache.isBlank() && standardJarCache != "0") {
         throw new GradleException(

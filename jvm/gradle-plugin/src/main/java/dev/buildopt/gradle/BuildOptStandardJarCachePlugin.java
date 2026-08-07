@@ -8,6 +8,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.specs.Spec;
+import org.gradle.api.tasks.bundling.Jar;
 
 /** Adds cache eligibility only to unmodified standard Gradle Jar producers. */
 public final class BuildOptStandardJarCachePlugin implements Plugin<Project> {
@@ -18,6 +19,7 @@ public final class BuildOptStandardJarCachePlugin implements Plugin<Project> {
     private static final String JAR_DECORATED =
             "org.gradle.api.tasks.bundling.Jar_Decorated";
     private static final String JAR_BASE = "org.gradle.api.tasks.bundling.Jar";
+    private static final Spec<Task> ALWAYS_CACHE = new AlwaysCacheSpec();
 
     @Override
     public void apply(Project target) {
@@ -31,13 +33,14 @@ public final class BuildOptStandardJarCachePlugin implements Plugin<Project> {
                         ignored -> {
                             for (Project project : root.getAllprojects()) {
                                 project.getTasks()
+                                        .withType(Jar.class)
                                         .configureEach(
                                                 task -> {
                                                     if (isStandardJarProducer(task)) {
                                                         task.getOutputs()
                                                                 .cacheIf(
                                                                         CACHE_REASON,
-                                                                        new AlwaysCacheSpec());
+                                                                        ALWAYS_CACHE);
                                                     }
                                                 });
                             }

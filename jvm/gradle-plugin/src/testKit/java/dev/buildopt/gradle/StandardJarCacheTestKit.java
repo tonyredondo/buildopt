@@ -76,8 +76,10 @@ public final class StandardJarCacheTestKit {
                             + "') } }\n"
                             + "if (gradle.getParent() == null && "
                             + "System.getenv('BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS') == '1') {\n"
-                            + "    allprojects { pluginManager.apply("
-                            + "dev.buildopt.gradle.BuildOptStandardJarCachePlugin) }\n"
+                            + "    gradle.projectsLoaded {\n"
+                            + "        gradle.rootProject.pluginManager.apply("
+                            + "dev.buildopt.gradle.BuildOptStandardJarCachePlugin)\n"
+                            + "    }\n"
                             + "}\n",
                     StandardCharsets.UTF_8);
 
