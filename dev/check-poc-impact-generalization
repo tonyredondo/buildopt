@@ -24,6 +24,18 @@ done
 jq -e '
     .schemaVersion == "buildopt.specs/poc-impact-generalization/v1" and
     .workItem == "POC-IMPACT-GENERALIZATION-001" and
+    .protocolRevision == {
+        from: 1,
+        reason: "GRAPH_CONTRACT_JQ_SCOPE",
+        completedGraphsBeforeRevision: 5,
+        warmupsBeforeRevision: 0,
+        acceptedObservationsBeforeRevision: 0,
+        resultEmittedBeforeRevision: false,
+        change: "ITERATE_THE_MATRIX_ARRAY_BEFORE_APPLYING_ALL",
+        productChanged: false,
+        measurementChanged: false,
+        valueGateChanged: false
+    } and
     .repository.revision == "4b5c92703c63966c3471242c621c4a63b382638d" and
     .runner.cpuCount == 12 and .runner.maxWorkers == 12 and
     [.matrixCells[].id] == [

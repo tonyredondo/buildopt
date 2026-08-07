@@ -239,12 +239,12 @@ if [[ "${buildopt_mode}" == discover ]]; then
 fi
 
 jq -e --slurpfile observed "${buildopt_graph_rows}" '
-    all(.matrixCells[] as $cell |
+    [.matrixCells[] as $cell |
         ($observed[] | select(.id == $cell.id)) as $actual |
         $actual.expectedGraphSha256 == $cell.expectedGraphSha256 and
         $actual.expectedReachedProjectCount == $cell.expectedReachedProjectCount and
         $actual.containsTestTasks == false and
-        $actual.unknownRelationships == ($cell.expectedMode == "FULL_GRAPH"))
+        $actual.unknownRelationships == ($cell.expectedMode == "FULL_GRAPH")] | all
 ' "${buildopt_spec}" >/dev/null || {
     printf 'Build Impact generalization graph contract drifted\n' >&2
     jq -s '.' "${buildopt_graph_rows}" >&2

@@ -2,6 +2,18 @@
   "schemaVersion": "buildopt.specs/poc-impact-generalization/v1",
   "workItem": "POC-IMPACT-GENERALIZATION-001",
   "decision": "PREREGISTER_REAL_SPRING_CHANGE_AND_OUTPUT_MATRIX",
+  "protocolRevision": {
+    "from": 1,
+    "reason": "GRAPH_CONTRACT_JQ_SCOPE",
+    "completedGraphsBeforeRevision": 5,
+    "warmupsBeforeRevision": 0,
+    "acceptedObservationsBeforeRevision": 0,
+    "resultEmittedBeforeRevision": false,
+    "change": "ITERATE_THE_MATRIX_ARRAY_BEFORE_APPLYING_ALL",
+    "productChanged": false,
+    "measurementChanged": false,
+    "valueGateChanged": false
+  },
   "repository": {
     "nameWithOwner": "spring-projects/spring-framework",
     "revision": "4b5c92703c63966c3471242c621c4a63b382638d",
