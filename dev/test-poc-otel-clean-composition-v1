@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_source="${buildopt_repo_root}/benchmarks/results/poc-otel-clean-composition-v1.json"
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-otel-clean-composition-test.XXXXXX")
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-otel-clean-composition-test."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+cp -- "${buildopt_source}" "${buildopt_root}/evidence.json"
+"${buildopt_script_dir}/check-poc-otel-clean-composition-v1-result" \
+    "${buildopt_root}/evidence.json" >/dev/null
+
+jq '.observations[0].candidateHotStateEnabled = true |
+    .discovery.measuredCandidateHotStateEnabled = true' \
+    "${buildopt_source}" >"${buildopt_root}/hot-state.json"
+if "${buildopt_script_dir}/check-poc-otel-clean-composition-v1-result" \
+    "${buildopt_root}/hot-state.json" >/dev/null 2>&1; then
+    printf 'clean composition checker accepted measured hot-state reuse\n' >&2
+    exit 1
+fi
+
+jq '.observations[3].requiredOutputSha256 =
+    "0000000000000000000000000000000000000000000000000000000000000000"' \
+    "${buildopt_source}" >"${buildopt_root}/output-drift.json"
+if "${buildopt_script_dir}/check-poc-otel-clean-composition-v1-result" \
+    "${buildopt_root}/output-drift.json" >/dev/null 2>&1; then
+    printf 'clean composition checker accepted required-output drift\n' >&2
+    exit 1
+fi
+
+printf 'clean OpenTelemetry composition negative checks OK\n'

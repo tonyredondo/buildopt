@@ -2419,13 +2419,15 @@ rerunning a benchmark:
 ./dev/check-build-optimization-performance
 ```
 
-The historical scorecard keeps each mechanism attributable and never adds
-percentages from different workloads. Current activation and continuation
-decisions come from `check-poc-value-validation`; the combined result is a
-separate measured path, not the sum of the mechanisms. Fresh cache and Build
-Impact evidence can be created with `run-cache-parity-benchmark` and
-`run-build-impact-performance`; each has a matching `check-*` command. See
-[the benchmark index](../benchmarks/README.md#build-optimization-scorecard).
+The scorecard keeps each mechanism attributable and never adds percentages
+from different workloads. It retains the historical OpenTelemetry profile and
+also prints the qualified clean composition separately, so a regressive
+included mechanism cannot be hidden by a faster terminal arm. Current
+activation and continuation decisions come from `check-poc-value-validation`;
+the combined result is a separately measured path, not the sum of the
+mechanisms. Fresh cache and Build Impact evidence can be created with
+`run-cache-parity-benchmark` and `run-build-impact-performance`; each has a
+matching `check-*` command. See [the benchmark index](../benchmarks/README.md#build-optimization-scorecard).
 
 ## Historical onboarding performance
 
@@ -2813,7 +2815,16 @@ the same native control, outputs, fallback, and frozen value gate:
 ./dev/check-poc-otel-clean-composition-v1
 ./dev/run-poc-otel-clean-composition-v1 /absolute/path/to/new-result.json
 ./dev/check-poc-otel-clean-composition-v1-result /absolute/path/to/new-result.json
+./dev/test-poc-otel-clean-composition-v1
 ```
+
+The checked repository evidence qualifies the clean composition at 5,361.25 ms
+or 50.40% mean saving over optimized native Gradle. All four pairs are positive,
+the paired interval is +4,334.25..+5,937 ms, all 125 required outputs are
+identical, every candidate restores the exact standard `Jar` producer from
+cache, and no measured invocation enables exact-bound hot state. The negative
+test proves that the checker rejects both hot-state contamination and output
+drift.
 
 Run the lock and doctor contract tests from the repository root:
 

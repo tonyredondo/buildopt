@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC BUILD-TIME VALUE PROVEN; CLEAN COMPOSITION REQUIRED` — Spring Build Impact and the OpenTelemetry standard-Jar arm beat optimized native Gradle, but the first combined OpenTelemetry profile was rejected because hot-state reuse regressed<br>
-**Current phase:** `POC-FULL-PATH-CLEAN-001 ACTIVE` — the clean Impact-plus-Jar protocol is frozen before timing; Hot State remains disabled<br>
+**Overall status:** `POC CLEAN COMPOSITION QUALIFIED; IMPACT GENERALIZATION NEXT` — the clean OpenTelemetry Impact-plus-Jar path beats optimized native Gradle by 50.40% with exact outputs, safe fallback, and Hot State disabled<br>
+**Current phase:** `POC-IMPACT-GENERALIZATION-001 NEXT` — broaden the qualified Build Impact mechanism across real change shapes and output families without widening the claim prematurely<br>
 **POC functional target:** attribute stable incremental value from one qualified combined path, then generalize only the Build Impact and exact task mechanisms that continue to beat optimized native Gradle; Safe Cache and Runtime candidates remain disabled<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -196,8 +196,8 @@ than partners. Test Optimization remains a separate product.
 | 42 | `POC-OTEL-JAR-CACHE-001` | Implement the generic corrective hypothesis only for exact unmodified standard Jar producers | `DONE` | Codex |
 | 43 | `POC-OTEL-STABILITY-002` | Execute a newly preregistered installed comparison under the unchanged terminal value gate | `DONE` | Codex |
 | 44 | `POC-FULL-PATH-ABLATION-001` | Measure optimized native Gradle and five incrementally composed qualified BuildOpt arms on Spring and OpenTelemetry | `DONE` | Codex |
-| 45 | `POC-FULL-PATH-CLEAN-001` | Measure OpenTelemetry Build Impact plus the standard Jar adapter without the regressive hot-state arm | `DOING` | Codex |
-| 46 | `POC-IMPACT-GENERALIZATION-001` | Generalize Build Impact across real change shapes and compilation, test-preparation, verification, packaging, and distribution outputs | `WAITING` | — |
+| 45 | `POC-FULL-PATH-CLEAN-001` | Measure OpenTelemetry Build Impact plus the standard Jar adapter without the regressive hot-state arm | `DONE` | Codex |
+| 46 | `POC-IMPACT-GENERALIZATION-001` | Generalize Build Impact across real change shapes and compilation, test-preparation, verification, packaging, and distribution outputs | `TODO` | Codex |
 | 47 | `POC-TASK-TAIL-ADAPTERS-001` | Select and qualify the next exact standard-task adapter from real task-attribution traces | `WAITING` | — |
 | 48 | `POC-TEST-BUILD-OPTIMIZATION-001` | Optimize build-owned test compilation, preparation, and packaging without selecting, skipping, or reprioritizing Test-owned execution | `WAITING` | — |
 | 49 | `POC-RUNTIME-RESEARCH-001` | Reopen Runtime Tuning only for one measured resource bottleneck and retain stable control unless it beats optimized native Gradle | `WAITING` | — |
@@ -1089,8 +1089,8 @@ incremental evidence beats optimized native Gradle.
 | ID | Priority | Deliverable | State | Dependency |
 |---|---:|---|---|---|
 | `POC-FULL-PATH-ABLATION-001` | 1 | Run six preregistered arms on Spring and OpenTelemetry: optimized native Gradle; Build Impact; Impact plus exact hot state; qualified standard-task adapters; exact reviewed task patches; and the complete qualified profile | `DONE` | `E-207` |
-| `POC-FULL-PATH-CLEAN-001` | 2 | Preregister and measure OpenTelemetry Build Impact plus the standard Jar adapter without hot-state reuse under the unchanged value and correctness gates | `DOING` | `E-208` |
-| `POC-IMPACT-GENERALIZATION-001` | 3 | Extend Build Impact across leaf/shared/build-logic/global changes and compilation, test preparation, verification, packaging, and distribution outputs while retaining full-graph fallback | `WAITING` | `POC-FULL-PATH-CLEAN-001` |
+| `POC-FULL-PATH-CLEAN-001` | 2 | Preregister and measure OpenTelemetry Build Impact plus the standard Jar adapter without hot-state reuse under the unchanged value and correctness gates | `DONE` | `E-211` |
+| `POC-IMPACT-GENERALIZATION-001` | 3 | Extend Build Impact across leaf/shared/build-logic/global changes and compilation, test preparation, verification, packaging, and distribution outputs while retaining full-graph fallback | `TODO` | `E-211` |
 | `POC-TASK-TAIL-ADAPTERS-001` | 4 | Select the next standard Gradle task type from real dominant-tail traces, define an exact eligibility contract, and measure it independently | `WAITING` | `POC-FULL-PATH-CLEAN-001` |
 | `POC-TEST-BUILD-OPTIMIZATION-001` | 5 | Reduce build-owned test compilation, preparation, and packaging without changing Test-owned selection, execution, retries, sharding, or prioritization | `WAITING` | `POC-IMPACT-GENERALIZATION-001`, `POC-TASK-TAIL-ADAPTERS-001` |
 | `POC-RUNTIME-RESEARCH-001` | 6 | Investigate one observed worker, heap, GC, queue, configuration, dependency-resolution, or JVM-warm-up bottleneck at a time; preserve `STABLE_CONTROL` on no-value evidence | `WAITING` | `POC-FULL-PATH-CLEAN-001` |
@@ -1099,13 +1099,14 @@ incremental evidence beats optimized native Gradle.
 
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
-| `POC-PERF-NEXT-G01` | The complete qualified profile beats optimized native Gradle by at least 500 ms and 2%, has a positive paired lower bound, preserves byte-identical required outputs, introduces zero product failures, proves full native/full-graph fallback, and contains no regressive included arm | `TODO` | `E-207` rejects the hot-state composition; pending `POC-FULL-PATH-CLEAN-001` |
+| `POC-PERF-NEXT-G01` | The complete qualified profile beats optimized native Gradle by at least 500 ms and 2%, has a positive paired lower bound, preserves byte-identical required outputs, introduces zero product failures, proves full native/full-graph fallback, and contains no regressive included arm | `DONE` | `E-211`: clean Impact plus exact standard Jar saves 5,361.25 ms/50.40%, interval +4,334.25..+5,937 ms, 4/4 positive pairs, exact outputs, safe fallback, and Hot State absent |
 
 The ablation matrix kept each incremental effect attributable and exposed a
-regressive hot-state arm behind a much larger Jar-adapter gain. The next block
-removes that arm and repeats the unchanged terminal gate. No item authorizes
-production rollout, soak, design-partner work, Test Optimization, or a
-universal savings claim.
+regressive hot-state arm behind a much larger Jar-adapter gain. The clean rerun
+removed that arm and passed the unchanged terminal gate. The next block
+generalizes Build Impact without re-enabling Hot State. No item authorizes
+production rollout, soak, design-partner work, Test Optimization, or a universal
+savings claim.
 
 ---
 
@@ -1439,6 +1440,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-208` | 2026-08-07 | `POC-FULL-PATH-CLEAN-001` | The versioned [clean-composition protocol](./specs/poc-otel-clean-composition-v1.md), machine-readable [contract](./specs/poc-otel-clean-composition-v1.json), immutable runner, static checker and independent result checker freeze a new four-pair OpenTelemetry comparison after `E-207`. The candidate retains typed Build Impact and exact standard-Jar eligibility but omits `--hot-state-dir`; every invocation must freshly validate planning inputs and any hot-state diagnostic fails the protocol. Repository, mutation, 53-task native control, runner, cache preparation, shared daemon, outputs, alternating order, fallback and the 500-ms/2%/positive-bound/4-of-4 gate remain unchanged | `DOING` preregistered with zero warmups or accepted observations: no prior timing is reused, no product behavior or threshold changed, and the complete measurement must be retained |
 | `E-209` | 2026-08-07 | `POC-FULL-PATH-CLEAN-001` | The first v1 attempt stopped while packaging the local BuildOpt archive because it inherited the session's read-only global Gradle home. No OpenTelemetry source was downloaded and no preflight, warm-up, pair or timing ran. Protocol revision 2 gives packaging a private temporary Gradle home; product, control, candidate, outputs, ordering, thresholds and result policy remain byte-for-byte equivalent | `DOING` measurement-infrastructure correction committed before timing: zero accepted observations and a complete fresh execution are required |
 | `E-210` | 2026-08-07 | `POC-FULL-PATH-CLEAN-001` | The revision-2 attempt completed source preparation, graph discovery and one control warm-up, then stopped before the candidate warm-up because the runner supplied `--repository-revision` without `--hot-state-dir`. The CLI correctly rejected that incomplete hot-state pair. Protocol revision 3 removes only the orphaned runner argument; product implementation, control, candidate mechanisms, outputs, ordering, thresholds and terminal policy remain unchanged | `DOING` measurement-harness correction committed with zero measured or accepted observations: no timing is retained and the complete experiment must restart from fresh state |
+| `E-211` | 2026-08-07 | `POC-FULL-PATH-CLEAN-001`, `POC-PERF-NEXT-G01` | The independently checked [clean OpenTelemetry composition](./benchmarks/results/poc-otel-clean-composition-v1.json) packages installed BuildOpt revision `dad7c7f3e74001ea5707e1cb37b00478bec0d5e8` and compares Build Impact plus the exact standard-Jar adapter, with Hot State absent, against the same 53-entrypoint optimized native Gradle control. Pair savings are `+3825`, `+5862`, `+5995`, and `+5763` ms. Native averages 10,636.5 ms and BuildOpt 5,275.25 ms, saving 5,361.25 ms/50.40%; the paired interval is +4,334.25..+5,937 ms and all 4/4 pairs are positive. Every candidate reports `:testing-common:jar FROM-CACHE`, no hot state or managed runtime starts, all pairs preserve the same non-empty 125-file digest, zero product-attributable failures occur, and a separate global change restores all 53 entrypoints and succeeds | `DONE` terminal `QUALIFY_CLEAN_OTEL_COMPOSITION`: the first non-regressive complete profile clears the unchanged value and correctness gate; generalize Build Impact next without re-enabling Hot State, moving thresholds, discarding pairs, or claiming production/universal value |
 
 ---
 
@@ -1446,6 +1448,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-07 | Qualified the clean OpenTelemetry composition at 5,361.25 ms/50.40% saved with 4/4 positive pairs, a positive interval, identical 125-file outputs, exact Jar reuse, zero product failures, safe full fallback, and Hot State absent; moved next to Build Impact generalization | Codex |
 | 2026-08-07 | Revised the clean-composition runner after it supplied a hot-state revision without a hot-state directory; retained zero measured observations and left product behavior, candidate mechanisms, control, outputs, ordering, thresholds, and terminal policy unchanged | Codex |
 | 2026-08-07 | Revised the clean-composition runner after packaging inherited a read-only global Gradle home; isolated packaging state before source download or any timing, with every product and measurement gate unchanged | Codex |
 | 2026-08-07 | Preregistered the clean OpenTelemetry Impact-plus-Jar composition with Hot State absent and every control, output, fallback, pair-order, and value threshold unchanged before timing | Codex |

@@ -56,3 +56,18 @@ required hot-state directory. That is an invalid CLI pair, not a product defect
 or performance result. No measured observation ran or was accepted. The
 product, control, candidate mechanisms, outputs, ordering, and value gate remain
 unchanged, and the complete experiment must restart from fresh temporary state.
+
+## Result
+
+The complete revision-3 execution qualifies the clean composition. Optimized
+native Gradle averaged 10,636.5 ms and installed BuildOpt averaged 5,275.25 ms,
+saving 5,361.25 ms or 50.40%. Pair savings were +3,825, +5,862, +5,995, and
++5,763 ms; the deterministic paired interval is +4,334.25..+5,937 ms. Every
+candidate restored `:testing-common:jar FROM-CACHE`, enabled no hot state or
+managed runtime, and preserved the same non-empty 125-file output digest. Zero
+product-attributable failures occurred. The global-change probe restored all 53
+control entrypoints and completed successfully.
+
+The terminal decision is `QUALIFY_CLEAN_OTEL_COMPOSITION`. Qualification is
+limited to this exact POC workload and does not authorize Hot State, production
+rollout, Test Optimization, or a universal savings claim.

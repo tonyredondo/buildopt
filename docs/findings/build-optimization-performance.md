@@ -12,13 +12,11 @@
 - **The Runtime Tuning profiles tested so far should remain disabled.** The
   strict comparison against optimized native Gradle regressed build time, so
   activating tuning would make the product worse rather than better.
-- **The full-path ablation is complete and rejected the first composition.**
-  Spring Build Impact qualified at 30.86%, and the OpenTelemetry terminal arm
-  reached 40.60%, but its included hot-state arm regressed by 7.68%. A faster
-  adapter is not allowed to hide a slower mechanism.
-- **The next step is a clean composition experiment:** Build Impact plus the
-  standard `Jar` adapter, with hot-state reuse removed. It must repeat the same
-  optimized-native comparison and correctness/fallback gates.
+- **The clean composition now qualifies.** After the full-path ablation rejected
+  a profile containing a 7.68% hot-state regression, the fresh OpenTelemetry
+  run removed hot state and combined only Build Impact with the exact standard
+  `Jar` adapter. It saved **5,361.25 ms/50.40%**, with 4/4 positive pairs, a
+  +4,334.25..+5,937-ms interval, 125 identical outputs, and safe full fallback.
 
 The current POC supports a clear decision: continue investing in mechanisms
 that avoid work or safely make expensive tasks reusable, while keeping neutral
@@ -44,7 +42,7 @@ measured on different workloads and scopes.
 | **Shared and Edge Cache** | Reuse committed outputs across machines and optionally place them nearer developers or CI runners. | No defensible build-time percentage has yet been established against Gradle's native remote-cache support. | Functionally implemented, but **performance value remains unproven**. It needs a controlled network and locality benchmark before further investment. |
 | **Build History** | Records durations, outcomes, cache behavior, and applied optimizations so results can be inspected and compared. | **No direct build-time saving.** | Observability that helps discover and validate optimizations; not an accelerator itself. |
 | **Launcher, gateway, and telemetry** | Provide orchestration, authentication, evidence collection, and safe fallback behavior. | Add fixed overhead rather than saving work. The local-cache fast path avoids starting these components when they have no consumer. | Necessary infrastructure for instrumented flows, but it must remain off the critical path when it is not needed. |
-| **Combined qualified path** | Orchestrates Build Impact and exact task optimizations through the packaged CLI and plugin while leaving unproven mechanisms disabled. | Fresh Spring Build Impact: **30.86% faster**. Fresh OpenTelemetry terminal arm: **40.60% faster**, but its included hot-state arm was **7.68% slower**. | **Not yet qualified as a composition.** Re-measure Impact + `Jar` without hot state. |
+| **Combined qualified path** | Orchestrates Build Impact and exact task optimizations through the packaged CLI and plugin while leaving unproven mechanisms disabled. | Fresh Spring Build Impact: **30.86% faster**. Clean OpenTelemetry Impact + standard `Jar`, with hot state absent: **50.40% faster**, saving 5,361.25 ms with 4/4 positive pairs. | **Qualified for the exact measured POC workloads.** Generalize change shapes and outputs before broadening the claim. |
 
 The early isolated Runtime Tuning experiment reported a 0.7% saving, but the
 later and stricter comparison against optimized native Gradle superseded that
@@ -99,15 +97,17 @@ the build 892 ms/7.68% slower. The terminal arm with the standard `Jar`
 adapter saved 4,496.75 ms/40.60%, but the complete composition was rejected
 because it still included that regressive hot-state mechanism.
 
-This is exactly why mechanisms are ablated independently: the next experiment
-removes hot state instead of allowing the adapter's large gain to mask it.
+This is exactly why mechanisms are ablated independently. The clean rerun then
+removed hot state and improved the same OpenTelemetry workload by 5,361.25 ms
+or 50.40%, with 4/4 positive pairs and a strictly positive interval. The result
+qualifies the clean composition for this exact workload; it does not rehabilitate
+hot state or authorize a universal claim.
 
 ## Recommended Direction
 
-### 1. Rebuild the profile without hot-state reuse
+### 1. Generalize the qualified clean profile
 
-The first full-path composition did not qualify. Create the next experimental
-profile from only the remaining non-regressive mechanisms:
+The clean profile now contains only the remaining non-regressive mechanisms:
 
 - native Gradle local cache as the cache baseline;
 - Build Impact with full-graph fallback;
@@ -115,14 +115,16 @@ profile from only the remaining non-regressive mechanisms:
 - reviewed task patches only when their contract matches exactly;
 - output equivalence, failure attribution, and immediate bypass throughout.
 
-It should explicitly exclude Runtime Tuning, strict Safe Cache, and Edge Cache
-until they demonstrate incremental value. This is **unified orchestration**, not
-"turn every feature on."
+It must continue to exclude Runtime Tuning, strict Safe Cache, hot state, and
+Edge Cache until each demonstrates incremental value. Generalization should now
+cover leaf, shared, build-logic, and global changes plus compilation,
+test-preparation, verification, packaging, and distribution outputs. This is
+**unified orchestration**, not "turn every feature on."
 
-### 2. Measure the clean composition against the same native control
+### 2. Keep the same native control while broadening workload coverage
 
-A single native-versus-everything comparison still would not show why it wins.
-Run the same OpenTelemetry mutation and outputs through these arms:
+A single native-versus-everything comparison still does not prove transfer.
+For every new change/output cell, retain these attributable arms:
 
 1. optimized native Gradle;
 2. native Gradle plus Build Impact;
@@ -130,10 +132,10 @@ Run the same OpenTelemetry mutation and outputs through these arms:
 4. the same candidate with native/full-graph fallback probes.
 
 Use Spring Framework and OpenTelemetry first because they already have stable
-protocols and meaningful build durations. Measure compilation,
-`testClasses`/test preparation, packaging, and the requested full build where
-the output contract can be stated exactly. This does not authorize test
-selection or skipping test execution; Test Optimization remains separate.
+protocols and meaningful build durations. Add a third repository only after an
+unchanged profile exercises a genuinely new workload class. This does not
+authorize test selection or skipping test execution; Test Optimization remains
+separate.
 
 Every arm should retain all signed observations and require:
 
@@ -231,21 +233,20 @@ exercises a different workload class or invalidates a current assumption.
 
 ## Recommended Next Block
 
-The next implementation block should be **Clean Qualified-Path Composition**:
+The next implementation block should be **Build Impact Generalization**:
 
-1. preregister OpenTelemetry Build Impact plus the standard `Jar` adapter with
-   hot state explicitly disabled;
-2. reuse the same optimized native Gradle control, mutation, required outputs,
-   alternating order, and unchanged 500-ms/2% gate;
-3. prove `Jar` restoration, exact outputs, zero product failures, and global
-   full-graph fallback in every candidate pair;
-4. retain the result even if it regresses; do not retry or move thresholds;
-5. only after qualification, generalize Build Impact and trace the next task
-   tail.
+1. preregister real leaf, shared, build-logic, and global changes before timing;
+2. cover compilation, test preparation, verification, packaging, and
+   distribution output contracts;
+3. retain the same optimized native Gradle control, 500-ms/2% gate, alternating
+   pairs, exact outputs, zero product failures, and full-graph fallback;
+4. keep the qualified standard `Jar` adapter active only where its exact task
+   contract matches and keep hot state disabled;
+5. broaden the claim only for cells that independently qualify.
 
-This block answers whether the actual non-regressive composition preserves the
-large adapter gain without relying on a component already shown to hurt wall
-time.
+The clean OpenTelemetry result answers the composition question positively.
+The next risk is breadth: proving the same mechanisms remain useful beyond one
+leaf production-source mutation and one output family.
 
 ## Open Questions
 
@@ -282,6 +283,7 @@ artifacts are:
 - [OpenTelemetry hot-state evidence](../../benchmarks/results/poc-otel-hot-state-v1.json);
 - [final OpenTelemetry optimization evidence](../../benchmarks/results/poc-otel-optimization-v2.json).
 - [fresh full-path ablation and retained component evidence](../../benchmarks/results/poc-full-path-ablation-v1/summary.json).
+- [qualified clean OpenTelemetry composition](../../benchmarks/results/poc-otel-clean-composition-v1.json).
 
 Validate the current scorecard with:
 

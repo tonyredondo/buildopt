@@ -96,10 +96,11 @@ decision is therefore `CONTINUE`, qualified only for those controlled workload
 classes. The repeated realistic breadth gate retained that narrow claim after
 4/8 cells qualified. A substantial Spring `testClasses` workload then saved
 28.72% across 8/8 pairs. After task attribution and a conservative
-standard-`Jar` cache adapter, the installed OpenTelemetry Spring-family path
-saved 39.92% across 4/4 pairs, with a positive paired interval, identical
-outputs and safe full-graph fallback. This is qualified POC value for that
-workload, not a universal-savings or production-readiness claim. See the [POC value
+standard-`Jar` cache adapter, the clean installed OpenTelemetry Spring-family
+path saved 50.40% or 5,361.25 ms across 4/4 pairs, with a positive paired
+interval, 125 identical outputs, Hot State disabled, and safe full-graph
+fallback. This is qualified POC value for that workload, not a universal-savings
+or production-readiness claim. See the [POC value
 contract](./specs/poc-value-validation-v1.md) and
 [raw scorecard](./benchmarks/README.md#build-optimization-scorecard).
 

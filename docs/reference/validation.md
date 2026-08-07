@@ -145,9 +145,10 @@ reference data, thresholds, or held-out results merely to obtain promotion.
 ```
 
 The commands validate the final POC decision, strict no-value/no-action
-evidence, accelerator breadth, and the combined public path. The last also
-preserves the earlier mechanism-development scorecard for historical
-comparison. None reruns Gradle or adds percentages from different workloads.
+evidence, accelerator breadth, and the combined public path. The last preserves
+the earlier mechanism-development scorecard and validates the clean
+OpenTelemetry composition as the current substantial public path. None reruns
+Gradle or adds percentages from different workloads.
 Use the owning benchmark runner only when the relevant implementation or
 fixture changes.
 
@@ -169,9 +170,13 @@ eight-pair gate.
 The later installed-path iteration is separate from that unchanged transfer.
 After task attribution, typed graph reduction and exact-bound hot state, the
 explicit standard-`Jar` adapter passed the new four-pair OpenTelemetry gate at
-39.92% mean saving with 4/4 positive pairs and exact outputs. Validate the
-checked evidence with `./dev/check-poc-otel-optimization-v2-result`; this
-qualifies only the POC workload and does not widen production cache policy.
+39.92% mean saving with 4/4 positive pairs and exact outputs. The subsequent
+clean composition removes the regressive hot-state mechanism and saves 50.40%
+or 5,361.25 ms with 4/4 positive pairs, the same 125 outputs, and safe global
+fallback. Validate the historical adapter evidence with
+`./dev/check-poc-otel-optimization-v2-result` and the clean evidence with
+`./dev/check-poc-otel-clean-composition-v1-result`; these results qualify only
+their POC workload and do not widen production cache policy.
 
 `check-poc-breadth` accepts both a passing and a failing decision document and
 recomputes all 64 observations. The post-attribution repeat retains the narrow

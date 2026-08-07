@@ -51,12 +51,24 @@ All source protocols preserved their declared outputs and fallback contracts.
 The aggregate decision is `RETAIN_COMPONENT_EVIDENCE_ONLY`: the fast terminal
 OpenTelemetry arm cannot hide the included hot-state regression. Protocol
 revision 2 tightened this composition rule after measurements without changing
-raw reports, thresholds, pairs, or source decisions. The next experiment is
-Build Impact plus the standard `Jar` adapter **without hot-state reuse**.
+raw reports, thresholds, pairs, or source decisions.
+
+The subsequent [clean-composition evidence](./results/poc-otel-clean-composition-v1.json)
+measures Build Impact plus the standard `Jar` adapter **without hot-state
+reuse** against the same optimized native control. Native Gradle averaged
+10,636.5 ms and the installed candidate averaged 5,275.25 ms, saving 5,361.25
+ms or **50.40%**. Pair savings were +3,825, +5,862, +5,995, and +5,763 ms; the
+paired interval is +4,334.25..+5,937 ms. All four candidate arms restored
+`:testing-common:jar FROM-CACHE`, preserved the same 125-file output digest,
+enabled no hot state or managed runtime, and introduced no product failure. A
+separate global change retained all 53 native entrypoints and completed
+successfully. The terminal decision is `QUALIFY_CLEAN_OTEL_COMPOSITION`.
 
 ```bash
 ./dev/check-poc-full-path-ablation
 ./dev/test-poc-full-path-ablation
+./dev/check-poc-otel-clean-composition-v1-result
+./dev/test-poc-otel-clean-composition-v1
 ```
 
 The scorecard answers a different question for each optimization instead of

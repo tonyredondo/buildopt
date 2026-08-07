@@ -13,10 +13,10 @@
 - **Not every feature adds value.** Safe Cache is effectively at parity with
   Gradle's native cache, and the tested Runtime Tuning profiles regressed. Both
   remain outside the default optimization path.
-- **The first full-path composition was rejected honestly.** Spring Build
-  Impact qualified at 30.86%, while OpenTelemetry's terminal adapter arm was
-  40.60% faster but included a hot-state arm that was 7.68% slower. The next
-  experiment removes hot state rather than hiding that regression.
+- **The clean full path now qualifies.** The first composition was rejected
+  because hot state regressed by 7.68%. The fresh rerun removed hot state and
+  combined only Build Impact with the exact standard-`Jar` adapter, saving
+  **5,361.25 ms/50.40%** with 4/4 positive pairs and 125 identical outputs.
 
 ## Product Idea
 
@@ -83,6 +83,7 @@ unfavorable observations. Percentages from different rows are not additive.
 | Typed graph reduction plus hot plan | **1.94% slower**, only 2/4 positive pairs | Correct outputs and fallback, but insufficient value. The result was retained rather than hidden. |
 | Exact-bound hot-state reuse | BuildOpt preparation reduced from 74.97 ms to 40.34 ms (**46.2%**) | Internal planning improvement only; not a whole-build percentage. |
 | Standard-`Jar` adapter | **39.92% faster**, 4,377 ms saved, 4/4 positive pairs | Qualified installed POC value with 125 identical outputs, zero product failures, and full 53-entrypoint fallback. |
+| Clean Impact + standard-`Jar` composition | **50.40% faster**, 5,361.25 ms saved, 4/4 positive pairs | Qualified without hot state; paired interval +4,334.25..+5,937 ms, identical 125-file outputs, and successful full-graph fallback. |
 
 ## Latest Ablation and Next Work
 
@@ -94,12 +95,17 @@ the standard `Jar` adapter produced a strong 4,496.75-ms/40.60% terminal gain,
 but that composition was rejected because it contained the regressive hot-state
 arm. All raw evidence and unfavorable observations were retained.
 
-The next block is `POC-FULL-PATH-CLEAN-001`: preregister and measure Build
-Impact plus the standard `Jar` adapter **without hot-state reuse**. The gate
-remains at least 500 ms/2%, a positive paired lower bound, byte-identical
-required outputs, zero product failures, and native/full-graph fallback.
+The clean rerun then removed hot state and qualified at 5,361.25 ms/50.40%
+saved, with 4/4 positive pairs, a +4,334.25..+5,937-ms interval, identical
+outputs, zero product failures, and successful full-graph fallback.
 
-After that, the roadmap is to generalize Build Impact, select new task adapters
+The clean block has now qualified under the unchanged 500-ms/2%, positive-bound,
+exact-output, zero-failure, and full-fallback gate. The next block is
+`POC-IMPACT-GENERALIZATION-001`: generalize Build Impact across real change
+shapes and compilation, test-preparation, verification, packaging, and
+distribution outputs while keeping hot state and other unproven mechanisms off.
+
+After that, the roadmap is to select new task adapters
 from real dominant-tail traces, optimize build-owned test preparation without
 changing Test execution, investigate Runtime Tuning only around measured
 bottlenecks, compare Shared/Edge directly with native remote cache, and finally
@@ -118,3 +124,4 @@ production operations are outside the current scope.
 - [Installed Spring evidence](../../benchmarks/results/poc-spring-installed-impact-v1.json)
 - [Final OpenTelemetry evidence](../../benchmarks/results/poc-otel-optimization-v2.json)
 - [Fresh full-path ablation](../../benchmarks/results/poc-full-path-ablation-v1/summary.json)
+- [Qualified clean OpenTelemetry composition](../../benchmarks/results/poc-otel-clean-composition-v1.json)

@@ -321,6 +321,7 @@ buildopt_required_files=(
     "dev/check-poc-otel-optimization-v2-result"
     "dev/check-poc-otel-clean-composition-v1"
     "dev/check-poc-otel-clean-composition-v1-result"
+    "dev/test-poc-otel-clean-composition-v1"
     "dev/check-poc-full-path-ablation"
     "dev/test-poc-full-path-ablation"
     "dev/check-poc-standard-jar-cache"
