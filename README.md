@@ -111,6 +111,7 @@ contract](./specs/poc-value-validation-v1.md) and
 | Run the source-based POC lab | [Quickstart](./docs/getting-started/quickstart.md) |
 | Add it to GitHub Actions or GitLab CI | [CI integration](./docs/guides/ci-integration.md) |
 | Understand the design | [Architecture overview](./docs/architecture/overview.md) |
+| Review measured value and next priorities | [Performance findings](./docs/findings/build-optimization-performance.md) |
 | Make a code change | [Developer onboarding](./docs/getting-started/developer-onboarding.md) |
 | Find a command or setting | [CLI](./docs/reference/cli.md) and [configuration](./docs/reference/configuration.md) references |
 | Diagnose a failure | [Troubleshooting](./docs/troubleshooting.md) |

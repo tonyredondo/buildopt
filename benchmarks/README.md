@@ -17,6 +17,9 @@ small/medium/large Gradle build matrix and makes no performance claim.
 
 ## Build Optimization scorecard
 
+For a stakeholder-oriented interpretation of these results and the recommended
+next experiments, see [Build Optimization performance findings](../docs/findings/build-optimization-performance.md).
+
 The current POC verdict is `CONTINUE`, qualified only for the measured synthetic
 workload classes. Contractual 4-vCPU/16-GiB runs cover the baseline,
 negative-mechanism decision, accelerator-coverage matrix, combined public path,

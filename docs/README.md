@@ -14,6 +14,7 @@ before running the product.
 | Add BuildOpt to CI | [CI integration](./guides/ci-integration.md) | [Configuration reference](./reference/configuration.md) |
 | Operate self-hosted or Edge | [Operations guide](./guides/operations.md) | [Runbooks](../runbooks/README.md) |
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
+| Review measured value and next priorities | [Performance findings](./findings/build-optimization-performance.md) | [Benchmark evidence](../benchmarks/README.md) |
 | Inspect exact behavior | [Specifications index](../specs/README.md) | [Contracts index](../contracts/README.md), [ADRs](../adr/README.md) |
 
 ## Documentation map
@@ -44,6 +45,12 @@ before running the product.
   execution on GitHub Actions and GitLab CI.
 - [Operations](./guides/operations.md): deployment choices, service lifecycle,
   health, recovery, upgrades, and removal.
+
+### Findings and recommendations
+
+- [Build Optimization performance findings](./findings/build-optimization-performance.md):
+  measured contribution by component, current activation decisions, evidence
+  boundaries, and the recommended experimental roadmap.
 
 ### Reference
 
