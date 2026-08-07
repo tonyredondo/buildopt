@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [EVIDENCE_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_evidence=${1:-"${buildopt_repo_root}/benchmarks/results/poc-normal-build-tail-expansion-v1.json"}
+buildopt_spec="${buildopt_repo_root}/specs/poc-normal-build-tail-expansion-v1.json"
+buildopt_copy_spec="${buildopt_repo_root}/specs/poc-standard-copy-cache-v1.json"
+buildopt_copy_evidence="${buildopt_repo_root}/benchmarks/results/poc-standard-copy-cascade-v1.json"
+buildopt_spring_evidence="${buildopt_repo_root}/benchmarks/results/poc-impact-generalization-v1.json"
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required normal-build tail command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+for buildopt_file in "${buildopt_spec}" "${buildopt_copy_spec}" \
+    "${buildopt_copy_evidence}" "${buildopt_spring_evidence}" \
+    "${buildopt_evidence}"; do
+    [[ -s "${buildopt_file}" ]] || {
+        printf 'normal-build tail input is unavailable: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_copy_spec_sha=$(sha256sum "${buildopt_copy_spec}" | awk '{print $1}')
+buildopt_copy_evidence_sha=$(sha256sum "${buildopt_copy_evidence}" | awk '{print $1}')
+buildopt_spring_evidence_sha=$(sha256sum "${buildopt_spring_evidence}" | awk '{print $1}')
+
+jq -e --arg copySpecSha "${buildopt_copy_spec_sha}" \
+    --arg copyEvidenceSha "${buildopt_copy_evidence_sha}" \
+    --arg springEvidenceSha "${buildopt_spring_evidence_sha}" \
+    --slurpfile contract "${buildopt_spec}" \
+    --slurpfile copySpec "${buildopt_copy_spec}" \
+    --slurpfile copyEvidence "${buildopt_copy_evidence}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    def git_sha: type == "string" and test("^[0-9a-f]{40}$");
+    $contract[0].schemaVersion ==
+        "buildopt.specs/poc-normal-build-tail-expansion/v1" and
+    $contract[0].decision == "REVIEW_FIXED_REAL_TAIL_BEFORE_ANOTHER_ADAPTER" and
+    $contract[0].selectionGate == {
+        minimumObservedDurationMs: 500,
+        mustBeUnmodifiedStandardGradleTask: true,
+        mustExposeBoundedInputsAndOutputs: true,
+        mustNotAlreadyReplayFromNativeCache: true,
+        mustNotBeTestOwned: true,
+        mustHaveStableIncrementalEvidenceWhenAlreadyImplemented: true,
+        repositorySpecificTaskNamesAllowedInProduct: false
+    } and
+    $contract[0].terminalDecisions == [
+        "SELECT_ONE_EXACT_STANDARD_TASK_CANDIDATE",
+        "STOP_NORMAL_BUILD_TASK_ADAPTER_EXPANSION_NO_ACTIONABLE_TAIL"
+    ] and
+    .schemaVersion == "buildopt.evidence/poc-normal-build-tail-expansion/v1" and
+    .workItem == $contract[0].workItem and
+    (.capturedAt | fromdateiso8601) > 0 and
+    (.reviewRevision | git_sha) and
+    .sources.standardCopySelection == {
+        path: $contract[0].inputs.standardCopySelection,
+        sha256: $copySpecSha
+    } and
+    .sources.standardCopyCascade == {
+        path: $contract[0].inputs.standardCopyCascade,
+        sha256: $copyEvidenceSha
+    } and
+    .sources.springGeneralization == {
+        path: $contract[0].inputs.springGeneralization,
+        sha256: $springEvidenceSha
+    } and
+    (.sources[] | .sha256 | sha256) and
+    (.reviewedTails | length) == 4 and
+    .reviewedTails[0] == {
+        taskFamily: "STANDARD_JAR",
+        observedTaskPath: $copySpec[0].selection.ranking[0].taskPath,
+        observedDurationMs: $copySpec[0].selection.ranking[0].durationMs,
+        classification: "ALREADY_QUALIFIED",
+        actionable: false,
+        reason: "EXACT_STANDARD_JAR_ALREADY_ACTIVE"
+    } and
+    .reviewedTails[1].taskFamily == "STANDARD_COPY" and
+    .reviewedTails[1].observedTaskPath == $copySpec[0].selection.ranking[1].taskPath and
+    .reviewedTails[1].observedDurationMs == $copySpec[0].selection.ranking[1].durationMs and
+    .reviewedTails[1].classification == "IMPLEMENTED_BUT_INCREMENTALLY_UNSTABLE" and
+    (.reviewedTails[1].actionable | not) and
+    .reviewedTails[1].incrementalEvidence ==
+        ($copyEvidence[0].result.comparisons[] |
+            select(.comparison == "INCREMENTAL_COPY_ON_QUALIFIED_PROFILE") |
+            {
+                meanSavedMs,
+                reductionRatio,
+                positivePairs,
+                interval95SavedMs,
+                qualified
+            }) and
+    .reviewedTails[1].reason == "DIRECT_INCREMENTAL_GATE_FAILED" and
+    .reviewedTails[2] == {
+        taskFamily: "CUSTOM_SHADOW_JAR",
+        observedTaskPath: $copySpec[0].selection.ranking[2].taskPath,
+        observedDurationMs: $copySpec[0].selection.ranking[2].durationMs,
+        classification: "NATIVE_CACHE_ALREADY_EFFECTIVE",
+        actionable: false,
+        reason: "CUSTOM_BELOW_FLOOR_AND_ALREADY_FROM_CACHE"
+    } and
+    .reviewedTails[3] == {
+        taskFamily: "CONFIGURED_JAVA_EXEC",
+        observedTaskPath: $copySpec[0].selection.ranking[3].taskPath,
+        observedDurationMs: $copySpec[0].selection.ranking[3].durationMs,
+        classification: "EFFECT_BOUNDARY_TOO_BROAD",
+        actionable: false,
+        reason: "BELOW_FLOOR_AND_EXTERNAL_PROCESS_EFFECTS_UNBOUNDED"
+    } and
+    .springReview == {
+        newStandardTaskCandidate: false,
+        decision: $copySpec[0].selection.springDecision
+    } and
+    .cascadeContext ==
+        ($copyEvidence[0].result.comparisons[] |
+            select(.comparison == "COMPLETE_PROFILE_VS_NATIVE") |
+            {
+                completeProfileMeasuredDirectly: true,
+                completeProfileMeanSavedMs: .meanSavedMs,
+                completeProfileReductionRatio: .reductionRatio,
+                completeProfilePositivePairs: .positivePairs,
+                completeProfileInterval95SavedMs: .interval95SavedMs,
+                percentagesAdded: false,
+                copyActivationAuthorized: false
+            }) and
+    ([.reviewedTails[] | select(.actionable)] | length) == 0 and
+    .result == {
+        actionableCandidateCount: 0,
+        selectedTaskFamily: null,
+        productImplementationRequired: false,
+        decision: "STOP_NORMAL_BUILD_TASK_ADAPTER_EXPANSION_NO_ACTIONABLE_TAIL",
+        nextWorkItem: "POC-TEST-BUILD-OPTIMIZATION-001"
+    } and
+    .boundaries == $contract[0].boundaries
+' "${buildopt_evidence}" >/dev/null
+
+printf 'normal-build task-tail expansion OK: no actionable exact standard-task candidate\n'

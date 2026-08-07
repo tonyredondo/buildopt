@@ -2852,6 +2852,22 @@ digest and the global fallback succeeds. The terminal decision is therefore
 `RETAIN_STANDARD_COPY_EVIDENCE_ONLY`: keep Copy disabled while retaining the
 qualified whole-profile cascade evidence.
 
+Before adding another normal-build adapter, review the remaining retained real
+task tails and their source hashes:
+
+```bash
+./dev/check-poc-normal-build-tail-expansion
+./dev/test-poc-normal-build-tail-expansion
+```
+
+The checked review adds no timing claim and finds zero actionable candidates.
+Standard `Jar` is already qualified, standard `Copy` failed its direct
+incremental gate, custom `ShadowJar` is below the value floor and already
+served by native cache, configured `JavaExec` is below the floor with broader
+process effects, and Spring selected no new standard task. Its terminal
+decision is `STOP_NORMAL_BUILD_TASK_ADAPTER_EXPANSION_NO_ACTIONABLE_TAIL`;
+another adapter requires a materially different dominant tail.
+
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source
 distribution. Structural discovery freezes selective execution only where the

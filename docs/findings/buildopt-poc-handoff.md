@@ -125,6 +125,13 @@ POC measures the whole profile as well as each increment: graph reduction can
 shorten the critical path and amplify later reuse, while a favorable terminal
 profile must not conceal an unqualified component.
 
+The follow-up normal-build tail review found no further actionable adapter in
+the retained real traces. Standard `Jar` is already active, standard `Copy`
+remains unauthorized, custom `ShadowJar` is below the value floor and already
+served by native cache, configured `JavaExec` is below the floor with broader
+effects, and Spring exposed no new exact standard task. This closes only the
+current trace set; a materially different dominant tail may reopen the work.
+
 The next block is `POC-TEST-BUILD-OPTIMIZATION-001`: optimize build-owned test
 compilation, preparation, and packaging without selecting, skipping,
 reprioritizing, retrying, or sharding Test-owned execution. After that, the

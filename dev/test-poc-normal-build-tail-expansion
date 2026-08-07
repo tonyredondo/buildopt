@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_evidence="${buildopt_repo_root}/benchmarks/results/poc-normal-build-tail-expansion-v1.json"
+buildopt_tampered=$(mktemp "${TMPDIR:-/tmp}/buildopt-normal-tail-tampered.XXXXXX.json")
+trap 'rm -f -- "${buildopt_tampered}"' EXIT
+
+"${buildopt_script_dir}/check-poc-normal-build-tail-expansion" \
+    "${buildopt_evidence}" >/dev/null
+
+jq '.reviewedTails[1].actionable = true' "${buildopt_evidence}" \
+    >"${buildopt_tampered}"
+if "${buildopt_script_dir}/check-poc-normal-build-tail-expansion" \
+    "${buildopt_tampered}" >/dev/null 2>&1; then
+    printf 'normal-build tail checker accepted an actionable rejected Copy tail\n' >&2
+    exit 1
+fi
+
+jq '.result.decision = "SELECT_ONE_EXACT_STANDARD_TASK_CANDIDATE"' \
+    "${buildopt_evidence}" >"${buildopt_tampered}"
+if "${buildopt_script_dir}/check-poc-normal-build-tail-expansion" \
+    "${buildopt_tampered}" >/dev/null 2>&1; then
+    printf 'normal-build tail checker accepted a fabricated selection decision\n' >&2
+    exit 1
+fi
+
+printf 'normal-build task-tail negative checks OK\n'

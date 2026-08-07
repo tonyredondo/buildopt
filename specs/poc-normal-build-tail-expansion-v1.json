@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "buildopt.specs/poc-normal-build-tail-expansion/v1",
+  "workItem": "POC-NORMAL-BUILD-TAIL-EXPANSION-001",
+  "decision": "REVIEW_FIXED_REAL_TAIL_BEFORE_ANOTHER_ADAPTER",
+  "purpose": "Decide whether the retained Spring and OpenTelemetry traces justify another exact standard-task adapter after Jar qualification and Copy rejection.",
+  "inputs": {
+    "standardCopySelection": "specs/poc-standard-copy-cache-v1.json",
+    "standardCopyCascade": "benchmarks/results/poc-standard-copy-cascade-v1.json",
+    "springGeneralization": "benchmarks/results/poc-impact-generalization-v1.json"
+  },
+  "selectionGate": {
+    "minimumObservedDurationMs": 500,
+    "mustBeUnmodifiedStandardGradleTask": true,
+    "mustExposeBoundedInputsAndOutputs": true,
+    "mustNotAlreadyReplayFromNativeCache": true,
+    "mustNotBeTestOwned": true,
+    "mustHaveStableIncrementalEvidenceWhenAlreadyImplemented": true,
+    "repositorySpecificTaskNamesAllowedInProduct": false
+  },
+  "terminalDecisions": [
+    "SELECT_ONE_EXACT_STANDARD_TASK_CANDIDATE",
+    "STOP_NORMAL_BUILD_TASK_ADAPTER_EXPANSION_NO_ACTIONABLE_TAIL"
+  ],
+  "boundaries": {
+    "proofOfConcept": true,
+    "newTimingClaim": false,
+    "priorPercentagesAdded": false,
+    "testOptimizationModified": false,
+    "productionReadinessClaim": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

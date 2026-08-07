@@ -108,6 +108,22 @@ stable cascade, but the direct incremental gate does not authorize activating
 Copy. This prevents a fast terminal profile from concealing an unstable
 component.
 
+### Normal-build task-tail closure
+
+The checked [normal-build task-tail review](./results/poc-normal-build-tail-expansion-v1.json)
+re-evaluates the remaining retained Spring and OpenTelemetry tails before any
+more adapter code is authorized. It adds no timing claim: source evidence is
+bound by SHA-256 and checked against the existing 500-ms, exact-standard-task,
+bounded-effects, native-cache, Test-ownership, and incremental-value gates.
+
+The review finds no actionable candidate. Standard `Jar` is already active;
+standard `Copy` failed its direct incremental gate; custom `ShadowJar` is below
+the floor and already restored from native cache; configured `JavaExec` is
+below the floor and has broader process effects. The terminal decision is
+`STOP_NORMAL_BUILD_TASK_ADAPTER_EXPANSION_NO_ACTIONABLE_TAIL`, so the POC moves
+to build-owned test work instead of implementing a generic adapter merely to
+continue the sequence.
+
 ```bash
 ./dev/check-poc-full-path-ablation
 ./dev/test-poc-full-path-ablation
@@ -117,6 +133,8 @@ component.
 ./dev/test-poc-impact-generalization
 ./dev/check-poc-standard-copy-cascade \
   benchmarks/results/poc-standard-copy-cascade-v1.json
+./dev/check-poc-normal-build-tail-expansion
+./dev/test-poc-normal-build-tail-expansion
 ```
 
 The scorecard answers a different question for each optimization instead of

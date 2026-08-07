@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-normal-build-tail-expansion/v1",
+  "workItem": "POC-NORMAL-BUILD-TAIL-EXPANSION-001",
+  "capturedAt": "2026-08-07T16:29:07Z",
+  "reviewRevision": "07ebd63c1b92a856ef2d2f51fbc277030663c51e",
+  "sources": {
+    "standardCopySelection": {
+      "path": "specs/poc-standard-copy-cache-v1.json",
+      "sha256": "069c6a531ae31cc595f26f0c9d62105ccb06c024d7b4abcff22d0e3b4790e85c"
+    },
+    "standardCopyCascade": {
+      "path": "benchmarks/results/poc-standard-copy-cascade-v1.json",
+      "sha256": "a28f19f202728c4639a8f6201d259270b63d4b0da0abcf5afe30a7919e37f96c"
+    },
+    "springGeneralization": {
+      "path": "benchmarks/results/poc-impact-generalization-v1.json",
+      "sha256": "9410aa12f703ad44354145e20ea1fd4c648c5f55552b0cdd382fdacd84c9dd66"
+    }
+  },
+  "reviewedTails": [
+    {
+      "taskFamily": "STANDARD_JAR",
+      "observedTaskPath": ":testing-common:jar",
+      "observedDurationMs": 3624,
+      "classification": "ALREADY_QUALIFIED",
+      "actionable": false,
+      "reason": "EXACT_STANDARD_JAR_ALREADY_ACTIVE"
+    },
+    {
+      "taskFamily": "STANDARD_COPY",
+      "observedTaskPath": ":testing:dependencies-shaded-for-testing:extractShadowJar",
+      "observedDurationMs": 2807,
+      "classification": "IMPLEMENTED_BUT_INCREMENTALLY_UNSTABLE",
+      "actionable": false,
+      "incrementalEvidence": {
+        "meanSavedMs": 2391.25,
+        "reductionRatio": 0.24901072581484954,
+        "positivePairs": 3,
+        "interval95SavedMs": [-2568.25, 7092],
+        "qualified": false
+      },
+      "reason": "DIRECT_INCREMENTAL_GATE_FAILED"
+    },
+    {
+      "taskFamily": "CUSTOM_SHADOW_JAR",
+      "observedTaskPath": ":testing:dependencies-shaded-for-testing:shadowJar",
+      "observedDurationMs": 497,
+      "classification": "NATIVE_CACHE_ALREADY_EFFECTIVE",
+      "actionable": false,
+      "reason": "CUSTOM_BELOW_FLOOR_AND_ALREADY_FROM_CACHE"
+    },
+    {
+      "taskFamily": "CONFIGURED_JAVA_EXEC",
+      "observedTaskPath": ":instrumentation-api-incubator:generateJflex",
+      "observedDurationMs": 427,
+      "classification": "EFFECT_BOUNDARY_TOO_BROAD",
+      "actionable": false,
+      "reason": "BELOW_FLOOR_AND_EXTERNAL_PROCESS_EFFECTS_UNBOUNDED"
+    }
+  ],
+  "springReview": {
+    "newStandardTaskCandidate": false,
+    "decision": "NO_NEW_STANDARD_TASK_SELECTED_FROM_SPRING"
+  },
+  "cascadeContext": {
+    "completeProfileMeasuredDirectly": true,
+    "completeProfileMeanSavedMs": 4377,
+    "completeProfileReductionRatio": 0.5288786853552441,
+    "completeProfilePositivePairs": 4,
+    "completeProfileInterval95SavedMs": [4130.25, 4653.25],
+    "percentagesAdded": false,
+    "copyActivationAuthorized": false
+  },
+  "result": {
+    "actionableCandidateCount": 0,
+    "selectedTaskFamily": null,
+    "productImplementationRequired": false,
+    "decision": "STOP_NORMAL_BUILD_TASK_ADAPTER_EXPANSION_NO_ACTIONABLE_TAIL",
+    "nextWorkItem": "POC-TEST-BUILD-OPTIMIZATION-001"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "newTimingClaim": false,
+    "priorPercentagesAdded": false,
+    "testOptimizationModified": false,
+    "productionReadinessClaim": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

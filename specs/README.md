@@ -54,6 +54,7 @@ the exact cross-component contract.
 | [`cache-parity-v1.md`](./cache-parity-v1.md) | Safe-cache performance |
 | [`poc-standard-jar-cache-v1.md`](./poc-standard-jar-cache-v1.md) | OpenTelemetry POC repeated-work reduction |
 | [`poc-standard-copy-cache-v1.md`](./poc-standard-copy-cache-v1.md) and [`poc-standard-copy-cache-v1.json`](./poc-standard-copy-cache-v1.json) | `POC-TASK-TAIL-ADAPTERS-001` |
+| [`poc-normal-build-tail-expansion-v1.md`](./poc-normal-build-tail-expansion-v1.md) and [`poc-normal-build-tail-expansion-v1.json`](./poc-normal-build-tail-expansion-v1.json) | `POC-NORMAL-BUILD-TAIL-EXPANSION-001` |
 | [`private-beta-data-lifecycle-v1.md`](./private-beta-data-lifecycle-v1.md) | `A1-004` / `A1-G05` |
 | [`private-beta-operations-v1.md`](./private-beta-operations-v1.md) | `A1-005` |
 | [`owner-controlled-pilot-deployment-v1.md`](./owner-controlled-pilot-deployment-v1.md) | `A1-001` |

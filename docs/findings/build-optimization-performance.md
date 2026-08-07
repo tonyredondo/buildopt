@@ -171,19 +171,20 @@ and source distribution reported incomplete graphs and retained exact-output
 full-graph execution. Therefore only the test-preparation cell is generalized;
 all other measured cells remain native or full graph.
 
-### 4. Expand task optimization from measured tails, not from a generic list
+### 4. Stop normal-build adapter expansion when the measured tail is exhausted
 
-The standard `Jar` result justifies looking for more adapters, but the next task
-type should be selected from traces of real repositories. For each dominant
-tail:
+The retained Spring and OpenTelemetry traces have now been re-evaluated under
+the same evidence gate. They do not justify another adapter: standard `Jar` is
+already qualified; standard `Copy` failed its direct incremental gate; custom
+`ShadowJar` is below the 500-ms floor and already restored from native cache;
+and configured `JavaExec` is below the floor with external-process effects too
+broad for a generic adapter. Spring produced no additional exact standard-task
+candidate.
 
-1. prove that the task type and implementation are exact and unmodified;
-2. define the required inputs, outputs, Gradle versions, and fallback;
-3. measure the adapter independently against optimized native Gradle;
-4. keep custom or ambiguous task implementations in normal execution.
-
-This approach is more likely to create defensible gains than preselecting a
-large catalog of task types and hoping they help.
+This is a bounded stop for the current traces, not a claim that every possible
+normal-build optimization has been discovered. A new adapter should reopen
+only when a materially different workload exposes a dominant, exact,
+unmodified task with bounded effects and independent incremental value.
 
 ### 5. Keep Runtime Tuning as targeted research
 
@@ -241,30 +242,26 @@ exercises a different workload class or invalidates a current assumption.
 
 ## Recommended Next Block
 
-The next implementation block should be **Trace-selected task adapters**:
+The next implementation block is **build-owned test-build optimization**:
 
-1. use existing Spring and OpenTelemetry task-attribution traces to rank the
-   remaining dominant build-owned tails;
-2. select one exact, unmodified standard Gradle task type rather than a generic
-   task family;
-3. freeze its implementation identity, inputs, outputs, supported Gradle
-   versions, native fallback, and denial cases before changing product code;
-4. measure the adapter independently against optimized native Gradle under the
-   same 500-ms/2%/positive-bound gate;
-5. activate it only if the complete installed path preserves exact outputs and
-   produces incremental value.
+1. profile test compilation, resource processing, fixture preparation, and
+   packaging on the fixed substantial public repositories;
+2. select one build-owned bottleneck from measured wall-clock evidence;
+3. preserve every requested `Test` task, test selection, order, retry, shard,
+   and outcome;
+4. measure the candidate independently and as part of the complete qualified
+   profile against optimized native Gradle;
+5. retain native execution whenever the unchanged 500-ms/2%/positive-bound
+   gate or exact-output/test-outcome checks fail.
 
-Build Impact generalization answered the breadth question partially: test
-preparation transfers, while compilation and packaging do not yet justify
-activation and incomplete graphs fail closed. The next opportunity is therefore
-another precise task adapter selected from real dominant-tail evidence.
+The task-tail review is complete with zero actionable normal-build candidates.
+This next block explores a different source of repeated build work without
+crossing into Test Optimization.
 
 ## Open Questions
 
 - Does Build Impact remain positive across full `build`, packaging, and
   verification entrypoints, not only selected test-preparation outputs?
-- Which standard Gradle task type is the next repeated non-cacheable tail after
-  `Jar`?
 - Can Runtime Tuning find a workload-specific win without a long search cost or
   an unstable profile?
 - Does Shared or Edge Cache improve end-to-end time over a native Gradle remote
