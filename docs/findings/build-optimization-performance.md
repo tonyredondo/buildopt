@@ -10,8 +10,10 @@
   well-configured native Gradle cache.** It improves builds that did not have
   effective caching, but is effectively at parity with Gradle's native cache.
 - **The Runtime Tuning profiles tested so far should remain disabled.** The
-  strict comparison against optimized native Gradle regressed build time, so
-  activating tuning would make the product worse rather than better.
+  latest trace-selected Spring experiment changed only the worker cap from 12
+  to 6 and made the build **191.5 ms/2.00% slower**. Earlier synthetic profiles
+  also regressed, so activating tuning would make the product worse rather
+  than better.
 - **The clean composition now qualifies.** After the full-path ablation rejected
   a profile containing a 7.68% hot-state regression, the fresh OpenTelemetry
   run removed hot state and combined only Build Impact with the exact standard
@@ -41,7 +43,7 @@ measured on different workloads and scopes.
 | Component | What it does | Measured build-time effect | Current conclusion |
 |---|---|---:|---|
 | **Safe Cache / local L1** | Reuses verified outputs in a scope isolated by repository, Wrapper, and platform. | Against cache-off: **15.9% faster in Kotlin** and **13.7% faster in Groovy**. Against native Gradle cache: **0.02% faster in Kotlin** and **0.47% slower in Groovy**. | Useful when a repository has no effective cache, but **not an accelerator over native Gradle cache**. Strict Safe Cache remains explicit-only. |
-| **Runtime Tuning** | Tests bounded worker, heap, and resource profiles intended to improve Gradle execution. | The latest candidate, `W3_H4G`, was **4.3% slower** (512 ms). The earlier `W4_H6G` candidate was **54.7% slower**. | **No current value. Disabled.** Optimized native Gradle remains the stable control. |
+| **Runtime Tuning** | Tests bounded worker, heap, and resource profiles intended to improve Gradle execution. | The latest real Spring candidate capped 12 workers to 6 and was **2.00% slower** (191.5 ms), with 2/4 favorable pairs and interval -973.5..+590.5 ms. Earlier synthetic `W3_H4G` and `W4_H6G` candidates were **4.3%** and **54.7% slower**. | **No current value. Disabled.** Optimized native Gradle remains the stable control. |
 | **Build Impact** | Maps a change to the projects and tasks needed for the requested outputs, with full-graph fallback for unknown or global changes. | Synthetic coverage: **73.5-76.0% faster**. Installed Spring path: **15.76% faster**. Generalized Spring test preparation: **18.88% faster**; leaf compilation and packaging did not qualify. | **The strongest broadly useful accelerator currently demonstrated, but only for independently qualified scopes.** |
 | **Task Intelligence** | Observes and qualifies tasks only when their inputs, outputs, cache keys, and outcomes are exact enough to support an optimization. | No general direct saving. In the accepted pilot it enabled a qualified native-cache restore that saved **203 ms** on average. | A **safety and eligibility layer**, not a standalone accelerator. Its value is realized through a qualified cache or patch route. |
 | **Patch Autopilot / reviewed task patch** | Produces a reviewable and reversible patch that correctly declares inputs and outputs and enables caching for an exact custom-task shape. | Exact reviewed Java recipe: **67.3% faster in Kotlin** and **68.0% faster in Groovy**. Combined installed path: **63.5-67.3% faster**. | Highly promising for **specific reviewed task contracts**. The result must not be generalized to arbitrary tasks or recipes. |
@@ -113,6 +115,14 @@ Enabling them would contaminate the gains from Build Impact and task adapters.
 Runtime Tuning should remain a research track with a hard activation rule: no
 profile is applied unless it produces repeatable incremental value for the
 current workload class.
+
+The latest bounded test used the retained Spring trace to preregister one
+worker-oversubscription hypothesis. The same offline `testClasses` workload
+averaged 9,556.75 ms at the native 12 workers and 9,748.25 ms at 6 workers. The
+candidate lost 191.5 ms/2.00%, had only 2/4 positive pairs and a paired interval
+of -973.5..+590.5 ms, while preserving the same 378 outputs and task outcomes.
+The terminal decision is `RETAIN_NATIVE_12_WORKERS`; the protocol explicitly
+forbids another worker search after this no-value result.
 
 ### The terminal result must not hide a regressive component
 
@@ -210,11 +220,13 @@ unmodified task with bounded effects and independent incremental value.
 
 ### 5. Keep Runtime Tuning as targeted research
 
-Do not spend the next cycle building a general automatic tuner. First identify
-workloads where the native profile shows a measurable resource bottleneck:
-worker starvation, heap pressure, garbage collection, queueing, or daemon
-startup. Test one hypothesis at a time and retain `STABLE_CONTROL` whenever the
-paired interval crosses zero or the gain is operationally insignificant.
+Do not spend the next cycle building a general automatic tuner. The bounded
+Spring worker-cap hypothesis failed and is closed without trying 7, 8, 9 or
+another post-result value. Reopen Runtime Tuning only when a materially
+different retained trace identifies a different bottleneck such as heap
+pressure, garbage collection, queueing, configuration work or daemon startup.
+Test one hypothesis at a time and retain `STABLE_CONTROL` whenever the paired
+interval crosses zero or the gain is operationally insignificant.
 
 Potential research areas are:
 
@@ -272,30 +284,31 @@ exercises a different workload class or invalidates a current assumption.
 
 ## Recommended Next Block
 
-The next implementation block is **targeted Runtime Tuning research**:
+The next implementation block is **controlled remote-cache value research**:
 
-1. select one measured worker, heap, GC, queue, configuration, dependency, or
-   warm-up bottleneck from a substantial retained trace;
-2. freeze one bounded candidate before timing rather than searching profiles
-   until one wins;
-3. compare it with the same optimized native Gradle command and preserve exact
-   outputs, tests and failure behavior;
-4. measure its incremental contribution and then the complete qualified path
-   without adding percentages from separate experiments;
-5. retain `STABLE_CONTROL` if the 500-ms/2%/positive-bound gate fails.
+1. compare BuildOpt Shared/Edge Cache with Gradle's native remote cache rather
+   than with cache-off;
+2. freeze latency, bandwidth, object sizes, hit rate and runner locality before
+   timing;
+3. keep the same build, outputs, cache population and cache-hit policy in both
+   arms;
+4. measure complete end-to-end build time plus cache-service overhead;
+5. retain native remote cache if BuildOpt misses the unchanged value gate and
+   does not provide a required safety property at acceptable cost.
 
-Normal-build task tails and direct test-build JAR reuse are now exhausted for
-the current traces. They should reopen only for a materially different dominant
-task, not to manufacture another optimization.
+Normal-build task tails, direct test-build JAR reuse and the trace-selected
+six-worker Runtime candidate are closed for the current evidence. They should
+reopen only for a materially different dominant task or bottleneck, not to
+manufacture another optimization.
 
 ## Open Questions
 
 - Does Build Impact remain positive across full `build`, packaging, and
   verification entrypoints, not only selected test-preparation outputs?
-- Can Runtime Tuning find a workload-specific win without a long search cost or
-  an unstable profile?
 - Does Shared or Edge Cache improve end-to-end time over a native Gradle remote
   cache under realistic network conditions?
+- Does a materially different retained trace expose a Runtime bottleneck that
+  justifies one new preregistered hypothesis?
 - How much of the combined gain remains when the same qualified profile is
   transferred unchanged to a third substantial public repository?
 
@@ -322,10 +335,12 @@ artifacts are:
 - [final OpenTelemetry optimization evidence](../../benchmarks/results/poc-otel-optimization-v2.json).
 - [fresh full-path ablation and retained component evidence](../../benchmarks/results/poc-full-path-ablation-v1/summary.json).
 - [qualified clean OpenTelemetry composition](../../benchmarks/results/poc-otel-clean-composition-v1.json).
+- [targeted Spring Runtime decision](../../benchmarks/results/poc-runtime-research-v1.json).
 
 Validate the current scorecard with:
 
 ```bash
 ./dev/check-build-optimization-performance
 ./dev/check-poc-value-validation
+./dev/check-poc-runtime-research
 ```

@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-runtime-research/v1",
+  "workItem": "POC-RUNTIME-RESEARCH-001",
+  "capturedAt": "2026-08-07T19:16:05Z",
+  "buildoptRevision": "bc9578765e8ad744fa849dc390795bbf3eeb427b",
+  "runnerScriptSha256": "d36bea66ea0fe37f482e10417dd85a17bde643856afed729e1c060cc417cf4f6",
+  "specSha256": "8c2644a980769740412d2822b6dc26d8e270326d705f413a3973641e46286034",
+  "repository": {
+    "nameWithOwner": "spring-projects/spring-framework",
+    "revision": "4b5c92703c63966c3471242c621c4a63b382638d",
+    "sourceArchiveSha256": "e3fa4258e5e568c0b0e6f1605956cd743cff847b9df7c82ce86b2d2f1109db16"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "jdk": "25"
+  },
+  "hypothesis": {
+    "bottleneck": "GRADLE_WORKER_OVERSUBSCRIPTION",
+    "observedSignal": "The retained Spring testClasses trace executed 67 of 160 actionable tasks with max-workers=12, while the retained full-check discovery completed 41,276 tests with six workers after the twelve-worker cell failed.",
+    "singleChangedInput": "--max-workers",
+    "controlValue": 12,
+    "candidateValue": 6
+  },
+  "workflow": {
+    "entrypoint": "testClasses",
+    "controlMaxWorkers": 12,
+    "candidateMaxWorkers": 6,
+    "commonArguments": [
+      "--daemon",
+      "--offline",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--no-scan",
+      "--stacktrace"
+    ]
+  },
+  "preparation": {
+    "onlinePreflightMeasured": false,
+    "onlinePreflightSuccess": true,
+    "onlinePreflightWallClockMs": 196570,
+    "measuredNetwork": "DISCONNECTED",
+    "dependencyMode": "GRADLE_OFFLINE",
+    "buildCacheSeedSha256": "206666f21f751b300b2bb202b7e3a54dff7a2a8acbb1086b42fb015e98a3879d",
+    "sameDependencyAndNativeCacheSeedRestoredBeforeArmSetup": true,
+    "independentCheckoutAndGradleHomePerArm": true,
+    "outputsRemovedBeforeEveryArm": true,
+    "fixedMutationAppliedAfterCacheRestore": true
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlMaxWorkers": 12,
+      "candidateMaxWorkers": 6,
+      "controlDurationMs": 10416,
+      "candidateDurationMs": 9629,
+      "savedMs": 787,
+      "interArmIdleGapMs": 7,
+      "requiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "requiredOutputCount": 378,
+      "taskOutcomeSetSha256": "1db9540c07c6067631f00e34f4539c5a0c71abfb55dae03930a5250834b68e24",
+      "outputsIdentical": true,
+      "taskOutcomesIdentical": true,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlMaxWorkers": 12,
+      "candidateMaxWorkers": 6,
+      "controlDurationMs": 9659,
+      "candidateDurationMs": 11033,
+      "savedMs": -1374,
+      "interArmIdleGapMs": 8,
+      "requiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "requiredOutputCount": 378,
+      "taskOutcomeSetSha256": "1db9540c07c6067631f00e34f4539c5a0c71abfb55dae03930a5250834b68e24",
+      "outputsIdentical": true,
+      "taskOutcomesIdentical": true,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlMaxWorkers": 12,
+      "candidateMaxWorkers": 6,
+      "controlDurationMs": 9673,
+      "candidateDurationMs": 9279,
+      "savedMs": 394,
+      "interArmIdleGapMs": 7,
+      "requiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "requiredOutputCount": 378,
+      "taskOutcomeSetSha256": "1db9540c07c6067631f00e34f4539c5a0c71abfb55dae03930a5250834b68e24",
+      "outputsIdentical": true,
+      "taskOutcomesIdentical": true,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlMaxWorkers": 12,
+      "candidateMaxWorkers": 6,
+      "controlDurationMs": 8479,
+      "candidateDurationMs": 9052,
+      "savedMs": -573,
+      "interArmIdleGapMs": 7,
+      "requiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "requiredOutputCount": 378,
+      "taskOutcomeSetSha256": "1db9540c07c6067631f00e34f4539c5a0c71abfb55dae03930a5250834b68e24",
+      "outputsIdentical": true,
+      "taskOutcomesIdentical": true,
+      "productAttributableFailure": false
+    }
+  ],
+  "result": {
+    "pairs": 4,
+    "controlMeanMs": 9556.75,
+    "candidateMeanMs": 9748.25,
+    "meanSavedMs": -191.5,
+    "reductionRatio": -0.020038192900306066,
+    "interval95SavedMs": [
+      -973.5,
+      590.5
+    ],
+    "positivePairs": 2,
+    "qualified": false,
+    "decision": "RETAIN_NATIVE_12_WORKERS"
+  },
+  "boundaries": {
+    "onlyMaxWorkersChanges": true,
+    "taskSelectionChanged": false,
+    "testExecutionRequested": false,
+    "testOptimizationModified": false,
+    "heapChanged": false,
+    "cachePolicyChanged": false,
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

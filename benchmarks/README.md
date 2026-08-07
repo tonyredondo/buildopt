@@ -162,6 +162,25 @@ to investigate rather than authorizing a causal fixed-cost claim. The only
 activation decision comes from the complete native comparison:
 `KEEP_NATIVE_FOR_UNQUALIFIED_STANDARD_JAR_WORKFLOW`.
 
+### Targeted Runtime Tuning research
+
+The checked [Spring Runtime evidence](./results/poc-runtime-research-v1.json)
+tests one preregistered resource hypothesis rather than searching profiles
+until one wins. Both arms run the same offline `testClasses` workload with the
+same heap, cache state, source mutation, task outcomes and 378 required class
+outputs; only `--max-workers` changes from the native 12 to 6.
+
+| Arm | Mean | Difference |
+|---|---:|---:|
+| Optimized native Gradle, 12 workers | 9,556.75 ms | Control |
+| Bounded Runtime candidate, 6 workers | 9,748.25 ms | **191.5 ms/2.00% slower** |
+
+The candidate is positive in only 2/4 pairs and its paired interval is
+-973.5..+590.5 ms. Every pair preserves the same 378 outputs and sorted task
+outcomes, with zero product failures. The terminal decision is
+`RETAIN_NATIVE_12_WORKERS`: Runtime Tuning remains disabled for this workload,
+and the frozen protocol forbids another worker search after this result.
+
 ```bash
 ./dev/check-poc-full-path-ablation
 ./dev/test-poc-full-path-ablation
@@ -177,6 +196,8 @@ activation decision comes from the complete native comparison:
   benchmarks/results/poc-spring-test-build-optimization-v1.json
 ./dev/check-poc-optimization-overhead-ablation \
   benchmarks/results/poc-optimization-overhead-ablation-v1.json
+./dev/check-poc-runtime-research \
+  benchmarks/results/poc-runtime-research-v1.json
 ```
 
 The scorecard answers a different question for each optimization instead of

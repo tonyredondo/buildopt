@@ -11,8 +11,8 @@
   workload by 15.76%; a conservative standard-`Jar` adapter improved the
   OpenTelemetry workload by 39.92%.
 - **Not every feature adds value.** Safe Cache is effectively at parity with
-  Gradle's native cache, and the tested Runtime Tuning profiles regressed. Both
-  remain outside the default optimization path.
+  Gradle's native cache, and the latest trace-selected Runtime Tuning candidate
+  was 2.00% slower. Both remain outside the default optimization path.
 - **The clean full path now qualifies.** The first composition was rejected
   because hot state regressed by 7.68%. The fresh rerun removed hot state and
   combined only Build Impact with the exact standard-`Jar` adapter, saving
@@ -48,7 +48,7 @@ Unknown changes, unqualified tasks, failed validation, or
 |---|---|---|---|
 | **Launcher and evidence envelope** | Runs the original command and records bounded execution evidence. | Direct Wrapper execution and normal process semantics. | Adds attribution, exact fallback, and bypass. It is infrastructure, not an accelerator, so its overhead must stay off unused paths. |
 | **Safe Cache / local L1** | Reuses verified outputs inside repository/Wrapper/platform boundaries. | Native local and remote Build Cache. | Adds stricter isolation and verification, but no incremental speed advantage has been proven. Native Gradle cache remains the default. |
-| **Runtime Tuning** | Evaluates worker, heap, fork, and resource profiles. | User-configured workers, JVM arguments, parallelism, and daemon behavior. | Intended to choose profiles from evidence rather than static defaults. Current candidates are disabled because they regressed. |
+| **Runtime Tuning** | Evaluates worker, heap, fork, and resource profiles. | User-configured workers, JVM arguments, parallelism, and daemon behavior. | Intended to choose profiles from evidence rather than static defaults. A bounded Spring 12-to-6-worker experiment was 191.5 ms/2.00% slower, so current candidates remain disabled. |
 | **Build Impact** | Maps changed files to the projects and entrypoints required for declared outputs. | Incremental and up-to-date behavior inside the task graph requested by the user. | Selects a smaller repository-authorized graph before Gradle executes it, with full-graph fallback for ambiguous/global changes. This is the strongest broadly useful accelerator so far. |
 | **Task Intelligence** | Qualifies tasks only when inputs, outputs, keys, and outcomes are exact enough. | Cacheability annotations and task validation supplied by build authors/plugins. | Adds an evidence-based eligibility layer. It enables optimizations but does not directly make a build faster. |
 | **Patch Autopilot** | Produces reviewable, reversible patches for exact known task shapes. | Manual build-script/plugin changes. | Can turn a non-cacheable custom task into a safely reusable task, but only for reviewed recipes that match exactly. |
@@ -83,6 +83,7 @@ unfavorable observations. Percentages from different rows are not additive.
 | Shared `spring-core` to `spring-jms` scope | **10.89% faster on average**, but only 3/4 positive pairs | Failed the frozen stability gate; no broad shared-change claim. |
 | Global two-fork test tuning | **24.07% slower** | Rejected. Every test was retained, but the candidate was materially worse. |
 | Selective two-fork test tuning | **1.57% slower** and `:spring-test:test` failed | Rejected and not retried. Work returned to build-owned test preparation. |
+| Trace-selected six-worker `testClasses` cap | **2.00% slower**, 191.5 ms lost, 2/4 positive pairs | Rejected. Native 12 workers averaged 9,556.75 ms; six workers averaged 9,748.25 ms, with identical 378 outputs and task outcomes. |
 | Exact Test-fixture JAR reuse around unchanged tests | **11.31% slower**, 735.25 ms lost, 0/4 positive pairs | Rejected. All 8 tests ran with identical cases and 15 identical JARs; three cache hits did not offset adapter overhead. |
 | Optimized JAR-adapter overhead ablation | **9.53% slower**, 612.25 ms lost, 2/4 positive rounds | Native averaged 6,422.75 ms; init/plugin-only 7,484.50 ms; adapter 7,035 ms. Hits recovered 449.50 ms versus init-only, but end-to-end value still failed. |
 | Generalized shared test preparation | **18.88% faster**, 2,638 ms saved, 4/4 positive pairs | Qualified with interval +1,516..+3,275.5 ms and 378 identical outputs. |
@@ -156,10 +157,17 @@ to init-only on the mean, but remained 612.25 ms/9.53% slower than native, with
 for the current Spring workflow: native Gradle is the value-aware selection;
 cache-hit count cannot override the complete build result.
 
-The next block is `POC-RUNTIME-RESEARCH-001`: select one resource bottleneck
-from retained traces, preregister one bounded hypothesis and keep optimized
-native Gradle whenever it fails the same gate. Shared/Edge comparison and
-third-repository transfer remain later work.
+The bounded Runtime experiment then selected worker oversubscription from the
+retained Spring trace before timing. Reducing the exact `testClasses` workload
+from 12 to 6 workers lost 191.5 ms/2.00%, produced only 2/4 positive pairs and
+an interval of -973.5..+590.5 ms, while preserving all 378 outputs and sorted
+task outcomes. The terminal decision is `RETAIN_NATIVE_12_WORKERS`; no further
+worker search is allowed for this trace.
+
+The next block is `POC-REMOTE-CACHE-VALUE-001`: compare BuildOpt Shared/Edge
+Cache with Gradle's native remote cache under frozen latency, bandwidth, object
+size, hit-rate and runner-locality conditions. Third-repository transfer
+remains later work.
 
 ## Boundaries and References
 
@@ -179,3 +187,4 @@ production operations are outside the current scope.
 - [Standard-Copy cascade evidence](../../benchmarks/results/poc-standard-copy-cascade-v1.json)
 - [Spring test-build stop evidence](../../benchmarks/results/poc-spring-test-build-optimization-v1.json)
 - [Optimization-overhead ablation](../../benchmarks/results/poc-optimization-overhead-ablation-v1.json)
+- [Targeted Runtime decision](../../benchmarks/results/poc-runtime-research-v1.json)

@@ -2917,6 +2917,13 @@ the same source change, task selector, heap, cache policy and required outputs:
 The candidate remains disabled unless all four pairs clear the unchanged
 500-ms/2%/positive-bound gate with exact outputs and task outcomes.
 
+The retained result closes that hypothesis without activation. Native Gradle
+at 12 workers averages 9,556.75 ms; the six-worker candidate averages 9,748.25
+ms, losing 191.5 ms/2.00%. Only 2/4 pairs favor the candidate and the paired
+interval is -973.5..+590.5 ms. All pairs preserve 378 outputs and exact sorted
+task outcomes. The terminal decision is `RETAIN_NATIVE_12_WORKERS`; do not
+search another worker value for this trace.
+
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source
 distribution. Structural discovery freezes selective execution only where the

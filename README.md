@@ -105,7 +105,12 @@ rejected direct Test-fixture JAR reuse after it regressed by 11.31%, so that
 diagnostic switch is not part of the recommended path. A subsequent three-arm
 ablation narrowed plugin registration but still found the complete adapter
 612.25 ms/9.53% slower than native; BuildOpt therefore keeps native Gradle for
-that unqualified workflow instead of treating cache hits as value. See the [POC value
+that unqualified workflow instead of treating cache hits as value. The next
+bounded Runtime Tuning hypothesis also failed: capping the same Spring
+`testClasses` workload from 12 to 6 workers made it 191.5 ms/2.00% slower, with
+only 2/4 favorable pairs and an interval crossing zero. BuildOpt therefore
+retains the native 12-worker control and performs no further parameter search
+for that trace. See the [POC value
 contract](./specs/poc-value-validation-v1.md) and
 [raw scorecard](./benchmarks/README.md#build-optimization-scorecard).
 
