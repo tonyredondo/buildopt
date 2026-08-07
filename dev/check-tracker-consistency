@@ -141,7 +141,7 @@ buildopt_required_tracker_text=(
     "| \`POC-FULL-PATH-ABLATION-001\` | 1 | Run six preregistered arms on Spring and OpenTelemetry"
     "| \`POC-FULL-PATH-CLEAN-001\` | 2 | Preregister and measure OpenTelemetry Build Impact plus the standard Jar adapter without hot-state reuse"
     "| \`POC-IMPACT-GENERALIZATION-001\` | 3 | Extend Build Impact across leaf/shared/build-logic/global changes"
-    "| \`POC-TASK-TAIL-ADAPTERS-001\` | 4 | Select the next standard Gradle task type from real dominant-tail traces"
+    "| \`POC-TASK-TAIL-ADAPTERS-001\` | 4 | Select the next standard Gradle task type from real dominant-tail traces, define an exact eligibility contract, measure it independently, and measure its end-to-end composition without adding component percentages | \`IN PROGRESS\`"
     "| \`POC-TEST-BUILD-OPTIMIZATION-001\` | 5 | Reduce build-owned test compilation, preparation, and packaging without changing Test-owned selection"
     "| \`POC-RUNTIME-RESEARCH-001\` | 6 | Investigate one observed worker, heap, GC, queue, configuration, dependency-resolution, or JVM-warm-up bottleneck at a time"
     "| \`POC-REMOTE-CACHE-VALUE-001\` | 7 | Compare BuildOpt Shared/Edge Cache with Gradle native remote cache"

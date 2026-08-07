@@ -198,7 +198,7 @@ than partners. Test Optimization remains a separate product.
 | 44 | `POC-FULL-PATH-ABLATION-001` | Measure optimized native Gradle and five incrementally composed qualified BuildOpt arms on Spring and OpenTelemetry | `DONE` | Codex |
 | 45 | `POC-FULL-PATH-CLEAN-001` | Measure OpenTelemetry Build Impact plus the standard Jar adapter without the regressive hot-state arm | `DONE` | Codex |
 | 46 | `POC-IMPACT-GENERALIZATION-001` | Generalize Build Impact across real change shapes and compilation, test-preparation, verification, packaging, and distribution outputs | `DONE` | Codex |
-| 47 | `POC-TASK-TAIL-ADAPTERS-001` | Select and qualify the next exact standard-task adapter from real task-attribution traces | `TODO` | Codex |
+| 47 | `POC-TASK-TAIL-ADAPTERS-001` | Select and qualify the next exact standard-task adapter from real task-attribution traces | `IN PROGRESS` | Codex |
 | 48 | `POC-TEST-BUILD-OPTIMIZATION-001` | Optimize build-owned test compilation, preparation, and packaging without selecting, skipping, or reprioritizing Test-owned execution | `WAITING` | — |
 | 49 | `POC-RUNTIME-RESEARCH-001` | Reopen Runtime Tuning only for one measured resource bottleneck and retain stable control unless it beats optimized native Gradle | `WAITING` | — |
 | 50 | `POC-REMOTE-CACHE-VALUE-001` | Compare Shared and Edge Cache end to end with Gradle's native remote cache under controlled network conditions | `WAITING` | — |
@@ -1091,7 +1091,7 @@ incremental evidence beats optimized native Gradle.
 | `POC-FULL-PATH-ABLATION-001` | 1 | Run six preregistered arms on Spring and OpenTelemetry: optimized native Gradle; Build Impact; Impact plus exact hot state; qualified standard-task adapters; exact reviewed task patches; and the complete qualified profile | `DONE` | `E-207` |
 | `POC-FULL-PATH-CLEAN-001` | 2 | Preregister and measure OpenTelemetry Build Impact plus the standard Jar adapter without hot-state reuse under the unchanged value and correctness gates | `DONE` | `E-211` |
 | `POC-IMPACT-GENERALIZATION-001` | 3 | Extend Build Impact across leaf/shared/build-logic/global changes and compilation, test preparation, verification, packaging, and distribution outputs while retaining full-graph fallback | `DONE` | `E-214` |
-| `POC-TASK-TAIL-ADAPTERS-001` | 4 | Select the next standard Gradle task type from real dominant-tail traces, define an exact eligibility contract, and measure it independently | `TODO` | `E-214` |
+| `POC-TASK-TAIL-ADAPTERS-001` | 4 | Select the next standard Gradle task type from real dominant-tail traces, define an exact eligibility contract, measure it independently, and measure its end-to-end composition without adding component percentages | `IN PROGRESS` | `E-214` |
 | `POC-TEST-BUILD-OPTIMIZATION-001` | 5 | Reduce build-owned test compilation, preparation, and packaging without changing Test-owned selection, execution, retries, sharding, or prioritization | `WAITING` | `POC-IMPACT-GENERALIZATION-001`, `POC-TASK-TAIL-ADAPTERS-001` |
 | `POC-RUNTIME-RESEARCH-001` | 6 | Investigate one observed worker, heap, GC, queue, configuration, dependency-resolution, or JVM-warm-up bottleneck at a time; preserve `STABLE_CONTROL` on no-value evidence | `WAITING` | `POC-FULL-PATH-CLEAN-001` |
 | `POC-REMOTE-CACHE-VALUE-001` | 7 | Compare BuildOpt Shared/Edge Cache with Gradle native remote cache using controlled latency, bandwidth, object size, hit rate, and runner locality | `WAITING` | `POC-FULL-PATH-CLEAN-001` |

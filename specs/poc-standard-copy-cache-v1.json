@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "buildopt.specs/poc-standard-copy-cache/v1",
+  "workItem": "POC-TASK-TAIL-ADAPTERS-001",
+  "decision": "PREREGISTER_EXACT_STANDARD_COPY_AND_CASCADE_MEASUREMENT",
+  "preregistration": {
+    "buildoptRevisionBeforeImplementation": "ba04a2155b78920c66ff3cc219542ce039fef850",
+    "completedAcceptedObservations": 0,
+    "priorTimingReused": false,
+    "valueGateChanged": false
+  },
+  "repository": {
+    "nameWithOwner": "open-telemetry/opentelemetry-java-instrumentation",
+    "releaseTag": "v2.30.0",
+    "revision": "080c1d32ca676ba7b0210c21b60cce8e7ac39058",
+    "sourceArchiveSha256": "073c707d98716944ec43cd1d8328d9c5bc47c04029d632d65fb71c1547f8c38c",
+    "gradleVersion": "9.6.1",
+    "jdk": "temurin-21.0.12+8"
+  },
+  "selection": {
+    "traceTaskRowsSha256": "2ff27d03e3b977c4ede7e2f4002af50024f0d078dc34e1fbce57ab1a6eddd0d3",
+    "sourceBuildFileSha256": "e50c53c5b9d3027caa5750be6648f089c6e500db145e5020e2407faf25cdc188",
+    "selectedTaskPath": ":testing:dependencies-shaded-for-testing:extractShadowJar",
+    "observedDurationMs": 2807,
+    "ranking": [
+      {
+        "taskPath": ":testing-common:jar",
+        "durationMs": 3624,
+        "decision": "ALREADY_QUALIFIED_STANDARD_JAR"
+      },
+      {
+        "taskPath": ":testing:dependencies-shaded-for-testing:extractShadowJar",
+        "durationMs": 2807,
+        "decision": "SELECT_EXACT_STANDARD_COPY"
+      },
+      {
+        "taskPath": ":testing:dependencies-shaded-for-testing:shadowJar",
+        "durationMs": 497,
+        "decision": "DENY_CUSTOM_PLUGIN_TASK_ALREADY_FROM_CACHE"
+      },
+      {
+        "taskPath": ":instrumentation-api-incubator:generateJflex",
+        "durationMs": 427,
+        "decision": "DENY_CONFIGURED_JAVAEXEC_BELOW_VALUE_FLOOR"
+      }
+    ],
+    "springDiagnosticSha256": "ac7030fbf5740d3a3903cdec348018174e3b24cecceec16440ec497c7a5b113a",
+    "springDecision": "NO_NEW_STANDARD_TASK_SELECTED_FROM_SPRING"
+  },
+  "eligibility": {
+    "supportedGradleVersions": ["9.6.1"],
+    "concreteClass": "org.gradle.api.tasks.Copy_Decorated",
+    "directSuperclass": "org.gradle.api.tasks.Copy",
+    "actions": ["org.gradle.api.internal.project.taskfactory.StandardTaskAction"],
+    "destinationMustBeBelowProjectBuildDirectory": true,
+    "gradleOwnCacheKeyAndDisableReasonsRemainAuthoritative": true,
+    "denied": [
+      "CUSTOM_COPY_SUBCLASS",
+      "SYNC",
+      "CUSTOM_TASK_ACTION",
+      "DESTINATION_OUTSIDE_PROJECT_BUILD_DIRECTORY",
+      "CUSTOM_ARCHIVE_TASK",
+      "TEST_TASK",
+      "UNSUPPORTED_GRADLE_VERSION"
+    ],
+    "mismatchBehavior": "NATIVE_GRADLE_FALLBACK"
+  },
+  "measurement": {
+    "runnerId": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12,
+    "installedPackageRequired": true,
+    "offlineMeasuredRuns": true,
+    "sharedHotRuntimeWithinComparison": true,
+    "nativeCacheSeedRestored": true,
+    "pairsPerComparison": 4,
+    "pairOrder": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
+    "comparisons": [
+      "COPY_ADAPTER_ONLY",
+      "INCREMENTAL_COPY_ON_QUALIFIED_PROFILE",
+      "COMPLETE_PROFILE_VS_NATIVE"
+    ],
+    "requiredOutputs": [
+      "instrumentation/spring/spring-boot-autoconfigure/build/classes",
+      "testing-common/build/libs",
+      "testing/dependencies-shaded-for-testing/build/extracted/shadow"
+    ],
+    "percentagesMayBeAdded": false
+  },
+  "valueGate": {
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "minimumPositivePairs": 4,
+    "positiveLower95Bound": true,
+    "requiredOutputsIdentical": true,
+    "requiredOutputsNonEmpty": true,
+    "maximumProductAttributableFailures": 0,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedPairsMayBeDiscarded": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "repositorySpecificTaskPathInProduct": false,
+    "testOptimizationModified": false,
+    "hotStateEnabled": false,
+    "runtimeTuningEnabled": false,
+    "safeSharedOrEdgeCacheEnabled": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}
