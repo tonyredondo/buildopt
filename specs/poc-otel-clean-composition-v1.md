@@ -47,3 +47,12 @@ The first attempt inherited a read-only global Gradle home and stopped while
 building the local package, before the source archive was downloaded and
 before any preflight, warm-up, or observation. The product, control, candidate,
 outputs, ordering, and value gate are unchanged; zero timing was accepted.
+
+Protocol revision 3 removes an orphaned `--repository-revision` argument from
+the candidate and fallback runner invocations. The second attempt completed
+source preparation, discovery, and the control warm-up, then stopped before the
+candidate warm-up because revision 2 passed the hot-state revision without the
+required hot-state directory. That is an invalid CLI pair, not a product defect
+or performance result. No measured observation ran or was accepted. The
+product, control, candidate mechanisms, outputs, ordering, and value gate remain
+unchanged, and the complete experiment must restart from fresh temporary state.

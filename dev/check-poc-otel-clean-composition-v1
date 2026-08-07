@@ -10,15 +10,16 @@ buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_spec="${buildopt_repo_root}/specs/poc-otel-clean-composition-v1.json"
 buildopt_tasks="${buildopt_repo_root}/specs/poc-otel-spring-family-v2.tasks.txt"
+buildopt_runner="${buildopt_repo_root}/dev/run-poc-otel-clean-composition-v1"
 
-for buildopt_command in jq sha256sum sort; do
+for buildopt_command in grep jq sha256sum sort; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
         printf 'required clean OpenTelemetry checker is unavailable: %s\n' \
             "${buildopt_command}" >&2
         exit 1
     }
 done
-for buildopt_file in "${buildopt_spec}" "${buildopt_tasks}"; do
+for buildopt_file in "${buildopt_spec}" "${buildopt_tasks}" "${buildopt_runner}"; do
     [[ -s "${buildopt_file}" ]] || {
         printf 'clean OpenTelemetry preregistration is unavailable: %s\n' \
             "${buildopt_file}" >&2
@@ -43,6 +44,19 @@ jq -e --arg taskSha "${buildopt_task_sha}" '
     .workItem == "POC-FULL-PATH-CLEAN-001" and
     .decision == "PREREGISTER_BUILD_IMPACT_AND_STANDARD_JAR_WITHOUT_HOT_STATE" and
     .protocolRevision == {
+        from: 2,
+        to: 3,
+        reason: "RUNNER_PASSED_HOT_STATE_REVISION_WITHOUT_HOT_STATE_DIRECTORY",
+        sourceDownloadedBeforeRevision: true,
+        completedWarmupsBeforeRevision: 1,
+        completedObservationsBeforeRevision: 0,
+        acceptedObservationsBeforeRevision: 0,
+        runnerChanged: true,
+        productChanged: false,
+        controlChanged: false,
+        valueGateChanged: false
+    } and
+    .priorProtocolRevisions == [{
         from: 1,
         to: 2,
         reason: "PACKAGING_INHERITED_READ_ONLY_GLOBAL_GRADLE_HOME",
@@ -54,7 +68,7 @@ jq -e --arg taskSha "${buildopt_task_sha}" '
         productChanged: false,
         controlChanged: false,
         valueGateChanged: false
-    } and
+    }] and
     .preregistration == {
         implementationRevision: "212c1ec39db490e033618664db9841b4f1d5598e",
         completedWarmupsBeforePreregistration: 0,
@@ -168,5 +182,11 @@ jq -e --arg taskSha "${buildopt_task_sha}" '
     .boundaries.previousTerminalExperimentUnchanged == true and
     .boundaries.exactBoundHotStateEnabled == false
 ' "${buildopt_spec}" >/dev/null
+
+if grep -Fq -- '--repository-revision' "${buildopt_runner}" ||
+    grep -Fq -- '--hot-state-dir' "${buildopt_runner}"; then
+    printf 'clean OpenTelemetry runner must not activate partial or complete hot state\n' >&2
+    exit 1
+fi
 
 printf 'clean OpenTelemetry preregistration OK\n'

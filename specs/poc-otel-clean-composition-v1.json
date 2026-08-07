@@ -3,11 +3,11 @@
   "workItem": "POC-FULL-PATH-CLEAN-001",
   "decision": "PREREGISTER_BUILD_IMPACT_AND_STANDARD_JAR_WITHOUT_HOT_STATE",
   "protocolRevision": {
-    "from": 1,
-    "to": 2,
-    "reason": "PACKAGING_INHERITED_READ_ONLY_GLOBAL_GRADLE_HOME",
-    "sourceDownloadedBeforeRevision": false,
-    "completedWarmupsBeforeRevision": 0,
+    "from": 2,
+    "to": 3,
+    "reason": "RUNNER_PASSED_HOT_STATE_REVISION_WITHOUT_HOT_STATE_DIRECTORY",
+    "sourceDownloadedBeforeRevision": true,
+    "completedWarmupsBeforeRevision": 1,
     "completedObservationsBeforeRevision": 0,
     "acceptedObservationsBeforeRevision": 0,
     "runnerChanged": true,
@@ -15,6 +15,21 @@
     "controlChanged": false,
     "valueGateChanged": false
   },
+  "priorProtocolRevisions": [
+    {
+      "from": 1,
+      "to": 2,
+      "reason": "PACKAGING_INHERITED_READ_ONLY_GLOBAL_GRADLE_HOME",
+      "sourceDownloadedBeforeRevision": false,
+      "completedWarmupsBeforeRevision": 0,
+      "completedObservationsBeforeRevision": 0,
+      "acceptedObservationsBeforeRevision": 0,
+      "runnerChanged": true,
+      "productChanged": false,
+      "controlChanged": false,
+      "valueGateChanged": false
+    }
+  ],
   "preregistration": {
     "implementationRevision": "212c1ec39db490e033618664db9841b4f1d5598e",
     "completedWarmupsBeforePreregistration": 0,

@@ -306,7 +306,6 @@ buildopt_run_arm() {
                 --repository-id open-telemetry/opentelemetry-java-instrumentation \
                 --pipeline-class poc-otel-spring-family-v2 \
                 --changes-file .buildopt-changes \
-                --repository-revision "$(jq -er '.repository.revision' "${buildopt_spec}")" \
                 --cache-standard-jar-producers \
                 --gradle-option=--daemon --gradle-option=--offline \
                 --gradle-option=--build-cache --gradle-option=--parallel \
@@ -539,7 +538,6 @@ if ! (
         --repository-id open-telemetry/opentelemetry-java-instrumentation \
         --pipeline-class poc-otel-spring-family-v2 \
         --changes-file .buildopt-changes \
-        --repository-revision "$(jq -er '.repository.revision' "${buildopt_spec}")" \
         --cache-standard-jar-producers \
         --gradle-option=--daemon --gradle-option=--offline \
         --gradle-option=--build-cache --gradle-option=--parallel \
