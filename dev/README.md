@@ -2826,6 +2826,25 @@ cache, and no measured invocation enables exact-bound hot state. The negative
 test proves that the checker rejects both hot-state contamination and output
 drift.
 
+The Build Impact generalization protocol broadens the real Spring matrix across
+compilation, test preparation, build-owned verification, packaging, and source
+distribution. Structural discovery freezes selective execution only where the
+declared graph is complete; unknown verification or distribution relationships
+must retain the original full selector. The checker accepts a pending result so
+the protocol can be committed before timing:
+
+```bash
+./dev/check-poc-impact-generalization
+./dev/run-poc-impact-generalization /absolute/path/to/new-result.json
+./dev/check-poc-impact-generalization /absolute/path/to/new-result.json
+```
+
+The measurement uses the installed package, optimized native Gradle control,
+four alternating pairs per selective cell, byte-identical non-empty outputs,
+and separate build-logic/global fallback cases. It executes no root-build
+Gradle `Test` task and leaves Hot State, Runtime Tuning, Safe Cache, Shared/Edge
+Cache, and Test Optimization disabled.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

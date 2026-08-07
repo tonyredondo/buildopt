@@ -1,0 +1,626 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+buildopt_mode=measure
+if (($# == 2)) && [[ "$1" == --discover ]]; then
+    buildopt_mode=discover
+    shift
+fi
+if (($# != 1)); then
+    printf 'usage: %s [--discover] OUTPUT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-impact-generalization-v1.json"
+buildopt_guard="${buildopt_script_dir}/poc-spring-test-preparation.guard.init.gradle"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ]]; then
+    printf 'invalid Build Impact generalization output path\n' >&2
+    exit 64
+fi
+for buildopt_command in awk cmp cp curl date find git grep jq mkdir mktemp \
+    sed sha256sum sort tar; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Build Impact generalization command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -x /usr/bin/time ]] || {
+    printf 'required Build Impact generalization command is unavailable: /usr/bin/time\n' >&2
+    exit 1
+}
+if env | grep -q '^BUILDOPT_'; then
+    printf 'Build Impact generalization requires no BUILDOPT_* overrides\n' >&2
+    exit 1
+fi
+if [[ "${buildopt_mode}" == measure ]] &&
+    [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)" ]]; then
+    printf 'Build Impact generalization measurement requires a clean revision-bound checkout\n' >&2
+    exit 1
+fi
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-impact-generalization.XXXXXX")
+buildopt_report_error() {
+    local buildopt_status=$?
+    printf 'Build Impact generalization failed at line %s with status %s\n' \
+        "${BASH_LINENO[0]}" "${buildopt_status}" >&2
+    return "${buildopt_status}"
+}
+trap buildopt_report_error ERR
+buildopt_stop_gradle() {
+    local buildopt_home=$1
+    if [[ -x "${buildopt_root}/source/gradlew" && -d "${buildopt_home}" ]]; then
+        (
+            cd "${buildopt_root}/source"
+            env GRADLE_USER_HOME="${buildopt_home}" \
+                "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+                ./gradlew --stop
+        ) >/dev/null 2>&1 || true
+    fi
+}
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-impact-generalization."* ]]; then
+        buildopt_stop_gradle "${buildopt_root}/preflight-home"
+        buildopt_stop_gradle "${buildopt_root}/control-home"
+        buildopt_stop_gradle "${buildopt_root}/candidate-home"
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+chmod 0700 "${buildopt_root}"
+mkdir -p -- "${buildopt_root}/source" "${buildopt_root}/preflight-home" \
+    "${buildopt_root}/logs" "${buildopt_root}/originals"
+chmod 0700 "${buildopt_root}/preflight-home"
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_runner_sha=$(sha256sum "${BASH_SOURCE[0]}" | awk '{print $1}')
+buildopt_guard_sha=$(sha256sum "${buildopt_guard}" | awk '{print $1}')
+(
+    cd "${buildopt_repo_root}"
+    "${buildopt_repo_root}/packaging/linux/package.sh" \
+        --version 0.3.0-dev --output "${buildopt_root}/package" >/dev/null
+)
+mkdir -p -- "${buildopt_root}/package-root" "${buildopt_root}/install"
+buildopt_package="${buildopt_root}/package/buildopt-0.3.0-dev-linux-amd64.tar.gz"
+tar -xzf "${buildopt_package}" -C "${buildopt_root}/package-root"
+"${buildopt_root}/package-root/buildopt-0.3.0-dev-linux-amd64/install.sh" \
+    --prefix "${buildopt_root}/install" >/dev/null
+buildopt_executable="${buildopt_root}/install/bin/buildopt"
+buildopt_impact_executable="${buildopt_root}/install/bin/buildopt-impact"
+buildopt_executable_sha=$(sha256sum "${buildopt_executable}" | awk '{print $1}')
+buildopt_package_sha=$(sha256sum "${buildopt_package}" | awk '{print $1}')
+
+buildopt_source_archive="${buildopt_root}/spring-framework.tar.gz"
+buildopt_source_url=$(jq -er '.repository.sourceArchiveUrl' "${buildopt_spec}")
+buildopt_source_sha=$(jq -er '.repository.sourceArchiveSha256' "${buildopt_spec}")
+curl --fail --location --proto '=https' --tlsv1.2 --silent --show-error \
+    --output "${buildopt_source_archive}" "${buildopt_source_url}"
+[[ "$(sha256sum "${buildopt_source_archive}" | awk '{print $1}')" == \
+    "${buildopt_source_sha}" ]] || {
+    printf 'Spring source archive checksum mismatch\n' >&2
+    exit 1
+}
+tar -xzf "${buildopt_source_archive}" --strip-components=1 -C "${buildopt_root}/source"
+
+while IFS=$'\t' read -r buildopt_path buildopt_expected_sha; do
+    [[ "$(sha256sum "${buildopt_root}/source/${buildopt_path}" | awk '{print $1}')" == \
+        "${buildopt_expected_sha}" ]] || {
+        printf 'fixed Spring input checksum mismatch: %s\n' "${buildopt_path}" >&2
+        exit 1
+    }
+    buildopt_original_id=$(printf '%s' "${buildopt_path}" | sha256sum | awk '{print $1}')
+    cp -- "${buildopt_root}/source/${buildopt_path}" \
+        "${buildopt_root}/originals/${buildopt_original_id}"
+done < <(jq -r '[.matrixCells[], .fallbackCells[]] |
+    unique_by(.changePath)[] | [.changePath, .changeOriginalSha256] | @tsv' "${buildopt_spec}")
+
+buildopt_preflight_started=$(date +%s%N)
+printf 'Preparing pinned Spring outputs and offline dependency state\n'
+if ! (
+    cd "${buildopt_root}/source"
+    env -u CI GRADLE_USER_HOME="${buildopt_root}/preflight-home" \
+        "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+        ./gradlew --daemon --build-cache --parallel --no-configuration-cache \
+        --max-workers=12 --no-scan --stacktrace \
+        classes testClasses checkstyleMain jar sourcesJar
+) >"${buildopt_root}/logs/preflight.log" 2>&1; then
+    tail -n 180 "${buildopt_root}/logs/preflight.log" >&2
+    printf 'Build Impact generalization preflight failed\n' >&2
+    exit 1
+fi
+buildopt_preflight_finished=$(date +%s%N)
+grep -Fq 'BUILD SUCCESSFUL' "${buildopt_root}/logs/preflight.log" || exit 1
+! grep -Fq 'forbidden root-build Gradle Test task(s):' \
+    "${buildopt_root}/logs/preflight.log" || exit 1
+buildopt_stop_gradle "${buildopt_root}/preflight-home"
+buildopt_cache_seed="${buildopt_root}/build-cache-seed.tar.gz"
+tar -C "${buildopt_root}/preflight-home/caches" -czf "${buildopt_cache_seed}" build-cache-1
+buildopt_cache_seed_sha=$(sha256sum "${buildopt_cache_seed}" | awk '{print $1}')
+for buildopt_arm in control candidate; do
+    cp -a -- "${buildopt_root}/preflight-home" "${buildopt_root}/${buildopt_arm}-home"
+    rm -rf -- "${buildopt_root}/${buildopt_arm}-home/daemon" \
+        "${buildopt_root}/${buildopt_arm}-home/.tmp"
+    mkdir -p -- "${buildopt_root}/${buildopt_arm}-home/init.d"
+    cp -- "${buildopt_guard}" \
+        "${buildopt_root}/${buildopt_arm}-home/init.d/buildopt-poc-test-preparation.guard.init.gradle"
+done
+
+buildopt_restore_path() {
+    local buildopt_path=$1
+    local buildopt_original_id
+    buildopt_original_id=$(printf '%s' "${buildopt_path}" | sha256sum | awk '{print $1}')
+    cp -- "${buildopt_root}/originals/${buildopt_original_id}" \
+        "${buildopt_root}/source/${buildopt_path}"
+}
+buildopt_restore_all_paths() {
+    while IFS= read -r buildopt_path; do
+        buildopt_restore_path "${buildopt_path}"
+    done < <(jq -r '[.matrixCells[], .fallbackCells[]] |
+        unique_by(.changePath)[].changePath' "${buildopt_spec}")
+}
+buildopt_make_manifest() {
+    local buildopt_cell_index=$1
+    jq --argjson cellIndex "${buildopt_cell_index}" '
+        .manifestTemplate as $template |
+        .matrixCells[$cellIndex] as $cell |
+        $template + {
+            pipelineClass: $cell.pipelineClass,
+            originalEntrypoints: $cell.originalEntrypoints,
+            allowedAlternatives: [{
+                id: $cell.alternativeId,
+                entrypoints: $cell.candidateEntrypoints
+            }],
+            requiredArtifacts: [{
+                id: $cell.requiredArtifactId,
+                path: (if $cell.requiredOutputKind == "DIRECTORY" then
+                    ($cell.requiredOutputPath + "/**") else $cell.requiredOutputPath end),
+                owner: "BUILD_OPTIMIZATION"
+            }]
+        }
+    ' "${buildopt_spec}" >"${buildopt_root}/source/buildopt-impact-manifest.json"
+}
+buildopt_graph_rows="${buildopt_root}/graphs.jsonl"
+: >"${buildopt_graph_rows}"
+buildopt_prepare_graph() {
+    local buildopt_cell_index=$1
+    local buildopt_cell_id buildopt_pipeline buildopt_entry graph_sha reach_count contains_tests unknown
+    buildopt_cell_id=$(jq -er ".matrixCells[${buildopt_cell_index}].id" "${buildopt_spec}")
+    buildopt_pipeline=$(jq -er ".matrixCells[${buildopt_cell_index}].pipelineClass" "${buildopt_spec}")
+    buildopt_entry=$(jq -er ".matrixCells[${buildopt_cell_index}].candidateEntrypoints[0]" "${buildopt_spec}")
+    buildopt_restore_all_paths
+    buildopt_make_manifest "${buildopt_cell_index}"
+    env GRADLE_USER_HOME="${buildopt_root}/candidate-home" \
+        "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+        "${buildopt_impact_executable}" generate \
+        --repository "${buildopt_root}/source" \
+        --manifest buildopt-impact-manifest.json \
+        --repository-id spring-projects/spring-framework \
+        --pipeline-class "${buildopt_pipeline}" \
+        --graph buildopt-impact-graph.generated.json \
+        --generated-manifest buildopt-impact.generated.json \
+        --gradle-command ./gradlew --timeout 5m >/dev/null
+    graph_sha=$(sha256sum "${buildopt_root}/source/buildopt-impact-graph.generated.json" | awk '{print $1}')
+    reach_count=$(jq -er --arg entry "${buildopt_entry}" \
+        '.entrypoints[] | select(.name == $entry) | .reachesProjects | length' \
+        "${buildopt_root}/source/buildopt-impact-graph.generated.json")
+    contains_tests=$(jq -r --arg entry "${buildopt_entry}" \
+        '.entrypoints[] | select(.name == $entry) | .containsTestTasks' \
+        "${buildopt_root}/source/buildopt-impact-graph.generated.json")
+    unknown=$(jq -r --arg entry "${buildopt_entry}" \
+        '.entrypoints[] | select(.name == $entry) | .unknownRelationships' \
+        "${buildopt_root}/source/buildopt-impact-graph.generated.json")
+    jq -cn --arg id "${buildopt_cell_id}" --arg graphSha "${graph_sha}" \
+        --argjson reach "${reach_count}" --argjson containsTests "${contains_tests}" \
+        --argjson unknown "${unknown}" '{
+            id: $id,
+            expectedGraphSha256: $graphSha,
+            expectedReachedProjectCount: $reach,
+            containsTestTasks: $containsTests,
+            unknownRelationships: $unknown
+        }' >>"${buildopt_graph_rows}"
+}
+
+buildopt_cell_count=$(jq -er '.matrixCells | length' "${buildopt_spec}")
+for ((buildopt_cell_index = 0; buildopt_cell_index < buildopt_cell_count; buildopt_cell_index++)); do
+    printf 'Discovering graph for %s\n' \
+        "$(jq -er ".matrixCells[${buildopt_cell_index}].id" "${buildopt_spec}")"
+    buildopt_prepare_graph "${buildopt_cell_index}"
+done
+if [[ "${buildopt_mode}" == discover ]]; then
+    jq -s '{schemaVersion: "buildopt.diagnostic/poc-impact-generalization-graphs/v1", cells: .}' \
+        "${buildopt_graph_rows}" >"${buildopt_output}"
+    printf 'Build Impact generalization graph diagnostic written: %s\n' "${buildopt_output}"
+    exit 0
+fi
+
+jq -e --slurpfile observed "${buildopt_graph_rows}" '
+    all(.matrixCells[] as $cell |
+        ($observed[] | select(.id == $cell.id)) as $actual |
+        $actual.expectedGraphSha256 == $cell.expectedGraphSha256 and
+        $actual.expectedReachedProjectCount == $cell.expectedReachedProjectCount and
+        $actual.containsTestTasks == false and
+        $actual.unknownRelationships == ($cell.expectedMode == "FULL_GRAPH"))
+' "${buildopt_spec}" >/dev/null || {
+    printf 'Build Impact generalization graph contract drifted\n' >&2
+    jq -s '.' "${buildopt_graph_rows}" >&2
+    exit 1
+}
+
+buildopt_reset_arm() {
+    local buildopt_cell_index=$1
+    local buildopt_arm=$2
+    local buildopt_mutation=$3
+    local buildopt_change_path buildopt_home
+    buildopt_change_path=$(jq -er ".matrixCells[${buildopt_cell_index}].changePath" "${buildopt_spec}")
+    buildopt_home="${buildopt_root}/${buildopt_arm}-home"
+    buildopt_restore_all_paths
+    (
+        cd "${buildopt_root}/source"
+        env -u CI GRADLE_USER_HOME="${buildopt_home}" \
+            "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+            ./gradlew --daemon --offline --quiet --max-workers=12 clean
+    ) >"${buildopt_root}/logs/reset-${buildopt_arm}.log" 2>&1
+    rm -rf -- "${buildopt_home}/caches/build-cache-1"
+    tar -C "${buildopt_home}/caches" -xzf "${buildopt_cache_seed}"
+    printf '\n// buildopt-poc-impact-generalization-%s\n' "${buildopt_mutation}" \
+        >>"${buildopt_root}/source/${buildopt_change_path}"
+    printf '%s\n' "${buildopt_change_path}" >"${buildopt_root}/source/.buildopt-changes"
+}
+
+buildopt_duration_ms=0
+buildopt_started_ns=0
+buildopt_finished_ns=0
+buildopt_max_rss_kb=0
+buildopt_run_arm() {
+    local buildopt_cell_index=$1
+    local buildopt_arm=$2
+    local buildopt_log=$3
+    local buildopt_time=$4
+    local buildopt_home buildopt_pipeline buildopt_alternative buildopt_entry
+    buildopt_home="${buildopt_root}/${buildopt_arm}-home"
+    buildopt_pipeline=$(jq -er ".matrixCells[${buildopt_cell_index}].pipelineClass" "${buildopt_spec}")
+    buildopt_alternative=$(jq -er ".matrixCells[${buildopt_cell_index}].alternativeId" "${buildopt_spec}")
+    buildopt_entry=$(jq -er ".matrixCells[${buildopt_cell_index}].candidateEntrypoints[0]" "${buildopt_spec}")
+    buildopt_started_ns=$(date +%s%N)
+    if ! (
+        cd "${buildopt_root}/source"
+        if [[ "${buildopt_arm}" == candidate ]]; then
+            /usr/bin/time -f 'maxRssKb=%M' -o "${buildopt_time}" \
+                env -u CI GRADLE_USER_HOME="${buildopt_home}" \
+                "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+                "${buildopt_executable}" impact \
+                --repository-id spring-projects/spring-framework \
+                --pipeline-class "${buildopt_pipeline}" \
+                --changes-file .buildopt-changes \
+                --gradle-option=--daemon --gradle-option=--offline \
+                --gradle-option=--build-cache --gradle-option=--parallel \
+                --gradle-option=--no-configuration-cache \
+                --gradle-option=--console=plain --gradle-option=--max-workers=12 \
+                --gradle-option=--no-scan --gradle-option=--stacktrace
+        else
+            mapfile -t buildopt_original_entries < <(
+                jq -r ".matrixCells[${buildopt_cell_index}].originalEntrypoints[]" "${buildopt_spec}")
+            /usr/bin/time -f 'maxRssKb=%M' -o "${buildopt_time}" \
+                env -u CI GRADLE_USER_HOME="${buildopt_home}" \
+                "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+                ./gradlew --daemon --offline --build-cache --parallel \
+                --no-configuration-cache --console=plain --max-workers=12 \
+                --no-scan --stacktrace "${buildopt_original_entries[@]}"
+        fi
+    ) >"${buildopt_log}" 2>&1; then
+        tail -n 180 "${buildopt_log}" >&2
+        return 1
+    fi
+    buildopt_finished_ns=$(date +%s%N)
+    buildopt_duration_ms=$(((buildopt_finished_ns - buildopt_started_ns) / 1000000))
+    buildopt_max_rss_kb=$(awk -F= '$1 == "maxRssKb" {print $2 + 0}' "${buildopt_time}")
+    grep -Fq 'BUILD SUCCESSFUL' "${buildopt_log}" || return 1
+    if [[ "${buildopt_arm}" == candidate ]]; then
+        if [[ "$(jq -r ".matrixCells[${buildopt_cell_index}].performanceClaim" "${buildopt_spec}")" == true ]]; then
+            grep -Fq "explicit Build Impact POC candidate ${buildopt_alternative} selected" \
+                "${buildopt_log}" || return 1
+        else
+            buildopt_expected_reason=$(jq -er ".matrixCells[${buildopt_cell_index}].expectedReason" "${buildopt_spec}")
+            grep -Fq "buildopt: Build Impact POC retained the full graph (${buildopt_expected_reason})" \
+                "${buildopt_log}" || return 1
+        fi
+    fi
+    grep -Eq "^> Task ${buildopt_entry//:/\\:}( |$)" "${buildopt_log}" || {
+        printf 'required selected task was not observed: %s\n' "${buildopt_entry}" >&2
+        return 1
+    }
+    grep -Fq '> Task :buildSrc:test UP-TO-DATE' "${buildopt_log}" || return 1
+    ! grep -Fq 'forbidden root-build Gradle Test task(s):' "${buildopt_log}" || return 1
+    if grep -Eq '^> Task .*:(publish|upload|release|sign)([A-Z:]|$)' "${buildopt_log}" ||
+        grep -Eq 'Publishing build scan|Build scan published|https://gradle[.]com/s/' "${buildopt_log}"; then
+        printf 'Build Impact generalization attempted an external action\n' >&2
+        return 1
+    fi
+}
+
+buildopt_output_manifest() {
+    local buildopt_cell_index=$1
+    local buildopt_manifest=$2
+    local buildopt_path buildopt_kind buildopt_file
+    buildopt_path=$(jq -er ".matrixCells[${buildopt_cell_index}].requiredOutputPath" "${buildopt_spec}")
+    buildopt_kind=$(jq -er ".matrixCells[${buildopt_cell_index}].requiredOutputKind" "${buildopt_spec}")
+    : >"${buildopt_manifest}"
+    if [[ "${buildopt_kind}" == FILE ]]; then
+        [[ -f "${buildopt_root}/source/${buildopt_path}" ]] || return 1
+        printf '%s  %s\n' \
+            "$(sha256sum "${buildopt_root}/source/${buildopt_path}" | awk '{print $1}')" \
+            "${buildopt_path}" >>"${buildopt_manifest}"
+    else
+        [[ -d "${buildopt_root}/source/${buildopt_path}" ]] || return 1
+        while IFS= read -r -d '' buildopt_file; do
+            printf '%s  %s\n' "$(sha256sum "${buildopt_file}" | awk '{print $1}')" \
+                "${buildopt_file#"${buildopt_root}/source/"}" >>"${buildopt_manifest}"
+        done < <(find "${buildopt_root}/source/${buildopt_path}" -type f -print0 | sort -z)
+    fi
+    [[ -s "${buildopt_manifest}" ]]
+}
+
+buildopt_cell_rows="${buildopt_root}/cells.jsonl"
+buildopt_capability_rows="${buildopt_root}/capability-fallbacks.jsonl"
+: >"${buildopt_cell_rows}"
+: >"${buildopt_capability_rows}"
+for ((buildopt_cell_index = 0; buildopt_cell_index < buildopt_cell_count; buildopt_cell_index++)); do
+    buildopt_cell_id=$(jq -er ".matrixCells[${buildopt_cell_index}].id" "${buildopt_spec}")
+    buildopt_prepare_graph "${buildopt_cell_index}"
+    if [[ "$(jq -r ".matrixCells[${buildopt_cell_index}].performanceClaim" "${buildopt_spec}")" != true ]]; then
+        for buildopt_arm in control candidate; do
+            buildopt_reset_arm "${buildopt_cell_index}" "${buildopt_arm}" capability-fallback
+            buildopt_log="${buildopt_root}/logs/${buildopt_cell_id}-capability-${buildopt_arm}.log"
+            buildopt_run_arm "${buildopt_cell_index}" "${buildopt_arm}" \
+                "${buildopt_log}" "${buildopt_log}.time"
+            buildopt_output_manifest "${buildopt_cell_index}" \
+                "${buildopt_root}/${buildopt_cell_id}-capability-${buildopt_arm}.outputs"
+        done
+        buildopt_control_manifest="${buildopt_root}/${buildopt_cell_id}-capability-control.outputs"
+        buildopt_candidate_manifest="${buildopt_root}/${buildopt_cell_id}-capability-candidate.outputs"
+        cmp -s "${buildopt_control_manifest}" "${buildopt_candidate_manifest}" || {
+            printf 'Build Impact generalization %s fallback outputs differ\n' \
+                "${buildopt_cell_id}" >&2
+            exit 1
+        }
+        buildopt_output_sha=$(sha256sum "${buildopt_control_manifest}" | awk '{print $1}')
+        buildopt_output_count=$(awk 'END {print NR}' "${buildopt_control_manifest}")
+        jq -cn --slurpfile spec "${buildopt_spec}" --argjson index "${buildopt_cell_index}" \
+            --arg outputSha "${buildopt_output_sha}" --argjson outputCount "${buildopt_output_count}" '
+            $spec[0].matrixCells[$index] + {
+                mode: "FULL_GRAPH",
+                reason: $spec[0].matrixCells[$index].expectedReason,
+                requiredOutputSha256: $outputSha,
+                requiredOutputCount: $outputCount,
+                outputsIdentical: true,
+                buildSuccessful: true
+            }' >>"${buildopt_capability_rows}"
+        printf 'Impact generalization %s: conservative full-graph fallback preserved exact output\n' \
+            "${buildopt_cell_id}"
+        continue
+    fi
+    for buildopt_arm in control candidate; do
+        buildopt_reset_arm "${buildopt_cell_index}" "${buildopt_arm}" warmup
+        buildopt_run_arm "${buildopt_cell_index}" "${buildopt_arm}" \
+            "${buildopt_root}/logs/${buildopt_cell_id}-warm-${buildopt_arm}.log" \
+            "${buildopt_root}/logs/${buildopt_cell_id}-warm-${buildopt_arm}.time"
+    done
+    buildopt_rows="${buildopt_root}/${buildopt_cell_id}.jsonl"
+    : >"${buildopt_rows}"
+    for buildopt_pair in 1 2 3 4; do
+        buildopt_order=CANDIDATE_FIRST
+        [[ $((buildopt_pair % 2)) == 1 ]] && buildopt_order=CONTROL_FIRST
+        buildopt_first_arm=candidate
+        buildopt_second_arm=control
+        [[ "${buildopt_order}" == CONTROL_FIRST ]] && {
+            buildopt_first_arm=control
+            buildopt_second_arm=candidate
+        }
+        for buildopt_arm in "${buildopt_first_arm}" "${buildopt_second_arm}"; do
+            buildopt_reset_arm "${buildopt_cell_index}" "${buildopt_arm}" "pair-${buildopt_pair}"
+            buildopt_log="${buildopt_root}/logs/${buildopt_cell_id}-pair-${buildopt_pair}-${buildopt_arm}.log"
+            buildopt_run_arm "${buildopt_cell_index}" "${buildopt_arm}" \
+                "${buildopt_log}" "${buildopt_log}.time"
+            if [[ "${buildopt_arm}" == control ]]; then
+                buildopt_control_duration=${buildopt_duration_ms}
+                buildopt_control_rss=${buildopt_max_rss_kb}
+            else
+                buildopt_candidate_duration=${buildopt_duration_ms}
+                buildopt_candidate_rss=${buildopt_max_rss_kb}
+            fi
+            buildopt_output_manifest "${buildopt_cell_index}" \
+                "${buildopt_root}/${buildopt_cell_id}-pair-${buildopt_pair}-${buildopt_arm}.outputs"
+            if [[ "${buildopt_arm}" == "${buildopt_first_arm}" ]]; then
+                buildopt_first_finished=${buildopt_finished_ns}
+            fi
+        done
+        buildopt_gap_ms=$(((buildopt_started_ns - buildopt_first_finished) / 1000000))
+        buildopt_control_manifest="${buildopt_root}/${buildopt_cell_id}-pair-${buildopt_pair}-control.outputs"
+        buildopt_candidate_manifest="${buildopt_root}/${buildopt_cell_id}-pair-${buildopt_pair}-candidate.outputs"
+        cmp -s "${buildopt_control_manifest}" "${buildopt_candidate_manifest}" || {
+            printf 'Build Impact generalization %s pair %s outputs differ\n' \
+                "${buildopt_cell_id}" "${buildopt_pair}" >&2
+            exit 1
+        }
+        buildopt_output_sha=$(sha256sum "${buildopt_control_manifest}" | awk '{print $1}')
+        buildopt_output_count=$(awk 'END {print NR}' "${buildopt_control_manifest}")
+        jq -cn --argjson pair "${buildopt_pair}" --arg order "${buildopt_order}" \
+            --argjson control "${buildopt_control_duration}" \
+            --argjson candidate "${buildopt_candidate_duration}" \
+            --argjson gap "${buildopt_gap_ms}" --argjson controlRss "${buildopt_control_rss}" \
+            --argjson candidateRss "${buildopt_candidate_rss}" \
+            --arg outputSha "${buildopt_output_sha}" --argjson outputCount "${buildopt_output_count}" '{
+                pair: $pair,
+                order: $order,
+                controlDurationMs: $control,
+                candidateDurationMs: $candidate,
+                savedMs: ($control - $candidate),
+                interArmIdleGapMs: $gap,
+                controlMaximumResidentSetKb: $controlRss,
+                candidateMaximumResidentSetKb: $candidateRss,
+                requiredOutputSha256: $outputSha,
+                requiredOutputCount: $outputCount,
+                rootBuildGradleTestTasksExecuted: false,
+                commonBuildLogicTestTask: ":buildSrc:test",
+                commonBuildLogicTestOutcome: "UP-TO-DATE",
+                productAttributableFailure: false
+            }' >>"${buildopt_rows}"
+        printf 'Impact generalization %s pair %s: control=%sms candidate=%sms saved=%sms\n' \
+            "${buildopt_cell_id}" "${buildopt_pair}" "${buildopt_control_duration}" \
+            "${buildopt_candidate_duration}" "$((buildopt_control_duration - buildopt_candidate_duration))"
+    done
+    jq -s --argjson cellIndex "${buildopt_cell_index}" --slurpfile spec "${buildopt_spec}" '
+        def bootstrap_mean($data; $sample):
+            reduce range(0; 4) as $draw
+                ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+                 .state = ((1664525 * .state + 1013904223) % 4294967296) |
+                 .sum += $data[((.state / 1073741824) | floor)].savedMs) |
+            .sum / 4;
+        def bootstrap95($data):
+            ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
+            [$r[102], $r[3993]];
+        . as $rows |
+        (($rows | map(.controlDurationMs) | add) / 4) as $controlMean |
+        (($rows | map(.candidateDurationMs) | add) / 4) as $candidateMean |
+        (($rows | map(.savedMs) | add) / 4) as $mean |
+        (($rows | map(.savedMs) | add) / ($rows | map(.controlDurationMs) | add)) as $ratio |
+        bootstrap95($rows) as $interval |
+        ($rows | map(select(.savedMs > 0)) | length) as $positive |
+        ($mean >= $spec[0].valueGate.minimumSavedMsPerSelectiveCell and
+         $ratio >= $spec[0].valueGate.minimumReductionRatioPerSelectiveCell and
+         $interval[0] > 0 and
+         $positive >= $spec[0].valueGate.minimumPositivePairsPerSelectiveCell) as $qualified |
+        $spec[0].matrixCells[$cellIndex] + {
+            observations: $rows,
+            result: {
+                pairs: 4,
+                controlMeanMs: $controlMean,
+                candidateMeanMs: $candidateMean,
+                meanSavedMs: $mean,
+                reductionRatio: $ratio,
+                interval95SavedMs: $interval,
+                positivePairs: $positive,
+                qualified: $qualified
+            }
+        }
+    ' "${buildopt_rows}" >>"${buildopt_cell_rows}"
+done
+
+buildopt_fallback_rows="${buildopt_root}/fallbacks.jsonl"
+: >"${buildopt_fallback_rows}"
+buildopt_fallback_count=$(jq -er '.fallbackCells | length' "${buildopt_spec}")
+for ((buildopt_fallback_index = 0; buildopt_fallback_index < buildopt_fallback_count; buildopt_fallback_index++)); do
+    buildopt_fallback_id=$(jq -er ".fallbackCells[${buildopt_fallback_index}].id" "${buildopt_spec}")
+    buildopt_change_path=$(jq -er ".fallbackCells[${buildopt_fallback_index}].changePath" "${buildopt_spec}")
+    buildopt_prepare_graph 0
+    buildopt_reset_arm 0 candidate "fallback-${buildopt_fallback_id}"
+    buildopt_restore_all_paths
+    if [[ "${buildopt_change_path}" == *.properties ]]; then
+        printf '\n# buildopt-poc-impact-generalization-%s\n' "${buildopt_fallback_id}" \
+            >>"${buildopt_root}/source/${buildopt_change_path}"
+    else
+        printf '\n// buildopt-poc-impact-generalization-%s\n' "${buildopt_fallback_id}" \
+            >>"${buildopt_root}/source/${buildopt_change_path}"
+    fi
+    printf '%s\n' "${buildopt_change_path}" >"${buildopt_root}/source/.buildopt-changes"
+    buildopt_fallback_log="${buildopt_root}/logs/fallback-${buildopt_fallback_id}.log"
+    if ! (
+        cd "${buildopt_root}/source"
+        env -u CI GRADLE_USER_HOME="${buildopt_root}/candidate-home" \
+            "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+            "${buildopt_executable}" impact \
+            --repository-id spring-projects/spring-framework \
+            --pipeline-class poc-impact-generalization-compilation \
+            --changes-file .buildopt-changes \
+            --gradle-option=--daemon --gradle-option=--offline \
+            --gradle-option=--build-cache --gradle-option=--parallel \
+            --gradle-option=--no-configuration-cache --gradle-option=--console=plain \
+            --gradle-option=--max-workers=12 --gradle-option=--no-scan \
+            --gradle-option=--stacktrace
+    ) >"${buildopt_fallback_log}" 2>&1; then
+        tail -n 180 "${buildopt_fallback_log}" >&2
+        exit 1
+    fi
+    grep -Fq 'buildopt: Build Impact POC retained the full graph (IMPACT_GLOBAL_CHANGE)' \
+        "${buildopt_fallback_log}" || exit 1
+    grep -Eq '^> Task :spring-jms:compileJava( |$)' "${buildopt_fallback_log}" || exit 1
+    grep -Fq 'BUILD SUCCESSFUL' "${buildopt_fallback_log}" || exit 1
+    ! grep -Fq 'forbidden root-build Gradle Test task(s):' "${buildopt_fallback_log}" || exit 1
+    jq -cn --slurpfile spec "${buildopt_spec}" --argjson index "${buildopt_fallback_index}" '
+        $spec[0].fallbackCells[$index] + {
+            mode: "FULL_GRAPH",
+            reason: "IMPACT_GLOBAL_CHANGE",
+            entrypoints: ["classes"],
+            outsideSelectiveScopeTaskObserved: ":spring-jms:compileJava",
+            buildSuccessful: true
+        }' >>"${buildopt_fallback_rows}"
+done
+
+jq -s --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg revision "${buildopt_revision}" --arg executableSha "${buildopt_executable_sha}" \
+    --arg packageSha "${buildopt_package_sha}" --arg specSha "${buildopt_spec_sha}" \
+    --arg runnerSha "${buildopt_runner_sha}" --arg guardSha "${buildopt_guard_sha}" \
+    --arg cacheSeedSha "${buildopt_cache_seed_sha}" \
+    --argjson preflightMs "$(((buildopt_preflight_finished - buildopt_preflight_started) / 1000000))" \
+    --slurpfile capabilityFallbacks "${buildopt_capability_rows}" \
+    --slurpfile fallbacks "${buildopt_fallback_rows}" --slurpfile spec "${buildopt_spec}" '
+    . as $cells |
+    ($cells | map(select(.result.qualified)) | length) as $qualified |
+    ($spec[0].matrixCells | map(select(.performanceClaim == true)) | length) as $performanceCellCount |
+    ($fallbacks | all(.buildSuccessful == true and .mode == "FULL_GRAPH")) as $fallbacksPassed |
+    {
+        schemaVersion: "buildopt.evidence/poc-impact-generalization/v1",
+        workItem: "POC-IMPACT-GENERALIZATION-001",
+        capturedAt: $capturedAt,
+        specSha256: $specSha,
+        buildopt: {
+            revision: $revision,
+            executableSha256: $executableSha,
+            packageSha256: $packageSha,
+            packageVersion: "0.3.0-dev",
+            runnerScriptSha256: $runnerSha,
+            testGuardScriptSha256: $guardSha,
+            launcherOverheadIncluded: true
+        },
+        repository: {
+            nameWithOwner: $spec[0].repository.nameWithOwner,
+            revision: $spec[0].repository.revision,
+            sourceArchiveSha256: $spec[0].repository.sourceArchiveSha256
+        },
+        runner: $spec[0].runner,
+        preparation: {
+            onlinePreflightMeasured: false,
+            onlinePreflightSuccess: true,
+            onlinePreflightWallClockMs: $preflightMs,
+            measuredNetwork: "DISCONNECTED",
+            dependencyMode: "GRADLE_OFFLINE",
+            buildCacheSeedSha256: $cacheSeedSha,
+            preflightDaemonStoppedBeforeArmSetup: true,
+            cacheSeedRestoredBeforeEveryArm: true,
+            outputsRemovedBeforeEveryArm: true,
+            fixedMutationAppliedAfterCacheRestore: true
+        },
+        performanceCells: $cells,
+        capabilityFallbackCells: $capabilityFallbacks,
+        fallbackCells: $fallbacks,
+        result: {
+            totalPerformanceCells: $performanceCellCount,
+            qualifiedPerformanceCells: $qualified,
+            capabilityFallbackCellsPassed: ($capabilityFallbacks | length),
+            fallbacksPassed: $fallbacksPassed,
+            decision: (if ($fallbacksPassed | not) then
+                $spec[0].terminalDecisions.anyFallbackFails
+                elif $qualified == $performanceCellCount then
+                $spec[0].terminalDecisions.allSelectiveCellsQualifyAndFallbacksPass
+                else $spec[0].terminalDecisions.partialSelectiveQualificationWithFallbacksPassing end)
+        },
+        boundaries: $spec[0].boundaries
+    }
+' "${buildopt_cell_rows}" >"${buildopt_output}"
+
+printf 'Build Impact generalization evidence written: %s\n' "${buildopt_output}"

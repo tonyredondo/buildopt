@@ -1,0 +1,211 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-impact-generalization-v1.json"
+buildopt_runner="${buildopt_script_dir}/run-poc-impact-generalization"
+buildopt_guard="${buildopt_script_dir}/poc-spring-test-preparation.guard.init.gradle"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-impact-generalization-v1.json"}
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Build Impact generalization validator is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-impact-generalization/v1" and
+    .workItem == "POC-IMPACT-GENERALIZATION-001" and
+    .repository.revision == "4b5c92703c63966c3471242c621c4a63b382638d" and
+    .runner.cpuCount == 12 and .runner.maxWorkers == 12 and
+    [.matrixCells[].id] == [
+        "LEAF_COMPILATION",
+        "SHARED_TEST_PREPARATION",
+        "LEAF_VERIFICATION",
+        "LEAF_PACKAGING",
+        "LEAF_SOURCE_DISTRIBUTION"
+    ] and
+    [.matrixCells[].outputFamily] == [
+        "COMPILATION", "TEST_PREPARATION", "VERIFICATION", "PACKAGING", "DISTRIBUTION"
+    ] and
+    [.matrixCells[].performanceClaim] == [true, true, false, true, false] and
+    [.matrixCells[].expectedMode] == [
+        "SELECTIVE", "SELECTIVE", "FULL_GRAPH", "SELECTIVE", "FULL_GRAPH"
+    ] and
+    all(.matrixCells[];
+        (.changeOriginalSha256 | test("^[0-9a-f]{64}$")) and
+        (.expectedGraphSha256 | test("^[0-9a-f]{64}$")) and
+        (.expectedReachedProjectCount | type == "number" and . > 0) and
+        (.candidateEntrypoints | length) == 1 and
+        (.originalEntrypoints | length) == 1 and
+        (.requiredOutputKind == "FILE" or .requiredOutputKind == "DIRECTORY")) and
+    all(.matrixCells[] | select(.performanceClaim == false);
+        .expectedReason == "IMPACT_UNKNOWN_RELATIONSHIP") and
+    [.fallbackCells[].id] == ["BUILD_LOGIC_FALLBACK", "GLOBAL_CONFIGURATION_FALLBACK"] and
+    all(.fallbackCells[];
+        .expectedMode == "FULL_GRAPH" and
+        .expectedReason == "IMPACT_GLOBAL_CHANGE" and
+        .performanceClaim == false) and
+    .measurement.pairsPerSelectiveCell == 4 and
+    .measurement.maximumInterArmIdleGapMs == 5000 and
+    .measurement.launcherOverheadIncluded == true and
+    .valueGate.minimumSavedMsPerSelectiveCell == 500 and
+    .valueGate.minimumReductionRatioPerSelectiveCell == 0.02 and
+    .valueGate.minimumPositivePairsPerSelectiveCell == 4 and
+    .valueGate.thresholdsMayMoveAfterMeasurement == false and
+    .valueGate.failedPairsMayBeDiscarded == false and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.hotStateEnabled == false and
+    .boundaries.runtimeTuningEnabled == false and
+    .boundaries.safeCacheEnabled == false and
+    .boundaries.productionSelectionChanged == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false
+' "${buildopt_spec}" >/dev/null
+
+if [[ ! -e "${buildopt_result}" ]]; then
+    printf 'Build Impact generalization protocol OK; result pending: %s\n' "${buildopt_result}"
+    exit 0
+fi
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_runner_sha=$(sha256sum "${buildopt_runner}" | awk '{print $1}')
+buildopt_guard_sha=$(sha256sum "${buildopt_guard}" | awk '{print $1}')
+jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sha}" \
+    --arg guardSha "${buildopt_guard_sha}" --slurpfile spec "${buildopt_spec}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    def gitsha: type == "string" and test("^[0-9a-f]{40}$");
+    def bootstrap_mean($data; $sample):
+        reduce range(0; 4) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $data[((.state / 1073741824) | floor)].savedMs) |
+        .sum / 4;
+    def bootstrap95($data):
+        ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
+        [$r[102], $r[3993]];
+    def valid_performance_cell($cell; $expected):
+        $cell.observations as $data |
+        (($data | map(.controlDurationMs) | add) / 4) as $controlMean |
+        (($data | map(.candidateDurationMs) | add) / 4) as $candidateMean |
+        (($data | map(.savedMs) | add) / 4) as $mean |
+        (($data | map(.savedMs) | add) /
+            ($data | map(.controlDurationMs) | add)) as $ratio |
+        bootstrap95($data) as $interval |
+        ($data | map(select(.savedMs > 0)) | length) as $positive |
+        ($mean >= $spec[0].valueGate.minimumSavedMsPerSelectiveCell and
+         $ratio >= $spec[0].valueGate.minimumReductionRatioPerSelectiveCell and
+         $interval[0] > 0 and
+         $positive >= $spec[0].valueGate.minimumPositivePairsPerSelectiveCell) as $qualified |
+        $cell.id == $expected.id and
+        $cell.outputFamily == $expected.outputFamily and
+        $cell.changeClass == $expected.changeClass and
+        $cell.changePath == $expected.changePath and
+        $cell.expectedGraphSha256 == $expected.expectedGraphSha256 and
+        $cell.expectedReachedProjectCount == $expected.expectedReachedProjectCount and
+        $cell.candidateEntrypoints == $expected.candidateEntrypoints and
+        $cell.requiredOutputPath == $expected.requiredOutputPath and
+        ($data | length) == 4 and
+        [$data[].pair] == [1, 2, 3, 4] and
+        [$data[].order] == [
+            "CONTROL_FIRST", "CANDIDATE_FIRST", "CONTROL_FIRST", "CANDIDATE_FIRST"
+        ] and
+        all($data[];
+            (.controlDurationMs | type == "number" and . > 0) and
+            (.candidateDurationMs | type == "number" and . > 0) and
+            .savedMs == (.controlDurationMs - .candidateDurationMs) and
+            (.interArmIdleGapMs | type == "number" and . >= 0 and
+                . <= $spec[0].measurement.maximumInterArmIdleGapMs) and
+            (.controlMaximumResidentSetKb | type == "number" and . > 0) and
+            (.candidateMaximumResidentSetKb | type == "number" and . > 0) and
+            (.requiredOutputSha256 | sha256) and
+            (.requiredOutputCount | type == "number" and . > 0) and
+            .rootBuildGradleTestTasksExecuted == false and
+            .commonBuildLogicTestTask == ":buildSrc:test" and
+            .commonBuildLogicTestOutcome == "UP-TO-DATE" and
+            .productAttributableFailure == false) and
+        $cell.result == {
+            pairs: 4,
+            controlMeanMs: $controlMean,
+            candidateMeanMs: $candidateMean,
+            meanSavedMs: $mean,
+            reductionRatio: $ratio,
+            interval95SavedMs: $interval,
+            positivePairs: $positive,
+            qualified: $qualified
+        };
+    .schemaVersion == "buildopt.evidence/poc-impact-generalization/v1" and
+    .workItem == "POC-IMPACT-GENERALIZATION-001" and
+    (.capturedAt | fromdateiso8601) and
+    .specSha256 == $specSha and
+    (.buildopt.revision | gitsha) and
+    (.buildopt.executableSha256 | sha256) and
+    (.buildopt.packageSha256 | sha256) and
+    .buildopt.packageVersion == "0.3.0-dev" and
+    .buildopt.runnerScriptSha256 == $runnerSha and
+    .buildopt.testGuardScriptSha256 == $guardSha and
+    .buildopt.launcherOverheadIncluded == true and
+    .repository == {
+        nameWithOwner: $spec[0].repository.nameWithOwner,
+        revision: $spec[0].repository.revision,
+        sourceArchiveSha256: $spec[0].repository.sourceArchiveSha256
+    } and
+    .runner == $spec[0].runner and
+    .preparation.onlinePreflightMeasured == false and
+    .preparation.onlinePreflightSuccess == true and
+    (.preparation.onlinePreflightWallClockMs | type == "number" and . > 0) and
+    .preparation.measuredNetwork == "DISCONNECTED" and
+    .preparation.dependencyMode == "GRADLE_OFFLINE" and
+    (.preparation.buildCacheSeedSha256 | sha256) and
+    .preparation.cacheSeedRestoredBeforeEveryArm == true and
+    .preparation.outputsRemovedBeforeEveryArm == true and
+    .preparation.fixedMutationAppliedAfterCacheRestore == true and
+    [.performanceCells[].id] == ["LEAF_COMPILATION", "SHARED_TEST_PREPARATION", "LEAF_PACKAGING"] and
+    valid_performance_cell(.performanceCells[0]; $spec[0].matrixCells[0]) and
+    valid_performance_cell(.performanceCells[1]; $spec[0].matrixCells[1]) and
+    valid_performance_cell(.performanceCells[2]; $spec[0].matrixCells[3]) and
+    [.capabilityFallbackCells[].id] == ["LEAF_VERIFICATION", "LEAF_SOURCE_DISTRIBUTION"] and
+    all(.capabilityFallbackCells[];
+        .mode == "FULL_GRAPH" and
+        .reason == "IMPACT_UNKNOWN_RELATIONSHIP" and
+        .outputsIdentical == true and
+        .buildSuccessful == true and
+        (.requiredOutputSha256 | sha256) and
+        (.requiredOutputCount | type == "number" and . > 0)) and
+    [.fallbackCells[].id] == ["BUILD_LOGIC_FALLBACK", "GLOBAL_CONFIGURATION_FALLBACK"] and
+    all(.fallbackCells[];
+        .mode == "FULL_GRAPH" and
+        .reason == "IMPACT_GLOBAL_CHANGE" and
+        .entrypoints == ["classes"] and
+        .outsideSelectiveScopeTaskObserved == ":spring-jms:compileJava" and
+        .buildSuccessful == true and
+        .performanceClaim == false) and
+    (.performanceCells | map(select(.result.qualified)) | length) as $qualified |
+    .result == {
+        totalPerformanceCells: 3,
+        qualifiedPerformanceCells: $qualified,
+        capabilityFallbackCellsPassed: 2,
+        fallbacksPassed: true,
+        decision: (if $qualified == 3 then
+            $spec[0].terminalDecisions.allSelectiveCellsQualifyAndFallbacksPass
+            else $spec[0].terminalDecisions.partialSelectiveQualificationWithFallbacksPassing end)
+    } and
+    .boundaries == $spec[0].boundaries
+' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'Build Impact generalization validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'Build Impact generalization evidence OK: %s\n' "${buildopt_result}"
