@@ -1,0 +1,155 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s EVIDENCE_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_evidence=$1
+buildopt_spec="${buildopt_repo_root}/specs/poc-standard-copy-cache-v1.json"
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required standard-Copy evidence command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -s "${buildopt_evidence}" ]] || {
+    printf 'standard-Copy evidence is unavailable: %s\n' "${buildopt_evidence}" >&2
+    exit 1
+}
+"${buildopt_script_dir}/check-poc-standard-copy-cache" --spec-only >/dev/null
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+
+jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    def bootstrap_mean($data; $sample):
+        reduce range(0; 4) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $data[((.state / 1073741824) | floor)].savedMs) |
+        .sum / 4;
+    def bootstrap95($data):
+        ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
+        [$r[102], $r[3993]];
+    def expected_result($name; $data; $gate):
+        (($data | map(.controlDurationMs) | add) / 4) as $controlMean |
+        (($data | map(.candidateDurationMs) | add) / 4) as $candidateMean |
+        (($data | map(.savedMs) | add) / 4) as $mean |
+        (($data | map(.savedMs) | add) /
+            ($data | map(.controlDurationMs) | add)) as $ratio |
+        bootstrap95($data) as $interval |
+        ($data | map(select(.savedMs > 0)) | length) as $positive |
+        ($mean >= $gate.minimumSavedMs and
+         $ratio >= $gate.minimumReductionRatio and
+         $interval[0] > 0 and
+         $positive >= $gate.minimumPositivePairs and
+         ($data | map(.requiredOutputSha256) | unique | length) == 1 and
+         all($data[]; .requiredOutputCount > 0 and
+             (.candidateHotStateEnabled | not) and
+             (.managedRuntimeStarted | not) and
+             (.rootBuildGradleTestTasksExecuted | not) and
+             (.productAttributableFailure | not))) as $qualified |
+        {
+            comparison: $name,
+            pairs: 4,
+            controlProfile: $data[0].controlProfile,
+            candidateProfile: $data[0].candidateProfile,
+            controlMeanMs: $controlMean,
+            candidateMeanMs: $candidateMean,
+            meanSavedMs: $mean,
+            reductionRatio: $ratio,
+            interval95SavedMs: $interval,
+            positivePairs: $positive,
+            requiredOutputSha256: $data[0].requiredOutputSha256,
+            requiredOutputCount: $data[0].requiredOutputCount,
+            qualified: $qualified
+        };
+    .schemaVersion == "buildopt.evidence/poc-standard-copy-cache/v1" and
+    .workItem == "POC-TASK-TAIL-ADAPTERS-001" and
+    (.capturedAt | fromdateiso8601) > 0 and
+    .specSha256 == $specSha and
+    (.buildopt.revision | sha256) and
+    (.buildopt.executableSha256 | sha256) and
+    (.buildopt.packageSha256 | sha256) and
+    .buildopt.packageVersion == "0.3.0-dev" and
+    .buildopt.launcherOverheadIncluded and
+    (.buildopt.runnerScriptSha256 | sha256) and
+    (.buildopt.rootTestGuardScriptSha256 | sha256) and
+    .repository.nameWithOwner == $spec[0].repository.nameWithOwner and
+    .repository.revision == $spec[0].repository.revision and
+    .repository.sourceArchiveSha256 == $spec[0].repository.sourceArchiveSha256 and
+    .runner == {
+        id: $spec[0].measurement.runnerId,
+        cpuCount: $spec[0].measurement.cpuCount,
+        memoryBytes: $spec[0].measurement.memoryBytes,
+        maxWorkers: $spec[0].measurement.maxWorkers,
+        jdk: $spec[0].repository.jdk
+    } and
+    .preparation.onlinePreflightMeasured == false and
+    .preparation.onlinePreflightSuccess and
+    .preparation.measuredNetwork == "DISCONNECTED" and
+    .preparation.cacheSeedRestoredBeforeEveryArm and
+    .preparation.sharedCheckout and .preparation.sharedGradleUserHome and
+    .preparation.sharedDaemon and .preparation.outputsRemovedBeforeEveryArm and
+    .preparation.fixedMutationAppliedAfterCacheRestore and
+    (.preparation.comparisonBuildCacheSeeds | length) == 3 and
+    all(.preparation.comparisonBuildCacheSeeds[];
+        (.comparison as $name | $spec[0].measurement.comparisons | index($name)) != null and
+        (.candidateBuildCacheSeedSha256 | sha256)) and
+    .discovery.complete and (.discovery.containsTestTasks | not) and
+    .discovery.projectCount == 1024 and .discovery.controlReachCount == 148 and
+    .discovery.candidateReachCount == 46 and
+    (.observations | length) == 12 and
+    all($spec[0].measurement.comparisons[] as $name;
+        ([.observations[] | select(.comparison == $name)] | length) == 4) and
+    all(.observations[];
+        (.pair >= 1 and .pair <= 4) and
+        .order == (if (.pair % 2) == 1 then "CONTROL_FIRST" else "CANDIDATE_FIRST" end) and
+        .controlDurationMs > 0 and .candidateDurationMs > 0 and
+        .savedMs == (.controlDurationMs - .candidateDurationMs) and
+        .interArmIdleGapMs >= 0 and .interArmIdleGapMs <= 5000 and
+        (.requiredOutputSha256 | sha256) and .requiredOutputCount > 0 and
+        (.candidateHotStateEnabled | not) and (.managedRuntimeStarted | not) and
+        (.rootBuildGradleTestTasksExecuted | not) and
+        (.productAttributableFailure | not)) and
+    all(.observations[];
+        if .comparison == "COPY_ADAPTER_ONLY" then
+            .controlProfile == "NATIVE_FULL_GRAPH" and
+            .candidateProfile == "COPY_FULL_GRAPH"
+        elif .comparison == "INCREMENTAL_COPY_ON_QUALIFIED_PROFILE" then
+            .controlProfile == "IMPACT_JAR" and
+            .candidateProfile == "IMPACT_JAR_COPY"
+        else
+            .comparison == "COMPLETE_PROFILE_VS_NATIVE" and
+            .controlProfile == "NATIVE_FULL_GRAPH" and
+            .candidateProfile == "IMPACT_JAR_COPY"
+        end) and
+    ([$spec[0].measurement.comparisons[] as $name |
+        expected_result($name;
+            [.observations[] | select(.comparison == $name)];
+            $spec[0].valueGate)]) as $expected |
+    .result.comparisons == $expected and
+    .result.allComparisonsQualified == all($expected[]; .qualified) and
+    (.result.cascade.percentagesAdded | not) and
+    .result.cascade.completeProfileMeasuredDirectly and
+    .result.cascade.isolatedCopyAdapterQualified ==
+        ($expected[] | select(.comparison == "COPY_ADAPTER_ONLY") | .qualified) and
+    .result.cascade.incrementalCopyValueQualified ==
+        ($expected[] | select(.comparison == "INCREMENTAL_COPY_ON_QUALIFIED_PROFILE") | .qualified) and
+    .result.cascade.completeProfileQualified ==
+        ($expected[] | select(.comparison == "COMPLETE_PROFILE_VS_NATIVE") | .qualified) and
+    .result.decision == (if all($expected[]; .qualified) then
+        "QUALIFY_STANDARD_COPY_AND_COMPLETE_PROFILE"
+        else "RETAIN_STANDARD_COPY_EVIDENCE_ONLY" end)) and
+    .fallback.mode == "FULL_GRAPH" and
+    .fallback.reason == "IMPACT_GLOBAL_CHANGE" and
+    .fallback.buildSuccessful and (.fallback.performanceClaim | not) and
+    .boundaries == $spec[0].boundaries
+' "${buildopt_evidence}" >/dev/null
+
+printf 'standard-Copy cascade evidence OK: isolated, incremental, and complete profiles verified\n'

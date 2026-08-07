@@ -50,6 +50,16 @@ if (gradle.getParent() == null) {
             "unsupported BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS: ${standardJarCache}"
         )
     }
+    def standardCopyCache = System.getenv("BUILDOPT_CACHE_STANDARD_COPY_TASKS")
+    if (standardCopyCache == "1") {
+        allprojects {
+            pluginManager.apply(dev.buildopt.gradle.BuildOptStandardCopyCachePlugin)
+        }
+    } else if (standardCopyCache != null && !standardCopyCache.isBlank() && standardCopyCache != "0") {
+        throw new GradleException(
+            "unsupported BUILDOPT_CACHE_STANDARD_COPY_TASKS: ${standardCopyCache}"
+        )
+    }
     def projectPluginMode = System.getenv("BUILDOPT_GRADLE_PROJECT_PLUGIN_MODE")
     if (projectPluginMode == null || projectPluginMode.isBlank() || projectPluginMode == "FULL") {
         allprojects {

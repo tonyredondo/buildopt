@@ -41,12 +41,13 @@ func TestImpactInvocationSelectsCandidateAndFallsBackToFullGraph(t *testing.T) {
 		"--changes-file", "changed.txt",
 		"--gradle-option=--no-daemon",
 		"--cache-standard-jar-producers",
+		"--cache-standard-copy-tasks",
 	}, false)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !candidate.plan.CandidateSelected || candidate.plan.ProductionAuthorized ||
-		!candidate.standardJarCache ||
+		!candidate.standardJarCache || !candidate.standardCopyCache ||
 		strings.Join(candidate.gradleArgs, " ") != "--no-daemon :service-a:assemble" {
 		t.Fatalf("candidate invocation = %+v", candidate)
 	}
@@ -109,6 +110,52 @@ func TestImpactRunActivatesExplicitStandardJarCache(t *testing.T) {
 	}
 	if strings.ReplaceAll(string(raw), "\r\n", "\n") != want {
 		t.Fatalf("standard Jar cache child environment = %q", raw)
+	}
+}
+
+func TestImpactRunActivatesExplicitStandardCopyCache(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	t.Chdir(repositoryRoot)
+	clearGradleManagedL1Inputs(t)
+	initScript := filepath.Join(repositoryRoot, "buildopt.init.gradle")
+	pluginJar := filepath.Join(repositoryRoot, "buildopt-gradle-plugin.jar")
+	writeGradleTestFile(t, initScript)
+	writeGradleTestFile(t, pluginJar)
+	t.Setenv(gradleInitScriptEnvironment, initScript)
+	t.Setenv(gradlePluginJarEnvironment, pluginJar)
+	writeGradleWrapperProperties(t, repositoryRoot, "distributionUrl=gradle-9.6.1-bin.zip\n")
+
+	wrapper := filepath.Join(repositoryRoot, gradleWrapperName(runtime.GOOS))
+	observation := filepath.Join(repositoryRoot, "copy-cache.env")
+	contents := "#!/bin/sh\nprintf '%s\\n' \"$BUILDOPT_CACHE_STANDARD_COPY_TASKS\" > copy-cache.env\n"
+	if runtime.GOOS == "windows" {
+		contents = "@echo off\r\nset BUILDOPT_CACHE_STANDARD_COPY_TASKS>copy-cache.env\r\n"
+	}
+	if err := os.WriteFile(wrapper, []byte(contents), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	code := Run([]string{
+		"impact",
+		"--repository-id", "tonyredondo/buildopt-impact-synthetic",
+		"--changes-file", "changed.txt",
+		"--cache-standard-copy-tasks",
+	}, strings.NewReader(""), &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("impact exit code = %d, stderr = %q", code, stderr.String())
+	}
+	raw, err := os.ReadFile(observation)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := "1\n"
+	if runtime.GOOS == "windows" {
+		want = gradleStandardCopyCacheEnvironment + "=1\n"
+	}
+	if strings.ReplaceAll(string(raw), "\r\n", "\n") != want {
+		t.Fatalf("standard Copy cache child environment = %q", raw)
 	}
 }
 

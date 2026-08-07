@@ -2826,6 +2826,23 @@ cache, and no measured invocation enables exact-bound hot state. The negative
 test proves that the checker rejects both hot-state contamination and output
 drift.
 
+The next task-tail experiment adds one exact standard-`Copy` adapter selected
+from the same OpenTelemetry trace. It deliberately measures isolated and
+cumulative effects rather than adding component percentages:
+
+```bash
+./dev/check-poc-standard-copy-cache
+./dev/run-poc-standard-copy-cascade /absolute/path/to/new-result.json
+./dev/check-poc-standard-copy-cascade /absolute/path/to/new-result.json
+```
+
+The three independent comparisons are Copy-only versus optimized native,
+Copy's incremental value on top of Build Impact plus the qualified standard
+`Jar` adapter, and the complete composed profile versus optimized native. Each
+comparison has its own four alternating pairs and frozen value gate. This
+direct complete-profile measurement is the only accepted evidence for a
+cascade effect; individual percentages are never summed.
+
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source
 distribution. Structural discovery freezes selective execution only where the

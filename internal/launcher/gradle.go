@@ -21,6 +21,7 @@ const (
 	gradleProjectPluginModeCacheOnly   = "CACHE_ONLY"
 	gradleSafeCacheEnvironment         = "BUILDOPT_SAFE_CACHE"
 	gradleStandardJarCacheEnvironment  = "BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS"
+	gradleStandardCopyCacheEnvironment = "BUILDOPT_CACHE_STANDARD_COPY_TASKS"
 	gradleCheckstyleHeapEnvironment    = "BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP"
 	gradleCheckstyleHeap2G             = "2g"
 	gradleCheckstyleMinimumMemoryBytes = int64(14 * 1024 * 1024 * 1024)
@@ -72,13 +73,17 @@ func prepareGradleInvocationWithEnvironment(
 		if jarErr != nil {
 			return gradleInvocation{}, jarErr
 		}
-		if standardJarCache && buildCacheConfigured && !buildCacheEnabled {
-			return gradleInvocation{}, errors.New("BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS is incompatible with --no-build-cache")
+		standardCopyCache, copyErr := gradleStandardCopyCacheEnabled(getenv)
+		if copyErr != nil {
+			return gradleInvocation{}, copyErr
+		}
+		if (standardJarCache || standardCopyCache) && buildCacheConfigured && !buildCacheEnabled {
+			return gradleInvocation{}, errors.New("BuildOpt standard task cache adapters are incompatible with --no-build-cache")
 		}
 		_, managedConfigured, _ := managedL1ConfigFromEnvironment(getenv)
 		externalInstrumentation := gradleInstrumentationRequested(getenv)
 		runtimeIntegration := gradleRuntimeIntegrationRequested(getenv)
-		instrumented := safeCacheEnabled || standardJarCache || externalInstrumentation || checkstyleHeap != ""
+		instrumented := safeCacheEnabled || standardJarCache || standardCopyCache || externalInstrumentation || checkstyleHeap != ""
 		if instrumented {
 			initScript, pluginJar, assetErr := resolveGradleAssets()
 			if assetErr != nil {
@@ -92,8 +97,11 @@ func prepareGradleInvocationWithEnvironment(
 			if standardJarCache {
 				environment[gradleStandardJarCacheEnvironment] = "1"
 			}
+			if standardCopyCache {
+				environment[gradleStandardCopyCacheEnvironment] = "1"
+			}
 			if (checkstyleHeap != "" && !externalInstrumentation ||
-				standardJarCache && !runtimeIntegration) && !safeCacheEnabled {
+				(standardJarCache || standardCopyCache) && !runtimeIntegration) && !safeCacheEnabled {
 				environment[gradleProjectPluginModeEnvironment] = gradleProjectPluginModeCacheOnly
 			}
 		}
@@ -122,7 +130,7 @@ func prepareGradleInvocationWithEnvironment(
 			childArgs: childArgs, environment: environment,
 			managedL1: defaultManagedL1, nativeOnly: !instrumented,
 			localOnly: (checkstyleHeap != "" && !externalInstrumentation ||
-				standardJarCache && !runtimeIntegration) && !safeCacheEnabled,
+				(standardJarCache || standardCopyCache) && !runtimeIntegration) && !safeCacheEnabled,
 		}, nil
 	}
 	childArgs = append(childArgs, args...)
@@ -142,6 +150,20 @@ func gradleStandardJarCacheEnabled(getenv func(string) string) (bool, error) {
 		return true, nil
 	default:
 		return false, errors.New("BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS must be 0 or 1")
+	}
+}
+
+func gradleStandardCopyCacheEnabled(getenv func(string) string) (bool, error) {
+	if getenv == nil {
+		return false, errors.New("resolve BUILDOPT_CACHE_STANDARD_COPY_TASKS: environment reader is unavailable")
+	}
+	switch getenv(gradleStandardCopyCacheEnvironment) {
+	case "", "0":
+		return false, nil
+	case "1":
+		return true, nil
+	default:
+		return false, errors.New("BUILDOPT_CACHE_STANDARD_COPY_TASKS must be 0 or 1")
 	}
 }
 

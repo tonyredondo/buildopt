@@ -43,6 +43,15 @@ cleanup. The plugin also applies `dev.buildopt.tier-one-policy` before each
 project. Malformed context disables the managed cache; the distinct
 `DISABLED_L2_WRITER` mode disables local load/store.
 
+The Build Optimization POC also contains explicit, version-bound adapters for
+unmodified standard `Jar` and `Copy` tasks that Gradle does not make cacheable
+by default. The `Copy` adapter is restricted to Gradle 9.6.1, the exact
+`Copy_Decorated -> Copy` hierarchy, one native `StandardTaskAction`, and a
+destination strictly below the owning project's build directory. `Sync`,
+custom actions, custom subclasses, external destinations, and every mismatch
+retain native Gradle behavior. These adapters are experimental evidence
+surfaces, not a general task-cache policy.
+
 `A0-006` extends that settings plugin with the public `HttpBuildCache` API.
 Only a complete launcher-owned authority/policy/configuration/gateway context
 configures the loopback remote cache. Read-only mode sets `push=false`; an

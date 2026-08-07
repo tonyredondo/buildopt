@@ -63,20 +63,48 @@ if (($# == 1)); then
     exit 0
 fi
 
-for command in java find grep; do
+for command in find grep mkdir readlink; do
     command -v "${command}" >/dev/null 2>&1 || {
         printf 'required command is unavailable: %s\n' "${command}" >&2
         exit 1
     }
 done
 
-plugin_jar_count=$(find "${buildopt_root}/jvm/gradle-plugin/build/libs" -maxdepth 1 -type f -name 'buildopt-gradle-plugin-*.jar' 2>/dev/null | wc -l)
-if [[ ${plugin_jar_count} -ne 1 ]]; then
-    printf 'expected one packaged Gradle plugin, found %s\n' "${plugin_jar_count}" >&2
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/launcher ./cmd/buildopt
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p -- "${GRADLE_USER_HOME}"
+
+buildopt_gradle_home=$(
+    find \
+        "${GRADLE_USER_HOME}/wrapper/dists/gradle-9.6.1-bin" \
+        -type d \
+        -path '*/gradle-9.6.1' \
+        -print \
+        -quit
+)
+if [[ -z "${buildopt_gradle_home}" ||
+    ! -x "${buildopt_gradle_home}/bin/gradle" ]]; then
+    printf 'pinned Gradle 9.6.1 must be provisioned\n' >&2
     exit 1
 fi
+buildopt_gradle_home=$(readlink -f "${buildopt_gradle_home}")
 
-plugin_jar=$(find "${buildopt_root}/jvm/gradle-plugin/build/libs" -maxdepth 1 -type f -name 'buildopt-gradle-plugin-*.jar')
-jar tf "${plugin_jar}" | grep -Fqx 'dev/buildopt/gradle/BuildOptStandardCopyCachePlugin.class'
+"${buildopt_script_dir}/run" -- \
+    "${buildopt_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --no-configuration-cache \
+    --warning-mode=fail \
+    "-PbuildoptTierOneGradleHome=${buildopt_gradle_home}" \
+    :jvm:gradle-plugin:standardCopyCacheTestKit
 
-printf 'POC standard Copy adapter OK: spec and packaged plugin are present\n'
+grep -Fq -- '--cache-standard-copy-tasks' \
+    "${buildopt_root}/internal/launcher/impact.go"
+grep -Fq 'BUILDOPT_CACHE_STANDARD_COPY_TASKS' \
+    "${buildopt_root}/.github/actions/buildopt.init.gradle"
+
+printf 'POC standard Copy cache OK: exact replay and conservative denials passed\n'

@@ -69,6 +69,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 	gradleNativeOnly := false
 	gradleLocalOnly := false
 	impactStandardJarCache := false
+	impactStandardCopyCache := false
 	if len(args) > 0 && args[0] == "impact" {
 		impactStartedAt := time.Now()
 		impact, err := prepareImpactInvocation(
@@ -116,19 +117,25 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			_, _ = fmt.Fprintln(stderr, "buildopt: exact-bound Build Impact POC hot state reused")
 		}
 		impactStandardJarCache = impact.standardJarCache
+		impactStandardCopyCache = impact.standardCopyCache
 		args = append([]string{"gradle"}, impact.gradleArgs...)
 	}
 	if len(args) > 0 && args[0] == "gradle" {
 		gradleSetupStartedAt := time.Now()
 		getenv := os.Getenv
-		if impactStandardJarCache {
+		if impactStandardJarCache || impactStandardCopyCache {
 			getenv = func(name string) string {
 				switch name {
 				case gradleStandardJarCacheEnvironment:
-					return "1"
-				default:
-					return os.Getenv(name)
+					if impactStandardJarCache {
+						return "1"
+					}
+				case gradleStandardCopyCacheEnvironment:
+					if impactStandardCopyCache {
+						return "1"
+					}
 				}
+				return os.Getenv(name)
 			}
 		}
 		invocation, err := prepareGradleInvocationWithEnvironment(
