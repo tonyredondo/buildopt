@@ -1,11 +1,11 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC INSTALLED BUILD IMPACT VALUE PROVEN; OTEL EXECUTION VARIANCE ACTIVE` — bounded Spring scopes qualify, while typed producers and exact hot state remain insufficient to beat native Gradle stably on OpenTelemetry<br>
-**Current phase:** `POC OTEL EXECUTION ATTRIBUTION` — the first optimized terminal run failed the unchanged gate; attribute Gradle task/daemon variance before another implementation hypothesis<br>
-**POC functional target:** measurable net build-time reduction from the qualified Build Impact and exact reviewed-source Task/Patch routes; no-value Safe Cache or Runtime candidates remain disabled<br>
+**Overall status:** `POC BUILD-TIME VALUE PROVEN; NEXT PERFORMANCE ROADMAP RECORDED` — installed Spring Build Impact and the OpenTelemetry standard-Jar path beat optimized native Gradle within their exact scopes<br>
+**Current phase:** `PAUSED BETWEEN POC PERFORMANCE BLOCKS` — `POC-FULL-PATH-ABLATION-001` is the first implementation block when performance work resumes; no roadmap item is active<br>
+**POC functional target:** attribute stable incremental value from one qualified combined path, then generalize only the Build Impact and exact task mechanisms that continue to beat optimized native Gradle; Safe Cache and Runtime candidates remain disabled<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
-**Last updated:** 2026-08-06<br>
+**Last updated:** 2026-08-07<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
 **RFC baseline SHA-256:** `963eb08cc43d82d35366edc834b014c079d1470e14e16a60ef28c3ab1dcbd861`
 
@@ -96,6 +96,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-SPRING-IMPACT-BREADTH | Test the installed mechanism on a second Spring output scope, a shared-source change and a global fallback | `DONE` | 2/2 | `E-188..191` |
 | POC-OTEL-SPRING-FAMILY | Transfer the installed mechanism to the stable OpenTelemetry Spring-family build boundary | `DONE` | 2/2 | `E-192`, `E-198` |
 | POC-OTEL-OPTIMIZATION | Turn the favorable but unstable OpenTelemetry signal into a repeatable installed-path advantage | `DONE` | 6/6 | `E-199..206` |
+| POC-PERF-NEXT | Qualified full-path ablation and measured mechanism generalization | `TODO` | 0/1 | `E-206` + [performance findings](./docs/findings/build-optimization-performance.md) |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -129,6 +130,9 @@ Optimized native Gradle baseline
   → preregister a substantial Spring Framework experiment against its cache-enabled, parallel native Gradle control
   → diagnose build outputs, test preparation, and unchanged full verification before changing product behavior
   → transfer only a qualifying generic mechanism unchanged to OpenTelemetry Java Instrumentation
+  → qualify the exact standard-Jar adapter on OpenTelemetry with stable positive evidence
+  → record the next performance roadmap without activating unproven mechanisms
+  → when resumed, ablate the qualified full path before generalizing Build Impact or adding task adapters
 ```
 
 The implementation history remains useful, but it is not the POC exit gate:
@@ -190,6 +194,13 @@ than partners. Test Optimization remains a separate product.
 | 41 | `POC-OTEL-VARIANCE-001` | Attribute the terminal regression inside Gradle task execution and define a generic corrective hypothesis before any new timing | `DONE` | Codex |
 | 42 | `POC-OTEL-JAR-CACHE-001` | Implement the generic corrective hypothesis only for exact unmodified standard Jar producers | `DONE` | Codex |
 | 43 | `POC-OTEL-STABILITY-002` | Execute a newly preregistered installed comparison under the unchanged terminal value gate | `DONE` | Codex |
+| 44 | `POC-FULL-PATH-ABLATION-001` | Measure optimized native Gradle and five incrementally composed qualified BuildOpt arms on Spring and OpenTelemetry | `TODO` | — |
+| 45 | `POC-IMPACT-GENERALIZATION-001` | Generalize Build Impact across real change shapes and compilation, test-preparation, verification, packaging, and distribution outputs | `WAITING` | — |
+| 46 | `POC-TASK-TAIL-ADAPTERS-001` | Select and qualify the next exact standard-task adapter from real task-attribution traces | `WAITING` | — |
+| 47 | `POC-TEST-BUILD-OPTIMIZATION-001` | Optimize build-owned test compilation, preparation, and packaging without selecting, skipping, or reprioritizing Test-owned execution | `WAITING` | — |
+| 48 | `POC-RUNTIME-RESEARCH-001` | Reopen Runtime Tuning only for one measured resource bottleneck and retain stable control unless it beats optimized native Gradle | `WAITING` | — |
+| 49 | `POC-REMOTE-CACHE-VALUE-001` | Compare Shared and Edge Cache end to end with Gradle's native remote cache under controlled network conditions | `WAITING` | — |
+| 50 | `POC-THIRD-REPOSITORY-TRANSFER-001` | Transfer the unchanged qualified profile to one substantial public repository representing a new workload class | `WAITING` | — |
 
 The raw diagnostic block is closed and unchanged. `E-172` corrects its
 ownership interpretation: Mockito's 242.690-second `compileTestJava` is
@@ -1063,6 +1074,36 @@ Test Optimization is an explicit non-goal for all functional and documentation t
 | `POC-OTEL-OPTIMIZATION-G03` | An exact-bound hot-path hit performs less BuildOpt-owned work than a miss and any drift fails closed without changing Gradle semantics | `DONE` | `E-202`: 74.97-ms miss versus 40.34-ms hit mean; exact selection and drift misses |
 | `POC-OTEL-OPTIMIZATION-G04` | Four alternating pairs save at least 500 ms/2%, have a positive paired lower bound and 4/4 positive pairs, with exact non-empty outputs, safe global fallback and zero product failures | `DONE` | `E-206`: +4,376.75 ms/+39.92%, interval +3,672.5..+5,539.5 ms, 4/4 positive, 125 exact outputs, zero product failures and full fallback |
 
+#### POC-PERF-NEXT — recorded optimization roadmap
+
+This roadmap is recorded for the next performance phase but is not active. The
+decision narrative, component scorecard, and measurement boundaries live in
+[Build Optimization Performance Findings and Next Steps](./docs/findings/build-optimization-performance.md).
+The roadmap unifies orchestration, not activation: only mechanisms already
+qualified for the exact workload may enter a combined candidate. Runtime
+Tuning, strict Safe Cache, and Shared/Edge Cache remain disabled until separate
+incremental evidence beats optimized native Gradle.
+
+| ID | Priority | Deliverable | State | Dependency |
+|---|---:|---|---|---|
+| `POC-FULL-PATH-ABLATION-001` | 1 | Run six preregistered arms on Spring and OpenTelemetry: optimized native Gradle; Build Impact; Impact plus exact hot state; qualified standard-task adapters; exact reviewed task patches; and the complete qualified profile | `TODO` | `E-187`, `E-202`, `E-206` |
+| `POC-IMPACT-GENERALIZATION-001` | 2 | Extend Build Impact across leaf/shared/build-logic/global changes and compilation, test preparation, verification, packaging, and distribution outputs while retaining full-graph fallback | `WAITING` | `POC-FULL-PATH-ABLATION-001` |
+| `POC-TASK-TAIL-ADAPTERS-001` | 3 | Select the next standard Gradle task type from real dominant-tail traces, define an exact eligibility contract, and measure it independently | `WAITING` | `POC-FULL-PATH-ABLATION-001` |
+| `POC-TEST-BUILD-OPTIMIZATION-001` | 4 | Reduce build-owned test compilation, preparation, and packaging without changing Test-owned selection, execution, retries, sharding, or prioritization | `WAITING` | `POC-IMPACT-GENERALIZATION-001`, `POC-TASK-TAIL-ADAPTERS-001` |
+| `POC-RUNTIME-RESEARCH-001` | 5 | Investigate one observed worker, heap, GC, queue, configuration, dependency-resolution, or JVM-warm-up bottleneck at a time; preserve `STABLE_CONTROL` on no-value evidence | `WAITING` | `POC-FULL-PATH-ABLATION-001` |
+| `POC-REMOTE-CACHE-VALUE-001` | 6 | Compare BuildOpt Shared/Edge Cache with Gradle native remote cache using controlled latency, bandwidth, object size, hit rate, and runner locality | `WAITING` | `POC-FULL-PATH-ABLATION-001` |
+| `POC-THIRD-REPOSITORY-TRANSFER-001` | 7 | Transfer the unchanged qualified profile to one substantial public repository only when it exercises a new workload class or tests a current assumption | `WAITING` | priorities 1–4 |
+
+| Exit gate | Summarized criterion | State | Evidence |
+|---|---|---|---|
+| `POC-PERF-NEXT-G01` | The complete qualified profile beats optimized native Gradle by at least 500 ms and 2%, has a positive paired lower bound, preserves byte-identical required outputs, introduces zero product failures, and proves full native/full-graph fallback without adding percentages across arms | `TODO` | Pending `POC-FULL-PATH-ABLATION-001`; every unfavorable observation must be retained |
+
+The first block must use an ablation matrix rather than a single
+native-versus-everything comparison. This keeps each incremental saving
+attributable and prevents a regressive mechanism from hiding behind Build
+Impact or an exact task adapter. No item authorizes production rollout, soak,
+design-partner work, Test Optimization, or a universal savings claim.
+
 ---
 
 ## 12. Continuous validation
@@ -1398,6 +1439,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-07 | Recorded the next seven POC performance priorities without starting them: qualified full-path ablation first, followed by Build Impact generalization, trace-selected task adapters, build-owned test preparation, targeted Runtime research, native-remote-cache comparison, and unchanged transfer to a third substantial repository; unproven mechanisms remain disabled | Codex |
 | 2026-08-07 | Qualified stable installed OpenTelemetry POC value: the conservative standard-Jar adapter saved 4,376.75 ms/39.92% with a positive interval, 4/4 positive pairs, exact outputs, zero product failures and safe full fallback | Codex |
 | 2026-08-06 | Preregistered the standard-Jar optimized OpenTelemetry terminal experiment with one shared hot Gradle runtime and the unchanged 4/4 value gate before any accepted observation | Codex |
 | 2026-08-06 | Attributed OpenTelemetry variance to repeated standard Jar packaging and added an explicit POC native-cache adapter that replays only exact unmodified Jar producers while denying custom Jar, Copy and the managed Tier 1 policy | Codex |

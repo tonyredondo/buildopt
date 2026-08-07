@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`POC INSTALLED BUILD IMPACT VALUE PROVEN; OTEL EXECUTION VARIANCE ACTIVE\`"
-    "**Current phase:** \`POC OTEL EXECUTION ATTRIBUTION\`"
+    "**Overall status:** \`POC BUILD-TIME VALUE PROVEN; NEXT PERFORMANCE ROADMAP RECORDED\`"
+    "**Current phase:** \`PAUSED BETWEEN POC PERFORMANCE BLOCKS\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"
@@ -132,6 +132,14 @@ buildopt_required_tracker_text=(
     "| \`E-205\` | 2026-08-06 | \`POC-OTEL-STABILITY-002\`"
     "| \`E-206\` | 2026-08-07 | \`POC-OTEL-STABILITY-002\`, \`POC-OTEL-OPTIMIZATION-G04\`"
     "| \`POC-OTEL-OPTIMIZATION-G04\` | The optimized installed candidate clears the unchanged 500-ms/2% value gate with a positive paired lower bound, 4/4 positive pairs, exact outputs, safe fallback and zero product failures | Stable OpenTelemetry POC claim | \`DONE\`"
+    "| \`POC-FULL-PATH-ABLATION-001\` | 1 | Run six preregistered arms on Spring and OpenTelemetry"
+    "| \`POC-IMPACT-GENERALIZATION-001\` | 2 | Extend Build Impact across leaf/shared/build-logic/global changes"
+    "| \`POC-TASK-TAIL-ADAPTERS-001\` | 3 | Select the next standard Gradle task type from real dominant-tail traces"
+    "| \`POC-TEST-BUILD-OPTIMIZATION-001\` | 4 | Reduce build-owned test compilation, preparation, and packaging without changing Test-owned selection"
+    "| \`POC-RUNTIME-RESEARCH-001\` | 5 | Investigate one observed worker, heap, GC, queue, configuration, dependency-resolution, or JVM-warm-up bottleneck at a time"
+    "| \`POC-REMOTE-CACHE-VALUE-001\` | 6 | Compare BuildOpt Shared/Edge Cache with Gradle native remote cache"
+    "| \`POC-THIRD-REPOSITORY-TRANSFER-001\` | 7 | Transfer the unchanged qualified profile to one substantial public repository"
+    "| \`POC-PERF-NEXT-G01\` | The complete qualified profile beats optimized native Gradle by at least 500 ms and 2%"
     "| \`A1-G06\` | Safe Cache is non-regressive versus optimized native cache"
     "| \`B-G03\` | Runtime Tuning exceeds the POC accelerator threshold"
     "| \`C1-001\` | Opt-in JVM Agent with coverage and budgets | \`UNAVAILABLE\`"
@@ -173,5 +181,5 @@ if [[ $(grep -Fc "| \`OPS-001/B\` |" <<<"${buildopt_readiness}") != 1 ]]; then
     exit 1
 fi
 
-printf 'RFC/tracker consistency OK: %s accepted decisions, terminal OpenTelemetry transfer recorded\n' \
+printf 'RFC/tracker consistency OK: %s accepted decisions, terminal OpenTelemetry transfer and next performance roadmap recorded\n' \
     "${buildopt_decision_count}"
