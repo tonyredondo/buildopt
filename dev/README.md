@@ -2979,6 +2979,7 @@ Apache Kafka 4.3.1 Java/Scala test-preparation workload:
 ./dev/check-poc-third-repository-transfer-v1
 ./dev/run-poc-third-repository-transfer-v1 /absolute/path/to/new-result.json
 ./dev/check-poc-third-repository-transfer-v1-result /absolute/path/to/new-result.json
+./dev/test-poc-third-repository-transfer-v1
 ```
 
 The installed candidate combines only generic Build Impact and exact standard
@@ -2990,6 +2991,12 @@ runner compares `clients` main/test classes and resources byte for byte, rejects
 any Gradle `Test` execution, and proves that a `gradle.properties` change
 restores the full graph. Hot State, Runtime Tuning, Copy, remote caches, managed
 runtime, Test Optimization, soak, and production claims remain disabled.
+
+The checked result qualifies the transfer: native Gradle averages 4,609.5 ms
+and BuildOpt 2,070 ms, saving 2,539.5 ms/55.09%. All four pairs are positive,
+the interval is +1,625.5..+4,093 ms, and all 4,062 required outputs match. The
+negative suite rejects hot-state activation, output drift, and a weakened
+fallback.
 
 Run the lock and doctor contract tests from the repository root:
 

@@ -116,7 +116,13 @@ locality: the same eight committed Shared objects and Gradle HTTP client took
 prewarmed loopback Edge. That is 2,401.25 ms/**34.74% faster**, with 4/4
 positive pairs, identical 32-MiB outputs and zero measured upstream Edge
 requests. This qualifies Edge locality only under that frozen profile; it does
-not claim that Shared alone outperforms another remote-cache origin. See the [POC value
+not claim that Shared alone outperforms another remote-cache origin. Finally,
+the unchanged clean profile transferred to Apache Kafka 4.3.1: native root
+`testClasses` averaged 4,609.5 ms and installed BuildOpt 2,070 ms, saving
+2,539.5 ms/**55.09%** with 4/4 positive pairs, 4,062 byte-identical outputs and
+full 64-project fallback. This broadens the POC evidence to a Java/Scala and
+generated-source workload without adding Kafka-specific product logic; it is
+still not a universal claim. See the [POC value
 contract](./specs/poc-value-validation-v1.md) and
 [raw scorecard](./benchmarks/README.md#build-optimization-scorecard).
 

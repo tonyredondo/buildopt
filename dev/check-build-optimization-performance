@@ -14,6 +14,7 @@ buildopt_impact="${buildopt_repo_root}/benchmarks/results/build-impact-performan
 buildopt_combined="${buildopt_repo_root}/benchmarks/results/poc-value-combined-v1.json"
 buildopt_otel_historical="${buildopt_repo_root}/benchmarks/results/poc-otel-optimization-v2.json"
 buildopt_otel_clean="${buildopt_repo_root}/benchmarks/results/poc-otel-clean-composition-v1.json"
+buildopt_kafka_transfer="${buildopt_repo_root}/benchmarks/results/poc-third-repository-transfer-v1.json"
 
 "${buildopt_script_dir}/check-cache-parity-performance" "${buildopt_cache}" >/dev/null
 "${buildopt_script_dir}/check-runtime-owner-evaluation" >/dev/null
@@ -21,6 +22,7 @@ buildopt_otel_clean="${buildopt_repo_root}/benchmarks/results/poc-otel-clean-com
 "${buildopt_script_dir}/check-poc-value-combined" "${buildopt_combined}" >/dev/null
 "${buildopt_script_dir}/check-poc-otel-optimization-v2-result" "${buildopt_otel_historical}" >/dev/null
 "${buildopt_script_dir}/check-poc-otel-clean-composition-v1-result" "${buildopt_otel_clean}" >/dev/null
+"${buildopt_script_dir}/check-poc-third-repository-transfer-v1-result" "${buildopt_kafka_transfer}" >/dev/null
 
 jq -n \
     --slurpfile cache "${buildopt_cache}" \
@@ -28,7 +30,8 @@ jq -n \
     --slurpfile impact "${buildopt_impact}" \
     --slurpfile combined "${buildopt_combined}" \
     --slurpfile otelHistorical "${buildopt_otel_historical}" \
-    --slurpfile otelClean "${buildopt_otel_clean}" '
+    --slurpfile otelClean "${buildopt_otel_clean}" \
+    --slurpfile kafkaTransfer "${buildopt_kafka_transfer}" '
     {
         schemaVersion: "buildopt.evidence/build-optimization-scorecard/v1",
         interpretation: "ATTRIBUTABLE_RESULTS_NOT_ADDITIVE",
@@ -114,6 +117,21 @@ jq -n \
             standardJarCacheHits:
                 $otelClean[0].discovery.measuredCandidateStandardJarCacheHits,
             decision: $otelClean[0].result.decision
+        },
+        thirdRepositoryTransfer: {
+            claim: "QUALIFIED_CLEAN_PROFILE_ON_APACHE_KAFKA",
+            repository: $kafkaTransfer[0].repository.nameWithOwner,
+            workloadClass: "MULTI_MODULE_JAVA_SCALA_TEST_PREPARATION",
+            meanSavedMs: $kafkaTransfer[0].result.meanSavedMs,
+            reductionRatio: $kafkaTransfer[0].result.reductionRatio,
+            interval95SavedMs: $kafkaTransfer[0].result.interval95SavedMs,
+            positivePairs: $kafkaTransfer[0].result.positivePairs,
+            requiredOutputCount:
+                $kafkaTransfer[0].observations[0].requiredOutputCount,
+            controlReachCount: $kafkaTransfer[0].discovery.controlReachCount,
+            candidateReachCount: $kafkaTransfer[0].discovery.candidateReachCount,
+            safeFallback: $kafkaTransfer[0].fallback.buildSuccessful,
+            decision: $kafkaTransfer[0].result.decision
         },
         boundaries: {
             proofOfConcept: true,

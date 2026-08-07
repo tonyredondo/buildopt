@@ -30,6 +30,11 @@
   and eight committed Shared objects averaged 6,911.25 ms over a frozen modeled
   WAN and 4,510 ms through a prewarmed Edge: **34.74% faster**, 4/4 positive
   pairs, identical 32-MiB outputs and zero measured upstream Edge requests.
+- **The clean profile transfers to a third substantial repository.** On Apache
+  Kafka 4.3.1, generic discovery reduced build-owned test preparation from 64
+  reached projects to three and exact `Jar` reuse restored `:generator:jar`.
+  Installed BuildOpt averaged **55.09% faster** (2,539.5 ms saved), with 4/4
+  positive pairs and 4,062 byte-identical outputs.
 
 ## Product Idea
 
@@ -108,6 +113,12 @@ unfavorable observations. Percentages from different rows are not additive.
 | Incremental `Copy` on Impact + `Jar` | **24.90% faster on average**, 2,391.25 ms saved, 3/4 positive pairs | Not qualified: the direct incremental interval -2,568.25..+7,092 ms crosses zero. |
 | Complete Impact + `Jar` + `Copy` profile | **52.89% faster**, 4,377 ms saved, 4/4 positive pairs | The directly measured cascade qualifies globally with interval +4,130.25..+4,653.25 ms and 21,818 identical outputs; percentages were not added. Copy still remains disabled because its incremental authorization gate failed. |
 
+### Apache Kafka: third real-repository transfer
+
+| Experiment | Result | Interpretation |
+|---|---:|---|
+| Clean Impact + exact standard-`Jar` profile | **55.09% faster**, 2,539.5 ms saved, 4/4 positive pairs | The unchanged installed profile reduced the conservative graph from 64 projects to three and restored `:generator:jar`; interval +1,625.5..+4,093 ms, 4,062 identical outputs, no Gradle `Test`, and successful full-graph fallback. |
+
 ## Latest Generalization and Next Work
 
 **Continue the POC, but activate only measured value.** The fresh ablation
@@ -175,9 +186,14 @@ the paired interval was +2,260.5..+2,542 ms, all 32-MiB outputs and task
 outcomes matched, and Edge made zero measured upstream requests. The claim is
 deliberately limited to this network profile.
 
-The next block is `POC-THIRD-REPOSITORY-TRANSFER-001`: transfer the unchanged
-qualified profile to one substantial public repository representing a new
-workload class, without adding repository-specific product rules.
+The third-repository transfer then applied the unchanged clean profile to
+Apache Kafka 4.3.1, a 64-project Java/Scala/generated-source build. Native root
+`testClasses` averaged 4,609.5 ms; installed BuildOpt selected
+`:clients:testClasses` and averaged 2,070 ms, saving 2,539.5 ms/55.09%. All four
+pairs were positive, the interval remained above zero, 4,062 required outputs
+were identical, and build-logic drift restored the full graph. This closes the
+recorded ten-block performance roadmap with transfer evidence rather than a
+repository-specific rule.
 
 ## Boundaries and References
 
@@ -199,3 +215,4 @@ production operations are outside the current scope.
 - [Optimization-overhead ablation](../../benchmarks/results/poc-optimization-overhead-ablation-v1.json)
 - [Targeted Runtime decision](../../benchmarks/results/poc-runtime-research-v1.json)
 - [Controlled remote-cache locality evidence](../../benchmarks/results/poc-remote-cache-value-v1.json)
+- [Apache Kafka transfer evidence](../../benchmarks/results/poc-third-repository-transfer-v1.json)

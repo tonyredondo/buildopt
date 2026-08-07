@@ -271,9 +271,11 @@ should use public repositories with:
 - repeatable mutations and entrypoints;
 - no repository-specific rule added to BuildOpt merely to win the benchmark.
 
-Spring Framework and OpenTelemetry satisfy enough of these conditions to remain
-the primary POC laboratories. A third repository should be added only when it
-exercises a different workload class or invalidates a current assumption.
+Spring Framework and OpenTelemetry remain the primary POC laboratories. Apache
+Kafka 4.3.1 now supplies the third workload class: 64 Gradle projects combining
+Java, Scala, generated protocol sources, shaded packaging, and test
+preparation. The unchanged clean profile qualified there without adding a
+Kafka-specific product rule.
 
 ## Recommended Activation Policy
 
@@ -290,18 +292,23 @@ exercises a different workload class or invalidates a current assumption.
 
 ## Recommended Next Block
 
-The next implementation block is **third-repository transfer**:
+The third-repository transfer is complete. Apache Kafka root `testClasses`
+averaged 4,609.5 ms and the unchanged installed clean profile averaged 2,070
+ms, saving 2,539.5 ms/55.09% with 4/4 positive pairs, a
++1,625.5..+4,093-ms interval, 4,062 identical outputs, and full fallback.
 
-1. select one substantial public repository representing a workload class not
-   already covered by Spring or OpenTelemetry;
-2. freeze its revision, entrypoint, mutation, outputs and optimized native
-   control before timing;
-3. transfer only the already qualified profile without repository-specific
-   product rules or threshold changes;
-4. retain every alternating pair and fail closed on incomplete native or
-   candidate execution;
-5. decide whether the current POC evidence transfers beyond the two primary
-   real-repository laboratories.
+The next block should be **qualified-profile usability and scope synthesis**:
+
+1. expose one explicit POC command/configuration for the clean qualified
+   profile rather than requiring experiment-only flags;
+2. keep activation repository-owned and opt-in, because only declared output
+   scopes are proven;
+3. report the selected/full graph, exact adapters and expected outputs before
+   execution so users can review the optimization;
+4. replay the same no-product-rule contract on future repositories only when a
+   materially new workload class appears;
+5. keep Runtime, Hot State, Copy and unqualified cache paths disabled until a
+   new trace supplies an independent causal hypothesis.
 
 Normal-build task tails, direct test-build JAR reuse and the trace-selected
 six-worker Runtime candidate are closed for the current evidence. They should
@@ -316,8 +323,8 @@ manufacture another optimization.
   and a network profile derived independently of this experiment?
 - Does a materially different retained trace expose a Runtime bottleneck that
   justifies one new preregistered hypothesis?
-- How much of the combined gain remains when the same qualified profile is
-  transferred unchanged to a third substantial public repository?
+- Which repository-owned manifest UX makes the qualified clean profile easy to
+  adopt without implying universal automatic selection?
 
 ## Evidence Boundaries
 

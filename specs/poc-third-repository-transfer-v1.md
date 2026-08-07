@@ -39,3 +39,22 @@ This experiment tests transfer of a POC mechanism, not production readiness.
 It neither executes nor selects tests, adds Kafka-specific product logic,
 changes upstream source, requires a soak/design partner, nor broadens any
 previous workload-specific claim.
+
+## Result
+
+The immutable execution qualifies the clean profile on Apache Kafka. Optimized
+native Gradle averaged 4,609.5 ms and installed BuildOpt averaged 2,070 ms,
+saving 2,539.5 ms or 55.09%. All four pairs were positive (+4,840, +1,948,
++1,852, and +1,518 ms), and the deterministic paired interval was
++1,625.5..+4,093 ms.
+
+Every pair preserved the same 4,062 required output files byte for byte. The
+candidate restored `:generator:jar FROM-CACHE`; native Gradle executed it. No
+Gradle `Test`, Runtime Tuning, Hot State, remote cache, managed runtime, or
+product-attributable failure occurred. A separate `gradle.properties` change
+retained the full graph and observed work outside `clients`.
+
+The terminal decision is
+`QUALIFY_CLEAN_PROFILE_ON_THIRD_SUBSTANTIAL_REPOSITORY`. This establishes
+transfer across three different real-repository workload families, but remains
+an output-scoped POC result rather than a universal or production claim.

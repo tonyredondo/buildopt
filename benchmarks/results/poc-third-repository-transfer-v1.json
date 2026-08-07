@@ -1,0 +1,199 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-third-repository-transfer/v1",
+  "workItem": "POC-THIRD-REPOSITORY-TRANSFER-001",
+  "capturedAt": "2026-08-07T21:07:47Z",
+  "buildopt": {
+    "revision": "7935968b44b14a722c0a7ec7e0d4af720eac80b5",
+    "executableSha256": "ebf3f6c6de2b7f97c412ac28637bf215a7b1ee0330ab8a67ad657acc34a23e75",
+    "packageSha256": "e5f9476de205cabc95d4236afc08164b736a009eb0f0aaba100e6c4b0070e5d6",
+    "packageVersion": "0.3.0-dev",
+    "candidateSurface": "INSTALLED_BUILDOPT_IMPACT_STANDARD_JAR_NO_HOT_STATE",
+    "launcherOverheadIncluded": true,
+    "runnerScriptSha256": "abfe655e4fde06b9441a08d689da82498fd71c51cd6ce31a80e4a5eb4c0e596f"
+  },
+  "specSha256": "e04d1a932681a4d702df64ceff44c7d37d451047df9cee5e99f80905049fe1a7",
+  "repository": {
+    "nameWithOwner": "apache/kafka",
+    "releaseTag": "4.3.1",
+    "revision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "sourceArchiveSha256": "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12,
+    "jdk": "temurin-25.0.3+9"
+  },
+  "preparation": {
+    "onlinePreflightMeasured": false,
+    "onlinePreflightSuccess": true,
+    "onlinePreflightWallClockMs": 284323,
+    "measuredNetwork": "DISCONNECTED",
+    "dependencyMode": "GRADLE_OFFLINE_WITH_SHARED_READ_ONLY_CACHE",
+    "readOnlyDependencyCacheSha256": "af31769a4cbf0875d2c04179d914351f76b58800dfa07caf7f631d3a2091fb1c",
+    "buildCacheSeedSha256": "fe204671b067b3aa668c93db09504784ecd5ab38e03b243df29be0f0019b4273",
+    "candidateBuildCacheSeedSha256": "51238dec059d01ad4896199e65175f3f2d3c47fcf42aed58a16966f3935ac27f",
+    "preflightDaemonStoppedBeforeArmSetup": true,
+    "cacheSeedRestoredBeforeEveryArm": true,
+    "sharedCheckout": true,
+    "sharedGradleUserHome": true,
+    "sharedDaemon": true,
+    "controlStandardJarCacheEligibility": false,
+    "candidateStandardJarCacheEligibility": true,
+    "outputsRemovedBeforeEveryArm": true,
+    "fixedMutationAppliedAfterCacheRestore": true
+  },
+  "discovery": {
+    "complete": true,
+    "containsTestTasks": false,
+    "graphSha256": "1ff0220c9c34ec0c666a8edd517781969d96c3b512d0e1510f320120f5508e0e",
+    "graphDigest": "sha256:977264c031238bef6a3ff0d66e6d0806b3afc5bc0e4d28ea7a83c8310e2ea00f",
+    "projectCount": 64,
+    "controlReachCount": 64,
+    "candidateReachCount": 3,
+    "candidateEntrypoints": [
+      ":clients:testClasses"
+    ],
+    "exactBoundHotStateEnabled": false,
+    "measuredCandidateStandardJarCacheHits": true
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 7018,
+      "candidateDurationMs": 2178,
+      "savedMs": 4840,
+      "interArmIdleGapMs": 1,
+      "controlMaximumResidentSetKb": 126040,
+      "candidateMaximumResidentSetKb": 125524,
+      "requiredOutputSha256": "0a1ba415bbdeec51775d720beed627b95b11f6073a2fef450ccfd269df57ea23",
+      "requiredOutputCount": 4062,
+      "controlEntrypoints": [
+        "testClasses"
+      ],
+      "candidateEntrypoints": [
+        ":clients:testClasses"
+      ],
+      "candidateHotStateEnabled": false,
+      "candidateStandardJarCacheHit": true,
+      "controlStandardJarCacheHit": false,
+      "runtimeTuningEnabled": false,
+      "remoteCacheEnabled": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 3997,
+      "candidateDurationMs": 2049,
+      "savedMs": 1948,
+      "interArmIdleGapMs": 1,
+      "controlMaximumResidentSetKb": 126680,
+      "candidateMaximumResidentSetKb": 125636,
+      "requiredOutputSha256": "0a1ba415bbdeec51775d720beed627b95b11f6073a2fef450ccfd269df57ea23",
+      "requiredOutputCount": 4062,
+      "controlEntrypoints": [
+        "testClasses"
+      ],
+      "candidateEntrypoints": [
+        ":clients:testClasses"
+      ],
+      "candidateHotStateEnabled": false,
+      "candidateStandardJarCacheHit": true,
+      "controlStandardJarCacheHit": false,
+      "runtimeTuningEnabled": false,
+      "remoteCacheEnabled": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 3803,
+      "candidateDurationMs": 1951,
+      "savedMs": 1852,
+      "interArmIdleGapMs": 1,
+      "controlMaximumResidentSetKb": 125832,
+      "candidateMaximumResidentSetKb": 125424,
+      "requiredOutputSha256": "0a1ba415bbdeec51775d720beed627b95b11f6073a2fef450ccfd269df57ea23",
+      "requiredOutputCount": 4062,
+      "controlEntrypoints": [
+        "testClasses"
+      ],
+      "candidateEntrypoints": [
+        ":clients:testClasses"
+      ],
+      "candidateHotStateEnabled": false,
+      "candidateStandardJarCacheHit": true,
+      "controlStandardJarCacheHit": false,
+      "runtimeTuningEnabled": false,
+      "remoteCacheEnabled": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 3620,
+      "candidateDurationMs": 2102,
+      "savedMs": 1518,
+      "interArmIdleGapMs": 1,
+      "controlMaximumResidentSetKb": 125336,
+      "candidateMaximumResidentSetKb": 125520,
+      "requiredOutputSha256": "0a1ba415bbdeec51775d720beed627b95b11f6073a2fef450ccfd269df57ea23",
+      "requiredOutputCount": 4062,
+      "controlEntrypoints": [
+        "testClasses"
+      ],
+      "candidateEntrypoints": [
+        ":clients:testClasses"
+      ],
+      "candidateHotStateEnabled": false,
+      "candidateStandardJarCacheHit": true,
+      "controlStandardJarCacheHit": false,
+      "runtimeTuningEnabled": false,
+      "remoteCacheEnabled": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
+    }
+  ],
+  "fallback": {
+    "changePath": "gradle.properties",
+    "mode": "FULL_GRAPH",
+    "reason": "IMPACT_GLOBAL_CHANGE",
+    "outsideCandidateEntrypointObserved": ":streams:compileTestJava",
+    "buildSuccessful": true,
+    "performanceClaim": false
+  },
+  "result": {
+    "pairs": 4,
+    "controlMeanMs": 4609.5,
+    "candidateMeanMs": 2070,
+    "meanSavedMs": 2539.5,
+    "reductionRatio": 0.5509274324764074,
+    "interval95SavedMs": [
+      1625.5,
+      4093
+    ],
+    "positivePairs": 4,
+    "qualified": true,
+    "decision": "QUALIFY_CLEAN_PROFILE_ON_THIRD_SUBSTANTIAL_REPOSITORY"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "repositorySpecificProductRuleAdded": false,
+    "productionSelectionChanged": false,
+    "buildOwnedTestPreparationOnly": true,
+    "testSelectionChanged": false,
+    "testExecutionChanged": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "publicReleaseRequired": false,
+    "universalSavingsClaimed": false
+  }
+}

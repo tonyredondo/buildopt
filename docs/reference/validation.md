@@ -147,8 +147,9 @@ reference data, thresholds, or held-out results merely to obtain promotion.
 The commands validate the final POC decision, strict no-value/no-action
 evidence, accelerator breadth, and the combined public path. The last preserves
 the earlier mechanism-development scorecard and validates the clean
-OpenTelemetry composition as the current substantial public path. None reruns
-Gradle or adds percentages from different workloads.
+OpenTelemetry composition plus the unchanged Apache Kafka transfer as the
+current substantial public paths. None reruns Gradle or adds percentages from
+different workloads.
 Use the owning benchmark runner only when the relevant implementation or
 fixture changes.
 
@@ -177,6 +178,14 @@ fallback. Validate the historical adapter evidence with
 `./dev/check-poc-otel-optimization-v2-result` and the clean evidence with
 `./dev/check-poc-otel-clean-composition-v1-result`; these results qualify only
 their POC workload and do not widen production cache policy.
+
+The unchanged clean profile later qualified on Apache Kafka 4.3.1, a distinct
+64-project Java/Scala/generated-source workload. Native root `testClasses`
+averaged 4,609.5 ms and installed BuildOpt 2,070 ms, saving 55.09% with 4/4
+positive pairs, 4,062 exact outputs and full fallback. Validate it with
+`./dev/check-poc-third-repository-transfer-v1-result` and its negative fixtures
+with `./dev/test-poc-third-repository-transfer-v1`. The result remains
+output-scoped POC transfer evidence.
 
 `check-poc-breadth` accepts both a passing and a failing decision document and
 recomputes all 64 observations. The post-attribution repeat retains the narrow

@@ -332,6 +332,7 @@ buildopt_required_files=(
     "dev/check-poc-remote-cache-value"
     "dev/check-poc-third-repository-transfer-v1"
     "dev/check-poc-third-repository-transfer-v1-result"
+    "dev/test-poc-third-repository-transfer-v1"
     "dev/check-poc-spring-test-build-optimization"
     "dev/check-poc-standard-copy-cache"
     "dev/check-poc-standard-copy-cascade"

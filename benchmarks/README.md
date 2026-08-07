@@ -461,12 +461,28 @@ The underlying evidence and contracts are:
 - [Build Impact generalization evidence](./results/poc-impact-generalization-v1.json),
   validated by `./dev/check-poc-impact-generalization` and
   `./dev/test-poc-impact-generalization`.
+- [Apache Kafka third-repository transfer evidence](./results/poc-third-repository-transfer-v1.json),
+  validated by `./dev/check-poc-third-repository-transfer-v1-result`.
+
+### Third substantial repository transfer
+
+The unchanged clean Build Impact plus exact standard-`Jar` profile qualifies
+on Apache Kafka 4.3.1. Four alternating offline pairs compare optimized native
+root `testClasses` with installed BuildOpt selecting `:clients:testClasses`.
+Native averages 4,609.5 ms and BuildOpt 2,070 ms, saving 2,539.5 ms/55.09%; all
+four pairs are positive and the interval is +1,625.5..+4,093 ms. Every pair
+preserves the same 4,062 required output files, the candidate alone restores
+`:generator:jar`, no Gradle `Test` executes, and a build-logic change restores
+the full 64-project graph. This is output-scoped POC transfer evidence, not a
+universal savings or production-readiness claim.
 
 The three mechanism-development reports remain historical inputs. The strict
 synthetic reports prove bounded combined value. The public-repository
-compatibility and performance reports test whether that claim generalizes; the
-answer is currently **no**. None of these documents claims universal savings
-or production readiness.
+compatibility and early performance reports showed that the first generic
+candidate did not transfer uniformly. Later preregistered Spring,
+OpenTelemetry, and Kafka experiments qualify narrower mechanisms and the clean
+profile for exact output scopes. The evidence therefore supports bounded
+transfer, not universal savings or production readiness.
 
 ### Public-repository performance result
 

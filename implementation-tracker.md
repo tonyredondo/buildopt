@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC THIRD-REPOSITORY TRANSFER PREREGISTERED` — Apache Kafka 4.3.1 adds a 64-project Java/Scala/generated-source workload; the unchanged clean profile and terminal gate are frozen before timing<br>
-**Current phase:** `POC-THIRD-REPOSITORY-TRANSFER-001 DOING` — execute four offline alternating pairs of optimized native root `testClasses` versus installed BuildOpt selecting `:clients:testClasses` plus exact `:generator:jar` reuse<br>
+**Overall status:** `POC PERFORMANCE ROADMAP COMPLETE` — the unchanged clean profile now qualifies on Apache Kafka 4.3.1 at 2,539.5 ms/55.09% faster, with 4/4 positive pairs, 4,062 exact outputs and full fallback<br>
+**Current phase:** `POC QUALIFIED-PROFILE SYNTHESIS NEXT` — make the proven profile explicit and reviewable for POC users without enabling unqualified mechanisms or claiming universal automation<br>
 **POC functional target:** attribute stable incremental value from one qualified combined path, then generalize only the Build Impact and exact task mechanisms that continue to beat optimized native Gradle; Safe Cache and Runtime candidates remain disabled<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -96,7 +96,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-SPRING-IMPACT-BREADTH | Test the installed mechanism on a second Spring output scope, a shared-source change and a global fallback | `DONE` | 2/2 | `E-188..191` |
 | POC-OTEL-SPRING-FAMILY | Transfer the installed mechanism to the stable OpenTelemetry Spring-family build boundary | `DONE` | 2/2 | `E-192`, `E-198` |
 | POC-OTEL-OPTIMIZATION | Turn the favorable but unstable OpenTelemetry signal into a repeatable installed-path advantage | `DONE` | 6/6 | `E-199..206` |
-| POC-PERF-NEXT | Qualified full-path composition and measured mechanism generalization | `DOING` | 1/2 | `E-207` + [performance findings](./docs/findings/build-optimization-performance.md) |
+| POC-PERF-NEXT | Qualified full-path composition, mechanism generalization and third-repository transfer | `DONE` | 10/10 | `E-207..224` + [performance findings](./docs/findings/build-optimization-performance.md) |
 | POC-OPTIMIZATION-OVERHEAD | Attribute standard-Jar adapter overhead and retain the faster complete workflow per qualified scope | `DONE` | 1/1 | `E-218` |
 | POC-RUNTIME-RESEARCH | Test one trace-selected worker-oversubscription hypothesis without post-result parameter search | `DONE` | 1/1 | `E-219..220` |
 | POC-REMOTE-CACHE-VALUE | Compare Gradle direct-to-Shared reads with the same committed objects served from a prewarmed BuildOpt Edge | `DONE` | 1/1 | `E-221..222` |
@@ -211,7 +211,7 @@ than partners. Test Optimization remains a separate product.
 | 50 | `POC-OPTIMIZATION-OVERHEAD-ABLATION-001` | Narrow standard-Jar registration, separate init/plugin and adapter cost, and retain native execution whenever the complete adapter misses the unchanged value gate | `DONE` | Codex |
 | 51 | `POC-RUNTIME-RESEARCH-001` | Reopen Runtime Tuning only for one measured resource bottleneck and retain stable control unless it beats optimized native Gradle | `DONE` | Codex |
 | 52 | `POC-REMOTE-CACHE-VALUE-001` | Compare Shared and Edge Cache end to end with Gradle's native remote cache under controlled network conditions | `DONE` | Codex |
-| 53 | `POC-THIRD-REPOSITORY-TRANSFER-001` | Transfer the unchanged qualified profile to one substantial public repository representing a new workload class | `DOING` | Codex |
+| 53 | `POC-THIRD-REPOSITORY-TRANSFER-001` | Transfer the unchanged qualified profile to one substantial public repository representing a new workload class | `DONE` | Codex |
 
 The raw diagnostic block is closed and unchanged. `E-172` corrects its
 ownership interpretation: Mockito's 242.690-second `compileTestJava` is
@@ -1106,7 +1106,7 @@ incremental evidence beats optimized native Gradle.
 | `POC-OPTIMIZATION-OVERHEAD-ABLATION-001` | 7 | Narrow standard-Jar registration, measure native/init-only/adapter arms, and retain the faster complete workflow without treating phase deltas as universally causal | `DONE` | `E-218` |
 | `POC-RUNTIME-RESEARCH-001` | 8 | Investigate one observed worker, heap, GC, queue, configuration, dependency-resolution, or JVM-warm-up bottleneck at a time; preserve `STABLE_CONTROL` on no-value evidence | `DONE` | `E-219..220` |
 | `POC-REMOTE-CACHE-VALUE-001` | 9 | Compare BuildOpt Shared/Edge Cache with Gradle native remote cache using controlled latency, bandwidth, object size, hit rate, and runner locality | `DONE` | `E-221..222` |
-| `POC-THIRD-REPOSITORY-TRANSFER-001` | 10 | Transfer the unchanged qualified profile to one substantial public repository only when it exercises a new workload class or tests a current assumption | `DOING` | `E-223`: Kafka 4.3.1 preregistration |
+| `POC-THIRD-REPOSITORY-TRANSFER-001` | 10 | Transfer the unchanged qualified profile to one substantial public repository only when it exercises a new workload class or tests a current assumption | `DONE` | `E-223..224`: Kafka 4.3.1 preregistration and qualified result |
 
 | Exit gate | Summarized criterion | State | Evidence |
 |---|---|---|---|
@@ -1122,10 +1122,13 @@ disabled. Test-build Jar reuse then regressed Spring, and the follow-up
 three-arm ablation showed that narrower registration did not make the complete
 adapter beat native Gradle. The subsequent trace-selected six-worker Runtime
 candidate was also 191.5 ms/2.00% slower than the native 12-worker control, so
-Runtime Tuning remains disabled without another parameter search. The next
-block compares Shared/Edge with Gradle native remote cache. No item authorizes
-production rollout, soak, design-partner work, Test Optimization, or a universal
-savings claim.
+Runtime Tuning remains disabled without another parameter search. Edge
+locality then qualified only under its frozen network profile. The unchanged
+clean profile subsequently transferred to Apache Kafka, reducing the complete
+conservative graph from 64 projects to three and saving 2,539.5 ms/55.09% with
+4/4 positive pairs and exact outputs. This completes all ten recorded
+priorities. No item authorizes production rollout, soak, design-partner work,
+Test Optimization, or a universal savings claim.
 
 ---
 
@@ -1472,6 +1475,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-221` | 2026-08-07 | `POC-REMOTE-CACHE-VALUE-001` | The versioned [remote-cache protocol](./specs/poc-remote-cache-value-v1.md), machine-readable contract, deterministic 32-MiB Gradle fixture, actual Shared/Edge harness and independent checker freeze one locality comparison before timing. Both arms use Gradle 9.6.1 `HttpBuildCache`, the same authenticated committed Shared objects, disabled local and Configuration caches, read-only measured runs and eight required outputs. The control traverses a fixed 80-ms/20-MiB/s modeled WAN; the candidate uses a prewarmed loopback Edge and must make zero measured upstream requests | `DOING` preregistered with zero accepted timing: qualification is limited to Edge locality under this network profile and requires the unchanged 500-ms/2%/positive-bound/4-of-4 gate; Shared alone receives no acceleration claim and no post-result network search, production, soak, design-partner, or Test Optimization claim is authorized |
 | `E-222` | 2026-08-07 | `POC-REMOTE-CACHE-VALUE-001` | The independently checked [remote-cache evidence](./benchmarks/results/poc-remote-cache-value-v1.json) retains all four alternating pairs. Direct Shared reads average 6,911.25 ms and prewarmed Edge reads average 4,510 ms, saving 2,401.25 ms/34.74%; pair savings are +2,605, +2,307, +2,479 and +2,214 ms, and the paired interval is +2,260.5..+2,542 ms. Both arms restore the same eight cacheable tasks and 32-MiB output digest from the same committed Shared object bytes; direct control performs eight measured origin GETs per pair while Edge performs zero, with zero product failures | `DONE` terminal `QUALIFY_EDGE_LOCALITY_FOR_CONTROLLED_REMOTE_CACHE_POC`: only Edge locality under the frozen 80-ms/20-MiB/s profile qualifies; Shared alone receives no acceleration claim, and third-repository transfer becomes the next block |
 | `E-223` | 2026-08-07 | `POC-THIRD-REPOSITORY-TRANSFER-001` | The checked [Kafka transfer contract](./specs/poc-third-repository-transfer-v1.json) pins public Apache Kafka 4.3.1 commit `26b251a451ce941d3d7a55e6487bcb7f16b5ad48`, source and Gradle inputs by SHA-256, Gradle 9.2.1, Temurin 25, the 12-CPU/16.66-GB host, and a new Java/Scala/generated-source test-preparation class. Generic discovery is complete: root `testClasses` reaches all 64 projects while `:clients:testClasses` reaches three, with no Gradle `Test` or unknown relationship. Before accepted timing the installed clean profile, `clients` mutation, exact `:generator:jar` adapter, required outputs, shared cache/daemon protocol, four alternating pairs, 500-ms/2%/positive-bound/4-of-4 gate, and full fallback are frozen | `DOING` preregistered with zero accepted timings: execute the immutable runner; do not reuse diagnostics, add Kafka-specific product logic, enable Hot State/Runtime/Copy/remote cache, move thresholds, discard pairs, or claim production readiness |
+| `E-224` | 2026-08-07 | `POC-THIRD-REPOSITORY-TRANSFER-001` | The independently checked [Kafka transfer evidence](./benchmarks/results/poc-third-repository-transfer-v1.json) binds installed BuildOpt `7935968b44b14a722c0a7ec7e0d4af720eac80b5` and retains all four alternating offline pairs. Native root `testClasses` averages 4,609.5 ms; BuildOpt selects `:clients:testClasses`, restores exact `:generator:jar`, and averages 2,070 ms, saving 2,539.5 ms/55.09%. Pair savings are +4,840, +1,948, +1,852 and +1,518 ms; the paired interval is +1,625.5..+4,093 ms. Every pair preserves the same 4,062 required outputs byte for byte, no Gradle `Test` or unqualified mechanism runs, zero product failures occur, and `gradle.properties` restores the full 64-project graph | `DONE` terminal `QUALIFY_CLEAN_PROFILE_ON_THIRD_SUBSTANTIAL_REPOSITORY`: the generic clean profile transfers to the distinct Kafka Java/Scala/generated-source workload without product changes; retain the output-scoped POC boundary and move to qualified-profile usability/scope synthesis |
 
 ---
 
@@ -1479,6 +1483,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-07 | Qualified the unchanged clean profile on Apache Kafka 4.3.1: native root `testClasses` averaged 4,609.5 ms and installed BuildOpt 2,070 ms, saving 2,539.5 ms/55.09% with 4/4 positive pairs, a positive interval, 4,062 exact outputs and full fallback; completed the ten-block performance roadmap | Codex |
 | 2026-08-07 | Preregistered the unchanged clean Build Impact plus exact standard-Jar profile on Apache Kafka 4.3.1: a complete 64-project Java/Scala graph narrows the fixed `clients` source change to three projects, with exact outputs, full fallback and the existing four-pair value gate frozen before timing | Codex |
 | 2026-08-07 | Qualified prewarmed Edge locality after it saved 2,401.25 ms/34.74% against direct same-origin Shared reads over the frozen modeled WAN, with 4/4 positive pairs, exact 32-MiB outputs and zero measured Edge upstream requests; kept the claim profile-specific and moved to third-repository transfer | Codex |
 | 2026-08-07 | Preregistered one controlled remote-cache value experiment: the same Gradle HTTP client and Shared objects read either directly over a fixed modeled WAN or from a prewarmed BuildOpt Edge, with network, cache state, outputs and terminal gate frozen before timing | Codex |
