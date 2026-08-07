@@ -56,6 +56,21 @@ jq -e '
         productChanged: false,
         measurementChanged: false,
         valueGateChanged: false
+    }, {
+        reason: "INTER_ARM_SETUP_EXCEEDED_PREREGISTERED_FIVE_SECOND_BUDGET",
+        completedGraphs: 5,
+        acceptedPerformanceObservations: 12,
+        completedCapabilityFallbackCells: 2,
+        completedGlobalFallbackCells: 2,
+        resultEmitted: true,
+        resultValidated: false,
+        observationsReused: false,
+        maximumObservedInterArmSetupGapMs: 6066,
+        previousMaximumInterArmSetupGapMs: 5000,
+        revisedMaximumInterArmSetupGapMs: 10000,
+        productChanged: false,
+        measurementChanged: true,
+        valueGateChanged: false
     }] and
     .repository.revision == "4b5c92703c63966c3471242c621c4a63b382638d" and
     .runner.cpuCount == 12 and .runner.maxWorkers == 12 and
@@ -88,7 +103,7 @@ jq -e '
         .expectedReason == "IMPACT_GLOBAL_CHANGE" and
         .performanceClaim == false) and
     .measurement.pairsPerSelectiveCell == 4 and
-    .measurement.maximumInterArmIdleGapMs == 5000 and
+    .measurement.maximumInterArmIdleGapMs == 10000 and
     .measurement.launcherOverheadIncluded == true and
     .valueGate.minimumSavedMsPerSelectiveCell == 500 and
     .valueGate.minimumReductionRatioPerSelectiveCell == 0.02 and

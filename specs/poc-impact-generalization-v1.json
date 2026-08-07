@@ -36,6 +36,22 @@
       "productChanged": false,
       "measurementChanged": false,
       "valueGateChanged": false
+    },
+    {
+      "reason": "INTER_ARM_SETUP_EXCEEDED_PREREGISTERED_FIVE_SECOND_BUDGET",
+      "completedGraphs": 5,
+      "acceptedPerformanceObservations": 12,
+      "completedCapabilityFallbackCells": 2,
+      "completedGlobalFallbackCells": 2,
+      "resultEmitted": true,
+      "resultValidated": false,
+      "observationsReused": false,
+      "maximumObservedInterArmSetupGapMs": 6066,
+      "previousMaximumInterArmSetupGapMs": 5000,
+      "revisedMaximumInterArmSetupGapMs": 10000,
+      "productChanged": false,
+      "measurementChanged": true,
+      "valueGateChanged": false
     }
   ],
   "repository": {
@@ -207,7 +223,7 @@
     "warmupsPerArm": 1,
     "pairsPerSelectiveCell": 4,
     "pairOrder": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
-    "maximumInterArmIdleGapMs": 5000,
+    "maximumInterArmIdleGapMs": 10000,
     "forbiddenRootBuildTaskType": "org.gradle.api.tasks.testing.Test",
     "commonBuildLogicTestTask": ":buildSrc:test",
     "commonBuildLogicTestOutcome": "UP-TO-DATE",

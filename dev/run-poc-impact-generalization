@@ -445,6 +445,13 @@ for ((buildopt_cell_index = 0; buildopt_cell_index < buildopt_cell_count; buildo
             fi
         done
         buildopt_gap_ms=$(((buildopt_started_ns - buildopt_first_finished) / 1000000))
+        buildopt_maximum_gap_ms=$(jq -er '.measurement.maximumInterArmIdleGapMs' "${buildopt_spec}")
+        if ((buildopt_gap_ms > buildopt_maximum_gap_ms)); then
+            printf 'Build Impact generalization %s pair %s inter-arm setup gap %sms exceeds %sms\n' \
+                "${buildopt_cell_id}" "${buildopt_pair}" "${buildopt_gap_ms}" \
+                "${buildopt_maximum_gap_ms}" >&2
+            exit 1
+        fi
         buildopt_control_manifest="${buildopt_root}/${buildopt_cell_id}-pair-${buildopt_pair}-control.outputs"
         buildopt_candidate_manifest="${buildopt_root}/${buildopt_cell_id}-pair-${buildopt_pair}-candidate.outputs"
         cmp -s "${buildopt_control_manifest}" "${buildopt_candidate_manifest}" || {

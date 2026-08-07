@@ -52,6 +52,14 @@ global completeness first and therefore reports `IMPACT_GRAPH_INCOMPLETE`.
 That attempt was also discarded, the exact expected reason was corrected, and
 the measurement method, cells, thresholds, and product remained unchanged.
 
+The following complete execution emitted a result, but validation rejected it
+because one mandatory inter-arm clean and cache restore took 6.066 seconds,
+exceeding the preregistered five-second setup budget. That result and all twelve
+observations were discarded. The operational setup budget was revised to ten
+seconds and is now enforced before a result can be emitted. The build-time value
+gates, alternation, workloads, product, and all other measurement rules remain
+unchanged.
+
 This experiment does not execute root-build Gradle `Test` tasks or change test
 selection, retries, sharding, prioritization, or execution. Hot State, Runtime
 Tuning, Safe Cache, Shared Cache, and Edge Cache remain disabled. The output is
