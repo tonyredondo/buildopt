@@ -17,6 +17,10 @@
   run removed hot state and combined only Build Impact with the exact standard
   `Jar` adapter. It saved **5,361.25 ms/50.40%**, with 4/4 positive pairs, a
   +4,334.25..+5,937-ms interval, 125 identical outputs, and safe full fallback.
+- **Build Impact breadth is selective, not universal.** The latest Spring
+  matrix qualified shared test preparation at **18.88% faster**, rejected leaf
+  compilation and packaging under the unchanged gate, and retained full-graph
+  execution for incomplete verification and distribution graphs.
 
 The current POC supports a clear decision: continue investing in mechanisms
 that avoid work or safely make expensive tasks reusable, while keeping neutral
@@ -33,7 +37,7 @@ measured on different workloads and scopes.
 |---|---|---:|---|
 | **Safe Cache / local L1** | Reuses verified outputs in a scope isolated by repository, Wrapper, and platform. | Against cache-off: **15.9% faster in Kotlin** and **13.7% faster in Groovy**. Against native Gradle cache: **0.02% faster in Kotlin** and **0.47% slower in Groovy**. | Useful when a repository has no effective cache, but **not an accelerator over native Gradle cache**. Strict Safe Cache remains explicit-only. |
 | **Runtime Tuning** | Tests bounded worker, heap, and resource profiles intended to improve Gradle execution. | The latest candidate, `W3_H4G`, was **4.3% slower** (512 ms). The earlier `W4_H6G` candidate was **54.7% slower**. | **No current value. Disabled.** Optimized native Gradle remains the stable control. |
-| **Build Impact** | Maps a change to the projects and tasks needed for the requested outputs, with full-graph fallback for unknown or global changes. | Synthetic coverage: **73.5-76.0% faster**. Spring direct discovery: **28.72% faster**. Installed Spring command including launcher and validation overhead: **15.76% faster**, with 8/8 positive pairs. | **The strongest broadly useful accelerator currently demonstrated.** It should receive the highest generalization priority. |
+| **Build Impact** | Maps a change to the projects and tasks needed for the requested outputs, with full-graph fallback for unknown or global changes. | Synthetic coverage: **73.5-76.0% faster**. Installed Spring path: **15.76% faster**. Generalized Spring test preparation: **18.88% faster**; leaf compilation and packaging did not qualify. | **The strongest broadly useful accelerator currently demonstrated, but only for independently qualified scopes.** |
 | **Task Intelligence** | Observes and qualifies tasks only when their inputs, outputs, cache keys, and outcomes are exact enough to support an optimization. | No general direct saving. In the accepted pilot it enabled a qualified native-cache restore that saved **203 ms** on average. | A **safety and eligibility layer**, not a standalone accelerator. Its value is realized through a qualified cache or patch route. |
 | **Patch Autopilot / reviewed task patch** | Produces a reviewable and reversible patch that correctly declares inputs and outputs and enables caching for an exact custom-task shape. | Exact reviewed Java recipe: **67.3% faster in Kotlin** and **68.0% faster in Groovy**. Combined installed path: **63.5-67.3% faster**. | Highly promising for **specific reviewed task contracts**. The result must not be generalized to arbitrary tasks or recipes. |
 | **Graph reduction** | Replaces broad aggregate task dependencies with the typed producers required for the declared outputs. | The OpenTelemetry experiment removed **3 graph nodes and 2 executed tasks** while preserving all 125 required outputs. No standalone wall-clock percentage is claimed. | Structurally valuable, but it still needs independent timing evidence before it can be presented as a separate accelerator. |
@@ -159,9 +163,13 @@ should cover more real change shapes and requested outputs:
 - multi-project Kotlin and Groovy builds with different plugin families;
 - unknown changes that must prove they restore the complete original graph.
 
-The goal is not to make every cell pass. The goal is to identify the scopes in
-which impact selection is consistently faster and safe, and to decline all
-other scopes explicitly.
+The completed matrix confirms that distinction. Shared test preparation saved
+2,638 ms/18.88%, with 4/4 positive pairs and a +1,516..+3,275.5-ms interval.
+Leaf compilation saved only 196.25 ms/1.33% with a negative lower bound, and
+leaf packaging saved 427.25 ms/3.73% with only 2/4 positive pairs. Verification
+and source distribution reported incomplete graphs and retained exact-output
+full-graph execution. Therefore only the test-preparation cell is generalized;
+all other measured cells remain native or full graph.
 
 ### 4. Expand task optimization from measured tails, not from a generic list
 
@@ -233,20 +241,23 @@ exercises a different workload class or invalidates a current assumption.
 
 ## Recommended Next Block
 
-The next implementation block should be **Build Impact Generalization**:
+The next implementation block should be **Trace-selected task adapters**:
 
-1. preregister real leaf, shared, build-logic, and global changes before timing;
-2. cover compilation, test preparation, verification, packaging, and
-   distribution output contracts;
-3. retain the same optimized native Gradle control, 500-ms/2% gate, alternating
-   pairs, exact outputs, zero product failures, and full-graph fallback;
-4. keep the qualified standard `Jar` adapter active only where its exact task
-   contract matches and keep hot state disabled;
-5. broaden the claim only for cells that independently qualify.
+1. use existing Spring and OpenTelemetry task-attribution traces to rank the
+   remaining dominant build-owned tails;
+2. select one exact, unmodified standard Gradle task type rather than a generic
+   task family;
+3. freeze its implementation identity, inputs, outputs, supported Gradle
+   versions, native fallback, and denial cases before changing product code;
+4. measure the adapter independently against optimized native Gradle under the
+   same 500-ms/2%/positive-bound gate;
+5. activate it only if the complete installed path preserves exact outputs and
+   produces incremental value.
 
-The clean OpenTelemetry result answers the composition question positively.
-The next risk is breadth: proving the same mechanisms remain useful beyond one
-leaf production-source mutation and one output family.
+Build Impact generalization answered the breadth question partially: test
+preparation transfers, while compilation and packaging do not yet justify
+activation and incomplete graphs fail closed. The next opportunity is therefore
+another precise task adapter selected from real dominant-tail evidence.
 
 ## Open Questions
 

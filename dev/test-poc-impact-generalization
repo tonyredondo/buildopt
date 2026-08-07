@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_source="${buildopt_repo_root}/benchmarks/results/poc-impact-generalization-v1.json"
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-impact-generalization-test.XXXXXX")
+trap 'rm -rf -- "${buildopt_temporary}"' EXIT
+
+buildopt_expect_rejected() {
+    local buildopt_name=$1
+    local buildopt_filter=$2
+    local buildopt_fixture="${buildopt_temporary}/${buildopt_name}.json"
+    jq "${buildopt_filter}" "${buildopt_source}" >"${buildopt_fixture}"
+    if "${buildopt_script_dir}/check-poc-impact-generalization" "${buildopt_fixture}" \
+        >/dev/null 2>&1; then
+        printf 'tampered Build Impact generalization evidence was accepted: %s\n' \
+            "${buildopt_name}" >&2
+        exit 1
+    fi
+}
+
+"${buildopt_script_dir}/check-poc-impact-generalization" "${buildopt_source}" >/dev/null
+buildopt_expect_rejected output-drift \
+    '.performanceCells[1].observations[0].requiredOutputSha256 = ("0" * 64)'
+buildopt_expect_rejected fallback-drift \
+    '.capabilityFallbackCells[0].reason = "IMPACT_UNKNOWN_RELATIONSHIP"'
+buildopt_expect_rejected false-qualification \
+    '.performanceCells[0].result.qualified = true'
+
+printf 'Build Impact generalization negative checks passed\n'

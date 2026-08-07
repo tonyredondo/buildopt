@@ -17,6 +17,10 @@
   because hot state regressed by 7.68%. The fresh rerun removed hot state and
   combined only Build Impact with the exact standard-`Jar` adapter, saving
   **5,361.25 ms/50.40%** with 4/4 positive pairs and 125 identical outputs.
+- **Build Impact does not generalize uniformly.** In the latest real Spring
+  matrix, shared test preparation qualified at **18.88% faster**, while leaf
+  compilation and packaging missed the frozen stability gate. Verification and
+  source distribution correctly retained the full graph.
 
 ## Product Idea
 
@@ -74,6 +78,10 @@ unfavorable observations. Percentages from different rows are not additive.
 | Shared `spring-core` to `spring-jms` scope | **10.89% faster on average**, but only 3/4 positive pairs | Failed the frozen stability gate; no broad shared-change claim. |
 | Global two-fork test tuning | **24.07% slower** | Rejected. Every test was retained, but the candidate was materially worse. |
 | Selective two-fork test tuning | **1.57% slower** and `:spring-test:test` failed | Rejected and not retried. Work returned to build-owned test preparation. |
+| Generalized shared test preparation | **18.88% faster**, 2,638 ms saved, 4/4 positive pairs | Qualified with interval +1,516..+3,275.5 ms and 378 identical outputs. |
+| Generalized leaf compilation | **1.33% faster**, 196.25 ms saved, 3/4 positive pairs | Rejected: misses 500 ms, 2%, 4/4, and positive-bound gates. |
+| Generalized leaf packaging | **3.73% faster**, 427.25 ms saved, 2/4 positive pairs | Rejected: misses 500 ms, 4/4, and positive-bound gates. |
+| Verification and source distribution | Full graph, exact output | Generated graphs were incomplete; no performance claim was attempted. |
 
 ### OpenTelemetry Java Instrumentation: real public repository
 
@@ -85,7 +93,7 @@ unfavorable observations. Percentages from different rows are not additive.
 | Standard-`Jar` adapter | **39.92% faster**, 4,377 ms saved, 4/4 positive pairs | Qualified installed POC value with 125 identical outputs, zero product failures, and full 53-entrypoint fallback. |
 | Clean Impact + standard-`Jar` composition | **50.40% faster**, 5,361.25 ms saved, 4/4 positive pairs | Qualified without hot state; paired interval +4,334.25..+5,937 ms, identical 125-file outputs, and successful full-graph fallback. |
 
-## Latest Ablation and Next Work
+## Latest Generalization and Next Work
 
 **Continue the POC, but activate only measured value.** The fresh ablation
 qualified Spring Build Impact at 2,492.375 ms/30.86% saved with 8/8 positive
@@ -99,14 +107,17 @@ The clean rerun then removed hot state and qualified at 5,361.25 ms/50.40%
 saved, with 4/4 positive pairs, a +4,334.25..+5,937-ms interval, identical
 outputs, zero product failures, and successful full-graph fallback.
 
-The clean block has now qualified under the unchanged 500-ms/2%, positive-bound,
-exact-output, zero-failure, and full-fallback gate. The next block is
-`POC-IMPACT-GENERALIZATION-001`: generalize Build Impact across real change
-shapes and compilation, test-preparation, verification, packaging, and
-distribution outputs while keeping hot state and other unproven mechanisms off.
+The subsequent Spring generalization matrix kept those same gates and produced
+one transferable result: shared test preparation averaged 13,971.75 ms natively
+and 11,333.75 ms with BuildOpt, saving 2,638 ms/18.88%, with 4/4 positive pairs
+and a +1,516..+3,275.5-ms interval. Leaf compilation and packaging did not
+qualify and remain on native Gradle. Incomplete verification and distribution
+graphs, plus build-logic and global-configuration changes, all retained the
+original full graph and completed successfully.
 
-After that, the roadmap is to select new task adapters
-from real dominant-tail traces, optimize build-owned test preparation without
+The next block is `POC-TASK-TAIL-ADAPTERS-001`: select the next exact standard
+Gradle task adapter from real dominant-tail traces and measure it independently.
+After that, the roadmap is to optimize build-owned test preparation without
 changing Test execution, investigate Runtime Tuning only around measured
 bottlenecks, compare Shared/Edge directly with native remote cache, and finally
 transfer the unchanged profile to a third substantial public repository.
@@ -125,3 +136,4 @@ production operations are outside the current scope.
 - [Final OpenTelemetry evidence](../../benchmarks/results/poc-otel-optimization-v2.json)
 - [Fresh full-path ablation](../../benchmarks/results/poc-full-path-ablation-v1/summary.json)
 - [Qualified clean OpenTelemetry composition](../../benchmarks/results/poc-otel-clean-composition-v1.json)
+- [Build Impact generalization evidence](../../benchmarks/results/poc-impact-generalization-v1.json)

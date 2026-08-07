@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`POC CLEAN COMPOSITION QUALIFIED; IMPACT GENERALIZATION NEXT\`"
-    "**Current phase:** \`POC-IMPACT-GENERALIZATION-001 DOING\`"
+    "**Overall status:** \`POC IMPACT GENERALIZATION PARTIAL; TASK-TAIL ADAPTER NEXT\`"
+    "**Current phase:** \`POC-TASK-TAIL-ADAPTERS-001 TODO\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"
@@ -136,6 +136,7 @@ buildopt_required_tracker_text=(
     "| \`E-209\` | 2026-08-07 | \`POC-FULL-PATH-CLEAN-001\`"
     "| \`E-210\` | 2026-08-07 | \`POC-FULL-PATH-CLEAN-001\`"
     "| \`E-211\` | 2026-08-07 | \`POC-FULL-PATH-CLEAN-001\`, \`POC-PERF-NEXT-G01\`"
+    "| \`E-214\` | 2026-08-07 | \`POC-IMPACT-GENERALIZATION-001\`"
     "| \`POC-OTEL-OPTIMIZATION-G04\` | The optimized installed candidate clears the unchanged 500-ms/2% value gate with a positive paired lower bound, 4/4 positive pairs, exact outputs, safe fallback and zero product failures | Stable OpenTelemetry POC claim | \`DONE\`"
     "| \`POC-FULL-PATH-ABLATION-001\` | 1 | Run six preregistered arms on Spring and OpenTelemetry"
     "| \`POC-FULL-PATH-CLEAN-001\` | 2 | Preregister and measure OpenTelemetry Build Impact plus the standard Jar adapter without hot-state reuse"

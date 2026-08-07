@@ -167,6 +167,8 @@ jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sh
         [$data[].order] == [
             "CONTROL_FIRST", "CANDIDATE_FIRST", "CONTROL_FIRST", "CANDIDATE_FIRST"
         ] and
+        ($data | map(.requiredOutputSha256) | unique | length) == 1 and
+        ($data | map(.requiredOutputCount) | unique | length) == 1 and
         all($data[];
             (.controlDurationMs | type == "number" and . > 0) and
             (.candidateDurationMs | type == "number" and . > 0) and

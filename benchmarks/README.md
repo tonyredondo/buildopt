@@ -64,11 +64,36 @@ enabled no hot state or managed runtime, and introduced no product failure. A
 separate global change retained all 53 native entrypoints and completed
 successfully. The terminal decision is `QUALIFY_CLEAN_OTEL_COMPOSITION`.
 
+### Build Impact generalization
+
+The checked [Spring generalization evidence](./results/poc-impact-generalization-v1.json)
+compares installed BuildOpt revision `f5708fb32a0c0b826553f741d198e2982eed0c21`
+with optimized native Gradle across compilation, test preparation, packaging,
+verification, and source distribution. All performance cells use four
+alternating offline pairs, include launcher and planner overhead, restore the
+same native cache seed, and preserve byte-identical non-empty required outputs.
+
+| Output family | Native mean | BuildOpt mean | Effect | Stability | Decision |
+|---|---:|---:|---:|---:|---|
+| Leaf compilation | 14,791.25 ms | 14,595 ms | 196.25 ms / 1.33% faster | 3/4 positive; interval -1,722.25..+1,901 ms | Not qualified |
+| Shared test preparation | 13,971.75 ms | 11,333.75 ms | **2,638 ms / 18.88% faster** | 4/4 positive; interval +1,516..+3,275.5 ms | Qualified |
+| Leaf packaging | 11,442 ms | 11,014.75 ms | 427.25 ms / 3.73% faster | 2/4 positive; interval -264.75..+1,433.5 ms | Not qualified |
+
+Verification and source-distribution discovery produced incomplete graphs, so
+the candidate retained the original full selector and produced the exact same
+report/JAR rather than making a performance claim. Separate `buildSrc` and
+`gradle.properties` mutations also returned `IMPACT_GLOBAL_CHANGE`, executed
+the complete `classes` selector, and succeeded. The terminal decision is
+`GENERALIZE_ONLY_QUALIFIED_CELLS`: only shared test preparation broadens the
+Build Impact POC claim.
+
 ```bash
 ./dev/check-poc-full-path-ablation
 ./dev/test-poc-full-path-ablation
 ./dev/check-poc-otel-clean-composition-v1-result
 ./dev/test-poc-otel-clean-composition-v1
+./dev/check-poc-impact-generalization
+./dev/test-poc-impact-generalization
 ```
 
 The scorecard answers a different question for each optimization instead of
@@ -304,6 +329,9 @@ The underlying evidence and contracts are:
   [contract](../specs/runtime-owner-evaluation-v1.md);
 - [Build Impact observations](./results/build-impact-performance-v1-local.json)
   and [contract](../specs/build-impact-performance-v1.md).
+- [Build Impact generalization evidence](./results/poc-impact-generalization-v1.json),
+  validated by `./dev/check-poc-impact-generalization` and
+  `./dev/test-poc-impact-generalization`.
 
 The three mechanism-development reports remain historical inputs. The strict
 synthetic reports prove bounded combined value. The public-repository

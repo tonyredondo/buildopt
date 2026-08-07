@@ -2845,6 +2845,14 @@ and separate build-logic/global fallback cases. It executes no root-build
 Gradle `Test` task and leaves Hot State, Runtime Tuning, Safe Cache, Shared/Edge
 Cache, and Test Optimization disabled.
 
+The checked result generalizes only shared test preparation: native Gradle
+averages 13,971.75 ms and BuildOpt 11,333.75 ms, saving 2,638 ms/18.88% with
+4/4 positive pairs and a +1,516..+3,275.5-ms interval. Leaf compilation and
+packaging fail the unchanged gate and remain native. Verification and source
+distribution retain exact-output full-graph execution because their generated
+graphs are incomplete. The negative suite rejects output drift, fallback-reason
+drift, and false qualification.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

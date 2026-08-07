@@ -1,0 +1,475 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-impact-generalization/v1",
+  "workItem": "POC-IMPACT-GENERALIZATION-001",
+  "capturedAt": "2026-08-07T13:38:32Z",
+  "specSha256": "b15782ddfdc35ddece15f75233c17b44bafb689321dceb1bb52819ddfcf8ca20",
+  "buildopt": {
+    "revision": "f5708fb32a0c0b826553f741d198e2982eed0c21",
+    "executableSha256": "f5f3e59e96208469e19ecf97a81db19ce336f34c27bc87ee53e8df377123553a",
+    "packageSha256": "66184a829b57a53a461cabaddd02504df063df7d2f84e54e4bee2deb6f71bb05",
+    "packageVersion": "0.3.0-dev",
+    "runnerScriptSha256": "e6e441e74e941b5dfb8f68155bff85cb17935ddc6a4d3d5c22c4f56be7d3b21e",
+    "testGuardScriptSha256": "c892c05832defdbf6788437b22a44d07ed4709e2b029550921235b285070b466",
+    "launcherOverheadIncluded": true
+  },
+  "repository": {
+    "nameWithOwner": "spring-projects/spring-framework",
+    "revision": "4b5c92703c63966c3471242c621c4a63b382638d",
+    "sourceArchiveSha256": "e3fa4258e5e568c0b0e6f1605956cd743cff847b9df7c82ce86b2d2f1109db16"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12
+  },
+  "preparation": {
+    "onlinePreflightMeasured": false,
+    "onlinePreflightSuccess": true,
+    "onlinePreflightWallClockMs": 184679,
+    "measuredNetwork": "DISCONNECTED",
+    "dependencyMode": "GRADLE_OFFLINE",
+    "buildCacheSeedSha256": "27f4e3662418d9ef650c8a7ea97aed2d9273fb4d475fe45d44b24d36728a6107",
+    "preflightDaemonStoppedBeforeArmSetup": true,
+    "cacheSeedRestoredBeforeEveryArm": true,
+    "outputsRemovedBeforeEveryArm": true,
+    "fixedMutationAppliedAfterCacheRestore": true
+  },
+  "performanceCells": [
+    {
+      "id": "LEAF_COMPILATION",
+      "changeClass": "LEAF_PRODUCTION_SOURCE",
+      "outputFamily": "COMPILATION",
+      "changePath": "spring-webmvc/src/main/java/org/springframework/web/servlet/DispatcherServlet.java",
+      "changeOriginalSha256": "768903db4d5f06da9fa6abe796c33e72553084b7a2de5d7ff7e817a1a34d68af",
+      "changedProject": ":spring-webmvc",
+      "originalEntrypoints": [
+        "classes"
+      ],
+      "pipelineClass": "poc-impact-generalization-compilation",
+      "alternativeId": "spring-webmvc-classes",
+      "candidateEntrypoints": [
+        ":spring-webmvc:classes"
+      ],
+      "requiredArtifactId": "spring-webmvc-main-classes",
+      "requiredOutputPath": "spring-webmvc/build/classes",
+      "requiredOutputKind": "DIRECTORY",
+      "expectedReachedProjectCount": 15,
+      "expectedGraphSha256": "e7881bc8bfd33cceab06a4bc51a5902ad8f531917916481097de3b8490c22a1c",
+      "performanceClaim": true,
+      "expectedMode": "SELECTIVE",
+      "observations": [
+        {
+          "pair": 1,
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 18901,
+          "candidateDurationMs": 18179,
+          "savedMs": 722,
+          "interArmIdleGapMs": 4060,
+          "controlMaximumResidentSetKb": 122952,
+          "candidateMaximumResidentSetKb": 125020,
+          "requiredOutputSha256": "d1d84362c2858d6e3d9864b96aefc7f8e698963f593800adc825d743b4b4905f",
+          "requiredOutputCount": 540,
+          "rootBuildGradleTestTasksExecuted": false,
+          "commonBuildLogicTestTask": ":buildSrc:test",
+          "commonBuildLogicTestOutcome": "UP-TO-DATE",
+          "productAttributableFailure": false
+        },
+        {
+          "pair": 2,
+          "order": "CANDIDATE_FIRST",
+          "controlDurationMs": 16903,
+          "candidateDurationMs": 14401,
+          "savedMs": 2502,
+          "interArmIdleGapMs": 4582,
+          "controlMaximumResidentSetKb": 123904,
+          "candidateMaximumResidentSetKb": 123588,
+          "requiredOutputSha256": "d1d84362c2858d6e3d9864b96aefc7f8e698963f593800adc825d743b4b4905f",
+          "requiredOutputCount": 540,
+          "rootBuildGradleTestTasksExecuted": false,
+          "commonBuildLogicTestTask": ":buildSrc:test",
+          "commonBuildLogicTestOutcome": "UP-TO-DATE",
+          "productAttributableFailure": false
+        },
+        {
+          "pair": 3,
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 11893,
+          "candidateDurationMs": 14430,
+          "savedMs": -2537,
+          "interArmIdleGapMs": 5841,
+          "controlMaximumResidentSetKb": 123248,
+          "candidateMaximumResidentSetKb": 123432,
+          "requiredOutputSha256": "d1d84362c2858d6e3d9864b96aefc7f8e698963f593800adc825d743b4b4905f",
+          "requiredOutputCount": 540,
+          "rootBuildGradleTestTasksExecuted": false,
+          "commonBuildLogicTestTask": ":buildSrc:test",
+          "commonBuildLogicTestOutcome": "UP-TO-DATE",
+          "productAttributableFailure": false
+        },
+        {
+          "pair": 4,
+          "order": "CANDIDATE_FIRST",
+          "controlDurationMs": 11468,
+          "candidateDurationMs": 11370,
+          "savedMs": 98,
+          "interArmIdleGapMs": 3593,
+          "controlMaximumResidentSetKb": 124724,
+          "candidateMaximumResidentSetKb": 122356,
+          "requiredOutputSha256": "d1d84362c2858d6e3d9864b96aefc7f8e698963f593800adc825d743b4b4905f",
+          "requiredOutputCount": 540,
+          "rootBuildGradleTestTasksExecuted": false,
+          "commonBuildLogicTestTask": ":buildSrc:test",
+          "commonBuildLogicTestOutcome": "UP-TO-DATE",
+          "productAttributableFailure": false
+        }
+      ],
+      "result": {
+        "pairs": 4,
+        "controlMeanMs": 14791.25,
+        "candidateMeanMs": 14595,
+        "meanSavedMs": 196.25,
+        "reductionRatio": 0.013267979379700836,
+        "interval95SavedMs": [
+          -1722.25,
+          1901
+        ],
+        "positivePairs": 3,
+        "qualified": false
+      }
+    },
+    {
+      "id": "SHARED_TEST_PREPARATION",
+      "changeClass": "SHARED_PRODUCTION_SOURCE",
+      "outputFamily": "TEST_PREPARATION",
+      "changePath": "spring-core/src/main/java/org/springframework/aot/AotDetector.java",
+      "changeOriginalSha256": "4c0d5e8e8ace8f200a8c72ea34d9de396873dc2462cd025eb6dbf830c66e6da1",
+      "changedProject": ":spring-core",
+      "originalEntrypoints": [
+        "testClasses"
+      ],
+      "pipelineClass": "poc-impact-generalization-test-preparation",
+      "alternativeId": "spring-core-to-jms-test-classes",
+      "candidateEntrypoints": [
+        ":spring-jms:testClasses"
+      ],
+      "requiredArtifactId": "spring-jms-test-preparation",
+      "requiredOutputPath": "spring-jms/build/classes",
+      "requiredOutputKind": "DIRECTORY",
+      "expectedReachedProjectCount": 12,
+      "expectedGraphSha256": "ce2ebbf140fa225526a9942ccf795ff6ddf6b8a5925566675874a2aebf00a45e",
+      "performanceClaim": true,
+      "expectedMode": "SELECTIVE",
+      "observations": [
+        {
+          "pair": 1,
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 14892,
+          "candidateDurationMs": 11561,
+          "savedMs": 3331,
+          "interArmIdleGapMs": 3418,
+          "controlMaximumResidentSetKb": 120036,
+          "candidateMaximumResidentSetKb": 120040,
+          "requiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+          "requiredOutputCount": 378,
+          "rootBuildGradleTestTasksExecuted": false,
+          "commonBuildLogicTestTask": ":buildSrc:test",
+          "commonBuildLogicTestOutcome": "UP-TO-DATE",
+          "productAttributableFailure": false
+        },
+        {
+          "pair": 2,
+          "order": "CANDIDATE_FIRST",
+          "controlDurationMs": 15096,
+          "candidateDurationMs": 11876,
+          "savedMs": 3220,
+          "interArmIdleGapMs": 2729,
+          "controlMaximumResidentSetKb": 118444,
+          "candidateMaximumResidentSetKb": 119120,
+          "requiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+          "requiredOutputCount": 378,
+          "rootBuildGradleTestTasksExecuted": false,
+          "commonBuildLogicTestTask": ":buildSrc:test",
+          "commonBuildLogicTestOutcome": "UP-TO-DATE",
+          "productAttributableFailure": false
+        },
+        {
+          "pair": 3,
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 13094,
+          "candidateDurationMs": 12146,
+          "savedMs": 948,
+          "interArmIdleGapMs": 4635,
+          "controlMaximumResidentSetKb": 123024,
+          "candidateMaximumResidentSetKb": 122800,
+          "requiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+          "requiredOutputCount": 378,
+          "rootBuildGradleTestTasksExecuted": false,
+          "commonBuildLogicTestTask": ":buildSrc:test",
+          "commonBuildLogicTestOutcome": "UP-TO-DATE",
+          "productAttributableFailure": false
+        },
+        {
+          "pair": 4,
+          "order": "CANDIDATE_FIRST",
+          "controlDurationMs": 12805,
+          "candidateDurationMs": 9752,
+          "savedMs": 3053,
+          "interArmIdleGapMs": 5020,
+          "controlMaximumResidentSetKb": 122784,
+          "candidateMaximumResidentSetKb": 120136,
+          "requiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+          "requiredOutputCount": 378,
+          "rootBuildGradleTestTasksExecuted": false,
+          "commonBuildLogicTestTask": ":buildSrc:test",
+          "commonBuildLogicTestOutcome": "UP-TO-DATE",
+          "productAttributableFailure": false
+        }
+      ],
+      "result": {
+        "pairs": 4,
+        "controlMeanMs": 13971.75,
+        "candidateMeanMs": 11333.75,
+        "meanSavedMs": 2638,
+        "reductionRatio": 0.18880956215219996,
+        "interval95SavedMs": [
+          1516,
+          3275.5
+        ],
+        "positivePairs": 4,
+        "qualified": true
+      }
+    },
+    {
+      "id": "LEAF_PACKAGING",
+      "changeClass": "LEAF_PRODUCTION_SOURCE",
+      "outputFamily": "PACKAGING",
+      "changePath": "spring-webmvc/src/main/java/org/springframework/web/servlet/DispatcherServlet.java",
+      "changeOriginalSha256": "768903db4d5f06da9fa6abe796c33e72553084b7a2de5d7ff7e817a1a34d68af",
+      "changedProject": ":spring-webmvc",
+      "originalEntrypoints": [
+        "jar"
+      ],
+      "pipelineClass": "poc-impact-generalization-packaging",
+      "alternativeId": "spring-webmvc-jar",
+      "candidateEntrypoints": [
+        ":spring-webmvc:jar"
+      ],
+      "requiredArtifactId": "spring-webmvc-binary-jar",
+      "requiredOutputPath": "spring-webmvc/build/libs/spring-webmvc-7.1.0-SNAPSHOT.jar",
+      "requiredOutputKind": "FILE",
+      "expectedReachedProjectCount": 15,
+      "expectedGraphSha256": "8e62687317e2cc5b33c16d0bb41ae4ac520651ff1b7d54dab4ab641d5b254544",
+      "performanceClaim": true,
+      "expectedMode": "SELECTIVE",
+      "observations": [
+        {
+          "pair": 1,
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 11445,
+          "candidateDurationMs": 11886,
+          "savedMs": -441,
+          "interArmIdleGapMs": 4045,
+          "controlMaximumResidentSetKb": 123928,
+          "candidateMaximumResidentSetKb": 122916,
+          "requiredOutputSha256": "d359c5b868b70a83676c1fc4c54857714e178d7c84262ebf79a2119129dd7c57",
+          "requiredOutputCount": 1,
+          "rootBuildGradleTestTasksExecuted": false,
+          "commonBuildLogicTestTask": ":buildSrc:test",
+          "commonBuildLogicTestOutcome": "UP-TO-DATE",
+          "productAttributableFailure": false
+        },
+        {
+          "pair": 2,
+          "order": "CANDIDATE_FIRST",
+          "controlDurationMs": 12218,
+          "candidateDurationMs": 10294,
+          "savedMs": 1924,
+          "interArmIdleGapMs": 1830,
+          "controlMaximumResidentSetKb": 123268,
+          "candidateMaximumResidentSetKb": 124596,
+          "requiredOutputSha256": "d359c5b868b70a83676c1fc4c54857714e178d7c84262ebf79a2119129dd7c57",
+          "requiredOutputCount": 1,
+          "rootBuildGradleTestTasksExecuted": false,
+          "commonBuildLogicTestTask": ":buildSrc:test",
+          "commonBuildLogicTestOutcome": "UP-TO-DATE",
+          "productAttributableFailure": false
+        },
+        {
+          "pair": 3,
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 11086,
+          "candidateDurationMs": 10822,
+          "savedMs": 264,
+          "interArmIdleGapMs": 1668,
+          "controlMaximumResidentSetKb": 124776,
+          "candidateMaximumResidentSetKb": 124100,
+          "requiredOutputSha256": "d359c5b868b70a83676c1fc4c54857714e178d7c84262ebf79a2119129dd7c57",
+          "requiredOutputCount": 1,
+          "rootBuildGradleTestTasksExecuted": false,
+          "commonBuildLogicTestTask": ":buildSrc:test",
+          "commonBuildLogicTestOutcome": "UP-TO-DATE",
+          "productAttributableFailure": false
+        },
+        {
+          "pair": 4,
+          "order": "CANDIDATE_FIRST",
+          "controlDurationMs": 11019,
+          "candidateDurationMs": 11057,
+          "savedMs": -38,
+          "interArmIdleGapMs": 3353,
+          "controlMaximumResidentSetKb": 122932,
+          "candidateMaximumResidentSetKb": 122296,
+          "requiredOutputSha256": "d359c5b868b70a83676c1fc4c54857714e178d7c84262ebf79a2119129dd7c57",
+          "requiredOutputCount": 1,
+          "rootBuildGradleTestTasksExecuted": false,
+          "commonBuildLogicTestTask": ":buildSrc:test",
+          "commonBuildLogicTestOutcome": "UP-TO-DATE",
+          "productAttributableFailure": false
+        }
+      ],
+      "result": {
+        "pairs": 4,
+        "controlMeanMs": 11442,
+        "candidateMeanMs": 11014.75,
+        "meanSavedMs": 427.25,
+        "reductionRatio": 0.037340499912602694,
+        "interval95SavedMs": [
+          -264.75,
+          1433.5
+        ],
+        "positivePairs": 2,
+        "qualified": false
+      }
+    }
+  ],
+  "capabilityFallbackCells": [
+    {
+      "id": "LEAF_VERIFICATION",
+      "changeClass": "LEAF_PRODUCTION_SOURCE",
+      "outputFamily": "VERIFICATION",
+      "changePath": "spring-webmvc/src/main/java/org/springframework/web/servlet/DispatcherServlet.java",
+      "changeOriginalSha256": "768903db4d5f06da9fa6abe796c33e72553084b7a2de5d7ff7e817a1a34d68af",
+      "changedProject": ":spring-webmvc",
+      "originalEntrypoints": [
+        "checkstyleMain"
+      ],
+      "pipelineClass": "poc-impact-generalization-verification",
+      "alternativeId": "spring-webmvc-checkstyle-main",
+      "candidateEntrypoints": [
+        ":spring-webmvc:checkstyleMain"
+      ],
+      "requiredArtifactId": "spring-webmvc-checkstyle-report",
+      "requiredOutputPath": "spring-webmvc/build/reports/checkstyle/main.xml",
+      "requiredOutputKind": "FILE",
+      "expectedReachedProjectCount": 15,
+      "expectedGraphSha256": "88ec5dec34d70dc47dd99208e3e48de507791d84112a831b6fcc3e488f417018",
+      "performanceClaim": false,
+      "expectedMode": "FULL_GRAPH",
+      "expectedReason": "IMPACT_GRAPH_INCOMPLETE",
+      "mode": "FULL_GRAPH",
+      "reason": "IMPACT_GRAPH_INCOMPLETE",
+      "requiredOutputSha256": "addcc704bf14f6ce86675ce55da91055f771404c07b1839ddb1e05bc024e4455",
+      "requiredOutputCount": 1,
+      "outputsIdentical": true,
+      "buildSuccessful": true
+    },
+    {
+      "id": "LEAF_SOURCE_DISTRIBUTION",
+      "changeClass": "LEAF_PRODUCTION_SOURCE",
+      "outputFamily": "DISTRIBUTION",
+      "changePath": "spring-webmvc/src/main/java/org/springframework/web/servlet/DispatcherServlet.java",
+      "changeOriginalSha256": "768903db4d5f06da9fa6abe796c33e72553084b7a2de5d7ff7e817a1a34d68af",
+      "changedProject": ":spring-webmvc",
+      "originalEntrypoints": [
+        "sourcesJar"
+      ],
+      "pipelineClass": "poc-impact-generalization-source-distribution",
+      "alternativeId": "spring-webmvc-sources-jar",
+      "candidateEntrypoints": [
+        ":spring-webmvc:sourcesJar"
+      ],
+      "requiredArtifactId": "spring-webmvc-source-distribution",
+      "requiredOutputPath": "spring-webmvc/build/libs/spring-webmvc-7.1.0-SNAPSHOT-sources.jar",
+      "requiredOutputKind": "FILE",
+      "expectedReachedProjectCount": 15,
+      "expectedGraphSha256": "5e87fc2d616a1356255f5e3188e54b2f14c56a489f10d0212034514863494c08",
+      "performanceClaim": false,
+      "expectedMode": "FULL_GRAPH",
+      "expectedReason": "IMPACT_GRAPH_INCOMPLETE",
+      "mode": "FULL_GRAPH",
+      "reason": "IMPACT_GRAPH_INCOMPLETE",
+      "requiredOutputSha256": "7627689779e60b7e4fe77eea06e882c05a9d80071fef02163de5a5b84e1cb9eb",
+      "requiredOutputCount": 1,
+      "outputsIdentical": true,
+      "buildSuccessful": true
+    }
+  ],
+  "fallbackCells": [
+    {
+      "id": "BUILD_LOGIC_FALLBACK",
+      "changeClass": "BUILD_LOGIC",
+      "changePath": "buildSrc/src/main/java/org/springframework/build/dev/LocalDevelopmentPlugin.java",
+      "changeOriginalSha256": "f4e2061603719e116b48bcceb3040b6051c303c95cdee27de7e9f68ce3058f20",
+      "pipelineCellId": "LEAF_COMPILATION",
+      "expectedMode": "FULL_GRAPH",
+      "expectedReason": "IMPACT_GLOBAL_CHANGE",
+      "expectedEntrypoints": [
+        "classes"
+      ],
+      "performanceClaim": false,
+      "mode": "FULL_GRAPH",
+      "reason": "IMPACT_GLOBAL_CHANGE",
+      "entrypoints": [
+        "classes"
+      ],
+      "outsideSelectiveScopeTaskObserved": ":spring-jms:compileJava",
+      "buildSuccessful": true
+    },
+    {
+      "id": "GLOBAL_CONFIGURATION_FALLBACK",
+      "changeClass": "GLOBAL_CONFIGURATION",
+      "changePath": "gradle.properties",
+      "changeOriginalSha256": "1d9b83934806d82172d67695cabcb4ea675b67d83eaaa4bbc9ba15bb49201ad9",
+      "pipelineCellId": "LEAF_COMPILATION",
+      "expectedMode": "FULL_GRAPH",
+      "expectedReason": "IMPACT_GLOBAL_CHANGE",
+      "expectedEntrypoints": [
+        "classes"
+      ],
+      "performanceClaim": false,
+      "mode": "FULL_GRAPH",
+      "reason": "IMPACT_GLOBAL_CHANGE",
+      "entrypoints": [
+        "classes"
+      ],
+      "outsideSelectiveScopeTaskObserved": ":spring-jms:compileJava",
+      "buildSuccessful": true
+    }
+  ],
+  "result": {
+    "totalPerformanceCells": 3,
+    "qualifiedPerformanceCells": 1,
+    "capabilityFallbackCellsPassed": 2,
+    "fallbacksPassed": true,
+    "decision": "GENERALIZE_ONLY_QUALIFIED_CELLS"
+  },
+  "boundaries": {
+    "repositorySpecificProductRuleAdded": false,
+    "productionSelectionChanged": false,
+    "rootBuildGradleTestTasksExecuted": false,
+    "testSelectionChanged": false,
+    "testExecutionChanged": false,
+    "testOptimizationModified": false,
+    "hotStateEnabled": false,
+    "runtimeTuningEnabled": false,
+    "safeCacheEnabled": false,
+    "sharedOrEdgeCacheEnabled": false,
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "installedPackage": true,
+    "publicReleaseRequired": false
+  }
+}
