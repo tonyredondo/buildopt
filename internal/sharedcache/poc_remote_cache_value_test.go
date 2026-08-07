@@ -470,7 +470,7 @@ func runPOCRemoteCacheGradle(t *testing.T, gradleBin, project, home, remoteURL s
 		t.Fatal(err)
 	}
 	started := time.Now()
-	command := exec.Command(gradleBin, "--no-daemon", "--offline", "--build-cache", "--no-configuration-cache", "--console=plain", "--max-workers=4", "remoteCacheFixture")
+	command := exec.Command(gradleBin, "--no-daemon", "--build-cache", "--no-configuration-cache", "--console=plain", "--max-workers=4", "remoteCacheFixture")
 	command.Dir = project
 	pushValue := "0"
 	if push {
