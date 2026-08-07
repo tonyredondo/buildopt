@@ -14,6 +14,12 @@
       "reason": "PRE_MEASUREMENT_ROOT_CLEAN_DID_NOT_FORCE_REQUESTED_TEST_EXECUTION",
       "acceptedPairsBeforeRevision": 0,
       "valueThresholdsChanged": false
+    },
+    {
+      "from": 2,
+      "reason": "PRE_MEASUREMENT_ATTRIBUTION_IGNORED_EXACT_TEST_FIXTURES_JAR_TASKS",
+      "acceptedPairsBeforeRevision": 0,
+      "valueThresholdsChanged": false
     }
   ],
   "repository": {
@@ -62,6 +68,7 @@
     "maximumInterArmIdleGapMs": 5000,
     "candidateMustRestoreStandardJar": true,
     "controlMustExecuteStandardJar": true,
+    "exactDifferentialTaskSuffix": "testFixturesJar",
     "requestedTestTaskMustExecute": true,
     "requiredJarOutputsIdentical": true,
     "testCasesAndOutcomeIdentical": true

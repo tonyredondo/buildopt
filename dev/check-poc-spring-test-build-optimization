@@ -27,6 +27,12 @@ jq -e '
             reason: "PRE_MEASUREMENT_ROOT_CLEAN_DID_NOT_FORCE_REQUESTED_TEST_EXECUTION",
             acceptedPairsBeforeRevision: 0,
             valueThresholdsChanged: false
+        },
+        {
+            from: 2,
+            reason: "PRE_MEASUREMENT_ATTRIBUTION_IGNORED_EXACT_TEST_FIXTURES_JAR_TASKS",
+            acceptedPairsBeforeRevision: 0,
+            valueThresholdsChanged: false
         }
     ] and
     .repository.nameWithOwner == "spring-projects/spring-framework" and
@@ -48,6 +54,7 @@ jq -e '
     .measurement.maximumInterArmIdleGapMs == 5000 and
     .measurement.candidateMustRestoreStandardJar == true and
     .measurement.controlMustExecuteStandardJar == true and
+    .measurement.exactDifferentialTaskSuffix == "testFixturesJar" and
     .measurement.requestedTestTaskMustExecute == true and
     .measurement.requiredJarOutputsIdentical == true and
     .measurement.testCasesAndOutcomeIdentical == true and
