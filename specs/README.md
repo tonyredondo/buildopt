@@ -18,6 +18,7 @@ the exact cross-component contract.
 | [`poc-spring-test-preparation-v2.json`](./poc-spring-test-preparation-v2.json) | `POC-SPRING-TEST-PREPARATION-001` |
 | [`poc-spring-test-build-optimization-v1.json`](./poc-spring-test-build-optimization-v1.json) | `POC-TEST-BUILD-OPTIMIZATION-001` |
 | [`poc-optimization-overhead-ablation-v1.json`](./poc-optimization-overhead-ablation-v1.json) | `POC-OPTIMIZATION-OVERHEAD-ABLATION-001` |
+| [`poc-runtime-research-v1.json`](./poc-runtime-research-v1.json) | `POC-RUNTIME-RESEARCH-001` |
 | [`poc-spring-installed-impact-v1.md`](./poc-spring-installed-impact-v1.md) and [`poc-spring-installed-impact-v1.json`](./poc-spring-installed-impact-v1.json) | `POC-SPRING-INSTALLED-IMPACT-001` |
 | [`poc-spring-impact-breadth-v1.md`](./poc-spring-impact-breadth-v1.md) and [`poc-spring-impact-breadth-v1.json`](./poc-spring-impact-breadth-v1.json) | `POC-SPRING-IMPACT-BREADTH-PREREG-001` / `POC-SPRING-IMPACT-BREADTH-G01` |
 | [`poc-otel-test-preparation-v1.json`](./poc-otel-test-preparation-v1.json) | `POC-OTEL-TRANSFER-001` |

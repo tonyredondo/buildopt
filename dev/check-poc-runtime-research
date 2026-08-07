@@ -1,0 +1,174 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-runtime-research-v1.json"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-runtime-research-v1.json"}
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Runtime research validator is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-runtime-research/v1" and
+    .workItem == "POC-RUNTIME-RESEARCH-001" and
+    .decision == "PREREGISTER_SPRING_TESTCLASSES_WORKER_CAP_6" and
+    .hypothesis.bottleneck == "GRADLE_WORKER_OVERSUBSCRIPTION" and
+    .hypothesis.singleChangedInput == "--max-workers" and
+    .hypothesis.controlValue == 12 and .hypothesis.candidateValue == 6 and
+    (.evidenceSources | length) == 3 and
+    all(.evidenceSources[];
+        (.path | startswith("benchmarks/results/")) and
+        (.sha256 | test("^[0-9a-f]{64}$"))) and
+    .repository.nameWithOwner == "spring-projects/spring-framework" and
+    (.repository.revision | test("^[0-9a-f]{40}$")) and
+    (.repository.sourceArchiveSha256 | test("^[0-9a-f]{64}$")) and
+    .runner.cpuCount == 12 and .runner.jdk == "25" and
+    .workflow.entrypoint == "testClasses" and
+    .workflow.controlMaxWorkers == 12 and .workflow.candidateMaxWorkers == 6 and
+    .measurement.warmupsPerArm == 1 and .measurement.pairs == 4 and
+    .measurement.pairOrder == [
+        "CONTROL_FIRST", "CANDIDATE_FIRST",
+        "CONTROL_FIRST", "CANDIDATE_FIRST"
+    ] and
+    .measurement.maximumInterArmIdleGapMs == 10000 and
+    .measurement.taskOutcomeSetMustMatch == true and
+    .valueGate.minimumSavedMs == 500 and
+    .valueGate.minimumReductionRatio == 0.02 and
+    .valueGate.positiveLower95Bound == true and
+    .valueGate.minimumPositivePairs == 4 and
+    .valueGate.thresholdsMayMoveAfterMeasurement == false and
+    .valueGate.failedPairsMayBeDiscarded == false and
+    .decisionPolicy.qualifiedDecision ==
+        "QUALIFY_WORKER_CAP_6_FOR_SPRING_TESTCLASSES_POC" and
+    .decisionPolicy.unqualifiedDecision == "RETAIN_NATIVE_12_WORKERS" and
+    .decisionPolicy.profileRemainsDisabledUnlessQualified == true and
+    .decisionPolicy.noAdditionalSearchAfterTerminalDecision == true and
+    .boundaries.onlyMaxWorkersChanges == true and
+    .boundaries.taskSelectionChanged == false and
+    .boundaries.testExecutionRequested == false and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.heapChanged == false and
+    .boundaries.cachePolicyChanged == false and
+    .boundaries.proofOfConcept == true and
+    .boundaries.productionReadinessClaimed == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false
+' "${buildopt_spec}" >/dev/null
+
+while IFS=$'\t' read -r buildopt_path buildopt_sha; do
+    [[ -s "${buildopt_repo_root}/${buildopt_path}" ]] || {
+        printf 'Runtime research source evidence is unavailable: %s\n' \
+            "${buildopt_path}" >&2
+        exit 1
+    }
+    [[ "$(sha256sum "${buildopt_repo_root}/${buildopt_path}" | awk '{print $1}')" == \
+        "${buildopt_sha}" ]] || {
+        printf 'Runtime research source evidence drifted: %s\n' "${buildopt_path}" >&2
+        exit 1
+    }
+done < <(jq -r '.evidenceSources[] | [.path, .sha256] | @tsv' "${buildopt_spec}")
+
+if (($# == 0)) && [[ ! -s "${buildopt_result}" ]]; then
+    printf 'POC Runtime research contract OK: %s\n' "${buildopt_spec}"
+    exit 0
+fi
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_runner_sha=$(sha256sum "${buildopt_script_dir}/run-poc-runtime-research" | awk '{print $1}')
+jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sha}" \
+    --slurpfile spec "${buildopt_spec}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    def bootstrap_mean($data; $sample):
+        reduce range(0; 4) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $data[((.state / 1073741824) | floor)].savedMs) |
+        .sum / 4;
+    def bootstrap95($data):
+        ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
+        [$r[102], $r[3993]];
+    .observations as $data |
+    (($data | map(.controlDurationMs) | add) / 4) as $controlMean |
+    (($data | map(.candidateDurationMs) | add) / 4) as $candidateMean |
+    ($controlMean - $candidateMean) as $saved |
+    (($data | map(.savedMs) | add) /
+        ($data | map(.controlDurationMs) | add)) as $ratio |
+    bootstrap95($data) as $interval |
+    ($data | map(select(.savedMs > 0)) | length) as $positive |
+    ($saved >= $spec[0].valueGate.minimumSavedMs and
+     $ratio >= $spec[0].valueGate.minimumReductionRatio and
+     $interval[0] > 0 and
+     $positive == $spec[0].valueGate.minimumPositivePairs and
+     all($data[];
+         .requiredOutputCount > 0 and .outputsIdentical and
+         .taskOutcomesIdentical and (.productAttributableFailure | not))) as $qualified |
+    .schemaVersion == "buildopt.evidence/poc-runtime-research/v1" and
+    .workItem == "POC-RUNTIME-RESEARCH-001" and
+    (.capturedAt | fromdateiso8601) and
+    (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+    .runnerScriptSha256 == $runnerSha and .specSha256 == $specSha and
+    .repository == {
+        nameWithOwner: $spec[0].repository.nameWithOwner,
+        revision: $spec[0].repository.revision,
+        sourceArchiveSha256: $spec[0].repository.sourceArchiveSha256
+    } and
+    .runner == $spec[0].runner and
+    .hypothesis == $spec[0].hypothesis and
+    .workflow == $spec[0].workflow and
+    .preparation.onlinePreflightMeasured == false and
+    .preparation.onlinePreflightSuccess == true and
+    .preparation.measuredNetwork == "DISCONNECTED" and
+    .preparation.dependencyMode == "GRADLE_OFFLINE" and
+    .preparation.sameDependencyAndNativeCacheSeedRestoredBeforeArmSetup == true and
+    .preparation.independentCheckoutAndGradleHomePerArm == true and
+    .preparation.outputsRemovedBeforeEveryArm == true and
+    .preparation.fixedMutationAppliedAfterCacheRestore == true and
+    ($data | length) == 4 and
+    [$data[].pair] == [1, 2, 3, 4] and
+    [$data[].order] == $spec[0].measurement.pairOrder and
+    all($data[];
+        .controlMaxWorkers == 12 and .candidateMaxWorkers == 6 and
+        (.controlDurationMs | type == "number" and . > 0) and
+        (.candidateDurationMs | type == "number" and . > 0) and
+        .savedMs == (.controlDurationMs - .candidateDurationMs) and
+        .interArmIdleGapMs >= 0 and
+        .interArmIdleGapMs <= $spec[0].measurement.maximumInterArmIdleGapMs and
+        (.requiredOutputSha256 | sha256) and
+        (.taskOutcomeSetSha256 | sha256)) and
+    ([$data[].requiredOutputSha256] | unique | length) == 1 and
+    ([$data[].taskOutcomeSetSha256] | unique | length) == 1 and
+    .result == {
+        pairs: 4,
+        controlMeanMs: $controlMean,
+        candidateMeanMs: $candidateMean,
+        meanSavedMs: $saved,
+        reductionRatio: $ratio,
+        interval95SavedMs: $interval,
+        positivePairs: $positive,
+        qualified: $qualified,
+        decision: (if $qualified then
+            $spec[0].decisionPolicy.qualifiedDecision
+            else $spec[0].decisionPolicy.unqualifiedDecision end)
+    } and
+    .boundaries == $spec[0].boundaries
+' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'POC Runtime research validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'POC Runtime research evidence OK: %s\n' "${buildopt_result}"

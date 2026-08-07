@@ -2903,6 +2903,20 @@ slower than native, with only 2/4 positive rounds and an interval crossing
 zero. These phase differences are diagnostic under the recorded rotated
 orders; only the end-to-end native comparison controls activation.
 
+The next bounded Runtime Tuning experiment tests one trace-selected resource
+hypothesis: Spring `testClasses` with 12 native workers versus a six-worker
+cap. The retained traces bind the hypothesis before timing; the two arms keep
+the same source change, task selector, heap, cache policy and required outputs:
+
+```bash
+./dev/check-poc-runtime-research
+./dev/run-poc-runtime-research /absolute/path/to/new-result.json
+./dev/check-poc-runtime-research /absolute/path/to/new-result.json
+```
+
+The candidate remains disabled unless all four pairs clear the unchanged
+500-ms/2%/positive-bound gate with exact outputs and task outcomes.
+
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source
 distribution. Structural discovery freezes selective execution only where the
