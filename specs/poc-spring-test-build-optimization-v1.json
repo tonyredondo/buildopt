@@ -2,12 +2,20 @@
   "schemaVersion": "buildopt.specs/poc-spring-test-build-optimization/v1",
   "workItem": "POC-TEST-BUILD-OPTIMIZATION-001",
   "decision": "PREREGISTER_EXACT_STANDARD_JAR_REUSE_WITH_UNCHANGED_TEST_EXECUTION",
-  "protocolRevision": {
-    "from": 0,
-    "reason": "PRE_MEASUREMENT_WARMUP_POPULATES_STANDARD_JAR_CACHE_WITHOUT_REPLAY",
-    "acceptedPairsBeforeRevision": 0,
-    "valueThresholdsChanged": false
-  },
+  "protocolRevisions": [
+    {
+      "from": 0,
+      "reason": "PRE_MEASUREMENT_WARMUP_POPULATES_STANDARD_JAR_CACHE_WITHOUT_REPLAY",
+      "acceptedPairsBeforeRevision": 0,
+      "valueThresholdsChanged": false
+    },
+    {
+      "from": 1,
+      "reason": "PRE_MEASUREMENT_ROOT_CLEAN_DID_NOT_FORCE_REQUESTED_TEST_EXECUTION",
+      "acceptedPairsBeforeRevision": 0,
+      "valueThresholdsChanged": false
+    }
+  ],
   "repository": {
     "nameWithOwner": "spring-projects/spring-framework",
     "revision": "4b5c92703c63966c3471242c621c4a63b382638d",
@@ -41,7 +49,8 @@
       "--no-configuration-cache",
       "--max-workers=12",
       "--no-scan",
-      "--stacktrace"
+      "--stacktrace",
+      "--rerun"
     ],
     "onlinePreflightMeasured": false,
     "preflightDaemonStoppedBeforeArmSetup": true,

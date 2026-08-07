@@ -99,7 +99,7 @@ tar -xzf "${buildopt_source_archive}" --strip-components=1 -C "${buildopt_root}/
 buildopt_common_args=(
     --daemon --build-cache --parallel --no-configuration-cache
     --max-workers=12 --no-scan --stacktrace --console=plain
-    :spring-jms:test --tests org.springframework.jms.support.JmsAccessorTests
+    :spring-jms:test --rerun --tests org.springframework.jms.support.JmsAccessorTests
 )
 buildopt_preflight_started=$(date +%s%N)
 if ! (
@@ -152,7 +152,11 @@ buildopt_run_arm() {
         cd "${buildopt_checkout}"
         env -u CI GRADLE_USER_HOME="${buildopt_home}" \
             "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
-            ./gradlew --daemon --offline --quiet --max-workers=12 clean
+            ./gradlew --daemon --offline --quiet --max-workers=12 \
+            clean :spring-core:clean :spring-instrument:clean \
+            :spring-beans:clean :spring-aop:clean :spring-context:clean \
+            :spring-expression:clean :spring-oxm:clean :spring-tx:clean \
+            :spring-messaging:clean :spring-jms:clean
     ) >"${buildopt_log}.clean" 2>&1
     local -a buildopt_command=(./gradlew --offline "${buildopt_common_args[@]}")
     if [[ "${buildopt_arm}" == candidate ]]; then
