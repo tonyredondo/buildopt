@@ -2791,6 +2791,19 @@ unable to consume the candidate-only standard-Jar entry. The unchanged gate
 still requires 500 ms, 2%, a positive paired lower bound, 4/4 positive pairs,
 exact outputs, zero product failures and the complete global fallback.
 
+The qualified full-path ablation re-executes the frozen Spring and
+OpenTelemetry protocols and records all six logical arms without inventing
+zero effects for mechanisms that are not authorized for a workload:
+
+```bash
+./dev/run-poc-full-path-ablation /absolute/path/to/poc-full-path-ablation-v1
+./dev/check-poc-full-path-ablation /absolute/path/to/poc-full-path-ablation-v1
+```
+
+Each executable arm retains its own contemporaneous optimized-native control.
+Cross-protocol differences are descriptive only, percentages are never added,
+and a failed source protocol stops the run without discarding a pair.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

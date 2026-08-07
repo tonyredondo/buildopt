@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "buildopt.specs/poc-full-path-ablation/v1",
+  "workItem": "POC-FULL-PATH-ABLATION-001",
+  "decision": "PREREGISTER_QUALIFIED_FULL_PATH_ABLATION",
+  "productRevision": "b8f4114da3ba2297c0478692a02deed3fac55422",
+  "methodology": {
+    "logicalArms": [
+      "NATIVE_GRADLE",
+      "BUILD_IMPACT",
+      "BUILD_IMPACT_HOT_STATE",
+      "QUALIFIED_STANDARD_TASK_ADAPTERS",
+      "EXACT_REVIEWED_TASK_PATCHES",
+      "COMPLETE_QUALIFIED_PROFILE"
+    ],
+    "freshSourceMeasurementsRequired": true,
+    "contemporaneousNativeControlPerExecutableArm": true,
+    "crossProtocolIncrementalEffects": "DESCRIPTIVE_ONLY",
+    "unavailableArmPolicy": "RECORD_NOT_AUTHORIZED_NEVER_ZERO",
+    "percentagesMayBeAdded": false,
+    "failedPairsMayBeDiscarded": false
+  },
+  "sourceProtocols": [
+    {
+      "id": "SPRING_BUILD_IMPACT",
+      "repository": "spring-projects/spring-framework",
+      "runner": "dev/run-poc-spring-installed-impact",
+      "checker": "dev/check-poc-spring-installed-impact",
+      "result": "spring-build-impact.json"
+    },
+    {
+      "id": "OTEL_BUILD_IMPACT",
+      "repository": "open-telemetry/opentelemetry-java-instrumentation",
+      "runner": "dev/run-poc-otel-spring-family-v2",
+      "checker": "dev/check-poc-otel-spring-family-v2-result",
+      "result": "otel-build-impact.json"
+    },
+    {
+      "id": "OTEL_BUILD_IMPACT_HOT_STATE",
+      "repository": "open-telemetry/opentelemetry-java-instrumentation",
+      "runner": "dev/run-poc-otel-optimization-v1",
+      "checker": "dev/check-poc-otel-optimization-v1-result",
+      "result": "otel-build-impact-hot-state.json"
+    },
+    {
+      "id": "OTEL_STANDARD_JAR_ADAPTER",
+      "repository": "open-telemetry/opentelemetry-java-instrumentation",
+      "runner": "dev/run-poc-otel-optimization-v2",
+      "checker": "dev/check-poc-otel-optimization-v2-result",
+      "result": "otel-standard-jar-adapter.json"
+    }
+  ],
+  "repositoryProfiles": {
+    "spring-projects/spring-framework": {
+      "completeProfileSource": "SPRING_BUILD_IMPACT",
+      "notAuthorized": [
+        "BUILD_IMPACT_HOT_STATE",
+        "QUALIFIED_STANDARD_TASK_ADAPTERS",
+        "EXACT_REVIEWED_TASK_PATCHES"
+      ]
+    },
+    "open-telemetry/opentelemetry-java-instrumentation": {
+      "completeProfileSource": "OTEL_STANDARD_JAR_ADAPTER",
+      "notAuthorized": ["EXACT_REVIEWED_TASK_PATCHES"]
+    }
+  },
+  "valueGate": {
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "requiredOutputsIdentical": true,
+    "requiredOutputsNonEmpty": true,
+    "maximumProductAttributableFailures": 0,
+    "safeFallbackRequired": true
+  },
+  "terminalDecisions": {
+    "bothCompleteProfilesQualify": "QUALIFY_FULL_PATH_POC_VALUE",
+    "anyCompleteProfileFails": "RETAIN_COMPONENT_EVIDENCE_ONLY",
+    "sourceProtocolFails": "STOP_ABLATION_WITHOUT_RETRY"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "universalSavingsClaimed": false,
+    "productionPromotionAuthorized": false,
+    "runtimeTuningEnabled": false,
+    "strictSafeCacheEnabled": false,
+    "sharedOrEdgeCacheEnabled": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

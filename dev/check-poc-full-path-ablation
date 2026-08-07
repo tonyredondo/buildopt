@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_DIRECTORY]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-full-path-ablation-v1.json"
+buildopt_runner="${buildopt_script_dir}/run-poc-full-path-ablation"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-full-path-ablation-v1"}
+buildopt_summary="${buildopt_result}/summary.json"
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required full-path ablation validator is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -d "${buildopt_result}" && -s "${buildopt_summary}" ]] || {
+    printf 'full-path ablation evidence is unavailable: %s\n' "${buildopt_result}" >&2
+    exit 1
+}
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+"${buildopt_script_dir}/check-poc-spring-installed-impact" \
+    "${buildopt_result}/spring-build-impact.json" >/dev/null
+"${buildopt_script_dir}/check-poc-otel-spring-family-v2-result" \
+    "${buildopt_result}/otel-build-impact.json" >/dev/null
+"${buildopt_script_dir}/check-poc-otel-optimization-v1-result" \
+    "${buildopt_result}/otel-build-impact-hot-state.json" >/dev/null
+"${buildopt_script_dir}/check-poc-otel-optimization-v2-result" \
+    "${buildopt_result}/otel-standard-jar-adapter.json" >/dev/null
+
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_runner_sha=$(sha256sum "${buildopt_runner}" | awk '{print $1}')
+buildopt_spring_sha=$(sha256sum "${buildopt_result}/spring-build-impact.json" | awk '{print $1}')
+buildopt_otel_impact_sha=$(sha256sum "${buildopt_result}/otel-build-impact.json" | awk '{print $1}')
+buildopt_otel_hot_sha=$(sha256sum "${buildopt_result}/otel-build-impact-hot-state.json" | awk '{print $1}')
+buildopt_otel_jar_sha=$(sha256sum "${buildopt_result}/otel-standard-jar-adapter.json" | awk '{print $1}')
+
+jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sha}" \
+    --arg springSha "${buildopt_spring_sha}" --arg otelImpactSha "${buildopt_otel_impact_sha}" \
+    --arg otelHotSha "${buildopt_otel_hot_sha}" --arg otelJarSha "${buildopt_otel_jar_sha}" \
+    --slurpfile spec "${buildopt_spec}" \
+    --slurpfile spring "${buildopt_result}/spring-build-impact.json" \
+    --slurpfile otelImpact "${buildopt_result}/otel-build-impact.json" \
+    --slurpfile otelHot "${buildopt_result}/otel-build-impact-hot-state.json" \
+    --slurpfile otelJar "${buildopt_result}/otel-standard-jar-adapter.json" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    def gitsha: type == "string" and test("^[0-9a-f]{40}$");
+    def effect($source):
+        $source.result | {
+            pairs, controlMeanMs, candidateMeanMs, meanSavedMs, reductionRatio,
+            interval95SavedMs, positivePairs, qualified, decision
+        };
+    .schemaVersion == "buildopt.evidence/poc-full-path-ablation/v1" and
+    .workItem == $spec[0].workItem and
+    (.capturedAt | fromdateiso8601) and
+    (.buildoptRevision | gitsha) and
+    .specSha256 == $specSha and
+    .runnerScriptSha256 == $runnerSha and
+    .methodology == $spec[0].methodology and
+    .sourceEvidence == [
+        {id: "SPRING_BUILD_IMPACT", file: "spring-build-impact.json", sha256: $springSha},
+        {id: "OTEL_BUILD_IMPACT", file: "otel-build-impact.json", sha256: $otelImpactSha},
+        {id: "OTEL_BUILD_IMPACT_HOT_STATE", file: "otel-build-impact-hot-state.json", sha256: $otelHotSha},
+        {id: "OTEL_STANDARD_JAR_ADAPTER", file: "otel-standard-jar-adapter.json", sha256: $otelJarSha}
+    ] and
+    (.repositories | length) == 2 and
+    all(.repositories[]; (.arms | length) == 6 and
+        [.arms[].id] == $spec[0].methodology.logicalArms) and
+    .repositories[0].nameWithOwner == $spring[0].repository.nameWithOwner and
+    .repositories[0].revision == $spring[0].repository.revision and
+    .repositories[0].arms[0] == {
+        id: "NATIVE_GRADLE", status: "EXECUTED_CONTROL",
+        controlMeanMs: $spring[0].result.controlMeanMs
+    } and
+    .repositories[0].arms[1].effect == effect($spring[0]) and
+    [.repositories[0].arms[2:5][].status] == [
+        "NOT_AUTHORIZED_FOR_WORKLOAD", "NOT_AUTHORIZED_FOR_WORKLOAD",
+        "NOT_AUTHORIZED_FOR_WORKLOAD"
+    ] and
+    .repositories[0].arms[5] == {
+        id: "COMPLETE_QUALIFIED_PROFILE", status: "ALIAS", aliasOf: "BUILD_IMPACT",
+        effect: effect($spring[0])
+    } and
+    .repositories[1].nameWithOwner == $otelJar[0].repository.nameWithOwner and
+    .repositories[1].revision == $otelJar[0].repository.revision and
+    .repositories[1].arms[1].effect == effect($otelImpact[0]) and
+    .repositories[1].arms[2].effect == effect($otelHot[0]) and
+    .repositories[1].arms[3].effect == effect($otelJar[0]) and
+    .repositories[1].arms[4] == {
+        id: "EXACT_REVIEWED_TASK_PATCHES", status: "NOT_AUTHORIZED_FOR_WORKLOAD"
+    } and
+    .repositories[1].arms[5] == {
+        id: "COMPLETE_QUALIFIED_PROFILE", status: "ALIAS",
+        aliasOf: "QUALIFIED_STANDARD_TASK_ADAPTERS", effect: effect($otelJar[0])
+    } and
+    .result == {
+        completeProfilesQualified: true,
+        qualifiedRepositoryCount: 2,
+        decision: $spec[0].terminalDecisions.bothCompleteProfilesQualify
+    } and
+    .boundaries == $spec[0].boundaries and
+    $spring[0].result.qualified == true and
+    $otelJar[0].result.qualified == true
+' "${buildopt_summary}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'full-path ablation validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'qualified full-path ablation evidence OK: %s\n' "${buildopt_result}"
