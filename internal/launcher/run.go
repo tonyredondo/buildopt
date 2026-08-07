@@ -18,7 +18,7 @@ const (
 	exitCannotExecute = 126
 	exitNotFound      = 127
 	exitConfiguration = 78
-	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt doctor\n"
+	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [--cache-standard-jar-producers --] [gradle args...]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt doctor\n"
 	bypassEnvironment = "BUILDOPT_BYPASS"
 )
 
@@ -122,12 +122,17 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 	}
 	if len(args) > 0 && args[0] == "gradle" {
 		gradleSetupStartedAt := time.Now()
+		gradleArgs, explicitStandardJarCache, parseErr := parseGradleProductOptions(args[1:])
+		if parseErr != nil {
+			_, _ = fmt.Fprintf(stderr, "buildopt: Gradle setup unavailable: %v\n", parseErr)
+			return exitConfiguration
+		}
 		getenv := os.Getenv
-		if impactStandardJarCache || impactStandardCopyCache {
+		if explicitStandardJarCache || impactStandardJarCache || impactStandardCopyCache {
 			getenv = func(name string) string {
 				switch name {
 				case gradleStandardJarCacheEnvironment:
-					if impactStandardJarCache {
+					if explicitStandardJarCache || impactStandardJarCache {
 						return "1"
 					}
 				case gradleStandardCopyCacheEnvironment:
@@ -139,7 +144,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			}
 		}
 		invocation, err := prepareGradleInvocationWithEnvironment(
-			args[1:],
+			gradleArgs,
 			os.Getenv(bypassEnvironment) == "1",
 			getenv,
 		)

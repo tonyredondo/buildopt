@@ -81,6 +81,33 @@ func TestPrepareGradleInvocation(t *testing.T) {
 	}
 }
 
+func TestParseGradleProductOptions(t *testing.T) {
+	t.Run("keeps ordinary Gradle arguments", func(t *testing.T) {
+		arguments := []string{"--parallel", "test"}
+		parsed, standardJar, err := parseGradleProductOptions(arguments)
+		if err != nil || standardJar || !reflect.DeepEqual(parsed, arguments) {
+			t.Fatalf("parsed = %q, standard Jar = %t, error = %v", parsed, standardJar, err)
+		}
+	})
+
+	t.Run("selects the exact standard Jar adapter", func(t *testing.T) {
+		parsed, standardJar, err := parseGradleProductOptions([]string{
+			gradleStandardJarCacheFlag, "--", "--parallel", "test",
+		})
+		if err != nil || !standardJar || !reflect.DeepEqual(parsed, []string{"--parallel", "test"}) {
+			t.Fatalf("parsed = %q, standard Jar = %t, error = %v", parsed, standardJar, err)
+		}
+	})
+
+	t.Run("requires an explicit delimiter", func(t *testing.T) {
+		if _, _, err := parseGradleProductOptions([]string{
+			gradleStandardJarCacheFlag, "test",
+		}); err == nil || !strings.Contains(err.Error(), "requires '--'") {
+			t.Fatalf("delimiter error = %v", err)
+		}
+	})
+}
+
 func TestPrepareGradleInvocationDefaultsToNativeCacheOnly(t *testing.T) {
 	root := t.TempDir()
 	wrapper := filepath.Join(root, gradleWrapperName(runtime.GOOS))

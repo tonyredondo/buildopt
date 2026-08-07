@@ -21,11 +21,25 @@ const (
 	gradleProjectPluginModeCacheOnly   = "CACHE_ONLY"
 	gradleSafeCacheEnvironment         = "BUILDOPT_SAFE_CACHE"
 	gradleStandardJarCacheEnvironment  = "BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS"
+	gradleStandardJarCacheFlag         = "--cache-standard-jar-producers"
 	gradleStandardCopyCacheEnvironment = "BUILDOPT_CACHE_STANDARD_COPY_TASKS"
 	gradleCheckstyleHeapEnvironment    = "BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP"
 	gradleCheckstyleHeap2G             = "2g"
 	gradleCheckstyleMinimumMemoryBytes = int64(14 * 1024 * 1024 * 1024)
 )
+
+func parseGradleProductOptions(args []string) ([]string, bool, error) {
+	if len(args) == 0 || args[0] != gradleStandardJarCacheFlag {
+		return args, false, nil
+	}
+	if len(args) < 2 || args[1] != "--" {
+		return nil, false, fmt.Errorf(
+			"%s requires '--' before Gradle arguments",
+			gradleStandardJarCacheFlag,
+		)
+	}
+	return args[2:], true, nil
+}
 
 type gradleInvocation struct {
 	childArgs   []string
