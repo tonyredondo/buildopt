@@ -132,6 +132,12 @@ still not a universal claim. See the [POC value
 contract](./specs/poc-value-validation-v1.md) and
 [raw scorecard](./benchmarks/README.md#build-optimization-scorecard).
 
+The same repository-owned profile has also been replayed through an installed
+package on those fixed OpenTelemetry and Kafka revisions. Both candidates
+reproduced their historical outputs and standard-`Jar` cache hit; global
+changes completed the native full graph. This is usability and fallback
+evidence only, so the earlier percentages remain unchanged.
+
 ## Choose what to do next
 
 | Goal | Start here |

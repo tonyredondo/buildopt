@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_usage='usage: ./dev/check-poc-qualified-profile-adoption'
+
+if (($# != 0)); then
+    printf '%s\n' "${buildopt_usage}" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-qualified-profile-adoption-v1.json"
+buildopt_result="${buildopt_repo_root}/benchmarks/results/poc-qualified-profile-adoption-v1.json"
+buildopt_fixtures="${buildopt_repo_root}/fixtures/poc-qualified-profile-adoption"
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'missing required command: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.poc/qualified-profile-adoption/v1" and
+    .workItem == "POC-QUALIFIED-PROFILE-ADOPTION-001" and
+    .purpose == "INSTALLED_COMMAND_ADOPTION_AND_FALLBACK_ONLY" and
+    .timingEvidenceAllowed == false and
+    .performanceClaimAllowed == false and
+    .installation.format == "LINUX_AMD64_NATIVE_PACKAGE" and
+    .installation.receiptSchema == "buildopt.install/v1" and
+    .installation.command == "buildopt poc --changes-file .buildopt-changes" and
+    .mechanisms.enabled == ["BUILD_IMPACT", "STANDARD_JAR"] and
+    .mechanisms.disabled == [
+        "HOT_STATE", "RUNTIME_TUNING", "SAFE_CACHE", "SHARED_EDGE_CACHE",
+        "STANDARD_COPY"
+    ] and
+    (.repositories | length) == 2 and
+    ([.repositories[].id] | sort) == ["kafka", "opentelemetry"] and
+    all(.repositories[];
+        (.revision | test("^[0-9a-f]{40}$")) and
+        (.sourceArchiveSha256 | test("^[0-9a-f]{64}$")) and
+        (.graphSha256 | test("^[0-9a-f]{64}$")) and
+        (.generatedManifestSha256 | test("^[0-9a-f]{64}$")) and
+        (.candidate.requiredOutputCount > 0) and
+        (.candidate.requiredOutputSha256 | test("^[0-9a-f]{64}$")) and
+        .fallback.reason == "IMPACT_GLOBAL_CHANGE"
+    ) and
+    .terminalDecision == "COMPLETE_INSTALLED_PROFILE_ADOPTION"
+' "${buildopt_spec}" >/dev/null
+
+while IFS=$'\t' read -r buildopt_id buildopt_profile buildopt_graph_sha \
+    buildopt_generated_sha; do
+    buildopt_fixture_dir="${buildopt_fixtures}/${buildopt_id}"
+    [[ "$(sha256sum "${buildopt_repo_root}/${buildopt_profile}" | awk '{print $1}')" != "" ]]
+    [[ "$(sha256sum "${buildopt_fixture_dir}/buildopt-impact-graph.generated.json" | awk '{print $1}')" == \
+        "${buildopt_graph_sha}" ]]
+    [[ "$(sha256sum "${buildopt_fixture_dir}/buildopt-impact.generated.json" | awk '{print $1}')" == \
+        "${buildopt_generated_sha}" ]]
+    jq -e '
+        .schemaVersion == "buildopt.poc/qualified-profile/v1" and
+        .ownership == "REPOSITORY_COMMITTED" and
+        .claimScope == "DECLARED_OUTPUTS_ONLY" and
+        .fallback == "NATIVE_FULL_GRAPH" and
+        .mechanisms == {
+            buildImpact: true,
+            standardJarAdapter: true,
+            safeCache: false,
+            runtimeTuning: false,
+            hotState: false,
+            standardCopyAdapter: false,
+            sharedEdgeCache: false
+        }
+    ' "${buildopt_repo_root}/${buildopt_profile}" >/dev/null
+    jq -e '
+        .schemaVersion == "buildopt.build-impact/generated-manifest/v1" and
+        .complete == true and
+        .fallbackReasons == []
+    ' "${buildopt_fixture_dir}/buildopt-impact.generated.json" >/dev/null
+done < <(jq -r '.repositories[] | [
+    .id, .profilePath, .graphSha256, .generatedManifestSha256
+] | @tsv' "${buildopt_spec}")
+
+jq -e --slurpfile spec "${buildopt_spec}" '
+    .schemaVersion == "buildopt.poc/qualified-profile-adoption-result/v1" and
+    .workItem == $spec[0].workItem and
+    (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+    .package.format == $spec[0].installation.format and
+    (.package.sha256 | test("^[0-9a-f]{64}$")) and
+    (.package.installedBinarySha256 | test("^[0-9a-f]{64}$")) and
+    (.package.receiptSha256 | test("^[0-9a-f]{64}$")) and
+    .runner.os == "linux" and
+    .runner.arch == "amd64" and
+    (.repositories | length) == 2 and
+    (.repositories | all(.[];
+        . as $result |
+        ($spec[0].repositories[] | select(.id == $result.id)) as $contract |
+        $result.revision == $contract.revision and
+        $result.candidate.planBeforeGradle == true and
+        $result.candidate.selectionMode == "POC_CANDIDATE" and
+        $result.candidate.selectionReason == "EXPLICIT_OWNER_POC_CANDIDATE" and
+        $result.candidate.alternativeId == $contract.candidate.alternativeId and
+        $result.candidate.enabledAdapters == ["STANDARD_JAR"] and
+        $result.candidate.jarProducer == $contract.candidate.jarProducer and
+        $result.candidate.jarOutcome == "FROM_CACHE" and
+        $result.candidate.requiredOutputCount == $contract.candidate.requiredOutputCount and
+        $result.candidate.requiredOutputSha256 == $contract.candidate.requiredOutputSha256 and
+        $result.candidate.gradleTestExecuted == false and
+        $result.candidate.unrelatedRuntimeStarted == false and
+        $result.candidate.buildSuccessful == true and
+        $result.fallback.planBeforeGradle == true and
+        $result.fallback.selectionMode == "FULL_GRAPH" and
+        $result.fallback.selectionReason == $contract.fallback.reason and
+        $result.fallback.enabledAdapters == [] and
+        $result.fallback.outsideCandidateTask == $contract.fallback.outsideCandidateTask and
+        $result.fallback.outsideCandidateTaskReached == true and
+        $result.fallback.buildSuccessful == true
+    )) and
+    .timingsCaptured == false and
+    .performanceClaim == false and
+    .decision == $spec[0].terminalDecision
+' "${buildopt_result}" >/dev/null
+
+printf 'qualified POC profile adoption contract: PASS\n'

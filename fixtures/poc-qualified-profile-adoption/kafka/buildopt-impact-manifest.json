@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "poc-third-repository-test-preparation-v1",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    "testClasses"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "kafka-clients-test-preparation",
+      "entrypoints": [
+        ":clients:testClasses"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "kafka-clients-main-classes",
+      "path": "clients/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "kafka-clients-test-classes",
+      "path": "clients/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "kafka-clients-resources",
+      "path": "clients/build/resources/**",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "build.gradle",
+    "settings.gradle",
+    "gradle/**",
+    "wrapper.gradle"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

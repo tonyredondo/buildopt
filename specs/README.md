@@ -339,3 +339,9 @@ loads `buildopt-qualified-profile.json`, reports the complete selected or
 fallback plan before Gradle starts, enables only Build Impact plus the exact
 standard-`Jar` adapter on a qualified alternative, and forces Safe Cache,
 Runtime Tuning, Hot State, standard `Copy`, and Shared/Edge out of this path.
+
+`poc-qualified-profile-adoption-v1.json` and
+`poc-qualified-profile-adoption-v1.md` freeze the subsequent installed-package
+replay on the exact OpenTelemetry and Kafka revisions. They require candidate
+Jar replay, historical output digests and native full-graph fallback while
+forbidding fresh timing or broader performance claims.

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.build-impact/generated-manifest/v1",
+  "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+  "pipelineClass": "poc-otel-spring-family-v2",
+  "manifestDigest": "sha256:6f02090f5b400d134bfa243963e2bf8df347dac8bfa22ec5fd9e32ac774d28b8",
+  "graphDigest": "sha256:804d1018c588a072c8c4fd82e96cc35f10e9835de9b8ddf4bf64315701e0f971",
+  "discoveryDigest": "sha256:34f2cc769d37c1fee4c300fdafdfa5e64c317fddc83f8398d280fffc06edcb90",
+  "adapterVersion": "gradle-runtime-v1",
+  "gradleVersion": "9.6.1",
+  "complete": true,
+  "fallbackReasons": []
+}

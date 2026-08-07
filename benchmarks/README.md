@@ -476,6 +476,17 @@ preserves the same 4,062 required output files, the candidate alone restores
 the full 64-project graph. This is output-scoped POC transfer evidence, not a
 universal savings or production-readiness claim.
 
+### Installed qualified-profile adoption
+
+The [adoption result](./results/poc-qualified-profile-adoption-v1.json) checks
+the public POC workflow after qualification rather than measuring it again. An
+installed Linux AMD64 package consumes the committed OpenTelemetry and Kafka
+profiles, emits the plan before Gradle, replays the exact standard `Jar`, and
+reproduces the historical 125- and 4,062-file output digests. Global
+`gradle.properties` changes retain the native full graph and reach work outside
+each candidate scope. `./dev/check-poc-qualified-profile-adoption` validates
+the record. It contains no durations and creates no new performance claim.
+
 The three mechanism-development reports remain historical inputs. The strict
 synthetic reports prove bounded combined value. The public-repository
 compatibility and early performance reports showed that the first generic

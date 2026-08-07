@@ -3012,6 +3012,18 @@ configuration decoding, disabled-mechanism rejection, pre-execution JSON plan
 output and child-environment isolation. It does not rerun the performance
 matrix or create a production policy.
 
+Validate the captured installed-package replay separately:
+
+```bash
+./dev/check-poc-qualified-profile-adoption
+```
+
+The adoption contract binds the repository-owned fixtures, native package and
+fixed OpenTelemetry/Kafka revisions. It checks candidate-only standard-`Jar`
+replay, historical output digests, and global full-graph fallback. The captured
+record intentionally contains no durations and does not replace either
+repository's performance experiment.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

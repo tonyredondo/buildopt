@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v1",
+  "profileVersion": 1,
+  "profileId": "clean-build-impact-plus-exact-standard-jar",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+  "pipelineClass": "poc-otel-spring-family-v2",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": true,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": false
+  },
+  "gradleOptions": [
+    "--daemon",
+    "--offline",
+    "--build-cache",
+    "--parallel",
+    "--configuration-cache",
+    "--console=plain",
+    "--max-workers=12",
+    "--no-scan",
+    "--stacktrace"
+  ]
+}

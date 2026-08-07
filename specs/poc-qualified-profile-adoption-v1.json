@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile-adoption/v1",
+  "workItem": "POC-QUALIFIED-PROFILE-ADOPTION-001",
+  "purpose": "INSTALLED_COMMAND_ADOPTION_AND_FALLBACK_ONLY",
+  "timingEvidenceAllowed": false,
+  "performanceClaimAllowed": false,
+  "installation": {
+    "format": "LINUX_AMD64_NATIVE_PACKAGE",
+    "receiptSchema": "buildopt.install/v1",
+    "command": "buildopt poc --changes-file .buildopt-changes"
+  },
+  "mechanisms": {
+    "enabled": [
+      "BUILD_IMPACT",
+      "STANDARD_JAR"
+    ],
+    "disabled": [
+      "HOT_STATE",
+      "RUNTIME_TUNING",
+      "SAFE_CACHE",
+      "SHARED_EDGE_CACHE",
+      "STANDARD_COPY"
+    ]
+  },
+  "repositories": [
+    {
+      "id": "opentelemetry",
+      "nameWithOwner": "open-telemetry/opentelemetry-java-instrumentation",
+      "revision": "080c1d32ca676ba7b0210c21b60cce8e7ac39058",
+      "sourceArchiveSha256": "073c707d98716944ec43cd1d8328d9c5bc47c04029d632d65fb71c1547f8c38c",
+      "gradleVersion": "9.6.1",
+      "jdk": "temurin-21.0.12+8",
+      "profilePath": "fixtures/poc-qualified-profile-adoption/opentelemetry/buildopt-qualified-profile.json",
+      "graphSha256": "ce4dfd8f04c8ca4b9eae54fdd1e8912f35a0e46b4fa7c85ef823efc92f1e129b",
+      "generatedManifestSha256": "3edfa630af179b4655dc9944b9069db09e3c094905e1dc7f95950c7f2ab2512d",
+      "candidate": {
+        "changePath": "instrumentation/spring/spring-boot-autoconfigure/src/main/java/io/opentelemetry/instrumentation/spring/autoconfigure/OpenTelemetryAutoConfiguration.java",
+        "alternativeId": "otel-spring-autoconfigure-class-producers",
+        "jarProducer": ":testing-common:jar",
+        "requiredOutputCount": 125,
+        "requiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d"
+      },
+      "fallback": {
+        "changePath": "gradle.properties",
+        "reason": "IMPACT_GLOBAL_CHANGE",
+        "outsideCandidateTask": ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:testClasses"
+      }
+    },
+    {
+      "id": "kafka",
+      "nameWithOwner": "apache/kafka",
+      "revision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "sourceArchiveSha256": "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2",
+      "gradleVersion": "9.2.1",
+      "jdk": "temurin-25.0.3+9",
+      "profilePath": "fixtures/poc-qualified-profile-adoption/kafka/buildopt-qualified-profile.json",
+      "graphSha256": "1ff0220c9c34ec0c666a8edd517781969d96c3b512d0e1510f320120f5508e0e",
+      "generatedManifestSha256": "2c5cbe661c53995cf3daa90f7f8946715edd7e20f182c4b62244ce0a38101e7b",
+      "candidate": {
+        "changePath": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+        "alternativeId": "kafka-clients-test-preparation",
+        "jarProducer": ":generator:jar",
+        "requiredOutputCount": 4062,
+        "requiredOutputSha256": "0a1ba415bbdeec51775d720beed627b95b11f6073a2fef450ccfd269df57ea23"
+      },
+      "fallback": {
+        "changePath": "gradle.properties",
+        "reason": "IMPACT_GLOBAL_CHANGE",
+        "outsideCandidateTask": ":streams:compileTestJava"
+      }
+    }
+  ],
+  "terminalDecision": "COMPLETE_INSTALLED_PROFILE_ADOPTION"
+}

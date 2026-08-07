@@ -35,6 +35,11 @@
   reached projects to three and exact `Jar` reuse restored `:generator:jar`.
   Installed BuildOpt averaged **55.09% faster** (2,539.5 ms saved), with 4/4
   positive pairs and 4,062 byte-identical outputs.
+- **The public POC command now consumes that profile end to end.** An installed
+  native package replayed the committed profile on the fixed OpenTelemetry and
+  Kafka revisions, restored the exact standard `Jar`, reproduced 125 and 4,062
+  historical outputs, and completed native full-graph fallback for global
+  changes. This is adoption evidence; it deliberately adds no new timing claim.
 
 ## Product Idea
 
@@ -211,6 +216,15 @@ were identical, and build-logic drift restored the full graph. This closes the
 recorded ten-block performance roadmap with transfer evidence rather than a
 repository-specific rule.
 
+The subsequent adoption replay installed the current native package and used
+only `buildopt poc --changes-file .buildopt-changes` plus repository-owned
+state. OpenTelemetry restored `:testing-common:jar` and reproduced its exact
+125-file output digest; Kafka restored `:generator:jar` and reproduced its
+exact 4,062-file digest. A `gradle.properties` change on each repository
+reported `FULL_GRAPH` before Gradle, disabled the adapter, reached work outside
+the candidate graph, and completed successfully. No durations were captured:
+the earlier qualified measurements remain the only performance claims.
+
 ## Boundaries and References
 
 This is proof-of-concept evidence, not a universal savings or production
@@ -232,3 +246,4 @@ production operations are outside the current scope.
 - [Targeted Runtime decision](../../benchmarks/results/poc-runtime-research-v1.json)
 - [Controlled remote-cache locality evidence](../../benchmarks/results/poc-remote-cache-value-v1.json)
 - [Apache Kafka transfer evidence](../../benchmarks/results/poc-third-repository-transfer-v1.json)
+- [Installed qualified-profile adoption evidence](../../benchmarks/results/poc-qualified-profile-adoption-v1.json)

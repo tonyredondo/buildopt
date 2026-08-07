@@ -101,6 +101,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-RUNTIME-RESEARCH | Test one trace-selected worker-oversubscription hypothesis without post-result parameter search | `DONE` | 1/1 | `E-219..220` |
 | POC-REMOTE-CACHE-VALUE | Compare Gradle direct-to-Shared reads with the same committed objects served from a prewarmed BuildOpt Edge | `DONE` | 1/1 | `E-221..222` |
 | POC-PROFILE-USABILITY | One explicit repository-owned command for the qualified clean POC profile | `DONE` | 1/1 | `E-225` |
+| POC-PROFILE-ADOPTION | Installed OpenTelemetry and Kafka candidate/fallback replay without new timing claims | `DONE` | 1/1 | `E-226` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -214,6 +215,7 @@ than partners. Test Optimization remains a separate product.
 | 52 | `POC-REMOTE-CACHE-VALUE-001` | Compare Shared and Edge Cache end to end with Gradle's native remote cache under controlled network conditions | `DONE` | Codex |
 | 53 | `POC-THIRD-REPOSITORY-TRANSFER-001` | Transfer the unchanged qualified profile to one substantial public repository representing a new workload class | `DONE` | Codex |
 | 54 | `POC-QUALIFIED-PROFILE-001` | Expose the clean qualified profile through one reviewable repository-owned POC command with native full-graph fallback | `DONE` | Codex |
+| 55 | `POC-QUALIFIED-PROFILE-ADOPTION-001` | Replay the installed command and committed profile on the fixed OpenTelemetry and Kafka revisions, including exact output and full-fallback proofs | `DONE` | Codex |
 
 The raw diagnostic block is closed and unchanged. `E-172` corrects its
 ownership interpretation: Mockito's 242.690-second `compileTestJava` is
@@ -1138,14 +1140,16 @@ Test Optimization, or a universal savings claim.
 |---|---|---|---|
 | `POC-QUALIFIED-PROFILE-001` | Add `buildopt poc --changes-file PATH`, a strict repository-owned profile, a pre-execution machine-readable plan, and candidate-only standard-`Jar` activation | `DONE` | `E-225` |
 | `POC-QUALIFIED-PROFILE-G01` | Candidate plans expose scope, outputs, adapters and disabled mechanisms; unknown/global/bypass paths retain native full-graph entrypoints without an adapter | `DONE` | `E-225` |
+| `POC-QUALIFIED-PROFILE-ADOPTION-001` | Install the native package, consume repository-owned state on both qualified public revisions, replay the candidate Jar, and execute global fallback without collecting timing | `DONE` | `E-226` |
 
 The profile is a POC usability boundary, not a production policy. Its config
 enables only Build Impact and the exact standard-`Jar` adapter on a selected
 repository alternative. Safe Cache, Runtime Tuning, Hot State, standard
-`Copy`, Shared/Edge and session integration are suppressed. The next bounded
-block is an installed-command adoption/fallback replay on the already
-qualified OpenTelemetry and Kafka revisions; it does not create new timing
-evidence or broaden the performance claim.
+`Copy`, Shared/Edge and session integration are suppressed. The installed
+adoption replay is now complete on the already qualified OpenTelemetry and
+Kafka revisions. It proves one-command consumption, exact output reproduction,
+candidate-only Jar replay, and native full-graph fallback without creating new
+timing evidence or broadening the performance claim.
 
 ---
 
@@ -1159,6 +1163,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Documentation system | Entry points, local links, referenced commands, architecture-to-code map, package boundaries, ownership, and base-CI wiring | `dev/check-documentation`, layout, ownership, Go test/vet for the validator and documented packages, lint, and base-CI static checks passed on the final documentation tree | 2026-08-02 | `E-151` |
 | Build Optimization scorecard | Safe-cache value/parity, Runtime Tuning causal resource savings, and Build Impact avoided work | `dev/check-build-optimization-performance` validated both new paired reports plus the existing hosted runtime evidence and emitted separate non-additive results | 2026-08-03 | `E-154` |
 | Qualified POC profile | Repository-owned clean mechanism set, pre-execution plan, disabled-mechanism rejection and native full-graph fallback | `dev/check-poc-qualified-profile` passed candidate, fallback, drift, environment-isolation and CLI fixtures | 2026-08-08 | `E-225` |
+| Installed qualified-profile adoption | Native package, committed OpenTelemetry/Kafka profiles, candidate Jar replay, exact outputs, and global fallback | `dev/check-poc-qualified-profile-adoption` validated the fixed contract and captured replay; both installed candidates and fallbacks completed on the public revisions | 2026-08-08 | `E-226` |
 | Realistic POC breadth | No-change, leaf, shared, and build-logic changes across Kotlin/Groovy on the strict runner | `dev/check-poc-breadth` recomputed the 64-observation post-attribution repeat: all correctness guardrails passed and 4/8 value cells qualified, so the broader claim remains preliminary | 2026-08-04 | `E-161` |
 | POC installed-path attribution | Non-overlapping launcher/client, configuration, task, finalization, and teardown phases on the strict runner | `dev/check-poc-overhead` proved native-only execution with zero init/plugin setup, exact duration reconciliation, and one removed candidate-only XDG environment difference; traced durations remain diagnostic-only | 2026-08-04 | `E-161` |
 | Realistic POC stability | Opposite global arm orders with isolated writable state on the strict runner | `dev/check-poc-stability` recomputed two 64-pair reports (256 underlying arm measurements): all correctness guardrails passed, but 0/8 versus 4/8 cells qualified and four classifications changed, so the checked verdict is `MEASUREMENT_UNSTABLE` | 2026-08-04 | `E-162` |
@@ -1495,6 +1500,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-223` | 2026-08-07 | `POC-THIRD-REPOSITORY-TRANSFER-001` | The checked [Kafka transfer contract](./specs/poc-third-repository-transfer-v1.json) pins public Apache Kafka 4.3.1 commit `26b251a451ce941d3d7a55e6487bcb7f16b5ad48`, source and Gradle inputs by SHA-256, Gradle 9.2.1, Temurin 25, the 12-CPU/16.66-GB host, and a new Java/Scala/generated-source test-preparation class. Generic discovery is complete: root `testClasses` reaches all 64 projects while `:clients:testClasses` reaches three, with no Gradle `Test` or unknown relationship. Before accepted timing the installed clean profile, `clients` mutation, exact `:generator:jar` adapter, required outputs, shared cache/daemon protocol, four alternating pairs, 500-ms/2%/positive-bound/4-of-4 gate, and full fallback are frozen | `DOING` preregistered with zero accepted timings: execute the immutable runner; do not reuse diagnostics, add Kafka-specific product logic, enable Hot State/Runtime/Copy/remote cache, move thresholds, discard pairs, or claim production readiness |
 | `E-224` | 2026-08-07 | `POC-THIRD-REPOSITORY-TRANSFER-001` | The independently checked [Kafka transfer evidence](./benchmarks/results/poc-third-repository-transfer-v1.json) binds installed BuildOpt `7935968b44b14a722c0a7ec7e0d4af720eac80b5` and retains all four alternating offline pairs. Native root `testClasses` averages 4,609.5 ms; BuildOpt selects `:clients:testClasses`, restores exact `:generator:jar`, and averages 2,070 ms, saving 2,539.5 ms/55.09%. Pair savings are +4,840, +1,948, +1,852 and +1,518 ms; the paired interval is +1,625.5..+4,093 ms. Every pair preserves the same 4,062 required outputs byte for byte, no Gradle `Test` or unqualified mechanism runs, zero product failures occur, and `gradle.properties` restores the full 64-project graph | `DONE` terminal `QUALIFY_CLEAN_PROFILE_ON_THIRD_SUBSTANTIAL_REPOSITORY`: the generic clean profile transfers to the distinct Kafka Java/Scala/generated-source workload without product changes; retain the output-scoped POC boundary and move to qualified-profile usability/scope synthesis |
 | `E-225` | 2026-08-08 | `POC-QUALIFIED-PROFILE-001`, `POC-QUALIFIED-PROFILE-G01` | The versioned [qualified profile contract](./specs/poc-qualified-profile-v1.md), strict repository example and executable checker expose `buildopt poc --changes-file PATH`. Focused CLI fixtures prove that the machine-readable plan is emitted before Gradle and contains the selected/full graph, entrypoints, expected outputs, preserved Test-owned checks, exact adapters and disabled mechanisms. Candidate selection activates only the standard-`Jar` adapter; unknown changes retain the original full graph without the adapter. Ambient Safe Cache, Runtime Tuning, Copy, session and managed-cache inputs do not enter the child path; malformed, drifted or expanded profiles fail before Gradle | `DONE` explicit POC usability only: the command does not create production authority, infer repository scope, re-enable rejected mechanisms, rerun performance timings, or broaden the Kafka/OpenTelemetry claims; installed adoption replay on those fixed revisions is next |
+| `E-226` | 2026-08-08 | `POC-QUALIFIED-PROFILE-ADOPTION-001` | The checked [adoption contract](./specs/poc-qualified-profile-adoption-v1.md), repository fixtures and [captured result](./benchmarks/results/poc-qualified-profile-adoption-v1.json) replay an installed Linux AMD64 package on fixed OpenTelemetry `080c1d3` and Kafka `26b251a` sources. Both candidates emit their plan before Gradle, enable only `STANDARD_JAR`, restore `:testing-common:jar`/`:generator:jar` from cache on a clean replay, and reproduce the historical 125/4,062 output counts and SHA-256 digests. Global `gradle.properties` changes emit `FULL_GRAPH`/`IMPACT_GLOBAL_CHANGE`, disable the adapter, reach tasks outside each candidate graph, and complete successfully | `DONE` terminal `COMPLETE_INSTALLED_PROFILE_ADOPTION`: no timings were captured and no performance, production, automatic-discovery, soak, design-partner, or Test Optimization claim was added |
 
 ---
 
@@ -1502,6 +1508,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-08 | Completed installed qualified-profile adoption on fixed OpenTelemetry and Kafka revisions: both candidate Jar replays reproduced exact historical outputs and both global changes completed native full-graph fallback, with no new timing claim | Codex |
 | 2026-08-08 | Added one repository-owned `buildopt poc` command for the clean qualified profile, with a reviewable pre-execution plan, candidate-only standard-Jar activation, explicit disabled mechanisms and native full-graph fallback | Codex |
 | 2026-08-07 | Qualified the unchanged clean profile on Apache Kafka 4.3.1: native root `testClasses` averaged 4,609.5 ms and installed BuildOpt 2,070 ms, saving 2,539.5 ms/55.09% with 4/4 positive pairs, a positive interval, 4,062 exact outputs and full fallback; completed the ten-block performance roadmap | Codex |
 | 2026-08-07 | Preregistered the unchanged clean Build Impact plus exact standard-Jar profile on Apache Kafka 4.3.1: a complete 64-project Java/Scala graph narrows the fixed `clients` source change to three projects, with exact outputs, full fallback and the existing four-pair value gate frozen before timing | Codex |

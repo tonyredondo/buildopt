@@ -308,9 +308,11 @@ The **qualified-profile usability and scope synthesis** block is now complete:
 5. Runtime, Hot State, Copy, Safe Cache and Shared/Edge are forced out of this
    command until separate evidence qualifies them.
 
-The next bounded block should validate this exact installed command and config
-on the already qualified OpenTelemetry and Kafka revisions. That is an adoption
-and fallback proof, not a new timing experiment or a broader performance claim.
+That installed adoption block is now complete. On the same fixed revisions,
+the packaged command restored `:testing-common:jar` and `:generator:jar`,
+reproduced the historical 125/4,062 output digests, and completed full-graph
+fallback for global changes. It captured no timing, so the earlier qualified
+50.40% and 55.09% results remain the only performance claims.
 
 Normal-build task tails, direct test-build JAR reuse and the trace-selected
 six-worker Runtime candidate are closed for the current evidence. They should

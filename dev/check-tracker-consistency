@@ -160,6 +160,8 @@ buildopt_required_tracker_text=(
     "| \`POC-QUALIFIED-PROFILE-001\` | Expose the clean qualified profile through one reviewable repository-owned POC command with native full-graph fallback | \`DONE\`"
     "| \`POC-QUALIFIED-PROFILE-G01\` | Candidate plans expose scope, outputs, adapters and disabled mechanisms; unknown/global/bypass paths retain native full-graph entrypoints without an adapter | \`DONE\` | \`E-225\`"
     "| \`E-225\` | 2026-08-08 | \`POC-QUALIFIED-PROFILE-001\`, \`POC-QUALIFIED-PROFILE-G01\`"
+    "| \`POC-QUALIFIED-PROFILE-ADOPTION-001\` | Install the native package, consume repository-owned state on both qualified public revisions, replay the candidate Jar, and execute global fallback without collecting timing | \`DONE\` | \`E-226\`"
+    "| \`E-226\` | 2026-08-08 | \`POC-QUALIFIED-PROFILE-ADOPTION-001\`"
     "| \`POC-PERF-NEXT-G01\` | The complete qualified profile beats optimized native Gradle by at least 500 ms and 2%"
     "| \`A1-G06\` | Safe Cache is non-regressive versus optimized native cache"
     "| \`B-G03\` | Runtime Tuning exceeds the POC accelerator threshold"
@@ -202,5 +204,5 @@ if [[ $(grep -Fc "| \`OPS-001/B\` |" <<<"${buildopt_readiness}") != 1 ]]; then
     exit 1
 fi
 
-printf 'RFC/tracker consistency OK: %s accepted decisions, qualified POC profile explicit and adoption validation next\n' \
+printf 'RFC/tracker consistency OK: %s accepted decisions, qualified POC profile and installed adoption complete\n' \
     "${buildopt_decision_count}"
