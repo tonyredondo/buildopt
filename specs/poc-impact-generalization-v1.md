@@ -37,6 +37,14 @@ Two non-performance cells change `buildSrc` and `gradle.properties`. Both must
 classify as global and restore the complete original `classes` entrypoint. An
 unknown or ambiguous change retains the same fail-closed behavior.
 
+The first complete-run attempt was discarded after eight performance
+observations because valid but incomplete generated state returned an error
+before the first capability-fallback cell could execute. The planner was fixed
+to distinguish invalid bindings, which still fail, from valid incompleteness,
+which now retains the original full graph. No observation from that interrupted
+execution is reused, and neither the measurement method nor the value gates
+changed.
+
 This experiment does not execute root-build Gradle `Test` tasks or change test
 selection, retries, sharding, prioritization, or execution. Hot State, Runtime
 Tuning, Safe Cache, Shared Cache, and Edge Cache remain disabled. The output is

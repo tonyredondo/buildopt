@@ -2,6 +2,7 @@ package buildimpact
 
 import (
 	"bytes"
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"testing"
@@ -83,6 +84,47 @@ func TestPlanPOCCandidateRetainsFullGraphForUnknownChange(t *testing.T) {
 		t.Fatal(err)
 	}
 	if plan.CandidateSelected || plan.ProductionAuthorized || plan.Mode != DecisionFullGraph || plan.Reason != "IMPACT_UNKNOWN_CHANGE_PATH" || len(plan.Entrypoints) != 1 || plan.Entrypoints[0] != "assemble" {
+		t.Fatalf("fallback plan = %+v", plan)
+	}
+}
+
+func TestPlanPOCCandidateRetainsFullGraphForIncompleteGeneratedState(t *testing.T) {
+	fixtureRoot := filepath.Join(buildImpactRepositoryRoot(t), filepath.FromSlash("fixtures/build-impact/synthetic-repository"))
+	temporaryRoot := t.TempDir()
+	for _, name := range []string{"buildopt-impact-manifest.json", "buildopt-impact-graph.generated.json", "buildopt-impact.generated.json"} {
+		raw, err := os.ReadFile(filepath.Join(fixtureRoot, name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if name == "buildopt-impact.generated.json" {
+			var generated GeneratedManifest
+			if err := json.Unmarshal(raw, &generated); err != nil {
+				t.Fatal(err)
+			}
+			generated.Complete = false
+			generated.FallbackReasons = []string{"UNSUPPORTED_OR_TEST_ENTRYPOINT"}
+			raw, err = json.Marshal(generated)
+			if err != nil {
+				t.Fatal(err)
+			}
+		}
+		if err := os.WriteFile(filepath.Join(temporaryRoot, name), raw, 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	plan, err := PlanPOCCandidate(POCCandidateOptions{
+		RepositoryRoot:        temporaryRoot,
+		ManifestPath:          "buildopt-impact-manifest.json",
+		GraphPath:             "buildopt-impact-graph.generated.json",
+		GeneratedManifestPath: "buildopt-impact.generated.json",
+		RepositoryID:          "tonyredondo/buildopt-impact-synthetic",
+		PipelineClass:         "pull-request",
+		ChangedPaths:          []string{"library-c/src/main/java/synthetic/LibraryC.java"},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if plan.CandidateSelected || plan.ProductionAuthorized || plan.Mode != DecisionFullGraph || plan.Reason != "IMPACT_GENERATED_STATE_INCOMPLETE" || len(plan.Entrypoints) != 1 || plan.Entrypoints[0] != "assemble" {
 		t.Fatalf("fallback plan = %+v", plan)
 	}
 }

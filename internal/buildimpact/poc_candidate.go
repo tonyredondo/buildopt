@@ -121,7 +121,7 @@ func PlanPOCCandidate(options POCCandidateOptions) (POCCandidatePlan, error) {
 	if err != nil {
 		return POCCandidatePlan{}, err
 	}
-	if err := validateGeneratedManifest(generated, manifest, graph); err != nil {
+	if err := validateGeneratedManifestBinding(generated, manifest, graph); err != nil {
 		return POCCandidatePlan{}, err
 	}
 	plan.PhaseTimings.GeneratedStateLoadAndValidationNs = time.Since(phaseStartedAt).Nanoseconds()
@@ -133,6 +133,13 @@ func PlanPOCCandidate(options POCCandidateOptions) (POCCandidatePlan, error) {
 	plan.AffectedProjects = cloneSlice(decision.AffectedProjects)
 	plan.OmittedProjects = cloneSlice(decision.OmittedProjects)
 	plan.PreservedTestCheckIDs = cloneSlice(decision.PreservedTestCheckIDs)
+	if !generated.Complete || len(generated.FallbackReasons) != 0 {
+		if decision.Mode == DecisionShadowAlternative {
+			plan.Reason = "IMPACT_GENERATED_STATE_INCOMPLETE"
+		}
+		plan.PhaseTimings.TotalNs = time.Since(startedAt).Nanoseconds()
+		return plan, nil
+	}
 	if decision.Mode != DecisionShadowAlternative {
 		plan.PhaseTimings.TotalNs = time.Since(startedAt).Nanoseconds()
 		return plan, nil
@@ -162,7 +169,7 @@ func parseGeneratedManifest(raw []byte) (GeneratedManifest, error) {
 	return generated, nil
 }
 
-func validateGeneratedManifest(generated GeneratedManifest, manifest LoadedManifest, graph LoadedGraph) error {
+func validateGeneratedManifestBinding(generated GeneratedManifest, manifest LoadedManifest, graph LoadedGraph) error {
 	if generated.SchemaVersion != GeneratedManifestSchemaVersion ||
 		generated.RepositoryID != manifest.Manifest.RepositoryID ||
 		generated.PipelineClass != manifest.Manifest.PipelineClass ||
@@ -172,9 +179,6 @@ func validateGeneratedManifest(generated GeneratedManifest, manifest LoadedManif
 		!sha256Pattern.MatchString(generated.DiscoveryDigest) ||
 		!gradleVersionPattern.MatchString(generated.GradleVersion) {
 		return errors.New("generated Build Impact manifest binding is invalid")
-	}
-	if !generated.Complete || len(generated.FallbackReasons) != 0 {
-		return errors.New("generated Build Impact state is incomplete")
 	}
 	return nil
 }

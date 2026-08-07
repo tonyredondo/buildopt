@@ -36,6 +36,17 @@ jq -e '
         measurementChanged: false,
         valueGateChanged: false
     } and
+    .discardedExecutions == [{
+        reason: "INCOMPLETE_GENERATED_STATE_ABORTED_BEFORE_FAIL_CLOSED_EXECUTION",
+        completedGraphs: 5,
+        acceptedPerformanceObservations: 8,
+        completedCapabilityFallbackCells: 0,
+        resultEmitted: false,
+        observationsReused: false,
+        productDefect: "VALID_GENERATED_STATE_INCOMPLETENESS_RETURNED_AN_ERROR_INSTEAD_OF_THE_DOCUMENTED_FULL_GRAPH_FALLBACK",
+        measurementChanged: false,
+        valueGateChanged: false
+    }] and
     .repository.revision == "4b5c92703c63966c3471242c621c4a63b382638d" and
     .runner.cpuCount == 12 and .runner.maxWorkers == 12 and
     [.matrixCells[].id] == [
