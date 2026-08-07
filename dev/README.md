@@ -2868,6 +2868,22 @@ process effects, and Spring selected no new standard task. Its terminal
 decision is `STOP_NORMAL_BUILD_TASK_ADAPTER_EXPANSION_NO_ACTIONABLE_TAIL`;
 another adapter requires a materially different dominant tail.
 
+The follow-up test-build experiment executes the same filtered Spring Test
+task in both arms and changes only exact standard-JAR eligibility:
+
+```bash
+./dev/check-poc-spring-test-build-optimization
+./dev/run-poc-spring-test-build-optimization /absolute/path/to/new-result.json
+./dev/check-poc-spring-test-build-optimization /absolute/path/to/new-result.json
+```
+
+The checked result is a stop, not an activation. BuildOpt restores three exact
+`testFixturesJar` producers and preserves the same 8 tests and 15 JARs, but
+regresses the complete workflow by 735.25 ms/11.31%, with 0/4 positive pairs
+and a -1,449..-113-ms interval. The direct `buildopt gradle` experiment option
+remains diagnostic-only for reproducibility; the standard-JAR adapter is not
+promoted beyond the Build Impact scope where it independently qualified.
+
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source
 distribution. Structural discovery freezes selective execution only where the

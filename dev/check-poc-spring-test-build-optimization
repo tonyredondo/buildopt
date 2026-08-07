@@ -114,7 +114,7 @@ jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sh
     .schemaVersion == "buildopt.evidence/poc-spring-test-build-optimization/v1" and
     .workItem == "POC-TEST-BUILD-OPTIMIZATION-001" and
     (.capturedAt | fromdateiso8601) and
-    (.buildopt.revision | test("^[0-9a-f]{40}$")) and
+    .buildopt.revision == "ca859f1ae66d115a641bea0a9e486ffc8272b47e" and
     (.buildopt.executableSha256 | sha256) and
     .buildopt.runnerScriptSha256 == $runnerSha and
     .specSha256 == $specSha and

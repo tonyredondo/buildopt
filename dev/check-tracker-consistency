@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`POC NORMAL-BUILD TASK TAIL EXHAUSTED FOR CURRENT TRACES; TEST-BUILD NEXT\`"
-    "**Current phase:** \`POC-TEST-BUILD-OPTIMIZATION-001 TODO\`"
+    "**Overall status:** \`POC TEST-BUILD JAR REUSE REJECTED; TARGETED RUNTIME RESEARCH NEXT\`"
+    "**Current phase:** \`POC-RUNTIME-RESEARCH-001 TODO\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"
@@ -139,14 +139,15 @@ buildopt_required_tracker_text=(
     "| \`E-214\` | 2026-08-07 | \`POC-IMPACT-GENERALIZATION-001\`"
     "| \`E-215\` | 2026-08-07 | \`POC-TASK-TAIL-ADAPTERS-001\`"
     "| \`E-216\` | 2026-08-07 | \`POC-NORMAL-BUILD-TAIL-EXPANSION-001\`"
+    "| \`E-217\` | 2026-08-07 | \`POC-TEST-BUILD-OPTIMIZATION-001\`"
     "| \`POC-OTEL-OPTIMIZATION-G04\` | The optimized installed candidate clears the unchanged 500-ms/2% value gate with a positive paired lower bound, 4/4 positive pairs, exact outputs, safe fallback and zero product failures | Stable OpenTelemetry POC claim | \`DONE\`"
     "| \`POC-FULL-PATH-ABLATION-001\` | 1 | Run six preregistered arms on Spring and OpenTelemetry"
     "| \`POC-FULL-PATH-CLEAN-001\` | 2 | Preregister and measure OpenTelemetry Build Impact plus the standard Jar adapter without hot-state reuse"
     "| \`POC-IMPACT-GENERALIZATION-001\` | 3 | Extend Build Impact across leaf/shared/build-logic/global changes"
     "| \`POC-TASK-TAIL-ADAPTERS-001\` | 4 | Select the next standard Gradle task type from real dominant-tail traces, define an exact eligibility contract, measure it independently, and measure its end-to-end composition without adding component percentages | \`DONE\`"
     "| \`POC-NORMAL-BUILD-TAIL-EXPANSION-001\` | 5 | Re-evaluate every remaining retained Spring/OpenTelemetry dominant tail against the exact-task, bounded-effects, native-cache, Test-ownership, and incremental-value gates before authorizing more normal-build code | \`DONE\` | \`E-216\`"
-    "| \`POC-TEST-BUILD-OPTIMIZATION-001\` | 6 | Reduce build-owned test compilation, preparation, and packaging without changing Test-owned selection, execution, retries, sharding, or prioritization | \`TODO\`"
-    "| \`POC-RUNTIME-RESEARCH-001\` | 7 | Investigate one observed worker, heap, GC, queue, configuration, dependency-resolution, or JVM-warm-up bottleneck at a time"
+    "| \`POC-TEST-BUILD-OPTIMIZATION-001\` | 6 | Reduce build-owned test compilation, preparation, and packaging without changing Test-owned selection, execution, retries, sharding, or prioritization | \`DONE\` | \`E-217\`"
+    "| \`POC-RUNTIME-RESEARCH-001\` | 7 | Investigate one observed worker, heap, GC, queue, configuration, dependency-resolution, or JVM-warm-up bottleneck at a time; preserve \`STABLE_CONTROL\` on no-value evidence | \`TODO\` | \`E-217\`"
     "| \`POC-REMOTE-CACHE-VALUE-001\` | 8 | Compare BuildOpt Shared/Edge Cache with Gradle native remote cache"
     "| \`POC-THIRD-REPOSITORY-TRANSFER-001\` | 9 | Transfer the unchanged qualified profile to one substantial public repository"
     "| \`POC-PERF-NEXT-G01\` | The complete qualified profile beats optimized native Gradle by at least 500 ms and 2%"
@@ -191,5 +192,5 @@ if [[ $(grep -Fc "| \`OPS-001/B\` |" <<<"${buildopt_readiness}") != 1 ]]; then
     exit 1
 fi
 
-printf 'RFC/tracker consistency OK: %s accepted decisions, current normal-build task tail closed and test-build work next\n' \
+printf 'RFC/tracker consistency OK: %s accepted decisions, test-build Jar reuse rejected and targeted runtime research next\n' \
     "${buildopt_decision_count}"

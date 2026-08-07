@@ -21,6 +21,9 @@
   matrix qualified shared test preparation at **18.88% faster**, rejected leaf
   compilation and packaging under the unchanged gate, and retained full-graph
   execution for incomplete verification and distribution graphs.
+- **Direct JAR reuse did not improve the measured Spring test build.** It
+  restored three exact Test-fixture JARs but regressed the complete unchanged
+  test workflow by **735.25 ms/11.31%**, so the activation was not promoted.
 
 The current POC supports a clear decision: continue investing in mechanisms
 that avoid work or safely make expensive tasks reusable, while keeping neutral
@@ -42,7 +45,7 @@ measured on different workloads and scopes.
 | **Patch Autopilot / reviewed task patch** | Produces a reviewable and reversible patch that correctly declares inputs and outputs and enables caching for an exact custom-task shape. | Exact reviewed Java recipe: **67.3% faster in Kotlin** and **68.0% faster in Groovy**. Combined installed path: **63.5-67.3% faster**. | Highly promising for **specific reviewed task contracts**. The result must not be generalized to arbitrary tasks or recipes. |
 | **Graph reduction** | Replaces broad aggregate task dependencies with the typed producers required for the declared outputs. | The OpenTelemetry experiment removed **3 graph nodes and 2 executed tasks** while preserving all 125 required outputs. No standalone wall-clock percentage is claimed. | Structurally valuable, but it still needs independent timing evidence before it can be presented as a separate accelerator. |
 | **Exact-bound hot-state reuse** | Reuses a previously validated Build Impact plan only when repository revision, graph, manifest, changes, Wrapper, executable, and options still match. | Reduced BuildOpt preparation from **74.97 ms to 40.34 ms**, but the fresh whole-build arm was **7.68% slower**. | **Disabled for the measured profile.** Micro-overhead reduction does not override regressive end-to-end evidence. |
-| **Standard `Jar` cache adapter** | Makes only an unmodified standard Gradle `Jar` task eligible for native caching; custom archives, `Copy`, arbitrary tasks, and `Test` remain unchanged. | Before the adapter, the OpenTelemetry candidate was **1.94% slower**. After the adapter it was **39.92% faster**, saving 4,376.75 ms with 4/4 positive pairs and 125 identical outputs. | **The strongest result on a substantial public repository.** It proves the value of precise standard-task adapters, not a universal policy for every archive task. |
+| **Standard `Jar` cache adapter** | Makes only an unmodified standard Gradle `Jar` task eligible for native caching; custom archives, `Copy`, arbitrary tasks, and `Test` remain unchanged. | OpenTelemetry Build Impact: **39.92% faster**, saving 4,376.75 ms. Direct Spring test-build use: **11.31% slower**, losing 735.25 ms despite three exact hits. | **Qualified only inside the measured OpenTelemetry composition.** Correct cacheability is insufficient when the avoided work is too small. |
 | **Shared and Edge Cache** | Reuse committed outputs across machines and optionally place them nearer developers or CI runners. | No defensible build-time percentage has yet been established against Gradle's native remote-cache support. | Functionally implemented, but **performance value remains unproven**. It needs a controlled network and locality benchmark before further investment. |
 | **Build History** | Records durations, outcomes, cache behavior, and applied optimizations so results can be inspected and compared. | **No direct build-time saving.** | Observability that helps discover and validate optimizations; not an accelerator itself. |
 | **Launcher, gateway, and telemetry** | Provide orchestration, authentication, evidence collection, and safe fallback behavior. | Add fixed overhead rather than saving work. The local-cache fast path avoids starting these components when they have no consumer. | Necessary infrastructure for instrumented flows, but it must remain off the critical path when it is not needed. |
@@ -202,6 +205,12 @@ Potential research areas are:
 - dependency resolution and artifact-transform reuse;
 - compiler avoidance and incremental compilation boundaries.
 
+The completed test-build experiment strengthens this priority. Reusing three
+small exact `testFixturesJar` producers did not shorten the critical path:
+native Gradle averaged 6,503.5 ms and BuildOpt 7,238.75 ms, with 0/4 positive
+pairs. The next candidate must therefore come from an observed resource or
+critical-path bottleneck, not from another low-cost cacheable task.
+
 ### 6. Benchmark Shared and Edge Cache only against the native alternative
 
 Shared and Edge Cache should not be prioritized until the experiment can model
@@ -234,7 +243,7 @@ exercises a different workload class or invalidates a current assumption.
 | Native Gradle cache | Enabled | Enabled | Continue parity and output checks |
 | Build Impact | Enabled for qualified scopes | Explicit command | Generalize across real change and output scopes |
 | Hot-state reuse | Disabled for the measured profile | Disabled | Beat the same end-to-end control independently before reconsideration |
-| Standard `Jar` adapter | Enabled for the exact standard task type | Not universal | Replicate on another substantial public repository |
+| Standard `Jar` adapter | Enabled only in the qualified Build Impact scope | Not universal | Require independent end-to-end value for every new workflow; direct Spring test-build use regressed |
 | Reviewed task patch | Enabled only for exact matching contracts | Review required | Add recipes only after independent qualification |
 | Strict Safe Cache | Disabled | Disabled | Beat or justify cost versus native Gradle cache |
 | Runtime Tuning | Disabled | Disabled | Positive incremental evidence against optimized native Gradle |
@@ -242,21 +251,21 @@ exercises a different workload class or invalidates a current assumption.
 
 ## Recommended Next Block
 
-The next implementation block is **build-owned test-build optimization**:
+The next implementation block is **targeted Runtime Tuning research**:
 
-1. profile test compilation, resource processing, fixture preparation, and
-   packaging on the fixed substantial public repositories;
-2. select one build-owned bottleneck from measured wall-clock evidence;
-3. preserve every requested `Test` task, test selection, order, retry, shard,
-   and outcome;
-4. measure the candidate independently and as part of the complete qualified
-   profile against optimized native Gradle;
-5. retain native execution whenever the unchanged 500-ms/2%/positive-bound
-   gate or exact-output/test-outcome checks fail.
+1. select one measured worker, heap, GC, queue, configuration, dependency, or
+   warm-up bottleneck from a substantial retained trace;
+2. freeze one bounded candidate before timing rather than searching profiles
+   until one wins;
+3. compare it with the same optimized native Gradle command and preserve exact
+   outputs, tests and failure behavior;
+4. measure its incremental contribution and then the complete qualified path
+   without adding percentages from separate experiments;
+5. retain `STABLE_CONTROL` if the 500-ms/2%/positive-bound gate fails.
 
-The task-tail review is complete with zero actionable normal-build candidates.
-This next block explores a different source of repeated build work without
-crossing into Test Optimization.
+Normal-build task tails and direct test-build JAR reuse are now exhausted for
+the current traces. They should reopen only for a materially different dominant
+task, not to manufacture another optimization.
 
 ## Open Questions
 

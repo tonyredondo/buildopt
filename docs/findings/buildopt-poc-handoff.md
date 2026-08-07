@@ -21,6 +21,9 @@
   matrix, shared test preparation qualified at **18.88% faster**, while leaf
   compilation and packaging missed the frozen stability gate. Verification and
   source distribution correctly retained the full graph.
+- **More cache hits are not automatically valuable.** On a real Spring test
+  workflow, BuildOpt restored three exact Test-fixture JARs but still made the
+  complete build **11.31% slower**. The activation was not promoted.
 
 ## Product Idea
 
@@ -78,6 +81,7 @@ unfavorable observations. Percentages from different rows are not additive.
 | Shared `spring-core` to `spring-jms` scope | **10.89% faster on average**, but only 3/4 positive pairs | Failed the frozen stability gate; no broad shared-change claim. |
 | Global two-fork test tuning | **24.07% slower** | Rejected. Every test was retained, but the candidate was materially worse. |
 | Selective two-fork test tuning | **1.57% slower** and `:spring-test:test` failed | Rejected and not retried. Work returned to build-owned test preparation. |
+| Exact Test-fixture JAR reuse around unchanged tests | **11.31% slower**, 735.25 ms lost, 0/4 positive pairs | Rejected. All 8 tests ran with identical cases and 15 identical JARs; three cache hits did not offset adapter overhead. |
 | Generalized shared test preparation | **18.88% faster**, 2,638 ms saved, 4/4 positive pairs | Qualified with interval +1,516..+3,275.5 ms and 378 identical outputs. |
 | Generalized leaf compilation | **1.33% faster**, 196.25 ms saved, 3/4 positive pairs | Rejected: misses 500 ms, 2%, 4/4, and positive-bound gates. |
 | Generalized leaf packaging | **3.73% faster**, 427.25 ms saved, 2/4 positive pairs | Rejected: misses 500 ms, 4/4, and positive-bound gates. |
@@ -132,12 +136,18 @@ served by native cache, configured `JavaExec` is below the floor with broader
 effects, and Spring exposed no new exact standard task. This closes only the
 current trace set; a materially different dominant tail may reopen the work.
 
-The next block is `POC-TEST-BUILD-OPTIMIZATION-001`: optimize build-owned test
-compilation, preparation, and packaging without selecting, skipping,
-reprioritizing, retrying, or sharding Test-owned execution. After that, the
-roadmap is to investigate Runtime Tuning only around measured bottlenecks,
-compare Shared/Edge directly with native remote cache, and finally transfer the
-unchanged profile to a third substantial public repository.
+The build-owned test experiment then preserved the exact requested test
+boundary but rejected direct standard-JAR reuse: native Gradle averaged
+6,503.5 ms and BuildOpt 7,238.75 ms, a 735.25-ms/11.31% regression with an
+interval of -1,449..-113 ms. The result retained all four pairs, 8/8 tests per
+arm, three differential cache hits and 15 identical JARs. The POC therefore
+kept the switch diagnostic-only rather than promoting a technically correct
+but slower feature.
+
+The next block is `POC-RUNTIME-RESEARCH-001`: select one resource bottleneck
+from retained traces, preregister one bounded hypothesis and keep optimized
+native Gradle whenever it fails the same gate. Shared/Edge comparison and
+third-repository transfer remain later work.
 
 ## Boundaries and References
 
@@ -155,3 +165,4 @@ production operations are outside the current scope.
 - [Qualified clean OpenTelemetry composition](../../benchmarks/results/poc-otel-clean-composition-v1.json)
 - [Build Impact generalization evidence](../../benchmarks/results/poc-impact-generalization-v1.json)
 - [Standard-Copy cascade evidence](../../benchmarks/results/poc-standard-copy-cascade-v1.json)
+- [Spring test-build stop evidence](../../benchmarks/results/poc-spring-test-build-optimization-v1.json)

@@ -90,7 +90,7 @@ func TestParseGradleProductOptions(t *testing.T) {
 		}
 	})
 
-	t.Run("selects the exact standard Jar adapter", func(t *testing.T) {
+	t.Run("selects the diagnostic standard Jar adapter", func(t *testing.T) {
 		parsed, standardJar, err := parseGradleProductOptions([]string{
 			gradleStandardJarCacheFlag, "--", "--parallel", "test",
 		})

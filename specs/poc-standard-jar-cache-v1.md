@@ -15,7 +15,6 @@ The adapter is opt-in through:
 
 ```text
 buildopt impact ... --cache-standard-jar-producers
-buildopt gradle --cache-standard-jar-producers -- <gradle args...>
 ```
 
 The launcher translates that flag to private child context, loads the packaged
@@ -54,7 +53,7 @@ This is a POC optimization, not a production-wide cache policy. It does not
 change the Tier 1 safe-cache allowlist, Test Optimization, production
 selection, soak scope or deployment readiness.
 
-The direct `buildopt gradle` form exists to evaluate build-owned compilation,
-resource and packaging work around an unchanged Test invocation. It remains an
-experimental POC option until its preregistered Spring comparison beats
-optimized native Gradle under the unchanged value and correctness gates.
+The revision-bound Spring test-build runner also retains a non-advertised
+`buildopt gradle --cache-standard-jar-producers -- ...` diagnostic switch so
+the negative experiment remains reproducible. That path regressed and is not a
+recommended or generally authorized activation.

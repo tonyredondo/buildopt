@@ -124,6 +124,22 @@ below the floor and has broader process effects. The terminal decision is
 to build-owned test work instead of implementing a generic adapter merely to
 continue the sequence.
 
+### Spring test-build JAR reuse
+
+The checked [Spring test-build evidence](./results/poc-spring-test-build-optimization-v1.json)
+measures a fixed `:spring-jms:test` filter while BuildOpt changes only
+build-owned standard-JAR eligibility. Every arm executes the same 8 tests with
+zero failures, errors or skips; every pair preserves the same 15 JARs and test
+case set. BuildOpt restores three exact `testFixturesJar` producers per pair,
+while native Gradle executes them.
+
+That technical success does not translate into value. Native Gradle averages
+6,503.5 ms and BuildOpt 7,238.75 ms: BuildOpt loses 735.25 ms/11.31%, has 0/4
+positive pairs and a -1,449..-113-ms interval. The terminal decision is
+`STOP_STANDARD_JAR_REUSE_FOR_SPRING_TEST_BUILD`; the switch remains
+diagnostic-only for reproducibility, while user-facing activation remains
+limited to its already qualified Build Impact scope.
+
 ```bash
 ./dev/check-poc-full-path-ablation
 ./dev/test-poc-full-path-ablation
@@ -135,6 +151,8 @@ continue the sequence.
   benchmarks/results/poc-standard-copy-cascade-v1.json
 ./dev/check-poc-normal-build-tail-expansion
 ./dev/test-poc-normal-build-tail-expansion
+./dev/check-poc-spring-test-build-optimization \
+  benchmarks/results/poc-spring-test-build-optimization-v1.json
 ```
 
 The scorecard answers a different question for each optimization instead of
