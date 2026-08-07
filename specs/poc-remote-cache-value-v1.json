@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "buildopt.specs/poc-remote-cache-value/v1",
+  "workItem": "POC-REMOTE-CACHE-VALUE-001",
+  "decision": "PREREGISTER_EDGE_LOCALITY_AGAINST_NATIVE_REMOTE_CACHE",
+  "hypothesis": {
+    "mechanism": "EDGE_COMMITTED_READ_LOCALITY",
+    "control": "GRADLE_HTTP_BUILD_CACHE_DIRECT_TO_SHARED",
+    "candidate": "GRADLE_HTTP_BUILD_CACHE_TO_PREWARMED_BUILDOPT_EDGE",
+    "singleChangedInput": "CACHE_READ_LOCATION"
+  },
+  "fixture": {
+    "path": "fixtures/remote-cache-value",
+    "entrypoint": "remoteCacheFixture",
+    "cacheableTasks": 8,
+    "bytesPerTask": 4194304,
+    "requiredOutputCount": 8,
+    "requiredOutputBytes": 33554432
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "jdk": "21",
+    "gradle": "9.6.1"
+  },
+  "network": {
+    "model": "LOOPBACK_SHAPED_WAN",
+    "latencyPerResponseMs": 80,
+    "bandwidthBytesPerSecond": 20971520,
+    "packetLossRatio": 0,
+    "controlTraversesShapedNetwork": true,
+    "candidateMeasuredUpstreamRequests": 0
+  },
+  "cacheState": {
+    "sameCommittedSharedObjects": true,
+    "nativeLocalCacheEnabled": false,
+    "configurationCacheEnabled": false,
+    "pushAllowedDuringMeasuredRuns": false,
+    "seedAndEdgeWarmupMeasured": false,
+    "independentProjectAndGradleHomePerArm": true,
+    "outputsAndProjectStateRemovedBeforeEveryArm": true
+  },
+  "measurement": {
+    "warmupsPerArm": 1,
+    "pairs": 4,
+    "pairOrder": [
+      "CONTROL_FIRST",
+      "CANDIDATE_FIRST",
+      "CONTROL_FIRST",
+      "CANDIDATE_FIRST"
+    ],
+    "maximumInterArmIdleGapMs": 15000,
+    "requiredTaskOutcome": "FROM-CACHE"
+  },
+  "valueGate": {
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositivePairs": 4,
+    "requiredOutputsIdentical": true,
+    "requiredOutputsNonEmpty": true,
+    "maximumProductAttributableFailures": 0,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedPairsMayBeDiscarded": false,
+    "parityAloneCountsAsValue": false
+  },
+  "decisionPolicy": {
+    "qualifiedDecision": "QUALIFY_EDGE_LOCALITY_FOR_CONTROLLED_REMOTE_CACHE_POC",
+    "unqualifiedDecision": "RETAIN_NATIVE_REMOTE_CACHE",
+    "sharedAloneReceivesNoAccelerationClaim": true,
+    "edgeRemainsPerformanceUnqualifiedUnlessGatePasses": true,
+    "noAdditionalNetworkSearchAfterTerminalDecision": true
+  },
+  "boundaries": {
+    "sameSharedOrigin": true,
+    "sameGradleHttpBuildCacheClient": true,
+    "sameCommittedObjectBytes": true,
+    "sameWorkloadAndOutputs": true,
+    "sameAuthenticationCheck": true,
+    "onlyReadLocalityChanges": true,
+    "safeCacheChanged": false,
+    "runtimeTuningChanged": false,
+    "buildImpactChanged": false,
+    "testOptimizationModified": false,
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

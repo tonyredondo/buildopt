@@ -1,0 +1,48 @@
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.TaskAction
+
+@CacheableTask
+abstract class GenerateDeterministicBlob extends DefaultTask {
+    @Input
+    abstract Property<Integer> getSeed()
+
+    @OutputFile
+    abstract RegularFileProperty getOutputFile()
+
+    @TaskAction
+    void generate() {
+        def state = seed.get() as int
+        def remaining = 4 * 1024 * 1024
+        def buffer = new byte[64 * 1024]
+        def target = outputFile.get().asFile
+        target.parentFile.mkdirs()
+        target.withOutputStream { stream ->
+            while (remaining > 0) {
+                def count = Math.min(buffer.length, remaining)
+                for (def index = 0; index < count; index++) {
+                    state ^= state << 13
+                    state ^= state >>> 17
+                    state ^= state << 5
+                    buffer[index] = (byte) state
+                }
+                stream.write(buffer, 0, count)
+                remaining -= count
+            }
+        }
+    }
+}
+
+def producers = (0..<8).collect { index ->
+    tasks.register("generateBlob${index}", GenerateDeterministicBlob) {
+        seed = 1000 + index
+        outputFile = layout.buildDirectory.file("remote-cache/blob-${index}.bin")
+    }
+}
+
+tasks.register('remoteCacheFixture') {
+    dependsOn(producers)
+}

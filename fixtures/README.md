@@ -70,6 +70,12 @@ long and short session tasks around one Tier 1 `JavaCompile` cache lookup,
 declares no external repositories or dependencies, and produces the required
 reproducible JAR used by the paired overhead gate.
 
+`remote-cache-value/` is the controlled POC locality workload. Eight cacheable
+producers generate 32 MiB of deterministic required outputs while the
+experiment compares Gradle reading one committed Shared object set directly
+over a modeled WAN with reading the same objects from a prewarmed BuildOpt
+Edge. Local cache, Configuration Cache and measured writes are disabled.
+
 `test-cache-isolation/` is the `A0-G08` root/composite boundary. Its root
 build, actual `buildSrc`, and included plugin each expose a cacheable `Test`
 task so the control can replay from an authenticated remote cache and the

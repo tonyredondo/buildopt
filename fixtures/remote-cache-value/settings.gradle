@@ -1,0 +1,21 @@
+import org.gradle.caching.http.HttpBuildCache
+
+rootProject.name = 'buildopt-remote-cache-value'
+
+def remoteCacheUrl = providers.environmentVariable('BUILDOPT_POC_REMOTE_CACHE_URL').get()
+def remoteCachePush = providers.environmentVariable('BUILDOPT_POC_REMOTE_CACHE_PUSH').getOrElse('0') == '1'
+
+buildCache {
+    local {
+        enabled = false
+    }
+    remote(HttpBuildCache) {
+        url = uri(remoteCacheUrl)
+        push = remoteCachePush
+        allowInsecureProtocol = true
+        credentials {
+            username = 'buildopt-poc'
+            password = 'remote-cache-value'
+        }
+    }
+}

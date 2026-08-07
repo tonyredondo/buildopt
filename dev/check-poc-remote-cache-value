@@ -1,0 +1,196 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-remote-cache-value-v1.json"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-remote-cache-value-v1.json"}
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required remote-cache validator is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-remote-cache-value/v1" and
+    .workItem == "POC-REMOTE-CACHE-VALUE-001" and
+    .decision == "PREREGISTER_EDGE_LOCALITY_AGAINST_NATIVE_REMOTE_CACHE" and
+    .hypothesis == {
+        mechanism: "EDGE_COMMITTED_READ_LOCALITY",
+        control: "GRADLE_HTTP_BUILD_CACHE_DIRECT_TO_SHARED",
+        candidate: "GRADLE_HTTP_BUILD_CACHE_TO_PREWARMED_BUILDOPT_EDGE",
+        singleChangedInput: "CACHE_READ_LOCATION"
+    } and
+    .fixture.path == "fixtures/remote-cache-value" and
+    .fixture.entrypoint == "remoteCacheFixture" and
+    .fixture.cacheableTasks == 8 and
+    .fixture.bytesPerTask == 4194304 and
+    .fixture.requiredOutputCount == 8 and
+    .fixture.requiredOutputBytes == 33554432 and
+    .runner == {
+        id: "linux-amd64-12c-16659865600b-v1",
+        cpuCount: 12,
+        memoryBytes: 16659865600,
+        jdk: "21",
+        gradle: "9.6.1"
+    } and
+    .network == {
+        model: "LOOPBACK_SHAPED_WAN",
+        latencyPerResponseMs: 80,
+        bandwidthBytesPerSecond: 20971520,
+        packetLossRatio: 0,
+        controlTraversesShapedNetwork: true,
+        candidateMeasuredUpstreamRequests: 0
+    } and
+    .cacheState.nativeLocalCacheEnabled == false and
+    .cacheState.configurationCacheEnabled == false and
+    .cacheState.pushAllowedDuringMeasuredRuns == false and
+    .cacheState.seedAndEdgeWarmupMeasured == false and
+    .cacheState.sameCommittedSharedObjects == true and
+    .measurement.warmupsPerArm == 1 and .measurement.pairs == 4 and
+    .measurement.pairOrder == [
+        "CONTROL_FIRST", "CANDIDATE_FIRST",
+        "CONTROL_FIRST", "CANDIDATE_FIRST"
+    ] and
+    .measurement.maximumInterArmIdleGapMs == 15000 and
+    .measurement.requiredTaskOutcome == "FROM-CACHE" and
+    .valueGate.minimumSavedMs == 500 and
+    .valueGate.minimumReductionRatio == 0.02 and
+    .valueGate.positiveLower95Bound == true and
+    .valueGate.minimumPositivePairs == 4 and
+    .valueGate.thresholdsMayMoveAfterMeasurement == false and
+    .valueGate.failedPairsMayBeDiscarded == false and
+    .decisionPolicy.qualifiedDecision ==
+        "QUALIFY_EDGE_LOCALITY_FOR_CONTROLLED_REMOTE_CACHE_POC" and
+    .decisionPolicy.unqualifiedDecision == "RETAIN_NATIVE_REMOTE_CACHE" and
+    .decisionPolicy.sharedAloneReceivesNoAccelerationClaim == true and
+    .decisionPolicy.noAdditionalNetworkSearchAfterTerminalDecision == true and
+    .boundaries.sameSharedOrigin == true and
+    .boundaries.sameGradleHttpBuildCacheClient == true and
+    .boundaries.sameCommittedObjectBytes == true and
+    .boundaries.sameWorkloadAndOutputs == true and
+    .boundaries.sameAuthenticationCheck == true and
+    .boundaries.onlyReadLocalityChanges == true and
+    .boundaries.safeCacheChanged == false and
+    .boundaries.runtimeTuningChanged == false and
+    .boundaries.buildImpactChanged == false and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.proofOfConcept == true and
+    .boundaries.productionReadinessClaimed == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false
+' "${buildopt_spec}" >/dev/null
+
+if (($# == 0)) && [[ ! -s "${buildopt_result}" ]]; then
+    printf 'POC remote-cache value contract OK: %s\n' "${buildopt_spec}"
+    exit 0
+fi
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_runner_sha=$(sha256sum "${buildopt_script_dir}/run-poc-remote-cache-value" | awk '{print $1}')
+buildopt_fixture_sha=$(
+    cd "${buildopt_repo_root}"
+    sha256sum \
+        fixtures/remote-cache-value/build.gradle \
+        fixtures/remote-cache-value/settings.gradle |
+        sha256sum |
+        awk '{print $1}'
+)
+jq -e --arg specSha "${buildopt_spec_sha}" \
+    --arg runnerSha "${buildopt_runner_sha}" \
+    --arg fixtureSha "${buildopt_fixture_sha}" \
+    --slurpfile spec "${buildopt_spec}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    def bootstrap_mean($data; $sample):
+        reduce range(0; 4) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $data[((.state / 1073741824) | floor)].savedMs) |
+        .sum / 4;
+    def bootstrap95($data):
+        ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
+        [$r[102], $r[3993]];
+    .observations as $data |
+    (($data | map(.controlDurationMs) | add) / 4) as $controlMean |
+    (($data | map(.candidateDurationMs) | add) / 4) as $candidateMean |
+    ($controlMean - $candidateMean) as $saved |
+    (($data | map(.savedMs) | add) /
+        ($data | map(.controlDurationMs) | add)) as $ratio |
+    bootstrap95($data) as $interval |
+    ($data | map(select(.savedMs > 0)) | length) as $positive |
+    ($saved >= $spec[0].valueGate.minimumSavedMs and
+     $ratio >= $spec[0].valueGate.minimumReductionRatio and
+     $interval[0] > 0 and
+     $positive == $spec[0].valueGate.minimumPositivePairs and
+     all($data[];
+        .requiredOutputCount == 8 and
+        .requiredOutputBytes == 33554432 and
+        .outputsIdentical and .taskOutcomesIdentical and
+        (.productAttributableFailure | not))) as $qualified |
+    .schemaVersion == "buildopt.evidence/poc-remote-cache-value/v1" and
+    .workItem == "POC-REMOTE-CACHE-VALUE-001" and
+    (.capturedAt | fromdateiso8601) and
+    (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+    .runnerScriptSha256 == $runnerSha and
+    .specSha256 == $specSha and .fixtureSha256 == $fixtureSha and
+    .runner == $spec[0].runner and
+    .hypothesis == $spec[0].hypothesis and
+    .network == {
+        model: $spec[0].network.model,
+        latencyPerResponseMs: $spec[0].network.latencyPerResponseMs,
+        bandwidthBytesPerSecond: $spec[0].network.bandwidthBytesPerSecond,
+        packetLossRatio: $spec[0].network.packetLossRatio
+    } and
+    .preparation.measured == false and
+    .preparation.seededObjectCount >= 8 and
+    .preparation.seededObjectBytes >= 33554432 and
+    .preparation.edgeWarmupOriginRequests == .preparation.seededObjectCount and
+    .preparation.edgeWarmupOriginBytes == .preparation.seededObjectBytes and
+    ($data | length) == 4 and
+    [$data[].pair] == [1, 2, 3, 4] and
+    [$data[].order] == $spec[0].measurement.pairOrder and
+    all($data[];
+        (.controlDurationMs | type == "number" and . > 0) and
+        (.candidateDurationMs | type == "number" and . > 0) and
+        .savedMs == (.controlDurationMs - .candidateDurationMs) and
+        .interArmIdleGapMs >= 0 and
+        .interArmIdleGapMs <= $spec[0].measurement.maximumInterArmIdleGapMs and
+        .controlOriginRequests >= 8 and
+        .controlOriginBytes >= 33554432 and
+        .candidateOriginRequests == 0 and .candidateOriginBytes == 0 and
+        (.requiredOutputSha256 | sha256) and
+        (.taskOutcomeSetSha256 | sha256)) and
+    ([$data[].requiredOutputSha256] | unique | length) == 1 and
+    ([$data[].taskOutcomeSetSha256] | unique | length) == 1 and
+    .result == {
+        pairs: 4,
+        controlMeanMs: $controlMean,
+        candidateMeanMs: $candidateMean,
+        meanSavedMs: $saved,
+        reductionRatio: $ratio,
+        interval95SavedMs: $interval,
+        positivePairs: $positive,
+        qualified: $qualified,
+        decision: (if $qualified then
+            $spec[0].decisionPolicy.qualifiedDecision
+            else $spec[0].decisionPolicy.unqualifiedDecision end)
+    } and
+    .boundaries == $spec[0].boundaries
+' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'POC remote-cache validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'POC remote-cache value evidence OK: %s\n' "${buildopt_result}"

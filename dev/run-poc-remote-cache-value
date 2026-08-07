@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s OUTPUT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-remote-cache-value-v1.json"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ]]; then
+    printf 'invalid POC remote-cache output path\n' >&2
+    exit 64
+fi
+for buildopt_command in awk find git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required POC remote-cache command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+if [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)" ]]; then
+    printf 'POC remote-cache measurement requires a clean revision-bound checkout\n' >&2
+    exit 1
+fi
+"${buildopt_script_dir}/check-poc-remote-cache-value" >/dev/null
+
+if [[ "$(getconf _NPROCESSORS_ONLN)" != 12 ]]; then
+    printf 'POC remote-cache measurement requires exactly 12 online CPUs\n' >&2
+    exit 1
+fi
+buildopt_gradle_bin=$(find \
+    "${buildopt_repo_root}/.tools/gradle-user-home/local/wrapper/dists/gradle-9.6.1-bin" \
+    -type f -path '*/gradle-9.6.1/bin/gradle' -perm -u+x -print -quit)
+if [[ -z "${buildopt_gradle_bin}" ]]; then
+    printf 'pinned Gradle 9.6.1 is unavailable; prime the Wrapper first\n' >&2
+    exit 1
+fi
+buildopt_java_home=$(
+    "${buildopt_script_dir}/run" -- \
+        java -XshowSettings:properties -version 2>&1 |
+        awk -F'= ' '/^[[:space:]]*java.home = / {print $2; exit}'
+)
+if [[ ! -x "${buildopt_java_home}/bin/java" ]]; then
+    printf 'pinned JDK 21 is unavailable\n' >&2
+    exit 1
+fi
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_runner_sha=$(sha256sum "${BASH_SOURCE[0]}" | awk '{print $1}')
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_fixture_sha=$(
+    cd "${buildopt_repo_root}"
+    sha256sum \
+        fixtures/remote-cache-value/build.gradle \
+        fixtures/remote-cache-value/settings.gradle |
+        sha256sum |
+        awk '{print $1}'
+)
+
+env \
+    JAVA_HOME="${buildopt_java_home}" \
+    PATH="${buildopt_java_home}/bin:${PATH}" \
+    BUILDOPT_POC_REMOTE_CACHE_RESULT="${buildopt_output}" \
+    BUILDOPT_POC_REPO_ROOT="${buildopt_repo_root}" \
+    BUILDOPT_POC_GRADLE_BIN="${buildopt_gradle_bin}" \
+    BUILDOPT_POC_REVISION="${buildopt_revision}" \
+    BUILDOPT_POC_RUNNER_SHA="${buildopt_runner_sha}" \
+    BUILDOPT_POC_SPEC_SHA="${buildopt_spec_sha}" \
+    BUILDOPT_POC_FIXTURE_SHA="${buildopt_fixture_sha}" \
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go test -count=1 -v ./internal/sharedcache \
+            -run '^TestPOCRemoteCacheValueExperiment$'
+
+"${buildopt_script_dir}/check-poc-remote-cache-value" "${buildopt_output}"
+printf 'POC remote-cache evidence written: %s\n' "${buildopt_output}"

@@ -214,6 +214,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/test-poc-normal-build-tail-expansion" >/dev/null
         "${buildopt_script_dir}/check-poc-optimization-overhead-ablation" >/dev/null
         "${buildopt_script_dir}/check-poc-runtime-research" >/dev/null
+        "${buildopt_script_dir}/check-poc-remote-cache-value" >/dev/null
         "${buildopt_script_dir}/check-poc-value-baseline" >/dev/null
         "${buildopt_script_dir}/check-poc-value-validation" >/dev/null
         "${buildopt_script_dir}/check-poc-breadth" \

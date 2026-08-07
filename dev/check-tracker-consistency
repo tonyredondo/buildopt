@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`POC TARGETED RUNTIME TUNING REJECTED; NATIVE 12-WORKER CONTROL RETAINED; REMOTE CACHE VALUE NEXT\`"
-    "**Current phase:** \`POC-REMOTE-CACHE-VALUE-001 TODO\`"
+    "**Overall status:** \`POC REMOTE CACHE VALUE PREREGISTERED; EDGE LOCALITY MEASUREMENT NEXT\`"
+    "**Current phase:** \`POC-REMOTE-CACHE-VALUE-001 DOING\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"
@@ -143,6 +143,7 @@ buildopt_required_tracker_text=(
     "| \`E-218\` | 2026-08-07 | \`POC-OPTIMIZATION-OVERHEAD-ABLATION-001\`"
     "| \`E-219\` | 2026-08-07 | \`POC-RUNTIME-RESEARCH-001\`"
     "| \`E-220\` | 2026-08-07 | \`POC-RUNTIME-RESEARCH-001\`"
+    "| \`E-221\` | 2026-08-07 | \`POC-REMOTE-CACHE-VALUE-001\`"
     "| \`POC-OTEL-OPTIMIZATION-G04\` | The optimized installed candidate clears the unchanged 500-ms/2% value gate with a positive paired lower bound, 4/4 positive pairs, exact outputs, safe fallback and zero product failures | Stable OpenTelemetry POC claim | \`DONE\`"
     "| \`POC-FULL-PATH-ABLATION-001\` | 1 | Run six preregistered arms on Spring and OpenTelemetry"
     "| \`POC-FULL-PATH-CLEAN-001\` | 2 | Preregister and measure OpenTelemetry Build Impact plus the standard Jar adapter without hot-state reuse"
@@ -152,7 +153,7 @@ buildopt_required_tracker_text=(
     "| \`POC-TEST-BUILD-OPTIMIZATION-001\` | 6 | Reduce build-owned test compilation, preparation, and packaging without changing Test-owned selection, execution, retries, sharding, or prioritization | \`DONE\` | \`E-217\`"
     "| \`POC-OPTIMIZATION-OVERHEAD-ABLATION-001\` | 7 | Narrow standard-Jar registration, measure native/init-only/adapter arms, and retain the faster complete workflow without treating phase deltas as universally causal | \`DONE\` | \`E-218\`"
     "| \`POC-RUNTIME-RESEARCH-001\` | 8 | Investigate one observed worker, heap, GC, queue, configuration, dependency-resolution, or JVM-warm-up bottleneck at a time; preserve \`STABLE_CONTROL\` on no-value evidence | \`DONE\` | \`E-219..220\`"
-    "| \`POC-REMOTE-CACHE-VALUE-001\` | 9 | Compare BuildOpt Shared/Edge Cache with Gradle native remote cache using controlled latency, bandwidth, object size, hit rate, and runner locality | \`TODO\` | \`E-220\`"
+    "| \`POC-REMOTE-CACHE-VALUE-001\` | 9 | Compare BuildOpt Shared/Edge Cache with Gradle native remote cache using controlled latency, bandwidth, object size, hit rate, and runner locality | \`DOING\` | \`E-221\`"
     "| \`POC-THIRD-REPOSITORY-TRANSFER-001\` | 10 | Transfer the unchanged qualified profile to one substantial public repository"
     "| \`POC-PERF-NEXT-G01\` | The complete qualified profile beats optimized native Gradle by at least 500 ms and 2%"
     "| \`A1-G06\` | Safe Cache is non-regressive versus optimized native cache"
@@ -196,5 +197,5 @@ if [[ $(grep -Fc "| \`OPS-001/B\` |" <<<"${buildopt_readiness}") != 1 ]]; then
     exit 1
 fi
 
-printf 'RFC/tracker consistency OK: %s accepted decisions, targeted Runtime candidate rejected and remote-cache value next\n' \
+printf 'RFC/tracker consistency OK: %s accepted decisions, remote-cache value preregistered before timing\n' \
     "${buildopt_decision_count}"
