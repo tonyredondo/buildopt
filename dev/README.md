@@ -2805,6 +2805,16 @@ Each executable arm retains its own contemporaneous optimized-native control.
 Cross-protocol differences are descriptive only, percentages are never added,
 and a failed source protocol stops the run without discarding a pair.
 
+The clean OpenTelemetry composition removes exact-bound hot-state reuse from
+the candidate while retaining Build Impact, the exact standard-`Jar` adapter,
+the same native control, outputs, fallback, and frozen value gate:
+
+```bash
+./dev/check-poc-otel-clean-composition-v1
+./dev/run-poc-otel-clean-composition-v1 /absolute/path/to/new-result.json
+./dev/check-poc-otel-clean-composition-v1-result /absolute/path/to/new-result.json
+```
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

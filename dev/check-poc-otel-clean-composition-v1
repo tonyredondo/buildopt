@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-otel-clean-composition-v1.json"
+buildopt_tasks="${buildopt_repo_root}/specs/poc-otel-spring-family-v2.tasks.txt"
+
+for buildopt_command in jq sha256sum sort; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required clean OpenTelemetry checker is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+for buildopt_file in "${buildopt_spec}" "${buildopt_tasks}"; do
+    [[ -s "${buildopt_file}" ]] || {
+        printf 'clean OpenTelemetry preregistration is unavailable: %s\n' \
+            "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_task_sha=$(sha256sum "${buildopt_tasks}" | awk '{print $1}')
+buildopt_task_count=$(awk 'NF {count++} END {print count + 0}' "${buildopt_tasks}")
+buildopt_sorted_tasks=$(mktemp)
+trap 'rm -f -- "${buildopt_sorted_tasks}"' EXIT
+LC_ALL=C sort -u "${buildopt_tasks}" >"${buildopt_sorted_tasks}"
+if [[ "${buildopt_task_count}" != 53 ]] ||
+    ! cmp -s "${buildopt_tasks}" "${buildopt_sorted_tasks}"; then
+    printf 'expected 53 sorted unique OpenTelemetry Spring-family entrypoints\n' >&2
+    exit 1
+fi
+
+jq -e --arg taskSha "${buildopt_task_sha}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    .schemaVersion == "buildopt.specs/poc-otel-clean-composition/v1" and
+    .workItem == "POC-FULL-PATH-CLEAN-001" and
+    .decision == "PREREGISTER_BUILD_IMPACT_AND_STANDARD_JAR_WITHOUT_HOT_STATE" and
+    .preregistration == {
+        implementationRevision: "212c1ec39db490e033618664db9841b4f1d5598e",
+        completedWarmupsBeforePreregistration: 0,
+        completedObservationsBeforePreregistration: 0,
+        acceptedObservationsBeforePreregistration: 0,
+        priorTerminalObservationsReused: false,
+        implementationChanged: false,
+        measurementChanged: true,
+        productionSelectionChanged: false,
+        controlChanged: false,
+        valueGateChanged: false
+    } and
+    .repository == {
+        nameWithOwner: "open-telemetry/opentelemetry-java-instrumentation",
+        releaseTag: "v2.30.0",
+        revision: "080c1d32ca676ba7b0210c21b60cce8e7ac39058",
+        sourceArchiveUrl: "https://codeload.github.com/open-telemetry/opentelemetry-java-instrumentation/tar.gz/080c1d32ca676ba7b0210c21b60cce8e7ac39058",
+        sourceArchiveSha256: "073c707d98716944ec43cd1d8328d9c5bc47c04029d632d65fb71c1547f8c38c",
+        gradleVersion: "9.6.1",
+        gradleWrapperJarSha256: "497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7",
+        gradleWrapperPropertiesSha256: "89f62533208a72b7a8cc2892b6b3540c445fa6175508297d932dae57d653591a",
+        gradlePropertiesSha256: "5d4bf60cef3a12a18fbb088ab5a8aa7dc7233ec033940d10a135462a88a74270",
+        upstreamPullRequestWorkflowSha256: "372ac4b5f0c7b32075152c620f353844a6734c5728e35044528406207d04f26c"
+    } and
+    .supersedes == {
+        terminalExperiment: "POC-FULL-PATH-ABLATION-001",
+        terminalRevision: "d497f0dfc77824f414d458465d7e2b8917838f9e",
+        reusesTerminalObservations: false,
+        reason: "REMOVE_REGRESSIVE_HOT_STATE_FROM_COMPOSITION"
+    } and
+    .runner == {
+        id: "linux-amd64-12c-16659865600b-v1",
+        cpuCount: 12,
+        memoryBytes: 16659865600,
+        maxWorkers: 12,
+        jdk: "temurin-21.0.12+8"
+    } and
+    .control.entrypointsFileSha256 == $taskSha and
+    .control.entrypointCount == 53 and
+    .control.expectedReachedProjectCount == 148 and
+    .candidate == {
+        changeClass: "LEAF_PRODUCTION_SOURCE",
+        changePath: "instrumentation/spring/spring-boot-autoconfigure/src/main/java/io/opentelemetry/instrumentation/spring/autoconfigure/OpenTelemetryAutoConfiguration.java",
+        changeOriginalSha256: "bd68a2761a21ce6a7f2f6002167783a75920d2f14f903dbcdfebe0fc9fbc4aae",
+        changedProject: ":instrumentation:spring:spring-boot-autoconfigure",
+        alternativeId: "otel-spring-autoconfigure-class-producers",
+        entrypoints: [
+            ":instrumentation:spring:spring-boot-autoconfigure:compileJava",
+            ":instrumentation:spring:spring-boot-autoconfigure:compileJavaSpring3Java",
+            ":instrumentation:spring:spring-boot-autoconfigure:compileJavaSpring4Java",
+            ":instrumentation:spring:spring-boot-autoconfigure:compileTestJava"
+        ],
+        expectedReachedProjectCount: 46,
+        standardJarCache: {
+            activation: "--cache-standard-jar-producers",
+            expectedProducer: ":testing-common:jar",
+            candidateOutcome: "FROM-CACHE",
+            controlCacheEligible: false,
+            managedRuntimeStarted: false
+        },
+        requiredOutputRoots: ["instrumentation/spring/spring-boot-autoconfigure/build/classes"]
+    } and
+    .discovery.expectedProjectCount == 1024 and
+    .discovery.expectedEntrypointCount == 53 and
+    .discovery.expectedGraphDigest == "sha256:804d1018c588a072c8c4fd82e96cc35f10e9835de9b8ddf4bf64315701e0f971" and
+    .discovery.expectedGraphSha256 == "ce4dfd8f04c8ca4b9eae54fdd1e8912f35a0e46b4fa7c85ef823efc92f1e129b" and
+    .discovery.expectedGeneratedManifestSha256 == "3edfa630af179b4655dc9944b9069db09e3c094905e1dc7f95950c7f2ab2512d" and
+    .discovery.complete == true and .discovery.containsTestTasks == false and
+    .discovery.unknownRelationships == false and
+    .measurement.candidateSurface == "INSTALLED_BUILDOPT_IMPACT_TYPED_PRODUCERS_STANDARD_JAR_CACHE_NO_HOT_STATE" and
+    .measurement.launcherOverheadIncluded == true and
+    .measurement.sameCandidateNativeCacheSeedRestoredBeforeEveryArm == true and
+    .measurement.sharedCheckout == true and
+    .measurement.sharedGradleUserHome == true and
+    .measurement.sharedDaemon == true and
+    .measurement.controlCannotConsumeCandidateJarEntry == true and
+    .measurement.warmupsPerArm == 1 and .measurement.pairs == 4 and
+    .measurement.pairOrder == "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST" and
+    .measurement.maximumInterArmIdleGapMs == 5000 and
+    .measurement.requiredOutputsComparedByteForByte == true and
+    .measurement.exactBoundHotStateEnabled == false and
+    .measurement.candidatePlanningPath == "FRESH_VALIDATION_EVERY_INVOCATION" and
+    .valueGate == {
+        minimumSavedMs: 500,
+        minimumReductionRatio: 0.02,
+        positiveLower95Bound: true,
+        minimumPositivePairs: 4,
+        requiredOutputsIdentical: true,
+        requiredOutputsNonEmpty: true,
+        maximumProductAttributableFailures: 0,
+        thresholdsMayMoveAfterMeasurement: false,
+        failedPairsMayBeDiscarded: false,
+        parityAloneCountsAsValue: false
+    } and
+    .fallback.expectedMode == "FULL_GRAPH" and
+    .fallback.expectedReason == "IMPACT_GLOBAL_CHANGE" and
+    .terminalDecisions == {
+        qualifies: "QUALIFY_CLEAN_OTEL_COMPOSITION",
+        failsValueGate: "RETAIN_CLEAN_COMPOSITION_EVIDENCE_ONLY",
+        controlOrCandidateFails: "STOP_CLEAN_COMPOSITION_WITHOUT_RETRY"
+    } and
+    .boundaries.proofOfConcept == true and
+    .boundaries.productionReadinessClaimed == false and
+    .boundaries.repositorySpecificProductRuleAdded == false and
+    .boundaries.productionSelectionChanged == false and
+    .boundaries.buildOwnedTestPreparationOnly == true and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false and
+    .boundaries.publicReleaseRequired == false and
+    .boundaries.previousTerminalExperimentUnchanged == true and
+    .boundaries.exactBoundHotStateEnabled == false
+' "${buildopt_spec}" >/dev/null
+
+printf 'clean OpenTelemetry preregistration OK\n'

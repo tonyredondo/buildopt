@@ -1,0 +1,155 @@
+{
+  "schemaVersion": "buildopt.specs/poc-otel-clean-composition/v1",
+  "workItem": "POC-FULL-PATH-CLEAN-001",
+  "decision": "PREREGISTER_BUILD_IMPACT_AND_STANDARD_JAR_WITHOUT_HOT_STATE",
+  "preregistration": {
+    "implementationRevision": "212c1ec39db490e033618664db9841b4f1d5598e",
+    "completedWarmupsBeforePreregistration": 0,
+    "completedObservationsBeforePreregistration": 0,
+    "acceptedObservationsBeforePreregistration": 0,
+    "priorTerminalObservationsReused": false,
+    "implementationChanged": false,
+    "measurementChanged": true,
+    "productionSelectionChanged": false,
+    "controlChanged": false,
+    "valueGateChanged": false
+  },
+  "repository": {
+    "nameWithOwner": "open-telemetry/opentelemetry-java-instrumentation",
+    "releaseTag": "v2.30.0",
+    "revision": "080c1d32ca676ba7b0210c21b60cce8e7ac39058",
+    "sourceArchiveUrl": "https://codeload.github.com/open-telemetry/opentelemetry-java-instrumentation/tar.gz/080c1d32ca676ba7b0210c21b60cce8e7ac39058",
+    "sourceArchiveSha256": "073c707d98716944ec43cd1d8328d9c5bc47c04029d632d65fb71c1547f8c38c",
+    "gradleVersion": "9.6.1",
+    "gradleWrapperJarSha256": "497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7",
+    "gradleWrapperPropertiesSha256": "89f62533208a72b7a8cc2892b6b3540c445fa6175508297d932dae57d653591a",
+    "gradlePropertiesSha256": "5d4bf60cef3a12a18fbb088ab5a8aa7dc7233ec033940d10a135462a88a74270",
+    "upstreamPullRequestWorkflowSha256": "372ac4b5f0c7b32075152c620f353844a6734c5728e35044528406207d04f26c"
+  },
+  "supersedes": {
+    "terminalExperiment": "POC-FULL-PATH-ABLATION-001",
+    "terminalRevision": "d497f0dfc77824f414d458465d7e2b8917838f9e",
+    "reusesTerminalObservations": false,
+    "reason": "REMOVE_REGRESSIVE_HOT_STATE_FROM_COMPOSITION"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12,
+    "jdk": "temurin-21.0.12+8"
+  },
+  "control": {
+    "class": "UPSTREAM_SPRING_FAMILY_TEST_PREPARATION",
+    "derivation": "GRADLE_TASKS_FROM_PROJECT_INSTRUMENTATION_SPRING",
+    "upstreamBoundary": "instrumentation/spring/**",
+    "entrypointsFile": "specs/poc-otel-spring-family-v2.tasks.txt",
+    "entrypointsFileSha256": "3a93d45f268589448baa5e5fd3c8055634ee4a4d7af685c7851c59dbec13ff0f",
+    "entrypointCount": 53,
+    "expectedReachedProjectCount": 148
+  },
+  "candidate": {
+    "changeClass": "LEAF_PRODUCTION_SOURCE",
+    "changePath": "instrumentation/spring/spring-boot-autoconfigure/src/main/java/io/opentelemetry/instrumentation/spring/autoconfigure/OpenTelemetryAutoConfiguration.java",
+    "changeOriginalSha256": "bd68a2761a21ce6a7f2f6002167783a75920d2f14f903dbcdfebe0fc9fbc4aae",
+    "changedProject": ":instrumentation:spring:spring-boot-autoconfigure",
+    "alternativeId": "otel-spring-autoconfigure-class-producers",
+    "entrypoints": [
+      ":instrumentation:spring:spring-boot-autoconfigure:compileJava",
+      ":instrumentation:spring:spring-boot-autoconfigure:compileJavaSpring3Java",
+      ":instrumentation:spring:spring-boot-autoconfigure:compileJavaSpring4Java",
+      ":instrumentation:spring:spring-boot-autoconfigure:compileTestJava"
+    ],
+    "expectedReachedProjectCount": 46,
+    "standardJarCache": {
+      "activation": "--cache-standard-jar-producers",
+      "expectedProducer": ":testing-common:jar",
+      "candidateOutcome": "FROM-CACHE",
+      "controlCacheEligible": false,
+      "managedRuntimeStarted": false
+    },
+    "requiredOutputRoots": [
+      "instrumentation/spring/spring-boot-autoconfigure/build/classes"
+    ]
+  },
+  "discovery": {
+    "adapterVersion": "gradle-runtime-v1",
+    "pipelineClass": "poc-otel-spring-family-v2",
+    "expectedProjectCount": 1024,
+    "expectedEntrypointCount": 53,
+    "expectedGraphDigest": "sha256:804d1018c588a072c8c4fd82e96cc35f10e9835de9b8ddf4bf64315701e0f971",
+    "expectedGraphSha256": "ce4dfd8f04c8ca4b9eae54fdd1e8912f35a0e46b4fa7c85ef823efc92f1e129b",
+    "expectedGeneratedManifestSha256": "3edfa630af179b4655dc9944b9069db09e3c094905e1dc7f95950c7f2ab2512d",
+    "complete": true,
+    "containsTestTasks": false,
+    "unknownRelationships": false
+  },
+  "measurement": {
+    "candidateSurface": "INSTALLED_BUILDOPT_IMPACT_TYPED_PRODUCERS_STANDARD_JAR_CACHE_NO_HOT_STATE",
+    "launcherOverheadIncluded": true,
+    "commonArguments": [
+      "--daemon",
+      "--offline",
+      "--build-cache",
+      "--parallel",
+      "--configuration-cache",
+      "--max-workers=12",
+      "--no-scan",
+      "--stacktrace"
+    ],
+    "onlinePreparationMeasured": false,
+    "sameCandidateNativeCacheSeedRestoredBeforeEveryArm": true,
+    "sharedCheckout": true,
+    "sharedGradleUserHome": true,
+    "sharedDaemon": true,
+    "controlCannotConsumeCandidateJarEntry": true,
+    "outputsRemovedBeforeEveryArm": true,
+    "fixedMutationAppliedAfterCacheRestore": true,
+    "warmupsPerArm": 1,
+    "pairs": 4,
+    "pairOrder": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
+    "maximumInterArmIdleGapMs": 5000,
+    "forbiddenRootBuildTaskType": "org.gradle.api.tasks.testing.Test",
+    "requiredOutputsComparedByteForByte": true,
+    "exactBoundHotStateEnabled": false,
+    "candidatePlanningPath": "FRESH_VALIDATION_EVERY_INVOCATION"
+  },
+  "valueGate": {
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositivePairs": 4,
+    "requiredOutputsIdentical": true,
+    "requiredOutputsNonEmpty": true,
+    "maximumProductAttributableFailures": 0,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedPairsMayBeDiscarded": false,
+    "parityAloneCountsAsValue": false
+  },
+  "fallback": {
+    "changePath": "gradle.properties",
+    "expectedMode": "FULL_GRAPH",
+    "expectedReason": "IMPACT_GLOBAL_CHANGE",
+    "expectedEntrypointsFile": "specs/poc-otel-spring-family-v2.tasks.txt",
+    "performanceClaim": false
+  },
+  "terminalDecisions": {
+    "qualifies": "QUALIFY_CLEAN_OTEL_COMPOSITION",
+    "failsValueGate": "RETAIN_CLEAN_COMPOSITION_EVIDENCE_ONLY",
+    "controlOrCandidateFails": "STOP_CLEAN_COMPOSITION_WITHOUT_RETRY"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "repositorySpecificProductRuleAdded": false,
+    "productionSelectionChanged": false,
+    "buildOwnedTestPreparationOnly": true,
+    "testSelectionChanged": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "publicReleaseRequired": false,
+    "previousTerminalExperimentUnchanged": true,
+    "exactBoundHotStateEnabled": false
+  }
+}
