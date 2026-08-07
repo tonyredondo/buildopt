@@ -74,8 +74,8 @@ buildopt_cleanup() {
 trap buildopt_cleanup EXIT
 chmod 0700 "${buildopt_root}"
 mkdir -p -- "${buildopt_root}/source" "${buildopt_root}/preflight-home" \
-    "${buildopt_root}/logs"
-chmod 0700 "${buildopt_root}/preflight-home"
+    "${buildopt_root}/package-gradle-home" "${buildopt_root}/logs"
+chmod 0700 "${buildopt_root}/preflight-home" "${buildopt_root}/package-gradle-home"
 
 buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
 buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
@@ -83,7 +83,8 @@ buildopt_runner_sha=$(sha256sum "${BASH_SOURCE[0]}" | awk '{print $1}')
 buildopt_guard_sha=$(sha256sum "${buildopt_guard}" | awk '{print $1}')
 (
     cd "${buildopt_repo_root}"
-    "${buildopt_repo_root}/packaging/linux/package.sh" \
+    env GRADLE_USER_HOME="${buildopt_root}/package-gradle-home" \
+        "${buildopt_repo_root}/packaging/linux/package.sh" \
         --version 0.3.0-dev --output "${buildopt_root}/package" >/dev/null
 )
 mkdir -p -- "${buildopt_root}/package-root" "${buildopt_root}/install"

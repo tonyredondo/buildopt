@@ -41,3 +41,9 @@ skip, shard, retry, or reorder tests; widen managed caching; add a
 repository-specific product rule; change production authority; or require a
 soak, design partner, or public release. The specification, runner, and both
 checkers must be committed before measurement.
+
+Protocol revision 2 assigns packaging its own private temporary Gradle home.
+The first attempt inherited a read-only global Gradle home and stopped while
+building the local package, before the source archive was downloaded and
+before any preflight, warm-up, or observation. The product, control, candidate,
+outputs, ordering, and value gate are unchanged; zero timing was accepted.
