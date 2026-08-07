@@ -204,20 +204,18 @@ buildopt-impact check \
   --generated-manifest buildopt-impact.generated.json
 ```
 
-For an owner-operated POC, execute the reviewed candidate without wiring an
-internal selection harness:
+For an owner-operated POC, commit `buildopt-qualified-profile.json` and execute
+the reviewed clean profile without wiring an internal selection harness:
 
 ```bash
 git diff --name-only --diff-filter=ACMR BASE_SHA HEAD_SHA > .buildopt-changes
-buildopt impact \
-  --repository-id owner/repository \
-  --pipeline-class pull-request \
-  --changes-file .buildopt-changes \
-  --gradle-option=--no-daemon
+buildopt poc --changes-file .buildopt-changes
 ```
 
 This explicit command is not autonomous production selection. It requires the
-current exact generated binding and may choose only a manifest alternative.
+current exact generated binding, reports its plan before execution and may
+choose only a manifest alternative. Its standard `Jar` adapter is disabled on
+the native/full-graph fallback path.
 Included builds, test-bearing alternatives, unsupported task types, missing
 projects, drift, unknown paths, and global changes use the original full
 entrypoints or reject invalid state before Gradle. Test Optimization-owned

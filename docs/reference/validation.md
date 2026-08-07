@@ -142,6 +142,7 @@ reference data, thresholds, or held-out results merely to obtain promotion.
 ./dev/check-poc-real-world-compatibility
 ./dev/check-poc-real-world-performance
 ./dev/check-build-optimization-performance
+./dev/check-poc-qualified-profile
 ```
 
 The commands validate the final POC decision, strict no-value/no-action
@@ -186,6 +187,11 @@ positive pairs, 4,062 exact outputs and full fallback. Validate it with
 `./dev/check-poc-third-repository-transfer-v1-result` and its negative fixtures
 with `./dev/test-poc-third-repository-transfer-v1`. The result remains
 output-scoped POC transfer evidence.
+
+`check-poc-qualified-profile` validates the usability layer added after that
+transfer: strict repository config, candidate-only standard-`Jar` activation,
+the machine-readable plan emitted before Gradle, rejected mechanism expansion,
+and native/full-graph fallback. It does not rerun or reinterpret any timing.
 
 `check-poc-breadth` accepts both a passing and a failing decision document and
 recomputes all 64 observations. The post-attribution repeat retains the narrow

@@ -76,14 +76,12 @@ explicit POC candidate:
 
 ```bash
 git diff --name-only --diff-filter=ACMR BASE_SHA HEAD_SHA > .buildopt-changes
-buildopt impact \
-  --repository-id owner/repository \
-  --pipeline-class pull-request \
-  --changes-file .buildopt-changes \
-  --gradle-option=--no-daemon
+buildopt poc --changes-file .buildopt-changes
 ```
 
-Resolve `BASE_SHA` and `HEAD_SHA` from immutable provider revision fields; do
+Commit the repository-owned qualified profile before using this command. It
+enables only Build Impact and the exact standard `Jar` adapter for a selected
+alternative; fallback is native full graph. Resolve `BASE_SHA` and `HEAD_SHA` from immutable provider revision fields; do
 not infer a branch name or silently accept a shallow/empty diff. Keep every
 Test-owned command as a separate unchanged workflow step. The command is an
 owner-operated POC candidate and never substitutes for `BIA-002` production

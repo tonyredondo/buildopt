@@ -23,6 +23,47 @@ Launcher-owned `BUILDOPT_PLUGIN_*` and `BUILDOPT_GATEWAY_*` rendezvous values
 are internal outputs. Do not prepopulate them; the launcher removes inherited
 values and creates fresh invocation context.
 
+## Qualified POC profile
+
+`buildopt poc` reads `buildopt-qualified-profile.json` from the repository root
+unless `--config` names another clean repository-relative file. A minimal
+profile is:
+
+```json
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v1",
+  "profileVersion": 1,
+  "profileId": "clean-build-impact-plus-exact-standard-jar",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "owner/repository",
+  "pipelineClass": "pull-request",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": true,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": false
+  },
+  "gradleOptions": ["--no-daemon"]
+}
+```
+
+The repository and pipeline values must match the Build Impact manifest. The
+mechanism booleans are intentionally exact, not feature toggles: changing any
+disabled value to `true`, disabling either qualified mechanism, adding unknown
+fields, or using an unsafe path rejects the profile before Gradle. The complete
+executable example lives in
+[`fixtures/build-impact/synthetic-repository/buildopt-qualified-profile.json`](../../fixtures/build-impact/synthetic-repository/buildopt-qualified-profile.json).
+
 ## Session ingest and export
 
 | Variable | Secret | Meaning |

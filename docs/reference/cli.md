@@ -30,6 +30,24 @@ internal JAR paths; users should not configure them.
 `BUILDOPT_BYPASS=1 buildopt gradle ...` invokes the Wrapper without the
 BuildOpt init script or plugin.
 
+### Run the qualified POC profile
+
+```text
+buildopt poc --changes-file PATH [--config PATH] [--timings-file PATH]
+```
+
+The default config is the repository-owned
+`buildopt-qualified-profile.json`. The command validates the exact clean
+profile and emits a `buildopt.poc/qualified-profile-plan/v1` JSON object before
+Gradle starts. The plan exposes selection/fallback reason, entrypoints,
+affected scope, omitted-project count, expected outputs, preserved Test-owned
+checks, enabled adapters and every disabled mechanism.
+
+Only native Gradle cache, Build Impact and the exact standard-`Jar` adapter are
+permitted. The adapter activates only for a selected repository alternative;
+unknown/global changes and bypass use native full-graph execution. This is a
+reviewable POC command, not autonomous or production authorization.
+
 ### Run an explicit Build Impact POC candidate
 
 ```text

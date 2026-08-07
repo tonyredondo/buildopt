@@ -48,6 +48,22 @@ aims to answer three questions safely:
 3. Does the complete installed path beat an already optimized native Gradle
    baseline?
 
+The qualified mechanisms are now exposed through one explicit repository-owned
+POC command:
+
+```text
+buildopt poc --changes-file .buildopt-changes
+```
+
+`buildopt-qualified-profile.json` binds the repository, pipeline, Build Impact
+state and clean mechanism set. Before Gradle starts, the command reports the
+selected or full graph, exact adapters, expected outputs and disabled
+mechanisms. It enables only Build Impact plus the exact standard-`Jar` adapter
+for a qualified alternative; Safe Cache, Runtime Tuning, Hot State, `Copy` and
+Shared/Edge remain outside this path. Unknown/global changes and bypass use
+native full-graph execution. This improves POC usability without broadening the
+performance or production claim.
+
 Unknown changes, unqualified tasks, failed validation, or
 `BUILDOPT_BYPASS=1` restore the original native/full-graph path.
 

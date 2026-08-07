@@ -18,7 +18,7 @@ const (
 	exitCannotExecute = 126
 	exitNotFound      = 127
 	exitConfiguration = 78
-	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt doctor\n"
+	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt poc --changes-file PATH [options]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt doctor\n"
 	bypassEnvironment = "BUILDOPT_BYPASS"
 )
 
@@ -64,21 +64,39 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		_, _ = io.WriteString(stdout, impactUsage)
 		return 0
 	}
+	if len(args) == 2 && args[0] == "poc" && isHelp(args[1:]) {
+		_, _ = io.WriteString(stdout, qualifiedPOCProfileUsage)
+		return 0
+	}
 	gradleEnvironment := map[string]string(nil)
 	var gradleManagedL1 *managedL1Config
 	gradleNativeOnly := false
 	gradleLocalOnly := false
 	impactStandardJarCache := false
 	impactStandardCopyCache := false
-	if len(args) > 0 && args[0] == "impact" {
+	qualifiedPOCProfile := false
+	if len(args) > 0 && (args[0] == "impact" || args[0] == "poc") {
 		impactStartedAt := time.Now()
-		impact, err := prepareImpactInvocation(
-			args[1:],
-			os.Getenv(bypassEnvironment) == "1",
-		)
+		var impact impactInvocation
+		var err error
+		if args[0] == "poc" {
+			impact, err = prepareQualifiedPOCProfileInvocation(
+				args[1:],
+				os.Getenv(bypassEnvironment) == "1",
+			)
+		} else {
+			impact, err = prepareImpactInvocation(
+				args[1:],
+				os.Getenv(bypassEnvironment) == "1",
+			)
+		}
 		if err != nil {
 			_, _ = fmt.Fprintf(stderr, "buildopt: Build Impact POC unavailable: %v\n", err)
-			_, _ = io.WriteString(stderr, impactUsage)
+			if args[0] == "poc" {
+				_, _ = io.WriteString(stderr, qualifiedPOCProfileUsage)
+			} else {
+				_, _ = io.WriteString(stderr, impactUsage)
+			}
 			return exitConfiguration
 		}
 		if impact.timingsPath != "" {
@@ -116,8 +134,15 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		if impact.hotStateHit {
 			_, _ = fmt.Fprintln(stderr, "buildopt: exact-bound Build Impact POC hot state reused")
 		}
+		if impact.qualifiedProfile != nil {
+			if err := writeQualifiedPOCProfilePlan(stderr, *impact.qualifiedProfile); err != nil {
+				_, _ = fmt.Fprintf(stderr, "buildopt: qualified POC profile plan unavailable: %v\n", err)
+				return exitConfiguration
+			}
+		}
 		impactStandardJarCache = impact.standardJarCache
 		impactStandardCopyCache = impact.standardCopyCache
+		qualifiedPOCProfile = impact.qualifiedProfile != nil
 		args = append([]string{"gradle"}, impact.gradleArgs...)
 	}
 	if len(args) > 0 && args[0] == "gradle" {
@@ -128,7 +153,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			return exitConfiguration
 		}
 		getenv := os.Getenv
-		if explicitStandardJarCache || impactStandardJarCache || impactStandardCopyCache {
+		if qualifiedPOCProfile {
+			getenv = qualifiedPOCProfileEnvironment(os.Getenv, impactStandardJarCache)
+		} else if explicitStandardJarCache || impactStandardJarCache || impactStandardCopyCache {
 			getenv = func(name string) string {
 				switch name {
 				case gradleStandardJarCacheEnvironment:

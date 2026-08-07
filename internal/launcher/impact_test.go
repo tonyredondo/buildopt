@@ -418,7 +418,7 @@ func impactTestRepository(t *testing.T) string {
 	}
 	source := filepath.Join(filepath.Dir(current), filepath.FromSlash("../../fixtures/build-impact/synthetic-repository"))
 	destination := t.TempDir()
-	for _, name := range []string{"buildopt-impact-manifest.json", "buildopt-impact-graph.generated.json", "buildopt-impact.generated.json"} {
+	for _, name := range []string{"buildopt-impact-manifest.json", "buildopt-impact-graph.generated.json", "buildopt-impact.generated.json", "buildopt-qualified-profile.json"} {
 		raw, err := os.ReadFile(filepath.Join(source, name))
 		if err != nil {
 			t.Fatal(err)

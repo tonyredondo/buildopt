@@ -297,18 +297,20 @@ averaged 4,609.5 ms and the unchanged installed clean profile averaged 2,070
 ms, saving 2,539.5 ms/55.09% with 4/4 positive pairs, a
 +1,625.5..+4,093-ms interval, 4,062 identical outputs, and full fallback.
 
-The next block should be **qualified-profile usability and scope synthesis**:
+The **qualified-profile usability and scope synthesis** block is now complete:
 
-1. expose one explicit POC command/configuration for the clean qualified
-   profile rather than requiring experiment-only flags;
-2. keep activation repository-owned and opt-in, because only declared output
-   scopes are proven;
-3. report the selected/full graph, exact adapters and expected outputs before
-   execution so users can review the optimization;
-4. replay the same no-product-rule contract on future repositories only when a
-   materially new workload class appears;
-5. keep Runtime, Hot State, Copy and unqualified cache paths disabled until a
-   new trace supplies an independent causal hypothesis.
+1. `buildopt poc --changes-file PATH` reads one repository-owned versioned
+   profile instead of experiment-only flags;
+2. activation remains opt-in and limited to declared output scopes;
+3. the CLI reports the selected/full graph, exact adapters, expected outputs
+   and disabled mechanisms before Gradle starts;
+4. fallback uses the original entrypoints without the standard-`Jar` adapter;
+5. Runtime, Hot State, Copy, Safe Cache and Shared/Edge are forced out of this
+   command until separate evidence qualifies them.
+
+The next bounded block should validate this exact installed command and config
+on the already qualified OpenTelemetry and Kafka revisions. That is an adoption
+and fallback proof, not a new timing experiment or a broader performance claim.
 
 Normal-build task tails, direct test-build JAR reuse and the trace-selected
 six-worker Runtime candidate are closed for the current evidence. They should

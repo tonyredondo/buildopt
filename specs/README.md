@@ -331,3 +331,11 @@ It binds the public revision and inputs, Gradle 9.2.1/JDK 25 workload, complete
 64-project graph, central `clients` mutation, 64-to-3 project selection,
 required test-preparation outputs, full-graph fallback, four-pair budget, and
 unchanged POC value gate without adding Kafka-specific product logic.
+
+`poc-qualified-profile-v1.json` and `poc-qualified-profile-v1.md` fix the
+explicit repository-owned POC activation that follows that transfer.
+`buildopt poc --changes-file PATH`
+loads `buildopt-qualified-profile.json`, reports the complete selected or
+fallback plan before Gradle starts, enables only Build Impact plus the exact
+standard-`Jar` adapter on a qualified alternative, and forces Safe Cache,
+Runtime Tuning, Hot State, standard `Copy`, and Shared/Edge out of this path.

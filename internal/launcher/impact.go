@@ -59,6 +59,7 @@ func validImpactGradleOption(value string) bool {
 type impactInvocation struct {
 	gradleArgs        []string
 	plan              buildimpact.POCCandidatePlan
+	qualifiedProfile  *qualifiedPOCProfilePlan
 	timingsPath       string
 	preparationNs     int64
 	hotStateHit       bool

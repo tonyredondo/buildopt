@@ -66,7 +66,7 @@ done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
     "**Overall status:** \`POC PERFORMANCE ROADMAP COMPLETE\`"
-    "**Current phase:** \`POC QUALIFIED-PROFILE SYNTHESIS NEXT\`"
+    "**Current phase:** \`POC QUALIFIED-PROFILE ADOPTION VALIDATION NEXT\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"
@@ -157,6 +157,9 @@ buildopt_required_tracker_text=(
     "| \`POC-REMOTE-CACHE-VALUE-001\` | 9 | Compare BuildOpt Shared/Edge Cache with Gradle native remote cache using controlled latency, bandwidth, object size, hit rate, and runner locality | \`DONE\` | \`E-221..222\`"
     "| \`POC-THIRD-REPOSITORY-TRANSFER-001\` | 10 | Transfer the unchanged qualified profile to one substantial public repository only when it exercises a new workload class or tests a current assumption | \`DONE\` | \`E-223..224\`: Kafka 4.3.1 preregistration and qualified result"
     "| \`POC-THIRD-REPOSITORY-TRANSFER-001\` | 10 | Transfer the unchanged qualified profile to one substantial public repository"
+    "| \`POC-QUALIFIED-PROFILE-001\` | Expose the clean qualified profile through one reviewable repository-owned POC command with native full-graph fallback | \`DONE\`"
+    "| \`POC-QUALIFIED-PROFILE-G01\` | Candidate plans expose scope, outputs, adapters and disabled mechanisms; unknown/global/bypass paths retain native full-graph entrypoints without an adapter | \`DONE\` | \`E-225\`"
+    "| \`E-225\` | 2026-08-08 | \`POC-QUALIFIED-PROFILE-001\`, \`POC-QUALIFIED-PROFILE-G01\`"
     "| \`POC-PERF-NEXT-G01\` | The complete qualified profile beats optimized native Gradle by at least 500 ms and 2%"
     "| \`A1-G06\` | Safe Cache is non-regressive versus optimized native cache"
     "| \`B-G03\` | Runtime Tuning exceeds the POC accelerator threshold"
@@ -199,5 +202,5 @@ if [[ $(grep -Fc "| \`OPS-001/B\` |" <<<"${buildopt_readiness}") != 1 ]]; then
     exit 1
 fi
 
-printf 'RFC/tracker consistency OK: %s accepted decisions, POC performance roadmap complete and profile synthesis next\n' \
+printf 'RFC/tracker consistency OK: %s accepted decisions, qualified POC profile explicit and adoption validation next\n' \
     "${buildopt_decision_count}"

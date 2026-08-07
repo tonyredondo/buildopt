@@ -63,6 +63,24 @@ manifest-enumerated alternative; unknown/global changes retain the original
 entrypoints. This explicit POC command is not `BIA-002` production promotion
 and never selects or removes Test Optimization-owned checks.
 
+## Qualified POC profile
+
+Once a repository has reviewed and committed the Build Impact inputs, the
+short recommended POC command is:
+
+```bash
+buildopt poc --changes-file .buildopt-changes
+```
+
+It reads `buildopt-qualified-profile.json` by default. Before Gradle starts it
+prints one machine-readable plan containing the selected/full graph,
+entrypoints, expected outputs, preserved Test-owned checks, enabled exact
+adapters and disabled mechanisms. Only Build Impact and the standard `Jar`
+adapter are accepted. Safe Cache, Runtime Tuning, Hot State, standard `Copy`,
+Shared/Edge and session integration are excluded from this command. A fallback
+uses the manifest's original entrypoints without the adapter. This remains an
+explicit owner-operated POC, not production authorization.
+
 The suite covers empty, quoted, whitespace, wildcard, Unicode, newline, and literal `--` arguments; inherited cwd, environment, and standard streams; success and non-zero child statuses; usage; launch failures; process-group isolation; signal forwarding through a child process tree; and the local bypass described below.
 
 ## Process and signal handling

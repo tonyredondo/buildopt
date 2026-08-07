@@ -101,8 +101,9 @@ Gradle. Adopt it only after reviewing and committing the repository manifest
 and generated graph described in the
 [Build Impact workflow](../guides/product-workflows.md#build-impact).
 
-For a pull request, create an exact changed-path input and execute the explicit
-candidate:
+For a pull request, commit the qualified profile described in the
+[configuration reference](../reference/configuration.md#qualified-poc-profile),
+create an exact changed-path input and execute the reviewable profile:
 
 ```bash
 git diff --name-only --diff-filter=ACMR BASE_SHA HEAD_SHA > .buildopt-changes
@@ -110,15 +111,16 @@ buildopt-impact check \
   --repository . \
   --repository-id owner/repository \
   --pipeline-class pull-request
-buildopt impact \
-  --repository-id owner/repository \
-  --pipeline-class pull-request \
-  --changes-file .buildopt-changes \
-  --gradle-option=--no-daemon
+buildopt poc --changes-file .buildopt-changes
 ```
 
-The command prints whether it selected the reviewed candidate or retained the
-full graph. It does not select tests or grant production promotion. Keep the
+This short command is available in source-built packages from current `main`.
+The published `v0.2.0` package uses the equivalent explicit `buildopt impact`
+form until a later tagged release.
+
+The command prints the complete selected/fallback plan, exact adapters and
+expected outputs before Gradle begins. It does not select tests or grant
+production promotion. Keep the
 existing Test-owned commands in the workflow, compare required outputs between
 candidate and full builds, and treat the measured result as POC evidence.
 

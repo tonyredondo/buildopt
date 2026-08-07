@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "buildopt.specs/poc-qualified-profile/v1",
+  "profileId": "clean-build-impact-plus-exact-standard-jar",
+  "activation": "EXPLICIT_REPOSITORY_OWNED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "enabledMechanisms": [
+    "NATIVE_GRADLE_CACHE",
+    "BUILD_IMPACT",
+    "STANDARD_JAR"
+  ],
+  "disabledMechanisms": [
+    "HOT_STATE",
+    "RUNTIME_TUNING",
+    "SAFE_CACHE",
+    "SHARED_EDGE_CACHE",
+    "STANDARD_COPY"
+  ],
+  "planRequiredBeforeExecution": true,
+  "productionAuthorized": false,
+  "valueGate": {
+    "minimumMeanSavedMs": 500,
+    "minimumMeanSavedPercent": 2,
+    "positivePairedLowerBound": true,
+    "identicalRequiredOutputs": true,
+    "zeroProductFailures": true,
+    "fallbackRequired": true
+  }
+}

@@ -2998,6 +2998,20 @@ the interval is +1,625.5..+4,093 ms, and all 4,062 required outputs match. The
 negative suite rejects hot-state activation, output drift, and a weakened
 fallback.
 
+### Qualified POC profile
+
+Validate the short repository-owned activation that follows the performance
+roadmap:
+
+```bash
+./dev/check-poc-qualified-profile
+```
+
+The check exercises candidate selection, native/full-graph fallback, strict
+configuration decoding, disabled-mechanism rejection, pre-execution JSON plan
+output and child-environment isolation. It does not rerun the performance
+matrix or create a production policy.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

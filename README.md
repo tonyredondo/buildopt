@@ -72,10 +72,12 @@ recommended rollout order. Contributors who want the complete synthetic lab
 can use the [source quickstart](./docs/getting-started/quickstart.md).
 
 The cache-compatible command is the zero-configuration starting point. The
-measured accelerator is Build Impact: after committing a reviewed manifest and
-generated graph, run the explicit POC candidate with `buildopt impact`. It
-selects only a repository-authorized alternative and restores the full graph
-for unknown/global changes or `BUILDOPT_BYPASS=1`. On the pinned Spring
+measured accelerator is the qualified POC profile: after committing a reviewed
+Build Impact manifest, generated graph and `buildopt-qualified-profile.json`,
+run `buildopt poc --changes-file .buildopt-changes`. It reports the selected or
+full graph, exact adapters and expected outputs before Gradle starts. Only
+Build Impact plus the exact standard-`Jar` adapter can activate; unknown/global
+changes and `BUILDOPT_BYPASS=1` restore native full-graph execution. On the pinned Spring
 Framework workload, direct discovery saved 28.72%; the installed command still
 saved 15.76% after package, launcher, manifest and graph-validation overhead,
 with 8/8 positive pairs and identical declared outputs. See the
@@ -85,6 +87,10 @@ faster, while a shared `spring-core` to `spring-jms` scope averaged 10.89%
 faster but failed the preregistered 4/4-positive stability rule. BuildOpt
 therefore keeps a bounded output-scope claim rather than generalizing to every
 change.
+
+`buildopt poc` is available in source-built packages from the current `main`.
+The published `v0.2.0` package continues to use the longer `buildopt impact`
+form until a later explicitly authorized release.
 
 The checked scorecard measures each optimization separately and then measures
 the complete public path without adding unrelated percentages. Safe Cache and

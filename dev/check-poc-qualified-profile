@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+buildopt_policy="${buildopt_root}/specs/poc-qualified-profile-v1.json"
+buildopt_example="${buildopt_root}/fixtures/build-impact/synthetic-repository/buildopt-qualified-profile.json"
+
+for buildopt_file in "${buildopt_policy}" "${buildopt_example}"; do
+    jq -e . "${buildopt_file}" >/dev/null
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-qualified-profile/v1" and
+    .profileId == "clean-build-impact-plus-exact-standard-jar" and
+    .activation == "EXPLICIT_REPOSITORY_OWNED" and
+    .claimScope == "DECLARED_OUTPUTS_ONLY" and
+    .fallback == "NATIVE_FULL_GRAPH" and
+    .enabledMechanisms == ["NATIVE_GRADLE_CACHE", "BUILD_IMPACT", "STANDARD_JAR"] and
+    .disabledMechanisms == ["HOT_STATE", "RUNTIME_TUNING", "SAFE_CACHE", "SHARED_EDGE_CACHE", "STANDARD_COPY"] and
+    .planRequiredBeforeExecution == true and
+    .productionAuthorized == false and
+    .valueGate.minimumMeanSavedMs == 500 and
+    .valueGate.minimumMeanSavedPercent == 2 and
+    .valueGate.positivePairedLowerBound == true and
+    .valueGate.identicalRequiredOutputs == true and
+    .valueGate.zeroProductFailures == true and
+    .valueGate.fallbackRequired == true
+' "${buildopt_policy}" >/dev/null
+
+jq -e '
+    .schemaVersion == "buildopt.poc/qualified-profile/v1" and
+    .profileVersion == 1 and
+    .profileId == "clean-build-impact-plus-exact-standard-jar" and
+    .ownership == "REPOSITORY_COMMITTED" and
+    .claimScope == "DECLARED_OUTPUTS_ONLY" and
+    .fallback == "NATIVE_FULL_GRAPH" and
+    .mechanisms.buildImpact == true and
+    .mechanisms.standardJarAdapter == true and
+    .mechanisms.safeCache == false and
+    .mechanisms.runtimeTuning == false and
+    .mechanisms.hotState == false and
+    .mechanisms.standardCopyAdapter == false and
+    .mechanisms.sharedEdgeCache == false
+' "${buildopt_example}" >/dev/null
+
+"${buildopt_root}/dev/run" --toolchain go -- \
+    go test -count=1 ./internal/launcher -run '^TestQualifiedPOCProfile'
+
+printf 'Qualified POC profile OK: repository-owned plan, clean mechanisms, native full-graph fallback\n'

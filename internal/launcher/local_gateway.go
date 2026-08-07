@@ -660,6 +660,7 @@ var reservedChildEnvironment = []string{
 	serverURLEnvironment,
 	serverTokenEnvironment,
 	exportContextEnvironment,
+	gradleSafeCacheEnvironment,
 	gradleCheckstyleHeapEnvironment,
 	gradleStandardJarCacheEnvironment,
 	gradleStandardCopyCacheEnvironment,
