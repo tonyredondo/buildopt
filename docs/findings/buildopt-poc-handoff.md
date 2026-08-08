@@ -41,15 +41,20 @@
   reached projects to three and exact `Jar` reuse restored `:generator:jar`.
   Installed BuildOpt averaged **55.09% faster** (2,539.5 ms saved), with 4/4
   positive pairs and 4,062 byte-identical outputs.
-- **The public POC command now consumes that profile end to end.** An installed
-  native package replayed the committed profile on the fixed OpenTelemetry and
-  Kafka revisions, restored the exact standard `Jar`, reproduced 125 and 4,062
-  historical outputs, and completed native full-graph fallback for global
-  changes. This is adoption evidence; it deliberately adds no new timing claim.
-- **Kafka packaging now qualifies independently.** For a fixed central client
-  change, native root `assemble` averaged 8,054 ms and installed BuildOpt
-  averaged 3,416.5 ms: **57.58% faster**, saving 4,637.5 ms with 4/4 positive
-  pairs, an exact 10.2-MB client JAR, zero product failures and full fallback.
+- **The public POC command now consumes repository-owned profiles end to end.**
+  An installed native package replayed the committed profile on the fixed
+  OpenTelemetry and Kafka revisions, reproduced 125 and 4,062 historical
+  outputs, and completed native full-graph fallback for global changes.
+  OpenTelemetry restored an exact standard `Jar`; Kafka restored
+  `:generator:jar`, while its required shaded client artifact is not a standard
+  `Jar`. This is adoption evidence; it deliberately adds no new timing claim.
+- **Kafka packaging now qualifies independently as Build Impact.** For a fixed
+  central client change, native root `assemble` averaged 8,054 ms and installed
+  BuildOpt averaged 3,416.5 ms: **57.58% faster**, saving 4,637.5 ms with 4/4
+  positive pairs, an exact 10.2-MB client JAR, zero product failures and full fallback.
+  A later composition seed proved `:clients:jar` is skipped and the required
+  artifact is produced by custom `:clients:shadowJar`, so this saving is not
+  evidence for the standard-`Jar` adapter.
 
 ## Product Idea
 
@@ -151,7 +156,7 @@ unfavorable observations. Percentages from different rows are not additive.
 | Experiment | Result | Interpretation |
 |---|---:|---|
 | Clean Impact + exact standard-`Jar` profile | **55.09% faster**, 2,539.5 ms saved, 4/4 positive pairs | The unchanged installed profile reduced the conservative graph from 64 projects to three and restored `:generator:jar`; interval +1,625.5..+4,093 ms, 4,062 identical outputs, no Gradle `Test`, and successful full-graph fallback. |
-| Client packaging through installed profile | **57.58% faster**, 4,637.5 ms saved, 4/4 positive pairs | Native root `assemble` averaged 8,054 ms; BuildOpt selected `:clients:jar` and averaged 3,416.5 ms. The smallest pair saving was 4,050 ms; the exact 10.2-MB JAR and global fallback passed. |
+| Client packaging through installed profile | **57.58% faster**, 4,637.5 ms saved, 4/4 positive pairs | Native root `assemble` averaged 8,054 ms; BuildOpt selected the three-project packaging scope and averaged 3,416.5 ms. The smallest pair saving was 4,050 ms; the exact 10.2-MB JAR and global fallback passed. Later diagnosis attributes this to Build Impact scope reduction, not standard-`Jar` reuse. |
 
 ## Latest Generalization and Next Work
 
@@ -227,8 +232,14 @@ The unchanged Edge mechanism then transferred to Kafka's real
 profile was frozen before cache timing. Direct Shared averaged 8,885.25 ms and
 Edge 7,534 ms, saving 1,351.25 ms/15.21%; all four pairs were positive, the
 interval was +788.25..+1,883 ms, four cache-hit outcomes matched, and all 4,062
-required outputs were identical. This justifies testing a complete composition
-with the Kafka-qualified Build Impact/Jar profile, not adding percentages.
+required outputs were identical.
+
+The attempted Kafka composition then stopped before timing because its
+standard-`Jar` premise was false: `:clients:jar` was `SKIPPED` and custom
+`:clients:shadowJar` produced the required artifact. Shared received zero
+objects, Edge was never opened, and no warm-up or measured pair ran. This
+corrects the next step: compose only Kafka-qualified Build Impact and Edge
+locality, without adding percentages or crediting the standard-`Jar` adapter.
 
 The third-repository transfer then applied the unchanged clean profile to
 Apache Kafka 4.3.1, a 64-project Java/Scala/generated-source build. Native root
@@ -262,10 +273,11 @@ up-to-date; their 4,249-ms cumulative duration overlaps. The candidate task
 interval was 1,581 ms shorter, while BuildOpt's largest own phase was only
 1.238233 ms. No correction is authorized and verification stays native.
 
-The next recommended performance block transfers the qualified Edge-locality
-result unchanged to another repository and an independently derived network
-profile, comparing end to end with Gradle's native remote cache. The POC should
-broaden Edge only if exact outputs, fallback and the same value gate pass.
+The next recommended performance block composes qualified Edge locality with
+the Kafka Build Impact scope while excluding the invalid standard-`Jar`
+premise. It must preserve the exact shaded output, full-graph fallback and the
+same Shared origin, and report one end-to-end effect rather than adding the
+existing component percentages.
 
 ## Boundaries and References
 
@@ -283,6 +295,7 @@ production operations are outside the current scope.
 - [Qualified clean OpenTelemetry composition](../../benchmarks/results/poc-otel-clean-composition-v1.json)
 - [Build Impact generalization evidence](../../benchmarks/results/poc-impact-generalization-v1.json)
 - [Standard-Copy cascade evidence](../../benchmarks/results/poc-standard-copy-cascade-v1.json)
+- [Kafka remote-composition terminal evidence](../../benchmarks/results/poc-qualified-remote-composition-v1.json)
 - [Spring test-build stop evidence](../../benchmarks/results/poc-spring-test-build-optimization-v1.json)
 - [Optimization-overhead ablation](../../benchmarks/results/poc-optimization-overhead-ablation-v1.json)
 - [Targeted Runtime decision](../../benchmarks/results/poc-runtime-research-v1.json)

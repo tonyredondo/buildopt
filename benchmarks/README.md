@@ -567,6 +567,26 @@ mechanism is enabled, product failures are zero, and a `gradle.properties`
 change completes native root `assemble` outside the candidate graph. The claim
 is limited to this Kafka client-packaging change shape.
 
+### Kafka remote-composition precondition result
+
+The [qualified remote-composition evidence](./results/poc-qualified-remote-composition-v1.json)
+is a terminal diagnostic, not a timing result. Before committing any cache
+object or opening Edge, the installed seed proved that Kafka's required
+`kafka-clients-4.3.1.jar` is produced by custom `:clients:shadowJar` while
+`:clients:jar` is `SKIPPED`. The observed shaded artifact also did not match the
+historical standard-`Jar` premise.
+
+The independent checker therefore accepts only
+`STOP_KAFKA_REMOTE_COMPOSITION_INVALID_STANDARD_JAR_PRECONDITION`: zero Shared
+objects, no Edge server, no warm-up and zero measured pairs. The prior 57.58%
+Kafka packaging result remains valid for its fixed Build Impact scope, but it
+must not be attributed to the standard-`Jar` adapter. The corrected next
+experiment may compose Kafka-qualified Build Impact with Edge locality only.
+
+```bash
+./dev/check-poc-qualified-remote-composition-v1-result
+```
+
 The three mechanism-development reports remain historical inputs. The strict
 synthetic reports prove bounded combined value. The public-repository
 compatibility and early performance reports showed that the first generic

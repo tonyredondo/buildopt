@@ -134,16 +134,22 @@ contract](./specs/poc-value-validation-v1.md) and
 
 The same repository-owned profile has also been replayed through an installed
 package on those fixed OpenTelemetry and Kafka revisions. Both candidates
-reproduced their historical outputs and standard-`Jar` cache hit; global
-changes completed the native full graph. This is usability and fallback
-evidence only, so the earlier percentages remain unchanged.
+reproduced their historical outputs; OpenTelemetry restored its standard JAR
+and Kafka restored `:generator:jar`. Global changes completed the native full
+graph. This is usability and fallback evidence only, so the earlier
+percentages remain unchanged.
 
 Fresh packaging evidence now extends the Kafka claim beyond test preparation.
 For the fixed `Metadata.java` change, native root `assemble` averaged 8,054 ms
 and installed `buildopt poc` averaged 3,416.5 ms, saving 4,637.5 ms/**57.58%**.
 All 4/4 pairs were positive, the smallest saving was 4,050 ms, the 10.2-MB
 client JAR was byte-identical, and the global fallback passed. This qualifies
-only the declared Kafka client-packaging scope.
+only the declared Kafka client-packaging scope. A subsequent composition seed
+proved that the required shaded artifact is produced by `:clients:shadowJar`
+while `:clients:jar` is skipped. It stopped before any timing, so the 57.58%
+result is Build Impact evidence and is not attributed to the standard-`Jar`
+adapter. The corrected next experiment will compose Build Impact with Edge
+locality only.
 
 ## Choose what to do next
 

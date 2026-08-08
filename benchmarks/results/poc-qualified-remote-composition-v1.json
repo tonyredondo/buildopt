@@ -1,0 +1,59 @@
+{
+  "boundaries": {
+    "designPartnerRequired": false,
+    "hotStateChanged": false,
+    "productionReadinessClaimed": false,
+    "proofOfConcept": true,
+    "runtimeTuningChanged": false,
+    "safeCacheChanged": false,
+    "sameCommittedObjectBytes": true,
+    "sameRequiredOutput": true,
+    "sameSharedOrigin": true,
+    "sameSourceAndChange": true,
+    "soakRequired": false,
+    "standardCopyChanged": false,
+    "testExecutionChanged": false,
+    "testOptimizationModified": false,
+    "testSelectionChanged": false,
+    "testTasksForbidden": true,
+    "universalSavingsClaimed": false
+  },
+  "buildoptRevision": "12bc3071035254c03bcec50170138ad5c6ebba8b",
+  "capturedAt": "2026-08-08T12:45:10Z",
+  "componentEvidence": {
+    "kafkaEdgeLocalitySha256": "04c73df729556111178522bfab6cb69b612a039fbbf8feb49b29581dcebbce53",
+    "kafkaImpactAndJarSha256": "d2efc3519bd9930b9cbf0e351b02cf6a52d610e7ee67caed1ebd0849feda316a"
+  },
+  "decision": "STOP_KAFKA_REMOTE_COMPOSITION_INVALID_STANDARD_JAR_PRECONDITION",
+  "dependencyCacheSha256": "efb41b3638e0e192826a0f82fa801e92b27c19f3be8aa6e1157dabdbe35ef689",
+  "diagnostic": {
+    "actualProducerIsExactStandardJar": false,
+    "actualProducingTask": ":clients:shadowJar",
+    "clientsJarOutcome": "SKIPPED",
+    "edgeOpened": false,
+    "expectedOutputSha256": "894d8e71aa10070f7c73212cfcce0489401a00c3217a75f2f3d55c8e6da4738a",
+    "measuredPairsCompleted": 0,
+    "observedOutputSha256": "08422ce94a6709d7d5b50bffeb7a97fb3078cd30a37d411ad2215bd54189f944",
+    "phase": "UNMEASURED_SEED_OUTPUT_VALIDATION",
+    "sharedObjectsCommitted": 0,
+    "warmupsCompleted": 0
+  },
+  "harnessSha256": "920cadf228237f5c9d70f42d7836f6169ad3cc7a4016021abaf7768e3058aaba",
+  "installedAssets": {
+    "binarySha256": "e8329a71f935ea63074a9dd8f4447abbe5c3de75eaca6052535cf226134f98d9",
+    "initScriptSha256": "0dc9260649627514643133f5bf971042aee064558eab232ab75f3c62af21cd57",
+    "pluginJarSha256": "e44760ffb3820f754a7fc68a67480330f4e4347671950e8a1b456daa2d51fee2"
+  },
+  "repository": {
+    "gradleVersion": "9.2.1",
+    "jdk": "temurin-25.0.3+9",
+    "nameWithOwner": "apache/kafka",
+    "releaseTag": "4.3.1",
+    "revision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48"
+  },
+  "runnerScriptSha256": "8ddf9fd173248bfbae70eeb661def307fcf9fd3302baad968b51f4e3e7bc063b",
+  "schemaVersion": "buildopt.evidence/poc-qualified-remote-composition/v1",
+  "sourceArchiveSha256": "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2",
+  "specSha256": "678ad2959cc3eedc0244dba6733a2a63fd11d1dd6d1e85d64360336b92b5cc8e",
+  "workItem": "POC-QUALIFIED-REMOTE-COMPOSITION-001"
+}

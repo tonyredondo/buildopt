@@ -2971,12 +2971,10 @@ is faster than another remote origin.
 
 ### Qualified Kafka remote composition
 
-`POC-QUALIFIED-REMOTE-COMPOSITION-001` measures one end-to-end effect instead
-of adding the independent Kafka percentages. Native Gradle runs the full
-`assemble` graph against Shared. The installed BuildOpt candidate selects
-`:clients:jar`, enables the exact standard-`Jar` adapter and reads the same
-committed objects through prewarmed Edge. Both arms retain the fixed change,
-dependencies, output JAR, 12-worker execution and 337-ms/6,994,831-B/s profile.
+`POC-QUALIFIED-REMOTE-COMPOSITION-001` preregistered one end-to-end effect
+instead of adding independent Kafka percentages. Its candidate assumed that
+the required client artifact was produced by exact standard `:clients:jar`
+before reading the same committed objects through prewarmed Edge.
 
 ```bash
 ./dev/check-poc-qualified-remote-composition-v1
@@ -2988,10 +2986,13 @@ dependencies, output JAR, 12-worker execution and 337-ms/6,994,831-B/s profile.
   /absolute/path/to/new-result.json
 ```
 
-The protocol requires four alternating positive pairs, exact client-JAR output,
-the preregistered candidate plan, `:clients:jar FROM-CACHE`, native full-graph
-fallback for a global change and successful output when Edge reads fail. Seed,
-warm-up and safety runs are not measured.
+The seed invalidated that premise before timing: Gradle reported
+`:clients:jar SKIPPED`, custom `:clients:shadowJar` produced the required
+artifact, and its digest differed from the historical standard-`Jar` premise.
+The checked terminal result records zero Shared objects, no Edge server, no
+warm-up and zero measured pairs. This is a successful fail-closed POC outcome,
+not a performance percentage. A corrected experiment may compose only
+Kafka-qualified Build Impact and Edge locality.
 
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source

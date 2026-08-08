@@ -56,16 +56,16 @@ measured on different workloads and scopes.
 |---|---|---:|---|
 | **Safe Cache / local L1** | Reuses verified outputs in a scope isolated by repository, Wrapper, and platform. | Against cache-off: **15.9% faster in Kotlin** and **13.7% faster in Groovy**. Against native Gradle cache: **0.02% faster in Kotlin** and **0.47% slower in Groovy**. | Useful when a repository has no effective cache, but **not an accelerator over native Gradle cache**. Strict Safe Cache remains explicit-only. |
 | **Runtime Tuning** | Tests bounded worker, heap, and resource profiles intended to improve Gradle execution. | The latest real Spring candidate capped 12 workers to 6 and was **2.00% slower** (191.5 ms), with 2/4 favorable pairs and interval -973.5..+590.5 ms. Earlier synthetic `W3_H4G` and `W4_H6G` candidates were **4.3%** and **54.7% slower**. | **No current value. Disabled.** Optimized native Gradle remains the stable control. |
-| **Build Impact** | Maps a change to the projects and tasks needed for the requested outputs, with full-graph fallback for unknown or global changes. | Synthetic coverage: **73.5-76.0% faster**. Installed Spring path: **15.76% faster**. Generalized Spring test preparation: **18.88% faster**. Kafka client packaging: **57.58% faster**. Spring verification is graph-complete but saved only **0.31%**; attribution found no product phase above **1.238233 ms**. | **The strongest broadly useful accelerator currently demonstrated, but only for independently qualified scopes.** |
+| **Build Impact** | Maps a change to the projects and tasks needed for the requested outputs, with full-graph fallback for unknown or global changes. | Synthetic coverage: **73.5-76.0% faster**. Installed Spring path: **15.76% faster**. Generalized Spring test preparation: **18.88% faster**. Kafka client packaging scope: **57.58% faster**. Spring verification is graph-complete but saved only **0.31%**; attribution found no product phase above **1.238233 ms**. | **The strongest broadly useful accelerator currently demonstrated, but only for independently qualified scopes.** The Kafka result proves graph reduction, not standard-`Jar` reuse of the required shaded artifact. |
 | **Task Intelligence** | Observes and qualifies tasks only when their inputs, outputs, cache keys, and outcomes are exact enough to support an optimization. | No general direct saving. In the accepted pilot it enabled a qualified native-cache restore that saved **203 ms** on average. | A **safety and eligibility layer**, not a standalone accelerator. Its value is realized through a qualified cache or patch route. |
 | **Patch Autopilot / reviewed task patch** | Produces a reviewable and reversible patch that correctly declares inputs and outputs and enables caching for an exact custom-task shape. | Exact reviewed Java recipe: **67.3% faster in Kotlin** and **68.0% faster in Groovy**. Combined installed path: **63.5-67.3% faster**. | Highly promising for **specific reviewed task contracts**. The result must not be generalized to arbitrary tasks or recipes. |
 | **Graph reduction** | Replaces broad aggregate task dependencies with the typed producers required for the declared outputs. | The OpenTelemetry experiment removed **3 graph nodes and 2 executed tasks** while preserving all 125 required outputs. No standalone wall-clock percentage is claimed. | Structurally valuable, but it still needs independent timing evidence before it can be presented as a separate accelerator. |
 | **Exact-bound hot-state reuse** | Reuses a previously validated Build Impact plan only when repository revision, graph, manifest, changes, Wrapper, executable, and options still match. | Reduced BuildOpt preparation from **74.97 ms to 40.34 ms**, but the fresh whole-build arm was **7.68% slower**. | **Disabled for the measured profile.** Micro-overhead reduction does not override regressive end-to-end evidence. |
-| **Standard `Jar` cache adapter** | Makes only an unmodified standard Gradle `Jar` task eligible for native caching; custom archives, `Copy`, arbitrary tasks, and `Test` remain unchanged. | OpenTelemetry Build Impact: **39.92% faster**, saving 4,376.75 ms. Direct Spring test-build use: **11.31% slower** initially; after narrowing registration, the three-arm ablation remained **9.53% slower** than native. | **Qualified only inside the measured OpenTelemetry composition.** Correct cacheability and cache hits are insufficient when the avoided work is too small. |
+| **Standard `Jar` cache adapter** | Makes only an unmodified standard Gradle `Jar` task eligible for native caching; custom archives, `Copy`, arbitrary tasks, and `Test` remain unchanged. | OpenTelemetry Build Impact: **39.92% faster**, saving 4,376.75 ms. Direct Spring test-build use: **11.31% slower** initially; after narrowing registration, the three-arm ablation remained **9.53% slower** than native. Kafka composition stopped before timing because `:clients:jar` was skipped and custom `:clients:shadowJar` produced the required artifact. | **Qualified only inside the measured OpenTelemetry composition.** It is not qualified for Kafka's shaded client artifact. Correct cacheability and cache hits are insufficient when the avoided work is too small or a different task owns the output. |
 | **Shared and Edge Cache** | Reuse committed outputs across machines and optionally place them nearer developers or CI runners. | Synthetic 32-MiB profile: **34.74% faster**, saving 2,401.25 ms. Kafka transfer under an independently derived 337-ms/6,994,831-B/s profile: **15.21% faster**, saving 1,351.25 ms. Both have 4/4 positive pairs, exact outputs and zero measured Edge upstream reads. | **Edge locality transfers across two bounded profiles.** Shared provides origin and authority semantics; no independent Shared acceleration or universal-network claim is made. |
 | **Build History** | Records durations, outcomes, cache behavior, and applied optimizations so results can be inspected and compared. | **No direct build-time saving.** | Observability that helps discover and validate optimizations; not an accelerator itself. |
 | **Launcher, gateway, and telemetry** | Provide orchestration, authentication, evidence collection, and safe fallback behavior. | Add fixed overhead rather than saving work. The local-cache fast path avoids starting these components when they have no consumer. | Necessary infrastructure for instrumented flows, but it must remain off the critical path when it is not needed. |
-| **Combined qualified path** | Orchestrates Build Impact and exact task optimizations through the packaged CLI and plugin while leaving unproven mechanisms disabled. | Fresh Spring Build Impact: **30.86% faster**. Clean OpenTelemetry Impact + standard `Jar`: **50.40% faster**. Kafka client packaging: **57.58% faster**, saving 4,637.5 ms with 4/4 positive pairs. | **Qualified for the exact measured POC workloads.** Generalize change shapes and outputs before broadening the claim. |
+| **Combined qualified path** | Orchestrates Build Impact and exact task optimizations through the packaged CLI and plugin while leaving unproven mechanisms disabled. | Fresh Spring Build Impact: **30.86% faster**. Clean OpenTelemetry Impact + standard `Jar`: **50.40% faster**. Kafka's installed packaging scope was **57.58% faster**, but the follow-up proved that its required artifact comes from `shadowJar`, so that result must not be attributed to the standard-`Jar` adapter. | **Qualified only for the exact measured POC workloads and mechanisms actually exercised.** Generalize change shapes and outputs before broadening the claim. |
 
 The early isolated Runtime Tuning experiment reported a 0.7% saving, but the
 later and stricter comparison against optimized native Gradle superseded that
@@ -303,7 +303,7 @@ Kafka-specific product rule.
 | Reviewed task patch | Enabled only for exact matching contracts | Review required | Add recipes only after independent qualification |
 | Strict Safe Cache | Disabled | Disabled | Beat or justify cost versus native Gradle cache |
 | Runtime Tuning | Disabled | Disabled | Positive incremental evidence against optimized native Gradle |
-| Shared / Edge Cache | Edge qualified for the synthetic and Kafka locality profiles | Operator opt-in | Measure its end-to-end composition with the already qualified Kafka Build Impact/Jar profile; keep native Shared behavior outside matched remote profiles |
+| Shared / Edge Cache | Edge qualified for the synthetic and Kafka locality profiles | Operator opt-in | Measure Edge with Kafka-qualified Build Impact only; exclude the disproved standard-`Jar` premise and keep native Shared behavior outside matched remote profiles |
 
 ## Recommended Next Block
 
@@ -321,12 +321,19 @@ Shared averaged 8,885.25 ms and prewarmed Edge 7,534 ms, saving
 1,351.25 ms/15.21%. The same unchanged gate passed with 4/4 positive pairs,
 interval +788.25..+1,883 ms, identical task outcomes and all 4,062 outputs.
 
+The first attempted composition stopped before timing. Its unmeasured seed
+proved that Kafka's required `kafka-clients-4.3.1.jar` is produced by custom
+`:clients:shadowJar`, while `:clients:jar` is `SKIPPED`. No object was committed
+to Shared, Edge was never opened, and no warm-up or measured pair ran. The
+57.58% packaging result therefore remains valid for the fixed Build Impact
+scope, but it cannot be attributed to exact standard-`Jar` reuse.
+
 The next performance block should compose only mechanisms independently
-qualified on Kafka: repository-authorized Build Impact, the exact standard-Jar
-adapter and prewarmed Edge locality. It must compare that complete installed
-path against optimized native Gradle using the same remote Shared origin,
-retain exact outputs and full fallback, and report one end-to-end effect rather
-than adding the existing 55.09%, 57.58% or 15.21% component percentages.
+qualified on Kafka: repository-authorized Build Impact and prewarmed Edge
+locality. It must compare that complete installed path against optimized native
+Gradle using the same remote Shared origin, retain exact outputs and full
+fallback, and report one end-to-end effect rather than adding the existing
+55.09%, 57.58% or 15.21% component percentages.
 
 The **qualified-profile usability and scope synthesis** block is now complete:
 
@@ -349,8 +356,10 @@ The follow-up Kafka packaging experiment is also complete. Native root
 `assemble` averaged 8,054 ms; the installed three-project client-Jar candidate
 averaged 3,416.5 ms, saving 4,637.5 ms/57.58%. All four pairs were positive,
 the smallest saving was 4,050 ms, the exact 10.2-MB JAR matched, and the global
-fallback passed. This is fresh performance evidence, limited to the declared
-Kafka client-packaging scope.
+fallback passed. This is fresh Build Impact performance evidence, limited to
+the declared Kafka client-packaging scope. The later seed diagnosis showed
+that the required artifact is produced by custom `shadowJar`; the standard
+`Jar` adapter must not receive credit for this result.
 
 Normal-build task tails, direct test-build JAR reuse and the trace-selected
 six-worker Runtime candidate are closed for the current evidence. They should
