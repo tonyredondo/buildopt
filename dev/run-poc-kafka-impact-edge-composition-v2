@@ -102,7 +102,7 @@ buildopt_cleanup() {
                 "${buildopt_output}.failure-logs.tar.gz" >&2
         fi
         for _ in 1 2 3; do
-            if rm -rf -- "${buildopt_root}"; then
+            if rm -rf -- "${buildopt_root}" 2>/dev/null; then
                 return 0
             fi
             buildopt_stop "${buildopt_root}/seed-project" "${buildopt_root}/seed-home"
@@ -296,12 +296,14 @@ jq \
     ' "${buildopt_output}" >"${buildopt_output}.tmp"
 mv "${buildopt_output}.tmp" "${buildopt_output}"
 if [[ "${buildopt_installed_profile_value}" == 1 ]]; then
-    jq --slurpfile spec "${buildopt_spec}" '
+    jq \
+      --arg postprocessingRevision "$(git -C "${buildopt_repo_root}" rev-parse HEAD)" \
+      --slurpfile spec "${buildopt_spec}" '
       def bootstrap_mean($data; $sample):
         reduce range(0; ($data | length)) as $draw
           ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
            .state = ((1664525 * .state + 1013904223) % 4294967296) |
-           .sum += $data[(.state % ($data | length))].savedMs) |
+           .sum += $data[((.state * ($data | length) / 4294967296) | floor)].savedMs) |
         .sum / ($data | length);
       def bootstrap95($data):
         ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
@@ -332,6 +334,12 @@ if [[ "${buildopt_installed_profile_value}" == 1 ]]; then
         usabilityEvidenceSha256: $spec[0].profile.usabilityEvidenceSha256,
         priorPerformanceEvidenceSha256: $spec[0].priorPerformanceEvidence.sha256,
         priorTimingsReused: false
+      } |
+      .statisticalPostprocessing = {
+        algorithm: "DETERMINISTIC_LCG32_FULL_RANGE_INDEX_V2",
+        bootstrapSamples: 4096,
+        observationsChanged: false,
+        revision: $postprocessingRevision
       } |
       .measurementAssertions.freshPairs = true |
       .measurementAssertions.priorObservationsReused = false |

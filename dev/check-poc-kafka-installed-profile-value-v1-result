@@ -9,8 +9,6 @@ fi
 buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_spec="${buildopt_repo_root}/specs/poc-kafka-installed-profile-value-v1.json"
-buildopt_runner="${buildopt_script_dir}/run-poc-kafka-impact-edge-composition-v2"
-buildopt_harness="${buildopt_repo_root}/internal/sharedcache/poc_kafka_impact_edge_composition_test.go"
 buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-kafka-installed-profile-value-v1.json"}
 
 for buildopt_command in git jq sha256sum; do
@@ -27,16 +25,27 @@ done
 "${buildopt_script_dir}/check-poc-kafka-installed-profile-value-v1" >/dev/null
 
 buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
-buildopt_execution_revision=$(git -C "${buildopt_repo_root}" log -1 --format=%H -- \
-    specs/poc-kafka-installed-profile-value-v1.json \
+buildopt_execution_revision=$(jq -er '.buildoptRevision' "${buildopt_result}")
+if ! git -C "${buildopt_repo_root}" merge-base --is-ancestor \
+    "${buildopt_execution_revision}" HEAD; then
+    printf 'installed Kafka profile evidence revision is not retained in history\n' >&2
+    exit 1
+fi
+buildopt_archived_sha() {
+    local buildopt_path=$1
+    git -C "${buildopt_repo_root}" show \
+        "${buildopt_execution_revision}:${buildopt_path}" | sha256sum | awk '{print $1}'
+}
+buildopt_postprocessing_revision=$(git -C "${buildopt_repo_root}" log -1 --format=%H -- \
     dev/run-poc-kafka-impact-edge-composition-v2 \
-    internal/sharedcache/poc_kafka_impact_edge_composition_test.go)
+    dev/check-poc-kafka-installed-profile-value-v1-result)
 
 jq -e \
     --arg executionRevision "${buildopt_execution_revision}" \
-    --arg specSha "$(sha256sum "${buildopt_spec}" | awk '{print $1}')" \
-    --arg runnerSha "$(sha256sum "${buildopt_runner}" | awk '{print $1}')" \
-    --arg harnessSha "$(sha256sum "${buildopt_harness}" | awk '{print $1}')" \
+    --arg specSha "$(buildopt_archived_sha specs/poc-kafka-installed-profile-value-v1.json)" \
+    --arg runnerSha "$(buildopt_archived_sha dev/run-poc-kafka-impact-edge-composition-v2)" \
+    --arg harnessSha "$(buildopt_archived_sha internal/sharedcache/poc_kafka_impact_edge_composition_test.go)" \
+    --arg postprocessingRevision "${buildopt_postprocessing_revision}" \
     --arg profileSha "$(sha256sum "${buildopt_repo_root}/fixtures/poc-kafka-packaging/buildopt-qualified-edge-profile.json" | awk '{print $1}')" \
     --arg usabilitySha "$(sha256sum "${buildopt_repo_root}/benchmarks/results/poc-kafka-composition-usability-v1.json" | awk '{print $1}')" \
     --arg priorSha "$(sha256sum "${buildopt_repo_root}/benchmarks/results/poc-kafka-impact-edge-composition-v2.json" | awk '{print $1}')" \
@@ -46,7 +55,7 @@ jq -e \
       reduce range(0; ($data | length)) as $draw
         ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
          .state = ((1664525 * .state + 1013904223) % 4294967296) |
-         .sum += $data[(.state % ($data | length))].savedMs) |
+         .sum += $data[((.state * ($data | length) / 4294967296) | floor)].savedMs) |
       .sum / ($data | length);
     def bootstrap95($data):
       ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
@@ -98,6 +107,12 @@ jq -e \
       usabilityEvidenceSha256: $usabilitySha,
       priorPerformanceEvidenceSha256: $priorSha,
       priorTimingsReused: false
+    } and
+    .statisticalPostprocessing == {
+      algorithm: "DETERMINISTIC_LCG32_FULL_RANGE_INDEX_V2",
+      bootstrapSamples: 4096,
+      observationsChanged: false,
+      revision: $postprocessingRevision
     } and
     .preparation.measured == false and
     .preparation.dependenciesResolvedBeforeMeasurement == true and

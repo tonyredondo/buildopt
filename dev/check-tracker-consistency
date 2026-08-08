@@ -192,6 +192,7 @@ buildopt_required_tracker_text=(
     "| \`E-262\` | 2026-08-08 | \`POC-KAFKA-INSTALLED-PROFILE-VALUE-001\`"
     "| \`E-263\` | 2026-08-08 | \`POC-KAFKA-INSTALLED-PROFILE-VALUE-001\`"
     "| \`E-264\` | 2026-08-08 | \`POC-KAFKA-INSTALLED-PROFILE-VALUE-001\`"
+    "| \`E-265\` | 2026-08-08 | \`POC-KAFKA-INSTALLED-PROFILE-VALUE-001\`"
     "| \`POC-PERF-NEXT-G01\` | The complete qualified profile beats optimized native Gradle by at least 500 ms and 2%"
     "| \`A1-G06\` | Safe Cache is non-regressive versus optimized native cache"
     "| \`B-G03\` | Runtime Tuning exceeds the POC accelerator threshold"
