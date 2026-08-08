@@ -2994,6 +2994,32 @@ warm-up and zero measured pairs. This is a successful fail-closed POC outcome,
 not a performance percentage. A corrected experiment may compose only
 Kafka-qualified Build Impact and Edge locality.
 
+### Kafka Build Impact and Edge composition
+
+`POC-KAFKA-IMPACT-EDGE-COMPOSITION-001` corrects the disproved standard-Jar
+premise without changing the Kafka workload or value threshold. The optimized
+native control runs the full root `assemble` through the modeled Shared origin;
+the installed candidate selects the already qualified three-project packaging
+scope and reads the same committed native Gradle cache object through a
+prewarmed Edge. Both arms must restore custom `:clients:shadowJar` from cache
+and reproduce the seed artifact exactly:
+
+```bash
+./dev/check-poc-kafka-impact-edge-composition-v1
+./dev/run-poc-kafka-impact-edge-composition-v1 \
+  /absolute/path/to/new-result.json \
+  /absolute/path/to/buildopt \
+  /absolute/path/to/kafka-source.tar.gz
+./dev/check-poc-kafka-impact-edge-composition-v1-result \
+  /absolute/path/to/new-result.json
+```
+
+The standard-Jar adapter, Runtime Tuning, Safe Cache, Hot State and Test
+Optimization remain disabled. The protocol contains zero timing observations
+until the fixed experiment completes; its result must report the directly
+measured combined effect rather than adding the earlier Build Impact and Edge
+percentages.
+
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source
 distribution. Structural discovery freezes selective execution only where the

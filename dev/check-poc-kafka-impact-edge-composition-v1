@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-kafka-impact-edge-composition-v1.json"
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Kafka Impact/Edge contract command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -s "${buildopt_spec}" ]] || {
+    printf 'Kafka Impact/Edge composition contract is unavailable\n' >&2
+    exit 1
+}
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_fixture="${buildopt_repo_root}/fixtures/poc-kafka-packaging"
+buildopt_impact="${buildopt_repo_root}/benchmarks/results/poc-kafka-packaging-v1.json"
+buildopt_edge="${buildopt_repo_root}/benchmarks/results/poc-remote-cache-transfer-v1.json"
+buildopt_invalid="${buildopt_repo_root}/benchmarks/results/poc-qualified-remote-composition-v1.json"
+
+jq -e \
+    --arg manifestSha "$(sha256sum "${buildopt_fixture}/buildopt-impact-manifest.json" | awk '{print $1}')" \
+    --arg graphSha "$(sha256sum "${buildopt_fixture}/buildopt-impact-graph.generated.json" | awk '{print $1}')" \
+    --arg generatedSha "$(sha256sum "${buildopt_fixture}/buildopt-impact.generated.json" | awk '{print $1}')" '
+    .schemaVersion == "buildopt.specs/poc-kafka-impact-edge-composition/v1" and
+    .workItem == "POC-KAFKA-IMPACT-EDGE-COMPOSITION-001" and
+    .status == "PREREGISTERED" and
+    .preregistration == {
+      productRevision: "f78e34b563c6d169618bd316111ac6e133962457",
+      acceptedObservationsBeforePreregistration: 0,
+      componentPercentagesMayBeAdded: false,
+      valueGateChanged: false,
+      workloadSearchAfterResultAllowed: false
+    } and
+    .hypothesis.control == "OPTIMIZED_NATIVE_GRADLE_FULL_ASSEMBLE_DIRECT_TO_SHARED" and
+    .hypothesis.candidate == "INSTALLED_BUILDOPT_IMPACT_THROUGH_PREWARMED_EDGE" and
+    .hypothesis.qualifiedMechanisms == ["KAFKA_BUILD_IMPACT", "EDGE_COMMITTED_READ_LOCALITY"] and
+    (.hypothesis.excludedMechanisms | index("BUILDOPT_STANDARD_JAR_ADAPTER")) != null and
+    (.hypothesis.excludedMechanisms | index("TEST_OPTIMIZATION")) != null and
+    .hypothesis.reportedEffect == "ONE_END_TO_END_COMPOSITION_EFFECT" and
+    .repository.nameWithOwner == "apache/kafka" and
+    .repository.revision == "26b251a451ce941d3d7a55e6487bcb7f16b5ad48" and
+    .repository.sourceArchiveSha256 == "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2" and
+    .repository.sourceArchiveBytes == 14169772 and
+    .repository.gradleVersion == "9.2.1" and
+    .repository.jdk == "temurin-25.0.3+9" and
+    .fixture.manifestSha256 == $manifestSha and
+    .fixture.graphSha256 == $graphSha and
+    .fixture.generatedManifestSha256 == $generatedSha and
+    .fixture.alternativeId == "kafka-clients-jar" and
+    .fixture.candidateEntrypoints == [":clients:jar"] and
+    .fixture.fallbackEntrypoints == ["assemble"] and
+    .fixture.omittedProjectCount == 61 and
+    .change.path == "clients/src/main/java/org/apache/kafka/clients/Metadata.java" and
+    .change.originalSha256 == "30e3d4ad29be4f6be1e34d545caf08d8520fa4341e0948968cd87fd51b8911e3" and
+    .network.latencyPerResponseMs == 337 and
+    .network.bandwidthBytesPerSecond == 6994831 and
+    .network.packetLossRatio == 0 and
+    .arms.seed.seedFromOptimizedNativeFullGraph == null and
+    .arms.seed.entrypoints == ["assemble"] and
+    .arms.seed.remotePush == true and
+    .arms.control.entrypoints == ["assemble"] and
+    .arms.control.buildImpact == false and
+    .arms.control.remoteReadLocation == "SHARED" and
+    .arms.candidate.entrypoints == [":clients:jar"] and
+    .arms.candidate.buildImpact == true and
+    .arms.candidate.standardJarAdapter == false and
+    .arms.candidate.remoteReadLocation == "PREWARMED_EDGE" and
+    .arms.commonGradleOptions == ["--daemon", "--build-cache", "--no-configuration-cache", "--parallel", "--console=plain", "--max-workers=12", "--no-scan"] and
+    .cacheState.seedFromOptimizedNativeFullGraph == true and
+    .cacheState.sameCommittedSharedObjects == true and
+    .cacheState.nativeLocalCacheEnabled == false and
+    .cacheState.configurationCacheEnabled == false and
+    .cacheState.pushAllowedDuringMeasuredRuns == false and
+    .requiredOutput.producingTask == ":clients:shadowJar" and
+    .requiredOutput.producerType == "CUSTOM_SHADOW_JAR" and
+    .requiredOutput.digestSource == "SEEDED_COMMITTED_SHARED_OBJECT" and
+    .requiredOutput.sameDigestRequiredForEveryArm == true and
+    .requiredOutput.requiredTaskOutcome == "FROM-CACHE" and
+    .measurement.warmupsPerArm == 1 and
+    .measurement.pairs == 4 and
+    .measurement.pairOrder == ["CONTROL_FIRST", "CANDIDATE_FIRST", "CONTROL_FIRST", "CANDIDATE_FIRST"] and
+    .measurement.maximumInterArmIdleGapMs == 15000 and
+    .valueGate.minimumSavedMs == 500 and
+    .valueGate.minimumReductionRatio == 0.02 and
+    .valueGate.positiveLower95Bound == true and
+    .valueGate.minimumPositivePairs == 4 and
+    .valueGate.requiredShadowJarOutcome == "FROM-CACHE" and
+    .valueGate.maximumProductAttributableFailures == 0 and
+    .valueGate.thresholdsMayMoveAfterMeasurement == false and
+    .valueGate.failedPairsMayBeDiscarded == false and
+    .fallback.requiredSelectionMode == "FULL_GRAPH" and
+    .fallback.requiredSelectionReason == "IMPACT_GLOBAL_CHANGE" and
+    .fallback.requiredOutsideCandidateTask == ":streams:jar" and
+    .fallback.edgeReadFailureMustPreserveBuildSuccess == true and
+    .decisionPolicy.qualifiedDecision == "QUALIFY_KAFKA_IMPACT_EDGE_COMPOSITION" and
+    .decisionPolicy.unqualifiedDecision == "RETAIN_SEPARATE_KAFKA_IMPACT_AND_EDGE" and
+    .decisionPolicy.componentPercentagesRemainNonAdditive == true and
+    .boundaries.standardJarChanged == false and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.proofOfConcept == true and
+    .boundaries.productionReadinessClaimed == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false and
+    .boundaries.universalSavingsClaimed == false
+' "${buildopt_spec}" >/dev/null
+
+jq -e '.decision == "QUALIFY_KAFKA_PACKAGING_SCOPE"' "${buildopt_impact}" >/dev/null
+jq -e '.result.decision == "QUALIFY_EDGE_LOCALITY_TRANSFER_ON_KAFKA_PROFILE"' "${buildopt_edge}" >/dev/null
+jq -e '.decision == "STOP_KAFKA_REMOTE_COMPOSITION_INVALID_STANDARD_JAR_PRECONDITION"' "${buildopt_invalid}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'Kafka Impact/Edge contract validation changed the working tree\n' >&2
+    exit 1
+fi
+printf 'POC Kafka Impact/Edge composition contract OK: %s\n' "${buildopt_spec}"
