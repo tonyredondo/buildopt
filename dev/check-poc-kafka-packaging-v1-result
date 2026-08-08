@@ -30,8 +30,12 @@ jq -e --slurpfile spec "${buildopt_spec}" '
     .result.controlMeanMs == ([.pairs[].controlMs] | add / length) and
     .result.candidateMeanMs == ([.pairs[].candidateMs] | add / length) and
     .result.meanSavedMs == ([.pairs[].savedMs] | add / length) and
+    .result.meanSavedPercent == (
+        ((.result.meanSavedMs * 10000 / .result.controlMeanMs) | round) / 100
+    ) and
     .result.positivePairs == ([.pairs[].savedMs | select(. > 0)] | length) and
     .result.pairedLowerBoundMs == ([.pairs[].savedMs] | min) and
+    .result.maximumArmGapMs == ([.pairs[].maximumArmGapMs] | max) and
     .result.outputsIdentical == true and
     .result.productFailures == 0 and
     .result.fallbackPassed == true and

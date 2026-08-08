@@ -205,6 +205,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-build-optimization-performance" >/dev/null
         "${buildopt_script_dir}/check-poc-qualified-profile" >/dev/null
         "${buildopt_script_dir}/check-poc-qualified-profile-adoption" >/dev/null
+        "${buildopt_script_dir}/check-poc-kafka-packaging-v1-result" >/dev/null
         "${buildopt_script_dir}/check-poc-spring-installed-impact" >/dev/null
         "${buildopt_script_dir}/check-poc-spring-impact-breadth" >/dev/null
         "${buildopt_script_dir}/check-poc-impact-generalization" >/dev/null

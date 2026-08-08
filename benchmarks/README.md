@@ -463,6 +463,8 @@ The underlying evidence and contracts are:
   `./dev/test-poc-impact-generalization`.
 - [Apache Kafka third-repository transfer evidence](./results/poc-third-repository-transfer-v1.json),
   validated by `./dev/check-poc-third-repository-transfer-v1-result`.
+- [Apache Kafka packaging evidence](./results/poc-kafka-packaging-v1.json),
+  validated by `./dev/check-poc-kafka-packaging-v1-result`.
 
 ### Third substantial repository transfer
 
@@ -486,6 +488,29 @@ reproduces the historical 125- and 4,062-file output digests. Global
 `gradle.properties` changes retain the native full graph and reach work outside
 each candidate scope. `./dev/check-poc-qualified-profile-adoption` validates
 the record. It contains no durations and creates no new performance claim.
+
+### Kafka client packaging value
+
+The [preregistered packaging result](./results/poc-kafka-packaging-v1.json)
+compares optimized native root `assemble` with an installed qualified profile
+selecting `:clients:jar` for the same fixed `Metadata.java` change. Both arms
+use Gradle 9.2.1, JDK 25, separate warm Gradle homes, offline execution and the
+same 12-CPU host.
+
+| Pair | Order | Native `assemble` | BuildOpt client JAR | Saving |
+|---:|---|---:|---:|---:|
+| 1 | Native to BuildOpt | 9,811 ms | 3,941 ms | 5,870 ms |
+| 2 | BuildOpt to native | 7,947 ms | 3,830 ms | 4,117 ms |
+| 3 | Native to BuildOpt | 7,137 ms | 3,087 ms | 4,050 ms |
+| 4 | BuildOpt to native | 7,321 ms | 2,808 ms | 4,513 ms |
+
+Native averages 8,054 ms and BuildOpt 3,416.5 ms, saving **4,637.5 ms or
+57.58%**. All four pairs are positive, the conservative lower bound used by
+this contract is +4,050 ms, and every arm produces the exact
+SHA-256-bound 10,204,023-byte client JAR. No Gradle `Test` runs, no unqualified
+mechanism is enabled, product failures are zero, and a `gradle.properties`
+change completes native root `assemble` outside the candidate graph. The claim
+is limited to this Kafka client-packaging change shape.
 
 The three mechanism-development reports remain historical inputs. The strict
 synthetic reports prove bounded combined value. The public-repository

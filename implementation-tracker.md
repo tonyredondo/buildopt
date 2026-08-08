@@ -216,7 +216,8 @@ than partners. Test Optimization remains a separate product.
 | 53 | `POC-THIRD-REPOSITORY-TRANSFER-001` | Transfer the unchanged qualified profile to one substantial public repository representing a new workload class | `DONE` | Codex |
 | 54 | `POC-QUALIFIED-PROFILE-001` | Expose the clean qualified profile through one reviewable repository-owned POC command with native full-graph fallback | `DONE` | Codex |
 | 55 | `POC-QUALIFIED-PROFILE-ADOPTION-001` | Replay the installed command and committed profile on the fixed OpenTelemetry and Kafka revisions, including exact output and full-fallback proofs | `DONE` | Codex |
-| 56 | `POC-KAFKA-PACKAGING-001` | Measure the installed qualified profile against optimized native Kafka `assemble` for a fixed client-packaging change | `DOING` | Codex |
+| 56 | `POC-KAFKA-PACKAGING-001` | Measure the installed qualified profile against optimized native Kafka `assemble` for a fixed client-packaging change | `DONE` | Codex |
+| 57 | `POC-VERIFICATION-DISTRIBUTION-GRAPH-001` | Resolve only generic unknown graph relationships for verification and distribution outputs, then measure one exact real scope if discovery becomes complete | `TODO` | Codex |
 
 The raw diagnostic block is closed and unchanged. `E-172` corrects its
 ownership interpretation: Mockito's 242.690-second `compileTestJava` is
@@ -1142,7 +1143,7 @@ Test Optimization, or a universal savings claim.
 | `POC-QUALIFIED-PROFILE-001` | Add `buildopt poc --changes-file PATH`, a strict repository-owned profile, a pre-execution machine-readable plan, and candidate-only standard-`Jar` activation | `DONE` | `E-225` |
 | `POC-QUALIFIED-PROFILE-G01` | Candidate plans expose scope, outputs, adapters and disabled mechanisms; unknown/global/bypass paths retain native full-graph entrypoints without an adapter | `DONE` | `E-225` |
 | `POC-QUALIFIED-PROFILE-ADOPTION-001` | Install the native package, consume repository-owned state on both qualified public revisions, replay the candidate Jar, and execute global fallback without collecting timing | `DONE` | `E-226` |
-| `POC-KAFKA-PACKAGING-001` | Preregister and measure root `assemble` versus the installed three-project client-Jar candidate on fixed Kafka 4.3.1 | `DOING` | `E-227`: immutable repository, graph, mutation, outputs, runner, four-pair order, fallback and unchanged value gate |
+| `POC-KAFKA-PACKAGING-001` | Preregister and measure root `assemble` versus the installed three-project client-Jar candidate on fixed Kafka 4.3.1 | `DONE` | `E-227..230`: immutable contract, transparent zero-observation harness corrections, four accepted pairs and qualified result |
 
 The profile is a POC usability boundary, not a production policy. Its config
 enables only Build Impact and the exact standard-`Jar` adapter on a selected
@@ -1153,11 +1154,18 @@ Kafka revisions. It proves one-command consumption, exact output reproduction,
 candidate-only Jar replay, and native full-graph fallback without creating new
 timing evidence or broadening the performance claim.
 
-The next value experiment is independently preregistered for Kafka packaging.
-It compares native root `assemble` with the installed qualified client-Jar
-selection, requires an exact 10.2-MB output, and cannot qualify unless all four
-pairs clear the unchanged 500-ms/2%/positive-bound gate. No accepted timing
-exists at preregistration.
+The independently preregistered Kafka packaging experiment is complete. It
+compares native root `assemble` with the installed qualified client-Jar
+selection and preserves an exact 10.2-MB output. All four pairs clear the
+unchanged 500-ms/2%/positive-bound gate, saving 4,637.5 ms/57.58% on average;
+the claim remains limited to this declared Kafka packaging scope.
+
+The next bounded block is generic verification/distribution graph completion.
+It may add only relationships provable from Gradle's typed model, must retain
+full-graph fallback for every unresolved edge, and may start timing only after
+one real exact-output scope has a complete preregistered graph. A repository-
+specific selector or a graph-only improvement without wall-clock value is not
+an acceptable outcome.
 
 ---
 
@@ -1172,7 +1180,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Build Optimization scorecard | Safe-cache value/parity, Runtime Tuning causal resource savings, and Build Impact avoided work | `dev/check-build-optimization-performance` validated both new paired reports plus the existing hosted runtime evidence and emitted separate non-additive results | 2026-08-03 | `E-154` |
 | Qualified POC profile | Repository-owned clean mechanism set, pre-execution plan, disabled-mechanism rejection and native full-graph fallback | `dev/check-poc-qualified-profile` passed candidate, fallback, drift, environment-isolation and CLI fixtures | 2026-08-08 | `E-225` |
 | Installed qualified-profile adoption | Native package, committed OpenTelemetry/Kafka profiles, candidate Jar replay, exact outputs, and global fallback | `dev/check-poc-qualified-profile-adoption` validated the fixed contract and captured replay; both installed candidates and fallbacks completed on the public revisions | 2026-08-08 | `E-226` |
-| Kafka packaging preregistration | Native Kafka `assemble`, installed three-project client-Jar candidate, exact output and global fallback | `dev/check-poc-kafka-packaging-v1` validates the immutable preregistration and generated fixture before any accepted timing | 2026-08-08 | `E-227` |
+| Kafka packaging value | Native Kafka `assemble`, installed three-project client-Jar candidate, exact output and global fallback | `dev/check-poc-kafka-packaging-v1-result` validates four alternating pairs, 57.58% mean savings, exact output and successful fallback | 2026-08-08 | `E-227..230` |
 | Realistic POC breadth | No-change, leaf, shared, and build-logic changes across Kotlin/Groovy on the strict runner | `dev/check-poc-breadth` recomputed the 64-observation post-attribution repeat: all correctness guardrails passed and 4/8 value cells qualified, so the broader claim remains preliminary | 2026-08-04 | `E-161` |
 | POC installed-path attribution | Non-overlapping launcher/client, configuration, task, finalization, and teardown phases on the strict runner | `dev/check-poc-overhead` proved native-only execution with zero init/plugin setup, exact duration reconciliation, and one removed candidate-only XDG environment difference; traced durations remain diagnostic-only | 2026-08-04 | `E-161` |
 | Realistic POC stability | Opposite global arm orders with isolated writable state on the strict runner | `dev/check-poc-stability` recomputed two 64-pair reports (256 underlying arm measurements): all correctness guardrails passed, but 0/8 versus 4/8 cells qualified and four classifications changed, so the checked verdict is `MEASUREMENT_UNSTABLE` | 2026-08-04 | `E-162` |
@@ -1513,6 +1521,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-227` | 2026-08-08 | `POC-KAFKA-PACKAGING-001` | The versioned [Kafka packaging contract](./specs/poc-kafka-packaging-v1.md) pins Apache Kafka `26b251a`, source and Gradle inputs, Gradle 9.2.1/JDK 25, a central `Metadata.java` comment change, complete 64-project discovery, root `assemble`, the three-project `:clients:jar` alternative, installed Build Impact plus exact standard-Jar activation, one exact 10,204,023-byte client JAR, 12 CPUs, four alternating pairs, offline measured execution, full global fallback and the unchanged 500-ms/2%/positive-bound/4-of-4 gate | `DOING` preregistered with zero accepted timings: hydrate and warm outside measurement, then run exactly four pairs without changing tasks, outputs, mechanisms, order, thresholds or discarded observations |
 | `E-228` | 2026-08-08 | `POC-KAFKA-PACKAGING-001` | The first immutable runner attempt stopped while validating fixed inputs, before dependency bootstrap, warm-up or accepted timing, because Kafka's source archive intentionally omits `gradle-wrapper.jar` and generates it through `wrapper.gradle`. Runner revision 2 moves only that SHA-256 assertion after the unmeasured Wrapper bootstrap and also initializes cleanup state before the trap can observe it | `DOING` harness-order correction with zero observations: repository, mutation, graph, tasks, outputs, pair order, thresholds and terminal decisions are unchanged; restart the complete experiment and do not reuse the failed temporary checkout |
 | `E-229` | 2026-08-08 | `POC-KAFKA-PACKAGING-001` | The restarted runner stopped on the next fixed-input assertion, still before bootstrap, warm-up or accepted timing. The source archive and first audited checkout contain byte-identical `wrapper.gradle` with SHA-256 `7ac5cc0849b211a9772d5273a8edabe2211c857a661120e4ff32f411571e1059`; the preregistration had transcribed a 60-character value by omitting `a977`. The contract now records the observed 64-character digest and rejects any future malformed fixed-input SHA | `DOING` input-transcription correction with zero observations: source bytes, repository revision, graph, mutation, tasks, outputs, mechanisms, pair order, thresholds and terminal decisions remain unchanged; restart the complete experiment |
+| `E-230` | 2026-08-08 | `POC-KAFKA-PACKAGING-001` | The independently checked [Kafka packaging evidence](./benchmarks/results/poc-kafka-packaging-v1.json) binds BuildOpt/runner revision `9cad31c` and retains all four alternating offline pairs. Native root `assemble` averages 8,054 ms; installed `buildopt poc` selects `:clients:jar` across three projects and averages 3,416.5 ms, saving 4,637.5 ms/57.58%. Pair savings are +5,870, +4,117, +4,050 and +4,513 ms; the conservative lower bound is +4,050 ms and maximum arm gap is 522 ms. Every arm reproduces the exact SHA-bound 10,204,023-byte client JAR, no Gradle `Test` or unqualified mechanism runs, product failures are zero, and `gradle.properties` completes native root `assemble` and reaches `:streams:jar` | `DONE` terminal `QUALIFY_KAFKA_PACKAGING_SCOPE`: broaden only the fixed Kafka client-packaging POC scope; do not generalize to arbitrary packaging, production, soak, design partners or Test Optimization |
 
 ---
 
@@ -1520,6 +1529,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-08 | Qualified the installed Kafka client-packaging scope: root `assemble` averaged 8,054 ms and BuildOpt 3,416.5 ms, saving 4,637.5 ms/57.58% with 4/4 positive pairs, an exact 10.2-MB JAR and full fallback | Codex |
 | 2026-08-08 | Preregistered a real Kafka packaging value experiment: optimized native root `assemble` versus the installed three-project client-Jar candidate, with exact output, four alternating pairs and unchanged qualification gate frozen before timing | Codex |
 | 2026-08-08 | Completed installed qualified-profile adoption on fixed OpenTelemetry and Kafka revisions: both candidate Jar replays reproduced exact historical outputs and both global changes completed native full-graph fallback, with no new timing claim | Codex |
 | 2026-08-08 | Added one repository-owned `buildopt poc` command for the clean qualified profile, with a reviewable pre-execution plan, candidate-only standard-Jar activation, explicit disabled mechanisms and native full-graph fallback | Codex |

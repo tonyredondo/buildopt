@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "buildopt.poc/kafka-packaging-result/v1",
+  "buildoptRevision": "9cad31ce7d6c8cda6920e85583072a036f4ebaf9",
+  "specSha256": "54e8dc598a2e6ecd66232796b873ad10456f17648f29845859eb96d47c9d6492",
+  "runnerSha256": "16cfe0765004dbc046e87a4c9dc663a0944e27604bb07b65e672db6995a7eaf3",
+  "installedBinarySha256": "38171d97b0f9ef54082b878e3f76ce879c7e8e17c042571df05a1e6ddc5b24f4",
+  "sourceArchiveSha256": "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2",
+  "runner": {
+    "os": "linux",
+    "arch": "amd64",
+    "cpuCount": 12
+  },
+  "pairs": [
+    {
+      "index": 1,
+      "order": "CONTROL_CANDIDATE",
+      "controlMs": 9811,
+      "candidateMs": 3941,
+      "savedMs": 5870,
+      "maximumArmGapMs": 522,
+      "outputIdentical": true
+    },
+    {
+      "index": 2,
+      "order": "CANDIDATE_CONTROL",
+      "controlMs": 7947,
+      "candidateMs": 3830,
+      "savedMs": 4117,
+      "maximumArmGapMs": 176,
+      "outputIdentical": true
+    },
+    {
+      "index": 3,
+      "order": "CONTROL_CANDIDATE",
+      "controlMs": 7137,
+      "candidateMs": 3087,
+      "savedMs": 4050,
+      "maximumArmGapMs": 410,
+      "outputIdentical": true
+    },
+    {
+      "index": 4,
+      "order": "CANDIDATE_CONTROL",
+      "controlMs": 7321,
+      "candidateMs": 2808,
+      "savedMs": 4513,
+      "maximumArmGapMs": 124,
+      "outputIdentical": true
+    }
+  ],
+  "result": {
+    "controlMeanMs": 8054,
+    "candidateMeanMs": 3416.5,
+    "meanSavedMs": 4637.5,
+    "meanSavedPercent": 57.58,
+    "positivePairs": 4,
+    "pairedLowerBoundMs": 4050,
+    "maximumArmGapMs": 522,
+    "outputsIdentical": true,
+    "productFailures": 0,
+    "fallbackPassed": true
+  },
+  "decision": "QUALIFY_KAFKA_PACKAGING_SCOPE"
+}

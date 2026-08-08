@@ -40,6 +40,10 @@
   Kafka revisions, restored the exact standard `Jar`, reproduced 125 and 4,062
   historical outputs, and completed native full-graph fallback for global
   changes. This is adoption evidence; it deliberately adds no new timing claim.
+- **Kafka packaging now qualifies independently.** For a fixed central client
+  change, native root `assemble` averaged 8,054 ms and installed BuildOpt
+  averaged 3,416.5 ms: **57.58% faster**, saving 4,637.5 ms with 4/4 positive
+  pairs, an exact 10.2-MB client JAR, zero product failures and full fallback.
 
 ## Product Idea
 
@@ -139,6 +143,7 @@ unfavorable observations. Percentages from different rows are not additive.
 | Experiment | Result | Interpretation |
 |---|---:|---|
 | Clean Impact + exact standard-`Jar` profile | **55.09% faster**, 2,539.5 ms saved, 4/4 positive pairs | The unchanged installed profile reduced the conservative graph from 64 projects to three and restored `:generator:jar`; interval +1,625.5..+4,093 ms, 4,062 identical outputs, no Gradle `Test`, and successful full-graph fallback. |
+| Client packaging through installed profile | **57.58% faster**, 4,637.5 ms saved, 4/4 positive pairs | Native root `assemble` averaged 8,054 ms; BuildOpt selected `:clients:jar` and averaged 3,416.5 ms. The smallest pair saving was 4,050 ms; the exact 10.2-MB JAR and global fallback passed. |
 
 ## Latest Generalization and Next Work
 
@@ -225,6 +230,20 @@ reported `FULL_GRAPH` before Gradle, disabled the adapter, reached work outside
 the candidate graph, and completed successfully. No durations were captured:
 the earlier qualified measurements remain the only performance claims.
 
+The next preregistered value experiment then measured that same public command
+for a Kafka packaging output rather than test preparation. Root `assemble`
+reached the complete 64-project graph; the candidate reached three projects.
+Native averaged 8,054 ms and BuildOpt 3,416.5 ms, saving 4,637.5 ms/57.58%.
+All four alternating pairs were positive, the exact client JAR matched after
+every arm, and global drift restored native `assemble`. Packaging is therefore
+qualified only for this declared Kafka output and mutation.
+
+The next recommended block is narrower than "support every build." It should
+resolve only generic unknown Gradle relationships that currently force
+verification and distribution outputs back to the full graph. Timing is
+allowed only after an exact real output has a complete graph; otherwise the
+POC should retain native execution rather than add repository-specific rules.
+
 ## Boundaries and References
 
 This is proof-of-concept evidence, not a universal savings or production
@@ -247,3 +266,4 @@ production operations are outside the current scope.
 - [Controlled remote-cache locality evidence](../../benchmarks/results/poc-remote-cache-value-v1.json)
 - [Apache Kafka transfer evidence](../../benchmarks/results/poc-third-repository-transfer-v1.json)
 - [Installed qualified-profile adoption evidence](../../benchmarks/results/poc-qualified-profile-adoption-v1.json)
+- [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)
