@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-verification-overhead-attribution-v1.json"
+buildopt_source_evidence="${buildopt_repo_root}/benchmarks/results/poc-verification-distribution-graph-v1.json"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-verification-overhead-attribution-v1.json"}
+
+"${buildopt_script_dir}/check-poc-verification-overhead-attribution-v1" >/dev/null
+[[ -s "${buildopt_result}" ]] || {
+    printf 'verification overhead attribution result is unavailable: %s\n' \
+        "${buildopt_result}" >&2
+    exit 1
+}
+
+jq -e '
+    def nonnegative: type == "number" and . >= 0;
+    def phases:
+        (.externalDurationMs | nonnegative) and
+        (.launcherAndGradleClientStartupMs | nonnegative) and
+        (.configurationBeforeTasksMs | nonnegative) and
+        (.taskExecutionTemporalMs | nonnegative) and
+        (.gradleFinalizationMs | nonnegative) and
+        (.launcherAndGradleClientTeardownMs | nonnegative) and
+        (.gradleRootDurationMs | nonnegative) and
+        (.reconciledDurationMs | nonnegative) and
+        ((.externalDurationMs - .reconciledDurationMs) | fabs) <= 2;
+    def task:
+        (.path | type == "string" and startswith(":")) and
+        (.durationMs | nonnegative) and
+        (.outcome | type == "string" and length > 0);
+    .schemaVersion == "buildopt.poc/verification-overhead-attribution-result/v1" and
+    .workItem == "POC-VERIFICATION-OVERHEAD-ATTRIBUTION-001" and
+    (.capturedAt | test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T")) and
+    (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+    (.specSha256 | test("^[0-9a-f]{64}$")) and
+    (.runnerSha256 | test("^[0-9a-f]{64}$")) and
+    (.installedBinarySha256 | test("^[0-9a-f]{64}$")) and
+    (.sourceEvidenceSha256 | test("^[0-9a-f]{64}$")) and
+    (.sourceArchiveSha256 | test("^[0-9a-f]{64}$")) and
+    .runner.os == "linux" and .runner.arch == "amd64" and
+    .runner.cpuCount == 12 and .runner.maxWorkers == 12 and
+    .methodology == {
+        diagnosticOnly: true,
+        performanceSampleAdded: false,
+        operationTracePerturbsTiming: true,
+        parallelTaskDurationsMayOverlap: true
+    } and
+    (.control.phases | phases) and (.candidate.phases | phases) and
+    (.control.tasks | length) > 0 and (.candidate.tasks | length) > 0 and
+    all(.control.tasks[]; task) and all(.candidate.tasks[]; task) and
+    ([.control.tasks[].path] | unique | length) == (.control.tasks | length) and
+    ([.candidate.tasks[].path] | unique | length) == (.candidate.tasks | length) and
+    .control.taskSummary.count == (.control.tasks | length) and
+    .candidate.taskSummary.count == (.candidate.tasks | length) and
+    .comparison.externalCandidateMinusControlMs ==
+        (.candidate.phases.externalDurationMs - .control.phases.externalDurationMs) and
+    .comparison.taskIntervalSavedMs ==
+        (.control.phases.taskExecutionTemporalMs - .candidate.phases.taskExecutionTemporalMs) and
+    ([.control.tasks[].path] - [.candidate.tasks[].path] | sort) ==
+        ([.comparison.controlOnlyTasks[].path] | sort) and
+    .comparison.controlOnlyTaskCount == (.comparison.controlOnlyTasks | length) and
+    .comparison.controlOnlyCumulativeDurationMs ==
+        ([.comparison.controlOnlyTasks[].durationMs] | add // 0) and
+    all(.comparison.buildoptCandidateSpecificPhasesMs[]; nonnegative) and
+    .comparison.largestCandidateSpecificPhaseMs ==
+        ([.comparison.buildoptCandidateSpecificPhasesMs[]] | max) and
+    .comparison.actionThresholdMs == 500 and
+    .comparison.actionThresholdMet ==
+        (.comparison.largestCandidateSpecificPhaseMs >= .comparison.actionThresholdMs) and
+    (.comparison.requiredOutputSha256 | test("^[0-9a-f]{64}$")) and
+    .comparison.outputsIdentical == true and .comparison.productFailures == 0 and
+    .decision == (if .comparison.actionThresholdMet
+        then "IMPLEMENT_ONE_GENERIC_CORRECTION"
+        else "STOP_VERIFICATION_OPTIMIZATION_NO_ACTIONABLE_BOTTLENECK" end) and
+    .boundaries == {
+        pocOnly: true,
+        performanceDecisionChanged: false,
+        productionAuthorityChanged: false,
+        testOptimizationModified: false,
+        otherOptimizationsEnabled: false
+    }
+' "${buildopt_result}" >/dev/null || {
+    printf 'verification overhead attribution result contract failed\n' >&2
+    exit 1
+}
+
+[[ "$(sha256sum "${buildopt_spec}" | awk '{print $1}')" == \
+    "$(jq -er '.specSha256' "${buildopt_result}")" ]] || {
+    printf 'verification overhead attribution spec digest mismatch\n' >&2
+    exit 1
+}
+[[ "$(sha256sum "${buildopt_source_evidence}" | awk '{print $1}')" == \
+    "$(jq -er '.sourceEvidenceSha256' "${buildopt_result}")" ]] || {
+    printf 'verification overhead attribution source evidence mismatch\n' >&2
+    exit 1
+}
+buildopt_measured_revision=$(jq -er '.buildoptRevision' "${buildopt_result}")
+buildopt_measured_runner_sha=$(
+    git -C "${buildopt_repo_root}" show \
+        "${buildopt_measured_revision}:dev/run-poc-verification-overhead-attribution-v1" |
+        sha256sum | awk '{print $1}'
+)
+[[ "$(jq -er '.runnerSha256' "${buildopt_result}")" == \
+    "${buildopt_measured_runner_sha}" ]] || {
+    printf 'verification overhead attribution runner digest mismatch\n' >&2
+    exit 1
+}
+
+printf 'Verification overhead attribution result: PASS\n'

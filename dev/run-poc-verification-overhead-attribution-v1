@@ -1,0 +1,374 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 4)); then
+    printf 'usage: %s OUTPUT_FILE BUILDOPT_BIN SOURCE_ARCHIVE GRADLE_HOME_SEED\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_executable=$2
+buildopt_source_archive=$3
+buildopt_home_seed=$4
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-verification-overhead-attribution-v1.json"
+buildopt_fixture="${buildopt_repo_root}/fixtures/poc-verification-distribution-graph"
+buildopt_guard="${buildopt_script_dir}/poc-spring-test-preparation.guard.init.gradle"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
+    ! -x "${buildopt_executable}" || ! -f "${buildopt_source_archive}" ||
+    ! -d "${buildopt_home_seed}" ]]; then
+    printf 'invalid verification attribution runner input\n' >&2
+    exit 64
+fi
+for buildopt_command in awk cp date find grep jq mkdir mktemp printenv rm \
+    sed sha256sum sleep sort tar timeout; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'missing verification attribution command: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+if [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)" ]]; then
+    printf 'verification attribution requires a clean revision-bound checkout\n' >&2
+    exit 1
+fi
+"${buildopt_script_dir}/check-poc-verification-overhead-attribution-v1" >/dev/null
+
+buildopt_java_home=$("${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+    printenv JAVA_HOME)
+[[ -x "${buildopt_java_home}/bin/java" ]] || {
+    printf 'locked Temurin 25 toolchain is unavailable\n' >&2
+    exit 1
+}
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-verification-attribution-v1.XXXXXX")
+buildopt_complete=false
+buildopt_stop() {
+    local buildopt_home=$1
+    if [[ -x "${buildopt_root}/source/gradlew" && -d "${buildopt_home}" ]]; then
+        (
+            cd "${buildopt_root}/source"
+            JAVA_HOME="${buildopt_java_home}" GRADLE_USER_HOME="${buildopt_home}" \
+                ./gradlew --stop
+        ) >/dev/null 2>&1 || true
+    fi
+}
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-verification-attribution-v1."* ]]; then
+        buildopt_stop "${buildopt_root}/control-home"
+        buildopt_stop "${buildopt_root}/candidate-home"
+        if [[ "${buildopt_complete}" != true && -d "${buildopt_root}/logs" ]]; then
+            tar -C "${buildopt_root}" -czf "${buildopt_output}.failure-logs.tar.gz" logs
+            chmod 0600 "${buildopt_output}.failure-logs.tar.gz"
+        fi
+        for ((buildopt_cleanup_attempt = 0; buildopt_cleanup_attempt < 5; buildopt_cleanup_attempt++)); do
+            if rm -rf -- "${buildopt_root}" 2>/dev/null && [[ ! -e "${buildopt_root}" ]]; then
+                return 0
+            fi
+            sleep 1
+        done
+        printf 'warning: verification attribution temporary directory remains: %s\n' \
+            "${buildopt_root}" >&2
+        [[ "${buildopt_complete}" == true ]]
+    fi
+}
+trap buildopt_cleanup EXIT
+chmod 0700 "${buildopt_root}"
+mkdir -p "${buildopt_root}/source" "${buildopt_root}/logs" \
+    "${buildopt_root}/control-home" "${buildopt_root}/candidate-home" \
+    "${buildopt_root}/original"
+
+[[ "$(sha256sum "${buildopt_source_archive}" | awk '{print $1}')" == \
+    "$(jq -er '.repository.sourceArchiveSha256' "${buildopt_spec}")" ]] || {
+    printf 'Spring source archive checksum mismatch\n' >&2
+    exit 1
+}
+tar -xzf "${buildopt_source_archive}" --strip-components=1 -C "${buildopt_root}/source"
+buildopt_change_path=$(jq -er '.change.path' "${buildopt_spec}")
+[[ "$(sha256sum "${buildopt_root}/source/${buildopt_change_path}" | awk '{print $1}')" == \
+    "$(jq -er '.change.originalSha256' "${buildopt_spec}")" ]] || {
+    printf 'Spring verification attribution input checksum mismatch\n' >&2
+    exit 1
+}
+cp "${buildopt_root}/source/${buildopt_change_path}" "${buildopt_root}/original/change"
+cp "${buildopt_fixture}/buildopt-impact-manifest.json" \
+    "${buildopt_root}/source/buildopt-impact-manifest.json"
+cp "${buildopt_fixture}/buildopt-impact-graph.generated.json" \
+    "${buildopt_root}/source/buildopt-impact-graph.generated.json"
+cp "${buildopt_fixture}/buildopt-impact.generated.json" \
+    "${buildopt_root}/source/buildopt-impact.generated.json"
+
+for buildopt_home in "${buildopt_root}/control-home" "${buildopt_root}/candidate-home"; do
+    for buildopt_seed_component in caches wrapper; do
+        [[ -d "${buildopt_home_seed}/${buildopt_seed_component}" ]] || {
+            printf 'verification attribution seed lacks %s\n' "${buildopt_seed_component}" >&2
+            exit 1
+        }
+        cp -a --reflink=auto "${buildopt_home_seed}/${buildopt_seed_component}" \
+            "${buildopt_home}/"
+    done
+    find "${buildopt_home}" -type f \( -name '*.lock' -o -name gc.properties \) -delete
+    mkdir -p "${buildopt_home}/init.d"
+    cp "${buildopt_guard}" "${buildopt_home}/init.d/buildopt-test-guard.init.gradle"
+done
+[[ -d "${buildopt_home_seed}/caches/build-cache-1" ]] || {
+    printf 'verification attribution seed lacks the native build cache\n' >&2
+    exit 1
+}
+buildopt_cache_seed="${buildopt_root}/build-cache-seed.tar.gz"
+tar -C "${buildopt_home_seed}/caches" -czf "${buildopt_cache_seed}" build-cache-1
+
+buildopt_reset_arm() {
+    local buildopt_arm=$1
+    local buildopt_mutation=$2
+    local buildopt_home="${buildopt_root}/${buildopt_arm}-home"
+    cp "${buildopt_root}/original/change" "${buildopt_root}/source/${buildopt_change_path}"
+    rm -f "${buildopt_root}/source/.buildopt-verification-attribution-timings.json"
+    (
+        cd "${buildopt_root}/source"
+        JAVA_HOME="${buildopt_java_home}" GRADLE_USER_HOME="${buildopt_home}" \
+            timeout 10m ./gradlew --daemon --offline --quiet --max-workers=12 clean
+    ) >"${buildopt_root}/logs/reset-${buildopt_arm}.log" 2>&1
+    rm -rf -- "${buildopt_home}/caches/build-cache-1"
+    tar -C "${buildopt_home}/caches" -xzf "${buildopt_cache_seed}"
+    printf '\n// BuildOpt fixed verification attribution change %s.\n' \
+        "${buildopt_mutation}" >>"${buildopt_root}/source/${buildopt_change_path}"
+    printf '%s\n' "${buildopt_change_path}" >"${buildopt_root}/source/.buildopt-changes"
+}
+
+buildopt_run_control() {
+    local buildopt_log=$1
+    local buildopt_trace=${2:-}
+    local -a buildopt_arguments=(
+        --daemon --offline --build-cache --parallel --no-configuration-cache
+        --console=plain --max-workers=12 --no-scan --stacktrace
+    )
+    [[ -z "${buildopt_trace}" ]] || \
+        buildopt_arguments+=("-Dorg.gradle.internal.operations.trace=${buildopt_trace}")
+    (
+        cd "${buildopt_root}/source"
+        JAVA_HOME="${buildopt_java_home}" \
+        GRADLE_USER_HOME="${buildopt_root}/control-home" \
+            timeout 20m ./gradlew "${buildopt_arguments[@]}" checkstyleMain
+    ) >"${buildopt_log}" 2>&1
+}
+
+buildopt_run_candidate() {
+    local buildopt_log=$1
+    local buildopt_trace=${2:-}
+    local -a buildopt_arguments=(
+        --gradle-option=--daemon --gradle-option=--offline
+        --gradle-option=--build-cache --gradle-option=--parallel
+        --gradle-option=--no-configuration-cache --gradle-option=--console=plain
+        --gradle-option=--max-workers=12 --gradle-option=--no-scan
+        --gradle-option=--stacktrace
+    )
+    if [[ -n "${buildopt_trace}" ]]; then
+        buildopt_arguments+=(
+            "--gradle-option=-Dorg.gradle.internal.operations.trace=${buildopt_trace}"
+            --timings-file .buildopt-verification-attribution-timings.json
+        )
+    fi
+    (
+        cd "${buildopt_root}/source"
+        JAVA_HOME="${buildopt_java_home}" \
+        GRADLE_USER_HOME="${buildopt_root}/candidate-home" \
+            timeout 20m "${buildopt_executable}" impact \
+            --repository-id spring-projects/spring-framework \
+            --pipeline-class poc-verification-distribution-graph-v1 \
+            --changes-file .buildopt-changes "${buildopt_arguments[@]}"
+    ) >"${buildopt_log}" 2>&1
+}
+
+buildopt_assert_output() {
+    local buildopt_log=$1
+    local buildopt_report
+    buildopt_report="${buildopt_root}/source/$(jq -er '.requiredOutput' "${buildopt_spec}")"
+    [[ -s "${buildopt_report}" ]] || {
+        printf 'Spring Checkstyle report is missing or empty\n' >&2
+        return 1
+    }
+    grep -Fq 'BUILD SUCCESSFUL' "${buildopt_log}"
+    grep -Fq '> Task :buildSrc:test UP-TO-DATE' "${buildopt_log}"
+    if grep -E '^> Task .*:test($| )' "${buildopt_log}" |
+        grep -Ev '^> Task :buildSrc:test( |$)' | grep -q . ||
+        grep -Fq 'forbidden root-build Gradle Test task(s):' "${buildopt_log}" ||
+        grep -Eq '^> Task .*:(publish|upload|release|sign)([A-Z:]|$)' "${buildopt_log}"; then
+        printf 'Spring verification attribution attempted forbidden work\n' >&2
+        return 1
+    fi
+    sha256sum "${buildopt_report}" | awk '{print $1}'
+}
+
+buildopt_trace_summary() {
+    local buildopt_trace_log=$1
+    local buildopt_external_started_ms=$2
+    local buildopt_external_finished_ms=$3
+    local buildopt_destination=$4
+    jq -sc \
+        --argjson externalStartedMs "${buildopt_external_started_ms}" \
+        --argjson externalFinishedMs "${buildopt_external_finished_ms}" '
+        (map(select(.startTime != null and
+                    .detailsClassName == "org.gradle.launcher.exec.DefaultBuildTreeActionExecutor$1")) |
+         if length == 1 then .[0] else error("expected one root build operation") end) as $rootStart |
+        (map(select(.endTime != null and .id == $rootStart.id)) |
+         if length == 1 then .[0] else error("expected one root build completion") end) as $rootEnd |
+        (map(select(.startTime != null and
+                    .detailsClassName == "org.gradle.internal.buildtree.BuildOperationFiringBuildTreeWorkExecutor$1")) |
+         if length == 1 then .[0] else error("expected one main-task operation") end) as $tasksStart |
+        (map(select(.endTime != null and .id == $tasksStart.id)) |
+         if length == 1 then .[0] else error("expected one main-task completion") end) as $tasksEnd |
+        (map(select(.startTime != null and
+                    .detailsClassName == "org.gradle.api.internal.tasks.execution.ExecuteTaskBuildOperationDetails")) |
+         map({key:(.id | tostring), value:.}) | from_entries) as $taskStarts |
+        (map(select(.endTime != null and
+                    .resultClassName == "org.gradle.api.internal.tasks.execution.ExecuteTaskBuildOperationResult"))) as $taskEnds |
+        [$taskEnds[] as $end | ($taskStarts[$end.id | tostring]) as $start |
+          select($start != null) |
+          {
+            path:(if $start.details.buildPath == ":" then $start.details.taskPath
+                  else $start.details.buildPath + $start.details.taskPath end),
+            durationMs:($end.endTime - $start.startTime),
+            outcome:(if $end.result.skipMessage != null then $end.result.skipMessage
+                     elif $end.result.originBuildCacheKeyBytes != null then "FROM-CACHE"
+                     elif $end.result.skipReasonMessage != null then $end.result.skipReasonMessage
+                     elif $end.result.actionable == false then "NO-ACTIONS"
+                     else "EXECUTED" end)
+          }] | sort_by(.path) as $tasks |
+        {
+          phases:{
+            externalDurationMs:($externalFinishedMs - $externalStartedMs),
+            launcherAndGradleClientStartupMs:($rootStart.startTime - $externalStartedMs),
+            configurationBeforeTasksMs:($tasksStart.startTime - $rootStart.startTime),
+            taskExecutionTemporalMs:($tasksEnd.endTime - $tasksStart.startTime),
+            gradleFinalizationMs:($rootEnd.endTime - $tasksEnd.endTime),
+            launcherAndGradleClientTeardownMs:($externalFinishedMs - $rootEnd.endTime),
+            gradleRootDurationMs:($rootEnd.endTime - $rootStart.startTime)
+          },
+          tasks:$tasks,
+          taskSummary:{
+            count:($tasks | length),
+            cumulativeDurationMs:([$tasks[].durationMs] | add // 0),
+            outcomes:($tasks | group_by(.outcome) | map({key:.[0].outcome,value:length}) | from_entries)
+          }
+        } |
+        .phases.reconciledDurationMs = (
+          .phases.launcherAndGradleClientStartupMs +
+          .phases.configurationBeforeTasksMs + .phases.taskExecutionTemporalMs +
+          .phases.gradleFinalizationMs + .phases.launcherAndGradleClientTeardownMs
+        ) |
+        if (.phases.externalDurationMs - .phases.reconciledDurationMs | fabs) <= 2 and
+           ([.phases[]] | all(. >= 0))
+        then . else error("verification attribution phases do not reconcile") end
+    ' "${buildopt_trace_log}" >"${buildopt_destination}"
+}
+
+buildopt_control_output_sha=''
+buildopt_candidate_output_sha=''
+for buildopt_arm in control candidate; do
+    buildopt_reset_arm "${buildopt_arm}" warmup
+    buildopt_log="${buildopt_root}/logs/warmup-${buildopt_arm}.log"
+    "buildopt_run_${buildopt_arm}" "${buildopt_log}"
+    buildopt_assert_output "${buildopt_log}" >/dev/null
+done
+
+for buildopt_arm in control candidate; do
+    buildopt_reset_arm "${buildopt_arm}" diagnostic
+    buildopt_log="${buildopt_root}/logs/diagnostic-${buildopt_arm}.log"
+    buildopt_trace="${buildopt_root}/logs/diagnostic-${buildopt_arm}.operations"
+    buildopt_started_ns=$(date +%s%N)
+    "buildopt_run_${buildopt_arm}" "${buildopt_log}" "${buildopt_trace}"
+    buildopt_finished_ns=$(date +%s%N)
+    printf -v "buildopt_${buildopt_arm}_output_sha" '%s' \
+        "$(buildopt_assert_output "${buildopt_log}")"
+    buildopt_trace_summary "${buildopt_trace}-log.txt" \
+        "$((buildopt_started_ns / 1000000))" "$((buildopt_finished_ns / 1000000))" \
+        "${buildopt_root}/${buildopt_arm}.json"
+done
+
+[[ "${buildopt_control_output_sha}" == "${buildopt_candidate_output_sha}" ]] || {
+    printf 'verification attribution outputs differ\n' >&2
+    exit 1
+}
+grep -Fq 'explicit Build Impact POC candidate spring-webmvc-checkstyle-main selected' \
+    "${buildopt_root}/logs/diagnostic-candidate.log"
+grep -Eq '^> Task :spring-webmvc:checkstyleMain( |$)' \
+    "${buildopt_root}/logs/diagnostic-candidate.log"
+if grep -Eq '^> Task :spring-jms:checkstyleMain( |$)' \
+    "${buildopt_root}/logs/diagnostic-candidate.log"; then
+    printf 'verification attribution candidate escaped its selected graph\n' >&2
+    exit 1
+fi
+
+buildopt_timing_report="${buildopt_root}/source/.buildopt-verification-attribution-timings.json"
+"${buildopt_script_dir}/check-build-impact-phase-timings" "${buildopt_timing_report}" >/dev/null
+buildopt_source_evidence="${buildopt_repo_root}/benchmarks/results/poc-verification-distribution-graph-v1.json"
+
+jq -n \
+    --arg revision "$(git -C "${buildopt_repo_root}" rev-parse HEAD)" \
+    --arg specSha "$(sha256sum "${buildopt_spec}" | awk '{print $1}')" \
+    --arg runnerSha "$(sha256sum "${BASH_SOURCE[0]}" | awk '{print $1}')" \
+    --arg binarySha "$(sha256sum "${buildopt_executable}" | awk '{print $1}')" \
+    --arg sourceEvidenceSha "$(sha256sum "${buildopt_source_evidence}" | awk '{print $1}')" \
+    --arg sourceArchiveSha "$(sha256sum "${buildopt_source_archive}" | awk '{print $1}')" \
+    --arg outputSha "${buildopt_control_output_sha}" \
+    --argjson cpu "$(getconf _NPROCESSORS_ONLN)" \
+    --slurpfile control "${buildopt_root}/control.json" \
+    --slurpfile candidate "${buildopt_root}/candidate.json" \
+    --slurpfile timing "${buildopt_timing_report}" '
+    def ns_to_ms: . / 1000000;
+    ($control[0].tasks | map(.path)) as $controlPaths |
+    ($candidate[0].tasks | map(.path)) as $candidatePaths |
+    ($control[0].tasks | map(select(.path as $path | $candidatePaths | index($path) | not))) as $controlOnly |
+    {
+      schemaVersion:"buildopt.poc/verification-overhead-attribution-result/v1",
+      workItem:"POC-VERIFICATION-OVERHEAD-ATTRIBUTION-001",
+      capturedAt:(now | todateiso8601),
+      buildoptRevision:$revision,
+      specSha256:$specSha,
+      runnerSha256:$runnerSha,
+      installedBinarySha256:$binarySha,
+      sourceEvidenceSha256:$sourceEvidenceSha,
+      sourceArchiveSha256:$sourceArchiveSha,
+      runner:{os:"linux",arch:"amd64",cpuCount:$cpu,maxWorkers:12},
+      methodology:{diagnosticOnly:true,performanceSampleAdded:false,
+        operationTracePerturbsTiming:true,parallelTaskDurationsMayOverlap:true},
+      control:$control[0],
+      candidate:$candidate[0],
+      comparison:{
+        externalCandidateMinusControlMs:($candidate[0].phases.externalDurationMs - $control[0].phases.externalDurationMs),
+        taskIntervalSavedMs:($control[0].phases.taskExecutionTemporalMs - $candidate[0].phases.taskExecutionTemporalMs),
+        controlOnlyTasks:$controlOnly,
+        controlOnlyTaskCount:($controlOnly | length),
+        controlOnlyCumulativeDurationMs:([$controlOnly[].durationMs] | add // 0),
+        controlOnlyOutcomeCounts:($controlOnly | group_by(.outcome) |
+          map({key:.[0].outcome,value:length}) | from_entries),
+        buildoptCandidateSpecificPhasesMs:{
+          impactPreparation:($timing[0].impactPreparationNs | ns_to_ms),
+          gradleSetup:($timing[0].gradleSetupNs | ns_to_ms),
+          runtimeSetup:($timing[0].runtimeSetupNs | ns_to_ms),
+          teardown:($timing[0].teardownNs | ns_to_ms),
+          unattributed:($timing[0].unattributedNs | ns_to_ms)
+        },
+        requiredOutputSha256:$outputSha,
+        outputsIdentical:true,
+        productFailures:0
+      },
+      boundaries:{pocOnly:true,performanceDecisionChanged:false,
+        productionAuthorityChanged:false,testOptimizationModified:false,
+        otherOptimizationsEnabled:false}
+    } |
+    (.comparison.buildoptCandidateSpecificPhasesMs | to_entries | max_by(.value)) as $largest |
+    .comparison.largestCandidateSpecificPhase = $largest.key |
+    .comparison.largestCandidateSpecificPhaseMs = $largest.value |
+    .comparison.actionThresholdMs = 500 |
+    .comparison.actionThresholdMet = ($largest.value >= 500) |
+    .decision = (if .comparison.actionThresholdMet
+      then "IMPLEMENT_ONE_GENERIC_CORRECTION"
+      else "STOP_VERIFICATION_OPTIMIZATION_NO_ACTIONABLE_BOTTLENECK" end)
+    ' >"${buildopt_output}"
+chmod 0600 "${buildopt_output}"
+buildopt_complete=true
+printf 'Verification overhead attribution: %s\n' \
+    "$(jq -er '.decision' "${buildopt_output}")"

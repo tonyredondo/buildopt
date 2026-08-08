@@ -3089,6 +3089,24 @@ bound, so the result deliberately keeps verification on the full native graph.
 Source distribution remains graph-complete capability evidence without a
 timing claim.
 
+Attribute that neutral verification result without adding a fifth performance
+sample with:
+
+```bash
+./dev/check-poc-verification-overhead-attribution-v1
+./dev/run-poc-verification-overhead-attribution-v1 \
+  /absolute/attribution.json \
+  /absolute/install/bin/buildopt \
+  /absolute/spring-framework-source.tar.gz \
+  /absolute/gradle-home-seed
+```
+
+The diagnostic uses one warm observation per arm plus Gradle operation traces
+and BuildOpt phase timings. Trace durations cannot change the retained
+performance decision. At most one generic correction is allowed, and only if
+a named candidate-specific phase exposes at least 500 ms of recoverable
+critical-path cost.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

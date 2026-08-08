@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-verification-overhead-attribution-v1.json"
+buildopt_source_evidence="${buildopt_repo_root}/benchmarks/results/poc-verification-distribution-graph-v1.json"
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'missing verification attribution command: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-verification-overhead-attribution/v1" and
+    .workItem == "POC-VERIFICATION-OVERHEAD-ATTRIBUTION-001" and
+    .sourceEvidence.path == "benchmarks/results/poc-verification-distribution-graph-v1.json" and
+    (.sourceEvidence.sha256 | test("^[0-9a-f]{64}$")) and
+    .sourceEvidence.decision == "RETAIN_VERIFICATION_FULL_GRAPH" and
+    .repository.nameWithOwner == "spring-projects/spring-framework" and
+    .repository.revision == "4b5c92703c63966c3471242c621c4a63b382638d" and
+    .controlEntrypoint == "checkstyleMain" and
+    .candidateEntrypoint == ":spring-webmvc:checkstyleMain" and
+    .requiredOutput == "spring-webmvc/build/reports/checkstyle/main.xml" and
+    .methodology.observationsPerArm == 1 and
+    .methodology.warmupMeasured == false and
+    .methodology.diagnosticDurationsGatePerformance == false and
+    .methodology.compareTaskPathsDurationsAndOutcomes == true and
+    .methodology.compareNonOverlappingExternalPhases == true and
+    .actionGate.minimumRecoverableCriticalPathMs == 500 and
+    .actionGate.maximumGenericCorrections == 1 and
+    .actionGate.requiresNamedCandidateSpecificPhase == true and
+    .actionGate.requiresMechanismUnchanged == true and
+    .actionGate.unchangedTimingRetryAllowed == false and
+    .terminalDecisions == [
+        "IMPLEMENT_ONE_GENERIC_CORRECTION",
+        "STOP_VERIFICATION_OPTIMIZATION_NO_ACTIONABLE_BOTTLENECK"
+    ] and
+    .boundaries == {
+        pocOnly: true,
+        productionAuthorityChanged: false,
+        testOptimizationModified: false,
+        otherOptimizationsEnabled: false,
+        soakRequired: false,
+        designPartnerRequired: false
+    }
+' "${buildopt_spec}" >/dev/null
+
+[[ "$(sha256sum "${buildopt_source_evidence}" | awk '{print $1}')" == \
+    "$(jq -er '.sourceEvidence.sha256' "${buildopt_spec}")" ]] || {
+    printf 'verification attribution source evidence drifted\n' >&2
+    exit 1
+}
+jq -e --slurpfile source "${buildopt_source_evidence}" '
+    .sourceEvidence.decision == $source[0].decision and
+    .repository.sourceArchiveSha256 == $source[0].sourceArchiveSha256 and
+    $source[0].result.meanSavedMs == 103.75 and
+    $source[0].result.positivePairs == 2 and
+    $source[0].decision == "RETAIN_VERIFICATION_FULL_GRAPH"
+' "${buildopt_spec}" >/dev/null
+
+printf 'Verification overhead attribution contract: PASS\n'

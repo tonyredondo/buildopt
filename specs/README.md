@@ -33,6 +33,7 @@ the exact cross-component contract.
 | [`poc-otel-clean-composition-v1.md`](./poc-otel-clean-composition-v1.md) and [`poc-otel-clean-composition-v1.json`](./poc-otel-clean-composition-v1.json) | `POC-FULL-PATH-CLEAN-001` |
 | [`poc-impact-generalization-v1.md`](./poc-impact-generalization-v1.md) and [`poc-impact-generalization-v1.json`](./poc-impact-generalization-v1.json) | `POC-IMPACT-GENERALIZATION-001` |
 | [`poc-verification-distribution-graph-v1.md`](./poc-verification-distribution-graph-v1.md) and [`poc-verification-distribution-graph-v1.json`](./poc-verification-distribution-graph-v1.json) | `POC-VERIFICATION-DISTRIBUTION-GRAPH-001` |
+| [`poc-verification-overhead-attribution-v1.md`](./poc-verification-overhead-attribution-v1.md) and [`poc-verification-overhead-attribution-v1.json`](./poc-verification-overhead-attribution-v1.json) | `POC-VERIFICATION-OVERHEAD-ATTRIBUTION-001` |
 | [`poc-stability-validation-v1.md`](./poc-stability-validation-v1.md) and [`poc-stability-validation-v1.json`](./poc-stability-validation-v1.json) | `POC-STABILITY-001` |
 | [`poc-pairing-validation-v1.md`](./poc-pairing-validation-v1.md) and [`poc-pairing-validation-v1.json`](./poc-pairing-validation-v1.json) | `POC-PAIRING-001` |
 | [`poc-groovy-validation-v1.md`](./poc-groovy-validation-v1.md) and [`poc-groovy-validation-v1.json`](./poc-groovy-validation-v1.json) | `POC-GROOVY-001` |
