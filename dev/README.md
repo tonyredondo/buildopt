@@ -3107,6 +3107,17 @@ performance decision. At most one generic correction is allowed, and only if
 a named candidate-specific phase exposes at least 500 ms of recoverable
 critical-path cost.
 
+Validate the retained attribution with:
+
+```bash
+./dev/check-poc-verification-overhead-attribution-v1-result
+```
+
+The trace records 143 native and 51 candidate task operations. Although the 92
+omitted rows total 4,249 ms, most are cache hits or no-op outcomes and their
+durations overlap. BuildOpt's largest own phase is only 1.238233 ms, so no
+generic correction is authorized and verification remains on native Gradle.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

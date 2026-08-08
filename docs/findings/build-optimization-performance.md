@@ -23,7 +23,9 @@
   qualified shared test preparation at **18.88% faster** and rejected leaf
   compilation/packaging. Verification and source-distribution graphs are now
   generically complete, but verification improved only **0.31%** with 2/4
-  positive pairs, so it remains on native full-graph execution.
+  positive pairs. Attribution found only **1.238233 ms** in the largest
+  BuildOpt-owned phase, so it remains on native full-graph execution and this
+  optimization line is closed.
 - **Direct JAR reuse did not improve the measured Spring test build.** It
   restored three exact Test-fixture JARs but regressed the complete unchanged
   test workflow by **735.25 ms/11.31%**, so the activation was not promoted.
@@ -50,7 +52,7 @@ measured on different workloads and scopes.
 |---|---|---:|---|
 | **Safe Cache / local L1** | Reuses verified outputs in a scope isolated by repository, Wrapper, and platform. | Against cache-off: **15.9% faster in Kotlin** and **13.7% faster in Groovy**. Against native Gradle cache: **0.02% faster in Kotlin** and **0.47% slower in Groovy**. | Useful when a repository has no effective cache, but **not an accelerator over native Gradle cache**. Strict Safe Cache remains explicit-only. |
 | **Runtime Tuning** | Tests bounded worker, heap, and resource profiles intended to improve Gradle execution. | The latest real Spring candidate capped 12 workers to 6 and was **2.00% slower** (191.5 ms), with 2/4 favorable pairs and interval -973.5..+590.5 ms. Earlier synthetic `W3_H4G` and `W4_H6G` candidates were **4.3%** and **54.7% slower**. | **No current value. Disabled.** Optimized native Gradle remains the stable control. |
-| **Build Impact** | Maps a change to the projects and tasks needed for the requested outputs, with full-graph fallback for unknown or global changes. | Synthetic coverage: **73.5-76.0% faster**. Installed Spring path: **15.76% faster**. Generalized Spring test preparation: **18.88% faster**. Kafka client packaging: **57.58% faster**. Spring verification is graph-complete but saved only **0.31%** and failed stability. | **The strongest broadly useful accelerator currently demonstrated, but only for independently qualified scopes.** |
+| **Build Impact** | Maps a change to the projects and tasks needed for the requested outputs, with full-graph fallback for unknown or global changes. | Synthetic coverage: **73.5-76.0% faster**. Installed Spring path: **15.76% faster**. Generalized Spring test preparation: **18.88% faster**. Kafka client packaging: **57.58% faster**. Spring verification is graph-complete but saved only **0.31%**; attribution found no product phase above **1.238233 ms**. | **The strongest broadly useful accelerator currently demonstrated, but only for independently qualified scopes.** |
 | **Task Intelligence** | Observes and qualifies tasks only when their inputs, outputs, cache keys, and outcomes are exact enough to support an optimization. | No general direct saving. In the accepted pilot it enabled a qualified native-cache restore that saved **203 ms** on average. | A **safety and eligibility layer**, not a standalone accelerator. Its value is realized through a qualified cache or patch route. |
 | **Patch Autopilot / reviewed task patch** | Produces a reviewable and reversible patch that correctly declares inputs and outputs and enables caching for an exact custom-task shape. | Exact reviewed Java recipe: **67.3% faster in Kotlin** and **68.0% faster in Groovy**. Combined installed path: **63.5-67.3% faster**. | Highly promising for **specific reviewed task contracts**. The result must not be generalized to arbitrary tasks or recipes. |
 | **Graph reduction** | Replaces broad aggregate task dependencies with the typed producers required for the declared outputs. | The OpenTelemetry experiment removed **3 graph nodes and 2 executed tasks** while preserving all 125 required outputs. No standalone wall-clock percentage is claimed. | Structurally valuable, but it still needs independent timing evidence before it can be presented as a separate accelerator. |
@@ -293,26 +295,21 @@ Kafka-specific product rule.
 
 ## Recommended Next Block
 
-The graph-completeness block is complete. Public Gradle `VerificationTask` and
-`AbstractArchiveTask` contracts resolve the former gaps without
-repository-specific names. Spring verification narrows from 23 to 12 projects
-and source distribution from 22 to 12, with no `Test` and full fallback.
+The verification attribution block is complete. The native trace contains 143
+task rows and the candidate 51. The 92 omitted rows have 4,249 ms of cumulative
+duration, but 35 are cache hits and another 39 are no-action, no-source,
+skipped or up-to-date; parallel durations cannot be treated as additive
+critical-path savings. The diagnostic candidate task interval is 1,581 ms
+shorter, while BuildOpt's largest own phase is only 1.238233 ms. There is no
+500-ms generic product bottleneck to remove, so verification stays native and
+this line is closed without another timing run.
 
-That structural result did not create stable verification value. Native
-Checkstyle averaged 33,916 ms and BuildOpt 33,812.25 ms: 103.75 ms/0.31%
-faster, 2/4 positive pairs and a -5,158-ms lower bound. The next block should
-therefore be a bounded **verification overhead attribution**, not another
-unchanged timing run:
-
-1. compare retained task outcomes and task time, configuration, BuildOpt
-   preparation, launch and teardown from both arms;
-2. determine whether the 11 omitted projects were already no-op/cache hits or
-   whether BuildOpt added a generic recoverable critical-path cost;
-3. authorize at most one generic correction when the trace identifies at least
-   500 ms of bounded recoverable cost;
-4. keep source distribution capability-only and verification full-graph until
-   a new preregistered mechanism exists; and
-5. stop this line if no actionable bottleneck exists.
+The next performance block should transfer the already qualified Edge-locality
+result unchanged to a second repository and an independently derived network
+profile. It must compare end-to-end against Gradle's native remote cache,
+preserve exact outputs and fallback, and retain native/Shared behavior unless
+the same value gate passes. This tests whether the remaining positive mechanism
+is transferable rather than manufacturing value in an exhausted Spring scope.
 
 The **qualified-profile usability and scope synthesis** block is now complete:
 
@@ -345,9 +342,6 @@ manufacture another optimization.
 
 ## Open Questions
 
-- Is the neutral Spring verification result caused by native cache/no-op work
-  in the omitted projects or by a generic BuildOpt critical-path cost that can
-  be removed without weakening fallback?
 - Does the qualified Edge-locality result transfer to a different repository
   and a network profile derived independently of this experiment?
 - Does a materially different retained trace expose a Runtime bottleneck that
@@ -381,6 +375,7 @@ artifacts are:
 - [targeted Spring Runtime decision](../../benchmarks/results/poc-runtime-research-v1.json).
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json).
 - [verification/distribution graph evidence](../../benchmarks/results/poc-verification-distribution-graph-v1.json).
+- [verification overhead attribution](../../benchmarks/results/poc-verification-overhead-attribution-v1.json).
 
 Validate the current scorecard with:
 
@@ -389,4 +384,5 @@ Validate the current scorecard with:
 ./dev/check-poc-value-validation
 ./dev/check-poc-runtime-research
 ./dev/check-poc-verification-distribution-graph-v1-result
+./dev/check-poc-verification-overhead-attribution-v1-result
 ```

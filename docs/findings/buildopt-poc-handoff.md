@@ -21,7 +21,8 @@
   qualified at **18.88% faster**, while leaf compilation and packaging missed
   the frozen gate. Generic verification/source-distribution graphs are now
   complete, but Spring verification saved only **0.31%** with 2/4 positive
-  pairs, so it still retains native full-graph execution.
+  pairs. Attribution found only **1.238233 ms** in the largest BuildOpt-owned
+  phase, so it still retains native full-graph execution and this line stops.
 - **More cache hits are not automatically valuable.** On a real Spring test
   workflow, BuildOpt restored three exact Test-fixture JARs but still made the
   complete build **11.31% slower**. After narrowing plugin registration, a
@@ -125,6 +126,7 @@ unfavorable observations. Percentages from different rows are not additive.
 | Generalized leaf compilation | **1.33% faster**, 196.25 ms saved, 3/4 positive pairs | Rejected: misses 500 ms, 2%, 4/4, and positive-bound gates. |
 | Generalized leaf packaging | **3.73% faster**, 427.25 ms saved, 2/4 positive pairs | Rejected: misses 500 ms, 4/4, and positive-bound gates. |
 | Verification graph completion | **0.31% faster**, 103.75 ms saved, 2/4 positive pairs | Generic graph is complete and exact, but performance is unstable; retain native full graph. |
+| Verification overhead attribution | 143 native versus 51 candidate task rows; **1.238233 ms** largest BuildOpt phase | The 92 omitted rows mostly restore or no-op and overlap; no 500-ms correction exists, so stop this line. |
 | Source distribution graph completion | Complete 12-project candidate; not timed | Capability proved generically; prior leaf packaging did not qualify, so no new timing was authorized. |
 
 ### OpenTelemetry Java Instrumentation: real public repository
@@ -242,12 +244,16 @@ All four alternating pairs were positive, the exact client JAR matched after
 every arm, and global drift restored native `assemble`. Packaging is therefore
 qualified only for this declared Kafka output and mutation.
 
-The next recommended block should attribute why removing 11 projects from the
-Spring verification graph produced no stable wall-clock value. It must compare
-Gradle task outcomes and BuildOpt preparation/launch cost from the retained
-traces, authorize at most one generic correction backed by at least 500 ms of
-recoverable critical-path cost, and forbid an unchanged timing retry. If no
-such bottleneck exists, verification stays native and the POC moves on.
+The verification attribution is now terminal. The trace removed 92 task rows,
+but 35 were cache hits and another 39 were no-action, no-source, skipped or
+up-to-date; their 4,249-ms cumulative duration overlaps. The candidate task
+interval was 1,581 ms shorter, while BuildOpt's largest own phase was only
+1.238233 ms. No correction is authorized and verification stays native.
+
+The next recommended performance block transfers the qualified Edge-locality
+result unchanged to another repository and an independently derived network
+profile, comparing end to end with Gradle's native remote cache. The POC should
+broaden Edge only if exact outputs, fallback and the same value gate pass.
 
 ## Boundaries and References
 
@@ -273,3 +279,4 @@ production operations are outside the current scope.
 - [Installed qualified-profile adoption evidence](../../benchmarks/results/poc-qualified-profile-adoption-v1.json)
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)
 - [Verification/distribution graph evidence](../../benchmarks/results/poc-verification-distribution-graph-v1.json)
+- [Verification overhead attribution](../../benchmarks/results/poc-verification-overhead-attribution-v1.json)

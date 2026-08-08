@@ -1,0 +1,1544 @@
+{
+  "schemaVersion": "buildopt.poc/verification-overhead-attribution-result/v1",
+  "workItem": "POC-VERIFICATION-OVERHEAD-ATTRIBUTION-001",
+  "capturedAt": "2026-08-08T08:18:44Z",
+  "buildoptRevision": "f3ac882aef25e184ae7567272ef9773a95c304e7",
+  "specSha256": "d2ac93ec767098db088e327c622a96d8b20d214bed1b439fd1fde9323a988c6e",
+  "runnerSha256": "106296c526fbba70fc76aec4905b5c6a24e14c39efb0e56ca22a7b7be5359ebb",
+  "installedBinarySha256": "e8329a71f935ea63074a9dd8f4447abbe5c3de75eaca6052535cf226134f98d9",
+  "sourceEvidenceSha256": "5e6a4918c6a24948123fd38deb335c0d86ab42a003d506731bed5692ce915851",
+  "sourceArchiveSha256": "e3fa4258e5e568c0b0e6f1605956cd743cff847b9df7c82ce86b2d2f1109db16",
+  "buildCacheSeedSha256": "fb75ff4538202609555b33ce9fed67223f65ab898c1414d1c505fd826069100c",
+  "runner": {
+    "os": "linux",
+    "arch": "amd64",
+    "cpuCount": 12,
+    "maxWorkers": 12
+  },
+  "methodology": {
+    "diagnosticOnly": true,
+    "performanceSampleAdded": false,
+    "operationTracePerturbsTiming": true,
+    "parallelTaskDurationsMayOverlap": true
+  },
+  "control": {
+    "phases": {
+      "externalDurationMs": 45841,
+      "launcherAndGradleClientStartupMs": 1442,
+      "configurationBeforeTasksMs": 1601,
+      "taskExecutionTemporalMs": 42650,
+      "gradleFinalizationMs": 75,
+      "launcherAndGradleClientTeardownMs": 73,
+      "gradleRootDurationMs": 44326,
+      "reconciledDurationMs": 45841
+    },
+    "tasks": [
+      {
+        "path": ":buildSrc:check",
+        "durationMs": 0,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:checkstyleMain",
+        "durationMs": 7,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:checkstyleTest",
+        "durationMs": 2,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:classes",
+        "durationMs": 0,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:compileGroovy",
+        "durationMs": 0,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":buildSrc:compileJava",
+        "durationMs": 22,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:compileTestGroovy",
+        "durationMs": 1,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":buildSrc:compileTestJava",
+        "durationMs": 12,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:jar",
+        "durationMs": 1,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:pluginDescriptors",
+        "durationMs": 0,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:pluginUnderTestMetadata",
+        "durationMs": 13,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:processResources",
+        "durationMs": 1,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:processTestResources",
+        "durationMs": 1,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":buildSrc:test",
+        "durationMs": 13,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:testClasses",
+        "durationMs": 0,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:validatePlugins",
+        "durationMs": 3,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":checkstyleMain",
+        "durationMs": 22,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":classes",
+        "durationMs": 0,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":compileJava",
+        "durationMs": 16,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":integration-tests:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 1,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":integration-tests:checkstyleMain",
+        "durationMs": 16,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":integration-tests:classes",
+        "durationMs": 1,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":integration-tests:compileJava",
+        "durationMs": 4,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":integration-tests:compileKotlin",
+        "durationMs": 26,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":integration-tests:processResources",
+        "durationMs": 12,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":processResources",
+        "durationMs": 23,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":spring-aop:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 1,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-aop:checkstyleMain",
+        "durationMs": 43,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-aop:classes",
+        "durationMs": 1,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-aop:compileJava",
+        "durationMs": 240,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-aop:compileKotlin",
+        "durationMs": 29,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":spring-aop:processResources",
+        "durationMs": 72,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-aspects:checkstyleMain",
+        "durationMs": 21,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-aspects:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-aspects:compileAspectj",
+        "durationMs": 72,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-aspects:compileJava",
+        "durationMs": 0,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-aspects:processResources",
+        "durationMs": 56,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-beans:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 1,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-beans:checkstyleMain",
+        "durationMs": 45,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-beans:classes",
+        "durationMs": 1,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-beans:compileJava",
+        "durationMs": 286,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-beans:compileKotlin",
+        "durationMs": 314,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-beans:processResources",
+        "durationMs": 107,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-context-indexer:checkstyleMain",
+        "durationMs": 21,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-context-indexer:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-context-indexer:compileJava",
+        "durationMs": 119,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-context-indexer:processResources",
+        "durationMs": 25,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-context-support:checkstyleMain",
+        "durationMs": 26,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-context-support:classes",
+        "durationMs": 1,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-context-support:compileJava",
+        "durationMs": 57,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-context-support:processResources",
+        "durationMs": 55,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-context:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 0,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-context:checkstyleMain",
+        "durationMs": 62,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-context:classes",
+        "durationMs": 1,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-context:compileJava",
+        "durationMs": 439,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-context:compileKotlin",
+        "durationMs": 301,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-context:processResources",
+        "durationMs": 108,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-core-test:checkstyleMain",
+        "durationMs": 29,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-core-test:classes",
+        "durationMs": 0,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":spring-core-test:compileJava",
+        "durationMs": 220,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-core-test:processResources",
+        "durationMs": 19,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":spring-core:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 3,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-core:checkstyleMain",
+        "durationMs": 94,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-core:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-core:compileJava",
+        "durationMs": 611,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-core:compileKotlin",
+        "durationMs": 393,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-core:javapoetRepackJar",
+        "durationMs": 65,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-core:objenesisRepackJar",
+        "durationMs": 47,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-core:processResources",
+        "durationMs": 23,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-expression:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 3,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-expression:checkstyleMain",
+        "durationMs": 35,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-expression:classes",
+        "durationMs": 0,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":spring-expression:compileJava",
+        "durationMs": 386,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-expression:compileKotlin",
+        "durationMs": 14,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":spring-expression:processResources",
+        "durationMs": 22,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":spring-instrument:checkstyleMain",
+        "durationMs": 30,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-instrument:classes",
+        "durationMs": 1,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":spring-instrument:compileJava",
+        "durationMs": 114,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-instrument:processResources",
+        "durationMs": 14,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":spring-jdbc:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 0,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-jdbc:checkstyleMain",
+        "durationMs": 22,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-jdbc:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-jdbc:compileJava",
+        "durationMs": 62,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-jdbc:compileKotlin",
+        "durationMs": 83,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-jdbc:processResources",
+        "durationMs": 59,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-jms:checkstyleMain",
+        "durationMs": 19,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-jms:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-jms:compileJava",
+        "durationMs": 52,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-jms:processResources",
+        "durationMs": 54,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-messaging:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 1,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-messaging:checkstyleMain",
+        "durationMs": 22,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-messaging:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-messaging:compileJava",
+        "durationMs": 147,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-messaging:compileKotlin",
+        "durationMs": 286,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-messaging:processResources",
+        "durationMs": 33,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-orm:checkstyleMain",
+        "durationMs": 54,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-orm:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-orm:compileJava",
+        "durationMs": 49,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-orm:processResources",
+        "durationMs": 46,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-oxm:checkstyleMain",
+        "durationMs": 33,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-oxm:classes",
+        "durationMs": 1,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-oxm:compileJava",
+        "durationMs": 127,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-oxm:processResources",
+        "durationMs": 60,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-r2dbc:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 1,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-r2dbc:checkstyleMain",
+        "durationMs": 12,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-r2dbc:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-r2dbc:compileJava",
+        "durationMs": 22,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-r2dbc:compileKotlin",
+        "durationMs": 70,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-r2dbc:processResources",
+        "durationMs": 46,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-test:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 0,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-test:checkstyleMain",
+        "durationMs": 94,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-test:classes",
+        "durationMs": 1,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-test:compileJava",
+        "durationMs": 399,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-test:compileKotlin",
+        "durationMs": 362,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-test:processResources",
+        "durationMs": 45,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-tx:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 1,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-tx:checkstyleMain",
+        "durationMs": 36,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-tx:classes",
+        "durationMs": 1,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-tx:compileJava",
+        "durationMs": 229,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-tx:compileKotlin",
+        "durationMs": 155,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-tx:processResources",
+        "durationMs": 43,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-web:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 0,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-web:checkstyleMain",
+        "durationMs": 23,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-web:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-web:compileJava",
+        "durationMs": 190,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-web:compileKotlin",
+        "durationMs": 388,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-web:processResources",
+        "durationMs": 63,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-webflux:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 0,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-webflux:checkstyleMain",
+        "durationMs": 34,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-webflux:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-webflux:compileJava",
+        "durationMs": 91,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-webflux:compileKotlin",
+        "durationMs": 142,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-webflux:processResources",
+        "durationMs": 37,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-webmvc:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 1,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-webmvc:checkstyleMain",
+        "durationMs": 21889,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-webmvc:classes",
+        "durationMs": 1,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-webmvc:compileJava",
+        "durationMs": 12924,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-webmvc:compileKotlin",
+        "durationMs": 4458,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-webmvc:processResources",
+        "durationMs": 49,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-websocket:checkstyleMain",
+        "durationMs": 73,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-websocket:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-websocket:compileJava",
+        "durationMs": 237,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-websocket:processResources",
+        "durationMs": 35,
+        "outcome": "EXECUTED"
+      }
+    ],
+    "taskSummary": {
+      "count": 143,
+      "cumulativeDurationMs": 48186,
+      "outcomes": {
+        "EXECUTED": 22,
+        "FROM-CACHE": 54,
+        "NO-ACTIONS": 19,
+        "NO-SOURCE": 15,
+        "SKIPPED": 15,
+        "UP-TO-DATE": 18
+      }
+    }
+  },
+  "candidate": {
+    "phases": {
+      "externalDurationMs": 44311,
+      "launcherAndGradleClientStartupMs": 627,
+      "configurationBeforeTasksMs": 2283,
+      "taskExecutionTemporalMs": 41069,
+      "gradleFinalizationMs": 172,
+      "launcherAndGradleClientTeardownMs": 160,
+      "gradleRootDurationMs": 43524,
+      "reconciledDurationMs": 44311
+    },
+    "tasks": [
+      {
+        "path": ":buildSrc:check",
+        "durationMs": 1,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:checkstyleMain",
+        "durationMs": 10,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:checkstyleTest",
+        "durationMs": 4,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:classes",
+        "durationMs": 0,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:compileGroovy",
+        "durationMs": 1,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":buildSrc:compileJava",
+        "durationMs": 32,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:compileTestGroovy",
+        "durationMs": 1,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":buildSrc:compileTestJava",
+        "durationMs": 16,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:jar",
+        "durationMs": 3,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:pluginDescriptors",
+        "durationMs": 0,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:pluginUnderTestMetadata",
+        "durationMs": 18,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:processResources",
+        "durationMs": 2,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:processTestResources",
+        "durationMs": 1,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":buildSrc:test",
+        "durationMs": 44,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:testClasses",
+        "durationMs": 0,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":buildSrc:validatePlugins",
+        "durationMs": 5,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":spring-aop:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 1,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-aop:compileJava",
+        "durationMs": 289,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-aop:compileKotlin",
+        "durationMs": 12,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":spring-beans:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 1,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-beans:compileJava",
+        "durationMs": 247,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-beans:compileKotlin",
+        "durationMs": 191,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-context-support:compileJava",
+        "durationMs": 51,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-context:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 0,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-context:compileJava",
+        "durationMs": 140,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-context:compileKotlin",
+        "durationMs": 321,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-core:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 2,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-core:compileJava",
+        "durationMs": 618,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-core:compileKotlin",
+        "durationMs": 289,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-core:javapoetRepackJar",
+        "durationMs": 28,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-core:objenesisRepackJar",
+        "durationMs": 17,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-expression:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 0,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-expression:compileJava",
+        "durationMs": 284,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-expression:compileKotlin",
+        "durationMs": 17,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":spring-instrument:compileJava",
+        "durationMs": 77,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-jdbc:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 0,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-jdbc:compileJava",
+        "durationMs": 46,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-jdbc:compileKotlin",
+        "durationMs": 51,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-oxm:compileJava",
+        "durationMs": 141,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-tx:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 2,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-tx:compileJava",
+        "durationMs": 64,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-tx:compileKotlin",
+        "durationMs": 40,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-web:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 1,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-web:compileJava",
+        "durationMs": 149,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-web:compileKotlin",
+        "durationMs": 112,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-webmvc:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 0,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-webmvc:checkstyleMain",
+        "durationMs": 22263,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-webmvc:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-webmvc:compileJava",
+        "durationMs": 11915,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-webmvc:compileKotlin",
+        "durationMs": 4433,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-webmvc:processResources",
+        "durationMs": 40,
+        "outcome": "EXECUTED"
+      }
+    ],
+    "taskSummary": {
+      "count": 51,
+      "cumulativeDurationMs": 41980,
+      "outcomes": {
+        "EXECUTED": 4,
+        "FROM-CACHE": 19,
+        "NO-ACTIONS": 1,
+        "NO-SOURCE": 5,
+        "SKIPPED": 9,
+        "UP-TO-DATE": 13
+      }
+    }
+  },
+  "comparison": {
+    "externalCandidateMinusControlMs": -1530,
+    "taskIntervalSavedMs": 1581,
+    "controlOnlyTasks": [
+      {
+        "path": ":checkstyleMain",
+        "durationMs": 22,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":classes",
+        "durationMs": 0,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":compileJava",
+        "durationMs": 16,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":integration-tests:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 1,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":integration-tests:checkstyleMain",
+        "durationMs": 16,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":integration-tests:classes",
+        "durationMs": 1,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":integration-tests:compileJava",
+        "durationMs": 4,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":integration-tests:compileKotlin",
+        "durationMs": 26,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":integration-tests:processResources",
+        "durationMs": 12,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":processResources",
+        "durationMs": 23,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":spring-aop:checkstyleMain",
+        "durationMs": 43,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-aop:classes",
+        "durationMs": 1,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-aop:processResources",
+        "durationMs": 72,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-aspects:checkstyleMain",
+        "durationMs": 21,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-aspects:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-aspects:compileAspectj",
+        "durationMs": 72,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-aspects:compileJava",
+        "durationMs": 0,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-aspects:processResources",
+        "durationMs": 56,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-beans:checkstyleMain",
+        "durationMs": 45,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-beans:classes",
+        "durationMs": 1,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-beans:processResources",
+        "durationMs": 107,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-context-indexer:checkstyleMain",
+        "durationMs": 21,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-context-indexer:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-context-indexer:compileJava",
+        "durationMs": 119,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-context-indexer:processResources",
+        "durationMs": 25,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-context-support:checkstyleMain",
+        "durationMs": 26,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-context-support:classes",
+        "durationMs": 1,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-context-support:processResources",
+        "durationMs": 55,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-context:checkstyleMain",
+        "durationMs": 62,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-context:classes",
+        "durationMs": 1,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-context:processResources",
+        "durationMs": 108,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-core-test:checkstyleMain",
+        "durationMs": 29,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-core-test:classes",
+        "durationMs": 0,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":spring-core-test:compileJava",
+        "durationMs": 220,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-core-test:processResources",
+        "durationMs": 19,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":spring-core:checkstyleMain",
+        "durationMs": 94,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-core:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-core:processResources",
+        "durationMs": 23,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-expression:checkstyleMain",
+        "durationMs": 35,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-expression:classes",
+        "durationMs": 0,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":spring-expression:processResources",
+        "durationMs": 22,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":spring-instrument:checkstyleMain",
+        "durationMs": 30,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-instrument:classes",
+        "durationMs": 1,
+        "outcome": "UP-TO-DATE"
+      },
+      {
+        "path": ":spring-instrument:processResources",
+        "durationMs": 14,
+        "outcome": "NO-SOURCE"
+      },
+      {
+        "path": ":spring-jdbc:checkstyleMain",
+        "durationMs": 22,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-jdbc:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-jdbc:processResources",
+        "durationMs": 59,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-jms:checkstyleMain",
+        "durationMs": 19,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-jms:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-jms:compileJava",
+        "durationMs": 52,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-jms:processResources",
+        "durationMs": 54,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-messaging:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 1,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-messaging:checkstyleMain",
+        "durationMs": 22,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-messaging:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-messaging:compileJava",
+        "durationMs": 147,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-messaging:compileKotlin",
+        "durationMs": 286,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-messaging:processResources",
+        "durationMs": 33,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-orm:checkstyleMain",
+        "durationMs": 54,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-orm:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-orm:compileJava",
+        "durationMs": 49,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-orm:processResources",
+        "durationMs": 46,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-oxm:checkstyleMain",
+        "durationMs": 33,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-oxm:classes",
+        "durationMs": 1,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-oxm:processResources",
+        "durationMs": 60,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-r2dbc:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 1,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-r2dbc:checkstyleMain",
+        "durationMs": 12,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-r2dbc:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-r2dbc:compileJava",
+        "durationMs": 22,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-r2dbc:compileKotlin",
+        "durationMs": 70,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-r2dbc:processResources",
+        "durationMs": 46,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-test:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 0,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-test:checkstyleMain",
+        "durationMs": 94,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-test:classes",
+        "durationMs": 1,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-test:compileJava",
+        "durationMs": 399,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-test:compileKotlin",
+        "durationMs": 362,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-test:processResources",
+        "durationMs": 45,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-tx:checkstyleMain",
+        "durationMs": 36,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-tx:classes",
+        "durationMs": 1,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-tx:processResources",
+        "durationMs": 43,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-web:checkstyleMain",
+        "durationMs": 23,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-web:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-web:processResources",
+        "durationMs": 63,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-webflux:checkKotlinGradlePluginConfigurationErrors",
+        "durationMs": 0,
+        "outcome": "SKIPPED"
+      },
+      {
+        "path": ":spring-webflux:checkstyleMain",
+        "durationMs": 34,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-webflux:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-webflux:compileJava",
+        "durationMs": 91,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-webflux:compileKotlin",
+        "durationMs": 142,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-webflux:processResources",
+        "durationMs": 37,
+        "outcome": "EXECUTED"
+      },
+      {
+        "path": ":spring-websocket:checkstyleMain",
+        "durationMs": 73,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-websocket:classes",
+        "durationMs": 0,
+        "outcome": "NO-ACTIONS"
+      },
+      {
+        "path": ":spring-websocket:compileJava",
+        "durationMs": 237,
+        "outcome": "FROM-CACHE"
+      },
+      {
+        "path": ":spring-websocket:processResources",
+        "durationMs": 35,
+        "outcome": "EXECUTED"
+      }
+    ],
+    "controlOnlyTaskCount": 92,
+    "controlOnlyCumulativeDurationMs": 4249,
+    "controlOnlyOutcomeCounts": {
+      "EXECUTED": 18,
+      "FROM-CACHE": 35,
+      "NO-ACTIONS": 18,
+      "NO-SOURCE": 10,
+      "SKIPPED": 6,
+      "UP-TO-DATE": 5
+    },
+    "buildoptCandidateSpecificPhasesMs": {
+      "impactPreparation": 1.238233,
+      "gradleSetup": 0.013565,
+      "runtimeSetup": 0.000485,
+      "teardown": 0.001053,
+      "unattributed": 0.027133
+    },
+    "requiredOutputSha256": "f8bd5b0b1f3587993081dc3403dc0d96d140bc157d0c7001f56f53fb42ad40bc",
+    "outputsIdentical": true,
+    "productFailures": 0,
+    "largestCandidateSpecificPhase": "impactPreparation",
+    "largestCandidateSpecificPhaseMs": 1.238233,
+    "actionThresholdMs": 500,
+    "actionThresholdMet": false
+  },
+  "boundaries": {
+    "pocOnly": true,
+    "performanceDecisionChanged": false,
+    "productionAuthorityChanged": false,
+    "testOptimizationModified": false,
+    "otherOptimizationsEnabled": false
+  },
+  "decision": "STOP_VERIFICATION_OPTIMIZATION_NO_ACTIONABLE_BOTTLENECK"
+}

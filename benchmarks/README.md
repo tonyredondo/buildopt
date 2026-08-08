@@ -105,6 +105,16 @@ report matched in every pair and global fallback passed, but the terminal
 decision is `RETAIN_VERIFICATION_FULL_GRAPH`. Graph capability is complete;
 stable build-time value is not.
 
+The checked [verification attribution evidence](./results/poc-verification-overhead-attribution-v1.json)
+explains why this line stops. The operation trace contains 143 control and 51
+candidate task rows. The 92 omitted rows total 4,249 ms of overlapping work,
+but 35 are native-cache hits and another 39 are no-action, no-source, skipped
+or up-to-date. The candidate task interval is diagnostically 1,581 ms shorter,
+while BuildOpt's largest own phase is only 1.238233 ms of impact preparation.
+No named product phase reaches the frozen 500-ms correction threshold. These
+trace durations do not replace the four-pair result; the decision is
+`STOP_VERIFICATION_OPTIMIZATION_NO_ACTIONABLE_BOTTLENECK`.
+
 ### Exact standard-Copy cascade
 
 The checked [standard-Copy cascade evidence](./results/poc-standard-copy-cascade-v1.json)

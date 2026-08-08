@@ -50,3 +50,23 @@ requires no soak or design partner, and does not modify Test Optimization.
 
 The machine-readable contract is
 [`poc-verification-overhead-attribution-v1.json`](./poc-verification-overhead-attribution-v1.json).
+
+## Result
+
+The trace contains 143 native-control task operations and 51 candidate task
+operations. The 92 control-only rows have 4,249 ms of cumulative duration, but
+that duration overlaps under parallel execution. Their outcomes are 35
+`FROM-CACHE`, 18 `EXECUTED`, 18 `NO-ACTIONS`, 10 `NO-SOURCE`, 6 `SKIPPED` and
+5 `UP-TO-DATE`.
+
+The diagnostic task interval is 1,581 ms shorter in the candidate and its
+external duration is 1,530 ms shorter. These traced values are not a new
+performance sample. BuildOpt's largest candidate-specific phase is impact
+preparation at 1.238233 ms; Gradle setup, runtime setup, teardown and
+unattributed time are all below 0.03 ms. No candidate-specific phase approaches
+the preregistered 500-ms action threshold.
+
+The terminal decision is
+`STOP_VERIFICATION_OPTIMIZATION_NO_ACTIONABLE_BOTTLENECK`. Verification keeps
+the native full graph, no correction is implemented, and the unchanged timing
+comparison must not be retried.
