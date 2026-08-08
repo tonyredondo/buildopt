@@ -1,8 +1,8 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC PERFORMANCE ROADMAP COMPLETE` — the unchanged clean profile now qualifies on Apache Kafka 4.3.1 at 2,539.5 ms/55.09% faster, with 4/4 positive pairs, 4,062 exact outputs and full fallback<br>
-**Current phase:** `POC QUALIFIED-PROFILE ADOPTION VALIDATION NEXT` — validate the new repository-owned `buildopt poc` command on the already qualified OpenTelemetry and Kafka revisions without reopening timing or broadening the claim<br>
-**POC functional target:** attribute stable incremental value from one qualified combined path, then generalize only the Build Impact and exact task mechanisms that continue to beat optimized native Gradle; Safe Cache and Runtime candidates remain disabled<br>
+**Overall status:** `POC NEXT VALUE VALIDATION PLANNED` — the current qualified profiles are usable and evidence-backed; the next five decisions test whether their installed paths retain enough incremental value to justify continuing the POC<br>
+**Current phase:** `POC KAFKA INSTALLED-PROFILE VALUE NEXT` — measure the exact repository-owned Kafka v2 profile against optimized native Gradle plus Shared Cache before generalizing any mechanism or adding another optimization<br>
+**POC functional target:** prove stable installed-path value on fixed public revisions, make profile discovery reviewable, and authorize new optimization code only for a measured generic critical-path bottleneck; Safe Cache and Runtime candidates remain disabled<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
 **Last updated:** 2026-08-08<br>
@@ -102,6 +102,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-REMOTE-CACHE-VALUE | Compare Gradle direct-to-Shared reads with the same committed objects served from a prewarmed BuildOpt Edge | `DONE` | 1/1 | `E-221..222` |
 | POC-PROFILE-USABILITY | One explicit repository-owned command for the qualified clean POC profile | `DONE` | 1/1 | `E-225` |
 | POC-PROFILE-ADOPTION | Installed OpenTelemetry and Kafka candidate/fallback replay without new timing claims | `DONE` | 1/1 | `E-226` |
+| POC-NEXT-VALUE | Installed-profile value, cross-repository replication, deterministic discovery, one trace-gated hypothesis, and a terminal POC portfolio decision | `TODO` | 0/5 | `E-257` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -143,6 +144,11 @@ Optimized native Gradle baseline
   → investigate one trace-selected Runtime Tuning bottleneck without enabling a no-value candidate
   → reject the six-worker cap and retain the optimized native 12-worker control
   → compare Shared/Edge Cache with Gradle native remote cache under controlled network conditions
+  → measure the exact installed Kafka v2 profile against optimized native Gradle plus Shared Cache
+  → repeat only already-qualified installed profiles on fixed Spring, OpenTelemetry and Kafka revisions
+  → generate deterministic reviewable profiles from checked repository evidence, never from repository names
+  → authorize at most one new optimization only when retained traces expose a generic recoverable critical-path bottleneck
+  → issue a terminal CONTINUE, SPECIALIZE or STOP/REFRAME decision without adding percentages across repositories
 ```
 
 The implementation history remains useful, but it is not the POC exit gate:
@@ -225,6 +231,99 @@ than partners. Test Optimization remains a separate product.
 | 62 | `POC-KAFKA-SHADOWJAR-REPRODUCIBILITY-001` | Attribute and stabilize Kafka custom `shadowJar` output reproducibility under remote-cache failure before any composition rerun | `DONE` | Codex |
 | 63 | `POC-KAFKA-IMPACT-EDGE-COMPOSITION-002` | Repeat the Kafka Build Impact plus Edge composition from a fresh preregistration using the qualified reproducible `shadowJar` source input | `DONE` | Codex |
 | 64 | `POC-KAFKA-COMPOSITION-USABILITY-001` | Express the qualified Kafka Impact plus Edge composition through an explicit repository-owned POC profile with visible preconditions and native fallbacks | `DONE` | Codex |
+| 65 | `POC-KAFKA-INSTALLED-PROFILE-VALUE-001` | Measure the exact packaged Kafka v2 profile against optimized native Gradle plus Shared Cache under the already qualified source and network boundary | `TODO` | Codex |
+| 66 | `POC-QUALIFIED-PROFILE-MATRIX-001` | Replicate installed-profile value independently on the fixed Spring, OpenTelemetry and Kafka workloads without averaging their percentages | `WAITING` | Codex |
+| 67 | `POC-PROFILE-DISCOVERY-001` | Generate reviewable repository-owned profiles deterministically from checked manifests, graphs, traces and evidence, with native fallback on uncertainty | `WAITING` | Codex |
+| 68 | `POC-TRACE-HYPOTHESIS-002` | Authorize at most one generic optimization from retained installed-path traces only when it exposes at least 500 ms of recoverable critical-path work | `WAITING` | Codex |
+| 69 | `POC-PORTFOLIO-DECISION-001` | Decide whether to continue broadly, specialize by repository family, or stop/reframe the POC from the installed-path evidence | `WAITING` | Codex |
+
+#### Planned POC decision sequence
+
+##### 1. Installed Kafka profile value
+
+`POC-KAFKA-INSTALLED-PROFILE-VALUE-001` depends on `E-257`. It answers one
+question: does the exact packaged `buildopt poc` path retain value when compared
+with the strongest applicable native control, rather than only inside the
+experiment harness?
+
+- Freeze Kafka 4.3.1, the qualified normalized source input and mutation, the
+  same required `shadowJar`, and the previously qualified network boundary of
+  337 ms latency and 6,994,831 bytes/s.
+- Compare optimized native Gradle plus Shared Cache with the installed v2
+  profile using Build Impact plus read-only Edge. Rebuild the package from the
+  measured revision; do not reuse any earlier timing observation.
+- Run eight alternating pairs. Preserve the exact normalized archive, native
+  full-graph fallback for global scope, and HTTP-503 local fallback.
+- Qualify only with at least 500 ms and 2% mean savings, a positive paired lower
+  bound, 8/8 positive pairs, identical required outputs, and zero
+  product-attributable failures. Otherwise retain the native path for this
+  scope and record the negative result without tuning after observation.
+
+##### 2. Installed qualified-profile matrix
+
+`POC-QUALIFIED-PROFILE-MATRIX-001` waits for the Kafka installed-path decision.
+It tests the complete user-facing path on the fixed Spring, OpenTelemetry and
+Kafka revisions using only mechanisms that already qualified for each scope:
+Spring Build Impact; OpenTelemetry Build Impact plus the exact standard-Jar
+adapter; and Kafka Build Impact plus read-only Edge.
+
+- Use each repository's optimized native Gradle control, unchanged task scope,
+  fixed mutation, declared outputs and native fallback.
+- Collect at least four alternating pairs per repository after a fresh
+  preregistration. Evaluate every repository independently; never add or
+  average percentages across repositories or mechanisms.
+- A cell qualifies only under the unchanged 500-ms/2%/positive-bound gate with
+  all pairs positive, exact outputs and zero product failures. A failed cell
+  retains its native path and narrows the claim instead of moving thresholds.
+- The matrix supports a broad continuation only when at least two independent
+  repository families qualify through the installed path.
+
+##### 3. Deterministic profile discovery
+
+`POC-PROFILE-DISCOVERY-001` waits for the installed matrix so it can target only
+retained mechanisms. Implement a read-only analyzer that emits a versioned,
+reviewable repository profile from checked manifests, Gradle graphs, traces and
+qualified evidence—not from repository names or hidden allowlists.
+
+- Reproduce the retained mechanism set, preconditions, entrypoints, outputs,
+  omitted scope and disabled mechanisms for the fixed qualifying revisions.
+- Bind generated profiles to source and input digests and explain why every
+  mechanism is enabled or disabled.
+- Unknown relationships, incomplete evidence, drift or unsupported task types
+  must generate a native full-graph plan. Discovery never activates a profile,
+  changes production authority, or creates a performance claim.
+- Qualify only if generation is deterministic, reviewable and fail-closed on
+  all fixed fixtures; otherwise keep manually reviewed profiles for the POC.
+
+##### 4. One trace-gated optimization hypothesis
+
+`POC-TRACE-HYPOTHESIS-002` waits for the installed matrix. Analyze its retained
+traces and authorize at most one new optimization only when a named,
+product-addressable critical-path phase contains at least 500 ms of recoverable
+work and is generic across at least two repository or workload families.
+
+- Preregister the bottleneck, causal mechanism, control, candidate, workload,
+  outputs, pair order, threshold and stop condition before implementation or
+  accepted timing.
+- Do not reopen rejected Runtime Tuning, Hot State, Copy, Safe Cache or
+  standard-Jar cases without materially new trace evidence.
+- If no bottleneck clears the authorization rule, close the block with a
+  no-action result. If one does, implement only that hypothesis and measure it
+  under the unchanged 500-ms/2%/positive-bound and correctness gate.
+
+##### 5. Terminal POC portfolio decision
+
+`POC-PORTFOLIO-DECISION-001` waits for the four preceding blocks and synthesizes
+their per-repository decisions without adding incompatible percentages.
+
+- `CONTINUE` when at least two repository families retain installed-path value
+  with exact outputs, zero product failures and complete fallback.
+- `SPECIALIZE` when only one family qualifies: keep a bounded repository or
+  workload profile and stop claiming a general accelerator.
+- `STOP/REFRAME` when no installed profile qualifies or its value disappears
+  through the user-facing path.
+- This is a POC decision only. It does not authorize production hardening,
+  soak, design-partner work, GA operations, or Test Optimization.
 
 The raw diagnostic block is closed and unchanged. `E-172` corrects its
 ownership interpretation: Mockito's 242.690-second `compileTestJava` is
@@ -1566,6 +1665,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-08 | Planned the next five POC decisions: installed Kafka profile value, cross-repository installed-profile replication, deterministic profile discovery, one trace-gated optimization hypothesis, and a terminal continue/specialize/stop decision; no timing, production, soak, design-partner, or Test Optimization claim was added | Codex |
 | 2026-08-08 | Qualified the fresh normalized Kafka Build Impact plus Edge composition at 82.35% mean savings with 4/4 positive pairs, exact cached and HTTP-503 fallback bytes, global full-graph fallback, and zero measured candidate-origin traffic; moved next to repository-owned POC usability | Codex |
 | 2026-08-08 | Preregistered the corrected Kafka Impact plus Edge composition with the independently qualified archive normalization applied equally to both arms and zero prior observations reusable | Codex |
 | 2026-08-08 | Qualified the Kafka `shadowJar` reproducibility input after two baseline builds isolated ZIP metadata drift and two normalized plus one HTTP-503 fallback build produced identical bytes; moved next to a fresh composition rather than retroactively accepting old timings | Codex |
