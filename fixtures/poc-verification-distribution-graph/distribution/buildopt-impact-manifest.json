@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "spring-projects/spring-framework",
+  "pipelineClass": "poc-source-distribution-graph-v1",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    "sourcesJar"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "spring-webmvc-sources-jar",
+      "entrypoints": [
+        ":spring-webmvc:sourcesJar"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "spring-webmvc-sources-jar",
+      "path": "spring-webmvc/build/libs/spring-webmvc-7.1.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "buildSrc/**",
+    "gradle/**",
+    "gradle.properties",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

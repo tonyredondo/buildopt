@@ -1,0 +1,325 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 4)); then
+    printf 'usage: %s OUTPUT_FILE BUILDOPT_BIN SOURCE_ARCHIVE GRADLE_HOME_SEED\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_executable=$2
+buildopt_source_archive=$3
+buildopt_home_seed=$4
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-verification-distribution-graph-v1.json"
+buildopt_fixture="${buildopt_repo_root}/fixtures/poc-verification-distribution-graph"
+buildopt_guard="${buildopt_script_dir}/poc-spring-test-preparation.guard.init.gradle"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
+    ! -x "${buildopt_executable}" || ! -f "${buildopt_source_archive}" ||
+    ! -d "${buildopt_home_seed}" ]]; then
+    printf 'invalid verification graph runner input\n' >&2
+    exit 64
+fi
+for buildopt_command in awk cmp cp date find grep jq mkdir mktemp printenv rm \
+    sed sha256sum sort tar timeout; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'missing required command: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+if [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)" ]]; then
+    printf 'verification graph runner requires a clean revision-bound checkout\n' >&2
+    exit 1
+fi
+"${buildopt_script_dir}/check-poc-verification-distribution-graph-v1" >/dev/null
+
+buildopt_java_home=$("${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+    printenv JAVA_HOME)
+[[ -x "${buildopt_java_home}/bin/java" ]] || {
+    printf 'locked Temurin 25 toolchain is unavailable\n' >&2
+    exit 1
+}
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-verification-graph-v1.XXXXXX")
+buildopt_complete=false
+buildopt_stop() {
+    local buildopt_home=$1
+    if [[ -x "${buildopt_root}/source/gradlew" && -d "${buildopt_home}" ]]; then
+        (
+            cd "${buildopt_root}/source"
+            JAVA_HOME="${buildopt_java_home}" GRADLE_USER_HOME="${buildopt_home}" \
+                ./gradlew --stop
+        ) >/dev/null 2>&1 || true
+    fi
+}
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-verification-graph-v1."* ]]; then
+        buildopt_stop "${buildopt_root}/control-home"
+        buildopt_stop "${buildopt_root}/candidate-home"
+        if [[ "${buildopt_complete}" != true && -d "${buildopt_root}/logs" ]]; then
+            tar -C "${buildopt_root}" -czf "${buildopt_output}.failure-logs.tar.gz" logs
+            chmod 0600 "${buildopt_output}.failure-logs.tar.gz"
+        fi
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+chmod 0700 "${buildopt_root}"
+mkdir -p "${buildopt_root}/source" "${buildopt_root}/logs" \
+    "${buildopt_root}/control-home" "${buildopt_root}/candidate-home" \
+    "${buildopt_root}/original"
+
+[[ "$(sha256sum "${buildopt_source_archive}" | awk '{print $1}')" == \
+    "$(jq -er '.repository.sourceArchiveSha256' "${buildopt_spec}")" ]] || {
+    printf 'Spring source archive checksum mismatch\n' >&2
+    exit 1
+}
+tar -xzf "${buildopt_source_archive}" --strip-components=1 -C "${buildopt_root}/source"
+
+buildopt_change_path=$(jq -er '.change.path' "${buildopt_spec}")
+[[ "$(sha256sum "${buildopt_root}/source/${buildopt_change_path}" | awk '{print $1}')" == \
+    "$(jq -er '.change.originalSha256' "${buildopt_spec}")" ]] || {
+    printf 'Spring verification change input checksum mismatch\n' >&2
+    exit 1
+}
+cp "${buildopt_root}/source/${buildopt_change_path}" "${buildopt_root}/original/change"
+cp "${buildopt_root}/source/gradle.properties" "${buildopt_root}/original/gradle.properties"
+cp "${buildopt_fixture}/buildopt-impact-manifest.json" \
+    "${buildopt_root}/source/buildopt-impact-manifest.json"
+cp "${buildopt_fixture}/buildopt-impact-graph.generated.json" \
+    "${buildopt_root}/source/buildopt-impact-graph.generated.json"
+cp "${buildopt_fixture}/buildopt-impact.generated.json" \
+    "${buildopt_root}/source/buildopt-impact.generated.json"
+
+for buildopt_home in "${buildopt_root}/control-home" "${buildopt_root}/candidate-home"; do
+    if [[ -d "${buildopt_home_seed}/caches" ]]; then
+        cp -a --reflink=auto "${buildopt_home_seed}/caches" "${buildopt_home}/"
+    fi
+    if [[ -d "${buildopt_home_seed}/wrapper" ]]; then
+        cp -a --reflink=auto "${buildopt_home_seed}/wrapper" "${buildopt_home}/"
+    fi
+    find "${buildopt_home}" -type f \( -name '*.lock' -o -name gc.properties \) -delete
+    mkdir -p "${buildopt_home}/init.d"
+    cp "${buildopt_guard}" "${buildopt_home}/init.d/buildopt-test-guard.init.gradle"
+done
+buildopt_cache_seed="${buildopt_root}/build-cache-seed.tar.gz"
+tar -C "${buildopt_home_seed}/caches" -czf "${buildopt_cache_seed}" build-cache-1
+buildopt_cache_seed_sha=$(sha256sum "${buildopt_cache_seed}" | awk '{print $1}')
+
+buildopt_reset_arm() {
+    local buildopt_arm=$1
+    local buildopt_mutation=$2
+    local buildopt_home="${buildopt_root}/${buildopt_arm}-home"
+    cp "${buildopt_root}/original/change" "${buildopt_root}/source/${buildopt_change_path}"
+    cp "${buildopt_root}/original/gradle.properties" "${buildopt_root}/source/gradle.properties"
+    (
+        cd "${buildopt_root}/source"
+        JAVA_HOME="${buildopt_java_home}" GRADLE_USER_HOME="${buildopt_home}" \
+            timeout 10m ./gradlew --daemon --offline --quiet --max-workers=12 clean
+    ) >"${buildopt_root}/logs/reset-${buildopt_arm}.log" 2>&1
+    rm -rf -- "${buildopt_home}/caches/build-cache-1"
+    tar -C "${buildopt_home}/caches" -xzf "${buildopt_cache_seed}"
+    printf '\n// BuildOpt fixed verification graph change %s.\n' "${buildopt_mutation}" \
+        >>"${buildopt_root}/source/${buildopt_change_path}"
+    printf '%s\n' "${buildopt_change_path}" >"${buildopt_root}/source/.buildopt-changes"
+}
+
+buildopt_run_control() {
+    local buildopt_log=$1
+    (
+        cd "${buildopt_root}/source"
+        JAVA_HOME="${buildopt_java_home}" \
+        GRADLE_USER_HOME="${buildopt_root}/control-home" \
+            timeout 20m ./gradlew --daemon --offline --build-cache --parallel \
+            --no-configuration-cache --console=plain --max-workers=12 \
+            --no-scan --stacktrace checkstyleMain
+    ) >"${buildopt_log}" 2>&1
+}
+
+buildopt_run_candidate() {
+    local buildopt_log=$1
+    (
+        cd "${buildopt_root}/source"
+        JAVA_HOME="${buildopt_java_home}" \
+        GRADLE_USER_HOME="${buildopt_root}/candidate-home" \
+            timeout 20m "${buildopt_executable}" impact \
+            --repository-id spring-projects/spring-framework \
+            --pipeline-class poc-verification-distribution-graph-v1 \
+            --changes-file .buildopt-changes \
+            --gradle-option=--daemon --gradle-option=--offline \
+            --gradle-option=--build-cache --gradle-option=--parallel \
+            --gradle-option=--no-configuration-cache \
+            --gradle-option=--console=plain --gradle-option=--max-workers=12 \
+            --gradle-option=--no-scan --gradle-option=--stacktrace
+    ) >"${buildopt_log}" 2>&1
+}
+
+buildopt_assert_output() {
+    local buildopt_log=$1
+    local buildopt_report
+    buildopt_report="${buildopt_root}/source/$(jq -er '.requiredOutput.path' "${buildopt_spec}")"
+    [[ -s "${buildopt_report}" ]] || {
+        printf 'Spring Checkstyle report is missing or empty\n' >&2
+        return 1
+    }
+    grep -Fq 'BUILD SUCCESSFUL' "${buildopt_log}"
+    grep -Fq '> Task :buildSrc:test UP-TO-DATE' "${buildopt_log}"
+    if grep -Eq '^> Task .*:test($| )' "${buildopt_log}" ||
+        grep -Fq 'forbidden root-build Gradle Test task(s):' "${buildopt_log}" ||
+        grep -Eq '^> Task .*:(publish|upload|release|sign)([A-Z:]|$)' "${buildopt_log}" ||
+        grep -Eq 'Publishing build scan|Build scan published|https://gradle[.]com/s/' \
+            "${buildopt_log}"; then
+        printf 'Spring verification attempted forbidden work\n' >&2
+        return 1
+    fi
+    sha256sum "${buildopt_report}" | awk '{print $1}'
+}
+
+for buildopt_arm in control candidate; do
+    buildopt_reset_arm "${buildopt_arm}" warmup
+    buildopt_log="${buildopt_root}/logs/warmup-${buildopt_arm}.log"
+    "buildopt_run_${buildopt_arm}" "${buildopt_log}"
+    buildopt_assert_output "${buildopt_log}" >/dev/null
+done
+
+buildopt_pairs='[]'
+buildopt_failures=0
+for buildopt_pair in 1 2 3 4; do
+    if ((buildopt_pair % 2 == 1)); then
+        buildopt_order=(control candidate)
+        buildopt_order_name=CONTROL_CANDIDATE
+    else
+        buildopt_order=(candidate control)
+        buildopt_order_name=CANDIDATE_CONTROL
+    fi
+    buildopt_control_ms=0
+    buildopt_candidate_ms=0
+    buildopt_first_finished_ns=0
+    buildopt_max_gap_ms=0
+    buildopt_control_output=''
+    buildopt_candidate_output=''
+    for buildopt_arm in "${buildopt_order[@]}"; do
+        buildopt_reset_arm "${buildopt_arm}" "pair-${buildopt_pair}"
+        buildopt_started_ns=$(date +%s%N)
+        if ((buildopt_first_finished_ns > 0)); then
+            buildopt_gap_ms=$(((buildopt_started_ns - buildopt_first_finished_ns) / 1000000))
+            ((buildopt_gap_ms > buildopt_max_gap_ms)) && buildopt_max_gap_ms=${buildopt_gap_ms}
+        fi
+        buildopt_log="${buildopt_root}/logs/pair-${buildopt_pair}-${buildopt_arm}.log"
+        if ! "buildopt_run_${buildopt_arm}" "${buildopt_log}"; then
+            buildopt_failures=$((buildopt_failures + 1))
+            tail -n 180 "${buildopt_log}" >&2
+            exit 1
+        fi
+        buildopt_finished_ns=$(date +%s%N)
+        buildopt_first_finished_ns=${buildopt_finished_ns}
+        buildopt_elapsed_ms=$(((buildopt_finished_ns - buildopt_started_ns) / 1000000))
+        buildopt_output_sha=$(buildopt_assert_output "${buildopt_log}")
+        printf -v "buildopt_${buildopt_arm}_ms" '%s' "${buildopt_elapsed_ms}"
+        printf -v "buildopt_${buildopt_arm}_output" '%s' "${buildopt_output_sha}"
+        if [[ "${buildopt_arm}" == candidate ]]; then
+            grep -Fq 'explicit Build Impact POC candidate spring-webmvc-checkstyle-main selected' \
+                "${buildopt_log}"
+            grep -Eq '^> Task :spring-webmvc:checkstyleMain( |$)' "${buildopt_log}"
+            if grep -Eq '^> Task :spring-jms:checkstyleMain( |$)' "${buildopt_log}"; then
+                printf 'selective verification executed an outside-scope task\n' >&2
+                exit 1
+            fi
+        fi
+    done
+    [[ "${buildopt_control_output}" == "${buildopt_candidate_output}" ]] || {
+        printf 'Spring verification outputs differ in pair %s\n' "${buildopt_pair}" >&2
+        exit 1
+    }
+    buildopt_saved_ms=$((buildopt_control_ms - buildopt_candidate_ms))
+    buildopt_pairs=$(jq -c \
+        --argjson index "${buildopt_pair}" --arg order "${buildopt_order_name}" \
+        --argjson control "${buildopt_control_ms}" \
+        --argjson candidate "${buildopt_candidate_ms}" \
+        --argjson saved "${buildopt_saved_ms}" --argjson gap "${buildopt_max_gap_ms}" \
+        --arg outputSha "${buildopt_control_output}" \
+        '. + [{index:$index, order:$order, controlMs:$control,
+               candidateMs:$candidate, savedMs:$saved, maximumArmGapMs:$gap,
+               requiredOutputSha256:$outputSha, outputIdentical:true}]' \
+        <<<"${buildopt_pairs}")
+    printf 'Verification pair %s: native=%sms BuildOpt=%sms saved=%sms\n' \
+        "${buildopt_pair}" "${buildopt_control_ms}" "${buildopt_candidate_ms}" \
+        "${buildopt_saved_ms}"
+done
+
+buildopt_reset_arm candidate fallback
+cp "${buildopt_root}/original/gradle.properties" "${buildopt_root}/source/gradle.properties"
+printf '\n# BuildOpt fixed verification graph fallback.\n' \
+    >>"${buildopt_root}/source/gradle.properties"
+printf '%s\n' gradle.properties >"${buildopt_root}/source/.buildopt-changes"
+buildopt_fallback_log="${buildopt_root}/logs/fallback.log"
+buildopt_run_candidate "${buildopt_fallback_log}"
+grep -Fq 'buildopt: Build Impact POC retained the full graph (IMPACT_GLOBAL_CHANGE)' \
+    "${buildopt_fallback_log}"
+grep -Eq '^> Task :spring-jms:checkstyleMain( |$)' "${buildopt_fallback_log}"
+buildopt_assert_output "${buildopt_fallback_log}" >/dev/null
+
+buildopt_control_mean=$(jq '[.[].controlMs] | add / length' <<<"${buildopt_pairs}")
+buildopt_candidate_mean=$(jq '[.[].candidateMs] | add / length' <<<"${buildopt_pairs}")
+buildopt_mean_saved=$(jq '[.[].savedMs] | add / length' <<<"${buildopt_pairs}")
+buildopt_saved_percent=$(awk -v saved="${buildopt_mean_saved}" -v control="${buildopt_control_mean}" \
+    'BEGIN { printf "%.2f", (saved * 100) / control }')
+buildopt_positive_pairs=$(jq '[.[].savedMs | select(. > 0)] | length' <<<"${buildopt_pairs}")
+buildopt_lower_bound=$(jq '[.[].savedMs] | min' <<<"${buildopt_pairs}")
+buildopt_max_gap=$(jq '[.[].maximumArmGapMs] | max' <<<"${buildopt_pairs}")
+
+buildopt_decision=RETAIN_VERIFICATION_FULL_GRAPH
+if awk -v saved="${buildopt_mean_saved}" -v percent="${buildopt_saved_percent}" \
+    -v lower="${buildopt_lower_bound}" \
+    'BEGIN { exit !(saved >= 500 && percent >= 2 && lower > 0) }' &&
+    [[ "${buildopt_positive_pairs}" == 4 && "${buildopt_failures}" == 0 &&
+       "${buildopt_max_gap}" -le 10000 ]]; then
+    buildopt_decision=QUALIFY_SPRING_VERIFICATION_SCOPE
+fi
+
+jq -n \
+    --arg revision "$(git -C "${buildopt_repo_root}" rev-parse HEAD)" \
+    --arg specSha "$(sha256sum "${buildopt_spec}" | awk '{print $1}')" \
+    --arg runnerSha "$(sha256sum "${BASH_SOURCE[0]}" | awk '{print $1}')" \
+    --arg binarySha "$(sha256sum "${buildopt_executable}" | awk '{print $1}')" \
+    --arg sourceSha "$(sha256sum "${buildopt_source_archive}" | awk '{print $1}')" \
+    --arg cacheSeedSha "${buildopt_cache_seed_sha}" \
+    --argjson cpu "$(getconf _NPROCESSORS_ONLN)" --argjson pairs "${buildopt_pairs}" \
+    --argjson controlMean "${buildopt_control_mean}" \
+    --argjson candidateMean "${buildopt_candidate_mean}" \
+    --argjson meanSaved "${buildopt_mean_saved}" \
+    --argjson savedPercent "${buildopt_saved_percent}" \
+    --argjson positivePairs "${buildopt_positive_pairs}" \
+    --argjson lowerBound "${buildopt_lower_bound}" \
+    --argjson maximumGap "${buildopt_max_gap}" --arg decision "${buildopt_decision}" '
+    {
+      schemaVersion:"buildopt.poc/verification-distribution-graph-result/v1",
+      workItem:"POC-VERIFICATION-DISTRIBUTION-GRAPH-001",
+      capturedAt:(now | todateiso8601),
+      buildoptRevision:$revision,
+      specSha256:$specSha,
+      runnerSha256:$runnerSha,
+      installedBinarySha256:$binarySha,
+      sourceArchiveSha256:$sourceSha,
+      buildCacheSeedSha256:$cacheSeedSha,
+      runner:{os:"linux",arch:"amd64",cpuCount:$cpu,maxWorkers:12},
+      graphContracts:{verificationComplete:true,sourceDistributionComplete:true,
+        verificationOriginalProjects:23,verificationCandidateProjects:12,
+        distributionOriginalProjects:22,distributionCandidateProjects:12},
+      pairs:$pairs,
+      result:{controlMeanMs:$controlMean,candidateMeanMs:$candidateMean,
+        meanSavedMs:$meanSaved,meanSavedPercent:$savedPercent,
+        positivePairs:$positivePairs,pairedLowerBoundMs:$lowerBound,
+        maximumArmGapMs:$maximumGap,outputsIdentical:true,
+        productFailures:0,fallbackPassed:true},
+      decision:$decision,
+      boundaries:{pocOnly:true,testOptimizationModified:false,
+        otherOptimizationsEnabled:false,productionAuthorityChanged:false}
+    }' >"${buildopt_output}"
+chmod 0600 "${buildopt_output}"
+buildopt_complete=true
+"${buildopt_script_dir}/check-poc-verification-distribution-graph-v1-result" \
+    "${buildopt_output}"
+printf 'Spring verification result: %s\n' "${buildopt_decision}"

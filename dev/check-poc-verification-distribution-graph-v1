@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: ./dev/check-poc-verification-distribution-graph-v1\n' >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-verification-distribution-graph-v1.json"
+buildopt_fixture="${buildopt_repo_root}/fixtures/poc-verification-distribution-graph"
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'missing verification graph validator: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-verification-distribution-graph/v1" and
+  .workItem == "POC-VERIFICATION-DISTRIBUTION-GRAPH-001" and
+  .repository.revision == "4b5c92703c63966c3471242c621c4a63b382638d" and
+  (.repository.sourceArchiveSha256 | test("^[0-9a-f]{64}$")) and
+  .change.class == "LEAF_PRODUCTION_SOURCE" and
+  .change.path == "spring-webmvc/src/main/java/org/springframework/web/servlet/DispatcherServlet.java" and
+  (.change.originalSha256 | test("^[0-9a-f]{64}$")) and
+  [.graphContracts[].outputFamily] == ["VERIFICATION", "SOURCE_DISTRIBUTION"] and
+  [.graphContracts[].originalReachedProjectCount] == [23, 22] and
+  [.graphContracts[].candidateReachedProjectCount] == [12, 12] and
+  all(.graphContracts[]; .complete == true and .containsTestTasks == false and
+    (.graphSha256 | test("^[0-9a-f]{64}$"))) and
+  [.graphContracts[].measured] == [true, false] and
+  .runner == {os:"linux",arch:"amd64",cpuCount:12,maxWorkers:12,pairCount:4,
+    order:["CONTROL_CANDIDATE","CANDIDATE_CONTROL","CONTROL_CANDIDATE","CANDIDATE_CONTROL"],
+    maximumPairSeparationMs:10000,warmupMeasured:false,offlineMeasured:true,
+    launcherOverheadIncluded:true} and
+  .valueGate.minimumMeanSavedMs == 500 and
+  .valueGate.minimumMeanSavedPercent == 2 and
+  .valueGate.minimumPositivePairs == 4 and
+  .valueGate.requirePositivePairedLowerBound == true and
+  .valueGate.requireIdenticalOutputs == true and
+  .valueGate.maximumProductFailures == 0 and
+  .valueGate.thresholdsMayMoveAfterMeasurement == false and
+  .valueGate.failedPairsMayBeDiscarded == false and
+  .fallback.expectedMode == "FULL_GRAPH" and
+  .fallback.expectedReason == "IMPACT_GLOBAL_CHANGE" and
+  .boundaries.pocOnly == true and
+  .boundaries.productionAuthorityChanged == false and
+  .boundaries.testOptimizationModified == false and
+  .boundaries.hotStateEnabled == false and
+  .boundaries.runtimeTuningEnabled == false and
+  .boundaries.safeCacheEnabled == false and
+  .boundaries.sharedOrEdgeCacheEnabled == false and
+  .boundaries.soakRequired == false and
+  .boundaries.designPartnerRequired == false
+' "${buildopt_spec}" >/dev/null
+
+[[ "$(sha256sum "${buildopt_fixture}/buildopt-impact-graph.generated.json" | awk '{print $1}')" == \
+    "$(jq -er '.graphContracts[0].graphSha256' "${buildopt_spec}")" ]]
+[[ "$(sha256sum "${buildopt_fixture}/distribution/buildopt-impact-graph.generated.json" | awk '{print $1}')" == \
+    "$(jq -er '.graphContracts[1].graphSha256' "${buildopt_spec}")" ]]
+
+jq -e --slurpfile spec "${buildopt_spec}" '
+  .complete == true and
+  .repositoryId == "spring-projects/spring-framework" and
+  .pipelineClass == $spec[0].graphContracts[0].pipelineClass and
+  [.entrypoints[].name] == [
+    $spec[0].graphContracts[0].candidateEntrypoint,
+    $spec[0].graphContracts[0].originalEntrypoint
+  ] and
+  [.entrypoints[].reachesProjects | length] == [12, 23] and
+  all(.entrypoints[]; .containsTestTasks == false and .unknownRelationships == false)
+' "${buildopt_fixture}/buildopt-impact-graph.generated.json" >/dev/null
+
+jq -e --slurpfile spec "${buildopt_spec}" '
+  .complete == true and
+  .repositoryId == "spring-projects/spring-framework" and
+  .pipelineClass == $spec[0].graphContracts[1].pipelineClass and
+  [.entrypoints[].name] == [
+    $spec[0].graphContracts[1].candidateEntrypoint,
+    $spec[0].graphContracts[1].originalEntrypoint
+  ] and
+  [.entrypoints[].reachesProjects | length] == [12, 22] and
+  all(.entrypoints[]; .containsTestTasks == false and .unknownRelationships == false)
+' "${buildopt_fixture}/distribution/buildopt-impact-graph.generated.json" >/dev/null
+
+printf 'Verification and distribution graph protocol: PASS\n'

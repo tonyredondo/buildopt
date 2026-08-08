@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "buildopt.specs/poc-verification-distribution-graph/v1",
+  "workItem": "POC-VERIFICATION-DISTRIBUTION-GRAPH-001",
+  "objective": "Resolve generic Gradle verification and archive relationships, then test one exact Spring verification scope against optimized native Gradle.",
+  "repository": {
+    "nameWithOwner": "spring-projects/spring-framework",
+    "revision": "4b5c92703c63966c3471242c621c4a63b382638d",
+    "sourceArchiveUrl": "https://github.com/spring-projects/spring-framework/archive/4b5c92703c63966c3471242c621c4a63b382638d.tar.gz",
+    "sourceArchiveSha256": "e3fa4258e5e568c0b0e6f1605956cd743cff847b9df7c82ce86b2d2f1109db16"
+  },
+  "change": {
+    "class": "LEAF_PRODUCTION_SOURCE",
+    "path": "spring-webmvc/src/main/java/org/springframework/web/servlet/DispatcherServlet.java",
+    "originalSha256": "768903db4d5f06da9fa6abe796c33e72553084b7a2de5d7ff7e817a1a34d68af"
+  },
+  "graphContracts": [
+    {
+      "outputFamily": "VERIFICATION",
+      "pipelineClass": "poc-verification-distribution-graph-v1",
+      "originalEntrypoint": "checkstyleMain",
+      "candidateEntrypoint": ":spring-webmvc:checkstyleMain",
+      "alternativeId": "spring-webmvc-checkstyle-main",
+      "originalReachedProjectCount": 23,
+      "candidateReachedProjectCount": 12,
+      "graphSha256": "6a533ac445e9396ffd6118f83e7d59dc5a83a4b7fba6601e5c9a2ef8c0360a9a",
+      "complete": true,
+      "containsTestTasks": false,
+      "measured": true
+    },
+    {
+      "outputFamily": "SOURCE_DISTRIBUTION",
+      "pipelineClass": "poc-source-distribution-graph-v1",
+      "originalEntrypoint": "sourcesJar",
+      "candidateEntrypoint": ":spring-webmvc:sourcesJar",
+      "alternativeId": "spring-webmvc-sources-jar",
+      "originalReachedProjectCount": 22,
+      "candidateReachedProjectCount": 12,
+      "graphSha256": "92bc60cfb9b7bcb1f58932557e8f1edfd551b92e3d61c5c6254b2c621fa16a12",
+      "complete": true,
+      "containsTestTasks": false,
+      "measured": false,
+      "reasonNotMeasured": "PRIOR_LEAF_PACKAGING_SCOPE_DID_NOT_QUALIFY_AND_ONLY_ONE_NEW_SCOPE_IS_AUTHORIZED"
+    }
+  ],
+  "requiredOutput": {
+    "path": "spring-webmvc/build/reports/checkstyle/main.xml",
+    "kind": "FILE",
+    "mustBeNonEmpty": true,
+    "mustBeIdentical": true
+  },
+  "runner": {
+    "os": "linux",
+    "arch": "amd64",
+    "cpuCount": 12,
+    "maxWorkers": 12,
+    "pairCount": 4,
+    "order": [
+      "CONTROL_CANDIDATE",
+      "CANDIDATE_CONTROL",
+      "CONTROL_CANDIDATE",
+      "CANDIDATE_CONTROL"
+    ],
+    "maximumPairSeparationMs": 10000,
+    "warmupMeasured": false,
+    "offlineMeasured": true,
+    "launcherOverheadIncluded": true
+  },
+  "control": {
+    "entrypoint": "checkstyleMain",
+    "description": "Optimized native Gradle with daemon, local build cache, parallel execution and 12 workers."
+  },
+  "candidate": {
+    "entrypoint": ":spring-webmvc:checkstyleMain",
+    "description": "Installed BuildOpt Build Impact selection with every other optimization disabled."
+  },
+  "valueGate": {
+    "minimumMeanSavedMs": 500,
+    "minimumMeanSavedPercent": 2,
+    "minimumPositivePairs": 4,
+    "requirePositivePairedLowerBound": true,
+    "requireIdenticalOutputs": true,
+    "maximumProductFailures": 0,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedPairsMayBeDiscarded": false
+  },
+  "fallback": {
+    "changePath": "gradle.properties",
+    "expectedMode": "FULL_GRAPH",
+    "expectedReason": "IMPACT_GLOBAL_CHANGE",
+    "outsideSelectiveTask": ":spring-jms:checkstyleMain"
+  },
+  "terminalDecisions": {
+    "qualifies": "QUALIFY_SPRING_VERIFICATION_SCOPE",
+    "doesNotQualify": "RETAIN_VERIFICATION_FULL_GRAPH",
+    "graphFailure": "RETAIN_VERIFICATION_AND_DISTRIBUTION_FULL_GRAPH"
+  },
+  "boundaries": {
+    "pocOnly": true,
+    "productionAuthorityChanged": false,
+    "testOptimizationModified": false,
+    "hotStateEnabled": false,
+    "runtimeTuningEnabled": false,
+    "safeCacheEnabled": false,
+    "sharedOrEdgeCacheEnabled": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

@@ -10,6 +10,12 @@ workloads used by the strict accelerator-coverage matrix. They compare against
 optimized native Gradle and are synthetic POC evidence, not production or
 universal-performance claims.
 
+[`poc-verification-distribution-graph`](./poc-verification-distribution-graph/)
+contains reviewable generated state for the fixed Spring Framework
+verification and source-distribution scopes. Both use public Gradle task types,
+contain no `Test`, and preserve full-graph fallback for any unsupported graph;
+only the verification scope is preregistered for performance measurement.
+
 Reproducible Gradle repositories and scenarios for the golden lane, TestKit, cache conformance, failures, cancellation, and compatibility.
 
 Fixtures must declare their wrapper, JDK, plugins, seed, and expected result; they do not depend on accidental workstation state.

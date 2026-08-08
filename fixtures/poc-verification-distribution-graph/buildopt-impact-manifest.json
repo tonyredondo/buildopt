@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "spring-projects/spring-framework",
+  "pipelineClass": "poc-verification-distribution-graph-v1",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    "checkstyleMain"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "spring-webmvc-checkstyle-main",
+      "entrypoints": [
+        ":spring-webmvc:checkstyleMain"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "spring-webmvc-checkstyle-report",
+      "path": "spring-webmvc/build/reports/checkstyle/main.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "buildSrc/**",
+    "gradle/**",
+    "gradle.properties",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

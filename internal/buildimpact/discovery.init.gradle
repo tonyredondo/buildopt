@@ -1,6 +1,8 @@
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.tasks.VerificationTask
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.testing.Test
 import java.util.concurrent.ConcurrentHashMap
@@ -76,9 +78,6 @@ gradle.projectsEvaluated {
     }
     def knownProjects = discoveredProjects.collect { it.path } as Set
 
-    def projectDependencies = discoveredProjects.collectEntries { project ->
-        [(project.path): project.dependsOn]
-    }
     def conventionalBuildTasks = [
         "assemble", "jar", "classes", "compileJava", "compileKotlin", "testClasses"
     ] as Set
@@ -117,44 +116,54 @@ gradle.projectsEvaluated {
         if (!graph.hasTask(discovery)) {
             throw new GradleException("BuildOpt impact discovery task is absent from the graph")
         }
-        def containsTests = graph.allTasks.any { it instanceof Test }
         // Discovery needs the configured task graph, never task execution. Disable
         // every requested task and dependency after Gradle has resolved the graph.
         graph.allTasks.findAll { it != discovery }.each { it.enabled = false }
+        def attributedTasks = new LinkedHashSet()
         def discoveredEntrypoints = requestedEntrypoints.collect { requestedName ->
             def tasks = requestedTaskGroups[requestedName as String]
-            def reachedProjects = new TreeSet<String>()
-            tasks.each { task ->
-                def pendingProjects
-                if (task.project == root && !root.subprojects.isEmpty()) {
-                    pendingProjects = knownProjects as ArrayDeque
-                } else {
-                    pendingProjects = [task.project.path] as ArrayDeque
+            def reachedTasks = new LinkedHashSet()
+            def pendingTasks = new ArrayDeque(tasks)
+            while (!pendingTasks.isEmpty()) {
+                def task = pendingTasks.removeFirst()
+                if (!reachedTasks.add(task)) {
+                    continue
                 }
-                while (!pendingProjects.isEmpty()) {
-                    def projectPath = pendingProjects.removeFirst()
-                    if (!reachedProjects.add(projectPath)) {
-                        continue
-                    }
-                    (projectDependencies[projectPath] ?: []).each {
-                        pendingProjects.addLast(it)
-                    }
+                graph.getDependencies(task).each {
+                    pendingTasks.addLast(it)
                 }
             }
-            // Source-set names are repository-defined, so safe compile tasks
-            // cannot be recognized by a fixed task-name allowlist. Gradle's
-            // AbstractCompile contract exposes declared inputs, outputs and
-            // task dependencies for Java/Groovy compilation while arbitrary
-            // custom tasks remain fail-closed.
+            attributedTasks.addAll(reachedTasks)
+            def reachedProjects = new TreeSet<String>()
+            reachedTasks.each { task ->
+                if (knownProjects.contains(task.project.path)) {
+                    reachedProjects.add(task.project.path)
+                }
+            }
+            def containsTests = reachedTasks.any { it instanceof Test }
+            // Source-set and producer names are repository-defined. Recognize
+            // build-owned work through Gradle's public task contracts while
+            // arbitrary custom entrypoints remain fail-closed. Verification
+            // tasks stay distinct from Test, which is rejected above even if
+            // a plugin also exposes it through a broader task interface.
             def unknownRelationships = tasks.any {
-                !conventionalBuildTasks.contains(it.name) && !(it instanceof AbstractCompile)
-            } || containsTests
+                !conventionalBuildTasks.contains(it.name) &&
+                    !(it instanceof AbstractCompile) &&
+                    !(it instanceof VerificationTask) &&
+                    !(it instanceof AbstractArchiveTask)
+            } || containsTests || reachedTasks.any { !graph.hasTask(it) }
             [
                 name: requestedName,
                 reachesProjects: reachedProjects as List,
                 containsTestTasks: containsTests,
                 unknownRelationships: reachedProjects.isEmpty() || unknownRelationships,
             ]
+        }
+        // Finalizers and other scheduled work that Gradle cannot attribute to
+        // a requested task through TaskExecutionGraph dependencies make the
+        // discovery incomplete. Never assign them by temporal proximity.
+        if (graph.allTasks.any { it != discovery && !attributedTasks.contains(it) }) {
+            discoveredEntrypoints.each { it.unknownRelationships = true }
         }
         def fallbackReasons = []
         if (externalIncludedBuild) {

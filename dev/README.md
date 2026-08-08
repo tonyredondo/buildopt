@@ -3051,6 +3051,32 @@ Gradle homes for the two arms, performs unmeasured warm-ups, records exactly
 four alternating offline pairs, verifies the client JAR after every arm, and
 executes the global fallback after timing.
 
+Validate the generic Gradle verification/archive graph extension and the
+preregistered Spring verification experiment before timing:
+
+```bash
+./dev/check-poc-verification-distribution-graph-v1
+```
+
+The checker binds public Gradle `VerificationTask` and
+`AbstractArchiveTask` contracts to complete Spring `checkstyleMain` and
+`sourcesJar` graphs. It retains arbitrary tasks, any `Test`, and unattributed
+scheduled work as fail-closed full-graph cases. Only the Checkstyle scope is
+authorized for timing. Run the installed comparison with:
+
+```bash
+./dev/run-poc-verification-distribution-graph-v1 \
+  /absolute/result.json \
+  /absolute/install/bin/buildopt \
+  /absolute/spring-framework-source.tar.gz \
+  /absolute/gradle-home-seed
+```
+
+The runner uses separate homes, a shared immutable native-cache seed, one
+unmeasured warm-up and four alternating offline pairs. It requires the exact
+non-empty Spring MVC Checkstyle report after every arm and verifies global
+full-graph fallback after timing.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

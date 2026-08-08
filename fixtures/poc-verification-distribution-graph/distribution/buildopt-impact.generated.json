@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.build-impact/generated-manifest/v1",
+  "repositoryId": "spring-projects/spring-framework",
+  "pipelineClass": "poc-source-distribution-graph-v1",
+  "manifestDigest": "sha256:cd3732b1b642421a6f71fb411a26847aade03dc8d25f584ec029a6a0d031c23f",
+  "graphDigest": "sha256:5be7bbf9dd5fd9b07149e225ee60f80b686ac215b8a53986ea6e0445e4de7d87",
+  "discoveryDigest": "sha256:472ac51aebfb19caf61c20a3a20357c52d6e6be22f382f511f85d91cfd3ca393",
+  "adapterVersion": "gradle-runtime-v1",
+  "gradleVersion": "9.6.1",
+  "complete": true,
+  "fallbackReasons": []
+}

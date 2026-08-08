@@ -193,7 +193,7 @@ func TestTestPreparationDiscoveryDistinguishesBuildWorkFromTestExecution(t *test
 	}
 }
 
-func TestDiscoveryAcceptsTypedCompileProducersAndRejectsArbitraryTasks(t *testing.T) {
+func TestDiscoveryAcceptsTypedBuildOwnedProducersAndRejectsArbitraryTasks(t *testing.T) {
 	if os.Getenv("BUILDOPT_RUN_BUILD_IMPACT_DISCOVERY_PROOF") != "1" {
 		t.Skip("real Gradle discovery proof is run by check-build-impact-automatic")
 	}
@@ -210,8 +210,9 @@ func TestDiscoveryAcceptsTypedCompileProducersAndRejectsArbitraryTasks(t *testin
 		}
 	}
 	write("settings.gradle.kts", "rootProject.name = \"typed-compile-producer\"\n")
-	write("build.gradle.kts", `plugins { java }
+	write("build.gradle.kts", `plugins { java; checkstyle }
 sourceSets.create("javaSpring3")
+tasks.register<Jar>("sourceBundle")
 tasks.register("arbitraryProducer")
 `)
 	write("src/javaSpring3/java/example/Spring3.java", "package example; public final class Spring3 {}\n")
@@ -250,6 +251,14 @@ tasks.register("arbitraryProducer")
 	typed := discover(":compileJavaSpring3Java")
 	if !typed.Generated.Complete || len(typed.Generated.FallbackReasons) != 0 {
 		t.Fatalf("typed compile producer was not accepted: %+v", typed.Generated)
+	}
+	verification := discover(":checkstyleMain")
+	if !verification.Generated.Complete || len(verification.Generated.FallbackReasons) != 0 {
+		t.Fatalf("typed verification producer was not accepted: %+v", verification.Generated)
+	}
+	archive := discover(":sourceBundle")
+	if !archive.Generated.Complete || len(archive.Generated.FallbackReasons) != 0 {
+		t.Fatalf("typed archive producer was not accepted: %+v", archive.Generated)
 	}
 	arbitrary := discover(":arbitraryProducer")
 	if arbitrary.Generated.Complete || !reflect.DeepEqual(arbitrary.Generated.FallbackReasons, []string{"UNSUPPORTED_OR_TEST_ENTRYPOINT"}) {
