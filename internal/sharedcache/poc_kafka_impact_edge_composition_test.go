@@ -137,47 +137,60 @@ func TestPOCKafkaImpactEdgeCompositionExperiment(t *testing.T) {
 	now := sharedAuthorityNow
 	storage := openLifecycleTestStorage(t)
 	storage.clock = func() time.Time { return now }
-	verified, credential, privateKey, _ := sharedAuthorityFixture(t, func(document *localauthority.Document) {
-		document.Attempt.AllowRead = true
-		document.Attempt.AllowWrite = true
-	})
-	binding, _, err := storage.InstallLocalAuthority(ctx, verified, credential, now)
-	if err != nil {
-		t.Fatal(err)
-	}
 	keys := make([]string, 0, len(seeded))
 	for key := range seeded {
 		keys = append(keys, key)
 	}
 	sort.Strings(keys)
-	objects := make([]CommitObject, 0, len(keys))
-	for _, key := range keys {
-		pending, putErr := storage.PutPending(ctx, binding.AttemptID, key, bytes.NewReader(seeded[key]))
-		if putErr != nil {
-			t.Fatalf("seed Kafka Impact/Edge Shared %s: %v", key, putErr)
+	const commitBatchSize = 16
+	var verified localauthority.Verified
+	var credential []byte
+	var binding LocalAuthorityBinding
+	for batchStart := 0; batchStart < len(keys); batchStart += commitBatchSize {
+		batchEnd := min(batchStart+commitBatchSize, len(keys))
+		batchNumber := batchStart/commitBatchSize + 1
+		privateKey := ed25519.PrivateKey(nil)
+		verified, credential, privateKey, _ = sharedAuthorityFixture(t, func(document *localauthority.Document) {
+			document.Attempt.AttemptID = fmt.Sprintf("11111111-1111-4111-8111-%012d", batchNumber)
+			document.Attempt.OwnerID = fmt.Sprintf("poc-impact-edge-%d", batchNumber)
+			document.Attempt.LeaseID = fmt.Sprintf("poc-impact-edge-lease-%d", batchNumber)
+			document.Attempt.AllowRead = true
+			document.Attempt.AllowWrite = true
+		})
+		var installErr error
+		binding, _, installErr = storage.InstallLocalAuthority(ctx, verified, credential, now)
+		if installErr != nil {
+			t.Fatal(installErr)
 		}
-		objects = append(objects, pending.Object)
-	}
-	status, err := storage.AttemptStatus(ctx, binding.AttemptID)
-	if err != nil {
-		t.Fatal(err)
-	}
-	request := StartAttemptRequest{
-		AttemptID: status.AttemptID, AuthorityDigest: status.AuthorityDigest,
-		Repository: status.Repository, NamespaceGeneration: status.NamespaceGeneration,
-		SourceRevision: status.SourceRevision, SourceStateDigest: status.SourceStateDigest,
-		PolicyDigest: status.PolicyDigest, ConfigurationPolicyDigest: status.ConfigurationPolicyDigest,
-		CacheContractDigest: status.CacheContractDigest, OwnerID: status.OwnerID,
-		LeaseID: status.LeaseID, LeaseExpiresAt: status.LeaseExpiresAt,
-	}
-	canonical := signLifecycleDecision(t, privateKey, request, "poc-kafka-impact-edge-composition-decision", objects, testRevocationEpoch, now)
-	publicKey := privateKey.Public().(ed25519.PublicKey)
-	decision, err := VerifyCommitDecision(ctx, canonical, map[string]ed25519.PublicKey{testDecisionKeyID: publicKey}, testRevocationEpoch, now)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if _, err := storage.CommitAttempt(ctx, status.StateVersion, testRevocationEpoch, decision); err != nil {
-		t.Fatal(err)
+		objects := make([]CommitObject, 0, batchEnd-batchStart)
+		for _, key := range keys[batchStart:batchEnd] {
+			pending, putErr := storage.PutPending(ctx, binding.AttemptID, key, bytes.NewReader(seeded[key]))
+			if putErr != nil {
+				t.Fatalf("seed Kafka Impact/Edge Shared batch %d key %s (%d objects, %d bytes): %v", batchNumber, key, len(seeded), seededBytes, putErr)
+			}
+			objects = append(objects, pending.Object)
+		}
+		status, statusErr := storage.AttemptStatus(ctx, binding.AttemptID)
+		if statusErr != nil {
+			t.Fatal(statusErr)
+		}
+		request := StartAttemptRequest{
+			AttemptID: status.AttemptID, AuthorityDigest: status.AuthorityDigest,
+			Repository: status.Repository, NamespaceGeneration: status.NamespaceGeneration,
+			SourceRevision: status.SourceRevision, SourceStateDigest: status.SourceStateDigest,
+			PolicyDigest: status.PolicyDigest, ConfigurationPolicyDigest: status.ConfigurationPolicyDigest,
+			CacheContractDigest: status.CacheContractDigest, OwnerID: status.OwnerID,
+			LeaseID: status.LeaseID, LeaseExpiresAt: status.LeaseExpiresAt,
+		}
+		canonical := signLifecycleDecision(t, privateKey, request, fmt.Sprintf("poc-kafka-impact-edge-composition-decision-%d", batchNumber), objects, testRevocationEpoch, now)
+		publicKey := privateKey.Public().(ed25519.PublicKey)
+		decision, verifyErr := VerifyCommitDecision(ctx, canonical, map[string]ed25519.PublicKey{testDecisionKeyID: publicKey}, testRevocationEpoch, now)
+		if verifyErr != nil {
+			t.Fatal(verifyErr)
+		}
+		if _, commitErr := storage.CommitAttempt(ctx, status.StateVersion, testRevocationEpoch, decision); commitErr != nil {
+			t.Fatal(commitErr)
+		}
 	}
 	sharedHandler, err := NewBetaTokenHTTPHandler(storage, binding, BetaTokenPlaneStable)
 	if err != nil {
