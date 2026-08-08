@@ -24,6 +24,7 @@ jq -e '
     .status == "PREREGISTERED" and
     .repository.nameWithOwner == "apache/kafka" and
     (.repository.revision | test("^[0-9a-f]{40}$")) and
+    all(.repository.fixedInputSha256[]; test("^[0-9a-f]{64}$")) and
     .fixture.originalProjectCount == 64 and
     .fixture.candidateProjectCount == 3 and
     .fixture.omittedProjectCount == 61 and
