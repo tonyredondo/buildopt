@@ -116,7 +116,7 @@ cp "${buildopt_fixture}/buildopt-impact.generated.json" \
     "${buildopt_root}/seed-project/buildopt-impact.generated.json"
 printf '%s\n' "${buildopt_change_path}" \
     >"${buildopt_root}/seed-project/.buildopt-changes"
-printf '\n// BuildOpt fixed qualified remote composition change.\n' \
+printf '\n// BuildOpt fixed Kafka packaging change.\n' \
     >>"${buildopt_root}/seed-project/${buildopt_change_path}"
 
 if ! (
