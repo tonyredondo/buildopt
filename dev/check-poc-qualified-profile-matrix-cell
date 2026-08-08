@@ -20,6 +20,34 @@ buildopt_profile=$(jq -er --arg id "${buildopt_cell}" \
     '.cells[] | select(.id == $id) | .profilePath' "${buildopt_spec}")
 buildopt_profile_sha=$(sha256sum "${buildopt_repo_root}/${buildopt_profile}" | awk '{print $1}')
 
+if jq -e '.evidenceState == "PREPARATION_FAILED"' "${buildopt_result}" >/dev/null; then
+    jq -e --arg id "${buildopt_cell}" --arg profileSha "${buildopt_profile_sha}" \
+        --slurpfile matrix "${buildopt_spec}" '
+      ($matrix[0].cells[] | select(.id == $id)) as $cell |
+      .schemaVersion == "buildopt.evidence/poc-qualified-profile-matrix-cell/v1" and
+      .workItem == "POC-QUALIFIED-PROFILE-MATRIX-001" and
+      .evidenceState == "PREPARATION_FAILED" and
+      (.capturedAt | fromdateiso8601) and
+      .repository == {nameWithOwner: $cell.repository, revision: $cell.revision} and
+      .buildopt.qualifiedProfile == true and
+      .buildopt.qualifiedProfileSha256 == $profileSha and
+      .failure.stage == "IMPACT_DISCOVERY" and
+      .failure.reason == "PROCESS_TERMINATED_BY_SIGNAL" and
+      .failure.acceptedObservations == 0 and
+      (.failure.logsSha256 | test("^[0-9a-f]{64}$")) and
+      .fallback == {retainedNativePath: true, performanceClaim: false} and
+      .observations == [] and
+      .result == {
+        pairs: 0, positivePairs: 0, qualified: false,
+        decision: "RETAIN_NATIVE_OTEL_PROFILE_PATH"
+      } and
+      .boundaries == $matrix[0].boundaries
+    ' "${buildopt_result}" >/dev/null
+    printf 'qualified-profile matrix failed-preparation cell OK: %s\n' \
+        "${buildopt_cell}"
+    exit 0
+fi
+
 jq -e --arg id "${buildopt_cell}" --arg profileSha "${buildopt_profile_sha}" \
   --slurpfile matrix "${buildopt_spec}" '
   def sha256: type == "string" and test("^[0-9a-f]{64}$");

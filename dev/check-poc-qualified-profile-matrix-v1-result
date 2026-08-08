@@ -22,12 +22,12 @@ buildopt_result_dir=$(CDPATH='' cd -- "$(dirname -- "${buildopt_result}")" && pw
     "${buildopt_result_dir}/kafka.json" >/dev/null
 
 buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
-buildopt_execution_revision=$(jq -er '.buildoptRevision' "${buildopt_result}")
-buildopt_runner_sha=$(git -C "${buildopt_repo_root}" show \
-    "${buildopt_execution_revision}:dev/run-poc-qualified-profile-matrix-v1" | \
+buildopt_evidence_revision=$(jq -er '.evidenceRevision' "${buildopt_result}")
+buildopt_composer_sha=$(git -C "${buildopt_repo_root}" show \
+    "${buildopt_evidence_revision}:dev/compose-poc-qualified-profile-matrix-v1" | \
     sha256sum | awk '{print $1}')
 
-jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sha}" \
+jq -e --arg specSha "${buildopt_spec_sha}" --arg composerSha "${buildopt_composer_sha}" \
     --arg springSha "$(sha256sum "${buildopt_result_dir}/spring.json" | awk '{print $1}')" \
     --arg otelSha "$(sha256sum "${buildopt_result_dir}/opentelemetry.json" | awk '{print $1}')" \
     --arg kafkaSha "$(sha256sum "${buildopt_result_dir}/kafka.json" | awk '{print $1}')" \
@@ -77,11 +77,12 @@ jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sh
   .workItem == "POC-QUALIFIED-PROFILE-MATRIX-001" and
   .evidenceState == "TERMINAL" and
   (.capturedAt | fromdateiso8601) and
-  (.buildoptRevision | gitsha) and
+  (.evidenceRevision | gitsha) and
+  (.measurementRevisions | length >= 1 and all(.[]; gitsha)) and
   .specSha256 == $specSha and
-  .runnerScriptSha256 == $runnerSha and
+  .composerScriptSha256 == $composerSha and
   .cells == $expectedCells and
-  all(.cells[]; (.evidenceSha256 | sha256) and .pairs >= 4 and
+  all(.cells[]; (.evidenceSha256 | sha256) and .pairs >= 0 and
     .positivePairs >= 0 and .positivePairs <= .pairs) and
   .aggregation == {
     qualifyingFamilies: $qualified,

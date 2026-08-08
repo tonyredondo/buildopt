@@ -311,6 +311,7 @@ buildopt_required_files=(
     "dev/check-poc-qualified-profile-matrix-v1"
     "dev/check-poc-qualified-profile-matrix-cell"
     "dev/check-poc-qualified-profile-matrix-v1-result"
+    "dev/compose-poc-qualified-profile-matrix-v1"
     "dev/check-poc-spring-impact-breadth"
     "dev/check-poc-impact-generalization"
     "dev/test-poc-impact-generalization"

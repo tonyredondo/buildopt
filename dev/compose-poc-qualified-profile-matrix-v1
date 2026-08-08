@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s RESULT_DIRECTORY\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output_dir=$1
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-qualified-profile-matrix-v1.json"
+buildopt_spring="${buildopt_output_dir}/spring.json"
+buildopt_otel="${buildopt_output_dir}/opentelemetry.json"
+buildopt_kafka="${buildopt_output_dir}/kafka.json"
+
+[[ "${buildopt_output_dir}" == /* && -d "${buildopt_output_dir}" &&
+    ! -e "${buildopt_output_dir}/summary.json" ]] || exit 64
+"${buildopt_script_dir}/check-poc-qualified-profile-matrix-cell" \
+    spring-build-impact "${buildopt_spring}" >/dev/null
+"${buildopt_script_dir}/check-poc-qualified-profile-matrix-cell" \
+    opentelemetry-impact-standard-jar "${buildopt_otel}" >/dev/null
+"${buildopt_script_dir}/check-poc-kafka-installed-profile-value-v1-result" \
+    "${buildopt_kafka}" >/dev/null
+
+buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+jq -n --arg capturedAt "${buildopt_captured_at}" \
+    --arg evidenceRevision "$(git -C "${buildopt_repo_root}" rev-parse HEAD)" \
+    --arg specSha "$(sha256sum "${buildopt_spec}" | awk '{print $1}')" \
+    --arg composerSha "$(sha256sum "${BASH_SOURCE[0]}" | awk '{print $1}')" \
+    --arg springSha "$(sha256sum "${buildopt_spring}" | awk '{print $1}')" \
+    --arg otelSha "$(sha256sum "${buildopt_otel}" | awk '{print $1}')" \
+    --arg kafkaSha "$(sha256sum "${buildopt_kafka}" | awk '{print $1}')" \
+    --slurpfile spec "${buildopt_spec}" --slurpfile spring "${buildopt_spring}" \
+    --slurpfile otel "${buildopt_otel}" --slurpfile kafka "${buildopt_kafka}" '
+  [
+    {id:"spring-build-impact", evidenceFile:"spring.json", evidenceSha256:$springSha,
+     mechanisms:$spec[0].cells[0].mechanisms, pairs:$spring[0].result.pairs,
+     controlMeanMs:$spring[0].result.controlMeanMs,
+     candidateMeanMs:$spring[0].result.candidateMeanMs,
+     meanSavedMs:$spring[0].result.meanSavedMs,
+     reductionRatio:$spring[0].result.reductionRatio,
+     interval95SavedMs:$spring[0].result.interval95SavedMs,
+     positivePairs:$spring[0].result.positivePairs, qualified:$spring[0].result.qualified},
+    {id:"opentelemetry-impact-standard-jar", evidenceFile:"opentelemetry.json",
+     evidenceSha256:$otelSha, mechanisms:$spec[0].cells[1].mechanisms,
+     pairs:$otel[0].result.pairs, controlMeanMs:$otel[0].result.controlMeanMs,
+     candidateMeanMs:$otel[0].result.candidateMeanMs,
+     meanSavedMs:$otel[0].result.meanSavedMs,
+     reductionRatio:$otel[0].result.reductionRatio,
+     interval95SavedMs:$otel[0].result.interval95SavedMs,
+     positivePairs:$otel[0].result.positivePairs, qualified:$otel[0].result.qualified},
+    {id:"kafka-impact-read-only-edge", evidenceFile:"kafka.json",
+     evidenceSha256:$kafkaSha, mechanisms:$spec[0].cells[2].mechanisms,
+     pairs:$kafka[0].result.pairs, controlMeanMs:$kafka[0].result.controlMeanMs,
+     candidateMeanMs:$kafka[0].result.candidateMeanMs,
+     meanSavedMs:$kafka[0].result.meanSavedMs,
+     reductionRatio:$kafka[0].result.reductionRatio,
+     interval95SavedMs:$kafka[0].result.interval95SavedMs,
+     positivePairs:$kafka[0].result.positivePairs, qualified:$kafka[0].result.qualified}
+  ] as $cells |
+  ($cells | map(select(.qualified)) | length) as $qualified |
+  {
+    schemaVersion:"buildopt.evidence/poc-qualified-profile-matrix/v1",
+    workItem:"POC-QUALIFIED-PROFILE-MATRIX-001", evidenceState:"TERMINAL",
+    capturedAt:$capturedAt, evidenceRevision:$evidenceRevision,
+    measurementRevisions:([$spring[0].buildopt.revision,
+      $otel[0].buildopt.revision, $kafka[0].buildoptRevision] | map(select(. != null)) | unique),
+    specSha256:$specSha, composerScriptSha256:$composerSha, cells:$cells,
+    aggregation:{qualifyingFamilies:$qualified, totalFamilies:($cells|length),
+      repositoryPercentagesAveraged:false, mechanismPercentagesAdded:false},
+    decision:(if $qualified >= $spec[0].aggregation.minimumQualifyingFamilies
+      then $spec[0].terminalDecisions.continue
+      elif $qualified > 0 then $spec[0].terminalDecisions.specialize
+      else $spec[0].terminalDecisions.stop end),
+    boundaries:$spec[0].boundaries
+  }
+' >"${buildopt_output_dir}/summary.json"
+
+"${buildopt_script_dir}/check-poc-qualified-profile-matrix-v1-result" \
+    "${buildopt_output_dir}/summary.json"
