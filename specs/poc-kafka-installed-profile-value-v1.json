@@ -44,7 +44,7 @@
     "schemaVersion": "buildopt.poc/qualified-profile/v2",
     "profileId": "normalized-impact-plus-read-only-edge",
     "path": "buildopt-qualified-profile.json",
-    "sha256": "ca0d8a67ec1977c96334e920da515ba50d5ae5515bd86c9fd481d84333056915",
+    "sha256": "ed9ffb33b18b3b41684b503a337d97ec7e9cefae2478cd8373878527c307af6a",
     "ownership": "REPOSITORY_COMMITTED",
     "productionAuthorized": false,
     "usabilityEvidence": "benchmarks/results/poc-kafka-composition-usability-v1.json",

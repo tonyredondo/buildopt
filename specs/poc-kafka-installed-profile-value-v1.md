@@ -28,6 +28,14 @@ reproduce the same output. No repository-specific product rule, threshold
 change, discarded pair, component-percentage addition, production claim, soak,
 design-partner work or Test Optimization change is permitted.
 
+Three unmeasured warm-up failures corrected the harness and profile before any
+timing was accepted: experiment-only Basic authentication was removed from the
+public loopback path, the selected Edge cache was moved after repository
+settings evaluation, and `--offline` was removed because Gradle disables HTTP
+build caches in offline mode. Dependency preparation and the blocked external
+network boundary remain unchanged. Evidence `E-259` through `E-261` records
+these zero-observation corrections; the pair order and value gate did not move.
+
 ```bash
 ./dev/check-poc-kafka-installed-profile-value-v1
 ./dev/run-poc-kafka-installed-profile-value-v1 \
