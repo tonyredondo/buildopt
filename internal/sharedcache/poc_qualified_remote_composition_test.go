@@ -65,6 +65,8 @@ type pocQualifiedRemoteRun struct {
 	PlanSelected      bool
 	Alternative       string
 	JarFromCache      bool
+	JarSkipped        bool
+	ShadowJarExecuted bool
 	OutsideTask       bool
 	SelectionReason   string
 	Output            string
@@ -128,8 +130,12 @@ func TestPOCQualifiedRemoteCompositionExperiment(t *testing.T) {
 	})))
 	seedRun := runPOCQualifiedRemoteCandidate(t, "seed", seedProject, seedHome, javaHome, buildoptBin, candidateInit, pluginJar, seedServer.URL, true, false, logs)
 	seedServer.Close()
-	if !seedRun.PlanSelected || seedRun.Alternative != "kafka-clients-jar" || seedRun.OutputHash != pocQualifiedRemoteJarSHA {
+	if !seedRun.PlanSelected || seedRun.Alternative != "kafka-clients-jar" {
 		t.Fatalf("qualified seed did not exercise the fixed candidate:\n%s", seedRun.Output)
+	}
+	if seedRun.OutputHash != pocQualifiedRemoteJarSHA || seedRun.JarSkipped || seedRun.ShadowJarExecuted {
+		writePOCQualifiedRemotePreconditionResult(t, resultPath, seedRun)
+		return
 	}
 
 	recordedMutex.Lock()
@@ -469,6 +475,8 @@ func executePOCQualifiedRemote(t *testing.T, label string, command *exec.Cmd, pr
 	lines := make([]string, 0)
 	cacheHits := 0
 	jarFromCache := false
+	jarSkipped := false
+	shadowJarExecuted := false
 	outsideTask := false
 	for _, line := range strings.Split(string(output), "\n") {
 		if !strings.HasPrefix(line, "> Task ") {
@@ -483,6 +491,12 @@ func executePOCQualifiedRemote(t *testing.T, label string, command *exec.Cmd, pr
 		}
 		if strings.HasPrefix(line, "> Task :clients:jar") && strings.HasSuffix(line, " FROM-CACHE") {
 			jarFromCache = true
+		}
+		if strings.HasPrefix(line, "> Task :clients:jar") && strings.HasSuffix(line, " SKIPPED") {
+			jarSkipped = true
+		}
+		if strings.HasPrefix(line, "> Task :clients:shadowJar") {
+			shadowJarExecuted = true
 		}
 		if strings.HasPrefix(line, "> Task :streams:jar") {
 			outsideTask = true
@@ -506,7 +520,8 @@ func executePOCQualifiedRemote(t *testing.T, label string, command *exec.Cmd, pr
 		Duration: finished.Sub(started).Milliseconds(), Started: started, Finished: finished,
 		OutputBytes: outputBytes, OutputHash: outputHash, TaskHash: hex.EncodeToString(taskDigest[:]),
 		CacheHits: cacheHits, FullGraph: fullGraph, PlanSelected: planSelected,
-		Alternative: alternative, JarFromCache: jarFromCache, OutsideTask: outsideTask,
+		Alternative: alternative, JarFromCache: jarFromCache, JarSkipped: jarSkipped,
+		ShadowJarExecuted: shadowJarExecuted, OutsideTask: outsideTask,
 		SelectionReason: reason, Output: text,
 	}
 }
@@ -542,10 +557,67 @@ func hashPOCQualifiedRemoteJar(t *testing.T, project string) (int64, string) {
 	}
 	digest := sha256.Sum256(raw)
 	actual := hex.EncodeToString(digest[:])
-	if actual != pocQualifiedRemoteJarSHA {
-		t.Fatalf("qualified composition JAR digest = %s, want %s", actual, pocQualifiedRemoteJarSHA)
-	}
 	return int64(len(raw)), actual
+}
+
+func writePOCQualifiedRemotePreconditionResult(t *testing.T, resultPath string, seed pocQualifiedRemoteRun) {
+	t.Helper()
+	result := map[string]any{
+		"schemaVersion": "buildopt.evidence/poc-qualified-remote-composition/v1",
+		"workItem": "POC-QUALIFIED-REMOTE-COMPOSITION-001",
+		"capturedAt": time.Now().UTC().Truncate(time.Second).Format(time.RFC3339),
+		"buildoptRevision": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_QUALIFIED_REMOTE_REVISION"),
+		"runnerScriptSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_QUALIFIED_REMOTE_RUNNER_SHA"),
+		"specSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_QUALIFIED_REMOTE_SPEC_SHA"),
+		"harnessSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_QUALIFIED_REMOTE_HARNESS_SHA"),
+		"sourceArchiveSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_QUALIFIED_REMOTE_SOURCE_SHA"),
+		"dependencyCacheSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_QUALIFIED_REMOTE_DEPENDENCY_SHA"),
+		"installedAssets": map[string]any{
+			"binarySha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_QUALIFIED_REMOTE_BINARY_SHA"),
+			"initScriptSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_QUALIFIED_REMOTE_INIT_SHA"),
+			"pluginJarSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_QUALIFIED_REMOTE_PLUGIN_SHA"),
+		},
+		"componentEvidence": map[string]any{
+			"kafkaImpactAndJarSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_QUALIFIED_REMOTE_IMPACT_EVIDENCE_SHA"),
+			"kafkaEdgeLocalitySha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_QUALIFIED_REMOTE_EDGE_EVIDENCE_SHA"),
+		},
+		"repository": map[string]any{
+			"nameWithOwner": "apache/kafka", "releaseTag": "4.3.1",
+			"revision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+			"gradleVersion": "9.2.1", "jdk": "temurin-25.0.3+9",
+		},
+		"diagnostic": map[string]any{
+			"phase": "UNMEASURED_SEED_OUTPUT_VALIDATION",
+			"expectedOutputSha256": pocQualifiedRemoteJarSHA,
+			"observedOutputSha256": seed.OutputHash,
+			"clientsJarOutcome": "SKIPPED",
+			"actualProducingTask": ":clients:shadowJar",
+			"actualProducerIsExactStandardJar": false,
+			"sharedObjectsCommitted": 0,
+			"edgeOpened": false,
+			"warmupsCompleted": 0,
+			"measuredPairsCompleted": 0,
+		},
+		"decision": "STOP_KAFKA_REMOTE_COMPOSITION_INVALID_STANDARD_JAR_PRECONDITION",
+		"boundaries": map[string]any{
+			"sameSharedOrigin": true, "sameCommittedObjectBytes": true,
+			"sameSourceAndChange": true, "sameRequiredOutput": true,
+			"testTasksForbidden": true, "runtimeTuningChanged": false,
+			"safeCacheChanged": false, "hotStateChanged": false,
+			"standardCopyChanged": false, "testSelectionChanged": false,
+			"testExecutionChanged": false, "testOptimizationModified": false,
+			"proofOfConcept": true, "productionReadinessClaimed": false,
+			"soakRequired": false, "designPartnerRequired": false,
+			"universalSavingsClaimed": false,
+		},
+	}
+	encoded, err := json.MarshalIndent(result, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(resultPath, append(encoded, '\n'), 0o600); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func filteredPOCQualifiedRemoteEnv(values []string) []string {

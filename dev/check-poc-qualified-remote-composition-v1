@@ -113,6 +113,10 @@ jq -e '
     .valueGate.maximumProductAttributableFailures == 0 and
     .valueGate.thresholdsMayMoveAfterMeasurement == false and
     .valueGate.failedPairsMayBeDiscarded == false and
+    .componentPrecondition.requiredOutputProducingTask == ":clients:jar" and
+    .componentPrecondition.requiredOutputProducingTaskMustBeExactStandardJar == true and
+    .componentPrecondition.invalidDecision ==
+        "STOP_KAFKA_REMOTE_COMPOSITION_INVALID_STANDARD_JAR_PRECONDITION" and
     .fallback.globalChangePath == "gradle.properties" and
     .fallback.requiredSelectionMode == "FULL_GRAPH" and
     .fallback.requiredSelectionReason == "IMPACT_GLOBAL_CHANGE" and

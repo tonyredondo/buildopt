@@ -28,6 +28,12 @@ native full graph and an unavailable Edge preserves a successful build and the
 required output. This is POC evidence for one Kafka profile, not production or
 universal-network authorization.
 
+Before Shared commit or timing, the seed must also prove that the required
+client JAR is produced by the exact standard `Jar` task assumed by the
+composition. A skipped `:clients:jar`, custom producer, or non-reproducing
+historical digest terminates the protocol as an invalid component precondition;
+it cannot be repaired by accepting new output bytes or dropping the adapter.
+
 ```bash
 ./dev/check-poc-qualified-remote-composition-v1
 ./dev/run-poc-qualified-remote-composition-v1 \
