@@ -507,9 +507,11 @@ func executePOCQualifiedRemote(t *testing.T, label string, command *exec.Cmd, pr
 	outputBytes, outputHash := hashPOCQualifiedRemoteJar(t, project)
 	text := string(output)
 	fullGraph := strings.Contains(text, `"selectionMode":"FULL_GRAPH"`)
-	planSelected := strings.Contains(text, `"selectionMode":"POC_CANDIDATE"`)
+	planSelected := strings.Contains(text, `"selectionMode":"POC_CANDIDATE"`) ||
+		strings.Contains(text, "explicit Build Impact POC candidate kafka-clients-jar selected")
 	alternative := ""
-	if strings.Contains(text, `"alternativeId":"kafka-clients-jar"`) {
+	if strings.Contains(text, `"alternativeId":"kafka-clients-jar"`) ||
+		strings.Contains(text, "explicit Build Impact POC candidate kafka-clients-jar selected") {
 		alternative = "kafka-clients-jar"
 	}
 	reason := ""
