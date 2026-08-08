@@ -23,7 +23,6 @@
   },
   "gradleOptions": [
     "--daemon",
-    "--offline",
     "--build-cache",
     "--no-configuration-cache",
     "--parallel",
