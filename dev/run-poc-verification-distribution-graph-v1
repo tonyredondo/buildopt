@@ -166,7 +166,8 @@ buildopt_assert_output() {
     }
     grep -Fq 'BUILD SUCCESSFUL' "${buildopt_log}"
     grep -Fq '> Task :buildSrc:test UP-TO-DATE' "${buildopt_log}"
-    if grep -Eq '^> Task .*:test($| )' "${buildopt_log}" ||
+    if grep -E '^> Task .*:test($| )' "${buildopt_log}" |
+        grep -Ev '^> Task :buildSrc:test( |$)' | grep -q . ||
         grep -Fq 'forbidden root-build Gradle Test task(s):' "${buildopt_log}" ||
         grep -Eq '^> Task .*:(publish|upload|release|sign)([A-Z:]|$)' "${buildopt_log}" ||
         grep -Eq 'Publishing build scan|Build scan published|https://gradle[.]com/s/' \
