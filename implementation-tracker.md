@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC NEXT VALUE VALIDATION PLANNED` — the current qualified profiles are usable and evidence-backed; the next five decisions test whether their installed paths retain enough incremental value to justify continuing the POC<br>
-**Current phase:** `POC KAFKA INSTALLED-PROFILE VALUE NEXT` — measure the exact repository-owned Kafka v2 profile against optimized native Gradle plus Shared Cache before generalizing any mechanism or adding another optimization<br>
+**Overall status:** `POC INSTALLED-PROFILE VALUE VALIDATION ACTIVE` — the exact Kafka installed profile retained qualified value; the remaining decisions test whether that value transfers, whether profiles can be discovered deterministically, and whether another generic optimization is justified<br>
+**Current phase:** `POC QUALIFIED-PROFILE MATRIX NEXT` — replicate complete installed-path value independently on fixed Spring, OpenTelemetry and Kafka revisions without averaging their percentages<br>
 **POC functional target:** prove stable installed-path value on fixed public revisions, make profile discovery reviewable, and authorize new optimization code only for a measured generic critical-path bottleneck; Safe Cache and Runtime candidates remain disabled<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -102,7 +102,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-REMOTE-CACHE-VALUE | Compare Gradle direct-to-Shared reads with the same committed objects served from a prewarmed BuildOpt Edge | `DONE` | 1/1 | `E-221..222` |
 | POC-PROFILE-USABILITY | One explicit repository-owned command for the qualified clean POC profile | `DONE` | 1/1 | `E-225` |
 | POC-PROFILE-ADOPTION | Installed OpenTelemetry and Kafka candidate/fallback replay without new timing claims | `DONE` | 1/1 | `E-226` |
-| POC-NEXT-VALUE | Installed-profile value, cross-repository replication, deterministic discovery, one trace-gated hypothesis, and a terminal POC portfolio decision | `TODO` | 0/5 | `E-257` |
+| POC-NEXT-VALUE | Installed-profile value, cross-repository replication, deterministic discovery, one trace-gated hypothesis, and a terminal POC portfolio decision | `DOING` | 1/5 | `E-257`, `E-266` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -144,7 +144,7 @@ Optimized native Gradle baseline
   → investigate one trace-selected Runtime Tuning bottleneck without enabling a no-value candidate
   → reject the six-worker cap and retain the optimized native 12-worker control
   → compare Shared/Edge Cache with Gradle native remote cache under controlled network conditions
-  → measure the exact installed Kafka v2 profile against optimized native Gradle plus Shared Cache
+  → qualify the exact installed Kafka v2 profile at 80.51% against optimized native Gradle plus Shared Cache
   → repeat only already-qualified installed profiles on fixed Spring, OpenTelemetry and Kafka revisions
   → generate deterministic reviewable profiles from checked repository evidence, never from repository names
   → authorize at most one new optimization only when retained traces expose a generic recoverable critical-path bottleneck
@@ -231,8 +231,8 @@ than partners. Test Optimization remains a separate product.
 | 62 | `POC-KAFKA-SHADOWJAR-REPRODUCIBILITY-001` | Attribute and stabilize Kafka custom `shadowJar` output reproducibility under remote-cache failure before any composition rerun | `DONE` | Codex |
 | 63 | `POC-KAFKA-IMPACT-EDGE-COMPOSITION-002` | Repeat the Kafka Build Impact plus Edge composition from a fresh preregistration using the qualified reproducible `shadowJar` source input | `DONE` | Codex |
 | 64 | `POC-KAFKA-COMPOSITION-USABILITY-001` | Express the qualified Kafka Impact plus Edge composition through an explicit repository-owned POC profile with visible preconditions and native fallbacks | `DONE` | Codex |
-| 65 | `POC-KAFKA-INSTALLED-PROFILE-VALUE-001` | Measure the exact packaged Kafka v2 profile against optimized native Gradle plus Shared Cache under the already qualified source and network boundary | `DOING` | Codex |
-| 66 | `POC-QUALIFIED-PROFILE-MATRIX-001` | Replicate installed-profile value independently on the fixed Spring, OpenTelemetry and Kafka workloads without averaging their percentages | `WAITING` | Codex |
+| 65 | `POC-KAFKA-INSTALLED-PROFILE-VALUE-001` | Measure the exact packaged Kafka v2 profile against optimized native Gradle plus Shared Cache under the already qualified source and network boundary | `DONE` | Codex |
+| 66 | `POC-QUALIFIED-PROFILE-MATRIX-001` | Replicate installed-profile value independently on the fixed Spring, OpenTelemetry and Kafka workloads without averaging their percentages | `TODO` | Codex |
 | 67 | `POC-PROFILE-DISCOVERY-001` | Generate reviewable repository-owned profiles deterministically from checked manifests, graphs, traces and evidence, with native fallback on uncertainty | `WAITING` | Codex |
 | 68 | `POC-TRACE-HYPOTHESIS-002` | Authorize at most one generic optimization from retained installed-path traces only when it exposes at least 500 ms of recoverable critical-path work | `WAITING` | Codex |
 | 69 | `POC-PORTFOLIO-DECISION-001` | Decide whether to continue broadly, specialize by repository family, or stop/reframe the POC from the installed-path evidence | `WAITING` | Codex |
@@ -259,9 +259,18 @@ experiment harness?
   product-attributable failures. Otherwise retain the native path for this
   scope and record the negative result without tuning after observation.
 
+Terminal result: optimized native Gradle plus Shared averaged 34,347.25 ms and
+the installed profile 6,694.375 ms, saving 27,652.875 ms/**80.51%**. All eight
+pairs were positive; the corrected bootstrap interval was
++24,826.5..+29,903.625 ms. Exact output, zero candidate origin requests,
+global full-graph fallback and byte-identical HTTP-503 fallback passed. The
+decision is `QUALIFY_INSTALLED_KAFKA_PROFILE_VALUE`, bounded to the fixed
+Kafka revision, change, output and modeled network profile.
+
 ##### 2. Installed qualified-profile matrix
 
-`POC-QUALIFIED-PROFILE-MATRIX-001` waits for the Kafka installed-path decision.
+`POC-QUALIFIED-PROFILE-MATRIX-001` is unblocked by the qualified Kafka
+installed-path decision.
 It tests the complete user-facing path on the fixed Spring, OpenTelemetry and
 Kafka revisions using only mechanisms that already qualified for each scope:
 Spring Build Impact; OpenTelemetry Build Impact plus the exact standard-Jar
@@ -1290,6 +1299,7 @@ This table points to the latest valid result. It does not replace reports or all
 | Kafka shadow JAR reproducibility | Two original clean rebuilds, two normalized rebuilds, logical payload identity, and HTTP-503 local fallback | `dev/check-poc-kafka-shadowjar-reproducibility-v1-result` validates metadata-only baseline drift and one identical normalized digest across two independent builds plus fallback | 2026-08-08 | `E-252..253` |
 | Kafka normalized Impact plus Edge composition | Fresh normalized seed/control/candidate, four alternating pairs, exact output, global fallback, and HTTP-503 local fallback | `dev/check-poc-kafka-impact-edge-composition-v2-result` recomputes 82.35% mean savings, a positive interval, 4/4 positive pairs, zero measured candidate-origin traffic, and exact fallback bytes | 2026-08-08 | `E-254..255` |
 | Repository-owned Kafka composition profile | v2 plan, exact normalized-source precondition, explicit read-only Edge, native full-graph fallback, real cache hit, and HTTP-503 local execution | `dev/check-poc-kafka-composition-usability` validates the CLI/profile path and references the unchanged 82.35% Kafka performance result without recomputing timing | 2026-08-08 | `E-256..257` |
+| Installed Kafka profile value | Packaged v2 command, eight fresh alternating pairs, exact normalized output, global fallback, HTTP-503 local fallback, and zero candidate origin requests | `dev/check-poc-kafka-installed-profile-value-v1-result` recomputes 80.51% mean savings, corrected interval +24,826.5..+29,903.625 ms and 8/8 positive pairs without changing the raw observations | 2026-08-08 | `E-258..266` |
 | Realistic POC breadth | No-change, leaf, shared, and build-logic changes across Kotlin/Groovy on the strict runner | `dev/check-poc-breadth` recomputed the 64-observation post-attribution repeat: all correctness guardrails passed and 4/8 value cells qualified, so the broader claim remains preliminary | 2026-08-04 | `E-161` |
 | POC installed-path attribution | Non-overlapping launcher/client, configuration, task, finalization, and teardown phases on the strict runner | `dev/check-poc-overhead` proved native-only execution with zero init/plugin setup, exact duration reconciliation, and one removed candidate-only XDG environment difference; traced durations remain diagnostic-only | 2026-08-04 | `E-161` |
 | Realistic POC stability | Opposite global arm orders with isolated writable state on the strict runner | `dev/check-poc-stability` recomputed two 64-pair reports (256 underlying arm measurements): all correctness guardrails passed, but 0/8 versus 4/8 cells qualified and four classifications changed, so the checked verdict is `MEASUREMENT_UNSTABLE` | 2026-08-04 | `E-162` |
@@ -1666,6 +1676,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-263` | 2026-08-08 | `POC-KAFKA-INSTALLED-PROFILE-VALUE-001` | The fifth invocation completed eight positive pairs and both safety fallbacks, but the runner exited non-zero before terminal postprocessing when a Gradle worker recreated `candidate-home/caches/modules-2` during one-shot temporary-root removal | `DOING` non-terminal lifecycle correction: stop each exact Gradle home and retry removal of only the validated temporary root up to three times. The intermediate v1 JSON and all eight pairs are discarded; the complete protocol must rerun and pass its independent result checker without changing product behavior, thresholds, arms or order |
 | `E-264` | 2026-08-08 | `POC-KAFKA-INSTALLED-PROFILE-VALUE-001` | The sixth invocation again completed eight positive pairs and both fallbacks, then exited before postprocessing because the shared runner looked up the normalized output digest at the composition-v2 path instead of the installed-profile contract path and compared the observed digest with `null` | `DOING` non-terminal contract-routing correction: select `sourceNormalization.qualifiedArtifactSha256` only in installed-profile mode and retain `requiredOutput.qualifiedNormalizationDigest` for composition v2. The raw intermediate JSON and all pairs are discarded; the unchanged protocol must rerun and pass the independent checker |
 | `E-265` | 2026-08-08 | `POC-KAFKA-INSTALLED-PROFILE-VALUE-001` | The seventh invocation completed the full protocol and passed its checker, but review caught a degenerate bootstrap interval: mapping LCG low bits with modulo 8 selected every observation exactly once in every eight-draw replicate, making both bounds equal the mean | `DOING` statistical postprocessing correction: retain the eight terminal raw observations, use the full 32-bit state to select bootstrap indices, record the correction revision and prove observations unchanged. No timing is discarded or rerun, and the positive-lower-bound gate is reevaluated by the independent checker before terminal acceptance |
+| `E-266` | 2026-08-08 | `POC-KAFKA-INSTALLED-PROFILE-VALUE-001` | [Installed Kafka profile value evidence](./benchmarks/results/poc-kafka-installed-profile-value-v1.json), independent result checker, exact package assets and corrected deterministic bootstrap postprocessing | `DONE`: optimized native Gradle plus Shared averaged 34,347.25 ms and the installed profile 6,694.375 ms, saving 27,652.875 ms/**80.51%** with 8/8 positive pairs and interval +24,826.5..+29,903.625 ms. Exact normalized output, zero candidate origin requests, global full-graph fallback, byte-identical HTTP-503 fallback and zero product failures pass; next is the independent qualified-profile matrix |
 
 ---
 
@@ -1673,6 +1684,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-08 | Qualified the exact installed Kafka v2 profile at 80.51% mean savings with 8/8 positive pairs, corrected interval +24,826.5..+29,903.625 ms, exact normalized output and both native/global and HTTP-503 safety fallbacks; unblocked the cross-repository profile matrix | Codex |
 | 2026-08-08 | Preregistered the exact installed Kafka v2 profile against optimized native Gradle plus Shared Cache with eight fresh alternating pairs, unchanged value/correctness gates and zero reusable prior timings | Codex |
 | 2026-08-08 | Corrected the installed Kafka harness after a zero-observation warm-up proved the public credential-free loopback Edge was still wrapped in experiment-only Basic authentication; no measured pair or threshold changed | Codex |
 | 2026-08-08 | Corrected the public POC Edge plugin after a second zero-observation warm-up proved Kafka's repository cache block replaced the selected endpoint; the plugin now applies the explicit profile after settings evaluation and the test reproduces that collision | Codex |

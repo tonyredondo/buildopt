@@ -687,6 +687,41 @@ other component percentages. Validate the usability boundary with:
 ./dev/check-poc-kafka-composition-usability
 ```
 
+### Installed Kafka profile value
+
+The [installed-profile evidence](./results/poc-kafka-installed-profile-value-v1.json)
+measures the exact repository-owned v2 profile through the packaged
+`buildopt poc` command. It does not reuse any timing from the earlier
+experiment-only composition. Eight fresh alternating pairs compare optimized
+native Gradle plus Shared Cache with installed Build Impact plus the read-only
+Edge profile under the same fixed Kafka source, normalized archive input and
+337-ms/6,994,831-B/s network model.
+
+| Pair | Order | Native + Shared | Installed profile | Saving |
+|---:|---|---:|---:|---:|
+| 1 | Native first | 31,622 ms | 12,164 ms | 19,458 ms |
+| 2 | Candidate first | 38,745 ms | 7,093 ms | 31,652 ms |
+| 3 | Native first | 35,004 ms | 6,519 ms | 28,485 ms |
+| 4 | Candidate first | 36,669 ms | 4,811 ms | 31,858 ms |
+| 5 | Native first | 33,707 ms | 5,760 ms | 27,947 ms |
+| 6 | Candidate first | 34,261 ms | 5,692 ms | 28,569 ms |
+| 7 | Native first | 32,812 ms | 5,604 ms | 27,208 ms |
+| 8 | Candidate first | 31,958 ms | 5,912 ms | 26,046 ms |
+
+Native averages 34,347.25 ms and the installed profile 6,694.375 ms, saving
+**27,652.875 ms or 80.51%**. All eight pairs are positive and the corrected
+deterministic bootstrap interval is +24,826.5..+29,903.625 ms. The archived
+evidence proves that statistical correction changed no observation. Every arm
+reproduces the exact normalized `shadowJar`; the candidate makes zero origin
+requests, global drift selects native full `assemble`, and HTTP 503 completes
+locally with identical bytes. The terminal decision is
+`QUALIFY_INSTALLED_KAFKA_PROFILE_VALUE`, bounded to this Kafka revision,
+change, output and modeled network profile.
+
+```bash
+./dev/check-poc-kafka-installed-profile-value-v1-result
+```
+
 The three mechanism-development reports remain historical inputs. The strict
 synthetic reports prove bounded combined value. The public-repository
 compatibility and early performance reports showed that the first generic

@@ -304,6 +304,7 @@ Kafka-specific product rule.
 | Strict Safe Cache | Disabled | Disabled | Beat or justify cost versus native Gradle cache |
 | Runtime Tuning | Disabled | Disabled | Positive incremental evidence against optimized native Gradle |
 | Shared / Edge Cache | Edge qualified independently and in the normalized Kafka composition | Explicit repository-owned v2 POC profile | Keep the 82.35% claim bound to the exact Kafka source precondition and modeled network profile; preserve native Shared behavior outside a matched candidate |
+| Installed Kafka composition | Exact packaged profile qualified at 80.51% with 8/8 positive pairs | Explicit repository-owned v2 POC profile | Replicate installed-path value independently on Spring and OpenTelemetry before changing the portfolio claim; do not average repository percentages |
 
 ## Recommended Next Block
 
@@ -355,6 +356,17 @@ JAR, Edge made zero measured Shared requests, the global change retained the
 full graph, and HTTP 503 disabled remote cache and rebuilt identical bytes.
 The terminal decision is `QUALIFY_KAFKA_IMPACT_EDGE_COMPOSITION`, bounded to
 this change and network profile.
+
+The exact repository-owned profile was then measured through the packaged
+`buildopt poc` command rather than experiment-only wiring. Optimized native
+Gradle plus Shared averaged 34,347.25 ms; the installed profile averaged
+6,694.375 ms, saving 27,652.875 ms/**80.51%**. All 8/8 pairs were positive and
+the corrected deterministic bootstrap interval was
++24,826.5..+29,903.625 ms. Exact normalized output, zero candidate origin
+requests, native full-graph global fallback and byte-identical HTTP-503 local
+fallback all passed. This independently qualifies installed-profile value for
+the fixed Kafka revision, change, output and network model; it does not make
+the percentage universal or additive with another mechanism result.
 
 The **qualified-profile usability and scope synthesis** block is now complete:
 
@@ -425,6 +437,7 @@ artifacts are:
 - [targeted Spring Runtime decision](../../benchmarks/results/poc-runtime-research-v1.json).
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json).
 - [repository-owned Kafka composition usability evidence](../../benchmarks/results/poc-kafka-composition-usability-v1.json).
+- [installed Kafka profile value evidence](../../benchmarks/results/poc-kafka-installed-profile-value-v1.json).
 - [verification/distribution graph evidence](../../benchmarks/results/poc-verification-distribution-graph-v1.json).
 - [verification overhead attribution](../../benchmarks/results/poc-verification-overhead-attribution-v1.json).
 

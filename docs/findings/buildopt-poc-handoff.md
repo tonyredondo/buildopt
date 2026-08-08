@@ -160,17 +160,18 @@ unfavorable observations. Percentages from different rows are not additive.
 | Build Impact + prewarmed Edge | **82.87% diagnostic difference**, 35,922 ms mean, 4/4 positive pairs | Native full `assemble` through Shared averaged 43,345 ms; the installed candidate averaged 7,423 ms and restored the same cached `shadowJar`. Not qualified: forced Edge failure completed but rebuilt the custom JAR with different bytes. |
 | Custom `shadowJar` reproducibility | **5/5 clean builds passed the fixed safety protocol** | Original builds kept the same payload/order but drifted in ZIP metadata. Two normalized builds and an HTTP-503 fallback produced identical `3ffd994e...3349` bytes. This qualifies an input, not a performance percentage. |
 | Fresh normalized Build Impact + Edge | **82.35% faster**, 35,405.5 ms saved, 4/4 positive pairs | Native + Shared averaged 42,992.75 ms; installed Impact + Edge averaged 7,587.25 ms. Interval +30,162..+42,487.75 ms, exact normalized output, full-graph global fallback, zero measured candidate-origin traffic, and byte-identical HTTP-503 fallback. Qualified only for this change and network profile. |
+| Exact installed Kafka profile | **80.51% faster**, 27,652.875 ms saved, 8/8 positive pairs | The packaged `buildopt poc` path retained the qualified value: native + Shared averaged 34,347.25 ms and the installed repository-owned profile 6,694.375 ms. Corrected bootstrap interval +24,826.5..+29,903.625 ms, exact normalized output, zero origin requests, global full-graph fallback and byte-identical HTTP-503 fallback. |
 
 ## Latest Generalization and Next Work
 
 The qualified Kafka composition has now moved from experiment-only wiring into
-a repository-owned v2 POC profile. `buildopt poc` exposes the exact normalized
-source SHA, selected graph, read-only loopback Edge endpoint and disabled
-mechanisms before Gradle starts. Global/unknown changes, precondition drift,
-missing/invalid Edge and bypass select native full-graph execution without
-Edge; HTTP 503 executes the selected graph locally with identical bytes. No
-new timing was collected, so the existing 82.35% result remains bounded to the
-fixed Kafka change and network profile.
+a repository-owned v2 POC profile and has been measured through the exact
+installed command. `buildopt poc` exposes the normalized source SHA, selected
+graph, read-only loopback Edge endpoint and disabled mechanisms before Gradle
+starts. Eight fresh pairs retained **80.51%** mean savings with a strictly
+positive bootstrap interval; global/unknown changes and endpoint failures keep
+the native or local fallback safe. The claim remains bounded to the fixed
+Kafka revision, change, output and modeled network profile.
 
 **Continue the POC, but activate only measured value.** The fresh ablation
 qualified Spring Build Impact at 2,492.375 ms/30.86% saved with 8/8 positive
@@ -311,11 +312,11 @@ up-to-date; their 4,249-ms cumulative duration overlaps. The candidate task
 interval was 1,581 ms shorter, while BuildOpt's largest own phase was only
 1.238233 ms. No correction is authorized and verification stays native.
 
-The next recommended performance block composes qualified Edge locality with
-the Kafka Build Impact scope while excluding the invalid standard-`Jar`
-premise. It must preserve the exact shaded output, full-graph fallback and the
-same Shared origin, and report one end-to-end effect rather than adding the
-existing component percentages.
+The next block is the qualified-profile matrix. It will measure the complete
+installed path independently on the fixed Spring, OpenTelemetry and Kafka
+workloads, using only the mechanisms already qualified for each scope. Every
+repository keeps its own optimized native control, output contract and
+percentage; the matrix must not average repositories or add mechanism effects.
 
 ## Boundaries and References
 
@@ -342,5 +343,6 @@ production operations are outside the current scope.
 - [Installed qualified-profile adoption evidence](../../benchmarks/results/poc-qualified-profile-adoption-v1.json)
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)
 - [Kafka shadow JAR reproducibility evidence](../../benchmarks/results/poc-kafka-shadowjar-reproducibility-v1.json)
+- [Installed Kafka profile value evidence](../../benchmarks/results/poc-kafka-installed-profile-value-v1.json)
 - [Verification/distribution graph evidence](../../benchmarks/results/poc-verification-distribution-graph-v1.json)
 - [Verification overhead attribution](../../benchmarks/results/poc-verification-overhead-attribution-v1.json)

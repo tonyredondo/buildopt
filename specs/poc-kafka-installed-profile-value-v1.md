@@ -36,6 +36,15 @@ build caches in offline mode. Dependency preparation and the blocked external
 network boundary remain unchanged. Evidence `E-259` through `E-261` records
 these zero-observation corrections; the pair order and value gate did not move.
 
+The terminal run qualifies the installed profile. Native Gradle plus Shared
+averages 34,347.25 ms and the packaged candidate 6,694.375 ms, saving
+27,652.875 ms/**80.51%**. All eight pairs are positive; the corrected
+deterministic bootstrap interval is +24,826.5..+29,903.625 ms and the evidence
+records that no raw observation changed during the statistical correction.
+The normalized archive, zero-origin candidate path, global full-graph fallback
+and byte-identical HTTP-503 local fallback all pass. This is a bounded POC
+claim for the fixed Kafka revision, change, output and network model.
+
 ```bash
 ./dev/check-poc-kafka-installed-profile-value-v1
 ./dev/run-poc-kafka-installed-profile-value-v1 \

@@ -3110,6 +3110,17 @@ read-only Edge profile. The result must preserve the normalized shaded JAR,
 global full-graph fallback and HTTP-503 local fallback. Earlier composition
 timings cannot be reused.
 
+The checked result qualifies the installed path: optimized native Gradle plus
+Shared averages 34,347.25 ms and the packaged profile 6,694.375 ms, saving
+27,652.875 ms/**80.51%**. All eight pairs are positive and the corrected
+bootstrap interval is +24,826.5..+29,903.625 ms. Exact output, zero candidate
+origin requests, native global fallback and byte-identical HTTP-503 fallback
+all pass. Revalidate the archived evidence with:
+
+```bash
+./dev/check-poc-kafka-installed-profile-value-v1-result
+```
+
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source
 distribution. Structural discovery freezes selective execution only where the
