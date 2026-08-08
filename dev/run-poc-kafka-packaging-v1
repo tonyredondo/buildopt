@@ -14,6 +14,7 @@ buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd
 buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_spec="${buildopt_repo_root}/specs/poc-kafka-packaging-v1.json"
 buildopt_fixture="${buildopt_repo_root}/fixtures/poc-kafka-packaging"
+buildopt_java_home="${buildopt_repo_root}/.tools/toolchains/temurin-jdk-25-69264a7a211bf502"
 
 if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
     ! -x "${buildopt_executable}" || ! -f "${buildopt_source_archive}" ||
@@ -70,6 +71,9 @@ mkdir -p "${buildopt_root}/source" "${buildopt_root}/logs" \
 tar -xzf "${buildopt_source_archive}" --strip-components=1 -C "${buildopt_root}/source"
 
 while IFS=$'\t' read -r buildopt_path buildopt_sha; do
+    if [[ "${buildopt_path}" == gradle/wrapper/gradle-wrapper.jar ]]; then
+        continue
+    fi
     [[ "$(sha256sum "${buildopt_root}/source/${buildopt_path}" | awk '{print $1}')" == \
         "${buildopt_sha}" ]] || {
         printf 'Kafka fixed input checksum mismatch: %s\n' "${buildopt_path}" >&2
@@ -107,7 +111,6 @@ for buildopt_home in "${buildopt_root}/control-home" "${buildopt_root}/candidate
     find "${buildopt_home}" -type f \( -name '*.lock' -o -name gc.properties \) -delete
 done
 
-buildopt_java_home="${buildopt_repo_root}/.tools/toolchains/temurin-jdk-25-69264a7a211bf502"
 [[ -x "${buildopt_java_home}/bin/java" ]] || {
     printf 'locked Temurin 25 toolchain is unavailable\n' >&2
     exit 1
@@ -164,6 +167,13 @@ for buildopt_arm in control candidate; do
     "buildopt_run_${buildopt_arm}" "${buildopt_root}/logs/warmup-${buildopt_arm}.log"
     buildopt_assert_output "${buildopt_root}/logs/warmup-${buildopt_arm}.log"
 done
+
+[[ "$(sha256sum "${buildopt_root}/source/gradle/wrapper/gradle-wrapper.jar" | awk '{print $1}')" == \
+    "$(jq -er '.repository.fixedInputSha256["gradle/wrapper/gradle-wrapper.jar"]' \
+        "${buildopt_spec}")" ]] || {
+    printf 'Kafka generated Wrapper JAR checksum mismatch\n' >&2
+    exit 1
+}
 
 buildopt_pairs='[]'
 buildopt_failures=0
