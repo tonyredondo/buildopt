@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-kafka-shadowjar-reproducibility-v1.json"
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Kafka reproducibility command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -s "${buildopt_spec}" ]] || {
+    printf 'Kafka shadow JAR reproducibility contract is unavailable\n' >&2
+    exit 1
+}
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-kafka-shadowjar-reproducibility/v1" and
+    .workItem == "POC-KAFKA-SHADOWJAR-REPRODUCIBILITY-001" and
+    .status == "PREREGISTERED" and
+    .preregistration == {
+      productRevision: "0513d67080f05a968dee6e1c97d568943387a4ee",
+      acceptedBuildsBeforePreregistration: 0,
+      outputDigestMayBeChosenAfterBuild: false,
+      fallbackMayBeSkipped: false
+    } and
+    .repository.nameWithOwner == "apache/kafka" and
+    .repository.revision == "26b251a451ce941d3d7a55e6487bcb7f16b5ad48" and
+    .repository.sourceArchiveSha256 == "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2" and
+    .repository.sourceArchiveBytes == 14169772 and
+    .repository.gradleVersion == "9.2.1" and
+    .repository.jdk == "temurin-25.0.3+9" and
+    .change.path == "clients/src/main/java/org/apache/kafka/clients/Metadata.java" and
+    .change.originalSha256 == "30e3d4ad29be4f6be1e34d545caf08d8520fa4341e0948968cd87fd51b8911e3" and
+    .diagnosis.originalBuildFileSha256 == "50b4d82988d6567b146b419c99498fb8e1b6154815f651750a5335ea905b7bd6" and
+    .diagnosis.producerTask == ":clients:shadowJar" and
+    .diagnosis.inheritedArchiveConfiguration == {
+      reproducibleFileOrder: false, preserveFileTimestamps: true
+    } and
+    .diagnosis.baselineIndependentCleanBuilds == 2 and
+    .diagnosis.baselineBytesExpectedToDiffer == true and
+    .diagnosis.baselinePayloadExpectedToMatch == true and
+    .stabilization.method == "EXACT_TEMPORARY_SOURCE_CONFIGURATION" and
+    .stabilization.replacements == [
+      {from: "    reproducibleFileOrder = false", to: "    reproducibleFileOrder = true"},
+      {from: "    preserveFileTimestamps = true", to: "    preserveFileTimestamps = false"}
+    ] and
+    .stabilization.normalizedIndependentCleanBuilds == 2 and
+    .stabilization.normalizedBytesMustMatch == true and
+    .stabilization.normalizedPayloadMustMatchBaseline == true and
+    .stabilization.upstreamCheckoutModified == false and
+    .build.entrypoints == [":clients:shadowJar"] and
+    .build.commonGradleOptions == ["--no-daemon", "--no-build-cache",
+      "--no-configuration-cache", "--parallel", "--console=plain",
+      "--max-workers=12", "--no-scan"] and
+    .build.dependencyPreparationMeasured == false and
+    .build.freshSourceTreePerBuild == true and
+    .build.freshGradleHomePerBuild == true and
+    .build.sharedPreparedDependencyBytes == true and
+    .build.testTasksForbidden == true and
+    .fallback == {remoteCacheResponseStatus: 503, remoteCachePush: false,
+      normalizedSourceRequired: true, buildMustSucceed: true,
+      remoteCacheMustDisable: true, outputMustMatchNormalizedBuilds: true} and
+    .decisionPolicy.qualifiedDecision == "QUALIFY_KAFKA_SHADOWJAR_REPRODUCIBILITY_INPUT" and
+    .decisionPolicy.unqualifiedDecision == "STOP_KAFKA_SHADOWJAR_REPRODUCIBILITY" and
+    .decisionPolicy.compositionRerunAuthorizedOnQualification == true and
+    .decisionPolicy.performanceClaimAllowed == false and
+    .boundaries == {proofOfConcept: true, productionReadinessClaimed: false,
+      upstreamPatchApplied: false, performanceMeasured: false,
+      compositionSavingsClaimed: false, testOptimizationModified: false,
+      soakRequired: false, designPartnerRequired: false,
+      universalReproducibilityClaimed: false}
+' "${buildopt_spec}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+[[ "${buildopt_before}" == "${buildopt_after}" ]] || {
+    printf 'Kafka reproducibility contract validation changed the working tree\n' >&2
+    exit 1
+}
+printf 'POC Kafka shadow JAR reproducibility contract OK: %s\n' "${buildopt_spec}"

@@ -23,6 +23,7 @@ the exact cross-component contract.
 | [`poc-remote-cache-transfer-v1.md`](./poc-remote-cache-transfer-v1.md) and [`poc-remote-cache-transfer-v1.json`](./poc-remote-cache-transfer-v1.json) | `POC-REMOTE-CACHE-TRANSFER-001` |
 | [`poc-qualified-remote-composition-v1.md`](./poc-qualified-remote-composition-v1.md) and [`poc-qualified-remote-composition-v1.json`](./poc-qualified-remote-composition-v1.json) | `POC-QUALIFIED-REMOTE-COMPOSITION-001` |
 | [`poc-kafka-impact-edge-composition-v1.md`](./poc-kafka-impact-edge-composition-v1.md) and [`poc-kafka-impact-edge-composition-v1.json`](./poc-kafka-impact-edge-composition-v1.json) | `POC-KAFKA-IMPACT-EDGE-COMPOSITION-001` |
+| [`poc-kafka-shadowjar-reproducibility-v1.md`](./poc-kafka-shadowjar-reproducibility-v1.md) and [`poc-kafka-shadowjar-reproducibility-v1.json`](./poc-kafka-shadowjar-reproducibility-v1.json) | `POC-KAFKA-SHADOWJAR-REPRODUCIBILITY-001` |
 | [`poc-spring-installed-impact-v1.md`](./poc-spring-installed-impact-v1.md) and [`poc-spring-installed-impact-v1.json`](./poc-spring-installed-impact-v1.json) | `POC-SPRING-INSTALLED-IMPACT-001` |
 | [`poc-spring-impact-breadth-v1.md`](./poc-spring-impact-breadth-v1.md) and [`poc-spring-impact-breadth-v1.json`](./poc-spring-impact-breadth-v1.json) | `POC-SPRING-IMPACT-BREADTH-PREREG-001` / `POC-SPRING-IMPACT-BREADTH-G01` |
 | [`poc-otel-test-preparation-v1.json`](./poc-otel-test-preparation-v1.json) | `POC-OTEL-TRANSFER-001` |

@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "buildopt.specs/poc-kafka-shadowjar-reproducibility/v1",
+  "workItem": "POC-KAFKA-SHADOWJAR-REPRODUCIBILITY-001",
+  "status": "PREREGISTERED",
+  "preregisteredAt": "2026-08-08",
+  "preregistration": {
+    "productRevision": "0513d67080f05a968dee6e1c97d568943387a4ee",
+    "acceptedBuildsBeforePreregistration": 0,
+    "outputDigestMayBeChosenAfterBuild": false,
+    "fallbackMayBeSkipped": false
+  },
+  "repository": {
+    "nameWithOwner": "apache/kafka",
+    "releaseTag": "4.3.1",
+    "revision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "sourceArchiveUrl": "https://codeload.github.com/apache/kafka/tar.gz/26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "sourceArchiveSha256": "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2",
+    "sourceArchiveBytes": 14169772,
+    "gradleVersion": "9.2.1",
+    "jdk": "temurin-25.0.3+9"
+  },
+  "change": {
+    "path": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+    "originalSha256": "30e3d4ad29be4f6be1e34d545caf08d8520fa4341e0948968cd87fd51b8911e3",
+    "mutation": "APPEND_FIXED_COMMENT_LINE"
+  },
+  "diagnosis": {
+    "buildFile": "build.gradle",
+    "originalBuildFileSha256": "50b4d82988d6567b146b419c99498fb8e1b6154815f651750a5335ea905b7bd6",
+    "producerTask": ":clients:shadowJar",
+    "producerType": "CUSTOM_SHADOW_JAR",
+    "inheritedArchiveConfiguration": {
+      "reproducibleFileOrder": false,
+      "preserveFileTimestamps": true
+    },
+    "baselineIndependentCleanBuilds": 2,
+    "baselineBytesExpectedToDiffer": true,
+    "baselinePayloadExpectedToMatch": true
+  },
+  "stabilization": {
+    "method": "EXACT_TEMPORARY_SOURCE_CONFIGURATION",
+    "buildFile": "build.gradle",
+    "replacements": [
+      {
+        "from": "    reproducibleFileOrder = false",
+        "to": "    reproducibleFileOrder = true"
+      },
+      {
+        "from": "    preserveFileTimestamps = true",
+        "to": "    preserveFileTimestamps = false"
+      }
+    ],
+    "normalizedIndependentCleanBuilds": 2,
+    "normalizedBytesMustMatch": true,
+    "normalizedPayloadMustMatchBaseline": true,
+    "upstreamCheckoutModified": false
+  },
+  "build": {
+    "entrypoints": [
+      ":clients:shadowJar"
+    ],
+    "commonGradleOptions": [
+      "--no-daemon",
+      "--no-build-cache",
+      "--no-configuration-cache",
+      "--parallel",
+      "--console=plain",
+      "--max-workers=12",
+      "--no-scan"
+    ],
+    "dependencyPreparationMeasured": false,
+    "freshSourceTreePerBuild": true,
+    "freshGradleHomePerBuild": true,
+    "sharedPreparedDependencyBytes": true,
+    "testTasksForbidden": true
+  },
+  "fallback": {
+    "remoteCacheResponseStatus": 503,
+    "remoteCachePush": false,
+    "normalizedSourceRequired": true,
+    "buildMustSucceed": true,
+    "remoteCacheMustDisable": true,
+    "outputMustMatchNormalizedBuilds": true
+  },
+  "decisionPolicy": {
+    "qualifiedDecision": "QUALIFY_KAFKA_SHADOWJAR_REPRODUCIBILITY_INPUT",
+    "unqualifiedDecision": "STOP_KAFKA_SHADOWJAR_REPRODUCIBILITY",
+    "compositionRerunAuthorizedOnQualification": true,
+    "performanceClaimAllowed": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "upstreamPatchApplied": false,
+    "performanceMeasured": false,
+    "compositionSavingsClaimed": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "universalReproducibilityClaimed": false
+  }
+}

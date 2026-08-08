@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-kafka-shadowjar-reproducibility-v1.json"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-kafka-shadowjar-reproducibility-v1.json"}
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Kafka reproducibility result command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -s "${buildopt_result}" ]] || {
+    printf 'Kafka shadow JAR reproducibility result is unavailable: %s\n' \
+        "${buildopt_result}" >&2
+    exit 1
+}
+"${buildopt_script_dir}/check-poc-kafka-shadowjar-reproducibility-v1" >/dev/null
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_runner_sha=$(sha256sum \
+    "${buildopt_script_dir}/run-poc-kafka-shadowjar-reproducibility-v1" | awk '{print $1}')
+buildopt_server_sha=$(sha256sum \
+    "${buildopt_repo_root}/dev/kafka-shadowjar-503-server/main.go" | awk '{print $1}')
+
+jq -e \
+    --arg specSha "${buildopt_spec_sha}" \
+    --arg runnerSha "${buildopt_runner_sha}" \
+    --arg serverSha "${buildopt_server_sha}" \
+    --slurpfile spec "${buildopt_spec}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    .schemaVersion == "buildopt.evidence/poc-kafka-shadowjar-reproducibility/v1" and
+    .workItem == "POC-KAFKA-SHADOWJAR-REPRODUCIBILITY-001" and
+    (.capturedAt | fromdateiso8601) and
+    (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+    .runnerScriptSha256 == $runnerSha and .specSha256 == $specSha and
+    .failureServerSourceSha256 == $serverSha and
+    .sourceArchiveSha256 == $spec[0].repository.sourceArchiveSha256 and
+    .repository == {nameWithOwner: $spec[0].repository.nameWithOwner,
+      releaseTag: $spec[0].repository.releaseTag,
+      revision: $spec[0].repository.revision,
+      gradleVersion: $spec[0].repository.gradleVersion,
+      jdk: $spec[0].repository.jdk} and
+    .runner == {id: "linux-amd64-12c-16659865600b-v1", cpuCount: 12,
+      memoryBytes: 16659865600, maxWorkers: 12} and
+    .preparation.measured == false and .preparation.cleanSourceCopies == 5 and
+    (.preparation.dependencyPreparationLogSha256 | sha256) and
+    .preparation.partialStateReused == false and
+    (.builds | length) == 5 and
+    [.builds[].id] == ["baseline-a", "baseline-b", "normalized-a",
+      "normalized-b", "fallback-503"] and
+    [.builds[].normalized] == [false, false, true, true, true] and
+    [.builds[].remoteFailureInjected] == [false, false, false, false, true] and
+    all(.builds[]; .cleanSourceTree and .freshGradleHome and .taskExecuted and
+      .durationMs > 0 and .artifactBytes > 0 and
+      (.buildFileSha256 | sha256) and (.artifactSha256 | sha256) and
+      (.payloadSha256 | sha256) and (.entryOrderSha256 | sha256) and
+      (.metadataSha256 | sha256) and (.logSha256 | sha256)) and
+    .builds[0].artifactSha256 != .builds[1].artifactSha256 and
+    ([.builds[0].payloadSha256, .builds[1].payloadSha256] | unique | length) == 1 and
+    ([.builds[2].artifactSha256, .builds[3].artifactSha256,
+      .builds[4].artifactSha256] | unique | length) == 1 and
+    ([.builds[].payloadSha256] | unique | length) == 1 and
+    .attribution == {upstreamReproducibleFileOrder: false,
+      upstreamPreserveFileTimestamps: true, baselineBytesIdentical: false,
+      baselinePayloadIdentical: true,
+      baselineArtifactSha256: [.builds[0].artifactSha256, .builds[1].artifactSha256],
+      logicalPayloadSha256: .builds[0].payloadSha256} and
+    .stabilization.method == $spec[0].stabilization.method and
+    (.stabilization.normalizedBuildFileSha256 | sha256) and
+    .stabilization.normalizedArtifactSha256 == .builds[2].artifactSha256 and
+    .stabilization.independentBuildsIdentical and
+    .stabilization.payloadPreserved and
+    (.stabilization.upstreamCheckoutModified | not) and
+    .fallback.remoteCacheResponseStatus == 503 and
+    .fallback.buildSucceeded and .fallback.remoteCacheDisabled and
+    .fallback.outputMatchedNormalizedBuilds and
+    (.fallback.failureServerLogSha256 | sha256) and
+    .result == {qualified: true,
+      decision: $spec[0].decisionPolicy.qualifiedDecision,
+      compositionRerunAuthorized: true, performanceClaimAllowed: false} and
+    .boundaries == $spec[0].boundaries
+' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+[[ "${buildopt_before}" == "${buildopt_after}" ]] || {
+    printf 'Kafka reproducibility result validation changed the working tree\n' >&2
+    exit 1
+}
+printf 'POC Kafka shadow JAR reproducibility evidence OK: %s\n' \
+    "${buildopt_result}"
