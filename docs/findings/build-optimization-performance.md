@@ -368,6 +368,18 @@ fallback all passed. This independently qualifies installed-profile value for
 the fixed Kafka revision, change, output and network model; it does not make
 the percentage universal or additive with another mechanism result.
 
+The subsequent installed matrix tested whether similarly bounded profiles
+replicate as a broad POC claim. They do not. Spring Build Impact averaged
+1,895 ms/14.33% faster and preserved exact outputs and fallback, but one of
+eight pairs regressed by 57 ms; the unchanged all-positive gate therefore
+retains optimized native Gradle. OpenTelemetry produced no accepted timing:
+impact discovery was terminated by signal after a successful unmeasured
+preflight, so the evidence records `PREPARATION_FAILED` rather than inferring
+value. Kafka independently retained 28,523.25 ms/81.85% savings with 8/8
+positive pairs, interval +26,603.5..+30,509 ms, exact normalized output and
+both safety fallbacks. With only one of three families qualified, the POC must
+specialize instead of claiming a general accelerator or averaging percentages.
+
 The **qualified-profile usability and scope synthesis** block is now complete:
 
 1. `buildopt poc --changes-file PATH` reads one repository-owned versioned
@@ -408,8 +420,9 @@ manufacture another optimization.
 
 - Does a materially different retained trace expose a Runtime bottleneck that
   justifies one new preregistered hypothesis?
-- Which repository-owned manifest UX makes the qualified clean profile easy to
-  adopt without implying universal automatic selection?
+- Can the retained Kafka profile be generated deterministically from checked
+  manifests, graphs, traces and evidence while the Spring and OpenTelemetry
+  fixtures fail closed to native Gradle?
 
 ## Evidence Boundaries
 
@@ -432,6 +445,7 @@ artifacts are:
 - [installed Spring Build Impact evidence](../../benchmarks/results/poc-spring-installed-impact-v1.json);
 - [OpenTelemetry hot-state evidence](../../benchmarks/results/poc-otel-hot-state-v1.json);
 - [final OpenTelemetry optimization evidence](../../benchmarks/results/poc-otel-optimization-v2.json).
+- [terminal installed qualified-profile matrix](../../benchmarks/results/poc-qualified-profile-matrix-v1/summary.json).
 - [fresh full-path ablation and retained component evidence](../../benchmarks/results/poc-full-path-ablation-v1/summary.json).
 - [qualified clean OpenTelemetry composition](../../benchmarks/results/poc-otel-clean-composition-v1.json).
 - [targeted Spring Runtime decision](../../benchmarks/results/poc-runtime-research-v1.json).

@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`POC INSTALLED-PROFILE VALUE VALIDATION ACTIVE\`"
-    "**Current phase:** \`POC QUALIFIED-PROFILE MATRIX NEXT\`"
+    "**Overall status:** \`POC PROFILE SPECIALIZATION ACTIVE\`"
+    "**Current phase:** \`POC DETERMINISTIC KAFKA PROFILE DISCOVERY NEXT\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"
@@ -176,11 +176,11 @@ buildopt_required_tracker_text=(
     "| \`E-225\` | 2026-08-08 | \`POC-QUALIFIED-PROFILE-001\`, \`POC-QUALIFIED-PROFILE-G01\`"
     "| \`POC-QUALIFIED-PROFILE-ADOPTION-001\` | Install the native package, consume repository-owned state on both qualified public revisions, replay the candidate Jar, and execute global fallback without collecting timing | \`DONE\` | \`E-226\`"
     "| \`E-226\` | 2026-08-08 | \`POC-QUALIFIED-PROFILE-ADOPTION-001\`"
-    "| POC-NEXT-VALUE | Installed-profile value, cross-repository replication, deterministic discovery, one trace-gated hypothesis, and a terminal POC portfolio decision | \`DOING\` | 1/5 | \`E-257\`, \`E-266\` |"
+    "| POC-NEXT-VALUE | Installed-profile value, cross-repository replication, deterministic discovery, one trace-gated hypothesis, and a terminal POC portfolio decision | \`DOING\` | 2/5 | \`E-257\`, \`E-266\`, \`E-271\` |"
     "| 65 | \`POC-KAFKA-INSTALLED-PROFILE-VALUE-001\` | Measure the exact packaged Kafka v2 profile against optimized native Gradle plus Shared Cache under the already qualified source and network boundary | \`DONE\` | Codex |"
-    "| 66 | \`POC-QUALIFIED-PROFILE-MATRIX-001\` | Replicate installed-profile value independently on the fixed Spring, OpenTelemetry and Kafka workloads without averaging their percentages | \`TODO\` | Codex |"
-    "| 67 | \`POC-PROFILE-DISCOVERY-001\` | Generate reviewable repository-owned profiles deterministically from checked manifests, graphs, traces and evidence, with native fallback on uncertainty | \`WAITING\` | Codex |"
-    "| 68 | \`POC-TRACE-HYPOTHESIS-002\` | Authorize at most one generic optimization from retained installed-path traces only when it exposes at least 500 ms of recoverable critical-path work | \`WAITING\` | Codex |"
+    "| 66 | \`POC-QUALIFIED-PROFILE-MATRIX-001\` | Replicate installed-profile value independently on the fixed Spring, OpenTelemetry and Kafka workloads without averaging their percentages | \`DONE\` | Codex |"
+    "| 67 | \`POC-PROFILE-DISCOVERY-001\` | Generate the retained Kafka profile deterministically from checked manifests, graphs, traces and evidence, with native fallback on uncertainty | \`TODO\` | Codex |"
+    "| 68 | \`POC-TRACE-HYPOTHESIS-002\` | Authorize at most one generic optimization from retained installed-path traces only when it exposes at least 500 ms of recoverable critical-path work | \`TODO\` | Codex |"
     "| 69 | \`POC-PORTFOLIO-DECISION-001\` | Decide whether to continue broadly, specialize by repository family, or stop/reframe the POC from the installed-path evidence | \`WAITING\` | Codex |"
     "#### Planned POC decision sequence"
     "Qualify only with at least 500 ms and 2% mean savings, a positive paired lower"
@@ -188,6 +188,7 @@ buildopt_required_tracker_text=(
     "| \`E-258\` | 2026-08-08 | \`POC-KAFKA-INSTALLED-PROFILE-VALUE-001\`"
     "| \`E-259\` | 2026-08-08 | \`POC-KAFKA-INSTALLED-PROFILE-VALUE-001\`"
     "| \`E-260\` | 2026-08-08 | \`POC-KAFKA-INSTALLED-PROFILE-VALUE-001\`"
+    "| \`E-271\` | 2026-08-08 | \`POC-QUALIFIED-PROFILE-MATRIX-001\`"
     "| \`E-261\` | 2026-08-08 | \`POC-KAFKA-INSTALLED-PROFILE-VALUE-001\`"
     "| \`E-262\` | 2026-08-08 | \`POC-KAFKA-INSTALLED-PROFILE-VALUE-001\`"
     "| \`E-263\` | 2026-08-08 | \`POC-KAFKA-INSTALLED-PROFILE-VALUE-001\`"
@@ -236,5 +237,5 @@ if [[ $(grep -Fc "| \`OPS-001/B\` |" <<<"${buildopt_readiness}") != 1 ]]; then
     exit 1
 fi
 
-printf 'RFC/tracker consistency OK: %s accepted decisions, installed Kafka value qualified and four POC decisions remain\n' \
+printf 'RFC/tracker consistency OK: %s accepted decisions, installed matrix specialized and three POC decisions remain\n' \
     "${buildopt_decision_count}"

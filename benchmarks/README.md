@@ -722,6 +722,29 @@ change, output and modeled network profile.
 ./dev/check-poc-kafka-installed-profile-value-v1-result
 ```
 
+### Installed qualified-profile matrix
+
+The [terminal matrix summary](./results/poc-qualified-profile-matrix-v1/summary.json)
+remeasures the complete installed path independently on the fixed Spring,
+OpenTelemetry and Kafka revisions. It does not average repository percentages
+or add mechanism effects.
+
+| Cell | Control mean | Candidate mean | Result | Decision |
+|---|---:|---:|---:|---|
+| Spring Build Impact | 13,226.375 ms | 11,331.375 ms | **1,895 ms / 14.33% faster**, 7/8 positive, interval +981..+3,111.75 ms | Retain native: one pair regressed by 57 ms, so the unchanged all-positive gate failed. |
+| OpenTelemetry Impact + standard `Jar` | — | — | Zero accepted observations | Retain native: impact discovery was terminated by signal after the successful unmeasured preflight; no performance claim is made. |
+| Kafka Impact + read-only Edge | 34,848.25 ms | 6,325 ms | **28,523.25 ms / 81.85% faster**, 8/8 positive, interval +26,603.5..+30,509 ms | Qualify the fixed Kafka profile with exact output and both safety fallbacks. |
+
+Only one of three independent families qualifies, below the two-family broad
+continuation rule. The terminal decision is `SPECIALIZE_QUALIFIED_PROFILES`:
+keep Spring and OpenTelemetry on optimized native Gradle, and continue only
+with deterministic, reviewable discovery of the bounded Kafka profile.
+
+```bash
+./dev/check-poc-qualified-profile-matrix-v1-result \
+  benchmarks/results/poc-qualified-profile-matrix-v1/summary.json
+```
+
 The three mechanism-development reports remain historical inputs. The strict
 synthetic reports prove bounded combined value. The public-repository
 compatibility and early performance reports showed that the first generic

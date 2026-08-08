@@ -36,9 +36,15 @@ buildopt_archived_sha() {
     git -C "${buildopt_repo_root}" show \
         "${buildopt_execution_revision}:${buildopt_path}" | sha256sum | awk '{print $1}'
 }
-buildopt_postprocessing_revision=$(git -C "${buildopt_repo_root}" log -1 --format=%H -- \
+buildopt_postprocessing_revision=$(git -C "${buildopt_repo_root}" log -1 \
+    --format=%H \
+    -S'DETERMINISTIC_LCG32_FULL_RANGE_INDEX_V2' -- \
     dev/run-poc-kafka-impact-edge-composition-v2 \
     dev/check-poc-kafka-installed-profile-value-v1-result)
+[[ -n "${buildopt_postprocessing_revision}" ]] || {
+    printf 'installed Kafka profile bootstrap correction is unavailable\n' >&2
+    exit 1
+}
 
 jq -e \
     --arg executionRevision "${buildopt_execution_revision}" \

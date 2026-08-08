@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-qualified-profile-matrix/v1",
+  "workItem": "POC-QUALIFIED-PROFILE-MATRIX-001",
+  "evidenceState": "TERMINAL",
+  "capturedAt": "2026-08-08T22:39:06Z",
+  "evidenceRevision": "a6bbf3f10273d8912b21da177c86653d60b3db21",
+  "measurementRevisions": [
+    "0ba7f941e70323f6637e2cdeaeeb76b9367a7398",
+    "cdcbe0f04a003ef44a0e2b35a95a3ecd16f1ac13"
+  ],
+  "specSha256": "565c931cf88ed057e5fadb560ddc2b313c5ffb544c97249f7aa5e455fb8b9fb0",
+  "composerScriptSha256": "eac5c1a1b55150d1c4f8ed1eb24c2eef0afa8c4c3ad9d73c9089633140e3abfe",
+  "cells": [
+    {
+      "id": "spring-build-impact",
+      "evidenceFile": "spring.json",
+      "evidenceSha256": "05f26b9c39c011ef4ccc4b0a6fa2c0373e3827944ec3bac25185e9ac9c26c6fa",
+      "mechanisms": [
+        "BUILD_IMPACT"
+      ],
+      "pairs": 8,
+      "controlMeanMs": 13226.375,
+      "candidateMeanMs": 11331.375,
+      "meanSavedMs": 1895,
+      "reductionRatio": 0.14327432875598944,
+      "interval95SavedMs": [
+        981,
+        3111.75
+      ],
+      "positivePairs": 7,
+      "qualified": false
+    },
+    {
+      "id": "opentelemetry-impact-standard-jar",
+      "evidenceFile": "opentelemetry.json",
+      "evidenceSha256": "bf876c2f712b4a17ee1d439a58ae0094bfc173e43ebd32f02e4a9a827485ab46",
+      "mechanisms": [
+        "BUILD_IMPACT",
+        "STANDARD_JAR"
+      ],
+      "pairs": 0,
+      "controlMeanMs": null,
+      "candidateMeanMs": null,
+      "meanSavedMs": null,
+      "reductionRatio": null,
+      "interval95SavedMs": null,
+      "positivePairs": 0,
+      "qualified": false
+    },
+    {
+      "id": "kafka-impact-read-only-edge",
+      "evidenceFile": "kafka.json",
+      "evidenceSha256": "31988f5f6577e0e8d134ef6e9d360f4d023c3d4af9df63a393a98e5abd32c0ee",
+      "mechanisms": [
+        "BUILD_IMPACT",
+        "SHARED_EDGE_CACHE"
+      ],
+      "pairs": 8,
+      "controlMeanMs": 34848.25,
+      "candidateMeanMs": 6325,
+      "meanSavedMs": 28523.25,
+      "reductionRatio": 0.818498776839583,
+      "interval95SavedMs": [
+        26603.5,
+        30509
+      ],
+      "positivePairs": 8,
+      "qualified": true
+    }
+  ],
+  "aggregation": {
+    "qualifyingFamilies": 1,
+    "totalFamilies": 3,
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false
+  },
+  "decision": "SPECIALIZE_QUALIFIED_PROFILES",
+  "boundaries": {
+    "proofOfConceptOnly": true,
+    "productionReadinessClaim": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationIncluded": false
+  }
+}

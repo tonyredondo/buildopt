@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-qualified-profile-matrix-cell/v1",
+  "workItem": "POC-QUALIFIED-PROFILE-MATRIX-001",
+  "evidenceState": "PREPARATION_FAILED",
+  "capturedAt": "2026-08-08T22:36:47Z",
+  "buildopt": {
+    "revision": "0ba7f941e70323f6637e2cdeaeeb76b9367a7398",
+    "qualifiedProfile": true,
+    "qualifiedProfileSha256": "66f2c68bc9bd04bfb6c3cd2c84b55eb9ac5fc347718f4260935153a8c863f58f"
+  },
+  "repository": {
+    "nameWithOwner": "open-telemetry/opentelemetry-java-instrumentation",
+    "revision": "080c1d32ca676ba7b0210c21b60cce8e7ac39058"
+  },
+  "failure": {
+    "stage": "IMPACT_DISCOVERY",
+    "reason": "PROCESS_TERMINATED_BY_SIGNAL",
+    "acceptedObservations": 0,
+    "logsSha256": "0df739d1beaf96df2dcf038b7715f4cf665cc2e12a22dedabf4c936fce00ef10"
+  },
+  "fallback": {
+    "retainedNativePath": true,
+    "performanceClaim": false
+  },
+  "observations": [],
+  "result": {
+    "pairs": 0,
+    "positivePairs": 0,
+    "qualified": false,
+    "decision": "RETAIN_NATIVE_OTEL_PROFILE_PATH"
+  },
+  "boundaries": {
+    "proofOfConceptOnly": true,
+    "productionReadinessClaim": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationIncluded": false
+  }
+}

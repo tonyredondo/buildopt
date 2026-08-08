@@ -161,6 +161,7 @@ unfavorable observations. Percentages from different rows are not additive.
 | Custom `shadowJar` reproducibility | **5/5 clean builds passed the fixed safety protocol** | Original builds kept the same payload/order but drifted in ZIP metadata. Two normalized builds and an HTTP-503 fallback produced identical `3ffd994e...3349` bytes. This qualifies an input, not a performance percentage. |
 | Fresh normalized Build Impact + Edge | **82.35% faster**, 35,405.5 ms saved, 4/4 positive pairs | Native + Shared averaged 42,992.75 ms; installed Impact + Edge averaged 7,587.25 ms. Interval +30,162..+42,487.75 ms, exact normalized output, full-graph global fallback, zero measured candidate-origin traffic, and byte-identical HTTP-503 fallback. Qualified only for this change and network profile. |
 | Exact installed Kafka profile | **80.51% faster**, 27,652.875 ms saved, 8/8 positive pairs | The packaged `buildopt poc` path retained the qualified value: native + Shared averaged 34,347.25 ms and the installed repository-owned profile 6,694.375 ms. Corrected bootstrap interval +24,826.5..+29,903.625 ms, exact normalized output, zero origin requests, global full-graph fallback and byte-identical HTTP-503 fallback. |
+| Installed qualified-profile matrix | **Kafka 81.85% faster; Spring 14.33% faster but unqualified; OpenTelemetry no accepted observations** | Kafka passed 8/8 pairs and all safety gates. Spring preserved output/fallback but passed only 7/8 pairs, including one -57-ms regression. OpenTelemetry impact discovery was terminated by signal after preflight, so it retains native with no performance claim. Only 1/3 families qualifies; do not average these percentages. |
 
 ## Latest Generalization and Next Work
 
@@ -172,6 +173,13 @@ starts. Eight fresh pairs retained **80.51%** mean savings with a strictly
 positive bootstrap interval; global/unknown changes and endpoint failures keep
 the native or local fallback safe. The claim remains bounded to the fixed
 Kafka revision, change, output and modeled network profile.
+
+The terminal installed matrix narrows the next step further. Deterministic
+profile discovery should reproduce only the qualified Kafka profile from
+checked manifests, graphs, traces and evidence. Spring and OpenTelemetry are
+negative fixtures: discovery must select their native paths, not encode their
+repository names or resurrect an unqualified profile. Broad automatic profile
+generation is not authorized by the current 1/3 result.
 
 **Continue the POC, but activate only measured value.** The fresh ablation
 qualified Spring Build Impact at 2,492.375 ms/30.86% saved with 8/8 positive
@@ -312,11 +320,12 @@ up-to-date; their 4,249-ms cumulative duration overlaps. The candidate task
 interval was 1,581 ms shorter, while BuildOpt's largest own phase was only
 1.238233 ms. No correction is authorized and verification stays native.
 
-The next block is the qualified-profile matrix. It will measure the complete
-installed path independently on the fixed Spring, OpenTelemetry and Kafka
-workloads, using only the mechanisms already qualified for each scope. Every
-repository keeps its own optimized native control, output contract and
-percentage; the matrix must not average repositories or add mechanism effects.
+The installed matrix is terminal and selects specialization, not broad
+continuation. The next block generates only the retained Kafka profile
+deterministically from checked manifests, graphs, traces and evidence. It must
+be reviewable, source-bound and fail closed to the native full graph on drift
+or uncertainty. Spring and OpenTelemetry remain negative fixtures, and no
+repository-name rule, hidden allowlist or automatic activation is permitted.
 
 ## Boundaries and References
 
@@ -341,6 +350,7 @@ production operations are outside the current scope.
 - [Controlled remote-cache locality evidence](../../benchmarks/results/poc-remote-cache-value-v1.json)
 - [Apache Kafka transfer evidence](../../benchmarks/results/poc-third-repository-transfer-v1.json)
 - [Installed qualified-profile adoption evidence](../../benchmarks/results/poc-qualified-profile-adoption-v1.json)
+- [Terminal installed qualified-profile matrix](../../benchmarks/results/poc-qualified-profile-matrix-v1/summary.json)
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)
 - [Kafka shadow JAR reproducibility evidence](../../benchmarks/results/poc-kafka-shadowjar-reproducibility-v1.json)
 - [Installed Kafka profile value evidence](../../benchmarks/results/poc-kafka-installed-profile-value-v1.json)

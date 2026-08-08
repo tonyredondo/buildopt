@@ -1,8 +1,8 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC INSTALLED-PROFILE VALUE VALIDATION ACTIVE` — the exact Kafka installed profile retained qualified value; the remaining decisions test whether that value transfers, whether profiles can be discovered deterministically, and whether another generic optimization is justified<br>
-**Current phase:** `POC QUALIFIED-PROFILE MATRIX NEXT` — replicate complete installed-path value independently on fixed Spring, OpenTelemetry and Kafka revisions without averaging their percentages<br>
-**POC functional target:** prove stable installed-path value on fixed public revisions, make profile discovery reviewable, and authorize new optimization code only for a measured generic critical-path bottleneck; Safe Cache and Runtime candidates remain disabled<br>
+**Overall status:** `POC PROFILE SPECIALIZATION ACTIVE` — the installed matrix qualified only the fixed Kafka profile, so the POC retains native Spring/OpenTelemetry paths and stops claiming a general accelerator<br>
+**Current phase:** `POC DETERMINISTIC KAFKA PROFILE DISCOVERY NEXT` — generate the one retained profile from checked repository evidence without repository-name rules, hidden allowlists, or automatic activation<br>
+**POC functional target:** prove that the qualified Kafka profile can be derived deterministically and reviewed, then authorize at most one new generic optimization only from retained trace evidence; Safe Cache and Runtime candidates remain disabled<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
 **Last updated:** 2026-08-08<br>
@@ -102,7 +102,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-REMOTE-CACHE-VALUE | Compare Gradle direct-to-Shared reads with the same committed objects served from a prewarmed BuildOpt Edge | `DONE` | 1/1 | `E-221..222` |
 | POC-PROFILE-USABILITY | One explicit repository-owned command for the qualified clean POC profile | `DONE` | 1/1 | `E-225` |
 | POC-PROFILE-ADOPTION | Installed OpenTelemetry and Kafka candidate/fallback replay without new timing claims | `DONE` | 1/1 | `E-226` |
-| POC-NEXT-VALUE | Installed-profile value, cross-repository replication, deterministic discovery, one trace-gated hypothesis, and a terminal POC portfolio decision | `DOING` | 1/5 | `E-257`, `E-266` |
+| POC-NEXT-VALUE | Installed-profile value, cross-repository replication, deterministic discovery, one trace-gated hypothesis, and a terminal POC portfolio decision | `DOING` | 2/5 | `E-257`, `E-266`, `E-271` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -146,7 +146,8 @@ Optimized native Gradle baseline
   → compare Shared/Edge Cache with Gradle native remote cache under controlled network conditions
   → qualify the exact installed Kafka v2 profile at 80.51% against optimized native Gradle plus Shared Cache
   → repeat only already-qualified installed profiles on fixed Spring, OpenTelemetry and Kafka revisions
-  → generate deterministic reviewable profiles from checked repository evidence, never from repository names
+  → specialize after only Kafka qualifies the installed matrix; retain native Spring/OpenTelemetry paths
+  → generate the retained Kafka profile deterministically from checked repository evidence, never from repository names
   → authorize at most one new optimization only when retained traces expose a generic recoverable critical-path bottleneck
   → issue a terminal CONTINUE, SPECIALIZE or STOP/REFRAME decision without adding percentages across repositories
 ```
@@ -232,9 +233,9 @@ than partners. Test Optimization remains a separate product.
 | 63 | `POC-KAFKA-IMPACT-EDGE-COMPOSITION-002` | Repeat the Kafka Build Impact plus Edge composition from a fresh preregistration using the qualified reproducible `shadowJar` source input | `DONE` | Codex |
 | 64 | `POC-KAFKA-COMPOSITION-USABILITY-001` | Express the qualified Kafka Impact plus Edge composition through an explicit repository-owned POC profile with visible preconditions and native fallbacks | `DONE` | Codex |
 | 65 | `POC-KAFKA-INSTALLED-PROFILE-VALUE-001` | Measure the exact packaged Kafka v2 profile against optimized native Gradle plus Shared Cache under the already qualified source and network boundary | `DONE` | Codex |
-| 66 | `POC-QUALIFIED-PROFILE-MATRIX-001` | Replicate installed-profile value independently on the fixed Spring, OpenTelemetry and Kafka workloads without averaging their percentages | `DOING` | Codex |
-| 67 | `POC-PROFILE-DISCOVERY-001` | Generate reviewable repository-owned profiles deterministically from checked manifests, graphs, traces and evidence, with native fallback on uncertainty | `WAITING` | Codex |
-| 68 | `POC-TRACE-HYPOTHESIS-002` | Authorize at most one generic optimization from retained installed-path traces only when it exposes at least 500 ms of recoverable critical-path work | `WAITING` | Codex |
+| 66 | `POC-QUALIFIED-PROFILE-MATRIX-001` | Replicate installed-profile value independently on the fixed Spring, OpenTelemetry and Kafka workloads without averaging their percentages | `DONE` | Codex |
+| 67 | `POC-PROFILE-DISCOVERY-001` | Generate the retained Kafka profile deterministically from checked manifests, graphs, traces and evidence, with native fallback on uncertainty | `TODO` | Codex |
+| 68 | `POC-TRACE-HYPOTHESIS-002` | Authorize at most one generic optimization from retained installed-path traces only when it exposes at least 500 ms of recoverable critical-path work | `TODO` | Codex |
 | 69 | `POC-PORTFOLIO-DECISION-001` | Decide whether to continue broadly, specialize by repository family, or stop/reframe the POC from the installed-path evidence | `WAITING` | Codex |
 
 #### Planned POC decision sequence
@@ -287,12 +288,24 @@ adapter; and Kafka Build Impact plus read-only Edge.
 - The matrix supports a broad continuation only when at least two independent
   repository families qualify through the installed path.
 
+Terminal result: only Kafka qualifies. Spring Build Impact averaged 1,895 ms
+or 14.33% faster with an interval of +981..+3,111.75 ms, exact outputs and
+fallback, but one of eight pairs regressed by 57 ms and therefore failed the
+unchanged all-positive gate. OpenTelemetry accepted zero observations: after
+its successful unmeasured preflight, the impact-discovery process was
+terminated by signal, so the cell records `PREPARATION_FAILED` and makes no
+performance claim. Kafka averaged 28,523.25 ms or 81.85% faster with 8/8
+positive pairs, interval +26,603.5..+30,509 ms, exact normalized output and
+both safety fallbacks. The matrix decision is `SPECIALIZE_QUALIFIED_PROFILES`;
+repository percentages are neither averaged nor added.
+
 ##### 3. Deterministic profile discovery
 
-`POC-PROFILE-DISCOVERY-001` waits for the installed matrix so it can target only
-retained mechanisms. Implement a read-only analyzer that emits a versioned,
-reviewable repository profile from checked manifests, Gradle graphs, traces and
-qualified evidence—not from repository names or hidden allowlists.
+`POC-PROFILE-DISCOVERY-001` now targets only the retained Kafka mechanism set.
+Implement a read-only analyzer that emits its versioned, reviewable repository
+profile from checked manifests, Gradle graphs, traces and qualified evidence—not
+from repository names or hidden allowlists. Spring and OpenTelemetry remain on
+their native paths and are negative fixtures for discovery.
 
 - Reproduce the retained mechanism set, preconditions, entrypoints, outputs,
   omitted scope and disabled mechanisms for the fixed qualifying revisions.
@@ -306,8 +319,8 @@ qualified evidence—not from repository names or hidden allowlists.
 
 ##### 4. One trace-gated optimization hypothesis
 
-`POC-TRACE-HYPOTHESIS-002` waits for the installed matrix. Analyze its retained
-traces and authorize at most one new optimization only when a named,
+`POC-TRACE-HYPOTHESIS-002` is also unblocked by the terminal matrix. Analyze
+its retained traces and authorize at most one new optimization only when a named,
 product-addressable critical-path phase contains at least 500 ms of recoverable
 work and is generic across at least two repository or workload families.
 
@@ -1681,6 +1694,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-268` | 2026-08-08 | `POC-QUALIFIED-PROFILE-MATRIX-001` | The fresh Spring cell completed all eight pairs, exact outputs and global fallback. It saved 1,895 ms/14.33% with positive interval +981..+3,111.75 ms, but pair 7 was -57 ms; the inherited producer omitted the matrix's all-pairs-positive condition and incorrectly labeled the raw document qualified | `DOING` deterministic postprocessing correction: preserve every raw observation and mark Spring unqualified with `RETAIN_NATIVE_SPRING_PROFILE_PATH`; no rerun, discarded pair, threshold or product change is allowed |
 | `E-269` | 2026-08-08 | `POC-QUALIFIED-PROFILE-MATRIX-001` | OpenTelemetry completed its unmeasured 17m39s preflight with 340 tasks, then exited during dependency-cache preparation before graph generation or any accepted pair; only the successful preflight log was retained | `DOING` zero-observation observability correction: add explicit failures around cache copy, cleanup, read-only transition, digest and seed creation, then retry the unchanged cell once; workload, profile, outputs and gates remain fixed |
 | `E-270` | 2026-08-08 | `POC-QUALIFIED-PROFILE-MATRIX-001` | Kafka completed eight positive fresh pairs and both safety fallbacks in 12m36s, but its independent checker rejected only the statistical-postprocessing revision because it assumed the historical correction commit rather than allowing a fresh run to bind its own execution revision | `DOING` checker correction with observations preserved: accept either the retained historical correction revision or the fresh execution revision while continuing to recompute the full-range interval, exact output and all safety assertions |
+| `E-271` | 2026-08-08 | `POC-QUALIFIED-PROFILE-MATRIX-001` | The independently checked [terminal matrix](./benchmarks/results/poc-qualified-profile-matrix-v1/summary.json) retains every cell separately. Spring saves 1,895 ms/**14.33%** with interval +981..+3,111.75 ms and exact outputs, but has 7/8 positive pairs and therefore retains native. OpenTelemetry records `PREPARATION_FAILED` with zero accepted observations after impact discovery is terminated by signal, so it makes no performance claim. Kafka saves 28,523.25 ms/**81.85%** with 8/8 positive pairs, interval +26,603.5..+30,509 ms, exact normalized output, zero candidate-origin traffic and both native/global and HTTP-503 fallbacks | `DONE` terminal `SPECIALIZE_QUALIFIED_PROFILES`: 1/3 families qualifies, percentages are not averaged, broad continuation fails, native Spring/OpenTelemetry paths remain active, and deterministic discovery may target only the retained Kafka profile |
 
 ---
 
@@ -1688,6 +1702,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-08 | Closed the installed qualified-profile matrix with one of three families qualified: Spring retained native after one negative pair, OpenTelemetry retained native after zero-observation preparation failure, and Kafka qualified at 81.85%; the POC now specializes deterministic discovery to Kafka without averaging repository percentages | Codex |
 | 2026-08-08 | Preserved the first matrix observations and corrected three non-product issues without moving the gate: Spring all-positive postprocessing, explicit OpenTelemetry preparation failures, and fresh Kafka postprocessing revision binding | Codex |
 | 2026-08-08 | Preregistered the three-repository installed qualified-profile matrix with repository-specific mechanisms, unchanged independent value/correctness gates, explicit native fallbacks and no cross-repository percentage aggregation | Codex |
 | 2026-08-08 | Qualified the exact installed Kafka v2 profile at 80.51% mean savings with 8/8 positive pairs, corrected interval +24,826.5..+29,903.625 ms, exact normalized output and both native/global and HTTP-503 safety fallbacks; unblocked the cross-repository profile matrix | Codex |

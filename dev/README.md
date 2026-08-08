@@ -2843,7 +2843,13 @@ percentages:
 
 The three complete cell documents are retained next to the summary. A broad
 continuation requires at least two independently qualifying repository
-families; every failed cell retains its optimized native Gradle path.
+families; every failed cell retains its optimized native Gradle path. The
+checked terminal result qualifies only Kafka: 28,523.25 ms/81.85% saved with
+8/8 positive pairs. Spring saves 1,895 ms/14.33% but has only 7/8 positive
+pairs, and OpenTelemetry records a zero-observation impact-discovery
+preparation failure. The resulting `SPECIALIZE_QUALIFIED_PROFILES` decision
+does not average repository percentages and keeps native Spring/OpenTelemetry
+paths active.
 
 The completed task-tail experiment adds one exact standard-`Copy` adapter
 selected from the same OpenTelemetry trace. It deliberately measures isolated and

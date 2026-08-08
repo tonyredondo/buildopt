@@ -143,6 +143,8 @@ reference data, thresholds, or held-out results merely to obtain promotion.
 ./dev/check-poc-real-world-performance
 ./dev/check-build-optimization-performance
 ./dev/check-poc-qualified-profile
+./dev/check-poc-qualified-profile-matrix-v1-result \
+  benchmarks/results/poc-qualified-profile-matrix-v1/summary.json
 ```
 
 The commands validate the final POC decision, strict no-value/no-action
@@ -192,6 +194,10 @@ output-scoped POC transfer evidence.
 transfer: strict repository config, candidate-only standard-`Jar` activation,
 the machine-readable plan emitted before Gradle, rejected mechanism expansion,
 and native/full-graph fallback. It does not rerun or reinterpret any timing.
+The matrix result checker then recomputes the three independent installed cells
+and terminal specialization decision: Spring retains native at 7/8 positive
+pairs, OpenTelemetry retains native with zero accepted observations, and only
+Kafka qualifies at 81.85% with 8/8 positive pairs and complete safety proofs.
 
 `check-poc-breadth` accepts both a passing and a failing decision document and
 recomputes all 64 observations. The post-attribution repeat retains the narrow
