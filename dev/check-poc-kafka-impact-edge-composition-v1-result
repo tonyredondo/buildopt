@@ -26,11 +26,20 @@ done
 "${buildopt_script_dir}/check-poc-kafka-impact-edge-composition-v1" >/dev/null
 
 buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
-buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
-buildopt_runner_sha=$(sha256sum \
-    "${buildopt_script_dir}/run-poc-kafka-impact-edge-composition-v1" | awk '{print $1}')
-buildopt_harness_sha=$(sha256sum \
-    "${buildopt_repo_root}/internal/sharedcache/poc_kafka_impact_edge_composition_test.go" | awk '{print $1}')
+buildopt_execution_revision=$(jq -er '.buildoptRevision' "${buildopt_result}")
+if ! git -C "${buildopt_repo_root}" merge-base --is-ancestor \
+    "${buildopt_execution_revision}" HEAD; then
+    printf 'Kafka Impact/Edge evidence revision is not retained in history\n' >&2
+    exit 1
+fi
+buildopt_archived_sha() {
+    local buildopt_path=$1
+    git -C "${buildopt_repo_root}" show \
+        "${buildopt_execution_revision}:${buildopt_path}" | sha256sum | awk '{print $1}'
+}
+buildopt_spec_sha=$(buildopt_archived_sha specs/poc-kafka-impact-edge-composition-v1.json)
+buildopt_runner_sha=$(buildopt_archived_sha dev/run-poc-kafka-impact-edge-composition-v1)
+buildopt_harness_sha=$(buildopt_archived_sha internal/sharedcache/poc_kafka_impact_edge_composition_test.go)
 buildopt_impact_sha=$(sha256sum \
     "${buildopt_repo_root}/benchmarks/results/poc-kafka-packaging-v1.json" | awk '{print $1}')
 buildopt_edge_sha=$(sha256sum \
@@ -39,6 +48,7 @@ buildopt_invalid_sha=$(sha256sum \
     "${buildopt_repo_root}/benchmarks/results/poc-qualified-remote-composition-v1.json" | awk '{print $1}')
 
 jq -e \
+    --arg executionRevision "${buildopt_execution_revision}" \
     --arg specSha "${buildopt_spec_sha}" \
     --arg runnerSha "${buildopt_runner_sha}" \
     --arg harnessSha "${buildopt_harness_sha}" \
@@ -68,7 +78,7 @@ jq -e \
     .workItem == "POC-KAFKA-IMPACT-EDGE-COMPOSITION-001" and
     .evidenceState == "TERMINAL_SAFETY_FAILURE_AFTER_MEASUREMENT" and
     (.capturedAt | fromdateiso8601) and
-    .buildoptRevision == "c415e3f979dc9d8bf31c8ce96a392c8638332edf" and
+    .buildoptRevision == $executionRevision and
     .runnerScriptSha256 == $runnerSha and .specSha256 == $specSha and
     .harnessSha256 == $harnessSha and (.failureLogArchiveSha256 | sha256) and
     .sourceArchiveSha256 == $spec[0].repository.sourceArchiveSha256 and
