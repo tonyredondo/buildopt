@@ -251,6 +251,45 @@ func TestPrepareGradleInvocationEnablesExplicitStandardCopyCache(t *testing.T) {
 	}
 }
 
+func TestPrepareGradleInvocationEnablesReadOnlyPOCEdgeCache(t *testing.T) {
+	root := t.TempDir()
+	wrapper := filepath.Join(root, gradleWrapperName(runtime.GOOS))
+	writeGradleTestFile(t, wrapper)
+	writeGradleWrapperProperties(t, root, "distributionUrl=gradle-9.6.1-bin.zip\n")
+	clearGradleManagedL1Inputs(t)
+	initScript := filepath.Join(root, "buildopt.init.gradle")
+	pluginJar := filepath.Join(root, "buildopt-gradle-plugin.jar")
+	writeGradleTestFile(t, initScript)
+	writeGradleTestFile(t, pluginJar)
+	t.Chdir(root)
+	t.Setenv(gradleInitScriptEnvironment, initScript)
+	t.Setenv(gradlePluginJarEnvironment, pluginJar)
+	t.Setenv(gradlePOCEdgeCacheURLEnvironment, "http://127.0.0.1:8043/")
+
+	invocation, err := prepareGradleInvocation([]string{"--build-cache", "build"}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if invocation.managedL1 != nil || invocation.nativeOnly || !invocation.localOnly ||
+		invocation.environment[gradlePOCEdgeCacheURLEnvironment] != "http://127.0.0.1:8043" ||
+		invocation.environment[gradleProjectPluginModeEnvironment] != gradleProjectPluginModeCacheOnly {
+		t.Fatalf("POC Edge invocation = %+v", invocation)
+	}
+
+	for _, invalid := range []string{"https://127.0.0.1:8043", "http://cache.example:8043", "http://127.0.0.1:8043/cache"} {
+		t.Setenv(gradlePOCEdgeCacheURLEnvironment, invalid)
+		if _, err := prepareGradleInvocation([]string{"--build-cache", "build"}, false); err == nil ||
+			!strings.Contains(err.Error(), "canonical IPv4 loopback") {
+			t.Fatalf("invalid POC Edge URL %q error = %v", invalid, err)
+		}
+	}
+	t.Setenv(gradlePOCEdgeCacheURLEnvironment, "http://127.0.0.1:8043")
+	if _, err := prepareGradleInvocation([]string{"--no-build-cache", "build"}, false); err == nil ||
+		!strings.Contains(err.Error(), "incompatible with --no-build-cache") {
+		t.Fatalf("disabled POC Edge cache error = %v", err)
+	}
+}
+
 func TestPrepareGradleInvocationSelectsLocalCheckstyleTuning(t *testing.T) {
 	root := t.TempDir()
 	wrapper := filepath.Join(root, gradleWrapperName(runtime.GOOS))

@@ -2,12 +2,90 @@ package launcher
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
 )
+
+func TestQualifiedPOCEdgeProfileSelectsOnlyQualifiedComposition(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	configureQualifiedPOCEdgeTestProfile(t, repositoryRoot)
+	t.Chdir(repositoryRoot)
+
+	invocation, err := prepareQualifiedPOCProfileInvocation([]string{
+		"--changes-file", "changed.txt",
+		"--edge-url", "http://127.0.0.1:8043",
+	}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !invocation.plan.CandidateSelected || invocation.standardJarCache ||
+		invocation.standardCopyCache || invocation.pocEdgeCacheURL != "http://127.0.0.1:8043" ||
+		invocation.qualifiedProfile == nil {
+		t.Fatalf("qualified Edge invocation = %+v", invocation)
+	}
+	plan := invocation.qualifiedProfile
+	if plan.SchemaVersion != qualifiedPOCProfilePlanSchemaV2 ||
+		plan.ProfileID != qualifiedPOCProfileIDV2 ||
+		strings.Join(plan.EnabledAdapters, " ") != "READ_ONLY_EDGE" ||
+		plan.EdgeCacheMode != "READ_ONLY_LOOPBACK" ||
+		plan.EdgeCacheEndpoint != "http://127.0.0.1:8043" ||
+		len(plan.Preconditions) != 1 || plan.Preconditions[0].Status != "SATISFIED" ||
+		plan.ProductionAuthorized {
+		t.Fatalf("qualified Edge plan = %+v", plan)
+	}
+}
+
+func TestQualifiedPOCEdgeProfileFallsBackBeforeGradle(t *testing.T) {
+	for _, testCase := range []struct {
+		name       string
+		change     string
+		edgeURL    string
+		driftBuild bool
+		reason     string
+		status     string
+	}{
+		{name: "global change", change: "unowned/file.txt\n", edgeURL: "http://127.0.0.1:8043", reason: "IMPACT_UNKNOWN_CHANGE_PATH", status: "NOT_EVALUATED"},
+		{name: "precondition drift", change: "library-c/src/main/java/synthetic/LibraryC.java\n", edgeURL: "http://127.0.0.1:8043", driftBuild: true, reason: "PROFILE_PRECONDITION_FAILED", status: "FAILED"},
+		{name: "missing Edge", change: "library-c/src/main/java/synthetic/LibraryC.java\n", reason: "PROFILE_EDGE_UNAVAILABLE", status: "SATISFIED"},
+		{name: "invalid Edge", change: "library-c/src/main/java/synthetic/LibraryC.java\n", edgeURL: "http://cache.example", reason: "PROFILE_EDGE_UNAVAILABLE", status: "SATISFIED"},
+	} {
+		t.Run(testCase.name, func(t *testing.T) {
+			repositoryRoot := impactTestRepository(t)
+			configureQualifiedPOCEdgeTestProfile(t, repositoryRoot)
+			t.Chdir(repositoryRoot)
+			if err := os.WriteFile(filepath.Join(repositoryRoot, "changed.txt"), []byte(testCase.change), 0o600); err != nil {
+				t.Fatal(err)
+			}
+			if testCase.driftBuild {
+				if err := os.WriteFile(filepath.Join(repositoryRoot, "build.gradle"), []byte("drifted\n"), 0o600); err != nil {
+					t.Fatal(err)
+				}
+			}
+			args := []string{"--changes-file", "changed.txt"}
+			if testCase.edgeURL != "" {
+				args = append(args, "--edge-url", testCase.edgeURL)
+			}
+			invocation, err := prepareQualifiedPOCProfileInvocation(args, false)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if invocation.plan.CandidateSelected || invocation.pocEdgeCacheURL != "" ||
+				invocation.qualifiedProfile == nil || invocation.plan.Reason != testCase.reason ||
+				strings.Join(invocation.gradleArgs, " ") != "--no-daemon assemble" ||
+				len(invocation.qualifiedProfile.EnabledAdapters) != 0 ||
+				invocation.qualifiedProfile.EdgeCacheEndpoint != "" ||
+				invocation.qualifiedProfile.Preconditions[0].Status != testCase.status {
+				t.Fatalf("native fallback invocation = %+v", invocation)
+			}
+		})
+	}
+}
 
 func TestQualifiedPOCProfileSelectsOnlyQualifiedMechanisms(t *testing.T) {
 	repositoryRoot := impactTestRepository(t)
@@ -25,7 +103,7 @@ func TestQualifiedPOCProfileSelectsOnlyQualifiedMechanisms(t *testing.T) {
 		t.Fatalf("qualified invocation = %+v", invocation)
 	}
 	plan := invocation.qualifiedProfile
-	if plan.ProfileID != qualifiedPOCProfileID ||
+	if plan.ProfileID != qualifiedPOCProfileIDV1 ||
 		plan.ClaimScope != qualifiedPOCProfileClaimScope ||
 		plan.SelectionMode != "POC_CANDIDATE" ||
 		plan.AlternativeID != "affected-service-a" ||
@@ -198,3 +276,32 @@ func TestQualifiedPOCProfileHelpAndInvalidArguments(t *testing.T) {
 }
 
 const sessioningestServerURLForTest = "BUILDOPT_SERVER_URL"
+
+func configureQualifiedPOCEdgeTestProfile(t *testing.T, repositoryRoot string) {
+	t.Helper()
+	profile, err := loadQualifiedPOCProfile(repositoryRoot, qualifiedPOCProfileDefaultPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	buildFile := []byte("normalized repository build\n")
+	digest := sha256.Sum256(buildFile)
+	profile.SchemaVersion = qualifiedPOCProfileSchemaVersionV2
+	profile.ProfileVersion = 2
+	profile.ProfileID = qualifiedPOCProfileIDV2
+	profile.Mechanisms.StandardJarAdapter = false
+	profile.Mechanisms.SharedEdgeCache = true
+	profile.Preconditions = []qualifiedPOCPrecondition{{
+		Type: "FILE_SHA256", Path: "build.gradle", SHA256: fmt.Sprintf("%x", digest),
+	}}
+	profile.EdgeCache = &qualifiedPOCEdgeCache{Mode: "READ_ONLY_LOOPBACK"}
+	raw, err := json.MarshalIndent(profile, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(repositoryRoot, qualifiedPOCProfileDefaultPath), append(raw, '\n'), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(repositoryRoot, "build.gradle"), buildFile, 0o600); err != nil {
+		t.Fatal(err)
+	}
+}

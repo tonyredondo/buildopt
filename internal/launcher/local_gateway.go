@@ -664,6 +664,7 @@ var reservedChildEnvironment = []string{
 	gradleCheckstyleHeapEnvironment,
 	gradleStandardJarCacheEnvironment,
 	gradleStandardCopyCacheEnvironment,
+	gradlePOCEdgeCacheURLEnvironment,
 	resourceAvailableMemoryEnvironment,
 }
 

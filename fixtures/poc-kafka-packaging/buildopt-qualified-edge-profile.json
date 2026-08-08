@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v2",
+  "profileVersion": 2,
+  "profileId": "normalized-impact-plus-read-only-edge",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "poc-kafka-packaging-v1",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": false,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": true
+  },
+  "gradleOptions": [
+    "--daemon",
+    "--offline",
+    "--build-cache",
+    "--no-configuration-cache",
+    "--parallel",
+    "--console=plain",
+    "--max-workers=12",
+    "--no-scan"
+  ],
+  "preconditions": [
+    {
+      "type": "FILE_SHA256",
+      "path": "build.gradle",
+      "sha256": "97a0e249d30e1d7a7ef23f92d2effd902a790a4cfc81118adfcc7e6d8e7b23c0"
+    }
+  ],
+  "edgeCache": {
+    "mode": "READ_ONLY_LOOPBACK"
+  }
+}

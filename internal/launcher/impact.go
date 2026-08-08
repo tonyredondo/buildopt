@@ -65,6 +65,7 @@ type impactInvocation struct {
 	hotStateHit       bool
 	standardJarCache  bool
 	standardCopyCache bool
+	pocEdgeCacheURL   string
 }
 
 func prepareImpactInvocation(args []string, bypass bool) (impactInvocation, error) {

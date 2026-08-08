@@ -61,6 +61,12 @@ gradlePlugin {
             displayName = "BuildOpt POC Standard Copy Cache"
             description = "Explicit cache eligibility for unmodified standard Gradle Copy tasks"
         }
+        create("buildOptPOCEdgeCache") {
+            id = "dev.buildopt.poc-edge-cache"
+            implementationClass = "dev.buildopt.gradle.BuildOptPOCEdgeCachePlugin"
+            displayName = "BuildOpt POC Edge Cache"
+            description = "Read-only loopback Edge cache for a repository-owned POC profile"
+        }
     }
 }
 
@@ -218,6 +224,28 @@ tasks.register<JavaExec>("standardCopyCacheTestKit") {
     dependsOn(tasks.named(testKit.classesTaskName), tasks.named("jar"))
     classpath = testKit.runtimeClasspath
     mainClass = "dev.buildopt.gradle.StandardCopyCacheTestKit"
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    argumentProviders.add(
+        CommandLineArgumentProvider {
+            listOf(
+                tierOneGradleHome.get(),
+                tasks.jar.get().archiveFile.get().asFile.absolutePath,
+            )
+        },
+    )
+    inputs.file(tasks.jar.flatMap { it.archiveFile })
+    inputs.property("gradleHome", tierOneGradleHome)
+}
+
+tasks.register<JavaExec>("pocEdgeCacheTestKit") {
+    group = "verification"
+    description = "Proves the repository-owned POC read-only Edge cache and native fallback."
+    notCompatibleWithConfigurationCache("The task launches nested TestKit builds.")
+    dependsOn(tasks.named(testKit.classesTaskName), tasks.named("jar"))
+    classpath = testKit.runtimeClasspath
+    mainClass = "dev.buildopt.gradle.POCEdgeCacheTestKit"
     javaLauncher = javaToolchains.launcherFor {
         languageVersion = JavaLanguageVersion.of(21)
     }

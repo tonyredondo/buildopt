@@ -25,6 +25,7 @@ the exact cross-component contract.
 | [`poc-kafka-impact-edge-composition-v1.md`](./poc-kafka-impact-edge-composition-v1.md) and [`poc-kafka-impact-edge-composition-v1.json`](./poc-kafka-impact-edge-composition-v1.json) | `POC-KAFKA-IMPACT-EDGE-COMPOSITION-001` |
 | [`poc-kafka-shadowjar-reproducibility-v1.md`](./poc-kafka-shadowjar-reproducibility-v1.md) and [`poc-kafka-shadowjar-reproducibility-v1.json`](./poc-kafka-shadowjar-reproducibility-v1.json) | `POC-KAFKA-SHADOWJAR-REPRODUCIBILITY-001` |
 | [`poc-kafka-impact-edge-composition-v2.md`](./poc-kafka-impact-edge-composition-v2.md) and [`poc-kafka-impact-edge-composition-v2.json`](./poc-kafka-impact-edge-composition-v2.json) | `POC-KAFKA-IMPACT-EDGE-COMPOSITION-002` |
+| [`poc-kafka-composition-usability-v1.md`](./poc-kafka-composition-usability-v1.md) and [`poc-kafka-composition-usability-v1.json`](./poc-kafka-composition-usability-v1.json) | `POC-KAFKA-COMPOSITION-USABILITY-001` |
 | [`poc-spring-installed-impact-v1.md`](./poc-spring-installed-impact-v1.md) and [`poc-spring-installed-impact-v1.json`](./poc-spring-installed-impact-v1.json) | `POC-SPRING-INSTALLED-IMPACT-001` |
 | [`poc-spring-impact-breadth-v1.md`](./poc-spring-impact-breadth-v1.md) and [`poc-spring-impact-breadth-v1.json`](./poc-spring-impact-breadth-v1.json) | `POC-SPRING-IMPACT-BREADTH-PREREG-001` / `POC-SPRING-IMPACT-BREADTH-G01` |
 | [`poc-otel-test-preparation-v1.json`](./poc-otel-test-preparation-v1.json) | `POC-OTEL-TRANSFER-001` |
@@ -352,6 +353,13 @@ Runtime Tuning, Hot State, standard `Copy`, and Shared/Edge out of this path.
 replay on the exact OpenTelemetry and Kafka revisions. They require candidate
 Jar replay, historical output digests and native full-graph fallback while
 forbidding fresh timing or broader performance claims.
+
+`poc-kafka-composition-usability-v1.json` and
+`poc-kafka-composition-usability-v1.md` extend that repository-owned surface
+with the already-qualified Kafka Build Impact plus read-only Edge composition.
+The v2 plan exposes the exact source precondition and loopback endpoint, while
+global changes, precondition drift, missing Edge, local bypass, and HTTP 503
+retain explicit native fallbacks without production authorization.
 
 `poc-kafka-packaging-v1.json` and `poc-kafka-packaging-v1.md` freeze the next
 real value experiment before timing. They compare Kafka's optimized native

@@ -40,6 +40,12 @@ if (gradle.getParent() == null) {
             settings.pluginManager.apply(dev.buildopt.gradle.BuildOptManagedL1Plugin)
         }
     }
+    def pocEdgeCacheUrl = System.getenv("BUILDOPT_POC_EDGE_CACHE_URL")
+    if (pocEdgeCacheUrl != null && !pocEdgeCacheUrl.isBlank()) {
+        beforeSettings { settings ->
+            settings.pluginManager.apply(dev.buildopt.gradle.BuildOptPOCEdgeCachePlugin)
+        }
+    }
     def standardJarCache = System.getenv("BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS")
     if (standardJarCache == "1") {
         gradle.projectsLoaded {

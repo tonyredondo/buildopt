@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "buildopt.specs/poc-kafka-composition-usability/v1",
+  "workItem": "POC-KAFKA-COMPOSITION-USABILITY-001",
+  "profile": {
+    "schemaVersion": "buildopt.poc/qualified-profile/v2",
+    "profileId": "normalized-impact-plus-read-only-edge",
+    "path": "buildopt-qualified-profile.json",
+    "ownership": "REPOSITORY_COMMITTED",
+    "claimScope": "DECLARED_OUTPUTS_ONLY",
+    "productionAuthorized": false
+  },
+  "command": "buildopt poc --changes-file .buildopt-changes --edge-url http://127.0.0.1:<PORT>",
+  "activation": {
+    "candidateMechanisms": [
+      "BUILD_IMPACT",
+      "READ_ONLY_EDGE"
+    ],
+    "disabledMechanisms": [
+      "HOT_STATE",
+      "RUNTIME_TUNING",
+      "SAFE_CACHE",
+      "STANDARD_COPY",
+      "STANDARD_JAR",
+      "TEST_OPTIMIZATION"
+    ],
+    "edgeEndpoint": "EXPLICIT_IPV4_LOOPBACK_ORIGIN",
+    "edgePush": false,
+    "ambientBuildOptConfigurationMasked": true
+  },
+  "preconditions": [
+    {
+      "type": "FILE_SHA256",
+      "path": "build.gradle",
+      "sha256": "97a0e249d30e1d7a7ef23f92d2effd902a790a4cfc81118adfcc7e6d8e7b23c0",
+      "meaning": "KAFKA_4_3_1_SHADOWJAR_NORMALIZATION"
+    }
+  ],
+  "fallbacks": {
+    "globalOrUnknownChange": "NATIVE_FULL_GRAPH_WITHOUT_EDGE",
+    "preconditionFailure": "NATIVE_FULL_GRAPH_WITHOUT_EDGE",
+    "missingOrInvalidEdgeEndpoint": "NATIVE_FULL_GRAPH_WITHOUT_EDGE",
+    "edgeHttpFailure": "SELECTED_GRAPH_EXECUTES_LOCALLY_WITH_EXACT_OUTPUT",
+    "localBypass": "NATIVE_FULL_GRAPH_WITHOUT_EDGE"
+  },
+  "evidenceBoundary": {
+    "performanceSource": "benchmarks/results/poc-kafka-impact-edge-composition-v2.json",
+    "performanceClaimRecomputed": false,
+    "usabilityClaim": "QUALIFIED_COMPOSITION_IS_EXPRESSIBLE_WITH_ONE_REPOSITORY_PROFILE_AND_ONE_EXPLICIT_EDGE_ENDPOINT",
+    "universalSavingsClaimed": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

@@ -74,6 +74,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 	gradleLocalOnly := false
 	impactStandardJarCache := false
 	impactStandardCopyCache := false
+	impactPOCEdgeCacheURL := ""
 	qualifiedPOCProfile := false
 	if len(args) > 0 && (args[0] == "impact" || args[0] == "poc") {
 		impactStartedAt := time.Now()
@@ -142,6 +143,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		}
 		impactStandardJarCache = impact.standardJarCache
 		impactStandardCopyCache = impact.standardCopyCache
+		impactPOCEdgeCacheURL = impact.pocEdgeCacheURL
 		qualifiedPOCProfile = impact.qualifiedProfile != nil
 		args = append([]string{"gradle"}, impact.gradleArgs...)
 	}
@@ -154,7 +156,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		}
 		getenv := os.Getenv
 		if qualifiedPOCProfile {
-			getenv = qualifiedPOCProfileEnvironment(os.Getenv, impactStandardJarCache)
+			getenv = qualifiedPOCProfileEnvironment(os.Getenv, impactStandardJarCache, impactPOCEdgeCacheURL)
 		} else if explicitStandardJarCache || impactStandardJarCache || impactStandardCopyCache {
 			getenv = func(name string) string {
 				switch name {

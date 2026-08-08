@@ -6,9 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/url"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
 
 	"github.com/tonyredondo/buildopt/internal/sessioningest"
 )
@@ -23,6 +25,7 @@ const (
 	gradleStandardJarCacheEnvironment  = "BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS"
 	gradleStandardJarCacheFlag         = "--cache-standard-jar-producers"
 	gradleStandardCopyCacheEnvironment = "BUILDOPT_CACHE_STANDARD_COPY_TASKS"
+	gradlePOCEdgeCacheURLEnvironment   = "BUILDOPT_POC_EDGE_CACHE_URL"
 	gradleCheckstyleHeapEnvironment    = "BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP"
 	gradleCheckstyleHeap2G             = "2g"
 	gradleCheckstyleMinimumMemoryBytes = int64(14 * 1024 * 1024 * 1024)
@@ -94,10 +97,18 @@ func prepareGradleInvocationWithEnvironment(
 		if (standardJarCache || standardCopyCache) && buildCacheConfigured && !buildCacheEnabled {
 			return gradleInvocation{}, errors.New("BuildOpt standard task cache adapters are incompatible with --no-build-cache")
 		}
+		pocEdgeCacheURL, pocEdgeErr := gradlePOCEdgeCacheURL(getenv)
+		if pocEdgeErr != nil {
+			return gradleInvocation{}, pocEdgeErr
+		}
+		if pocEdgeCacheURL != "" && buildCacheConfigured && !buildCacheEnabled {
+			return gradleInvocation{}, errors.New("BuildOpt POC Edge cache is incompatible with --no-build-cache")
+		}
 		_, managedConfigured, _ := managedL1ConfigFromEnvironment(getenv)
 		externalInstrumentation := gradleInstrumentationRequested(getenv)
 		runtimeIntegration := gradleRuntimeIntegrationRequested(getenv)
-		instrumented := safeCacheEnabled || standardJarCache || standardCopyCache || externalInstrumentation || checkstyleHeap != ""
+		instrumented := safeCacheEnabled || standardJarCache || standardCopyCache ||
+			pocEdgeCacheURL != "" || externalInstrumentation || checkstyleHeap != ""
 		if instrumented {
 			initScript, pluginJar, assetErr := resolveGradleAssets()
 			if assetErr != nil {
@@ -114,8 +125,12 @@ func prepareGradleInvocationWithEnvironment(
 			if standardCopyCache {
 				environment[gradleStandardCopyCacheEnvironment] = "1"
 			}
+			if pocEdgeCacheURL != "" {
+				environment[gradlePOCEdgeCacheURLEnvironment] = pocEdgeCacheURL
+			}
 			if (checkstyleHeap != "" && !externalInstrumentation ||
-				(standardJarCache || standardCopyCache) && !runtimeIntegration) && !safeCacheEnabled {
+				(standardJarCache || standardCopyCache) && !runtimeIntegration ||
+				pocEdgeCacheURL != "") && !safeCacheEnabled {
 				environment[gradleProjectPluginModeEnvironment] = gradleProjectPluginModeCacheOnly
 			}
 		}
@@ -144,13 +159,47 @@ func prepareGradleInvocationWithEnvironment(
 			childArgs: childArgs, environment: environment,
 			managedL1: defaultManagedL1, nativeOnly: !instrumented,
 			localOnly: (checkstyleHeap != "" && !externalInstrumentation ||
-				(standardJarCache || standardCopyCache) && !runtimeIntegration) && !safeCacheEnabled,
+				(standardJarCache || standardCopyCache) && !runtimeIntegration ||
+				pocEdgeCacheURL != "") && !safeCacheEnabled,
 		}, nil
 	}
 	childArgs = append(childArgs, args...)
 	return gradleInvocation{
 		childArgs: childArgs, environment: environment, managedL1: defaultManagedL1,
 	}, nil
+}
+
+func gradlePOCEdgeCacheURL(getenv func(string) string) (string, error) {
+	if getenv == nil {
+		return "", errors.New("resolve BUILDOPT_POC_EDGE_CACHE_URL: environment reader is unavailable")
+	}
+	value := getenv(gradlePOCEdgeCacheURLEnvironment)
+	if value == "" {
+		return "", nil
+	}
+	canonical, err := canonicalLoopbackHTTPOrigin(value)
+	if err != nil {
+		return "", errors.New("BUILDOPT_POC_EDGE_CACHE_URL must be a canonical IPv4 loopback HTTP origin")
+	}
+	return canonical, nil
+}
+
+func canonicalLoopbackHTTPOrigin(value string) (string, error) {
+	parsed, err := url.Parse(value)
+	if err != nil || parsed.Scheme != "http" || parsed.Hostname() != "127.0.0.1" ||
+		parsed.User != nil || parsed.RawQuery != "" || parsed.Fragment != "" ||
+		parsed.RawPath != "" || (parsed.Path != "" && parsed.Path != "/") {
+		return "", errors.New("invalid loopback origin")
+	}
+	port, err := strconv.Atoi(parsed.Port())
+	if err != nil || port < 1 || port > 65535 {
+		return "", errors.New("invalid loopback port")
+	}
+	canonical := "http://127.0.0.1:" + strconv.Itoa(port)
+	if value != canonical && value != canonical+"/" {
+		return "", errors.New("non-canonical loopback origin")
+	}
+	return canonical, nil
 }
 
 func gradleStandardJarCacheEnabled(getenv func(string) string) (bool, error) {

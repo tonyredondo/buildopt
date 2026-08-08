@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_static=false
+if (($# == 1)) && [[ "$1" == "--static" ]]; then
+    buildopt_static=true
+elif (($# != 0)); then
+    printf 'usage: %s [--static]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-kafka-composition-usability-v1.json"
+buildopt_profile="${buildopt_repo_root}/fixtures/poc-kafka-packaging/buildopt-qualified-edge-profile.json"
+buildopt_result="${buildopt_repo_root}/benchmarks/results/poc-kafka-composition-usability-v1.json"
+
+for buildopt_command in git jq; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Kafka composition usability command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-kafka-composition-usability/v1" and
+    .workItem == "POC-KAFKA-COMPOSITION-USABILITY-001" and
+    .profile.schemaVersion == "buildopt.poc/qualified-profile/v2" and
+    .profile.profileId == "normalized-impact-plus-read-only-edge" and
+    .activation.candidateMechanisms == ["BUILD_IMPACT", "READ_ONLY_EDGE"] and
+    .activation.edgeEndpoint == "EXPLICIT_IPV4_LOOPBACK_ORIGIN" and
+    .activation.edgePush == false and
+    .fallbacks.globalOrUnknownChange == "NATIVE_FULL_GRAPH_WITHOUT_EDGE" and
+    .fallbacks.preconditionFailure == "NATIVE_FULL_GRAPH_WITHOUT_EDGE" and
+    .fallbacks.missingOrInvalidEdgeEndpoint == "NATIVE_FULL_GRAPH_WITHOUT_EDGE" and
+    .fallbacks.edgeHttpFailure == "SELECTED_GRAPH_EXECUTES_LOCALLY_WITH_EXACT_OUTPUT" and
+    .evidenceBoundary.performanceClaimRecomputed == false and
+    .evidenceBoundary.universalSavingsClaimed == false and
+    .evidenceBoundary.soakRequired == false and
+    .evidenceBoundary.designPartnerRequired == false
+' "${buildopt_spec}" >/dev/null
+
+jq -e --slurpfile specification "${buildopt_spec}" '
+    .schemaVersion == "buildopt.poc/qualified-profile/v2" and
+    .profileVersion == 2 and
+    .profileId == "normalized-impact-plus-read-only-edge" and
+    .ownership == "REPOSITORY_COMMITTED" and
+    .claimScope == "DECLARED_OUTPUTS_ONLY" and
+    .repositoryId == "apache/kafka" and
+    .pipelineClass == "poc-kafka-packaging-v1" and
+    .fallback == "NATIVE_FULL_GRAPH" and
+    .mechanisms == {
+        "buildImpact": true,
+        "standardJarAdapter": false,
+        "safeCache": false,
+        "runtimeTuning": false,
+        "hotState": false,
+        "standardCopyAdapter": false,
+        "sharedEdgeCache": true
+    } and
+    .preconditions == [($specification[0].preconditions[0] | {type, path, sha256})] and
+    .edgeCache.mode == "READ_ONLY_LOOPBACK"
+' "${buildopt_profile}" >/dev/null
+
+if [[ -f "${buildopt_result}" ]]; then
+    jq -e '
+        .schemaVersion == "buildopt.evidence/poc-kafka-composition-usability/v1" and
+        .workItem == "POC-KAFKA-COMPOSITION-USABILITY-001" and
+        .result.profilePlanPassed == true and
+        .result.readOnlyEdgeHitPassed == true and
+        .result.globalFallbackPassed == true and
+        .result.preconditionFallbackPassed == true and
+        .result.edgeFailureFallbackPassed == true and
+        .boundaries.performanceClaimRecomputed == false and
+        .boundaries.productionReadinessClaimed == false
+    ' "${buildopt_result}" >/dev/null
+fi
+
+if [[ "${buildopt_static}" == true ]]; then
+    printf 'Kafka composition usability static contract OK\n'
+    exit 0
+fi
+
+PATH="${buildopt_repo_root}/.tools/toolchains/go-5c2c3b16caefa1d9/bin:${PATH}" \
+    GOCACHE="${TMPDIR:-/tmp}/buildopt-go-cache" \
+    go test -count=1 -run 'TestQualifiedPOCEdgeProfile|TestPrepareGradleInvocationEnablesReadOnlyPOCEdgeCache' \
+    ./internal/launcher
+
+if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
+    export GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local"
+fi
+mkdir -p -- "${GRADLE_USER_HOME}"
+buildopt_gradle_home=$(
+    find "${GRADLE_USER_HOME}/wrapper/dists/gradle-9.6.1-bin" \
+        -type d -path '*/gradle-9.6.1' -print -quit 2>/dev/null || true
+)
+if [[ -z "${buildopt_gradle_home}" || ! -x "${buildopt_gradle_home}/bin/gradle" ]]; then
+    printf 'pinned Gradle 9.6.1 distribution is unavailable\n' >&2
+    exit 1
+fi
+"${buildopt_script_dir}/run" -- \
+    "${buildopt_repo_root}/gradlew" \
+    --no-daemon \
+    --offline \
+    --no-configuration-cache \
+    --warning-mode=fail \
+    "-PbuildoptTierOneGradleHome=${buildopt_gradle_home}" \
+    :jvm:gradle-plugin:pocEdgeCacheTestKit
+
+printf 'Kafka composition usability contract OK\n'
