@@ -247,7 +247,11 @@ func TestPOCKafkaImpactEdgeCompositionExperiment(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	edgeServer := httptest.NewServer(pocRemoteCacheBasicAuth(proxy.Handler()))
+	edgeHandler := proxy.Handler()
+	if !installedProfileValue {
+		edgeHandler = pocRemoteCacheBasicAuth(edgeHandler)
+	}
+	edgeServer := httptest.NewServer(edgeHandler)
 	defer edgeServer.Close()
 	controlServer := httptest.NewServer(pocRemoteCacheBasicAuth(http.HandlerFunc(func(response http.ResponseWriter, request *http.Request) {
 		clone := request.Clone(request.Context())
@@ -333,9 +337,13 @@ func TestPOCKafkaImpactEdgeCompositionExperiment(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(candidateProject, ".buildopt-changes"), []byte(changePath+"\n"), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	failingEdge := httptest.NewServer(pocRemoteCacheBasicAuth(http.HandlerFunc(func(response http.ResponseWriter, _ *http.Request) {
+	failingEdgeHandler := http.Handler(http.HandlerFunc(func(response http.ResponseWriter, _ *http.Request) {
 		response.WriteHeader(http.StatusServiceUnavailable)
-	})))
+	}))
+	if !installedProfileValue {
+		failingEdgeHandler = pocRemoteCacheBasicAuth(failingEdgeHandler)
+	}
+	failingEdge := httptest.NewServer(failingEdgeHandler)
 	edgeFailure := runPOCKafkaImpactEdgeCandidate(t, "fallback-edge", candidateProject, candidateHome, javaHome, buildoptBin, candidateInit, pluginJar, failingEdge.URL, logs)
 	failingEdge.Close()
 	edgeFailureFallbackPassed := edgeFailure.PlanSelected && !edgeFailure.StandardJarAdapter && edgeFailure.OutputHash == seedOutputSHA
