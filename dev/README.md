@@ -3024,6 +3024,17 @@ replay, historical output digests, and global full-graph fallback. The captured
 record intentionally contains no durations and does not replace either
 repository's performance experiment.
 
+Validate the preregistered Kafka packaging experiment before timing:
+
+```bash
+./dev/check-poc-kafka-packaging-v1
+```
+
+This checker binds Kafka 4.3.1, its complete generated graph, the installed
+three-project client-Jar candidate, the root `assemble` control, exact output,
+four alternating pairs and the unchanged value gate. Preregistration contains
+no accepted timings.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

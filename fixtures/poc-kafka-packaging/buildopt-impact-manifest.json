@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "poc-kafka-packaging-v1",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    "assemble"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "kafka-clients-jar",
+      "entrypoints": [
+        ":clients:jar"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "kafka-clients-jar",
+      "path": "clients/build/libs/kafka-clients-*.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "build.gradle",
+    "settings.gradle",
+    "gradle/**",
+    "wrapper.gradle"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

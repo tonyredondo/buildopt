@@ -345,3 +345,9 @@ Runtime Tuning, Hot State, standard `Copy`, and Shared/Edge out of this path.
 replay on the exact OpenTelemetry and Kafka revisions. They require candidate
 Jar replay, historical output digests and native full-graph fallback while
 forbidding fresh timing or broader performance claims.
+
+`poc-kafka-packaging-v1.json` and `poc-kafka-packaging-v1.md` freeze the next
+real value experiment before timing. They compare Kafka's optimized native
+root `assemble` with the installed qualified three-project client-Jar path,
+bind the exact output and global fallback, and retain the existing four-pair
+500-ms/2%/positive-bound qualification gate.

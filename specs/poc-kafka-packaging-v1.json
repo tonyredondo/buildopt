@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "buildopt.poc/kafka-packaging/v1",
+  "workItem": "POC-KAFKA-PACKAGING-001",
+  "status": "PREREGISTERED",
+  "preregisteredAt": "2026-08-08",
+  "claim": "QUALIFIED_INSTALLED_PROFILE_BEATS_OPTIMIZED_NATIVE_GRADLE_FOR_KAFKA_CLIENT_PACKAGING",
+  "repository": {
+    "nameWithOwner": "apache/kafka",
+    "revision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "sourceArchiveUrl": "https://github.com/apache/kafka/archive/26b251a451ce941d3d7a55e6487bcb7f16b5ad48.tar.gz",
+    "sourceArchiveSha256": "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2",
+    "gradleVersion": "9.2.1",
+    "jdk": "temurin-25.0.3+9",
+    "fixedInputSha256": {
+      "gradle/wrapper/gradle-wrapper.jar": "423cb469ccc0ecc31f0e4e1c309976198ccb734cdcbb7029d4bda0f18f57e8d9",
+      "gradle/wrapper/gradle-wrapper.properties": "ae9287ed83e55d3a7e1fc1475faaf03fe6cb6e216a976d64852b1c4312ae3559",
+      "gradle.properties": "0de8cbc79425cb95e31312b8dfa898b084e67045bd0a0bbfc7c0455c3cc3c7f7",
+      "settings.gradle": "1e3f0c2e339757e2112b24c696cb227f6696252364724f041e2642e8e9c28aab",
+      "build.gradle": "50b4d82988d6567b146b419c99498fb8e1b6154815f651750a5335ea905b7bd6",
+      "wrapper.gradle": "7ac5cc0849b2112d5273a8edabe2211c857a661120e4ff32f411571e1059"
+    }
+  },
+  "fixture": {
+    "directory": "fixtures/poc-kafka-packaging",
+    "manifestSha256": "ce9a29b92da3fefd15eec9ce0a1c2dcb4309fcb58af184e449bc197d8f0c2fdb",
+    "graphSha256": "bff1ab7ba04b97010d0386278d767888cdab7c240f3d64987023e8b395a01f0b",
+    "generatedManifestSha256": "160f6e4b650004002593add7dca6898589902e061055d0b9ccff837f0f9a43ca",
+    "profileSha256": "338b0f26932f5795f8a49f9fbe08bf4f2c4bc0024cdf398e418c28ae1889e82a",
+    "originalProjectCount": 64,
+    "candidateProjectCount": 3,
+    "omittedProjectCount": 61
+  },
+  "change": {
+    "path": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+    "originalSha256": "30e3d4ad29be4f6be1e34d545caf08d8520fa4341e0948968cd87fd51b8911e3",
+    "mutation": "APPEND_COMMENT_LINE",
+    "changesFile": ".buildopt-changes"
+  },
+  "arms": {
+    "control": {
+      "command": "./gradlew --daemon --offline --build-cache --parallel --console=plain --max-workers=12 --no-scan assemble",
+      "entrypoints": ["assemble"]
+    },
+    "candidate": {
+      "command": "buildopt poc --changes-file .buildopt-changes",
+      "alternativeId": "kafka-clients-jar",
+      "entrypoints": [":clients:jar"],
+      "enabledMechanisms": ["BUILD_IMPACT", "STANDARD_JAR"],
+      "disabledMechanisms": ["HOT_STATE", "RUNTIME_TUNING", "SAFE_CACHE", "SHARED_EDGE_CACHE", "STANDARD_COPY"]
+    }
+  },
+  "requiredOutput": {
+    "glob": "clients/build/libs/kafka-clients-*.jar",
+    "count": 1,
+    "sha256": "894d8e71aa10070f7c73212cfcce0489401a00c3217a75f2f3d55c8e6da4738a"
+  },
+  "runner": {
+    "os": "linux",
+    "arch": "amd64",
+    "cpuCount": 12,
+    "pairCount": 4,
+    "order": ["CONTROL_CANDIDATE", "CANDIDATE_CONTROL", "CONTROL_CANDIDATE", "CANDIDATE_CONTROL"],
+    "maximumPairSeparationMs": 5000,
+    "warmupMeasured": false,
+    "offlineMeasured": true
+  },
+  "valueGate": {
+    "minimumMeanSavedMs": 500,
+    "minimumMeanSavedPercent": 2,
+    "minimumPositivePairs": 4,
+    "requirePositivePairedLowerBound": true,
+    "requireIdenticalOutputs": true,
+    "maximumProductFailures": 0
+  },
+  "fallback": {
+    "changePath": "gradle.properties",
+    "selectionReason": "IMPACT_GLOBAL_CHANGE",
+    "entrypoints": ["assemble"],
+    "outsideCandidateTask": ":streams:jar"
+  },
+  "terminalDecisions": [
+    "QUALIFY_KAFKA_PACKAGING_SCOPE",
+    "RETAIN_CURRENT_QUALIFIED_SCOPE"
+  ]
+}

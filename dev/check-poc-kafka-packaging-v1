@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: ./dev/check-poc-kafka-packaging-v1\n' >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-kafka-packaging-v1.json"
+buildopt_fixture="${buildopt_repo_root}/fixtures/poc-kafka-packaging"
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'missing required command: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.poc/kafka-packaging/v1" and
+    .workItem == "POC-KAFKA-PACKAGING-001" and
+    .status == "PREREGISTERED" and
+    .repository.nameWithOwner == "apache/kafka" and
+    (.repository.revision | test("^[0-9a-f]{40}$")) and
+    .fixture.originalProjectCount == 64 and
+    .fixture.candidateProjectCount == 3 and
+    .fixture.omittedProjectCount == 61 and
+    .arms.control.entrypoints == ["assemble"] and
+    .arms.candidate.entrypoints == [":clients:jar"] and
+    .arms.candidate.enabledMechanisms == ["BUILD_IMPACT", "STANDARD_JAR"] and
+    .runner.cpuCount == 12 and
+    .runner.pairCount == 4 and
+    .runner.order == [
+        "CONTROL_CANDIDATE", "CANDIDATE_CONTROL",
+        "CONTROL_CANDIDATE", "CANDIDATE_CONTROL"
+    ] and
+    .valueGate.minimumMeanSavedMs == 500 and
+    .valueGate.minimumMeanSavedPercent == 2 and
+    .valueGate.minimumPositivePairs == 4 and
+    .valueGate.requirePositivePairedLowerBound == true and
+    .valueGate.requireIdenticalOutputs == true and
+    .valueGate.maximumProductFailures == 0 and
+    .fallback.selectionReason == "IMPACT_GLOBAL_CHANGE" and
+    .terminalDecisions == [
+        "QUALIFY_KAFKA_PACKAGING_SCOPE", "RETAIN_CURRENT_QUALIFIED_SCOPE"
+    ]
+' "${buildopt_spec}" >/dev/null
+
+while IFS=$'\t' read -r buildopt_name buildopt_expected; do
+    buildopt_path="${buildopt_fixture}/${buildopt_name}"
+    [[ "$(sha256sum "${buildopt_path}" | awk '{print $1}')" == "${buildopt_expected}" ]] || {
+        printf 'Kafka packaging fixture digest mismatch: %s\n' "${buildopt_name}" >&2
+        exit 1
+    }
+done < <(jq -r '.fixture | [
+    ["buildopt-impact-manifest.json", .manifestSha256],
+    ["buildopt-impact-graph.generated.json", .graphSha256],
+    ["buildopt-impact.generated.json", .generatedManifestSha256],
+    ["buildopt-qualified-profile.json", .profileSha256]
+][] | @tsv' "${buildopt_spec}")
+
+jq -e '
+    .repositoryId == "apache/kafka" and
+    .originalEntrypoints == ["assemble"] and
+    .allowedAlternatives == [{id: "kafka-clients-jar", entrypoints: [":clients:jar"]}] and
+    .requiredArtifacts == [{
+        id: "kafka-clients-jar",
+        path: "clients/build/libs/kafka-clients-*.jar",
+        owner: "BUILD_OPTIMIZATION"
+    }]
+' "${buildopt_fixture}/buildopt-impact-manifest.json" >/dev/null
+jq -e '
+    .complete == true and .fallbackReasons == [] and .gradleVersion == "9.2.1"
+' "${buildopt_fixture}/buildopt-impact.generated.json" >/dev/null
+jq -e '
+    .repositoryId == "apache/kafka" and
+    .pipelineClass == "poc-kafka-packaging-v1" and
+    .mechanisms.buildImpact == true and
+    .mechanisms.standardJarAdapter == true and
+    ([.mechanisms.safeCache, .mechanisms.runtimeTuning, .mechanisms.hotState,
+      .mechanisms.standardCopyAdapter, .mechanisms.sharedEdgeCache] | all(. == false))
+' "${buildopt_fixture}/buildopt-qualified-profile.json" >/dev/null
+
+printf 'Kafka packaging preregistration: PASS\n'

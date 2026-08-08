@@ -334,6 +334,7 @@ buildopt_required_files=(
     "dev/check-poc-third-repository-transfer-v1-result"
     "dev/check-poc-qualified-profile"
     "dev/check-poc-qualified-profile-adoption"
+    "dev/check-poc-kafka-packaging-v1"
     "dev/test-poc-third-repository-transfer-v1"
     "dev/check-poc-spring-test-build-optimization"
     "dev/check-poc-standard-copy-cache"
