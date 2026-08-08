@@ -83,7 +83,9 @@ jq -e '
     .cacheState.configurationCacheEnabled == false and
     .cacheState.pushAllowedDuringMeasuredRuns == false and
     .cacheState.seedAndEdgeWarmupMeasured == false and
-    .cacheState.dependenciesOfflineDuringMeasurement == true and
+    .cacheState.nativeRemoteCacheRequiresOnlineMode == true and
+    .cacheState.externalDependencyNetworkBlockedDuringMeasurement == true and
+    .cacheState.loopbackRemoteCacheAllowedDuringMeasurement == true and
     .measurement.warmupsPerArm == 1 and
     .measurement.pairs == 4 and
     .measurement.pairOrder == [

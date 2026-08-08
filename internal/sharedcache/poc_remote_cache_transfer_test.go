@@ -70,6 +70,7 @@ type pocRemoteCacheTransferRun struct {
 	OutputHash  string
 	TaskHash    string
 	CacheHits   int
+	Output      string
 }
 
 func TestPOCRemoteCacheTransferExperiment(t *testing.T) {
@@ -145,7 +146,7 @@ func TestPOCRemoteCacheTransferExperiment(t *testing.T) {
 	}
 	recordedMutex.Unlock()
 	if len(seeded) < pocRemoteCacheTransferMinHits || seededBytes < 1<<20 {
-		t.Fatalf("Kafka committed remote entries = %d/%d", len(seeded), seededBytes)
+		t.Fatalf("Kafka committed remote entries = %d/%d\n%s", len(seeded), seededBytes, seedRun.Output)
 	}
 
 	ctx := context.Background()
@@ -330,7 +331,7 @@ func TestPOCRemoteCacheTransferExperiment(t *testing.T) {
 		"runner":       map[string]any{"id": "linux-amd64-12c-16659865600b-v1", "cpuCount": 12, "memoryBytes": 16659865600, "maxWorkers": 12},
 		"hypothesis":   map[string]any{"mechanism": "EDGE_COMMITTED_READ_LOCALITY", "control": "GRADLE_HTTP_BUILD_CACHE_DIRECT_TO_SHARED", "candidate": "GRADLE_HTTP_BUILD_CACHE_TO_PREWARMED_BUILDOPT_EDGE", "singleChangedInput": "CACHE_READ_LOCATION"},
 		"network":      map[string]any{"model": "INDEPENDENT_SOURCE_ARCHIVE_DERIVED_LOOPBACK_WAN", "latencyPerResponseMs": 337, "bandwidthBytesPerSecond": 6994831, "packetLossRatio": 0, "derivationMethod": "MEDIAN_OF_THREE_SEQUENTIAL_FIXED_SOURCE_ARCHIVE_DOWNLOADS"},
-		"preparation":  map[string]any{"measured": false, "dependenciesResolvedBeforeMeasurement": true, "measuredRunsOffline": true, "seededObjectCount": len(seeded), "seededObjectBytes": seededBytes, "edgeWarmupOriginRequests": edgeWarmup.Requests, "edgeWarmupOriginBytes": edgeWarmup.Bytes},
+		"preparation":  map[string]any{"measured": false, "dependenciesResolvedBeforeMeasurement": true, "nativeRemoteCacheOnlineMode": true, "externalDependencyNetworkBlocked": true, "seededObjectCount": len(seeded), "seededObjectBytes": seededBytes, "edgeWarmupOriginRequests": edgeWarmup.Requests, "edgeWarmupOriginBytes": edgeWarmup.Bytes},
 		"observations": observations,
 		"result":       map[string]any{"pairs": 4, "controlMeanMs": controlMean, "candidateMeanMs": candidateMean, "meanSavedMs": savedMean, "reductionRatio": ratio, "interval95SavedMs": interval, "positivePairs": positive, "qualified": qualified, "decision": decisionName},
 		"boundaries":   map[string]any{"sameSharedOrigin": true, "sameGradleHttpBuildCacheClient": true, "sameCommittedObjectBytes": true, "sameWorkloadAndOutputs": true, "sameAuthenticationCheck": true, "onlyReadLocalityChanges": true, "edgeImplementationChanged": false, "safeCacheChanged": false, "runtimeTuningChanged": false, "buildImpactChanged": false, "testSelectionChanged": false, "testExecutionChanged": false, "testOptimizationModified": false, "proofOfConcept": true, "productionReadinessClaimed": false, "soakRequired": false, "designPartnerRequired": false, "universalSavingsClaimed": false},
@@ -375,13 +376,13 @@ func runPOCRemoteCacheTransferGradle(t *testing.T, project, home, javaHome, init
 	t.Helper()
 	removePOCRemoteCacheTransferOutputs(t, project)
 	started := time.Now()
-	command := exec.Command(filepath.Join(project, "gradlew"), "--daemon", "--offline", "--build-cache", "--no-configuration-cache", "--parallel", "--console=plain", "--max-workers=12", "--no-scan", "--init-script", initScript, ":clients:testClasses")
+	command := exec.Command(filepath.Join(project, "gradlew"), "--daemon", "--build-cache", "--no-configuration-cache", "--parallel", "--console=plain", "--max-workers=12", "--no-scan", "--init-script", initScript, ":clients:testClasses")
 	command.Dir = project
 	pushValue := "0"
 	if push {
 		pushValue = "1"
 	}
-	command.Env = append(filteredPOCRemoteCacheTransferEnv(os.Environ()), "JAVA_HOME="+javaHome, "GRADLE_USER_HOME="+home, "BUILDOPT_POC_REMOTE_CACHE_URL="+pocRemoteCacheEndpoint(remoteURL), "BUILDOPT_POC_REMOTE_CACHE_PUSH="+pushValue)
+	command.Env = append(filteredPOCRemoteCacheTransferEnv(os.Environ()), "JAVA_HOME="+javaHome, "GRADLE_USER_HOME="+home, "GRADLE_OPTS=-Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=1 -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=1 -Dhttp.nonProxyHosts=127.0.0.1|localhost", "BUILDOPT_POC_REMOTE_CACHE_URL="+pocRemoteCacheEndpoint(remoteURL), "BUILDOPT_POC_REMOTE_CACHE_PUSH="+pushValue)
 	output, err := command.CombinedOutput()
 	finished := time.Now()
 	if err != nil {
@@ -410,7 +411,7 @@ func runPOCRemoteCacheTransferGradle(t *testing.T, project, home, javaHome, init
 	sort.Strings(lines)
 	taskDigest := sha256.Sum256([]byte(strings.Join(lines, "\n") + "\n"))
 	outputCount, outputBytes, outputHash := hashPOCRemoteCacheTransferOutputs(t, project)
-	return pocRemoteCacheTransferRun{Duration: finished.Sub(started).Milliseconds(), Started: started, Finished: finished, OutputCount: outputCount, OutputBytes: outputBytes, OutputHash: outputHash, TaskHash: hex.EncodeToString(taskDigest[:]), CacheHits: cacheHits}
+	return pocRemoteCacheTransferRun{Duration: finished.Sub(started).Milliseconds(), Started: started, Finished: finished, OutputCount: outputCount, OutputBytes: outputBytes, OutputHash: outputHash, TaskHash: hex.EncodeToString(taskDigest[:]), CacheHits: cacheHits, Output: string(output)}
 }
 
 func filteredPOCRemoteCacheTransferEnv(values []string) []string {

@@ -101,7 +101,9 @@
     "seedAndEdgeWarmupMeasured": false,
     "independentProjectAndGradleHomePerArm": true,
     "dependenciesPreparedBeforeMeasurement": true,
-    "dependenciesOfflineDuringMeasurement": true,
+    "nativeRemoteCacheRequiresOnlineMode": true,
+    "externalDependencyNetworkBlockedDuringMeasurement": true,
+    "loopbackRemoteCacheAllowedDuringMeasurement": true,
     "outputsAndProjectStateRemovedBeforeEveryArm": true
   },
   "measurement": {

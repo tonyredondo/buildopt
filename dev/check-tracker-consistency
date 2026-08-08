@@ -146,6 +146,7 @@ buildopt_required_tracker_text=(
     "| \`E-221\` | 2026-08-07 | \`POC-REMOTE-CACHE-VALUE-001\`"
     "| \`E-222\` | 2026-08-07 | \`POC-REMOTE-CACHE-VALUE-001\`"
     "| \`E-240\` | 2026-08-08 | \`POC-REMOTE-CACHE-TRANSFER-001\`"
+    "| \`E-241\` | 2026-08-08 | \`POC-REMOTE-CACHE-TRANSFER-001\`"
     "| \`POC-OTEL-OPTIMIZATION-G04\` | The optimized installed candidate clears the unchanged 500-ms/2% value gate with a positive paired lower bound, 4/4 positive pairs, exact outputs, safe fallback and zero product failures | Stable OpenTelemetry POC claim | \`DONE\`"
     "| \`POC-FULL-PATH-ABLATION-001\` | 1 | Run six preregistered arms on Spring and OpenTelemetry"
     "| \`POC-FULL-PATH-CLEAN-001\` | 2 | Preregister and measure OpenTelemetry Build Impact plus the standard Jar adapter without hot-state reuse"

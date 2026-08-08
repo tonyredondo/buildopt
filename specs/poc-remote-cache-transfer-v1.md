@@ -15,10 +15,13 @@ post-result latency, bandwidth, object or topology search is allowed.
 
 Both arms use the same Kafka revision, JDK 25, Gradle 9.2.1 Wrapper, native
 `HttpBuildCache`, authenticated Shared origin, committed cache-entry bytes,
-offline dependency state and required outputs. Native local cache and
-Configuration Cache are disabled. The control traverses the frozen modeled
-link; the candidate reads from a prewarmed loopback Edge and must make zero
-measured upstream requests. Seeding and one warm-up per arm are excluded.
+prepared dependency state and required outputs. Native local cache and
+Configuration Cache are disabled. Gradle cannot use an HTTP build cache under
+`--offline`, so measured invocations run in online mode while JVM proxy
+properties route every non-loopback HTTP/HTTPS request to a closed local port.
+The control traverses the frozen modeled link; the candidate reads from a
+prewarmed loopback Edge and must make zero measured upstream requests. Seeding
+and one warm-up per arm are excluded.
 
 Four alternating pairs retain every observation. Qualification keeps the
 existing gate: at least 500 ms and 2% mean saving, a positive deterministic

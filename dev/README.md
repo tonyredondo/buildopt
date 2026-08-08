@@ -2942,10 +2942,12 @@ every arm; local cache, Configuration Cache and measured writes are disabled:
 read path from the deterministic fixture to Apache Kafka 4.3.1
 `:clients:testClasses`. Before any cache comparison, three sequential downloads
 of Kafka's fixed source archive derive and freeze a 337-ms/6,994,831-B/s link.
-Measured builds are offline, use the same native Gradle HTTP client and
-committed objects, disable local and Configuration caches, preserve the 4,062
-required outputs, and differ only in direct Shared versus prewarmed Edge
-locality.
+Measured builds use the same native Gradle HTTP client and committed objects,
+disable local and Configuration caches, preserve the 4,062 required outputs,
+and differ only in direct Shared versus prewarmed Edge locality. Because
+Gradle's `--offline` also disables its HTTP build cache, JVM proxy properties
+block every non-loopback dependency request while leaving the two loopback
+cache endpoints available.
 
 ```bash
 ./dev/check-poc-remote-cache-transfer-v1

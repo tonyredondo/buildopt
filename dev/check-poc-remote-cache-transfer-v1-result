@@ -92,7 +92,8 @@ jq -e --arg specSha "${buildopt_spec_sha}" \
     } and
     .preparation.measured == false and
     .preparation.dependenciesResolvedBeforeMeasurement == true and
-    .preparation.measuredRunsOffline == true and
+    .preparation.nativeRemoteCacheOnlineMode == true and
+    .preparation.externalDependencyNetworkBlocked == true and
     .preparation.seededObjectCount >= $spec[0].workload.minimumRemoteCacheHits and
     .preparation.seededObjectBytes >= $spec[0].workload.minimumCommittedObjectBytes and
     .preparation.edgeWarmupOriginRequests == .preparation.seededObjectCount and
