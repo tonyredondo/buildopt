@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-kafka-shadowjar-reproducibility/v1",
+  "workItem": "POC-KAFKA-SHADOWJAR-REPRODUCIBILITY-001",
+  "capturedAt": "2026-08-08T14:50:11Z",
+  "buildoptRevision": "2b930cd77b68da65cb89be7ddcc29f9c9452002a",
+  "runnerScriptSha256": "3640e086e9e91caed88eeb2c86f0e979b1f52333739217f15b39651582e37927",
+  "specSha256": "996d3c0e203c58efeef5bebc7205a10a534d7f79a86e58849161cc0118aae1ab",
+  "failureServerSourceSha256": "968c9d7ab0acb2326d3cb6d232399e550340cbc8f39786902974b31fd3126ca3",
+  "sourceArchiveSha256": "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2",
+  "repository": {
+    "nameWithOwner": "apache/kafka",
+    "releaseTag": "4.3.1",
+    "revision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "gradleVersion": "9.2.1",
+    "jdk": "temurin-25.0.3+9"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12
+  },
+  "preparation": {
+    "measured": false,
+    "cleanSourceCopies": 5,
+    "dependencyPreparationLogSha256": "a152c1bdb6f7b75498fd2038e9dc3300684aa36eed65dbb42e749c19cf8cafd6",
+    "partialStateReused": false
+  },
+  "builds": [
+    {
+      "id": "baseline-a",
+      "normalized": false,
+      "cleanSourceTree": true,
+      "freshGradleHome": true,
+      "buildFileSha256": "50b4d82988d6567b146b419c99498fb8e1b6154815f651750a5335ea905b7bd6",
+      "artifactSha256": "5539a2732c8bd08b8312e00c8367066ab5c958fe4f33dd9251776907f6bd2d96",
+      "artifactBytes": 10204023,
+      "payloadSha256": "becd39cc5e8bed24f867d139d17d4c004694e119fb9c9cd1f7743c4c949cbe5e",
+      "entryOrderSha256": "3fbfdc6ee6cf643e7f8ecd80da891e61d7a3de3a337fcb247ad56e481e4ba0a3",
+      "metadataSha256": "95a250f4cc1c482a358799329eaea18ccc22de44e2364c0c6317a0fb32550d6c",
+      "logSha256": "c78fe988d987e910d491c12378195ca47b26ae0c1b14c3a61f241111b2f9d4ea",
+      "durationMs": 30373,
+      "taskExecuted": true,
+      "remoteFailureInjected": false
+    },
+    {
+      "id": "baseline-b",
+      "normalized": false,
+      "cleanSourceTree": true,
+      "freshGradleHome": true,
+      "buildFileSha256": "50b4d82988d6567b146b419c99498fb8e1b6154815f651750a5335ea905b7bd6",
+      "artifactSha256": "ce25a3f363ef8fd85318c12d92df5dd5e18ebf2daf1e55a8e8aa5177964db0a1",
+      "artifactBytes": 10204023,
+      "payloadSha256": "becd39cc5e8bed24f867d139d17d4c004694e119fb9c9cd1f7743c4c949cbe5e",
+      "entryOrderSha256": "3fbfdc6ee6cf643e7f8ecd80da891e61d7a3de3a337fcb247ad56e481e4ba0a3",
+      "metadataSha256": "14f400b078049fc148c58d8ede345a73e6c3f51f96fca1c3c2aa76ed6d88fcaf",
+      "logSha256": "6563508920505c9b5c28e388b3448f4a97e3eb93c8d1c5ee937bff6e505ccd70",
+      "durationMs": 61577,
+      "taskExecuted": true,
+      "remoteFailureInjected": false
+    },
+    {
+      "id": "normalized-a",
+      "normalized": true,
+      "cleanSourceTree": true,
+      "freshGradleHome": true,
+      "buildFileSha256": "97a0e249d30e1d7a7ef23f92d2effd902a790a4cfc81118adfcc7e6d8e7b23c0",
+      "artifactSha256": "3ffd994e55cf6ddad21600a89a78a9b57851e4e0e48d2e75091d2736b0463349",
+      "artifactBytes": 10204023,
+      "payloadSha256": "becd39cc5e8bed24f867d139d17d4c004694e119fb9c9cd1f7743c4c949cbe5e",
+      "entryOrderSha256": "9021f2616f9689bf32a9c7f4011a19ce8c0383034c57ed805cddfa925eea9f90",
+      "metadataSha256": "7f0d9a21eb507d31043b4a35eb4fd42df27aaf0e3b49eefd6a51fb11a1abc36b",
+      "logSha256": "17ac78f60b051063ab5650796226374ebe0ab9efa9609ffa57569d6956f0d7c8",
+      "durationMs": 70875,
+      "taskExecuted": true,
+      "remoteFailureInjected": false
+    },
+    {
+      "id": "normalized-b",
+      "normalized": true,
+      "cleanSourceTree": true,
+      "freshGradleHome": true,
+      "buildFileSha256": "97a0e249d30e1d7a7ef23f92d2effd902a790a4cfc81118adfcc7e6d8e7b23c0",
+      "artifactSha256": "3ffd994e55cf6ddad21600a89a78a9b57851e4e0e48d2e75091d2736b0463349",
+      "artifactBytes": 10204023,
+      "payloadSha256": "becd39cc5e8bed24f867d139d17d4c004694e119fb9c9cd1f7743c4c949cbe5e",
+      "entryOrderSha256": "9021f2616f9689bf32a9c7f4011a19ce8c0383034c57ed805cddfa925eea9f90",
+      "metadataSha256": "7f0d9a21eb507d31043b4a35eb4fd42df27aaf0e3b49eefd6a51fb11a1abc36b",
+      "logSha256": "39b9f690d90cbda16725ae8288c22412361085235444de64ba80164c2d568e34",
+      "durationMs": 73826,
+      "taskExecuted": true,
+      "remoteFailureInjected": false
+    },
+    {
+      "id": "fallback-503",
+      "normalized": true,
+      "cleanSourceTree": true,
+      "freshGradleHome": true,
+      "buildFileSha256": "97a0e249d30e1d7a7ef23f92d2effd902a790a4cfc81118adfcc7e6d8e7b23c0",
+      "artifactSha256": "3ffd994e55cf6ddad21600a89a78a9b57851e4e0e48d2e75091d2736b0463349",
+      "artifactBytes": 10204023,
+      "payloadSha256": "becd39cc5e8bed24f867d139d17d4c004694e119fb9c9cd1f7743c4c949cbe5e",
+      "entryOrderSha256": "9021f2616f9689bf32a9c7f4011a19ce8c0383034c57ed805cddfa925eea9f90",
+      "metadataSha256": "7f0d9a21eb507d31043b4a35eb4fd42df27aaf0e3b49eefd6a51fb11a1abc36b",
+      "logSha256": "31aa4eab5ef776d979910e1586955a6e576a83ee622ab4e296864b65633e6ac3",
+      "durationMs": 72171,
+      "taskExecuted": true,
+      "remoteFailureInjected": true
+    }
+  ],
+  "attribution": {
+    "upstreamReproducibleFileOrder": false,
+    "upstreamPreserveFileTimestamps": true,
+    "baselineBytesIdentical": false,
+    "baselinePayloadIdentical": true,
+    "baselineArtifactSha256": [
+      "5539a2732c8bd08b8312e00c8367066ab5c958fe4f33dd9251776907f6bd2d96",
+      "ce25a3f363ef8fd85318c12d92df5dd5e18ebf2daf1e55a8e8aa5177964db0a1"
+    ],
+    "logicalPayloadSha256": "becd39cc5e8bed24f867d139d17d4c004694e119fb9c9cd1f7743c4c949cbe5e"
+  },
+  "stabilization": {
+    "method": "EXACT_TEMPORARY_SOURCE_CONFIGURATION",
+    "normalizedBuildFileSha256": "97a0e249d30e1d7a7ef23f92d2effd902a790a4cfc81118adfcc7e6d8e7b23c0",
+    "normalizedArtifactSha256": "3ffd994e55cf6ddad21600a89a78a9b57851e4e0e48d2e75091d2736b0463349",
+    "independentBuildsIdentical": true,
+    "payloadPreserved": true,
+    "upstreamCheckoutModified": false
+  },
+  "fallback": {
+    "remoteCacheResponseStatus": 503,
+    "buildSucceeded": true,
+    "remoteCacheDisabled": true,
+    "outputMatchedNormalizedBuilds": true,
+    "failureServerLogSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "result": {
+    "qualified": true,
+    "decision": "QUALIFY_KAFKA_SHADOWJAR_REPRODUCIBILITY_INPUT",
+    "compositionRerunAuthorized": true,
+    "performanceClaimAllowed": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "upstreamPatchApplied": false,
+    "performanceMeasured": false,
+    "compositionSavingsClaimed": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "universalReproducibilityClaimed": false
+  }
+}

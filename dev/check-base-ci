@@ -214,6 +214,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-qualified-remote-composition-v1-result" >/dev/null
         "${buildopt_script_dir}/check-poc-kafka-impact-edge-composition-v1" >/dev/null
         "${buildopt_script_dir}/check-poc-kafka-impact-edge-composition-v1-result" >/dev/null
+        "${buildopt_script_dir}/check-poc-kafka-shadowjar-reproducibility-v1-result" >/dev/null
         "${buildopt_script_dir}/check-poc-spring-installed-impact" >/dev/null
         "${buildopt_script_dir}/check-poc-spring-impact-breadth" >/dev/null
         "${buildopt_script_dir}/check-poc-impact-generalization" >/dev/null

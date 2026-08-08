@@ -67,8 +67,14 @@ jq -e \
       (.metadataSha256 | sha256) and (.logSha256 | sha256)) and
     .builds[0].artifactSha256 != .builds[1].artifactSha256 and
     ([.builds[0].payloadSha256, .builds[1].payloadSha256] | unique | length) == 1 and
+    .builds[0].entryOrderSha256 == .builds[1].entryOrderSha256 and
+    .builds[0].metadataSha256 != .builds[1].metadataSha256 and
     ([.builds[2].artifactSha256, .builds[3].artifactSha256,
       .builds[4].artifactSha256] | unique | length) == 1 and
+    ([.builds[2].entryOrderSha256, .builds[3].entryOrderSha256,
+      .builds[4].entryOrderSha256] | unique | length) == 1 and
+    ([.builds[2].metadataSha256, .builds[3].metadataSha256,
+      .builds[4].metadataSha256] | unique | length) == 1 and
     ([.builds[].payloadSha256] | unique | length) == 1 and
     .attribution == {upstreamReproducibleFileOrder: false,
       upstreamPreserveFileTimestamps: true, baselineBytesIdentical: false,

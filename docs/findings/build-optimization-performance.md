@@ -336,11 +336,21 @@ numbers are not additive component percentages and they are not a qualified
 claim: forced Edge failure completed successfully but rebuilt custom
 `shadowJar` with different bytes from the cached artifact.
 
-The next block is `POC-KAFKA-SHADOWJAR-REPRODUCIBILITY-001`. It must attribute
-the differing archive bytes, prove whether timestamps/order/metadata or actual
-content causes the drift, and make the narrowest repository-generic correction
-only if exact semantics can be preserved. No composition rerun is authorized
-until two independent uncached builds reproduce the same required artifact.
+The reproducibility block is now complete. Two independent uncached baseline
+builds produced different 10,204,023-byte JAR digests while preserving the
+same logical payload and entry order; their ZIP metadata fingerprints differed.
+Kafka explicitly configured non-reproducible archive order and preserved file
+timestamps. Changing only those two temporary source properties produced the
+same `3ffd994e...3349` digest in two independent builds and preserved the
+baseline payload. A fifth build received remote-cache HTTP 503, rebuilt
+locally, and reproduced the same normalized digest after Gradle disabled the
+cache.
+
+This qualifies the narrow reproducibility input, not the prior 82.87% timing.
+The next block is `POC-KAFKA-IMPACT-EDGE-COMPOSITION-002`: preregister a fresh
+end-to-end comparison using the normalized archive configuration in both arms,
+then repeat exact-output, global-change and Edge-failure gates without reusing
+the old observations.
 
 The **qualified-profile usability and scope synthesis** block is now complete:
 

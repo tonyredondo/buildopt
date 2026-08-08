@@ -151,8 +151,12 @@ result is Build Impact evidence and is not attributed to the standard-`Jar`
 adapter. The corrected Build Impact + Edge experiment then produced a strong
 diagnostic signal: 43,345-ms native versus 7,423-ms candidate means, 4/4
 positive pairs. It remains unqualified because forced Edge failure rebuilt the
-custom `shadowJar` with different bytes. The next block addresses archive
-reproducibility before any composition claim.
+custom `shadowJar` with different bytes. Five subsequent clean builds isolated
+that drift to ZIP metadata: the two original JARs had identical payload and
+entry order but different metadata, while two builds with reproducible order
+and timestamps disabled—and a third after remote-cache HTTP 503—all produced
+SHA-256 `3ffd994e...3349`. This qualifies the reproducibility input for a fresh
+composition experiment; it does not retroactively qualify the 82.87%.
 
 ## Choose what to do next
 

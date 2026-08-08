@@ -3027,6 +3027,28 @@ does not qualify. Under forced Edge failure Gradle disabled remote cache and
 completed, while custom `shadowJar` rebuilt different bytes. Validate the
 retained terminal decision with the result checker above.
 
+### Kafka shadow JAR reproducibility
+
+`POC-KAFKA-SHADOWJAR-REPRODUCIBILITY-001` isolates that fallback failure with
+five fresh source trees and Gradle homes. The baseline uses Kafka's explicit
+non-reproducible archive settings; the normalized builds change only the two
+`AbstractArchiveTask` properties. The final build injects HTTP 503 through a
+loopback fixture and requires Gradle's local rebuild to reproduce the same
+normalized artifact:
+
+```bash
+./dev/check-poc-kafka-shadowjar-reproducibility-v1
+./dev/run-poc-kafka-shadowjar-reproducibility-v1 \
+  /absolute/path/to/new-result.json \
+  /absolute/path/to/kafka-source.tar.gz
+./dev/check-poc-kafka-shadowjar-reproducibility-v1-result \
+  /absolute/path/to/new-result.json
+```
+
+The checked result proves equal payloads, baseline metadata drift, two
+byte-identical normalized rebuilds and one byte-identical HTTP-503 fallback.
+It captures no performance claim and does not modify Kafka upstream.
+
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source
 distribution. Structural discovery freezes selective execution only where the

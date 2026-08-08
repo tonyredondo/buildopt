@@ -158,8 +158,15 @@ unfavorable observations. Percentages from different rows are not additive.
 | Clean Impact + exact standard-`Jar` profile | **55.09% faster**, 2,539.5 ms saved, 4/4 positive pairs | The unchanged installed profile reduced the conservative graph from 64 projects to three and restored `:generator:jar`; interval +1,625.5..+4,093 ms, 4,062 identical outputs, no Gradle `Test`, and successful full-graph fallback. |
 | Client packaging through installed profile | **57.58% faster**, 4,637.5 ms saved, 4/4 positive pairs | Native root `assemble` averaged 8,054 ms; BuildOpt selected the three-project packaging scope and averaged 3,416.5 ms. The smallest pair saving was 4,050 ms; the exact 10.2-MB JAR and global fallback passed. Later diagnosis attributes this to Build Impact scope reduction, not standard-`Jar` reuse. |
 | Build Impact + prewarmed Edge | **82.87% diagnostic difference**, 35,922 ms mean, 4/4 positive pairs | Native full `assemble` through Shared averaged 43,345 ms; the installed candidate averaged 7,423 ms and restored the same cached `shadowJar`. Not qualified: forced Edge failure completed but rebuilt the custom JAR with different bytes. |
+| Custom `shadowJar` reproducibility | **5/5 clean builds passed the fixed safety protocol** | Original builds kept the same payload/order but drifted in ZIP metadata. Two normalized builds and an HTTP-503 fallback produced identical `3ffd994e...3349` bytes. This qualifies an input, not a performance percentage. |
 
 ## Latest Generalization and Next Work
+
+The immediate next block is a fresh Kafka Build Impact plus Edge composition.
+It must apply the qualified reproducible archive configuration equally to
+control and candidate, preserve global-change and HTTP-503 fallback, and collect
+new alternating pairs rather than reuse or relabel the earlier 82.87%
+diagnostic result.
 
 **Continue the POC, but activate only measured value.** The fresh ablation
 qualified Spring Build Impact at 2,492.375 ms/30.86% saved with 8/8 positive
@@ -248,8 +255,15 @@ entirely positive interval. Measured cached outputs matched, Build Impact
 selected the intended scope, Edge made zero origin requests and global fallback
 passed. The composition still does not qualify: an Edge 503 caused Gradle to
 fall back and finish normally, but the custom `shadowJar` rebuilt different
-bytes. The next block is therefore artifact reproducibility, not another speed
-run or a broad product claim.
+bytes.
+
+The follow-up reproducibility block has now isolated and corrected that safety
+input. Two clean baseline JARs had the same logical payload and entry order but
+different ZIP metadata. With reproducible archive order and timestamps
+disabled, two independent builds and a third HTTP-503 fallback all produced
+the same `3ffd994e...3349` JAR digest. This authorizes a fresh preregistered
+composition run; it does not retroactively turn the earlier 82.87% diagnostic
+into a qualified claim.
 
 The third-repository transfer then applied the unchanged clean profile to
 Apache Kafka 4.3.1, a 64-project Java/Scala/generated-source build. Native root
@@ -313,5 +327,6 @@ production operations are outside the current scope.
 - [Apache Kafka transfer evidence](../../benchmarks/results/poc-third-repository-transfer-v1.json)
 - [Installed qualified-profile adoption evidence](../../benchmarks/results/poc-qualified-profile-adoption-v1.json)
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)
+- [Kafka shadow JAR reproducibility evidence](../../benchmarks/results/poc-kafka-shadowjar-reproducibility-v1.json)
 - [Verification/distribution graph evidence](../../benchmarks/results/poc-verification-distribution-graph-v1.json)
 - [Verification overhead attribution](../../benchmarks/results/poc-verification-overhead-attribution-v1.json)

@@ -619,6 +619,28 @@ attribute and stabilize that custom archive before any recomposition.
 ./dev/check-poc-kafka-impact-edge-composition-v1-result
 ```
 
+### Kafka shadow JAR reproducibility
+
+The [reproducibility evidence](./results/poc-kafka-shadowjar-reproducibility-v1.json)
+attributes the failed fallback without measuring performance. Two independent
+clean builds using Kafka's original archive settings produced different
+10,204,023-byte JAR SHA-256 values (`5539a273...2d96` and
+`ce25a3f3...b0a1`). Their logical payload and entry-order fingerprints were
+identical; only ZIP metadata differed.
+
+Two more clean builds changed exactly `reproducibleFileOrder` to `true` and
+`preserveFileTimestamps` to `false`. Both produced
+`3ffd994e...3349` with the original logical payload. A fifth build received
+HTTP 503 from the remote cache, Gradle disabled that cache and rebuilt locally,
+and the resulting JAR still had the same normalized digest. The terminal
+decision is `QUALIFY_KAFKA_SHADOWJAR_REPRODUCIBILITY_INPUT`: a newly
+preregistered composition may use this source configuration, but no timing or
+savings claim follows from the reproducibility block itself.
+
+```bash
+./dev/check-poc-kafka-shadowjar-reproducibility-v1-result
+```
+
 The three mechanism-development reports remain historical inputs. The strict
 synthetic reports prove bounded combined value. The public-repository
 compatibility and early performance reports showed that the first generic
