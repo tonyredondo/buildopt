@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "buildopt.poc/verification-distribution-graph-result/v1",
+  "workItem": "POC-VERIFICATION-DISTRIBUTION-GRAPH-001",
+  "capturedAt": "2026-08-08T05:05:48Z",
+  "buildoptRevision": "fed1e3b30de70272bf4f1fcf3d53b89a2253041a",
+  "specSha256": "1bbe4ddc8c606bae7ddbc5426af5cdc836cef0c8d37af573af8e5ebf3c51058a",
+  "runnerSha256": "35cd4c2f6936152994c98ee29a7dc6050170f2376737d18e7612e37eddc86f6a",
+  "installedBinarySha256": "e8329a71f935ea63074a9dd8f4447abbe5c3de75eaca6052535cf226134f98d9",
+  "sourceArchiveSha256": "e3fa4258e5e568c0b0e6f1605956cd743cff847b9df7c82ce86b2d2f1109db16",
+  "buildCacheSeedSha256": "fb75ff4538202609555b33ce9fed67223f65ab898c1414d1c505fd826069100c",
+  "runner": {
+    "os": "linux",
+    "arch": "amd64",
+    "cpuCount": 12,
+    "maxWorkers": 12
+  },
+  "graphContracts": {
+    "verificationComplete": true,
+    "sourceDistributionComplete": true,
+    "verificationOriginalProjects": 23,
+    "verificationCandidateProjects": 12,
+    "distributionOriginalProjects": 22,
+    "distributionCandidateProjects": 12
+  },
+  "pairs": [
+    {
+      "index": 1,
+      "order": "CONTROL_CANDIDATE",
+      "controlMs": 34160,
+      "candidateMs": 39318,
+      "savedMs": -5158,
+      "maximumArmGapMs": 5657,
+      "requiredOutputSha256": "57d262b41f1af535470ce16f868909a07e423633da49faf0245c098c1e4a57fb",
+      "outputIdentical": true
+    },
+    {
+      "index": 2,
+      "order": "CANDIDATE_CONTROL",
+      "controlMs": 36954,
+      "candidateMs": 34033,
+      "savedMs": 2921,
+      "maximumArmGapMs": 2142,
+      "requiredOutputSha256": "57d262b41f1af535470ce16f868909a07e423633da49faf0245c098c1e4a57fb",
+      "outputIdentical": true
+    },
+    {
+      "index": 3,
+      "order": "CONTROL_CANDIDATE",
+      "controlMs": 30906,
+      "candidateMs": 32042,
+      "savedMs": -1136,
+      "maximumArmGapMs": 2773,
+      "requiredOutputSha256": "57d262b41f1af535470ce16f868909a07e423633da49faf0245c098c1e4a57fb",
+      "outputIdentical": true
+    },
+    {
+      "index": 4,
+      "order": "CANDIDATE_CONTROL",
+      "controlMs": 33644,
+      "candidateMs": 29856,
+      "savedMs": 3788,
+      "maximumArmGapMs": 1547,
+      "requiredOutputSha256": "57d262b41f1af535470ce16f868909a07e423633da49faf0245c098c1e4a57fb",
+      "outputIdentical": true
+    }
+  ],
+  "result": {
+    "controlMeanMs": 33916,
+    "candidateMeanMs": 33812.25,
+    "meanSavedMs": 103.75,
+    "meanSavedPercent": 0.31,
+    "positivePairs": 2,
+    "pairedLowerBoundMs": -5158,
+    "maximumArmGapMs": 5657,
+    "outputsIdentical": true,
+    "productFailures": 0,
+    "fallbackPassed": true
+  },
+  "decision": "RETAIN_VERIFICATION_FULL_GRAPH",
+  "boundaries": {
+    "pocOnly": true,
+    "testOptimizationModified": false,
+    "otherOptimizationsEnabled": false,
+    "productionAuthorityChanged": false
+  }
+}

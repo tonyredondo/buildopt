@@ -9,7 +9,6 @@ fi
 buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_spec="${buildopt_repo_root}/specs/poc-verification-distribution-graph-v1.json"
-buildopt_runner="${buildopt_script_dir}/run-poc-verification-distribution-graph-v1"
 buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-verification-distribution-graph-v1.json"}
 
 "${buildopt_script_dir}/check-poc-verification-distribution-graph-v1" >/dev/null
@@ -64,8 +63,14 @@ jq -e --slurpfile spec "${buildopt_spec}" '
     printf 'verification graph result spec digest mismatch\n' >&2
     exit 1
 }
+buildopt_measured_revision=$(jq -er '.buildoptRevision' "${buildopt_result}")
+buildopt_measured_runner_sha=$(
+    git -C "${buildopt_repo_root}" show \
+        "${buildopt_measured_revision}:dev/run-poc-verification-distribution-graph-v1" |
+        sha256sum | awk '{print $1}'
+)
 [[ "$(jq -er '.runnerSha256' "${buildopt_result}")" == \
-    "$(sha256sum "${buildopt_runner}" | awk '{print $1}')" ]] || {
+    "${buildopt_measured_runner_sha}" ]] || {
     printf 'verification graph result runner digest mismatch\n' >&2
     exit 1
 }

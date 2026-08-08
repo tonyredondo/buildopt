@@ -3077,6 +3077,18 @@ unmeasured warm-up and four alternating offline pairs. It requires the exact
 non-empty Spring MVC Checkstyle report after every arm and verifies global
 full-graph fallback after timing.
 
+The retained result is validated with:
+
+```bash
+./dev/check-poc-verification-distribution-graph-v1-result
+```
+
+Native Checkstyle averages 33,916 ms and BuildOpt 33,812.25 ms. The
+103.75-ms/0.31% mean is positive in only 2/4 pairs and has a -5,158-ms lower
+bound, so the result deliberately keeps verification on the full native graph.
+Source distribution remains graph-complete capability evidence without a
+timing claim.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

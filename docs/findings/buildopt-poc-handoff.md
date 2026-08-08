@@ -17,10 +17,11 @@
   because hot state regressed by 7.68%. The fresh rerun removed hot state and
   combined only Build Impact with the exact standard-`Jar` adapter, saving
   **5,361.25 ms/50.40%** with 4/4 positive pairs and 125 identical outputs.
-- **Build Impact does not generalize uniformly.** In the latest real Spring
-  matrix, shared test preparation qualified at **18.88% faster**, while leaf
-  compilation and packaging missed the frozen stability gate. Verification and
-  source distribution correctly retained the full graph.
+- **Build Impact does not generalize uniformly.** Shared test preparation
+  qualified at **18.88% faster**, while leaf compilation and packaging missed
+  the frozen gate. Generic verification/source-distribution graphs are now
+  complete, but Spring verification saved only **0.31%** with 2/4 positive
+  pairs, so it still retains native full-graph execution.
 - **More cache hits are not automatically valuable.** On a real Spring test
   workflow, BuildOpt restored three exact Test-fixture JARs but still made the
   complete build **11.31% slower**. After narrowing plugin registration, a
@@ -123,7 +124,8 @@ unfavorable observations. Percentages from different rows are not additive.
 | Generalized shared test preparation | **18.88% faster**, 2,638 ms saved, 4/4 positive pairs | Qualified with interval +1,516..+3,275.5 ms and 378 identical outputs. |
 | Generalized leaf compilation | **1.33% faster**, 196.25 ms saved, 3/4 positive pairs | Rejected: misses 500 ms, 2%, 4/4, and positive-bound gates. |
 | Generalized leaf packaging | **3.73% faster**, 427.25 ms saved, 2/4 positive pairs | Rejected: misses 500 ms, 4/4, and positive-bound gates. |
-| Verification and source distribution | Full graph, exact output | Generated graphs were incomplete; no performance claim was attempted. |
+| Verification graph completion | **0.31% faster**, 103.75 ms saved, 2/4 positive pairs | Generic graph is complete and exact, but performance is unstable; retain native full graph. |
+| Source distribution graph completion | Complete 12-project candidate; not timed | Capability proved generically; prior leaf packaging did not qualify, so no new timing was authorized. |
 
 ### OpenTelemetry Java Instrumentation: real public repository
 
@@ -163,9 +165,11 @@ The subsequent Spring generalization matrix kept those same gates and produced
 one transferable result: shared test preparation averaged 13,971.75 ms natively
 and 11,333.75 ms with BuildOpt, saving 2,638 ms/18.88%, with 4/4 positive pairs
 and a +1,516..+3,275.5-ms interval. Leaf compilation and packaging did not
-qualify and remain on native Gradle. Incomplete verification and distribution
-graphs, plus build-logic and global-configuration changes, all retained the
-original full graph and completed successfully.
+qualify and remain on native Gradle. Verification and distribution were then
+made complete through public Gradle task contracts. The measured verification
+scope averaged only 103.75 ms/0.31% faster with 2/4 positive pairs and a
+-5,158-ms lower bound, so it also remains on native Gradle. Build-logic and
+global-configuration changes continue to retain the original full graph.
 
 The standard-`Copy` experiment confirms the cascade concern directly. The
 complete profile is stable at 52.89% faster, but Copy alone and Copy's direct
@@ -238,11 +242,12 @@ All four alternating pairs were positive, the exact client JAR matched after
 every arm, and global drift restored native `assemble`. Packaging is therefore
 qualified only for this declared Kafka output and mutation.
 
-The next recommended block is narrower than "support every build." It should
-resolve only generic unknown Gradle relationships that currently force
-verification and distribution outputs back to the full graph. Timing is
-allowed only after an exact real output has a complete graph; otherwise the
-POC should retain native execution rather than add repository-specific rules.
+The next recommended block should attribute why removing 11 projects from the
+Spring verification graph produced no stable wall-clock value. It must compare
+Gradle task outcomes and BuildOpt preparation/launch cost from the retained
+traces, authorize at most one generic correction backed by at least 500 ms of
+recoverable critical-path cost, and forbid an unchanged timing retry. If no
+such bottleneck exists, verification stays native and the POC moves on.
 
 ## Boundaries and References
 
@@ -267,3 +272,4 @@ production operations are outside the current scope.
 - [Apache Kafka transfer evidence](../../benchmarks/results/poc-third-repository-transfer-v1.json)
 - [Installed qualified-profile adoption evidence](../../benchmarks/results/poc-qualified-profile-adoption-v1.json)
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)
+- [Verification/distribution graph evidence](../../benchmarks/results/poc-verification-distribution-graph-v1.json)

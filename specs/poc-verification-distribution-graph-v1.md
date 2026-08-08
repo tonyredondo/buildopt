@@ -67,3 +67,24 @@ cannot be changed or discarded after measurement.
 
 The machine-readable contract is
 [`poc-verification-distribution-graph-v1.json`](./poc-verification-distribution-graph-v1.json).
+
+## Result
+
+Both generic graph contracts passed. The accepted verification comparison did
+not pass the value gate:
+
+| Arm | Mean |
+|---|---:|
+| Optimized native `checkstyleMain` | 33,916 ms |
+| Installed BuildOpt `:spring-webmvc:checkstyleMain` | 33,812.25 ms |
+
+The mean saving is 103.75 ms/0.31%. Pair savings are -5,158, +2,921, -1,136
+and +3,788 ms, so only 2/4 pairs are positive and the conservative lower bound
+is -5,158 ms. Every pair produced the same non-empty Checkstyle report, no
+root-build `Test` ran, product failures are zero, and the global fallback
+passed. The terminal decision is `RETAIN_VERIFICATION_FULL_GRAPH`.
+
+The result separates capability from value: BuildOpt can now model these task
+families generically, but graph completeness alone is not sufficient reason to
+select the narrower verification path. Source distribution remains capability
+evidence only and was not timed.

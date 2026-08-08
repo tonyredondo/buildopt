@@ -454,6 +454,7 @@ buildopt_required_files=(
     "specs/poc-verification-distribution-graph-v1.md"
     "benchmarks/results/poc-impact-generalization-v1.json"
     "benchmarks/results/poc-kafka-packaging-v1.json"
+    "benchmarks/results/poc-verification-distribution-graph-v1.json"
     "benchmarks/results/poc-standard-copy-cascade-v1.json"
     "benchmarks/results/poc-normal-build-tail-expansion-v1.json"
     "specs/poc-otel-spring-family-v2.json"

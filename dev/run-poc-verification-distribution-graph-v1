@@ -23,7 +23,7 @@ if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
     exit 64
 fi
 for buildopt_command in awk cmp cp date find grep jq mkdir mktemp printenv rm \
-    sed sha256sum sort tar timeout; do
+    sed sha256sum sleep sort tar timeout; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
         printf 'missing required command: %s\n' "${buildopt_command}" >&2
         exit 1
@@ -62,7 +62,15 @@ buildopt_cleanup() {
             tar -C "${buildopt_root}" -czf "${buildopt_output}.failure-logs.tar.gz" logs
             chmod 0600 "${buildopt_output}.failure-logs.tar.gz"
         fi
-        rm -rf -- "${buildopt_root}"
+        for ((buildopt_cleanup_attempt = 0; buildopt_cleanup_attempt < 5; buildopt_cleanup_attempt++)); do
+            if rm -rf -- "${buildopt_root}" 2>/dev/null && [[ ! -e "${buildopt_root}" ]]; then
+                return 0
+            fi
+            sleep 1
+        done
+        printf 'warning: verification graph temporary directory remains: %s\n' \
+            "${buildopt_root}" >&2
+        [[ "${buildopt_complete}" == true ]]
     fi
 }
 trap buildopt_cleanup EXIT

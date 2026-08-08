@@ -87,6 +87,24 @@ the complete `classes` selector, and succeeded. The terminal decision is
 `GENERALIZE_ONLY_QUALIFIED_CELLS`: only shared test preparation broadens the
 Build Impact POC claim.
 
+### Verification and distribution graph completion
+
+The checked
+[verification/distribution evidence](./results/poc-verification-distribution-graph-v1.json)
+replaces the former name-based fallback with public Gradle task contracts.
+On the fixed Spring revision, `checkstyleMain` narrows from 23 projects to a
+complete 12-project Spring MVC dependency closure; `sourcesJar` narrows from
+22 projects to a complete 12-project closure. Both contain no `Test` and add no
+Spring-specific task rule.
+
+Only verification was preregistered for timing. Optimized native Gradle
+averaged 33,916 ms and installed BuildOpt averaged 33,812.25 ms, an apparent
+103.75-ms/0.31% saving. Pair effects were -5,158, +2,921, -1,136 and +3,788 ms:
+only 2/4 were positive and the lower bound was -5,158 ms. The exact Checkstyle
+report matched in every pair and global fallback passed, but the terminal
+decision is `RETAIN_VERIFICATION_FULL_GRAPH`. Graph capability is complete;
+stable build-time value is not.
+
 ### Exact standard-Copy cascade
 
 The checked [standard-Copy cascade evidence](./results/poc-standard-copy-cascade-v1.json)
