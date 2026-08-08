@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-remote-cache-transfer-v1.json"
+
+command -v jq >/dev/null 2>&1 || {
+    printf 'required transfer contract validator is unavailable: jq\n' >&2
+    exit 1
+}
+
+jq -e '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    .schemaVersion == "buildopt.specs/poc-remote-cache-transfer/v1" and
+    .workItem == "POC-REMOTE-CACHE-TRANSFER-001" and
+    .status == "PREREGISTERED" and
+    .preregisteredAt == "2026-08-08" and
+    (.preregistration.productRevision | test("^[0-9a-f]{40}$")) and
+    .preregistration.completedWarmupsBeforePreregistration == 0 and
+    .preregistration.completedObservationsBeforePreregistration == 0 and
+    .preregistration.acceptedObservationsBeforePreregistration == 0 and
+    .preregistration.edgeImplementationChanged == false and
+    .preregistration.valueGateChanged == false and
+    .preregistration.networkSearchAfterResultAllowed == false and
+    .hypothesis == {
+        mechanism: "EDGE_COMMITTED_READ_LOCALITY",
+        control: "GRADLE_HTTP_BUILD_CACHE_DIRECT_TO_SHARED",
+        candidate: "GRADLE_HTTP_BUILD_CACHE_TO_PREWARMED_BUILDOPT_EDGE",
+        singleChangedInput: "CACHE_READ_LOCATION"
+    } and
+    .repository.nameWithOwner == "apache/kafka" and
+    .repository.releaseTag == "4.3.1" and
+    .repository.revision == "26b251a451ce941d3d7a55e6487bcb7f16b5ad48" and
+    .repository.sourceArchiveSha256 ==
+        "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2" and
+    .repository.sourceArchiveBytes == 14169772 and
+    .repository.gradleVersion == "9.2.1" and
+    .repository.jdk == "temurin-25.0.3+9" and
+    all(.repository.fixedInputSha256[]; sha256) and
+    .workload.entrypoint == ":clients:testClasses" and
+    .workload.requiredOutputRoots == [
+        "clients/build/classes/java/main",
+        "clients/build/classes/java/test",
+        "clients/build/resources/main",
+        "clients/build/resources/test"
+    ] and
+    .workload.requiredOutputCount == 4062 and
+    .workload.requiredOutputSha256 ==
+        "0a1ba415bbdeec51775d720beed627b95b11f6073a2fef450ccfd269df57ea23" and
+    .workload.minimumRemoteCacheHits == 4 and
+    .workload.minimumCommittedObjectBytes == 1048576 and
+    .networkDerivation.method ==
+        "MEDIAN_OF_THREE_SEQUENTIAL_FIXED_SOURCE_ARCHIVE_DOWNLOADS" and
+    .networkDerivation.curlVersion == "8.5.0" and
+    .networkDerivation.allSamplesMatchedSourceSha256 == true and
+    (.networkDerivation.samples | length) == 3 and
+    [.networkDerivation.samples[].sample] == [1, 2, 3] and
+    all(.networkDerivation.samples[];
+        . as $sample |
+        .httpCode == 200 and .bytes == 14169772 and
+        (.timeToFirstByteMs | type == "number" and . > 0) and
+        (.totalMs | type == "number" and . > $sample.timeToFirstByteMs) and
+        (.bytesPerSecond | type == "number" and . > 0)) and
+    .networkDerivation.medianTimeToFirstByteMs == 337.266 and
+    .networkDerivation.modeledLatencyPerResponseMs == 337 and
+    .networkDerivation.medianBandwidthBytesPerSecond == 6994831 and
+    .networkDerivation.packetLossRatio == 0 and
+    .networkDerivation.packetLossForcedForIsolation == true and
+    .runner == {
+        id: "linux-amd64-12c-16659865600b-v1",
+        cpuCount: 12,
+        memoryBytes: 16659865600,
+        maxWorkers: 12
+    } and
+    .cacheState.sameCommittedSharedObjects == true and
+    .cacheState.nativeLocalCacheEnabled == false and
+    .cacheState.configurationCacheEnabled == false and
+    .cacheState.pushAllowedDuringMeasuredRuns == false and
+    .cacheState.seedAndEdgeWarmupMeasured == false and
+    .cacheState.dependenciesOfflineDuringMeasurement == true and
+    .measurement.warmupsPerArm == 1 and
+    .measurement.pairs == 4 and
+    .measurement.pairOrder == [
+        "CONTROL_FIRST", "CANDIDATE_FIRST",
+        "CONTROL_FIRST", "CANDIDATE_FIRST"
+    ] and
+    .measurement.maximumInterArmIdleGapMs == 15000 and
+    .measurement.requiredTaskOutcome == "FROM-CACHE" and
+    .valueGate.minimumSavedMs == 500 and
+    .valueGate.minimumReductionRatio == 0.02 and
+    .valueGate.positiveLower95Bound == true and
+    .valueGate.minimumPositivePairs == 4 and
+    .valueGate.thresholdsMayMoveAfterMeasurement == false and
+    .valueGate.failedPairsMayBeDiscarded == false and
+    .valueGate.parityAloneCountsAsValue == false and
+    .decisionPolicy.qualifiedDecision ==
+        "QUALIFY_EDGE_LOCALITY_TRANSFER_ON_KAFKA_PROFILE" and
+    .decisionPolicy.unqualifiedDecision ==
+        "RETAIN_NATIVE_REMOTE_CACHE_FOR_KAFKA_PROFILE" and
+    .decisionPolicy.sharedAloneReceivesNoAccelerationClaim == true and
+    .decisionPolicy.noAdditionalNetworkSearchAfterTerminalDecision == true and
+    .boundaries.sameSharedOrigin == true and
+    .boundaries.sameGradleHttpBuildCacheClient == true and
+    .boundaries.sameCommittedObjectBytes == true and
+    .boundaries.sameWorkloadAndOutputs == true and
+    .boundaries.sameAuthenticationCheck == true and
+    .boundaries.onlyReadLocalityChanges == true and
+    .boundaries.edgeImplementationChanged == false and
+    .boundaries.safeCacheChanged == false and
+    .boundaries.runtimeTuningChanged == false and
+    .boundaries.buildImpactChanged == false and
+    .boundaries.testSelectionChanged == false and
+    .boundaries.testExecutionChanged == false and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.proofOfConcept == true and
+    .boundaries.productionReadinessClaimed == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false and
+    .boundaries.universalSavingsClaimed == false
+' "${buildopt_spec}" >/dev/null
+
+printf 'POC remote-cache transfer contract OK: %s\n' "${buildopt_spec}"

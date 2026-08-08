@@ -1,0 +1,176 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 2)); then
+    printf 'usage: %s OUTPUT_FILE SOURCE_ARCHIVE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_source_archive=$2
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-remote-cache-transfer-v1.json"
+buildopt_harness="${buildopt_repo_root}/internal/sharedcache/poc_remote_cache_transfer_test.go"
+buildopt_java_home="${buildopt_repo_root}/.tools/toolchains/temurin-jdk-25-69264a7a211bf502"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
+    ! -f "${buildopt_source_archive}" ]]; then
+    printf 'invalid POC remote-cache transfer runner input\n' >&2
+    exit 64
+fi
+for buildopt_command in awk chmod cp date find git grep jq mkdir mktemp rm \
+    sha256sum sort tar timeout xargs; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required remote-cache transfer command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+if [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)" ]]; then
+    printf 'remote-cache transfer requires a clean revision-bound checkout\n' >&2
+    exit 1
+fi
+if [[ "$(getconf _NPROCESSORS_ONLN)" != 12 ]]; then
+    printf 'remote-cache transfer requires exactly 12 online CPUs\n' >&2
+    exit 1
+fi
+[[ -x "${buildopt_java_home}/bin/java" ]] || {
+    printf 'locked Temurin 25 toolchain is unavailable\n' >&2
+    exit 1
+}
+"${buildopt_script_dir}/check-poc-remote-cache-transfer-v1" >/dev/null
+
+buildopt_source_sha=$(sha256sum "${buildopt_source_archive}" | awk '{print $1}')
+[[ "${buildopt_source_sha}" == \
+    "$(jq -er '.repository.sourceArchiveSha256' "${buildopt_spec}")" ]] || {
+    printf 'Kafka source archive checksum mismatch\n' >&2
+    exit 1
+}
+[[ "$(stat -c %s "${buildopt_source_archive}")" == \
+    "$(jq -er '.repository.sourceArchiveBytes' "${buildopt_spec}")" ]] || {
+    printf 'Kafka source archive size mismatch\n' >&2
+    exit 1
+}
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-remote-cache-transfer-v1.XXXXXX")
+buildopt_complete=false
+buildopt_stop() {
+    local buildopt_project=$1
+    local buildopt_home=$2
+    if [[ -x "${buildopt_project}/gradlew" && -d "${buildopt_home}" ]]; then
+        (
+            cd "${buildopt_project}"
+            env -u CI JAVA_HOME="${buildopt_java_home}" \
+                GRADLE_USER_HOME="${buildopt_home}" ./gradlew --stop
+        ) >/dev/null 2>&1 || true
+    fi
+}
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-remote-cache-transfer-v1."* ]]; then
+        buildopt_stop "${buildopt_root}/seed-project" "${buildopt_root}/seed-home"
+        buildopt_stop "${buildopt_root}/control-project" "${buildopt_root}/control-home"
+        buildopt_stop "${buildopt_root}/candidate-project" "${buildopt_root}/candidate-home"
+        if [[ "${buildopt_complete}" != true && -d "${buildopt_root}/logs" ]]; then
+            tar -C "${buildopt_root}" -czf "${buildopt_output}.failure-logs.tar.gz" logs
+            chmod 0600 "${buildopt_output}.failure-logs.tar.gz"
+            printf 'remote-cache transfer failure logs preserved: %s\n' \
+                "${buildopt_output}.failure-logs.tar.gz" >&2
+        fi
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+chmod 0700 "${buildopt_root}"
+mkdir -p "${buildopt_root}/seed-project" "${buildopt_root}/seed-home" \
+    "${buildopt_root}/control-project" "${buildopt_root}/control-home" \
+    "${buildopt_root}/candidate-project" "${buildopt_root}/candidate-home" \
+    "${buildopt_root}/logs"
+
+tar -xzf "${buildopt_source_archive}" --strip-components=1 \
+    -C "${buildopt_root}/seed-project"
+while IFS=$'\t' read -r buildopt_path buildopt_sha; do
+    [[ "$(sha256sum "${buildopt_root}/seed-project/${buildopt_path}" | awk '{print $1}')" == \
+        "${buildopt_sha}" ]] || {
+        printf 'Kafka fixed input checksum mismatch: %s\n' "${buildopt_path}" >&2
+        exit 1
+    }
+done < <(jq -r '.repository.fixedInputSha256 | to_entries[] | [.key, .value] | @tsv' \
+    "${buildopt_spec}")
+
+if ! (
+    cd "${buildopt_root}/seed-project"
+    env -u CI JAVA_HOME="${buildopt_java_home}" \
+        GRADLE_USER_HOME="${buildopt_root}/seed-home" \
+        timeout 20m ./gradlew --daemon --build-cache --parallel \
+        --console=plain --max-workers=12 --no-scan :clients:testClasses
+) >"${buildopt_root}/logs/dependency-preparation.log" 2>&1; then
+    tail -n 180 "${buildopt_root}/logs/dependency-preparation.log" >&2
+    printf 'Kafka dependency preparation failed\n' >&2
+    exit 1
+fi
+grep -Fq 'BUILD SUCCESSFUL' "${buildopt_root}/logs/dependency-preparation.log" || {
+    printf 'Kafka dependency preparation lacks success marker\n' >&2
+    exit 1
+}
+! grep -Eq '^> Task .*:test($| )' \
+    "${buildopt_root}/logs/dependency-preparation.log" || {
+    printf 'Kafka dependency preparation executed a Gradle Test task\n' >&2
+    exit 1
+}
+buildopt_stop "${buildopt_root}/seed-project" "${buildopt_root}/seed-home"
+
+[[ "$(sha256sum "${buildopt_root}/seed-project/gradle/wrapper/gradle-wrapper.jar" | awk '{print $1}')" == \
+    "423cb469ccc0ecc31f0e4e1c309976198ccb734cdcbb7029d4bda0f18f57e8d9" ]] || {
+    printf 'Kafka generated Wrapper JAR checksum mismatch\n' >&2
+    exit 1
+}
+
+rm -rf -- "${buildopt_root}/seed-home/daemon" \
+    "${buildopt_root}/seed-home/caches/build-cache-1"
+find "${buildopt_root}/seed-home" -type f \
+    \( -name '*.lock' -o -name gc.properties \) -delete
+buildopt_dependency_sha=$(
+    cd "${buildopt_root}/seed-home"
+    find caches/modules-2 -type f -print0 | sort -z |
+        xargs -0 sha256sum | sha256sum | awk '{print $1}'
+)
+
+for buildopt_arm in control candidate; do
+    tar -xzf "${buildopt_source_archive}" --strip-components=1 \
+        -C "${buildopt_root}/${buildopt_arm}-project"
+    cp "${buildopt_root}/seed-project/gradle/wrapper/gradle-wrapper.jar" \
+        "${buildopt_root}/${buildopt_arm}-project/gradle/wrapper/gradle-wrapper.jar"
+    cp -a --reflink=auto "${buildopt_root}/seed-home/." \
+        "${buildopt_root}/${buildopt_arm}-home/"
+done
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_runner_sha=$(sha256sum "${BASH_SOURCE[0]}" | awk '{print $1}')
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_harness_sha=$(sha256sum "${buildopt_harness}" | awk '{print $1}')
+
+env -u CI JAVA_HOME="${buildopt_java_home}" \
+    PATH="${buildopt_java_home}/bin:${PATH}" \
+    BUILDOPT_POC_REMOTE_CACHE_TRANSFER_RESULT="${buildopt_output}" \
+    BUILDOPT_POC_REMOTE_CACHE_TRANSFER_SEED_PROJECT="${buildopt_root}/seed-project" \
+    BUILDOPT_POC_REMOTE_CACHE_TRANSFER_CONTROL_PROJECT="${buildopt_root}/control-project" \
+    BUILDOPT_POC_REMOTE_CACHE_TRANSFER_CANDIDATE_PROJECT="${buildopt_root}/candidate-project" \
+    BUILDOPT_POC_REMOTE_CACHE_TRANSFER_SEED_HOME="${buildopt_root}/seed-home" \
+    BUILDOPT_POC_REMOTE_CACHE_TRANSFER_CONTROL_HOME="${buildopt_root}/control-home" \
+    BUILDOPT_POC_REMOTE_CACHE_TRANSFER_CANDIDATE_HOME="${buildopt_root}/candidate-home" \
+    BUILDOPT_POC_REMOTE_CACHE_TRANSFER_JAVA_HOME="${buildopt_java_home}" \
+    BUILDOPT_POC_REMOTE_CACHE_TRANSFER_REVISION="${buildopt_revision}" \
+    BUILDOPT_POC_REMOTE_CACHE_TRANSFER_RUNNER_SHA="${buildopt_runner_sha}" \
+    BUILDOPT_POC_REMOTE_CACHE_TRANSFER_SPEC_SHA="${buildopt_spec_sha}" \
+    BUILDOPT_POC_REMOTE_CACHE_TRANSFER_HARNESS_SHA="${buildopt_harness_sha}" \
+    BUILDOPT_POC_REMOTE_CACHE_TRANSFER_SOURCE_SHA="${buildopt_source_sha}" \
+    BUILDOPT_POC_REMOTE_CACHE_TRANSFER_DEPENDENCY_SHA="${buildopt_dependency_sha}" \
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go test -count=1 -timeout=30m -v ./internal/sharedcache \
+        -run '^TestPOCRemoteCacheTransferExperiment$'
+
+"${buildopt_script_dir}/check-poc-remote-cache-transfer-v1-result" \
+    "${buildopt_output}"
+buildopt_complete=true
+printf 'POC remote-cache transfer evidence written: %s\n' "${buildopt_output}"

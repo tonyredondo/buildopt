@@ -20,6 +20,7 @@ the exact cross-component contract.
 | [`poc-optimization-overhead-ablation-v1.json`](./poc-optimization-overhead-ablation-v1.json) | `POC-OPTIMIZATION-OVERHEAD-ABLATION-001` |
 | [`poc-runtime-research-v1.json`](./poc-runtime-research-v1.json) | `POC-RUNTIME-RESEARCH-001` |
 | [`poc-remote-cache-value-v1.md`](./poc-remote-cache-value-v1.md) and [`poc-remote-cache-value-v1.json`](./poc-remote-cache-value-v1.json) | `POC-REMOTE-CACHE-VALUE-001` |
+| [`poc-remote-cache-transfer-v1.md`](./poc-remote-cache-transfer-v1.md) and [`poc-remote-cache-transfer-v1.json`](./poc-remote-cache-transfer-v1.json) | `POC-REMOTE-CACHE-TRANSFER-001` |
 | [`poc-spring-installed-impact-v1.md`](./poc-spring-installed-impact-v1.md) and [`poc-spring-installed-impact-v1.json`](./poc-spring-installed-impact-v1.json) | `POC-SPRING-INSTALLED-IMPACT-001` |
 | [`poc-spring-impact-breadth-v1.md`](./poc-spring-impact-breadth-v1.md) and [`poc-spring-impact-breadth-v1.json`](./poc-spring-impact-breadth-v1.json) | `POC-SPRING-IMPACT-BREADTH-PREREG-001` / `POC-SPRING-IMPACT-BREADTH-G01` |
 | [`poc-otel-test-preparation-v1.json`](./poc-otel-test-preparation-v1.json) | `POC-OTEL-TRANSFER-001` |

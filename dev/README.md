@@ -2936,6 +2936,30 @@ every arm; local cache, Configuration Cache and measured writes are disabled:
 ./dev/check-poc-remote-cache-value /absolute/path/to/new-result.json
 ```
 
+### Real-repository remote-cache transfer
+
+`POC-REMOTE-CACHE-TRANSFER-001` moves the unchanged authenticated Shared/Edge
+read path from the deterministic fixture to Apache Kafka 4.3.1
+`:clients:testClasses`. Before any cache comparison, three sequential downloads
+of Kafka's fixed source archive derive and freeze a 337-ms/6,994,831-B/s link.
+Measured builds are offline, use the same native Gradle HTTP client and
+committed objects, disable local and Configuration caches, preserve the 4,062
+required outputs, and differ only in direct Shared versus prewarmed Edge
+locality.
+
+```bash
+./dev/check-poc-remote-cache-transfer-v1
+./dev/run-poc-remote-cache-transfer-v1 \
+  /absolute/path/to/new-result.json \
+  /absolute/path/to/kafka-source.tar.gz
+./dev/check-poc-remote-cache-transfer-v1-result \
+  /absolute/path/to/new-result.json
+```
+
+The network profile and unchanged 500-ms/2%/positive-bound/4-of-4 gate are
+preregistered. No failed pair, dependency preparation, cache seed or Edge
+warm-up enters the timing, and no post-result profile search is permitted.
+
 The checked result qualifies Edge locality under that profile. Direct Shared
 reads average 6,911.25 ms and Edge averages 4,510 ms, saving 2,401.25
 ms/34.74%. All four pairs are positive, the interval is

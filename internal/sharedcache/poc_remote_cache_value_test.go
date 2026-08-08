@@ -404,6 +404,10 @@ func pocRemoteCacheUpstreamAuth(next http.Handler, token, authorityDigest string
 }
 
 func pocRemoteCacheShape(metrics *pocRemoteCacheMetrics, next http.Handler) http.Handler {
+	return pocRemoteCacheShapeWithProfile(metrics, next, pocRemoteCacheLatency, pocRemoteCacheBandwidth)
+}
+
+func pocRemoteCacheShapeWithProfile(metrics *pocRemoteCacheMetrics, next http.Handler, latency time.Duration, bandwidth int64) http.Handler {
 	return http.HandlerFunc(func(response http.ResponseWriter, request *http.Request) {
 		recorder := httptest.NewRecorder()
 		next.ServeHTTP(recorder, request)
@@ -418,7 +422,7 @@ func pocRemoteCacheShape(metrics *pocRemoteCacheMetrics, next http.Handler) http
 			metrics.requests++
 			metrics.bytes += int64(len(payload))
 			metrics.mutex.Unlock()
-			time.Sleep(pocRemoteCacheLatency + time.Duration(int64(time.Second)*int64(len(payload))/pocRemoteCacheBandwidth))
+			time.Sleep(latency + time.Duration(int64(time.Second)*int64(len(payload))/bandwidth))
 		}
 		response.WriteHeader(recorder.Code)
 		_, _ = response.Write(payload)

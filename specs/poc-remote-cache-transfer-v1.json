@@ -1,0 +1,158 @@
+{
+  "schemaVersion": "buildopt.specs/poc-remote-cache-transfer/v1",
+  "workItem": "POC-REMOTE-CACHE-TRANSFER-001",
+  "status": "PREREGISTERED",
+  "preregisteredAt": "2026-08-08",
+  "preregistration": {
+    "productRevision": "3488a92a2e36383cda58ca17bd9700606c351d27",
+    "completedWarmupsBeforePreregistration": 0,
+    "completedObservationsBeforePreregistration": 0,
+    "acceptedObservationsBeforePreregistration": 0,
+    "edgeImplementationChanged": false,
+    "valueGateChanged": false,
+    "networkSearchAfterResultAllowed": false
+  },
+  "hypothesis": {
+    "mechanism": "EDGE_COMMITTED_READ_LOCALITY",
+    "control": "GRADLE_HTTP_BUILD_CACHE_DIRECT_TO_SHARED",
+    "candidate": "GRADLE_HTTP_BUILD_CACHE_TO_PREWARMED_BUILDOPT_EDGE",
+    "singleChangedInput": "CACHE_READ_LOCATION"
+  },
+  "repository": {
+    "nameWithOwner": "apache/kafka",
+    "releaseTag": "4.3.1",
+    "revision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "sourceArchiveUrl": "https://codeload.github.com/apache/kafka/tar.gz/26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "sourceArchiveSha256": "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2",
+    "sourceArchiveBytes": 14169772,
+    "gradleVersion": "9.2.1",
+    "jdk": "temurin-25.0.3+9",
+    "fixedInputSha256": {
+      "gradle/wrapper/gradle-wrapper.properties": "ae9287ed83e55d3a7e1fc1475faaf03fe6cb6e216a976d64852b1c4312ae3559",
+      "gradle.properties": "0de8cbc79425cb95e31312b8dfa898b084e67045bd0a0bbfc7c0455c3cc3c7f7",
+      "settings.gradle": "1e3f0c2e339757e2112b24c696cb227f6696252364724f041e2642e8e9c28aab",
+      "build.gradle": "50b4d82988d6567b146b419c99498fb8e1b6154815f651750a5335ea905b7bd6",
+      "wrapper.gradle": "7ac5cc0849b211a9772d5273a8edabe2211c857a661120e4ff32f411571e1059"
+    }
+  },
+  "workload": {
+    "class": "REAL_MULTI_MODULE_JAVA_SCALA_TEST_PREPARATION",
+    "entrypoint": ":clients:testClasses",
+    "forbiddenTaskType": "org.gradle.api.tasks.testing.Test",
+    "requiredOutputRoots": [
+      "clients/build/classes/java/main",
+      "clients/build/classes/java/test",
+      "clients/build/resources/main",
+      "clients/build/resources/test"
+    ],
+    "requiredOutputCount": 4062,
+    "requiredOutputSha256": "0a1ba415bbdeec51775d720beed627b95b11f6073a2fef450ccfd269df57ea23",
+    "minimumRemoteCacheHits": 4,
+    "minimumCommittedObjectBytes": 1048576
+  },
+  "networkDerivation": {
+    "capturedAt": "2026-08-08",
+    "method": "MEDIAN_OF_THREE_SEQUENTIAL_FIXED_SOURCE_ARCHIVE_DOWNLOADS",
+    "curlVersion": "8.5.0",
+    "allSamplesMatchedSourceSha256": true,
+    "samples": [
+      {
+        "sample": 1,
+        "httpCode": 200,
+        "bytes": 14169772,
+        "timeToFirstByteMs": 365.408,
+        "totalMs": 2081.036,
+        "bytesPerSecond": 6808998
+      },
+      {
+        "sample": 2,
+        "httpCode": 200,
+        "bytes": 14169772,
+        "timeToFirstByteMs": 337.266,
+        "totalMs": 2025.749,
+        "bytesPerSecond": 6994831
+      },
+      {
+        "sample": 3,
+        "httpCode": 200,
+        "bytes": 14169772,
+        "timeToFirstByteMs": 218.615,
+        "totalMs": 728.495,
+        "bytesPerSecond": 19450747
+      }
+    ],
+    "medianTimeToFirstByteMs": 337.266,
+    "modeledLatencyPerResponseMs": 337,
+    "medianBandwidthBytesPerSecond": 6994831,
+    "packetLossRatio": 0,
+    "packetLossForcedForIsolation": true
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12
+  },
+  "cacheState": {
+    "sameCommittedSharedObjects": true,
+    "nativeLocalCacheEnabled": false,
+    "configurationCacheEnabled": false,
+    "pushAllowedDuringMeasuredRuns": false,
+    "seedAndEdgeWarmupMeasured": false,
+    "independentProjectAndGradleHomePerArm": true,
+    "dependenciesPreparedBeforeMeasurement": true,
+    "dependenciesOfflineDuringMeasurement": true,
+    "outputsAndProjectStateRemovedBeforeEveryArm": true
+  },
+  "measurement": {
+    "warmupsPerArm": 1,
+    "pairs": 4,
+    "pairOrder": [
+      "CONTROL_FIRST",
+      "CANDIDATE_FIRST",
+      "CONTROL_FIRST",
+      "CANDIDATE_FIRST"
+    ],
+    "maximumInterArmIdleGapMs": 15000,
+    "requiredTaskOutcome": "FROM-CACHE"
+  },
+  "valueGate": {
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositivePairs": 4,
+    "requiredOutputsIdentical": true,
+    "requiredOutputsNonEmpty": true,
+    "requiredTaskOutcomesIdentical": true,
+    "maximumProductAttributableFailures": 0,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedPairsMayBeDiscarded": false,
+    "parityAloneCountsAsValue": false
+  },
+  "decisionPolicy": {
+    "qualifiedDecision": "QUALIFY_EDGE_LOCALITY_TRANSFER_ON_KAFKA_PROFILE",
+    "unqualifiedDecision": "RETAIN_NATIVE_REMOTE_CACHE_FOR_KAFKA_PROFILE",
+    "sharedAloneReceivesNoAccelerationClaim": true,
+    "noAdditionalNetworkSearchAfterTerminalDecision": true
+  },
+  "boundaries": {
+    "sameSharedOrigin": true,
+    "sameGradleHttpBuildCacheClient": true,
+    "sameCommittedObjectBytes": true,
+    "sameWorkloadAndOutputs": true,
+    "sameAuthenticationCheck": true,
+    "onlyReadLocalityChanges": true,
+    "edgeImplementationChanged": false,
+    "safeCacheChanged": false,
+    "runtimeTuningChanged": false,
+    "buildImpactChanged": false,
+    "testSelectionChanged": false,
+    "testExecutionChanged": false,
+    "testOptimizationModified": false,
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "universalSavingsClaimed": false
+  }
+}

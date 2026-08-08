@@ -208,6 +208,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-kafka-packaging-v1-result" >/dev/null
         "${buildopt_script_dir}/check-poc-verification-distribution-graph-v1-result" >/dev/null
         "${buildopt_script_dir}/check-poc-verification-overhead-attribution-v1-result" >/dev/null
+        "${buildopt_script_dir}/check-poc-remote-cache-transfer-v1" >/dev/null
         "${buildopt_script_dir}/check-poc-spring-installed-impact" >/dev/null
         "${buildopt_script_dir}/check-poc-spring-impact-breadth" >/dev/null
         "${buildopt_script_dir}/check-poc-impact-generalization" >/dev/null
