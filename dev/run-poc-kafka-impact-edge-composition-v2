@@ -34,7 +34,7 @@ if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
     exit 64
 fi
 for buildopt_command in awk chmod cp find git grep jq mkdir mktemp mv readlink rm \
-    sed sha256sum sort stat tar timeout xargs; do
+    sed sha256sum sleep sort stat tar timeout xargs; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
         printf 'required Kafka composition v2 command is unavailable: %s\n' \
             "${buildopt_command}" >&2
@@ -101,7 +101,18 @@ buildopt_cleanup() {
             printf 'Kafka composition v2 failure logs preserved: %s\n' \
                 "${buildopt_output}.failure-logs.tar.gz" >&2
         fi
-        rm -rf -- "${buildopt_root}"
+        for _ in 1 2 3; do
+            if rm -rf -- "${buildopt_root}"; then
+                return 0
+            fi
+            buildopt_stop "${buildopt_root}/seed-project" "${buildopt_root}/seed-home"
+            buildopt_stop "${buildopt_root}/control-project" "${buildopt_root}/control-home"
+            buildopt_stop "${buildopt_root}/candidate-project" "${buildopt_root}/candidate-home"
+            sleep 1
+        done
+        printf 'Kafka composition v2 could not remove temporary root: %s\n' \
+            "${buildopt_root}" >&2
+        return 1
     fi
 }
 trap buildopt_cleanup EXIT
