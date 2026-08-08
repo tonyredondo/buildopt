@@ -122,13 +122,21 @@ func TestPOCKafkaImpactEdgeCompositionExperiment(t *testing.T) {
 	seedOutputBytes := seedRun.OutputBytes
 
 	recordedMutex.Lock()
+	capturedObjectCount := len(recorded)
+	var capturedObjectBytes int64
 	seeded := make(map[string][]byte, len(recorded))
 	var seededBytes int64
 	for key, payload := range recorded {
+		capturedObjectBytes += int64(len(payload))
+		if int64(len(payload)) > MaximumBlobBytes {
+			continue
+		}
 		seeded[key] = bytes.Clone(payload)
 		seededBytes += int64(len(payload))
 	}
 	recordedMutex.Unlock()
+	excludedObjectCount := capturedObjectCount - len(seeded)
+	excludedObjectBytes := capturedObjectBytes - seededBytes
 	if len(seeded) == 0 || seededBytes < 1<<20 {
 		t.Fatalf("Kafka Impact/Edge committed entries = %d/%d", len(seeded), seededBytes)
 	}
@@ -366,7 +374,10 @@ func TestPOCKafkaImpactEdgeCompositionExperiment(t *testing.T) {
 		"network": map[string]any{"model": "INDEPENDENT_SOURCE_ARCHIVE_DERIVED_LOOPBACK_WAN", "latencyPerResponseMs": 337, "bandwidthBytesPerSecond": 6994831, "packetLossRatio": 0},
 		"preparation": map[string]any{
 			"measured": false, "dependenciesResolvedBeforeMeasurement": true,
-			"externalDependencyNetworkBlocked": true, "seededObjectCount": len(seeded),
+			"externalDependencyNetworkBlocked": true,
+			"capturedObjectCount": capturedObjectCount, "capturedObjectBytes": capturedObjectBytes,
+			"excludedOversizedObjectCount": excludedObjectCount, "excludedOversizedObjectBytes": excludedObjectBytes,
+			"sharedMaximumObjectBytes": MaximumBlobBytes, "seededObjectCount": len(seeded),
 			"seededObjectBytes": seededBytes, "seedOutputBytes": seedOutputBytes,
 			"seedOutputSha256": seedOutputSHA, "seedOutputProducingTask": ":clients:shadowJar",
 			"edgeWarmupOriginRequests": edgeWarmup.Requests, "edgeWarmupOriginBytes": edgeWarmup.Bytes,

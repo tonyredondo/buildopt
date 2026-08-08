@@ -115,6 +115,11 @@ jq -e \
     .preparation.measured == false and
     .preparation.dependenciesResolvedBeforeMeasurement == true and
     .preparation.externalDependencyNetworkBlocked == true and
+    .preparation.capturedObjectCount == (.preparation.seededObjectCount + .preparation.excludedOversizedObjectCount) and
+    .preparation.capturedObjectBytes == (.preparation.seededObjectBytes + .preparation.excludedOversizedObjectBytes) and
+    .preparation.excludedOversizedObjectCount > 0 and
+    .preparation.excludedOversizedObjectBytes > $spec[0].cacheState.sharedMaximumObjectBytes and
+    .preparation.sharedMaximumObjectBytes == $spec[0].cacheState.sharedMaximumObjectBytes and
     .preparation.seededObjectCount > 0 and
     .preparation.seededObjectBytes >= 1048576 and
     .preparation.seedOutputBytes > 0 and

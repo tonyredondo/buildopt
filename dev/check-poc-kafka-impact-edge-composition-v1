@@ -79,6 +79,8 @@ jq -e \
     .arms.commonGradleOptions == ["--daemon", "--build-cache", "--no-configuration-cache", "--parallel", "--console=plain", "--max-workers=12", "--no-scan"] and
     .cacheState.seedFromOptimizedNativeFullGraph == true and
     .cacheState.sameCommittedSharedObjects == true and
+    .cacheState.sharedMaximumObjectBytes == 104857600 and
+    .cacheState.objectsExceedingSharedLimitRemainUncommitted == true and
     .cacheState.nativeLocalCacheEnabled == false and
     .cacheState.configurationCacheEnabled == false and
     .cacheState.pushAllowedDuringMeasuredRuns == false and

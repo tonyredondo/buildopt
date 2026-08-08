@@ -104,6 +104,8 @@
   "cacheState": {
     "seedFromOptimizedNativeFullGraph": true,
     "sameCommittedSharedObjects": true,
+    "sharedMaximumObjectBytes": 104857600,
+    "objectsExceedingSharedLimitRemainUncommitted": true,
     "nativeLocalCacheEnabled": false,
     "configurationCacheEnabled": false,
     "pushAllowedDuringMeasuredRuns": false,

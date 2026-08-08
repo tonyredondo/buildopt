@@ -15,12 +15,13 @@ by the same Shared origin. Both arms use the same fixed source mutation,
 dependency state, committed cache objects, JDK, Gradle version, output scope,
 12-worker setting and modeled network profile.
 
-An unmeasured optimized-native seed populates one temporary remote cache. Its
-objects are committed unchanged to Shared and warmed unchanged into Edge. The
-seed binds the required shaded client-JAR digest for this run. Both measured
-arms must restore `:clients:shadowJar` from the same committed object and
-produce that exact digest; the candidate must not activate any BuildOpt task
-adapter.
+An unmeasured optimized-native seed populates one temporary remote cache. Every
+entry within Shared's immutable 100-MiB per-object boundary is committed
+unchanged and warmed unchanged into Edge; oversized native entries remain
+uncommitted in both arms and are counted explicitly. The seed binds the
+required shaded client-JAR digest for this run. Both measured arms must restore
+`:clients:shadowJar` from the same committed object and produce that exact
+digest; the candidate must not activate any BuildOpt task adapter.
 
 One unmeasured warm-up per arm precedes four alternating pairs. The composition
 qualifies only if it saves at least 500 ms and 2% on average, all four pairs are
