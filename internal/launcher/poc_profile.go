@@ -268,7 +268,11 @@ func readQualifiedPOCProfileFile(repositoryRoot, relativePath string) ([]byte, e
 	if err != nil {
 		return nil, fmt.Errorf("resolve qualified POC profile: %w", err)
 	}
-	relative, err := filepath.Rel(repositoryRoot, canonicalPath)
+	canonicalRoot, err := filepath.EvalSymlinks(repositoryRoot)
+	if err != nil {
+		return nil, fmt.Errorf("resolve qualified POC repository root: %w", err)
+	}
+	relative, err := filepath.Rel(canonicalRoot, canonicalPath)
 	if err != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) || filepath.IsAbs(relative) {
 		return nil, errors.New("qualified POC profile escapes the repository")
 	}
@@ -384,7 +388,11 @@ func hashQualifiedPOCPreconditionFile(repositoryRoot, relativePath string) (stri
 	if err != nil {
 		return "", err
 	}
-	relative, err := filepath.Rel(repositoryRoot, canonicalPath)
+	canonicalRoot, err := filepath.EvalSymlinks(repositoryRoot)
+	if err != nil {
+		return "", err
+	}
+	relative, err := filepath.Rel(canonicalRoot, canonicalPath)
 	if err != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) || filepath.IsAbs(relative) {
 		return "", errors.New("qualified POC precondition escapes the repository")
 	}
