@@ -234,7 +234,13 @@ env -u CI JAVA_HOME="${buildopt_java_home}" \
         go test -count=1 -timeout=40m -v ./internal/sharedcache \
         -run '^TestPOCKafkaImpactEdgeCompositionExperiment$'
 
-buildopt_expected_output=$(jq -er '.requiredOutput.qualifiedNormalizationDigest' "${buildopt_spec}")
+if [[ "${buildopt_installed_profile_value}" == 1 ]]; then
+    buildopt_expected_output=$(jq -er \
+        '.sourceNormalization.qualifiedArtifactSha256' "${buildopt_spec}")
+else
+    buildopt_expected_output=$(jq -er \
+        '.requiredOutput.qualifiedNormalizationDigest' "${buildopt_spec}")
+fi
 [[ "$(jq -er '.preparation.seedOutputSha256' "${buildopt_output}")" == \
     "${buildopt_expected_output}" ]] || {
     printf 'Kafka normalized seed output did not match the qualified digest\n' >&2
