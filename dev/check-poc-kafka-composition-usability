@@ -67,7 +67,7 @@ if [[ -f "${buildopt_result}" ]]; then
     jq -e --slurpfile performance "${buildopt_repo_root}/benchmarks/results/poc-kafka-impact-edge-composition-v2.json" '
         .schemaVersion == "buildopt.evidence/poc-kafka-composition-usability/v1" and
         .workItem == "POC-KAFKA-COMPOSITION-USABILITY-001" and
-        .implementationRevision == "74e5912a3861ee75486013187b8154707c3eb84b" and
+        .implementationRevision == "86691d45ddffc7063ca729a7fb89d80228b450d2" and
         .profile.candidateMechanisms == ["BUILD_IMPACT", "READ_ONLY_EDGE"] and
         .profile.edgePush == false and
         .profile.productionAuthorized == false and
