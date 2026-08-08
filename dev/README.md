@@ -3035,6 +3035,22 @@ three-project client-Jar candidate, the root `assemble` control, exact output,
 four alternating pairs and the unchanged value gate. Preregistration contains
 no accepted timings.
 
+After provisioning the fixed source archive, dependency cache and installed
+package, execute the immutable comparison with:
+
+```bash
+./dev/run-poc-kafka-packaging-v1 \
+  /absolute/result.json \
+  /absolute/install/bin/buildopt \
+  /absolute/kafka-source.tar.gz \
+  /absolute/gradle-home-seed
+```
+
+The runner creates a private disposable checkout, uses separate persistent
+Gradle homes for the two arms, performs unmeasured warm-ups, records exactly
+four alternating offline pairs, verifies the client JAR after every arm, and
+executes the global fallback after timing.
+
 Run the lock and doctor contract tests from the repository root:
 
 ```bash

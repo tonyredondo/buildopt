@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: ./dev/check-poc-kafka-packaging-v1-result [RESULT_FILE]\n' >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-kafka-packaging-v1.json"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-kafka-packaging-v1.json"}
+
+"${buildopt_script_dir}/check-poc-kafka-packaging-v1" >/dev/null
+jq -e --slurpfile spec "${buildopt_spec}" '
+    .schemaVersion == "buildopt.poc/kafka-packaging-result/v1" and
+    (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+    (.specSha256 | test("^[0-9a-f]{64}$")) and
+    (.runnerSha256 | test("^[0-9a-f]{64}$")) and
+    (.installedBinarySha256 | test("^[0-9a-f]{64}$")) and
+    .sourceArchiveSha256 == $spec[0].repository.sourceArchiveSha256 and
+    .runner.os == $spec[0].runner.os and
+    .runner.arch == $spec[0].runner.arch and
+    .runner.cpuCount == $spec[0].runner.cpuCount and
+    (.pairs | length) == $spec[0].runner.pairCount and
+    ([.pairs[].order] == $spec[0].runner.order) and
+    all(.pairs[]; .controlMs > 0 and .candidateMs > 0 and
+        .savedMs == (.controlMs - .candidateMs) and .outputIdentical == true and
+        .maximumArmGapMs <= $spec[0].runner.maximumPairSeparationMs) and
+    .result.controlMeanMs == ([.pairs[].controlMs] | add / length) and
+    .result.candidateMeanMs == ([.pairs[].candidateMs] | add / length) and
+    .result.meanSavedMs == ([.pairs[].savedMs] | add / length) and
+    .result.positivePairs == ([.pairs[].savedMs | select(. > 0)] | length) and
+    .result.pairedLowerBoundMs == ([.pairs[].savedMs] | min) and
+    .result.outputsIdentical == true and
+    .result.productFailures == 0 and
+    .result.fallbackPassed == true and
+    .decision == (
+      if (.result.meanSavedMs >= $spec[0].valueGate.minimumMeanSavedMs and
+          .result.meanSavedPercent >= $spec[0].valueGate.minimumMeanSavedPercent and
+          .result.positivePairs >= $spec[0].valueGate.minimumPositivePairs and
+          .result.pairedLowerBoundMs > 0)
+      then "QUALIFY_KAFKA_PACKAGING_SCOPE"
+      else "RETAIN_CURRENT_QUALIFIED_SCOPE"
+      end
+    )
+' "${buildopt_result}" >/dev/null
+
+buildopt_expected_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+[[ "$(jq -er '.specSha256' "${buildopt_result}")" == "${buildopt_expected_spec_sha}" ]] || {
+    printf 'Kafka packaging result spec digest mismatch\n' >&2
+    exit 1
+}
+
+printf 'Kafka packaging result contract: PASS\n'

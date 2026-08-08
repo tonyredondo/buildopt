@@ -1,0 +1,288 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 4)); then
+    printf 'usage: %s OUTPUT_FILE BUILDOPT_BIN SOURCE_ARCHIVE GRADLE_HOME_SEED\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_executable=$2
+buildopt_source_archive=$3
+buildopt_home_seed=$4
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-kafka-packaging-v1.json"
+buildopt_fixture="${buildopt_repo_root}/fixtures/poc-kafka-packaging"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
+    ! -x "${buildopt_executable}" || ! -f "${buildopt_source_archive}" ||
+    ! -d "${buildopt_home_seed}" ]]; then
+    printf 'invalid Kafka packaging runner input\n' >&2
+    exit 64
+fi
+for buildopt_command in awk cp date find grep jq mkdir mktemp rm sed sha256sum \
+    sort tar timeout; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'missing required command: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+if [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)" ]]; then
+    printf 'Kafka packaging runner requires a clean revision-bound checkout\n' >&2
+    exit 1
+fi
+"${buildopt_script_dir}/check-poc-kafka-packaging-v1" >/dev/null
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-kafka-packaging-v1.XXXXXX")
+buildopt_complete=false
+buildopt_stop() {
+    local buildopt_home=$1
+    if [[ -x "${buildopt_root}/source/gradlew" && -d "${buildopt_home}" ]]; then
+        (
+            cd "${buildopt_root}/source"
+            JAVA_HOME="${buildopt_java_home}" GRADLE_USER_HOME="${buildopt_home}" \
+                ./gradlew --stop
+        ) >/dev/null 2>&1 || true
+    fi
+}
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-kafka-packaging-v1."* ]]; then
+        buildopt_stop "${buildopt_root}/control-home"
+        buildopt_stop "${buildopt_root}/candidate-home"
+        if [[ "${buildopt_complete}" != true && -d "${buildopt_root}/logs" ]]; then
+            tar -C "${buildopt_root}" -czf "${buildopt_output}.failure-logs.tar.gz" logs
+            chmod 0600 "${buildopt_output}.failure-logs.tar.gz"
+        fi
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+chmod 0700 "${buildopt_root}"
+mkdir -p "${buildopt_root}/source" "${buildopt_root}/logs" \
+    "${buildopt_root}/control-home" "${buildopt_root}/candidate-home"
+
+[[ "$(sha256sum "${buildopt_source_archive}" | awk '{print $1}')" == \
+    "$(jq -er '.repository.sourceArchiveSha256' "${buildopt_spec}")" ]] || {
+    printf 'Kafka source archive checksum mismatch\n' >&2
+    exit 1
+}
+tar -xzf "${buildopt_source_archive}" --strip-components=1 -C "${buildopt_root}/source"
+
+while IFS=$'\t' read -r buildopt_path buildopt_sha; do
+    [[ "$(sha256sum "${buildopt_root}/source/${buildopt_path}" | awk '{print $1}')" == \
+        "${buildopt_sha}" ]] || {
+        printf 'Kafka fixed input checksum mismatch: %s\n' "${buildopt_path}" >&2
+        exit 1
+    }
+done < <(jq -r '.repository.fixedInputSha256 | to_entries[] | [.key, .value] | @tsv' \
+    "${buildopt_spec}")
+
+buildopt_change_path=$(jq -er '.change.path' "${buildopt_spec}")
+[[ "$(sha256sum "${buildopt_root}/source/${buildopt_change_path}" | awk '{print $1}')" == \
+    "$(jq -er '.change.originalSha256' "${buildopt_spec}")" ]] || {
+    printf 'Kafka change input checksum mismatch\n' >&2
+    exit 1
+}
+
+cp "${buildopt_fixture}/buildopt-impact-manifest.json" \
+    "${buildopt_root}/source/buildopt-impact-manifest.json"
+cp "${buildopt_fixture}/buildopt-impact-graph.generated.json" \
+    "${buildopt_root}/source/buildopt-impact-graph.generated.json"
+cp "${buildopt_fixture}/buildopt-impact.generated.json" \
+    "${buildopt_root}/source/buildopt-impact.generated.json"
+cp "${buildopt_fixture}/buildopt-qualified-profile.json" \
+    "${buildopt_root}/source/buildopt-qualified-profile.json"
+printf '%s\n' "${buildopt_change_path}" >"${buildopt_root}/source/.buildopt-changes"
+printf '\n// BuildOpt fixed Kafka packaging change.\n' \
+    >>"${buildopt_root}/source/${buildopt_change_path}"
+
+for buildopt_home in "${buildopt_root}/control-home" "${buildopt_root}/candidate-home"; do
+    if [[ -d "${buildopt_home_seed}/caches" ]]; then
+        cp -a --reflink=auto "${buildopt_home_seed}/caches" "${buildopt_home}/"
+    fi
+    if [[ -d "${buildopt_home_seed}/wrapper" ]]; then
+        cp -a --reflink=auto "${buildopt_home_seed}/wrapper" "${buildopt_home}/"
+    fi
+    find "${buildopt_home}" -type f \( -name '*.lock' -o -name gc.properties \) -delete
+done
+
+buildopt_java_home="${buildopt_repo_root}/.tools/toolchains/temurin-jdk-25-69264a7a211bf502"
+[[ -x "${buildopt_java_home}/bin/java" ]] || {
+    printf 'locked Temurin 25 toolchain is unavailable\n' >&2
+    exit 1
+}
+
+buildopt_reset_outputs() {
+    find "${buildopt_root}/source" -depth -type d \
+        \( -name build -o -name .gradle \) -exec rm -rf -- {} +
+}
+
+buildopt_assert_output() {
+    local buildopt_log=$1
+    mapfile -t buildopt_outputs < <(
+        find "${buildopt_root}/source/clients/build/libs" -maxdepth 1 -type f \
+            -name 'kafka-clients-*.jar' | sort
+    )
+    [[ "${#buildopt_outputs[@]}" == 1 ]] || {
+        printf 'Kafka packaging output count mismatch\n' >&2
+        return 1
+    }
+    [[ "$(sha256sum "${buildopt_outputs[0]}" | awk '{print $1}')" == \
+        "$(jq -er '.requiredOutput.sha256' "${buildopt_spec}")" ]] || {
+        printf 'Kafka packaging output digest mismatch\n' >&2
+        return 1
+    }
+    grep -Fq 'BUILD SUCCESSFUL' "${buildopt_log}"
+    ! grep -Eq '^> Task .*:test($| )' "${buildopt_log}"
+}
+
+buildopt_run_control() {
+    local buildopt_log=$1
+    (
+        cd "${buildopt_root}/source"
+        JAVA_HOME="${buildopt_java_home}" \
+        GRADLE_USER_HOME="${buildopt_root}/control-home" \
+            timeout 20m ./gradlew --daemon --offline --build-cache --parallel \
+            --console=plain --max-workers=12 --no-scan assemble
+    ) >"${buildopt_log}" 2>&1
+}
+
+buildopt_run_candidate() {
+    local buildopt_log=$1
+    (
+        cd "${buildopt_root}/source"
+        JAVA_HOME="${buildopt_java_home}" \
+        GRADLE_USER_HOME="${buildopt_root}/candidate-home" \
+            timeout 20m "${buildopt_executable}" poc \
+            --changes-file .buildopt-changes
+    ) >"${buildopt_log}" 2>&1
+}
+
+for buildopt_arm in control candidate; do
+    buildopt_reset_outputs
+    "buildopt_run_${buildopt_arm}" "${buildopt_root}/logs/warmup-${buildopt_arm}.log"
+    buildopt_assert_output "${buildopt_root}/logs/warmup-${buildopt_arm}.log"
+done
+
+buildopt_pairs='[]'
+buildopt_failures=0
+buildopt_previous_end_ns=0
+for buildopt_pair in 1 2 3 4; do
+    if ((buildopt_pair % 2 == 1)); then
+        buildopt_order=(control candidate)
+        buildopt_order_name=CONTROL_CANDIDATE
+    else
+        buildopt_order=(candidate control)
+        buildopt_order_name=CANDIDATE_CONTROL
+    fi
+    buildopt_control_ms=0
+    buildopt_candidate_ms=0
+    buildopt_max_gap_ms=0
+    for buildopt_arm in "${buildopt_order[@]}"; do
+        buildopt_reset_outputs
+        buildopt_started_ns=$(date +%s%N)
+        if ((buildopt_previous_end_ns > 0)); then
+            buildopt_gap_ms=$(((buildopt_started_ns - buildopt_previous_end_ns) / 1000000))
+            ((buildopt_gap_ms > buildopt_max_gap_ms)) && buildopt_max_gap_ms=${buildopt_gap_ms}
+        fi
+        buildopt_log="${buildopt_root}/logs/pair-${buildopt_pair}-${buildopt_arm}.log"
+        if ! "buildopt_run_${buildopt_arm}" "${buildopt_log}"; then
+            buildopt_failures=$((buildopt_failures + 1))
+            tail -n 160 "${buildopt_log}" >&2
+            exit 1
+        fi
+        buildopt_finished_ns=$(date +%s%N)
+        buildopt_previous_end_ns=${buildopt_finished_ns}
+        buildopt_elapsed_ms=$(((buildopt_finished_ns - buildopt_started_ns) / 1000000))
+        buildopt_assert_output "${buildopt_log}"
+        printf -v "buildopt_${buildopt_arm}_ms" '%s' "${buildopt_elapsed_ms}"
+        if [[ "${buildopt_arm}" == candidate ]]; then
+            grep -Fq '"selectionMode":"POC_CANDIDATE"' "${buildopt_log}"
+            grep -Fq '"alternativeId":"kafka-clients-jar"' "${buildopt_log}"
+        fi
+    done
+    buildopt_saved_ms=$((buildopt_control_ms - buildopt_candidate_ms))
+    buildopt_pairs=$(jq -c \
+        --argjson index "${buildopt_pair}" \
+        --arg order "${buildopt_order_name}" \
+        --argjson control "${buildopt_control_ms}" \
+        --argjson candidate "${buildopt_candidate_ms}" \
+        --argjson saved "${buildopt_saved_ms}" \
+        --argjson gap "${buildopt_max_gap_ms}" \
+        '. + [{index:$index, order:$order, controlMs:$control,
+               candidateMs:$candidate, savedMs:$saved, maximumArmGapMs:$gap,
+               outputIdentical:true}]' <<<"${buildopt_pairs}")
+done
+
+buildopt_reset_outputs
+printf '%s\n' gradle.properties >"${buildopt_root}/source/.buildopt-changes"
+buildopt_fallback_log="${buildopt_root}/logs/fallback.log"
+buildopt_run_candidate "${buildopt_fallback_log}"
+grep -Fq '"selectionMode":"FULL_GRAPH"' "${buildopt_fallback_log}"
+grep -Fq '"selectionReason":"IMPACT_GLOBAL_CHANGE"' "${buildopt_fallback_log}"
+grep -Eq '^> Task :streams:jar($| )' "${buildopt_fallback_log}"
+buildopt_assert_output "${buildopt_fallback_log}"
+
+buildopt_control_mean=$(jq '[.[].controlMs] | add / length' <<<"${buildopt_pairs}")
+buildopt_candidate_mean=$(jq '[.[].candidateMs] | add / length' <<<"${buildopt_pairs}")
+buildopt_mean_saved=$(jq '[.[].savedMs] | add / length' <<<"${buildopt_pairs}")
+buildopt_saved_percent=$(awk -v saved="${buildopt_mean_saved}" -v control="${buildopt_control_mean}" \
+    'BEGIN { printf "%.2f", (saved * 100) / control }')
+buildopt_positive_pairs=$(jq '[.[].savedMs | select(. > 0)] | length' <<<"${buildopt_pairs}")
+buildopt_lower_bound=$(jq '[.[].savedMs] | min' <<<"${buildopt_pairs}")
+buildopt_max_gap=$(jq '[.[].maximumArmGapMs] | max' <<<"${buildopt_pairs}")
+
+buildopt_decision=RETAIN_CURRENT_QUALIFIED_SCOPE
+if awk -v saved="${buildopt_mean_saved}" -v percent="${buildopt_saved_percent}" \
+    -v lower="${buildopt_lower_bound}" \
+    'BEGIN { exit !(saved >= 500 && percent >= 2 && lower > 0) }' &&
+    [[ "${buildopt_positive_pairs}" == 4 && "${buildopt_failures}" == 0 &&
+       "${buildopt_max_gap}" -le 5000 ]]; then
+    buildopt_decision=QUALIFY_KAFKA_PACKAGING_SCOPE
+fi
+
+jq -n \
+    --arg revision "$(git -C "${buildopt_repo_root}" rev-parse HEAD)" \
+    --arg specSha "$(sha256sum "${buildopt_spec}" | awk '{print $1}')" \
+    --arg runnerSha "$(sha256sum "${BASH_SOURCE[0]}" | awk '{print $1}')" \
+    --arg binarySha "$(sha256sum "${buildopt_executable}" | awk '{print $1}')" \
+    --arg sourceSha "$(sha256sum "${buildopt_source_archive}" | awk '{print $1}')" \
+    --argjson cpu "$(getconf _NPROCESSORS_ONLN)" \
+    --argjson pairs "${buildopt_pairs}" \
+    --argjson controlMean "${buildopt_control_mean}" \
+    --argjson candidateMean "${buildopt_candidate_mean}" \
+    --argjson meanSaved "${buildopt_mean_saved}" \
+    --argjson savedPercent "${buildopt_saved_percent}" \
+    --argjson positivePairs "${buildopt_positive_pairs}" \
+    --argjson lowerBound "${buildopt_lower_bound}" \
+    --argjson maximumGap "${buildopt_max_gap}" \
+    --arg decision "${buildopt_decision}" '
+    {
+      schemaVersion: "buildopt.poc/kafka-packaging-result/v1",
+      buildoptRevision: $revision,
+      specSha256: $specSha,
+      runnerSha256: $runnerSha,
+      installedBinarySha256: $binarySha,
+      sourceArchiveSha256: $sourceSha,
+      runner: {os:"linux", arch:"amd64", cpuCount:$cpu},
+      pairs: $pairs,
+      result: {
+        controlMeanMs:$controlMean,
+        candidateMeanMs:$candidateMean,
+        meanSavedMs:$meanSaved,
+        meanSavedPercent:$savedPercent,
+        positivePairs:$positivePairs,
+        pairedLowerBoundMs:$lowerBound,
+        maximumArmGapMs:$maximumGap,
+        outputsIdentical:true,
+        productFailures:0,
+        fallbackPassed:true
+      },
+      decision: $decision
+    }
+    ' >"${buildopt_output}"
+chmod 0600 "${buildopt_output}"
+buildopt_complete=true
+"${buildopt_script_dir}/check-poc-kafka-packaging-v1-result" "${buildopt_output}"
+printf 'Kafka packaging result: %s\n' "${buildopt_decision}"
