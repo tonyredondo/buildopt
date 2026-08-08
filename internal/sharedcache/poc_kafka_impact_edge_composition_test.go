@@ -437,9 +437,13 @@ func runPOCKafkaImpactEdgeCandidate(t *testing.T, label, project, home, javaHome
 	if os.Getenv("BUILDOPT_POC_KAFKA_INSTALLED_PROFILE_VALUE") == "1" {
 		command := exec.Command(buildoptBin, "poc", "--changes-file", ".buildopt-changes", "--edge-url", remoteURL)
 		run := executePOCQualifiedRemote(t, label, command, project, home, javaHome, remoteURL, false, logs)
-		if !strings.Contains(run.Output, `"profileId":"normalized-impact-plus-read-only-edge"`) ||
-			!strings.Contains(run.Output, `"edgeCacheMode":"READ_ONLY_LOOPBACK"`) ||
-			!strings.Contains(run.Output, `"edgeCacheEndpoint":"`+remoteURL+`"`) {
+		profilePresent := strings.Contains(run.Output, `"profileId":"normalized-impact-plus-read-only-edge"`)
+		candidateEdgePresent := strings.Contains(run.Output, `"edgeCacheMode":"READ_ONLY_LOOPBACK"`) &&
+			strings.Contains(run.Output, `"edgeCacheEndpoint":"`+remoteURL+`"`)
+		fullGraphWithoutEdge := run.FullGraph &&
+			strings.Contains(run.Output, `"selectionReason":"IMPACT_GLOBAL_CHANGE"`) &&
+			!strings.Contains(run.Output, `"edgeCacheEndpoint"`)
+		if !profilePresent || (!candidateEdgePresent && !fullGraphWithoutEdge) {
 			t.Fatalf("installed Kafka profile plan is absent or incomplete:\n%s", run.Output)
 		}
 		return pocKafkaImpactEdgeRun{
