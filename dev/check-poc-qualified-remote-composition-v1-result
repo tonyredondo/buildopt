@@ -1,0 +1,168 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-qualified-remote-composition-v1.json"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-qualified-remote-composition-v1.json"}
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required qualified composition result validator is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -s "${buildopt_result}" ]] || {
+    printf 'qualified remote composition result is unavailable: %s\n' \
+        "${buildopt_result}" >&2
+    exit 1
+}
+"${buildopt_script_dir}/check-poc-qualified-remote-composition-v1" >/dev/null
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_runner_sha=$(sha256sum \
+    "${buildopt_script_dir}/run-poc-qualified-remote-composition-v1" | awk '{print $1}')
+buildopt_harness_sha=$(sha256sum \
+    "${buildopt_repo_root}/internal/sharedcache/poc_qualified_remote_composition_test.go" |
+    awk '{print $1}')
+buildopt_impact_sha=$(sha256sum \
+    "${buildopt_repo_root}/benchmarks/results/poc-kafka-packaging-v1.json" |
+    awk '{print $1}')
+buildopt_edge_sha=$(sha256sum \
+    "${buildopt_repo_root}/benchmarks/results/poc-remote-cache-transfer-v1.json" |
+    awk '{print $1}')
+
+jq -e \
+    --arg specSha "${buildopt_spec_sha}" \
+    --arg runnerSha "${buildopt_runner_sha}" \
+    --arg harnessSha "${buildopt_harness_sha}" \
+    --arg impactSha "${buildopt_impact_sha}" \
+    --arg edgeSha "${buildopt_edge_sha}" \
+    --slurpfile spec "${buildopt_spec}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    def bootstrap_mean($data; $sample):
+        reduce range(0; 4) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $data[((.state / 1073741824) | floor)].savedMs) |
+        .sum / 4;
+    def bootstrap95($data):
+        ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
+        [$r[102], $r[3993]];
+    .observations as $data |
+    (($data | map(.controlDurationMs) | add) / 4) as $controlMean |
+    (($data | map(.candidateDurationMs) | add) / 4) as $candidateMean |
+    ($controlMean - $candidateMean) as $saved |
+    (($data | map(.savedMs) | add) /
+        ($data | map(.controlDurationMs) | add)) as $ratio |
+    bootstrap95($data) as $interval |
+    ($data | map(select(.savedMs > 0)) | length) as $positive |
+    ($saved >= $spec[0].valueGate.minimumSavedMs and
+     $ratio >= $spec[0].valueGate.minimumReductionRatio and
+     $interval[0] > 0 and
+     $positive == $spec[0].valueGate.minimumPositivePairs and
+     .safety.impactFallbackPassed and .safety.edgeFailureFallbackPassed and
+     all($data[];
+        .outputsIdentical and .controlFullGraph and
+        .candidatePlanSelected and
+        .candidateAlternative == $spec[0].valueGate.requiredCandidateAlternative and
+        .candidateJarFromCache and
+        (.productAttributableFailure | not))) as $qualified |
+    .schemaVersion ==
+        "buildopt.evidence/poc-qualified-remote-composition/v1" and
+    .workItem == "POC-QUALIFIED-REMOTE-COMPOSITION-001" and
+    (.capturedAt | fromdateiso8601) and
+    (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+    .runnerScriptSha256 == $runnerSha and
+    .specSha256 == $specSha and .harnessSha256 == $harnessSha and
+    .sourceArchiveSha256 == $spec[0].repository.sourceArchiveSha256 and
+    (.dependencyCacheSha256 | sha256) and
+    (.installedAssets.binarySha256 | sha256) and
+    (.installedAssets.initScriptSha256 | sha256) and
+    (.installedAssets.pluginJarSha256 | sha256) and
+    .componentEvidence.kafkaImpactAndJarSha256 == $impactSha and
+    .componentEvidence.kafkaEdgeLocalitySha256 == $edgeSha and
+    .repository == {
+        nameWithOwner: $spec[0].repository.nameWithOwner,
+        releaseTag: $spec[0].repository.releaseTag,
+        revision: $spec[0].repository.revision,
+        gradleVersion: $spec[0].repository.gradleVersion,
+        jdk: $spec[0].repository.jdk
+    } and
+    .runner == {
+        id: "linux-amd64-12c-16659865600b-v1",
+        cpuCount: 12,
+        memoryBytes: 16659865600,
+        maxWorkers: 12
+    } and
+    .network == {
+        model: $spec[0].network.model,
+        latencyPerResponseMs: $spec[0].network.latencyPerResponseMs,
+        bandwidthBytesPerSecond: $spec[0].network.bandwidthBytesPerSecond,
+        packetLossRatio: $spec[0].network.packetLossRatio
+    } and
+    .preparation.measured == false and
+    .preparation.dependenciesResolvedBeforeMeasurement == true and
+    .preparation.externalDependencyNetworkBlocked == true and
+    .preparation.seededObjectCount > 0 and
+    .preparation.seededObjectBytes >= 1048576 and
+    .preparation.edgeWarmupOriginRequests == .preparation.seededObjectCount and
+    .preparation.edgeWarmupOriginBytes == .preparation.seededObjectBytes and
+    ($data | length) == $spec[0].measurement.pairs and
+    [$data[].pair] == [1, 2, 3, 4] and
+    [$data[].order] == $spec[0].measurement.pairOrder and
+    all($data[];
+        (.controlDurationMs | type == "number" and . > 0) and
+        (.candidateDurationMs | type == "number" and . > 0) and
+        .savedMs == (.controlDurationMs - .candidateDurationMs) and
+        .interArmIdleGapMs >= 0 and
+        .interArmIdleGapMs <= $spec[0].measurement.maximumInterArmIdleGapMs and
+        .controlOriginRequests > 0 and .controlOriginBytes > 0 and
+        .candidateOriginRequests == 0 and .candidateOriginBytes == 0 and
+        .controlRemoteCacheHits > 0 and .candidateRemoteCacheHits > 0 and
+        .controlFullGraph == true and .candidatePlanSelected == true and
+        .candidateAlternative == $spec[0].fixture.alternativeId and
+        .candidateJarFromCache == true and
+        .requiredOutputCount == $spec[0].requiredOutput.count and
+        .requiredOutputBytes > 0 and
+        .requiredOutputSha256 == $spec[0].requiredOutput.sha256 and
+        (.controlTaskOutcomeSha256 | sha256) and
+        (.candidateTaskOutcomeSha256 | sha256) and
+        .outputsIdentical == true and
+        .productAttributableFailure == false) and
+    ([$data[].requiredOutputSha256] | unique | length) == 1 and
+    .safety == {
+        impactFallbackPassed: true,
+        edgeFailureFallbackPassed: true
+    } and
+    .result == {
+        pairs: 4,
+        controlMeanMs: $controlMean,
+        candidateMeanMs: $candidateMean,
+        meanSavedMs: $saved,
+        reductionRatio: $ratio,
+        interval95SavedMs: $interval,
+        positivePairs: $positive,
+        qualified: $qualified,
+        decision: (if $qualified then
+            $spec[0].decisionPolicy.qualifiedDecision
+            else $spec[0].decisionPolicy.unqualifiedDecision end)
+    } and
+    .boundaries == $spec[0].boundaries
+' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'qualified composition validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'POC qualified remote composition evidence OK: %s\n' \
+    "${buildopt_result}"

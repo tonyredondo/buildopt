@@ -1,0 +1,174 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-qualified-remote-composition-v1.json"
+buildopt_fixture="${buildopt_repo_root}/fixtures/poc-kafka-packaging"
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required qualified composition validator is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    .schemaVersion == "buildopt.specs/poc-qualified-remote-composition/v1" and
+    .workItem == "POC-QUALIFIED-REMOTE-COMPOSITION-001" and
+    .status == "PREREGISTERED" and
+    .preregisteredAt == "2026-08-08" and
+    .preregistration.productRevision ==
+        "1f3843eb9d89eaca005772b710aca4223c554e0a" and
+    .preregistration.acceptedObservationsBeforePreregistration == 0 and
+    .preregistration.componentPercentagesMayBeAdded == false and
+    .preregistration.valueGateChanged == false and
+    .preregistration.workloadSearchAfterResultAllowed == false and
+    .hypothesis.control ==
+        "OPTIMIZED_NATIVE_GRADLE_FULL_ASSEMBLE_DIRECT_TO_SHARED" and
+    .hypothesis.candidate ==
+        "INSTALLED_BUILDOPT_IMPACT_PLUS_STANDARD_JAR_THROUGH_PREWARMED_EDGE" and
+    .hypothesis.qualifiedMechanisms == [
+        "KAFKA_BUILD_IMPACT", "EXACT_STANDARD_JAR",
+        "EDGE_COMMITTED_READ_LOCALITY"
+    ] and
+    .hypothesis.reportedEffect == "ONE_END_TO_END_COMPOSITION_EFFECT" and
+    .repository.nameWithOwner == "apache/kafka" and
+    .repository.releaseTag == "4.3.1" and
+    .repository.revision == "26b251a451ce941d3d7a55e6487bcb7f16b5ad48" and
+    .repository.sourceArchiveSha256 ==
+        "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2" and
+    .repository.sourceArchiveBytes == 14169772 and
+    .repository.gradleVersion == "9.2.1" and
+    .repository.jdk == "temurin-25.0.3+9" and
+    .fixture.directory == "fixtures/poc-kafka-packaging" and
+    (.fixture.manifestSha256 | sha256) and
+    (.fixture.graphSha256 | sha256) and
+    (.fixture.generatedManifestSha256 | sha256) and
+    .fixture.repositoryId == "apache/kafka" and
+    .fixture.pipelineClass == "poc-kafka-packaging-v1" and
+    .fixture.alternativeId == "kafka-clients-jar" and
+    .fixture.candidateEntrypoints == [":clients:jar"] and
+    .fixture.fallbackEntrypoints == ["assemble"] and
+    .fixture.omittedProjectCount == 61 and
+    .change.path ==
+        "clients/src/main/java/org/apache/kafka/clients/Metadata.java" and
+    (.change.originalSha256 | sha256) and
+    .change.mutation == "APPEND_COMMENT_LINE" and
+    .change.changesFile == ".buildopt-changes" and
+    .network.model == "INDEPENDENT_SOURCE_ARCHIVE_DERIVED_LOOPBACK_WAN" and
+    .network.latencyPerResponseMs == 337 and
+    .network.bandwidthBytesPerSecond == 6994831 and
+    .network.packetLossRatio == 0 and
+    .network.derivationEvidence ==
+        "benchmarks/results/poc-remote-cache-transfer-v1.json" and
+    .arms.control.entrypoints == ["assemble"] and
+    .arms.control.buildImpact == false and
+    .arms.control.standardJarAdapter == false and
+    .arms.control.remoteReadLocation == "SHARED" and
+    .arms.candidate.entrypoints == [":clients:jar"] and
+    .arms.candidate.buildImpact == true and
+    .arms.candidate.standardJarAdapter == true and
+    .arms.candidate.remoteReadLocation == "PREWARMED_EDGE" and
+    .arms.candidate.installedBuildoptRequired == true and
+    .arms.commonGradleOptions == [
+        "--daemon", "--build-cache", "--no-configuration-cache",
+        "--parallel", "--console=plain", "--max-workers=12", "--no-scan"
+    ] and
+    .cacheState.seedFromInstalledCandidate == true and
+    .cacheState.sameCommittedSharedObjects == true and
+    .cacheState.nativeLocalCacheEnabled == false and
+    .cacheState.configurationCacheEnabled == false and
+    .cacheState.pushAllowedDuringMeasuredRuns == false and
+    .cacheState.seedAndEdgeWarmupMeasured == false and
+    .cacheState.dependenciesPreparedBeforeMeasurement == true and
+    .cacheState.externalDependencyNetworkBlockedDuringMeasurement == true and
+    .cacheState.loopbackRemoteCacheAllowedDuringMeasurement == true and
+    .cacheState.outputsAndProjectStateRemovedBeforeEveryArm == true and
+    .requiredOutput.glob == "clients/build/libs/kafka-clients-*.jar" and
+    .requiredOutput.count == 1 and
+    .requiredOutput.sha256 ==
+        "894d8e71aa10070f7c73212cfcce0489401a00c3217a75f2f3d55c8e6da4738a" and
+    .measurement.warmupsPerArm == 1 and .measurement.pairs == 4 and
+    .measurement.pairOrder == [
+        "CONTROL_FIRST", "CANDIDATE_FIRST",
+        "CONTROL_FIRST", "CANDIDATE_FIRST"
+    ] and
+    .measurement.maximumInterArmIdleGapMs == 15000 and
+    .valueGate.minimumSavedMs == 500 and
+    .valueGate.minimumReductionRatio == 0.02 and
+    .valueGate.positiveLower95Bound == true and
+    .valueGate.minimumPositivePairs == 4 and
+    .valueGate.requiredOutputsIdentical == true and
+    .valueGate.requiredCandidatePlan == "POC_CANDIDATE" and
+    .valueGate.requiredCandidateAlternative == "kafka-clients-jar" and
+    .valueGate.requiredCandidateJarOutcome == "FROM-CACHE" and
+    .valueGate.maximumProductAttributableFailures == 0 and
+    .valueGate.thresholdsMayMoveAfterMeasurement == false and
+    .valueGate.failedPairsMayBeDiscarded == false and
+    .fallback.globalChangePath == "gradle.properties" and
+    .fallback.requiredSelectionMode == "FULL_GRAPH" and
+    .fallback.requiredSelectionReason == "IMPACT_GLOBAL_CHANGE" and
+    .fallback.requiredOutsideCandidateTask == ":streams:jar" and
+    .fallback.edgeReadFailureMustPreserveBuildSuccess == true and
+    .fallback.requiredOutputStillApplies == true and
+    .decisionPolicy.qualifiedDecision == "QUALIFY_KAFKA_REMOTE_COMPOSITION" and
+    .decisionPolicy.unqualifiedDecision == "RETAIN_SEPARATE_KAFKA_MECHANISMS" and
+    .decisionPolicy.componentPercentagesRemainNonAdditive == true and
+    .decisionPolicy.noProductionAuthorization == true and
+    .boundaries.sameSharedOrigin == true and
+    .boundaries.sameCommittedObjectBytes == true and
+    .boundaries.sameSourceAndChange == true and
+    .boundaries.sameRequiredOutput == true and
+    .boundaries.testTasksForbidden == true and
+    .boundaries.runtimeTuningChanged == false and
+    .boundaries.safeCacheChanged == false and
+    .boundaries.hotStateChanged == false and
+    .boundaries.standardCopyChanged == false and
+    .boundaries.testSelectionChanged == false and
+    .boundaries.testExecutionChanged == false and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.proofOfConcept == true and
+    .boundaries.productionReadinessClaimed == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false and
+    .boundaries.universalSavingsClaimed == false
+' "${buildopt_spec}" >/dev/null
+
+while IFS=$'\t' read -r buildopt_path buildopt_expected; do
+    [[ "$(sha256sum "${buildopt_fixture}/${buildopt_path}" | awk '{print $1}')" == \
+        "${buildopt_expected}" ]] || {
+        printf 'qualified composition fixture digest mismatch: %s\n' \
+            "${buildopt_path}" >&2
+        exit 1
+    }
+done < <(jq -r '
+    ["buildopt-impact-manifest.json", .fixture.manifestSha256],
+    ["buildopt-impact-graph.generated.json", .fixture.graphSha256],
+    ["buildopt-impact.generated.json", .fixture.generatedManifestSha256] |
+    @tsv
+' "${buildopt_spec}")
+
+jq -e '
+    .result.qualified == true and
+    .result.decision == "QUALIFY_EDGE_LOCALITY_TRANSFER_ON_KAFKA_PROFILE" and
+    .repository.nameWithOwner == "apache/kafka" and
+    .network.latencyPerResponseMs == 337 and
+    .network.bandwidthBytesPerSecond == 6994831
+' "${buildopt_repo_root}/benchmarks/results/poc-remote-cache-transfer-v1.json" \
+    >/dev/null
+jq -e '
+    .decision == "QUALIFY_KAFKA_PACKAGING_SCOPE" and
+    .result.fallbackPassed == true and
+    .result.outputsIdentical == true
+' "${buildopt_repo_root}/benchmarks/results/poc-kafka-packaging-v1.json" \
+    >/dev/null
+
+printf 'POC qualified remote composition contract OK: %s\n' "${buildopt_spec}"

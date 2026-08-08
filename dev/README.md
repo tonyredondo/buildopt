@@ -2963,11 +2963,35 @@ preregistered. No failed pair, dependency preparation, cache seed or Edge
 warm-up enters the timing, and no post-result profile search is permitted.
 
 The checked result qualifies Edge locality under that profile. Direct Shared
-reads average 6,911.25 ms and Edge averages 4,510 ms, saving 2,401.25
-ms/34.74%. All four pairs are positive, the interval is
-+2,260.5..+2,542 ms, outputs and `FROM-CACHE` outcomes are exact, and Edge
-makes zero measured Shared requests. It cannot claim that Shared storage
-itself is faster than another remote origin.
+reads average 8,885.25 ms and Edge averages 7,534 ms, saving 1,351.25
+ms/15.21%. All four pairs are positive, the interval is
++788.25..+1,883 ms, outputs and `FROM-CACHE` outcomes are exact, and Edge
+makes zero measured Shared reads. It cannot claim that Shared storage itself
+is faster than another remote origin.
+
+### Qualified Kafka remote composition
+
+`POC-QUALIFIED-REMOTE-COMPOSITION-001` measures one end-to-end effect instead
+of adding the independent Kafka percentages. Native Gradle runs the full
+`assemble` graph against Shared. The installed BuildOpt candidate selects
+`:clients:jar`, enables the exact standard-`Jar` adapter and reads the same
+committed objects through prewarmed Edge. Both arms retain the fixed change,
+dependencies, output JAR, 12-worker execution and 337-ms/6,994,831-B/s profile.
+
+```bash
+./dev/check-poc-qualified-remote-composition-v1
+./dev/run-poc-qualified-remote-composition-v1 \
+  /absolute/path/to/new-result.json \
+  /absolute/path/to/buildopt \
+  /absolute/path/to/kafka-source.tar.gz
+./dev/check-poc-qualified-remote-composition-v1-result \
+  /absolute/path/to/new-result.json
+```
+
+The protocol requires four alternating positive pairs, exact client-JAR output,
+the preregistered candidate plan, `:clients:jar FROM-CACHE`, native full-graph
+fallback for a global change and successful output when Edge reads fail. Seed,
+warm-up and safety runs are not measured.
 
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source
