@@ -232,6 +232,33 @@ terminal decision is `QUALIFY_EDGE_LOCALITY_FOR_CONTROLLED_REMOTE_CACHE_POC`.
 This is a locality result under the frozen network profile, not evidence that
 Shared storage itself is faster than another Gradle-compatible origin.
 
+### Real-repository Edge transfer
+
+The checked [Kafka transfer evidence](./results/poc-remote-cache-transfer-v1.json)
+moves the unchanged Shared/Edge implementation to Apache Kafka 4.3.1
+`:clients:testClasses`. Its network profile was frozen before timing from the
+median of three SHA-identical source-archive downloads: 337 ms per response and
+6,994,831 bytes/s. Both arms use Gradle 9.2.1 native `HttpBuildCache`, the same
+six committed objects, prepared dependency state, disabled local and
+Configuration caches, and the same 4,062 required outputs.
+
+| Arm | Mean | Measured Shared traffic |
+|---|---:|---:|
+| Gradle HTTP cache direct to Shared | 8,885.25 ms | 4 GETs / 7,652,777 bytes per pair |
+| Gradle HTTP cache through prewarmed Edge | 7,534.00 ms | 0 GETs / 0 bytes per pair |
+
+Edge saves **1,351.25 ms/15.21%**. All four pairs are positive (+2,107,
++1,211, +533 and +1,554 ms), and the paired interval is
++788.25..+1,883 ms. All four cache-hit outcomes, 4,062 outputs and their
+24,722,721 bytes are identical. This transfers the locality result to a real
+repository and a materially different network shape; it remains an opt-in POC
+claim rather than universal or production evidence.
+
+```bash
+./dev/check-poc-remote-cache-transfer-v1-result \
+  benchmarks/results/poc-remote-cache-transfer-v1.json
+```
+
 ```bash
 ./dev/check-poc-full-path-ablation
 ./dev/test-poc-full-path-ablation

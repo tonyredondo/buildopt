@@ -35,7 +35,11 @@
   32-MiB object set through a prewarmed loopback Edge was **34.74% faster**
   than direct Shared reads over the frozen 80-ms/20-MiB/s link, saving
   2,401.25 ms with 4/4 positive pairs and zero measured upstream Edge reads.
-  This qualifies Edge locality for that profile, not Shared storage generally.
+  The unchanged mechanism then transferred to Kafka `:clients:testClasses`
+  under an independently derived 337-ms/6,994,831-B/s profile: **15.21%
+  faster**, saving 1,351.25 ms with 4/4 positive pairs and 4,062 exact outputs.
+  This qualifies Edge locality for both bounded profiles, not Shared storage
+  generally or every network.
 
 The current POC supports a clear decision: continue investing in mechanisms
 that avoid work or safely make expensive tasks reusable, while keeping neutral
@@ -58,7 +62,7 @@ measured on different workloads and scopes.
 | **Graph reduction** | Replaces broad aggregate task dependencies with the typed producers required for the declared outputs. | The OpenTelemetry experiment removed **3 graph nodes and 2 executed tasks** while preserving all 125 required outputs. No standalone wall-clock percentage is claimed. | Structurally valuable, but it still needs independent timing evidence before it can be presented as a separate accelerator. |
 | **Exact-bound hot-state reuse** | Reuses a previously validated Build Impact plan only when repository revision, graph, manifest, changes, Wrapper, executable, and options still match. | Reduced BuildOpt preparation from **74.97 ms to 40.34 ms**, but the fresh whole-build arm was **7.68% slower**. | **Disabled for the measured profile.** Micro-overhead reduction does not override regressive end-to-end evidence. |
 | **Standard `Jar` cache adapter** | Makes only an unmodified standard Gradle `Jar` task eligible for native caching; custom archives, `Copy`, arbitrary tasks, and `Test` remain unchanged. | OpenTelemetry Build Impact: **39.92% faster**, saving 4,376.75 ms. Direct Spring test-build use: **11.31% slower** initially; after narrowing registration, the three-arm ablation remained **9.53% slower** than native. | **Qualified only inside the measured OpenTelemetry composition.** Correct cacheability and cache hits are insufficient when the avoided work is too small. |
-| **Shared and Edge Cache** | Reuse committed outputs across machines and optionally place them nearer developers or CI runners. | With the same eight committed Shared objects, Gradle client and 32-MiB outputs, prewarmed Edge averaged **34.74% faster** than direct Shared over a frozen 80-ms/20-MiB/s link, saving 2,401.25 ms with 4/4 positive pairs. | **Edge locality qualifies for this controlled POC profile.** Shared provides the common origin and authority semantics; no independent Shared acceleration claim is made. |
+| **Shared and Edge Cache** | Reuse committed outputs across machines and optionally place them nearer developers or CI runners. | Synthetic 32-MiB profile: **34.74% faster**, saving 2,401.25 ms. Kafka transfer under an independently derived 337-ms/6,994,831-B/s profile: **15.21% faster**, saving 1,351.25 ms. Both have 4/4 positive pairs, exact outputs and zero measured Edge upstream reads. | **Edge locality transfers across two bounded profiles.** Shared provides origin and authority semantics; no independent Shared acceleration or universal-network claim is made. |
 | **Build History** | Records durations, outcomes, cache behavior, and applied optimizations so results can be inspected and compared. | **No direct build-time saving.** | Observability that helps discover and validate optimizations; not an accelerator itself. |
 | **Launcher, gateway, and telemetry** | Provide orchestration, authentication, evidence collection, and safe fallback behavior. | Add fixed overhead rather than saving work. The local-cache fast path avoids starting these components when they have no consumer. | Necessary infrastructure for instrumented flows, but it must remain off the critical path when it is not needed. |
 | **Combined qualified path** | Orchestrates Build Impact and exact task optimizations through the packaged CLI and plugin while leaving unproven mechanisms disabled. | Fresh Spring Build Impact: **30.86% faster**. Clean OpenTelemetry Impact + standard `Jar`: **50.40% faster**. Kafka client packaging: **57.58% faster**, saving 4,637.5 ms with 4/4 positive pairs. | **Qualified for the exact measured POC workloads.** Generalize change shapes and outputs before broadening the claim. |
@@ -262,6 +266,14 @@ material network boundary. It should not be presented as a universal win on
 low-latency networks, and the result does not establish that Shared alone is
 faster than another Gradle-compatible remote origin.
 
+The Kafka transfer strengthens that conclusion without changing the mechanism.
+Under a network profile derived before timing from Kafka's own fixed source
+archive, direct Shared averaged 8,885.25 ms and prewarmed Edge 7,534 ms. The
+1,351.25-ms/15.21% saving cleared the same gate with 4/4 positive pairs, a
++788.25..+1,883-ms interval, four identical cache hits and 4,062 exact outputs.
+The smaller percentage is expected because only four of Kafka's tasks consumed
+7.65 MB from Shared; locality still shortened the complete build consistently.
+
 ### 7. Use real repositories with substantial builds
 
 Short two-second repositories are useful for compatibility but poor for
@@ -291,7 +303,7 @@ Kafka-specific product rule.
 | Reviewed task patch | Enabled only for exact matching contracts | Review required | Add recipes only after independent qualification |
 | Strict Safe Cache | Disabled | Disabled | Beat or justify cost versus native Gradle cache |
 | Runtime Tuning | Disabled | Disabled | Positive incremental evidence against optimized native Gradle |
-| Shared / Edge Cache | Edge qualified for the frozen locality profile | Operator opt-in | Transfer unchanged to a materially different repository and network shape before broadening |
+| Shared / Edge Cache | Edge qualified for the synthetic and Kafka locality profiles | Operator opt-in | Measure its end-to-end composition with the already qualified Kafka Build Impact/Jar profile; keep native Shared behavior outside matched remote profiles |
 
 ## Recommended Next Block
 
@@ -304,12 +316,17 @@ shorter, while BuildOpt's largest own phase is only 1.238233 ms. There is no
 500-ms generic product bottleneck to remove, so verification stays native and
 this line is closed without another timing run.
 
-The next performance block should transfer the already qualified Edge-locality
-result unchanged to a second repository and an independently derived network
-profile. It must compare end-to-end against Gradle's native remote cache,
-preserve exact outputs and fallback, and retain native/Shared behavior unless
-the same value gate passes. This tests whether the remaining positive mechanism
-is transferable rather than manufacturing value in an exhausted Spring scope.
+The Edge transfer is complete. On real Kafka `:clients:testClasses`, direct
+Shared averaged 8,885.25 ms and prewarmed Edge 7,534 ms, saving
+1,351.25 ms/15.21%. The same unchanged gate passed with 4/4 positive pairs,
+interval +788.25..+1,883 ms, identical task outcomes and all 4,062 outputs.
+
+The next performance block should compose only mechanisms independently
+qualified on Kafka: repository-authorized Build Impact, the exact standard-Jar
+adapter and prewarmed Edge locality. It must compare that complete installed
+path against optimized native Gradle using the same remote Shared origin,
+retain exact outputs and full fallback, and report one end-to-end effect rather
+than adding the existing 55.09%, 57.58% or 15.21% component percentages.
 
 The **qualified-profile usability and scope synthesis** block is now complete:
 

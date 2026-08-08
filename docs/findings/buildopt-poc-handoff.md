@@ -32,6 +32,10 @@
   and eight committed Shared objects averaged 6,911.25 ms over a frozen modeled
   WAN and 4,510 ms through a prewarmed Edge: **34.74% faster**, 4/4 positive
   pairs, identical 32-MiB outputs and zero measured upstream Edge requests.
+  The unchanged mechanism transferred to real Kafka `:clients:testClasses`
+  under an independently derived network profile: direct Shared averaged
+  8,885.25 ms and Edge 7,534 ms, **15.21% faster**, with 4/4 positive pairs and
+  all 4,062 outputs identical.
 - **The clean profile transfers to a third substantial repository.** On Apache
   Kafka 4.3.1, generic discovery reduced build-owned test preparation from 64
   reached projects to three and exact `Jar` reuse restored `:generator:jar`.
@@ -90,7 +94,7 @@ Unknown changes, unqualified tasks, failed validation, or
 | **Patch Autopilot** | Produces reviewable, reversible patches for exact known task shapes. | Manual build-script/plugin changes. | Can turn a non-cacheable custom task into a safely reusable task, but only for reviewed recipes that match exactly. |
 | **Exact task adapters** | Adds bounded eligibility for an unmodified standard Gradle task type. | Native caching when a task is correctly cacheable. | Uses real task traces to close one missing cacheability gap at a time. The standard-`Jar` adapter qualified; the later standard-`Copy` adapter works exactly but remains disabled because its isolated and incremental timing was unstable. |
 | **Hot-state reuse** | Reuses a validated impact plan when every repository, graph, Wrapper, executable, and option digest still matches. | Configuration Cache and daemon reuse inside Gradle. | Reduced planning overhead, but the fresh end-to-end arm was 7.68% slower. It is disabled for this profile. |
-| **Shared / Edge Cache** | Shares committed outputs and optionally places them nearer runners. | Native Gradle remote-cache protocol and third-party cache servers. | Edge locality qualified at **34.74% faster** under the frozen 80-ms/20-MiB/s profile. Shared remains the common authoritative origin; no standalone Shared speed claim is made. |
+| **Shared / Edge Cache** | Shares committed outputs and optionally places them nearer runners. | Native Gradle remote-cache protocol and third-party cache servers. | Edge qualified at **34.74% faster** on the synthetic 80-ms/20-MiB/s profile and **15.21% faster** on Kafka under an independently derived 337-ms/6,994,831-B/s profile. Shared remains the authoritative origin; no standalone Shared or universal-network speed claim is made. |
 | **Build History** | Stores redacted sessions, timing, cache, and optimization evidence. | Logs, Build Scans, and external observability tooling. | Provides local POC evidence and comparison. It improves diagnosis, not build time directly. |
 
 ## Initial Performance Evidence
@@ -217,6 +221,14 @@ averaged 4,510 ms, saving 2,401.25 ms/34.74%. All four pairs were positive,
 the paired interval was +2,260.5..+2,542 ms, all 32-MiB outputs and task
 outcomes matched, and Edge made zero measured upstream requests. The claim is
 deliberately limited to this network profile.
+
+The unchanged Edge mechanism then transferred to Kafka's real
+`:clients:testClasses` workload. A separately derived 337-ms/6,994,831-B/s
+profile was frozen before cache timing. Direct Shared averaged 8,885.25 ms and
+Edge 7,534 ms, saving 1,351.25 ms/15.21%; all four pairs were positive, the
+interval was +788.25..+1,883 ms, four cache-hit outcomes matched, and all 4,062
+required outputs were identical. This justifies testing a complete composition
+with the Kafka-qualified Build Impact/Jar profile, not adding percentages.
 
 The third-repository transfer then applied the unchanged clean profile to
 Apache Kafka 4.3.1, a 64-project Java/Scala/generated-source build. Native root
