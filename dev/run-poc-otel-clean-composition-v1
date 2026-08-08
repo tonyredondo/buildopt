@@ -161,19 +161,34 @@ buildopt_stop_gradle "${buildopt_root}/source" "${buildopt_root}/preflight-home"
 
 buildopt_readonly_cache="${buildopt_root}/readonly-dependencies"
 mkdir -p -- "${buildopt_readonly_cache}"
-cp -a -- "${buildopt_root}/preflight-home/caches/modules-2" \
-    "${buildopt_readonly_cache}/modules-2"
-find "${buildopt_readonly_cache}/modules-2" -type f \
-    \( -name '*.lock' -o -name gc.properties \) -delete
-chmod -R a-w "${buildopt_readonly_cache}"
-buildopt_readonly_cache_sha=$(
+if ! cp -a -- "${buildopt_root}/preflight-home/caches/modules-2" \
+    "${buildopt_readonly_cache}/modules-2"; then
+    printf 'OpenTelemetry dependency-cache copy failed\n' >&2
+    exit 1
+fi
+if ! find "${buildopt_readonly_cache}/modules-2" -type f \
+    \( -name '*.lock' -o -name gc.properties \) -delete; then
+    printf 'OpenTelemetry dependency-cache cleanup failed\n' >&2
+    exit 1
+fi
+if ! chmod -R a-w "${buildopt_readonly_cache}"; then
+    printf 'OpenTelemetry dependency-cache read-only transition failed\n' >&2
+    exit 1
+fi
+if ! buildopt_readonly_cache_sha=$(
     cd "${buildopt_readonly_cache}"
     find modules-2 -type f -print0 | sort -z |
         xargs -0 sha256sum | sha256sum | awk '{print $1}'
-)
+); then
+    printf 'OpenTelemetry dependency-cache digest failed\n' >&2
+    exit 1
+fi
 buildopt_cache_seed="${buildopt_root}/build-cache-seed.tar.gz"
-tar -C "${buildopt_root}/preflight-home/caches" -czf \
-    "${buildopt_cache_seed}" build-cache-1
+if ! tar -C "${buildopt_root}/preflight-home/caches" -czf \
+    "${buildopt_cache_seed}" build-cache-1; then
+    printf 'OpenTelemetry build-cache seed creation failed\n' >&2
+    exit 1
+fi
 buildopt_cache_seed_sha=$(sha256sum "${buildopt_cache_seed}" | awk '{print $1}')
 
 jq -Rn '[inputs | select(length > 0)]' <"${buildopt_tasks_file}" \

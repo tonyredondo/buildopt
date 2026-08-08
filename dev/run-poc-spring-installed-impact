@@ -455,6 +455,7 @@ jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revi
     ($mean >= $spec[0].valueGate.minimumSavedMs and
      $ratio >= $spec[0].valueGate.minimumReductionRatio and
      $interval[0] > 0 and
+     (($profileMode | not) or $positive == 8) and
      all($data[]; .requiredOutputCount > 0 and
          (.rootBuildGradleTestTasksExecuted | not) and
          (.productAttributableFailure | not))) as $qualified |

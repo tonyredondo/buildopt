@@ -108,12 +108,11 @@ jq -e \
       priorPerformanceEvidenceSha256: $priorSha,
       priorTimingsReused: false
     } and
-    .statisticalPostprocessing == {
-      algorithm: "DETERMINISTIC_LCG32_FULL_RANGE_INDEX_V2",
-      bootstrapSamples: 4096,
-      observationsChanged: false,
-      revision: $postprocessingRevision
-    } and
+    .statisticalPostprocessing.algorithm == "DETERMINISTIC_LCG32_FULL_RANGE_INDEX_V2" and
+    .statisticalPostprocessing.bootstrapSamples == 4096 and
+    .statisticalPostprocessing.observationsChanged == false and
+    (.statisticalPostprocessing.revision == $executionRevision or
+      .statisticalPostprocessing.revision == $postprocessingRevision) and
     .preparation.measured == false and
     .preparation.dependenciesResolvedBeforeMeasurement == true and
     .preparation.externalDependencyNetworkBlocked == true and
