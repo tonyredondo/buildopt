@@ -13,6 +13,7 @@ buildopt_home_seed=$4
 buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_spec="${buildopt_repo_root}/specs/poc-verification-overhead-attribution-v1.json"
+buildopt_source_evidence="${buildopt_repo_root}/benchmarks/results/poc-verification-distribution-graph-v1.json"
 buildopt_fixture="${buildopt_repo_root}/fixtures/poc-verification-distribution-graph"
 buildopt_guard="${buildopt_script_dir}/poc-spring-test-preparation.guard.init.gradle"
 
@@ -118,6 +119,12 @@ done
 }
 buildopt_cache_seed="${buildopt_root}/build-cache-seed.tar.gz"
 tar -C "${buildopt_home_seed}/caches" -czf "${buildopt_cache_seed}" build-cache-1
+buildopt_cache_seed_sha=$(sha256sum "${buildopt_cache_seed}" | awk '{print $1}')
+[[ "${buildopt_cache_seed_sha}" == \
+    "$(jq -er '.buildCacheSeedSha256' "${buildopt_source_evidence}")" ]] || {
+    printf 'verification attribution native-cache seed drifted\n' >&2
+    exit 1
+}
 
 buildopt_reset_arm() {
     local buildopt_arm=$1
@@ -303,8 +310,6 @@ fi
 
 buildopt_timing_report="${buildopt_root}/source/.buildopt-verification-attribution-timings.json"
 "${buildopt_script_dir}/check-build-impact-phase-timings" "${buildopt_timing_report}" >/dev/null
-buildopt_source_evidence="${buildopt_repo_root}/benchmarks/results/poc-verification-distribution-graph-v1.json"
-
 jq -n \
     --arg revision "$(git -C "${buildopt_repo_root}" rev-parse HEAD)" \
     --arg specSha "$(sha256sum "${buildopt_spec}" | awk '{print $1}')" \
@@ -312,6 +317,7 @@ jq -n \
     --arg binarySha "$(sha256sum "${buildopt_executable}" | awk '{print $1}')" \
     --arg sourceEvidenceSha "$(sha256sum "${buildopt_source_evidence}" | awk '{print $1}')" \
     --arg sourceArchiveSha "$(sha256sum "${buildopt_source_archive}" | awk '{print $1}')" \
+    --arg cacheSeedSha "${buildopt_cache_seed_sha}" \
     --arg outputSha "${buildopt_control_output_sha}" \
     --argjson cpu "$(getconf _NPROCESSORS_ONLN)" \
     --slurpfile control "${buildopt_root}/control.json" \
@@ -331,6 +337,7 @@ jq -n \
       installedBinarySha256:$binarySha,
       sourceEvidenceSha256:$sourceEvidenceSha,
       sourceArchiveSha256:$sourceArchiveSha,
+      buildCacheSeedSha256:$cacheSeedSha,
       runner:{os:"linux",arch:"amd64",cpuCount:$cpu,maxWorkers:12},
       methodology:{diagnosticOnly:true,performanceSampleAdded:false,
         operationTracePerturbsTiming:true,parallelTaskDurationsMayOverlap:true},

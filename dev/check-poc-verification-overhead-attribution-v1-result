@@ -44,6 +44,7 @@ jq -e '
     (.installedBinarySha256 | test("^[0-9a-f]{64}$")) and
     (.sourceEvidenceSha256 | test("^[0-9a-f]{64}$")) and
     (.sourceArchiveSha256 | test("^[0-9a-f]{64}$")) and
+    (.buildCacheSeedSha256 | test("^[0-9a-f]{64}$")) and
     .runner.os == "linux" and .runner.arch == "amd64" and
     .runner.cpuCount == 12 and .runner.maxWorkers == 12 and
     .methodology == {
@@ -99,6 +100,13 @@ jq -e '
 [[ "$(sha256sum "${buildopt_source_evidence}" | awk '{print $1}')" == \
     "$(jq -er '.sourceEvidenceSha256' "${buildopt_result}")" ]] || {
     printf 'verification overhead attribution source evidence mismatch\n' >&2
+    exit 1
+}
+jq -e --slurpfile source "${buildopt_source_evidence}" '
+    .sourceArchiveSha256 == $source[0].sourceArchiveSha256 and
+    .buildCacheSeedSha256 == $source[0].buildCacheSeedSha256
+' "${buildopt_result}" >/dev/null || {
+    printf 'verification overhead attribution fixed inputs drifted\n' >&2
     exit 1
 }
 buildopt_measured_revision=$(jq -er '.buildoptRevision' "${buildopt_result}")

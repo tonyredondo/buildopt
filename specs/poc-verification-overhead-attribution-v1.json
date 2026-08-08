@@ -25,6 +25,7 @@
     "operationTrace": "GRADLE_9_6_1_INTERNAL_BUILD_OPERATION_TRACE",
     "buildoptPhaseTimings": true,
     "diagnosticDurationsGatePerformance": false,
+    "requiresSourceBuildCacheSeed": true,
     "compareTaskPathsDurationsAndOutcomes": true,
     "compareNonOverlappingExternalPhases": true
   },

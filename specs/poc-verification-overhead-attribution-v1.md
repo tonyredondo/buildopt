@@ -12,7 +12,8 @@ The repository revision, source mutation, Gradle options, cache state,
 required Checkstyle report, native `checkstyleMain` control and
 `:spring-webmvc:checkstyleMain` candidate remain identical to the completed
 verification experiment. Each arm receives one unmeasured warm-up followed by
-one diagnostic observation.
+one diagnostic observation. The runner also requires the exact native-cache
+seed SHA-256 recorded by that source experiment.
 
 Gradle 9.6.1 operation traces provide non-overlapping external phases and task
 rows. The BuildOpt candidate also emits its existing phase-timing report. The

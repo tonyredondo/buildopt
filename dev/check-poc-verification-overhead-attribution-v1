@@ -32,6 +32,7 @@ jq -e '
     .methodology.observationsPerArm == 1 and
     .methodology.warmupMeasured == false and
     .methodology.diagnosticDurationsGatePerformance == false and
+    .methodology.requiresSourceBuildCacheSeed == true and
     .methodology.compareTaskPathsDurationsAndOutcomes == true and
     .methodology.compareNonOverlappingExternalPhases == true and
     .actionGate.minimumRecoverableCriticalPathMs == 500 and
