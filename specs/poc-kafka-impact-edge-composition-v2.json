@@ -1,0 +1,203 @@
+{
+  "schemaVersion": "buildopt.specs/poc-kafka-impact-edge-composition/v2",
+  "workItem": "POC-KAFKA-IMPACT-EDGE-COMPOSITION-002",
+  "status": "PREREGISTERED",
+  "preregisteredAt": "2026-08-08",
+  "preregistration": {
+    "productRevision": "e33d7717ed915f444ce1819ace7b9fa773c1e981",
+    "acceptedObservationsBeforePreregistration": 0,
+    "priorCompositionObservationsReusable": false,
+    "componentPercentagesMayBeAdded": false,
+    "valueGateChanged": false,
+    "workloadSearchAfterResultAllowed": false
+  },
+  "hypothesis": {
+    "control": "NORMALIZED_OPTIMIZED_NATIVE_GRADLE_FULL_ASSEMBLE_DIRECT_TO_SHARED",
+    "candidate": "NORMALIZED_INSTALLED_BUILDOPT_IMPACT_THROUGH_PREWARMED_EDGE",
+    "qualifiedMechanisms": [
+      "KAFKA_BUILD_IMPACT",
+      "EDGE_COMMITTED_READ_LOCALITY",
+      "KAFKA_SHADOWJAR_REPRODUCIBILITY_INPUT"
+    ],
+    "excludedMechanisms": [
+      "BUILDOPT_STANDARD_JAR_ADAPTER",
+      "BUILDOPT_STANDARD_COPY_ADAPTER",
+      "BUILDOPT_SAFE_CACHE",
+      "BUILDOPT_RUNTIME_TUNING",
+      "BUILDOPT_HOT_STATE",
+      "TEST_OPTIMIZATION"
+    ],
+    "reportedEffect": "ONE_END_TO_END_COMPOSITION_EFFECT"
+  },
+  "repository": {
+    "nameWithOwner": "apache/kafka",
+    "releaseTag": "4.3.1",
+    "revision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "sourceArchiveUrl": "https://codeload.github.com/apache/kafka/tar.gz/26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "sourceArchiveSha256": "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2",
+    "sourceArchiveBytes": 14169772,
+    "gradleVersion": "9.2.1",
+    "jdk": "temurin-25.0.3+9"
+  },
+  "sourceNormalization": {
+    "qualificationEvidence": "benchmarks/results/poc-kafka-shadowjar-reproducibility-v1.json",
+    "qualificationEvidenceSha256": "b651c30f607daa47410bfa00ff736846d56322a6d6c085d1f6a27bb7343966c3",
+    "qualifiedDecision": "QUALIFY_KAFKA_SHADOWJAR_REPRODUCIBILITY_INPUT",
+    "file": "build.gradle",
+    "originalSha256": "50b4d82988d6567b146b419c99498fb8e1b6154815f651750a5335ea905b7bd6",
+    "normalizedSha256": "97a0e249d30e1d7a7ef23f92d2effd902a790a4cfc81118adfcc7e6d8e7b23c0",
+    "replacements": [
+      {
+        "from": "    reproducibleFileOrder = false",
+        "to": "    reproducibleFileOrder = true",
+        "requiredOccurrences": 1
+      },
+      {
+        "from": "    preserveFileTimestamps = true",
+        "to": "    preserveFileTimestamps = false",
+        "requiredOccurrences": 1
+      }
+    ],
+    "appliedBeforeDependencyPreparation": true,
+    "identicalInSeedControlAndCandidate": true,
+    "upstreamModified": false
+  },
+  "fixture": {
+    "directory": "fixtures/poc-kafka-packaging",
+    "manifestSha256": "ce9a29b92da3fefd15eec9ce0a1c2dcb4309fcb58af184e449bc197d8f0c2fdb",
+    "graphSha256": "bff1ab7ba04b97010d0386278d767888cdab7c240f3d64987023e8b395a01f0b",
+    "generatedManifestSha256": "160f6e4b650004002593add7dca6898589902e061055d0b9ccff837f0f9a43ca",
+    "repositoryId": "apache/kafka",
+    "pipelineClass": "poc-kafka-packaging-v1",
+    "alternativeId": "kafka-clients-jar",
+    "candidateEntrypoints": [":clients:jar"],
+    "fallbackEntrypoints": ["assemble"],
+    "omittedProjectCount": 61
+  },
+  "change": {
+    "path": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+    "originalSha256": "30e3d4ad29be4f6be1e34d545caf08d8520fa4341e0948968cd87fd51b8911e3",
+    "mutation": "APPEND_COMMENT_LINE",
+    "changesFile": ".buildopt-changes"
+  },
+  "network": {
+    "model": "INDEPENDENT_SOURCE_ARCHIVE_DERIVED_LOOPBACK_WAN",
+    "latencyPerResponseMs": 337,
+    "bandwidthBytesPerSecond": 6994831,
+    "packetLossRatio": 0
+  },
+  "arms": {
+    "seed": {
+      "entrypoints": ["assemble"],
+      "buildImpact": false,
+      "remoteReadLocation": "EMPTY_SEED_SERVER",
+      "remotePush": true
+    },
+    "control": {
+      "entrypoints": ["assemble"],
+      "buildImpact": false,
+      "remoteReadLocation": "SHARED"
+    },
+    "candidate": {
+      "entrypoints": [":clients:jar"],
+      "buildImpact": true,
+      "standardJarAdapter": false,
+      "remoteReadLocation": "PREWARMED_EDGE",
+      "installedBuildoptRequired": true
+    },
+    "commonGradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--no-configuration-cache",
+      "--parallel",
+      "--console=plain",
+      "--max-workers=12",
+      "--no-scan"
+    ]
+  },
+  "cacheState": {
+    "seedFromOptimizedNativeFullGraph": true,
+    "sameCommittedSharedObjects": true,
+    "sharedMaximumObjectBytes": 104857600,
+    "objectsExceedingSharedLimitRemainUncommitted": true,
+    "nativeLocalCacheEnabled": false,
+    "configurationCacheEnabled": false,
+    "pushAllowedDuringMeasuredRuns": false,
+    "seedAndEdgeWarmupMeasured": false,
+    "dependenciesPreparedBeforeMeasurement": true,
+    "externalDependencyNetworkBlockedDuringMeasurement": true,
+    "loopbackRemoteCacheAllowedDuringMeasurement": true,
+    "outputsAndProjectStateRemovedBeforeEveryArm": true
+  },
+  "requiredOutput": {
+    "glob": "clients/build/libs/kafka-clients-*.jar",
+    "count": 1,
+    "producingTask": ":clients:shadowJar",
+    "producerType": "NORMALIZED_CUSTOM_SHADOW_JAR",
+    "digestSource": "SEEDED_COMMITTED_SHARED_OBJECT",
+    "qualifiedNormalizationDigest": "3ffd994e55cf6ddad21600a89a78a9b57851e4e0e48d2e75091d2736b0463349",
+    "sameDigestRequiredForEveryArm": true,
+    "requiredTaskOutcome": "FROM-CACHE"
+  },
+  "measurement": {
+    "warmupsPerArm": 1,
+    "pairs": 4,
+    "pairOrder": [
+      "CONTROL_FIRST",
+      "CANDIDATE_FIRST",
+      "CONTROL_FIRST",
+      "CANDIDATE_FIRST"
+    ],
+    "maximumInterArmIdleGapMs": 15000
+  },
+  "valueGate": {
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositivePairs": 4,
+    "requiredOutputsIdentical": true,
+    "requiredCandidatePlan": "POC_CANDIDATE",
+    "requiredCandidateAlternative": "kafka-clients-jar",
+    "requiredShadowJarOutcome": "FROM-CACHE",
+    "maximumProductAttributableFailures": 0,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedPairsMayBeDiscarded": false
+  },
+  "fallback": {
+    "globalChangePath": "gradle.properties",
+    "requiredSelectionMode": "FULL_GRAPH",
+    "requiredSelectionReason": "IMPACT_GLOBAL_CHANGE",
+    "requiredOutsideCandidateTask": ":streams:jar",
+    "edgeReadFailureStatus": 503,
+    "edgeReadFailureMustPreserveBuildSuccess": true,
+    "edgeReadFailureMustDisableRemoteCache": true,
+    "edgeReadFailureOutputMustMatchSeed": true
+  },
+  "decisionPolicy": {
+    "qualifiedDecision": "QUALIFY_KAFKA_IMPACT_EDGE_COMPOSITION",
+    "unqualifiedDecision": "RETAIN_SEPARATE_KAFKA_IMPACT_AND_EDGE",
+    "componentPercentagesRemainNonAdditive": true,
+    "noProductionAuthorization": true
+  },
+  "boundaries": {
+    "sameSharedOrigin": true,
+    "sameCommittedObjectBytes": true,
+    "sameNormalizedSourceAndChange": true,
+    "sameRequiredOutput": true,
+    "priorObservationsReused": false,
+    "testTasksForbidden": true,
+    "runtimeTuningChanged": false,
+    "safeCacheChanged": false,
+    "hotStateChanged": false,
+    "standardJarChanged": false,
+    "standardCopyChanged": false,
+    "testSelectionChanged": false,
+    "testExecutionChanged": false,
+    "testOptimizationModified": false,
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "universalSavingsClaimed": false
+  }
+}
