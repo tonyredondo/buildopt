@@ -147,16 +147,19 @@ buildopt_reset_arm() {
 buildopt_run_control() {
     local buildopt_log=$1
     local buildopt_trace=${2:-}
+    local -a buildopt_trace_environment=()
     local -a buildopt_arguments=(
         --daemon --offline --build-cache --parallel --no-configuration-cache
         --console=plain --max-workers=12 --no-scan --stacktrace
     )
-    [[ -z "${buildopt_trace}" ]] || \
-        buildopt_arguments+=("-Dorg.gradle.internal.operations.trace=${buildopt_trace}")
+    [[ -z "${buildopt_trace}" ]] || buildopt_trace_environment+=(
+        "GRADLE_OPTS=-Dorg.gradle.internal.operations.trace=${buildopt_trace}"
+    )
     (
         cd "${buildopt_root}/source"
-        JAVA_HOME="${buildopt_java_home}" \
-        GRADLE_USER_HOME="${buildopt_root}/control-home" \
+        env "${buildopt_trace_environment[@]}" \
+            JAVA_HOME="${buildopt_java_home}" \
+            GRADLE_USER_HOME="${buildopt_root}/control-home" \
             timeout 20m ./gradlew "${buildopt_arguments[@]}" checkstyleMain
     ) >"${buildopt_log}" 2>&1
 }
@@ -164,6 +167,7 @@ buildopt_run_control() {
 buildopt_run_candidate() {
     local buildopt_log=$1
     local buildopt_trace=${2:-}
+    local -a buildopt_trace_environment=()
     local -a buildopt_arguments=(
         --gradle-option=--daemon --gradle-option=--offline
         --gradle-option=--build-cache --gradle-option=--parallel
@@ -172,15 +176,18 @@ buildopt_run_candidate() {
         --gradle-option=--stacktrace
     )
     if [[ -n "${buildopt_trace}" ]]; then
+        buildopt_trace_environment+=(
+            "GRADLE_OPTS=-Dorg.gradle.internal.operations.trace=${buildopt_trace}"
+        )
         buildopt_arguments+=(
-            "--gradle-option=-Dorg.gradle.internal.operations.trace=${buildopt_trace}"
             --timings-file .buildopt-verification-attribution-timings.json
         )
     fi
     (
         cd "${buildopt_root}/source"
-        JAVA_HOME="${buildopt_java_home}" \
-        GRADLE_USER_HOME="${buildopt_root}/candidate-home" \
+        env "${buildopt_trace_environment[@]}" \
+            JAVA_HOME="${buildopt_java_home}" \
+            GRADLE_USER_HOME="${buildopt_root}/candidate-home" \
             timeout 20m "${buildopt_executable}" impact \
             --repository-id spring-projects/spring-framework \
             --pipeline-class poc-verification-distribution-graph-v1 \
