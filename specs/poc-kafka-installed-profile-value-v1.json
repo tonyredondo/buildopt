@@ -1,0 +1,166 @@
+{
+  "schemaVersion": "buildopt.specs/poc-kafka-installed-profile-value/v1",
+  "workItem": "POC-KAFKA-INSTALLED-PROFILE-VALUE-001",
+  "status": "PREREGISTERED",
+  "preregisteredAt": "2026-08-08",
+  "preregistration": {
+    "productRevision": "511b6d69a51a2a92c9636772e43d67d9d4b762b7",
+    "acceptedObservationsBeforePreregistration": 0,
+    "priorCompositionObservationsReusable": false,
+    "componentPercentagesMayBeAdded": false,
+    "valueGateChanged": false,
+    "workloadSearchAfterResultAllowed": false
+  },
+  "hypothesis": {
+    "control": "NORMALIZED_OPTIMIZED_NATIVE_GRADLE_FULL_ASSEMBLE_DIRECT_TO_SHARED",
+    "candidate": "INSTALLED_REPOSITORY_OWNED_V2_PROFILE_THROUGH_PREWARMED_EDGE",
+    "command": "buildopt poc --changes-file .buildopt-changes --edge-url LOOPBACK_ORIGIN",
+    "qualifiedMechanisms": [
+      "KAFKA_BUILD_IMPACT",
+      "EDGE_COMMITTED_READ_LOCALITY",
+      "KAFKA_SHADOWJAR_REPRODUCIBILITY_INPUT"
+    ],
+    "excludedMechanisms": [
+      "BUILDOPT_STANDARD_JAR_ADAPTER",
+      "BUILDOPT_STANDARD_COPY_ADAPTER",
+      "BUILDOPT_SAFE_CACHE",
+      "BUILDOPT_RUNTIME_TUNING",
+      "BUILDOPT_HOT_STATE",
+      "TEST_OPTIMIZATION"
+    ],
+    "reportedEffect": "ONE_INSTALLED_END_TO_END_PROFILE_EFFECT"
+  },
+  "repository": {
+    "nameWithOwner": "apache/kafka",
+    "releaseTag": "4.3.1",
+    "revision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "sourceArchiveUrl": "https://codeload.github.com/apache/kafka/tar.gz/26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "sourceArchiveSha256": "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2",
+    "sourceArchiveBytes": 14169772,
+    "gradleVersion": "9.2.1",
+    "jdk": "temurin-25.0.3+9"
+  },
+  "profile": {
+    "schemaVersion": "buildopt.poc/qualified-profile/v2",
+    "profileId": "normalized-impact-plus-read-only-edge",
+    "path": "buildopt-qualified-profile.json",
+    "sha256": "ca0d8a67ec1977c96334e920da515ba50d5ae5515bd86c9fd481d84333056915",
+    "ownership": "REPOSITORY_COMMITTED",
+    "productionAuthorized": false,
+    "usabilityEvidence": "benchmarks/results/poc-kafka-composition-usability-v1.json",
+    "usabilityEvidenceSha256": "283417632614d2b0b5c6810d712e5abfa9f8195984b13d4c49e520d72594133e"
+  },
+  "priorPerformanceEvidence": {
+    "path": "benchmarks/results/poc-kafka-impact-edge-composition-v2.json",
+    "sha256": "c3b33a62f1d300470acfe7454b93759bce3c1df70e676dac2634d66f9a840438",
+    "decision": "QUALIFY_KAFKA_IMPACT_EDGE_COMPOSITION",
+    "timingsReusable": false
+  },
+  "sourceNormalization": {
+    "file": "build.gradle",
+    "originalSha256": "50b4d82988d6567b146b419c99498fb8e1b6154815f651750a5335ea905b7bd6",
+    "normalizedSha256": "97a0e249d30e1d7a7ef23f92d2effd902a790a4cfc81118adfcc7e6d8e7b23c0",
+    "qualifiedArtifactSha256": "3ffd994e55cf6ddad21600a89a78a9b57851e4e0e48d2e75091d2736b0463349",
+    "appliedBeforeDependencyPreparation": true,
+    "identicalInSeedControlAndCandidate": true
+  },
+  "change": {
+    "path": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+    "originalSha256": "30e3d4ad29be4f6be1e34d545caf08d8520fa4341e0948968cd87fd51b8911e3",
+    "mutation": "APPEND_COMMENT_LINE",
+    "changesFile": ".buildopt-changes"
+  },
+  "network": {
+    "model": "INDEPENDENT_SOURCE_ARCHIVE_DERIVED_LOOPBACK_WAN",
+    "latencyPerResponseMs": 337,
+    "bandwidthBytesPerSecond": 6994831,
+    "packetLossRatio": 0
+  },
+  "arms": {
+    "control": {
+      "entrypoints": ["assemble"],
+      "remoteReadLocation": "SHARED"
+    },
+    "candidate": {
+      "entrypoints": [":clients:jar"],
+      "remoteReadLocation": "PREWARMED_EDGE",
+      "installedPackageRequired": true,
+      "repositoryOwnedProfileRequired": true,
+      "experimentOnlySelectionEnvironmentForbidden": true
+    }
+  },
+  "cacheState": {
+    "sameCommittedSharedObjects": true,
+    "sharedMaximumObjectBytes": 104857600,
+    "nativeLocalCacheEnabled": false,
+    "configurationCacheEnabled": false,
+    "pushAllowedDuringMeasuredRuns": false,
+    "outputsAndProjectStateRemovedBeforeEveryArm": true
+  },
+  "measurement": {
+    "warmupsPerArm": 1,
+    "pairs": 8,
+    "pairOrder": [
+      "CONTROL_FIRST",
+      "CANDIDATE_FIRST",
+      "CONTROL_FIRST",
+      "CANDIDATE_FIRST",
+      "CONTROL_FIRST",
+      "CANDIDATE_FIRST",
+      "CONTROL_FIRST",
+      "CANDIDATE_FIRST"
+    ],
+    "maximumInterArmIdleGapMs": 15000
+  },
+  "valueGate": {
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositivePairs": 8,
+    "requiredOutputsIdentical": true,
+    "requiredCandidatePlan": "POC_CANDIDATE",
+    "requiredCandidateAlternative": "kafka-clients-jar",
+    "requiredShadowJarOutcome": "FROM-CACHE",
+    "maximumProductAttributableFailures": 0,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedPairsMayBeDiscarded": false
+  },
+  "fallback": {
+    "globalChangePath": "gradle.properties",
+    "requiredSelectionMode": "FULL_GRAPH",
+    "requiredSelectionReason": "IMPACT_GLOBAL_CHANGE",
+    "requiredOutsideCandidateTask": ":streams:jar",
+    "edgeReadFailureStatus": 503,
+    "edgeReadFailureMustPreserveBuildSuccess": true,
+    "edgeReadFailureMustDisableRemoteCache": true,
+    "edgeReadFailureOutputMustMatchSeed": true
+  },
+  "decisionPolicy": {
+    "qualifiedDecision": "QUALIFY_INSTALLED_KAFKA_PROFILE_VALUE",
+    "unqualifiedDecision": "RETAIN_NATIVE_KAFKA_PROFILE_PATH",
+    "nextQualifiedWorkItem": "POC-QUALIFIED-PROFILE-MATRIX-001",
+    "componentPercentagesRemainNonAdditive": true,
+    "noProductionAuthorization": true
+  },
+  "boundaries": {
+    "sameSharedOrigin": true,
+    "sameCommittedObjectBytes": true,
+    "sameNormalizedSourceAndChange": true,
+    "sameRequiredOutput": true,
+    "priorObservationsReused": false,
+    "testTasksForbidden": true,
+    "runtimeTuningChanged": false,
+    "safeCacheChanged": false,
+    "hotStateChanged": false,
+    "standardJarChanged": false,
+    "standardCopyChanged": false,
+    "testSelectionChanged": false,
+    "testExecutionChanged": false,
+    "testOptimizationModified": false,
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "universalSavingsClaimed": false
+  }
+}

@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-kafka-installed-profile-value-v1.json"
+buildopt_profile="${buildopt_repo_root}/fixtures/poc-kafka-packaging/buildopt-qualified-edge-profile.json"
+buildopt_usability="${buildopt_repo_root}/benchmarks/results/poc-kafka-composition-usability-v1.json"
+buildopt_performance="${buildopt_repo_root}/benchmarks/results/poc-kafka-impact-edge-composition-v2.json"
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required installed Kafka profile command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+jq -e \
+    --arg profileSha "$(sha256sum "${buildopt_profile}" | awk '{print $1}')" \
+    --arg usabilitySha "$(sha256sum "${buildopt_usability}" | awk '{print $1}')" \
+    --arg performanceSha "$(sha256sum "${buildopt_performance}" | awk '{print $1}')" '
+    .schemaVersion == "buildopt.specs/poc-kafka-installed-profile-value/v1" and
+    .workItem == "POC-KAFKA-INSTALLED-PROFILE-VALUE-001" and
+    .status == "PREREGISTERED" and
+    .preregistration.acceptedObservationsBeforePreregistration == 0 and
+    .preregistration.priorCompositionObservationsReusable == false and
+    .preregistration.componentPercentagesMayBeAdded == false and
+    .preregistration.valueGateChanged == false and
+    .preregistration.workloadSearchAfterResultAllowed == false and
+    .hypothesis.control == "NORMALIZED_OPTIMIZED_NATIVE_GRADLE_FULL_ASSEMBLE_DIRECT_TO_SHARED" and
+    .hypothesis.candidate == "INSTALLED_REPOSITORY_OWNED_V2_PROFILE_THROUGH_PREWARMED_EDGE" and
+    .hypothesis.reportedEffect == "ONE_INSTALLED_END_TO_END_PROFILE_EFFECT" and
+    (.hypothesis.excludedMechanisms | index("TEST_OPTIMIZATION")) != null and
+    .repository.nameWithOwner == "apache/kafka" and
+    .repository.revision == "26b251a451ce941d3d7a55e6487bcb7f16b5ad48" and
+    .repository.sourceArchiveSha256 == "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2" and
+    .profile.schemaVersion == "buildopt.poc/qualified-profile/v2" and
+    .profile.profileId == "normalized-impact-plus-read-only-edge" and
+    .profile.sha256 == $profileSha and
+    .profile.usabilityEvidenceSha256 == $usabilitySha and
+    .priorPerformanceEvidence.sha256 == $performanceSha and
+    .priorPerformanceEvidence.timingsReusable == false and
+    .sourceNormalization.normalizedSha256 == "97a0e249d30e1d7a7ef23f92d2effd902a790a4cfc81118adfcc7e6d8e7b23c0" and
+    .sourceNormalization.qualifiedArtifactSha256 == "3ffd994e55cf6ddad21600a89a78a9b57851e4e0e48d2e75091d2736b0463349" and
+    .network == {model: "INDEPENDENT_SOURCE_ARCHIVE_DERIVED_LOOPBACK_WAN",
+      latencyPerResponseMs: 337, bandwidthBytesPerSecond: 6994831,
+      packetLossRatio: 0} and
+    .arms.control.entrypoints == ["assemble"] and
+    .arms.control.remoteReadLocation == "SHARED" and
+    .arms.candidate.installedPackageRequired == true and
+    .arms.candidate.repositoryOwnedProfileRequired == true and
+    .arms.candidate.experimentOnlySelectionEnvironmentForbidden == true and
+    .measurement.warmupsPerArm == 1 and
+    .measurement.pairs == 8 and
+    .measurement.pairOrder == ["CONTROL_FIRST", "CANDIDATE_FIRST",
+      "CONTROL_FIRST", "CANDIDATE_FIRST", "CONTROL_FIRST",
+      "CANDIDATE_FIRST", "CONTROL_FIRST", "CANDIDATE_FIRST"] and
+    .valueGate.minimumSavedMs == 500 and
+    .valueGate.minimumReductionRatio == 0.02 and
+    .valueGate.minimumPositivePairs == 8 and
+    .valueGate.thresholdsMayMoveAfterMeasurement == false and
+    .valueGate.failedPairsMayBeDiscarded == false and
+    .fallback.requiredSelectionMode == "FULL_GRAPH" and
+    .fallback.edgeReadFailureStatus == 503 and
+    .decisionPolicy.qualifiedDecision == "QUALIFY_INSTALLED_KAFKA_PROFILE_VALUE" and
+    .decisionPolicy.unqualifiedDecision == "RETAIN_NATIVE_KAFKA_PROFILE_PATH" and
+    .decisionPolicy.nextQualifiedWorkItem == "POC-QUALIFIED-PROFILE-MATRIX-001" and
+    .boundaries.priorObservationsReused == false and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.productionReadinessClaimed == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false and
+    .boundaries.universalSavingsClaimed == false
+' "${buildopt_spec}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
+    printf 'installed Kafka profile validation changed the working tree\n' >&2
+    exit 1
+fi
+printf 'Installed Kafka profile value contract OK: %s\n' "${buildopt_spec}"

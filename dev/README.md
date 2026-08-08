@@ -3088,6 +3088,28 @@ fallbacks and exact local execution after HTTP 503. It references the existing
 82.35% composition result and deliberately records no new timing or production
 claim.
 
+### Installed Kafka profile value
+
+`POC-KAFKA-INSTALLED-PROFILE-VALUE-001` measures the exact repository-owned v2
+profile through the packaged `buildopt poc` command rather than experiment-only
+selection wiring:
+
+```bash
+./dev/check-poc-kafka-installed-profile-value-v1
+./dev/run-poc-kafka-installed-profile-value-v1 \
+  /absolute/path/to/new-result.json \
+  /absolute/path/to/installed/buildopt \
+  /absolute/path/to/kafka-source.tar.gz
+./dev/check-poc-kafka-installed-profile-value-v1-result \
+  /absolute/path/to/new-result.json
+```
+
+Preparation and warm-up are unmeasured. Eight new alternating pairs compare
+optimized native Gradle plus Shared with the installed Build Impact plus
+read-only Edge profile. The result must preserve the normalized shaded JAR,
+global full-graph fallback and HTTP-503 local fallback. Earlier composition
+timings cannot be reused.
+
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source
 distribution. Structural discovery freezes selective execution only where the

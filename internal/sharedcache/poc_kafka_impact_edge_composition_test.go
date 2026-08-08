@@ -25,36 +25,36 @@ import (
 
 type pocKafkaImpactEdgeRun struct {
 	pocQualifiedRemoteRun
-	ShadowJarFromCache      bool
-	StandardJarAdapter      bool
+	ShadowJarFromCache bool
+	StandardJarAdapter bool
 }
 
 type pocKafkaImpactEdgeObservation struct {
-	Pair                       int    `json:"pair"`
-	Order                      string `json:"order"`
-	ControlDurationMs          int64  `json:"controlDurationMs"`
-	CandidateDurationMs        int64  `json:"candidateDurationMs"`
-	SavedMs                    int64  `json:"savedMs"`
-	InterArmIdleGapMs          int64  `json:"interArmIdleGapMs"`
-	ControlOriginRequests      int    `json:"controlOriginRequests"`
-	ControlOriginBytes         int64  `json:"controlOriginBytes"`
-	CandidateOriginRequests    int    `json:"candidateOriginRequests"`
-	CandidateOriginBytes       int64  `json:"candidateOriginBytes"`
-	ControlRemoteCacheHits     int    `json:"controlRemoteCacheHits"`
-	CandidateRemoteCacheHits   int    `json:"candidateRemoteCacheHits"`
-	ControlFullGraph           bool   `json:"controlFullGraph"`
-	CandidatePlanSelected      bool   `json:"candidatePlanSelected"`
-	CandidateAlternative       string `json:"candidateAlternative"`
-	ControlShadowJarFromCache  bool   `json:"controlShadowJarFromCache"`
-	CandidateShadowJarFromCache bool  `json:"candidateShadowJarFromCache"`
-	CandidateStandardJarAdapter bool  `json:"candidateStandardJarAdapter"`
-	RequiredOutputCount        int    `json:"requiredOutputCount"`
-	RequiredOutputBytes        int64  `json:"requiredOutputBytes"`
-	RequiredOutputSHA256       string `json:"requiredOutputSha256"`
-	ControlTaskOutcomeSHA256   string `json:"controlTaskOutcomeSha256"`
-	CandidateTaskOutcomeSHA256 string `json:"candidateTaskOutcomeSha256"`
-	OutputsIdentical           bool   `json:"outputsIdentical"`
-	ProductAttributableFailure bool   `json:"productAttributableFailure"`
+	Pair                        int    `json:"pair"`
+	Order                       string `json:"order"`
+	ControlDurationMs           int64  `json:"controlDurationMs"`
+	CandidateDurationMs         int64  `json:"candidateDurationMs"`
+	SavedMs                     int64  `json:"savedMs"`
+	InterArmIdleGapMs           int64  `json:"interArmIdleGapMs"`
+	ControlOriginRequests       int    `json:"controlOriginRequests"`
+	ControlOriginBytes          int64  `json:"controlOriginBytes"`
+	CandidateOriginRequests     int    `json:"candidateOriginRequests"`
+	CandidateOriginBytes        int64  `json:"candidateOriginBytes"`
+	ControlRemoteCacheHits      int    `json:"controlRemoteCacheHits"`
+	CandidateRemoteCacheHits    int    `json:"candidateRemoteCacheHits"`
+	ControlFullGraph            bool   `json:"controlFullGraph"`
+	CandidatePlanSelected       bool   `json:"candidatePlanSelected"`
+	CandidateAlternative        string `json:"candidateAlternative"`
+	ControlShadowJarFromCache   bool   `json:"controlShadowJarFromCache"`
+	CandidateShadowJarFromCache bool   `json:"candidateShadowJarFromCache"`
+	CandidateStandardJarAdapter bool   `json:"candidateStandardJarAdapter"`
+	RequiredOutputCount         int    `json:"requiredOutputCount"`
+	RequiredOutputBytes         int64  `json:"requiredOutputBytes"`
+	RequiredOutputSHA256        string `json:"requiredOutputSha256"`
+	ControlTaskOutcomeSHA256    string `json:"controlTaskOutcomeSha256"`
+	CandidateTaskOutcomeSHA256  string `json:"candidateTaskOutcomeSha256"`
+	OutputsIdentical            bool   `json:"outputsIdentical"`
+	ProductAttributableFailure  bool   `json:"productAttributableFailure"`
 }
 
 func TestPOCKafkaImpactEdgeCompositionExperiment(t *testing.T) {
@@ -77,6 +77,7 @@ func TestPOCKafkaImpactEdgeCompositionExperiment(t *testing.T) {
 	packagedInit := requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_INIT_SCRIPT")
 	pluginJar := requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_PLUGIN_JAR")
 	logs := requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_LOGS")
+	installedProfileValue := os.Getenv("BUILDOPT_POC_KAFKA_INSTALLED_PROFILE_VALUE") == "1"
 	controlInit, candidateInit := writePOCQualifiedRemoteInitScripts(t, packagedInit)
 
 	recorded := make(map[string][]byte)
@@ -264,6 +265,9 @@ func TestPOCKafkaImpactEdgeCompositionExperiment(t *testing.T) {
 	metrics.reset()
 
 	orders := []string{"CONTROL_FIRST", "CANDIDATE_FIRST", "CONTROL_FIRST", "CANDIDATE_FIRST"}
+	if installedProfileValue {
+		orders = append(orders, orders...)
+	}
 	observations := make([]pocKafkaImpactEdgeObservation, 0, len(orders))
 	for index, order := range orders {
 		var control, candidate pocKafkaImpactEdgeRun
@@ -305,16 +309,16 @@ func TestPOCKafkaImpactEdgeCompositionExperiment(t *testing.T) {
 			CandidateOriginRequests: candidateTraffic.Requests, CandidateOriginBytes: candidateTraffic.Bytes,
 			ControlRemoteCacheHits: control.CacheHits, CandidateRemoteCacheHits: candidate.CacheHits,
 			ControlFullGraph: control.FullGraph, CandidatePlanSelected: candidate.PlanSelected,
-			CandidateAlternative: candidate.Alternative,
-			ControlShadowJarFromCache: control.ShadowJarFromCache,
+			CandidateAlternative:        candidate.Alternative,
+			ControlShadowJarFromCache:   control.ShadowJarFromCache,
 			CandidateShadowJarFromCache: candidate.ShadowJarFromCache,
 			CandidateStandardJarAdapter: candidate.StandardJarAdapter,
-			RequiredOutputCount: 1, RequiredOutputBytes: control.OutputBytes,
-			RequiredOutputSHA256: control.OutputHash,
+			RequiredOutputCount:         1, RequiredOutputBytes: control.OutputBytes,
+			RequiredOutputSHA256:     control.OutputHash,
 			ControlTaskOutcomeSHA256: control.TaskHash, CandidateTaskOutcomeSHA256: candidate.TaskHash,
 			OutputsIdentical: true, ProductAttributableFailure: false,
 		})
-		t.Logf("Kafka Impact/Edge pair %d/4: native=%dms candidate=%dms saved=%dms order=%s", index+1, control.Duration, candidate.Duration, control.Duration-candidate.Duration, order)
+		t.Logf("Kafka Impact/Edge pair %d/%d: native=%dms candidate=%dms saved=%dms order=%s", index+1, len(orders), control.Duration, candidate.Duration, control.Duration-candidate.Duration, order)
 	}
 
 	if err := os.WriteFile(filepath.Join(candidateProject, ".buildopt-changes"), []byte("gradle.properties\n"), 0o600); err != nil {
@@ -350,32 +354,32 @@ func TestPOCKafkaImpactEdgeCompositionExperiment(t *testing.T) {
 		decisionName = "QUALIFY_KAFKA_IMPACT_EDGE_COMPOSITION"
 	}
 	result := map[string]any{
-		"schemaVersion": "buildopt.evidence/poc-kafka-impact-edge-composition/v1",
-		"workItem": "POC-KAFKA-IMPACT-EDGE-COMPOSITION-001",
-		"capturedAt": time.Now().UTC().Truncate(time.Second).Format(time.RFC3339),
-		"buildoptRevision": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_REVISION"),
-		"runnerScriptSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_RUNNER_SHA"),
-		"specSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_SPEC_SHA"),
-		"harnessSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_HARNESS_SHA"),
-		"sourceArchiveSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_SOURCE_SHA"),
+		"schemaVersion":         "buildopt.evidence/poc-kafka-impact-edge-composition/v1",
+		"workItem":              "POC-KAFKA-IMPACT-EDGE-COMPOSITION-001",
+		"capturedAt":            time.Now().UTC().Truncate(time.Second).Format(time.RFC3339),
+		"buildoptRevision":      requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_REVISION"),
+		"runnerScriptSha256":    requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_RUNNER_SHA"),
+		"specSha256":            requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_SPEC_SHA"),
+		"harnessSha256":         requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_HARNESS_SHA"),
+		"sourceArchiveSha256":   requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_SOURCE_SHA"),
 		"dependencyCacheSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_DEPENDENCY_SHA"),
 		"installedAssets": map[string]any{
-			"binarySha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_BINARY_SHA"),
+			"binarySha256":     requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_BINARY_SHA"),
 			"initScriptSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_INIT_SHA"),
-			"pluginJarSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_PLUGIN_SHA"),
+			"pluginJarSha256":  requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_PLUGIN_SHA"),
 		},
 		"componentEvidence": map[string]any{
-			"kafkaImpactScopeSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_IMPACT_SHA"),
-			"kafkaEdgeLocalitySha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_EDGE_SHA"),
+			"kafkaImpactScopeSha256":      requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_IMPACT_SHA"),
+			"kafkaEdgeLocalitySha256":     requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_EDGE_SHA"),
 			"invalidJarCompositionSha256": requiredPOCQualifiedRemoteEnv(t, "BUILDOPT_POC_KAFKA_IMPACT_EDGE_INVALID_SHA"),
 		},
 		"repository": map[string]any{"nameWithOwner": "apache/kafka", "releaseTag": "4.3.1", "revision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48", "gradleVersion": "9.2.1", "jdk": "temurin-25.0.3+9"},
-		"runner": map[string]any{"id": "linux-amd64-12c-16659865600b-v1", "cpuCount": 12, "memoryBytes": int64(16659865600), "maxWorkers": 12},
-		"network": map[string]any{"model": "INDEPENDENT_SOURCE_ARCHIVE_DERIVED_LOOPBACK_WAN", "latencyPerResponseMs": 337, "bandwidthBytesPerSecond": 6994831, "packetLossRatio": 0},
+		"runner":     map[string]any{"id": "linux-amd64-12c-16659865600b-v1", "cpuCount": 12, "memoryBytes": int64(16659865600), "maxWorkers": 12},
+		"network":    map[string]any{"model": "INDEPENDENT_SOURCE_ARCHIVE_DERIVED_LOOPBACK_WAN", "latencyPerResponseMs": 337, "bandwidthBytesPerSecond": 6994831, "packetLossRatio": 0},
 		"preparation": map[string]any{
 			"measured": false, "dependenciesResolvedBeforeMeasurement": true,
 			"externalDependencyNetworkBlocked": true,
-			"capturedObjectCount": capturedObjectCount, "capturedObjectBytes": capturedObjectBytes,
+			"capturedObjectCount":              capturedObjectCount, "capturedObjectBytes": capturedObjectBytes,
 			"excludedOversizedObjectCount": excludedObjectCount, "excludedOversizedObjectBytes": excludedObjectBytes,
 			"sharedMaximumObjectBytes": MaximumBlobBytes, "seededObjectCount": len(seeded),
 			"seededObjectBytes": seededBytes, "seedOutputBytes": seedOutputBytes,
@@ -387,10 +391,19 @@ func TestPOCKafkaImpactEdgeCompositionExperiment(t *testing.T) {
 			"standardCopyAdapter": false, "safeCache": false, "runtimeTuning": false,
 			"hotState": false, "testOptimization": false,
 		},
+		"executionPath": map[string]any{
+			"installedProfile": installedProfileValue,
+			"command": func() string {
+				if installedProfileValue {
+					return "buildopt poc --changes-file .buildopt-changes --edge-url LOOPBACK_ORIGIN"
+				}
+				return "buildopt impact"
+			}(),
+		},
 		"observations": observations,
-		"safety": map[string]any{"impactFallbackPassed": impactFallbackPassed, "edgeFailureFallbackPassed": edgeFailureFallbackPassed},
-		"result": map[string]any{"pairs": 4, "controlMeanMs": controlMean, "candidateMeanMs": candidateMean, "meanSavedMs": savedMean, "reductionRatio": ratio, "interval95SavedMs": interval, "positivePairs": positive, "qualified": qualified, "decision": decisionName},
-		"boundaries": map[string]any{"sameSharedOrigin": true, "sameCommittedObjectBytes": true, "sameSourceAndChange": true, "sameRequiredOutput": true, "testTasksForbidden": true, "runtimeTuningChanged": false, "safeCacheChanged": false, "hotStateChanged": false, "standardJarChanged": false, "standardCopyChanged": false, "testSelectionChanged": false, "testExecutionChanged": false, "testOptimizationModified": false, "proofOfConcept": true, "productionReadinessClaimed": false, "soakRequired": false, "designPartnerRequired": false, "universalSavingsClaimed": false},
+		"safety":       map[string]any{"impactFallbackPassed": impactFallbackPassed, "edgeFailureFallbackPassed": edgeFailureFallbackPassed},
+		"result":       map[string]any{"pairs": len(orders), "controlMeanMs": controlMean, "candidateMeanMs": candidateMean, "meanSavedMs": savedMean, "reductionRatio": ratio, "interval95SavedMs": interval, "positivePairs": positive, "qualified": qualified, "decision": decisionName},
+		"boundaries":   map[string]any{"sameSharedOrigin": true, "sameCommittedObjectBytes": true, "sameSourceAndChange": true, "sameRequiredOutput": true, "testTasksForbidden": true, "runtimeTuningChanged": false, "safeCacheChanged": false, "hotStateChanged": false, "standardJarChanged": false, "standardCopyChanged": false, "testSelectionChanged": false, "testExecutionChanged": false, "testOptimizationModified": false, "proofOfConcept": true, "productionReadinessClaimed": false, "soakRequired": false, "designPartnerRequired": false, "universalSavingsClaimed": false},
 	}
 	encoded, err := json.MarshalIndent(result, "", "  ")
 	if err != nil {
@@ -413,6 +426,20 @@ func runPOCKafkaImpactEdgeControl(t *testing.T, label, project, home, javaHome, 
 func runPOCKafkaImpactEdgeCandidate(t *testing.T, label, project, home, javaHome, buildoptBin, initScript, pluginJar, remoteURL, logs string) pocKafkaImpactEdgeRun {
 	t.Helper()
 	removePOCRemoteCacheTransferOutputs(t, project)
+	if os.Getenv("BUILDOPT_POC_KAFKA_INSTALLED_PROFILE_VALUE") == "1" {
+		command := exec.Command(buildoptBin, "poc", "--changes-file", ".buildopt-changes", "--edge-url", remoteURL)
+		run := executePOCQualifiedRemote(t, label, command, project, home, javaHome, remoteURL, false, logs)
+		if !strings.Contains(run.Output, `"profileId":"normalized-impact-plus-read-only-edge"`) ||
+			!strings.Contains(run.Output, `"edgeCacheMode":"READ_ONLY_LOOPBACK"`) ||
+			!strings.Contains(run.Output, `"edgeCacheEndpoint":"`+remoteURL+`"`) {
+			t.Fatalf("installed Kafka profile plan is absent or incomplete:\n%s", run.Output)
+		}
+		return pocKafkaImpactEdgeRun{
+			pocQualifiedRemoteRun: run,
+			ShadowJarFromCache:    strings.Contains(run.Output, "> Task :clients:shadowJar FROM-CACHE"),
+			StandardJarAdapter:    strings.Contains(run.Output, "BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS=1"),
+		}
+	}
 	args := []string{
 		"impact", "--repository-id", "apache/kafka", "--pipeline-class", "poc-kafka-packaging-v1",
 		"--changes-file", ".buildopt-changes", "--manifest", "buildopt-impact-manifest.json",
@@ -432,8 +459,8 @@ func runPOCKafkaImpactEdgeCandidate(t *testing.T, label, project, home, javaHome
 	}
 	return pocKafkaImpactEdgeRun{
 		pocQualifiedRemoteRun: run,
-		ShadowJarFromCache: strings.Contains(run.Output, "> Task :clients:shadowJar FROM-CACHE"),
-		StandardJarAdapter: strings.Contains(run.Output, "BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS=1"),
+		ShadowJarFromCache:    strings.Contains(run.Output, "> Task :clients:shadowJar FROM-CACHE"),
+		StandardJarAdapter:    strings.Contains(run.Output, "BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS=1"),
 	}
 }
 

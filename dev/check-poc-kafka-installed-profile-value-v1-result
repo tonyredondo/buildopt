@@ -8,58 +8,52 @@ fi
 
 buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
-buildopt_spec="${buildopt_repo_root}/specs/poc-kafka-impact-edge-composition-v2.json"
-buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-kafka-impact-edge-composition-v2.json"}
+buildopt_spec="${buildopt_repo_root}/specs/poc-kafka-installed-profile-value-v1.json"
+buildopt_runner="${buildopt_script_dir}/run-poc-kafka-impact-edge-composition-v2"
+buildopt_harness="${buildopt_repo_root}/internal/sharedcache/poc_kafka_impact_edge_composition_test.go"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-kafka-installed-profile-value-v1.json"}
 
 for buildopt_command in git jq sha256sum; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
-        printf 'required Kafka composition v2 result command is unavailable: %s\n' \
+        printf 'required installed Kafka profile result command is unavailable: %s\n' \
             "${buildopt_command}" >&2
         exit 1
     }
 done
 [[ -s "${buildopt_result}" ]] || {
-    printf 'Kafka composition v2 result is unavailable: %s\n' "${buildopt_result}" >&2
+    printf 'installed Kafka profile result is unavailable: %s\n' "${buildopt_result}" >&2
     exit 1
 }
-"${buildopt_script_dir}/check-poc-kafka-impact-edge-composition-v2" >/dev/null
+"${buildopt_script_dir}/check-poc-kafka-installed-profile-value-v1" >/dev/null
 
 buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
-buildopt_execution_revision=$(jq -er '.buildoptRevision' "${buildopt_result}")
-if ! git -C "${buildopt_repo_root}" merge-base --is-ancestor \
-    "${buildopt_execution_revision}" HEAD; then
-    printf 'Kafka composition v2 evidence revision is not retained in history\n' >&2
-    exit 1
-fi
-buildopt_archived_sha() {
-    local buildopt_path=$1
-    git -C "${buildopt_repo_root}" show \
-        "${buildopt_execution_revision}:${buildopt_path}" | sha256sum | awk '{print $1}'
-}
+buildopt_execution_revision=$(git -C "${buildopt_repo_root}" log -1 --format=%H -- \
+    specs/poc-kafka-installed-profile-value-v1.json \
+    dev/run-poc-kafka-impact-edge-composition-v2 \
+    internal/sharedcache/poc_kafka_impact_edge_composition_test.go)
 
 jq -e \
     --arg executionRevision "${buildopt_execution_revision}" \
-    --arg specSha "$(buildopt_archived_sha specs/poc-kafka-impact-edge-composition-v2.json)" \
-    --arg runnerSha "$(buildopt_archived_sha dev/run-poc-kafka-impact-edge-composition-v2)" \
-    --arg harnessSha "$(buildopt_archived_sha internal/sharedcache/poc_kafka_impact_edge_composition_test.go)" \
-    --arg qualificationSha "$(sha256sum "${buildopt_repo_root}/benchmarks/results/poc-kafka-shadowjar-reproducibility-v1.json" | awk '{print $1}')" \
-    --arg impactSha "$(sha256sum "${buildopt_repo_root}/benchmarks/results/poc-kafka-packaging-v1.json" | awk '{print $1}')" \
-    --arg edgeSha "$(sha256sum "${buildopt_repo_root}/benchmarks/results/poc-remote-cache-transfer-v1.json" | awk '{print $1}')" \
-    --arg invalidSha "$(sha256sum "${buildopt_repo_root}/benchmarks/results/poc-qualified-remote-composition-v1.json" | awk '{print $1}')" \
+    --arg specSha "$(sha256sum "${buildopt_spec}" | awk '{print $1}')" \
+    --arg runnerSha "$(sha256sum "${buildopt_runner}" | awk '{print $1}')" \
+    --arg harnessSha "$(sha256sum "${buildopt_harness}" | awk '{print $1}')" \
+    --arg profileSha "$(sha256sum "${buildopt_repo_root}/fixtures/poc-kafka-packaging/buildopt-qualified-edge-profile.json" | awk '{print $1}')" \
+    --arg usabilitySha "$(sha256sum "${buildopt_repo_root}/benchmarks/results/poc-kafka-composition-usability-v1.json" | awk '{print $1}')" \
+    --arg priorSha "$(sha256sum "${buildopt_repo_root}/benchmarks/results/poc-kafka-impact-edge-composition-v2.json" | awk '{print $1}')" \
     --slurpfile spec "${buildopt_spec}" '
     def sha256: type == "string" and test("^[0-9a-f]{64}$");
     def bootstrap_mean($data; $sample):
-      reduce range(0; 4) as $draw
+      reduce range(0; ($data | length)) as $draw
         ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
          .state = ((1664525 * .state + 1013904223) % 4294967296) |
-         .sum += $data[((.state / 1073741824) | floor)].savedMs) |
-      .sum / 4;
+         .sum += $data[(.state % ($data | length))].savedMs) |
+      .sum / ($data | length);
     def bootstrap95($data):
       ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
       [$r[102], $r[3993]];
     .observations as $data |
-    (($data | map(.controlDurationMs) | add) / 4) as $controlMean |
-    (($data | map(.candidateDurationMs) | add) / 4) as $candidateMean |
+    (($data | map(.controlDurationMs) | add) / ($data | length)) as $controlMean |
+    (($data | map(.candidateDurationMs) | add) / ($data | length)) as $candidateMean |
     ($controlMean - $candidateMean) as $saved |
     (($data | map(.savedMs) | add) /
       ($data | map(.controlDurationMs) | add)) as $ratio |
@@ -69,8 +63,8 @@ jq -e \
       ($ratio >= $spec[0].valueGate.minimumReductionRatio) and
       ($interval[0] > 0) and
       ($positive >= $spec[0].valueGate.minimumPositivePairs)) as $performance |
-    .schemaVersion == "buildopt.evidence/poc-kafka-impact-edge-composition/v2" and
-    .workItem == "POC-KAFKA-IMPACT-EDGE-COMPOSITION-002" and
+    .schemaVersion == "buildopt.evidence/poc-kafka-installed-profile-value/v1" and
+    .workItem == "POC-KAFKA-INSTALLED-PROFILE-VALUE-001" and
     .evidenceState == "TERMINAL" and
     (.capturedAt | fromdateiso8601) and
     .buildoptRevision == $executionRevision and
@@ -82,19 +76,6 @@ jq -e \
     (.installedAssets.binarySha256 | sha256) and
     (.installedAssets.initScriptSha256 | sha256) and
     (.installedAssets.pluginJarSha256 | sha256) and
-    .componentEvidence == {
-      kafkaImpactScopeSha256: $impactSha,
-      kafkaEdgeLocalitySha256: $edgeSha,
-      invalidJarCompositionSha256: $invalidSha
-    } and
-    .inputQualification == {
-      decision: $spec[0].sourceNormalization.qualifiedDecision,
-      evidenceSha256: $qualificationSha,
-      normalizedBuildFileSha256: $spec[0].sourceNormalization.normalizedSha256,
-      normalizedArtifactSha256: $spec[0].requiredOutput.qualifiedNormalizationDigest,
-      appliedBeforeDependencyPreparation: true,
-      identicalInSeedControlAndCandidate: true
-    } and
     .repository == {
       nameWithOwner: $spec[0].repository.nameWithOwner,
       releaseTag: $spec[0].repository.releaseTag,
@@ -105,18 +86,25 @@ jq -e \
     .runner == {id: "linux-amd64-12c-16659865600b-v1", cpuCount: 12,
       memoryBytes: 16659865600, maxWorkers: 12} and
     .network == $spec[0].network and
+    .executionPath == {
+      installedProfile: true,
+      command: $spec[0].hypothesis.command,
+      profileId: $spec[0].profile.profileId,
+      repositoryOwnedProfile: true,
+      experimentOnlySelectionEnvironmentUsed: false
+    } and
+    .profileEvidence == {
+      profileSha256: $profileSha,
+      usabilityEvidenceSha256: $usabilitySha,
+      priorPerformanceEvidenceSha256: $priorSha,
+      priorTimingsReused: false
+    } and
     .preparation.measured == false and
     .preparation.dependenciesResolvedBeforeMeasurement == true and
     .preparation.externalDependencyNetworkBlocked == true and
-    .preparation.capturedObjectCount > 0 and
-    .preparation.capturedObjectBytes > 0 and
-    .preparation.excludedOversizedObjectCount >= 0 and
-    .preparation.excludedOversizedObjectBytes >= 0 and
-    .preparation.sharedMaximumObjectBytes == $spec[0].cacheState.sharedMaximumObjectBytes and
     .preparation.seededObjectCount > 0 and
     .preparation.seededObjectBytes > 0 and
-    .preparation.seedOutputBytes > 0 and
-    .preparation.seedOutputSha256 == $spec[0].requiredOutput.qualifiedNormalizationDigest and
+    .preparation.seedOutputSha256 == $spec[0].sourceNormalization.qualifiedArtifactSha256 and
     .preparation.seedOutputProducingTask == ":clients:shadowJar" and
     .preparation.edgeWarmupOriginRequests > 0 and
     .preparation.edgeWarmupOriginBytes > 0 and
@@ -124,17 +112,18 @@ jq -e \
       standardJarAdapter: false, standardCopyAdapter: false, safeCache: false,
       runtimeTuning: false, hotState: false, testOptimization: false,
       sourceNormalization: true} and
-    .measurementAssertions == {freshPairs: true,
-      priorObservationsReused: false,
-      sameCachedOutputInEveryMeasuredArm: true,
-      shadowJarFromCacheInEveryMeasuredArm: true,
-      candidateOriginTrafficZeroInEveryPair: true,
-      candidatePlanSelectedInEveryPair: true,
-      controlFullGraphInEveryPair: true,
-      standardJarAdapterAbsent: true,
-      productAttributableFailures: 0} and
-    ($data | length) == 4 and
-    [$data[].pair] == [1, 2, 3, 4] and
+    .measurementAssertions.freshPairs == true and
+    .measurementAssertions.priorObservationsReused == false and
+    .measurementAssertions.sameCachedOutputInEveryMeasuredArm == true and
+    .measurementAssertions.shadowJarFromCacheInEveryMeasuredArm == true and
+    .measurementAssertions.candidateOriginTrafficZeroInEveryPair == true and
+    .measurementAssertions.candidatePlanSelectedInEveryPair == true and
+    .measurementAssertions.controlFullGraphInEveryPair == true and
+    .measurementAssertions.standardJarAdapterAbsent == true and
+    .measurementAssertions.repositoryOwnedProfileSelectedInEveryPair == true and
+    .measurementAssertions.productAttributableFailures == 0 and
+    ($data | length) == 8 and
+    [$data[].pair] == [1, 2, 3, 4, 5, 6, 7, 8] and
     [$data[].order] == $spec[0].measurement.pairOrder and
     all($data[];
       .controlDurationMs > 0 and .candidateDurationMs > 0 and
@@ -145,12 +134,12 @@ jq -e \
       .candidateOriginRequests == 0 and .candidateOriginBytes == 0 and
       .controlRemoteCacheHits > 0 and .candidateRemoteCacheHits > 0 and
       .controlFullGraph == true and .candidatePlanSelected == true and
-      .candidateAlternative == $spec[0].fixture.alternativeId and
+      .candidateAlternative == $spec[0].valueGate.requiredCandidateAlternative and
       .controlShadowJarFromCache == true and
       .candidateShadowJarFromCache == true and
       .candidateStandardJarAdapter == false and
       .requiredOutputCount == 1 and .requiredOutputBytes > 0 and
-      .requiredOutputSha256 == $spec[0].requiredOutput.qualifiedNormalizationDigest and
+      .requiredOutputSha256 == $spec[0].sourceNormalization.qualifiedArtifactSha256 and
       (.controlTaskOutcomeSha256 | sha256) and
       (.candidateTaskOutcomeSha256 | sha256) and
       .outputsIdentical == true and .productAttributableFailure == false) and
@@ -160,21 +149,25 @@ jq -e \
     .safety.edgeFailureRemoteCacheDisabled == true and
     .safety.edgeFailureRequiredOutputProduced == true and
     .safety.edgeFailureOutputExact == true and
-    (.safety.edgeFailureLogSha256 | sha256) and
-    (.safety.impactFallbackLogSha256 | sha256) and
-    .result == {pairs: 4, controlMeanMs: $controlMean,
-      candidateMeanMs: $candidateMean, meanSavedMs: $saved,
-      reductionRatio: $ratio, interval95SavedMs: $interval,
-      positivePairs: $positive, qualified: $performance,
+    .result == {
+      pairs: 8,
+      controlMeanMs: $controlMean,
+      candidateMeanMs: $candidateMean,
+      meanSavedMs: $saved,
+      reductionRatio: $ratio,
+      interval95SavedMs: $interval,
+      positivePairs: $positive,
+      qualified: $performance,
       decision: (if $performance then $spec[0].decisionPolicy.qualifiedDecision
         else $spec[0].decisionPolicy.unqualifiedDecision end),
-      performanceGatePassed: $performance} and
+      performanceGatePassed: $performance
+    } and
     .boundaries == $spec[0].boundaries
 ' "${buildopt_result}" >/dev/null
 
 buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
 if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
-    printf 'Kafka composition v2 result validation changed the working tree\n' >&2
+    printf 'installed Kafka profile result validation changed the working tree\n' >&2
     exit 1
 fi
-printf 'POC Kafka Impact/Edge composition v2 evidence OK: %s\n' "${buildopt_result}"
+printf 'Installed Kafka profile value evidence OK: %s\n' "${buildopt_result}"

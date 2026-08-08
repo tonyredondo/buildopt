@@ -11,7 +11,18 @@ buildopt_executable=$2
 buildopt_source_archive=$3
 buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_installed_profile_value=${BUILDOPT_POC_KAFKA_INSTALLED_PROFILE_VALUE:-0}
 buildopt_spec="${buildopt_repo_root}/specs/poc-kafka-impact-edge-composition-v2.json"
+buildopt_contract_check="${buildopt_script_dir}/check-poc-kafka-impact-edge-composition-v2"
+buildopt_result_check="${buildopt_script_dir}/check-poc-kafka-impact-edge-composition-v2-result"
+if [[ "${buildopt_installed_profile_value}" == 1 ]]; then
+    buildopt_spec="${buildopt_repo_root}/specs/poc-kafka-installed-profile-value-v1.json"
+    buildopt_contract_check="${buildopt_script_dir}/check-poc-kafka-installed-profile-value-v1"
+    buildopt_result_check="${buildopt_script_dir}/check-poc-kafka-installed-profile-value-v1-result"
+elif [[ "${buildopt_installed_profile_value}" != 0 ]]; then
+    printf 'invalid installed Kafka profile value mode\n' >&2
+    exit 64
+fi
 buildopt_fixture="${buildopt_repo_root}/fixtures/poc-kafka-packaging"
 buildopt_harness="${buildopt_repo_root}/internal/sharedcache/poc_kafka_impact_edge_composition_test.go"
 buildopt_qualification="${buildopt_repo_root}/benchmarks/results/poc-kafka-shadowjar-reproducibility-v1.json"
@@ -42,7 +53,7 @@ fi
     printf 'locked Temurin 25 toolchain is unavailable\n' >&2
     exit 1
 }
-"${buildopt_script_dir}/check-poc-kafka-impact-edge-composition-v2" >/dev/null
+"${buildopt_contract_check}" >/dev/null
 
 buildopt_source_sha=$(sha256sum "${buildopt_source_archive}" | awk '{print $1}')
 [[ "${buildopt_source_sha}" == \
@@ -133,6 +144,10 @@ cp "${buildopt_fixture}/buildopt-impact-graph.generated.json" \
     "${buildopt_root}/seed-project/buildopt-impact-graph.generated.json"
 cp "${buildopt_fixture}/buildopt-impact.generated.json" \
     "${buildopt_root}/seed-project/buildopt-impact.generated.json"
+if [[ "${buildopt_installed_profile_value}" == 1 ]]; then
+    cp "${buildopt_fixture}/buildopt-qualified-edge-profile.json" \
+        "${buildopt_root}/seed-project/buildopt-qualified-profile.json"
+fi
 printf '%s\n' "${buildopt_change_path}" >"${buildopt_root}/seed-project/.buildopt-changes"
 printf '\n// BuildOpt fixed Kafka packaging change.\n' \
     >>"${buildopt_root}/seed-project/${buildopt_change_path}"
@@ -200,6 +215,7 @@ env -u CI JAVA_HOME="${buildopt_java_home}" \
     BUILDOPT_POC_KAFKA_IMPACT_EDGE_BINARY_SHA="$(sha256sum "${buildopt_binary}" | awk '{print $1}')" \
     BUILDOPT_POC_KAFKA_IMPACT_EDGE_INIT_SHA="$(sha256sum "${buildopt_init_script}" | awk '{print $1}')" \
     BUILDOPT_POC_KAFKA_IMPACT_EDGE_PLUGIN_SHA="$(sha256sum "${buildopt_plugin_jar}" | awk '{print $1}')" \
+    BUILDOPT_POC_KAFKA_INSTALLED_PROFILE_VALUE="${buildopt_installed_profile_value}" \
     BUILDOPT_POC_KAFKA_IMPACT_EDGE_IMPACT_SHA="$(sha256sum "${buildopt_repo_root}/benchmarks/results/poc-kafka-packaging-v1.json" | awk '{print $1}')" \
     BUILDOPT_POC_KAFKA_IMPACT_EDGE_EDGE_SHA="$(sha256sum "${buildopt_repo_root}/benchmarks/results/poc-remote-cache-transfer-v1.json" | awk '{print $1}')" \
     BUILDOPT_POC_KAFKA_IMPACT_EDGE_INVALID_SHA="$(sha256sum "${buildopt_repo_root}/benchmarks/results/poc-qualified-remote-composition-v1.json" | awk '{print $1}')" \
@@ -262,10 +278,72 @@ jq \
     .boundaries = $spec[0].boundaries
     ' "${buildopt_output}" >"${buildopt_output}.tmp"
 mv "${buildopt_output}.tmp" "${buildopt_output}"
+if [[ "${buildopt_installed_profile_value}" == 1 ]]; then
+    jq --slurpfile spec "${buildopt_spec}" '
+      def bootstrap_mean($data; $sample):
+        reduce range(0; ($data | length)) as $draw
+          ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+           .state = ((1664525 * .state + 1013904223) % 4294967296) |
+           .sum += $data[(.state % ($data | length))].savedMs) |
+        .sum / ($data | length);
+      def bootstrap95($data):
+        ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
+        [$r[102], $r[3993]];
+      .observations as $data |
+      (($data | map(.controlDurationMs) | add) / ($data | length)) as $controlMean |
+      (($data | map(.candidateDurationMs) | add) / ($data | length)) as $candidateMean |
+      ($controlMean - $candidateMean) as $saved |
+      (($data | map(.savedMs) | add) /
+        ($data | map(.controlDurationMs) | add)) as $ratio |
+      bootstrap95($data) as $interval |
+      ($data | map(select(.savedMs > 0)) | length) as $positive |
+      (($saved >= $spec[0].valueGate.minimumSavedMs) and
+        ($ratio >= $spec[0].valueGate.minimumReductionRatio) and
+        ($interval[0] > 0) and
+        ($positive >= $spec[0].valueGate.minimumPositivePairs)) as $performance |
+      .schemaVersion = "buildopt.evidence/poc-kafka-installed-profile-value/v1" |
+      .workItem = "POC-KAFKA-INSTALLED-PROFILE-VALUE-001" |
+      .executionPath = {
+        installedProfile: true,
+        command: $spec[0].hypothesis.command,
+        profileId: $spec[0].profile.profileId,
+        repositoryOwnedProfile: true,
+        experimentOnlySelectionEnvironmentUsed: false
+      } |
+      .profileEvidence = {
+        profileSha256: $spec[0].profile.sha256,
+        usabilityEvidenceSha256: $spec[0].profile.usabilityEvidenceSha256,
+        priorPerformanceEvidenceSha256: $spec[0].priorPerformanceEvidence.sha256,
+        priorTimingsReused: false
+      } |
+      .measurementAssertions.freshPairs = true |
+      .measurementAssertions.priorObservationsReused = false |
+      .measurementAssertions.repositoryOwnedProfileSelectedInEveryPair = true |
+      .measurementAssertions.productAttributableFailures = 0 |
+      .result = {
+        pairs: ($data | length),
+        controlMeanMs: $controlMean,
+        candidateMeanMs: $candidateMean,
+        meanSavedMs: $saved,
+        reductionRatio: $ratio,
+        interval95SavedMs: $interval,
+        positivePairs: $positive,
+        qualified: $performance,
+        decision: (if $performance then $spec[0].decisionPolicy.qualifiedDecision
+          else $spec[0].decisionPolicy.unqualifiedDecision end),
+        performanceGatePassed: $performance
+      } |
+      .boundaries = $spec[0].boundaries
+    ' "${buildopt_output}" >"${buildopt_output}.tmp"
+    mv "${buildopt_output}.tmp" "${buildopt_output}"
+fi
 chmod 0600 "${buildopt_output}"
 
-"${buildopt_script_dir}/check-poc-kafka-impact-edge-composition-v2-result" \
-    "${buildopt_output}"
+"${buildopt_result_check}" "${buildopt_output}"
 buildopt_complete=true
-printf 'POC Kafka Impact/Edge composition v2 evidence written: %s\n' \
-    "${buildopt_output}"
+if [[ "${buildopt_installed_profile_value}" == 1 ]]; then
+    printf 'Installed Kafka profile value evidence written: %s\n' "${buildopt_output}"
+else
+    printf 'POC Kafka Impact/Edge composition v2 evidence written: %s\n' \
+        "${buildopt_output}"
+fi
