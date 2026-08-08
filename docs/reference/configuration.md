@@ -64,6 +64,15 @@ fields, or using an unsafe path rejects the profile before Gradle. The complete
 executable example lives in
 [`fixtures/build-impact/synthetic-repository/buildopt-qualified-profile.json`](../../fixtures/build-impact/synthetic-repository/buildopt-qualified-profile.json).
 
+The v2 form composes an already-qualified Build Impact alternative with one
+read-only loopback Edge endpoint supplied at invocation time. It adds bounded
+`FILE_SHA256` preconditions and `edgeCache.mode: READ_ONLY_LOOPBACK`; the
+repository never stores a runtime endpoint or credential. The checked Kafka
+example is
+[`fixtures/poc-kafka-packaging/buildopt-qualified-edge-profile.json`](../../fixtures/poc-kafka-packaging/buildopt-qualified-edge-profile.json).
+Run it with `--edge-url http://127.0.0.1:<PORT>`. Failed preconditions or an
+unusable endpoint select the native full graph before Gradle starts.
+
 ## Session ingest and export
 
 | Variable | Secret | Meaning |

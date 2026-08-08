@@ -221,6 +221,20 @@ projects, drift, unknown paths, and global changes use the original full
 entrypoints or reject invalid state before Gradle. Test Optimization-owned
 checks are preserved separately and stay in their existing workflow.
 
+For the qualified Kafka composition, commit the v2 profile and pass the
+already-running local Edge origin explicitly:
+
+```bash
+buildopt poc --changes-file .buildopt-changes \
+  --edge-url http://127.0.0.1:<PORT>
+```
+
+The reported plan includes the normalized source precondition and marks Edge
+as read-only. Drift, global scope, missing Edge and local bypass execute the
+native full graph without Edge; an HTTP failure executes the selected graph
+locally. This is a bounded POC replay of existing evidence, not a general
+remote-cache policy.
+
 Run `./dev/check-build-impact-automatic` for the bounded synthetic example and
 `./dev/run --toolchain temurin-jdk-21 -- ./dev/check-build-impact-poc-onboarding`
 for the installed candidate/fallback proof. Read

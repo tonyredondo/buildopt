@@ -303,7 +303,7 @@ Kafka-specific product rule.
 | Reviewed task patch | Enabled only for exact matching contracts | Review required | Add recipes only after independent qualification |
 | Strict Safe Cache | Disabled | Disabled | Beat or justify cost versus native Gradle cache |
 | Runtime Tuning | Disabled | Disabled | Positive incremental evidence against optimized native Gradle |
-| Shared / Edge Cache | Edge qualified independently and in the normalized Kafka composition | Operator opt-in | Expose the qualified composition through an explicit repository-owned POC profile; keep native Shared behavior outside matched remote profiles |
+| Shared / Edge Cache | Edge qualified independently and in the normalized Kafka composition | Explicit repository-owned v2 POC profile | Keep the 82.35% claim bound to the exact Kafka source precondition and modeled network profile; preserve native Shared behavior outside a matched candidate |
 
 ## Recommended Next Block
 
@@ -364,8 +364,13 @@ The **qualified-profile usability and scope synthesis** block is now complete:
 3. the CLI reports the selected/full graph, exact adapters, expected outputs
    and disabled mechanisms before Gradle starts;
 4. fallback uses the original entrypoints without the standard-`Jar` adapter;
-5. Runtime, Hot State, Copy, Safe Cache and Shared/Edge are forced out of this
-   command until separate evidence qualifies them.
+5. Runtime, Hot State, Copy and Safe Cache remain forced out of the command;
+6. a v2 profile may activate only the separately qualified Build Impact plus
+   read-only Edge composition, with exact file-SHA preconditions and an
+   explicit loopback endpoint;
+7. global scope, precondition drift, missing/invalid Edge and bypass select the
+   native full graph before Gradle, while HTTP 503 executes locally with exact
+   output bytes.
 
 That installed adoption block is now complete. On the same fixed revisions,
 the packaged command restored `:testing-common:jar` and `:generator:jar`,
@@ -389,9 +394,6 @@ manufacture another optimization.
 
 ## Open Questions
 
-- Can the qualified Kafka Impact + Edge composition be expressed through a
-  repository-owned POC profile without experiment-only wiring or a universal
-  Kafka-specific product rule?
 - Does a materially different retained trace expose a Runtime bottleneck that
   justifies one new preregistered hypothesis?
 - Which repository-owned manifest UX makes the qualified clean profile easy to
@@ -422,6 +424,7 @@ artifacts are:
 - [qualified clean OpenTelemetry composition](../../benchmarks/results/poc-otel-clean-composition-v1.json).
 - [targeted Spring Runtime decision](../../benchmarks/results/poc-runtime-research-v1.json).
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json).
+- [repository-owned Kafka composition usability evidence](../../benchmarks/results/poc-kafka-composition-usability-v1.json).
 - [verification/distribution graph evidence](../../benchmarks/results/poc-verification-distribution-graph-v1.json).
 - [verification overhead attribution](../../benchmarks/results/poc-verification-overhead-attribution-v1.json).
 

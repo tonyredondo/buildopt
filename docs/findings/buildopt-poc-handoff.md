@@ -163,12 +163,14 @@ unfavorable observations. Percentages from different rows are not additive.
 
 ## Latest Generalization and Next Work
 
-The next block should move the qualified Kafka composition from the
-experiment-only harness into an explicit repository-owned POC profile. It must
-validate the normalized archive precondition before activation, expose the
-Impact and Edge plan before Gradle starts, and preserve native full-graph and
-remote-cache-failure fallbacks. It must not make Edge or a Kafka-specific rule
-the universal default.
+The qualified Kafka composition has now moved from experiment-only wiring into
+a repository-owned v2 POC profile. `buildopt poc` exposes the exact normalized
+source SHA, selected graph, read-only loopback Edge endpoint and disabled
+mechanisms before Gradle starts. Global/unknown changes, precondition drift,
+missing/invalid Edge and bypass select native full-graph execution without
+Edge; HTTP 503 executes the selected graph locally with identical bytes. No
+new timing was collected, so the existing 82.35% result remains bounded to the
+fixed Kafka change and network profile.
 
 **Continue the POC, but activate only measured value.** The fresh ablation
 qualified Spring Build Impact at 2,492.375 ms/30.86% saved with 8/8 positive

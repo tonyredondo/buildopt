@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-kafka-composition-usability/v1",
+  "workItem": "POC-KAFKA-COMPOSITION-USABILITY-001",
+  "capturedAt": "2026-08-08T16:31:54Z",
+  "implementationRevision": "74e5912a3861ee75486013187b8154707c3eb84b",
+  "inputs": {
+    "specSha256": "f6f9bc1b1ec4faf38e684a437f88dc2ddfb9a62188db5a57f31587242c5cea15",
+    "profileSha256": "ca0d8a67ec1977c96334e920da515ba50d5ae5515bd86c9fd481d84333056915",
+    "checkerSha256": "a5a6a30e0367cd161882b2ee50dc4b4cbc025d494d2b00ba4e0b239c63ada716",
+    "packagedInitScriptSha256": "82b0d66e9f3cd0d3b68f10b0bf09a150aa4c42733ff7b1c3a0862f8c0148e2d4",
+    "pocEdgePluginSha256": "27c11ace8eb16eb649a9d2085f9fc25caf3aeee701ef75a6e079cafa77d224c0",
+    "edgeTestKitSha256": "4107ef00978997d13df91c843d2ed3beae7f6e6fa70794138c83c9a8e28dd02d",
+    "qualifiedPerformanceEvidenceSha256": "c3b33a62f1d300470acfe7454b93759bce3c1df70e676dac2634d66f9a840438"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "gradleVersion": "9.6.1",
+    "jdk": "temurin-21.0.12+8"
+  },
+  "profile": {
+    "schemaVersion": "buildopt.poc/qualified-profile/v2",
+    "planSchemaVersion": "buildopt.poc/qualified-profile-plan/v2",
+    "profileId": "normalized-impact-plus-read-only-edge",
+    "candidateMechanisms": [
+      "BUILD_IMPACT",
+      "READ_ONLY_EDGE"
+    ],
+    "edgePush": false,
+    "productionAuthorized": false
+  },
+  "result": {
+    "profilePlanPassed": true,
+    "selectedEndpointPassed": true,
+    "ambientEndpointMasked": true,
+    "readOnlyEdgeHitPassed": true,
+    "globalFallbackPassed": true,
+    "preconditionFallbackPassed": true,
+    "missingEdgeFallbackPassed": true,
+    "invalidEdgeFallbackPassed": true,
+    "edgeFailureFallbackPassed": true,
+    "edgeFailureOutputExact": true,
+    "qualified": true,
+    "decision": "QUALIFY_REPOSITORY_OWNED_KAFKA_COMPOSITION_PROFILE"
+  },
+  "performanceBasis": {
+    "reusedEvidence": "benchmarks/results/poc-kafka-impact-edge-composition-v2.json",
+    "controlMeanMs": 42992.75,
+    "candidateMeanMs": 7587.25,
+    "meanSavedMs": 35405.5,
+    "reductionRatio": 0.8235225706659843,
+    "positivePairs": 4,
+    "pairs": 4,
+    "normalizedOutputSha256": "3ffd994e55cf6ddad21600a89a78a9b57851e4e0e48d2e75091d2736b0463349"
+  },
+  "boundaries": {
+    "performanceClaimRecomputed": false,
+    "performancePercentagesAdded": false,
+    "realKafkaPerformanceEvidenceReused": true,
+    "testOptimizationModified": false,
+    "productionReadinessClaimed": false,
+    "proofOfConcept": true,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "universalSavingsClaimed": false
+  }
+}

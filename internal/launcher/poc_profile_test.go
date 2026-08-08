@@ -255,6 +255,49 @@ func TestQualifiedPOCProfileRunReportsPlanBeforeGradle(t *testing.T) {
 	}
 }
 
+func TestQualifiedPOCEdgeProfileRunPassesOnlySelectedEndpoint(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	configureQualifiedPOCEdgeTestProfile(t, repositoryRoot)
+	t.Chdir(repositoryRoot)
+	clearGradleManagedL1Inputs(t)
+	initScript := filepath.Join(repositoryRoot, "buildopt.init.gradle")
+	pluginJar := filepath.Join(repositoryRoot, "buildopt-gradle-plugin.jar")
+	writeGradleTestFile(t, initScript)
+	writeGradleTestFile(t, pluginJar)
+	t.Setenv(gradleInitScriptEnvironment, initScript)
+	t.Setenv(gradlePluginJarEnvironment, pluginJar)
+	t.Setenv(gradlePOCEdgeCacheURLEnvironment, "http://127.0.0.1:9999")
+	writeGradleWrapperProperties(t, repositoryRoot, "distributionUrl=gradle-9.6.1-bin.zip\n")
+
+	wrapper := filepath.Join(repositoryRoot, gradleWrapperName(runtime.GOOS))
+	contents := "#!/bin/sh\nprintf 'wrapper-start edge=%s mode=%s\\n' \"$BUILDOPT_POC_EDGE_CACHE_URL\" \"$BUILDOPT_GRADLE_PROJECT_PLUGIN_MODE\" >&2\n"
+	if runtime.GOOS == "windows" {
+		contents = "@echo off\r\necho wrapper-start edge=%BUILDOPT_POC_EDGE_CACHE_URL% mode=%BUILDOPT_GRADLE_PROJECT_PLUGIN_MODE% 1>&2\r\n"
+	}
+	if err := os.WriteFile(wrapper, []byte(contents), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	code := Run([]string{
+		"poc", "--changes-file", "changed.txt",
+		"--edge-url", "http://127.0.0.1:8043",
+	}, strings.NewReader(""), &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("qualified Edge POC exit code = %d, stderr = %q", code, stderr.String())
+	}
+	planIndex := strings.Index(stderr.String(), "buildopt: qualified POC profile plan {")
+	wrapperIndex := strings.Index(stderr.String(), "wrapper-start ")
+	if planIndex < 0 || wrapperIndex < 0 || planIndex >= wrapperIndex ||
+		!strings.Contains(stderr.String(), `"enabledAdapters":["READ_ONLY_EDGE"]`) ||
+		!strings.Contains(stderr.String(), `"status":"SATISFIED"`) ||
+		!strings.Contains(stderr.String(), "edge=http://127.0.0.1:8043 mode=CACHE_ONLY") ||
+		strings.Contains(stderr.String(), "edge=http://127.0.0.1:9999") {
+		t.Fatalf("qualified Edge POC output = %q", stderr.String())
+	}
+}
+
 func TestQualifiedPOCProfileHelpAndInvalidArguments(t *testing.T) {
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer

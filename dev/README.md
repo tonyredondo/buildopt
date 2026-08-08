@@ -3073,6 +3073,21 @@ and the HTTP-503 local rebuild match `3ffd994e...3349`; the global change uses
 the full graph and candidate reads cause zero measured Shared traffic. The
 claim is limited to the fixed Kafka change and modeled network profile.
 
+### Repository-owned Kafka composition profile
+
+Validate the v2 `buildopt poc` profile that exposes the qualified Kafka Build
+Impact plus read-only Edge composition with:
+
+```bash
+./dev/check-poc-kafka-composition-usability
+```
+
+The checker validates the exact normalized-source SHA precondition, CLI plan,
+ambient-endpoint masking, read-only loopback Edge hit, native full-graph
+fallbacks and exact local execution after HTTP 503. It references the existing
+82.35% composition result and deliberately records no new timing or production
+claim.
+
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source
 distribution. Structural discovery freezes selective execution only where the

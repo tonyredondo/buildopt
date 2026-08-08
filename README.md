@@ -160,6 +160,20 @@ global changes restored the full graph, and HTTP 503 disabled Edge and rebuilt
 the same output locally. This qualifies the combined POC only for the fixed
 Kafka change and modeled network profile.
 
+The same composition is now available through the repository-owned v2 POC
+profile instead of experiment-only cache variables:
+
+```bash
+buildopt poc --changes-file .buildopt-changes \
+  --edge-url http://127.0.0.1:<PORT>
+```
+
+The plan exposes the exact normalized `build.gradle` SHA-256 and read-only
+Edge endpoint. Global/unknown changes, precondition drift, missing/invalid
+Edge, and bypass select the native full graph without Edge. HTTP 503 executes
+the selected graph locally and preserves the exact output. This is usability
+evidence; it does not widen or recompute the 82.35% result.
+
 ## Choose what to do next
 
 | Goal | Start here |

@@ -33,7 +33,7 @@ BuildOpt init script or plugin.
 ### Run the qualified POC profile
 
 ```text
-buildopt poc --changes-file PATH [--config PATH] [--timings-file PATH]
+buildopt poc --changes-file PATH [--config PATH] [--timings-file PATH] [--edge-url LOOPBACK_ORIGIN]
 ```
 
 The default config is the repository-owned
@@ -43,10 +43,13 @@ Gradle starts. The plan exposes selection/fallback reason, entrypoints,
 affected scope, omitted-project count, expected outputs, preserved Test-owned
 checks, enabled adapters and every disabled mechanism.
 
-Only native Gradle cache, Build Impact and the exact standard-`Jar` adapter are
-permitted. The adapter activates only for a selected repository alternative;
-unknown/global changes and bypass use native full-graph execution. This is a
-reviewable POC command, not autonomous or production authorization.
+The v1 profile permits only native Gradle cache, Build Impact and the exact
+standard-`Jar` adapter. The v2 profile permits only Build Impact plus an
+explicit read-only IPv4 loopback Edge endpoint and evaluates repository-owned
+file-SHA preconditions first. Unknown/global changes, failed preconditions,
+absent/invalid Edge and bypass use native full-graph execution without Edge.
+HTTP failures retain Gradle-native local execution. Both plans are reviewable
+POC decisions, not autonomous or production authorization.
 
 ### Run an explicit Build Impact POC candidate
 

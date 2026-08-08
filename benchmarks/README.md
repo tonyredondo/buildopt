@@ -669,6 +669,24 @@ network profile only.
 ./dev/check-poc-kafka-impact-edge-composition-v2-result
 ```
 
+### Repository-owned Kafka composition profile
+
+The checked [usability evidence](./results/poc-kafka-composition-usability-v1.json)
+binds the qualified 82.35% Kafka result to the v2 `buildopt poc` surface. One
+repository-owned profile records the exact normalized `build.gradle` digest;
+one explicit `--edge-url` supplies a read-only loopback Edge origin. The plan,
+selected endpoint, ambient-endpoint masking, real Gradle cache hit, global and
+precondition fallbacks, missing/invalid endpoint fallbacks, and byte-exact HTTP
+503 fallback all pass.
+
+No new timing was collected. The performance numbers are referenced from the
+unchanged v2 composition evidence and are not recomputed or combined with
+other component percentages. Validate the usability boundary with:
+
+```bash
+./dev/check-poc-kafka-composition-usability
+```
+
 The three mechanism-development reports remain historical inputs. The strict
 synthetic reports prove bounded combined value. The public-repository
 compatibility and early performance reports showed that the first generic

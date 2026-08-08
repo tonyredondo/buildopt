@@ -64,17 +64,56 @@ jq -e --slurpfile specification "${buildopt_spec}" '
 ' "${buildopt_profile}" >/dev/null
 
 if [[ -f "${buildopt_result}" ]]; then
-    jq -e '
+    jq -e --slurpfile performance "${buildopt_repo_root}/benchmarks/results/poc-kafka-impact-edge-composition-v2.json" '
         .schemaVersion == "buildopt.evidence/poc-kafka-composition-usability/v1" and
         .workItem == "POC-KAFKA-COMPOSITION-USABILITY-001" and
+        .implementationRevision == "74e5912a3861ee75486013187b8154707c3eb84b" and
+        .profile.candidateMechanisms == ["BUILD_IMPACT", "READ_ONLY_EDGE"] and
+        .profile.edgePush == false and
+        .profile.productionAuthorized == false and
         .result.profilePlanPassed == true and
+        .result.selectedEndpointPassed == true and
+        .result.ambientEndpointMasked == true and
         .result.readOnlyEdgeHitPassed == true and
         .result.globalFallbackPassed == true and
         .result.preconditionFallbackPassed == true and
+        .result.missingEdgeFallbackPassed == true and
+        .result.invalidEdgeFallbackPassed == true and
         .result.edgeFailureFallbackPassed == true and
+        .result.edgeFailureOutputExact == true and
+        .result.qualified == true and
+        .performanceBasis.controlMeanMs == $performance[0].result.controlMeanMs and
+        .performanceBasis.candidateMeanMs == $performance[0].result.candidateMeanMs and
+        .performanceBasis.meanSavedMs == $performance[0].result.meanSavedMs and
+        .performanceBasis.reductionRatio == $performance[0].result.reductionRatio and
+        .performanceBasis.positivePairs == $performance[0].result.positivePairs and
+        .performanceBasis.pairs == $performance[0].result.pairs and
+        .performanceBasis.normalizedOutputSha256 == $performance[0].preparation.seedOutputSha256 and
         .boundaries.performanceClaimRecomputed == false and
+        .boundaries.performancePercentagesAdded == false and
+        .boundaries.testOptimizationModified == false and
         .boundaries.productionReadinessClaimed == false
     ' "${buildopt_result}" >/dev/null
+    while read -r buildopt_expected buildopt_relative; do
+        [[ "$(sha256sum "${buildopt_repo_root}/${buildopt_relative}" | awk '{print $1}')" == \
+            "${buildopt_expected}" ]] || {
+            printf 'Kafka composition usability evidence digest mismatch: %s\n' \
+                "${buildopt_relative}" >&2
+            exit 1
+        }
+    done < <(
+        jq -r '
+            .inputs |
+            [
+                [.specSha256, "specs/poc-kafka-composition-usability-v1.json"],
+                [.profileSha256, "fixtures/poc-kafka-packaging/buildopt-qualified-edge-profile.json"],
+                [.packagedInitScriptSha256, ".github/actions/buildopt.init.gradle"],
+                [.pocEdgePluginSha256, "jvm/gradle-plugin/src/main/java/dev/buildopt/gradle/BuildOptPOCEdgeCachePlugin.java"],
+                [.edgeTestKitSha256, "jvm/gradle-plugin/src/testKit/java/dev/buildopt/gradle/POCEdgeCacheTestKit.java"],
+                [.qualifiedPerformanceEvidenceSha256, "benchmarks/results/poc-kafka-impact-edge-composition-v2.json"]
+            ][] | @tsv
+        ' "${buildopt_result}"
+    )
 fi
 
 if [[ "${buildopt_static}" == true ]]; then
