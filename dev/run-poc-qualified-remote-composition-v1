@@ -57,16 +57,13 @@ buildopt_source_sha=$(sha256sum "${buildopt_source_archive}" | awk '{print $1}')
 
 buildopt_binary=$(readlink -f "${buildopt_executable}")
 buildopt_prefix=$(CDPATH='' cd -- "$(dirname -- "${buildopt_binary}")/.." && pwd)
-buildopt_init_script="${buildopt_prefix}/lib/buildopt.init.gradle"
-mapfile -t buildopt_plugin_jars < <(
-    find "${buildopt_prefix}/lib" -maxdepth 1 -type f \
-        -name 'buildopt-gradle-plugin-*.jar' | sort
-)
-if [[ ! -f "${buildopt_init_script}" || "${#buildopt_plugin_jars[@]}" != 1 ]]; then
-    printf 'installed BuildOpt Gradle assets are unavailable or ambiguous\n' >&2
+buildopt_assets="${buildopt_prefix}/share/buildopt"
+buildopt_init_script="${buildopt_assets}/buildopt.init.gradle"
+buildopt_plugin_jar="${buildopt_assets}/buildopt-gradle-plugin.jar"
+if [[ ! -f "${buildopt_init_script}" || ! -f "${buildopt_plugin_jar}" ]]; then
+    printf 'installed BuildOpt Gradle assets are unavailable\n' >&2
     exit 1
 fi
-buildopt_plugin_jar=${buildopt_plugin_jars[0]}
 
 buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-qualified-remote-composition-v1.XXXXXX")
 buildopt_complete=false
