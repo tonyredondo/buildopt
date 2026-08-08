@@ -641,6 +641,34 @@ savings claim follows from the reproducibility block itself.
 ./dev/check-poc-kafka-shadowjar-reproducibility-v1-result
 ```
 
+### Qualified Kafka Build Impact and Edge composition
+
+The fresh [v2 composition evidence](./results/poc-kafka-impact-edge-composition-v2.json)
+uses the qualified archive settings before dependency preparation and derives
+seed, control, and candidate from the same normalized source. It reuses no v1
+timing observation.
+
+| Pair | Order | Native + Shared | Impact + Edge | Saving |
+|---:|---|---:|---:|---:|
+| 1 | Native first | 54,404 ms | 8,245 ms | 46,159 ms |
+| 2 | Candidate first | 41,402 ms | 6,263 ms | 35,139 ms |
+| 3 | Native first | 38,488 ms | 9,638 ms | 28,850 ms |
+| 4 | Candidate first | 37,677 ms | 6,203 ms | 31,474 ms |
+
+Native averages 42,992.75 ms and the installed candidate 7,587.25 ms, saving
+**35,405.5 ms or 82.35%**. All four pairs are positive and the paired interval
+is +30,162..+42,487.75 ms. Every measured arm restores the same normalized
+10,204,023-byte `shadowJar`; candidate Edge reads produce zero Shared traffic.
+A global change selects the full graph. When Edge returns HTTP 503, Gradle
+disables the remote cache, succeeds locally, and reproduces the exact
+`3ffd994e...3349` output. The terminal decision is
+`QUALIFY_KAFKA_IMPACT_EDGE_COMPOSITION` for this POC workload and modeled
+network profile only.
+
+```bash
+./dev/check-poc-kafka-impact-edge-composition-v2-result
+```
+
 The three mechanism-development reports remain historical inputs. The strict
 synthetic reports prove bounded combined value. The public-repository
 compatibility and early performance reports showed that the first generic

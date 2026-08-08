@@ -3049,6 +3049,30 @@ The checked result proves equal payloads, baseline metadata drift, two
 byte-identical normalized rebuilds and one byte-identical HTTP-503 fallback.
 It captures no performance claim and does not modify Kafka upstream.
 
+### Qualified Kafka Build Impact and Edge composition rerun
+
+`POC-KAFKA-IMPACT-EDGE-COMPOSITION-002` binds the archive normalization above
+before dependency preparation and derives seed, control, and candidate from
+the same source. It then collects four fresh alternating pairs and repeats the
+global-change and HTTP-503 safety paths:
+
+```bash
+./dev/check-poc-kafka-impact-edge-composition-v2
+./dev/run-poc-kafka-impact-edge-composition-v2 \
+  /absolute/path/to/new-result.json \
+  /absolute/path/to/buildopt \
+  /absolute/path/to/kafka-source.tar.gz
+./dev/check-poc-kafka-impact-edge-composition-v2-result \
+  /absolute/path/to/new-result.json
+```
+
+The checked evidence qualifies the composition at 82.35% mean savings:
+42,992.75-ms native + Shared versus 7,587.25-ms installed Impact + Edge, with
+4/4 positive pairs and interval +30,162..+42,487.75 ms. All measured outputs
+and the HTTP-503 local rebuild match `3ffd994e...3349`; the global change uses
+the full graph and candidate reads cause zero measured Shared traffic. The
+claim is limited to the fixed Kafka change and modeled network profile.
+
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source
 distribution. Structural discovery freezes selective execution only where the

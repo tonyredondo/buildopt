@@ -159,14 +159,16 @@ unfavorable observations. Percentages from different rows are not additive.
 | Client packaging through installed profile | **57.58% faster**, 4,637.5 ms saved, 4/4 positive pairs | Native root `assemble` averaged 8,054 ms; BuildOpt selected the three-project packaging scope and averaged 3,416.5 ms. The smallest pair saving was 4,050 ms; the exact 10.2-MB JAR and global fallback passed. Later diagnosis attributes this to Build Impact scope reduction, not standard-`Jar` reuse. |
 | Build Impact + prewarmed Edge | **82.87% diagnostic difference**, 35,922 ms mean, 4/4 positive pairs | Native full `assemble` through Shared averaged 43,345 ms; the installed candidate averaged 7,423 ms and restored the same cached `shadowJar`. Not qualified: forced Edge failure completed but rebuilt the custom JAR with different bytes. |
 | Custom `shadowJar` reproducibility | **5/5 clean builds passed the fixed safety protocol** | Original builds kept the same payload/order but drifted in ZIP metadata. Two normalized builds and an HTTP-503 fallback produced identical `3ffd994e...3349` bytes. This qualifies an input, not a performance percentage. |
+| Fresh normalized Build Impact + Edge | **82.35% faster**, 35,405.5 ms saved, 4/4 positive pairs | Native + Shared averaged 42,992.75 ms; installed Impact + Edge averaged 7,587.25 ms. Interval +30,162..+42,487.75 ms, exact normalized output, full-graph global fallback, zero measured candidate-origin traffic, and byte-identical HTTP-503 fallback. Qualified only for this change and network profile. |
 
 ## Latest Generalization and Next Work
 
-The immediate next block is a fresh Kafka Build Impact plus Edge composition.
-It must apply the qualified reproducible archive configuration equally to
-control and candidate, preserve global-change and HTTP-503 fallback, and collect
-new alternating pairs rather than reuse or relabel the earlier 82.87%
-diagnostic result.
+The next block should move the qualified Kafka composition from the
+experiment-only harness into an explicit repository-owned POC profile. It must
+validate the normalized archive precondition before activation, expose the
+Impact and Edge plan before Gradle starts, and preserve native full-graph and
+remote-cache-failure fallbacks. It must not make Edge or a Kafka-specific rule
+the universal default.
 
 **Continue the POC, but activate only measured value.** The fresh ablation
 qualified Spring Build Impact at 2,492.375 ms/30.86% saved with 8/8 positive
@@ -264,6 +266,16 @@ disabled, two independent builds and a third HTTP-503 fallback all produced
 the same `3ffd994e...3349` JAR digest. This authorizes a fresh preregistered
 composition run; it does not retroactively turn the earlier 82.87% diagnostic
 into a qualified claim.
+
+The fresh v2 composition has now used that input in both arms without reusing
+the old observations. Native full `assemble` through Shared averaged
+42,992.75 ms and installed Build Impact through prewarmed Edge averaged
+7,587.25 ms. The four new savings were +46,159, +35,139, +28,850 and
++31,474 ms, producing an **82.35%** mean reduction and a
++30,162..+42,487.75-ms interval. Every arm restored the same normalized JAR,
+the candidate made zero measured Shared requests, global fallback passed, and
+HTTP 503 rebuilt the exact bytes locally. The composition is qualified only
+for this Kafka change and frozen network profile.
 
 The third-repository transfer then applied the unchanged clean profile to
 Apache Kafka 4.3.1, a 64-project Java/Scala/generated-source build. Native root

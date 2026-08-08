@@ -65,7 +65,7 @@ measured on different workloads and scopes.
 | **Shared and Edge Cache** | Reuse committed outputs across machines and optionally place them nearer developers or CI runners. | Synthetic 32-MiB profile: **34.74% faster**, saving 2,401.25 ms. Kafka transfer under an independently derived 337-ms/6,994,831-B/s profile: **15.21% faster**, saving 1,351.25 ms. Both have 4/4 positive pairs, exact outputs and zero measured Edge upstream reads. | **Edge locality transfers across two bounded profiles.** Shared provides origin and authority semantics; no independent Shared acceleration or universal-network claim is made. |
 | **Build History** | Records durations, outcomes, cache behavior, and applied optimizations so results can be inspected and compared. | **No direct build-time saving.** | Observability that helps discover and validate optimizations; not an accelerator itself. |
 | **Launcher, gateway, and telemetry** | Provide orchestration, authentication, evidence collection, and safe fallback behavior. | Add fixed overhead rather than saving work. The local-cache fast path avoids starting these components when they have no consumer. | Necessary infrastructure for instrumented flows, but it must remain off the critical path when it is not needed. |
-| **Combined qualified path** | Orchestrates Build Impact and exact task optimizations through the packaged CLI and plugin while leaving unproven mechanisms disabled. | Fresh Spring Build Impact: **30.86% faster**. Clean OpenTelemetry Impact + standard `Jar`: **50.40% faster**. Kafka Impact + Edge showed a diagnostic **82.87%** difference, but failed exact fallback equivalence when uncached custom `shadowJar` rebuilt different bytes. | **Qualified only for exact measured workloads that pass both value and safety gates.** Kafka composition remains unqualified despite its speed. |
+| **Combined qualified path** | Orchestrates Build Impact and exact task optimizations through the packaged CLI and plugin while leaving unproven mechanisms disabled. | Fresh Spring Build Impact: **30.86% faster**. Clean OpenTelemetry Impact + standard `Jar`: **50.40% faster**. Fresh normalized Kafka Impact + Edge: **82.35% faster**, saving 35,405.5 ms with 4/4 positive pairs. | **Qualified only for exact measured workloads that pass both value and safety gates.** Kafka now passes exact cached, global-change, and HTTP-503 fallback gates for its fixed change and network profile. |
 
 The early isolated Runtime Tuning experiment reported a 0.7% saving, but the
 later and stricter comparison against optimized native Gradle superseded that
@@ -303,7 +303,7 @@ Kafka-specific product rule.
 | Reviewed task patch | Enabled only for exact matching contracts | Review required | Add recipes only after independent qualification |
 | Strict Safe Cache | Disabled | Disabled | Beat or justify cost versus native Gradle cache |
 | Runtime Tuning | Disabled | Disabled | Positive incremental evidence against optimized native Gradle |
-| Shared / Edge Cache | Edge qualified for the synthetic and Kafka locality profiles | Operator opt-in | Measure Edge with Kafka-qualified Build Impact only; exclude the disproved standard-`Jar` premise and keep native Shared behavior outside matched remote profiles |
+| Shared / Edge Cache | Edge qualified independently and in the normalized Kafka composition | Operator opt-in | Expose the qualified composition through an explicit repository-owned POC profile; keep native Shared behavior outside matched remote profiles |
 
 ## Recommended Next Block
 
@@ -328,7 +328,7 @@ to Shared, Edge was never opened, and no warm-up or measured pair ran. The
 57.58% packaging result therefore remains valid for the fixed Build Impact
 scope, but it cannot be attributed to exact standard-`Jar` reuse.
 
-That corrected composition is now complete. Native full `assemble` through
+The first corrected composition is complete. Native full `assemble` through
 Shared averaged 43,345 ms and installed Build Impact through prewarmed Edge
 averaged 7,423 ms. All four diagnostic pairs were positive (+42,084, +34,881,
 +35,269 and +31,454 ms), and the paired interval was strictly positive. Those
@@ -347,10 +347,14 @@ locally, and reproduced the same normalized digest after Gradle disabled the
 cache.
 
 This qualifies the narrow reproducibility input, not the prior 82.87% timing.
-The next block is `POC-KAFKA-IMPACT-EDGE-COMPOSITION-002`: preregister a fresh
-end-to-end comparison using the normalized archive configuration in both arms,
-then repeat exact-output, global-change and Edge-failure gates without reusing
-the old observations.
+The fresh v2 composition then applied it equally to both arms and collected
+four new pairs. Native + Shared averaged 42,992.75 ms; installed Impact + Edge
+averaged 7,587.25 ms, saving 35,405.5 ms/**82.35%** with 4/4 positive pairs and
+interval +30,162..+42,487.75 ms. All measured outputs were the exact normalized
+JAR, Edge made zero measured Shared requests, the global change retained the
+full graph, and HTTP 503 disabled remote cache and rebuilt identical bytes.
+The terminal decision is `QUALIFY_KAFKA_IMPACT_EDGE_COMPOSITION`, bounded to
+this change and network profile.
 
 The **qualified-profile usability and scope synthesis** block is now complete:
 
@@ -385,8 +389,9 @@ manufacture another optimization.
 
 ## Open Questions
 
-- Can Kafka's custom `shadowJar` be made byte-reproducible across cached and
-  uncached fallback without repository-specific product logic?
+- Can the qualified Kafka Impact + Edge composition be expressed through a
+  repository-owned POC profile without experiment-only wiring or a universal
+  Kafka-specific product rule?
 - Does a materially different retained trace expose a Runtime bottleneck that
   justifies one new preregistered hypothesis?
 - Which repository-owned manifest UX makes the qualified clean profile easy to
