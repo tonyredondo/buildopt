@@ -157,6 +157,7 @@ unfavorable observations. Percentages from different rows are not additive.
 |---|---:|---|
 | Clean Impact + exact standard-`Jar` profile | **55.09% faster**, 2,539.5 ms saved, 4/4 positive pairs | The unchanged installed profile reduced the conservative graph from 64 projects to three and restored `:generator:jar`; interval +1,625.5..+4,093 ms, 4,062 identical outputs, no Gradle `Test`, and successful full-graph fallback. |
 | Client packaging through installed profile | **57.58% faster**, 4,637.5 ms saved, 4/4 positive pairs | Native root `assemble` averaged 8,054 ms; BuildOpt selected the three-project packaging scope and averaged 3,416.5 ms. The smallest pair saving was 4,050 ms; the exact 10.2-MB JAR and global fallback passed. Later diagnosis attributes this to Build Impact scope reduction, not standard-`Jar` reuse. |
+| Build Impact + prewarmed Edge | **82.87% diagnostic difference**, 35,922 ms mean, 4/4 positive pairs | Native full `assemble` through Shared averaged 43,345 ms; the installed candidate averaged 7,423 ms and restored the same cached `shadowJar`. Not qualified: forced Edge failure completed but rebuilt the custom JAR with different bytes. |
 
 ## Latest Generalization and Next Work
 
@@ -240,6 +241,15 @@ standard-`Jar` premise was false: `:clients:jar` was `SKIPPED` and custom
 objects, Edge was never opened, and no warm-up or measured pair ran. This
 corrects the next step: compose only Kafka-qualified Build Impact and Edge
 locality, without adding percentages or crediting the standard-`Jar` adapter.
+
+That corrected experiment is now complete. Its four pairs saved 42,084,
+34,881, 35,269 and 31,454 ms, a diagnostic 82.87% mean difference with an
+entirely positive interval. Measured cached outputs matched, Build Impact
+selected the intended scope, Edge made zero origin requests and global fallback
+passed. The composition still does not qualify: an Edge 503 caused Gradle to
+fall back and finish normally, but the custom `shadowJar` rebuilt different
+bytes. The next block is therefore artifact reproducibility, not another speed
+run or a broad product claim.
 
 The third-repository transfer then applied the unchanged clean profile to
 Apache Kafka 4.3.1, a 64-project Java/Scala/generated-source build. Native root

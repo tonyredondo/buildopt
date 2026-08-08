@@ -478,6 +478,7 @@ buildopt_required_files=(
     "benchmarks/results/poc-verification-overhead-attribution-v1.json"
     "benchmarks/results/poc-remote-cache-transfer-v1.json"
     "benchmarks/results/poc-qualified-remote-composition-v1.json"
+    "benchmarks/results/poc-kafka-impact-edge-composition-v1.json"
     "benchmarks/results/poc-standard-copy-cascade-v1.json"
     "benchmarks/results/poc-normal-build-tail-expansion-v1.json"
     "specs/poc-otel-spring-family-v2.json"

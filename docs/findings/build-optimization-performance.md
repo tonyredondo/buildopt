@@ -65,7 +65,7 @@ measured on different workloads and scopes.
 | **Shared and Edge Cache** | Reuse committed outputs across machines and optionally place them nearer developers or CI runners. | Synthetic 32-MiB profile: **34.74% faster**, saving 2,401.25 ms. Kafka transfer under an independently derived 337-ms/6,994,831-B/s profile: **15.21% faster**, saving 1,351.25 ms. Both have 4/4 positive pairs, exact outputs and zero measured Edge upstream reads. | **Edge locality transfers across two bounded profiles.** Shared provides origin and authority semantics; no independent Shared acceleration or universal-network claim is made. |
 | **Build History** | Records durations, outcomes, cache behavior, and applied optimizations so results can be inspected and compared. | **No direct build-time saving.** | Observability that helps discover and validate optimizations; not an accelerator itself. |
 | **Launcher, gateway, and telemetry** | Provide orchestration, authentication, evidence collection, and safe fallback behavior. | Add fixed overhead rather than saving work. The local-cache fast path avoids starting these components when they have no consumer. | Necessary infrastructure for instrumented flows, but it must remain off the critical path when it is not needed. |
-| **Combined qualified path** | Orchestrates Build Impact and exact task optimizations through the packaged CLI and plugin while leaving unproven mechanisms disabled. | Fresh Spring Build Impact: **30.86% faster**. Clean OpenTelemetry Impact + standard `Jar`: **50.40% faster**. Kafka's installed packaging scope was **57.58% faster**, but the follow-up proved that its required artifact comes from `shadowJar`, so that result must not be attributed to the standard-`Jar` adapter. | **Qualified only for the exact measured POC workloads and mechanisms actually exercised.** Generalize change shapes and outputs before broadening the claim. |
+| **Combined qualified path** | Orchestrates Build Impact and exact task optimizations through the packaged CLI and plugin while leaving unproven mechanisms disabled. | Fresh Spring Build Impact: **30.86% faster**. Clean OpenTelemetry Impact + standard `Jar`: **50.40% faster**. Kafka Impact + Edge showed a diagnostic **82.87%** difference, but failed exact fallback equivalence when uncached custom `shadowJar` rebuilt different bytes. | **Qualified only for exact measured workloads that pass both value and safety gates.** Kafka composition remains unqualified despite its speed. |
 
 The early isolated Runtime Tuning experiment reported a 0.7% saving, but the
 later and stricter comparison against optimized native Gradle superseded that
@@ -328,12 +328,19 @@ to Shared, Edge was never opened, and no warm-up or measured pair ran. The
 57.58% packaging result therefore remains valid for the fixed Build Impact
 scope, but it cannot be attributed to exact standard-`Jar` reuse.
 
-The next performance block should compose only mechanisms independently
-qualified on Kafka: repository-authorized Build Impact and prewarmed Edge
-locality. It must compare that complete installed path against optimized native
-Gradle using the same remote Shared origin, retain exact outputs and full
-fallback, and report one end-to-end effect rather than adding the existing
-55.09%, 57.58% or 15.21% component percentages.
+That corrected composition is now complete. Native full `assemble` through
+Shared averaged 43,345 ms and installed Build Impact through prewarmed Edge
+averaged 7,423 ms. All four diagnostic pairs were positive (+42,084, +34,881,
++35,269 and +31,454 ms), and the paired interval was strictly positive. Those
+numbers are not additive component percentages and they are not a qualified
+claim: forced Edge failure completed successfully but rebuilt custom
+`shadowJar` with different bytes from the cached artifact.
+
+The next block is `POC-KAFKA-SHADOWJAR-REPRODUCIBILITY-001`. It must attribute
+the differing archive bytes, prove whether timestamps/order/metadata or actual
+content causes the drift, and make the narrowest repository-generic correction
+only if exact semantics can be preserved. No composition rerun is authorized
+until two independent uncached builds reproduce the same required artifact.
 
 The **qualified-profile usability and scope synthesis** block is now complete:
 
@@ -368,8 +375,8 @@ manufacture another optimization.
 
 ## Open Questions
 
-- Does the qualified Edge-locality result transfer to a different repository
-  and a network profile derived independently of this experiment?
+- Can Kafka's custom `shadowJar` be made byte-reproducible across cached and
+  uncached fallback without repository-specific product logic?
 - Does a materially different retained trace expose a Runtime bottleneck that
   justifies one new preregistered hypothesis?
 - Which repository-owned manifest UX makes the qualified clean profile easy to

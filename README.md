@@ -148,8 +148,11 @@ only the declared Kafka client-packaging scope. A subsequent composition seed
 proved that the required shaded artifact is produced by `:clients:shadowJar`
 while `:clients:jar` is skipped. It stopped before any timing, so the 57.58%
 result is Build Impact evidence and is not attributed to the standard-`Jar`
-adapter. The corrected next experiment will compose Build Impact with Edge
-locality only.
+adapter. The corrected Build Impact + Edge experiment then produced a strong
+diagnostic signal: 43,345-ms native versus 7,423-ms candidate means, 4/4
+positive pairs. It remains unqualified because forced Edge failure rebuilt the
+custom `shadowJar` with different bytes. The next block addresses archive
+reproducibility before any composition claim.
 
 ## Choose what to do next
 

@@ -587,6 +587,38 @@ experiment may compose Kafka-qualified Build Impact with Edge locality only.
 ./dev/check-poc-qualified-remote-composition-v1-result
 ```
 
+### Kafka Build Impact and Edge composition
+
+The corrected [terminal composition evidence](./results/poc-kafka-impact-edge-composition-v1.json)
+removes the disproved standard-`Jar` premise and combines only Kafka-qualified
+Build Impact with prewarmed Edge locality. The native control runs full root
+`assemble` through Shared; the installed candidate selects the three-project
+packaging scope and reads the same admissible committed objects through Edge.
+
+| Pair | Order | Native + Shared | Impact + Edge | Diagnostic saving |
+|---:|---|---:|---:|---:|
+| 1 | Native first | 52,143 ms | 10,059 ms | 42,084 ms |
+| 2 | Candidate first | 42,040 ms | 7,159 ms | 34,881 ms |
+| 3 | Native first | 41,630 ms | 6,361 ms | 35,269 ms |
+| 4 | Candidate first | 37,567 ms | 6,113 ms | 31,454 ms |
+
+The means are 43,345 ms and 7,423 ms: a diagnostic 35,922-ms/**82.87%**
+difference with 4/4 positive pairs and interval
++32,407.75..+40,283.25 ms. Every measured arm restored custom
+`:clients:shadowJar`, matched the same cached artifact, kept the standard-Jar
+adapter disabled, and the candidate made zero Shared requests.
+
+This is **not a qualified savings claim**. When Edge returned HTTP 503, native
+Gradle correctly disabled the remote cache and completed the candidate build,
+but rebuilding custom `shadowJar` produced different bytes from the cached
+artifact. The mandatory fallback-equivalence gate therefore failed and the
+decision is `RETAIN_SEPARATE_KAFKA_IMPACT_AND_EDGE`. The next experiment must
+attribute and stabilize that custom archive before any recomposition.
+
+```bash
+./dev/check-poc-kafka-impact-edge-composition-v1-result
+```
+
 The three mechanism-development reports remain historical inputs. The strict
 synthetic reports prove bounded combined value. The public-repository
 compatibility and early performance reports showed that the first generic

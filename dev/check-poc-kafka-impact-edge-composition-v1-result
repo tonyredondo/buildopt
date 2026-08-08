@@ -57,7 +57,6 @@ jq -e \
         ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
         [$r[102], $r[3993]];
     .observations as $data |
-    .preparation as $prep |
     (($data | map(.controlDurationMs) | add) / 4) as $controlMean |
     (($data | map(.candidateDurationMs) | add) / 4) as $candidateMean |
     ($controlMean - $candidateMean) as $saved |
@@ -65,26 +64,14 @@ jq -e \
         ($data | map(.controlDurationMs) | add)) as $ratio |
     bootstrap95($data) as $interval |
     ($data | map(select(.savedMs > 0)) | length) as $positive |
-    ($saved >= $spec[0].valueGate.minimumSavedMs and
-     $ratio >= $spec[0].valueGate.minimumReductionRatio and
-     $interval[0] > 0 and
-     $positive == $spec[0].valueGate.minimumPositivePairs and
-     .safety.impactFallbackPassed and .safety.edgeFailureFallbackPassed and
-     all($data[];
-        .outputsIdentical and .controlFullGraph and
-        .candidatePlanSelected and
-        .candidateAlternative == $spec[0].valueGate.requiredCandidateAlternative and
-        .controlShadowJarFromCache and .candidateShadowJarFromCache and
-        (.candidateStandardJarAdapter | not) and
-        (.productAttributableFailure | not))) as $qualified |
     .schemaVersion == "buildopt.evidence/poc-kafka-impact-edge-composition/v1" and
     .workItem == "POC-KAFKA-IMPACT-EDGE-COMPOSITION-001" and
+    .evidenceState == "TERMINAL_SAFETY_FAILURE_AFTER_MEASUREMENT" and
     (.capturedAt | fromdateiso8601) and
-    (.buildoptRevision | test("^[0-9a-f]{40}$")) and
-    .runnerScriptSha256 == $runnerSha and
-    .specSha256 == $specSha and .harnessSha256 == $harnessSha and
+    .buildoptRevision == "c415e3f979dc9d8bf31c8ce96a392c8638332edf" and
+    .runnerScriptSha256 == $runnerSha and .specSha256 == $specSha and
+    .harnessSha256 == $harnessSha and (.failureLogArchiveSha256 | sha256) and
     .sourceArchiveSha256 == $spec[0].repository.sourceArchiveSha256 and
-    (.dependencyCacheSha256 | sha256) and
     (.installedAssets.binarySha256 | sha256) and
     (.installedAssets.initScriptSha256 | sha256) and
     (.installedAssets.pluginJarSha256 | sha256) and
@@ -100,82 +87,50 @@ jq -e \
       gradleVersion: $spec[0].repository.gradleVersion,
       jdk: $spec[0].repository.jdk
     } and
-    .runner == {
-      id: "linux-amd64-12c-16659865600b-v1",
-      cpuCount: 12,
-      memoryBytes: 16659865600,
-      maxWorkers: 12
-    } and
-    .network == {
-      model: $spec[0].network.model,
+    .runner == {id: "linux-amd64-12c-16659865600b-v1", cpuCount: 12,
+      memoryBytes: 16659865600, maxWorkers: 12} and
+    .network == {model: $spec[0].network.model,
       latencyPerResponseMs: $spec[0].network.latencyPerResponseMs,
       bandwidthBytesPerSecond: $spec[0].network.bandwidthBytesPerSecond,
-      packetLossRatio: $spec[0].network.packetLossRatio
-    } and
-    .preparation.measured == false and
-    .preparation.dependenciesResolvedBeforeMeasurement == true and
-    .preparation.externalDependencyNetworkBlocked == true and
-    .preparation.capturedObjectCount == (.preparation.seededObjectCount + .preparation.excludedOversizedObjectCount) and
-    .preparation.capturedObjectBytes == (.preparation.seededObjectBytes + .preparation.excludedOversizedObjectBytes) and
-    .preparation.excludedOversizedObjectCount > 0 and
-    .preparation.excludedOversizedObjectBytes > $spec[0].cacheState.sharedMaximumObjectBytes and
-    .preparation.sharedMaximumObjectBytes == $spec[0].cacheState.sharedMaximumObjectBytes and
-    .preparation.seededObjectCount > 0 and
-    .preparation.seededObjectBytes >= 1048576 and
-    .preparation.seedOutputBytes > 0 and
-    (.preparation.seedOutputSha256 | sha256) and
-    .preparation.seedOutputProducingTask == $spec[0].requiredOutput.producingTask and
-    .preparation.edgeWarmupOriginRequests == .preparation.seededObjectCount and
-    .preparation.edgeWarmupOriginBytes == .preparation.seededObjectBytes and
-    .mechanisms == {
-      buildImpact: true,
-      edgeLocality: true,
-      standardJarAdapter: false,
-      standardCopyAdapter: false,
-      safeCache: false,
-      runtimeTuning: false,
-      hotState: false,
-      testOptimization: false
-    } and
-    ($data | length) == $spec[0].measurement.pairs and
-    [$data[].pair] == [1, 2, 3, 4] and
+      packetLossRatio: $spec[0].network.packetLossRatio} and
+    .preparation == {measured: false, capturedObjectCount: 60,
+      capturedObjectBytes: 168442184,
+      sharedMaximumObjectBytes: $spec[0].cacheState.sharedMaximumObjectBytes,
+      oversizedObjectsExcludedBeforeSharedCommit: true,
+      partialStateReused: false} and
+    .mechanisms == {buildImpact: true, edgeLocality: true,
+      standardJarAdapter: false, standardCopyAdapter: false, safeCache: false,
+      runtimeTuning: false, hotState: false, testOptimization: false} and
+    .measurementAssertions == {allPairsAcceptedBeforeSafetyFailure: true,
+      sameCachedOutputInEveryMeasuredArm: true,
+      shadowJarFromCacheInEveryMeasuredArm: true,
+      candidateOriginTrafficZeroInEveryPair: true,
+      candidatePlanSelectedInEveryPair: true,
+      controlFullGraphInEveryPair: true,
+      standardJarAdapterAbsent: true,
+      productAttributableFailures: 0} and
+    ($data | length) == 4 and [$data[].pair] == [1, 2, 3, 4] and
     [$data[].order] == $spec[0].measurement.pairOrder and
-    all($data[];
-      (.controlDurationMs | type == "number" and . > 0) and
-      (.candidateDurationMs | type == "number" and . > 0) and
-      .savedMs == (.controlDurationMs - .candidateDurationMs) and
-      .interArmIdleGapMs >= 0 and
-      .interArmIdleGapMs <= $spec[0].measurement.maximumInterArmIdleGapMs and
-      .controlOriginRequests > 0 and .controlOriginBytes > 0 and
-      .candidateOriginRequests == 0 and .candidateOriginBytes == 0 and
-      .controlRemoteCacheHits > 0 and .candidateRemoteCacheHits > 0 and
-      .controlFullGraph == true and .candidatePlanSelected == true and
-      .candidateAlternative == $spec[0].fixture.alternativeId and
-      .controlShadowJarFromCache == true and
-      .candidateShadowJarFromCache == true and
-      .candidateStandardJarAdapter == false and
-      .requiredOutputCount == $spec[0].requiredOutput.count and
-      .requiredOutputBytes == $prep.seedOutputBytes and
-      .requiredOutputSha256 == $prep.seedOutputSha256 and
-      (.controlTaskOutcomeSha256 | sha256) and
-      (.candidateTaskOutcomeSha256 | sha256) and
-      .outputsIdentical == true and
-      .productAttributableFailure == false) and
-    ([$data[].requiredOutputSha256] | unique) == [$prep.seedOutputSha256] and
-    .safety == {impactFallbackPassed: true, edgeFailureFallbackPassed: true} and
-    .result == {
-      pairs: 4,
-      controlMeanMs: $controlMean,
-      candidateMeanMs: $candidateMean,
-      meanSavedMs: $saved,
-      reductionRatio: $ratio,
-      interval95SavedMs: $interval,
-      positivePairs: $positive,
-      qualified: $qualified,
-      decision: (if $qualified then
-        $spec[0].decisionPolicy.qualifiedDecision
-      else $spec[0].decisionPolicy.unqualifiedDecision end)
-    } and
+    all($data[]; .controlDurationMs > 0 and .candidateDurationMs > 0 and
+      .savedMs == (.controlDurationMs - .candidateDurationMs)) and
+    .safety.impactFallbackPassed == true and
+    .safety.edgeFailureBuildSucceeded == true and
+    .safety.edgeFailureRemoteCacheDisabled == true and
+    .safety.edgeFailureRequiredOutputProduced == true and
+    .safety.edgeFailureOutputExact == false and
+    (.safety.edgeFailureLogSha256 | sha256) and
+    (.safety.impactFallbackLogSha256 | sha256) and
+    .result == {pairs: 4, controlMeanMs: $controlMean,
+      candidateMeanMs: $candidateMean, meanSavedMs: $saved,
+      reductionRatio: $ratio, interval95SavedMs: $interval,
+      positivePairs: $positive, performanceGatePassed: true,
+      qualified: false,
+      decision: $spec[0].decisionPolicy.unqualifiedDecision} and
+    .terminalDiagnostic == {phase: "EDGE_FAILURE_FALLBACK_OUTPUT_VALIDATION",
+      reason: "CUSTOM_SHADOW_JAR_REBUILT_DIFFERENT_BYTES",
+      timingsMayBeReportedAsDiagnosticOnly: true,
+      compositionSavingsMayBeClaimed: false,
+      nextAction: "ATTRIBUTE_AND_STABILIZE_CUSTOM_SHADOW_JAR_REPRODUCIBILITY_BEFORE_RECOMPOSITION"} and
     .boundaries == $spec[0].boundaries
 ' "${buildopt_result}" >/dev/null
 
@@ -184,4 +139,4 @@ if [[ "${buildopt_before}" != "${buildopt_after}" ]]; then
     printf 'Kafka Impact/Edge result validation changed the working tree\n' >&2
     exit 1
 fi
-printf 'POC Kafka Impact/Edge composition evidence OK: %s\n' "${buildopt_result}"
+printf 'POC Kafka Impact/Edge terminal evidence OK: %s\n' "${buildopt_result}"

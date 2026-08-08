@@ -3020,6 +3020,13 @@ until the fixed experiment completes; its result must report the directly
 measured combined effect rather than adding the earlier Build Impact and Edge
 percentages.
 
+The terminal run produced four positive diagnostic pairs: native full
+`assemble` through Shared averaged 43,345 ms and installed Build Impact through
+Edge averaged 7,423 ms. The performance gate would pass, but the composition
+does not qualify. Under forced Edge failure Gradle disabled remote cache and
+completed, while custom `shadowJar` rebuilt different bytes. Validate the
+retained terminal decision with the result checker above.
+
 The Build Impact generalization protocol broadens the real Spring matrix across
 compilation, test preparation, build-owned verification, packaging, and source
 distribution. Structural discovery freezes selective execution only where the

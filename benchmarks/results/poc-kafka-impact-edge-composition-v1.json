@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-kafka-impact-edge-composition/v1",
+  "workItem": "POC-KAFKA-IMPACT-EDGE-COMPOSITION-001",
+  "evidenceState": "TERMINAL_SAFETY_FAILURE_AFTER_MEASUREMENT",
+  "capturedAt": "2026-08-08T14:07:03Z",
+  "buildoptRevision": "c415e3f979dc9d8bf31c8ce96a392c8638332edf",
+  "runnerScriptSha256": "5fd1554ead87c2a5212775aacce2ac08669fd26c45e411d379cd3324eef5f321",
+  "specSha256": "cfbce19b27c867ff764a4ace0b9bf9cc2b94ef4f9271f47829068a5b31232d36",
+  "harnessSha256": "67a056ed495072fc5be8eaefde333bfd1b17988316f2f325cb812c852735ea27",
+  "failureLogArchiveSha256": "f5b1bbec1ff5c61c35ca222b29913de030c106ef238dae2175c1d74361142b20",
+  "sourceArchiveSha256": "4b5a65a52cbfdabe217856b6b4eb7cad7067f250524a38592ff27ee315824ea2",
+  "installedAssets": {
+    "binarySha256": "e8329a71f935ea63074a9dd8f4447abbe5c3de75eaca6052535cf226134f98d9",
+    "initScriptSha256": "0dc9260649627514643133f5bf971042aee064558eab232ab75f3c62af21cd57",
+    "pluginJarSha256": "bf6003a25b802b814d288057f0a06582534d9af852c00b0d296e7415f22d5725"
+  },
+  "componentEvidence": {
+    "kafkaImpactScopeSha256": "d2efc3519bd9930b9cbf0e351b02cf6a52d610e7ee67caed1ebd0849feda316a",
+    "kafkaEdgeLocalitySha256": "04c73df729556111178522bfab6cb69b612a039fbbf8feb49b29581dcebbce53",
+    "invalidJarCompositionSha256": "f47eee324b0f25b984cb2c5be001464c7f898496f3ac63e8d746906a56cd4e96"
+  },
+  "repository": {
+    "nameWithOwner": "apache/kafka",
+    "releaseTag": "4.3.1",
+    "revision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "gradleVersion": "9.2.1",
+    "jdk": "temurin-25.0.3+9"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12
+  },
+  "network": {
+    "model": "INDEPENDENT_SOURCE_ARCHIVE_DERIVED_LOOPBACK_WAN",
+    "latencyPerResponseMs": 337,
+    "bandwidthBytesPerSecond": 6994831,
+    "packetLossRatio": 0
+  },
+  "preparation": {
+    "measured": false,
+    "capturedObjectCount": 60,
+    "capturedObjectBytes": 168442184,
+    "sharedMaximumObjectBytes": 104857600,
+    "oversizedObjectsExcludedBeforeSharedCommit": true,
+    "partialStateReused": false
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "edgeLocality": true,
+    "standardJarAdapter": false,
+    "standardCopyAdapter": false,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "testOptimization": false
+  },
+  "measurementAssertions": {
+    "allPairsAcceptedBeforeSafetyFailure": true,
+    "sameCachedOutputInEveryMeasuredArm": true,
+    "shadowJarFromCacheInEveryMeasuredArm": true,
+    "candidateOriginTrafficZeroInEveryPair": true,
+    "candidatePlanSelectedInEveryPair": true,
+    "controlFullGraphInEveryPair": true,
+    "standardJarAdapterAbsent": true,
+    "productAttributableFailures": 0
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 52143,
+      "candidateDurationMs": 10059,
+      "savedMs": 42084
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 42040,
+      "candidateDurationMs": 7159,
+      "savedMs": 34881
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 41630,
+      "candidateDurationMs": 6361,
+      "savedMs": 35269
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 37567,
+      "candidateDurationMs": 6113,
+      "savedMs": 31454
+    }
+  ],
+  "safety": {
+    "impactFallbackPassed": true,
+    "edgeFailureBuildSucceeded": true,
+    "edgeFailureRemoteCacheDisabled": true,
+    "edgeFailureRequiredOutputProduced": true,
+    "edgeFailureOutputExact": false,
+    "edgeFailureLogSha256": "3fb92466307a74f05d6af5a1a530ddd253f83d90045fae9e21e420dc991541a5",
+    "impactFallbackLogSha256": "7a03ed37caded2125ca60e695b014e6ea2184b779485429f1c987e1799e0e347"
+  },
+  "result": {
+    "pairs": 4,
+    "controlMeanMs": 43345,
+    "candidateMeanMs": 7423,
+    "meanSavedMs": 35922,
+    "reductionRatio": 0.8287461068173954,
+    "interval95SavedMs": [
+      32407.75,
+      40283.25
+    ],
+    "positivePairs": 4,
+    "performanceGatePassed": true,
+    "qualified": false,
+    "decision": "RETAIN_SEPARATE_KAFKA_IMPACT_AND_EDGE"
+  },
+  "terminalDiagnostic": {
+    "phase": "EDGE_FAILURE_FALLBACK_OUTPUT_VALIDATION",
+    "reason": "CUSTOM_SHADOW_JAR_REBUILT_DIFFERENT_BYTES",
+    "timingsMayBeReportedAsDiagnosticOnly": true,
+    "compositionSavingsMayBeClaimed": false,
+    "nextAction": "ATTRIBUTE_AND_STABILIZE_CUSTOM_SHADOW_JAR_REPRODUCIBILITY_BEFORE_RECOMPOSITION"
+  },
+  "boundaries": {
+    "sameSharedOrigin": true,
+    "sameCommittedObjectBytes": true,
+    "sameSourceAndChange": true,
+    "sameRequiredOutput": true,
+    "testTasksForbidden": true,
+    "runtimeTuningChanged": false,
+    "safeCacheChanged": false,
+    "hotStateChanged": false,
+    "standardJarChanged": false,
+    "standardCopyChanged": false,
+    "testSelectionChanged": false,
+    "testExecutionChanged": false,
+    "testOptimizationModified": false,
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "universalSavingsClaimed": false
+  }
+}
