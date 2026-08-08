@@ -220,6 +220,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-kafka-composition-usability" --static >/dev/null
         "${buildopt_script_dir}/check-poc-kafka-installed-profile-value-v1" >/dev/null
         "${buildopt_script_dir}/check-poc-kafka-installed-profile-value-v1-result" >/dev/null
+        "${buildopt_script_dir}/check-poc-qualified-profile-matrix-v1" >/dev/null
         "${buildopt_script_dir}/check-poc-spring-installed-impact" >/dev/null
         "${buildopt_script_dir}/check-poc-spring-impact-breadth" >/dev/null
         "${buildopt_script_dir}/check-poc-impact-generalization" >/dev/null

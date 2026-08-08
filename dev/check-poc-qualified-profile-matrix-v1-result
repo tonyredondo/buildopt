@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s RESULT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_result=$1
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-qualified-profile-matrix-v1.json"
+buildopt_result_dir=$(CDPATH='' cd -- "$(dirname -- "${buildopt_result}")" && pwd)
+
+[[ -s "${buildopt_result}" ]] || exit 1
+"${buildopt_script_dir}/check-poc-qualified-profile-matrix-v1" >/dev/null
+"${buildopt_script_dir}/check-poc-qualified-profile-matrix-cell" \
+    spring-build-impact "${buildopt_result_dir}/spring.json" >/dev/null
+"${buildopt_script_dir}/check-poc-qualified-profile-matrix-cell" \
+    opentelemetry-impact-standard-jar "${buildopt_result_dir}/opentelemetry.json" >/dev/null
+"${buildopt_script_dir}/check-poc-kafka-installed-profile-value-v1-result" \
+    "${buildopt_result_dir}/kafka.json" >/dev/null
+
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_execution_revision=$(jq -er '.buildoptRevision' "${buildopt_result}")
+buildopt_runner_sha=$(git -C "${buildopt_repo_root}" show \
+    "${buildopt_execution_revision}:dev/run-poc-qualified-profile-matrix-v1" | \
+    sha256sum | awk '{print $1}')
+
+jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sha}" \
+    --arg springSha "$(sha256sum "${buildopt_result_dir}/spring.json" | awk '{print $1}')" \
+    --arg otelSha "$(sha256sum "${buildopt_result_dir}/opentelemetry.json" | awk '{print $1}')" \
+    --arg kafkaSha "$(sha256sum "${buildopt_result_dir}/kafka.json" | awk '{print $1}')" \
+    --slurpfile spec "${buildopt_spec}" \
+    --slurpfile spring "${buildopt_result_dir}/spring.json" \
+    --slurpfile otel "${buildopt_result_dir}/opentelemetry.json" \
+    --slurpfile kafka "${buildopt_result_dir}/kafka.json" '
+  def sha256: type == "string" and test("^[0-9a-f]{64}$");
+  def gitsha: type == "string" and test("^[0-9a-f]{40}$");
+  (.cells | map(select(.qualified)) | length) as $qualified |
+  [
+    {
+      id: "spring-build-impact", evidenceFile: "spring.json", evidenceSha256: $springSha,
+      mechanisms: $spec[0].cells[0].mechanisms, pairs: $spring[0].result.pairs,
+      controlMeanMs: $spring[0].result.controlMeanMs,
+      candidateMeanMs: $spring[0].result.candidateMeanMs,
+      meanSavedMs: $spring[0].result.meanSavedMs,
+      reductionRatio: $spring[0].result.reductionRatio,
+      interval95SavedMs: $spring[0].result.interval95SavedMs,
+      positivePairs: $spring[0].result.positivePairs,
+      qualified: $spring[0].result.qualified
+    },
+    {
+      id: "opentelemetry-impact-standard-jar", evidenceFile: "opentelemetry.json",
+      evidenceSha256: $otelSha, mechanisms: $spec[0].cells[1].mechanisms,
+      pairs: $otel[0].result.pairs, controlMeanMs: $otel[0].result.controlMeanMs,
+      candidateMeanMs: $otel[0].result.candidateMeanMs,
+      meanSavedMs: $otel[0].result.meanSavedMs,
+      reductionRatio: $otel[0].result.reductionRatio,
+      interval95SavedMs: $otel[0].result.interval95SavedMs,
+      positivePairs: $otel[0].result.positivePairs,
+      qualified: $otel[0].result.qualified
+    },
+    {
+      id: "kafka-impact-read-only-edge", evidenceFile: "kafka.json",
+      evidenceSha256: $kafkaSha, mechanisms: $spec[0].cells[2].mechanisms,
+      pairs: $kafka[0].result.pairs, controlMeanMs: $kafka[0].result.controlMeanMs,
+      candidateMeanMs: $kafka[0].result.candidateMeanMs,
+      meanSavedMs: $kafka[0].result.meanSavedMs,
+      reductionRatio: $kafka[0].result.reductionRatio,
+      interval95SavedMs: $kafka[0].result.interval95SavedMs,
+      positivePairs: $kafka[0].result.positivePairs,
+      qualified: $kafka[0].result.qualified
+    }
+  ] as $expectedCells |
+  .schemaVersion == "buildopt.evidence/poc-qualified-profile-matrix/v1" and
+  .workItem == "POC-QUALIFIED-PROFILE-MATRIX-001" and
+  .evidenceState == "TERMINAL" and
+  (.capturedAt | fromdateiso8601) and
+  (.buildoptRevision | gitsha) and
+  .specSha256 == $specSha and
+  .runnerScriptSha256 == $runnerSha and
+  .cells == $expectedCells and
+  all(.cells[]; (.evidenceSha256 | sha256) and .pairs >= 4 and
+    .positivePairs >= 0 and .positivePairs <= .pairs) and
+  .aggregation == {
+    qualifyingFamilies: $qualified,
+    totalFamilies: 3,
+    repositoryPercentagesAveraged: false,
+    mechanismPercentagesAdded: false
+  } and
+  .decision == (if $qualified >= $spec[0].aggregation.minimumQualifyingFamilies
+    then $spec[0].terminalDecisions.continue
+    elif $qualified > 0 then $spec[0].terminalDecisions.specialize
+    else $spec[0].terminalDecisions.stop end) and
+  .boundaries == $spec[0].boundaries and
+  (has("aggregateReductionRatio") | not) and
+  (has("aggregateMeanSavedMs") | not)
+' "${buildopt_result}" >/dev/null
+
+printf 'qualified-profile matrix evidence OK: %s\n' "${buildopt_result}"

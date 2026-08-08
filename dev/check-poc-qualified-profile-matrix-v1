@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-qualified-profile-matrix-v1.json"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-qualified-profile-matrix/v1" and
+  .workItem == "POC-QUALIFIED-PROFILE-MATRIX-001" and
+  .status == "PREREGISTERED" and
+  .aggregation == {
+    minimumQualifyingFamilies: 2,
+    repositoryPercentagesMayBeAveraged: false,
+    mechanismPercentagesMayBeAdded: false
+  } and
+  .commonValueGate.minimumSavedMs == 500 and
+  .commonValueGate.minimumReductionRatio == 0.02 and
+  .commonValueGate.positiveLower95Bound == true and
+  .commonValueGate.allPairsPositive == true and
+  .commonValueGate.requiredOutputsIdentical == true and
+  .commonValueGate.maximumProductAttributableFailures == 0 and
+  .commonValueGate.thresholdsMayMoveAfterMeasurement == false and
+  .commonValueGate.failedPairsMayBeDiscarded == false and
+  [.cells[].id] == [
+    "spring-build-impact",
+    "opentelemetry-impact-standard-jar",
+    "kafka-impact-read-only-edge"
+  ] and
+  ([.cells[].repository] | unique | length) == 3 and
+  all(.cells[]; (.revision | test("^[0-9a-f]{40}$")) and
+    .minimumPairs >= 4 and (.mechanisms | length) > 0) and
+  .boundaries == {
+    proofOfConceptOnly: true,
+    productionReadinessClaim: false,
+    soakRequired: false,
+    designPartnerRequired: false,
+    testOptimizationIncluded: false
+  }
+' "${buildopt_spec}" >/dev/null
+
+for buildopt_profile in $(jq -r '.cells[].profilePath' "${buildopt_spec}"); do
+    [[ -s "${buildopt_repo_root}/${buildopt_profile}" ]] || {
+        printf 'qualified matrix profile is unavailable: %s\n' "${buildopt_profile}" >&2
+        exit 1
+    }
+done
+
+printf 'qualified-profile matrix preregistration OK\n'

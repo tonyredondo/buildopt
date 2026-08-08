@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v3",
+  "profileVersion": 3,
+  "profileId": "build-impact-only",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "spring-projects/spring-framework",
+  "pipelineClass": "poc-spring-test-preparation",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": false,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": false
+  },
+  "gradleOptions": [
+    "--daemon",
+    "--offline",
+    "--build-cache",
+    "--parallel",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--max-workers=12",
+    "--no-scan",
+    "--stacktrace"
+  ]
+}

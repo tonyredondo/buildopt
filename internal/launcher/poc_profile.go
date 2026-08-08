@@ -20,10 +20,13 @@ const (
 	qualifiedPOCProfileUsage             = "usage: buildopt poc --changes-file PATH [--config PATH] [--timings-file PATH] [--edge-url LOOPBACK_ORIGIN]\n"
 	qualifiedPOCProfileSchemaVersionV1   = "buildopt.poc/qualified-profile/v1"
 	qualifiedPOCProfileSchemaVersionV2   = "buildopt.poc/qualified-profile/v2"
+	qualifiedPOCProfileSchemaVersionV3   = "buildopt.poc/qualified-profile/v3"
 	qualifiedPOCProfilePlanSchemaV1      = "buildopt.poc/qualified-profile-plan/v1"
 	qualifiedPOCProfilePlanSchemaV2      = "buildopt.poc/qualified-profile-plan/v2"
+	qualifiedPOCProfilePlanSchemaV3      = "buildopt.poc/qualified-profile-plan/v3"
 	qualifiedPOCProfileIDV1              = "clean-build-impact-plus-exact-standard-jar"
 	qualifiedPOCProfileIDV2              = "normalized-impact-plus-read-only-edge"
+	qualifiedPOCProfileIDV3              = "build-impact-only"
 	qualifiedPOCProfileOwnership         = "REPOSITORY_COMMITTED"
 	qualifiedPOCProfileClaimScope        = "DECLARED_OUTPUTS_ONLY"
 	qualifiedPOCProfileFallback          = "NATIVE_FULL_GRAPH"
@@ -154,9 +157,9 @@ func prepareQualifiedPOCProfileInvocation(args []string, bypass bool) (impactInv
 	}
 	preconditions := qualifiedPOCPreconditionResults(profile.Preconditions, "NOT_EVALUATED")
 	pocEdgeURL := ""
-	if profile.SchemaVersion == qualifiedPOCProfileSchemaVersionV1 {
+	if profile.SchemaVersion != qualifiedPOCProfileSchemaVersionV2 {
 		if *edgeURL != "" {
-			return impactInvocation{}, errors.New("qualified POC profile v1 does not accept an Edge endpoint")
+			return impactInvocation{}, errors.New("qualified POC profile does not accept an Edge endpoint")
 		}
 	} else if invocation.plan.CandidateSelected {
 		var satisfied bool
@@ -190,6 +193,9 @@ func prepareQualifiedPOCProfileInvocation(args []string, bypass bool) (impactInv
 	if profile.SchemaVersion == qualifiedPOCProfileSchemaVersionV2 {
 		planSchema = qualifiedPOCProfilePlanSchemaV2
 		disabledMechanisms = []string{"HOT_STATE", "RUNTIME_TUNING", "SAFE_CACHE", "STANDARD_COPY", "STANDARD_JAR"}
+	} else if profile.SchemaVersion == qualifiedPOCProfileSchemaVersionV3 {
+		planSchema = qualifiedPOCProfilePlanSchemaV3
+		disabledMechanisms = []string{"HOT_STATE", "RUNTIME_TUNING", "SAFE_CACHE", "SHARED_EDGE_CACHE", "STANDARD_COPY", "STANDARD_JAR"}
 	}
 	invocation.qualifiedProfile = &qualifiedPOCProfilePlan{
 		SchemaVersion:         planSchema,
@@ -288,7 +294,9 @@ func validateQualifiedPOCProfile(profile qualifiedPOCProfile) error {
 		profile.ProfileVersion == 1 && profile.ProfileID == qualifiedPOCProfileIDV1
 	versionTwo := profile.SchemaVersion == qualifiedPOCProfileSchemaVersionV2 &&
 		profile.ProfileVersion == 2 && profile.ProfileID == qualifiedPOCProfileIDV2
-	if !versionOne && !versionTwo {
+	versionThree := profile.SchemaVersion == qualifiedPOCProfileSchemaVersionV3 &&
+		profile.ProfileVersion == 3 && profile.ProfileID == qualifiedPOCProfileIDV3
+	if !versionOne && !versionTwo && !versionThree {
 		return errors.New("unsupported qualified POC profile identity")
 	}
 	if profile.Ownership != qualifiedPOCProfileOwnership ||
@@ -321,6 +329,12 @@ func validateQualifiedPOCProfile(profile qualifiedPOCProfile) error {
 		profile.EdgeCache.Mode != "READ_ONLY_LOOPBACK" || len(profile.Preconditions) == 0 ||
 		len(profile.Preconditions) > 8) {
 		return errors.New("qualified POC profile v2 must enable only Build Impact and read-only loopback Edge with bounded preconditions")
+	}
+	if versionThree && (!profile.Mechanisms.BuildImpact || profile.Mechanisms.StandardJarAdapter ||
+		profile.Mechanisms.SafeCache || profile.Mechanisms.RuntimeTuning ||
+		profile.Mechanisms.HotState || profile.Mechanisms.StandardCopyAdapter ||
+		profile.Mechanisms.SharedEdgeCache || len(profile.Preconditions) != 0 || profile.EdgeCache != nil) {
+		return errors.New("qualified POC profile v3 must enable only Build Impact")
 	}
 	for _, precondition := range profile.Preconditions {
 		if precondition.Type != "FILE_SHA256" || !validQualifiedPOCProfilePath(precondition.Path) ||

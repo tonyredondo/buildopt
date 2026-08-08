@@ -1,17 +1,26 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if (($# != 1)); then
-    printf 'usage: %s OUTPUT_FILE\n' "$0" >&2
+if (($# < 1 || $# > 2)); then
+    printf 'usage: %s OUTPUT_FILE [--qualified-profile]\n' "$0" >&2
     exit 64
 fi
 
 buildopt_output=$1
+buildopt_profile_mode=false
+if (($# == 2)); then
+    [[ "$2" == "--qualified-profile" ]] || {
+        printf 'invalid Spring installed-impact mode\n' >&2
+        exit 64
+    }
+    buildopt_profile_mode=true
+fi
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_spec="${buildopt_repo_root}/specs/poc-spring-installed-impact-v1.json"
 buildopt_base_spec="${buildopt_repo_root}/specs/poc-spring-test-preparation-v2.json"
 buildopt_repository_spec="${buildopt_repo_root}/specs/poc-spring-framework-v1.json"
+buildopt_profile_fixture="${buildopt_repo_root}/fixtures/poc-qualified-profile-matrix/spring/buildopt-qualified-profile.json"
 
 if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ]]; then
     printf 'invalid Spring test-preparation output path\n' >&2
@@ -168,6 +177,10 @@ jq -e '
 buildopt_graph_sha=$(sha256sum \
     "${buildopt_candidate_checkout}/buildopt-impact-graph.generated.json" | awk '{print $1}')
 printf '%s\n' "${buildopt_change_path}" >"${buildopt_candidate_checkout}/.buildopt-changes"
+if [[ "${buildopt_profile_mode}" == true ]]; then
+    cp -- "${buildopt_profile_fixture}" \
+        "${buildopt_candidate_checkout}/buildopt-qualified-profile.json"
+fi
 
 buildopt_reset_arm() {
     local buildopt_arm=$1
@@ -206,22 +219,29 @@ buildopt_run_arm() {
     if ! (
         cd "${buildopt_checkout}"
         if [[ "${buildopt_arm}" == candidate ]]; then
-            /usr/bin/time -f 'maxRssKb=%M' -o "${buildopt_time}" \
-                env -u CI GRADLE_USER_HOME="${buildopt_home}" \
-                "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
-                "${buildopt_executable}" impact \
-                --repository-id spring-projects/spring-framework \
-                --pipeline-class poc-spring-test-preparation \
-                --changes-file .buildopt-changes \
-                --gradle-option=--daemon \
-                --gradle-option=--offline \
-                --gradle-option=--build-cache \
-                --gradle-option=--parallel \
-                --gradle-option=--no-configuration-cache \
-                --gradle-option=--console=plain \
-                --gradle-option=--max-workers=12 \
-                --gradle-option=--no-scan \
-                --gradle-option=--stacktrace
+            if [[ "${buildopt_profile_mode}" == true ]]; then
+                /usr/bin/time -f 'maxRssKb=%M' -o "${buildopt_time}" \
+                    env -u CI GRADLE_USER_HOME="${buildopt_home}" \
+                    "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+                    "${buildopt_executable}" poc --changes-file .buildopt-changes
+            else
+                /usr/bin/time -f 'maxRssKb=%M' -o "${buildopt_time}" \
+                    env -u CI GRADLE_USER_HOME="${buildopt_home}" \
+                    "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+                    "${buildopt_executable}" impact \
+                    --repository-id spring-projects/spring-framework \
+                    --pipeline-class poc-spring-test-preparation \
+                    --changes-file .buildopt-changes \
+                    --gradle-option=--daemon \
+                    --gradle-option=--offline \
+                    --gradle-option=--build-cache \
+                    --gradle-option=--parallel \
+                    --gradle-option=--no-configuration-cache \
+                    --gradle-option=--console=plain \
+                    --gradle-option=--max-workers=12 \
+                    --gradle-option=--no-scan \
+                    --gradle-option=--stacktrace
+            fi
         else
             /usr/bin/time -f 'maxRssKb=%M' -o "${buildopt_time}" \
                 env -u CI GRADLE_USER_HOME="${buildopt_home}" \
@@ -246,6 +266,11 @@ buildopt_run_arm() {
             grep -F 'buildopt: Build Impact POC' "${buildopt_log}" >&2 ||
                 tail -n 80 "${buildopt_log}" >&2
             printf 'Spring installed Build Impact warmup did not select the bound candidate\n' >&2
+            return 1
+        fi
+        if [[ "${buildopt_profile_mode}" == true ]] &&
+            ! grep -Fq 'buildopt: qualified POC profile plan {' "${buildopt_log}"; then
+            printf 'Spring installed profile did not report its plan\n' >&2
             return 1
         fi
     fi
@@ -364,6 +389,39 @@ for buildopt_pair in {1..8}; do
         "$((buildopt_control_duration - buildopt_candidate_duration))" "${buildopt_order}"
 done
 
+buildopt_global_fallback_passed=false
+if [[ "${buildopt_profile_mode}" == true ]]; then
+    buildopt_reset_arm candidate "${buildopt_candidate_checkout}" \
+        "${buildopt_candidate_home}" global-fallback
+    printf 'gradle/buildopt-profile-matrix-global.properties\n' \
+        >"${buildopt_candidate_checkout}/.buildopt-changes"
+    buildopt_fallback_log="${buildopt_root}/logs/global-fallback.log"
+    if ! (
+        cd "${buildopt_candidate_checkout}"
+        env -u CI GRADLE_USER_HOME="${buildopt_candidate_home}" \
+            "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+            "${buildopt_executable}" poc --changes-file .buildopt-changes
+    ) >"${buildopt_fallback_log}" 2>&1; then
+        tail -n 180 "${buildopt_fallback_log}" >&2
+        printf 'Spring installed-profile global fallback failed\n' >&2
+        exit 1
+    fi
+    if ! grep -Fq '"selectionMode":"FULL_GRAPH"' "${buildopt_fallback_log}" ||
+        ! grep -Fq '"selectionReason":"IMPACT_GLOBAL_CHANGE"' "${buildopt_fallback_log}" ||
+        ! grep -Fq 'BUILD SUCCESSFUL' "${buildopt_fallback_log}" ||
+        ! grep -Eq '^> Task :spring-core:compileJava( |$)' "${buildopt_fallback_log}"; then
+        printf 'Spring installed profile did not retain the native full graph\n' >&2
+        exit 1
+    fi
+    buildopt_fallback_outputs="${buildopt_root}/fallback.outputs"
+    buildopt_output_manifest "${buildopt_candidate_checkout}" "${buildopt_fallback_outputs}"
+    cmp -s "${buildopt_candidate_outputs}" "${buildopt_fallback_outputs}" || {
+        printf 'Spring installed-profile fallback changed required outputs\n' >&2
+        exit 1
+    }
+    buildopt_global_fallback_passed=true
+fi
+
 jq -s '.' "${buildopt_rows}" >"${buildopt_root}/observations.json"
 buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revision}" \
@@ -372,6 +430,9 @@ jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revi
     --arg executableSha "${buildopt_executable_sha}" --arg packageSha "${buildopt_package_sha}" \
     --arg sourceSha "${buildopt_source_sha}" \
     --arg cacheSha "${buildopt_cache_seed_sha}" --arg graphSha "${buildopt_graph_sha}" \
+    --arg profileSha "$(sha256sum "${buildopt_profile_fixture}" | awk '{print $1}')" \
+    --argjson profileMode "${buildopt_profile_mode}" \
+    --argjson globalFallbackPassed "${buildopt_global_fallback_passed}" \
     --argjson preflightMs \
         "$(((buildopt_preflight_finished - buildopt_preflight_started) / 1000000))" \
     --slurpfile spec "${buildopt_spec}" --slurpfile rows "${buildopt_root}/observations.json" '
@@ -379,7 +440,7 @@ jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revi
         reduce range(0; 8) as $draw
             ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
              .state = ((1664525 * .state + 1013904223) % 4294967296) |
-             .sum += $data[((.state / 536870912) | floor)].savedMs) |
+             .sum += $data[((.state * 8 / 4294967296) | floor)].savedMs) |
         .sum / 8;
     def bootstrap95($data):
         ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
@@ -398,15 +459,22 @@ jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revi
          (.rootBuildGradleTestTasksExecuted | not) and
          (.productAttributableFailure | not))) as $qualified |
     {
-        schemaVersion: "buildopt.evidence/poc-spring-installed-impact/v1",
-        workItem: "POC-SPRING-INSTALLED-IMPACT-001",
+        schemaVersion: (if $profileMode then
+            "buildopt.evidence/poc-qualified-profile-matrix-cell/v1"
+          else "buildopt.evidence/poc-spring-installed-impact/v1" end),
+        workItem: (if $profileMode then "POC-QUALIFIED-PROFILE-MATRIX-001"
+          else "POC-SPRING-INSTALLED-IMPACT-001" end),
         capturedAt: $capturedAt,
         buildopt: {
             revision: $revision,
             executableSha256: $executableSha,
             packageSha256: $packageSha,
             packageVersion: $spec[0].package.version,
-            candidateCommand: $spec[0].measurement.candidateCommand,
+            candidateCommand: (if $profileMode then
+                ["buildopt", "poc", "--changes-file", ".buildopt-changes"]
+              else $spec[0].measurement.candidateCommand end),
+            qualifiedProfile: $profileMode,
+            qualifiedProfileSha256: (if $profileMode then $profileSha else null end),
             launcherOverheadIncluded: true,
             runnerScriptSha256: $runnerSha,
             testGuardScriptSha256: $testGuardSha
@@ -438,6 +506,10 @@ jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revi
             candidateEntrypoints: $spec[0].measurement.candidateEntrypoints
         },
         observations: $data,
+        safety: {
+            globalFallbackRequired: $profileMode,
+            globalFallbackPassed: $globalFallbackPassed
+        },
         result: {
             pairs: 8,
             controlMeanMs: $controlMean,
@@ -447,7 +519,13 @@ jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revi
             interval95SavedMs: $interval,
             positivePairs: $positive,
             qualified: $qualified,
-            decision: (if $qualified then "QUALIFIED_INSTALLED_BUILD_IMPACT" else "STOP_INSTALLED_BUILD_IMPACT" end)
+            decision: (if $qualified then
+                (if $profileMode then "QUALIFY_INSTALLED_SPRING_PROFILE_VALUE"
+                 else "QUALIFIED_INSTALLED_BUILD_IMPACT" end)
+              else
+                (if $profileMode then "RETAIN_NATIVE_SPRING_PROFILE_PATH"
+                 else "STOP_INSTALLED_BUILD_IMPACT" end)
+              end)
         },
         boundaries: $spec[0].boundaries
     }

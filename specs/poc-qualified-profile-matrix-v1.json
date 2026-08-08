@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "buildopt.specs/poc-qualified-profile-matrix/v1",
+  "workItem": "POC-QUALIFIED-PROFILE-MATRIX-001",
+  "status": "PREREGISTERED",
+  "preregisteredAt": "2026-08-08",
+  "hypothesis": "At least two independent repository families retain measurable installed-path value when each uses only mechanisms already qualified for that exact scope.",
+  "aggregation": {
+    "minimumQualifyingFamilies": 2,
+    "repositoryPercentagesMayBeAveraged": false,
+    "mechanismPercentagesMayBeAdded": false
+  },
+  "commonValueGate": {
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "allPairsPositive": true,
+    "requiredOutputsIdentical": true,
+    "maximumProductAttributableFailures": 0,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedPairsMayBeDiscarded": false
+  },
+  "cells": [
+    {
+      "id": "spring-build-impact",
+      "repository": "spring-projects/spring-framework",
+      "revision": "4b5c92703c63966c3471242c621c4a63b382638d",
+      "mechanisms": ["BUILD_IMPACT"],
+      "profilePath": "fixtures/poc-qualified-profile-matrix/spring/buildopt-qualified-profile.json",
+      "runner": "dev/run-poc-spring-installed-impact",
+      "minimumPairs": 4,
+      "fallback": "NATIVE_FULL_GRAPH_ON_GLOBAL_CHANGE"
+    },
+    {
+      "id": "opentelemetry-impact-standard-jar",
+      "repository": "open-telemetry/opentelemetry-java-instrumentation",
+      "revision": "080c1d32ca676ba7b0210c21b60cce8e7ac39058",
+      "mechanisms": ["BUILD_IMPACT", "STANDARD_JAR"],
+      "profilePath": "fixtures/poc-qualified-profile-adoption/opentelemetry/buildopt-qualified-profile.json",
+      "runner": "dev/run-poc-otel-clean-composition-v1",
+      "minimumPairs": 4,
+      "fallback": "NATIVE_FULL_GRAPH_ON_GLOBAL_CHANGE"
+    },
+    {
+      "id": "kafka-impact-read-only-edge",
+      "repository": "apache/kafka",
+      "revision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "mechanisms": ["BUILD_IMPACT", "SHARED_EDGE_CACHE"],
+      "profilePath": "fixtures/poc-kafka-packaging/buildopt-qualified-edge-profile.json",
+      "runner": "dev/run-poc-kafka-installed-profile-value-v1",
+      "minimumPairs": 8,
+      "fallback": "NATIVE_FULL_GRAPH_AND_HTTP_503_LOCAL_FALLBACK"
+    }
+  ],
+  "terminalDecisions": {
+    "continue": "CONTINUE_QUALIFIED_PROFILE_DISCOVERY",
+    "specialize": "SPECIALIZE_QUALIFIED_PROFILES",
+    "stop": "STOP_INSTALLED_PROFILE_GENERALIZATION"
+  },
+  "boundaries": {
+    "proofOfConceptOnly": true,
+    "productionReadinessClaim": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationIncluded": false
+  }
+}

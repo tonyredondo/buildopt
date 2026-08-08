@@ -2826,6 +2826,25 @@ cache, and no measured invocation enables exact-bound hot state. The negative
 test proves that the checker rejects both hot-state contamination and output
 drift.
 
+The installed qualified-profile matrix remeasures the public `buildopt poc`
+path independently on Spring, OpenTelemetry and Kafka. It enables only the
+mechanisms already qualified for each fixed scope and never averages repository
+percentages:
+
+```bash
+./dev/check-poc-qualified-profile-matrix-v1
+./dev/run-poc-qualified-profile-matrix-v1 \
+  /absolute/path/to/result-directory \
+  /absolute/path/to/installed/buildopt \
+  /absolute/path/to/kafka-source.tar.gz
+./dev/check-poc-qualified-profile-matrix-v1-result \
+  /absolute/path/to/result-directory/summary.json
+```
+
+The three complete cell documents are retained next to the summary. A broad
+continuation requires at least two independently qualifying repository
+families; every failed cell retains its optimized native Gradle path.
+
 The completed task-tail experiment adds one exact standard-`Copy` adapter
 selected from the same OpenTelemetry trace. It deliberately measures isolated and
 cumulative effects rather than adding component percentages:

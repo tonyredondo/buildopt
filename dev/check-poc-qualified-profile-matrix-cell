@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 2)); then
+    printf 'usage: %s CELL_ID RESULT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_cell=$1
+buildopt_result=$2
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-qualified-profile-matrix-v1.json"
+
+[[ "${buildopt_cell}" == spring-build-impact ||
+    "${buildopt_cell}" == opentelemetry-impact-standard-jar ]] || exit 64
+[[ -s "${buildopt_result}" ]] || exit 1
+
+buildopt_profile=$(jq -er --arg id "${buildopt_cell}" \
+    '.cells[] | select(.id == $id) | .profilePath' "${buildopt_spec}")
+buildopt_profile_sha=$(sha256sum "${buildopt_repo_root}/${buildopt_profile}" | awk '{print $1}')
+
+jq -e --arg id "${buildopt_cell}" --arg profileSha "${buildopt_profile_sha}" \
+  --slurpfile matrix "${buildopt_spec}" '
+  def sha256: type == "string" and test("^[0-9a-f]{64}$");
+  def bootstrap_mean($data; $sample):
+    reduce range(0; ($data | length)) as $draw
+      ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+       .state = ((1664525 * .state + 1013904223) % 4294967296) |
+       .sum += $data[((.state * ($data | length) / 4294967296) | floor)].savedMs) |
+    .sum / ($data | length);
+  def bootstrap95($data):
+    ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
+    [$r[102], $r[3993]];
+  ($matrix[0].cells[] | select(.id == $id)) as $cell |
+  .observations as $data |
+  (($data | map(.controlDurationMs) | add) / ($data | length)) as $controlMean |
+  (($data | map(.candidateDurationMs) | add) / ($data | length)) as $candidateMean |
+  (($data | map(.savedMs) | add) / ($data | length)) as $mean |
+  (($data | map(.savedMs) | add) / ($data | map(.controlDurationMs) | add)) as $ratio |
+  bootstrap95($data) as $interval |
+  ($data | map(select(.savedMs > 0)) | length) as $positive |
+  ($mean >= $matrix[0].commonValueGate.minimumSavedMs and
+   $ratio >= $matrix[0].commonValueGate.minimumReductionRatio and
+   $interval[0] > 0 and $positive == ($data | length) and
+   ($data | map(.requiredOutputSha256) | unique | length) == 1 and
+   all($data[]; .requiredOutputCount > 0 and
+     (.productAttributableFailure | not))) as $qualified |
+  .schemaVersion == "buildopt.evidence/poc-qualified-profile-matrix-cell/v1" and
+  .workItem == "POC-QUALIFIED-PROFILE-MATRIX-001" and
+  .repository.nameWithOwner == $cell.repository and
+  .repository.revision == $cell.revision and
+  .buildopt.qualifiedProfile == true and
+  .buildopt.qualifiedProfileSha256 == $profileSha and
+  .buildopt.candidateCommand == ["buildopt", "poc", "--changes-file", ".buildopt-changes"] and
+  ($data | length) >= $cell.minimumPairs and
+  all($data[]; .requiredOutputCount > 0 and
+    (.requiredOutputSha256 | sha256) and
+    (.productAttributableFailure | not)) and
+  ($data | map(.requiredOutputSha256) | unique | length) == 1 and
+  .result.controlMeanMs == $controlMean and
+  .result.candidateMeanMs == $candidateMean and
+  .result.meanSavedMs == $mean and
+  .result.reductionRatio == $ratio and
+  .result.interval95SavedMs == $interval and
+  .result.positivePairs == $positive and
+  .result.qualified == $qualified and
+  (if $id == "spring-build-impact" then
+     .safety.globalFallbackPassed == true and
+     .result.decision == (if $qualified then
+       "QUALIFY_INSTALLED_SPRING_PROFILE_VALUE"
+       else "RETAIN_NATIVE_SPRING_PROFILE_PATH" end)
+   else
+     .fallback.buildSuccessful == true and
+     .fallback.mode == "FULL_GRAPH" and
+     all($data[]; .candidateStandardJarCacheHit and
+       (.controlStandardJarCacheHit | not) and
+       (.candidateHotStateEnabled | not) and
+       (.managedRuntimeStarted | not)) and
+     .result.decision == (if $qualified then
+       "QUALIFY_INSTALLED_OTEL_PROFILE_VALUE"
+       else "RETAIN_NATIVE_OTEL_PROFILE_PATH" end)
+   end)
+' "${buildopt_result}" >/dev/null
+
+printf 'qualified-profile matrix cell OK: %s\n' "${buildopt_cell}"

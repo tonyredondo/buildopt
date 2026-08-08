@@ -116,6 +116,50 @@ func TestQualifiedPOCProfileSelectsOnlyQualifiedMechanisms(t *testing.T) {
 	}
 }
 
+func TestQualifiedPOCBuildImpactOnlyProfileSelectsNoAdapters(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	configureQualifiedPOCBuildImpactOnlyTestProfile(t, repositoryRoot)
+	t.Chdir(repositoryRoot)
+
+	invocation, err := prepareQualifiedPOCProfileInvocation([]string{
+		"--changes-file", "changed.txt",
+	}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !invocation.plan.CandidateSelected || invocation.standardJarCache ||
+		invocation.standardCopyCache || invocation.pocEdgeCacheURL != "" ||
+		invocation.qualifiedProfile == nil {
+		t.Fatalf("Build Impact-only invocation = %+v", invocation)
+	}
+	plan := invocation.qualifiedProfile
+	if plan.SchemaVersion != qualifiedPOCProfilePlanSchemaV3 ||
+		plan.ProfileID != qualifiedPOCProfileIDV3 || len(plan.EnabledAdapters) != 0 ||
+		strings.Join(plan.DisabledMechanisms, " ") !=
+			"HOT_STATE RUNTIME_TUNING SAFE_CACHE SHARED_EDGE_CACHE STANDARD_COPY STANDARD_JAR" ||
+		plan.ProductionAuthorized {
+		t.Fatalf("Build Impact-only plan = %+v", plan)
+	}
+}
+
+func TestQualifiedPOCBuildImpactOnlyProfileRejectsExtraMechanism(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	configureQualifiedPOCBuildImpactOnlyTestProfile(t, repositoryRoot)
+	t.Chdir(repositoryRoot)
+	path := filepath.Join(repositoryRoot, qualifiedPOCProfileDefaultPath)
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	raw = bytes.Replace(raw, []byte(`"standardJarAdapter": false`), []byte(`"standardJarAdapter": true`), 1)
+	if err := os.WriteFile(path, raw, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := prepareQualifiedPOCProfileInvocation([]string{"--changes-file", "changed.txt"}, false); err == nil {
+		t.Fatal("Build Impact-only profile accepted an extra mechanism")
+	}
+}
+
 func TestQualifiedPOCProfileUnknownChangeUsesNativeFullGraph(t *testing.T) {
 	repositoryRoot := impactTestRepository(t)
 	t.Chdir(repositoryRoot)
@@ -345,6 +389,27 @@ func configureQualifiedPOCEdgeTestProfile(t *testing.T, repositoryRoot string) {
 		t.Fatal(err)
 	}
 	if err := os.WriteFile(filepath.Join(repositoryRoot, "build.gradle"), buildFile, 0o600); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func configureQualifiedPOCBuildImpactOnlyTestProfile(t *testing.T, repositoryRoot string) {
+	t.Helper()
+	profile, err := loadQualifiedPOCProfile(repositoryRoot, qualifiedPOCProfileDefaultPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	profile.SchemaVersion = qualifiedPOCProfileSchemaVersionV3
+	profile.ProfileVersion = 3
+	profile.ProfileID = qualifiedPOCProfileIDV3
+	profile.Mechanisms.StandardJarAdapter = false
+	profile.Preconditions = nil
+	profile.EdgeCache = nil
+	raw, err := json.MarshalIndent(profile, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(repositoryRoot, qualifiedPOCProfileDefaultPath), append(raw, '\n'), 0o600); err != nil {
 		t.Fatal(err)
 	}
 }

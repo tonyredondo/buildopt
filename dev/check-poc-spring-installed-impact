@@ -10,7 +10,6 @@ buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_spec="${buildopt_repo_root}/specs/poc-spring-installed-impact-v1.json"
 buildopt_base_spec="${buildopt_repo_root}/specs/poc-spring-test-preparation-v2.json"
-buildopt_runner="${buildopt_script_dir}/run-poc-spring-installed-impact"
 buildopt_guard="${buildopt_script_dir}/poc-spring-test-preparation.guard.init.gradle"
 buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-spring-installed-impact-v1.json"}
 
@@ -30,7 +29,15 @@ done
 buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
 buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
 buildopt_base_spec_sha=$(sha256sum "${buildopt_base_spec}" | awk '{print $1}')
-buildopt_runner_sha=$(sha256sum "${buildopt_runner}" | awk '{print $1}')
+buildopt_execution_revision=$(jq -er '.buildopt.revision' "${buildopt_result}")
+if ! git -C "${buildopt_repo_root}" merge-base --is-ancestor \
+    "${buildopt_execution_revision}" HEAD; then
+    printf 'Spring evidence revision is not retained in history\n' >&2
+    exit 1
+fi
+buildopt_runner_sha=$(git -C "${buildopt_repo_root}" show \
+    "${buildopt_execution_revision}:dev/run-poc-spring-installed-impact" | \
+    sha256sum | awk '{print $1}')
 buildopt_guard_sha=$(sha256sum "${buildopt_guard}" | awk '{print $1}')
 jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sha}" \
     --arg guardSha "${buildopt_guard_sha}" --arg baseSpecSha "${buildopt_base_spec_sha}" \

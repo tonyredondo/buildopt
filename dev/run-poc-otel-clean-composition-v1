@@ -1,17 +1,26 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if (($# != 1)); then
-    printf 'usage: %s OUTPUT_FILE\n' "$0" >&2
+if (($# < 1 || $# > 2)); then
+    printf 'usage: %s OUTPUT_FILE [--qualified-profile]\n' "$0" >&2
     exit 64
 fi
 
 buildopt_output=$1
+buildopt_profile_mode=false
+if (($# == 2)); then
+    [[ "$2" == "--qualified-profile" ]] || {
+        printf 'invalid OpenTelemetry clean-composition mode\n' >&2
+        exit 64
+    }
+    buildopt_profile_mode=true
+fi
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_spec="${buildopt_repo_root}/specs/poc-otel-clean-composition-v1.json"
 buildopt_tasks_file="${buildopt_repo_root}/specs/poc-otel-spring-family-v2.tasks.txt"
 buildopt_guard="${buildopt_script_dir}/poc-spring-test-preparation.guard.init.gradle"
+buildopt_profile_fixture="${buildopt_repo_root}/fixtures/poc-qualified-profile-adoption/opentelemetry/buildopt-qualified-profile.json"
 
 if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ]]; then
     printf 'invalid OpenTelemetry test-preparation output path\n' >&2
@@ -257,6 +266,10 @@ cp -- "${buildopt_candidate_checkout}/buildopt-impact-manifest.json" \
     "${buildopt_graph}" "${buildopt_generated_manifest}" \
     "${buildopt_root}/logs/discovery-state/"
 printf '%s\n' "${buildopt_change_path}" >"${buildopt_candidate_checkout}/.buildopt-changes"
+if [[ "${buildopt_profile_mode}" == true ]]; then
+    cp -- "${buildopt_profile_fixture}" \
+        "${buildopt_candidate_checkout}/buildopt-qualified-profile.json"
+fi
 buildopt_reset_arm() {
     local buildopt_arm=$1
     local buildopt_checkout=$2
@@ -298,20 +311,29 @@ buildopt_run_arm() {
     if ! (
         cd "${buildopt_checkout}"
         if [[ "${buildopt_arm}" == candidate ]]; then
-            /usr/bin/time -f 'maxRssKb=%M' -o "${buildopt_time}" \
-                env -u CI GRADLE_USER_HOME="${buildopt_home}" \
-                GRADLE_RO_DEP_CACHE="${buildopt_readonly_cache}" \
-                "${buildopt_script_dir}/run" --toolchain temurin-jdk-21 -- \
-                timeout 10m "${buildopt_executable}" impact \
-                --repository-id open-telemetry/opentelemetry-java-instrumentation \
-                --pipeline-class poc-otel-spring-family-v2 \
-                --changes-file .buildopt-changes \
-                --cache-standard-jar-producers \
-                --gradle-option=--daemon --gradle-option=--offline \
-                --gradle-option=--build-cache --gradle-option=--parallel \
-                --gradle-option=--configuration-cache --gradle-option=--console=plain \
-                --gradle-option=--max-workers=12 --gradle-option=--no-scan \
-                --gradle-option=--stacktrace
+            if [[ "${buildopt_profile_mode}" == true ]]; then
+                /usr/bin/time -f 'maxRssKb=%M' -o "${buildopt_time}" \
+                    env -u CI GRADLE_USER_HOME="${buildopt_home}" \
+                    GRADLE_RO_DEP_CACHE="${buildopt_readonly_cache}" \
+                    "${buildopt_script_dir}/run" --toolchain temurin-jdk-21 -- \
+                    timeout 10m "${buildopt_executable}" poc \
+                    --changes-file .buildopt-changes
+            else
+                /usr/bin/time -f 'maxRssKb=%M' -o "${buildopt_time}" \
+                    env -u CI GRADLE_USER_HOME="${buildopt_home}" \
+                    GRADLE_RO_DEP_CACHE="${buildopt_readonly_cache}" \
+                    "${buildopt_script_dir}/run" --toolchain temurin-jdk-21 -- \
+                    timeout 10m "${buildopt_executable}" impact \
+                    --repository-id open-telemetry/opentelemetry-java-instrumentation \
+                    --pipeline-class poc-otel-spring-family-v2 \
+                    --changes-file .buildopt-changes \
+                    --cache-standard-jar-producers \
+                    --gradle-option=--daemon --gradle-option=--offline \
+                    --gradle-option=--build-cache --gradle-option=--parallel \
+                    --gradle-option=--configuration-cache --gradle-option=--console=plain \
+                    --gradle-option=--max-workers=12 --gradle-option=--no-scan \
+                    --gradle-option=--stacktrace
+            fi
         else
             /usr/bin/time -f 'maxRssKb=%M' -o "${buildopt_time}" \
                 env -u CI GRADLE_USER_HOME="${buildopt_home}" \
@@ -335,6 +357,11 @@ buildopt_run_arm() {
             "${buildopt_arm}" >&2
         return 1
     }
+    if [[ "${buildopt_arm}" == candidate && "${buildopt_profile_mode}" == true ]] &&
+        ! grep -Fq 'buildopt: qualified POC profile plan {' "${buildopt_log}"; then
+        printf 'OpenTelemetry installed profile did not report its plan\n' >&2
+        return 1
+    fi
     if [[ "${buildopt_arm}" == candidate ]] && ! grep -Fq \
         'explicit Build Impact POC candidate otel-spring-autoconfigure-class-producers selected' \
         "${buildopt_log}"; then
@@ -531,19 +558,27 @@ printf 'gradle.properties\n' >"${buildopt_candidate_checkout}/.buildopt-changes"
 buildopt_fallback_log="${buildopt_root}/logs/fallback.log"
 if ! (
     cd "${buildopt_candidate_checkout}"
-    env -u CI GRADLE_USER_HOME="${buildopt_candidate_home}" \
-        GRADLE_RO_DEP_CACHE="${buildopt_readonly_cache}" \
-        "${buildopt_script_dir}/run" --toolchain temurin-jdk-21 -- \
-        timeout 10m "${buildopt_executable}" impact \
-        --repository-id open-telemetry/opentelemetry-java-instrumentation \
-        --pipeline-class poc-otel-spring-family-v2 \
-        --changes-file .buildopt-changes \
-        --cache-standard-jar-producers \
-        --gradle-option=--daemon --gradle-option=--offline \
-        --gradle-option=--build-cache --gradle-option=--parallel \
-        --gradle-option=--configuration-cache --gradle-option=--console=plain \
-        --gradle-option=--max-workers=12 --gradle-option=--no-scan \
-        --gradle-option=--stacktrace
+    if [[ "${buildopt_profile_mode}" == true ]]; then
+        env -u CI GRADLE_USER_HOME="${buildopt_candidate_home}" \
+            GRADLE_RO_DEP_CACHE="${buildopt_readonly_cache}" \
+            "${buildopt_script_dir}/run" --toolchain temurin-jdk-21 -- \
+            timeout 10m "${buildopt_executable}" poc \
+            --changes-file .buildopt-changes
+    else
+        env -u CI GRADLE_USER_HOME="${buildopt_candidate_home}" \
+            GRADLE_RO_DEP_CACHE="${buildopt_readonly_cache}" \
+            "${buildopt_script_dir}/run" --toolchain temurin-jdk-21 -- \
+            timeout 10m "${buildopt_executable}" impact \
+                --repository-id open-telemetry/opentelemetry-java-instrumentation \
+                --pipeline-class poc-otel-spring-family-v2 \
+                --changes-file .buildopt-changes \
+                --cache-standard-jar-producers \
+                --gradle-option=--daemon --gradle-option=--offline \
+                --gradle-option=--build-cache --gradle-option=--parallel \
+                --gradle-option=--configuration-cache --gradle-option=--console=plain \
+                --gradle-option=--max-workers=12 --gradle-option=--no-scan \
+                --gradle-option=--stacktrace
+    fi
 ) >"${buildopt_fallback_log}" 2>&1; then
     tail -n 180 "${buildopt_fallback_log}" >&2
     printf 'OpenTelemetry Spring-family global fallback failed\n' >&2
@@ -576,6 +611,8 @@ jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revi
     --arg sourceSha "${buildopt_source_sha}" --arg cacheSha "${buildopt_cache_seed_sha}" \
     --arg candidateCacheSha "${buildopt_candidate_cache_seed_sha}" \
     --arg readOnlyCacheSha "${buildopt_readonly_cache_sha}" --arg graphSha "${buildopt_graph_sha}" \
+    --arg profileSha "$(sha256sum "${buildopt_profile_fixture}" | awk '{print $1}')" \
+    --argjson profileMode "${buildopt_profile_mode}" \
     --argjson preflightMs "$(((buildopt_preflight_finished - buildopt_preflight_started) / 1000000))" \
     --slurpfile spec "${buildopt_spec}" --slurpfile rows "${buildopt_root}/observations.json" '
     def bootstrap_mean($data; $sample):
@@ -606,15 +643,24 @@ jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revi
          (.rootBuildGradleTestTasksExecuted | not) and
          (.productAttributableFailure | not))) as $qualified |
     {
-        schemaVersion: "buildopt.evidence/poc-otel-clean-composition/v1",
-        workItem: "POC-FULL-PATH-CLEAN-001",
+        schemaVersion: (if $profileMode then
+            "buildopt.evidence/poc-qualified-profile-matrix-cell/v1"
+          else "buildopt.evidence/poc-otel-clean-composition/v1" end),
+        workItem: (if $profileMode then "POC-QUALIFIED-PROFILE-MATRIX-001"
+          else "POC-FULL-PATH-CLEAN-001" end),
         capturedAt: $capturedAt,
         buildopt: {
             revision: $revision,
             executableSha256: $executableSha,
             packageSha256: $packageSha,
             packageVersion: "0.3.0-dev",
-            candidateSurface: $spec[0].measurement.candidateSurface,
+            candidateSurface: (if $profileMode then "INSTALLED_QUALIFIED_PROFILE"
+              else $spec[0].measurement.candidateSurface end),
+            candidateCommand: (if $profileMode then
+                ["buildopt", "poc", "--changes-file", ".buildopt-changes"]
+              else null end),
+            qualifiedProfile: $profileMode,
+            qualifiedProfileSha256: (if $profileMode then $profileSha else null end),
             launcherOverheadIncluded: true,
             runnerScriptSha256: $runnerSha,
             rootTestGuardScriptSha256: $guardSha
@@ -680,8 +726,11 @@ jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revi
             positivePairs: $positive,
             qualified: $qualified,
             decision: (if $qualified then
-                $spec[0].terminalDecisions.qualifies
-                else $spec[0].terminalDecisions.failsValueGate end)
+                (if $profileMode then "QUALIFY_INSTALLED_OTEL_PROFILE_VALUE"
+                 else $spec[0].terminalDecisions.qualifies end)
+              else
+                (if $profileMode then "RETAIN_NATIVE_OTEL_PROFILE_PATH"
+                 else $spec[0].terminalDecisions.failsValueGate end) end)
         },
         boundaries: $spec[0].boundaries
     }
