@@ -28,21 +28,29 @@ public final class BuildOptPOCEdgeCachePlugin implements Plugin<Settings> {
         if (endpoint == null) {
             return;
         }
-        settings.getBuildCache()
-                .local(
-                        cache -> {
-                            cache.setEnabled(false);
-                            cache.setPush(false);
-                        });
-        settings.getBuildCache()
-                .remote(
-                        HttpBuildCache.class,
-                        cache -> {
-                            cache.setUrl(endpoint.resolve("/cache/"));
-                            cache.setEnabled(true);
-                            cache.setPush(false);
-                            cache.setAllowInsecureProtocol(true);
-                            cache.setUseExpectContinue(true);
+        // Repository settings are evaluated after init-script plugins. Apply
+        // the explicitly selected POC endpoint last so repository-owned local
+        // or Develocity cache defaults cannot silently replace this read-only
+        // Edge arm.
+        settings.getGradle()
+                .settingsEvaluated(
+                        evaluated -> {
+                            evaluated.getBuildCache()
+                                    .local(
+                                            cache -> {
+                                                cache.setEnabled(false);
+                                                cache.setPush(false);
+                                            });
+                            evaluated.getBuildCache()
+                                    .remote(
+                                            HttpBuildCache.class,
+                                            cache -> {
+                                                cache.setUrl(endpoint.resolve("/cache/"));
+                                                cache.setEnabled(true);
+                                                cache.setPush(false);
+                                                cache.setAllowInsecureProtocol(true);
+                                                cache.setUseExpectContinue(true);
+                                            });
                         });
     }
 

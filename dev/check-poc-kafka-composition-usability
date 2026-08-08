@@ -64,6 +64,12 @@ jq -e --slurpfile specification "${buildopt_spec}" '
 ' "${buildopt_profile}" >/dev/null
 
 if [[ -f "${buildopt_result}" ]]; then
+    buildopt_implementation_revision=$(jq -er '.implementationRevision' "${buildopt_result}")
+    if ! git -C "${buildopt_repo_root}" merge-base --is-ancestor \
+        "${buildopt_implementation_revision}" HEAD; then
+        printf 'Kafka composition usability evidence revision is not retained in history\n' >&2
+        exit 1
+    fi
     jq -e --slurpfile performance "${buildopt_repo_root}/benchmarks/results/poc-kafka-impact-edge-composition-v2.json" '
         .schemaVersion == "buildopt.evidence/poc-kafka-composition-usability/v1" and
         .workItem == "POC-KAFKA-COMPOSITION-USABILITY-001" and
@@ -95,7 +101,9 @@ if [[ -f "${buildopt_result}" ]]; then
         .boundaries.productionReadinessClaimed == false
     ' "${buildopt_result}" >/dev/null
     while read -r buildopt_expected buildopt_relative; do
-        [[ "$(sha256sum "${buildopt_repo_root}/${buildopt_relative}" | awk '{print $1}')" == \
+        [[ "$(git -C "${buildopt_repo_root}" show \
+            "${buildopt_implementation_revision}:${buildopt_relative}" | \
+            sha256sum | awk '{print $1}')" == \
             "${buildopt_expected}" ]] || {
             printf 'Kafka composition usability evidence digest mismatch: %s\n' \
                 "${buildopt_relative}" >&2

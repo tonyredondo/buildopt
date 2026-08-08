@@ -61,7 +61,12 @@ public final class POCEdgeCacheTestKit {
             Files.createDirectories(project);
             Files.writeString(
                     project.resolve("settings.gradle"),
-                    "rootProject.name = 'poc-edge-cache-fixture'\n",
+                    "import org.gradle.caching.http.HttpBuildCache\n"
+                            + "rootProject.name = 'poc-edge-cache-fixture'\n"
+                            + "buildCache {\n"
+                            + "  local { enabled = true }\n"
+                            + "  remote(HttpBuildCache) { enabled = false }\n"
+                            + "}\n",
                     StandardCharsets.UTF_8);
             Files.writeString(
                     project.resolve("build.gradle"),
@@ -86,7 +91,7 @@ public final class POCEdgeCacheTestKit {
                             + "  local { enabled = false }\n"
                             + "  remote(HttpBuildCache) { url = uri('"
                             + origin
-                            + "/cache/'); push = true; allowInsecureProtocol = true }\n"
+                            + "/cache/'); enabled = true; push = true; allowInsecureProtocol = true }\n"
                             + "} }\n",
                     StandardCharsets.UTF_8);
             Path candidateInit = root.resolve("candidate.init.gradle");
@@ -104,7 +109,8 @@ public final class POCEdgeCacheTestKit {
             Path output = project.resolve("build/result.txt");
             String expectedDigest = sha256(output);
             if (objects.isEmpty()) {
-                throw new IllegalStateException("native seed did not populate the loopback cache");
+                throw new IllegalStateException(
+                        "native seed did not populate the loopback cache\n" + seed.getOutput());
             }
 
             BuildResult hit = run(project, root.resolve("candidate-home"), candidateInit, gradleHome, origin);
