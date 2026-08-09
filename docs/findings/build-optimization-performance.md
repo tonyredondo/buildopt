@@ -306,8 +306,18 @@ Kafka-specific product rule.
 | Shared / Edge Cache | Edge qualified independently and in the normalized Kafka composition | Explicit repository-owned v2 POC profile | Keep the 82.35% claim bound to the exact Kafka source precondition and modeled network profile; preserve native Shared behavior outside a matched candidate |
 | Installed Kafka composition | Exact packaged profile qualified at 80.51% with 8/8 positive pairs | Explicit repository-owned v2 POC profile | Replicate installed-path value independently on Spring and OpenTelemetry before changing the portfolio claim; do not average repository percentages |
 | Deterministic profile discovery | No new timing; exact retained Kafka profile reproduced | Read-only, review-required analyzer | Keep native fallback for Spring, OpenTelemetry, drift, incomplete/unknown graphs and selected Test tasks; never turn discovery into autonomous activation |
+| Trace-gated hypothesis decision | No new timing; largest BuildOpt-specific phase 1.238233 ms | Deterministic evidence synthesis | Implement nothing: no phase supplies 500 ms of causally recoverable critical-path work in two families |
 
 ## Recommended Next Block
+
+The next block is the terminal POC portfolio decision. It must synthesize the
+installed matrix, bounded Kafka specialization, deterministic discovery and
+the trace-gated no-action result without averaging repository percentages or
+adding mechanism effects. The evidence currently supports specialization, not
+a broad accelerator claim: Kafka qualifies; Spring and OpenTelemetry retain
+optimized native Gradle; no new generic hypothesis is authorized.
+
+The following completed blocks remain the evidence behind that decision.
 
 The verification attribution block is complete. The native trace contains 143
 task rows and the candidate 51. The 92 omitted rows have 4,249 ms of cumulative
@@ -419,11 +429,10 @@ manufacture another optimization.
 
 ## Open Questions
 
-- Does a materially different retained trace expose a Runtime bottleneck that
-  justifies one new preregistered hypothesis?
-- Does one retained installed-path trace expose at least 500 ms of recoverable,
-  product-addressable critical-path work across two repository or workload
-  families? If not, close the hypothesis with no action.
+- Does the terminal installed-path portfolio justify continuing only the
+  bounded Kafka specialization, or should the broader accelerator claim stop?
+- What future materially different trace would be sufficient to reopen a
+  rejected mechanism without repeating the closed evidence?
 
 ## Evidence Boundaries
 

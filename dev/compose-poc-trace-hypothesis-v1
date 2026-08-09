@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s OUTPUT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-trace-hypothesis-v1.json"
+buildopt_synthetic="${buildopt_repo_root}/benchmarks/results/poc-overhead-v1.json"
+buildopt_spring="${buildopt_repo_root}/benchmarks/results/poc-verification-overhead-attribution-v1.json"
+
+[[ "${buildopt_output}" == /* && ! -e "${buildopt_output}" && -d "$(dirname -- "${buildopt_output}")" ]] || exit 64
+
+buildopt_expected_synthetic_sha=$(jq -er '.inputs[] | select(.id == "INSTALLED_SYNTHETIC_PHASE_TRACE") | .sha256' "${buildopt_spec}")
+buildopt_expected_spring_sha=$(jq -er '.inputs[] | select(.id == "INSTALLED_SPRING_VERIFICATION_TRACE") | .sha256' "${buildopt_spec}")
+buildopt_synthetic_sha=$(sha256sum "${buildopt_synthetic}" | awk '{print $1}')
+buildopt_spring_sha=$(sha256sum "${buildopt_spring}" | awk '{print $1}')
+[[ "${buildopt_synthetic_sha}" == "${buildopt_expected_synthetic_sha}" &&
+    "${buildopt_spring_sha}" == "${buildopt_expected_spring_sha}" ]] || {
+    printf 'trace evidence digest drift\n' >&2
+    exit 1
+}
+
+"${buildopt_script_dir}/check-poc-overhead" >/dev/null
+"${buildopt_script_dir}/check-poc-verification-overhead-attribution-v1-result" >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-overhead/v1" and
+  .methodology.purpose == "ATTRIBUTE_INSTALLED_PATH_PHASES_WITHOUT_PROMOTION" and
+  .methodology.phaseIntervalsOverlap == false and
+  .methodology.diagnosticTraceCanPerturbTiming == true and
+  .methodology.diagnosticDurationsUsedForBreadthGate == false and
+  .methodology.initOrProjectPluginLoaded == false and
+  (.workloads | length == 8) and
+  all(.workloads[];
+    .requiredOutputsIdentical == true and .reconciled == true and
+    .productAttributableFailures == 0)
+' "${buildopt_synthetic}" >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.poc/verification-overhead-attribution-result/v1" and
+  .decision == "STOP_VERIFICATION_OPTIMIZATION_NO_ACTIONABLE_BOTTLENECK" and
+  .comparison.outputsIdentical == true and .comparison.productFailures == 0 and
+  .comparison.actionThresholdMs == 500 and
+  .comparison.actionThresholdMet == false and
+  .boundaries.productionAuthorityChanged == false and
+  .boundaries.testOptimizationModified == false
+' "${buildopt_spring}" >/dev/null
+
+jq -n --arg specSha "$(sha256sum "${buildopt_spec}" | awk '{print $1}')" \
+    --arg composerSha "$(sha256sum "${BASH_SOURCE[0]}" | awk '{print $1}')" \
+    --arg syntheticSha "${buildopt_synthetic_sha}" --arg springSha "${buildopt_spring_sha}" \
+    --slurpfile spec "${buildopt_spec}" --slurpfile synthetic "${buildopt_synthetic}" \
+    --slurpfile spring "${buildopt_spring}" '
+  def positive: if . > 0 then . else 0 end;
+  def synthetic_family($dsl; $id):
+    [$synthetic[0].workloads[] | select(.dsl == $dsl)] as $workloads |
+    {
+      id: $id, kind: "WORKLOAD_FAMILY", source: "INSTALLED_SYNTHETIC_PHASE_TRACE",
+      observationCount: ($workloads | length),
+      outputsIdentical: all($workloads[]; .requiredOutputsIdentical),
+      productFailures: ([$workloads[].productAttributableFailures] | add),
+      phases: {
+        buildoptSpecificSetupMs: ([$workloads[].phases.initPluginSetup.candidateMinusControlMs | positive] | max),
+        launcherAndGradleClientStartupMs: ([$workloads[].phases.launcherAndGradleClientStartup.candidateMinusControlMs | positive] | max),
+        configurationBeforeTasksMs: ([$workloads[].phases.configurationBeforeTasks.candidateMinusControlMs | positive] | max),
+        gradleFinalizationMs: ([$workloads[].phases.gradleFinalization.candidateMinusControlMs | positive] | max),
+        launcherAndGradleClientTeardownMs: ([$workloads[].phases.launcherAndGradleClientTeardown.candidateMinusControlMs | positive] | max)
+      }
+    };
+  synthetic_family("GROOVY"; "SYNTHETIC_GROOVY") as $groovy |
+  synthetic_family("KOTLIN"; "SYNTHETIC_KOTLIN") as $kotlin |
+  {
+    id: "SPRING_VERIFICATION", kind: "REPOSITORY_FAMILY",
+    source: "INSTALLED_SPRING_VERIFICATION_TRACE", observationCount: 1,
+    outputsIdentical: $spring[0].comparison.outputsIdentical,
+    productFailures: $spring[0].comparison.productFailures,
+    phases: {
+      buildoptSpecificSetupMs: $spring[0].comparison.largestCandidateSpecificPhaseMs,
+      launcherAndGradleClientStartupMs:
+        (($spring[0].candidate.phases.launcherAndGradleClientStartupMs -
+          $spring[0].control.phases.launcherAndGradleClientStartupMs) | positive),
+      configurationBeforeTasksMs:
+        (($spring[0].candidate.phases.configurationBeforeTasksMs -
+          $spring[0].control.phases.configurationBeforeTasksMs) | positive),
+      gradleFinalizationMs:
+        (($spring[0].candidate.phases.gradleFinalizationMs -
+          $spring[0].control.phases.gradleFinalizationMs) | positive),
+      launcherAndGradleClientTeardownMs:
+        (($spring[0].candidate.phases.launcherAndGradleClientTeardownMs -
+          $spring[0].control.phases.launcherAndGradleClientTeardownMs) | positive)
+    }
+  } as $springFamily |
+  [$groovy, $kotlin, $springFamily] as $families |
+  $spec[0].authorizationRule.minimumRecoverableCriticalPathMs as $threshold |
+  def observations($phase; $causal):
+    [$families[] | {
+      familyId: .id, observedPositiveDeltaMs: .phases[$phase],
+      causalRecoverabilityEstablished: $causal,
+      thresholdMet: ($causal and .phases[$phase] >= $threshold)
+    }];
+  [
+    {id:"BUILDOPT_SPECIFIC_SETUP", productAddressable:true,
+     observations:observations("buildoptSpecificSetupMs"; true)},
+    {id:"LAUNCHER_AND_GRADLE_CLIENT_STARTUP", productAddressable:true,
+     observations:observations("launcherAndGradleClientStartupMs"; false)},
+    {id:"CONFIGURATION_BEFORE_TASKS", productAddressable:false,
+     observations:observations("configurationBeforeTasksMs"; false)},
+    {id:"GRADLE_FINALIZATION", productAddressable:false,
+     observations:observations("gradleFinalizationMs"; false)},
+    {id:"LAUNCHER_AND_GRADLE_CLIENT_TEARDOWN", productAddressable:true,
+     observations:observations("launcherAndGradleClientTeardownMs"; false)}
+  ] | map(. + {
+    qualifyingFamilies: ([.observations[] | select(.thresholdMet)] | length),
+    authorized: (.productAddressable and
+      ([.observations[] | select(.thresholdMet)] | length) >=
+        $spec[0].authorizationRule.minimumIndependentFamilies)
+  }) as $candidates |
+  {
+    schemaVersion:"buildopt.evidence/poc-trace-hypothesis/v1",
+    workItem:$spec[0].workItem, evidenceState:"TERMINAL",
+    analyzedOn:$spec[0].analyzedOn, specSha256:$specSha,
+    composerScriptSha256:$composerSha,
+    inputs:[
+      {id:$spec[0].inputs[0].id, path:$spec[0].inputs[0].path,
+       sha256:$syntheticSha, schemaVersion:$synthetic[0].schemaVersion,
+       buildoptRevision:$synthetic[0].buildoptRevision},
+      {id:$spec[0].inputs[1].id, path:$spec[0].inputs[1].path,
+       sha256:$springSha, schemaVersion:$spring[0].schemaVersion,
+       buildoptRevision:$spring[0].buildoptRevision}
+    ],
+    authorizationRule:$spec[0].authorizationRule,
+    families:$families, candidates:$candidates,
+    excludedObservations:$spec[0].excludedObservations,
+    reopenPolicy:$spec[0].reopenPolicy,
+    authorizedHypothesis:null,
+    decision:(if any($candidates[]; .authorized)
+      then $spec[0].terminalDecisions.authorize
+      else $spec[0].terminalDecisions.stop end),
+    nextWorkItem:"POC-PORTFOLIO-DECISION-001",
+    boundaries:$spec[0].boundaries
+  }
+' >"${buildopt_output}"
+
+printf 'trace hypothesis decision composed: %s\n' "${buildopt_output}"

@@ -182,6 +182,14 @@ profile. Spring and OpenTelemetry emit `NATIVE_FULL_GRAPH`, as do evidence
 drift, incomplete graphs, unknown relationships, selected Test tasks, and
 precondition drift. Discovery never writes or activates a profile.
 
+The subsequent trace-gated decision found no new generic optimization worth
+implementing. Across the retained installed synthetic and Spring traces,
+BuildOpt-specific setup peaks at 1.238233 ms, startup at 364.875 ms,
+finalization at 97 ms, and teardown at 87 ms. Configuration reaches 682 ms in
+Spring but is neither causally attributed to BuildOpt nor reproduced above the
+500-ms threshold in a second workload family. The checked result is therefore
+`NO_ACTIONABLE_HYPOTHESIS`; no new timing or mechanism activation follows.
+
 ## Choose what to do next
 
 | Goal | Start here |

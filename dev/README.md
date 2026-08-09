@@ -2864,6 +2864,19 @@ the embedded profile with the reviewed v2 fixture, checks Spring and
 OpenTelemetry native fallbacks, and runs the Go drift/uncertainty matrix. It
 does not run Gradle or create a new performance observation.
 
+The trace-gated hypothesis checker then recomposes the terminal decision from
+the immutable installed synthetic and Spring attribution traces:
+
+```bash
+./dev/check-poc-trace-hypothesis-v1
+```
+
+It verifies the exact input and composer digests, required-output/failure
+boundaries, three family summaries and five candidate phases. No phase is both
+causally recoverable and at least 500 ms in two families, so the byte-stable
+result is `NO_ACTIONABLE_HYPOTHESIS`. The command collects no timing and does
+not change product code or activation authority.
+
 The completed task-tail experiment adds one exact standard-`Copy` adapter
 selected from the same OpenTelemetry trace. It deliberately measures isolated and
 cumulative effects rather than adding component percentages:

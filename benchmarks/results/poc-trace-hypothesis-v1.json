@@ -1,0 +1,238 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-trace-hypothesis/v1",
+  "workItem": "POC-TRACE-HYPOTHESIS-002",
+  "evidenceState": "TERMINAL",
+  "analyzedOn": "2026-08-09",
+  "specSha256": "4eedcfcdd96b3c47710fa7eba151f00fed085cfe6d1520fd538784bc4dc21710",
+  "composerScriptSha256": "4a3ab369d88829a4f5ac312f618727f931f9ee21fa912fb07aa0b3ded8eb50c5",
+  "inputs": [
+    {
+      "id": "INSTALLED_SYNTHETIC_PHASE_TRACE",
+      "path": "benchmarks/results/poc-overhead-v1.json",
+      "sha256": "614de39e711a8b69daf33181d0805e595964c0c2a0e03444fa9b532da568e9a6",
+      "schemaVersion": "buildopt.evidence/poc-overhead/v1",
+      "buildoptRevision": "42f922addc6fc59915dc9e56d5384d624b595772"
+    },
+    {
+      "id": "INSTALLED_SPRING_VERIFICATION_TRACE",
+      "path": "benchmarks/results/poc-verification-overhead-attribution-v1.json",
+      "sha256": "1d40750eee3eedf762734d4d178d0f5942472e48ab5bc0e357088ad96faa9318",
+      "schemaVersion": "buildopt.poc/verification-overhead-attribution-result/v1",
+      "buildoptRevision": "f3ac882aef25e184ae7567272ef9773a95c304e7"
+    }
+  ],
+  "authorizationRule": {
+    "minimumRecoverableCriticalPathMs": 500,
+    "minimumIndependentFamilies": 2,
+    "mustBeProductAddressable": true,
+    "mustHaveCausalRecoverability": true,
+    "mustPreserveRequiredOutputs": true,
+    "maximumProductAttributableFailures": 0,
+    "oneHypothesisMaximum": true
+  },
+  "families": [
+    {
+      "id": "SYNTHETIC_GROOVY",
+      "kind": "WORKLOAD_FAMILY",
+      "source": "INSTALLED_SYNTHETIC_PHASE_TRACE",
+      "observationCount": 4,
+      "outputsIdentical": true,
+      "productFailures": 0,
+      "phases": {
+        "buildoptSpecificSetupMs": 0,
+        "launcherAndGradleClientStartupMs": 364.875,
+        "configurationBeforeTasksMs": 395.75,
+        "gradleFinalizationMs": 0.375,
+        "launcherAndGradleClientTeardownMs": 8
+      }
+    },
+    {
+      "id": "SYNTHETIC_KOTLIN",
+      "kind": "WORKLOAD_FAMILY",
+      "source": "INSTALLED_SYNTHETIC_PHASE_TRACE",
+      "observationCount": 4,
+      "outputsIdentical": true,
+      "productFailures": 0,
+      "phases": {
+        "buildoptSpecificSetupMs": 0,
+        "launcherAndGradleClientStartupMs": 175.125,
+        "configurationBeforeTasksMs": 0,
+        "gradleFinalizationMs": 0.5,
+        "launcherAndGradleClientTeardownMs": 5.875
+      }
+    },
+    {
+      "id": "SPRING_VERIFICATION",
+      "kind": "REPOSITORY_FAMILY",
+      "source": "INSTALLED_SPRING_VERIFICATION_TRACE",
+      "observationCount": 1,
+      "outputsIdentical": true,
+      "productFailures": 0,
+      "phases": {
+        "buildoptSpecificSetupMs": 1.238233,
+        "launcherAndGradleClientStartupMs": 0,
+        "configurationBeforeTasksMs": 682,
+        "gradleFinalizationMs": 97,
+        "launcherAndGradleClientTeardownMs": 87
+      }
+    }
+  ],
+  "candidates": [
+    {
+      "id": "BUILDOPT_SPECIFIC_SETUP",
+      "productAddressable": true,
+      "observations": [
+        {
+          "familyId": "SYNTHETIC_GROOVY",
+          "observedPositiveDeltaMs": 0,
+          "causalRecoverabilityEstablished": true,
+          "thresholdMet": false
+        },
+        {
+          "familyId": "SYNTHETIC_KOTLIN",
+          "observedPositiveDeltaMs": 0,
+          "causalRecoverabilityEstablished": true,
+          "thresholdMet": false
+        },
+        {
+          "familyId": "SPRING_VERIFICATION",
+          "observedPositiveDeltaMs": 1.238233,
+          "causalRecoverabilityEstablished": true,
+          "thresholdMet": false
+        }
+      ],
+      "qualifyingFamilies": 0,
+      "authorized": false
+    },
+    {
+      "id": "LAUNCHER_AND_GRADLE_CLIENT_STARTUP",
+      "productAddressable": true,
+      "observations": [
+        {
+          "familyId": "SYNTHETIC_GROOVY",
+          "observedPositiveDeltaMs": 364.875,
+          "causalRecoverabilityEstablished": false,
+          "thresholdMet": false
+        },
+        {
+          "familyId": "SYNTHETIC_KOTLIN",
+          "observedPositiveDeltaMs": 175.125,
+          "causalRecoverabilityEstablished": false,
+          "thresholdMet": false
+        },
+        {
+          "familyId": "SPRING_VERIFICATION",
+          "observedPositiveDeltaMs": 0,
+          "causalRecoverabilityEstablished": false,
+          "thresholdMet": false
+        }
+      ],
+      "qualifyingFamilies": 0,
+      "authorized": false
+    },
+    {
+      "id": "CONFIGURATION_BEFORE_TASKS",
+      "productAddressable": false,
+      "observations": [
+        {
+          "familyId": "SYNTHETIC_GROOVY",
+          "observedPositiveDeltaMs": 395.75,
+          "causalRecoverabilityEstablished": false,
+          "thresholdMet": false
+        },
+        {
+          "familyId": "SYNTHETIC_KOTLIN",
+          "observedPositiveDeltaMs": 0,
+          "causalRecoverabilityEstablished": false,
+          "thresholdMet": false
+        },
+        {
+          "familyId": "SPRING_VERIFICATION",
+          "observedPositiveDeltaMs": 682,
+          "causalRecoverabilityEstablished": false,
+          "thresholdMet": false
+        }
+      ],
+      "qualifyingFamilies": 0,
+      "authorized": false
+    },
+    {
+      "id": "GRADLE_FINALIZATION",
+      "productAddressable": false,
+      "observations": [
+        {
+          "familyId": "SYNTHETIC_GROOVY",
+          "observedPositiveDeltaMs": 0.375,
+          "causalRecoverabilityEstablished": false,
+          "thresholdMet": false
+        },
+        {
+          "familyId": "SYNTHETIC_KOTLIN",
+          "observedPositiveDeltaMs": 0.5,
+          "causalRecoverabilityEstablished": false,
+          "thresholdMet": false
+        },
+        {
+          "familyId": "SPRING_VERIFICATION",
+          "observedPositiveDeltaMs": 97,
+          "causalRecoverabilityEstablished": false,
+          "thresholdMet": false
+        }
+      ],
+      "qualifyingFamilies": 0,
+      "authorized": false
+    },
+    {
+      "id": "LAUNCHER_AND_GRADLE_CLIENT_TEARDOWN",
+      "productAddressable": true,
+      "observations": [
+        {
+          "familyId": "SYNTHETIC_GROOVY",
+          "observedPositiveDeltaMs": 8,
+          "causalRecoverabilityEstablished": false,
+          "thresholdMet": false
+        },
+        {
+          "familyId": "SYNTHETIC_KOTLIN",
+          "observedPositiveDeltaMs": 5.875,
+          "causalRecoverabilityEstablished": false,
+          "thresholdMet": false
+        },
+        {
+          "familyId": "SPRING_VERIFICATION",
+          "observedPositiveDeltaMs": 87,
+          "causalRecoverabilityEstablished": false,
+          "thresholdMet": false
+        }
+      ],
+      "qualifyingFamilies": 0,
+      "authorized": false
+    }
+  ],
+  "excludedObservations": {
+    "taskExecutionSavings": "ALREADY_QUALIFIED_BUILD_IMPACT_IS_NOT_A_NEW_HYPOTHESIS",
+    "controlOnlyCumulativeTaskDuration": "PARALLEL_TASK_DURATIONS_OVERLAP_AND_ARE_NOT_CRITICAL_PATH",
+    "diagnosticTraceTiming": "ATTRIBUTION_ONLY_NOT_NEW_PERFORMANCE_EVIDENCE"
+  },
+  "reopenPolicy": {
+    "mechanisms": [
+      "RUNTIME_TUNING",
+      "HOT_STATE",
+      "STANDARD_COPY",
+      "SAFE_CACHE",
+      "STANDARD_JAR"
+    ],
+    "requiresMateriallyNewTraceEvidence": true
+  },
+  "authorizedHypothesis": null,
+  "decision": "NO_ACTIONABLE_HYPOTHESIS",
+  "nextWorkItem": "POC-PORTFOLIO-DECISION-001",
+  "boundaries": {
+    "proofOfConceptOnly": true,
+    "newTimingCollected": false,
+    "productionAuthorityChanged": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationIncluded": false
+  }
+}

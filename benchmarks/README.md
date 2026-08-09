@@ -763,6 +763,31 @@ adds no timing and does not broaden Kafka's 81.85% result.
 ./dev/check-poc-profile-discovery
 ```
 
+### Trace-gated hypothesis decision
+
+The checked [trace decision](./results/poc-trace-hypothesis-v1.json) analyzes
+only the immutable installed synthetic phase trace and Spring verification
+trace. It does not collect another timing sample. Required outputs are exact
+and product failures remain zero across the three evaluated workload or
+repository families.
+
+| Phase | Largest positive observed delta | Authorization result |
+|---|---:|---|
+| BuildOpt-specific setup | 1.238233 ms | Below 500 ms in every family |
+| Launcher and Gradle-client startup | 364.875 ms | Below 500 ms and not causally recoverable |
+| Configuration before tasks | 682 ms | Only Spring exceeds 500 ms; not product-attributed and not reproduced |
+| Gradle finalization | 97 ms | Below 500 ms and not product-attributed |
+| Launcher and Gradle-client teardown | 87 ms | Below 500 ms and not causally recoverable |
+
+Existing Build Impact task-interval savings are deliberately excluded because
+they are not a new hypothesis. The 4,249 ms of Spring control-only task time is
+also excluded because parallel task durations overlap and are not an additive
+critical path. The terminal decision is `NO_ACTIONABLE_HYPOTHESIS`.
+
+```bash
+./dev/check-poc-trace-hypothesis-v1
+```
+
 The three mechanism-development reports remain historical inputs. The strict
 synthetic reports prove bounded combined value. The public-repository
 compatibility and early performance reports showed that the first generic

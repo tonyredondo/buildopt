@@ -163,6 +163,7 @@ unfavorable observations. Percentages from different rows are not additive.
 | Exact installed Kafka profile | **80.51% faster**, 27,652.875 ms saved, 8/8 positive pairs | The packaged `buildopt poc` path retained the qualified value: native + Shared averaged 34,347.25 ms and the installed repository-owned profile 6,694.375 ms. Corrected bootstrap interval +24,826.5..+29,903.625 ms, exact normalized output, zero origin requests, global full-graph fallback and byte-identical HTTP-503 fallback. |
 | Installed qualified-profile matrix | **Kafka 81.85% faster; Spring 14.33% faster but unqualified; OpenTelemetry no accepted observations** | Kafka passed 8/8 pairs and all safety gates. Spring preserved output/fallback but passed only 7/8 pairs, including one -57-ms regression. OpenTelemetry impact discovery was terminated by signal after preflight, so it retains native with no performance claim. Only 1/3 families qualifies; do not average these percentages. |
 | Deterministic profile discovery | **No new timing; exact Kafka profile reproduced** | The read-only analyzer binds the terminal matrix, complete graph, generated state, trace/input digests, exact output and reviewed contract. Kafka emits the same v2 profile and 61-project omission plan; Spring, OpenTelemetry, drift, incomplete/unknown graphs and selected Test tasks emit native full graph. |
+| Trace-gated hypothesis decision | **No new timing; no hypothesis authorized** | BuildOpt setup peaks at 1.238233 ms, startup at 364.875 ms, finalization at 97 ms and teardown at 87 ms. Configuration reaches 682 ms only in Spring, without product attribution or a second qualifying family. |
 
 ## Latest Generalization and Next Work
 
@@ -329,11 +330,13 @@ incomplete evidence, unknown graph relationships and selected Test tasks all
 fail closed to the native full graph. The analyzer contains no repository-name
 rule or hidden allowlist and never writes or activates a profile.
 
-The next block is the one trace-gated hypothesis. It may authorize at most one
-generic optimization only if retained installed-path traces expose at least
-500 ms of recoverable critical-path work across two repository or workload
-families. Otherwise it must record `NO_ACTIONABLE_HYPOTHESIS` and move directly
-to the portfolio decision; rejected mechanisms and Test Optimization stay out.
+The trace-gated hypothesis block is now terminal. The immutable synthetic and
+Spring installed traces expose no phase that is product-addressable, causally
+recoverable, at least 500 ms, and reproduced across two families. Its checked
+decision is `NO_ACTIONABLE_HYPOTHESIS`; no new implementation or timing was
+authorized. The next block is the terminal portfolio decision: decide whether
+to retain only the bounded Kafka specialization or stop/reframe the broader
+accelerator claim. Rejected mechanisms and Test Optimization stay out.
 
 ## Boundaries and References
 
@@ -359,6 +362,8 @@ production operations are outside the current scope.
 - [Apache Kafka transfer evidence](../../benchmarks/results/poc-third-repository-transfer-v1.json)
 - [Installed qualified-profile adoption evidence](../../benchmarks/results/poc-qualified-profile-adoption-v1.json)
 - [Terminal installed qualified-profile matrix](../../benchmarks/results/poc-qualified-profile-matrix-v1/summary.json)
+- [Deterministic profile-discovery evidence](../../benchmarks/results/poc-profile-discovery-v1.json)
+- [Trace-gated hypothesis decision](../../benchmarks/results/poc-trace-hypothesis-v1.json)
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)
 - [Kafka shadow JAR reproducibility evidence](../../benchmarks/results/poc-kafka-shadowjar-reproducibility-v1.json)
 - [Installed Kafka profile value evidence](../../benchmarks/results/poc-kafka-installed-profile-value-v1.json)

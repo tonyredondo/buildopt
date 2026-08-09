@@ -369,6 +369,12 @@ graph, generated-state, trace/input, safety and reviewed-contract evidence;
 unqualified or uncertain inputs emit a native full-graph decision and never
 activate a profile.
 
+`poc-trace-hypothesis-v1.json` and `poc-trace-hypothesis-v1.md` bind the final
+trace-gated optimization decision. They require at least 500 ms of causally
+recoverable product-owned critical-path work in two families, reject overlapping
+task-duration sums and already-qualified mechanisms as new hypotheses, and
+emit `NO_ACTIONABLE_HYPOTHESIS` when no phase clears every condition.
+
 `poc-kafka-packaging-v1.json` and `poc-kafka-packaging-v1.md` freeze the next
 real value experiment before timing. They compare Kafka's optimized native
 root `assemble` with the installed qualified three-project client-Jar path,

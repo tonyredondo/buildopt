@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "buildopt.specs/poc-trace-hypothesis/v1",
+  "workItem": "POC-TRACE-HYPOTHESIS-002",
+  "status": "PREREGISTERED",
+  "analyzedOn": "2026-08-09",
+  "inputs": [
+    {
+      "id": "INSTALLED_SYNTHETIC_PHASE_TRACE",
+      "path": "benchmarks/results/poc-overhead-v1.json",
+      "sha256": "614de39e711a8b69daf33181d0805e595964c0c2a0e03444fa9b532da568e9a6"
+    },
+    {
+      "id": "INSTALLED_SPRING_VERIFICATION_TRACE",
+      "path": "benchmarks/results/poc-verification-overhead-attribution-v1.json",
+      "sha256": "1d40750eee3eedf762734d4d178d0f5942472e48ab5bc0e357088ad96faa9318"
+    }
+  ],
+  "authorizationRule": {
+    "minimumRecoverableCriticalPathMs": 500,
+    "minimumIndependentFamilies": 2,
+    "mustBeProductAddressable": true,
+    "mustHaveCausalRecoverability": true,
+    "mustPreserveRequiredOutputs": true,
+    "maximumProductAttributableFailures": 0,
+    "oneHypothesisMaximum": true
+  },
+  "candidatePhases": [
+    "BUILDOPT_SPECIFIC_SETUP",
+    "LAUNCHER_AND_GRADLE_CLIENT_STARTUP",
+    "CONFIGURATION_BEFORE_TASKS",
+    "GRADLE_FINALIZATION",
+    "LAUNCHER_AND_GRADLE_CLIENT_TEARDOWN"
+  ],
+  "excludedObservations": {
+    "taskExecutionSavings": "ALREADY_QUALIFIED_BUILD_IMPACT_IS_NOT_A_NEW_HYPOTHESIS",
+    "controlOnlyCumulativeTaskDuration": "PARALLEL_TASK_DURATIONS_OVERLAP_AND_ARE_NOT_CRITICAL_PATH",
+    "diagnosticTraceTiming": "ATTRIBUTION_ONLY_NOT_NEW_PERFORMANCE_EVIDENCE"
+  },
+  "reopenPolicy": {
+    "mechanisms": [
+      "RUNTIME_TUNING",
+      "HOT_STATE",
+      "STANDARD_COPY",
+      "SAFE_CACHE",
+      "STANDARD_JAR"
+    ],
+    "requiresMateriallyNewTraceEvidence": true
+  },
+  "terminalDecisions": {
+    "authorize": "AUTHORIZE_ONE_TRACE_SELECTED_HYPOTHESIS",
+    "stop": "NO_ACTIONABLE_HYPOTHESIS"
+  },
+  "boundaries": {
+    "proofOfConceptOnly": true,
+    "newTimingCollected": false,
+    "productionAuthorityChanged": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationIncluded": false
+  }
+}

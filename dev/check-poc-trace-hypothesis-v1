@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-trace-hypothesis-v1.json"}
+buildopt_spec="${buildopt_repo_root}/specs/poc-trace-hypothesis-v1.json"
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-trace-hypothesis.XXXXXX")
+trap 'rm -rf -- "${buildopt_temporary}"' EXIT
+
+[[ -s "${buildopt_result}" ]] || exit 1
+"${buildopt_script_dir}/compose-poc-trace-hypothesis-v1" "${buildopt_temporary}/result.json" >/dev/null
+cmp -s "${buildopt_result}" "${buildopt_temporary}/result.json"
+
+jq -e --arg specSha "$(sha256sum "${buildopt_spec}" | awk '{print $1}')" \
+    --arg composerSha "$(sha256sum "${buildopt_script_dir}/compose-poc-trace-hypothesis-v1" | awk '{print $1}')" '
+  def sha256: type == "string" and test("^[0-9a-f]{64}$");
+  def gitsha: type == "string" and test("^[0-9a-f]{40}$");
+  .schemaVersion == "buildopt.evidence/poc-trace-hypothesis/v1" and
+  .workItem == "POC-TRACE-HYPOTHESIS-002" and .evidenceState == "TERMINAL" and
+  .analyzedOn == "2026-08-09" and .specSha256 == $specSha and
+  .composerScriptSha256 == $composerSha and
+  (.inputs | length == 2 and all(.[]; (.sha256 | sha256) and (.buildoptRevision | gitsha))) and
+  (.families | map(.id)) == ["SYNTHETIC_GROOVY", "SYNTHETIC_KOTLIN", "SPRING_VERIFICATION"] and
+  all(.families[]; .outputsIdentical and .productFailures == 0) and
+  (.candidates | length == 5) and all(.candidates[]; .authorized == false) and
+  (.candidates[] | select(.id == "BUILDOPT_SPECIFIC_SETUP") |
+    ([.observations[].observedPositiveDeltaMs] | max) == 1.238233 and .qualifyingFamilies == 0) and
+  (.candidates[] | select(.id == "LAUNCHER_AND_GRADLE_CLIENT_STARTUP") |
+    ([.observations[].observedPositiveDeltaMs] | max) == 364.875 and .qualifyingFamilies == 0) and
+  (.candidates[] | select(.id == "CONFIGURATION_BEFORE_TASKS") |
+    .productAddressable == false and
+    ([.observations[].observedPositiveDeltaMs] | max) == 682 and .qualifyingFamilies == 0) and
+  (.candidates[] | select(.id == "GRADLE_FINALIZATION") |
+    ([.observations[].observedPositiveDeltaMs] | max) == 97) and
+  (.candidates[] | select(.id == "LAUNCHER_AND_GRADLE_CLIENT_TEARDOWN") |
+    ([.observations[].observedPositiveDeltaMs] | max) == 87 and .qualifyingFamilies == 0) and
+  .authorizedHypothesis == null and .decision == "NO_ACTIONABLE_HYPOTHESIS" and
+  .nextWorkItem == "POC-PORTFOLIO-DECISION-001" and
+  .boundaries == {
+    proofOfConceptOnly:true, newTimingCollected:false,
+    productionAuthorityChanged:false, soakRequired:false,
+    designPartnerRequired:false, testOptimizationIncluded:false
+  }
+' "${buildopt_result}" >/dev/null
+
+cp "${buildopt_repo_root}/benchmarks/results/poc-overhead-v1.json" "${buildopt_temporary}/drift.json"
+printf '\n' >>"${buildopt_temporary}/drift.json"
+if sha256sum "${buildopt_temporary}/drift.json" | awk '{print $1}' | \
+    grep -qx "$(jq -r '.inputs[0].sha256' "${buildopt_spec}")"; then
+    printf 'mutated trace unexpectedly retained its digest\n' >&2
+    exit 1
+fi
+
+printf 'trace hypothesis evidence OK: no phase authorizes a new optimization\n'
