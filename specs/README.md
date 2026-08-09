@@ -383,6 +383,12 @@ Core at an exact public revision, a 75-to-22-project binary-assembly reduction,
 eight alternating pairs, byte-identical required JARs, a global-change fallback
 and the unchanged 500-ms/2%/positive-bound gate before any timing is accepted.
 
+`poc-source-ownership-v1.json` and `poc-source-ownership-v1.md` separate the
+direct project owner of a changed source from the expanded conservative source
+boundary of a cyclic Gradle component. Production closure remains unchanged;
+the owner-operated POC path may use only subset-validated owned roots and keeps
+the full graph for equal-specificity ambiguity.
+
 `poc-trace-hypothesis-v1.json` and `poc-trace-hypothesis-v1.md` bind the final
 trace-gated optimization decision. They require at least 500 ms of causally
 recoverable product-owned critical-path work in two families, reject overlapping

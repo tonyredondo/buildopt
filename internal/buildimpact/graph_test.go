@@ -48,6 +48,26 @@ func validGraph(t *testing.T) (LoadedManifest, DeclaredGraph) {
 	return manifest, graph
 }
 
+func singleProjectAlternativeGraph(t *testing.T) (LoadedManifest, DeclaredGraph) {
+	t.Helper()
+	manifestValue := validManifest()
+	manifestValue.OriginalEntrypoints = []string{"assemble"}
+	manifestValue.AllowedAlternatives = []EntrypointSet{{
+		ID: "service-a", Entrypoints: []string{":service-a:assemble"},
+	}}
+	manifestValue.RequiredArtifacts = []Artifact{{
+		ID: "distribution", Path: "distribution/build/libs/*.zip", Owner: BuildOptimization,
+	}}
+	manifest, err := ParseManifest(encodeManifest(t, manifestValue), "acme/monorepo", "pull-request")
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, graph := validGraph(t)
+	graph.ManifestDigest = manifest.Digest
+	graph.Entrypoints[2].ReachesProjects = []string{":service-a"}
+	return manifest, graph
+}
+
 func encodeGraph(t *testing.T, graph DeclaredGraph) []byte {
 	t.Helper()
 	raw, err := json.Marshal(graph)
@@ -218,6 +238,45 @@ func TestPOCOutputScopeUsesMostSpecificNestedProjectOwner(t *testing.T) {
 	}
 }
 
+func TestPOCOutputScopeSeparatesOwnedSourcesFromConservativeCycleBoundary(t *testing.T) {
+	manifest, graph := singleProjectAlternativeGraph(t)
+	graph.Projects[0].SourcePaths = []string{"library-c/**", "service-a/**"}
+	graph.Projects[0].OwnedSourcePaths = []string{"library-c/**"}
+	graph.Projects[0].DependsOn = nil
+	graph.Projects[1].SourcePaths = []string{"library-c/**", "service-a/**"}
+	graph.Projects[1].OwnedSourcePaths = []string{"service-a/**"}
+	graph.Projects[1].DependsOn = nil
+
+	changed := []string{"service-a/src/main/java/Service.java"}
+	production := EvaluateImpact(manifest, graph, changed)
+	if production.Mode != DecisionFullGraph || production.Reason != "NO_AUTHORIZED_ALTERNATIVE" ||
+		!reflect.DeepEqual(production.AffectedProjects, []string{":library-c", ":service-a"}) {
+		t.Fatalf("production decision = %+v", production)
+	}
+	poc := evaluatePOCImpact(manifest, graph, changed)
+	if poc.Mode != DecisionShadowAlternative ||
+		poc.Reason != "CUSTOMER_ALTERNATIVE_AND_DECLARED_OUTPUT_SCOPE" ||
+		poc.PredictedAlternativeID != "service-a" ||
+		!reflect.DeepEqual(poc.AffectedProjects, []string{":library-c", ":service-a"}) {
+		t.Fatalf("POC decision = %+v", poc)
+	}
+}
+
+func TestPOCOutputScopeRetainsEveryEqualSpecificityOwnedSource(t *testing.T) {
+	manifest, graph := singleProjectAlternativeGraph(t)
+	graph.Projects[0].SourcePaths = []string{"shared/**"}
+	graph.Projects[0].OwnedSourcePaths = []string{"shared/**"}
+	graph.Projects[1].SourcePaths = []string{"shared/**"}
+	graph.Projects[1].OwnedSourcePaths = []string{"shared/**"}
+	graph.Projects[1].DependsOn = nil
+
+	decision := evaluatePOCImpact(manifest, graph, []string{"shared/src/main/java/Shared.java"})
+	if decision.Mode != DecisionFullGraph || decision.Reason != "NO_AUTHORIZED_ALTERNATIVE" ||
+		!reflect.DeepEqual(decision.AffectedProjects, []string{":library-c", ":service-a"}) {
+		t.Fatalf("ambiguous owned source decision = %+v", decision)
+	}
+}
+
 func TestInvalidGraphFailsClosed(t *testing.T) {
 	manifest, graph := validGraph(t)
 	graph.Projects[0].DependsOn = []string{":service-a"}
@@ -309,5 +368,13 @@ func TestDeclaredGraphRequiresExplicitSecurityFields(t *testing.T) {
 				t.Fatal("graph with missing security field accepted")
 			}
 		})
+	}
+}
+
+func TestDeclaredGraphRejectsOwnedSourcesOutsideConservativeBoundary(t *testing.T) {
+	manifest, graph := validGraph(t)
+	graph.Projects[0].OwnedSourcePaths = []string{"unrelated/**"}
+	if _, err := ParseDeclaredGraph(encodeGraph(t, graph), manifest); err == nil {
+		t.Fatal("owned source outside conservative source boundary accepted")
 	}
 }

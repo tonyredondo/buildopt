@@ -22,10 +22,12 @@ jq -e '
     .workItems == ["BIA-F4-001", "BIA-F4-002", "BIA-F4-003"] and
     .discovery.implementation == "buildimpact.Discover" and
     .discovery.unknownPolicy == "FULL_GRAPH" and
+    .discovery.directSourceOwnership == "ORIGINAL_MEMBER_PATHS_OPTIONAL_SUBSET" and
     .generatedState.driftPolicy == "FAIL_CLOSED" and
     .selection.boundary == "buildimpact.PlanSelection" and
     .selection.promotion == "BIA-002_UNCHANGED" and
     .selection.testOptimization == "PRESERVED_SEPARATELY_NEVER_SELECTED" and
+    .selection.productionAffectedClosure == "EXPANDED_SOURCE_BOUNDARY_UNCHANGED" and
     (.fallbacks | index("GENERATED_STATE_DRIFT")) != null and
     (.fallbacks | index("BIA_002_NOT_QUALIFIED")) != null
 ' "${buildopt_repo_root}/specs/build-impact-automatic-v1.json" >/dev/null

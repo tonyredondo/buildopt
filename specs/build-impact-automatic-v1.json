@@ -9,6 +9,8 @@
     "taskSelectors": "GRADLE_NATIVE_UNQUALIFIED_OR_EXACT_PATH",
     "parallelConfiguration": "PROJECT_LOCAL_SNAPSHOT",
     "cyclicProjectDependencies": "CONSERVATIVE_STRONGLY_CONNECTED_COMPONENT",
+    "cyclicSourceBoundary": "EXPANDED_FOR_CONSERVATIVE_AFFECTED_CLOSURE",
+    "directSourceOwnership": "ORIGINAL_MEMBER_PATHS_OPTIONAL_SUBSET",
     "repositoryLocalIncludedBuilds": "GLOBAL_CHANGE_PATH",
     "unknownPolicy": "FULL_GRAPH"
   },
@@ -23,7 +25,9 @@
     "boundary": "buildimpact.PlanSelection",
     "promotion": "BIA-002_UNCHANGED",
     "requiredProof": "FULL_VERSUS_SELECTED_ARTIFACT_EQUIVALENCE",
-    "testOptimization": "PRESERVED_SEPARATELY_NEVER_SELECTED"
+    "testOptimization": "PRESERVED_SEPARATELY_NEVER_SELECTED",
+    "productionAffectedClosure": "EXPANDED_SOURCE_BOUNDARY_UNCHANGED",
+    "pocDirectAttribution": "OWNED_SOURCE_PATHS_WITH_EQUAL_SPECIFICITY_FALLBACK"
   },
   "fallbacks": [
     "INCLUDED_BUILD_OUTSIDE_REPOSITORY",

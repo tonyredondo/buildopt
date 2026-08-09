@@ -13,7 +13,12 @@ Only conventional artifact and test-preparation tasks are modeled
 automatically. Unqualified task names retain Gradle's native selector semantics
 across subprojects. Dependency declarations are captured while each project
 owns its mutable configuration state, and cyclic project components share one
-conservative source/dependency boundary. Repository-local included builds are
+conservative source/dependency boundary. The generated graph also preserves
+each component member's original `ownedSourcePaths` as an optional subset of
+that boundary. Production affected-project closure still uses the expanded
+boundary; only the explicit owner-operated POC path may use the narrower field
+to attribute a changed file directly. Equal-specificity ownership remains
+ambiguous and keeps the full graph. Repository-local included builds are
 global-change paths; an included build outside the repository, a test-bearing
 entrypoint, an unsupported task type, a missing project, malformed state,
 generated-file drift, an unknown source path, or any failed discovery retains

@@ -66,7 +66,7 @@ done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
     "**Overall status:** \`POC GENERALIZATION REOPENED\`"
-    "**Current phase:** \`SOURCE OWNERSHIP GAP IDENTIFIED\`"
+    "**Current phase:** \`SOURCE OWNERSHIP CORRECTION IMPLEMENTED\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"
@@ -240,5 +240,5 @@ if [[ $(grep -Fc "| \`OPS-001/B\` |" <<<"${buildopt_readiness}") != 1 ]]; then
     exit 1
 fi
 
-printf 'RFC/tracker consistency OK: %s accepted decisions and source-ownership gap tracked\n' \
+printf 'RFC/tracker consistency OK: %s accepted decisions and source-ownership correction tracked\n' \
     "${buildopt_decision_count}"

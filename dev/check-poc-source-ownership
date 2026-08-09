@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-source-ownership-v1.json"
+
+for buildopt_command in go jq; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required source-ownership command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-source-ownership/v1" and
+    .workItem == "POC-SOURCE-OWNERSHIP-001" and
+    .model.conservativeSourcePaths == "UNCHANGED_EXPANDED_COMPONENT_BOUNDARY" and
+    .model.ownedSourcePaths == "ORIGINAL_PROJECT_SOURCE_PATHS" and
+    .model.ownedPathsMustBeSubset == true and
+    .model.productionAffectedClosureChanged == false and
+    .model.equalSpecificity == "FULL_GRAPH" and
+    (.requiredProofs | length) == 5 and
+    .micronautReplay.allowedOnlyIfEveryDirectOwnerCovered == true and
+    .micronautReplay.tasksOutputsPairingAndThresholdsMayChange == false and
+    .boundaries.repositorySpecificRuleAllowed == false and
+    .boundaries.productionSelectionChanged == false and
+    .boundaries.testOptimizationModified == false
+' "${buildopt_contract}" >/dev/null
+
+cd "${buildopt_repo_root}"
+go test -race -count=1 -run \
+    '^(TestPOCOutputScopeSeparatesOwnedSourcesFromConservativeCycleBoundary|TestPOCOutputScopeRetainsEveryEqualSpecificityOwnedSource|TestDeclaredGraphRejectsOwnedSourcesOutsideConservativeBoundary|TestGenerateImpactConservativelyNormalizesProjectDependencyCycles)$' \
+    ./internal/buildimpact
+go vet ./internal/buildimpact
+
+printf 'POC source ownership OK: direct owners separated from conservative cycles with fail-closed ambiguity\n'

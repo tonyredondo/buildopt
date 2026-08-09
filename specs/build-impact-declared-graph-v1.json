@@ -8,13 +8,16 @@
     "history": "NEVER_AUTHORIZES_OMISSION",
     "maximumBytes": 2097152,
     "unknownRelationships": "FULL_GRAPH",
-    "incomplete": "FULL_GRAPH"
+    "incomplete": "FULL_GRAPH",
+    "ownedSourcePaths": "OPTIONAL_NON_EMPTY_SUBSET_OF_CONSERVATIVE_SOURCE_PATHS"
   },
   "decision": {
     "execution": "ORIGINAL_ENTRYPOINTS",
     "predictionModes": ["FULL_GRAPH", "SHADOW_ALTERNATIVE"],
     "selectionAuthorized": false,
     "affectedProjects": "CHANGED_PLUS_TRANSITIVE_REVERSE_DEPENDENTS",
+    "productionSourceBoundary": "CONSERVATIVE_SOURCE_PATHS_ONLY",
+    "pocDirectAttribution": "OWNED_SOURCE_PATHS_WITH_EQUAL_SPECIFICITY_FALLBACK",
     "candidateRequirements": [
       "CUSTOMER_ENUMERATED_ENTRYPOINT_SET",
       "ALL_AFFECTED_PROJECTS_REACHED",

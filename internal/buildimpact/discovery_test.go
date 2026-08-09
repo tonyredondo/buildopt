@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 )
@@ -88,7 +89,9 @@ func TestGenerateImpactConservativelyNormalizesProjectDependencyCycles(t *testin
 		t.Fatal(err)
 	}
 	for _, project := range generated.Graph.Graph.Projects[:2] {
-		if !reflect.DeepEqual(project.SourcePaths, []string{"library-c/**", "service-a/**"}) || len(project.DependsOn) != 0 {
+		expectedOwned := []string{strings.TrimPrefix(project.Path, ":") + "/**"}
+		if !reflect.DeepEqual(project.SourcePaths, []string{"library-c/**", "service-a/**"}) ||
+			!reflect.DeepEqual(project.OwnedSourcePaths, expectedOwned) || len(project.DependsOn) != 0 {
 			t.Fatalf("normalized cyclic project = %+v", project)
 		}
 	}

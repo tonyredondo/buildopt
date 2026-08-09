@@ -25,9 +25,11 @@ jq -e '
     .graph.authority == "GRADLE_DECLARED_GRAPH_PLUS_CUSTOMER_MANIFEST" and
     .graph.history == "NEVER_AUTHORIZES_OMISSION" and
     .graph.unknownRelationships == "FULL_GRAPH" and
+    .graph.ownedSourcePaths == "OPTIONAL_NON_EMPTY_SUBSET_OF_CONSERVATIVE_SOURCE_PATHS" and
     .decision.execution == "ORIGINAL_ENTRYPOINTS" and
     .decision.predictionModes == ["FULL_GRAPH", "SHADOW_ALTERNATIVE"] and
     .decision.selectionAuthorized == false and
+    .decision.productionSourceBoundary == "CONSERVATIVE_SOURCE_PATHS_ONLY" and
     (.decision.candidateRequirements | length) == 6 and
     (.decision.fallbacks | index("UNKNOWN_CHANGE_PATH")) != null and
     .decision.testOptimizationChecks == "PRESERVED_UNCHANGED" and

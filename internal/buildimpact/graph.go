@@ -52,6 +52,7 @@ type DeclaredGraph struct {
 type Project struct {
 	Path                 string   `json:"path"`
 	SourcePaths          []string `json:"sourcePaths"`
+	OwnedSourcePaths     []string `json:"ownedSourcePaths,omitempty"`
 	DependsOn            []string `json:"dependsOn"`
 	UnknownRelationships bool     `json:"unknownRelationships"`
 }
@@ -155,6 +156,7 @@ func evaluateImpact(manifest LoadedManifest, graph DeclaredGraph, changedPaths [
 		projectByPath[project.Path] = project
 	}
 	changedProjects := map[string]bool{}
+	affectedSeeds := map[string]bool{}
 	for _, changedPath := range changedPaths {
 		if !validRepositoryPath(changedPath) {
 			decision.Reason = "INVALID_CHANGE_PATH"
@@ -164,16 +166,25 @@ func evaluateImpact(manifest LoadedManifest, graph DeclaredGraph, changedPaths [
 			decision.Reason = "GLOBAL_CHANGE"
 			return decision
 		}
-		matches := matchingChangedProjects(graph.Projects, changedPath, !requireAffectedClosure)
-		if len(matches) == 0 {
+		affectedMatches := matchingChangedProjects(graph.Projects, changedPath, false, false)
+		if len(affectedMatches) == 0 {
 			decision.Reason = "UNKNOWN_CHANGE_PATH"
 			return decision
+		}
+		addAll(affectedSeeds, sortedKeys(affectedMatches))
+		matches := affectedMatches
+		if !requireAffectedClosure {
+			matches = matchingChangedProjects(graph.Projects, changedPath, true, true)
+			if len(matches) == 0 {
+				decision.Reason = "UNKNOWN_CHANGE_PATH"
+				return decision
+			}
 		}
 		for projectPath := range matches {
 			changedProjects[projectPath] = true
 		}
 	}
-	affected := reverseDependencyClosure(projectByPath, changedProjects)
+	affected := reverseDependencyClosure(projectByPath, affectedSeeds)
 	decision.AffectedProjects = sortedKeys(affected)
 	requiredProjects := affected
 	if !requireAffectedClosure {
@@ -242,12 +253,16 @@ func evaluateImpact(manifest LoadedManifest, graph DeclaredGraph, changedPaths [
 // matchingChangedProjects keeps production selection conservative while the
 // explicit POC path resolves nested project-directory globs to their closest
 // declared owner. Equal-specificity matches remain ambiguous and are all kept.
-func matchingChangedProjects(projects []Project, changedPath string, mostSpecificOnly bool) map[string]bool {
+func matchingChangedProjects(projects []Project, changedPath string, mostSpecificOnly, ownedOnly bool) map[string]bool {
 	matches := map[string]bool{}
 	bestSpecificity := -1
 	for _, project := range projects {
 		projectSpecificity := -1
-		for _, sourcePath := range project.SourcePaths {
+		sourcePaths := project.SourcePaths
+		if ownedOnly && len(project.OwnedSourcePaths) != 0 {
+			sourcePaths = project.OwnedSourcePaths
+		}
+		for _, sourcePath := range sourcePaths {
 			if matchRepositoryGlob(sourcePath, changedPath) {
 				projectSpecificity = max(projectSpecificity, repositoryGlobSpecificity(sourcePath))
 			}
@@ -292,12 +307,21 @@ func validateDeclaredGraph(manifest LoadedManifest, graph DeclaredGraph) error {
 	}
 	projects := map[string]bool{}
 	for _, project := range graph.Projects {
-		if !validGradleProject(project.Path) || projects[project.Path] || len(project.SourcePaths) == 0 || len(project.SourcePaths) > 256 || len(project.DependsOn) > 1024 {
+		if !validGradleProject(project.Path) || projects[project.Path] || len(project.SourcePaths) == 0 || len(project.SourcePaths) > 256 || len(project.OwnedSourcePaths) > 256 || len(project.DependsOn) > 1024 {
 			return errors.New("declared graph project is invalid")
 		}
 		projects[project.Path] = true
-		if !uniqueSafeGlobs(project.SourcePaths) || !uniqueStrings(project.DependsOn) {
+		if !uniqueSafeGlobs(project.SourcePaths) || !uniqueSafeGlobs(project.OwnedSourcePaths) || !uniqueStrings(project.DependsOn) {
 			return errors.New("declared graph project paths or dependencies are invalid")
+		}
+		if len(project.OwnedSourcePaths) != 0 {
+			sourceSet := map[string]bool{}
+			addAll(sourceSet, project.SourcePaths)
+			for _, owned := range project.OwnedSourcePaths {
+				if !sourceSet[owned] {
+					return errors.New("declared graph owned source is outside its conservative source boundary")
+				}
+			}
 		}
 	}
 	for _, project := range graph.Projects {
@@ -607,6 +631,7 @@ func defensiveGraph(graph DeclaredGraph) DeclaredGraph {
 	graph.Projects = cloneSlice(graph.Projects)
 	for index := range graph.Projects {
 		graph.Projects[index].SourcePaths = cloneSlice(graph.Projects[index].SourcePaths)
+		graph.Projects[index].OwnedSourcePaths = cloneSlice(graph.Projects[index].OwnedSourcePaths)
 		graph.Projects[index].DependsOn = cloneSlice(graph.Projects[index].DependsOn)
 	}
 	graph.Entrypoints = cloneSlice(graph.Entrypoints)

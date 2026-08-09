@@ -13,6 +13,14 @@ reach every affected project, required artifact, and Build Optimization-owned
 check. Test Optimization-owned checks are carried through unchanged and no
 entrypoint containing Test tasks can be selected.
 
+An automatically generated project may include `ownedSourcePaths` when its
+`sourcePaths` were expanded to represent a conservative cyclic component. The
+owned paths must be a non-empty subset of the conservative paths. Production
+selection ignores the narrower field and retains the existing affected-project
+closure. The explicit owner-operated POC evaluator may use it only for direct
+change attribution; missing ownership falls back to `sourcePaths`, and equal
+specificity remains ambiguous rather than authorizing omission.
+
 The actual executable entrypoints remain the original customer entrypoints in
 this block. The alternative is a shadow prediction only. Invalid or incomplete
 graphs, cycles, missing references, global/build-logic changes, unknown paths,

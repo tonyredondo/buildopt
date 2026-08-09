@@ -41,6 +41,7 @@ type DiscoverySnapshot struct {
 type DiscoveredProject struct {
 	Path                 string   `json:"path"`
 	SourcePaths          []string `json:"sourcePaths"`
+	OwnedSourcePaths     []string `json:"-"`
 	DependsOn            []string `json:"dependsOn"`
 	UnknownRelationships bool     `json:"unknownRelationships"`
 }
@@ -164,6 +165,7 @@ func GenerateImpact(manifest LoadedManifest, raw []byte) (GeneratedImpact, error
 		graphValue.Projects = append(graphValue.Projects, Project{
 			Path:                 project.Path,
 			SourcePaths:          cloneSlice(project.SourcePaths),
+			OwnedSourcePaths:     cloneSlice(project.OwnedSourcePaths),
 			DependsOn:            cloneSlice(project.DependsOn),
 			UnknownRelationships: project.UnknownRelationships,
 		})
@@ -295,6 +297,9 @@ func normalizeDependencyCycles(projects []DiscoveredProject) []DiscoveredProject
 		componentDependencies := sortedKeys(externalDependencies)
 		for _, projectPath := range component {
 			project := byPath[projectPath]
+			if len(component) > 1 {
+				project.OwnedSourcePaths = cloneSlice(project.SourcePaths)
+			}
 			project.SourcePaths = cloneSlice(componentSources)
 			project.DependsOn = cloneSlice(componentDependencies)
 			project.UnknownRelationships = unknown

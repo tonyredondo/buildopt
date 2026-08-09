@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "buildopt.specs/poc-source-ownership/v1",
+  "workItem": "POC-SOURCE-OWNERSHIP-001",
+  "question": "CAN_DIRECT_SOURCE_OWNERSHIP_BE_SEPARATED_FROM_CONSERVATIVE_CYCLE_EXPANSION_WITHOUT_REPOSITORY_RULES",
+  "model": {
+    "conservativeSourcePaths": "UNCHANGED_EXPANDED_COMPONENT_BOUNDARY",
+    "ownedSourcePaths": "ORIGINAL_PROJECT_SOURCE_PATHS",
+    "ownedPathsMustBeSubset": true,
+    "productionAffectedClosureChanged": false,
+    "pocDirectAttribution": "MOST_SPECIFIC_OWNED_PATH",
+    "equalSpecificity": "FULL_GRAPH",
+    "missingOwnedPaths": "FALL_BACK_TO_CONSERVATIVE_SOURCE_PATHS"
+  },
+  "requiredProofs": [
+    "CYCLIC_COMPONENT_RETAINS_PRODUCTION_CLOSURE",
+    "DIRECT_OWNER_CAN_SELECT_ALREADY_DECLARED_POC_ALTERNATIVE",
+    "EQUAL_SPECIFICITY_RETAINS_FULL_GRAPH",
+    "OWNED_PATH_OUTSIDE_CONSERVATIVE_BOUNDARY_IS_REJECTED",
+    "UNCHANGED_NON_CYCLIC_GENERATED_FIXTURES"
+  ],
+  "micronautReplay": {
+    "repository": "micronaut-projects/micronaut-core",
+    "revision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+    "measurementProtocol": "specs/poc-structural-transfer-v1.json",
+    "allowedOnlyIfEveryDirectOwnerCovered": true,
+    "tasksOutputsPairingAndThresholdsMayChange": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "repositorySpecificRuleAllowed": false,
+    "productionSelectionChanged": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "publicReleaseRequired": false
+  }
+}
