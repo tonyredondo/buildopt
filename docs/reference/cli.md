@@ -71,6 +71,23 @@ fallbacks all remain qualified. Unqualified or uncertain inputs emit
 repository, run Gradle, activate the profile, or grant production authority.
 See [deterministic POC profile discovery](../../specs/poc-profile-discovery-v1.md).
 
+### Evaluate a structural POC profile
+
+```text
+buildopt profile evaluate \
+  --manifest PATH \
+  --graph PATH \
+  --generated-manifest PATH \
+  [--evidence PATH --profile-output PATH]
+```
+
+This is the recommended generic decision surface. Without evidence it reports
+whether a complete repository-owned graph contains a candidate worth measuring.
+With exact installed-path evidence it writes a digest-bound v4 profile only
+when all timing, output and fallback gates qualify. Otherwise it reports
+`NATIVE_FULL_GRAPH` and writes nothing. The command never infers required
+outputs, activates a profile, or grants production authority.
+
 ### Run an explicit Build Impact POC candidate
 
 ```text

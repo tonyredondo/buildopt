@@ -405,6 +405,12 @@ remain inside all eight candidate observations. The checked result retains
 72.16% mean savings with 8/8 positive pairs and both global and graph-drift
 full-graph fallbacks.
 
+`poc-generic-evaluation-v1.json` and `poc-generic-evaluation-v1.md` define the
+single generic POC decision that combines structural analysis and exact
+qualification. It writes a profile only after qualified evidence and otherwise
+retains native full graph; it never invents required outputs or activates the
+profile automatically.
+
 `poc-trace-hypothesis-v1.json` and `poc-trace-hypothesis-v1.md` bind the final
 trace-gated optimization decision. They require at least 500 ms of causally
 recoverable product-owned critical-path work in two families, reject overlapping

@@ -65,8 +65,10 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`POC GENERIC STRUCTURAL PROFILE QUALIFIED\`"
-    "**Current phase:** \`GENERIC STRUCTURAL PROFILE ADOPTION COMPLETE\`"
+    "**Overall status:** \`POC GENERIC STRUCTURAL EVALUATION AVAILABLE\`"
+    "**Current phase:** \`GENERIC EVALUATION WORKFLOW COMPLETE\`"
+    "| 74 | \`POC-GENERIC-EVALUATION-001\` | Combine generic opportunity analysis and exact evidence qualification into one reviewable command"
+    "| \`E-287\` | 2026-08-09 | \`POC-GENERIC-EVALUATION-001\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"
@@ -240,5 +242,5 @@ if [[ $(grep -Fc "| \`OPS-001/B\` |" <<<"${buildopt_readiness}") != 1 ]]; then
     exit 1
 fi
 
-printf 'RFC/tracker consistency OK: %s accepted decisions and generic structural profile qualified\n' \
+printf 'RFC/tracker consistency OK: %s accepted decisions and generic structural evaluation available\n' \
     "${buildopt_decision_count}"

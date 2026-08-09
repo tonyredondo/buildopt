@@ -111,6 +111,22 @@ It emits a measurement candidate only for a complete, known, non-Test graph
 reduction. Additional cache, runtime and task-adapter mechanisms remain disabled
 until direct evidence qualifies them for the exact workload.
 
+The combined POC decision surface removes the manual analyze/qualify handoff:
+
+```bash
+buildopt profile evaluate \
+  --manifest buildopt-impact-manifest.json \
+  --graph buildopt-impact-graph.generated.json \
+  --generated-manifest buildopt-impact.generated.json \
+  --evidence path/to/structural-evidence.json \
+  --profile-output buildopt-qualified-profile.json
+```
+
+Omit the final two options to obtain a measurement proposal. A profile is
+written only for exact qualified evidence; every uncertain result retains
+native full graph. Required outputs stay repository-owned because BuildOpt
+cannot safely guess which products of a broad Gradle command the caller needs.
+
 The suite covers empty, quoted, whitespace, wildcard, Unicode, newline, and literal `--` arguments; inherited cwd, environment, and standard streams; success and non-zero child statuses; usage; launch failures; process-group isolation; signal forwarding through a child process tree; and the local bypass described below.
 
 ## Process and signal handling

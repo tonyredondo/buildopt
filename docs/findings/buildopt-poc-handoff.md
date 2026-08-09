@@ -392,6 +392,16 @@ configuration and graph-SHA drift both restored the full graph. This is a
 generic mechanism with repository-bound evidence, not a Micronaut-specific
 product branch or an automatic production policy.
 
+The workflow is now compressed into one generic review decision:
+`buildopt profile evaluate`. Given repository-owned manifest, graph and
+generated state, it reports whether the structural candidate should be
+measured. Given the exact paired evidence as well, it writes the same
+digest-bound v4 profile atomically only when the frozen timing, output and
+fallback gates pass. Missing output ownership or unqualified evidence retains
+native full graph. This removes orchestration friction without adding a
+repository-name rule or pretending that BuildOpt can infer which artifacts a
+customer requires.
+
 ## Boundaries and References
 
 This is proof-of-concept evidence, not a universal savings or production

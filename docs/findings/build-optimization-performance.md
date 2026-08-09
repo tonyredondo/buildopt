@@ -227,6 +227,13 @@ and source distribution reported incomplete graphs and retained exact-output
 full-graph execution. Therefore only the test-preparation cell is generalized;
 all other measured cells remain native or full graph.
 
+The installed `buildopt profile evaluate` command now combines the generic
+analysis and exact qualification decisions. It intentionally does not infer
+required outputs or measure control and candidate in a shared Gradle state:
+those shortcuts would make the result faster to obtain but unsafe to trust.
+Qualified paired evidence produces an atomic reviewable profile; absent or
+weak evidence keeps optimized native Gradle.
+
 ### 4. Stop normal-build adapter expansion when the measured tail is exhausted
 
 The retained Spring and OpenTelemetry traces have now been re-evaluated under

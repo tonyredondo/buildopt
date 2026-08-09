@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "buildopt.specs/poc-generic-evaluation/v1",
+  "workItem": "POC-GENERIC-EVALUATION-001",
+  "command": "buildopt profile evaluate",
+  "inputs": {
+    "repositoryOwned": [
+      "build-impact-manifest",
+      "build-impact-graph",
+      "generated-manifest"
+    ],
+    "optionalExactEvidence": "buildopt.evidence/structural-profile-qualification/v1"
+  },
+  "decisions": [
+    "MEASURE_STRUCTURAL_CANDIDATE",
+    "QUALIFY_STRUCTURAL_PROFILE",
+    "NATIVE_FULL_GRAPH"
+  ],
+  "profileWrite": {
+    "when": "EXACT_EVIDENCE_QUALIFIED",
+    "mode": "ATOMIC_REPOSITORY_RELATIVE",
+    "automaticActivation": false
+  },
+  "fallback": {
+    "mode": "NATIVE_FULL_GRAPH",
+    "unknownOutputs": "REQUIRE_REPOSITORY_CONTRACT",
+    "weakOrInvalidEvidence": "NO_PROFILE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRules": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

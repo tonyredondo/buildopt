@@ -3424,6 +3424,12 @@ and requires both global-change and profile-drift full-graph fallbacks. With no
 argument it validates the committed terminal evidence, which records 72.16%
 mean savings, 8/8 positive pairs and exact required outputs.
 
+`./dev/check-poc-generic-evaluation` validates the one-decision installed POC
+surface. It exercises a complete generic opportunity, invalid evidence, no
+profile write on fallback, repository-relative atomic output policy, and the
+absence of automatic or production authorization. It does not run a timing
+experiment or modify Test Optimization.
+
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 
 The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.

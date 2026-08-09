@@ -1,9 +1,12 @@
 package launcher
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
@@ -12,7 +15,20 @@ const (
 	profileDiscoveryUsage = "usage: buildopt profile discover --manifest PATH --graph PATH --generated-manifest PATH --matrix-summary PATH --cell-evidence PATH --profile-contract PATH\n"
 	profileAnalysisUsage  = "usage: buildopt profile analyze --manifest PATH --graph PATH --generated-manifest PATH\n"
 	profileQualifyUsage   = "usage: buildopt profile qualify --manifest PATH --graph PATH --generated-manifest PATH --evidence PATH\n"
+	profileEvaluateUsage  = "usage: buildopt profile evaluate --manifest PATH --graph PATH --generated-manifest PATH [--evidence PATH --profile-output PATH]\n"
 )
+
+type profileEvaluation struct {
+	SchemaVersion        string                               `json:"schemaVersion"`
+	Decision             string                               `json:"decision"`
+	Reason               string                               `json:"reason"`
+	Analysis             profilediscovery.AnalysisReport      `json:"analysis"`
+	Profile              *profilediscovery.StructuralProfile  `json:"profile"`
+	ProfileOutput        string                               `json:"profileOutput,omitempty"`
+	ReviewRequired       bool                                 `json:"reviewRequired"`
+	ActivationAutomatic  bool                                 `json:"activationAutomatic"`
+	ProductionAuthorized bool                                 `json:"productionAuthorized"`
+}
 
 func runProfileDiscovery(args []string, stdout, stderr io.Writer) int {
 	if len(args) > 0 && args[0] == "analyze" {
@@ -20,6 +36,9 @@ func runProfileDiscovery(args []string, stdout, stderr io.Writer) int {
 	}
 	if len(args) > 0 && args[0] == "qualify" {
 		return runStructuralProfileQualification(args[1:], stdout, stderr)
+	}
+	if len(args) > 0 && args[0] == "evaluate" {
+		return runStructuralProfileEvaluation(args[1:], stdout, stderr)
 	}
 	if (len(args) == 1 && isHelp(args)) ||
 		(len(args) == 2 && args[0] == "discover" && isHelp(args[1:])) {
@@ -66,6 +85,131 @@ func runProfileDiscovery(args []string, stdout, stderr io.Writer) int {
 		return exitConfiguration
 	}
 	return 0
+}
+
+func runStructuralProfileEvaluation(args []string, stdout, stderr io.Writer) int {
+	if isHelp(args) {
+		_, _ = io.WriteString(stdout, profileEvaluateUsage)
+		return 0
+	}
+	flags := flag.NewFlagSet("buildopt profile evaluate", flag.ContinueOnError)
+	flags.SetOutput(io.Discard)
+	manifest := flags.String("manifest", "", "checked Build Impact manifest")
+	graph := flags.String("graph", "", "checked Build Impact graph")
+	generated := flags.String("generated-manifest", "", "checked generated-state binding")
+	evidence := flags.String("evidence", "", "installed-path structural evidence")
+	profileOutput := flags.String("profile-output", "", "repository-relative qualified profile output")
+	if err := flags.Parse(args); err != nil || flags.NArg() != 0 || *manifest == "" || *graph == "" || *generated == "" || (*evidence == "") != (*profileOutput == "") {
+		_, _ = io.WriteString(stderr, profileEvaluateUsage)
+		return exitUsage
+	}
+	repositoryRoot, err := canonicalWorkingDirectory()
+	if err != nil {
+		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile evaluation unavailable: %v\n", err)
+		return exitConfiguration
+	}
+	analysis, err := profilediscovery.AnalyzeOpportunity(profilediscovery.AnalysisOptions{
+		RepositoryRoot: repositoryRoot,
+		ManifestPath:   *manifest,
+		GraphPath:      *graph,
+		GeneratedPath:  *generated,
+	})
+	if err != nil {
+		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile evaluation unavailable: %v\n", err)
+		return exitConfiguration
+	}
+	report := profileEvaluation{
+		SchemaVersion:        "buildopt.poc/profile-evaluation/v1",
+		Decision:             analysis.Decision,
+		Reason:               analysis.Reason,
+		Analysis:             analysis,
+		ReviewRequired:       true,
+		ActivationAutomatic:  false,
+		ProductionAuthorized: false,
+	}
+	if analysis.Decision == profilediscovery.DecisionMeasure && *evidence != "" {
+		profile, qualifyErr := profilediscovery.QualifyStructuralProfile(profilediscovery.StructuralOptions{
+			RepositoryRoot: repositoryRoot,
+			ManifestPath:   *manifest,
+			GraphPath:      *graph,
+			GeneratedPath:  *generated,
+			EvidencePath:   *evidence,
+		})
+		if qualifyErr != nil {
+			report.Decision = "NATIVE_FULL_GRAPH"
+			report.Reason = "EVIDENCE_NOT_QUALIFIED"
+		} else {
+			if err := writeEvaluatedProfile(repositoryRoot, *profileOutput, profile); err != nil {
+				_, _ = fmt.Fprintf(stderr, "buildopt: structural profile evaluation unavailable: %v\n", err)
+				return exitConfiguration
+			}
+			report.Decision = "QUALIFY_STRUCTURAL_PROFILE"
+			report.Reason = "EXACT_EVIDENCE_QUALIFIED"
+			report.Profile = &profile
+			report.ProfileOutput = *profileOutput
+		}
+	}
+	raw, err := json.MarshalIndent(report, "", "  ")
+	if err != nil {
+		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile evaluation unavailable: %v\n", err)
+		return exitConfiguration
+	}
+	raw = append(raw, '\n')
+	if _, err := stdout.Write(raw); err != nil {
+		_, _ = fmt.Fprintf(stderr, "buildopt: write structural profile evaluation: %v\n", err)
+		return exitConfiguration
+	}
+	return 0
+}
+
+func writeEvaluatedProfile(repositoryRoot, relativePath string, profile profilediscovery.StructuralProfile) error {
+	if relativePath == "" || filepath.IsAbs(relativePath) || filepath.Clean(relativePath) != relativePath || relativePath == "." || relativePath == ".." {
+		return fmt.Errorf("profile output must be clean and repository relative")
+	}
+	path := filepath.Join(repositoryRoot, relativePath)
+	relative, err := filepath.Rel(repositoryRoot, path)
+	if err != nil || relative == ".." || filepath.IsAbs(relative) {
+		return fmt.Errorf("profile output escapes the repository")
+	}
+	parent := filepath.Dir(path)
+	canonicalParent, err := filepath.EvalSymlinks(parent)
+	if err != nil {
+		return fmt.Errorf("resolve profile output directory: %w", err)
+	}
+	parentRelative, err := filepath.Rel(repositoryRoot, canonicalParent)
+	if err != nil || parentRelative == ".." || filepath.IsAbs(parentRelative) || canonicalParent != parent {
+		return fmt.Errorf("profile output directory must be an existing repository directory without symlinks")
+	}
+	if info, err := os.Lstat(path); err == nil && info.Mode()&os.ModeSymlink != 0 {
+		return fmt.Errorf("profile output must not be a symlink")
+	} else if err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("inspect profile output: %w", err)
+	}
+	raw, err := profilediscovery.RenderStructuralProfile(profile)
+	if err != nil {
+		return err
+	}
+	temporary, err := os.CreateTemp(parent, ".buildopt-profile-*.tmp")
+	if err != nil {
+		return fmt.Errorf("create profile output: %w", err)
+	}
+	temporaryPath := temporary.Name()
+	defer os.Remove(temporaryPath)
+	if _, err := temporary.Write(raw); err != nil {
+		temporary.Close()
+		return fmt.Errorf("write profile output: %w", err)
+	}
+	if err := temporary.Chmod(0o644); err != nil {
+		temporary.Close()
+		return fmt.Errorf("set profile output mode: %w", err)
+	}
+	if err := temporary.Close(); err != nil {
+		return fmt.Errorf("close profile output: %w", err)
+	}
+	if err := os.Rename(temporaryPath, path); err != nil {
+		return fmt.Errorf("publish profile output: %w", err)
+	}
+	return nil
 }
 
 func runStructuralProfileQualification(args []string, stdout, stderr io.Writer) int {

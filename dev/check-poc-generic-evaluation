@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-generic-evaluation-v1.json"
+
+for buildopt_command in cp git jq mktemp; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required generic evaluation command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-generic-evaluation/v1" and
+  .workItem == "POC-GENERIC-EVALUATION-001" and
+  .command == "buildopt profile evaluate" and
+  .decisions == ["MEASURE_STRUCTURAL_CANDIDATE", "QUALIFY_STRUCTURAL_PROFILE", "NATIVE_FULL_GRAPH"] and
+  .profileWrite.when == "EXACT_EVIDENCE_QUALIFIED" and
+  .profileWrite.automaticActivation == false and
+  .fallback.mode == "NATIVE_FULL_GRAPH" and
+  .fallback.unknownOutputs == "REQUIRE_REPOSITORY_CONTRACT" and
+  .boundaries == {
+    proofOfConcept: true,
+    productionAuthorized: false,
+    repositorySpecificRules: false,
+    testOptimizationModified: false,
+    soakRequired: false,
+    designPartnerRequired: false
+  }
+' "${buildopt_contract}" >/dev/null
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+"${buildopt_repo_root}/dev/run" --toolchain go -- \
+    go test -count=1 ./internal/launcher \
+    -run 'TestStructuralProfileEvaluation|TestWriteEvaluatedProfile'
+
+buildopt_fixture=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-generic-evaluation.XXXXXX")
+buildopt_cleanup() {
+    if [[ "${buildopt_fixture}" == "${TMPDIR:-/tmp}/buildopt-generic-evaluation."* ]]; then
+        rm -rf -- "${buildopt_fixture}"
+    fi
+}
+trap buildopt_cleanup EXIT
+cp -- "${buildopt_repo_root}/fixtures/poc-kafka-packaging/buildopt-impact-manifest.json" \
+    "${buildopt_repo_root}/fixtures/poc-kafka-packaging/buildopt-impact-graph.generated.json" \
+    "${buildopt_repo_root}/fixtures/poc-kafka-packaging/buildopt-impact.generated.json" \
+    "${buildopt_fixture}/"
+printf '{}\n' >"${buildopt_fixture}/invalid-evidence.json"
+(
+    cd "${buildopt_repo_root}"
+    "${buildopt_repo_root}/dev/run" --toolchain go -- \
+        go build -o "${buildopt_fixture}/buildopt" ./cmd/buildopt
+)
+
+(
+    cd "${buildopt_fixture}"
+    "${buildopt_fixture}/buildopt" profile evaluate \
+        --manifest buildopt-impact-manifest.json \
+        --graph buildopt-impact-graph.generated.json \
+        --generated-manifest buildopt-impact.generated.json
+) >"${buildopt_fixture}/analysis.json"
+jq -e '
+  .schemaVersion == "buildopt.poc/profile-evaluation/v1" and
+  .decision == "MEASURE_STRUCTURAL_CANDIDATE" and
+  .reason == "COMPLETE_STRUCTURAL_REDUCTION" and
+  .profile == null and
+  .reviewRequired == true and
+  .activationAutomatic == false and
+  .productionAuthorized == false
+' "${buildopt_fixture}/analysis.json" >/dev/null
+
+(
+    cd "${buildopt_fixture}"
+    "${buildopt_fixture}/buildopt" profile evaluate \
+        --manifest buildopt-impact-manifest.json \
+        --graph buildopt-impact-graph.generated.json \
+        --generated-manifest buildopt-impact.generated.json \
+        --evidence invalid-evidence.json \
+        --profile-output buildopt-qualified-profile.json
+) >"${buildopt_fixture}/fallback.json"
+jq -e '
+  .decision == "NATIVE_FULL_GRAPH" and
+  .reason == "EVIDENCE_NOT_QUALIFIED" and
+  .profile == null
+' "${buildopt_fixture}/fallback.json" >/dev/null
+[[ ! -e "${buildopt_fixture}/buildopt-qualified-profile.json" ]]
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+[[ "${buildopt_after}" == "${buildopt_before}" ]] || {
+    printf 'generic evaluation checker mutated the source tree\n' >&2
+    exit 1
+}
+
+printf 'POC-GENERIC-EVALUATION-001 passed: one decision, exact qualification, and native fallback\n'
