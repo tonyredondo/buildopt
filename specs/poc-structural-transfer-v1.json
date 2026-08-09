@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "buildopt.specs/poc-structural-transfer/v1",
+  "workItem": "POC-STRUCTURAL-TRANSFER-001",
+  "decision": "PREREGISTER_FRESH_INSTALLED_STRUCTURAL_REPLICATION_ON_MICRONAUT",
+  "preregistration": {
+    "implementationRevision": "5fc94bea28d401793a0fafc0d03297213f33a120",
+    "completedWarmupsBeforePreregistration": 0,
+    "completedObservationsBeforePreregistration": 0,
+    "acceptedObservationsBeforePreregistration": 0,
+    "diagnosticRunsReused": false,
+    "thresholdsFrozenBeforeTiming": true,
+    "repositorySpecificProductRuleAdded": false
+  },
+  "repository": {
+    "nameWithOwner": "micronaut-projects/micronaut-core",
+    "branch": "5.2.x",
+    "revision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+    "sourceArchiveUrl": "https://codeload.github.com/micronaut-projects/micronaut-core/tar.gz/8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+    "sourceArchiveSha256": "d76b07c96f80a075f48e1fd94ad7dfd798e2b173cff8aee7bd39e5697b7b4507",
+    "gradleVersion": "9.6.1",
+    "gradleWrapperJarSha256": "497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7",
+    "gradleWrapperPropertiesSha256": "c94d41b634a5e0ff8a2f812023697b1337eebac18e9962610356a1793f72896d",
+    "gradlePropertiesSha256": "73d379e074dcae1f2b4070e2747ab51ff00d7c3aa19889fd79a0dbc815484168",
+    "settingsSha256": "f9f84e7195159b3d4283b8f3f02ff5a6898dea17ca86d73e023d7ec975d6f126",
+    "rootBuildSha256": "853daea86f97d3d48290ef0ef6a57952d250189e6461509a506b96f00d952728",
+    "upstreamBuildWorkflowSha256": "1e38091a453d251c05d7ad2e6de8aa3a35ce6b438a645943c95c2bdc5fb6d082",
+    "changedProjectBuildSha256": "64d4651206b015291e418a0529731741055eb4abc9c6fc84db7cc605b00f09ec",
+    "requiredJdkDocumentedByUpstream": "GraalVM 25.1.3",
+    "pocJdk": "Temurin 25.0.3+9"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12,
+    "jdk": "temurin-25.0.3+9"
+  },
+  "workload": {
+    "class": "MULTI_MODULE_BINARY_ASSEMBLY",
+    "upstreamReference": "The upstream README documents ./gradlew publishToMavenLocal; this POC isolates the build-owned assemble boundary without publishing",
+    "commonExclusions": ["javadoc", "javadocJar", "sourcesJar"],
+    "controlEntrypoints": ["assemble"],
+    "controlExpectedReachedProjectCount": 75,
+    "forbiddenTaskType": "org.gradle.api.tasks.testing.Test"
+  },
+  "candidate": {
+    "profile": "STRUCTURAL_BUILD_IMPACT_ONLY",
+    "changeClass": "PRODUCTION_SOURCE_IN_HTTP_CLIENT_JDK_MODULE",
+    "changePath": "http-client-jdk/src/main/java/io/micronaut/http/client/jdk/DefaultJdkHttpClient.java",
+    "changeOriginalSha256": "2c7691abbd94c007155c61cff6ae41f053a0aca94e787eb12acf411a9e507d89",
+    "changedProject": ":micronaut-http-client-jdk",
+    "alternativeId": "micronaut-http-client-jdk-assemble",
+    "entrypoints": [":micronaut-http-client-jdk:assemble"],
+    "expectedReachedProjectCount": 22,
+    "requiredOutputRoot": "http-client-jdk/build/libs",
+    "requiredOutputPattern": "http-client-jdk/build/libs/**"
+  },
+  "discovery": {
+    "adapterVersion": "gradle-runtime-v1",
+    "pipelineClass": "poc-structural-transfer-assemble-v1",
+    "expectedProjectCount": 75,
+    "expectedEntrypointCount": 2,
+    "expectedGraphDigest": "sha256:2cb54c2d27fbc5a0a28587fb55f8103ead424f6c809f83835bf60886d2a71637",
+    "expectedGraphSha256": "65563d85848d72e72f14d2dd0abb3768867db3f475a9887e6c75033465a71960",
+    "expectedManifestSha256": "5318e227739802040f22645fe6ec78c7307af4fb537e66312cb09b5458e535c7",
+    "expectedGeneratedManifestSha256": "fdaa01c2952d5bf562686cd71a2b1790c70c1d263986f130d8f503c386c00829",
+    "complete": true,
+    "containsTestTasks": false,
+    "unknownRelationships": false
+  },
+  "measurement": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "launcherOverheadIncluded": true,
+    "commonArguments": [
+      "--daemon", "--offline", "--build-cache", "--parallel",
+      "--no-configuration-cache", "--console=plain", "--warning-mode=none",
+      "--max-workers=12", "--no-scan", "-x", "javadoc", "-x",
+      "javadocJar", "-x", "sourcesJar"
+    ],
+    "onlinePreparationMeasured": false,
+    "sameBuildCacheSeedRestoredBeforeEveryArm": true,
+    "sharedCheckout": true,
+    "sharedGradleUserHome": true,
+    "sharedDaemon": true,
+    "outputsRemovedBeforeEveryArm": true,
+    "fixedMutationAppliedAfterCacheRestore": true,
+    "warmupsPerArm": 1,
+    "pairs": 8,
+    "pairOrder": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
+    "maximumInterArmIdleGapMs": 5000,
+    "requiredOutputsComparedByteForByte": true,
+    "runtimeTuningEnabled": false,
+    "safeCacheEnabled": false,
+    "hotStateEnabled": false,
+    "copyAdapterEnabled": false,
+    "standardJarAdapterEnabled": false,
+    "remoteCacheEnabled": false
+  },
+  "valueGate": {
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositivePairs": 8,
+    "requiredOutputsIdentical": true,
+    "requiredOutputsNonEmpty": true,
+    "maximumProductAttributableFailures": 0,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedPairsMayBeDiscarded": false,
+    "parityAloneCountsAsValue": false
+  },
+  "fallback": {
+    "changePath": "gradle.properties",
+    "expectedMode": "FULL_GRAPH",
+    "expectedReason": "IMPACT_GLOBAL_CHANGE",
+    "outsideCandidateEntrypoint": ":micronaut-websocket:assemble",
+    "performanceClaim": false
+  },
+  "terminalDecisions": {
+    "qualifies": "QUALIFY_STRUCTURAL_IMPACT_ON_FOURTH_SUBSTANTIAL_REPOSITORY",
+    "failsValueGate": "RETAIN_NATIVE_MICRONAUT_AS_DEFAULT",
+    "controlOrCandidateFails": "STOP_STRUCTURAL_TRANSFER_WITHOUT_RETRY"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "repositorySpecificProductRuleAdded": false,
+    "productionSelectionChanged": false,
+    "testSelectionChanged": false,
+    "testExecutionChanged": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "publicReleaseRequired": false,
+    "universalSavingsClaimed": false
+  }
+}

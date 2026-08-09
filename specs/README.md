@@ -377,6 +377,12 @@ measurements. Component percentages cannot be added, repository percentages
 cannot be averaged, and only strict installed replication can justify an
 explicit reviewed profile; every other target remains native by default.
 
+`poc-structural-transfer-v1.json` and `poc-structural-transfer-v1.md` freeze the
+first fresh installed replication after that foundation. They bind Micronaut
+Core at an exact public revision, a 75-to-22-project binary-assembly reduction,
+eight alternating pairs, byte-identical required JARs, a global-change fallback
+and the unchanged 500-ms/2%/positive-bound gate before any timing is accepted.
+
 `poc-trace-hypothesis-v1.json` and `poc-trace-hypothesis-v1.md` bind the final
 trace-gated optimization decision. They require at least 500 ms of causally
 recoverable product-owned critical-path work in two families, reject overlapping

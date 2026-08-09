@@ -3393,6 +3393,14 @@ whole-profile measurements, recalculate their results from SHA-bound evidence
 and confirm that neither mechanism effects nor repository percentages are
 aggregated.
 
+The fresh structural-transfer protocol is validated with
+`./dev/check-poc-structural-transfer-v1 --contract`. Its runner,
+`./dev/run-poc-structural-transfer-v1 /absolute/path/to/new-result.json`,
+packages and installs the current BuildOpt revision, downloads the exact
+Micronaut source archive, performs excluded online preparation, then measures
+the frozen offline native-versus-structural comparison. Once evidence exists,
+`./dev/check-poc-structural-transfer-v1` independently recalculates its result.
+
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 
 The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.
