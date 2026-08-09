@@ -182,6 +182,7 @@ func qualifiedStructuralTestEvidence(t *testing.T, repository string) structural
 	return structuralEvidence{
 		SchemaVersion: StructuralEvidenceSchema,
 		EvidenceState: "QUALIFIED",
+		CapturedAt:    "2026-08-09T00:00:00Z",
 		Subject: structuralSubject{
 			RepositoryID: analysis.Subject.RepositoryID, RepositoryRevision: strings.Repeat("a", 40),
 			PipelineClass: analysis.Subject.PipelineClass,
@@ -193,6 +194,7 @@ func qualifiedStructuralTestEvidence(t *testing.T, repository string) structural
 		Plan: *analysis.Plan,
 		Execution: structuralExecution{
 			CandidateSurface:         "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+			BuildOptRevision:         strings.Repeat("d", 40),
 			Mechanisms:               []string{"BUILD_IMPACT"},
 			GradleOptions:            []string{"--daemon", "--offline", "--build-cache", "--parallel", "--no-configuration-cache", "--console=plain", "--max-workers=4", "--no-scan"},
 			LauncherOverheadIncluded: true,

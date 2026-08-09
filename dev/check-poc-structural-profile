@@ -75,6 +75,7 @@ jq -n --slurpfile analysis "${buildopt_fixture}/analysis.json" \
     {
         schemaVersion: "buildopt.evidence/structural-profile-qualification/v1",
         evidenceState: "QUALIFIED",
+        capturedAt: "2026-08-09T00:00:00Z",
         subject: {
             repositoryId: $analysis[0].subject.repositoryId,
             repositoryRevision: ("b" * 40),
@@ -89,6 +90,7 @@ jq -n --slurpfile analysis "${buildopt_fixture}/analysis.json" \
         plan: $analysis[0].plan,
         execution: {
             candidateSurface: "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+            buildoptRevision: ("d" * 40),
             mechanisms: ["BUILD_IMPACT"],
             gradleOptions: ["--daemon", "--offline", "--build-cache", "--parallel",
                 "--no-configuration-cache", "--console=plain", "--max-workers=4", "--no-scan"],

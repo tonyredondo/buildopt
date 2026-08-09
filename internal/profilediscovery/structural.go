@@ -12,6 +12,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const (
@@ -66,6 +67,7 @@ type StructuralProfileEvidence struct {
 type structuralEvidence struct {
 	SchemaVersion  string                   `json:"schemaVersion"`
 	EvidenceState  string                   `json:"evidenceState"`
+	CapturedAt     string                   `json:"capturedAt"`
 	Subject        structuralSubject        `json:"subject"`
 	SourceBindings structuralSourceBindings `json:"sourceBindings"`
 	Plan           AnalysisPlan             `json:"plan"`
@@ -91,6 +93,7 @@ type structuralSourceBindings struct {
 
 type structuralExecution struct {
 	CandidateSurface         string   `json:"candidateSurface"`
+	BuildOptRevision         string   `json:"buildoptRevision"`
 	Mechanisms               []string `json:"mechanisms"`
 	GradleOptions            []string `json:"gradleOptions"`
 	LauncherOverheadIncluded bool     `json:"launcherOverheadIncluded"`
@@ -222,6 +225,9 @@ func validateStructuralEvidence(evidence structuralEvidence, analysis AnalysisRe
 	if evidence.SchemaVersion != StructuralEvidenceSchema || evidence.EvidenceState != "QUALIFIED" {
 		return errors.New("structural qualification evidence is not qualified")
 	}
+	if _, err := time.Parse(time.RFC3339, evidence.CapturedAt); err != nil {
+		return errors.New("structural qualification capture time is invalid")
+	}
 	if evidence.Subject.RepositoryID != analysis.Subject.RepositoryID ||
 		evidence.Subject.PipelineClass != analysis.Subject.PipelineClass ||
 		!validRevision(evidence.Subject.RepositoryRevision) {
@@ -231,6 +237,7 @@ func validateStructuralEvidence(evidence structuralEvidence, analysis AnalysisRe
 		return errors.New("structural qualification plan drift")
 	}
 	if evidence.Execution.CandidateSurface != "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY" ||
+		!validRevision(evidence.Execution.BuildOptRevision) ||
 		!evidence.Execution.LauncherOverheadIncluded ||
 		len(evidence.Execution.Mechanisms) != 1 || evidence.Execution.Mechanisms[0] != "BUILD_IMPACT" ||
 		!validStructuralGradleOptions(evidence.Execution.GradleOptions) {
