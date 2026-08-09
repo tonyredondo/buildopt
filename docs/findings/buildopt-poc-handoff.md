@@ -55,11 +55,13 @@
   A later composition seed proved `:clients:jar` is skipped and the required
   artifact is produced by custom `:clients:shadowJar`, so this saving is not
   evidence for the standard-`Jar` adapter.
-- **The terminal POC decision is specialization, not a general accelerator.**
-  Only Kafka qualified in the installed three-family matrix: **81.85% faster**
-  with 8/8 positive pairs and complete fallback. Spring and OpenTelemetry stay
-  on optimized native Gradle. The exact Kafka profile remains explicit,
-  review-required and bounded; repository percentages remain independent.
+- **The earlier three-family matrix specialized; later structural evidence
+  broadened the mechanism, not the claim.** Kafka qualified at **81.85%** with
+  8/8 pairs. A materially different generic ownership/profile path now also
+  qualifies the fixed Micronaut scope at **72.16%** through installed
+  `buildopt poc`. Spring, OpenTelemetry and unknown/drifted scopes stay on
+  optimized native Gradle; profiles remain explicit, review-required and
+  repository-bound.
 
 ## Product Idea
 
@@ -171,7 +173,7 @@ unfavorable observations. Percentages from different rows are not additive.
 | Trace-gated hypothesis decision | **No new timing; no hypothesis authorized** | BuildOpt setup peaks at 1.238233 ms, startup at 364.875 ms, finalization at 97 ms and teardown at 87 ms. Configuration reaches 682 ms only in Spring, without product attribution or a second qualifying family. |
 | Terminal portfolio decision | **Specialize: 1/3 families qualifies** | Retain only the explicit Kafka profile; Spring and OpenTelemetry use optimized native Gradle. Withdraw the general accelerator claim and do not average repository percentages. |
 
-## Terminal Portfolio Decision
+## Historical Portfolio Decision and Subsequent Generalization
 
 The qualified Kafka composition has now moved from experiment-only wiring into
 a repository-owned v2 POC profile and has been measured through the exact
@@ -182,16 +184,17 @@ positive bootstrap interval; global/unknown changes and endpoint failures keep
 the native or local fallback safe. The claim remains bounded to the fixed
 Kafka revision, change, output and modeled network profile.
 
-The terminal installed matrix narrowed discovery to one profile. The completed
+The installed matrix at that point narrowed discovery to one profile. The completed
 read-only analyzer reproduces only the qualified Kafka v2 profile from checked
 manifests, graphs, generated state, trace/input digests and evidence. Spring and
 OpenTelemetry are negative fixtures and select native full graph. It does not
 encode repository names, resurrect an unqualified profile or authorize broad
 automatic generation from the current 1/3 result.
 
-**Specialize the POC and activate only measured value.** The terminal checked
-decision is `SPECIALIZE_BOUNDED_KAFKA_PROFILE`: only the exact reviewed Kafka
-profile remains, while the general accelerator claim is withdrawn. The fresh
+**Specialize the POC and activate only measured value.** That checked
+decision was `SPECIALIZE_BOUNDED_KAFKA_PROFILE`: only the exact reviewed Kafka
+profile qualified in that matrix. The later generic Micronaut structural
+profile is documented below and does not retroactively alter this evidence. The fresh
 ablation qualified Spring Build Impact at 2,492.375 ms/30.86% saved with 8/8
 positive pairs. OpenTelemetry Build Impact alone saved 985.5 ms/7.49% but did not meet
 the stability gate; adding exact hot state regressed by 892 ms/7.68%. Adding
@@ -358,7 +361,7 @@ by exact evidence for each target:
 | Spring Framework | Build Impact | **30.86% faster** | Native; later strict matrix was 7/8 positive |
 | OpenTelemetry | Build Impact + standard `Jar` | **50.40% faster** | Native; later matrix had no accepted timing |
 | Kafka | Build Impact + read-only Edge | **82.35% faster** | Explicit reviewed POC profile; later **81.85%**, 8/8 |
-| Micronaut Core | Structural Build Impact candidate | **72.97% faster**, saving 17,561.625 ms, 8/8 positive | Qualify the fixed 75-to-22-project scope after generic direct-source ownership; global changes retain native full graph |
+| Micronaut Core | Structural Build Impact candidate | **72.97% faster** directly; **72.16% faster** through installed `buildopt poc`, saving 17,061.125 ms, 8/8 positive | Generic exact-evidence qualification retains nearly all value; global changes and graph drift retain native full graph |
 
 These are whole-path comparisons against each target's optimized native Gradle
 control. The percentages are neither added nor averaged. Hot State is omitted
@@ -378,6 +381,16 @@ for BuildOpt, saving **17,561.625 ms/72.97%** with 8/8 positive pairs, interval
 +17,018.875..+18,118.375 ms, three byte-identical JARs and full-graph fallback.
 This strengthens structural Build Impact across repository families; it does
 not authorize automatic activation or a universal percentage.
+
+The follow-up adoption replay proves that the result survives the actual POC
+surface. A deterministic v4 profile was materialized from exact evidence before
+timing, then `buildopt poc` averaged 6,581.625 ms against 23,642.75 ms for
+optimized native Gradle. The **72.16%** reduction includes profile validation,
+planning and launcher overhead and is only 0.81 percentage points below the
+direct experiment. All eight pairs preserved the same three JARs; global
+configuration and graph-SHA drift both restored the full graph. This is a
+generic mechanism with repository-bound evidence, not a Micronaut-specific
+product branch or an automatic production policy.
 
 ## Boundaries and References
 
@@ -408,6 +421,7 @@ production operations are outside the current scope.
 - [Terminal POC portfolio decision](../../benchmarks/results/poc-portfolio-decision-v1.json)
 - [General whole-profile value scorecard](../../benchmarks/results/poc-general-build-value-v1.json)
 - [Micronaut qualified structural-transfer evidence](../../benchmarks/results/poc-structural-transfer-v1.json)
+- [Generic installed structural-profile adoption evidence](../../benchmarks/results/poc-structural-profile-adoption-v1.json)
 - [Historical Micronaut fail-closed evidence](../../benchmarks/results/poc-structural-transfer-v1-native-stop.json)
 - [General opportunity and composition contract](../../specs/poc-general-build-value-v1.md)
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)

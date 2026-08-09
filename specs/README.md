@@ -401,7 +401,9 @@ profile remains repository-owned and rechecks all three graph inputs at runtime.
 The same Micronaut source, mutation, outputs and optimized-native control are
 retained, but the candidate is now only `buildopt poc --changes-file`. Profile
 materialization is excluded while validation, planning and launcher overhead
-remain inside all eight candidate observations.
+remain inside all eight candidate observations. The checked result retains
+72.16% mean savings with 8/8 positive pairs and both global and graph-drift
+full-graph fallbacks.
 
 `poc-trace-hypothesis-v1.json` and `poc-trace-hypothesis-v1.md` bind the final
 trace-gated optimization decision. They require at least 500 ms of causally

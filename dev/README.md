@@ -3420,7 +3420,9 @@ The fresh installed adoption is frozen by
 The runner materializes the profile before timing, then compares only
 `buildopt poc` with optimized native Gradle over eight alternating pairs. The
 independent checker recomputes the result, revalidates the source qualification
-and requires both global-change and profile-drift full-graph fallbacks.
+and requires both global-change and profile-drift full-graph fallbacks. With no
+argument it validates the committed terminal evidence, which records 72.16%
+mean savings, 8/8 positive pairs and exact required outputs.
 
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 

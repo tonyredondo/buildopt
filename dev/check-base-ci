@@ -231,6 +231,8 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-structural-transfer-v1" \
             "${buildopt_repo_root}/benchmarks/results/poc-structural-transfer-v1-native-stop.json" >/dev/null
         "${buildopt_script_dir}/check-poc-source-ownership" >/dev/null
+        "${buildopt_script_dir}/check-poc-structural-profile" >/dev/null
+        "${buildopt_script_dir}/check-poc-structural-profile-adoption-v1" >/dev/null
         "${buildopt_script_dir}/check-poc-trace-hypothesis-v1" >/dev/null
         "${buildopt_script_dir}/check-poc-portfolio-decision-v1" >/dev/null
         "${buildopt_script_dir}/check-poc-spring-installed-impact" >/dev/null

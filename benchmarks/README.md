@@ -80,8 +80,36 @@ the current evidence and the historical fail-closed result with:
   benchmarks/results/poc-structural-transfer-v1-native-stop.json
 ```
 
-The current POC verdict is `CONTINUE`, qualified only for the measured synthetic
-workload classes. Contractual 4-vCPU/16-GiB runs cover the baseline,
+### Generic installed structural-profile adoption
+
+[`results/poc-structural-profile-adoption-v1.json`](./results/poc-structural-profile-adoption-v1.json)
+measures the reviewed profile through the packaged product path rather than
+through experiment-only flags. `buildopt profile qualify` first materializes a
+Build-Impact-only v4 profile from the independently checked structural result;
+the timed candidate then invokes only `buildopt poc --changes-file`.
+
+| Metric | Optimized native control | Installed qualified profile | Difference |
+|---|---:|---:|---:|
+| Mean wall clock | 23,642.75 ms | 6,581.625 ms | **17,061.125 ms / 72.16% faster** |
+| Alternating pairs | 8 | 8 | **8/8 positive** |
+| 95% paired interval | — | — | **+16,243.75..+17,942.25 ms** |
+| Required output | 3 JARs | Same 3 JARs | Byte-identical in every pair |
+
+Profile validation, planning and launcher overhead are included; only profile
+materialization is outside the timed path. The installed result is 0.81
+percentage points below the direct structural experiment, so adoption retains
+almost all measured value. A global change and a whitespace-only graph drift
+both restored the full graph. The product implementation contains no
+repository-name rule, but this percentage remains bound to the fixed Micronaut
+revision, change and outputs. Validate it with:
+
+```bash
+./dev/check-poc-structural-profile
+./dev/check-poc-structural-profile-adoption-v1
+```
+
+The current POC verdict is `CONTINUE` for exact evidence-qualified scopes, not
+for arbitrary repositories. Contractual 4-vCPU/16-GiB runs cover the baseline,
 negative-mechanism decision, accelerator-coverage matrix, combined public path,
 and realistic breadth test. Safe Cache is explicit-only while the default delegates to Gradle's native
 cache; Runtime Tuning candidates `W4_H6G` and `W3_H4G` are disabled; Build

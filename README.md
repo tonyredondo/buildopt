@@ -98,6 +98,15 @@ positive pairs, three byte-identical JARs and full-graph fallback for a global
 change. This qualifies only the fixed Micronaut structural scope, not every
 repository or change.
 
+That exact evidence can now be converted into a generic, review-required v4
+profile with `buildopt profile qualify`. A fresh installed replay then used
+only `buildopt poc --changes-file`: optimized native Gradle averaged 23.643 s
+and the profile averaged 6.582 s, saving **17.061 s/72.16%** with 8/8 positive
+pairs. Validation, planning and launcher overhead are included. Global changes
+and even whitespace-only graph drift restored the full graph. No product rule
+matches Micronaut or any repository name; new repositories remain native until
+their own structure and evidence qualify.
+
 `buildopt poc` is available in source-built packages from the current `main`.
 The published `v0.2.0` package continues to use the longer `buildopt impact`
 form until a later explicitly authorized release.
@@ -200,13 +209,13 @@ Spring but is neither causally attributed to BuildOpt nor reproduced above the
 500-ms threshold in a second workload family. The checked result is therefore
 `NO_ACTIONABLE_HYPOTHESIS`; no new timing or mechanism activation follows.
 
-The terminal portfolio decision is now
-`SPECIALIZE_BOUNDED_KAFKA_PROFILE`. Only Kafka qualified through the installed
-path: **28,523.25 ms / 81.85%** saved with 8/8 positive pairs and complete
-fallback. Spring and OpenTelemetry remain on optimized native Gradle, the
-general accelerator claim is withdrawn, and deterministic discovery stays
-read-only and review-required. This is terminal POC evidence, not a production
-or universal-value claim.
+The earlier three-family portfolio decision was
+`SPECIALIZE_BOUNDED_KAFKA_PROFILE`: only Kafka qualified in that installed
+matrix. The later, materially different structural-generalization work now also
+qualifies the fixed Micronaut scope through a repository-independent profile,
+while Spring, OpenTelemetry and every unqualified change remain on optimized
+native Gradle. This is bounded POC evidence, not a production, automatic or
+universal-value claim.
 
 A new generalization foundation now separates structural opportunity from
 activation. `buildopt profile analyze` detects a complete smaller graph without
