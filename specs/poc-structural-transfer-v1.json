@@ -74,7 +74,7 @@
     "launcherOverheadIncluded": true,
     "commonArguments": [
       "--daemon", "--offline", "--build-cache", "--parallel",
-      "--no-configuration-cache", "--console=plain", "--warning-mode=none",
+      "--no-configuration-cache", "--console=plain",
       "--max-workers=12", "--no-scan"
     ],
     "onlinePreparationMeasured": false,

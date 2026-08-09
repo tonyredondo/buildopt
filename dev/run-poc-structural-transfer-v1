@@ -136,7 +136,7 @@ if ! (
     env -u CI GRADLE_USER_HOME="${buildopt_root}/preflight-home" \
         "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
         timeout 20m ./gradlew --daemon --build-cache --parallel \
-        --no-configuration-cache --console=plain --warning-mode=none \
+        --no-configuration-cache --console=plain \
         --max-workers=12 --no-scan assemble
 ) >"${buildopt_root}/logs/preflight.log" 2>&1; then
     tail -n 180 "${buildopt_root}/logs/preflight.log" >&2
@@ -296,7 +296,7 @@ buildopt_run_arm() {
                 --gradle-option=--daemon --gradle-option=--offline \
                 --gradle-option=--build-cache --gradle-option=--parallel \
                 --gradle-option=--no-configuration-cache \
-                --gradle-option=--console=plain --gradle-option=--warning-mode=none \
+                --gradle-option=--console=plain \
                 --gradle-option=--max-workers=12 --gradle-option=--no-scan
         else
             /usr/bin/time -f 'maxRssKb=%M' -o "${buildopt_time}" \
@@ -304,7 +304,7 @@ buildopt_run_arm() {
                 GRADLE_RO_DEP_CACHE="${buildopt_readonly_cache}" \
                 "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
                 timeout 10m ./gradlew --daemon --offline --build-cache --parallel \
-                --no-configuration-cache --console=plain --warning-mode=none \
+                --no-configuration-cache --console=plain \
                 --max-workers=12 --no-scan assemble
         fi
     ) >"${buildopt_log}" 2>&1; then
@@ -471,7 +471,7 @@ if ! (
         --gradle-option=--daemon --gradle-option=--offline \
         --gradle-option=--build-cache --gradle-option=--parallel \
         --gradle-option=--no-configuration-cache \
-        --gradle-option=--console=plain --gradle-option=--warning-mode=none \
+        --gradle-option=--console=plain \
         --gradle-option=--max-workers=12 --gradle-option=--no-scan
 ) >"${buildopt_fallback_log}" 2>&1; then
     tail -n 180 "${buildopt_fallback_log}" >&2

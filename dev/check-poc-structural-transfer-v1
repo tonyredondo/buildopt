@@ -36,6 +36,10 @@ if [[ "${1:-}" == --contract ]]; then
         .measurement.hotStateEnabled == false and
         .measurement.standardJarAdapterEnabled == false and
         .measurement.remoteCacheEnabled == false and
+        (.measurement.commonArguments | all(. == "--daemon" or . == "--offline" or
+            . == "--build-cache" or . == "--parallel" or
+            . == "--no-configuration-cache" or . == "--console=plain" or
+            . == "--max-workers=12" or . == "--no-scan")) and
         .valueGate.minimumSavedMs == 500 and
         .valueGate.minimumReductionRatio == 0.02 and
         .valueGate.minimumPositivePairs == 8 and
