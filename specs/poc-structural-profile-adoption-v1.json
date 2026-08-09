@@ -1,0 +1,169 @@
+{
+  "schemaVersion": "buildopt.specs/poc-structural-profile-adoption/v1",
+  "workItem": "POC-STRUCTURAL-PROFILE-001",
+  "protocolRevision": 1,
+  "decision": "PREREGISTER_FRESH_INSTALLED_GENERIC_PROFILE_ADOPTION",
+  "preregistration": {
+    "implementationRevision": "11ee2945e1b3924b4d9b40b586cdb87baf42f59c",
+    "completedWarmupsBeforePreregistration": 0,
+    "completedObservationsBeforePreregistration": 0,
+    "acceptedObservationsBeforePreregistration": 0,
+    "diagnosticRunsReused": false,
+    "thresholdsFrozenBeforeTiming": true,
+    "repositorySpecificProductRuleAdded": false
+  },
+  "repository": {
+    "nameWithOwner": "micronaut-projects/micronaut-core",
+    "branch": "5.2.x",
+    "revision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+    "sourceArchiveUrl": "https://codeload.github.com/micronaut-projects/micronaut-core/tar.gz/8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+    "sourceArchiveSha256": "d76b07c96f80a075f48e1fd94ad7dfd798e2b173cff8aee7bd39e5697b7b4507",
+    "gradleVersion": "9.6.1",
+    "gradleWrapperJarSha256": "497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7",
+    "gradleWrapperPropertiesSha256": "c94d41b634a5e0ff8a2f812023697b1337eebac18e9962610356a1793f72896d",
+    "gradlePropertiesSha256": "73d379e074dcae1f2b4070e2747ab51ff00d7c3aa19889fd79a0dbc815484168",
+    "settingsSha256": "f9f84e7195159b3d4283b8f3f02ff5a6898dea17ca86d73e023d7ec975d6f126",
+    "rootBuildSha256": "853daea86f97d3d48290ef0ef6a57952d250189e6461509a506b96f00d952728",
+    "upstreamBuildWorkflowSha256": "1e38091a453d251c05d7ad2e6de8aa3a35ce6b438a645943c95c2bdc5fb6d082",
+    "changedProjectBuildSha256": "64d4651206b015291e418a0529731741055eb4abc9c6fc84db7cc605b00f09ec",
+    "requiredJdkDocumentedByUpstream": "GraalVM 25.1.3",
+    "pocJdk": "Temurin 25.0.3+9"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12,
+    "jdk": "temurin-25.0.3+9"
+  },
+  "workload": {
+    "class": "MULTI_MODULE_BINARY_ASSEMBLY",
+    "upstreamReference": "The upstream README documents ./gradlew publishToMavenLocal; this POC isolates the build-owned assemble boundary without publishing",
+    "commonExclusions": [],
+    "controlEntrypoints": [
+      "assemble"
+    ],
+    "controlExpectedReachedProjectCount": 75,
+    "forbiddenTaskType": "org.gradle.api.tasks.testing.Test"
+  },
+  "candidate": {
+    "profile": "STRUCTURAL_BUILD_IMPACT_ONLY",
+    "changeClass": "PRODUCTION_SOURCE_IN_HTTP_CLIENT_JDK_MODULE",
+    "changePath": "http-client-jdk/src/main/java/io/micronaut/http/client/jdk/DefaultJdkHttpClient.java",
+    "changeOriginalSha256": "2c7691abbd94c007155c61cff6ae41f053a0aca94e787eb12acf411a9e507d89",
+    "changedProject": ":micronaut-http-client-jdk",
+    "alternativeId": "micronaut-http-client-jdk-assemble",
+    "entrypoints": [
+      ":micronaut-http-client-jdk:assemble"
+    ],
+    "expectedReachedProjectCount": 22,
+    "requiredOutputRoot": "http-client-jdk/build/libs",
+    "requiredOutputPattern": "http-client-jdk/build/libs/**"
+  },
+  "discovery": {
+    "adapterVersion": "gradle-runtime-v1",
+    "pipelineClass": "poc-structural-transfer-assemble-v1",
+    "expectedProjectCount": 75,
+    "expectedEntrypointCount": 2,
+    "expectedGraphDigest": "sha256:ffe1f07aa4e9180468ca706599f7072805db6dacf53d88e917dec63945a18526",
+    "expectedGraphSha256": "229c8fb19af98729f98c55f62998188864e6fac5c9542b213b9443a4182eaa68",
+    "expectedManifestSha256": "5318e227739802040f22645fe6ec78c7307af4fb537e66312cb09b5458e535c7",
+    "expectedGeneratedManifestSha256": "9991aca07734f3dfa4fcb39c71670a44c81ad9a933321a4b273dcdb3d5b87fce",
+    "expectedDirectOwners": [
+      ":micronaut-http-client-jdk"
+    ],
+    "expectedDirectOwnersOutsideCandidate": [],
+    "complete": true,
+    "containsTestTasks": false,
+    "unknownRelationships": false
+  },
+  "measurement": {
+    "candidateSurface": "INSTALLED_BUILDOPT_POC_QUALIFIED_PROFILE",
+    "launcherOverheadIncluded": true,
+    "commonArguments": [
+      "--daemon",
+      "--offline",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--max-workers=12",
+      "--no-scan"
+    ],
+    "onlinePreparationMeasured": false,
+    "sameBuildCacheSeedRestoredBeforeEveryArm": true,
+    "sharedCheckout": true,
+    "sharedGradleUserHome": true,
+    "sharedDaemon": true,
+    "outputsRemovedBeforeEveryArm": true,
+    "fixedMutationAppliedAfterCacheRestore": true,
+    "mutatedCompileCachePolicy": {
+      "warmups": "REQUIRE_MISS_BEFORE_SHARED_SEED_CAPTURE",
+      "measuredPairs": "SHARED_OPTIMIZED_NATIVE_CACHE_HIT_ALLOWED_SYMMETRICALLY"
+    },
+    "warmupsPerArm": 1,
+    "pairs": 8,
+    "pairOrder": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
+    "maximumInterArmIdleGapMs": 5000,
+    "requiredOutputsComparedByteForByte": true,
+    "runtimeTuningEnabled": false,
+    "safeCacheEnabled": false,
+    "hotStateEnabled": false,
+    "copyAdapterEnabled": false,
+    "standardJarAdapterEnabled": false,
+    "remoteCacheEnabled": false,
+    "profileMaterializationMeasured": false,
+    "profileValidationAndLauncherOverheadIncluded": true
+  },
+  "valueGate": {
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositivePairs": 8,
+    "requiredOutputsIdentical": true,
+    "requiredOutputsNonEmpty": true,
+    "maximumProductAttributableFailures": 0,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedPairsMayBeDiscarded": false,
+    "parityAloneCountsAsValue": false
+  },
+  "fallback": {
+    "changePath": "gradle.properties",
+    "expectedMode": "FULL_GRAPH",
+    "expectedReason": "IMPACT_GLOBAL_CHANGE",
+    "outsideCandidateEntrypoint": ":micronaut-websocket:assemble",
+    "performanceClaim": false
+  },
+  "terminalDecisions": {
+    "qualifies": "QUALIFY_GENERIC_INSTALLED_PROFILE_ADOPTION",
+    "failsValueGate": "RETAIN_NATIVE_MICRONAUT_AS_DEFAULT",
+    "controlOrCandidateFails": "STOP_PROFILE_ADOPTION_WITHOUT_RETRY"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "repositorySpecificProductRuleAdded": false,
+    "productionSelectionChanged": false,
+    "testSelectionChanged": false,
+    "testExecutionChanged": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "publicReleaseRequired": false,
+    "universalSavingsClaimed": false,
+    "automaticActivation": false
+  },
+  "profile": {
+    "schemaVersion": "buildopt.poc/qualified-profile/v4",
+    "profileId": "qualified-structural-build-impact",
+    "qualificationEvidencePath": "buildopt-structural-qualification.json",
+    "qualificationEvidenceSha256": "9ea344b8099d6354dc1ea9ce8035bad4a98b64300520d5f3019fe0350cf918a8",
+    "sourceEvidenceSha256": "f4c335b559da35d3e010c68dd87bbd4cae0599d6d5da42c66e35161a1dca9b27",
+    "configPath": "buildopt-qualified-profile.json",
+    "runtimePreconditions": [
+      "buildopt-impact-manifest.json",
+      "buildopt-impact-graph.generated.json",
+      "buildopt-impact.generated.json"
+    ]
+  }
+}

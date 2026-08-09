@@ -396,6 +396,13 @@ identical outputs, a positive paired bound, exact source hashes and proven
 full-graph fallback are required before deterministic materialization. The v4
 profile remains repository-owned and rechecks all three graph inputs at runtime.
 
+`poc-structural-profile-adoption-v1.json` and
+`poc-structural-profile-adoption-v1.md` freeze the subsequent installed replay.
+The same Micronaut source, mutation, outputs and optimized-native control are
+retained, but the candidate is now only `buildopt poc --changes-file`. Profile
+materialization is excluded while validation, planning and launcher overhead
+remain inside all eight candidate observations.
+
 `poc-trace-hypothesis-v1.json` and `poc-trace-hypothesis-v1.md` bind the final
 trace-gated optimization decision. They require at least 500 ms of causally
 recoverable product-owned critical-path work in two families, reject overlapping

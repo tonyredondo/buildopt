@@ -1,0 +1,276 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [--contract|RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-structural-profile-adoption-v1.json"
+buildopt_runner="${buildopt_script_dir}/run-poc-structural-profile-adoption-v1"
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-structural-profile-adoption-v1.json"}
+buildopt_qualification="${buildopt_repo_root}/benchmarks/results/poc-structural-profile-qualification-v1.json"
+buildopt_source_evidence="${buildopt_repo_root}/benchmarks/results/poc-structural-transfer-v1.json"
+
+"${buildopt_script_dir}/check-poc-structural-transfer-v1" \
+    "${buildopt_source_evidence}" >/dev/null
+[[ "$(sha256sum "${buildopt_qualification}" | awk '{print $1}')" == \
+    "$(jq -er '.profile.qualificationEvidenceSha256' "${buildopt_spec}")" ]]
+[[ "$(sha256sum "${buildopt_source_evidence}" | awk '{print $1}')" == \
+    "$(jq -er '.profile.sourceEvidenceSha256' "${buildopt_spec}")" ]]
+jq -e --slurpfile source "${buildopt_source_evidence}" '
+    .schemaVersion == "buildopt.evidence/structural-profile-qualification/v1" and
+    .evidenceState == "QUALIFIED" and
+    .capturedAt == $source[0].capturedAt and
+    .subject.repositoryId == $source[0].repository.nameWithOwner and
+    .subject.repositoryRevision == $source[0].repository.revision and
+    .execution.candidateSurface == $source[0].buildopt.candidateSurface and
+    .execution.buildoptRevision == $source[0].buildopt.revision and
+    .execution.mechanisms == ["BUILD_IMPACT"] and
+    .execution.launcherOverheadIncluded == true and
+    [.observations[] | {
+        pair, order, controlDurationMs, candidateDurationMs, savedMs,
+        requiredOutputCount, productAttributableFailure
+    }] == [$source[0].observations[] | {
+        pair, order, controlDurationMs, candidateDurationMs, savedMs,
+        requiredOutputCount, productAttributableFailure
+    }] and
+    all(.observations[];
+        .controlRequiredOutputSha256 == .candidateRequiredOutputSha256) and
+    .result.pairs == $source[0].result.pairs and
+    .result.controlMeanMs == $source[0].result.controlMeanMs and
+    .result.candidateMeanMs == $source[0].result.candidateMeanMs and
+    .result.meanSavedMs == $source[0].result.meanSavedMs and
+    .result.reductionRatio == $source[0].result.reductionRatio and
+    .result.interval95SavedMs == $source[0].result.interval95SavedMs and
+    .result.positivePairs == $source[0].result.positivePairs and
+    .result.qualified == true and .result.decision == "QUALIFY_STRUCTURAL_PROFILE" and
+    .fallback.mode == $source[0].fallback.mode and
+    .fallback.reason == $source[0].fallback.reason and
+    .fallback.buildSuccessful == true and
+    .boundaries == {
+        proofOfConcept: true, productionAuthorized: false,
+        repositorySpecificRuleAdded: false, testOptimizationModified: false
+    }
+' "${buildopt_qualification}" >/dev/null
+
+if [[ "${1:-}" == --contract ]]; then
+    jq -e '
+        .schemaVersion == "buildopt.specs/poc-structural-profile-adoption/v1" and
+        .workItem == "POC-STRUCTURAL-PROFILE-001" and
+        .protocolRevision == 1 and
+        .preregistration.implementationRevision == "11ee2945e1b3924b4d9b40b586cdb87baf42f59c" and
+        .preregistration.completedObservationsBeforePreregistration == 0 and
+        .profile.schemaVersion == "buildopt.poc/qualified-profile/v4" and
+        .profile.profileId == "qualified-structural-build-impact" and
+        (.profile.qualificationEvidenceSha256 | test("^[0-9a-f]{64}$")) and
+        (.profile.sourceEvidenceSha256 | test("^[0-9a-f]{64}$")) and
+        .profile.runtimePreconditions == [
+            "buildopt-impact-manifest.json",
+            "buildopt-impact-graph.generated.json",
+            "buildopt-impact.generated.json"
+        ] and
+        .repository.nameWithOwner == "micronaut-projects/micronaut-core" and
+        (.repository.revision | test("^[0-9a-f]{40}$")) and
+        (.repository.sourceArchiveSha256 | test("^[0-9a-f]{64}$")) and
+        .runner.cpuCount == 12 and .runner.maxWorkers == 12 and
+        .workload.controlEntrypoints == ["assemble"] and
+        .workload.commonExclusions == [] and
+        .workload.controlExpectedReachedProjectCount == 75 and
+        .candidate.entrypoints == [":micronaut-http-client-jdk:assemble"] and
+        .candidate.alternativeId == "micronaut-http-client-jdk-assemble" and
+        .candidate.expectedReachedProjectCount == 22 and
+        .discovery.complete == true and .discovery.containsTestTasks == false and
+        .discovery.unknownRelationships == false and
+        .discovery.expectedDirectOwners == [":micronaut-http-client-jdk"] and
+        .discovery.expectedDirectOwnersOutsideCandidate == [] and
+        .measurement.pairs == 8 and .measurement.warmupsPerArm == 1 and
+        .measurement.mutatedCompileCachePolicy == {
+            warmups: "REQUIRE_MISS_BEFORE_SHARED_SEED_CAPTURE",
+            measuredPairs: "SHARED_OPTIMIZED_NATIVE_CACHE_HIT_ALLOWED_SYMMETRICALLY"
+        } and
+        .measurement.candidateSurface == "INSTALLED_BUILDOPT_POC_QUALIFIED_PROFILE" and
+        .measurement.launcherOverheadIncluded == true and
+        .measurement.profileMaterializationMeasured == false and
+        .measurement.profileValidationAndLauncherOverheadIncluded == true and
+        .measurement.runtimeTuningEnabled == false and
+        .measurement.safeCacheEnabled == false and
+        .measurement.hotStateEnabled == false and
+        .measurement.standardJarAdapterEnabled == false and
+        .measurement.remoteCacheEnabled == false and
+        (.measurement.commonArguments | all(. == "--daemon" or . == "--offline" or
+            . == "--build-cache" or . == "--parallel" or
+            . == "--no-configuration-cache" or . == "--console=plain" or
+            . == "--max-workers=12" or . == "--no-scan")) and
+        .valueGate.minimumSavedMs == 500 and
+        .valueGate.minimumReductionRatio == 0.02 and
+        .valueGate.minimumPositivePairs == 8 and
+        .valueGate.thresholdsMayMoveAfterMeasurement == false and
+        .valueGate.failedPairsMayBeDiscarded == false and
+        .fallback.expectedMode == "FULL_GRAPH" and
+        .fallback.expectedReason == "IMPACT_GLOBAL_CHANGE" and
+        .boundaries.proofOfConcept == true and
+        .boundaries.productionReadinessClaimed == false and
+        .boundaries.testOptimizationModified == false and
+        .boundaries.soakRequired == false and
+        .boundaries.designPartnerRequired == false
+    ' "${buildopt_spec}" >/dev/null
+    printf 'structural profile adoption contract OK\n'
+    exit 0
+fi
+
+[[ -s "${buildopt_result}" ]] || {
+    printf 'structural profile adoption evidence is unavailable: %s\n' \
+        "${buildopt_result}" >&2
+    exit 1
+}
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_runner_sha=$(sha256sum "${buildopt_runner}" | awk '{print $1}')
+
+jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sha}" \
+    --slurpfile spec "${buildopt_spec}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    def gitsha: type == "string" and test("^[0-9a-f]{40}$");
+    def bootstrap_mean($data; $sample):
+        reduce range(0; 8) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $data[((.state / 536870912) | floor)].savedMs) |
+        .sum / 8;
+    def bootstrap95($data):
+        ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
+        [$r[102], $r[3993]];
+    .observations as $data |
+    (($data | map(.controlDurationMs) | add) / 8) as $controlMean |
+    (($data | map(.candidateDurationMs) | add) / 8) as $candidateMean |
+    (($data | map(.savedMs) | add) / 8) as $mean |
+    (($data | map(.savedMs) | add) / ($data | map(.controlDurationMs) | add)) as $ratio |
+    bootstrap95($data) as $interval |
+    ($data | map(select(.savedMs > 0)) | length) as $positive |
+    ($mean >= $spec[0].valueGate.minimumSavedMs and
+     $ratio >= $spec[0].valueGate.minimumReductionRatio and
+     $interval[0] > 0 and
+     $positive >= $spec[0].valueGate.minimumPositivePairs and
+     ($data | map(.requiredOutputSha256) | unique | length) == 1 and
+     all($data[]; .requiredOutputCount > 0 and (.hotStateEnabled | not) and
+         (.safeCacheEnabled | not) and (.standardJarAdapterEnabled | not) and
+         (.runtimeTuningEnabled | not) and (.remoteCacheEnabled | not) and
+         (.rootBuildGradleTestTasksExecuted | not) and
+         (.productAttributableFailure | not))) as $qualified |
+    .schemaVersion == "buildopt.evidence/poc-structural-profile-adoption/v1" and
+    .workItem == "POC-STRUCTURAL-PROFILE-001" and
+    (.capturedAt | fromdateiso8601) and
+    .specSha256 == $specSha and
+    (.buildopt.revision | gitsha) and
+    (.buildopt.executableSha256 | sha256) and
+    (.buildopt.packageSha256 | sha256) and
+    .buildopt.packageVersion == "0.3.0-dev" and
+    .buildopt.candidateSurface == $spec[0].measurement.candidateSurface and
+    .buildopt.launcherOverheadIncluded == true and
+    .buildopt.runnerScriptSha256 == $runnerSha and
+    .profile.schemaVersion == $spec[0].profile.schemaVersion and
+    .profile.profileId == $spec[0].profile.profileId and
+    (.profile.sha256 | sha256) and
+    .profile.qualificationEvidenceSha256 == $spec[0].profile.qualificationEvidenceSha256 and
+    .profile.materializedBeforeTiming == true and
+    .profile.repositoryOwnedReviewRequired == true and
+    .profile.productionAuthorized == false and
+    .repository == {
+        nameWithOwner: $spec[0].repository.nameWithOwner,
+        branch: $spec[0].repository.branch,
+        revision: $spec[0].repository.revision,
+        sourceArchiveSha256: $spec[0].repository.sourceArchiveSha256
+    } and
+    .runner == $spec[0].runner and
+    .preparation.onlinePreflightMeasured == false and
+    .preparation.onlinePreflightSuccess == true and
+    (.preparation.onlinePreflightWallClockMs | type == "number" and . > 0) and
+    .preparation.measuredNetwork == "DISCONNECTED" and
+    .preparation.dependencyMode == "GRADLE_OFFLINE_WITH_SHARED_READ_ONLY_CACHE" and
+    (.preparation.readOnlyDependencyCacheSha256 | sha256) and
+    (.preparation.buildCacheSeedSha256 | sha256) and
+    (.preparation.measuredBuildCacheSeedSha256 | sha256) and
+    .preparation.preflightDaemonStoppedBeforeArmSetup == true and
+    .preparation.cacheSeedRestoredBeforeEveryArm == true and
+    .preparation.sharedCheckout == true and
+    .preparation.sharedGradleUserHome == true and
+    .preparation.sharedDaemon == true and
+    .preparation.outputsRemovedBeforeEveryArm == true and
+    .preparation.fixedMutationAppliedAfterCacheRestore == true and
+    .discovery == {
+        complete: true,
+        containsTestTasks: false,
+        graphSha256: $spec[0].discovery.expectedGraphSha256,
+        graphDigest: $spec[0].discovery.expectedGraphDigest,
+        projectCount: 75,
+        controlReachCount: 75,
+        candidateReachCount: 22,
+        candidateEntrypoints: [":micronaut-http-client-jdk:assemble"],
+        omittedProjectCount: 53,
+        omittedProjectRatio: (53 / 75)
+    } and
+    ($data | length) == 8 and
+    [$data[].pair] == [1, 2, 3, 4, 5, 6, 7, 8] and
+    [$data[].order] == [
+        "CONTROL_FIRST", "CANDIDATE_FIRST", "CONTROL_FIRST", "CANDIDATE_FIRST",
+        "CONTROL_FIRST", "CANDIDATE_FIRST", "CONTROL_FIRST", "CANDIDATE_FIRST"
+    ] and
+    ($data | map(.requiredOutputSha256) | unique | length) == 1 and
+    ($data | map(.requiredOutputCount) | unique | length) == 1 and
+    all($data[];
+        (.controlDurationMs | type == "number" and . > 0) and
+        (.candidateDurationMs | type == "number" and . > 0) and
+        .savedMs == (.controlDurationMs - .candidateDurationMs) and
+        (.interArmIdleGapMs | type == "number" and . >= 0 and
+            . <= $spec[0].measurement.maximumInterArmIdleGapMs) and
+        (.controlMaximumResidentSetKb | type == "number" and . > 0) and
+        (.candidateMaximumResidentSetKb | type == "number" and . > 0) and
+        (.requiredOutputSha256 | sha256) and
+        (.requiredOutputCount | type == "number" and . > 0) and
+        .controlEntrypoints == ["assemble"] and
+        .candidateEntrypoints == [":micronaut-http-client-jdk:assemble"] and
+        .hotStateEnabled == false and .safeCacheEnabled == false and
+        .standardJarAdapterEnabled == false and
+        .runtimeTuningEnabled == false and .remoteCacheEnabled == false and
+        .rootBuildGradleTestTasksExecuted == false and
+        .productAttributableFailure == false) and
+    .fallback == {
+        changePath: "gradle.properties",
+        mode: "FULL_GRAPH",
+        reason: "IMPACT_GLOBAL_CHANGE",
+        outsideCandidateEntrypointObserved: ":micronaut-websocket:assemble",
+        buildSuccessful: true,
+        performanceClaim: false
+    } and
+    .driftFallback == {
+        changedBinding: "BUILD_IMPACT_GRAPH_SHA256",
+        mode: "FULL_GRAPH",
+        reason: "PROFILE_PRECONDITION_FAILED",
+        outsideCandidateEntrypointObserved: ":micronaut-websocket:assemble",
+        buildSuccessful: true,
+        performanceClaim: false
+    } and
+    .result == {
+        pairs: 8,
+        controlMeanMs: $controlMean,
+        candidateMeanMs: $candidateMean,
+        meanSavedMs: $mean,
+        reductionRatio: $ratio,
+        interval95SavedMs: $interval,
+        positivePairs: $positive,
+        qualified: $qualified,
+        decision: (if $qualified then $spec[0].terminalDecisions.qualifies
+            else $spec[0].terminalDecisions.failsValueGate end)
+    } and
+    .boundaries == $spec[0].boundaries
+' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+[[ "${buildopt_before}" == "${buildopt_after}" ]] || {
+    printf 'structural profile adoption validation changed the working tree\n' >&2
+    exit 1
+}
+printf 'structural profile adoption evidence OK: %s\n' "${buildopt_result}"

@@ -3414,6 +3414,14 @@ twice, proves byte-for-byte determinism, rejects evidence/source drift, and
 executes the focused runtime-precondition fallback test. The qualifier contains
 no repository-name branches and never writes or activates a profile itself.
 
+The fresh installed adoption is frozen by
+`./dev/check-poc-structural-profile-adoption-v1 --contract` and executed with
+`./dev/run-poc-structural-profile-adoption-v1 /absolute/path/to/result.json`.
+The runner materializes the profile before timing, then compares only
+`buildopt poc` with optimized native Gradle over eight alternating pairs. The
+independent checker recomputes the result, revalidates the source qualification
+and requires both global-change and profile-drift full-graph fallbacks.
+
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 
 The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.
