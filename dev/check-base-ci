@@ -234,6 +234,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-structural-profile" >/dev/null
         "${buildopt_script_dir}/check-poc-structural-profile-adoption-v1" >/dev/null
         "${buildopt_script_dir}/check-poc-generic-evaluation" >/dev/null
+        "${buildopt_script_dir}/check-poc-generic-measurement" >/dev/null
         "${buildopt_script_dir}/check-poc-trace-hypothesis-v1" >/dev/null
         "${buildopt_script_dir}/check-poc-portfolio-decision-v1" >/dev/null
         "${buildopt_script_dir}/check-poc-spring-installed-impact" >/dev/null

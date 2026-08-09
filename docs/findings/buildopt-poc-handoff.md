@@ -402,6 +402,16 @@ native full graph. This removes orchestration friction without adding a
 repository-name rule or pretending that BuildOpt can infer which artifacts a
 customer requires.
 
+The remaining evidence handoff is now executable as well. `buildopt profile
+measure` verifies that a repository-owned changes file exactly matches one
+clean base-to-target Git diff, creates separate native and BuildOpt clones and
+Gradle homes, warms each arm independently, then records eight alternating
+pairs plus an exact full-graph fallback. It writes the existing qualification
+evidence format, so `profile evaluate` can consume it without translation.
+This block adds no performance claim: its deterministic fixture proves
+isolation, output equality and fail-closed orchestration rather than timing a
+customer workload.
+
 ## Boundaries and References
 
 This is proof-of-concept evidence, not a universal savings or production

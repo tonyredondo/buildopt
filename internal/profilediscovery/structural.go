@@ -94,6 +94,7 @@ type structuralSourceBindings struct {
 type structuralExecution struct {
 	CandidateSurface         string   `json:"candidateSurface"`
 	BuildOptRevision         string   `json:"buildoptRevision"`
+	ExecutableSHA256         string   `json:"executableSha256,omitempty"`
 	Mechanisms               []string `json:"mechanisms"`
 	GradleOptions            []string `json:"gradleOptions"`
 	LauncherOverheadIncluded bool     `json:"launcherOverheadIncluded"`
@@ -134,6 +135,129 @@ type structuralBoundaries struct {
 	ProductionAuthorized        bool `json:"productionAuthorized"`
 	RepositorySpecificRuleAdded bool `json:"repositorySpecificRuleAdded"`
 	TestOptimizationModified    bool `json:"testOptimizationModified"`
+}
+
+// StructuralMeasurementObservation is one temporally paired optimized-native
+// and installed-BuildOpt measurement over byte-identical required outputs.
+type StructuralMeasurementObservation struct {
+	Pair                       int
+	Order                      string
+	ControlDurationMS          int64
+	CandidateDurationMS        int64
+	RequiredOutputSHA256       string
+	RequiredOutputCount        int
+	ProductAttributableFailure bool
+}
+
+// StructuralMeasurementOptions carries the independently observed values used
+// to render evidence for the existing structural profile qualifier. It grants
+// no activation or production authority.
+type StructuralMeasurementOptions struct {
+	CapturedAt           time.Time
+	Analysis             AnalysisReport
+	RepositoryRevision   string
+	BuildOptRevision     string
+	ExecutableSHA256     string
+	SourceEvidenceSHA256 string
+	GradleOptions        []string
+	Observations         []StructuralMeasurementObservation
+	FallbackReason       string
+	FallbackSuccessful   bool
+}
+
+// RenderStructuralMeasurementEvidence recomputes the frozen qualification
+// result and emits the exact evidence document consumed by
+// QualifyStructuralProfile. A valid but non-positive result remains
+// INCONCLUSIVE and therefore cannot materialize a profile.
+func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) ([]byte, bool, error) {
+	if options.Analysis.Decision != DecisionMeasure || options.Analysis.Plan == nil {
+		return nil, false, errors.New("structural measurement requires a complete candidate analysis")
+	}
+	if !validRevision(options.RepositoryRevision) || !validRevision(options.BuildOptRevision) ||
+		!validSHA(options.ExecutableSHA256) ||
+		options.ExecutableSHA256 != strings.ToLower(options.ExecutableSHA256) ||
+		!validSHA(options.SourceEvidenceSHA256) ||
+		options.SourceEvidenceSHA256 != strings.ToLower(options.SourceEvidenceSHA256) ||
+		!validStructuralGradleOptions(options.GradleOptions) {
+		return nil, false, errors.New("structural measurement identity or Gradle options are invalid")
+	}
+	if options.CapturedAt.IsZero() || options.FallbackReason == "" || !options.FallbackSuccessful {
+		return nil, false, errors.New("structural measurement fallback is unproven")
+	}
+	inputs := make(map[string]InputBinding, len(options.Analysis.Inputs))
+	for _, input := range options.Analysis.Inputs {
+		inputs[input.Role] = input
+	}
+	for _, role := range []string{"BUILD_IMPACT_MANIFEST", "BUILD_IMPACT_GRAPH", "GENERATED_MANIFEST"} {
+		if !validSHA(trimSHA(inputs[role].SHA256)) {
+			return nil, false, fmt.Errorf("structural measurement lacks %s binding", role)
+		}
+	}
+	observations := make([]structuralObservation, len(options.Observations))
+	for index, observation := range options.Observations {
+		observations[index] = structuralObservation{
+			Pair:                          observation.Pair,
+			Order:                         observation.Order,
+			ControlDurationMS:             observation.ControlDurationMS,
+			CandidateDurationMS:           observation.CandidateDurationMS,
+			SavedMS:                       observation.ControlDurationMS - observation.CandidateDurationMS,
+			ControlRequiredOutputSHA256:   observation.RequiredOutputSHA256,
+			CandidateRequiredOutputSHA256: observation.RequiredOutputSHA256,
+			RequiredOutputCount:           observation.RequiredOutputCount,
+			ProductAttributableFailure:    observation.ProductAttributableFailure,
+		}
+	}
+	result, err := calculateStructuralResult(observations)
+	if err != nil {
+		return nil, false, err
+	}
+	evidenceState := "INCONCLUSIVE"
+	if result.Qualified {
+		evidenceState = "QUALIFIED"
+	}
+	evidence := structuralEvidence{
+		SchemaVersion: StructuralEvidenceSchema,
+		EvidenceState: evidenceState,
+		CapturedAt:    options.CapturedAt.UTC().Truncate(time.Second).Format(time.RFC3339),
+		Subject: structuralSubject{
+			RepositoryID:       options.Analysis.Subject.RepositoryID,
+			RepositoryRevision: options.RepositoryRevision,
+			PipelineClass:      options.Analysis.Subject.PipelineClass,
+		},
+		SourceBindings: structuralSourceBindings{
+			ManifestSHA256:       trimSHA(inputs["BUILD_IMPACT_MANIFEST"].SHA256),
+			GraphSHA256:          trimSHA(inputs["BUILD_IMPACT_GRAPH"].SHA256),
+			GeneratedSHA256:      trimSHA(inputs["GENERATED_MANIFEST"].SHA256),
+			SourceEvidenceSHA256: options.SourceEvidenceSHA256,
+		},
+		Plan: *options.Analysis.Plan,
+		Execution: structuralExecution{
+			CandidateSurface:         "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+			BuildOptRevision:         options.BuildOptRevision,
+			ExecutableSHA256:         options.ExecutableSHA256,
+			Mechanisms:               []string{"BUILD_IMPACT"},
+			GradleOptions:            append([]string(nil), options.GradleOptions...),
+			LauncherOverheadIncluded: true,
+		},
+		Observations: observations,
+		Fallback: structuralFallback{
+			Mode:            "FULL_GRAPH",
+			Reason:          options.FallbackReason,
+			BuildSuccessful: true,
+		},
+		Result: result,
+		Boundaries: structuralBoundaries{
+			ProofOfConcept:              true,
+			ProductionAuthorized:        false,
+			RepositorySpecificRuleAdded: false,
+			TestOptimizationModified:    false,
+		},
+	}
+	raw, err := json.MarshalIndent(evidence, "", "  ")
+	if err != nil {
+		return nil, false, fmt.Errorf("render structural measurement evidence: %w", err)
+	}
+	return append(raw, '\n'), result.Qualified, nil
 }
 
 // QualifyStructuralProfile materializes a repository-name-independent
@@ -238,6 +362,9 @@ func validateStructuralEvidence(evidence structuralEvidence, analysis AnalysisRe
 	}
 	if evidence.Execution.CandidateSurface != "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY" ||
 		!validRevision(evidence.Execution.BuildOptRevision) ||
+		(evidence.Execution.ExecutableSHA256 != "" &&
+			(!validSHA(evidence.Execution.ExecutableSHA256) ||
+				evidence.Execution.ExecutableSHA256 != strings.ToLower(evidence.Execution.ExecutableSHA256))) ||
 		!evidence.Execution.LauncherOverheadIncluded ||
 		len(evidence.Execution.Mechanisms) != 1 || evidence.Execution.Mechanisms[0] != "BUILD_IMPACT" ||
 		!validStructuralGradleOptions(evidence.Execution.GradleOptions) {

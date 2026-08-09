@@ -101,6 +101,15 @@ Gradle. Adopt it only after reviewing and committing the repository manifest
 and generated graph described in the
 [Build Impact workflow](../guides/product-workflows.md#build-impact).
 
+Before committing a qualified profile, current `main` can collect the exact
+POC evidence with `buildopt profile measure`. Give it a clean target revision,
+its ancestor baseline, the exact changed paths, one global-fallback path set
+and the required outputs already declared by the manifest. It compares eight
+isolated optimized-native and BuildOpt pairs and writes evidence only after
+every build and output check succeeds. Then `buildopt profile evaluate` either
+writes a reviewable profile or retains native full graph. See the
+[generic measurement contract](../../specs/poc-generic-measurement-v1.md).
+
 For a pull request, commit the qualified profile described in the
 [configuration reference](../reference/configuration.md#qualified-poc-profile),
 create an exact changed-path input and execute the reviewable profile:

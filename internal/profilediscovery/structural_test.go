@@ -7,7 +7,82 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
+
+func TestRenderStructuralMeasurementEvidenceQualifiesOnlyPositiveExactPairs(t *testing.T) {
+	root := repositoryRoot(t)
+	repository := structuralTestRepository(
+		t,
+		root,
+		"fixtures/poc-kafka-packaging/buildopt-impact-manifest.json",
+		"fixtures/poc-kafka-packaging/buildopt-impact-graph.generated.json",
+		"fixtures/poc-kafka-packaging/buildopt-impact.generated.json",
+	)
+	analysis, err := AnalyzeOpportunity(AnalysisOptions{
+		RepositoryRoot: repository,
+		ManifestPath:   "buildopt-impact-manifest.json",
+		GraphPath:      "buildopt-impact-graph.generated.json",
+		GeneratedPath:  "buildopt-impact.generated.json",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	observations := make([]StructuralMeasurementObservation, structuralPairCount)
+	for index := range observations {
+		order := "CANDIDATE_FIRST"
+		if index%2 == 0 {
+			order = "CONTROL_FIRST"
+		}
+		observations[index] = StructuralMeasurementObservation{
+			Pair: index + 1, Order: order,
+			ControlDurationMS: 10000, CandidateDurationMS: 7000,
+			RequiredOutputSHA256: strings.Repeat("a", 64), RequiredOutputCount: 1,
+		}
+	}
+	raw, qualified, err := RenderStructuralMeasurementEvidence(StructuralMeasurementOptions{
+		CapturedAt: time.Date(2026, 8, 9, 12, 0, 0, 0, time.UTC), Analysis: analysis,
+		RepositoryRevision: strings.Repeat("b", 40), BuildOptRevision: strings.Repeat("c", 40),
+		ExecutableSHA256:     strings.Repeat("e", 64),
+		SourceEvidenceSHA256: strings.Repeat("d", 64),
+		GradleOptions:        []string{"--daemon", "--build-cache"}, Observations: observations,
+		FallbackReason: "IMPACT_GLOBAL_CHANGE", FallbackSuccessful: true,
+	})
+	if err != nil || !qualified {
+		t.Fatalf("render qualified evidence = %v/%v", qualified, err)
+	}
+	var evidence structuralEvidence
+	if err := json.Unmarshal(raw, &evidence); err != nil {
+		t.Fatal(err)
+	}
+	if evidence.EvidenceState != "QUALIFIED" || !evidence.Result.Qualified ||
+		evidence.Result.MeanSavedMS != 3000 || evidence.Result.PositivePairs != 8 ||
+		evidence.Boundaries.ProductionAuthorized || evidence.Boundaries.TestOptimizationModified {
+		t.Fatalf("rendered evidence = %+v", evidence)
+	}
+
+	for index := range observations {
+		observations[index].CandidateDurationMS = 9950
+	}
+	raw, qualified, err = RenderStructuralMeasurementEvidence(StructuralMeasurementOptions{
+		CapturedAt: time.Date(2026, 8, 9, 12, 0, 0, 0, time.UTC), Analysis: analysis,
+		RepositoryRevision: strings.Repeat("b", 40), BuildOptRevision: strings.Repeat("c", 40),
+		ExecutableSHA256:     strings.Repeat("e", 64),
+		SourceEvidenceSHA256: strings.Repeat("d", 64),
+		GradleOptions:        []string{"--daemon", "--build-cache"}, Observations: observations,
+		FallbackReason: "IMPACT_GLOBAL_CHANGE", FallbackSuccessful: true,
+	})
+	if err != nil || qualified {
+		t.Fatalf("render inconclusive evidence = %v/%v", qualified, err)
+	}
+	if err := json.Unmarshal(raw, &evidence); err != nil {
+		t.Fatal(err)
+	}
+	if evidence.EvidenceState != "INCONCLUSIVE" || evidence.Result.Qualified ||
+		evidence.Result.Decision != "RETAIN_NATIVE_GRADLE" {
+		t.Fatalf("inconclusive evidence = %+v", evidence)
+	}
+}
 
 func TestStructuralProfileQualificationIsRepositoryIndependentAndDeterministic(t *testing.T) {
 	root := repositoryRoot(t)

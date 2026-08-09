@@ -1,0 +1,95 @@
+package launcher
+
+import (
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+)
+
+func TestHashMeasurementOutputsIsPathAndContentBound(t *testing.T) {
+	repository := t.TempDir()
+	for path, content := range map[string]string{
+		"service/build/libs/a.jar": "alpha",
+		"service/build/libs/b.jar": "beta",
+		"other/build/libs/c.jar":   "ignored",
+	} {
+		absolute := filepath.Join(repository, filepath.FromSlash(path))
+		if err := os.MkdirAll(filepath.Dir(absolute), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(absolute, []byte(content), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	firstSHA, firstCount, err := hashMeasurementOutputs(repository, []string{"service/build/libs/**"})
+	if err != nil || firstCount != 2 || !validMeasurementRevision(firstSHA[:40]) {
+		t.Fatalf("first output set = %s/%d/%v", firstSHA, firstCount, err)
+	}
+	if err := os.WriteFile(filepath.Join(repository, "service", "build", "libs", "b.jar"), []byte("changed"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	secondSHA, secondCount, err := hashMeasurementOutputs(repository, []string{"service/build/libs/**"})
+	if err != nil || secondCount != firstCount || secondSHA == firstSHA {
+		t.Fatalf("changed output set = %s/%d/%v", secondSHA, secondCount, err)
+	}
+}
+
+func TestMeasurementHelpersFailClosed(t *testing.T) {
+	if got := measurementFallbackReason("buildopt: Build Impact POC retained the full graph (IMPACT_GLOBAL_CHANGE)\n"); got != "IMPACT_GLOBAL_CHANGE" {
+		t.Fatalf("fallback reason = %q", got)
+	}
+	if got := measurementFallbackReason("candidate selected"); got != "" {
+		t.Fatalf("unexpected fallback reason = %q", got)
+	}
+	if !matchMeasurementGlob("service/**/libs/*.jar", "service/build/libs/a.jar") ||
+		matchMeasurementGlob("service/**/libs/*.jar", "other/build/libs/a.jar") {
+		t.Fatal("recursive required-output glob is not conservative")
+	}
+	if validMeasurementRevision(strings.Repeat("A", 40)) || validMeasurementRevision("abc") {
+		t.Fatal("invalid revision was accepted")
+	}
+	if got := nullDelimitedPaths("with space.txt\x00café.txt\x00"); len(got) != 2 || got[0] != "with space.txt" || got[1] != "café.txt" {
+		t.Fatalf("NUL-delimited paths = %#v", got)
+	}
+	file := filepath.Join(t.TempDir(), "buildopt")
+	if err := os.WriteFile(file, []byte("exact executable"), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	digest, err := hashMeasurementFile(file)
+	if err != nil || digest != "c724d05a236c3cd227411e93cdf5ef0d23b7a9e4e254dc0ff9ef0b699284dffc" {
+		t.Fatalf("executable digest = %q/%v", digest, err)
+	}
+}
+
+func TestCopyMeasurementInputRejectsSymlinkParent(t *testing.T) {
+	source := t.TempDir()
+	target := t.TempDir()
+	outside := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(source, "contracts"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(source, "contracts", "input.json"), []byte("{}\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(outside, filepath.Join(target, "contracts")); err != nil {
+		t.Skipf("symlink unavailable: %v", err)
+	}
+	if err := copyMeasurementInput(source, target, filepath.Join("contracts", "input.json")); err == nil {
+		t.Fatal("measurement input escaped through a symlink parent")
+	}
+	if _, err := os.Stat(filepath.Join(outside, "input.json")); !os.IsNotExist(err) {
+		t.Fatalf("measurement input escaped the isolated repository: %v", err)
+	}
+}
+
+func TestMeasurementEnvironmentRemovesExternalBuildOptState(t *testing.T) {
+	t.Setenv("BUILDOPT_SERVER_URL", "https://should-not-propagate.invalid")
+	t.Setenv("GRADLE_USER_HOME", "wrong")
+	environment := measurementEnvironment("isolated-home")
+	joined := strings.Join(environment, "\n")
+	if strings.Contains(joined, "BUILDOPT_SERVER_URL=") || strings.Contains(joined, "GRADLE_USER_HOME=wrong") ||
+		!strings.Contains(joined, "GRADLE_USER_HOME=isolated-home") {
+		t.Fatalf("measurement environment = %q", joined)
+	}
+}

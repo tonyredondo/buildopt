@@ -3430,6 +3430,14 @@ profile write on fallback, repository-relative atomic output policy, and the
 absence of automatic or production authorization. It does not run a timing
 experiment or modify Test Optimization.
 
+`./dev/check-poc-generic-measurement` builds the real CLI and creates a
+two-revision external Git repository. It proves two independent source clones,
+two Gradle homes, independently restored native-cache seeds, alternating
+eight-pair order, exact required outputs, qualified evidence, full-graph
+fallback, atomic profile evaluation and invalid-evidence rejection. The fixture
+uses a deterministic fake Wrapper so Base CI validates orchestration rather
+than publishing a new performance percentage.
+
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 
 The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.

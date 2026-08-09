@@ -1,0 +1,176 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+for buildopt_command in git jq cmp mktemp sort wc; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'missing required command: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_root=$(mktemp -d)
+trap 'rm -rf -- "${buildopt_root}"' EXIT
+buildopt_fixture="${buildopt_root}/repository"
+buildopt_binary="${buildopt_root}/buildopt"
+buildopt_home_log="${buildopt_root}/gradle-homes.log"
+mkdir -p -- "${buildopt_fixture}/clients/src/main/java/example"
+
+"${buildopt_repo_root}/dev/run" --toolchain go -- \
+    go build -mod=readonly -buildvcs=false -trimpath \
+    -o "${buildopt_binary}" ./cmd/buildopt
+
+git -C "${buildopt_fixture}" init --quiet
+git -C "${buildopt_fixture}" config user.name 'BuildOpt Fixture'
+git -C "${buildopt_fixture}" config user.email 'buildopt-fixture@example.invalid'
+git -C "${buildopt_fixture}" config commit.gpgsign false
+printf 'root build\n' >"${buildopt_fixture}/build.gradle"
+printf 'class Main { static final int VALUE = 1; }\n' \
+    >"${buildopt_fixture}/clients/src/main/java/example/Main.java"
+cat >"${buildopt_fixture}/gradlew" <<'WRAPPER'
+#!/usr/bin/env bash
+set -euo pipefail
+printf '%s\n' "${GRADLE_USER_HOME:?}" >>"${MEASUREMENT_TEST_LOG:?}"
+for buildopt_arg in "$@"; do
+    if [[ "${buildopt_arg}" == --stop ]]; then
+        exit 0
+    fi
+done
+mkdir -p -- "${GRADLE_USER_HOME}/caches/build-cache-1" clients/build/libs
+printf 'seed\n' >"${GRADLE_USER_HOME}/caches/build-cache-1/seed"
+buildopt_candidate=false
+for buildopt_arg in "$@"; do
+    if [[ "${buildopt_arg}" == :clients:jar ]]; then
+        buildopt_candidate=true
+    fi
+done
+if [[ "${buildopt_candidate}" == true ]]; then
+    sleep 0.05
+else
+    sleep 0.75
+fi
+printf 'byte-identical-client-artifact\n' \
+    >clients/build/libs/kafka-clients-fixture.jar
+WRAPPER
+chmod 0755 "${buildopt_fixture}/gradlew"
+git -C "${buildopt_fixture}" add build.gradle gradlew clients/src/main/java/example/Main.java
+git -C "${buildopt_fixture}" commit --quiet -m 'fixture base'
+buildopt_base_revision=$(git -C "${buildopt_fixture}" rev-parse HEAD)
+printf 'class Main { static final int VALUE = 2; }\n' \
+    >"${buildopt_fixture}/clients/src/main/java/example/Main.java"
+git -C "${buildopt_fixture}" add clients/src/main/java/example/Main.java
+git -C "${buildopt_fixture}" commit --quiet -m 'fixture target'
+
+cp -- "${buildopt_repo_root}/fixtures/poc-kafka-packaging/buildopt-impact-manifest.json" \
+    "${buildopt_fixture}/buildopt-impact-manifest.json"
+cp -- "${buildopt_repo_root}/fixtures/poc-kafka-packaging/buildopt-impact-graph.generated.json" \
+    "${buildopt_fixture}/buildopt-impact-graph.generated.json"
+cp -- "${buildopt_repo_root}/fixtures/poc-kafka-packaging/buildopt-impact.generated.json" \
+    "${buildopt_fixture}/buildopt-impact.generated.json"
+printf 'clients/src/main/java/example/Main.java\n' \
+    >"${buildopt_fixture}/buildopt-changes.txt"
+printf 'build.gradle\n' >"${buildopt_fixture}/buildopt-fallback-changes.txt"
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_executable_sha=$(sha256sum "${buildopt_binary}" | cut -d ' ' -f 1)
+(
+    cd "${buildopt_fixture}"
+    MEASUREMENT_TEST_LOG="${buildopt_home_log}" \
+        "${buildopt_binary}" profile measure \
+        --manifest buildopt-impact-manifest.json \
+        --graph buildopt-impact-graph.generated.json \
+        --generated-manifest buildopt-impact.generated.json \
+        --changes-file buildopt-changes.txt \
+        --fallback-changes-file buildopt-fallback-changes.txt \
+        --base-revision "${buildopt_base_revision}" \
+        --buildopt-revision "${buildopt_revision}" \
+        --evidence-output buildopt-structural-evidence.json \
+        --timeout 2m >buildopt-measurement-stdout.json
+)
+
+cmp --silent \
+    "${buildopt_fixture}/buildopt-measurement-stdout.json" \
+    "${buildopt_fixture}/buildopt-structural-evidence.json"
+jq -e --arg executable_sha "${buildopt_executable_sha}" '
+    .schemaVersion == "buildopt.evidence/structural-profile-qualification/v1" and
+    .evidenceState == "QUALIFIED" and
+    .execution.candidateSurface == "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY" and
+    .execution.executableSha256 == $executable_sha and
+    .execution.mechanisms == ["BUILD_IMPACT"] and
+    .execution.launcherOverheadIncluded == true and
+    .result.pairs == 8 and
+    .result.positivePairs == 8 and
+    .result.meanSavedMs >= 500 and
+    .result.reductionRatio >= 0.02 and
+    .result.interval95SavedMs[0] > 0 and
+    .result.qualified == true and
+    .fallback.mode == "FULL_GRAPH" and
+    .fallback.buildSuccessful == true and
+    ([.observations[].order] == [
+        "CONTROL_FIRST", "CANDIDATE_FIRST", "CONTROL_FIRST", "CANDIDATE_FIRST",
+        "CONTROL_FIRST", "CANDIDATE_FIRST", "CONTROL_FIRST", "CANDIDATE_FIRST"
+    ]) and
+    ([.observations[] |
+        .controlRequiredOutputSha256 == .candidateRequiredOutputSha256] | all) and
+    ([.observations[].requiredOutputCount] | min) == 1 and
+    .boundaries.proofOfConcept == true and
+    .boundaries.productionAuthorized == false and
+    .boundaries.repositorySpecificRuleAdded == false and
+    .boundaries.testOptimizationModified == false
+' "${buildopt_fixture}/buildopt-structural-evidence.json" >/dev/null
+
+buildopt_distinct_homes=$(sort -u "${buildopt_home_log}" | wc -l)
+[[ "${buildopt_distinct_homes}" -eq 2 ]] || {
+    printf 'measurement did not isolate the two Gradle homes\n' >&2
+    exit 1
+}
+grep -Fq -- 'control-gradle-home' "${buildopt_home_log}"
+grep -Fq -- 'candidate-gradle-home' "${buildopt_home_log}"
+
+(
+    cd "${buildopt_fixture}"
+    "${buildopt_binary}" profile evaluate \
+        --manifest buildopt-impact-manifest.json \
+        --graph buildopt-impact-graph.generated.json \
+        --generated-manifest buildopt-impact.generated.json \
+        --evidence buildopt-structural-evidence.json \
+        --profile-output buildopt-qualified-profile.json \
+        >buildopt-evaluation.json
+)
+jq -e '
+    .decision == "QUALIFY_STRUCTURAL_PROFILE" and
+    .reason == "EXACT_EVIDENCE_QUALIFIED" and
+    .profile.schemaVersion == "buildopt.poc/qualified-profile/v4" and
+    .reviewRequired == true and
+    .activationAutomatic == false and
+    .productionAuthorized == false
+' "${buildopt_fixture}/buildopt-evaluation.json" >/dev/null
+
+jq '.observations[0].candidateRequiredOutputSha256 = ("0" * 64)' \
+    "${buildopt_fixture}/buildopt-structural-evidence.json" \
+    >"${buildopt_fixture}/buildopt-invalid-evidence.json"
+(
+    cd "${buildopt_fixture}"
+    "${buildopt_binary}" profile evaluate \
+        --manifest buildopt-impact-manifest.json \
+        --graph buildopt-impact-graph.generated.json \
+        --generated-manifest buildopt-impact.generated.json \
+        --evidence buildopt-invalid-evidence.json \
+        --profile-output invalid-profile.json \
+        >buildopt-invalid-evaluation.json
+)
+jq -e '
+    .decision == "NATIVE_FULL_GRAPH" and
+    .reason == "EVIDENCE_NOT_QUALIFIED" and
+    .profile == null
+' "${buildopt_fixture}/buildopt-invalid-evaluation.json" >/dev/null
+[[ ! -e "${buildopt_fixture}/invalid-profile.json" ]]
+git -C "${buildopt_fixture}" diff --quiet --exit-code
+
+printf 'Generic isolated paired measurement and evaluation: PASS\n'

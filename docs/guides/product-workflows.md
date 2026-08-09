@@ -204,6 +204,29 @@ buildopt-impact check \
   --generated-manifest buildopt-impact.generated.json
 ```
 
+Before adopting a candidate, collect its exact workload evidence instead of
+assuming graph reduction equals wall-clock value:
+
+```bash
+git diff --name-only --no-renames BASE_SHA HEAD > buildopt-changes.txt
+printf 'settings.gradle.kts\n' > buildopt-fallback-changes.txt
+buildopt profile measure \
+  --manifest buildopt-impact-manifest.json \
+  --graph buildopt-impact-graph.generated.json \
+  --generated-manifest buildopt-impact.generated.json \
+  --changes-file buildopt-changes.txt \
+  --fallback-changes-file buildopt-fallback-changes.txt \
+  --base-revision "$BASE_SHA" \
+  --buildopt-revision "$BUILDOPT_REVISION" \
+  --evidence-output buildopt-structural-evidence.json
+```
+
+The target tracked tree must be clean and the declared changes must equal the
+Git diff. The command uses independent clones, Gradle homes and cache seeds for
+eight alternating pairs, requires stable byte-identical outputs and executes a
+full-graph fallback. Feed the resulting evidence to `buildopt profile
+evaluate`; do not commit or activate an inconclusive result.
+
 For an owner-operated POC, commit `buildopt-qualified-profile.json` and execute
 the reviewed clean profile without wiring an internal selection harness:
 
@@ -254,8 +277,9 @@ buildopt profile discover \
 Run `./dev/check-build-impact-automatic` for the bounded synthetic example and
 `./dev/run --toolchain temurin-jdk-21 -- ./dev/check-build-impact-poc-onboarding`
 for the installed candidate/fallback proof. Read
-[Automatic Build Impact](../../specs/build-impact-automatic-v1.md) and
-[Build Impact POC onboarding](../../specs/build-impact-poc-onboarding-v1.md).
+[Automatic Build Impact](../../specs/build-impact-automatic-v1.md),
+[Build Impact POC onboarding](../../specs/build-impact-poc-onboarding-v1.md),
+and the [generic measurement contract](../../specs/poc-generic-measurement-v1.md).
 
 ## Edge Cache
 

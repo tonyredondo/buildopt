@@ -411,6 +411,12 @@ qualification. It writes a profile only after qualified evidence and otherwise
 retains native full graph; it never invents required outputs or activates the
 profile automatically.
 
+`poc-generic-measurement-v1.json` and `poc-generic-measurement-v1.md` define
+the isolated paired evidence collector between analysis and evaluation. Two
+local clones, two Gradle homes and two independently restored native-cache
+seeds preserve arm isolation while eight alternating pairs, exact outputs and
+full-graph fallback produce either qualified or inconclusive review evidence.
+
 `poc-trace-hypothesis-v1.json` and `poc-trace-hypothesis-v1.md` bind the final
 trace-gated optimization decision. They require at least 500 ms of causally
 recoverable product-owned critical-path work in two families, reject overlapping

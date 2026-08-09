@@ -111,6 +111,26 @@ It emits a measurement candidate only for a complete, known, non-Test graph
 reduction. Additional cache, runtime and task-adapter mechanisms remain disabled
 until direct evidence qualifies them for the exact workload.
 
+The installed measurement surface then collects that evidence without sharing
+state between optimized native Gradle and BuildOpt:
+
+```bash
+buildopt profile measure \
+  --manifest buildopt-impact-manifest.json \
+  --graph buildopt-impact-graph.generated.json \
+  --generated-manifest buildopt-impact.generated.json \
+  --changes-file buildopt-changes.txt \
+  --fallback-changes-file buildopt-fallback-changes.txt \
+  --base-revision "$BASE_REVISION" \
+  --buildopt-revision "$BUILDOPT_REVISION" \
+  --evidence-output buildopt-structural-evidence.json
+```
+
+The command checks the exact Git diff, warms two independent clones and Gradle
+homes at the base revision, alternates eight target-revision pairs, verifies
+byte-identical required outputs and proves full-graph fallback. It writes
+qualified or inconclusive evidence but never activates an optimization.
+
 The combined POC decision surface removes the manual analyze/qualify handoff:
 
 ```bash

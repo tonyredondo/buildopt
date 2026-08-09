@@ -229,6 +229,13 @@ installed replication; Spring and OpenTelemetry therefore remain native by
 default while fresh generalization experiments continue. See the [general
 build-value contract](./specs/poc-general-build-value-v1.md).
 
+`buildopt profile measure` now performs the missing generic experiment step.
+It checks one exact clean Git change, creates independent native and BuildOpt
+clones and Gradle homes, alternates eight pairs, compares repository-declared
+outputs byte for byte and proves full-graph fallback. Its evidence feeds
+`buildopt profile evaluate`; neither command activates a profile automatically.
+The deterministic conformance fixture adds no performance percentage.
+
 Once that exact scope has independently beaten optimized native Gradle,
 `buildopt profile qualify` can turn the digest-bound evidence into a reviewable
 Build-Impact-only profile. The command is repository-independent: it validates

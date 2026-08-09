@@ -88,6 +88,31 @@ when all timing, output and fallback gates qualify. Otherwise it reports
 `NATIVE_FULL_GRAPH` and writes nothing. The command never infers required
 outputs, activates a profile, or grants production authority.
 
+### Measure a structural POC candidate
+
+```text
+buildopt profile measure \
+  --manifest PATH \
+  --graph PATH \
+  --generated-manifest PATH \
+  --changes-file PATH \
+  --fallback-changes-file PATH \
+  --base-revision REVISION \
+  --buildopt-revision REVISION \
+  --evidence-output PATH \
+  [--gradle-option VALUE ...] \
+  [--timeout DURATION]
+```
+
+This command supplies the evidence consumed by `profile evaluate`. It requires
+a clean tracked target revision and an exact base-to-target changes file. The
+optimized-native and installed-BuildOpt arms use independent local clones,
+Gradle homes and native-cache seeds; eight pairs alternate execution order.
+Required outputs must remain byte-identical in every observation and under the
+full-graph fallback. Non-positive evidence remains `INCONCLUSIVE`; invalid
+source state, build failure or output mismatch writes no evidence. See
+[generic isolated structural measurement](../../specs/poc-generic-measurement-v1.md).
+
 ### Run an explicit Build Impact POC candidate
 
 ```text

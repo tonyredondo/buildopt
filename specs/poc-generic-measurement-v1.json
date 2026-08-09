@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "buildopt.poc/generic-structural-measurement/v1",
+  "purpose": "Collect exact paired evidence for one repository-owned structural Build Impact candidate without sharing Gradle or source state between arms.",
+  "command": "buildopt profile measure",
+  "inputs": {
+    "repositoryState": "clean tracked target revision",
+    "baseRevision": "distinct lowercase 40-character ancestor revision",
+    "changesFile": "exact base-to-target Git path set",
+    "fallbackChangesFile": "repository-owned global-change path set",
+    "structuralInputs": [
+      "build-impact manifest",
+      "complete generated graph",
+      "generated-state binding"
+    ],
+    "requiredOutputs": "repository-owned manifest paths",
+    "buildoptRevision": "lowercase 40-character revision",
+    "buildoptExecutableSha256": "SHA-256 computed from the exact installed executable",
+    "gradleOptions": "one identical allowlisted option vector for both arms"
+  },
+  "isolation": {
+    "source": "two independent local Git clones",
+    "gradleUserHome": "one private home per arm",
+    "nativeBuildCache": "one independently warmed and restored seed per arm",
+    "externalBuildoptEnvironment": "removed from both arms",
+    "network": "unchanged by the command; callers may require offline mode"
+  },
+  "measurement": {
+    "warmupRevision": "base revision",
+    "measuredRevision": "target revision",
+    "pairs": 8,
+    "maximumInterArmGapMs": 5000,
+    "orders": [
+      "CONTROL_FIRST",
+      "CANDIDATE_FIRST"
+    ],
+    "control": "optimized native Gradle over original entrypoints",
+    "candidate": "installed BuildOpt Build Impact over the analyzed alternative",
+    "launcherOverheadIncluded": true
+  },
+  "gates": {
+    "requiredOutputEquality": "byte- and path-identical in every arm and pair",
+    "stableOutputsAcrossPairs": true,
+    "additionalProductFailures": 0,
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positivePairs": "8/8",
+    "pairedBootstrap95LowerBound": "> 0",
+    "fullGraphFallback": "successful and output-identical"
+  },
+  "decisions": {
+    "qualified": "write QUALIFIED evidence for review by buildopt profile evaluate",
+    "nonPositive": "write INCONCLUSIVE evidence and retain optimized native Gradle",
+    "invalidOrUnsafe": "write no evidence and fail closed"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "automaticActivation": false,
+    "productionAuthorization": false,
+    "repositorySpecificRules": false,
+    "testOptimization": false,
+    "soak": false,
+    "designPartner": false
+  }
+}

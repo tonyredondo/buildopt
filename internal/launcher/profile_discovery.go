@@ -5,9 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
@@ -20,15 +17,15 @@ const (
 )
 
 type profileEvaluation struct {
-	SchemaVersion        string                               `json:"schemaVersion"`
-	Decision             string                               `json:"decision"`
-	Reason               string                               `json:"reason"`
-	Analysis             profilediscovery.AnalysisReport      `json:"analysis"`
-	Profile              *profilediscovery.StructuralProfile  `json:"profile"`
-	ProfileOutput        string                               `json:"profileOutput,omitempty"`
-	ReviewRequired       bool                                 `json:"reviewRequired"`
-	ActivationAutomatic  bool                                 `json:"activationAutomatic"`
-	ProductionAuthorized bool                                 `json:"productionAuthorized"`
+	SchemaVersion        string                              `json:"schemaVersion"`
+	Decision             string                              `json:"decision"`
+	Reason               string                              `json:"reason"`
+	Analysis             profilediscovery.AnalysisReport     `json:"analysis"`
+	Profile              *profilediscovery.StructuralProfile `json:"profile"`
+	ProfileOutput        string                              `json:"profileOutput,omitempty"`
+	ReviewRequired       bool                                `json:"reviewRequired"`
+	ActivationAutomatic  bool                                `json:"activationAutomatic"`
+	ProductionAuthorized bool                                `json:"productionAuthorized"`
 }
 
 func runProfileDiscovery(args []string, stdout, stderr io.Writer) int {
@@ -40,6 +37,9 @@ func runProfileDiscovery(args []string, stdout, stderr io.Writer) int {
 	}
 	if len(args) > 0 && args[0] == "evaluate" {
 		return runStructuralProfileEvaluation(args[1:], stdout, stderr)
+	}
+	if len(args) > 0 && args[0] == "measure" {
+		return runStructuralProfileMeasurement(args[1:], stdout, stderr)
 	}
 	if (len(args) == 1 && isHelp(args)) ||
 		(len(args) == 2 && args[0] == "discover" && isHelp(args[1:])) {
@@ -164,59 +164,11 @@ func runStructuralProfileEvaluation(args []string, stdout, stderr io.Writer) int
 }
 
 func writeEvaluatedProfile(repositoryRoot, relativePath string, profile profilediscovery.StructuralProfile) error {
-	if relativePath == "" || filepath.IsAbs(relativePath) || filepath.Clean(relativePath) != relativePath || relativePath == "." || relativePath == ".." {
-		return fmt.Errorf("profile output must be clean and repository relative")
-	}
-	path := filepath.Join(repositoryRoot, relativePath)
-	relative, err := filepath.Rel(repositoryRoot, path)
-	if err != nil || relative == ".." || filepath.IsAbs(relative) {
-		return fmt.Errorf("profile output escapes the repository")
-	}
-	parent := filepath.Dir(path)
-	parentRelative, err := filepath.Rel(repositoryRoot, parent)
-	if err != nil || parentRelative == ".." || filepath.IsAbs(parentRelative) {
-		return fmt.Errorf("profile output directory must be an existing repository directory without symlinks")
-	}
-	current := repositoryRoot
-	if parentRelative != "." {
-		for _, segment := range strings.Split(parentRelative, string(filepath.Separator)) {
-			current = filepath.Join(current, segment)
-			info, inspectErr := os.Lstat(current)
-			if inspectErr != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
-				return fmt.Errorf("profile output directory must be an existing repository directory without symlinks")
-			}
-		}
-	}
-	if info, err := os.Lstat(path); err == nil && info.Mode()&os.ModeSymlink != 0 {
-		return fmt.Errorf("profile output must not be a symlink")
-	} else if err != nil && !os.IsNotExist(err) {
-		return fmt.Errorf("inspect profile output: %w", err)
-	}
 	raw, err := profilediscovery.RenderStructuralProfile(profile)
 	if err != nil {
 		return err
 	}
-	temporary, err := os.CreateTemp(parent, ".buildopt-profile-*.tmp")
-	if err != nil {
-		return fmt.Errorf("create profile output: %w", err)
-	}
-	temporaryPath := temporary.Name()
-	defer os.Remove(temporaryPath)
-	if _, err := temporary.Write(raw); err != nil {
-		temporary.Close()
-		return fmt.Errorf("write profile output: %w", err)
-	}
-	if err := temporary.Chmod(0o644); err != nil {
-		temporary.Close()
-		return fmt.Errorf("set profile output mode: %w", err)
-	}
-	if err := temporary.Close(); err != nil {
-		return fmt.Errorf("close profile output: %w", err)
-	}
-	if err := os.Rename(temporaryPath, path); err != nil {
-		return fmt.Errorf("publish profile output: %w", err)
-	}
-	return nil
+	return writeRepositoryDocument(repositoryRoot, relativePath, raw, 0o644)
 }
 
 func runStructuralProfileQualification(args []string, stdout, stderr io.Writer) int {

@@ -234,6 +234,15 @@ those shortcuts would make the result faster to obtain but unsafe to trust.
 Qualified paired evidence produces an atomic reviewable profile; absent or
 weak evidence keeps optimized native Gradle.
 
+The generic installed workflow now also collects that evidence directly with
+`buildopt profile measure`. Control and candidate use distinct local clones,
+Gradle homes and native-cache seeds, while order alternates across eight pairs.
+The command checks the exact Git change set, hashes repository-declared outputs
+and proves full-graph fallback before writing qualified or inconclusive
+evidence. It intentionally adds no number to this document: the conformance
+fixture validates measurement integrity, and only a separately executed real
+repository experiment may make a performance claim.
+
 ### 4. Stop normal-build adapter expansion when the measured tail is exhausted
 
 The retained Spring and OpenTelemetry traces have now been re-evaluated under
