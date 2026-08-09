@@ -3385,6 +3385,14 @@ Run the lock and doctor contract tests from the repository root:
 
 The validator rejects malformed schema versions, duplicate identities or URLs, unknown platforms, non-HTTPS sources, invalid SHA-256 values, unsupported artifact kinds, and missing or malformed tracker references.
 
+The POC generalization checks separate capability from value. Run
+`./dev/check-poc-opportunity-analysis` to prove deterministic structural
+candidate discovery and fail-closed uncertainty across distinct real graph
+fixtures. Run `./dev/check-poc-general-build-value` to bind the three direct
+whole-profile measurements, recalculate their results from SHA-bound evidence
+and confirm that neither mechanism effects nor repository percentages are
+aggregated.
+
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 
 The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.

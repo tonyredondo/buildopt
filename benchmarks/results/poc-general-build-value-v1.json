@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-general-build-value/v1",
+  "workItem": "POC-GENERAL-BUILD-VALUE-001",
+  "capturedAt": "2026-08-09",
+  "measurementPolicy": {
+    "source": "DIRECT_END_TO_END_COMPOSITION_EVIDENCE",
+    "newTimingPerformed": false,
+    "reason": "The product execution paths and experiment inputs are unchanged; exact prior whole-path measurements are digest-bound instead of repeated.",
+    "optimizedNativeGradleControlPerTarget": true,
+    "isolatedEffectsAdded": false,
+    "repositoryPercentagesAveraged": false
+  },
+  "targets": [
+    {
+      "id": "spring-build-impact",
+      "repository": "spring-projects/spring-framework",
+      "revision": "4b5c92703c63966c3471242c621c4a63b382638d",
+      "mechanisms": ["BUILD_IMPACT"],
+      "componentSupport": [
+        {"name": "BUILD_IMPACT", "status": "QUALIFIED_DIRECT_ARM"}
+      ],
+      "sourceEvidence": {
+        "path": "benchmarks/results/poc-full-path-ablation-v1/spring-build-impact.json",
+        "sha256": "b2d40b7e35ed137f0fccf1956779a544b96fca901588b0373544f53e67571c37"
+      },
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 8075.75,
+        "candidateMeanMs": 5583.375,
+        "meanSavedMs": 2492.375,
+        "reductionRatio": 0.30862458595176917,
+        "positivePairs": 8,
+        "interval95SavedMs": [1688.25, 3242.25],
+        "requiredOutputsIdentical": true,
+        "directCompositionQualified": true
+      },
+      "replication": {
+        "status": "POSITIVE_NOT_STRICTLY_REPLICATED",
+        "meanSavedMs": 1895,
+        "reductionRatio": 0.14327432875598944,
+        "positivePairs": 7,
+        "pairs": 8,
+        "reason": "One pair regressed by 57 ms under the frozen all-positive gate."
+      },
+      "selection": "NATIVE_BY_DEFAULT_MEASURE_NEW_SCOPE"
+    },
+    {
+      "id": "opentelemetry-impact-standard-jar",
+      "repository": "open-telemetry/opentelemetry-java-instrumentation",
+      "revision": "080c1d32ca676ba7b0210c21b60cce8e7ac39058",
+      "mechanisms": ["BUILD_IMPACT", "STANDARD_JAR"],
+      "componentSupport": [
+        {"name": "BUILD_IMPACT", "status": "POSITIVE_NOT_INDEPENDENTLY_QUALIFIED"},
+        {"name": "STANDARD_JAR", "status": "QUALIFIED_EXACT_COMPOSED_ARM"}
+      ],
+      "excludedMechanisms": [
+        {
+          "name": "HOT_STATE",
+          "reason": "Direct arm regressed by 892 ms / 7.68%."
+        }
+      ],
+      "sourceEvidence": {
+        "path": "benchmarks/results/poc-otel-clean-composition-v1.json",
+        "sha256": "8449b9ecf105e8a2fcf75f3500cb1af2b8640bd3868523ef1b5fb94ea5e386f0"
+      },
+      "result": {
+        "pairs": 4,
+        "controlMeanMs": 10636.5,
+        "candidateMeanMs": 5275.25,
+        "meanSavedMs": 5361.25,
+        "reductionRatio": 0.5040426832134631,
+        "positivePairs": 4,
+        "interval95SavedMs": [4334.25, 5937],
+        "requiredOutputsIdentical": true,
+        "directCompositionQualified": true
+      },
+      "replication": {
+        "status": "NOT_MEASURED",
+        "positivePairs": 0,
+        "pairs": 0,
+        "reason": "Preparation terminated after preflight and before accepted timing."
+      },
+      "selection": "NATIVE_BY_DEFAULT_REPLICATE_INSTALLED_SCOPE"
+    },
+    {
+      "id": "kafka-impact-read-only-edge",
+      "repository": "apache/kafka",
+      "revision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "mechanisms": ["BUILD_IMPACT", "SHARED_EDGE_CACHE"],
+      "componentSupport": [
+        {"name": "BUILD_IMPACT", "status": "QUALIFIED_DIRECT_ARM"},
+        {"name": "SHARED_EDGE_CACHE", "status": "QUALIFIED_DIRECT_ARM"}
+      ],
+      "sourceEvidence": {
+        "path": "benchmarks/results/poc-kafka-impact-edge-composition-v2.json",
+        "sha256": "c3b33a62f1d300470acfe7454b93759bce3c1df70e676dac2634d66f9a840438"
+      },
+      "result": {
+        "pairs": 4,
+        "controlMeanMs": 42992.75,
+        "candidateMeanMs": 7587.25,
+        "meanSavedMs": 35405.5,
+        "reductionRatio": 0.8235225706659843,
+        "positivePairs": 4,
+        "interval95SavedMs": [30162, 42487.75],
+        "requiredOutputsIdentical": true,
+        "directCompositionQualified": true
+      },
+      "replication": {
+        "status": "STRICTLY_REPLICATED_INSTALLED_PATH",
+        "meanSavedMs": 28523.25,
+        "reductionRatio": 0.818498776839583,
+        "positivePairs": 8,
+        "pairs": 8
+      },
+      "selection": "EXPLICIT_REVIEWED_POC_PROFILE"
+    }
+  ],
+  "portfolio": {
+    "directPositiveTargets": 3,
+    "strictlyReplicatedInstalledTargets": 1,
+    "broadGeneralAcceleratorQualified": false,
+    "decision": "CONTINUE_STRUCTURAL_GENERALIZATION_WITH_NATIVE_DEFAULT",
+    "nextProof": "Measure structurally discovered candidates on additional substantial public repositories and replicate Spring/OpenTelemetry installed value before broadening the claim."
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "automaticActivation": false,
+    "productionReadinessClaimed": false,
+    "universalSavingsClaimed": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

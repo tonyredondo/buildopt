@@ -369,6 +369,14 @@ graph, generated-state, trace/input, safety and reviewed-contract evidence;
 unqualified or uncertain inputs emit a native full-graph decision and never
 activate a profile.
 
+`poc-general-build-value-v1.json` and `poc-general-build-value-v1.md` open the
+next POC generalization question without changing the terminal portfolio
+evidence. They define repository-name-independent structural opportunity
+analysis and bind the direct Spring, OpenTelemetry and Kafka whole-profile
+measurements. Component percentages cannot be added, repository percentages
+cannot be averaged, and only strict installed replication can justify an
+explicit reviewed profile; every other target remains native by default.
+
 `poc-trace-hypothesis-v1.json` and `poc-trace-hypothesis-v1.md` bind the final
 trace-gated optimization decision. They require at least 500 ms of causally
 recoverable product-owned critical-path work in two families, reject overlapping

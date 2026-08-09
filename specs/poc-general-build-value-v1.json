@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "buildopt.specs/poc-general-build-value/v1",
+  "workItem": "POC-GENERAL-BUILD-VALUE-001",
+  "question": "What is the direct whole-build impact of enabling every mechanism supported by exact evidence for each measured target?",
+  "methodology": {
+    "optimizedNativeGradleControlPerTarget": true,
+    "directEndToEndCompositionRequired": true,
+    "isolatedMechanismEffectsMayBeAdded": false,
+    "repositoryPercentagesMayBeAveraged": false,
+    "regressiveMechanismsMayBeHiddenByComposition": false,
+    "unchangedInputsMayBeRemeasuredWithoutNewHypothesis": false,
+    "requiredOutputsMustBeIdentical": true,
+    "nativeFallbackRequired": true
+  },
+  "targets": [
+    {
+      "id": "spring-build-impact",
+      "mechanisms": ["BUILD_IMPACT"],
+      "evidence": "benchmarks/results/poc-full-path-ablation-v1/spring-build-impact.json",
+      "replication": "benchmarks/results/poc-qualified-profile-matrix-v1/spring.json"
+    },
+    {
+      "id": "opentelemetry-impact-standard-jar",
+      "mechanisms": ["BUILD_IMPACT", "STANDARD_JAR"],
+      "excludedRegressiveMechanisms": ["HOT_STATE"],
+      "evidence": "benchmarks/results/poc-otel-clean-composition-v1.json",
+      "replication": "benchmarks/results/poc-qualified-profile-matrix-v1/opentelemetry.json"
+    },
+    {
+      "id": "kafka-impact-read-only-edge",
+      "mechanisms": ["BUILD_IMPACT", "SHARED_EDGE_CACHE"],
+      "evidence": "benchmarks/results/poc-kafka-impact-edge-composition-v2.json",
+      "replication": "benchmarks/results/poc-qualified-profile-matrix-v1/kafka.json"
+    }
+  ],
+  "decisionPolicy": {
+    "directPositiveScope": "Preserve the exact measured composition as POC evidence.",
+    "replicatedInstalledScope": "Eligible for an explicit reviewed POC profile only.",
+    "notReplicated": "Retain optimized native Gradle and use the result only to prioritize a fresh materially different experiment.",
+    "unknownStructureOrEvidence": "NATIVE_FULL_GRAPH"
+  },
+  "boundaries": {
+    "proofOfConceptOnly": true,
+    "productionReadinessClaim": false,
+    "automaticActivation": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationIncluded": false
+  }
+}

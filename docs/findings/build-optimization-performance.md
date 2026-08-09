@@ -471,6 +471,38 @@ artifacts are:
 - [verification overhead attribution](../../benchmarks/results/poc-verification-overhead-attribution-v1.json).
 - [terminal POC portfolio decision](../../benchmarks/results/poc-portfolio-decision-v1.json).
 
+## General opportunity and whole-profile value
+
+The terminal specialization remains valid, but it does not end the search for
+a general product. The next foundation separates two decisions that earlier
+profiles coupled too tightly:
+
+1. `buildopt profile analyze` uses only complete manifest, graph and generated
+   state to identify a smaller reviewed graph. It does not use repository names,
+   predict a percentage or enable a mechanism.
+2. direct whole-profile evidence decides whether the exact composition beats
+   optimized native Gradle for that workload.
+
+The checked composition scorecard binds prior direct measurements rather than
+rerunning unchanged experiments:
+
+| Target | Complete composition | Direct effect | Replication decision |
+| --- | --- | ---: | --- |
+| Spring Framework | Build Impact | **30.86% faster**, 2,492.375 ms, 8/8 positive | Later installed run stayed 14.33% positive but failed the frozen 8/8 rule at 7/8; native default |
+| OpenTelemetry | Build Impact + standard `Jar` | **50.40% faster**, 5,361.25 ms, 4/4 positive | Later installed preparation produced zero accepted observations; native default pending replication |
+| Kafka | Build Impact + read-only Edge | **82.35% faster**, 35,405.5 ms, 4/4 positive | Strict installed replication **81.85%**, 8/8; explicit reviewed POC profile |
+
+The table does not sum component effects or average repositories. Hot State is
+excluded because its direct OpenTelemetry arm regressed by 7.68%. Runtime
+Tuning, Safe Cache and `Copy` remain disabled because the target evidence did
+not qualify them. OpenTelemetry Build Impact was directionally positive but did
+not independently clear its stability gate; value is claimed only for the
+directly measured Impact-plus-Jar composition. This is the central product rule
+going forward: discover
+opportunities generally, compose only mechanisms supported by the exact
+workload evidence, measure the final path directly, and choose native Gradle
+whenever the installed result is not replicated.
+
 Validate the current scorecard with:
 
 ```bash

@@ -20,6 +20,29 @@ small/medium/large Gradle build matrix and makes no performance claim.
 For a stakeholder-oriented interpretation of these results and the recommended
 next experiments, see [Build Optimization performance findings](../docs/findings/build-optimization-performance.md).
 
+### General whole-profile value
+
+[`results/poc-general-build-value-v1.json`](./results/poc-general-build-value-v1.json)
+binds the direct end-to-end result for every exact target composition without
+rerunning unchanged inputs or adding component percentages:
+
+| Target | Complete measured mechanisms | Direct result | Installed replication |
+| --- | --- | ---: | --- |
+| Spring Framework | Build Impact | **30.86% faster** | Positive 14.33%, but 7/8 pairs failed the frozen all-positive gate |
+| OpenTelemetry | Build Impact + standard `Jar` | **50.40% faster** | No accepted replication timing after preparation failure |
+| Kafka | Build Impact + read-only Edge | **82.35% faster** | **81.85% faster**, 8/8 pairs |
+
+Hot State is excluded because it directly regressed on OpenTelemetry. Runtime
+Tuning, Safe Cache, standard `Copy` and Test Optimization are not part of these
+target compositions. The exact scorecard has three positive direct scopes but
+only one strict installed replication, so it supports continued structural
+experiments rather than a general accelerator claim. Validate source digests,
+calculations, outputs and replication status with:
+
+```bash
+./dev/check-poc-general-build-value
+```
+
 The current POC verdict is `CONTINUE`, qualified only for the measured synthetic
 workload classes. Contractual 4-vCPU/16-GiB runs cover the baseline,
 negative-mechanism decision, accelerator-coverage matrix, combined public path,

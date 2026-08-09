@@ -18,7 +18,7 @@ const (
 	exitCannotExecute = 126
 	exitNotFound      = 127
 	exitConfiguration = 78
-	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt poc --changes-file PATH [options]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt profile discover [options]\n       buildopt doctor\n"
+	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt poc --changes-file PATH [options]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt profile analyze [options]\n       buildopt profile discover [options]\n       buildopt doctor\n"
 	bypassEnvironment = "BUILDOPT_BYPASS"
 )
 
@@ -26,7 +26,8 @@ const (
 // exposes the authenticated local rendezvous through either its walking-
 // skeleton or managed runner-slot lifecycle, delivers the WS-005 session
 // ingest when configured, installs the signed A0-007 Gradle bootstrap cache,
-// honors the F0-039 local bypass, and returns the child process exit status.
+// honors the F0-039 local bypass, exposes read-only structural opportunity
+// analysis, and returns the child process exit status.
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode int) {
 	var impactTiming *impactTimingState
 	execute := func(

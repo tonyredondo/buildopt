@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
+result=${1:-benchmarks/results/poc-general-build-value-v1.json}
+
+cd "${buildopt_root}"
+
+[[ -f "${result}" ]]
+jq -e '
+    .schemaVersion == "buildopt.evidence/poc-general-build-value/v1" and
+    .workItem == "POC-GENERAL-BUILD-VALUE-001" and
+    .measurementPolicy.source == "DIRECT_END_TO_END_COMPOSITION_EVIDENCE" and
+    .measurementPolicy.newTimingPerformed == false and
+    .measurementPolicy.optimizedNativeGradleControlPerTarget == true and
+    .measurementPolicy.isolatedEffectsAdded == false and
+    .measurementPolicy.repositoryPercentagesAveraged == false and
+    (.targets | length) == 3 and
+    ([.targets[].id] == [
+      "spring-build-impact",
+      "opentelemetry-impact-standard-jar",
+      "kafka-impact-read-only-edge"
+    ]) and
+    ([.targets[].result.directCompositionQualified] | all) and
+    ([.targets[].result.requiredOutputsIdentical] | all) and
+    .portfolio.directPositiveTargets == 3 and
+    .portfolio.strictlyReplicatedInstalledTargets == 1 and
+    .portfolio.broadGeneralAcceleratorQualified == false and
+    .portfolio.decision == "CONTINUE_STRUCTURAL_GENERALIZATION_WITH_NATIVE_DEFAULT" and
+    .boundaries.proofOfConcept == true and
+    .boundaries.automaticActivation == false and
+    .boundaries.productionReadinessClaimed == false and
+    .boundaries.universalSavingsClaimed == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false and
+    .boundaries.testOptimizationModified == false
+' "${result}" >/dev/null
+
+while IFS=$'\t' read -r source expected; do
+    actual=$(sha256sum "${source}" | awk '{print $1}')
+    [[ "${actual}" == "${expected}" ]] || {
+        printf 'source evidence drift: %s\n' "${source}" >&2
+        exit 1
+    }
+done < <(jq -r '.targets[] | [.sourceEvidence.path, .sourceEvidence.sha256] | @tsv' "${result}")
+
+jq -e --slurpfile source benchmarks/results/poc-full-path-ablation-v1/spring-build-impact.json '
+    .targets[0].repository == $source[0].repository.nameWithOwner and
+    .targets[0].revision == $source[0].repository.revision and
+    .targets[0].result.pairs == $source[0].result.pairs and
+    .targets[0].result.controlMeanMs == $source[0].result.controlMeanMs and
+    .targets[0].result.candidateMeanMs == $source[0].result.candidateMeanMs and
+    .targets[0].result.meanSavedMs == $source[0].result.meanSavedMs and
+    .targets[0].result.reductionRatio == $source[0].result.reductionRatio and
+    .targets[0].result.positivePairs == $source[0].result.positivePairs and
+    .targets[0].result.interval95SavedMs == $source[0].result.interval95SavedMs and
+    ($source[0].observations | length) == $source[0].result.pairs and
+    ([$source[0].observations[].requiredOutputSha256] | unique | length) == 1 and
+    ([$source[0].observations[].requiredOutputCount] | min) > 0 and
+    ([$source[0].observations[].productAttributableFailure] | any) == false
+' "${result}" >/dev/null
+
+jq -e --slurpfile source benchmarks/results/poc-otel-clean-composition-v1.json '
+    .targets[1].repository == $source[0].repository.nameWithOwner and
+    .targets[1].revision == $source[0].repository.revision and
+    .targets[1].result.pairs == $source[0].result.pairs and
+    .targets[1].result.controlMeanMs == $source[0].result.controlMeanMs and
+    .targets[1].result.candidateMeanMs == $source[0].result.candidateMeanMs and
+    .targets[1].result.meanSavedMs == $source[0].result.meanSavedMs and
+    .targets[1].result.reductionRatio == $source[0].result.reductionRatio and
+    .targets[1].result.positivePairs == $source[0].result.positivePairs and
+    .targets[1].result.interval95SavedMs == $source[0].result.interval95SavedMs and
+    ($source[0].observations | length) == $source[0].result.pairs and
+    ([$source[0].observations[].requiredOutputSha256] | unique | length) == 1 and
+    ([$source[0].observations[].requiredOutputCount] | min) > 0 and
+    ([$source[0].observations[].candidateHotStateEnabled] | any) == false and
+    ([$source[0].observations[].candidateStandardJarCacheHit] | all) and
+    ([$source[0].observations[].productAttributableFailure] | any) == false and
+    $source[0].fallback.buildSuccessful == true
+' "${result}" >/dev/null
+
+jq -e --slurpfile source benchmarks/results/poc-kafka-impact-edge-composition-v2.json '
+    .targets[2].repository == $source[0].repository.nameWithOwner and
+    .targets[2].revision == $source[0].repository.revision and
+    .targets[2].result.pairs == $source[0].result.pairs and
+    .targets[2].result.controlMeanMs == $source[0].result.controlMeanMs and
+    .targets[2].result.candidateMeanMs == $source[0].result.candidateMeanMs and
+    .targets[2].result.meanSavedMs == $source[0].result.meanSavedMs and
+    .targets[2].result.reductionRatio == $source[0].result.reductionRatio and
+    .targets[2].result.positivePairs == $source[0].result.positivePairs and
+    .targets[2].result.interval95SavedMs == $source[0].result.interval95SavedMs and
+    $source[0].measurementAssertions.sameCachedOutputInEveryMeasuredArm == true and
+    $source[0].measurementAssertions.productAttributableFailures == 0 and
+    $source[0].safety.impactFallbackPassed == true and
+    $source[0].safety.edgeFailureFallbackPassed == true and
+    $source[0].safety.edgeFailureOutputExact == true
+' "${result}" >/dev/null
+
+jq -e --slurpfile matrix benchmarks/results/poc-qualified-profile-matrix-v1/summary.json '
+    .targets[0].replication.pairs == $matrix[0].cells[0].pairs and
+    .targets[0].replication.positivePairs == $matrix[0].cells[0].positivePairs and
+    .targets[0].replication.meanSavedMs == $matrix[0].cells[0].meanSavedMs and
+    .targets[1].replication.pairs == $matrix[0].cells[1].pairs and
+    .targets[1].replication.positivePairs == $matrix[0].cells[1].positivePairs and
+    .targets[2].replication.pairs == $matrix[0].cells[2].pairs and
+    .targets[2].replication.positivePairs == $matrix[0].cells[2].positivePairs and
+    .targets[2].replication.meanSavedMs == $matrix[0].cells[2].meanSavedMs
+' "${result}" >/dev/null
+
+jq -e '
+    .targets[0].result.meanSavedMs == (.targets[0].result.controlMeanMs - .targets[0].result.candidateMeanMs) and
+    .targets[1].result.meanSavedMs == (.targets[1].result.controlMeanMs - .targets[1].result.candidateMeanMs) and
+    .targets[2].result.meanSavedMs == (.targets[2].result.controlMeanMs - .targets[2].result.candidateMeanMs) and
+    .targets[0].mechanisms == ["BUILD_IMPACT"] and
+    .targets[0].componentSupport == [{"name":"BUILD_IMPACT","status":"QUALIFIED_DIRECT_ARM"}] and
+    .targets[1].mechanisms == ["BUILD_IMPACT", "STANDARD_JAR"] and
+    .targets[1].componentSupport == [
+      {"name":"BUILD_IMPACT","status":"POSITIVE_NOT_INDEPENDENTLY_QUALIFIED"},
+      {"name":"STANDARD_JAR","status":"QUALIFIED_EXACT_COMPOSED_ARM"}
+    ] and
+    .targets[1].excludedMechanisms == [{"name":"HOT_STATE","reason":"Direct arm regressed by 892 ms / 7.68%."}] and
+    .targets[2].mechanisms == ["BUILD_IMPACT", "SHARED_EDGE_CACHE"] and
+    .targets[2].componentSupport == [
+      {"name":"BUILD_IMPACT","status":"QUALIFIED_DIRECT_ARM"},
+      {"name":"SHARED_EDGE_CACHE","status":"QUALIFIED_DIRECT_ARM"}
+    ]
+' "${result}" >/dev/null
+
+printf 'General build value OK: Spring 30.86%%, OpenTelemetry 50.40%%, Kafka 82.35%% direct compositions; 1/3 strict installed replications; no cross-target aggregation\n'

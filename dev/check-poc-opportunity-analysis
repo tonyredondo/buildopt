@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-opportunity-analysis.XXXXXX")
+cleanup() {
+    rm -f "${buildopt_temporary}/buildopt" \
+        "${buildopt_temporary}/kafka-first.json" \
+        "${buildopt_temporary}/kafka-second.json" \
+        "${buildopt_temporary}/otel.json" \
+        "${buildopt_temporary}/help.txt" \
+        "${buildopt_temporary}/stderr.txt"
+    rmdir "${buildopt_temporary}"
+}
+trap cleanup EXIT
+
+cd "${buildopt_root}"
+./dev/run --toolchain go -- go build -trimpath -o "${buildopt_temporary}/buildopt" ./cmd/buildopt
+
+analyze() {
+    local fixture=$1
+    local output=$2
+    "${buildopt_temporary}/buildopt" profile analyze \
+        --manifest "${fixture}/buildopt-impact-manifest.json" \
+        --graph "${fixture}/buildopt-impact-graph.generated.json" \
+        --generated-manifest "${fixture}/buildopt-impact.generated.json" \
+        >"${output}"
+}
+
+analyze fixtures/poc-kafka-packaging "${buildopt_temporary}/kafka-first.json"
+analyze fixtures/poc-kafka-packaging "${buildopt_temporary}/kafka-second.json"
+cmp -s "${buildopt_temporary}/kafka-first.json" "${buildopt_temporary}/kafka-second.json"
+
+jq -e '
+    .schemaVersion == "buildopt.poc/opportunity-analysis/v1" and
+    .decision == "MEASURE_STRUCTURAL_CANDIDATE" and
+    .reason == "COMPLETE_STRUCTURAL_REDUCTION" and
+    .plan.alternativeId == "kafka-clients-jar" and
+    .plan.totalProjectCount == 64 and
+    .plan.selectedProjectCount == 3 and
+    .plan.omittedProjectCount == 61 and
+    .plan.omittedProjectRatio > 0.95 and
+    .measurementRequired == true and
+    .reviewRequired == true and
+    .activationAutomatic == false and
+    .productionAuthorized == false and
+    ([.mechanisms[] | select(.status == "MEASURE_CANDIDATE") | .name] == ["BUILD_IMPACT"]) and
+    ([.mechanisms[] | select(.name != "BUILD_IMPACT") | .status] | all(. == "NOT_AUTHORIZED"))
+' "${buildopt_temporary}/kafka-first.json" >/dev/null
+
+analyze fixtures/poc-qualified-profile-adoption/opentelemetry "${buildopt_temporary}/otel.json"
+jq -e '
+    .decision == "MEASURE_STRUCTURAL_CANDIDATE" and
+    .subject.repositoryId == "open-telemetry/opentelemetry-java-instrumentation" and
+    .plan.omittedProjectCount > 0 and
+    .plan.omittedProjectRatio > 0 and
+    ([.mechanisms[] | select(.status == "MEASURE_CANDIDATE") | .name] == ["BUILD_IMPACT"])
+' "${buildopt_temporary}/otel.json" >/dev/null
+
+"${buildopt_temporary}/buildopt" profile analyze --help >"${buildopt_temporary}/help.txt"
+grep -Fx 'usage: buildopt profile analyze --manifest PATH --graph PATH --generated-manifest PATH' \
+    "${buildopt_temporary}/help.txt" >/dev/null
+
+set +e
+"${buildopt_temporary}/buildopt" profile analyze --manifest missing \
+    > /dev/null 2>"${buildopt_temporary}/stderr.txt"
+status=$?
+set -e
+[[ ${status} -eq 64 ]]
+grep -Fx 'usage: buildopt profile analyze --manifest PATH --graph PATH --generated-manifest PATH' \
+    "${buildopt_temporary}/stderr.txt" >/dev/null
+
+./dev/run --toolchain go -- go test -count=1 ./internal/profilediscovery
+
+printf 'POC opportunity analysis OK: structural candidates across OpenTelemetry and Kafka, deterministic output, fail-closed uncertainty, no automatic activation\n'

@@ -198,6 +198,18 @@ general accelerator claim is withdrawn, and deterministic discovery stays
 read-only and review-required. This is terminal POC evidence, not a production
 or universal-value claim.
 
+A new generalization foundation now separates structural opportunity from
+activation. `buildopt profile analyze` detects a complete smaller graph without
+matching repository names and emits a measurement proposal, never a predicted
+speedup. The checked whole-profile scorecard then evaluates every mechanism
+supported by exact evidence for each target: Spring Build Impact was **30.86%**
+faster, clean OpenTelemetry Impact + standard `Jar` was **50.40%** faster, and
+Kafka Impact + read-only Edge was **82.35%** faster. These are direct independent
+compositions, not added percentages. Only Kafka also passed the later strict
+installed replication; Spring and OpenTelemetry therefore remain native by
+default while fresh generalization experiments continue. See the [general
+build-value contract](./specs/poc-general-build-value-v1.md).
+
 ## Choose what to do next
 
 | Goal | Start here |

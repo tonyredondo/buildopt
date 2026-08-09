@@ -115,7 +115,10 @@ terminal matrix evidence to complete Build Impact state, trace/input digests,
 the exact output and reviewed profile contract, then emits either a reviewable
 profile or an explicit native full-graph decision. It never writes repository
 state, activates a profile, recognizes repository names, or grants production
-authority.
+authority. The same package also owns the earlier opportunity-analysis stage:
+it can identify and quantify a smaller complete graph across repositories, but
+it emits only a measurement proposal and never infers wall-clock value or
+enables an additional mechanism from structure alone.
 
 No type in this directory replaces the normative schemas, OpenAPI, or Protobuf definitions in `contracts/`.
 

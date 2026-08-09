@@ -345,8 +345,28 @@ decision is `NO_ACTIONABLE_HYPOTHESIS`; no new implementation or timing was
 authorized. The checked portfolio synthesis retains only the bounded Kafka
 specialization, keeps Spring and OpenTelemetry native, and withdraws the
 broader accelerator claim. Rejected mechanisms and Test Optimization stay out.
-The current POC evidence plan is complete; further work requires a new,
-materially different question and preregistration.
+
+The new generalization foundation asks that materially different question.
+The installed `buildopt profile analyze` command can now identify a complete
+smaller graph from digest-bound repository state without matching a repository
+name, but it emits only a measurement proposal. A checked whole-profile
+scorecard then records the direct result of enabling every mechanism supported
+by exact evidence for each target:
+
+| Target | Measured composition | Direct result | Default after replication |
+| --- | --- | ---: | --- |
+| Spring Framework | Build Impact | **30.86% faster** | Native; later strict matrix was 7/8 positive |
+| OpenTelemetry | Build Impact + standard `Jar` | **50.40% faster** | Native; later matrix had no accepted timing |
+| Kafka | Build Impact + read-only Edge | **82.35% faster** | Explicit reviewed POC profile; later **81.85%**, 8/8 |
+
+These are whole-path comparisons against each target's optimized native Gradle
+control. The percentages are neither added nor averaged. Hot State is omitted
+because it regressed by 7.68% on OpenTelemetry; Runtime Tuning, Safe Cache and
+`Copy` remain disabled for these targets. OpenTelemetry Build Impact did not
+qualify independently, so only the complete Impact-plus-Jar result receives a
+value claim. The POC now has a general analysis
+stage, but broad value still requires fresh installed replication on additional
+substantial repository families.
 
 ## Boundaries and References
 
@@ -375,6 +395,8 @@ production operations are outside the current scope.
 - [Deterministic profile-discovery evidence](../../benchmarks/results/poc-profile-discovery-v1.json)
 - [Trace-gated hypothesis decision](../../benchmarks/results/poc-trace-hypothesis-v1.json)
 - [Terminal POC portfolio decision](../../benchmarks/results/poc-portfolio-decision-v1.json)
+- [General whole-profile value scorecard](../../benchmarks/results/poc-general-build-value-v1.json)
+- [General opportunity and composition contract](../../specs/poc-general-build-value-v1.md)
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)
 - [Kafka shadow JAR reproducibility evidence](../../benchmarks/results/poc-kafka-shadowjar-reproducibility-v1.json)
 - [Installed Kafka profile value evidence](../../benchmarks/results/poc-kafka-installed-profile-value-v1.json)

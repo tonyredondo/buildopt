@@ -97,6 +97,20 @@ It emits deterministic review JSON and embeds a profile only when all checked
 qualification, graph, trace/input, output and fallback bindings still pass. It
 never writes or activates the profile; uncertainty emits native full graph.
 
+Before a workload is qualified, the general read-only analysis surface finds a
+smaller reviewed graph without guessing a speedup:
+
+```bash
+buildopt profile analyze \
+  --manifest buildopt-impact-manifest.json \
+  --graph buildopt-impact-graph.generated.json \
+  --generated-manifest buildopt-impact.generated.json
+```
+
+It emits a measurement candidate only for a complete, known, non-Test graph
+reduction. Additional cache, runtime and task-adapter mechanisms remain disabled
+until direct evidence qualifies them for the exact workload.
+
 The suite covers empty, quoted, whitespace, wildcard, Unicode, newline, and literal `--` arguments; inherited cwd, environment, and standard streams; success and non-zero child statuses; usage; launch failures; process-group isolation; signal forwarding through a child process tree; and the local bypass described below.
 
 ## Process and signal handling
