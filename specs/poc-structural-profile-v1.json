@@ -12,7 +12,7 @@
   },
   "qualification": {
     "evidenceSchemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
-    "candidateSurface": "INSTALLED_BUILDOPT_QUALIFIED_PROFILE",
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
     "pairs": 8,
     "pairOrder": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
     "minimumMeanSavedMs": 500,
@@ -28,6 +28,7 @@
     "BUILD_IMPACT_MANIFEST_SHA256",
     "BUILD_IMPACT_GRAPH_SHA256",
     "GENERATED_MANIFEST_SHA256",
+    "SOURCE_EVIDENCE_SHA256",
     "QUALIFICATION_EVIDENCE_SHA256",
     "REPOSITORY_REVISION"
   ],

@@ -16,6 +16,11 @@ savings, a positive deterministic 95% paired lower bound, eight positive pairs,
 identical stable outputs, zero product-attributable failures and a successful
 native-full-graph fallback.
 
+The qualifying comparison uses the installed structural `buildopt impact`
+surface. Requiring the profile itself here would be circular. A separate fresh
+replay must then prove that the emitted profile preserves the same selection,
+outputs, fallback and value through `buildopt poc`.
+
 ## Commands
 
 Analyze a checked repository graph without granting authority:

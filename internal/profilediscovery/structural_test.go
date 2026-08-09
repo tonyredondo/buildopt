@@ -188,11 +188,11 @@ func qualifiedStructuralTestEvidence(t *testing.T, repository string) structural
 		},
 		SourceBindings: structuralSourceBindings{
 			ManifestSHA256: inputs["BUILD_IMPACT_MANIFEST"], GraphSHA256: inputs["BUILD_IMPACT_GRAPH"],
-			GeneratedSHA256: inputs["GENERATED_MANIFEST"],
+			GeneratedSHA256: inputs["GENERATED_MANIFEST"], SourceEvidenceSHA256: strings.Repeat("c", 64),
 		},
 		Plan: *analysis.Plan,
 		Execution: structuralExecution{
-			CandidateSurface:         "INSTALLED_BUILDOPT_QUALIFIED_PROFILE",
+			CandidateSurface:         "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
 			Mechanisms:               []string{"BUILD_IMPACT"},
 			GradleOptions:            []string{"--daemon", "--offline", "--build-cache", "--parallel", "--no-configuration-cache", "--console=plain", "--max-workers=4", "--no-scan"},
 			LauncherOverheadIncluded: true,

@@ -83,9 +83,10 @@ type structuralSubject struct {
 }
 
 type structuralSourceBindings struct {
-	ManifestSHA256  string `json:"manifestSha256"`
-	GraphSHA256     string `json:"graphSha256"`
-	GeneratedSHA256 string `json:"generatedManifestSha256"`
+	ManifestSHA256       string `json:"manifestSha256"`
+	GraphSHA256          string `json:"graphSha256"`
+	GeneratedSHA256      string `json:"generatedManifestSha256"`
+	SourceEvidenceSHA256 string `json:"sourceEvidenceSha256"`
 }
 
 type structuralExecution struct {
@@ -229,7 +230,7 @@ func validateStructuralEvidence(evidence structuralEvidence, analysis AnalysisRe
 	if !sameAnalysisPlan(evidence.Plan, *analysis.Plan) {
 		return errors.New("structural qualification plan drift")
 	}
-	if evidence.Execution.CandidateSurface != "INSTALLED_BUILDOPT_QUALIFIED_PROFILE" ||
+	if evidence.Execution.CandidateSurface != "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY" ||
 		!evidence.Execution.LauncherOverheadIncluded ||
 		len(evidence.Execution.Mechanisms) != 1 || evidence.Execution.Mechanisms[0] != "BUILD_IMPACT" ||
 		!validStructuralGradleOptions(evidence.Execution.GradleOptions) {
@@ -254,6 +255,7 @@ func validateStructuralEvidence(evidence structuralEvidence, analysis AnalysisRe
 		evidence.SourceBindings.ManifestSHA256,
 		evidence.SourceBindings.GraphSHA256,
 		evidence.SourceBindings.GeneratedSHA256,
+		evidence.SourceBindings.SourceEvidenceSHA256,
 	} {
 		if !validSHA(digest) || digest != strings.ToLower(digest) {
 			return errors.New("structural qualification source digest is invalid")
