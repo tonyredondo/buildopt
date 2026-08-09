@@ -235,12 +235,33 @@ jq -e --slurpfile spec "${buildopt_spec}" '
         .containsTestTasks == false and .unknownRelationships == false)
 ' "${buildopt_graph}" >/dev/null
 buildopt_graph_sha=$(sha256sum "${buildopt_graph}" | awk '{print $1}')
+buildopt_generated_manifest="${buildopt_checkout}/buildopt-impact.generated.json"
+buildopt_generated_manifest_sha=$(sha256sum "${buildopt_generated_manifest}" | awk '{print $1}')
+buildopt_graph_digest=$(jq -er '.graphDigest' "${buildopt_generated_manifest}")
+buildopt_owner_glob="${buildopt_change_path%%/src/*}/**"
+buildopt_ownership_summary=$(jq -c --arg ownerGlob "${buildopt_owner_glob}" '
+    (.entrypoints[] | select(.name == ":micronaut-http-client-jdk:assemble") |
+        .reachesProjects) as $candidate |
+    [.projects[] |
+        select((((.ownedSourcePaths // .sourcePaths) | index($ownerGlob)) != null)) |
+        .path] as $owners |
+    {
+        ownerGlob: $ownerGlob,
+        directOwners: $owners,
+        directOwnerCount: ($owners | length),
+        directOwnersOutsideCandidate: [
+            $owners[] as $owner | select(($candidate | index($owner)) == null) | $owner
+        ]
+    }
+' "${buildopt_graph}")
+printf 'Micronaut observed graph: sha256=%s digest=%s generatedManifestSha256=%s ownership=%s\n' \
+    "${buildopt_graph_sha}" "${buildopt_graph_digest}" \
+    "${buildopt_generated_manifest_sha}" "${buildopt_ownership_summary}" >&2
 [[ "${buildopt_graph_sha}" == "$(jq -er '.discovery.expectedGraphSha256' "${buildopt_spec}")" ]] || {
     printf 'Micronaut discovered graph drifted after preregistration\n' >&2
     exit 1
 }
-buildopt_generated_manifest="${buildopt_checkout}/buildopt-impact.generated.json"
-[[ "$(sha256sum "${buildopt_generated_manifest}" | awk '{print $1}')" == \
+[[ "${buildopt_generated_manifest_sha}" == \
     "$(jq -er '.discovery.expectedGeneratedManifestSha256' "${buildopt_spec}")" ]] || {
     printf 'Micronaut generated manifest drifted after preregistration\n' >&2
     exit 1
