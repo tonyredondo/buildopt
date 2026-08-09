@@ -52,6 +52,37 @@ func TestGenerateImpactCanonicalizesConservativeSnapshot(t *testing.T) {
 	}
 }
 
+func TestGenerateImpactAcceptsRootProjectDependency(t *testing.T) {
+	manifest := automaticDiscoveryManifest(t)
+	raw := []byte(`{
+  "schemaVersion":"buildopt.build-impact/gradle-discovery/v1",
+  "gradleVersion":"8.14.4",
+  "complete":true,
+  "fallbackReasons":[],
+  "projects":[
+    {"path":":","sourcePaths":["src/**"],"dependsOn":[],"unknownRelationships":false},
+    {"path":":service-a","sourcePaths":["service-a/**"],"dependsOn":[":"],"unknownRelationships":false},
+    {"path":":service-b","sourcePaths":["service-b/**"],"dependsOn":[],"unknownRelationships":false}
+  ],
+  "entrypoints":[
+    {"name":"assemble","reachesProjects":[":",":service-a",":service-b"],"containsTestTasks":false,"unknownRelationships":false},
+    {"name":":service-a:assemble","reachesProjects":[":",":service-a"],"containsTestTasks":false,"unknownRelationships":false}
+  ]
+}`)
+	generated, err := GenerateImpact(manifest, raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	projects := generated.Graph.Graph.Projects
+	if len(projects) != 3 || projects[0].Path != ":" || !reflect.DeepEqual(projects[1].DependsOn, []string{":"}) {
+		t.Fatalf("generated root dependency graph = %+v", projects)
+	}
+	decision := EvaluateImpact(manifest, generated.Graph.Graph, []string{"src/main/java/example/Core.java"})
+	if decision.Mode != DecisionShadowAlternative || !reflect.DeepEqual(decision.AffectedProjects, []string{":", ":service-a"}) {
+		t.Fatalf("root dependency impact decision = %+v", decision)
+	}
+}
+
 func TestGenerateImpactRejectsAmbiguousCompleteness(t *testing.T) {
 	manifest := automaticDiscoveryManifest(t)
 	raw := []byte(`{
@@ -216,6 +247,7 @@ func TestDiscoveryAcceptsTypedBuildOwnedProducersAndRejectsArbitraryTasks(t *tes
 	write("build.gradle.kts", `plugins { java; checkstyle }
 sourceSets.create("javaSpring3")
 tasks.register<Jar>("sourceBundle")
+tasks.register("aggregateProducer") { dependsOn("sourceBundle") }
 tasks.register("arbitraryProducer")
 `)
 	write("src/javaSpring3/java/example/Spring3.java", "package example; public final class Spring3 {}\n")
@@ -263,9 +295,71 @@ tasks.register("arbitraryProducer")
 	if !archive.Generated.Complete || len(archive.Generated.FallbackReasons) != 0 {
 		t.Fatalf("typed archive producer was not accepted: %+v", archive.Generated)
 	}
+	aggregate := discover(":aggregateProducer")
+	if !aggregate.Generated.Complete || len(aggregate.Generated.FallbackReasons) != 0 {
+		t.Fatalf("no-action aggregate producer was not accepted: %+v", aggregate.Generated)
+	}
 	arbitrary := discover(":arbitraryProducer")
 	if arbitrary.Generated.Complete || !reflect.DeepEqual(arbitrary.Generated.FallbackReasons, []string{"UNSUPPORTED_OR_TEST_ENTRYPOINT"}) {
 		t.Fatalf("arbitrary producer did not fail closed: %+v", arbitrary.Generated)
+	}
+}
+
+func TestDiscoveryIncludesRootWhenSubprojectDependsOnIt(t *testing.T) {
+	if os.Getenv("BUILDOPT_RUN_BUILD_IMPACT_DISCOVERY_PROOF") != "1" {
+		t.Skip("real Gradle discovery proof is run by check-build-impact-automatic")
+	}
+	repositoryRoot := buildImpactRepositoryRoot(t)
+	workspace := t.TempDir()
+	write := func(name, contents string) {
+		t.Helper()
+		path := filepath.Join(workspace, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(contents), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	write("settings.gradle.kts", "rootProject.name = \"root-producer\"\ninclude(\"consumer\")\n")
+	write("build.gradle.kts", "plugins { java }\n")
+	write("consumer/build.gradle.kts", "plugins { java }\ndependencies { implementation(project(\":\")) }\n")
+	write("src/main/java/example/Core.java", "package example; public final class Core {}\n")
+	write("consumer/src/main/java/example/Consumer.java", "package example; public final class Consumer {}\n")
+	write("buildopt-impact-manifest.json", `{
+  "schemaVersion":"buildopt.build-impact/manifest/v1",
+  "manifestVersion":1,
+  "repositoryId":"tonyredondo/buildopt-root-producer",
+  "pipelineClass":"pull-request",
+  "ownership":"REPOSITORY_COMMITTED",
+  "originalEntrypoints":["assemble"],
+  "allowedAlternatives":[{"id":"consumer","entrypoints":[":consumer:assemble"]}],
+  "requiredArtifacts":[{"id":"consumer-jar","path":"consumer/build/libs/*.jar","owner":"BUILD_OPTIMIZATION"}],
+  "requiredChecks":[],
+  "globalChangePaths":["gradle/**"],
+  "unknownChangePolicy":"FULL_GRAPH"
+}`)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	generated, err := Discover(ctx, DiscoveryOptions{
+		RepositoryRoot: workspace,
+		ManifestPath:   "buildopt-impact-manifest.json",
+		RepositoryID:   "tonyredondo/buildopt-root-producer",
+		PipelineClass:  "pull-request",
+		GradleCommand:  filepath.Join(repositoryRoot, "gradlew"),
+		GradleArgs:     []string{"--offline"},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	projects := generated.Graph.Graph.Projects
+	if len(projects) != 2 || projects[0].Path != ":" || projects[1].Path != ":consumer" || !reflect.DeepEqual(projects[1].DependsOn, []string{":"}) {
+		t.Fatalf("discovered root producer graph = %+v", projects)
+	}
+	for _, entrypoint := range generated.Graph.Graph.Entrypoints {
+		if entrypoint.Name == ":consumer:assemble" && !reflect.DeepEqual(entrypoint.ReachesProjects, []string{":", ":consumer"}) {
+			t.Fatalf("consumer reach = %+v", entrypoint)
+		}
 	}
 }
 

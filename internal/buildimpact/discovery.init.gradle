@@ -60,8 +60,15 @@ gradle.projectsEvaluated {
             }
         }
     }
+    // Multiproject builds often use the root only as an aggregator, but some
+    // repositories also publish production code from it and depend on
+    // project(':') from subprojects. Keep the root in the model only when it
+    // is the sole project or a declared dependency target.
+    def rootIsDependencyTarget = projectDependenciesByPath.values().any {
+        it.contains(root.path)
+    }
     def discoveredProjects = root.allprojects.findAll {
-        it != root || root.subprojects.isEmpty()
+        it != root || root.subprojects.isEmpty() || rootIsDependencyTarget
     }.sort { left, right -> left.path <=> right.path }.collect { project ->
         def dependencyPaths = projectDependenciesByPath.get(project.path)
         if (dependencyPaths == null) {
@@ -143,14 +150,16 @@ gradle.projectsEvaluated {
             def containsTests = reachedTasks.any { it instanceof Test }
             // Source-set and producer names are repository-defined. Recognize
             // build-owned work through Gradle's public task contracts while
-            // arbitrary custom entrypoints remain fail-closed. Verification
-            // tasks stay distinct from Test, which is rejected above even if
-            // a plugin also exposes it through a broader task interface.
+            // no-action lifecycle tasks may safely aggregate those producers.
+            // Arbitrary executable entrypoints remain fail-closed. Verification
+            // tasks stay distinct from Test, which is rejected above even if a
+            // plugin also exposes it through a broader task interface.
             def unknownRelationships = tasks.any {
                 !conventionalBuildTasks.contains(it.name) &&
                     !(it instanceof AbstractCompile) &&
                     !(it instanceof VerificationTask) &&
-                    !(it instanceof AbstractArchiveTask)
+                    !(it instanceof AbstractArchiveTask) &&
+                    !(it.actions.isEmpty() && !graph.getDependencies(it).isEmpty())
             } || containsTests || reachedTasks.any { !graph.hasTask(it) }
             [
                 name: requestedName,
