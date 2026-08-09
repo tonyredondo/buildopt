@@ -16,7 +16,8 @@ if [[ "${1:-}" == --contract ]]; then
     jq -e '
         .schemaVersion == "buildopt.specs/poc-structural-transfer/v1" and
         .workItem == "POC-STRUCTURAL-TRANSFER-001" and
-        .protocolRevision == 2 and
+        .protocolRevision == 3 and
+        .preregistration.implementationRevision == "0f82b42acd58880de87f67ffaacd64498cfd943a" and
         .repository.nameWithOwner == "micronaut-projects/micronaut-core" and
         (.repository.revision | test("^[0-9a-f]{40}$")) and
         (.repository.sourceArchiveSha256 | test("^[0-9a-f]{64}$")) and
@@ -29,6 +30,8 @@ if [[ "${1:-}" == --contract ]]; then
         .candidate.expectedReachedProjectCount == 22 and
         .discovery.complete == true and .discovery.containsTestTasks == false and
         .discovery.unknownRelationships == false and
+        .discovery.expectedDirectOwners == [":micronaut-http-client-jdk"] and
+        .discovery.expectedDirectOwnersOutsideCandidate == [] and
         .measurement.pairs == 8 and .measurement.warmupsPerArm == 1 and
         .measurement.launcherOverheadIncluded == true and
         .measurement.runtimeTuningEnabled == false and
@@ -77,9 +80,13 @@ if [[ "$(jq -er '.result.decision' "${buildopt_result}")" == \
     buildopt_historical_runner_sha=$(git -C "${buildopt_repo_root}" show \
         "${buildopt_execution_revision}:dev/run-poc-structural-transfer-v1" | \
         sha256sum | awk '{print $1}')
-    jq -e --arg specSha "${buildopt_spec_sha}" \
+    buildopt_historical_spec_sha=$(git -C "${buildopt_repo_root}" show \
+        "${buildopt_execution_revision}:specs/poc-structural-transfer-v1.json" | \
+        sha256sum | awk '{print $1}')
+    jq -e --arg specSha "${buildopt_historical_spec_sha}" \
         --arg runnerSha "${buildopt_historical_runner_sha}" \
-        --slurpfile spec "${buildopt_spec}" '
+        --slurpfile spec <(git -C "${buildopt_repo_root}" show \
+            "${buildopt_execution_revision}:specs/poc-structural-transfer-v1.json") '
         def sha256: type == "string" and test("^[0-9a-f]{64}$");
         def gitsha: type == "string" and test("^[0-9a-f]{40}$");
         .schemaVersion == "buildopt.evidence/poc-structural-transfer/v1" and

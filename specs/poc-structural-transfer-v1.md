@@ -6,13 +6,21 @@ to a fourth substantial public Gradle family. It freezes Micronaut Core revision
 
 The optimized native control runs the binary `assemble` graph. The installed
 BuildOpt candidate runs only `:micronaut-http-client-jdk:assemble` after the
-same fixed production-source mutation. Both arms exclude documentation and
-source archives, restore the same cache seed, use the same checkout, Gradle
-home, daemon and 12-worker budget, and compare every required JAR byte for byte.
-Both arms run the complete `assemble` semantics, including documentation and
-source archives. Revision 1 attempted common `-x` exclusions, but the installed
+same fixed production-source mutation. Both arms restore the same cache seed,
+use the same checkout, Gradle home, daemon and 12-worker budget, and compare
+every required JAR byte for byte. Both run complete `assemble` semantics,
+including documentation and source archives. Revision 1 attempted common `-x`
+exclusions, but the installed
 CLI correctly rejected graph-changing Gradle options before candidate warm-up;
 no timing pair was produced or reused.
+
+Revision 3 changes only the generated graph binding after the generic
+`POC-SOURCE-OWNERSHIP-001` correction. The conservative cyclic source boundary
+is unchanged, while direct ownership now resolves solely to
+`:micronaut-http-client-jdk`, which is inside the 22-project candidate. The
+diagnostic regeneration accepted no warm-up or timing observation. Repository,
+mutation, tasks, outputs, cache state, pair order and value thresholds remain
+unchanged.
 
 Discovery must remain repository-name independent and complete: 75 projects in
 the control reach, 22 in the candidate reach, no Test tasks and no unknown

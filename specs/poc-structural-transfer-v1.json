@@ -1,10 +1,10 @@
 {
   "schemaVersion": "buildopt.specs/poc-structural-transfer/v1",
   "workItem": "POC-STRUCTURAL-TRANSFER-001",
-  "protocolRevision": 2,
+  "protocolRevision": 3,
   "decision": "PREREGISTER_FRESH_INSTALLED_STRUCTURAL_REPLICATION_ON_MICRONAUT",
   "preregistration": {
-    "implementationRevision": "5fc94bea28d401793a0fafc0d03297213f33a120",
+    "implementationRevision": "0f82b42acd58880de87f67ffaacd64498cfd943a",
     "completedWarmupsBeforePreregistration": 0,
     "completedObservationsBeforePreregistration": 0,
     "acceptedObservationsBeforePreregistration": 0,
@@ -61,10 +61,12 @@
     "pipelineClass": "poc-structural-transfer-assemble-v1",
     "expectedProjectCount": 75,
     "expectedEntrypointCount": 2,
-    "expectedGraphDigest": "sha256:2cb54c2d27fbc5a0a28587fb55f8103ead424f6c809f83835bf60886d2a71637",
-    "expectedGraphSha256": "65563d85848d72e72f14d2dd0abb3768867db3f475a9887e6c75033465a71960",
+    "expectedGraphDigest": "sha256:ffe1f07aa4e9180468ca706599f7072805db6dacf53d88e917dec63945a18526",
+    "expectedGraphSha256": "229c8fb19af98729f98c55f62998188864e6fac5c9542b213b9443a4182eaa68",
     "expectedManifestSha256": "5318e227739802040f22645fe6ec78c7307af4fb537e66312cb09b5458e535c7",
-    "expectedGeneratedManifestSha256": "fdaa01c2952d5bf562686cd71a2b1790c70c1d263986f130d8f503c386c00829",
+    "expectedGeneratedManifestSha256": "9991aca07734f3dfa4fcb39c71670a44c81ad9a933321a4b273dcdb3d5b87fce",
+    "expectedDirectOwners": [":micronaut-http-client-jdk"],
+    "expectedDirectOwnersOutsideCandidate": [],
     "complete": true,
     "containsTestTasks": false,
     "unknownRelationships": false
