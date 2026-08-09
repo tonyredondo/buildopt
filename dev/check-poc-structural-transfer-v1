@@ -16,11 +16,13 @@ if [[ "${1:-}" == --contract ]]; then
     jq -e '
         .schemaVersion == "buildopt.specs/poc-structural-transfer/v1" and
         .workItem == "POC-STRUCTURAL-TRANSFER-001" and
+        .protocolRevision == 2 and
         .repository.nameWithOwner == "micronaut-projects/micronaut-core" and
         (.repository.revision | test("^[0-9a-f]{40}$")) and
         (.repository.sourceArchiveSha256 | test("^[0-9a-f]{64}$")) and
         .runner.cpuCount == 12 and .runner.maxWorkers == 12 and
         .workload.controlEntrypoints == ["assemble"] and
+        .workload.commonExclusions == [] and
         .workload.controlExpectedReachedProjectCount == 75 and
         .candidate.entrypoints == [":micronaut-http-client-jdk:assemble"] and
         .candidate.alternativeId == "micronaut-http-client-jdk-assemble" and

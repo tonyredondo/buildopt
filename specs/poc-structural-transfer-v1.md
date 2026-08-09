@@ -1,6 +1,6 @@
 # Structural transfer evaluation
 
-This protocol asks whether repository-independent structural analysis transfers
+This revision-2 protocol asks whether repository-independent structural analysis transfers
 to a fourth substantial public Gradle family. It freezes Micronaut Core revision
 `8de8f38aceb6239f7df05c92c4eb7a26113e882b` before accepting any timing.
 
@@ -9,6 +9,10 @@ BuildOpt candidate runs only `:micronaut-http-client-jdk:assemble` after the
 same fixed production-source mutation. Both arms exclude documentation and
 source archives, restore the same cache seed, use the same checkout, Gradle
 home, daemon and 12-worker budget, and compare every required JAR byte for byte.
+Both arms run the complete `assemble` semantics, including documentation and
+source archives. Revision 1 attempted common `-x` exclusions, but the installed
+CLI correctly rejected graph-changing Gradle options before candidate warm-up;
+no timing pair was produced or reused.
 
 Discovery must remain repository-name independent and complete: 75 projects in
 the control reach, 22 in the candidate reach, no Test tasks and no unknown

@@ -1,6 +1,7 @@
 {
   "schemaVersion": "buildopt.specs/poc-structural-transfer/v1",
   "workItem": "POC-STRUCTURAL-TRANSFER-001",
+  "protocolRevision": 2,
   "decision": "PREREGISTER_FRESH_INSTALLED_STRUCTURAL_REPLICATION_ON_MICRONAUT",
   "preregistration": {
     "implementationRevision": "5fc94bea28d401793a0fafc0d03297213f33a120",
@@ -38,7 +39,7 @@
   "workload": {
     "class": "MULTI_MODULE_BINARY_ASSEMBLY",
     "upstreamReference": "The upstream README documents ./gradlew publishToMavenLocal; this POC isolates the build-owned assemble boundary without publishing",
-    "commonExclusions": ["javadoc", "javadocJar", "sourcesJar"],
+    "commonExclusions": [],
     "controlEntrypoints": ["assemble"],
     "controlExpectedReachedProjectCount": 75,
     "forbiddenTaskType": "org.gradle.api.tasks.testing.Test"
@@ -74,8 +75,7 @@
     "commonArguments": [
       "--daemon", "--offline", "--build-cache", "--parallel",
       "--no-configuration-cache", "--console=plain", "--warning-mode=none",
-      "--max-workers=12", "--no-scan", "-x", "javadoc", "-x",
-      "javadocJar", "-x", "sourcesJar"
+      "--max-workers=12", "--no-scan"
     ],
     "onlinePreparationMeasured": false,
     "sameBuildCacheSeedRestoredBeforeEveryArm": true,

@@ -137,7 +137,7 @@ if ! (
         "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
         timeout 20m ./gradlew --daemon --build-cache --parallel \
         --no-configuration-cache --console=plain --warning-mode=none \
-        --max-workers=12 --no-scan assemble -x javadoc -x javadocJar -x sourcesJar
+        --max-workers=12 --no-scan assemble
 ) >"${buildopt_root}/logs/preflight.log" 2>&1; then
     tail -n 180 "${buildopt_root}/logs/preflight.log" >&2
     printf 'Micronaut assemble preflight failed\n' >&2
@@ -297,10 +297,7 @@ buildopt_run_arm() {
                 --gradle-option=--build-cache --gradle-option=--parallel \
                 --gradle-option=--no-configuration-cache \
                 --gradle-option=--console=plain --gradle-option=--warning-mode=none \
-                --gradle-option=--max-workers=12 --gradle-option=--no-scan \
-                --gradle-option=-x --gradle-option=javadoc \
-                --gradle-option=-x --gradle-option=javadocJar \
-                --gradle-option=-x --gradle-option=sourcesJar
+                --gradle-option=--max-workers=12 --gradle-option=--no-scan
         else
             /usr/bin/time -f 'maxRssKb=%M' -o "${buildopt_time}" \
                 env -u CI GRADLE_USER_HOME="${buildopt_home}" \
@@ -308,7 +305,7 @@ buildopt_run_arm() {
                 "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
                 timeout 10m ./gradlew --daemon --offline --build-cache --parallel \
                 --no-configuration-cache --console=plain --warning-mode=none \
-                --max-workers=12 --no-scan assemble -x javadoc -x javadocJar -x sourcesJar
+                --max-workers=12 --no-scan assemble
         fi
     ) >"${buildopt_log}" 2>&1; then
         tail -n 180 "${buildopt_log}" >&2
@@ -475,10 +472,7 @@ if ! (
         --gradle-option=--build-cache --gradle-option=--parallel \
         --gradle-option=--no-configuration-cache \
         --gradle-option=--console=plain --gradle-option=--warning-mode=none \
-        --gradle-option=--max-workers=12 --gradle-option=--no-scan \
-        --gradle-option=-x --gradle-option=javadoc \
-        --gradle-option=-x --gradle-option=javadocJar \
-        --gradle-option=-x --gradle-option=sourcesJar
+        --gradle-option=--max-workers=12 --gradle-option=--no-scan
 ) >"${buildopt_fallback_log}" 2>&1; then
     tail -n 180 "${buildopt_fallback_log}" >&2
     printf 'Micronaut global fallback failed\n' >&2
