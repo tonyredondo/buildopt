@@ -51,17 +51,33 @@ revision is substantial: complete root `assemble` executed 360 tasks, and
 repository-independent discovery found a complete 75-project control reach and
 22-project candidate reach, a potential 53-project/70.67% omission.
 
-The installed candidate correctly retained the full graph before timing. The
-changed `http-client-jdk/**` root was attributed to 39 projects because
-Micronaut expands or shares source sets; 17 inferred owners lie outside the
-22-project candidate reach. The decision is therefore
-`RETAIN_NATIVE_MICRONAUT_AS_DEFAULT` with zero measured pairs and no performance
-percentage. This is a valuable negative result: structural reach reduction is
-not sufficient until source ownership is exact. Validate the source binding,
-arithmetic, failure history and native-default decision with:
+The initial installed candidate correctly retained the full graph because
+Micronaut's cyclic source-set expansion made one direct root appear owned by 39
+projects. That immutable zero-observation result remains in
+[`results/poc-structural-transfer-v1-native-stop.json`](./results/poc-structural-transfer-v1-native-stop.json).
+The generic ownership correction now preserves the expanded boundary for
+conservative affected closure while using only original project roots for
+direct ownership. Fresh discovery resolves exactly one owner,
+`:micronaut-http-client-jdk`, inside the candidate.
+
+The unchanged replay then qualified against optimized native Gradle:
+
+| Metric | Optimized native control | Installed structural candidate | Difference |
+|---|---:|---:|---:|
+| Mean wall clock | 24,067.125 ms | 6,505.5 ms | **17,561.625 ms / 72.97% faster** |
+| Alternating pairs | 8 | 8 | **8/8 positive** |
+| 95% paired interval | — | — | **+17,018.875..+18,118.375 ms** |
+| Required output | 3 JARs | Same 3 JARs | Byte-identical in every pair |
+
+A global `gradle.properties` change restored the full graph, no Gradle `Test`
+task ran, and no other optimization mechanism was enabled. This qualifies the
+fixed structural Micronaut scope; it is not a universal savings claim. Validate
+the current evidence and the historical fail-closed result with:
 
 ```bash
 ./dev/check-poc-structural-transfer-v1
+./dev/check-poc-structural-transfer-v1 \
+  benchmarks/results/poc-structural-transfer-v1-native-stop.json
 ```
 
 The current POC verdict is `CONTINUE`, qualified only for the measured synthetic

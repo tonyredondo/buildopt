@@ -26,12 +26,13 @@
   positive pairs. Attribution found only **1.238233 ms** in the largest
   BuildOpt-owned phase, so it remains on native full-graph execution and this
   optimization line is closed.
-- **Fresh Micronaut transfer exposed the next generalization gap before
-  timing.** Discovery found a complete **75-to-22-project** assemble candidate
-  (53 projects/70.67% potentially omitted), but the changed source root matched
-  39 inferred owners and 17 were outside the candidate reach. The installed
-  path correctly returned `IMPACT_NO_AUTHORIZED_ALTERNATIVE`; Micronaut remains
-  on native Gradle with zero timing pairs and no savings claim.
+- **Fresh Micronaut transfer now qualifies after a generic ownership fix.**
+  Discovery still finds the complete **75-to-22-project** assemble candidate,
+  while direct ownership now resolves exactly to the covered
+  `:micronaut-http-client-jdk` project and conservative cyclic closure remains
+  unchanged. The installed candidate saved **17,561.625 ms/72.97%**, with 8/8
+  positive pairs, interval +17,018.875..+18,118.375 ms, three exact JARs and
+  verified global full-graph fallback.
 - **Direct JAR reuse did not improve the measured Spring test build.** It
   restored three exact Test-fixture JARs but regressed the complete unchanged
   test workflow by **735.25 ms/11.31%**, so the activation was not promoted.
@@ -62,7 +63,7 @@ measured on different workloads and scopes.
 |---|---|---:|---|
 | **Safe Cache / local L1** | Reuses verified outputs in a scope isolated by repository, Wrapper, and platform. | Against cache-off: **15.9% faster in Kotlin** and **13.7% faster in Groovy**. Against native Gradle cache: **0.02% faster in Kotlin** and **0.47% slower in Groovy**. | Useful when a repository has no effective cache, but **not an accelerator over native Gradle cache**. Strict Safe Cache remains explicit-only. |
 | **Runtime Tuning** | Tests bounded worker, heap, and resource profiles intended to improve Gradle execution. | The latest real Spring candidate capped 12 workers to 6 and was **2.00% slower** (191.5 ms), with 2/4 favorable pairs and interval -973.5..+590.5 ms. Earlier synthetic `W3_H4G` and `W4_H6G` candidates were **4.3%** and **54.7% slower**. | **No current value. Disabled.** Optimized native Gradle remains the stable control. |
-| **Build Impact** | Maps a change to the projects and tasks needed for the requested outputs, with full-graph fallback for unknown or global changes. | Synthetic coverage: **73.5-76.0% faster**. Installed Spring path: **15.76% faster**. Generalized Spring test preparation: **18.88% faster**. Kafka client packaging scope: **57.58% faster**. Spring verification is graph-complete but saved only **0.31%**; attribution found no product phase above **1.238233 ms**. | **The strongest broadly useful accelerator currently demonstrated, but only for independently qualified scopes.** The Kafka result proves graph reduction, not standard-`Jar` reuse of the required shaded artifact. |
+| **Build Impact** | Maps a change to the projects and tasks needed for the requested outputs, with full-graph fallback for unknown or global changes. | Synthetic coverage: **73.5-76.0% faster**. Installed Spring path: **15.76% faster**. Generalized Spring test preparation: **18.88% faster**. Kafka client packaging scope: **57.58% faster**. Fresh Micronaut structural scope: **72.97% faster**, 8/8 positive. Spring verification is graph-complete but saved only **0.31%**; attribution found no product phase above **1.238233 ms**. | **The strongest broadly useful accelerator currently demonstrated, but only for independently qualified scopes.** Direct ownership now transfers generically to cyclic Micronaut source boundaries while global and ambiguous changes still fail closed. |
 | **Task Intelligence** | Observes and qualifies tasks only when their inputs, outputs, cache keys, and outcomes are exact enough to support an optimization. | No general direct saving. In the accepted pilot it enabled a qualified native-cache restore that saved **203 ms** on average. | A **safety and eligibility layer**, not a standalone accelerator. Its value is realized through a qualified cache or patch route. |
 | **Patch Autopilot / reviewed task patch** | Produces a reviewable and reversible patch that correctly declares inputs and outputs and enables caching for an exact custom-task shape. | Exact reviewed Java recipe: **67.3% faster in Kotlin** and **68.0% faster in Groovy**. Combined installed path: **63.5-67.3% faster**. | Highly promising for **specific reviewed task contracts**. The result must not be generalized to arbitrary tasks or recipes. |
 | **Graph reduction** | Replaces broad aggregate task dependencies with the typed producers required for the declared outputs. | The OpenTelemetry experiment removed **3 graph nodes and 2 executed tasks** while preserving all 125 required outputs. No standalone wall-clock percentage is claimed. | Structurally valuable, but it still needs independent timing evidence before it can be presented as a separate accelerator. |

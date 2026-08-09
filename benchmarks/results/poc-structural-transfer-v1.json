@@ -1,16 +1,17 @@
 {
   "schemaVersion": "buildopt.evidence/poc-structural-transfer/v1",
   "workItem": "POC-STRUCTURAL-TRANSFER-001",
-  "capturedAt": "2026-08-09T13:26:12Z",
+  "capturedAt": "2026-08-09T15:21:07Z",
   "buildopt": {
-    "revision": "8c8fb419ab6b50d718787cc45ddb09e0ecca3a0c",
-    "runnerScriptSha256": "813bbaf373d6ce63580e311f0f6b66f1b2418ec600e370a77d9a15475dc159dd",
+    "revision": "8a80d73d936cbf77ef3196b3a5fcfc4abdad681c",
+    "executableSha256": "75a4fde7e668e935f436dd33a5e25888008ddd4d9325845e417d251ad1d82b90",
+    "packageSha256": "833e3d51b7d754a1bc0e0ce524bc2b59af9f59e09a76f1bb4485d653bac1a60b",
     "packageVersion": "0.3.0-dev",
-    "installedPackageUsed": true,
     "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
-    "launcherOverheadIncluded": true
+    "launcherOverheadIncluded": true,
+    "runnerScriptSha256": "cc325c39cc8c117cb76f9f09d25433c5ac7b62d783b8c920fe591510bd26c917"
   },
-  "specSha256": "09f4bc7a58db4d9113ae4cc607ecdc12ec3116bac20b2563400cb7af7d99632c",
+  "specSha256": "348119464e34343862f61d267d4bc53be756302231ea8733c9e258012d02d97c",
   "repository": {
     "nameWithOwner": "micronaut-projects/micronaut-core",
     "branch": "5.2.x",
@@ -25,106 +26,259 @@
     "jdk": "temurin-25.0.3+9"
   },
   "preparation": {
-    "sourceChecksumVerified": true,
     "onlinePreflightMeasured": false,
     "onlinePreflightSuccess": true,
-    "onlinePreflightReportedDurationMs": 625000,
-    "onlinePreflightActionableTasks": 360,
+    "onlinePreflightWallClockMs": 547094,
     "measuredNetwork": "DISCONNECTED",
     "dependencyMode": "GRADLE_OFFLINE_WITH_SHARED_READ_ONLY_CACHE",
+    "readOnlyDependencyCacheSha256": "e753b98334e3fad7b35b2f014731cb9a770ff9408ca18ce8abe38a47ecb36192",
+    "buildCacheSeedSha256": "b884f37cbbaec90be3e0f326695412474b59119a70986a7b14f801c5ba248b8d",
+    "measuredBuildCacheSeedSha256": "7f8e01d69eb39972895db3a36114ca424e3e11d148bb8b86d5451a7f725b5559",
     "preflightDaemonStoppedBeforeArmSetup": true,
     "cacheSeedRestoredBeforeEveryArm": true,
     "sharedCheckout": true,
     "sharedGradleUserHome": true,
     "sharedDaemon": true,
+    "outputsRemovedBeforeEveryArm": true,
     "fixedMutationAppliedAfterCacheRestore": true
   },
   "discovery": {
     "complete": true,
     "containsTestTasks": false,
-    "unknownRelationships": false,
-    "graphSha256": "65563d85848d72e72f14d2dd0abb3768867db3f475a9887e6c75033465a71960",
-    "graphDigest": "sha256:2cb54c2d27fbc5a0a28587fb55f8103ead424f6c809f83835bf60886d2a71637",
-    "generatedManifestSha256": "fdaa01c2952d5bf562686cd71a2b1790c70c1d263986f130d8f503c386c00829",
+    "graphSha256": "229c8fb19af98729f98c55f62998188864e6fac5c9542b213b9443a4182eaa68",
+    "graphDigest": "sha256:ffe1f07aa4e9180468ca706599f7072805db6dacf53d88e917dec63945a18526",
     "projectCount": 75,
     "controlReachCount": 75,
     "candidateReachCount": 22,
+    "candidateEntrypoints": [
+      ":micronaut-http-client-jdk:assemble"
+    ],
     "omittedProjectCount": 53,
     "omittedProjectRatio": 0.7066666666666667
   },
-  "diagnosis": {
-    "changePath": "http-client-jdk/src/main/java/io/micronaut/http/client/jdk/DefaultJdkHttpClient.java",
-    "changePathMatchedProjectCount": 39,
-    "candidateReachCoveredMatchedProjectCount": 22,
-    "matchedProjectsOutsideCandidateCount": 17,
-    "matchedProjectsOutsideCandidate": [
-      ":micronaut-function",
-      ":micronaut-function-client",
-      ":micronaut-function-web",
-      ":micronaut-http-server",
-      ":micronaut-http-server-netty",
-      ":micronaut-http-validation",
-      ":micronaut-inject-groovy",
-      ":micronaut-inject-groovy-test",
-      ":micronaut-inject-java-helper",
-      ":micronaut-inject-java-helper2",
-      ":micronaut-inject-java-test",
-      ":micronaut-inject-test-utils",
-      ":micronaut-management",
-      ":micronaut-router",
-      ":micronaut-runtime",
-      ":test-suite",
-      ":test-suite-helper"
-    ],
-    "candidatePlannerMode": "FULL_GRAPH",
-    "candidatePlannerReason": "IMPACT_NO_AUTHORIZED_ALTERNATIVE",
-    "controlWarmupBuildSuccessful": true,
-    "candidateFallbackWarmupBuildSuccessful": true,
-    "controlWarmupLogSha256": "a4ca28fc6bcfc3faf1b27d664c89fd4c00dead320492c0e04a463d0eff90963a",
-    "candidateFallbackWarmupLogSha256": "7c31773f1b1c96db9659f2778a17433bccc928e601c192cfd01b8e8f56a1e36b",
-    "failureLogArchiveSha256": "a1c292ae6f3756f9ab2bb4a9c57f076c6b9d3d043963b74916cada47fa22996a"
-  },
-  "discardedAttempts": [
+  "observations": [
     {
-      "stage": "DISCOVERY_BINDING",
-      "reason": "HARNESS_ARTIFACT_ID_MISMATCH",
-      "warmupsCompleted": 0,
-      "acceptedObservations": 0,
-      "reused": false
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 24736,
+      "candidateDurationMs": 6569,
+      "savedMs": 18167,
+      "interArmIdleGapMs": 1,
+      "controlMaximumResidentSetKb": 121740,
+      "candidateMaximumResidentSetKb": 123280,
+      "requiredOutputSha256": "5f515b36f67f0f1eb13cb74d612ee693e0e65ba39783f068ad3b446527daf83a",
+      "requiredOutputCount": 3,
+      "controlEntrypoints": [
+        "assemble"
+      ],
+      "candidateEntrypoints": [
+        ":micronaut-http-client-jdk:assemble"
+      ],
+      "hotStateEnabled": false,
+      "safeCacheEnabled": false,
+      "standardJarAdapterEnabled": false,
+      "runtimeTuningEnabled": false,
+      "remoteCacheEnabled": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
     },
     {
-      "stage": "CANDIDATE_ARGUMENT_VALIDATION",
-      "reason": "GRAPH_CHANGING_EXCLUSION_REJECTED",
-      "warmupsCompleted": 1,
-      "acceptedObservations": 0,
-      "reused": false
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 24049,
+      "candidateDurationMs": 6679,
+      "savedMs": 17370,
+      "interArmIdleGapMs": 1,
+      "controlMaximumResidentSetKb": 125400,
+      "candidateMaximumResidentSetKb": 125016,
+      "requiredOutputSha256": "5f515b36f67f0f1eb13cb74d612ee693e0e65ba39783f068ad3b446527daf83a",
+      "requiredOutputCount": 3,
+      "controlEntrypoints": [
+        "assemble"
+      ],
+      "candidateEntrypoints": [
+        ":micronaut-http-client-jdk:assemble"
+      ],
+      "hotStateEnabled": false,
+      "safeCacheEnabled": false,
+      "standardJarAdapterEnabled": false,
+      "runtimeTuningEnabled": false,
+      "remoteCacheEnabled": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
     },
     {
-      "stage": "CANDIDATE_ARGUMENT_VALIDATION",
-      "reason": "COSMETIC_OPTION_OUTSIDE_ALLOWLIST",
-      "warmupsCompleted": 1,
-      "acceptedObservations": 0,
-      "reused": false
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 24934,
+      "candidateDurationMs": 6440,
+      "savedMs": 18494,
+      "interArmIdleGapMs": 1,
+      "controlMaximumResidentSetKb": 121264,
+      "candidateMaximumResidentSetKb": 123008,
+      "requiredOutputSha256": "5f515b36f67f0f1eb13cb74d612ee693e0e65ba39783f068ad3b446527daf83a",
+      "requiredOutputCount": 3,
+      "controlEntrypoints": [
+        "assemble"
+      ],
+      "candidateEntrypoints": [
+        ":micronaut-http-client-jdk:assemble"
+      ],
+      "hotStateEnabled": false,
+      "safeCacheEnabled": false,
+      "standardJarAdapterEnabled": false,
+      "runtimeTuningEnabled": false,
+      "remoteCacheEnabled": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 22693,
+      "candidateDurationMs": 5998,
+      "savedMs": 16695,
+      "interArmIdleGapMs": 1,
+      "controlMaximumResidentSetKb": 123560,
+      "candidateMaximumResidentSetKb": 122968,
+      "requiredOutputSha256": "5f515b36f67f0f1eb13cb74d612ee693e0e65ba39783f068ad3b446527daf83a",
+      "requiredOutputCount": 3,
+      "controlEntrypoints": [
+        "assemble"
+      ],
+      "candidateEntrypoints": [
+        ":micronaut-http-client-jdk:assemble"
+      ],
+      "hotStateEnabled": false,
+      "safeCacheEnabled": false,
+      "standardJarAdapterEnabled": false,
+      "runtimeTuningEnabled": false,
+      "remoteCacheEnabled": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 5,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 24967,
+      "candidateDurationMs": 6355,
+      "savedMs": 18612,
+      "interArmIdleGapMs": 1,
+      "controlMaximumResidentSetKb": 124648,
+      "candidateMaximumResidentSetKb": 124252,
+      "requiredOutputSha256": "5f515b36f67f0f1eb13cb74d612ee693e0e65ba39783f068ad3b446527daf83a",
+      "requiredOutputCount": 3,
+      "controlEntrypoints": [
+        "assemble"
+      ],
+      "candidateEntrypoints": [
+        ":micronaut-http-client-jdk:assemble"
+      ],
+      "hotStateEnabled": false,
+      "safeCacheEnabled": false,
+      "standardJarAdapterEnabled": false,
+      "runtimeTuningEnabled": false,
+      "remoteCacheEnabled": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 6,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 23868,
+      "candidateDurationMs": 7002,
+      "savedMs": 16866,
+      "interArmIdleGapMs": 5,
+      "controlMaximumResidentSetKb": 123672,
+      "candidateMaximumResidentSetKb": 122212,
+      "requiredOutputSha256": "5f515b36f67f0f1eb13cb74d612ee693e0e65ba39783f068ad3b446527daf83a",
+      "requiredOutputCount": 3,
+      "controlEntrypoints": [
+        "assemble"
+      ],
+      "candidateEntrypoints": [
+        ":micronaut-http-client-jdk:assemble"
+      ],
+      "hotStateEnabled": false,
+      "safeCacheEnabled": false,
+      "standardJarAdapterEnabled": false,
+      "runtimeTuningEnabled": false,
+      "remoteCacheEnabled": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 7,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 24246,
+      "candidateDurationMs": 6355,
+      "savedMs": 17891,
+      "interArmIdleGapMs": 1,
+      "controlMaximumResidentSetKb": 124232,
+      "candidateMaximumResidentSetKb": 122552,
+      "requiredOutputSha256": "5f515b36f67f0f1eb13cb74d612ee693e0e65ba39783f068ad3b446527daf83a",
+      "requiredOutputCount": 3,
+      "controlEntrypoints": [
+        "assemble"
+      ],
+      "candidateEntrypoints": [
+        ":micronaut-http-client-jdk:assemble"
+      ],
+      "hotStateEnabled": false,
+      "safeCacheEnabled": false,
+      "standardJarAdapterEnabled": false,
+      "runtimeTuningEnabled": false,
+      "remoteCacheEnabled": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 8,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 23044,
+      "candidateDurationMs": 6646,
+      "savedMs": 16398,
+      "interArmIdleGapMs": 1,
+      "controlMaximumResidentSetKb": 122500,
+      "candidateMaximumResidentSetKb": 120876,
+      "requiredOutputSha256": "5f515b36f67f0f1eb13cb74d612ee693e0e65ba39783f068ad3b446527daf83a",
+      "requiredOutputCount": 3,
+      "controlEntrypoints": [
+        "assemble"
+      ],
+      "candidateEntrypoints": [
+        ":micronaut-http-client-jdk:assemble"
+      ],
+      "hotStateEnabled": false,
+      "safeCacheEnabled": false,
+      "standardJarAdapterEnabled": false,
+      "runtimeTuningEnabled": false,
+      "remoteCacheEnabled": false,
+      "rootBuildGradleTestTasksExecuted": false,
+      "productAttributableFailure": false
     }
   ],
-  "observations": [],
   "fallback": {
+    "changePath": "gradle.properties",
     "mode": "FULL_GRAPH",
-    "reason": "IMPACT_NO_AUTHORIZED_ALTERNATIVE",
+    "reason": "IMPACT_GLOBAL_CHANGE",
+    "outsideCandidateEntrypointObserved": ":micronaut-websocket:assemble",
     "buildSuccessful": true,
     "performanceClaim": false
   },
   "result": {
-    "pairs": 0,
-    "qualified": false,
-    "valueGateEvaluated": false,
-    "decision": "RETAIN_NATIVE_MICRONAUT_AS_DEFAULT",
-    "reason": "IMPACT_NO_AUTHORIZED_ALTERNATIVE",
-    "performanceClaim": false
-  },
-  "nextHypothesis": {
-    "id": "POC-SOURCE-OWNERSHIP-001",
-    "description": "Distinguish project-owned source roots from transitive or shared source-set expansion without repository-name rules, then replay the unchanged Micronaut protocol only if the candidate covers every true owner."
+    "pairs": 8,
+    "controlMeanMs": 24067.125,
+    "candidateMeanMs": 6505.5,
+    "meanSavedMs": 17561.625,
+    "reductionRatio": 0.7296935134545568,
+    "interval95SavedMs": [
+      17018.875,
+      18118.375
+    ],
+    "positivePairs": 8,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_IMPACT_ON_FOURTH_SUBSTANTIAL_REPOSITORY"
   },
   "boundaries": {
     "proofOfConcept": true,

@@ -228,6 +228,8 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-general-build-value" >/dev/null
         "${buildopt_script_dir}/check-poc-structural-transfer-v1" --contract >/dev/null
         "${buildopt_script_dir}/check-poc-structural-transfer-v1" >/dev/null
+        "${buildopt_script_dir}/check-poc-structural-transfer-v1" \
+            "${buildopt_repo_root}/benchmarks/results/poc-structural-transfer-v1-native-stop.json" >/dev/null
         "${buildopt_script_dir}/check-poc-source-ownership" >/dev/null
         "${buildopt_script_dir}/check-poc-trace-hypothesis-v1" >/dev/null
         "${buildopt_script_dir}/check-poc-portfolio-decision-v1" >/dev/null

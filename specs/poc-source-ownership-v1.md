@@ -23,6 +23,14 @@ its repository revision, mutation, control/candidate tasks, outputs, cache
 state, pair order, eight-pair requirement, and value thresholds remain
 unchanged.
 
+The unchanged replay passed. Direct ownership resolved only to
+`:micronaut-http-client-jdk`, inside the 22-project candidate. Against the
+optimized native 75-project control, the installed candidate saved
+17,561.625 ms/72.97% on average with 8/8 positive pairs, a positive paired
+interval, exact required JARs and verified global full-graph fallback. This
+closes the generic ownership hypothesis; it does not generalize the percentage
+to another repository or authorize automatic activation.
+
 Run the bounded contract with:
 
 ```bash

@@ -358,7 +358,7 @@ by exact evidence for each target:
 | Spring Framework | Build Impact | **30.86% faster** | Native; later strict matrix was 7/8 positive |
 | OpenTelemetry | Build Impact + standard `Jar` | **50.40% faster** | Native; later matrix had no accepted timing |
 | Kafka | Build Impact + read-only Edge | **82.35% faster** | Explicit reviewed POC profile; later **81.85%**, 8/8 |
-| Micronaut Core | Structural Build Impact candidate | **No timing claim** | Native: complete 75-to-22 reach was rejected because 17 of 39 inferred source owners sat outside the candidate |
+| Micronaut Core | Structural Build Impact candidate | **72.97% faster**, saving 17,561.625 ms, 8/8 positive | Qualify the fixed 75-to-22-project scope after generic direct-source ownership; global changes retain native full graph |
 
 These are whole-path comparisons against each target's optimized native Gradle
 control. The percentages are neither added nor averaged. Hot State is omitted
@@ -368,12 +368,16 @@ qualify independently, so only the complete Impact-plus-Jar result receives a
 value claim. The POC now has a general analysis
 stage, but broad value still requires fresh installed replication on additional
 substantial repository families. The first such replication used Micronaut
-Core. Its full preflight executed 360 tasks and structural discovery could
-potentially omit 53/75 projects, but the installed planner failed closed before
-timing with `IMPACT_NO_AUTHORIZED_ALTERNATIVE`. Micronaut's expanded/shared
-source sets made `http-client-jdk/**` appear owned by 39 projects, 17 outside
-the candidate reach. Native remains the default; the next generic hypothesis
-is precise project-owned versus transitive/shared source-root attribution.
+Core. Its full preflight executed 360 tasks and structural discovery could omit
+53/75 projects. The first installed attempt correctly failed closed because a
+cyclic source-set union obscured direct ownership. A generic fix now preserves
+that expanded union for conservative closure while retaining each project's
+original owned roots. The unchanged replay resolved one covered owner and
+qualified: optimized native `assemble` averaged 24,067.125 ms versus 6,505.5 ms
+for BuildOpt, saving **17,561.625 ms/72.97%** with 8/8 positive pairs, interval
++17,018.875..+18,118.375 ms, three byte-identical JARs and full-graph fallback.
+This strengthens structural Build Impact across repository families; it does
+not authorize automatic activation or a universal percentage.
 
 ## Boundaries and References
 
@@ -403,7 +407,8 @@ production operations are outside the current scope.
 - [Trace-gated hypothesis decision](../../benchmarks/results/poc-trace-hypothesis-v1.json)
 - [Terminal POC portfolio decision](../../benchmarks/results/poc-portfolio-decision-v1.json)
 - [General whole-profile value scorecard](../../benchmarks/results/poc-general-build-value-v1.json)
-- [Micronaut structural-transfer stop evidence](../../benchmarks/results/poc-structural-transfer-v1.json)
+- [Micronaut qualified structural-transfer evidence](../../benchmarks/results/poc-structural-transfer-v1.json)
+- [Historical Micronaut fail-closed evidence](../../benchmarks/results/poc-structural-transfer-v1-native-stop.json)
 - [General opportunity and composition contract](../../specs/poc-general-build-value-v1.md)
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)
 - [Kafka shadow JAR reproducibility evidence](../../benchmarks/results/poc-kafka-shadowjar-reproducibility-v1.json)
