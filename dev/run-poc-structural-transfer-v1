@@ -186,7 +186,7 @@ jq -n '
             entrypoints: [":micronaut-http-client-jdk:assemble"]
         }],
         requiredArtifacts: [{
-            id: "micronaut-http-client-jdk-jars",
+            id: "micronaut-http-client-jdk-library",
             path: "http-client-jdk/build/libs/**",
             owner: "BUILD_OPTIMIZATION"
         }],

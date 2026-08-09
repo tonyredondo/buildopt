@@ -23,6 +23,7 @@ if [[ "${1:-}" == --contract ]]; then
         .workload.controlEntrypoints == ["assemble"] and
         .workload.controlExpectedReachedProjectCount == 75 and
         .candidate.entrypoints == [":micronaut-http-client-jdk:assemble"] and
+        .candidate.alternativeId == "micronaut-http-client-jdk-assemble" and
         .candidate.expectedReachedProjectCount == 22 and
         .discovery.complete == true and .discovery.containsTestTasks == false and
         .discovery.unknownRelationships == false and
