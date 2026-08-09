@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "buildopt.specs/poc-structural-profile/v1",
+  "workItem": "POC-STRUCTURAL-PROFILE-001",
+  "profile": {
+    "schemaVersion": "buildopt.poc/qualified-profile/v4",
+    "profileVersion": 4,
+    "profileId": "qualified-structural-build-impact",
+    "ownership": "REPOSITORY_COMMITTED",
+    "claimScope": "DECLARED_OUTPUTS_ONLY",
+    "fallback": "NATIVE_FULL_GRAPH",
+    "enabledMechanisms": ["BUILD_IMPACT"]
+  },
+  "qualification": {
+    "evidenceSchemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "candidateSurface": "INSTALLED_BUILDOPT_QUALIFIED_PROFILE",
+    "pairs": 8,
+    "pairOrder": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositivePairs": 8,
+    "requiredOutputsIdentical": true,
+    "requiredOutputsStableAcrossPairs": true,
+    "maximumProductAttributableFailures": 0,
+    "launcherOverheadIncluded": true
+  },
+  "bindings": [
+    "BUILD_IMPACT_MANIFEST_SHA256",
+    "BUILD_IMPACT_GRAPH_SHA256",
+    "GENERATED_MANIFEST_SHA256",
+    "QUALIFICATION_EVIDENCE_SHA256",
+    "REPOSITORY_REVISION"
+  ],
+  "fallback": {
+    "unknownOrGlobalChange": "NATIVE_FULL_GRAPH",
+    "inputDrift": "NATIVE_FULL_GRAPH",
+    "unqualifiedEvidenceProducesProfile": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificProductRuleAllowed": false,
+    "automaticActivation": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "publicReleaseRequired": false,
+    "universalSavingsClaimed": false
+  }
+}

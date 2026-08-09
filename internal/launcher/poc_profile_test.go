@@ -10,6 +10,9 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/tonyredondo/buildopt/internal/buildimpact"
+	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
 
 func TestQualifiedPOCEdgeProfileSelectsOnlyQualifiedComposition(t *testing.T) {
@@ -139,6 +142,50 @@ func TestQualifiedPOCBuildImpactOnlyProfileSelectsNoAdapters(t *testing.T) {
 			"HOT_STATE RUNTIME_TUNING SAFE_CACHE SHARED_EDGE_CACHE STANDARD_COPY STANDARD_JAR" ||
 		plan.ProductionAuthorized {
 		t.Fatalf("Build Impact-only plan = %+v", plan)
+	}
+}
+
+func TestQualifiedPOCStructuralProfileSelectsAndFailsClosedOnDrift(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	configureQualifiedPOCStructuralTestProfile(t, repositoryRoot)
+	t.Chdir(repositoryRoot)
+
+	invocation, err := prepareQualifiedPOCProfileInvocation([]string{
+		"--changes-file", "changed.txt",
+	}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !invocation.plan.CandidateSelected || invocation.qualifiedProfile == nil ||
+		invocation.qualifiedProfile.SchemaVersion != qualifiedPOCProfilePlanSchemaV4 ||
+		invocation.qualifiedProfile.ProfileID != qualifiedPOCProfileIDV4 ||
+		len(invocation.qualifiedProfile.Preconditions) != 3 {
+		t.Fatalf("qualified structural invocation = %+v", invocation)
+	}
+	for _, precondition := range invocation.qualifiedProfile.Preconditions {
+		if precondition.Status != "SATISFIED" {
+			t.Fatalf("qualified structural precondition = %+v", precondition)
+		}
+	}
+
+	graphPath := filepath.Join(repositoryRoot, "buildopt-impact-graph.generated.json")
+	raw, err := os.ReadFile(graphPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(graphPath, append(raw, '\n'), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	invocation, err = prepareQualifiedPOCProfileInvocation([]string{
+		"--changes-file", "changed.txt",
+	}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if invocation.plan.CandidateSelected || invocation.plan.Mode != buildimpact.DecisionFullGraph ||
+		invocation.plan.Reason != "PROFILE_PRECONDITION_FAILED" || invocation.qualifiedProfile == nil ||
+		invocation.qualifiedProfile.SelectionMode != buildimpact.DecisionFullGraph {
+		t.Fatalf("drifted structural invocation = %+v", invocation)
 	}
 }
 
@@ -405,6 +452,48 @@ func configureQualifiedPOCBuildImpactOnlyTestProfile(t *testing.T, repositoryRoo
 	profile.Mechanisms.StandardJarAdapter = false
 	profile.Preconditions = nil
 	profile.EdgeCache = nil
+	raw, err := json.MarshalIndent(profile, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(repositoryRoot, qualifiedPOCProfileDefaultPath), append(raw, '\n'), 0o600); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func configureQualifiedPOCStructuralTestProfile(t *testing.T, repositoryRoot string) {
+	t.Helper()
+	configureQualifiedPOCBuildImpactOnlyTestProfile(t, repositoryRoot)
+	profile, err := loadQualifiedPOCProfile(repositoryRoot, qualifiedPOCProfileDefaultPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	profile.SchemaVersion = qualifiedPOCProfileSchemaVersionV4
+	profile.ProfileVersion = 4
+	profile.ProfileID = qualifiedPOCProfileIDV4
+	profile.Preconditions = nil
+	for _, path := range []string{
+		"buildopt-impact-manifest.json",
+		"buildopt-impact-graph.generated.json",
+		"buildopt-impact.generated.json",
+	} {
+		digest, err := hashQualifiedPOCPreconditionFile(repositoryRoot, path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		profile.Preconditions = append(profile.Preconditions, qualifiedPOCPrecondition{
+			Type: "FILE_SHA256", Path: path, SHA256: digest,
+		})
+	}
+	profile.Qualification = &qualifiedPOCQualification{
+		SchemaVersion:      profilediscovery.StructuralEvidenceSchema,
+		SHA256:             strings.Repeat("a", 64),
+		RepositoryRevision: strings.Repeat("b", 40),
+		Pairs:              8,
+		MeanSavedMS:        1000,
+		ReductionRatio:     0.10,
+		Interval95SavedMS:  []float64{900, 1100},
+	}
 	raw, err := json.MarshalIndent(profile, "", "  ")
 	if err != nil {
 		t.Fatal(err)

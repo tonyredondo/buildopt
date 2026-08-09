@@ -3408,6 +3408,12 @@ attribution uses only original member roots, equal-specificity ownership falls
 back, and malformed owned roots are rejected. The unchanged Micronaut protocol
 may be replayed only after this checker passes and every direct owner is covered.
 
+`./dev/check-poc-structural-profile` validates the generic qualification bridge.
+It builds the real CLI, analyzes a checked graph, materializes the v4 profile
+twice, proves byte-for-byte determinism, rejects evidence/source drift, and
+executes the focused runtime-precondition fallback test. The qualifier contains
+no repository-name branches and never writes or activates a profile itself.
+
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 
 The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.

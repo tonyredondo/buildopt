@@ -11,11 +11,15 @@ import (
 const (
 	profileDiscoveryUsage = "usage: buildopt profile discover --manifest PATH --graph PATH --generated-manifest PATH --matrix-summary PATH --cell-evidence PATH --profile-contract PATH\n"
 	profileAnalysisUsage  = "usage: buildopt profile analyze --manifest PATH --graph PATH --generated-manifest PATH\n"
+	profileQualifyUsage   = "usage: buildopt profile qualify --manifest PATH --graph PATH --generated-manifest PATH --evidence PATH\n"
 )
 
 func runProfileDiscovery(args []string, stdout, stderr io.Writer) int {
 	if len(args) > 0 && args[0] == "analyze" {
 		return runProfileAnalysis(args[1:], stdout, stderr)
+	}
+	if len(args) > 0 && args[0] == "qualify" {
+		return runStructuralProfileQualification(args[1:], stdout, stderr)
 	}
 	if (len(args) == 1 && isHelp(args)) ||
 		(len(args) == 2 && args[0] == "discover" && isHelp(args[1:])) {
@@ -59,6 +63,49 @@ func runProfileDiscovery(args []string, stdout, stderr io.Writer) int {
 	}
 	if _, err := stdout.Write(raw); err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt: write profile discovery: %v\n", err)
+		return exitConfiguration
+	}
+	return 0
+}
+
+func runStructuralProfileQualification(args []string, stdout, stderr io.Writer) int {
+	if isHelp(args) {
+		_, _ = io.WriteString(stdout, profileQualifyUsage)
+		return 0
+	}
+	flags := flag.NewFlagSet("buildopt profile qualify", flag.ContinueOnError)
+	flags.SetOutput(io.Discard)
+	manifest := flags.String("manifest", "", "checked Build Impact manifest")
+	graph := flags.String("graph", "", "checked Build Impact graph")
+	generated := flags.String("generated-manifest", "", "checked generated-state binding")
+	evidence := flags.String("evidence", "", "qualified installed-path structural evidence")
+	if err := flags.Parse(args); err != nil || flags.NArg() != 0 || *manifest == "" || *graph == "" || *generated == "" || *evidence == "" {
+		_, _ = io.WriteString(stderr, profileQualifyUsage)
+		return exitUsage
+	}
+	repositoryRoot, err := canonicalWorkingDirectory()
+	if err != nil {
+		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile qualification unavailable: %v\n", err)
+		return exitConfiguration
+	}
+	profile, err := profilediscovery.QualifyStructuralProfile(profilediscovery.StructuralOptions{
+		RepositoryRoot: repositoryRoot,
+		ManifestPath:   *manifest,
+		GraphPath:      *graph,
+		GeneratedPath:  *generated,
+		EvidencePath:   *evidence,
+	})
+	if err != nil {
+		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile qualification unavailable: %v\n", err)
+		return exitConfiguration
+	}
+	raw, err := profilediscovery.RenderStructuralProfile(profile)
+	if err != nil {
+		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile qualification unavailable: %v\n", err)
+		return exitConfiguration
+	}
+	if _, err := stdout.Write(raw); err != nil {
+		_, _ = fmt.Fprintf(stderr, "buildopt: write structural profile: %v\n", err)
 		return exitConfiguration
 	}
 	return 0

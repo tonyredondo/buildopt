@@ -50,7 +50,7 @@ const (
 	managedL1RetentionEnvironment  = "BUILDOPT_MANAGED_L1_RETENTION_DAYS"
 	gatewayReadyPath               = "/_buildopt/ready"
 	gatewayGenerationHeader        = "BuildOpt-Gateway-Connection-Generation"
-	expectedUsage                  = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt poc --changes-file PATH [options]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt profile analyze [options]\n       buildopt profile discover [options]\n       buildopt doctor\n"
+	expectedUsage                  = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt poc --changes-file PATH [options]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt profile analyze [options]\n       buildopt profile qualify [options]\n       buildopt profile discover [options]\n       buildopt doctor\n"
 )
 
 type helperObservation struct {

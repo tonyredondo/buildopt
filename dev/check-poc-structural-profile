@@ -1,0 +1,180 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-structural-profile-v1.json"
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-structural-profile.XXXXXX")
+trap 'rm -r -- "${buildopt_temporary}"' EXIT
+
+for buildopt_command in awk cmp cp grep jq mkdir rm sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required structural-profile command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-structural-profile/v1" and
+    .workItem == "POC-STRUCTURAL-PROFILE-001" and
+    .profile.schemaVersion == "buildopt.poc/qualified-profile/v4" and
+    .profile.profileId == "qualified-structural-build-impact" and
+    .profile.enabledMechanisms == ["BUILD_IMPACT"] and
+    .qualification.pairs == 8 and
+    .qualification.minimumMeanSavedMs == 500 and
+    .qualification.minimumReductionRatio == 0.02 and
+    .qualification.minimumPositivePairs == 8 and
+    .fallback.inputDrift == "NATIVE_FULL_GRAPH" and
+    .boundaries.proofOfConcept == true and
+    .boundaries.productionAuthorized == false and
+    .boundaries.repositorySpecificProductRuleAllowed == false and
+    .boundaries.automaticActivation == false and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false
+' "${buildopt_spec}" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+./dev/run --toolchain go -- \
+    go build -trimpath -o "${buildopt_temporary}/buildopt" ./cmd/buildopt
+
+buildopt_fixture="${buildopt_temporary}/repository"
+mkdir -p -- "${buildopt_fixture}"
+cp -- fixtures/poc-kafka-packaging/buildopt-impact-manifest.json \
+    "${buildopt_fixture}/buildopt-impact-manifest.json"
+cp -- fixtures/poc-kafka-packaging/buildopt-impact-graph.generated.json \
+    "${buildopt_fixture}/buildopt-impact-graph.generated.json"
+cp -- fixtures/poc-kafka-packaging/buildopt-impact.generated.json \
+    "${buildopt_fixture}/buildopt-impact.generated.json"
+
+(
+    cd -- "${buildopt_fixture}"
+    "${buildopt_temporary}/buildopt" profile analyze \
+        --manifest buildopt-impact-manifest.json \
+        --graph buildopt-impact-graph.generated.json \
+        --generated-manifest buildopt-impact.generated.json \
+        > analysis.json
+)
+
+buildopt_manifest_sha=$(sha256sum "${buildopt_fixture}/buildopt-impact-manifest.json" | awk '{print $1}')
+buildopt_graph_sha=$(sha256sum "${buildopt_fixture}/buildopt-impact-graph.generated.json" | awk '{print $1}')
+buildopt_generated_sha=$(sha256sum "${buildopt_fixture}/buildopt-impact.generated.json" | awk '{print $1}')
+
+jq -n --slurpfile analysis "${buildopt_fixture}/analysis.json" \
+    --arg manifestSha "${buildopt_manifest_sha}" \
+    --arg graphSha "${buildopt_graph_sha}" \
+    --arg generatedSha "${buildopt_generated_sha}" '
+    [range(1; 9) | {
+        pair: ., order: (if (. % 2) == 1 then "CONTROL_FIRST" else "CANDIDATE_FIRST" end),
+        controlDurationMs: 10000, candidateDurationMs: 7000, savedMs: 3000,
+        controlRequiredOutputSha256: ("a" * 64),
+        candidateRequiredOutputSha256: ("a" * 64),
+        requiredOutputCount: 1, productAttributableFailure: false
+    }] as $observations |
+    {
+        schemaVersion: "buildopt.evidence/structural-profile-qualification/v1",
+        evidenceState: "QUALIFIED",
+        subject: {
+            repositoryId: $analysis[0].subject.repositoryId,
+            repositoryRevision: ("b" * 40),
+            pipelineClass: $analysis[0].subject.pipelineClass
+        },
+        sourceBindings: {
+            manifestSha256: $manifestSha,
+            graphSha256: $graphSha,
+            generatedManifestSha256: $generatedSha
+        },
+        plan: $analysis[0].plan,
+        execution: {
+            candidateSurface: "INSTALLED_BUILDOPT_QUALIFIED_PROFILE",
+            mechanisms: ["BUILD_IMPACT"],
+            gradleOptions: ["--daemon", "--offline", "--build-cache", "--parallel",
+                "--no-configuration-cache", "--console=plain", "--max-workers=4", "--no-scan"],
+            launcherOverheadIncluded: true
+        },
+        observations: $observations,
+        fallback: {mode: "FULL_GRAPH", reason: "IMPACT_GLOBAL_CHANGE", buildSuccessful: true},
+        result: {
+            pairs: 8, controlMeanMs: 10000, candidateMeanMs: 7000,
+            meanSavedMs: 3000, reductionRatio: 0.3,
+            interval95SavedMs: [3000, 3000], positivePairs: 8,
+            qualified: true, decision: "QUALIFY_STRUCTURAL_PROFILE"
+        },
+        boundaries: {
+            proofOfConcept: true, productionAuthorized: false,
+            repositorySpecificRuleAdded: false, testOptimizationModified: false
+        }
+    }
+' >"${buildopt_fixture}/buildopt-structural-qualification.json"
+
+for buildopt_run in first second; do
+    (
+        cd -- "${buildopt_fixture}"
+        "${buildopt_temporary}/buildopt" profile qualify \
+            --manifest buildopt-impact-manifest.json \
+            --graph buildopt-impact-graph.generated.json \
+            --generated-manifest buildopt-impact.generated.json \
+            --evidence buildopt-structural-qualification.json
+    ) >"${buildopt_temporary}/${buildopt_run}.json"
+done
+cmp --silent "${buildopt_temporary}/first.json" "${buildopt_temporary}/second.json"
+
+jq -e --arg manifestSha "${buildopt_manifest_sha}" \
+    --arg graphSha "${buildopt_graph_sha}" --arg generatedSha "${buildopt_generated_sha}" '
+    .schemaVersion == "buildopt.poc/qualified-profile/v4" and
+    .profileVersion == 4 and .profileId == "qualified-structural-build-impact" and
+    .repositoryId == "apache/kafka" and .pipelineClass == "poc-kafka-packaging-v1" and
+    .fallback == "NATIVE_FULL_GRAPH" and .mechanisms == {
+        buildImpact: true, standardJarAdapter: false, safeCache: false,
+        runtimeTuning: false, hotState: false, standardCopyAdapter: false,
+        sharedEdgeCache: false
+    } and
+    .preconditions == [
+        {type: "FILE_SHA256", path: "buildopt-impact-manifest.json", sha256: $manifestSha},
+        {type: "FILE_SHA256", path: "buildopt-impact-graph.generated.json", sha256: $graphSha},
+        {type: "FILE_SHA256", path: "buildopt-impact.generated.json", sha256: $generatedSha}
+    ] and
+    .qualification.schemaVersion == "buildopt.evidence/structural-profile-qualification/v1" and
+    .qualification.pairs == 8 and .qualification.meanSavedMs == 3000 and
+    .qualification.reductionRatio == 0.3 and
+    .qualification.interval95SavedMs == [3000, 3000]
+' "${buildopt_temporary}/first.json" >/dev/null
+
+jq '.sourceBindings.graphSha256 = ("0" * 64)' \
+    "${buildopt_fixture}/buildopt-structural-qualification.json" \
+    >"${buildopt_fixture}/drifted.json"
+set +e
+(
+    cd -- "${buildopt_fixture}"
+    "${buildopt_temporary}/buildopt" profile qualify \
+        --manifest buildopt-impact-manifest.json \
+        --graph buildopt-impact-graph.generated.json \
+        --generated-manifest buildopt-impact.generated.json \
+        --evidence drifted.json
+) >"${buildopt_temporary}/negative.stdout" 2>"${buildopt_temporary}/negative.stderr"
+buildopt_status=$?
+set -e
+if [[ "${buildopt_status}" != 78 ]] || [[ -s "${buildopt_temporary}/negative.stdout" ]] ||
+    ! grep -Fq 'structural qualification source binding drift' \
+        "${buildopt_temporary}/negative.stderr"; then
+    printf 'structural profile drift did not fail closed\n' >&2
+    exit 1
+fi
+
+"${buildopt_temporary}/buildopt" profile qualify --help \
+    >"${buildopt_temporary}/help.stdout" 2>"${buildopt_temporary}/help.stderr"
+if [[ -s "${buildopt_temporary}/help.stderr" ]] ||
+    ! grep -Fxq \
+        'usage: buildopt profile qualify --manifest PATH --graph PATH --generated-manifest PATH --evidence PATH' \
+        "${buildopt_temporary}/help.stdout"; then
+    printf 'structural profile help contract failed\n' >&2
+    exit 1
+fi
+
+./dev/run --toolchain go -- go test -count=1 ./internal/profilediscovery
+./dev/run --toolchain go -- go test -count=1 \
+    -run 'TestQualifiedPOCStructuralProfileSelectsAndFailsClosedOnDrift' \
+    ./internal/launcher
+
+printf 'structural profile OK: generic deterministic qualification, strict value gate, runtime drift fallback\n'

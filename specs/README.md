@@ -389,6 +389,13 @@ boundary of a cyclic Gradle component. Production closure remains unchanged;
 the owner-operated POC path may use only subset-validated owned roots and keeps
 the full graph for equal-specificity ambiguity.
 
+`poc-structural-profile-v1.json` and `poc-structural-profile-v1.md` define the
+repository-independent bridge from measured structural value to an installed
+Build-Impact-only profile. Eight positive optimized-native comparisons,
+identical outputs, a positive paired bound, exact source hashes and proven
+full-graph fallback are required before deterministic materialization. The v4
+profile remains repository-owned and rechecks all three graph inputs at runtime.
+
 `poc-trace-hypothesis-v1.json` and `poc-trace-hypothesis-v1.md` bind the final
 trace-gated optimization decision. They require at least 500 ms of causally
 recoverable product-owned critical-path work in two families, reject overlapping

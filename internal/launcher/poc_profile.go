@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
+	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 	"github.com/tonyredondo/buildopt/internal/sessioningest"
 )
 
@@ -21,12 +22,15 @@ const (
 	qualifiedPOCProfileSchemaVersionV1   = "buildopt.poc/qualified-profile/v1"
 	qualifiedPOCProfileSchemaVersionV2   = "buildopt.poc/qualified-profile/v2"
 	qualifiedPOCProfileSchemaVersionV3   = "buildopt.poc/qualified-profile/v3"
+	qualifiedPOCProfileSchemaVersionV4   = "buildopt.poc/qualified-profile/v4"
 	qualifiedPOCProfilePlanSchemaV1      = "buildopt.poc/qualified-profile-plan/v1"
 	qualifiedPOCProfilePlanSchemaV2      = "buildopt.poc/qualified-profile-plan/v2"
 	qualifiedPOCProfilePlanSchemaV3      = "buildopt.poc/qualified-profile-plan/v3"
+	qualifiedPOCProfilePlanSchemaV4      = "buildopt.poc/qualified-profile-plan/v4"
 	qualifiedPOCProfileIDV1              = "clean-build-impact-plus-exact-standard-jar"
 	qualifiedPOCProfileIDV2              = "normalized-impact-plus-read-only-edge"
 	qualifiedPOCProfileIDV3              = "build-impact-only"
+	qualifiedPOCProfileIDV4              = "qualified-structural-build-impact"
 	qualifiedPOCProfileOwnership         = "REPOSITORY_COMMITTED"
 	qualifiedPOCProfileClaimScope        = "DECLARED_OUTPUTS_ONLY"
 	qualifiedPOCProfileFallback          = "NATIVE_FULL_GRAPH"
@@ -49,6 +53,17 @@ type qualifiedPOCProfile struct {
 	GradleOptions  []string                      `json:"gradleOptions"`
 	Preconditions  []qualifiedPOCPrecondition    `json:"preconditions,omitempty"`
 	EdgeCache      *qualifiedPOCEdgeCache        `json:"edgeCache,omitempty"`
+	Qualification  *qualifiedPOCQualification    `json:"qualification,omitempty"`
+}
+
+type qualifiedPOCQualification struct {
+	SchemaVersion      string    `json:"schemaVersion"`
+	SHA256             string    `json:"sha256"`
+	RepositoryRevision string    `json:"repositoryRevision"`
+	Pairs              int       `json:"pairs"`
+	MeanSavedMS        float64   `json:"meanSavedMs"`
+	ReductionRatio     float64   `json:"reductionRatio"`
+	Interval95SavedMS  []float64 `json:"interval95SavedMs"`
 }
 
 type qualifiedPOCPrecondition struct {
@@ -104,6 +119,7 @@ type qualifiedPOCProfilePlan struct {
 	Preconditions         []qualifiedPOCPreconditionResult `json:"preconditions,omitempty"`
 	EdgeCacheMode         string                           `json:"edgeCacheMode,omitempty"`
 	EdgeCacheEndpoint     string                           `json:"edgeCacheEndpoint,omitempty"`
+	Qualification         *qualifiedPOCQualification       `json:"qualification,omitempty"`
 	ProductionAuthorized  bool                             `json:"productionAuthorized"`
 }
 
@@ -157,7 +173,8 @@ func prepareQualifiedPOCProfileInvocation(args []string, bypass bool) (impactInv
 	}
 	preconditions := qualifiedPOCPreconditionResults(profile.Preconditions, "NOT_EVALUATED")
 	pocEdgeURL := ""
-	if profile.SchemaVersion != qualifiedPOCProfileSchemaVersionV2 {
+	if profile.SchemaVersion != qualifiedPOCProfileSchemaVersionV2 &&
+		profile.SchemaVersion != qualifiedPOCProfileSchemaVersionV4 {
 		if *edgeURL != "" {
 			return impactInvocation{}, errors.New("qualified POC profile does not accept an Edge endpoint")
 		}
@@ -166,10 +183,14 @@ func prepareQualifiedPOCProfileInvocation(args []string, bypass bool) (impactInv
 		preconditions, satisfied = evaluateQualifiedPOCPreconditions(repositoryRoot, profile.Preconditions)
 		if !satisfied {
 			invocation.plan = qualifiedPOCNativeFallback(invocation.plan, manifest.Manifest.OriginalEntrypoints, "PROFILE_PRECONDITION_FAILED")
-		} else if canonical, edgeErr := canonicalLoopbackHTTPOrigin(*edgeURL); edgeErr != nil {
-			invocation.plan = qualifiedPOCNativeFallback(invocation.plan, manifest.Manifest.OriginalEntrypoints, "PROFILE_EDGE_UNAVAILABLE")
-		} else {
-			pocEdgeURL = canonical
+		} else if profile.SchemaVersion == qualifiedPOCProfileSchemaVersionV2 {
+			if canonical, edgeErr := canonicalLoopbackHTTPOrigin(*edgeURL); edgeErr != nil {
+				invocation.plan = qualifiedPOCNativeFallback(invocation.plan, manifest.Manifest.OriginalEntrypoints, "PROFILE_EDGE_UNAVAILABLE")
+			} else {
+				pocEdgeURL = canonical
+			}
+		} else if *edgeURL != "" {
+			return impactInvocation{}, errors.New("qualified POC profile does not accept an Edge endpoint")
 		}
 		invocation.gradleArgs = append(append([]string(nil), profile.GradleOptions...), invocation.plan.Entrypoints...)
 	}
@@ -196,6 +217,9 @@ func prepareQualifiedPOCProfileInvocation(args []string, bypass bool) (impactInv
 	} else if profile.SchemaVersion == qualifiedPOCProfileSchemaVersionV3 {
 		planSchema = qualifiedPOCProfilePlanSchemaV3
 		disabledMechanisms = []string{"HOT_STATE", "RUNTIME_TUNING", "SAFE_CACHE", "SHARED_EDGE_CACHE", "STANDARD_COPY", "STANDARD_JAR"}
+	} else if profile.SchemaVersion == qualifiedPOCProfileSchemaVersionV4 {
+		planSchema = qualifiedPOCProfilePlanSchemaV4
+		disabledMechanisms = []string{"HOT_STATE", "RUNTIME_TUNING", "SAFE_CACHE", "SHARED_EDGE_CACHE", "STANDARD_COPY", "STANDARD_JAR"}
 	}
 	invocation.qualifiedProfile = &qualifiedPOCProfilePlan{
 		SchemaVersion:         planSchema,
@@ -217,6 +241,7 @@ func prepareQualifiedPOCProfileInvocation(args []string, bypass bool) (impactInv
 		Preconditions:         preconditions,
 		EdgeCacheMode:         qualifiedPOCEdgeMode(profile),
 		EdgeCacheEndpoint:     pocEdgeURL,
+		Qualification:         profile.Qualification,
 		ProductionAuthorized:  false,
 	}
 	return invocation, nil
@@ -296,7 +321,9 @@ func validateQualifiedPOCProfile(profile qualifiedPOCProfile) error {
 		profile.ProfileVersion == 2 && profile.ProfileID == qualifiedPOCProfileIDV2
 	versionThree := profile.SchemaVersion == qualifiedPOCProfileSchemaVersionV3 &&
 		profile.ProfileVersion == 3 && profile.ProfileID == qualifiedPOCProfileIDV3
-	if !versionOne && !versionTwo && !versionThree {
+	versionFour := profile.SchemaVersion == qualifiedPOCProfileSchemaVersionV4 &&
+		profile.ProfileVersion == 4 && profile.ProfileID == qualifiedPOCProfileIDV4
+	if !versionOne && !versionTwo && !versionThree && !versionFour {
 		return errors.New("unsupported qualified POC profile identity")
 	}
 	if profile.Ownership != qualifiedPOCProfileOwnership ||
@@ -336,6 +363,26 @@ func validateQualifiedPOCProfile(profile qualifiedPOCProfile) error {
 		profile.Mechanisms.SharedEdgeCache || len(profile.Preconditions) != 0 || profile.EdgeCache != nil) {
 		return errors.New("qualified POC profile v3 must enable only Build Impact")
 	}
+	if versionFour && (!profile.Mechanisms.BuildImpact || profile.Mechanisms.StandardJarAdapter ||
+		profile.Mechanisms.SafeCache || profile.Mechanisms.RuntimeTuning ||
+		profile.Mechanisms.HotState || profile.Mechanisms.StandardCopyAdapter ||
+		profile.Mechanisms.SharedEdgeCache || len(profile.Preconditions) != 3 || profile.EdgeCache != nil ||
+		profile.Qualification == nil || profile.Qualification.SchemaVersion != profilediscovery.StructuralEvidenceSchema ||
+		!validQualifiedPOCLowerHex(profile.Qualification.SHA256, sha256.Size*2) ||
+		!validQualifiedPOCLowerHex(profile.Qualification.RepositoryRevision, 40) ||
+		profile.Qualification.Pairs != 8 || profile.Qualification.MeanSavedMS < 500 ||
+		profile.Qualification.ReductionRatio < 0.02 || len(profile.Qualification.Interval95SavedMS) != 2 ||
+		profile.Qualification.Interval95SavedMS[0] <= 0 || len(profile.GradleOptions) == 0) {
+		return errors.New("qualified POC profile v4 requires exact positive structural evidence and three file bindings")
+	}
+	if versionFour && (profile.Preconditions[0].Path != profile.Impact.Manifest ||
+		profile.Preconditions[1].Path != profile.Impact.Graph ||
+		profile.Preconditions[2].Path != profile.Impact.GeneratedManifest) {
+		return errors.New("qualified POC profile v4 preconditions must bind its manifest, graph, and generated state")
+	}
+	if !versionFour && profile.Qualification != nil {
+		return errors.New("legacy qualified POC profiles cannot carry structural qualification evidence")
+	}
 	for _, precondition := range profile.Preconditions {
 		if precondition.Type != "FILE_SHA256" || !validQualifiedPOCProfilePath(precondition.Path) ||
 			len(precondition.SHA256) != sha256.Size*2 {
@@ -369,6 +416,18 @@ func qualifiedPOCPreconditionResults(preconditions []qualifiedPOCPrecondition, s
 		})
 	}
 	return results
+}
+
+func validQualifiedPOCLowerHex(value string, length int) bool {
+	if len(value) != length {
+		return false
+	}
+	for _, character := range value {
+		if !strings.ContainsRune("0123456789abcdef", character) {
+			return false
+		}
+	}
+	return true
 }
 
 func evaluateQualifiedPOCPreconditions(repositoryRoot string, preconditions []qualifiedPOCPrecondition) ([]qualifiedPOCPreconditionResult, bool) {
