@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+  "evidenceState": "QUALIFIED",
+  "capturedAt": "2026-08-09T22:46:24Z",
+  "subject": {
+    "repositoryId": "apache/groovy",
+    "repositoryRevision": "7e71c394ac27ba8f741613251181cb9e5129927a",
+    "pipelineClass": "classes"
+  },
+  "sourceBindings": {
+    "manifestSha256": "64afdd2d1114ebd161bfe14c5a4a442d5b154b619ed679192421f9585988dfd4",
+    "graphSha256": "0cec194e6e24a82350badb73c7295c765c2a84d374d5be26a57cb11e4d158f14",
+    "generatedManifestSha256": "6ae1c7526ec6e3b15b1b61f5ee3d3db5f521a0d88f4485b98f7f09dc1333f7c4",
+    "sourceEvidenceSha256": "567700230e4130b93ec67296f6a281dfbcbbf312156c7887463e20ec110f42fd"
+  },
+  "plan": {
+    "alternativeId": "changed-module-classes",
+    "entrypoints": [
+      ":groovy-json:classes"
+    ],
+    "fallbackEntrypoints": [
+      "classes"
+    ],
+    "requiredOutputs": [
+      "subprojects/groovy-json/build/classes/**"
+    ],
+    "totalProjectCount": 37,
+    "selectedProjectCount": 2,
+    "omittedProjectCount": 35,
+    "omittedProjectRatio": 0.9459459459459459
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "b24eb848ba74aabecf3633ddaa941b24c512236d",
+    "executableSha256": "90e388632da49aae8b9c16d817da543f79de33c38f932ddb5a2490dfd6377bed",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--no-daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=4"
+    ],
+    "launcherOverheadIncluded": true
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 95007,
+      "candidateDurationMs": 51091,
+      "savedMs": 43916,
+      "controlRequiredOutputSha256": "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e",
+      "candidateRequiredOutputSha256": "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e",
+      "requiredOutputCount": 66,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 90699,
+      "candidateDurationMs": 42761,
+      "savedMs": 47938,
+      "controlRequiredOutputSha256": "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e",
+      "candidateRequiredOutputSha256": "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e",
+      "requiredOutputCount": 66,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 93590,
+      "candidateDurationMs": 44867,
+      "savedMs": 48723,
+      "controlRequiredOutputSha256": "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e",
+      "candidateRequiredOutputSha256": "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e",
+      "requiredOutputCount": 66,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 91357,
+      "candidateDurationMs": 44752,
+      "savedMs": 46605,
+      "controlRequiredOutputSha256": "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e",
+      "candidateRequiredOutputSha256": "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e",
+      "requiredOutputCount": 66,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 5,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 94010,
+      "candidateDurationMs": 47191,
+      "savedMs": 46819,
+      "controlRequiredOutputSha256": "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e",
+      "candidateRequiredOutputSha256": "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e",
+      "requiredOutputCount": 66,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 6,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 86932,
+      "candidateDurationMs": 46480,
+      "savedMs": 40452,
+      "controlRequiredOutputSha256": "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e",
+      "candidateRequiredOutputSha256": "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e",
+      "requiredOutputCount": 66,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 7,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 96739,
+      "candidateDurationMs": 47700,
+      "savedMs": 49039,
+      "controlRequiredOutputSha256": "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e",
+      "candidateRequiredOutputSha256": "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e",
+      "requiredOutputCount": 66,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 8,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 90471,
+      "candidateDurationMs": 44117,
+      "savedMs": 46354,
+      "controlRequiredOutputSha256": "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e",
+      "candidateRequiredOutputSha256": "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e",
+      "requiredOutputCount": 66,
+      "productAttributableFailure": false
+    }
+  ],
+  "fallback": {
+    "mode": "FULL_GRAPH",
+    "reason": "IMPACT_GLOBAL_CHANGE",
+    "buildSuccessful": true
+  },
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 92350.625,
+    "candidateMeanMs": 46119.875,
+    "meanSavedMs": 46230.75,
+    "reductionRatio": 0.5006002937175574,
+    "interval95SavedMs": [
+      44190.25,
+      47846.875
+    ],
+    "positivePairs": 8,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

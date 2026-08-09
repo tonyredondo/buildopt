@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.build-impact/generated-manifest/v1",
+  "repositoryId": "apache/groovy",
+  "pipelineClass": "classes",
+  "manifestDigest": "sha256:2bcf0e4675d5c703d10fb3bd557812ba297df83fc090b2400133d630edbbe7ba",
+  "graphDigest": "sha256:0a6b528ce9b353a60f3b90d2234d46ba0dc2862a479b6076437210da4e884938",
+  "discoveryDigest": "sha256:55f941deccc4f9310f003ef9244eae2b59b6cff3b4210a0f669bb938aff3a341",
+  "adapterVersion": "gradle-runtime-v1",
+  "gradleVersion": "8.14.4",
+  "complete": true,
+  "fallbackReasons": []
+}

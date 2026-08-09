@@ -177,6 +177,15 @@ unfavorable observations. Percentages from different rows are not additive.
 | Trace-gated hypothesis decision | **No new timing; no hypothesis authorized** | BuildOpt setup peaks at 1.238233 ms, startup at 364.875 ms, finalization at 97 ms and teardown at 87 ms. Configuration reaches 682 ms only in Spring, without product attribution or a second qualifying family. |
 | Terminal portfolio decision | **Specialize: 1/3 families qualifies** | Retain only the explicit Kafka profile; Spring and OpenTelemetry use optimized native Gradle. Withdraw the general accelerator claim and do not average repository percentages. |
 
+### Apache Groovy: fresh generic structural measurement
+
+| Experiment | Result | Interpretation |
+|---|---:|---|
+| Generic `classes` workflow | **50.06% faster**, 46,230.75 ms saved, 8/8 positive pairs | Discovery reduced 37 projects to two for one `groovy-json` source change. Native averaged 92,350.625 ms; installed BuildOpt averaged 46,119.875 ms; the paired interval was +44,190.25..+47,846.875 ms. |
+| Required output | **66/66 class files byte-identical** | Both arms produced SHA-256 `c2031f4f...ca70e`; launcher and planning overhead were included. |
+| Safety fallback | **Full graph passed** | A `gradle.properties` change restored native `classes`; no repository-name rule or Test Optimization behavior was added. |
+| Rejected scopes | Distribution ZIP mismatch; root `assemble` included unrelated docs work | Neither candidate contributed accepted timing. The qualified claim is the exact `groovy-json` classes output only. |
+
 ## Historical Portfolio Decision and Subsequent Generalization
 
 The qualified Kafka composition has now moved from experiment-only wiring into
@@ -416,6 +425,15 @@ This block adds no performance claim: its deterministic fixture proves
 isolation, output equality and fail-closed orchestration rather than timing a
 customer workload.
 
+The first fresh run through that exact generic handoff now provides the missing
+value evidence. On Apache Groovy 5.0.8, a one-file `groovy-json` change reduced
+the checked `classes` reach from 37 projects to two. Eight alternating pairs
+saved 46,230.75 ms/**50.06%** on average against optimized native Gradle, with
+a strictly positive +44,190.25..+47,846.875-ms interval, 66 byte-identical
+class outputs and verified global fallback. This is strong evidence that graph
+reduction creates end-to-end cascade value on another family; it remains an
+exact output-scope claim rather than automatic support for every Gradle build.
+
 ## Boundaries and References
 
 This is proof-of-concept evidence, not a universal savings or production
@@ -446,6 +464,7 @@ production operations are outside the current scope.
 - [General whole-profile value scorecard](../../benchmarks/results/poc-general-build-value-v1.json)
 - [Micronaut qualified structural-transfer evidence](../../benchmarks/results/poc-structural-transfer-v1.json)
 - [Generic installed structural-profile adoption evidence](../../benchmarks/results/poc-structural-profile-adoption-v1.json)
+- [Apache Groovy generic classes evidence bundle](../../benchmarks/results/poc-apache-groovy-classes-v1/measurement.json)
 - [Historical Micronaut fail-closed evidence](../../benchmarks/results/poc-structural-transfer-v1-native-stop.json)
 - [General opportunity and composition contract](../../specs/poc-general-build-value-v1.md)
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)

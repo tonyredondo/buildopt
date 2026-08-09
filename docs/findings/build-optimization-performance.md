@@ -38,6 +38,12 @@
   native Gradle, saving **17,061.125 ms/72.16%** with 8/8 positive pairs and a
   +16,243.75..+17,942.25-ms interval. Profile validation, planning and launcher
   overhead are included; global changes and graph-hash drift both fail closed.
+- **The same generic pipeline now qualifies on Apache Groovy.** For one
+  `groovy-json` source change, the exact `classes` scope reduced the reachable
+  graph from 37 projects to two. Optimized native Gradle averaged 92,350.625 ms
+  and installed BuildOpt averaged 46,119.875 ms: **50.06% faster**, saving
+  46,230.75 ms with 8/8 positive pairs, interval
+  +44,190.25..+47,846.875 ms, 66 exact class outputs and full-graph fallback.
 - **Direct JAR reuse did not improve the measured Spring test build.** It
   restored three exact Test-fixture JARs but regressed the complete unchanged
   test workflow by **735.25 ms/11.31%**, so the activation was not promoted.
@@ -68,7 +74,7 @@ measured on different workloads and scopes.
 |---|---|---:|---|
 | **Safe Cache / local L1** | Reuses verified outputs in a scope isolated by repository, Wrapper, and platform. | Against cache-off: **15.9% faster in Kotlin** and **13.7% faster in Groovy**. Against native Gradle cache: **0.02% faster in Kotlin** and **0.47% slower in Groovy**. | Useful when a repository has no effective cache, but **not an accelerator over native Gradle cache**. Strict Safe Cache remains explicit-only. |
 | **Runtime Tuning (retired)** | Tested bounded worker, heap, and resource profiles intended to improve Gradle execution. | The latest real Spring candidate capped 12 workers to 6 and was **2.00% slower** (191.5 ms), with 2/4 favorable pairs and interval -973.5..+590.5 ms. Earlier synthetic `W3_H4G` and `W4_H6G` candidates were **4.3%** and **54.7% slower**. | **No defensible value. Removed.** Optimized native Gradle remains the stable control. |
-| **Build Impact** | Maps a change to the projects and tasks needed for the requested outputs, with full-graph fallback for unknown or global changes. | Synthetic coverage: **73.5-76.0% faster**. Installed Spring path: **15.76% faster**. Generalized Spring test preparation: **18.88% faster**. Kafka client packaging scope: **57.58% faster**. Micronaut direct structural scope: **72.97% faster**; generic installed profile: **72.16% faster**, both 8/8 positive. Spring verification is graph-complete but saved only **0.31%**; attribution found no product phase above **1.238233 ms**. | **The strongest broadly useful accelerator currently demonstrated, but only for independently qualified scopes.** Profile materialization and execution are repository-name independent; global, ambiguous and drifted inputs still fail closed. |
+| **Build Impact** | Maps a change to the projects and tasks needed for the requested outputs, with full-graph fallback for unknown or global changes. | Synthetic coverage: **73.5-76.0% faster**. Installed Spring path: **15.76% faster**. Generalized Spring test preparation: **18.88% faster**. Kafka client packaging scope: **57.58% faster**. Micronaut generic installed profile: **72.16% faster**. Fresh Apache Groovy classes: **50.06% faster**, 8/8 positive. Spring verification is graph-complete but saved only **0.31%**; attribution found no product phase above **1.238233 ms**. | **The strongest broadly useful accelerator currently demonstrated, but only for independently qualified scopes.** Profile materialization and execution are repository-name independent; global, ambiguous and drifted inputs still fail closed. |
 | **Task Intelligence** | Observes and qualifies tasks only when their inputs, outputs, cache keys, and outcomes are exact enough to support an optimization. | No general direct saving. In the accepted pilot it enabled a qualified native-cache restore that saved **203 ms** on average. | A **safety and eligibility layer**, not a standalone accelerator. Its value is realized through a qualified cache or patch route. |
 | **Patch Autopilot / reviewed task patch** | Produces a reviewable and reversible patch that correctly declares inputs and outputs and enables caching for an exact custom-task shape. | Exact reviewed Java recipe: **67.3% faster in Kotlin** and **68.0% faster in Groovy**. Combined installed path: **63.5-67.3% faster**. | Highly promising for **specific reviewed task contracts**. The result must not be generalized to arbitrary tasks or recipes. |
 | **Graph reduction** | Replaces broad aggregate task dependencies with the typed producers required for the declared outputs. | The OpenTelemetry experiment removed **3 graph nodes and 2 executed tasks** while preserving all 125 required outputs. No standalone wall-clock percentage is claimed. | Structurally valuable, but it still needs independent timing evidence before it can be presented as a separate accelerator. |
@@ -513,6 +519,7 @@ rerunning unchanged experiments:
 | OpenTelemetry | Build Impact + standard `Jar` | **50.40% faster**, 5,361.25 ms, 4/4 positive | Later installed preparation produced zero accepted observations; native default pending replication |
 | Kafka | Build Impact + read-only Edge | **82.35% faster**, 35,405.5 ms, 4/4 positive | Strict installed replication **81.85%**, 8/8; explicit reviewed POC profile |
 | Micronaut Core | Structural Build Impact | **72.97% faster**, 17,561.625 ms, 8/8 positive | Generic installed v4 profile **72.16% faster**, 8/8; review-required, exact-hash bound |
+| Apache Groovy | Structural Build Impact for `groovy-json` classes | **50.06% faster**, 46,230.75 ms, 8/8 positive | Generic measured evidence qualifies; 66 exact outputs and global fallback; exact classes scope only |
 
 The table does not sum component effects or average repositories. Hot State is
 excluded because its direct OpenTelemetry arm regressed by 7.68%. Runtime
@@ -533,4 +540,5 @@ Validate the current scorecard with:
 ./dev/check-poc-runtime-research
 ./dev/check-poc-verification-distribution-graph-v1-result
 ./dev/check-poc-verification-overhead-attribution-v1-result
+./dev/check-poc-apache-groovy-classes-v1
 ```

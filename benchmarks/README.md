@@ -109,6 +109,35 @@ revision, change and outputs. Validate it with:
 ./dev/check-poc-structural-profile-adoption-v1
 ```
 
+### Fresh generic measurement: Apache Groovy classes
+
+[`results/poc-apache-groovy-classes-v1`](./results/poc-apache-groovy-classes-v1/)
+contains the complete checked input and output bundle from Apache Groovy 5.0.8:
+manifest, generated graph, generated-state binding, exact changed paths,
+fallback paths, eight-pair measurement, and the derived review-required
+profile.
+
+| Metric | Optimized native control | Installed structural candidate | Difference |
+|---|---:|---:|---:|
+| Mean wall clock | 92,350.625 ms | 46,119.875 ms | **46,230.75 ms / 50.06% faster** |
+| Alternating pairs | 8 | 8 | **8/8 positive** |
+| 95% paired interval | — | — | **+44,190.25..+47,846.875 ms** |
+| Required output | 66 class files | Same 66 class files | Byte-identical in every pair |
+| Project reach | 37 | 2 | 35/37 or 94.59% omitted |
+
+Both arms used the same optimized-native options, including build cache,
+parallel execution and four workers. Launcher/planning overhead is included.
+A global `gradle.properties` change restored the full graph. The earlier
+distribution candidate was rejected because its ZIP bytes differed, and root
+`assemble` was stopped before timing because it included unrelated docs work.
+The exact classes result therefore qualifies only this declared output scope.
+
+Validate hashes, calculations, profile determinism and tamper fallback with:
+
+```bash
+./dev/check-poc-apache-groovy-classes-v1
+```
+
 The current POC verdict is `CONTINUE` for exact evidence-qualified scopes, not
 for arbitrary repositories. Contractual 4-vCPU/16-GiB runs cover the baseline,
 negative-mechanism decision, accelerator-coverage matrix, combined public path,

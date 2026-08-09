@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v4",
+  "profileVersion": 4,
+  "profileId": "qualified-structural-build-impact",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "apache/groovy",
+  "pipelineClass": "classes",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": false,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": false
+  },
+  "gradleOptions": [
+    "--no-daemon",
+    "--build-cache",
+    "--parallel",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-scan",
+    "--max-workers=4"
+  ],
+  "preconditions": [
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-manifest.json",
+      "sha256": "64afdd2d1114ebd161bfe14c5a4a442d5b154b619ed679192421f9585988dfd4"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-graph.generated.json",
+      "sha256": "0cec194e6e24a82350badb73c7295c765c2a84d374d5be26a57cb11e4d158f14"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact.generated.json",
+      "sha256": "6ae1c7526ec6e3b15b1b61f5ee3d3db5f521a0d88f4485b98f7f09dc1333f7c4"
+    }
+  ],
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "d9ee5328fbe38fb00132771cbe9bc266f30dde9c24d90eef27cb5fabb2b1d70a",
+    "repositoryRevision": "7e71c394ac27ba8f741613251181cb9e5129927a",
+    "pairs": 8,
+    "meanSavedMs": 46230.75,
+    "reductionRatio": 0.5006002937175574,
+    "interval95SavedMs": [
+      44190.25,
+      47846.875
+    ]
+  }
+}

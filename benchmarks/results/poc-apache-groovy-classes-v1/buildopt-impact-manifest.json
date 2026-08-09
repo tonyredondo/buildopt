@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "apache/groovy",
+  "pipelineClass": "classes",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": ["classes"],
+  "allowedAlternatives": [
+    {
+      "id": "changed-module-classes",
+      "entrypoints": [":groovy-json:classes"]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "groovy-json-classes",
+      "path": "subprojects/groovy-json/build/classes/**",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "build-logic/**",
+    "gradle/**",
+    "build.gradle",
+    "settings.gradle",
+    "gradle.properties"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

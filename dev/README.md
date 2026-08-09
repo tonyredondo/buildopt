@@ -3389,6 +3389,14 @@ fallback, atomic profile evaluation and invalid-evidence rejection. The fixture
 uses a deterministic fake Wrapper so Base CI validates orchestration rather
 than publishing a new performance percentage.
 
+`./dev/check-poc-apache-groovy-classes-v1` independently validates the first
+fresh public-repository result produced by that generic pipeline. It recomputes
+all eight Apache Groovy pairs and their deterministic paired interval, checks
+the manifest/graph/change digests and 66 byte-identical class outputs, rebuilds
+the current CLI, reproduces the exact qualified profile, and proves that
+tampered evidence writes no profile. The checked result is 50.06% faster for
+the fixed `groovy-json` classes scope; no other Apache Groovy scope is enabled.
+
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 
 The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.

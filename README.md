@@ -29,11 +29,11 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
 > **Project status:** this is an owner-operated proof of concept. The combined
 > public path has beaten a well-configured native Gradle baseline across four
-> qualified synthetic Kotlin/Groovy workload cells, so the bounded decision is
-> `CONTINUE`. After removing one attributable benchmark-environment asymmetry,
-> the repeated realistic five-project matrix qualified 4/8 change/DSL cells,
-> up from 2/8. The claim has still not been broadened. This does not prove
-> universal savings or production readiness.
+> qualified synthetic Kotlin/Groovy workload cells, and exact structural scopes
+> now qualify on substantial Spring, OpenTelemetry, Kafka, Micronaut and Apache
+> Groovy builds. The decision is `CONTINUE` only for independently measured,
+> output-exact scopes; unknown repositories and changes still use optimized
+> native Gradle. This does not prove universal savings or production readiness.
 > Soak, design partners, HA, enterprise identity, multi-tenancy, and production
 > operations remain outside this phase. Test Optimization is a separate product
 > and is not implemented here.
@@ -236,6 +236,16 @@ clones and Gradle homes, alternates eight pairs, compares repository-declared
 outputs byte for byte and proves full-graph fallback. Its evidence feeds
 `buildopt profile evaluate`; neither command activates a profile automatically.
 The deterministic conformance fixture adds no performance percentage.
+
+That generic path now has fresh value evidence on Apache Groovy 5.0.8. For one
+`groovy-json` source change, discovery reduced the checked `classes` graph from
+37 projects to two. Across eight isolated alternating pairs, optimized native
+Gradle averaged 92.351 s and installed BuildOpt averaged 46.120 s: **46.231 s
+or 50.06% faster**, with 8/8 positive pairs, 66 byte-identical class outputs
+and successful full-graph fallback for a global change. Distribution was
+rejected on output mismatch and aggregate `assemble` was rejected as the wrong
+semantic scope before this candidate was measured. The qualified result remains
+bound to the exact classes output; it is not a claim for every Groovy build.
 
 Once that exact scope has independently beaten optimized native Gradle,
 `buildopt profile qualify` can turn the digest-bound evidence into a reviewable

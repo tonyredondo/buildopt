@@ -417,6 +417,13 @@ local clones, two Gradle homes and two independently restored native-cache
 seeds preserve arm isolation while eight alternating pairs, exact outputs and
 full-graph fallback produce either qualified or inconclusive review evidence.
 
+`poc-apache-groovy-classes-v1.md` records the first substantial fresh-family
+result produced by that generic collector. It binds Apache Groovy 5.0.8, the
+exact local source mutation, optimized-native `classes`, the two-project
+candidate, 66 exact class outputs, eight alternating pairs and the global
+full-graph fallback. It also records why distribution and aggregate-assemble
+candidate scopes were rejected before accepting timing evidence.
+
 `poc-trace-hypothesis-v1.json` and `poc-trace-hypothesis-v1.md` bind the final
 trace-gated optimization decision. They require at least 500 ms of causally
 recoverable product-owned critical-path work in two families, reject overlapping

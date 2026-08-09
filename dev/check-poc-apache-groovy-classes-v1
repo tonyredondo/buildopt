@@ -1,0 +1,200 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+for buildopt_command in cmp git jq mktemp sha256sum; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'missing required command: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_bundle="${buildopt_repo_root}/benchmarks/results/poc-apache-groovy-classes-v1"
+buildopt_evidence="${buildopt_bundle}/measurement.json"
+buildopt_root=$(mktemp -d)
+trap 'rm -rf -- "${buildopt_root}"' EXIT
+buildopt_fixture="${buildopt_root}/repository"
+buildopt_binary="${buildopt_root}/buildopt"
+
+for buildopt_file in \
+    buildopt-impact-manifest.json \
+    buildopt-impact-graph.generated.json \
+    buildopt-impact.generated.json \
+    changes.txt \
+    fallback-changes.txt \
+    measurement.json \
+    qualified-profile.json; do
+    [[ -s "${buildopt_bundle}/${buildopt_file}" ]] || {
+        printf 'missing Apache Groovy evidence file: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_manifest_sha=$(sha256sum "${buildopt_bundle}/buildopt-impact-manifest.json" | awk '{print $1}')
+buildopt_graph_sha=$(sha256sum "${buildopt_bundle}/buildopt-impact-graph.generated.json" | awk '{print $1}')
+buildopt_generated_sha=$(sha256sum "${buildopt_bundle}/buildopt-impact.generated.json" | awk '{print $1}')
+buildopt_changes_sha=$(sha256sum "${buildopt_bundle}/changes.txt" | awk '{print $1}')
+
+jq -e \
+    --arg manifest_sha "${buildopt_manifest_sha}" \
+    --arg graph_sha "${buildopt_graph_sha}" \
+    --arg generated_sha "${buildopt_generated_sha}" \
+    --arg changes_sha "${buildopt_changes_sha}" '
+    def bootstrap_mean($data; $sample):
+        reduce range(0; 8) as $draw
+            ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+             .state = ((1664525 * .state + 1013904223) % 4294967296) |
+             .sum += $data[((.state / 536870912) | floor)].savedMs) |
+        .sum / 8;
+    def bootstrap95($data):
+        ([range(0; 4096) as $sample | bootstrap_mean($data; $sample)] | sort) as $r |
+        [$r[102], $r[3993]];
+    .observations as $data |
+    (($data | map(.controlDurationMs) | add) / 8) as $control_mean |
+    (($data | map(.candidateDurationMs) | add) / 8) as $candidate_mean |
+    (($data | map(.savedMs) | add) / 8) as $saved_mean |
+    (($data | map(.savedMs) | add) / ($data | map(.controlDurationMs) | add)) as $ratio |
+    bootstrap95($data) as $interval |
+    .schemaVersion == "buildopt.evidence/structural-profile-qualification/v1" and
+    .evidenceState == "QUALIFIED" and
+    .subject == {
+        repositoryId: "apache/groovy",
+        repositoryRevision: "7e71c394ac27ba8f741613251181cb9e5129927a",
+        pipelineClass: "classes"
+    } and
+    .sourceBindings == {
+        manifestSha256: $manifest_sha,
+        graphSha256: $graph_sha,
+        generatedManifestSha256: $generated_sha,
+        sourceEvidenceSha256: $changes_sha
+    } and
+    .plan == {
+        alternativeId: "changed-module-classes",
+        entrypoints: [":groovy-json:classes"],
+        fallbackEntrypoints: ["classes"],
+        requiredOutputs: ["subprojects/groovy-json/build/classes/**"],
+        totalProjectCount: 37,
+        selectedProjectCount: 2,
+        omittedProjectCount: 35,
+        omittedProjectRatio: (35 / 37)
+    } and
+    .execution.candidateSurface == "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY" and
+    .execution.buildoptRevision == "b24eb848ba74aabecf3633ddaa941b24c512236d" and
+    .execution.executableSha256 == "90e388632da49aae8b9c16d817da543f79de33c38f932ddb5a2490dfd6377bed" and
+    .execution.mechanisms == ["BUILD_IMPACT"] and
+    .execution.gradleOptions == [
+        "--no-daemon", "--build-cache", "--parallel",
+        "--no-configuration-cache", "--console=plain", "--no-scan",
+        "--max-workers=4"
+    ] and
+    .execution.launcherOverheadIncluded == true and
+    ($data | length) == 8 and
+    [$data[].pair] == [1, 2, 3, 4, 5, 6, 7, 8] and
+    [$data[].order] == [
+        "CONTROL_FIRST", "CANDIDATE_FIRST", "CONTROL_FIRST", "CANDIDATE_FIRST",
+        "CONTROL_FIRST", "CANDIDATE_FIRST", "CONTROL_FIRST", "CANDIDATE_FIRST"
+    ] and
+    all($data[];
+        .savedMs == (.controlDurationMs - .candidateDurationMs) and
+        .savedMs > 0 and
+        .requiredOutputCount == 66 and
+        .controlRequiredOutputSha256 == "c2031f4fe54da7b49d30e53c0dc2f2efefb2b0dc931b42a61f50101a3b2ca70e" and
+        .candidateRequiredOutputSha256 == .controlRequiredOutputSha256 and
+        (.productAttributableFailure | not)) and
+    $control_mean == 92350.625 and
+    $candidate_mean == 46119.875 and
+    $saved_mean == 46230.75 and
+    $ratio == 0.5006002937175574 and
+    $interval == [44190.25, 47846.875] and
+    .result == {
+        pairs: 8,
+        controlMeanMs: $control_mean,
+        candidateMeanMs: $candidate_mean,
+        meanSavedMs: $saved_mean,
+        reductionRatio: $ratio,
+        interval95SavedMs: $interval,
+        positivePairs: 8,
+        qualified: true,
+        decision: "QUALIFY_STRUCTURAL_PROFILE"
+    } and
+    .fallback == {
+        mode: "FULL_GRAPH",
+        reason: "IMPACT_GLOBAL_CHANGE",
+        buildSuccessful: true
+    } and
+    .boundaries == {
+        proofOfConcept: true,
+        productionAuthorized: false,
+        repositorySpecificRuleAdded: false,
+        testOptimizationModified: false
+    }
+' "${buildopt_evidence}" >/dev/null
+
+[[ "$(<"${buildopt_bundle}/fallback-changes.txt")" == "gradle.properties" ]] || {
+    printf 'Apache Groovy fallback input drifted\n' >&2
+    exit 1
+}
+
+mkdir -p -- "${buildopt_fixture}"
+cp -- "${buildopt_bundle}/buildopt-impact-manifest.json" "${buildopt_fixture}/"
+cp -- "${buildopt_bundle}/buildopt-impact-graph.generated.json" "${buildopt_fixture}/"
+cp -- "${buildopt_bundle}/buildopt-impact.generated.json" "${buildopt_fixture}/"
+cp -- "${buildopt_evidence}" "${buildopt_fixture}/measurement.json"
+git -C "${buildopt_fixture}" init --quiet
+git -C "${buildopt_fixture}" config user.name 'BuildOpt Evidence Check'
+git -C "${buildopt_fixture}" config user.email 'buildopt-evidence@example.invalid'
+git -C "${buildopt_fixture}" config commit.gpgsign false
+git -C "${buildopt_fixture}" add .
+git -C "${buildopt_fixture}" commit --quiet -m 'checked evidence inputs'
+
+"${buildopt_repo_root}/dev/run" --toolchain go -- \
+    go build -mod=readonly -buildvcs=false -trimpath \
+    -o "${buildopt_binary}" ./cmd/buildopt
+
+(
+    cd "${buildopt_fixture}"
+    "${buildopt_binary}" profile evaluate \
+        --manifest buildopt-impact-manifest.json \
+        --graph buildopt-impact-graph.generated.json \
+        --generated-manifest buildopt-impact.generated.json \
+        --evidence measurement.json \
+        --profile-output evaluated-profile.json \
+        >evaluation.json
+)
+jq -e '
+    .decision == "QUALIFY_STRUCTURAL_PROFILE" and
+    .reason == "EXACT_EVIDENCE_QUALIFIED" and
+    .reviewRequired == true and
+    .activationAutomatic == false and
+    .productionAuthorized == false
+' "${buildopt_fixture}/evaluation.json" >/dev/null
+cmp --silent \
+    "${buildopt_fixture}/evaluated-profile.json" \
+    "${buildopt_bundle}/qualified-profile.json"
+
+jq '.observations[0].candidateRequiredOutputSha256 = ("0" * 64)' \
+    "${buildopt_evidence}" >"${buildopt_fixture}/invalid-measurement.json"
+(
+    cd "${buildopt_fixture}"
+    "${buildopt_binary}" profile evaluate \
+        --manifest buildopt-impact-manifest.json \
+        --graph buildopt-impact-graph.generated.json \
+        --generated-manifest buildopt-impact.generated.json \
+        --evidence invalid-measurement.json \
+        --profile-output invalid-profile.json \
+        >invalid-evaluation.json
+)
+jq -e '
+    .decision == "NATIVE_FULL_GRAPH" and
+    .reason == "EVIDENCE_NOT_QUALIFIED" and
+    .profile == null
+' "${buildopt_fixture}/invalid-evaluation.json" >/dev/null
+[[ ! -e "${buildopt_fixture}/invalid-profile.json" ]]
+
+printf 'Apache Groovy classes generalization evidence: PASS (50.06%%, 8/8 pairs)\n'

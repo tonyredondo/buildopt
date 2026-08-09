@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC GENERIC PAIRED EVIDENCE AVAILABLE` — repository-independent Build Impact runs from checked graph state through isolated native-versus-BuildOpt measurement and exact profile qualification while every unqualified or drifted scope retains optimized native Gradle<br>
-**Current phase:** `REJECTED MECHANISMS RETIRED` — Runtime Tuning, exact-bound Hot State, and the standard-Copy adapter have no launcher, CLI, plugin, workflow, or experiment-runner activation path; their immutable negative evidence remains available for audit<br>
+**Overall status:** `POC FRESH GENERIC VALUE QUALIFIED` — the repository-independent Build Impact workflow now qualifies one exact Apache Groovy classes scope at 50.06% mean savings with 8/8 positive pairs, exact outputs and full fallback, while every unqualified or drifted scope retains optimized native Gradle<br>
+**Current phase:** `GENERIC PROFILE ONBOARDING NEXT` — the next block removes manual manifest/graph orchestration by producing a reviewable candidate from one requested Gradle workflow, change set and declared outputs without activating it automatically<br>
 **POC functional target:** improve real builds against optimized native Gradle by discovering structural opportunities generally, enabling only exact workload-qualified mechanisms, measuring their complete composition directly, and retaining native fallback whenever value does not replicate<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -111,6 +111,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-GENERIC-EVALUATION | Combine structural opportunity and exact qualification into one generic fail-closed POC decision | `DONE` | 1/1 | `E-287` |
 | POC-GENERIC-MEASUREMENT | Collect exact isolated paired evidence for a generic structural candidate and feed the existing evaluator | `DONE` | 1/1 | `E-288` |
 | POC-NEGATIVE-MECHANISM-RETIREMENT | Remove no-value Runtime Tuning, Hot State, and standard-Copy activation while preserving rejection evidence | `DONE` | 1/1 | `E-289` |
+| POC-APACHE-GROOVY-GENERALIZATION | Run the generic paired workflow on a fresh substantial Gradle family without repository-specific logic | `DONE` | 1/1 | `E-290` |
+| POC-GENERIC-PROFILE-ONBOARDING | Generate reviewable measurement inputs from one Gradle workflow, exact change and declared outputs | `TODO` | 0/1 | `E-290` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -252,6 +254,31 @@ than partners. Test Optimization remains a separate product.
 | 74 | `POC-GENERIC-EVALUATION-001` | Combine generic opportunity analysis and exact evidence qualification into one reviewable command, writing no profile for missing output ownership, weak evidence, drift, or uncertainty | `DONE` | Codex |
 | 75 | `POC-GENERIC-MEASUREMENT-001` | Collect eight isolated alternating optimized-native-versus-BuildOpt pairs from one exact Git change, verify stable required outputs and full-graph fallback, and write evidence directly consumable by the generic evaluator | `DONE` | Codex |
 | 76 | `POC-NEGATIVE-MECHANISM-RETIREMENT-001` | Remove Runtime Tuning, Hot State, and standard-Copy from active CLI, launcher, plugin, workflow, and runner surfaces while retaining immutable rejection evidence and native/qualified fallbacks | `DONE` | Codex |
+| 77 | `POC-APACHE-GROOVY-GENERALIZATION-001` | Apply the generic measurement workflow to Apache Groovy, reject semantically or byte-inequivalent candidates, and qualify only an exact output-preserving scope that beats optimized native Gradle | `DONE` | Codex |
+| 78 | `POC-GENERIC-PROFILE-ONBOARDING-001` | Produce a reviewable structural measurement proposal from one original Gradle task, exact Git change and repository-declared outputs, then hand it to the existing isolated measure/evaluate flow without repository-name rules or automatic activation | `TODO` | Codex |
+
+#### Next POC block: generic profile onboarding
+
+`POC-GENERIC-PROFILE-ONBOARDING-001` is the next recommended work. Apache
+Groovy proves that the generic engine can create material value, but the owner
+still had to assemble the Build Impact manifest, generated graph, exact changed
+paths and fallback inputs by hand. The next block must compress that setup into
+one reviewable proposal command.
+
+The command will accept the original Gradle workflow, one exact base-to-target
+Git change and repository-declared required outputs. It may discover only typed
+Gradle project/task relationships and standard lifecycle producers. It must
+show the proposed candidate, omitted graph, output scope, unknown relationships
+and fallback before any timing; it must write no active profile. Accepted
+proposals feed the existing `profile measure` and `profile evaluate` commands
+unchanged. Ambiguous ownership, Test-owned execution, custom output semantics,
+incomplete discovery or drift retain native full graph.
+
+The exit gate is an external clean-checkout fixture that reaches a measurement
+proposal without hand-editing JSON, reproduces the checked proposal byte for
+byte, rejects one ambiguous/custom workflow, and leaves production,
+Test Optimization and automatic activation disabled. Performance percentages
+remain the responsibility of the existing isolated paired value gate.
 
 #### Planned POC decision sequence
 
@@ -1791,6 +1818,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-287` | 2026-08-09 | `POC-GENERIC-EVALUATION-001` | The [generic evaluation contract](./specs/poc-generic-evaluation-v1.md), installed `buildopt profile evaluate` command, focused Go tests and executable CLI checker combine the existing repository-independent analyzer and strict v4 qualifier. Complete checked state emits a measurement proposal; exact qualified evidence is written atomically to a repository-relative profile; invalid evidence emits `NATIVE_FULL_GRAPH` and writes nothing | `DONE` terminal `GENERIC_REVIEW_DECISION_AVAILABLE`: required outputs remain repository-owned, measurement isolation remains explicit, and the command contains no repository-name switch, automatic activation, production, soak, design-partner or Test Optimization authority |
 | `E-288` | 2026-08-09 | `POC-GENERIC-MEASUREMENT-001` | The [generic measurement contract](./specs/poc-generic-measurement-v1.md), installed `buildopt profile measure` command, evidence renderer, focused Go tests and executable external-repository checker bind an exact clean Git diff, frozen input documents, the exact executable SHA-256, two local clones, two Gradle homes, two independently restored native-cache seeds, eight alternating pairs, stable byte-identical outputs and successful full-graph fallback. The emitted qualification evidence is consumed unchanged by `profile evaluate`; manipulated evidence retains native and writes no profile | `DONE` terminal `GENERIC_ISOLATED_EVIDENCE_AVAILABLE`: deterministic fixture timings prove orchestration only and create no performance percentage. Non-positive evidence remains inconclusive; invalid source, build or output state writes no evidence. No repository-name switch, automatic activation, production, soak, design-partner or Test Optimization authority is added |
 | `E-289` | 2026-08-09 | `POC-NEGATIVE-MECHANISM-RETIREMENT-001`, POC-B terminal decision | Runtime Tuning, exact-bound Hot State, and the standard-Copy adapter were removed from the installed launcher, Build Impact flags, Gradle init script/plugin registry, local-authority execution, hosted workflows, and executable experiment runners. The removal gate rejects the old CLI options, proves stale environment variables cannot activate integration, and requires the negative evidence for `W4_H6G`/`W3_H4G`, the whole-build Hot State regression, and Copy's failed incremental interval to remain checked in. Native Gradle Configuration Cache, qualified Build Impact, standard Jar, and bounded Edge paths are unchanged | `DONE` terminal `NO_VALUE_MECHANISMS_RETIRED`: immutable protocols/results remain auditable history, but no customer or developer path can reactivate the rejected mechanisms. Reopening requires a new RFC decision and materially new evidence, not another parameter search |
+| `E-290` | 2026-08-09 | `POC-APACHE-GROOVY-GENERALIZATION-001` | The checked [Apache Groovy classes bundle](./benchmarks/results/poc-apache-groovy-classes-v1/measurement.json), [experiment record](./specs/poc-apache-groovy-classes-v1.md), generic root-producer discovery fix and independent checker bind public Groovy 5.0.8 base `c1689831`, one exact `groovy-json` source mutation, BuildOpt `b24eb84`, Gradle 8.14.4, Temurin 21 and the optimized-native four-worker `classes` control. Complete discovery reduces 37 projects to two. Eight isolated alternating pairs average 92,350.625 ms natively and 46,119.875 ms through installed BuildOpt, saving 46,230.75 ms/**50.06%** with interval +44,190.25..+47,846.875 ms, 8/8 positive pairs, the same 66 class outputs and successful global full-graph fallback. The distribution candidate was rejected on byte mismatch and aggregate `assemble` was stopped before timing as a non-focused docs-heavy scope | `DONE` terminal `QUALIFY_GENERIC_APACHE_GROOVY_CLASSES_SCOPE`: the implementation contains no Apache Groovy or repository-name branch and the exact evidence reproduces the review-required v4 profile. Only the fixed classes output qualifies; distribution, aggregate assemble, tests, unknown changes, drift and all other scopes retain native. No automatic activation, production, soak, design-partner, public-release or Test Optimization authority is created. `POC-GENERIC-PROFILE-ONBOARDING-001` is next |
 
 ---
 
@@ -1798,6 +1826,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-09 | Qualified the generic structural workflow on Apache Groovy classes: 37 projects reduced to two, 50.06% mean savings, 8/8 positive pairs, 66 exact outputs and global fallback; recorded rejected distribution/aggregate scopes and made reviewable profile onboarding the next POC block | Codex |
 | 2026-08-09 | Retired Runtime Tuning, exact-bound Hot State, and standard Copy from all active POC surfaces after their terminal negative value results; preserved immutable evidence and added a CI retirement gate | Codex |
 | 2026-08-09 | Opened and closed the generalization foundation: added repository-independent structural opportunity analysis and a checked whole-profile scorecard for Spring, OpenTelemetry and Kafka; preserved the terminal Kafka specialization because only one target has strict installed replication | Codex |
 | 2026-08-09 | Qualified generic direct-source ownership and the unchanged Micronaut replay: optimized native `assemble` averaged 24,067.125 ms versus 6,505.5 ms for the exact 22-project candidate, saving 72.97% with 8/8 positive pairs, exact outputs and full global fallback | Codex |

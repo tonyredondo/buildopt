@@ -65,10 +65,13 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`POC GENERIC PAIRED EVIDENCE AVAILABLE\`"
-    "**Current phase:** \`REJECTED MECHANISMS RETIRED\`"
+    "**Overall status:** \`POC FRESH GENERIC VALUE QUALIFIED\`"
+    "**Current phase:** \`GENERIC PROFILE ONBOARDING NEXT\`"
     "| 75 | \`POC-GENERIC-MEASUREMENT-001\` | Collect eight isolated alternating optimized-native-versus-BuildOpt pairs"
     "| \`E-288\` | 2026-08-09 | \`POC-GENERIC-MEASUREMENT-001\`"
+    "| 77 | \`POC-APACHE-GROOVY-GENERALIZATION-001\` | Apply the generic measurement workflow to Apache Groovy"
+    "| 78 | \`POC-GENERIC-PROFILE-ONBOARDING-001\` | Produce a reviewable structural measurement proposal"
+    "| \`E-290\` | 2026-08-09 | \`POC-APACHE-GROOVY-GENERALIZATION-001\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"
