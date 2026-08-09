@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-structural-transfer/v1",
+  "workItem": "POC-STRUCTURAL-TRANSFER-001",
+  "capturedAt": "2026-08-09T13:26:12Z",
+  "buildopt": {
+    "revision": "8c8fb419ab6b50d718787cc45ddb09e0ecca3a0c",
+    "runnerScriptSha256": "813bbaf373d6ce63580e311f0f6b66f1b2418ec600e370a77d9a15475dc159dd",
+    "packageVersion": "0.3.0-dev",
+    "installedPackageUsed": true,
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "launcherOverheadIncluded": true
+  },
+  "specSha256": "09f4bc7a58db4d9113ae4cc607ecdc12ec3116bac20b2563400cb7af7d99632c",
+  "repository": {
+    "nameWithOwner": "micronaut-projects/micronaut-core",
+    "branch": "5.2.x",
+    "revision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+    "sourceArchiveSha256": "d76b07c96f80a075f48e1fd94ad7dfd798e2b173cff8aee7bd39e5697b7b4507"
+  },
+  "runner": {
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "maxWorkers": 12,
+    "jdk": "temurin-25.0.3+9"
+  },
+  "preparation": {
+    "sourceChecksumVerified": true,
+    "onlinePreflightMeasured": false,
+    "onlinePreflightSuccess": true,
+    "onlinePreflightReportedDurationMs": 625000,
+    "onlinePreflightActionableTasks": 360,
+    "measuredNetwork": "DISCONNECTED",
+    "dependencyMode": "GRADLE_OFFLINE_WITH_SHARED_READ_ONLY_CACHE",
+    "preflightDaemonStoppedBeforeArmSetup": true,
+    "cacheSeedRestoredBeforeEveryArm": true,
+    "sharedCheckout": true,
+    "sharedGradleUserHome": true,
+    "sharedDaemon": true,
+    "fixedMutationAppliedAfterCacheRestore": true
+  },
+  "discovery": {
+    "complete": true,
+    "containsTestTasks": false,
+    "unknownRelationships": false,
+    "graphSha256": "65563d85848d72e72f14d2dd0abb3768867db3f475a9887e6c75033465a71960",
+    "graphDigest": "sha256:2cb54c2d27fbc5a0a28587fb55f8103ead424f6c809f83835bf60886d2a71637",
+    "generatedManifestSha256": "fdaa01c2952d5bf562686cd71a2b1790c70c1d263986f130d8f503c386c00829",
+    "projectCount": 75,
+    "controlReachCount": 75,
+    "candidateReachCount": 22,
+    "omittedProjectCount": 53,
+    "omittedProjectRatio": 0.7066666666666667
+  },
+  "diagnosis": {
+    "changePath": "http-client-jdk/src/main/java/io/micronaut/http/client/jdk/DefaultJdkHttpClient.java",
+    "changePathMatchedProjectCount": 39,
+    "candidateReachCoveredMatchedProjectCount": 22,
+    "matchedProjectsOutsideCandidateCount": 17,
+    "matchedProjectsOutsideCandidate": [
+      ":micronaut-function",
+      ":micronaut-function-client",
+      ":micronaut-function-web",
+      ":micronaut-http-server",
+      ":micronaut-http-server-netty",
+      ":micronaut-http-validation",
+      ":micronaut-inject-groovy",
+      ":micronaut-inject-groovy-test",
+      ":micronaut-inject-java-helper",
+      ":micronaut-inject-java-helper2",
+      ":micronaut-inject-java-test",
+      ":micronaut-inject-test-utils",
+      ":micronaut-management",
+      ":micronaut-router",
+      ":micronaut-runtime",
+      ":test-suite",
+      ":test-suite-helper"
+    ],
+    "candidatePlannerMode": "FULL_GRAPH",
+    "candidatePlannerReason": "IMPACT_NO_AUTHORIZED_ALTERNATIVE",
+    "controlWarmupBuildSuccessful": true,
+    "candidateFallbackWarmupBuildSuccessful": true,
+    "controlWarmupLogSha256": "a4ca28fc6bcfc3faf1b27d664c89fd4c00dead320492c0e04a463d0eff90963a",
+    "candidateFallbackWarmupLogSha256": "7c31773f1b1c96db9659f2778a17433bccc928e601c192cfd01b8e8f56a1e36b",
+    "failureLogArchiveSha256": "a1c292ae6f3756f9ab2bb4a9c57f076c6b9d3d043963b74916cada47fa22996a"
+  },
+  "discardedAttempts": [
+    {
+      "stage": "DISCOVERY_BINDING",
+      "reason": "HARNESS_ARTIFACT_ID_MISMATCH",
+      "warmupsCompleted": 0,
+      "acceptedObservations": 0,
+      "reused": false
+    },
+    {
+      "stage": "CANDIDATE_ARGUMENT_VALIDATION",
+      "reason": "GRAPH_CHANGING_EXCLUSION_REJECTED",
+      "warmupsCompleted": 1,
+      "acceptedObservations": 0,
+      "reused": false
+    },
+    {
+      "stage": "CANDIDATE_ARGUMENT_VALIDATION",
+      "reason": "COSMETIC_OPTION_OUTSIDE_ALLOWLIST",
+      "warmupsCompleted": 1,
+      "acceptedObservations": 0,
+      "reused": false
+    }
+  ],
+  "observations": [],
+  "fallback": {
+    "mode": "FULL_GRAPH",
+    "reason": "IMPACT_NO_AUTHORIZED_ALTERNATIVE",
+    "buildSuccessful": true,
+    "performanceClaim": false
+  },
+  "result": {
+    "pairs": 0,
+    "qualified": false,
+    "valueGateEvaluated": false,
+    "decision": "RETAIN_NATIVE_MICRONAUT_AS_DEFAULT",
+    "reason": "IMPACT_NO_AUTHORIZED_ALTERNATIVE",
+    "performanceClaim": false
+  },
+  "nextHypothesis": {
+    "id": "POC-SOURCE-OWNERSHIP-001",
+    "description": "Distinguish project-owned source roots from transitive or shared source-set expansion without repository-name rules, then replay the unchanged Micronaut protocol only if the candidate covers every true owner."
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionReadinessClaimed": false,
+    "repositorySpecificProductRuleAdded": false,
+    "productionSelectionChanged": false,
+    "testSelectionChanged": false,
+    "testExecutionChanged": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "publicReleaseRequired": false,
+    "universalSavingsClaimed": false
+  }
+}

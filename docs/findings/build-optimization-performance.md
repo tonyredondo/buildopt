@@ -26,6 +26,12 @@
   positive pairs. Attribution found only **1.238233 ms** in the largest
   BuildOpt-owned phase, so it remains on native full-graph execution and this
   optimization line is closed.
+- **Fresh Micronaut transfer exposed the next generalization gap before
+  timing.** Discovery found a complete **75-to-22-project** assemble candidate
+  (53 projects/70.67% potentially omitted), but the changed source root matched
+  39 inferred owners and 17 were outside the candidate reach. The installed
+  path correctly returned `IMPACT_NO_AUTHORIZED_ALTERNATIVE`; Micronaut remains
+  on native Gradle with zero timing pairs and no savings claim.
 - **Direct JAR reuse did not improve the measured Spring test build.** It
   restored three exact Test-fixture JARs but regressed the complete unchanged
   test workflow by **735.25 ms/11.31%**, so the activation was not promoted.

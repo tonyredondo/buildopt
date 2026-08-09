@@ -530,6 +530,7 @@ buildopt_required_files=(
     "benchmarks/results/poc-qualified-profile-matrix-v1/summary.json"
     "benchmarks/results/poc-profile-discovery-v1.json"
     "benchmarks/results/poc-general-build-value-v1.json"
+    "benchmarks/results/poc-structural-transfer-v1.json"
     "benchmarks/results/poc-trace-hypothesis-v1.json"
     "benchmarks/results/poc-standard-copy-cascade-v1.json"
     "benchmarks/results/poc-normal-build-tail-expansion-v1.json"

@@ -66,6 +66,113 @@ buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untrack
 buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
 buildopt_runner_sha=$(sha256sum "${buildopt_runner}" | awk '{print $1}')
 
+if [[ "$(jq -er '.result.decision' "${buildopt_result}")" == \
+    RETAIN_NATIVE_MICRONAUT_AS_DEFAULT ]]; then
+    buildopt_execution_revision=$(jq -er '.buildopt.revision' "${buildopt_result}")
+    git -C "${buildopt_repo_root}" merge-base --is-ancestor \
+        "${buildopt_execution_revision}" HEAD || {
+        printf 'structural transfer execution revision is not retained in history\n' >&2
+        exit 1
+    }
+    buildopt_historical_runner_sha=$(git -C "${buildopt_repo_root}" show \
+        "${buildopt_execution_revision}:dev/run-poc-structural-transfer-v1" | \
+        sha256sum | awk '{print $1}')
+    jq -e --arg specSha "${buildopt_spec_sha}" \
+        --arg runnerSha "${buildopt_historical_runner_sha}" \
+        --slurpfile spec "${buildopt_spec}" '
+        def sha256: type == "string" and test("^[0-9a-f]{64}$");
+        def gitsha: type == "string" and test("^[0-9a-f]{40}$");
+        .schemaVersion == "buildopt.evidence/poc-structural-transfer/v1" and
+        .workItem == "POC-STRUCTURAL-TRANSFER-001" and
+        (.capturedAt | fromdateiso8601) and
+        .specSha256 == $specSha and
+        .buildopt.revision == "8c8fb419ab6b50d718787cc45ddb09e0ecca3a0c" and
+        (.buildopt.revision | gitsha) and
+        .buildopt.runnerScriptSha256 == $runnerSha and
+        .buildopt.packageVersion == "0.3.0-dev" and
+        .buildopt.installedPackageUsed == true and
+        .buildopt.candidateSurface == $spec[0].measurement.candidateSurface and
+        .buildopt.launcherOverheadIncluded == true and
+        .repository == {
+            nameWithOwner: $spec[0].repository.nameWithOwner,
+            branch: $spec[0].repository.branch,
+            revision: $spec[0].repository.revision,
+            sourceArchiveSha256: $spec[0].repository.sourceArchiveSha256
+        } and
+        .runner == $spec[0].runner and
+        .preparation.sourceChecksumVerified == true and
+        .preparation.onlinePreflightMeasured == false and
+        .preparation.onlinePreflightSuccess == true and
+        .preparation.onlinePreflightReportedDurationMs == 625000 and
+        .preparation.onlinePreflightActionableTasks == 360 and
+        .preparation.measuredNetwork == "DISCONNECTED" and
+        .preparation.dependencyMode == "GRADLE_OFFLINE_WITH_SHARED_READ_ONLY_CACHE" and
+        .preparation.preflightDaemonStoppedBeforeArmSetup == true and
+        .preparation.cacheSeedRestoredBeforeEveryArm == true and
+        .preparation.sharedCheckout == true and
+        .preparation.sharedGradleUserHome == true and
+        .preparation.sharedDaemon == true and
+        .preparation.fixedMutationAppliedAfterCacheRestore == true and
+        .discovery.complete == true and .discovery.containsTestTasks == false and
+        .discovery.unknownRelationships == false and
+        .discovery.graphSha256 == $spec[0].discovery.expectedGraphSha256 and
+        .discovery.graphDigest == $spec[0].discovery.expectedGraphDigest and
+        .discovery.generatedManifestSha256 == $spec[0].discovery.expectedGeneratedManifestSha256 and
+        .discovery.projectCount == 75 and .discovery.controlReachCount == 75 and
+        .discovery.candidateReachCount == 22 and
+        .discovery.omittedProjectCount == (.discovery.controlReachCount - .discovery.candidateReachCount) and
+        .discovery.omittedProjectRatio == (.discovery.omittedProjectCount / .discovery.controlReachCount) and
+        .diagnosis.changePath == $spec[0].candidate.changePath and
+        .diagnosis.changePathMatchedProjectCount == 39 and
+        .diagnosis.candidateReachCoveredMatchedProjectCount == 22 and
+        .diagnosis.matchedProjectsOutsideCandidateCount ==
+            (.diagnosis.changePathMatchedProjectCount - .diagnosis.candidateReachCoveredMatchedProjectCount) and
+        .diagnosis.matchedProjectsOutsideCandidate == [
+            ":micronaut-function", ":micronaut-function-client", ":micronaut-function-web",
+            ":micronaut-http-server", ":micronaut-http-server-netty",
+            ":micronaut-http-validation", ":micronaut-inject-groovy",
+            ":micronaut-inject-groovy-test", ":micronaut-inject-java-helper",
+            ":micronaut-inject-java-helper2", ":micronaut-inject-java-test",
+            ":micronaut-inject-test-utils", ":micronaut-management",
+            ":micronaut-router", ":micronaut-runtime", ":test-suite",
+            ":test-suite-helper"
+        ] and
+        .diagnosis.candidatePlannerMode == "FULL_GRAPH" and
+        .diagnosis.candidatePlannerReason == "IMPACT_NO_AUTHORIZED_ALTERNATIVE" and
+        .diagnosis.controlWarmupBuildSuccessful == true and
+        .diagnosis.candidateFallbackWarmupBuildSuccessful == true and
+        (.diagnosis.controlWarmupLogSha256 | sha256) and
+        (.diagnosis.candidateFallbackWarmupLogSha256 | sha256) and
+        (.diagnosis.failureLogArchiveSha256 | sha256) and
+        (.discardedAttempts | length) == 3 and
+        all(.discardedAttempts[]; .acceptedObservations == 0 and .reused == false) and
+        .observations == [] and
+        .fallback == {
+            mode: "FULL_GRAPH",
+            reason: "IMPACT_NO_AUTHORIZED_ALTERNATIVE",
+            buildSuccessful: true,
+            performanceClaim: false
+        } and
+        .result == {
+            pairs: 0,
+            qualified: false,
+            valueGateEvaluated: false,
+            decision: "RETAIN_NATIVE_MICRONAUT_AS_DEFAULT",
+            reason: "IMPACT_NO_AUTHORIZED_ALTERNATIVE",
+            performanceClaim: false
+        } and
+        .nextHypothesis.id == "POC-SOURCE-OWNERSHIP-001" and
+        .boundaries == $spec[0].boundaries
+    ' "${buildopt_result}" >/dev/null
+    buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+    [[ "${buildopt_before}" == "${buildopt_after}" ]] || {
+        printf 'structural transfer validation changed the working tree\n' >&2
+        exit 1
+    }
+    printf 'structural transfer native-default evidence OK: %s\n' "${buildopt_result}"
+    exit 0
+fi
+
 jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sha}" \
     --slurpfile spec "${buildopt_spec}" '
     def sha256: type == "string" and test("^[0-9a-f]{64}$");

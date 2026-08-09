@@ -358,6 +358,7 @@ by exact evidence for each target:
 | Spring Framework | Build Impact | **30.86% faster** | Native; later strict matrix was 7/8 positive |
 | OpenTelemetry | Build Impact + standard `Jar` | **50.40% faster** | Native; later matrix had no accepted timing |
 | Kafka | Build Impact + read-only Edge | **82.35% faster** | Explicit reviewed POC profile; later **81.85%**, 8/8 |
+| Micronaut Core | Structural Build Impact candidate | **No timing claim** | Native: complete 75-to-22 reach was rejected because 17 of 39 inferred source owners sat outside the candidate |
 
 These are whole-path comparisons against each target's optimized native Gradle
 control. The percentages are neither added nor averaged. Hot State is omitted
@@ -366,7 +367,13 @@ because it regressed by 7.68% on OpenTelemetry; Runtime Tuning, Safe Cache and
 qualify independently, so only the complete Impact-plus-Jar result receives a
 value claim. The POC now has a general analysis
 stage, but broad value still requires fresh installed replication on additional
-substantial repository families.
+substantial repository families. The first such replication used Micronaut
+Core. Its full preflight executed 360 tasks and structural discovery could
+potentially omit 53/75 projects, but the installed planner failed closed before
+timing with `IMPACT_NO_AUTHORIZED_ALTERNATIVE`. Micronaut's expanded/shared
+source sets made `http-client-jdk/**` appear owned by 39 projects, 17 outside
+the candidate reach. Native remains the default; the next generic hypothesis
+is precise project-owned versus transitive/shared source-root attribution.
 
 ## Boundaries and References
 
@@ -396,6 +403,7 @@ production operations are outside the current scope.
 - [Trace-gated hypothesis decision](../../benchmarks/results/poc-trace-hypothesis-v1.json)
 - [Terminal POC portfolio decision](../../benchmarks/results/poc-portfolio-decision-v1.json)
 - [General whole-profile value scorecard](../../benchmarks/results/poc-general-build-value-v1.json)
+- [Micronaut structural-transfer stop evidence](../../benchmarks/results/poc-structural-transfer-v1.json)
 - [General opportunity and composition contract](../../specs/poc-general-build-value-v1.md)
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)
 - [Kafka shadow JAR reproducibility evidence](../../benchmarks/results/poc-kafka-shadowjar-reproducibility-v1.json)

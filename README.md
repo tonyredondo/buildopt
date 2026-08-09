@@ -88,6 +88,13 @@ faster but failed the preregistered 4/4-positive stability rule. BuildOpt
 therefore keeps a bounded output-scope claim rather than generalizing to every
 change.
 
+The latest fresh-family check used Micronaut Core. Structural discovery found
+a complete 75-to-22-project candidate, but the installed planner correctly kept
+native Gradle because shared or expanded source roots made 17 inferred owners
+fall outside that candidate. No timing percentage is claimed. The next POC
+block is generic source-ownership attribution, followed by an unchanged replay
+only if the candidate covers every true owner.
+
 `buildopt poc` is available in source-built packages from the current `main`.
 The published `v0.2.0` package continues to use the longer `buildopt impact`
 form until a later explicitly authorized release.

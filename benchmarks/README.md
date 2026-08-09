@@ -43,6 +43,27 @@ calculations, outputs and replication status with:
 ./dev/check-poc-general-build-value
 ```
 
+### Fresh structural transfer: Micronaut Core
+
+[`results/poc-structural-transfer-v1.json`](./results/poc-structural-transfer-v1.json)
+records the next fresh installed replication on Micronaut Core. The public
+revision is substantial: complete root `assemble` executed 360 tasks, and
+repository-independent discovery found a complete 75-project control reach and
+22-project candidate reach, a potential 53-project/70.67% omission.
+
+The installed candidate correctly retained the full graph before timing. The
+changed `http-client-jdk/**` root was attributed to 39 projects because
+Micronaut expands or shares source sets; 17 inferred owners lie outside the
+22-project candidate reach. The decision is therefore
+`RETAIN_NATIVE_MICRONAUT_AS_DEFAULT` with zero measured pairs and no performance
+percentage. This is a valuable negative result: structural reach reduction is
+not sufficient until source ownership is exact. Validate the source binding,
+arithmetic, failure history and native-default decision with:
+
+```bash
+./dev/check-poc-structural-transfer-v1
+```
+
 The current POC verdict is `CONTINUE`, qualified only for the measured synthetic
 workload classes. Contractual 4-vCPU/16-GiB runs cover the baseline,
 negative-mechanism decision, accelerator-coverage matrix, combined public path,
