@@ -162,6 +162,7 @@ unfavorable observations. Percentages from different rows are not additive.
 | Fresh normalized Build Impact + Edge | **82.35% faster**, 35,405.5 ms saved, 4/4 positive pairs | Native + Shared averaged 42,992.75 ms; installed Impact + Edge averaged 7,587.25 ms. Interval +30,162..+42,487.75 ms, exact normalized output, full-graph global fallback, zero measured candidate-origin traffic, and byte-identical HTTP-503 fallback. Qualified only for this change and network profile. |
 | Exact installed Kafka profile | **80.51% faster**, 27,652.875 ms saved, 8/8 positive pairs | The packaged `buildopt poc` path retained the qualified value: native + Shared averaged 34,347.25 ms and the installed repository-owned profile 6,694.375 ms. Corrected bootstrap interval +24,826.5..+29,903.625 ms, exact normalized output, zero origin requests, global full-graph fallback and byte-identical HTTP-503 fallback. |
 | Installed qualified-profile matrix | **Kafka 81.85% faster; Spring 14.33% faster but unqualified; OpenTelemetry no accepted observations** | Kafka passed 8/8 pairs and all safety gates. Spring preserved output/fallback but passed only 7/8 pairs, including one -57-ms regression. OpenTelemetry impact discovery was terminated by signal after preflight, so it retains native with no performance claim. Only 1/3 families qualifies; do not average these percentages. |
+| Deterministic profile discovery | **No new timing; exact Kafka profile reproduced** | The read-only analyzer binds the terminal matrix, complete graph, generated state, trace/input digests, exact output and reviewed contract. Kafka emits the same v2 profile and 61-project omission plan; Spring, OpenTelemetry, drift, incomplete/unknown graphs and selected Test tasks emit native full graph. |
 
 ## Latest Generalization and Next Work
 
@@ -174,12 +175,12 @@ positive bootstrap interval; global/unknown changes and endpoint failures keep
 the native or local fallback safe. The claim remains bounded to the fixed
 Kafka revision, change, output and modeled network profile.
 
-The terminal installed matrix narrows the next step further. Deterministic
-profile discovery should reproduce only the qualified Kafka profile from
-checked manifests, graphs, traces and evidence. Spring and OpenTelemetry are
-negative fixtures: discovery must select their native paths, not encode their
-repository names or resurrect an unqualified profile. Broad automatic profile
-generation is not authorized by the current 1/3 result.
+The terminal installed matrix narrowed discovery to one profile. The completed
+read-only analyzer reproduces only the qualified Kafka v2 profile from checked
+manifests, graphs, generated state, trace/input digests and evidence. Spring and
+OpenTelemetry are negative fixtures and select native full graph. It does not
+encode repository names, resurrect an unqualified profile or authorize broad
+automatic generation from the current 1/3 result.
 
 **Continue the POC, but activate only measured value.** The fresh ablation
 qualified Spring Build Impact at 2,492.375 ms/30.86% saved with 8/8 positive
@@ -321,11 +322,18 @@ interval was 1,581 ms shorter, while BuildOpt's largest own phase was only
 1.238233 ms. No correction is authorized and verification stays native.
 
 The installed matrix is terminal and selects specialization, not broad
-continuation. The next block generates only the retained Kafka profile
-deterministically from checked manifests, graphs, traces and evidence. It must
-be reviewable, source-bound and fail closed to the native full graph on drift
-or uncertainty. Spring and OpenTelemetry remain negative fixtures, and no
-repository-name rule, hidden allowlist or automatic activation is permitted.
+continuation. Deterministic discovery now reproduces only the retained Kafka
+profile from checked manifests, graphs, generated state, traces and evidence.
+The output is reviewable and source-bound; Spring, OpenTelemetry, drift,
+incomplete evidence, unknown graph relationships and selected Test tasks all
+fail closed to the native full graph. The analyzer contains no repository-name
+rule or hidden allowlist and never writes or activates a profile.
+
+The next block is the one trace-gated hypothesis. It may authorize at most one
+generic optimization only if retained installed-path traces expose at least
+500 ms of recoverable critical-path work across two repository or workload
+families. Otherwise it must record `NO_ACTIONABLE_HYPOTHESIS` and move directly
+to the portfolio decision; rejected mechanisms and Test Optimization stay out.
 
 ## Boundaries and References
 

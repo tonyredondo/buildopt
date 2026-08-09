@@ -305,6 +305,7 @@ Kafka-specific product rule.
 | Runtime Tuning | Disabled | Disabled | Positive incremental evidence against optimized native Gradle |
 | Shared / Edge Cache | Edge qualified independently and in the normalized Kafka composition | Explicit repository-owned v2 POC profile | Keep the 82.35% claim bound to the exact Kafka source precondition and modeled network profile; preserve native Shared behavior outside a matched candidate |
 | Installed Kafka composition | Exact packaged profile qualified at 80.51% with 8/8 positive pairs | Explicit repository-owned v2 POC profile | Replicate installed-path value independently on Spring and OpenTelemetry before changing the portfolio claim; do not average repository percentages |
+| Deterministic profile discovery | No new timing; exact retained Kafka profile reproduced | Read-only, review-required analyzer | Keep native fallback for Spring, OpenTelemetry, drift, incomplete/unknown graphs and selected Test tasks; never turn discovery into autonomous activation |
 
 ## Recommended Next Block
 
@@ -420,9 +421,9 @@ manufacture another optimization.
 
 - Does a materially different retained trace expose a Runtime bottleneck that
   justifies one new preregistered hypothesis?
-- Can the retained Kafka profile be generated deterministically from checked
-  manifests, graphs, traces and evidence while the Spring and OpenTelemetry
-  fixtures fail closed to native Gradle?
+- Does one retained installed-path trace expose at least 500 ms of recoverable,
+  product-addressable critical-path work across two repository or workload
+  families? If not, close the hypothesis with no action.
 
 ## Evidence Boundaries
 

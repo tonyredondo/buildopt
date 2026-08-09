@@ -184,6 +184,10 @@ BuildOpt separates actions by the proof they require:
   repository-owned manifest and proven against the current generated graph.
   Unknown or global changes use the full graph. Test-owned checks are never
   omitted by BuildOpt.
+- **Reviewable specialization:** POC profile discovery binds a qualified
+  matrix cell to the exact graph, generated state, trace/input digests, output,
+  and reviewed contract. It emits a profile only when every binding remains
+  valid; it never activates the result and otherwise emits native full graph.
 
 Every active action has a disablement, fallback, or exact revert path. Passing
 one build is not treated as proof of correctness.

@@ -73,6 +73,11 @@ example is
 Run it with `--edge-url http://127.0.0.1:<PORT>`. Failed preconditions or an
 unusable endpoint select the native full graph before Gradle starts.
 
+`buildopt profile discover` can reconstruct that v2 document from checked
+qualification evidence. Treat its output as a review artifact: discovery never
+writes the default profile or authorizes activation. Commit a profile only
+after reviewing the complete source bindings and mechanism explanations.
+
 ## Session ingest and export
 
 | Variable | Secret | Meaning |

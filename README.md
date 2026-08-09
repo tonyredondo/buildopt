@@ -174,6 +174,14 @@ Edge, and bypass select the native full graph without Edge. HTTP 503 executes
 the selected graph locally and preserves the exact output. This is usability
 evidence; it does not widen or recompute the 82.35% result.
 
+The profile can now be reproduced by the read-only
+`buildopt profile discover` command from the checked matrix evidence, Build
+Impact manifest/graph/generated state, trace digests, and reviewed profile
+contract. The generated Kafka profile is exactly equal to the reviewed v2
+profile. Spring and OpenTelemetry emit `NATIVE_FULL_GRAPH`, as do evidence
+drift, incomplete graphs, unknown relationships, selected Test tasks, and
+precondition drift. Discovery never writes or activates a profile.
+
 ## Choose what to do next
 
 | Goal | Start here |

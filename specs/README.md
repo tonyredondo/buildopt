@@ -363,6 +363,12 @@ The v2 plan exposes the exact source precondition and loopback endpoint, while
 global changes, precondition drift, missing Edge, local bypass, and HTTP 503
 retain explicit native fallbacks without production authorization.
 
+`poc-profile-discovery-v1.md` defines the subsequent read-only derivation
+contract. It emits the retained profile only from digest-bound qualification,
+graph, generated-state, trace/input, safety and reviewed-contract evidence;
+unqualified or uncertain inputs emit a native full-graph decision and never
+activate a profile.
+
 `poc-kafka-packaging-v1.json` and `poc-kafka-packaging-v1.md` freeze the next
 real value experiment before timing. They compare Kafka's optimized native
 root `assemble` with the installed qualified three-project client-Jar path,

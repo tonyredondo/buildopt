@@ -18,7 +18,7 @@ const (
 	exitCannotExecute = 126
 	exitNotFound      = 127
 	exitConfiguration = 78
-	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt poc --changes-file PATH [options]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt doctor\n"
+	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt poc --changes-file PATH [options]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt profile discover [options]\n       buildopt doctor\n"
 	bypassEnvironment = "BUILDOPT_BYPASS"
 )
 
@@ -55,6 +55,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 	}
 	if len(args) == 1 && args[0] == "doctor" {
 		return runDoctor(stdout, stderr)
+	}
+	if len(args) > 0 && args[0] == "profile" {
+		return runProfileDiscovery(args[1:], stdout, stderr)
 	}
 	if isHelp(args) {
 		_, _ = io.WriteString(stdout, usage)

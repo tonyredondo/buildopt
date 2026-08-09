@@ -75,11 +75,27 @@ buildopt poc --changes-file .buildopt-changes
 It reads `buildopt-qualified-profile.json` by default. Before Gradle starts it
 prints one machine-readable plan containing the selected/full graph,
 entrypoints, expected outputs, preserved Test-owned checks, enabled exact
-adapters and disabled mechanisms. Only Build Impact and the standard `Jar`
-adapter are accepted. Safe Cache, Runtime Tuning, Hot State, standard `Copy`,
-Shared/Edge and session integration are excluded from this command. A fallback
-uses the manifest's original entrypoints without the adapter. This remains an
-explicit owner-operated POC, not production authorization.
+adapters and disabled mechanisms. The v1 profile allows Build Impact plus the
+exact standard `Jar` adapter. The v2 Kafka profile allows Build Impact plus an
+explicit read-only loopback Edge endpoint after its source-SHA precondition.
+A fallback uses the manifest's original entrypoints without an adapter or
+Edge. This remains an explicit owner-operated POC, not production authorization.
+
+The read-only discovery surface audits how a qualified profile was derived:
+
+```bash
+buildopt profile discover \
+  --manifest buildopt-impact-manifest.json \
+  --graph buildopt-impact-graph.generated.json \
+  --generated-manifest buildopt-impact.generated.json \
+  --matrix-summary path/to/summary.json \
+  --cell-evidence path/to/qualified-cell.json \
+  --profile-contract path/to/profile-contract.json
+```
+
+It emits deterministic review JSON and embeds a profile only when all checked
+qualification, graph, trace/input, output and fallback bindings still pass. It
+never writes or activates the profile; uncertainty emits native full graph.
 
 The suite covers empty, quoted, whitespace, wildcard, Unicode, newline, and literal `--` arguments; inherited cwd, environment, and standard streams; success and non-zero child statuses; usage; launch failures; process-group isolation; signal forwarding through a child process tree; and the local bypass described below.
 

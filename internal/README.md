@@ -110,6 +110,13 @@ observations, selects only a customer-manifest alternative, and restores the
 original entrypoints for every disabled, bypassed, killed, drifted, unknown,
 global, unqualified, or invalid path while preserving Test-owned checks.
 
+`profilediscovery/` owns the read-only POC specialization boundary. It binds
+terminal matrix evidence to complete Build Impact state, trace/input digests,
+the exact output and reviewed profile contract, then emits either a reviewable
+profile or an explicit native full-graph decision. It never writes repository
+state, activates a profile, recognizes repository names, or grants production
+authority.
+
 No type in this directory replaces the normative schemas, OpenAPI, or Protobuf definitions in `contracts/`.
 
 `generated/openapi/` contains the checked-in Go transport binding derived from

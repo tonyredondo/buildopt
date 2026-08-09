@@ -2851,6 +2851,19 @@ preparation failure. The resulting `SPECIALIZE_QUALIFIED_PROFILES` decision
 does not average repository percentages and keeps native Spring/OpenTelemetry
 paths active.
 
+The deterministic discovery gate then reconstructs only that retained Kafka
+profile from the checked matrix, manifest, graph, generated state, trace/input
+digests, and reviewed contract:
+
+```bash
+./dev/check-poc-profile-discovery
+```
+
+It builds the installed CLI, proves two invocations are byte-identical, compares
+the embedded profile with the reviewed v2 fixture, checks Spring and
+OpenTelemetry native fallbacks, and runs the Go drift/uncertainty matrix. It
+does not run Gradle or create a new performance observation.
+
 The completed task-tail experiment adds one exact standard-`Copy` adapter
 selected from the same OpenTelemetry trace. It deliberately measures isolated and
 cumulative effects rather than adding component percentages:

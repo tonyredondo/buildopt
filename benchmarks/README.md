@@ -745,6 +745,24 @@ with deterministic, reviewable discovery of the bounded Kafka profile.
   benchmarks/results/poc-qualified-profile-matrix-v1/summary.json
 ```
 
+### Deterministic qualified-profile discovery
+
+The checked [discovery report](./results/poc-profile-discovery-v1.json) binds
+the terminal matrix, Kafka cell, complete Build Impact graph, generated-state
+digest, component trace digests, normalized source input, exact output, and
+reviewed profile contract. It reproduces the committed v2 Kafka profile and
+its 61-project omission plan without a repository-name allowlist.
+
+Spring and OpenTelemetry are negative fixtures because their matrix cells did
+not qualify; they emit native full-graph decisions rather than profiles. The
+same fallback covers evidence drift, incomplete or unknown graph state,
+selected Test tasks, generated-state drift, and precondition drift. This block
+adds no timing and does not broaden Kafka's 81.85% result.
+
+```bash
+./dev/check-poc-profile-discovery
+```
+
 The three mechanism-development reports remain historical inputs. The strict
 synthetic reports prove bounded combined value. The public-repository
 compatibility and early performance reports showed that the first generic

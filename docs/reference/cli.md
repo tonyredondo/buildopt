@@ -51,6 +51,26 @@ absent/invalid Edge and bypass use native full-graph execution without Edge.
 HTTP failures retain Gradle-native local execution. Both plans are reviewable
 POC decisions, not autonomous or production authorization.
 
+### Discover a qualified POC profile
+
+```text
+buildopt profile discover \
+  --manifest PATH \
+  --graph PATH \
+  --generated-manifest PATH \
+  --matrix-summary PATH \
+  --cell-evidence PATH \
+  --profile-contract PATH
+```
+
+This read-only command emits a deterministic review document on standard
+output. It embeds a profile only when the matrix cell, graph, generated state,
+trace/input digests, mechanism set, preconditions, outputs, and safety
+fallbacks all remain qualified. Unqualified or uncertain inputs emit
+`NATIVE_FULL_GRAPH` with `profile: null`. The command does not write the
+repository, run Gradle, activate the profile, or grant production authority.
+See [deterministic POC profile discovery](../../specs/poc-profile-discovery-v1.md).
+
 ### Run an explicit Build Impact POC candidate
 
 ```text

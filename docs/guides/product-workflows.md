@@ -235,6 +235,22 @@ native full graph without Edge; an HTTP failure executes the selected graph
 locally. This is a bounded POC replay of existing evidence, not a general
 remote-cache policy.
 
+To audit how the retained profile was derived, run the read-only discovery
+command with the checked manifest, graph, generated state, terminal matrix
+summary, qualifying cell evidence, and profile contract. Review the embedded
+profile and every enabled/disabled explanation; do not copy a profile when the
+decision is `NATIVE_FULL_GRAPH`.
+
+```bash
+buildopt profile discover \
+  --manifest buildopt-impact-manifest.json \
+  --graph buildopt-impact-graph.generated.json \
+  --generated-manifest buildopt-impact.generated.json \
+  --matrix-summary path/to/summary.json \
+  --cell-evidence path/to/qualified-cell.json \
+  --profile-contract path/to/profile-contract.json
+```
+
 Run `./dev/check-build-impact-automatic` for the bounded synthetic example and
 `./dev/run --toolchain temurin-jdk-21 -- ./dev/check-build-impact-poc-onboarding`
 for the installed candidate/fallback proof. Read

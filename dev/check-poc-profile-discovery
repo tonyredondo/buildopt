@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-profile-discovery.XXXXXX")
+trap 'rm -r -- "${buildopt_temporary}"' EXIT
+
+for buildopt_command in cmp jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required profile-discovery command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+cd -- "${buildopt_repo_root}"
+./dev/run --toolchain go -- \
+    go build -trimpath -o "${buildopt_temporary}/buildopt" ./cmd/buildopt
+
+buildopt_arguments=(
+    profile discover
+    --manifest fixtures/poc-kafka-packaging/buildopt-impact-manifest.json
+    --graph fixtures/poc-kafka-packaging/buildopt-impact-graph.generated.json
+    --generated-manifest fixtures/poc-kafka-packaging/buildopt-impact.generated.json
+    --matrix-summary benchmarks/results/poc-qualified-profile-matrix-v1/summary.json
+    --profile-contract specs/poc-kafka-composition-usability-v1.json
+)
+
+"${buildopt_temporary}/buildopt" \
+    "${buildopt_arguments[@]}" \
+    --cell-evidence benchmarks/results/poc-qualified-profile-matrix-v1/kafka.json \
+    >"${buildopt_temporary}/kafka-first.json"
+"${buildopt_temporary}/buildopt" \
+    "${buildopt_arguments[@]}" \
+    --cell-evidence benchmarks/results/poc-qualified-profile-matrix-v1/kafka.json \
+    >"${buildopt_temporary}/kafka-second.json"
+cmp --silent \
+    "${buildopt_temporary}/kafka-first.json" \
+    "${buildopt_temporary}/kafka-second.json"
+cmp --silent \
+    "${buildopt_temporary}/kafka-first.json" \
+    benchmarks/results/poc-profile-discovery-v1.json
+
+jq -S '.profile' "${buildopt_temporary}/kafka-first.json" \
+    >"${buildopt_temporary}/generated-profile.json"
+jq -S '.' fixtures/poc-kafka-packaging/buildopt-qualified-edge-profile.json \
+    >"${buildopt_temporary}/reviewed-profile.json"
+cmp --silent \
+    "${buildopt_temporary}/generated-profile.json" \
+    "${buildopt_temporary}/reviewed-profile.json"
+
+jq -e '
+    .schemaVersion == "buildopt.poc/profile-discovery/v1" and
+    .decision == "GENERATED_QUALIFIED_PROFILE" and
+    .reason == "QUALIFIED_EVIDENCE_BOUND" and
+    .subject.repositoryRevision ==
+      "26b251a451ce941d3d7a55e6487bcb7f16b5ad48" and
+    .plan == {
+      alternativeId: "kafka-clients-jar",
+      entrypoints: [":clients:jar"],
+      fallbackEntrypoints: ["assemble"],
+      requiredOutputs: ["clients/build/libs/kafka-clients-*.jar"],
+      omittedProjectCount: 61
+    } and
+    ([.mechanisms[] | select(.enabled) | .name] ==
+      ["BUILD_IMPACT", "SHARED_EDGE_CACHE"]) and
+    .sourceBindings.normalizedInputSha256 ==
+      "97a0e249d30e1d7a7ef23f92d2effd902a790a4cfc81118adfcc7e6d8e7b23c0" and
+    .sourceBindings.requiredOutputSha256 ==
+      "3ffd994e55cf6ddad21600a89a78a9b57851e4e0e48d2e75091d2736b0463349" and
+    .reviewRequired == true and
+    .activationAutomatic == false and
+    .productionAuthorized == false
+' "${buildopt_temporary}/kafka-first.json" >/dev/null
+
+for buildopt_fixture in spring opentelemetry; do
+    "${buildopt_temporary}/buildopt" \
+        "${buildopt_arguments[@]}" \
+        --cell-evidence \
+        "benchmarks/results/poc-qualified-profile-matrix-v1/${buildopt_fixture}.json" \
+        >"${buildopt_temporary}/${buildopt_fixture}.json"
+    jq -e '
+        .decision == "NATIVE_FULL_GRAPH" and
+        .reason == "EVIDENCE_NOT_QUALIFIED" and
+        .profile == null and
+        ([.mechanisms[] | select(.enabled)] | length) == 0 and
+        .activationAutomatic == false and
+        .productionAuthorized == false
+    ' "${buildopt_temporary}/${buildopt_fixture}.json" >/dev/null
+done
+
+./dev/run --toolchain go -- \
+    go test -count=1 ./internal/profilediscovery
+
+"${buildopt_temporary}/buildopt" profile discover --help \
+    >"${buildopt_temporary}/help.stdout" \
+    2>"${buildopt_temporary}/help.stderr"
+if [[ -s "${buildopt_temporary}/help.stderr" ]] ||
+    ! grep -Fxq \
+        'usage: buildopt profile discover --manifest PATH --graph PATH --generated-manifest PATH --matrix-summary PATH --cell-evidence PATH --profile-contract PATH' \
+        "${buildopt_temporary}/help.stdout"; then
+    printf 'profile discovery help contract failed\n' >&2
+    exit 1
+fi
+
+set +e
+"${buildopt_temporary}/buildopt" profile discover \
+    >"${buildopt_temporary}/invalid.stdout" \
+    2>"${buildopt_temporary}/invalid.stderr"
+buildopt_status=$?
+set -e
+if [[ "${buildopt_status}" != 64 ]] ||
+    [[ -s "${buildopt_temporary}/invalid.stdout" ]] ||
+    ! grep -Fxq \
+        'usage: buildopt profile discover --manifest PATH --graph PATH --generated-manifest PATH --matrix-summary PATH --cell-evidence PATH --profile-contract PATH' \
+        "${buildopt_temporary}/invalid.stderr"; then
+    printf 'profile discovery invalid-usage contract failed\n' >&2
+    exit 1
+fi
+
+printf 'POC profile discovery OK: deterministic Kafka profile, native Spring/OpenTelemetry fallbacks, drift and uncertainty fail closed\n'

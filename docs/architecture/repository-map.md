@@ -59,6 +59,7 @@ in `internal/`; cross-process representations belong in `contracts/` first.
 | `internal/runtimeoptimizer` | Scheduling, policies, resource profiles, cohorts, bandit, rollout, fallback | runtime evaluation specs |
 | `internal/taskintelligence` | Qualification state, trace coverage, quarantine evidence | task-intelligence specs |
 | `internal/buildimpact` | Manifest, graph discovery, validation, promotion, active selection | `buildopt-impact`; C3/BIA specs |
+| `internal/profilediscovery` | Read-only, digest-bound POC profile derivation with native fallback | `buildopt profile discover`; profile-discovery spec |
 | `internal/neutralenvelope` | Paired measurements, pilot assignment, reports, no-hit evidence | `neutral-envelope`; measurement specs |
 | `internal/betabenchmark` | Synthetic load and disk/shared/system fault evidence | `beta-benchmark`; beta specs |
 | `internal/datalifecycle` | Redaction profiles, deletion, leases, tombstones | `buildopt-server`; private-beta lifecycle specs |

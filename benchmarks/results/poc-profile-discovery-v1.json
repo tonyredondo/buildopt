@@ -1,0 +1,158 @@
+{
+  "schemaVersion": "buildopt.poc/profile-discovery/v1",
+  "decision": "GENERATED_QUALIFIED_PROFILE",
+  "reason": "QUALIFIED_EVIDENCE_BOUND",
+  "subject": {
+    "repositoryId": "apache/kafka",
+    "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "pipelineClass": "poc-kafka-packaging-v1",
+    "gradleVersion": "9.2.1",
+    "jdk": "temurin-25.0.3+9"
+  },
+  "inputs": [
+    {
+      "role": "QUALIFICATION_MATRIX",
+      "path": "benchmarks/results/poc-qualified-profile-matrix-v1/summary.json",
+      "sha256": "sha256:e1646ac60cbe495845607972f7e8bbe09f36cc5fbd2241d4718b5ca78596e12d"
+    },
+    {
+      "role": "CELL_EVIDENCE",
+      "path": "benchmarks/results/poc-qualified-profile-matrix-v1/kafka.json",
+      "sha256": "sha256:31988f5f6577e0e8d134ef6e9d360f4d023c3d4af9df63a393a98e5abd32c0ee"
+    },
+    {
+      "role": "BUILD_IMPACT_MANIFEST",
+      "path": "fixtures/poc-kafka-packaging/buildopt-impact-manifest.json",
+      "sha256": "sha256:ce9a29b92da3fefd15eec9ce0a1c2dcb4309fcb58af184e449bc197d8f0c2fdb"
+    },
+    {
+      "role": "BUILD_IMPACT_GRAPH",
+      "path": "fixtures/poc-kafka-packaging/buildopt-impact-graph.generated.json",
+      "sha256": "sha256:bff1ab7ba04b97010d0386278d767888cdab7c240f3d64987023e8b395a01f0b"
+    },
+    {
+      "role": "GENERATED_MANIFEST",
+      "path": "fixtures/poc-kafka-packaging/buildopt-impact.generated.json",
+      "sha256": "sha256:160f6e4b650004002593add7dca6898589902e061055d0b9ccff837f0f9a43ca"
+    },
+    {
+      "role": "PROFILE_CONTRACT",
+      "path": "specs/poc-kafka-composition-usability-v1.json",
+      "sha256": "sha256:f6f9bc1b1ec4faf38e684a437f88dc2ddfb9a62188db5a57f31587242c5cea15"
+    }
+  ],
+  "sourceBindings": {
+    "evidenceRevision": "a6bbf3f10273d8912b21da177c86653d60b3db21",
+    "componentEvidence": {
+      "invalidJarCompositionSha256": "f47eee324b0f25b984cb2c5be001464c7f898496f3ac63e8d746906a56cd4e96",
+      "kafkaEdgeLocalitySha256": "04c73df729556111178522bfab6cb69b612a039fbbf8feb49b29581dcebbce53",
+      "kafkaImpactScopeSha256": "d2efc3519bd9930b9cbf0e351b02cf6a52d610e7ee67caed1ebd0849feda316a"
+    },
+    "manifestDigest": "sha256:ace13e455ee911d1ffcf46edde1084c24078b88bb17a92eec9cc4721f86b8efa",
+    "graphDigest": "sha256:4c76f7ac9db7529a7bb8b87e225c0fa07daced7e5370c28df1e63587d06099bc",
+    "discoveryDigest": "sha256:699213629ca87c9b62d38a42bd7022aae3b189d1317b22e149ff89e731bf3769",
+    "normalizedInputSha256": "97a0e249d30e1d7a7ef23f92d2effd902a790a4cfc81118adfcc7e6d8e7b23c0",
+    "requiredOutputSha256": "3ffd994e55cf6ddad21600a89a78a9b57851e4e0e48d2e75091d2736b0463349"
+  },
+  "plan": {
+    "alternativeId": "kafka-clients-jar",
+    "entrypoints": [
+      ":clients:jar"
+    ],
+    "fallbackEntrypoints": [
+      "assemble"
+    ],
+    "requiredOutputs": [
+      "clients/build/libs/kafka-clients-*.jar"
+    ],
+    "omittedProjectCount": 61
+  },
+  "mechanisms": [
+    {
+      "name": "BUILD_IMPACT",
+      "enabled": true,
+      "reason": "complete digest-bound graph and qualified installed-path evidence"
+    },
+    {
+      "name": "SHARED_EDGE_CACHE",
+      "enabled": true,
+      "reason": "qualified read-only locality with exact HTTP-failure fallback"
+    },
+    {
+      "name": "HOT_STATE",
+      "enabled": false,
+      "reason": "not present in the qualified mechanism set"
+    },
+    {
+      "name": "RUNTIME_TUNING",
+      "enabled": false,
+      "reason": "not present in the qualified mechanism set"
+    },
+    {
+      "name": "SAFE_CACHE",
+      "enabled": false,
+      "reason": "not present in the qualified mechanism set"
+    },
+    {
+      "name": "STANDARD_COPY",
+      "enabled": false,
+      "reason": "not present in the qualified mechanism set"
+    },
+    {
+      "name": "STANDARD_JAR",
+      "enabled": false,
+      "reason": "required output is not produced by the standard Jar adapter"
+    },
+    {
+      "name": "TEST_OPTIMIZATION",
+      "enabled": false,
+      "reason": "outside BuildOpt scope and forbidden by the evidence boundary"
+    }
+  ],
+  "profile": {
+    "schemaVersion": "buildopt.poc/qualified-profile/v2",
+    "profileVersion": 2,
+    "profileId": "normalized-impact-plus-read-only-edge",
+    "ownership": "REPOSITORY_COMMITTED",
+    "claimScope": "DECLARED_OUTPUTS_ONLY",
+    "repositoryId": "apache/kafka",
+    "pipelineClass": "poc-kafka-packaging-v1",
+    "fallback": "NATIVE_FULL_GRAPH",
+    "impact": {
+      "manifest": "buildopt-impact-manifest.json",
+      "graph": "buildopt-impact-graph.generated.json",
+      "generatedManifest": "buildopt-impact.generated.json"
+    },
+    "mechanisms": {
+      "buildImpact": true,
+      "standardJarAdapter": false,
+      "safeCache": false,
+      "runtimeTuning": false,
+      "hotState": false,
+      "standardCopyAdapter": false,
+      "sharedEdgeCache": true
+    },
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--no-configuration-cache",
+      "--parallel",
+      "--console=plain",
+      "--max-workers=12",
+      "--no-scan"
+    ],
+    "preconditions": [
+      {
+        "type": "FILE_SHA256",
+        "path": "build.gradle",
+        "sha256": "97a0e249d30e1d7a7ef23f92d2effd902a790a4cfc81118adfcc7e6d8e7b23c0"
+      }
+    ],
+    "edgeCache": {
+      "mode": "READ_ONLY_LOOPBACK"
+    }
+  },
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false
+}
