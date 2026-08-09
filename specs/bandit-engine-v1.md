@@ -43,11 +43,9 @@ or cross-binding records cannot update learning. A guardrail result is
 
 ## Conformance
 
-Run:
-
-```bash
-./dev/check-bandit-engine
-```
+The executable implementation and checker were retired after Runtime Tuning
+failed the POC value gate. This document is retained as historical protocol
+evidence only.
 
 The checker composes the original 15-scenario replay with the production
 selector, durable reopen, exact propensity, 20-sample entry, era reset,

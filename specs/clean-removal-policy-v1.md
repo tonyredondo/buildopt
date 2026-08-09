@@ -21,4 +21,6 @@ for every preservation path. This block implements the disabled action and its
 contract fixtures; it does not activate it for an owner repository or close
 `B-G04`, which also requires invocation-merging coverage.
 
-Run `./dev/check-clean-removal-policy` for the executable contract.
+The executable implementation and checker were retired after Runtime Tuning
+failed the POC value gate. This document is retained as historical protocol
+evidence only.

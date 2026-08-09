@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if (($# != 1)); then
-    printf 'usage: %s EVIDENCE_FILE\n' "$0" >&2
+if (($# > 1)); then
+    printf 'usage: %s [EVIDENCE_FILE]\n' "$0" >&2
     exit 64
 fi
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
-buildopt_evidence=$1
+buildopt_evidence=${1:-"${buildopt_repo_root}/benchmarks/results/poc-standard-copy-cascade-v1.json"}
 buildopt_spec="${buildopt_repo_root}/specs/poc-standard-copy-cache-v1.json"
 
 for buildopt_command in jq sha256sum; do
@@ -22,7 +22,7 @@ done
     printf 'standard-Copy evidence is unavailable: %s\n' "${buildopt_evidence}" >&2
     exit 1
 }
-"${buildopt_script_dir}/check-poc-standard-copy-cache" --spec-only >/dev/null
+"${buildopt_script_dir}/check-poc-standard-copy-cache" >/dev/null
 buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
 
 jq -e --arg specSha "${buildopt_spec_sha}" --slurpfile spec "${buildopt_spec}" '

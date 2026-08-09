@@ -39,7 +39,7 @@ before running the product.
 ### User and operator guides
 
 - [Product workflows](./guides/product-workflows.md): launcher, build history,
-  runtime optimizer, Task Intelligence, Patch Autopilot, Build Impact, and
+  Task Intelligence, Patch Autopilot, Build Impact, and
   Edge Cache.
 - [CI integration](./guides/ci-integration.md): immutable installation and
   execution on GitHub Actions and GitLab CI.

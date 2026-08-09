@@ -86,7 +86,7 @@ fi
 
 buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
 buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
-buildopt_runner_sha=$(sha256sum "${buildopt_script_dir}/run-poc-runtime-research" | awk '{print $1}')
+buildopt_runner_sha=d36bea66ea0fe37f482e10417dd85a17bde643856afed729e1c060cc417cf4f6
 jq -e --arg specSha "${buildopt_spec_sha}" --arg runnerSha "${buildopt_runner_sha}" \
     --slurpfile spec "${buildopt_spec}" '
     def sha256: type == "string" and test("^[0-9a-f]{64}$");

@@ -40,7 +40,7 @@ versioned microservices.
 | `buildopt-impact` | `cmd/buildopt-impact/` | `buildimpact` | [Build Impact workflow](../guides/product-workflows.md#build-impact) |
 | `buildopt-service.exe` | `cmd/buildopt-service/` | server and Edge entrypoints | [Windows operations](../guides/operations.md#windows) |
 | `neutral-envelope` | `cmd/neutral-envelope/` | `neutralenvelope` | [component README](../../cmd/neutral-envelope/README.md) |
-| Evaluation CLIs | `cmd/runtime-evaluation/`, `cmd/task-intelligence-evaluation/`, `cmd/beta-benchmark/` | corresponding internal packages | [Validation reference](../reference/validation.md) |
+| Evaluation CLIs | `cmd/task-intelligence-evaluation/`, `cmd/beta-benchmark/` | corresponding internal packages | [Validation reference](../reference/validation.md) |
 
 Files in `cmd/` should remain thin composition roots. Reusable behavior belongs
 in `internal/`; cross-process representations belong in `contracts/` first.
@@ -56,7 +56,6 @@ in `internal/`; cross-process representations belong in `contracts/` first.
 | `internal/localauthority` | Canonical signed policy/revocation verification and anti-rollback state | launcher and Shared; local authority spec |
 | `internal/sharedcache` | Shared blobs, pending/commit CAS, SQLite state, quota, tokens, reconciliation | `buildopt-server`; A0/A1 cache specs |
 | `internal/edgecache` | Edge config, store, read-through, pending replication, quota, runtime status | `buildopt-edge`; C2/O1 specs |
-| `internal/runtimeoptimizer` | Scheduling, policies, resource profiles, cohorts, bandit, rollout, fallback | runtime evaluation specs |
 | `internal/taskintelligence` | Qualification state, trace coverage, quarantine evidence | task-intelligence specs |
 | `internal/buildimpact` | Manifest, graph discovery, validation, promotion, active selection | `buildopt-impact`; C3/BIA specs |
 | `internal/profilediscovery` | Read-only, digest-bound POC profile derivation with native fallback | `buildopt profile discover`; profile-discovery spec |

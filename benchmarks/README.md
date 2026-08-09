@@ -33,7 +33,8 @@ rerunning unchanged inputs or adding component percentages:
 | Kafka | Build Impact + read-only Edge | **82.35% faster** | **81.85% faster**, 8/8 pairs |
 
 Hot State is excluded because it directly regressed on OpenTelemetry. Runtime
-Tuning, Safe Cache, standard `Copy` and Test Optimization are not part of these
+Tuning, Hot State, and standard `Copy` are retired from the executable POC;
+Safe Cache and Test Optimization are not part of these
 target compositions. The exact scorecard has three positive direct scopes but
 only one strict installed replication, so it supports continued structural
 experiments rather than a general accelerator claim. Validate source digests,
@@ -112,7 +113,7 @@ The current POC verdict is `CONTINUE` for exact evidence-qualified scopes, not
 for arbitrary repositories. Contractual 4-vCPU/16-GiB runs cover the baseline,
 negative-mechanism decision, accelerator-coverage matrix, combined public path,
 and realistic breadth test. Safe Cache is explicit-only while the default delegates to Gradle's native
-cache; Runtime Tuning candidates `W4_H6G` and `W3_H4G` are disabled; Build
+cache; Runtime Tuning candidates `W4_H6G` and `W3_H4G` are retired; Build
 Impact and the exact reviewed Task/Patch route clear the threshold across Kotlin
 and Groovy; and the complete path also clears the final gate. Validate that
 interpretation with:
@@ -278,7 +279,7 @@ to investigate rather than authorizing a causal fixed-cost claim. The only
 activation decision comes from the complete native comparison:
 `KEEP_NATIVE_FOR_UNQUALIFIED_STANDARD_JAR_WORKFLOW`.
 
-### Targeted Runtime Tuning research
+### Retired Runtime Tuning research
 
 The checked [Spring Runtime evidence](./results/poc-runtime-research-v1.json)
 tests one preregistered resource hypothesis rather than searching profiles
@@ -294,8 +295,9 @@ outputs; only `--max-workers` changes from the native 12 to 6.
 The candidate is positive in only 2/4 pairs and its paired interval is
 -973.5..+590.5 ms. Every pair preserves the same 378 outputs and sorted task
 outcomes, with zero product failures. The terminal decision is
-`RETAIN_NATIVE_12_WORKERS`: Runtime Tuning remains disabled for this workload,
-and the frozen protocol forbids another worker search after this result.
+`RETAIN_NATIVE_12_WORKERS`: Runtime Tuning was retired from the POC after this
+result. Its runner and activation code were removed; the frozen evidence is
+retained to prevent another parameter search over the same failed mechanism.
 
 ### Controlled remote-cache locality
 
@@ -513,7 +515,7 @@ that unrelated builds receive the same percentage.
 |---|---:|---:|---|
 | Default native-cache fallback, Kotlin | 79 ms faster (8.9%) | +6 to +156 ms | `NO_VALUE_NO_ACTION`; same cache mechanism, no acceleration claim |
 | Default native-cache fallback, Groovy | 1,051 ms faster (56.6%) | +486 to +1,572 ms | `NO_VALUE_NO_ACTION`; same cache mechanism, no acceleration claim |
-| Runtime Tuning `W3_H4G` | 512 ms slower (4.3%) | −2,818 to +1,302 ms | `NO_VALUE_NO_ACTION`; `STABLE_CONTROL_ONLY` |
+| Runtime Tuning `W3_H4G` | 512 ms slower (4.3%) | −2,818 to +1,302 ms | `NO_VALUE_NO_ACTION`; mechanism now retired |
 | Build Impact, Kotlin | 1,939 ms faster (76.0%) | +1,899 to +1,982 ms | `THRESHOLD_MET_REQUIRED_BREADTH` |
 | Build Impact, Groovy | 2,155 ms faster (73.5%) | +1,869 to +2,414 ms | `THRESHOLD_MET_REQUIRED_BREADTH` |
 | Reviewed Task/Patch, Kotlin | 1,369 ms faster (67.3%) | +1,142 to +1,624 ms | `THRESHOLD_MET_REVIEWED_CUSTOM_TASK` |
@@ -1253,10 +1255,10 @@ This closes the owner-operated POC gate only; the result remains PRELIMINARY,
 does not authorize production promotion, and does not claim the deferred soak
 or external design-partner evidence.
 
-## Runtime owner evaluation evidence
+## Historical Runtime owner evaluation evidence
 
 [`results/b-runtime-owner-evaluation.json`](./results/b-runtime-owner-evaluation.json)
-records the public four-CPU owner run for the Runtime Optimizer. The same run
+records the public four-CPU owner run for the retired Runtime Optimizer. The run
 drives 200 durable pre-outcome A/A assignments with delayed exactly-once
 rewards, then measures four real alternating Gradle pairs for A/A and the
 finite `W4_H6G` candidate. It passes sample-ratio, p95/p99, queue, OOM,
@@ -1266,8 +1268,9 @@ additional-compute, and byte-identical artifact guardrails.
 ./dev/check-runtime-owner-evaluation
 ```
 
-This closes the owner-operated POC gates `B-G01` and `B-G03`; it does not run
-the deferred eight-hour soak or authorize production promotion.
+This is historical evidence only. Stricter later comparisons superseded its
+early positive signal, and the Runtime Tuning implementation and workflow were
+removed after the terminal no-value decision.
 
 
 ## Task Intelligence accepted-patch evidence

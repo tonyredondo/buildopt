@@ -661,11 +661,12 @@ var reservedChildEnvironment = []string{
 	serverTokenEnvironment,
 	exportContextEnvironment,
 	gradleSafeCacheEnvironment,
-	gradleCheckstyleHeapEnvironment,
 	gradleStandardJarCacheEnvironment,
-	gradleStandardCopyCacheEnvironment,
 	gradlePOCEdgeCacheURLEnvironment,
-	resourceAvailableMemoryEnvironment,
+	// Retired variables are scrubbed so stale shell configuration cannot
+	// reactivate repository-side experiments outside BuildOpt.
+	"BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP",
+	"BUILDOPT_CACHE_STANDARD_COPY_TASKS",
 }
 
 func replaceEnvironment(

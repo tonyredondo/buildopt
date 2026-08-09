@@ -24,11 +24,7 @@ const (
 	gradleSafeCacheEnvironment         = "BUILDOPT_SAFE_CACHE"
 	gradleStandardJarCacheEnvironment  = "BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS"
 	gradleStandardJarCacheFlag         = "--cache-standard-jar-producers"
-	gradleStandardCopyCacheEnvironment = "BUILDOPT_CACHE_STANDARD_COPY_TASKS"
 	gradlePOCEdgeCacheURLEnvironment   = "BUILDOPT_POC_EDGE_CACHE_URL"
-	gradleCheckstyleHeapEnvironment    = "BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP"
-	gradleCheckstyleHeap2G             = "2g"
-	gradleCheckstyleMinimumMemoryBytes = int64(14 * 1024 * 1024 * 1024)
 )
 
 func parseGradleProductOptions(args []string) ([]string, bool, error) {
@@ -78,10 +74,6 @@ func prepareGradleInvocationWithEnvironment(
 	var defaultManagedL1 *managedL1Config
 	buildCacheConfigured, buildCacheEnabled := gradleBuildCacheMode(args)
 	if !bypass {
-		checkstyleHeap, tuningErr := gradleCheckstyleHeap(getenv)
-		if tuningErr != nil {
-			return gradleInvocation{}, tuningErr
-		}
 		safeCacheEnabled, activationErr := gradleSafeCacheEnabled(getenv)
 		if activationErr != nil {
 			return gradleInvocation{}, activationErr
@@ -90,11 +82,7 @@ func prepareGradleInvocationWithEnvironment(
 		if jarErr != nil {
 			return gradleInvocation{}, jarErr
 		}
-		standardCopyCache, copyErr := gradleStandardCopyCacheEnabled(getenv)
-		if copyErr != nil {
-			return gradleInvocation{}, copyErr
-		}
-		if (standardJarCache || standardCopyCache) && buildCacheConfigured && !buildCacheEnabled {
+		if standardJarCache && buildCacheConfigured && !buildCacheEnabled {
 			return gradleInvocation{}, errors.New("BuildOpt standard task cache adapters are incompatible with --no-build-cache")
 		}
 		pocEdgeCacheURL, pocEdgeErr := gradlePOCEdgeCacheURL(getenv)
@@ -107,8 +95,8 @@ func prepareGradleInvocationWithEnvironment(
 		_, managedConfigured, _ := managedL1ConfigFromEnvironment(getenv)
 		externalInstrumentation := gradleInstrumentationRequested(getenv)
 		runtimeIntegration := gradleRuntimeIntegrationRequested(getenv)
-		instrumented := safeCacheEnabled || standardJarCache || standardCopyCache ||
-			pocEdgeCacheURL != "" || externalInstrumentation || checkstyleHeap != ""
+		instrumented := safeCacheEnabled || standardJarCache ||
+			pocEdgeCacheURL != "" || externalInstrumentation
 		if instrumented {
 			initScript, pluginJar, assetErr := resolveGradleAssets()
 			if assetErr != nil {
@@ -116,20 +104,13 @@ func prepareGradleInvocationWithEnvironment(
 			}
 			childArgs = append(childArgs, "--init-script", initScript)
 			environment = map[string]string{gradlePluginJarEnvironment: pluginJar}
-			if checkstyleHeap != "" {
-				environment[gradleCheckstyleHeapEnvironment] = checkstyleHeap
-			}
 			if standardJarCache {
 				environment[gradleStandardJarCacheEnvironment] = "1"
-			}
-			if standardCopyCache {
-				environment[gradleStandardCopyCacheEnvironment] = "1"
 			}
 			if pocEdgeCacheURL != "" {
 				environment[gradlePOCEdgeCacheURLEnvironment] = pocEdgeCacheURL
 			}
-			if (checkstyleHeap != "" && !externalInstrumentation ||
-				(standardJarCache || standardCopyCache) && !runtimeIntegration ||
+			if (standardJarCache && !runtimeIntegration ||
 				pocEdgeCacheURL != "") && !safeCacheEnabled {
 				environment[gradleProjectPluginModeEnvironment] = gradleProjectPluginModeCacheOnly
 			}
@@ -158,8 +139,7 @@ func prepareGradleInvocationWithEnvironment(
 		return gradleInvocation{
 			childArgs: childArgs, environment: environment,
 			managedL1: defaultManagedL1, nativeOnly: !instrumented,
-			localOnly: (checkstyleHeap != "" && !externalInstrumentation ||
-				(standardJarCache || standardCopyCache) && !runtimeIntegration ||
+			localOnly: (standardJarCache && !runtimeIntegration ||
 				pocEdgeCacheURL != "") && !safeCacheEnabled,
 		}, nil
 	}
@@ -213,44 +193,6 @@ func gradleStandardJarCacheEnabled(getenv func(string) string) (bool, error) {
 		return true, nil
 	default:
 		return false, errors.New("BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS must be 0 or 1")
-	}
-}
-
-func gradleStandardCopyCacheEnabled(getenv func(string) string) (bool, error) {
-	if getenv == nil {
-		return false, errors.New("resolve BUILDOPT_CACHE_STANDARD_COPY_TASKS: environment reader is unavailable")
-	}
-	switch getenv(gradleStandardCopyCacheEnvironment) {
-	case "", "0":
-		return false, nil
-	case "1":
-		return true, nil
-	default:
-		return false, errors.New("BUILDOPT_CACHE_STANDARD_COPY_TASKS must be 0 or 1")
-	}
-}
-
-func gradleCheckstyleHeap(getenv func(string) string) (string, error) {
-	if getenv == nil {
-		return "", errors.New("resolve BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP: environment reader is unavailable")
-	}
-	switch getenv(gradleCheckstyleHeapEnvironment) {
-	case "":
-		return "", nil
-	case gradleCheckstyleHeap2G:
-		availableBytes, err := parsePositiveResourceInt64(
-			getenv(resourceAvailableMemoryEnvironment),
-			resourceAvailableMemoryEnvironment,
-		)
-		if err != nil {
-			return "", err
-		}
-		if availableBytes < gradleCheckstyleMinimumMemoryBytes {
-			return "", errors.New("BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP requires at least 14 GiB available memory")
-		}
-		return gradleCheckstyleHeap2G, nil
-	default:
-		return "", errors.New("BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP must be empty or 2g")
 	}
 }
 

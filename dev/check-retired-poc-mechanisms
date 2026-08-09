@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+
+buildopt_removed_paths=(
+    ".github/workflows/runtime-owner-evaluation.yml"
+    "cmd/runtime-evaluation"
+    "internal/runtimeoptimizer"
+    "internal/launcher/resource_profile.go"
+    "internal/launcher/impact_hot_state.go"
+    "jvm/gradle-plugin/src/main/java/dev/buildopt/gradle/BuildOptStandardCopyCachePlugin.java"
+    "jvm/gradle-plugin/src/testKit/java/dev/buildopt/gradle/StandardCopyCacheTestKit.java"
+    "dev/check-gradle-runtime-tuning"
+    "dev/run-runtime-owner-evaluation"
+    "dev/run-poc-standard-copy-cascade"
+    "dev/run-poc-otel-optimization-v1"
+    "dev/run-poc-otel-optimization-v2"
+    "dev/run-poc-full-path-ablation"
+    "dev/run-poc-runtime-research"
+    "dev/run-poc-value-baseline"
+    "dev/run-poc-value-baseline-container"
+    "dev/run-poc-value-negative-mechanisms"
+    "dev/run-poc-value-negative-mechanisms-container"
+    "dev/run-poc-spring-value"
+)
+for buildopt_path in "${buildopt_removed_paths[@]}"; do
+    if [[ -f "${buildopt_root}/${buildopt_path}" ]] ||
+        [[ -d "${buildopt_root}/${buildopt_path}" &&
+            -n "$(find "${buildopt_root}/${buildopt_path}" -type f -print -quit)" ]]; then
+        printf 'retired POC mechanism path is still executable: %s\n' "${buildopt_path}" >&2
+        exit 1
+    fi
+done
+
+buildopt_active_roots=(
+    "${buildopt_root}/.github/actions"
+    "${buildopt_root}/.github/workflows"
+    "${buildopt_root}/cmd"
+    "${buildopt_root}/internal/launcher"
+    "${buildopt_root}/internal/localauthority"
+    "${buildopt_root}/jvm/gradle-plugin/src/main"
+    "${buildopt_root}/jvm/gradle-plugin/build.gradle.kts"
+)
+if rg -n -g '!**/*_test.go' \
+    'BuildOptStandardCopyCachePlugin|ResourceProfileReference|applyAuthorizedResourceProfile|--hot-state-dir|--cache-standard-copy-tasks' \
+    "${buildopt_active_roots[@]}"; then
+    printf 'retired POC mechanism remains reachable from an active surface\n' >&2
+    exit 1
+fi
+
+# These names may remain only in the child-environment scrub list and tests
+# proving that stale user configuration cannot reactivate them.
+for buildopt_variable in \
+    BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP \
+    BUILDOPT_CACHE_STANDARD_COPY_TASKS; do
+    buildopt_hits=$(
+        rg -l "${buildopt_variable}" \
+            "${buildopt_root}/.github/actions" \
+            "${buildopt_root}/cmd" \
+            "${buildopt_root}/internal/launcher" \
+            "${buildopt_root}/jvm/gradle-plugin" || true
+    )
+    while IFS= read -r buildopt_hit; do
+        [[ -z "${buildopt_hit}" ]] && continue
+        case "${buildopt_hit}" in
+            "${buildopt_root}/internal/launcher/local_gateway.go" | \
+                "${buildopt_root}/internal/launcher/gradle_test.go") ;;
+            *)
+                printf 'retired environment variable remains active: %s in %s\n' \
+                    "${buildopt_variable}" "${buildopt_hit}" >&2
+                exit 1
+                ;;
+        esac
+    done <<<"${buildopt_hits}"
+done
+
+jq -e '
+    .runtimeTuning.classification == "NO_VALUE_NO_ACTION" and
+    .runtimeTuning.evaluatedCandidateProfile == "W3_H4G" and
+    .runtimeTuning.meanSavedMs < 0 and
+    .runtimeTuning.requiredOutputsIdentical and
+    .runtimeTuning.productAttributableFailures == 0
+' "${buildopt_root}/benchmarks/results/poc-value-negative-mechanisms-v1.json" >/dev/null
+
+jq -e '
+    .result.decision == "RETAIN_STANDARD_COPY_EVIDENCE_ONLY" and
+    (.result.comparisons[] | select(.comparison == "INCREMENTAL_COPY_ON_QUALIFIED_PROFILE") | .qualified) == false
+' "${buildopt_root}/benchmarks/results/poc-standard-copy-cascade-v1.json" >/dev/null
+
+jq -e '
+    .result.decision == "RETAIN_COMPONENT_EVIDENCE_ONLY" and
+    (.result.regressiveIncludedArms[] |
+        select(.arm == "BUILD_IMPACT_HOT_STATE") |
+        .meanSavedMs < 0 and .reductionRatio < 0)
+' "${buildopt_root}/benchmarks/results/poc-full-path-ablation-v1/summary.json" >/dev/null
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/launcher \
+        -run 'TestRetiredMechanismEnvironmentDoesNotActivateGradleIntegration|TestImpactHelpAndInvalidArguments'
+
+printf 'Retired POC mechanisms OK: no activation surface; rejection evidence retained\n'

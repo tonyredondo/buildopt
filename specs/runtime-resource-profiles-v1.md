@@ -21,4 +21,6 @@ This block proves finite selection, materialization, startup/memory/rollback
 eligibility, and launcher fallback. Real causal improvement and p95/p99/queue/
 OOM evidence remain with `B-G03` and owner-operated evaluation.
 
-Run `./dev/check-runtime-resource-profiles` for the executable contract.
+The executable implementation and checker were retired after Runtime Tuning
+failed the POC value gate. This document is retained as historical protocol
+evidence only.

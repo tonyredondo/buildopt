@@ -10,7 +10,6 @@ buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_contract="${buildopt_repo_root}/specs/poc-value-validation-v1.json"
 buildopt_cache="${buildopt_repo_root}/benchmarks/results/cache-parity-v1-local.json"
-buildopt_runtime="${buildopt_repo_root}/benchmarks/results/b-runtime-owner-evaluation.json"
 buildopt_impact="${buildopt_repo_root}/benchmarks/results/build-impact-performance-v1-local.json"
 buildopt_baseline="${buildopt_repo_root}/benchmarks/results/poc-value-baseline-v1.json"
 buildopt_negative="${buildopt_repo_root}/benchmarks/results/poc-value-negative-mechanisms-v1.json"
@@ -23,7 +22,6 @@ command -v jq >/dev/null 2>&1 || {
 }
 
 "${buildopt_script_dir}/check-cache-parity-performance" "${buildopt_cache}" >/dev/null
-"${buildopt_script_dir}/check-runtime-owner-evaluation" >/dev/null
 "${buildopt_script_dir}/check-build-impact-performance" "${buildopt_impact}" >/dev/null
 "${buildopt_script_dir}/check-poc-value-baseline" "${buildopt_baseline}" >/dev/null
 "${buildopt_script_dir}/check-poc-value-negative-mechanisms" "${buildopt_negative}" >/dev/null
@@ -32,7 +30,6 @@ command -v jq >/dev/null 2>&1 || {
 
 jq -e \
     --slurpfile cache "${buildopt_cache}" \
-    --slurpfile runtime "${buildopt_runtime}" \
     --slurpfile impact "${buildopt_impact}" \
     --slurpfile baseline "${buildopt_baseline}" \
     --slurpfile negative "${buildopt_negative}" \
@@ -174,7 +171,6 @@ jq -e \
 jq -n \
     --slurpfile contract "${buildopt_contract}" \
     --slurpfile cache "${buildopt_cache}" \
-    --slurpfile runtime "${buildopt_runtime}" \
     --slurpfile impact "${buildopt_impact}" \
     --slurpfile baseline "${buildopt_baseline}" \
     --slurpfile negative "${buildopt_negative}" \

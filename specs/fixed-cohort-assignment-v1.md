@@ -37,11 +37,9 @@ request. Delayed and exactly-once outcome processing remains in `B-007`.
 
 ## Conformance
 
-Run:
-
-```bash
-./dev/check-fixed-cohort-assignment
-```
+The executable implementation and checker were retired after Runtime Tuning
+failed the POC value gate. This document is retained as historical protocol
+evidence only.
 
 This validates private durable state, deterministic/idempotent assignment,
 non-50/50 A/A, exact propensities, finite safe arms, stable-control floor, and

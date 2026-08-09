@@ -9,7 +9,7 @@ fi
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_cache="${buildopt_repo_root}/benchmarks/results/cache-parity-v1-local.json"
-buildopt_runtime="${buildopt_repo_root}/benchmarks/results/b-runtime-owner-evaluation.json"
+buildopt_negative="${buildopt_repo_root}/benchmarks/results/poc-value-negative-mechanisms-v1.json"
 buildopt_impact="${buildopt_repo_root}/benchmarks/results/build-impact-performance-v1-local.json"
 buildopt_combined="${buildopt_repo_root}/benchmarks/results/poc-value-combined-v1.json"
 buildopt_otel_historical="${buildopt_repo_root}/benchmarks/results/poc-otel-optimization-v2.json"
@@ -17,7 +17,7 @@ buildopt_otel_clean="${buildopt_repo_root}/benchmarks/results/poc-otel-clean-com
 buildopt_kafka_transfer="${buildopt_repo_root}/benchmarks/results/poc-third-repository-transfer-v1.json"
 
 "${buildopt_script_dir}/check-cache-parity-performance" "${buildopt_cache}" >/dev/null
-"${buildopt_script_dir}/check-runtime-owner-evaluation" >/dev/null
+"${buildopt_script_dir}/check-poc-value-negative-mechanisms" "${buildopt_negative}" >/dev/null
 "${buildopt_script_dir}/check-build-impact-performance" "${buildopt_impact}" >/dev/null
 "${buildopt_script_dir}/check-poc-value-combined" "${buildopt_combined}" >/dev/null
 "${buildopt_script_dir}/check-poc-otel-optimization-v2-result" "${buildopt_otel_historical}" >/dev/null
@@ -26,7 +26,7 @@ buildopt_kafka_transfer="${buildopt_repo_root}/benchmarks/results/poc-third-repo
 
 jq -n \
     --slurpfile cache "${buildopt_cache}" \
-    --slurpfile runtime "${buildopt_runtime}" \
+    --slurpfile negative "${buildopt_negative}" \
     --slurpfile impact "${buildopt_impact}" \
     --slurpfile combined "${buildopt_combined}" \
     --slurpfile otelHistorical "${buildopt_otel_historical}" \
@@ -60,16 +60,19 @@ jq -n \
             nativeCacheMaximumRegressionRatio: 0.02
         },
         runtimeTuning: {
-            claim: "POSITIVE_CAUSAL_RESOURCE_PROFILE_SAVINGS",
-            reductionRatio:
-                $runtime[0].autotuning.metrics.reductionRatio,
-            meanSavedMs:
-                $runtime[0].autotuning.metrics.meanDeltaMs,
-            lower95SavedMs:
-                $runtime[0].autotuning.metrics.interval95Ms[0],
-            artifactDivergence:
-                $runtime[0].autotuning.metrics.artifactDivergence,
-            oomDelta: $runtime[0].autotuning.oomDelta
+            claim: "RETIRED_AFTER_NO_VALUE",
+            classification: $negative[0].runtimeTuning.classification,
+            activation: "REMOVED",
+            evaluatedCandidateProfile:
+                $negative[0].runtimeTuning.evaluatedCandidateProfile,
+            reductionRatio: $negative[0].runtimeTuning.meanReductionRatio,
+            meanSavedMs: $negative[0].runtimeTuning.meanSavedMs,
+            interval95SavedMs:
+                $negative[0].runtimeTuning.interval95SavedMs,
+            requiredOutputsIdentical:
+                $negative[0].runtimeTuning.requiredOutputsIdentical,
+            productAttributableFailures:
+                $negative[0].runtimeTuning.productAttributableFailures
         },
         buildImpact: {
             claim: "POSITIVE_SAVINGS_WHEN_A_DECLARED_PROJECT_IS_UNAFFECTED",
@@ -93,7 +96,7 @@ jq -n \
                 }}) | from_entries)
         },
         historicalSubstantialPublicPath: {
-            claim: "QUALIFIED_OPENTELEMETRY_SPRING_FAMILY_POC_VALUE_WITH_HOT_STATE",
+            claim: "HISTORICAL_OPENTELEMETRY_RESULT_CONTAINING_RETIRED_HOT_STATE",
             meanSavedMs: $otelHistorical[0].result.meanSavedMs,
             reductionRatio: $otelHistorical[0].result.reductionRatio,
             interval95SavedMs: $otelHistorical[0].result.interval95SavedMs,
@@ -102,6 +105,7 @@ jq -n \
                 $otelHistorical[0].observations[0].requiredOutputCount,
             safeFallback: $otelHistorical[0].fallback.buildSuccessful,
             hotStateEnabled: true,
+            hotStateRetired: true,
             decision: $otelHistorical[0].result.decision
         },
         substantialPublicPath: {
@@ -138,7 +142,13 @@ jq -n \
             universalSavingsClaim: false,
             productionPromotionAuthorized: false,
             eightHourSoakExecuted: false,
-            testOptimizationModified: false
+            testOptimizationModified: false,
+            retiredMechanisms: [
+                "RUNTIME_TUNING",
+                "HOT_STATE",
+                "STANDARD_COPY",
+                "GLOBAL_TUNING"
+            ]
         }
     }
 '

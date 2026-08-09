@@ -28,7 +28,7 @@ func TestQualifiedPOCEdgeProfileSelectsOnlyQualifiedComposition(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !invocation.plan.CandidateSelected || invocation.standardJarCache ||
-		invocation.standardCopyCache || invocation.pocEdgeCacheURL != "http://127.0.0.1:8043" ||
+		invocation.pocEdgeCacheURL != "http://127.0.0.1:8043" ||
 		invocation.qualifiedProfile == nil {
 		t.Fatalf("qualified Edge invocation = %+v", invocation)
 	}
@@ -101,7 +101,6 @@ func TestQualifiedPOCProfileSelectsOnlyQualifiedMechanisms(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !invocation.plan.CandidateSelected || !invocation.standardJarCache ||
-		invocation.standardCopyCache || invocation.hotStateHit ||
 		invocation.qualifiedProfile == nil {
 		t.Fatalf("qualified invocation = %+v", invocation)
 	}
@@ -131,7 +130,7 @@ func TestQualifiedPOCBuildImpactOnlyProfileSelectsNoAdapters(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !invocation.plan.CandidateSelected || invocation.standardJarCache ||
-		invocation.standardCopyCache || invocation.pocEdgeCacheURL != "" ||
+		invocation.pocEdgeCacheURL != "" ||
 		invocation.qualifiedProfile == nil {
 		t.Fatalf("Build Impact-only invocation = %+v", invocation)
 	}
@@ -221,7 +220,7 @@ func TestQualifiedPOCProfileUnknownChangeUsesNativeFullGraph(t *testing.T) {
 		t.Fatal(err)
 	}
 	if invocation.plan.CandidateSelected || invocation.standardJarCache ||
-		invocation.standardCopyCache || invocation.qualifiedProfile == nil ||
+		invocation.qualifiedProfile == nil ||
 		strings.Join(invocation.gradleArgs, " ") != "--no-daemon assemble" ||
 		len(invocation.qualifiedProfile.EnabledAdapters) != 0 ||
 		invocation.qualifiedProfile.SelectionMode != "FULL_GRAPH" {
@@ -314,15 +313,13 @@ func TestQualifiedPOCProfileRunReportsPlanBeforeGradle(t *testing.T) {
 	t.Setenv(gradleInitScriptEnvironment, initScript)
 	t.Setenv(gradlePluginJarEnvironment, pluginJar)
 	t.Setenv(gradleSafeCacheEnvironment, "1")
-	t.Setenv(gradleStandardCopyCacheEnvironment, "1")
-	t.Setenv(gradleCheckstyleHeapEnvironment, "2g")
 	t.Setenv(sessioningestServerURLForTest, "not-a-valid-url")
 	writeGradleWrapperProperties(t, repositoryRoot, "distributionUrl=gradle-9.6.1-bin.zip\n")
 
 	wrapper := filepath.Join(repositoryRoot, gradleWrapperName(runtime.GOOS))
-	contents := "#!/bin/sh\nprintf 'wrapper-start jar=%s safe=%s copy=%s mode=%s server=%s\\n' \"$BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS\" \"$BUILDOPT_SAFE_CACHE\" \"$BUILDOPT_CACHE_STANDARD_COPY_TASKS\" \"$BUILDOPT_GRADLE_PROJECT_PLUGIN_MODE\" \"$BUILDOPT_SERVER_URL\" >&2\n"
+	contents := "#!/bin/sh\nprintf 'wrapper-start jar=%s safe=%s mode=%s server=%s\\n' \"$BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS\" \"$BUILDOPT_SAFE_CACHE\" \"$BUILDOPT_GRADLE_PROJECT_PLUGIN_MODE\" \"$BUILDOPT_SERVER_URL\" >&2\n"
 	if runtime.GOOS == "windows" {
-		contents = "@echo off\r\necho wrapper-start jar=%BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS% safe=%BUILDOPT_SAFE_CACHE% copy=%BUILDOPT_CACHE_STANDARD_COPY_TASKS% mode=%BUILDOPT_GRADLE_PROJECT_PLUGIN_MODE% server=%BUILDOPT_SERVER_URL% 1>&2\r\n"
+		contents = "@echo off\r\necho wrapper-start jar=%BUILDOPT_CACHE_STANDARD_JAR_PRODUCERS% safe=%BUILDOPT_SAFE_CACHE% mode=%BUILDOPT_GRADLE_PROJECT_PLUGIN_MODE% server=%BUILDOPT_SERVER_URL% 1>&2\r\n"
 	}
 	if err := os.WriteFile(wrapper, []byte(contents), 0o755); err != nil {
 		t.Fatal(err)
@@ -341,7 +338,7 @@ func TestQualifiedPOCProfileRunReportsPlanBeforeGradle(t *testing.T) {
 	}
 	if !strings.Contains(stderr.String(), `"enabledAdapters":["STANDARD_JAR"]`) ||
 		!strings.Contains(stderr.String(), `"expectedOutputs":["service-a/build/libs/service-a-*.jar"]`) ||
-		!strings.Contains(stderr.String(), "jar=1 safe= copy= mode=CACHE_ONLY server=") {
+		!strings.Contains(stderr.String(), "jar=1 safe= mode=CACHE_ONLY server=") {
 		t.Fatalf("qualified POC output = %q", stderr.String())
 	}
 }

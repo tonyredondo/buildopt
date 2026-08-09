@@ -293,7 +293,6 @@ interfaces:
 | Binary | Purpose |
 |---|---|
 | `neutral-envelope` | Record, report, validate, assign, and export paired measurement/pilot evidence |
-| `runtime-evaluation` | Evaluate a strict runtime-optimizer input JSON into result JSON |
 | `task-intelligence-evaluation` | Evaluate a strict Task Intelligence input JSON into result JSON |
 | `beta-benchmark` | Run and validate bounded smoke/fault/sustained/soak evidence |
 | `metrics-catalog-validator` | Validate the versioned metric catalog |
@@ -301,3 +300,6 @@ interfaces:
 Use the matching `dev/check-*` gate and specification rather than relying on
 unstated flags. The soak subcommand exists as a deferred qualification tool;
 the quickstart and owner POC lab do not run it.
+
+Runtime Tuning, exact-bound Hot State, and standard Copy have no installed or
+source-tree evaluation CLI. Their immutable results are historical evidence.

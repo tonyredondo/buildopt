@@ -208,7 +208,6 @@ func prepareQualifiedPOCProfileInvocation(args []string, bypass bool) (impactInv
 		enabledAdapters = []string{"READ_ONLY_EDGE"}
 		invocation.pocEdgeCacheURL = pocEdgeURL
 	}
-	invocation.standardCopyCache = false
 	planSchema := qualifiedPOCProfilePlanSchemaV1
 	disabledMechanisms := []string{"HOT_STATE", "RUNTIME_TUNING", "SAFE_CACHE", "SHARED_EDGE_CACHE", "STANDARD_COPY"}
 	if profile.SchemaVersion == qualifiedPOCProfileSchemaVersionV2 {
@@ -524,10 +523,9 @@ func qualifiedPOCProfileEnvironment(getenv func(string) string, standardJarEnabl
 			return "0"
 		case gradlePOCEdgeCacheURLEnvironment:
 			return pocEdgeCacheURL
-		case gradleSafeCacheEnvironment, gradleStandardCopyCacheEnvironment:
+		case gradleSafeCacheEnvironment:
 			return "0"
-		case gradleCheckstyleHeapEnvironment,
-			gradleInitScriptEnvironment,
+		case gradleInitScriptEnvironment,
 			gradlePluginJarEnvironment,
 			sessioningest.ServerURLEnvironment,
 			sessioningest.ServerTokenEnvironment,

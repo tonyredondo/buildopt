@@ -112,9 +112,10 @@ The published `v0.2.0` package continues to use the longer `buildopt impact`
 form until a later explicitly authorized release.
 
 The checked scorecard measures each optimization separately and then measures
-the complete public path without adding unrelated percentages. Safe Cache and
-the tested Runtime Tuning profiles did not add defensible value over optimized
-native Gradle, so neither is active on the default path. The final combined
+the complete public path without adding unrelated percentages. The tested
+Runtime Tuning, Hot State, and standard-Copy mechanisms did not add defensible
+incremental value over optimized native Gradle, so their activation code has
+been removed from the POC. The final combined
 path saved 63.5–84.1% across four Kotlin/Groovy synthetic workload cells, with
 identical required outputs and zero product-attributable failures. The POC
 decision is therefore `CONTINUE`, qualified only for those controlled workload
@@ -123,7 +124,7 @@ classes. The repeated realistic breadth gate retained that narrow claim after
 28.72% across 8/8 pairs. After task attribution and a conservative
 standard-`Jar` cache adapter, the clean installed OpenTelemetry Spring-family
 path saved 50.40% or 5,361.25 ms across 4/4 pairs, with a positive paired
-interval, 125 identical outputs, Hot State disabled, and safe full-graph
+interval, 125 identical outputs, retired Hot State absent, and safe full-graph
 fallback. This is qualified POC value for that workload, not a universal-savings
 or production-readiness claim. A separate unchanged Spring test workflow
 rejected direct Test-fixture JAR reuse after it regressed by 11.31%, so that
@@ -263,12 +264,16 @@ uncertainty. See the [structural profile contract](./specs/poc-structural-profil
 |---|---|---|
 | Launcher | Runs the original argv without a shell and preserves its exit code | Original command |
 | Managed L1 and Shared Cache | Reuses only authenticated, verified, committed Gradle outputs | Cache miss and normal execution |
-| Runtime Optimizer | Applies bounded resource, invocation, Configuration Cache, and lifecycle policies | Baseline policy |
 | Task Intelligence | Qualifies only tasks with sufficient exact evidence | No publication or optimization |
 | Patch Autopilot | Creates exact, signed, reviewable draft changes and exact revert bundles | Repository remains unchanged |
 | Build Impact | Chooses only repository-authorized Gradle entrypoint alternatives | Full original graph |
 | Build history | Exposes redacted immutable sessions through a loopback API and embedded dashboard | No history endpoint |
 | Edge Cache | Provides an optional nearby cache while Shared remains commit authority | Shared or ordinary miss |
+
+Runtime Tuning, exact-bound Hot State, and the standard-Copy adapter are
+retired experiments. Their protocols and results remain under `specs/` and
+`benchmarks/results/` so the negative decisions stay auditable, but no CLI,
+launcher, plugin, or workflow can activate them.
 
 Set `BUILDOPT_BYPASS=1` to remove the optimization path immediately while
 preserving the original command and process behavior:

@@ -20,4 +20,6 @@ revocation epoch are rechecked before use; invalid entries are discarded.
 Callers wait with their own deadline, and losing prefetched state always falls
 back to the normal authenticated policy path.
 
-Run `./dev/check-invocation-merge-prefetch` for the executable contract.
+The executable implementation and checker were retired after Runtime Tuning
+failed the POC value gate. This document is retained as historical protocol
+evidence only.

@@ -410,11 +410,6 @@ func authorityTestFixture() (
 				Enabled:         true,
 				ContractVersion: "configuration-cache-v1",
 			},
-			ResourceProfile: ResourceProfileReference{
-				ProfileID:      "W4_H6G",
-				ProfileDigest:  "sha256:" + strings.Repeat("4", 64),
-				CatalogVersion: "resource-catalog-v1",
-			},
 			Budgets: PolicyBudgets{
 				MaxSynchronousOverheadMs:    500,
 				MaxSynchronousOverheadRatio: 0.02,

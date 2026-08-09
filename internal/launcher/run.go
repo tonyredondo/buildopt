@@ -77,7 +77,6 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 	gradleNativeOnly := false
 	gradleLocalOnly := false
 	impactStandardJarCache := false
-	impactStandardCopyCache := false
 	impactPOCEdgeCacheURL := ""
 	qualifiedPOCProfile := false
 	if len(args) > 0 && (args[0] == "impact" || args[0] == "poc") {
@@ -136,9 +135,6 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 				impact.plan.Reason,
 			)
 		}
-		if impact.hotStateHit {
-			_, _ = fmt.Fprintln(stderr, "buildopt: exact-bound Build Impact POC hot state reused")
-		}
 		if impact.qualifiedProfile != nil {
 			if err := writeQualifiedPOCProfilePlan(stderr, *impact.qualifiedProfile); err != nil {
 				_, _ = fmt.Fprintf(stderr, "buildopt: qualified POC profile plan unavailable: %v\n", err)
@@ -146,7 +142,6 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			}
 		}
 		impactStandardJarCache = impact.standardJarCache
-		impactStandardCopyCache = impact.standardCopyCache
 		impactPOCEdgeCacheURL = impact.pocEdgeCacheURL
 		qualifiedPOCProfile = impact.qualifiedProfile != nil
 		args = append([]string{"gradle"}, impact.gradleArgs...)
@@ -161,15 +156,11 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		getenv := os.Getenv
 		if qualifiedPOCProfile {
 			getenv = qualifiedPOCProfileEnvironment(os.Getenv, impactStandardJarCache, impactPOCEdgeCacheURL)
-		} else if explicitStandardJarCache || impactStandardJarCache || impactStandardCopyCache {
+		} else if explicitStandardJarCache || impactStandardJarCache {
 			getenv = func(name string) string {
 				switch name {
 				case gradleStandardJarCacheEnvironment:
 					if explicitStandardJarCache || impactStandardJarCache {
-						return "1"
-					}
-				case gradleStandardCopyCacheEnvironment:
-					if impactStandardCopyCache {
 						return "1"
 					}
 				}
@@ -380,12 +371,6 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		for key, value := range gradleBootstrap.childEnvironment() {
 			childEnvironment[key] = value
 		}
-	}
-	profiledArgs, resourceProfileErr := applyAuthorizedResourceProfile(childArgs, authority, os.Getenv)
-	if resourceProfileErr != nil {
-		_, _ = fmt.Fprintf(stderr, "buildopt: resource profile unavailable: %v\n", resourceProfileErr)
-	} else {
-		childArgs = profiledArgs
 	}
 	childArgs = applyConfigurationCachePolicy(childArgs, authority)
 	execution := execute(

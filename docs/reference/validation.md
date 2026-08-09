@@ -114,20 +114,20 @@ descriptors to satisfy drift checks.
 Storage changes should include the owning package tests, corruption/recovery
 gate, and platform compatibility if filesystem or file-lifecycle code changed.
 
-## Runtime Optimizer and evidence
+## Historical Runtime Tuning evidence
 
 ```bash
 ./dev/check-causal-pilot
-./dev/check-runtime-resource-profiles
-./dev/check-runtime-rollout-control
-./dev/check-runtime-validation-isolation
 ./dev/check-runtime-owner-evaluation
+./dev/check-retired-poc-mechanisms
 ./dev/check-no-hit-overhead
 ./dev/check-walking-skeleton-overhead
 ```
 
-Use immutable paired inputs and preserve `INCONCLUSIVE` outcomes. Do not alter
-reference data, thresholds, or held-out results merely to obtain promotion.
+The runtime checker validates immutable historical evidence only. The
+retirement checker proves the rejected mechanisms have no active CLI,
+launcher, plugin, workflow, or runner surface. Do not alter reference data or
+thresholds to rehabilitate a failed mechanism.
 
 ## Build Optimization performance scorecard
 

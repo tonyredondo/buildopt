@@ -18,7 +18,7 @@ import (
 const (
 	maximumImpactChangesBytes = 1 << 20
 	maximumImpactChangedPaths = 10_000
-	impactUsage               = "usage: buildopt impact --repository-id OWNER/REPO --changes-file PATH [--pipeline-class CLASS] [--manifest PATH] [--graph PATH] [--generated-manifest PATH] [--timings-file PATH] [--hot-state-dir PATH --repository-revision REVISION] [--cache-standard-jar-producers] [--cache-standard-copy-tasks] [--gradle-option VALUE ...]\n"
+	impactUsage               = "usage: buildopt impact --repository-id OWNER/REPO --changes-file PATH [--pipeline-class CLASS] [--manifest PATH] [--graph PATH] [--generated-manifest PATH] [--timings-file PATH] [--cache-standard-jar-producers] [--gradle-option VALUE ...]\n"
 )
 
 type repeatedStringFlag []string
@@ -57,15 +57,13 @@ func validImpactGradleOption(value string) bool {
 }
 
 type impactInvocation struct {
-	gradleArgs        []string
-	plan              buildimpact.POCCandidatePlan
-	qualifiedProfile  *qualifiedPOCProfilePlan
-	timingsPath       string
-	preparationNs     int64
-	hotStateHit       bool
-	standardJarCache  bool
-	standardCopyCache bool
-	pocEdgeCacheURL   string
+	gradleArgs       []string
+	plan             buildimpact.POCCandidatePlan
+	qualifiedProfile *qualifiedPOCProfilePlan
+	timingsPath      string
+	preparationNs    int64
+	standardJarCache bool
+	pocEdgeCacheURL  string
 }
 
 func prepareImpactInvocation(args []string, bypass bool) (impactInvocation, error) {
@@ -79,10 +77,7 @@ func prepareImpactInvocation(args []string, bypass bool) (impactInvocation, erro
 	graphPath := flags.String("graph", "buildopt-impact-graph.generated.json", "repository-relative generated graph")
 	generatedPath := flags.String("generated-manifest", "buildopt-impact.generated.json", "repository-relative generated manifest")
 	timingsPath := flags.String("timings-file", "", "repository-relative machine-readable phase timing output")
-	hotStateDir := flags.String("hot-state-dir", "", "absolute private POC hot-state directory")
-	repositoryRevision := flags.String("repository-revision", "", "immutable repository revision bound to hot state")
 	standardJarCache := flags.Bool("cache-standard-jar-producers", false, "enable the POC cache adapter for unmodified Gradle Jar producers")
-	standardCopyCache := flags.Bool("cache-standard-copy-tasks", false, "enable the POC cache adapter for unmodified Gradle Copy tasks")
 	var gradleOptions repeatedStringFlag
 	flags.Var(&gradleOptions, "gradle-option", "Gradle option passed before the selected entrypoints; repeat for multiple values")
 	if err := flags.Parse(args); err != nil || flags.NArg() != 0 || *repositoryID == "" || *changesFile == "" {
@@ -114,33 +109,9 @@ func prepareImpactInvocation(args []string, bypass bool) (impactInvocation, erro
 		ChangedPaths:          changedPaths,
 		LocalBypass:           bypass,
 	}
-	hotState, err := prepareImpactHotState(impactHotStateOptions{
-		RepositoryRoot:     repositoryRoot,
-		RepositoryID:       *repositoryID,
-		PipelineClass:      *pipelineClass,
-		RepositoryRevision: *repositoryRevision,
-		ManifestPath:       *manifestPath,
-		GraphPath:          *graphPath,
-		GeneratedPath:      *generatedPath,
-		ChangesPath:        *changesFile,
-		GradleOptions:      gradleOptions,
-		StateDirectory:     *hotStateDir,
-	})
+	plan, err := buildimpact.PlanPOCCandidate(planOptions)
 	if err != nil {
 		return impactInvocation{}, err
-	}
-	plan, hotStateHit, err := hotState.load()
-	if err != nil {
-		return impactInvocation{}, err
-	}
-	if !hotStateHit {
-		plan, err = buildimpact.PlanPOCCandidate(planOptions)
-		if err != nil {
-			return impactInvocation{}, err
-		}
-		if err := hotState.store(plan); err != nil {
-			return impactInvocation{}, err
-		}
 	}
 	resolvedTimingsPath, err := resolveImpactTimingsPath(repositoryRoot, *timingsPath)
 	if err != nil {
@@ -149,13 +120,11 @@ func prepareImpactInvocation(args []string, bypass bool) (impactInvocation, erro
 	gradleArgs := append([]string(nil), gradleOptions...)
 	gradleArgs = append(gradleArgs, plan.Entrypoints...)
 	return impactInvocation{
-		gradleArgs:        gradleArgs,
-		plan:              plan,
-		timingsPath:       resolvedTimingsPath,
-		preparationNs:     time.Since(startedAt).Nanoseconds(),
-		hotStateHit:       hotStateHit,
-		standardJarCache:  *standardJarCache,
-		standardCopyCache: *standardCopyCache,
+		gradleArgs:       gradleArgs,
+		plan:             plan,
+		timingsPath:      resolvedTimingsPath,
+		preparationNs:    time.Since(startedAt).Nanoseconds(),
+		standardJarCache: *standardJarCache,
 	}, nil
 }
 

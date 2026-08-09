@@ -173,10 +173,10 @@ syncs directories where Windows cannot open them for equivalent flushing.
 
 BuildOpt separates actions by the proof they require:
 
-- **Direct bounded actions:** known-safe configuration within an accepted
-  policy, such as a selected resource profile.
-- **Proof-gated runtime actions:** Configuration Cache, invocation merging, or
-  lifecycle changes promoted only from compatible evidence and controls.
+- **Direct bounded actions:** an exact qualified task adapter or read-only Edge
+  route within a repository-owned profile.
+- **Proof-gated runtime actions:** native Configuration Cache and cache routes
+  promoted only from compatible evidence and controls.
 - **Repository changes:** Patch Autopilot emits an exact signed bundle, applies
   it in isolation, runs full relevant validation, and creates only a draft
   change. It does not force-push or merge.

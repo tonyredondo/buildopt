@@ -19,6 +19,6 @@ jq -e '
   .doesNotClose == ["A1-001", "A1-006", "A1-G06", "B-G01", "B-G02"]
 ' specs/configuration-cache-policy-v1.json >/dev/null
 
-go test -race ./internal/runtimeoptimizer ./internal/launcher
-go vet ./internal/runtimeoptimizer ./internal/launcher
+./dev/run --toolchain go -- go test -race ./internal/launcher
+./dev/run --toolchain go -- go vet ./internal/launcher
 printf 'B-002 Configuration Cache policy OK: strict CI canary, natural-hit promotion, failure invalidation, local-only entries\n'

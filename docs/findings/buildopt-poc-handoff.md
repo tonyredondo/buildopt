@@ -10,9 +10,12 @@
   tasks reusable.** Installed Build Impact improved the reviewed Spring
   workload by 15.76%; a conservative standard-`Jar` adapter improved the
   OpenTelemetry workload by 39.92%.
-- **Not every feature adds value.** Safe Cache is effectively at parity with
-  Gradle's native cache, and the latest trace-selected Runtime Tuning candidate
-  was 2.00% slower. Both remain outside the default optimization path.
+- **Not every experiment deserves to remain in the POC.** Safe Cache is
+  effectively at parity with Gradle's native cache. Runtime Tuning lost 2.00%
+  in its final Spring experiment, exact-bound Hot State lost 7.68% end to end,
+  and standard `Copy` failed its isolated stability gate. Their activation
+  code and rerun workflows have been removed; their evidence remains here so
+  the failed hypotheses are not rediscovered by accident.
 - **The clean full path now qualifies.** The first composition was rejected
   because hot state regressed by 7.68%. The fresh rerun removed hot state and
   combined only Build Impact with the exact standard-`Jar` adapter, saving
@@ -86,8 +89,9 @@ buildopt poc --changes-file .buildopt-changes
 state and clean mechanism set. Before Gradle starts, the command reports the
 selected or full graph, exact adapters, expected outputs and disabled
 mechanisms. It enables only Build Impact plus the exact standard-`Jar` adapter
-for a qualified alternative; Safe Cache, Runtime Tuning, Hot State, `Copy` and
-Shared/Edge remain outside this path. Unknown/global changes and bypass use
+for a qualified alternative; Safe Cache and the retired Runtime Tuning, Hot
+State, and `Copy` mechanisms remain outside this path, as do Shared/Edge.
+Unknown/global changes and bypass use
 native full-graph execution. This improves POC usability without broadening the
 performance or production claim.
 
@@ -100,12 +104,12 @@ Unknown changes, unqualified tasks, failed validation, or
 |---|---|---|---|
 | **Launcher and evidence envelope** | Runs the original command and records bounded execution evidence. | Direct Wrapper execution and normal process semantics. | Adds attribution, exact fallback, and bypass. It is infrastructure, not an accelerator, so its overhead must stay off unused paths. |
 | **Safe Cache / local L1** | Reuses verified outputs inside repository/Wrapper/platform boundaries. | Native local and remote Build Cache. | Adds stricter isolation and verification, but no incremental speed advantage has been proven. Native Gradle cache remains the default. |
-| **Runtime Tuning** | Evaluates worker, heap, fork, and resource profiles. | User-configured workers, JVM arguments, parallelism, and daemon behavior. | Intended to choose profiles from evidence rather than static defaults. A bounded Spring 12-to-6-worker experiment was 191.5 ms/2.00% slower, so current candidates remain disabled. |
+| **Runtime Tuning (retired)** | Evaluated worker, heap, fork, and resource profiles. | User-configured workers, JVM arguments, parallelism, and daemon behavior. | The bounded Spring 12-to-6-worker experiment was 191.5 ms/2.00% slower; earlier profiles were also negative or inconclusive. The POC implementation and activation surface were removed. Native Gradle remains the control. |
 | **Build Impact** | Maps changed files to the projects and entrypoints required for declared outputs. | Incremental and up-to-date behavior inside the task graph requested by the user. | Selects a smaller repository-authorized graph before Gradle executes it, with full-graph fallback for ambiguous/global changes. This is the strongest broadly useful accelerator so far. |
 | **Task Intelligence** | Qualifies tasks only when inputs, outputs, keys, and outcomes are exact enough. | Cacheability annotations and task validation supplied by build authors/plugins. | Adds an evidence-based eligibility layer. It enables optimizations but does not directly make a build faster. |
 | **Patch Autopilot** | Produces reviewable, reversible patches for exact known task shapes. | Manual build-script/plugin changes. | Can turn a non-cacheable custom task into a safely reusable task, but only for reviewed recipes that match exactly. |
-| **Exact task adapters** | Adds bounded eligibility for an unmodified standard Gradle task type. | Native caching when a task is correctly cacheable. | Uses real task traces to close one missing cacheability gap at a time. The standard-`Jar` adapter qualified; the later standard-`Copy` adapter works exactly but remains disabled because its isolated and incremental timing was unstable. |
-| **Hot-state reuse** | Reuses a validated impact plan when every repository, graph, Wrapper, executable, and option digest still matches. | Configuration Cache and daemon reuse inside Gradle. | Reduced planning overhead, but the fresh end-to-end arm was 7.68% slower. It is disabled for this profile. |
+| **Exact task adapters** | Adds bounded eligibility for an unmodified standard Gradle task type. | Native caching when a task is correctly cacheable. | Uses real task traces to close one missing cacheability gap at a time. The standard-`Jar` adapter qualified. The standard-`Copy` experiment failed its isolated and incremental gates and has been removed. |
+| **Hot-state reuse (retired)** | Reused a validated impact plan when every repository, graph, Wrapper, executable, and option digest matched. | Configuration Cache and daemon reuse inside Gradle. | Internal planning became faster, but the fresh end-to-end arm was 7.68% slower. The mechanism and its activation flags were removed. Native Configuration Cache support remains. |
 | **Shared / Edge Cache** | Shares committed outputs and optionally places them nearer runners. | Native Gradle remote-cache protocol and third-party cache servers. | Edge qualified at **34.74% faster** on the synthetic 80-ms/20-MiB/s profile and **15.21% faster** on Kafka under an independently derived 337-ms/6,994,831-B/s profile. Shared remains the authoritative origin; no standalone Shared or universal-network speed claim is made. |
 | **Build History** | Stores redacted sessions, timing, cache, and optimization evidence. | Logs, Build Scans, and external observability tooling. | Provides local POC evidence and comparison. It improves diagnosis, not build time directly. |
 
@@ -120,7 +124,7 @@ unfavorable observations. Percentages from different rows are not additive.
 |---|---:|---:|---|
 | Safe Cache versus cache disabled | **15.9% faster** | **13.7% faster** | Useful when caching is absent. |
 | Safe Cache versus native Gradle cache | **0.02% faster** | **0.47% slower** | Native-cache parity; no BuildOpt acceleration claim. |
-| Runtime Tuning `W3_H4G` | **4.3% slower** overall (512 ms) | Not DSL-specific | Disabled; the earlier `W4_H6G` profile was 54.7% slower. |
+| Runtime Tuning `W3_H4G` | **4.3% slower** overall (512 ms) | Not DSL-specific | Retired; the earlier `W4_H6G` profile was 54.7% slower and the final Spring six-worker candidate was 2.00% slower. |
 | Build Impact | **76.0% faster** (1,939 ms) | **73.5% faster** (2,155 ms) | Qualified for the controlled affected-work class. |
 | Reviewed Task/Patch | **67.3% faster** (1,369 ms) | **68.0% faster** (2,349 ms) | Qualified only for the exact reviewed custom-task recipe. |
 | Combined installed Impact path | **77.5% faster** | **84.1% faster** | Qualified synthetic POC value; not a universal claim. |
@@ -156,7 +160,7 @@ unfavorable observations. Percentages from different rows are not additive.
 | Clean Impact + standard-`Jar` composition | **50.40% faster**, 5,361.25 ms saved, 4/4 positive pairs | Qualified without hot state; paired interval +4,334.25..+5,937 ms, identical 125-file outputs, and successful full-graph fallback. |
 | Standard-`Copy` adapter alone | **27.05% faster on average**, 4,284.25 ms saved, 3/4 positive pairs | Not qualified: interval -3,334.25..+8,846.5 ms crosses zero. |
 | Incremental `Copy` on Impact + `Jar` | **24.90% faster on average**, 2,391.25 ms saved, 3/4 positive pairs | Not qualified: the direct incremental interval -2,568.25..+7,092 ms crosses zero. |
-| Complete Impact + `Jar` + `Copy` profile | **52.89% faster**, 4,377 ms saved, 4/4 positive pairs | The directly measured cascade qualifies globally with interval +4,130.25..+4,653.25 ms and 21,818 identical outputs; percentages were not added. Copy still remains disabled because its incremental authorization gate failed. |
+| Complete Impact + `Jar` + `Copy` profile | **52.89% faster**, 4,377 ms saved, 4/4 positive pairs | Historical whole-profile evidence only. `Copy` failed its isolated and incremental gates and has been retired despite the composed mean. |
 
 ### Apache Kafka: third real-repository transfer
 
@@ -365,8 +369,8 @@ by exact evidence for each target:
 
 These are whole-path comparisons against each target's optimized native Gradle
 control. The percentages are neither added nor averaged. Hot State is omitted
-because it regressed by 7.68% on OpenTelemetry; Runtime Tuning, Safe Cache and
-`Copy` remain disabled for these targets. OpenTelemetry Build Impact did not
+because it regressed by 7.68% on OpenTelemetry; Runtime Tuning and `Copy` have
+been retired and removed, while Safe Cache remains explicit-only. OpenTelemetry Build Impact did not
 qualify independently, so only the complete Impact-plus-Jar result receives a
 value claim. The POC now has a general analysis
 stage, but broad value still requires fresh installed replication on additional

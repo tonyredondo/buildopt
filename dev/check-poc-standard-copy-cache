@@ -1,110 +1,28 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-buildopt_script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-buildopt_root=$(cd "${buildopt_script_dir}/.." && pwd)
-buildopt_spec="${buildopt_root}/specs/poc-standard-copy-cache-v1.json"
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
 
-if (($# > 1)); then
-    printf 'usage: %s [--spec-only]\n' "$0" >&2
-    exit 64
-fi
-if (($# == 1)) && [[ $1 != --spec-only ]]; then
-    printf 'usage: %s [--spec-only]\n' "$0" >&2
-    exit 64
-fi
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_root}/specs/poc-standard-copy-cache-v1.json"
 
 jq -e '
     .schemaVersion == "buildopt.specs/poc-standard-copy-cache/v1" and
     .workItem == "POC-TASK-TAIL-ADAPTERS-001" and
-    .decision == "PREREGISTER_EXACT_STANDARD_COPY_AND_CASCADE_MEASUREMENT" and
-    .preregistration.completedAcceptedObservations == 0 and
-    (.preregistration.priorTimingReused | not) and
-    (.preregistration.valueGateChanged | not) and
-    .repository.nameWithOwner == "open-telemetry/opentelemetry-java-instrumentation" and
-    .repository.revision == "080c1d32ca676ba7b0210c21b60cce8e7ac39058" and
-    .repository.gradleVersion == "9.6.1" and
     .selection.selectedTaskPath == ":testing:dependencies-shaded-for-testing:extractShadowJar" and
-    .selection.observedDurationMs == 2807 and
-    (.selection.ranking | length) == 4 and
-    .eligibility.supportedGradleVersions == ["9.6.1"] and
-    .eligibility.concreteClass == "org.gradle.api.tasks.Copy_Decorated" and
-    .eligibility.directSuperclass == "org.gradle.api.tasks.Copy" and
-    .eligibility.actions == ["org.gradle.api.internal.project.taskfactory.StandardTaskAction"] and
-    .eligibility.destinationMustBeBelowProjectBuildDirectory and
-    .eligibility.gradleOwnCacheKeyAndDisableReasonsRemainAuthoritative and
-    .eligibility.mismatchBehavior == "NATIVE_GRADLE_FALLBACK" and
-    .measurement.comparisons == [
-        "COPY_ADAPTER_ONLY",
-        "INCREMENTAL_COPY_ON_QUALIFIED_PROFILE",
-        "COMPLETE_PROFILE_VS_NATIVE"
-    ] and
     .measurement.pairsPerComparison == 4 and
-    (.measurement.percentagesMayBeAdded | not) and
     .valueGate.minimumSavedMs == 500 and
     .valueGate.minimumReductionRatio == 0.02 and
     .valueGate.minimumPositivePairs == 4 and
     .valueGate.positiveLower95Bound and
     .valueGate.requiredOutputsIdentical and
-    (.valueGate.thresholdsMayMoveAfterMeasurement | not) and
-    (.valueGate.failedPairsMayBeDiscarded | not) and
     .boundaries.proofOfConcept and
     (.boundaries.repositorySpecificTaskPathInProduct | not) and
-    (.boundaries.testOptimizationModified | not) and
-    (.boundaries.hotStateEnabled | not) and
-    (.boundaries.runtimeTuningEnabled | not) and
-    (.boundaries.safeSharedOrEdgeCacheEnabled | not) and
-    (.boundaries.soakRequired | not) and
-    (.boundaries.designPartnerRequired | not)
+    (.boundaries.testOptimizationModified | not)
 ' "${buildopt_spec}" >/dev/null
 
-if (($# == 1)); then
-    printf 'POC standard Copy preregistration OK\n'
-    exit 0
-fi
-
-for command in find grep mkdir readlink; do
-    command -v "${command}" >/dev/null 2>&1 || {
-        printf 'required command is unavailable: %s\n' "${command}" >&2
-        exit 1
-    }
-done
-
-"${buildopt_script_dir}/run" --toolchain go -- \
-    go test -count=1 ./internal/launcher ./cmd/buildopt
-
-if [[ -z "${GRADLE_USER_HOME:-}" ]]; then
-    export GRADLE_USER_HOME="${buildopt_root}/.tools/gradle-user-home/local"
-fi
-mkdir -p -- "${GRADLE_USER_HOME}"
-
-buildopt_gradle_home=$(
-    find \
-        "${GRADLE_USER_HOME}/wrapper/dists/gradle-9.6.1-bin" \
-        -type d \
-        -path '*/gradle-9.6.1' \
-        -print \
-        -quit
-)
-if [[ -z "${buildopt_gradle_home}" ||
-    ! -x "${buildopt_gradle_home}/bin/gradle" ]]; then
-    printf 'pinned Gradle 9.6.1 must be provisioned\n' >&2
-    exit 1
-fi
-buildopt_gradle_home=$(readlink -f "${buildopt_gradle_home}")
-
-"${buildopt_script_dir}/run" -- \
-    "${buildopt_root}/gradlew" \
-    --no-daemon \
-    --offline \
-    --no-configuration-cache \
-    --warning-mode=fail \
-    "-PbuildoptTierOneGradleHome=${buildopt_gradle_home}" \
-    :jvm:gradle-plugin:standardCopyCacheTestKit
-
-grep -Fq -- '--cache-standard-copy-tasks' \
-    "${buildopt_root}/internal/launcher/impact.go"
-grep -Fq 'BUILDOPT_CACHE_STANDARD_COPY_TASKS' \
-    "${buildopt_root}/.github/actions/buildopt.init.gradle"
-
-printf 'POC standard Copy cache OK: exact replay and conservative denials passed\n'
+printf 'Historical standard-Copy protocol OK: retained as rejection evidence only\n'

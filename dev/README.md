@@ -1762,22 +1762,12 @@ The gate composes C3-001..005 in one source-preserving invocation. It retains
 the two checked-in observations as `INCONCLUSIVE` and requires the full
 synthetic qualification, fail-closed matrix, and real offline Gradle proof.
 
-## Runtime owner evaluation
+## Retired Runtime Tuning evidence
 
-On the exact 4-CPU/16-GiB runner, execute real A/A and resource-profile
-autotuning evidence:
-
-```bash
-./dev/run-runtime-owner-evaluation /tmp/buildopt-runtime-evidence
-```
-
-The command compiles an eight-project, 2,048-source parallel Gradle fixture in
-four alternating pairs. It also drives 200 durable pre-outcome A/A assignments
-and one-hour delayed exactly-once rewards through the production cohort/bandit
-engine. The result must preserve p95/p99, queue, OOM, compute, and exact ZIP
-guardrails; a cache hit or synthetic reward alone cannot pass.
-The hosted run is retained under `benchmarks/results` and revalidated without
-rerunning the builds with `./dev/check-runtime-owner-evaluation`.
+Runtime Tuning failed the later optimized-native value gates, so its evaluator,
+workflow, optimizer, activation variables, and fresh-run harnesses have been
+removed. The immutable historical result remains revalidated with
+`./dev/check-runtime-owner-evaluation`; it is not an active capability.
 
 
 ## Owner-operated causal POC evaluation
@@ -2056,21 +2046,9 @@ Validate the revision-bound strict-runner baseline without rerunning builds:
 ./dev/check-poc-value-baseline
 ```
 
-Generate fresh evidence from clean Kotlin and Groovy pilot checkouts. This
-builds the current package and runs the digest-pinned container with effective
-4-CPU/16-GiB cgroups; it is a bounded benchmark, not a soak:
-
-```bash
-GRADLE_USER_HOME=.tools/gradle-user-home/local \
-  ./dev/run-poc-value-baseline-container \
-    /tmp/poc-value-baseline.json \
-    /path/to/buildopt-pilot \
-    /path/to/buildopt-pilot-groovy
-```
-
-The capture accepts favorable and unfavorable measurements, then classifies
-them. This is intentional: a POC must preserve regressions rather than reject
-the report that contains them.
+The retained capture accepts favorable and unfavorable measurements and is
+historical evidence. Its runner was removed with Runtime Tuning; current
+experiments use the mechanism-specific benchmark harnesses instead.
 
 Validate the current POC decision, evidence classifications, and open value
 gates without rerunning benchmarks:
@@ -2087,15 +2065,8 @@ Validate the strict `POC-VALUE-002` decisions without rerunning Gradle:
 
 The checked evidence proves effective 4-CPU/16-GiB cgroups, identical outputs,
 zero product failures, default fallback to Gradle's native cache, and rejection
-of both tested Runtime Tuning candidates. To reproduce the bounded experiment
-inside the pinned image, provide the immutable Kotlin and Groovy pilots:
-
-```bash
-./dev/run-poc-value-negative-mechanisms-container \
-  /tmp/poc-value-negative-mechanisms.json \
-  /path/to/buildopt-pilot \
-  /path/to/buildopt-pilot-groovy
-```
+of both tested Runtime Tuning candidates. Fresh Runtime Tuning execution is
+intentionally unavailable.
 
 Validate the strict `POC-VALUE-003` accelerator coverage without rerunning
 Gradle:
@@ -2509,17 +2480,8 @@ enabled. No result may be transferred to OpenTelemetry unless it clears the
 unchanged 500-ms, 2%, and positive-lower-bound gate with identical outputs and
 all requested tests preserved.
 
-The post-diagnostic candidate is an explicit Runtime Tuning profile. On a
-runner with at least 14 GiB available, setting
-`BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP=2g` raises only a standard Gradle
-`Checkstyle` task named `checkstyleNohttp` whose repository-owned heap is
-exactly `1g`. Other task types, task actions, inputs, outputs, cache policy,
-worker count, and repository-owned heap values remain unchanged. Validate the
-launcher and init-script boundary with:
-
-```bash
-./dev/check-gradle-runtime-tuning
-```
+The post-diagnostic Checkstyle Runtime Tuning hypothesis is historical. It did
+not clear the POC value floor and its activation boundary has been removed.
 
 Capture the revision-bound Spring diagnostic on the local 12-CPU POC host:
 
@@ -2545,7 +2507,6 @@ After the Runtime Tuning candidate and measurement contract are committed,
 run the accepted full-verification comparison with:
 
 ```bash
-./dev/run-poc-spring-value /absolute/path/to/result.json
 ./dev/check-poc-spring-value /absolute/path/to/result.json
 ```
 
@@ -2755,11 +2716,10 @@ Validate the preregistration before timing with:
 ./dev/check-poc-otel-optimization-v1
 ```
 
-After committing the preregistration revision, execute and independently
-validate the one accepted terminal measurement with:
+The original Hot State runner has been retired. Validate its retained terminal
+measurement with:
 
 ```bash
-./dev/run-poc-otel-optimization-v1 /absolute/path/to/new-result.json
 ./dev/check-poc-otel-optimization-v1-result /absolute/path/to/new-result.json
 ```
 
@@ -2779,12 +2739,11 @@ a custom `Jar` with an extra action and a `Copy` task execute normally. This
 adapter is explicit on `buildopt impact`; it does not widen the managed Tier 1
 safe-cache policy.
 
-The new terminal protocol measures that adapter over one shared hot Gradle
-runtime without reusing any prior observation:
+The historical terminal protocol measured that adapter over one shared hot
+Gradle runtime. Fresh runs of the Hot State composition are retired:
 
 ```bash
 ./dev/check-poc-otel-optimization-v2
-./dev/run-poc-otel-optimization-v2 /absolute/path/to/new-result.json
 ./dev/check-poc-otel-optimization-v2-result /absolute/path/to/new-result.json
 ```
 
@@ -2798,7 +2757,6 @@ OpenTelemetry protocols and records all six logical arms without inventing
 zero effects for mechanisms that are not authorized for a workload:
 
 ```bash
-./dev/run-poc-full-path-ablation /absolute/path/to/poc-full-path-ablation-v1
 ./dev/check-poc-full-path-ablation /absolute/path/to/poc-full-path-ablation-v1
 ./dev/test-poc-full-path-ablation
 ```
@@ -2897,8 +2855,7 @@ cumulative effects rather than adding component percentages:
 
 ```bash
 ./dev/check-poc-standard-copy-cache
-./dev/run-poc-standard-copy-cascade /absolute/path/to/new-result.json
-./dev/check-poc-standard-copy-cascade /absolute/path/to/new-result.json
+./dev/check-poc-standard-copy-cascade
 ```
 
 The three independent comparisons are Copy-only versus optimized native,
@@ -2968,19 +2925,13 @@ slower than native, with only 2/4 positive rounds and an interval crossing
 zero. These phase differences are diagnostic under the recorded rotated
 orders; only the end-to-end native comparison controls activation.
 
-The next bounded Runtime Tuning experiment tests one trace-selected resource
+The final bounded Runtime Tuning experiment tested one trace-selected resource
 hypothesis: Spring `testClasses` with 12 native workers versus a six-worker
-cap. The retained traces bind the hypothesis before timing; the two arms keep
-the same source change, task selector, heap, cache policy and required outputs:
+cap. Its fresh-run harness is retired; validate the immutable evidence with:
 
 ```bash
 ./dev/check-poc-runtime-research
-./dev/run-poc-runtime-research /absolute/path/to/new-result.json
-./dev/check-poc-runtime-research /absolute/path/to/new-result.json
 ```
-
-The candidate remains disabled unless all four pairs clear the unchanged
-500-ms/2%/positive-bound gate with exact outputs and task outcomes.
 
 The retained result closes that hypothesis without activation. Native Gradle
 at 12 workers averages 9,556.75 ms; the six-worker candidate averages 9,748.25

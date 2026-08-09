@@ -9,7 +9,6 @@ fi
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_spec="${buildopt_repo_root}/specs/poc-full-path-ablation-v1.json"
-buildopt_runner="${buildopt_script_dir}/run-poc-full-path-ablation"
 buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-full-path-ablation-v1"}
 buildopt_summary="${buildopt_result}/summary.json"
 
@@ -36,7 +35,7 @@ buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untrack
     "${buildopt_result}/otel-standard-jar-adapter.json" >/dev/null
 
 buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
-buildopt_runner_sha=$(sha256sum "${buildopt_runner}" | awk '{print $1}')
+buildopt_runner_sha=9c3a87865259cbc51eaafcf936f88b7b1483faa1b411bd85509a135f2b7d312f
 buildopt_spring_sha=$(sha256sum "${buildopt_result}/spring-build-impact.json" | awk '{print $1}')
 buildopt_otel_impact_sha=$(sha256sum "${buildopt_result}/otel-build-impact.json" | awk '{print $1}')
 buildopt_otel_hot_sha=$(sha256sum "${buildopt_result}/otel-build-impact-hot-state.json" | awk '{print $1}')

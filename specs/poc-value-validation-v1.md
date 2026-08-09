@@ -68,8 +68,8 @@ closed `POC-VALUE-001..004` with these results:
   that BuildOpt accelerated the same native mechanism.
 - Runtime Tuning profiles `W4_H6G` and `W3_H4G` both failed the accelerator rule.
   The strict `W3_H4G` run saved −512 ms (−4.3%) with a 95% interval from
-  −2,818 to +1,302 ms. Only `STABLE_CONTROL` may be applied; the candidates are
-  classified `NO_VALUE_NO_ACTION`.
+  −2,818 to +1,302 ms. The candidates were classified `NO_VALUE_NO_ACTION`;
+  later retirement removed the complete Runtime Tuning activation path.
 - Build Impact clears the accelerator threshold for the bounded
   `UNRELATED_NON_CACHEABLE_WORK` class in both DSLs. Eight-pair means saved
   1,939 ms (76.0%) in Kotlin and 2,155 ms (73.5%) in Groovy; both lower 95%

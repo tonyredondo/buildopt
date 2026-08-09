@@ -154,25 +154,12 @@ checksum-verified Wrapper distribution to the runner slot, compatibility
 class, Wrapper JAR, distribution digest, and configuration policy. Invalid or
 drifted input leaves Gradle on its normal bootstrap path.
 
-## Resource profile context
+## Retired resource-profile context
 
-The launcher can consume orchestrator-provided runner/build facts:
-
-- `BUILDOPT_RUNNER_CLASS`
-- `BUILDOPT_BUILD_CLASS`
-- `BUILDOPT_RUNNER_CGROUP_CPU_COUNT`
-- `BUILDOPT_RUNNER_CGROUP_MEMORY_BYTES`
-- `BUILDOPT_RUNNER_AVAILABLE_MEMORY_BYTES`
-- `BUILDOPT_RUNNER_JDK_VENDOR`
-- `BUILDOPT_RUNNER_JDK_VERSION`
-- `BUILDOPT_RUNNER_JDK_ARCHITECTURE`
-
-These facts select only a catalogued bounded profile. For the active POC,
-`STABLE_CONTROL` is the only authorized profile: `W4_H6G` and `W3_H4G` failed
-the value threshold and are rejected before arguments are applied. Invalid,
-missing, incompatible, or experimental context keeps the baseline. macOS
-reports resource isolation rather than emulating Linux cgroups; Windows uses
-Job Objects.
+The former Runtime Tuning environment and resource-profile selector have been
+removed. Tested profiles did not beat optimized native Gradle, so stale runner
+facts cannot change Gradle arguments. Historical contracts and measurements
+remain under `specs/` and `benchmarks/results/` for audit only.
 
 ## Server configuration
 

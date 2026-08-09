@@ -16,4 +16,6 @@ Control is authoritative for the validation result. Candidate artifacts cross
 the boundary only through later digest comparison. Scheduling does not enable
 an action, publish candidate bytes, or claim causal evidence.
 
-Run `./dev/check-runtime-validation-isolation` for the executable contract.
+The executable implementation and checker were retired after Runtime Tuning
+failed the POC value gate. This document is retained as historical protocol
+evidence only.

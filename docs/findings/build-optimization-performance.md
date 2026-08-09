@@ -9,7 +9,7 @@
 - **Safe Cache is useful but is not currently a competitive advantage over a
   well-configured native Gradle cache.** It improves builds that did not have
   effective caching, but is effectively at parity with Gradle's native cache.
-- **The Runtime Tuning profiles tested so far should remain disabled.** The
+- **Runtime Tuning has been retired from the POC.** The
   latest trace-selected Spring experiment changed only the worker cap from 12
   to 6 and made the build **191.5 ms/2.00% slower**. Earlier synthetic profiles
   also regressed, so activating tuning would make the product worse rather
@@ -67,12 +67,12 @@ measured on different workloads and scopes.
 | Component | What it does | Measured build-time effect | Current conclusion |
 |---|---|---:|---|
 | **Safe Cache / local L1** | Reuses verified outputs in a scope isolated by repository, Wrapper, and platform. | Against cache-off: **15.9% faster in Kotlin** and **13.7% faster in Groovy**. Against native Gradle cache: **0.02% faster in Kotlin** and **0.47% slower in Groovy**. | Useful when a repository has no effective cache, but **not an accelerator over native Gradle cache**. Strict Safe Cache remains explicit-only. |
-| **Runtime Tuning** | Tests bounded worker, heap, and resource profiles intended to improve Gradle execution. | The latest real Spring candidate capped 12 workers to 6 and was **2.00% slower** (191.5 ms), with 2/4 favorable pairs and interval -973.5..+590.5 ms. Earlier synthetic `W3_H4G` and `W4_H6G` candidates were **4.3%** and **54.7% slower**. | **No current value. Disabled.** Optimized native Gradle remains the stable control. |
+| **Runtime Tuning (retired)** | Tested bounded worker, heap, and resource profiles intended to improve Gradle execution. | The latest real Spring candidate capped 12 workers to 6 and was **2.00% slower** (191.5 ms), with 2/4 favorable pairs and interval -973.5..+590.5 ms. Earlier synthetic `W3_H4G` and `W4_H6G` candidates were **4.3%** and **54.7% slower**. | **No defensible value. Removed.** Optimized native Gradle remains the stable control. |
 | **Build Impact** | Maps a change to the projects and tasks needed for the requested outputs, with full-graph fallback for unknown or global changes. | Synthetic coverage: **73.5-76.0% faster**. Installed Spring path: **15.76% faster**. Generalized Spring test preparation: **18.88% faster**. Kafka client packaging scope: **57.58% faster**. Micronaut direct structural scope: **72.97% faster**; generic installed profile: **72.16% faster**, both 8/8 positive. Spring verification is graph-complete but saved only **0.31%**; attribution found no product phase above **1.238233 ms**. | **The strongest broadly useful accelerator currently demonstrated, but only for independently qualified scopes.** Profile materialization and execution are repository-name independent; global, ambiguous and drifted inputs still fail closed. |
 | **Task Intelligence** | Observes and qualifies tasks only when their inputs, outputs, cache keys, and outcomes are exact enough to support an optimization. | No general direct saving. In the accepted pilot it enabled a qualified native-cache restore that saved **203 ms** on average. | A **safety and eligibility layer**, not a standalone accelerator. Its value is realized through a qualified cache or patch route. |
 | **Patch Autopilot / reviewed task patch** | Produces a reviewable and reversible patch that correctly declares inputs and outputs and enables caching for an exact custom-task shape. | Exact reviewed Java recipe: **67.3% faster in Kotlin** and **68.0% faster in Groovy**. Combined installed path: **63.5-67.3% faster**. | Highly promising for **specific reviewed task contracts**. The result must not be generalized to arbitrary tasks or recipes. |
 | **Graph reduction** | Replaces broad aggregate task dependencies with the typed producers required for the declared outputs. | The OpenTelemetry experiment removed **3 graph nodes and 2 executed tasks** while preserving all 125 required outputs. No standalone wall-clock percentage is claimed. | Structurally valuable, but it still needs independent timing evidence before it can be presented as a separate accelerator. |
-| **Exact-bound hot-state reuse** | Reuses a previously validated Build Impact plan only when repository revision, graph, manifest, changes, Wrapper, executable, and options still match. | Reduced BuildOpt preparation from **74.97 ms to 40.34 ms**, but the fresh whole-build arm was **7.68% slower**. | **Disabled for the measured profile.** Micro-overhead reduction does not override regressive end-to-end evidence. |
+| **Exact-bound hot-state reuse (retired)** | Reused a previously validated Build Impact plan only when repository revision, graph, manifest, changes, Wrapper, executable, and options matched. | Reduced BuildOpt preparation from **74.97 ms to 40.34 ms**, but the fresh whole-build arm was **7.68% slower**. | **Removed.** Micro-overhead reduction does not override regressive end-to-end evidence. Native Configuration Cache support remains. |
 | **Standard `Jar` cache adapter** | Makes only an unmodified standard Gradle `Jar` task eligible for native caching; custom archives, `Copy`, arbitrary tasks, and `Test` remain unchanged. | OpenTelemetry Build Impact: **39.92% faster**, saving 4,376.75 ms. Direct Spring test-build use: **11.31% slower** initially; after narrowing registration, the three-arm ablation remained **9.53% slower** than native. Kafka composition stopped before timing because `:clients:jar` was skipped and custom `:clients:shadowJar` produced the required artifact. | **Qualified only inside the measured OpenTelemetry composition.** It is not qualified for Kafka's shaded client artifact. Correct cacheability and cache hits are insufficient when the avoided work is too small or a different task owns the output. |
 | **Shared and Edge Cache** | Reuse committed outputs across machines and optionally place them nearer developers or CI runners. | Synthetic 32-MiB profile: **34.74% faster**, saving 2,401.25 ms. Kafka transfer under an independently derived 337-ms/6,994,831-B/s profile: **15.21% faster**, saving 1,351.25 ms. Both have 4/4 positive pairs, exact outputs and zero measured Edge upstream reads. | **Edge locality transfers across two bounded profiles.** Shared provides origin and authority semantics; no independent Shared acceleration or universal-network claim is made. |
 | **Build History** | Records durations, outcomes, cache behavior, and applied optimizations so results can be inspected and compared. | **No direct build-time saving.** | Observability that helps discover and validate optimizations; not an accelerator itself. |
@@ -132,13 +132,14 @@ Gradle cache engine. BuildOpt should not claim a speed advantage where the
 underlying mechanism is the same. The default should continue to use native
 Gradle caching unless the stricter security behavior is explicitly required.
 
-### Runtime Tuning is not ready
+### Runtime Tuning is retired
 
 The tested resource profiles did not beat an optimized native Gradle control.
 Enabling them would contaminate the gains from Build Impact and task adapters.
-Runtime Tuning should remain a research track with a hard activation rule: no
-profile is applied unless it produces repeatable incremental value for the
-current workload class.
+The optimizer, workflow, CLI, activation variables, and rerun harnesses have
+therefore been removed. The immutable results remain as negative evidence.
+Reopening this idea requires a materially new hypothesis and a new RFC
+decision, not another parameter search over the retired implementation.
 
 The latest bounded test used the retained Spring trace to preregister one
 worker-oversubscription hypothesis. The same offline `testClasses` workload
@@ -258,23 +259,14 @@ normal-build optimization has been discovered. A new adapter should reopen
 only when a materially different workload exposes a dominant, exact,
 unmodified task with bounded effects and independent incremental value.
 
-### 5. Keep Runtime Tuning as targeted research
+### 5. Do not reopen retired mechanisms without materially new evidence
 
-Do not spend the next cycle building a general automatic tuner. The bounded
-Spring worker-cap hypothesis failed and is closed without trying 7, 8, 9 or
-another post-result value. Reopen Runtime Tuning only when a materially
-different retained trace identifies a different bottleneck such as heap
-pressure, garbage collection, queueing, configuration work or daemon startup.
-Test one hypothesis at a time and retain `STABLE_CONTROL` whenever the paired
-interval crosses zero or the gain is operationally insignificant.
-
-Potential research areas are:
-
-- workload-specific worker and heap selection rather than one global profile;
-- daemon and JVM warm-up cost for CI and short-lived builds;
-- configuration-phase and Kotlin DSL compilation overhead;
-- dependency resolution and artifact-transform reuse;
-- compiler avoidance and incremental compilation boundaries.
+Do not spend the next cycle rebuilding the automatic tuner, exact-bound Hot
+State, or standard `Copy` adapter. Each failed a customer-visible value gate,
+and their code has been removed to keep the POC focused. A future proposal may
+reopen one only when a materially different trace identifies a causal
+bottleneck large enough to clear the 500-ms/2% gate and the RFC is amended
+before implementation.
 
 The completed test-build experiment strengthens this priority. Reusing three
 small exact `testFixturesJar` producers did not shorten the critical path:
@@ -326,11 +318,11 @@ Kafka-specific product rule.
 |---|---:|---:|---|
 | Native Gradle cache | Enabled | Enabled | Continue parity and output checks |
 | Build Impact | Enabled for qualified scopes | Explicit command | Generalize across real change and output scopes |
-| Hot-state reuse | Disabled for the measured profile | Disabled | Beat the same end-to-end control independently before reconsideration |
+| Hot-state reuse | Retired and removed | Retired | New RFC plus an independent end-to-end win |
 | Standard `Jar` adapter | Enabled only in the qualified Build Impact scope | Not universal | Require independent end-to-end value for every new workflow; optimized direct Spring use remained 9.53% slower |
 | Reviewed task patch | Enabled only for exact matching contracts | Review required | Add recipes only after independent qualification |
 | Strict Safe Cache | Disabled | Disabled | Beat or justify cost versus native Gradle cache |
-| Runtime Tuning | Disabled | Disabled | Positive incremental evidence against optimized native Gradle |
+| Runtime Tuning | Retired and removed | Retired | Materially new hypothesis plus a new RFC decision |
 | Shared / Edge Cache | Edge qualified independently and in the normalized Kafka composition | Explicit repository-owned v2 POC profile | Keep the 82.35% claim bound to the exact Kafka source precondition and modeled network profile; preserve native Shared behavior outside a matched candidate |
 | Installed Kafka composition | Exact packaged profile qualified at 80.51% with 8/8 positive pairs | Explicit repository-owned v2 POC profile | Replicate installed-path value independently on Spring and OpenTelemetry before changing the portfolio claim; do not average repository percentages |
 | Deterministic profile discovery | No new timing; exact retained Kafka profile reproduced | Read-only, review-required analyzer | Keep native fallback for Spring, OpenTelemetry, drift, incomplete/unknown graphs and selected Test tasks; never turn discovery into autonomous activation |
@@ -432,7 +424,7 @@ The **qualified-profile usability and scope synthesis** block is now complete:
 3. the CLI reports the selected/full graph, exact adapters, expected outputs
    and disabled mechanisms before Gradle starts;
 4. fallback uses the original entrypoints without the standard-`Jar` adapter;
-5. Runtime, Hot State, Copy and Safe Cache remain forced out of the command;
+5. retired Runtime, Hot State and Copy cannot be activated; Safe Cache remains forced out of the command;
 6. a v2 profile may activate only the separately qualified Build Impact plus
    read-only Edge composition, with exact file-SHA preconditions and an
    explicit loopback endpoint;
@@ -524,7 +516,7 @@ rerunning unchanged experiments:
 
 The table does not sum component effects or average repositories. Hot State is
 excluded because its direct OpenTelemetry arm regressed by 7.68%. Runtime
-Tuning, Safe Cache and `Copy` remain disabled because the target evidence did
+Tuning and `Copy` are retired because the target evidence did
 not qualify them. OpenTelemetry Build Impact was directionally positive but did
 not independently clear its stability gate; value is claimed only for the
 directly measured Impact-plus-Jar composition. This is the central product rule

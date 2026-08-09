@@ -181,7 +181,7 @@ hide another's cost:
 | Safe Cache | `NO_VALUE_NO_ACTION`; explicit-only | The default delegates to Gradle native cache, removing product overhead without claiming acceleration |
 | Installed Spring Build Impact | 15.76% faster; 1,260.125 ms saved; 8/8 positive pairs | The packaged command beats optimized native Gradle for one reviewed Spring output scope with identical declared outputs |
 | Installed Spring breadth | `spring-webmvc` 13.50% faster and qualified; shared `spring-core` scope averaged 10.89% faster but failed 4/4 stability | The POC remains output-scope-specific and does not promise acceleration for every change |
-| Runtime Tuning | `NO_VALUE_NO_ACTION`; stable control only | `W4_H6G` regressed 54.7%; `W3_H4G` regressed 4.3% with an interval crossing zero |
+| Runtime Tuning | `RETIRED` | `W4_H6G` regressed 54.7%; `W3_H4G` regressed 4.3%; the final Spring worker cap was 2.00% slower |
 | Build Impact | 73.5–76.0% faster in the strict bounded Kotlin/Groovy workloads | Avoided unrelated non-cacheable work while required outputs stayed unchanged |
 | Reviewed Task/Patch | 67.3–68.0% faster for the exact reviewed custom-task recipe | Restored all eight qualified task outputs; this does not generalize to other recipes |
 | Combined public path | 63.5–84.1% faster across four strict Kotlin/Groovy workload cells | The actual packaged CLIs and plugin beat optimized native Gradle with unproven mechanisms disabled |
@@ -214,7 +214,6 @@ justifies operating it.
 |---|---|---|---|---|
 | Launcher and native Gradle cache | Native package or CI integration | No configuration for the default path | `buildopt gradle` | Run the same build twice and inspect normal Gradle output |
 | Safe Cache experiment | Included in the native package | `BUILDOPT_SAFE_CACHE=1`; not a recommended default | `buildopt gradle` | Use only when collecting new paired POC evidence |
-| Runtime tuning | No active candidate; stable control only | Bounded policy inputs and evaluation contracts | `runtime-evaluation` and owner checks | A new profile must clear the value threshold before activation |
 | Task Intelligence | No separate installed CLI; owner evaluation in this source repository | Qualification evidence and trace contracts | `task-intelligence-evaluation` and owner checks | Prove qualification without publishing an optimization |
 | Build history | `buildopt-server` in the package | Server config and export directory on the server host | Service manager plus server API/dashboard | Start loopback server and inspect a redacted session |
 | Build Impact | `buildopt` and `buildopt-impact` in the package | Manifest and generated graph committed in the target repository | CI calls `generate` during adoption, `check` for drift, then explicit `buildopt impact` with a changed-path file | Verify candidate/full fallback and compare required outputs before interpreting timings |
@@ -234,14 +233,18 @@ defaults from operator-owned credentials and private configuration.
 2. Put the same command in one CI job and keep `BUILDOPT_BYPASS=1` as rollback.
 3. Collect build history before changing policy so improvements have a
    baseline.
-4. Evaluate runtime tuning, Task Intelligence and Patch Autopilot through their owner workflows; they are not first-run package switches.
-5. Add Build Impact independently and compare it against the history baseline.
+4. Add Build Impact independently and compare it against the history baseline.
+5. Evaluate Task Intelligence and Patch Autopilot through their owner workflows; they are not first-run package switches.
 6. Operate Shared or Edge only when local/CI reuse justifies a persistent
    service and its credential lifecycle.
 
 This ordering keeps the first result local and reversible. Persistent storage,
 network access, credentials and repository mutation are never prerequisites
 for the first build.
+
+Runtime Tuning, exact-bound Hot State, and standard Copy are not onboarding
+options. They were retired after failing incremental end-to-end value gates;
+their historical evidence remains available only for audit.
 
 ## Develop BuildOpt itself
 

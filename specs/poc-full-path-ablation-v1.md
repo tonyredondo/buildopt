@@ -49,8 +49,6 @@ the standard `Jar` adapter without hot-state reuse.
 Run the fresh ablation from a clean committed checkout:
 
 ```bash
-./dev/run-poc-full-path-ablation \
-  /absolute/path/to/poc-full-path-ablation-v1
 ./dev/check-poc-full-path-ablation \
   /absolute/path/to/poc-full-path-ablation-v1
 ```

@@ -85,11 +85,6 @@ func main() {
 				Enabled:         true,
 				ContractVersion: "configuration-cache-v1",
 			},
-			ResourceProfile: localauthority.ResourceProfileReference{
-				ProfileID:      "STABLE_CONTROL",
-				ProfileDigest:  "sha256:" + strings.Repeat("4", 64),
-				CatalogVersion: "resource-catalog-v1",
-			},
 			Budgets: localauthority.PolicyBudgets{
 				MaxSynchronousOverheadMs:    500,
 				MaxSynchronousOverheadRatio: 0.02,

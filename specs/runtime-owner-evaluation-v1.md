@@ -22,11 +22,8 @@ paired-bootstrap savings, non-regressive p95 and p99, non-positive additional
 runner time, an exact zero incremental queue effect because both arms share
 one already-started workflow job, no cgroup OOM increment, and identical ZIPs.
 
-Run on the golden runner:
-
-```bash
-./dev/run-runtime-owner-evaluation /tmp/buildopt-runtime-evidence
-```
+Fresh Runtime Tuning runs are intentionally unavailable. Validate the retained
+historical result with `./dev/check-runtime-owner-evaluation`.
 
 The checked-in result is validated without rerunning compilation by
 `./dev/check-runtime-owner-evaluation`. This is owner-operated POC evidence;

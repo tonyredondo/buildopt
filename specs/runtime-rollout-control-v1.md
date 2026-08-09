@@ -53,11 +53,9 @@ required.
 
 ## Conformance
 
-Run:
-
-```bash
-./dev/check-runtime-rollout-control
-```
+The executable implementation and checker were retired after Runtime Tuning
+failed the POC value gate. This document is retained as historical protocol
+evidence only.
 
 The checker composes the existing CI budget and validation-isolation contracts
 with focused race tests for daily/weekly boundaries, zero budget, concurrency,

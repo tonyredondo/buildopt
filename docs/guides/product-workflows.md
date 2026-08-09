@@ -95,31 +95,16 @@ revocation state, and complete-byte checksum verification. Writes remain
 pending until the control path authorizes commit. Any unknown, invalid,
 expired, conflicting, or unavailable state falls back to a miss or baseline.
 
-## Runtime Optimizer
+## Retired optimization experiments
 
-The runtime optimizer implements bounded policies for:
+Runtime Tuning, exact-bound Hot State, and the standard-Copy adapter are no
+longer product workflows. Repeated optimized-native comparisons found no
+stable incremental value, so their launchers, plugins, evaluators, and hosted
+workflows were removed. Historical contracts and immutable benchmark results
+remain available for audit; they are not instructions for activation.
 
-- Configuration Cache adoption;
-- clean-task removal under an explicit workspace lifecycle;
-- four resource profiles;
-- allowlisted invocation merging and policy prefetch;
-- fixed control cohorts and contextual bandit selection;
-- budgets, canaries, rollback, and a kill switch.
-
-These are policy/evaluation surfaces in the current POC, not arbitrary CLI
-switches. Evidence remains isolated by repository, compatibility class,
-policy, and cohort. Validate the complete implemented model with:
-
-```bash
-./dev/check-runtime-resource-profiles
-./dev/check-runtime-rollout-control
-./dev/check-runtime-validation-isolation
-./dev/check-runtime-owner-evaluation
-```
-
-Read [the Runtime Optimizer section of the RFC](../../gradle-build-optimization-platform.md#14-resource-autotuning)
-for the model and use the tracker to inspect exact evidence. A policy that
-cannot be bound or validated does not activate.
+Configuration Cache support remains because it delegates to Gradle's native
+feature and is independent of the retired resource tuner.
 
 ## Task Intelligence
 

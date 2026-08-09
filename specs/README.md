@@ -18,7 +18,7 @@ the exact cross-component contract.
 | [`poc-spring-test-preparation-v2.json`](./poc-spring-test-preparation-v2.json) | `POC-SPRING-TEST-PREPARATION-001` |
 | [`poc-spring-test-build-optimization-v1.json`](./poc-spring-test-build-optimization-v1.json) | `POC-TEST-BUILD-OPTIMIZATION-001` |
 | [`poc-optimization-overhead-ablation-v1.json`](./poc-optimization-overhead-ablation-v1.json) | `POC-OPTIMIZATION-OVERHEAD-ABLATION-001` |
-| [`poc-runtime-research-v1.json`](./poc-runtime-research-v1.json) | `POC-RUNTIME-RESEARCH-001` |
+| [`poc-runtime-research-v1.json`](./poc-runtime-research-v1.json) | Historical retired Runtime Tuning evidence |
 | [`poc-remote-cache-value-v1.md`](./poc-remote-cache-value-v1.md) and [`poc-remote-cache-value-v1.json`](./poc-remote-cache-value-v1.json) | `POC-REMOTE-CACHE-VALUE-001` |
 | [`poc-remote-cache-transfer-v1.md`](./poc-remote-cache-transfer-v1.md) and [`poc-remote-cache-transfer-v1.json`](./poc-remote-cache-transfer-v1.json) | `POC-REMOTE-CACHE-TRANSFER-001` |
 | [`poc-qualified-remote-composition-v1.md`](./poc-qualified-remote-composition-v1.md) and [`poc-qualified-remote-composition-v1.json`](./poc-qualified-remote-composition-v1.json) | `POC-QUALIFIED-REMOTE-COMPOSITION-001` |
@@ -34,7 +34,7 @@ the exact cross-component contract.
 | [`poc-otel-spring-family-v2.md`](./poc-otel-spring-family-v2.md), [`poc-otel-spring-family-v2.json`](./poc-otel-spring-family-v2.json), and the [fixed entrypoints](./poc-otel-spring-family-v2.tasks.txt) | `POC-OTEL-SPRING-FAMILY-PREREG-001` |
 | [`build-impact-poc-phase-timings-v1.md`](./build-impact-poc-phase-timings-v1.md) | `POC-OTEL-OVERHEAD-001` |
 | [`poc-otel-graph-reduction-v1.md`](./poc-otel-graph-reduction-v1.md) | `POC-OTEL-GRAPH-001` |
-| [`build-impact-poc-hot-state-v1.md`](./build-impact-poc-hot-state-v1.md) | `POC-OTEL-HOT-PATH-001` |
+| [`build-impact-poc-hot-state-v1.md`](./build-impact-poc-hot-state-v1.md) | Historical retired Hot State evidence |
 | [`poc-otel-optimization-v1.md`](./poc-otel-optimization-v1.md) and [`poc-otel-optimization-v1.json`](./poc-otel-optimization-v1.json) | `POC-OTEL-STABILITY-001` |
 | [`poc-otel-optimization-v2.md`](./poc-otel-optimization-v2.md) and [`poc-otel-optimization-v2.json`](./poc-otel-optimization-v2.json) | `POC-OTEL-STABILITY-002` |
 | [`poc-full-path-ablation-v1.md`](./poc-full-path-ablation-v1.md) and [`poc-full-path-ablation-v1.json`](./poc-full-path-ablation-v1.json) | `POC-FULL-PATH-ABLATION-001` |
@@ -67,13 +67,13 @@ the exact cross-component contract.
 | [`onboarding-performance-v1.md`](./onboarding-performance-v1.md) | Product onboarding |
 | [`cache-parity-v1.md`](./cache-parity-v1.md) | Safe-cache performance |
 | [`poc-standard-jar-cache-v1.md`](./poc-standard-jar-cache-v1.md) | OpenTelemetry POC repeated-work reduction |
-| [`poc-standard-copy-cache-v1.md`](./poc-standard-copy-cache-v1.md) and [`poc-standard-copy-cache-v1.json`](./poc-standard-copy-cache-v1.json) | `POC-TASK-TAIL-ADAPTERS-001` |
+| [`poc-standard-copy-cache-v1.md`](./poc-standard-copy-cache-v1.md) and [`poc-standard-copy-cache-v1.json`](./poc-standard-copy-cache-v1.json) | Historical retired standard-`Copy` evidence |
 | [`poc-normal-build-tail-expansion-v1.md`](./poc-normal-build-tail-expansion-v1.md) and [`poc-normal-build-tail-expansion-v1.json`](./poc-normal-build-tail-expansion-v1.json) | `POC-NORMAL-BUILD-TAIL-EXPANSION-001` |
 | [`private-beta-data-lifecycle-v1.md`](./private-beta-data-lifecycle-v1.md) | `A1-004` / `A1-G05` |
 | [`private-beta-operations-v1.md`](./private-beta-operations-v1.md) | `A1-005` |
 | [`owner-controlled-pilot-deployment-v1.md`](./owner-controlled-pilot-deployment-v1.md) | `A1-001` |
 | [`owner-poc-evaluation-v1.md`](./owner-poc-evaluation-v1.md) | `A1-006` / `A1-G06` |
-| [`runtime-owner-evaluation-v1.md`](./runtime-owner-evaluation-v1.md) | `B-G01` / `B-G03` |
+| [`runtime-owner-evaluation-v1.md`](./runtime-owner-evaluation-v1.md) | Historical retired Runtime Tuning evidence |
 | [`task-intelligence-poc-v1.md`](./task-intelligence-poc-v1.md) | `MVP-C1` |
 | [`build-impact-manifest-v1.md`](./build-impact-manifest-v1.md) | `C3-001` |
 | [`build-impact-declared-graph-v1.md`](./build-impact-declared-graph-v1.md) | `C3-002` |
@@ -348,7 +348,7 @@ explicit repository-owned POC activation that follows that transfer.
 loads `buildopt-qualified-profile.json`, reports the complete selected or
 fallback plan before Gradle starts, enables only Build Impact plus the exact
 standard-`Jar` adapter on a qualified alternative, and forces Safe Cache,
-Runtime Tuning, Hot State, standard `Copy`, and Shared/Edge out of this path.
+retired Runtime Tuning, retired Hot State, retired standard `Copy`, and Shared/Edge out of this path.
 
 `poc-qualified-profile-adoption-v1.json` and
 `poc-qualified-profile-adoption-v1.md` freeze the subsequent installed-package

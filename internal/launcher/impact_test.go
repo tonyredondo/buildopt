@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
-	"reflect"
 	"runtime"
 	"strings"
 	"testing"
@@ -29,6 +28,19 @@ func TestImpactHelpAndInvalidArguments(t *testing.T) {
 	if stdout.Len() != 0 || !strings.Contains(stderr.String(), impactUsage) {
 		t.Fatalf("invalid invocation stdout = %q, stderr = %q", stdout.String(), stderr.String())
 	}
+
+	repositoryRoot := impactTestRepository(t)
+	t.Chdir(repositoryRoot)
+	for _, retired := range []string{"--hot-state-dir", "--repository-revision", "--cache-standard-copy-tasks"} {
+		_, err := prepareImpactInvocation([]string{
+			"--repository-id", "tonyredondo/buildopt-impact-synthetic",
+			"--changes-file", "changed.txt",
+			retired, "retired",
+		}, false)
+		if err == nil {
+			t.Fatalf("retired Build Impact option %q was accepted", retired)
+		}
+	}
 }
 
 func TestImpactInvocationSelectsCandidateAndFallsBackToFullGraph(t *testing.T) {
@@ -41,13 +53,12 @@ func TestImpactInvocationSelectsCandidateAndFallsBackToFullGraph(t *testing.T) {
 		"--changes-file", "changed.txt",
 		"--gradle-option=--no-daemon",
 		"--cache-standard-jar-producers",
-		"--cache-standard-copy-tasks",
 	}, false)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !candidate.plan.CandidateSelected || candidate.plan.ProductionAuthorized ||
-		!candidate.standardJarCache || !candidate.standardCopyCache ||
+		!candidate.standardJarCache ||
 		strings.Join(candidate.gradleArgs, " ") != "--no-daemon :service-a:assemble" {
 		t.Fatalf("candidate invocation = %+v", candidate)
 	}
@@ -110,52 +121,6 @@ func TestImpactRunActivatesExplicitStandardJarCache(t *testing.T) {
 	}
 	if strings.ReplaceAll(string(raw), "\r\n", "\n") != want {
 		t.Fatalf("standard Jar cache child environment = %q", raw)
-	}
-}
-
-func TestImpactRunActivatesExplicitStandardCopyCache(t *testing.T) {
-	repositoryRoot := impactTestRepository(t)
-	t.Chdir(repositoryRoot)
-	clearGradleManagedL1Inputs(t)
-	initScript := filepath.Join(repositoryRoot, "buildopt.init.gradle")
-	pluginJar := filepath.Join(repositoryRoot, "buildopt-gradle-plugin.jar")
-	writeGradleTestFile(t, initScript)
-	writeGradleTestFile(t, pluginJar)
-	t.Setenv(gradleInitScriptEnvironment, initScript)
-	t.Setenv(gradlePluginJarEnvironment, pluginJar)
-	writeGradleWrapperProperties(t, repositoryRoot, "distributionUrl=gradle-9.6.1-bin.zip\n")
-
-	wrapper := filepath.Join(repositoryRoot, gradleWrapperName(runtime.GOOS))
-	observation := filepath.Join(repositoryRoot, "copy-cache.env")
-	contents := "#!/bin/sh\nprintf '%s\\n' \"$BUILDOPT_CACHE_STANDARD_COPY_TASKS\" > copy-cache.env\n"
-	if runtime.GOOS == "windows" {
-		contents = "@echo off\r\nset BUILDOPT_CACHE_STANDARD_COPY_TASKS>copy-cache.env\r\n"
-	}
-	if err := os.WriteFile(wrapper, []byte(contents), 0o755); err != nil {
-		t.Fatal(err)
-	}
-
-	var stdout bytes.Buffer
-	var stderr bytes.Buffer
-	code := Run([]string{
-		"impact",
-		"--repository-id", "tonyredondo/buildopt-impact-synthetic",
-		"--changes-file", "changed.txt",
-		"--cache-standard-copy-tasks",
-	}, strings.NewReader(""), &stdout, &stderr)
-	if code != 0 {
-		t.Fatalf("impact exit code = %d, stderr = %q", code, stderr.String())
-	}
-	raw, err := os.ReadFile(observation)
-	if err != nil {
-		t.Fatal(err)
-	}
-	want := "1\n"
-	if runtime.GOOS == "windows" {
-		want = gradleStandardCopyCacheEnvironment + "=1\n"
-	}
-	if strings.ReplaceAll(string(raw), "\r\n", "\n") != want {
-		t.Fatalf("standard Copy cache child environment = %q", raw)
 	}
 }
 
@@ -242,82 +207,6 @@ func TestImpactInvocationAcceptsBoundedSpringExecutionOptions(t *testing.T) {
 	}
 	if got := strings.Join(invocation.gradleArgs, " "); got != "--daemon --parallel --no-scan --max-workers=12 :service-a:assemble" {
 		t.Fatalf("Spring-compatible Gradle arguments = %q", got)
-	}
-}
-
-func TestImpactHotStateRequiresExactBindingAndFailsClosedOnDrift(t *testing.T) {
-	repositoryRoot := impactTestRepository(t)
-	t.Chdir(repositoryRoot)
-	wrapperRoot := filepath.Join(repositoryRoot, "gradle", "wrapper")
-	if err := os.MkdirAll(wrapperRoot, 0o755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(wrapperRoot, "gradle-wrapper.jar"), []byte("wrapper-jar"), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(wrapperRoot, "gradle-wrapper.properties"), []byte("distributionUrl=fixed"), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	stateRoot := t.TempDir()
-	if err := os.Chmod(stateRoot, 0o700); err != nil {
-		t.Fatal(err)
-	}
-	args := []string{
-		"--repository-id", "tonyredondo/buildopt-impact-synthetic",
-		"--changes-file", "changed.txt",
-		"--repository-revision", "0123456789abcdef0123456789abcdef01234567",
-		"--hot-state-dir", stateRoot,
-		"--gradle-option=--no-daemon",
-	}
-	miss, err := prepareImpactInvocation(args, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if miss.hotStateHit || !miss.plan.CandidateSelected {
-		t.Fatalf("initial hot-state miss = %+v", miss)
-	}
-	hit, err := prepareImpactInvocation(args, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !hit.hotStateHit || !reflect.DeepEqual(hit.plan.Entrypoints, miss.plan.Entrypoints) {
-		t.Fatalf("exact hot-state hit = %+v", hit)
-	}
-	if err := os.WriteFile(filepath.Join(repositoryRoot, "changed.txt"), []byte("unowned/file.txt\n"), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	drift, err := prepareImpactInvocation(args, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if drift.hotStateHit || drift.plan.CandidateSelected || drift.plan.Reason != "IMPACT_UNKNOWN_CHANGE_PATH" {
-		t.Fatalf("changed-path drift reused state = %+v", drift)
-	}
-	if err := os.WriteFile(filepath.Join(repositoryRoot, "changed.txt"), []byte("library-c/src/main/java/synthetic/LibraryC.java\n"), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(wrapperRoot, "gradle-wrapper.jar"), []byte("drifted-wrapper-jar"), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	wrapperDrift, err := prepareImpactInvocation(args, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if wrapperDrift.hotStateHit || !wrapperDrift.plan.CandidateSelected {
-		t.Fatalf("wrapper drift reused state = %+v", wrapperDrift)
-	}
-	revisionArgs := append([]string(nil), args...)
-	for index := range revisionArgs {
-		if revisionArgs[index] == "0123456789abcdef0123456789abcdef01234567" {
-			revisionArgs[index] = "1123456789abcdef0123456789abcdef01234567"
-		}
-	}
-	revisionDrift, err := prepareImpactInvocation(revisionArgs, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if revisionDrift.hotStateHit || !revisionDrift.plan.CandidateSelected {
-		t.Fatalf("revision drift reused state = %+v", revisionDrift)
 	}
 }
 

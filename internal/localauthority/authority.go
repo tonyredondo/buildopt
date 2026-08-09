@@ -100,13 +100,6 @@ type GrantReference struct {
 	ExpiresAt string `json:"expiresAt"`
 }
 
-// ResourceProfileReference selects one already authenticated resource profile.
-type ResourceProfileReference struct {
-	ProfileID      string `json:"profileId"`
-	ProfileDigest  string `json:"profileDigest"`
-	CatalogVersion string `json:"catalogVersion"`
-}
-
 // PolicyBudgets bound synchronous and validation overhead.
 type PolicyBudgets struct {
 	MaxSynchronousOverheadMs    int64   `json:"maxSynchronousOverheadMs"`
@@ -153,7 +146,6 @@ type OptimizationPolicy struct {
 	RemoteCache                 RemoteCachePolicy        `json:"remoteCache"`
 	ConfigurationCache          ConfigurationCachePolicy `json:"configurationCache"`
 	TestOptimizationGrant       *GrantReference          `json:"testOptimizationGrant,omitempty"`
-	ResourceProfile             ResourceProfileReference `json:"resourceProfile"`
 	Budgets                     PolicyBudgets            `json:"budgets"`
 	ExportProfile               string                   `json:"exportProfile"`
 	QualifiedTasks              []QualifiedTask          `json:"qualifiedTasks"`
@@ -508,7 +500,6 @@ func validateSemantics(
 		return fail("invalid component version range")
 	}
 	if !validConfigurationPolicy(document.Policy.ConfigurationCache) ||
-		!validResourceProfile(document.Policy.ResourceProfile) ||
 		!validBudgets(document.Policy.Budgets) ||
 		!validExportProfile(document.Policy.ExportProfile) {
 		return fail("invalid optimization policy selection")
@@ -644,12 +635,6 @@ func validGate(value string) bool {
 
 func validConfigurationPolicy(policy ConfigurationCachePolicy) bool {
 	return identifierPattern.MatchString(policy.ContractVersion)
-}
-
-func validResourceProfile(profile ResourceProfileReference) bool {
-	return identifierPattern.MatchString(profile.ProfileID) &&
-		validSHA256(profile.ProfileDigest) &&
-		identifierPattern.MatchString(profile.CatalogVersion)
 }
 
 func validBudgets(budgets PolicyBudgets) bool {
