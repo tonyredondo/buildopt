@@ -16,7 +16,7 @@ if [[ "${1:-}" == --contract ]]; then
     jq -e '
         .schemaVersion == "buildopt.specs/poc-structural-transfer/v1" and
         .workItem == "POC-STRUCTURAL-TRANSFER-001" and
-        .protocolRevision == 3 and
+        .protocolRevision == 4 and
         .preregistration.implementationRevision == "0f82b42acd58880de87f67ffaacd64498cfd943a" and
         .repository.nameWithOwner == "micronaut-projects/micronaut-core" and
         (.repository.revision | test("^[0-9a-f]{40}$")) and
@@ -33,6 +33,10 @@ if [[ "${1:-}" == --contract ]]; then
         .discovery.expectedDirectOwners == [":micronaut-http-client-jdk"] and
         .discovery.expectedDirectOwnersOutsideCandidate == [] and
         .measurement.pairs == 8 and .measurement.warmupsPerArm == 1 and
+        .measurement.mutatedCompileCachePolicy == {
+            warmups: "REQUIRE_MISS_BEFORE_SHARED_SEED_CAPTURE",
+            measuredPairs: "SHARED_OPTIMIZED_NATIVE_CACHE_HIT_ALLOWED_SYMMETRICALLY"
+        } and
         .measurement.launcherOverheadIncluded == true and
         .measurement.runtimeTuningEnabled == false and
         .measurement.safeCacheEnabled == false and

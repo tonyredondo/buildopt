@@ -1,7 +1,7 @@
 {
   "schemaVersion": "buildopt.specs/poc-structural-transfer/v1",
   "workItem": "POC-STRUCTURAL-TRANSFER-001",
-  "protocolRevision": 3,
+  "protocolRevision": 4,
   "decision": "PREREGISTER_FRESH_INSTALLED_STRUCTURAL_REPLICATION_ON_MICRONAUT",
   "preregistration": {
     "implementationRevision": "0f82b42acd58880de87f67ffaacd64498cfd943a",
@@ -86,6 +86,10 @@
     "sharedDaemon": true,
     "outputsRemovedBeforeEveryArm": true,
     "fixedMutationAppliedAfterCacheRestore": true,
+    "mutatedCompileCachePolicy": {
+      "warmups": "REQUIRE_MISS_BEFORE_SHARED_SEED_CAPTURE",
+      "measuredPairs": "SHARED_OPTIMIZED_NATIVE_CACHE_HIT_ALLOWED_SYMMETRICALLY"
+    },
     "warmupsPerArm": 1,
     "pairs": 8,
     "pairOrder": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",

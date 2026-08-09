@@ -302,6 +302,7 @@ buildopt_run_arm() {
     local buildopt_arm=$1
     local buildopt_log=$2
     local buildopt_time=$3
+    local buildopt_compile_cache_policy=$4
     buildopt_started_ns=$(date +%s%N)
     if ! (
         cd "${buildopt_checkout}"
@@ -350,10 +351,18 @@ buildopt_run_arm() {
         printf 'Micronaut %s arm did not reach changed http-client-jdk compileJava\n' "${buildopt_arm}" >&2
         return 1
     }
-    ! grep -Eq '^> Task :micronaut-http-client-jdk:compileJava FROM-CACHE$' "${buildopt_log}" || {
-        printf 'Micronaut %s arm replayed rather than compiled the fixed mutation\n' "${buildopt_arm}" >&2
+    if [[ "${buildopt_compile_cache_policy}" == REQUIRE_MISS ]]; then
+        ! grep -Eq '^> Task :micronaut-http-client-jdk:compileJava FROM-CACHE$' \
+            "${buildopt_log}" || {
+            printf 'Micronaut %s warm-up replayed rather than compiled the fixed mutation\n' \
+                "${buildopt_arm}" >&2
+            return 1
+        }
+    elif [[ "${buildopt_compile_cache_policy}" != ALLOW_SHARED_NATIVE_HIT ]]; then
+        printf 'invalid Micronaut compile-cache policy: %s\n' \
+            "${buildopt_compile_cache_policy}" >&2
         return 1
-    }
+    fi
     ! grep -Eq '^> Task .*:test($| )' "${buildopt_log}" || {
         printf 'Micronaut %s arm executed a Gradle Test task\n' "${buildopt_arm}" >&2
         return 1
@@ -385,10 +394,10 @@ buildopt_output_manifest() {
 
 buildopt_reset_arm control
 buildopt_run_arm control "${buildopt_root}/logs/warm-control.log" \
-    "${buildopt_root}/logs/warm-control.time"
+    "${buildopt_root}/logs/warm-control.time" REQUIRE_MISS
 buildopt_reset_arm candidate
 buildopt_run_arm candidate "${buildopt_root}/logs/warm-candidate.log" \
-    "${buildopt_root}/logs/warm-candidate.time"
+    "${buildopt_root}/logs/warm-candidate.time" REQUIRE_MISS
 buildopt_candidate_cache_seed="${buildopt_root}/measured-build-cache-seed.tar.gz"
 tar -C "${buildopt_home}/caches" -czf \
     "${buildopt_candidate_cache_seed}" build-cache-1
@@ -408,25 +417,29 @@ for buildopt_pair in {1..8}; do
     buildopt_candidate_outputs="${buildopt_root}/candidate-${buildopt_pair}.outputs"
     if [[ "${buildopt_order}" == CONTROL_FIRST ]]; then
         buildopt_reset_arm control
-        buildopt_run_arm control "${buildopt_control_log}" "${buildopt_control_log}.time"
+        buildopt_run_arm control "${buildopt_control_log}" "${buildopt_control_log}.time" \
+            ALLOW_SHARED_NATIVE_HIT
         buildopt_control_duration=${buildopt_duration_ms}
         buildopt_control_rss=${buildopt_max_rss_kb}
         buildopt_output_manifest "${buildopt_control_outputs}"
         buildopt_reset_arm candidate
         buildopt_first_finished=$(date +%s%N)
-        buildopt_run_arm candidate "${buildopt_candidate_log}" "${buildopt_candidate_log}.time"
+        buildopt_run_arm candidate "${buildopt_candidate_log}" "${buildopt_candidate_log}.time" \
+            ALLOW_SHARED_NATIVE_HIT
         buildopt_candidate_duration=${buildopt_duration_ms}
         buildopt_candidate_rss=${buildopt_max_rss_kb}
         buildopt_output_manifest "${buildopt_candidate_outputs}"
     else
         buildopt_reset_arm candidate
-        buildopt_run_arm candidate "${buildopt_candidate_log}" "${buildopt_candidate_log}.time"
+        buildopt_run_arm candidate "${buildopt_candidate_log}" "${buildopt_candidate_log}.time" \
+            ALLOW_SHARED_NATIVE_HIT
         buildopt_candidate_duration=${buildopt_duration_ms}
         buildopt_candidate_rss=${buildopt_max_rss_kb}
         buildopt_output_manifest "${buildopt_candidate_outputs}"
         buildopt_reset_arm control
         buildopt_first_finished=$(date +%s%N)
-        buildopt_run_arm control "${buildopt_control_log}" "${buildopt_control_log}.time"
+        buildopt_run_arm control "${buildopt_control_log}" "${buildopt_control_log}.time" \
+            ALLOW_SHARED_NATIVE_HIT
         buildopt_control_duration=${buildopt_duration_ms}
         buildopt_control_rss=${buildopt_max_rss_kb}
         buildopt_output_manifest "${buildopt_control_outputs}"

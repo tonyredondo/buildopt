@@ -66,7 +66,7 @@ done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
     "**Overall status:** \`POC GENERALIZATION REOPENED\`"
-    "**Current phase:** \`MICRONAUT REPLAY PREREGISTERED\`"
+    "**Current phase:** \`MICRONAUT CACHE-SYMMETRY REPLAY PREREGISTERED\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"
