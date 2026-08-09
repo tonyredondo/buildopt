@@ -2877,6 +2877,20 @@ causally recoverable and at least 500 ms in two families, so the byte-stable
 result is `NO_ACTIONABLE_HYPOTHESIS`. The command collects no timing and does
 not change product code or activation authority.
 
+The terminal portfolio checker then recomposes the final POC decision from the
+installed matrix, Kafka cell, deterministic discovery result and trace result:
+
+```bash
+./dev/check-poc-portfolio-decision-v1
+```
+
+It requires the exact SHA-256-bound inputs, revalidates every upstream result,
+forbids cross-repository averages and additive mechanism effects, and emits
+`SPECIALIZE_BOUNDED_KAFKA_PROFILE`. Only the explicit reviewed Kafka profile is
+retained; Spring and OpenTelemetry stay on optimized native Gradle. It runs no
+benchmark and creates no production, soak, design-partner, or Test Optimization
+authority.
+
 The completed task-tail experiment adds one exact standard-`Copy` adapter
 selected from the same OpenTelemetry trace. It deliberately measures isolated and
 cumulative effects rather than adding component percentages:

@@ -1,0 +1,145 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s OUTPUT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-portfolio-decision-v1.json"
+buildopt_matrix="${buildopt_repo_root}/benchmarks/results/poc-qualified-profile-matrix-v1/summary.json"
+buildopt_kafka="${buildopt_repo_root}/benchmarks/results/poc-qualified-profile-matrix-v1/kafka.json"
+buildopt_discovery="${buildopt_repo_root}/benchmarks/results/poc-profile-discovery-v1.json"
+buildopt_trace="${buildopt_repo_root}/benchmarks/results/poc-trace-hypothesis-v1.json"
+
+[[ "${buildopt_output}" == /* && ! -e "${buildopt_output}" && -d "$(dirname -- "${buildopt_output}")" ]] || exit 64
+
+for buildopt_input in "${buildopt_matrix}" "${buildopt_kafka}" "${buildopt_discovery}" "${buildopt_trace}"; do
+    buildopt_id=$(jq -er --arg path "${buildopt_input#"${buildopt_repo_root}/"}" \
+        '.inputs[] | select(.path == $path) | .id' "${buildopt_spec}")
+    buildopt_expected=$(jq -er --arg id "${buildopt_id}" '.inputs[] | select(.id == $id) | .sha256' "${buildopt_spec}")
+    buildopt_observed=$(sha256sum "${buildopt_input}" | awk '{print $1}')
+    [[ "${buildopt_observed}" == "${buildopt_expected}" ]] || {
+        printf 'portfolio input digest drift: %s\n' "${buildopt_id}" >&2
+        exit 1
+    }
+done
+
+"${buildopt_script_dir}/check-poc-qualified-profile-matrix-v1-result" "${buildopt_matrix}" >/dev/null
+"${buildopt_script_dir}/check-poc-profile-discovery" >/dev/null
+"${buildopt_script_dir}/check-poc-trace-hypothesis-v1" >/dev/null
+
+jq -e '
+  .decision == "SPECIALIZE_QUALIFIED_PROFILES" and
+  .aggregation == {
+    qualifyingFamilies:1, totalFamilies:3,
+    repositoryPercentagesAveraged:false, mechanismPercentagesAdded:false
+  }
+' "${buildopt_matrix}" >/dev/null
+jq -e '
+  .executionPath.installedProfile == true and
+  .executionPath.repositoryOwnedProfile == true and
+  .result.qualified == true and .result.positivePairs == 8 and
+  .result.performanceGatePassed == true and
+  .safety.impactFallbackPassed == true and
+  .safety.edgeFailureFallbackPassed == true and
+  .safety.edgeFailureOutputExact == true
+' "${buildopt_kafka}" >/dev/null
+jq -e '
+  .decision == "GENERATED_QUALIFIED_PROFILE" and
+  .activationAutomatic == false and .reviewRequired == true and
+  .productionAuthorized == false and
+  .profile.repositoryId == "apache/kafka" and
+  .profile.fallback == "NATIVE_FULL_GRAPH"
+' "${buildopt_discovery}" >/dev/null
+jq -e '
+  .decision == "NO_ACTIONABLE_HYPOTHESIS" and
+  .authorizedHypothesis == null and .boundaries.newTimingCollected == false
+' "${buildopt_trace}" >/dev/null
+
+jq -n \
+    --arg specSha "$(sha256sum "${buildopt_spec}" | awk '{print $1}')" \
+    --arg composerSha "$(sha256sum "${BASH_SOURCE[0]}" | awk '{print $1}')" \
+    --arg matrixSha "$(sha256sum "${buildopt_matrix}" | awk '{print $1}')" \
+    --arg kafkaSha "$(sha256sum "${buildopt_kafka}" | awk '{print $1}')" \
+    --arg discoverySha "$(sha256sum "${buildopt_discovery}" | awk '{print $1}')" \
+    --arg traceSha "$(sha256sum "${buildopt_trace}" | awk '{print $1}')" \
+    --slurpfile spec "${buildopt_spec}" --slurpfile matrix "${buildopt_matrix}" \
+    --slurpfile kafka "${buildopt_kafka}" --slurpfile discovery "${buildopt_discovery}" \
+    --slurpfile trace "${buildopt_trace}" '
+  ($matrix[0].aggregation.qualifyingFamilies) as $qualified |
+  ($matrix[0].aggregation.totalFamilies) as $total |
+  ($matrix[0].cells[] | select(.id == "spring-build-impact")) as $springCell |
+  ($matrix[0].cells[] | select(.id == "opentelemetry-impact-standard-jar")) as $otelCell |
+  {
+    schemaVersion:"buildopt.evidence/poc-portfolio-decision/v1",
+    workItem:$spec[0].workItem, evidenceState:"TERMINAL",
+    decidedOn:$spec[0].decidedOn, specSha256:$specSha,
+    composerScriptSha256:$composerSha,
+    inputs:[
+      {id:$spec[0].inputs[0].id, path:$spec[0].inputs[0].path, sha256:$matrixSha,
+       schemaVersion:$matrix[0].schemaVersion, evidenceRevision:$matrix[0].evidenceRevision},
+      {id:$spec[0].inputs[1].id, path:$spec[0].inputs[1].path, sha256:$kafkaSha,
+       schemaVersion:$kafka[0].schemaVersion, repositoryRevision:$kafka[0].repository.revision},
+      {id:$spec[0].inputs[2].id, path:$spec[0].inputs[2].path, sha256:$discoverySha,
+       schemaVersion:$discovery[0].schemaVersion, repositoryRevision:$discovery[0].subject.repositoryRevision},
+      {id:$spec[0].inputs[3].id, path:$spec[0].inputs[3].path, sha256:$traceSha,
+       schemaVersion:$trace[0].schemaVersion}
+    ],
+    decisionPolicy:$spec[0].decisionPolicy,
+    aggregation:{
+      qualifyingFamilies:$qualified, totalFamilies:$total,
+      repositoryPercentagesAveraged:false, mechanismPercentagesAdded:false
+    },
+    families:[
+      {id:"SPRING_FRAMEWORK", qualified:false,
+       portfolioAction:$spec[0].portfolioActions.unqualifiedFamily,
+       reason:"FAILED_ALL_POSITIVE_GATE", pairs:$springCell.pairs,
+       positivePairs:$springCell.positivePairs,
+       meanSavedMs:$springCell.meanSavedMs,
+       reductionRatio:$springCell.reductionRatio},
+      {id:"OPENTELEMETRY_JAVA_INSTRUMENTATION", qualified:false,
+       portfolioAction:$spec[0].portfolioActions.unqualifiedFamily,
+       reason:"NO_ACCEPTED_OBSERVATIONS", pairs:$otelCell.pairs,
+       positivePairs:$otelCell.positivePairs,
+       meanSavedMs:$otelCell.meanSavedMs,
+       reductionRatio:$otelCell.reductionRatio},
+      {id:"APACHE_KAFKA", qualified:true,
+       portfolioAction:$spec[0].portfolioActions.qualifiedFamily,
+       reason:"INSTALLED_VALUE_AND_SAFETY_QUALIFIED",
+       pairs:$kafka[0].result.pairs, positivePairs:$kafka[0].result.positivePairs,
+       meanSavedMs:$kafka[0].result.meanSavedMs,
+       reductionRatio:$kafka[0].result.reductionRatio,
+       interval95SavedMs:$kafka[0].result.interval95SavedMs,
+       installedProfile:$kafka[0].executionPath.installedProfile,
+       exactFailureFallback:$kafka[0].safety.edgeFailureOutputExact}
+    ],
+    retainedProfile:{
+      repositoryId:$discovery[0].profile.repositoryId,
+      repositoryRevision:$discovery[0].subject.repositoryRevision,
+      profileId:$discovery[0].profile.profileId,
+      claimScope:$discovery[0].profile.claimScope,
+      entrypoints:$discovery[0].plan.entrypoints,
+      fallbackEntrypoints:$discovery[0].plan.fallbackEntrypoints,
+      requiredOutputs:$discovery[0].plan.requiredOutputs,
+      omittedProjectCount:$discovery[0].plan.omittedProjectCount,
+      activationAutomatic:$discovery[0].activationAutomatic,
+      reviewRequired:$discovery[0].reviewRequired
+    },
+    traceDecision:$trace[0].decision,
+    newGenericOptimizationAuthorized:false,
+    generalAcceleratorClaim:$spec[0].portfolioActions.generalAcceleratorClaim,
+    decision:(if $qualified >= $spec[0].decisionPolicy.continueMinimumQualifyingFamilies
+      then $spec[0].terminalDecisions.continue
+      elif $qualified >= $spec[0].decisionPolicy.specializeMinimumQualifyingFamilies
+      then $spec[0].terminalDecisions.specialize
+      else $spec[0].terminalDecisions.stop end),
+    nextWorkItem:null,
+    boundaries:$spec[0].boundaries
+  }
+' >"${buildopt_output}"
+
+printf 'portfolio decision composed: %s\n' "${buildopt_output}"

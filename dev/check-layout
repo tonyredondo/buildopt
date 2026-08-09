@@ -240,6 +240,8 @@ buildopt_required_files=(
     "dev/check-poc-profile-discovery"
     "dev/check-poc-trace-hypothesis-v1"
     "dev/compose-poc-trace-hypothesis-v1"
+    "dev/check-poc-portfolio-decision-v1"
+    "dev/compose-poc-portfolio-decision-v1"
     "dev/check-build-impact-automatic"
     "dev/check-build-impact-poc-onboarding"
     "dev/check-build-impact-phase-timings"

@@ -308,14 +308,19 @@ Kafka-specific product rule.
 | Deterministic profile discovery | No new timing; exact retained Kafka profile reproduced | Read-only, review-required analyzer | Keep native fallback for Spring, OpenTelemetry, drift, incomplete/unknown graphs and selected Test tasks; never turn discovery into autonomous activation |
 | Trace-gated hypothesis decision | No new timing; largest BuildOpt-specific phase 1.238233 ms | Deterministic evidence synthesis | Implement nothing: no phase supplies 500 ms of causally recoverable critical-path work in two families |
 
-## Recommended Next Block
+## Terminal Portfolio Decision
 
-The next block is the terminal POC portfolio decision. It must synthesize the
-installed matrix, bounded Kafka specialization, deterministic discovery and
-the trace-gated no-action result without averaging repository percentages or
-adding mechanism effects. The evidence currently supports specialization, not
-a broad accelerator claim: Kafka qualifies; Spring and OpenTelemetry retain
-optimized native Gradle; no new generic hypothesis is authorized.
+The terminal POC decision is `SPECIALIZE_BOUNDED_KAFKA_PROFILE`. The checked
+synthesis combines the installed matrix, bounded Kafka specialization,
+deterministic discovery and trace-gated no-action result without averaging
+repository percentages or adding mechanism effects.
+
+Kafka is the only qualifying installed family and retains its explicit reviewed
+profile. Spring and OpenTelemetry retain optimized native Gradle. The broad
+accelerator claim is withdrawn, and no new generic hypothesis is authorized.
+The current evidence plan is complete; any future POC block requires a new,
+materially different evidence question rather than another search over the
+closed mechanisms.
 
 The following completed blocks remain the evidence behind that decision.
 
@@ -429,8 +434,8 @@ manufacture another optimization.
 
 ## Open Questions
 
-- Does the terminal installed-path portfolio justify continuing only the
-  bounded Kafka specialization, or should the broader accelerator claim stop?
+- Is a future repository family materially similar enough to the qualified
+  Kafka graph/locality shape to justify a newly preregistered replication?
 - What future materially different trace would be sufficient to reopen a
   rejected mechanism without repeating the closed evidence?
 
@@ -464,6 +469,7 @@ artifacts are:
 - [installed Kafka profile value evidence](../../benchmarks/results/poc-kafka-installed-profile-value-v1.json).
 - [verification/distribution graph evidence](../../benchmarks/results/poc-verification-distribution-graph-v1.json).
 - [verification overhead attribution](../../benchmarks/results/poc-verification-overhead-attribution-v1.json).
+- [terminal POC portfolio decision](../../benchmarks/results/poc-portfolio-decision-v1.json).
 
 Validate the current scorecard with:
 

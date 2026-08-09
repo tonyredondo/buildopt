@@ -788,6 +788,24 @@ critical path. The terminal decision is `NO_ACTIONABLE_HYPOTHESIS`.
 ./dev/check-poc-trace-hypothesis-v1
 ```
 
+### Terminal POC portfolio decision
+
+The checked [portfolio decision](./results/poc-portfolio-decision-v1.json)
+applies the preregistered continue/specialize/stop policy to the installed
+matrix, qualified Kafka cell, deterministic discovery result, and trace-gated
+no-action decision. It collects no new timing.
+
+Only one of three repository families qualifies, so the terminal result is
+`SPECIALIZE_BOUNDED_KAFKA_PROFILE`. Kafka retains its exact reviewed profile at
+28,523.25 ms / 81.85% mean savings with 8/8 positive pairs and complete
+fallback. Spring and OpenTelemetry retain optimized native Gradle. Repository
+percentages are not averaged, mechanism effects are not added, and the broad
+accelerator claim is withdrawn.
+
+```bash
+./dev/check-poc-portfolio-decision-v1
+```
+
 The three mechanism-development reports remain historical inputs. The strict
 synthetic reports prove bounded combined value. The public-repository
 compatibility and early performance reports showed that the first generic

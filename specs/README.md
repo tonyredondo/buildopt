@@ -375,6 +375,13 @@ recoverable product-owned critical-path work in two families, reject overlapping
 task-duration sums and already-qualified mechanisms as new hypotheses, and
 emit `NO_ACTIONABLE_HYPOTHESIS` when no phase clears every condition.
 
+`poc-portfolio-decision-v1.json` and `poc-portfolio-decision-v1.md` bind the
+terminal POC synthesis. The exact installed matrix, qualified Kafka cell,
+deterministic discovery result and trace decision select `CONTINUE`,
+`SPECIALIZE`, or `STOP/REFRAME` without averaging repository percentages or
+adding mechanism effects. The checked result specializes to the bounded Kafka
+profile and withdraws the general accelerator claim.
+
 `poc-kafka-packaging-v1.json` and `poc-kafka-packaging-v1.md` freeze the next
 real value experiment before timing. They compare Kafka's optimized native
 root `assemble` with the installed qualified three-project client-Jar path,

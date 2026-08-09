@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/poc-portfolio-decision-v1.json"}
+buildopt_spec="${buildopt_repo_root}/specs/poc-portfolio-decision-v1.json"
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-portfolio-decision.XXXXXX")
+trap 'rm -rf -- "${buildopt_temporary}"' EXIT
+
+[[ -s "${buildopt_result}" ]] || exit 1
+"${buildopt_script_dir}/compose-poc-portfolio-decision-v1" "${buildopt_temporary}/result.json" >/dev/null
+cmp -s "${buildopt_result}" "${buildopt_temporary}/result.json"
+
+jq -e --arg specSha "$(sha256sum "${buildopt_spec}" | awk '{print $1}')" \
+    --arg composerSha "$(sha256sum "${buildopt_script_dir}/compose-poc-portfolio-decision-v1" | awk '{print $1}')" '
+  def sha256: type == "string" and test("^[0-9a-f]{64}$");
+  def gitsha: type == "string" and test("^[0-9a-f]{40}$");
+  .schemaVersion == "buildopt.evidence/poc-portfolio-decision/v1" and
+  .workItem == "POC-PORTFOLIO-DECISION-001" and .evidenceState == "TERMINAL" and
+  .decidedOn == "2026-08-09" and .specSha256 == $specSha and
+  .composerScriptSha256 == $composerSha and
+  (.inputs | length == 4 and all(.[]; .sha256 | sha256)) and
+  (.inputs[] | select(.id == "INSTALLED_PROFILE_MATRIX") | .evidenceRevision | gitsha) and
+  .decisionPolicy.continueMinimumQualifyingFamilies == 2 and
+  .aggregation == {
+    qualifyingFamilies:1, totalFamilies:3,
+    repositoryPercentagesAveraged:false, mechanismPercentagesAdded:false
+  } and
+  (.families | map(.id)) == [
+    "SPRING_FRAMEWORK", "OPENTELEMETRY_JAVA_INSTRUMENTATION", "APACHE_KAFKA"
+  ] and
+  (.families[] | select(.id == "SPRING_FRAMEWORK") |
+    .qualified == false and .positivePairs == 7 and .pairs == 8 and
+    .portfolioAction == "RETAIN_OPTIMIZED_NATIVE_GRADLE") and
+  (.families[] | select(.id == "OPENTELEMETRY_JAVA_INSTRUMENTATION") |
+    .qualified == false and .pairs == 0 and .meanSavedMs == null and
+    .portfolioAction == "RETAIN_OPTIMIZED_NATIVE_GRADLE") and
+  (.families[] | select(.id == "APACHE_KAFKA") |
+    .qualified == true and .pairs == 8 and .positivePairs == 8 and
+    .meanSavedMs == 28523.25 and .reductionRatio == 0.818498776839583 and
+    .installedProfile == true and .exactFailureFallback == true and
+    .portfolioAction == "RETAIN_EXPLICIT_REVIEWED_PROFILE") and
+  .retainedProfile.repositoryId == "apache/kafka" and
+  .retainedProfile.repositoryRevision == "26b251a451ce941d3d7a55e6487bcb7f16b5ad48" and
+  .retainedProfile.profileId == "normalized-impact-plus-read-only-edge" and
+  .retainedProfile.activationAutomatic == false and
+  .retainedProfile.reviewRequired == true and
+  .traceDecision == "NO_ACTIONABLE_HYPOTHESIS" and
+  .newGenericOptimizationAuthorized == false and
+  .generalAcceleratorClaim == "WITHDRAW" and
+  .decision == "SPECIALIZE_BOUNDED_KAFKA_PROFILE" and
+  .nextWorkItem == null and
+  .boundaries == {
+    proofOfConceptOnly:true, newTimingCollected:false,
+    productionAuthorityChanged:false, soakRequired:false,
+    designPartnerRequired:false, testOptimizationIncluded:false
+  } and
+  (has("aggregateReductionRatio") | not) and
+  (has("aggregateMeanSavedMs") | not)
+' "${buildopt_result}" >/dev/null
+
+cp "${buildopt_repo_root}/benchmarks/results/poc-qualified-profile-matrix-v1/summary.json" \
+    "${buildopt_temporary}/drift.json"
+printf '\n' >>"${buildopt_temporary}/drift.json"
+if sha256sum "${buildopt_temporary}/drift.json" | awk '{print $1}' | \
+    grep -qx "$(jq -r '.inputs[0].sha256' "${buildopt_spec}")"; then
+    printf 'mutated portfolio input unexpectedly retained its digest\n' >&2
+    exit 1
+fi
+
+printf 'POC portfolio decision OK: specialize the bounded Kafka profile\n'

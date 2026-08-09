@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "buildopt.specs/poc-portfolio-decision/v1",
+  "workItem": "POC-PORTFOLIO-DECISION-001",
+  "status": "PREREGISTERED",
+  "decidedOn": "2026-08-09",
+  "inputs": [
+    {
+      "id": "INSTALLED_PROFILE_MATRIX",
+      "path": "benchmarks/results/poc-qualified-profile-matrix-v1/summary.json",
+      "sha256": "e1646ac60cbe495845607972f7e8bbe09f36cc5fbd2241d4718b5ca78596e12d"
+    },
+    {
+      "id": "QUALIFIED_KAFKA_CELL",
+      "path": "benchmarks/results/poc-qualified-profile-matrix-v1/kafka.json",
+      "sha256": "31988f5f6577e0e8d134ef6e9d360f4d023c3d4af9df63a393a98e5abd32c0ee"
+    },
+    {
+      "id": "PROFILE_DISCOVERY",
+      "path": "benchmarks/results/poc-profile-discovery-v1.json",
+      "sha256": "aa32b9057e2136e0bf6ce0c7d6a21d83921c5e96c1a89cbc9b4ffed31503c5c8"
+    },
+    {
+      "id": "TRACE_HYPOTHESIS_DECISION",
+      "path": "benchmarks/results/poc-trace-hypothesis-v1.json",
+      "sha256": "1315cd12e76cd02002fe4626ce84ce36be007ca5d445e873a4ac1f605461910b"
+    }
+  ],
+  "decisionPolicy": {
+    "continueMinimumQualifyingFamilies": 2,
+    "specializeMinimumQualifyingFamilies": 1,
+    "mustUseInstalledPath": true,
+    "mustPreserveExactRequiredOutput": true,
+    "mustPassEveryFallback": true,
+    "maximumProductAttributableFailures": 0,
+    "repositoryPercentagesMayBeAveraged": false,
+    "mechanismPercentagesMayBeAdded": false
+  },
+  "terminalDecisions": {
+    "continue": "CONTINUE_GENERAL_POC",
+    "specialize": "SPECIALIZE_BOUNDED_KAFKA_PROFILE",
+    "stop": "STOP_OR_REFRAME_POC"
+  },
+  "portfolioActions": {
+    "qualifiedFamily": "RETAIN_EXPLICIT_REVIEWED_PROFILE",
+    "unqualifiedFamily": "RETAIN_OPTIMIZED_NATIVE_GRADLE",
+    "generalAcceleratorClaim": "WITHDRAW",
+    "newGenericOptimization": "DO_NOT_IMPLEMENT"
+  },
+  "boundaries": {
+    "proofOfConceptOnly": true,
+    "newTimingCollected": false,
+    "productionAuthorityChanged": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationIncluded": false
+  }
+}

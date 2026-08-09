@@ -55,6 +55,11 @@
   A later composition seed proved `:clients:jar` is skipped and the required
   artifact is produced by custom `:clients:shadowJar`, so this saving is not
   evidence for the standard-`Jar` adapter.
+- **The terminal POC decision is specialization, not a general accelerator.**
+  Only Kafka qualified in the installed three-family matrix: **81.85% faster**
+  with 8/8 positive pairs and complete fallback. Spring and OpenTelemetry stay
+  on optimized native Gradle. The exact Kafka profile remains explicit,
+  review-required and bounded; repository percentages remain independent.
 
 ## Product Idea
 
@@ -164,8 +169,9 @@ unfavorable observations. Percentages from different rows are not additive.
 | Installed qualified-profile matrix | **Kafka 81.85% faster; Spring 14.33% faster but unqualified; OpenTelemetry no accepted observations** | Kafka passed 8/8 pairs and all safety gates. Spring preserved output/fallback but passed only 7/8 pairs, including one -57-ms regression. OpenTelemetry impact discovery was terminated by signal after preflight, so it retains native with no performance claim. Only 1/3 families qualifies; do not average these percentages. |
 | Deterministic profile discovery | **No new timing; exact Kafka profile reproduced** | The read-only analyzer binds the terminal matrix, complete graph, generated state, trace/input digests, exact output and reviewed contract. Kafka emits the same v2 profile and 61-project omission plan; Spring, OpenTelemetry, drift, incomplete/unknown graphs and selected Test tasks emit native full graph. |
 | Trace-gated hypothesis decision | **No new timing; no hypothesis authorized** | BuildOpt setup peaks at 1.238233 ms, startup at 364.875 ms, finalization at 97 ms and teardown at 87 ms. Configuration reaches 682 ms only in Spring, without product attribution or a second qualifying family. |
+| Terminal portfolio decision | **Specialize: 1/3 families qualifies** | Retain only the explicit Kafka profile; Spring and OpenTelemetry use optimized native Gradle. Withdraw the general accelerator claim and do not average repository percentages. |
 
-## Latest Generalization and Next Work
+## Terminal Portfolio Decision
 
 The qualified Kafka composition has now moved from experiment-only wiring into
 a repository-owned v2 POC profile and has been measured through the exact
@@ -183,9 +189,11 @@ OpenTelemetry are negative fixtures and select native full graph. It does not
 encode repository names, resurrect an unqualified profile or authorize broad
 automatic generation from the current 1/3 result.
 
-**Continue the POC, but activate only measured value.** The fresh ablation
-qualified Spring Build Impact at 2,492.375 ms/30.86% saved with 8/8 positive
-pairs. OpenTelemetry Build Impact alone saved 985.5 ms/7.49% but did not meet
+**Specialize the POC and activate only measured value.** The terminal checked
+decision is `SPECIALIZE_BOUNDED_KAFKA_PROFILE`: only the exact reviewed Kafka
+profile remains, while the general accelerator claim is withdrawn. The fresh
+ablation qualified Spring Build Impact at 2,492.375 ms/30.86% saved with 8/8
+positive pairs. OpenTelemetry Build Impact alone saved 985.5 ms/7.49% but did not meet
 the stability gate; adding exact hot state regressed by 892 ms/7.68%. Adding
 the standard `Jar` adapter produced a strong 4,496.75-ms/40.60% terminal gain,
 but that composition was rejected because it contained the regressive hot-state
@@ -334,9 +342,11 @@ The trace-gated hypothesis block is now terminal. The immutable synthetic and
 Spring installed traces expose no phase that is product-addressable, causally
 recoverable, at least 500 ms, and reproduced across two families. Its checked
 decision is `NO_ACTIONABLE_HYPOTHESIS`; no new implementation or timing was
-authorized. The next block is the terminal portfolio decision: decide whether
-to retain only the bounded Kafka specialization or stop/reframe the broader
-accelerator claim. Rejected mechanisms and Test Optimization stay out.
+authorized. The checked portfolio synthesis retains only the bounded Kafka
+specialization, keeps Spring and OpenTelemetry native, and withdraws the
+broader accelerator claim. Rejected mechanisms and Test Optimization stay out.
+The current POC evidence plan is complete; further work requires a new,
+materially different question and preregistration.
 
 ## Boundaries and References
 
@@ -364,6 +374,7 @@ production operations are outside the current scope.
 - [Terminal installed qualified-profile matrix](../../benchmarks/results/poc-qualified-profile-matrix-v1/summary.json)
 - [Deterministic profile-discovery evidence](../../benchmarks/results/poc-profile-discovery-v1.json)
 - [Trace-gated hypothesis decision](../../benchmarks/results/poc-trace-hypothesis-v1.json)
+- [Terminal POC portfolio decision](../../benchmarks/results/poc-portfolio-decision-v1.json)
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)
 - [Kafka shadow JAR reproducibility evidence](../../benchmarks/results/poc-kafka-shadowjar-reproducibility-v1.json)
 - [Installed Kafka profile value evidence](../../benchmarks/results/poc-kafka-installed-profile-value-v1.json)

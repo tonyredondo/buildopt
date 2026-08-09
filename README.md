@@ -190,6 +190,14 @@ Spring but is neither causally attributed to BuildOpt nor reproduced above the
 500-ms threshold in a second workload family. The checked result is therefore
 `NO_ACTIONABLE_HYPOTHESIS`; no new timing or mechanism activation follows.
 
+The terminal portfolio decision is now
+`SPECIALIZE_BOUNDED_KAFKA_PROFILE`. Only Kafka qualified through the installed
+path: **28,523.25 ms / 81.85%** saved with 8/8 positive pairs and complete
+fallback. Spring and OpenTelemetry remain on optimized native Gradle, the
+general accelerator claim is withdrawn, and deterministic discovery stays
+read-only and review-required. This is terminal POC evidence, not a production
+or universal-value claim.
+
 ## Choose what to do next
 
 | Goal | Start here |

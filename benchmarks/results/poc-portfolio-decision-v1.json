@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-portfolio-decision/v1",
+  "workItem": "POC-PORTFOLIO-DECISION-001",
+  "evidenceState": "TERMINAL",
+  "decidedOn": "2026-08-09",
+  "specSha256": "69790e74c2caa18edf1e2fd47681c9e621a2dd0bd5cac0a50c33f8dc8a180b75",
+  "composerScriptSha256": "144803ca504dfa08ec9660d91b10c2f6cc6bb49fe0980817ec7412d52dee1c83",
+  "inputs": [
+    {
+      "id": "INSTALLED_PROFILE_MATRIX",
+      "path": "benchmarks/results/poc-qualified-profile-matrix-v1/summary.json",
+      "sha256": "e1646ac60cbe495845607972f7e8bbe09f36cc5fbd2241d4718b5ca78596e12d",
+      "schemaVersion": "buildopt.evidence/poc-qualified-profile-matrix/v1",
+      "evidenceRevision": "a6bbf3f10273d8912b21da177c86653d60b3db21"
+    },
+    {
+      "id": "QUALIFIED_KAFKA_CELL",
+      "path": "benchmarks/results/poc-qualified-profile-matrix-v1/kafka.json",
+      "sha256": "31988f5f6577e0e8d134ef6e9d360f4d023c3d4af9df63a393a98e5abd32c0ee",
+      "schemaVersion": "buildopt.evidence/poc-kafka-installed-profile-value/v1",
+      "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48"
+    },
+    {
+      "id": "PROFILE_DISCOVERY",
+      "path": "benchmarks/results/poc-profile-discovery-v1.json",
+      "sha256": "aa32b9057e2136e0bf6ce0c7d6a21d83921c5e96c1a89cbc9b4ffed31503c5c8",
+      "schemaVersion": "buildopt.poc/profile-discovery/v1",
+      "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48"
+    },
+    {
+      "id": "TRACE_HYPOTHESIS_DECISION",
+      "path": "benchmarks/results/poc-trace-hypothesis-v1.json",
+      "sha256": "1315cd12e76cd02002fe4626ce84ce36be007ca5d445e873a4ac1f605461910b",
+      "schemaVersion": "buildopt.evidence/poc-trace-hypothesis/v1"
+    }
+  ],
+  "decisionPolicy": {
+    "continueMinimumQualifyingFamilies": 2,
+    "specializeMinimumQualifyingFamilies": 1,
+    "mustUseInstalledPath": true,
+    "mustPreserveExactRequiredOutput": true,
+    "mustPassEveryFallback": true,
+    "maximumProductAttributableFailures": 0,
+    "repositoryPercentagesMayBeAveraged": false,
+    "mechanismPercentagesMayBeAdded": false
+  },
+  "aggregation": {
+    "qualifyingFamilies": 1,
+    "totalFamilies": 3,
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false
+  },
+  "families": [
+    {
+      "id": "SPRING_FRAMEWORK",
+      "qualified": false,
+      "portfolioAction": "RETAIN_OPTIMIZED_NATIVE_GRADLE",
+      "reason": "FAILED_ALL_POSITIVE_GATE",
+      "pairs": 8,
+      "positivePairs": 7,
+      "meanSavedMs": 1895,
+      "reductionRatio": 0.14327432875598944
+    },
+    {
+      "id": "OPENTELEMETRY_JAVA_INSTRUMENTATION",
+      "qualified": false,
+      "portfolioAction": "RETAIN_OPTIMIZED_NATIVE_GRADLE",
+      "reason": "NO_ACCEPTED_OBSERVATIONS",
+      "pairs": 0,
+      "positivePairs": 0,
+      "meanSavedMs": null,
+      "reductionRatio": null
+    },
+    {
+      "id": "APACHE_KAFKA",
+      "qualified": true,
+      "portfolioAction": "RETAIN_EXPLICIT_REVIEWED_PROFILE",
+      "reason": "INSTALLED_VALUE_AND_SAFETY_QUALIFIED",
+      "pairs": 8,
+      "positivePairs": 8,
+      "meanSavedMs": 28523.25,
+      "reductionRatio": 0.818498776839583,
+      "interval95SavedMs": [
+        26603.5,
+        30509
+      ],
+      "installedProfile": true,
+      "exactFailureFallback": true
+    }
+  ],
+  "retainedProfile": {
+    "repositoryId": "apache/kafka",
+    "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "profileId": "normalized-impact-plus-read-only-edge",
+    "claimScope": "DECLARED_OUTPUTS_ONLY",
+    "entrypoints": [
+      ":clients:jar"
+    ],
+    "fallbackEntrypoints": [
+      "assemble"
+    ],
+    "requiredOutputs": [
+      "clients/build/libs/kafka-clients-*.jar"
+    ],
+    "omittedProjectCount": 61,
+    "activationAutomatic": false,
+    "reviewRequired": true
+  },
+  "traceDecision": "NO_ACTIONABLE_HYPOTHESIS",
+  "newGenericOptimizationAuthorized": false,
+  "generalAcceleratorClaim": "WITHDRAW",
+  "decision": "SPECIALIZE_BOUNDED_KAFKA_PROFILE",
+  "nextWorkItem": null,
+  "boundaries": {
+    "proofOfConceptOnly": true,
+    "newTimingCollected": false,
+    "productionAuthorityChanged": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationIncluded": false
+  }
+}

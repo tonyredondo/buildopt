@@ -1,8 +1,8 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC PROFILE SPECIALIZATION ACTIVE` — the installed matrix qualified only the fixed Kafka profile, so the POC retains native Spring/OpenTelemetry paths and stops claiming a general accelerator<br>
-**Current phase:** `POC TERMINAL PORTFOLIO DECISION NEXT` — synthesize the installed-path evidence into a continue/specialize/stop decision without averaging repository percentages or reopening rejected mechanisms<br>
-**POC functional target:** make the terminal portfolio decision after trace analysis authorized no new optimization; Safe Cache, rejected Runtime candidates and unqualified profiles remain disabled<br>
+**Overall status:** `POC PORTFOLIO SPECIALIZED` — terminal evidence retains only the explicit reviewed Kafka profile; Spring/OpenTelemetry use optimized native Gradle and the general accelerator claim is withdrawn<br>
+**Current phase:** `POC EVIDENCE PLAN COMPLETE` — the terminal decision is `SPECIALIZE_BOUNDED_KAFKA_PROFILE`; further work requires a new, materially different preregistered POC question<br>
+**POC functional target:** preserve the bounded Kafka evidence and native fallbacks without reopening rejected mechanisms, averaging repository percentages, or implying production authority<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
 **Last updated:** 2026-08-09<br>
@@ -102,7 +102,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-REMOTE-CACHE-VALUE | Compare Gradle direct-to-Shared reads with the same committed objects served from a prewarmed BuildOpt Edge | `DONE` | 1/1 | `E-221..222` |
 | POC-PROFILE-USABILITY | One explicit repository-owned command for the qualified clean POC profile | `DONE` | 1/1 | `E-225` |
 | POC-PROFILE-ADOPTION | Installed OpenTelemetry and Kafka candidate/fallback replay without new timing claims | `DONE` | 1/1 | `E-226` |
-| POC-NEXT-VALUE | Installed-profile value, cross-repository replication, deterministic discovery, one trace-gated hypothesis, and a terminal POC portfolio decision | `DOING` | 4/5 | `E-257`, `E-266`, `E-271..273` |
+| POC-NEXT-VALUE | Installed-profile value, cross-repository replication, deterministic discovery, one trace-gated hypothesis, and a terminal POC portfolio decision | `DONE` | 5/5 | `E-257`, `E-266`, `E-271..274` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -236,7 +236,7 @@ than partners. Test Optimization remains a separate product.
 | 66 | `POC-QUALIFIED-PROFILE-MATRIX-001` | Replicate installed-profile value independently on the fixed Spring, OpenTelemetry and Kafka workloads without averaging their percentages | `DONE` | Codex |
 | 67 | `POC-PROFILE-DISCOVERY-001` | Generate the retained Kafka profile deterministically from checked manifests, graphs, traces and evidence, with native fallback on uncertainty | `DONE` | Codex |
 | 68 | `POC-TRACE-HYPOTHESIS-002` | Authorize at most one generic optimization from retained installed-path traces only when it exposes at least 500 ms of recoverable critical-path work | `DONE` | Codex |
-| 69 | `POC-PORTFOLIO-DECISION-001` | Decide whether to continue broadly, specialize by repository family, or stop/reframe the POC from the installed-path evidence | `TODO` | Codex |
+| 69 | `POC-PORTFOLIO-DECISION-001` | Decide whether to continue broadly, specialize by repository family, or stop/reframe the POC from the installed-path evidence | `DONE` | Codex |
 
 #### Planned POC decision sequence
 
@@ -354,7 +354,7 @@ in Spring, but is neither product-attributed nor reproduced above 500 ms in a
 second family. Existing Build Impact savings and overlapping control-only task
 durations cannot become a new hypothesis. The result is
 `NO_ACTIONABLE_HYPOTHESIS`: no implementation or timing is authorized, and the
-terminal portfolio decision is next.
+result feeds the terminal portfolio decision below.
 
 ##### 5. Terminal POC portfolio decision
 
@@ -369,6 +369,16 @@ their per-repository decisions without adding incompatible percentages.
   through the user-facing path.
 - This is a POC decision only. It does not authorize production hardening,
   soak, design-partner work, GA operations, or Test Optimization.
+
+Terminal result: exactly one of three installed repository families qualifies,
+so the checked decision is `SPECIALIZE_BOUNDED_KAFKA_PROFILE`. Kafka retains
+only the explicit reviewed `normalized-impact-plus-read-only-edge` profile at
+28,523.25 ms/**81.85%** mean savings with 8/8 positive pairs and complete
+fallback. Spring and OpenTelemetry retain optimized native Gradle. The broad
+accelerator claim is withdrawn, deterministic discovery remains read-only and
+review-required, and `NO_ACTIONABLE_HYPOTHESIS` authorizes no additional
+implementation. Repository percentages are not averaged and mechanism effects
+are not added.
 
 The raw diagnostic block is closed and unchanged. `E-172` corrects its
 ownership interpretation: Mockito's 242.690-second `compileTestJava` is
@@ -1720,6 +1730,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-271` | 2026-08-08 | `POC-QUALIFIED-PROFILE-MATRIX-001` | The independently checked [terminal matrix](./benchmarks/results/poc-qualified-profile-matrix-v1/summary.json) retains every cell separately. Spring saves 1,895 ms/**14.33%** with interval +981..+3,111.75 ms and exact outputs, but has 7/8 positive pairs and therefore retains native. OpenTelemetry records `PREPARATION_FAILED` with zero accepted observations after impact discovery is terminated by signal, so it makes no performance claim. Kafka saves 28,523.25 ms/**81.85%** with 8/8 positive pairs, interval +26,603.5..+30,509 ms, exact normalized output, zero candidate-origin traffic and both native/global and HTTP-503 fallbacks | `DONE` terminal `SPECIALIZE_QUALIFIED_PROFILES`: 1/3 families qualifies, percentages are not averaged, broad continuation fails, native Spring/OpenTelemetry paths remain active, and deterministic discovery may target only the retained Kafka profile |
 | `E-272` | 2026-08-09 | `POC-PROFILE-DISCOVERY-001` | The [deterministic discovery contract](./specs/poc-profile-discovery-v1.md), checked [Kafka report](./benchmarks/results/poc-profile-discovery-v1.json), installed CLI command, Go unit matrix and CI checker bind the terminal matrix, exact cell SHA, complete manifest/graph/generated state, component trace digests, normalized source, required output and reviewed profile contract. The emitted profile equals the reviewed Kafka v2 profile; it selects `:clients:jar`, falls back to `assemble`, declares the exact client JAR and omits 61 projects | `DONE` terminal `GENERATED_QUALIFIED_PROFILE`: repeated output is byte-identical and repository-name independent. Spring, OpenTelemetry, evidence drift, incomplete or unknown graph state, selected Test tasks, incomplete generated state and precondition drift all emit `NATIVE_FULL_GRAPH` with `profile: null`. Discovery is read-only, review-required and neither activates a profile nor creates timing, production or Test Optimization authority; `POC-TRACE-HYPOTHESIS-002` is next |
 | `E-273` | 2026-08-09 | `POC-TRACE-HYPOTHESIS-002` | The [trace-gated contract](./specs/poc-trace-hypothesis-v1.md), exact machine contract, deterministic composer, independent checker and [terminal evidence](./benchmarks/results/poc-trace-hypothesis-v1.json) bind the installed synthetic and Spring trace SHAs. Across synthetic Groovy, synthetic Kotlin and Spring verification, the largest observed positive deltas are 1.238233 ms for BuildOpt-specific setup, 364.875 ms for startup, 682 ms for configuration, 97 ms for finalization and 87 ms for teardown; all required outputs remain exact and product failures are zero | `DONE` terminal `NO_ACTIONABLE_HYPOTHESIS`: setup is far below 500 ms; startup/finalization/teardown do not clear the threshold or causal rule; configuration exceeds 500 ms only in Spring and is not product-attributed. Existing Build Impact savings and overlapping task sums are excluded, no rejected mechanism reopens, no implementation/timing/production/Test Optimization authority is created, and `POC-PORTFOLIO-DECISION-001` is next |
+| `E-274` | 2026-08-09 | `POC-PORTFOLIO-DECISION-001` | The [terminal decision contract](./specs/poc-portfolio-decision-v1.md), exact machine policy, deterministic composer, independent checker and [portfolio evidence](./benchmarks/results/poc-portfolio-decision-v1.json) bind the installed matrix, qualified Kafka cell, deterministic profile discovery and trace-gated no-action result by SHA-256. The policy requires two qualifying installed families for broad continuation and forbids averaging repository percentages or adding mechanism effects | `DONE` terminal `SPECIALIZE_BOUNDED_KAFKA_PROFILE`: 1/3 families qualifies. Retain only the explicit reviewed Kafka profile at 28,523.25 ms/81.85% mean savings with 8/8 positive pairs and complete fallback; Spring and OpenTelemetry retain optimized native Gradle; withdraw the general accelerator claim. No new timing, automatic activation, production, soak, design-partner or Test Optimization authority is created, and the current POC evidence plan is complete |
 
 ---
 
@@ -1727,6 +1738,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-09 | Closed the terminal POC portfolio decision as `SPECIALIZE_BOUNDED_KAFKA_PROFILE`: retain only the explicit reviewed Kafka profile, keep Spring/OpenTelemetry native, withdraw the general accelerator claim, and require a new materially different preregistration for any further POC work | Codex |
 | 2026-08-09 | Closed the trace-gated hypothesis with `NO_ACTIONABLE_HYPOTHESIS`: no retained installed phase provides 500 ms of causally recoverable product-owned work in two families, so no new implementation or timing is authorized and the terminal portfolio decision is next | Codex |
 | 2026-08-09 | Closed deterministic profile discovery: the installed read-only command reproduces the exact retained Kafka v2 profile from digest-bound contracts and evidence without repository-name rules, while Spring, OpenTelemetry and every tested uncertainty fail closed to native full graph; moved the trace-gated hypothesis next without adding a timing or authority claim | Codex |
 | 2026-08-08 | Closed the installed qualified-profile matrix with one of three families qualified: Spring retained native after one negative pair, OpenTelemetry retained native after zero-observation preparation failure, and Kafka qualified at 81.85%; the POC now specializes deterministic discovery to Kafka without averaging repository percentages | Codex |
