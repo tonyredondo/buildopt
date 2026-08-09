@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
@@ -172,13 +173,19 @@ func writeEvaluatedProfile(repositoryRoot, relativePath string, profile profiled
 		return fmt.Errorf("profile output escapes the repository")
 	}
 	parent := filepath.Dir(path)
-	canonicalParent, err := filepath.EvalSymlinks(parent)
-	if err != nil {
-		return fmt.Errorf("resolve profile output directory: %w", err)
-	}
-	parentRelative, err := filepath.Rel(repositoryRoot, canonicalParent)
-	if err != nil || parentRelative == ".." || filepath.IsAbs(parentRelative) || canonicalParent != parent {
+	parentRelative, err := filepath.Rel(repositoryRoot, parent)
+	if err != nil || parentRelative == ".." || filepath.IsAbs(parentRelative) {
 		return fmt.Errorf("profile output directory must be an existing repository directory without symlinks")
+	}
+	current := repositoryRoot
+	if parentRelative != "." {
+		for _, segment := range strings.Split(parentRelative, string(filepath.Separator)) {
+			current = filepath.Join(current, segment)
+			info, inspectErr := os.Lstat(current)
+			if inspectErr != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+				return fmt.Errorf("profile output directory must be an existing repository directory without symlinks")
+			}
+		}
 	}
 	if info, err := os.Lstat(path); err == nil && info.Mode()&os.ModeSymlink != 0 {
 		return fmt.Errorf("profile output must not be a symlink")
