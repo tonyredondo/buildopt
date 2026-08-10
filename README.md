@@ -27,16 +27,13 @@ evidence around that execution and uses conservative fallbacks: a rejected
 cache entry becomes a normal cache miss, an unqualified optimization is not
 applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
-> **Project status:** this is an owner-operated proof of concept. The combined
-> public path has beaten a well-configured native Gradle baseline across four
-> qualified synthetic Kotlin/Groovy workload cells, and exact structural scopes
-> now qualify on substantial Spring, OpenTelemetry, Kafka, Micronaut and Apache
-> Groovy builds. The decision is `CONTINUE` only for independently measured,
-> output-exact scopes; unknown repositories and changes still use optimized
-> native Gradle. This does not prove universal savings or production readiness.
-> Soak, design partners, HA, enterprise identity, multi-tenancy, and production
-> operations remain outside this phase. Test Optimization is a separate product
-> and is not implemented here.
+> **Project status:** this is an owner-operated proof of concept. The same
+> generic structural Build Impact method now qualifies on OpenTelemetry,
+> Kafka, Micronaut, and Groovy at **14.43% to 84.11% lower wall time** than
+> optimized native Gradle. Spring improved by **17.94%** but remains native
+> because one of eight pairs was slower. The current decision is to continue
+> with a review-required structural POC, not to claim universal savings or
+> production readiness. See the [current one-pager](./docs/findings/buildopt-poc-handoff.md).
 
 ## Get your first result
 
@@ -66,10 +63,20 @@ build can therefore restore compatible outputs without a plugin path, service,
 credential, or `--build-cache` flag. BuildOpt's stricter Safe Cache remains an
 explicit POC experiment because it has not demonstrated incremental build-time
 value over that native baseline.
+
+This two-command check validates installation and cache-compatible execution;
+it does not by itself activate or prove the structural accelerator. The current
+accelerator requires repository-owned inputs, paired measurement, explicit
+review, and a qualified profile. Follow the [Build Impact workflow](./docs/guides/product-workflows.md#build-impact)
+to evaluate that path.
+
 The [product onboarding guide](./docs/getting-started/product-onboarding.md)
 contains Windows installation, CI snippets, component ownership and the
 recommended rollout order. Contributors who want the complete synthetic lab
 can use the [source quickstart](./docs/getting-started/quickstart.md).
+
+<details>
+<summary>Historical research and earlier bounded experiments</summary>
 
 The cache-compatible command is the zero-configuration starting point. The
 measured accelerator is the qualified POC profile: after committing a reviewed
@@ -283,6 +290,8 @@ hashes, then emits JSON for repository review. `buildopt poc` rechecks those
 bindings before every run and retains the native full graph on drift or
 uncertainty. See the [structural profile contract](./specs/poc-structural-profile-v1.md).
 
+</details>
+
 ## Choose what to do next
 
 | Goal | Start here |
@@ -291,7 +300,7 @@ uncertainty. See the [structural profile contract](./specs/poc-structural-profil
 | Run the source-based POC lab | [Quickstart](./docs/getting-started/quickstart.md) |
 | Add it to GitHub Actions or GitLab CI | [CI integration](./docs/guides/ci-integration.md) |
 | Understand the design | [Architecture overview](./docs/architecture/overview.md) |
-| Review measured value and next priorities | [Performance findings](./docs/findings/build-optimization-performance.md) |
+| Review the POC idea, current value, and next priorities | [Current POC one-pager](./docs/findings/buildopt-poc-handoff.md) |
 | Make a code change | [Developer onboarding](./docs/getting-started/developer-onboarding.md) |
 | Find a command or setting | [CLI](./docs/reference/cli.md) and [configuration](./docs/reference/configuration.md) references |
 | Diagnose a failure | [Troubleshooting](./docs/troubleshooting.md) |
@@ -331,8 +340,8 @@ Start at the [documentation portal](./docs/README.md). Common routes are:
   trust boundaries, and failure behavior.
 - [Repository map](./docs/architecture/repository-map.md) — the architecture's
   exact correspondence with folders and artifacts.
-- [Product workflows](./docs/guides/product-workflows.md) — history, runtime
-  optimization, Patch Autopilot, Build Impact, and Edge.
+- [Product workflows](./docs/guides/product-workflows.md) — launcher, profile
+  evaluation, Patch Autopilot, Build Impact, and Edge.
 - [CI integration](./docs/guides/ci-integration.md) — GitHub Actions and GitLab
   CI.
 - [CLI reference](./docs/reference/cli.md) and

@@ -1,6 +1,32 @@
 # Build Optimization Performance Findings and Next Steps
 
-## Executive Summary
+## Current Executive Summary
+
+- **The current POC has one broadly supported accelerator: structural Build
+  Impact.** Under the same installed, eight-pair method it qualified on
+  OpenTelemetry (**14.43% faster**), Kafka (**84.11%**), Micronaut
+  (**41.74%**), and Groovy (**73.85%**) while preserving exact required outputs
+  and full-graph fallback.
+- **Spring confirms that the product gate is stricter than the mean.** It was
+  **17.94% faster** on average with a positive interval, but one -260-ms pair
+  failed the frozen 8/8 rule, so the current decision remains optimized native
+  Gradle.
+- **The POC should now prove repeatable adoption and unseen-repository
+  transfer.** The next block is a review-only repository-owned CI artifact,
+  followed by clean-runner replay and one unchanged substantial holdout. See
+  the [current one-pager](./buildopt-poc-handoff.md) for the decision-ready
+  summary and roadmap.
+- **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
+  Runtime Tuning, Hot State, and standard Copy are retired; historical Jar,
+  Patch, and Edge experiments remain scoped supporting evidence rather than
+  part of the comparable five-repository claim.
+
+## Historical and Mechanism-Specific Findings
+
+The sections below preserve the experiments that led to the current decision.
+They are useful for attribution and for avoiding repeated failed hypotheses,
+but they do not supersede the terminal structural matrix above or the current
+one-pager.
 
 - **BuildOpt has demonstrated real build-time value, but not every component is
   an accelerator.** Build Impact and bounded task optimizations are the

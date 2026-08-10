@@ -17,8 +17,9 @@ small/medium/large Gradle build matrix and makes no performance claim.
 
 ## Build Optimization scorecard
 
-For a stakeholder-oriented interpretation of these results and the recommended
-next experiments, see [Build Optimization performance findings](../docs/findings/build-optimization-performance.md).
+For the decision-ready product summary, see the [current POC one-pager](../docs/findings/buildopt-poc-handoff.md).
+The [detailed performance findings](../docs/findings/build-optimization-performance.md)
+retain mechanism-specific and historical experiments for engineering review.
 
 ### Terminal generic structural matrix
 
@@ -40,7 +41,10 @@ execution mode; its timed conditions and thresholds are identical to v3. Do
 not average these repository percentages or add them to other mechanism
 effects.
 
-### General whole-profile value
+### Historical whole-profile composition evidence
+
+This earlier scorecard records differently composed mechanisms and is not
+directly comparable with the terminal structural-only matrix above.
 
 [`results/poc-general-build-value-v1.json`](./results/poc-general-build-value-v1.json)
 binds the direct end-to-end result for every exact target composition without

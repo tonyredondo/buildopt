@@ -1,133 +1,135 @@
-# BuildOpt POC One-Pager
+# BuildOpt POC: Current Evidence and Direction
 
-_Current evidence as of 2026-08-11_
+## Executive Summary
 
-## Purpose
+- **BuildOpt is testing whether a generic decision layer can make substantial
+  Gradle builds faster than optimized native Gradle.** Its current accelerator
+  selects a smaller change-specific project graph before Gradle executes it,
+  while preserving repository-declared outputs and the original full graph as
+  the fallback.
+- **The current evidence supports continuing the POC.** The same structural
+  method qualified on OpenTelemetry, Kafka, Micronaut, and Groovy, reducing
+  wall time by **14.43% to 84.11%**. Spring improved by **17.94%**, but BuildOpt
+  correctly retained native Gradle because one of eight pairs was slower.
+- **The next problem is adoption and generalization, not production
+  hardening.** BuildOpt should turn repository-owned CI inputs into a reviewable
+  proposal, reproduce the current decisions on clean runners, and then run the
+  unchanged workflow on an unseen substantial Gradle repository.
 
-BuildOpt tests one strict product hypothesis: a repository-independent tool can
-make substantial Gradle builds faster than an already optimized native Gradle
-baseline by executing a smaller, change-specific project graph, without
-changing the required outputs or weakening fallback behavior.
+## The Project in One Minute
 
-The current POC is intentionally narrow. It is not a production-readiness
-exercise and it does not claim that every repository or change can be
-optimized.
+Gradle already provides Build Cache, Configuration Cache, incremental tasks,
+up-to-date checks, parallel execution, and remote-cache integration. Those
+features optimize work inside the task graph requested by the build.
 
-## Current POC Flow
+BuildOpt explores an additional layer: given the original Gradle workflow, an
+exact Git change, and the outputs the repository requires, can it prove that a
+smaller graph is sufficient and materially faster? If the answer is uncertain
+or the measured value is weak, BuildOpt runs the optimized native full graph.
 
-The active workflow is:
+The current POC flow is:
 
 ```text
-repository-owned task + exact Git change + required outputs
+repository-owned Gradle task + exact Git change + required outputs
   -> buildopt profile propose
   -> buildopt profile measure
   -> buildopt profile evaluate
-  -> explicit, review-required structural profile
-  -> buildopt poc
+  -> explicit review
+  -> buildopt poc or optimized native Gradle
 ```
 
-The proposal logic uses project structure and source ownership rather than
-repository names. Measurement compares the installed BuildOpt path with
-optimized native Gradle through eight isolated alternating pairs. Evaluation
-requires exact outputs, a positive timing result, repeatability, and a proven
-full-graph fallback.
+There are no repository-name rules and no automatic production activation.
 
-If discovery is incomplete, inputs drift, outputs differ, timing is weak, or a
-fallback fails, BuildOpt retains the original native full graph.
+## Mechanisms and Current Role
 
-## Current Comparable Evidence
+| Mechanism | What it does | Difference from native Gradle | Current POC decision |
+| --- | --- | --- | --- |
+| **Structural Build Impact** | Maps a change and required outputs to the smallest proven project/task entrypoint set. | Avoids configuring and executing unrelated parts of the requested graph; Gradle's incremental features normally act after the graph has been requested. | **Active accelerator.** This is the mechanism measured consistently across the five current repositories. |
+| **Profile measurement and evaluation** | Captures isolated paired timings, exact outputs, drift bindings, and fallback evidence before producing a profile. | Adds a cross-build evidence and activation policy rather than another Gradle execution optimization. | **Required safety layer.** Review remains explicit. |
+| **Safe Cache / local L1** | Reuses verified outputs within repository, Wrapper, and platform boundaries. | Adds isolation and verification around native cache semantics. | **Not a speed differentiator.** It is at parity with a warm native Gradle cache and is not part of the current structural claim. |
+| **Exact task optimization / Patch Autopilot** | Makes one exactly understood task shape reusable through a bounded adapter or reviewable patch. | Repairs or augments cacheability that the repository has not declared correctly. | **Promising but scoped research.** It must qualify independently for each generic task contract before joining the main path. |
+| **Shared / Edge Cache** | Serves committed outputs from shared or nearer storage. | Adds controlled locality around Gradle's remote-cache protocol. | **Bounded supporting evidence.** Network-dependent results are kept separate from the structural matrix. |
+| **Build History and launcher** | Records evidence, preserves process behavior, and applies bypass/fallback. | Provides orchestration and attribution, not avoided Gradle work. | **Supporting infrastructure.** Its overhead is included in installed-path measurements. |
+| **Runtime Tuning, Hot State, standard Copy** | Previously tested worker/heap changes, plan reuse, and broader task adaptation. | Attempted to tune or reuse work beyond the retained structural path. | **Retired.** Terminal evidence was neutral, unstable, or regressive. |
 
-All rows below use the same structural-only method. Times are wall-clock means
-from eight alternating pairs and include the installed BuildOpt launcher and
-profile overhead.
+## Current Wall-Time Evidence
 
-| Repository | Full -> selected projects | Optimized native | BuildOpt | Mean saving | Positive pairs | POC decision |
+The comparison baseline is optimized native Gradle using the same repository
+revision, Gradle workflow, runner resources, required outputs, and applicable
+native cache/parallel settings. Each row contains eight isolated alternating
+pairs. BuildOpt time includes proposal consumption, validation, launcher, and
+Gradle execution.
+
+| Repository | Full -> selected projects | Native mean | BuildOpt mean | Mean saving | Positive pairs | Decision |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
-| Spring Framework | 27 -> 10 | 13.940 s | 11.438 s | **2.501 s / 17.94%** | 7/8 | Retain native: one -260 ms pair fails the frozen 8/8 repeatability rule. |
+| Spring Framework | 27 -> 10 | 13.940 s | 11.438 s | **2.501 s / 17.94%** | 7/8 | Retain native: one -260 ms pair fails the frozen 8/8 repeatability gate. |
 | OpenTelemetry Java Instrumentation | 1,024 -> 34 | 83.934 s | 71.825 s | **12.110 s / 14.43%** | 8/8 | Qualify. |
 | Apache Kafka | 64 -> 3 | 82.498 s | 13.113 s | **69.385 s / 84.11%** | 8/8 | Qualify. |
 | Micronaut Core | 75 -> 22 | 27.407 s | 15.968 s | **11.439 s / 41.74%** | 8/8 | Qualify. |
 | Apache Groovy | 37 -> 2 | 75.064 s | 19.629 s | **55.434 s / 73.85%** | 8/8 | Qualify. |
 
 Every accepted observation preserved the declared required outputs byte for
-byte, completed the native full-graph fallback, and recorded zero
-product-attributable failures. OpenTelemetry uses the separately
-preregistered v4 correction because its earlier correctness fallback changed
-scheduling and therefore could not be accepted; no rejected timing was reused.
+byte, completed a scheduling-equivalent native full-graph fallback, and
+recorded zero product-attributable failures. OpenTelemetry uses its separately
+preregistered v4 correction because the earlier fallback changed scheduling;
+none of the rejected timing was reused.
 
-The repository percentages are independent results. They are neither averaged
-across repositories nor added to results from caching, JAR adapters, Edge, or
-older compositions.
+Repository percentages are independent. They are not averaged across
+repositories and are not added to cache, task-adapter, or Edge results.
 
-## What This Proves
+## What the Tests Demonstrate
 
-1. **Generic structural optimization can beat optimized native Gradle.** The
-   same repository-independent mechanism qualified on four materially
-   different Gradle families.
-2. **The value is end to end.** The measurements include discovery, launcher,
-   validation, profile loading, and Gradle execution rather than timing only an
-   internal BuildOpt phase.
-3. **Graph reduction has a cascade effect.** Omitting unrelated projects also
-   removes their configuration, task scheduling, cache lookup, source
-   processing, compilation, and packaging work. This explains the larger
-   Kafka, Micronaut, and Groovy gains.
-4. **A smaller graph is not sufficient by itself.** Spring removed 17 projects
-   and improved its mean, but BuildOpt still declined activation because the
-   complete paired result missed the frozen repeatability gate.
-5. **Fail-closed selection is practical.** Unsupported, incomplete, drifted,
-   weak, or incorrect candidates return to native Gradle instead of converting
-   uncertainty into a performance claim.
+- **The idea transfers.** Four different public Gradle families qualified
+  without repository-specific product logic.
+- **Avoided work compounds.** Omitting projects also removes their
+  configuration, scheduling, cache lookup, compilation, and packaging work;
+  this explains the larger Kafka, Micronaut, and Groovy gains.
+- **Correctness is necessary but not sufficient.** Spring preserved outputs
+  and improved on average, yet retained native Gradle because the complete
+  result missed the repeatability gate.
+- **The gain survives product overhead.** Timings include BuildOpt validation,
+  launcher, profile loading, and Gradle execution rather than an internal
+  microbenchmark.
 
-## Current Product Conclusion
+## Current Conclusion
 
-The POC now has a defensible reason to continue: BuildOpt can create material
-value beyond Gradle's native incremental and cache behavior by avoiding work
-before Gradle executes the requested graph. The current evidence supports a
-**review-required structural Build Impact POC**, not a universal automatic
-optimizer.
+BuildOpt now has a defensible POC value proposition: it can improve substantial
+Gradle build wall time beyond native caching and incremental execution by
+proving that less of the repository needs to run for a specific change and
+declared output set.
 
-Structural selection is the active acceleration mechanism. Safe Cache remains
-at native-cache parity rather than being presented as a speed advantage.
-Runtime Tuning, Hot State, and standard-Copy activation were removed after
-terminal negative evidence. Historical JAR and Edge results remain useful
-research evidence, but they are not part of this comparable five-repository
-claim.
+The evidence does **not** support calling BuildOpt a universal optimizer yet.
+The right product shape today is a review-required structural optimization
+assistant that produces evidence, qualifies only repeatable wins, and otherwise
+keeps native Gradle authoritative.
 
-## What This Does Not Prove
+## Recommended Next Steps
 
-- It does not guarantee savings for every repository, change, task, or runner.
-- It does not establish production readiness, autonomous activation, HA,
-  long-duration stability, or customer operations.
-- It does not authorize skipping undeclared outputs or Test Optimization.
-- It does not show that BuildOpt's cache is faster than a warm native Gradle
-  cache.
-- It does not justify relaxing the correctness or fallback gates to qualify
-  more repositories.
+1. **Make the proposal a review-only CI artifact.** Implement
+   `POC-GENERIC-PROFILE-CI-001`: an owner-declared workflow supplies the
+   Gradle task, exact Git change, and required outputs; CI uploads the proposal
+   and fallback reason without activating it.
+2. **Reproduce current decisions on clean CI runners.** The five repositories
+   should produce the same graph proposals or explicit native decisions from
+   checked-in inputs.
+3. **Run an unchanged holdout test.** Select one unseen, substantial Gradle
+   repository and apply the same propose -> measure -> evaluate flow without
+   repository-specific code, post-result tuning, or relaxed gates.
+4. **Broaden workflow coverage deliberately.** After the holdout, test distinct
+   customer build shapes such as compilation, packaging, verification, and
+   build-owned test preparation. Test Optimization remains separate.
+5. **Make onboarding repository-owned and keep wall time authoritative.** Users
+   should provide a Gradle command, change source, and output contract—not
+   hand-authored graphs. Promote only installed paths that preserve outputs,
+   pass repeatability, prove fallback, and materially beat native Gradle.
 
-## Next Steps
+## Scope and Evidence Sources
 
-1. **Publish the proposal as a review-only CI artifact.** Implement
-   `POC-GENERIC-PROFILE-CI-001` so an owner-declared workflow supplies the
-   original Gradle task, exact Git change, and required outputs. CI should
-   upload the generated proposal and native-fallback reason without activating
-   it automatically.
-2. **Exercise that CI flow on the existing public repositories.** Confirm that
-   clean runners reproduce the same proposals and that unsupported or
-   incomplete discovery produces an explicit native decision.
-3. **Use one unseen substantial Gradle repository as a holdout.** Run the
-   unchanged propose -> measure -> evaluate workflow without repository-specific
-   code or post-result parameter tuning.
-4. **Keep wall-clock value as the promotion boundary.** Continue only when the
-   installed path beats optimized native Gradle, preserves every declared
-   output, passes the repeatability rule, and proves full fallback.
-5. **Reopen other mechanisms only from new attributable evidence.** Do not
-   revive Runtime Tuning, Hot State, or Copy unless a materially different,
-   generic trace exposes enough recoverable critical-path work to justify a
-   preregistered experiment.
-
-## Primary Evidence
+This is POC evidence, not production readiness, autonomous activation,
+long-duration validation, customer operations, or a universal savings claim.
+Test Optimization remains outside Build Optimization.
 
 - [Terminal five-repository structural matrix](../../benchmarks/results/poc-generic-profile-matrix-v3/README.md)
 - [OpenTelemetry fallback-equivalence correction](../../benchmarks/results/poc-generic-profile-matrix-v4/README.md)
-- [Detailed current performance findings](./build-optimization-performance.md)
+- [Detailed performance findings and historical research](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

@@ -200,37 +200,28 @@ exports. Add `version: 0.2.0` to pin the native package.
 
 ## What improvement should you expect?
 
-The current scorecard measures mechanisms separately so one feature cannot
-hide another's cost:
+Do not use one headline percentage as an expectation for a new repository.
+The current comparable evidence measures the same installed structural-only
+method against optimized native Gradle:
 
-| Mechanism | Measured result | What the comparison proves |
-|---|---:|---|
-| Safe Cache | `NO_VALUE_NO_ACTION`; explicit-only | The default delegates to Gradle native cache, removing product overhead without claiming acceleration |
-| Installed Spring Build Impact | 15.76% faster; 1,260.125 ms saved; 8/8 positive pairs | The packaged command beats optimized native Gradle for one reviewed Spring output scope with identical declared outputs |
-| Installed Spring breadth | `spring-webmvc` 13.50% faster and qualified; shared `spring-core` scope averaged 10.89% faster but failed 4/4 stability | The POC remains output-scope-specific and does not promise acceleration for every change |
-| Runtime Tuning | `RETIRED` | `W4_H6G` regressed 54.7%; `W3_H4G` regressed 4.3%; the final Spring worker cap was 2.00% slower |
-| Build Impact | 73.5–76.0% faster in the strict bounded Kotlin/Groovy workloads | Avoided unrelated non-cacheable work while required outputs stayed unchanged |
-| Reviewed Task/Patch | 67.3–68.0% faster for the exact reviewed custom-task recipe | Restored all eight qualified task outputs; this does not generalize to other recipes |
-| Combined public path | 63.5–84.1% faster across four strict Kotlin/Groovy workload cells | The actual packaged CLIs and plugin beat optimized native Gradle with unproven mechanisms disabled |
+| Repository | Native mean | BuildOpt mean | Result | Current decision |
+| --- | ---: | ---: | ---: | --- |
+| Spring Framework | 13.940 s | 11.438 s | **17.94% faster**, 7/8 positive | Retain native under the frozen repeatability rule. |
+| OpenTelemetry | 83.934 s | 71.825 s | **14.43% faster**, 8/8 positive | Qualify. |
+| Apache Kafka | 82.498 s | 13.113 s | **84.11% faster**, 8/8 positive | Qualify. |
+| Micronaut Core | 27.407 s | 15.968 s | **41.74% faster**, 8/8 positive | Qualify. |
+| Apache Groovy | 75.064 s | 19.629 s | **73.85% faster**, 8/8 positive | Qualify. |
 
-These are controlled POC workloads, not universal predictions, and the
-mechanism percentages must not be added; the combined row is measured directly.
-A separate realistic five-project matrix initially qualified 2/8 cells. After
-installed-path attribution and removal of one candidate-only environment
-difference, the unchanged repeat qualified leaf Kotlin/Groovy and shared Kotlin
-acceleration plus no-change Kotlin parity (4/8 cells). Global build-logic,
-no-change Groovy, and shared Groovy remain outside the claim. The isolated-arm
-experiment then exposed four order-dependent classifications, so those cells
-remain outside the claim while a temporally paired, state-isolated measurement
-removes runner drift.
-A repository that needs the full graph receives
-no Build Impact saving; an already warm native cache is a parity baseline, not
-the cache-off comparison. Run `./dev/check-poc-value-validation` to validate
-and print the `CONTINUE` decision without rerunning Gradle. This means the idea
-merits further POC work for the qualified synthetic classes, not that it is
-production-ready. The
-[benchmark index](../../benchmarks/README.md#build-optimization-scorecard)
-links every raw observation and measurement contract.
+Every accepted row preserved the declared outputs byte for byte and proved
+full-graph fallback. These results show that structural reduction can create
+material value, not that a new repository will match one of these percentages.
+The propose -> measure -> evaluate workflow must establish that repository's
+own result. Safe Cache remains at native-cache parity; Runtime Tuning, Hot
+State, and standard Copy are retired. Mechanism and repository percentages are
+not averaged or added. See the [current POC one-pager](../findings/buildopt-poc-handoff.md)
+for the interpretation and roadmap, and the
+[benchmark index](../../benchmarks/README.md#build-optimization-scorecard) for
+the raw evidence.
 
 ## Component ownership and configuration
 
@@ -256,18 +247,25 @@ defaults from operator-owned credentials and private configuration.
 
 ## Recommended adoption order
 
-1. Run `buildopt doctor` and one local `buildopt gradle` build.
-2. Put the same command in one CI job and keep `BUILDOPT_BYPASS=1` as rollback.
-3. Collect build history before changing policy so improvements have a
-   baseline.
-4. Add Build Impact independently and compare it against the history baseline.
-5. Evaluate Task Intelligence and Patch Autopilot through their owner workflows; they are not first-run package switches.
-6. Operate Shared or Edge only when local/CI reuse justifies a persistent
-   service and its credential lifecycle.
+1. Run `buildopt doctor` and capture the real optimized-native Gradle command
+   and wall-time baseline.
+2. Declare the original Gradle entrypoint, exact Git change, and required
+   output globs; these are repository-owner decisions rather than BuildOpt
+   guesses.
+3. Run `buildopt profile propose` and review the selected graph or explicit
+   native-fallback reason.
+4. Run the isolated `profile measure -> profile evaluate` flow. Accept no
+   profile unless required outputs, repeatability, wall-time value, and the
+   full-graph fallback all pass.
+5. Commit the reviewed profile and exercise `buildopt poc` in one CI job with
+   `BUILDOPT_BYPASS=1` available as immediate rollback.
+6. Consider Patch Autopilot or Edge only after structural value is established
+   and their own workload-specific evidence justifies the extra mechanism.
 
 This ordering keeps the first result local and reversible. Persistent storage,
 network access, credentials and repository mutation are never prerequisites
-for the first build.
+for the first build, and a new repository remains on optimized native Gradle
+until its own evidence qualifies.
 
 Runtime Tuning, exact-bound Hot State, and standard Copy are not onboarding
 options. They were retired after failing incremental end-to-end value gates;
