@@ -1210,6 +1210,37 @@ only for the reproduced failures: no-change Groovy, leaf Kotlin, and shared
 Groovy. It explicitly blocks tuning the two mismatched Kotlin cells from this
 evidence. Percentages are not added across cells.
 
+## Five-repository generic structural profile matrix
+
+[`results/poc-generic-profile-matrix-v1/summary.json`](./results/poc-generic-profile-matrix-v1/summary.json)
+applies one installed, repository-independent `profile propose -> profile
+measure -> profile evaluate` path to Spring Framework, OpenTelemetry Java
+Instrumentation, Apache Kafka, Micronaut Core, and Apache Groovy. The fresh
+candidate contains Build Impact only; older Jar and Edge compositions are
+retained separately and are not attributed to structural reduction.
+
+| Repository | Project reach | Optimized native | Structural candidate | Result | Decision |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Spring Framework | 27 -> 10 | 12.338 s | 11.495 s | **6.83% faster**, 5/8 positive, interval crosses zero | Native |
+| OpenTelemetry | 1,024 -> 34 | — | — | No accepted result; pair 6 gap was 5.444 s | Native |
+| Kafka | 64 -> 3 | 87.873 s | 13.080 s | **85.12% faster**, 8/8 positive | Qualified |
+| Micronaut Core | 75 -> 22 | 25.699 s | 14.848 s | **42.22% faster**, 8/8 positive | Qualified |
+| Apache Groovy | 37 -> 2 | 69.446 s | 19.455 s | **71.99% faster**, 8/8 positive | Qualified |
+
+Every completed row preserves byte-identical required outputs and proves the
+native full-graph fallback. OpenTelemetry's first five pairs were positive,
+but they are deliberately excluded because the sixth pair exceeded the frozen
+five-second inter-arm gap. The matrix therefore reports three qualified cells,
+one weak cell, and one unavailable cell rather than averaging repository
+percentages or selecting favorable partial data.
+
+Validate the committed bundle without network access:
+
+```bash
+./dev/check-generic-profile-matrix \
+  benchmarks/results/poc-generic-profile-matrix-v1
+```
+
 ## Historical v0.2 public onboarding performance
 
 [The hosted result](./results/onboarding-performance-v1-hosted.json) preserves

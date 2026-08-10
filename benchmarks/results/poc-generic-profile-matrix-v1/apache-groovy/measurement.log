@@ -1,0 +1,176 @@
+buildopt: warming isolated control arm at c16898314460cdfc3e0f0d7d24822585bbd1997e
+buildopt: warming isolated candidate arm at c16898314460cdfc3e0f0d7d24822585bbd1997e
+buildopt: structural pair 1/8 control=77265ms candidate=23782ms saved=53483ms gap=1222ms order=CONTROL_FIRST
+buildopt: structural pair 2/8 control=70219ms candidate=18222ms saved=51997ms gap=284ms order=CANDIDATE_FIRST
+buildopt: structural pair 3/8 control=71344ms candidate=18567ms saved=52777ms gap=223ms order=CONTROL_FIRST
+buildopt: structural pair 4/8 control=69750ms candidate=18031ms saved=51719ms gap=294ms order=CANDIDATE_FIRST
+buildopt: structural pair 5/8 control=68741ms candidate=19369ms saved=49372ms gap=217ms order=CONTROL_FIRST
+buildopt: structural pair 6/8 control=65170ms candidate=19756ms saved=45414ms gap=378ms order=CANDIDATE_FIRST
+buildopt: structural pair 7/8 control=68731ms candidate=19783ms saved=48948ms gap=217ms order=CONTROL_FIRST
+buildopt: structural pair 8/8 control=64345ms candidate=18128ms saved=46217ms gap=276ms order=CANDIDATE_FIRST
+buildopt: structural profile measurement decision QUALIFIED_EVIDENCE_WRITTEN; review buildopt-structural-evidence.json before evaluation
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+  "evidenceState": "QUALIFIED",
+  "capturedAt": "2026-08-10T09:36:05Z",
+  "subject": {
+    "repositoryId": "apache/groovy",
+    "repositoryRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+    "pipelineClass": "classes"
+  },
+  "sourceBindings": {
+    "manifestSha256": "9362beeb60a3f844a7fea20ea4b9bb5af8e5199b7463d6fd7d62c7f7cbd43be5",
+    "graphSha256": "ad0f9d809da99051f61ee2952fd797da8909670ea685a3c553a09704c1b17687",
+    "generatedManifestSha256": "13561951bad18d2480b573327bd72ac6e61a73ea3c21971dd0f5f13446d5a944",
+    "sourceEvidenceSha256": "567700230e4130b93ec67296f6a281dfbcbbf312156c7887463e20ec110f42fd"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":groovy-json:classes"
+    ],
+    "fallbackEntrypoints": [
+      "classes"
+    ],
+    "requiredOutputs": [
+      "subprojects/groovy-json/build/classes/**"
+    ],
+    "totalProjectCount": 37,
+    "selectedProjectCount": 2,
+    "omittedProjectCount": 35,
+    "omittedProjectRatio": 0.9459459459459459
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "6adc0ec74160ef99446c48d876b36e0610a14105",
+    "executableSha256": "273f7091e1dad1a9b71a38827108422cc4ef666553f830d567bf6464a1bd7d18",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 77265,
+      "candidateDurationMs": 23782,
+      "savedMs": 53483,
+      "controlRequiredOutputSha256": "3d8afa0c7f5f31a3dea7c0098e607284926ec09e538c5e6dd781a8570211551d",
+      "candidateRequiredOutputSha256": "3d8afa0c7f5f31a3dea7c0098e607284926ec09e538c5e6dd781a8570211551d",
+      "requiredOutputCount": 66,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 70219,
+      "candidateDurationMs": 18222,
+      "savedMs": 51997,
+      "controlRequiredOutputSha256": "3d8afa0c7f5f31a3dea7c0098e607284926ec09e538c5e6dd781a8570211551d",
+      "candidateRequiredOutputSha256": "3d8afa0c7f5f31a3dea7c0098e607284926ec09e538c5e6dd781a8570211551d",
+      "requiredOutputCount": 66,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 71344,
+      "candidateDurationMs": 18567,
+      "savedMs": 52777,
+      "controlRequiredOutputSha256": "3d8afa0c7f5f31a3dea7c0098e607284926ec09e538c5e6dd781a8570211551d",
+      "candidateRequiredOutputSha256": "3d8afa0c7f5f31a3dea7c0098e607284926ec09e538c5e6dd781a8570211551d",
+      "requiredOutputCount": 66,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 69750,
+      "candidateDurationMs": 18031,
+      "savedMs": 51719,
+      "controlRequiredOutputSha256": "3d8afa0c7f5f31a3dea7c0098e607284926ec09e538c5e6dd781a8570211551d",
+      "candidateRequiredOutputSha256": "3d8afa0c7f5f31a3dea7c0098e607284926ec09e538c5e6dd781a8570211551d",
+      "requiredOutputCount": 66,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 5,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 68741,
+      "candidateDurationMs": 19369,
+      "savedMs": 49372,
+      "controlRequiredOutputSha256": "3d8afa0c7f5f31a3dea7c0098e607284926ec09e538c5e6dd781a8570211551d",
+      "candidateRequiredOutputSha256": "3d8afa0c7f5f31a3dea7c0098e607284926ec09e538c5e6dd781a8570211551d",
+      "requiredOutputCount": 66,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 6,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 65170,
+      "candidateDurationMs": 19756,
+      "savedMs": 45414,
+      "controlRequiredOutputSha256": "3d8afa0c7f5f31a3dea7c0098e607284926ec09e538c5e6dd781a8570211551d",
+      "candidateRequiredOutputSha256": "3d8afa0c7f5f31a3dea7c0098e607284926ec09e538c5e6dd781a8570211551d",
+      "requiredOutputCount": 66,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 7,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 68731,
+      "candidateDurationMs": 19783,
+      "savedMs": 48948,
+      "controlRequiredOutputSha256": "3d8afa0c7f5f31a3dea7c0098e607284926ec09e538c5e6dd781a8570211551d",
+      "candidateRequiredOutputSha256": "3d8afa0c7f5f31a3dea7c0098e607284926ec09e538c5e6dd781a8570211551d",
+      "requiredOutputCount": 66,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 8,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 64345,
+      "candidateDurationMs": 18128,
+      "savedMs": 46217,
+      "controlRequiredOutputSha256": "3d8afa0c7f5f31a3dea7c0098e607284926ec09e538c5e6dd781a8570211551d",
+      "candidateRequiredOutputSha256": "3d8afa0c7f5f31a3dea7c0098e607284926ec09e538c5e6dd781a8570211551d",
+      "requiredOutputCount": 66,
+      "productAttributableFailure": false
+    }
+  ],
+  "fallback": {
+    "mode": "FULL_GRAPH",
+    "reason": "IMPACT_GLOBAL_CHANGE",
+    "buildSuccessful": true
+  },
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 69445.625,
+    "candidateMeanMs": 19454.75,
+    "meanSavedMs": 49990.875,
+    "reductionRatio": 0.7198563624418385,
+    "interval95SavedMs": [
+      47969.25,
+      51873
+    ],
+    "positivePairs": 8,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

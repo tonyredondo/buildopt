@@ -1,0 +1,176 @@
+buildopt: warming isolated control arm at 4b5c92703c63966c3471242c621c4a63b382638d
+buildopt: warming isolated candidate arm at 4b5c92703c63966c3471242c621c4a63b382638d
+buildopt: structural pair 1/8 control=11220ms candidate=14271ms saved=-3051ms gap=1041ms order=CONTROL_FIRST
+buildopt: structural pair 2/8 control=10150ms candidate=11321ms saved=-1171ms gap=701ms order=CANDIDATE_FIRST
+buildopt: structural pair 3/8 control=14234ms candidate=10974ms saved=3260ms gap=397ms order=CONTROL_FIRST
+buildopt: structural pair 4/8 control=13744ms candidate=12791ms saved=953ms gap=768ms order=CANDIDATE_FIRST
+buildopt: structural pair 5/8 control=13318ms candidate=10133ms saved=3185ms gap=317ms order=CONTROL_FIRST
+buildopt: structural pair 6/8 control=13244ms candidate=10617ms saved=2627ms gap=670ms order=CANDIDATE_FIRST
+buildopt: structural pair 7/8 control=12454ms candidate=10866ms saved=1588ms gap=353ms order=CONTROL_FIRST
+buildopt: structural pair 8/8 control=10336ms candidate=10983ms saved=-647ms gap=680ms order=CANDIDATE_FIRST
+buildopt: structural profile measurement decision RETAIN_NATIVE_GRADLE; review buildopt-structural-evidence.json before evaluation
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+  "evidenceState": "INCONCLUSIVE",
+  "capturedAt": "2026-08-10T07:23:36Z",
+  "subject": {
+    "repositoryId": "spring-projects/spring-framework",
+    "repositoryRevision": "139ced3938511e97a509b5ca6d0f55cb08ee9269",
+    "pipelineClass": "test-classes"
+  },
+  "sourceBindings": {
+    "manifestSha256": "4585ca6ffff6585bbd453200ac65b12cb00bc4ef44b5309cbc3841138512e0d7",
+    "graphSha256": "6ca175d1dceff28fabe5b721fa2b8af736f421fc98735fcd90bbeef88c376c80",
+    "generatedManifestSha256": "9c7a12afed7f588b04602b9300b546faceb48b0054e3f383f85cfd0f99a01153",
+    "sourceEvidenceSha256": "619fbe12f910ed32fc295a4dfa6f6599c0c2906221e9b73bda97ed13bb42dc75"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":spring-jms:testClasses"
+    ],
+    "fallbackEntrypoints": [
+      "testClasses"
+    ],
+    "requiredOutputs": [
+      "spring-jms/build/classes/**"
+    ],
+    "totalProjectCount": 27,
+    "selectedProjectCount": 10,
+    "omittedProjectCount": 17,
+    "omittedProjectRatio": 0.6296296296296297
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "6adc0ec74160ef99446c48d876b36e0610a14105",
+    "executableSha256": "273f7091e1dad1a9b71a38827108422cc4ef666553f830d567bf6464a1bd7d18",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 11220,
+      "candidateDurationMs": 14271,
+      "savedMs": -3051,
+      "controlRequiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "candidateRequiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "requiredOutputCount": 378,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 10150,
+      "candidateDurationMs": 11321,
+      "savedMs": -1171,
+      "controlRequiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "candidateRequiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "requiredOutputCount": 378,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 14234,
+      "candidateDurationMs": 10974,
+      "savedMs": 3260,
+      "controlRequiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "candidateRequiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "requiredOutputCount": 378,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 13744,
+      "candidateDurationMs": 12791,
+      "savedMs": 953,
+      "controlRequiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "candidateRequiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "requiredOutputCount": 378,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 5,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 13318,
+      "candidateDurationMs": 10133,
+      "savedMs": 3185,
+      "controlRequiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "candidateRequiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "requiredOutputCount": 378,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 6,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 13244,
+      "candidateDurationMs": 10617,
+      "savedMs": 2627,
+      "controlRequiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "candidateRequiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "requiredOutputCount": 378,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 7,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 12454,
+      "candidateDurationMs": 10866,
+      "savedMs": 1588,
+      "controlRequiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "candidateRequiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "requiredOutputCount": 378,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 8,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 10336,
+      "candidateDurationMs": 10983,
+      "savedMs": -647,
+      "controlRequiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "candidateRequiredOutputSha256": "c1de7856f3bfbec061af1a6a147e489da0bd960aca43bf326e51372c2ca5d629",
+      "requiredOutputCount": 378,
+      "productAttributableFailure": false
+    }
+  ],
+  "fallback": {
+    "mode": "FULL_GRAPH",
+    "reason": "IMPACT_GLOBAL_CHANGE",
+    "buildSuccessful": true
+  },
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 12337.5,
+    "candidateMeanMs": 11494.5,
+    "meanSavedMs": 843,
+    "reductionRatio": 0.06832826747720365,
+    "interval95SavedMs": [
+      -737.5,
+      2255.5
+    ],
+    "positivePairs": 5,
+    "qualified": false,
+    "decision": "RETAIN_NATIVE_GRADLE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

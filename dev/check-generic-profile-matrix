@@ -49,7 +49,7 @@ buildopt_repository_count=$(jq '.repositories | length' "${buildopt_spec}")
 for ((buildopt_index = 0; buildopt_index < buildopt_repository_count; buildopt_index++)); do
     buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_spec}")
     buildopt_subject="${buildopt_evidence}/${buildopt_key}"
-    for buildopt_name in buildopt-changes.txt buildopt-profile-proposal.json proposal.log result.json; do
+    for buildopt_name in buildopt-changes.txt buildopt-profile-proposal.json result.json; do
         [[ -s ${buildopt_subject}/${buildopt_name} ]] || {
             printf 'missing %s matrix evidence: %s\n' "${buildopt_key}" "${buildopt_name}" >&2
             exit 1
@@ -104,14 +104,43 @@ for ((buildopt_index = 0; buildopt_index < buildopt_repository_count; buildopt_i
             .boundaries.repositorySpecificRuleAdded == false and
             .boundaries.testOptimizationModified == false
         ' "${buildopt_subject}/evidence.json" >/dev/null
+        jq -e \
+            --slurpfile evidence "${buildopt_subject}/evidence.json" \
+            --slurpfile evaluation "${buildopt_subject}/evaluation.json" '
+            .measurementStatus == "COMPLETED" and
+            .result == $evidence[0].result and
+            .evaluationDecision == $evaluation[0].decision
+        ' "${buildopt_subject}/result.json" >/dev/null
     elif [[ ${buildopt_status} != NOT_RUN_NATIVE_FULL_GRAPH && \
         ${buildopt_status} != MEASUREMENT_UNAVAILABLE ]]; then
         printf 'invalid %s measurement status: %s\n' "${buildopt_key}" "${buildopt_status}" >&2
         exit 1
+    elif [[ ${buildopt_status} == MEASUREMENT_UNAVAILABLE ]]; then
+        jq -e '
+            .result == null and .evaluationDecision == "NATIVE_FULL_GRAPH"
+        ' "${buildopt_subject}/result.json" >/dev/null
+        jq -e '. == null' "${buildopt_subject}/evidence.json" >/dev/null
+        grep -Fq -- 'structural profile measurement unavailable:' \
+            "${buildopt_subject}/measurement.log"
     fi
 done
 
-jq -e --slurpfile spec "${buildopt_spec}" '
+jq -e \
+    --slurpfile spec "${buildopt_spec}" \
+    --slurpfile spring "${buildopt_evidence}/spring-framework/result.json" \
+    --slurpfile otel "${buildopt_evidence}/opentelemetry-java-instrumentation/result.json" \
+    --slurpfile kafka "${buildopt_evidence}/apache-kafka/result.json" \
+    --slurpfile micronaut "${buildopt_evidence}/micronaut-core/result.json" \
+    --slurpfile groovy "${buildopt_evidence}/apache-groovy/result.json" '
+    ([$spring[0], $otel[0], $kafka[0], $micronaut[0], $groovy[0]]) as $results |
+    .subjects == $results and
+    .aggregation.subjectCount == ($results | length) and
+    .aggregation.structurallyProposed ==
+        ($results | map(select(.proposal.decision == "MEASURE_STRUCTURAL_CANDIDATE")) | length) and
+    .aggregation.measured ==
+        ($results | map(select(.measurementStatus == "COMPLETED")) | length) and
+    .aggregation.qualified ==
+        ($results | map(select(.result.qualified == true)) | length) and
     .retainedCompositionContext == $spec[0].retainedCompositionContext and
     all(.retainedCompositionContext[];
         (.evidence | type) == "string" and

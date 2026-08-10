@@ -65,6 +65,12 @@
   `buildopt poc`. Spring, OpenTelemetry and unknown/drifted scopes stay on
   optimized native Gradle; profiles remain explicit, review-required and
   repository-bound.
+- **A fresh five-repository matrix now measures the same structural-only path.**
+  Build Impact qualified Kafka at **85.12%**, Micronaut at **42.22%**, and
+  Groovy at **71.99%** faster. Spring improved **6.83%** but retained native
+  because its interval crossed zero. OpenTelemetry retained native after one
+  pair exceeded the preregistered timing boundary; favorable partial pairs
+  were not promoted.
 
 ## Product Idea
 
@@ -185,6 +191,24 @@ unfavorable observations. Percentages from different rows are not additive.
 | Required output | **66/66 class files byte-identical** | Both arms produced SHA-256 `c2031f4f...ca70e`; launcher and planning overhead were included. |
 | Safety fallback | **Full graph passed** | A `gradle.properties` change restored native `classes`; no repository-name rule or Test Optimization behavior was added. |
 | Rejected scopes | Distribution ZIP mismatch; root `assemble` included unrelated docs work | Neither candidate contributed accepted timing. The qualified claim is the exact `groovy-json` classes output only. |
+
+### Comparable structural-only matrix
+
+| Repository | Project reach | Optimized native | BuildOpt | Decision |
+| --- | ---: | ---: | ---: | --- |
+| Spring Framework | 27 -> 10 | 12.338 s | 11.495 s (**6.83% faster**) | Native; interval crosses zero |
+| OpenTelemetry | 1,024 -> 34 | — | No accepted result | Native; pair 6 timing boundary failed |
+| Apache Kafka | 64 -> 3 | 87.873 s | 13.080 s (**85.12% faster**) | Qualified |
+| Micronaut Core | 75 -> 22 | 25.699 s | 14.848 s (**42.22% faster**) | Qualified |
+| Apache Groovy | 37 -> 2 | 69.446 s | 19.455 s (**71.99% faster**) | Qualified |
+
+All completed rows use eight alternating isolated pairs, preserve exact
+required outputs, and prove full-graph fallback. This is the strongest current
+evidence that the generic POC can improve substantial builds by removing work
+before Gradle executes it. It is also evidence for the fail-closed policy:
+smaller graphs do not activate when the complete timing result is weak or the
+protocol is invalid. Repository percentages are not averaged, and the older
+Jar/Edge compositions remain separate evidence.
 
 ## Historical Portfolio Decision and Subsequent Generalization
 
@@ -483,6 +507,7 @@ production operations are outside the current scope.
 - [Generic installed structural-profile adoption evidence](../../benchmarks/results/poc-structural-profile-adoption-v1.json)
 - [Apache Groovy generic classes evidence bundle](../../benchmarks/results/poc-apache-groovy-classes-v1/measurement.json)
 - [Public-repository generic profile replay](../../benchmarks/results/poc-generic-profile-realworld-v1/README.md)
+- [Five-repository generic structural matrix](../../benchmarks/results/poc-generic-profile-matrix-v1/README.md)
 - [Historical Micronaut fail-closed evidence](../../benchmarks/results/poc-structural-transfer-v1-native-stop.json)
 - [General opportunity and composition contract](../../specs/poc-general-build-value-v1.md)
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)

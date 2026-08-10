@@ -1,0 +1,305 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-generic-profile-matrix/v1",
+  "workItem": "POC-GENERIC-PROFILE-MATRIX-001",
+  "capturedAt": "2026-08-10T09:36:08Z",
+  "buildopt": {
+    "revision": "6adc0ec74160ef99446c48d876b36e0610a14105",
+    "executableSha256": "273f7091e1dad1a9b71a38827108422cc4ef666553f830d567bf6464a1bd7d18",
+    "packageVersion": "0.3.0-dev"
+  },
+  "method": {
+    "surface": "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE",
+    "candidateMechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "control": "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW",
+    "isolatedArms": true,
+    "independentGradleHomes": true,
+    "independentNativeCacheSeeds": true,
+    "requiredOutputsComparedByteForByte": true,
+    "fullGraphFallbackRequired": true,
+    "onlinePreparationMeasured": false,
+    "repositorySpecificProductRulesAllowed": false
+  },
+  "subjects": [
+    {
+      "key": "spring-framework",
+      "repositoryId": "spring-projects/spring-framework",
+      "publicRevision": "4b5c92703c63966c3471242c621c4a63b382638d",
+      "targetRevision": "139ced3938511e97a509b5ca6d0f55cb08ee9269",
+      "proposal": {
+        "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+        "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+        "originalEntrypoints": [
+          "testClasses"
+        ],
+        "candidateEntrypoints": [
+          ":spring-jms:testClasses"
+        ],
+        "totalProjectCount": 27,
+        "selectedProjectCount": 10,
+        "omittedProjectCount": 17
+      },
+      "measurementStatus": "COMPLETED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 12337.5,
+        "candidateMeanMs": 11494.5,
+        "meanSavedMs": 843,
+        "reductionRatio": 0.06832826747720365,
+        "interval95SavedMs": [
+          -737.5,
+          2255.5
+        ],
+        "positivePairs": 5,
+        "qualified": false,
+        "decision": "RETAIN_NATIVE_GRADLE"
+      },
+      "evaluationDecision": "NATIVE_FULL_GRAPH"
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "publicRevision": "080c1d32ca676ba7b0210c21b60cce8e7ac39058",
+      "targetRevision": "ff5105437413fc7612f8ea0a9bf43744b673ca3c",
+      "proposal": {
+        "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+        "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+        "originalEntrypoints": [
+          ":instrumentation:spring:spring-batch-3.0:javaagent:testClasses",
+          ":instrumentation:spring:spring-boot-actuator-autoconfigure-2.0:javaagent:testClasses",
+          ":instrumentation:spring:spring-boot-autoconfigure:testClasses",
+          ":instrumentation:spring:spring-boot-autoconfigure:testing:testClasses",
+          ":instrumentation:spring:spring-boot-resources:javaagent-unit-tests:testClasses",
+          ":instrumentation:spring:spring-boot-resources:javaagent:testClasses",
+          ":instrumentation:spring:spring-cloud-aws-3.0:javaagent:testClasses",
+          ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.0:javaagent:testClasses",
+          ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.2:testing:testClasses",
+          ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:testClasses",
+          ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:testing:testClasses",
+          ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webflux-4.3:testing:testClasses",
+          ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webmvc-4.3:javaagent:testClasses",
+          ":instrumentation:spring:spring-core-2.0:javaagent:testClasses",
+          ":instrumentation:spring:spring-data:spring-data-1.8:javaagent:testClasses",
+          ":instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:testClasses",
+          ":instrumentation:spring:spring-data:spring-data-3.0:testing:testClasses",
+          ":instrumentation:spring:spring-data:spring-data-common:testing:testClasses",
+          ":instrumentation:spring:spring-integration-4.1:javaagent:testClasses",
+          ":instrumentation:spring:spring-integration-4.1:library:testClasses",
+          ":instrumentation:spring:spring-integration-4.1:testing:testClasses",
+          ":instrumentation:spring:spring-jms:spring-jms-2.0:javaagent:testClasses",
+          ":instrumentation:spring:spring-jms:spring-jms-2.0:testing:testClasses",
+          ":instrumentation:spring:spring-jms:spring-jms-6.0:javaagent:testClasses",
+          ":instrumentation:spring:spring-kafka-2.7:javaagent:testClasses",
+          ":instrumentation:spring:spring-kafka-2.7:library:testClasses",
+          ":instrumentation:spring:spring-kafka-2.7:testing:testClasses",
+          ":instrumentation:spring:spring-pulsar-1.0:javaagent:testClasses",
+          ":instrumentation:spring:spring-pulsar-1.0:testing:testClasses",
+          ":instrumentation:spring:spring-rabbit-1.0:javaagent:testClasses",
+          ":instrumentation:spring:spring-rmi-4.0:javaagent:testClasses",
+          ":instrumentation:spring:spring-scheduling-3.1:bootstrap:testClasses",
+          ":instrumentation:spring:spring-scheduling-3.1:javaagent:testClasses",
+          ":instrumentation:spring:spring-security-config-6.0:javaagent:testClasses",
+          ":instrumentation:spring:spring-security-config-6.0:library:testClasses",
+          ":instrumentation:spring:spring-web:spring-web-3.1:library:testClasses",
+          ":instrumentation:spring:spring-web:spring-web-3.1:testing:testClasses",
+          ":instrumentation:spring:spring-web:spring-web-6.0:javaagent:testClasses",
+          ":instrumentation:spring:spring-webflux:spring-webflux-5.0:javaagent:testClasses",
+          ":instrumentation:spring:spring-webflux:spring-webflux-5.0:testing-webflux7:testClasses",
+          ":instrumentation:spring:spring-webflux:spring-webflux-5.0:testing:testClasses",
+          ":instrumentation:spring:spring-webflux:spring-webflux-5.3:library:testClasses",
+          ":instrumentation:spring:spring-webflux:spring-webflux-5.3:testing-webflux7:testClasses",
+          ":instrumentation:spring:spring-webflux:spring-webflux-5.3:testing:testClasses",
+          ":instrumentation:spring:spring-webmvc:spring-webmvc-3.1:javaagent:testClasses",
+          ":instrumentation:spring:spring-webmvc:spring-webmvc-3.1:wildfly-testing:testClasses",
+          ":instrumentation:spring:spring-webmvc:spring-webmvc-5.3:library:testClasses",
+          ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:testClasses",
+          ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:library:testClasses",
+          ":instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:testClasses",
+          ":instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:testing:testClasses",
+          ":instrumentation:spring:spring-ws-2.0:javaagent:testClasses",
+          ":instrumentation:spring:spring-ws-2.0:testing:testClasses"
+        ],
+        "candidateEntrypoints": [
+          ":instrumentation:spring:spring-boot-autoconfigure:testClasses"
+        ],
+        "totalProjectCount": 1024,
+        "selectedProjectCount": 34,
+        "omittedProjectCount": 990
+      },
+      "measurementStatus": "MEASUREMENT_UNAVAILABLE",
+      "result": null,
+      "evaluationDecision": "NATIVE_FULL_GRAPH"
+    },
+    {
+      "key": "apache-kafka",
+      "repositoryId": "apache/kafka",
+      "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "targetRevision": "a7d0e4c31618c3ec91951723c9152309d4155ae4",
+      "proposal": {
+        "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+        "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+        "originalEntrypoints": [
+          "testClasses"
+        ],
+        "candidateEntrypoints": [
+          ":clients:testClasses"
+        ],
+        "totalProjectCount": 64,
+        "selectedProjectCount": 3,
+        "omittedProjectCount": 61
+      },
+      "measurementStatus": "COMPLETED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 87872.75,
+        "candidateMeanMs": 13079.5,
+        "meanSavedMs": 74793.25,
+        "reductionRatio": 0.8511540836038476,
+        "interval95SavedMs": [
+          62183,
+          90347
+        ],
+        "positivePairs": 8,
+        "qualified": true,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE"
+      },
+      "evaluationDecision": "QUALIFY_STRUCTURAL_PROFILE"
+    },
+    {
+      "key": "micronaut-core",
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "publicRevision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+      "targetRevision": "4d28ada8732b1dd3be9c52d64692ec16dd717d60",
+      "proposal": {
+        "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+        "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+        "originalEntrypoints": [
+          "assemble"
+        ],
+        "candidateEntrypoints": [
+          ":micronaut-http-client-jdk:assemble"
+        ],
+        "totalProjectCount": 75,
+        "selectedProjectCount": 22,
+        "omittedProjectCount": 53
+      },
+      "measurementStatus": "COMPLETED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 25698.625,
+        "candidateMeanMs": 14848.125,
+        "meanSavedMs": 10850.5,
+        "reductionRatio": 0.42222103322648585,
+        "interval95SavedMs": [
+          10250.625,
+          11457.75
+        ],
+        "positivePairs": 8,
+        "qualified": true,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE"
+      },
+      "evaluationDecision": "QUALIFY_STRUCTURAL_PROFILE"
+    },
+    {
+      "key": "apache-groovy",
+      "repositoryId": "apache/groovy",
+      "publicRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "targetRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+      "proposal": {
+        "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+        "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+        "originalEntrypoints": [
+          "classes"
+        ],
+        "candidateEntrypoints": [
+          ":groovy-json:classes"
+        ],
+        "totalProjectCount": 37,
+        "selectedProjectCount": 2,
+        "omittedProjectCount": 35
+      },
+      "measurementStatus": "COMPLETED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 69445.625,
+        "candidateMeanMs": 19454.75,
+        "meanSavedMs": 49990.875,
+        "reductionRatio": 0.7198563624418385,
+        "interval95SavedMs": [
+          47969.25,
+          51873
+        ],
+        "positivePairs": 8,
+        "qualified": true,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE"
+      },
+      "evaluationDecision": "QUALIFY_STRUCTURAL_PROFILE"
+    }
+  ],
+  "retainedCompositionContext": [
+    {
+      "key": "spring-framework",
+      "evidence": "benchmarks/results/poc-qualified-profile-matrix-v1/spring.json",
+      "mechanisms": [
+        "BUILD_IMPACT"
+      ],
+      "reductionRatio": 0.14327432875598944,
+      "qualified": false
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "evidence": "benchmarks/results/poc-otel-clean-composition-v1.json",
+      "mechanisms": [
+        "BUILD_IMPACT",
+        "STANDARD_JAR"
+      ],
+      "reductionRatio": 0.5040426832134631,
+      "qualified": true
+    },
+    {
+      "key": "apache-kafka",
+      "evidence": "benchmarks/results/poc-third-repository-transfer-v1.json",
+      "mechanisms": [
+        "BUILD_IMPACT",
+        "STANDARD_JAR"
+      ],
+      "reductionRatio": 0.5509274324764074,
+      "qualified": true
+    },
+    {
+      "key": "micronaut-core",
+      "evidence": "benchmarks/results/poc-structural-profile-adoption-v1.json",
+      "mechanisms": [
+        "BUILD_IMPACT"
+      ],
+      "reductionRatio": 0.7216260477579773,
+      "qualified": true
+    },
+    {
+      "key": "apache-groovy",
+      "evidence": "benchmarks/results/poc-apache-groovy-classes-v1/measurement.json",
+      "mechanisms": [
+        "BUILD_IMPACT"
+      ],
+      "reductionRatio": 0.5006002937175574,
+      "qualified": true
+    }
+  ],
+  "aggregation": {
+    "subjectCount": 5,
+    "structurallyProposed": 5,
+    "measured": 4,
+    "qualified": 3,
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

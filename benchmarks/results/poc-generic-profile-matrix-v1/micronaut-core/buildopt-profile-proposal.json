@@ -1,0 +1,199 @@
+{
+  "schemaVersion": "buildopt.poc/profile-proposal/v1",
+  "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+  "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+  "repositoryId": "micronaut-projects/micronaut-core",
+  "pipelineClass": "assemble",
+  "baseRevision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+  "targetRevision": "4d28ada8732b1dd3be9c52d64692ec16dd717d60",
+  "originalEntrypoint": "assemble",
+  "originalEntrypoints": [
+    "assemble"
+  ],
+  "changedPaths": [
+    "http-client-jdk/src/main/java/io/micronaut/http/client/jdk/DefaultJdkHttpClient.java"
+  ],
+  "requiredOutputs": [
+    "http-client-jdk/build/libs/**"
+  ],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "candidateEntrypoints": [
+    ":micronaut-http-client-jdk:assemble"
+  ],
+  "omittedProjects": [
+    ":benchmarks",
+    ":micronaut-context-python",
+    ":micronaut-context-python-netty",
+    ":micronaut-core-bom",
+    ":micronaut-function",
+    ":micronaut-function-client",
+    ":micronaut-function-web",
+    ":micronaut-http-client-tck",
+    ":micronaut-http-server",
+    ":micronaut-http-server-netty",
+    ":micronaut-http-server-tck",
+    ":micronaut-http-tck",
+    ":micronaut-http-validation",
+    ":micronaut-inject-groovy",
+    ":micronaut-inject-groovy-test",
+    ":micronaut-inject-java-helper",
+    ":micronaut-inject-java-helper2",
+    ":micronaut-inject-java-test",
+    ":micronaut-inject-kotlin",
+    ":micronaut-inject-kotlin-test",
+    ":micronaut-inject-python",
+    ":micronaut-inject-python-test",
+    ":micronaut-inject-test-utils",
+    ":micronaut-management",
+    ":micronaut-messaging",
+    ":micronaut-module-info",
+    ":micronaut-module-info-runtime",
+    ":micronaut-router",
+    ":micronaut-runtime",
+    ":micronaut-runtime-osx",
+    ":test-suite",
+    ":test-suite-annotation-remapper",
+    ":test-suite-annotation-remapper-visitor",
+    ":test-suite-groovy",
+    ":test-suite-helper",
+    ":test-suite-http-client-jdk-ssl",
+    ":test-suite-http-client-tck-jdk",
+    ":test-suite-http-client-tck-netty",
+    ":test-suite-http-server-tck-jdk",
+    ":test-suite-http-server-tck-netty",
+    ":test-suite-http2-server-tck-netty",
+    ":test-suite-jakarta-inject-bean-import",
+    ":test-suite-javax-inject",
+    ":test-suite-kotlin",
+    ":test-suite-kotlin-graalvm",
+    ":test-suite-kotlin-ksp-all-open",
+    ":test-suite-logback",
+    ":test-suite-logback-external-configuration",
+    ":test-suite-logback-graalvm",
+    ":test-suite-netty-ssl-graalvm",
+    ":test-suite-property-source",
+    ":test-suite-python",
+    ":test-utils"
+  ],
+  "unknownRelationships": false,
+  "analysis": {
+    "schemaVersion": "buildopt.poc/opportunity-analysis/v1",
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "subject": {
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "pipelineClass": "assemble",
+      "gradleVersion": "9.6.1"
+    },
+    "inputs": null,
+    "sourceBindings": {
+      "manifestDigest": "sha256:83ac03d836b7c9723eb47da3d7542375b22ceea309a620c5c57f0b71ea38f8e8",
+      "graphDigest": "sha256:c7ecec46fbbfd12bdf28cb0da6e20afec5f59748532e80fcfc2140ddb8f243a5",
+      "discoveryDigest": "sha256:5639441d212ebde5c9f9ad1a84af0f65e3ecca62092bd3f8a641e99725b1fe75"
+    },
+    "plan": {
+      "alternativeId": "changed-projects",
+      "entrypoints": [
+        ":micronaut-http-client-jdk:assemble"
+      ],
+      "fallbackEntrypoints": [
+        "assemble"
+      ],
+      "requiredOutputs": [
+        "http-client-jdk/build/libs/**"
+      ],
+      "totalProjectCount": 75,
+      "selectedProjectCount": 22,
+      "omittedProjectCount": 53,
+      "omittedProjectRatio": 0.7066666666666667
+    },
+    "mechanisms": [
+      {
+        "name": "BUILD_IMPACT",
+        "status": "MEASURE_CANDIDATE",
+        "reason": "complete graph exposes a smaller reviewed alternative; direct timing is still required"
+      },
+      {
+        "name": "SHARED_EDGE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent locality and failure-fallback evidence for this workload"
+      },
+      {
+        "name": "HOT_STATE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "RUNTIME_TUNING",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "SAFE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "STANDARD_COPY",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "STANDARD_JAR",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "TEST_OPTIMIZATION",
+        "status": "NOT_AUTHORIZED",
+        "reason": "outside BuildOpt scope"
+      }
+    ],
+    "measurementRequired": true,
+    "reviewRequired": true,
+    "activationAutomatic": false,
+    "productionAuthorized": false
+  },
+  "documents": {
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json",
+    "fallbackChanges": "buildopt-fallback-changes.txt",
+    "proposal": "buildopt-profile-proposal.json"
+  },
+  "measureCommand": [
+    "buildopt",
+    "profile",
+    "measure",
+    "--manifest",
+    "buildopt-impact-manifest.json",
+    "--graph",
+    "buildopt-impact-graph.generated.json",
+    "--generated-manifest",
+    "buildopt-impact.generated.json",
+    "--changes-file",
+    "buildopt-changes.txt",
+    "--fallback-changes-file",
+    "buildopt-fallback-changes.txt",
+    "--base-revision",
+    "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+    "--buildopt-revision",
+    "6adc0ec74160ef99446c48d876b36e0610a14105",
+    "--evidence-output",
+    "buildopt-profile-evidence.json"
+  ],
+  "buildOptRevisionNeeded": false,
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false,
+  "testOptimization": "OUT_OF_SCOPE"
+}

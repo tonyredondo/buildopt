@@ -1,0 +1,176 @@
+buildopt: warming isolated control arm at 8de8f38aceb6239f7df05c92c4eb7a26113e882b
+buildopt: warming isolated candidate arm at 8de8f38aceb6239f7df05c92c4eb7a26113e882b
+buildopt: structural pair 1/8 control=32629ms candidate=20520ms saved=12109ms gap=629ms order=CONTROL_FIRST
+buildopt: structural pair 2/8 control=25264ms candidate=14652ms saved=10612ms gap=1834ms order=CANDIDATE_FIRST
+buildopt: structural pair 3/8 control=24028ms candidate=14288ms saved=9740ms gap=295ms order=CONTROL_FIRST
+buildopt: structural pair 4/8 control=25324ms candidate=13678ms saved=11646ms gap=633ms order=CANDIDATE_FIRST
+buildopt: structural pair 5/8 control=25088ms candidate=14837ms saved=10251ms gap=1384ms order=CONTROL_FIRST
+buildopt: structural pair 6/8 control=23245ms candidate=13594ms saved=9651ms gap=587ms order=CANDIDATE_FIRST
+buildopt: structural pair 7/8 control=24886ms candidate=13797ms saved=11089ms gap=962ms order=CONTROL_FIRST
+buildopt: structural pair 8/8 control=25125ms candidate=13419ms saved=11706ms gap=601ms order=CANDIDATE_FIRST
+buildopt: structural profile measurement decision QUALIFIED_EVIDENCE_WRITTEN; review buildopt-structural-evidence.json before evaluation
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+  "evidenceState": "QUALIFIED",
+  "capturedAt": "2026-08-10T09:14:20Z",
+  "subject": {
+    "repositoryId": "micronaut-projects/micronaut-core",
+    "repositoryRevision": "4d28ada8732b1dd3be9c52d64692ec16dd717d60",
+    "pipelineClass": "assemble"
+  },
+  "sourceBindings": {
+    "manifestSha256": "f71b72bd9007840c744e866f889992058c9d393877987f8b5fa335fa49325df2",
+    "graphSha256": "5959d5d5e841b3dc3c795857151d7bf61f470d5d7c78a9a868f15e4214c3203c",
+    "generatedManifestSha256": "f9aaf6b560e1926b5149c76f805a25c15f191684f4c996d9fe375576848ae563",
+    "sourceEvidenceSha256": "3dc827e52dc05d3aa535e84e1b96f3ee87276d3f998e540acac089bc8e1c81b4"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":micronaut-http-client-jdk:assemble"
+    ],
+    "fallbackEntrypoints": [
+      "assemble"
+    ],
+    "requiredOutputs": [
+      "http-client-jdk/build/libs/**"
+    ],
+    "totalProjectCount": 75,
+    "selectedProjectCount": 22,
+    "omittedProjectCount": 53,
+    "omittedProjectRatio": 0.7066666666666667
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "6adc0ec74160ef99446c48d876b36e0610a14105",
+    "executableSha256": "273f7091e1dad1a9b71a38827108422cc4ef666553f830d567bf6464a1bd7d18",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 32629,
+      "candidateDurationMs": 20520,
+      "savedMs": 12109,
+      "controlRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "candidateRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 25264,
+      "candidateDurationMs": 14652,
+      "savedMs": 10612,
+      "controlRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "candidateRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 24028,
+      "candidateDurationMs": 14288,
+      "savedMs": 9740,
+      "controlRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "candidateRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 25324,
+      "candidateDurationMs": 13678,
+      "savedMs": 11646,
+      "controlRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "candidateRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 5,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 25088,
+      "candidateDurationMs": 14837,
+      "savedMs": 10251,
+      "controlRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "candidateRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 6,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 23245,
+      "candidateDurationMs": 13594,
+      "savedMs": 9651,
+      "controlRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "candidateRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 7,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 24886,
+      "candidateDurationMs": 13797,
+      "savedMs": 11089,
+      "controlRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "candidateRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 8,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 25125,
+      "candidateDurationMs": 13419,
+      "savedMs": 11706,
+      "controlRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "candidateRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    }
+  ],
+  "fallback": {
+    "mode": "FULL_GRAPH",
+    "reason": "IMPACT_GLOBAL_CHANGE",
+    "buildSuccessful": true
+  },
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 25698.625,
+    "candidateMeanMs": 14848.125,
+    "meanSavedMs": 10850.5,
+    "reductionRatio": 0.42222103322648585,
+    "interval95SavedMs": [
+      10250.625,
+      11457.75
+    ],
+    "positivePairs": 8,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

@@ -1,0 +1,8 @@
+buildopt: warming isolated control arm at 080c1d32ca676ba7b0210c21b60cce8e7ac39058
+buildopt: warming isolated candidate arm at 080c1d32ca676ba7b0210c21b60cce8e7ac39058
+buildopt: structural pair 1/8 control=82139ms candidate=70473ms saved=11666ms gap=2398ms order=CONTROL_FIRST
+buildopt: structural pair 2/8 control=76496ms candidate=64266ms saved=12230ms gap=1885ms order=CANDIDATE_FIRST
+buildopt: structural pair 3/8 control=81030ms candidate=74431ms saved=6599ms gap=1771ms order=CONTROL_FIRST
+buildopt: structural pair 4/8 control=83650ms candidate=69781ms saved=13869ms gap=2406ms order=CANDIDATE_FIRST
+buildopt: structural pair 5/8 control=82178ms candidate=73034ms saved=9144ms gap=3623ms order=CONTROL_FIRST
+buildopt: structural profile measurement unavailable: pair 6 inter-arm gap 5.443700097s exceeds 5s

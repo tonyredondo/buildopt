@@ -458,6 +458,38 @@ six-worker Runtime candidate are closed for the current evidence. They should
 reopen only for a materially different dominant task or bottleneck, not to
 manufacture another optimization.
 
+## Comparable Structural Evidence Across Five Public Repositories
+
+The same installed and repository-independent structural-only method has now
+been measured on Spring Framework, OpenTelemetry Java Instrumentation, Apache
+Kafka, Micronaut Core, and Apache Groovy. This closes the earlier comparability
+gap: these rows all use Build Impact alone against each repository's declared
+optimized-native Gradle workflow, with 12 workers, eight alternating isolated
+pairs, exact required outputs, and full-graph fallback.
+
+| Repository | Graph reduction | Direct result | Product decision |
+| --- | ---: | ---: | --- |
+| Spring Framework | 27 -> 10 projects | **6.83% faster**, 843 ms, 5/8 positive, interval -738..+2,256 ms | Retain native; end-to-end value is uncertain. |
+| OpenTelemetry | 1,024 -> 34 projects | No accepted percentage | Retain native; pair 6 exceeded the frozen inter-arm gap by 444 ms, so five favorable partial pairs are rejected. |
+| Apache Kafka | 64 -> 3 projects | **85.12% faster**, 74.793 s, 8/8 positive | Qualify the exact structural profile. |
+| Micronaut Core | 75 -> 22 projects | **42.22% faster**, 10.851 s, 8/8 positive | Qualify the exact structural profile. |
+| Apache Groovy | 37 -> 2 projects | **71.99% faster**, 49.991 s, 8/8 positive | Qualify the exact structural profile. |
+
+The result changes the generalization conclusion without creating a universal
+claim. Generic graph reduction now produces qualified end-to-end value in
+three materially different repository families and safely declines two
+others. The large Kafka, Micronaut, and Groovy gains show the cascade effect:
+omitting unrelated projects also removes their configuration, task scheduling,
+cache lookup, source processing, and downstream packaging work. Spring shows
+why project-count reduction alone is not enough; the final wall-clock gate
+still decides activation.
+
+These percentages replace neither the older complete Jar/Edge compositions
+nor one another. They are direct Build-Impact-only measurements and must not be
+averaged or added to historical mechanism effects. The next POC block should
+make the same generic proposal a review artifact in repository-owned CI, while
+activation remains explicit and evidence-bound.
+
 ## Open Questions
 
 - Is a future repository family materially similar enough to the qualified
@@ -487,6 +519,7 @@ artifacts are:
 - [OpenTelemetry hot-state evidence](../../benchmarks/results/poc-otel-hot-state-v1.json);
 - [final OpenTelemetry optimization evidence](../../benchmarks/results/poc-otel-optimization-v2.json).
 - [terminal installed qualified-profile matrix](../../benchmarks/results/poc-qualified-profile-matrix-v1/summary.json).
+- [fresh five-repository structural-only matrix](../../benchmarks/results/poc-generic-profile-matrix-v1/README.md).
 - [fresh full-path ablation and retained component evidence](../../benchmarks/results/poc-full-path-ablation-v1/summary.json).
 - [qualified clean OpenTelemetry composition](../../benchmarks/results/poc-otel-clean-composition-v1.json).
 - [targeted Spring Runtime decision](../../benchmarks/results/poc-runtime-research-v1.json).

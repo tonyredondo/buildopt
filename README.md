@@ -262,6 +262,17 @@ rejected on output mismatch and aggregate `assemble` was rejected as the wrong
 semantic scope before this candidate was measured. The qualified result remains
 bound to the exact classes output; it is not a claim for every Groovy build.
 
+The same structural-only protocol has now been rerun uniformly across five
+substantial public repositories. Fresh results qualify Kafka at **85.12%**,
+Micronaut at **42.22%**, and Groovy at **71.99%** faster than their declared
+optimized-native workflows. Spring is **6.83%** faster but retains native
+because its paired interval crosses zero. OpenTelemetry also retains native:
+pair 6 exceeded the preregistered inter-arm timing boundary, so its favorable
+partial observations are not reported as a result. This is the strongest
+current evidence that generic graph reduction can create large cascade value,
+while still failing closed when the end-to-end experiment is weak or invalid.
+See the [five-repository matrix](./benchmarks/results/poc-generic-profile-matrix-v1/README.md).
+
 Once that exact scope has independently beaten optimized native Gradle,
 `buildopt profile qualify` can turn the digest-bound evidence into a reviewable
 Build-Impact-only profile. The command is repository-independent: it validates

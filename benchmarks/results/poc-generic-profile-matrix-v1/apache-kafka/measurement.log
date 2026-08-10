@@ -1,0 +1,179 @@
+buildopt: warming isolated control arm at 26b251a451ce941d3d7a55e6487bcb7f16b5ad48
+buildopt: warming isolated candidate arm at 26b251a451ce941d3d7a55e6487bcb7f16b5ad48
+buildopt: structural pair 1/8 control=77925ms candidate=17155ms saved=60770ms gap=456ms order=CONTROL_FIRST
+buildopt: structural pair 2/8 control=87669ms candidate=14236ms saved=73433ms gap=715ms order=CANDIDATE_FIRST
+buildopt: structural pair 3/8 control=71856ms candidate=12421ms saved=59435ms gap=2134ms order=CONTROL_FIRST
+buildopt: structural pair 4/8 control=72458ms candidate=13410ms saved=59048ms gap=671ms order=CANDIDATE_FIRST
+buildopt: structural pair 5/8 control=122918ms candidate=14459ms saved=108459ms gap=510ms order=CONTROL_FIRST
+buildopt: structural pair 6/8 control=119467ms candidate=11115ms saved=108352ms gap=1790ms order=CANDIDATE_FIRST
+buildopt: structural pair 7/8 control=75707ms candidate=11154ms saved=64553ms gap=391ms order=CONTROL_FIRST
+buildopt: structural pair 8/8 control=74982ms candidate=10686ms saved=64296ms gap=633ms order=CANDIDATE_FIRST
+buildopt: structural profile measurement decision QUALIFIED_EVIDENCE_WRITTEN; review buildopt-structural-evidence.json before evaluation
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+  "evidenceState": "QUALIFIED",
+  "capturedAt": "2026-08-10T08:45:18Z",
+  "subject": {
+    "repositoryId": "apache/kafka",
+    "repositoryRevision": "a7d0e4c31618c3ec91951723c9152309d4155ae4",
+    "pipelineClass": "test-classes"
+  },
+  "sourceBindings": {
+    "manifestSha256": "71a3f4884cab4da591b0be4c51275101ebc78bfbbcac96c61a8dc7d2d6bccd0c",
+    "graphSha256": "6ee53ca766ba13512120c7610e2173c10d5e12fd69ba66a56d9adb9ff50e0af8",
+    "generatedManifestSha256": "7d808135836ba7f3ad34b0d0c0b847fa222eb605cda4e923df3a520283fdc06e",
+    "sourceEvidenceSha256": "d2a07796014a1b3b0b6666ac3ba54aba2993c93917adada7a7720a089e38788c"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":clients:testClasses"
+    ],
+    "fallbackEntrypoints": [
+      "testClasses"
+    ],
+    "requiredOutputs": [
+      "clients/build/classes/java/main/**",
+      "clients/build/classes/java/test/**",
+      "clients/build/resources/main/**",
+      "clients/build/resources/test/**"
+    ],
+    "totalProjectCount": 64,
+    "selectedProjectCount": 3,
+    "omittedProjectCount": 61,
+    "omittedProjectRatio": 0.953125
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "6adc0ec74160ef99446c48d876b36e0610a14105",
+    "executableSha256": "273f7091e1dad1a9b71a38827108422cc4ef666553f830d567bf6464a1bd7d18",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 77925,
+      "candidateDurationMs": 17155,
+      "savedMs": 60770,
+      "controlRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "candidateRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "requiredOutputCount": 4062,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 87669,
+      "candidateDurationMs": 14236,
+      "savedMs": 73433,
+      "controlRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "candidateRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "requiredOutputCount": 4062,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 71856,
+      "candidateDurationMs": 12421,
+      "savedMs": 59435,
+      "controlRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "candidateRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "requiredOutputCount": 4062,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 72458,
+      "candidateDurationMs": 13410,
+      "savedMs": 59048,
+      "controlRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "candidateRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "requiredOutputCount": 4062,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 5,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 122918,
+      "candidateDurationMs": 14459,
+      "savedMs": 108459,
+      "controlRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "candidateRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "requiredOutputCount": 4062,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 6,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 119467,
+      "candidateDurationMs": 11115,
+      "savedMs": 108352,
+      "controlRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "candidateRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "requiredOutputCount": 4062,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 7,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 75707,
+      "candidateDurationMs": 11154,
+      "savedMs": 64553,
+      "controlRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "candidateRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "requiredOutputCount": 4062,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 8,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 74982,
+      "candidateDurationMs": 10686,
+      "savedMs": 64296,
+      "controlRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "candidateRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "requiredOutputCount": 4062,
+      "productAttributableFailure": false
+    }
+  ],
+  "fallback": {
+    "mode": "FULL_GRAPH",
+    "reason": "IMPACT_GLOBAL_CHANGE",
+    "buildSuccessful": true
+  },
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 87872.75,
+    "candidateMeanMs": 13079.5,
+    "meanSavedMs": 74793.25,
+    "reductionRatio": 0.8511540836038476,
+    "interval95SavedMs": [
+      62183,
+      90347
+    ],
+    "positivePairs": 8,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

@@ -3416,6 +3416,23 @@ the current CLI, reproduces the exact qualified profile, and proves that
 tampered evidence writes no profile. The checked result is 50.06% faster for
 the fixed `groovy-json` classes scope; no other Apache Groovy scope is enabled.
 
+`./dev/run-generic-profile-matrix /absolute/evidence/directory` packages the
+current CLI and applies the same generic structural-only proposal, measurement,
+and evaluation flow to the frozen Spring, OpenTelemetry, Kafka, Micronaut, and
+Groovy revisions. Every cell keeps its repository-declared workflow and output
+globs; OpenTelemetry supplies all 53 original entrypoints through repeated
+`--entrypoint` arguments. Preparation is excluded, while each accepted cell
+uses eight alternating isolated pairs, exact outputs, and full-graph fallback.
+
+`./dev/check-generic-profile-matrix [evidence-directory]` validates the frozen
+inputs and terminal bundle without network access. The committed result
+qualifies structural Build Impact for Kafka (**85.12%**), Micronaut
+(**42.22%**), and Groovy (**71.99%**). Spring remains native after a weak
+**6.83%** result, and OpenTelemetry remains native because pair 6 exceeded the
+preregistered inter-arm timing boundary. The checker rejects partial timing,
+repository percentage averages, and attribution of retained Jar/Edge results
+to Build Impact.
+
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 
 The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.

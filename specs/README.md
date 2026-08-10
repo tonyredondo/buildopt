@@ -9,6 +9,7 @@ the exact cross-component contract.
 
 | Specification | Owning item |
 |---|---|
+| [`poc-generic-profile-matrix-v1.md`](./poc-generic-profile-matrix-v1.md) and [`poc-generic-profile-matrix-v1.json`](./poc-generic-profile-matrix-v1.json) | `POC-GENERIC-PROFILE-MATRIX-001` |
 | [`poc-generic-profile-realworld-v1.md`](./poc-generic-profile-realworld-v1.md) and [`poc-generic-profile-realworld-v1.json`](./poc-generic-profile-realworld-v1.json) | `POC-GENERIC-PROFILE-REALWORLD-001` |
 | [`poc-generic-profile-onboarding-v1.md`](./poc-generic-profile-onboarding-v1.md) | `POC-GENERIC-PROFILE-ONBOARDING-001` |
 | [`poc-real-world-compatibility-v1.md`](./poc-real-world-compatibility-v1.md) and [`poc-real-world-compatibility-v1.json`](./poc-real-world-compatibility-v1.json) | `POC-REALWORLD-001` / `POC-REALWORLD-G01` |
@@ -425,6 +426,13 @@ exact local source mutation, optimized-native `classes`, the two-project
 candidate, 66 exact class outputs, eight alternating pairs and the global
 full-graph fallback. It also records why distribution and aggregate-assemble
 candidate scopes were rejected before accepting timing evidence.
+
+`poc-generic-profile-matrix-v1.json` and
+`poc-generic-profile-matrix-v1.md` freeze the same installed structural-only
+method across Spring, OpenTelemetry, Kafka, Micronaut, and Groovy. The contract
+binds each public revision, declared workflow, exact source change, output
+scope, 12-worker native control, eight alternating isolated pairs, exact
+fallback, and non-additive reporting boundary before timing.
 
 `poc-trace-hypothesis-v1.json` and `poc-trace-hypothesis-v1.md` bind the final
 trace-gated optimization decision. They require at least 500 ms of causally
