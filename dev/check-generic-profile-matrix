@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if (($# > 2)); then
-    printf 'usage: %s [evidence-directory] [specification]\n' "$0" >&2
+if (($# > 3)); then
+    printf 'usage: %s [evidence-directory] [specification] [repository-key]\n' "$0" >&2
     exit 64
 fi
 
@@ -10,6 +10,7 @@ buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
 buildopt_evidence=${1:-"${buildopt_repo_root}/benchmarks/results/poc-generic-profile-matrix-v1"}
 buildopt_spec=${2:-"${buildopt_repo_root}/specs/poc-generic-profile-matrix-v1.json"}
+buildopt_subject_filter=${3:-}
 if [[ ${buildopt_spec} != /* ]]; then
     buildopt_spec="${buildopt_repo_root}/${buildopt_spec}"
 fi
@@ -21,7 +22,11 @@ for buildopt_command in jq sha256sum; do
         exit 1
     }
 done
-for buildopt_file in "${buildopt_spec}" "${buildopt_summary}"; do
+buildopt_required_files=("${buildopt_spec}")
+if [[ -z ${buildopt_subject_filter} ]]; then
+    buildopt_required_files+=("${buildopt_summary}")
+fi
+for buildopt_file in "${buildopt_required_files[@]}"; do
     [[ -f ${buildopt_file} ]] || {
         printf 'missing generic profile matrix input: %s\n' "${buildopt_file}" >&2
         exit 1
@@ -31,9 +36,10 @@ done
 buildopt_evidence_schema=$(jq -er '.evidenceSchemaVersion // "buildopt.evidence/poc-generic-profile-matrix/v1"' "${buildopt_spec}")
 buildopt_work_item=$(jq -er '.workItem' "${buildopt_spec}")
 
-jq -e \
-    --arg schemaVersion "${buildopt_evidence_schema}" \
-    --arg workItem "${buildopt_work_item}" '
+if [[ -z ${buildopt_subject_filter} ]]; then
+    jq -e \
+        --arg schemaVersion "${buildopt_evidence_schema}" \
+        --arg workItem "${buildopt_work_item}" '
     .schemaVersion == $schemaVersion and
     .workItem == $workItem and
     (.buildopt.revision | test("^[0-9a-f]{40}$")) and
@@ -51,11 +57,23 @@ jq -e \
     .boundaries.testOptimizationModified == false and
     .boundaries.soakRequired == false and
     .boundaries.designPartnerRequired == false
-' "${buildopt_summary}" >/dev/null
+    ' "${buildopt_summary}" >/dev/null
+fi
 
 buildopt_repository_count=$(jq '.repositories | length' "${buildopt_spec}")
+if [[ -n ${buildopt_subject_filter} ]]; then
+    buildopt_subject_matches=$(jq --arg key "${buildopt_subject_filter}" \
+        '[.repositories[] | select(.key == $key)] | length' "${buildopt_spec}")
+    [[ ${buildopt_subject_matches} -eq 1 ]] || {
+        printf 'repository key is absent or ambiguous: %s\n' "${buildopt_subject_filter}" >&2
+        exit 1
+    }
+fi
 for ((buildopt_index = 0; buildopt_index < buildopt_repository_count; buildopt_index++)); do
     buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_spec}")
+    if [[ -n ${buildopt_subject_filter} && ${buildopt_key} != "${buildopt_subject_filter}" ]]; then
+        continue
+    fi
     buildopt_subject="${buildopt_evidence}/${buildopt_key}"
     for buildopt_name in buildopt-changes.txt buildopt-profile-proposal.json result.json; do
         [[ -s ${buildopt_subject}/${buildopt_name} ]] || {
@@ -132,6 +150,11 @@ for ((buildopt_index = 0; buildopt_index < buildopt_repository_count; buildopt_i
             "${buildopt_subject}/measurement.log"
     fi
 done
+
+if [[ -n ${buildopt_subject_filter} ]]; then
+    printf 'Generic profile subject %s: PASS\n' "${buildopt_subject_filter}"
+    exit 0
+fi
 
 jq -e \
     --slurpfile spec "${buildopt_spec}" \
