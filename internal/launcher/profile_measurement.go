@@ -27,6 +27,7 @@ const (
 	profileMeasureUsage           = "usage: buildopt profile measure --manifest PATH --graph PATH --generated-manifest PATH --changes-file PATH --fallback-changes-file PATH --base-revision REVISION --buildopt-revision REVISION --evidence-output PATH [--gradle-option VALUE ...] [--timeout DURATION]\n"
 	measurementPairs              = 8
 	maximumMeasurementInterArmGap = 5 * time.Second
+	measurementFallbackMaxWorkers = 4
 )
 
 var defaultStructuralGradleOptions = []string{
@@ -251,12 +252,12 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 	if err != nil {
 		return nil, false, err
 	}
-	defer stopStructuralMeasurementArm(control)
+	defer func() { _ = stopStructuralMeasurementArm(control) }()
 	candidate, err := prepareStructuralMeasurementArm(config, root, "candidate", true, progress)
 	if err != nil {
 		return nil, false, err
 	}
-	defer stopStructuralMeasurementArm(candidate)
+	defer func() { _ = stopStructuralMeasurementArm(candidate) }()
 	observations := make([]profilediscovery.StructuralMeasurementObservation, 0, measurementPairs)
 	stableOutputSHA := ""
 	stableOutputCount := 0
@@ -332,7 +333,16 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 			pair, measurementPairs, controlResult.durationMS, candidateResult.durationMS,
 			controlResult.durationMS-candidateResult.durationMS, interArmGap.Milliseconds(), order)
 	}
-	fallbackResult, fallbackReason, err := measureStructuralFallback(config, candidate)
+	// The fallback proves correctness; it is not part of the measured effect.
+	// Release both hot measurement daemons before running the full graph so a
+	// large repository cannot combine three JVM heaps and exhaust the host.
+	if err := stopStructuralMeasurementArm(control); err != nil {
+		return nil, false, fmt.Errorf("stop control daemon before fallback: %w", err)
+	}
+	if err := stopStructuralMeasurementArm(candidate); err != nil {
+		return nil, false, fmt.Errorf("stop candidate daemon before fallback: %w", err)
+	}
+	fallbackResult, fallbackReason, err := measureStructuralFallback(config, candidate, progress)
 	if err != nil {
 		return nil, false, err
 	}
@@ -386,11 +396,14 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	return arm, nil
 }
 
-func measureStructuralFallback(config structuralMeasurementConfig, arm structuralMeasurementArm) (structuralArmResult, string, error) {
+func measureStructuralFallback(config structuralMeasurementConfig, arm structuralMeasurementArm, progress io.Writer) (structuralArmResult, string, error) {
 	if err := resetStructuralArm(config, arm, config.targetRevision, true); err != nil {
 		return structuralArmResult{}, "", err
 	}
-	result, err := runStructuralArm(config, arm, true, config.fallbackChangesPath)
+	fallbackConfig := config
+	fallbackConfig.gradleOptions = structuralFallbackGradleOptions(config.gradleOptions)
+	_, _ = fmt.Fprintf(progress, "buildopt: validating full-graph fallback with --no-daemon --no-parallel --max-workers=%d\n", measurementFallbackMaxWorkers)
+	result, err := runStructuralArm(fallbackConfig, arm, true, config.fallbackChangesPath)
 	if err != nil {
 		return result, "", fmt.Errorf("full-graph fallback: %w", err)
 	}
@@ -400,6 +413,18 @@ func measureStructuralFallback(config structuralMeasurementConfig, arm structura
 	}
 	result.outputSHA, result.outputCount, err = hashMeasurementOutputs(arm.workspace, config.analysis.Plan.RequiredOutputs)
 	return result, reason, err
+}
+
+func structuralFallbackGradleOptions(measured []string) []string {
+	options := make([]string, 0, len(measured)+3)
+	for _, option := range measured {
+		if option == "--daemon" || option == "--no-daemon" || option == "--parallel" || option == "--no-parallel" ||
+			strings.HasPrefix(option, "--max-workers=") {
+			continue
+		}
+		options = append(options, option)
+	}
+	return append(options, "--no-daemon", "--no-parallel", fmt.Sprintf("--max-workers=%d", measurementFallbackMaxWorkers))
 }
 
 func resetStructuralArm(config structuralMeasurementConfig, arm structuralMeasurementArm, revision string, restoreCache bool) error {
@@ -476,14 +501,17 @@ func measurementGradleCommand(repositoryRoot string, args []string) []string {
 	return append([]string{wrapper}, args...)
 }
 
-func stopStructuralMeasurementArm(arm structuralMeasurementArm) {
+func stopStructuralMeasurementArm(arm structuralMeasurementArm) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 	command := measurementGradleCommand(arm.workspace, []string{"--stop"})
 	cmd := exec.CommandContext(ctx, command[0], command[1:]...)
 	cmd.Dir = arm.workspace
 	cmd.Env = measurementEnvironment(arm.gradleHome)
-	_ = cmd.Run()
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("stop %s Gradle daemon: %w", arm.name, err)
+	}
+	return nil
 }
 
 func measurementEnvironment(gradleHome string) []string {
