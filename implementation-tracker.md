@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `POC PUBLIC REPOSITORY PROFILE REPLAY COMPLETE` — the installed repository-independent proposal command has reproduced the qualified Apache Groovy and Micronaut structural boundaries from fresh public checkouts without retained BuildOpt JSON, repository-name rules, automatic activation or a redundant timing rerun<br>
-**Current phase:** `GENERIC PROFILE CI REVIEW HANDOFF NEXT` — the next block must expose the same fail-closed proposal as an explicit review artifact in CI from repository-owner inputs, without timing, activation or production authority<br>
+**Overall status:** `FIVE-REPOSITORY GENERIC PROFILE MATRIX PREREGISTERED` — one installed repository-independent proposal, measurement and evaluation method is frozen for Spring Framework, OpenTelemetry, Kafka, Micronaut and Groovy; retained Jar/Edge compositions remain separate context rather than being attributed to structural Build Impact<br>
+**Current phase:** `GENERIC PROFILE MATRIX MEASUREMENT IN PROGRESS` — capture fresh structural-only proposals and, only for complete supported candidates, eight isolated alternating pairs against each repository's declared optimized-native Gradle workflow with byte-identical outputs and full-graph fallback<br>
 **POC functional target:** improve real builds against optimized native Gradle by discovering structural opportunities generally, enabling only exact workload-qualified mechanisms, measuring their complete composition directly, and retaining native fallback whenever value does not replicate<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -114,7 +114,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-APACHE-GROOVY-GENERALIZATION | Run the generic paired workflow on a fresh substantial Gradle family without repository-specific logic | `DONE` | 1/1 | `E-290` |
 | POC-GENERIC-PROFILE-ONBOARDING | Generate reviewable measurement inputs from one Gradle workflow, exact change and declared outputs | `DONE` | 1/1 | `E-291` |
 | POC-GENERIC-PROFILE-REALWORLD | Reproduce qualified structural candidates through the no-hand-authored-JSON flow on fresh public repositories | `DONE` | 1/1 | `E-292` |
-| POC-GENERIC-PROFILE-CI | Publish the generic proposal as an explicit review artifact from repository-owned CI inputs | `TODO` | 0/1 | `E-292` |
+| POC-GENERIC-PROFILE-MATRIX | Compare the same generic structural-only method across five substantial public Gradle repositories | `DOING` | 0/1 | `E-293` |
+| POC-GENERIC-PROFILE-CI | Publish the generic proposal as an explicit review artifact from repository-owned CI inputs | `TODO` | 0/1 | `E-293` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -259,25 +260,30 @@ than partners. Test Optimization remains a separate product.
 | 77 | `POC-APACHE-GROOVY-GENERALIZATION-001` | Apply the generic measurement workflow to Apache Groovy, reject semantically or byte-inequivalent candidates, and qualify only an exact output-preserving scope that beats optimized native Gradle | `DONE` | Codex |
 | 78 | `POC-GENERIC-PROFILE-ONBOARDING-001` | Produce a reviewable structural measurement proposal from one original Gradle task, exact Git change and repository-declared outputs, then hand it to the existing isolated measure/evaluate flow without repository-name rules or automatic activation | `DONE` | Codex |
 | 79 | `POC-GENERIC-PROFILE-REALWORLD-001` | Run the unchanged proposal command on fresh Apache Groovy and Micronaut checkouts and require it to reproduce their already qualified structural boundaries before any new timing | `DONE` | Codex |
-| 80 | `POC-GENERIC-PROFILE-CI-001` | Expose the unchanged proposal command as a review-only CI artifact from an owner-declared workflow, exact Git change and required outputs, retaining native on unsupported or incomplete discovery | `TODO` | Codex |
+| 80 | `POC-GENERIC-PROFILE-MATRIX-001` | Run one installed `profile propose -> measure -> evaluate` structural-only method on Spring, OpenTelemetry, Kafka, Micronaut and Groovy, preserving each declared workflow and outputs while reporting prior Jar/Edge compositions separately | `DOING` | Codex |
+| 81 | `POC-GENERIC-PROFILE-CI-001` | Expose the unchanged proposal command as a review-only CI artifact from an owner-declared workflow, exact Git change and required outputs, retaining native on unsupported or incomplete discovery | `TODO` | Codex |
 
-#### Next POC block: generic CI review handoff
+#### Current POC block: five-repository generic profile matrix
 
-`POC-GENERIC-PROFILE-CI-001` is next. Fresh Apache Groovy and Micronaut
-checkouts now prove that the installed proposal command rediscovers the exact
-qualified structural boundaries without copying retained BuildOpt state. The
-next adoption gap is making that review bundle easy to obtain in an ordinary
-CI workflow without granting it activation authority.
+`POC-GENERIC-PROFILE-MATRIX-001` is preregistered before timing. It answers the
+cross-repository comparison gap exposed after the Groovy/Micronaut replay:
+Spring, OpenTelemetry and Kafka must receive fresh evidence from the same
+installed structural-only surface rather than being represented only by older
+protocols or compositions.
 
-- Accept only explicit repository-owner inputs: original Gradle workflow,
-  exact base-to-head changed paths and required output globs.
-- Run `buildopt profile propose` through the packaged Action/component and
-  publish the proposal, manifest, graph, generated binding and fallback input
-  as a review artifact. Do not commit or activate a profile.
-- Make native-full-graph, unknown, custom, Test-bearing and failed discovery
-  outcomes visible and successful without hiding the reason.
-- Use deterministic fixtures for CI orchestration. Do not run the expensive
-  public-repository builds or repeat qualified timing on every push.
+- Use only repository identity, declared Gradle entrypoints, exact changed path
+  and required output globs; no repository-name product condition is allowed.
+- OpenTelemetry retains its real 53-entrypoint Spring-family workflow through
+  the generic repeated-entrypoint proposal surface rather than substituting an
+  unrepresentative root task.
+- Compare optimized native Gradle with installed BuildOpt Build Impact only,
+  using independent state, eight alternating pairs, exact output equality and
+  proven full-graph fallback. Unsupported or weak cells retain native.
+- Report older Jar and Edge compositions in a separate context table. Do not
+  average repositories, add mechanisms or attribute a composition result to
+  structural Build Impact alone.
+- After the terminal matrix, `POC-GENERIC-PROFILE-CI-001` remains the next
+  adoption block.
 
 #### Planned POC decision sequence
 
@@ -1819,7 +1825,8 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-289` | 2026-08-09 | `POC-NEGATIVE-MECHANISM-RETIREMENT-001`, POC-B terminal decision | Runtime Tuning, exact-bound Hot State, and the standard-Copy adapter were removed from the installed launcher, Build Impact flags, Gradle init script/plugin registry, local-authority execution, hosted workflows, and executable experiment runners. The removal gate rejects the old CLI options, proves stale environment variables cannot activate integration, and requires the negative evidence for `W4_H6G`/`W3_H4G`, the whole-build Hot State regression, and Copy's failed incremental interval to remain checked in. Native Gradle Configuration Cache, qualified Build Impact, standard Jar, and bounded Edge paths are unchanged | `DONE` terminal `NO_VALUE_MECHANISMS_RETIRED`: immutable protocols/results remain auditable history, but no customer or developer path can reactivate the rejected mechanisms. Reopening requires a new RFC decision and materially new evidence, not another parameter search |
 | `E-290` | 2026-08-09 | `POC-APACHE-GROOVY-GENERALIZATION-001` | The checked [Apache Groovy classes bundle](./benchmarks/results/poc-apache-groovy-classes-v1/measurement.json), [experiment record](./specs/poc-apache-groovy-classes-v1.md), generic root-producer discovery fix and independent checker bind public Groovy 5.0.8 base `c1689831`, one exact `groovy-json` source mutation, BuildOpt `b24eb84`, Gradle 8.14.4, Temurin 21 and the optimized-native four-worker `classes` control. Complete discovery reduces 37 projects to two. Eight isolated alternating pairs average 92,350.625 ms natively and 46,119.875 ms through installed BuildOpt, saving 46,230.75 ms/**50.06%** with interval +44,190.25..+47,846.875 ms, 8/8 positive pairs, the same 66 class outputs and successful global full-graph fallback. The distribution candidate was rejected on byte mismatch and aggregate `assemble` was stopped before timing as a non-focused docs-heavy scope | `DONE` terminal `QUALIFY_GENERIC_APACHE_GROOVY_CLASSES_SCOPE`: the implementation contains no Apache Groovy or repository-name branch and the exact evidence reproduces the review-required v4 profile. Only the fixed classes output qualifies; distribution, aggregate assemble, tests, unknown changes, drift and all other scopes retain native. No automatic activation, production, soak, design-partner, public-release or Test Optimization authority is created. `POC-GENERIC-PROFILE-ONBOARDING-001` is next |
 | `E-291` | 2026-08-10 | `POC-GENERIC-PROFILE-ONBOARDING-001` | The [generic onboarding contract](./specs/poc-generic-profile-onboarding-v1.md), installed `buildopt profile propose` command, two-pass typed Gradle discovery, focused ownership tests and external clean-checkout checker remove the hand-authored manifest/graph step. Starting only from `classes`, one exact base-to-target source change and one declared output glob, the fixture deterministically proposes `:service-a:classes`, reduces two projects to one, writes the review bundle and feeds it unchanged to `profile analyze`. A custom executable workflow returns native and writes no candidate state | `DONE` terminal `GENERIC_REVIEWABLE_PROPOSAL_AVAILABLE`: repeated manifest, graph, generated binding and proposal bytes are identical. The report exposes output scope, reduction, fallback, unknown state and the exact measure handoff. Required outputs remain owner-declared; no timing percentage, active profile, automatic activation, production authority or Test Optimization behavior is created. `POC-GENERIC-PROFILE-REALWORLD-001` is next |
-| `E-292` | 2026-08-10 | `POC-GENERIC-PROFILE-REALWORLD-001` | The [public-repository replay contract](./specs/poc-generic-profile-realworld-v1.md), installed runner, independent checker and [captured evidence](./benchmarks/results/poc-generic-profile-realworld-v1/README.md) start from shallow checkouts of Apache Groovy `c1689831` and Micronaut Core `8de8f38`, apply their frozen one-file changes and supply only the original workflow plus qualified output glob. After excluded bounded dependency preparation, both accepted proposal passes run offline. Groovy independently returns `:groovy-json:classes`, 37 projects to two; Micronaut returns `:micronaut-http-client-jdk:assemble`, 75 projects to 22. Proposal, manifest, graph and generated bindings are digest-bound and compared with the retained structural plans | `DONE` terminal `QUALIFIED_BOUNDARIES_REPRODUCED_FROM_PUBLIC_CHECKOUTS`: both candidates are materially unchanged, so no timing was repeated and no new percentage was created. Retained 50.06% Groovy and 72.16% installed Micronaut results remain the value evidence. The workflow contains no repository-name rule, active profile, automatic activation, production, soak, design-partner or Test Optimization authority. `POC-GENERIC-PROFILE-CI-001` is next |
+| `E-292` | 2026-08-10 | `POC-GENERIC-PROFILE-REALWORLD-001` | The [public-repository replay contract](./specs/poc-generic-profile-realworld-v1.md), installed runner, independent checker and [captured evidence](./benchmarks/results/poc-generic-profile-realworld-v1/README.md) start from shallow checkouts of Apache Groovy `c1689831` and Micronaut Core `8de8f38`, apply their frozen one-file changes and supply only the original workflow plus qualified output glob. After excluded bounded dependency preparation, both accepted proposal passes run offline. Groovy independently returns `:groovy-json:classes`, 37 projects to two; Micronaut returns `:micronaut-http-client-jdk:assemble`, 75 projects to 22. Proposal, manifest, graph and generated bindings are digest-bound and compared with the retained structural plans | `DONE` terminal `QUALIFIED_BOUNDARIES_REPRODUCED_FROM_PUBLIC_CHECKOUTS`: both candidates are materially unchanged, so no timing was repeated and no new percentage was created. Retained 50.06% Groovy and 72.16% installed Micronaut results remain the value evidence. The workflow contains no repository-name rule, active profile, automatic activation, production, soak, design-partner or Test Optimization authority. `POC-GENERIC-PROFILE-MATRIX-001` is next |
+| `E-293` | 2026-08-10 | `POC-GENERIC-PROFILE-MATRIX-001` | The [five-repository matrix contract](./specs/poc-generic-profile-matrix-v1.md), frozen JSON inputs, generic repeated-entrypoint proposal extension, installed runner and independent checker bind implementation `8ac349e`, exact Spring/OpenTelemetry/Kafka/Micronaut/Groovy public revisions, source mutations, declared workflows and required outputs. All fresh cells use Build Impact only against optimized native Gradle with 12 workers, eight alternating isolated pairs, exact outputs and full fallback. Retained Jar/Edge compositions are explicitly separate, non-additive context | `DOING` preregistered with zero accepted observations: discover all five candidates first, measure only complete supported reductions, retain native on weak or unavailable evidence, and publish repository-level results without averaging percentages. No repository-name product rule, automatic activation, production, soak, design-partner or Test Optimization authority is created |
 
 ---
 
@@ -1827,6 +1834,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-10 | Preregistered one structural-only `profile propose -> measure -> evaluate` matrix across Spring, OpenTelemetry, Kafka, Micronaut and Groovy; added generic multi-entrypoint workflow support and kept retained Jar/Edge compositions separate and non-additive | Codex |
 | 2026-08-10 | Replayed the installed generic proposal from fresh Apache Groovy and Micronaut checkouts, reproducing the qualified 37-to-2 and 75-to-22 project plans without retained BuildOpt JSON; retained existing value evidence and made a review-only CI artifact the next POC block | Codex |
 | 2026-08-10 | Added no-hand-authored-JSON structural onboarding: two-pass Gradle discovery produces a deterministic review bundle and measure handoff from one exact Git change while custom, ambiguous, global, Test-bearing or unknown workflows retain native full graph | Codex |
 | 2026-08-09 | Qualified the generic structural workflow on Apache Groovy classes: 37 projects reduced to two, 50.06% mean savings, 8/8 positive pairs, 66 exact outputs and global fallback; recorded rejected distribution/aggregate scopes and made reviewable profile onboarding the next POC block | Codex |

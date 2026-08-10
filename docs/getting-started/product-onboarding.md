@@ -115,6 +115,11 @@ buildopt profile propose \
   --required-output 'module/build/classes/**'
 ```
 
+Repeat `--entrypoint` for a workflow that invokes several Gradle task paths.
+BuildOpt preserves the complete native workflow as fallback and maps the unique
+terminal selectors to the exact changed project owners; it does not require a
+repository-specific profile or an artificial aggregate task.
+
 Review `buildopt-profile-proposal.json` first. A
 `MEASURE_STRUCTURAL_CANDIDATE` decision includes the follow-up argument vector
 for `buildopt profile measure`; fill the immutable BuildOpt revision if it was

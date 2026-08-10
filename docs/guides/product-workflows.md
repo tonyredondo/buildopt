@@ -203,6 +203,10 @@ buildopt profile propose \
   --required-output 'module/build/classes/**'
 ```
 
+`--entrypoint` is repeatable. Multi-entrypoint workflows retain every declared
+native task as fallback while the generic proposal derives candidate task
+selectors from their terminal names and the exact owners of the change.
+
 The proposal command produces the manifest, graph, generated binding and
 fallback input used below without hand-authored JSON. Review the selected task
 set, omitted projects, required output scope and native fallback before running

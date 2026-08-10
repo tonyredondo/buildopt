@@ -110,11 +110,12 @@ buildopt profile propose \
   --required-output 'module/build/classes/**'
 ```
 
-This two-pass onboarding command first observes the original Gradle selector,
-then validates the same lifecycle task on the exact changed project owners. A
-safe reduction produces the manifest, graph, generated binding, fallback file
-and exact measurement handoff. Custom, ambiguous, global, Test-bearing or
-unknown work retains native full graph and writes no candidate state.
+This two-pass onboarding command first observes the original Gradle workflow,
+then validates its terminal task selectors on the exact changed project
+owners. Repeat `--entrypoint` to preserve a multi-entrypoint workflow. A safe
+reduction produces the manifest, graph, generated binding, fallback file and
+exact measurement handoff. Custom, ambiguous, global, Test-bearing or unknown
+work retains native full graph and writes no candidate state.
 
 The generated state can then be inspected independently:
 

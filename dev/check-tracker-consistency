@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`POC PUBLIC REPOSITORY PROFILE REPLAY COMPLETE\`"
-    "**Current phase:** \`GENERIC PROFILE CI REVIEW HANDOFF NEXT\`"
+    "**Overall status:** \`FIVE-REPOSITORY GENERIC PROFILE MATRIX PREREGISTERED\`"
+    "**Current phase:** \`GENERIC PROFILE MATRIX MEASUREMENT IN PROGRESS\`"
     "| 75 | \`POC-GENERIC-MEASUREMENT-001\` | Collect eight isolated alternating optimized-native-versus-BuildOpt pairs"
     "| \`E-288\` | 2026-08-09 | \`POC-GENERIC-MEASUREMENT-001\`"
     "| 77 | \`POC-APACHE-GROOVY-GENERALIZATION-001\` | Apply the generic measurement workflow to Apache Groovy"
@@ -74,8 +74,9 @@ buildopt_required_tracker_text=(
     "| \`E-290\` | 2026-08-09 | \`POC-APACHE-GROOVY-GENERALIZATION-001\`"
     "| 79 | \`POC-GENERIC-PROFILE-REALWORLD-001\` | Run the unchanged proposal command on fresh Apache Groovy and Micronaut checkouts"
     "| \`E-291\` | 2026-08-10 | \`POC-GENERIC-PROFILE-ONBOARDING-001\`"
-    "| 80 | \`POC-GENERIC-PROFILE-CI-001\` | Expose the unchanged proposal command as a review-only CI artifact"
+    "| 80 | \`POC-GENERIC-PROFILE-MATRIX-001\` | Run one installed \`profile propose -> measure -> evaluate\` structural-only method"
     "| \`E-292\` | 2026-08-10 | \`POC-GENERIC-PROFILE-REALWORLD-001\`"
+    "| \`E-293\` | 2026-08-10 | \`POC-GENERIC-PROFILE-MATRIX-001\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"

@@ -95,6 +95,7 @@ buildopt profile propose \
   --repository-id OWNER/REPO \
   --pipeline-class CLASS \
   --entrypoint TASK \
+  [--entrypoint TASK ...] \
   --changes-file PATH \
   --base-revision REVISION \
   --required-output GLOB \
@@ -103,8 +104,10 @@ buildopt profile propose \
 
 This is the first command for a repository that has no BuildOpt manifest. It
 uses two configured-model discovery passes to map the exact Git change to
-Gradle projects, propose the same lifecycle task on those projects and validate
-the smaller graph. It writes reviewable manifest, graph, generated binding,
+Gradle projects, propose each terminal task selector on those projects and
+validate the smaller graph. Repeated `--entrypoint` values preserve a real
+multi-entrypoint workflow without replacing it with an artificial root task.
+It writes reviewable manifest, graph, generated binding,
 fallback and proposal documents only for a supported complete candidate.
 Global, ambiguous, custom, Test-bearing or unknown workflows retain
 `NATIVE_FULL_GRAPH`. It never writes an active profile or predicts a speedup.

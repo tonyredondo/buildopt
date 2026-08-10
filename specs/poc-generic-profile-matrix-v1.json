@@ -2,7 +2,7 @@
   "schemaVersion": "buildopt.specs/poc-generic-profile-matrix/v1",
   "workItem": "POC-GENERIC-PROFILE-MATRIX-001",
   "decision": "PREREGISTER_ONE_GENERIC_STRUCTURAL_METHOD_ACROSS_FIVE_PUBLIC_REPOSITORIES",
-  "buildoptRevision": "fc68a910f0ae87bbb309ff0484af23bbf7a302f6",
+  "buildoptRevision": "8ac349e4df9ec03933480e26f4fb0b3456fd7fa5",
   "runner": {
     "platform": "linux-amd64",
     "cpuCount": 12,
