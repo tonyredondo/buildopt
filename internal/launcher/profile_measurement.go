@@ -265,16 +265,26 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 		if pair%2 == 1 {
 			order = "CONTROL_FIRST"
 		}
+		// Prepare both isolated arms before starting either measured process. A
+		// large repository can spend seconds resetting its checkout and restoring
+		// the native cache; charging that work to the inter-arm gap would measure
+		// fixture preparation rather than temporal comparability.
+		if err := resetStructuralArm(config, control, config.targetRevision, true); err != nil {
+			return nil, false, fmt.Errorf("pair %d prepare control arm: %w", pair, err)
+		}
+		if err := resetStructuralArm(config, candidate, config.targetRevision, true); err != nil {
+			return nil, false, fmt.Errorf("pair %d prepare candidate arm: %w", pair, err)
+		}
 		var controlResult, candidateResult structuralArmResult
 		if order == "CONTROL_FIRST" {
-			controlResult, err = measureStructuralArm(config, control, false)
+			controlResult, err = runStructuralArm(config, control, false, config.changesPath)
 			if err == nil {
-				candidateResult, err = measureStructuralArm(config, candidate, true)
+				candidateResult, err = runStructuralArm(config, candidate, true, config.changesPath)
 			}
 		} else {
-			candidateResult, err = measureStructuralArm(config, candidate, true)
+			candidateResult, err = runStructuralArm(config, candidate, true, config.changesPath)
 			if err == nil {
-				controlResult, err = measureStructuralArm(config, control, false)
+				controlResult, err = runStructuralArm(config, control, false, config.changesPath)
 			}
 		}
 		if err != nil {
@@ -287,6 +297,20 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 		interArmGap := secondResult.startedAt.Sub(firstResult.finishedAt)
 		if interArmGap < 0 || interArmGap > maximumMeasurementInterArmGap {
 			return nil, false, fmt.Errorf("pair %d inter-arm gap %s exceeds %s", pair, interArmGap, maximumMeasurementInterArmGap)
+		}
+		if !strings.Contains(candidateResult.log, "explicit Build Impact POC candidate "+config.analysis.Plan.AlternativeID+" selected") {
+			return nil, false, errors.New("installed candidate did not select the analyzed structural alternative")
+		}
+		// Verify outputs only after both measured processes have finished. Output
+		// traversal can be material on large graphs and must not inflate the gap
+		// between the two Gradle starts.
+		controlResult.outputSHA, controlResult.outputCount, err = hashMeasurementOutputs(control.workspace, config.analysis.Plan.RequiredOutputs)
+		if err != nil {
+			return nil, false, fmt.Errorf("pair %d verify control outputs: %w", pair, err)
+		}
+		candidateResult.outputSHA, candidateResult.outputCount, err = hashMeasurementOutputs(candidate.workspace, config.analysis.Plan.RequiredOutputs)
+		if err != nil {
+			return nil, false, fmt.Errorf("pair %d verify candidate outputs: %w", pair, err)
 		}
 		if controlResult.outputSHA != candidateResult.outputSHA || controlResult.outputCount != candidateResult.outputCount {
 			return nil, false, fmt.Errorf("pair %d required outputs differ between optimized native Gradle and BuildOpt", pair)
@@ -360,21 +384,6 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 		return arm, fmt.Errorf("snapshot %s native build cache: %w", name, err)
 	}
 	return arm, nil
-}
-
-func measureStructuralArm(config structuralMeasurementConfig, arm structuralMeasurementArm, candidate bool) (structuralArmResult, error) {
-	if err := resetStructuralArm(config, arm, config.targetRevision, true); err != nil {
-		return structuralArmResult{}, err
-	}
-	result, err := runStructuralArm(config, arm, candidate, config.changesPath)
-	if err != nil {
-		return result, err
-	}
-	if candidate && !strings.Contains(result.log, "explicit Build Impact POC candidate "+config.analysis.Plan.AlternativeID+" selected") {
-		return result, errors.New("installed candidate did not select the analyzed structural alternative")
-	}
-	result.outputSHA, result.outputCount, err = hashMeasurementOutputs(arm.workspace, config.analysis.Plan.RequiredOutputs)
-	return result, err
 }
 
 func measureStructuralFallback(config structuralMeasurementConfig, arm structuralMeasurementArm) (structuralArmResult, string, error) {

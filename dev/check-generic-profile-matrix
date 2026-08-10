@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if (($# > 1)); then
-    printf 'usage: %s [evidence-directory]\n' "$0" >&2
+if (($# > 2)); then
+    printf 'usage: %s [evidence-directory] [specification]\n' "$0" >&2
     exit 64
 fi
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
 buildopt_evidence=${1:-"${buildopt_repo_root}/benchmarks/results/poc-generic-profile-matrix-v1"}
-buildopt_spec="${buildopt_repo_root}/specs/poc-generic-profile-matrix-v1.json"
+buildopt_spec=${2:-"${buildopt_repo_root}/specs/poc-generic-profile-matrix-v1.json"}
+if [[ ${buildopt_spec} != /* ]]; then
+    buildopt_spec="${buildopt_repo_root}/${buildopt_spec}"
+fi
 buildopt_summary="${buildopt_evidence}/summary.json"
 
 for buildopt_command in jq sha256sum; do
@@ -25,9 +28,14 @@ for buildopt_file in "${buildopt_spec}" "${buildopt_summary}"; do
     }
 done
 
-jq -e '
-    .schemaVersion == "buildopt.evidence/poc-generic-profile-matrix/v1" and
-    .workItem == "POC-GENERIC-PROFILE-MATRIX-001" and
+buildopt_evidence_schema=$(jq -er '.evidenceSchemaVersion // "buildopt.evidence/poc-generic-profile-matrix/v1"' "${buildopt_spec}")
+buildopt_work_item=$(jq -er '.workItem' "${buildopt_spec}")
+
+jq -e \
+    --arg schemaVersion "${buildopt_evidence_schema}" \
+    --arg workItem "${buildopt_work_item}" '
+    .schemaVersion == $schemaVersion and
+    .workItem == $workItem and
     (.buildopt.revision | test("^[0-9a-f]{40}$")) and
     (.buildopt.executableSha256 | test("^[0-9a-f]{64}$")) and
     .method.candidateMechanisms == ["BUILD_IMPACT"] and
