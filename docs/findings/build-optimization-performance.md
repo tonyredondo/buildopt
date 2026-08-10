@@ -467,18 +467,19 @@ gap: these rows all use Build Impact alone against each repository's declared
 optimized-native Gradle workflow, with 12 workers, eight alternating isolated
 pairs, exact required outputs, and full-graph fallback.
 
-| Repository | Graph reduction | Direct result | Product decision |
-| --- | ---: | ---: | --- |
-| Spring Framework | 27 -> 10 projects | **6.83% faster**, 843 ms, 5/8 positive, interval -738..+2,256 ms | Retain native; end-to-end value is uncertain. |
-| OpenTelemetry | 1,024 -> 34 projects | No accepted percentage | Retain native; pair 6 exceeded the frozen inter-arm gap by 444 ms, so five favorable partial pairs are rejected. |
-| Apache Kafka | 64 -> 3 projects | **85.12% faster**, 74.793 s, 8/8 positive | Qualify the exact structural profile. |
-| Micronaut Core | 75 -> 22 projects | **42.22% faster**, 10.851 s, 8/8 positive | Qualify the exact structural profile. |
-| Apache Groovy | 37 -> 2 projects | **71.99% faster**, 49.991 s, 8/8 positive | Qualify the exact structural profile. |
+| Repository | Graph reduction | Optimized native | BuildOpt | Direct result | POC decision |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Spring Framework | 27 -> 10 projects | 13.940 s | 11.438 s | **17.94% faster**, 2.501 s, interval +1.479..+3.422 s | Retain native; one -260-ms pair fails the frozen 8-of-8 gate. |
+| OpenTelemetry | 1,024 -> 34 projects | 83.934 s | 71.825 s | **14.43% faster**, 12.110 s, interval +9.819..+14.267 s | Qualify from the separately preregistered v4 fallback-equivalence correction; 8/8 positive. |
+| Apache Kafka | 64 -> 3 projects | 82.498 s | 13.113 s | **84.11% faster**, 69.385 s | Qualify; 8/8 positive. |
+| Micronaut Core | 75 -> 22 projects | 27.407 s | 15.968 s | **41.74% faster**, 11.439 s | Qualify; 8/8 positive. |
+| Apache Groovy | 37 -> 2 projects | 75.064 s | 19.629 s | **73.85% faster**, 55.434 s | Qualify; 8/8 positive. |
 
 The result changes the generalization conclusion without creating a universal
 claim. Generic graph reduction now produces qualified end-to-end value in
-three materially different repository families and safely declines two
-others. The large Kafka, Micronaut, and Groovy gains show the cascade effect:
+four materially different repository families and safely declines Spring
+under the preregistered repeatability rule. The large Kafka, Micronaut, and
+Groovy gains show the cascade effect:
 omitting unrelated projects also removes their configuration, task scheduling,
 cache lookup, source processing, and downstream packaging work. Spring shows
 why project-count reduction alone is not enough; the final wall-clock gate
@@ -488,7 +489,10 @@ These percentages replace neither the older complete Jar/Edge compositions
 nor one another. They are direct Build-Impact-only measurements and must not be
 averaged or added to historical mechanism effects. The next POC block should
 make the same generic proposal a review artifact in repository-owned CI, while
-activation remains explicit and evidence-bound.
+activation remains explicit and evidence-bound. OpenTelemetry also shows that
+a correctness-only fallback must preserve measured scheduling when output
+bytes are scheduling-sensitive: v3 remains immutable rejected evidence, and
+the v4 correction changed no timed condition or qualification threshold.
 
 ## Open Questions
 
@@ -562,19 +566,19 @@ rerunning unchanged experiments:
 
 | Target | Complete composition | Direct effect | Replication decision |
 | --- | --- | ---: | --- |
-| Spring Framework | Build Impact | **30.86% faster**, 2,492.375 ms, 8/8 positive | Later installed run stayed 14.33% positive but failed the frozen 8/8 rule at 7/8; native default |
-| OpenTelemetry | Build Impact + standard `Jar` | **50.40% faster**, 5,361.25 ms, 4/4 positive | Later installed preparation produced zero accepted observations; native default pending replication |
-| Kafka | Build Impact + read-only Edge | **82.35% faster**, 35,405.5 ms, 4/4 positive | Strict installed replication **81.85%**, 8/8; explicit reviewed POC profile |
-| Micronaut Core | Structural Build Impact | **72.97% faster**, 17,561.625 ms, 8/8 positive | Generic installed v4 profile **72.16% faster**, 8/8; review-required, exact-hash bound |
-| Apache Groovy | Structural Build Impact for `groovy-json` classes | **50.06% faster**, 46,230.75 ms, 8/8 positive | Generic measured evidence qualifies; 66 exact outputs and global fallback; exact classes scope only |
+| Spring Framework | Build Impact | **30.86% faster**, 2,492.375 ms, 8/8 positive | Latest generic row saved **17.94%** but failed the frozen 8/8 rule at 7/8; native default |
+| OpenTelemetry | Build Impact + standard `Jar` | **50.40% faster**, 5,361.25 ms, 4/4 positive | Latest generic Build-Impact-only row independently qualifies at **14.43%**, 8/8 positive; composition and structural effects remain separate |
+| Kafka | Build Impact + read-only Edge | **82.35% faster**, 35,405.5 ms, 4/4 positive | Latest generic Build-Impact-only row qualifies at **84.11%**, 8/8 positive; explicit reviewed POC profile |
+| Micronaut Core | Structural Build Impact | **72.97% faster**, 17,561.625 ms, 8/8 positive | Latest uniform generic row qualifies at **41.74%**, 8/8; review-required and exact-hash bound |
+| Apache Groovy | Structural Build Impact for `groovy-json` classes | **50.06% faster**, 46,230.75 ms, 8/8 positive | Latest uniform generic row qualifies at **73.85%**, 8/8; exact classes scope only |
 
 The table does not sum component effects or average repositories. Hot State is
 excluded because its direct OpenTelemetry arm regressed by 7.68%. Runtime
-Tuning and `Copy` are retired because the target evidence did
-not qualify them. OpenTelemetry Build Impact was directionally positive but did
-not independently clear its stability gate; value is claimed only for the
-directly measured Impact-plus-Jar composition. This is the central product rule
-going forward: discover
+Tuning and `Copy` are retired because the target evidence did not qualify them.
+OpenTelemetry Build Impact now independently clears the uniform structural
+gate at 14.43%; the older Impact-plus-Jar result remains a separate composition
+and the two effects are not added. This is the central product rule going
+forward: discover
 opportunities generally, compose only mechanisms supported by the exact
 workload evidence, measure the final path directly, and choose native Gradle
 whenever the installed result is not replicated.

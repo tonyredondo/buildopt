@@ -445,6 +445,22 @@ prepared before either measured process and outputs are checked after both;
 the same strict five-second process-only gap, repositories, workflows,
 thresholds, outputs, fallbacks, and non-additive reporting rules remain.
 
+`poc-generic-profile-matrix-v3.json` and
+`poc-generic-profile-matrix-v3.md` freeze the terminal five-repository rerun
+after two resource-control failures showed that the untimed fallback must not
+overlap both measured daemons. The v3 evidence remains immutable: Kafka,
+Micronaut, and Groovy qualify; Spring retains native under the 8-of-8 rule; and
+OpenTelemetry retains native because its four-worker non-parallel fallback
+changed required output bytes.
+
+`poc-generic-profile-matrix-v4.json` and
+`poc-generic-profile-matrix-v4.md` preregister the OpenTelemetry-only correction.
+They preserve every timed condition and threshold while making the untimed
+no-daemon fallback retain measured parallel 12-worker scheduling. The fresh
+terminal row qualifies at 14.43% faster with 8/8 positive pairs, exact outputs,
+zero product failures, and successful full-graph fallback. No v3 timing is
+reused.
+
 `poc-trace-hypothesis-v1.json` and `poc-trace-hypothesis-v1.md` bind the final
 trace-gated optimization decision. They require at least 500 ms of causally
 recoverable product-owned critical-path work in two families, reject overlapping

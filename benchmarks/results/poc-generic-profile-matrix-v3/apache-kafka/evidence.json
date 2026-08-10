@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+  "evidenceState": "QUALIFIED",
+  "capturedAt": "2026-08-10T19:43:06Z",
+  "subject": {
+    "repositoryId": "apache/kafka",
+    "repositoryRevision": "a7d0e4c31618c3ec91951723c9152309d4155ae4",
+    "pipelineClass": "test-classes"
+  },
+  "sourceBindings": {
+    "manifestSha256": "71a3f4884cab4da591b0be4c51275101ebc78bfbbcac96c61a8dc7d2d6bccd0c",
+    "graphSha256": "6ee53ca766ba13512120c7610e2173c10d5e12fd69ba66a56d9adb9ff50e0af8",
+    "generatedManifestSha256": "7d808135836ba7f3ad34b0d0c0b847fa222eb605cda4e923df3a520283fdc06e",
+    "sourceEvidenceSha256": "d2a07796014a1b3b0b6666ac3ba54aba2993c93917adada7a7720a089e38788c"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":clients:testClasses"
+    ],
+    "fallbackEntrypoints": [
+      "testClasses"
+    ],
+    "requiredOutputs": [
+      "clients/build/classes/java/main/**",
+      "clients/build/classes/java/test/**",
+      "clients/build/resources/main/**",
+      "clients/build/resources/test/**"
+    ],
+    "totalProjectCount": 64,
+    "selectedProjectCount": 3,
+    "omittedProjectCount": 61,
+    "omittedProjectRatio": 0.953125
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "efa38b22ff14a6276900210bc9ac10a81aac0328",
+    "executableSha256": "01ecc4c28e31dc602c9360f8101f4528671beaeed5666b7dcf4e057eae186482",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 83177,
+      "candidateDurationMs": 15284,
+      "savedMs": 67893,
+      "controlRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "candidateRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "requiredOutputCount": 4062,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 92174,
+      "candidateDurationMs": 12973,
+      "savedMs": 79201,
+      "controlRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "candidateRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "requiredOutputCount": 4062,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 73252,
+      "candidateDurationMs": 11949,
+      "savedMs": 61303,
+      "controlRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "candidateRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "requiredOutputCount": 4062,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 77923,
+      "candidateDurationMs": 13750,
+      "savedMs": 64173,
+      "controlRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "candidateRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "requiredOutputCount": 4062,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 5,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 72714,
+      "candidateDurationMs": 12086,
+      "savedMs": 60628,
+      "controlRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "candidateRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "requiredOutputCount": 4062,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 6,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 68314,
+      "candidateDurationMs": 13786,
+      "savedMs": 54528,
+      "controlRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "candidateRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "requiredOutputCount": 4062,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 7,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 67850,
+      "candidateDurationMs": 11907,
+      "savedMs": 55943,
+      "controlRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "candidateRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "requiredOutputCount": 4062,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 8,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 124578,
+      "candidateDurationMs": 13169,
+      "savedMs": 111409,
+      "controlRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "candidateRequiredOutputSha256": "ffdf96d02d1299c1e39c8e017abe83f77bbb517faf740f92052d4c563dea5ae8",
+      "requiredOutputCount": 4062,
+      "productAttributableFailure": false
+    }
+  ],
+  "fallback": {
+    "mode": "FULL_GRAPH",
+    "reason": "IMPACT_GLOBAL_CHANGE",
+    "buildSuccessful": true
+  },
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 82497.75,
+    "candidateMeanMs": 13113,
+    "meanSavedMs": 69384.75,
+    "reductionRatio": 0.8410502104602853,
+    "interval95SavedMs": [
+      59509.875,
+      83024.375
+    ],
+    "positivePairs": 8,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

@@ -1,0 +1,217 @@
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+  "evidenceState": "QUALIFIED",
+  "capturedAt": "2026-08-10T21:59:22Z",
+  "subject": {
+    "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+    "repositoryRevision": "ff5105437413fc7612f8ea0a9bf43744b673ca3c",
+    "pipelineClass": "spring-family-test-classes"
+  },
+  "sourceBindings": {
+    "manifestSha256": "d56399fccc1ee9ab3a28f75fd871fc569c484df037a2d8c0a9700eabee41d1f6",
+    "graphSha256": "1db31d0f75041382aca8833e91499b7378cb6e0caf0fd90e2bb275f5b050d849",
+    "generatedManifestSha256": "dc2066db76ed966533a87f6e415d85d7be9ab57f475073cef04f9abdade65c8d",
+    "sourceEvidenceSha256": "e310608f1b78a717dd5b0baed71dc8f769679ead7688359d6ee3e59d6cd21516"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":instrumentation:spring:spring-boot-autoconfigure:testClasses"
+    ],
+    "fallbackEntrypoints": [
+      ":instrumentation:spring:spring-batch-3.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-boot-actuator-autoconfigure-2.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-boot-autoconfigure:testClasses",
+      ":instrumentation:spring:spring-boot-autoconfigure:testing:testClasses",
+      ":instrumentation:spring:spring-boot-resources:javaagent-unit-tests:testClasses",
+      ":instrumentation:spring:spring-boot-resources:javaagent:testClasses",
+      ":instrumentation:spring:spring-cloud-aws-3.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.2:testing:testClasses",
+      ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:testClasses",
+      ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:testing:testClasses",
+      ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webflux-4.3:testing:testClasses",
+      ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webmvc-4.3:javaagent:testClasses",
+      ":instrumentation:spring:spring-core-2.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-data:spring-data-1.8:javaagent:testClasses",
+      ":instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:testClasses",
+      ":instrumentation:spring:spring-data:spring-data-3.0:testing:testClasses",
+      ":instrumentation:spring:spring-data:spring-data-common:testing:testClasses",
+      ":instrumentation:spring:spring-integration-4.1:javaagent:testClasses",
+      ":instrumentation:spring:spring-integration-4.1:library:testClasses",
+      ":instrumentation:spring:spring-integration-4.1:testing:testClasses",
+      ":instrumentation:spring:spring-jms:spring-jms-2.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-jms:spring-jms-2.0:testing:testClasses",
+      ":instrumentation:spring:spring-jms:spring-jms-6.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-kafka-2.7:javaagent:testClasses",
+      ":instrumentation:spring:spring-kafka-2.7:library:testClasses",
+      ":instrumentation:spring:spring-kafka-2.7:testing:testClasses",
+      ":instrumentation:spring:spring-pulsar-1.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-pulsar-1.0:testing:testClasses",
+      ":instrumentation:spring:spring-rabbit-1.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-rmi-4.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-scheduling-3.1:bootstrap:testClasses",
+      ":instrumentation:spring:spring-scheduling-3.1:javaagent:testClasses",
+      ":instrumentation:spring:spring-security-config-6.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-security-config-6.0:library:testClasses",
+      ":instrumentation:spring:spring-web:spring-web-3.1:library:testClasses",
+      ":instrumentation:spring:spring-web:spring-web-3.1:testing:testClasses",
+      ":instrumentation:spring:spring-web:spring-web-6.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-webflux:spring-webflux-5.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-webflux:spring-webflux-5.0:testing-webflux7:testClasses",
+      ":instrumentation:spring:spring-webflux:spring-webflux-5.0:testing:testClasses",
+      ":instrumentation:spring:spring-webflux:spring-webflux-5.3:library:testClasses",
+      ":instrumentation:spring:spring-webflux:spring-webflux-5.3:testing-webflux7:testClasses",
+      ":instrumentation:spring:spring-webflux:spring-webflux-5.3:testing:testClasses",
+      ":instrumentation:spring:spring-webmvc:spring-webmvc-3.1:javaagent:testClasses",
+      ":instrumentation:spring:spring-webmvc:spring-webmvc-3.1:wildfly-testing:testClasses",
+      ":instrumentation:spring:spring-webmvc:spring-webmvc-5.3:library:testClasses",
+      ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:library:testClasses",
+      ":instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:testClasses",
+      ":instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:testing:testClasses",
+      ":instrumentation:spring:spring-ws-2.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-ws-2.0:testing:testClasses"
+    ],
+    "requiredOutputs": [
+      "instrumentation/spring/spring-boot-autoconfigure/build/classes/**"
+    ],
+    "totalProjectCount": 1024,
+    "selectedProjectCount": 34,
+    "omittedProjectCount": 990,
+    "omittedProjectRatio": 0.966796875
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "8fbb060512f58fcbcf762fd2ef0331b36c22da9e",
+    "executableSha256": "0ea7dbf83f548b09bf5c9f53d9121290d30a0a4b0fbbdbb002d7b018e954f9d3",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 89795,
+      "candidateDurationMs": 75049,
+      "savedMs": 14746,
+      "controlRequiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d",
+      "candidateRequiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d",
+      "requiredOutputCount": 125,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 87102,
+      "candidateDurationMs": 73648,
+      "savedMs": 13454,
+      "controlRequiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d",
+      "candidateRequiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d",
+      "requiredOutputCount": 125,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 81574,
+      "candidateDurationMs": 74450,
+      "savedMs": 7124,
+      "controlRequiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d",
+      "candidateRequiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d",
+      "requiredOutputCount": 125,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 85565,
+      "candidateDurationMs": 69277,
+      "savedMs": 16288,
+      "controlRequiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d",
+      "candidateRequiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d",
+      "requiredOutputCount": 125,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 5,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 81377,
+      "candidateDurationMs": 73726,
+      "savedMs": 7651,
+      "controlRequiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d",
+      "candidateRequiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d",
+      "requiredOutputCount": 125,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 6,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 79712,
+      "candidateDurationMs": 70190,
+      "savedMs": 9522,
+      "controlRequiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d",
+      "candidateRequiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d",
+      "requiredOutputCount": 125,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 7,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 81405,
+      "candidateDurationMs": 68293,
+      "savedMs": 13112,
+      "controlRequiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d",
+      "candidateRequiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d",
+      "requiredOutputCount": 125,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 8,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 84943,
+      "candidateDurationMs": 69963,
+      "savedMs": 14980,
+      "controlRequiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d",
+      "candidateRequiredOutputSha256": "53269cb108684c2d218ea8fe10022c5b144f94d676dfcde046a8c222f6e89c0d",
+      "requiredOutputCount": 125,
+      "productAttributableFailure": false
+    }
+  ],
+  "fallback": {
+    "mode": "FULL_GRAPH",
+    "reason": "IMPACT_GLOBAL_CHANGE",
+    "buildSuccessful": true
+  },
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 83934.125,
+    "candidateMeanMs": 71824.5,
+    "meanSavedMs": 12109.625,
+    "reductionRatio": 0.14427534688662091,
+    "interval95SavedMs": [
+      9819.25,
+      14266.5
+    ],
+    "positivePairs": 8,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

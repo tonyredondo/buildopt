@@ -1,0 +1,35 @@
+{
+  "key": "micronaut-core",
+  "repositoryId": "micronaut-projects/micronaut-core",
+  "publicRevision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+  "targetRevision": "4d28ada8732b1dd3be9c52d64692ec16dd717d60",
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "assemble"
+    ],
+    "candidateEntrypoints": [
+      ":micronaut-http-client-jdk:assemble"
+    ],
+    "totalProjectCount": 75,
+    "selectedProjectCount": 22,
+    "omittedProjectCount": 53
+  },
+  "measurementStatus": "COMPLETED",
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 27406.625,
+    "candidateMeanMs": 15967.875,
+    "meanSavedMs": 11438.75,
+    "reductionRatio": 0.417371712131647,
+    "interval95SavedMs": [
+      10199.75,
+      12650.125
+    ],
+    "positivePairs": 8,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "evaluationDecision": "QUALIFY_STRUCTURAL_PROFILE"
+}

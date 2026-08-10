@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v4",
+  "profileVersion": 4,
+  "profileId": "qualified-structural-build-impact",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "micronaut-projects/micronaut-core",
+  "pipelineClass": "assemble",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": false,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": false
+  },
+  "gradleOptions": [
+    "--daemon",
+    "--build-cache",
+    "--parallel",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-scan",
+    "--max-workers=12"
+  ],
+  "preconditions": [
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-manifest.json",
+      "sha256": "f71b72bd9007840c744e866f889992058c9d393877987f8b5fa335fa49325df2"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-graph.generated.json",
+      "sha256": "5959d5d5e841b3dc3c795857151d7bf61f470d5d7c78a9a868f15e4214c3203c"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact.generated.json",
+      "sha256": "f9aaf6b560e1926b5149c76f805a25c15f191684f4c996d9fe375576848ae563"
+    }
+  ],
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "ebc08d349f461a279470285d2a27c6854d6deb72440026680758a9a0f1882447",
+    "repositoryRevision": "4d28ada8732b1dd3be9c52d64692ec16dd717d60",
+    "pairs": 8,
+    "meanSavedMs": 11438.75,
+    "reductionRatio": 0.417371712131647,
+    "interval95SavedMs": [
+      10199.75,
+      12650.125
+    ]
+  }
+}

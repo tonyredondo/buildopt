@@ -1,0 +1,35 @@
+{
+  "key": "apache-kafka",
+  "repositoryId": "apache/kafka",
+  "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+  "targetRevision": "a7d0e4c31618c3ec91951723c9152309d4155ae4",
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "testClasses"
+    ],
+    "candidateEntrypoints": [
+      ":clients:testClasses"
+    ],
+    "totalProjectCount": 64,
+    "selectedProjectCount": 3,
+    "omittedProjectCount": 61
+  },
+  "measurementStatus": "COMPLETED",
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 82497.75,
+    "candidateMeanMs": 13113,
+    "meanSavedMs": 69384.75,
+    "reductionRatio": 0.8410502104602853,
+    "interval95SavedMs": [
+      59509.875,
+      83024.375
+    ],
+    "positivePairs": 8,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "evaluationDecision": "QUALIFY_STRUCTURAL_PROFILE"
+}

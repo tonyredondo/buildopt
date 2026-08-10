@@ -20,6 +20,26 @@ small/medium/large Gradle build matrix and makes no performance claim.
 For a stakeholder-oriented interpretation of these results and the recommended
 next experiments, see [Build Optimization performance findings](../docs/findings/build-optimization-performance.md).
 
+### Terminal generic structural matrix
+
+The [terminal v3 five-repository bundle](./results/poc-generic-profile-matrix-v3/README.md)
+and separately preregistered [OpenTelemetry v4 correction](./results/poc-generic-profile-matrix-v4/README.md)
+provide the latest comparable Build-Impact-only evidence:
+
+| Repository | Native mean | BuildOpt mean | Direct result | Decision |
+| --- | ---: | ---: | ---: | --- |
+| Spring Framework | 13.940 s | 11.438 s | **17.94% faster**, 7/8 positive | Retain native under the frozen 8-of-8 gate |
+| OpenTelemetry | 83.934 s | 71.825 s | **14.43% faster**, 8/8 positive | Qualified by v4 fallback-equivalence proof |
+| Apache Kafka | 82.498 s | 13.113 s | **84.11% faster**, 8/8 positive | Qualified |
+| Micronaut Core | 27.407 s | 15.968 s | **41.74% faster**, 8/8 positive | Qualified |
+| Apache Groovy | 75.064 s | 19.629 s | **73.85% faster**, 8/8 positive | Qualified |
+
+All accepted observations preserve required outputs byte for byte and include
+launcher/planning overhead. OpenTelemetry v4 changes only the untimed fallback
+execution mode; its timed conditions and thresholds are identical to v3. Do
+not average these repository percentages or add them to other mechanism
+effects.
+
 ### General whole-profile value
 
 [`results/poc-general-build-value-v1.json`](./results/poc-general-build-value-v1.json)
@@ -1210,7 +1230,11 @@ only for the reproduced failures: no-change Groovy, leaf Kotlin, and shared
 Groovy. It explicitly blocks tuning the two mismatched Kotlin cells from this
 evidence. Percentages are not added across cells.
 
-## Five-repository generic structural profile matrix
+## Historical v1 five-repository generic structural profile matrix
+
+This section preserves the first terminal v1 attempt. The latest comparable
+results are the v3/v4 table near the top of this document; v1 observations are
+not reused or silently replaced.
 
 [`results/poc-generic-profile-matrix-v1/summary.json`](./results/poc-generic-profile-matrix-v1/summary.json)
 applies one installed, repository-independent `profile propose -> profile

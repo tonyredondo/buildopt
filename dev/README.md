@@ -3424,14 +3424,16 @@ globs; OpenTelemetry supplies all 53 original entrypoints through repeated
 `--entrypoint` arguments. Preparation is excluded, while each accepted cell
 uses eight alternating isolated pairs, exact outputs, and full-graph fallback.
 
-`./dev/check-generic-profile-matrix [evidence-directory] [specification]` validates the frozen
-inputs and terminal bundle without network access. The committed result
-qualifies structural Build Impact for Kafka (**85.12%**), Micronaut
-(**42.22%**), and Groovy (**71.99%**). Spring remains native after a weak
-**6.83%** result, and OpenTelemetry remains native because pair 6 exceeded the
-preregistered inter-arm timing boundary. The checker rejects partial timing,
-repository percentage averages, and attribution of retained Jar/Edge results
-to Build Impact.
+`./dev/check-generic-profile-matrix [evidence-directory] [specification]
+[repository-key]` validates either a frozen terminal bundle or one atomic
+subject without network access. The terminal v3 bundle qualifies structural
+Build Impact for Kafka (**84.11%**), Micronaut (**41.74%**), and Groovy
+(**73.85%**). Spring saves **17.94%** but retains native because one negative
+pair fails the frozen 8-of-8 rule. The separately preregistered OpenTelemetry
+v4 subject qualifies at **14.43%**, with 8/8 positive pairs, exact 125-file
+outputs and scheduling-equivalent full-graph fallback. The checker rejects
+partial timing, repository percentage averages, and attribution of retained
+Jar/Edge results to Build Impact.
 
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 

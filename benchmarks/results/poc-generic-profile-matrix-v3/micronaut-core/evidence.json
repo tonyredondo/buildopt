@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+  "evidenceState": "QUALIFIED",
+  "capturedAt": "2026-08-10T20:16:03Z",
+  "subject": {
+    "repositoryId": "micronaut-projects/micronaut-core",
+    "repositoryRevision": "4d28ada8732b1dd3be9c52d64692ec16dd717d60",
+    "pipelineClass": "assemble"
+  },
+  "sourceBindings": {
+    "manifestSha256": "f71b72bd9007840c744e866f889992058c9d393877987f8b5fa335fa49325df2",
+    "graphSha256": "5959d5d5e841b3dc3c795857151d7bf61f470d5d7c78a9a868f15e4214c3203c",
+    "generatedManifestSha256": "f9aaf6b560e1926b5149c76f805a25c15f191684f4c996d9fe375576848ae563",
+    "sourceEvidenceSha256": "3dc827e52dc05d3aa535e84e1b96f3ee87276d3f998e540acac089bc8e1c81b4"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":micronaut-http-client-jdk:assemble"
+    ],
+    "fallbackEntrypoints": [
+      "assemble"
+    ],
+    "requiredOutputs": [
+      "http-client-jdk/build/libs/**"
+    ],
+    "totalProjectCount": 75,
+    "selectedProjectCount": 22,
+    "omittedProjectCount": 53,
+    "omittedProjectRatio": 0.7066666666666667
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "efa38b22ff14a6276900210bc9ac10a81aac0328",
+    "executableSha256": "01ecc4c28e31dc602c9360f8101f4528671beaeed5666b7dcf4e057eae186482",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 36033,
+      "candidateDurationMs": 21285,
+      "savedMs": 14748,
+      "controlRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "candidateRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 28606,
+      "candidateDurationMs": 17776,
+      "savedMs": 10830,
+      "controlRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "candidateRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 26835,
+      "candidateDurationMs": 16555,
+      "savedMs": 10280,
+      "controlRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "candidateRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 25811,
+      "candidateDurationMs": 14202,
+      "savedMs": 11609,
+      "controlRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "candidateRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 5,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 26162,
+      "candidateDurationMs": 14360,
+      "savedMs": 11802,
+      "controlRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "candidateRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 6,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 23713,
+      "candidateDurationMs": 15552,
+      "savedMs": 8161,
+      "controlRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "candidateRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 7,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 26124,
+      "candidateDurationMs": 14041,
+      "savedMs": 12083,
+      "controlRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "candidateRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 8,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 25969,
+      "candidateDurationMs": 13972,
+      "savedMs": 11997,
+      "controlRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "candidateRequiredOutputSha256": "842736edc73c518f70081dc87f574c2c4778cc346a0b75cd0438f64fa66bedd2",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    }
+  ],
+  "fallback": {
+    "mode": "FULL_GRAPH",
+    "reason": "IMPACT_GLOBAL_CHANGE",
+    "buildSuccessful": true
+  },
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 27406.625,
+    "candidateMeanMs": 15967.875,
+    "meanSavedMs": 11438.75,
+    "reductionRatio": 0.417371712131647,
+    "interval95SavedMs": [
+      10199.75,
+      12650.125
+    ],
+    "positivePairs": 8,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

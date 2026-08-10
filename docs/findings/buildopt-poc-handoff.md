@@ -62,15 +62,16 @@
   broadened the mechanism, not the claim.** Kafka qualified at **81.85%** with
   8/8 pairs. A materially different generic ownership/profile path now also
   qualifies the fixed Micronaut scope at **72.16%** through installed
-  `buildopt poc`. Spring, OpenTelemetry and unknown/drifted scopes stay on
-  optimized native Gradle; profiles remain explicit, review-required and
-  repository-bound.
-- **A fresh five-repository matrix now measures the same structural-only path.**
-  Build Impact qualified Kafka at **85.12%**, Micronaut at **42.22%**, and
-  Groovy at **71.99%** faster. Spring improved **6.83%** but retained native
-  because its interval crossed zero. OpenTelemetry retained native after one
-  pair exceeded the preregistered timing boundary; favorable partial pairs
-  were not promoted.
+  `buildopt poc`. At that historical stage Spring, OpenTelemetry and
+  unknown/drifted scopes stayed on optimized native Gradle; profiles remain
+  explicit, review-required and repository-bound.
+- **The terminal five-repository matrix now measures the same structural-only
+  path.** Build Impact qualified Kafka at **84.11%**, Micronaut at **41.74%**,
+  Groovy at **73.85%**, and OpenTelemetry at **14.43%** faster. OpenTelemetry's
+  separately preregistered v4 row preserved measured scheduling in the
+  correctness fallback and passed 8/8 pairs with exact outputs. Spring improved
+  **17.94%** with a positive interval but retained native because one -260-ms
+  pair failed the frozen 8-of-8 rule.
 
 ## Product Idea
 
@@ -196,18 +197,20 @@ unfavorable observations. Percentages from different rows are not additive.
 
 | Repository | Project reach | Optimized native | BuildOpt | Decision |
 | --- | ---: | ---: | ---: | --- |
-| Spring Framework | 27 -> 10 | 12.338 s | 11.495 s (**6.83% faster**) | Native; interval crosses zero |
-| OpenTelemetry | 1,024 -> 34 | — | No accepted result | Native; pair 6 timing boundary failed |
-| Apache Kafka | 64 -> 3 | 87.873 s | 13.080 s (**85.12% faster**) | Qualified |
-| Micronaut Core | 75 -> 22 | 25.699 s | 14.848 s (**42.22% faster**) | Qualified |
-| Apache Groovy | 37 -> 2 | 69.446 s | 19.455 s (**71.99% faster**) | Qualified |
+| Spring Framework | 27 -> 10 | 13.940 s | 11.438 s (**17.94% faster**) | Native; one -260-ms pair fails the frozen 8-of-8 rule |
+| OpenTelemetry | 1,024 -> 34 | 83.934 s | 71.825 s (**14.43% faster**) | Qualified by the separate v4 fallback-equivalence correction, 8/8 positive |
+| Apache Kafka | 64 -> 3 | 82.498 s | 13.113 s (**84.11% faster**) | Qualified |
+| Micronaut Core | 75 -> 22 | 27.407 s | 15.968 s (**41.74% faster**) | Qualified |
+| Apache Groovy | 37 -> 2 | 75.064 s | 19.629 s (**73.85% faster**) | Qualified |
 
 All completed rows use eight alternating isolated pairs, preserve exact
-required outputs, and prove full-graph fallback. This is the strongest current
-evidence that the generic POC can improve substantial builds by removing work
-before Gradle executes it. It is also evidence for the fail-closed policy:
-smaller graphs do not activate when the complete timing result is weak or the
-protocol is invalid. Repository percentages are not averaged, and the older
+required outputs, and prove full-graph fallback. OpenTelemetry uses a separate
+v4 capture because v3 changed fallback scheduling and therefore changed output
+bytes; no v3 timing was reused. This is the strongest current evidence that the
+generic POC can improve substantial builds by removing work before Gradle
+executes it. It is also evidence for the fail-closed policy: smaller graphs do
+not activate when the complete timing result misses a frozen gate. Repository
+percentages are not averaged, and the older
 Jar/Edge compositions remain separate evidence.
 
 ## Historical Portfolio Decision and Subsequent Generalization
@@ -507,7 +510,8 @@ production operations are outside the current scope.
 - [Generic installed structural-profile adoption evidence](../../benchmarks/results/poc-structural-profile-adoption-v1.json)
 - [Apache Groovy generic classes evidence bundle](../../benchmarks/results/poc-apache-groovy-classes-v1/measurement.json)
 - [Public-repository generic profile replay](../../benchmarks/results/poc-generic-profile-realworld-v1/README.md)
-- [Five-repository generic structural matrix](../../benchmarks/results/poc-generic-profile-matrix-v1/README.md)
+- [Terminal v3 five-repository generic structural matrix](../../benchmarks/results/poc-generic-profile-matrix-v3/README.md)
+- [OpenTelemetry v4 fallback-equivalence correction](../../benchmarks/results/poc-generic-profile-matrix-v4/README.md)
 - [Historical Micronaut fail-closed evidence](../../benchmarks/results/poc-structural-transfer-v1-native-stop.json)
 - [General opportunity and composition contract](../../specs/poc-general-build-value-v1.md)
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)

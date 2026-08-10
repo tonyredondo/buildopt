@@ -1,0 +1,1 @@
+spring-jms/src/main/java/org/springframework/jms/JmsException.java

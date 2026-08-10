@@ -1,0 +1,35 @@
+{
+  "key": "apache-groovy",
+  "repositoryId": "apache/groovy",
+  "publicRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+  "targetRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "classes"
+    ],
+    "candidateEntrypoints": [
+      ":groovy-json:classes"
+    ],
+    "totalProjectCount": 37,
+    "selectedProjectCount": 2,
+    "omittedProjectCount": 35
+  },
+  "measurementStatus": "COMPLETED",
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 75063.625,
+    "candidateMeanMs": 19629.25,
+    "meanSavedMs": 55434.375,
+    "reductionRatio": 0.7384985070998104,
+    "interval95SavedMs": [
+      53790.875,
+      57486.75
+    ],
+    "positivePairs": 8,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "evaluationDecision": "QUALIFY_STRUCTURAL_PROFILE"
+}
