@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "buildopt.poc/opportunity-analysis/v1",
+  "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+  "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+  "subject": {
+    "repositoryId": "micronaut-projects/micronaut-core",
+    "pipelineClass": "poc-structural-transfer-assemble-v1",
+    "gradleVersion": "9.6.1"
+  },
+  "inputs": [
+    {
+      "role": "BUILD_IMPACT_MANIFEST",
+      "path": "buildopt-impact-manifest.json",
+      "sha256": "sha256:4cbe3a4cdd43164573943c51a95e1dcf9117f3eab0fa9766710ef7d46478ae96"
+    },
+    {
+      "role": "BUILD_IMPACT_GRAPH",
+      "path": "buildopt-impact-graph.generated.json",
+      "sha256": "sha256:47a90ebaeeb3dcf04da7b8ad5e1354983573cab98fdfe905cfd0fb986a85d643"
+    },
+    {
+      "role": "GENERATED_MANIFEST",
+      "path": "buildopt-impact.generated.json",
+      "sha256": "sha256:dc8068810ff0adecd6ac9ca3df0813016b22b8323536ed0bedd70226a16c58cd"
+    }
+  ],
+  "sourceBindings": {
+    "manifestDigest": "sha256:cd4fd27560a08c2ac3977c2400c9efae49c2463bb3bac42e6085af587ff93514",
+    "graphDigest": "sha256:0e8d09a2035d08790bdcd4cb3501a2f82dc3dbee23c5ef425590977070abc747",
+    "discoveryDigest": "sha256:5639441d212ebde5c9f9ad1a84af0f65e3ecca62092bd3f8a641e99725b1fe75"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":micronaut-http-client-jdk:assemble"
+    ],
+    "fallbackEntrypoints": [
+      "assemble"
+    ],
+    "requiredOutputs": [
+      "http-client-jdk/build/libs/**"
+    ],
+    "totalProjectCount": 75,
+    "selectedProjectCount": 22,
+    "omittedProjectCount": 53,
+    "omittedProjectRatio": 0.7066666666666667
+  },
+  "mechanisms": [
+    {
+      "name": "BUILD_IMPACT",
+      "status": "MEASURE_CANDIDATE",
+      "reason": "complete graph exposes a smaller reviewed alternative; direct timing is still required"
+    },
+    {
+      "name": "SHARED_EDGE_CACHE",
+      "status": "NOT_AUTHORIZED",
+      "reason": "requires independent locality and failure-fallback evidence for this workload"
+    },
+    {
+      "name": "HOT_STATE",
+      "status": "NOT_AUTHORIZED",
+      "reason": "requires independent end-to-end value evidence for this workload"
+    },
+    {
+      "name": "RUNTIME_TUNING",
+      "status": "NOT_AUTHORIZED",
+      "reason": "requires independent end-to-end value evidence for this workload"
+    },
+    {
+      "name": "SAFE_CACHE",
+      "status": "NOT_AUTHORIZED",
+      "reason": "requires independent end-to-end value evidence for this workload"
+    },
+    {
+      "name": "STANDARD_COPY",
+      "status": "NOT_AUTHORIZED",
+      "reason": "requires exact task-shape and end-to-end value evidence"
+    },
+    {
+      "name": "STANDARD_JAR",
+      "status": "NOT_AUTHORIZED",
+      "reason": "requires exact task-shape and end-to-end value evidence"
+    },
+    {
+      "name": "TEST_OPTIMIZATION",
+      "status": "NOT_AUTHORIZED",
+      "reason": "outside BuildOpt scope"
+    }
+  ],
+  "measurementRequired": true,
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false
+}

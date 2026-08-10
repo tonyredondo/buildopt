@@ -125,6 +125,13 @@ reviewable profile or retains native full graph. See the [generic onboarding
 contract](../../specs/poc-generic-profile-onboarding-v1.md) and [measurement
 contract](../../specs/poc-generic-measurement-v1.md).
 
+This workflow is not limited to the small conformance fixture. Starting from
+fresh public checkouts, the installed command independently reproduced Apache
+Groovy's qualified 37-to-2 project plan and Micronaut Core's 75-to-22 plan
+without copying retained BuildOpt JSON. The replay intentionally did not repeat
+unchanged timings; review the [captured onboarding evidence](../../benchmarks/results/poc-generic-profile-realworld-v1/README.md)
+before adapting the command to another repository.
+
 For a pull request, commit the qualified profile described in the
 [configuration reference](../reference/configuration.md#qualified-poc-profile),
 create an exact changed-path input and execute the reviewable profile:

@@ -138,6 +138,24 @@ Validate hashes, calculations, profile determinism and tamper fallback with:
 ./dev/check-poc-apache-groovy-classes-v1
 ```
 
+### Public-repository onboarding replay
+
+[`results/poc-generic-profile-realworld-v1`](./results/poc-generic-profile-realworld-v1/)
+records the installed `buildopt profile propose` workflow starting from fresh
+checkouts rather than retained BuildOpt inputs. Apache Groovy reproduced the
+37-to-2 project plan and Micronaut reproduced the 75-to-22 plan. Both accepted
+proposal passes ran offline after excluded dependency preparation.
+
+The structural plans are exactly the ones already qualified, so this block did
+not rerun timing or create a new percentage. The retained **50.06%** Groovy and
+**72.16%** Micronaut results remain the value evidence; this replay proves that
+the user-facing setup can rediscover those candidates without hand-authored
+BuildOpt JSON. Validate the complete evidence bundle with:
+
+```bash
+./dev/check-generic-profile-realworld
+```
+
 The current POC verdict is `CONTINUE` for exact evidence-qualified scopes, not
 for arbitrary repositories. Contractual 4-vCPU/16-GiB runs cover the baseline,
 negative-mechanism decision, accelerator-coverage matrix, combined public path,

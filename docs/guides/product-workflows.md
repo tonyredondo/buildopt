@@ -208,6 +208,11 @@ fallback input used below without hand-authored JSON. Review the selected task
 set, omitted projects, required output scope and native fallback before running
 the emitted measurement command.
 
+The same packaged proposal path has been checked from clean Apache Groovy and
+Micronaut Core revisions. It rediscovered their previously qualified 37-to-2
+and 75-to-22 project plans without retained BuildOpt files or repository-name
+rules. See the [public-repository replay evidence](../../benchmarks/results/poc-generic-profile-realworld-v1/README.md).
+
 ```bash
 buildopt profile measure \
   --manifest buildopt-impact-manifest.json \

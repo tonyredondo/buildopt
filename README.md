@@ -245,6 +245,13 @@ without repository-name rules or hand-authored JSON. Unsupported, ambiguous,
 global or Test-bearing workflows retain native full graph; no profile is
 written or activated.
 
+That same installed command has also been replayed from fresh Apache Groovy and
+Micronaut Core checkouts with no retained BuildOpt JSON. It reproduced the
+qualified 37-to-2 and 75-to-22 project boundaries exactly. No timing was
+repeated because the candidates did not change materially; the existing 50.06%
+and 72.16% measurements remain the associated value evidence. See the
+[public-repository replay](./benchmarks/results/poc-generic-profile-realworld-v1/README.md).
+
 That generic path now has fresh value evidence on Apache Groovy 5.0.8. For one
 `groovy-json` source change, discovery reduced the checked `classes` graph from
 37 projects to two. Across eight isolated alternating pairs, optimized native

@@ -18,7 +18,7 @@ buildopt_spec="${buildopt_repo_root}/specs/poc-generic-profile-realworld-v1.json
 buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-generic-profile-realworld.XXXXXX")
 trap 'rm -rf -- "${buildopt_root}"' EXIT
 
-for buildopt_command in git jq sha256sum tar; do
+for buildopt_command in git jq sha256sum tar timeout; do
     command -v "${buildopt_command}" >/dev/null || {
         printf 'required command is unavailable: %s\n' "${buildopt_command}" >&2
         exit 1
@@ -119,6 +119,7 @@ buildopt_replay_repository() {
     if ! (
         cd -- "${buildopt_repository}"
         env -u CI GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            timeout 20m \
             "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
             ./gradlew --no-daemon --build-cache --parallel \
             --no-configuration-cache --no-scan --max-workers=12 \

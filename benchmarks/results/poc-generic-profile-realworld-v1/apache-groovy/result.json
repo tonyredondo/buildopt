@@ -1,0 +1,22 @@
+{
+  "key": "apache-groovy",
+  "repositoryId": "apache/groovy",
+  "publicRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+  "targetRevision": "6ff2ba5d64685c917598608506272eac98db971e",
+  "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+  "candidateEntrypoints": [
+    ":groovy-json:classes"
+  ],
+  "requiredOutputs": [
+    "subprojects/groovy-json/build/classes/**"
+  ],
+  "totalProjectCount": 37,
+  "selectedProjectCount": 2,
+  "omittedProjectCount": 35,
+  "bindings": {
+    "proposalSha256": "75c44ac9042d730a95883426b9749581716ccf47a8041c85e8a5583391e7d1f9",
+    "manifestSha256": "9362beeb60a3f844a7fea20ea4b9bb5af8e5199b7463d6fd7d62c7f7cbd43be5",
+    "graphSha256": "ad0f9d809da99051f61ee2952fd797da8909670ea685a3c553a09704c1b17687",
+    "generatedSha256": "13561951bad18d2480b573327bd72ac6e61a73ea3c21971dd0f5f13446d5a944"
+  }
+}

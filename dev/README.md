@@ -3398,6 +3398,16 @@ that a custom executable workflow retains native full graph without writing
 candidate state. This gate measures onboarding correctness, not build-time
 value.
 
+`./dev/run-generic-profile-realworld /absolute/evidence/directory` packages the
+current CLI, shallow-fetches the frozen Apache Groovy and Micronaut revisions,
+applies their already qualified one-file changes, prepares dependencies outside
+measurement and runs the accepted proposal pass offline. The bounded online
+preflight is capped at 20 minutes per repository. The runner writes proposal,
+analysis, manifest, graph, generated binding and digest evidence, then invokes
+`./dev/check-generic-profile-realworld`. The checker can also validate the
+committed bundle without network access and requires exact equality with both
+retained structural plans. It deliberately makes no new timing claim.
+
 `./dev/check-poc-apache-groovy-classes-v1` independently validates the first
 fresh public-repository result produced by that generic pipeline. It recomputes
 all eight Apache Groovy pairs and their deterministic paired interval, checks

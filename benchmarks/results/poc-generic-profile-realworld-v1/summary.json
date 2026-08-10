@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-generic-profile-realworld/v1",
+  "workItem": "POC-GENERIC-PROFILE-REALWORLD-001",
+  "capturedAt": "2026-08-10T06:14:13Z",
+  "buildopt": {
+    "revision": "30303bd4c7ddc12470ba7ac333b32e0051460881",
+    "executableSha256": "e22d323bb5fef5cbcf38a5d9bcf79770b153e388d6fcc6711506f4a6923292a9",
+    "packageVersion": "0.3.0-dev"
+  },
+  "preparation": {
+    "onlineDependencyPreparationMeasured": false,
+    "acceptedProposalMode": "OFFLINE"
+  },
+  "subjects": [
+    {
+      "key": "apache-groovy",
+      "repositoryId": "apache/groovy",
+      "publicRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "targetRevision": "6ff2ba5d64685c917598608506272eac98db971e",
+      "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+      "candidateEntrypoints": [
+        ":groovy-json:classes"
+      ],
+      "requiredOutputs": [
+        "subprojects/groovy-json/build/classes/**"
+      ],
+      "totalProjectCount": 37,
+      "selectedProjectCount": 2,
+      "omittedProjectCount": 35,
+      "bindings": {
+        "proposalSha256": "75c44ac9042d730a95883426b9749581716ccf47a8041c85e8a5583391e7d1f9",
+        "manifestSha256": "9362beeb60a3f844a7fea20ea4b9bb5af8e5199b7463d6fd7d62c7f7cbd43be5",
+        "graphSha256": "ad0f9d809da99051f61ee2952fd797da8909670ea685a3c553a09704c1b17687",
+        "generatedSha256": "13561951bad18d2480b573327bd72ac6e61a73ea3c21971dd0f5f13446d5a944"
+      }
+    },
+    {
+      "key": "micronaut-core",
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "publicRevision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+      "targetRevision": "028e4dd6ddd070422d7813d0cbd65a4029b94ec6",
+      "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+      "candidateEntrypoints": [
+        ":micronaut-http-client-jdk:assemble"
+      ],
+      "requiredOutputs": [
+        "http-client-jdk/build/libs/**"
+      ],
+      "totalProjectCount": 75,
+      "selectedProjectCount": 22,
+      "omittedProjectCount": 53,
+      "bindings": {
+        "proposalSha256": "b6914fcb672a8ff5624d6747fa94e377fefeee912cc7c3b518c71533ecbc215b",
+        "manifestSha256": "4cbe3a4cdd43164573943c51a95e1dcf9117f3eab0fa9766710ef7d46478ae96",
+        "graphSha256": "47a90ebaeeb3dcf04da7b8ad5e1354983573cab98fdfe905cfd0fb986a85d643",
+        "generatedSha256": "dc8068810ff0adecd6ac9ca3df0813016b22b8323536ed0bedd70226a16c58cd"
+      }
+    }
+  ],
+  "result": {
+    "reproducedSubjects": 2,
+    "historicalBoundariesReproduced": true,
+    "materiallyNewCandidate": false,
+    "timingRerun": false,
+    "newPerformanceClaim": false,
+    "decision": "RETAIN_QUALIFIED_BOUNDARIES_AND_ADVANCE_ONBOARDING"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "reviewRequired": true,
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

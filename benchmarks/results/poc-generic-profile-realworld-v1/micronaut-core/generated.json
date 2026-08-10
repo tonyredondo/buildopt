@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.build-impact/generated-manifest/v1",
+  "repositoryId": "micronaut-projects/micronaut-core",
+  "pipelineClass": "poc-structural-transfer-assemble-v1",
+  "manifestDigest": "sha256:cd4fd27560a08c2ac3977c2400c9efae49c2463bb3bac42e6085af587ff93514",
+  "graphDigest": "sha256:0e8d09a2035d08790bdcd4cb3501a2f82dc3dbee23c5ef425590977070abc747",
+  "discoveryDigest": "sha256:5639441d212ebde5c9f9ad1a84af0f65e3ecca62092bd3f8a641e99725b1fe75",
+  "adapterVersion": "gradle-runtime-v1",
+  "gradleVersion": "9.6.1",
+  "complete": true,
+  "fallbackReasons": []
+}

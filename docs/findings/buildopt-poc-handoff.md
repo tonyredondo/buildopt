@@ -434,6 +434,14 @@ repository to a deterministic measurement proposal and rejects a custom task
 to native full graph. Required output globs remain repository-declared, and the
 command writes no active profile or new performance claim.
 
+The installed proposal workflow has now been replayed from fresh Apache Groovy
+and Micronaut Core checkouts. Without copying any retained BuildOpt manifest,
+graph, generated state or profile, it reproduced the already qualified 37-to-2
+and 75-to-22 project boundaries. The accepted passes ran offline after excluded
+dependency preparation. Since the structural candidates were unchanged, the
+replay correctly created no new timing claim; the retained **50.06%** Groovy
+and **72.16%** Micronaut measurements remain the value evidence.
+
 The first fresh run through that exact generic handoff now provides the missing
 value evidence. On Apache Groovy 5.0.8, a one-file `groovy-json` change reduced
 the checked `classes` reach from 37 projects to two. Eight alternating pairs
@@ -474,6 +482,7 @@ production operations are outside the current scope.
 - [Micronaut qualified structural-transfer evidence](../../benchmarks/results/poc-structural-transfer-v1.json)
 - [Generic installed structural-profile adoption evidence](../../benchmarks/results/poc-structural-profile-adoption-v1.json)
 - [Apache Groovy generic classes evidence bundle](../../benchmarks/results/poc-apache-groovy-classes-v1/measurement.json)
+- [Public-repository generic profile replay](../../benchmarks/results/poc-generic-profile-realworld-v1/README.md)
 - [Historical Micronaut fail-closed evidence](../../benchmarks/results/poc-structural-transfer-v1-native-stop.json)
 - [General opportunity and composition contract](../../specs/poc-general-build-value-v1.md)
 - [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)

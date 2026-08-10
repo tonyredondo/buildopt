@@ -1,0 +1,22 @@
+{
+  "key": "micronaut-core",
+  "repositoryId": "micronaut-projects/micronaut-core",
+  "publicRevision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+  "targetRevision": "028e4dd6ddd070422d7813d0cbd65a4029b94ec6",
+  "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+  "candidateEntrypoints": [
+    ":micronaut-http-client-jdk:assemble"
+  ],
+  "requiredOutputs": [
+    "http-client-jdk/build/libs/**"
+  ],
+  "totalProjectCount": 75,
+  "selectedProjectCount": 22,
+  "omittedProjectCount": 53,
+  "bindings": {
+    "proposalSha256": "b6914fcb672a8ff5624d6747fa94e377fefeee912cc7c3b518c71533ecbc215b",
+    "manifestSha256": "4cbe3a4cdd43164573943c51a95e1dcf9117f3eab0fa9766710ef7d46478ae96",
+    "graphSha256": "47a90ebaeeb3dcf04da7b8ad5e1354983573cab98fdfe905cfd0fb986a85d643",
+    "generatedSha256": "dc8068810ff0adecd6ac9ca3df0813016b22b8323536ed0bedd70226a16c58cd"
+  }
+}

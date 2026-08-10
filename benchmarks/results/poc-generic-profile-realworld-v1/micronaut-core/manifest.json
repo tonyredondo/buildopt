@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "micronaut-projects/micronaut-core",
+  "pipelineClass": "poc-structural-transfer-assemble-v1",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    "assemble"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "changed-projects",
+      "entrypoints": [
+        ":micronaut-http-client-jdk:assemble"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "required-output-1",
+      "path": "http-client-jdk/build/libs/**",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

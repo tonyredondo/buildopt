@@ -516,6 +516,14 @@ output globs. Two-pass typed discovery generates the review bundle and hands it
 to the unchanged measure/evaluate gates. This improves experiment usability;
 it does not add or alter any percentage in the scorecard.
 
+A fresh-checkout replay now closes that adoption question on the two qualified
+public structural workloads. The installed command reproduced Groovy's
+37-to-2 plan and Micronaut's 75-to-22 plan from only the original entrypoint,
+exact Git change and declared outputs. Dependency preparation was excluded and
+the accepted proposal ran offline. Because neither candidate changed, no new
+timing was authorized: **50.06%** and **72.16%** remain the corresponding value
+results rather than being replaced by a more favorable rerun.
+
 The checked composition scorecard binds prior direct measurements rather than
 rerunning unchanged experiments:
 
