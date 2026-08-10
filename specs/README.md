@@ -9,6 +9,7 @@ the exact cross-component contract.
 
 | Specification | Owning item |
 |---|---|
+| [`poc-generic-profile-matrix-v3.md`](./poc-generic-profile-matrix-v3.md) and [`poc-generic-profile-matrix-v3.json`](./poc-generic-profile-matrix-v3.json) | `POC-GENERIC-PROFILE-MATRIX-002` |
 | [`poc-generic-profile-matrix-v2.md`](./poc-generic-profile-matrix-v2.md) and [`poc-generic-profile-matrix-v2.json`](./poc-generic-profile-matrix-v2.json) | `POC-GENERIC-PROFILE-MATRIX-002` |
 | [`poc-generic-profile-matrix-v1.md`](./poc-generic-profile-matrix-v1.md) and [`poc-generic-profile-matrix-v1.json`](./poc-generic-profile-matrix-v1.json) | `POC-GENERIC-PROFILE-MATRIX-001` |
 | [`poc-generic-profile-realworld-v1.md`](./poc-generic-profile-realworld-v1.md) and [`poc-generic-profile-realworld-v1.json`](./poc-generic-profile-realworld-v1.json) | `POC-GENERIC-PROFILE-REALWORLD-001` |
