@@ -12,7 +12,8 @@
     "pairs": 8,
     "order": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
     "perBuildTimeout": "30m",
-    "maximumInterArmGap": "5s"
+    "maximumInterArmGap": "5s",
+    "captureUnit": "ONE_REPOSITORY_RESUMABLE_WITH_FINAL_ATOMIC_AGGREGATION"
   },
   "method": {
     "surface": "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE",

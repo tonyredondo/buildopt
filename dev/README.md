@@ -3416,7 +3416,7 @@ the current CLI, reproduces the exact qualified profile, and proves that
 tampered evidence writes no profile. The checked result is 50.06% faster for
 the fixed `groovy-json` classes scope; no other Apache Groovy scope is enabled.
 
-`./dev/run-generic-profile-matrix /absolute/evidence/directory [specification]` packages the
+`./dev/run-generic-profile-matrix /absolute/evidence/directory [specification] [repository-key]` packages the
 current CLI and applies the same generic structural-only proposal, measurement,
 and evaluation flow to the frozen Spring, OpenTelemetry, Kafka, Micronaut, and
 Groovy revisions. Every cell keeps its repository-declared workflow and output

@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if (($# < 1 || $# > 2)) || [[ $1 != /* ]]; then
-    printf 'usage: %s /absolute/evidence/output/directory [specification]\n' "$0" >&2
+if (($# < 1 || $# > 3)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/output/directory [specification] [repository-key]\n' "$0" >&2
     exit 64
 fi
 
 buildopt_output=$1
-if [[ -e ${buildopt_output} ]]; then
+buildopt_subject_filter=${3:-}
+if [[ -z ${buildopt_subject_filter} && -e ${buildopt_output} ]]; then
     printf 'evidence output already exists: %s\n' "${buildopt_output}" >&2
     exit 1
 fi
@@ -37,6 +38,19 @@ done
     printf 'generic profile matrix specification is unavailable\n' >&2
     exit 1
 }
+if [[ -n ${buildopt_subject_filter} ]]; then
+    buildopt_subject_matches=$(jq --arg key "${buildopt_subject_filter}" \
+        '[.repositories[] | select(.key == $key)] | length' "${buildopt_spec}")
+    [[ ${buildopt_subject_matches} -eq 1 ]] || {
+        printf 'repository key is absent or ambiguous: %s\n' "${buildopt_subject_filter}" >&2
+        exit 1
+    }
+    [[ ! -e ${buildopt_output}/${buildopt_subject_filter} ]] || {
+        printf 'repository evidence already exists: %s\n' \
+            "${buildopt_output}/${buildopt_subject_filter}" >&2
+        exit 1
+    }
+fi
 [[ -z $(git -C "${buildopt_repo_root}" status --porcelain --untracked-files=no) ]] || {
     printf 'BuildOpt tracked state must be clean before evidence capture\n' >&2
     exit 1
@@ -277,8 +291,21 @@ buildopt_capture_subject() {
 
 buildopt_repository_count=$(jq '.repositories | length' "${buildopt_spec}")
 for ((buildopt_index = 0; buildopt_index < buildopt_repository_count; buildopt_index++)); do
+    if [[ -n ${buildopt_subject_filter} && \
+        $(jq -er ".repositories[${buildopt_index}].key" "${buildopt_spec}") != \
+            "${buildopt_subject_filter}" ]]; then
+        continue
+    fi
     buildopt_capture_subject "${buildopt_index}"
 done
+
+buildopt_completed_subjects=$(find "${buildopt_output}" -mindepth 2 -maxdepth 2 \
+    -name result.json -type f | wc -l)
+if [[ ${buildopt_completed_subjects} -lt ${buildopt_repository_count} ]]; then
+    printf 'Repository evidence captured (%d/%d); rerun with the remaining repository keys.\n' \
+        "${buildopt_completed_subjects}" "${buildopt_repository_count}"
+    exit 0
+fi
 
 jq -n \
     --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \

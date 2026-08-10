@@ -26,6 +26,11 @@ All five repositories are rerun from zero under this corrected method. No v1
 timing is reused, no favorable OpenTelemetry pair is rescued, and the v1
 bundle remains immutable historical evidence.
 
+Each repository is captured as a separate fail-closed unit and the summary is
+created only after all five terminal `result.json` files exist. An interrupted
+repository is discarded and rerun from zero; completed repositories are never
+replayed merely because a later repository was interrupted.
+
 The candidate remains Build Impact only. The control remains each repository's
 declared optimized-native Gradle workflow. Eight observations alternate order,
 use independent checkouts, Gradle homes, and native-cache seeds, compare
