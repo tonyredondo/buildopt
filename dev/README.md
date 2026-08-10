@@ -3389,6 +3389,15 @@ fallback, atomic profile evaluation and invalid-evidence rejection. The fixture
 uses a deterministic fake Wrapper so Base CI validates orchestration rather
 than publishing a new performance percentage.
 
+`./dev/check-generic-profile-onboarding` creates an external two-project Git
+repository with no BuildOpt JSON and drives the installed `buildopt profile
+propose` command from one exact change and one required-output glob. It checks
+the generated manifest, graph, binding, fallback and proposal byte for byte,
+feeds them to `profile analyze` and no-evidence `profile evaluate`, and verifies
+that a custom executable workflow retains native full graph without writing
+candidate state. This gate measures onboarding correctness, not build-time
+value.
+
 `./dev/check-poc-apache-groovy-classes-v1` independently validates the first
 fresh public-repository result produced by that generic pipeline. It recomputes
 all eight Apache Groovy pairs and their deterministic paired interval, checks

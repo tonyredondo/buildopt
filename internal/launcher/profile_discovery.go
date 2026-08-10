@@ -29,6 +29,9 @@ type profileEvaluation struct {
 }
 
 func runProfileDiscovery(args []string, stdout, stderr io.Writer) int {
+	if len(args) > 0 && args[0] == "propose" {
+		return runStructuralProfileProposal(args[1:], stdout, stderr)
+	}
 	if len(args) > 0 && args[0] == "analyze" {
 		return runProfileAnalysis(args[1:], stdout, stderr)
 	}

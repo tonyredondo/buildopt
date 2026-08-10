@@ -88,6 +88,28 @@ when all timing, output and fallback gates qualify. Otherwise it reports
 `NATIVE_FULL_GRAPH` and writes nothing. The command never infers required
 outputs, activates a profile, or grants production authority.
 
+### Propose a structural POC measurement
+
+```text
+buildopt profile propose \
+  --repository-id OWNER/REPO \
+  --pipeline-class CLASS \
+  --entrypoint TASK \
+  --changes-file PATH \
+  --base-revision REVISION \
+  --required-output GLOB \
+  [--required-output GLOB ...]
+```
+
+This is the first command for a repository that has no BuildOpt manifest. It
+uses two configured-model discovery passes to map the exact Git change to
+Gradle projects, propose the same lifecycle task on those projects and validate
+the smaller graph. It writes reviewable manifest, graph, generated binding,
+fallback and proposal documents only for a supported complete candidate.
+Global, ambiguous, custom, Test-bearing or unknown workflows retain
+`NATIVE_FULL_GRAPH`. It never writes an active profile or predicts a speedup.
+See [generic structural profile onboarding](../../specs/poc-generic-profile-onboarding-v1.md).
+
 ### Measure a structural POC candidate
 
 ```text

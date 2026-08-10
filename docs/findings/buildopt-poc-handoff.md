@@ -425,6 +425,15 @@ This block adds no performance claim: its deterministic fixture proves
 isolation, output equality and fail-closed orchestration rather than timing a
 customer workload.
 
+The setup before measurement no longer requires hand-authored Build Impact
+JSON. `buildopt profile propose` observes the original task selector, maps the
+exact Git change to one most-specific Gradle project owner, proposes the same
+lifecycle task on the affected owner set, and validates it in a second
+discovery pass. Its checked external fixture goes from an empty two-project
+repository to a deterministic measurement proposal and rejects a custom task
+to native full graph. Required output globs remain repository-declared, and the
+command writes no active profile or new performance claim.
+
 The first fresh run through that exact generic handoff now provides the missing
 value evidence. On Apache Groovy 5.0.8, a one-file `groovy-json` change reduced
 the checked `classes` reach from 37 projects to two. Eight alternating pairs

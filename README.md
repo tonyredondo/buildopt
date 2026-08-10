@@ -237,6 +237,14 @@ outputs byte for byte and proves full-graph fallback. Its evidence feeds
 `buildopt profile evaluate`; neither command activates a profile automatically.
 The deterministic conformance fixture adds no performance percentage.
 
+The preceding setup is now executable as well. `buildopt profile propose`
+starts from one original Gradle selector, the exact base-to-HEAD change and
+owner-declared output globs. It performs two read-only Gradle discovery passes,
+generates the manifest/graph/fallback bundle and emits the measurement handoff
+without repository-name rules or hand-authored JSON. Unsupported, ambiguous,
+global or Test-bearing workflows retain native full graph; no profile is
+written or activated.
+
 That generic path now has fresh value evidence on Apache Groovy 5.0.8. For one
 `groovy-json` source change, discovery reduced the checked `classes` graph from
 37 projects to two. Across eight isolated alternating pairs, optimized native

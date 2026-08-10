@@ -52,6 +52,29 @@ func TestGenerateImpactCanonicalizesConservativeSnapshot(t *testing.T) {
 	}
 }
 
+func TestResolveProjectOwnersUsesMostSpecificSourceBoundary(t *testing.T) {
+	snapshot := DiscoverySnapshot{Projects: []DiscoveredProject{
+		{Path: ":parent", SourcePaths: []string{"modules/**"}},
+		{Path: ":child", SourcePaths: []string{"modules/child/**"}},
+	}}
+	owners, err := ResolveProjectOwners(snapshot, []string{"modules/child/src/main/java/Example.java"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(owners, []string{":child"}) {
+		t.Fatalf("owners = %v", owners)
+	}
+	if _, err := ResolveProjectOwners(DiscoverySnapshot{Projects: []DiscoveredProject{
+		{Path: ":left", SourcePaths: []string{"shared/**"}},
+		{Path: ":right", SourcePaths: []string{"shared/**"}},
+	}}, []string{"shared/Example.java"}); err == nil {
+		t.Fatal("ambiguous source ownership was accepted")
+	}
+	if _, err := ResolveProjectOwners(snapshot, []string{"outside/Example.java"}); err == nil {
+		t.Fatal("unowned source path was accepted")
+	}
+}
+
 func TestGenerateImpactAcceptsRootProjectDependency(t *testing.T) {
 	manifest := automaticDiscoveryManifest(t)
 	raw := []byte(`{

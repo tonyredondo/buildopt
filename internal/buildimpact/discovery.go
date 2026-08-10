@@ -78,6 +78,16 @@ type DiscoveryOptions struct {
 	GradleArgs     []string
 }
 
+// ObservationOptions names one read-only Gradle model observation. It is used
+// before a repository manifest exists so onboarding can propose, but never
+// authorize, a smaller workflow from typed Gradle relationships.
+type ObservationOptions struct {
+	RepositoryRoot string
+	Entrypoints    []string
+	GradleCommand  string
+	GradleArgs     []string
+}
+
 type GeneratedImpact struct {
 	Manifest       LoadedManifest
 	Graph          LoadedGraph
@@ -100,19 +110,68 @@ func Discover(ctx context.Context, options DiscoveryOptions) (GeneratedImpact, e
 	if err != nil {
 		return GeneratedImpact{}, err
 	}
+	return discoverWithManifest(ctx, options, manifest)
+}
+
+// DiscoverWithManifest validates an already parsed, reviewable manifest
+// against Gradle's configured model. The manifest is still only proposal state;
+// callers must persist and review it before any measurement or activation.
+func DiscoverWithManifest(ctx context.Context, options DiscoveryOptions, manifest LoadedManifest) (GeneratedImpact, error) {
+	root, err := filepath.Abs(options.RepositoryRoot)
+	if err != nil {
+		return GeneratedImpact{}, fmt.Errorf("resolve repository root: %w", err)
+	}
+	options.RepositoryRoot = filepath.Clean(root)
+	return discoverWithManifest(ctx, options, manifest)
+}
+
+func discoverWithManifest(ctx context.Context, options DiscoveryOptions, manifest LoadedManifest) (GeneratedImpact, error) {
+	raw, err := observeGradle(ctx, ObservationOptions{
+		RepositoryRoot: options.RepositoryRoot,
+		Entrypoints:    allManifestEntrypoints(manifest.Manifest),
+		GradleCommand:  options.GradleCommand,
+		GradleArgs:     options.GradleArgs,
+	})
+	if err != nil {
+		return GeneratedImpact{}, err
+	}
+	return GenerateImpact(manifest, raw)
+}
+
+// ObserveGradle returns a strictly validated configured-model snapshot for a
+// bounded entrypoint set. It performs no task work and grants no omission or
+// activation authority.
+func ObserveGradle(ctx context.Context, options ObservationOptions) (DiscoverySnapshot, error) {
+	raw, err := observeGradle(ctx, options)
+	if err != nil {
+		return DiscoverySnapshot{}, err
+	}
+	snapshot, _, err := parseDiscoverySnapshotForEntrypoints(raw, options.Entrypoints, true)
+	return snapshot, err
+}
+
+func observeGradle(ctx context.Context, options ObservationOptions) ([]byte, error) {
+	root, err := filepath.Abs(options.RepositoryRoot)
+	if err != nil {
+		return nil, fmt.Errorf("resolve repository root: %w", err)
+	}
+	root = filepath.Clean(root)
 	temporary, err := os.MkdirTemp("", "buildopt-impact-discovery-")
 	if err != nil {
-		return GeneratedImpact{}, fmt.Errorf("create discovery directory: %w", err)
+		return nil, fmt.Errorf("create discovery directory: %w", err)
 	}
 	defer os.RemoveAll(temporary)
 	initPath := filepath.Join(temporary, "discovery.init.gradle")
 	outputPath := filepath.Join(temporary, "snapshot.json")
 	if err := os.WriteFile(initPath, discoveryInitScript, 0o600); err != nil {
-		return GeneratedImpact{}, fmt.Errorf("write discovery init script: %w", err)
+		return nil, fmt.Errorf("write discovery init script: %w", err)
 	}
-	entrypoints, err := json.Marshal(allManifestEntrypoints(manifest.Manifest))
+	if err := validateEntrypoints(options.Entrypoints); err != nil {
+		return nil, fmt.Errorf("invalid discovery entrypoints: %w", err)
+	}
+	entrypoints, err := json.Marshal(options.Entrypoints)
 	if err != nil {
-		return GeneratedImpact{}, fmt.Errorf("encode discovery entrypoints: %w", err)
+		return nil, fmt.Errorf("encode discovery entrypoints: %w", err)
 	}
 	gradleCommand := options.GradleCommand
 	if gradleCommand == "" {
@@ -133,13 +192,13 @@ func Discover(ctx context.Context, options DiscoveryOptions) (GeneratedImpact, e
 	})
 	output, err := command.CombinedOutput()
 	if err != nil {
-		return GeneratedImpact{}, fmt.Errorf("run Gradle impact discovery: %w\n%s", err, output)
+		return nil, fmt.Errorf("run Gradle impact discovery: %w\n%s", err, output)
 	}
 	raw, err := os.ReadFile(outputPath)
 	if err != nil {
-		return GeneratedImpact{}, fmt.Errorf("read Gradle impact discovery: %w", err)
+		return nil, fmt.Errorf("read Gradle impact discovery: %w", err)
 	}
-	return GenerateImpact(manifest, raw)
+	return raw, nil
 }
 
 // GenerateImpact strictly validates a Gradle snapshot and produces canonical
@@ -314,6 +373,10 @@ func normalizeDependencyCycles(projects []DiscoveredProject) []DiscoveredProject
 }
 
 func parseDiscoverySnapshot(raw []byte, manifest Manifest) (DiscoverySnapshot, string, error) {
+	return parseDiscoverySnapshotForEntrypoints(raw, allManifestEntrypoints(manifest), false)
+}
+
+func parseDiscoverySnapshotForEntrypoints(raw []byte, wantedEntrypoints []string, allowEmptyReach bool) (DiscoverySnapshot, string, error) {
 	if len(raw) == 0 || len(raw) > maximumDiscoveryBytes {
 		return DiscoverySnapshot{}, "", errors.New("Gradle discovery size is invalid")
 	}
@@ -336,7 +399,6 @@ func parseDiscoverySnapshot(raw []byte, manifest Manifest) (DiscoverySnapshot, s
 	if len(snapshot.IncludedBuildPaths) > 256 || !uniqueSafeGlobs(snapshot.IncludedBuildPaths) {
 		return DiscoverySnapshot{}, "", errors.New("Gradle discovery included-build paths are invalid")
 	}
-	wantedEntrypoints := allManifestEntrypoints(manifest)
 	if len(snapshot.Entrypoints) != len(wantedEntrypoints) {
 		return DiscoverySnapshot{}, "", errors.New("Gradle discovery does not cover every manifest entrypoint")
 	}
@@ -354,8 +416,14 @@ func parseDiscoverySnapshot(raw []byte, manifest Manifest) (DiscoverySnapshot, s
 	for index := range snapshot.Entrypoints {
 		entrypoint := &snapshot.Entrypoints[index]
 		sort.Strings(entrypoint.ReachesProjects)
-		if !validGradleEntrypoint(entrypoint.Name) || entrypointSet[entrypoint.Name] || len(entrypoint.ReachesProjects) == 0 || !uniqueStrings(entrypoint.ReachesProjects) {
-			return DiscoverySnapshot{}, "", errors.New("Gradle discovery contains an invalid entrypoint")
+		if !validGradleEntrypoint(entrypoint.Name) {
+			return DiscoverySnapshot{}, "", fmt.Errorf("Gradle discovery contains invalid entrypoint name %q", entrypoint.Name)
+		}
+		if entrypointSet[entrypoint.Name] {
+			return DiscoverySnapshot{}, "", fmt.Errorf("Gradle discovery repeats entrypoint %q", entrypoint.Name)
+		}
+		if (!allowEmptyReach && len(entrypoint.ReachesProjects) == 0) || !uniqueStrings(entrypoint.ReachesProjects) {
+			return DiscoverySnapshot{}, "", fmt.Errorf("Gradle discovery entrypoint %q has an invalid project reach", entrypoint.Name)
 		}
 		entrypointSet[entrypoint.Name] = true
 		for _, projectPath := range entrypoint.ReachesProjects {

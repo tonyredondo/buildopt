@@ -267,6 +267,7 @@ buildopt_required_files=(
     "dev/check-gradle-plugin-handshake"
     "dev/check-generated-code"
     "dev/check-generated-clients"
+    "dev/check-generic-profile-onboarding"
     "dev/check-github-action"
     "dev/check-gitlab-ci"
     "dev/check-go-toolchain"

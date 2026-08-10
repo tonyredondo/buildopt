@@ -101,14 +101,29 @@ Gradle. Adopt it only after reviewing and committing the repository manifest
 and generated graph described in the
 [Build Impact workflow](../guides/product-workflows.md#build-impact).
 
-Before committing a qualified profile, current `main` can collect the exact
-POC evidence with `buildopt profile measure`. Give it a clean target revision,
-its ancestor baseline, the exact changed paths, one global-fallback path set
-and the required outputs already declared by the manifest. It compares eight
-isolated optimized-native and BuildOpt pairs and writes evidence only after
-every build and output check succeeds. Then `buildopt profile evaluate` either
-writes a reviewable profile or retains native full graph. See the
-[generic measurement contract](../../specs/poc-generic-measurement-v1.md).
+Before committing a qualified profile, current `main` can create the exact POC
+inputs without hand-authoring Build Impact JSON:
+
+```bash
+git diff --name-only --no-renames "$BASE_SHA" HEAD > buildopt-changes.txt
+buildopt profile propose \
+  --repository-id owner/repository \
+  --pipeline-class classes \
+  --entrypoint classes \
+  --changes-file buildopt-changes.txt \
+  --base-revision "$BASE_SHA" \
+  --required-output 'module/build/classes/**'
+```
+
+Review `buildopt-profile-proposal.json` first. A
+`MEASURE_STRUCTURAL_CANDIDATE` decision includes the follow-up argument vector
+for `buildopt profile measure`; fill the immutable BuildOpt revision if it was
+not supplied to `profile propose`. Measurement compares eight isolated
+optimized-native and BuildOpt pairs and writes evidence only after every build
+and output check succeeds. Then `buildopt profile evaluate` either writes a
+reviewable profile or retains native full graph. See the [generic onboarding
+contract](../../specs/poc-generic-profile-onboarding-v1.md) and [measurement
+contract](../../specs/poc-generic-measurement-v1.md).
 
 For a pull request, commit the qualified profile described in the
 [configuration reference](../reference/configuration.md#qualified-poc-profile),

@@ -1,0 +1,182 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "$0")/.." && pwd -P)
+temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-generic-onboarding.XXXXXX")
+trap 'rm -rf -- "${temporary}"' EXIT
+repository="${temporary}/external-gradle-repository"
+fixture_gradle_home="${buildopt_root}/.tools/gradle-user-home/local"
+mkdir -p -- "${repository}/service-a/src/main/java/example" \
+    "${repository}/service-b/src/main/java/example" \
+    "${temporary}/bin"
+
+cp -- "${buildopt_root}/gradlew" "${repository}/gradlew"
+cp -R -- "${buildopt_root}/gradle" "${repository}/gradle"
+chmod +x -- "${repository}/gradlew"
+
+cat >"${repository}/settings.gradle.kts" <<'EOF'
+rootProject.name = "generic-onboarding-fixture"
+include("service-a", "service-b")
+EOF
+cat >"${repository}/build.gradle.kts" <<'EOF'
+subprojects {
+    apply(plugin = "java")
+    repositories { mavenCentral() }
+}
+EOF
+cat >"${repository}/service-a/src/main/java/example/ServiceA.java" <<'EOF'
+package example;
+public final class ServiceA { public static String value() { return "base"; } }
+EOF
+cat >"${repository}/service-b/src/main/java/example/ServiceB.java" <<'EOF'
+package example;
+public final class ServiceB { public static String value() { return "stable"; } }
+EOF
+git -C "${repository}" init -q
+git -C "${repository}" config user.name "BuildOpt Fixture"
+git -C "${repository}" config user.email "buildopt-fixture@example.invalid"
+git -C "${repository}" config commit.gpgsign false
+git -C "${repository}" add .
+git -C "${repository}" commit -qm "fixture base"
+base_revision=$(git -C "${repository}" rev-parse HEAD)
+sed -i 's/return "base"/return "target"/' "${repository}/service-a/src/main/java/example/ServiceA.java"
+git -C "${repository}" add service-a/src/main/java/example/ServiceA.java
+git -C "${repository}" commit -qm "change service a"
+printf '%s\n' 'service-a/src/main/java/example/ServiceA.java' >"${repository}/changes.txt"
+
+"${buildopt_root}/dev/run" --toolchain go -- go build -trimpath -o "${temporary}/bin/buildopt" ./cmd/buildopt
+"${temporary}/bin/buildopt" profile propose --help >"${temporary}/proposal-help.txt"
+grep -F 'usage: buildopt profile propose --repository-id OWNER/REPO' "${temporary}/proposal-help.txt" >/dev/null
+set +e
+"${temporary}/bin/buildopt" profile propose --repository-id example/missing >"${temporary}/invalid.stdout" 2>"${temporary}/invalid.stderr"
+invalid_status=$?
+set -e
+if ((invalid_status != 64)); then
+    printf 'invalid proposal status: %s\n' "${invalid_status}" >&2
+    exit 1
+fi
+grep -F 'usage: buildopt profile propose --repository-id OWNER/REPO' "${temporary}/invalid.stderr" >/dev/null
+
+proposal_args=(
+    profile propose
+    --repository-id example/generic-onboarding-fixture
+    --pipeline-class classes
+    --entrypoint classes
+    --changes-file changes.txt
+    --base-revision "${base_revision}"
+    --required-output 'service-a/build/classes/**'
+    --gradle-option=--offline
+)
+(
+    cd -- "${repository}"
+    GRADLE_USER_HOME="${fixture_gradle_home}" "${temporary}/bin/buildopt" "${proposal_args[@]}" >proposal.stdout.json
+)
+cp -- "${repository}/buildopt-profile-proposal.json" "${temporary}/first-proposal.json"
+cp -- "${repository}/buildopt-impact-manifest.json" "${temporary}/first-manifest.json"
+cp -- "${repository}/buildopt-impact-graph.generated.json" "${temporary}/first-graph.json"
+cp -- "${repository}/buildopt-impact.generated.json" "${temporary}/first-generated.json"
+
+python3 - "${repository}/buildopt-profile-proposal.json" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    proposal = json.load(handle)
+assert proposal["schemaVersion"] == "buildopt.poc/profile-proposal/v1"
+assert proposal["decision"] == "MEASURE_STRUCTURAL_CANDIDATE"
+assert proposal["candidateEntrypoints"] == [":service-a:classes"]
+assert proposal["omittedProjects"] == [":service-b"]
+assert proposal["analysis"]["plan"]["selectedProjectCount"] == 1
+assert proposal["analysis"]["plan"]["omittedProjectCount"] == 1
+assert proposal["analysis"]["plan"]["requiredOutputs"] == ["service-a/build/classes/**"]
+assert proposal["reviewRequired"] is True
+assert proposal["activationAutomatic"] is False
+assert proposal["productionAuthorized"] is False
+assert proposal["testOptimization"] == "OUT_OF_SCOPE"
+assert proposal["buildOptRevisionNeeded"] is True
+assert proposal["measureCommand"][:3] == ["buildopt", "profile", "measure"]
+PY
+
+(
+    cd -- "${repository}"
+    GRADLE_USER_HOME="${fixture_gradle_home}" "${temporary}/bin/buildopt" "${proposal_args[@]}" >/dev/null
+    "${temporary}/bin/buildopt" profile analyze \
+        --manifest buildopt-impact-manifest.json \
+        --graph buildopt-impact-graph.generated.json \
+        --generated-manifest buildopt-impact.generated.json >analysis.json
+    "${temporary}/bin/buildopt" profile evaluate \
+        --manifest buildopt-impact-manifest.json \
+        --graph buildopt-impact-graph.generated.json \
+        --generated-manifest buildopt-impact.generated.json >evaluation.json
+)
+cmp --silent "${temporary}/first-proposal.json" "${repository}/buildopt-profile-proposal.json"
+cmp --silent "${temporary}/first-manifest.json" "${repository}/buildopt-impact-manifest.json"
+cmp --silent "${temporary}/first-graph.json" "${repository}/buildopt-impact-graph.generated.json"
+cmp --silent "${temporary}/first-generated.json" "${repository}/buildopt-impact.generated.json"
+grep -Fx 'build.gradle' "${repository}/buildopt-fallback-changes.txt" >/dev/null
+python3 - "${repository}/analysis.json" "${repository}/buildopt-profile-proposal.json" <<'PY'
+import json
+import sys
+with open(sys.argv[1], encoding="utf-8") as handle:
+    analysis = json.load(handle)
+with open(sys.argv[2], encoding="utf-8") as handle:
+    proposal = json.load(handle)
+assert analysis["decision"] == "MEASURE_STRUCTURAL_CANDIDATE"
+assert analysis["reason"] == proposal["analysis"]["reason"]
+assert analysis["plan"] == proposal["analysis"]["plan"]
+PY
+python3 - "${repository}/evaluation.json" <<'PY'
+import json
+import sys
+with open(sys.argv[1], encoding="utf-8") as handle:
+    evaluation = json.load(handle)
+assert evaluation["decision"] == "MEASURE_STRUCTURAL_CANDIDATE"
+assert evaluation["profile"] is None
+assert evaluation["reviewRequired"] is True
+assert evaluation["activationAutomatic"] is False
+PY
+
+custom_repository="${temporary}/custom-workflow"
+cp -R -- "${repository}" "${custom_repository}"
+git -C "${custom_repository}" clean -ffdxq
+cat >>"${custom_repository}/build.gradle.kts" <<'EOF'
+subprojects { tasks.register("customWorkflow") { doLast { println("custom") } } }
+EOF
+git -C "${custom_repository}" add build.gradle.kts
+git -C "${custom_repository}" commit -qm "add unsupported custom workflow"
+custom_base=$(git -C "${custom_repository}" rev-parse HEAD~1)
+printf '%s\n' 'build.gradle.kts' >"${custom_repository}/custom-changes.txt"
+(
+    cd -- "${custom_repository}"
+    GRADLE_USER_HOME="${fixture_gradle_home}" "${temporary}/bin/buildopt" profile propose \
+        --repository-id example/custom-workflow \
+        --pipeline-class custom \
+        --entrypoint customWorkflow \
+        --changes-file custom-changes.txt \
+        --base-revision "${custom_base}" \
+        --required-output 'build/custom/**' \
+        --global-change 'settings.gradle.kts' \
+        --gradle-option=--offline >/dev/null
+)
+python3 - "${custom_repository}/buildopt-profile-proposal.json" <<'PY'
+import json
+import sys
+with open(sys.argv[1], encoding="utf-8") as handle:
+    proposal = json.load(handle)
+assert proposal["decision"] == "NATIVE_FULL_GRAPH"
+assert proposal["reason"] == "ORIGINAL_WORKFLOW_UNSUPPORTED"
+assert proposal["activationAutomatic"] is False
+assert proposal["productionAuthorized"] is False
+assert "manifest" not in proposal["documents"]
+PY
+test ! -e "${custom_repository}/buildopt-impact-manifest.json"
+test ! -e "${custom_repository}/buildopt-impact-graph.generated.json"
+test ! -e "${custom_repository}/buildopt-impact.generated.json"
+test ! -e "${custom_repository}/buildopt-fallback-changes.txt"
+
+printf 'Generic profile onboarding contract passed\n'

@@ -101,6 +101,24 @@ Before a workload is qualified, the general read-only analysis surface finds a
 smaller reviewed graph without guessing a speedup:
 
 ```bash
+buildopt profile propose \
+  --repository-id owner/repository \
+  --pipeline-class classes \
+  --entrypoint classes \
+  --changes-file buildopt-changes.txt \
+  --base-revision "$BASE_REVISION" \
+  --required-output 'module/build/classes/**'
+```
+
+This two-pass onboarding command first observes the original Gradle selector,
+then validates the same lifecycle task on the exact changed project owners. A
+safe reduction produces the manifest, graph, generated binding, fallback file
+and exact measurement handoff. Custom, ambiguous, global, Test-bearing or
+unknown work retains native full graph and writes no candidate state.
+
+The generated state can then be inspected independently:
+
+```bash
 buildopt profile analyze \
   --manifest buildopt-impact-manifest.json \
   --graph buildopt-impact-graph.generated.json \

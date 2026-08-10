@@ -194,7 +194,21 @@ assuming graph reduction equals wall-clock value:
 
 ```bash
 git diff --name-only --no-renames BASE_SHA HEAD > buildopt-changes.txt
-printf 'settings.gradle.kts\n' > buildopt-fallback-changes.txt
+buildopt profile propose \
+  --repository-id owner/repository \
+  --pipeline-class pull-request \
+  --entrypoint classes \
+  --changes-file buildopt-changes.txt \
+  --base-revision "$BASE_SHA" \
+  --required-output 'module/build/classes/**'
+```
+
+The proposal command produces the manifest, graph, generated binding and
+fallback input used below without hand-authored JSON. Review the selected task
+set, omitted projects, required output scope and native fallback before running
+the emitted measurement command.
+
+```bash
 buildopt profile measure \
   --manifest buildopt-impact-manifest.json \
   --graph buildopt-impact-graph.generated.json \

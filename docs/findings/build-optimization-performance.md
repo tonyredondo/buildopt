@@ -510,6 +510,12 @@ profiles coupled too tightly:
 2. direct whole-profile evidence decides whether the exact composition beats
    optimized native Gradle for that workload.
 
+The generic path now begins with `buildopt profile propose`, so a repository
+owner supplies only the original Gradle selector, exact Git change and required
+output globs. Two-pass typed discovery generates the review bundle and hands it
+to the unchanged measure/evaluate gates. This improves experiment usability;
+it does not add or alter any percentage in the scorecard.
+
 The checked composition scorecard binds prior direct measurements rather than
 rerunning unchanged experiments:
 

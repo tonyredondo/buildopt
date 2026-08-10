@@ -159,6 +159,61 @@ func AnalyzeOpportunity(options AnalysisOptions) (AnalysisReport, error) {
 	return report, nil
 }
 
+// AnalyzeGeneratedOpportunity evaluates already parsed discovery state before
+// it is persisted. This lets onboarding remain transactional: rejected
+// proposals write only their native decision and no candidate documents.
+func AnalyzeGeneratedOpportunity(manifest buildimpact.LoadedManifest, graph buildimpact.LoadedGraph, generated buildimpact.GeneratedManifest) AnalysisReport {
+	report := nativeAnalysisReport("GRAPH_INVALID")
+	report.Subject.RepositoryID = manifest.Manifest.RepositoryID
+	report.Subject.PipelineClass = manifest.Manifest.PipelineClass
+	report.Subject.GradleVersion = generated.GradleVersion
+	report.SourceBindings.ManifestDigest = manifest.Digest
+	report.SourceBindings.GraphDigest = graph.Digest
+	report.SourceBindings.DiscoveryDigest = generated.DiscoveryDigest
+	if !graph.Graph.Complete {
+		report.Reason = "GRAPH_INCOMPLETE"
+		return report
+	}
+	if graphHasUnknownRelationships(graph.Graph) {
+		report.Reason = "GRAPH_UNKNOWN_RELATIONSHIP"
+		return report
+	}
+	if selectedAlternativeContainsTestTasks(manifest.Manifest, graph.Graph) {
+		report.Reason = "UNSUPPORTED_TEST_TASK"
+		return report
+	}
+	if !generated.Complete || len(generated.FallbackReasons) != 0 {
+		report.Reason = "GENERATED_STATE_INCOMPLETE"
+		return report
+	}
+	if !generatedStateBound(generated, manifest, graph) {
+		report.Reason = "GENERATED_STATE_DRIFT"
+		return report
+	}
+	plan, reason := derivePlan(manifest.Manifest, graph.Graph)
+	if reason != "" {
+		report.Reason = reason
+		return report
+	}
+	if plan.OmittedProjectCount <= 0 {
+		report.Reason = "NO_GRAPH_REDUCTION"
+		return report
+	}
+	selectedCount := len(graph.Graph.Projects) - plan.OmittedProjectCount
+	report.Plan = &AnalysisPlan{
+		AlternativeID: plan.AlternativeID, Entrypoints: plan.Entrypoints,
+		FallbackEntrypoints: plan.FallbackEntrypoints,
+		RequiredOutputs: plan.RequiredOutputs, TotalProjectCount: len(graph.Graph.Projects),
+		SelectedProjectCount: selectedCount, OmittedProjectCount: plan.OmittedProjectCount,
+		OmittedProjectRatio: float64(plan.OmittedProjectCount) / float64(len(graph.Graph.Projects)),
+	}
+	report.Decision = DecisionMeasure
+	report.Reason = "COMPLETE_STRUCTURAL_REDUCTION"
+	report.Mechanisms = analysisMechanismDecisions(true)
+	report.MeasurementRequired = true
+	return report
+}
+
 // RenderAnalysis emits stable reviewable JSON.
 func RenderAnalysis(report AnalysisReport) ([]byte, error) {
 	raw, err := json.MarshalIndent(report, "", "  ")
