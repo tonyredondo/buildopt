@@ -1,0 +1,188 @@
+{
+  "schemaVersion": "buildopt.specs/poc-generic-profile-matrix/v1",
+  "workItem": "POC-GENERIC-PROFILE-MATRIX-001",
+  "decision": "PREREGISTER_ONE_GENERIC_STRUCTURAL_METHOD_ACROSS_FIVE_PUBLIC_REPOSITORIES",
+  "buildoptRevision": "fc68a910f0ae87bbb309ff0484af23bbf7a302f6",
+  "runner": {
+    "platform": "linux-amd64",
+    "cpuCount": 12,
+    "maxWorkers": 12,
+    "pairs": 8,
+    "order": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
+    "perBuildTimeout": "30m"
+  },
+  "method": {
+    "surface": "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE",
+    "candidateMechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "control": "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW",
+    "isolatedArms": true,
+    "independentGradleHomes": true,
+    "independentNativeCacheSeeds": true,
+    "requiredOutputsComparedByteForByte": true,
+    "fullGraphFallbackRequired": true,
+    "onlinePreparationMeasured": false,
+    "repositorySpecificProductRulesAllowed": false
+  },
+  "repositories": [
+    {
+      "key": "spring-framework",
+      "repositoryId": "spring-projects/spring-framework",
+      "remoteUrl": "https://github.com/spring-projects/spring-framework.git",
+      "publicRevision": "4b5c92703c63966c3471242c621c4a63b382638d",
+      "jdkToolchain": "temurin-jdk-25",
+      "pipelineClass": "test-classes",
+      "entrypoints": [
+        "testClasses"
+      ],
+      "changePath": "spring-jms/src/main/java/org/springframework/jms/JmsException.java",
+      "mutation": "APPEND_FIXED_COMMENT",
+      "requiredOutputs": [
+        "spring-jms/build/classes/**"
+      ],
+      "expectedCandidateEntrypoints": [
+        ":spring-jms:testClasses"
+      ]
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "remoteUrl": "https://github.com/open-telemetry/opentelemetry-java-instrumentation.git",
+      "publicRevision": "080c1d32ca676ba7b0210c21b60cce8e7ac39058",
+      "jdkToolchain": "temurin-jdk-21",
+      "pipelineClass": "spring-family-test-classes",
+      "entrypointsFile": "specs/poc-otel-spring-family-v2.tasks.txt",
+      "entrypointCount": 53,
+      "changePath": "instrumentation/spring/spring-boot-autoconfigure/src/main/java/io/opentelemetry/instrumentation/spring/autoconfigure/OpenTelemetryAutoConfiguration.java",
+      "mutation": "APPEND_FIXED_COMMENT",
+      "requiredOutputs": [
+        "instrumentation/spring/spring-boot-autoconfigure/build/classes/**"
+      ],
+      "expectedCandidateEntrypoints": [
+        ":instrumentation:spring:spring-boot-autoconfigure:testClasses"
+      ]
+    },
+    {
+      "key": "apache-kafka",
+      "repositoryId": "apache/kafka",
+      "remoteUrl": "https://github.com/apache/kafka.git",
+      "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "jdkToolchain": "temurin-jdk-25",
+      "pipelineClass": "test-classes",
+      "entrypoints": [
+        "testClasses"
+      ],
+      "changePath": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+      "mutation": "APPEND_FIXED_COMMENT",
+      "requiredOutputs": [
+        "clients/build/classes/java/main/**",
+        "clients/build/classes/java/test/**",
+        "clients/build/resources/main/**",
+        "clients/build/resources/test/**"
+      ],
+      "expectedCandidateEntrypoints": [
+        ":clients:testClasses"
+      ]
+    },
+    {
+      "key": "micronaut-core",
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "remoteUrl": "https://github.com/micronaut-projects/micronaut-core.git",
+      "publicRevision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+      "jdkToolchain": "temurin-jdk-25",
+      "pipelineClass": "assemble",
+      "entrypoints": [
+        "assemble"
+      ],
+      "changePath": "http-client-jdk/src/main/java/io/micronaut/http/client/jdk/DefaultJdkHttpClient.java",
+      "mutation": "APPEND_FIXED_COMMENT",
+      "requiredOutputs": [
+        "http-client-jdk/build/libs/**"
+      ],
+      "expectedCandidateEntrypoints": [
+        ":micronaut-http-client-jdk:assemble"
+      ]
+    },
+    {
+      "key": "apache-groovy",
+      "repositoryId": "apache/groovy",
+      "remoteUrl": "https://github.com/apache/groovy.git",
+      "publicRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "jdkToolchain": "temurin-jdk-21",
+      "pipelineClass": "classes",
+      "entrypoints": [
+        "classes"
+      ],
+      "changePath": "subprojects/groovy-json/src/main/java/org/apache/groovy/json/DefaultFastStringService.java",
+      "mutation": "ADD_PACKAGE_PRIVATE_MARKER_RETURNING_ONE",
+      "requiredOutputs": [
+        "subprojects/groovy-json/build/classes/**"
+      ],
+      "expectedCandidateEntrypoints": [
+        ":groovy-json:classes"
+      ]
+    }
+  ],
+  "qualification": {
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositivePairs": 8,
+    "requiredOutputsIdentical": true,
+    "maximumProductAttributableFailures": 0,
+    "failedOrTimedOutObservationsMayBeDiscarded": false
+  },
+  "retainedCompositionContext": [
+    {
+      "key": "spring-framework",
+      "evidence": "benchmarks/results/poc-qualified-profile-matrix-v1/spring.json",
+      "mechanisms": ["BUILD_IMPACT"],
+      "reductionRatio": 0.14327432875598944,
+      "qualified": false
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "evidence": "benchmarks/results/poc-otel-clean-composition-v1.json",
+      "mechanisms": ["BUILD_IMPACT", "STANDARD_JAR"],
+      "reductionRatio": 0.5040426832134631,
+      "qualified": true
+    },
+    {
+      "key": "apache-kafka",
+      "evidence": "benchmarks/results/poc-third-repository-transfer-v1.json",
+      "mechanisms": ["BUILD_IMPACT", "STANDARD_JAR"],
+      "reductionRatio": 0.5509274324764074,
+      "qualified": true
+    },
+    {
+      "key": "micronaut-core",
+      "evidence": "benchmarks/results/poc-structural-profile-adoption-v1.json",
+      "mechanisms": ["BUILD_IMPACT"],
+      "reductionRatio": 0.7216260477579773,
+      "qualified": true
+    },
+    {
+      "key": "apache-groovy",
+      "evidence": "benchmarks/results/poc-apache-groovy-classes-v1/measurement.json",
+      "mechanisms": ["BUILD_IMPACT"],
+      "reductionRatio": 0.5006002937175574,
+      "qualified": true
+    }
+  ],
+  "interpretation": {
+    "structuralRowsComparable": true,
+    "retainedCompositionRowsComparableToStructuralRows": false,
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false,
+    "graphReductionIsNotPerformanceEvidence": true
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

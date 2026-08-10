@@ -1,0 +1,316 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/output/directory\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+if [[ -e ${buildopt_output} ]]; then
+    printf 'evidence output already exists: %s\n' "${buildopt_output}" >&2
+    exit 1
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-generic-profile-matrix-v1.json"
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-generic-profile-matrix.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ ${buildopt_root} == "${TMPDIR:-/tmp}/buildopt-generic-profile-matrix."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in git jq perl sha256sum tar timeout; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'required command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -f ${buildopt_spec} ]] || {
+    printf 'generic profile matrix specification is unavailable\n' >&2
+    exit 1
+}
+[[ -z $(git -C "${buildopt_repo_root}" status --porcelain --untracked-files=no) ]] || {
+    printf 'BuildOpt tracked state must be clean before evidence capture\n' >&2
+    exit 1
+}
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_package_root="${buildopt_root}/package"
+mkdir -p -- "${buildopt_package_root}" "${buildopt_root}/install" "${buildopt_output}"
+"${buildopt_repo_root}/packaging/linux/package.sh" \
+    --version 0.3.0-dev --output "${buildopt_package_root}" >/dev/null
+buildopt_package="${buildopt_package_root}/buildopt-0.3.0-dev-linux-amd64.tar.gz"
+mkdir -p -- "${buildopt_root}/release"
+tar -xzf "${buildopt_package}" -C "${buildopt_root}/release"
+"${buildopt_root}/release/buildopt-0.3.0-dev-linux-amd64/install.sh" \
+    --prefix "${buildopt_root}/install" >/dev/null
+buildopt_executable="${buildopt_root}/install/bin/buildopt"
+buildopt_executable_sha=$(sha256sum "${buildopt_executable}" | awk '{print $1}')
+
+buildopt_mutate_repository() {
+    local buildopt_key=$1
+    local buildopt_repository=$2
+    local buildopt_change_path=$3
+
+    case "${buildopt_key}" in
+        apache-groovy)
+            perl -0pi -e 's/\n}\n\z/\n\n    int buildOptPocMarker() {\n        return 1;\n    }\n}\n/' \
+                "${buildopt_repository}/${buildopt_change_path}"
+            ;;
+        spring-framework)
+            printf '\n// buildopt-poc-generic-profile-matrix-spring\n' \
+                >>"${buildopt_repository}/${buildopt_change_path}"
+            ;;
+        opentelemetry-java-instrumentation)
+            printf '\n// buildopt-poc-generic-profile-matrix-opentelemetry\n' \
+                >>"${buildopt_repository}/${buildopt_change_path}"
+            ;;
+        apache-kafka)
+            printf '\n// buildopt-poc-generic-profile-matrix-kafka\n' \
+                >>"${buildopt_repository}/${buildopt_change_path}"
+            ;;
+        micronaut-core)
+            printf '\n// buildopt-poc-generic-profile-matrix-micronaut\n' \
+                >>"${buildopt_repository}/${buildopt_change_path}"
+            ;;
+        *)
+            printf 'unsupported matrix subject: %s\n' "${buildopt_key}" >&2
+            return 1
+            ;;
+    esac
+}
+
+buildopt_entrypoint_arguments() {
+    local buildopt_index=$1
+    local buildopt_file buildopt_entrypoint
+
+    buildopt_file=$(jq -r ".repositories[${buildopt_index}].entrypointsFile // empty" "${buildopt_spec}")
+    if [[ -n ${buildopt_file} ]]; then
+        while IFS= read -r buildopt_entrypoint; do
+            [[ -n ${buildopt_entrypoint} ]] && printf '%s\0%s\0' --entrypoint "${buildopt_entrypoint}"
+        done <"${buildopt_repo_root}/${buildopt_file}"
+    else
+        while IFS= read -r buildopt_entrypoint; do
+            printf '%s\0%s\0' --entrypoint "${buildopt_entrypoint}"
+        done < <(jq -r ".repositories[${buildopt_index}].entrypoints[]" "${buildopt_spec}")
+    fi
+}
+
+buildopt_output_arguments() {
+    local buildopt_index=$1
+    local buildopt_required_output
+    while IFS= read -r buildopt_required_output; do
+        printf '%s\0%s\0' --required-output "${buildopt_required_output}"
+    done < <(jq -r ".repositories[${buildopt_index}].requiredOutputs[]" "${buildopt_spec}")
+}
+
+buildopt_capture_subject() {
+    local buildopt_index=$1
+    local buildopt_key buildopt_repository_id buildopt_remote buildopt_public_revision
+    local buildopt_jdk buildopt_pipeline buildopt_change_path buildopt_repository
+    local buildopt_gradle_home buildopt_subject_output buildopt_base buildopt_target
+    local buildopt_name buildopt_measure_status buildopt_evaluation_decision
+    local -a buildopt_entrypoint_args=() buildopt_required_output_args=()
+
+    buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_spec}")
+    buildopt_repository_id=$(jq -er ".repositories[${buildopt_index}].repositoryId" "${buildopt_spec}")
+    buildopt_remote=$(jq -er ".repositories[${buildopt_index}].remoteUrl" "${buildopt_spec}")
+    buildopt_public_revision=$(jq -er ".repositories[${buildopt_index}].publicRevision" "${buildopt_spec}")
+    buildopt_jdk=$(jq -er ".repositories[${buildopt_index}].jdkToolchain" "${buildopt_spec}")
+    buildopt_pipeline=$(jq -er ".repositories[${buildopt_index}].pipelineClass" "${buildopt_spec}")
+    buildopt_change_path=$(jq -er ".repositories[${buildopt_index}].changePath" "${buildopt_spec}")
+    buildopt_repository="${buildopt_root}/${buildopt_key}/repository"
+    buildopt_gradle_home="${buildopt_root}/${buildopt_key}/gradle-home"
+    buildopt_subject_output="${buildopt_output}/${buildopt_key}"
+    mkdir -p -- "${buildopt_repository}" "${buildopt_gradle_home}" "${buildopt_subject_output}"
+
+    git -C "${buildopt_repository}" init -q
+    git -C "${buildopt_repository}" remote add origin "${buildopt_remote}"
+    git -C "${buildopt_repository}" fetch --depth=1 origin "${buildopt_public_revision}"
+    git -C "${buildopt_repository}" checkout -q --detach FETCH_HEAD
+    buildopt_base=$(git -C "${buildopt_repository}" rev-parse HEAD)
+    [[ ${buildopt_base} == "${buildopt_public_revision}" ]] || {
+        printf 'public revision mismatch for %s\n' "${buildopt_key}" >&2
+        return 1
+    }
+
+    buildopt_mutate_repository "${buildopt_key}" "${buildopt_repository}" "${buildopt_change_path}"
+    git -C "${buildopt_repository}" config user.name 'BuildOpt POC'
+    git -C "${buildopt_repository}" config user.email 'buildopt-poc@example.invalid'
+    git -C "${buildopt_repository}" config commit.gpgsign false
+    git -C "${buildopt_repository}" add "${buildopt_change_path}"
+    GIT_AUTHOR_DATE='2026-08-10T00:00:00Z' \
+        GIT_COMMITTER_DATE='2026-08-10T00:00:00Z' \
+        git -C "${buildopt_repository}" commit -qm 'Apply frozen BuildOpt matrix mutation'
+    buildopt_target=$(git -C "${buildopt_repository}" rev-parse HEAD)
+    printf '%s\n' "${buildopt_change_path}" >"${buildopt_repository}/buildopt-changes.txt"
+
+    mapfile -d '' -t buildopt_entrypoint_args \
+        < <(buildopt_entrypoint_arguments "${buildopt_index}")
+    mapfile -d '' -t buildopt_required_output_args \
+        < <(buildopt_output_arguments "${buildopt_index}")
+
+    printf 'Discovering generic structural candidate for %s\n' "${buildopt_repository_id}"
+    if ! (
+        cd -- "${buildopt_repository}"
+        env -u CI GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            timeout 45m \
+            "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+            "${buildopt_executable}" profile propose \
+            --repository-id "${buildopt_repository_id}" \
+            --pipeline-class "${buildopt_pipeline}" \
+            "${buildopt_entrypoint_args[@]}" \
+            --changes-file buildopt-changes.txt \
+            --base-revision "${buildopt_base}" \
+            "${buildopt_required_output_args[@]}" \
+            --gradle-option=--no-scan --gradle-option=--max-workers=12 \
+            --buildopt-revision "${buildopt_revision}" --timeout 30m
+    ) >"${buildopt_subject_output}/proposal.log" 2>&1; then
+        tail -n 200 "${buildopt_subject_output}/proposal.log" >&2
+        printf 'proposal execution failed for %s\n' "${buildopt_key}" >&2
+        return 1
+    fi
+
+    for buildopt_name in buildopt-changes.txt buildopt-fallback-changes.txt \
+        buildopt-impact-manifest.json buildopt-impact-graph.generated.json \
+        buildopt-impact.generated.json buildopt-profile-proposal.json; do
+        if [[ -s ${buildopt_repository}/${buildopt_name} ]]; then
+            cp -- "${buildopt_repository}/${buildopt_name}" \
+                "${buildopt_subject_output}/${buildopt_name}"
+        fi
+    done
+
+    buildopt_measure_status=NOT_RUN_NATIVE_FULL_GRAPH
+    buildopt_evaluation_decision=NATIVE_FULL_GRAPH
+    printf 'null\n' >"${buildopt_subject_output}/evidence.json"
+    if [[ $(jq -r '.decision' "${buildopt_repository}/buildopt-profile-proposal.json") == \
+        MEASURE_STRUCTURAL_CANDIDATE ]]; then
+        printf 'Measuring generic structural candidate for %s\n' "${buildopt_repository_id}"
+        if (
+            cd -- "${buildopt_repository}"
+            env -u CI GRADLE_USER_HOME="${buildopt_gradle_home}" \
+                "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+                "${buildopt_executable}" profile measure \
+                --manifest buildopt-impact-manifest.json \
+                --graph buildopt-impact-graph.generated.json \
+                --generated-manifest buildopt-impact.generated.json \
+                --changes-file buildopt-changes.txt \
+                --fallback-changes-file buildopt-fallback-changes.txt \
+                --base-revision "${buildopt_base}" \
+                --buildopt-revision "${buildopt_revision}" \
+                --evidence-output buildopt-structural-evidence.json \
+                --gradle-option=--daemon --gradle-option=--build-cache \
+                --gradle-option=--parallel --gradle-option=--no-configuration-cache \
+                --gradle-option=--console=plain --gradle-option=--no-scan \
+                --gradle-option=--max-workers=12 --timeout 30m
+        ) >"${buildopt_subject_output}/measurement.log" 2>&1; then
+            buildopt_measure_status=COMPLETED
+            cp -- "${buildopt_repository}/buildopt-structural-evidence.json" \
+                "${buildopt_subject_output}/evidence.json"
+            (
+                cd -- "${buildopt_repository}"
+                "${buildopt_executable}" profile evaluate \
+                    --manifest buildopt-impact-manifest.json \
+                    --graph buildopt-impact-graph.generated.json \
+                    --generated-manifest buildopt-impact.generated.json \
+                    --evidence buildopt-structural-evidence.json \
+                    --profile-output buildopt-qualified-profile.json
+            ) >"${buildopt_subject_output}/evaluation.json" 2>"${buildopt_subject_output}/evaluation.log"
+            buildopt_evaluation_decision=$(jq -er '.decision' "${buildopt_subject_output}/evaluation.json")
+            if [[ -s ${buildopt_repository}/buildopt-qualified-profile.json ]]; then
+                cp -- "${buildopt_repository}/buildopt-qualified-profile.json" \
+                    "${buildopt_subject_output}/profile.json"
+            fi
+        else
+            buildopt_measure_status=MEASUREMENT_UNAVAILABLE
+            tail -n 200 "${buildopt_subject_output}/measurement.log" >&2
+        fi
+    fi
+
+    jq -n \
+        --arg key "${buildopt_key}" \
+        --arg repositoryId "${buildopt_repository_id}" \
+        --arg publicRevision "${buildopt_public_revision}" \
+        --arg targetRevision "${buildopt_target}" \
+        --arg measurementStatus "${buildopt_measure_status}" \
+        --arg evaluationDecision "${buildopt_evaluation_decision}" \
+        --slurpfile proposal "${buildopt_repository}/buildopt-profile-proposal.json" \
+        --slurpfile evidence "${buildopt_subject_output}/evidence.json" '
+        {
+          key: $key,
+          repositoryId: $repositoryId,
+          publicRevision: $publicRevision,
+          targetRevision: $targetRevision,
+          proposal: {
+            decision: $proposal[0].decision,
+            reason: $proposal[0].reason,
+            originalEntrypoints: $proposal[0].originalEntrypoints,
+            candidateEntrypoints: ($proposal[0].candidateEntrypoints // []),
+            totalProjectCount: ($proposal[0].analysis.plan.totalProjectCount // null),
+            selectedProjectCount: ($proposal[0].analysis.plan.selectedProjectCount // null),
+            omittedProjectCount: ($proposal[0].analysis.plan.omittedProjectCount // null)
+          },
+          measurementStatus: $measurementStatus,
+          result: (if ($evidence | length) == 1 then $evidence[0].result else null end),
+          evaluationDecision: $evaluationDecision
+        }
+    ' >"${buildopt_subject_output}/result.json"
+
+    (
+        cd -- "${buildopt_repository}"
+        env GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+            ./gradlew --stop
+    ) >/dev/null 2>&1 || true
+    rm -rf -- "${buildopt_root:?}/${buildopt_key}"
+}
+
+buildopt_repository_count=$(jq '.repositories | length' "${buildopt_spec}")
+for ((buildopt_index = 0; buildopt_index < buildopt_repository_count; buildopt_index++)); do
+    buildopt_capture_subject "${buildopt_index}"
+done
+
+jq -n \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg revision "${buildopt_revision}" \
+    --arg executableSha256 "${buildopt_executable_sha}" \
+    --slurpfile spec "${buildopt_spec}" \
+    --slurpfile spring "${buildopt_output}/spring-framework/result.json" \
+    --slurpfile otel "${buildopt_output}/opentelemetry-java-instrumentation/result.json" \
+    --slurpfile kafka "${buildopt_output}/apache-kafka/result.json" \
+    --slurpfile micronaut "${buildopt_output}/micronaut-core/result.json" \
+    --slurpfile groovy "${buildopt_output}/apache-groovy/result.json" '
+    {
+      schemaVersion: "buildopt.evidence/poc-generic-profile-matrix/v1",
+      workItem: "POC-GENERIC-PROFILE-MATRIX-001",
+      capturedAt: $capturedAt,
+      buildopt: {
+        revision: $revision,
+        executableSha256: $executableSha256,
+        packageVersion: "0.3.0-dev"
+      },
+      method: $spec[0].method,
+      subjects: [$spring[0], $otel[0], $kafka[0], $micronaut[0], $groovy[0]],
+      retainedCompositionContext: $spec[0].retainedCompositionContext,
+      aggregation: {
+        subjectCount: 5,
+        structurallyProposed: ([$spring[0], $otel[0], $kafka[0], $micronaut[0], $groovy[0]] |
+          map(select(.proposal.decision == "MEASURE_STRUCTURAL_CANDIDATE")) | length),
+        measured: ([$spring[0], $otel[0], $kafka[0], $micronaut[0], $groovy[0]] |
+          map(select(.measurementStatus == "COMPLETED")) | length),
+        qualified: ([$spring[0], $otel[0], $kafka[0], $micronaut[0], $groovy[0]] |
+          map(select(.result.qualified == true)) | length),
+        repositoryPercentagesAveraged: false,
+        mechanismPercentagesAdded: false
+      },
+      boundaries: $spec[0].boundaries
+    }
+' >"${buildopt_output}/summary.json"
+
+"${buildopt_script_dir}/check-generic-profile-matrix" "${buildopt_output}"
+printf 'Five-repository generic profile matrix written to %s\n' "${buildopt_output}"

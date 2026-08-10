@@ -17,7 +17,7 @@ import (
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
 
-const profileProposalUsage = "usage: buildopt profile propose --repository-id OWNER/REPO --pipeline-class CLASS --entrypoint TASK --changes-file PATH --base-revision REVISION --required-output GLOB [--required-output GLOB ...] [--global-change GLOB ...] [--gradle-command PATH] [--gradle-option VALUE ...] [--manifest-output PATH] [--graph-output PATH] [--generated-manifest-output PATH] [--fallback-changes-output PATH] [--proposal-output PATH] [--buildopt-revision REVISION] [--timeout DURATION]\n"
+const profileProposalUsage = "usage: buildopt profile propose --repository-id OWNER/REPO --pipeline-class CLASS --entrypoint TASK [--entrypoint TASK ...] --changes-file PATH --base-revision REVISION --required-output GLOB [--required-output GLOB ...] [--global-change GLOB ...] [--gradle-command PATH] [--gradle-option VALUE ...] [--manifest-output PATH] [--graph-output PATH] [--generated-manifest-output PATH] [--fallback-changes-output PATH] [--proposal-output PATH] [--buildopt-revision REVISION] [--timeout DURATION]\n"
 
 var defaultProposalGlobalChanges = []string{
 	"build-logic/**",
@@ -47,7 +47,8 @@ type profileProposalReport struct {
 	PipelineClass          string                               `json:"pipelineClass"`
 	BaseRevision           string                               `json:"baseRevision"`
 	TargetRevision         string                               `json:"targetRevision"`
-	OriginalEntrypoint     string                               `json:"originalEntrypoint"`
+	OriginalEntrypoint     string                               `json:"originalEntrypoint,omitempty"`
+	OriginalEntrypoints    []string                             `json:"originalEntrypoints"`
 	ChangedPaths           []string                             `json:"changedPaths"`
 	RequiredOutputs        []string                             `json:"requiredOutputs"`
 	GlobalChangePaths      []string                             `json:"globalChangePaths"`
@@ -81,7 +82,8 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 	flags.SetOutput(io.Discard)
 	repositoryID := flags.String("repository-id", "", "owner/repository identity")
 	pipelineClass := flags.String("pipeline-class", "", "pipeline class")
-	entrypoint := flags.String("entrypoint", "", "one original Gradle task selector")
+	var entrypoints proposalStringFlag
+	flags.Var(&entrypoints, "entrypoint", "original Gradle task selector; repeat for multi-entrypoint workflows")
 	changesFile := flags.String("changes-file", "", "exact base-to-target changed paths")
 	baseRevision := flags.String("base-revision", "", "immutable baseline Git revision")
 	gradleCommand := flags.String("gradle-command", "", "repository-relative or absolute Gradle command")
@@ -98,7 +100,7 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 	flags.Var(&requiredOutputs, "required-output", "repository-owned output glob; repeat for multiple outputs")
 	flags.Var(&globalChanges, "global-change", "full-graph fallback glob; repeat to replace defaults")
 	flags.Var(&gradleOptions, "gradle-option", "Gradle discovery option; repeat for multiple values")
-	if err := flags.Parse(args); err != nil || flags.NArg() != 0 || *repositoryID == "" || *pipelineClass == "" || *entrypoint == "" || *changesFile == "" || *baseRevision == "" || len(requiredOutputs) == 0 || *timeout <= 0 {
+	if err := flags.Parse(args); err != nil || flags.NArg() != 0 || *repositoryID == "" || *pipelineClass == "" || len(entrypoints) == 0 || *changesFile == "" || *baseRevision == "" || len(requiredOutputs) == 0 || *timeout <= 0 {
 		_, _ = io.WriteString(stderr, profileProposalUsage)
 		return exitUsage
 	}
@@ -107,7 +109,7 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 	}
 	report, documents, err := prepareStructuralProfileProposal(context.Background(), structuralProposalConfig{
 		repositoryID: *repositoryID, pipelineClass: *pipelineClass,
-		entrypoint: *entrypoint, changesFile: *changesFile, baseRevision: *baseRevision,
+		entrypoints: append([]string(nil), entrypoints...), changesFile: *changesFile, baseRevision: *baseRevision,
 		requiredOutputs: append([]string(nil), requiredOutputs...),
 		globalChanges: append([]string(nil), globalChanges...),
 		gradleCommand: *gradleCommand, gradleOptions: append([]string(nil), gradleOptions...),
@@ -148,7 +150,8 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 }
 
 type structuralProposalConfig struct {
-	repositoryID, pipelineClass, entrypoint, changesFile, baseRevision string
+	repositoryID, pipelineClass, changesFile, baseRevision             string
+	entrypoints                                                        []string
 	requiredOutputs, globalChanges, gradleOptions                     []string
 	gradleCommand, manifestOutput, graphOutput, generatedOutput       string
 	fallbackOutput, proposalOutput, buildOptRevision                   string
@@ -160,8 +163,12 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 	if err != nil {
 		return profileProposalReport{}, nil, err
 	}
-	if strings.Contains(config.entrypoint, ":") {
-		return profileProposalReport{}, nil, errors.New("proposal entrypoint must be one unqualified Gradle task selector")
+	if len(config.entrypoints) > 256 || !uniqueMeasurementStrings(config.entrypoints) {
+		return profileProposalReport{}, nil, errors.New("proposal entrypoints must be unique and bounded")
+	}
+	selectors, err := proposalTerminalSelectors(config.entrypoints)
+	if err != nil {
+		return profileProposalReport{}, nil, err
 	}
 	if len(config.requiredOutputs) > 256 || len(config.globalChanges) > 256 || !uniqueMeasurementStrings(config.requiredOutputs) || !uniqueMeasurementStrings(config.globalChanges) {
 		return profileProposalReport{}, nil, errors.New("proposal outputs and global changes must be unique and bounded")
@@ -195,13 +202,16 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 	observationContext, cancel := context.WithTimeout(ctx, config.timeout)
 	defer cancel()
 	snapshot, err := buildimpact.ObserveGradle(observationContext, buildimpact.ObservationOptions{
-		RepositoryRoot: root, Entrypoints: []string{config.entrypoint},
+		RepositoryRoot: root, Entrypoints: config.entrypoints,
 		GradleCommand: config.gradleCommand, GradleArgs: config.gradleOptions,
 	})
 	if err != nil {
 		return profileProposalReport{}, nil, err
 	}
-	report.UnknownRelationships = !snapshot.Complete || snapshot.Entrypoints[0].UnknownRelationships
+	report.UnknownRelationships = !snapshot.Complete
+	for _, entrypoint := range snapshot.Entrypoints {
+		report.UnknownRelationships = report.UnknownRelationships || entrypoint.UnknownRelationships
+	}
 	if !snapshot.Complete {
 		report.Reason = "ORIGINAL_WORKFLOW_UNSUPPORTED"
 		return report, nil, nil
@@ -217,21 +227,24 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 		report.Reason = "SOURCE_OWNERSHIP_AMBIGUOUS"
 		return report, nil, nil
 	}
-	candidateEntrypoints := make([]string, 0, len(owners))
+	candidateEntrypoints := make([]string, 0, len(owners)*len(selectors))
 	for _, owner := range owners {
-		if owner == ":" {
-			candidateEntrypoints = append(candidateEntrypoints, ":"+config.entrypoint)
-		} else {
-			candidateEntrypoints = append(candidateEntrypoints, owner+":"+config.entrypoint)
+		for _, selector := range selectors {
+			if owner == ":" {
+				candidateEntrypoints = append(candidateEntrypoints, ":"+selector)
+			} else {
+				candidateEntrypoints = append(candidateEntrypoints, owner+":"+selector)
+			}
 		}
 	}
+	sort.Strings(candidateEntrypoints)
 	report.CandidateEntrypoints = candidateEntrypoints
 
 	manifest := buildimpact.Manifest{
 		SchemaVersion: buildimpact.ManifestSchemaVersion, ManifestVersion: 1,
 		RepositoryID: config.repositoryID, PipelineClass: config.pipelineClass,
 		Ownership: buildimpact.RepositoryOwnership,
-		OriginalEntrypoints: []string{config.entrypoint},
+		OriginalEntrypoints: append([]string(nil), config.entrypoints...),
 		AllowedAlternatives: []buildimpact.EntrypointSet{{ID: "changed-projects", Entrypoints: candidateEntrypoints}},
 		RequiredChecks: []buildimpact.Check{}, GlobalChangePaths: config.globalChanges,
 		UnknownChangePolicy: buildimpact.FullGraphPolicy,
@@ -292,17 +305,45 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 }
 
 func nativeProfileProposal(config structuralProposalConfig, targetRevision string, changedPaths []string) profileProposalReport {
+	legacyEntrypoint := ""
+	if len(config.entrypoints) == 1 {
+		legacyEntrypoint = config.entrypoints[0]
+	}
 	return profileProposalReport{
 		SchemaVersion: "buildopt.poc/profile-proposal/v1", Decision: "NATIVE_FULL_GRAPH",
 		Reason: "NO_SAFE_STRUCTURAL_CANDIDATE", RepositoryID: config.repositoryID,
 		PipelineClass: config.pipelineClass, BaseRevision: config.baseRevision,
-		TargetRevision: targetRevision, OriginalEntrypoint: config.entrypoint,
+		TargetRevision: targetRevision, OriginalEntrypoint: legacyEntrypoint,
+		OriginalEntrypoints: append([]string(nil), config.entrypoints...),
 		ChangedPaths: changedPaths, RequiredOutputs: config.requiredOutputs,
 		GlobalChangePaths: config.globalChanges,
 		Documents: profileProposalDocuments{Proposal: config.proposalOutput},
 		ReviewRequired: true, ActivationAutomatic: false, ProductionAuthorized: false,
 		TestOptimization: "OUT_OF_SCOPE",
 	}
+}
+
+func proposalTerminalSelectors(entrypoints []string) ([]string, error) {
+	selectors := make([]string, 0, len(entrypoints))
+	seen := make(map[string]bool, len(entrypoints))
+	for _, entrypoint := range entrypoints {
+		if entrypoint == "" || strings.ContainsAny(entrypoint, " /\\") {
+			return nil, errors.New("proposal entrypoints must be Gradle task selectors")
+		}
+		selector := entrypoint
+		if index := strings.LastIndex(entrypoint, ":"); index >= 0 {
+			selector = entrypoint[index+1:]
+		}
+		if selector == "" || strings.Contains(selector, ":") {
+			return nil, errors.New("proposal entrypoints must end in a task name")
+		}
+		if !seen[selector] {
+			seen[selector] = true
+			selectors = append(selectors, selector)
+		}
+	}
+	sort.Strings(selectors)
+	return selectors, nil
 }
 
 func proposalGitTarget(root, baseRevision string) (string, error) {

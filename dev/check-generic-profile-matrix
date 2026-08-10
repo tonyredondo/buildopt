@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [evidence-directory]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence=${1:-"${buildopt_repo_root}/benchmarks/results/poc-generic-profile-matrix-v1"}
+buildopt_spec="${buildopt_repo_root}/specs/poc-generic-profile-matrix-v1.json"
+buildopt_summary="${buildopt_evidence}/summary.json"
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'required command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+for buildopt_file in "${buildopt_spec}" "${buildopt_summary}"; do
+    [[ -f ${buildopt_file} ]] || {
+        printf 'missing generic profile matrix input: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.evidence/poc-generic-profile-matrix/v1" and
+    .workItem == "POC-GENERIC-PROFILE-MATRIX-001" and
+    (.buildopt.revision | test("^[0-9a-f]{40}$")) and
+    (.buildopt.executableSha256 | test("^[0-9a-f]{64}$")) and
+    .method.candidateMechanisms == ["BUILD_IMPACT"] and
+    .method.control == "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW" and
+    .method.repositorySpecificProductRulesAllowed == false and
+    (.subjects | length) == 5 and
+    .aggregation.subjectCount == 5 and
+    .aggregation.repositoryPercentagesAveraged == false and
+    .aggregation.mechanismPercentagesAdded == false and
+    .boundaries.proofOfConcept == true and
+    .boundaries.productionAuthorized == false and
+    .boundaries.automaticActivation == false and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false
+' "${buildopt_summary}" >/dev/null
+
+buildopt_repository_count=$(jq '.repositories | length' "${buildopt_spec}")
+for ((buildopt_index = 0; buildopt_index < buildopt_repository_count; buildopt_index++)); do
+    buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_spec}")
+    buildopt_subject="${buildopt_evidence}/${buildopt_key}"
+    for buildopt_name in buildopt-changes.txt buildopt-profile-proposal.json proposal.log result.json; do
+        [[ -s ${buildopt_subject}/${buildopt_name} ]] || {
+            printf 'missing %s matrix evidence: %s\n' "${buildopt_key}" "${buildopt_name}" >&2
+            exit 1
+        }
+    done
+    jq -e \
+        --arg key "${buildopt_key}" \
+        --slurpfile spec "${buildopt_spec}" '
+        ($spec[0].repositories[] | select(.key == $key)) as $expected |
+        .schemaVersion == "buildopt.poc/profile-proposal/v1" and
+        .repositoryId == $expected.repositoryId and
+        .baseRevision == $expected.publicRevision and
+        .changedPaths == [$expected.changePath] and
+        .requiredOutputs == $expected.requiredOutputs and
+        .reviewRequired == true and
+        .activationAutomatic == false and
+        .productionAuthorized == false and
+        .testOptimization == "OUT_OF_SCOPE" and
+        ((.decision == "MEASURE_STRUCTURAL_CANDIDATE" and
+          .candidateEntrypoints == $expected.expectedCandidateEntrypoints and
+          .reason == "COMPLETE_STRUCTURAL_REDUCTION" and
+          .unknownRelationships == false) or
+         (.decision == "NATIVE_FULL_GRAPH" and
+          (.reason | IN("ORIGINAL_WORKFLOW_UNSUPPORTED", "CANDIDATE_WORKFLOW_UNSUPPORTED",
+                        "CANDIDATE_GRAPH_INCOMPLETE", "NO_SAFE_STRUCTURAL_CANDIDATE",
+                        "SOURCE_OWNERSHIP_AMBIGUOUS"))))
+    ' "${buildopt_subject}/buildopt-profile-proposal.json" >/dev/null
+
+    buildopt_status=$(jq -er '.measurementStatus' "${buildopt_subject}/result.json")
+    if [[ ${buildopt_status} == COMPLETED ]]; then
+        for buildopt_name in buildopt-impact-manifest.json buildopt-impact-graph.generated.json \
+            buildopt-impact.generated.json buildopt-fallback-changes.txt evidence.json \
+            evaluation.json measurement.log; do
+            [[ -s ${buildopt_subject}/${buildopt_name} ]] || {
+                printf 'missing completed %s evidence: %s\n' "${buildopt_key}" "${buildopt_name}" >&2
+                exit 1
+            }
+        done
+        jq -e '
+            .schemaVersion == "buildopt.evidence/structural-profile-qualification/v1" and
+            (.evidenceState | IN("QUALIFIED", "INCONCLUSIVE")) and
+            .execution.candidateSurface == "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY" and
+            .execution.mechanisms == ["BUILD_IMPACT"] and
+            .execution.launcherOverheadIncluded == true and
+            (.observations | length) == 8 and
+            all(.observations[];
+                .productAttributableFailure == false and
+                .requiredOutputCount > 0 and
+                .controlRequiredOutputSha256 == .candidateRequiredOutputSha256) and
+            .fallback.mode == "FULL_GRAPH" and
+            .fallback.buildSuccessful == true and
+            .boundaries.repositorySpecificRuleAdded == false and
+            .boundaries.testOptimizationModified == false
+        ' "${buildopt_subject}/evidence.json" >/dev/null
+    elif [[ ${buildopt_status} != NOT_RUN_NATIVE_FULL_GRAPH && \
+        ${buildopt_status} != MEASUREMENT_UNAVAILABLE ]]; then
+        printf 'invalid %s measurement status: %s\n' "${buildopt_key}" "${buildopt_status}" >&2
+        exit 1
+    fi
+done
+
+jq -e --slurpfile spec "${buildopt_spec}" '
+    .retainedCompositionContext == $spec[0].retainedCompositionContext and
+    all(.retainedCompositionContext[];
+        (.evidence | type) == "string" and
+        (.mechanisms | length) >= 1 and
+        (.reductionRatio >= 0 and .reductionRatio < 1) and
+        (.qualified | type) == "boolean")
+' "${buildopt_summary}" >/dev/null
+
+printf 'Five-repository generic profile matrix: PASS\n'
