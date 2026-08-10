@@ -1,521 +1,133 @@
-# BuildOpt POC Handoff
+# BuildOpt POC One-Pager
 
-## Executive Summary
+_Current evidence as of 2026-08-11_
 
-- **BuildOpt is an evidence-driven Gradle optimization POC.** It runs the
-  repository's existing Gradle command, preserves expected outputs and exit
-  behavior, and applies an optimization only when its scope and fallback are
-  explicit.
-- **The clearest value comes from avoiding work and making exact expensive
-  tasks reusable.** Installed Build Impact improved the reviewed Spring
-  workload by 15.76%; a conservative standard-`Jar` adapter improved the
-  OpenTelemetry workload by 39.92%.
-- **Not every experiment deserves to remain in the POC.** Safe Cache is
-  effectively at parity with Gradle's native cache. Runtime Tuning lost 2.00%
-  in its final Spring experiment, exact-bound Hot State lost 7.68% end to end,
-  and standard `Copy` failed its isolated stability gate. Their activation
-  code and rerun workflows have been removed; their evidence remains here so
-  the failed hypotheses are not rediscovered by accident.
-- **The clean full path now qualifies.** The first composition was rejected
-  because hot state regressed by 7.68%. The fresh rerun removed hot state and
-  combined only Build Impact with the exact standard-`Jar` adapter, saving
-  **5,361.25 ms/50.40%** with 4/4 positive pairs and 125 identical outputs.
-- **Build Impact does not generalize uniformly.** Shared test preparation
-  qualified at **18.88% faster**, while leaf compilation and packaging missed
-  the frozen gate. Generic verification/source-distribution graphs are now
-  complete, but Spring verification saved only **0.31%** with 2/4 positive
-  pairs. Attribution found only **1.238233 ms** in the largest BuildOpt-owned
-  phase, so it still retains native full-graph execution and this line stops.
-- **More cache hits are not automatically valuable.** On a real Spring test
-  workflow, BuildOpt restored three exact Test-fixture JARs but still made the
-  complete build **11.31% slower**. After narrowing plugin registration, a
-  three-arm ablation still measured it **9.53% slower** than native. The
-  activation was not promoted.
-- **Edge locality now has bounded value evidence.** The same Gradle HTTP client
-  and eight committed Shared objects averaged 6,911.25 ms over a frozen modeled
-  WAN and 4,510 ms through a prewarmed Edge: **34.74% faster**, 4/4 positive
-  pairs, identical 32-MiB outputs and zero measured upstream Edge requests.
-  The unchanged mechanism transferred to real Kafka `:clients:testClasses`
-  under an independently derived network profile: direct Shared averaged
-  8,885.25 ms and Edge 7,534 ms, **15.21% faster**, with 4/4 positive pairs and
-  all 4,062 outputs identical.
-- **The clean profile transfers to a third substantial repository.** On Apache
-  Kafka 4.3.1, generic discovery reduced build-owned test preparation from 64
-  reached projects to three and exact `Jar` reuse restored `:generator:jar`.
-  Installed BuildOpt averaged **55.09% faster** (2,539.5 ms saved), with 4/4
-  positive pairs and 4,062 byte-identical outputs.
-- **The public POC command now consumes repository-owned profiles end to end.**
-  An installed native package replayed the committed profile on the fixed
-  OpenTelemetry and Kafka revisions, reproduced 125 and 4,062 historical
-  outputs, and completed native full-graph fallback for global changes.
-  OpenTelemetry restored an exact standard `Jar`; Kafka restored
-  `:generator:jar`, while its required shaded client artifact is not a standard
-  `Jar`. This is adoption evidence; it deliberately adds no new timing claim.
-- **Kafka packaging now qualifies independently as Build Impact.** For a fixed
-  central client change, native root `assemble` averaged 8,054 ms and installed
-  BuildOpt averaged 3,416.5 ms: **57.58% faster**, saving 4,637.5 ms with 4/4
-  positive pairs, an exact 10.2-MB client JAR, zero product failures and full fallback.
-  A later composition seed proved `:clients:jar` is skipped and the required
-  artifact is produced by custom `:clients:shadowJar`, so this saving is not
-  evidence for the standard-`Jar` adapter.
-- **The earlier three-family matrix specialized; later structural evidence
-  broadened the mechanism, not the claim.** Kafka qualified at **81.85%** with
-  8/8 pairs. A materially different generic ownership/profile path now also
-  qualifies the fixed Micronaut scope at **72.16%** through installed
-  `buildopt poc`. At that historical stage Spring, OpenTelemetry and
-  unknown/drifted scopes stayed on optimized native Gradle; profiles remain
-  explicit, review-required and repository-bound.
-- **The terminal five-repository matrix now measures the same structural-only
-  path.** Build Impact qualified Kafka at **84.11%**, Micronaut at **41.74%**,
-  Groovy at **73.85%**, and OpenTelemetry at **14.43%** faster. OpenTelemetry's
-  separately preregistered v4 row preserved measured scheduling in the
-  correctness fallback and passed 8/8 pairs with exact outputs. Spring improved
-  **17.94%** with a positive interval but retained native because one -260-ms
-  pair failed the frozen 8-of-8 rule.
+## Purpose
 
-## Product Idea
+BuildOpt tests one strict product hypothesis: a repository-independent tool can
+make substantial Gradle builds faster than an already optimized native Gradle
+baseline by executing a smaller, change-specific project graph, without
+changing the required outputs or weakening fallback behavior.
 
-Gradle already provides Build Cache, up-to-date checks, incremental tasks,
-Configuration Cache, parallel execution, and remote-cache integration. BuildOpt
-does not replace those features. It adds a decision layer around Gradle that
-aims to answer three questions safely:
+The current POC is intentionally narrow. It is not a production-readiness
+exercise and it does not claim that every repository or change can be
+optimized.
 
-1. Can this build execute a smaller affected graph?
-2. Can an expensive task be made reusable without changing its outputs?
-3. Does the complete installed path beat an already optimized native Gradle
-   baseline?
+## Current POC Flow
 
-The qualified mechanisms are now exposed through one explicit repository-owned
-POC command:
+The active workflow is:
 
 ```text
-buildopt poc --changes-file .buildopt-changes
+repository-owned task + exact Git change + required outputs
+  -> buildopt profile propose
+  -> buildopt profile measure
+  -> buildopt profile evaluate
+  -> explicit, review-required structural profile
+  -> buildopt poc
 ```
 
-`buildopt-qualified-profile.json` binds the repository, pipeline, Build Impact
-state and clean mechanism set. Before Gradle starts, the command reports the
-selected or full graph, exact adapters, expected outputs and disabled
-mechanisms. It enables only Build Impact plus the exact standard-`Jar` adapter
-for a qualified alternative; Safe Cache and the retired Runtime Tuning, Hot
-State, and `Copy` mechanisms remain outside this path, as do Shared/Edge.
-Unknown/global changes and bypass use
-native full-graph execution. This improves POC usability without broadening the
-performance or production claim.
+The proposal logic uses project structure and source ownership rather than
+repository names. Measurement compares the installed BuildOpt path with
+optimized native Gradle through eight isolated alternating pairs. Evaluation
+requires exact outputs, a positive timing result, repeatability, and a proven
+full-graph fallback.
 
-Unknown changes, unqualified tasks, failed validation, or
-`BUILDOPT_BYPASS=1` restore the original native/full-graph path.
+If discovery is incomplete, inputs drift, outputs differ, timing is weak, or a
+fallback fails, BuildOpt retains the original native full graph.
 
-## Components and Differentiation from Gradle
+## Current Comparable Evidence
 
-| Component | What it does | What Gradle already provides | BuildOpt differentiation and current status |
-|---|---|---|---|
-| **Launcher and evidence envelope** | Runs the original command and records bounded execution evidence. | Direct Wrapper execution and normal process semantics. | Adds attribution, exact fallback, and bypass. It is infrastructure, not an accelerator, so its overhead must stay off unused paths. |
-| **Safe Cache / local L1** | Reuses verified outputs inside repository/Wrapper/platform boundaries. | Native local and remote Build Cache. | Adds stricter isolation and verification, but no incremental speed advantage has been proven. Native Gradle cache remains the default. |
-| **Runtime Tuning (retired)** | Evaluated worker, heap, fork, and resource profiles. | User-configured workers, JVM arguments, parallelism, and daemon behavior. | The bounded Spring 12-to-6-worker experiment was 191.5 ms/2.00% slower; earlier profiles were also negative or inconclusive. The POC implementation and activation surface were removed. Native Gradle remains the control. |
-| **Build Impact** | Maps changed files to the projects and entrypoints required for declared outputs. | Incremental and up-to-date behavior inside the task graph requested by the user. | Selects a smaller repository-authorized graph before Gradle executes it, with full-graph fallback for ambiguous/global changes. This is the strongest broadly useful accelerator so far. |
-| **Task Intelligence** | Qualifies tasks only when inputs, outputs, keys, and outcomes are exact enough. | Cacheability annotations and task validation supplied by build authors/plugins. | Adds an evidence-based eligibility layer. It enables optimizations but does not directly make a build faster. |
-| **Patch Autopilot** | Produces reviewable, reversible patches for exact known task shapes. | Manual build-script/plugin changes. | Can turn a non-cacheable custom task into a safely reusable task, but only for reviewed recipes that match exactly. |
-| **Exact task adapters** | Adds bounded eligibility for an unmodified standard Gradle task type. | Native caching when a task is correctly cacheable. | Uses real task traces to close one missing cacheability gap at a time. The standard-`Jar` adapter qualified. The standard-`Copy` experiment failed its isolated and incremental gates and has been removed. |
-| **Hot-state reuse (retired)** | Reused a validated impact plan when every repository, graph, Wrapper, executable, and option digest matched. | Configuration Cache and daemon reuse inside Gradle. | Internal planning became faster, but the fresh end-to-end arm was 7.68% slower. The mechanism and its activation flags were removed. Native Configuration Cache support remains. |
-| **Shared / Edge Cache** | Shares committed outputs and optionally places them nearer runners. | Native Gradle remote-cache protocol and third-party cache servers. | Edge qualified at **34.74% faster** on the synthetic 80-ms/20-MiB/s profile and **15.21% faster** on Kafka under an independently derived 337-ms/6,994,831-B/s profile. Shared remains the authoritative origin; no standalone Shared or universal-network speed claim is made. |
-| **Build History** | Stores redacted sessions, timing, cache, and optimization evidence. | Logs, Build Scans, and external observability tooling. | Provides local POC evidence and comparison. It improves diagnosis, not build time directly. |
+All rows below use the same structural-only method. Times are wall-clock means
+from eight alternating pairs and include the installed BuildOpt launcher and
+profile overhead.
 
-## Initial Performance Evidence
+| Repository | Full -> selected projects | Optimized native | BuildOpt | Mean saving | Positive pairs | POC decision |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| Spring Framework | 27 -> 10 | 13.940 s | 11.438 s | **2.501 s / 17.94%** | 7/8 | Retain native: one -260 ms pair fails the frozen 8/8 repeatability rule. |
+| OpenTelemetry Java Instrumentation | 1,024 -> 34 | 83.934 s | 71.825 s | **12.110 s / 14.43%** | 8/8 | Qualify. |
+| Apache Kafka | 64 -> 3 | 82.498 s | 13.113 s | **69.385 s / 84.11%** | 8/8 | Qualify. |
+| Micronaut Core | 75 -> 22 | 27.407 s | 15.968 s | **11.439 s / 41.74%** | 8/8 | Qualify. |
+| Apache Groovy | 37 -> 2 | 75.064 s | 19.629 s | **55.434 s / 73.85%** | 8/8 | Qualify. |
 
-All qualified comparisons preserve their declared outputs and retain
-unfavorable observations. Percentages from different rows are not additive.
+Every accepted observation preserved the declared required outputs byte for
+byte, completed the native full-graph fallback, and recorded zero
+product-attributable failures. OpenTelemetry uses the separately
+preregistered v4 correction because its earlier correctness fallback changed
+scheduling and therefore could not be accepted; no rejected timing was reused.
 
-### Controlled synthetic Kotlin and Groovy workloads
+The repository percentages are independent results. They are neither averaged
+across repositories nor added to results from caching, JAR adapters, Edge, or
+older compositions.
 
-| Mechanism | Kotlin | Groovy | Decision |
-|---|---:|---:|---|
-| Safe Cache versus cache disabled | **15.9% faster** | **13.7% faster** | Useful when caching is absent. |
-| Safe Cache versus native Gradle cache | **0.02% faster** | **0.47% slower** | Native-cache parity; no BuildOpt acceleration claim. |
-| Runtime Tuning `W3_H4G` | **4.3% slower** overall (512 ms) | Not DSL-specific | Retired; the earlier `W4_H6G` profile was 54.7% slower and the final Spring six-worker candidate was 2.00% slower. |
-| Build Impact | **76.0% faster** (1,939 ms) | **73.5% faster** (2,155 ms) | Qualified for the controlled affected-work class. |
-| Reviewed Task/Patch | **67.3% faster** (1,369 ms) | **68.0% faster** (2,349 ms) | Qualified only for the exact reviewed custom-task recipe. |
-| Combined installed Impact path | **77.5% faster** | **84.1% faster** | Qualified synthetic POC value; not a universal claim. |
+## What This Proves
 
-### Spring Framework: real public repository
+1. **Generic structural optimization can beat optimized native Gradle.** The
+   same repository-independent mechanism qualified on four materially
+   different Gradle families.
+2. **The value is end to end.** The measurements include discovery, launcher,
+   validation, profile loading, and Gradle execution rather than timing only an
+   internal BuildOpt phase.
+3. **Graph reduction has a cascade effect.** Omitting unrelated projects also
+   removes their configuration, task scheduling, cache lookup, source
+   processing, compilation, and packaging work. This explains the larger
+   Kafka, Micronaut, and Groovy gains.
+4. **A smaller graph is not sufficient by itself.** Spring removed 17 projects
+   and improved its mean, but BuildOpt still declined activation because the
+   complete paired result missed the frozen repeatability gate.
+5. **Fail-closed selection is practical.** Unsupported, incomplete, drifted,
+   weak, or incorrect candidates return to native Gradle instead of converting
+   uncertainty into a performance claim.
 
-| Experiment | Result | Interpretation |
-|---|---:|---|
-| Direct `testClasses` Build Impact | **28.72% faster**, 2,098 ms saved, 8/8 positive pairs | Generic affected-project selection qualified with 378 identical outputs. |
-| Installed `buildopt impact` path | **15.76% faster**, 1,260 ms saved, 8/8 positive pairs | Includes package, launcher, manifest, and graph-validation overhead. This is the most representative Spring result. |
-| Additional `spring-webmvc` leaf scope | **13.50% faster**, 4/4 positive pairs | Additional positive per-scope evidence. |
-| Shared `spring-core` to `spring-jms` scope | **10.89% faster on average**, but only 3/4 positive pairs | Failed the frozen stability gate; no broad shared-change claim. |
-| Global two-fork test tuning | **24.07% slower** | Rejected. Every test was retained, but the candidate was materially worse. |
-| Selective two-fork test tuning | **1.57% slower** and `:spring-test:test` failed | Rejected and not retried. Work returned to build-owned test preparation. |
-| Trace-selected six-worker `testClasses` cap | **2.00% slower**, 191.5 ms lost, 2/4 positive pairs | Rejected. Native 12 workers averaged 9,556.75 ms; six workers averaged 9,748.25 ms, with identical 378 outputs and task outcomes. |
-| Exact Test-fixture JAR reuse around unchanged tests | **11.31% slower**, 735.25 ms lost, 0/4 positive pairs | Rejected. All 8 tests ran with identical cases and 15 identical JARs; three cache hits did not offset adapter overhead. |
-| Optimized JAR-adapter overhead ablation | **9.53% slower**, 612.25 ms lost, 2/4 positive rounds | Native averaged 6,422.75 ms; init/plugin-only 7,484.50 ms; adapter 7,035 ms. Hits recovered 449.50 ms versus init-only, but end-to-end value still failed. |
-| Generalized shared test preparation | **18.88% faster**, 2,638 ms saved, 4/4 positive pairs | Qualified with interval +1,516..+3,275.5 ms and 378 identical outputs. |
-| Generalized leaf compilation | **1.33% faster**, 196.25 ms saved, 3/4 positive pairs | Rejected: misses 500 ms, 2%, 4/4, and positive-bound gates. |
-| Generalized leaf packaging | **3.73% faster**, 427.25 ms saved, 2/4 positive pairs | Rejected: misses 500 ms, 4/4, and positive-bound gates. |
-| Verification graph completion | **0.31% faster**, 103.75 ms saved, 2/4 positive pairs | Generic graph is complete and exact, but performance is unstable; retain native full graph. |
-| Verification overhead attribution | 143 native versus 51 candidate task rows; **1.238233 ms** largest BuildOpt phase | The 92 omitted rows mostly restore or no-op and overlap; no 500-ms correction exists, so stop this line. |
-| Source distribution graph completion | Complete 12-project candidate; not timed | Capability proved generically; prior leaf packaging did not qualify, so no new timing was authorized. |
+## Current Product Conclusion
 
-### OpenTelemetry Java Instrumentation: real public repository
+The POC now has a defensible reason to continue: BuildOpt can create material
+value beyond Gradle's native incremental and cache behavior by avoiding work
+before Gradle executes the requested graph. The current evidence supports a
+**review-required structural Build Impact POC**, not a universal automatic
+optimizer.
 
-| Experiment | Result | Interpretation |
-|---|---:|---|
-| Initial installed Spring-family transfer | **10.01% faster on average**, but 3/4 positive pairs and interval crossed zero | Favorable signal, not stable enough to qualify. |
-| Typed graph reduction plus hot plan | **1.94% slower**, only 2/4 positive pairs | Correct outputs and fallback, but insufficient value. The result was retained rather than hidden. |
-| Exact-bound hot-state reuse | BuildOpt preparation reduced from 74.97 ms to 40.34 ms (**46.2%**) | Internal planning improvement only; not a whole-build percentage. |
-| Standard-`Jar` adapter | **39.92% faster**, 4,377 ms saved, 4/4 positive pairs | Qualified installed POC value with 125 identical outputs, zero product failures, and full 53-entrypoint fallback. |
-| Clean Impact + standard-`Jar` composition | **50.40% faster**, 5,361.25 ms saved, 4/4 positive pairs | Qualified without hot state; paired interval +4,334.25..+5,937 ms, identical 125-file outputs, and successful full-graph fallback. |
-| Standard-`Copy` adapter alone | **27.05% faster on average**, 4,284.25 ms saved, 3/4 positive pairs | Not qualified: interval -3,334.25..+8,846.5 ms crosses zero. |
-| Incremental `Copy` on Impact + `Jar` | **24.90% faster on average**, 2,391.25 ms saved, 3/4 positive pairs | Not qualified: the direct incremental interval -2,568.25..+7,092 ms crosses zero. |
-| Complete Impact + `Jar` + `Copy` profile | **52.89% faster**, 4,377 ms saved, 4/4 positive pairs | Historical whole-profile evidence only. `Copy` failed its isolated and incremental gates and has been retired despite the composed mean. |
+Structural selection is the active acceleration mechanism. Safe Cache remains
+at native-cache parity rather than being presented as a speed advantage.
+Runtime Tuning, Hot State, and standard-Copy activation were removed after
+terminal negative evidence. Historical JAR and Edge results remain useful
+research evidence, but they are not part of this comparable five-repository
+claim.
 
-### Apache Kafka: third real-repository transfer
+## What This Does Not Prove
 
-| Experiment | Result | Interpretation |
-|---|---:|---|
-| Clean Impact + exact standard-`Jar` profile | **55.09% faster**, 2,539.5 ms saved, 4/4 positive pairs | The unchanged installed profile reduced the conservative graph from 64 projects to three and restored `:generator:jar`; interval +1,625.5..+4,093 ms, 4,062 identical outputs, no Gradle `Test`, and successful full-graph fallback. |
-| Client packaging through installed profile | **57.58% faster**, 4,637.5 ms saved, 4/4 positive pairs | Native root `assemble` averaged 8,054 ms; BuildOpt selected the three-project packaging scope and averaged 3,416.5 ms. The smallest pair saving was 4,050 ms; the exact 10.2-MB JAR and global fallback passed. Later diagnosis attributes this to Build Impact scope reduction, not standard-`Jar` reuse. |
-| Build Impact + prewarmed Edge | **82.87% diagnostic difference**, 35,922 ms mean, 4/4 positive pairs | Native full `assemble` through Shared averaged 43,345 ms; the installed candidate averaged 7,423 ms and restored the same cached `shadowJar`. Not qualified: forced Edge failure completed but rebuilt the custom JAR with different bytes. |
-| Custom `shadowJar` reproducibility | **5/5 clean builds passed the fixed safety protocol** | Original builds kept the same payload/order but drifted in ZIP metadata. Two normalized builds and an HTTP-503 fallback produced identical `3ffd994e...3349` bytes. This qualifies an input, not a performance percentage. |
-| Fresh normalized Build Impact + Edge | **82.35% faster**, 35,405.5 ms saved, 4/4 positive pairs | Native + Shared averaged 42,992.75 ms; installed Impact + Edge averaged 7,587.25 ms. Interval +30,162..+42,487.75 ms, exact normalized output, full-graph global fallback, zero measured candidate-origin traffic, and byte-identical HTTP-503 fallback. Qualified only for this change and network profile. |
-| Exact installed Kafka profile | **80.51% faster**, 27,652.875 ms saved, 8/8 positive pairs | The packaged `buildopt poc` path retained the qualified value: native + Shared averaged 34,347.25 ms and the installed repository-owned profile 6,694.375 ms. Corrected bootstrap interval +24,826.5..+29,903.625 ms, exact normalized output, zero origin requests, global full-graph fallback and byte-identical HTTP-503 fallback. |
-| Installed qualified-profile matrix | **Kafka 81.85% faster; Spring 14.33% faster but unqualified; OpenTelemetry no accepted observations** | Kafka passed 8/8 pairs and all safety gates. Spring preserved output/fallback but passed only 7/8 pairs, including one -57-ms regression. OpenTelemetry impact discovery was terminated by signal after preflight, so it retains native with no performance claim. Only 1/3 families qualifies; do not average these percentages. |
-| Deterministic profile discovery | **No new timing; exact Kafka profile reproduced** | The read-only analyzer binds the terminal matrix, complete graph, generated state, trace/input digests, exact output and reviewed contract. Kafka emits the same v2 profile and 61-project omission plan; Spring, OpenTelemetry, drift, incomplete/unknown graphs and selected Test tasks emit native full graph. |
-| Trace-gated hypothesis decision | **No new timing; no hypothesis authorized** | BuildOpt setup peaks at 1.238233 ms, startup at 364.875 ms, finalization at 97 ms and teardown at 87 ms. Configuration reaches 682 ms only in Spring, without product attribution or a second qualifying family. |
-| Terminal portfolio decision | **Specialize: 1/3 families qualifies** | Retain only the explicit Kafka profile; Spring and OpenTelemetry use optimized native Gradle. Withdraw the general accelerator claim and do not average repository percentages. |
+- It does not guarantee savings for every repository, change, task, or runner.
+- It does not establish production readiness, autonomous activation, HA,
+  long-duration stability, or customer operations.
+- It does not authorize skipping undeclared outputs or Test Optimization.
+- It does not show that BuildOpt's cache is faster than a warm native Gradle
+  cache.
+- It does not justify relaxing the correctness or fallback gates to qualify
+  more repositories.
 
-### Apache Groovy: fresh generic structural measurement
+## Next Steps
 
-| Experiment | Result | Interpretation |
-|---|---:|---|
-| Generic `classes` workflow | **50.06% faster**, 46,230.75 ms saved, 8/8 positive pairs | Discovery reduced 37 projects to two for one `groovy-json` source change. Native averaged 92,350.625 ms; installed BuildOpt averaged 46,119.875 ms; the paired interval was +44,190.25..+47,846.875 ms. |
-| Required output | **66/66 class files byte-identical** | Both arms produced SHA-256 `c2031f4f...ca70e`; launcher and planning overhead were included. |
-| Safety fallback | **Full graph passed** | A `gradle.properties` change restored native `classes`; no repository-name rule or Test Optimization behavior was added. |
-| Rejected scopes | Distribution ZIP mismatch; root `assemble` included unrelated docs work | Neither candidate contributed accepted timing. The qualified claim is the exact `groovy-json` classes output only. |
+1. **Publish the proposal as a review-only CI artifact.** Implement
+   `POC-GENERIC-PROFILE-CI-001` so an owner-declared workflow supplies the
+   original Gradle task, exact Git change, and required outputs. CI should
+   upload the generated proposal and native-fallback reason without activating
+   it automatically.
+2. **Exercise that CI flow on the existing public repositories.** Confirm that
+   clean runners reproduce the same proposals and that unsupported or
+   incomplete discovery produces an explicit native decision.
+3. **Use one unseen substantial Gradle repository as a holdout.** Run the
+   unchanged propose -> measure -> evaluate workflow without repository-specific
+   code or post-result parameter tuning.
+4. **Keep wall-clock value as the promotion boundary.** Continue only when the
+   installed path beats optimized native Gradle, preserves every declared
+   output, passes the repeatability rule, and proves full fallback.
+5. **Reopen other mechanisms only from new attributable evidence.** Do not
+   revive Runtime Tuning, Hot State, or Copy unless a materially different,
+   generic trace exposes enough recoverable critical-path work to justify a
+   preregistered experiment.
 
-### Comparable structural-only matrix
+## Primary Evidence
 
-| Repository | Project reach | Optimized native | BuildOpt | Decision |
-| --- | ---: | ---: | ---: | --- |
-| Spring Framework | 27 -> 10 | 13.940 s | 11.438 s (**17.94% faster**) | Native; one -260-ms pair fails the frozen 8-of-8 rule |
-| OpenTelemetry | 1,024 -> 34 | 83.934 s | 71.825 s (**14.43% faster**) | Qualified by the separate v4 fallback-equivalence correction, 8/8 positive |
-| Apache Kafka | 64 -> 3 | 82.498 s | 13.113 s (**84.11% faster**) | Qualified |
-| Micronaut Core | 75 -> 22 | 27.407 s | 15.968 s (**41.74% faster**) | Qualified |
-| Apache Groovy | 37 -> 2 | 75.064 s | 19.629 s (**73.85% faster**) | Qualified |
-
-All completed rows use eight alternating isolated pairs, preserve exact
-required outputs, and prove full-graph fallback. OpenTelemetry uses a separate
-v4 capture because v3 changed fallback scheduling and therefore changed output
-bytes; no v3 timing was reused. This is the strongest current evidence that the
-generic POC can improve substantial builds by removing work before Gradle
-executes it. It is also evidence for the fail-closed policy: smaller graphs do
-not activate when the complete timing result misses a frozen gate. Repository
-percentages are not averaged, and the older
-Jar/Edge compositions remain separate evidence.
-
-## Historical Portfolio Decision and Subsequent Generalization
-
-The qualified Kafka composition has now moved from experiment-only wiring into
-a repository-owned v2 POC profile and has been measured through the exact
-installed command. `buildopt poc` exposes the normalized source SHA, selected
-graph, read-only loopback Edge endpoint and disabled mechanisms before Gradle
-starts. Eight fresh pairs retained **80.51%** mean savings with a strictly
-positive bootstrap interval; global/unknown changes and endpoint failures keep
-the native or local fallback safe. The claim remains bounded to the fixed
-Kafka revision, change, output and modeled network profile.
-
-The installed matrix at that point narrowed discovery to one profile. The completed
-read-only analyzer reproduces only the qualified Kafka v2 profile from checked
-manifests, graphs, generated state, trace/input digests and evidence. Spring and
-OpenTelemetry are negative fixtures and select native full graph. It does not
-encode repository names, resurrect an unqualified profile or authorize broad
-automatic generation from the current 1/3 result.
-
-**Specialize the POC and activate only measured value.** That checked
-decision was `SPECIALIZE_BOUNDED_KAFKA_PROFILE`: only the exact reviewed Kafka
-profile qualified in that matrix. The later generic Micronaut structural
-profile is documented below and does not retroactively alter this evidence. The fresh
-ablation qualified Spring Build Impact at 2,492.375 ms/30.86% saved with 8/8
-positive pairs. OpenTelemetry Build Impact alone saved 985.5 ms/7.49% but did not meet
-the stability gate; adding exact hot state regressed by 892 ms/7.68%. Adding
-the standard `Jar` adapter produced a strong 4,496.75-ms/40.60% terminal gain,
-but that composition was rejected because it contained the regressive hot-state
-arm. All raw evidence and unfavorable observations were retained.
-
-The clean rerun then removed hot state and qualified at 5,361.25 ms/50.40%
-saved, with 4/4 positive pairs, a +4,334.25..+5,937-ms interval, identical
-outputs, zero product failures, and successful full-graph fallback.
-
-The subsequent Spring generalization matrix kept those same gates and produced
-one transferable result: shared test preparation averaged 13,971.75 ms natively
-and 11,333.75 ms with BuildOpt, saving 2,638 ms/18.88%, with 4/4 positive pairs
-and a +1,516..+3,275.5-ms interval. Leaf compilation and packaging did not
-qualify and remain on native Gradle. Verification and distribution were then
-made complete through public Gradle task contracts. The measured verification
-scope averaged only 103.75 ms/0.31% faster with 2/4 positive pairs and a
--5,158-ms lower bound, so it also remains on native Gradle. Build-logic and
-global-configuration changes continue to retain the original full graph.
-
-The standard-`Copy` experiment confirms the cascade concern directly. The
-complete profile is stable at 52.89% faster, but Copy alone and Copy's direct
-incremental contribution are not stable enough to activate. This is why the
-POC measures the whole profile as well as each increment: graph reduction can
-shorten the critical path and amplify later reuse, while a favorable terminal
-profile must not conceal an unqualified component.
-
-The follow-up normal-build tail review found no further actionable adapter in
-the retained real traces. Standard `Jar` is already active, standard `Copy`
-remains unauthorized, custom `ShadowJar` is below the value floor and already
-served by native cache, configured `JavaExec` is below the floor with broader
-effects, and Spring exposed no new exact standard task. This closes only the
-current trace set; a materially different dominant tail may reopen the work.
-
-The build-owned test experiment then preserved the exact requested test
-boundary but rejected direct standard-JAR reuse: native Gradle averaged
-6,503.5 ms and BuildOpt 7,238.75 ms, a 735.25-ms/11.31% regression with an
-interval of -1,449..-113 ms. The result retained all four pairs, 8/8 tests per
-arm, three differential cache hits and 15 identical JARs. The POC therefore
-kept the switch diagnostic-only rather than promoting a technically correct
-but slower feature.
-
-The follow-up optimized the adapter itself: one root-plugin registration now
-targets only typed `Jar` collections instead of applying through every project
-and observing every task. A separate four-round ablation then isolated native,
-init/plugin-only, and adapter arms. The adapter recovered 449.50 ms relative
-to init-only on the mean, but remained 612.25 ms/9.53% slower than native, with
-2/4 positive rounds and an interval crossing zero. This closes the question
-for the current Spring workflow: native Gradle is the value-aware selection;
-cache-hit count cannot override the complete build result.
-
-The bounded Runtime experiment then selected worker oversubscription from the
-retained Spring trace before timing. Reducing the exact `testClasses` workload
-from 12 to 6 workers lost 191.5 ms/2.00%, produced only 2/4 positive pairs and
-an interval of -973.5..+590.5 ms, while preserving all 378 outputs and sorted
-task outcomes. The terminal decision is `RETAIN_NATIVE_12_WORKERS`; no further
-worker search is allowed for this trace.
-
-The controlled remote-cache experiment then qualified Edge locality. Direct
-Shared reads averaged 6,911.25 ms; the same eight objects from prewarmed Edge
-averaged 4,510 ms, saving 2,401.25 ms/34.74%. All four pairs were positive,
-the paired interval was +2,260.5..+2,542 ms, all 32-MiB outputs and task
-outcomes matched, and Edge made zero measured upstream requests. The claim is
-deliberately limited to this network profile.
-
-The unchanged Edge mechanism then transferred to Kafka's real
-`:clients:testClasses` workload. A separately derived 337-ms/6,994,831-B/s
-profile was frozen before cache timing. Direct Shared averaged 8,885.25 ms and
-Edge 7,534 ms, saving 1,351.25 ms/15.21%; all four pairs were positive, the
-interval was +788.25..+1,883 ms, four cache-hit outcomes matched, and all 4,062
-required outputs were identical.
-
-The attempted Kafka composition then stopped before timing because its
-standard-`Jar` premise was false: `:clients:jar` was `SKIPPED` and custom
-`:clients:shadowJar` produced the required artifact. Shared received zero
-objects, Edge was never opened, and no warm-up or measured pair ran. This
-corrects the next step: compose only Kafka-qualified Build Impact and Edge
-locality, without adding percentages or crediting the standard-`Jar` adapter.
-
-That corrected experiment is now complete. Its four pairs saved 42,084,
-34,881, 35,269 and 31,454 ms, a diagnostic 82.87% mean difference with an
-entirely positive interval. Measured cached outputs matched, Build Impact
-selected the intended scope, Edge made zero origin requests and global fallback
-passed. The composition still does not qualify: an Edge 503 caused Gradle to
-fall back and finish normally, but the custom `shadowJar` rebuilt different
-bytes.
-
-The follow-up reproducibility block has now isolated and corrected that safety
-input. Two clean baseline JARs had the same logical payload and entry order but
-different ZIP metadata. With reproducible archive order and timestamps
-disabled, two independent builds and a third HTTP-503 fallback all produced
-the same `3ffd994e...3349` JAR digest. This authorizes a fresh preregistered
-composition run; it does not retroactively turn the earlier 82.87% diagnostic
-into a qualified claim.
-
-The fresh v2 composition has now used that input in both arms without reusing
-the old observations. Native full `assemble` through Shared averaged
-42,992.75 ms and installed Build Impact through prewarmed Edge averaged
-7,587.25 ms. The four new savings were +46,159, +35,139, +28,850 and
-+31,474 ms, producing an **82.35%** mean reduction and a
-+30,162..+42,487.75-ms interval. Every arm restored the same normalized JAR,
-the candidate made zero measured Shared requests, global fallback passed, and
-HTTP 503 rebuilt the exact bytes locally. The composition is qualified only
-for this Kafka change and frozen network profile.
-
-The third-repository transfer then applied the unchanged clean profile to
-Apache Kafka 4.3.1, a 64-project Java/Scala/generated-source build. Native root
-`testClasses` averaged 4,609.5 ms; installed BuildOpt selected
-`:clients:testClasses` and averaged 2,070 ms, saving 2,539.5 ms/55.09%. All four
-pairs were positive, the interval remained above zero, 4,062 required outputs
-were identical, and build-logic drift restored the full graph. This closes the
-recorded ten-block performance roadmap with transfer evidence rather than a
-repository-specific rule.
-
-The subsequent adoption replay installed the current native package and used
-only `buildopt poc --changes-file .buildopt-changes` plus repository-owned
-state. OpenTelemetry restored `:testing-common:jar` and reproduced its exact
-125-file output digest; Kafka restored `:generator:jar` and reproduced its
-exact 4,062-file digest. A `gradle.properties` change on each repository
-reported `FULL_GRAPH` before Gradle, disabled the adapter, reached work outside
-the candidate graph, and completed successfully. No durations were captured:
-the earlier qualified measurements remain the only performance claims.
-
-The next preregistered value experiment then measured that same public command
-for a Kafka packaging output rather than test preparation. Root `assemble`
-reached the complete 64-project graph; the candidate reached three projects.
-Native averaged 8,054 ms and BuildOpt 3,416.5 ms, saving 4,637.5 ms/57.58%.
-All four alternating pairs were positive, the exact client JAR matched after
-every arm, and global drift restored native `assemble`. Packaging is therefore
-qualified only for this declared Kafka output and mutation.
-
-The verification attribution is now terminal. The trace removed 92 task rows,
-but 35 were cache hits and another 39 were no-action, no-source, skipped or
-up-to-date; their 4,249-ms cumulative duration overlaps. The candidate task
-interval was 1,581 ms shorter, while BuildOpt's largest own phase was only
-1.238233 ms. No correction is authorized and verification stays native.
-
-The installed matrix is terminal and selects specialization, not broad
-continuation. Deterministic discovery now reproduces only the retained Kafka
-profile from checked manifests, graphs, generated state, traces and evidence.
-The output is reviewable and source-bound; Spring, OpenTelemetry, drift,
-incomplete evidence, unknown graph relationships and selected Test tasks all
-fail closed to the native full graph. The analyzer contains no repository-name
-rule or hidden allowlist and never writes or activates a profile.
-
-The trace-gated hypothesis block is now terminal. The immutable synthetic and
-Spring installed traces expose no phase that is product-addressable, causally
-recoverable, at least 500 ms, and reproduced across two families. Its checked
-decision is `NO_ACTIONABLE_HYPOTHESIS`; no new implementation or timing was
-authorized. The checked portfolio synthesis retains only the bounded Kafka
-specialization, keeps Spring and OpenTelemetry native, and withdraws the
-broader accelerator claim. Rejected mechanisms and Test Optimization stay out.
-
-The new generalization foundation asks that materially different question.
-The installed `buildopt profile analyze` command can now identify a complete
-smaller graph from digest-bound repository state without matching a repository
-name, but it emits only a measurement proposal. A checked whole-profile
-scorecard then records the direct result of enabling every mechanism supported
-by exact evidence for each target:
-
-| Target | Measured composition | Direct result | Default after replication |
-| --- | --- | ---: | --- |
-| Spring Framework | Build Impact | **30.86% faster** | Native; later strict matrix was 7/8 positive |
-| OpenTelemetry | Build Impact + standard `Jar` | **50.40% faster** | Native; later matrix had no accepted timing |
-| Kafka | Build Impact + read-only Edge | **82.35% faster** | Explicit reviewed POC profile; later **81.85%**, 8/8 |
-| Micronaut Core | Structural Build Impact candidate | **72.97% faster** directly; **72.16% faster** through installed `buildopt poc`, saving 17,061.125 ms, 8/8 positive | Generic exact-evidence qualification retains nearly all value; global changes and graph drift retain native full graph |
-
-These are whole-path comparisons against each target's optimized native Gradle
-control. The percentages are neither added nor averaged. Hot State is omitted
-because it regressed by 7.68% on OpenTelemetry; Runtime Tuning and `Copy` have
-been retired and removed, while Safe Cache remains explicit-only. OpenTelemetry Build Impact did not
-qualify independently, so only the complete Impact-plus-Jar result receives a
-value claim. The POC now has a general analysis
-stage, but broad value still requires fresh installed replication on additional
-substantial repository families. The first such replication used Micronaut
-Core. Its full preflight executed 360 tasks and structural discovery could omit
-53/75 projects. The first installed attempt correctly failed closed because a
-cyclic source-set union obscured direct ownership. A generic fix now preserves
-that expanded union for conservative closure while retaining each project's
-original owned roots. The unchanged replay resolved one covered owner and
-qualified: optimized native `assemble` averaged 24,067.125 ms versus 6,505.5 ms
-for BuildOpt, saving **17,561.625 ms/72.97%** with 8/8 positive pairs, interval
-+17,018.875..+18,118.375 ms, three byte-identical JARs and full-graph fallback.
-This strengthens structural Build Impact across repository families; it does
-not authorize automatic activation or a universal percentage.
-
-The follow-up adoption replay proves that the result survives the actual POC
-surface. A deterministic v4 profile was materialized from exact evidence before
-timing, then `buildopt poc` averaged 6,581.625 ms against 23,642.75 ms for
-optimized native Gradle. The **72.16%** reduction includes profile validation,
-planning and launcher overhead and is only 0.81 percentage points below the
-direct experiment. All eight pairs preserved the same three JARs; global
-configuration and graph-SHA drift both restored the full graph. This is a
-generic mechanism with repository-bound evidence, not a Micronaut-specific
-product branch or an automatic production policy.
-
-The workflow is now compressed into one generic review decision:
-`buildopt profile evaluate`. Given repository-owned manifest, graph and
-generated state, it reports whether the structural candidate should be
-measured. Given the exact paired evidence as well, it writes the same
-digest-bound v4 profile atomically only when the frozen timing, output and
-fallback gates pass. Missing output ownership or unqualified evidence retains
-native full graph. This removes orchestration friction without adding a
-repository-name rule or pretending that BuildOpt can infer which artifacts a
-customer requires.
-
-The remaining evidence handoff is now executable as well. `buildopt profile
-measure` verifies that a repository-owned changes file exactly matches one
-clean base-to-target Git diff, creates separate native and BuildOpt clones and
-Gradle homes, warms each arm independently, then records eight alternating
-pairs plus an exact full-graph fallback. It writes the existing qualification
-evidence format, so `profile evaluate` can consume it without translation.
-This block adds no performance claim: its deterministic fixture proves
-isolation, output equality and fail-closed orchestration rather than timing a
-customer workload.
-
-The setup before measurement no longer requires hand-authored Build Impact
-JSON. `buildopt profile propose` observes the original task selector, maps the
-exact Git change to one most-specific Gradle project owner, proposes the same
-lifecycle task on the affected owner set, and validates it in a second
-discovery pass. Its checked external fixture goes from an empty two-project
-repository to a deterministic measurement proposal and rejects a custom task
-to native full graph. Required output globs remain repository-declared, and the
-command writes no active profile or new performance claim.
-
-The installed proposal workflow has now been replayed from fresh Apache Groovy
-and Micronaut Core checkouts. Without copying any retained BuildOpt manifest,
-graph, generated state or profile, it reproduced the already qualified 37-to-2
-and 75-to-22 project boundaries. The accepted passes ran offline after excluded
-dependency preparation. Since the structural candidates were unchanged, the
-replay correctly created no new timing claim; the retained **50.06%** Groovy
-and **72.16%** Micronaut measurements remain the value evidence.
-
-The first fresh run through that exact generic handoff now provides the missing
-value evidence. On Apache Groovy 5.0.8, a one-file `groovy-json` change reduced
-the checked `classes` reach from 37 projects to two. Eight alternating pairs
-saved 46,230.75 ms/**50.06%** on average against optimized native Gradle, with
-a strictly positive +44,190.25..+47,846.875-ms interval, 66 byte-identical
-class outputs and verified global fallback. This is strong evidence that graph
-reduction creates end-to-end cascade value on another family; it remains an
-exact output-scope claim rather than automatic support for every Gradle build.
-
-## Boundaries and References
-
-This is proof-of-concept evidence, not a universal savings or production
-readiness claim. Test Optimization, soak testing, design partners, HA, and
-production operations are outside the current scope.
-
-- [Detailed performance findings and recommendations](./build-optimization-performance.md)
-- [Benchmark evidence index](../../benchmarks/README.md)
-- [Current implementation tracker and next roadmap](../../implementation-tracker.md)
-- [Synthetic combined evidence](../../benchmarks/results/poc-value-combined-v1.json)
-- [Installed Spring evidence](../../benchmarks/results/poc-spring-installed-impact-v1.json)
-- [Final OpenTelemetry evidence](../../benchmarks/results/poc-otel-optimization-v2.json)
-- [Fresh full-path ablation](../../benchmarks/results/poc-full-path-ablation-v1/summary.json)
-- [Qualified clean OpenTelemetry composition](../../benchmarks/results/poc-otel-clean-composition-v1.json)
-- [Build Impact generalization evidence](../../benchmarks/results/poc-impact-generalization-v1.json)
-- [Standard-Copy cascade evidence](../../benchmarks/results/poc-standard-copy-cascade-v1.json)
-- [Kafka remote-composition terminal evidence](../../benchmarks/results/poc-qualified-remote-composition-v1.json)
-- [Spring test-build stop evidence](../../benchmarks/results/poc-spring-test-build-optimization-v1.json)
-- [Optimization-overhead ablation](../../benchmarks/results/poc-optimization-overhead-ablation-v1.json)
-- [Targeted Runtime decision](../../benchmarks/results/poc-runtime-research-v1.json)
-- [Controlled remote-cache locality evidence](../../benchmarks/results/poc-remote-cache-value-v1.json)
-- [Apache Kafka transfer evidence](../../benchmarks/results/poc-third-repository-transfer-v1.json)
-- [Installed qualified-profile adoption evidence](../../benchmarks/results/poc-qualified-profile-adoption-v1.json)
-- [Terminal installed qualified-profile matrix](../../benchmarks/results/poc-qualified-profile-matrix-v1/summary.json)
-- [Deterministic profile-discovery evidence](../../benchmarks/results/poc-profile-discovery-v1.json)
-- [Trace-gated hypothesis decision](../../benchmarks/results/poc-trace-hypothesis-v1.json)
-- [Terminal POC portfolio decision](../../benchmarks/results/poc-portfolio-decision-v1.json)
-- [General whole-profile value scorecard](../../benchmarks/results/poc-general-build-value-v1.json)
-- [Micronaut qualified structural-transfer evidence](../../benchmarks/results/poc-structural-transfer-v1.json)
-- [Generic installed structural-profile adoption evidence](../../benchmarks/results/poc-structural-profile-adoption-v1.json)
-- [Apache Groovy generic classes evidence bundle](../../benchmarks/results/poc-apache-groovy-classes-v1/measurement.json)
-- [Public-repository generic profile replay](../../benchmarks/results/poc-generic-profile-realworld-v1/README.md)
-- [Terminal v3 five-repository generic structural matrix](../../benchmarks/results/poc-generic-profile-matrix-v3/README.md)
-- [OpenTelemetry v4 fallback-equivalence correction](../../benchmarks/results/poc-generic-profile-matrix-v4/README.md)
-- [Historical Micronaut fail-closed evidence](../../benchmarks/results/poc-structural-transfer-v1-native-stop.json)
-- [General opportunity and composition contract](../../specs/poc-general-build-value-v1.md)
-- [Apache Kafka packaging evidence](../../benchmarks/results/poc-kafka-packaging-v1.json)
-- [Kafka shadow JAR reproducibility evidence](../../benchmarks/results/poc-kafka-shadowjar-reproducibility-v1.json)
-- [Installed Kafka profile value evidence](../../benchmarks/results/poc-kafka-installed-profile-value-v1.json)
-- [Verification/distribution graph evidence](../../benchmarks/results/poc-verification-distribution-graph-v1.json)
-- [Verification overhead attribution](../../benchmarks/results/poc-verification-overhead-attribution-v1.json)
+- [Terminal five-repository structural matrix](../../benchmarks/results/poc-generic-profile-matrix-v3/README.md)
+- [OpenTelemetry fallback-equivalence correction](../../benchmarks/results/poc-generic-profile-matrix-v4/README.md)
+- [Detailed current performance findings](./build-optimization-performance.md)
+- [Implementation tracker](../../implementation-tracker.md)
