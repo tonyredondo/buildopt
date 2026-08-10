@@ -75,7 +75,7 @@ buildopt_replay_repository() {
     local buildopt_key buildopt_repository_id buildopt_remote buildopt_public_revision
     local buildopt_jdk buildopt_pipeline buildopt_entrypoint buildopt_change_path
     local buildopt_required_output buildopt_repository buildopt_gradle_home
-    local buildopt_base buildopt_target buildopt_subject_output
+    local buildopt_base buildopt_target buildopt_subject_output buildopt_preflight_task
 
     buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_spec}")
     buildopt_repository_id=$(jq -er ".repositories[${buildopt_index}].repositoryId" "${buildopt_spec}")
@@ -89,6 +89,10 @@ buildopt_replay_repository() {
     buildopt_repository="${buildopt_root}/${buildopt_key}/repository"
     buildopt_gradle_home="${buildopt_root}/${buildopt_key}/gradle-home"
     buildopt_subject_output="${buildopt_output}/${buildopt_key}"
+    buildopt_preflight_task=help
+    if [[ ${buildopt_key} == micronaut-core ]]; then
+        buildopt_preflight_task=assemble
+    fi
     mkdir -p -- "${buildopt_repository}" "${buildopt_gradle_home}" "${buildopt_subject_output}"
 
     git -C "${buildopt_repository}" init -q
@@ -116,7 +120,9 @@ buildopt_replay_repository() {
         cd -- "${buildopt_repository}"
         env -u CI GRADLE_USER_HOME="${buildopt_gradle_home}" \
             "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
-            ./gradlew --no-daemon --no-scan help
+            ./gradlew --no-daemon --build-cache --parallel \
+            --no-configuration-cache --no-scan --max-workers=12 \
+            "${buildopt_preflight_task}"
     ) >"${buildopt_root}/${buildopt_key}-preflight.log" 2>&1; then
         tail -n 160 "${buildopt_root}/${buildopt_key}-preflight.log" >&2
         printf 'online preparation failed for %s\n' "${buildopt_key}" >&2
