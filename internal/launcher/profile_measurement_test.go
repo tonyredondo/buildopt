@@ -94,13 +94,46 @@ func TestMeasurementEnvironmentRemovesExternalBuildOptState(t *testing.T) {
 	}
 }
 
-func TestStructuralFallbackGradleOptionsBoundMemoryWithoutMutatingMeasuredOptions(t *testing.T) {
+func TestStructuralFallbackGradleOptionsPreserveMeasuredSchedulingWithoutMutatingOptions(t *testing.T) {
 	measured := []string{"--daemon", "--build-cache", "--parallel", "--no-configuration-cache", "--console=plain", "--no-scan", "--max-workers=12"}
 	fallback := structuralFallbackGradleOptions(measured)
-	if got := strings.Join(fallback, " "); got != "--build-cache --no-configuration-cache --console=plain --no-scan --no-daemon --no-parallel --max-workers=4" {
+	if got := strings.Join(fallback, " "); got != "--build-cache --parallel --no-configuration-cache --console=plain --no-scan --max-workers=12 --no-daemon" {
 		t.Fatalf("fallback options = %q", got)
 	}
 	if got := strings.Join(measured, " "); got != "--daemon --build-cache --parallel --no-configuration-cache --console=plain --no-scan --max-workers=12" {
 		t.Fatalf("measured options mutated = %q", got)
+	}
+}
+
+func TestDescribeMeasurementOutputDifferenceIsBoundedAndPathSpecific(t *testing.T) {
+	expected := t.TempDir()
+	actual := t.TempDir()
+	writeOutput := func(root, relative, content string) {
+		t.Helper()
+		absolute := filepath.Join(root, filepath.FromSlash(relative))
+		if err := os.MkdirAll(filepath.Dir(absolute), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(absolute, []byte(content), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	writeOutput(expected, "build/classes/changed.class", "before")
+	writeOutput(actual, "build/classes/changed.class", "after")
+	writeOutput(expected, "build/classes/missing.class", "missing")
+	writeOutput(actual, "build/classes/unexpected.class", "unexpected")
+
+	difference, err := describeMeasurementOutputDifference(expected, actual, []string{"build/classes/**"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, expectedFragment := range []string{
+		"changed build/classes/changed.class",
+		"missing build/classes/missing.class",
+		"unexpected build/classes/unexpected.class",
+	} {
+		if !strings.Contains(difference, expectedFragment) {
+			t.Fatalf("difference %q does not contain %q", difference, expectedFragment)
+		}
 	}
 }

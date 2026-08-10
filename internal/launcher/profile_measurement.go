@@ -27,7 +27,6 @@ const (
 	profileMeasureUsage           = "usage: buildopt profile measure --manifest PATH --graph PATH --generated-manifest PATH --changes-file PATH --fallback-changes-file PATH --base-revision REVISION --buildopt-revision REVISION --evidence-output PATH [--gradle-option VALUE ...] [--timeout DURATION]\n"
 	measurementPairs              = 8
 	maximumMeasurementInterArmGap = 5 * time.Second
-	measurementFallbackMaxWorkers = 4
 )
 
 var defaultStructuralGradleOptions = []string{
@@ -347,7 +346,15 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 		return nil, false, err
 	}
 	if fallbackResult.outputSHA != stableOutputSHA || fallbackResult.outputCount != stableOutputCount {
-		return nil, false, errors.New("full-graph fallback changed required outputs")
+		difference, differenceErr := describeMeasurementOutputDifference(
+			control.workspace,
+			candidate.workspace,
+			config.analysis.Plan.RequiredOutputs,
+		)
+		if differenceErr != nil {
+			return nil, false, fmt.Errorf("full-graph fallback changed required outputs; inspect difference: %w", differenceErr)
+		}
+		return nil, false, fmt.Errorf("full-graph fallback changed required outputs: %s", difference)
 	}
 	changesRaw := config.inputDocuments[config.changesPath]
 	changesSHA := sha256.Sum256(changesRaw)
@@ -402,7 +409,7 @@ func measureStructuralFallback(config structuralMeasurementConfig, arm structura
 	}
 	fallbackConfig := config
 	fallbackConfig.gradleOptions = structuralFallbackGradleOptions(config.gradleOptions)
-	_, _ = fmt.Fprintf(progress, "buildopt: validating full-graph fallback with --no-daemon --no-parallel --max-workers=%d\n", measurementFallbackMaxWorkers)
+	_, _ = fmt.Fprintln(progress, "buildopt: validating full-graph fallback with --no-daemon and measured scheduling")
 	result, err := runStructuralArm(fallbackConfig, arm, true, config.fallbackChangesPath)
 	if err != nil {
 		return result, "", fmt.Errorf("full-graph fallback: %w", err)
@@ -416,15 +423,14 @@ func measureStructuralFallback(config structuralMeasurementConfig, arm structura
 }
 
 func structuralFallbackGradleOptions(measured []string) []string {
-	options := make([]string, 0, len(measured)+3)
+	options := make([]string, 0, len(measured)+1)
 	for _, option := range measured {
-		if option == "--daemon" || option == "--no-daemon" || option == "--parallel" || option == "--no-parallel" ||
-			strings.HasPrefix(option, "--max-workers=") {
+		if option == "--daemon" || option == "--no-daemon" {
 			continue
 		}
 		options = append(options, option)
 	}
-	return append(options, "--no-daemon", "--no-parallel", fmt.Sprintf("--max-workers=%d", measurementFallbackMaxWorkers))
+	return append(options, "--no-daemon")
 }
 
 func resetStructuralArm(config structuralMeasurementConfig, arm structuralMeasurementArm, revision string, restoreCache bool) error {
@@ -566,6 +572,23 @@ func validateMeasurementChangeSet(repositoryRoot, baseRevision, targetRevision s
 }
 
 func hashMeasurementOutputs(repositoryRoot string, patterns []string) (string, int, error) {
+	outputs, err := measurementOutputDigests(repositoryRoot, patterns)
+	if err != nil {
+		return "", 0, err
+	}
+	files := make([]string, 0, len(outputs))
+	for relative := range outputs {
+		files = append(files, relative)
+	}
+	sort.Strings(files)
+	manifest := sha256.New()
+	for _, relative := range files {
+		_, _ = fmt.Fprintf(manifest, "%s  %s\n", outputs[relative], relative)
+	}
+	return hex.EncodeToString(manifest.Sum(nil)), len(files), nil
+}
+
+func measurementOutputDigests(repositoryRoot string, patterns []string) (map[string]string, error) {
 	files := make([]string, 0)
 	err := filepath.WalkDir(repositoryRoot, func(candidate string, entry fs.DirEntry, walkErr error) error {
 		if walkErr != nil {
@@ -593,30 +616,70 @@ func hashMeasurementOutputs(repositoryRoot string, patterns []string) (string, i
 		return nil
 	})
 	if err != nil {
-		return "", 0, fmt.Errorf("inspect required outputs: %w", err)
+		return nil, fmt.Errorf("inspect required outputs: %w", err)
 	}
 	sort.Strings(files)
 	if len(files) == 0 {
-		return "", 0, errors.New("measurement produced no required outputs")
+		return nil, errors.New("measurement produced no required outputs")
 	}
-	manifest := sha256.New()
+	outputs := make(map[string]string, len(files))
 	for _, relative := range files {
 		file, err := os.Open(filepath.Join(repositoryRoot, filepath.FromSlash(relative)))
 		if err != nil {
-			return "", 0, err
+			return nil, err
 		}
 		digest := sha256.New()
 		_, copyErr := io.Copy(digest, file)
 		closeErr := file.Close()
 		if copyErr != nil {
-			return "", 0, copyErr
+			return nil, copyErr
 		}
 		if closeErr != nil {
-			return "", 0, closeErr
+			return nil, closeErr
 		}
-		_, _ = fmt.Fprintf(manifest, "%x  %s\n", digest.Sum(nil), relative)
+		outputs[relative] = hex.EncodeToString(digest.Sum(nil))
 	}
-	return hex.EncodeToString(manifest.Sum(nil)), len(files), nil
+	return outputs, nil
+}
+
+func describeMeasurementOutputDifference(expectedRoot, actualRoot string, patterns []string) (string, error) {
+	expected, err := measurementOutputDigests(expectedRoot, patterns)
+	if err != nil {
+		return "", fmt.Errorf("expected outputs: %w", err)
+	}
+	actual, err := measurementOutputDigests(actualRoot, patterns)
+	if err != nil {
+		return "", fmt.Errorf("actual outputs: %w", err)
+	}
+	differences := make([]string, 0)
+	for path, expectedDigest := range expected {
+		actualDigest, ok := actual[path]
+		switch {
+		case !ok:
+			differences = append(differences, "missing "+path)
+		case actualDigest != expectedDigest:
+			differences = append(differences, "changed "+path)
+		}
+	}
+	for path := range actual {
+		if _, ok := expected[path]; !ok {
+			differences = append(differences, "unexpected "+path)
+		}
+	}
+	sort.Strings(differences)
+	if len(differences) == 0 {
+		return "aggregate digest differs without a path-level difference", nil
+	}
+	const maximumReportedDifferences = 10
+	reported := differences
+	if len(reported) > maximumReportedDifferences {
+		reported = reported[:maximumReportedDifferences]
+	}
+	description := strings.Join(reported, "; ")
+	if len(reported) != len(differences) {
+		description += fmt.Sprintf("; and %d more", len(differences)-len(reported))
+	}
+	return description, nil
 }
 
 func matchesMeasurementOutput(patterns []string, candidate string) bool {
