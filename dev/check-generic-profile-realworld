@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [evidence-directory]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence=${1:-"${buildopt_repo_root}/benchmarks/results/poc-generic-profile-realworld-v1"}
+buildopt_spec="${buildopt_repo_root}/specs/poc-generic-profile-realworld-v1.json"
+buildopt_summary="${buildopt_evidence}/summary.json"
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'required command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+for buildopt_file in "${buildopt_spec}" "${buildopt_summary}"; do
+    [[ -f ${buildopt_file} ]] || {
+        printf 'missing generic profile replay input: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.evidence/poc-generic-profile-realworld/v1" and
+    .workItem == "POC-GENERIC-PROFILE-REALWORLD-001" and
+    (.buildopt.revision | test("^[0-9a-f]{40}$")) and
+    (.buildopt.executableSha256 | test("^[0-9a-f]{64}$")) and
+    .preparation.onlineDependencyPreparationMeasured == false and
+    .preparation.acceptedProposalMode == "OFFLINE" and
+    .result.reproducedSubjects == 2 and
+    .result.historicalBoundariesReproduced == true and
+    .result.materiallyNewCandidate == false and
+    .result.timingRerun == false and
+    .result.newPerformanceClaim == false and
+    .boundaries.proofOfConcept == true and
+    .boundaries.reviewRequired == true and
+    .boundaries.automaticActivation == false and
+    .boundaries.productionAuthorized == false and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false
+' "${buildopt_summary}" >/dev/null
+
+for buildopt_index in 0 1; do
+    buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_spec}")
+    buildopt_subject="${buildopt_evidence}/${buildopt_key}"
+    for buildopt_name in changes.txt fallback-changes.txt manifest.json graph.json generated.json proposal.json analysis.json result.json; do
+        [[ -s "${buildopt_subject}/${buildopt_name}" ]] || {
+            printf 'missing %s replay evidence: %s\n' "${buildopt_key}" "${buildopt_name}" >&2
+            exit 1
+        }
+    done
+
+    jq -e \
+        --arg key "${buildopt_key}" \
+        --slurpfile spec "${buildopt_spec}" \
+        --slurpfile proposal "${buildopt_subject}/proposal.json" \
+        --slurpfile analysis "${buildopt_subject}/analysis.json" '
+        ($spec[0].repositories[] | select(.key == $key)) as $expected |
+        $proposal[0].schemaVersion == "buildopt.poc/profile-proposal/v1" and
+        $proposal[0].decision == "MEASURE_STRUCTURAL_CANDIDATE" and
+        $proposal[0].reason == "COMPLETE_STRUCTURAL_REDUCTION" and
+        $proposal[0].repositoryId == $expected.repositoryId and
+        $proposal[0].baseRevision == $expected.publicRevision and
+        $proposal[0].changedPaths == [$expected.changePath] and
+        $proposal[0].requiredOutputs == [$expected.requiredOutput] and
+        $proposal[0].candidateEntrypoints == $expected.expectedCandidateEntrypoints and
+        $proposal[0].analysis.plan.totalProjectCount == $expected.expectedTotalProjects and
+        $proposal[0].analysis.plan.selectedProjectCount == $expected.expectedSelectedProjects and
+        $proposal[0].analysis.plan.omittedProjectCount == $expected.expectedOmittedProjects and
+        $proposal[0].unknownRelationships == false and
+        $proposal[0].buildOptRevisionNeeded == false and
+        $proposal[0].reviewRequired == true and
+        $proposal[0].activationAutomatic == false and
+        $proposal[0].productionAuthorized == false and
+        $proposal[0].testOptimization == "OUT_OF_SCOPE" and
+        $analysis[0].decision == $proposal[0].decision and
+        $analysis[0].reason == $proposal[0].reason and
+        $analysis[0].plan == $proposal[0].analysis.plan
+    ' "${buildopt_subject}/proposal.json" >/dev/null
+
+    jq -e \
+        --arg key "${buildopt_key}" \
+        --arg proposalSha256 "$(sha256sum "${buildopt_subject}/proposal.json" | awk '{print $1}')" \
+        --arg manifestSha256 "$(sha256sum "${buildopt_subject}/manifest.json" | awk '{print $1}')" \
+        --arg graphSha256 "$(sha256sum "${buildopt_subject}/graph.json" | awk '{print $1}')" \
+        --arg generatedSha256 "$(sha256sum "${buildopt_subject}/generated.json" | awk '{print $1}')" '
+        .subjects[] | select(.key == $key) |
+        .bindings.proposalSha256 == $proposalSha256 and
+        .bindings.manifestSha256 == $manifestSha256 and
+        .bindings.graphSha256 == $graphSha256 and
+        .bindings.generatedSha256 == $generatedSha256
+    ' "${buildopt_summary}" >/dev/null
+
+    grep -Fx "$(jq -er ".repositories[${buildopt_index}].changePath" "${buildopt_spec}")" \
+        "${buildopt_subject}/changes.txt" >/dev/null
+done
+
+jq -e \
+    --slurpfile retained "${buildopt_repo_root}/benchmarks/results/poc-apache-groovy-classes-v1/measurement.json" '
+    .analysis.plan.entrypoints == $retained[0].plan.entrypoints and
+    .analysis.plan.requiredOutputs == $retained[0].plan.requiredOutputs and
+    .analysis.plan.totalProjectCount == $retained[0].plan.totalProjectCount and
+    .analysis.plan.selectedProjectCount == $retained[0].plan.selectedProjectCount and
+    .analysis.plan.omittedProjectCount == $retained[0].plan.omittedProjectCount
+' "${buildopt_evidence}/apache-groovy/proposal.json" >/dev/null
+
+jq -e \
+    --slurpfile retained "${buildopt_repo_root}/specs/poc-structural-profile-adoption-v1.json" '
+    .analysis.plan.entrypoints == $retained[0].candidate.entrypoints and
+    .analysis.plan.requiredOutputs == [$retained[0].candidate.requiredOutputPattern] and
+    .analysis.plan.totalProjectCount == $retained[0].workload.controlExpectedReachedProjectCount and
+    .analysis.plan.selectedProjectCount == $retained[0].candidate.expectedReachedProjectCount and
+    .analysis.plan.omittedProjectCount ==
+        ($retained[0].workload.controlExpectedReachedProjectCount -
+         $retained[0].candidate.expectedReachedProjectCount)
+' "${buildopt_evidence}/micronaut-core/proposal.json" >/dev/null
+
+printf 'Generic profile public-repository replay: PASS (Groovy 37->2, Micronaut 75->22, no timing rerun)\n'

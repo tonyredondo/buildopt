@@ -9,6 +9,7 @@ the exact cross-component contract.
 
 | Specification | Owning item |
 |---|---|
+| [`poc-generic-profile-realworld-v1.md`](./poc-generic-profile-realworld-v1.md) and [`poc-generic-profile-realworld-v1.json`](./poc-generic-profile-realworld-v1.json) | `POC-GENERIC-PROFILE-REALWORLD-001` |
 | [`poc-generic-profile-onboarding-v1.md`](./poc-generic-profile-onboarding-v1.md) | `POC-GENERIC-PROFILE-ONBOARDING-001` |
 | [`poc-real-world-compatibility-v1.md`](./poc-real-world-compatibility-v1.md) and [`poc-real-world-compatibility-v1.json`](./poc-real-world-compatibility-v1.json) | `POC-REALWORLD-001` / `POC-REALWORLD-G01` |
 | [`poc-real-world-performance-v1.md`](./poc-real-world-performance-v1.md) and [`poc-real-world-performance-v1.json`](./poc-real-world-performance-v1.json) | `POC-REALWORLD-002` / `POC-REALWORLD-G02` |

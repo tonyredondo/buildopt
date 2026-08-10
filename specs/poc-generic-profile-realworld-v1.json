@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "buildopt.poc/generic-profile-realworld/v1",
+  "workItem": "POC-GENERIC-PROFILE-REALWORLD-001",
+  "repositories": [
+    {
+      "key": "apache-groovy",
+      "repositoryId": "apache/groovy",
+      "remoteUrl": "https://github.com/apache/groovy.git",
+      "publicRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "jdkToolchain": "temurin-jdk-21",
+      "pipelineClass": "classes",
+      "entrypoint": "classes",
+      "changePath": "subprojects/groovy-json/src/main/java/org/apache/groovy/json/DefaultFastStringService.java",
+      "mutation": "ADD_PACKAGE_PRIVATE_MARKER_RETURNING_ONE",
+      "requiredOutput": "subprojects/groovy-json/build/classes/**",
+      "expectedCandidateEntrypoints": [
+        ":groovy-json:classes"
+      ],
+      "expectedTotalProjects": 37,
+      "expectedSelectedProjects": 2,
+      "expectedOmittedProjects": 35,
+      "historicalEvidence": "benchmarks/results/poc-apache-groovy-classes-v1/measurement.json",
+      "historicalReductionRatio": 0.5006006775451656
+    },
+    {
+      "key": "micronaut-core",
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "remoteUrl": "https://github.com/micronaut-projects/micronaut-core.git",
+      "publicRevision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+      "jdkToolchain": "temurin-jdk-25",
+      "pipelineClass": "poc-structural-transfer-assemble-v1",
+      "entrypoint": "assemble",
+      "changePath": "http-client-jdk/src/main/java/io/micronaut/http/client/jdk/DefaultJdkHttpClient.java",
+      "mutation": "APPEND_FIXED_COMMENT",
+      "requiredOutput": "http-client-jdk/build/libs/**",
+      "expectedCandidateEntrypoints": [
+        ":micronaut-http-client-jdk:assemble"
+      ],
+      "expectedTotalProjects": 75,
+      "expectedSelectedProjects": 22,
+      "expectedOmittedProjects": 53,
+      "historicalEvidence": "benchmarks/results/poc-structural-profile-adoption-v1.json",
+      "historicalReductionRatio": 0.7216260477579773
+    }
+  ],
+  "acceptance": {
+    "proposalDecision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "proposalReason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "finalDiscoveryMode": "OFFLINE",
+    "requiredHistoricalBoundaryMatch": true,
+    "newTimingAuthorizedOnlyForMateriallyDifferentCandidate": true
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "timingRerunRequired": false,
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

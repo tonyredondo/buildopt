@@ -1,0 +1,236 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/output/directory\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+if [[ -e ${buildopt_output} ]]; then
+    printf 'evidence output already exists: %s\n' "${buildopt_output}" >&2
+    exit 1
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-generic-profile-realworld-v1.json"
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-generic-profile-realworld.XXXXXX")
+trap 'rm -rf -- "${buildopt_root}"' EXIT
+
+for buildopt_command in git jq sha256sum tar; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'required command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+[[ -f ${buildopt_spec} ]] || {
+    printf 'real-world profile specification is unavailable\n' >&2
+    exit 1
+}
+[[ -z $(git -C "${buildopt_repo_root}" status --porcelain --untracked-files=no) ]] || {
+    printf 'BuildOpt tracked state must be clean before evidence capture\n' >&2
+    exit 1
+}
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_package_root="${buildopt_root}/package"
+mkdir -p -- "${buildopt_package_root}" "${buildopt_root}/install"
+"${buildopt_repo_root}/packaging/linux/package.sh" \
+    --version 0.3.0-dev --output "${buildopt_package_root}" >/dev/null
+buildopt_package="${buildopt_package_root}/buildopt-0.3.0-dev-linux-amd64.tar.gz"
+mkdir -p -- "${buildopt_root}/release"
+tar -xzf "${buildopt_package}" -C "${buildopt_root}/release"
+"${buildopt_root}/release/buildopt-0.3.0-dev-linux-amd64/install.sh" \
+    --prefix "${buildopt_root}/install" >/dev/null
+buildopt_executable="${buildopt_root}/install/bin/buildopt"
+buildopt_executable_sha=$(sha256sum "${buildopt_executable}" | awk '{print $1}')
+
+mkdir -p -- "${buildopt_output}"
+
+buildopt_mutate_repository() {
+    local buildopt_key=$1
+    local buildopt_repository=$2
+    local buildopt_change_path=$3
+
+    case "${buildopt_key}" in
+        apache-groovy)
+            perl -0pi -e 's/\n}\n\z/\n\n    int buildOptPocMarker() {\n        return 1;\n    }\n}\n/' \
+                "${buildopt_repository}/${buildopt_change_path}"
+            ;;
+        micronaut-core)
+            printf '\n// buildopt-poc-structural-transfer-fixed-change\n' \
+                >>"${buildopt_repository}/${buildopt_change_path}"
+            ;;
+        *)
+            printf 'unsupported real-world subject: %s\n' "${buildopt_key}" >&2
+            return 1
+            ;;
+    esac
+}
+
+buildopt_replay_repository() {
+    local buildopt_index=$1
+    local buildopt_key buildopt_repository_id buildopt_remote buildopt_public_revision
+    local buildopt_jdk buildopt_pipeline buildopt_entrypoint buildopt_change_path
+    local buildopt_required_output buildopt_repository buildopt_gradle_home
+    local buildopt_base buildopt_target buildopt_subject_output
+
+    buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_spec}")
+    buildopt_repository_id=$(jq -er ".repositories[${buildopt_index}].repositoryId" "${buildopt_spec}")
+    buildopt_remote=$(jq -er ".repositories[${buildopt_index}].remoteUrl" "${buildopt_spec}")
+    buildopt_public_revision=$(jq -er ".repositories[${buildopt_index}].publicRevision" "${buildopt_spec}")
+    buildopt_jdk=$(jq -er ".repositories[${buildopt_index}].jdkToolchain" "${buildopt_spec}")
+    buildopt_pipeline=$(jq -er ".repositories[${buildopt_index}].pipelineClass" "${buildopt_spec}")
+    buildopt_entrypoint=$(jq -er ".repositories[${buildopt_index}].entrypoint" "${buildopt_spec}")
+    buildopt_change_path=$(jq -er ".repositories[${buildopt_index}].changePath" "${buildopt_spec}")
+    buildopt_required_output=$(jq -er ".repositories[${buildopt_index}].requiredOutput" "${buildopt_spec}")
+    buildopt_repository="${buildopt_root}/${buildopt_key}/repository"
+    buildopt_gradle_home="${buildopt_root}/${buildopt_key}/gradle-home"
+    buildopt_subject_output="${buildopt_output}/${buildopt_key}"
+    mkdir -p -- "${buildopt_repository}" "${buildopt_gradle_home}" "${buildopt_subject_output}"
+
+    git -C "${buildopt_repository}" init -q
+    git -C "${buildopt_repository}" remote add origin "${buildopt_remote}"
+    git -C "${buildopt_repository}" fetch --depth=1 origin "${buildopt_public_revision}"
+    git -C "${buildopt_repository}" checkout -q --detach FETCH_HEAD
+    buildopt_base=$(git -C "${buildopt_repository}" rev-parse HEAD)
+    [[ ${buildopt_base} == "${buildopt_public_revision}" ]] || {
+        printf 'public revision mismatch for %s\n' "${buildopt_key}" >&2
+        return 1
+    }
+
+    buildopt_mutate_repository "${buildopt_key}" "${buildopt_repository}" "${buildopt_change_path}"
+    git -C "${buildopt_repository}" config user.name 'BuildOpt POC'
+    git -C "${buildopt_repository}" config user.email 'buildopt-poc@example.invalid'
+    git -C "${buildopt_repository}" config commit.gpgsign false
+    git -C "${buildopt_repository}" add "${buildopt_change_path}"
+    GIT_AUTHOR_DATE='2026-08-10T00:00:00Z' \
+        GIT_COMMITTER_DATE='2026-08-10T00:00:00Z' \
+        git -C "${buildopt_repository}" commit -qm 'Apply frozen BuildOpt mutation'
+    buildopt_target=$(git -C "${buildopt_repository}" rev-parse HEAD)
+    printf '%s\n' "${buildopt_change_path}" >"${buildopt_repository}/buildopt-changes.txt"
+
+    if ! (
+        cd -- "${buildopt_repository}"
+        env -u CI GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+            ./gradlew --no-daemon --no-scan help
+    ) >"${buildopt_root}/${buildopt_key}-preflight.log" 2>&1; then
+        tail -n 160 "${buildopt_root}/${buildopt_key}-preflight.log" >&2
+        printf 'online preparation failed for %s\n' "${buildopt_key}" >&2
+        return 1
+    fi
+
+    if ! (
+        cd -- "${buildopt_repository}"
+        env -u CI GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+            "${buildopt_executable}" profile propose \
+            --repository-id "${buildopt_repository_id}" \
+            --pipeline-class "${buildopt_pipeline}" \
+            --entrypoint "${buildopt_entrypoint}" \
+            --changes-file buildopt-changes.txt \
+            --base-revision "${buildopt_base}" \
+            --required-output "${buildopt_required_output}" \
+            --gradle-option=--offline --gradle-option=--no-scan \
+            --buildopt-revision "${buildopt_revision}" --timeout 15m
+    ) >"${buildopt_root}/${buildopt_key}-proposal.log" 2>&1; then
+        tail -n 200 "${buildopt_root}/${buildopt_key}-proposal.log" >&2
+        printf 'offline proposal failed for %s\n' "${buildopt_key}" >&2
+        return 1
+    fi
+
+    (
+        cd -- "${buildopt_repository}"
+        "${buildopt_executable}" profile analyze \
+            --manifest buildopt-impact-manifest.json \
+            --graph buildopt-impact-graph.generated.json \
+            --generated-manifest buildopt-impact.generated.json
+    ) >"${buildopt_repository}/buildopt-profile-analysis.json"
+
+    cp -- "${buildopt_repository}/buildopt-changes.txt" "${buildopt_subject_output}/changes.txt"
+    cp -- "${buildopt_repository}/buildopt-fallback-changes.txt" "${buildopt_subject_output}/fallback-changes.txt"
+    cp -- "${buildopt_repository}/buildopt-impact-manifest.json" "${buildopt_subject_output}/manifest.json"
+    cp -- "${buildopt_repository}/buildopt-impact-graph.generated.json" "${buildopt_subject_output}/graph.json"
+    cp -- "${buildopt_repository}/buildopt-impact.generated.json" "${buildopt_subject_output}/generated.json"
+    cp -- "${buildopt_repository}/buildopt-profile-proposal.json" "${buildopt_subject_output}/proposal.json"
+    cp -- "${buildopt_repository}/buildopt-profile-analysis.json" "${buildopt_subject_output}/analysis.json"
+
+    jq -n \
+        --arg key "${buildopt_key}" \
+        --arg repositoryId "${buildopt_repository_id}" \
+        --arg publicRevision "${buildopt_public_revision}" \
+        --arg targetRevision "${buildopt_target}" \
+        --arg proposalSha256 "$(sha256sum "${buildopt_subject_output}/proposal.json" | awk '{print $1}')" \
+        --arg manifestSha256 "$(sha256sum "${buildopt_subject_output}/manifest.json" | awk '{print $1}')" \
+        --arg graphSha256 "$(sha256sum "${buildopt_subject_output}/graph.json" | awk '{print $1}')" \
+        --arg generatedSha256 "$(sha256sum "${buildopt_subject_output}/generated.json" | awk '{print $1}')" \
+        --slurpfile proposal "${buildopt_subject_output}/proposal.json" '
+        {
+            key: $key,
+            repositoryId: $repositoryId,
+            publicRevision: $publicRevision,
+            targetRevision: $targetRevision,
+            decision: $proposal[0].decision,
+            candidateEntrypoints: $proposal[0].candidateEntrypoints,
+            requiredOutputs: $proposal[0].requiredOutputs,
+            totalProjectCount: $proposal[0].analysis.plan.totalProjectCount,
+            selectedProjectCount: $proposal[0].analysis.plan.selectedProjectCount,
+            omittedProjectCount: $proposal[0].analysis.plan.omittedProjectCount,
+            bindings: {
+                proposalSha256: $proposalSha256,
+                manifestSha256: $manifestSha256,
+                graphSha256: $graphSha256,
+                generatedSha256: $generatedSha256
+            }
+        }
+    ' >"${buildopt_subject_output}/result.json"
+}
+
+buildopt_replay_repository 0
+buildopt_replay_repository 1
+
+jq -n \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg revision "${buildopt_revision}" \
+    --arg executableSha256 "${buildopt_executable_sha}" \
+    --slurpfile groovy "${buildopt_output}/apache-groovy/result.json" \
+    --slurpfile micronaut "${buildopt_output}/micronaut-core/result.json" '
+    {
+        schemaVersion: "buildopt.evidence/poc-generic-profile-realworld/v1",
+        workItem: "POC-GENERIC-PROFILE-REALWORLD-001",
+        capturedAt: $capturedAt,
+        buildopt: {
+            revision: $revision,
+            executableSha256: $executableSha256,
+            packageVersion: "0.3.0-dev"
+        },
+        preparation: {
+            onlineDependencyPreparationMeasured: false,
+            acceptedProposalMode: "OFFLINE"
+        },
+        subjects: [$groovy[0], $micronaut[0]],
+        result: {
+            reproducedSubjects: 2,
+            historicalBoundariesReproduced: true,
+            materiallyNewCandidate: false,
+            timingRerun: false,
+            newPerformanceClaim: false,
+            decision: "RETAIN_QUALIFIED_BOUNDARIES_AND_ADVANCE_ONBOARDING"
+        },
+        boundaries: {
+            proofOfConcept: true,
+            reviewRequired: true,
+            automaticActivation: false,
+            productionAuthorized: false,
+            testOptimizationModified: false,
+            soakRequired: false,
+            designPartnerRequired: false
+        }
+    }
+' >"${buildopt_output}/summary.json"
+
+"${buildopt_script_dir}/check-generic-profile-realworld" "${buildopt_output}"
+printf 'Generic profile public-repository replay evidence written to %s\n' "${buildopt_output}"
