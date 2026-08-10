@@ -9,6 +9,7 @@ the exact cross-component contract.
 
 | Specification | Owning item |
 |---|---|
+| [`poc-generic-profile-matrix-v2.md`](./poc-generic-profile-matrix-v2.md) and [`poc-generic-profile-matrix-v2.json`](./poc-generic-profile-matrix-v2.json) | `POC-GENERIC-PROFILE-MATRIX-002` |
 | [`poc-generic-profile-matrix-v1.md`](./poc-generic-profile-matrix-v1.md) and [`poc-generic-profile-matrix-v1.json`](./poc-generic-profile-matrix-v1.json) | `POC-GENERIC-PROFILE-MATRIX-001` |
 | [`poc-generic-profile-realworld-v1.md`](./poc-generic-profile-realworld-v1.md) and [`poc-generic-profile-realworld-v1.json`](./poc-generic-profile-realworld-v1.json) | `POC-GENERIC-PROFILE-REALWORLD-001` |
 | [`poc-generic-profile-onboarding-v1.md`](./poc-generic-profile-onboarding-v1.md) | `POC-GENERIC-PROFILE-ONBOARDING-001` |
@@ -433,6 +434,14 @@ method across Spring, OpenTelemetry, Kafka, Micronaut, and Groovy. The contract
 binds each public revision, declared workflow, exact source change, output
 scope, 12-worker native control, eight alternating isolated pairs, exact
 fallback, and non-additive reporting boundary before timing.
+
+`poc-generic-profile-matrix-v2.json` and
+`poc-generic-profile-matrix-v2.md` preregister a complete fresh rerun after the
+v1 OpenTelemetry cell exposed that checkout/cache preparation and output
+hashing were incorrectly included in the inter-arm gap. Both arms are now
+prepared before either measured process and outputs are checked after both;
+the same strict five-second process-only gap, repositories, workflows,
+thresholds, outputs, fallbacks, and non-additive reporting rules remain.
 
 `poc-trace-hypothesis-v1.json` and `poc-trace-hypothesis-v1.md` bind the final
 trace-gated optimization decision. They require at least 500 ms of causally
