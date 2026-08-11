@@ -1,0 +1,68 @@
+name: Review-only profile proposal
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  proposal:
+    name: Generate a review artifact
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out BuildOpt
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install the pinned Java runtime
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
+        with:
+          distribution: temurin
+          java-version: '21.0.12+8'
+          check-latest: false
+
+      - name: Prepare a clean consumer repository
+        id: fixture
+        shell: bash
+        run: >-
+          ./dev/prepare-generic-profile-ci-fixture
+          "${RUNNER_TEMP}/profile-ci-consumer"
+          "${GITHUB_OUTPUT}"
+
+      - name: Publish the BuildOpt proposal
+        id: proposal
+        uses: ./
+        with:
+          mode: profile-proposal
+          profile-config: .buildopt/profile-ci.json
+          profile-base-revision: ${{ steps.fixture.outputs.base-revision }}
+          profile-target-revision: ${{ steps.fixture.outputs.target-revision }}
+          profile-repository-directory: ${{ steps.fixture.outputs.repository }}
+          profile-artifact-name: buildopt-profile-proposal-fixture
+          profile-buildopt-revision: ${{ github.sha }}
+
+      - name: Verify the hosted review decision
+        shell: bash
+        env:
+          ARTIFACT_DIRECTORY: ${{ steps.proposal.outputs.profile-artifact-directory }}
+          DECISION: ${{ steps.proposal.outputs.profile-decision }}
+          REASON: ${{ steps.proposal.outputs.profile-reason }}
+        run: |
+          set -euo pipefail
+          if [[ "$DECISION" != MEASURE_STRUCTURAL_CANDIDATE ]] ||
+            [[ "$REASON" != COMPLETE_STRUCTURAL_REDUCTION ]]; then
+            printf 'unexpected hosted proposal: %s (%s)\n' "$DECISION" "$REASON" >&2
+            exit 1
+          fi
+          jq -e '
+            .outcome == "COMPLETE" and
+            .decision == "MEASURE_STRUCTURAL_CANDIDATE" and
+            .reviewRequired == true and
+            .activationAutomatic == false and
+            .productionAuthorized == false
+          ' "$ARTIFACT_DIRECTORY/review.json" >/dev/null
+          test ! -e "${RUNNER_TEMP}/profile-ci-consumer/buildopt-qualified-profile.json"

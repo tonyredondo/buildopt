@@ -10,6 +10,19 @@ exposing the launcher, Build Impact, server, Edge, plugin, agent and init
 script. [`release.yml`](./workflows/release.yml) creates the native packages on
 Linux, macOS and Windows when a semantic-version tag is pushed.
 
+The same Action exposes an explicit `profile-proposal` mode for Linux CI. It
+builds the CLI from the Action's immutable source commit, reads the consumer's
+checked-in `.buildopt/profile-ci.json`, derives the exact base-to-target change
+and uploads a review bundle. The mode never measures or activates a profile;
+unsupported or incomplete discovery is a successful `NATIVE_FULL_GRAPH`
+decision. Operational failures upload diagnostics when possible and then fail
+the job. See the [CI proposal contract](../specs/poc-generic-profile-ci-v1.md).
+
+[`profile-proposal-fixture.yml`](./workflows/profile-proposal-fixture.yml) is a
+manual, read-only hosted conformance run for that mode. It creates an external
+clean Gradle checkout below runner temp, uploads the generated proposal and
+asserts that no active profile exists.
+
 
 [`ws-007-fixture.yml`](./workflows/ws-007-fixture.yml) is a manual,
 read-only hosted conformance fixture. It pins every referenced Action by a full

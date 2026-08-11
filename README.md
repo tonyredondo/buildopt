@@ -70,6 +70,12 @@ accelerator requires repository-owned inputs, paired measurement, explicit
 review, and a qualified profile. Follow the [Build Impact workflow](./docs/guides/product-workflows.md#build-impact)
 to evaluate that path.
 
+For a non-invasive evaluation, the GitHub Action's `profile-proposal` mode
+turns a checked-in workflow/output declaration and exact pull-request diff into
+a downloadable review artifact. It never measures or activates the candidate;
+uncertain analysis keeps optimized native Gradle. See the [CI integration
+guide](./docs/guides/ci-integration.md#review-a-structural-proposal).
+
 The [product onboarding guide](./docs/getting-started/product-onboarding.md)
 contains Windows installation, CI snippets, component ownership and the
 recommended rollout order. Contributors who want the complete synthetic lab

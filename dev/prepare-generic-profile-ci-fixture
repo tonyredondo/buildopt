@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 2)); then
+    printf 'usage: %s OUTPUT_DIRECTORY GITHUB_OUTPUT\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_fixture_directory=$1
+buildopt_github_output=$2
+buildopt_script_directory=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repository_root=$(cd -- "${buildopt_script_directory}/.." && pwd -P)
+buildopt_fixture_source="${buildopt_repository_root}/fixtures/gradle-profile-ci"
+
+[[ ! -e "${buildopt_fixture_directory}" ]] || {
+    printf 'fixture output already exists: %s\n' "${buildopt_fixture_directory}" >&2
+    exit 1
+}
+[[ -n "${buildopt_github_output}" ]] || {
+    printf 'fixture output file is required\n' >&2
+    exit 1
+}
+
+mkdir -p -- "${buildopt_fixture_directory}"
+cp -R -- "${buildopt_fixture_source}/." "${buildopt_fixture_directory}/"
+cp -- "${buildopt_repository_root}/gradlew" "${buildopt_fixture_directory}/gradlew"
+cp -R -- "${buildopt_repository_root}/gradle" "${buildopt_fixture_directory}/gradle"
+chmod +x -- "${buildopt_fixture_directory}/gradlew"
+
+git -C "${buildopt_fixture_directory}" init -q
+git -C "${buildopt_fixture_directory}" config user.name 'BuildOpt CI Fixture'
+git -C "${buildopt_fixture_directory}" config user.email 'buildopt-ci-fixture@example.invalid'
+git -C "${buildopt_fixture_directory}" config commit.gpgsign false
+git -C "${buildopt_fixture_directory}" add .
+git -C "${buildopt_fixture_directory}" commit -qm 'fixture base'
+buildopt_base_revision=$(git -C "${buildopt_fixture_directory}" rev-parse HEAD)
+
+python3 - "${buildopt_fixture_directory}/service-a/src/main/java/example/ServiceA.java" <<'PY'
+import pathlib
+import sys
+
+path = pathlib.Path(sys.argv[1])
+raw = path.read_text(encoding="utf-8")
+if raw.count('return "base";') != 1:
+    raise SystemExit("fixture source marker is missing or ambiguous")
+path.write_text(raw.replace('return "base";', 'return "target";'), encoding="utf-8")
+PY
+git -C "${buildopt_fixture_directory}" add service-a/src/main/java/example/ServiceA.java
+git -C "${buildopt_fixture_directory}" commit -qm 'change service a'
+buildopt_target_revision=$(git -C "${buildopt_fixture_directory}" rev-parse HEAD)
+
+{
+    printf 'repository=%s\n' "${buildopt_fixture_directory}"
+    printf 'base-revision=%s\n' "${buildopt_base_revision}"
+    printf 'target-revision=%s\n' "${buildopt_target_revision}"
+} >>"${buildopt_github_output}"
+
+printf 'Prepared generic profile CI fixture: %s..%s\n' \
+    "${buildopt_base_revision}" \
+    "${buildopt_target_revision}"

@@ -1,7 +1,11 @@
-name: Setup BuildOpt
-description: Install BuildOpt and make Gradle builds available through one command
+name: Setup or review BuildOpt
+description: Install BuildOpt or publish a review-only structural profile proposal
 
 inputs:
+  mode:
+    description: install or profile-proposal
+    required: false
+    default: install
   version:
     description: BuildOpt release version, or latest
     required: false
@@ -11,6 +15,27 @@ inputs:
     required: false
   archive-sha256:
     description: Required SHA-256 when archive-url is set
+    required: false
+  profile-config:
+    description: Repository-relative owner configuration for profile-proposal mode
+    required: false
+    default: .buildopt/profile-ci.json
+  profile-base-revision:
+    description: Exact 40-character base commit for profile-proposal mode
+    required: false
+  profile-target-revision:
+    description: Exact checked-out target commit for profile-proposal mode
+    required: false
+  profile-repository-directory:
+    description: Repository checkout to analyze, relative to the workspace or below runner.temp
+    required: false
+    default: .
+  profile-artifact-name:
+    description: Name of the uploaded review artifact
+    required: false
+    default: buildopt-profile-proposal
+  profile-buildopt-revision:
+    description: Full BuildOpt source commit; inferred from an immutable external Action reference
     required: false
 
 outputs:
@@ -32,12 +57,33 @@ outputs:
   gradle-init-script:
     description: Pinned init script that applies the packaged Gradle plugin
     value: ${{ steps.install.outputs.gradle-init-script }}
+  profile-decision:
+    description: MEASURE_STRUCTURAL_CANDIDATE or NATIVE_FULL_GRAPH
+    value: ${{ steps.profile.outputs.decision }}
+  profile-reason:
+    description: Stable reason associated with the profile decision
+    value: ${{ steps.profile.outputs.reason }}
+  profile-artifact-directory:
+    description: Absolute directory uploaded as the review artifact
+    value: ${{ steps.profile.outputs.artifact-directory }}
 
 runs:
   using: composite
   steps:
+    - name: Validate the requested BuildOpt Action mode
+      shell: bash
+      env:
+        BUILDOPT_ACTION_MODE: ${{ inputs.mode }}
+      run: |
+        if [[ "$BUILDOPT_ACTION_MODE" != install && \
+          "$BUILDOPT_ACTION_MODE" != profile-proposal ]]; then
+          printf 'BuildOpt Action mode must be install or profile-proposal\n' >&2
+          exit 64
+        fi
+
     - name: Install verified BuildOpt release
       id: install
+      if: inputs.mode == 'install'
       shell: bash
       env:
         BUILDOPT_ACTION_VERSION: ${{ inputs.version }}
@@ -46,3 +92,48 @@ runs:
         BUILDOPT_ACTION_INSTALL_DIR: ${{ runner.temp }}/buildopt-action
         BUILDOPT_ACTION_PATH: ${{ github.action_path }}
       run: '"$BUILDOPT_ACTION_PATH/.github/actions/setup-buildopt"'
+
+    - name: Install the pinned Go toolchain for proposal generation
+      if: inputs.mode == 'profile-proposal'
+      uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5
+      with:
+        go-version: '1.26.5'
+        check-latest: false
+        cache: false
+
+    - name: Generate the review-only structural proposal
+      id: profile
+      if: inputs.mode == 'profile-proposal'
+      continue-on-error: true
+      shell: bash
+      env:
+        BUILDOPT_PROFILE_ACTION_PATH: ${{ github.action_path }}
+        BUILDOPT_PROFILE_ACTION_REF: ${{ github.action_ref }}
+        BUILDOPT_PROFILE_ARTIFACT_NAME: ${{ inputs.profile-artifact-name }}
+        BUILDOPT_PROFILE_BASE_REVISION: ${{ inputs.profile-base-revision }}
+        BUILDOPT_PROFILE_BUILDOPT_REVISION: ${{ inputs.profile-buildopt-revision }}
+        BUILDOPT_PROFILE_CONFIG: ${{ inputs.profile-config }}
+        BUILDOPT_PROFILE_REPOSITORY_DIRECTORY: ${{ inputs.profile-repository-directory }}
+        BUILDOPT_PROFILE_RUNNER_OS: ${{ runner.os }}
+        BUILDOPT_PROFILE_TARGET_REVISION: ${{ inputs.profile-target-revision }}
+      run: '"$BUILDOPT_PROFILE_ACTION_PATH/.github/actions/run-profile-proposal"'
+
+    - name: Upload the review-only structural proposal
+      if: inputs.mode == 'profile-proposal' && always() && steps.profile.outputs.artifact-directory != ''
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: ${{ inputs.profile-artifact-name }}
+        path: ${{ steps.profile.outputs.artifact-directory }}
+        if-no-files-found: error
+        retention-days: 14
+
+    - name: Preserve proposal command failures after uploading diagnostics
+      if: inputs.mode == 'profile-proposal' && always()
+      shell: bash
+      env:
+        BUILDOPT_PROFILE_STEP_OUTCOME: ${{ steps.profile.outcome }}
+      run: |
+        if [[ "$BUILDOPT_PROFILE_STEP_OUTCOME" != success ]]; then
+          printf 'BuildOpt profile proposal command failed; review the uploaded artifact\n' >&2
+          exit 1
+        fi

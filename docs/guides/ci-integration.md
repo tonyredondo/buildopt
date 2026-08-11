@@ -32,6 +32,29 @@ them.
 Do not expose cache/server credentials to untrusted forks. The Action does not
 request them and its default local path works without secrets.
 
+### Review a structural proposal
+
+Before adopting Build Impact, a repository can ask CI for a proposal without
+changing or timing its build. Check in `.buildopt/profile-ci.json` using the
+strict [review-only CI contract](../../specs/poc-generic-profile-ci-v1.md),
+check out the exact target with its base available, and use the same Action at
+a full commit:
+
+```yaml
+- name: Publish the BuildOpt proposal
+  uses: tonyredondo/buildopt@<40-character-commit-sha>
+  with:
+    mode: profile-proposal
+    profile-base-revision: ${{ github.event.pull_request.base.sha }}
+    profile-target-revision: ${{ github.event.pull_request.head.sha }}
+```
+
+The `buildopt-profile-proposal` artifact contains normalized inputs, the exact
+change set, proposal or native decision, a readable summary and checksums. It
+does not run `profile measure`, write `buildopt-qualified-profile.json`, edit
+the workflow or activate anything. Treat `NATIVE_FULL_GRAPH` as the safe and
+expected outcome whenever discovery is incomplete or the change is global.
+
 ## GitLab CI
 
 Include the component from an immutable BuildOpt revision:

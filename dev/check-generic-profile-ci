@@ -1,0 +1,261 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_directory=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repository_root=$(cd -- "${buildopt_script_directory}/.." && pwd -P)
+buildopt_action="${buildopt_repository_root}/action.yml"
+buildopt_runner="${buildopt_repository_root}/.github/actions/run-profile-proposal"
+buildopt_workflow="${buildopt_repository_root}/.github/workflows/profile-proposal-fixture.yml"
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-generic-profile-ci.XXXXXX")
+buildopt_cleanup() {
+    if [[ -n "${buildopt_temporary:-}" && \
+        "${buildopt_temporary}" == "${TMPDIR:-/tmp}/buildopt-generic-profile-ci."* && \
+        -d "${buildopt_temporary}" ]]; then
+        rm -rf -- "${buildopt_temporary}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in awk cmp cp diff git grep jq ln python3 rm sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required profile CI checker command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+for buildopt_file in "${buildopt_action}" "${buildopt_runner}" "${buildopt_workflow}"; do
+    [[ -f "${buildopt_file}" ]] || {
+        printf 'missing generic profile CI surface: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done
+[[ -x "${buildopt_runner}" ]] || {
+    printf 'profile proposal Action runner is not executable\n' >&2
+    exit 1
+}
+
+for buildopt_line in \
+    '    default: install' \
+    "      uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5" \
+    "      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02" \
+    "        retention-days: 14" \
+    "        BUILDOPT_PROFILE_ACTION_REF: \${{ github.action_ref }}"; do
+    if [[ "$(grep -Fxc "${buildopt_line}" "${buildopt_action}")" != 1 ]]; then
+        printf 'Action is missing the profile CI contract line: %s\n' \
+            "${buildopt_line}" >&2
+        exit 1
+    fi
+done
+if ! grep -Fqx '  workflow_dispatch:' "${buildopt_workflow}" ||
+    ! grep -Fqx '  contents: read' "${buildopt_workflow}" ||
+    grep -Eq '^[[:space:]]+(push|pull_request|pull_request_target|schedule):' \
+        "${buildopt_workflow}"; then
+    printf 'hosted profile proposal fixture has an unsafe trigger or permission\n' >&2
+    exit 1
+fi
+mapfile -t buildopt_remote_uses < <(
+    awk '$1 == "uses:" && $2 != "./" {print $2}' "${buildopt_workflow}"
+)
+if ((${#buildopt_remote_uses[@]} != 2)); then
+    printf 'hosted profile proposal fixture expected two remote Actions\n' >&2
+    exit 1
+fi
+for buildopt_use in "${buildopt_remote_uses[@]}"; do
+    [[ "${buildopt_use}" =~ ^[^@[:space:]]+@[0-9a-f]{40}$ ]] || {
+        printf 'hosted profile proposal fixture has a mutable Action: %s\n' \
+            "${buildopt_use}" >&2
+        exit 1
+    }
+done
+
+buildopt_revision=$(git -C "${buildopt_repository_root}" rev-parse HEAD)
+buildopt_run_action() {
+    local buildopt_consumer=$1
+    local buildopt_base=$2
+    local buildopt_target=$3
+    local buildopt_output=$4
+    GRADLE_USER_HOME="${buildopt_repository_root}/.tools/gradle-user-home/local" \
+    BUILDOPT_PROFILE_ACTION_PATH="${buildopt_repository_root}" \
+    BUILDOPT_PROFILE_ACTION_REF="${buildopt_revision}" \
+    BUILDOPT_PROFILE_ARTIFACT_NAME=buildopt-profile-proposal-fixture \
+    BUILDOPT_PROFILE_BASE_REVISION="${buildopt_base}" \
+    BUILDOPT_PROFILE_BUILDOPT_REVISION="${buildopt_revision}" \
+    BUILDOPT_PROFILE_CONFIG=.buildopt/profile-ci.json \
+    BUILDOPT_PROFILE_REPOSITORY_DIRECTORY="${buildopt_consumer}" \
+    BUILDOPT_PROFILE_RUNNER_OS=Linux \
+    BUILDOPT_PROFILE_TARGET_REVISION="${buildopt_target}" \
+    GITHUB_OUTPUT="${buildopt_output}" \
+    GITHUB_WORKSPACE="${buildopt_temporary}" \
+    RUNNER_TEMP="${buildopt_temporary}" \
+        "${buildopt_repository_root}/dev/run" --toolchain go -- \
+        "${buildopt_runner}"
+}
+
+buildopt_fixture_output="${buildopt_temporary}/fixture.outputs"
+"${buildopt_script_directory}/prepare-generic-profile-ci-fixture" \
+    "${buildopt_temporary}/consumer" \
+    "${buildopt_fixture_output}" >/dev/null
+buildopt_consumer=$(awk -F= '$1 == "repository" {print substr($0, index($0, "=") + 1)}' "${buildopt_fixture_output}")
+buildopt_base=$(awk -F= '$1 == "base-revision" {print $2}' "${buildopt_fixture_output}")
+buildopt_target=$(awk -F= '$1 == "target-revision" {print $2}' "${buildopt_fixture_output}")
+
+buildopt_first_output="${buildopt_temporary}/first.outputs"
+buildopt_run_action "${buildopt_consumer}" "${buildopt_base}" "${buildopt_target}" \
+    "${buildopt_first_output}" >/dev/null
+buildopt_artifact="${buildopt_consumer}/.buildopt/buildopt-profile-proposal"
+jq -e '
+    .outcome == "COMPLETE" and
+    .decision == "MEASURE_STRUCTURAL_CANDIDATE" and
+    .reason == "COMPLETE_STRUCTURAL_REDUCTION" and
+    .reviewRequired == true and
+    .activationAutomatic == false and
+    .productionAuthorized == false and
+    .testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_artifact}/review.json" >/dev/null
+jq -e '
+    .decision == "MEASURE_STRUCTURAL_CANDIDATE" and
+    .candidateEntrypoints == [":service-a:classes"] and
+    .omittedProjects == [":service-b"] and
+    .buildOptRevisionNeeded == false and
+    .reviewRequired == true and
+    .activationAutomatic == false
+' "${buildopt_artifact}/buildopt-profile-proposal.json" >/dev/null
+grep -Fx 'service-a/src/main/java/example/ServiceA.java' \
+    "${buildopt_artifact}/changes.txt" >/dev/null
+(
+    cd -- "${buildopt_artifact}"
+    sha256sum -c checksums.txt >/dev/null
+)
+test ! -e "${buildopt_consumer}/buildopt-qualified-profile.json"
+cp -R -- "${buildopt_artifact}" "${buildopt_temporary}/first-artifact"
+
+git -C "${buildopt_consumer}" clean -ffdxq
+buildopt_second_output="${buildopt_temporary}/second.outputs"
+buildopt_run_action "${buildopt_consumer}" "${buildopt_base}" "${buildopt_target}" \
+    "${buildopt_second_output}" >/dev/null
+diff -ru -- "${buildopt_temporary}/first-artifact" "${buildopt_artifact}"
+
+buildopt_native_output="${buildopt_temporary}/native-fixture.outputs"
+"${buildopt_script_directory}/prepare-generic-profile-ci-fixture" \
+    "${buildopt_temporary}/native-consumer" \
+    "${buildopt_native_output}" >/dev/null
+buildopt_native_consumer=$(awk -F= '$1 == "repository" {print substr($0, index($0, "=") + 1)}' "${buildopt_native_output}")
+buildopt_native_base=$(git -C "${buildopt_native_consumer}" rev-parse HEAD)
+printf '\n// Global build change retained by native Gradle.\n' >>"${buildopt_native_consumer}/build.gradle.kts"
+git -C "${buildopt_native_consumer}" add build.gradle.kts
+git -C "${buildopt_native_consumer}" commit -qm 'change global build logic'
+buildopt_native_target=$(git -C "${buildopt_native_consumer}" rev-parse HEAD)
+buildopt_run_action \
+    "${buildopt_native_consumer}" \
+    "${buildopt_native_base}" \
+    "${buildopt_native_target}" \
+    "${buildopt_temporary}/native.outputs" >/dev/null
+buildopt_native_artifact="${buildopt_native_consumer}/.buildopt/buildopt-profile-proposal"
+jq -e '
+    .outcome == "COMPLETE" and
+    .decision == "NATIVE_FULL_GRAPH" and
+    .reason == "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH" and
+    .activationAutomatic == false
+' "${buildopt_native_artifact}/review.json" >/dev/null
+test ! -e "${buildopt_native_artifact}/buildopt-impact-manifest.json"
+test ! -e "${buildopt_native_artifact}/buildopt-impact-graph.generated.json"
+test ! -e "${buildopt_native_consumer}/buildopt-qualified-profile.json"
+
+buildopt_error_output="${buildopt_temporary}/error-fixture.outputs"
+"${buildopt_script_directory}/prepare-generic-profile-ci-fixture" \
+    "${buildopt_temporary}/error-consumer" \
+    "${buildopt_error_output}" >/dev/null
+buildopt_error_consumer=$(awk -F= '$1 == "repository" {print substr($0, index($0, "=") + 1)}' "${buildopt_error_output}")
+buildopt_error_base=$(git -C "${buildopt_error_consumer}" rev-parse HEAD)
+jq '.gradleCommand = "./missing-gradle"' \
+    "${buildopt_error_consumer}/.buildopt/profile-ci.json" \
+    >"${buildopt_temporary}/error-profile-ci.json"
+cp -- "${buildopt_temporary}/error-profile-ci.json" \
+    "${buildopt_error_consumer}/.buildopt/profile-ci.json"
+git -C "${buildopt_error_consumer}" add .buildopt/profile-ci.json
+git -C "${buildopt_error_consumer}" commit -qm 'configure a missing Gradle command'
+buildopt_error_target=$(git -C "${buildopt_error_consumer}" rev-parse HEAD)
+set +e
+buildopt_run_action \
+    "${buildopt_error_consumer}" \
+    "${buildopt_error_base}" \
+    "${buildopt_error_target}" \
+    "${buildopt_temporary}/error.outputs" >/dev/null 2>&1
+buildopt_error_status=$?
+set -e
+if ((buildopt_error_status == 0)); then
+    printf 'missing Gradle command produced a successful Action result\n' >&2
+    exit 1
+fi
+buildopt_error_artifact="${buildopt_error_consumer}/.buildopt/buildopt-profile-proposal"
+jq -e '
+    .outcome == "ERROR" and
+    .decision == "NATIVE_FULL_GRAPH" and
+    .reason == "PROPOSAL_COMMAND_FAILED" and
+    .commandStatus != 0 and
+    .activationAutomatic == false
+' "${buildopt_error_artifact}/review.json" >/dev/null
+(
+    cd -- "${buildopt_error_artifact}"
+    sha256sum -c checksums.txt >/dev/null
+)
+test ! -e "${buildopt_error_consumer}/buildopt-qualified-profile.json"
+
+set +e
+BUILDOPT_PROFILE_ACTION_PATH="${buildopt_repository_root}" \
+BUILDOPT_PROFILE_ACTION_REF="${buildopt_revision}" \
+BUILDOPT_PROFILE_ARTIFACT_NAME=buildopt-profile-proposal-fixture \
+BUILDOPT_PROFILE_BASE_REVISION="${buildopt_base}" \
+BUILDOPT_PROFILE_BUILDOPT_REVISION="${buildopt_revision}" \
+BUILDOPT_PROFILE_CONFIG=.buildopt/profile-ci.json \
+BUILDOPT_PROFILE_REPOSITORY_DIRECTORY="${buildopt_consumer}" \
+BUILDOPT_PROFILE_RUNNER_OS=Linux \
+BUILDOPT_PROFILE_TARGET_REVISION=0000000000000000000000000000000000000000 \
+GITHUB_OUTPUT="${buildopt_temporary}/invalid.outputs" \
+GITHUB_WORKSPACE="${buildopt_temporary}" \
+RUNNER_TEMP="${buildopt_temporary}" \
+    "${buildopt_repository_root}/dev/run" --toolchain go -- \
+    "${buildopt_runner}" >/dev/null 2>&1
+buildopt_invalid_status=$?
+set -e
+if ((buildopt_invalid_status == 0)); then
+    printf 'mismatched target revision was accepted\n' >&2
+    exit 1
+fi
+
+git -C "${buildopt_consumer}" clean -ffdxq
+cp -- "${buildopt_consumer}/.buildopt/profile-ci.json" \
+    "${buildopt_temporary}/outside-profile-ci.json"
+rm -f -- "${buildopt_consumer}/.buildopt/profile-ci.json"
+ln -s -- "${buildopt_temporary}/outside-profile-ci.json" \
+    "${buildopt_consumer}/.buildopt/profile-ci.json"
+set +e
+BUILDOPT_PROFILE_ACTION_PATH="${buildopt_repository_root}" \
+BUILDOPT_PROFILE_ACTION_REF="${buildopt_revision}" \
+BUILDOPT_PROFILE_ARTIFACT_NAME=buildopt-profile-proposal-fixture \
+BUILDOPT_PROFILE_BASE_REVISION="${buildopt_base}" \
+BUILDOPT_PROFILE_BUILDOPT_REVISION="${buildopt_revision}" \
+BUILDOPT_PROFILE_CONFIG=.buildopt/profile-ci.json \
+BUILDOPT_PROFILE_REPOSITORY_DIRECTORY="${buildopt_consumer}" \
+BUILDOPT_PROFILE_RUNNER_OS=Linux \
+BUILDOPT_PROFILE_TARGET_REVISION="${buildopt_target}" \
+GITHUB_OUTPUT="${buildopt_temporary}/symlink.outputs" \
+GITHUB_WORKSPACE="${buildopt_temporary}" \
+RUNNER_TEMP="${buildopt_temporary}" \
+    "${buildopt_repository_root}/dev/run" --toolchain go -- \
+    "${buildopt_runner}" >/dev/null 2>&1
+buildopt_symlink_status=$?
+set -e
+if ((buildopt_symlink_status == 0)) ||
+    [[ -e "${buildopt_consumer}/.buildopt/buildopt-profile-proposal" ]]; then
+    printf 'symlinked profile configuration was accepted or created state\n' >&2
+    exit 1
+fi
+
+printf 'Generic profile CI contract passed: candidate, deterministic replay, native fallback, diagnostic failure, invalid target, and symlink rejection\n'

@@ -101,6 +101,13 @@ Gradle. Adopt it only after reviewing and committing the repository manifest
 and generated graph described in the
 [Build Impact workflow](../guides/product-workflows.md#build-impact).
 
+The easiest first step is review-only CI. Commit the owner input described by
+the [profile proposal CI contract](../../specs/poc-generic-profile-ci-v1.md)
+and run the repository-root Action in `profile-proposal` mode. It derives the
+exact Git change and uploads a deterministic proposal or an explicit native
+fallback. It does not time the candidate or activate a profile, so a team can
+inspect BuildOpt's reasoning before trusting it with any execution change.
+
 Before committing a qualified profile, current `main` can create the exact POC
 inputs without hand-authoring Build Impact JSON:
 
