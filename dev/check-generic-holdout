@@ -385,16 +385,18 @@ elif [[ ${buildopt_measurement_status} == COMPLETED ]]; then
                      .controlHostPressure.ioFullTotalUs, .candidateHostPressure.cpuSomeTotalUs,
                      .candidateHostPressure.memorySomeTotalUs, .candidateHostPressure.memoryFullTotalUs,
                      .candidateHostPressure.ioSomeTotalUs, .candidateHostPressure.ioFullTotalUs][]; . >= 0)) and
-            ([.observations[].controlTaskOutcomes.fingerprintSha256] | unique | length) == 1 and
-            ([.observations[].candidateTaskOutcomes.fingerprintSha256] | unique | length) == 1 and
-            .execution.controlWarmups[2].taskOutcomes.fingerprintSha256 ==
-              .observations[0].controlTaskOutcomes.fingerprintSha256 and
-            .execution.candidateWarmups[2].taskOutcomes.fingerprintSha256 ==
-              .observations[0].candidateTaskOutcomes.fingerprintSha256 and
             .result.executionShapeObserved == true and
-            .result.executionShapeStable == true and
             .result.targetWarmupShapeObserved == true and
-            .result.targetWarmupShapeStable == true
+            (([.observations[].controlTaskOutcomes.fingerprintSha256] | unique | length) == 1 and
+             ([.observations[].candidateTaskOutcomes.fingerprintSha256] | unique | length) == 1) as $measuredShapeStable |
+            (.execution.controlWarmups[2].taskOutcomes.fingerprintSha256 ==
+               .observations[0].controlTaskOutcomes.fingerprintSha256 and
+             .execution.candidateWarmups[2].taskOutcomes.fingerprintSha256 ==
+               .observations[0].candidateTaskOutcomes.fingerprintSha256) as $targetShapeStable |
+            ((.result.executionShapeStable // false) == $measuredShapeStable) and
+            ((.result.targetWarmupShapeStable // false) == $targetShapeStable) and
+            ((.result.qualified == false) or
+             ($measuredShapeStable and $targetShapeStable))
         ' "${buildopt_evidence}/evidence.json" >/dev/null
     fi
     jq -e \

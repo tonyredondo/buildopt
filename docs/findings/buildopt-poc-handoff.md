@@ -10,16 +10,17 @@
 - **The current evidence supports continuing the POC.** The same structural
   method qualified on OpenTelemetry, Kafka, Micronaut, and Groovy, reducing
   wall time by **14.43% to 84.11%**. Spring improved by **17.94%** and the unseen
-  Hibernate holdout by **7.80%**, but both correctly retained native Gradle
-  because one of eight pairs was slower.
+  Hibernate holdout still shows a positive **3.82%** latest diagnostic signal,
+  but both correctly retain native Gradle because their repeatability gates do
+  not pass.
 - **Cross-repository CI reproducibility passes 5/5, and the blind transfer is
   now complete.** The read-only Action recreated every terminal proposal on
   clean hosted runners with zero graph drift. The unchanged generic path then
-  discovered a 29-to-1 Hibernate candidate and saved 19.386 seconds on average;
-  the strict 7/8 result remained native rather than manufacturing a win. A
-  separate diagnostic recovered that first negative after better daemon
-  stabilization, proving it was investigable rather than a structural reason
-  to discard the candidate; a target-workload replay is now preregistered.
+  discovered a 29-to-1 Hibernate candidate without repository-specific logic.
+  The latest attribution run saved 8.480 seconds on average but remained native
+  at 5/8. It showed a stable 32-task candidate, a 300-302-task native baseline
+  and a material first/second-period effect, proving the failure is
+  investigable rather than grounds to discard the candidate.
 
 ## The Project in One Minute
 
@@ -72,7 +73,7 @@ Gradle execution.
 | Apache Kafka | 64 -> 3 | 82.498 s | 13.113 s | **69.385 s / 84.11%** | 8/8 | Qualify. |
 | Micronaut Core | 75 -> 22 | 27.407 s | 15.968 s | **11.439 s / 41.74%** | 8/8 | Qualify. |
 | Apache Groovy | 37 -> 2 | 75.064 s | 19.629 s | **55.434 s / 73.85%** | 8/8 | Qualify. |
-| Hibernate ORM holdout | 29 -> 1 | 248.481 s | 229.095 s | **19.386 s / 7.80%** | 7/8 | Retain native: one -1.118 s pair fails the frozen 8/8 gate. |
+| Hibernate ORM holdout, latest diagnostic | 29 -> 1 | 221.898 s | 213.418 s | **8.480 s / 3.82%** | 5/8 | Retain native: warm-up, task-shape and period effects remain unresolved. |
 
 Every accepted observation preserved the declared required outputs byte for
 byte, completed a scheduling-equivalent native full-graph fallback, and
@@ -83,7 +84,7 @@ none of the rejected timing was reused.
 Repository percentages are independent. They are not averaged across
 repositories and are not added to cache, task-adapter, or Edge results.
 
-### Hibernate is retained while its variance is investigated
+### Hibernate is retained while its recoverable variance is corrected
 
 The immutable v3 diagnostic did not replace the 7.80% v2 value result. It added
 a second excluded base-revision warm-up and reran all eight pairs from zero.
@@ -92,10 +93,15 @@ negative was recoverable. The complete v3 run reached only **4/8 positive
 pairs**, **2.50% mean savings**, and an interval of **−6.604..+20.190 s** while
 both arms continued accelerating. Native Gradle therefore remains active.
 
-The next frozen replay warms the exact target workload, binds normalized task
-and outcome fingerprints, and records interval-scoped Linux host pressure.
-Those diagnostics may explain a failure but cannot remove a pair or relax the
-8/8 gate.
+The subsequent v4 replay completed all eight fresh pairs after an exact-target
+warm-up. Native averaged **221.898 s** and BuildOpt **213.418 s**, a positive
+**8.480 s/3.82%** signal, but only **5/8** pairs improved and the interval was
+**-0.839..+17.478 s**. The candidate stayed at one 32-task fingerprint; native
+varied between 300, 301 and 302 tasks. All four control-first pairs improved,
+but only one candidate-first pair did. Four post-hoc reciprocal blocks were
+positive, which diagnoses a plausible period effect but does not qualify the
+candidate. Native remains active while a fresh crossover protocol is
+preregistered; no v2-v4 timing will be reused.
 
 ## Clean-CI Reproducibility
 
@@ -130,6 +136,10 @@ their existing paired timings. No timing was executed during this replay.
   attempt safely stopped before timing because its modules use `target` instead
   of Gradle's default `build` directory. The POC needs an earlier generic
   output-contract preflight before expensive paired measurement.
+- **A raw pair can measure period as well as product.** Hibernate v4 preserved
+  exact outputs while the first/second execution position dominated early
+  results. Substantial measurements need target stability and reciprocal blocks
+  before a strict per-observation gate is meaningful.
 
 ## Current Conclusion
 
@@ -145,16 +155,19 @@ keeps native Gradle authoritative.
 
 ## Recommended Next Steps
 
-1. **Make output ownership discoverable and fail early.** Derive or validate
+1. **Correct the substantial-build measurement protocol.** Establish target
+   task/time stability, retain task-path differences, and run eight fresh AB/BA
+   crossover blocks without reusing the Hibernate diagnostic timings.
+2. **Make output ownership discoverable and fail early.** Derive or validate
    the repository's real Gradle output directories before warm-ups and paired
    measurement, retaining native when ownership remains ambiguous.
-2. **Measure only reviewed candidates.** A CI proposal remains an observation,
+3. **Measure only reviewed candidates.** A CI proposal remains an observation,
    not value evidence. Run isolated paired measurement only after its graph,
    outputs and fallback are accepted.
-3. **Broaden workflow coverage deliberately.** Test distinct customer build
+4. **Broaden workflow coverage deliberately.** Test distinct customer build
    shapes such as compilation, packaging, verification, and build-owned test
    preparation. Test Optimization remains separate.
-4. **Make onboarding repository-owned and keep wall time authoritative.** Users
+5. **Make onboarding repository-owned and keep wall time authoritative.** Users
    should provide a Gradle command, change source, and output contract—not
    hand-authored graphs. Promote only installed paths that preserve outputs,
    pass repeatability, prove fallback, and materially beat native Gradle.
@@ -171,5 +184,6 @@ Test Optimization remains outside Build Optimization.
 - [Five-repository clean-CI replay](../../benchmarks/results/poc-generic-profile-ci-replay-v1/README.md)
 - [Unseen Hibernate ORM holdout](../../benchmarks/results/poc-generic-holdout-v2/README.md)
 - [Hibernate warm-up diagnosis](../../benchmarks/results/poc-generic-holdout-v3/README.md)
+- [Hibernate target-workload attribution](../../benchmarks/results/poc-generic-holdout-v4/README.md)
 - [Detailed performance findings and historical research](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

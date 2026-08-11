@@ -75,6 +75,18 @@ both arms continued accelerating and the control changed to 300 tasks in pair
 exact task fingerprinting and interval-scoped host PSI; no old timing is
 discarded or reused.
 
+The separately preregistered
+[v4 attribution bundle](./results/poc-generic-holdout-v4/README.md) executes
+that correction from fresh arms. It reduces the raw means to 221.898 seconds
+for native and 213.418 seconds for BuildOpt, a positive 8.480-second/3.82%
+signal, but retains native at 5/8 positive pairs with interval
+-0.839..+17.478 seconds. The candidate is structurally stable at 32 tasks;
+the native control moves between 300, 301 and 302 tasks, and all four
+control-first pairs are positive versus one of four candidate-first pairs.
+Four post-hoc AB/BA crossover blocks are positive, so the result diagnoses a
+recoverable warm-up/period problem rather than a structural-product failure.
+Those blocks are diagnostic only and cannot qualify a future run.
+
 ### Terminal generic structural matrix
 
 The [terminal v3 five-repository bundle](./results/poc-generic-profile-matrix-v3/README.md)

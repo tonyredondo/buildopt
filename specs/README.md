@@ -492,6 +492,13 @@ normalized task/outcome fingerprint, and captures interval-scoped Linux CPU,
 memory, and IO PSI outside measured wall time. Task-shape drift fails closed;
 PSI remains diagnostic and cannot relax the unchanged 8-of-8 value gate.
 
+The retained v4 result completes all eight fresh pairs and the exact fallback,
+but remains unqualified: 5/8 positive pairs, 3.82% mean savings, a negative
+lower interval bound and native task/outcome drift between 300, 301 and 302
+tasks. Its four post-hoc AB/BA blocks are all positive, which authorizes only a
+new preregistration for reciprocal blocks and stronger target stabilization;
+no v4 timing may be reused as qualifying evidence.
+
 The terminal v2 evidence reduces the 29-project root graph to one project and
 saves 19,386.25 ms/7.80% on average with exact outputs and zero product
 failures. Seven of eight pairs improve, so the unchanged 8-of-8 gate retains

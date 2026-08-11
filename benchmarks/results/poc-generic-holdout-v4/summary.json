@@ -1,0 +1,110 @@
+{
+  "boundaries": {
+    "automaticActivation": false,
+    "designPartnerRequired": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "soakRequired": false,
+    "testOptimizationModified": false
+  },
+  "buildopt": {
+    "executableSha256": "379a827da9012c145ddf2fb00636aa84e6a200264343f67573ae5a0ec2c0b150",
+    "packageVersion": "0.3.0-dev",
+    "revision": "ef595cb584009b4a8b18153bc8f716ba6145007e"
+  },
+  "capturedAt": "2026-08-11T19:19:27Z",
+  "evaluationDecision": "NATIVE_FULL_GRAPH",
+  "measurementStatus": "COMPLETED",
+  "method": {
+    "bothArmsPreparedBeforeMeasuredPair": true,
+    "candidateMechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "control": "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW",
+    "fullGraphFallbackRequired": true,
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "hostPressureChangesQualificationThresholds": false,
+    "independentGradleHomes": true,
+    "independentNativeCacheSeeds": true,
+    "intervalLinuxPsiRecordedOutsideTiming": true,
+    "isolatedArms": true,
+    "onlinePreparationMeasured": false,
+    "postResultTuningAllowed": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "requiredOutputsComparedByteForByte": true,
+    "surface": "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE",
+    "targetRevisionWarmupBeforePairs": true,
+    "warmupAndPairLogSha256Recorded": true,
+    "warmupAndPairTaskFingerprintRecorded": true,
+    "warmupAndPairTaskOutcomesRecorded": true,
+    "warmupsMeasured": false
+  },
+  "proposal": {
+    "candidateEntrypoints": [
+      ":hibernate-core:assemble"
+    ],
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "omittedProjectCount": 28,
+    "originalEntrypoints": [
+      "assemble"
+    ],
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "selectedProjectCount": 1,
+    "totalProjectCount": 29
+  },
+  "qualification": {
+    "failedOrTimedOutObservationsMayBeDiscarded": false,
+    "maximumProductAttributableFailures": 0,
+    "measuredExecutionShapeMustBeStable": true,
+    "minimumMeanSavedMs": 500,
+    "minimumPositivePairs": 8,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "requiredOutputsIdentical": true,
+    "targetWarmupExecutionShapeMustMatchMeasuredPairs": true
+  },
+  "result": {
+    "candidateMeanMs": 213418,
+    "controlMeanMs": 221898,
+    "decision": "RETAIN_NATIVE_GRADLE",
+    "executionShapeObserved": true,
+    "interval95SavedMs": [
+      -839.25,
+      17478
+    ],
+    "meanSavedMs": 8480,
+    "pairs": 8,
+    "positivePairs": 5,
+    "qualified": false,
+    "reductionRatio": 0.038215756789155376,
+    "targetWarmupShapeObserved": true
+  },
+  "schemaVersion": "buildopt.evidence/poc-generic-holdout/v4",
+  "subject": {
+    "changePath": "hibernate-core/src/main/java/org/hibernate/Session.java",
+    "entrypoints": [
+      "assemble"
+    ],
+    "jdkToolchain": "temurin-jdk-25",
+    "key": "hibernate-orm",
+    "mutation": "APPEND_FIXED_COMMENT",
+    "observedPublicRevision": "2b448a59d332326f0cd0691c868425124d55cbb5",
+    "pipelineClass": "assemble",
+    "publicRevision": "2b448a59d332326f0cd0691c868425124d55cbb5",
+    "remoteUrl": "https://github.com/hibernate/hibernate-orm.git",
+    "repositoryId": "hibernate/hibernate-orm",
+    "requiredOutputs": [
+      "hibernate-core/target/libs/**"
+    ],
+    "targetRevision": "2a93cdaeea605bbc0025a1d9a095d0edf885d7f5"
+  },
+  "workItem": "POC-GENERIC-HOLDOUT-003"
+}
