@@ -477,6 +477,14 @@ v2 replaces `hibernate-core/build/libs/**` with
 `hibernate-core/target/libs/**` before a fresh proposal or timing run. No v1
 warm-up, proposal or observation is reused.
 
+`poc-generic-holdout-v3.json` and `poc-generic-holdout-v3.md` retain the full
+v2 7/8 result and preregister a generic causality correction before any new
+timing. The measurement now separates cache seeding from daemon stabilization
+and records bounded task-outcome plus log-digest diagnostics for every excluded
+warm-up and measured arm. The frozen repository, workflow, mutation, outputs,
+Gradle options, eight pairs and qualification thresholds remain unchanged; no
+v2 timing is reused or discarded.
+
 The terminal v2 evidence reduces the 29-project root graph to one project and
 saves 19,386.25 ms/7.80% on average with exact outputs and zero product
 failures. Seven of eight pairs improve, so the unchanged 8-of-8 gate retains

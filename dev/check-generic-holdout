@@ -9,6 +9,7 @@ fi
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
 buildopt_v1_spec="${buildopt_repo_root}/specs/poc-generic-holdout-v1.json"
+buildopt_v2_spec="${buildopt_repo_root}/specs/poc-generic-holdout-v2.json"
 buildopt_spec=${2:-"${buildopt_repo_root}/specs/poc-generic-holdout-v2.json"}
 if [[ ${buildopt_spec} != /* ]]; then
     buildopt_spec="${buildopt_repo_root}/${buildopt_spec}"
@@ -22,7 +23,7 @@ for buildopt_command in git jq; do
         exit 1
     }
 done
-for buildopt_file in "${buildopt_v1_spec}" "${buildopt_spec}"; do
+for buildopt_file in "${buildopt_v1_spec}" "${buildopt_v2_spec}" "${buildopt_spec}"; do
     [[ -f ${buildopt_file} ]] || {
         printf 'holdout specification is unavailable: %s\n' "${buildopt_file}" >&2
         exit 1
@@ -106,6 +107,50 @@ if [[ ${buildopt_spec} != "${buildopt_v1_spec}" ]]; then
         .amendment.proposalReused == false and
         .amendment.timedConditionsChanged == false and
         .amendment.qualificationChanged == false and
+        .boundaries.proofOfConcept == true and
+        .boundaries.productionAuthorized == false and
+        .boundaries.automaticActivation == false and
+        .boundaries.testOptimizationModified == false
+    ' "${buildopt_v2_spec}" >/dev/null
+fi
+
+if [[ $(jq -r '.schemaVersion' "${buildopt_spec}") == buildopt.specs/poc-generic-holdout/v3 ]]; then
+    jq -e '
+        .schemaVersion == "buildopt.specs/poc-generic-holdout/v3" and
+        .evidenceSchemaVersion == "buildopt.evidence/poc-generic-holdout/v3" and
+        .workItem == "POC-GENERIC-HOLDOUT-002" and
+        .decision == "RERUN_FROZEN_HOLDOUT_AFTER_GENERIC_WARMUP_DIAGNOSTIC_CORRECTION" and
+        .preregisteredFromRevision == "fac53c2c92b53c4226be3792907fc8f714dbcf54" and
+        .supersedes == "buildopt.specs/poc-generic-holdout/v2" and
+        .subject.repositoryId == "hibernate/hibernate-orm" and
+        .subject.publicRevision == "2b448a59d332326f0cd0691c868425124d55cbb5" and
+        .subject.entrypoints == ["assemble"] and
+        .subject.changePath == "hibernate-core/src/main/java/org/hibernate/Session.java" and
+        .subject.requiredOutputs == ["hibernate-core/target/libs/**"] and
+        .runner.cpuCount == 12 and
+        .runner.warmupsPerArm == 2 and
+        .runner.warmupPhases == ["CACHE_SEED", "DAEMON_STABILIZATION"] and
+        .runner.pairs == 8 and
+        .method.candidateMechanisms == ["BUILD_IMPACT"] and
+        .method.control == "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW" and
+        .method.warmupsMeasured == false and
+        .method.warmupAndPairTaskOutcomesRecorded == true and
+        .method.warmupAndPairLogSha256Recorded == true and
+        .method.repositorySpecificProductRulesAllowed == false and
+        .method.postResultTuningAllowed == false and
+        .qualification.minimumMeanSavedMs == 500 and
+        .qualification.minimumReductionRatio == 0.02 and
+        .qualification.minimumPositivePairs == 8 and
+        .qualification.failedOrTimedOutObservationsMayBeDiscarded == false and
+        .amendment.reason == "V2_SINGLE_WARMUP_COULD_NOT_ATTRIBUTE_FIRST_PAIR_DAEMON_DRIFT" and
+        .amendment.v2PositivePairs == 7 and
+        .amendment.v2FirstPairSavedMs == -1118 and
+        .amendment.acceptedPairsFromV2 == 0 and
+        .amendment.warmupsReused == false and
+        .amendment.proposalReused == false and
+        .amendment.timingReused == false and
+        .amendment.qualificationChanged == false and
+        .decisionRules.thresholdRelaxation == "FORBIDDEN" and
         .boundaries.proofOfConcept == true and
         .boundaries.productionAuthorized == false and
         .boundaries.automaticActivation == false and
@@ -236,6 +281,24 @@ elif [[ ${buildopt_measurement_status} == COMPLETED ]]; then
         .boundaries.repositorySpecificRuleAdded == false and
         .boundaries.testOptimizationModified == false
     ' "${buildopt_evidence}/evidence.json" >/dev/null
+    if [[ $(jq -r '.schemaVersion' "${buildopt_spec}") == buildopt.specs/poc-generic-holdout/v3 ]]; then
+        jq -e '
+            .execution.warmupsPerArm == 2 and
+            [.execution.controlWarmups[].phase] == ["CACHE_SEED", "DAEMON_STABILIZATION"] and
+            [.execution.candidateWarmups[].phase] == ["CACHE_SEED", "DAEMON_STABILIZATION"] and
+            all(.execution.controlWarmups[], .execution.candidateWarmups[];
+                .durationMs > 0 and
+                (.logSha256 | test("^[0-9a-f]{64}$")) and
+                .taskOutcomes.total > 0 and
+                .taskOutcomes.total == (.taskOutcomes.executed + .taskOutcomes.fromCache +
+                  .taskOutcomes.upToDate + .taskOutcomes.noSource + .taskOutcomes.skipped)) and
+            all(.observations[];
+                (.controlLogSha256 | test("^[0-9a-f]{64}$")) and
+                (.candidateLogSha256 | test("^[0-9a-f]{64}$")) and
+                .controlTaskOutcomes.total > 0 and
+                .candidateTaskOutcomes.total > 0)
+        ' "${buildopt_evidence}/evidence.json" >/dev/null
+    fi
     jq -e \
         --slurpfile evidence "${buildopt_evidence}/evidence.json" \
         --slurpfile evaluation "${buildopt_evidence}/evaluation.json" '

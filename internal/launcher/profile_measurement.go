@@ -26,6 +26,7 @@ import (
 const (
 	profileMeasureUsage           = "usage: buildopt profile measure --manifest PATH --graph PATH --generated-manifest PATH --changes-file PATH --fallback-changes-file PATH --base-revision REVISION --buildopt-revision REVISION --evidence-output PATH [--gradle-option VALUE ...] [--timeout DURATION]\n"
 	measurementPairs              = 8
+	structuralWarmupsPerArm       = 2
 	maximumMeasurementInterArmGap = 5 * time.Second
 )
 
@@ -62,15 +63,18 @@ type structuralMeasurementArm struct {
 	workspace  string
 	gradleHome string
 	cacheSeed  string
+	warmups    []profilediscovery.StructuralWarmupObservation
 }
 
 type structuralArmResult struct {
-	durationMS  int64
-	outputSHA   string
-	outputCount int
-	log         string
-	startedAt   time.Time
-	finishedAt  time.Time
+	durationMS   int64
+	outputSHA    string
+	outputCount  int
+	log          string
+	logSHA256    string
+	taskOutcomes profilediscovery.StructuralTaskOutcomes
+	startedAt    time.Time
+	finishedAt   time.Time
 }
 
 func runStructuralProfileMeasurement(args []string, stdout, stderr io.Writer) int {
@@ -323,14 +327,20 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 		}
 		observations = append(observations, profilediscovery.StructuralMeasurementObservation{
 			Pair: pair, Order: order,
-			ControlDurationMS:    controlResult.durationMS,
-			CandidateDurationMS:  candidateResult.durationMS,
-			RequiredOutputSHA256: controlResult.outputSHA,
-			RequiredOutputCount:  controlResult.outputCount,
+			ControlDurationMS:     controlResult.durationMS,
+			CandidateDurationMS:   candidateResult.durationMS,
+			RequiredOutputSHA256:  controlResult.outputSHA,
+			RequiredOutputCount:   controlResult.outputCount,
+			ControlLogSHA256:      controlResult.logSHA256,
+			CandidateLogSHA256:    candidateResult.logSHA256,
+			ControlTaskOutcomes:   controlResult.taskOutcomes,
+			CandidateTaskOutcomes: candidateResult.taskOutcomes,
 		})
 		_, _ = fmt.Fprintf(progress, "buildopt: structural pair %d/%d control=%dms candidate=%dms saved=%dms gap=%dms order=%s\n",
 			pair, measurementPairs, controlResult.durationMS, candidateResult.durationMS,
 			controlResult.durationMS-candidateResult.durationMS, interArmGap.Milliseconds(), order)
+		_, _ = fmt.Fprintf(progress, "buildopt: structural pair %d task outcomes control=%s candidate=%s\n",
+			pair, formatStructuralTaskOutcomes(controlResult.taskOutcomes), formatStructuralTaskOutcomes(candidateResult.taskOutcomes))
 	}
 	// The fallback proves correctness; it is not part of the measured effect.
 	// Release both hot measurement daemons before running the full graph so a
@@ -372,6 +382,7 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 		ExecutableSHA256:     config.executableSHA256,
 		SourceEvidenceSHA256: hex.EncodeToString(changesSHA[:]),
 		GradleOptions:        config.gradleOptions, Observations: observations,
+		ControlWarmups: control.warmups, CandidateWarmups: candidate.warmups,
 		FallbackReason: fallbackReason, FallbackSuccessful: true,
 	})
 }
@@ -392,15 +403,37 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	if err := resetStructuralArm(config, arm, config.baseRevision, false); err != nil {
 		return arm, fmt.Errorf("prepare %s baseline: %w", name, err)
 	}
-	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s arm at %s\n", name, config.baseRevision)
-	if _, err := runStructuralArm(config, arm, candidate, config.changesPath); err != nil {
+	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s arm at %s (cache seed 1/%d)\n", name, config.baseRevision, structuralWarmupsPerArm)
+	seedWarmup, err := runStructuralArm(config, arm, candidate, config.changesPath)
+	if err != nil {
 		return arm, fmt.Errorf("warm %s arm: %w", name, err)
 	}
+	arm.warmups = append(arm.warmups, structuralWarmupDiagnostic("CACHE_SEED", seedWarmup))
+	_, _ = fmt.Fprintf(progress, "buildopt: warmed isolated %s arm cache seed in %dms with %s\n",
+		name, seedWarmup.durationMS, formatStructuralTaskOutcomes(seedWarmup.taskOutcomes))
 	cache := filepath.Join(arm.gradleHome, "caches", "build-cache-1")
 	if err := copyMeasurementTree(cache, arm.cacheSeed); err != nil {
 		return arm, fmt.Errorf("snapshot %s native build cache: %w", name, err)
 	}
+	if err := resetStructuralArm(config, arm, config.baseRevision, true); err != nil {
+		return arm, fmt.Errorf("prepare %s daemon stabilization: %w", name, err)
+	}
+	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s arm at %s (daemon stabilization 2/%d)\n", name, config.baseRevision, structuralWarmupsPerArm)
+	stabilizationWarmup, err := runStructuralArm(config, arm, candidate, config.changesPath)
+	if err != nil {
+		return arm, fmt.Errorf("stabilize %s arm: %w", name, err)
+	}
+	arm.warmups = append(arm.warmups, structuralWarmupDiagnostic("DAEMON_STABILIZATION", stabilizationWarmup))
+	_, _ = fmt.Fprintf(progress, "buildopt: warmed isolated %s arm daemon stabilization in %dms with %s\n",
+		name, stabilizationWarmup.durationMS, formatStructuralTaskOutcomes(stabilizationWarmup.taskOutcomes))
 	return arm, nil
+}
+
+func structuralWarmupDiagnostic(phase string, result structuralArmResult) profilediscovery.StructuralWarmupObservation {
+	return profilediscovery.StructuralWarmupObservation{
+		Phase: phase, DurationMS: result.durationMS, LogSHA256: result.logSHA256,
+		TaskOutcomes: result.taskOutcomes,
+	}
 }
 
 func measureStructuralFallback(config structuralMeasurementConfig, arm structuralMeasurementArm, progress io.Writer) (structuralArmResult, string, error) {
@@ -489,7 +522,12 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 	if duration < 1 {
 		duration = 1
 	}
-	result := structuralArmResult{durationMS: duration, log: log.String(), startedAt: started, finishedAt: finished}
+	logText := log.String()
+	logSHA := sha256.Sum256([]byte(logText))
+	result := structuralArmResult{
+		durationMS: duration, log: logText, logSHA256: hex.EncodeToString(logSHA[:]),
+		taskOutcomes: summarizeStructuralTaskOutcomes(logText), startedAt: started, finishedAt: finished,
+	}
 	if ctx.Err() == context.DeadlineExceeded {
 		return result, fmt.Errorf("%s arm exceeded %s", arm.name, config.timeout)
 	}
@@ -497,6 +535,36 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 		return result, fmt.Errorf("%s arm failed: %w\n%s", arm.name, err, tailMeasurementLog(result.log, 80))
 	}
 	return result, nil
+}
+
+func summarizeStructuralTaskOutcomes(log string) profilediscovery.StructuralTaskOutcomes {
+	var outcomes profilediscovery.StructuralTaskOutcomes
+	scanner := bufio.NewScanner(strings.NewReader(log))
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if !strings.HasPrefix(line, "> Task ") {
+			continue
+		}
+		outcomes.Total++
+		switch {
+		case strings.HasSuffix(line, " FROM-CACHE"):
+			outcomes.FromCache++
+		case strings.HasSuffix(line, " UP-TO-DATE"):
+			outcomes.UpToDate++
+		case strings.HasSuffix(line, " NO-SOURCE"):
+			outcomes.NoSource++
+		case strings.HasSuffix(line, " SKIPPED"):
+			outcomes.Skipped++
+		default:
+			outcomes.Executed++
+		}
+	}
+	return outcomes
+}
+
+func formatStructuralTaskOutcomes(outcomes profilediscovery.StructuralTaskOutcomes) string {
+	return fmt.Sprintf("total:%d/executed:%d/from-cache:%d/up-to-date:%d/no-source:%d/skipped:%d",
+		outcomes.Total, outcomes.Executed, outcomes.FromCache, outcomes.UpToDate, outcomes.NoSource, outcomes.Skipped)
 }
 
 func measurementGradleCommand(repositoryRoot string, args []string) []string {

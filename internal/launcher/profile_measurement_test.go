@@ -94,6 +94,23 @@ func TestMeasurementEnvironmentRemovesExternalBuildOptState(t *testing.T) {
 	}
 }
 
+func TestSummarizeStructuralTaskOutcomes(t *testing.T) {
+	log := strings.Join([]string{
+		"configuration output",
+		"> Task :compileJava",
+		"> Task :resources FROM-CACHE",
+		"> Task :classes UP-TO-DATE",
+		"> Task :empty NO-SOURCE",
+		"> Task :disabled SKIPPED",
+		"> Task :other",
+	}, "\n")
+	outcomes := summarizeStructuralTaskOutcomes(log)
+	if outcomes.Total != 6 || outcomes.Executed != 2 || outcomes.FromCache != 1 ||
+		outcomes.UpToDate != 1 || outcomes.NoSource != 1 || outcomes.Skipped != 1 {
+		t.Fatalf("task outcomes = %+v", outcomes)
+	}
+}
+
 func TestStructuralFallbackGradleOptionsPreserveMeasuredSchedulingWithoutMutatingOptions(t *testing.T) {
 	measured := []string{"--daemon", "--build-cache", "--parallel", "--no-configuration-cache", "--console=plain", "--no-scan", "--max-workers=12"}
 	fallback := structuralFallbackGradleOptions(measured)

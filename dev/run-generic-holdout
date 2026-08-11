@@ -9,7 +9,7 @@ fi
 buildopt_output=$1
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
-buildopt_spec="${buildopt_repo_root}/specs/poc-generic-holdout-v2.json"
+buildopt_spec="${buildopt_repo_root}/specs/poc-generic-holdout-v3.json"
 buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-generic-holdout.XXXXXX")
 
 buildopt_cleanup() {

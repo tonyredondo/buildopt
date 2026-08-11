@@ -92,24 +92,31 @@ type structuralSourceBindings struct {
 }
 
 type structuralExecution struct {
-	CandidateSurface         string   `json:"candidateSurface"`
-	BuildOptRevision         string   `json:"buildoptRevision"`
-	ExecutableSHA256         string   `json:"executableSha256,omitempty"`
-	Mechanisms               []string `json:"mechanisms"`
-	GradleOptions            []string `json:"gradleOptions"`
-	LauncherOverheadIncluded bool     `json:"launcherOverheadIncluded"`
+	CandidateSurface         string                        `json:"candidateSurface"`
+	BuildOptRevision         string                        `json:"buildoptRevision"`
+	ExecutableSHA256         string                        `json:"executableSha256,omitempty"`
+	Mechanisms               []string                      `json:"mechanisms"`
+	GradleOptions            []string                      `json:"gradleOptions"`
+	LauncherOverheadIncluded bool                          `json:"launcherOverheadIncluded"`
+	WarmupsPerArm            int                           `json:"warmupsPerArm,omitempty"`
+	ControlWarmups           []StructuralWarmupObservation `json:"controlWarmups,omitempty"`
+	CandidateWarmups         []StructuralWarmupObservation `json:"candidateWarmups,omitempty"`
 }
 
 type structuralObservation struct {
-	Pair                          int    `json:"pair"`
-	Order                         string `json:"order"`
-	ControlDurationMS             int64  `json:"controlDurationMs"`
-	CandidateDurationMS           int64  `json:"candidateDurationMs"`
-	SavedMS                       int64  `json:"savedMs"`
-	ControlRequiredOutputSHA256   string `json:"controlRequiredOutputSha256"`
-	CandidateRequiredOutputSHA256 string `json:"candidateRequiredOutputSha256"`
-	RequiredOutputCount           int    `json:"requiredOutputCount"`
-	ProductAttributableFailure    bool   `json:"productAttributableFailure"`
+	Pair                          int                    `json:"pair"`
+	Order                         string                 `json:"order"`
+	ControlDurationMS             int64                  `json:"controlDurationMs"`
+	CandidateDurationMS           int64                  `json:"candidateDurationMs"`
+	SavedMS                       int64                  `json:"savedMs"`
+	ControlRequiredOutputSHA256   string                 `json:"controlRequiredOutputSha256"`
+	CandidateRequiredOutputSHA256 string                 `json:"candidateRequiredOutputSha256"`
+	RequiredOutputCount           int                    `json:"requiredOutputCount"`
+	ProductAttributableFailure    bool                   `json:"productAttributableFailure"`
+	ControlLogSHA256              string                 `json:"controlLogSha256,omitempty"`
+	CandidateLogSHA256            string                 `json:"candidateLogSha256,omitempty"`
+	ControlTaskOutcomes           StructuralTaskOutcomes `json:"controlTaskOutcomes,omitempty"`
+	CandidateTaskOutcomes         StructuralTaskOutcomes `json:"candidateTaskOutcomes,omitempty"`
 }
 
 type structuralFallback struct {
@@ -147,6 +154,31 @@ type StructuralMeasurementObservation struct {
 	RequiredOutputSHA256       string
 	RequiredOutputCount        int
 	ProductAttributableFailure bool
+	ControlLogSHA256           string
+	CandidateLogSHA256         string
+	ControlTaskOutcomes        StructuralTaskOutcomes
+	CandidateTaskOutcomes      StructuralTaskOutcomes
+}
+
+// StructuralTaskOutcomes is a bounded execution-shape summary parsed from
+// Gradle's plain console output. It helps diagnose timing outliers without
+// retaining repository build logs or changing the measured Gradle invocation.
+type StructuralTaskOutcomes struct {
+	Total     int `json:"total"`
+	Executed  int `json:"executed"`
+	FromCache int `json:"fromCache"`
+	UpToDate  int `json:"upToDate"`
+	NoSource  int `json:"noSource"`
+	Skipped   int `json:"skipped"`
+}
+
+// StructuralWarmupObservation records excluded cache-seeding and daemon-
+// stabilization invocations. Warm-ups never contribute to qualification.
+type StructuralWarmupObservation struct {
+	Phase        string                 `json:"phase"`
+	DurationMS   int64                  `json:"durationMs"`
+	LogSHA256    string                 `json:"logSha256"`
+	TaskOutcomes StructuralTaskOutcomes `json:"taskOutcomes"`
 }
 
 // StructuralMeasurementOptions carries the independently observed values used
@@ -160,6 +192,8 @@ type StructuralMeasurementOptions struct {
 	ExecutableSHA256     string
 	SourceEvidenceSHA256 string
 	GradleOptions        []string
+	ControlWarmups       []StructuralWarmupObservation
+	CandidateWarmups     []StructuralWarmupObservation
 	Observations         []StructuralMeasurementObservation
 	FallbackReason       string
 	FallbackSuccessful   bool
@@ -205,7 +239,14 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 			CandidateRequiredOutputSHA256: observation.RequiredOutputSHA256,
 			RequiredOutputCount:           observation.RequiredOutputCount,
 			ProductAttributableFailure:    observation.ProductAttributableFailure,
+			ControlLogSHA256:              observation.ControlLogSHA256,
+			CandidateLogSHA256:            observation.CandidateLogSHA256,
+			ControlTaskOutcomes:           observation.ControlTaskOutcomes,
+			CandidateTaskOutcomes:         observation.CandidateTaskOutcomes,
 		}
+	}
+	if err := validateStructuralDiagnostics(options.ControlWarmups, options.CandidateWarmups, observations); err != nil {
+		return nil, false, err
 	}
 	result, err := calculateStructuralResult(observations)
 	if err != nil {
@@ -238,6 +279,9 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 			Mechanisms:               []string{"BUILD_IMPACT"},
 			GradleOptions:            append([]string(nil), options.GradleOptions...),
 			LauncherOverheadIncluded: true,
+			WarmupsPerArm:            len(options.ControlWarmups),
+			ControlWarmups:           append([]StructuralWarmupObservation(nil), options.ControlWarmups...),
+			CandidateWarmups:         append([]StructuralWarmupObservation(nil), options.CandidateWarmups...),
 		},
 		Observations: observations,
 		Fallback: structuralFallback{
@@ -370,6 +414,13 @@ func validateStructuralEvidence(evidence structuralEvidence, analysis AnalysisRe
 		!validStructuralGradleOptions(evidence.Execution.GradleOptions) {
 		return errors.New("structural qualification execution surface is invalid")
 	}
+	if evidence.Execution.WarmupsPerArm != len(evidence.Execution.ControlWarmups) ||
+		evidence.Execution.WarmupsPerArm != len(evidence.Execution.CandidateWarmups) {
+		return errors.New("structural qualification warm-up evidence is invalid")
+	}
+	if err := validateStructuralDiagnostics(evidence.Execution.ControlWarmups, evidence.Execution.CandidateWarmups, evidence.Observations); err != nil {
+		return err
+	}
 	calculated, err := calculateStructuralResult(evidence.Observations)
 	if err != nil {
 		return err
@@ -396,6 +447,47 @@ func validateStructuralEvidence(evidence structuralEvidence, analysis AnalysisRe
 		}
 	}
 	return nil
+}
+
+func validateStructuralDiagnostics(control, candidate []StructuralWarmupObservation, observations []structuralObservation) error {
+	if len(control) == 0 && len(candidate) == 0 {
+		for _, observation := range observations {
+			if observation.ControlLogSHA256 != "" || observation.CandidateLogSHA256 != "" ||
+				observation.ControlTaskOutcomes.Total != 0 || observation.CandidateTaskOutcomes.Total != 0 {
+				return errors.New("structural measurement diagnostics are incomplete")
+			}
+		}
+		return nil
+	}
+	if len(control) != 2 || len(candidate) != 2 {
+		return errors.New("structural measurement requires cache-seed and daemon-stabilization warm-ups")
+	}
+	for _, warmups := range [][]StructuralWarmupObservation{control, candidate} {
+		for index, warmup := range warmups {
+			expectedPhase := "CACHE_SEED"
+			if index == 1 {
+				expectedPhase = "DAEMON_STABILIZATION"
+			}
+			if warmup.Phase != expectedPhase || warmup.DurationMS <= 0 ||
+				!validSHA(warmup.LogSHA256) || !validStructuralTaskOutcomes(warmup.TaskOutcomes) {
+				return errors.New("structural measurement warm-up diagnostic is invalid")
+			}
+		}
+	}
+	for _, observation := range observations {
+		if !validSHA(observation.ControlLogSHA256) || !validSHA(observation.CandidateLogSHA256) ||
+			!validStructuralTaskOutcomes(observation.ControlTaskOutcomes) ||
+			!validStructuralTaskOutcomes(observation.CandidateTaskOutcomes) {
+			return errors.New("structural measurement pair diagnostic is invalid")
+		}
+	}
+	return nil
+}
+
+func validStructuralTaskOutcomes(outcomes StructuralTaskOutcomes) bool {
+	return outcomes.Total >= 0 && outcomes.Executed >= 0 && outcomes.FromCache >= 0 &&
+		outcomes.UpToDate >= 0 && outcomes.NoSource >= 0 && outcomes.Skipped >= 0 &&
+		outcomes.Total == outcomes.Executed+outcomes.FromCache+outcomes.UpToDate+outcomes.NoSource+outcomes.Skipped
 }
 
 func calculateStructuralResult(observations []structuralObservation) (structuralResult, error) {

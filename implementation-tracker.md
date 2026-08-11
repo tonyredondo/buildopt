@@ -120,6 +120,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-GENERIC-PROFILE-CI | Publish the generic proposal as an explicit review artifact from repository-owned CI inputs | `DONE` | 1/1 | `E-304..306` |
 | POC-GENERIC-PROFILE-CI-REPLAY | Reproduce the five terminal structural proposals from checked-in owner inputs on clean CI without altering their separate value decisions | `DONE` | 1/1 | `E-307..308` |
 | POC-GENERIC-HOLDOUT | Apply the unchanged generic structural path to one unseen substantial public Gradle repository | `DONE` | 1/1 | `E-309..312` |
+| POC-GENERIC-HOLDOUT-DIAGNOSTIC | Attribute the Hibernate 7/8 outlier before accepting or rejecting the candidate | `IN_PROGRESS` | 0/1 | v3 preregistration pending |
 | POC-GENERIC-OUTPUT-CONTRACT | Discover or validate repository-owned Gradle outputs before structural measurement | `TODO` | 0/1 | Holdout learning `E-310` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
@@ -275,6 +276,7 @@ than partners. Test Optimization remains a separate product.
 | 84 | `POC-GENERIC-PROFILE-CI-REPLAY-001` | Run the committed review-only Action from checked-in owner inputs for Spring, OpenTelemetry, Kafka, Micronaut and Groovy, requiring the terminal structural proposals or explicit drift while preserving their separate value decisions | `DONE` | Codex |
 | 85 | `POC-GENERIC-HOLDOUT-001` | Select one unseen substantial public Gradle repository, freeze its exact revision, workflow, change, outputs, optimized-native control and unchanged value gates, then run the generic propose -> measure -> evaluate path without repository-specific product logic | `DONE` | Codex |
 | 86 | `POC-GENERIC-OUTPUT-CONTRACT-001` | Derive or validate the real Gradle output directories for an owner-declared workflow before warm-up or timing, emitting a review artifact and retaining native on missing, empty or ambiguous ownership | `TODO` | Codex |
+| 87 | `POC-GENERIC-HOLDOUT-002` | Preserve the Hibernate v2 7/8 result, diagnose its first-pair outlier with a separately preregistered cache-seed plus daemon-stabilization protocol, rerun all eight pairs from zero, and retain the unchanged 8/8 gate | `IN_PROGRESS` | Codex |
 
 #### Completed POC block: five-repository generic profile matrix
 
