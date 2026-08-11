@@ -3453,7 +3453,11 @@ runner records the proposal even when it retains native Gradle and measures
 only a complete structural candidate. `./dev/check-generic-holdout
 [evidence-directory]` validates the exact source, workflow, change, outputs,
 control, proposal, eight-pair evidence, evaluation and fallback without
-network access; use `--spec-only` before evidence capture.
+network access; use `--spec-only` before evidence capture. The retained v1
+attempt demonstrates fail-closed handling of an invalid owner-declared output.
+The default runner and checker use the separately preregistered v2 correction,
+which points to Hibernate's repository-defined `target/libs` directory and
+changes no measured condition or value gate.
 
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 

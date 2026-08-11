@@ -470,6 +470,13 @@ core-library outputs, optimized native Gradle with 12 workers, and the same
 eight-pair value and correctness gates as the terminal five-repository matrix.
 The contract intentionally records no expected candidate or favorable result.
 
+`poc-generic-holdout-v2.json` and `poc-generic-holdout-v2.md` retain the v1
+zero-pair failure and correct only its invalid repository-owned output path.
+Hibernate's frozen build plugin sets module build directories to `target`, so
+v2 replaces `hibernate-core/build/libs/**` with
+`hibernate-core/target/libs/**` before a fresh proposal or timing run. No v1
+warm-up, proposal or observation is reused.
+
 `poc-trace-hypothesis-v1.json` and `poc-trace-hypothesis-v1.md` bind the final
 trace-gated optimization decision. They require at least 500 ms of causally
 recoverable product-owned critical-path work in two families, reject overlapping

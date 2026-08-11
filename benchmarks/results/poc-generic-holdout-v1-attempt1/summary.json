@@ -1,0 +1,86 @@
+{
+  "boundaries": {
+    "automaticActivation": false,
+    "designPartnerRequired": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "soakRequired": false,
+    "testOptimizationModified": false
+  },
+  "buildopt": {
+    "executableSha256": "0ea7dbf83f548b09bf5c9f53d9121290d30a0a4b0fbbdbb002d7b018e954f9d3",
+    "packageVersion": "0.3.0-dev",
+    "revision": "f8dac70fa71900215516bdd4f4f1f3cd42573b41"
+  },
+  "capturedAt": "2026-08-11T11:16:40Z",
+  "evaluationDecision": "NATIVE_FULL_GRAPH",
+  "measurementStatus": "MEASUREMENT_UNAVAILABLE",
+  "method": {
+    "bothArmsPreparedBeforeMeasuredPair": true,
+    "candidateMechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "control": "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW",
+    "fullGraphFallbackRequired": true,
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "independentGradleHomes": true,
+    "independentNativeCacheSeeds": true,
+    "isolatedArms": true,
+    "onlinePreparationMeasured": false,
+    "postResultTuningAllowed": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "requiredOutputsComparedByteForByte": true,
+    "surface": "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE"
+  },
+  "proposal": {
+    "candidateEntrypoints": [
+      ":hibernate-core:assemble"
+    ],
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "omittedProjectCount": 28,
+    "originalEntrypoints": [
+      "assemble"
+    ],
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "selectedProjectCount": 1,
+    "totalProjectCount": 29
+  },
+  "qualification": {
+    "failedOrTimedOutObservationsMayBeDiscarded": false,
+    "maximumProductAttributableFailures": 0,
+    "minimumMeanSavedMs": 500,
+    "minimumPositivePairs": 8,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "requiredOutputsIdentical": true
+  },
+  "result": null,
+  "schemaVersion": "buildopt.evidence/poc-generic-holdout/v1",
+  "subject": {
+    "changePath": "hibernate-core/src/main/java/org/hibernate/Session.java",
+    "entrypoints": [
+      "assemble"
+    ],
+    "jdkToolchain": "temurin-jdk-25",
+    "key": "hibernate-orm",
+    "mutation": "APPEND_FIXED_COMMENT",
+    "observedPublicRevision": "2b448a59d332326f0cd0691c868425124d55cbb5",
+    "pipelineClass": "assemble",
+    "publicRevision": "2b448a59d332326f0cd0691c868425124d55cbb5",
+    "remoteUrl": "https://github.com/hibernate/hibernate-orm.git",
+    "repositoryId": "hibernate/hibernate-orm",
+    "requiredOutputs": [
+      "hibernate-core/build/libs/**"
+    ],
+    "targetRevision": "2a93cdaeea605bbc0025a1d9a095d0edf885d7f5"
+  },
+  "workItem": "POC-GENERIC-HOLDOUT-001"
+}

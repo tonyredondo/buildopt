@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.build-impact/generated-manifest/v1",
+  "repositoryId": "hibernate/hibernate-orm",
+  "pipelineClass": "assemble",
+  "manifestDigest": "sha256:d5e0fb3fd9d9b05e5175732b5549400be36a3f6788bb9c6c9c8c1417784770a0",
+  "graphDigest": "sha256:27091506d4c3f0de4fdd0dc471a71f673fd1707972d891929b731423c2c5c3f3",
+  "discoveryDigest": "sha256:d71b8cf777f6f33ecc4f135a0079c37eebc5716b158e4c6497d2eb80431fc6ca",
+  "adapterVersion": "gradle-runtime-v1",
+  "gradleVersion": "9.6.1",
+  "complete": true,
+  "fallbackReasons": []
+}

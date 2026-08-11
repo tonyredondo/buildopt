@@ -1,0 +1,1 @@
+hibernate-core/src/main/java/org/hibernate/Session.java

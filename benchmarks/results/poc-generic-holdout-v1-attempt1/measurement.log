@@ -1,0 +1,3 @@
+buildopt: warming isolated control arm at 2b448a59d332326f0cd0691c868425124d55cbb5
+buildopt: warming isolated candidate arm at 2b448a59d332326f0cd0691c868425124d55cbb5
+buildopt: structural profile measurement unavailable: pair 1 verify control outputs: measurement produced no required outputs

@@ -1,0 +1,478 @@
+{
+  "schemaVersion": "buildopt.build-impact/declared-graph/v1",
+  "repositoryId": "hibernate/hibernate-orm",
+  "pipelineClass": "assemble",
+  "manifestDigest": "sha256:d5e0fb3fd9d9b05e5175732b5549400be36a3f6788bb9c6c9c8c1417784770a0",
+  "adapterVersion": "gradle-runtime-v1",
+  "complete": true,
+  "projects": [
+    {
+      "path": ":documentation",
+      "sourcePaths": [
+        "documentation/**"
+      ],
+      "dependsOn": [
+        ":hibernate-agroal",
+        ":hibernate-ant",
+        ":hibernate-c3p0",
+        ":hibernate-community-dialects",
+        ":hibernate-core",
+        ":hibernate-envers",
+        ":hibernate-graalvm",
+        ":hibernate-hikaricp",
+        ":hibernate-jcache",
+        ":hibernate-maven-plugin",
+        ":hibernate-micrometer",
+        ":hibernate-processor",
+        ":hibernate-spatial",
+        ":hibernate-testing"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-agroal",
+      "sourcePaths": [
+        "hibernate-agroal/**"
+      ],
+      "dependsOn": [
+        ":hibernate-core",
+        ":hibernate-platform",
+        ":hibernate-testing"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-ant",
+      "sourcePaths": [
+        "hibernate-community-dialects/**",
+        "hibernate-core/**",
+        "hibernate-graalvm/**",
+        "hibernate-scan-jandex/**",
+        "hibernate-testing/**",
+        "tooling/hibernate-ant/**",
+        "tooling/hibernate-reveng/**",
+        "tooling/metamodel-generator/**"
+      ],
+      "ownedSourcePaths": [
+        "tooling/hibernate-ant/**"
+      ],
+      "dependsOn": [
+        ":hibernate-platform"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-assistant",
+      "sourcePaths": [
+        "tooling/hibernate-assistant/**"
+      ],
+      "dependsOn": [
+        ":hibernate-core",
+        ":hibernate-platform",
+        ":hibernate-testing"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-c3p0",
+      "sourcePaths": [
+        "hibernate-c3p0/**"
+      ],
+      "dependsOn": [
+        ":hibernate-core",
+        ":hibernate-platform",
+        ":hibernate-testing"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-community-dialects",
+      "sourcePaths": [
+        "hibernate-community-dialects/**",
+        "hibernate-core/**",
+        "hibernate-graalvm/**",
+        "hibernate-scan-jandex/**",
+        "hibernate-testing/**",
+        "tooling/hibernate-ant/**",
+        "tooling/hibernate-reveng/**",
+        "tooling/metamodel-generator/**"
+      ],
+      "ownedSourcePaths": [
+        "hibernate-community-dialects/**"
+      ],
+      "dependsOn": [
+        ":hibernate-platform"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-core",
+      "sourcePaths": [
+        "hibernate-community-dialects/**",
+        "hibernate-core/**",
+        "hibernate-graalvm/**",
+        "hibernate-scan-jandex/**",
+        "hibernate-testing/**",
+        "tooling/hibernate-ant/**",
+        "tooling/hibernate-reveng/**",
+        "tooling/metamodel-generator/**"
+      ],
+      "ownedSourcePaths": [
+        "hibernate-core/**"
+      ],
+      "dependsOn": [
+        ":hibernate-platform"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-envers",
+      "sourcePaths": [
+        "hibernate-envers/**"
+      ],
+      "dependsOn": [
+        ":hibernate-core",
+        ":hibernate-platform",
+        ":hibernate-processor",
+        ":hibernate-testing"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-graalvm",
+      "sourcePaths": [
+        "hibernate-community-dialects/**",
+        "hibernate-core/**",
+        "hibernate-graalvm/**",
+        "hibernate-scan-jandex/**",
+        "hibernate-testing/**",
+        "tooling/hibernate-ant/**",
+        "tooling/hibernate-reveng/**",
+        "tooling/metamodel-generator/**"
+      ],
+      "ownedSourcePaths": [
+        "hibernate-graalvm/**"
+      ],
+      "dependsOn": [
+        ":hibernate-platform"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-gradle-plugin",
+      "sourcePaths": [
+        "tooling/hibernate-gradle-plugin/**"
+      ],
+      "dependsOn": [
+        ":hibernate-core",
+        ":hibernate-platform",
+        ":hibernate-reveng"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-hikaricp",
+      "sourcePaths": [
+        "hibernate-hikaricp/**"
+      ],
+      "dependsOn": [
+        ":hibernate-core",
+        ":hibernate-platform",
+        ":hibernate-testing"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-integrationtest-java-modules",
+      "sourcePaths": [
+        "hibernate-integrationtest-java-modules/**"
+      ],
+      "dependsOn": [
+        ":hibernate-core",
+        ":hibernate-envers",
+        ":hibernate-scan-jandex"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-jcache",
+      "sourcePaths": [
+        "hibernate-jcache/**"
+      ],
+      "dependsOn": [
+        ":hibernate-core",
+        ":hibernate-platform",
+        ":hibernate-testing"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-jfr",
+      "sourcePaths": [
+        "hibernate-jfr/**"
+      ],
+      "dependsOn": [
+        ":hibernate-core",
+        ":hibernate-platform",
+        ":hibernate-testing"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-maven-plugin",
+      "sourcePaths": [
+        "tooling/hibernate-maven-plugin/**"
+      ],
+      "dependsOn": [
+        ":hibernate-core",
+        ":hibernate-platform",
+        ":hibernate-reveng"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-micrometer",
+      "sourcePaths": [
+        "hibernate-micrometer/**"
+      ],
+      "dependsOn": [
+        ":hibernate-core",
+        ":hibernate-platform",
+        ":hibernate-processor",
+        ":hibernate-testing"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-platform",
+      "sourcePaths": [
+        "hibernate-platform/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-processor",
+      "sourcePaths": [
+        "hibernate-community-dialects/**",
+        "hibernate-core/**",
+        "hibernate-graalvm/**",
+        "hibernate-scan-jandex/**",
+        "hibernate-testing/**",
+        "tooling/hibernate-ant/**",
+        "tooling/hibernate-reveng/**",
+        "tooling/metamodel-generator/**"
+      ],
+      "ownedSourcePaths": [
+        "tooling/metamodel-generator/**"
+      ],
+      "dependsOn": [
+        ":hibernate-platform"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-reveng",
+      "sourcePaths": [
+        "hibernate-community-dialects/**",
+        "hibernate-core/**",
+        "hibernate-graalvm/**",
+        "hibernate-scan-jandex/**",
+        "hibernate-testing/**",
+        "tooling/hibernate-ant/**",
+        "tooling/hibernate-reveng/**",
+        "tooling/metamodel-generator/**"
+      ],
+      "ownedSourcePaths": [
+        "tooling/hibernate-reveng/**"
+      ],
+      "dependsOn": [
+        ":hibernate-platform"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-scan-jandex",
+      "sourcePaths": [
+        "hibernate-community-dialects/**",
+        "hibernate-core/**",
+        "hibernate-graalvm/**",
+        "hibernate-scan-jandex/**",
+        "hibernate-testing/**",
+        "tooling/hibernate-ant/**",
+        "tooling/hibernate-reveng/**",
+        "tooling/metamodel-generator/**"
+      ],
+      "ownedSourcePaths": [
+        "hibernate-scan-jandex/**"
+      ],
+      "dependsOn": [
+        ":hibernate-platform"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-spatial",
+      "sourcePaths": [
+        "hibernate-spatial/**"
+      ],
+      "dependsOn": [
+        ":hibernate-ant",
+        ":hibernate-core",
+        ":hibernate-platform",
+        ":hibernate-testing"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-tck-data-runner",
+      "sourcePaths": [
+        "hibernate-tck-data-runner/**"
+      ],
+      "dependsOn": [
+        ":hibernate-core",
+        ":hibernate-processor",
+        ":hibernate-testing"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-tck-runner",
+      "sourcePaths": [
+        "hibernate-tck-runner/**"
+      ],
+      "dependsOn": [
+        ":hibernate-core",
+        ":hibernate-testing"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-testing",
+      "sourcePaths": [
+        "hibernate-community-dialects/**",
+        "hibernate-core/**",
+        "hibernate-graalvm/**",
+        "hibernate-scan-jandex/**",
+        "hibernate-testing/**",
+        "tooling/hibernate-ant/**",
+        "tooling/hibernate-reveng/**",
+        "tooling/metamodel-generator/**"
+      ],
+      "ownedSourcePaths": [
+        "hibernate-testing/**"
+      ],
+      "dependsOn": [
+        ":hibernate-platform"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-ucp",
+      "sourcePaths": [
+        "hibernate-ucp/**"
+      ],
+      "dependsOn": [
+        ":hibernate-core",
+        ":hibernate-platform",
+        ":hibernate-testing"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":hibernate-vector",
+      "sourcePaths": [
+        "hibernate-vector/**"
+      ],
+      "dependsOn": [
+        ":hibernate-core",
+        ":hibernate-platform",
+        ":hibernate-testing"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":local-build-asciidoctor-extensions",
+      "sourcePaths": [
+        "local-build-asciidoctor-extensions/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":release",
+      "sourcePaths": [
+        "release/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":reporting",
+      "sourcePaths": [
+        "reporting/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    }
+  ],
+  "entrypoints": [
+    {
+      "name": ":hibernate-core:assemble",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [
+        ":hibernate-core"
+      ],
+      "artifactIds": [
+        "required-output-1"
+      ],
+      "checkIds": [],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    },
+    {
+      "name": "assemble",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [
+        ":documentation",
+        ":hibernate-agroal",
+        ":hibernate-ant",
+        ":hibernate-assistant",
+        ":hibernate-c3p0",
+        ":hibernate-community-dialects",
+        ":hibernate-core",
+        ":hibernate-envers",
+        ":hibernate-graalvm",
+        ":hibernate-gradle-plugin",
+        ":hibernate-hikaricp",
+        ":hibernate-integrationtest-java-modules",
+        ":hibernate-jcache",
+        ":hibernate-jfr",
+        ":hibernate-maven-plugin",
+        ":hibernate-micrometer",
+        ":hibernate-platform",
+        ":hibernate-processor",
+        ":hibernate-reveng",
+        ":hibernate-scan-jandex",
+        ":hibernate-spatial",
+        ":hibernate-tck-data-runner",
+        ":hibernate-tck-runner",
+        ":hibernate-testing",
+        ":hibernate-ucp",
+        ":hibernate-vector",
+        ":local-build-asciidoctor-extensions",
+        ":release",
+        ":reporting"
+      ],
+      "artifactIds": [
+        "required-output-1"
+      ],
+      "checkIds": [],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    }
+  ],
+  "globalChangePaths": [
+    "local-build-plugins/**"
+  ]
+}

@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if (($# > 1)); then
-    printf 'usage: %s [evidence-directory|--spec-only]\n' "$0" >&2
+if (($# > 2)); then
+    printf 'usage: %s [evidence-directory|--spec-only] [specification]\n' "$0" >&2
     exit 64
 fi
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
-buildopt_spec="${buildopt_repo_root}/specs/poc-generic-holdout-v1.json"
-buildopt_evidence=${1:-"${buildopt_repo_root}/benchmarks/results/poc-generic-holdout-v1"}
+buildopt_v1_spec="${buildopt_repo_root}/specs/poc-generic-holdout-v1.json"
+buildopt_spec=${2:-"${buildopt_repo_root}/specs/poc-generic-holdout-v2.json"}
+if [[ ${buildopt_spec} != /* ]]; then
+    buildopt_spec="${buildopt_repo_root}/${buildopt_spec}"
+fi
+buildopt_evidence=${1:-"${buildopt_repo_root}/benchmarks/results/poc-generic-holdout-v2"}
 
 for buildopt_command in git jq; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
@@ -18,10 +22,12 @@ for buildopt_command in git jq; do
         exit 1
     }
 done
-[[ -f ${buildopt_spec} ]] || {
-    printf 'holdout specification is unavailable\n' >&2
-    exit 1
-}
+for buildopt_file in "${buildopt_v1_spec}" "${buildopt_spec}"; do
+    [[ -f ${buildopt_file} ]] || {
+        printf 'holdout specification is unavailable: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done
 
 jq -e '
     .schemaVersion == "buildopt.specs/poc-generic-holdout/v1" and
@@ -68,7 +74,44 @@ jq -e '
     .boundaries.testOptimizationModified == false and
     .boundaries.soakRequired == false and
     .boundaries.designPartnerRequired == false
-' "${buildopt_spec}" >/dev/null
+' "${buildopt_v1_spec}" >/dev/null
+
+if [[ ${buildopt_spec} != "${buildopt_v1_spec}" ]]; then
+    jq -e '
+        .schemaVersion == "buildopt.specs/poc-generic-holdout/v2" and
+        .evidenceSchemaVersion == "buildopt.evidence/poc-generic-holdout/v2" and
+        .workItem == "POC-GENERIC-HOLDOUT-001" and
+        .decision == "RERUN_FROZEN_HOLDOUT_WITH_CORRECTED_REPOSITORY_OUTPUT_DIRECTORY" and
+        .preregisteredFromRevision == "f8dac70fa71900215516bdd4f4f1f3cd42573b41" and
+        .supersedes == "buildopt.specs/poc-generic-holdout/v1" and
+        .subject.repositoryId == "hibernate/hibernate-orm" and
+        .subject.publicRevision == "2b448a59d332326f0cd0691c868425124d55cbb5" and
+        .subject.entrypoints == ["assemble"] and
+        .subject.changePath == "hibernate-core/src/main/java/org/hibernate/Session.java" and
+        .subject.requiredOutputs == ["hibernate-core/target/libs/**"] and
+        .runner.cpuCount == 12 and
+        .runner.pairs == 8 and
+        .method.candidateMechanisms == ["BUILD_IMPACT"] and
+        .method.control == "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW" and
+        .method.repositorySpecificProductRulesAllowed == false and
+        .method.postResultTuningAllowed == false and
+        .qualification.minimumMeanSavedMs == 500 and
+        .qualification.minimumReductionRatio == 0.02 and
+        .qualification.minimumPositivePairs == 8 and
+        .qualification.failedOrTimedOutObservationsMayBeDiscarded == false and
+        .amendment.reason == "HIBERNATE_MODULE_ASPECT_SETS_BUILD_DIRECTORY_TO_TARGET" and
+        .amendment.sourceLine == 31 and
+        .amendment.acceptedPairsFromV1 == 0 and
+        .amendment.warmupsReused == false and
+        .amendment.proposalReused == false and
+        .amendment.timedConditionsChanged == false and
+        .amendment.qualificationChanged == false and
+        .boundaries.proofOfConcept == true and
+        .boundaries.productionAuthorized == false and
+        .boundaries.automaticActivation == false and
+        .boundaries.testOptimizationModified == false
+    ' "${buildopt_spec}" >/dev/null
+fi
 
 buildopt_preregistered_from=$(jq -er '.preregisteredFromRevision' "${buildopt_spec}")
 git -C "${buildopt_repo_root}" cat-file -e \
