@@ -1,0 +1,174 @@
+{
+  "schemaVersion": "buildopt.poc/profile-proposal/v1",
+  "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+  "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+  "repositoryId": "hibernate/hibernate-orm",
+  "pipelineClass": "assemble",
+  "baseRevision": "2b448a59d332326f0cd0691c868425124d55cbb5",
+  "targetRevision": "2a93cdaeea605bbc0025a1d9a095d0edf885d7f5",
+  "originalEntrypoint": "assemble",
+  "originalEntrypoints": [
+    "assemble"
+  ],
+  "changedPaths": [
+    "hibernate-core/src/main/java/org/hibernate/Session.java"
+  ],
+  "requiredOutputs": [
+    "hibernate-core/target/libs/**"
+  ],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "candidateEntrypoints": [
+    ":hibernate-core:assemble"
+  ],
+  "omittedProjects": [
+    ":documentation",
+    ":hibernate-agroal",
+    ":hibernate-ant",
+    ":hibernate-assistant",
+    ":hibernate-c3p0",
+    ":hibernate-community-dialects",
+    ":hibernate-envers",
+    ":hibernate-graalvm",
+    ":hibernate-gradle-plugin",
+    ":hibernate-hikaricp",
+    ":hibernate-integrationtest-java-modules",
+    ":hibernate-jcache",
+    ":hibernate-jfr",
+    ":hibernate-maven-plugin",
+    ":hibernate-micrometer",
+    ":hibernate-platform",
+    ":hibernate-processor",
+    ":hibernate-reveng",
+    ":hibernate-scan-jandex",
+    ":hibernate-spatial",
+    ":hibernate-tck-data-runner",
+    ":hibernate-tck-runner",
+    ":hibernate-testing",
+    ":hibernate-ucp",
+    ":hibernate-vector",
+    ":local-build-asciidoctor-extensions",
+    ":release",
+    ":reporting"
+  ],
+  "unknownRelationships": false,
+  "analysis": {
+    "schemaVersion": "buildopt.poc/opportunity-analysis/v1",
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "subject": {
+      "repositoryId": "hibernate/hibernate-orm",
+      "pipelineClass": "assemble",
+      "gradleVersion": "9.6.1"
+    },
+    "inputs": null,
+    "sourceBindings": {
+      "manifestDigest": "sha256:c914f363348044d2f83d9b5ede0a7f4d3522abedbc4c6b24ecedd74d12160a5c",
+      "graphDigest": "sha256:2968053fa7544fc7c779bbd0c22e90c93c6b1c08384f150dd4a1866736bded78",
+      "discoveryDigest": "sha256:d71b8cf777f6f33ecc4f135a0079c37eebc5716b158e4c6497d2eb80431fc6ca"
+    },
+    "plan": {
+      "alternativeId": "changed-projects",
+      "entrypoints": [
+        ":hibernate-core:assemble"
+      ],
+      "fallbackEntrypoints": [
+        "assemble"
+      ],
+      "requiredOutputs": [
+        "hibernate-core/target/libs/**"
+      ],
+      "totalProjectCount": 29,
+      "selectedProjectCount": 1,
+      "omittedProjectCount": 28,
+      "omittedProjectRatio": 0.9655172413793104
+    },
+    "mechanisms": [
+      {
+        "name": "BUILD_IMPACT",
+        "status": "MEASURE_CANDIDATE",
+        "reason": "complete graph exposes a smaller reviewed alternative; direct timing is still required"
+      },
+      {
+        "name": "SHARED_EDGE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent locality and failure-fallback evidence for this workload"
+      },
+      {
+        "name": "HOT_STATE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "RUNTIME_TUNING",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "SAFE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "STANDARD_COPY",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "STANDARD_JAR",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "TEST_OPTIMIZATION",
+        "status": "NOT_AUTHORIZED",
+        "reason": "outside BuildOpt scope"
+      }
+    ],
+    "measurementRequired": true,
+    "reviewRequired": true,
+    "activationAutomatic": false,
+    "productionAuthorized": false
+  },
+  "documents": {
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json",
+    "fallbackChanges": "buildopt-fallback-changes.txt",
+    "proposal": "buildopt-profile-proposal.json"
+  },
+  "measureCommand": [
+    "buildopt",
+    "profile",
+    "measure",
+    "--manifest",
+    "buildopt-impact-manifest.json",
+    "--graph",
+    "buildopt-impact-graph.generated.json",
+    "--generated-manifest",
+    "buildopt-impact.generated.json",
+    "--changes-file",
+    "buildopt-changes.txt",
+    "--fallback-changes-file",
+    "buildopt-fallback-changes.txt",
+    "--base-revision",
+    "2b448a59d332326f0cd0691c868425124d55cbb5",
+    "--buildopt-revision",
+    "dba128a109b90e58eebbd635baf2ac3b976fc48f",
+    "--evidence-output",
+    "buildopt-profile-evidence.json"
+  ],
+  "buildOptRevisionNeeded": false,
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false,
+  "testOptimization": "OUT_OF_SCOPE"
+}

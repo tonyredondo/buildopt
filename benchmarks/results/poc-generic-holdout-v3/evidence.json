@@ -1,0 +1,366 @@
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+  "evidenceState": "INCONCLUSIVE",
+  "capturedAt": "2026-08-11T17:39:32Z",
+  "subject": {
+    "repositoryId": "hibernate/hibernate-orm",
+    "repositoryRevision": "2a93cdaeea605bbc0025a1d9a095d0edf885d7f5",
+    "pipelineClass": "assemble"
+  },
+  "sourceBindings": {
+    "manifestSha256": "2da9ce319b1716d773a745f3450c52296be306c91a78942e298e6e83bc6f5354",
+    "graphSha256": "36f4120a14fe2e715d52a354e0636479851be652d99f9ba2c05ce66afaad4b5b",
+    "generatedManifestSha256": "111331eb208be95dfc07172c3f3ae77b61651dcd3d414d9a760fdf298d1a75fd",
+    "sourceEvidenceSha256": "d457941c917905561ee77b5cdc90f102914a5b0431f88a3c0790a19f4dc4e59f"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":hibernate-core:assemble"
+    ],
+    "fallbackEntrypoints": [
+      "assemble"
+    ],
+    "requiredOutputs": [
+      "hibernate-core/target/libs/**"
+    ],
+    "totalProjectCount": 29,
+    "selectedProjectCount": 1,
+    "omittedProjectCount": 28,
+    "omittedProjectRatio": 0.9655172413793104
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "dba128a109b90e58eebbd635baf2ac3b976fc48f",
+    "executableSha256": "6dd31217d3d8cdf6b9880602e64d2721565088d50984716ab33da7e49885a2cc",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true,
+    "warmupsPerArm": 2,
+    "controlWarmups": [
+      {
+        "phase": "CACHE_SEED",
+        "durationMs": 259140,
+        "logSha256": "023929da05374c01be937913dd2d76bfbd0e4a325bbbf7a7942212548039f888",
+        "taskOutcomes": {
+          "total": 303,
+          "executed": 198,
+          "fromCache": 54,
+          "upToDate": 36,
+          "noSource": 14,
+          "skipped": 1
+        }
+      },
+      {
+        "phase": "DAEMON_STABILIZATION",
+        "durationMs": 32914,
+        "logSha256": "6c6b6497a79c7408c12bade8d0a3a06bec09733fb05bdfdf75b743efff643700",
+        "taskOutcomes": {
+          "total": 301,
+          "executed": 167,
+          "fromCache": 82,
+          "upToDate": 37,
+          "noSource": 14,
+          "skipped": 1
+        }
+      }
+    ],
+    "candidateWarmups": [
+      {
+        "phase": "CACHE_SEED",
+        "durationMs": 176163,
+        "logSha256": "465b875c15cb105f42c43d2299b59f4bffe8b2b4443af3e430a1fdb5cc253e22",
+        "taskOutcomes": {
+          "total": 32,
+          "executed": 21,
+          "fromCache": 10,
+          "upToDate": 1,
+          "noSource": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "phase": "DAEMON_STABILIZATION",
+        "durationMs": 25023,
+        "logSha256": "0eeb7956a2efb993e28e6f449e8fd3ff1d83b88d9e01bedb3d33692c2bd8441a",
+        "taskOutcomes": {
+          "total": 32,
+          "executed": 13,
+          "fromCache": 17,
+          "upToDate": 2,
+          "noSource": 0,
+          "skipped": 0
+        }
+      }
+    ]
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 290779,
+      "candidateDurationMs": 278896,
+      "savedMs": 11883,
+      "controlRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "candidateRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false,
+      "controlLogSha256": "2a7cd8fcf51e2ee4c7f1d4cdb370f3a150a9c886353bab5551b76c8cdc60d57d",
+      "candidateLogSha256": "b93ac7cb0b349756b91ad9b0c7e25bb6b2f4311d3179f92d01abf1de45c5f7c4",
+      "controlTaskOutcomes": {
+        "total": 301,
+        "executed": 172,
+        "fromCache": 78,
+        "upToDate": 36,
+        "noSource": 14,
+        "skipped": 1
+      },
+      "candidateTaskOutcomes": {
+        "total": 32,
+        "executed": 17,
+        "fromCache": 14,
+        "upToDate": 1,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 248316,
+      "candidateDurationMs": 235026,
+      "savedMs": 13290,
+      "controlRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "candidateRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false,
+      "controlLogSha256": "eea0c2d5deb9ef4c1ff5db0cd21f398d54f7aa077a5ca9992342c3225468c8cd",
+      "candidateLogSha256": "d442db7180970758002ce277e60ccbf7ecc2321362e85d292565824bec72abc7",
+      "controlTaskOutcomes": {
+        "total": 301,
+        "executed": 172,
+        "fromCache": 78,
+        "upToDate": 36,
+        "noSource": 14,
+        "skipped": 1
+      },
+      "candidateTaskOutcomes": {
+        "total": 32,
+        "executed": 17,
+        "fromCache": 14,
+        "upToDate": 1,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 247305,
+      "candidateDurationMs": 221095,
+      "savedMs": 26210,
+      "controlRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "candidateRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false,
+      "controlLogSha256": "11e8f9270e2dacb23433d6832432c665d21c0137a8977508974159373b5c242b",
+      "candidateLogSha256": "4d45a4386e7f37f6e503c882052d337155b9e5796f7e6a7a489ca1e68e1c9806",
+      "controlTaskOutcomes": {
+        "total": 301,
+        "executed": 172,
+        "fromCache": 78,
+        "upToDate": 36,
+        "noSource": 14,
+        "skipped": 1
+      },
+      "candidateTaskOutcomes": {
+        "total": 32,
+        "executed": 17,
+        "fromCache": 14,
+        "upToDate": 1,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 268064,
+      "candidateDurationMs": 226643,
+      "savedMs": 41421,
+      "controlRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "candidateRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false,
+      "controlLogSha256": "2bd703f9ff53fd75e7aaa798f6275f92a32af574e8db7158cedefd71a3e47f27",
+      "candidateLogSha256": "c9d81d693205bf109275371aefa0d2e1a840251d929b68fc30dc0358efda0136",
+      "controlTaskOutcomes": {
+        "total": 301,
+        "executed": 172,
+        "fromCache": 78,
+        "upToDate": 36,
+        "noSource": 14,
+        "skipped": 1
+      },
+      "candidateTaskOutcomes": {
+        "total": 32,
+        "executed": 17,
+        "fromCache": 14,
+        "upToDate": 1,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 5,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 259454,
+      "candidateDurationMs": 263712,
+      "savedMs": -4258,
+      "controlRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "candidateRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false,
+      "controlLogSha256": "7e1a72dce842f7acc3e87a8567fd860487ac9cf94585097e54012f03c170a483",
+      "candidateLogSha256": "054b2da2ac9ee44f5e33cd14914d1ad08dc802cf62ce2db3fd347bb4fdf75993",
+      "controlTaskOutcomes": {
+        "total": 301,
+        "executed": 172,
+        "fromCache": 78,
+        "upToDate": 36,
+        "noSource": 14,
+        "skipped": 1
+      },
+      "candidateTaskOutcomes": {
+        "total": 32,
+        "executed": 17,
+        "fromCache": 14,
+        "upToDate": 1,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 6,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 238968,
+      "candidateDurationMs": 262098,
+      "savedMs": -23130,
+      "controlRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "candidateRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false,
+      "controlLogSha256": "bc0f22e387460182927fc42c4f5c6f638e25d72f7e78a657ff1ff7d8ef728717",
+      "candidateLogSha256": "607e1ba85eb4ce30dc5ada645bf30f367a6888b33f391269050ceb03aa72fff7",
+      "controlTaskOutcomes": {
+        "total": 301,
+        "executed": 172,
+        "fromCache": 78,
+        "upToDate": 36,
+        "noSource": 14,
+        "skipped": 1
+      },
+      "candidateTaskOutcomes": {
+        "total": 32,
+        "executed": 17,
+        "fromCache": 14,
+        "upToDate": 1,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 7,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 231636,
+      "candidateDurationMs": 239216,
+      "savedMs": -7580,
+      "controlRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "candidateRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false,
+      "controlLogSha256": "7dcbec10793b7c2f3bbee4e2d04c29224efffb5b5c64b26bb6a2adce04597abe",
+      "candidateLogSha256": "053045a7875e59420afb74c4ae2d85f92e50bd4c65a325a0f6abca931b772605",
+      "controlTaskOutcomes": {
+        "total": 301,
+        "executed": 172,
+        "fromCache": 78,
+        "upToDate": 36,
+        "noSource": 14,
+        "skipped": 1
+      },
+      "candidateTaskOutcomes": {
+        "total": 32,
+        "executed": 17,
+        "fromCache": 14,
+        "upToDate": 1,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 8,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 228696,
+      "candidateDurationMs": 236290,
+      "savedMs": -7594,
+      "controlRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "candidateRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false,
+      "controlLogSha256": "28cdcec87e5bf16b958c9db7cec29d301751fdb86af31449b40ae0ffcedf53a4",
+      "candidateLogSha256": "5c4ce521a8b066d21904a17b4305534854da965c5f643518c47d048ca367ae86",
+      "controlTaskOutcomes": {
+        "total": 300,
+        "executed": 171,
+        "fromCache": 78,
+        "upToDate": 36,
+        "noSource": 14,
+        "skipped": 1
+      },
+      "candidateTaskOutcomes": {
+        "total": 32,
+        "executed": 17,
+        "fromCache": 14,
+        "upToDate": 1,
+        "noSource": 0,
+        "skipped": 0
+      }
+    }
+  ],
+  "fallback": {
+    "mode": "FULL_GRAPH",
+    "reason": "IMPACT_GLOBAL_CHANGE",
+    "buildSuccessful": true
+  },
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 251652.25,
+    "candidateMeanMs": 245372,
+    "meanSavedMs": 6280.25,
+    "reductionRatio": 0.024956065364009263,
+    "interval95SavedMs": [
+      -6603.5,
+      20189.625
+    ],
+    "positivePairs": 4,
+    "qualified": false,
+    "decision": "RETAIN_NATIVE_GRADLE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

@@ -63,6 +63,18 @@ directory. Validate both records with:
   specs/poc-generic-holdout-v1.json
 ```
 
+The [v3 diagnostic bundle](./results/poc-generic-holdout-v3/README.md) then
+investigates rather than discarding the v2 negative. A second excluded base
+warm-up reduced control/candidate preparation by 87.30%/85.80% and recovered
+the first pair to +11.883 seconds, proving the original −1.118-second result was
+not a structural reason to reject BuildOpt. The complete fresh run still
+reached only 4/8 positive pairs: 2.50% mean savings with interval
+−6.604..+20.190 seconds. Task outcomes stayed at 301/32 through pair 7, while
+both arms continued accelerating and the control changed to 300 tasks in pair
+8. Version 3 therefore retains native and motivates target-workload warm-up,
+exact task fingerprinting and interval-scoped host PSI; no old timing is
+discarded or reused.
+
 ### Terminal generic structural matrix
 
 The [terminal v3 five-repository bundle](./results/poc-generic-profile-matrix-v3/README.md)
