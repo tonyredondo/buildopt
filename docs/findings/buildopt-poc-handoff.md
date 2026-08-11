@@ -9,13 +9,14 @@
   the fallback.
 - **The current evidence supports continuing the POC.** The same structural
   method qualified on OpenTelemetry, Kafka, Micronaut, and Groovy, reducing
-  wall time by **14.43% to 84.11%**. Spring improved by **17.94%**, but BuildOpt
-  correctly retained native Gradle because one of eight pairs was slower.
-- **Cross-repository CI reproducibility now passes 5/5.** The read-only Action
-  recreated every terminal Spring, OpenTelemetry, Kafka, Micronaut, and Groovy
-  proposal on independent clean hosted runners with zero graph drift and no
-  active profile. The next evidence gap is an unchanged holdout on an unseen
-  substantial Gradle repository, not production hardening.
+  wall time by **14.43% to 84.11%**. Spring improved by **17.94%** and the unseen
+  Hibernate holdout by **7.80%**, but both correctly retained native Gradle
+  because one of eight pairs was slower.
+- **Cross-repository CI reproducibility passes 5/5, and the blind transfer is
+  now complete.** The read-only Action recreated every terminal proposal on
+  clean hosted runners with zero graph drift. The unchanged generic path then
+  discovered a 29-to-1 Hibernate candidate and saved 19.386 seconds on average;
+  the strict 7/8 result remained native rather than manufacturing a win.
 
 ## The Project in One Minute
 
@@ -45,7 +46,7 @@ There are no repository-name rules and no automatic production activation.
 
 | Mechanism | What it does | Difference from native Gradle | Current POC decision |
 | --- | --- | --- | --- |
-| **Structural Build Impact** | Maps a change and required outputs to the smallest proven project/task entrypoint set. | Avoids configuring and executing unrelated parts of the requested graph; Gradle's incremental features normally act after the graph has been requested. | **Active accelerator.** This is the mechanism measured consistently across the five current repositories. |
+| **Structural Build Impact** | Maps a change and required outputs to the smallest proven project/task entrypoint set. | Avoids configuring and executing unrelated parts of the requested graph; Gradle's incremental features normally act after the graph has been requested. | **Active accelerator.** This is the mechanism measured consistently across the six current public repositories. |
 | **Profile measurement and evaluation** | Captures isolated paired timings, exact outputs, drift bindings, and fallback evidence before producing a profile. | Adds a cross-build evidence and activation policy rather than another Gradle execution optimization. | **Required safety layer.** Review remains explicit. |
 | **Safe Cache / local L1** | Reuses verified outputs within repository, Wrapper, and platform boundaries. | Adds isolation and verification around native cache semantics. | **Not a speed differentiator.** It is at parity with a warm native Gradle cache and is not part of the current structural claim. |
 | **Exact task optimization / Patch Autopilot** | Makes one exactly understood task shape reusable through a bounded adapter or reviewable patch. | Repairs or augments cacheability that the repository has not declared correctly. | **Promising but scoped research.** It must qualify independently for each generic task contract before joining the main path. |
@@ -68,6 +69,7 @@ Gradle execution.
 | Apache Kafka | 64 -> 3 | 82.498 s | 13.113 s | **69.385 s / 84.11%** | 8/8 | Qualify. |
 | Micronaut Core | 75 -> 22 | 27.407 s | 15.968 s | **11.439 s / 41.74%** | 8/8 | Qualify. |
 | Apache Groovy | 37 -> 2 | 75.064 s | 19.629 s | **55.434 s / 73.85%** | 8/8 | Qualify. |
+| Hibernate ORM holdout | 29 -> 1 | 248.481 s | 229.095 s | **19.386 s / 7.80%** | 7/8 | Retain native: one -1.118 s pair fails the frozen 8/8 gate. |
 
 Every accepted observation preserved the declared required outputs byte for
 byte, completed a scheduling-equivalent native full-graph fallback, and
@@ -96,7 +98,8 @@ their existing paired timings. No timing was executed during this replay.
 ## What the Tests Demonstrate
 
 - **The idea transfers.** Four different public Gradle families qualified
-  without repository-specific product logic.
+  without repository-specific product logic, and the unseen Hibernate family
+  produced a complete output-equivalent candidate without product changes.
 - **Avoided work compounds.** Omitting projects also removes their
   configuration, scheduling, cache lookup, compilation, and packaging work;
   this explains the larger Kafka, Micronaut, and Groovy gains.
@@ -106,6 +109,10 @@ their existing paired timings. No timing was executed during this replay.
 - **The gain survives product overhead.** Timings include BuildOpt validation,
   launcher, profile loading, and Gradle execution rather than an internal
   microbenchmark.
+- **Owner output declarations remain a usability risk.** The first Hibernate
+  attempt safely stopped before timing because its modules use `target` instead
+  of Gradle's default `build` directory. The POC needs an earlier generic
+  output-contract preflight before expensive paired measurement.
 
 ## Current Conclusion
 
@@ -121,15 +128,15 @@ keeps native Gradle authoritative.
 
 ## Recommended Next Steps
 
-1. **Run an unchanged holdout test.** Select one unseen, substantial Gradle
-   repository and apply the same propose -> measure -> evaluate flow without
-   repository-specific code, post-result tuning, or relaxed gates.
+1. **Make output ownership discoverable and fail early.** Derive or validate
+   the repository's real Gradle output directories before warm-ups and paired
+   measurement, retaining native when ownership remains ambiguous.
 2. **Measure only reviewed candidates.** A CI proposal remains an observation,
    not value evidence. Run isolated paired measurement only after its graph,
    outputs and fallback are accepted.
-3. **Broaden workflow coverage deliberately.** After the holdout, test distinct
-   customer build shapes such as compilation, packaging, verification, and
-   build-owned test preparation. Test Optimization remains separate.
+3. **Broaden workflow coverage deliberately.** Test distinct customer build
+   shapes such as compilation, packaging, verification, and build-owned test
+   preparation. Test Optimization remains separate.
 4. **Make onboarding repository-owned and keep wall time authoritative.** Users
    should provide a Gradle command, change source, and output contract—not
    hand-authored graphs. Promote only installed paths that preserve outputs,
@@ -145,5 +152,6 @@ Test Optimization remains outside Build Optimization.
 - [OpenTelemetry fallback-equivalence correction](../../benchmarks/results/poc-generic-profile-matrix-v4/README.md)
 - [Hosted review-only CI artifact run](https://github.com/tonyredondo/buildopt/actions/runs/31464264563)
 - [Five-repository clean-CI replay](../../benchmarks/results/poc-generic-profile-ci-replay-v1/README.md)
+- [Unseen Hibernate ORM holdout](../../benchmarks/results/poc-generic-holdout-v2/README.md)
 - [Detailed performance findings and historical research](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

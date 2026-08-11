@@ -247,7 +247,7 @@ elif [[ ${buildopt_measurement_status} == COMPLETED ]]; then
          (.result.qualified == false and
           .evaluationDecision == "NATIVE_FULL_GRAPH"))
     ' "${buildopt_summary}" >/dev/null
-    buildopt_qualified=$(jq -er '.result.qualified' "${buildopt_summary}")
+    buildopt_qualified=$(jq -r '.result.qualified' "${buildopt_summary}")
     if [[ ${buildopt_qualified} == true ]]; then
         [[ -s ${buildopt_evidence}/profile.json ]] || {
             printf 'qualified holdout evidence is missing its review profile\n' >&2

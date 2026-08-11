@@ -1,0 +1,177 @@
+buildopt: warming isolated control arm at 2b448a59d332326f0cd0691c868425124d55cbb5
+buildopt: warming isolated candidate arm at 2b448a59d332326f0cd0691c868425124d55cbb5
+buildopt: structural pair 1/8 control=273368ms candidate=274486ms saved=-1118ms gap=0ms order=CONTROL_FIRST
+buildopt: structural pair 2/8 control=270718ms candidate=224042ms saved=46676ms gap=0ms order=CANDIDATE_FIRST
+buildopt: structural pair 3/8 control=252894ms candidate=223815ms saved=29079ms gap=0ms order=CONTROL_FIRST
+buildopt: structural pair 4/8 control=247747ms candidate=229624ms saved=18123ms gap=0ms order=CANDIDATE_FIRST
+buildopt: structural pair 5/8 control=241898ms candidate=220000ms saved=21898ms gap=0ms order=CONTROL_FIRST
+buildopt: structural pair 6/8 control=235460ms candidate=215021ms saved=20439ms gap=0ms order=CANDIDATE_FIRST
+buildopt: structural pair 7/8 control=240321ms candidate=220531ms saved=19790ms gap=0ms order=CONTROL_FIRST
+buildopt: structural pair 8/8 control=225445ms candidate=225242ms saved=203ms gap=0ms order=CANDIDATE_FIRST
+buildopt: validating full-graph fallback with --no-daemon and measured scheduling
+buildopt: structural profile measurement decision RETAIN_NATIVE_GRADLE; review buildopt-structural-evidence.json before evaluation
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+  "evidenceState": "INCONCLUSIVE",
+  "capturedAt": "2026-08-11T12:42:14Z",
+  "subject": {
+    "repositoryId": "hibernate/hibernate-orm",
+    "repositoryRevision": "2a93cdaeea605bbc0025a1d9a095d0edf885d7f5",
+    "pipelineClass": "assemble"
+  },
+  "sourceBindings": {
+    "manifestSha256": "2da9ce319b1716d773a745f3450c52296be306c91a78942e298e6e83bc6f5354",
+    "graphSha256": "36f4120a14fe2e715d52a354e0636479851be652d99f9ba2c05ce66afaad4b5b",
+    "generatedManifestSha256": "111331eb208be95dfc07172c3f3ae77b61651dcd3d414d9a760fdf298d1a75fd",
+    "sourceEvidenceSha256": "d457941c917905561ee77b5cdc90f102914a5b0431f88a3c0790a19f4dc4e59f"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":hibernate-core:assemble"
+    ],
+    "fallbackEntrypoints": [
+      "assemble"
+    ],
+    "requiredOutputs": [
+      "hibernate-core/target/libs/**"
+    ],
+    "totalProjectCount": 29,
+    "selectedProjectCount": 1,
+    "omittedProjectCount": 28,
+    "omittedProjectRatio": 0.9655172413793104
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "e58669ec5f3f3c60488d40a413c0c9f00b1c4f59",
+    "executableSha256": "0ea7dbf83f548b09bf5c9f53d9121290d30a0a4b0fbbdbb002d7b018e954f9d3",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 273368,
+      "candidateDurationMs": 274486,
+      "savedMs": -1118,
+      "controlRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "candidateRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 270718,
+      "candidateDurationMs": 224042,
+      "savedMs": 46676,
+      "controlRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "candidateRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 252894,
+      "candidateDurationMs": 223815,
+      "savedMs": 29079,
+      "controlRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "candidateRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 247747,
+      "candidateDurationMs": 229624,
+      "savedMs": 18123,
+      "controlRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "candidateRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 5,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 241898,
+      "candidateDurationMs": 220000,
+      "savedMs": 21898,
+      "controlRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "candidateRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 6,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 235460,
+      "candidateDurationMs": 215021,
+      "savedMs": 20439,
+      "controlRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "candidateRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 7,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 240321,
+      "candidateDurationMs": 220531,
+      "savedMs": 19790,
+      "controlRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "candidateRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 8,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 225445,
+      "candidateDurationMs": 225242,
+      "savedMs": 203,
+      "controlRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "candidateRequiredOutputSha256": "4f652148a022ca9096a9d8cf0ef393ef10106d0f4e85512ae618b02ac2d66e0e",
+      "requiredOutputCount": 3,
+      "productAttributableFailure": false
+    }
+  ],
+  "fallback": {
+    "mode": "FULL_GRAPH",
+    "reason": "IMPACT_GLOBAL_CHANGE",
+    "buildSuccessful": true
+  },
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 248481.375,
+    "candidateMeanMs": 229095.125,
+    "meanSavedMs": 19386.25,
+    "reductionRatio": 0.07801892596577913,
+    "interval95SavedMs": [
+      9718.5,
+      29210.375
+    ],
+    "positivePairs": 7,
+    "qualified": false,
+    "decision": "RETAIN_NATIVE_GRADLE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

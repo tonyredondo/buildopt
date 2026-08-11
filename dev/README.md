@@ -3457,7 +3457,10 @@ network access; use `--spec-only` before evidence capture. The retained v1
 attempt demonstrates fail-closed handling of an invalid owner-declared output.
 The default runner and checker use the separately preregistered v2 correction,
 which points to Hibernate's repository-defined `target/libs` directory and
-changes no measured condition or value gate.
+changes no measured condition or value gate. The terminal v2 bundle completes
+all eight pairs at 7.80% mean savings and 7/8 positive pairs, validates exact
+outputs plus full fallback, and correctly retains native Gradle under the
+unchanged repeatability rule.
 
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 

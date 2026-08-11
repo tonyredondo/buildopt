@@ -32,6 +32,37 @@ drift was **0/5** and no active profile was written. This proves proposal
 reproducibility only. It reruns no timing and does not change the wall-time
 decisions below.
 
+### Unseen Hibernate ORM holdout
+
+The [terminal holdout bundle](./results/poc-generic-holdout-v2/README.md)
+applies the unchanged generic installed path to Hibernate ORM, which was not
+part of proposal development or the five-repository matrix. From root
+`assemble`, one exact `Session.java` change and repository-declared core JARs,
+BuildOpt discovered a 29-to-1-project candidate without repository-specific
+product logic.
+
+| Metric | Optimized native | BuildOpt candidate | Result |
+| --- | ---: | ---: | --- |
+| Mean wall time | 248.481 s | 229.095 s | **19.386 s / 7.80% faster** |
+| Positive pairs | — | 7/8 | Retain native under the frozen 8/8 gate |
+| Paired 95% interval | — | — | **+9.719..+29.210 s** |
+| Required outputs | 3 JARs | Same 3 JARs | Byte-identical in all pairs |
+
+The full-graph fallback succeeded and no product-attributable failure occurred.
+The result supports the generic structural hypothesis but does not qualify the
+Hibernate scope. The separately retained
+[v1 attempt](./results/poc-generic-holdout-v1-attempt1/README.md) contains zero
+timings: it failed closed because the initial owner output glob used Gradle's
+default `build` directory instead of Hibernate's configured `target`
+directory. Validate both records with:
+
+```bash
+./dev/check-generic-holdout
+./dev/check-generic-holdout \
+  benchmarks/results/poc-generic-holdout-v1-attempt1 \
+  specs/poc-generic-holdout-v1.json
+```
+
 ### Terminal generic structural matrix
 
 The [terminal v3 five-repository bundle](./results/poc-generic-profile-matrix-v3/README.md)

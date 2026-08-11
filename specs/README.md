@@ -477,6 +477,11 @@ v2 replaces `hibernate-core/build/libs/**` with
 `hibernate-core/target/libs/**` before a fresh proposal or timing run. No v1
 warm-up, proposal or observation is reused.
 
+The terminal v2 evidence reduces the 29-project root graph to one project and
+saves 19,386.25 ms/7.80% on average with exact outputs and zero product
+failures. Seven of eight pairs improve, so the unchanged 8-of-8 gate retains
+native Gradle and the full-graph fallback succeeds.
+
 `poc-trace-hypothesis-v1.json` and `poc-trace-hypothesis-v1.md` bind the final
 trace-gated optimization decision. They require at least 500 ms of causally
 recoverable product-owned critical-path work in two families, reject overlapping
