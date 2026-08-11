@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
         with:
           distribution: temurin
-          java-version: '21.0.12+8'
+          java-version: '21.0.12+8.0.LTS'
           check-latest: false
 
       - name: Prepare a clean consumer repository
