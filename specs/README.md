@@ -463,6 +463,13 @@ terminal row qualifies at 14.43% faster with 8/8 positive pairs, exact outputs,
 zero product failures, and successful full-graph fallback. No v3 timing is
 reused.
 
+`poc-generic-holdout-v1.json` and `poc-generic-holdout-v1.md` freeze the first
+unseen substantial holdout before proposal or timing. Hibernate ORM uses its
+root `assemble` workflow, one exact `hibernate-core` source change, declared
+core-library outputs, optimized native Gradle with 12 workers, and the same
+eight-pair value and correctness gates as the terminal five-repository matrix.
+The contract intentionally records no expected candidate or favorable result.
+
 `poc-trace-hypothesis-v1.json` and `poc-trace-hypothesis-v1.md` bind the final
 trace-gated optimization decision. They require at least 500 ms of causally
 recoverable product-owned critical-path work in two families, reject overlapping

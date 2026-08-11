@@ -1,0 +1,239 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/output/directory\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-generic-holdout-v1.json"
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-generic-holdout.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ ${buildopt_root} == "${TMPDIR:-/tmp}/buildopt-generic-holdout."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in git jq sha256sum tar timeout; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required holdout command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ ! -e ${buildopt_output} ]] || {
+    printf 'holdout evidence output already exists: %s\n' "${buildopt_output}" >&2
+    exit 1
+}
+[[ -f ${buildopt_spec} ]] || {
+    printf 'holdout specification is unavailable\n' >&2
+    exit 1
+}
+[[ -z $(git -C "${buildopt_repo_root}" status --porcelain --untracked-files=no) ]] || {
+    printf 'BuildOpt tracked state must be clean before holdout capture\n' >&2
+    exit 1
+}
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_repository_id=$(jq -er '.subject.repositoryId' "${buildopt_spec}")
+buildopt_remote=$(jq -er '.subject.remoteUrl' "${buildopt_spec}")
+buildopt_public_revision=$(jq -er '.subject.publicRevision' "${buildopt_spec}")
+buildopt_jdk=$(jq -er '.subject.jdkToolchain' "${buildopt_spec}")
+buildopt_pipeline=$(jq -er '.subject.pipelineClass' "${buildopt_spec}")
+buildopt_change_path=$(jq -er '.subject.changePath' "${buildopt_spec}")
+buildopt_mutation=$(jq -er '.subject.mutation' "${buildopt_spec}")
+buildopt_repository="${buildopt_root}/repository"
+buildopt_gradle_home="${buildopt_root}/gradle-home"
+buildopt_package_root="${buildopt_root}/package"
+mkdir -p -- "${buildopt_repository}" "${buildopt_gradle_home}" \
+    "${buildopt_package_root}" "${buildopt_root}/install" "${buildopt_output}"
+
+"${buildopt_repo_root}/packaging/linux/package.sh" \
+    --version 0.3.0-dev --output "${buildopt_package_root}" >/dev/null
+buildopt_package="${buildopt_package_root}/buildopt-0.3.0-dev-linux-amd64.tar.gz"
+mkdir -p -- "${buildopt_root}/release"
+tar -xzf "${buildopt_package}" -C "${buildopt_root}/release"
+"${buildopt_root}/release/buildopt-0.3.0-dev-linux-amd64/install.sh" \
+    --prefix "${buildopt_root}/install" >/dev/null
+buildopt_executable="${buildopt_root}/install/bin/buildopt"
+buildopt_executable_sha=$(sha256sum "${buildopt_executable}" | awk '{print $1}')
+
+git -C "${buildopt_repository}" init -q
+git -C "${buildopt_repository}" remote add origin "${buildopt_remote}"
+git -C "${buildopt_repository}" fetch --depth=1 origin "${buildopt_public_revision}"
+git -C "${buildopt_repository}" checkout -q --detach FETCH_HEAD
+buildopt_base=$(git -C "${buildopt_repository}" rev-parse HEAD)
+[[ ${buildopt_base} == "${buildopt_public_revision}" ]] || {
+    printf 'public revision mismatch for %s\n' "${buildopt_repository_id}" >&2
+    exit 1
+}
+
+case "${buildopt_mutation}" in
+    APPEND_FIXED_COMMENT)
+        printf '\n// buildopt-poc-generic-holdout\n' \
+            >>"${buildopt_repository}/${buildopt_change_path}"
+        ;;
+    *)
+        printf 'unsupported frozen holdout mutation: %s\n' "${buildopt_mutation}" >&2
+        exit 1
+        ;;
+esac
+git -C "${buildopt_repository}" config user.name 'BuildOpt POC'
+git -C "${buildopt_repository}" config user.email 'buildopt-poc@example.invalid'
+git -C "${buildopt_repository}" config commit.gpgsign false
+git -C "${buildopt_repository}" add "${buildopt_change_path}"
+GIT_AUTHOR_DATE='2026-08-11T01:00:00Z' \
+GIT_COMMITTER_DATE='2026-08-11T01:00:00Z' \
+    git -C "${buildopt_repository}" commit -qm 'Apply frozen BuildOpt holdout mutation'
+buildopt_target=$(git -C "${buildopt_repository}" rev-parse HEAD)
+printf '%s\n' "${buildopt_change_path}" \
+    >"${buildopt_repository}/buildopt-changes.txt"
+
+buildopt_entrypoint_args=()
+while IFS= read -r buildopt_entrypoint; do
+    buildopt_entrypoint_args+=(--entrypoint "${buildopt_entrypoint}")
+done < <(jq -r '.subject.entrypoints[]' "${buildopt_spec}")
+buildopt_output_args=()
+while IFS= read -r buildopt_required_output; do
+    buildopt_output_args+=(--required-output "${buildopt_required_output}")
+done < <(jq -r '.subject.requiredOutputs[]' "${buildopt_spec}")
+
+printf 'Discovering generic structural candidate for %s\n' "${buildopt_repository_id}"
+if ! (
+    cd -- "${buildopt_repository}"
+    env -u CI GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        timeout 45m \
+        "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+        "${buildopt_executable}" profile propose \
+        --repository-id "${buildopt_repository_id}" \
+        --pipeline-class "${buildopt_pipeline}" \
+        "${buildopt_entrypoint_args[@]}" \
+        --changes-file buildopt-changes.txt \
+        --base-revision "${buildopt_base}" \
+        "${buildopt_output_args[@]}" \
+        --gradle-option=--no-scan --gradle-option=--max-workers=12 \
+        --buildopt-revision "${buildopt_revision}" --timeout 30m
+) >"${buildopt_output}/proposal.log" 2>&1; then
+    tail -n 200 "${buildopt_output}/proposal.log" >&2
+    printf 'holdout proposal execution failed\n' >&2
+    exit 1
+fi
+
+for buildopt_name in buildopt-changes.txt buildopt-fallback-changes.txt \
+    buildopt-impact-manifest.json buildopt-impact-graph.generated.json \
+    buildopt-impact.generated.json buildopt-profile-proposal.json; do
+    if [[ -s ${buildopt_repository}/${buildopt_name} ]]; then
+        cp -- "${buildopt_repository}/${buildopt_name}" \
+            "${buildopt_output}/${buildopt_name}"
+    fi
+done
+
+buildopt_measure_status=NOT_RUN_NATIVE_FULL_GRAPH
+buildopt_evaluation_decision=NATIVE_FULL_GRAPH
+printf 'null\n' >"${buildopt_output}/evidence.json"
+printf 'null\n' >"${buildopt_output}/evaluation.json"
+if [[ $(jq -r '.decision' \
+    "${buildopt_repository}/buildopt-profile-proposal.json") == \
+    MEASURE_STRUCTURAL_CANDIDATE ]]; then
+    buildopt_gradle_args=()
+    while IFS= read -r buildopt_gradle_option; do
+        buildopt_gradle_args+=(--gradle-option="${buildopt_gradle_option}")
+    done < <(jq -r '.method.gradleOptions[]' "${buildopt_spec}")
+
+    printf 'Measuring frozen holdout candidate for %s\n' "${buildopt_repository_id}"
+    if (
+        cd -- "${buildopt_repository}"
+        env -u CI GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+            "${buildopt_executable}" profile measure \
+            --manifest buildopt-impact-manifest.json \
+            --graph buildopt-impact-graph.generated.json \
+            --generated-manifest buildopt-impact.generated.json \
+            --changes-file buildopt-changes.txt \
+            --fallback-changes-file buildopt-fallback-changes.txt \
+            --base-revision "${buildopt_base}" \
+            --buildopt-revision "${buildopt_revision}" \
+            --evidence-output buildopt-structural-evidence.json \
+            "${buildopt_gradle_args[@]}" --timeout 30m
+    ) >"${buildopt_output}/measurement.log" 2>&1; then
+        buildopt_measure_status=COMPLETED
+        cp -- "${buildopt_repository}/buildopt-structural-evidence.json" \
+            "${buildopt_output}/evidence.json"
+        (
+            cd -- "${buildopt_repository}"
+            "${buildopt_executable}" profile evaluate \
+                --manifest buildopt-impact-manifest.json \
+                --graph buildopt-impact-graph.generated.json \
+                --generated-manifest buildopt-impact.generated.json \
+                --evidence buildopt-structural-evidence.json \
+                --profile-output buildopt-qualified-profile.json
+        ) >"${buildopt_output}/evaluation.json" \
+            2>"${buildopt_output}/evaluation.log"
+        buildopt_evaluation_decision=$(jq -er '.decision' \
+            "${buildopt_output}/evaluation.json")
+        if [[ -s ${buildopt_repository}/buildopt-qualified-profile.json ]]; then
+            cp -- "${buildopt_repository}/buildopt-qualified-profile.json" \
+                "${buildopt_output}/profile.json"
+        fi
+    else
+        buildopt_measure_status=MEASUREMENT_UNAVAILABLE
+        tail -n 200 "${buildopt_output}/measurement.log" >&2
+    fi
+fi
+
+jq -n -S \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg buildoptRevision "${buildopt_revision}" \
+    --arg executableSha256 "${buildopt_executable_sha}" \
+    --arg publicRevision "${buildopt_public_revision}" \
+    --arg targetRevision "${buildopt_target}" \
+    --arg measurementStatus "${buildopt_measure_status}" \
+    --arg evaluationDecision "${buildopt_evaluation_decision}" \
+    --slurpfile spec "${buildopt_spec}" \
+    --slurpfile proposal "${buildopt_repository}/buildopt-profile-proposal.json" \
+    --slurpfile evidence "${buildopt_output}/evidence.json" '
+    {
+      schemaVersion: $spec[0].evidenceSchemaVersion,
+      workItem: $spec[0].workItem,
+      capturedAt: $capturedAt,
+      buildopt: {
+        revision: $buildoptRevision,
+        executableSha256: $executableSha256,
+        packageVersion: "0.3.0-dev"
+      },
+      subject: ($spec[0].subject + {
+        targetRevision: $targetRevision,
+        observedPublicRevision: $publicRevision
+      }),
+      proposal: {
+        decision: $proposal[0].decision,
+        reason: $proposal[0].reason,
+        originalEntrypoints: $proposal[0].originalEntrypoints,
+        candidateEntrypoints: ($proposal[0].candidateEntrypoints // []),
+        totalProjectCount: ($proposal[0].analysis.plan.totalProjectCount // null),
+        selectedProjectCount: ($proposal[0].analysis.plan.selectedProjectCount // null),
+        omittedProjectCount: ($proposal[0].analysis.plan.omittedProjectCount // null)
+      },
+      measurementStatus: $measurementStatus,
+      result: (if ($evidence | length) == 1 then $evidence[0].result else null end),
+      evaluationDecision: $evaluationDecision,
+      method: $spec[0].method,
+      qualification: $spec[0].qualification,
+      boundaries: $spec[0].boundaries
+    }
+' >"${buildopt_output}/summary.json"
+
+(
+    cd -- "${buildopt_repository}"
+    env GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+        ./gradlew --stop
+) >/dev/null 2>&1 || true
+
+"${buildopt_script_dir}/check-generic-holdout" "${buildopt_output}"
+printf 'Generic holdout evidence written to %s\n' "${buildopt_output}"

@@ -426,6 +426,8 @@ buildopt_required_files=(
     "dev/run-poc-spring-impact-breadth"
     "dev/run-poc-impact-generalization"
     "dev/run-generic-profile-realworld"
+    "dev/run-generic-holdout"
+    "dev/check-generic-holdout"
     "dev/run-poc-otel-test-preparation"
     "dev/run-poc-otel-spring-family-v2"
     "dev/run-poc-otel-clean-composition-v1"

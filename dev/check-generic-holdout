@@ -1,0 +1,233 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [evidence-directory|--spec-only]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-generic-holdout-v1.json"
+buildopt_evidence=${1:-"${buildopt_repo_root}/benchmarks/results/poc-generic-holdout-v1"}
+
+for buildopt_command in git jq; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required holdout validation command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -f ${buildopt_spec} ]] || {
+    printf 'holdout specification is unavailable\n' >&2
+    exit 1
+}
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-generic-holdout/v1" and
+    .evidenceSchemaVersion == "buildopt.evidence/poc-generic-holdout/v1" and
+    .workItem == "POC-GENERIC-HOLDOUT-001" and
+    .decision == "RUN_ONE_UNSEEN_SUBSTANTIAL_HOLDOUT_WITH_THE_UNCHANGED_GENERIC_PATH" and
+    (.preregisteredFromRevision | test("^[0-9a-f]{40}$")) and
+    .subject == {
+      key: "hibernate-orm",
+      repositoryId: "hibernate/hibernate-orm",
+      remoteUrl: "https://github.com/hibernate/hibernate-orm.git",
+      publicRevision: "2b448a59d332326f0cd0691c868425124d55cbb5",
+      jdkToolchain: "temurin-jdk-25",
+      pipelineClass: "assemble",
+      entrypoints: ["assemble"],
+      changePath: "hibernate-core/src/main/java/org/hibernate/Session.java",
+      mutation: "APPEND_FIXED_COMMENT",
+      requiredOutputs: ["hibernate-core/build/libs/**"]
+    } and
+    .runner.platform == "linux-amd64" and
+    .runner.cpuCount == 12 and
+    .runner.maxWorkers == 12 and
+    .runner.pairs == 8 and
+    .runner.order == "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST" and
+    .runner.maximumInterArmGap == "5s" and
+    .runner.fallbackMaxWorkers == 4 and
+    .method.surface == "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE" and
+    .method.candidateMechanisms == ["BUILD_IMPACT"] and
+    .method.control == "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW" and
+    .method.repositorySpecificProductRulesAllowed == false and
+    .method.postResultTuningAllowed == false and
+    .qualification.minimumMeanSavedMs == 500 and
+    .qualification.minimumReductionRatio == 0.02 and
+    .qualification.positiveLower95Bound == true and
+    .qualification.minimumPositivePairs == 8 and
+    .qualification.requiredOutputsIdentical == true and
+    .qualification.maximumProductAttributableFailures == 0 and
+    .qualification.failedOrTimedOutObservationsMayBeDiscarded == false and
+    .decisionRules.repositorySpecificException == "FORBIDDEN" and
+    .decisionRules.thresholdRelaxation == "FORBIDDEN" and
+    .boundaries.proofOfConcept == true and
+    .boundaries.productionAuthorized == false and
+    .boundaries.automaticActivation == false and
+    .boundaries.testOptimizationModified == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false
+' "${buildopt_spec}" >/dev/null
+
+buildopt_preregistered_from=$(jq -er '.preregisteredFromRevision' "${buildopt_spec}")
+git -C "${buildopt_repo_root}" cat-file -e \
+    "${buildopt_preregistered_from}^{commit}" 2>/dev/null || {
+    printf 'holdout preregistration base is not a repository commit\n' >&2
+    exit 1
+}
+
+if [[ ${buildopt_evidence} == --spec-only ]]; then
+    printf 'Generic holdout preregistration: PASS\n'
+    exit 0
+fi
+
+buildopt_summary="${buildopt_evidence}/summary.json"
+buildopt_required=(
+    "${buildopt_summary}"
+    "${buildopt_evidence}/buildopt-changes.txt"
+    "${buildopt_evidence}/buildopt-profile-proposal.json"
+    "${buildopt_evidence}/proposal.log"
+    "${buildopt_evidence}/evidence.json"
+    "${buildopt_evidence}/evaluation.json"
+)
+for buildopt_file in "${buildopt_required[@]}"; do
+    [[ -s ${buildopt_file} ]] || {
+        printf 'missing holdout evidence: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+jq -e --slurpfile spec "${buildopt_spec}" '
+    .schemaVersion == $spec[0].evidenceSchemaVersion and
+    .workItem == $spec[0].workItem and
+    (.capturedAt | fromdateiso8601) > 0 and
+    (.buildopt.revision | test("^[0-9a-f]{40}$")) and
+    (.buildopt.executableSha256 | test("^[0-9a-f]{64}$")) and
+    .buildopt.packageVersion == "0.3.0-dev" and
+    .subject.key == $spec[0].subject.key and
+    .subject.repositoryId == $spec[0].subject.repositoryId and
+    .subject.remoteUrl == $spec[0].subject.remoteUrl and
+    .subject.publicRevision == $spec[0].subject.publicRevision and
+    .subject.observedPublicRevision == $spec[0].subject.publicRevision and
+    (.subject.targetRevision | test("^[0-9a-f]{40}$")) and
+    .subject.jdkToolchain == $spec[0].subject.jdkToolchain and
+    .subject.pipelineClass == $spec[0].subject.pipelineClass and
+    .subject.entrypoints == $spec[0].subject.entrypoints and
+    .subject.changePath == $spec[0].subject.changePath and
+    .subject.requiredOutputs == $spec[0].subject.requiredOutputs and
+    .method == $spec[0].method and
+    .qualification == $spec[0].qualification and
+    .boundaries == $spec[0].boundaries and
+    .proposal.originalEntrypoints == $spec[0].subject.entrypoints and
+    (.proposal.decision | IN("MEASURE_STRUCTURAL_CANDIDATE", "NATIVE_FULL_GRAPH"))
+' "${buildopt_summary}" >/dev/null
+
+jq -e --slurpfile spec "${buildopt_spec}" '
+    .schemaVersion == "buildopt.poc/profile-proposal/v1" and
+    .repositoryId == $spec[0].subject.repositoryId and
+    .baseRevision == $spec[0].subject.publicRevision and
+    .changedPaths == [$spec[0].subject.changePath] and
+    .requiredOutputs == $spec[0].subject.requiredOutputs and
+    .originalEntrypoints == $spec[0].subject.entrypoints and
+    .reviewRequired == true and
+    .activationAutomatic == false and
+    .productionAuthorized == false and
+    .testOptimization == "OUT_OF_SCOPE" and
+    ((.decision == "MEASURE_STRUCTURAL_CANDIDATE" and
+      .reason == "COMPLETE_STRUCTURAL_REDUCTION" and
+      .unknownRelationships == false and
+      (.candidateEntrypoints | length) >= 1 and
+      .analysis.plan.selectedProjectCount >= 1 and
+      .analysis.plan.selectedProjectCount < .analysis.plan.totalProjectCount and
+      .analysis.plan.omittedProjectCount ==
+        (.analysis.plan.totalProjectCount - .analysis.plan.selectedProjectCount)) or
+     (.decision == "NATIVE_FULL_GRAPH" and
+      (.reason | IN("ORIGINAL_WORKFLOW_UNSUPPORTED", "CANDIDATE_WORKFLOW_UNSUPPORTED",
+                    "CANDIDATE_GRAPH_INCOMPLETE", "NO_SAFE_STRUCTURAL_CANDIDATE",
+                    "SOURCE_OWNERSHIP_AMBIGUOUS"))))
+' "${buildopt_evidence}/buildopt-profile-proposal.json" >/dev/null
+
+buildopt_expected_change=$(jq -er '.subject.changePath' "${buildopt_spec}")
+[[ $(cat "${buildopt_evidence}/buildopt-changes.txt") == "${buildopt_expected_change}" ]] || {
+    printf 'holdout changed path does not match the preregistration\n' >&2
+    exit 1
+}
+
+buildopt_proposal_decision=$(jq -er '.proposal.decision' "${buildopt_summary}")
+buildopt_measurement_status=$(jq -er '.measurementStatus' "${buildopt_summary}")
+if [[ ${buildopt_proposal_decision} == NATIVE_FULL_GRAPH ]]; then
+    jq -e '
+        .measurementStatus == "NOT_RUN_NATIVE_FULL_GRAPH" and
+        .result == null and
+        .evaluationDecision == "NATIVE_FULL_GRAPH"
+    ' "${buildopt_summary}" >/dev/null
+    jq -e '. == null' "${buildopt_evidence}/evidence.json" >/dev/null
+    jq -e '. == null' "${buildopt_evidence}/evaluation.json" >/dev/null
+    [[ ! -e ${buildopt_evidence}/profile.json ]] || {
+        printf 'native holdout decision unexpectedly wrote a profile\n' >&2
+        exit 1
+    }
+elif [[ ${buildopt_measurement_status} == COMPLETED ]]; then
+    for buildopt_name in buildopt-fallback-changes.txt \
+        buildopt-impact-manifest.json buildopt-impact-graph.generated.json \
+        buildopt-impact.generated.json measurement.log evaluation.log; do
+        [[ -e ${buildopt_evidence}/${buildopt_name} ]] || {
+            printf 'missing completed holdout evidence: %s\n' "${buildopt_name}" >&2
+            exit 1
+        }
+    done
+    jq -e '
+        .schemaVersion == "buildopt.evidence/structural-profile-qualification/v1" and
+        (.evidenceState | IN("QUALIFIED", "INCONCLUSIVE")) and
+        .execution.candidateSurface == "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY" and
+        .execution.mechanisms == ["BUILD_IMPACT"] and
+        .execution.launcherOverheadIncluded == true and
+        (.observations | length) == 8 and
+        all(.observations[];
+            .productAttributableFailure == false and
+            .requiredOutputCount > 0 and
+            .controlRequiredOutputSha256 == .candidateRequiredOutputSha256) and
+        .fallback.mode == "FULL_GRAPH" and
+        .fallback.buildSuccessful == true and
+        .boundaries.repositorySpecificRuleAdded == false and
+        .boundaries.testOptimizationModified == false
+    ' "${buildopt_evidence}/evidence.json" >/dev/null
+    jq -e \
+        --slurpfile evidence "${buildopt_evidence}/evidence.json" \
+        --slurpfile evaluation "${buildopt_evidence}/evaluation.json" '
+        .result == $evidence[0].result and
+        .evaluationDecision == $evaluation[0].decision and
+        .result.pairs == 8 and
+        ((.result.qualified == true and
+          .evaluationDecision == "QUALIFY_STRUCTURAL_PROFILE") or
+         (.result.qualified == false and
+          .evaluationDecision == "NATIVE_FULL_GRAPH"))
+    ' "${buildopt_summary}" >/dev/null
+    buildopt_qualified=$(jq -er '.result.qualified' "${buildopt_summary}")
+    if [[ ${buildopt_qualified} == true ]]; then
+        [[ -s ${buildopt_evidence}/profile.json ]] || {
+            printf 'qualified holdout evidence is missing its review profile\n' >&2
+            exit 1
+        }
+    else
+        [[ ! -e ${buildopt_evidence}/profile.json ]] || {
+            printf 'inconclusive holdout evidence unexpectedly wrote a profile\n' >&2
+            exit 1
+        }
+    fi
+elif [[ ${buildopt_measurement_status} == MEASUREMENT_UNAVAILABLE ]]; then
+    jq -e '
+        .result == null and .evaluationDecision == "NATIVE_FULL_GRAPH"
+    ' "${buildopt_summary}" >/dev/null
+    jq -e '. == null' "${buildopt_evidence}/evidence.json" >/dev/null
+    grep -Fq -- 'structural profile measurement unavailable:' \
+        "${buildopt_evidence}/measurement.log"
+else
+    printf 'invalid holdout measurement state: %s\n' \
+        "${buildopt_measurement_status}" >&2
+    exit 1
+fi
+
+printf 'Generic unseen holdout: PASS (%s, %s)\n' \
+    "${buildopt_proposal_decision}" "${buildopt_measurement_status}"

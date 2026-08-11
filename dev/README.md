@@ -3446,6 +3446,15 @@ checkouts, `./dev/evaluate-generic-profile-ci-replay` to write each durable
 verdict, and `./dev/compose-generic-profile-ci-replay` to publish the terminal
 summary. This replay performs no timing and writes no qualified profile.
 
+`./dev/run-generic-holdout /absolute/evidence/directory` packages the current
+committed CLI and applies the preregistered generic proposal, isolated
+measurement and evaluation path to the frozen Hibernate ORM holdout. The
+runner records the proposal even when it retains native Gradle and measures
+only a complete structural candidate. `./dev/check-generic-holdout
+[evidence-directory]` validates the exact source, workflow, change, outputs,
+control, proposal, eight-pair evidence, evaluation and fallback without
+network access; use `--spec-only` before evidence capture.
+
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 
 The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.
