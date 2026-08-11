@@ -21,7 +21,9 @@ the job. See the [CI proposal contract](../specs/poc-generic-profile-ci-v1.md).
 [`profile-proposal-fixture.yml`](./workflows/profile-proposal-fixture.yml) is a
 manual, read-only hosted conformance run for that mode. It creates an external
 clean Gradle checkout below runner temp, uploads the generated proposal and
-asserts that no active profile exists.
+asserts that no active profile exists. Hosted run
+[`31464264563`](https://github.com/tonyredondo/buildopt/actions/runs/31464264563)
+passed from immutable source `f6a2c5e` with an 11-file checksummed artifact.
 
 
 [`ws-007-fixture.yml`](./workflows/ws-007-fixture.yml) is a manual,

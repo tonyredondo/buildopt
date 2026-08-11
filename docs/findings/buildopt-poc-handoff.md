@@ -11,10 +11,11 @@
   method qualified on OpenTelemetry, Kafka, Micronaut, and Groovy, reducing
   wall time by **14.43% to 84.11%**. Spring improved by **17.94%**, but BuildOpt
   correctly retained native Gradle because one of eight pairs was slower.
-- **The next problem is adoption and generalization, not production
-  hardening.** BuildOpt should turn repository-owned CI inputs into a reviewable
-  proposal, reproduce the current decisions on clean runners, and then run the
-  unchanged workflow on an unseen substantial Gradle repository.
+- **The next problem is cross-repository CI reproducibility, not production
+  hardening.** A read-only Action now turns repository-owned inputs into a
+  checksummed proposal or native decision. BuildOpt should reproduce the five
+  current decisions through that surface and then run it unchanged on an
+  unseen substantial Gradle repository.
 
 ## The Project in One Minute
 
@@ -105,16 +106,16 @@ keeps native Gradle authoritative.
 
 ## Recommended Next Steps
 
-1. **Make the proposal a review-only CI artifact.** Implement
-   `POC-GENERIC-PROFILE-CI-001`: an owner-declared workflow supplies the
-   Gradle task, exact Git change, and required outputs; CI uploads the proposal
-   and fallback reason without activating it.
-2. **Reproduce current decisions on clean CI runners.** The five repositories
-   should produce the same graph proposals or explicit native decisions from
-   checked-in inputs.
-3. **Run an unchanged holdout test.** Select one unseen, substantial Gradle
+1. **Reproduce current decisions on clean CI runners.** Use the completed
+   review-only Action and checked-in owner inputs for the five repositories.
+   Require the same graph proposals or explicit native decisions; report drift
+   without changing thresholds or repository-specific code.
+2. **Run an unchanged holdout test.** Select one unseen, substantial Gradle
    repository and apply the same propose -> measure -> evaluate flow without
    repository-specific code, post-result tuning, or relaxed gates.
+3. **Measure only reviewed candidates.** A CI proposal remains an observation,
+   not value evidence. Run isolated paired measurement only after its graph,
+   outputs and fallback are accepted.
 4. **Broaden workflow coverage deliberately.** After the holdout, test distinct
    customer build shapes such as compilation, packaging, verification, and
    build-owned test preparation. Test Optimization remains separate.
@@ -131,5 +132,6 @@ Test Optimization remains outside Build Optimization.
 
 - [Terminal five-repository structural matrix](../../benchmarks/results/poc-generic-profile-matrix-v3/README.md)
 - [OpenTelemetry fallback-equivalence correction](../../benchmarks/results/poc-generic-profile-matrix-v4/README.md)
+- [Hosted review-only CI artifact run](https://github.com/tonyredondo/buildopt/actions/runs/31464264563)
 - [Detailed performance findings and historical research](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

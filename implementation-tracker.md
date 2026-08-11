@@ -117,7 +117,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-GENERIC-PROFILE-MATRIX | Compare the same generic structural-only method across five substantial public Gradle repositories | `DONE` | 1/1 | `E-293..294` |
 | POC-GENERIC-PROFILE-MATRIX-V3 | Correct the process-only gap, bound fallback memory, and rerun all five repositories under one frozen method | `DONE` | 1/1 | `E-295..301` |
 | POC-GENERIC-PROFILE-MATRIX-V4 | Re-run only the failed OpenTelemetry row with measured scheduling preserved in the untimed fallback | `DONE` | 1/1 | `E-302..303` |
-| POC-GENERIC-PROFILE-CI | Publish the generic proposal as an explicit review artifact from repository-owned CI inputs | `DOING` | 0/1 | `E-304` |
+| POC-GENERIC-PROFILE-CI | Publish the generic proposal as an explicit review artifact from repository-owned CI inputs | `DONE` | 1/1 | `E-304..306` |
+| POC-GENERIC-PROFILE-CI-REPLAY | Reproduce the five terminal proposal/native decisions from checked-in owner inputs on clean CI | `TODO` | 0/1 | `E-306` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -265,7 +266,8 @@ than partners. Test Optimization remains a separate product.
 | 80 | `POC-GENERIC-PROFILE-MATRIX-001` | Run one installed `profile propose -> measure -> evaluate` structural-only method on Spring, OpenTelemetry, Kafka, Micronaut and Groovy, preserving each declared workflow and outputs while reporting prior Jar/Edge compositions separately | `DONE` | Codex |
 | 81 | `POC-GENERIC-PROFILE-MATRIX-002` | Correct the process-only inter-arm gap, bound the untimed fallback memory, and rerun the same five repositories from zero without reusing failed observations | `DONE` | Codex |
 | 82 | `POC-GENERIC-PROFILE-MATRIX-003` | Correct only OpenTelemetry's scheduling-sensitive fallback proof and capture one fresh atomic row without changing timed conditions or thresholds | `DONE` | Codex |
-| 83 | `POC-GENERIC-PROFILE-CI-001` | Expose the unchanged proposal command as a review-only CI artifact from an owner-declared workflow, exact Git change and required outputs, retaining native on unsupported or incomplete discovery | `DOING` | Codex |
+| 83 | `POC-GENERIC-PROFILE-CI-001` | Expose the unchanged proposal command as a review-only CI artifact from an owner-declared workflow, exact Git change and required outputs, retaining native on unsupported or incomplete discovery | `DONE` | Codex |
+| 84 | `POC-GENERIC-PROFILE-CI-REPLAY-001` | Run the committed review-only Action from checked-in owner inputs for Spring, OpenTelemetry, Kafka, Micronaut and Groovy, requiring the terminal candidate/native decisions or explicit drift without timing or repository-specific code | `TODO` | Codex |
 
 #### Completed POC block: five-repository generic profile matrix
 
@@ -300,7 +302,7 @@ qualified at **14.43%** faster with 12,109.625 ms saved, interval
 successful full-graph fallback. Repository percentages remain unaveraged and
 prior Jar/Edge compositions remain separate evidence.
 
-#### Active POC block: review-only profile proposal in CI
+#### Completed POC block: review-only profile proposal in CI
 
 `POC-GENERIC-PROFILE-CI-001` moves the already validated generic proposal into
 one repository-owned CI surface. It does not change discovery, qualification
@@ -321,6 +323,16 @@ thresholds or Gradle execution.
 - Closure requires deterministic local candidate replay, native fallback,
   invalid-revision rejection, a real read-only hosted artifact and green Base
   and Native Platform CI on the final tracker SHA.
+
+Terminal result: hosted run
+[`31464264563`](https://github.com/tonyredondo/buildopt/actions/runs/31464264563)
+compiled the CLI from immutable BuildOpt `f6a2c5e`, accepted the strict owner
+input, derived the exact two-commit change and uploaded an 11-file artifact.
+Every checksum passed; the proposal selected `:service-a:classes`, omitted
+`:service-b`, remained review-required and created no active profile. The first
+run `31464154987` failed before executing BuildOpt because the fixture used an
+invalid hosted Temurin selector; it is retained as failure evidence and no
+proposal observation came from it.
 
 #### Planned POC decision sequence
 
@@ -1875,6 +1887,8 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-302` | 2026-08-10 | `POC-GENERIC-PROFILE-MATRIX-003` | Implementation [`e36b66b`](https://github.com/tonyredondo/buildopt/commit/e36b66b956cceb2d1783f3dae807ae64d31b1193) still stops both measured daemons before fallback but now preserves the measured parallelism and 12-worker scheduling while using `--no-daemon`; bounded path-level output diagnostics replace an opaque aggregate mismatch. The [v4 correction](./specs/poc-generic-profile-matrix-v4.md) freezes the unchanged OpenTelemetry source, workflow, outputs, eight alternating timed pairs, 12-worker runner and qualification gates before replay | `DONE` preregistration: zero v3 observations were reused, only OpenTelemetry was replayed, and the terminal result is recorded separately as `E-303` |
 | `E-303` | 2026-08-10 | `POC-GENERIC-PROFILE-MATRIX-003` | The independently checked [OpenTelemetry v4 bundle](./benchmarks/results/poc-generic-profile-matrix-v4/README.md) binds BuildOpt `8fbb060`, executable SHA-256 `0ea7dbf...f9d3`, the unchanged public revision, 53-entrypoint workflow, 1,024-to-34-project reduction, 12-worker scheduling and eight fresh alternating pairs. Optimized native averaged 83,934.125 ms; installed BuildOpt averaged 71,824.5 ms, saving 12,109.625 ms/**14.43%** with interval +9,819.25..+14,266.5 ms and 8/8 positive pairs. Every observation produced the same 125 required files, gaps were zero, product failures were zero, and the scheduling-equivalent no-daemon full-graph fallback reproduced the required output | `DONE` terminal `QUALIFY_GENERIC_OPENTELEMETRY_STRUCTURAL_PROFILE`: the corrected fallback changes no timed condition or threshold, v3 remains immutable rejected evidence, evaluation is review-required and non-automatic, and no repository-specific rule, production, soak, design-partner or Test Optimization authority is created. `POC-GENERIC-PROFILE-CI-001` is next |
 | `E-304` | 2026-08-11 | `POC-GENERIC-PROFILE-CI-001` | The [review-only CI contract](./specs/poc-generic-profile-ci-v1.md), repository-root Action mode, strict checked-in fixture input and executable checker expose the unchanged generic proposal from an exact base/target checkout. Local conformance produces `:service-a:classes`, repeats the complete artifact byte for byte, retains native for a global build change, rejects a mismatched target and writes no qualified profile | `DOING` preregistered before hosted execution: the manual read-only workflow must upload the artifact from the committed Action SHA before closure. No measurement, timing percentage, automatic activation, production authority or Test Optimization behavior is created |
+| `E-305` | 2026-08-11 | `POC-GENERIC-PROFILE-CI-001` | Hosted run [31464154987](https://github.com/tonyredondo/buildopt/actions/runs/31464154987) stopped in `actions/setup-java` before fixture preparation or BuildOpt execution because `21.0.12+8` did not match the hosted Temurin identifier `21.0.12+8.0.LTS` | `DONE` discarded infrastructure-fixture failure: no proposal artifact or observation existed. Commit `f6a2c5e` corrected only the exact Java selector; Action behavior, inputs, discovery and decisions were unchanged |
+| `E-306` | 2026-08-11 | `POC-GENERIC-PROFILE-CI-001` | Read-only hosted run [31464264563](https://github.com/tonyredondo/buildopt/actions/runs/31464264563) executed the repository-root composite Action from BuildOpt `f6a2c5e`, compiled its pinned Go source, created a clean external Gradle checkout and uploaded `buildopt-profile-proposal-fixture`. All 11 artifact checksums passed. `review.json` binds the exact base/target commits and BuildOpt revision, reports `MEASURE_STRUCTURAL_CANDIDATE` / `COMPLETE_STRUCTURAL_REDUCTION`, selects `:service-a:classes`, omits `:service-b`, requires review, disables automatic activation and production, and leaves `buildopt-qualified-profile.json` absent | `DONE` terminal `REVIEW_ONLY_CI_PROPOSAL_AVAILABLE`: local conformance also proves deterministic replay, native fallback, diagnostic failure, invalid target and symlink rejection. No performance percentage, measurement, workflow mutation, production claim or Test Optimization behavior was created. `POC-GENERIC-PROFILE-CI-REPLAY-001` is next |
 
 ---
 
@@ -1882,6 +1896,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-11 | Closed the review-only profile proposal Action with a checksum-verified hosted artifact bound to immutable source and exact Git revisions; retained the initial Java-selector failure and moved five-repository clean-CI decision replay next | Codex |
 | 2026-08-11 | Implemented and preregistered the review-only generic profile Action: strict owner inputs and exact revisions produce a deterministic proposal or native decision artifact; hosted evidence remains required before closing the block | Codex |
 | 2026-08-10 | Qualified the fresh OpenTelemetry v4 structural row at 14.43% faster with 8/8 positive pairs, exact 125-file outputs, zero product failures and scheduling-equivalent full-graph fallback; preserved v3 as immutable rejected evidence and moved repository-owned CI proposal publication next | Codex |
 | 2026-08-10 | Closed the terminal v3 five-repository matrix with Kafka, Micronaut, and Groovy qualified; Spring retained native under the 8-of-8 rule and OpenTelemetry retained native after its reduced-concurrency fallback changed outputs. Preregistered an OpenTelemetry-only v4 correction that preserves measured scheduling in the untimed fallback | Codex |

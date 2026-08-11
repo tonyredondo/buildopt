@@ -12,8 +12,9 @@
   failed the frozen 8/8 rule, so the current decision remains optimized native
   Gradle.
 - **The POC should now prove repeatable adoption and unseen-repository
-  transfer.** The next block is a review-only repository-owned CI artifact,
-  followed by clean-runner replay and one unchanged substantial holdout. See
+  transfer.** The review-only repository-owned CI artifact is complete; the
+  next block replays all five decisions through it before one unchanged
+  substantial holdout. See
   the [current one-pager](./buildopt-poc-handoff.md) for the decision-ready
   summary and roadmap.
 - **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
@@ -513,9 +514,10 @@ still decides activation.
 
 These percentages replace neither the older complete Jar/Edge compositions
 nor one another. They are direct Build-Impact-only measurements and must not be
-averaged or added to historical mechanism effects. The next POC block should
-make the same generic proposal a review artifact in repository-owned CI, while
-activation remains explicit and evidence-bound. OpenTelemetry also shows that
+averaged or added to historical mechanism effects. The generic proposal is now
+a review artifact in repository-owned CI; the next block must reproduce all
+five terminal decisions through that surface while activation remains explicit
+and evidence-bound. OpenTelemetry also shows that
 a correctness-only fallback must preserve measured scheduling when output
 bytes are scheduling-sensitive: v3 remains immutable rejected evidence, and
 the v4 correction changed no timed condition or qualification threshold.
