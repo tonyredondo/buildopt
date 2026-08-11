@@ -21,6 +21,11 @@ for buildopt_batch in 1 2; do
     printf 'Capturing independent crossover batch %d/2\n' "${buildopt_batch}"
     "${buildopt_script_dir}/run-generic-holdout" \
         "${buildopt_output}/batch-${buildopt_batch}" "${buildopt_spec}"
+    jq -e '.schemaVersion == "buildopt.evidence/structural-profile-qualification/v1"' \
+        "${buildopt_output}/batch-${buildopt_batch}/evidence.json" >/dev/null || {
+        printf 'crossover batch %d did not produce structural evidence\n' "${buildopt_batch}" >&2
+        exit 1
+    }
 done
 
 buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)

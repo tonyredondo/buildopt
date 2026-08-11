@@ -2,6 +2,8 @@ package profilediscovery
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -242,6 +244,38 @@ func TestRenderStructuralMeasurementEvidencePreservesWarmupAndPairDiagnostics(t 
 	if !evidence.Result.ExecutionShapeStable || !evidence.Result.TargetWarmupShapeObserved ||
 		evidence.Result.TargetWarmupShapeStable || evidence.Result.Qualified {
 		t.Fatalf("mismatched target warm-up qualified = %+v", evidence.Result)
+	}
+}
+
+func TestValidateStructuralTaskOutcomesExplainsMalformedExactEvidence(t *testing.T) {
+	valid := StructuralTaskOutcomes{
+		Total: 2, Executed: 1, FromCache: 1,
+		Tasks: []StructuralTaskObservation{
+			{Path: ":alpha", Outcome: "EXECUTED"},
+			{Path: ":beta", Outcome: "FROM_CACHE"},
+		},
+	}
+	digest := sha256.Sum256([]byte("> Task :alpha\n> Task :beta FROM-CACHE\n"))
+	valid.FingerprintSHA256 = hex.EncodeToString(digest[:])
+	if err := ValidateStructuralTaskOutcomes(valid); err != nil {
+		t.Fatalf("valid exact task evidence: %v", err)
+	}
+
+	duplicate := valid
+	duplicate.Tasks = append([]StructuralTaskObservation(nil), valid.Tasks...)
+	duplicate.Tasks[1].Path = duplicate.Tasks[0].Path
+	if err := ValidateStructuralTaskOutcomes(duplicate); err == nil || !strings.Contains(err.Error(), "not strictly sorted") {
+		t.Fatalf("duplicate task path error = %v", err)
+	}
+
+	mismatch := valid
+	mismatch.FingerprintSHA256 = strings.Repeat("f", 64)
+	if err := ValidateStructuralTaskOutcomes(mismatch); err == nil || !strings.Contains(err.Error(), "fingerprint mismatch") {
+		t.Fatalf("fingerprint mismatch error = %v", err)
+	}
+
+	if err := ValidateStructuralHostPressure(&StructuralHostPressure{Available: true, CPUSomeTotalUS: -1}); err == nil {
+		t.Fatal("negative host-pressure counter was accepted")
 	}
 }
 

@@ -558,31 +558,50 @@ func validateStructuralDiagnostics(control, candidate []StructuralWarmupObservat
 }
 
 func validStructuralTaskOutcomes(outcomes StructuralTaskOutcomes) bool {
+	return ValidateStructuralTaskOutcomes(outcomes) == nil
+}
+
+// ValidateStructuralTaskOutcomes checks that the bounded exact-task evidence
+// recomputes the same canonical fingerprint as the Gradle console summary.
+// Measurement callers use the detailed error to fail on the first malformed
+// sample instead of discovering it only after an expensive paired run.
+func ValidateStructuralTaskOutcomes(outcomes StructuralTaskOutcomes) error {
 	if outcomes.Total < 0 || outcomes.Executed < 0 || outcomes.FromCache < 0 ||
 		outcomes.UpToDate < 0 || outcomes.NoSource < 0 || outcomes.Skipped < 0 ||
-		outcomes.Total != outcomes.Executed+outcomes.FromCache+outcomes.UpToDate+outcomes.NoSource+outcomes.Skipped ||
-		(outcomes.FingerprintSHA256 != "" &&
-			(!validSHA(outcomes.FingerprintSHA256) || outcomes.FingerprintSHA256 != strings.ToLower(outcomes.FingerprintSHA256))) {
-		return false
+		outcomes.Total != outcomes.Executed+outcomes.FromCache+outcomes.UpToDate+outcomes.NoSource+outcomes.Skipped {
+		return errors.New("task outcome counters are inconsistent")
+	}
+	if outcomes.FingerprintSHA256 != "" &&
+		(!validSHA(outcomes.FingerprintSHA256) || outcomes.FingerprintSHA256 != strings.ToLower(outcomes.FingerprintSHA256)) {
+		return errors.New("task fingerprint is not a lowercase SHA-256 digest")
 	}
 	if len(outcomes.Tasks) == 0 {
-		return true
+		return nil
 	}
 	if len(outcomes.Tasks) != outcomes.Total || outcomes.FingerprintSHA256 == "" {
-		return false
+		return fmt.Errorf("exact task evidence has %d entries for total %d", len(outcomes.Tasks), outcomes.Total)
 	}
 	canonical := make([]string, len(outcomes.Tasks))
 	previous := ""
 	for index, task := range outcomes.Tasks {
-		if task.Path == "" || !strings.HasPrefix(task.Path, ":") ||
-			!validStructuralTaskOutcome(task.Outcome) || (previous != "" && task.Path <= previous) {
-			return false
+		if task.Path == "" || !strings.HasPrefix(task.Path, ":") {
+			return fmt.Errorf("exact task %d has invalid path %q", index+1, task.Path)
+		}
+		if !validStructuralTaskOutcome(task.Outcome) {
+			return fmt.Errorf("exact task %s has invalid outcome %q", task.Path, task.Outcome)
+		}
+		if previous != "" && task.Path <= previous {
+			return fmt.Errorf("exact task paths are not strictly sorted: %q followed by %q", previous, task.Path)
 		}
 		previous = task.Path
 		canonical[index] = structuralTaskFingerprintLine(task)
 	}
 	digest := sha256.Sum256([]byte(strings.Join(canonical, "\n") + "\n"))
-	return hex.EncodeToString(digest[:]) == outcomes.FingerprintSHA256
+	calculated := hex.EncodeToString(digest[:])
+	if calculated != outcomes.FingerprintSHA256 {
+		return fmt.Errorf("exact task fingerprint mismatch: calculated %s, recorded %s", calculated, outcomes.FingerprintSHA256)
+	}
+	return nil
 }
 
 func validStructuralTaskOutcome(outcome string) bool {
@@ -611,9 +630,19 @@ func structuralTaskFingerprintLine(task StructuralTaskObservation) string {
 }
 
 func validStructuralHostPressure(pressure *StructuralHostPressure) bool {
-	return pressure == nil || (pressure.Available && pressure.CPUSomeTotalUS >= 0 &&
-		pressure.MemorySomeTotalUS >= 0 && pressure.MemoryFullTotalUS >= 0 &&
-		pressure.IOSomeTotalUS >= 0 && pressure.IOFullTotalUS >= 0)
+	return ValidateStructuralHostPressure(pressure) == nil
+}
+
+// ValidateStructuralHostPressure verifies an optional interval PSI sample.
+func ValidateStructuralHostPressure(pressure *StructuralHostPressure) error {
+	if pressure == nil {
+		return nil
+	}
+	if !pressure.Available || pressure.CPUSomeTotalUS < 0 || pressure.MemorySomeTotalUS < 0 ||
+		pressure.MemoryFullTotalUS < 0 || pressure.IOSomeTotalUS < 0 || pressure.IOFullTotalUS < 0 {
+		return errors.New("host-pressure interval is unavailable or contains a negative counter")
+	}
+	return nil
 }
 
 func calculateStructuralResult(observations []structuralObservation) (structuralResult, error) {

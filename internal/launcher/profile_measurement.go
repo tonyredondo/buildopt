@@ -578,6 +578,12 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 		hostPressure: structuralPressureDelta(pressureBefore, pressureAfter),
 		startedAt:    started, finishedAt: finished,
 	}
+	if validationErr := profilediscovery.ValidateStructuralTaskOutcomes(result.taskOutcomes); validationErr != nil {
+		return result, fmt.Errorf("%s arm produced invalid exact task evidence: %w", arm.name, validationErr)
+	}
+	if validationErr := profilediscovery.ValidateStructuralHostPressure(structuralHostPressurePointer(result.hostPressure)); validationErr != nil {
+		return result, fmt.Errorf("%s arm produced invalid host-pressure evidence: %w", arm.name, validationErr)
+	}
 	if ctx.Err() == context.DeadlineExceeded {
 		return result, fmt.Errorf("%s arm exceeded %s", arm.name, config.timeout)
 	}
