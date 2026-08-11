@@ -107,8 +107,12 @@ func TestSummarizeStructuralTaskOutcomes(t *testing.T) {
 	outcomes := summarizeStructuralTaskOutcomes(log)
 	if outcomes.Total != 6 || outcomes.Executed != 2 || outcomes.FromCache != 1 ||
 		outcomes.UpToDate != 1 || outcomes.NoSource != 1 || outcomes.Skipped != 1 ||
-		outcomes.FingerprintSHA256 == "" {
+		outcomes.FingerprintSHA256 == "" || len(outcomes.Tasks) != outcomes.Total {
 		t.Fatalf("task outcomes = %+v", outcomes)
+	}
+	if outcomes.Tasks[0].Path != ":classes" || outcomes.Tasks[0].Outcome != "UP_TO_DATE" ||
+		outcomes.Tasks[5].Path != ":resources" || outcomes.Tasks[5].Outcome != "FROM_CACHE" {
+		t.Fatalf("exact task observations = %+v", outcomes.Tasks)
 	}
 	reordered := summarizeStructuralTaskOutcomes(strings.Join([]string{
 		"> Task :disabled SKIPPED",

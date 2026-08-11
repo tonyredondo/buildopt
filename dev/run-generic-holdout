@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if (($# != 1)) || [[ $1 != /* ]]; then
-    printf 'usage: %s /absolute/evidence/output/directory\n' "$0" >&2
-    exit 64
+if (($# < 1 || $# > 2)) || [[ $1 != /* ]]; then
+	printf 'usage: %s /absolute/evidence/output/directory [specification]\n' "$0" >&2
+	exit 64
 fi
 
 buildopt_output=$1
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
-buildopt_spec="${buildopt_repo_root}/specs/poc-generic-holdout-v4.json"
+buildopt_spec=${2:-"${buildopt_repo_root}/specs/poc-generic-holdout-v4.json"}
+if [[ ${buildopt_spec} != /* ]]; then
+	buildopt_spec="${buildopt_repo_root}/${buildopt_spec}"
+fi
 buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-generic-holdout.XXXXXX")
 
 buildopt_cleanup() {
@@ -140,10 +143,15 @@ printf 'null\n' >"${buildopt_output}/evaluation.json"
 if [[ $(jq -r '.decision' \
     "${buildopt_repository}/buildopt-profile-proposal.json") == \
     MEASURE_STRUCTURAL_CANDIDATE ]]; then
-    buildopt_gradle_args=()
+	buildopt_gradle_args=()
     while IFS= read -r buildopt_gradle_option; do
         buildopt_gradle_args+=(--gradle-option="${buildopt_gradle_option}")
-    done < <(jq -r '.method.gradleOptions[]' "${buildopt_spec}")
+	done < <(jq -r '.method.gradleOptions[]' "${buildopt_spec}")
+	buildopt_stability_args=()
+	buildopt_target_confirmations=$(jq -r '.runner.targetStabilityConfirmations // 1' "${buildopt_spec}")
+	if [[ ${buildopt_target_confirmations} != 1 ]]; then
+		buildopt_stability_args+=(--target-stability-confirmations "${buildopt_target_confirmations}")
+	fi
 
     printf 'Measuring frozen holdout candidate for %s\n' "${buildopt_repository_id}"
     if (
@@ -158,8 +166,8 @@ if [[ $(jq -r '.decision' \
             --fallback-changes-file buildopt-fallback-changes.txt \
             --base-revision "${buildopt_base}" \
             --buildopt-revision "${buildopt_revision}" \
-            --evidence-output buildopt-structural-evidence.json \
-            "${buildopt_gradle_args[@]}" --timeout 30m
+			--evidence-output buildopt-structural-evidence.json \
+			"${buildopt_gradle_args[@]}" "${buildopt_stability_args[@]}" --timeout 30m
     ) >"${buildopt_output}/measurement.log" 2>&1; then
         buildopt_measure_status=COMPLETED
         cp -- "${buildopt_repository}/buildopt-structural-evidence.json" \

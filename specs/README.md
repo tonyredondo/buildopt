@@ -499,6 +499,15 @@ tasks. Its four post-hoc AB/BA blocks are all positive, which authorizes only a
 new preregistration for reciprocal blocks and stronger target stabilization;
 no v4 timing may be reused as qualifying evidence.
 
+`poc-generic-holdout-v5.json` and `poc-generic-holdout-v5.md` preregister the
+recoverability test implied by v4. Two independent eight-pair batches become
+eight reciprocal `AB/BA` blocks; each arm must expose two target-workload
+observations and exact task paths before its measured pairs. Qualification
+still requires 500 ms, 2%, a positive lower bound, eight-of-eight positive
+blocks, exact outputs, both full-graph fallbacks and zero product failures.
+Target drift is reported path by path and retains native rather than being
+discarded or special-cased.
+
 The terminal v2 evidence reduces the 29-project root graph to one project and
 saves 19,386.25 ms/7.80% on average with exact outputs and zero product
 failures. Seven of eight pairs improve, so the unchanged 8-of-8 gate retains

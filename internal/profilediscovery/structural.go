@@ -3,6 +3,7 @@ package profilediscovery
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -172,13 +173,22 @@ type StructuralMeasurementObservation struct {
 // Gradle's plain console output. It helps diagnose timing outliers without
 // retaining repository build logs or changing the measured Gradle invocation.
 type StructuralTaskOutcomes struct {
-	Total             int    `json:"total"`
-	Executed          int    `json:"executed"`
-	FromCache         int    `json:"fromCache"`
-	UpToDate          int    `json:"upToDate"`
-	NoSource          int    `json:"noSource"`
-	Skipped           int    `json:"skipped"`
-	FingerprintSHA256 string `json:"fingerprintSha256,omitempty"`
+	Total             int                         `json:"total"`
+	Executed          int                         `json:"executed"`
+	FromCache         int                         `json:"fromCache"`
+	UpToDate          int                         `json:"upToDate"`
+	NoSource          int                         `json:"noSource"`
+	Skipped           int                         `json:"skipped"`
+	FingerprintSHA256 string                      `json:"fingerprintSha256,omitempty"`
+	Tasks             []StructuralTaskObservation `json:"tasks,omitempty"`
+}
+
+// StructuralTaskObservation preserves the exact Gradle task path and observed
+// outcome used to derive an execution-shape fingerprint. The bounded list is
+// diagnostic evidence; it never authorizes repository-specific selection.
+type StructuralTaskObservation struct {
+	Path    string `json:"path"`
+	Outcome string `json:"outcome"`
 }
 
 // StructuralHostPressure records the system-wide Linux PSI time accumulated
@@ -491,12 +501,15 @@ func validateStructuralDiagnostics(control, candidate []StructuralWarmupObservat
 		}
 		return nil
 	}
-	if len(control) != len(candidate) || (len(control) != 2 && len(control) != 3) {
-		return errors.New("structural measurement requires complete two- or three-phase warm-ups")
+	if len(control) != len(candidate) || (len(control) != 2 && len(control) != 3 && len(control) != 4) {
+		return errors.New("structural measurement requires complete two-, three-, or four-phase warm-ups")
 	}
 	expectedPhases := []string{"CACHE_SEED", "DAEMON_STABILIZATION"}
-	if len(control) == 3 {
+	if len(control) >= 3 {
 		expectedPhases = []string{"CACHE_SEED", "BASE_DAEMON_STABILIZATION", "TARGET_WORKLOAD_STABILIZATION"}
+	}
+	if len(control) == 4 {
+		expectedPhases = append(expectedPhases, "TARGET_WORKLOAD_STABILITY_CONFIRMATION")
 	}
 	fingerprintPresent := false
 	fingerprintAbsent := false
@@ -545,11 +558,56 @@ func validateStructuralDiagnostics(control, candidate []StructuralWarmupObservat
 }
 
 func validStructuralTaskOutcomes(outcomes StructuralTaskOutcomes) bool {
-	return outcomes.Total >= 0 && outcomes.Executed >= 0 && outcomes.FromCache >= 0 &&
-		outcomes.UpToDate >= 0 && outcomes.NoSource >= 0 && outcomes.Skipped >= 0 &&
-		outcomes.Total == outcomes.Executed+outcomes.FromCache+outcomes.UpToDate+outcomes.NoSource+outcomes.Skipped &&
-		(outcomes.FingerprintSHA256 == "" ||
-			(validSHA(outcomes.FingerprintSHA256) && outcomes.FingerprintSHA256 == strings.ToLower(outcomes.FingerprintSHA256)))
+	if outcomes.Total < 0 || outcomes.Executed < 0 || outcomes.FromCache < 0 ||
+		outcomes.UpToDate < 0 || outcomes.NoSource < 0 || outcomes.Skipped < 0 ||
+		outcomes.Total != outcomes.Executed+outcomes.FromCache+outcomes.UpToDate+outcomes.NoSource+outcomes.Skipped ||
+		(outcomes.FingerprintSHA256 != "" &&
+			(!validSHA(outcomes.FingerprintSHA256) || outcomes.FingerprintSHA256 != strings.ToLower(outcomes.FingerprintSHA256))) {
+		return false
+	}
+	if len(outcomes.Tasks) == 0 {
+		return true
+	}
+	if len(outcomes.Tasks) != outcomes.Total || outcomes.FingerprintSHA256 == "" {
+		return false
+	}
+	canonical := make([]string, len(outcomes.Tasks))
+	previous := ""
+	for index, task := range outcomes.Tasks {
+		if task.Path == "" || !strings.HasPrefix(task.Path, ":") ||
+			!validStructuralTaskOutcome(task.Outcome) || (previous != "" && task.Path <= previous) {
+			return false
+		}
+		previous = task.Path
+		canonical[index] = structuralTaskFingerprintLine(task)
+	}
+	digest := sha256.Sum256([]byte(strings.Join(canonical, "\n") + "\n"))
+	return hex.EncodeToString(digest[:]) == outcomes.FingerprintSHA256
+}
+
+func validStructuralTaskOutcome(outcome string) bool {
+	switch outcome {
+	case "EXECUTED", "FROM_CACHE", "UP_TO_DATE", "NO_SOURCE", "SKIPPED":
+		return true
+	default:
+		return false
+	}
+}
+
+func structuralTaskFingerprintLine(task StructuralTaskObservation) string {
+	line := "> Task " + task.Path
+	switch task.Outcome {
+	case "FROM_CACHE":
+		return line + " FROM-CACHE"
+	case "UP_TO_DATE":
+		return line + " UP-TO-DATE"
+	case "NO_SOURCE":
+		return line + " NO-SOURCE"
+	case "SKIPPED":
+		return line + " SKIPPED"
+	default:
+		return line
+	}
 }
 
 func validStructuralHostPressure(pressure *StructuralHostPressure) bool {
@@ -636,18 +694,29 @@ func applyStructuralTargetWarmupShape(
 	control, candidate []StructuralWarmupObservation,
 	observations []structuralObservation,
 ) structuralResult {
-	if len(control) != 3 || len(candidate) != 3 || len(observations) == 0 {
+	if (len(control) != 3 && len(control) != 4) || len(candidate) != len(control) || len(observations) == 0 {
 		return result
 	}
-	controlWarmup := control[2].TaskOutcomes.FingerprintSHA256
-	candidateWarmup := candidate[2].TaskOutcomes.FingerprintSHA256
-	controlMeasured := observations[0].ControlTaskOutcomes.FingerprintSHA256
-	candidateMeasured := observations[0].CandidateTaskOutcomes.FingerprintSHA256
-	if controlWarmup == "" || candidateWarmup == "" || controlMeasured == "" || candidateMeasured == "" {
+	controlFingerprint := control[2].TaskOutcomes.FingerprintSHA256
+	candidateFingerprint := candidate[2].TaskOutcomes.FingerprintSHA256
+	if controlFingerprint == "" || candidateFingerprint == "" {
 		return result
 	}
 	result.TargetWarmupShapeObserved = true
-	result.TargetWarmupShapeStable = controlWarmup == controlMeasured && candidateWarmup == candidateMeasured
+	result.TargetWarmupShapeStable = true
+	for _, warmup := range control[3:] {
+		result.TargetWarmupShapeStable = result.TargetWarmupShapeStable &&
+			warmup.TaskOutcomes.FingerprintSHA256 == controlFingerprint
+	}
+	for _, warmup := range candidate[3:] {
+		result.TargetWarmupShapeStable = result.TargetWarmupShapeStable &&
+			warmup.TaskOutcomes.FingerprintSHA256 == candidateFingerprint
+	}
+	for _, observation := range observations {
+		result.TargetWarmupShapeStable = result.TargetWarmupShapeStable &&
+			observation.ControlTaskOutcomes.FingerprintSHA256 == controlFingerprint &&
+			observation.CandidateTaskOutcomes.FingerprintSHA256 == candidateFingerprint
+	}
 	if !result.TargetWarmupShapeStable {
 		result.Qualified = false
 		result.Decision = "RETAIN_NATIVE_GRADLE"

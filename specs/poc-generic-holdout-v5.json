@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "buildopt.specs/poc-generic-holdout/v5",
+  "evidenceSchemaVersion": "buildopt.evidence/poc-generic-holdout/v5",
+  "workItem": "POC-GENERIC-HOLDOUT-CROSSOVER-001",
+  "decision": "RERUN_FROZEN_HOLDOUT_AS_PREREGISTERED_RECIPROCAL_CROSSOVER",
+  "preregisteredFromRevision": "eda817279505eda1801a43ec80c680f429662e65",
+  "supersedes": "buildopt.specs/poc-generic-holdout/v4",
+  "subject": {
+    "key": "hibernate-orm",
+    "repositoryId": "hibernate/hibernate-orm",
+    "remoteUrl": "https://github.com/hibernate/hibernate-orm.git",
+    "publicRevision": "2b448a59d332326f0cd0691c868425124d55cbb5",
+    "jdkToolchain": "temurin-jdk-25",
+    "pipelineClass": "assemble",
+    "entrypoints": [
+      "assemble"
+    ],
+    "changePath": "hibernate-core/src/main/java/org/hibernate/Session.java",
+    "mutation": "APPEND_FIXED_COMMENT",
+    "requiredOutputs": [
+      "hibernate-core/target/libs/**"
+    ]
+  },
+  "runner": {
+    "platform": "linux-amd64",
+    "cpuCount": 12,
+    "maxWorkers": 12,
+    "measurementBatches": 2,
+    "pairsPerBatch": 8,
+    "reciprocalBlocks": 8,
+    "warmupsPerArm": 4,
+    "warmupPhases": [
+      "CACHE_SEED",
+      "BASE_DAEMON_STABILIZATION",
+      "TARGET_WORKLOAD_STABILIZATION",
+      "TARGET_WORKLOAD_STABILITY_CONFIRMATION"
+    ],
+    "targetStabilityConfirmations": 2,
+    "orderWithinBatch": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
+    "blockConstruction": "ADJACENT_CONTROL_FIRST_PLUS_CANDIDATE_FIRST",
+    "perBuildTimeout": "30m",
+    "maximumInterArmGap": "5s",
+    "fallbackMaxWorkers": 12,
+    "fallbackGradleOptions": [
+      "--no-daemon",
+      "--parallel",
+      "--max-workers=12"
+    ]
+  },
+  "method": {
+    "surface": "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE",
+    "candidateMechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "control": "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW",
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "isolatedArms": true,
+    "independentGradleHomes": true,
+    "independentNativeCacheSeeds": true,
+    "bothArmsPreparedBeforeMeasuredPair": true,
+    "requiredOutputsComparedByteForByte": true,
+    "fullGraphFallbackRequiredPerBatch": true,
+    "onlinePreparationMeasured": false,
+    "warmupsMeasured": false,
+    "targetRevisionWarmupBeforePairs": true,
+    "twoTargetShapeObservationsBeforePairs": true,
+    "warmupAndPairTaskOutcomesRecorded": true,
+    "warmupAndPairExactTaskPathsRecorded": true,
+    "warmupAndPairTaskFingerprintRecorded": true,
+    "warmupAndPairLogSha256Recorded": true,
+    "intervalLinuxPsiRecordedOutsideTiming": true,
+    "rawPairsCombinedOnlyAsReciprocalBlocks": true,
+    "hostPressureChangesQualificationThresholds": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "postResultTuningAllowed": false
+  },
+  "qualification": {
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositiveBlocks": 8,
+    "requiredOutputsIdentical": true,
+    "maximumProductAttributableFailures": 0,
+    "failedOrTimedOutObservationsMayBeDiscarded": false,
+    "measuredExecutionShapeMustBeStable": true,
+    "targetWarmupExecutionShapeMustMatchMeasuredPairs": true,
+    "exactTaskPathsMustBePresent": true,
+    "bothBatchFallbacksMustPass": true
+  },
+  "decisionRules": {
+    "unsupportedOrUncertainProposal": "RETAIN_NATIVE_GRADLE",
+    "completeButWeakMeasurement": "RETAIN_NATIVE_GRADLE",
+    "unstableTargetShape": "RETAIN_NATIVE_GRADLE_AND_REPORT_EXACT_TASK_DIFF",
+    "qualifiedMeasurement": "REVIEW_STRUCTURAL_PROFILE",
+    "genericCorrectnessDefect": "FIX_GENERIC_MECHANISM_AND_RERUN_FROZEN_HOLDOUT_FROM_ZERO",
+    "repositorySpecificException": "FORBIDDEN",
+    "thresholdRelaxation": "FORBIDDEN"
+  },
+  "amendment": {
+    "reason": "V4_REVEALED_FIRST_SECOND_PERIOD_BIAS_AND_NATIVE_TARGET_SHAPE_DRIFT",
+    "sourceEvidence": "benchmarks/results/poc-generic-holdout-v4/evidence.json",
+    "v4MeanSavedMs": 8480,
+    "v4ReductionRatio": 0.038215756789155376,
+    "v4PositivePairs": 5,
+    "v4Interval95SavedMs": [
+      -839.25,
+      17478
+    ],
+    "v4ControlFirstPositivePairs": 4,
+    "v4CandidateFirstPositivePairs": 1,
+    "v4PostHocReciprocalBlocksPositive": 4,
+    "acceptedPairsFromV4": 0,
+    "warmupsReused": false,
+    "proposalReused": false,
+    "timingReused": false,
+    "qualificationThresholdsChanged": false,
+    "observationUnitChanged": true
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [evidence-directory|--spec-only]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-generic-holdout-v5.json"
+buildopt_evidence=${1:-"${buildopt_repo_root}/benchmarks/results/poc-generic-holdout-v5"}
+
+"${buildopt_script_dir}/check-generic-holdout" --spec-only "${buildopt_spec}"
+if [[ ${buildopt_evidence} == --spec-only ]]; then
+    printf 'Generic holdout crossover preregistration: PASS\n'
+    exit 0
+fi
+
+for buildopt_batch in 1 2; do
+    "${buildopt_script_dir}/check-generic-holdout" \
+        "${buildopt_evidence}/batch-${buildopt_batch}" "${buildopt_spec}"
+done
+
+buildopt_result="${buildopt_evidence}/crossover.json"
+[[ -s ${buildopt_result} ]] || {
+    printf 'missing crossover result: %s\n' "${buildopt_result}" >&2
+    exit 1
+}
+buildopt_captured_at=$(jq -er '.capturedAt' "${buildopt_result}")
+buildopt_expected=$(mktemp "${TMPDIR:-/tmp}/buildopt-crossover-check.XXXXXX")
+trap 'rm -f -- "${buildopt_expected}"' EXIT
+(
+    cd -- "${buildopt_repo_root}"
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go run ./dev/generic-holdout-crossover \
+        --spec "${buildopt_spec}" --captured-at "${buildopt_captured_at}" \
+        --batch "${buildopt_evidence}/batch-1/evidence.json" \
+        --batch "${buildopt_evidence}/batch-2/evidence.json"
+) >"${buildopt_expected}"
+cmp --silent "${buildopt_expected}" "${buildopt_result}" || {
+    printf 'crossover result does not recompute from its source batches\n' >&2
+    exit 1
+}
+
+jq -e --slurpfile spec "${buildopt_spec}" '
+    .schemaVersion == $spec[0].evidenceSchemaVersion and
+    .workItem == $spec[0].workItem and
+    (.capturedAt | fromdateiso8601) > 0 and
+    (.buildopt.revision | test("^[0-9a-f]{40}$")) and
+    (.buildopt.executableSha256 | test("^[0-9a-f]{64}$")) and
+    (.sourceBatches | length) == 2 and
+    all(.sourceBatches[]; (.sha256 | test("^[0-9a-f]{64}$"))) and
+    (.blocks | length) == 8 and
+    all(.blocks[];
+        .controlMeanMs > 0 and .candidateMeanMs > 0 and
+        .savedMs == (.controlMeanMs - .candidateMeanMs)) and
+    .qualification == $spec[0].qualification and
+    .boundaries == $spec[0].boundaries and
+    .result.blocks == 8 and
+    .result.outputsIdentical == true and
+    .result.fallbacksSuccessful == true and
+    ((.result.qualified == true and
+      .result.decision == "REVIEW_STRUCTURAL_PROFILE" and
+      .result.targetShapeStable == true and
+      .result.positiveBlocks == 8 and
+      .result.meanSavedMs >= 500 and
+      .result.reductionRatio >= 0.02 and
+      .result.interval95SavedMs[0] > 0) or
+     (.result.qualified == false and .result.decision == "RETAIN_NATIVE_GRADLE"))
+' "${buildopt_result}" >/dev/null
+
+printf 'Generic holdout crossover: PASS (%s, %s/%s positive blocks)\n' \
+    "$(jq -r '.result.decision' "${buildopt_result}")" \
+    "$(jq -r '.result.positiveBlocks' "${buildopt_result}")" \
+    "$(jq -r '.result.blocks' "${buildopt_result}")"

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -137,7 +138,7 @@ func TestRenderStructuralMeasurementEvidencePreservesWarmupAndPairDiagnostics(t 
 		t.Fatal(err)
 	}
 	if evidence.Execution.WarmupsPerArm != 2 || len(evidence.Execution.ControlWarmups) != 2 ||
-		evidence.Observations[0].ControlTaskOutcomes != taskOutcomes ||
+		!reflect.DeepEqual(evidence.Observations[0].ControlTaskOutcomes, taskOutcomes) ||
 		evidence.Observations[0].CandidateLogSHA256 != strings.Repeat("4", 64) {
 		t.Fatalf("diagnostic evidence = %+v", evidence)
 	}
@@ -179,6 +180,26 @@ func TestRenderStructuralMeasurementEvidencePreservesWarmupAndPairDiagnostics(t 
 	if evidence.Execution.WarmupsPerArm != 3 || !evidence.Result.ExecutionShapeObserved ||
 		!evidence.Result.ExecutionShapeStable || evidence.Observations[0].ControlHostPressure == nil {
 		t.Fatalf("three-phase diagnostic evidence = %+v", evidence)
+	}
+
+	controlFourPhase := append(append([]StructuralWarmupObservation(nil), warmups...), StructuralWarmupObservation{
+		Phase: "TARGET_WORKLOAD_STABILITY_CONFIRMATION", DurationMS: 900,
+		LogSHA256: strings.Repeat("8", 64), TaskOutcomes: controlOutcomes, HostPressure: pressure,
+	})
+	candidateFourPhase := append(append([]StructuralWarmupObservation(nil), candidateWarmups...), StructuralWarmupObservation{
+		Phase: "TARGET_WORKLOAD_STABILITY_CONFIRMATION", DurationMS: 900,
+		LogSHA256: strings.Repeat("9", 64), TaskOutcomes: candidateOutcomes, HostPressure: pressure,
+	})
+	raw, qualified, err = RenderStructuralMeasurementEvidence(StructuralMeasurementOptions{
+		CapturedAt: time.Date(2026, 8, 11, 13, 30, 0, 0, time.UTC), Analysis: analysis,
+		RepositoryRevision: strings.Repeat("b", 40), BuildOptRevision: strings.Repeat("c", 40),
+		ExecutableSHA256: strings.Repeat("e", 64), SourceEvidenceSHA256: strings.Repeat("d", 64),
+		GradleOptions: []string{"--daemon", "--build-cache"}, ControlWarmups: controlFourPhase,
+		CandidateWarmups: candidateFourPhase, Observations: observations,
+		FallbackReason: "IMPACT_GLOBAL_CHANGE", FallbackSuccessful: true,
+	})
+	if err != nil || !qualified {
+		t.Fatalf("render four-phase evidence = %v/%v", qualified, err)
 	}
 
 	observations[7].ControlTaskOutcomes.FingerprintSHA256 = strings.Repeat("7", 64)

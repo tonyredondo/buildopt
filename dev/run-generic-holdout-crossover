@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/output/directory\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-generic-holdout-v5.json"
+
+[[ ! -e ${buildopt_output} ]] || {
+    printf 'crossover evidence output already exists: %s\n' "${buildopt_output}" >&2
+    exit 1
+}
+mkdir -p -- "${buildopt_output}"
+
+for buildopt_batch in 1 2; do
+    printf 'Capturing independent crossover batch %d/2\n' "${buildopt_batch}"
+    "${buildopt_script_dir}/run-generic-holdout" \
+        "${buildopt_output}/batch-${buildopt_batch}" "${buildopt_spec}"
+done
+
+buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+(
+    cd -- "${buildopt_repo_root}"
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go run ./dev/generic-holdout-crossover \
+        --spec "${buildopt_spec}" --captured-at "${buildopt_captured_at}" \
+        --batch "${buildopt_output}/batch-1/evidence.json" \
+        --batch "${buildopt_output}/batch-2/evidence.json"
+) >"${buildopt_output}/crossover.json"
+
+"${buildopt_script_dir}/check-generic-holdout-crossover" "${buildopt_output}"
+printf 'Generic holdout crossover evidence written to %s\n' "${buildopt_output}"

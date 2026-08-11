@@ -3466,6 +3466,15 @@ recording task-outcome summaries and log digests. Validate that preregistration
 before capture with `./dev/check-generic-holdout --spec-only
 specs/poc-generic-holdout-v3.json`; no v2 observation is reused.
 
+`./dev/run-generic-holdout-crossover /absolute/evidence/directory` executes
+the separately preregistered v5 recovery experiment. It captures two complete
+fresh batches, each with two exact-target stability observations and eight
+alternating raw pairs, then combines only adjacent opposite-order pairs into
+eight reciprocal blocks. `./dev/check-generic-holdout-crossover [directory]`
+recomputes the aggregate from both checked batches and validates exact task
+paths, outputs, fallbacks and the unchanged value gate. Use `--spec-only`
+before capture. Version 4 timings are never inputs to the v5 result.
+
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 
 The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.

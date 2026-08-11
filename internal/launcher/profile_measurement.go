@@ -25,9 +25,8 @@ import (
 )
 
 const (
-	profileMeasureUsage           = "usage: buildopt profile measure --manifest PATH --graph PATH --generated-manifest PATH --changes-file PATH --fallback-changes-file PATH --base-revision REVISION --buildopt-revision REVISION --evidence-output PATH [--gradle-option VALUE ...] [--timeout DURATION]\n"
+	profileMeasureUsage           = "usage: buildopt profile measure --manifest PATH --graph PATH --generated-manifest PATH --changes-file PATH --fallback-changes-file PATH --base-revision REVISION --buildopt-revision REVISION --evidence-output PATH [--gradle-option VALUE ...] [--target-stability-confirmations 1|2] [--timeout DURATION]\n"
 	measurementPairs              = 8
-	structuralWarmupsPerArm       = 3
 	maximumMeasurementInterArmGap = 5 * time.Second
 )
 
@@ -41,22 +40,23 @@ var defaultStructuralGradleOptions = []string{
 }
 
 type structuralMeasurementConfig struct {
-	repositoryRoot      string
-	manifestPath        string
-	graphPath           string
-	generatedPath       string
-	changesPath         string
-	fallbackChangesPath string
-	baseRevision        string
-	targetRevision      string
-	buildOptRevision    string
-	evidenceOutput      string
-	gradleOptions       []string
-	timeout             time.Duration
-	analysis            profilediscovery.AnalysisReport
-	executable          string
-	executableSHA256    string
-	inputDocuments      map[string][]byte
+	repositoryRoot               string
+	manifestPath                 string
+	graphPath                    string
+	generatedPath                string
+	changesPath                  string
+	fallbackChangesPath          string
+	baseRevision                 string
+	targetRevision               string
+	buildOptRevision             string
+	evidenceOutput               string
+	gradleOptions                []string
+	timeout                      time.Duration
+	analysis                     profilediscovery.AnalysisReport
+	executable                   string
+	executableSHA256             string
+	inputDocuments               map[string][]byte
+	targetStabilityConfirmations int
 }
 
 type structuralMeasurementArm struct {
@@ -95,12 +95,14 @@ func runStructuralProfileMeasurement(args []string, stdout, stderr io.Writer) in
 	buildOptRevision := flags.String("buildopt-revision", "", "immutable BuildOpt revision")
 	evidenceOutput := flags.String("evidence-output", "", "repository-relative evidence output")
 	timeout := flags.Duration("timeout", 20*time.Minute, "per-build timeout")
+	targetStabilityConfirmations := flags.Int("target-stability-confirmations", 1, "target-workload warm-ups required before measured pairs")
 	var gradleOptions repeatedStringFlag
 	flags.Var(&gradleOptions, "gradle-option", "Gradle option shared by both arms; repeat for multiple values")
 	if err := flags.Parse(args); err != nil || flags.NArg() != 0 ||
 		*manifest == "" || *graph == "" || *generated == "" || *changes == "" ||
 		*fallbackChanges == "" || *baseRevision == "" || *buildOptRevision == "" ||
-		*evidenceOutput == "" || *timeout <= 0 {
+		*evidenceOutput == "" || *timeout <= 0 ||
+		(*targetStabilityConfirmations != 1 && *targetStabilityConfirmations != 2) {
 		_, _ = io.WriteString(stderr, profileMeasureUsage)
 		return exitUsage
 	}
@@ -111,6 +113,7 @@ func runStructuralProfileMeasurement(args []string, stdout, stderr io.Writer) in
 		*manifest, *graph, *generated, *changes, *fallbackChanges,
 		*baseRevision, *buildOptRevision, *evidenceOutput,
 		append([]string(nil), gradleOptions...), *timeout,
+		*targetStabilityConfirmations,
 	)
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile measurement unavailable: %v\n", err)
@@ -142,6 +145,7 @@ func prepareStructuralMeasurementConfig(
 	buildOptRevision, evidenceOutput string,
 	gradleOptions []string,
 	timeout time.Duration,
+	targetStabilityConfirmations int,
 ) (structuralMeasurementConfig, error) {
 	repositoryRoot, err := canonicalWorkingDirectory()
 	if err != nil {
@@ -170,6 +174,9 @@ func prepareStructuralMeasurementConfig(
 	}
 	if len(gradleOptions) == 0 {
 		return structuralMeasurementConfig{}, errors.New("at least one Gradle option is required")
+	}
+	if targetStabilityConfirmations != 1 && targetStabilityConfirmations != 2 {
+		return structuralMeasurementConfig{}, errors.New("target stability confirmations must be one or two")
 	}
 	for _, option := range gradleOptions {
 		if !validImpactGradleOption(option) {
@@ -242,8 +249,9 @@ func prepareStructuralMeasurementConfig(
 		targetRevision: targetRevision, buildOptRevision: buildOptRevision,
 		evidenceOutput: evidenceOutput, gradleOptions: gradleOptions,
 		timeout: timeout, analysis: analysis, executable: executable,
-		executableSHA256: executableSHA256,
-		inputDocuments:   inputDocuments,
+		executableSHA256:             executableSHA256,
+		inputDocuments:               inputDocuments,
+		targetStabilityConfirmations: targetStabilityConfirmations,
 	}, nil
 }
 
@@ -392,6 +400,7 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 }
 
 func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, name string, candidate bool, progress io.Writer) (structuralMeasurementArm, error) {
+	totalWarmups := 2 + config.targetStabilityConfirmations
 	arm := structuralMeasurementArm{
 		name:       name,
 		workspace:  filepath.Join(root, name+"-repository"),
@@ -407,7 +416,7 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	if err := resetStructuralArm(config, arm, config.baseRevision, false); err != nil {
 		return arm, fmt.Errorf("prepare %s baseline: %w", name, err)
 	}
-	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s arm at %s (cache seed 1/%d)\n", name, config.baseRevision, structuralWarmupsPerArm)
+	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s arm at %s (cache seed 1/%d)\n", name, config.baseRevision, totalWarmups)
 	seedWarmup, err := runStructuralArm(config, arm, candidate, config.changesPath)
 	if err != nil {
 		return arm, fmt.Errorf("warm %s arm: %w", name, err)
@@ -422,7 +431,7 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	if err := resetStructuralArm(config, arm, config.baseRevision, true); err != nil {
 		return arm, fmt.Errorf("prepare %s daemon stabilization: %w", name, err)
 	}
-	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s arm at %s (base daemon stabilization 2/%d)\n", name, config.baseRevision, structuralWarmupsPerArm)
+	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s arm at %s (base daemon stabilization 2/%d)\n", name, config.baseRevision, totalWarmups)
 	stabilizationWarmup, err := runStructuralArm(config, arm, candidate, config.changesPath)
 	if err != nil {
 		return arm, fmt.Errorf("stabilize %s arm: %w", name, err)
@@ -433,7 +442,7 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	if err := resetStructuralArm(config, arm, config.targetRevision, true); err != nil {
 		return arm, fmt.Errorf("prepare %s target-workload stabilization: %w", name, err)
 	}
-	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s arm at %s (target-workload stabilization 3/%d)\n", name, config.targetRevision, structuralWarmupsPerArm)
+	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s arm at %s (target-workload stabilization 3/%d)\n", name, config.targetRevision, totalWarmups)
 	targetWarmup, err := runStructuralArm(config, arm, candidate, config.changesPath)
 	if err != nil {
 		return arm, fmt.Errorf("stabilize %s target workload: %w", name, err)
@@ -441,6 +450,19 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	arm.warmups = append(arm.warmups, structuralWarmupDiagnostic("TARGET_WORKLOAD_STABILIZATION", targetWarmup))
 	_, _ = fmt.Fprintf(progress, "buildopt: warmed isolated %s arm target workload in %dms with %s\n",
 		name, targetWarmup.durationMS, formatStructuralTaskOutcomes(targetWarmup.taskOutcomes))
+	if config.targetStabilityConfirmations == 2 {
+		if err := resetStructuralArm(config, arm, config.targetRevision, true); err != nil {
+			return arm, fmt.Errorf("prepare %s target-workload stability confirmation: %w", name, err)
+		}
+		_, _ = fmt.Fprintf(progress, "buildopt: confirming isolated %s target-workload shape at %s (4/%d)\n", name, config.targetRevision, totalWarmups)
+		confirmation, err := runStructuralArm(config, arm, candidate, config.changesPath)
+		if err != nil {
+			return arm, fmt.Errorf("confirm %s target workload: %w", name, err)
+		}
+		arm.warmups = append(arm.warmups, structuralWarmupDiagnostic("TARGET_WORKLOAD_STABILITY_CONFIRMATION", confirmation))
+		_, _ = fmt.Fprintf(progress, "buildopt: confirmed isolated %s target workload in %dms with %s\n",
+			name, confirmation.durationMS, formatStructuralTaskOutcomes(confirmation.taskOutcomes))
+	}
 	return arm, nil
 }
 
@@ -568,31 +590,45 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 func summarizeStructuralTaskOutcomes(log string) profilediscovery.StructuralTaskOutcomes {
 	var outcomes profilediscovery.StructuralTaskOutcomes
 	var taskLines []string
+	var tasks []profilediscovery.StructuralTaskObservation
 	scanner := bufio.NewScanner(strings.NewReader(log))
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if !strings.HasPrefix(line, "> Task ") {
 			continue
 		}
-		taskLines = append(taskLines, strings.Join(strings.Fields(line), " "))
+		fields := strings.Fields(line)
+		if len(fields) < 3 {
+			continue
+		}
+		canonical := strings.Join(fields, " ")
+		taskLines = append(taskLines, canonical)
 		outcomes.Total++
+		outcome := "EXECUTED"
 		switch {
 		case strings.HasSuffix(line, " FROM-CACHE"):
 			outcomes.FromCache++
+			outcome = "FROM_CACHE"
 		case strings.HasSuffix(line, " UP-TO-DATE"):
 			outcomes.UpToDate++
+			outcome = "UP_TO_DATE"
 		case strings.HasSuffix(line, " NO-SOURCE"):
 			outcomes.NoSource++
+			outcome = "NO_SOURCE"
 		case strings.HasSuffix(line, " SKIPPED"):
 			outcomes.Skipped++
+			outcome = "SKIPPED"
 		default:
 			outcomes.Executed++
 		}
+		tasks = append(tasks, profilediscovery.StructuralTaskObservation{Path: fields[2], Outcome: outcome})
 	}
 	if len(taskLines) > 0 {
 		sort.Strings(taskLines)
+		sort.Slice(tasks, func(left, right int) bool { return tasks[left].Path < tasks[right].Path })
 		digest := sha256.Sum256([]byte(strings.Join(taskLines, "\n") + "\n"))
 		outcomes.FingerprintSHA256 = hex.EncodeToString(digest[:])
+		outcomes.Tasks = tasks
 	}
 	return outcomes
 }
