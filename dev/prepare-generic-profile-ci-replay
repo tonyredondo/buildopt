@@ -1,0 +1,141 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 3)) || [[ $2 != /* || $3 != /* ]]; then
+    printf 'usage: %s REPOSITORY-KEY /absolute/repository /absolute/github-output\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_key=$1
+buildopt_repository=$2
+buildopt_github_output=$3
+buildopt_script_directory=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_directory}/.." && pwd -P)
+buildopt_replay_spec="${buildopt_root}/specs/poc-generic-profile-ci-replay-v1.json"
+buildopt_matrix_spec="${buildopt_root}/specs/poc-generic-profile-matrix-v3.json"
+
+for buildopt_command in git jq mkdir mv perl; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required replay preparation command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ ! -e "${buildopt_repository}" ]] || {
+    printf 'replay repository already exists: %s\n' "${buildopt_repository}" >&2
+    exit 1
+}
+[[ -f "${buildopt_github_output}" ]] || {
+    printf 'GitHub output file is unavailable: %s\n' "${buildopt_github_output}" >&2
+    exit 1
+}
+[[ $(jq --arg key "${buildopt_key}" \
+    '[.subjects[] | select(.key == $key)] | length' "${buildopt_replay_spec}") -eq 1 ]] || {
+    printf 'unknown replay repository key: %s\n' "${buildopt_key}" >&2
+    exit 64
+}
+[[ $(jq --arg key "${buildopt_key}" \
+    '[.repositories[] | select(.key == $key)] | length' "${buildopt_matrix_spec}") -eq 1 ]] || {
+    printf 'matrix source is missing replay repository: %s\n' "${buildopt_key}" >&2
+    exit 1
+}
+
+buildopt_remote=$(jq -er --arg key "${buildopt_key}" \
+    '.repositories[] | select(.key == $key) | .remoteUrl' "${buildopt_matrix_spec}")
+buildopt_public_revision=$(jq -er --arg key "${buildopt_key}" \
+    '.repositories[] | select(.key == $key) | .publicRevision' "${buildopt_matrix_spec}")
+buildopt_change_path=$(jq -er --arg key "${buildopt_key}" \
+    '.repositories[] | select(.key == $key) | .changePath' "${buildopt_matrix_spec}")
+buildopt_mutation=$(jq -er --arg key "${buildopt_key}" \
+    '.repositories[] | select(.key == $key) | .mutation' "${buildopt_matrix_spec}")
+buildopt_repository_id=$(jq -er --arg key "${buildopt_key}" \
+    '.repositories[] | select(.key == $key) | .repositoryId' "${buildopt_matrix_spec}")
+buildopt_pipeline=$(jq -er --arg key "${buildopt_key}" \
+    '.repositories[] | select(.key == $key) | .pipelineClass' "${buildopt_matrix_spec}")
+
+mkdir -p -- "${buildopt_repository}"
+git -C "${buildopt_repository}" init -q
+git -C "${buildopt_repository}" remote add origin "${buildopt_remote}"
+git -C "${buildopt_repository}" fetch --depth=1 origin "${buildopt_public_revision}"
+git -C "${buildopt_repository}" checkout -q --detach FETCH_HEAD
+[[ $(git -C "${buildopt_repository}" rev-parse HEAD) == "${buildopt_public_revision}" ]] || {
+    printf 'fetched source revision does not match the replay contract\n' >&2
+    exit 1
+}
+
+buildopt_entrypoints_file=$(jq -r --arg key "${buildopt_key}" \
+    '.repositories[] | select(.key == $key) | .entrypointsFile // empty' \
+    "${buildopt_matrix_spec}")
+buildopt_entrypoints_json="${buildopt_repository}/.buildopt-entrypoints.json"
+if [[ -n "${buildopt_entrypoints_file}" ]]; then
+    jq -Rn '[inputs | select(length > 0)]' \
+        <"${buildopt_root}/${buildopt_entrypoints_file}" >"${buildopt_entrypoints_json}"
+else
+    jq --arg key "${buildopt_key}" \
+        '.repositories[] | select(.key == $key) | .entrypoints' \
+        "${buildopt_matrix_spec}" >"${buildopt_entrypoints_json}"
+fi
+
+mkdir -p -- "${buildopt_repository}/.buildopt"
+jq -n -S \
+    --arg repositoryId "${buildopt_repository_id}" \
+    --arg pipelineClass "${buildopt_pipeline}" \
+    --slurpfile entrypoints "${buildopt_entrypoints_json}" \
+    --argjson requiredOutputs "$(jq -c --arg key "${buildopt_key}" \
+        '.repositories[] | select(.key == $key) | .requiredOutputs' "${buildopt_matrix_spec}")" \
+    '{
+        schemaVersion: "buildopt.poc/profile-ci-input/v1",
+        repositoryId: $repositoryId,
+        pipelineClass: $pipelineClass,
+        entrypoints: $entrypoints[0],
+        requiredOutputs: $requiredOutputs,
+        globalChanges: [],
+        gradleCommand: "./gradlew",
+        gradleOptions: ["--no-scan", "--max-workers=12"],
+        timeoutMinutes: 30
+    }' >"${buildopt_repository}/.buildopt/profile-ci.json"
+rm -f -- "${buildopt_entrypoints_json}"
+
+git -C "${buildopt_repository}" config user.name 'BuildOpt POC'
+git -C "${buildopt_repository}" config user.email 'buildopt-poc@example.invalid'
+git -C "${buildopt_repository}" config commit.gpgsign false
+git -C "${buildopt_repository}" add .buildopt/profile-ci.json
+GIT_AUTHOR_DATE='2026-08-11T00:00:00Z' \
+GIT_COMMITTER_DATE='2026-08-11T00:00:00Z' \
+    git -C "${buildopt_repository}" commit -qm 'Add review-only BuildOpt profile input'
+buildopt_base=$(git -C "${buildopt_repository}" rev-parse HEAD)
+
+case "${buildopt_mutation}" in
+    APPEND_FIXED_COMMENT)
+        printf '\n// buildopt-poc-generic-profile-ci-replay-%s\n' "${buildopt_key}" \
+            >>"${buildopt_repository}/${buildopt_change_path}"
+        ;;
+    ADD_PACKAGE_PRIVATE_MARKER_RETURNING_ONE)
+        perl -0pi -e \
+            's/\n}\n\z/\n\n    int buildOptPocMarker() {\n        return 1;\n    }\n}\n/' \
+            "${buildopt_repository}/${buildopt_change_path}"
+        ;;
+    *)
+        printf 'unsupported frozen mutation: %s\n' "${buildopt_mutation}" >&2
+        exit 1
+        ;;
+esac
+git -C "${buildopt_repository}" add "${buildopt_change_path}"
+GIT_AUTHOR_DATE='2026-08-11T00:01:00Z' \
+GIT_COMMITTER_DATE='2026-08-11T00:01:00Z' \
+    git -C "${buildopt_repository}" commit -qm 'Apply frozen BuildOpt replay mutation'
+buildopt_target=$(git -C "${buildopt_repository}" rev-parse HEAD)
+
+[[ -z $(git -C "${buildopt_repository}" status --porcelain --untracked-files=no) ]] || {
+    printf 'prepared replay checkout is not clean\n' >&2
+    exit 1
+}
+buildopt_repository=$(cd -- "${buildopt_repository}" && pwd -P)
+{
+    printf 'repository=%s\n' "${buildopt_repository}"
+    printf 'source-revision=%s\n' "${buildopt_public_revision}"
+    printf 'base-revision=%s\n' "${buildopt_base}"
+    printf 'target-revision=%s\n' "${buildopt_target}"
+} >>"${buildopt_github_output}"
+printf 'Prepared %s review-only replay: %s..%s\n' \
+    "${buildopt_key}" "${buildopt_base}" "${buildopt_target}"

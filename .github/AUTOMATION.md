@@ -25,6 +25,15 @@ asserts that no active profile exists. Hosted run
 [`31464264563`](https://github.com/tonyredondo/buildopt/actions/runs/31464264563)
 passed from immutable source `f6a2c5e` with an 11-file checksummed artifact.
 
+[`profile-proposal-replay.yml`](./workflows/profile-proposal-replay.yml) is the
+manual five-repository adoption replay. It creates clean Spring,
+OpenTelemetry, Kafka, Micronaut, and Groovy checkouts, commits each frozen
+repository-owned input before its source change, and invokes the same root
+Action. Every job uploads both the proposal and a compact `MATCH` or `DRIFT`
+verdict; the summary requires all five reference graphs to match. It performs
+no timing and never activates the proposals. See the
+[replay contract](../specs/poc-generic-profile-ci-replay-v1.md).
+
 
 [`ws-007-fixture.yml`](./workflows/ws-007-fixture.yml) is a manual,
 read-only hosted conformance fixture. It pins every referenced Action by a full

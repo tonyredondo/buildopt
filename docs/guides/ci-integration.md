@@ -55,6 +55,13 @@ does not run `profile measure`, write `buildopt-qualified-profile.json`, edit
 the workflow or activate anything. Treat `NATIVE_FULL_GRAPH` as the safe and
 expected outcome whenever discovery is incomplete or the change is global.
 
+BuildOpt's own manual five-repository replay runs this exact surface on clean
+Spring, OpenTelemetry, Kafka, Micronaut, and Groovy checkouts. It verifies that
+the owner inputs still reproduce the reviewed terminal graphs and records any
+difference as drift. It creates no new timing result: a matching proposal must
+still pass the separate paired measurement and review gate before activation.
+See the [replay specification](../../specs/poc-generic-profile-ci-replay-v1.md).
+
 ## GitLab CI
 
 Include the component from an immutable BuildOpt revision:

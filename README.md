@@ -75,6 +75,9 @@ turns a checked-in workflow/output declaration and exact pull-request diff into
 a downloadable review artifact. It never measures or activates the candidate;
 uncertain analysis keeps optimized native Gradle. See the [CI integration
 guide](./docs/guides/ci-integration.md#review-a-structural-proposal).
+The POC also keeps a manual
+[five-repository clean-CI replay](./specs/poc-generic-profile-ci-replay-v1.md)
+that detects proposal drift without rerunning or inflating performance claims.
 
 The [product onboarding guide](./docs/getting-started/product-onboarding.md)
 contains Windows installation, CI snippets, component ownership and the

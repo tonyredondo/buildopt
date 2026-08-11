@@ -3435,6 +3435,17 @@ outputs and scheduling-equivalent full-graph fallback. The checker rejects
 partial timing, repository percentage averages, and attribution of retained
 Jar/Edge results to Build Impact.
 
+`./dev/check-generic-profile-ci-replay` validates the manual clean-runner
+replay without cloning public repositories. It reconstructs retained Action
+artifacts for all five subjects, requires five semantic and byte-level graph
+matches, changes one graph deliberately to prove explicit `DRIFT`, and proves
+that a four-of-five aggregate is incomplete. The hosted
+`.github/workflows/profile-proposal-replay.yml` uses
+`./dev/prepare-generic-profile-ci-replay` to create the exact external
+checkouts, `./dev/evaluate-generic-profile-ci-replay` to write each durable
+verdict, and `./dev/compose-generic-profile-ci-replay` to publish the terminal
+summary. This replay performs no timing and writes no qualified profile.
+
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 
 The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.

@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "buildopt.specs/poc-generic-profile-ci-replay/v1",
+  "workItem": "POC-GENERIC-PROFILE-CI-REPLAY-001",
+  "decision": "REPLAY_FIVE_REVIEW_ONLY_PROPOSALS_ON_CLEAN_HOSTED_RUNNERS",
+  "sourceContract": "specs/poc-generic-profile-matrix-v3.json",
+  "actionMode": "profile-proposal",
+  "runner": {
+    "platform": "linux-amd64",
+    "workflow": ".github/workflows/profile-proposal-replay.yml",
+    "trigger": "workflow_dispatch",
+    "repositoryPermission": "contents:read",
+    "jobTimeoutMinutes": 50,
+    "artifactRetentionDays": 14
+  },
+  "method": {
+    "ownerInputPath": ".buildopt/profile-ci.json",
+    "ownerInputCommittedBeforeChange": true,
+    "sourceCheckoutClean": true,
+    "exactBaseAndTargetRequired": true,
+    "timingExecuted": false,
+    "historicalThresholdsReevaluated": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "artifactChecksumsRequired": true,
+    "referenceGraphEqualityRequired": true,
+    "reviewRequired": true,
+    "automaticActivation": false
+  },
+  "subjects": [
+    {
+      "key": "spring-framework",
+      "jdk": "25.0.3+9.0.LTS",
+      "referenceArtifact": "benchmarks/results/poc-generic-profile-matrix-v3/spring-framework",
+      "expectedProposalDecision": "MEASURE_STRUCTURAL_CANDIDATE",
+      "expectedProposalReason": "COMPLETE_STRUCTURAL_REDUCTION",
+      "expectedCandidateEntrypoints": [":spring-jms:testClasses"],
+      "expectedPlan": {
+        "totalProjectCount": 27,
+        "selectedProjectCount": 10,
+        "omittedProjectCount": 17
+      },
+      "historicalValueDecision": "RETAIN_NATIVE_GRADLE"
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "jdk": "21.0.12+8.0.LTS",
+      "referenceArtifact": "benchmarks/results/poc-generic-profile-matrix-v4/opentelemetry-java-instrumentation",
+      "expectedProposalDecision": "MEASURE_STRUCTURAL_CANDIDATE",
+      "expectedProposalReason": "COMPLETE_STRUCTURAL_REDUCTION",
+      "expectedCandidateEntrypoints": [":instrumentation:spring:spring-boot-autoconfigure:testClasses"],
+      "expectedPlan": {
+        "totalProjectCount": 1024,
+        "selectedProjectCount": 34,
+        "omittedProjectCount": 990
+      },
+      "historicalValueDecision": "QUALIFY_STRUCTURAL_PROFILE"
+    },
+    {
+      "key": "apache-kafka",
+      "jdk": "25.0.3+9.0.LTS",
+      "referenceArtifact": "benchmarks/results/poc-generic-profile-matrix-v3/apache-kafka",
+      "expectedProposalDecision": "MEASURE_STRUCTURAL_CANDIDATE",
+      "expectedProposalReason": "COMPLETE_STRUCTURAL_REDUCTION",
+      "expectedCandidateEntrypoints": [":clients:testClasses"],
+      "expectedPlan": {
+        "totalProjectCount": 64,
+        "selectedProjectCount": 3,
+        "omittedProjectCount": 61
+      },
+      "historicalValueDecision": "QUALIFY_STRUCTURAL_PROFILE"
+    },
+    {
+      "key": "micronaut-core",
+      "jdk": "25.0.3+9.0.LTS",
+      "referenceArtifact": "benchmarks/results/poc-generic-profile-matrix-v3/micronaut-core",
+      "expectedProposalDecision": "MEASURE_STRUCTURAL_CANDIDATE",
+      "expectedProposalReason": "COMPLETE_STRUCTURAL_REDUCTION",
+      "expectedCandidateEntrypoints": [":micronaut-http-client-jdk:assemble"],
+      "expectedPlan": {
+        "totalProjectCount": 75,
+        "selectedProjectCount": 22,
+        "omittedProjectCount": 53
+      },
+      "historicalValueDecision": "QUALIFY_STRUCTURAL_PROFILE"
+    },
+    {
+      "key": "apache-groovy",
+      "jdk": "21.0.12+8.0.LTS",
+      "referenceArtifact": "benchmarks/results/poc-generic-profile-matrix-v3/apache-groovy",
+      "expectedProposalDecision": "MEASURE_STRUCTURAL_CANDIDATE",
+      "expectedProposalReason": "COMPLETE_STRUCTURAL_REDUCTION",
+      "expectedCandidateEntrypoints": [":groovy-json:classes"],
+      "expectedPlan": {
+        "totalProjectCount": 37,
+        "selectedProjectCount": 2,
+        "omittedProjectCount": 35
+      },
+      "historicalValueDecision": "QUALIFY_STRUCTURAL_PROFILE"
+    }
+  ],
+  "acceptance": {
+    "subjectCount": 5,
+    "matchingSubjectsRequired": 5,
+    "driftIsTerminalAndExplicit": true,
+    "qualifiedProfileWritten": false,
+    "performanceClaimCreated": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

@@ -1,0 +1,152 @@
+name: Five-repository profile proposal replay
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  replay:
+    name: ${{ matrix.name }} review replay
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - key: spring-framework
+            name: Spring Framework
+            java: 25.0.3+9.0.LTS
+          - key: opentelemetry-java-instrumentation
+            name: OpenTelemetry
+            java: 21.0.12+8.0.LTS
+          - key: apache-kafka
+            name: Apache Kafka
+            java: 25.0.3+9.0.LTS
+          - key: micronaut-core
+            name: Micronaut Core
+            java: 25.0.3+9.0.LTS
+          - key: apache-groovy
+            name: Apache Groovy
+            java: 21.0.12+8.0.LTS
+    steps:
+      - name: Check out BuildOpt
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install the pinned Java runtime
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          check-latest: false
+
+      - name: Prepare the clean repository-owned input
+        id: prepare
+        shell: bash
+        env:
+          REPOSITORY_KEY: ${{ matrix.key }}
+        run: >-
+          ./dev/prepare-generic-profile-ci-replay
+          "$REPOSITORY_KEY"
+          "${RUNNER_TEMP}/repository"
+          "${GITHUB_OUTPUT}"
+
+      - name: Publish the review-only BuildOpt proposal
+        id: proposal
+        uses: ./
+        with:
+          mode: profile-proposal
+          profile-config: .buildopt/profile-ci.json
+          profile-base-revision: ${{ steps.prepare.outputs.base-revision }}
+          profile-target-revision: ${{ steps.prepare.outputs.target-revision }}
+          profile-repository-directory: ${{ steps.prepare.outputs.repository }}
+          profile-artifact-name: buildopt-profile-proposal-${{ matrix.key }}
+          profile-buildopt-revision: ${{ github.sha }}
+
+      - name: Classify proposal replay or drift
+        shell: bash
+        env:
+          ARTIFACT_DIRECTORY: ${{ steps.proposal.outputs.profile-artifact-directory }}
+          BASE_REVISION: ${{ steps.prepare.outputs.base-revision }}
+          BUILDOPT_REVISION: ${{ github.sha }}
+          REPOSITORY_KEY: ${{ matrix.key }}
+          TARGET_REVISION: ${{ steps.prepare.outputs.target-revision }}
+        run: >-
+          ./dev/evaluate-generic-profile-ci-replay
+          "$REPOSITORY_KEY"
+          "$ARTIFACT_DIRECTORY"
+          "$BASE_REVISION"
+          "$TARGET_REVISION"
+          "$BUILDOPT_REVISION"
+          "${RUNNER_TEMP}/${REPOSITORY_KEY}-replay.json"
+
+      - name: Upload the durable replay verdict
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: buildopt-profile-replay-${{ matrix.key }}
+          path: ${{ runner.temp }}/${{ matrix.key }}-replay.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Require an unchanged review proposal
+        shell: bash
+        env:
+          REPOSITORY_KEY: ${{ matrix.key }}
+        run: >-
+          jq -e
+          '.status == "MATCH" and .proposalDecision == "MEASURE_STRUCTURAL_CANDIDATE" and .timingExecuted == false and .activationAutomatic == false'
+          "${RUNNER_TEMP}/${REPOSITORY_KEY}-replay.json"
+
+  summary:
+    name: Five-repository replay summary
+    if: always()
+    needs: replay
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out BuildOpt
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Download repository verdicts
+        id: download
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: buildopt-profile-replay-*
+          path: ${{ runner.temp }}/replay-verdicts
+          merge-multiple: true
+
+      - name: Compose the five-repository result
+        shell: bash
+        env:
+          BUILDOPT_REVISION: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+        run: >-
+          ./dev/compose-generic-profile-ci-replay
+          "${RUNNER_TEMP}/replay-verdicts"
+          "${RUNNER_TEMP}/profile-replay-summary.json"
+          "$BUILDOPT_REVISION"
+          "$RUN_ID"
+
+      - name: Upload the replay summary
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: buildopt-profile-replay-summary
+          path: ${{ runner.temp }}/profile-replay-summary.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Require five matching repositories
+        shell: bash
+        run: >-
+          jq -e
+          '.conclusion == "MATCH" and .aggregation.subjectCount == 5 and .aggregation.matchCount == 5 and .aggregation.driftCount == 0'
+          "${RUNNER_TEMP}/profile-replay-summary.json"

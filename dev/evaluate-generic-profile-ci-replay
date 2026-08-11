@@ -1,0 +1,197 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 6)) || [[ $2 != /* || $6 != /* ]]; then
+    printf 'usage: %s REPOSITORY-KEY /absolute/artifact BASE TARGET BUILDOPT-REVISION /absolute/verdict.json\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_key=$1
+buildopt_artifact=$2
+buildopt_base=$3
+buildopt_target=$4
+buildopt_revision=$5
+buildopt_output=$6
+buildopt_script_directory=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_directory}/.." && pwd -P)
+
+python3 - \
+    "${buildopt_root}" \
+    "${buildopt_key}" \
+    "${buildopt_artifact}" \
+    "${buildopt_base}" \
+    "${buildopt_target}" \
+    "${buildopt_revision}" \
+    "${buildopt_output}" <<'PY'
+import hashlib
+import json
+import pathlib
+import re
+import sys
+
+root = pathlib.Path(sys.argv[1])
+key = sys.argv[2]
+artifact = pathlib.Path(sys.argv[3])
+base = sys.argv[4]
+target = sys.argv[5]
+buildopt_revision = sys.argv[6]
+output = pathlib.Path(sys.argv[7])
+spec = json.loads((root / "specs/poc-generic-profile-ci-replay-v1.json").read_text())
+matrix = json.loads((root / spec["sourceContract"]).read_text())
+
+subjects = [item for item in spec["subjects"] if item["key"] == key]
+repositories = [item for item in matrix["repositories"] if item["key"] == key]
+if len(subjects) != 1 or len(repositories) != 1:
+    raise SystemExit(f"unknown or ambiguous replay subject: {key}")
+subject = subjects[0]
+repository = repositories[0]
+reference = root / subject["referenceArtifact"]
+
+def load_json(path):
+    return json.loads(path.read_text(encoding="utf-8"))
+
+def sha256(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+def exact_file(name):
+    actual = artifact / name
+    expected = reference / name
+    return actual.is_file() and expected.is_file() and actual.read_bytes() == expected.read_bytes()
+
+required = [
+    "README.md",
+    "changes.txt",
+    "checksums.txt",
+    "ci-input.json",
+    "command.stderr.txt",
+    "command.stdout.json",
+    "review.json",
+    "buildopt-fallback-changes.txt",
+    "buildopt-impact-graph.generated.json",
+    "buildopt-impact-manifest.json",
+    "buildopt-impact.generated.json",
+    "buildopt-profile-proposal.json",
+]
+missing = [name for name in required if not (artifact / name).is_file()]
+if missing:
+    raise SystemExit("replay artifact is incomplete: " + ", ".join(missing))
+
+checksums_ok = True
+checksum_lines = (artifact / "checksums.txt").read_text(encoding="utf-8").splitlines()
+covered = set()
+for line in checksum_lines:
+    match = re.fullmatch(r"([0-9a-f]{64})  ([^\r\n]+)", line)
+    if not match:
+        checksums_ok = False
+        continue
+    expected_hash, name = match.groups()
+    candidate = artifact / name
+    if not candidate.is_file() or sha256(candidate) != expected_hash:
+        checksums_ok = False
+    covered.add(name)
+checksums_ok = checksums_ok and covered == set(required) - {"checksums.txt"}
+
+review = load_json(artifact / "review.json")
+owner_input = load_json(artifact / "ci-input.json")
+proposal = load_json(artifact / "buildopt-profile-proposal.json")
+reference_proposal = load_json(reference / "buildopt-profile-proposal.json")
+if "entrypointsFile" in repository:
+    entrypoints = [
+        line
+        for line in (root / repository["entrypointsFile"]).read_text(encoding="utf-8").splitlines()
+        if line
+    ]
+else:
+    entrypoints = repository["entrypoints"]
+expected_input = {
+    "schemaVersion": "buildopt.poc/profile-ci-input/v1",
+    "repositoryId": repository["repositoryId"],
+    "pipelineClass": repository["pipelineClass"],
+    "entrypoints": entrypoints,
+    "requiredOutputs": repository["requiredOutputs"],
+    "globalChanges": [],
+    "gradleCommand": "./gradlew",
+    "gradleOptions": ["--no-scan", "--max-workers=12"],
+    "timeoutMinutes": 30,
+}
+
+actual_plan = proposal.get("analysis", {}).get("plan", {})
+expected_plan = subject["expectedPlan"]
+checks = {
+    "artifactChecksums": checksums_ok,
+    "reviewContract": (
+        review.get("outcome") == "COMPLETE"
+        and review.get("decision") == subject["expectedProposalDecision"]
+        and review.get("reason") == subject["expectedProposalReason"]
+        and review.get("baseRevision") == base
+        and review.get("targetRevision") == target
+        and review.get("buildOptRevision") == buildopt_revision
+        and review.get("reviewRequired") is True
+        and review.get("activationAutomatic") is False
+        and review.get("productionAuthorized") is False
+        and review.get("testOptimization") == "OUT_OF_SCOPE"
+    ),
+    "ownerInput": owner_input == expected_input,
+    "changeSet": (artifact / "changes.txt").read_text(encoding="utf-8").splitlines()
+    == [repository["changePath"]],
+    "proposalDecision": (
+        proposal.get("decision") == subject["expectedProposalDecision"]
+        and proposal.get("reason") == subject["expectedProposalReason"]
+        and proposal.get("candidateEntrypoints") == subject["expectedCandidateEntrypoints"]
+        and proposal.get("reviewRequired") is True
+        and proposal.get("activationAutomatic") is False
+        and proposal.get("productionAuthorized") is False
+        and proposal.get("testOptimization") == "OUT_OF_SCOPE"
+    ),
+    "plan": all(actual_plan.get(name) == value for name, value in expected_plan.items()),
+    "referencePlan": actual_plan == reference_proposal.get("analysis", {}).get("plan", {}),
+    "manifest": exact_file("buildopt-impact-manifest.json"),
+    "declaredGraph": exact_file("buildopt-impact-graph.generated.json"),
+    "generatedBinding": exact_file("buildopt-impact.generated.json"),
+    "fallbackInput": exact_file("buildopt-fallback-changes.txt"),
+    "noActiveProfile": not (artifact / "buildopt-qualified-profile.json").exists(),
+}
+drift = sorted(name for name, value in checks.items() if not value)
+status = "MATCH" if not drift else "DRIFT"
+hashes = {
+    name: "sha256:" + sha256(artifact / name)
+    for name in [
+        "ci-input.json",
+        "buildopt-impact-manifest.json",
+        "buildopt-impact-graph.generated.json",
+        "buildopt-impact.generated.json",
+        "buildopt-profile-proposal.json",
+        "review.json",
+    ]
+}
+verdict = {
+    "schemaVersion": "buildopt.evidence/poc-generic-profile-ci-replay/v1",
+    "workItem": spec["workItem"],
+    "subject": key,
+    "repositoryId": repository["repositoryId"],
+    "sourceRevision": repository["publicRevision"],
+    "baseRevision": base,
+    "targetRevision": target,
+    "buildOptRevision": buildopt_revision,
+    "status": status,
+    "proposalDecision": proposal.get("decision"),
+    "proposalReason": proposal.get("reason"),
+    "historicalValueDecision": subject["historicalValueDecision"],
+    "checks": checks,
+    "driftReasons": drift,
+    "artifactHashes": hashes,
+    "referenceArtifact": subject["referenceArtifact"],
+    "timingExecuted": False,
+    "reviewRequired": True,
+    "activationAutomatic": False,
+    "productionAuthorized": False,
+    "testOptimization": "OUT_OF_SCOPE",
+}
+output.parent.mkdir(parents=True, exist_ok=True)
+temporary = output.with_name(output.name + ".tmp")
+temporary.write_text(json.dumps(verdict, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+temporary.replace(output)
+print(f"{key}: {status} ({proposal.get('decision')})")
+if drift:
+    print("drift: " + ", ".join(drift), file=sys.stderr)
+PY

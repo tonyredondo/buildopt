@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 4)) || [[ $1 != /* || $2 != /* ]]; then
+    printf 'usage: %s /absolute/verdict-directory /absolute/summary.json BUILDOPT-REVISION RUN-ID\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_input=$1
+buildopt_output=$2
+buildopt_revision=$3
+buildopt_run_id=$4
+buildopt_script_directory=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_directory}/.." && pwd -P)
+buildopt_spec="${buildopt_root}/specs/poc-generic-profile-ci-replay-v1.json"
+
+[[ "${buildopt_revision}" =~ ^[0-9a-f]{40}$ ]] || {
+    printf 'BuildOpt replay revision must be a lowercase full Git commit\n' >&2
+    exit 64
+}
+[[ "${buildopt_run_id}" =~ ^[0-9]+$ ]] || {
+    printf 'BuildOpt replay run ID must be numeric\n' >&2
+    exit 64
+}
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+
+mapfile -d '' -t buildopt_verdicts < <(
+    find "${buildopt_input}" -maxdepth 1 -type f -name '*-replay.json' -print0 | sort -z
+)
+buildopt_subjects_file=$(mktemp "${TMPDIR:-/tmp}/buildopt-profile-replay-subjects.XXXXXX")
+buildopt_cleanup() {
+    rm -f -- "${buildopt_subjects_file}"
+}
+trap buildopt_cleanup EXIT
+if ((${#buildopt_verdicts[@]} == 0)); then
+    printf '[]\n' >"${buildopt_subjects_file}"
+else
+    jq -s 'sort_by(.subject)' "${buildopt_verdicts[@]}" >"${buildopt_subjects_file}"
+fi
+
+jq -n -S \
+    --arg buildOptRevision "${buildopt_revision}" \
+    --arg runId "${buildopt_run_id}" \
+    --slurpfile subjects "${buildopt_subjects_file}" \
+    --argjson expectedSubjects "$(jq '.acceptance.subjectCount' "${buildopt_spec}")" \
+    '{
+        schemaVersion: "buildopt.evidence/poc-generic-profile-ci-replay-summary/v1",
+        workItem: "POC-GENERIC-PROFILE-CI-REPLAY-001",
+        buildOptRevision: $buildOptRevision,
+        hostedRunId: $runId,
+        conclusion: (
+            if (($subjects[0] | length) == $expectedSubjects and
+                ($subjects[0] | all(.status == "MATCH")))
+            then "MATCH" else "DRIFT_OR_INCOMPLETE" end
+        ),
+        subjects: $subjects[0],
+        aggregation: {
+            expectedSubjectCount: $expectedSubjects,
+            subjectCount: ($subjects[0] | length),
+            matchCount: ($subjects[0] | map(select(.status == "MATCH")) | length),
+            driftCount: ($subjects[0] | map(select(.status == "DRIFT")) | length)
+        },
+        timingExecuted: false,
+        reviewRequired: true,
+        activationAutomatic: false,
+        productionAuthorized: false,
+        testOptimization: "OUT_OF_SCOPE"
+    }' >"${buildopt_output}"
+
+jq -e '
+    .schemaVersion == "buildopt.evidence/poc-generic-profile-ci-replay-summary/v1" and
+    .reviewRequired == true and
+    .activationAutomatic == false and
+    .productionAuthorized == false and
+    .timingExecuted == false
+' "${buildopt_output}" >/dev/null
+printf 'Five-repository replay summary: %s (%s/%s matching)\n' \
+    "$(jq -r '.conclusion' "${buildopt_output}")" \
+    "$(jq -r '.aggregation.matchCount' "${buildopt_output}")" \
+    "$(jq -r '.aggregation.expectedSubjectCount' "${buildopt_output}")"
