@@ -595,8 +595,7 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 
 func summarizeStructuralTaskOutcomes(log string) profilediscovery.StructuralTaskOutcomes {
 	var outcomes profilediscovery.StructuralTaskOutcomes
-	var taskLines []string
-	var tasks []profilediscovery.StructuralTaskObservation
+	observed := map[string]string{}
 	scanner := bufio.NewScanner(strings.NewReader(log))
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
@@ -607,36 +606,68 @@ func summarizeStructuralTaskOutcomes(log string) profilediscovery.StructuralTask
 		if len(fields) < 3 {
 			continue
 		}
-		canonical := strings.Join(fields, " ")
-		taskLines = append(taskLines, canonical)
-		outcomes.Total++
 		outcome := "EXECUTED"
 		switch {
 		case strings.HasSuffix(line, " FROM-CACHE"):
-			outcomes.FromCache++
 			outcome = "FROM_CACHE"
 		case strings.HasSuffix(line, " UP-TO-DATE"):
-			outcomes.UpToDate++
 			outcome = "UP_TO_DATE"
 		case strings.HasSuffix(line, " NO-SOURCE"):
-			outcomes.NoSource++
 			outcome = "NO_SOURCE"
 		case strings.HasSuffix(line, " SKIPPED"):
-			outcomes.Skipped++
 			outcome = "SKIPPED"
-		default:
-			outcomes.Executed++
 		}
-		tasks = append(tasks, profilediscovery.StructuralTaskObservation{Path: fields[2], Outcome: outcome})
+		path := fields[2]
+		if previous, exists := observed[path]; exists && previous != outcome {
+			observed[path] = "CONFLICTING"
+		} else if !exists {
+			observed[path] = outcome
+		}
 	}
-	if len(taskLines) > 0 {
-		sort.Strings(taskLines)
+	if len(observed) > 0 {
+		tasks := make([]profilediscovery.StructuralTaskObservation, 0, len(observed))
+		for path, outcome := range observed {
+			tasks = append(tasks, profilediscovery.StructuralTaskObservation{Path: path, Outcome: outcome})
+			switch outcome {
+			case "FROM_CACHE":
+				outcomes.FromCache++
+			case "UP_TO_DATE":
+				outcomes.UpToDate++
+			case "NO_SOURCE":
+				outcomes.NoSource++
+			case "SKIPPED":
+				outcomes.Skipped++
+			default:
+				outcomes.Executed++
+			}
+		}
 		sort.Slice(tasks, func(left, right int) bool { return tasks[left].Path < tasks[right].Path })
-		digest := sha256.Sum256([]byte(strings.Join(taskLines, "\n") + "\n"))
+		canonical := make([]string, len(tasks))
+		for index, task := range tasks {
+			canonical[index] = canonicalStructuralTaskLine(task)
+		}
+		digest := sha256.Sum256([]byte(strings.Join(canonical, "\n") + "\n"))
+		outcomes.Total = len(tasks)
 		outcomes.FingerprintSHA256 = hex.EncodeToString(digest[:])
 		outcomes.Tasks = tasks
 	}
 	return outcomes
+}
+
+func canonicalStructuralTaskLine(task profilediscovery.StructuralTaskObservation) string {
+	line := "> Task " + task.Path
+	switch task.Outcome {
+	case "FROM_CACHE":
+		return line + " FROM-CACHE"
+	case "UP_TO_DATE":
+		return line + " UP-TO-DATE"
+	case "NO_SOURCE":
+		return line + " NO-SOURCE"
+	case "SKIPPED":
+		return line + " SKIPPED"
+	default:
+		return line
+	}
 }
 
 func formatStructuralTaskOutcomes(outcomes profilediscovery.StructuralTaskOutcomes) string {

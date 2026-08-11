@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
 
 func TestHashMeasurementOutputsIsPathAndContentBound(t *testing.T) {
@@ -128,6 +130,30 @@ func TestSummarizeStructuralTaskOutcomes(t *testing.T) {
 	changed := summarizeStructuralTaskOutcomes(strings.Replace(log, ":other", ":different", 1))
 	if changed.FingerprintSHA256 == outcomes.FingerprintSHA256 {
 		t.Fatal("task fingerprint did not bind the task path")
+	}
+}
+
+func TestSummarizeStructuralTaskOutcomesNormalizesRepeatedConsoleLines(t *testing.T) {
+	repeated := summarizeStructuralTaskOutcomes(strings.Join([]string{
+		"> Task :javadoc",
+		"warning emitted by javadoc",
+		"> Task :javadoc",
+		"> Task :classes UP-TO-DATE",
+	}, "\n"))
+	if repeated.Total != 2 || repeated.Executed != 1 || repeated.UpToDate != 1 || len(repeated.Tasks) != 2 {
+		t.Fatalf("repeated task lines = %+v", repeated)
+	}
+	if err := profilediscovery.ValidateStructuralTaskOutcomes(repeated); err != nil {
+		t.Fatalf("normalized task evidence: %v", err)
+	}
+
+	conflicting := summarizeStructuralTaskOutcomes(strings.Join([]string{
+		"> Task :compileJava",
+		"> Task :compileJava FROM-CACHE",
+	}, "\n"))
+	if err := profilediscovery.ValidateStructuralTaskOutcomes(conflicting); err == nil ||
+		!strings.Contains(err.Error(), "invalid outcome") {
+		t.Fatalf("conflicting task emissions error = %v", err)
 	}
 }
 
