@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-generic-profile-ci-replay/v1",
+  "workItem": "POC-GENERIC-PROFILE-CI-REPLAY-001",
+  "capturedAt": "2026-08-11T07:13:43Z",
+  "hostedRun": {
+    "id": "31467370391",
+    "url": "https://github.com/tonyredondo/buildopt/actions/runs/31467370391",
+    "buildoptRevision": "18caa8fdf1e71819c1334ac432fd1c6829bd085c",
+    "rawSummarySha256": "2b91629defd20f0357e850a0bea970c5ae8d8573e42a328d9daff5ecd4aea491",
+    "conclusion": "success"
+  },
+  "result": {
+    "decision": "FIVE_REVIEW_PROPOSALS_REPRODUCED",
+    "subjectCount": 5,
+    "matchCount": 5,
+    "driftCount": 0
+  },
+  "subjects": [
+    {
+      "key": "spring-framework",
+      "sourceRevision": "4b5c92703c63966c3471242c621c4a63b382638d",
+      "proposalDecision": "MEASURE_STRUCTURAL_CANDIDATE",
+      "candidateEntrypoints": [":spring-jms:testClasses"],
+      "totalProjectCount": 27,
+      "selectedProjectCount": 10,
+      "omittedProjectCount": 17,
+      "declaredGraphSha256": "6ca175d1dceff28fabe5b721fa2b8af736f421fc98735fcd90bbeef88c376c80",
+      "historicalValueDecision": "RETAIN_NATIVE_GRADLE",
+      "status": "MATCH"
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "sourceRevision": "080c1d32ca676ba7b0210c21b60cce8e7ac39058",
+      "proposalDecision": "MEASURE_STRUCTURAL_CANDIDATE",
+      "candidateEntrypoints": [":instrumentation:spring:spring-boot-autoconfigure:testClasses"],
+      "totalProjectCount": 1024,
+      "selectedProjectCount": 34,
+      "omittedProjectCount": 990,
+      "declaredGraphSha256": "1db31d0f75041382aca8833e91499b7378cb6e0caf0fd90e2bb275f5b050d849",
+      "historicalValueDecision": "QUALIFY_STRUCTURAL_PROFILE",
+      "status": "MATCH"
+    },
+    {
+      "key": "apache-kafka",
+      "sourceRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "proposalDecision": "MEASURE_STRUCTURAL_CANDIDATE",
+      "candidateEntrypoints": [":clients:testClasses"],
+      "totalProjectCount": 64,
+      "selectedProjectCount": 3,
+      "omittedProjectCount": 61,
+      "declaredGraphSha256": "6ee53ca766ba13512120c7610e2173c10d5e12fd69ba66a56d9adb9ff50e0af8",
+      "historicalValueDecision": "QUALIFY_STRUCTURAL_PROFILE",
+      "status": "MATCH"
+    },
+    {
+      "key": "micronaut-core",
+      "sourceRevision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+      "proposalDecision": "MEASURE_STRUCTURAL_CANDIDATE",
+      "candidateEntrypoints": [":micronaut-http-client-jdk:assemble"],
+      "totalProjectCount": 75,
+      "selectedProjectCount": 22,
+      "omittedProjectCount": 53,
+      "declaredGraphSha256": "5959d5d5e841b3dc3c795857151d7bf61f470d5d7c78a9a868f15e4214c3203c",
+      "historicalValueDecision": "QUALIFY_STRUCTURAL_PROFILE",
+      "status": "MATCH"
+    },
+    {
+      "key": "apache-groovy",
+      "sourceRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "proposalDecision": "MEASURE_STRUCTURAL_CANDIDATE",
+      "candidateEntrypoints": [":groovy-json:classes"],
+      "totalProjectCount": 37,
+      "selectedProjectCount": 2,
+      "omittedProjectCount": 35,
+      "declaredGraphSha256": "ad0f9d809da99051f61ee2952fd797da8909670ea685a3c553a09704c1b17687",
+      "historicalValueDecision": "QUALIFY_STRUCTURAL_PROFILE",
+      "status": "MATCH"
+    }
+  ],
+  "checks": {
+    "ownerInputsExact": true,
+    "changesExact": true,
+    "artifactChecksumsValid": true,
+    "manifestsExact": true,
+    "declaredGraphsExact": true,
+    "generatedBindingsExact": true,
+    "fallbackInputsExact": true,
+    "referencePlansExact": true,
+    "activeProfilesWritten": 0
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "timingExecuted": false,
+    "performanceClaimCreated": false,
+    "reviewRequired": true,
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

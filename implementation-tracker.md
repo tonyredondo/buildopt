@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `FIVE-REPOSITORY REVIEW-ONLY CI REPLAY PREREGISTERED` — the generic proposal is available as a repository-owned CI artifact and the five terminal graphs are frozen as replay references<br>
-**Current phase:** `FIVE-REPOSITORY CLEAN-CI REPLAY` — execute the committed Action on clean hosted Spring/OpenTelemetry/Kafka/Micronaut/Groovy checkouts and require five unchanged proposals or explicit drift without timing<br>
+**Overall status:** `FIVE-REPOSITORY REVIEW-ONLY CI REPLAY COMPLETE` — the generic Action reproduced all five terminal proposal graphs from repository-owned inputs on independent clean hosted runners with zero drift<br>
+**Current phase:** `UNSEEN SUBSTANTIAL HOLDOUT` — select and preregister one new Gradle family, then apply the unchanged propose -> measure -> evaluate path without repository-specific code or relaxed gates<br>
 **POC functional target:** improve real builds against optimized native Gradle by discovering structural opportunities generally, enabling only exact workload-qualified mechanisms, measuring their complete composition directly, and retaining native fallback whenever value does not replicate<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -118,7 +118,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-GENERIC-PROFILE-MATRIX-V3 | Correct the process-only gap, bound fallback memory, and rerun all five repositories under one frozen method | `DONE` | 1/1 | `E-295..301` |
 | POC-GENERIC-PROFILE-MATRIX-V4 | Re-run only the failed OpenTelemetry row with measured scheduling preserved in the untimed fallback | `DONE` | 1/1 | `E-302..303` |
 | POC-GENERIC-PROFILE-CI | Publish the generic proposal as an explicit review artifact from repository-owned CI inputs | `DONE` | 1/1 | `E-304..306` |
-| POC-GENERIC-PROFILE-CI-REPLAY | Reproduce the five terminal proposal/native decisions from checked-in owner inputs on clean CI | `DOING` | 0/1 | `E-307` |
+| POC-GENERIC-PROFILE-CI-REPLAY | Reproduce the five terminal structural proposals from checked-in owner inputs on clean CI without altering their separate value decisions | `DONE` | 1/1 | `E-307..308` |
+| POC-GENERIC-HOLDOUT | Apply the unchanged generic structural path to one unseen substantial public Gradle repository | `TODO` | 0/1 | `E-308` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -168,6 +169,7 @@ Optimized native Gradle baseline
   → issue a terminal CONTINUE, SPECIALIZE or STOP/REFRAME decision without adding percentages across repositories
   → publish the generic structural proposal as a review-only repository-owned CI artifact
   → reproduce all five terminal structural proposals on clean hosted runners before selecting an unseen holdout
+  → preregister and execute one unchanged substantial holdout against optimized native Gradle
 ```
 
 The implementation history remains useful, but it is not the POC exit gate:
@@ -269,7 +271,8 @@ than partners. Test Optimization remains a separate product.
 | 81 | `POC-GENERIC-PROFILE-MATRIX-002` | Correct the process-only inter-arm gap, bound the untimed fallback memory, and rerun the same five repositories from zero without reusing failed observations | `DONE` | Codex |
 | 82 | `POC-GENERIC-PROFILE-MATRIX-003` | Correct only OpenTelemetry's scheduling-sensitive fallback proof and capture one fresh atomic row without changing timed conditions or thresholds | `DONE` | Codex |
 | 83 | `POC-GENERIC-PROFILE-CI-001` | Expose the unchanged proposal command as a review-only CI artifact from an owner-declared workflow, exact Git change and required outputs, retaining native on unsupported or incomplete discovery | `DONE` | Codex |
-| 84 | `POC-GENERIC-PROFILE-CI-REPLAY-001` | Run the committed review-only Action from checked-in owner inputs for Spring, OpenTelemetry, Kafka, Micronaut and Groovy, requiring the terminal candidate/native decisions or explicit drift without timing or repository-specific code | `DOING` | Codex |
+| 84 | `POC-GENERIC-PROFILE-CI-REPLAY-001` | Run the committed review-only Action from checked-in owner inputs for Spring, OpenTelemetry, Kafka, Micronaut and Groovy, requiring the terminal structural proposals or explicit drift while preserving their separate value decisions | `DONE` | Codex |
+| 85 | `POC-GENERIC-HOLDOUT-001` | Select one unseen substantial public Gradle repository, freeze its exact revision, workflow, change, outputs, optimized-native control and unchanged value gates, then run the generic propose -> measure -> evaluate path without repository-specific product logic | `TODO` | Codex |
 
 #### Completed POC block: five-repository generic profile matrix
 
@@ -1892,6 +1895,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-305` | 2026-08-11 | `POC-GENERIC-PROFILE-CI-001` | Hosted run [31464154987](https://github.com/tonyredondo/buildopt/actions/runs/31464154987) stopped in `actions/setup-java` before fixture preparation or BuildOpt execution because `21.0.12+8` did not match the hosted Temurin identifier `21.0.12+8.0.LTS` | `DONE` discarded infrastructure-fixture failure: no proposal artifact or observation existed. Commit `f6a2c5e` corrected only the exact Java selector; Action behavior, inputs, discovery and decisions were unchanged |
 | `E-306` | 2026-08-11 | `POC-GENERIC-PROFILE-CI-001` | Read-only hosted run [31464264563](https://github.com/tonyredondo/buildopt/actions/runs/31464264563) executed the repository-root composite Action from BuildOpt `f6a2c5e`, compiled its pinned Go source, created a clean external Gradle checkout and uploaded `buildopt-profile-proposal-fixture`. All 11 artifact checksums passed. `review.json` binds the exact base/target commits and BuildOpt revision, reports `MEASURE_STRUCTURAL_CANDIDATE` / `COMPLETE_STRUCTURAL_REDUCTION`, selects `:service-a:classes`, omits `:service-b`, requires review, disables automatic activation and production, and leaves `buildopt-qualified-profile.json` absent | `DONE` terminal `REVIEW_ONLY_CI_PROPOSAL_AVAILABLE`: local conformance also proves deterministic replay, native fallback, diagnostic failure, invalid target and symlink rejection. No performance percentage, measurement, workflow mutation, production claim or Test Optimization behavior was created. `POC-GENERIC-PROFILE-CI-REPLAY-001` is next |
 | `E-307` | 2026-08-11 | `POC-GENERIC-PROFILE-CI-REPLAY-001` | The [five-repository hosted replay contract](./specs/poc-generic-profile-ci-replay-v1.md), machine specification, manual read-only matrix workflow, clean-checkout preparer, drift evaluator, summary composer and executable local checker freeze the existing Spring/OpenTelemetry/Kafka/Micronaut/Groovy owner inputs and terminal v3/v4 proposal graphs before hosted execution | `DOING` preregistered with zero hosted replay observations: each repository must emit the same review-only structural candidate and graph or explicit drift. Spring's proposal replay remains separate from its historical native value decision; no timing, threshold change, repository-name product rule, profile activation, production, soak, design-partner or Test Optimization authority is created |
+| `E-308` | 2026-08-11 | `POC-GENERIC-PROFILE-CI-REPLAY-001` | Hosted run [31467370391](https://github.com/tonyredondo/buildopt/actions/runs/31467370391) executed BuildOpt `18caa8f` in five independent clean Ubuntu jobs. The checked [replay summary](./benchmarks/results/poc-generic-profile-ci-replay-v1/summary.json) records 5/5 `MATCH`, zero drift and exact owner input, change, checksums, manifest, declared graph, generated binding, fallback input and reference plan for Spring 27->10, OpenTelemetry 1,024->34, Kafka 64->3, Micronaut 75->22 and Groovy 37->2 | `DONE` terminal `FIVE_REVIEW_PROPOSALS_REPRODUCED`: no active profile or timing was created. Spring remains native under its historical 7/8 value result; the other four qualifications remain bound to their existing paired evidence. No repository-specific product rule, threshold change, production, soak, design-partner or Test Optimization authority exists. `POC-GENERIC-HOLDOUT-001` is next |
 
 ---
 
@@ -1899,6 +1903,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-11 | Closed the five-repository clean-CI replay at 5/5 exact proposal matches and zero drift; retained Spring's native value decision and moved one unseen substantial holdout next | Codex |
 | 2026-08-11 | Preregistered the five-repository clean-CI proposal replay with committed owner inputs, exact graph references, explicit drift classification and no timing or activation authority | Codex |
 | 2026-08-11 | Closed the review-only profile proposal Action with a checksum-verified hosted artifact bound to immutable source and exact Git revisions; retained the initial Java-selector failure and moved five-repository clean-CI decision replay next | Codex |
 | 2026-08-11 | Implemented and preregistered the review-only generic profile Action: strict owner inputs and exact revisions produce a deterministic proposal or native decision artifact; hosted evidence remains required before closing the block | Codex |

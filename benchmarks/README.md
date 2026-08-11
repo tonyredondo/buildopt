@@ -21,6 +21,17 @@ For the decision-ready product summary, see the [current POC one-pager](../docs/
 The [detailed performance findings](../docs/findings/build-optimization-performance.md)
 retain mechanism-specific and historical experiments for engineering review.
 
+### Clean-CI proposal replay
+
+The [five-repository hosted replay](./results/poc-generic-profile-ci-replay-v1/README.md)
+recreated Spring, OpenTelemetry, Kafka, Micronaut, and Groovy from their exact
+public revisions on five independent GitHub-hosted runners. All **5/5** owner
+inputs, changes, candidate plans, manifests, declared graphs, generated
+bindings, fallback inputs, and checksums matched their terminal references;
+drift was **0/5** and no active profile was written. This proves proposal
+reproducibility only. It reruns no timing and does not change the wall-time
+decisions below.
+
 ### Terminal generic structural matrix
 
 The [terminal v3 five-repository bundle](./results/poc-generic-profile-matrix-v3/README.md)

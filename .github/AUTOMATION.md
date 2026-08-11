@@ -32,7 +32,9 @@ repository-owned input before its source change, and invokes the same root
 Action. Every job uploads both the proposal and a compact `MATCH` or `DRIFT`
 verdict; the summary requires all five reference graphs to match. It performs
 no timing and never activates the proposals. See the
-[replay contract](../specs/poc-generic-profile-ci-replay-v1.md).
+[replay contract](../specs/poc-generic-profile-ci-replay-v1.md). Hosted run
+[`31467370391`](https://github.com/tonyredondo/buildopt/actions/runs/31467370391)
+passed all five repository jobs and the aggregate summary with zero drift.
 
 
 [`ws-007-fixture.yml`](./workflows/ws-007-fixture.yml) is a manual,

@@ -123,6 +123,8 @@ buildopt_required_files=(
     "CONTRIBUTING.md"
     "GENERATED_CODE.md"
     "README.md"
+    "benchmarks/results/poc-generic-profile-ci-replay-v1/README.md"
+    "benchmarks/results/poc-generic-profile-ci-replay-v1/summary.json"
     "docs/README.md"
     "docs/architecture/overview.md"
     "docs/architecture/repository-map.md"

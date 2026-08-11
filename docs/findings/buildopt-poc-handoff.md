@@ -11,11 +11,11 @@
   method qualified on OpenTelemetry, Kafka, Micronaut, and Groovy, reducing
   wall time by **14.43% to 84.11%**. Spring improved by **17.94%**, but BuildOpt
   correctly retained native Gradle because one of eight pairs was slower.
-- **The next problem is cross-repository CI reproducibility, not production
-  hardening.** A read-only Action now turns repository-owned inputs into a
-  checksummed proposal or native decision. BuildOpt should reproduce the five
-  current decisions through that surface and then run it unchanged on an
-  unseen substantial Gradle repository.
+- **Cross-repository CI reproducibility now passes 5/5.** The read-only Action
+  recreated every terminal Spring, OpenTelemetry, Kafka, Micronaut, and Groovy
+  proposal on independent clean hosted runners with zero graph drift and no
+  active profile. The next evidence gap is an unchanged holdout on an unseen
+  substantial Gradle repository, not production hardening.
 
 ## The Project in One Minute
 
@@ -78,6 +78,21 @@ none of the rejected timing was reused.
 Repository percentages are independent. They are not averaged across
 repositories and are not added to cache, task-adapter, or Edge results.
 
+## Clean-CI Reproducibility
+
+Hosted run
+[`31467370391`](https://github.com/tonyredondo/buildopt/actions/runs/31467370391)
+executed the review-only Action from immutable revision `18caa8f` on five
+independent Ubuntu runners. Every repository reproduced its exact owner input,
+source change, proposal, project counts, manifest, graph, generated binding,
+fallback input, and checksums. The result was **5/5 `MATCH`, 0 drift**, and zero
+active profiles.
+
+Spring's successful replay does not reverse its value decision: it confirms
+the 27-to-10 proposal is reproducible, while the prior 7/8 wall-time result
+still requires native Gradle. The other four value decisions remain bound to
+their existing paired timings. No timing was executed during this replay.
+
 ## What the Tests Demonstrate
 
 - **The idea transfers.** Four different public Gradle families qualified
@@ -106,20 +121,16 @@ keeps native Gradle authoritative.
 
 ## Recommended Next Steps
 
-1. **Reproduce current decisions on clean CI runners.** Use the completed
-   review-only Action and checked-in owner inputs for the five repositories.
-   Require the same graph proposals or explicit native decisions; report drift
-   without changing thresholds or repository-specific code.
-2. **Run an unchanged holdout test.** Select one unseen, substantial Gradle
+1. **Run an unchanged holdout test.** Select one unseen, substantial Gradle
    repository and apply the same propose -> measure -> evaluate flow without
    repository-specific code, post-result tuning, or relaxed gates.
-3. **Measure only reviewed candidates.** A CI proposal remains an observation,
+2. **Measure only reviewed candidates.** A CI proposal remains an observation,
    not value evidence. Run isolated paired measurement only after its graph,
    outputs and fallback are accepted.
-4. **Broaden workflow coverage deliberately.** After the holdout, test distinct
+3. **Broaden workflow coverage deliberately.** After the holdout, test distinct
    customer build shapes such as compilation, packaging, verification, and
    build-owned test preparation. Test Optimization remains separate.
-5. **Make onboarding repository-owned and keep wall time authoritative.** Users
+4. **Make onboarding repository-owned and keep wall time authoritative.** Users
    should provide a Gradle command, change source, and output contract—not
    hand-authored graphs. Promote only installed paths that preserve outputs,
    pass repeatability, prove fallback, and materially beat native Gradle.
@@ -133,5 +144,6 @@ Test Optimization remains outside Build Optimization.
 - [Terminal five-repository structural matrix](../../benchmarks/results/poc-generic-profile-matrix-v3/README.md)
 - [OpenTelemetry fallback-equivalence correction](../../benchmarks/results/poc-generic-profile-matrix-v4/README.md)
 - [Hosted review-only CI artifact run](https://github.com/tonyredondo/buildopt/actions/runs/31464264563)
+- [Five-repository clean-CI replay](../../benchmarks/results/poc-generic-profile-ci-replay-v1/README.md)
 - [Detailed performance findings and historical research](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

@@ -11,6 +11,7 @@ buildopt_root=$(cd -- "${buildopt_script_directory}/.." && pwd -P)
 buildopt_spec="${buildopt_root}/specs/poc-generic-profile-ci-replay-v1.json"
 buildopt_matrix="${buildopt_root}/specs/poc-generic-profile-matrix-v3.json"
 buildopt_workflow="${buildopt_root}/.github/workflows/profile-proposal-replay.yml"
+buildopt_result="${buildopt_root}/benchmarks/results/poc-generic-profile-ci-replay-v1/summary.json"
 buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-profile-ci-replay.XXXXXX")
 buildopt_cleanup() {
     if [[ -n "${buildopt_temporary:-}" && \
@@ -30,6 +31,7 @@ for buildopt_command in cmp find grep jq python3 sha256sum sort xargs; do
 done
 for buildopt_file in \
     "${buildopt_spec}" \
+    "${buildopt_result}" \
     "${buildopt_workflow}" \
     "${buildopt_script_directory}/prepare-generic-profile-ci-replay" \
     "${buildopt_script_directory}/evaluate-generic-profile-ci-replay" \
@@ -60,6 +62,28 @@ jq -e '
     .boundaries.soakRequired == false and
     .boundaries.designPartnerRequired == false
 ' "${buildopt_spec}" >/dev/null
+jq -e '
+    .schemaVersion == "buildopt.evidence/poc-generic-profile-ci-replay/v1" and
+    .workItem == "POC-GENERIC-PROFILE-CI-REPLAY-001" and
+    .hostedRun.id == "31467370391" and
+    .hostedRun.buildoptRevision == "18caa8fdf1e71819c1334ac432fd1c6829bd085c" and
+    .hostedRun.conclusion == "success" and
+    .result.decision == "FIVE_REVIEW_PROPOSALS_REPRODUCED" and
+    .result.subjectCount == 5 and
+    .result.matchCount == 5 and
+    .result.driftCount == 0 and
+    (.subjects | length) == 5 and
+    ([.subjects[].key] | unique | length) == 5 and
+    ([.subjects[].status] | unique) == ["MATCH"] and
+    .checks.activeProfilesWritten == 0 and
+    .boundaries.proofOfConcept == true and
+    .boundaries.timingExecuted == false and
+    .boundaries.performanceClaimCreated == false and
+    .boundaries.reviewRequired == true and
+    .boundaries.automaticActivation == false and
+    .boundaries.productionAuthorized == false and
+    .boundaries.testOptimizationModified == false
+' "${buildopt_result}" >/dev/null
 
 if ! grep -Fqx '  workflow_dispatch:' "${buildopt_workflow}" ||
     ! grep -Fqx '  contents: read' "${buildopt_workflow}" ||
@@ -94,6 +118,24 @@ for buildopt_key in "${buildopt_keys[@]}"; do
         '.repositories[] | select(.key == $key)' "${buildopt_matrix}")
     buildopt_reference=$(jq -r '.referenceArtifact' <<<"${buildopt_subject}")
     buildopt_reference="${buildopt_root}/${buildopt_reference}"
+    buildopt_reference_graph_sha=$(sha256sum \
+        "${buildopt_reference}/buildopt-impact-graph.generated.json" | awk '{print $1}')
+    jq -e \
+        --arg key "${buildopt_key}" \
+        --arg graphSha "${buildopt_reference_graph_sha}" \
+        --arg decision "$(jq -r '.expectedProposalDecision' <<<"${buildopt_subject}")" \
+        --arg historical "$(jq -r '.historicalValueDecision' <<<"${buildopt_subject}")" \
+        --argjson expectedPlan "$(jq -c '.expectedPlan' <<<"${buildopt_subject}")" '
+        [.subjects[] | select(.key == $key)] as $matches |
+        ($matches | length) == 1 and
+        $matches[0].status == "MATCH" and
+        $matches[0].proposalDecision == $decision and
+        $matches[0].historicalValueDecision == $historical and
+        $matches[0].declaredGraphSha256 == $graphSha and
+        $matches[0].totalProjectCount == $expectedPlan.totalProjectCount and
+        $matches[0].selectedProjectCount == $expectedPlan.selectedProjectCount and
+        $matches[0].omittedProjectCount == $expectedPlan.omittedProjectCount
+    ' "${buildopt_result}" >/dev/null
     buildopt_artifact="${buildopt_temporary}/${buildopt_key}"
     mkdir -p -- "${buildopt_artifact}"
     for buildopt_name in \

@@ -61,3 +61,13 @@ qualified profile exists, every proposal remains review-required, and the
 workflow-level conclusion is successful. This remains POC evidence only. It
 does not authorize production, soak testing, design-partner work, or Test
 Optimization.
+
+## Result
+
+Hosted run
+[`31467370391`](https://github.com/tonyredondo/buildopt/actions/runs/31467370391)
+passed all five independent repository jobs and the aggregate summary from
+immutable BuildOpt revision `18caa8f`. Every proposal and reference graph
+matched, drift was zero, and no active profile was written. The durable result
+is stored under
+[`benchmarks/results/poc-generic-profile-ci-replay-v1`](../benchmarks/results/poc-generic-profile-ci-replay-v1/README.md).

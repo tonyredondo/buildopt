@@ -515,12 +515,21 @@ still decides activation.
 These percentages replace neither the older complete Jar/Edge compositions
 nor one another. They are direct Build-Impact-only measurements and must not be
 averaged or added to historical mechanism effects. The generic proposal is now
-a review artifact in repository-owned CI; the next block must reproduce all
-five terminal decisions through that surface while activation remains explicit
-and evidence-bound. OpenTelemetry also shows that
+a review artifact in repository-owned CI; activation remains explicit and
+evidence-bound. OpenTelemetry also shows that
 a correctness-only fallback must preserve measured scheduling when output
 bytes are scheduling-sensitive: v3 remains immutable rejected evidence, and
 the v4 correction changed no timed condition or qualification threshold.
+
+The subsequent review-only hosted replay is also complete. Five independent
+clean GitHub runners reconstructed the frozen owner input and source change,
+then invoked the repository-root Action from immutable BuildOpt revision
+`18caa8f`. Spring, OpenTelemetry, Kafka, Micronaut, and Groovy all reproduced
+their terminal candidate entrypoint, project counts, manifest, declared graph,
+generated binding, fallback input, and checksums: **5/5 `MATCH`, zero drift,
+zero active profiles**. This result removes a CI-reproducibility risk but adds
+no timing observation. Spring therefore remains native, and the other four
+value decisions remain bound to the paired measurements above.
 
 ## Open Questions
 
