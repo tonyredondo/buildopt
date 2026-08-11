@@ -485,6 +485,13 @@ warm-up and measured arm. The frozen repository, workflow, mutation, outputs,
 Gradle options, eight pairs and qualification thresholds remain unchanged; no
 v2 timing is reused or discarded.
 
+`poc-generic-holdout-v4.json` and `poc-generic-holdout-v4.md` preserve the v3
+4/8 diagnostic and preregister a second generic correction. Each arm now warms
+the exact target workload from the frozen base cache before pair one, binds a
+normalized task/outcome fingerprint, and captures interval-scoped Linux CPU,
+memory, and IO PSI outside measured wall time. Task-shape drift fails closed;
+PSI remains diagnostic and cannot relax the unchanged 8-of-8 value gate.
+
 The terminal v2 evidence reduces the 29-project root graph to one project and
 saves 19,386.25 ms/7.80% on average with exact outputs and zero product
 failures. Seven of eight pairs improve, so the unchanged 8-of-8 gate retains

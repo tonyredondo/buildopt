@@ -550,6 +550,21 @@ stopped with zero accepted pairs. The corrected v2 run reused no warm-up,
 proposal, or timing, but the POC should now validate repository-owned output
 contracts before paying for a full paired experiment.
 
+The follow-up v3 run investigated rather than discarding Hibernate's single
+negative pair. A separate excluded base-daemon stabilization reduced control
+and candidate preparation by 87.30% and 85.80%, and pair one changed from
+−1.118 seconds to +11.883 seconds. The full fresh run still produced only 4/8
+positive pairs, 2.50% mean savings and a −6.604..+20.190-second interval while
+both arms continued accelerating. Task counts stayed at 301/32 through pair
+seven, then control changed to 300 tasks. Native therefore remains active, but
+the original outlier is not evidence that structural reduction cannot work.
+
+The separately preregistered v4 correction warms the exact target revision
+from the same frozen seed, binds sorted task/outcome fingerprints and captures
+Linux CPU/memory/IO PSI around every arm outside timed boundaries. These fields
+exist to attribute failure; they cannot discard an observation or weaken the
+unchanged 8-of-8 gate.
+
 ## Open Questions
 
 - Is a future repository family materially similar enough to the qualified
@@ -558,6 +573,9 @@ contracts before paying for a full paired experiment.
   rejected mechanism without repeating the closed evidence?
 - Can the proposal derive or validate real Gradle build/output directories
   generically enough to reject a bad owner glob before warm-up and timing?
+- Does exact target-workload stabilization remove the monotonic drift in the
+  Hibernate holdout, and do any remaining negative pairs align with execution
+  shape changes or interval-scoped IO pressure?
 
 ## Evidence Boundaries
 

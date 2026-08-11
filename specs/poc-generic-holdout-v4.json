@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "buildopt.specs/poc-generic-holdout/v4",
+  "evidenceSchemaVersion": "buildopt.evidence/poc-generic-holdout/v4",
+  "workItem": "POC-GENERIC-HOLDOUT-003",
+  "decision": "RERUN_FROZEN_HOLDOUT_AFTER_TARGET_WORKLOAD_AND_HOST_PRESSURE_DIAGNOSTIC_CORRECTION",
+  "preregisteredFromRevision": "4b9f8e17b889da65f32725d70c4efb70d026f6fc",
+  "supersedes": "buildopt.specs/poc-generic-holdout/v3",
+  "subject": {
+    "key": "hibernate-orm",
+    "repositoryId": "hibernate/hibernate-orm",
+    "remoteUrl": "https://github.com/hibernate/hibernate-orm.git",
+    "publicRevision": "2b448a59d332326f0cd0691c868425124d55cbb5",
+    "jdkToolchain": "temurin-jdk-25",
+    "pipelineClass": "assemble",
+    "entrypoints": [
+      "assemble"
+    ],
+    "changePath": "hibernate-core/src/main/java/org/hibernate/Session.java",
+    "mutation": "APPEND_FIXED_COMMENT",
+    "requiredOutputs": [
+      "hibernate-core/target/libs/**"
+    ]
+  },
+  "runner": {
+    "platform": "linux-amd64",
+    "cpuCount": 12,
+    "maxWorkers": 12,
+    "warmupsPerArm": 3,
+    "warmupPhases": [
+      "CACHE_SEED",
+      "BASE_DAEMON_STABILIZATION",
+      "TARGET_WORKLOAD_STABILIZATION"
+    ],
+    "pairs": 8,
+    "order": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
+    "perBuildTimeout": "30m",
+    "maximumInterArmGap": "5s",
+    "fallbackMaxWorkers": 12,
+    "fallbackGradleOptions": [
+      "--no-daemon",
+      "--parallel",
+      "--max-workers=12"
+    ]
+  },
+  "method": {
+    "surface": "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE",
+    "candidateMechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "control": "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW",
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "isolatedArms": true,
+    "independentGradleHomes": true,
+    "independentNativeCacheSeeds": true,
+    "bothArmsPreparedBeforeMeasuredPair": true,
+    "requiredOutputsComparedByteForByte": true,
+    "fullGraphFallbackRequired": true,
+    "onlinePreparationMeasured": false,
+    "warmupsMeasured": false,
+    "targetRevisionWarmupBeforePairs": true,
+    "warmupAndPairTaskOutcomesRecorded": true,
+    "warmupAndPairTaskFingerprintRecorded": true,
+    "warmupAndPairLogSha256Recorded": true,
+    "intervalLinuxPsiRecordedOutsideTiming": true,
+    "hostPressureChangesQualificationThresholds": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "postResultTuningAllowed": false
+  },
+  "qualification": {
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositivePairs": 8,
+    "requiredOutputsIdentical": true,
+    "maximumProductAttributableFailures": 0,
+    "failedOrTimedOutObservationsMayBeDiscarded": false,
+    "measuredExecutionShapeMustBeStable": true,
+    "targetWarmupExecutionShapeMustMatchMeasuredPairs": true
+  },
+  "decisionRules": {
+    "unsupportedOrUncertainProposal": "RETAIN_NATIVE_GRADLE",
+    "completeButWeakMeasurement": "RETAIN_NATIVE_GRADLE",
+    "qualifiedMeasurement": "REVIEW_STRUCTURAL_PROFILE",
+    "genericCorrectnessDefect": "FIX_GENERIC_MECHANISM_AND_RERUN_FROZEN_HOLDOUT_FROM_ZERO",
+    "repositorySpecificException": "FORBIDDEN",
+    "thresholdRelaxation": "FORBIDDEN"
+  },
+  "amendment": {
+    "reason": "V3_BASE_ONLY_STABILIZATION_DID_NOT_WARM_TARGET_WORKLOAD_OR_ATTRIBUTE_EXECUTION_SHAPE_AND_HOST_PRESSURE",
+    "sourceEvidence": "benchmarks/results/poc-generic-holdout-v3/evidence.json",
+    "v3MeanSavedMs": 6280.25,
+    "v3ReductionRatio": 0.024956065364009263,
+    "v3PositivePairs": 4,
+    "v3Interval95SavedMs": [
+      -6603.5,
+      20189.625
+    ],
+    "v3FirstFourPairsPositive": true,
+    "v3LastFourPairsPositive": false,
+    "v3ControlTaskCountDriftPair": 8,
+    "acceptedPairsFromV3": 0,
+    "warmupsReused": false,
+    "proposalReused": false,
+    "timingReused": false,
+    "qualificationChanged": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

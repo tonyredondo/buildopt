@@ -17,6 +17,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -26,7 +27,7 @@ import (
 const (
 	profileMeasureUsage           = "usage: buildopt profile measure --manifest PATH --graph PATH --generated-manifest PATH --changes-file PATH --fallback-changes-file PATH --base-revision REVISION --buildopt-revision REVISION --evidence-output PATH [--gradle-option VALUE ...] [--timeout DURATION]\n"
 	measurementPairs              = 8
-	structuralWarmupsPerArm       = 2
+	structuralWarmupsPerArm       = 3
 	maximumMeasurementInterArmGap = 5 * time.Second
 )
 
@@ -73,6 +74,7 @@ type structuralArmResult struct {
 	log          string
 	logSHA256    string
 	taskOutcomes profilediscovery.StructuralTaskOutcomes
+	hostPressure profilediscovery.StructuralHostPressure
 	startedAt    time.Time
 	finishedAt   time.Time
 }
@@ -335,6 +337,8 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 			CandidateLogSHA256:    candidateResult.logSHA256,
 			ControlTaskOutcomes:   controlResult.taskOutcomes,
 			CandidateTaskOutcomes: candidateResult.taskOutcomes,
+			ControlHostPressure:   structuralHostPressurePointer(controlResult.hostPressure),
+			CandidateHostPressure: structuralHostPressurePointer(candidateResult.hostPressure),
 		})
 		_, _ = fmt.Fprintf(progress, "buildopt: structural pair %d/%d control=%dms candidate=%dms saved=%dms gap=%dms order=%s\n",
 			pair, measurementPairs, controlResult.durationMS, candidateResult.durationMS,
@@ -418,14 +422,25 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	if err := resetStructuralArm(config, arm, config.baseRevision, true); err != nil {
 		return arm, fmt.Errorf("prepare %s daemon stabilization: %w", name, err)
 	}
-	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s arm at %s (daemon stabilization 2/%d)\n", name, config.baseRevision, structuralWarmupsPerArm)
+	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s arm at %s (base daemon stabilization 2/%d)\n", name, config.baseRevision, structuralWarmupsPerArm)
 	stabilizationWarmup, err := runStructuralArm(config, arm, candidate, config.changesPath)
 	if err != nil {
 		return arm, fmt.Errorf("stabilize %s arm: %w", name, err)
 	}
-	arm.warmups = append(arm.warmups, structuralWarmupDiagnostic("DAEMON_STABILIZATION", stabilizationWarmup))
+	arm.warmups = append(arm.warmups, structuralWarmupDiagnostic("BASE_DAEMON_STABILIZATION", stabilizationWarmup))
 	_, _ = fmt.Fprintf(progress, "buildopt: warmed isolated %s arm daemon stabilization in %dms with %s\n",
 		name, stabilizationWarmup.durationMS, formatStructuralTaskOutcomes(stabilizationWarmup.taskOutcomes))
+	if err := resetStructuralArm(config, arm, config.targetRevision, true); err != nil {
+		return arm, fmt.Errorf("prepare %s target-workload stabilization: %w", name, err)
+	}
+	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s arm at %s (target-workload stabilization 3/%d)\n", name, config.targetRevision, structuralWarmupsPerArm)
+	targetWarmup, err := runStructuralArm(config, arm, candidate, config.changesPath)
+	if err != nil {
+		return arm, fmt.Errorf("stabilize %s target workload: %w", name, err)
+	}
+	arm.warmups = append(arm.warmups, structuralWarmupDiagnostic("TARGET_WORKLOAD_STABILIZATION", targetWarmup))
+	_, _ = fmt.Fprintf(progress, "buildopt: warmed isolated %s arm target workload in %dms with %s\n",
+		name, targetWarmup.durationMS, formatStructuralTaskOutcomes(targetWarmup.taskOutcomes))
 	return arm, nil
 }
 
@@ -433,7 +448,16 @@ func structuralWarmupDiagnostic(phase string, result structuralArmResult) profil
 	return profilediscovery.StructuralWarmupObservation{
 		Phase: phase, DurationMS: result.durationMS, LogSHA256: result.logSHA256,
 		TaskOutcomes: result.taskOutcomes,
+		HostPressure: structuralHostPressurePointer(result.hostPressure),
 	}
+}
+
+func structuralHostPressurePointer(pressure profilediscovery.StructuralHostPressure) *profilediscovery.StructuralHostPressure {
+	if !pressure.Available {
+		return nil
+	}
+	copy := pressure
+	return &copy
 }
 
 func measureStructuralFallback(config structuralMeasurementConfig, arm structuralMeasurementArm, progress io.Writer) (structuralArmResult, string, error) {
@@ -515,9 +539,11 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 	var log bytes.Buffer
 	cmd.Stdout = &log
 	cmd.Stderr = &log
+	pressureBefore := readStructuralPressureSnapshot()
 	started := time.Now()
 	err := cmd.Run()
 	finished := time.Now()
+	pressureAfter := readStructuralPressureSnapshot()
 	duration := finished.Sub(started).Milliseconds()
 	if duration < 1 {
 		duration = 1
@@ -526,7 +552,9 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 	logSHA := sha256.Sum256([]byte(logText))
 	result := structuralArmResult{
 		durationMS: duration, log: logText, logSHA256: hex.EncodeToString(logSHA[:]),
-		taskOutcomes: summarizeStructuralTaskOutcomes(logText), startedAt: started, finishedAt: finished,
+		taskOutcomes: summarizeStructuralTaskOutcomes(logText),
+		hostPressure: structuralPressureDelta(pressureBefore, pressureAfter),
+		startedAt:    started, finishedAt: finished,
 	}
 	if ctx.Err() == context.DeadlineExceeded {
 		return result, fmt.Errorf("%s arm exceeded %s", arm.name, config.timeout)
@@ -539,12 +567,14 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 
 func summarizeStructuralTaskOutcomes(log string) profilediscovery.StructuralTaskOutcomes {
 	var outcomes profilediscovery.StructuralTaskOutcomes
+	var taskLines []string
 	scanner := bufio.NewScanner(strings.NewReader(log))
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if !strings.HasPrefix(line, "> Task ") {
 			continue
 		}
+		taskLines = append(taskLines, strings.Join(strings.Fields(line), " "))
 		outcomes.Total++
 		switch {
 		case strings.HasSuffix(line, " FROM-CACHE"):
@@ -559,12 +589,105 @@ func summarizeStructuralTaskOutcomes(log string) profilediscovery.StructuralTask
 			outcomes.Executed++
 		}
 	}
+	if len(taskLines) > 0 {
+		sort.Strings(taskLines)
+		digest := sha256.Sum256([]byte(strings.Join(taskLines, "\n") + "\n"))
+		outcomes.FingerprintSHA256 = hex.EncodeToString(digest[:])
+	}
 	return outcomes
 }
 
 func formatStructuralTaskOutcomes(outcomes profilediscovery.StructuralTaskOutcomes) string {
-	return fmt.Sprintf("total:%d/executed:%d/from-cache:%d/up-to-date:%d/no-source:%d/skipped:%d",
-		outcomes.Total, outcomes.Executed, outcomes.FromCache, outcomes.UpToDate, outcomes.NoSource, outcomes.Skipped)
+	return fmt.Sprintf("total:%d/executed:%d/from-cache:%d/up-to-date:%d/no-source:%d/skipped:%d/fingerprint:%s",
+		outcomes.Total, outcomes.Executed, outcomes.FromCache, outcomes.UpToDate, outcomes.NoSource,
+		outcomes.Skipped, outcomes.FingerprintSHA256)
+}
+
+type structuralPressureSnapshot struct {
+	available         bool
+	cpuSomeTotalUS    int64
+	memorySomeTotalUS int64
+	memoryFullTotalUS int64
+	ioSomeTotalUS     int64
+	ioFullTotalUS     int64
+}
+
+func readStructuralPressureSnapshot() structuralPressureSnapshot {
+	if runtime.GOOS != "linux" {
+		return structuralPressureSnapshot{}
+	}
+	cpuRaw, cpuErr := os.ReadFile("/proc/pressure/cpu")
+	memoryRaw, memoryErr := os.ReadFile("/proc/pressure/memory")
+	ioRaw, ioErr := os.ReadFile("/proc/pressure/io")
+	if cpuErr != nil || memoryErr != nil || ioErr != nil {
+		return structuralPressureSnapshot{}
+	}
+	cpuSome, _, err := parseStructuralPressure(cpuRaw, false)
+	if err != nil {
+		return structuralPressureSnapshot{}
+	}
+	memorySome, memoryFull, err := parseStructuralPressure(memoryRaw, true)
+	if err != nil {
+		return structuralPressureSnapshot{}
+	}
+	ioSome, ioFull, err := parseStructuralPressure(ioRaw, true)
+	if err != nil {
+		return structuralPressureSnapshot{}
+	}
+	return structuralPressureSnapshot{
+		available: true, cpuSomeTotalUS: cpuSome,
+		memorySomeTotalUS: memorySome, memoryFullTotalUS: memoryFull,
+		ioSomeTotalUS: ioSome, ioFullTotalUS: ioFull,
+	}
+}
+
+func parseStructuralPressure(raw []byte, requireFull bool) (int64, int64, error) {
+	values := map[string]int64{}
+	scanner := bufio.NewScanner(bytes.NewReader(raw))
+	for scanner.Scan() {
+		fields := strings.Fields(scanner.Text())
+		if len(fields) < 2 || (fields[0] != "some" && fields[0] != "full") {
+			continue
+		}
+		for _, field := range fields[1:] {
+			if !strings.HasPrefix(field, "total=") {
+				continue
+			}
+			value, err := strconv.ParseInt(strings.TrimPrefix(field, "total="), 10, 64)
+			if err != nil || value < 0 {
+				return 0, 0, errors.New("Linux PSI total is invalid")
+			}
+			values[fields[0]] = value
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return 0, 0, err
+	}
+	some, someOK := values["some"]
+	full, fullOK := values["full"]
+	if !someOK || (requireFull && !fullOK) {
+		return 0, 0, errors.New("Linux PSI totals are incomplete")
+	}
+	return some, full, nil
+}
+
+func structuralPressureDelta(before, after structuralPressureSnapshot) profilediscovery.StructuralHostPressure {
+	if !before.available || !after.available ||
+		after.cpuSomeTotalUS < before.cpuSomeTotalUS ||
+		after.memorySomeTotalUS < before.memorySomeTotalUS ||
+		after.memoryFullTotalUS < before.memoryFullTotalUS ||
+		after.ioSomeTotalUS < before.ioSomeTotalUS ||
+		after.ioFullTotalUS < before.ioFullTotalUS {
+		return profilediscovery.StructuralHostPressure{}
+	}
+	return profilediscovery.StructuralHostPressure{
+		Available:         true,
+		CPUSomeTotalUS:    after.cpuSomeTotalUS - before.cpuSomeTotalUS,
+		MemorySomeTotalUS: after.memorySomeTotalUS - before.memorySomeTotalUS,
+		MemoryFullTotalUS: after.memoryFullTotalUS - before.memoryFullTotalUS,
+		IOSomeTotalUS:     after.ioSomeTotalUS - before.ioSomeTotalUS,
+		IOFullTotalUS:     after.ioFullTotalUS - before.ioFullTotalUS,
+	}
 }
 
 func measurementGradleCommand(repositoryRoot string, args []string) []string {

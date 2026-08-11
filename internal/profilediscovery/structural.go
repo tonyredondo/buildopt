@@ -104,19 +104,21 @@ type structuralExecution struct {
 }
 
 type structuralObservation struct {
-	Pair                          int                    `json:"pair"`
-	Order                         string                 `json:"order"`
-	ControlDurationMS             int64                  `json:"controlDurationMs"`
-	CandidateDurationMS           int64                  `json:"candidateDurationMs"`
-	SavedMS                       int64                  `json:"savedMs"`
-	ControlRequiredOutputSHA256   string                 `json:"controlRequiredOutputSha256"`
-	CandidateRequiredOutputSHA256 string                 `json:"candidateRequiredOutputSha256"`
-	RequiredOutputCount           int                    `json:"requiredOutputCount"`
-	ProductAttributableFailure    bool                   `json:"productAttributableFailure"`
-	ControlLogSHA256              string                 `json:"controlLogSha256,omitempty"`
-	CandidateLogSHA256            string                 `json:"candidateLogSha256,omitempty"`
-	ControlTaskOutcomes           StructuralTaskOutcomes `json:"controlTaskOutcomes,omitempty"`
-	CandidateTaskOutcomes         StructuralTaskOutcomes `json:"candidateTaskOutcomes,omitempty"`
+	Pair                          int                     `json:"pair"`
+	Order                         string                  `json:"order"`
+	ControlDurationMS             int64                   `json:"controlDurationMs"`
+	CandidateDurationMS           int64                   `json:"candidateDurationMs"`
+	SavedMS                       int64                   `json:"savedMs"`
+	ControlRequiredOutputSHA256   string                  `json:"controlRequiredOutputSha256"`
+	CandidateRequiredOutputSHA256 string                  `json:"candidateRequiredOutputSha256"`
+	RequiredOutputCount           int                     `json:"requiredOutputCount"`
+	ProductAttributableFailure    bool                    `json:"productAttributableFailure"`
+	ControlLogSHA256              string                  `json:"controlLogSha256,omitempty"`
+	CandidateLogSHA256            string                  `json:"candidateLogSha256,omitempty"`
+	ControlTaskOutcomes           StructuralTaskOutcomes  `json:"controlTaskOutcomes,omitempty"`
+	CandidateTaskOutcomes         StructuralTaskOutcomes  `json:"candidateTaskOutcomes,omitempty"`
+	ControlHostPressure           *StructuralHostPressure `json:"controlHostPressure,omitempty"`
+	CandidateHostPressure         *StructuralHostPressure `json:"candidateHostPressure,omitempty"`
 }
 
 type structuralFallback struct {
@@ -126,15 +128,19 @@ type structuralFallback struct {
 }
 
 type structuralResult struct {
-	Pairs             int       `json:"pairs"`
-	ControlMeanMS     float64   `json:"controlMeanMs"`
-	CandidateMeanMS   float64   `json:"candidateMeanMs"`
-	MeanSavedMS       float64   `json:"meanSavedMs"`
-	ReductionRatio    float64   `json:"reductionRatio"`
-	Interval95SavedMS []float64 `json:"interval95SavedMs"`
-	PositivePairs     int       `json:"positivePairs"`
-	Qualified         bool      `json:"qualified"`
-	Decision          string    `json:"decision"`
+	Pairs                     int       `json:"pairs"`
+	ControlMeanMS             float64   `json:"controlMeanMs"`
+	CandidateMeanMS           float64   `json:"candidateMeanMs"`
+	MeanSavedMS               float64   `json:"meanSavedMs"`
+	ReductionRatio            float64   `json:"reductionRatio"`
+	Interval95SavedMS         []float64 `json:"interval95SavedMs"`
+	PositivePairs             int       `json:"positivePairs"`
+	ExecutionShapeObserved    bool      `json:"executionShapeObserved,omitempty"`
+	ExecutionShapeStable      bool      `json:"executionShapeStable,omitempty"`
+	TargetWarmupShapeObserved bool      `json:"targetWarmupShapeObserved,omitempty"`
+	TargetWarmupShapeStable   bool      `json:"targetWarmupShapeStable,omitempty"`
+	Qualified                 bool      `json:"qualified"`
+	Decision                  string    `json:"decision"`
 }
 
 type structuralBoundaries struct {
@@ -158,27 +164,43 @@ type StructuralMeasurementObservation struct {
 	CandidateLogSHA256         string
 	ControlTaskOutcomes        StructuralTaskOutcomes
 	CandidateTaskOutcomes      StructuralTaskOutcomes
+	ControlHostPressure        *StructuralHostPressure
+	CandidateHostPressure      *StructuralHostPressure
 }
 
 // StructuralTaskOutcomes is a bounded execution-shape summary parsed from
 // Gradle's plain console output. It helps diagnose timing outliers without
 // retaining repository build logs or changing the measured Gradle invocation.
 type StructuralTaskOutcomes struct {
-	Total     int `json:"total"`
-	Executed  int `json:"executed"`
-	FromCache int `json:"fromCache"`
-	UpToDate  int `json:"upToDate"`
-	NoSource  int `json:"noSource"`
-	Skipped   int `json:"skipped"`
+	Total             int    `json:"total"`
+	Executed          int    `json:"executed"`
+	FromCache         int    `json:"fromCache"`
+	UpToDate          int    `json:"upToDate"`
+	NoSource          int    `json:"noSource"`
+	Skipped           int    `json:"skipped"`
+	FingerprintSHA256 string `json:"fingerprintSha256,omitempty"`
+}
+
+// StructuralHostPressure records the system-wide Linux PSI time accumulated
+// while one Gradle arm was running. It is diagnostic only and never changes a
+// measured duration or qualifies an otherwise failing observation.
+type StructuralHostPressure struct {
+	Available         bool  `json:"available"`
+	CPUSomeTotalUS    int64 `json:"cpuSomeTotalUs"`
+	MemorySomeTotalUS int64 `json:"memorySomeTotalUs"`
+	MemoryFullTotalUS int64 `json:"memoryFullTotalUs"`
+	IOSomeTotalUS     int64 `json:"ioSomeTotalUs"`
+	IOFullTotalUS     int64 `json:"ioFullTotalUs"`
 }
 
 // StructuralWarmupObservation records excluded cache-seeding and daemon-
 // stabilization invocations. Warm-ups never contribute to qualification.
 type StructuralWarmupObservation struct {
-	Phase        string                 `json:"phase"`
-	DurationMS   int64                  `json:"durationMs"`
-	LogSHA256    string                 `json:"logSha256"`
-	TaskOutcomes StructuralTaskOutcomes `json:"taskOutcomes"`
+	Phase        string                  `json:"phase"`
+	DurationMS   int64                   `json:"durationMs"`
+	LogSHA256    string                  `json:"logSha256"`
+	TaskOutcomes StructuralTaskOutcomes  `json:"taskOutcomes"`
+	HostPressure *StructuralHostPressure `json:"hostPressure,omitempty"`
 }
 
 // StructuralMeasurementOptions carries the independently observed values used
@@ -243,6 +265,8 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 			CandidateLogSHA256:            observation.CandidateLogSHA256,
 			ControlTaskOutcomes:           observation.ControlTaskOutcomes,
 			CandidateTaskOutcomes:         observation.CandidateTaskOutcomes,
+			ControlHostPressure:           observation.ControlHostPressure,
+			CandidateHostPressure:         observation.CandidateHostPressure,
 		}
 	}
 	if err := validateStructuralDiagnostics(options.ControlWarmups, options.CandidateWarmups, observations); err != nil {
@@ -252,6 +276,7 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 	if err != nil {
 		return nil, false, err
 	}
+	result = applyStructuralTargetWarmupShape(result, options.ControlWarmups, options.CandidateWarmups, observations)
 	evidenceState := "INCONCLUSIVE"
 	if result.Qualified {
 		evidenceState = "QUALIFIED"
@@ -425,6 +450,12 @@ func validateStructuralEvidence(evidence structuralEvidence, analysis AnalysisRe
 	if err != nil {
 		return err
 	}
+	calculated = applyStructuralTargetWarmupShape(
+		calculated,
+		evidence.Execution.ControlWarmups,
+		evidence.Execution.CandidateWarmups,
+		evidence.Observations,
+	)
 	if !sameStructuralResult(calculated, evidence.Result) || !calculated.Qualified ||
 		evidence.Result.Decision != "QUALIFY_STRUCTURAL_PROFILE" {
 		return errors.New("structural qualification result is invalid")
@@ -453,33 +484,62 @@ func validateStructuralDiagnostics(control, candidate []StructuralWarmupObservat
 	if len(control) == 0 && len(candidate) == 0 {
 		for _, observation := range observations {
 			if observation.ControlLogSHA256 != "" || observation.CandidateLogSHA256 != "" ||
-				observation.ControlTaskOutcomes.Total != 0 || observation.CandidateTaskOutcomes.Total != 0 {
+				observation.ControlTaskOutcomes.Total != 0 || observation.CandidateTaskOutcomes.Total != 0 ||
+				observation.ControlHostPressure != nil || observation.CandidateHostPressure != nil {
 				return errors.New("structural measurement diagnostics are incomplete")
 			}
 		}
 		return nil
 	}
-	if len(control) != 2 || len(candidate) != 2 {
-		return errors.New("structural measurement requires cache-seed and daemon-stabilization warm-ups")
+	if len(control) != len(candidate) || (len(control) != 2 && len(control) != 3) {
+		return errors.New("structural measurement requires complete two- or three-phase warm-ups")
+	}
+	expectedPhases := []string{"CACHE_SEED", "DAEMON_STABILIZATION"}
+	if len(control) == 3 {
+		expectedPhases = []string{"CACHE_SEED", "BASE_DAEMON_STABILIZATION", "TARGET_WORKLOAD_STABILIZATION"}
+	}
+	fingerprintPresent := false
+	fingerprintAbsent := false
+	pressurePresent := false
+	pressureAbsent := false
+	observeDiagnostics := func(outcomes StructuralTaskOutcomes, pressure *StructuralHostPressure) {
+		if outcomes.FingerprintSHA256 == "" {
+			fingerprintAbsent = true
+		} else {
+			fingerprintPresent = true
+		}
+		if pressure == nil {
+			pressureAbsent = true
+		} else {
+			pressurePresent = true
+		}
 	}
 	for _, warmups := range [][]StructuralWarmupObservation{control, candidate} {
 		for index, warmup := range warmups {
-			expectedPhase := "CACHE_SEED"
-			if index == 1 {
-				expectedPhase = "DAEMON_STABILIZATION"
-			}
-			if warmup.Phase != expectedPhase || warmup.DurationMS <= 0 ||
-				!validSHA(warmup.LogSHA256) || !validStructuralTaskOutcomes(warmup.TaskOutcomes) {
+			if warmup.Phase != expectedPhases[index] || warmup.DurationMS <= 0 ||
+				!validSHA(warmup.LogSHA256) || !validStructuralTaskOutcomes(warmup.TaskOutcomes) ||
+				!validStructuralHostPressure(warmup.HostPressure) {
 				return errors.New("structural measurement warm-up diagnostic is invalid")
 			}
+			observeDiagnostics(warmup.TaskOutcomes, warmup.HostPressure)
 		}
 	}
 	for _, observation := range observations {
 		if !validSHA(observation.ControlLogSHA256) || !validSHA(observation.CandidateLogSHA256) ||
 			!validStructuralTaskOutcomes(observation.ControlTaskOutcomes) ||
-			!validStructuralTaskOutcomes(observation.CandidateTaskOutcomes) {
+			!validStructuralTaskOutcomes(observation.CandidateTaskOutcomes) ||
+			!validStructuralHostPressure(observation.ControlHostPressure) ||
+			!validStructuralHostPressure(observation.CandidateHostPressure) {
 			return errors.New("structural measurement pair diagnostic is invalid")
 		}
+		observeDiagnostics(observation.ControlTaskOutcomes, observation.ControlHostPressure)
+		observeDiagnostics(observation.CandidateTaskOutcomes, observation.CandidateHostPressure)
+	}
+	if fingerprintPresent && fingerprintAbsent {
+		return errors.New("structural measurement task fingerprints are incomplete")
+	}
+	if pressurePresent && pressureAbsent {
+		return errors.New("structural measurement host-pressure diagnostics are incomplete")
 	}
 	return nil
 }
@@ -487,7 +547,15 @@ func validateStructuralDiagnostics(control, candidate []StructuralWarmupObservat
 func validStructuralTaskOutcomes(outcomes StructuralTaskOutcomes) bool {
 	return outcomes.Total >= 0 && outcomes.Executed >= 0 && outcomes.FromCache >= 0 &&
 		outcomes.UpToDate >= 0 && outcomes.NoSource >= 0 && outcomes.Skipped >= 0 &&
-		outcomes.Total == outcomes.Executed+outcomes.FromCache+outcomes.UpToDate+outcomes.NoSource+outcomes.Skipped
+		outcomes.Total == outcomes.Executed+outcomes.FromCache+outcomes.UpToDate+outcomes.NoSource+outcomes.Skipped &&
+		(outcomes.FingerprintSHA256 == "" ||
+			(validSHA(outcomes.FingerprintSHA256) && outcomes.FingerprintSHA256 == strings.ToLower(outcomes.FingerprintSHA256)))
+}
+
+func validStructuralHostPressure(pressure *StructuralHostPressure) bool {
+	return pressure == nil || (pressure.Available && pressure.CPUSomeTotalUS >= 0 &&
+		pressure.MemorySomeTotalUS >= 0 && pressure.MemoryFullTotalUS >= 0 &&
+		pressure.IOSomeTotalUS >= 0 && pressure.IOFullTotalUS >= 0)
 }
 
 func calculateStructuralResult(observations []structuralObservation) (structuralResult, error) {
@@ -498,6 +566,10 @@ func calculateStructuralResult(observations []structuralObservation) (structural
 	var controlTotal, candidateTotal int64
 	positive := 0
 	requiredOutputSHA := ""
+	executionShapeObserved := true
+	executionShapeStable := true
+	controlTaskFingerprint := ""
+	candidateTaskFingerprint := ""
 	for index, observation := range observations {
 		expectedOrder := "CANDIDATE_FIRST"
 		if index%2 == 0 {
@@ -522,27 +594,65 @@ func calculateStructuralResult(observations []structuralObservation) (structural
 		if observation.SavedMS > 0 {
 			positive++
 		}
+		if observation.ControlTaskOutcomes.FingerprintSHA256 == "" ||
+			observation.CandidateTaskOutcomes.FingerprintSHA256 == "" {
+			executionShapeObserved = false
+			executionShapeStable = false
+		} else if controlTaskFingerprint == "" {
+			controlTaskFingerprint = observation.ControlTaskOutcomes.FingerprintSHA256
+			candidateTaskFingerprint = observation.CandidateTaskOutcomes.FingerprintSHA256
+		} else if observation.ControlTaskOutcomes.FingerprintSHA256 != controlTaskFingerprint ||
+			observation.CandidateTaskOutcomes.FingerprintSHA256 != candidateTaskFingerprint {
+			executionShapeStable = false
+		}
 	}
 	meanSaved := float64(controlTotal-candidateTotal) / structuralPairCount
 	ratio := float64(controlTotal-candidateTotal) / float64(controlTotal)
 	interval := structuralBootstrap95(saved)
 	qualified := meanSaved >= structuralMinimumSavedMS && ratio >= structuralMinimumRatio &&
-		interval[0] > 0 && positive == structuralPairCount
+		interval[0] > 0 && positive == structuralPairCount &&
+		(!executionShapeObserved || executionShapeStable)
 	decision := "RETAIN_NATIVE_GRADLE"
 	if qualified {
 		decision = "QUALIFY_STRUCTURAL_PROFILE"
 	}
 	return structuralResult{
-		Pairs:             structuralPairCount,
-		ControlMeanMS:     float64(controlTotal) / structuralPairCount,
-		CandidateMeanMS:   float64(candidateTotal) / structuralPairCount,
-		MeanSavedMS:       meanSaved,
-		ReductionRatio:    ratio,
-		Interval95SavedMS: interval,
-		PositivePairs:     positive,
-		Qualified:         qualified,
-		Decision:          decision,
+		Pairs:                  structuralPairCount,
+		ControlMeanMS:          float64(controlTotal) / structuralPairCount,
+		CandidateMeanMS:        float64(candidateTotal) / structuralPairCount,
+		MeanSavedMS:            meanSaved,
+		ReductionRatio:         ratio,
+		Interval95SavedMS:      interval,
+		PositivePairs:          positive,
+		ExecutionShapeObserved: executionShapeObserved,
+		ExecutionShapeStable:   executionShapeStable,
+		Qualified:              qualified,
+		Decision:               decision,
 	}, nil
+}
+
+func applyStructuralTargetWarmupShape(
+	result structuralResult,
+	control, candidate []StructuralWarmupObservation,
+	observations []structuralObservation,
+) structuralResult {
+	if len(control) != 3 || len(candidate) != 3 || len(observations) == 0 {
+		return result
+	}
+	controlWarmup := control[2].TaskOutcomes.FingerprintSHA256
+	candidateWarmup := candidate[2].TaskOutcomes.FingerprintSHA256
+	controlMeasured := observations[0].ControlTaskOutcomes.FingerprintSHA256
+	candidateMeasured := observations[0].CandidateTaskOutcomes.FingerprintSHA256
+	if controlWarmup == "" || candidateWarmup == "" || controlMeasured == "" || candidateMeasured == "" {
+		return result
+	}
+	result.TargetWarmupShapeObserved = true
+	result.TargetWarmupShapeStable = controlWarmup == controlMeasured && candidateWarmup == candidateMeasured
+	if !result.TargetWarmupShapeStable {
+		result.Qualified = false
+		result.Decision = "RETAIN_NATIVE_GRADLE"
+	}
+	return result
 }
 
 func structuralBootstrap95(saved []float64) []float64 {
@@ -601,6 +711,10 @@ func sameStructuralResult(left, right structuralResult) bool {
 		sameNumber(left.CandidateMeanMS, right.CandidateMeanMS) &&
 		sameNumber(left.MeanSavedMS, right.MeanSavedMS) && sameNumber(left.ReductionRatio, right.ReductionRatio) &&
 		sameNumbers(left.Interval95SavedMS, right.Interval95SavedMS) && left.PositivePairs == right.PositivePairs &&
+		left.ExecutionShapeObserved == right.ExecutionShapeObserved &&
+		left.ExecutionShapeStable == right.ExecutionShapeStable &&
+		left.TargetWarmupShapeObserved == right.TargetWarmupShapeObserved &&
+		left.TargetWarmupShapeStable == right.TargetWarmupShapeStable &&
 		left.Qualified == right.Qualified && left.Decision == right.Decision
 }
 

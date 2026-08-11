@@ -141,6 +141,87 @@ func TestRenderStructuralMeasurementEvidencePreservesWarmupAndPairDiagnostics(t 
 		evidence.Observations[0].CandidateLogSHA256 != strings.Repeat("4", 64) {
 		t.Fatalf("diagnostic evidence = %+v", evidence)
 	}
+
+	pressure := &StructuralHostPressure{Available: true, CPUSomeTotalUS: 1, IOSomeTotalUS: 2}
+	controlOutcomes := taskOutcomes
+	controlOutcomes.FingerprintSHA256 = strings.Repeat("5", 64)
+	candidateOutcomes := taskOutcomes
+	candidateOutcomes.FingerprintSHA256 = strings.Repeat("6", 64)
+	warmups = []StructuralWarmupObservation{
+		{Phase: "CACHE_SEED", DurationMS: 3000, LogSHA256: strings.Repeat("1", 64), TaskOutcomes: controlOutcomes, HostPressure: pressure},
+		{Phase: "BASE_DAEMON_STABILIZATION", DurationMS: 2000, LogSHA256: strings.Repeat("2", 64), TaskOutcomes: controlOutcomes, HostPressure: pressure},
+		{Phase: "TARGET_WORKLOAD_STABILIZATION", DurationMS: 1000, LogSHA256: strings.Repeat("3", 64), TaskOutcomes: controlOutcomes, HostPressure: pressure},
+	}
+	candidateWarmups := append([]StructuralWarmupObservation(nil), warmups...)
+	for index := range candidateWarmups {
+		candidateWarmups[index].TaskOutcomes = candidateOutcomes
+	}
+	for index := range observations {
+		observations[index].ControlTaskOutcomes = controlOutcomes
+		observations[index].CandidateTaskOutcomes = candidateOutcomes
+		observations[index].ControlHostPressure = pressure
+		observations[index].CandidateHostPressure = pressure
+	}
+	raw, qualified, err = RenderStructuralMeasurementEvidence(StructuralMeasurementOptions{
+		CapturedAt: time.Date(2026, 8, 11, 13, 0, 0, 0, time.UTC), Analysis: analysis,
+		RepositoryRevision: strings.Repeat("b", 40), BuildOptRevision: strings.Repeat("c", 40),
+		ExecutableSHA256: strings.Repeat("e", 64), SourceEvidenceSHA256: strings.Repeat("d", 64),
+		GradleOptions: []string{"--daemon", "--build-cache"}, ControlWarmups: warmups,
+		CandidateWarmups: candidateWarmups, Observations: observations,
+		FallbackReason: "IMPACT_GLOBAL_CHANGE", FallbackSuccessful: true,
+	})
+	if err != nil || !qualified {
+		t.Fatalf("render three-phase evidence = %v/%v", qualified, err)
+	}
+	if err := json.Unmarshal(raw, &evidence); err != nil {
+		t.Fatal(err)
+	}
+	if evidence.Execution.WarmupsPerArm != 3 || !evidence.Result.ExecutionShapeObserved ||
+		!evidence.Result.ExecutionShapeStable || evidence.Observations[0].ControlHostPressure == nil {
+		t.Fatalf("three-phase diagnostic evidence = %+v", evidence)
+	}
+
+	observations[7].ControlTaskOutcomes.FingerprintSHA256 = strings.Repeat("7", 64)
+	raw, qualified, err = RenderStructuralMeasurementEvidence(StructuralMeasurementOptions{
+		CapturedAt: time.Date(2026, 8, 11, 14, 0, 0, 0, time.UTC), Analysis: analysis,
+		RepositoryRevision: strings.Repeat("b", 40), BuildOptRevision: strings.Repeat("c", 40),
+		ExecutableSHA256: strings.Repeat("e", 64), SourceEvidenceSHA256: strings.Repeat("d", 64),
+		GradleOptions: []string{"--daemon", "--build-cache"}, ControlWarmups: warmups,
+		CandidateWarmups: candidateWarmups, Observations: observations,
+		FallbackReason: "IMPACT_GLOBAL_CHANGE", FallbackSuccessful: true,
+	})
+	if err != nil || qualified {
+		t.Fatalf("render drifting execution shape = %v/%v", qualified, err)
+	}
+	evidence = structuralEvidence{}
+	if err := json.Unmarshal(raw, &evidence); err != nil {
+		t.Fatal(err)
+	}
+	if !evidence.Result.ExecutionShapeObserved || evidence.Result.ExecutionShapeStable || evidence.Result.Qualified {
+		t.Fatalf("drifting execution shape qualified = %+v", evidence.Result)
+	}
+
+	observations[7].ControlTaskOutcomes.FingerprintSHA256 = controlOutcomes.FingerprintSHA256
+	candidateWarmups[2].TaskOutcomes.FingerprintSHA256 = strings.Repeat("7", 64)
+	raw, qualified, err = RenderStructuralMeasurementEvidence(StructuralMeasurementOptions{
+		CapturedAt: time.Date(2026, 8, 11, 15, 0, 0, 0, time.UTC), Analysis: analysis,
+		RepositoryRevision: strings.Repeat("b", 40), BuildOptRevision: strings.Repeat("c", 40),
+		ExecutableSHA256: strings.Repeat("e", 64), SourceEvidenceSHA256: strings.Repeat("d", 64),
+		GradleOptions: []string{"--daemon", "--build-cache"}, ControlWarmups: warmups,
+		CandidateWarmups: candidateWarmups, Observations: observations,
+		FallbackReason: "IMPACT_GLOBAL_CHANGE", FallbackSuccessful: true,
+	})
+	if err != nil || qualified {
+		t.Fatalf("render mismatched target warm-up = %v/%v", qualified, err)
+	}
+	evidence = structuralEvidence{}
+	if err := json.Unmarshal(raw, &evidence); err != nil {
+		t.Fatal(err)
+	}
+	if !evidence.Result.ExecutionShapeStable || !evidence.Result.TargetWarmupShapeObserved ||
+		evidence.Result.TargetWarmupShapeStable || evidence.Result.Qualified {
+		t.Fatalf("mismatched target warm-up qualified = %+v", evidence.Result)
+	}
 }
 
 func TestStructuralProfileQualificationIsRepositoryIndependentAndDeterministic(t *testing.T) {

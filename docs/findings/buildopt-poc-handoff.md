@@ -16,7 +16,10 @@
   now complete.** The read-only Action recreated every terminal proposal on
   clean hosted runners with zero graph drift. The unchanged generic path then
   discovered a 29-to-1 Hibernate candidate and saved 19.386 seconds on average;
-  the strict 7/8 result remained native rather than manufacturing a win.
+  the strict 7/8 result remained native rather than manufacturing a win. A
+  separate diagnostic recovered that first negative after better daemon
+  stabilization, proving it was investigable rather than a structural reason
+  to discard the candidate; a target-workload replay is now preregistered.
 
 ## The Project in One Minute
 
@@ -79,6 +82,20 @@ none of the rejected timing was reused.
 
 Repository percentages are independent. They are not averaged across
 repositories and are not added to cache, task-adapter, or Edge results.
+
+### Hibernate is retained while its variance is investigated
+
+The immutable v3 diagnostic did not replace the 7.80% v2 value result. It added
+a second excluded base-revision warm-up and reran all eight pairs from zero.
+The first pair changed from **−1.118 s to +11.883 s**, proving that the original
+negative was recoverable. The complete v3 run reached only **4/8 positive
+pairs**, **2.50% mean savings**, and an interval of **−6.604..+20.190 s** while
+both arms continued accelerating. Native Gradle therefore remains active.
+
+The next frozen replay warms the exact target workload, binds normalized task
+and outcome fingerprints, and records interval-scoped Linux host pressure.
+Those diagnostics may explain a failure but cannot remove a pair or relax the
+8/8 gate.
 
 ## Clean-CI Reproducibility
 
@@ -153,5 +170,6 @@ Test Optimization remains outside Build Optimization.
 - [Hosted review-only CI artifact run](https://github.com/tonyredondo/buildopt/actions/runs/31464264563)
 - [Five-repository clean-CI replay](../../benchmarks/results/poc-generic-profile-ci-replay-v1/README.md)
 - [Unseen Hibernate ORM holdout](../../benchmarks/results/poc-generic-holdout-v2/README.md)
+- [Hibernate warm-up diagnosis](../../benchmarks/results/poc-generic-holdout-v3/README.md)
 - [Detailed performance findings and historical research](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

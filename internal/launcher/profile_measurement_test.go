@@ -106,8 +106,52 @@ func TestSummarizeStructuralTaskOutcomes(t *testing.T) {
 	}, "\n")
 	outcomes := summarizeStructuralTaskOutcomes(log)
 	if outcomes.Total != 6 || outcomes.Executed != 2 || outcomes.FromCache != 1 ||
-		outcomes.UpToDate != 1 || outcomes.NoSource != 1 || outcomes.Skipped != 1 {
+		outcomes.UpToDate != 1 || outcomes.NoSource != 1 || outcomes.Skipped != 1 ||
+		outcomes.FingerprintSHA256 == "" {
 		t.Fatalf("task outcomes = %+v", outcomes)
+	}
+	reordered := summarizeStructuralTaskOutcomes(strings.Join([]string{
+		"> Task :disabled SKIPPED",
+		"> Task :other",
+		"> Task :empty NO-SOURCE",
+		"> Task :classes UP-TO-DATE",
+		"> Task :resources FROM-CACHE",
+		"> Task :compileJava",
+	}, "\n"))
+	if reordered.FingerprintSHA256 != outcomes.FingerprintSHA256 {
+		t.Fatalf("task fingerprint depends on console order: %q != %q", reordered.FingerprintSHA256, outcomes.FingerprintSHA256)
+	}
+	changed := summarizeStructuralTaskOutcomes(strings.Replace(log, ":other", ":different", 1))
+	if changed.FingerprintSHA256 == outcomes.FingerprintSHA256 {
+		t.Fatal("task fingerprint did not bind the task path")
+	}
+}
+
+func TestStructuralPressureParsingAndDelta(t *testing.T) {
+	some, full, err := parseStructuralPressure([]byte(
+		"some avg10=0.10 avg60=0.20 avg300=0.30 total=12345\n"+
+			"full avg10=0.00 avg60=0.00 avg300=0.00 total=2345\n"), true)
+	if err != nil || some != 12345 || full != 2345 {
+		t.Fatalf("pressure totals = %d/%d/%v", some, full, err)
+	}
+	if _, _, err := parseStructuralPressure([]byte("some total=1\n"), true); err == nil {
+		t.Fatal("incomplete full-pressure record was accepted")
+	}
+	before := structuralPressureSnapshot{
+		available: true, cpuSomeTotalUS: 10, memorySomeTotalUS: 20,
+		memoryFullTotalUS: 3, ioSomeTotalUS: 40, ioFullTotalUS: 5,
+	}
+	after := structuralPressureSnapshot{
+		available: true, cpuSomeTotalUS: 18, memorySomeTotalUS: 22,
+		memoryFullTotalUS: 4, ioSomeTotalUS: 55, ioFullTotalUS: 9,
+	}
+	delta := structuralPressureDelta(before, after)
+	if !delta.Available || delta.CPUSomeTotalUS != 8 || delta.MemorySomeTotalUS != 2 ||
+		delta.MemoryFullTotalUS != 1 || delta.IOSomeTotalUS != 15 || delta.IOFullTotalUS != 4 {
+		t.Fatalf("pressure delta = %+v", delta)
+	}
+	if structuralPressureDelta(after, before).Available {
+		t.Fatal("decreasing Linux PSI total was accepted")
 	}
 }
 
