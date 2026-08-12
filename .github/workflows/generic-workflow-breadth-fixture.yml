@@ -37,7 +37,7 @@ jobs:
         run: ./dev/bootstrap --toolchain go
 
       - name: Prime the checksum-pinned Gradle Wrapper
-        run: ./dev/run -- ./gradlew --no-daemon --version
+        run: ./gradlew --no-daemon --version
 
       - name: Exercise the confirmed owner input
         run: |
