@@ -248,6 +248,7 @@ buildopt_capture_subject() {
             --changes-file buildopt-changes.txt \
             --base-revision "${buildopt_base}" \
             "${buildopt_required_output_args[@]}" \
+            --gradle-option=--no-configuration-cache \
             --gradle-option=--no-scan --gradle-option=--max-workers=12 \
             --buildopt-revision "${buildopt_revision}" --timeout 30m
     ) >"${buildopt_subject_output}/proposal.log" 2>&1; then

@@ -33,6 +33,8 @@ jq -e \
   .captureContract.pairsPerCapture == 8 and
   .captureContract.sameBuildOptRevisionRequired == true and
   .captureContract.sameExecutableSha256Required == true and
+  .captureContract.proposalConfigurationCache == false and
+  .captureContract.measurementConfigurationCache == false and
   .captureContract.gradleDistributionPreparedByOriginalWorkflowPreflight == true and
   .captureContract.gradleDistributionPreparationAttempts == 3 and
   .captureContract.gradleDistributionPreparationOutsideCapture == true and

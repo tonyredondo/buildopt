@@ -3464,6 +3464,11 @@ private measurement Gradle home. Proposal, warm-ups, timed pairs and fallback
 therefore perform no Gradle distribution download; caches and daemons remain
 isolated between arms.
 
+Proposal and measurement explicitly disable Configuration Cache. The temporary
+output-contract preflight inspects repository-owned task outputs and is not a
+configuration-cache-compatible workload; using the same explicit mode prevents
+repository defaults from changing whether that generic preflight can run.
+
 `./dev/run-generic-workflow-value /absolute/evidence/directory [workflow-key]`
 uses the same installed generic runner with the frozen public workflow-family
 contract. It measures Groovy JAR packaging, Kafka Checkstyle verification,

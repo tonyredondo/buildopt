@@ -16,6 +16,8 @@
     "sameExecutableSha256Required": true,
     "sameRepositoryRevisionRequired": true,
     "samePlanAndOptionsRequired": true,
+    "proposalConfigurationCache": false,
+    "measurementConfigurationCache": false,
     "gradleDistributionPreparedByOriginalWorkflowPreflight": true,
     "gradleDistributionPreparationAttempts": 3,
     "gradleDistributionPreparationOutsideCapture": true,

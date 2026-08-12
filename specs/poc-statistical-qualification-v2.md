@@ -41,6 +41,12 @@ Gradle. This infrastructure correction was added after preserved
 pre-measurement `Unexpected end of file` failures and does not change a task,
 option, threshold or timing boundary.
 
+Proposal and measurement both use `--no-configuration-cache`. The proposal's
+temporary output-contract task inspects repository-owned Gradle task outputs
+and is not a reusable configuration-cache model. Keeping that preflight mode
+identical across repositories avoids repository-default drift and matches the
+already frozen measured option without changing a timed invocation.
+
 ## Qualification
 
 A repository qualifies for a reviewable POC profile only when all of these are
