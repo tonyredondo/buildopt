@@ -17,6 +17,8 @@
     "sameRepositoryRevisionRequired": true,
     "samePlanAndOptionsRequired": true,
     "gradleDistributionPreparedByOriginalWorkflowPreflight": true,
+    "gradleDistributionPreparationAttempts": 3,
+    "gradleDistributionPreparationOutsideCapture": true,
     "gradleDistributionCopiedPrivatelyPerArm": true,
     "networkAllowedDuringWarmupsOrTiming": false
   },

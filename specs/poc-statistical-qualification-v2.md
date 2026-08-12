@@ -31,12 +31,15 @@ The v2 aggregate binds both capture SHA-256 digests and independently
 revalidates subject, revision, plan, binary, options, exact outputs, task shape,
 host diagnostics and full-graph fallback before calculating value.
 
-The original workflow preflight successfully prepares the repository's Gradle
-Wrapper distribution before either arm exists. Measurement copies those bytes into
-each private Gradle home while preserving executable files; no warm-up, timed
-pair or fallback may download Gradle. This infrastructure correction was added
-after two preserved pre-measurement `Unexpected end of file` failures and does
-not change a task, option, threshold or timing boundary.
+Before the original-workflow preflight, the runner reads the repository's own
+Wrapper URL, reuses only its matching local distribution when present, and
+allows at most three bounded preparation attempts. This step runs no owner task
+and is outside every warm-up and timing boundary. Measurement then copies the
+successfully used distribution into each private Gradle home while preserving
+executable files; no proposal, warm-up, timed pair or fallback may download
+Gradle. This infrastructure correction was added after preserved
+pre-measurement `Unexpected end of file` failures and does not change a task,
+option, threshold or timing boundary.
 
 ## Qualification
 

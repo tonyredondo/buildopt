@@ -34,6 +34,8 @@ jq -e \
   .captureContract.sameBuildOptRevisionRequired == true and
   .captureContract.sameExecutableSha256Required == true and
   .captureContract.gradleDistributionPreparedByOriginalWorkflowPreflight == true and
+  .captureContract.gradleDistributionPreparationAttempts == 3 and
+  .captureContract.gradleDistributionPreparationOutsideCapture == true and
   .captureContract.gradleDistributionCopiedPrivatelyPerArm == true and
   .captureContract.networkAllowedDuringWarmupsOrTiming == false and
   (.repositories | map(.key)) == [

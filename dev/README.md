@@ -3456,8 +3456,11 @@ executable and options; 16 raw pairs become eight AB/BA blocks. The checker
 does not average repository percentages or permit a failed observation to be
 discarded.
 
-The original-workflow preflight also seeds its successfully used Wrapper distribution
-into each private measurement Gradle home. Warm-ups, timed pairs and fallback
+Before the original-workflow preflight, the runner prepares the exact Wrapper
+distribution selected by that repository, reusing only a matching cached
+distribution and allowing at most three bounded network attempts. It runs no
+owner task. The successfully used distribution is then copied into each
+private measurement Gradle home. Proposal, warm-ups, timed pairs and fallback
 therefore perform no Gradle distribution download; caches and daemons remain
 isolated between arms.
 

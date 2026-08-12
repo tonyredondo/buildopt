@@ -28,7 +28,7 @@ buildopt_cleanup() {
 }
 trap buildopt_cleanup EXIT
 
-for buildopt_command in git jq perl sha256sum tar timeout; do
+for buildopt_command in awk cp git jq perl sha256sum tar timeout; do
     command -v "${buildopt_command}" >/dev/null || {
         printf 'required command is unavailable: %s\n' "${buildopt_command}" >&2
         exit 1
@@ -117,6 +117,65 @@ buildopt_output_arguments() {
     done < <(jq -r ".repositories[${buildopt_index}].requiredOutputs[]" "${buildopt_spec}")
 }
 
+buildopt_seed_cached_gradle_distribution() {
+    local buildopt_repository=$1
+    local buildopt_gradle_home=$2
+    local buildopt_properties buildopt_url buildopt_archive buildopt_distribution
+    local buildopt_source_root buildopt_source buildopt_destination
+
+    buildopt_properties="${buildopt_repository}/gradle/wrapper/gradle-wrapper.properties"
+    [[ -f ${buildopt_properties} ]] || {
+        printf 'Gradle Wrapper properties are unavailable: %s\n' "${buildopt_properties}" >&2
+        return 1
+    }
+    buildopt_url=$(awk -F= '$1 == "distributionUrl" {sub(/^[^=]*=/, ""); print; exit}' \
+        "${buildopt_properties}")
+    buildopt_url=${buildopt_url//\\:/:}
+    buildopt_archive=${buildopt_url%%\?*}
+    buildopt_archive=${buildopt_archive##*/}
+    buildopt_distribution=${buildopt_archive%.zip}
+    [[ ${buildopt_distribution} =~ ^gradle-[0-9][0-9.]*-(bin|all)$ ]] || {
+        printf 'unsupported Gradle Wrapper distribution: %s\n' "${buildopt_url}" >&2
+        return 1
+    }
+
+    buildopt_destination="${buildopt_gradle_home}/wrapper/dists/${buildopt_distribution}"
+    mkdir -p -- "${buildopt_destination}"
+    for buildopt_source_root in \
+        "${buildopt_repo_root}/.tools/gradle-user-home/wrapper/dists" \
+        "${GRADLE_USER_HOME:-${HOME}/.gradle}/wrapper/dists"; do
+        buildopt_source="${buildopt_source_root}/${buildopt_distribution}"
+        [[ -d ${buildopt_source} ]] || continue
+        cp -a -- "${buildopt_source}/." "${buildopt_destination}/"
+    done
+}
+
+buildopt_prepare_gradle_distribution() {
+    local buildopt_repository=$1
+    local buildopt_gradle_home=$2
+    local buildopt_jdk=$3
+    local buildopt_log=$4
+    local buildopt_attempt
+
+    buildopt_seed_cached_gradle_distribution "${buildopt_repository}" "${buildopt_gradle_home}"
+    : >"${buildopt_log}"
+    for buildopt_attempt in 1 2 3; do
+        printf 'Gradle distribution preparation attempt %d/3\n' "${buildopt_attempt}" \
+            >>"${buildopt_log}"
+        if (
+            cd -- "${buildopt_repository}"
+            env -u CI GRADLE_USER_HOME="${buildopt_gradle_home}" \
+                timeout 15m \
+                "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+                ./gradlew --version
+        ) >>"${buildopt_log}" 2>&1; then
+            return 0
+        fi
+    done
+    tail -n 200 "${buildopt_log}" >&2
+    return 1
+}
+
 buildopt_capture_subject() {
     local buildopt_index=$1
     local buildopt_key buildopt_repository_id buildopt_remote buildopt_public_revision
@@ -150,6 +209,14 @@ buildopt_capture_subject() {
         printf 'public revision mismatch for %s\n' "${buildopt_key}" >&2
         return 1
     }
+
+    printf 'Preparing Gradle distribution for %s outside measurement\n' "${buildopt_repository_id}"
+    if ! buildopt_prepare_gradle_distribution \
+        "${buildopt_repository}" "${buildopt_gradle_home}" "${buildopt_jdk}" \
+        "${buildopt_subject_output}/distribution-preparation.log"; then
+        printf 'Gradle distribution preparation failed for %s\n' "${buildopt_key}" >&2
+        return 1
+    fi
 
     buildopt_mutate_repository "${buildopt_mutation}" "${buildopt_repository}" \
         "${buildopt_change_path}" "${buildopt_key}"
