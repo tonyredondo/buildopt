@@ -5,16 +5,16 @@
 - **The current POC has one broadly supported accelerator: structural Build
   Impact.** Under the same installed, eight-pair method it qualified on
   OpenTelemetry (**14.43% faster**), Kafka (**84.11%**), Micronaut
-  (**41.74%**), and Groovy (**73.85%**) while preserving exact required outputs
-  and full-graph fallback.
+  (**41.74%**), Groovy (**73.85%**), and the unseen Hibernate holdout
+  (**5.88%**) while preserving exact required outputs and full-graph fallback.
 - **Spring confirms that the product gate is stricter than the mean.** It was
   **17.94% faster** on average with a positive interval, but one -260-ms pair
   failed the frozen 8/8 rule, so the current decision remains optimized native
   Gradle.
-- **The unseen-repository transfer is complete and safely inconclusive.** The
-  unchanged generic path reduced Hibernate ORM from 29 projects to one and
-  saved **19.386 seconds/7.80%** on average with exact outputs, but one negative
-  pair produced a 7/8 result and retained native Gradle under the frozen gate.
+- **The unseen-repository transfer now qualifies after investigation.** The
+  unchanged generic path reduced Hibernate ORM from 29 projects to one. A
+  preregistered reciprocal crossover saved **12.733 seconds/5.88%** with exact
+  300/32-task shapes, a positive interval and 8/8 positive blocks.
   See
   the [current one-pager](./buildopt-poc-handoff.md) for the decision-ready
   summary and roadmap.
@@ -502,11 +502,11 @@ pairs, exact required outputs, and full-graph fallback.
 | Apache Kafka | 64 -> 3 projects | 82.498 s | 13.113 s | **84.11% faster**, 69.385 s | Qualify; 8/8 positive. |
 | Micronaut Core | 75 -> 22 projects | 27.407 s | 15.968 s | **41.74% faster**, 11.439 s | Qualify; 8/8 positive. |
 | Apache Groovy | 37 -> 2 projects | 75.064 s | 19.629 s | **73.85% faster**, 55.434 s | Qualify; 8/8 positive. |
-| Hibernate ORM holdout, latest diagnostic | 29 -> 1 project | 221.898 s | 213.418 s | **3.82% faster**, 8.480 s, interval -0.839..+17.478 s | Retain native; 5/8 and native task-shape drift require a fresh crossover protocol. |
+| Hibernate ORM holdout | 29 -> 1 project | 216.724 s | 203.991 s | **5.88% faster**, 12.733 s, interval +6.808..+19.859 s | Review structural profile; 8/8 reciprocal blocks positive, exact shapes, outputs and fallbacks. |
 
 The result changes the generalization conclusion without creating a universal
 claim. Generic graph reduction now produces qualified end-to-end value in
-four materially different repository families and safely declines Spring
+five materially different repository families and safely declines Spring
 under the preregistered repeatability rule. The large Kafka, Micronaut, and
 Groovy gains show the cascade effect:
 omitting unrelated projects also removes their configuration, task scheduling,
@@ -578,6 +578,22 @@ qualification evidence. The next generic correction must establish target
 stability, preserve task-path differences and measure fresh reciprocal blocks
 before the POC can accept or reject the Hibernate candidate.
 
+That correction is now complete. Version 5 froze two independent batches of
+eight alternating pairs before timing and treated each adjacent opposite-order
+pair as one reciprocal block. Exact target paths stabilized at 300 native tasks
+and 32 candidate tasks across all 20 observations per arm. Native averaged
+216.724 seconds and BuildOpt 203.991 seconds, saving 12.733 seconds/**5.88%**
+with interval +6.808..+19.859 seconds and **8/8 positive blocks**. All required
+JARs were byte-identical and both full-graph fallbacks passed. No v2-v4 timing
+was reused.
+
+The accepted run followed two rejected collection attempts. The first lacked
+an actionable invalid-diagnostic error; fail-fast reporting then exposed
+duplicate identical Gradle `javadoc` console records. The generic collector
+now coalesces identical repeated path/outcome records and rejects conflicting
+duplicates. This corrects evidence collection without dropping observations,
+relaxing a gate or adding a Hibernate-specific decision.
+
 ## Open Questions
 
 - Is a future repository family materially similar enough to the qualified
@@ -586,9 +602,8 @@ before the POC can accept or reject the Hibernate candidate.
   rejected mechanism without repeating the closed evidence?
 - Can the proposal derive or validate real Gradle build/output directories
   generically enough to reject a bad owner glob before warm-up and timing?
-- Can an adaptive target-stability rule plus fresh reciprocal AB/BA blocks
-  remove the Hibernate period effect without repository-specific logic or a
-  weaker value gate?
+- Which additional unseen repository family and workflow should test whether
+  the qualified structural method continues to transfer?
 
 ## Evidence Boundaries
 
@@ -625,6 +640,8 @@ artifacts are:
 - [generic installed structural-profile adoption](../../benchmarks/results/poc-structural-profile-adoption-v1.json).
 - [unseen Hibernate ORM holdout](../../benchmarks/results/poc-generic-holdout-v2/README.md),
 - [Hibernate target-workload attribution](../../benchmarks/results/poc-generic-holdout-v4/README.md).
+- [Hibernate reciprocal crossover result](../../benchmarks/results/poc-generic-holdout-v5/README.md).
+- [generalization audit](./buildopt-generalization-audit.md).
 
 ## General opportunity and whole-profile value
 
@@ -662,7 +679,7 @@ rerunning unchanged experiments:
 | Kafka | Build Impact + read-only Edge | **82.35% faster**, 35,405.5 ms, 4/4 positive | Latest generic Build-Impact-only row qualifies at **84.11%**, 8/8 positive; explicit reviewed POC profile |
 | Micronaut Core | Structural Build Impact | **72.97% faster**, 17,561.625 ms, 8/8 positive | Latest uniform generic row qualifies at **41.74%**, 8/8; review-required and exact-hash bound |
 | Apache Groovy | Structural Build Impact for `groovy-json` classes | **50.06% faster**, 46,230.75 ms, 8/8 positive | Latest uniform generic row qualifies at **73.85%**, 8/8; exact classes scope only |
-| Hibernate ORM holdout | Structural Build Impact for `hibernate-core` assembly | Latest diagnostic **3.82% faster**, 8,480 ms, 5/8 positive | Native default; candidate shape is stable, but native shape and first/second-period effects require fresh crossover evidence |
+| Hibernate ORM holdout | Structural Build Impact for `hibernate-core` assembly | **5.88% faster**, 12,733 ms, 8/8 reciprocal blocks | Review structural profile; exact 300/32-task shapes, outputs and both fallbacks pass |
 
 The table does not sum component effects or average repositories. Hot State is
 excluded because its direct OpenTelemetry arm regressed by 7.68%. Runtime

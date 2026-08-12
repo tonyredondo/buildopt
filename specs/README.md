@@ -508,6 +508,13 @@ blocks, exact outputs, both full-graph fallbacks and zero product failures.
 Target drift is reported path by path and retains native rather than being
 discarded or special-cased.
 
+The retained [v5 evidence](../benchmarks/results/poc-generic-holdout-v5/README.md)
+passes that unchanged contract: native averages 216.724 seconds and BuildOpt
+203.991 seconds, saving 12.733 seconds/5.88% with interval
++6.808..+19.859 seconds and eight of eight positive reciprocal blocks. Exact
+target shapes remain 300/32 tasks, required outputs are byte-identical and both
+full-graph fallbacks pass. The decision is review-only.
+
 The terminal v2 evidence reduces the 29-project root graph to one project and
 saves 19,386.25 ms/7.80% on average with exact outputs and zero product
 failures. Seven of eight pairs improve, so the unchanged 8-of-8 gate retains

@@ -54,6 +54,9 @@ before running the product.
 - [Build Optimization performance findings](./findings/build-optimization-performance.md):
   measured contribution by component, current activation decisions, evidence
   boundaries, and the recommended experimental roadmap.
+- [BuildOpt generalization audit](./findings/buildopt-generalization-audit.md):
+  which mechanisms are repository-independent, which semantic inputs must
+  remain owner-controlled, and what still blocks broad POC onboarding.
 
 ### Reference
 

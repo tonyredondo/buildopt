@@ -87,10 +87,20 @@ Four post-hoc AB/BA crossover blocks are positive, so the result diagnoses a
 recoverable warm-up/period problem rather than a structural-product failure.
 Those blocks are diagnostic only and cannot qualify a future run.
 
+The fresh [v5 reciprocal result](./results/poc-generic-holdout-v5/README.md)
+then runs the preregistered correction rather than reusing those blocks. Two
+independent batches produce eight reciprocal observations. Native Gradle
+averages 216.724 seconds and BuildOpt 203.991 seconds, saving **12.733
+seconds/5.88%** with interval **+6.808..+19.859 seconds** and **8/8 positive
+blocks**. Exact target shapes remain at 300/32 tasks, required JARs are
+byte-identical and both full-graph fallbacks pass. The terminal decision is
+`REVIEW_STRUCTURAL_PROFILE`, not automatic activation.
+
 ### Terminal generic structural matrix
 
-The [terminal v3 five-repository bundle](./results/poc-generic-profile-matrix-v3/README.md)
-and separately preregistered [OpenTelemetry v4 correction](./results/poc-generic-profile-matrix-v4/README.md)
+The [terminal v3 five-repository bundle](./results/poc-generic-profile-matrix-v3/README.md),
+separately preregistered [OpenTelemetry v4 correction](./results/poc-generic-profile-matrix-v4/README.md),
+and unseen [Hibernate v5 crossover](./results/poc-generic-holdout-v5/README.md)
 provide the latest comparable Build-Impact-only evidence:
 
 | Repository | Native mean | BuildOpt mean | Direct result | Decision |
@@ -100,12 +110,15 @@ provide the latest comparable Build-Impact-only evidence:
 | Apache Kafka | 82.498 s | 13.113 s | **84.11% faster**, 8/8 positive | Qualified |
 | Micronaut Core | 27.407 s | 15.968 s | **41.74% faster**, 8/8 positive | Qualified |
 | Apache Groovy | 75.064 s | 19.629 s | **73.85% faster**, 8/8 positive | Qualified |
+| Hibernate ORM | 216.724 s | 203.991 s | **5.88% faster**, 8/8 reciprocal blocks | Review structural profile |
 
 All accepted observations preserve required outputs byte for byte and include
 launcher/planning overhead. OpenTelemetry v4 changes only the untimed fallback
 execution mode; its timed conditions and thresholds are identical to v3. Do
 not average these repository percentages or add them to other mechanism
-effects.
+effects. Hibernate uses reciprocal blocks because its preregistered diagnostic
+proved raw pairs were materially order-sensitive; every value and correctness
+threshold remains unchanged.
 
 ### Historical whole-profile composition evidence
 

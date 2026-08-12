@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v4",
+  "profileVersion": 4,
+  "profileId": "qualified-structural-build-impact",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "hibernate/hibernate-orm",
+  "pipelineClass": "assemble",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": false,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": false
+  },
+  "gradleOptions": [
+    "--daemon",
+    "--build-cache",
+    "--parallel",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-scan",
+    "--max-workers=12"
+  ],
+  "preconditions": [
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-manifest.json",
+      "sha256": "2da9ce319b1716d773a745f3450c52296be306c91a78942e298e6e83bc6f5354"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-graph.generated.json",
+      "sha256": "36f4120a14fe2e715d52a354e0636479851be652d99f9ba2c05ce66afaad4b5b"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact.generated.json",
+      "sha256": "111331eb208be95dfc07172c3f3ae77b61651dcd3d414d9a760fdf298d1a75fd"
+    }
+  ],
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "26aba1d3e567d3434b157415499659dcb141d0b09ab158a63863f9ab9c08f288",
+    "repositoryRevision": "2a93cdaeea605bbc0025a1d9a095d0edf885d7f5",
+    "pairs": 8,
+    "meanSavedMs": 20081.125,
+    "reductionRatio": 0.08994295459266198,
+    "interval95SavedMs": [
+      14028.75,
+      26277
+    ]
+  }
+}

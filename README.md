@@ -29,11 +29,13 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
 > **Project status:** this is an owner-operated proof of concept. The same
 > generic structural Build Impact method now qualifies on OpenTelemetry,
-> Kafka, Micronaut, and Groovy at **14.43% to 84.11% lower wall time** than
-> optimized native Gradle. Spring improved by **17.94%** but remains native
+> Kafka, Micronaut, Groovy, and the unseen Hibernate holdout at **5.88% to
+> 84.11% lower wall time** than optimized native Gradle. Spring improved by
+> **17.94%** but remains native
 > because one of eight pairs was slower. The current decision is to continue
 > with a review-required structural POC, not to claim universal savings or
-> production readiness. See the [current one-pager](./docs/findings/buildopt-poc-handoff.md).
+> production readiness. See the [current one-pager](./docs/findings/buildopt-poc-handoff.md)
+> and [generalization audit](./docs/findings/buildopt-generalization-audit.md).
 
 ## Get your first result
 
@@ -228,11 +230,12 @@ Spring but is neither causally attributed to BuildOpt nor reproduced above the
 
 The earlier three-family portfolio decision was
 `SPECIALIZE_BOUNDED_KAFKA_PROFILE`: only Kafka qualified in that installed
-matrix. The later, materially different structural-generalization work now also
-qualifies the fixed Micronaut scope through a repository-independent profile,
-while Spring, OpenTelemetry and every unqualified change remain on optimized
-native Gradle. This is bounded POC evidence, not a production, automatic or
-universal-value claim.
+matrix. That decision remains scoped to its exact compositions. The later,
+materially different structural-only method independently qualifies
+OpenTelemetry, Kafka, Micronaut, Groovy and Hibernate without repository-name
+rules, while Spring and every unqualified change remain on optimized native
+Gradle. This is bounded POC evidence, not a production, automatic or universal
+value claim.
 
 A new generalization foundation now separates structural opportunity from
 activation. `buildopt profile analyze` detects a complete smaller graph without
@@ -241,10 +244,10 @@ speedup. The checked whole-profile scorecard then evaluates every mechanism
 supported by exact evidence for each target: Spring Build Impact was **30.86%**
 faster, clean OpenTelemetry Impact + standard `Jar` was **50.40%** faster, and
 Kafka Impact + read-only Edge was **82.35%** faster. These are direct independent
-compositions, not added percentages. Only Kafka also passed the later strict
-installed replication; Spring and OpenTelemetry therefore remain native by
-default while fresh generalization experiments continue. See the [general
-build-value contract](./specs/poc-general-build-value-v1.md).
+compositions, not added percentages. Only Kafka passed that composition's
+later strict installed replication; the newer structural-only qualifications
+remain separate evidence. See the [general build-value
+contract](./specs/poc-general-build-value-v1.md).
 
 `buildopt profile measure` now performs the missing generic experiment step.
 It checks one exact clean Git change, creates independent native and BuildOpt

@@ -204,6 +204,8 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-onboarding-performance"
         "${buildopt_script_dir}/check-build-optimization-performance" >/dev/null
         "${buildopt_script_dir}/check-generic-holdout" >/dev/null
+        "${buildopt_script_dir}/check-generic-holdout-crossover" \
+            "${buildopt_repo_root}/benchmarks/results/poc-generic-holdout-v5" >/dev/null
         "${buildopt_script_dir}/check-poc-qualified-profile" >/dev/null
         "${buildopt_script_dir}/check-poc-qualified-profile-adoption" >/dev/null
         "${buildopt_script_dir}/check-poc-kafka-packaging-v1-result" >/dev/null

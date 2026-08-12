@@ -1,0 +1,171 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-generic-holdout/v5",
+  "workItem": "POC-GENERIC-HOLDOUT-CROSSOVER-001",
+  "capturedAt": "2026-08-12T00:36:49Z",
+  "buildopt": {
+    "revision": "00ad49754b276fc9bb5d199cfad0b36e73fb0743",
+    "executableSha256": "d9056e28d379239c96f59e14c91c5f6b961968b2f42fd64dbcb9f085da3e1520"
+  },
+  "subject": {
+    "key": "hibernate-orm",
+    "repositoryId": "hibernate/hibernate-orm",
+    "remoteUrl": "https://github.com/hibernate/hibernate-orm.git",
+    "publicRevision": "2b448a59d332326f0cd0691c868425124d55cbb5",
+    "jdkToolchain": "temurin-jdk-25",
+    "pipelineClass": "assemble",
+    "entrypoints": [
+      "assemble"
+    ],
+    "changePath": "hibernate-core/src/main/java/org/hibernate/Session.java",
+    "mutation": "APPEND_FIXED_COMMENT",
+    "requiredOutputs": [
+      "hibernate-core/target/libs/**"
+    ]
+  },
+  "sourceBatches": [
+    {
+      "batch": 1,
+      "sha256": "005ffaee6e8032e4dec1e40889595b72d257906bdab58cbddc312fbf16d58d17"
+    },
+    {
+      "batch": 2,
+      "sha256": "26aba1d3e567d3434b157415499659dcb141d0b09ab158a63863f9ab9c08f288"
+    }
+  ],
+  "blocks": [
+    {
+      "block": 1,
+      "batch": 1,
+      "controlFirstPair": 1,
+      "candidateFirstPair": 2,
+      "controlMeanMs": 210664.5,
+      "candidateMeanMs": 204236,
+      "savedMs": 6428.5
+    },
+    {
+      "block": 2,
+      "batch": 1,
+      "controlFirstPair": 3,
+      "candidateFirstPair": 4,
+      "controlMeanMs": 215021,
+      "candidateMeanMs": 206812.5,
+      "savedMs": 8208.5
+    },
+    {
+      "block": 3,
+      "batch": 1,
+      "controlFirstPair": 5,
+      "candidateFirstPair": 6,
+      "controlMeanMs": 204533.5,
+      "candidateMeanMs": 199708,
+      "savedMs": 4825.5
+    },
+    {
+      "block": 4,
+      "batch": 1,
+      "controlFirstPair": 7,
+      "candidateFirstPair": 8,
+      "controlMeanMs": 210514,
+      "candidateMeanMs": 208434.5,
+      "savedMs": 2079.5
+    },
+    {
+      "block": 5,
+      "batch": 2,
+      "controlFirstPair": 1,
+      "candidateFirstPair": 2,
+      "controlMeanMs": 226852.5,
+      "candidateMeanMs": 204581,
+      "savedMs": 22271.5
+    },
+    {
+      "block": 6,
+      "batch": 2,
+      "controlFirstPair": 3,
+      "candidateFirstPair": 4,
+      "controlMeanMs": 226566.5,
+      "candidateMeanMs": 194481.5,
+      "savedMs": 32085
+    },
+    {
+      "block": 7,
+      "batch": 2,
+      "controlFirstPair": 5,
+      "candidateFirstPair": 6,
+      "controlMeanMs": 224549.5,
+      "candidateMeanMs": 209311,
+      "savedMs": 15238.5
+    },
+    {
+      "block": 8,
+      "batch": 2,
+      "controlFirstPair": 7,
+      "candidateFirstPair": 8,
+      "controlMeanMs": 215092,
+      "candidateMeanMs": 204362.5,
+      "savedMs": 10729.5
+    }
+  ],
+  "targetStability": {
+    "control": {
+      "observed": true,
+      "stable": true,
+      "referenceFingerprintSha256": "7ca1835cc067b07702d8f5612094090005184a3d3846cc3040a0d8bbef1d016a",
+      "variants": [
+        {
+          "fingerprintSha256": "7ca1835cc067b07702d8f5612094090005184a3d3846cc3040a0d8bbef1d016a",
+          "occurrences": 20
+        }
+      ]
+    },
+    "candidate": {
+      "observed": true,
+      "stable": true,
+      "referenceFingerprintSha256": "9e3509ab34070df0a230510748fb0de244e5a3c9e2baeaf576efcac611db1af9",
+      "variants": [
+        {
+          "fingerprintSha256": "9e3509ab34070df0a230510748fb0de244e5a3c9e2baeaf576efcac611db1af9",
+          "occurrences": 20
+        }
+      ]
+    }
+  },
+  "result": {
+    "blocks": 8,
+    "controlMeanMs": 216724.1875,
+    "candidateMeanMs": 203990.875,
+    "meanSavedMs": 12733.3125,
+    "reductionRatio": 0.058753536681271444,
+    "interval95SavedMs": [
+      6807.875,
+      19859
+    ],
+    "positiveBlocks": 8,
+    "outputsIdentical": true,
+    "fallbacksSuccessful": true,
+    "targetShapeStable": true,
+    "qualified": true,
+    "decision": "REVIEW_STRUCTURAL_PROFILE"
+  },
+  "qualification": {
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositiveBlocks": 8,
+    "requiredOutputsIdentical": true,
+    "maximumProductAttributableFailures": 0,
+    "failedOrTimedOutObservationsMayBeDiscarded": false,
+    "measuredExecutionShapeMustBeStable": true,
+    "targetWarmupExecutionShapeMustMatchMeasuredPairs": true,
+    "exactTaskPathsMustBePresent": true,
+    "bothBatchFallbacksMustPass": true
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

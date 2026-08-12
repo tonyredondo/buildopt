@@ -3475,6 +3475,16 @@ recomputes the aggregate from both checked batches and validates exact task
 paths, outputs, fallbacks and the unchanged value gate. Use `--spec-only`
 before capture. Version 4 timings are never inputs to the v5 result.
 
+The retained terminal bundle is
+`benchmarks/results/poc-generic-holdout-v5`. It qualifies at 12.733 seconds/
+5.88% mean savings with interval +6.808..+19.859 seconds and 8/8 positive
+reciprocal blocks. Validate it without cloning Hibernate:
+
+```bash
+./dev/check-generic-holdout-crossover \
+  benchmarks/results/poc-generic-holdout-v5
+```
+
 The doctor tests exercise successful and failed host reports, JSON shape, exit codes `0`, `1`, `64`, and `70`, JDK `java`/`javac` probes, and the read-only working-tree invariant.
 
 The JDK toolchain tests use a synthetic archive and isolated tool root. They exercise checksum and manifest-drift rejection, atomic provisioning, idempotency, project-local `JAVA_HOME`/`PATH`, global-Java isolation, missing-tool behavior, usage errors, and child exit-code propagation without downloading or changing the workstation JDK.
