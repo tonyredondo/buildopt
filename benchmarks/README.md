@@ -32,6 +32,18 @@ drift was **0/5** and no active profile was written. This proves proposal
 reproducibility only. It reruns no timing and does not change the wall-time
 decisions below.
 
+### Generic workflow breadth
+
+The [hosted workflow-breadth result](./results/poc-generic-workflow-breadth-v1/README.md)
+uses one unchanged confirmed owner-input contract for packaging, typed
+verification, distribution, and build-owned test preparation. All four cells
+selected only the changed `service-a` task, omitted `service-b`, rebuilt the
+declared output byte for byte, and executed no Gradle `Test`. An arbitrary
+executable workflow retained native before structural state or timing.
+
+This is capability and fallback evidence only. It contains zero timing
+observations and creates no performance claim.
+
 ### Unseen Hibernate ORM holdout
 
 The [terminal holdout bundle](./results/poc-generic-holdout-v2/README.md)

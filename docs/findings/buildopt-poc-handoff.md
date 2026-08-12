@@ -215,7 +215,7 @@ Test Optimization remains outside Build Optimization.
 - [Hibernate reciprocal crossover result](../../benchmarks/results/poc-generic-holdout-v5/README.md)
 - [Hibernate output-contract preflight](../../benchmarks/results/poc-generic-output-contract-v1/README.md)
 - [Generic owner-input contract](../../specs/poc-generic-owner-input-v1.md)
-- [Generic workflow-breadth contract](../../specs/poc-generic-workflow-breadth-v1.md)
+- [Hosted generic workflow-breadth result](../../benchmarks/results/poc-generic-workflow-breadth-v1/README.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [Detailed performance findings and historical research](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

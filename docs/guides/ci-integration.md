@@ -69,6 +69,8 @@ build-owned test preparation. It uploads review evidence with exact output
 digests and verifies native fallback for an unsupported executable task. It
 does not time or activate any candidate; real workflow families need their own
 paired installed-path value evidence after review.
+The preserved [hosted result](../../benchmarks/results/poc-generic-workflow-breadth-v1/README.md)
+contains the exact decisions and output digests.
 
 ## GitLab CI
 

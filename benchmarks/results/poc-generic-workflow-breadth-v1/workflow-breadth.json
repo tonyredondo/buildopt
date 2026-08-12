@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-generic-workflow-breadth/v1",
+  "workItem": "POC-GENERIC-WORKFLOW-BREADTH-001",
+  "capturedAt": "2026-08-12T12:55:30Z",
+  "buildoptRevision": "0c1b64fef5e210526a41d487f4ed4cea865c4777",
+  "specSha256": "83d9a2a88af4845583d506813ce5ca515c287df9e2f647c4f68fdfde9ec44758",
+  "runnerSha256": "3e0261aa5a2db5a06c0612d5515f2c3bc5d8fb72a25316da477d1df135bfeb77",
+  "fixture": {
+    "path": "fixtures/gradle-workflow-breadth",
+    "sha256": "51e263b3da42b45862cb44471625baf89e4070927fda08c1c46400e98682627d",
+    "baseRevision": "e2169805ccde9ac62d149774ee7bf09e466ecdbb",
+    "targetRevision": "e165d947de77f3e302326e176d1762520e72a414",
+    "changedPaths": [
+      "service-a/src/main/java/example/Application.java"
+    ]
+  },
+  "supportedWorkflows": [
+    {
+      "id": "packaging",
+      "outputFamily": "PACKAGING",
+      "originalEntrypoint": "jar",
+      "candidateEntrypoints": [
+        ":service-a:jar"
+      ],
+      "requiredOutput": "service-a/build/libs/**",
+      "ownerInputSha256": "3e2912b3b395f8a1a610b7aa4a825c532c597b75367d48d73af12c8f181a0e24",
+      "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+      "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+      "omittedProjects": [
+        ":service-b"
+      ],
+      "nativeOutputSha256": "7335ea135c204797f0ca9378f031d0eb3a529fa6ec418be31feb6eabe123a9fb",
+      "candidateOutputSha256": "7335ea135c204797f0ca9378f031d0eb3a529fa6ec418be31feb6eabe123a9fb",
+      "outputsIdentical": true,
+      "testTasksExecuted": false,
+      "performanceClaim": false
+    },
+    {
+      "id": "verification",
+      "outputFamily": "VERIFICATION",
+      "originalEntrypoint": "verifyMetadata",
+      "candidateEntrypoints": [
+        ":service-a:verifyMetadata"
+      ],
+      "requiredOutput": "service-a/build/reports/verification/**",
+      "ownerInputSha256": "fe6699911cf0ff84a973f80879bf0fe8a05aeec0c487a4db260d0605d2fcd57c",
+      "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+      "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+      "omittedProjects": [
+        ":service-b"
+      ],
+      "nativeOutputSha256": "314d563c371188e90105e62376ad30966c16d5ec5bbb9bd6b645909fe4e12d47",
+      "candidateOutputSha256": "314d563c371188e90105e62376ad30966c16d5ec5bbb9bd6b645909fe4e12d47",
+      "outputsIdentical": true,
+      "testTasksExecuted": false,
+      "performanceClaim": false
+    },
+    {
+      "id": "distribution",
+      "outputFamily": "DISTRIBUTION",
+      "originalEntrypoint": "distZip",
+      "candidateEntrypoints": [
+        ":service-a:distZip"
+      ],
+      "requiredOutput": "service-a/build/distributions/**",
+      "ownerInputSha256": "bdd837bf05243786783592af0500f597581689a4420e1a55b35a7075625994f3",
+      "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+      "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+      "omittedProjects": [
+        ":service-b"
+      ],
+      "nativeOutputSha256": "216d3728c3ccdec1335d06fea6f8b31bac0075330b5471e3859719b9e1d75e49",
+      "candidateOutputSha256": "216d3728c3ccdec1335d06fea6f8b31bac0075330b5471e3859719b9e1d75e49",
+      "outputsIdentical": true,
+      "testTasksExecuted": false,
+      "performanceClaim": false
+    },
+    {
+      "id": "test-preparation",
+      "outputFamily": "TEST_PREPARATION",
+      "originalEntrypoint": "testClasses",
+      "candidateEntrypoints": [
+        ":service-a:testClasses"
+      ],
+      "requiredOutput": "service-a/build/classes/java/test/**",
+      "ownerInputSha256": "a79a1f2c1b0da61b95da18b715420169449861abdf15cdf150fa4d18e34d1230",
+      "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+      "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+      "omittedProjects": [
+        ":service-b"
+      ],
+      "nativeOutputSha256": "3d913c8399efd2224887e4fd02028910c6af18db247f4af885b0b3a1ecb382af",
+      "candidateOutputSha256": "3d913c8399efd2224887e4fd02028910c6af18db247f4af885b0b3a1ecb382af",
+      "outputsIdentical": true,
+      "testTasksExecuted": false,
+      "performanceClaim": false
+    }
+  ],
+  "unsupportedWorkflow": {
+    "id": "unsupported-release",
+    "entrypoint": "prepareReleaseNotes",
+    "requiredOutput": "service-a/build/release/**",
+    "outputContractDecision": "VALIDATED_REQUIRED_OUTPUTS",
+    "proposalDecision": "NATIVE_FULL_GRAPH",
+    "proposalReason": "ORIGINAL_WORKFLOW_UNSUPPORTED",
+    "outputPreserved": true,
+    "structuralDocumentsWritten": false,
+    "performanceClaim": false
+  },
+  "result": {
+    "supportedWorkflowCount": 4,
+    "exactOutputCount": 4,
+    "unsupportedWorkflowCount": 1,
+    "nativeFallbackCount": 1,
+    "decision": "GENERIC_OWNER_INPUT_COVERS_BUILD_OWNED_WORKFLOW_BREADTH"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "reviewRequired": true,
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "performanceClaimCreated": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

@@ -45,6 +45,10 @@ is the manual read-only capability matrix for the shared owner input. It checks
 packaging, typed verification, distribution, and build-owned test preparation,
 then proves native fallback for an executable workflow whose structural
 semantics are unsupported. Its artifact contains no timing or active profile.
+Hosted run
+[`31598631537`](https://github.com/tonyredondo/buildopt/actions/runs/31598631537)
+passed all four supported cells and the native fallback on immutable source
+`0c1b64f`.
 
 
 [`ws-007-fixture.yml`](./workflows/ws-007-fixture.yml) is a manual,
