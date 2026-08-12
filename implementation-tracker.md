@@ -125,7 +125,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-GENERALIZATION-AUDIT | Separate generic implementation from repository-owned semantics and identify the next adoption gap | `DONE` | 1/1 | `E-318` |
 | POC-GENERIC-OUTPUT-CONTRACT | Discover or validate repository-owned Gradle outputs before structural measurement | `DONE` | 1/1 | `E-319` |
 | POC-GENERIC-OWNER-INPUT | Turn reviewed workflow, change source and Gradle-owned outputs into one checked, versioned owner input | `DONE` | 1/1 | `E-320` |
-| POC-GENERIC-WORKFLOW-BREADTH | Exercise the unchanged owner-input path across distinct owner workflows before any new timing | `TODO` | 0/1 | Owner-input proof `E-320` |
+| POC-GENERIC-WORKFLOW-BREADTH | Exercise the unchanged owner-input path across distinct owner workflows before any new timing | `DOING` | 0/1 | Preregistered capability proof `E-321` |
+| POC-GENERIC-WORKFLOW-VALUE | Measure reviewed substantial public workflow families through the installed path against optimized native Gradle | `WAITING` | 0/1 | Workflow-breadth proof `E-321` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -285,7 +286,27 @@ than partners. Test Optimization remains a separate product.
 | 89 | `POC-GENERIC-HOLDOUT-004` | Preserve the v4 failure, capture exact task-path drift, establish target-workload stability before timing, and measure eight fresh reciprocal AB/BA blocks so the observation unit cancels first/second-period bias without weakening correctness or value gates | `DONE` | Codex; `E-316..317` |
 | 90 | `POC-GENERALIZATION-AUDIT-001` | Audit every retained mechanism from installation through qualification, distinguish repository-independent code from owner semantic inputs, and identify the next generic usability gap | `DONE` | Codex; `E-318` |
 | 91 | `POC-GENERIC-OWNER-INPUT-001` | Convert confirmed workflow, change source and Gradle-owned output candidates into one reviewable owner file with explicit acceptance, drift diagnostics and native fallback when unconfirmed | `DONE` | Codex; `E-320` |
-| 92 | `POC-GENERIC-WORKFLOW-BREADTH-001` | Run the unchanged generated owner-file flow on packaging, verification, distribution and build-owned test-preparation workflows, preserving repository-declared success outputs and retaining native before timing on unsupported semantics | `TODO` | Codex |
+| 92 | `POC-GENERIC-WORKFLOW-BREADTH-001` | Run the unchanged generated owner-file flow on packaging, verification, distribution and build-owned test-preparation workflows, preserving repository-declared success outputs and retaining native before timing on unsupported semantics | `DOING` | Codex; `E-321` |
+| 93 | `POC-GENERIC-WORKFLOW-VALUE-001` | Measure reviewed substantial public packaging, verification, distribution and build-owned test-preparation candidates through the installed path; preserve exact outputs and full fallback, and retain native independently for every family that does not beat optimized native Gradle | `WAITING` | Codex; requires `E-321` |
+
+#### Active POC block: generic workflow breadth
+
+`POC-GENERIC-WORKFLOW-BREADTH-001` keeps the confirmed owner-input schema
+unchanged across four public Gradle task semantics: packaging with `Jar`, typed
+verification with `VerificationTask`, distribution with
+`AbstractArchiveTask`, and build-owned test preparation with `testClasses`.
+The deterministic two-project fixture changes only `service-a`; every
+supported proposal must select its exact `service-a` task, omit `service-b`,
+rebuild the declared output byte for byte from a clean state, and execute no
+Gradle `Test` task.
+
+An arbitrary executable `prepareReleaseNotes` workflow deliberately has no
+supported structural contract. Its declared output must validate, but the
+proposal must stop at `NATIVE_FULL_GRAPH / ORIGINAL_WORKFLOW_UNSUPPORTED`
+before writing graph state or entering timing. This block proves capability
+and fallback only. It creates no wall-time result, qualified profile,
+automatic activation, production authority, soak, design-partner or Test
+Optimization behavior. Hosted read-only execution is required before closure.
 
 #### Completed POC block: generic owner input
 
@@ -1955,6 +1976,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-318` | 2026-08-12 | `POC-GENERALIZATION-AUDIT-001` | The [generalization audit](./docs/findings/buildopt-generalization-audit.md) traces installation, Safe Cache, structural proposal/measurement/evaluation, reviewed task patches, remote caches and CI replay. Customer execution code contains no public-repository selection branches; repository names remain only in fixtures, runners and evidence. The generic structural path consumes one owner workflow, exact Git change and required outputs, binds graph/manifest/Wrapper/revision/executable state, and retains native for unknown relationships, tests, drift, weak value or failed fallback. Six public repositories now use the same method; five qualify under their frozen rules and Spring safely remains native | `DONE` POC audit: generic implementation is demonstrated, but zero-input automatic activation is not. The next block remains `POC-GENERIC-OUTPUT-CONTRACT-001`, because Hibernate's initial `build/libs` assumption proves that output ownership must be discovered or confirmed before expensive measurement |
 | `E-319` | 2026-08-12 | `POC-GENERIC-OUTPUT-CONTRACT-001` | The [generic output-contract contract](./specs/poc-generic-output-contract-v1.md), synthetic checker and installed `profile outputs`/`profile propose` preflight validate the exact owner workflow before structural discovery. The frozen [Hibernate observation](./benchmarks/results/poc-generic-output-contract-v1/README.md) preserves the original `hibernate-core/build/libs/**` declaration, classifies it `EMPTY`, and reports the Gradle-owned main, sources and Javadoc JARs under `hibernate-core/target/libs` with owner `:hibernate-core` | `DONE` terminal `NATIVE_FULL_GRAPH / REQUIRED_OUTPUTS_EMPTY`: one preflight workflow ran, but zero warm-ups, timings, structural graph documents or profiles were created. Synthetic success and ambiguity cases pass; no Hibernate-specific decision, performance percentage, automatic activation, production authority, soak, design-partner or Test Optimization behavior was added. `POC-GENERIC-OWNER-INPUT-001` is next |
 | `E-320` | 2026-08-12 | `POC-GENERIC-OWNER-INPUT-001` | The [generic owner-input contract](./specs/poc-generic-owner-input-v1.md), installed CLI checker and Action fixture create one strict `.buildopt/profile.json` only from an explicitly confirmed validated output contract. The local CLI derives the exact no-rename base-to-HEAD Git change without a manual changes file; local and CI proposals bind the same owner-input SHA-256. Synthetic Gradle drift moves `service-a` JARs from `target/libs` to `dist/libs` | `DONE` terminal owner contract: the unchanged owner file returns `NATIVE_FULL_GRAPH / REQUIRED_OUTPUTS_EMPTY`, exposes the current `dist/libs` candidate and writes no candidate graph. Generation without `--confirm`, unknown fields, symlinks, unsafe paths and non-integral timeouts are rejected. No timing, percentage, automatic activation, production authority, soak, design-partner or Test Optimization behavior was created. `POC-GENERIC-WORKFLOW-BREADTH-001` is next |
+| `E-321` | 2026-08-12 | `POC-GENERIC-WORKFLOW-BREADTH-001` | The preregistered [workflow-breadth contract](./specs/poc-generic-workflow-breadth-v1.md), deterministic Gradle fixture, executable matrix and strict result checker bind one production-source change to packaging, typed verification, distribution and build-owned test-preparation workflows. Each supported cell must derive only the matching `:service-a` task, omit `:service-b`, preserve its declared output bytes and execute no Gradle `Test`; the unsupported executable workflow must retain native before timing | `DOING` preregistered before hosted execution: the manual read-only workflow must upload the SHA-bound evidence from the committed runner before closure. No timing, percentage, profile qualification, automatic activation, production authority, soak, design-partner or Test Optimization behavior is created |
 
 ---
 
@@ -1962,6 +1984,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-12 | Preregistered generic workflow breadth across packaging, typed verification, distribution and build-owned test preparation, with exact-output checks and native fallback for unsupported semantics before timing | Codex |
 | 2026-08-12 | Closed the generic output-contract preflight: rejected Hibernate's empty `build/libs` declaration before measurement, exposed its owned `target/libs` candidates, retained native and moved one checked owner-input workflow next | Codex |
 | 2026-08-12 | Closed the generic owner input: unified local and CI semantics in one explicit confirmed file, derived changes from Git, bound its digest, proved output-drift diagnostics and retained native before measurement | Codex |
 | 2026-08-12 | Closed the Hibernate reciprocal crossover at 12.733 seconds/5.88% savings, 8/8 positive blocks, stable 300/32-task shapes, exact outputs and both fallbacks; emitted review-only qualification without changing the value gate | Codex |

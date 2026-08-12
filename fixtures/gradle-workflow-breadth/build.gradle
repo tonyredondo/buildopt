@@ -1,0 +1,55 @@
+import org.gradle.api.tasks.VerificationTask
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
+
+abstract class BuildOwnedVerification extends DefaultTask implements VerificationTask {
+    @OutputFile
+    abstract RegularFileProperty getReportFile()
+
+    private boolean ignoreFailures
+
+    @Override
+    void setIgnoreFailures(boolean value) {
+        ignoreFailures = value
+    }
+
+    @Override
+    boolean getIgnoreFailures() {
+        return ignoreFailures
+    }
+
+    @TaskAction
+    void verifyMetadata() {
+        def output = reportFile.get().asFile
+        output.parentFile.mkdirs()
+        output.text = "verified:${project.name}\n"
+    }
+}
+
+subprojects {
+    apply plugin: 'application'
+
+    application {
+        mainClass = 'example.Application'
+    }
+
+    tasks.register('verifyMetadata', BuildOwnedVerification) {
+        dependsOn tasks.named('classes')
+        reportFile = layout.buildDirectory.file('reports/verification/metadata.txt')
+    }
+
+    tasks.register('prepareReleaseNotes') {
+        dependsOn tasks.named('classes')
+        def releaseNotes = layout.buildDirectory.file('release/release-notes.txt')
+        outputs.file(releaseNotes)
+        doLast {
+            def output = releaseNotes.get().asFile
+            output.parentFile.mkdirs()
+            output.text = "release:${project.name}\n"
+        }
+    }
+
+    tasks.withType(AbstractArchiveTask).configureEach {
+        preserveFileTimestamps = false
+        reproducibleFileOrder = true
+    }
+}

@@ -1,0 +1,58 @@
+name: Generic Workflow Breadth Fixture
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: generic-workflow-breadth-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  workflow-breadth:
+    name: Review-only workflow breadth
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out the source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install the pinned Java runtime
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
+        with:
+          distribution: temurin
+          java-version: '21.0.12+8.0.LTS'
+          check-latest: false
+
+      - name: Provision the pinned Go toolchain
+        run: ./dev/bootstrap --toolchain go
+
+      - name: Prime the checksum-pinned Gradle Wrapper
+        run: ./dev/run -- ./gradlew --no-daemon --version
+
+      - name: Exercise the confirmed owner input
+        run: |
+          mkdir -p artifact
+          ./dev/check-generic-workflow-breadth \
+            artifact/workflow-breadth.json
+          ./dev/check-generic-workflow-breadth-result \
+            artifact/workflow-breadth.json
+          sha256sum artifact/workflow-breadth.json \
+            >artifact/SHA256SUMS
+
+      - name: Upload the review evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: generic-workflow-breadth
+          path: artifact/
+          if-no-files-found: error
+          retention-days: 14

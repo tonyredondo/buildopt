@@ -40,6 +40,12 @@ no timing and never activates the proposals. See the
 [`31467370391`](https://github.com/tonyredondo/buildopt/actions/runs/31467370391)
 passed all five repository jobs and the aggregate summary with zero drift.
 
+[`generic-workflow-breadth-fixture.yml`](./workflows/generic-workflow-breadth-fixture.yml)
+is the manual read-only capability matrix for the shared owner input. It checks
+packaging, typed verification, distribution, and build-owned test preparation,
+then proves native fallback for an executable workflow whose structural
+semantics are unsupported. Its artifact contains no timing or active profile.
+
 
 [`ws-007-fixture.yml`](./workflows/ws-007-fixture.yml) is a manual,
 read-only hosted conformance fixture. It pins every referenced Action by a full

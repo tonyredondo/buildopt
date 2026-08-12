@@ -133,6 +133,13 @@ work retains native full graph and writes no candidate state. Every proposal
 rechecks the confirmed output contract and binds the owner-input SHA-256, so
 workflow or output drift is visible before measurement.
 
+The owner file is not compilation-specific. The checked workflow-breadth
+fixture uses this same command for packaging, typed verification,
+distribution, and build-owned test preparation. Supported public Gradle task
+semantics produce review-only structural candidates with exact declared
+outputs; an arbitrary executable task remains native before measurement. See
+[`poc-generic-workflow-breadth-v1.md`](../../specs/poc-generic-workflow-breadth-v1.md).
+
 The generated state can then be inspected independently:
 
 ```bash

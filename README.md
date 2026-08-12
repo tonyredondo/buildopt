@@ -80,6 +80,12 @@ guide](./docs/guides/ci-integration.md#review-a-structural-proposal).
 The POC also keeps a manual
 [five-repository clean-CI replay](./specs/poc-generic-profile-ci-replay-v1.md)
 that detects proposal drift without rerunning or inflating performance claims.
+The same confirmed owner-input path has now been exercised unchanged across
+packaging, typed verification, distribution, and build-owned test-preparation
+workflows. Each candidate preserved its declared output bytes and omitted the
+unaffected project; an executable task without supported structural semantics
+stayed on native Gradle before timing. This is a capability result, not a new
+performance claim.
 
 The [product onboarding guide](./docs/getting-started/product-onboarding.md)
 contains Windows installation, CI snippets, component ownership and the
@@ -254,6 +260,14 @@ GitHub Action consume the same file, bind its SHA-256, and rerun the output
 preflight on every target. Output drift therefore produces a concrete
 `NATIVE_FULL_GRAPH` diagnostic rather than a stale or silently activated
 candidate.
+
+One owner-input schema is also sufficient for Gradle-owned `Jar`,
+`VerificationTask`, `AbstractArchiveTask`, and `testClasses` workflows. The
+checked breadth fixture derives the exact `service-a` task for each family,
+rebuilds the repository-declared output byte for byte, executes no `Test`
+task, and keeps an arbitrary executable task on
+`NATIVE_FULL_GRAPH / ORIGINAL_WORKFLOW_UNSUPPORTED`. See the
+[workflow-breadth contract](./specs/poc-generic-workflow-breadth-v1.md).
 
 A new generalization foundation now separates structural opportunity from
 activation. `buildopt profile analyze` detects a complete smaller graph without

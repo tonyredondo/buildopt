@@ -63,6 +63,13 @@ difference as drift. It creates no new timing result: a matching proposal must
 still pass the separate paired measurement and review gate before activation.
 See the [replay specification](../../specs/poc-generic-profile-ci-replay-v1.md).
 
+BuildOpt's separate manual workflow-breadth fixture applies that same confirmed
+owner-input contract to packaging, typed verification, distribution, and
+build-owned test preparation. It uploads review evidence with exact output
+digests and verifies native fallback for an unsupported executable task. It
+does not time or activate any candidate; real workflow families need their own
+paired installed-path value evidence after review.
+
 ## GitLab CI
 
 Include the component from an immutable BuildOpt revision:

@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "buildopt.specs/poc-generic-workflow-breadth/v1",
+  "workItem": "POC-GENERIC-WORKFLOW-BREADTH-001",
+  "decision": "EXERCISE_UNCHANGED_OWNER_INPUT_ACROSS_BUILD_OWNED_WORKFLOWS",
+  "fixture": "fixtures/gradle-workflow-breadth",
+  "change": {
+    "class": "LEAF_PRODUCTION_SOURCE",
+    "path": "service-a/src/main/java/example/Application.java"
+  },
+  "supportedWorkflows": [
+    {
+      "id": "packaging",
+      "outputFamily": "PACKAGING",
+      "entrypoint": "jar",
+      "candidateEntrypoint": ":service-a:jar",
+      "requiredOutput": "service-a/build/libs/**"
+    },
+    {
+      "id": "verification",
+      "outputFamily": "VERIFICATION",
+      "entrypoint": "verifyMetadata",
+      "candidateEntrypoint": ":service-a:verifyMetadata",
+      "requiredOutput": "service-a/build/reports/verification/**"
+    },
+    {
+      "id": "distribution",
+      "outputFamily": "DISTRIBUTION",
+      "entrypoint": "distZip",
+      "candidateEntrypoint": ":service-a:distZip",
+      "requiredOutput": "service-a/build/distributions/**"
+    },
+    {
+      "id": "test-preparation",
+      "outputFamily": "TEST_PREPARATION",
+      "entrypoint": "testClasses",
+      "candidateEntrypoint": ":service-a:testClasses",
+      "requiredOutput": "service-a/build/classes/java/test/**"
+    }
+  ],
+  "unsupportedWorkflow": {
+    "id": "unsupported-release",
+    "entrypoint": "prepareReleaseNotes",
+    "requiredOutput": "service-a/build/release/**",
+    "outputContractDecision": "VALIDATED_REQUIRED_OUTPUTS",
+    "proposalDecision": "NATIVE_FULL_GRAPH",
+    "proposalReason": "ORIGINAL_WORKFLOW_UNSUPPORTED"
+  },
+  "acceptance": {
+    "supportedDecision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "supportedReason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "supportedOmittedProjects": [
+      ":service-b"
+    ],
+    "supportedOutputsByteIdentical": true,
+    "testTasksExecuted": false,
+    "unsupportedStructuralDocumentsWritten": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "reviewRequired": true,
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "performanceClaimCreated": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

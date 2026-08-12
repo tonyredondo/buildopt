@@ -3469,6 +3469,16 @@ the new owned JAR candidate and writes no candidate graph. The same schema is
 exercised by `./dev/check-generic-profile-ci`; the frozen five-repository
 replay continues to validate the former CI-only schema for compatibility.
 
+`./dev/check-generic-workflow-breadth [result.json]` exercises that unchanged
+owner-input path across packaging, typed verification, distribution, and
+build-owned test preparation. It executes each original workflow, derives the
+exact changed-project candidate, rebuilds the required output from a clean
+state and compares bytes while rejecting any Gradle `Test` execution. The
+unsupported executable fixture must stop at
+`NATIVE_FULL_GRAPH / ORIGINAL_WORKFLOW_UNSUPPORTED` before structural state or
+timing. `./dev/check-generic-workflow-breadth-result result.json` validates the
+specification, runner, fixture and terminal decisions without rerunning Gradle.
+
 `./dev/run-generic-holdout /absolute/evidence/directory` packages the current
 committed CLI and applies the preregistered generic proposal, isolated
 measurement and evaluation path to the frozen Hibernate ORM holdout. The

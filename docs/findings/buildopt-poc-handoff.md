@@ -158,6 +158,12 @@ their existing paired timings. No timing was executed during this replay.
   reexecutes the confirmed output workflow. A synthetic `target`-to-`dist`
   drift returned `NATIVE_FULL_GRAPH / REQUIRED_OUTPUTS_EMPTY`, exposed the new
   Gradle-owned JAR candidate and wrote no candidate graph.
+- **The owner-input path is not compilation-specific.** One unchanged schema
+  produced exact changed-project candidates for `Jar`, typed verification,
+  distribution ZIP and `testClasses` workflows. All four rebuilt their
+  declared outputs byte for byte without executing a Gradle `Test`; an
+  arbitrary executable task retained native with
+  `ORIGINAL_WORKFLOW_UNSUPPORTED` before timing.
 - **A raw pair can measure period as well as product.** Hibernate v4 preserved
   exact outputs while the first/second execution position dominated early
   results. Substantial measurements need target stability and reciprocal blocks
@@ -177,9 +183,11 @@ keeps native Gradle authoritative.
 
 ## Recommended Next Steps
 
-1. **Broaden workflow coverage through the owner file.** Run the unchanged
-   local/CI contract on packaging, verification, distribution, and build-owned
-   test-preparation workflows; preserve each repository's own success outputs.
+1. **Measure workflow-family value on public repositories.** Use the unchanged
+   owner file on substantial packaging, verification, distribution, and
+   build-owned test-preparation workflows. Qualify each family independently
+   only when the installed path preserves outputs and materially beats
+   optimized native Gradle; capability alone is not value.
 2. **Measure only reviewed candidates.** A CI proposal remains an observation,
    not value evidence. Run isolated paired measurement only after its graph,
    outputs and fallback are accepted.
@@ -207,6 +215,7 @@ Test Optimization remains outside Build Optimization.
 - [Hibernate reciprocal crossover result](../../benchmarks/results/poc-generic-holdout-v5/README.md)
 - [Hibernate output-contract preflight](../../benchmarks/results/poc-generic-output-contract-v1/README.md)
 - [Generic owner-input contract](../../specs/poc-generic-owner-input-v1.md)
+- [Generic workflow-breadth contract](../../specs/poc-generic-workflow-breadth-v1.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [Detailed performance findings and historical research](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

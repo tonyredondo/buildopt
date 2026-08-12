@@ -42,6 +42,14 @@ Every proposal executes the recorded workflow and revalidates its output
 contract at the current target. Drift is a reviewable native decision, not an
 automatic update. See the [owner-input contract](../../specs/poc-generic-owner-input-v1.md).
 
+The schema is shared across supported build-owned workflow families. Packaging,
+typed verification, distribution, and `testClasses` use the same fields and
+review boundary; no family-specific configuration key is required. An
+executable task without supported public structural semantics returns
+`NATIVE_FULL_GRAPH / ORIGINAL_WORKFLOW_UNSUPPORTED` before timing. The exact
+matrix is specified in
+[`poc-generic-workflow-breadth-v1.md`](../../specs/poc-generic-workflow-breadth-v1.md).
+
 ## Qualified POC profile
 
 `buildopt poc` reads `buildopt-qualified-profile.json` from the repository root

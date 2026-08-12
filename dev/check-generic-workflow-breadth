@@ -1,0 +1,370 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "$0")/.." && pwd -P)
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-workflow-breadth.XXXXXX")
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-workflow-breadth."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in git jq python3 sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required workflow-breadth command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_result=${1:-"${buildopt_temp}/result.json"}
+buildopt_repository="${buildopt_temp}/repository"
+buildopt_gradle_home="${buildopt_root}/.tools/gradle-user-home/local"
+buildopt_binary="${buildopt_temp}/bin/buildopt"
+mkdir -p -- "${buildopt_repository}" "${buildopt_temp}/bin"
+cp -R -- "${buildopt_root}/fixtures/gradle-workflow-breadth/." \
+    "${buildopt_repository}/"
+cp -- "${buildopt_root}/gradlew" "${buildopt_repository}/gradlew"
+cp -R -- "${buildopt_root}/gradle" "${buildopt_repository}/gradle"
+chmod +x -- "${buildopt_repository}/gradlew"
+
+sed -i 's/service-a-target/service-a-base/' \
+    "${buildopt_repository}/service-a/src/main/java/example/Application.java"
+git -C "${buildopt_repository}" init -q
+git -C "${buildopt_repository}" config user.name 'BuildOpt Fixture'
+git -C "${buildopt_repository}" config user.email buildopt-fixture@example.invalid
+git -C "${buildopt_repository}" config commit.gpgsign false
+git -C "${buildopt_repository}" add .
+git -C "${buildopt_repository}" commit -qm 'workflow breadth base'
+buildopt_base=$(git -C "${buildopt_repository}" rev-parse HEAD)
+sed -i 's/service-a-base/service-a-target/' \
+    "${buildopt_repository}/service-a/src/main/java/example/Application.java"
+git -C "${buildopt_repository}" add \
+    service-a/src/main/java/example/Application.java
+git -C "${buildopt_repository}" commit -qm 'change service a'
+buildopt_target=$(git -C "${buildopt_repository}" rev-parse HEAD)
+
+"${buildopt_root}/dev/run" --toolchain go -- \
+    go build -trimpath -o "${buildopt_binary}" ./cmd/buildopt
+
+buildopt_hash_output() {
+    python3 - "$1" <<'PY'
+import hashlib
+import os
+import pathlib
+import sys
+
+root = pathlib.Path(sys.argv[1])
+digest = hashlib.sha256()
+if root.is_file():
+    digest.update(root.read_bytes())
+elif root.is_dir():
+    for candidate in sorted(path for path in root.rglob("*") if path.is_file()):
+        digest.update(candidate.relative_to(root).as_posix().encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(candidate.read_bytes())
+        digest.update(b"\0")
+else:
+    raise SystemExit(f"required output is unavailable: {root}")
+print(digest.hexdigest())
+PY
+}
+
+buildopt_clean_outputs() {
+    rm -rf -- "${buildopt_repository}/service-a/build" \
+        "${buildopt_repository}/service-b/build"
+}
+
+buildopt_rows="${buildopt_temp}/supported.ndjson"
+: >"${buildopt_rows}"
+
+buildopt_check_supported() {
+    local buildopt_id=$1
+    local buildopt_family=$2
+    local buildopt_entrypoint=$3
+    local buildopt_required_pattern=$4
+    local buildopt_required_path=$5
+    local buildopt_owner="${buildopt_repository}/.buildopt/${buildopt_id}.json"
+    local buildopt_case="${buildopt_repository}/.buildopt/${buildopt_id}"
+    local buildopt_proposal="${buildopt_case}/proposal.json"
+    local buildopt_log="${buildopt_temp}/${buildopt_id}-candidate.log"
+    mkdir -p -- "${buildopt_case}"
+    buildopt_clean_outputs
+
+    (
+        cd -- "${buildopt_repository}"
+        GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            "${buildopt_binary}" profile outputs \
+            --repository-id example/generic-workflow-breadth \
+            --pipeline-class "${buildopt_id}" \
+            --entrypoint "${buildopt_entrypoint}" \
+            --required-output "${buildopt_required_pattern}" \
+            --gradle-command ./gradlew \
+            --gradle-option=--offline \
+            --output ".buildopt/${buildopt_id}/confirmed-output-contract.json" \
+            >/dev/null
+        "${buildopt_binary}" profile input \
+            --output-contract ".buildopt/${buildopt_id}/confirmed-output-contract.json" \
+            --confirm \
+            --gradle-command ./gradlew \
+            --gradle-option=--offline \
+            --timeout 10m \
+            --output ".buildopt/${buildopt_id}.json" >/dev/null
+        GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            "${buildopt_binary}" profile propose \
+            --owner-input ".buildopt/${buildopt_id}.json" \
+            --base-revision "${buildopt_base}" \
+            --output-contract-output ".buildopt/${buildopt_id}/proposal-output-contract.json" \
+            --manifest-output ".buildopt/${buildopt_id}/manifest.json" \
+            --graph-output ".buildopt/${buildopt_id}/graph.json" \
+            --generated-manifest-output ".buildopt/${buildopt_id}/generated.json" \
+            --fallback-changes-output ".buildopt/${buildopt_id}/fallback.txt" \
+            --proposal-output ".buildopt/${buildopt_id}/proposal.json" >/dev/null
+    )
+
+    local buildopt_owner_sha
+    buildopt_owner_sha=$(sha256sum "${buildopt_owner}" | awk '{print $1}')
+    jq -e --arg id "${buildopt_id}" --arg entrypoint "${buildopt_entrypoint}" \
+        --arg pattern "${buildopt_required_pattern}" \
+        --arg candidate ":service-a:${buildopt_entrypoint}" \
+        --arg owner ".buildopt/${buildopt_id}.json" \
+        --arg ownerSha "${buildopt_owner_sha}" '
+        .decision == "MEASURE_STRUCTURAL_CANDIDATE" and
+        .reason == "COMPLETE_STRUCTURAL_REDUCTION" and
+        .pipelineClass == $id and
+        .originalEntrypoints == [$entrypoint] and
+        .requiredOutputs == [$pattern] and
+        .candidateEntrypoints == [$candidate] and
+        .omittedProjects == [":service-b"] and
+        .ownerInput == $owner and
+        .ownerInputSha256 == $ownerSha and
+        .changeSource == "GIT_DIFF_BASE_TO_HEAD" and
+        .unknownRelationships == false and
+        .reviewRequired == true and
+        .activationAutomatic == false and
+        .productionAuthorized == false and
+        .testOptimization == "OUT_OF_SCOPE"
+    ' "${buildopt_proposal}" >/dev/null
+    jq -e --arg entrypoint "${buildopt_entrypoint}" \
+        --arg pattern "${buildopt_required_pattern}" '
+        .schemaVersion == "buildopt.poc/profile-owner-input/v1" and
+        .entrypoints == [$entrypoint] and
+        .requiredOutputs == [$pattern] and
+        .outputConfirmation.status == "OWNER_CONFIRMED"
+    ' "${buildopt_owner}" >/dev/null
+
+    local buildopt_full_sha
+    buildopt_full_sha=$(buildopt_hash_output \
+        "${buildopt_repository}/${buildopt_required_path}")
+    buildopt_clean_outputs
+    (
+        cd -- "${buildopt_repository}"
+        GRADLE_USER_HOME="${buildopt_gradle_home}" ./gradlew \
+            --offline --no-daemon --console=plain \
+            ":service-a:${buildopt_entrypoint}"
+    ) >"${buildopt_log}" 2>&1
+    if rg -n '^> Task :service-[ab]:test([[:space:]]|$)' "${buildopt_log}" >/dev/null; then
+        printf '%s workflow executed a Test task\n' "${buildopt_id}" >&2
+        exit 1
+    fi
+    if [[ -e ${buildopt_repository}/service-b/build ]]; then
+        printf '%s candidate produced omitted service-b outputs\n' \
+            "${buildopt_id}" >&2
+        exit 1
+    fi
+    local buildopt_candidate_sha
+    buildopt_candidate_sha=$(buildopt_hash_output \
+        "${buildopt_repository}/${buildopt_required_path}")
+    if [[ ${buildopt_full_sha} != "${buildopt_candidate_sha}" ]]; then
+        printf '%s candidate changed the repository-declared output\n' \
+            "${buildopt_id}" >&2
+        exit 1
+    fi
+
+    jq -cn --arg id "${buildopt_id}" --arg family "${buildopt_family}" \
+        --arg entrypoint "${buildopt_entrypoint}" \
+        --arg requiredOutput "${buildopt_required_pattern}" \
+        --arg candidate ":service-a:${buildopt_entrypoint}" \
+        --arg digest "${buildopt_candidate_sha}" \
+        --arg ownerSha "${buildopt_owner_sha}" '{
+        id: $id,
+        outputFamily: $family,
+        originalEntrypoint: $entrypoint,
+        candidateEntrypoints: [$candidate],
+        requiredOutput: $requiredOutput,
+        ownerInputSha256: $ownerSha,
+        decision: "MEASURE_STRUCTURAL_CANDIDATE",
+        reason: "COMPLETE_STRUCTURAL_REDUCTION",
+        omittedProjects: [":service-b"],
+        nativeOutputSha256: $digest,
+        candidateOutputSha256: $digest,
+        outputsIdentical: true,
+        testTasksExecuted: false,
+        performanceClaim: false
+    }' >>"${buildopt_rows}"
+}
+
+buildopt_check_supported \
+    packaging PACKAGING jar 'service-a/build/libs/**' \
+    service-a/build/libs/service-a.jar
+buildopt_check_supported \
+    verification VERIFICATION verifyMetadata \
+    'service-a/build/reports/verification/**' \
+    service-a/build/reports/verification
+buildopt_check_supported \
+    distribution DISTRIBUTION distZip \
+    'service-a/build/distributions/**' \
+    service-a/build/distributions/service-a.zip
+buildopt_check_supported \
+    test-preparation TEST_PREPARATION testClasses \
+    'service-a/build/classes/java/test/**' \
+    service-a/build/classes/java/test
+
+buildopt_clean_outputs
+buildopt_unsupported="${buildopt_repository}/.buildopt/unsupported"
+mkdir -p -- "${buildopt_unsupported}"
+(
+    cd -- "${buildopt_repository}"
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_binary}" profile outputs \
+        --repository-id example/generic-workflow-breadth \
+        --pipeline-class unsupported-release \
+        --entrypoint prepareReleaseNotes \
+        --required-output 'service-a/build/release/**' \
+        --gradle-command ./gradlew \
+        --gradle-option=--offline \
+        --output .buildopt/unsupported/confirmed-output-contract.json >/dev/null
+    "${buildopt_binary}" profile input \
+        --output-contract .buildopt/unsupported/confirmed-output-contract.json \
+        --confirm \
+        --gradle-command ./gradlew \
+        --gradle-option=--offline \
+        --timeout 10m \
+        --output .buildopt/unsupported.json >/dev/null
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_binary}" profile propose \
+        --owner-input .buildopt/unsupported.json \
+        --base-revision "${buildopt_base}" \
+        --output-contract-output .buildopt/unsupported/proposal-output-contract.json \
+        --manifest-output .buildopt/unsupported/manifest.json \
+        --graph-output .buildopt/unsupported/graph.json \
+        --generated-manifest-output .buildopt/unsupported/generated.json \
+        --fallback-changes-output .buildopt/unsupported/fallback.txt \
+        --proposal-output .buildopt/unsupported/proposal.json >/dev/null
+)
+jq -e '
+    .decision == "NATIVE_FULL_GRAPH" and
+    .reason == "ORIGINAL_WORKFLOW_UNSUPPORTED" and
+    .originalEntrypoints == ["prepareReleaseNotes"] and
+    .requiredOutputs == ["service-a/build/release/**"] and
+    .unknownRelationships == true and
+    .ownerInput == ".buildopt/unsupported.json" and
+    .reviewRequired == true and
+    .activationAutomatic == false and
+    .productionAuthorized == false
+' "${buildopt_unsupported}/proposal.json" >/dev/null
+jq -e '
+    .decision == "VALIDATED_REQUIRED_OUTPUTS" and
+    .reason == "DECLARED_OUTPUTS_MATCH_EXECUTED_WORKFLOW" and
+    .validations == [{
+        pattern: "service-a/build/release/**",
+        status: "VALIDATED",
+        matchedFiles: 1,
+        ownerProjects: [":service-a"],
+        producerTasks: [":service-a:prepareReleaseNotes"]
+    }]
+' "${buildopt_unsupported}/proposal-output-contract.json" >/dev/null
+test -s "${buildopt_repository}/service-a/build/release/release-notes.txt"
+test ! -e "${buildopt_unsupported}/manifest.json"
+test ! -e "${buildopt_unsupported}/graph.json"
+test ! -e "${buildopt_unsupported}/generated.json"
+
+buildopt_revision=$(git -C "${buildopt_root}" rev-parse HEAD)
+buildopt_spec="${buildopt_root}/specs/poc-generic-workflow-breadth-v1.json"
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_runner_sha=$(sha256sum "${buildopt_root}/dev/check-generic-workflow-breadth" |
+    awk '{print $1}')
+buildopt_fixture_sha=$(
+    cd -- "${buildopt_root}/fixtures/gradle-workflow-breadth"
+    find . -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum |
+        awk '{print $1}'
+)
+jq -s --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg buildoptRevision "${buildopt_revision}" \
+    --arg specSha "${buildopt_spec_sha}" \
+    --arg runnerSha "${buildopt_runner_sha}" \
+    --arg fixtureSha "${buildopt_fixture_sha}" \
+    --arg baseRevision "${buildopt_base}" \
+    --arg targetRevision "${buildopt_target}" '{
+    schemaVersion: "buildopt.evidence/poc-generic-workflow-breadth/v1",
+    workItem: "POC-GENERIC-WORKFLOW-BREADTH-001",
+    capturedAt: $capturedAt,
+    buildoptRevision: $buildoptRevision,
+    specSha256: $specSha,
+    runnerSha256: $runnerSha,
+    fixture: {
+        path: "fixtures/gradle-workflow-breadth",
+        sha256: $fixtureSha,
+        baseRevision: $baseRevision,
+        targetRevision: $targetRevision,
+        changedPaths: ["service-a/src/main/java/example/Application.java"]
+    },
+    supportedWorkflows: .,
+    unsupportedWorkflow: {
+        id: "unsupported-release",
+        entrypoint: "prepareReleaseNotes",
+        requiredOutput: "service-a/build/release/**",
+        outputContractDecision: "VALIDATED_REQUIRED_OUTPUTS",
+        proposalDecision: "NATIVE_FULL_GRAPH",
+        proposalReason: "ORIGINAL_WORKFLOW_UNSUPPORTED",
+        outputPreserved: true,
+        structuralDocumentsWritten: false,
+        performanceClaim: false
+    },
+    result: {
+        supportedWorkflowCount: length,
+        exactOutputCount: (map(select(.outputsIdentical == true)) | length),
+        unsupportedWorkflowCount: 1,
+        nativeFallbackCount: 1,
+        decision: "GENERIC_OWNER_INPUT_COVERS_BUILD_OWNED_WORKFLOW_BREADTH"
+    },
+    boundaries: {
+        proofOfConcept: true,
+        reviewRequired: true,
+        automaticActivation: false,
+        productionAuthorized: false,
+        performanceClaimCreated: false,
+        repositorySpecificProductRulesAllowed: false,
+        testOptimizationModified: false,
+        soakRequired: false,
+        designPartnerRequired: false
+    }
+}' "${buildopt_rows}" >"${buildopt_result}"
+
+jq -e '
+    .result == {
+        supportedWorkflowCount: 4,
+        exactOutputCount: 4,
+        unsupportedWorkflowCount: 1,
+        nativeFallbackCount: 1,
+        decision: "GENERIC_OWNER_INPUT_COVERS_BUILD_OWNED_WORKFLOW_BREADTH"
+    } and
+    [.supportedWorkflows[].outputFamily] == [
+        "PACKAGING", "VERIFICATION", "DISTRIBUTION", "TEST_PREPARATION"
+    ] and
+    all(.supportedWorkflows[];
+        .outputsIdentical == true and
+        .testTasksExecuted == false and
+        .performanceClaim == false) and
+    .unsupportedWorkflow.proposalDecision == "NATIVE_FULL_GRAPH" and
+    .boundaries.performanceClaimCreated == false and
+    .boundaries.testOptimizationModified == false
+' "${buildopt_result}" >/dev/null
+
+printf 'Generic workflow breadth passed: four exact build-owned outputs and one native unsupported fallback\n'

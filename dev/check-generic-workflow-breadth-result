@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s RESULT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "$0")/.." && pwd -P)
+buildopt_spec="${buildopt_root}/specs/poc-generic-workflow-breadth-v1.json"
+buildopt_runner="${buildopt_root}/dev/check-generic-workflow-breadth"
+buildopt_result=$1
+
+for buildopt_command in find jq sha256sum sort xargs; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required workflow-breadth validator is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_runner_sha=$(sha256sum "${buildopt_runner}" | awk '{print $1}')
+buildopt_fixture_sha=$(
+    cd -- "${buildopt_root}/fixtures/gradle-workflow-breadth"
+    find . -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum |
+        awk '{print $1}'
+)
+
+jq -e --arg specSha "${buildopt_spec_sha}" \
+    --arg runnerSha "${buildopt_runner_sha}" \
+    --arg fixtureSha "${buildopt_fixture_sha}" \
+    --slurpfile spec "${buildopt_spec}" '
+    def sha256: type == "string" and test("^[0-9a-f]{64}$");
+    def gitsha: type == "string" and test("^[0-9a-f]{40}$");
+    . as $result |
+    .schemaVersion == "buildopt.evidence/poc-generic-workflow-breadth/v1" and
+    .workItem == $spec[0].workItem and
+    (.capturedAt | fromdateiso8601) and
+    (.buildoptRevision | gitsha) and
+    .specSha256 == $specSha and
+    .runnerSha256 == $runnerSha and
+    .fixture.path == $spec[0].fixture and
+    .fixture.sha256 == $fixtureSha and
+    (.fixture.baseRevision | gitsha) and
+    (.fixture.targetRevision | gitsha) and
+    .fixture.baseRevision != .fixture.targetRevision and
+    .fixture.changedPaths == [$spec[0].change.path] and
+    (.supportedWorkflows | length) == ($spec[0].supportedWorkflows | length) and
+    all(range(0; ($spec[0].supportedWorkflows | length)); . as $index |
+        $result.supportedWorkflows[$index] as $cell |
+        $spec[0].supportedWorkflows[$index] as $expected |
+        $cell.id == $expected.id and
+        $cell.outputFamily == $expected.outputFamily and
+        $cell.originalEntrypoint == $expected.entrypoint and
+        $cell.candidateEntrypoints == [$expected.candidateEntrypoint] and
+        $cell.requiredOutput == $expected.requiredOutput and
+        ($cell.ownerInputSha256 | sha256) and
+        $cell.decision == $spec[0].acceptance.supportedDecision and
+        $cell.reason == $spec[0].acceptance.supportedReason and
+        $cell.omittedProjects == $spec[0].acceptance.supportedOmittedProjects and
+        ($cell.nativeOutputSha256 | sha256) and
+        $cell.candidateOutputSha256 == $cell.nativeOutputSha256 and
+        $cell.outputsIdentical == $spec[0].acceptance.supportedOutputsByteIdentical and
+        $cell.testTasksExecuted == $spec[0].acceptance.testTasksExecuted and
+        $cell.performanceClaim == false) and
+    .unsupportedWorkflow.id == $spec[0].unsupportedWorkflow.id and
+    .unsupportedWorkflow.entrypoint == $spec[0].unsupportedWorkflow.entrypoint and
+    .unsupportedWorkflow.requiredOutput == $spec[0].unsupportedWorkflow.requiredOutput and
+    .unsupportedWorkflow.outputContractDecision == $spec[0].unsupportedWorkflow.outputContractDecision and
+    .unsupportedWorkflow.proposalDecision == $spec[0].unsupportedWorkflow.proposalDecision and
+    .unsupportedWorkflow.proposalReason == $spec[0].unsupportedWorkflow.proposalReason and
+    .unsupportedWorkflow.outputPreserved == true and
+    .unsupportedWorkflow.structuralDocumentsWritten == $spec[0].acceptance.unsupportedStructuralDocumentsWritten and
+    .unsupportedWorkflow.performanceClaim == false and
+    .result == {
+        supportedWorkflowCount: 4,
+        exactOutputCount: 4,
+        unsupportedWorkflowCount: 1,
+        nativeFallbackCount: 1,
+        decision: "GENERIC_OWNER_INPUT_COVERS_BUILD_OWNED_WORKFLOW_BREADTH"
+    } and
+    .boundaries == $spec[0].boundaries
+' "${buildopt_result}" >/dev/null
+
+printf 'Generic workflow breadth evidence OK: %s\n' "${buildopt_result}"

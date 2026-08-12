@@ -118,9 +118,13 @@ declared.
 
 ## Remaining gaps before calling the POC broadly usable
 
-1. **Workflow breadth.** Repeat the unchanged owner-file path on more packaging,
-   verification, distribution and build-owned test-preparation workflows.
-   Gradle `Test` optimization remains separate.
+1. **Installed value across workflow families.** The unchanged owner-input
+   path now preserves exact outputs for packaging, typed verification,
+   distribution and build-owned test preparation, while an unsupported custom
+   workflow retains native before timing. Measure substantial public examples
+   of those families through the installed path and qualify each family only
+   when it materially beats optimized native Gradle. Gradle `Test` optimization
+   remains separate.
 2. **Installed replay of qualified profiles.** Prove that a reviewed profile
    selected by `evaluate` produces the same value through the public package,
    not only the measurement harness, for more than the existing bounded cases.
@@ -146,7 +150,9 @@ repositories and beats optimized native Gradle in five under their frozen
 decision rules; Spring demonstrates that native fallback still governs a
 positive but insufficiently repeatable result.
 
-The next block should test workflow breadth through the completed owner-input
-surface. Packaging, verification, distribution, and build-owned
-test-preparation need their own repository-declared success outputs and the
-same fail-closed proposal behavior before any new timing is justified.
+The next block should measure installed-path value for substantial public
+packaging, verification, distribution, and build-owned test-preparation
+workflows. The capability surface is now common and fail-closed; that does not
+prove any family is faster. Each family needs fresh paired wall-time evidence,
+exact declared outputs, native fallback, and an independent retain-or-reject
+decision.

@@ -230,6 +230,15 @@ generated binding and fallback input used below without hand-authored JSON.
 Review the selected task set, omitted projects, required output scope and native
 fallback before running the emitted measurement command.
 
+The same owner-input flow has been checked for packaging (`Jar`), typed
+verification (`VerificationTask`), distribution (`AbstractArchiveTask`), and
+build-owned test preparation (`testClasses`). In each case the proposal selects
+the exact changed-project task and preserves the declared output bytes without
+running a Gradle `Test` task. Custom executable tasks without one of the
+supported public semantics remain on the original native workflow before
+timing. This capability proof does not imply that every supported candidate is
+faster; each reviewed candidate still needs paired installed-path evidence.
+
 The same packaged proposal path has been checked from clean Apache Groovy and
 Micronaut Core revisions. It rediscovered their previously qualified 37-to-2
 and 75-to-22 project plans without retained BuildOpt files or repository-name
