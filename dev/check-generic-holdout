@@ -351,7 +351,8 @@ jq -e --slurpfile spec "${buildopt_spec}" '
      (.decision == "NATIVE_FULL_GRAPH" and
       (.reason | IN("ORIGINAL_WORKFLOW_UNSUPPORTED", "CANDIDATE_WORKFLOW_UNSUPPORTED",
                     "CANDIDATE_GRAPH_INCOMPLETE", "NO_SAFE_STRUCTURAL_CANDIDATE",
-                    "SOURCE_OWNERSHIP_AMBIGUOUS"))))
+                    "SOURCE_OWNERSHIP_AMBIGUOUS", "OUTPUTS_MISSING",
+                    "REQUIRED_OUTPUTS_EMPTY", "OUTPUT_OWNERSHIP_AMBIGUOUS"))))
 ' "${buildopt_evidence}/buildopt-profile-proposal.json" >/dev/null
 
 buildopt_expected_change=$(jq -er '.subject.changePath' "${buildopt_spec}")

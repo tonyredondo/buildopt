@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [evidence-directory]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "$0")/.." && pwd -P)
+buildopt_spec="${buildopt_root}/specs/poc-generic-output-contract-v1.json"
+buildopt_evidence=${1:-"${buildopt_root}/benchmarks/results/poc-generic-output-contract-v1"}
+buildopt_summary="${buildopt_evidence}/summary.json"
+buildopt_contract="${buildopt_evidence}/buildopt-output-contract.json"
+buildopt_proposal="${buildopt_evidence}/buildopt-profile-proposal.json"
+
+for buildopt_file in "${buildopt_spec}" "${buildopt_summary}" \
+    "${buildopt_contract}" "${buildopt_proposal}" \
+    "${buildopt_evidence}/checksums.txt"; do
+    [[ -s ${buildopt_file} ]] || {
+        printf 'missing generic output-contract evidence: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-generic-output-contract/v1" and
+    .workItem == "POC-GENERIC-OUTPUT-CONTRACT-001" and
+    .decision == "RUN_OUTPUT_CONTRACT_PREFLIGHT_ON_FROZEN_HIBERNATE_DECLARATION" and
+    .preregisteredFromRevision == "6640c1faeac0bfb56e605bad1ef50e0c9dea2423" and
+    .subject.repositoryId == "hibernate/hibernate-orm" and
+    .subject.publicRevision == "2b448a59d332326f0cd0691c868425124d55cbb5" and
+    .subject.entrypoints == ["assemble"] and
+    .subject.declaredOutputs == ["hibernate-core/build/libs/**"] and
+    .method.executesOwnerWorkflowBeforeStructuralDiscovery == true and
+    .method.warmupAllowedAfterFailedContract == false and
+    .method.timingAllowedAfterFailedContract == false and
+    .method.repositorySpecificProductRulesAllowed == false and
+    .method.postResultCorrectionAllowed == false and
+    .acceptance.proposalDecision == "NATIVE_FULL_GRAPH" and
+    .acceptance.proposalReason == "REQUIRED_OUTPUTS_EMPTY" and
+    .boundaries.proofOfConcept == true and
+    .boundaries.automaticActivation == false and
+    .boundaries.productionAuthorized == false and
+    .boundaries.testOptimizationModified == false
+' "${buildopt_spec}" >/dev/null
+
+jq -e --slurpfile spec "${buildopt_spec}" '
+    .schemaVersion == "buildopt.evidence/poc-generic-output-contract/v1" and
+    .workItem == $spec[0].workItem and
+    (.capturedAt | fromdateiso8601) > 0 and
+    (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+    .subject.repositoryId == $spec[0].subject.repositoryId and
+    .subject.publicRevision == $spec[0].subject.publicRevision and
+    (.subject.targetRevision | test("^[0-9a-f]{40}$")) and
+    .subject.entrypoints == $spec[0].subject.entrypoints and
+    .subject.declaredOutputs == $spec[0].subject.declaredOutputs and
+    .result.proposalDecision == $spec[0].acceptance.proposalDecision and
+    .result.proposalReason == $spec[0].acceptance.proposalReason and
+    .result.outputContractDecision == "NATIVE_FULL_GRAPH" and
+    .result.outputContractReason == "REQUIRED_OUTPUTS_EMPTY" and
+    .result.declaredPatternStatus == "EMPTY" and
+    .result.candidateUnderExpectedDirectory == true and
+    .result.candidateOwnerConfirmed == true and
+    .result.measurementStatus == "NOT_RUN_NATIVE_FULL_GRAPH" and
+    .result.warmupStarted == false and
+    .result.timingStarted == false and
+    .result.profileWritten == false and
+    .boundaries == $spec[0].boundaries
+' "${buildopt_summary}" >/dev/null
+
+jq -e --slurpfile spec "${buildopt_spec}" '
+    .schemaVersion == "buildopt.poc/output-contract/v1" and
+    .decision == "NATIVE_FULL_GRAPH" and
+    .reason == "REQUIRED_OUTPUTS_EMPTY" and
+    .repositoryId == $spec[0].subject.repositoryId and
+    .originalEntrypoints == $spec[0].subject.entrypoints and
+    .declaredOutputs == $spec[0].subject.declaredOutputs and
+    .validations == [{
+      pattern: "hibernate-core/build/libs/**",
+      status: "EMPTY",
+      matchedFiles: 0,
+      ownerProjects: [],
+      producerTasks: []
+    }] and
+    any(.candidateOutputs[];
+      (.path | startswith($spec[0].acceptance.candidatePathPrefix)) and
+      (.ownerProjects | index($spec[0].acceptance.candidateOwnerProject)) != null) and
+    .reviewRequired == true and
+    .activationAutomatic == false and
+    .productionAuthorized == false and
+    .testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_contract}" >/dev/null
+
+jq -e '
+    .decision == "NATIVE_FULL_GRAPH" and
+    .reason == "REQUIRED_OUTPUTS_EMPTY" and
+    .documents.outputContract == "buildopt-output-contract.json" and
+    (.documents | has("manifest") | not) and
+    (.measureCommand | length) == 0 and
+    .reviewRequired == true and
+    .activationAutomatic == false and
+    .productionAuthorized == false and
+    .testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_proposal}" >/dev/null
+
+[[ ! -e ${buildopt_evidence}/measurement.log ]] || {
+    printf 'failed output contract unexpectedly entered measurement\n' >&2
+    exit 1
+}
+[[ ! -e ${buildopt_evidence}/profile.json ]] || {
+    printf 'failed output contract unexpectedly wrote a profile\n' >&2
+    exit 1
+}
+(
+    cd -- "${buildopt_evidence}"
+    sha256sum -c checksums.txt >/dev/null
+)
+
+printf 'Generic output-contract Hibernate evidence passed\n'

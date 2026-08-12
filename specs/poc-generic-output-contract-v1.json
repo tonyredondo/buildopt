@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "buildopt.specs/poc-generic-output-contract/v1",
+  "workItem": "POC-GENERIC-OUTPUT-CONTRACT-001",
+  "decision": "RUN_OUTPUT_CONTRACT_PREFLIGHT_ON_FROZEN_HIBERNATE_DECLARATION",
+  "preregisteredFromRevision": "6640c1faeac0bfb56e605bad1ef50e0c9dea2423",
+  "subject": {
+    "repositoryId": "hibernate/hibernate-orm",
+    "remoteUrl": "https://github.com/hibernate/hibernate-orm.git",
+    "publicRevision": "2b448a59d332326f0cd0691c868425124d55cbb5",
+    "jdkToolchain": "temurin-jdk-25",
+    "pipelineClass": "assemble",
+    "entrypoints": [
+      "assemble"
+    ],
+    "changePath": "hibernate-core/src/main/java/org/hibernate/Session.java",
+    "declaredOutputs": [
+      "hibernate-core/build/libs/**"
+    ]
+  },
+  "method": {
+    "surface": "INSTALLED_PROFILE_PROPOSE_WITH_OUTPUT_CONTRACT_PREFLIGHT",
+    "executesOwnerWorkflowBeforeStructuralDiscovery": true,
+    "observesGradleDeclaredTaskOutputs": true,
+    "requiresNonEmptyRegularFiles": true,
+    "requiresUnambiguousProjectOwnership": true,
+    "emitsReviewArtifact": true,
+    "warmupAllowedAfterFailedContract": false,
+    "timingAllowedAfterFailedContract": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "postResultCorrectionAllowed": false
+  },
+  "acceptance": {
+    "proposalCommandSucceeds": true,
+    "proposalDecision": "NATIVE_FULL_GRAPH",
+    "proposalReason": "REQUIRED_OUTPUTS_EMPTY",
+    "declaredPatternStatus": "EMPTY",
+    "candidatePathPrefix": "hibernate-core/target/libs/",
+    "candidateOwnerProject": ":hibernate-core",
+    "measurementStatus": "NOT_RUN_NATIVE_FULL_GRAPH",
+    "profileWritten": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "reviewRequired": true,
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

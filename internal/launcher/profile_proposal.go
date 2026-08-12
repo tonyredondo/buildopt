@@ -17,7 +17,7 @@ import (
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
 
-const profileProposalUsage = "usage: buildopt profile propose --repository-id OWNER/REPO --pipeline-class CLASS --entrypoint TASK [--entrypoint TASK ...] --changes-file PATH --base-revision REVISION --required-output GLOB [--required-output GLOB ...] [--global-change GLOB ...] [--gradle-command PATH] [--gradle-option VALUE ...] [--manifest-output PATH] [--graph-output PATH] [--generated-manifest-output PATH] [--fallback-changes-output PATH] [--proposal-output PATH] [--buildopt-revision REVISION] [--timeout DURATION]\n"
+const profileProposalUsage = "usage: buildopt profile propose --repository-id OWNER/REPO --pipeline-class CLASS --entrypoint TASK [--entrypoint TASK ...] --changes-file PATH --base-revision REVISION --required-output GLOB [--required-output GLOB ...] [--global-change GLOB ...] [--gradle-command PATH] [--gradle-option VALUE ...] [--output-contract-output PATH] [--manifest-output PATH] [--graph-output PATH] [--generated-manifest-output PATH] [--fallback-changes-output PATH] [--proposal-output PATH] [--buildopt-revision REVISION] [--timeout DURATION]\n"
 
 var defaultProposalGlobalChanges = []string{
 	"build-logic/**",
@@ -31,38 +31,39 @@ var defaultProposalGlobalChanges = []string{
 }
 
 type profileProposalDocuments struct {
-	Manifest         string `json:"manifest,omitempty"`
-	Graph            string `json:"graph,omitempty"`
-	Generated        string `json:"generatedManifest,omitempty"`
-	FallbackChanges  string `json:"fallbackChanges,omitempty"`
-	Proposal         string `json:"proposal"`
+	OutputContract  string `json:"outputContract"`
+	Manifest        string `json:"manifest,omitempty"`
+	Graph           string `json:"graph,omitempty"`
+	Generated       string `json:"generatedManifest,omitempty"`
+	FallbackChanges string `json:"fallbackChanges,omitempty"`
+	Proposal        string `json:"proposal"`
 }
 
 type profileProposalReport struct {
-	repositoryRoot          string                               `json:"-"`
-	SchemaVersion          string                               `json:"schemaVersion"`
-	Decision               string                               `json:"decision"`
-	Reason                 string                               `json:"reason"`
-	RepositoryID           string                               `json:"repositoryId"`
-	PipelineClass          string                               `json:"pipelineClass"`
-	BaseRevision           string                               `json:"baseRevision"`
-	TargetRevision         string                               `json:"targetRevision"`
-	OriginalEntrypoint     string                               `json:"originalEntrypoint,omitempty"`
-	OriginalEntrypoints    []string                             `json:"originalEntrypoints"`
-	ChangedPaths           []string                             `json:"changedPaths"`
-	RequiredOutputs        []string                             `json:"requiredOutputs"`
-	GlobalChangePaths      []string                             `json:"globalChangePaths"`
-	CandidateEntrypoints   []string                             `json:"candidateEntrypoints,omitempty"`
-	OmittedProjects        []string                             `json:"omittedProjects,omitempty"`
-	UnknownRelationships   bool                                 `json:"unknownRelationships"`
-	Analysis               *profilediscovery.AnalysisReport     `json:"analysis,omitempty"`
-	Documents              profileProposalDocuments             `json:"documents"`
-	MeasureCommand         []string                             `json:"measureCommand,omitempty"`
-	BuildOptRevisionNeeded bool                                 `json:"buildOptRevisionNeeded"`
-	ReviewRequired         bool                                 `json:"reviewRequired"`
-	ActivationAutomatic    bool                                 `json:"activationAutomatic"`
-	ProductionAuthorized   bool                                 `json:"productionAuthorized"`
-	TestOptimization       string                               `json:"testOptimization"`
+	repositoryRoot         string                           `json:"-"`
+	SchemaVersion          string                           `json:"schemaVersion"`
+	Decision               string                           `json:"decision"`
+	Reason                 string                           `json:"reason"`
+	RepositoryID           string                           `json:"repositoryId"`
+	PipelineClass          string                           `json:"pipelineClass"`
+	BaseRevision           string                           `json:"baseRevision"`
+	TargetRevision         string                           `json:"targetRevision"`
+	OriginalEntrypoint     string                           `json:"originalEntrypoint,omitempty"`
+	OriginalEntrypoints    []string                         `json:"originalEntrypoints"`
+	ChangedPaths           []string                         `json:"changedPaths"`
+	RequiredOutputs        []string                         `json:"requiredOutputs"`
+	GlobalChangePaths      []string                         `json:"globalChangePaths"`
+	CandidateEntrypoints   []string                         `json:"candidateEntrypoints,omitempty"`
+	OmittedProjects        []string                         `json:"omittedProjects,omitempty"`
+	UnknownRelationships   bool                             `json:"unknownRelationships"`
+	Analysis               *profilediscovery.AnalysisReport `json:"analysis,omitempty"`
+	Documents              profileProposalDocuments         `json:"documents"`
+	MeasureCommand         []string                         `json:"measureCommand,omitempty"`
+	BuildOptRevisionNeeded bool                             `json:"buildOptRevisionNeeded"`
+	ReviewRequired         bool                             `json:"reviewRequired"`
+	ActivationAutomatic    bool                             `json:"activationAutomatic"`
+	ProductionAuthorized   bool                             `json:"productionAuthorized"`
+	TestOptimization       string                           `json:"testOptimization"`
 }
 
 type proposalStringFlag []string
@@ -88,6 +89,7 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 	baseRevision := flags.String("base-revision", "", "immutable baseline Git revision")
 	gradleCommand := flags.String("gradle-command", "", "repository-relative or absolute Gradle command")
 	manifestOutput := flags.String("manifest-output", "buildopt-impact-manifest.json", "reviewable manifest output")
+	outputContractOutput := flags.String("output-contract-output", "buildopt-output-contract.json", "validated output-contract artifact")
 	graphOutput := flags.String("graph-output", "buildopt-impact-graph.generated.json", "reviewable graph output")
 	generatedOutput := flags.String("generated-manifest-output", "buildopt-impact.generated.json", "generated-state binding output")
 	fallbackOutput := flags.String("fallback-changes-output", "buildopt-fallback-changes.txt", "full-graph fallback input")
@@ -111,9 +113,10 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 		repositoryID: *repositoryID, pipelineClass: *pipelineClass,
 		entrypoints: append([]string(nil), entrypoints...), changesFile: *changesFile, baseRevision: *baseRevision,
 		requiredOutputs: append([]string(nil), requiredOutputs...),
-		globalChanges: append([]string(nil), globalChanges...),
-		gradleCommand: *gradleCommand, gradleOptions: append([]string(nil), gradleOptions...),
-		manifestOutput: *manifestOutput, graphOutput: *graphOutput,
+		globalChanges:   append([]string(nil), globalChanges...),
+		gradleCommand:   *gradleCommand, gradleOptions: append([]string(nil), gradleOptions...),
+		outputContractOutput: *outputContractOutput,
+		manifestOutput:       *manifestOutput, graphOutput: *graphOutput,
 		generatedOutput: *generatedOutput, fallbackOutput: *fallbackOutput,
 		proposalOutput: *proposalOutput, buildOptRevision: *buildOptRevision,
 		timeout: *timeout,
@@ -122,7 +125,7 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile proposal unavailable: %v\n", err)
 		return exitConfiguration
 	}
-	for _, output := range []string{report.Documents.Manifest, report.Documents.Graph, report.Documents.Generated, report.Documents.FallbackChanges} {
+	for _, output := range []string{report.Documents.OutputContract, report.Documents.Manifest, report.Documents.Graph, report.Documents.Generated, report.Documents.FallbackChanges} {
 		raw, ok := documents[output]
 		if output == "" || !ok {
 			continue
@@ -150,12 +153,13 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 }
 
 type structuralProposalConfig struct {
-	repositoryID, pipelineClass, changesFile, baseRevision             string
-	entrypoints                                                        []string
-	requiredOutputs, globalChanges, gradleOptions                     []string
-	gradleCommand, manifestOutput, graphOutput, generatedOutput       string
-	fallbackOutput, proposalOutput, buildOptRevision                   string
-	timeout                                                              time.Duration
+	repositoryID, pipelineClass, changesFile, baseRevision           string
+	entrypoints                                                      []string
+	requiredOutputs, globalChanges, gradleOptions                    []string
+	gradleCommand, outputContractOutput, manifestOutput, graphOutput string
+	generatedOutput                                                  string
+	fallbackOutput, proposalOutput, buildOptRevision                 string
+	timeout                                                          time.Duration
 }
 
 func prepareStructuralProfileProposal(ctx context.Context, config structuralProposalConfig) (profileProposalReport, map[string][]byte, error) {
@@ -198,6 +202,28 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 	sort.Strings(config.globalChanges)
 	report := nativeProfileProposal(config, targetRevision, changedPaths)
 	report.repositoryRoot = root
+	outputReport, err := prepareOutputContract(ctx, root, outputContractConfig{
+		repositoryID: config.repositoryID, pipelineClass: config.pipelineClass,
+		repositoryRevision: targetRevision,
+		entrypoints:        append([]string(nil), config.entrypoints...),
+		requiredOutputs:    append([]string(nil), config.requiredOutputs...),
+		gradleCommand:      config.gradleCommand,
+		gradleOptions:      append([]string(nil), config.gradleOptions...),
+		timeout:            config.timeout,
+	})
+	if err != nil {
+		return profileProposalReport{}, nil, err
+	}
+	outputRaw, err := renderOutputContract(outputReport)
+	if err != nil {
+		return profileProposalReport{}, nil, err
+	}
+	documents := map[string][]byte{config.outputContractOutput: outputRaw}
+	report.Documents.OutputContract = config.outputContractOutput
+	if outputReport.Decision != "VALIDATED_REQUIRED_OUTPUTS" {
+		report.Reason = outputReport.Reason
+		return report, documents, nil
+	}
 
 	observationContext, cancel := context.WithTimeout(ctx, config.timeout)
 	defer cancel()
@@ -214,18 +240,18 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 	}
 	if !snapshot.Complete {
 		report.Reason = "ORIGINAL_WORKFLOW_UNSUPPORTED"
-		return report, nil, nil
+		return report, documents, nil
 	}
 	for _, changedPath := range changedPaths {
 		if matchesAnyProposalGlob(config.globalChanges, changedPath) {
 			report.Reason = "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"
-			return report, nil, nil
+			return report, documents, nil
 		}
 	}
 	owners, err := buildimpact.ResolveProjectOwners(snapshot, changedPaths)
 	if err != nil {
 		report.Reason = "SOURCE_OWNERSHIP_AMBIGUOUS"
-		return report, nil, nil
+		return report, documents, nil
 	}
 	candidateEntrypoints := make([]string, 0, len(owners)*len(selectors))
 	for _, owner := range owners {
@@ -243,10 +269,10 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 	manifest := buildimpact.Manifest{
 		SchemaVersion: buildimpact.ManifestSchemaVersion, ManifestVersion: 1,
 		RepositoryID: config.repositoryID, PipelineClass: config.pipelineClass,
-		Ownership: buildimpact.RepositoryOwnership,
+		Ownership:           buildimpact.RepositoryOwnership,
 		OriginalEntrypoints: append([]string(nil), config.entrypoints...),
 		AllowedAlternatives: []buildimpact.EntrypointSet{{ID: "changed-projects", Entrypoints: candidateEntrypoints}},
-		RequiredChecks: []buildimpact.Check{}, GlobalChangePaths: config.globalChanges,
+		RequiredChecks:      []buildimpact.Check{}, GlobalChangePaths: config.globalChanges,
 		UnknownChangePolicy: buildimpact.FullGraphPolicy,
 	}
 	for index, output := range config.requiredOutputs {
@@ -270,29 +296,29 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 	}, loadedManifest)
 	if err != nil {
 		report.Reason = "CANDIDATE_WORKFLOW_UNSUPPORTED"
-		return report, nil, nil
+		return report, documents, nil
 	}
 	if !generated.Generated.Complete {
 		report.Reason = "CANDIDATE_GRAPH_INCOMPLETE"
 		report.UnknownRelationships = true
-		return report, nil, nil
+		return report, documents, nil
 	}
 	fallbackChange, err := proposalFallbackChange(config.globalChanges)
 	if err != nil {
 		return profileProposalReport{}, nil, err
 	}
 	fallbackRaw := []byte(fallbackChange + "\n")
-	documents := map[string][]byte{
-		config.manifestOutput: manifestRaw, config.graphOutput: generated.GraphJSON,
-		config.generatedOutput: generated.GeneratedJSON, config.fallbackOutput: fallbackRaw,
-	}
+	documents[config.manifestOutput] = manifestRaw
+	documents[config.graphOutput] = generated.GraphJSON
+	documents[config.generatedOutput] = generated.GeneratedJSON
+	documents[config.fallbackOutput] = fallbackRaw
 	analysis := profilediscovery.AnalyzeGeneratedOpportunity(loadedManifest, generated.Graph, generated.Generated)
 	report.Analysis = &analysis
 	report.Decision = analysis.Decision
 	report.Reason = analysis.Reason
 	report.UnknownRelationships = false
 	if analysis.Decision != profilediscovery.DecisionMeasure {
-		return report, nil, nil
+		return report, documents, nil
 	}
 	report.Documents.Manifest = config.manifestOutput
 	report.Documents.Graph = config.graphOutput
@@ -315,10 +341,10 @@ func nativeProfileProposal(config structuralProposalConfig, targetRevision strin
 		PipelineClass: config.pipelineClass, BaseRevision: config.baseRevision,
 		TargetRevision: targetRevision, OriginalEntrypoint: legacyEntrypoint,
 		OriginalEntrypoints: append([]string(nil), config.entrypoints...),
-		ChangedPaths: changedPaths, RequiredOutputs: config.requiredOutputs,
+		ChangedPaths:        changedPaths, RequiredOutputs: config.requiredOutputs,
 		GlobalChangePaths: config.globalChanges,
-		Documents: profileProposalDocuments{Proposal: config.proposalOutput},
-		ReviewRequired: true, ActivationAutomatic: false, ProductionAuthorized: false,
+		Documents:         profileProposalDocuments{OutputContract: config.outputContractOutput, Proposal: config.proposalOutput},
+		ReviewRequired:    true, ActivationAutomatic: false, ProductionAuthorized: false,
 		TestOptimization: "OUT_OF_SCOPE",
 	}
 }
@@ -370,7 +396,7 @@ func proposalGitTarget(root, baseRevision string) (string, error) {
 }
 
 func validateProposalOutputs(config structuralProposalConfig) error {
-	paths := []string{config.manifestOutput, config.graphOutput, config.generatedOutput, config.fallbackOutput, config.proposalOutput}
+	paths := []string{config.outputContractOutput, config.manifestOutput, config.graphOutput, config.generatedOutput, config.fallbackOutput, config.proposalOutput}
 	seen := map[string]bool{config.changesFile: true}
 	for _, candidate := range paths {
 		if candidate == "" || filepath.IsAbs(candidate) || filepath.Clean(candidate) != candidate || candidate == "." || candidate == ".." || seen[candidate] {

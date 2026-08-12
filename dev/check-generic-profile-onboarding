@@ -52,6 +52,8 @@ printf '%s\n' 'service-a/src/main/java/example/ServiceA.java' >"${repository}/ch
 "${buildopt_root}/dev/run" --toolchain go -- go build -trimpath -o "${temporary}/bin/buildopt" ./cmd/buildopt
 "${temporary}/bin/buildopt" profile propose --help >"${temporary}/proposal-help.txt"
 grep -F 'usage: buildopt profile propose --repository-id OWNER/REPO' "${temporary}/proposal-help.txt" >/dev/null
+"${temporary}/bin/buildopt" profile outputs --help >"${temporary}/outputs-help.txt"
+grep -F 'usage: buildopt profile outputs --repository-id OWNER/REPO' "${temporary}/outputs-help.txt" >/dev/null
 set +e
 "${temporary}/bin/buildopt" profile propose --repository-id example/missing >"${temporary}/invalid.stdout" 2>"${temporary}/invalid.stderr"
 invalid_status=$?
@@ -94,12 +96,29 @@ assert proposal["omittedProjects"] == [":service-b"]
 assert proposal["analysis"]["plan"]["selectedProjectCount"] == 1
 assert proposal["analysis"]["plan"]["omittedProjectCount"] == 1
 assert proposal["analysis"]["plan"]["requiredOutputs"] == ["service-a/build/classes/**"]
+assert proposal["documents"]["outputContract"] == "buildopt-output-contract.json"
 assert proposal["reviewRequired"] is True
 assert proposal["activationAutomatic"] is False
 assert proposal["productionAuthorized"] is False
 assert proposal["testOptimization"] == "OUT_OF_SCOPE"
 assert proposal["buildOptRevisionNeeded"] is True
 assert proposal["measureCommand"][:3] == ["buildopt", "profile", "measure"]
+PY
+python3 - "${repository}/buildopt-output-contract.json" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    contract = json.load(handle)
+assert contract["schemaVersion"] == "buildopt.poc/output-contract/v1"
+assert contract["decision"] == "VALIDATED_REQUIRED_OUTPUTS"
+assert contract["reason"] == "DECLARED_OUTPUTS_MATCH_EXECUTED_WORKFLOW"
+assert contract["declaredOutputs"] == ["service-a/build/classes/**"]
+assert contract["validations"][0]["status"] == "VALIDATED"
+assert contract["validations"][0]["matchedFiles"] > 0
+assert contract["validations"][0]["ownerProjects"] == [":service-a"]
+assert contract["reviewRequired"] is True
+assert contract["activationAutomatic"] is False
 PY
 
 (
@@ -169,10 +188,21 @@ import sys
 with open(sys.argv[1], encoding="utf-8") as handle:
     proposal = json.load(handle)
 assert proposal["decision"] == "NATIVE_FULL_GRAPH"
-assert proposal["reason"] == "ORIGINAL_WORKFLOW_UNSUPPORTED"
+assert proposal["reason"] == "OUTPUTS_MISSING"
 assert proposal["activationAutomatic"] is False
 assert proposal["productionAuthorized"] is False
 assert "manifest" not in proposal["documents"]
+assert proposal["documents"]["outputContract"] == "buildopt-output-contract.json"
+PY
+python3 - "${custom_repository}/buildopt-output-contract.json" <<'PY'
+import json
+import sys
+with open(sys.argv[1], encoding="utf-8") as handle:
+    contract = json.load(handle)
+assert contract["decision"] == "NATIVE_FULL_GRAPH"
+assert contract["reason"] == "OUTPUTS_MISSING"
+assert contract["candidateOutputs"] == []
+assert contract["validations"] == []
 PY
 test ! -e "${custom_repository}/buildopt-impact-manifest.json"
 test ! -e "${custom_repository}/buildopt-impact-graph.generated.json"

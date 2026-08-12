@@ -127,7 +127,8 @@ if ! (
     exit 1
 fi
 
-for buildopt_name in buildopt-changes.txt buildopt-fallback-changes.txt \
+for buildopt_name in buildopt-changes.txt buildopt-output-contract.json \
+    buildopt-fallback-changes.txt \
     buildopt-impact-manifest.json buildopt-impact-graph.generated.json \
     buildopt-impact.generated.json buildopt-profile-proposal.json; do
     if [[ -s ${buildopt_repository}/${buildopt_name} ]]; then

@@ -126,6 +126,17 @@ jq -e '
     .reviewRequired == true and
     .activationAutomatic == false
 ' "${buildopt_artifact}/buildopt-profile-proposal.json" >/dev/null
+jq -e '
+    .schemaVersion == "buildopt.poc/output-contract/v1" and
+    .decision == "VALIDATED_REQUIRED_OUTPUTS" and
+    .reason == "DECLARED_OUTPUTS_MATCH_EXECUTED_WORKFLOW" and
+    .declaredOutputs == ["service-a/build/classes/**"] and
+    .validations[0].status == "VALIDATED" and
+    .validations[0].matchedFiles > 0 and
+    .validations[0].ownerProjects == [":service-a"] and
+    .reviewRequired == true and
+    .activationAutomatic == false
+' "${buildopt_artifact}/buildopt-output-contract.json" >/dev/null
 grep -Fx 'service-a/src/main/java/example/ServiceA.java' \
     "${buildopt_artifact}/changes.txt" >/dev/null
 (

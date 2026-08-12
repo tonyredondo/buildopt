@@ -210,6 +210,7 @@ buildopt_args=(
     --pipeline-class "${buildopt_pipeline_class}"
     --changes-file "${buildopt_artifact_relative}/changes.txt"
     --base-revision "${buildopt_base_revision}"
+    --output-contract-output "${buildopt_artifact_relative}/buildopt-output-contract.json"
     --manifest-output "${buildopt_artifact_relative}/buildopt-impact-manifest.json"
     --graph-output "${buildopt_artifact_relative}/buildopt-impact-graph.generated.json"
     --generated-manifest-output "${buildopt_artifact_relative}/buildopt-impact.generated.json"
@@ -284,7 +285,8 @@ if ! jq -e '
     .reviewRequired == true and
     .activationAutomatic == false and
     .productionAuthorized == false and
-    .testOptimization == "OUT_OF_SCOPE"
+    .testOptimization == "OUT_OF_SCOPE" and
+    .documents.outputContract == ".buildopt/buildopt-profile-proposal/buildopt-output-contract.json"
 ' "${buildopt_proposal}" >/dev/null; then
     buildopt_write_outputs NATIVE_FULL_GRAPH INVALID_PROPOSAL_ARTIFACT
     buildopt_die 'generated proposal violates the review-only contract'

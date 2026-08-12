@@ -1,0 +1,219 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "$0")/.." && pwd -P)
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-output-contract.XXXXXX")
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-output-contract."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in git python3; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required output-contract command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_repository="${buildopt_temp}/repository"
+buildopt_gradle_home="${buildopt_root}/.tools/gradle-user-home/local"
+mkdir -p -- "${buildopt_repository}/service-a/src/main/java/example" \
+    "${buildopt_repository}/service-b/src/main/java/example" "${buildopt_temp}/bin"
+cp -- "${buildopt_root}/gradlew" "${buildopt_repository}/gradlew"
+cp -R -- "${buildopt_root}/gradle" "${buildopt_repository}/gradle"
+chmod +x -- "${buildopt_repository}/gradlew"
+
+cat >"${buildopt_repository}/settings.gradle.kts" <<'EOF'
+rootProject.name = "generic-output-contract-fixture"
+include("service-a", "service-b")
+EOF
+cat >"${buildopt_repository}/build.gradle.kts" <<'EOF'
+subprojects {
+    apply(plugin = "java")
+    layout.buildDirectory = layout.projectDirectory.dir("target")
+}
+EOF
+cat >"${buildopt_repository}/service-a/src/main/java/example/ServiceA.java" <<'EOF'
+package example;
+public final class ServiceA { public static String value() { return "base"; } }
+EOF
+cat >"${buildopt_repository}/service-b/src/main/java/example/ServiceB.java" <<'EOF'
+package example;
+public final class ServiceB { public static String value() { return "stable"; } }
+EOF
+git -C "${buildopt_repository}" init -q
+git -C "${buildopt_repository}" config user.name 'BuildOpt Fixture'
+git -C "${buildopt_repository}" config user.email buildopt-fixture@example.invalid
+git -C "${buildopt_repository}" config commit.gpgsign false
+git -C "${buildopt_repository}" add .
+git -C "${buildopt_repository}" commit -qm 'output contract base'
+buildopt_base=$(git -C "${buildopt_repository}" rev-parse HEAD)
+sed -i 's/return "base"/return "target"/' \
+    "${buildopt_repository}/service-a/src/main/java/example/ServiceA.java"
+git -C "${buildopt_repository}" add service-a/src/main/java/example/ServiceA.java
+git -C "${buildopt_repository}" commit -qm 'change service a'
+printf '%s\n' service-a/src/main/java/example/ServiceA.java \
+    >"${buildopt_repository}/changes.txt"
+
+"${buildopt_root}/dev/run" --toolchain go -- \
+    go build -trimpath -o "${buildopt_temp}/bin/buildopt" ./cmd/buildopt
+
+buildopt_common=(
+    --repository-id example/generic-output-contract-fixture
+    --pipeline-class jar
+    --entrypoint jar
+    --gradle-option=--offline
+)
+(
+    cd -- "${buildopt_repository}"
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_temp}/bin/buildopt" profile outputs \
+        "${buildopt_common[@]}" --output discovered.json >/dev/null
+)
+python3 - "${buildopt_repository}/discovered.json" <<'PY'
+import json
+import sys
+with open(sys.argv[1], encoding="utf-8") as handle:
+    report = json.load(handle)
+assert report["decision"] == "REVIEW_REQUIRED_OUTPUTS"
+assert report["reason"] == "OUTPUTS_DISCOVERED"
+assert report["declaredOutputs"] == []
+candidates = {item["pattern"]: item for item in report["candidateOutputs"]}
+assert "service-a/target/libs/service-a.jar" in candidates
+assert "service-b/target/libs/service-b.jar" in candidates
+assert candidates["service-a/target/libs/service-a.jar"]["ownerProjects"] == [":service-a"]
+assert report["activationAutomatic"] is False
+assert report["productionAuthorized"] is False
+PY
+
+(
+    cd -- "${buildopt_repository}"
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_temp}/bin/buildopt" profile outputs \
+        "${buildopt_common[@]}" \
+        --required-output 'service-a/target/libs/**' \
+        --required-output 'service-b/target/libs/**' \
+        --output validated.json >/dev/null
+)
+python3 - "${buildopt_repository}/validated.json" <<'PY'
+import json
+import sys
+with open(sys.argv[1], encoding="utf-8") as handle:
+    report = json.load(handle)
+assert report["decision"] == "VALIDATED_REQUIRED_OUTPUTS"
+assert report["reason"] == "DECLARED_OUTPUTS_MATCH_EXECUTED_WORKFLOW"
+assert [item["status"] for item in report["validations"]] == ["VALIDATED", "VALIDATED"]
+assert all(item["matchedFiles"] == 1 for item in report["validations"])
+PY
+
+wrong_proposal=(
+    profile propose
+    "${buildopt_common[@]}"
+    --changes-file changes.txt
+    --base-revision "${buildopt_base}"
+    --required-output 'service-a/build/libs/**'
+    --output-contract-output wrong-output-contract.json
+    --proposal-output wrong-proposal.json
+)
+(
+    cd -- "${buildopt_repository}"
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_temp}/bin/buildopt" "${wrong_proposal[@]}" >/dev/null
+)
+python3 - "${buildopt_repository}/wrong-output-contract.json" \
+    "${buildopt_repository}/wrong-proposal.json" <<'PY'
+import json
+import sys
+with open(sys.argv[1], encoding="utf-8") as handle:
+    contract = json.load(handle)
+with open(sys.argv[2], encoding="utf-8") as handle:
+    proposal = json.load(handle)
+assert contract["decision"] == "NATIVE_FULL_GRAPH"
+assert contract["reason"] == "REQUIRED_OUTPUTS_EMPTY"
+assert contract["validations"][0]["status"] == "EMPTY"
+assert any(item["pattern"].startswith("service-a/target/") for item in contract["candidateOutputs"])
+assert proposal["decision"] == "NATIVE_FULL_GRAPH"
+assert proposal["reason"] == "REQUIRED_OUTPUTS_EMPTY"
+assert proposal["documents"]["outputContract"] == "wrong-output-contract.json"
+assert "manifest" not in proposal["documents"]
+PY
+test ! -e "${buildopt_repository}/buildopt-impact-manifest.json"
+
+rm -f -- "${buildopt_repository}/buildopt-output-contract.json" \
+    "${buildopt_repository}/buildopt-impact-manifest.json" \
+    "${buildopt_repository}/buildopt-impact-graph.generated.json" \
+    "${buildopt_repository}/buildopt-impact.generated.json" \
+    "${buildopt_repository}/buildopt-fallback-changes.txt" \
+    "${buildopt_repository}/buildopt-profile-proposal.json"
+(
+    cd -- "${buildopt_repository}"
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_temp}/bin/buildopt" profile propose \
+        "${buildopt_common[@]}" \
+        --changes-file changes.txt \
+        --base-revision "${buildopt_base}" \
+        --required-output 'service-a/target/libs/**' >/dev/null
+)
+python3 - "${buildopt_repository}/buildopt-output-contract.json" \
+    "${buildopt_repository}/buildopt-profile-proposal.json" <<'PY'
+import json
+import sys
+with open(sys.argv[1], encoding="utf-8") as handle:
+    contract = json.load(handle)
+with open(sys.argv[2], encoding="utf-8") as handle:
+    proposal = json.load(handle)
+assert contract["decision"] == "VALIDATED_REQUIRED_OUTPUTS"
+assert proposal["decision"] == "MEASURE_STRUCTURAL_CANDIDATE"
+assert proposal["candidateEntrypoints"] == [":service-a:jar"]
+assert proposal["omittedProjects"] == [":service-b"]
+assert proposal["analysis"]["plan"]["requiredOutputs"] == ["service-a/target/libs/**"]
+PY
+
+buildopt_ambiguous="${buildopt_temp}/ambiguous"
+cp -R -- "${buildopt_repository}" "${buildopt_ambiguous}"
+git -C "${buildopt_ambiguous}" clean -ffdxq
+cat >>"${buildopt_ambiguous}/build.gradle.kts" <<'EOF'
+subprojects {
+    tasks.register("sharedOutput") {
+        outputs.dir(rootProject.layout.projectDirectory.dir("shared"))
+        doLast {
+            rootProject.file("shared/${project.name}.txt").apply {
+                parentFile.mkdirs()
+                writeText(project.name)
+            }
+        }
+    }
+}
+EOF
+git -C "${buildopt_ambiguous}" add build.gradle.kts
+git -C "${buildopt_ambiguous}" commit -qm 'add ambiguous shared output'
+(
+    cd -- "${buildopt_ambiguous}"
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_temp}/bin/buildopt" profile outputs \
+        --repository-id example/ambiguous-output \
+        --pipeline-class shared \
+        --entrypoint sharedOutput \
+        --required-output 'shared/**' \
+        --gradle-option=--offline \
+        --output ambiguous.json >/dev/null
+)
+python3 - "${buildopt_ambiguous}/ambiguous.json" <<'PY'
+import json
+import sys
+with open(sys.argv[1], encoding="utf-8") as handle:
+    report = json.load(handle)
+assert report["decision"] == "NATIVE_FULL_GRAPH"
+assert report["reason"] == "OUTPUT_OWNERSHIP_AMBIGUOUS"
+assert report["validations"][0]["status"] == "AMBIGUOUS"
+assert report["validations"][0]["ownerProjects"] == [":service-a", ":service-b"]
+PY
+
+printf 'Generic output-contract preflight passed\n'

@@ -1,0 +1,99 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import java.nio.file.Files
+
+// Init scripts are inherited by buildSrc and included builds. Output-contract
+// discovery owns only the top-level repository selected by the CLI.
+if (gradle.getParent() == null) {
+    gradle.projectsEvaluated {
+        def outputPath = System.getenv("BUILDOPT_OUTPUT_CONTRACT_SNAPSHOT")
+        def entrypointJSON = System.getenv("BUILDOPT_OUTPUT_CONTRACT_ENTRYPOINTS")
+        if (outputPath == null || outputPath.isBlank() || entrypointJSON == null) {
+            throw new GradleException("BuildOpt output-contract environment is incomplete")
+        }
+        def requestedEntrypoints = new JsonSlurper().parseText(entrypointJSON)
+        if (!(requestedEntrypoints instanceof List) || requestedEntrypoints.isEmpty()) {
+            throw new GradleException("BuildOpt output-contract discovery requires entrypoints")
+        }
+
+        def root = gradle.rootProject
+        def rootPath = root.projectDir.toPath().toAbsolutePath().normalize()
+        def requestedTasks = requestedEntrypoints.collectMany { requestedName ->
+            def requested = requestedName as String
+            if (requested.contains(":")) {
+                return [root.tasks.getByPath(requested)]
+            }
+            def matches = root.allprojects.collect {
+                it.tasks.findByName(requested)
+            }.findAll { it != null }
+            if (matches.isEmpty()) {
+                throw new GradleException("Task selector '${requested}' did not match any project")
+            }
+            return matches
+        }.toSet().toList().sort { left, right -> left.path <=> right.path }
+
+        def contractTask = root.tasks.register("buildoptOutputContract") {
+            group = "buildopt"
+            description = "Executes the owner workflow and records its repository-owned outputs"
+            dependsOn(requestedTasks)
+            doLast {
+                def tasks = gradle.taskGraph.allTasks.findAll {
+                    !(it.name == "buildoptOutputContract" && it.project == root) &&
+                        it.project.gradle == gradle
+                }.sort { left, right -> left.path <=> right.path }.collect { task ->
+                    def projectDirectory = rootPath.relativize(
+                        task.project.projectDir.toPath().toAbsolutePath().normalize()
+                    ).toString().replace('\\', '/')
+                    def outputs = task.outputs.files.files.collect { output ->
+                        def normalized = output.toPath().toAbsolutePath().normalize()
+                        def insideRepository = normalized.startsWith(rootPath)
+                        def relative = insideRepository
+                            ? rootPath.relativize(normalized).toString().replace('\\', '/')
+                            : ""
+                        def kind = Files.isDirectory(normalized) ? "DIRECTORY" : "FILE"
+                        def symlink = Files.isSymbolicLink(normalized)
+                        long fileCount = 0
+                        if (insideRepository && !symlink && Files.isRegularFile(normalized)) {
+                            fileCount = 1
+                        } else if (insideRepository && !symlink && Files.isDirectory(normalized)) {
+                            def stream = Files.walk(normalized)
+                            try {
+                                fileCount = stream.filter {
+                                    Files.isRegularFile(it) && !Files.isSymbolicLink(it)
+                                }.count()
+                            } finally {
+                                stream.close()
+                            }
+                        }
+                        [
+                            path: relative,
+                            kind: kind,
+                            exists: Files.exists(normalized),
+                            symlink: symlink,
+                            insideRepository: insideRepository,
+                            fileCount: fileCount,
+                        ]
+                    }.sort { left, right ->
+                        def byPath = left.path <=> right.path
+                        byPath != 0 ? byPath : left.kind <=> right.kind
+                    }
+                    [
+                        taskPath: task.path,
+                        projectPath: task.project.path,
+                        projectDirectory: projectDirectory,
+                        outputs: outputs,
+                    ]
+                }
+                def snapshot = [
+                    schemaVersion: "buildopt.poc/output-contract-snapshot/v1",
+                    gradleVersion: gradle.gradleVersion,
+                    entrypoints: requestedEntrypoints,
+                    tasks: tasks,
+                ]
+                def destination = new File(outputPath)
+                destination.parentFile.mkdirs()
+                destination.text = JsonOutput.toJson(snapshot) + "\n"
+            }
+        }
+    }
+}
