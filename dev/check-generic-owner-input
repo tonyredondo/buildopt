@@ -1,0 +1,226 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "$0")/.." && pwd -P)
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-owner-input.XXXXXX")
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-owner-input."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in cmp git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required owner-input checker command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_repository="${buildopt_temp}/repository"
+buildopt_gradle_home="${buildopt_root}/.tools/gradle-user-home/local"
+mkdir -p -- "${buildopt_repository}/service-a/src/main/java/example" \
+    "${buildopt_repository}/service-b/src/main/java/example" \
+    "${buildopt_repository}/.buildopt" "${buildopt_temp}/bin"
+cp -- "${buildopt_root}/gradlew" "${buildopt_repository}/gradlew"
+cp -R -- "${buildopt_root}/gradle" "${buildopt_repository}/gradle"
+chmod +x -- "${buildopt_repository}/gradlew"
+
+cat >"${buildopt_repository}/settings.gradle.kts" <<'EOF'
+rootProject.name = "generic-owner-input-fixture"
+include("service-a", "service-b")
+EOF
+cat >"${buildopt_repository}/build.gradle.kts" <<'EOF'
+subprojects {
+    apply(plugin = "java")
+    layout.buildDirectory = layout.projectDirectory.dir("target")
+}
+EOF
+cat >"${buildopt_repository}/service-a/src/main/java/example/ServiceA.java" <<'EOF'
+package example;
+public final class ServiceA { public static String value() { return "base"; } }
+EOF
+cat >"${buildopt_repository}/service-b/src/main/java/example/ServiceB.java" <<'EOF'
+package example;
+public final class ServiceB { public static String value() { return "stable"; } }
+EOF
+git -C "${buildopt_repository}" init -q
+git -C "${buildopt_repository}" config user.name 'BuildOpt Fixture'
+git -C "${buildopt_repository}" config user.email buildopt-fixture@example.invalid
+git -C "${buildopt_repository}" config commit.gpgsign false
+git -C "${buildopt_repository}" add .
+git -C "${buildopt_repository}" commit -qm 'owner input base'
+buildopt_base=$(git -C "${buildopt_repository}" rev-parse HEAD)
+sed -i 's/return "base"/return "target"/' \
+    "${buildopt_repository}/service-a/src/main/java/example/ServiceA.java"
+git -C "${buildopt_repository}" add service-a/src/main/java/example/ServiceA.java
+git -C "${buildopt_repository}" commit -qm 'change service a'
+buildopt_target=$(git -C "${buildopt_repository}" rev-parse HEAD)
+git -C "${buildopt_repository}" diff --name-only "${buildopt_base}" "${buildopt_target}" \
+    >"${buildopt_repository}/changes.txt"
+
+"${buildopt_root}/dev/run" --toolchain go -- \
+    go build -trimpath -o "${buildopt_temp}/bin/buildopt" ./cmd/buildopt
+
+(
+    cd -- "${buildopt_repository}"
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_temp}/bin/buildopt" profile outputs \
+        --repository-id example/generic-owner-input-fixture \
+        --pipeline-class jar \
+        --entrypoint jar \
+        --required-output 'service-a/target/libs/**' \
+        --gradle-command ./gradlew \
+        --gradle-option=--offline \
+        --output validated-output-contract.json >/dev/null
+)
+
+set +e
+(
+    cd -- "${buildopt_repository}"
+    "${buildopt_temp}/bin/buildopt" profile input \
+        --output-contract validated-output-contract.json \
+        >"${buildopt_temp}/unconfirmed.stdout" \
+        2>"${buildopt_temp}/unconfirmed.stderr"
+)
+buildopt_unconfirmed_status=$?
+set -e
+if ((buildopt_unconfirmed_status != 64)) ||
+    [[ -e ${buildopt_repository}/.buildopt/profile.json ]]; then
+    printf 'unconfirmed output contract created an owner input\n' >&2
+    exit 1
+fi
+
+set +e
+(
+    cd -- "${buildopt_repository}"
+    "${buildopt_temp}/bin/buildopt" profile input \
+        --output-contract validated-output-contract.json \
+        --confirm \
+        --timeout 90s \
+        --output .buildopt/non-integral-timeout.json \
+        >/dev/null 2>&1
+)
+buildopt_timeout_status=$?
+set -e
+if ((buildopt_timeout_status != 78)) ||
+    [[ -e ${buildopt_repository}/.buildopt/non-integral-timeout.json ]]; then
+    printf 'non-integral timeout created an owner input\n' >&2
+    exit 1
+fi
+
+(
+    cd -- "${buildopt_repository}"
+    "${buildopt_temp}/bin/buildopt" profile input \
+        --output-contract validated-output-contract.json \
+        --confirm \
+        --gradle-command ./gradlew \
+        --gradle-option=--offline \
+        --output .buildopt/profile.json \
+        >"${buildopt_temp}/generated.json"
+    "${buildopt_temp}/bin/buildopt" profile input \
+        --check .buildopt/profile.json \
+        >"${buildopt_temp}/checked.json"
+)
+cmp -- "${buildopt_temp}/generated.json" \
+    "${buildopt_repository}/.buildopt/profile.json"
+cmp -- "${buildopt_temp}/generated.json" "${buildopt_temp}/checked.json"
+buildopt_contract_sha=$(sha256sum \
+    "${buildopt_repository}/validated-output-contract.json" | awk '{print $1}')
+jq -e --arg revision "${buildopt_target}" --arg digest "${buildopt_contract_sha}" '
+    .schemaVersion == "buildopt.poc/profile-owner-input/v1" and
+    .repositoryId == "example/generic-owner-input-fixture" and
+    .pipelineClass == "jar" and
+    .entrypoints == ["jar"] and
+    .requiredOutputs == ["service-a/target/libs/**"] and
+    .changeSource == "GIT_DIFF_BASE_TO_HEAD" and
+    .gradleCommand == "./gradlew" and
+    .gradleOptions == ["--offline"] and
+    .outputConfirmation == {
+        status: "OWNER_CONFIRMED",
+        observedRevision: $revision,
+        contractSha256: $digest
+    } and
+    .reviewRequired == true and
+    .activationAutomatic == false and
+    .productionAuthorized == false and
+    .testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_repository}/.buildopt/profile.json" >/dev/null
+
+mkdir -p -- "${buildopt_repository}/.buildopt/proposal"
+(
+    cd -- "${buildopt_repository}"
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_temp}/bin/buildopt" profile propose \
+        --owner-input .buildopt/profile.json \
+        --base-revision "${buildopt_base}" \
+        --output-contract-output .buildopt/proposal/output-contract.json \
+        --manifest-output .buildopt/proposal/manifest.json \
+        --graph-output .buildopt/proposal/graph.json \
+        --generated-manifest-output .buildopt/proposal/generated.json \
+        --fallback-changes-output .buildopt/proposal/fallback.txt \
+        --proposal-output .buildopt/proposal/proposal.json >/dev/null
+)
+buildopt_owner_sha=$(sha256sum \
+    "${buildopt_repository}/.buildopt/profile.json" | awk '{print $1}')
+jq -e --arg digest "${buildopt_owner_sha}" '
+    .decision == "MEASURE_STRUCTURAL_CANDIDATE" and
+    .reason == "COMPLETE_STRUCTURAL_REDUCTION" and
+    .candidateEntrypoints == [":service-a:jar"] and
+    .omittedProjects == [":service-b"] and
+    .ownerInput == ".buildopt/profile.json" and
+    .ownerInputSha256 == $digest and
+    .activationAutomatic == false
+' "${buildopt_repository}/.buildopt/proposal/proposal.json" >/dev/null
+
+sed -i 's/dir("target")/dir("dist")/' \
+    "${buildopt_repository}/build.gradle.kts"
+git -C "${buildopt_repository}" add build.gradle.kts
+git -C "${buildopt_repository}" commit -qm 'move Gradle outputs'
+buildopt_drift_target=$(git -C "${buildopt_repository}" rev-parse HEAD)
+git -C "${buildopt_repository}" diff --name-only \
+    "${buildopt_base}" "${buildopt_drift_target}" \
+    >"${buildopt_repository}/changes.txt"
+mkdir -p -- "${buildopt_repository}/.buildopt/drift"
+(
+    cd -- "${buildopt_repository}"
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_temp}/bin/buildopt" profile propose \
+        --owner-input .buildopt/profile.json \
+        --base-revision "${buildopt_base}" \
+        --output-contract-output .buildopt/drift/output-contract.json \
+        --manifest-output .buildopt/drift/manifest.json \
+        --graph-output .buildopt/drift/graph.json \
+        --generated-manifest-output .buildopt/drift/generated.json \
+        --fallback-changes-output .buildopt/drift/fallback.txt \
+        --proposal-output .buildopt/drift/proposal.json >/dev/null
+)
+jq -e '
+    .decision == "NATIVE_FULL_GRAPH" and
+    .reason == "REQUIRED_OUTPUTS_EMPTY" and
+    .ownerInput == ".buildopt/profile.json" and
+    .reviewRequired == true and
+    .activationAutomatic == false
+' "${buildopt_repository}/.buildopt/drift/proposal.json" >/dev/null
+jq -e '
+    .decision == "NATIVE_FULL_GRAPH" and
+    .reason == "REQUIRED_OUTPUTS_EMPTY" and
+    .validations == [{
+        pattern: "service-a/target/libs/**",
+        status: "EMPTY",
+        matchedFiles: 0,
+        ownerProjects: [],
+        producerTasks: []
+    }] and
+    any(.candidateOutputs[]; .pattern == "service-a/dist/libs/service-a.jar")
+' "${buildopt_repository}/.buildopt/drift/output-contract.json" >/dev/null
+test ! -e "${buildopt_repository}/.buildopt/drift/manifest.json"
+test ! -e "${buildopt_repository}/.buildopt/drift/graph.json"
+
+printf 'Generic owner input passed: explicit confirmation, deterministic check, proposal reuse, digest binding, drift diagnostics, and native fallback\n'

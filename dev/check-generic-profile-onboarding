@@ -51,7 +51,7 @@ printf '%s\n' 'service-a/src/main/java/example/ServiceA.java' >"${repository}/ch
 
 "${buildopt_root}/dev/run" --toolchain go -- go build -trimpath -o "${temporary}/bin/buildopt" ./cmd/buildopt
 "${temporary}/bin/buildopt" profile propose --help >"${temporary}/proposal-help.txt"
-grep -F 'usage: buildopt profile propose --repository-id OWNER/REPO' "${temporary}/proposal-help.txt" >/dev/null
+grep -F 'usage: buildopt profile propose (--owner-input PATH [--changes-file PATH] | --repository-id OWNER/REPO' "${temporary}/proposal-help.txt" >/dev/null
 "${temporary}/bin/buildopt" profile outputs --help >"${temporary}/outputs-help.txt"
 grep -F 'usage: buildopt profile outputs --repository-id OWNER/REPO' "${temporary}/outputs-help.txt" >/dev/null
 set +e
@@ -62,7 +62,7 @@ if ((invalid_status != 64)); then
     printf 'invalid proposal status: %s\n' "${invalid_status}" >&2
     exit 1
 fi
-grep -F 'usage: buildopt profile propose --repository-id OWNER/REPO' "${temporary}/invalid.stderr" >/dev/null
+grep -F 'usage: buildopt profile propose (--owner-input PATH [--changes-file PATH] | --repository-id OWNER/REPO' "${temporary}/invalid.stderr" >/dev/null
 
 proposal_args=(
     profile propose

@@ -12,13 +12,14 @@ Linux, macOS and Windows when a semantic-version tag is pushed.
 
 The same Action exposes an explicit `profile-proposal` mode for Linux CI. It
 builds the CLI from the Action's immutable source commit, reads the consumer's
-checked-in `.buildopt/profile-ci.json`, derives the exact base-to-target change
+checked-in `.buildopt/profile.json`, derives the exact base-to-target change
 and uploads a review bundle. Before graph discovery it executes the declared
 workflow once and includes `buildopt-output-contract.json`; empty or ambiguous
 required outputs retain native and cannot reach measurement. The mode never
 measures or activates a profile; unsupported or incomplete discovery is a
 successful `NATIVE_FULL_GRAPH` decision. Operational failures upload
 diagnostics when possible and then fail the job. See the
+[owner-input contract](../specs/poc-generic-owner-input-v1.md) and
 [CI proposal contract](../specs/poc-generic-profile-ci-v1.md).
 
 [`profile-proposal-fixture.yml`](./workflows/profile-proposal-fixture.yml) is a

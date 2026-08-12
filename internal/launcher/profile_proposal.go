@@ -17,7 +17,7 @@ import (
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
 
-const profileProposalUsage = "usage: buildopt profile propose --repository-id OWNER/REPO --pipeline-class CLASS --entrypoint TASK [--entrypoint TASK ...] --changes-file PATH --base-revision REVISION --required-output GLOB [--required-output GLOB ...] [--global-change GLOB ...] [--gradle-command PATH] [--gradle-option VALUE ...] [--output-contract-output PATH] [--manifest-output PATH] [--graph-output PATH] [--generated-manifest-output PATH] [--fallback-changes-output PATH] [--proposal-output PATH] [--buildopt-revision REVISION] [--timeout DURATION]\n"
+const profileProposalUsage = "usage: buildopt profile propose (--owner-input PATH [--changes-file PATH] | --repository-id OWNER/REPO --pipeline-class CLASS --entrypoint TASK [--entrypoint TASK ...] --required-output GLOB [--required-output GLOB ...] --changes-file PATH) --base-revision REVISION [--global-change GLOB ...] [--gradle-command PATH] [--gradle-option VALUE ...] [--output-contract-output PATH] [--manifest-output PATH] [--graph-output PATH] [--generated-manifest-output PATH] [--fallback-changes-output PATH] [--proposal-output PATH] [--buildopt-revision REVISION] [--timeout DURATION]\n"
 
 var defaultProposalGlobalChanges = []string{
 	"build-logic/**",
@@ -64,6 +64,9 @@ type profileProposalReport struct {
 	ActivationAutomatic    bool                             `json:"activationAutomatic"`
 	ProductionAuthorized   bool                             `json:"productionAuthorized"`
 	TestOptimization       string                           `json:"testOptimization"`
+	OwnerInput             string                           `json:"ownerInput,omitempty"`
+	OwnerInputSHA256       string                           `json:"ownerInputSha256,omitempty"`
+	ChangeSource           string                           `json:"changeSource,omitempty"`
 }
 
 type proposalStringFlag []string
@@ -83,6 +86,7 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 	flags.SetOutput(io.Discard)
 	repositoryID := flags.String("repository-id", "", "owner/repository identity")
 	pipelineClass := flags.String("pipeline-class", "", "pipeline class")
+	ownerInputPath := flags.String("owner-input", "", "checked versioned owner input")
 	var entrypoints proposalStringFlag
 	flags.Var(&entrypoints, "entrypoint", "original Gradle task selector; repeat for multi-entrypoint workflows")
 	changesFile := flags.String("changes-file", "", "exact base-to-target changed paths")
@@ -95,14 +99,53 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 	fallbackOutput := flags.String("fallback-changes-output", "buildopt-fallback-changes.txt", "full-graph fallback input")
 	proposalOutput := flags.String("proposal-output", "buildopt-profile-proposal.json", "reviewable proposal output")
 	buildOptRevision := flags.String("buildopt-revision", "", "immutable BuildOpt revision for the next measure command")
-	timeout := flags.Duration("timeout", 5*time.Minute, "Gradle discovery timeout")
+	timeout := flags.Duration("timeout", 0, "Gradle discovery timeout")
 	var requiredOutputs proposalStringFlag
 	var globalChanges proposalStringFlag
 	var gradleOptions repeatedStringFlag
 	flags.Var(&requiredOutputs, "required-output", "repository-owned output glob; repeat for multiple outputs")
 	flags.Var(&globalChanges, "global-change", "full-graph fallback glob; repeat to replace defaults")
 	flags.Var(&gradleOptions, "gradle-option", "Gradle discovery option; repeat for multiple values")
-	if err := flags.Parse(args); err != nil || flags.NArg() != 0 || *repositoryID == "" || *pipelineClass == "" || len(entrypoints) == 0 || *changesFile == "" || *baseRevision == "" || len(requiredOutputs) == 0 || *timeout <= 0 {
+	if err := flags.Parse(args); err != nil || flags.NArg() != 0 || *baseRevision == "" {
+		_, _ = io.WriteString(stderr, profileProposalUsage)
+		return exitUsage
+	}
+	ownerInputDigest := ""
+	ownerChangeSource := ""
+	if *ownerInputPath != "" {
+		if *repositoryID != "" || *pipelineClass != "" || len(entrypoints) != 0 || len(requiredOutputs) != 0 || len(globalChanges) != 0 || *gradleCommand != "" || len(gradleOptions) != 0 || *timeout != 0 {
+			_, _ = io.WriteString(stderr, profileProposalUsage)
+			return exitUsage
+		}
+		root, err := canonicalWorkingDirectory()
+		if err != nil {
+			_, _ = fmt.Fprintf(stderr, "buildopt: structural profile proposal unavailable: %v\n", err)
+			return exitConfiguration
+		}
+		input, digest, err := readProfileOwnerInput(root, *ownerInputPath)
+		if err != nil {
+			_, _ = fmt.Fprintf(stderr, "buildopt: structural profile proposal unavailable: %v\n", err)
+			return exitConfiguration
+		}
+		*repositoryID, *pipelineClass = input.RepositoryID, input.PipelineClass
+		entrypoints = append(entrypoints, input.Entrypoints...)
+		requiredOutputs = append(requiredOutputs, input.RequiredOutputs...)
+		globalChanges = append(globalChanges, input.GlobalChanges...)
+		*gradleCommand = input.GradleCommand
+		gradleOptions = append(gradleOptions, input.GradleOptions...)
+		*timeout = time.Duration(input.TimeoutMinutes) * time.Minute
+		ownerInputDigest = digest
+		ownerChangeSource = input.ChangeSource
+	} else {
+		if *repositoryID == "" || *pipelineClass == "" || len(entrypoints) == 0 || len(requiredOutputs) == 0 || *changesFile == "" {
+			_, _ = io.WriteString(stderr, profileProposalUsage)
+			return exitUsage
+		}
+		if *timeout == 0 {
+			*timeout = 5 * time.Minute
+		}
+	}
+	if *timeout <= 0 {
 		_, _ = io.WriteString(stderr, profileProposalUsage)
 		return exitUsage
 	}
@@ -119,7 +162,9 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 		manifestOutput:       *manifestOutput, graphOutput: *graphOutput,
 		generatedOutput: *generatedOutput, fallbackOutput: *fallbackOutput,
 		proposalOutput: *proposalOutput, buildOptRevision: *buildOptRevision,
-		timeout: *timeout,
+		ownerInput: *ownerInputPath, ownerInputSHA256: ownerInputDigest,
+		changeSource: ownerChangeSource,
+		timeout:      *timeout,
 	})
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile proposal unavailable: %v\n", err)
@@ -159,6 +204,8 @@ type structuralProposalConfig struct {
 	gradleCommand, outputContractOutput, manifestOutput, graphOutput string
 	generatedOutput                                                  string
 	fallbackOutput, proposalOutput, buildOptRevision                 string
+	ownerInput, ownerInputSHA256                                     string
+	changeSource                                                     string
 	timeout                                                          time.Duration
 }
 
@@ -190,11 +237,18 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 	if err != nil {
 		return profileProposalReport{}, nil, err
 	}
-	changedPaths, err := readImpactChangedPaths(root, config.changesFile)
-	if err != nil {
-		return profileProposalReport{}, nil, err
+	var changedPaths []string
+	if config.changesFile != "" {
+		changedPaths, err = readImpactChangedPaths(root, config.changesFile)
+		if err == nil {
+			err = validateMeasurementChangeSet(root, config.baseRevision, targetRevision, changedPaths)
+		}
+	} else if config.changeSource == "GIT_DIFF_BASE_TO_HEAD" {
+		changedPaths, err = proposalGitChangedPaths(root, config.baseRevision, targetRevision)
+	} else {
+		err = errors.New("proposal requires an exact change source")
 	}
-	if err := validateMeasurementChangeSet(root, config.baseRevision, targetRevision, changedPaths); err != nil {
+	if err != nil {
 		return profileProposalReport{}, nil, err
 	}
 	sort.Strings(changedPaths)
@@ -346,7 +400,27 @@ func nativeProfileProposal(config structuralProposalConfig, targetRevision strin
 		Documents:         profileProposalDocuments{OutputContract: config.outputContractOutput, Proposal: config.proposalOutput},
 		ReviewRequired:    true, ActivationAutomatic: false, ProductionAuthorized: false,
 		TestOptimization: "OUT_OF_SCOPE",
+		OwnerInput:       config.ownerInput, OwnerInputSHA256: config.ownerInputSHA256,
+		ChangeSource: config.changeSource,
 	}
+}
+
+func proposalGitChangedPaths(root, baseRevision, targetRevision string) ([]string, error) {
+	raw, err := gitOutput(root, "diff", "--name-only", "--no-renames", "-z", baseRevision, targetRevision, "--")
+	if err != nil {
+		return nil, err
+	}
+	paths := nullDelimitedPaths(raw)
+	if len(paths) == 0 || len(paths) > maximumImpactChangedPaths || !uniqueMeasurementStrings(paths) {
+		return nil, errors.New("Git change source must contain unique bounded paths")
+	}
+	for _, candidate := range paths {
+		if !validObservedOutputPath(candidate) || strings.ContainsAny(candidate, "\r\n\x00") {
+			return nil, errors.New("Git change source contains an unsafe path")
+		}
+	}
+	sort.Strings(paths)
+	return paths, nil
 }
 
 func proposalTerminalSelectors(entrypoints []string) ([]string, error) {
@@ -397,7 +471,13 @@ func proposalGitTarget(root, baseRevision string) (string, error) {
 
 func validateProposalOutputs(config structuralProposalConfig) error {
 	paths := []string{config.outputContractOutput, config.manifestOutput, config.graphOutput, config.generatedOutput, config.fallbackOutput, config.proposalOutput}
-	seen := map[string]bool{config.changesFile: true}
+	seen := map[string]bool{}
+	if config.changesFile != "" {
+		seen[config.changesFile] = true
+	}
+	if config.ownerInput != "" {
+		seen[config.ownerInput] = true
+	}
 	for _, candidate := range paths {
 		if candidate == "" || filepath.IsAbs(candidate) || filepath.Clean(candidate) != candidate || candidate == "." || candidate == ".." || seen[candidate] {
 			return errors.New("proposal outputs must be distinct clean repository-relative paths")

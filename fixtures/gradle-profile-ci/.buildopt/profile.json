@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.poc/profile-owner-input/v1",
+  "repositoryId": "example/buildopt-profile-ci-fixture",
+  "pipelineClass": "pull-request",
+  "entrypoints": [
+    "classes"
+  ],
+  "requiredOutputs": [
+    "service-a/build/classes/**"
+  ],
+  "changeSource": "GIT_DIFF_BASE_TO_HEAD",
+  "globalChanges": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "gradleCommand": "./gradlew",
+  "gradleOptions": [],
+  "timeoutMinutes": 10,
+  "outputConfirmation": {
+    "status": "OWNER_CONFIRMED",
+    "observedRevision": "0123456789abcdef0123456789abcdef01234567",
+    "contractSha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+  },
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false,
+  "testOptimization": "OUT_OF_SCOPE"
+}

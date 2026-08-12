@@ -102,30 +102,40 @@ and generated graph described in the
 [Build Impact workflow](../guides/product-workflows.md#build-impact).
 
 The easiest first step is review-only CI. Commit the owner input described by
-the [profile proposal CI contract](../../specs/poc-generic-profile-ci-v1.md)
+the [owner-input contract](../../specs/poc-generic-owner-input-v1.md)
 and run the repository-root Action in `profile-proposal` mode. It derives the
 exact Git change and uploads a deterministic proposal or an explicit native
 fallback. It does not time the candidate or activate a profile, so a team can
 inspect BuildOpt's reasoning before trusting it with any execution change.
 
-Before committing a qualified profile, current `main` can create the exact POC
-inputs without hand-authoring Build Impact JSON:
+Before committing a qualified profile, current `main` can create one checked
+owner input without hand-authoring Build Impact JSON:
 
 ```bash
-git diff --name-only --no-renames "$BASE_SHA" HEAD > buildopt-changes.txt
-buildopt profile propose \
+mkdir -p .buildopt
+buildopt profile outputs \
   --repository-id owner/repository \
   --pipeline-class classes \
   --entrypoint classes \
-  --changes-file buildopt-changes.txt \
-  --base-revision "$BASE_SHA" \
-  --required-output 'module/build/classes/**'
+  --required-output 'module/build/classes/**' \
+  --output .buildopt/output-contract.json
+buildopt profile input \
+  --output-contract .buildopt/output-contract.json \
+  --confirm \
+  --gradle-command ./gradlew \
+  --output .buildopt/profile.json
+buildopt profile propose \
+  --owner-input .buildopt/profile.json \
+  --base-revision "$BASE_SHA"
 ```
 
 Repeat `--entrypoint` for a workflow that invokes several Gradle task paths.
 BuildOpt preserves the complete native workflow as fallback and maps the unique
 terminal selectors to the exact changed project owners; it does not require a
-repository-specific profile or an artificial aggregate task.
+repository-specific profile or an artificial aggregate task. The owner file
+declares `GIT_DIFF_BASE_TO_HEAD`, so local and CI proposal paths use the same
+change source. BuildOpt revalidates the output contract on every target and
+retains native Gradle with concrete candidates if those outputs drift.
 
 Review `buildopt-profile-proposal.json` first. A
 `MEASURE_STRUCTURAL_CANDIDATE` decision includes the follow-up argument vector
@@ -133,8 +143,9 @@ for `buildopt profile measure`; fill the immutable BuildOpt revision if it was
 not supplied to `profile propose`. Measurement compares eight isolated
 optimized-native and BuildOpt pairs and writes evidence only after every build
 and output check succeeds. Then `buildopt profile evaluate` either writes a
-reviewable profile or retains native full graph. See the [generic onboarding
-contract](../../specs/poc-generic-profile-onboarding-v1.md) and [measurement
+reviewable profile or retains native full graph. See the [owner-input
+contract](../../specs/poc-generic-owner-input-v1.md), [generic onboarding
+contract](../../specs/poc-generic-profile-onboarding-v1.md), and [measurement
 contract](../../specs/poc-generic-measurement-v1.md).
 
 This workflow is not limited to the small conformance fixture. Starting from

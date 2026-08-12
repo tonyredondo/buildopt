@@ -38,7 +38,7 @@ jobs:
         uses: ./
         with:
           mode: profile-proposal
-          profile-config: .buildopt/profile-ci.json
+          profile-config: .buildopt/profile.json
           profile-base-revision: ${{ steps.fixture.outputs.base-revision }}
           profile-target-revision: ${{ steps.fixture.outputs.target-revision }}
           profile-repository-directory: ${{ steps.fixture.outputs.repository }}

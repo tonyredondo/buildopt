@@ -42,6 +42,7 @@ done
 
 for buildopt_line in \
     '    default: install' \
+    '    default: .buildopt/profile.json' \
     "      uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5" \
     "      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02" \
     "        retention-days: 14" \
@@ -86,7 +87,7 @@ buildopt_run_action() {
     BUILDOPT_PROFILE_ARTIFACT_NAME=buildopt-profile-proposal-fixture \
     BUILDOPT_PROFILE_BASE_REVISION="${buildopt_base}" \
     BUILDOPT_PROFILE_BUILDOPT_REVISION="${buildopt_revision}" \
-    BUILDOPT_PROFILE_CONFIG=.buildopt/profile-ci.json \
+    BUILDOPT_PROFILE_CONFIG=.buildopt/profile.json \
     BUILDOPT_PROFILE_REPOSITORY_DIRECTORY="${buildopt_consumer}" \
     BUILDOPT_PROFILE_RUNNER_OS=Linux \
     BUILDOPT_PROFILE_TARGET_REVISION="${buildopt_target}" \
@@ -123,9 +124,17 @@ jq -e '
     .candidateEntrypoints == [":service-a:classes"] and
     .omittedProjects == [":service-b"] and
     .buildOptRevisionNeeded == false and
+    .ownerInput == ".buildopt/profile.json" and
+    (.ownerInputSha256 | test("^[0-9a-f]{64}$")) and
     .reviewRequired == true and
     .activationAutomatic == false
 ' "${buildopt_artifact}/buildopt-profile-proposal.json" >/dev/null
+jq -e '
+    .schemaVersion == "buildopt.poc/profile-owner-input/v1" and
+    .outputConfirmation.status == "OWNER_CONFIRMED" and
+    .reviewRequired == true and
+    .activationAutomatic == false
+' "${buildopt_artifact}/ci-input.json" >/dev/null
 jq -e '
     .schemaVersion == "buildopt.poc/output-contract/v1" and
     .decision == "VALIDATED_REQUIRED_OUTPUTS" and
@@ -185,11 +194,11 @@ buildopt_error_output="${buildopt_temporary}/error-fixture.outputs"
 buildopt_error_consumer=$(awk -F= '$1 == "repository" {print substr($0, index($0, "=") + 1)}' "${buildopt_error_output}")
 buildopt_error_base=$(git -C "${buildopt_error_consumer}" rev-parse HEAD)
 jq '.gradleCommand = "./missing-gradle"' \
-    "${buildopt_error_consumer}/.buildopt/profile-ci.json" \
+    "${buildopt_error_consumer}/.buildopt/profile.json" \
     >"${buildopt_temporary}/error-profile-ci.json"
 cp -- "${buildopt_temporary}/error-profile-ci.json" \
-    "${buildopt_error_consumer}/.buildopt/profile-ci.json"
-git -C "${buildopt_error_consumer}" add .buildopt/profile-ci.json
+    "${buildopt_error_consumer}/.buildopt/profile.json"
+git -C "${buildopt_error_consumer}" add .buildopt/profile.json
 git -C "${buildopt_error_consumer}" commit -qm 'configure a missing Gradle command'
 buildopt_error_target=$(git -C "${buildopt_error_consumer}" rev-parse HEAD)
 set +e
@@ -224,7 +233,7 @@ BUILDOPT_PROFILE_ACTION_REF="${buildopt_revision}" \
 BUILDOPT_PROFILE_ARTIFACT_NAME=buildopt-profile-proposal-fixture \
 BUILDOPT_PROFILE_BASE_REVISION="${buildopt_base}" \
 BUILDOPT_PROFILE_BUILDOPT_REVISION="${buildopt_revision}" \
-BUILDOPT_PROFILE_CONFIG=.buildopt/profile-ci.json \
+BUILDOPT_PROFILE_CONFIG=.buildopt/profile.json \
 BUILDOPT_PROFILE_REPOSITORY_DIRECTORY="${buildopt_consumer}" \
 BUILDOPT_PROFILE_RUNNER_OS=Linux \
 BUILDOPT_PROFILE_TARGET_REVISION=0000000000000000000000000000000000000000 \
@@ -241,18 +250,18 @@ if ((buildopt_invalid_status == 0)); then
 fi
 
 git -C "${buildopt_consumer}" clean -ffdxq
-cp -- "${buildopt_consumer}/.buildopt/profile-ci.json" \
+cp -- "${buildopt_consumer}/.buildopt/profile.json" \
     "${buildopt_temporary}/outside-profile-ci.json"
-rm -f -- "${buildopt_consumer}/.buildopt/profile-ci.json"
+rm -f -- "${buildopt_consumer}/.buildopt/profile.json"
 ln -s -- "${buildopt_temporary}/outside-profile-ci.json" \
-    "${buildopt_consumer}/.buildopt/profile-ci.json"
+    "${buildopt_consumer}/.buildopt/profile.json"
 set +e
 BUILDOPT_PROFILE_ACTION_PATH="${buildopt_repository_root}" \
 BUILDOPT_PROFILE_ACTION_REF="${buildopt_revision}" \
 BUILDOPT_PROFILE_ARTIFACT_NAME=buildopt-profile-proposal-fixture \
 BUILDOPT_PROFILE_BASE_REVISION="${buildopt_base}" \
 BUILDOPT_PROFILE_BUILDOPT_REVISION="${buildopt_revision}" \
-BUILDOPT_PROFILE_CONFIG=.buildopt/profile-ci.json \
+BUILDOPT_PROFILE_CONFIG=.buildopt/profile.json \
 BUILDOPT_PROFILE_REPOSITORY_DIRECTORY="${buildopt_consumer}" \
 BUILDOPT_PROFILE_RUNNER_OS=Linux \
 BUILDOPT_PROFILE_TARGET_REVISION="${buildopt_target}" \

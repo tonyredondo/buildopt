@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "buildopt.specs/poc-generic-owner-input/v1",
+  "workItem": "POC-GENERIC-OWNER-INPUT-001",
+  "decision": "UNIFY_CONFIRMED_OWNER_SEMANTICS_FOR_LOCAL_AND_CI_PROPOSALS",
+  "implementedFromRevision": "5aaf816890cbe02cc70cb066f395371e3207471d",
+  "method": {
+    "sourceArtifact": "buildopt.poc/output-contract/v1",
+    "ownerArtifact": "buildopt.poc/profile-owner-input/v1",
+    "defaultPath": ".buildopt/profile.json",
+    "requiresValidatedNonEmptyOutputs": true,
+    "requiresExplicitOwnerConfirmation": true,
+    "changeSource": "GIT_DIFF_BASE_TO_HEAD",
+    "sameInputUsedLocallyAndInCI": true,
+    "ownerInputDigestBoundIntoProposal": true,
+    "ownerWorkflowReexecutedBeforeEveryProposal": true,
+    "legacyCIInputAcceptedForCompatibility": true,
+    "repositorySpecificProductRulesAllowed": false
+  },
+  "acceptance": {
+    "generationWithoutConfirmRejected": true,
+    "generatedInputRoundTripsDeterministically": true,
+    "localProposalDerivesExactGitChange": true,
+    "ciProposalUsesSameOwnerSchema": true,
+    "confirmedOutputDriftDecision": "NATIVE_FULL_GRAPH",
+    "confirmedOutputDriftReason": "REQUIRED_OUTPUTS_EMPTY",
+    "driftCandidatesReported": true,
+    "candidateProfileWrittenOnDrift": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "reviewRequired": true,
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "performanceClaimCreated": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

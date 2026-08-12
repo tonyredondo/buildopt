@@ -97,17 +97,31 @@ It emits deterministic review JSON and embeds a profile only when all checked
 qualification, graph, trace/input, output and fallback bindings still pass. It
 never writes or activates the profile; uncertainty emits native full graph.
 
-Before a workload is qualified, the general read-only analysis surface finds a
-smaller reviewed graph without guessing a speedup:
+Before a workload is qualified, confirm the owner workflow and outputs once,
+then commit the generated owner input:
 
 ```bash
-buildopt profile propose \
+mkdir -p .buildopt
+buildopt profile outputs \
   --repository-id owner/repository \
   --pipeline-class classes \
   --entrypoint classes \
-  --changes-file buildopt-changes.txt \
-  --base-revision "$BASE_REVISION" \
-  --required-output 'module/build/classes/**'
+  --required-output 'module/build/classes/**' \
+  --output .buildopt/output-contract.json
+buildopt profile input \
+  --output-contract .buildopt/output-contract.json \
+  --confirm \
+  --gradle-command ./gradlew \
+  --output .buildopt/profile.json
+```
+
+The general read-only analysis surface then derives the exact base-to-HEAD Git
+change and finds a smaller reviewed graph without guessing a speedup:
+
+```bash
+buildopt profile propose \
+  --owner-input .buildopt/profile.json \
+  --base-revision "$BASE_REVISION"
 ```
 
 This two-pass onboarding command first observes the original Gradle workflow,
@@ -115,7 +129,9 @@ then validates its terminal task selectors on the exact changed project
 owners. Repeat `--entrypoint` to preserve a multi-entrypoint workflow. A safe
 reduction produces the manifest, graph, generated binding, fallback file and
 exact measurement handoff. Custom, ambiguous, global, Test-bearing or unknown
-work retains native full graph and writes no candidate state.
+work retains native full graph and writes no candidate state. Every proposal
+rechecks the confirmed output contract and binds the owner-input SHA-256, so
+workflow or output drift is visible before measurement.
 
 The generated state can then be inspected independently:
 

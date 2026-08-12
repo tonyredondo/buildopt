@@ -25,7 +25,7 @@ outputs represent success for an unknown customer build.
 | Structural decision | Fixed minimum saving, reduction, uncertainty, repeatability, output, failure and fallback gates determine `REVIEW_STRUCTURAL_PROFILE` or native fallback. | Explicit human review remains required. | Hibernate version 5 qualifies at 5.88%, 8/8 reciprocal blocks; Spring remains native at 7/8 despite a positive mean. |
 | Reviewed task optimization | Exact task adapters and Patch Autopilot can repair one understood cacheability contract with signed, reversible evidence. | A reviewed task type/recipe and its exact validation boundary. | Strong Kotlin/Groovy custom-task evidence exists, but this is not generalized to arbitrary task implementations. |
 | Shared / Edge Cache | Implements Gradle remote-cache protocol, authenticated commit authority, locality and safe miss/failure behavior. | Operator endpoint, credentials and a workload/network profile. | Locality has bounded synthetic and Kafka evidence; it is not part of the uniform structural claim. |
-| Evidence and CI | Review-only Action emits proposals from checked-in owner inputs and can replay them on clean runners without activating a profile. | A versioned owner input file. | Five-of-five clean-CI replay matched with zero graph drift and zero active profiles. |
+| Evidence and CI | Review-only Action and local CLI consume the same generated `.buildopt/profile.json`, derive the exact Git change and can replay proposals on clean runners without activating a profile. | Explicit confirmation of the generated owner input. | Synthetic drift returns native with concrete output candidates; five-of-five clean-CI replay remains compatible with zero graph drift and zero active profiles. |
 
 Runtime Tuning, Hot State and the standard `Copy` adapter are intentionally not
 generalized because end-to-end evidence was neutral, unstable or regressive.
@@ -69,9 +69,10 @@ JARs under `target/libs`, not Gradle's conventional `build/libs`. The completed
 generic preflight now runs the exact owner workflow once, rejects the empty
 `hibernate-core/build/libs/**` declaration, and reports three non-empty
 `:hibernate-core` JAR candidates under `target/libs`. It writes no structural
-proposal or profile and starts no warm-up or timing. The product still needs a
-small owner-facing flow for accepting a reviewed candidate into versioned
-input; it no longer needs the owner to discover the path by hand.
+proposal or profile and starts no warm-up or timing. That candidate can now be
+accepted explicitly through `buildopt profile input --confirm`; the generated
+owner file is shared by local and CI proposal paths, binds its source contract
+digest and is revalidated on each target.
 
 ## Cross-repository evidence
 
@@ -117,23 +118,19 @@ declared.
 
 ## Remaining gaps before calling the POC broadly usable
 
-1. **Owner-input ergonomics.** Turn reviewed output candidates, workflow and
-   change source into one small, documented, versioned file with an explicit
-   confirmation/update step; do not replace owner semantics with hidden
-   inference.
-2. **Workflow breadth.** Repeat the unchanged path on more packaging,
+1. **Workflow breadth.** Repeat the unchanged owner-file path on more packaging,
    verification, distribution and build-owned test-preparation workflows.
    Gradle `Test` optimization remains separate.
-3. **Installed replay of qualified profiles.** Prove that a reviewed profile
+2. **Installed replay of qualified profiles.** Prove that a reviewed profile
    selected by `evaluate` produces the same value through the public package,
    not only the measurement harness, for more than the existing bounded cases.
-4. **Generic task-contract research.** Add an adapter or patch recipe only when
+3. **Generic task-contract research.** Add an adapter or patch recipe only when
    an exact task contract and end-to-end wall-time win transfer across
    repositories; never infer value from cacheability alone.
-5. **Portfolio measurement.** When more than one mechanism qualifies for the
+4. **Portfolio measurement.** When more than one mechanism qualifies for the
    same workload, measure the complete installed composition directly. Do not
    add isolated percentages.
-6. **Native measurement parity.** Installation, launcher and service lifecycle
+5. **Native measurement parity.** Installation, launcher and service lifecycle
    are validated on Linux, macOS and Windows, but the current comparable
    structural wall-time matrix is Linux evidence. Run the same fail-closed
    qualification protocol natively before making macOS or Windows performance
@@ -149,7 +146,7 @@ repositories and beats optimized native Gradle in five under their frozen
 decision rules; Spring demonstrates that native fallback still governs a
 positive but insufficiently repeatable result.
 
-The next block should make owner input reviewable and easy to maintain. The
-preflight has closed the blind holdout failure; the remaining friction is
-turning its Gradle-owned candidates into one explicit, checked input without
-hand-editing several CLI flags or weakening correctness.
+The next block should test workflow breadth through the completed owner-input
+surface. Packaging, verification, distribution, and build-owned
+test-preparation need their own repository-declared success outputs and the
+same fail-closed proposal behavior before any new timing is justified.

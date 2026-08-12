@@ -3460,6 +3460,15 @@ observation against `specs/poc-generic-output-contract-v1.json`. The original
 candidates under `hibernate-core/target/libs`, and proposal stops at
 `NATIVE_FULL_GRAPH` with no warm-up, timing or profile.
 
+`./dev/check-generic-owner-input` converts a validated output contract into
+the shared `.buildopt/profile.json` only after explicit confirmation. It proves
+deterministic validation, automatic base-to-HEAD Git change derivation,
+owner-input digest binding, and a real Gradle output move from `target` to
+`dist`. The drift returns `NATIVE_FULL_GRAPH / REQUIRED_OUTPUTS_EMPTY`, reports
+the new owned JAR candidate and writes no candidate graph. The same schema is
+exercised by `./dev/check-generic-profile-ci`; the frozen five-repository
+replay continues to validate the former CI-only schema for compatibility.
+
 `./dev/run-generic-holdout /absolute/evidence/directory` packages the current
 committed CLI and applies the preregistered generic proposal, isolated
 measurement and evaluation path to the frozen Hibernate ORM holdout. The

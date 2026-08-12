@@ -19,7 +19,7 @@ inputs:
   profile-config:
     description: Repository-relative owner configuration for profile-proposal mode
     required: false
-    default: .buildopt/profile-ci.json
+    default: .buildopt/profile.json
   profile-base-revision:
     description: Exact 40-character base commit for profile-proposal mode
     required: false

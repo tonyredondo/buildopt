@@ -23,6 +23,25 @@ Launcher-owned `BUILDOPT_PLUGIN_*` and `BUILDOPT_GATEWAY_*` rendezvous values
 are internal outputs. Do not prepopulate them; the launcher removes inherited
 values and creates fresh invocation context.
 
+## Structural proposal owner input
+
+`.buildopt/profile.json` is the repository-owned review contract shared by
+local `buildopt profile propose` and the GitHub Action. Generate it only from a
+validated `buildopt profile outputs` artifact using `buildopt profile input
+--confirm`; do not hand-copy discovered paths. It contains no credential.
+
+The strict `buildopt.poc/profile-owner-input/v1` document records repository
+and pipeline identity, original Gradle entrypoints, confirmed output globs,
+`GIT_DIFF_BASE_TO_HEAD`, global fallback globs, a portable Wrapper command,
+Gradle options, timeout, observed revision, and the source output-contract
+SHA-256. `reviewRequired` is always true, while automatic activation and
+production authority are always false. Run `buildopt profile input --check
+.buildopt/profile.json` after resolving a merge or editing workflow metadata.
+
+Every proposal executes the recorded workflow and revalidates its output
+contract at the current target. Drift is a reviewable native decision, not an
+automatic update. See the [owner-input contract](../../specs/poc-generic-owner-input-v1.md).
+
 ## Qualified POC profile
 
 `buildopt poc` reads `buildopt-qualified-profile.json` from the repository root

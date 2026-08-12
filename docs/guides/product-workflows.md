@@ -189,30 +189,41 @@ buildopt-impact check \
   --generated-manifest buildopt-impact.generated.json
 ```
 
-Before adopting a candidate, collect its exact workload evidence instead of
-assuming graph reduction equals wall-clock value:
+Before adopting a candidate, confirm the workflow and outputs into one owner
+file, then collect exact workload evidence instead of assuming graph reduction
+equals wall-clock value:
 
 ```bash
-git diff --name-only --no-renames BASE_SHA HEAD > buildopt-changes.txt
-buildopt profile propose \
+mkdir -p .buildopt
+buildopt profile outputs \
   --repository-id owner/repository \
   --pipeline-class pull-request \
   --entrypoint classes \
-  --changes-file buildopt-changes.txt \
-  --base-revision "$BASE_SHA" \
-  --required-output 'module/build/classes/**'
+  --required-output 'module/build/classes/**' \
+  --output .buildopt/output-contract.json
+buildopt profile input \
+  --output-contract .buildopt/output-contract.json \
+  --confirm \
+  --gradle-command ./gradlew \
+  --output .buildopt/profile.json
+buildopt profile propose \
+  --owner-input .buildopt/profile.json \
+  --base-revision "$BASE_SHA"
 ```
 
 `--entrypoint` is repeatable. Multi-entrypoint workflows retain every declared
 native task as fallback while the generic proposal derives candidate task
 selectors from their terminal names and the exact owners of the change.
+`GIT_DIFF_BASE_TO_HEAD` is stored in the owner file, so local and CI invocations
+derive the same exact no-rename change set.
 
 Before graph discovery, the proposal executes the exact owner workflow once
 and writes `buildopt-output-contract.json`. Review the non-empty candidate
 paths, Gradle project owners and producer tasks. An empty or ambiguously owned
 declaration stops on native Gradle before any warm-up or timing. Use
 `buildopt profile outputs` when output ownership needs review before preparing
-the full change-bound proposal.
+the full change-bound proposal. `buildopt profile input --check
+.buildopt/profile.json` verifies the checked owner file without running Gradle.
 
 After output validation, the proposal command produces the manifest, graph,
 generated binding and fallback input used below without hand-authored JSON.

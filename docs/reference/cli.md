@@ -107,18 +107,31 @@ return review candidates; missing, empty, symlinked or ambiguously owned output
 contracts retain `NATIVE_FULL_GRAPH`. It never warms, times, proposes or
 activates an optimization.
 
+### Confirm a repository owner input
+
+```text
+buildopt profile input \
+  --output-contract PATH \
+  --confirm \
+  [--gradle-command PATH] \
+  [--gradle-option VALUE ...] \
+  [--output .buildopt/profile.json]
+
+buildopt profile input --check .buildopt/profile.json
+```
+
+Only a validated output contract can become an owner input, and creation
+requires explicit confirmation. The file records the workflow,
+`GIT_DIFF_BASE_TO_HEAD` change source, confirmed outputs, global fallback
+paths, Gradle options, timeout, observed revision, and source-contract digest.
+It is review input for local and CI proposals, not an active profile.
+
 ### Propose a structural POC measurement
 
 ```text
 buildopt profile propose \
-  --repository-id OWNER/REPO \
-  --pipeline-class CLASS \
-  --entrypoint TASK \
-  [--entrypoint TASK ...] \
-  --changes-file PATH \
-  --base-revision REVISION \
-  --required-output GLOB \
-  [--required-output GLOB ...]
+  --owner-input .buildopt/profile.json \
+  --base-revision REVISION
 ```
 
 This is the first command for a repository that has no BuildOpt manifest. It
@@ -132,7 +145,10 @@ task. It writes reviewable manifest, graph, generated binding, fallback and
 proposal documents only for a supported complete candidate. Global,
 ambiguous, custom, Test-bearing, unknown or invalid-output workflows retain
 `NATIVE_FULL_GRAPH`. It never writes an active profile or predicts a speedup.
-See [generic structural profile onboarding](../../specs/poc-generic-profile-onboarding-v1.md).
+The explicit legacy flags remain available for compatibility; the owner input
+is the recommended shared local/CI path and derives the exact Git diff when no
+changes file is supplied. See the [owner-input contract](../../specs/poc-generic-owner-input-v1.md)
+and [generic structural profile onboarding](../../specs/poc-generic-profile-onboarding-v1.md).
 
 ### Measure a structural POC candidate
 

@@ -4,7 +4,7 @@
 
 `POC-GENERIC-PROFILE-CI-001` exposes the unchanged generic structural proposal
 command through the repository-root GitHub Action. A repository owner supplies
-one checked-in configuration plus exact base and target commits. CI derives the
+one checked-in owner input plus exact base and target commits. CI derives the
 change set and uploads a review artifact. It never measures, writes an active
 profile, changes the Gradle workflow, or authorizes production use.
 
@@ -14,28 +14,41 @@ graphs and without repository-name logic?
 
 ## Owner configuration
 
-The default path is `.buildopt/profile-ci.json`:
+The default path is `.buildopt/profile.json`. It is generated from an
+explicitly confirmed output-contract preflight as defined by the
+[generic owner-input contract](./poc-generic-owner-input-v1.md):
 
 ```json
 {
-  "schemaVersion": "buildopt.poc/profile-ci-input/v1",
+  "schemaVersion": "buildopt.poc/profile-owner-input/v1",
   "repositoryId": "owner/repository",
   "pipelineClass": "pull-request",
   "entrypoints": ["assemble"],
   "requiredOutputs": ["module/build/libs/*.jar"],
-  "globalChanges": [],
+  "changeSource": "GIT_DIFF_BASE_TO_HEAD",
+  "globalChanges": ["build.gradle.kts", "settings.gradle.kts"],
   "gradleCommand": "./gradlew",
   "gradleOptions": [],
-  "timeoutMinutes": 10
+  "timeoutMinutes": 10,
+  "outputConfirmation": {
+    "status": "OWNER_CONFIRMED",
+    "observedRevision": "<40-character-commit>",
+    "contractSha256": "<64-character-sha256>"
+  },
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false,
+  "testOptimization": "OUT_OF_SCOPE"
 }
 ```
 
 The original Gradle entrypoints and required outputs are repository-owned
-semantics. An empty `globalChanges` array keeps BuildOpt's conservative default
-for settings, root build logic, `buildSrc`, `build-logic`, Gradle properties and
-Wrapper changes. The Action accepts only the strict v1 keys, bounded unique
-arrays, a clean relative Gradle command and a timeout from one to 30 minutes.
-The configuration contains no credentials.
+semantics. `profile input` supplies conservative global-change defaults unless
+the owner replaces them explicitly. The Action accepts only the strict v1
+keys, bounded unique arrays, a clean relative Gradle command, a timeout from
+one to 30 minutes, and the immutable output confirmation. The configuration
+contains no credentials. The former `profile-ci-input/v1` remains accepted for
+the frozen replay and existing consumers during migration.
 
 ## Immutable CI invocation
 

@@ -20,6 +20,11 @@
   a product failure. A fresh preregistered crossover then stabilized the exact
   300/32-task shapes and qualified at **5.88%**, with eight of eight reciprocal
   blocks positive.
+- **Onboarding now has one owner contract.** A reviewed
+  `.buildopt/profile.json` carries the Gradle workflow, exact Git change source,
+  confirmed outputs and fallback policy for both local and CI proposals. Every
+  target revalidates those outputs and falls back to native Gradle with drift
+  diagnostics before any timing.
 
 ## The Project in One Minute
 
@@ -35,7 +40,9 @@ or the measured value is weak, BuildOpt runs the optimized native full graph.
 The current POC flow is:
 
 ```text
-repository-owned Gradle task + exact Git change + required outputs
+repository-owned Gradle task + required outputs
+  -> buildopt profile outputs
+  -> explicit owner confirmation in .buildopt/profile.json
   -> buildopt profile propose
   -> buildopt profile measure
   -> buildopt profile evaluate
@@ -146,6 +153,11 @@ their existing paired timings. No timing was executed during this replay.
   result after one owner-workflow execution and exposed three
   `:hibernate-core` JAR candidates under `target/libs`. It started zero
   warm-ups/timings and wrote no candidate profile.
+- **Local and CI semantics are now identical.** The same checked owner file
+  derives the exact base-to-HEAD Git change, is SHA-bound into the proposal and
+  reexecutes the confirmed output workflow. A synthetic `target`-to-`dist`
+  drift returned `NATIVE_FULL_GRAPH / REQUIRED_OUTPUTS_EMPTY`, exposed the new
+  Gradle-owned JAR candidate and wrote no candidate graph.
 - **A raw pair can measure period as well as product.** Hibernate v4 preserved
   exact outputs while the first/second execution position dominated early
   results. Substantial measurements need target stability and reciprocal blocks
@@ -165,19 +177,16 @@ keeps native Gradle authoritative.
 
 ## Recommended Next Steps
 
-1. **Make owner input easy to review and version.** Turn the confirmed workflow,
-   change source and Gradle-owned output candidates into one checked file with
-   actionable drift/update diagnostics; keep confirmation explicit.
+1. **Broaden workflow coverage through the owner file.** Run the unchanged
+   local/CI contract on packaging, verification, distribution, and build-owned
+   test-preparation workflows; preserve each repository's own success outputs.
 2. **Measure only reviewed candidates.** A CI proposal remains an observation,
    not value evidence. Run isolated paired measurement only after its graph,
    outputs and fallback are accepted.
-3. **Broaden workflow coverage deliberately.** Test distinct customer build
-   shapes such as compilation, packaging, verification, and build-owned test
-   preparation. Test Optimization remains separate.
-4. **Replay reviewed profiles through the installed path.** Confirm that the
+3. **Replay reviewed profiles through the installed path.** Confirm that the
    public package preserves the measured result for additional qualified
    repositories instead of treating harness evidence as deployment evidence.
-5. **Make onboarding repository-owned and keep wall time authoritative.** Users
+4. **Keep wall time authoritative.** Users
    should provide a Gradle command, change source, and output contract—not
    hand-authored graphs. Promote only installed paths that preserve outputs,
    pass repeatability, prove fallback, and materially beat native Gradle.
@@ -197,6 +206,7 @@ Test Optimization remains outside Build Optimization.
 - [Hibernate target-workload attribution](../../benchmarks/results/poc-generic-holdout-v4/README.md)
 - [Hibernate reciprocal crossover result](../../benchmarks/results/poc-generic-holdout-v5/README.md)
 - [Hibernate output-contract preflight](../../benchmarks/results/poc-generic-output-contract-v1/README.md)
+- [Generic owner-input contract](../../specs/poc-generic-owner-input-v1.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [Detailed performance findings and historical research](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

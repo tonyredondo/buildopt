@@ -16,7 +16,7 @@ buildopt_action_ref=${BUILDOPT_PROFILE_ACTION_REF:-}
 buildopt_buildopt_revision=${BUILDOPT_PROFILE_BUILDOPT_REVISION:-}
 buildopt_repository_input=${BUILDOPT_PROFILE_REPOSITORY_DIRECTORY:-.}
 buildopt_runner_os=${BUILDOPT_PROFILE_RUNNER_OS:-}
-buildopt_config_relative=${BUILDOPT_PROFILE_CONFIG:-.buildopt/profile-ci.json}
+buildopt_config_relative=${BUILDOPT_PROFILE_CONFIG:-.buildopt/profile.json}
 buildopt_base_revision=${BUILDOPT_PROFILE_BASE_REVISION:-}
 buildopt_target_revision=${BUILDOPT_PROFILE_TARGET_REVISION:-}
 buildopt_artifact_name=${BUILDOPT_PROFILE_ARTIFACT_NAME:-buildopt-profile-proposal}
@@ -47,6 +47,16 @@ buildopt_repository=$(cd -- "${buildopt_repository_input}" 2>/dev/null && pwd -P
     buildopt_die 'profile repository directory is unavailable'
 if [[ ! -d "${buildopt_repository}/.git" && ! -f "${buildopt_repository}/.git" ]]; then
     buildopt_die 'profile repository directory is not a Git checkout'
+fi
+
+# Keep consumers on the historical default working while the owner-generated
+# profile replaces the former CI-only input.
+if [[ "${buildopt_config_relative}" == .buildopt/profile.json && \
+    ! -e "${buildopt_repository}/${buildopt_config_relative}" && \
+    ! -L "${buildopt_repository}/${buildopt_config_relative}" && \
+    -f "${buildopt_repository}/.buildopt/profile-ci.json" && \
+    ! -L "${buildopt_repository}/.buildopt/profile-ci.json" ]]; then
+    buildopt_config_relative=.buildopt/profile-ci.json
 fi
 
 buildopt_path_is_below() {
@@ -93,7 +103,38 @@ for index, part in enumerate(path.parts):
 PY
 buildopt_config="${buildopt_repository}/${buildopt_config_relative}"
 
-if ! jq -e '
+buildopt_config_schema=$(jq -r '.schemaVersion // ""' "${buildopt_config}")
+if [[ "${buildopt_config_schema}" == buildopt.poc/profile-owner-input/v1 ]]; then
+    jq -e '
+    keys == [
+        "activationAutomatic",
+        "changeSource",
+        "entrypoints",
+        "globalChanges",
+        "gradleCommand",
+        "gradleOptions",
+        "outputConfirmation",
+        "pipelineClass",
+        "productionAuthorized",
+        "repositoryId",
+        "requiredOutputs",
+        "reviewRequired",
+        "schemaVersion",
+        "testOptimization",
+        "timeoutMinutes"
+    ] and
+    .schemaVersion == "buildopt.poc/profile-owner-input/v1" and
+    .changeSource == "GIT_DIFF_BASE_TO_HEAD" and
+    .outputConfirmation.status == "OWNER_CONFIRMED" and
+    (.outputConfirmation.observedRevision | test("^[0-9a-f]{40}$")) and
+    (.outputConfirmation.contractSha256 | test("^[0-9a-f]{64}$")) and
+    .reviewRequired == true and
+    .activationAutomatic == false and
+    .productionAuthorized == false and
+    .testOptimization == "OUT_OF_SCOPE"
+    ' "${buildopt_config}" >/dev/null ||
+        buildopt_die 'profile configuration does not match buildopt.poc/profile-owner-input/v1' 64
+elif ! jq -e '
     keys == [
         "entrypoints",
         "globalChanges",
@@ -195,19 +236,8 @@ trap buildopt_cleanup EXIT
     go build -buildvcs=false -trimpath -o "${buildopt_binary_root}/buildopt" ./cmd/buildopt
 )
 
-buildopt_repository_id=$(jq -r '.repositoryId' "${buildopt_config}")
-buildopt_pipeline_class=$(jq -r '.pipelineClass' "${buildopt_config}")
-buildopt_gradle_command=$(jq -r '.gradleCommand' "${buildopt_config}")
-buildopt_timeout=$(jq -r '.timeoutMinutes | tostring + "m"' "${buildopt_config}")
-mapfile -t buildopt_entrypoints < <(jq -r '.entrypoints[]' "${buildopt_config}")
-mapfile -t buildopt_required_outputs < <(jq -r '.requiredOutputs[]' "${buildopt_config}")
-mapfile -t buildopt_global_changes < <(jq -r '.globalChanges[]' "${buildopt_config}")
-mapfile -t buildopt_gradle_options < <(jq -r '.gradleOptions[]' "${buildopt_config}")
-
 buildopt_args=(
     profile propose
-    --repository-id "${buildopt_repository_id}"
-    --pipeline-class "${buildopt_pipeline_class}"
     --changes-file "${buildopt_artifact_relative}/changes.txt"
     --base-revision "${buildopt_base_revision}"
     --output-contract-output "${buildopt_artifact_relative}/buildopt-output-contract.json"
@@ -217,22 +247,34 @@ buildopt_args=(
     --fallback-changes-output "${buildopt_artifact_relative}/buildopt-fallback-changes.txt"
     --proposal-output "${buildopt_artifact_relative}/buildopt-profile-proposal.json"
     --buildopt-revision "${buildopt_buildopt_revision}"
-    --timeout "${buildopt_timeout}"
 )
-for buildopt_value in "${buildopt_entrypoints[@]}"; do
-    buildopt_args+=(--entrypoint "${buildopt_value}")
-done
-for buildopt_value in "${buildopt_required_outputs[@]}"; do
-    buildopt_args+=(--required-output "${buildopt_value}")
-done
-for buildopt_value in "${buildopt_global_changes[@]}"; do
-    buildopt_args+=(--global-change "${buildopt_value}")
-done
-for buildopt_value in "${buildopt_gradle_options[@]}"; do
-    buildopt_args+=(--gradle-option "${buildopt_value}")
-done
-if [[ -n "${buildopt_gradle_command}" ]]; then
-    buildopt_args+=(--gradle-command "${buildopt_gradle_command}")
+if [[ "${buildopt_config_schema}" == buildopt.poc/profile-owner-input/v1 ]]; then
+    buildopt_args+=(--owner-input "${buildopt_config_relative}")
+else
+    buildopt_repository_id=$(jq -r '.repositoryId' "${buildopt_config}")
+    buildopt_pipeline_class=$(jq -r '.pipelineClass' "${buildopt_config}")
+    buildopt_gradle_command=$(jq -r '.gradleCommand' "${buildopt_config}")
+    buildopt_timeout=$(jq -r '.timeoutMinutes | tostring + "m"' "${buildopt_config}")
+    mapfile -t buildopt_entrypoints < <(jq -r '.entrypoints[]' "${buildopt_config}")
+    mapfile -t buildopt_required_outputs < <(jq -r '.requiredOutputs[]' "${buildopt_config}")
+    mapfile -t buildopt_global_changes < <(jq -r '.globalChanges[]' "${buildopt_config}")
+    mapfile -t buildopt_gradle_options < <(jq -r '.gradleOptions[]' "${buildopt_config}")
+    buildopt_args+=(--repository-id "${buildopt_repository_id}" --pipeline-class "${buildopt_pipeline_class}" --timeout "${buildopt_timeout}")
+    for buildopt_value in "${buildopt_entrypoints[@]}"; do
+        buildopt_args+=(--entrypoint "${buildopt_value}")
+    done
+    for buildopt_value in "${buildopt_required_outputs[@]}"; do
+        buildopt_args+=(--required-output "${buildopt_value}")
+    done
+    for buildopt_value in "${buildopt_global_changes[@]}"; do
+        buildopt_args+=(--global-change "${buildopt_value}")
+    done
+    for buildopt_value in "${buildopt_gradle_options[@]}"; do
+        buildopt_args+=(--gradle-option "${buildopt_value}")
+    done
+    if [[ -n "${buildopt_gradle_command}" ]]; then
+        buildopt_args+=(--gradle-command "${buildopt_gradle_command}")
+    fi
 fi
 
 set +e

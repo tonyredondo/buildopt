@@ -35,8 +35,9 @@ request them and its default local path works without secrets.
 ### Review a structural proposal
 
 Before adopting Build Impact, a repository can ask CI for a proposal without
-changing or timing its build. Check in `.buildopt/profile-ci.json` using the
-strict [review-only CI contract](../../specs/poc-generic-profile-ci-v1.md),
+changing or timing its build. Generate and check in `.buildopt/profile.json`
+using the [owner-input contract](../../specs/poc-generic-owner-input-v1.md),
+then use the strict [review-only CI contract](../../specs/poc-generic-profile-ci-v1.md),
 check out the exact target with its base available, and use the same Action at
 a full commit:
 
