@@ -120,10 +120,11 @@ buildopt_output_arguments() {
 buildopt_capture_subject() {
     local buildopt_index=$1
     local buildopt_key buildopt_repository_id buildopt_remote buildopt_public_revision
-    local buildopt_jdk buildopt_pipeline buildopt_change_path buildopt_mutation
+    local buildopt_jdk buildopt_pipeline buildopt_workflow_family buildopt_change_path buildopt_mutation
     local buildopt_repository
     local buildopt_gradle_home buildopt_subject_output buildopt_base buildopt_target
-    local buildopt_name buildopt_measure_status buildopt_evaluation_decision
+    local buildopt_name buildopt_measure_status buildopt_measurement_failure_class
+    local buildopt_evaluation_decision
     local -a buildopt_entrypoint_args=() buildopt_required_output_args=()
 
     buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_spec}")
@@ -132,6 +133,7 @@ buildopt_capture_subject() {
     buildopt_public_revision=$(jq -er ".repositories[${buildopt_index}].publicRevision" "${buildopt_spec}")
     buildopt_jdk=$(jq -er ".repositories[${buildopt_index}].jdkToolchain" "${buildopt_spec}")
     buildopt_pipeline=$(jq -er ".repositories[${buildopt_index}].pipelineClass" "${buildopt_spec}")
+    buildopt_workflow_family=$(jq -r ".repositories[${buildopt_index}].workflowFamily // empty" "${buildopt_spec}")
     buildopt_change_path=$(jq -er ".repositories[${buildopt_index}].changePath" "${buildopt_spec}")
     buildopt_mutation=$(jq -er ".repositories[${buildopt_index}].mutation" "${buildopt_spec}")
     buildopt_repository="${buildopt_root}/${buildopt_key}/repository"
@@ -197,6 +199,7 @@ buildopt_capture_subject() {
     done
 
     buildopt_measure_status=NOT_RUN_NATIVE_FULL_GRAPH
+    buildopt_measurement_failure_class=
     buildopt_evaluation_decision=NATIVE_FULL_GRAPH
     printf 'null\n' >"${buildopt_subject_output}/evidence.json"
     if [[ $(jq -r '.decision' "${buildopt_repository}/buildopt-profile-proposal.json") == \
@@ -239,6 +242,17 @@ buildopt_capture_subject() {
             fi
         else
             buildopt_measure_status=MEASUREMENT_UNAVAILABLE
+            case $(tail -n 200 "${buildopt_subject_output}/measurement.log") in
+                *'invalid exact task evidence:'*)
+                    buildopt_measurement_failure_class=TASK_EVIDENCE_AMBIGUOUS
+                    ;;
+                *'required outputs differ between optimized native Gradle and BuildOpt'*)
+                    buildopt_measurement_failure_class=REQUIRED_OUTPUTS_NOT_BYTE_IDENTICAL
+                    ;;
+                *)
+                    buildopt_measurement_failure_class=MEASUREMENT_EXECUTION_UNAVAILABLE
+                    ;;
+            esac
             tail -n 200 "${buildopt_subject_output}/measurement.log" >&2
         fi
     fi
@@ -246,15 +260,18 @@ buildopt_capture_subject() {
     jq -n \
         --arg key "${buildopt_key}" \
         --arg repositoryId "${buildopt_repository_id}" \
+        --arg workflowFamily "${buildopt_workflow_family}" \
         --arg publicRevision "${buildopt_public_revision}" \
         --arg targetRevision "${buildopt_target}" \
         --arg measurementStatus "${buildopt_measure_status}" \
+        --arg measurementFailureClass "${buildopt_measurement_failure_class}" \
         --arg evaluationDecision "${buildopt_evaluation_decision}" \
         --slurpfile proposal "${buildopt_repository}/buildopt-profile-proposal.json" \
         --slurpfile evidence "${buildopt_subject_output}/evidence.json" '
         {
           key: $key,
           repositoryId: $repositoryId,
+          workflowFamily: (if $workflowFamily == "" then null else $workflowFamily end),
           publicRevision: $publicRevision,
           targetRevision: $targetRevision,
           proposal: {
@@ -267,6 +284,7 @@ buildopt_capture_subject() {
             omittedProjectCount: ($proposal[0].analysis.plan.omittedProjectCount // null)
           },
           measurementStatus: $measurementStatus,
+          measurementFailureClass: (if $measurementFailureClass == "" then null else $measurementFailureClass end),
           result: (if ($evidence | length) == 1 then $evidence[0].result else null end),
           evaluationDecision: $evaluationDecision
         }

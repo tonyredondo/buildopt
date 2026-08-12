@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-generic-workflow-diagnostics/v1",
+  "capturedOn": "2026-08-12",
+  "policy": {
+    "failedObservationsDiscarded": false,
+    "outputDifferencesNormalized": false,
+    "nonWinningFamiliesRetainNative": true
+  },
+  "findings": [
+    {
+      "key": "apache-groovy-jar-packaging",
+      "workflowFamily": "JAR_PACKAGING",
+      "decision": "RETAIN_NATIVE_GRADLE",
+      "rootCause": "The first immutable run reported an ambiguous :compileJava console outcome. A diagnostic rerun passed all warm-up shapes and then found a byte difference in the required JAR. An isolated native-versus-selected reproduction found identical 80-entry ZIP structure and one changed payload: META-INF/groovy-release-info.properties embeds the wall-clock BuildTime.",
+      "recoverable": true,
+      "recoveryBoundary": "BuildOpt may revisit this family only after the owner workflow emits a reproducible release-info payload or after an explicit owner-approved output contract replaces byte identity. It must not normalize the timestamp silently.",
+      "diagnostic": {
+        "controlArtifactSha256": "5a26569f5cb03349c792573b00ba23a3c5d9fbb17544c883975961d7f8c4d867",
+        "candidateArtifactSha256": "11bf47d9c1d0392fcbd94cd9bde24d9f50fc5da18c77a30a9eb7506191f8bea6",
+        "entryCount": 80,
+        "differentPayloadCount": 1,
+        "differentEntry": "META-INF/groovy-release-info.properties"
+      }
+    },
+    {
+      "key": "apache-kafka-checkstyle-verification",
+      "workflowFamily": "TYPED_VERIFICATION",
+      "decision": "RETAIN_NATIVE_GRADLE",
+      "rootCause": "The Checkstyle XML report records absolute repository paths, so the isolated control and candidate workspaces cannot produce byte-identical reports even when the findings are the same.",
+      "recoverable": true,
+      "recoveryBoundary": "A future owner-approved report contract may canonicalize only the isolated workspace prefix and must prove finding-level equality. The current exact-byte contract remains authoritative.",
+      "diagnostic": {
+        "embeddedPathExampleSuffix": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+        "workspaceRelativeOutput": "clients/build/reports/checkstyle/main.xml"
+      }
+    },
+    {
+      "key": "apache-kafka-shadow-distribution",
+      "workflowFamily": "FAT_JAR_DISTRIBUTION",
+      "decision": "RETAIN_NATIVE_GRADLE",
+      "rootCause": "Kafka configures archives with reproducibleFileOrder=false and preserveFileTimestamps=true. Two consecutive native clean shadowJar builds had different archive SHA-256 values while all 4,378 entry names and every uncompressed payload were identical; ZIP timestamps changed.",
+      "recoverable": true,
+      "recoveryBoundary": "BuildOpt may revisit this family when the owner makes the archive reproducible or explicitly approves a canonical archive-content contract. Exact bytes remain required today.",
+      "diagnostic": {
+        "firstArtifactSha256": "155faa758d53335097761c8b456693d10e34ee19de990fdcb14c3be06a9f00d1",
+        "secondArtifactSha256": "cf00fcdd5f249d0c873630b308f097bc27e07c75ad7257c1711183d87e23c29b",
+        "entryCount": 4378,
+        "differentPayloadCount": 0,
+        "timestampDifferenceObserved": true
+      }
+    },
+    {
+      "key": "spring-framework-test-preparation",
+      "workflowFamily": "BUILD_OWNED_TEST_PREPARATION",
+      "decision": "INVESTIGATE_REPEATABILITY",
+      "rootCause": "The installed candidate preserved exact class outputs and saved 2,695 ms on average, but only seven of eight preregistered pairs were positive. The frozen eight-of-eight repeatability gate therefore retained native Gradle.",
+      "recoverable": true,
+      "recoveryBoundary": "Investigate the single negative observation and use a newly preregistered order-aware replication. Do not relax the completed gate after observing the result.",
+      "diagnostic": {
+        "nativeMeanMs": 14587.75,
+        "buildoptMeanMs": 11892.75,
+        "meanSavedMs": 2695,
+        "reductionPercent": 18.47,
+        "positivePairs": 7,
+        "pairCount": 8,
+        "interval95SavedMs": [1254.875, 3933.5]
+      }
+    }
+  ]
+}

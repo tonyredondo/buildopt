@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-generic-workflow-value/v1",
+  "workItem": "POC-GENERIC-WORKFLOW-VALUE-001",
+  "capturedAt": "2026-08-12T16:12:42Z",
+  "buildopt": {
+    "revision": "d365f73e89ebb2c69bb133e222c5b58cbe398f9e",
+    "executableSha256": "1a42666e6b98b66e47838a78cbaa403cf25f1214013675e25c2d9d3ca09358a3",
+    "packageVersion": "0.3.0-dev"
+  },
+  "method": {
+    "surface": "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE",
+    "candidateMechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "control": "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW",
+    "isolatedArms": true,
+    "independentGradleHomes": true,
+    "independentNativeCacheSeeds": true,
+    "requiredOutputsComparedByteForByte": true,
+    "fullGraphFallbackRequired": true,
+    "onlinePreparationMeasured": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "workflowFamiliesEvaluatedIndependently": true
+  },
+  "subjects": [
+    {
+      "key": "apache-groovy-jar-packaging",
+      "repositoryId": "apache/groovy",
+      "publicRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "targetRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+      "proposal": {
+        "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+        "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+        "originalEntrypoints": [
+          "jar"
+        ],
+        "candidateEntrypoints": [
+          ":groovy-json:jar"
+        ],
+        "totalProjectCount": 37,
+        "selectedProjectCount": 2,
+        "omittedProjectCount": 35
+      },
+      "measurementStatus": "MEASUREMENT_UNAVAILABLE",
+      "result": null,
+      "evaluationDecision": "NATIVE_FULL_GRAPH",
+      "workflowFamily": "JAR_PACKAGING",
+      "measurementFailureClass": "TASK_EVIDENCE_AMBIGUOUS"
+    },
+    {
+      "key": "apache-kafka-checkstyle-verification",
+      "repositoryId": "apache/kafka",
+      "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "targetRevision": "4db12142986acc0fbc82da355ee068d7581f0c99",
+      "proposal": {
+        "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+        "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+        "originalEntrypoints": [
+          "checkstyleMain"
+        ],
+        "candidateEntrypoints": [
+          ":clients:checkstyleMain"
+        ],
+        "totalProjectCount": 64,
+        "selectedProjectCount": 2,
+        "omittedProjectCount": 62
+      },
+      "measurementStatus": "MEASUREMENT_UNAVAILABLE",
+      "result": null,
+      "evaluationDecision": "NATIVE_FULL_GRAPH",
+      "workflowFamily": "TYPED_VERIFICATION",
+      "measurementFailureClass": "REQUIRED_OUTPUTS_NOT_BYTE_IDENTICAL"
+    },
+    {
+      "key": "apache-kafka-shadow-distribution",
+      "repositoryId": "apache/kafka",
+      "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "targetRevision": "d02f6f62f56e7c8746d4006ccc4ab4725c9be00b",
+      "proposal": {
+        "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+        "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+        "originalEntrypoints": [
+          "shadowJar"
+        ],
+        "candidateEntrypoints": [
+          ":clients:shadowJar"
+        ],
+        "totalProjectCount": 64,
+        "selectedProjectCount": 2,
+        "omittedProjectCount": 62
+      },
+      "measurementStatus": "MEASUREMENT_UNAVAILABLE",
+      "result": null,
+      "evaluationDecision": "NATIVE_FULL_GRAPH",
+      "workflowFamily": "FAT_JAR_DISTRIBUTION",
+      "measurementFailureClass": "REQUIRED_OUTPUTS_NOT_BYTE_IDENTICAL"
+    },
+    {
+      "key": "spring-framework-test-preparation",
+      "repositoryId": "spring-projects/spring-framework",
+      "publicRevision": "4b5c92703c63966c3471242c621c4a63b382638d",
+      "targetRevision": "c1b87fc6cc579c2ad7fc48ee8ecb382ec8ec441b",
+      "proposal": {
+        "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+        "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+        "originalEntrypoints": [
+          "testClasses"
+        ],
+        "candidateEntrypoints": [
+          ":spring-jms:testClasses"
+        ],
+        "totalProjectCount": 27,
+        "selectedProjectCount": 10,
+        "omittedProjectCount": 17
+      },
+      "measurementStatus": "COMPLETED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 14587.75,
+        "candidateMeanMs": 11892.75,
+        "meanSavedMs": 2695,
+        "reductionRatio": 0.1847440489451766,
+        "interval95SavedMs": [
+          1254.875,
+          3933.5
+        ],
+        "positivePairs": 7,
+        "executionShapeObserved": true,
+        "executionShapeStable": true,
+        "targetWarmupShapeObserved": true,
+        "targetWarmupShapeStable": true,
+        "qualified": false,
+        "decision": "RETAIN_NATIVE_GRADLE"
+      },
+      "evaluationDecision": "NATIVE_FULL_GRAPH",
+      "workflowFamily": "BUILD_OWNED_TEST_PREPARATION",
+      "measurementFailureClass": null
+    }
+  ],
+  "retainedCompositionContext": [],
+  "aggregation": {
+    "subjectCount": 4,
+    "structurallyProposed": 4,
+    "measured": 1,
+    "qualified": 0,
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

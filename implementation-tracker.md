@@ -126,7 +126,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-GENERIC-OUTPUT-CONTRACT | Discover or validate repository-owned Gradle outputs before structural measurement | `DONE` | 1/1 | `E-319` |
 | POC-GENERIC-OWNER-INPUT | Turn reviewed workflow, change source and Gradle-owned outputs into one checked, versioned owner input | `DONE` | 1/1 | `E-320` |
 | POC-GENERIC-WORKFLOW-BREADTH | Exercise the unchanged owner-input path across distinct owner workflows before any new timing | `DONE` | 1/1 | `E-321..323` |
-| POC-GENERIC-WORKFLOW-VALUE | Measure reviewed substantial public workflow families through the installed path against optimized native Gradle | `TODO` | 0/1 | Workflow-breadth proof `E-323` |
+| POC-GENERIC-WORKFLOW-VALUE | Measure reviewed substantial public workflow families through the installed path against optimized native Gradle | `DONE` | 1/1 | `E-324..325` |
+| POC-GENERIC-OUTPUT-EQUIVALENCE | Define explicit owner-reviewed semantic equivalence for relocatable reports and nondeterministic archives while retaining exact bytes by default | `TODO` | 0/1 | Workflow-value diagnostics `E-325` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -287,7 +288,32 @@ than partners. Test Optimization remains a separate product.
 | 90 | `POC-GENERALIZATION-AUDIT-001` | Audit every retained mechanism from installation through qualification, distinguish repository-independent code from owner semantic inputs, and identify the next generic usability gap | `DONE` | Codex; `E-318` |
 | 91 | `POC-GENERIC-OWNER-INPUT-001` | Convert confirmed workflow, change source and Gradle-owned output candidates into one reviewable owner file with explicit acceptance, drift diagnostics and native fallback when unconfirmed | `DONE` | Codex; `E-320` |
 | 92 | `POC-GENERIC-WORKFLOW-BREADTH-001` | Run the unchanged generated owner-file flow on packaging, verification, distribution and build-owned test-preparation workflows, preserving repository-declared success outputs and retaining native before timing on unsupported semantics | `DONE` | Codex; `E-321..323` |
-| 93 | `POC-GENERIC-WORKFLOW-VALUE-001` | Measure reviewed substantial public packaging, verification, distribution and build-owned test-preparation candidates through the installed path; preserve exact outputs and full fallback, and retain native independently for every family that does not beat optimized native Gradle | `TODO` | Codex; `E-323` |
+| 93 | `POC-GENERIC-WORKFLOW-VALUE-001` | Measure reviewed substantial public packaging, verification, distribution and build-owned test-preparation candidates through the installed path; preserve exact outputs and full fallback, and retain native independently for every family that does not beat optimized native Gradle | `DONE` | Codex; `E-324..325` |
+| 94 | `POC-GENERIC-OUTPUT-EQUIVALENCE-001` | Keep byte identity as the default, add explicit owner-reviewed equivalence contracts for relocatable reports and canonical archive contents, prove that payload drift remains rejected, and rerun the three blocked public workflow families without repository-name rules | `TODO` | Codex; `E-325` |
+
+#### Completed POC block: public workflow-family value
+
+`POC-GENERIC-WORKFLOW-VALUE-001` freezes four substantial public workflows and
+runs the installed `profile propose -> measure -> evaluate` surface against the
+same optimized native Gradle workflow. All four produced generic structural
+candidates: Groovy `jar` reduced 37 projects to 2, both Kafka workflows reduced
+64 to 2, and Spring `testClasses` reduced 27 to 10.
+
+Spring completed all eight pairs with exact class outputs and a successful
+full-graph fallback. Native averaged 14.588 seconds and BuildOpt 11.893 seconds,
+saving 2.695 seconds / 18.47% with a positive 95% interval, but only seven of
+eight pairs improved. The unchanged 8/8 repeatability gate therefore retains
+native Gradle.
+
+The other families failed closed before producing value percentages. Groovy's
+JAR contains a generated `BuildTime`; Kafka Checkstyle reports contain absolute
+isolated-workspace paths; and Kafka explicitly preserves ZIP timestamps and
+non-reproducible order. Two native Kafka `shadowJar` rebuilds had different
+archive hashes while all 4,378 names and uncompressed payloads were identical.
+No output was normalized, no observation discarded and no threshold moved.
+The terminal result is 0/4 qualified, with native Gradle authoritative for all
+four families. `POC-GENERIC-OUTPUT-EQUIVALENCE-001` is next and may only add
+explicit owner-reviewed semantics while byte identity remains the default.
 
 #### Completed POC block: generic workflow breadth
 
@@ -1981,6 +2007,8 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-321` | 2026-08-12 | `POC-GENERIC-WORKFLOW-BREADTH-001` | The preregistered [workflow-breadth contract](./specs/poc-generic-workflow-breadth-v1.md), deterministic Gradle fixture, executable matrix and strict result checker bind one production-source change to packaging, typed verification, distribution and build-owned test-preparation workflows. Each supported cell must derive only the matching `:service-a` task, omit `:service-b`, preserve its declared output bytes and execute no Gradle `Test`; the unsupported executable workflow must retain native before timing | `DONE` preregistration: the terminal hosted result is recorded separately as `E-323`. No timing, percentage, profile qualification, automatic activation, production authority, soak, design-partner or Test Optimization behavior is created |
 | `E-322` | 2026-08-12 | `POC-GENERIC-WORKFLOW-BREADTH-001` | Hosted run [31598459522](https://github.com/tonyredondo/buildopt/actions/runs/31598459522) stopped while priming the Gradle Wrapper because the workflow selected exact hosted Temurin 21 but invoked `dev/run`, which requires a separately provisioned repository-local JDK. BuildOpt, the fixture and all workflow-family cells were never executed | `DONE` discarded infrastructure-fixture failure: no proposal, result or artifact exists. The correction invokes the checksum-pinned Wrapper directly under the already exact hosted Temurin runtime; the specification, fixture, task families, decisions and acceptance gates are unchanged |
 | `E-323` | 2026-08-12 | `POC-GENERIC-WORKFLOW-BREADTH-001` | Read-only hosted run [31598631537](https://github.com/tonyredondo/buildopt/actions/runs/31598631537) executed immutable BuildOpt `0c1b64f` and uploaded the independently revalidated [terminal result](./benchmarks/results/poc-generic-workflow-breadth-v1/README.md). Packaging, typed verification, distribution and build-owned test preparation all returned `MEASURE_STRUCTURAL_CANDIDATE / COMPLETE_STRUCTURAL_REDUCTION`, selected only the matching `:service-a` task, omitted `:service-b`, reproduced their declared outputs byte for byte and executed zero Gradle `Test` tasks. The custom executable workflow validated its output but returned `NATIVE_FULL_GRAPH / ORIGINAL_WORKFLOW_UNSUPPORTED` with no structural documents | `DONE` terminal `GENERIC_OWNER_INPUT_COVERS_BUILD_OWNED_WORKFLOW_BREADTH`: four exact candidates and one native fallback prove capability, not value. Zero timing observations, percentages or profiles were created. `POC-GENERIC-WORKFLOW-VALUE-001` is next and must measure each substantial public workflow family independently against optimized native Gradle |
+| `E-324` | 2026-08-12 | `POC-GENERIC-WORKFLOW-VALUE-001` | The [preregistered public workflow-value contract](./specs/poc-generic-workflow-value-v1.md), installed-path runner and strict checker freeze Groovy JAR packaging, Kafka typed verification, Kafka fat-JAR distribution and Spring build-owned test preparation at exact public revisions. Each cell requires eight alternating pairs, isolated Gradle homes/cache seeds, optimized-native control, byte-identical declared outputs, successful full fallback, at least 500 ms/2% saving, positive 95% lower bound, 8/8 positive pairs and zero product failures | `DONE` preregistration at immutable revision `d365f73`; no result, threshold or repository-specific rule was known when the protocol was committed |
+| `E-325` | 2026-08-12 | `POC-GENERIC-WORKFLOW-VALUE-001` | The [terminal public workflow-value bundle](./benchmarks/results/poc-generic-workflow-value-v1/README.md) preserves all four results plus explicit [root-cause diagnostics](./benchmarks/results/poc-generic-workflow-value-v1/diagnostics.json). Spring preserved exact outputs and saved 2,695 ms/18.47% with a positive interval but retained native at 7/8. Groovy stopped on generated `BuildTime`; Kafka Checkstyle stopped on absolute report paths; Kafka `shadowJar` stopped on upstream timestamp/order nondeterminism, independently reproduced by two native JAR hashes with identical 4,378 payloads | `DONE` terminal `0/4 QUALIFIED / RETAIN_NATIVE_GRADLE`: one material but insufficiently repeatable signal and three recoverable output-contract barriers. Failed observations remain visible, no bytes were normalized, no gate moved, and no profile or automatic activation was created. `POC-GENERIC-OUTPUT-EQUIVALENCE-001` is next |
 
 ---
 
@@ -1988,6 +2016,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-12 | Closed public workflow-family value with a preserved 18.47% Spring signal that retained native at 7/8, plus root-caused fail-closed Groovy/Kafka output barriers; opened explicit owner-reviewed output equivalence next without normalizing bytes or moving gates | Codex |
 | 2026-08-12 | Closed generic workflow breadth on hosted CI with four exact build-owned candidates, one unsupported native fallback, zero Test execution and zero performance claims; moved installed public workflow-family value measurement next | Codex |
 | 2026-08-12 | Retained the first hosted workflow-breadth failure as infrastructure evidence and corrected only Wrapper priming to use the exact Temurin runtime already installed by the workflow | Codex |
 | 2026-08-12 | Preregistered generic workflow breadth across packaging, typed verification, distribution and build-owned test preparation, with exact-output checks and native fallback for unsupported semantics before timing | Codex |

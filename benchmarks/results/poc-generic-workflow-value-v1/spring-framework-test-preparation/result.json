@@ -1,0 +1,41 @@
+{
+  "key": "spring-framework-test-preparation",
+  "repositoryId": "spring-projects/spring-framework",
+  "publicRevision": "4b5c92703c63966c3471242c621c4a63b382638d",
+  "targetRevision": "c1b87fc6cc579c2ad7fc48ee8ecb382ec8ec441b",
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "testClasses"
+    ],
+    "candidateEntrypoints": [
+      ":spring-jms:testClasses"
+    ],
+    "totalProjectCount": 27,
+    "selectedProjectCount": 10,
+    "omittedProjectCount": 17
+  },
+  "measurementStatus": "COMPLETED",
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 14587.75,
+    "candidateMeanMs": 11892.75,
+    "meanSavedMs": 2695,
+    "reductionRatio": 0.1847440489451766,
+    "interval95SavedMs": [
+      1254.875,
+      3933.5
+    ],
+    "positivePairs": 7,
+    "executionShapeObserved": true,
+    "executionShapeStable": true,
+    "targetWarmupShapeObserved": true,
+    "targetWarmupShapeStable": true,
+    "qualified": false,
+    "decision": "RETAIN_NATIVE_GRADLE"
+  },
+  "evaluationDecision": "NATIVE_FULL_GRAPH",
+  "workflowFamily": "BUILD_OWNED_TEST_PREPARATION",
+  "measurementFailureClass": null
+}

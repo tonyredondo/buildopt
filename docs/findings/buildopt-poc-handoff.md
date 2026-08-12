@@ -25,6 +25,13 @@
   confirmed outputs and fallback policy for both local and CI proposals. Every
   target revalidates those outputs and falls back to native Gradle with drift
   diagnostics before any timing.
+- **Workflow breadth exposed the next generic constraint.** On substantial
+  packaging, verification, distribution, and test-preparation workflows,
+  Spring showed an exact-output **18.47% / 2.695 s** mean saving but missed the
+  frozen repeatability gate at 7/8 positive pairs. Groovy and Kafka failed
+  closed because owner artifacts contain wall-clock time, absolute workspace
+  paths, or ZIP timestamps. The result is **0/4 qualified** and all four retain
+  native Gradle; no output difference was normalized away.
 
 ## The Project in One Minute
 
@@ -89,6 +96,21 @@ none of the rejected timing was reused.
 
 Repository percentages are independent. They are not averaged across
 repositories and are not added to cache, task-adapter, or Edge results.
+
+### Substantial non-compilation workflows
+
+| Workflow | Full -> selected projects | Observed result | Decision |
+| --- | ---: | --- | --- |
+| Apache Groovy root `jar` | 37 -> 2 | Exact-byte validation stopped: one generated release-info payload embeds `BuildTime`. | Retain native. |
+| Apache Kafka root `checkstyleMain` | 64 -> 2 | Exact-byte validation stopped: reports embed absolute isolated-workspace paths. | Retain native. |
+| Apache Kafka root `shadowJar` | 64 -> 2 | Exact-byte validation stopped: upstream preserves ZIP timestamps/order; 4,378 payloads were identical across two native rebuilds. | Retain native. |
+| Spring Framework root `testClasses` | 27 -> 10 | 14.588 s -> 11.893 s; **2.695 s / 18.47%**; positive interval; 7/8 pairs. | Retain native under the frozen 8/8 gate. |
+
+These rows answer a different question from the compilation-oriented matrix:
+can the same generic owner-input path add value to other Gradle workflow
+families? The answer is “promising but not qualified yet.” The graph reduction
+transfers, but exact output semantics and repeatability must be solved without
+repository-name rules or post-result threshold changes.
 
 ### Hibernate qualifies after the recoverable variance is corrected
 
@@ -168,6 +190,11 @@ their existing paired timings. No timing was executed during this replay.
   exact outputs while the first/second execution position dominated early
   results. Substantial measurements need target stability and reciprocal blocks
   before a strict per-observation gate is meaningful.
+- **Byte identity can reject semantically equal owner outputs.** That is the
+  correct default: BuildOpt retained native for time-bearing JAR metadata,
+  workspace-bearing reports, and timestamped fat JARs. Any future equivalence
+  must be explicit in the owner contract and independently validated; BuildOpt
+  must never normalize a mismatch silently.
 
 ## Current Conclusion
 
@@ -183,18 +210,20 @@ keeps native Gradle authoritative.
 
 ## Recommended Next Steps
 
-1. **Measure workflow-family value on public repositories.** Use the unchanged
-   owner file on substantial packaging, verification, distribution, and
-   build-owned test-preparation workflows. Qualify each family independently
-   only when the installed path preserves outputs and materially beats
-   optimized native Gradle; capability alone is not value.
-2. **Measure only reviewed candidates.** A CI proposal remains an observation,
+1. **Generalize owner-approved output equivalence.** Keep byte identity as the
+   default, but prototype explicit contracts for relocatable reports and
+   canonical archive contents. Re-run the three blocked public workflows and
+   prove that the contract compares semantics without hiding payload drift.
+2. **Replicate Spring with an order-aware frozen protocol.** Preserve the
+   current 7/8 result, investigate its negative pair, and collect fresh data;
+   do not relax the existing gate.
+3. **Measure only reviewed candidates.** A CI proposal remains an observation,
    not value evidence. Run isolated paired measurement only after its graph,
    outputs and fallback are accepted.
-3. **Replay reviewed profiles through the installed path.** Confirm that the
+4. **Replay reviewed profiles through the installed path.** Confirm that the
    public package preserves the measured result for additional qualified
    repositories instead of treating harness evidence as deployment evidence.
-4. **Keep wall time authoritative.** Users
+5. **Keep wall time authoritative.** Users
    should provide a Gradle command, change source, and output contract—not
    hand-authored graphs. Promote only installed paths that preserve outputs,
    pass repeatability, prove fallback, and materially beat native Gradle.
@@ -216,6 +245,7 @@ Test Optimization remains outside Build Optimization.
 - [Hibernate output-contract preflight](../../benchmarks/results/poc-generic-output-contract-v1/README.md)
 - [Generic owner-input contract](../../specs/poc-generic-owner-input-v1.md)
 - [Hosted generic workflow-breadth result](../../benchmarks/results/poc-generic-workflow-breadth-v1/README.md)
+- [Public workflow-family value and root causes](../../benchmarks/results/poc-generic-workflow-value-v1/README.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [Detailed performance findings and historical research](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

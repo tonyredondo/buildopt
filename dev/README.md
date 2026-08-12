@@ -3441,8 +3441,13 @@ contract. It measures Groovy JAR packaging, Kafka Checkstyle verification,
 Kafka fat-JAR distribution, and Spring test-class preparation independently
 against their unchanged optimized-native workflows. The companion
 `./dev/check-generic-workflow-value [evidence-directory] [workflow-key]`
-requires all eight pairs, exact declared outputs, full fallback, and a separate
-qualify-or-retain-native decision for every family.
+requires complete eight-pair evidence for measured subjects and explicit
+fail-closed classification for subjects that cannot satisfy the output or task
+evidence contract. The terminal public bundle retains native for all four
+families: Spring records a positive **18.47% / 2.695 s** signal but only 7/8
+positive pairs, while Groovy/Kafka stop on generated time, absolute workspace
+paths, or archive timestamps. The checker also validates the root-cause record
+and proves that failed observations were not discarded or normalized.
 
 `./dev/check-generic-profile-ci-replay` validates the manual clean-runner
 replay without cloning public repositories. It reconstructs retained Action

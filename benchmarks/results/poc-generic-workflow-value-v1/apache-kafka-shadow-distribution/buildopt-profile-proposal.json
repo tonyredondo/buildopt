@@ -1,0 +1,209 @@
+{
+  "schemaVersion": "buildopt.poc/profile-proposal/v1",
+  "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+  "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "shadow-jar-distribution",
+  "baseRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+  "targetRevision": "d02f6f62f56e7c8746d4006ccc4ab4725c9be00b",
+  "originalEntrypoint": "shadowJar",
+  "originalEntrypoints": [
+    "shadowJar"
+  ],
+  "changedPaths": [
+    "clients/src/main/java/org/apache/kafka/clients/Metadata.java"
+  ],
+  "requiredOutputs": [
+    "clients/build/libs/kafka-clients-*.jar"
+  ],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "candidateEntrypoints": [
+    ":clients:shadowJar"
+  ],
+  "omittedProjects": [
+    ":clients:clients-integration-tests",
+    ":connect",
+    ":connect:api",
+    ":connect:basic-auth-extension",
+    ":connect:file",
+    ":connect:json",
+    ":connect:mirror",
+    ":connect:mirror-client",
+    ":connect:runtime",
+    ":connect:test-plugins",
+    ":connect:transforms",
+    ":coordinator-common",
+    ":core",
+    ":examples",
+    ":group-coordinator",
+    ":group-coordinator:group-coordinator-api",
+    ":jmh-benchmarks",
+    ":metadata",
+    ":raft",
+    ":server",
+    ":server-common",
+    ":share-coordinator",
+    ":shell",
+    ":storage",
+    ":storage:storage-api",
+    ":streams",
+    ":streams:examples",
+    ":streams:integration-tests",
+    ":streams:streams-scala",
+    ":streams:test-utils",
+    ":streams:upgrade-system-tests-0110",
+    ":streams:upgrade-system-tests-10",
+    ":streams:upgrade-system-tests-11",
+    ":streams:upgrade-system-tests-20",
+    ":streams:upgrade-system-tests-21",
+    ":streams:upgrade-system-tests-22",
+    ":streams:upgrade-system-tests-23",
+    ":streams:upgrade-system-tests-24",
+    ":streams:upgrade-system-tests-25",
+    ":streams:upgrade-system-tests-26",
+    ":streams:upgrade-system-tests-27",
+    ":streams:upgrade-system-tests-28",
+    ":streams:upgrade-system-tests-30",
+    ":streams:upgrade-system-tests-31",
+    ":streams:upgrade-system-tests-32",
+    ":streams:upgrade-system-tests-33",
+    ":streams:upgrade-system-tests-34",
+    ":streams:upgrade-system-tests-35",
+    ":streams:upgrade-system-tests-36",
+    ":streams:upgrade-system-tests-37",
+    ":streams:upgrade-system-tests-38",
+    ":streams:upgrade-system-tests-39",
+    ":streams:upgrade-system-tests-40",
+    ":streams:upgrade-system-tests-41",
+    ":test-common",
+    ":test-common:test-common-internal-api",
+    ":test-common:test-common-runtime",
+    ":test-common:test-common-util",
+    ":tools",
+    ":tools:tools-api",
+    ":transaction-coordinator",
+    ":trogdor"
+  ],
+  "unknownRelationships": false,
+  "analysis": {
+    "schemaVersion": "buildopt.poc/opportunity-analysis/v1",
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "subject": {
+      "repositoryId": "apache/kafka",
+      "pipelineClass": "shadow-jar-distribution",
+      "gradleVersion": "9.2.1"
+    },
+    "inputs": null,
+    "sourceBindings": {
+      "manifestDigest": "sha256:bfd5f12afe50a2aaf2ca9ead706a20243c1858ad9c44ab945d2c0a295f6b3c69",
+      "graphDigest": "sha256:f1bd005dd857c84e21303ad73569fee5fe02292407c3ac27c9e30e0718900384",
+      "discoveryDigest": "sha256:cac6658fa159f5e0dcbe1abf2572e86b1bf52f681276a85a2aa6296c2852b04b"
+    },
+    "plan": {
+      "alternativeId": "changed-projects",
+      "entrypoints": [
+        ":clients:shadowJar"
+      ],
+      "fallbackEntrypoints": [
+        "shadowJar"
+      ],
+      "requiredOutputs": [
+        "clients/build/libs/kafka-clients-*.jar"
+      ],
+      "totalProjectCount": 64,
+      "selectedProjectCount": 2,
+      "omittedProjectCount": 62,
+      "omittedProjectRatio": 0.96875
+    },
+    "mechanisms": [
+      {
+        "name": "BUILD_IMPACT",
+        "status": "MEASURE_CANDIDATE",
+        "reason": "complete graph exposes a smaller reviewed alternative; direct timing is still required"
+      },
+      {
+        "name": "SHARED_EDGE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent locality and failure-fallback evidence for this workload"
+      },
+      {
+        "name": "HOT_STATE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "RUNTIME_TUNING",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "SAFE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "STANDARD_COPY",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "STANDARD_JAR",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "TEST_OPTIMIZATION",
+        "status": "NOT_AUTHORIZED",
+        "reason": "outside BuildOpt scope"
+      }
+    ],
+    "measurementRequired": true,
+    "reviewRequired": true,
+    "activationAutomatic": false,
+    "productionAuthorized": false
+  },
+  "documents": {
+    "outputContract": "buildopt-output-contract.json",
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json",
+    "fallbackChanges": "buildopt-fallback-changes.txt",
+    "proposal": "buildopt-profile-proposal.json"
+  },
+  "measureCommand": [
+    "buildopt",
+    "profile",
+    "measure",
+    "--manifest",
+    "buildopt-impact-manifest.json",
+    "--graph",
+    "buildopt-impact-graph.generated.json",
+    "--generated-manifest",
+    "buildopt-impact.generated.json",
+    "--changes-file",
+    "buildopt-changes.txt",
+    "--fallback-changes-file",
+    "buildopt-fallback-changes.txt",
+    "--base-revision",
+    "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "--buildopt-revision",
+    "d365f73e89ebb2c69bb133e222c5b58cbe398f9e",
+    "--evidence-output",
+    "buildopt-profile-evidence.json"
+  ],
+  "buildOptRevisionNeeded": false,
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false,
+  "testOptimization": "OUT_OF_SCOPE"
+}

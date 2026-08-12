@@ -1,0 +1,13 @@
+buildopt: warming isolated control arm at 26b251a451ce941d3d7a55e6487bcb7f16b5ad48 (cache seed 1/3)
+buildopt: warmed isolated control arm cache seed in 239167ms with total:121/executed:110/from-cache:0/up-to-date:0/no-source:10/skipped:1/fingerprint:4b5a3cd368539dd1e66fc1adc6781bec5458f8f29ba51c364e926bfdce29a7f9
+buildopt: warming isolated control arm at 26b251a451ce941d3d7a55e6487bcb7f16b5ad48 (base daemon stabilization 2/3)
+buildopt: warmed isolated control arm daemon stabilization in 12711ms with total:121/executed:56/from-cache:45/up-to-date:9/no-source:10/skipped:1/fingerprint:052c46022dafa1d8dd618f70db100a60335d4102a32714c082e34ed206b5b3cf
+buildopt: warming isolated control arm at d02f6f62f56e7c8746d4006ccc4ab4725c9be00b (target-workload stabilization 3/3)
+buildopt: warmed isolated control arm target workload in 49633ms with total:121/executed:67/from-cache:34/up-to-date:9/no-source:10/skipped:1/fingerprint:d6b36845e7f0948e0e1bd2b53b9fc8f3eb25a915f1c8a9df9e9093384defbf89
+buildopt: warming isolated candidate arm at 26b251a451ce941d3d7a55e6487bcb7f16b5ad48 (cache seed 1/3)
+buildopt: warmed isolated candidate arm cache seed in 108370ms with total:10/executed:9/from-cache:0/up-to-date:0/no-source:1/skipped:0/fingerprint:20a2ab82325c8202a5d6a103edd45135aa326dcc561e4a29e395f87605029683
+buildopt: warming isolated candidate arm at 26b251a451ce941d3d7a55e6487bcb7f16b5ad48 (base daemon stabilization 2/3)
+buildopt: warmed isolated candidate arm daemon stabilization in 6563ms with total:10/executed:3/from-cache:5/up-to-date:1/no-source:1/skipped:0/fingerprint:75c2a20b0cf468f82946b24a3188e9ec560ce44ff51b791bdd73284ce86a2d8b
+buildopt: warming isolated candidate arm at d02f6f62f56e7c8746d4006ccc4ab4725c9be00b (target-workload stabilization 3/3)
+buildopt: warmed isolated candidate arm target workload in 23617ms with total:10/executed:6/from-cache:2/up-to-date:1/no-source:1/skipped:0/fingerprint:a026be126dcf504181d183b2e72ba4ad24a60930ce1d1846e6d96ceada98296b
+buildopt: structural profile measurement unavailable: pair 1 required outputs differ between optimized native Gradle and BuildOpt

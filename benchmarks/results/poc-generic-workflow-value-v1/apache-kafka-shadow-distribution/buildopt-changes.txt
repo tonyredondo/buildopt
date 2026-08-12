@@ -1,0 +1,1 @@
+clients/src/main/java/org/apache/kafka/clients/Metadata.java

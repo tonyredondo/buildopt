@@ -20,12 +20,31 @@ if [[ -z ${2:-} ]]; then
         (.subjects | map(.proposal.originalEntrypoints)) ==
             ($spec[0].repositories | map(.entrypoints)) and
         (.aggregation.subjectCount == 4) and
-        (.aggregation.measured == 4) and
+        (.aggregation.measured >= 1 and .aggregation.measured <= 4) and
         all(.subjects[];
-            .measurementStatus == "COMPLETED" and
-            .result.pairs == 8 and
-            (.result.decision | IN("QUALIFY_STRUCTURAL_PROFILE", "RETAIN_NATIVE_GRADLE"))) and
+            (.workflowFamily | IN("JAR_PACKAGING", "TYPED_VERIFICATION", "FAT_JAR_DISTRIBUTION", "BUILD_OWNED_TEST_PREPARATION")) and
+            ((.measurementStatus == "COMPLETED" and
+              .measurementFailureClass == null and
+              .result.pairs == 8 and
+              (.result.decision | IN("QUALIFY_STRUCTURAL_PROFILE", "RETAIN_NATIVE_GRADLE"))) or
+             (.measurementStatus == "MEASUREMENT_UNAVAILABLE" and
+              .measurementFailureClass != null and
+              .result == null and
+              .evaluationDecision == "NATIVE_FULL_GRAPH"))) and
         .method.workflowFamiliesEvaluatedIndependently == true
     ' "${buildopt_evidence}/summary.json" >/dev/null
+
+    jq -e '
+        .schemaVersion == "buildopt.evidence/poc-generic-workflow-diagnostics/v1" and
+        .policy.failedObservationsDiscarded == false and
+        .policy.outputDifferencesNormalized == false and
+        .policy.nonWinningFamiliesRetainNative == true and
+        (.findings | length) == 4 and
+        all(.findings[];
+            (.workflowFamily | type) == "string" and
+            (.decision | IN("RETAIN_NATIVE_GRADLE", "INVESTIGATE_REPEATABILITY")) and
+            (.rootCause | type) == "string" and
+            (.recoverable | type) == "boolean")
+    ' "${buildopt_evidence}/diagnostics.json" >/dev/null
     printf 'Generic public workflow value: PASS\n'
 fi

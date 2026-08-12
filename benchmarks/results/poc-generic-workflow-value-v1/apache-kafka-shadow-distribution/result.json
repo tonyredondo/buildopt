@@ -1,0 +1,24 @@
+{
+  "key": "apache-kafka-shadow-distribution",
+  "repositoryId": "apache/kafka",
+  "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+  "targetRevision": "d02f6f62f56e7c8746d4006ccc4ab4725c9be00b",
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "shadowJar"
+    ],
+    "candidateEntrypoints": [
+      ":clients:shadowJar"
+    ],
+    "totalProjectCount": 64,
+    "selectedProjectCount": 2,
+    "omittedProjectCount": 62
+  },
+  "measurementStatus": "MEASUREMENT_UNAVAILABLE",
+  "result": null,
+  "evaluationDecision": "NATIVE_FULL_GRAPH",
+  "workflowFamily": "FAT_JAR_DISTRIBUTION",
+  "measurementFailureClass": "REQUIRED_OUTPUTS_NOT_BYTE_IDENTICAL"
+}

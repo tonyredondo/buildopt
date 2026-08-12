@@ -44,6 +44,25 @@ executable workflow retained native before structural state or timing.
 This is capability and fallback evidence only. It contains zero timing
 observations and creates no performance claim.
 
+### Public workflow-family value
+
+The [public workflow value result](./results/poc-generic-workflow-value-v1/README.md)
+then applies the installed path to substantial Groovy, Kafka, and Spring
+workflows under one preregistered eight-pair protocol. Spring
+`testClasses` preserved exact class outputs and averaged **18.47% / 2.695 s**
+faster with a positive 95% interval, but retained native Gradle because only
+7/8 pairs improved under the frozen 8/8 gate.
+
+The other three cells failed closed before timing could become value evidence:
+Groovy embeds `BuildTime` in an otherwise reproducible JAR, Kafka Checkstyle
+embeds the isolated checkout path, and Kafka explicitly preserves timestamps
+and non-reproducible order in the measured fat JAR. Two native Kafka rebuilds
+had different archive hashes despite identical names and payloads for all
+4,378 entries. The terminal result is therefore **0/4 qualified** with all four
+families retaining native Gradle. This is useful correctness evidence and a
+concrete next generalization target; it is not a universal workflow-value
+claim.
+
 ### Unseen Hibernate ORM holdout
 
 The [terminal holdout bundle](./results/poc-generic-holdout-v2/README.md)

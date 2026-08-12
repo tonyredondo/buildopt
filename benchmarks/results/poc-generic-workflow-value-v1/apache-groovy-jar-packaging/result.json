@@ -1,0 +1,24 @@
+{
+  "key": "apache-groovy-jar-packaging",
+  "repositoryId": "apache/groovy",
+  "publicRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+  "targetRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "jar"
+    ],
+    "candidateEntrypoints": [
+      ":groovy-json:jar"
+    ],
+    "totalProjectCount": 37,
+    "selectedProjectCount": 2,
+    "omittedProjectCount": 35
+  },
+  "measurementStatus": "MEASUREMENT_UNAVAILABLE",
+  "result": null,
+  "evaluationDecision": "NATIVE_FULL_GRAPH",
+  "workflowFamily": "JAR_PACKAGING",
+  "measurementFailureClass": "TASK_EVIDENCE_AMBIGUOUS"
+}

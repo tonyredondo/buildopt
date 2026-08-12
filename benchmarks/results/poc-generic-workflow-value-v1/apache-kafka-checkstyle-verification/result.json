@@ -1,0 +1,24 @@
+{
+  "key": "apache-kafka-checkstyle-verification",
+  "repositoryId": "apache/kafka",
+  "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+  "targetRevision": "4db12142986acc0fbc82da355ee068d7581f0c99",
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "checkstyleMain"
+    ],
+    "candidateEntrypoints": [
+      ":clients:checkstyleMain"
+    ],
+    "totalProjectCount": 64,
+    "selectedProjectCount": 2,
+    "omittedProjectCount": 62
+  },
+  "measurementStatus": "MEASUREMENT_UNAVAILABLE",
+  "result": null,
+  "evaluationDecision": "NATIVE_FULL_GRAPH",
+  "workflowFamily": "TYPED_VERIFICATION",
+  "measurementFailureClass": "REQUIRED_OUTPUTS_NOT_BYTE_IDENTICAL"
+}
