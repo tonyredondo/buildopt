@@ -1,6 +1,7 @@
 package launcher
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -154,6 +155,17 @@ func TestSummarizeStructuralTaskOutcomesNormalizesRepeatedConsoleLines(t *testin
 	if err := profilediscovery.ValidateStructuralTaskOutcomes(conflicting); err == nil ||
 		!strings.Contains(err.Error(), "invalid outcome") {
 		t.Fatalf("conflicting task emissions error = %v", err)
+	}
+}
+
+func TestStructuralTaskEvidenceErrorPreservesDiagnosticLog(t *testing.T) {
+	err := structuralTaskEvidenceError("candidate", errors.New("conflicting task"), strings.Join([]string{
+		"> Task :compileJava",
+		"> Task :compileJava FROM-CACHE",
+	}, "\n"))
+	if !strings.Contains(err.Error(), "candidate arm produced invalid exact task evidence: conflicting task") ||
+		!strings.Contains(err.Error(), "> Task :compileJava FROM-CACHE") {
+		t.Fatalf("diagnostic error = %q", err)
 	}
 }
 

@@ -579,7 +579,7 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 		startedAt:    started, finishedAt: finished,
 	}
 	if validationErr := profilediscovery.ValidateStructuralTaskOutcomes(result.taskOutcomes); validationErr != nil {
-		return result, fmt.Errorf("%s arm produced invalid exact task evidence: %w", arm.name, validationErr)
+		return result, structuralTaskEvidenceError(arm.name, validationErr, result.log)
 	}
 	if validationErr := profilediscovery.ValidateStructuralHostPressure(structuralHostPressurePointer(result.hostPressure)); validationErr != nil {
 		return result, fmt.Errorf("%s arm produced invalid host-pressure evidence: %w", arm.name, validationErr)
@@ -591,6 +591,11 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 		return result, fmt.Errorf("%s arm failed: %w\n%s", arm.name, err, tailMeasurementLog(result.log, 80))
 	}
 	return result, nil
+}
+
+func structuralTaskEvidenceError(armName string, validationErr error, log string) error {
+	return fmt.Errorf("%s arm produced invalid exact task evidence: %w\n%s",
+		armName, validationErr, tailMeasurementLog(log, 80))
 }
 
 func summarizeStructuralTaskOutcomes(log string) profilediscovery.StructuralTaskOutcomes {
