@@ -1,0 +1,143 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 2)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/root RFC3339_CAPTURE_TIME\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_evidence_root=$1
+buildopt_captured_at=$2
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-balanced-qualification.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-balanced-qualification."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in jq date grep cat; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'required balanced qualification assembler is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+date -u -d "${buildopt_captured_at}" +%Y-%m-%dT%H:%M:%SZ | grep -Fx -- "${buildopt_captured_at}" >/dev/null || {
+    printf 'capture time must be canonical UTC RFC3339\n' >&2
+    exit 1
+}
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go build -o "${buildopt_temp}/buildopt" ./cmd/buildopt
+
+mapfile -t buildopt_keys < <(jq -r '.repositories[].key' \
+    "${buildopt_repo_root}/specs/poc-statistical-qualification-v2.json")
+buildopt_qualification_files=()
+for buildopt_key in "${buildopt_keys[@]}"; do
+    buildopt_capture_one="${buildopt_evidence_root}/${buildopt_key}/capture-1/evidence.json"
+    buildopt_capture_two="${buildopt_evidence_root}/${buildopt_key}/capture-2/evidence.json"
+    buildopt_result_one="${buildopt_evidence_root}/${buildopt_key}/capture-1/result.json"
+    buildopt_result_two="${buildopt_evidence_root}/${buildopt_key}/capture-2/result.json"
+    buildopt_qualification="${buildopt_evidence_root}/${buildopt_key}/qualification.json"
+    for buildopt_result in "${buildopt_result_one}" "${buildopt_result_two}"; do
+        [[ -s ${buildopt_result} ]] || {
+            printf 'balanced capture result is unavailable: %s\n' "${buildopt_result}" >&2
+            exit 1
+        }
+    done
+    if [[ $(jq -r '.measurementStatus' "${buildopt_result_one}") != COMPLETED || \
+        $(jq -r '.measurementStatus' "${buildopt_result_two}") != COMPLETED ]]; then
+        jq -n \
+            --arg captured_at "${buildopt_captured_at}" \
+            --argjson first "$(cat -- "${buildopt_result_one}")" \
+            --argjson second "$(cat -- "${buildopt_result_two}")" '
+          {
+            schemaVersion: "buildopt.evidence/structural-profile-balanced-qualification/v2",
+            evidenceState: "UNAVAILABLE",
+            capturedAt: $captured_at,
+            subject: {
+              repositoryId: $first.repositoryId,
+              repositoryRevision: $first.targetRevision,
+              pipelineClass: ($first.proposal.originalEntrypoints | join(" "))
+            },
+            captures: [
+              {index: 1, measurementStatus: $first.measurementStatus, failureClass: $first.measurementFailureClass},
+              {index: 2, measurementStatus: $second.measurementStatus, failureClass: $second.measurementFailureClass}
+            ],
+            result: null,
+            decision: "RETAIN_NATIVE_GRADLE",
+            boundaries: {
+              proofOfConcept: true,
+              productionAuthorized: false,
+              automaticActivation: false,
+              repositorySpecificRuleAdded: false,
+              testOptimizationModified: false
+            }
+          }
+        ' >"${buildopt_qualification}"
+        buildopt_qualification_files+=("${buildopt_qualification}")
+        continue
+    fi
+    for buildopt_capture in "${buildopt_capture_one}" "${buildopt_capture_two}"; do
+        jq -e 'type == "object"' "${buildopt_capture}" >/dev/null || {
+            printf 'completed balanced capture is invalid: %s\n' "${buildopt_capture}" >&2
+            exit 1
+        }
+    done
+    buildopt_capture_one_relative=${buildopt_capture_one#"${buildopt_repo_root}/"}
+    buildopt_capture_two_relative=${buildopt_capture_two#"${buildopt_repo_root}/"}
+    [[ ${buildopt_capture_one_relative} != "${buildopt_capture_one}" && \
+        ${buildopt_capture_two_relative} != "${buildopt_capture_two}" ]] || {
+        printf 'evidence root must be inside the BuildOpt repository\n' >&2
+        exit 1
+    }
+    (
+        cd -- "${buildopt_repo_root}"
+        "${buildopt_temp}/buildopt" profile aggregate \
+            --capture "${buildopt_capture_one_relative}" \
+            --capture "${buildopt_capture_two_relative}" \
+            --captured-at "${buildopt_captured_at}"
+    ) >"${buildopt_qualification}"
+    buildopt_qualification_files+=("${buildopt_qualification}")
+done
+
+jq -s \
+    --arg captured_at "${buildopt_captured_at}" '
+  {
+    schemaVersion: "buildopt.evidence/poc-statistical-qualification-matrix/v2",
+    workItem: "POC-STATISTICAL-QUALIFICATION-V2-001",
+    capturedAt: $captured_at,
+    subjects: map({
+      repositoryId: .subject.repositoryId,
+      repositoryRevision: .subject.repositoryRevision,
+      pipelineClass: .subject.pipelineClass,
+      evidenceState,
+      plan: (if .plan then {
+        originalEntrypoints: .plan.fallbackEntrypoints,
+        candidateEntrypoints: .plan.entrypoints,
+        totalProjectCount: .plan.totalProjectCount,
+        selectedProjectCount: .plan.selectedProjectCount,
+        omittedProjectCount: .plan.omittedProjectCount
+      } else null end),
+      result
+    }),
+    aggregation: {
+      subjectCount: length,
+      qualified: (map(select(.result != null and .result.qualified)) | length),
+      retainedNative: (map(select(.result != null and (.result.qualified | not))) | length),
+      unavailable: (map(select(.result == null)) | length),
+      repositoryPercentagesAveraged: false
+    },
+    boundaries: {
+      proofOfConcept: true,
+      productionAuthorized: false,
+      automaticActivation: false,
+      testOptimizationModified: false
+    }
+  }
+' "${buildopt_qualification_files[@]}" >"${buildopt_evidence_root}/summary.json"
+
+printf 'Balanced qualification matrix assembled: %s\n' "${buildopt_evidence_root}/summary.json"

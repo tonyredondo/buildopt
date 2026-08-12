@@ -425,8 +425,23 @@ func RenderStructuralProfile(profile StructuralProfile) ([]byte, error) {
 }
 
 func validateStructuralEvidence(evidence structuralEvidence, analysis AnalysisReport) error {
-	if evidence.SchemaVersion != StructuralEvidenceSchema || evidence.EvidenceState != "QUALIFIED" {
+	if err := validateStructuralCaptureEvidence(evidence, analysis); err != nil {
+		return err
+	}
+	if evidence.EvidenceState != "QUALIFIED" || !evidence.Result.Qualified {
 		return errors.New("structural qualification evidence is not qualified")
+	}
+	return nil
+}
+
+// validateStructuralCaptureEvidence accepts both qualified and inconclusive
+// v1 captures, but recomputes every correctness and timing field. Balanced v2
+// qualification uses it so a noisy individual capture can contribute raw
+// observations without weakening output, execution-shape, or fallback gates.
+func validateStructuralCaptureEvidence(evidence structuralEvidence, analysis AnalysisReport) error {
+	if evidence.SchemaVersion != StructuralEvidenceSchema ||
+		(evidence.EvidenceState != "QUALIFIED" && evidence.EvidenceState != "INCONCLUSIVE") {
+		return errors.New("structural qualification capture state is invalid")
 	}
 	if _, err := time.Parse(time.RFC3339, evidence.CapturedAt); err != nil {
 		return errors.New("structural qualification capture time is invalid")
@@ -466,8 +481,8 @@ func validateStructuralEvidence(evidence structuralEvidence, analysis AnalysisRe
 		evidence.Execution.CandidateWarmups,
 		evidence.Observations,
 	)
-	if !sameStructuralResult(calculated, evidence.Result) || !calculated.Qualified ||
-		evidence.Result.Decision != "QUALIFY_STRUCTURAL_PROFILE" {
+	if !sameStructuralResult(calculated, evidence.Result) ||
+		(evidence.EvidenceState == "QUALIFIED") != calculated.Qualified {
 		return errors.New("structural qualification result is invalid")
 	}
 	if evidence.Fallback.Mode != "FULL_GRAPH" || evidence.Fallback.Reason == "" || !evidence.Fallback.BuildSuccessful {

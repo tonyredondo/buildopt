@@ -245,6 +245,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-generic-profile-ci" >/dev/null
         "${buildopt_script_dir}/check-generic-profile-ci-replay" >/dev/null
         "${buildopt_script_dir}/check-generic-workflow-value" >/dev/null
+        "${buildopt_script_dir}/check-statistical-qualification-v2" >/dev/null
         "${buildopt_script_dir}/check-poc-trace-hypothesis-v1" >/dev/null
         "${buildopt_script_dir}/check-poc-portfolio-decision-v1" >/dev/null
         "${buildopt_script_dir}/check-poc-spring-installed-impact" >/dev/null

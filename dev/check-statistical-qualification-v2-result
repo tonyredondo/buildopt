@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [/absolute/evidence/root]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence_root=${1:-"${buildopt_repo_root}/benchmarks/results/poc-statistical-qualification-v2"}
+[[ ${buildopt_evidence_root} == /* ]] || {
+    printf 'evidence root must be absolute\n' >&2
+    exit 64
+}
+
+"${buildopt_script_dir}/check-statistical-qualification-v2" >/dev/null
+for buildopt_command in jq cmp mktemp; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'required balanced qualification result checker is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_summary="${buildopt_evidence_root}/summary.json"
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-statistical-qualification-matrix/v2" and
+  .workItem == "POC-STATISTICAL-QUALIFICATION-V2-001" and
+  (.capturedAt | test("Z$")) and
+  (.subjects | length) == 5 and
+  (.subjects | map(.repositoryId)) == [
+    "spring-projects/spring-framework",
+    "open-telemetry/opentelemetry-java-instrumentation",
+    "apache/kafka",
+    "micronaut-projects/micronaut-core",
+    "apache/groovy"
+  ] and
+  .aggregation.subjectCount == 5 and
+  (.aggregation.qualified + .aggregation.retainedNative + .aggregation.unavailable) == 5 and
+  .aggregation.repositoryPercentagesAveraged == false and
+  .boundaries == {
+    proofOfConcept: true,
+    productionAuthorized: false,
+    automaticActivation: false,
+    testOptimizationModified: false
+  }
+' "${buildopt_summary}" >/dev/null
+
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-balanced-result-check.XXXXXX")
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-balanced-result-check."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+"${buildopt_script_dir}/run" --toolchain go -- go build -o "${buildopt_temp}/buildopt" ./cmd/buildopt
+
+buildopt_captured_at=$(jq -er '.capturedAt' "${buildopt_summary}")
+mapfile -t buildopt_keys < <(jq -r '.repositories[].key' \
+    "${buildopt_repo_root}/specs/poc-statistical-qualification-v2.json")
+for buildopt_key in "${buildopt_keys[@]}"; do
+    buildopt_qualification="${buildopt_evidence_root}/${buildopt_key}/qualification.json"
+    buildopt_state=$(jq -er '.evidenceState' "${buildopt_qualification}")
+    if [[ ${buildopt_state} == UNAVAILABLE ]]; then
+        jq -e '
+          .schemaVersion == "buildopt.evidence/structural-profile-balanced-qualification/v2" and
+          .evidenceState == "UNAVAILABLE" and .result == null and
+          .decision == "RETAIN_NATIVE_GRADLE" and
+          (.captures | length) == 2 and
+          ([.captures[].measurementStatus] | any(. != "COMPLETED")) and
+          .boundaries.proofOfConcept == true and
+          .boundaries.productionAuthorized == false and
+          .boundaries.repositorySpecificRuleAdded == false
+        ' "${buildopt_qualification}" >/dev/null
+        continue
+    fi
+    [[ ${buildopt_state} == QUALIFIED || ${buildopt_state} == INCONCLUSIVE ]] || {
+        printf 'unexpected balanced qualification state for %s: %s\n' "${buildopt_key}" "${buildopt_state}" >&2
+        exit 1
+    }
+    buildopt_capture_one="${buildopt_evidence_root}/${buildopt_key}/capture-1/evidence.json"
+    buildopt_capture_two="${buildopt_evidence_root}/${buildopt_key}/capture-2/evidence.json"
+    buildopt_capture_one_relative=${buildopt_capture_one#"${buildopt_repo_root}/"}
+    buildopt_capture_two_relative=${buildopt_capture_two#"${buildopt_repo_root}/"}
+    (
+        cd -- "${buildopt_repo_root}"
+        "${buildopt_temp}/buildopt" profile aggregate \
+            --capture "${buildopt_capture_one_relative}" \
+            --capture "${buildopt_capture_two_relative}" \
+            --captured-at "${buildopt_captured_at}"
+    ) >"${buildopt_temp}/${buildopt_key}.json"
+    cmp -s "${buildopt_qualification}" "${buildopt_temp}/${buildopt_key}.json" || {
+        printf 'balanced qualification does not recompute: %s\n' "${buildopt_key}" >&2
+        exit 1
+    }
+    jq -e '
+      .execution.captureCount == 2 and .execution.pairsPerCapture == 8 and
+      .execution.blockCount == 8 and (.captures | length) == 2 and
+      (.blocks | length) == 8 and .result.captures == 2 and
+      .result.pairs == 16 and .result.blocks == 8 and
+      .result.requiredOutputsIdentical == true and
+      .result.executionShapeStable == true and
+      .result.fallbacksSuccessful == true and
+      (.result.qualified == (.evidenceState == "QUALIFIED")) and
+      (.result.decision == (if .result.qualified then
+        "QUALIFY_BALANCED_STRUCTURAL_PROFILE" else "RETAIN_NATIVE_GRADLE" end))
+    ' "${buildopt_qualification}" >/dev/null
+done
+
+printf 'Balanced statistical qualification v2 evidence OK: %s\n' "${buildopt_summary}"

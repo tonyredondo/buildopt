@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "buildopt.specs/poc-statistical-qualification/v2",
+  "evidenceSchemaVersion": "buildopt.evidence/structural-profile-balanced-qualification/v2",
+  "workItem": "POC-STATISTICAL-QUALIFICATION-V2-001",
+  "decision": "REMEASURE_FIVE_PUBLIC_REPOSITORIES_WITH_BALANCED_REPEATABLE_QUALIFICATION",
+  "captureContract": {
+    "path": "specs/poc-generic-profile-matrix-v4.json",
+    "sha256": "003d427708260f3bf5440bd58879a835be1056729865ff9b65cd52eff9b81f06",
+    "opentelemetryEntrypointsPath": "specs/poc-otel-spring-family-v2.tasks.txt",
+    "opentelemetryEntrypointsSha256": "3a93d45f268589448baa5e5fd3c8055634ee4a4d7af685c7851c59dbec13ff0f",
+    "captureEvidenceSchemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "captureCountPerRepository": 2,
+    "pairsPerCapture": 8,
+    "order": "FOUR_ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST_BLOCKS",
+    "sameBuildOptRevisionRequired": true,
+    "sameExecutableSha256Required": true,
+    "sameRepositoryRevisionRequired": true,
+    "samePlanAndOptionsRequired": true
+  },
+  "repositories": [
+    {
+      "key": "spring-framework",
+      "repositoryId": "spring-projects/spring-framework",
+      "workflow": "testClasses",
+      "workflowFamily": "BUILD_OWNED_TEST_PREPARATION"
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "workflow": "spring-family testClasses",
+      "workflowFamily": "BUILD_OWNED_TEST_PREPARATION"
+    },
+    {
+      "key": "apache-kafka",
+      "repositoryId": "apache/kafka",
+      "workflow": "testClasses",
+      "workflowFamily": "BUILD_OWNED_TEST_PREPARATION"
+    },
+    {
+      "key": "micronaut-core",
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "workflow": "assemble",
+      "workflowFamily": "ASSEMBLY"
+    },
+    {
+      "key": "apache-groovy",
+      "repositoryId": "apache/groovy",
+      "workflow": "classes",
+      "workflowFamily": "COMPILATION"
+    }
+  ],
+  "qualification": {
+    "blockDefinition": "MEAN_OF_ONE_CONTROL_FIRST_PAIR_AND_THE_FOLLOWING_CANDIDATE_FIRST_PAIR",
+    "blockCount": 8,
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95BlockBootstrapBound": true,
+    "positiveMedianBlockSaving": true,
+    "minimumPositiveBlocks": 6,
+    "candidateP95NotRegressive": true,
+    "requiredOutputsIdentical": true,
+    "executionShapeStable": true,
+    "fullGraphFallbackRequiredPerCapture": true,
+    "maximumProductAttributableFailures": 0,
+    "failedOrTimedOutObservationsMayBeDiscarded": false,
+    "nonWinningDecision": "RETAIN_NATIVE_GRADLE"
+  },
+  "reporting": {
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false,
+    "individualPairsPreserved": true,
+    "individualCaptureDecisionsPreserved": true,
+    "orderEffectReported": true,
+    "p95Reported": true,
+    "allUnavailableAndFailedCellsPreserved": true
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

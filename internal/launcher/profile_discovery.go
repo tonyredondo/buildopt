@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
@@ -14,6 +15,7 @@ const (
 	profileAnalysisUsage  = "usage: buildopt profile analyze --manifest PATH --graph PATH --generated-manifest PATH\n"
 	profileQualifyUsage   = "usage: buildopt profile qualify --manifest PATH --graph PATH --generated-manifest PATH --evidence PATH\n"
 	profileEvaluateUsage  = "usage: buildopt profile evaluate --manifest PATH --graph PATH --generated-manifest PATH [--evidence PATH --profile-output PATH]\n"
+	profileAggregateUsage = "usage: buildopt profile aggregate --capture PATH --capture PATH --captured-at RFC3339\n"
 )
 
 type profileEvaluation struct {
@@ -26,6 +28,20 @@ type profileEvaluation struct {
 	ReviewRequired       bool                                `json:"reviewRequired"`
 	ActivationAutomatic  bool                                `json:"activationAutomatic"`
 	ProductionAuthorized bool                                `json:"productionAuthorized"`
+}
+
+type repeatedProfilePathFlag []string
+
+func (values *repeatedProfilePathFlag) String() string {
+	return ""
+}
+
+func (values *repeatedProfilePathFlag) Set(value string) error {
+	if value == "" {
+		return fmt.Errorf("profile path is empty")
+	}
+	*values = append(*values, value)
+	return nil
 }
 
 func runProfileDiscovery(args []string, stdout, stderr io.Writer) int {
@@ -49,6 +65,9 @@ func runProfileDiscovery(args []string, stdout, stderr io.Writer) int {
 	}
 	if len(args) > 0 && args[0] == "measure" {
 		return runStructuralProfileMeasurement(args[1:], stdout, stderr)
+	}
+	if len(args) > 0 && args[0] == "aggregate" {
+		return runBalancedStructuralAggregation(args[1:], stdout, stderr)
 	}
 	if (len(args) == 1 && isHelp(args)) ||
 		(len(args) == 2 && args[0] == "discover" && isHelp(args[1:])) {
@@ -92,6 +111,44 @@ func runProfileDiscovery(args []string, stdout, stderr io.Writer) int {
 	}
 	if _, err := stdout.Write(raw); err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt: write profile discovery: %v\n", err)
+		return exitConfiguration
+	}
+	return 0
+}
+
+func runBalancedStructuralAggregation(args []string, stdout, stderr io.Writer) int {
+	if isHelp(args) {
+		_, _ = io.WriteString(stdout, profileAggregateUsage)
+		return 0
+	}
+	flags := flag.NewFlagSet("buildopt profile aggregate", flag.ContinueOnError)
+	flags.SetOutput(io.Discard)
+	var captures repeatedProfilePathFlag
+	flags.Var(&captures, "capture", "repository-relative v1 structural capture; exactly two required")
+	capturedAtText := flags.String("captured-at", "", "RFC3339 aggregation time")
+	if err := flags.Parse(args); err != nil || flags.NArg() != 0 || len(captures) != 2 || *capturedAtText == "" {
+		_, _ = io.WriteString(stderr, profileAggregateUsage)
+		return exitUsage
+	}
+	capturedAt, err := time.Parse(time.RFC3339, *capturedAtText)
+	if err != nil {
+		_, _ = io.WriteString(stderr, profileAggregateUsage)
+		return exitUsage
+	}
+	repositoryRoot, err := canonicalWorkingDirectory()
+	if err != nil {
+		_, _ = fmt.Fprintf(stderr, "buildopt: balanced structural aggregation unavailable: %v\n", err)
+		return exitConfiguration
+	}
+	raw, _, err := profilediscovery.RenderBalancedStructuralEvidence(profilediscovery.BalancedStructuralOptions{
+		RepositoryRoot: repositoryRoot, EvidencePaths: append([]string(nil), captures...), CapturedAt: capturedAt,
+	})
+	if err != nil {
+		_, _ = fmt.Fprintf(stderr, "buildopt: balanced structural aggregation unavailable: %v\n", err)
+		return exitConfiguration
+	}
+	if _, err := stdout.Write(raw); err != nil {
+		_, _ = fmt.Fprintf(stderr, "buildopt: write balanced structural aggregation: %v\n", err)
 		return exitConfiguration
 	}
 	return 0

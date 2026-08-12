@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_root}/specs/poc-statistical-qualification-v2.json"
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'required balanced qualification checker is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_capture_sha=$(sha256sum "${buildopt_root}/specs/poc-generic-profile-matrix-v4.json" | awk '{print $1}')
+buildopt_otel_sha=$(sha256sum "${buildopt_root}/specs/poc-otel-spring-family-v2.tasks.txt" | awk '{print $1}')
+
+jq -e \
+    --arg capture_sha "${buildopt_capture_sha}" \
+    --arg otel_sha "${buildopt_otel_sha}" '
+  .schemaVersion == "buildopt.specs/poc-statistical-qualification/v2" and
+  .evidenceSchemaVersion == "buildopt.evidence/structural-profile-balanced-qualification/v2" and
+  .workItem == "POC-STATISTICAL-QUALIFICATION-V2-001" and
+  .captureContract.path == "specs/poc-generic-profile-matrix-v4.json" and
+  .captureContract.sha256 == $capture_sha and
+  .captureContract.opentelemetryEntrypointsSha256 == $otel_sha and
+  .captureContract.captureCountPerRepository == 2 and
+  .captureContract.pairsPerCapture == 8 and
+  .captureContract.sameBuildOptRevisionRequired == true and
+  .captureContract.sameExecutableSha256Required == true and
+  (.repositories | map(.key)) == [
+    "spring-framework",
+    "opentelemetry-java-instrumentation",
+    "apache-kafka",
+    "micronaut-core",
+    "apache-groovy"
+  ] and
+  (.repositories | map(.repositoryId) | unique | length) == 5 and
+  .qualification == {
+    blockDefinition: "MEAN_OF_ONE_CONTROL_FIRST_PAIR_AND_THE_FOLLOWING_CANDIDATE_FIRST_PAIR",
+    blockCount: 8,
+    minimumMeanSavedMs: 500,
+    minimumReductionRatio: 0.02,
+    positiveLower95BlockBootstrapBound: true,
+    positiveMedianBlockSaving: true,
+    minimumPositiveBlocks: 6,
+    candidateP95NotRegressive: true,
+    requiredOutputsIdentical: true,
+    executionShapeStable: true,
+    fullGraphFallbackRequiredPerCapture: true,
+    maximumProductAttributableFailures: 0,
+    failedOrTimedOutObservationsMayBeDiscarded: false,
+    nonWinningDecision: "RETAIN_NATIVE_GRADLE"
+  } and
+  .reporting.repositoryPercentagesAveraged == false and
+  .reporting.mechanismPercentagesAdded == false and
+  .reporting.individualPairsPreserved == true and
+  .boundaries == {
+    proofOfConcept: true,
+    productionAuthorized: false,
+    automaticActivation: false,
+    repositorySpecificProductRulesAllowed: false,
+    testOptimizationModified: false,
+    soakRequired: false,
+    designPartnerRequired: false
+  }
+' "${buildopt_spec}" >/dev/null
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/profilediscovery -run BalancedStructuralQualification >/dev/null
+
+printf 'Balanced statistical qualification v2 contract OK: %s\n' "${buildopt_spec}"

@@ -518,6 +518,16 @@ preparation. Every row uses the installed generic profile path, eight isolated
 alternating pairs, exact outputs, and native full-graph fallback. Families are
 qualified or rejected independently; no percentages are averaged or added.
 
+`poc-statistical-qualification-v2.json` and
+`poc-statistical-qualification-v2.md` preregister a fresh, comparable rerun of
+Spring Framework, OpenTelemetry Java Instrumentation, Kafka, Micronaut and
+Groovy. Each repository receives two independent eight-pair captures from the
+same BuildOpt revision and executable. Adjacent opposite-order observations
+form eight balanced blocks; qualification requires material mean saving,
+positive median and bootstrap lower bound, at least six positive blocks,
+non-regressive candidate p95, exact outputs, stable task shape, both full-graph
+fallbacks and zero product failures. Historical v1 decisions remain immutable.
+
 The retained [v5 evidence](../benchmarks/results/poc-generic-holdout-v5/README.md)
 passes that unchanged contract: native averages 216.724 seconds and BuildOpt
 203.991 seconds, saving 12.733 seconds/5.88% with interval

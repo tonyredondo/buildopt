@@ -3435,6 +3435,27 @@ outputs and scheduling-equivalent full-graph fallback. The checker rejects
 partial timing, repository percentage averages, and attribution of retained
 Jar/Edge results to Build Impact.
 
+`./dev/check-statistical-qualification-v2` validates the frozen balanced
+qualification contract before any new observation is captured. Run each of the
+five subjects twice through `./dev/run-generic-profile-matrix`, using the
+unchanged v4 capture contract and the same committed BuildOpt revision. Place
+the two immutable capture directories under
+`benchmarks/results/poc-statistical-qualification-v2/<key>/capture-{1,2}` and
+assemble the matrix with:
+
+```bash
+./dev/assemble-statistical-qualification-v2 \
+  "$PWD/benchmarks/results/poc-statistical-qualification-v2" \
+  2026-08-12T12:00:00Z
+```
+
+`./dev/check-statistical-qualification-v2-result` independently recomputes
+every completed aggregate and preserves unavailable captures. It requires two
+different source documents with identical repository, revision, plan,
+executable and options; 16 raw pairs become eight AB/BA blocks. The checker
+does not average repository percentages or permit a failed observation to be
+discarded.
+
 `./dev/run-generic-workflow-value /absolute/evidence/directory [workflow-key]`
 uses the same installed generic runner with the frozen public workflow-family
 contract. It measures Groovy JAR packaging, Kafka Checkstyle verification,

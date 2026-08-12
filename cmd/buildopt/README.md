@@ -189,6 +189,22 @@ written only for exact qualified evidence; every uncertain result retains
 native full graph. Required outputs stay repository-owned because BuildOpt
 cannot safely guess which products of a broad Gradle command the caller needs.
 
+Two independent eight-pair captures from the same BuildOpt revision can be
+aggregated without changing either original decision:
+
+```bash
+buildopt profile aggregate \
+  --capture path/to/capture-1/evidence.json \
+  --capture path/to/capture-2/evidence.json \
+  --captured-at 2026-08-12T12:00:00Z
+```
+
+The POC v2 aggregate balances adjacent opposite-order observations into eight
+AB/BA blocks. It reports mean and median saving, a deterministic block
+bootstrap interval, order effect and p95 wall time. Qualification still
+requires exact outputs, stable task shape, both native fallbacks and zero
+product failures; a non-winning aggregate retains optimized native Gradle.
+
 The suite covers empty, quoted, whitespace, wildcard, Unicode, newline, and literal `--` arguments; inherited cwd, environment, and standard streams; success and non-zero child statuses; usage; launch failures; process-group isolation; signal forwarding through a child process tree; and the local bypass described below.
 
 ## Process and signal handling
