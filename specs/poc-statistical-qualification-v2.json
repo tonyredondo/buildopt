@@ -15,7 +15,10 @@
     "sameBuildOptRevisionRequired": true,
     "sameExecutableSha256Required": true,
     "sameRepositoryRevisionRequired": true,
-    "samePlanAndOptionsRequired": true
+    "samePlanAndOptionsRequired": true,
+    "gradleDistributionPreparedByOriginalWorkflowPreflight": true,
+    "gradleDistributionCopiedPrivatelyPerArm": true,
+    "networkAllowedDuringWarmupsOrTiming": false
   },
   "repositories": [
     {

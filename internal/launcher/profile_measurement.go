@@ -57,6 +57,7 @@ type structuralMeasurementConfig struct {
 	executableSHA256             string
 	inputDocuments               map[string][]byte
 	targetStabilityConfirmations int
+	gradleDistributionSeed       string
 }
 
 type structuralMeasurementArm struct {
@@ -242,6 +243,10 @@ func prepareStructuralMeasurementConfig(
 	if err != nil {
 		return structuralMeasurementConfig{}, fmt.Errorf("hash installed BuildOpt executable: %w", err)
 	}
+	gradleDistributionSeed, err := measurementGradleDistributionSeed()
+	if err != nil {
+		return structuralMeasurementConfig{}, err
+	}
 	return structuralMeasurementConfig{
 		repositoryRoot: repositoryRoot, manifestPath: manifest, graphPath: graph,
 		generatedPath: generated, changesPath: changes,
@@ -252,6 +257,7 @@ func prepareStructuralMeasurementConfig(
 		executableSHA256:             executableSHA256,
 		inputDocuments:               inputDocuments,
 		targetStabilityConfirmations: targetStabilityConfirmations,
+		gradleDistributionSeed:       gradleDistributionSeed,
 	}, nil
 }
 
@@ -412,6 +418,12 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	}
 	if err := os.MkdirAll(arm.gradleHome, 0o700); err != nil {
 		return arm, fmt.Errorf("create %s Gradle home: %w", name, err)
+	}
+	if config.gradleDistributionSeed != "" {
+		destination := filepath.Join(arm.gradleHome, "wrapper", "dists")
+		if err := copyMeasurementDistributionTree(config.gradleDistributionSeed, destination); err != nil {
+			return arm, fmt.Errorf("seed %s Gradle distribution: %w", name, err)
+		}
 	}
 	if err := resetStructuralArm(config, arm, config.baseRevision, false); err != nil {
 		return arm, fmt.Errorf("prepare %s baseline: %w", name, err)
@@ -801,6 +813,25 @@ func measurementEnvironment(gradleHome string) []string {
 	return append(environment, "GRADLE_USER_HOME="+gradleHome)
 }
 
+func measurementGradleDistributionSeed() (string, error) {
+	gradleHome := os.Getenv("GRADLE_USER_HOME")
+	if gradleHome == "" {
+		return "", nil
+	}
+	candidate := filepath.Join(gradleHome, "wrapper", "dists")
+	info, err := os.Lstat(candidate)
+	if os.IsNotExist(err) {
+		return "", nil
+	}
+	if err != nil {
+		return "", fmt.Errorf("inspect Gradle distribution seed: %w", err)
+	}
+	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return "", errors.New("Gradle distribution seed must be a real directory")
+	}
+	return candidate, nil
+}
+
 func validateMeasurementInputFile(repositoryRoot, relativePath string) error {
 	if relativePath == "" || filepath.IsAbs(relativePath) || filepath.Clean(relativePath) != relativePath || relativePath == "." || relativePath == ".." {
 		return errors.New("input must be clean and repository relative")
@@ -1059,13 +1090,49 @@ func copyMeasurementTree(source, target string) error {
 	})
 }
 
+// copyMeasurementDistributionTree keeps each arm private while moving the
+// already verified Wrapper distribution out of the network-dependent preflight.
+// Only the executable bit is preserved; broader source permissions are not.
+func copyMeasurementDistributionTree(source, target string) error {
+	info, err := os.Lstat(source)
+	if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return errors.New("Gradle distribution seed is unavailable")
+	}
+	return filepath.WalkDir(source, func(candidate string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		relative, err := filepath.Rel(source, candidate)
+		if err != nil {
+			return err
+		}
+		destination := filepath.Join(target, relative)
+		if entry.IsDir() {
+			return os.MkdirAll(destination, 0o700)
+		}
+		entryInfo, err := entry.Info()
+		if err != nil || !entryInfo.Mode().IsRegular() {
+			return errors.New("Gradle distribution seed contains a non-regular entry")
+		}
+		mode := fs.FileMode(0o600)
+		if entryInfo.Mode().Perm()&0o111 != 0 {
+			mode = 0o700
+		}
+		return copyMeasurementRegularFileWithMode(candidate, destination, mode)
+	})
+}
+
 func copyMeasurementRegularFile(source, target string) error {
+	return copyMeasurementRegularFileWithMode(source, target, 0o600)
+}
+
+func copyMeasurementRegularFileWithMode(source, target string, mode fs.FileMode) error {
 	input, err := os.Open(source)
 	if err != nil {
 		return err
 	}
 	defer input.Close()
-	output, err := os.OpenFile(target, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o600)
+	output, err := os.OpenFile(target, os.O_CREATE|os.O_EXCL|os.O_WRONLY, mode)
 	if err != nil {
 		return err
 	}

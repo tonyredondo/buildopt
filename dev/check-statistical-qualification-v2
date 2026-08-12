@@ -33,6 +33,9 @@ jq -e \
   .captureContract.pairsPerCapture == 8 and
   .captureContract.sameBuildOptRevisionRequired == true and
   .captureContract.sameExecutableSha256Required == true and
+  .captureContract.gradleDistributionPreparedByOriginalWorkflowPreflight == true and
+  .captureContract.gradleDistributionCopiedPrivatelyPerArm == true and
+  .captureContract.networkAllowedDuringWarmupsOrTiming == false and
   (.repositories | map(.key)) == [
     "spring-framework",
     "opentelemetry-java-instrumentation",

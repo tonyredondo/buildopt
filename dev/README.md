@@ -3456,6 +3456,11 @@ executable and options; 16 raw pairs become eight AB/BA blocks. The checker
 does not average repository percentages or permit a failed observation to be
 discarded.
 
+The original-workflow preflight also seeds its successfully used Wrapper distribution
+into each private measurement Gradle home. Warm-ups, timed pairs and fallback
+therefore perform no Gradle distribution download; caches and daemons remain
+isolated between arms.
+
 `./dev/run-generic-workflow-value /absolute/evidence/directory [workflow-key]`
 uses the same installed generic runner with the frozen public workflow-family
 contract. It measures Groovy JAR packaging, Kafka Checkstyle verification,

@@ -31,6 +31,13 @@ The v2 aggregate binds both capture SHA-256 digests and independently
 revalidates subject, revision, plan, binary, options, exact outputs, task shape,
 host diagnostics and full-graph fallback before calculating value.
 
+The original workflow preflight successfully prepares the repository's Gradle
+Wrapper distribution before either arm exists. Measurement copies those bytes into
+each private Gradle home while preserving executable files; no warm-up, timed
+pair or fallback may download Gradle. This infrastructure correction was added
+after two preserved pre-measurement `Unexpected end of file` failures and does
+not change a task, option, threshold or timing boundary.
+
 ## Qualification
 
 A repository qualifies for a reviewable POC profile only when all of these are

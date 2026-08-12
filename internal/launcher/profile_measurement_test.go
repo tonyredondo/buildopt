@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -94,6 +95,50 @@ func TestMeasurementEnvironmentRemovesExternalBuildOptState(t *testing.T) {
 	if strings.Contains(joined, "BUILDOPT_SERVER_URL=") || strings.Contains(joined, "GRADLE_USER_HOME=wrong") ||
 		!strings.Contains(joined, "GRADLE_USER_HOME=isolated-home") {
 		t.Fatalf("measurement environment = %q", joined)
+	}
+}
+
+func TestMeasurementGradleDistributionSeedIsPrivateAndExecutable(t *testing.T) {
+	gradleHome := t.TempDir()
+	seed := filepath.Join(gradleHome, "wrapper", "dists")
+	bin := filepath.Join(seed, "gradle-9.6.1-bin", "checksum", "gradle-9.6.1", "bin")
+	if err := os.MkdirAll(bin, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(bin, "gradle"), []byte("launcher"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(seed, "marker.ok"), []byte("verified"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("GRADLE_USER_HOME", gradleHome)
+	resolved, err := measurementGradleDistributionSeed()
+	if err != nil || resolved != seed {
+		t.Fatalf("distribution seed = %q/%v", resolved, err)
+	}
+	target := filepath.Join(t.TempDir(), "wrapper", "dists")
+	if err := copyMeasurementDistributionTree(resolved, target); err != nil {
+		t.Fatal(err)
+	}
+	launcherInfo, err := os.Stat(filepath.Join(target, "gradle-9.6.1-bin", "checksum", "gradle-9.6.1", "bin", "gradle"))
+	if err != nil || (runtime.GOOS != "windows" && launcherInfo.Mode().Perm() != 0o700) {
+		t.Fatalf("copied launcher mode = %v/%v", launcherInfo, err)
+	}
+	markerInfo, err := os.Stat(filepath.Join(target, "marker.ok"))
+	if err != nil || (runtime.GOOS != "windows" && markerInfo.Mode().Perm() != 0o600) {
+		t.Fatalf("copied marker mode = %v/%v", markerInfo, err)
+	}
+}
+
+func TestMeasurementGradleDistributionSeedRejectsSymlinks(t *testing.T) {
+	seed := t.TempDir()
+	outside := t.TempDir()
+	if err := os.Symlink(outside, filepath.Join(seed, "escaped")); err != nil {
+		t.Skipf("symlink unavailable: %v", err)
+	}
+	if err := copyMeasurementDistributionTree(seed, filepath.Join(t.TempDir(), "target")); err == nil ||
+		!strings.Contains(err.Error(), "non-regular") {
+		t.Fatalf("symlink seed error = %v", err)
 	}
 }
 
