@@ -207,10 +207,17 @@ buildopt profile propose \
 native task as fallback while the generic proposal derives candidate task
 selectors from their terminal names and the exact owners of the change.
 
-The proposal command produces the manifest, graph, generated binding and
-fallback input used below without hand-authored JSON. Review the selected task
-set, omitted projects, required output scope and native fallback before running
-the emitted measurement command.
+Before graph discovery, the proposal executes the exact owner workflow once
+and writes `buildopt-output-contract.json`. Review the non-empty candidate
+paths, Gradle project owners and producer tasks. An empty or ambiguously owned
+declaration stops on native Gradle before any warm-up or timing. Use
+`buildopt profile outputs` when output ownership needs review before preparing
+the full change-bound proposal.
+
+After output validation, the proposal command produces the manifest, graph,
+generated binding and fallback input used below without hand-authored JSON.
+Review the selected task set, omitted projects, required output scope and native
+fallback before running the emitted measurement command.
 
 The same packaged proposal path has been checked from clean Apache Groovy and
 Micronaut Core revisions. It rediscovered their previously qualified 37-to-2

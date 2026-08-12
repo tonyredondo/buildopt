@@ -63,6 +63,20 @@ directory. Validate both records with:
   specs/poc-generic-holdout-v1.json
 ```
 
+The later [generic output-contract preflight](./results/poc-generic-output-contract-v1/README.md)
+replays that original wrong declaration through the installed proposal path.
+After one exact owner-workflow execution it reports the declared pattern as
+empty, exposes the Gradle-owned `hibernate-core/target/libs` candidates, and
+retains native before structural discovery, warm-up or timing. Validate the
+frozen observation with:
+
+```bash
+./dev/check-generic-output-contract-evidence
+```
+
+This adds a fail-early usability/correctness result, not another performance
+percentage.
+
 The [v3 diagnostic bundle](./results/poc-generic-holdout-v3/README.md) then
 investigates rather than discarding the v2 negative. A second excluded base
 warm-up reduced control/candidate preparation by 87.30%/85.80% and recovered

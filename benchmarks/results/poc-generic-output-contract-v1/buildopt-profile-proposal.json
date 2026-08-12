@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "buildopt.poc/profile-proposal/v1",
+  "decision": "NATIVE_FULL_GRAPH",
+  "reason": "REQUIRED_OUTPUTS_EMPTY",
+  "repositoryId": "hibernate/hibernate-orm",
+  "pipelineClass": "assemble",
+  "baseRevision": "2b448a59d332326f0cd0691c868425124d55cbb5",
+  "targetRevision": "2a93cdaeea605bbc0025a1d9a095d0edf885d7f5",
+  "originalEntrypoint": "assemble",
+  "originalEntrypoints": [
+    "assemble"
+  ],
+  "changedPaths": [
+    "hibernate-core/src/main/java/org/hibernate/Session.java"
+  ],
+  "requiredOutputs": [
+    "hibernate-core/build/libs/**"
+  ],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "unknownRelationships": false,
+  "documents": {
+    "outputContract": "buildopt-output-contract.json",
+    "proposal": "buildopt-profile-proposal.json"
+  },
+  "buildOptRevisionNeeded": false,
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false,
+  "testOptimization": "OUT_OF_SCOPE"
+}

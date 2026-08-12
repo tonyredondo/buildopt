@@ -19,7 +19,8 @@ outputs represent success for an unknown customer build.
 | --- | --- | --- | --- |
 | Installation and launcher | Native packages and `buildopt gradle` locate the Wrapper, preserve argv/process behavior and support Linux, macOS and Windows. | The repository's Wrapper and requested Gradle command. | External Kotlin and Groovy pilots pass onboarding; platform CI covers native lifecycle. |
 | Safe Cache / L1 | Cache scope is derived from repository, Wrapper and platform; unsafe or unavailable state falls back to native execution. | None beyond the repository and Wrapper already being executed. | At parity with a warm native Gradle cache, so it is a safety/onboarding feature rather than a retained accelerator claim. |
-| Structural proposal | Typed Gradle discovery maps the original entrypoints and exact changed paths to project owners, constructs a smaller candidate and rejects incomplete or ambiguous graphs. | Repository identity, original entrypoints, exact Git change and required output globs. | The same code reproduced five clean-CI proposals and discovered the unseen Hibernate 29-to-1 candidate. No public-repository names appear in the customer execution decision. |
+| Output-contract preflight | The exact owner workflow runs once before proposal discovery; Gradle-declared task outputs are reduced to non-empty, repository-contained candidates with one most-specific project owner per file. Missing, empty, symlinked or ambiguous declarations retain native Gradle. | Repository identity, original entrypoints and optional required-output globs to confirm. | The same generic code caught Hibernate's wrong `build/libs` declaration, exposed its Gradle-owned `target/libs` JARs and stopped before warm-up or timing. |
+| Structural proposal | Typed Gradle discovery maps the original entrypoints and exact changed paths to project owners, constructs a smaller candidate and rejects incomplete or ambiguous graphs. | Repository identity, original entrypoints, exact Git change and validated required output globs. | The same code reproduced five clean-CI proposals and discovered the unseen Hibernate 29-to-1 candidate. No public-repository names appear in the customer execution decision. |
 | Structural measurement | Independent source trees, Gradle homes and cache seeds compare optimized native Gradle with the candidate, bind source/tool/profile hashes, compare output bytes and prove full-graph fallback. | Accepted proposal and its declared output contract. | Spring, OpenTelemetry, Kafka, Micronaut, Groovy and Hibernate use the same installed measure/evaluate path. |
 | Structural decision | Fixed minimum saving, reduction, uncertainty, repeatability, output, failure and fallback gates determine `REVIEW_STRUCTURAL_PROFILE` or native fallback. | Explicit human review remains required. | Hibernate version 5 qualifies at 5.88%, 8/8 reciprocal blocks; Spring remains native at 7/8 despite a positive mean. |
 | Reviewed task optimization | Exact task adapters and Patch Autopilot can repair one understood cacheability contract with signed, reversible evidence. | A reviewed task type/recipe and its exact validation boundary. | Strong Kotlin/Groovy custom-task evidence exists, but this is not generalized to arbitrary task implementations. |
@@ -63,13 +64,14 @@ against which a generic optimizer can prove correctness. Removing them would
 make the POC easier to run only by making it capable of reporting a faster but
 wrong build.
 
-The Hibernate holdout demonstrated the remaining usability problem: its build
-places JARs under `target/libs`, not Gradle's conventional `build/libs`. The
-first attempt safely stopped before timing, but only after the user supplied a
-wrong output glob. BuildOpt therefore still needs a generic output-contract
-preflight that discovers candidate output directories, asks the owner to
-confirm them and rejects missing, empty, overlapping or ambiguous ownership
-before expensive measurement.
+The Hibernate holdout demonstrated the usability problem: its build places
+JARs under `target/libs`, not Gradle's conventional `build/libs`. The completed
+generic preflight now runs the exact owner workflow once, rejects the empty
+`hibernate-core/build/libs/**` declaration, and reports three non-empty
+`:hibernate-core` JAR candidates under `target/libs`. It writes no structural
+proposal or profile and starts no warm-up or timing. The product still needs a
+small owner-facing flow for accepting a reviewed candidate into versioned
+input; it no longer needs the owner to discover the path by hand.
 
 ## Cross-repository evidence
 
@@ -115,25 +117,23 @@ declared.
 
 ## Remaining gaps before calling the POC broadly usable
 
-1. **Output-contract preflight.** Discover and validate real Gradle outputs
-   before warm-up or timing, then produce a review artifact rather than
-   guessing conventions.
-2. **Owner-input ergonomics.** Reduce the three semantic inputs to one small,
-   documented, versioned file and actionable diagnostics; do not replace them
-   with hidden inference.
-3. **Workflow breadth.** Repeat the unchanged path on more packaging,
+1. **Owner-input ergonomics.** Turn reviewed output candidates, workflow and
+   change source into one small, documented, versioned file with an explicit
+   confirmation/update step; do not replace owner semantics with hidden
+   inference.
+2. **Workflow breadth.** Repeat the unchanged path on more packaging,
    verification, distribution and build-owned test-preparation workflows.
    Gradle `Test` optimization remains separate.
-4. **Installed replay of qualified profiles.** Prove that a reviewed profile
+3. **Installed replay of qualified profiles.** Prove that a reviewed profile
    selected by `evaluate` produces the same value through the public package,
    not only the measurement harness, for more than the existing bounded cases.
-5. **Generic task-contract research.** Add an adapter or patch recipe only when
+4. **Generic task-contract research.** Add an adapter or patch recipe only when
    an exact task contract and end-to-end wall-time win transfer across
    repositories; never infer value from cacheability alone.
-6. **Portfolio measurement.** When more than one mechanism qualifies for the
+5. **Portfolio measurement.** When more than one mechanism qualifies for the
    same workload, measure the complete installed composition directly. Do not
    add isolated percentages.
-7. **Native measurement parity.** Installation, launcher and service lifecycle
+6. **Native measurement parity.** Installation, launcher and service lifecycle
    are validated on Linux, macOS and Windows, but the current comparable
    structural wall-time matrix is Linux evidence. Run the same fail-closed
    qualification protocol natively before making macOS or Windows performance
@@ -149,7 +149,7 @@ repositories and beats optimized native Gradle in five under their frozen
 decision rules; Spring demonstrates that native fallback still governs a
 positive but insufficiently repeatable result.
 
-The next block should implement the output-contract preflight. It closes the
-only generic onboarding failure observed by the blind holdout and makes the
-current mechanism easier to evaluate on another arbitrary Gradle repository
-without weakening correctness or pretending the POC is production-ready.
+The next block should make owner input reviewable and easy to maintain. The
+preflight has closed the blind holdout failure; the remaining friction is
+turning its Gradle-owned candidates into one explicit, checked input without
+hand-editing several CLI flags or weakening correctness.

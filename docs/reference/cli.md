@@ -88,6 +88,25 @@ when all timing, output and fallback gates qualify. Otherwise it reports
 `NATIVE_FULL_GRAPH` and writes nothing. The command never infers required
 outputs, activates a profile, or grants production authority.
 
+### Review Gradle output ownership
+
+```text
+buildopt profile outputs \
+  --repository-id OWNER/REPO \
+  --pipeline-class CLASS \
+  --entrypoint TASK \
+  [--entrypoint TASK ...] \
+  [--required-output GLOB ...]
+```
+
+This preflight executes the exact owner workflow once and inspects the output
+declarations of its Gradle task graph. It emits non-empty, repository-contained
+candidate paths with their most-specific project owners and producer tasks.
+Confirmed declarations return `VALIDATED_REQUIRED_OUTPUTS`; absent declarations
+return review candidates; missing, empty, symlinked or ambiguously owned output
+contracts retain `NATIVE_FULL_GRAPH`. It never warms, times, proposes or
+activates an optimization.
+
 ### Propose a structural POC measurement
 
 ```text
@@ -103,13 +122,15 @@ buildopt profile propose \
 ```
 
 This is the first command for a repository that has no BuildOpt manifest. It
-uses two configured-model discovery passes to map the exact Git change to
-Gradle projects, propose each terminal task selector on those projects and
-validate the smaller graph. Repeated `--entrypoint` values preserve a real
-multi-entrypoint workflow without replacing it with an artificial root task.
-It writes reviewable manifest, graph, generated binding,
-fallback and proposal documents only for a supported complete candidate.
-Global, ambiguous, custom, Test-bearing or unknown workflows retain
+runs the output-contract preflight before structural discovery and always
+writes `buildopt-output-contract.json`. Only a validated non-empty declaration
+can continue into the two configured-model discovery passes that map the exact
+Git change to Gradle projects, propose each terminal task selector on those
+projects and validate the smaller graph. Repeated `--entrypoint` values preserve
+a real multi-entrypoint workflow without replacing it with an artificial root
+task. It writes reviewable manifest, graph, generated binding, fallback and
+proposal documents only for a supported complete candidate. Global,
+ambiguous, custom, Test-bearing, unknown or invalid-output workflows retain
 `NATIVE_FULL_GRAPH`. It never writes an active profile or predicts a speedup.
 See [generic structural profile onboarding](../../specs/poc-generic-profile-onboarding-v1.md).
 

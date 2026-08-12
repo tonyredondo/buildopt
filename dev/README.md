@@ -3446,6 +3446,20 @@ checkouts, `./dev/evaluate-generic-profile-ci-replay` to write each durable
 verdict, and `./dev/compose-generic-profile-ci-replay` to publish the terminal
 summary. This replay performs no timing and writes no qualified profile.
 
+`./dev/check-generic-output-contract` exercises the generic Gradle output
+preflight with a synthetic repository whose build directory is redirected from
+`build` to `target`. It proves discovery without declarations, successful
+confirmation, early rejection of an empty conventional glob and native
+fallback for cross-project ownership ambiguity. The same preflight is embedded
+in `profile propose`; failed output contracts cannot write graph documents or
+enter measurement.
+
+`./dev/check-generic-output-contract-evidence` validates the frozen Hibernate
+observation against `specs/poc-generic-output-contract-v1.json`. The original
+`hibernate-core/build/libs/**` declaration is empty, Gradle exposes owned JAR
+candidates under `hibernate-core/target/libs`, and proposal stops at
+`NATIVE_FULL_GRAPH` with no warm-up, timing or profile.
+
 `./dev/run-generic-holdout /absolute/evidence/directory` packages the current
 committed CLI and applies the preregistered generic proposal, isolated
 measurement and evaluation path to the frozen Hibernate ORM holdout. The

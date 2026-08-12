@@ -237,6 +237,15 @@ rules, while Spring and every unqualified change remain on optimized native
 Gradle. This is bounded POC evidence, not a production, automatic or universal
 value claim.
 
+Before proposing that structural experiment, `buildopt profile propose` now
+executes the owner workflow once and validates its required outputs against
+Gradle-declared task outputs. A missing, empty, symlinked or ambiguously owned
+declaration retains native Gradle and writes a review artifact with concrete
+candidates; it cannot enter warm-up or timing. `buildopt profile outputs`
+exposes the same preflight independently. The frozen Hibernate proof caught
+its original `build/libs` assumption and reported the real `target/libs` JARs
+without adding repository-specific product logic.
+
 A new generalization foundation now separates structural opportunity from
 activation. `buildopt profile analyze` detects a complete smaller graph without
 matching repository names and emits a measurement proposal, never a predicted

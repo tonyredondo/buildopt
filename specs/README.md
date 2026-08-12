@@ -515,6 +515,16 @@ passes that unchanged contract: native averages 216.724 seconds and BuildOpt
 target shapes remain 300/32 tasks, required outputs are byte-identical and both
 full-graph fallbacks pass. The decision is review-only.
 
+`poc-generic-output-contract-v1.json` and
+`poc-generic-output-contract-v1.md` freeze the fail-early correction implied by
+Hibernate's original empty `build/libs` declaration. The exact owner workflow
+runs once before structural discovery; Gradle-declared outputs become
+repository-contained review candidates with unambiguous project ownership.
+The frozen public evidence must report the wrong declaration as empty, expose
+an owned `hibernate-core/target/libs` candidate, retain native, and start no
+warm-up or timing. No repository-specific path rule or performance claim is
+authorized.
+
 The terminal v2 evidence reduces the 29-project root graph to one project and
 saves 19,386.25 ms/7.80% on average with exact outputs and zero product
 failures. Seven of eight pairs improve, so the unchanged 8-of-8 gate retains

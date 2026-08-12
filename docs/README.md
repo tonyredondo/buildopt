@@ -56,7 +56,8 @@ before running the product.
   boundaries, and the recommended experimental roadmap.
 - [BuildOpt generalization audit](./findings/buildopt-generalization-audit.md):
   which mechanisms are repository-independent, which semantic inputs must
-  remain owner-controlled, and what still blocks broad POC onboarding.
+  remain owner-controlled, how output ownership now fails before measurement,
+  and what still blocks broad POC onboarding.
 
 ### Reference
 

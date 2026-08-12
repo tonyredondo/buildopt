@@ -239,6 +239,8 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-structural-profile-adoption-v1" >/dev/null
         "${buildopt_script_dir}/check-poc-generic-evaluation" >/dev/null
         "${buildopt_script_dir}/check-poc-generic-measurement" >/dev/null
+        "${buildopt_script_dir}/check-generic-output-contract" >/dev/null
+        "${buildopt_script_dir}/check-generic-output-contract-evidence" >/dev/null
         "${buildopt_script_dir}/check-generic-profile-ci" >/dev/null
         "${buildopt_script_dir}/check-generic-profile-ci-replay" >/dev/null
         "${buildopt_script_dir}/check-poc-trace-hypothesis-v1" >/dev/null

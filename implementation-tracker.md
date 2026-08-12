@@ -123,7 +123,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-GENERIC-HOLDOUT-DIAGNOSTIC | Attribute the Hibernate 7/8 outlier before accepting or rejecting the candidate | `DONE` | 2/2 | `E-313..315` |
 | POC-GENERIC-HOLDOUT-CROSSOVER | Remove target-state and first/second-period bias before the terminal Hibernate decision | `DONE` | 2/2 | `E-316..317` |
 | POC-GENERALIZATION-AUDIT | Separate generic implementation from repository-owned semantics and identify the next adoption gap | `DONE` | 1/1 | `E-318` |
-| POC-GENERIC-OUTPUT-CONTRACT | Discover or validate repository-owned Gradle outputs before structural measurement | `TODO` | 0/1 | Holdout learning `E-310` |
+| POC-GENERIC-OUTPUT-CONTRACT | Discover or validate repository-owned Gradle outputs before structural measurement | `DONE` | 1/1 | `E-319` |
+| POC-GENERIC-OWNER-INPUT | Turn reviewed workflow, change source and Gradle-owned outputs into one checked, versioned owner input | `TODO` | 0/1 | Output-contract proof `E-319` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -277,11 +278,29 @@ than partners. Test Optimization remains a separate product.
 | 83 | `POC-GENERIC-PROFILE-CI-001` | Expose the unchanged proposal command as a review-only CI artifact from an owner-declared workflow, exact Git change and required outputs, retaining native on unsupported or incomplete discovery | `DONE` | Codex |
 | 84 | `POC-GENERIC-PROFILE-CI-REPLAY-001` | Run the committed review-only Action from checked-in owner inputs for Spring, OpenTelemetry, Kafka, Micronaut and Groovy, requiring the terminal structural proposals or explicit drift while preserving their separate value decisions | `DONE` | Codex |
 | 85 | `POC-GENERIC-HOLDOUT-001` | Select one unseen substantial public Gradle repository, freeze its exact revision, workflow, change, outputs, optimized-native control and unchanged value gates, then run the generic propose -> measure -> evaluate path without repository-specific product logic | `DONE` | Codex |
-| 86 | `POC-GENERIC-OUTPUT-CONTRACT-001` | Derive or validate the real Gradle output directories for an owner-declared workflow before warm-up or timing, emitting a review artifact and retaining native on missing, empty or ambiguous ownership | `TODO` | Codex |
+| 86 | `POC-GENERIC-OUTPUT-CONTRACT-001` | Derive or validate the real Gradle output directories for an owner-declared workflow before warm-up or timing, emitting a review artifact and retaining native on missing, empty or ambiguous ownership | `DONE` | Codex; `E-319` |
 | 87 | `POC-GENERIC-HOLDOUT-002` | Preserve the Hibernate v2 7/8 result, diagnose its first-pair outlier with a separately preregistered cache-seed plus daemon-stabilization protocol, rerun all eight pairs from zero, and retain the unchanged 8/8 gate | `DONE` | Codex |
 | 88 | `POC-GENERIC-HOLDOUT-003` | Warm the exact Hibernate target workload before timing, bind normalized task/outcome fingerprints and interval Linux PSI, then rerun all eight pairs without reusing v2/v3 observations or relaxing the gate | `DONE` | Codex |
 | 89 | `POC-GENERIC-HOLDOUT-004` | Preserve the v4 failure, capture exact task-path drift, establish target-workload stability before timing, and measure eight fresh reciprocal AB/BA blocks so the observation unit cancels first/second-period bias without weakening correctness or value gates | `DONE` | Codex; `E-316..317` |
 | 90 | `POC-GENERALIZATION-AUDIT-001` | Audit every retained mechanism from installation through qualification, distinguish repository-independent code from owner semantic inputs, and identify the next generic usability gap | `DONE` | Codex; `E-318` |
+| 91 | `POC-GENERIC-OWNER-INPUT-001` | Convert confirmed workflow, change source and Gradle-owned output candidates into one reviewable owner file with explicit acceptance, drift diagnostics and native fallback when unconfirmed | `TODO` | Codex |
+
+#### Completed POC block: generic output-contract preflight
+
+`POC-GENERIC-OUTPUT-CONTRACT-001` executes the exact owner workflow once before
+structural discovery, records non-empty repository-contained Gradle task
+outputs, and assigns each matched file to one most-specific project owner. It
+accepts confirmed declarations, reports candidates when outputs are omitted,
+and retains native on missing, empty, symlinked or ambiguous ownership.
+
+Synthetic conformance covers a redirected `target` build directory, successful
+confirmation, a wrong conventional `build` glob and cross-project ambiguity.
+The frozen Hibernate replay preserved its original wrong
+`hibernate-core/build/libs/**` declaration: the preflight returned
+`NATIVE_FULL_GRAPH / REQUIRED_OUTPUTS_EMPTY`, exposed three owned core JARs
+under `hibernate-core/target/libs`, and stopped before structural discovery,
+warm-up or timing. No profile, performance percentage or repository-specific
+product rule was created. `POC-GENERIC-OWNER-INPUT-001` is next.
 
 #### Completed POC block: five-repository generic profile matrix
 
@@ -1915,6 +1934,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-316` | 2026-08-11 | `POC-GENERIC-HOLDOUT-CROSSOVER-001` | The preregistered [v5 crossover protocol](./specs/poc-generic-holdout-v5.md), machine contract, generic four-phase measurement support and independent aggregate checker freeze two new eight-pair batches as eight adjacent reciprocal `AB/BA` blocks. Every invocation now retains exact sorted task paths and outcomes; two exact-target observations per arm plus every measured pair must agree before qualification, while task drift is reported explicitly. The public source, mutation, workflow, outputs, JDK, 12-worker native control, Build-Impact-only candidate, 500-ms/2%/positive-bound/eight-of-eight threshold and full fallback remain unchanged; the observation unit deliberately changes from an order-sensitive pair to a reciprocal block | `DONE` preregistration: the fresh terminal evidence is retained separately as `E-317`. No v2-v4 timing, repository-specific rule, threshold relaxation, failed-observation discard, automatic activation, production, soak, design-partner or Test Optimization authority is allowed |
 | `E-317` | 2026-08-12 | `POC-GENERIC-HOLDOUT-CROSSOVER-001` | The independently checked [Hibernate v5 crossover bundle](./benchmarks/results/poc-generic-holdout-v5/README.md) binds BuildOpt `00ad497`, two fresh eight-pair batches and exact 300/32-task target shapes. Eight reciprocal blocks save +6.429/+8.209/+4.826/+2.080/+22.272/+32.085/+15.239/+10.730 seconds. Native averages 216.724 s and BuildOpt 203.991 s, saving 12.733 s/**5.88%** with interval +6.808..+19.859 s and 8/8 positive blocks. Required JARs are byte-identical and both full-graph fallbacks pass. Two rejected collector attempts are diagnosed: fail-fast reporting exposed duplicate identical Gradle task emissions, which are now coalesced while conflicting outcomes remain invalid | `DONE` terminal `REVIEW_STRUCTURAL_PROFILE`: the unchanged generic holdout now qualifies without reusing v2-v4 timings, discarding an observation, relaxing a gate or adding Hibernate-specific product logic. Review remains explicit; automatic activation, production and Test Optimization remain unauthorized |
 | `E-318` | 2026-08-12 | `POC-GENERALIZATION-AUDIT-001` | The [generalization audit](./docs/findings/buildopt-generalization-audit.md) traces installation, Safe Cache, structural proposal/measurement/evaluation, reviewed task patches, remote caches and CI replay. Customer execution code contains no public-repository selection branches; repository names remain only in fixtures, runners and evidence. The generic structural path consumes one owner workflow, exact Git change and required outputs, binds graph/manifest/Wrapper/revision/executable state, and retains native for unknown relationships, tests, drift, weak value or failed fallback. Six public repositories now use the same method; five qualify under their frozen rules and Spring safely remains native | `DONE` POC audit: generic implementation is demonstrated, but zero-input automatic activation is not. The next block remains `POC-GENERIC-OUTPUT-CONTRACT-001`, because Hibernate's initial `build/libs` assumption proves that output ownership must be discovered or confirmed before expensive measurement |
+| `E-319` | 2026-08-12 | `POC-GENERIC-OUTPUT-CONTRACT-001` | The [generic output-contract contract](./specs/poc-generic-output-contract-v1.md), synthetic checker and installed `profile outputs`/`profile propose` preflight validate the exact owner workflow before structural discovery. The frozen [Hibernate observation](./benchmarks/results/poc-generic-output-contract-v1/README.md) preserves the original `hibernate-core/build/libs/**` declaration, classifies it `EMPTY`, and reports the Gradle-owned main, sources and Javadoc JARs under `hibernate-core/target/libs` with owner `:hibernate-core` | `DONE` terminal `NATIVE_FULL_GRAPH / REQUIRED_OUTPUTS_EMPTY`: one preflight workflow ran, but zero warm-ups, timings, structural graph documents or profiles were created. Synthetic success and ambiguity cases pass; no Hibernate-specific decision, performance percentage, automatic activation, production authority, soak, design-partner or Test Optimization behavior was added. `POC-GENERIC-OWNER-INPUT-001` is next |
 
 ---
 
@@ -1922,6 +1942,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-12 | Closed the generic output-contract preflight: rejected Hibernate's empty `build/libs` declaration before measurement, exposed its owned `target/libs` candidates, retained native and moved one checked owner-input workflow next | Codex |
 | 2026-08-12 | Closed the Hibernate reciprocal crossover at 12.733 seconds/5.88% savings, 8/8 positive blocks, stable 300/32-task shapes, exact outputs and both fallbacks; emitted review-only qualification without changing the value gate | Codex |
 | 2026-08-12 | Audited generalization across all retained mechanisms; confirmed repository-independent structural code, separated owner semantic inputs from product specialization, and kept output-contract discovery as the next POC block | Codex |
 | 2026-08-11 | Closed the Hibernate v4 attribution at 3.82% mean savings but 5/8 and unstable native fingerprints; retained native, preserved all observations, and moved fresh target-stable reciprocal blocks next instead of discarding the candidate | Codex |

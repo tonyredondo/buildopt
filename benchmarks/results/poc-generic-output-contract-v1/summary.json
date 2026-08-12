@@ -1,0 +1,39 @@
+{
+  "boundaries": {
+    "automaticActivation": false,
+    "designPartnerRequired": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "reviewRequired": true,
+    "soakRequired": false,
+    "testOptimizationModified": false
+  },
+  "buildoptRevision": "dcb327348181da7b06c87f07f14ae6682c91ef6f",
+  "capturedAt": "2026-08-12T08:06:51Z",
+  "result": {
+    "candidateOwnerConfirmed": true,
+    "candidateUnderExpectedDirectory": true,
+    "declaredPatternStatus": "EMPTY",
+    "measurementStatus": "NOT_RUN_NATIVE_FULL_GRAPH",
+    "outputContractDecision": "NATIVE_FULL_GRAPH",
+    "outputContractReason": "REQUIRED_OUTPUTS_EMPTY",
+    "profileWritten": false,
+    "proposalDecision": "NATIVE_FULL_GRAPH",
+    "proposalReason": "REQUIRED_OUTPUTS_EMPTY",
+    "timingStarted": false,
+    "warmupStarted": false
+  },
+  "schemaVersion": "buildopt.evidence/poc-generic-output-contract/v1",
+  "subject": {
+    "declaredOutputs": [
+      "hibernate-core/build/libs/**"
+    ],
+    "entrypoints": [
+      "assemble"
+    ],
+    "publicRevision": "2b448a59d332326f0cd0691c868425124d55cbb5",
+    "repositoryId": "hibernate/hibernate-orm",
+    "targetRevision": "2a93cdaeea605bbc0025a1d9a095d0edf885d7f5"
+  },
+  "workItem": "POC-GENERIC-OUTPUT-CONTRACT-001"
+}

@@ -1,0 +1,2456 @@
+{
+  "schemaVersion": "buildopt.poc/output-contract/v1",
+  "decision": "NATIVE_FULL_GRAPH",
+  "reason": "REQUIRED_OUTPUTS_EMPTY",
+  "repositoryId": "hibernate/hibernate-orm",
+  "pipelineClass": "assemble",
+  "repositoryRevision": "2a93cdaeea605bbc0025a1d9a095d0edf885d7f5",
+  "gradleVersion": "9.6.1",
+  "originalEntrypoints": [
+    "assemble"
+  ],
+  "declaredOutputs": [
+    "hibernate-core/build/libs/**"
+  ],
+  "candidateOutputs": [
+    {
+      "pattern": "hibernate-agroal/target/classes/java/main/**",
+      "path": "hibernate-agroal/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":hibernate-agroal"
+      ],
+      "producerTasks": [
+        ":hibernate-agroal:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-agroal/target/docs/javadoc/**",
+      "path": "hibernate-agroal/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 43,
+      "ownerProjects": [
+        ":hibernate-agroal"
+      ],
+      "producerTasks": [
+        ":hibernate-agroal:javadoc"
+      ]
+    },
+    {
+      "pattern": "hibernate-agroal/target/libs/hibernate-agroal-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-agroal/target/libs/hibernate-agroal-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-agroal"
+      ],
+      "producerTasks": [
+        ":hibernate-agroal:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-agroal/target/libs/hibernate-agroal-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-agroal/target/libs/hibernate-agroal-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-agroal"
+      ],
+      "producerTasks": [
+        ":hibernate-agroal:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-agroal/target/libs/hibernate-agroal-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-agroal/target/libs/hibernate-agroal-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-agroal"
+      ],
+      "producerTasks": [
+        ":hibernate-agroal:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-agroal/target/resources/main/**",
+      "path": "hibernate-agroal/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":hibernate-agroal"
+      ],
+      "producerTasks": [
+        ":hibernate-agroal:processResources"
+      ]
+    },
+    {
+      "pattern": "hibernate-agroal/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "hibernate-agroal/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-agroal"
+      ],
+      "producerTasks": [
+        ":hibernate-agroal:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-agroal/target/unpacked-theme/**",
+      "path": "hibernate-agroal/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-agroal"
+      ],
+      "producerTasks": [
+        ":hibernate-agroal:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-c3p0/target/classes/java/main/**",
+      "path": "hibernate-c3p0/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 5,
+      "ownerProjects": [
+        ":hibernate-c3p0"
+      ],
+      "producerTasks": [
+        ":hibernate-c3p0:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-c3p0/target/docs/javadoc/**",
+      "path": "hibernate-c3p0/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 46,
+      "ownerProjects": [
+        ":hibernate-c3p0"
+      ],
+      "producerTasks": [
+        ":hibernate-c3p0:javadoc"
+      ]
+    },
+    {
+      "pattern": "hibernate-c3p0/target/generated/sources/annotationProcessor/java/main/**",
+      "path": "hibernate-c3p0/target/generated/sources/annotationProcessor/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-c3p0"
+      ],
+      "producerTasks": [
+        ":hibernate-c3p0:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-c3p0/target/libs/hibernate-c3p0-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-c3p0/target/libs/hibernate-c3p0-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-c3p0"
+      ],
+      "producerTasks": [
+        ":hibernate-c3p0:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-c3p0/target/libs/hibernate-c3p0-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-c3p0/target/libs/hibernate-c3p0-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-c3p0"
+      ],
+      "producerTasks": [
+        ":hibernate-c3p0:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-c3p0/target/libs/hibernate-c3p0-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-c3p0/target/libs/hibernate-c3p0-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-c3p0"
+      ],
+      "producerTasks": [
+        ":hibernate-c3p0:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-c3p0/target/resources/main/**",
+      "path": "hibernate-c3p0/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":hibernate-c3p0"
+      ],
+      "producerTasks": [
+        ":hibernate-c3p0:processResources"
+      ]
+    },
+    {
+      "pattern": "hibernate-c3p0/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "hibernate-c3p0/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-c3p0"
+      ],
+      "producerTasks": [
+        ":hibernate-c3p0:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-c3p0/target/unpacked-theme/**",
+      "path": "hibernate-c3p0/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-c3p0"
+      ],
+      "producerTasks": [
+        ":hibernate-c3p0:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-community-dialects/target/classes/java/main/**",
+      "path": "hibernate-community-dialects/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 338,
+      "ownerProjects": [
+        ":hibernate-community-dialects"
+      ],
+      "producerTasks": [
+        ":hibernate-community-dialects:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-community-dialects/target/docs/javadoc/**",
+      "path": "hibernate-community-dialects/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 250,
+      "ownerProjects": [
+        ":hibernate-community-dialects"
+      ],
+      "producerTasks": [
+        ":hibernate-community-dialects:javadoc"
+      ]
+    },
+    {
+      "pattern": "hibernate-community-dialects/target/libs/hibernate-community-dialects-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-community-dialects/target/libs/hibernate-community-dialects-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-community-dialects"
+      ],
+      "producerTasks": [
+        ":hibernate-community-dialects:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-community-dialects/target/libs/hibernate-community-dialects-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-community-dialects/target/libs/hibernate-community-dialects-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-community-dialects"
+      ],
+      "producerTasks": [
+        ":hibernate-community-dialects:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-community-dialects/target/libs/hibernate-community-dialects-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-community-dialects/target/libs/hibernate-community-dialects-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-community-dialects"
+      ],
+      "producerTasks": [
+        ":hibernate-community-dialects:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-community-dialects/target/resources/main/**",
+      "path": "hibernate-community-dialects/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":hibernate-community-dialects"
+      ],
+      "producerTasks": [
+        ":hibernate-community-dialects:processResources"
+      ]
+    },
+    {
+      "pattern": "hibernate-community-dialects/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "hibernate-community-dialects/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-community-dialects"
+      ],
+      "producerTasks": [
+        ":hibernate-community-dialects:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-community-dialects/target/unpacked-theme/**",
+      "path": "hibernate-community-dialects/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-community-dialects"
+      ],
+      "producerTasks": [
+        ":hibernate-community-dialects:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/classes/java/main/**",
+      "path": "hibernate-core/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 8640,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/docs/javadoc/**",
+      "path": "hibernate-core/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 2718,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:javadoc"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/generated/sources/annotationProcessor/java/main/**",
+      "path": "hibernate-core/target/generated/sources/annotationProcessor/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 52,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/generated/sources/antlr/main/org/hibernate/grammars/graph/**",
+      "path": "hibernate-core/target/generated/sources/antlr/main/org/hibernate/grammars/graph",
+      "kind": "DIRECTORY",
+      "fileCount": 11,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:generateDeprecated-graphParser",
+        ":hibernate-core:generateGraphParser"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/generated/sources/antlr/main/org/hibernate/grammars/hql/**",
+      "path": "hibernate-core/target/generated/sources/antlr/main/org/hibernate/grammars/hql",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:generateHqlParser"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/generated/sources/antlr/main/org/hibernate/grammars/importsql/**",
+      "path": "hibernate-core/target/generated/sources/antlr/main/org/hibernate/grammars/importsql",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:generateSqlScriptParser"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/generated/sources/antlr/main/org/hibernate/grammars/ordering/**",
+      "path": "hibernate-core/target/generated/sources/antlr/main/org/hibernate/grammars/ordering",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:generateOrderingParser"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/generated/sources/xjc/main/cfg/**",
+      "path": "hibernate-core/target/generated/sources/xjc/main/cfg",
+      "kind": "DIRECTORY",
+      "fileCount": 10,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:xjcCfg"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/generated/sources/xjc/main/configuration/**",
+      "path": "hibernate-core/target/generated/sources/xjc/main/configuration",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:xjcConfiguration"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/generated/sources/xjc/main/hbm/**",
+      "path": "hibernate-core/target/generated/sources/xjc/main/hbm",
+      "kind": "DIRECTORY",
+      "fileCount": 107,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:xjcHbm"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/generated/sources/xjc/main/mapping/**",
+      "path": "hibernate-core/target/generated/sources/xjc/main/mapping",
+      "kind": "DIRECTORY",
+      "fileCount": 128,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:xjcMapping"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/libs/hibernate-core-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-core/target/libs/hibernate-core-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/libs/hibernate-core-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-core/target/libs/hibernate-core-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/libs/hibernate-core-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-core/target/libs/hibernate-core-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/resources/main/**",
+      "path": "hibernate-core/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 29,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:processResources"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/tmp/antlr/org/hibernate/grammars/graph/**",
+      "path": "hibernate-core/target/tmp/antlr/org/hibernate/grammars/graph",
+      "kind": "DIRECTORY",
+      "fileCount": 17,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:generateDeprecated-graphParser",
+        ":hibernate-core:generateGraphParser"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/tmp/antlr/org/hibernate/grammars/hql/**",
+      "path": "hibernate-core/target/tmp/antlr/org/hibernate/grammars/hql",
+      "kind": "DIRECTORY",
+      "fileCount": 10,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:generateHqlParser"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/tmp/antlr/org/hibernate/grammars/importsql/**",
+      "path": "hibernate-core/target/tmp/antlr/org/hibernate/grammars/importsql",
+      "kind": "DIRECTORY",
+      "fileCount": 10,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:generateSqlScriptParser"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/tmp/antlr/org/hibernate/grammars/ordering/**",
+      "path": "hibernate-core/target/tmp/antlr/org/hibernate/grammars/ordering",
+      "kind": "DIRECTORY",
+      "fileCount": 10,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:generateOrderingParser"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "hibernate-core/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-core/target/unpacked-theme/**",
+      "path": "hibernate-core/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-core"
+      ],
+      "producerTasks": [
+        ":hibernate-core:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-envers/target/classes/java/main/**",
+      "path": "hibernate-envers/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 401,
+      "ownerProjects": [
+        ":hibernate-envers"
+      ],
+      "producerTasks": [
+        ":hibernate-envers:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-envers/target/docs/javadoc/**",
+      "path": "hibernate-envers/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 420,
+      "ownerProjects": [
+        ":hibernate-envers"
+      ],
+      "producerTasks": [
+        ":hibernate-envers:javadoc"
+      ]
+    },
+    {
+      "pattern": "hibernate-envers/target/generated/sources/annotationProcessor/java/main/**",
+      "path": "hibernate-envers/target/generated/sources/annotationProcessor/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":hibernate-envers"
+      ],
+      "producerTasks": [
+        ":hibernate-envers:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-envers/target/libs/hibernate-envers-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-envers/target/libs/hibernate-envers-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-envers"
+      ],
+      "producerTasks": [
+        ":hibernate-envers:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-envers/target/libs/hibernate-envers-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-envers/target/libs/hibernate-envers-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-envers"
+      ],
+      "producerTasks": [
+        ":hibernate-envers:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-envers/target/libs/hibernate-envers-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-envers/target/libs/hibernate-envers-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-envers"
+      ],
+      "producerTasks": [
+        ":hibernate-envers:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-envers/target/resources/main/**",
+      "path": "hibernate-envers/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 7,
+      "ownerProjects": [
+        ":hibernate-envers"
+      ],
+      "producerTasks": [
+        ":hibernate-envers:processResources"
+      ]
+    },
+    {
+      "pattern": "hibernate-envers/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "hibernate-envers/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-envers"
+      ],
+      "producerTasks": [
+        ":hibernate-envers:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-envers/target/unpacked-theme/**",
+      "path": "hibernate-envers/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-envers"
+      ],
+      "producerTasks": [
+        ":hibernate-envers:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-graalvm/target/classes/java/main/**",
+      "path": "hibernate-graalvm/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":hibernate-graalvm"
+      ],
+      "producerTasks": [
+        ":hibernate-graalvm:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-graalvm/target/docs/javadoc/**",
+      "path": "hibernate-graalvm/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 35,
+      "ownerProjects": [
+        ":hibernate-graalvm"
+      ],
+      "producerTasks": [
+        ":hibernate-graalvm:javadoc"
+      ]
+    },
+    {
+      "pattern": "hibernate-graalvm/target/libs/hibernate-graalvm-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-graalvm/target/libs/hibernate-graalvm-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-graalvm"
+      ],
+      "producerTasks": [
+        ":hibernate-graalvm:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-graalvm/target/libs/hibernate-graalvm-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-graalvm/target/libs/hibernate-graalvm-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-graalvm"
+      ],
+      "producerTasks": [
+        ":hibernate-graalvm:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-graalvm/target/libs/hibernate-graalvm-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-graalvm/target/libs/hibernate-graalvm-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-graalvm"
+      ],
+      "producerTasks": [
+        ":hibernate-graalvm:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-graalvm/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "hibernate-graalvm/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-graalvm"
+      ],
+      "producerTasks": [
+        ":hibernate-graalvm:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-graalvm/target/unpacked-theme/**",
+      "path": "hibernate-graalvm/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-graalvm"
+      ],
+      "producerTasks": [
+        ":hibernate-graalvm:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-hikaricp/target/classes/java/main/**",
+      "path": "hibernate-hikaricp/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 3,
+      "ownerProjects": [
+        ":hibernate-hikaricp"
+      ],
+      "producerTasks": [
+        ":hibernate-hikaricp:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-hikaricp/target/docs/javadoc/**",
+      "path": "hibernate-hikaricp/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 45,
+      "ownerProjects": [
+        ":hibernate-hikaricp"
+      ],
+      "producerTasks": [
+        ":hibernate-hikaricp:javadoc"
+      ]
+    },
+    {
+      "pattern": "hibernate-hikaricp/target/libs/hibernate-hikaricp-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-hikaricp/target/libs/hibernate-hikaricp-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-hikaricp"
+      ],
+      "producerTasks": [
+        ":hibernate-hikaricp:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-hikaricp/target/libs/hibernate-hikaricp-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-hikaricp/target/libs/hibernate-hikaricp-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-hikaricp"
+      ],
+      "producerTasks": [
+        ":hibernate-hikaricp:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-hikaricp/target/libs/hibernate-hikaricp-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-hikaricp/target/libs/hibernate-hikaricp-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-hikaricp"
+      ],
+      "producerTasks": [
+        ":hibernate-hikaricp:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-hikaricp/target/resources/main/**",
+      "path": "hibernate-hikaricp/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":hibernate-hikaricp"
+      ],
+      "producerTasks": [
+        ":hibernate-hikaricp:processResources"
+      ]
+    },
+    {
+      "pattern": "hibernate-hikaricp/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "hibernate-hikaricp/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-hikaricp"
+      ],
+      "producerTasks": [
+        ":hibernate-hikaricp:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-hikaricp/target/unpacked-theme/**",
+      "path": "hibernate-hikaricp/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-hikaricp"
+      ],
+      "producerTasks": [
+        ":hibernate-hikaricp:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-integrationtest-java-modules/target/libs/hibernate-integrationtest-java-modules-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-integrationtest-java-modules/target/libs/hibernate-integrationtest-java-modules-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-integrationtest-java-modules"
+      ],
+      "producerTasks": [
+        ":hibernate-integrationtest-java-modules:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-integrationtest-java-modules/target/libs/hibernate-integrationtest-java-modules-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-integrationtest-java-modules/target/libs/hibernate-integrationtest-java-modules-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-integrationtest-java-modules"
+      ],
+      "producerTasks": [
+        ":hibernate-integrationtest-java-modules:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-integrationtest-java-modules/target/libs/hibernate-integrationtest-java-modules-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-integrationtest-java-modules/target/libs/hibernate-integrationtest-java-modules-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-integrationtest-java-modules"
+      ],
+      "producerTasks": [
+        ":hibernate-integrationtest-java-modules:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-integrationtest-java-modules/target/unpacked-theme/**",
+      "path": "hibernate-integrationtest-java-modules/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-integrationtest-java-modules"
+      ],
+      "producerTasks": [
+        ":hibernate-integrationtest-java-modules:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-jcache/target/classes/java/main/**",
+      "path": "hibernate-jcache/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 8,
+      "ownerProjects": [
+        ":hibernate-jcache"
+      ],
+      "producerTasks": [
+        ":hibernate-jcache:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-jcache/target/docs/javadoc/**",
+      "path": "hibernate-jcache/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 58,
+      "ownerProjects": [
+        ":hibernate-jcache"
+      ],
+      "producerTasks": [
+        ":hibernate-jcache:javadoc"
+      ]
+    },
+    {
+      "pattern": "hibernate-jcache/target/libs/hibernate-jcache-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-jcache/target/libs/hibernate-jcache-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-jcache"
+      ],
+      "producerTasks": [
+        ":hibernate-jcache:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-jcache/target/libs/hibernate-jcache-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-jcache/target/libs/hibernate-jcache-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-jcache"
+      ],
+      "producerTasks": [
+        ":hibernate-jcache:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-jcache/target/libs/hibernate-jcache-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-jcache/target/libs/hibernate-jcache-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-jcache"
+      ],
+      "producerTasks": [
+        ":hibernate-jcache:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-jcache/target/resources/main/**",
+      "path": "hibernate-jcache/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-jcache"
+      ],
+      "producerTasks": [
+        ":hibernate-jcache:processResources"
+      ]
+    },
+    {
+      "pattern": "hibernate-jcache/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "hibernate-jcache/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-jcache"
+      ],
+      "producerTasks": [
+        ":hibernate-jcache:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-jcache/target/unpacked-theme/**",
+      "path": "hibernate-jcache/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-jcache"
+      ],
+      "producerTasks": [
+        ":hibernate-jcache:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-jfr/target/classes/java/main/**",
+      "path": "hibernate-jfr/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 22,
+      "ownerProjects": [
+        ":hibernate-jfr"
+      ],
+      "producerTasks": [
+        ":hibernate-jfr:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-jfr/target/docs/javadoc/**",
+      "path": "hibernate-jfr/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 70,
+      "ownerProjects": [
+        ":hibernate-jfr"
+      ],
+      "producerTasks": [
+        ":hibernate-jfr:javadoc"
+      ]
+    },
+    {
+      "pattern": "hibernate-jfr/target/libs/hibernate-jfr-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-jfr/target/libs/hibernate-jfr-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-jfr"
+      ],
+      "producerTasks": [
+        ":hibernate-jfr:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-jfr/target/libs/hibernate-jfr-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-jfr/target/libs/hibernate-jfr-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-jfr"
+      ],
+      "producerTasks": [
+        ":hibernate-jfr:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-jfr/target/libs/hibernate-jfr-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-jfr/target/libs/hibernate-jfr-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-jfr"
+      ],
+      "producerTasks": [
+        ":hibernate-jfr:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-jfr/target/resources/main/**",
+      "path": "hibernate-jfr/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-jfr"
+      ],
+      "producerTasks": [
+        ":hibernate-jfr:processResources"
+      ]
+    },
+    {
+      "pattern": "hibernate-jfr/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "hibernate-jfr/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-jfr"
+      ],
+      "producerTasks": [
+        ":hibernate-jfr:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-jfr/target/unpacked-theme/**",
+      "path": "hibernate-jfr/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-jfr"
+      ],
+      "producerTasks": [
+        ":hibernate-jfr:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-micrometer/target/classes/java/main/**",
+      "path": "hibernate-micrometer/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 5,
+      "ownerProjects": [
+        ":hibernate-micrometer"
+      ],
+      "producerTasks": [
+        ":hibernate-micrometer:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-micrometer/target/docs/javadoc/**",
+      "path": "hibernate-micrometer/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 43,
+      "ownerProjects": [
+        ":hibernate-micrometer"
+      ],
+      "producerTasks": [
+        ":hibernate-micrometer:javadoc"
+      ]
+    },
+    {
+      "pattern": "hibernate-micrometer/target/libs/hibernate-micrometer-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-micrometer/target/libs/hibernate-micrometer-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-micrometer"
+      ],
+      "producerTasks": [
+        ":hibernate-micrometer:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-micrometer/target/libs/hibernate-micrometer-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-micrometer/target/libs/hibernate-micrometer-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-micrometer"
+      ],
+      "producerTasks": [
+        ":hibernate-micrometer:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-micrometer/target/libs/hibernate-micrometer-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-micrometer/target/libs/hibernate-micrometer-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-micrometer"
+      ],
+      "producerTasks": [
+        ":hibernate-micrometer:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-micrometer/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "hibernate-micrometer/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-micrometer"
+      ],
+      "producerTasks": [
+        ":hibernate-micrometer:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-micrometer/target/unpacked-theme/**",
+      "path": "hibernate-micrometer/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-micrometer"
+      ],
+      "producerTasks": [
+        ":hibernate-micrometer:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-scan-jandex/target/classes/java/main/**",
+      "path": "hibernate-scan-jandex/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 5,
+      "ownerProjects": [
+        ":hibernate-scan-jandex"
+      ],
+      "producerTasks": [
+        ":hibernate-scan-jandex:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-scan-jandex/target/docs/javadoc/**",
+      "path": "hibernate-scan-jandex/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 44,
+      "ownerProjects": [
+        ":hibernate-scan-jandex"
+      ],
+      "producerTasks": [
+        ":hibernate-scan-jandex:javadoc"
+      ]
+    },
+    {
+      "pattern": "hibernate-scan-jandex/target/libs/hibernate-scan-jandex-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-scan-jandex/target/libs/hibernate-scan-jandex-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-scan-jandex"
+      ],
+      "producerTasks": [
+        ":hibernate-scan-jandex:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-scan-jandex/target/libs/hibernate-scan-jandex-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-scan-jandex/target/libs/hibernate-scan-jandex-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-scan-jandex"
+      ],
+      "producerTasks": [
+        ":hibernate-scan-jandex:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-scan-jandex/target/libs/hibernate-scan-jandex-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-scan-jandex/target/libs/hibernate-scan-jandex-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-scan-jandex"
+      ],
+      "producerTasks": [
+        ":hibernate-scan-jandex:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-scan-jandex/target/resources/main/**",
+      "path": "hibernate-scan-jandex/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-scan-jandex"
+      ],
+      "producerTasks": [
+        ":hibernate-scan-jandex:processResources"
+      ]
+    },
+    {
+      "pattern": "hibernate-scan-jandex/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "hibernate-scan-jandex/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-scan-jandex"
+      ],
+      "producerTasks": [
+        ":hibernate-scan-jandex:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-scan-jandex/target/unpacked-theme/**",
+      "path": "hibernate-scan-jandex/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-scan-jandex"
+      ],
+      "producerTasks": [
+        ":hibernate-scan-jandex:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-spatial/target/classes/java/main/**",
+      "path": "hibernate-spatial/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 114,
+      "ownerProjects": [
+        ":hibernate-spatial"
+      ],
+      "producerTasks": [
+        ":hibernate-spatial:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-spatial/target/docs/javadoc/**",
+      "path": "hibernate-spatial/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 163,
+      "ownerProjects": [
+        ":hibernate-spatial"
+      ],
+      "producerTasks": [
+        ":hibernate-spatial:javadoc"
+      ]
+    },
+    {
+      "pattern": "hibernate-spatial/target/generated/sources/annotationProcessor/java/main/**",
+      "path": "hibernate-spatial/target/generated/sources/annotationProcessor/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-spatial"
+      ],
+      "producerTasks": [
+        ":hibernate-spatial:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-spatial/target/libs/hibernate-spatial-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-spatial/target/libs/hibernate-spatial-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-spatial"
+      ],
+      "producerTasks": [
+        ":hibernate-spatial:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-spatial/target/libs/hibernate-spatial-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-spatial/target/libs/hibernate-spatial-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-spatial"
+      ],
+      "producerTasks": [
+        ":hibernate-spatial:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-spatial/target/libs/hibernate-spatial-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-spatial/target/libs/hibernate-spatial-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-spatial"
+      ],
+      "producerTasks": [
+        ":hibernate-spatial:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-spatial/target/resources/main/**",
+      "path": "hibernate-spatial/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 5,
+      "ownerProjects": [
+        ":hibernate-spatial"
+      ],
+      "producerTasks": [
+        ":hibernate-spatial:processResources"
+      ]
+    },
+    {
+      "pattern": "hibernate-spatial/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "hibernate-spatial/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-spatial"
+      ],
+      "producerTasks": [
+        ":hibernate-spatial:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-spatial/target/unpacked-theme/**",
+      "path": "hibernate-spatial/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-spatial"
+      ],
+      "producerTasks": [
+        ":hibernate-spatial:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-tck-data-runner/target/libs/hibernate-tck-data-runner-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-tck-data-runner/target/libs/hibernate-tck-data-runner-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-tck-data-runner"
+      ],
+      "producerTasks": [
+        ":hibernate-tck-data-runner:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-tck-data-runner/target/libs/hibernate-tck-data-runner-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-tck-data-runner/target/libs/hibernate-tck-data-runner-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-tck-data-runner"
+      ],
+      "producerTasks": [
+        ":hibernate-tck-data-runner:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-tck-data-runner/target/libs/hibernate-tck-data-runner-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-tck-data-runner/target/libs/hibernate-tck-data-runner-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-tck-data-runner"
+      ],
+      "producerTasks": [
+        ":hibernate-tck-data-runner:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-tck-data-runner/target/unpacked-theme/**",
+      "path": "hibernate-tck-data-runner/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-tck-data-runner"
+      ],
+      "producerTasks": [
+        ":hibernate-tck-data-runner:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-tck-runner/target/libs/hibernate-tck-runner-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-tck-runner/target/libs/hibernate-tck-runner-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-tck-runner"
+      ],
+      "producerTasks": [
+        ":hibernate-tck-runner:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-tck-runner/target/libs/hibernate-tck-runner-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-tck-runner/target/libs/hibernate-tck-runner-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-tck-runner"
+      ],
+      "producerTasks": [
+        ":hibernate-tck-runner:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-tck-runner/target/libs/hibernate-tck-runner-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-tck-runner/target/libs/hibernate-tck-runner-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-tck-runner"
+      ],
+      "producerTasks": [
+        ":hibernate-tck-runner:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-tck-runner/target/unpacked-theme/**",
+      "path": "hibernate-tck-runner/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-tck-runner"
+      ],
+      "producerTasks": [
+        ":hibernate-tck-runner:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-testing/target/classes/java/main/**",
+      "path": "hibernate-testing/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 789,
+      "ownerProjects": [
+        ":hibernate-testing"
+      ],
+      "producerTasks": [
+        ":hibernate-testing:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-testing/target/docs/javadoc/**",
+      "path": "hibernate-testing/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 742,
+      "ownerProjects": [
+        ":hibernate-testing"
+      ],
+      "producerTasks": [
+        ":hibernate-testing:javadoc"
+      ]
+    },
+    {
+      "pattern": "hibernate-testing/target/generated/sources/annotationProcessor/java/main/**",
+      "path": "hibernate-testing/target/generated/sources/annotationProcessor/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 287,
+      "ownerProjects": [
+        ":hibernate-testing"
+      ],
+      "producerTasks": [
+        ":hibernate-testing:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-testing/target/libs/hibernate-testing-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-testing/target/libs/hibernate-testing-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-testing"
+      ],
+      "producerTasks": [
+        ":hibernate-testing:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-testing/target/libs/hibernate-testing-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-testing/target/libs/hibernate-testing-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-testing"
+      ],
+      "producerTasks": [
+        ":hibernate-testing:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-testing/target/libs/hibernate-testing-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-testing/target/libs/hibernate-testing-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-testing"
+      ],
+      "producerTasks": [
+        ":hibernate-testing:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-testing/target/resources/main/**",
+      "path": "hibernate-testing/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 4,
+      "ownerProjects": [
+        ":hibernate-testing"
+      ],
+      "producerTasks": [
+        ":hibernate-testing:processResources"
+      ]
+    },
+    {
+      "pattern": "hibernate-testing/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "hibernate-testing/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-testing"
+      ],
+      "producerTasks": [
+        ":hibernate-testing:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-testing/target/unpacked-theme/**",
+      "path": "hibernate-testing/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-testing"
+      ],
+      "producerTasks": [
+        ":hibernate-testing:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-ucp/target/classes/java/main/**",
+      "path": "hibernate-ucp/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":hibernate-ucp"
+      ],
+      "producerTasks": [
+        ":hibernate-ucp:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-ucp/target/docs/javadoc/**",
+      "path": "hibernate-ucp/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 42,
+      "ownerProjects": [
+        ":hibernate-ucp"
+      ],
+      "producerTasks": [
+        ":hibernate-ucp:javadoc"
+      ]
+    },
+    {
+      "pattern": "hibernate-ucp/target/libs/hibernate-ucp-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-ucp/target/libs/hibernate-ucp-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-ucp"
+      ],
+      "producerTasks": [
+        ":hibernate-ucp:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-ucp/target/libs/hibernate-ucp-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-ucp/target/libs/hibernate-ucp-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-ucp"
+      ],
+      "producerTasks": [
+        ":hibernate-ucp:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-ucp/target/libs/hibernate-ucp-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-ucp/target/libs/hibernate-ucp-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-ucp"
+      ],
+      "producerTasks": [
+        ":hibernate-ucp:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-ucp/target/resources/main/**",
+      "path": "hibernate-ucp/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":hibernate-ucp"
+      ],
+      "producerTasks": [
+        ":hibernate-ucp:processResources"
+      ]
+    },
+    {
+      "pattern": "hibernate-ucp/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "hibernate-ucp/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-ucp"
+      ],
+      "producerTasks": [
+        ":hibernate-ucp:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-ucp/target/unpacked-theme/**",
+      "path": "hibernate-ucp/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-ucp"
+      ],
+      "producerTasks": [
+        ":hibernate-ucp:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "hibernate-vector/target/classes/java/main/**",
+      "path": "hibernate-vector/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 91,
+      "ownerProjects": [
+        ":hibernate-vector"
+      ],
+      "producerTasks": [
+        ":hibernate-vector:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-vector/target/docs/javadoc/**",
+      "path": "hibernate-vector/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 120,
+      "ownerProjects": [
+        ":hibernate-vector"
+      ],
+      "producerTasks": [
+        ":hibernate-vector:javadoc"
+      ]
+    },
+    {
+      "pattern": "hibernate-vector/target/libs/hibernate-vector-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "hibernate-vector/target/libs/hibernate-vector-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-vector"
+      ],
+      "producerTasks": [
+        ":hibernate-vector:javadocJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-vector/target/libs/hibernate-vector-8.1.0-SNAPSHOT-sources.jar",
+      "path": "hibernate-vector/target/libs/hibernate-vector-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-vector"
+      ],
+      "producerTasks": [
+        ":hibernate-vector:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "hibernate-vector/target/libs/hibernate-vector-8.1.0-SNAPSHOT.jar",
+      "path": "hibernate-vector/target/libs/hibernate-vector-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-vector"
+      ],
+      "producerTasks": [
+        ":hibernate-vector:jar"
+      ]
+    },
+    {
+      "pattern": "hibernate-vector/target/resources/main/**",
+      "path": "hibernate-vector/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":hibernate-vector"
+      ],
+      "producerTasks": [
+        ":hibernate-vector:processResources"
+      ]
+    },
+    {
+      "pattern": "hibernate-vector/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "hibernate-vector/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-vector"
+      ],
+      "producerTasks": [
+        ":hibernate-vector:compileJava"
+      ]
+    },
+    {
+      "pattern": "hibernate-vector/target/unpacked-theme/**",
+      "path": "hibernate-vector/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-vector"
+      ],
+      "producerTasks": [
+        ":hibernate-vector:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "local-build-asciidoctor-extensions/target/classes/java/main/**",
+      "path": "local-build-asciidoctor-extensions/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":local-build-asciidoctor-extensions"
+      ],
+      "producerTasks": [
+        ":local-build-asciidoctor-extensions:compileJava"
+      ]
+    },
+    {
+      "pattern": "local-build-asciidoctor-extensions/target/docs/javadoc/**",
+      "path": "local-build-asciidoctor-extensions/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 38,
+      "ownerProjects": [
+        ":local-build-asciidoctor-extensions"
+      ],
+      "producerTasks": [
+        ":local-build-asciidoctor-extensions:javadoc"
+      ]
+    },
+    {
+      "pattern": "local-build-asciidoctor-extensions/target/libs/local-build-asciidoctor-extensions-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "local-build-asciidoctor-extensions/target/libs/local-build-asciidoctor-extensions-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":local-build-asciidoctor-extensions"
+      ],
+      "producerTasks": [
+        ":local-build-asciidoctor-extensions:javadocJar"
+      ]
+    },
+    {
+      "pattern": "local-build-asciidoctor-extensions/target/libs/local-build-asciidoctor-extensions-8.1.0-SNAPSHOT-sources.jar",
+      "path": "local-build-asciidoctor-extensions/target/libs/local-build-asciidoctor-extensions-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":local-build-asciidoctor-extensions"
+      ],
+      "producerTasks": [
+        ":local-build-asciidoctor-extensions:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "local-build-asciidoctor-extensions/target/libs/local-build-asciidoctor-extensions-8.1.0-SNAPSHOT.jar",
+      "path": "local-build-asciidoctor-extensions/target/libs/local-build-asciidoctor-extensions-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":local-build-asciidoctor-extensions"
+      ],
+      "producerTasks": [
+        ":local-build-asciidoctor-extensions:jar"
+      ]
+    },
+    {
+      "pattern": "local-build-asciidoctor-extensions/target/resources/main/**",
+      "path": "local-build-asciidoctor-extensions/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":local-build-asciidoctor-extensions"
+      ],
+      "producerTasks": [
+        ":local-build-asciidoctor-extensions:processResources"
+      ]
+    },
+    {
+      "pattern": "local-build-asciidoctor-extensions/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "local-build-asciidoctor-extensions/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":local-build-asciidoctor-extensions"
+      ],
+      "producerTasks": [
+        ":local-build-asciidoctor-extensions:compileJava"
+      ]
+    },
+    {
+      "pattern": "local-build-asciidoctor-extensions/target/unpacked-theme/**",
+      "path": "local-build-asciidoctor-extensions/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":local-build-asciidoctor-extensions"
+      ],
+      "producerTasks": [
+        ":local-build-asciidoctor-extensions:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-ant/target/classes/java/main/**",
+      "path": "tooling/hibernate-ant/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 45,
+      "ownerProjects": [
+        ":hibernate-ant"
+      ],
+      "producerTasks": [
+        ":hibernate-ant:compileJava"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-ant/target/docs/javadoc/**",
+      "path": "tooling/hibernate-ant/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 92,
+      "ownerProjects": [
+        ":hibernate-ant"
+      ],
+      "producerTasks": [
+        ":hibernate-ant:javadoc"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-ant/target/libs/hibernate-ant-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "tooling/hibernate-ant/target/libs/hibernate-ant-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-ant"
+      ],
+      "producerTasks": [
+        ":hibernate-ant:javadocJar"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-ant/target/libs/hibernate-ant-8.1.0-SNAPSHOT-sources.jar",
+      "path": "tooling/hibernate-ant/target/libs/hibernate-ant-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-ant"
+      ],
+      "producerTasks": [
+        ":hibernate-ant:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-ant/target/libs/hibernate-ant-8.1.0-SNAPSHOT.jar",
+      "path": "tooling/hibernate-ant/target/libs/hibernate-ant-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-ant"
+      ],
+      "producerTasks": [
+        ":hibernate-ant:jar"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-ant/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "tooling/hibernate-ant/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-ant"
+      ],
+      "producerTasks": [
+        ":hibernate-ant:compileJava"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-ant/target/unpacked-theme/**",
+      "path": "tooling/hibernate-ant/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-ant"
+      ],
+      "producerTasks": [
+        ":hibernate-ant:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-assistant/target/classes/java/main/**",
+      "path": "tooling/hibernate-assistant/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 7,
+      "ownerProjects": [
+        ":hibernate-assistant"
+      ],
+      "producerTasks": [
+        ":hibernate-assistant:compileJava"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-assistant/target/docs/javadoc/**",
+      "path": "tooling/hibernate-assistant/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 45,
+      "ownerProjects": [
+        ":hibernate-assistant"
+      ],
+      "producerTasks": [
+        ":hibernate-assistant:javadoc"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-assistant/target/libs/hibernate-assistant-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "tooling/hibernate-assistant/target/libs/hibernate-assistant-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-assistant"
+      ],
+      "producerTasks": [
+        ":hibernate-assistant:javadocJar"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-assistant/target/libs/hibernate-assistant-8.1.0-SNAPSHOT-sources.jar",
+      "path": "tooling/hibernate-assistant/target/libs/hibernate-assistant-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-assistant"
+      ],
+      "producerTasks": [
+        ":hibernate-assistant:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-assistant/target/libs/hibernate-assistant-8.1.0-SNAPSHOT.jar",
+      "path": "tooling/hibernate-assistant/target/libs/hibernate-assistant-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-assistant"
+      ],
+      "producerTasks": [
+        ":hibernate-assistant:jar"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-assistant/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "tooling/hibernate-assistant/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-assistant"
+      ],
+      "producerTasks": [
+        ":hibernate-assistant:compileJava"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-assistant/target/unpacked-theme/**",
+      "path": "tooling/hibernate-assistant/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-assistant"
+      ],
+      "producerTasks": [
+        ":hibernate-assistant:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-gradle-plugin/target/classes/java/main/**",
+      "path": "tooling/hibernate-gradle-plugin/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 19,
+      "ownerProjects": [
+        ":hibernate-gradle-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-gradle-plugin:compileJava"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-gradle-plugin/target/docs/javadoc/**",
+      "path": "tooling/hibernate-gradle-plugin/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 81,
+      "ownerProjects": [
+        ":hibernate-gradle-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-gradle-plugin:javadoc"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-gradle-plugin/target/libs/hibernate-gradle-plugin-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "tooling/hibernate-gradle-plugin/target/libs/hibernate-gradle-plugin-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-gradle-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-gradle-plugin:javadocJar"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-gradle-plugin/target/libs/hibernate-gradle-plugin-8.1.0-SNAPSHOT-sources.jar",
+      "path": "tooling/hibernate-gradle-plugin/target/libs/hibernate-gradle-plugin-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-gradle-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-gradle-plugin:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-gradle-plugin/target/libs/hibernate-gradle-plugin-8.1.0-SNAPSHOT.jar",
+      "path": "tooling/hibernate-gradle-plugin/target/libs/hibernate-gradle-plugin-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-gradle-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-gradle-plugin:jar"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-gradle-plugin/target/pluginDescriptors/**",
+      "path": "tooling/hibernate-gradle-plugin/target/pluginDescriptors",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-gradle-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-gradle-plugin:pluginDescriptors"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-gradle-plugin/target/resources/main/**",
+      "path": "tooling/hibernate-gradle-plugin/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":hibernate-gradle-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-gradle-plugin:processResources"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-gradle-plugin/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "tooling/hibernate-gradle-plugin/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-gradle-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-gradle-plugin:compileJava"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-gradle-plugin/target/unpacked-theme/**",
+      "path": "tooling/hibernate-gradle-plugin/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-gradle-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-gradle-plugin:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-maven-plugin/target/classes/java/main/**",
+      "path": "tooling/hibernate-maven-plugin/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 9,
+      "ownerProjects": [
+        ":hibernate-maven-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-maven-plugin:compileJava"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-maven-plugin/target/docs/javadoc/**",
+      "path": "tooling/hibernate-maven-plugin/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 49,
+      "ownerProjects": [
+        ":hibernate-maven-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-maven-plugin:javadoc"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-maven-plugin/target/libs/hibernate-maven-plugin-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "tooling/hibernate-maven-plugin/target/libs/hibernate-maven-plugin-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-maven-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-maven-plugin:javadocJar"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-maven-plugin/target/libs/hibernate-maven-plugin-8.1.0-SNAPSHOT-sources.jar",
+      "path": "tooling/hibernate-maven-plugin/target/libs/hibernate-maven-plugin-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-maven-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-maven-plugin:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-maven-plugin/target/libs/hibernate-maven-plugin-8.1.0-SNAPSHOT.jar",
+      "path": "tooling/hibernate-maven-plugin/target/libs/hibernate-maven-plugin-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-maven-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-maven-plugin:jar"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-maven-plugin/target/mavenPlugin/descriptor/**",
+      "path": "tooling/hibernate-maven-plugin/target/mavenPlugin/descriptor",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":hibernate-maven-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-maven-plugin:generateMavenPluginDescriptor"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-maven-plugin/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "tooling/hibernate-maven-plugin/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-maven-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-maven-plugin:compileJava"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-maven-plugin/target/unpacked-theme/**",
+      "path": "tooling/hibernate-maven-plugin/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-maven-plugin"
+      ],
+      "producerTasks": [
+        ":hibernate-maven-plugin:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-reveng/target/classes/java/main/**",
+      "path": "tooling/hibernate-reveng/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 204,
+      "ownerProjects": [
+        ":hibernate-reveng"
+      ],
+      "producerTasks": [
+        ":hibernate-reveng:compileJava"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-reveng/target/docs/javadoc/**",
+      "path": "tooling/hibernate-reveng/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 232,
+      "ownerProjects": [
+        ":hibernate-reveng"
+      ],
+      "producerTasks": [
+        ":hibernate-reveng:javadoc"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-reveng/target/libs/hibernate-reveng-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "tooling/hibernate-reveng/target/libs/hibernate-reveng-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-reveng"
+      ],
+      "producerTasks": [
+        ":hibernate-reveng:javadocJar"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-reveng/target/libs/hibernate-reveng-8.1.0-SNAPSHOT-sources.jar",
+      "path": "tooling/hibernate-reveng/target/libs/hibernate-reveng-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-reveng"
+      ],
+      "producerTasks": [
+        ":hibernate-reveng:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-reveng/target/libs/hibernate-reveng-8.1.0-SNAPSHOT.jar",
+      "path": "tooling/hibernate-reveng/target/libs/hibernate-reveng-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-reveng"
+      ],
+      "producerTasks": [
+        ":hibernate-reveng:jar"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-reveng/target/resources/main/**",
+      "path": "tooling/hibernate-reveng/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 73,
+      "ownerProjects": [
+        ":hibernate-reveng"
+      ],
+      "producerTasks": [
+        ":hibernate-reveng:processResources"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-reveng/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "tooling/hibernate-reveng/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-reveng"
+      ],
+      "producerTasks": [
+        ":hibernate-reveng:compileJava"
+      ]
+    },
+    {
+      "pattern": "tooling/hibernate-reveng/target/unpacked-theme/**",
+      "path": "tooling/hibernate-reveng/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-reveng"
+      ],
+      "producerTasks": [
+        ":hibernate-reveng:unpackTheme"
+      ]
+    },
+    {
+      "pattern": "tooling/metamodel-generator/target/classes/java/main/**",
+      "path": "tooling/metamodel-generator/target/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 121,
+      "ownerProjects": [
+        ":hibernate-processor"
+      ],
+      "producerTasks": [
+        ":hibernate-processor:compileJava"
+      ]
+    },
+    {
+      "pattern": "tooling/metamodel-generator/target/docs/javadoc/**",
+      "path": "tooling/metamodel-generator/target/docs/javadoc",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-processor"
+      ],
+      "producerTasks": [
+        ":hibernate-processor:javadoc"
+      ]
+    },
+    {
+      "pattern": "tooling/metamodel-generator/target/libs/hibernate-processor-8.1.0-SNAPSHOT-javadoc.jar",
+      "path": "tooling/metamodel-generator/target/libs/hibernate-processor-8.1.0-SNAPSHOT-javadoc.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-processor"
+      ],
+      "producerTasks": [
+        ":hibernate-processor:javadocJar"
+      ]
+    },
+    {
+      "pattern": "tooling/metamodel-generator/target/libs/hibernate-processor-8.1.0-SNAPSHOT-sources.jar",
+      "path": "tooling/metamodel-generator/target/libs/hibernate-processor-8.1.0-SNAPSHOT-sources.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-processor"
+      ],
+      "producerTasks": [
+        ":hibernate-processor:sourcesJar"
+      ]
+    },
+    {
+      "pattern": "tooling/metamodel-generator/target/libs/hibernate-processor-8.1.0-SNAPSHOT.jar",
+      "path": "tooling/metamodel-generator/target/libs/hibernate-processor-8.1.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-processor"
+      ],
+      "producerTasks": [
+        ":hibernate-processor:jar"
+      ]
+    },
+    {
+      "pattern": "tooling/metamodel-generator/target/resources/main/**",
+      "path": "tooling/metamodel-generator/target/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":hibernate-processor"
+      ],
+      "producerTasks": [
+        ":hibernate-processor:processResources"
+      ]
+    },
+    {
+      "pattern": "tooling/metamodel-generator/target/tmp/compileJava/previous-compilation-data.bin",
+      "path": "tooling/metamodel-generator/target/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":hibernate-processor"
+      ],
+      "producerTasks": [
+        ":hibernate-processor:compileJava"
+      ]
+    },
+    {
+      "pattern": "tooling/metamodel-generator/target/unpacked-theme/**",
+      "path": "tooling/metamodel-generator/target/unpacked-theme",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":hibernate-processor"
+      ],
+      "producerTasks": [
+        ":hibernate-processor:unpackTheme"
+      ]
+    }
+  ],
+  "validations": [
+    {
+      "pattern": "hibernate-core/build/libs/**",
+      "status": "EMPTY",
+      "matchedFiles": 0,
+      "ownerProjects": [],
+      "producerTasks": []
+    }
+  ],
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false,
+  "testOptimization": "OUT_OF_SCOPE"
+}

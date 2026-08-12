@@ -547,8 +547,15 @@ The holdout also exposed a generic onboarding weakness before timing. Its first
 preregistration used Gradle's default `build/libs` path, while Hibernate's own
 build plugin redirects module outputs to `target/libs`. That immutable attempt
 stopped with zero accepted pairs. The corrected v2 run reused no warm-up,
-proposal, or timing, but the POC should now validate repository-owned output
-contracts before paying for a full paired experiment.
+proposal, or timing.
+
+The generic output-contract preflight now closes that gap. Replaying the
+original wrong declaration executed root `assemble` once, classified
+`hibernate-core/build/libs/**` as empty and returned native before structural
+discovery. The review artifact exposed the main, sources and Javadoc JARs under
+`hibernate-core/target/libs/`, each owned by `:hibernate-core` and its Gradle
+producer task. Zero warm-ups, timed observations or qualified profiles were
+created, and no Hibernate-specific rule was added.
 
 The follow-up v3 run investigated rather than discarding Hibernate's single
 negative pair. A separate excluded base-daemon stabilization reduced control
@@ -600,8 +607,9 @@ relaxing a gate or adding a Hibernate-specific decision.
   Kafka graph/locality shape to justify a newly preregistered replication?
 - What future materially different trace would be sufficient to reopen a
   rejected mechanism without repeating the closed evidence?
-- Can the proposal derive or validate real Gradle build/output directories
-  generically enough to reject a bad owner glob before warm-up and timing?
+- Can a reviewed Gradle-owned output candidate be turned into one convenient,
+  versioned owner input without hiding repository semantics or weakening drift
+  detection?
 - Which additional unseen repository family and workflow should test whether
   the qualified structural method continues to transfer?
 
@@ -641,6 +649,7 @@ artifacts are:
 - [unseen Hibernate ORM holdout](../../benchmarks/results/poc-generic-holdout-v2/README.md),
 - [Hibernate target-workload attribution](../../benchmarks/results/poc-generic-holdout-v4/README.md).
 - [Hibernate reciprocal crossover result](../../benchmarks/results/poc-generic-holdout-v5/README.md).
+- [Hibernate output-contract preflight](../../benchmarks/results/poc-generic-output-contract-v1/README.md).
 - [generalization audit](./buildopt-generalization-audit.md).
 
 ## General opportunity and whole-profile value

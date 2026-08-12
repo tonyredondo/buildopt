@@ -141,10 +141,11 @@ their existing paired timings. No timing was executed during this replay.
 - **The gain survives product overhead.** Timings include BuildOpt validation,
   launcher, profile loading, and Gradle execution rather than an internal
   microbenchmark.
-- **Owner output declarations remain a usability risk.** The first Hibernate
-  attempt safely stopped before timing because its modules use `target` instead
-  of Gradle's default `build` directory. The POC needs an earlier generic
-  output-contract preflight before expensive paired measurement.
+- **Owner output mistakes now fail before measurement.** The generic preflight
+  reran the original Hibernate `build/libs` declaration, rejected its empty
+  result after one owner-workflow execution and exposed three
+  `:hibernate-core` JAR candidates under `target/libs`. It started zero
+  warm-ups/timings and wrote no candidate profile.
 - **A raw pair can measure period as well as product.** Hibernate v4 preserved
   exact outputs while the first/second execution position dominated early
   results. Substantial measurements need target stability and reciprocal blocks
@@ -164,9 +165,9 @@ keeps native Gradle authoritative.
 
 ## Recommended Next Steps
 
-1. **Make output ownership discoverable and fail early.** Derive or validate
-   the repository's real Gradle output directories before warm-ups and paired
-   measurement, retaining native when ownership remains ambiguous.
+1. **Make owner input easy to review and version.** Turn the confirmed workflow,
+   change source and Gradle-owned output candidates into one checked file with
+   actionable drift/update diagnostics; keep confirmation explicit.
 2. **Measure only reviewed candidates.** A CI proposal remains an observation,
    not value evidence. Run isolated paired measurement only after its graph,
    outputs and fallback are accepted.
@@ -195,6 +196,7 @@ Test Optimization remains outside Build Optimization.
 - [Hibernate warm-up diagnosis](../../benchmarks/results/poc-generic-holdout-v3/README.md)
 - [Hibernate target-workload attribution](../../benchmarks/results/poc-generic-holdout-v4/README.md)
 - [Hibernate reciprocal crossover result](../../benchmarks/results/poc-generic-holdout-v5/README.md)
+- [Hibernate output-contract preflight](../../benchmarks/results/poc-generic-output-contract-v1/README.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [Detailed performance findings and historical research](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)
