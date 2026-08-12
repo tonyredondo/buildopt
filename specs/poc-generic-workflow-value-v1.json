@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "buildopt.specs/poc-generic-workflow-value/v1",
+  "evidenceSchemaVersion": "buildopt.evidence/poc-generic-workflow-value/v1",
+  "workItem": "POC-GENERIC-WORKFLOW-VALUE-001",
+  "decision": "MEASURE_FOUR_PUBLIC_BUILD_OWNED_WORKFLOW_FAMILIES_INDEPENDENTLY",
+  "buildoptRevision": "TO_BE_BOUND_BY_CAPTURE",
+  "runner": {
+    "platform": "linux-amd64",
+    "cpuCount": 12,
+    "maxWorkers": 12,
+    "pairs": 8,
+    "order": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
+    "perBuildTimeout": "30m"
+  },
+  "method": {
+    "surface": "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE",
+    "candidateMechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "control": "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW",
+    "isolatedArms": true,
+    "independentGradleHomes": true,
+    "independentNativeCacheSeeds": true,
+    "requiredOutputsComparedByteForByte": true,
+    "fullGraphFallbackRequired": true,
+    "onlinePreparationMeasured": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "workflowFamiliesEvaluatedIndependently": true
+  },
+  "repositories": [
+    {
+      "key": "apache-groovy-jar-packaging",
+      "workflowFamily": "JAR_PACKAGING",
+      "repositoryId": "apache/groovy",
+      "remoteUrl": "https://github.com/apache/groovy.git",
+      "publicRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "jdkToolchain": "temurin-jdk-21",
+      "pipelineClass": "jar-packaging",
+      "entrypoints": [
+        "jar"
+      ],
+      "changePath": "subprojects/groovy-json/src/main/java/org/apache/groovy/json/DefaultFastStringService.java",
+      "mutation": "ADD_PACKAGE_PRIVATE_MARKER_RETURNING_ONE",
+      "requiredOutputs": [
+        "subprojects/groovy-json/build/libs/*.jar"
+      ],
+      "expectedCandidateEntrypoints": [
+        ":groovy-json:jar"
+      ]
+    },
+    {
+      "key": "apache-kafka-checkstyle-verification",
+      "workflowFamily": "TYPED_VERIFICATION",
+      "repositoryId": "apache/kafka",
+      "remoteUrl": "https://github.com/apache/kafka.git",
+      "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "jdkToolchain": "temurin-jdk-25",
+      "pipelineClass": "checkstyle-main",
+      "entrypoints": [
+        "checkstyleMain"
+      ],
+      "changePath": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+      "mutation": "APPEND_FIXED_COMMENT",
+      "requiredOutputs": [
+        "clients/build/reports/checkstyle/main.html",
+        "clients/build/reports/checkstyle/main.xml"
+      ],
+      "expectedCandidateEntrypoints": [
+        ":clients:checkstyleMain"
+      ]
+    },
+    {
+      "key": "apache-kafka-shadow-distribution",
+      "workflowFamily": "FAT_JAR_DISTRIBUTION",
+      "repositoryId": "apache/kafka",
+      "remoteUrl": "https://github.com/apache/kafka.git",
+      "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "jdkToolchain": "temurin-jdk-25",
+      "pipelineClass": "shadow-jar-distribution",
+      "entrypoints": [
+        "shadowJar"
+      ],
+      "changePath": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+      "mutation": "APPEND_FIXED_COMMENT",
+      "requiredOutputs": [
+        "clients/build/libs/kafka-clients-*.jar"
+      ],
+      "expectedCandidateEntrypoints": [
+        ":clients:shadowJar"
+      ]
+    },
+    {
+      "key": "spring-framework-test-preparation",
+      "workflowFamily": "BUILD_OWNED_TEST_PREPARATION",
+      "repositoryId": "spring-projects/spring-framework",
+      "remoteUrl": "https://github.com/spring-projects/spring-framework.git",
+      "publicRevision": "4b5c92703c63966c3471242c621c4a63b382638d",
+      "jdkToolchain": "temurin-jdk-25",
+      "pipelineClass": "test-classes",
+      "entrypoints": [
+        "testClasses"
+      ],
+      "changePath": "spring-jms/src/main/java/org/springframework/jms/JmsException.java",
+      "mutation": "APPEND_FIXED_COMMENT",
+      "requiredOutputs": [
+        "spring-jms/build/classes/**"
+      ],
+      "expectedCandidateEntrypoints": [
+        ":spring-jms:testClasses"
+      ]
+    }
+  ],
+  "qualification": {
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositivePairs": 8,
+    "requiredOutputsIdentical": true,
+    "maximumProductAttributableFailures": 0,
+    "failedOrTimedOutObservationsMayBeDiscarded": false,
+    "nonWinningFamilyDecision": "RETAIN_NATIVE_GRADLE"
+  },
+  "interpretation": {
+    "workflowFamiliesComparable": false,
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false,
+    "graphReductionIsNotPerformanceEvidence": true,
+    "capabilityEvidenceReusedAsPerformanceEvidence": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

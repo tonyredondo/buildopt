@@ -35,11 +35,13 @@ done
 
 buildopt_evidence_schema=$(jq -er '.evidenceSchemaVersion // "buildopt.evidence/poc-generic-profile-matrix/v1"' "${buildopt_spec}")
 buildopt_work_item=$(jq -er '.workItem' "${buildopt_spec}")
+buildopt_repository_count=$(jq '.repositories | length' "${buildopt_spec}")
 
 if [[ -z ${buildopt_subject_filter} ]]; then
     jq -e \
         --arg schemaVersion "${buildopt_evidence_schema}" \
-        --arg workItem "${buildopt_work_item}" '
+        --arg workItem "${buildopt_work_item}" \
+        --argjson subjectCount "${buildopt_repository_count}" '
     .schemaVersion == $schemaVersion and
     .workItem == $workItem and
     (.buildopt.revision | test("^[0-9a-f]{40}$")) and
@@ -47,8 +49,8 @@ if [[ -z ${buildopt_subject_filter} ]]; then
     .method.candidateMechanisms == ["BUILD_IMPACT"] and
     .method.control == "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW" and
     .method.repositorySpecificProductRulesAllowed == false and
-    (.subjects | length) == 5 and
-    .aggregation.subjectCount == 5 and
+    (.subjects | length) == $subjectCount and
+    .aggregation.subjectCount == $subjectCount and
     .aggregation.repositoryPercentagesAveraged == false and
     .aggregation.mechanismPercentagesAdded == false and
     .boundaries.proofOfConcept == true and
@@ -60,7 +62,6 @@ if [[ -z ${buildopt_subject_filter} ]]; then
     ' "${buildopt_summary}" >/dev/null
 fi
 
-buildopt_repository_count=$(jq '.repositories | length' "${buildopt_spec}")
 if [[ -n ${buildopt_subject_filter} ]]; then
     buildopt_subject_matches=$(jq --arg key "${buildopt_subject_filter}" \
         '[.repositories[] | select(.key == $key)] | length' "${buildopt_spec}")
@@ -156,14 +157,16 @@ if [[ -n ${buildopt_subject_filter} ]]; then
     exit 0
 fi
 
+mapfile -t buildopt_result_files < <(
+    jq -r '.repositories[].key' "${buildopt_spec}" |
+        while IFS= read -r buildopt_key; do
+            printf '%s/%s/result.json\n' "${buildopt_evidence}" "${buildopt_key}"
+        done
+)
 jq -e \
     --slurpfile spec "${buildopt_spec}" \
-    --slurpfile spring "${buildopt_evidence}/spring-framework/result.json" \
-    --slurpfile otel "${buildopt_evidence}/opentelemetry-java-instrumentation/result.json" \
-    --slurpfile kafka "${buildopt_evidence}/apache-kafka/result.json" \
-    --slurpfile micronaut "${buildopt_evidence}/micronaut-core/result.json" \
-    --slurpfile groovy "${buildopt_evidence}/apache-groovy/result.json" '
-    ([$spring[0], $otel[0], $kafka[0], $micronaut[0], $groovy[0]]) as $results |
+    --slurpfile resultsDocument <(jq -s '.' "${buildopt_result_files[@]}") '
+    ($resultsDocument[0]) as $results |
     .subjects == $results and
     .aggregation.subjectCount == ($results | length) and
     .aggregation.structurallyProposed ==
@@ -172,7 +175,7 @@ jq -e \
         ($results | map(select(.measurementStatus == "COMPLETED")) | length) and
     .aggregation.qualified ==
         ($results | map(select(.result.qualified == true)) | length) and
-    .retainedCompositionContext == $spec[0].retainedCompositionContext and
+    .retainedCompositionContext == ($spec[0].retainedCompositionContext // []) and
     all(.retainedCompositionContext[];
         (.evidence | type) == "string" and
         (.mechanisms | length) >= 1 and
@@ -180,4 +183,4 @@ jq -e \
         (.qualified | type) == "boolean")
 ' "${buildopt_summary}" >/dev/null
 
-printf 'Five-repository generic profile matrix: PASS\n'
+printf 'Generic profile matrix: PASS\n'

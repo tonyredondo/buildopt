@@ -510,6 +510,14 @@ blocks, exact outputs, both full-graph fallbacks and zero product failures.
 Target drift is reported path by path and retains native rather than being
 discarded or special-cased.
 
+`poc-generic-workflow-value-v1.json` and
+`poc-generic-workflow-value-v1.md` freeze the first public value comparison
+across four build-owned workflow families: Groovy JAR packaging, Kafka typed
+Checkstyle verification, Kafka fat-JAR distribution, and Spring test-class
+preparation. Every row uses the installed generic profile path, eight isolated
+alternating pairs, exact outputs, and native full-graph fallback. Families are
+qualified or rejected independently; no percentages are averaged or added.
+
 The retained [v5 evidence](../benchmarks/results/poc-generic-holdout-v5/README.md)
 passes that unchanged contract: native averages 216.724 seconds and BuildOpt
 203.991 seconds, saving 12.733 seconds/5.88% with interval

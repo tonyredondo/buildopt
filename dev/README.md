@@ -3435,6 +3435,15 @@ outputs and scheduling-equivalent full-graph fallback. The checker rejects
 partial timing, repository percentage averages, and attribution of retained
 Jar/Edge results to Build Impact.
 
+`./dev/run-generic-workflow-value /absolute/evidence/directory [workflow-key]`
+uses the same installed generic runner with the frozen public workflow-family
+contract. It measures Groovy JAR packaging, Kafka Checkstyle verification,
+Kafka fat-JAR distribution, and Spring test-class preparation independently
+against their unchanged optimized-native workflows. The companion
+`./dev/check-generic-workflow-value [evidence-directory] [workflow-key]`
+requires all eight pairs, exact declared outputs, full fallback, and a separate
+qualify-or-retain-native decision for every family.
+
 `./dev/check-generic-profile-ci-replay` validates the manual clean-runner
 replay without cloning public repositories. It reconstructs retained Action
 artifacts for all five subjects, requires five semantic and byte-level graph

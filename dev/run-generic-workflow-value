@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# < 1 || $# > 2)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/output/directory [workflow-key]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+
+exec "${buildopt_script_dir}/run-generic-profile-matrix" \
+    "$1" "${buildopt_repo_root}/specs/poc-generic-workflow-value-v1.json" "${2:-}"

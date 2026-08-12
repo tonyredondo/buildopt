@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 2)); then
+    printf 'usage: %s [evidence-directory] [workflow-key]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence=${1:-"${buildopt_repo_root}/benchmarks/results/poc-generic-workflow-value-v1"}
+buildopt_spec="${buildopt_repo_root}/specs/poc-generic-workflow-value-v1.json"
+
+"${buildopt_script_dir}/check-generic-profile-matrix" \
+    "${buildopt_evidence}" "${buildopt_spec}" "${2:-}"
+
+if [[ -z ${2:-} ]]; then
+    jq -e --slurpfile spec "${buildopt_spec}" '
+        (.subjects | map(.key)) == ($spec[0].repositories | map(.key)) and
+        (.subjects | map(.proposal.originalEntrypoints)) ==
+            ($spec[0].repositories | map(.entrypoints)) and
+        (.aggregation.subjectCount == 4) and
+        (.aggregation.measured == 4) and
+        all(.subjects[];
+            .measurementStatus == "COMPLETED" and
+            .result.pairs == 8 and
+            (.result.decision | IN("QUALIFY_STRUCTURAL_PROFILE", "RETAIN_NATIVE_GRADLE"))) and
+        .method.workflowFamiliesEvaluatedIndependently == true
+    ' "${buildopt_evidence}/summary.json" >/dev/null
+    printf 'Generic public workflow value: PASS\n'
+fi

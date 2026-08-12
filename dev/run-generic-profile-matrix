@@ -72,33 +72,22 @@ buildopt_executable="${buildopt_root}/install/bin/buildopt"
 buildopt_executable_sha=$(sha256sum "${buildopt_executable}" | awk '{print $1}')
 
 buildopt_mutate_repository() {
-    local buildopt_key=$1
+    local buildopt_mutation=$1
     local buildopt_repository=$2
     local buildopt_change_path=$3
+    local buildopt_marker=$4
 
-    case "${buildopt_key}" in
-        apache-groovy)
+    case "${buildopt_mutation}" in
+        ADD_PACKAGE_PRIVATE_MARKER_RETURNING_ONE)
             perl -0pi -e 's/\n}\n\z/\n\n    int buildOptPocMarker() {\n        return 1;\n    }\n}\n/' \
                 "${buildopt_repository}/${buildopt_change_path}"
             ;;
-        spring-framework)
-            printf '\n// buildopt-poc-generic-profile-matrix-spring\n' \
-                >>"${buildopt_repository}/${buildopt_change_path}"
-            ;;
-        opentelemetry-java-instrumentation)
-            printf '\n// buildopt-poc-generic-profile-matrix-opentelemetry\n' \
-                >>"${buildopt_repository}/${buildopt_change_path}"
-            ;;
-        apache-kafka)
-            printf '\n// buildopt-poc-generic-profile-matrix-kafka\n' \
-                >>"${buildopt_repository}/${buildopt_change_path}"
-            ;;
-        micronaut-core)
-            printf '\n// buildopt-poc-generic-profile-matrix-micronaut\n' \
+        APPEND_FIXED_COMMENT)
+            printf '\n// buildopt-poc-%s\n' "${buildopt_marker}" \
                 >>"${buildopt_repository}/${buildopt_change_path}"
             ;;
         *)
-            printf 'unsupported matrix subject: %s\n' "${buildopt_key}" >&2
+            printf 'unsupported matrix mutation: %s\n' "${buildopt_mutation}" >&2
             return 1
             ;;
     esac
@@ -131,7 +120,8 @@ buildopt_output_arguments() {
 buildopt_capture_subject() {
     local buildopt_index=$1
     local buildopt_key buildopt_repository_id buildopt_remote buildopt_public_revision
-    local buildopt_jdk buildopt_pipeline buildopt_change_path buildopt_repository
+    local buildopt_jdk buildopt_pipeline buildopt_change_path buildopt_mutation
+    local buildopt_repository
     local buildopt_gradle_home buildopt_subject_output buildopt_base buildopt_target
     local buildopt_name buildopt_measure_status buildopt_evaluation_decision
     local -a buildopt_entrypoint_args=() buildopt_required_output_args=()
@@ -143,6 +133,7 @@ buildopt_capture_subject() {
     buildopt_jdk=$(jq -er ".repositories[${buildopt_index}].jdkToolchain" "${buildopt_spec}")
     buildopt_pipeline=$(jq -er ".repositories[${buildopt_index}].pipelineClass" "${buildopt_spec}")
     buildopt_change_path=$(jq -er ".repositories[${buildopt_index}].changePath" "${buildopt_spec}")
+    buildopt_mutation=$(jq -er ".repositories[${buildopt_index}].mutation" "${buildopt_spec}")
     buildopt_repository="${buildopt_root}/${buildopt_key}/repository"
     buildopt_gradle_home="${buildopt_root}/${buildopt_key}/gradle-home"
     buildopt_subject_output="${buildopt_output}/${buildopt_key}"
@@ -158,7 +149,8 @@ buildopt_capture_subject() {
         return 1
     }
 
-    buildopt_mutate_repository "${buildopt_key}" "${buildopt_repository}" "${buildopt_change_path}"
+    buildopt_mutate_repository "${buildopt_mutation}" "${buildopt_repository}" \
+        "${buildopt_change_path}" "${buildopt_key}"
     git -C "${buildopt_repository}" config user.name 'BuildOpt POC'
     git -C "${buildopt_repository}" config user.email 'buildopt-poc@example.invalid'
     git -C "${buildopt_repository}" config commit.gpgsign false
@@ -307,6 +299,13 @@ if [[ ${buildopt_completed_subjects} -lt ${buildopt_repository_count} ]]; then
     exit 0
 fi
 
+mapfile -t buildopt_result_files < <(
+    jq -r '.repositories[].key' "${buildopt_spec}" |
+        while IFS= read -r buildopt_key; do
+            printf '%s/%s/result.json\n' "${buildopt_output}" "${buildopt_key}"
+        done
+)
+
 jq -n \
     --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
     --arg revision "${buildopt_revision}" \
@@ -314,11 +313,8 @@ jq -n \
     --arg schemaVersion "${buildopt_evidence_schema}" \
     --arg workItem "${buildopt_work_item}" \
     --slurpfile spec "${buildopt_spec}" \
-    --slurpfile spring "${buildopt_output}/spring-framework/result.json" \
-    --slurpfile otel "${buildopt_output}/opentelemetry-java-instrumentation/result.json" \
-    --slurpfile kafka "${buildopt_output}/apache-kafka/result.json" \
-    --slurpfile micronaut "${buildopt_output}/micronaut-core/result.json" \
-    --slurpfile groovy "${buildopt_output}/apache-groovy/result.json" '
+    --slurpfile results <(jq -s '.' "${buildopt_result_files[@]}") '
+    ($results[0]) as $subjects |
     {
       schemaVersion: $schemaVersion,
       workItem: $workItem,
@@ -329,15 +325,15 @@ jq -n \
         packageVersion: "0.3.0-dev"
       },
       method: $spec[0].method,
-      subjects: [$spring[0], $otel[0], $kafka[0], $micronaut[0], $groovy[0]],
-      retainedCompositionContext: $spec[0].retainedCompositionContext,
+      subjects: $subjects,
+      retainedCompositionContext: ($spec[0].retainedCompositionContext // []),
       aggregation: {
-        subjectCount: 5,
-        structurallyProposed: ([$spring[0], $otel[0], $kafka[0], $micronaut[0], $groovy[0]] |
+        subjectCount: ($subjects | length),
+        structurallyProposed: ($subjects |
           map(select(.proposal.decision == "MEASURE_STRUCTURAL_CANDIDATE")) | length),
-        measured: ([$spring[0], $otel[0], $kafka[0], $micronaut[0], $groovy[0]] |
+        measured: ($subjects |
           map(select(.measurementStatus == "COMPLETED")) | length),
-        qualified: ([$spring[0], $otel[0], $kafka[0], $micronaut[0], $groovy[0]] |
+        qualified: ($subjects |
           map(select(.result.qualified == true)) | length),
         repositoryPercentagesAveraged: false,
         mechanismPercentagesAdded: false
@@ -347,4 +343,4 @@ jq -n \
 ' >"${buildopt_output}/summary.json"
 
 "${buildopt_script_dir}/check-generic-profile-matrix" "${buildopt_output}" "${buildopt_spec}"
-printf 'Five-repository generic profile matrix written to %s\n' "${buildopt_output}"
+printf 'Generic profile matrix written to %s\n' "${buildopt_output}"
