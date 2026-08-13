@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"strings"
 	"testing"
@@ -197,9 +198,13 @@ func TestSummarizeStructuralTaskOutcomesNormalizesRepeatedConsoleLines(t *testin
 		"> Task :compileJava",
 		"> Task :compileJava FROM-CACHE",
 	}, "\n"))
-	if err := profilediscovery.ValidateStructuralTaskOutcomes(conflicting); err == nil ||
-		!strings.Contains(err.Error(), "invalid outcome") {
-		t.Fatalf("conflicting task emissions error = %v", err)
+	if err := profilediscovery.ValidateStructuralTaskOutcomes(conflicting); err != nil {
+		t.Fatalf("build-tree task-path collision was rejected: %v", err)
+	}
+	if conflicting.Total != 1 || conflicting.Executed != 1 || len(conflicting.Tasks) != 1 ||
+		conflicting.Tasks[0].Outcome != "EXECUTED" ||
+		!reflect.DeepEqual(conflicting.Tasks[0].ConsoleOutcomes, []string{"EXECUTED", "FROM_CACHE"}) {
+		t.Fatalf("build-tree task-path collision = %+v", conflicting)
 	}
 }
 

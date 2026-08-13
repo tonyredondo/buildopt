@@ -192,8 +192,9 @@ type StructuralTaskOutcomes struct {
 // outcome used to derive an execution-shape fingerprint. The bounded list is
 // diagnostic evidence; it never authorizes repository-specific selection.
 type StructuralTaskObservation struct {
-	Path    string `json:"path"`
-	Outcome string `json:"outcome"`
+	Path            string   `json:"path"`
+	Outcome         string   `json:"outcome"`
+	ConsoleOutcomes []string `json:"consoleOutcomes,omitempty"`
 }
 
 // StructuralHostPressure records the system-wide Linux PSI time accumulated
@@ -649,6 +650,7 @@ func ValidateStructuralTaskOutcomes(outcomes StructuralTaskOutcomes) error {
 	}
 	canonical := make([]string, len(outcomes.Tasks))
 	previous := ""
+	var executed, fromCache, upToDate, noSource, skipped int
 	for index, task := range outcomes.Tasks {
 		if task.Path == "" || !strings.HasPrefix(task.Path, ":") {
 			return fmt.Errorf("exact task %d has invalid path %q", index+1, task.Path)
@@ -656,11 +658,43 @@ func ValidateStructuralTaskOutcomes(outcomes StructuralTaskOutcomes) error {
 		if !validStructuralTaskOutcome(task.Outcome) {
 			return fmt.Errorf("exact task %s has invalid outcome %q", task.Path, task.Outcome)
 		}
+		if len(task.ConsoleOutcomes) != 0 {
+			if len(task.ConsoleOutcomes) < 2 || len(task.ConsoleOutcomes) > 5 ||
+				!sort.StringsAreSorted(task.ConsoleOutcomes) {
+				return fmt.Errorf("exact task %s has invalid console outcomes", task.Path)
+			}
+			previousOutcome := ""
+			for _, outcome := range task.ConsoleOutcomes {
+				if !validStructuralTaskOutcome(outcome) || outcome == previousOutcome {
+					return fmt.Errorf("exact task %s has invalid console outcomes", task.Path)
+				}
+				previousOutcome = outcome
+			}
+			if structuralConservativeOutcome(task.ConsoleOutcomes) != task.Outcome {
+				return fmt.Errorf("exact task %s does not use its conservative console outcome", task.Path)
+			}
+		}
 		if previous != "" && task.Path <= previous {
 			return fmt.Errorf("exact task paths are not strictly sorted: %q followed by %q", previous, task.Path)
 		}
 		previous = task.Path
 		canonical[index] = structuralTaskFingerprintLine(task)
+		switch task.Outcome {
+		case "FROM_CACHE":
+			fromCache++
+		case "UP_TO_DATE":
+			upToDate++
+		case "NO_SOURCE":
+			noSource++
+		case "SKIPPED":
+			skipped++
+		default:
+			executed++
+		}
+	}
+	if outcomes.Executed != executed || outcomes.FromCache != fromCache || outcomes.UpToDate != upToDate ||
+		outcomes.NoSource != noSource || outcomes.Skipped != skipped {
+		return errors.New("exact task outcome counters do not match task evidence")
 	}
 	digest := sha256.Sum256([]byte(strings.Join(canonical, "\n") + "\n"))
 	calculated := hex.EncodeToString(digest[:])
@@ -683,16 +717,32 @@ func structuralTaskFingerprintLine(task StructuralTaskObservation) string {
 	line := "> Task " + task.Path
 	switch task.Outcome {
 	case "FROM_CACHE":
-		return line + " FROM-CACHE"
+		line += " FROM-CACHE"
 	case "UP_TO_DATE":
-		return line + " UP-TO-DATE"
+		line += " UP-TO-DATE"
 	case "NO_SOURCE":
-		return line + " NO-SOURCE"
+		line += " NO-SOURCE"
 	case "SKIPPED":
-		return line + " SKIPPED"
+		line += " SKIPPED"
 	default:
-		return line
 	}
+	if len(task.ConsoleOutcomes) > 0 {
+		line += " [console-outcomes=" + strings.Join(task.ConsoleOutcomes, ",") + "]"
+	}
+	return line
+}
+
+func structuralConservativeOutcome(outcomes []string) string {
+	priority := map[string]int{
+		"SKIPPED": 1, "NO_SOURCE": 2, "UP_TO_DATE": 3, "FROM_CACHE": 4, "EXECUTED": 5,
+	}
+	selected := ""
+	for _, outcome := range outcomes {
+		if priority[outcome] > priority[selected] {
+			selected = outcome
+		}
+	}
+	return selected
 }
 
 func validStructuralHostPressure(pressure *StructuralHostPressure) bool {

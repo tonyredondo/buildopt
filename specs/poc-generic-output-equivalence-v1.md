@@ -41,6 +41,12 @@ positive median/lower-bound, at-least-six-positive-block, non-regressive-p95,
 stable-shape, complete-fallback, and zero-product-failure gates. Percentages
 remain independent across workflows.
 
+Gradle plain-console task identifiers are local to a build, so an included or
+composite build can emit the same path with different outcomes. The generic
+measurement layer preserves the sorted set of outcomes in its execution-shape
+fingerprint and uses the conservative outcome for counters. It does not discard
+the collision or pretend that the console path is globally unique.
+
 ## Boundaries
 
 This is a review-only POC. The contract creates no automatic activation,

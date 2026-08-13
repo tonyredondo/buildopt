@@ -264,11 +264,13 @@ func TestValidateStructuralTaskOutcomesExplainsMalformedExactEvidence(t *testing
 		t.Fatalf("valid exact task evidence: %v", err)
 	}
 
-	duplicate := valid
-	duplicate.Tasks = append([]StructuralTaskObservation(nil), valid.Tasks...)
-	duplicate.Tasks[1].Path = duplicate.Tasks[0].Path
-	if err := ValidateStructuralTaskOutcomes(duplicate); err == nil || !strings.Contains(err.Error(), "not strictly sorted") {
-		t.Fatalf("duplicate task path error = %v", err)
+	invalidConsoleOutcomes := valid
+	invalidConsoleOutcomes.Tasks = append([]StructuralTaskObservation(nil), valid.Tasks...)
+	invalidConsoleOutcomes.Tasks[0].Outcome = "FROM_CACHE"
+	invalidConsoleOutcomes.Tasks[0].ConsoleOutcomes = []string{"EXECUTED", "FROM_CACHE"}
+	if err := ValidateStructuralTaskOutcomes(invalidConsoleOutcomes); err == nil ||
+		!strings.Contains(err.Error(), "conservative console outcome") {
+		t.Fatalf("non-conservative console outcome error = %v", err)
 	}
 
 	mismatch := valid

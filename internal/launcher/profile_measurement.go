@@ -647,7 +647,7 @@ func structuralTaskEvidenceError(armName string, validationErr error, log string
 
 func summarizeStructuralTaskOutcomes(log string) profilediscovery.StructuralTaskOutcomes {
 	var outcomes profilediscovery.StructuralTaskOutcomes
-	observed := map[string]string{}
+	observed := map[string]map[string]bool{}
 	scanner := bufio.NewScanner(strings.NewReader(log))
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
@@ -670,16 +670,25 @@ func summarizeStructuralTaskOutcomes(log string) profilediscovery.StructuralTask
 			outcome = "SKIPPED"
 		}
 		path := fields[2]
-		if previous, exists := observed[path]; exists && previous != outcome {
-			observed[path] = "CONFLICTING"
-		} else if !exists {
-			observed[path] = outcome
+		if observed[path] == nil {
+			observed[path] = map[string]bool{}
 		}
+		observed[path][outcome] = true
 	}
 	if len(observed) > 0 {
 		tasks := make([]profilediscovery.StructuralTaskObservation, 0, len(observed))
-		for path, outcome := range observed {
-			tasks = append(tasks, profilediscovery.StructuralTaskObservation{Path: path, Outcome: outcome})
+		for path, observedOutcomes := range observed {
+			consoleOutcomes := make([]string, 0, len(observedOutcomes))
+			for outcome := range observedOutcomes {
+				consoleOutcomes = append(consoleOutcomes, outcome)
+			}
+			sort.Strings(consoleOutcomes)
+			outcome := conservativeStructuralConsoleOutcome(consoleOutcomes)
+			task := profilediscovery.StructuralTaskObservation{Path: path, Outcome: outcome}
+			if len(consoleOutcomes) > 1 {
+				task.ConsoleOutcomes = consoleOutcomes
+			}
+			tasks = append(tasks, task)
 			switch outcome {
 			case "FROM_CACHE":
 				outcomes.FromCache++
@@ -710,16 +719,32 @@ func canonicalStructuralTaskLine(task profilediscovery.StructuralTaskObservation
 	line := "> Task " + task.Path
 	switch task.Outcome {
 	case "FROM_CACHE":
-		return line + " FROM-CACHE"
+		line += " FROM-CACHE"
 	case "UP_TO_DATE":
-		return line + " UP-TO-DATE"
+		line += " UP-TO-DATE"
 	case "NO_SOURCE":
-		return line + " NO-SOURCE"
+		line += " NO-SOURCE"
 	case "SKIPPED":
-		return line + " SKIPPED"
+		line += " SKIPPED"
 	default:
-		return line
 	}
+	if len(task.ConsoleOutcomes) > 0 {
+		line += " [console-outcomes=" + strings.Join(task.ConsoleOutcomes, ",") + "]"
+	}
+	return line
+}
+
+func conservativeStructuralConsoleOutcome(outcomes []string) string {
+	priority := map[string]int{
+		"SKIPPED": 1, "NO_SOURCE": 2, "UP_TO_DATE": 3, "FROM_CACHE": 4, "EXECUTED": 5,
+	}
+	selected := ""
+	for _, outcome := range outcomes {
+		if priority[outcome] > priority[selected] {
+			selected = outcome
+		}
+	}
+	return selected
 }
 
 func formatStructuralTaskOutcomes(outcomes profilediscovery.StructuralTaskOutcomes) string {
