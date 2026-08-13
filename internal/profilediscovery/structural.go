@@ -14,6 +14,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/tonyredondo/buildopt/internal/outputequivalence"
 )
 
 const (
@@ -28,11 +30,12 @@ const (
 // StructuralOptions binds an independently measured structural optimization
 // to the exact repository graph from which the candidate was derived.
 type StructuralOptions struct {
-	RepositoryRoot string
-	ManifestPath   string
-	GraphPath      string
-	GeneratedPath  string
-	EvidencePath   string
+	RepositoryRoot        string
+	ManifestPath          string
+	GraphPath             string
+	GeneratedPath         string
+	EvidencePath          string
+	OutputEquivalencePath string
 }
 
 // StructuralProfile is the reviewable Build Impact-only profile accepted by
@@ -86,10 +89,11 @@ type structuralSubject struct {
 }
 
 type structuralSourceBindings struct {
-	ManifestSHA256       string `json:"manifestSha256"`
-	GraphSHA256          string `json:"graphSha256"`
-	GeneratedSHA256      string `json:"generatedManifestSha256"`
-	SourceEvidenceSHA256 string `json:"sourceEvidenceSha256"`
+	ManifestSHA256          string `json:"manifestSha256"`
+	GraphSHA256             string `json:"graphSha256"`
+	GeneratedSHA256         string `json:"generatedManifestSha256"`
+	SourceEvidenceSHA256    string `json:"sourceEvidenceSha256"`
+	OutputEquivalenceSHA256 string `json:"outputEquivalenceSha256,omitempty"`
 }
 
 type structuralExecution struct {
@@ -99,6 +103,7 @@ type structuralExecution struct {
 	Mechanisms               []string                      `json:"mechanisms"`
 	GradleOptions            []string                      `json:"gradleOptions"`
 	LauncherOverheadIncluded bool                          `json:"launcherOverheadIncluded"`
+	OutputEquivalenceMode    string                        `json:"outputEquivalenceMode,omitempty"`
 	WarmupsPerArm            int                           `json:"warmupsPerArm,omitempty"`
 	ControlWarmups           []StructuralWarmupObservation `json:"controlWarmups,omitempty"`
 	CandidateWarmups         []StructuralWarmupObservation `json:"candidateWarmups,omitempty"`
@@ -217,18 +222,19 @@ type StructuralWarmupObservation struct {
 // to render evidence for the existing structural profile qualifier. It grants
 // no activation or production authority.
 type StructuralMeasurementOptions struct {
-	CapturedAt           time.Time
-	Analysis             AnalysisReport
-	RepositoryRevision   string
-	BuildOptRevision     string
-	ExecutableSHA256     string
-	SourceEvidenceSHA256 string
-	GradleOptions        []string
-	ControlWarmups       []StructuralWarmupObservation
-	CandidateWarmups     []StructuralWarmupObservation
-	Observations         []StructuralMeasurementObservation
-	FallbackReason       string
-	FallbackSuccessful   bool
+	CapturedAt              time.Time
+	Analysis                AnalysisReport
+	RepositoryRevision      string
+	BuildOptRevision        string
+	ExecutableSHA256        string
+	SourceEvidenceSHA256    string
+	OutputEquivalenceSHA256 string
+	GradleOptions           []string
+	ControlWarmups          []StructuralWarmupObservation
+	CandidateWarmups        []StructuralWarmupObservation
+	Observations            []StructuralMeasurementObservation
+	FallbackReason          string
+	FallbackSuccessful      bool
 }
 
 // RenderStructuralMeasurementEvidence recomputes the frozen qualification
@@ -249,6 +255,13 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 	}
 	if options.CapturedAt.IsZero() || options.FallbackReason == "" || !options.FallbackSuccessful {
 		return nil, false, errors.New("structural measurement fallback is unproven")
+	}
+	outputEquivalenceMode := ""
+	if options.OutputEquivalenceSHA256 != "" {
+		if !validSHA(options.OutputEquivalenceSHA256) || options.OutputEquivalenceSHA256 != strings.ToLower(options.OutputEquivalenceSHA256) {
+			return nil, false, errors.New("structural output-equivalence binding is invalid")
+		}
+		outputEquivalenceMode = "OWNER_REVIEWED_SEMANTIC_V1"
 	}
 	inputs := make(map[string]InputBinding, len(options.Analysis.Inputs))
 	for _, input := range options.Analysis.Inputs {
@@ -301,10 +314,11 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 			PipelineClass:      options.Analysis.Subject.PipelineClass,
 		},
 		SourceBindings: structuralSourceBindings{
-			ManifestSHA256:       trimSHA(inputs["BUILD_IMPACT_MANIFEST"].SHA256),
-			GraphSHA256:          trimSHA(inputs["BUILD_IMPACT_GRAPH"].SHA256),
-			GeneratedSHA256:      trimSHA(inputs["GENERATED_MANIFEST"].SHA256),
-			SourceEvidenceSHA256: options.SourceEvidenceSHA256,
+			ManifestSHA256:          trimSHA(inputs["BUILD_IMPACT_MANIFEST"].SHA256),
+			GraphSHA256:             trimSHA(inputs["BUILD_IMPACT_GRAPH"].SHA256),
+			GeneratedSHA256:         trimSHA(inputs["GENERATED_MANIFEST"].SHA256),
+			SourceEvidenceSHA256:    options.SourceEvidenceSHA256,
+			OutputEquivalenceSHA256: options.OutputEquivalenceSHA256,
 		},
 		Plan: *options.Analysis.Plan,
 		Execution: structuralExecution{
@@ -314,6 +328,7 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 			Mechanisms:               []string{"BUILD_IMPACT"},
 			GradleOptions:            append([]string(nil), options.GradleOptions...),
 			LauncherOverheadIncluded: true,
+			OutputEquivalenceMode:    outputEquivalenceMode,
 			WarmupsPerArm:            len(options.ControlWarmups),
 			ControlWarmups:           append([]StructuralWarmupObservation(nil), options.ControlWarmups...),
 			CandidateWarmups:         append([]StructuralWarmupObservation(nil), options.CandidateWarmups...),
@@ -370,6 +385,25 @@ func QualifyStructuralProfile(options StructuralOptions) (StructuralProfile, err
 	if err := validateStructuralEvidence(evidence, analysis); err != nil {
 		return StructuralProfile{}, err
 	}
+	var equivalenceInput *InputBinding
+	if evidence.SourceBindings.OutputEquivalenceSHA256 != "" {
+		if options.OutputEquivalencePath == "" {
+			return StructuralProfile{}, errors.New("owner-reviewed output-equivalence contract is required")
+		}
+		equivalenceRaw, input, err := readInput(root, options.OutputEquivalencePath, "OUTPUT_EQUIVALENCE_CONTRACT")
+		if err != nil {
+			return StructuralProfile{}, err
+		}
+		if _, err := outputequivalence.Parse(equivalenceRaw); err != nil {
+			return StructuralProfile{}, err
+		}
+		if !sameEvidenceSHA(input.SHA256, evidence.SourceBindings.OutputEquivalenceSHA256) {
+			return StructuralProfile{}, errors.New("output-equivalence contract binding drift")
+		}
+		equivalenceInput = &input
+	} else if options.OutputEquivalencePath != "" {
+		return StructuralProfile{}, errors.New("exact-byte evidence cannot add an output-equivalence contract")
+	}
 	inputByRole := make(map[string]InputBinding, len(analysis.Inputs))
 	for _, input := range analysis.Inputs {
 		inputByRole[input.Role] = input
@@ -383,6 +417,12 @@ func QualifyStructuralProfile(options StructuralOptions) (StructuralProfile, err
 		{Type: "FILE_SHA256", Path: options.ManifestPath, SHA256: evidence.SourceBindings.ManifestSHA256},
 		{Type: "FILE_SHA256", Path: options.GraphPath, SHA256: evidence.SourceBindings.GraphSHA256},
 		{Type: "FILE_SHA256", Path: options.GeneratedPath, SHA256: evidence.SourceBindings.GeneratedSHA256},
+	}
+	if equivalenceInput != nil {
+		preconditions = append(preconditions, Precondition{
+			Type: "FILE_SHA256", Path: options.OutputEquivalencePath,
+			SHA256: evidence.SourceBindings.OutputEquivalenceSHA256,
+		})
 	}
 	evidenceSHA := trimSHA(evidenceInput.SHA256)
 	return StructuralProfile{
@@ -464,6 +504,13 @@ func validateStructuralCaptureEvidence(evidence structuralEvidence, analysis Ana
 		!validStructuralGradleOptions(evidence.Execution.GradleOptions) {
 		return errors.New("structural qualification execution surface is invalid")
 	}
+	if evidence.SourceBindings.OutputEquivalenceSHA256 == "" {
+		if evidence.Execution.OutputEquivalenceMode != "" {
+			return errors.New("structural output-equivalence execution binding is invalid")
+		}
+	} else if evidence.Execution.OutputEquivalenceMode != "OWNER_REVIEWED_SEMANTIC_V1" {
+		return errors.New("structural output-equivalence execution binding is invalid")
+	}
 	if evidence.Execution.WarmupsPerArm != len(evidence.Execution.ControlWarmups) ||
 		evidence.Execution.WarmupsPerArm != len(evidence.Execution.CandidateWarmups) {
 		return errors.New("structural qualification warm-up evidence is invalid")
@@ -501,6 +548,10 @@ func validateStructuralCaptureEvidence(evidence structuralEvidence, analysis Ana
 		if !validSHA(digest) || digest != strings.ToLower(digest) {
 			return errors.New("structural qualification source digest is invalid")
 		}
+	}
+	if digest := evidence.SourceBindings.OutputEquivalenceSHA256; digest != "" &&
+		(!validSHA(digest) || digest != strings.ToLower(digest)) {
+		return errors.New("structural output-equivalence source digest is invalid")
 	}
 	return nil
 }

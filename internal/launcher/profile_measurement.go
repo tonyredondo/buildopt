@@ -21,11 +21,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tonyredondo/buildopt/internal/outputequivalence"
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
 
 const (
-	profileMeasureUsage           = "usage: buildopt profile measure --manifest PATH --graph PATH --generated-manifest PATH --changes-file PATH --fallback-changes-file PATH --base-revision REVISION --buildopt-revision REVISION --evidence-output PATH [--gradle-option VALUE ...] [--target-stability-confirmations 1|2] [--timeout DURATION]\n"
+	profileMeasureUsage           = "usage: buildopt profile measure --manifest PATH --graph PATH --generated-manifest PATH --changes-file PATH --fallback-changes-file PATH --base-revision REVISION --buildopt-revision REVISION --evidence-output PATH [--output-equivalence PATH] [--gradle-option VALUE ...] [--target-stability-confirmations 1|2] [--timeout DURATION]\n"
 	measurementPairs              = 8
 	maximumMeasurementInterArmGap = 5 * time.Second
 )
@@ -56,6 +57,9 @@ type structuralMeasurementConfig struct {
 	executable                   string
 	executableSHA256             string
 	inputDocuments               map[string][]byte
+	outputEquivalencePath        string
+	outputEquivalenceSHA256      string
+	outputEquivalence            *outputequivalence.Contract
 	targetStabilityConfirmations int
 	gradleDistributionSeed       string
 }
@@ -95,6 +99,7 @@ func runStructuralProfileMeasurement(args []string, stdout, stderr io.Writer) in
 	baseRevision := flags.String("base-revision", "", "immutable baseline Git revision")
 	buildOptRevision := flags.String("buildopt-revision", "", "immutable BuildOpt revision")
 	evidenceOutput := flags.String("evidence-output", "", "repository-relative evidence output")
+	outputEquivalence := flags.String("output-equivalence", "", "owner-reviewed semantic output-equivalence contract")
 	timeout := flags.Duration("timeout", 20*time.Minute, "per-build timeout")
 	targetStabilityConfirmations := flags.Int("target-stability-confirmations", 1, "target-workload warm-ups required before measured pairs")
 	var gradleOptions repeatedStringFlag
@@ -114,7 +119,7 @@ func runStructuralProfileMeasurement(args []string, stdout, stderr io.Writer) in
 		*manifest, *graph, *generated, *changes, *fallbackChanges,
 		*baseRevision, *buildOptRevision, *evidenceOutput,
 		append([]string(nil), gradleOptions...), *timeout,
-		*targetStabilityConfirmations,
+		*targetStabilityConfirmations, *outputEquivalence,
 	)
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile measurement unavailable: %v\n", err)
@@ -147,6 +152,7 @@ func prepareStructuralMeasurementConfig(
 	gradleOptions []string,
 	timeout time.Duration,
 	targetStabilityConfirmations int,
+	outputEquivalencePath string,
 ) (structuralMeasurementConfig, error) {
 	repositoryRoot, err := canonicalWorkingDirectory()
 	if err != nil {
@@ -156,8 +162,16 @@ func prepareStructuralMeasurementConfig(
 		"manifest": manifest, "graph": graph, "generated manifest": generated,
 		"changes file": changes, "fallback changes file": fallbackChanges,
 	}
+	if outputEquivalencePath != "" {
+		inputPaths["output equivalence"] = outputEquivalencePath
+	}
 	inputDocuments := make(map[string][]byte, len(inputPaths))
+	seenInputPaths := make(map[string]string, len(inputPaths))
 	for label, candidate := range inputPaths {
+		if previous, exists := seenInputPaths[candidate]; exists {
+			return structuralMeasurementConfig{}, fmt.Errorf("%s and %s must use distinct input paths", previous, label)
+		}
+		seenInputPaths[candidate] = label
 		if err := validateMeasurementInputFile(repositoryRoot, candidate); err != nil {
 			return structuralMeasurementConfig{}, fmt.Errorf("%s: %w", label, err)
 		}
@@ -169,6 +183,19 @@ func prepareStructuralMeasurementConfig(
 	}
 	if evidenceOutput == "" || filepath.IsAbs(evidenceOutput) || filepath.Clean(evidenceOutput) != evidenceOutput || evidenceOutput == "." || evidenceOutput == ".." {
 		return structuralMeasurementConfig{}, errors.New("evidence output must be clean and repository relative")
+	}
+	if label, exists := seenInputPaths[evidenceOutput]; exists {
+		return structuralMeasurementConfig{}, fmt.Errorf("evidence output must not replace %s", label)
+	}
+	var equivalence *outputequivalence.Contract
+	equivalenceSHA256 := ""
+	if outputEquivalencePath != "" {
+		parsed, err := outputequivalence.Parse(inputDocuments[outputEquivalencePath])
+		if err != nil {
+			return structuralMeasurementConfig{}, err
+		}
+		equivalence = &parsed
+		equivalenceSHA256 = outputequivalence.SHA256(inputDocuments[outputEquivalencePath])
 	}
 	if !validMeasurementRevision(baseRevision) || !validMeasurementRevision(buildOptRevision) {
 		return structuralMeasurementConfig{}, errors.New("base and BuildOpt revisions must be lowercase 40-character Git revisions")
@@ -256,6 +283,9 @@ func prepareStructuralMeasurementConfig(
 		timeout: timeout, analysis: analysis, executable: executable,
 		executableSHA256:             executableSHA256,
 		inputDocuments:               inputDocuments,
+		outputEquivalencePath:        outputEquivalencePath,
+		outputEquivalenceSHA256:      equivalenceSHA256,
+		outputEquivalence:            equivalence,
 		targetStabilityConfirmations: targetStabilityConfirmations,
 		gradleDistributionSeed:       gradleDistributionSeed,
 	}, nil
@@ -324,11 +354,11 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 		// Verify outputs only after both measured processes have finished. Output
 		// traversal can be material on large graphs and must not inflate the gap
 		// between the two Gradle starts.
-		controlResult.outputSHA, controlResult.outputCount, err = hashMeasurementOutputs(control.workspace, config.analysis.Plan.RequiredOutputs)
+		controlResult.outputSHA, controlResult.outputCount, err = hashStructuralMeasurementOutputs(config, control.workspace)
 		if err != nil {
 			return nil, false, fmt.Errorf("pair %d verify control outputs: %w", pair, err)
 		}
-		candidateResult.outputSHA, candidateResult.outputCount, err = hashMeasurementOutputs(candidate.workspace, config.analysis.Plan.RequiredOutputs)
+		candidateResult.outputSHA, candidateResult.outputCount, err = hashStructuralMeasurementOutputs(config, candidate.workspace)
 		if err != nil {
 			return nil, false, fmt.Errorf("pair %d verify candidate outputs: %w", pair, err)
 		}
@@ -395,11 +425,12 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 	}
 	return profilediscovery.RenderStructuralMeasurementEvidence(profilediscovery.StructuralMeasurementOptions{
 		CapturedAt: time.Now(), Analysis: config.analysis,
-		RepositoryRevision:   config.targetRevision,
-		BuildOptRevision:     config.buildOptRevision,
-		ExecutableSHA256:     config.executableSHA256,
-		SourceEvidenceSHA256: hex.EncodeToString(changesSHA[:]),
-		GradleOptions:        config.gradleOptions, Observations: observations,
+		RepositoryRevision:      config.targetRevision,
+		BuildOptRevision:        config.buildOptRevision,
+		ExecutableSHA256:        config.executableSHA256,
+		SourceEvidenceSHA256:    hex.EncodeToString(changesSHA[:]),
+		OutputEquivalenceSHA256: config.outputEquivalenceSHA256,
+		GradleOptions:           config.gradleOptions, Observations: observations,
 		ControlWarmups: control.warmups, CandidateWarmups: candidate.warmups,
 		FallbackReason: fallbackReason, FallbackSuccessful: true,
 	})
@@ -509,7 +540,7 @@ func measureStructuralFallback(config structuralMeasurementConfig, arm structura
 	if reason == "" {
 		return result, "", errors.New("installed fallback did not report full-graph execution")
 	}
-	result.outputSHA, result.outputCount, err = hashMeasurementOutputs(arm.workspace, config.analysis.Plan.RequiredOutputs)
+	result.outputSHA, result.outputCount, err = hashStructuralMeasurementOutputs(config, arm.workspace)
 	return result, reason, err
 }
 
@@ -540,7 +571,11 @@ func resetStructuralArm(config structuralMeasurementConfig, arm structuralMeasur
 			return fmt.Errorf("restore isolated native build cache: %w", err)
 		}
 	}
-	for _, input := range []string{config.manifestPath, config.graphPath, config.generatedPath, config.changesPath, config.fallbackChangesPath} {
+	inputs := []string{config.manifestPath, config.graphPath, config.generatedPath, config.changesPath, config.fallbackChangesPath}
+	if config.outputEquivalencePath != "" {
+		inputs = append(inputs, config.outputEquivalencePath)
+	}
+	for _, input := range inputs {
 		if err := copyMeasurementInputDocument(arm.workspace, input, config.inputDocuments[input]); err != nil {
 			return err
 		}
@@ -886,6 +921,10 @@ func hashMeasurementOutputs(repositoryRoot string, patterns []string) (string, i
 		_, _ = fmt.Fprintf(manifest, "%s  %s\n", outputs[relative], relative)
 	}
 	return hex.EncodeToString(manifest.Sum(nil)), len(files), nil
+}
+
+func hashStructuralMeasurementOutputs(config structuralMeasurementConfig, repositoryRoot string) (string, int, error) {
+	return outputequivalence.HashOutputs(repositoryRoot, config.analysis.Plan.RequiredOutputs, config.outputEquivalence)
 }
 
 func measurementOutputDigests(repositoryRoot string, patterns []string) (map[string]string, error) {

@@ -180,11 +180,13 @@ buildopt_capture_subject() {
     local buildopt_index=$1
     local buildopt_key buildopt_repository_id buildopt_remote buildopt_public_revision
     local buildopt_jdk buildopt_pipeline buildopt_workflow_family buildopt_change_path buildopt_mutation
+    local buildopt_equivalence_source buildopt_equivalence_path
     local buildopt_repository
     local buildopt_gradle_home buildopt_subject_output buildopt_base buildopt_target
     local buildopt_name buildopt_measure_status buildopt_measurement_failure_class
     local buildopt_evaluation_decision
     local -a buildopt_entrypoint_args=() buildopt_required_output_args=()
+    local -a buildopt_equivalence_args=()
 
     buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_spec}")
     buildopt_repository_id=$(jq -er ".repositories[${buildopt_index}].repositoryId" "${buildopt_spec}")
@@ -195,6 +197,8 @@ buildopt_capture_subject() {
     buildopt_workflow_family=$(jq -r ".repositories[${buildopt_index}].workflowFamily // empty" "${buildopt_spec}")
     buildopt_change_path=$(jq -er ".repositories[${buildopt_index}].changePath" "${buildopt_spec}")
     buildopt_mutation=$(jq -er ".repositories[${buildopt_index}].mutation" "${buildopt_spec}")
+    buildopt_equivalence_source=$(jq -r ".repositories[${buildopt_index}].outputEquivalenceContract // empty" "${buildopt_spec}")
+    buildopt_equivalence_path=
     buildopt_repository="${buildopt_root}/${buildopt_key}/repository"
     buildopt_gradle_home="${buildopt_root}/${buildopt_key}/gradle-home"
     buildopt_subject_output="${buildopt_output}/${buildopt_key}"
@@ -229,6 +233,18 @@ buildopt_capture_subject() {
         git -C "${buildopt_repository}" commit -qm 'Apply frozen BuildOpt matrix mutation'
     buildopt_target=$(git -C "${buildopt_repository}" rev-parse HEAD)
     printf '%s\n' "${buildopt_change_path}" >"${buildopt_repository}/buildopt-changes.txt"
+    if [[ -n ${buildopt_equivalence_source} ]]; then
+        [[ -f ${buildopt_repo_root}/${buildopt_equivalence_source} ]] || {
+            printf 'output-equivalence contract is unavailable: %s\n' "${buildopt_equivalence_source}" >&2
+            return 1
+        }
+        buildopt_equivalence_path=buildopt-output-equivalence.json
+        cp -- "${buildopt_repo_root}/${buildopt_equivalence_source}" \
+            "${buildopt_repository}/${buildopt_equivalence_path}"
+        cp -- "${buildopt_repo_root}/${buildopt_equivalence_source}" \
+            "${buildopt_subject_output}/${buildopt_equivalence_path}"
+        buildopt_equivalence_args=(--output-equivalence "${buildopt_equivalence_path}")
+    fi
 
     mapfile -d '' -t buildopt_entrypoint_args \
         < <(buildopt_entrypoint_arguments "${buildopt_index}")
@@ -250,6 +266,7 @@ buildopt_capture_subject() {
             "${buildopt_required_output_args[@]}" \
             --gradle-option=--no-configuration-cache \
             --gradle-option=--no-scan --gradle-option=--max-workers=12 \
+            "${buildopt_equivalence_args[@]}" \
             --buildopt-revision "${buildopt_revision}" --timeout 30m
     ) >"${buildopt_subject_output}/proposal.log" 2>&1; then
         tail -n 200 "${buildopt_subject_output}/proposal.log" >&2
@@ -289,7 +306,8 @@ buildopt_capture_subject() {
                 --gradle-option=--daemon --gradle-option=--build-cache \
                 --gradle-option=--parallel --gradle-option=--no-configuration-cache \
                 --gradle-option=--console=plain --gradle-option=--no-scan \
-                --gradle-option=--max-workers=12 --timeout 30m
+                --gradle-option=--max-workers=12 \
+                "${buildopt_equivalence_args[@]}" --timeout 30m
         ) >"${buildopt_subject_output}/measurement.log" 2>&1; then
             buildopt_measure_status=COMPLETED
             cp -- "${buildopt_repository}/buildopt-structural-evidence.json" \
@@ -301,6 +319,7 @@ buildopt_capture_subject() {
                     --graph buildopt-impact-graph.generated.json \
                     --generated-manifest buildopt-impact.generated.json \
                     --evidence buildopt-structural-evidence.json \
+                    "${buildopt_equivalence_args[@]}" \
                     --profile-output buildopt-qualified-profile.json
             ) >"${buildopt_subject_output}/evaluation.json" 2>"${buildopt_subject_output}/evaluation.log"
             buildopt_evaluation_decision=$(jq -er '.decision' "${buildopt_subject_output}/evaluation.json")
@@ -315,7 +334,7 @@ buildopt_capture_subject() {
                     buildopt_measurement_failure_class=TASK_EVIDENCE_AMBIGUOUS
                     ;;
                 *'required outputs differ between optimized native Gradle and BuildOpt'*)
-                    buildopt_measurement_failure_class=REQUIRED_OUTPUTS_NOT_BYTE_IDENTICAL
+                    buildopt_measurement_failure_class=REQUIRED_OUTPUTS_NOT_EQUIVALENT
                     ;;
                 *)
                     buildopt_measurement_failure_class=MEASUREMENT_EXECUTION_UNAVAILABLE
@@ -328,6 +347,7 @@ buildopt_capture_subject() {
     jq -n \
         --arg key "${buildopt_key}" \
         --arg repositoryId "${buildopt_repository_id}" \
+        --arg pipelineClass "${buildopt_pipeline}" \
         --arg workflowFamily "${buildopt_workflow_family}" \
         --arg publicRevision "${buildopt_public_revision}" \
         --arg targetRevision "${buildopt_target}" \
@@ -339,6 +359,7 @@ buildopt_capture_subject() {
         {
           key: $key,
           repositoryId: $repositoryId,
+          pipelineClass: $pipelineClass,
           workflowFamily: (if $workflowFamily == "" then null else $workflowFamily end),
           publicRevision: $publicRevision,
           targetRevision: $targetRevision,
@@ -354,7 +375,9 @@ buildopt_capture_subject() {
           measurementStatus: $measurementStatus,
           measurementFailureClass: (if $measurementFailureClass == "" then null else $measurementFailureClass end),
           result: (if ($evidence | length) == 1 then $evidence[0].result else null end),
-          evaluationDecision: $evaluationDecision
+          evaluationDecision: $evaluationDecision,
+          outputEquivalence: ($proposal[0].outputEquivalence // null),
+          outputEquivalenceSha256: ($proposal[0].outputEquivalenceSha256 // null)
         }
     ' >"${buildopt_subject_output}/result.json"
 

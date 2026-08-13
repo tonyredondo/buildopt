@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/tonyredondo/buildopt/internal/outputequivalence"
 )
 
 func TestParseConfirmedOutputContractRequiresValidatedDeclarations(t *testing.T) {
@@ -85,5 +87,44 @@ func TestReadProfileOwnerInputRejectsTamperingAndSymlinks(t *testing.T) {
 	}
 	if _, _, err := readProfileOwnerInput(root, "profile.json"); err == nil {
 		t.Fatal("expected a symlinked owner input to be rejected")
+	}
+}
+
+func TestReadProfileOwnerInputBindsOutputEquivalence(t *testing.T) {
+	root := t.TempDir()
+	contract := []byte(`{"schemaVersion":"buildopt.poc/output-equivalence/v1","rules":[{"pattern":"build/*.zip","mode":"CANONICAL_ZIP"}],"reviewRequired":true,"activationAutomatic":false,"productionAuthorized":false}`)
+	if err := os.WriteFile(filepath.Join(root, "equivalence.json"), contract, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	input := profileOwnerInput{
+		SchemaVersion: profileOwnerInputSchema, RepositoryID: "example/repository",
+		PipelineClass: "assemble", Entrypoints: []string{"assemble"},
+		RequiredOutputs: []string{"build/*.zip"}, ChangeSource: "GIT_DIFF_BASE_TO_HEAD",
+		GlobalChanges:  append([]string(nil), defaultProposalGlobalChanges...),
+		TimeoutMinutes: 5,
+		OutputConfirmation: profileOwnerOutputConfirmation{
+			Status: "OWNER_CONFIRMED", ObservedRevision: strings.Repeat("b", 40),
+			ContractSHA256: strings.Repeat("c", 64),
+		},
+		OutputEquivalence: &profileOwnerDocumentBinding{
+			Path: "equivalence.json", SHA256: outputequivalence.SHA256(contract),
+		},
+		ReviewRequired: true, TestOptimization: "OUT_OF_SCOPE",
+	}
+	raw, err := renderProfileOwnerInput(input)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(root, "profile.json"), raw, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := readProfileOwnerInput(root, "profile.json"); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(root, "equivalence.json"), append(contract, '\n'), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := readProfileOwnerInput(root, "profile.json"); err == nil {
+		t.Fatal("equivalence-contract drift was accepted")
 	}
 }

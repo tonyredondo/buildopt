@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 2)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/root RFC3339_CAPTURE_TIME\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_evidence_root=$1
+buildopt_captured_at=$2
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-generic-output-equivalence-v1.json"
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-output-equivalence-aggregate.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-output-equivalence-aggregate."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+date -u -d "${buildopt_captured_at}" +%Y-%m-%dT%H:%M:%SZ | grep -Fx -- "${buildopt_captured_at}" >/dev/null || {
+    printf 'capture time must be canonical UTC RFC3339\n' >&2
+    exit 1
+}
+"${buildopt_script_dir}/run" --toolchain go -- go build -o "${buildopt_temp}/buildopt" ./cmd/buildopt
+
+mapfile -t buildopt_keys < <(jq -r '.repositories[].key' "${buildopt_spec}")
+buildopt_qualification_files=()
+for buildopt_key in "${buildopt_keys[@]}"; do
+    buildopt_capture_one="${buildopt_evidence_root}/${buildopt_key}/capture-1/evidence.json"
+    buildopt_capture_two="${buildopt_evidence_root}/${buildopt_key}/capture-2/evidence.json"
+    buildopt_result_one="${buildopt_evidence_root}/${buildopt_key}/capture-1/result.json"
+    buildopt_result_two="${buildopt_evidence_root}/${buildopt_key}/capture-2/result.json"
+    buildopt_qualification="${buildopt_evidence_root}/${buildopt_key}/qualification.json"
+    for buildopt_result in "${buildopt_result_one}" "${buildopt_result_two}"; do
+        [[ -s ${buildopt_result} ]] || {
+            printf 'output-equivalence capture result is unavailable: %s\n' "${buildopt_result}" >&2
+            exit 1
+        }
+    done
+    if [[ $(jq -r '.measurementStatus' "${buildopt_result_one}") != COMPLETED || \
+        $(jq -r '.measurementStatus' "${buildopt_result_two}") != COMPLETED ]]; then
+        jq -n \
+            --arg capturedAt "${buildopt_captured_at}" \
+            --argjson first "$(cat -- "${buildopt_result_one}")" \
+            --argjson second "$(cat -- "${buildopt_result_two}")" '
+          {
+            schemaVersion: "buildopt.evidence/structural-profile-balanced-qualification/v2",
+            evidenceState: "UNAVAILABLE",
+            capturedAt: $capturedAt,
+            subject: {
+              repositoryId: $first.repositoryId,
+              repositoryRevision: $first.targetRevision,
+              pipelineClass: $first.pipelineClass
+            },
+            captures: [
+              {index: 1, measurementStatus: $first.measurementStatus, failureClass: $first.measurementFailureClass},
+              {index: 2, measurementStatus: $second.measurementStatus, failureClass: $second.measurementFailureClass}
+            ],
+            result: null,
+            decision: "RETAIN_NATIVE_GRADLE",
+            sourceBindings: {
+              outputEquivalenceSha256: $first.outputEquivalenceSha256
+            },
+            execution: {
+              outputEquivalenceMode: "OWNER_REVIEWED_SEMANTIC_V1"
+            },
+            boundaries: {
+              proofOfConcept: true,
+              productionAuthorized: false,
+              automaticActivation: false,
+              repositorySpecificRuleAdded: false,
+              testOptimizationModified: false
+            }
+          }
+        ' >"${buildopt_qualification}"
+        buildopt_qualification_files+=("${buildopt_qualification}")
+        continue
+    fi
+    buildopt_capture_one_relative=${buildopt_capture_one#"${buildopt_repo_root}/"}
+    buildopt_capture_two_relative=${buildopt_capture_two#"${buildopt_repo_root}/"}
+    [[ ${buildopt_capture_one_relative} != "${buildopt_capture_one}" && \
+        ${buildopt_capture_two_relative} != "${buildopt_capture_two}" ]] || {
+        printf 'evidence root must be inside the BuildOpt repository\n' >&2
+        exit 1
+    }
+    (
+        cd -- "${buildopt_repo_root}"
+        "${buildopt_temp}/buildopt" profile aggregate \
+            --capture "${buildopt_capture_one_relative}" \
+            --capture "${buildopt_capture_two_relative}" \
+            --captured-at "${buildopt_captured_at}"
+    ) >"${buildopt_qualification}"
+    buildopt_qualification_files+=("${buildopt_qualification}")
+done
+
+jq -s \
+    --arg capturedAt "${buildopt_captured_at}" '
+  {
+    schemaVersion: "buildopt.evidence/poc-generic-output-equivalence/v1",
+    workItem: "POC-GENERIC-OUTPUT-EQUIVALENCE-001",
+    capturedAt: $capturedAt,
+    subjects: map({
+      repositoryId: .subject.repositoryId,
+      repositoryRevision: .subject.repositoryRevision,
+      pipelineClass: .subject.pipelineClass,
+      evidenceState,
+      plan: (if .plan then {
+        originalEntrypoints: .plan.fallbackEntrypoints,
+        candidateEntrypoints: .plan.entrypoints,
+        totalProjectCount: .plan.totalProjectCount,
+        selectedProjectCount: .plan.selectedProjectCount,
+        omittedProjectCount: .plan.omittedProjectCount
+      } else null end),
+      outputEquivalenceSha256: (.sourceBindings.outputEquivalenceSha256 // null),
+      result
+    }),
+    aggregation: {
+      subjectCount: length,
+      qualified: (map(select(.result != null and .result.qualified)) | length),
+      retainedNative: (map(select(.result != null and (.result.qualified | not))) | length),
+      unavailable: (map(select(.result == null)) | length),
+      workflowPercentagesAveraged: false
+    },
+    boundaries: {
+      proofOfConcept: true,
+      productionAuthorized: false,
+      automaticActivation: false,
+      repositorySpecificRuleAdded: false,
+      testOptimizationModified: false
+    }
+  }
+' "${buildopt_qualification_files[@]}" >"${buildopt_evidence_root}/summary.json"
+
+printf 'Output-equivalence matrix assembled: %s\n' "${buildopt_evidence_root}/summary.json"

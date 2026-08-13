@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [/absolute/evidence/root]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence_root=${1:-"${buildopt_repo_root}/benchmarks/results/poc-generic-output-equivalence-v1"}
+buildopt_spec="${buildopt_repo_root}/specs/poc-generic-output-equivalence-v1.json"
+[[ ${buildopt_evidence_root} == /* ]] || {
+    printf 'evidence root must be absolute\n' >&2
+    exit 64
+}
+
+"${buildopt_script_dir}/check-generic-output-equivalence" >/dev/null
+buildopt_summary="${buildopt_evidence_root}/summary.json"
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-generic-output-equivalence/v1" and
+  .workItem == "POC-GENERIC-OUTPUT-EQUIVALENCE-001" and
+  (.capturedAt | test("Z$")) and
+  (.subjects | map(.repositoryId)) == ["apache/groovy", "apache/kafka", "apache/kafka"] and
+  .aggregation.subjectCount == 3 and
+  (.aggregation.qualified + .aggregation.retainedNative + .aggregation.unavailable) == 3 and
+  .aggregation.workflowPercentagesAveraged == false and
+  .boundaries.proofOfConcept == true and
+  .boundaries.productionAuthorized == false and
+  .boundaries.automaticActivation == false and
+  .boundaries.repositorySpecificRuleAdded == false and
+  .boundaries.testOptimizationModified == false
+' "${buildopt_summary}" >/dev/null
+
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-output-equivalence-result.XXXXXX")
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-output-equivalence-result."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+"${buildopt_script_dir}/run" --toolchain go -- go build -o "${buildopt_temp}/buildopt" ./cmd/buildopt
+buildopt_captured_at=$(jq -er '.capturedAt' "${buildopt_summary}")
+
+mapfile -t buildopt_keys < <(jq -r '.repositories[].key' "${buildopt_spec}")
+for buildopt_key in "${buildopt_keys[@]}"; do
+    buildopt_expected_contract=$(jq -er --arg key "${buildopt_key}" '.repositories[] | select(.key == $key) | .outputEquivalenceContract' "${buildopt_spec}")
+    buildopt_expected_sha=$(sha256sum "${buildopt_repo_root}/${buildopt_expected_contract}" | awk '{print $1}')
+    buildopt_completed_captures=0
+    for buildopt_capture in 1 2; do
+        buildopt_capture_root="${buildopt_evidence_root}/${buildopt_key}/capture-${buildopt_capture}"
+        jq -e --arg sha "${buildopt_expected_sha}" '
+          (.measurementStatus == "COMPLETED" or .measurementStatus == "MEASUREMENT_UNAVAILABLE") and
+          .outputEquivalence == "buildopt-output-equivalence.json" and
+          .outputEquivalenceSha256 == $sha
+        ' "${buildopt_capture_root}/result.json" >/dev/null
+        if [[ $(jq -r '.measurementStatus' "${buildopt_capture_root}/result.json") == COMPLETED ]]; then
+            buildopt_completed_captures=$((buildopt_completed_captures + 1))
+            jq -e --arg sha "${buildopt_expected_sha}" '
+              .schemaVersion == "buildopt.evidence/structural-profile-qualification/v1" and
+              .sourceBindings.outputEquivalenceSha256 == $sha and
+              .execution.outputEquivalenceMode == "OWNER_REVIEWED_SEMANTIC_V1" and
+              (.observations | length) == 8 and
+              all(.observations[];
+                .productAttributableFailure == false and .requiredOutputCount > 0 and
+                .controlRequiredOutputSha256 == .candidateRequiredOutputSha256) and
+              .fallback.mode == "FULL_GRAPH" and .fallback.buildSuccessful == true and
+              .boundaries.repositorySpecificRuleAdded == false
+            ' "${buildopt_capture_root}/evidence.json" >/dev/null
+        else
+            jq -e '.measurementFailureClass != null' \
+                "${buildopt_capture_root}/result.json" >/dev/null
+        fi
+        cmp -s "${buildopt_repo_root}/${buildopt_expected_contract}" \
+            "${buildopt_capture_root}/buildopt-output-equivalence.json" || {
+            printf 'captured output-equivalence contract drifted: %s capture %d\n' "${buildopt_key}" "${buildopt_capture}" >&2
+            exit 1
+        }
+    done
+
+    if ((buildopt_completed_captures == 2)); then
+        buildopt_capture_one="${buildopt_evidence_root}/${buildopt_key}/capture-1/evidence.json"
+        buildopt_capture_two="${buildopt_evidence_root}/${buildopt_key}/capture-2/evidence.json"
+        buildopt_capture_one_relative=${buildopt_capture_one#"${buildopt_repo_root}/"}
+        buildopt_capture_two_relative=${buildopt_capture_two#"${buildopt_repo_root}/"}
+        (
+            cd -- "${buildopt_repo_root}"
+            "${buildopt_temp}/buildopt" profile aggregate \
+                --capture "${buildopt_capture_one_relative}" \
+                --capture "${buildopt_capture_two_relative}" \
+                --captured-at "${buildopt_captured_at}"
+        ) >"${buildopt_temp}/${buildopt_key}.json"
+        cmp -s "${buildopt_evidence_root}/${buildopt_key}/qualification.json" \
+            "${buildopt_temp}/${buildopt_key}.json" || {
+            printf 'output-equivalence qualification does not recompute: %s\n' "${buildopt_key}" >&2
+            exit 1
+        }
+        jq -e --arg sha "${buildopt_expected_sha}" '
+          .sourceBindings.outputEquivalenceSha256 == $sha and
+          .execution.outputEquivalenceMode == "OWNER_REVIEWED_SEMANTIC_V1" and
+          .execution.captureCount == 2 and .execution.pairsPerCapture == 8 and
+          .execution.blockCount == 8 and (.blocks | length) == 8 and
+          .result.pairs == 16 and .result.blocks == 8 and
+          .result.requiredOutputsIdentical == true and
+          .result.executionShapeStable == true and .result.fallbacksSuccessful == true and
+          (.result.qualified == (.evidenceState == "QUALIFIED"))
+        ' "${buildopt_evidence_root}/${buildopt_key}/qualification.json" >/dev/null
+    else
+        jq -e --arg sha "${buildopt_expected_sha}" '
+          .evidenceState == "UNAVAILABLE" and .result == null and
+          .decision == "RETAIN_NATIVE_GRADLE" and
+          .sourceBindings.outputEquivalenceSha256 == $sha and
+          .execution.outputEquivalenceMode == "OWNER_REVIEWED_SEMANTIC_V1"
+        ' "${buildopt_evidence_root}/${buildopt_key}/qualification.json" >/dev/null
+    fi
+done
+
+printf 'Generic output-equivalence evidence OK: %s\n' "${buildopt_summary}"

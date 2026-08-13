@@ -49,6 +49,7 @@ type balancedStructuralExecution struct {
 	Mechanisms               []string `json:"mechanisms"`
 	GradleOptions            []string `json:"gradleOptions"`
 	LauncherOverheadIncluded bool     `json:"launcherOverheadIncluded"`
+	OutputEquivalenceMode    string   `json:"outputEquivalenceMode,omitempty"`
 	CaptureCount             int      `json:"captureCount"`
 	PairsPerCapture          int      `json:"pairsPerCapture"`
 	BlockCount               int      `json:"blockCount"`
@@ -197,7 +198,8 @@ func RenderBalancedStructuralEvidence(options BalancedStructuralOptions) ([]byte
 			Mechanisms:               append([]string(nil), captures[0].Execution.Mechanisms...),
 			GradleOptions:            append([]string(nil), captures[0].Execution.GradleOptions...),
 			LauncherOverheadIncluded: true, CaptureCount: balancedCaptureCount,
-			PairsPerCapture: structuralPairCount, BlockCount: balancedBlockCount,
+			OutputEquivalenceMode: captures[0].Execution.OutputEquivalenceMode,
+			PairsPerCapture:       structuralPairCount, BlockCount: balancedBlockCount,
 		},
 		Captures: refs, Blocks: blocks,
 		Qualification: balancedQualification{
@@ -223,6 +225,7 @@ func validateBalancedCaptureIdentity(left, right structuralEvidence) error {
 		left.Execution.CandidateSurface != right.Execution.CandidateSurface ||
 		left.Execution.BuildOptRevision != right.Execution.BuildOptRevision ||
 		left.Execution.ExecutableSHA256 != right.Execution.ExecutableSHA256 ||
+		left.Execution.OutputEquivalenceMode != right.Execution.OutputEquivalenceMode ||
 		left.Execution.LauncherOverheadIncluded != right.Execution.LauncherOverheadIncluded ||
 		!sameStrings(left.Execution.Mechanisms, right.Execution.Mechanisms) ||
 		!sameStrings(left.Execution.GradleOptions, right.Execution.GradleOptions) {

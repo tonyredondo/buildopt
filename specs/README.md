@@ -528,6 +528,16 @@ positive median and bootstrap lower bound, at least six positive blocks,
 non-regressive candidate p95, exact outputs, stable task shape, both full-graph
 fallbacks and zero product failures. Historical v1 decisions remain immutable.
 
+`poc-generic-output-equivalence-v1.json` and
+`poc-generic-output-equivalence-v1.md` preregister the three public workflows
+whose outputs were semantically stable but not byte-reproducible. Exact bytes
+remain the implicit contract. Explicit reviewed rules may relocate only the
+isolated repository root in UTF-8 reports or compare canonical ZIP contents;
+one exact properties key in one exact archive entry may be declared volatile.
+Every other payload, path, mode, output shape, fallback, and wall-time gate
+remains bound. Two fresh captures per workflow use the balanced qualification
+method and no repository-name product rule.
+
 The retained [v5 evidence](../benchmarks/results/poc-generic-holdout-v5/README.md)
 passes that unchanged contract: native averages 216.724 seconds and BuildOpt
 203.991 seconds, saving 12.733 seconds/5.88% with interval

@@ -32,6 +32,7 @@ Only a `VALIDATED_REQUIRED_OUTPUTS` result can be converted. The explicit
 ```bash
 buildopt profile input \
   --output-contract .buildopt/output-contract.json \
+  --output-equivalence .buildopt/output-equivalence.json \
   --confirm \
   --gradle-command ./gradlew \
   --output .buildopt/profile.json
@@ -39,7 +40,10 @@ buildopt profile input --check .buildopt/profile.json
 ```
 
 The generated file binds the observed repository revision and exact SHA-256
-of the reviewed output contract. `changeSource` is fixed to
+of the reviewed output contract. When semantic equivalence is required, it
+also binds the path and SHA-256 of that separately reviewed contract; drift or
+malformed rules fail before proposal. Without that optional file, required
+outputs remain byte-exact. `changeSource` is fixed to
 `GIT_DIFF_BASE_TO_HEAD`; BuildOpt therefore derives the complete no-rename Git
 diff rather than trusting a hand-maintained path list.
 

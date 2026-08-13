@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "buildopt.specs/poc-generic-output-equivalence/v1",
+  "evidenceSchemaVersion": "buildopt.evidence/poc-generic-output-equivalence/v1",
+  "workItem": "POC-GENERIC-OUTPUT-EQUIVALENCE-001",
+  "decision": "RERUN_THREE_BLOCKED_PUBLIC_WORKFLOWS_WITH_EXPLICIT_OWNER_REVIEWED_EQUIVALENCE",
+  "buildoptRevision": "TO_BE_BOUND_BY_CAPTURE",
+  "runner": {
+    "platform": "linux-amd64",
+    "cpuCount": 12,
+    "maxWorkers": 12,
+    "capturesPerWorkflow": 2,
+    "pairsPerCapture": 8,
+    "blocksPerWorkflow": 8,
+    "order": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
+    "perBuildTimeout": "30m"
+  },
+  "method": {
+    "surface": "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE",
+    "candidateMechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "control": "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW",
+    "byteIdentityDefault": true,
+    "semanticEquivalenceRequiresOwnerContract": true,
+    "contractDigestBoundIntoEvidence": true,
+    "payloadDriftRejected": true,
+    "repositorySpecificProductRulesAllowed": false,
+    "failedObservationsDiscarded": false
+  },
+  "repositories": [
+    {
+      "key": "apache-groovy-jar-packaging",
+      "workflowFamily": "JAR_PACKAGING",
+      "repositoryId": "apache/groovy",
+      "remoteUrl": "https://github.com/apache/groovy.git",
+      "publicRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "jdkToolchain": "temurin-jdk-21",
+      "pipelineClass": "jar-packaging",
+      "entrypoints": [
+        "jar"
+      ],
+      "changePath": "subprojects/groovy-json/src/main/java/org/apache/groovy/json/DefaultFastStringService.java",
+      "mutation": "ADD_PACKAGE_PRIVATE_MARKER_RETURNING_ONE",
+      "requiredOutputs": [
+        "subprojects/groovy-json/build/libs/*.jar"
+      ],
+      "outputEquivalenceContract": "fixtures/output-equivalence/groovy-jar.json",
+      "expectedCandidateEntrypoints": [
+        ":groovy-json:jar"
+      ]
+    },
+    {
+      "key": "apache-kafka-checkstyle-verification",
+      "workflowFamily": "TYPED_VERIFICATION",
+      "repositoryId": "apache/kafka",
+      "remoteUrl": "https://github.com/apache/kafka.git",
+      "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "jdkToolchain": "temurin-jdk-25",
+      "pipelineClass": "checkstyle-main",
+      "entrypoints": [
+        "checkstyleMain"
+      ],
+      "changePath": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+      "mutation": "APPEND_FIXED_COMMENT",
+      "requiredOutputs": [
+        "clients/build/reports/checkstyle/main.html",
+        "clients/build/reports/checkstyle/main.xml"
+      ],
+      "outputEquivalenceContract": "fixtures/output-equivalence/kafka-checkstyle.json",
+      "expectedCandidateEntrypoints": [
+        ":clients:checkstyleMain"
+      ]
+    },
+    {
+      "key": "apache-kafka-shadow-distribution",
+      "workflowFamily": "FAT_JAR_DISTRIBUTION",
+      "repositoryId": "apache/kafka",
+      "remoteUrl": "https://github.com/apache/kafka.git",
+      "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "jdkToolchain": "temurin-jdk-25",
+      "pipelineClass": "shadow-jar-distribution",
+      "entrypoints": [
+        "shadowJar"
+      ],
+      "changePath": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+      "mutation": "APPEND_FIXED_COMMENT",
+      "requiredOutputs": [
+        "clients/build/libs/kafka-clients-*.jar"
+      ],
+      "outputEquivalenceContract": "fixtures/output-equivalence/kafka-shadowjar.json",
+      "expectedCandidateEntrypoints": [
+        ":clients:shadowJar"
+      ]
+    }
+  ],
+  "qualification": {
+    "blockDefinition": "MEAN_OF_ONE_CONTROL_FIRST_PAIR_AND_THE_FOLLOWING_CANDIDATE_FIRST_PAIR",
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95BlockBootstrapBound": true,
+    "positiveMedianBlockSaving": true,
+    "minimumPositiveBlocks": 6,
+    "candidateP95NotRegressive": true,
+    "semanticallyEquivalentRequiredOutputs": true,
+    "executionShapeStable": true,
+    "fullGraphFallbackRequiredPerCapture": true,
+    "maximumProductAttributableFailures": 0,
+    "failedOrTimedOutObservationsMayBeDiscarded": false,
+    "nonWinningDecision": "RETAIN_NATIVE_GRADLE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

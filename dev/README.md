@@ -3483,6 +3483,22 @@ positive pairs, while Groovy/Kafka stop on generated time, absolute workspace
 paths, or archive timestamps. The checker also validates the root-cause record
 and proves that failed observations were not discarded or normalized.
 
+`./dev/check-generic-output-equivalence` validates the versioned semantic
+contract before any public timing. Byte identity remains implicit; the only
+reviewed exceptions are isolated-root relocation in bounded UTF-8 text,
+canonical ZIP content, and exact volatile Java-properties keys inside exact
+ZIP entries. The Go conformance tests change undeclared findings, payloads and
+properties and require fail-closed rejection. The frozen public rerun uses two
+fresh eight-pair captures for Groovy `jar`, Kafka `checkstyleMain`, and Kafka
+`shadowJar`, then evaluates eight reciprocal blocks per workflow under the
+current material-value, tail, shape, fallback, and zero-failure gates.
+
+```bash
+./dev/run-generic-output-equivalence \
+  "$(pwd)/benchmarks/results/poc-generic-output-equivalence-v1"
+./dev/check-generic-output-equivalence-result
+```
+
 `./dev/check-generic-profile-ci-replay` validates the manual clean-runner
 replay without cloning public repositories. It reconstructs retained Action
 artifacts for all five subjects, requires five semantic and byte-level graph

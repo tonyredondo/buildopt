@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-generic-output-equivalence-v1.json"
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'required output-equivalence checker is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-generic-output-equivalence/v1" and
+  .workItem == "POC-GENERIC-OUTPUT-EQUIVALENCE-001" and
+  .runner.capturesPerWorkflow == 2 and .runner.pairsPerCapture == 8 and
+  .runner.blocksPerWorkflow == 8 and
+  (.repositories | map(.key)) == [
+    "apache-groovy-jar-packaging",
+    "apache-kafka-checkstyle-verification",
+    "apache-kafka-shadow-distribution"
+  ] and
+  (.repositories | map(.repositoryId) | unique) == ["apache/groovy", "apache/kafka"] and
+  all(.repositories[];
+    (.outputEquivalenceContract | startswith("fixtures/output-equivalence/")) and
+    (.requiredOutputs | length) >= 1 and (.expectedCandidateEntrypoints | length) == 1) and
+  .method.byteIdentityDefault == true and
+  .method.semanticEquivalenceRequiresOwnerContract == true and
+  .method.contractDigestBoundIntoEvidence == true and
+  .method.payloadDriftRejected == true and
+  .method.repositorySpecificProductRulesAllowed == false and
+  .qualification.minimumPositiveBlocks == 6 and
+  .qualification.semanticallyEquivalentRequiredOutputs == true and
+  .qualification.failedOrTimedOutObservationsMayBeDiscarded == false and
+  .boundaries.proofOfConcept == true and
+  .boundaries.productionAuthorized == false and
+  .boundaries.automaticActivation == false and
+  .boundaries.repositorySpecificProductRulesAllowed == false and
+  .boundaries.testOptimizationModified == false and
+  .boundaries.soakRequired == false and
+  .boundaries.designPartnerRequired == false
+' "${buildopt_spec}" >/dev/null
+
+while IFS= read -r buildopt_contract; do
+    jq -e '
+      .schemaVersion == "buildopt.poc/output-equivalence/v1" and
+      (.rules | length) >= 1 and .reviewRequired == true and
+      .activationAutomatic == false and .productionAuthorized == false
+    ' "${buildopt_repo_root}/${buildopt_contract}" >/dev/null
+done < <(jq -r '.repositories[].outputEquivalenceContract' "${buildopt_spec}")
+
+jq -e '
+  .rules == [{
+    pattern: "subprojects/groovy-json/build/libs/*.jar",
+    mode: "CANONICAL_ZIP",
+    volatileProperties: [{entry: "META-INF/groovy-release-info.properties", keys: ["BuildTime"]}]
+  }]
+' "${buildopt_repo_root}/fixtures/output-equivalence/groovy-jar.json" >/dev/null
+jq -e '
+  .rules == [
+    {pattern: "clients/build/reports/checkstyle/main.html", mode: "REPOSITORY_ROOT_TEXT"},
+    {pattern: "clients/build/reports/checkstyle/main.xml", mode: "REPOSITORY_ROOT_TEXT"}
+  ]
+' "${buildopt_repo_root}/fixtures/output-equivalence/kafka-checkstyle.json" >/dev/null
+jq -e '
+  .rules == [{pattern: "clients/build/libs/kafka-clients-*.jar", mode: "CANONICAL_ZIP"}]
+' "${buildopt_repo_root}/fixtures/output-equivalence/kafka-shadowjar.json" >/dev/null
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/outputequivalence \
+    -run 'Test(ExactBytes|RepositoryRootText|CanonicalZIP|Contract|CanonicalProperty)' >/dev/null
+
+printf 'Generic output-equivalence contract OK: %s\n' "${buildopt_spec}"

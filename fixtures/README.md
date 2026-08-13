@@ -20,6 +20,12 @@ Reproducible Gradle repositories and scenarios for the golden lane, TestKit, cac
 
 Fixtures must declare their wrapper, JDK, plugins, seed, and expected result; they do not depend on accidental workstation state.
 
+`output-equivalence/` contains the three owner-reviewed semantic contracts for
+the public workflow POC. They exercise relocatable UTF-8 reports, canonical ZIP
+contents, and one exact volatile Java-properties key. The implementation tests
+prove that undeclared text, archive payload, entry, mode, and property drift
+remain rejected; these fixtures do not authorize automatic activation.
+
 `poc-qualified-profile-matrix/` contains the Spring Build-Impact-only profile
 used by the cross-repository installed-path matrix. OpenTelemetry and Kafka
 reuse their already reviewed repository-owned profiles; the matrix never

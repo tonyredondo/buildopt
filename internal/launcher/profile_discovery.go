@@ -13,8 +13,8 @@ import (
 const (
 	profileDiscoveryUsage = "usage: buildopt profile discover --manifest PATH --graph PATH --generated-manifest PATH --matrix-summary PATH --cell-evidence PATH --profile-contract PATH\n"
 	profileAnalysisUsage  = "usage: buildopt profile analyze --manifest PATH --graph PATH --generated-manifest PATH\n"
-	profileQualifyUsage   = "usage: buildopt profile qualify --manifest PATH --graph PATH --generated-manifest PATH --evidence PATH\n"
-	profileEvaluateUsage  = "usage: buildopt profile evaluate --manifest PATH --graph PATH --generated-manifest PATH [--evidence PATH --profile-output PATH]\n"
+	profileQualifyUsage   = "usage: buildopt profile qualify --manifest PATH --graph PATH --generated-manifest PATH --evidence PATH [--output-equivalence PATH]\n"
+	profileEvaluateUsage  = "usage: buildopt profile evaluate --manifest PATH --graph PATH --generated-manifest PATH [--evidence PATH --profile-output PATH] [--output-equivalence PATH]\n"
 	profileAggregateUsage = "usage: buildopt profile aggregate --capture PATH --capture PATH --captured-at RFC3339\n"
 )
 
@@ -166,7 +166,8 @@ func runStructuralProfileEvaluation(args []string, stdout, stderr io.Writer) int
 	generated := flags.String("generated-manifest", "", "checked generated-state binding")
 	evidence := flags.String("evidence", "", "installed-path structural evidence")
 	profileOutput := flags.String("profile-output", "", "repository-relative qualified profile output")
-	if err := flags.Parse(args); err != nil || flags.NArg() != 0 || *manifest == "" || *graph == "" || *generated == "" || (*evidence == "") != (*profileOutput == "") {
+	outputEquivalence := flags.String("output-equivalence", "", "owner-reviewed semantic output-equivalence contract")
+	if err := flags.Parse(args); err != nil || flags.NArg() != 0 || *manifest == "" || *graph == "" || *generated == "" || (*evidence == "") != (*profileOutput == "") || (*outputEquivalence != "" && *evidence == "") {
 		_, _ = io.WriteString(stderr, profileEvaluateUsage)
 		return exitUsage
 	}
@@ -196,11 +197,12 @@ func runStructuralProfileEvaluation(args []string, stdout, stderr io.Writer) int
 	}
 	if analysis.Decision == profilediscovery.DecisionMeasure && *evidence != "" {
 		profile, qualifyErr := profilediscovery.QualifyStructuralProfile(profilediscovery.StructuralOptions{
-			RepositoryRoot: repositoryRoot,
-			ManifestPath:   *manifest,
-			GraphPath:      *graph,
-			GeneratedPath:  *generated,
-			EvidencePath:   *evidence,
+			RepositoryRoot:        repositoryRoot,
+			ManifestPath:          *manifest,
+			GraphPath:             *graph,
+			GeneratedPath:         *generated,
+			EvidencePath:          *evidence,
+			OutputEquivalencePath: *outputEquivalence,
 		})
 		if qualifyErr != nil {
 			report.Decision = "NATIVE_FULL_GRAPH"
@@ -212,6 +214,9 @@ func runStructuralProfileEvaluation(args []string, stdout, stderr io.Writer) int
 			}
 			report.Decision = "QUALIFY_STRUCTURAL_PROFILE"
 			report.Reason = "EXACT_EVIDENCE_QUALIFIED"
+			if *outputEquivalence != "" {
+				report.Reason = "OWNER_REVIEWED_EQUIVALENCE_EVIDENCE_QUALIFIED"
+			}
 			report.Profile = &profile
 			report.ProfileOutput = *profileOutput
 		}
@@ -248,6 +253,7 @@ func runStructuralProfileQualification(args []string, stdout, stderr io.Writer) 
 	graph := flags.String("graph", "", "checked Build Impact graph")
 	generated := flags.String("generated-manifest", "", "checked generated-state binding")
 	evidence := flags.String("evidence", "", "qualified installed-path structural evidence")
+	outputEquivalence := flags.String("output-equivalence", "", "owner-reviewed semantic output-equivalence contract")
 	if err := flags.Parse(args); err != nil || flags.NArg() != 0 || *manifest == "" || *graph == "" || *generated == "" || *evidence == "" {
 		_, _ = io.WriteString(stderr, profileQualifyUsage)
 		return exitUsage
@@ -258,11 +264,12 @@ func runStructuralProfileQualification(args []string, stdout, stderr io.Writer) 
 		return exitConfiguration
 	}
 	profile, err := profilediscovery.QualifyStructuralProfile(profilediscovery.StructuralOptions{
-		RepositoryRoot: repositoryRoot,
-		ManifestPath:   *manifest,
-		GraphPath:      *graph,
-		GeneratedPath:  *generated,
-		EvidencePath:   *evidence,
+		RepositoryRoot:        repositoryRoot,
+		ManifestPath:          *manifest,
+		GraphPath:             *graph,
+		GeneratedPath:         *generated,
+		EvidencePath:          *evidence,
+		OutputEquivalencePath: *outputEquivalence,
 	})
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile qualification unavailable: %v\n", err)

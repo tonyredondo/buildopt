@@ -16,11 +16,13 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/tonyredondo/buildopt/internal/outputequivalence"
 )
 
 const (
 	profileOwnerInputSchema = "buildopt.poc/profile-owner-input/v1"
-	profileOwnerInputUsage  = "usage: buildopt profile input (--output-contract PATH --confirm [--output PATH] [--global-change GLOB ...] [--gradle-command PATH] [--gradle-option VALUE ...] [--timeout DURATION] | --check PATH)\n"
+	profileOwnerInputUsage  = "usage: buildopt profile input (--output-contract PATH --confirm [--output-equivalence PATH] [--output PATH] [--global-change GLOB ...] [--gradle-command PATH] [--gradle-option VALUE ...] [--timeout DURATION] | --check PATH)\n"
 	maximumOwnerInputBytes  = 1 << 20
 )
 
@@ -38,6 +40,7 @@ type profileOwnerInput struct {
 	GradleOptions        []string                       `json:"gradleOptions"`
 	TimeoutMinutes       int                            `json:"timeoutMinutes"`
 	OutputConfirmation   profileOwnerOutputConfirmation `json:"outputConfirmation"`
+	OutputEquivalence    *profileOwnerDocumentBinding   `json:"outputEquivalence,omitempty"`
 	ReviewRequired       bool                           `json:"reviewRequired"`
 	ActivationAutomatic  bool                           `json:"activationAutomatic"`
 	ProductionAuthorized bool                           `json:"productionAuthorized"`
@@ -50,6 +53,11 @@ type profileOwnerOutputConfirmation struct {
 	ContractSHA256   string `json:"contractSha256"`
 }
 
+type profileOwnerDocumentBinding struct {
+	Path   string `json:"path"`
+	SHA256 string `json:"sha256"`
+}
+
 func runProfileOwnerInput(args []string, stdout, stderr io.Writer) int {
 	if isHelp(args) {
 		_, _ = io.WriteString(stdout, profileOwnerInputUsage)
@@ -58,6 +66,7 @@ func runProfileOwnerInput(args []string, stdout, stderr io.Writer) int {
 	flags := flag.NewFlagSet("buildopt profile input", flag.ContinueOnError)
 	flags.SetOutput(io.Discard)
 	outputContract := flags.String("output-contract", "", "validated output-contract review artifact")
+	outputEquivalence := flags.String("output-equivalence", "", "owner-reviewed semantic output-equivalence contract")
 	check := flags.String("check", "", "validate and normalize an existing owner input")
 	confirm := flags.Bool("confirm", false, "explicitly confirm the validated output contract")
 	output := flags.String("output", ".buildopt/profile.json", "versioned owner input output")
@@ -73,11 +82,11 @@ func runProfileOwnerInput(args []string, stdout, stderr io.Writer) int {
 	}
 	checking := *check != ""
 	creating := *outputContract != ""
-	if checking == creating || (checking && (*confirm || len(globalChanges) != 0 || len(gradleOptions) != 0 || *gradleCommand != "" || *output != ".buildopt/profile.json" || *timeout != 5*time.Minute)) || (creating && !*confirm) {
+	if checking == creating || (checking && (*confirm || *outputEquivalence != "" || len(globalChanges) != 0 || len(gradleOptions) != 0 || *gradleCommand != "" || *output != ".buildopt/profile.json" || *timeout != 5*time.Minute)) || (creating && !*confirm) {
 		_, _ = io.WriteString(stderr, profileOwnerInputUsage)
 		return exitUsage
 	}
-	if creating && *output == *outputContract {
+	if creating && (*output == *outputContract || (*outputEquivalence != "" && (*output == *outputEquivalence || *outputContract == *outputEquivalence))) {
 		_, _ = fmt.Fprintln(stderr, "buildopt: profile owner input unavailable: output must not replace its source contract")
 		return exitConfiguration
 	}
@@ -120,6 +129,21 @@ func runProfileOwnerInput(args []string, stdout, stderr io.Writer) int {
 		return exitConfiguration
 	}
 	digest := sha256.Sum256(contractRaw)
+	var equivalenceBinding *profileOwnerDocumentBinding
+	if *outputEquivalence != "" {
+		equivalenceRaw, err := readRepositoryRegularDocument(root, *outputEquivalence, maximumOwnerInputBytes)
+		if err != nil {
+			_, _ = fmt.Fprintf(stderr, "buildopt: profile owner input unavailable: %v\n", err)
+			return exitConfiguration
+		}
+		if _, err := outputequivalence.Parse(equivalenceRaw); err != nil {
+			_, _ = fmt.Fprintf(stderr, "buildopt: profile owner input unavailable: %v\n", err)
+			return exitConfiguration
+		}
+		equivalenceBinding = &profileOwnerDocumentBinding{
+			Path: *outputEquivalence, SHA256: outputequivalence.SHA256(equivalenceRaw),
+		}
+	}
 	input := profileOwnerInput{
 		SchemaVersion: profileOwnerInputSchema,
 		RepositoryID:  contract.RepositoryID, PipelineClass: contract.PipelineClass,
@@ -133,7 +157,8 @@ func runProfileOwnerInput(args []string, stdout, stderr io.Writer) int {
 			Status: "OWNER_CONFIRMED", ObservedRevision: contract.RepositoryRevision,
 			ContractSHA256: hex.EncodeToString(digest[:]),
 		},
-		ReviewRequired: true, ActivationAutomatic: false,
+		OutputEquivalence: equivalenceBinding,
+		ReviewRequired:    true, ActivationAutomatic: false,
 		ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
 	}
 	sort.Strings(input.Entrypoints)
@@ -200,6 +225,18 @@ func readProfileOwnerInput(repositoryRoot, relativePath string) (profileOwnerInp
 	if err := validateProfileOwnerInput(input); err != nil {
 		return profileOwnerInput{}, "", err
 	}
+	if input.OutputEquivalence != nil {
+		equivalenceRaw, err := readRepositoryRegularDocument(repositoryRoot, input.OutputEquivalence.Path, maximumOwnerInputBytes)
+		if err != nil {
+			return profileOwnerInput{}, "", err
+		}
+		if _, err := outputequivalence.Parse(equivalenceRaw); err != nil {
+			return profileOwnerInput{}, "", err
+		}
+		if outputequivalence.SHA256(equivalenceRaw) != input.OutputEquivalence.SHA256 {
+			return profileOwnerInput{}, "", errors.New("owner input output-equivalence binding drift")
+		}
+	}
 	digest := sha256.Sum256(raw)
 	return input, hex.EncodeToString(digest[:]), nil
 }
@@ -244,6 +281,14 @@ func validateProfileOwnerInput(input profileOwnerInput) error {
 	}
 	if input.OutputConfirmation.Status != "OWNER_CONFIRMED" || !validMeasurementRevision(input.OutputConfirmation.ObservedRevision) || !ownerInputDigestPattern.MatchString(input.OutputConfirmation.ContractSHA256) {
 		return errors.New("owner input output confirmation is invalid")
+	}
+	if input.OutputEquivalence != nil {
+		binding := input.OutputEquivalence
+		if binding.Path == "" || filepath.IsAbs(binding.Path) || path.Clean(binding.Path) != binding.Path ||
+			binding.Path == "." || binding.Path == ".." || !validObservedOutputPath(binding.Path) ||
+			!ownerInputDigestPattern.MatchString(binding.SHA256) {
+			return errors.New("owner input output-equivalence binding is invalid")
+		}
 	}
 	if !input.ReviewRequired || input.ActivationAutomatic || input.ProductionAuthorized || input.TestOptimization != "OUT_OF_SCOPE" {
 		return errors.New("owner input POC boundaries are invalid")

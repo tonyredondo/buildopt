@@ -14,10 +14,11 @@ import (
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
+	"github.com/tonyredondo/buildopt/internal/outputequivalence"
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
 
-const profileProposalUsage = "usage: buildopt profile propose (--owner-input PATH [--changes-file PATH] | --repository-id OWNER/REPO --pipeline-class CLASS --entrypoint TASK [--entrypoint TASK ...] --required-output GLOB [--required-output GLOB ...] --changes-file PATH) --base-revision REVISION [--global-change GLOB ...] [--gradle-command PATH] [--gradle-option VALUE ...] [--output-contract-output PATH] [--manifest-output PATH] [--graph-output PATH] [--generated-manifest-output PATH] [--fallback-changes-output PATH] [--proposal-output PATH] [--buildopt-revision REVISION] [--timeout DURATION]\n"
+const profileProposalUsage = "usage: buildopt profile propose (--owner-input PATH [--changes-file PATH] | --repository-id OWNER/REPO --pipeline-class CLASS --entrypoint TASK [--entrypoint TASK ...] --required-output GLOB [--required-output GLOB ...] --changes-file PATH [--output-equivalence PATH]) --base-revision REVISION [--global-change GLOB ...] [--gradle-command PATH] [--gradle-option VALUE ...] [--output-contract-output PATH] [--manifest-output PATH] [--graph-output PATH] [--generated-manifest-output PATH] [--fallback-changes-output PATH] [--proposal-output PATH] [--buildopt-revision REVISION] [--timeout DURATION]\n"
 
 var defaultProposalGlobalChanges = []string{
 	"build-logic/**",
@@ -40,33 +41,35 @@ type profileProposalDocuments struct {
 }
 
 type profileProposalReport struct {
-	repositoryRoot         string                           `json:"-"`
-	SchemaVersion          string                           `json:"schemaVersion"`
-	Decision               string                           `json:"decision"`
-	Reason                 string                           `json:"reason"`
-	RepositoryID           string                           `json:"repositoryId"`
-	PipelineClass          string                           `json:"pipelineClass"`
-	BaseRevision           string                           `json:"baseRevision"`
-	TargetRevision         string                           `json:"targetRevision"`
-	OriginalEntrypoint     string                           `json:"originalEntrypoint,omitempty"`
-	OriginalEntrypoints    []string                         `json:"originalEntrypoints"`
-	ChangedPaths           []string                         `json:"changedPaths"`
-	RequiredOutputs        []string                         `json:"requiredOutputs"`
-	GlobalChangePaths      []string                         `json:"globalChangePaths"`
-	CandidateEntrypoints   []string                         `json:"candidateEntrypoints,omitempty"`
-	OmittedProjects        []string                         `json:"omittedProjects,omitempty"`
-	UnknownRelationships   bool                             `json:"unknownRelationships"`
-	Analysis               *profilediscovery.AnalysisReport `json:"analysis,omitempty"`
-	Documents              profileProposalDocuments         `json:"documents"`
-	MeasureCommand         []string                         `json:"measureCommand,omitempty"`
-	BuildOptRevisionNeeded bool                             `json:"buildOptRevisionNeeded"`
-	ReviewRequired         bool                             `json:"reviewRequired"`
-	ActivationAutomatic    bool                             `json:"activationAutomatic"`
-	ProductionAuthorized   bool                             `json:"productionAuthorized"`
-	TestOptimization       string                           `json:"testOptimization"`
-	OwnerInput             string                           `json:"ownerInput,omitempty"`
-	OwnerInputSHA256       string                           `json:"ownerInputSha256,omitempty"`
-	ChangeSource           string                           `json:"changeSource,omitempty"`
+	repositoryRoot          string                           `json:"-"`
+	SchemaVersion           string                           `json:"schemaVersion"`
+	Decision                string                           `json:"decision"`
+	Reason                  string                           `json:"reason"`
+	RepositoryID            string                           `json:"repositoryId"`
+	PipelineClass           string                           `json:"pipelineClass"`
+	BaseRevision            string                           `json:"baseRevision"`
+	TargetRevision          string                           `json:"targetRevision"`
+	OriginalEntrypoint      string                           `json:"originalEntrypoint,omitempty"`
+	OriginalEntrypoints     []string                         `json:"originalEntrypoints"`
+	ChangedPaths            []string                         `json:"changedPaths"`
+	RequiredOutputs         []string                         `json:"requiredOutputs"`
+	GlobalChangePaths       []string                         `json:"globalChangePaths"`
+	CandidateEntrypoints    []string                         `json:"candidateEntrypoints,omitempty"`
+	OmittedProjects         []string                         `json:"omittedProjects,omitempty"`
+	UnknownRelationships    bool                             `json:"unknownRelationships"`
+	Analysis                *profilediscovery.AnalysisReport `json:"analysis,omitempty"`
+	Documents               profileProposalDocuments         `json:"documents"`
+	MeasureCommand          []string                         `json:"measureCommand,omitempty"`
+	BuildOptRevisionNeeded  bool                             `json:"buildOptRevisionNeeded"`
+	ReviewRequired          bool                             `json:"reviewRequired"`
+	ActivationAutomatic     bool                             `json:"activationAutomatic"`
+	ProductionAuthorized    bool                             `json:"productionAuthorized"`
+	TestOptimization        string                           `json:"testOptimization"`
+	OwnerInput              string                           `json:"ownerInput,omitempty"`
+	OwnerInputSHA256        string                           `json:"ownerInputSha256,omitempty"`
+	OutputEquivalence       string                           `json:"outputEquivalence,omitempty"`
+	OutputEquivalenceSHA256 string                           `json:"outputEquivalenceSha256,omitempty"`
+	ChangeSource            string                           `json:"changeSource,omitempty"`
 }
 
 type proposalStringFlag []string
@@ -87,6 +90,7 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 	repositoryID := flags.String("repository-id", "", "owner/repository identity")
 	pipelineClass := flags.String("pipeline-class", "", "pipeline class")
 	ownerInputPath := flags.String("owner-input", "", "checked versioned owner input")
+	outputEquivalence := flags.String("output-equivalence", "", "owner-reviewed semantic output-equivalence contract")
 	var entrypoints proposalStringFlag
 	flags.Var(&entrypoints, "entrypoint", "original Gradle task selector; repeat for multi-entrypoint workflows")
 	changesFile := flags.String("changes-file", "", "exact base-to-target changed paths")
@@ -113,7 +117,7 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 	ownerInputDigest := ""
 	ownerChangeSource := ""
 	if *ownerInputPath != "" {
-		if *repositoryID != "" || *pipelineClass != "" || len(entrypoints) != 0 || len(requiredOutputs) != 0 || len(globalChanges) != 0 || *gradleCommand != "" || len(gradleOptions) != 0 || *timeout != 0 {
+		if *repositoryID != "" || *pipelineClass != "" || len(entrypoints) != 0 || len(requiredOutputs) != 0 || *outputEquivalence != "" || len(globalChanges) != 0 || *gradleCommand != "" || len(gradleOptions) != 0 || *timeout != 0 {
 			_, _ = io.WriteString(stderr, profileProposalUsage)
 			return exitUsage
 		}
@@ -136,6 +140,9 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 		*timeout = time.Duration(input.TimeoutMinutes) * time.Minute
 		ownerInputDigest = digest
 		ownerChangeSource = input.ChangeSource
+		if input.OutputEquivalence != nil {
+			*outputEquivalence = input.OutputEquivalence.Path
+		}
 	} else {
 		if *repositoryID == "" || *pipelineClass == "" || len(entrypoints) == 0 || len(requiredOutputs) == 0 || *changesFile == "" {
 			_, _ = io.WriteString(stderr, profileProposalUsage)
@@ -163,8 +170,9 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 		generatedOutput: *generatedOutput, fallbackOutput: *fallbackOutput,
 		proposalOutput: *proposalOutput, buildOptRevision: *buildOptRevision,
 		ownerInput: *ownerInputPath, ownerInputSHA256: ownerInputDigest,
-		changeSource: ownerChangeSource,
-		timeout:      *timeout,
+		outputEquivalence: *outputEquivalence,
+		changeSource:      ownerChangeSource,
+		timeout:           *timeout,
 	})
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile proposal unavailable: %v\n", err)
@@ -205,6 +213,7 @@ type structuralProposalConfig struct {
 	generatedOutput                                                  string
 	fallbackOutput, proposalOutput, buildOptRevision                 string
 	ownerInput, ownerInputSHA256                                     string
+	outputEquivalence                                                string
 	changeSource                                                     string
 	timeout                                                          time.Duration
 }
@@ -226,6 +235,17 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 	}
 	if len(config.gradleOptions) > 32 || !uniqueMeasurementStrings(config.gradleOptions) {
 		return profileProposalReport{}, nil, errors.New("Gradle discovery options must be unique and bounded")
+	}
+	outputEquivalenceSHA256 := ""
+	if config.outputEquivalence != "" {
+		raw, err := readRepositoryRegularDocument(root, config.outputEquivalence, maximumOwnerInputBytes)
+		if err != nil {
+			return profileProposalReport{}, nil, err
+		}
+		if _, err := outputequivalence.Parse(raw); err != nil {
+			return profileProposalReport{}, nil, err
+		}
+		outputEquivalenceSHA256 = outputequivalence.SHA256(raw)
 	}
 	if err := validateProposalOutputs(config); err != nil {
 		return profileProposalReport{}, nil, err
@@ -255,6 +275,8 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 	sort.Strings(config.requiredOutputs)
 	sort.Strings(config.globalChanges)
 	report := nativeProfileProposal(config, targetRevision, changedPaths)
+	report.OutputEquivalence = config.outputEquivalence
+	report.OutputEquivalenceSHA256 = outputEquivalenceSHA256
 	report.repositoryRoot = root
 	outputReport, err := prepareOutputContract(ctx, root, outputContractConfig{
 		repositoryID: config.repositoryID, pipelineClass: config.pipelineClass,
@@ -478,6 +500,9 @@ func validateProposalOutputs(config structuralProposalConfig) error {
 	if config.ownerInput != "" {
 		seen[config.ownerInput] = true
 	}
+	if config.outputEquivalence != "" {
+		seen[config.outputEquivalence] = true
+	}
 	for _, candidate := range paths {
 		if candidate == "" || filepath.IsAbs(candidate) || filepath.Clean(candidate) != candidate || candidate == "." || candidate == ".." || seen[candidate] {
 			return errors.New("proposal outputs must be distinct clean repository-relative paths")
@@ -545,7 +570,7 @@ func proposalMeasureCommand(config structuralProposalConfig) []string {
 	if revision == "" {
 		revision = "<BUILDOPT_REVISION>"
 	}
-	return []string{
+	command := []string{
 		"buildopt", "profile", "measure",
 		"--manifest", config.manifestOutput,
 		"--graph", config.graphOutput,
@@ -556,6 +581,10 @@ func proposalMeasureCommand(config structuralProposalConfig) []string {
 		"--buildopt-revision", revision,
 		"--evidence-output", "buildopt-profile-evidence.json",
 	}
+	if config.outputEquivalence != "" {
+		command = append(command, "--output-equivalence", config.outputEquivalence)
+	}
+	return command
 }
 
 func proposalOmittedProjects(graph buildimpact.DeclaredGraph, candidates []string) []string {

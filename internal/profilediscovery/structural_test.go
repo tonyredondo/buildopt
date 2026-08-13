@@ -46,9 +46,10 @@ func TestRenderStructuralMeasurementEvidenceQualifiesOnlyPositiveExactPairs(t *t
 	raw, qualified, err := RenderStructuralMeasurementEvidence(StructuralMeasurementOptions{
 		CapturedAt: time.Date(2026, 8, 9, 12, 0, 0, 0, time.UTC), Analysis: analysis,
 		RepositoryRevision: strings.Repeat("b", 40), BuildOptRevision: strings.Repeat("c", 40),
-		ExecutableSHA256:     strings.Repeat("e", 64),
-		SourceEvidenceSHA256: strings.Repeat("d", 64),
-		GradleOptions:        []string{"--daemon", "--build-cache"}, Observations: observations,
+		ExecutableSHA256:        strings.Repeat("e", 64),
+		SourceEvidenceSHA256:    strings.Repeat("d", 64),
+		OutputEquivalenceSHA256: strings.Repeat("f", 64),
+		GradleOptions:           []string{"--daemon", "--build-cache"}, Observations: observations,
 		FallbackReason: "IMPACT_GLOBAL_CHANGE", FallbackSuccessful: true,
 	})
 	if err != nil || !qualified {
@@ -60,6 +61,8 @@ func TestRenderStructuralMeasurementEvidenceQualifiesOnlyPositiveExactPairs(t *t
 	}
 	if evidence.EvidenceState != "QUALIFIED" || !evidence.Result.Qualified ||
 		evidence.Result.MeanSavedMS != 3000 || evidence.Result.PositivePairs != 8 ||
+		evidence.SourceBindings.OutputEquivalenceSHA256 != strings.Repeat("f", 64) ||
+		evidence.Execution.OutputEquivalenceMode != "OWNER_REVIEWED_SEMANTIC_V1" ||
 		evidence.Boundaries.ProductionAuthorized || evidence.Boundaries.TestOptimizationModified {
 		t.Fatalf("rendered evidence = %+v", evidence)
 	}
@@ -340,6 +343,45 @@ func TestStructuralProfileQualificationIsRepositoryIndependentAndDeterministic(t
 				t.Fatalf("structural profile = %+v", first)
 			}
 		})
+	}
+}
+
+func TestStructuralProfileQualificationBindsReviewedOutputEquivalence(t *testing.T) {
+	root := repositoryRoot(t)
+	repository := structuralTestRepository(
+		t,
+		root,
+		"fixtures/poc-kafka-packaging/buildopt-impact-manifest.json",
+		"fixtures/poc-kafka-packaging/buildopt-impact-graph.generated.json",
+		"fixtures/poc-kafka-packaging/buildopt-impact.generated.json",
+	)
+	contract := []byte(`{"schemaVersion":"buildopt.poc/output-equivalence/v1","rules":[{"pattern":"build/*.jar","mode":"CANONICAL_ZIP"}],"reviewRequired":true,"activationAutomatic":false,"productionAuthorized":false}`)
+	digest := sha256.Sum256(contract)
+	if err := os.WriteFile(filepath.Join(repository, "output-equivalence.json"), contract, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	evidence := qualifiedStructuralTestEvidence(t, repository)
+	evidence.SourceBindings.OutputEquivalenceSHA256 = hex.EncodeToString(digest[:])
+	evidence.Execution.OutputEquivalenceMode = "OWNER_REVIEWED_SEMANTIC_V1"
+	writeStructuralTestEvidence(t, repository, evidence)
+	options := StructuralOptions{
+		RepositoryRoot: repository, ManifestPath: "buildopt-impact-manifest.json",
+		GraphPath: "buildopt-impact-graph.generated.json", GeneratedPath: "buildopt-impact.generated.json",
+		EvidencePath: "buildopt-structural-qualification.json", OutputEquivalencePath: "output-equivalence.json",
+	}
+	profile, err := QualifyStructuralProfile(options)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(profile.Preconditions) != 4 || profile.Preconditions[3].Path != "output-equivalence.json" ||
+		profile.Preconditions[3].SHA256 != hex.EncodeToString(digest[:]) {
+		t.Fatalf("output-equivalence precondition = %+v", profile.Preconditions)
+	}
+	if err := os.WriteFile(filepath.Join(repository, "output-equivalence.json"), append(contract, '\n'), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := QualifyStructuralProfile(options); err == nil {
+		t.Fatal("output-equivalence contract drift was accepted")
 	}
 }
 
