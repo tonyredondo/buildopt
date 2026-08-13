@@ -1,0 +1,217 @@
+{
+  "schemaVersion": "buildopt.poc/profile-evaluation/v1",
+  "decision": "QUALIFY_STRUCTURAL_PROFILE",
+  "reason": "EXACT_EVIDENCE_QUALIFIED",
+  "analysis": {
+    "schemaVersion": "buildopt.poc/opportunity-analysis/v1",
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "subject": {
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "pipelineClass": "spring-family-test-classes",
+      "gradleVersion": "9.6.1"
+    },
+    "inputs": [
+      {
+        "role": "BUILD_IMPACT_MANIFEST",
+        "path": "buildopt-impact-manifest.json",
+        "sha256": "sha256:d56399fccc1ee9ab3a28f75fd871fc569c484df037a2d8c0a9700eabee41d1f6"
+      },
+      {
+        "role": "BUILD_IMPACT_GRAPH",
+        "path": "buildopt-impact-graph.generated.json",
+        "sha256": "sha256:1db31d0f75041382aca8833e91499b7378cb6e0caf0fd90e2bb275f5b050d849"
+      },
+      {
+        "role": "GENERATED_MANIFEST",
+        "path": "buildopt-impact.generated.json",
+        "sha256": "sha256:dc2066db76ed966533a87f6e415d85d7be9ab57f475073cef04f9abdade65c8d"
+      }
+    ],
+    "sourceBindings": {
+      "manifestDigest": "sha256:669b69b08ab93c228472a5ea7457497a00c01ddf63708f304a8dddffed226bd3",
+      "graphDigest": "sha256:90a82c7c6c874800279d6d155b3c27b44f57c7378b0391b2dc03240ce022d67f",
+      "discoveryDigest": "sha256:a6ced0f13783e3b3dd438d48ac31c6a43abc287edd9e54d938f667c009511ef2"
+    },
+    "plan": {
+      "alternativeId": "changed-projects",
+      "entrypoints": [
+        ":instrumentation:spring:spring-boot-autoconfigure:testClasses"
+      ],
+      "fallbackEntrypoints": [
+        ":instrumentation:spring:spring-batch-3.0:javaagent:testClasses",
+        ":instrumentation:spring:spring-boot-actuator-autoconfigure-2.0:javaagent:testClasses",
+        ":instrumentation:spring:spring-boot-autoconfigure:testClasses",
+        ":instrumentation:spring:spring-boot-autoconfigure:testing:testClasses",
+        ":instrumentation:spring:spring-boot-resources:javaagent-unit-tests:testClasses",
+        ":instrumentation:spring:spring-boot-resources:javaagent:testClasses",
+        ":instrumentation:spring:spring-cloud-aws-3.0:javaagent:testClasses",
+        ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.0:javaagent:testClasses",
+        ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.2:testing:testClasses",
+        ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:testClasses",
+        ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:testing:testClasses",
+        ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webflux-4.3:testing:testClasses",
+        ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webmvc-4.3:javaagent:testClasses",
+        ":instrumentation:spring:spring-core-2.0:javaagent:testClasses",
+        ":instrumentation:spring:spring-data:spring-data-1.8:javaagent:testClasses",
+        ":instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:testClasses",
+        ":instrumentation:spring:spring-data:spring-data-3.0:testing:testClasses",
+        ":instrumentation:spring:spring-data:spring-data-common:testing:testClasses",
+        ":instrumentation:spring:spring-integration-4.1:javaagent:testClasses",
+        ":instrumentation:spring:spring-integration-4.1:library:testClasses",
+        ":instrumentation:spring:spring-integration-4.1:testing:testClasses",
+        ":instrumentation:spring:spring-jms:spring-jms-2.0:javaagent:testClasses",
+        ":instrumentation:spring:spring-jms:spring-jms-2.0:testing:testClasses",
+        ":instrumentation:spring:spring-jms:spring-jms-6.0:javaagent:testClasses",
+        ":instrumentation:spring:spring-kafka-2.7:javaagent:testClasses",
+        ":instrumentation:spring:spring-kafka-2.7:library:testClasses",
+        ":instrumentation:spring:spring-kafka-2.7:testing:testClasses",
+        ":instrumentation:spring:spring-pulsar-1.0:javaagent:testClasses",
+        ":instrumentation:spring:spring-pulsar-1.0:testing:testClasses",
+        ":instrumentation:spring:spring-rabbit-1.0:javaagent:testClasses",
+        ":instrumentation:spring:spring-rmi-4.0:javaagent:testClasses",
+        ":instrumentation:spring:spring-scheduling-3.1:bootstrap:testClasses",
+        ":instrumentation:spring:spring-scheduling-3.1:javaagent:testClasses",
+        ":instrumentation:spring:spring-security-config-6.0:javaagent:testClasses",
+        ":instrumentation:spring:spring-security-config-6.0:library:testClasses",
+        ":instrumentation:spring:spring-web:spring-web-3.1:library:testClasses",
+        ":instrumentation:spring:spring-web:spring-web-3.1:testing:testClasses",
+        ":instrumentation:spring:spring-web:spring-web-6.0:javaagent:testClasses",
+        ":instrumentation:spring:spring-webflux:spring-webflux-5.0:javaagent:testClasses",
+        ":instrumentation:spring:spring-webflux:spring-webflux-5.0:testing-webflux7:testClasses",
+        ":instrumentation:spring:spring-webflux:spring-webflux-5.0:testing:testClasses",
+        ":instrumentation:spring:spring-webflux:spring-webflux-5.3:library:testClasses",
+        ":instrumentation:spring:spring-webflux:spring-webflux-5.3:testing-webflux7:testClasses",
+        ":instrumentation:spring:spring-webflux:spring-webflux-5.3:testing:testClasses",
+        ":instrumentation:spring:spring-webmvc:spring-webmvc-3.1:javaagent:testClasses",
+        ":instrumentation:spring:spring-webmvc:spring-webmvc-3.1:wildfly-testing:testClasses",
+        ":instrumentation:spring:spring-webmvc:spring-webmvc-5.3:library:testClasses",
+        ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:testClasses",
+        ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:library:testClasses",
+        ":instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:testClasses",
+        ":instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:testing:testClasses",
+        ":instrumentation:spring:spring-ws-2.0:javaagent:testClasses",
+        ":instrumentation:spring:spring-ws-2.0:testing:testClasses"
+      ],
+      "requiredOutputs": [
+        "instrumentation/spring/spring-boot-autoconfigure/build/classes/**"
+      ],
+      "totalProjectCount": 1024,
+      "selectedProjectCount": 34,
+      "omittedProjectCount": 990,
+      "omittedProjectRatio": 0.966796875
+    },
+    "mechanisms": [
+      {
+        "name": "BUILD_IMPACT",
+        "status": "MEASURE_CANDIDATE",
+        "reason": "complete graph exposes a smaller reviewed alternative; direct timing is still required"
+      },
+      {
+        "name": "SHARED_EDGE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent locality and failure-fallback evidence for this workload"
+      },
+      {
+        "name": "HOT_STATE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "RUNTIME_TUNING",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "SAFE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "STANDARD_COPY",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "STANDARD_JAR",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "TEST_OPTIMIZATION",
+        "status": "NOT_AUTHORIZED",
+        "reason": "outside BuildOpt scope"
+      }
+    ],
+    "measurementRequired": true,
+    "reviewRequired": true,
+    "activationAutomatic": false,
+    "productionAuthorized": false
+  },
+  "profile": {
+    "schemaVersion": "buildopt.poc/qualified-profile/v4",
+    "profileVersion": 4,
+    "profileId": "qualified-structural-build-impact",
+    "ownership": "REPOSITORY_COMMITTED",
+    "claimScope": "DECLARED_OUTPUTS_ONLY",
+    "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+    "pipelineClass": "spring-family-test-classes",
+    "fallback": "NATIVE_FULL_GRAPH",
+    "impact": {
+      "manifest": "buildopt-impact-manifest.json",
+      "graph": "buildopt-impact-graph.generated.json",
+      "generatedManifest": "buildopt-impact.generated.json"
+    },
+    "mechanisms": {
+      "buildImpact": true,
+      "standardJarAdapter": false,
+      "safeCache": false,
+      "runtimeTuning": false,
+      "hotState": false,
+      "standardCopyAdapter": false,
+      "sharedEdgeCache": false
+    },
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "preconditions": [
+      {
+        "type": "FILE_SHA256",
+        "path": "buildopt-impact-manifest.json",
+        "sha256": "d56399fccc1ee9ab3a28f75fd871fc569c484df037a2d8c0a9700eabee41d1f6"
+      },
+      {
+        "type": "FILE_SHA256",
+        "path": "buildopt-impact-graph.generated.json",
+        "sha256": "1db31d0f75041382aca8833e91499b7378cb6e0caf0fd90e2bb275f5b050d849"
+      },
+      {
+        "type": "FILE_SHA256",
+        "path": "buildopt-impact.generated.json",
+        "sha256": "dc2066db76ed966533a87f6e415d85d7be9ab57f475073cef04f9abdade65c8d"
+      }
+    ],
+    "qualification": {
+      "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+      "sha256": "cf809db961522e22878c5fdc44ce402941a51cc8481c30af9e84f460cfe27793",
+      "repositoryRevision": "ed75b8e453be3196bdde7806df05f5f9ee7e2f2f",
+      "pairs": 8,
+      "meanSavedMs": 15706.875,
+      "reductionRatio": 0.1753865608852586,
+      "interval95SavedMs": [
+        11408,
+        19949.75
+      ]
+    }
+  },
+  "profileOutput": "buildopt-qualified-profile.json",
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false
+}

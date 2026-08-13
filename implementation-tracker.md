@@ -127,7 +127,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-GENERIC-OWNER-INPUT | Turn reviewed workflow, change source and Gradle-owned outputs into one checked, versioned owner input | `DONE` | 1/1 | `E-320` |
 | POC-GENERIC-WORKFLOW-BREADTH | Exercise the unchanged owner-input path across distinct owner workflows before any new timing | `DONE` | 1/1 | `E-321..323` |
 | POC-GENERIC-WORKFLOW-VALUE | Measure reviewed substantial public workflow families through the installed path against optimized native Gradle | `DONE` | 1/1 | `E-324..325` |
-| POC-STATISTICAL-QUALIFICATION-V2 | Re-measure all five public structural subjects with two independent captures and balanced repeatability/tail gates | `DOING` | 0/1 | Preregistered as `E-326`; terminal evidence pending |
+| POC-STATISTICAL-QUALIFICATION-V2 | Re-measure all five public structural subjects with two independent captures and balanced repeatability/tail gates | `DONE` | 1/1 | `E-326..330`; terminal 5/5 qualification |
 | POC-GENERIC-OUTPUT-EQUIVALENCE | Define explicit owner-reviewed semantic equivalence for relocatable reports and nondeterministic archives while retaining exact bytes by default | `TODO` | 0/1 | Workflow-value diagnostics `E-325` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
@@ -290,8 +290,34 @@ than partners. Test Optimization remains a separate product.
 | 91 | `POC-GENERIC-OWNER-INPUT-001` | Convert confirmed workflow, change source and Gradle-owned output candidates into one reviewable owner file with explicit acceptance, drift diagnostics and native fallback when unconfirmed | `DONE` | Codex; `E-320` |
 | 92 | `POC-GENERIC-WORKFLOW-BREADTH-001` | Run the unchanged generated owner-file flow on packaging, verification, distribution and build-owned test-preparation workflows, preserving repository-declared success outputs and retaining native before timing on unsupported semantics | `DONE` | Codex; `E-321..323` |
 | 93 | `POC-GENERIC-WORKFLOW-VALUE-001` | Measure reviewed substantial public packaging, verification, distribution and build-owned test-preparation candidates through the installed path; preserve exact outputs and full fallback, and retain native independently for every family that does not beat optimized native Gradle | `DONE` | Codex; `E-324..325` |
-| 94 | `POC-STATISTICAL-QUALIFICATION-V2-001` | Preserve every v1 decision, then rerun Spring, OpenTelemetry, Kafka, Micronaut and Groovy twice from one exact BuildOpt revision. Aggregate 16 raw pairs into eight AB/BA blocks and qualify independently only with material mean saving, positive median/lower bound, at least 6/8 positive blocks, non-regressive candidate p95, exact outputs, stable task shape, both fallbacks and zero product failures | `DOING` | Codex; preregistration `E-326`, terminal evidence pending |
+| 94 | `POC-STATISTICAL-QUALIFICATION-V2-001` | Preserve every v1 decision, then rerun Spring, OpenTelemetry, Kafka, Micronaut and Groovy twice from one exact BuildOpt revision. Aggregate 16 raw pairs into eight AB/BA blocks and qualify independently only with material mean saving, positive median/lower bound, at least 6/8 positive blocks, non-regressive candidate p95, exact outputs, stable task shape, both fallbacks and zero product failures | `DONE` | Codex; `E-326..330` |
 | 95 | `POC-GENERIC-OUTPUT-EQUIVALENCE-001` | Keep byte identity as the default, add explicit owner-reviewed equivalence contracts for relocatable reports and canonical archive contents, prove that payload drift remains rejected, and rerun the three blocked public workflow families without repository-name rules | `TODO` | Codex; `E-325` |
+
+#### Completed POC block: balanced public-repository qualification
+
+`POC-STATISTICAL-QUALIFICATION-V2-001` preserves all historical decisions and
+re-measures the five established public structural subjects from one exact
+BuildOpt revision. Each repository contributes two independent eight-pair
+captures. Adjacent opposite-order observations form eight AB/BA blocks, so the
+terminal decision is less sensitive to one raw outlier while retaining the
+material-value, positive lower-bound, p95, exact-output, stable-shape,
+full-fallback and zero-product-failure gates.
+
+All five subjects qualify independently: Spring **15.99%**, OpenTelemetry
+**14.97%**, Kafka **87.35%**, Micronaut **39.44%**, and Groovy **74.00%** lower
+mean wall time than their optimized native controls. All 80 raw pairs and all
+40 balanced blocks are positive; candidate p95 improves in every repository.
+Required outputs are identical, measured task shapes are stable, both native
+full-graph fallbacks pass per repository, and no product-attributable failure
+occurs. Percentages are not averaged across repositories.
+
+The [terminal evidence](./benchmarks/results/poc-statistical-qualification-v2/README.md)
+also preserves every infrastructure and orchestration incident. Groovy's first
+capture records a one-warm-up 13/9-to-14/8 executed/cache transition; all 16
+measured pairs stabilize at the same 14/8 fingerprint and the second capture
+reaches it before timing. No historical evidence was rewritten, no threshold
+was changed after observation, and no repository-name rule or automatic
+activation was added. `POC-GENERIC-OUTPUT-EQUIVALENCE-001` remains next.
 
 #### Completed POC block: public workflow-family value
 
@@ -315,9 +341,10 @@ archive hashes while all 4,378 names and uncompressed payloads were identical.
 No output was normalized, no observation discarded and no threshold moved.
 The terminal result is 0/4 qualified, with native Gradle authoritative for all
 four families. Before changing output semantics, the separately preregistered
-`POC-STATISTICAL-QUALIFICATION-V2-001` reruns all five established public
-structural subjects with two independent captures, balanced order blocks and a
-tail guard. Historical results are not reclassified.
+`POC-STATISTICAL-QUALIFICATION-V2-001` completed a fresh two-capture rerun of
+all five established public structural subjects with balanced order blocks and
+a tail guard. Historical results remain unchanged; terminal v2 evidence is
+recorded separately as `E-330`.
 
 #### Completed POC block: generic workflow breadth
 
@@ -2017,6 +2044,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-327` | 2026-08-12 | `POC-STATISTICAL-QUALIFICATION-V2-001` | The first Spring capture completed, but the second attempt failed during the proposal Wrapper download and its one bounded retry failed while warming the candidate arm, both with `Unexpected end of file from server`. The first valid capture, both failure logs and the unavailable result remain preserved under the terminal bundle's `incidents/` directory. Measurement now copies the distribution already prepared and successfully used by the original-workflow preflight into each private arm, preserving executable mode and rejecting symlinks; caches, daemons, tasks, options, thresholds and measured boundaries remain unchanged | `DOING` infrastructure correction before terminal capture: all five repositories will restart from zero on one new exact BuildOpt revision, and the prior valid Spring timing will not be reused. No failed/timed observation was discarded, because both failed attempts ended before timing; no network download is allowed in a warm-up or measured arm |
 | `E-328` | 2026-08-12 | `POC-STATISTICAL-QUALIFICATION-V2-001` | The first terminal-SHA Spring rerun exposed the remaining earlier network boundary: the original workflow preflight still started with an empty Gradle home and failed downloading 9.6.1. The runner now derives the exact distribution from each repository's Wrapper properties, reuses only that matching local distribution, and permits at most three bounded `gradlew --version` preparation attempts before proposal. The prepared distribution is then privately copied into both measurement arms | `DOING` complete infrastructure isolation before terminal capture: preparation runs no owner task and is outside warm-ups/timings; proposal, warm-ups, pairs and fallback perform no distribution download. All terminal subjects restart on the correction SHA; no task, option, value/correctness gate or repository-specific product decision changed |
 | `E-329` | 2026-08-12 | `POC-STATISTICAL-QUALIFICATION-V2-001` | OpenTelemetry's first fresh attempt executed all 53 original entrypoints for 17m08s but failed in the temporary `buildoptOutputContract` task because the repository enables Configuration Cache and the generic task inspects `Task.project` at execution time. No timed observation exists. The full log and the two otherwise valid Spring captures on that SHA remain preserved under `incidents/`. Proposal now explicitly uses `--no-configuration-cache`, matching the already frozen measurement option for every repository | `DOING` generic preflight correction: all five terminal subjects restart from zero on one new SHA. No entrypoint, task, output, timing option, threshold or repository-specific rule changed; the failure is investigated rather than classified as a negative value result |
+| `E-330` | 2026-08-13 | `POC-STATISTICAL-QUALIFICATION-V2-001` | The [terminal balanced matrix](./benchmarks/results/poc-statistical-qualification-v2/README.md) recomputes two independent eight-pair captures per repository from immutable BuildOpt `b8fd0f6` and executable SHA-256 `565e1787ddcb27e81f5408158818b2e2445af38d0f083251415fb0a022640e87`. Spring saves 2,128 ms/15.99%, OpenTelemetry 13,156 ms/14.97%, Kafka 99,040 ms/87.35%, Micronaut 11,993 ms/39.44%, and Groovy 59,101 ms/74.00%. All 80 raw pairs and 40 reciprocal blocks improve; every candidate p95 is lower, required outputs match, measured task shapes are stable, two full fallbacks pass per repository, and product failures remain zero | `DONE` terminal `5/5 QUALIFIED`: no repository percentages are averaged, no historical decision is rewritten, and all excluded infrastructure/orchestration attempts remain indexed under `incidents/`. Groovy's preserved one-warm-up task transition is absent from all measured pairs and from the independent second capture's target warm-up. Profiles remain review-required; no automatic/production authority, soak, design-partner or Test Optimization scope is created. `POC-GENERIC-OUTPUT-EQUIVALENCE-001` is next |
 
 ---
 
@@ -2024,6 +2052,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-13 | Closed the fresh balanced five-repository rerun at 5/5 qualified, 80/80 positive raw pairs, 40/40 positive reciprocal blocks, improved p95, exact outputs, stable measured shapes and complete native fallbacks; kept semantic output equivalence next | Codex |
 | 2026-08-12 | Preserved the OpenTelemetry Configuration Cache failure, aligned the generic output-contract preflight with the already disabled measured mode, and restarted all terminal captures on one correction SHA | Codex |
 | 2026-08-12 | Completed Gradle network isolation by preparing each repository-selected Wrapper distribution before proposal and copying it into both private arms; terminal captures restart on one correction SHA | Codex |
 | 2026-08-12 | Preserved two external Gradle Wrapper EOF failures and the prior Spring capture, then moved verified distribution preparation ahead of all isolated warm-ups/timings; all five subjects restart on one correction SHA | Codex |

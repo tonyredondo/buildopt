@@ -21,6 +21,31 @@ For the decision-ready product summary, see the [current POC one-pager](../docs/
 The [detailed performance findings](../docs/findings/build-optimization-performance.md)
 retain mechanism-specific and historical experiments for engineering review.
 
+### Balanced public-repository qualification
+
+The [terminal v2 evidence](./results/poc-statistical-qualification-v2/README.md)
+re-measures Spring, OpenTelemetry, Kafka, Micronaut, and Groovy under one
+preregistered protocol and one exact BuildOpt revision. Each repository has two
+independent eight-pair captures; adjacent opposite-order observations form
+eight AB/BA blocks.
+
+| Repository | Optimized native mean | BuildOpt mean | Direct result | Decision |
+| --- | ---: | ---: | ---: | --- |
+| Spring Framework | 13.311 s | 11.183 s | **15.99% faster**, 8/8 blocks | Qualify |
+| OpenTelemetry | 87.869 s | 74.713 s | **14.97% faster**, 8/8 blocks | Qualify |
+| Apache Kafka | 113.381 s | 14.341 s | **87.35% faster**, 8/8 blocks | Qualify |
+| Micronaut Core | 30.411 s | 18.418 s | **39.44% faster**, 8/8 blocks | Qualify |
+| Apache Groovy | 79.868 s | 20.767 s | **74.00% faster**, 8/8 blocks | Qualify |
+
+All 80 raw pairs improved. Every row also passes its material-mean, positive
+median/lower-bound, 6-of-8 repeatability, non-regressive p95, exact-output,
+stable-shape, two-fallback, and zero-product-failure gates. Percentages remain
+repository-specific and are not averaged or added to other mechanisms.
+
+This is the latest directly comparable five-repository matrix. Older sections
+below remain immutable historical evidence and may use different protocols;
+they must not be substituted into this table.
+
 ### Clean-CI proposal replay
 
 The [five-repository hosted replay](./results/poc-generic-profile-ci-replay-v1/README.md)

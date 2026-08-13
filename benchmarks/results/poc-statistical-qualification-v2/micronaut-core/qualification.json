@@ -1,0 +1,221 @@
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-balanced-qualification/v2",
+  "evidenceState": "QUALIFIED",
+  "capturedAt": "2026-08-13T15:24:41Z",
+  "subject": {
+    "repositoryId": "micronaut-projects/micronaut-core",
+    "repositoryRevision": "3174e667b7202c7689405610f43b7c6d1203b74d",
+    "pipelineClass": "assemble"
+  },
+  "sourceBindings": {
+    "manifestSha256": "f71b72bd9007840c744e866f889992058c9d393877987f8b5fa335fa49325df2",
+    "graphSha256": "5959d5d5e841b3dc3c795857151d7bf61f470d5d7c78a9a868f15e4214c3203c",
+    "generatedManifestSha256": "f9aaf6b560e1926b5149c76f805a25c15f191684f4c996d9fe375576848ae563",
+    "sourceEvidenceSha256": "3dc827e52dc05d3aa535e84e1b96f3ee87276d3f998e540acac089bc8e1c81b4"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":micronaut-http-client-jdk:assemble"
+    ],
+    "fallbackEntrypoints": [
+      "assemble"
+    ],
+    "requiredOutputs": [
+      "http-client-jdk/build/libs/**"
+    ],
+    "totalProjectCount": 75,
+    "selectedProjectCount": 22,
+    "omittedProjectCount": 53,
+    "omittedProjectRatio": 0.7066666666666667
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "b8fd0f67598af50ee52eb8b11645a877836416db",
+    "executableSha256": "565e1787ddcb27e81f5408158818b2e2445af38d0f083251415fb0a022640e87",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true,
+    "captureCount": 2,
+    "pairsPerCapture": 8,
+    "blockCount": 8
+  },
+  "captures": [
+    {
+      "index": 1,
+      "path": "benchmarks/results/poc-statistical-qualification-v2/micronaut-core/capture-1/evidence.json",
+      "sha256": "43044f24b2d811c6ac86ad250c90520039fca2347911accd9fcfb48689d5bde3",
+      "capturedAt": "2026-08-13T13:33:51Z",
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 30780.625,
+        "candidateMeanMs": 18869.5,
+        "meanSavedMs": 11911.125,
+        "reductionRatio": 0.3869682633149912,
+        "interval95SavedMs": [
+          11214,
+          12699.625
+        ],
+        "positivePairs": 8,
+        "executionShapeObserved": true,
+        "executionShapeStable": true,
+        "targetWarmupShapeObserved": true,
+        "targetWarmupShapeStable": true,
+        "qualified": true,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE"
+      }
+    },
+    {
+      "index": 2,
+      "path": "benchmarks/results/poc-statistical-qualification-v2/micronaut-core/capture-2/evidence.json",
+      "sha256": "1256f268cbbde38a232cc65b15bc8c347576f7c0a10cc33c191ce00d8bd7732d",
+      "capturedAt": "2026-08-13T14:20:26Z",
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 30040.875,
+        "candidateMeanMs": 17965.5,
+        "meanSavedMs": 12075.375,
+        "reductionRatio": 0.40196482292875957,
+        "interval95SavedMs": [
+          10923,
+          13349.875
+        ],
+        "positivePairs": 8,
+        "executionShapeObserved": true,
+        "executionShapeStable": true,
+        "targetWarmupShapeObserved": true,
+        "targetWarmupShapeStable": true,
+        "qualified": true,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE"
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "captureIndex": 1,
+      "block": 1,
+      "controlFirstPair": 1,
+      "candidateFirstPair": 2,
+      "controlMeanMs": 31057,
+      "candidateMeanMs": 20067.5,
+      "savedMs": 10989.5
+    },
+    {
+      "captureIndex": 1,
+      "block": 2,
+      "controlFirstPair": 3,
+      "candidateFirstPair": 4,
+      "controlMeanMs": 31777.5,
+      "candidateMeanMs": 19215.5,
+      "savedMs": 12562
+    },
+    {
+      "captureIndex": 1,
+      "block": 3,
+      "controlFirstPair": 5,
+      "candidateFirstPair": 6,
+      "controlMeanMs": 30672,
+      "candidateMeanMs": 17928,
+      "savedMs": 12744
+    },
+    {
+      "captureIndex": 1,
+      "block": 4,
+      "controlFirstPair": 7,
+      "candidateFirstPair": 8,
+      "controlMeanMs": 29616,
+      "candidateMeanMs": 18267,
+      "savedMs": 11349
+    },
+    {
+      "captureIndex": 2,
+      "block": 1,
+      "controlFirstPair": 1,
+      "candidateFirstPair": 2,
+      "controlMeanMs": 29982.5,
+      "candidateMeanMs": 19208.5,
+      "savedMs": 10774
+    },
+    {
+      "captureIndex": 2,
+      "block": 2,
+      "controlFirstPair": 3,
+      "candidateFirstPair": 4,
+      "controlMeanMs": 31042.5,
+      "candidateMeanMs": 18606,
+      "savedMs": 12436.5
+    },
+    {
+      "captureIndex": 2,
+      "block": 3,
+      "controlFirstPair": 5,
+      "candidateFirstPair": 6,
+      "controlMeanMs": 29522,
+      "candidateMeanMs": 17218,
+      "savedMs": 12304
+    },
+    {
+      "captureIndex": 2,
+      "block": 4,
+      "controlFirstPair": 7,
+      "candidateFirstPair": 8,
+      "controlMeanMs": 29616.5,
+      "candidateMeanMs": 16829.5,
+      "savedMs": 12787
+    }
+  ],
+  "qualification": {
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositiveBlocks": 6,
+    "positiveMedian": true,
+    "candidateP95NotRegressive": true,
+    "requiredOutputsIdentical": true,
+    "executionShapeStable": true,
+    "fullGraphFallbackRequired": true
+  },
+  "result": {
+    "captures": 2,
+    "pairs": 16,
+    "blocks": 8,
+    "controlMeanMs": 30410.75,
+    "candidateMeanMs": 18417.5,
+    "meanSavedMs": 11993.25,
+    "reductionRatio": 0.39437534424504495,
+    "medianBlockSavedMs": 12370.25,
+    "interval95BlockSavedMs": [
+      11429.875,
+      12479.625
+    ],
+    "positiveBlocks": 8,
+    "controlP95Ms": 34006,
+    "candidateP95Ms": 20448,
+    "controlFirstMeanSavedMs": 12795.25,
+    "candidateFirstMeanSavedMs": 11191.25,
+    "orderEffectMs": 1604,
+    "requiredOutputsIdentical": true,
+    "executionShapeStable": true,
+    "fallbacksSuccessful": true,
+    "qualified": true,
+    "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

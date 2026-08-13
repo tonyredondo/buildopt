@@ -15,3 +15,6 @@
 *.wasm binary
 *.xz binary
 *.zip binary
+
+# Preserve generated benchmark logs byte for byte; JSON and Markdown remain text.
+benchmarks/results/poc-statistical-qualification-v2/**/*.log binary

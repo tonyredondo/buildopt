@@ -1,0 +1,221 @@
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-balanced-qualification/v2",
+  "evidenceState": "QUALIFIED",
+  "capturedAt": "2026-08-13T15:24:41Z",
+  "subject": {
+    "repositoryId": "spring-projects/spring-framework",
+    "repositoryRevision": "1ddf23d53ea5ccea988cc3f1f135670e22ea12ce",
+    "pipelineClass": "test-classes"
+  },
+  "sourceBindings": {
+    "manifestSha256": "4585ca6ffff6585bbd453200ac65b12cb00bc4ef44b5309cbc3841138512e0d7",
+    "graphSha256": "6ca175d1dceff28fabe5b721fa2b8af736f421fc98735fcd90bbeef88c376c80",
+    "generatedManifestSha256": "9c7a12afed7f588b04602b9300b546faceb48b0054e3f383f85cfd0f99a01153",
+    "sourceEvidenceSha256": "619fbe12f910ed32fc295a4dfa6f6599c0c2906221e9b73bda97ed13bb42dc75"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":spring-jms:testClasses"
+    ],
+    "fallbackEntrypoints": [
+      "testClasses"
+    ],
+    "requiredOutputs": [
+      "spring-jms/build/classes/**"
+    ],
+    "totalProjectCount": 27,
+    "selectedProjectCount": 10,
+    "omittedProjectCount": 17,
+    "omittedProjectRatio": 0.6296296296296297
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "b8fd0f67598af50ee52eb8b11645a877836416db",
+    "executableSha256": "565e1787ddcb27e81f5408158818b2e2445af38d0f083251415fb0a022640e87",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true,
+    "captureCount": 2,
+    "pairsPerCapture": 8,
+    "blockCount": 8
+  },
+  "captures": [
+    {
+      "index": 1,
+      "path": "benchmarks/results/poc-statistical-qualification-v2/spring-framework/capture-1/evidence.json",
+      "sha256": "6110d5146a23fe96cbe336af0ef43ec78172bc863c1003c68e442e7397b216f4",
+      "capturedAt": "2026-08-12T22:12:43Z",
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 13175.125,
+        "candidateMeanMs": 10932,
+        "meanSavedMs": 2243.125,
+        "reductionRatio": 0.17025455166459522,
+        "interval95SavedMs": [
+          1574.5,
+          2882.625
+        ],
+        "positivePairs": 8,
+        "executionShapeObserved": true,
+        "executionShapeStable": true,
+        "targetWarmupShapeObserved": true,
+        "targetWarmupShapeStable": true,
+        "qualified": true,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE"
+      }
+    },
+    {
+      "index": 2,
+      "path": "benchmarks/results/poc-statistical-qualification-v2/spring-framework/capture-2/evidence.json",
+      "sha256": "6401c987e33307119dcb6d9c2cd6be80cc48a79c15de326d7a5ad4d65bbc1f1e",
+      "capturedAt": "2026-08-12T22:32:04Z",
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 13446,
+        "candidateMeanMs": 11433.5,
+        "meanSavedMs": 2012.5,
+        "reductionRatio": 0.14967276513461253,
+        "interval95SavedMs": [
+          1548.5,
+          2459.5
+        ],
+        "positivePairs": 8,
+        "executionShapeObserved": true,
+        "executionShapeStable": true,
+        "targetWarmupShapeObserved": true,
+        "targetWarmupShapeStable": true,
+        "qualified": true,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE"
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "captureIndex": 1,
+      "block": 1,
+      "controlFirstPair": 1,
+      "candidateFirstPair": 2,
+      "controlMeanMs": 13691.5,
+      "candidateMeanMs": 11533,
+      "savedMs": 2158.5
+    },
+    {
+      "captureIndex": 1,
+      "block": 2,
+      "controlFirstPair": 3,
+      "candidateFirstPair": 4,
+      "controlMeanMs": 13356.5,
+      "candidateMeanMs": 11111,
+      "savedMs": 2245.5
+    },
+    {
+      "captureIndex": 1,
+      "block": 3,
+      "controlFirstPair": 5,
+      "candidateFirstPair": 6,
+      "controlMeanMs": 12918,
+      "candidateMeanMs": 10780,
+      "savedMs": 2138
+    },
+    {
+      "captureIndex": 1,
+      "block": 4,
+      "controlFirstPair": 7,
+      "candidateFirstPair": 8,
+      "controlMeanMs": 12734.5,
+      "candidateMeanMs": 10304,
+      "savedMs": 2430.5
+    },
+    {
+      "captureIndex": 2,
+      "block": 1,
+      "controlFirstPair": 1,
+      "candidateFirstPair": 2,
+      "controlMeanMs": 14518.5,
+      "candidateMeanMs": 11998,
+      "savedMs": 2520.5
+    },
+    {
+      "captureIndex": 2,
+      "block": 2,
+      "controlFirstPair": 3,
+      "candidateFirstPair": 4,
+      "controlMeanMs": 13700.5,
+      "candidateMeanMs": 11156.5,
+      "savedMs": 2544
+    },
+    {
+      "captureIndex": 2,
+      "block": 3,
+      "controlFirstPair": 5,
+      "candidateFirstPair": 6,
+      "controlMeanMs": 13004.5,
+      "candidateMeanMs": 11183.5,
+      "savedMs": 1821
+    },
+    {
+      "captureIndex": 2,
+      "block": 4,
+      "controlFirstPair": 7,
+      "candidateFirstPair": 8,
+      "controlMeanMs": 12560.5,
+      "candidateMeanMs": 11396,
+      "savedMs": 1164.5
+    }
+  ],
+  "qualification": {
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositiveBlocks": 6,
+    "positiveMedian": true,
+    "candidateP95NotRegressive": true,
+    "requiredOutputsIdentical": true,
+    "executionShapeStable": true,
+    "fullGraphFallbackRequired": true
+  },
+  "result": {
+    "captures": 2,
+    "pairs": 16,
+    "blocks": 8,
+    "controlMeanMs": 13310.5625,
+    "candidateMeanMs": 11182.75,
+    "meanSavedMs": 2127.8125,
+    "reductionRatio": 0.1598589466072527,
+    "medianBlockSavedMs": 2202,
+    "interval95BlockSavedMs": [
+      1803.375,
+      2385.75
+    ],
+    "positiveBlocks": 8,
+    "controlP95Ms": 15711,
+    "candidateP95Ms": 13318,
+    "controlFirstMeanSavedMs": 2424.25,
+    "candidateFirstMeanSavedMs": 1831.375,
+    "orderEffectMs": 592.875,
+    "requiredOutputsIdentical": true,
+    "executionShapeStable": true,
+    "fallbacksSuccessful": true,
+    "qualified": true,
+    "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "buildopt.poc/profile-evaluation/v1",
+  "decision": "QUALIFY_STRUCTURAL_PROFILE",
+  "reason": "EXACT_EVIDENCE_QUALIFIED",
+  "analysis": {
+    "schemaVersion": "buildopt.poc/opportunity-analysis/v1",
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "subject": {
+      "repositoryId": "spring-projects/spring-framework",
+      "pipelineClass": "test-classes",
+      "gradleVersion": "9.6.1"
+    },
+    "inputs": [
+      {
+        "role": "BUILD_IMPACT_MANIFEST",
+        "path": "buildopt-impact-manifest.json",
+        "sha256": "sha256:4585ca6ffff6585bbd453200ac65b12cb00bc4ef44b5309cbc3841138512e0d7"
+      },
+      {
+        "role": "BUILD_IMPACT_GRAPH",
+        "path": "buildopt-impact-graph.generated.json",
+        "sha256": "sha256:6ca175d1dceff28fabe5b721fa2b8af736f421fc98735fcd90bbeef88c376c80"
+      },
+      {
+        "role": "GENERATED_MANIFEST",
+        "path": "buildopt-impact.generated.json",
+        "sha256": "sha256:9c7a12afed7f588b04602b9300b546faceb48b0054e3f383f85cfd0f99a01153"
+      }
+    ],
+    "sourceBindings": {
+      "manifestDigest": "sha256:455420df609501375ba304d979c37530fbac817cc19f34896ac80e4d03987160",
+      "graphDigest": "sha256:8bbbe7042ac6f158b467f249fe3bcc6217198d653facfb3e7218d4b3851094c1",
+      "discoveryDigest": "sha256:56629266d5182811e21bf31e33915255447c34a6a0db4f2368390a767b890d2d"
+    },
+    "plan": {
+      "alternativeId": "changed-projects",
+      "entrypoints": [
+        ":spring-jms:testClasses"
+      ],
+      "fallbackEntrypoints": [
+        "testClasses"
+      ],
+      "requiredOutputs": [
+        "spring-jms/build/classes/**"
+      ],
+      "totalProjectCount": 27,
+      "selectedProjectCount": 10,
+      "omittedProjectCount": 17,
+      "omittedProjectRatio": 0.6296296296296297
+    },
+    "mechanisms": [
+      {
+        "name": "BUILD_IMPACT",
+        "status": "MEASURE_CANDIDATE",
+        "reason": "complete graph exposes a smaller reviewed alternative; direct timing is still required"
+      },
+      {
+        "name": "SHARED_EDGE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent locality and failure-fallback evidence for this workload"
+      },
+      {
+        "name": "HOT_STATE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "RUNTIME_TUNING",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "SAFE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "STANDARD_COPY",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "STANDARD_JAR",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "TEST_OPTIMIZATION",
+        "status": "NOT_AUTHORIZED",
+        "reason": "outside BuildOpt scope"
+      }
+    ],
+    "measurementRequired": true,
+    "reviewRequired": true,
+    "activationAutomatic": false,
+    "productionAuthorized": false
+  },
+  "profile": {
+    "schemaVersion": "buildopt.poc/qualified-profile/v4",
+    "profileVersion": 4,
+    "profileId": "qualified-structural-build-impact",
+    "ownership": "REPOSITORY_COMMITTED",
+    "claimScope": "DECLARED_OUTPUTS_ONLY",
+    "repositoryId": "spring-projects/spring-framework",
+    "pipelineClass": "test-classes",
+    "fallback": "NATIVE_FULL_GRAPH",
+    "impact": {
+      "manifest": "buildopt-impact-manifest.json",
+      "graph": "buildopt-impact-graph.generated.json",
+      "generatedManifest": "buildopt-impact.generated.json"
+    },
+    "mechanisms": {
+      "buildImpact": true,
+      "standardJarAdapter": false,
+      "safeCache": false,
+      "runtimeTuning": false,
+      "hotState": false,
+      "standardCopyAdapter": false,
+      "sharedEdgeCache": false
+    },
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "preconditions": [
+      {
+        "type": "FILE_SHA256",
+        "path": "buildopt-impact-manifest.json",
+        "sha256": "4585ca6ffff6585bbd453200ac65b12cb00bc4ef44b5309cbc3841138512e0d7"
+      },
+      {
+        "type": "FILE_SHA256",
+        "path": "buildopt-impact-graph.generated.json",
+        "sha256": "6ca175d1dceff28fabe5b721fa2b8af736f421fc98735fcd90bbeef88c376c80"
+      },
+      {
+        "type": "FILE_SHA256",
+        "path": "buildopt-impact.generated.json",
+        "sha256": "9c7a12afed7f588b04602b9300b546faceb48b0054e3f383f85cfd0f99a01153"
+      }
+    ],
+    "qualification": {
+      "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+      "sha256": "6401c987e33307119dcb6d9c2cd6be80cc48a79c15de326d7a5ad4d65bbc1f1e",
+      "repositoryRevision": "1ddf23d53ea5ccea988cc3f1f135670e22ea12ce",
+      "pairs": 8,
+      "meanSavedMs": 2012.5,
+      "reductionRatio": 0.14967276513461253,
+      "interval95SavedMs": [
+        1548.5,
+        2459.5
+      ]
+    }
+  },
+  "profileOutput": "buildopt-qualified-profile.json",
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false
+}

@@ -1,0 +1,940 @@
+buildopt: structural profile proposal unavailable: run owner Gradle workflow for output-contract preflight: exit status 1
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.6.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+Parallel Configuration Cache is an incubating feature.
+Calculating task graph as no cached configuration is available for tasks: buildoptOutputContract
+> Task :conventions:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :gradle-plugins:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :conventions:extractPrecompiledScriptPluginPlugins
+> Task :conventions:generateScriptPluginAdapters
+> Task :conventions:pluginDescriptors
+> Task :conventions:processResources
+> Task :gradle-plugins:generateExternalPluginSpecBuilders
+> Task :gradle-plugins:extractPrecompiledScriptPluginPlugins
+> Task :gradle-plugins:generateScriptPluginAdapters
+> Task :gradle-plugins:pluginDescriptors
+> Task :gradle-plugins:processResources
+> Task :gradle-plugins:compilePluginsBlocks
+> Task :gradle-plugins:generatePrecompiledScriptPluginAccessors
+> Task :gradle-plugins:compileKotlin
+> Task :gradle-plugins:compileJava NO-SOURCE
+> Task :gradle-plugins:classes
+> Task :gradle-plugins:jar
+> Task :conventions:generateExternalPluginSpecBuilders
+> Task :conventions:compilePluginsBlocks
+> Task :conventions:generatePrecompiledScriptPluginAccessors
+> Task :conventions:compileKotlin
+> Task :conventions:compileJava NO-SOURCE
+> Task :conventions:classes
+> Task :conventions:jar
+> Task :quarkus-2.0-plugin:pluginDescriptors
+> Task :quarkus-2.0-plugin:processResources
+
+> Task :quarkus-common-plugin:compileJava
+Note: /tmp/buildopt-generic-profile-matrix.hMG0M6/opentelemetry-java-instrumentation/repository/instrumentation/quarkus-resteasy-reactive-1.11/quarkus-common-plugin/src/main/java/io/quarkus/gradle/tooling/GradleApplicationModelBuilder.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :quarkus-common-plugin:processResources NO-SOURCE
+> Task :quarkus-common-plugin:classes
+> Task :quarkus-common-plugin:jar
+> Task :quarkus-2.0-plugin:compileJava
+> Task :quarkus-2.0-plugin:classes
+> Task :quarkus-2.0-plugin:jar
+> Task :quarkus-3.0-plugin:compileJava
+> Task :quarkus-3.0-plugin:pluginDescriptors
+> Task :quarkus-3.0-plugin:processResources
+> Task :quarkus-3.0-plugin:classes
+> Task :quarkus-3.0-plugin:jar
+
+> Task :quarkus-3.9-plugin:compileJava
+Note: /tmp/buildopt-generic-profile-matrix.hMG0M6/opentelemetry-java-instrumentation/repository/instrumentation/quarkus-resteasy-reactive-1.11/quarkus-3.9-plugin/src/main/java/io/quarkus/gradle/tooling/GradleApplicationModelBuilder.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :quarkus-3.9-plugin:pluginDescriptors
+> Task :quarkus-3.9-plugin:processResources
+> Task :quarkus-3.9-plugin:classes
+> Task :quarkus-3.9-plugin:jar
+> Task :declarative-config-bridge:processResources NO-SOURCE
+> Task :instrumentation-api:processResources NO-SOURCE
+> Task :instrumentation-annotations:processResources NO-SOURCE
+> Task :instrumentation-annotations-support:processResources NO-SOURCE
+> Task :testing-common:with-shaded-dependencies:processResources NO-SOURCE
+> Task :javaagent-bootstrap:processResources NO-SOURCE
+> Task :instrumentation:r2dbc-1.0:library-instrumentation-shaded:processResources NO-SOURCE
+> Task :testing:dependencies-shaded-for-testing:processResources NO-SOURCE
+> Task :javaagent-extension-api:processResources NO-SOURCE
+> Task :instrumentation:jdbc:library:generateInstrumentationVersionFile
+> Task :instrumentation:resources:library:generateInstrumentationVersionFile
+> Task :instrumentation:resources:library:processResources NO-SOURCE
+> Task :instrumentation:r2dbc-1.0:library:generateInstrumentationVersionFile
+> Task :sdk-autoconfigure-support:processResources
+> Task :instrumentation:log4j:log4j-appender-2.17:library:generateInstrumentationVersionFile
+> Task :instrumentation:resources:library:processJava11Resources NO-SOURCE
+> Task :instrumentation:r2dbc-1.0:library:processResources NO-SOURCE
+> Task :instrumentation:jdbc:library:processResources
+> Task :instrumentation:logback:logback-appender-1.0:library:generateInstrumentationVersionFile
+> Task :instrumentation:runtime-telemetry:library:generateInstrumentationVersionFile
+> Task :instrumentation:log4j:log4j-appender-2.17:library:processResources NO-SOURCE
+> Task :instrumentation:resources:library:processJava9Resources NO-SOURCE
+> Task :testing-common:processResources
+> Task :instrumentation:log4j:log4j-context-data:log4j-context-data-2.17:library-autoconfigure:generateInstrumentationVersionFile
+> Task :muzzle:processResources
+> Task :instrumentation:micrometer:micrometer-1.5:library:generateInstrumentationVersionFile
+> Task :instrumentation:micrometer:micrometer-1.5:library:processResources NO-SOURCE
+> Task :instrumentation:logback:logback-mdc-1.0:library:generateInstrumentationVersionFile
+> Task :instrumentation:mongo:mongo-3.1:library:generateInstrumentationVersionFile
+> Task :instrumentation:logback:logback-mdc-1.0:library:processResources NO-SOURCE
+> Task :instrumentation:mongo:mongo-3.1:library:processResources NO-SOURCE
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-common-0.11:library:generateInstrumentationVersionFile
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-2.6:library:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-web:spring-web-3.1:library:generateInstrumentationVersionFile
+> Task :instrumentation:logback:logback-appender-1.0:library:processResources
+> Task :instrumentation:spring:spring-kafka-2.7:library:generateInstrumentationVersionFile
+> Task :instrumentation:log4j:log4j-context-data:log4j-context-data-2.17:library-autoconfigure:processResources
+> Task :instrumentation:spring:spring-web:spring-web-3.1:library:processResources NO-SOURCE
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-2.6:library:processResources NO-SOURCE
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-common-0.11:library:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-kafka-2.7:library:processResources NO-SOURCE
+> Task :instrumentation:runtime-telemetry:library:processResources
+> Task :javaagent-tooling:javaagent-tooling-java9:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-boot-autoconfigure:testing:processResources NO-SOURCE
+> Task :javaagent-tooling:processResources NO-SOURCE
+> Task :instrumentation:reactor:reactor-3.1:library:generateInstrumentationVersionFile
+> Task :instrumentation:runtime-telemetry:library:processJava17Resources NO-SOURCE
+> Task :instrumentation:spring:spring-boot-autoconfigure:testing:processTestResources NO-SOURCE
+> Task :instrumentation:reactor:reactor-3.1:library:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:library:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-5.3:library:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-boot-resources:javaagent-unit-tests:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:library:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-boot-autoconfigure:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:library:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-5.3:library:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-boot-resources:javaagent-unit-tests:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:library:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-batch-3.0:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-boot-actuator-autoconfigure-2.0:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:micrometer:micrometer-1.5:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:aws-sdk:aws-sdk-2.2:library:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-cloud-aws-3.0:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-batch-3.0:javaagent:processResources NO-SOURCE
+> Task :instrumentation:micrometer:micrometer-1.5:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-boot-actuator-autoconfigure-2.0:javaagent:processResources NO-SOURCE
+> Task :instrumentation:aws-sdk:aws-sdk-2.2:library:processResources NO-SOURCE
+> Task :instrumentation:executors:bootstrap:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-aws-3.0:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-boot-actuator-autoconfigure-2.0:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-integration-4.1:testing:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-integration-4.1:library:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-cloud-aws-3.0:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-scheduling-3.1:bootstrap:processResources NO-SOURCE
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-0.11:bootstrap:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-core-2.0:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-boot-autoconfigure:processResources
+> Task :instrumentation:spring:spring-integration-4.1:library:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-integration-4.1:testing:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-core-2.0:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-boot-resources:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-kafka-2.7:library:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-kafka-2.7:testing:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-boot-autoconfigure:processJavaSpring3Resources NO-SOURCE
+> Task :instrumentation:spring:spring-integration-4.1:library:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-boot-resources:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-integration-4.1:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-core-2.0:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-boot-autoconfigure:processJavaSpring4Resources NO-SOURCE
+> Task :instrumentation:spring:spring-kafka-2.7:testing:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-kafka-2.7:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-pulsar-1.0:testing:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-integration-4.1:javaagent:processResources NO-SOURCE
+> Task :instrumentation:rmi:bootstrap:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-integration-4.1:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-pulsar-1.0:testing:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-kafka-2.7:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-pulsar-1.0:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-batch-3.0:javaagent:processTestResources
+> Task :instrumentation:pulsar:pulsar-2.8:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-scheduling-3.1:bootstrap:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-rabbit-1.0:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-kafka-2.7:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-pulsar-1.0:javaagent:processResources NO-SOURCE
+> Task :instrumentation:pulsar:pulsar-2.8:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-boot-autoconfigure:processTestResources
+> Task :instrumentation:spring:spring-rabbit-1.0:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-pulsar-1.0:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-boot-resources:javaagent:processTestResources
+> Task :instrumentation:spring:spring-rabbit-1.0:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-rmi-4.0:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-rmi-4.0:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:testing:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-security-config-6.0:library:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-scheduling-3.1:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-ws-2.0:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-security-config-6.0:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-security-config-6.0:library:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-scheduling-3.1:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.0:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.2:testing:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:testing:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-security-config-6.0:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-rmi-4.0:javaagent:processTestResources
+> Task :instrumentation:spring:spring-security-config-6.0:library:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-ws-2.0:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-security-config-6.0:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-scheduling-3.1:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.2:testing:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-ws-2.0:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.0:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-common:testing:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webflux-4.3:testing:generateInstrumentationVersionFile
+> Task :instrumentation:jms:jms-common-1.1:bootstrap:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webmvc-4.3:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-data:spring-data-common:testing:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-1.8:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webflux-4.3:testing:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webmvc-4.3:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.2:testing:processTestResources
+> Task :instrumentation:spring:spring-data:spring-data-3.0:testing:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-data:spring-data-1.8:javaagent:processResources NO-SOURCE
+> Task :instrumentation:jms:jms-common-1.1:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.0:javaagent:processTestResources
+> Task :instrumentation:spring:spring-data:spring-data-1.8:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webmvc-4.3:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-3.0:testing:processResources NO-SOURCE
+> Task :instrumentation:jms:jms-common-1.1:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:testing:processResources NO-SOURCE
+> Task :instrumentation:jms:jms-1.1:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-data:spring-data-3.0:testing:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:processTestResources NO-SOURCE
+> Task :instrumentation:jms:jms-1.1:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-web:spring-web-3.1:library:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:testing:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webflux-4.3:testing:processTestResources
+> Task :instrumentation:jms:jms-3.0:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-web:spring-web-3.1:testing:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-jms:spring-jms-6.0:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-web:spring-web-6.0:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-web:spring-web-3.1:testing:processResources NO-SOURCE
+> Task :instrumentation:jms:jms-3.0:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-web:spring-web-6.0:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-jms:spring-jms-6.0:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-web:spring-web-3.1:testing:processTestResources NO-SOURCE
+> Task :instrumentation:netty:netty-common:library:generateInstrumentationVersionFile
+> Task :instrumentation:netty:netty-common-4.0:library:generateInstrumentationVersionFile
+> Task :instrumentation:netty:netty-4.1:library:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing-webflux7:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-jms:spring-jms-6.0:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-web:spring-web-6.0:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing-webflux7:processTestResources NO-SOURCE
+> Task :instrumentation:netty:netty-common-4.0:library:processResources NO-SOURCE
+> Task :instrumentation:netty:netty-common:library:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:library:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:javaagent:processResources NO-SOURCE
+> Task :instrumentation:servlet:servlet-common:bootstrap:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing:processTestResources NO-SOURCE
+> Task :instrumentation:netty:netty-4.1:library:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:testing:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-5.3:library:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:library:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing-webflux7:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:testing:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing-webflux7:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:wildfly-testing:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:javaagent:processTestResources
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:generateInstrumentationVersionFile
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing-webflux7:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:wildfly-testing:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:processResources NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:processTestResources NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:javaagent:processTestResources
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:wildfly-testing:processTestResources
+> Task :instrumentation:spring:spring-ws-2.0:testing:processTestResources NO-SOURCE
+
+> Task :instrumentation-api-incubator:generateJflex
+Reading "/tmp/buildopt-generic-profile-matrix.hMG0M6/opentelemetry-java-instrumentation/repository/instrumentation-api-incubator/src/main/jflex/SqlSanitizer.jflex"
+Constructing NFA : 482 states in NFA
+Converting NFA to DFA : 
+...................................................................................................................................................................................................................................
+231 states before minimization, 185 states in minimized DFA
+Writing code to "/tmp/buildopt-generic-profile-matrix.hMG0M6/opentelemetry-java-instrumentation/repository/instrumentation-api-incubator/build/generated/sources/jflex/AutoSqlSanitizer.java"
+Reading "/tmp/buildopt-generic-profile-matrix.hMG0M6/opentelemetry-java-instrumentation/repository/instrumentation-api-incubator/src/main/jflex/SqlSanitizerWithSummary.jflex"
+Constructing NFA : 705 states in NFA
+Converting NFA to DFA : 
+..............................................................................................................................................................................................................................................................................................................................................
+338 states before minimization, 281 states in minimized DFA
+Writing code to "/tmp/buildopt-generic-profile-matrix.hMG0M6/opentelemetry-java-instrumentation/repository/instrumentation-api-incubator/build/generated/sources/jflex/AutoSqlSanitizerWithSummary.java"
+
+> Task :instrumentation-api-incubator:processResources NO-SOURCE
+
+> Task :instrumentation:spring:spring-ws-2.0:testing:xjc
+io/opentelemetry/test/hello_web_service/HelloRequest.java
+io/opentelemetry/test/hello_web_service/HelloRequestSoapAction.java
+io/opentelemetry/test/hello_web_service/HelloRequestWsAction.java
+io/opentelemetry/test/hello_web_service/HelloResponse.java
+io/opentelemetry/test/hello_web_service/ObjectFactory.java
+io/opentelemetry/test/hello_web_service/package-info.java
+
+> Task :instrumentation:spring:spring-ws-2.0:testing:processResources
+> Task :custom-checks:compileJava
+> Task :custom-checks:compileGroovy NO-SOURCE
+> Task :custom-checks:processResources NO-SOURCE
+> Task :custom-checks:classes
+> Task :custom-checks:jar
+> Task :instrumentation:spring:spring-boot-resources:javaagent-unit-tests:compileJava NO-SOURCE
+> Task :testing:dependencies-shaded-for-testing:compileJava NO-SOURCE
+> Task :testing:dependencies-shaded-for-testing:compileGroovy NO-SOURCE
+> Task :testing:dependencies-shaded-for-testing:classes UP-TO-DATE
+> Task :instrumentation:spring:spring-boot-resources:javaagent-unit-tests:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-boot-resources:javaagent-unit-tests:classes UP-TO-DATE
+> Task :instrumentation-annotations:compileJava
+> Task :instrumentation-annotations:compileGroovy NO-SOURCE
+> Task :instrumentation-annotations:classes
+> Task :instrumentation-annotations:jar
+> Task :instrumentation:spring:spring-ws-2.0:testing:compileJava
+> Task :instrumentation:spring:spring-ws-2.0:testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-ws-2.0:testing:classes
+> Task :instrumentation:spring:spring-ws-2.0:testing:jar
+> Task :instrumentation:spring:spring-ws-2.0:testing:compileTestJava NO-SOURCE
+> Task :instrumentation:spring:spring-ws-2.0:testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-ws-2.0:testing:testClasses UP-TO-DATE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing-webflux7:compileJava
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing-webflux7:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing-webflux7:classes
+> Task :sdk-autoconfigure-support:compileJava
+> Task :sdk-autoconfigure-support:compileGroovy NO-SOURCE
+> Task :sdk-autoconfigure-support:classes
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing-webflux7:jar
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing-webflux7:compileTestJava NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing-webflux7:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing-webflux7:testClasses UP-TO-DATE
+> Task :sdk-autoconfigure-support:jar
+> Task :declarative-config-bridge:compileJava
+> Task :declarative-config-bridge:compileGroovy NO-SOURCE
+> Task :declarative-config-bridge:classes
+> Task :declarative-config-bridge:jar
+> Task :instrumentation-api:compileJava
+> Task :instrumentation-api:compileGroovy NO-SOURCE
+> Task :instrumentation-api:classes
+> Task :instrumentation-api:jar
+> Task :javaagent-bootstrap:compileJava
+> Task :javaagent-bootstrap:compileGroovy NO-SOURCE
+> Task :javaagent-bootstrap:classes
+> Task :javaagent-bootstrap:jar
+> Task :instrumentation-annotations-support:compileJava
+> Task :instrumentation-annotations-support:compileGroovy NO-SOURCE
+> Task :instrumentation-annotations-support:classes
+> Task :instrumentation-annotations-support:jar
+> Task :instrumentation:spring:spring-scheduling-3.1:bootstrap:compileJava
+> Task :instrumentation:spring:spring-scheduling-3.1:bootstrap:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-scheduling-3.1:bootstrap:classes
+> Task :instrumentation:spring:spring-scheduling-3.1:bootstrap:jar
+> Task :instrumentation:spring:spring-scheduling-3.1:bootstrap:compileTestJava NO-SOURCE
+> Task :instrumentation:spring:spring-scheduling-3.1:bootstrap:compileTestGroovy NO-SOURCE
+> Task :instrumentation:rmi:bootstrap:compileJava
+> Task :instrumentation:spring:spring-scheduling-3.1:bootstrap:testClasses UP-TO-DATE
+> Task :instrumentation:rmi:bootstrap:compileGroovy NO-SOURCE
+> Task :instrumentation:rmi:bootstrap:classes
+> Task :instrumentation:rmi:bootstrap:jar
+> Task :instrumentation:jms:jms-common-1.1:bootstrap:compileJava
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-0.11:bootstrap:compileJava
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-0.11:bootstrap:compileGroovy NO-SOURCE
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-0.11:bootstrap:classes
+> Task :instrumentation:jms:jms-common-1.1:bootstrap:compileGroovy NO-SOURCE
+> Task :instrumentation:jms:jms-common-1.1:bootstrap:classes
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-0.11:bootstrap:jar
+> Task :instrumentation:jms:jms-common-1.1:bootstrap:jar
+> Task :instrumentation:executors:bootstrap:compileJava
+> Task :instrumentation:executors:bootstrap:compileGroovy NO-SOURCE
+> Task :instrumentation:executors:bootstrap:classes
+> Task :instrumentation:executors:bootstrap:jar
+> Task :javaagent-tooling:javaagent-tooling-java9:compileJava
+> Task :javaagent-tooling:javaagent-tooling-java9:compileGroovy NO-SOURCE
+> Task :javaagent-tooling:javaagent-tooling-java9:classes
+> Task :javaagent-tooling:javaagent-tooling-java9:jar
+
+> Task :instrumentation-api-incubator:compileJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :instrumentation-api-incubator:compileGroovy NO-SOURCE
+> Task :instrumentation-api-incubator:classes
+> Task :instrumentation-api-incubator:jar
+> Task :testing:dependencies-shaded-for-testing:shadowJar
+> Task :instrumentation:logback:logback-mdc-1.0:library:compileJava
+> Task :instrumentation:logback:logback-mdc-1.0:library:compileGroovy NO-SOURCE
+> Task :instrumentation:logback:logback-mdc-1.0:library:classes
+> Task :instrumentation:logback:logback-mdc-1.0:library:jar
+> Task :instrumentation:micrometer:micrometer-1.5:library:compileJava
+> Task :instrumentation:micrometer:micrometer-1.5:library:compileGroovy NO-SOURCE
+> Task :instrumentation:micrometer:micrometer-1.5:library:classes
+> Task :instrumentation:micrometer:micrometer-1.5:library:jar
+> Task :instrumentation:runtime-telemetry:library:compileJava
+> Task :instrumentation:runtime-telemetry:library:compileGroovy NO-SOURCE
+> Task :instrumentation:runtime-telemetry:library:classes
+> Task :javaagent-extension-api:compileJava
+> Task :javaagent-extension-api:compileGroovy NO-SOURCE
+> Task :javaagent-extension-api:classes
+> Task :javaagent-extension-api:jar
+> Task :instrumentation:spring:spring-web:spring-web-3.1:library:compileJava
+> Task :instrumentation:resources:library:compileJava
+> Task :instrumentation:resources:library:compileGroovy NO-SOURCE
+> Task :instrumentation:resources:library:classes
+> Task :instrumentation:spring:spring-boot-resources:javaagent:compileJava
+> Task :instrumentation:spring:spring-web:spring-web-3.1:library:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-web:spring-web-3.1:library:classes
+> Task :instrumentation:spring:spring-web:spring-web-3.1:library:jar
+> Task :instrumentation:spring:spring-boot-resources:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-boot-resources:javaagent:classes
+> Task :instrumentation:spring:spring-boot-resources:javaagent:jar
+> Task :instrumentation:resources:library:compileJava11Java
+> Task :instrumentation:resources:library:compileJava11Groovy NO-SOURCE
+> Task :instrumentation:log4j:log4j-context-data:log4j-context-data-2.17:library-autoconfigure:compileJava
+> Task :instrumentation:log4j:log4j-context-data:log4j-context-data-2.17:library-autoconfigure:compileGroovy NO-SOURCE
+> Task :instrumentation:log4j:log4j-context-data:log4j-context-data-2.17:library-autoconfigure:classes
+> Task :instrumentation:log4j:log4j-context-data:log4j-context-data-2.17:library-autoconfigure:jar
+> Task :instrumentation:r2dbc-1.0:library:compileJava
+> Task :instrumentation:r2dbc-1.0:library:compileGroovy NO-SOURCE
+> Task :instrumentation:r2dbc-1.0:library:classes
+> Task :instrumentation:r2dbc-1.0:library:jar
+> Task :instrumentation:r2dbc-1.0:library-instrumentation-shaded:compileJava NO-SOURCE
+> Task :instrumentation:r2dbc-1.0:library-instrumentation-shaded:compileGroovy NO-SOURCE
+> Task :instrumentation:r2dbc-1.0:library-instrumentation-shaded:classes UP-TO-DATE
+> Task :instrumentation:r2dbc-1.0:library-instrumentation-shaded:shadowJar
+> Task :instrumentation:r2dbc-1.0:library-instrumentation-shaded:extractShadowJarSpring
+
+> Task :instrumentation:log4j:log4j-appender-2.17:library:compileJava
+Note: Processing Log4j annotations
+Note: Annotations processed
+Note: Processing Log4j annotations
+Note: No elements to process
+
+> Task :instrumentation:resources:library:compileJava9Java
+> Task :instrumentation:resources:library:compileJava9Groovy NO-SOURCE
+> Task :instrumentation:resources:library:java11Classes
+> Task :instrumentation:resources:library:java9Classes
+> Task :instrumentation:resources:library:jar
+> Task :instrumentation:mongo:mongo-3.1:library:compileJava
+> Task :instrumentation:mongo:mongo-3.1:library:compileGroovy NO-SOURCE
+> Task :instrumentation:mongo:mongo-3.1:library:classes
+> Task :instrumentation:mongo:mongo-3.1:library:jar
+> Task :instrumentation:jdbc:library:compileJava
+> Task :instrumentation:jdbc:library:compileGroovy NO-SOURCE
+> Task :instrumentation:jdbc:library:classes
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:library:compileJava
+> Task :instrumentation:jdbc:library:jar
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:library:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:library:classes
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:library:jar
+> Task :instrumentation:runtime-telemetry:library:compileJava17Java
+> Task :instrumentation:runtime-telemetry:library:compileJava17Groovy NO-SOURCE
+> Task :instrumentation:runtime-telemetry:library:java17Classes
+> Task :instrumentation:runtime-telemetry:library:jar
+> Task :instrumentation:netty:netty-common:library:compileJava
+> Task :instrumentation:netty:netty-common:library:compileGroovy NO-SOURCE
+> Task :instrumentation:netty:netty-common:library:classes
+> Task :instrumentation:netty:netty-common:library:jar
+> Task :instrumentation:servlet:servlet-common:bootstrap:compileJava
+> Task :instrumentation:servlet:servlet-common:bootstrap:compileGroovy NO-SOURCE
+> Task :instrumentation:servlet:servlet-common:bootstrap:classes
+> Task :instrumentation:servlet:servlet-common:bootstrap:jar
+> Task :instrumentation:log4j:log4j-appender-2.17:library:compileGroovy NO-SOURCE
+> Task :instrumentation:log4j:log4j-appender-2.17:library:classes
+> Task :instrumentation:log4j:log4j-appender-2.17:library:jar
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-5.3:library:compileJava
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-5.3:library:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-5.3:library:classes
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-5.3:library:jar
+> Task :instrumentation:spring:spring-boot-resources:javaagent-unit-tests:compileTestJava
+> Task :instrumentation:spring:spring-boot-resources:javaagent-unit-tests:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-boot-resources:javaagent-unit-tests:testClasses
+> Task :instrumentation:spring:spring-integration-4.1:library:compileJava
+> Task :instrumentation:spring:spring-integration-4.1:library:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-integration-4.1:library:classes
+> Task :instrumentation:spring:spring-integration-4.1:library:jar
+> Task :muzzle:compileJava
+> Task :muzzle:compileGroovy NO-SOURCE
+> Task :muzzle:classes
+> Task :muzzle:jar
+> Task :instrumentation:netty:netty-common-4.0:library:compileJava
+> Task :instrumentation:netty:netty-common-4.0:library:compileGroovy NO-SOURCE
+> Task :instrumentation:netty:netty-common-4.0:library:classes
+> Task :instrumentation:netty:netty-common-4.0:library:jar
+> Task :instrumentation:reactor:reactor-3.1:library:compileJava
+> Task :instrumentation:reactor:reactor-3.1:library:compileGroovy NO-SOURCE
+> Task :instrumentation:reactor:reactor-3.1:library:classes
+> Task :instrumentation:reactor:reactor-3.1:library:jar
+> Task :instrumentation:logback:logback-appender-1.0:library:compileJava
+> Task :instrumentation:logback:logback-appender-1.0:library:compileGroovy NO-SOURCE
+> Task :instrumentation:logback:logback-appender-1.0:library:classes
+> Task :instrumentation:logback:logback-appender-1.0:library:jar
+> Task :instrumentation:netty:netty-4.1:library:compileJava
+> Task :instrumentation:netty:netty-4.1:library:compileGroovy NO-SOURCE
+> Task :instrumentation:netty:netty-4.1:library:classes
+> Task :instrumentation:netty:netty-4.1:library:jar
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-common-0.11:library:compileJava
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-common-0.11:library:compileGroovy NO-SOURCE
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-common-0.11:library:classes
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-common-0.11:library:jar
+> Task :instrumentation:spring:spring-security-config-6.0:library:compileJava
+> Task :instrumentation:spring:spring-security-config-6.0:library:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-security-config-6.0:library:classes
+> Task :instrumentation:spring:spring-security-config-6.0:library:jar
+
+> Task :instrumentation:aws-sdk:aws-sdk-2.2:library:compileJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:library:compileJava
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:library:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:library:classes
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:library:jar
+> Task :instrumentation:aws-sdk:aws-sdk-2.2:library:compileGroovy NO-SOURCE
+> Task :instrumentation:aws-sdk:aws-sdk-2.2:library:classes
+> Task :instrumentation:aws-sdk:aws-sdk-2.2:library:jar
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-2.6:library:compileJava
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-2.6:library:compileGroovy NO-SOURCE
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-2.6:library:classes
+> Task :instrumentation:kafka:kafka-clients:kafka-clients-2.6:library:jar
+> Task :instrumentation:spring:spring-kafka-2.7:library:compileJava
+> Task :instrumentation:spring:spring-kafka-2.7:library:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-kafka-2.7:library:classes
+> Task :instrumentation:spring:spring-kafka-2.7:library:jar
+> Task :javaagent-tooling:compileJava
+> Task :javaagent-tooling:compileGroovy NO-SOURCE
+> Task :javaagent-tooling:classes
+> Task :javaagent-tooling:jar
+> Task :instrumentation:spring:spring-core-2.0:javaagent:compileJava
+> Task :instrumentation:spring:spring-integration-4.1:javaagent:compileJava
+
+> Task :instrumentation:spring:spring-rmi-4.0:javaagent:compileJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :instrumentation:micrometer:micrometer-1.5:javaagent:compileJava
+> Task :instrumentation:spring:spring-scheduling-3.1:javaagent:compileJava
+> Task :instrumentation:spring:spring-core-2.0:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-core-2.0:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-core-2.0:javaagent:classes
+> Task :instrumentation:spring:spring-scheduling-3.1:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-scheduling-3.1:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-scheduling-3.1:javaagent:classes
+> Task :instrumentation:spring:spring-rmi-4.0:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-rmi-4.0:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-rmi-4.0:javaagent:classes
+> Task :instrumentation:spring:spring-integration-4.1:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-integration-4.1:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-integration-4.1:javaagent:classes
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.2:testing:compileJava NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.2:testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.2:testing:classes
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webflux-4.3:testing:compileJava NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webflux-4.3:testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webflux-4.3:testing:classes
+> Task :instrumentation:micrometer:micrometer-1.5:javaagent:byteBuddyJava
+> Task :instrumentation:micrometer:micrometer-1.5:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:micrometer:micrometer-1.5:javaagent:classes
+> Task :instrumentation:micrometer:micrometer-1.5:javaagent:jar
+> Task :instrumentation:spring:spring-kafka-2.7:javaagent:compileJava
+> Task :instrumentation:spring:spring-rabbit-1.0:javaagent:compileJava
+> Task :instrumentation:spring:spring-rabbit-1.0:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-rabbit-1.0:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-rabbit-1.0:javaagent:classes
+> Task :instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:compileKotlin NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:compileJava NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:classes
+> Task :instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:jar
+> Task :instrumentation:spring:spring-data:spring-data-3.0:testing:compileJava NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-3.0:testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-3.0:testing:classes
+> Task :instrumentation:spring:spring-batch-3.0:javaagent:compileJava
+> Task :instrumentation:spring:spring-kafka-2.7:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-kafka-2.7:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-kafka-2.7:javaagent:classes
+> Task :instrumentation:spring:spring-web:spring-web-3.1:testing:compileJava NO-SOURCE
+> Task :instrumentation:spring:spring-web:spring-web-3.1:testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-web:spring-web-3.1:testing:classes
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:compileJava
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:classes
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:jar
+> Task :instrumentation:spring:spring-batch-3.0:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-batch-3.0:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-batch-3.0:javaagent:classes
+> Task :instrumentation:spring:spring-security-config-6.0:javaagent:compileJava
+> Task :instrumentation:spring:spring-security-config-6.0:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-security-config-6.0:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-security-config-6.0:javaagent:classes
+> Task :instrumentation:spring:spring-web:spring-web-6.0:javaagent:compileJava
+> Task :instrumentation:spring:spring-web:spring-web-6.0:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-web:spring-web-6.0:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-web:spring-web-6.0:javaagent:classes
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing-webflux7:compileJava NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing-webflux7:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing-webflux7:classes
+> Task :instrumentation:jms:jms-common-1.1:javaagent:compileJava
+> Task :instrumentation:spring:spring-data:spring-data-1.8:javaagent:compileJava
+> Task :instrumentation:jms:jms-common-1.1:javaagent:byteBuddyJava
+> Task :instrumentation:jms:jms-common-1.1:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:jms:jms-common-1.1:javaagent:classes
+> Task :instrumentation:jms:jms-common-1.1:javaagent:jar
+
+> Task :instrumentation:spring:spring-boot-autoconfigure:compileJava
+Note: /tmp/buildopt-generic-profile-matrix.hMG0M6/opentelemetry-java-instrumentation/repository/instrumentation/spring/spring-boot-autoconfigure/src/main/java/io/opentelemetry/instrumentation/spring/autoconfigure/OpenTelemetryAutoConfiguration.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :instrumentation:spring:spring-data:spring-data-1.8:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-data:spring-data-1.8:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-1.8:javaagent:classes
+> Task :instrumentation:spring:spring-ws-2.0:javaagent:compileJava
+
+> Task :testing:dependencies-shaded-for-testing:shadowJar
+'META-INF/micrometer-core.kotlin_module' is matched by com.github.jengelman.gradle.plugins.shadow.transformers.KotlinModuleMetadataTransformer_Decorated but its DuplicatesStrategy is EXCLUDE — duplicates may be silently dropped before the transformer processes them.
+Set it to INCLUDE or WARN to ensure all duplicates are processed by the transformer.
+See https://gradleup.com/shadow/configuration/merging/#handling-duplicates-strategy for more details.
+
+> Task :instrumentation:spring:spring-ws-2.0:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-ws-2.0:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-ws-2.0:javaagent:classes
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:wildfly-testing:compileJava NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:wildfly-testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:wildfly-testing:classes
+> Task :instrumentation:spring:spring-cloud-aws-3.0:javaagent:compileJava
+> Task :instrumentation:spring:spring-cloud-aws-3.0:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-cloud-aws-3.0:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-aws-3.0:javaagent:classes
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:compileJava
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:classes
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:jar
+> Task :instrumentation:jms:jms-1.1:javaagent:compileJava
+> Task :instrumentation:jms:jms-1.1:javaagent:byteBuddyJava
+> Task :instrumentation:jms:jms-1.1:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:jms:jms-1.1:javaagent:classes
+> Task :instrumentation:jms:jms-1.1:javaagent:jar
+> Task :instrumentation:jms:jms-3.0:javaagent:compileJava
+> Task :instrumentation:jms:jms-3.0:javaagent:byteBuddyJava
+> Task :instrumentation:jms:jms-3.0:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:jms:jms-3.0:javaagent:classes
+> Task :instrumentation:jms:jms-3.0:javaagent:jar
+> Task :instrumentation:spring:spring-boot-actuator-autoconfigure-2.0:javaagent:compileJava
+> Task :instrumentation:spring:spring-boot-actuator-autoconfigure-2.0:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-boot-actuator-autoconfigure-2.0:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-boot-actuator-autoconfigure-2.0:javaagent:classes
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:javaagent:compileJava
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:javaagent:classes
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:javaagent:compileJava
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:compileJava
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:classes
+> Task :instrumentation:spring:spring-jms:spring-jms-6.0:javaagent:compileJava
+> Task :instrumentation:pulsar:pulsar-2.8:javaagent:compileJava
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:javaagent:classes
+> Task :instrumentation:spring:spring-jms:spring-jms-6.0:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-jms:spring-jms-6.0:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-jms:spring-jms-6.0:javaagent:classes
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:javaagent:compileJava
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:javaagent:classes
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.0:javaagent:compileJava
+> Task :instrumentation:spring:spring-boot-autoconfigure:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-boot-autoconfigure:classes
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.0:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.0:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.0:javaagent:classes
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webmvc-4.3:javaagent:compileJava
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webmvc-4.3:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webmvc-4.3:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webmvc-4.3:javaagent:classes
+> Task :instrumentation:pulsar:pulsar-2.8:javaagent:byteBuddyJava
+> Task :instrumentation:pulsar:pulsar-2.8:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:pulsar:pulsar-2.8:javaagent:classes
+> Task :instrumentation:pulsar:pulsar-2.8:javaagent:jar
+> Task :instrumentation:spring:spring-boot-autoconfigure:compileJavaSpring3Java
+> Task :instrumentation:spring:spring-boot-autoconfigure:compileJavaSpring3Groovy NO-SOURCE
+> Task :instrumentation:spring:spring-boot-autoconfigure:compileJavaSpring4Java
+> Task :instrumentation:spring:spring-boot-autoconfigure:compileJavaSpring4Groovy NO-SOURCE
+> Task :instrumentation:spring:spring-boot-autoconfigure:javaSpring3Classes
+> Task :instrumentation:spring:spring-boot-autoconfigure:javaSpring4Classes
+> Task :instrumentation:spring:spring-boot-autoconfigure:jar
+> Task :instrumentation:spring:spring-pulsar-1.0:javaagent:compileJava
+> Task :instrumentation:spring:spring-pulsar-1.0:javaagent:byteBuddyJava
+> Task :instrumentation:spring:spring-pulsar-1.0:javaagent:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-pulsar-1.0:javaagent:classes
+> Task :testing:dependencies-shaded-for-testing:extractShadowJar
+> Task :testing-common:compileJava
+> Task :testing-common:compileGroovy NO-SOURCE
+> Task :testing-common:classes
+> Task :testing-common:jar
+> Task :testing-common:with-shaded-dependencies:compileJava NO-SOURCE
+> Task :testing-common:with-shaded-dependencies:compileGroovy NO-SOURCE
+> Task :testing-common:with-shaded-dependencies:classes UP-TO-DATE
+> Task :testing-common:with-shaded-dependencies:jar
+> Task :instrumentation:spring:spring-boot-resources:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-boot-resources:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-boot-resources:javaagent:testClasses
+> Task :instrumentation:spring:spring-batch-3.0:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-cloud-aws-3.0:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-boot-actuator-autoconfigure-2.0:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-core-2.0:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-integration-4.1:testing:compileJava
+> Task :instrumentation:spring:spring-boot-autoconfigure:testing:compileJava
+> Task :instrumentation:spring:spring-pulsar-1.0:testing:compileJava
+> Task :instrumentation:spring:spring-rabbit-1.0:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-rmi-4.0:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-kafka-2.7:testing:compileJava
+> Task :instrumentation:spring:spring-scheduling-3.1:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-boot-autoconfigure:testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-boot-autoconfigure:testing:classes
+> Task :instrumentation:spring:spring-boot-autoconfigure:testing:jar
+> Task :instrumentation:spring:spring-boot-autoconfigure:compileTestJava
+> Task :instrumentation:spring:spring-boot-autoconfigure:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-boot-autoconfigure:testClasses
+> Task :instrumentation:spring:spring-boot-autoconfigure:testing:compileTestJava NO-SOURCE
+> Task :instrumentation:spring:spring-boot-autoconfigure:testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-boot-autoconfigure:testing:testClasses UP-TO-DATE
+> Task :instrumentation:spring:spring-core-2.0:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-core-2.0:javaagent:testClasses
+> Task :instrumentation:spring:spring-boot-actuator-autoconfigure-2.0:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-boot-actuator-autoconfigure-2.0:javaagent:testClasses
+> Task :instrumentation:spring:spring-batch-3.0:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-batch-3.0:javaagent:testClasses
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:compileTestJava NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:testClasses UP-TO-DATE
+> Task :instrumentation:spring:spring-scheduling-3.1:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-scheduling-3.1:javaagent:testClasses
+> Task :instrumentation:spring:spring-kafka-2.7:testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-kafka-2.7:testing:classes
+> Task :instrumentation:spring:spring-kafka-2.7:testing:jar
+> Task :instrumentation:spring:spring-security-config-6.0:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-kafka-2.7:testing:compileTestJava NO-SOURCE
+> Task :instrumentation:spring:spring-kafka-2.7:testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-kafka-2.7:testing:testClasses UP-TO-DATE
+> Task :instrumentation:spring:spring-pulsar-1.0:testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-pulsar-1.0:testing:classes
+> Task :instrumentation:spring:spring-pulsar-1.0:testing:jar
+> Task :instrumentation:spring:spring-security-config-6.0:library:compileTestJava
+> Task :instrumentation:spring:spring-pulsar-1.0:testing:compileTestJava NO-SOURCE
+> Task :instrumentation:spring:spring-pulsar-1.0:testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-pulsar-1.0:testing:testClasses UP-TO-DATE
+> Task :instrumentation:spring:spring-security-config-6.0:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-security-config-6.0:javaagent:testClasses
+> Task :instrumentation:spring:spring-security-config-6.0:library:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-security-config-6.0:library:testClasses
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:testing:compileJava
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:testing:classes
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:testing:jar
+> Task :instrumentation:spring:spring-pulsar-1.0:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-pulsar-1.0:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-pulsar-1.0:javaagent:testClasses
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:testing:compileTestJava NO-SOURCE
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:testing:testClasses UP-TO-DATE
+> Task :instrumentation:spring:spring-rabbit-1.0:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-rabbit-1.0:javaagent:testClasses
+> Task :instrumentation:spring:spring-kafka-2.7:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-kafka-2.7:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-kafka-2.7:javaagent:testClasses
+> Task :instrumentation:spring:spring-web:spring-web-3.1:library:compileTestJava
+> Task :instrumentation:spring:spring-web:spring-web-3.1:library:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-web:spring-web-3.1:library:testClasses
+> Task :instrumentation:spring:spring-kafka-2.7:library:compileTestJava
+> Task :instrumentation:spring:spring-kafka-2.7:library:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-kafka-2.7:library:testClasses
+> Task :instrumentation:spring:spring-integration-4.1:testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-integration-4.1:testing:classes
+> Task :instrumentation:spring:spring-integration-4.1:testing:jar
+> Task :instrumentation:spring:spring-web:spring-web-3.1:testing:compileTestJava
+> Task :instrumentation:spring:spring-web:spring-web-6.0:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-integration-4.1:testing:compileTestJava NO-SOURCE
+> Task :instrumentation:spring:spring-integration-4.1:testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-integration-4.1:testing:testClasses UP-TO-DATE
+> Task :instrumentation:spring:spring-web:spring-web-3.1:testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-web:spring-web-3.1:testing:testClasses
+> Task :instrumentation:spring:spring-web:spring-web-6.0:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-web:spring-web-6.0:javaagent:testClasses
+> Task :instrumentation:spring:spring-integration-4.1:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-integration-4.1:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-integration-4.1:javaagent:testClasses
+> Task :instrumentation:spring:spring-integration-4.1:library:compileTestJava
+> Task :instrumentation:spring:spring-integration-4.1:library:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-integration-4.1:library:testClasses
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing:compileJava
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing:classes
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing:jar
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing:compileTestJava NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing:testClasses UP-TO-DATE
+> Task :instrumentation:spring:spring-ws-2.0:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:testing:compileJava
+> Task :instrumentation:spring:spring-data:spring-data-common:testing:compileJava
+> Task :instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:compileTestKotlin
+> Task :instrumentation:spring:spring-ws-2.0:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-ws-2.0:javaagent:testClasses
+> Task :instrumentation:spring:spring-jms:spring-jms-6.0:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-jms:spring-jms-6.0:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-jms:spring-jms-6.0:javaagent:testClasses
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:compileTestJava NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:testClasses UP-TO-DATE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing:compileJava
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing:classes
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing:jar
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:wildfly-testing:compileTestJava
+> Task :instrumentation:spring:spring-rmi-4.0:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-rmi-4.0:javaagent:testClasses
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing:compileTestJava NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:testing:testClasses UP-TO-DATE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:wildfly-testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:wildfly-testing:testClasses
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:testing:classes
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:testing:jar
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:testing:compileTestJava NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:testing:testClasses UP-TO-DATE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:library:compileTestJava
+> Task :instrumentation:spring:spring-data:spring-data-common:testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-common:testing:classes
+> Task :instrumentation:spring:spring-data:spring-data-common:testing:jar
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-5.3:library:compileTestJava
+> Task :instrumentation:spring:spring-data:spring-data-common:testing:compileTestJava NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-common:testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-common:testing:testClasses UP-TO-DATE
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-jms:spring-jms-2.0:javaagent:testClasses
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:javaagent:testClasses
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-5.3:library:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-5.3:library:testClasses
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:library:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:library:testClasses
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:library:compileTestJava
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:library:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.3:library:testClasses
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.2:testing:compileTestJava
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.2:testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.2:testing:testClasses
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.0:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.0:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.0:javaagent:testClasses
+> Task :instrumentation:spring:spring-cloud-aws-3.0:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-aws-3.0:javaagent:testClasses
+> Task :instrumentation:spring:spring-data:spring-data-1.8:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-data:spring-data-1.8:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-1.8:javaagent:testClasses
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:testing:compileJava
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:testing:compileGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:testing:classes
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:testing:jar
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:testing:compileTestJava NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:testing:testClasses UP-TO-DATE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing-webflux7:compileTestJava
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing-webflux7:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webflux:spring-webflux-5.0:testing-webflux7:testClasses
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webflux-4.3:testing:compileTestJava
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webflux-4.3:testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webflux-4.3:testing:testClasses
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webmvc-4.3:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webmvc-4.3:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webmvc-4.3:javaagent:testClasses
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-3.1:javaagent:testClasses
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:compileTestJava
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:testClasses
+> Task :instrumentation:spring:spring-data:spring-data-3.0:testing:compileTestJava
+> Task :instrumentation:spring:spring-data:spring-data-3.0:testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-3.0:testing:testClasses
+
+> Task :instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:compileTestKotlin
+w: file:///tmp/buildopt-generic-profile-matrix.hMG0M6/opentelemetry-java-instrumentation/repository/instrumentation/spring/spring-data/spring-data-3.0/kotlin-testing/src/test/kotlin/io/opentelemetry/javaagent/instrumentation/spring/data/v3_0/repository/PersistenceConfig.kt:26:48 Java type mismatch: inferred type is 'ConnectionFactory?', but 'ConnectionFactory' was expected.
+
+> Task :instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:compileTestJava NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:compileTestGroovy NO-SOURCE
+> Task :instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:testClasses UP-TO-DATE
+> Task :buildoptOutputContract FAILED
+
+[Incubating] Problems report is available at: file:///tmp/buildopt-generic-profile-matrix.hMG0M6/opentelemetry-java-instrumentation/repository/build/reports/problems/problems-report.html
+
+FAILURE: Build completed with 2 failures.
+
+1: Task failed with an exception.
+-----------
+* Where:
+Initialization script '/tmp/buildopt-output-contract-2486280863/output-contract.init.gradle' line: 42
+
+* What went wrong:
+Execution failed for task ':buildoptOutputContract' (registered in initialization script '/tmp/buildopt-output-contract-2486280863/output-contract.init.gradle').
+> Execution of task ':buildoptOutputContract' caused invocation of 'Task.project' by task ':custom-checks:compileJava' at execution time which is unsupported with the configuration cache.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+2: Task failed with an exception.
+-----------
+* What went wrong:
+Configuration cache problems found in this build.
+
+2 problems were found storing the configuration cache.
+- Task `:buildoptOutputContract` of type `org.gradle.api.DefaultTask`: cannot serialize object of type 'org.gradle.api.internal.project.DefaultProject', a subtype of 'org.gradle.api.Project', as these are not supported with the configuration cache.
+  See https://docs.gradle.org/9.6.1/userguide/configuration_cache_requirements.html#config_cache:requirements:disallowed_types
+- Initialization script '/tmp/buildopt-output-contract-2486280863/output-contract.init.gradle': line 42: execution of task ':buildoptOutputContract' caused invocation of 'Task.project' in other task at execution time which is unsupported with the configuration cache.
+  See https://docs.gradle.org/9.6.1/userguide/configuration_cache_requirements.html#config_cache:requirements:use_project_during_execution
+
+See the complete report at file:///tmp/buildopt-generic-profile-matrix.hMG0M6/opentelemetry-java-instrumentation/repository/build/reports/configuration-cache/eqjbf4ha60vrswyhullr7wj6f/4ac8xvt6zqwyneyszw6p57new/configuration-cache-report.html
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.6.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 17m 8s
+341 actionable tasks: 341 executed
+Configuration cache entry discarded with 2 problems.
+

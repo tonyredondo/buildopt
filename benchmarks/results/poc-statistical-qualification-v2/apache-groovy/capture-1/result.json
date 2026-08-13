@@ -1,0 +1,40 @@
+{
+  "key": "apache-groovy",
+  "repositoryId": "apache/groovy",
+  "workflowFamily": null,
+  "publicRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+  "targetRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "classes"
+    ],
+    "candidateEntrypoints": [
+      ":groovy-json:classes"
+    ],
+    "totalProjectCount": 37,
+    "selectedProjectCount": 2,
+    "omittedProjectCount": 35
+  },
+  "measurementStatus": "COMPLETED",
+  "measurementFailureClass": null,
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 81443,
+    "candidateMeanMs": 20349.25,
+    "meanSavedMs": 61093.75,
+    "reductionRatio": 0.7501412030499859,
+    "interval95SavedMs": [
+      60039.25,
+      62163
+    ],
+    "positivePairs": 8,
+    "executionShapeObserved": true,
+    "executionShapeStable": true,
+    "targetWarmupShapeObserved": true,
+    "qualified": false,
+    "decision": "RETAIN_NATIVE_GRADLE"
+  },
+  "evaluationDecision": "NATIVE_FULL_GRAPH"
+}

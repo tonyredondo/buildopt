@@ -1,0 +1,27 @@
+buildopt: warming isolated control arm at 4b5c92703c63966c3471242c621c4a63b382638d (cache seed 1/3)
+buildopt: warmed isolated control arm cache seed in 261689ms with total:305/executed:128/from-cache:70/up-to-date:23/no-source:65/skipped:19/fingerprint:cf3398efc89473709edcd1b23375dbb6c14e67d359820442e8990d1bb952942b
+buildopt: warming isolated control arm at 4b5c92703c63966c3471242c621c4a63b382638d (base daemon stabilization 2/3)
+buildopt: warmed isolated control arm daemon stabilization in 15660ms with total:305/executed:108/from-cache:90/up-to-date:23/no-source:65/skipped:19/fingerprint:1394115c8e91572561c1f22f40b0192ebabe7f68f0d755aae33167b9d14747d2
+buildopt: warming isolated control arm at 1ddf23d53ea5ccea988cc3f1f135670e22ea12ce (target-workload stabilization 3/3)
+buildopt: warmed isolated control arm target workload in 16534ms with total:305/executed:109/from-cache:89/up-to-date:23/no-source:65/skipped:19/fingerprint:85399d45cd2d3615162148545d5babb68fb708dbdd29a2e2991b8e65724ce6a7
+buildopt: warming isolated candidate arm at 4b5c92703c63966c3471242c621c4a63b382638d (cache seed 1/3)
+buildopt: structural profile measurement unavailable: warm candidate arm: candidate arm failed: exit status 1
+buildopt: explicit Build Impact POC candidate changed-projects selected; this is not production authorization
+Fetching distribution.
+Downloading https://services.gradle.org/distributions/gradle-9.6.1-bin.zip
+Attempt 1/1 failed. Reason: Unexpected end of file from server
+Exception in thread "main" java.net.SocketException: Unexpected end of file from server
+	at java.base/sun.net.www.http.HttpClient.parseHTTPHeader(HttpClient.java:923)
+	at java.base/sun.net.www.http.HttpClient.parseHTTP(HttpClient.java:727)
+	at java.base/sun.net.www.http.HttpClient.parseHTTPHeader(HttpClient.java:920)
+	at java.base/sun.net.www.http.HttpClient.parseHTTP(HttpClient.java:727)
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1392)
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1302)
+	at java.base/java.net.HttpURLConnection.getResponseCode(HttpURLConnection.java:493)
+	at java.base/sun.net.www.protocol.https.HttpsURLConnectionImpl.getResponseCode(HttpsURLConnectionImpl.java:307)
+	at org.gradle.wrapper.Download.download(SourceFile:1)
+	at org.gradle.wrapper.Install.forceFetch(SourceFile)
+	at org.gradle.wrapper.Install.lambda$createDist$0(SourceFile:9)
+	at org.gradle.wrapper.Install.createDist(SourceFile:24)
+	at org.gradle.wrapper.GradleWrapperMain.lambda$prepareWrapper$0(SourceFile:2)
+	at org.gradle.wrapper.GradleWrapperMain.main(SourceFile:2)

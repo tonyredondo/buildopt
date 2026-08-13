@@ -226,6 +226,8 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-qualified-profile-matrix-v1" >/dev/null
         "${buildopt_script_dir}/check-poc-qualified-profile-matrix-v1-result" \
             "${buildopt_repo_root}/benchmarks/results/poc-qualified-profile-matrix-v1/summary.json" >/dev/null
+        "${buildopt_script_dir}/check-statistical-qualification-v2-result" \
+            "${buildopt_repo_root}/benchmarks/results/poc-statistical-qualification-v2" >/dev/null
         "${buildopt_script_dir}/check-poc-profile-discovery" >/dev/null
         "${buildopt_script_dir}/check-poc-opportunity-analysis" >/dev/null
         "${buildopt_script_dir}/check-poc-general-build-value" >/dev/null

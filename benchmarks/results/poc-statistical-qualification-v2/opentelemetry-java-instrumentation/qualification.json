@@ -1,0 +1,273 @@
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-balanced-qualification/v2",
+  "evidenceState": "QUALIFIED",
+  "capturedAt": "2026-08-13T15:24:41Z",
+  "subject": {
+    "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+    "repositoryRevision": "ed75b8e453be3196bdde7806df05f5f9ee7e2f2f",
+    "pipelineClass": "spring-family-test-classes"
+  },
+  "sourceBindings": {
+    "manifestSha256": "d56399fccc1ee9ab3a28f75fd871fc569c484df037a2d8c0a9700eabee41d1f6",
+    "graphSha256": "1db31d0f75041382aca8833e91499b7378cb6e0caf0fd90e2bb275f5b050d849",
+    "generatedManifestSha256": "dc2066db76ed966533a87f6e415d85d7be9ab57f475073cef04f9abdade65c8d",
+    "sourceEvidenceSha256": "e310608f1b78a717dd5b0baed71dc8f769679ead7688359d6ee3e59d6cd21516"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":instrumentation:spring:spring-boot-autoconfigure:testClasses"
+    ],
+    "fallbackEntrypoints": [
+      ":instrumentation:spring:spring-batch-3.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-boot-actuator-autoconfigure-2.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-boot-autoconfigure:testClasses",
+      ":instrumentation:spring:spring-boot-autoconfigure:testing:testClasses",
+      ":instrumentation:spring:spring-boot-resources:javaagent-unit-tests:testClasses",
+      ":instrumentation:spring:spring-boot-resources:javaagent:testClasses",
+      ":instrumentation:spring:spring-cloud-aws-3.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.2:testing:testClasses",
+      ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:testClasses",
+      ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:testing:testClasses",
+      ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webflux-4.3:testing:testClasses",
+      ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webmvc-4.3:javaagent:testClasses",
+      ":instrumentation:spring:spring-core-2.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-data:spring-data-1.8:javaagent:testClasses",
+      ":instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:testClasses",
+      ":instrumentation:spring:spring-data:spring-data-3.0:testing:testClasses",
+      ":instrumentation:spring:spring-data:spring-data-common:testing:testClasses",
+      ":instrumentation:spring:spring-integration-4.1:javaagent:testClasses",
+      ":instrumentation:spring:spring-integration-4.1:library:testClasses",
+      ":instrumentation:spring:spring-integration-4.1:testing:testClasses",
+      ":instrumentation:spring:spring-jms:spring-jms-2.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-jms:spring-jms-2.0:testing:testClasses",
+      ":instrumentation:spring:spring-jms:spring-jms-6.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-kafka-2.7:javaagent:testClasses",
+      ":instrumentation:spring:spring-kafka-2.7:library:testClasses",
+      ":instrumentation:spring:spring-kafka-2.7:testing:testClasses",
+      ":instrumentation:spring:spring-pulsar-1.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-pulsar-1.0:testing:testClasses",
+      ":instrumentation:spring:spring-rabbit-1.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-rmi-4.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-scheduling-3.1:bootstrap:testClasses",
+      ":instrumentation:spring:spring-scheduling-3.1:javaagent:testClasses",
+      ":instrumentation:spring:spring-security-config-6.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-security-config-6.0:library:testClasses",
+      ":instrumentation:spring:spring-web:spring-web-3.1:library:testClasses",
+      ":instrumentation:spring:spring-web:spring-web-3.1:testing:testClasses",
+      ":instrumentation:spring:spring-web:spring-web-6.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-webflux:spring-webflux-5.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-webflux:spring-webflux-5.0:testing-webflux7:testClasses",
+      ":instrumentation:spring:spring-webflux:spring-webflux-5.0:testing:testClasses",
+      ":instrumentation:spring:spring-webflux:spring-webflux-5.3:library:testClasses",
+      ":instrumentation:spring:spring-webflux:spring-webflux-5.3:testing-webflux7:testClasses",
+      ":instrumentation:spring:spring-webflux:spring-webflux-5.3:testing:testClasses",
+      ":instrumentation:spring:spring-webmvc:spring-webmvc-3.1:javaagent:testClasses",
+      ":instrumentation:spring:spring-webmvc:spring-webmvc-3.1:wildfly-testing:testClasses",
+      ":instrumentation:spring:spring-webmvc:spring-webmvc-5.3:library:testClasses",
+      ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:library:testClasses",
+      ":instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:testClasses",
+      ":instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:testing:testClasses",
+      ":instrumentation:spring:spring-ws-2.0:javaagent:testClasses",
+      ":instrumentation:spring:spring-ws-2.0:testing:testClasses"
+    ],
+    "requiredOutputs": [
+      "instrumentation/spring/spring-boot-autoconfigure/build/classes/**"
+    ],
+    "totalProjectCount": 1024,
+    "selectedProjectCount": 34,
+    "omittedProjectCount": 990,
+    "omittedProjectRatio": 0.966796875
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "b8fd0f67598af50ee52eb8b11645a877836416db",
+    "executableSha256": "565e1787ddcb27e81f5408158818b2e2445af38d0f083251415fb0a022640e87",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true,
+    "captureCount": 2,
+    "pairsPerCapture": 8,
+    "blockCount": 8
+  },
+  "captures": [
+    {
+      "index": 1,
+      "path": "benchmarks/results/poc-statistical-qualification-v2/opentelemetry-java-instrumentation/capture-1/evidence.json",
+      "sha256": "cf809db961522e22878c5fdc44ce402941a51cc8481c30af9e84f460cfe27793",
+      "capturedAt": "2026-08-13T10:01:09Z",
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 89555.75,
+        "candidateMeanMs": 73848.875,
+        "meanSavedMs": 15706.875,
+        "reductionRatio": 0.1753865608852586,
+        "interval95SavedMs": [
+          11408,
+          19949.75
+        ],
+        "positivePairs": 8,
+        "executionShapeObserved": true,
+        "executionShapeStable": true,
+        "targetWarmupShapeObserved": true,
+        "targetWarmupShapeStable": true,
+        "qualified": true,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE"
+      }
+    },
+    {
+      "index": 2,
+      "path": "benchmarks/results/poc-statistical-qualification-v2/opentelemetry-java-instrumentation/capture-2/evidence.json",
+      "sha256": "6dfae4f04cc04890d79790e86d43625996549f4e0f2314177ae8e3f6dc056265",
+      "capturedAt": "2026-08-13T11:25:50Z",
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 86182.625,
+        "candidateMeanMs": 75577.5,
+        "meanSavedMs": 10605.125,
+        "reductionRatio": 0.12305409588069521,
+        "interval95SavedMs": [
+          8183.375,
+          12885.875
+        ],
+        "positivePairs": 8,
+        "executionShapeObserved": true,
+        "executionShapeStable": true,
+        "targetWarmupShapeObserved": true,
+        "targetWarmupShapeStable": true,
+        "qualified": true,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE"
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "captureIndex": 1,
+      "block": 1,
+      "controlFirstPair": 1,
+      "candidateFirstPair": 2,
+      "controlMeanMs": 95955,
+      "candidateMeanMs": 74381,
+      "savedMs": 21574
+    },
+    {
+      "captureIndex": 1,
+      "block": 2,
+      "controlFirstPair": 3,
+      "candidateFirstPair": 4,
+      "controlMeanMs": 86068,
+      "candidateMeanMs": 71912.5,
+      "savedMs": 14155.5
+    },
+    {
+      "captureIndex": 1,
+      "block": 3,
+      "controlFirstPair": 5,
+      "candidateFirstPair": 6,
+      "controlMeanMs": 91844,
+      "candidateMeanMs": 75382.5,
+      "savedMs": 16461.5
+    },
+    {
+      "captureIndex": 1,
+      "block": 4,
+      "controlFirstPair": 7,
+      "candidateFirstPair": 8,
+      "controlMeanMs": 84356,
+      "candidateMeanMs": 73719.5,
+      "savedMs": 10636.5
+    },
+    {
+      "captureIndex": 2,
+      "block": 1,
+      "controlFirstPair": 1,
+      "candidateFirstPair": 2,
+      "controlMeanMs": 86293,
+      "candidateMeanMs": 78355,
+      "savedMs": 7938
+    },
+    {
+      "captureIndex": 2,
+      "block": 2,
+      "controlFirstPair": 3,
+      "candidateFirstPair": 4,
+      "controlMeanMs": 85315,
+      "candidateMeanMs": 73899.5,
+      "savedMs": 11415.5
+    },
+    {
+      "captureIndex": 2,
+      "block": 3,
+      "controlFirstPair": 5,
+      "candidateFirstPair": 6,
+      "controlMeanMs": 84980,
+      "candidateMeanMs": 74969,
+      "savedMs": 10011
+    },
+    {
+      "captureIndex": 2,
+      "block": 4,
+      "controlFirstPair": 7,
+      "candidateFirstPair": 8,
+      "controlMeanMs": 88142.5,
+      "candidateMeanMs": 75086.5,
+      "savedMs": 13056
+    }
+  ],
+  "qualification": {
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositiveBlocks": 6,
+    "positiveMedian": true,
+    "candidateP95NotRegressive": true,
+    "requiredOutputsIdentical": true,
+    "executionShapeStable": true,
+    "fullGraphFallbackRequired": true
+  },
+  "result": {
+    "captures": 2,
+    "pairs": 16,
+    "blocks": 8,
+    "controlMeanMs": 87869.1875,
+    "candidateMeanMs": 74713.1875,
+    "meanSavedMs": 13156,
+    "reductionRatio": 0.14972256344125182,
+    "medianBlockSavedMs": 12235.75,
+    "interval95BlockSavedMs": [
+      10636.1875,
+      16219.375
+    ],
+    "positiveBlocks": 8,
+    "controlP95Ms": 100229,
+    "candidateP95Ms": 79004,
+    "controlFirstMeanSavedMs": 11776,
+    "candidateFirstMeanSavedMs": 14536,
+    "orderEffectMs": -2760,
+    "requiredOutputsIdentical": true,
+    "executionShapeStable": true,
+    "fallbacksSuccessful": true,
+    "qualified": true,
+    "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

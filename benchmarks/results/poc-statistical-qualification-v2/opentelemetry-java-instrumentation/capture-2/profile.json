@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v4",
+  "profileVersion": 4,
+  "profileId": "qualified-structural-build-impact",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+  "pipelineClass": "spring-family-test-classes",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": false,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": false
+  },
+  "gradleOptions": [
+    "--daemon",
+    "--build-cache",
+    "--parallel",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-scan",
+    "--max-workers=12"
+  ],
+  "preconditions": [
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-manifest.json",
+      "sha256": "d56399fccc1ee9ab3a28f75fd871fc569c484df037a2d8c0a9700eabee41d1f6"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-graph.generated.json",
+      "sha256": "1db31d0f75041382aca8833e91499b7378cb6e0caf0fd90e2bb275f5b050d849"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact.generated.json",
+      "sha256": "dc2066db76ed966533a87f6e415d85d7be9ab57f475073cef04f9abdade65c8d"
+    }
+  ],
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "6dfae4f04cc04890d79790e86d43625996549f4e0f2314177ae8e3f6dc056265",
+    "repositoryRevision": "ed75b8e453be3196bdde7806df05f5f9ee7e2f2f",
+    "pairs": 8,
+    "meanSavedMs": 10605.125,
+    "reductionRatio": 0.12305409588069521,
+    "interval95SavedMs": [
+      8183.375,
+      12885.875
+    ]
+  }
+}

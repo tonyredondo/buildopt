@@ -1,0 +1,41 @@
+{
+  "key": "spring-framework",
+  "repositoryId": "spring-projects/spring-framework",
+  "workflowFamily": null,
+  "publicRevision": "4b5c92703c63966c3471242c621c4a63b382638d",
+  "targetRevision": "1ddf23d53ea5ccea988cc3f1f135670e22ea12ce",
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "testClasses"
+    ],
+    "candidateEntrypoints": [
+      ":spring-jms:testClasses"
+    ],
+    "totalProjectCount": 27,
+    "selectedProjectCount": 10,
+    "omittedProjectCount": 17
+  },
+  "measurementStatus": "COMPLETED",
+  "measurementFailureClass": null,
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 13239.375,
+    "candidateMeanMs": 11583.125,
+    "meanSavedMs": 1656.25,
+    "reductionRatio": 0.12510031629136573,
+    "interval95SavedMs": [
+      106.625,
+      3118.875
+    ],
+    "positivePairs": 6,
+    "executionShapeObserved": true,
+    "executionShapeStable": true,
+    "targetWarmupShapeObserved": true,
+    "targetWarmupShapeStable": true,
+    "qualified": false,
+    "decision": "RETAIN_NATIVE_GRADLE"
+  },
+  "evaluationDecision": "NATIVE_FULL_GRAPH"
+}

@@ -27,14 +27,14 @@ evidence around that execution and uses conservative fallbacks: a rejected
 cache entry becomes a normal cache miss, an unqualified optimization is not
 applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
-> **Project status:** this is an owner-operated proof of concept. The same
-> generic structural Build Impact method now qualifies on OpenTelemetry,
-> Kafka, Micronaut, Groovy, and the unseen Hibernate holdout at **5.88% to
-> 84.11% lower wall time** than optimized native Gradle. Spring improved by
-> **17.94%** but remains native
-> because one of eight pairs was slower. The current decision is to continue
-> with a review-required structural POC, not to claim universal savings or
-> production readiness. See the [current one-pager](./docs/findings/buildopt-poc-handoff.md)
+> **Project status:** this is an owner-operated proof of concept. In a fresh
+> preregistered balanced rerun, the same generic structural Build Impact method
+> qualified independently on Spring, OpenTelemetry, Kafka, Micronaut, and
+> Groovy at **14.97% to 87.35% lower wall time** than optimized native Gradle.
+> All 80 raw pairs improved, required outputs matched, tails improved, and full
+> fallbacks passed. These results are bound to exact changes and workflows;
+> profiles remain review-required and are not production-authorized. See the
+> [current one-pager](./docs/findings/buildopt-poc-handoff.md)
 > and [generalization audit](./docs/findings/buildopt-generalization-audit.md).
 
 ## Get your first result

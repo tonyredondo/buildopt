@@ -1,0 +1,29 @@
+buildopt: structural profile proposal unavailable: run owner Gradle workflow for output-contract preflight: exit status 1
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.6.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Failed to apply plugin class 'org.gradle.api.plugins.JavaPlugin'.
+> java.nio.file.NoSuchFileException: /tmp/buildopt-generic-profile-matrix.HufCKm/spring-framework/gradle-home/wrapper/dists/gradle-9.6.1-bin/4ticwg1pgcbps2hj28r8so764/gradle-9.6.1/lib/plugins/gradle-plugins-jvm-test-suite-9.6.1.jar
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 53s
+Unable to store build scan data: /tmp/buildopt-generic-profile-matrix.HufCKm/spring-framework/gradle-home/build-scan-data/spool/7cd92ff3-9da6-4092-9e44-efe4f7ec4b7b.scan
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Could not set process working directory to '/tmp/buildopt-generic-profile-matrix.HufCKm/spring-framework/gradle-home/daemon/9.6.1': could not setcwd() (errno 2: No such file or directory)
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+

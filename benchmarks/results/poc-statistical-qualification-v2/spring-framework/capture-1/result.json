@@ -1,0 +1,41 @@
+{
+  "key": "spring-framework",
+  "repositoryId": "spring-projects/spring-framework",
+  "workflowFamily": null,
+  "publicRevision": "4b5c92703c63966c3471242c621c4a63b382638d",
+  "targetRevision": "1ddf23d53ea5ccea988cc3f1f135670e22ea12ce",
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "testClasses"
+    ],
+    "candidateEntrypoints": [
+      ":spring-jms:testClasses"
+    ],
+    "totalProjectCount": 27,
+    "selectedProjectCount": 10,
+    "omittedProjectCount": 17
+  },
+  "measurementStatus": "COMPLETED",
+  "measurementFailureClass": null,
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 13175.125,
+    "candidateMeanMs": 10932,
+    "meanSavedMs": 2243.125,
+    "reductionRatio": 0.17025455166459522,
+    "interval95SavedMs": [
+      1574.5,
+      2882.625
+    ],
+    "positivePairs": 8,
+    "executionShapeObserved": true,
+    "executionShapeStable": true,
+    "targetWarmupShapeObserved": true,
+    "targetWarmupShapeStable": true,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "evaluationDecision": "QUALIFY_STRUCTURAL_PROFILE"
+}

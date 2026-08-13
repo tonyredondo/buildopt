@@ -1,0 +1,41 @@
+{
+  "key": "apache-kafka",
+  "repositoryId": "apache/kafka",
+  "workflowFamily": null,
+  "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+  "targetRevision": "54cef9e351e07f06277f40daa09b7a58bda17e70",
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "testClasses"
+    ],
+    "candidateEntrypoints": [
+      ":clients:testClasses"
+    ],
+    "totalProjectCount": 64,
+    "selectedProjectCount": 3,
+    "omittedProjectCount": 61
+  },
+  "measurementStatus": "COMPLETED",
+  "measurementFailureClass": null,
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 111698.5,
+    "candidateMeanMs": 14136.75,
+    "meanSavedMs": 97561.75,
+    "reductionRatio": 0.8734383183301476,
+    "interval95SavedMs": [
+      78848.75,
+      117162.125
+    ],
+    "positivePairs": 8,
+    "executionShapeObserved": true,
+    "executionShapeStable": true,
+    "targetWarmupShapeObserved": true,
+    "targetWarmupShapeStable": true,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "evaluationDecision": "QUALIFY_STRUCTURAL_PROFILE"
+}

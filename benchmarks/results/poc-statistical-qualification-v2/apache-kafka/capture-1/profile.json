@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v4",
+  "profileVersion": 4,
+  "profileId": "qualified-structural-build-impact",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "test-classes",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": false,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": false
+  },
+  "gradleOptions": [
+    "--daemon",
+    "--build-cache",
+    "--parallel",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-scan",
+    "--max-workers=12"
+  ],
+  "preconditions": [
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-manifest.json",
+      "sha256": "71a3f4884cab4da591b0be4c51275101ebc78bfbbcac96c61a8dc7d2d6bccd0c"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-graph.generated.json",
+      "sha256": "6ee53ca766ba13512120c7610e2173c10d5e12fd69ba66a56d9adb9ff50e0af8"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact.generated.json",
+      "sha256": "7d808135836ba7f3ad34b0d0c0b847fa222eb605cda4e923df3a520283fdc06e"
+    }
+  ],
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "2aec5108503e2316a790204e44a9146ad37b5877b1f283d2bac7b47c80a36ff9",
+    "repositoryRevision": "54cef9e351e07f06277f40daa09b7a58bda17e70",
+    "pairs": 8,
+    "meanSavedMs": 97561.75,
+    "reductionRatio": 0.8734383183301476,
+    "interval95SavedMs": [
+      78848.75,
+      117162.125
+    ]
+  }
+}

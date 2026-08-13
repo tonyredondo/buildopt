@@ -1,0 +1,26 @@
+Gradle distribution preparation attempt 1/3
+
+Welcome to Gradle 9.6.1!
+
+Here are the highlights of this release:
+ - Improved Configuration Cache hit rates
+ - Additional CLI rendering options
+ - Important project hierarchy lookup deprecations
+
+For more details see https://docs.gradle.org/9.6.1/release-notes.html
+
+
+------------------------------------------------------------
+Gradle 9.6.1
+------------------------------------------------------------
+
+Build time:    2026-06-26 14:25:50 UTC
+Revision:      309d128bd9fe8c0b71311878fc660b9cbaa07c51
+
+Kotlin:        2.3.21
+Groovy:        4.0.32
+Ant:           Apache Ant(TM) version 1.10.17 compiled on April 6 2026
+Launcher JVM:  21.0.12 (Eclipse Adoptium 21.0.12+8-LTS)
+Daemon JVM:    /tmp/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155 (no Daemon JVM specified, using current Java home)
+OS:            Linux 7.1.5-1-t2-noble amd64
+

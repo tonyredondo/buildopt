@@ -1,0 +1,24 @@
+{
+  "key": "spring-framework",
+  "repositoryId": "spring-projects/spring-framework",
+  "workflowFamily": null,
+  "publicRevision": "4b5c92703c63966c3471242c621c4a63b382638d",
+  "targetRevision": "1ddf23d53ea5ccea988cc3f1f135670e22ea12ce",
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "testClasses"
+    ],
+    "candidateEntrypoints": [
+      ":spring-jms:testClasses"
+    ],
+    "totalProjectCount": 27,
+    "selectedProjectCount": 10,
+    "omittedProjectCount": 17
+  },
+  "measurementStatus": "MEASUREMENT_UNAVAILABLE",
+  "measurementFailureClass": "MEASUREMENT_EXECUTION_UNAVAILABLE",
+  "result": null,
+  "evaluationDecision": "NATIVE_FULL_GRAPH"
+}
