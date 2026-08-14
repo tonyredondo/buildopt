@@ -1,0 +1,48 @@
+{
+  "key": "apache-kafka-shadow-generator-source",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "shadow-jar-generator-source",
+  "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+  "targetRevision": "5f2ebbce13f19f351b84e94671741453eec25c75",
+  "terminalOutputSha256": "56938ecb334635cbaad67174259431b22f2935042ea44f63bb427efa6127e272",
+  "crossCaptureTerminalOutputMatched": true,
+  "candidateFallbackOutputsMatched": true,
+  "candidate": {
+    "decision": "POC_CANDIDATE",
+    "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+    "entrypoints": [
+      ":clients:shadowJar"
+    ],
+    "output": {
+      "sha256": "56938ecb334635cbaad67174259431b22f2935042ea44f63bb427efa6127e272",
+      "count": 1
+    },
+    "logSha256": "2d2c9ca44bfa7659c3e8736b016e0d08384b5d048fcbc57cc4f13676920050c9"
+  },
+  "driftFallback": {
+    "decision": "FULL_GRAPH",
+    "reason": "PROFILE_PRECONDITION_FAILED",
+    "entrypoints": [
+      "shadowJar"
+    ],
+    "output": {
+      "sha256": "56938ecb334635cbaad67174259431b22f2935042ea44f63bb427efa6127e272",
+      "count": 1
+    },
+    "logSha256": "6248e456f427b60abec11b742dbf0671acd6f4203c2bed29b68efb7c6f750bdb"
+  },
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "62d32b5a5fccddc3923ce7cb16d6ec0764220e52de25fed1ce9a76c7e184138f",
+    "repositoryRevision": "5f2ebbce13f19f351b84e94671741453eec25c75",
+    "pairs": 8,
+    "meanSavedMs": 29121.625,
+    "reductionRatio": 0.7915017513581094,
+    "interval95SavedMs": [
+      27917.625,
+      30386.375
+    ]
+  },
+  "productAttributableFailures": 0,
+  "testOptimization": "OUT_OF_SCOPE"
+}

@@ -1,0 +1,68 @@
+buildopt: explicit Build Impact POC candidate changed-projects selected; this is not production authorization
+buildopt: qualified POC profile plan {"schemaVersion":"buildopt.poc/qualified-profile-plan/v4","profileId":"qualified-structural-build-impact","claimScope":"DECLARED_OUTPUTS_ONLY","repositoryId":"apache/groovy","pipelineClass":"jar-packaging-shared-source","selectionMode":"POC_CANDIDATE","selectionReason":"EXPLICIT_OWNER_POC_CANDIDATE","alternativeId":"changed-projects","entrypoints":[":groovy-json:jar"],"fallbackEntrypoints":["jar"],"affectedProjects":[":",":groovy-all",":groovy-ant",":groovy-astbuilder",":groovy-binary",":groovy-cli-commons",":groovy-cli-picocli",":groovy-console",":groovy-contracts",":groovy-datetime",":groovy-dateutil",":groovy-docgenerator",":groovy-ginq",":groovy-groovydoc",":groovy-groovysh",":groovy-jmx",":groovy-json",":groovy-jsr223",":groovy-macro",":groovy-macro-library",":groovy-nio",":groovy-servlet",":groovy-sql",":groovy-swing",":groovy-templates",":groovy-test",":groovy-test-junit5",":groovy-testng",":groovy-toml",":groovy-typecheckers",":groovy-xml",":groovy-yaml",":performance",":stress",":tests-preview"],"omittedProjectCount":35,"expectedOutputs":["subprojects/groovy-json/build/libs/*.jar"],"preservedTestCheckIds":null,"enabledAdapters":[],"disabledMechanisms":["HOT_STATE","RUNTIME_TUNING","SAFE_CACHE","SHARED_EDGE_CACHE","STANDARD_COPY","STANDARD_JAR"],"preconditions":[{"type":"FILE_SHA256","path":"buildopt-impact-manifest.json","sha256":"ecd43f265c76e7346cc3799fd38a45c59167cdae86e5ea85c8130991dab80fe3","status":"SATISFIED"},{"type":"FILE_SHA256","path":"buildopt-impact-graph.generated.json","sha256":"286a476fd1c3fd45a3314f7c5efee7ba808d3289afaf2cbd0d46790688bf67ea","status":"SATISFIED"},{"type":"FILE_SHA256","path":"buildopt-impact.generated.json","sha256":"5afa523caf7066df62bb229555b70f11c9bd0375d185f6bea5418a7b046db652","status":"SATISFIED"},{"type":"FILE_SHA256","path":"buildopt-output-equivalence.json","sha256":"ed3bc40daec143645589a768d5058bdbdf1a982d08d2659170142bca3dea1ff5","status":"SATISFIED"}],"qualification":{"schemaVersion":"buildopt.evidence/structural-profile-qualification/v1","sha256":"6a7feecec0622ec8bb256f27672bae12fa43a7695f8e5d09373528664da96ad9","repositoryRevision":"491de170b6d0a6f35b6d93a23620a1c055268c85","pairs":8,"meanSavedMs":51589,"reductionRatio":0.6572548345125993,"interval95SavedMs":[50241.25,52747.25]},"productionAuthorized":false}
+Starting a Gradle Daemon (subsequent builds will be faster)
+Type-safe project accessors is an incubating feature.
+> Task :build-logic:extractPluginRequests
+> Task :build-logic:generatePluginAdapters
+> Task :build-logic:compileJava
+
+> Task :build-logic:compileGroovy
+Groovy compilation avoidance is an incubating feature.
+
+> Task :build-logic:compileGroovyPlugins
+> Task :build-logic:pluginDescriptors
+> Task :build-logic:processResources
+> Task :build-logic:classes
+> Task :build-logic:jar
+
+> Configure project :
+Detected development environment
+ArtifactoryUser user: not defined
+Using Java from ${BUILDOPT_SOURCE_ROOT}/.tools/toolchains/temurin-jdk-21-e4446ff06a276155 (version 21.0.12)
+user.dir: ${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository
+
+> Task :groovy-json:processResources
+> Task :groovy-json:generateReleaseInfo
+
+> Task :generateGrammarSource
+warning(154): GroovyParser.g4:282:0: rule 'methodDeclaration' contains an optional block with at least one alternative that can match an empty string
+
+> Task :compileJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+Translated 31 methods and 0 method calls
+
+> Task :dgmConverter
+Saved 1769 dgm records to: ${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/build/dgm//META-INF/dgminfo
+
+> Task :generateReleaseInfo
+> Task :bootstrapJar
+> Task :compileGroovy
+> Task :processResources
+> Task :classes
+> Task :osgiClasses
+
+> Task :jar
+file '${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/licenses/LICENSE-JARJAR' will be copied to 'META-INF/LICENSE', overwriting file '${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/LICENSE', which has already been copied there.
+file '${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/notices/NOTICE-JARJAR' will be copied to 'META-INF/NOTICE', overwriting file '${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/NOTICE', which has already been copied there.
+
+> Task :groovy-json:compileJava
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :groovy-json:compileGroovy NO-SOURCE
+> Task :groovy-json:classes
+> Task :groovy-json:jar
+
+[Incubating] Problems report is available at: file://${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.4/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 1m 57s
+21 actionable tasks: 21 executed

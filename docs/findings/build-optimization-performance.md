@@ -111,7 +111,7 @@ measured on different workloads and scopes.
 |---|---|---:|---|
 | **Safe Cache / local L1** | Reuses verified outputs in a scope isolated by repository, Wrapper, and platform. | Against cache-off: **15.9% faster in Kotlin** and **13.7% faster in Groovy**. Against native Gradle cache: **0.02% faster in Kotlin** and **0.47% slower in Groovy**. | Useful when a repository has no effective cache, but **not an accelerator over native Gradle cache**. Strict Safe Cache remains explicit-only. |
 | **Runtime Tuning (retired)** | Tested bounded worker, heap, and resource profiles intended to improve Gradle execution. | The latest real Spring candidate capped 12 workers to 6 and was **2.00% slower** (191.5 ms), with 2/4 favorable pairs and interval -973.5..+590.5 ms. Earlier synthetic `W3_H4G` and `W4_H6G` candidates were **4.3%** and **54.7% slower**. | **No defensible value. Removed.** Optimized native Gradle remains the stable control. |
-| **Build Impact** | Maps a change to the projects and tasks needed for the requested outputs, with full-graph fallback for unknown or global changes. | Latest balanced repository matrix: **15.99% to 87.35% faster** across five independently qualified public subjects. Additional owner-reviewed workflows: Groovy `jar` **73.10%**, Kafka Checkstyle **29.73%**, and Kafka `shadowJar` **66.55%** faster. Six change-breadth cells then saved **28.00% to 79.54%**; all eight build-logic/global probes retained native Gradle. Discovery plus candidate warm-ups repays after **10–31 qualifying builds** in those six cells. Historical Spring verification is graph-complete but saved only **0.31%**. | **The strongest broadly useful accelerator currently demonstrated, but only for independently qualified scopes.** Profile materialization and execution are repository-name independent; global, ambiguous and drifted inputs still fail closed. Calibration efficiency is now the main adoption gap. |
+| **Build Impact** | Maps a change to the projects and tasks needed for the requested outputs, with full-graph fallback for unknown or global changes. | Latest balanced repository matrix: **15.99% to 87.35% faster** across five independently qualified public subjects. Additional owner-reviewed workflows: Groovy `jar` **73.10%**, Kafka Checkstyle **29.73%**, and Kafka `shadowJar` **66.55%** faster. Six change-breadth cells then saved **28.00% to 79.54%**; all eight build-logic/global probes retained native Gradle. Discovery plus candidate warm-ups repays after **10–31 qualifying builds** in those six cells. Public `v0.3.1` replay preserves all six profiles and fallbacks without adding a timing claim. Historical Spring verification is graph-complete but saved only **0.31%**. | **The strongest broadly useful accelerator currently demonstrated, but only for independently qualified scopes.** Profile materialization and execution are repository-name independent; global, ambiguous and drifted inputs still fail closed. Cross-date semantic-output generalization is now the next adoption gap. |
 | **Task Intelligence** | Observes and qualifies tasks only when their inputs, outputs, cache keys, and outcomes are exact enough to support an optimization. | No general direct saving. In the accepted pilot it enabled a qualified native-cache restore that saved **203 ms** on average. | A **safety and eligibility layer**, not a standalone accelerator. Its value is realized through a qualified cache or patch route. |
 | **Patch Autopilot / reviewed task patch** | Produces a reviewable and reversible patch that correctly declares inputs and outputs and enables caching for an exact custom-task shape. | Exact reviewed Java recipe: **67.3% faster in Kotlin** and **68.0% faster in Groovy**. Combined installed path: **63.5-67.3% faster**. | Highly promising for **specific reviewed task contracts**. The result must not be generalized to arbitrary tasks or recipes. |
 | **Graph reduction** | Replaces broad aggregate task dependencies with the typed producers required for the declared outputs. | The OpenTelemetry experiment removed **3 graph nodes and 2 executed tasks** while preserving all 125 required outputs. No standalone wall-clock percentage is claimed. | Structurally valuable, but it still needs independent timing evidence before it can be presented as a separate accelerator. |
@@ -256,7 +256,7 @@ work. Terminal wall-time savings and correctness evidence are unchanged.
 
 ## Recommended Direction
 
-### 1. Replay the qualified profile through the public installed path
+### 1. Broaden cross-date output equivalence before another value claim
 
 Preserve the current clean profile and its non-regressive mechanisms:
 
@@ -267,12 +267,14 @@ Preserve the current clean profile and its non-regressive mechanisms:
 - output equivalence, failure attribution, and immediate bypass throughout.
 
 It must continue to exclude Runtime Tuning, strict Safe Cache, hot state, and
-Edge Cache until each demonstrates incremental value. Calibration efficiency
-now passes all six cells under unchanged gates. The next bounded study should
-install the public package in clean external checkouts, replay reviewed
-profiles through the user-facing command, and prove the same semantic outputs,
-drift handling, native fallback and terminal value. This is installed-path
-replication, not automatic activation or "turn every feature on."
+Edge Cache until each demonstrates incremental value. Public `v0.3.1` replay
+now passes all six cells: the user-facing command preserves every reviewed
+selection and qualification, manifest drift falls back in all six cases, and
+same-run candidate/native semantic outputs match. The remaining correctness
+gap is cross-date output comparison: Groovy's reviewed JAR contract removes
+`BuildTime` but not date-dependent `BuildDate`. The next bounded study should
+generalize owner-declared volatile-property handling and requalify it across a
+date boundary without adding repository-name rules or changing timing claims.
 
 ### 2. Keep the same native control while broadening workload coverage
 

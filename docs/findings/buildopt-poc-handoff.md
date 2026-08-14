@@ -144,6 +144,11 @@ visible but is excluded as shared native/BuildOpt work.
   builds; proving the complete comparative POC takes 19–50. Exact repeat
   evaluation repays after 4–12 builds. The POC proves repeated-build value,
   not instant first-run payback.
+- **The reviewed profiles transfer to the public package.** Public `v0.3.1`
+  reproduced all six selective decisions through `buildopt poc`; all six
+  manifest-drift probes retained native Gradle and all six contemporary
+  candidate/native outputs were semantically equal. The replay preserves the
+  existing timing qualifications rather than creating new percentages.
 
 ## Current limits
 
@@ -158,14 +163,17 @@ The evidence now covers those three known output representations, but only
 through explicit reviewed contracts: Groovy JAR metadata embeds build time,
 Kafka Checkstyle embeds isolated workspace paths, and Kafka `shadowJar`
 preserves timestamp/order differences. A new output shape remains byte-exact
-until an owner declares and validates its semantics.
+until an owner declares and validates its semantics. Public replay also exposed
+that Groovy's JAR has a date-dependent `BuildDate` in addition to the already
+declared `BuildTime`; native and BuildOpt agree within one replay, but the two
+Groovy digests do not compare across dates under the current contract.
 
 ## Recommended next steps
 
-1. **Replay qualified profiles through the public installed path.** Confirm
-   the same value, semantic-output contract, drift handling, and native
-   fallback outside the research runner. This is now the primary adoption
-   gap after calibration efficiency improved all six cells.
+1. **Generalize cross-date output equivalence.** Add an owner-declared,
+   digest-bound way to ignore exact volatile date/time properties, prove that
+   payload drift is still rejected, and repeat the six public replay cells
+   across a date boundary without changing their timing qualification.
 2. **Add one new substantial repository family.** Use the unchanged generic
    path and owner-input model; do not add a repository-name rule to force a
    result.
@@ -186,6 +194,7 @@ until an owner declares and validates its semantics.
 - [Terminal generic change-breadth qualification](../../benchmarks/results/poc-generic-change-breadth-v1/README.md)
 - [Terminal calibration economics](../../benchmarks/results/poc-calibration-economics-v1/README.md)
 - [Terminal calibration efficiency](../../benchmarks/results/poc-calibration-efficiency-v1/README.md)
+- [Public installed profile replay](../../benchmarks/results/poc-installed-profile-replay-v1/README.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

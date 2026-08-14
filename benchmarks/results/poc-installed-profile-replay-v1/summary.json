@@ -1,0 +1,344 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-installed-profile-replay/v1",
+  "workItem": "POC-INSTALLED-PROFILE-REPLAY-001",
+  "capturedAt": "2026-08-14T23:18:28Z",
+  "release": {
+    "version": "0.3.1",
+    "tag": "v0.3.1",
+    "revision": "05ed1d0dcffe3850a497a5e0c64a950f81ae8515",
+    "platform": "linux-amd64",
+    "executableSha256": "0240d78232602de9c922ca17621ae22af182a0af565b317e13a4351cae125981",
+    "installerSha256": "57d63b6a0dce7794a3a26123ef4326c2b0bbe63ca6e2964041e573452337a2ec",
+    "archiveSha256": "985753ec7efdba1406f8cc8315d67ce5f433abfbb6e67a4a26ad5f3366e76900"
+  },
+  "method": {
+    "surface": "PUBLIC_RELEASE_BUILDOPT_POC",
+    "installation": "PINNED_PUBLIC_INSTALLER_AND_RELEASE_CHECKSUM",
+    "checkout": "CLEAN_EXTERNAL_CHECKOUT_AT_FROZEN_PUBLIC_REVISION",
+    "candidate": "REPOSITORY_COMMITTED_QUALIFIED_PROFILE_V4",
+    "driftProbe": "APPEND_JSON_WHITESPACE_TO_BOUND_MANIFEST",
+    "driftOutcome": "NATIVE_FULL_GRAPH_PROFILE_PRECONDITION_FAILED",
+    "requiredOutputComparison": "SAME_REPLAY_CANDIDATE_EQUALS_NATIVE_FALLBACK",
+    "terminalOutputDigestRole": "DIAGNOSTIC_ONLY_CROSS_DATE_VOLATILITY_NOT_A_GATE",
+    "valueDecision": "PRESERVE_TERMINAL_QUALIFICATION_WITHOUT_REESTIMATION",
+    "repositorySpecificProductRulesAllowed": false
+  },
+  "amendment": {
+    "stage": "BEFORE_ANY_COMPLETE_CELL_RESULT",
+    "invalidAssumption": "CROSS_DATE_SEMANTIC_DIGEST_MUST_EQUAL_TERMINAL_CAPTURE",
+    "observedCause": "GROOVY_JAR_BUILDDATE_IS_NOT_REMOVED_BY_THE_REVIEWED_CONTRACT",
+    "independentDiagnostic": "SAME_FROZEN_CHECKOUT_NATIVE_GRADLE_MATCHED_PUBLIC_BUILDOPT_DIGEST",
+    "replacementGate": "SAME_REPLAY_CANDIDATE_EQUALS_NATIVE_FALLBACK",
+    "timingQualificationChanged": false
+  },
+  "cells": [
+    {
+      "key": "apache-groovy-jar-leaf-source",
+      "repositoryId": "apache/groovy",
+      "pipelineClass": "jar-packaging-leaf-source",
+      "publicRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "targetRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+      "terminalOutputSha256": "27f462c377352f1f2a4074f1fae1f96ed51ec97f97e5b42237a57174204da1d5",
+      "crossCaptureTerminalOutputMatched": false,
+      "candidateFallbackOutputsMatched": true,
+      "candidate": {
+        "decision": "POC_CANDIDATE",
+        "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+        "entrypoints": [
+          ":groovy-json:jar"
+        ],
+        "output": {
+          "sha256": "bfdaddcad4c48659522ecfdb6a7ccc6e85fab540d89dd987d7b06644a743a482",
+          "count": 1
+        },
+        "logSha256": "ea799083c9e4390e231cef61b72e0d4f237d2dcf86cdcb05033bbea693a65910"
+      },
+      "driftFallback": {
+        "decision": "FULL_GRAPH",
+        "reason": "PROFILE_PRECONDITION_FAILED",
+        "entrypoints": [
+          "jar"
+        ],
+        "output": {
+          "sha256": "bfdaddcad4c48659522ecfdb6a7ccc6e85fab540d89dd987d7b06644a743a482",
+          "count": 1
+        },
+        "logSha256": "0ed7dfd4826c3d30e8d1d1c2f9ee37a1fbe53b4e429a6f7776ea34329cd585de"
+      },
+      "qualification": {
+        "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+        "sha256": "156d423af63ae76fca779a6a6520d6a8dbb507786e8afc0198ef7b659f6f7b3c",
+        "repositoryRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+        "pairs": 8,
+        "meanSavedMs": 52911.75,
+        "reductionRatio": 0.7381841772085674,
+        "interval95SavedMs": [
+          51316.625,
+          54591.375
+        ]
+      },
+      "productAttributableFailures": 0,
+      "testOptimization": "OUT_OF_SCOPE"
+    },
+    {
+      "key": "apache-groovy-jar-shared-source",
+      "repositoryId": "apache/groovy",
+      "pipelineClass": "jar-packaging-shared-source",
+      "publicRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "targetRevision": "491de170b6d0a6f35b6d93a23620a1c055268c85",
+      "terminalOutputSha256": "f706b295b716f490617a7377b93cc1c3e352fd9837549af25f6bf78263121461",
+      "crossCaptureTerminalOutputMatched": false,
+      "candidateFallbackOutputsMatched": true,
+      "candidate": {
+        "decision": "POC_CANDIDATE",
+        "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+        "entrypoints": [
+          ":groovy-json:jar"
+        ],
+        "output": {
+          "sha256": "e24b779d47d080a9c1abbcf4337f312c85320250a4049a3e725009fd24299a37",
+          "count": 1
+        },
+        "logSha256": "a751f2e5f65dbf2d33fa2b40685132d2a1e238f0a00559b8d644eb90ea712d0c"
+      },
+      "driftFallback": {
+        "decision": "FULL_GRAPH",
+        "reason": "PROFILE_PRECONDITION_FAILED",
+        "entrypoints": [
+          "jar"
+        ],
+        "output": {
+          "sha256": "e24b779d47d080a9c1abbcf4337f312c85320250a4049a3e725009fd24299a37",
+          "count": 1
+        },
+        "logSha256": "18228606f0d43789bbfd8b622dfee978fcd096cabb7f176ee41972149bd379d0"
+      },
+      "qualification": {
+        "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+        "sha256": "6a7feecec0622ec8bb256f27672bae12fa43a7695f8e5d09373528664da96ad9",
+        "repositoryRevision": "491de170b6d0a6f35b6d93a23620a1c055268c85",
+        "pairs": 8,
+        "meanSavedMs": 51589,
+        "reductionRatio": 0.6572548345125993,
+        "interval95SavedMs": [
+          50241.25,
+          52747.25
+        ]
+      },
+      "productAttributableFailures": 0,
+      "testOptimization": "OUT_OF_SCOPE"
+    },
+    {
+      "key": "apache-kafka-checkstyle-metadata-source",
+      "repositoryId": "apache/kafka",
+      "pipelineClass": "checkstyle-main-metadata-source",
+      "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "targetRevision": "dd90892d8590b6e25b481e62b1a3fe8029acc19e",
+      "terminalOutputSha256": "798f5262b6ac7cd280f6add96ce7b781aeed1a74a7851339ddfa17f6fc6edd75",
+      "crossCaptureTerminalOutputMatched": true,
+      "candidateFallbackOutputsMatched": true,
+      "candidate": {
+        "decision": "POC_CANDIDATE",
+        "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+        "entrypoints": [
+          ":clients:checkstyleMain"
+        ],
+        "output": {
+          "sha256": "798f5262b6ac7cd280f6add96ce7b781aeed1a74a7851339ddfa17f6fc6edd75",
+          "count": 2
+        },
+        "logSha256": "8373d79ecae983b3600bc3045bd6fa8318280e3937d022b4169c71aaac22aa07"
+      },
+      "driftFallback": {
+        "decision": "FULL_GRAPH",
+        "reason": "PROFILE_PRECONDITION_FAILED",
+        "entrypoints": [
+          "checkstyleMain"
+        ],
+        "output": {
+          "sha256": "798f5262b6ac7cd280f6add96ce7b781aeed1a74a7851339ddfa17f6fc6edd75",
+          "count": 2
+        },
+        "logSha256": "dd3c03323cd3c204c82a25b43f987b484b7a236bdc5507c8902329f48e441a45"
+      },
+      "qualification": {
+        "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+        "sha256": "8cf6885bb050e37081fe04f691941fc9b0ef3eb58838c895897e90d9dd08ad8e",
+        "repositoryRevision": "dd90892d8590b6e25b481e62b1a3fe8029acc19e",
+        "pairs": 8,
+        "meanSavedMs": 23703.125,
+        "reductionRatio": 0.28439939048167545,
+        "interval95SavedMs": [
+          22642.875,
+          24664.125
+        ]
+      },
+      "productAttributableFailures": 0,
+      "testOptimization": "OUT_OF_SCOPE"
+    },
+    {
+      "key": "apache-kafka-checkstyle-client-utils-source",
+      "repositoryId": "apache/kafka",
+      "pipelineClass": "checkstyle-main-client-utils-source",
+      "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "targetRevision": "69e4650c3ac2ec0338ef51475ef750e97a467b51",
+      "terminalOutputSha256": "798f5262b6ac7cd280f6add96ce7b781aeed1a74a7851339ddfa17f6fc6edd75",
+      "crossCaptureTerminalOutputMatched": true,
+      "candidateFallbackOutputsMatched": true,
+      "candidate": {
+        "decision": "POC_CANDIDATE",
+        "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+        "entrypoints": [
+          ":clients:checkstyleMain"
+        ],
+        "output": {
+          "sha256": "798f5262b6ac7cd280f6add96ce7b781aeed1a74a7851339ddfa17f6fc6edd75",
+          "count": 2
+        },
+        "logSha256": "dbce98e0ee043ead9334fc1c6348bff75c23ca1b762235ec5e9df63863ec0f19"
+      },
+      "driftFallback": {
+        "decision": "FULL_GRAPH",
+        "reason": "PROFILE_PRECONDITION_FAILED",
+        "entrypoints": [
+          "checkstyleMain"
+        ],
+        "output": {
+          "sha256": "798f5262b6ac7cd280f6add96ce7b781aeed1a74a7851339ddfa17f6fc6edd75",
+          "count": 2
+        },
+        "logSha256": "0632d6af02718f24f9b33eb5c2a28c9708b48f525af6564853273afea9c612c9"
+      },
+      "qualification": {
+        "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+        "sha256": "f1a989304e8f37c162d0c230724c155f3cdd691c62f1e2faf1d70e429ca53f51",
+        "repositoryRevision": "69e4650c3ac2ec0338ef51475ef750e97a467b51",
+        "pairs": 8,
+        "meanSavedMs": 28356.125,
+        "reductionRatio": 0.31684281538115583,
+        "interval95SavedMs": [
+          25331.125,
+          31157.25
+        ]
+      },
+      "productAttributableFailures": 0,
+      "testOptimization": "OUT_OF_SCOPE"
+    },
+    {
+      "key": "apache-kafka-shadow-clients-source",
+      "repositoryId": "apache/kafka",
+      "pipelineClass": "shadow-jar-clients-source",
+      "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "targetRevision": "929868cbdee1fbdc9cb60701e2ca17e8a66cd2ae",
+      "terminalOutputSha256": "f336f6211b7f8a92ffffcf3f4444549a3a3f9c01e9cca52722c29532f9d5c338",
+      "crossCaptureTerminalOutputMatched": true,
+      "candidateFallbackOutputsMatched": true,
+      "candidate": {
+        "decision": "POC_CANDIDATE",
+        "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+        "entrypoints": [
+          ":clients:shadowJar"
+        ],
+        "output": {
+          "sha256": "f336f6211b7f8a92ffffcf3f4444549a3a3f9c01e9cca52722c29532f9d5c338",
+          "count": 1
+        },
+        "logSha256": "9aa7e72d835e73406a52542e418f53a142f8947cdae304e8c0c1fb02b6e88345"
+      },
+      "driftFallback": {
+        "decision": "FULL_GRAPH",
+        "reason": "PROFILE_PRECONDITION_FAILED",
+        "entrypoints": [
+          "shadowJar"
+        ],
+        "output": {
+          "sha256": "f336f6211b7f8a92ffffcf3f4444549a3a3f9c01e9cca52722c29532f9d5c338",
+          "count": 1
+        },
+        "logSha256": "5bdf423e88ca4a9150b80edf67db002ecea472130f34b7d71501378dcf941740"
+      },
+      "qualification": {
+        "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+        "sha256": "6fbb6f3a60331de77673d566dee3424adf97bdbdf8646ab5a76b6b969299121e",
+        "repositoryRevision": "929868cbdee1fbdc9cb60701e2ca17e8a66cd2ae",
+        "pairs": 8,
+        "meanSavedMs": 29638.125,
+        "reductionRatio": 0.6640331813548119,
+        "interval95SavedMs": [
+          28094.125,
+          30760.75
+        ]
+      },
+      "productAttributableFailures": 0,
+      "testOptimization": "OUT_OF_SCOPE"
+    },
+    {
+      "key": "apache-kafka-shadow-generator-source",
+      "repositoryId": "apache/kafka",
+      "pipelineClass": "shadow-jar-generator-source",
+      "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "targetRevision": "5f2ebbce13f19f351b84e94671741453eec25c75",
+      "terminalOutputSha256": "56938ecb334635cbaad67174259431b22f2935042ea44f63bb427efa6127e272",
+      "crossCaptureTerminalOutputMatched": true,
+      "candidateFallbackOutputsMatched": true,
+      "candidate": {
+        "decision": "POC_CANDIDATE",
+        "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+        "entrypoints": [
+          ":clients:shadowJar"
+        ],
+        "output": {
+          "sha256": "56938ecb334635cbaad67174259431b22f2935042ea44f63bb427efa6127e272",
+          "count": 1
+        },
+        "logSha256": "2d2c9ca44bfa7659c3e8736b016e0d08384b5d048fcbc57cc4f13676920050c9"
+      },
+      "driftFallback": {
+        "decision": "FULL_GRAPH",
+        "reason": "PROFILE_PRECONDITION_FAILED",
+        "entrypoints": [
+          "shadowJar"
+        ],
+        "output": {
+          "sha256": "56938ecb334635cbaad67174259431b22f2935042ea44f63bb427efa6127e272",
+          "count": 1
+        },
+        "logSha256": "6248e456f427b60abec11b742dbf0671acd6f4203c2bed29b68efb7c6f750bdb"
+      },
+      "qualification": {
+        "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+        "sha256": "62d32b5a5fccddc3923ce7cb16d6ec0764220e52de25fed1ce9a76c7e184138f",
+        "repositoryRevision": "5f2ebbce13f19f351b84e94671741453eec25c75",
+        "pairs": 8,
+        "meanSavedMs": 29121.625,
+        "reductionRatio": 0.7915017513581094,
+        "interval95SavedMs": [
+          27917.625,
+          30386.375
+        ]
+      },
+      "productAttributableFailures": 0,
+      "testOptimization": "OUT_OF_SCOPE"
+    }
+  ],
+  "aggregation": {
+    "cells": 6,
+    "selectivePlans": 6,
+    "driftFallbacks": 6,
+    "candidateFallbackOutputsMatched": 6,
+    "crossCaptureTerminalOutputsMatched": 4,
+    "qualificationsPreserved": 6,
+    "productAttributableFailures": 0,
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "newTimingClaim": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

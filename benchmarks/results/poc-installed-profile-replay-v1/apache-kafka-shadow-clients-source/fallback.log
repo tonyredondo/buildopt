@@ -1,0 +1,165 @@
+buildopt: Build Impact POC retained the full graph (PROFILE_PRECONDITION_FAILED)
+buildopt: qualified POC profile plan {"schemaVersion":"buildopt.poc/qualified-profile-plan/v4","profileId":"qualified-structural-build-impact","claimScope":"DECLARED_OUTPUTS_ONLY","repositoryId":"apache/kafka","pipelineClass":"shadow-jar-clients-source","selectionMode":"FULL_GRAPH","selectionReason":"PROFILE_PRECONDITION_FAILED","entrypoints":["shadowJar"],"fallbackEntrypoints":["shadowJar"],"affectedProjects":[],"omittedProjectCount":0,"expectedOutputs":["clients/build/libs/kafka-clients-*.jar"],"preservedTestCheckIds":null,"enabledAdapters":[],"disabledMechanisms":["HOT_STATE","RUNTIME_TUNING","SAFE_CACHE","SHARED_EDGE_CACHE","STANDARD_COPY","STANDARD_JAR"],"preconditions":[{"type":"FILE_SHA256","path":"buildopt-impact-manifest.json","sha256":"566aa779e0e43f5f26f48f855ab21053cb4028871360c4f6ea510e4c22dff032","status":"FAILED"},{"type":"FILE_SHA256","path":"buildopt-impact-graph.generated.json","sha256":"39dbd18de8daa3bd3909a9defb43c52eacff8ce19603a2becb0f0cacbda9abc4","status":"SATISFIED"},{"type":"FILE_SHA256","path":"buildopt-impact.generated.json","sha256":"742d6952ee2c64b0e794b4cefc6610a61385f5bc16cc2748c09d5bb59f2671e6","status":"SATISFIED"},{"type":"FILE_SHA256","path":"buildopt-output-equivalence.json","sha256":"22dba20d585be322658604491b4b91d1f7e5deaa8dece5e5b8a954881630108a","status":"SATISFIED"}],"qualification":{"schemaVersion":"buildopt.evidence/structural-profile-qualification/v1","sha256":"6fbb6f3a60331de77673d566dee3424adf97bdbdf8646ab5a76b6b969299121e","repositoryRevision":"929868cbdee1fbdc9cb60701e2ca17e8a66cd2ae","pairs":8,"meanSavedMs":29638.125,"reductionRatio":0.6640331813548119,"interval95SavedMs":[28094.125,30760.75]},"productionAuthorized":false}
+
+> Configure project :
+Starting build with version 4.3.1 (commit id 929868cb) using Gradle 9.2.1, Java 25 and Scala 2.13.18
+Build properties: ignoreFailures=false, maxParallelForks=12, maxScalacThreads=8, maxTestRetries=0
+
+> Task :core:processResources NO-SOURCE
+> Task :server-common:processResources NO-SOURCE
+> Task :coordinator-common:processResources NO-SOURCE
+> Task :server:processResources NO-SOURCE
+> Task :raft:processResources
+> Task :server-common:processTestResources
+> Task :share-coordinator:processResources
+> Task :server:createVersionFile
+> Task :coordinator-common:processTestResources
+> Task :raft:createVersionFile
+> Task :transaction-coordinator:processResources
+> Task :storage:processResources
+> Task :group-coordinator:group-coordinator-api:processResources NO-SOURCE
+> Task :server-common:createVersionFile
+> Task :tools:tools-api:processResources NO-SOURCE
+> Task :storage:storage-api:processResources NO-SOURCE
+> Task :jmh-benchmarks:processResources NO-SOURCE
+> Task :storage:createVersionFile
+> Task :streams:processResources
+> Task :raft:processTestResources
+> Task :storage:storage-api:createVersionFile
+> Task :group-coordinator:group-coordinator-api:createVersionFile
+> Task :connect:api:processResources
+> Task :streams:createStreamsVersionFile
+> Task :tools:tools-api:createVersionFile
+> Task :connect:json:processResources
+> Task :metadata:processResources
+> Task :connect:transforms:processResources
+> Task :metadata:processTestResources
+> Task :group-coordinator:processResources
+> Task :clients:processResources
+> Task :clients:createVersionFile FROM-CACHE
+> Task :clients:processTestResources
+> Task :generator:compileJava FROM-CACHE
+> Task :generator:processResources NO-SOURCE
+> Task :generator:classes UP-TO-DATE
+> Task :generator:jar
+> Task :clients:processMessages FROM-CACHE
+> Task :test-common:test-common-util:compileJava
+
+> Task :transaction-coordinator:processMessages
+MessageGenerator: processed 2 Kafka message JSON file(s).
+
+> Task :streams:processMessages
+MessageGenerator: processed 1 Kafka message JSON file(s).
+
+> Task :raft:processMessages
+MessageGenerator: processed 1 Kafka message JSON file(s).
+
+> Task :share-coordinator:processMessages
+MessageGenerator: processed 4 Kafka message JSON file(s).
+
+> Task :storage:processMessages
+MessageGenerator: processed 5 Kafka message JSON file(s).
+
+> Task :metadata:processMessages
+MessageGenerator: processed 26 Kafka message JSON file(s).
+
+> Task :group-coordinator:processMessages
+MessageGenerator: processed 44 Kafka message JSON file(s).
+
+> Task :clients:compileJava FROM-CACHE
+> Task :clients:classes
+> Task :clients:shadowJar FROM-CACHE
+
+> Task :clients:processTestMessages
+MessageGenerator: processed 5 Kafka message JSON file(s).
+
+> Task :group-coordinator:group-coordinator-api:compileJava
+> Task :tools:tools-api:compileJava
+> Task :group-coordinator:group-coordinator-api:classes
+> Task :tools:tools-api:classes
+> Task :tools:tools-api:jar
+> Task :group-coordinator:group-coordinator-api:jar
+> Task :connect:api:compileJava
+> Task :connect:api:classes
+> Task :connect:json:compileJava
+> Task :connect:json:classes
+> Task :connect:transforms:compileJava
+> Task :connect:transforms:classes
+> Task :server-common:compileJava
+> Task :server-common:classes
+> Task :server-common:jar
+> Task :storage:storage-api:compileJava
+> Task :storage:storage-api:classes
+> Task :storage:storage-api:jar
+> Task :storage:compileJava
+> Task :storage:classes
+> Task :storage:jar
+> Task :raft:compileJava
+> Task :raft:classes
+> Task :raft:jar
+> Task :metadata:compileJava
+> Task :metadata:classes
+> Task :metadata:jar
+> Task :streams:compileJava
+> Task :streams:classes
+> Task :streams:copyDependantLibs
+> Task :coordinator-common:compileJava
+> Task :coordinator-common:classes
+> Task :coordinator-common:jar
+> Task :transaction-coordinator:compileJava
+> Task :transaction-coordinator:classes
+> Task :transaction-coordinator:jar
+> Task :streams:jar
+> Task :share-coordinator:compileJava
+> Task :share-coordinator:classes
+> Task :share-coordinator:jar
+> Task :group-coordinator:compileJava
+> Task :group-coordinator:classes
+> Task :group-coordinator:jar
+> Task :server:compileJava
+> Task :server:classes
+> Task :core:compileJava NO-SOURCE
+> Task :server:jar
+
+> Task :clients:compileTestJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :clients:jar SKIPPED
+> Task :clients:testClasses
+> Task :connect:api:copyDependantLibs
+> Task :connect:api:jar
+> Task :connect:transforms:copyDependantLibs
+> Task :connect:json:copyDependantLibs
+> Task :connect:transforms:jar
+> Task :connect:json:jar
+> Task :server-common:compileTestJava
+> Task :server-common:testClasses
+> Task :coordinator-common:compileTestJava
+> Task :coordinator-common:testClasses
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::arrayBaseOffset has been called by net.openhft.hashing.UnsafeAccess (file:${BUILDOPT_CAPTURE_ROOT}/apache-kafka-shadow-clients-source/gradle-home/caches/modules-2/files-2.1/net.openhft/zero-allocation-hashing/0.16/ca252f328160ed5d027f100a4fe525d6d21daaf/zero-allocation-hashing-0.16.jar)
+WARNING: Please consider reporting this to the maintainers of class net.openhft.hashing.UnsafeAccess
+WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
+> Task :raft:compileTestJava
+> Task :raft:testClasses
+> Task :core:compileScala
+> Task :metadata:compileTestJava
+> Task :metadata:testClasses
+> Task :core:classes
+> Task :core:copyDependantLibs
+> Task :core:jar
+> Task :jmh-benchmarks:compileJava
+> Task :jmh-benchmarks:classes
+> Task :jmh-benchmarks:shadowJar
+
+[Incubating] Problems report is available at: file://${BUILDOPT_CAPTURE_ROOT}/apache-kafka-shadow-clients-source/repository/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.2.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 2m 12s
+85 actionable tasks: 80 executed, 5 from cache

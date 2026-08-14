@@ -1,0 +1,264 @@
+buildopt: Build Impact POC retained the full graph (PROFILE_PRECONDITION_FAILED)
+buildopt: qualified POC profile plan {"schemaVersion":"buildopt.poc/qualified-profile-plan/v4","profileId":"qualified-structural-build-impact","claimScope":"DECLARED_OUTPUTS_ONLY","repositoryId":"apache/groovy","pipelineClass":"jar-packaging-shared-source","selectionMode":"FULL_GRAPH","selectionReason":"PROFILE_PRECONDITION_FAILED","entrypoints":["jar"],"fallbackEntrypoints":["jar"],"affectedProjects":[],"omittedProjectCount":0,"expectedOutputs":["subprojects/groovy-json/build/libs/*.jar"],"preservedTestCheckIds":null,"enabledAdapters":[],"disabledMechanisms":["HOT_STATE","RUNTIME_TUNING","SAFE_CACHE","SHARED_EDGE_CACHE","STANDARD_COPY","STANDARD_JAR"],"preconditions":[{"type":"FILE_SHA256","path":"buildopt-impact-manifest.json","sha256":"ecd43f265c76e7346cc3799fd38a45c59167cdae86e5ea85c8130991dab80fe3","status":"FAILED"},{"type":"FILE_SHA256","path":"buildopt-impact-graph.generated.json","sha256":"286a476fd1c3fd45a3314f7c5efee7ba808d3289afaf2cbd0d46790688bf67ea","status":"SATISFIED"},{"type":"FILE_SHA256","path":"buildopt-impact.generated.json","sha256":"5afa523caf7066df62bb229555b70f11c9bd0375d185f6bea5418a7b046db652","status":"SATISFIED"},{"type":"FILE_SHA256","path":"buildopt-output-equivalence.json","sha256":"ed3bc40daec143645589a768d5058bdbdf1a982d08d2659170142bca3dea1ff5","status":"SATISFIED"}],"qualification":{"schemaVersion":"buildopt.evidence/structural-profile-qualification/v1","sha256":"6a7feecec0622ec8bb256f27672bae12fa43a7695f8e5d09373528664da96ad9","repositoryRevision":"491de170b6d0a6f35b6d93a23620a1c055268c85","pairs":8,"meanSavedMs":51589,"reductionRatio":0.6572548345125993,"interval95SavedMs":[50241.25,52747.25]},"productionAuthorized":false}
+Type-safe project accessors is an incubating feature.
+> Task :build-logic:extractPluginRequests FROM-CACHE
+> Task :build-logic:generatePluginAdapters FROM-CACHE
+> Task :build-logic:compileJava FROM-CACHE
+> Task :build-logic:compileGroovy FROM-CACHE
+> Task :build-logic:compileGroovyPlugins FROM-CACHE
+> Task :build-logic:pluginDescriptors
+> Task :build-logic:processResources
+> Task :build-logic:classes
+> Task :build-logic:jar
+
+> Configure project :
+Detected development environment
+ArtifactoryUser user: not defined
+Using Java from ${BUILDOPT_SOURCE_ROOT}/.tools/toolchains/temurin-jdk-21-e4446ff06a276155 (version 21.0.12)
+user.dir: ${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository
+
+> Task :groovy-cli-commons:processResources NO-SOURCE
+> Task :groovy-templates:processResources NO-SOURCE
+> Task :groovy-cli-picocli:processResources NO-SOURCE
+> Task :groovy-astbuilder:processResources
+> Task :groovy-cli-commons:generateReleaseInfo
+> Task :groovy-cli-picocli:generateReleaseInfo
+> Task :groovy-templates:generateReleaseInfo
+> Task :groovy-ant:processResources
+> Task :groovy-contracts:processResources
+> Task :groovy-xml:moduleDescriptor
+> Task :groovy-swing:moduleDescriptor
+> Task :groovy-datetime:moduleDescriptor
+> Task :groovy-dateutil:moduleDescriptor
+> Task :groovy-macro:moduleDescriptor
+> Task :groovy-xml:processResources NO-SOURCE
+> Task :groovy-swing:processResources NO-SOURCE
+> Task :groovy-datetime:processResources NO-SOURCE
+> Task :groovy-dateutil:processResources NO-SOURCE
+> Task :groovy-ant:generateReleaseInfo
+> Task :groovy-contracts:generateReleaseInfo
+> Task :groovy-xml:generateReleaseInfo
+> Task :groovy-docgenerator:processResources
+> Task :groovy-datetime:generateReleaseInfo
+> Task :groovy-astbuilder:generateReleaseInfo
+> Task :groovy-nio:moduleDescriptor
+> Task :groovy-docgenerator:generateReleaseInfo
+> Task :groovy-swing:generateReleaseInfo
+> Task :groovy-dateutil:generateReleaseInfo
+> Task :groovy-jmx:processResources NO-SOURCE
+> Task :groovy-json:processResources
+> Task :groovy-macro:processResources
+> Task :groovy-ginq:moduleDescriptor
+> Task :groovy-groovydoc:processResources
+> Task :groovy-servlet:processResources NO-SOURCE
+> Task :groovy-nio:processResources NO-SOURCE
+> Task :groovy-ginq:processResources NO-SOURCE
+> Task :groovy-jsr223:moduleDescriptor
+> Task :groovy-jmx:generateReleaseInfo
+> Task :groovy-macro:generateReleaseInfo
+> Task :groovy-macro-library:moduleDescriptor
+> Task :groovy-macro-library:processResources NO-SOURCE
+> Task :groovy-groovydoc:generateReleaseInfo
+> Task :groovy-test:processResources NO-SOURCE
+> Task :groovy-json:generateReleaseInfo
+> Task :groovy-sql:moduleDescriptor
+> Task :groovy-servlet:generateReleaseInfo
+> Task :groovy-jsr223:processResources
+> Task :groovy-nio:generateReleaseInfo
+> Task :groovy-macro-library:generateReleaseInfo
+> Task :groovy-ginq:generateReleaseInfo
+> Task :groovy-jsr223:generateReleaseInfo
+> Task :groovy-test:generateReleaseInfo
+> Task :groovy-console:processResources
+> Task :groovy-sql:processResources NO-SOURCE
+> Task :groovy-typecheckers:processResources NO-SOURCE
+> Task :groovy-toml:processResources NO-SOURCE
+> Task :groovy-yaml:processResources NO-SOURCE
+> Task :performance:compileJava NO-SOURCE
+> Task :groovy-test-junit5:processResources
+> Task :groovy-sql:generateReleaseInfo
+> Task :performance:processResources NO-SOURCE
+> Task :tests-preview:processResources NO-SOURCE
+> Task :stress:compileJava NO-SOURCE
+> Task :groovy-testng:processResources
+> Task :groovy-console:generateReleaseInfo
+> Task :groovy-yaml:generateReleaseInfo
+> Task :stress:processResources NO-SOURCE
+> Task :groovy-test-junit5:generateReleaseInfo
+> Task :groovy-typecheckers:generateReleaseInfo
+> Task :groovy-toml:generateReleaseInfo
+> Task :groovy-testng:generateReleaseInfo
+> Task :groovy-groovysh:processResources
+> Task :groovy-groovysh:generateReleaseInfo
+> Task :generateGrammarSource FROM-CACHE
+> Task :compileJava FROM-CACHE
+> Task :dgmConverter FROM-CACHE
+> Task :generateReleaseInfo
+> Task :bootstrapJar
+> Task :compileGroovy FROM-CACHE
+> Task :processResources
+> Task :classes
+> Task :osgiClasses
+
+> Task :jar
+file '${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/licenses/LICENSE-JARJAR' will be copied to 'META-INF/LICENSE', overwriting file '${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/LICENSE', which has already been copied there.
+file '${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/notices/NOTICE-JARJAR' will be copied to 'META-INF/NOTICE', overwriting file '${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/NOTICE', which has already been copied there.
+
+> Task :groovy-cli-picocli:compileJava NO-SOURCE
+> Task :groovy-macro:compileJava NO-SOURCE
+> Task :groovy-cli-commons:compileJava NO-SOURCE
+> Task :groovy-json:compileJava FROM-CACHE
+> Task :groovy-json:compileGroovy NO-SOURCE
+> Task :groovy-json:classes
+> Task :groovy-json:jar
+> Task :groovy-astbuilder:compileJava
+> Task :groovy-astbuilder:compileGroovy NO-SOURCE
+> Task :groovy-astbuilder:classes
+> Task :groovy-astbuilder:jar
+> Task :groovy-dateutil:compileJava
+> Task :groovy-dateutil:compileGroovy NO-SOURCE
+> Task :groovy-dateutil:classes
+> Task :groovy-dateutil:jar
+> Task :groovy-jmx:compileJava
+> Task :groovy-nio:compileJava
+> Task :groovy-nio:compileGroovy NO-SOURCE
+> Task :groovy-nio:classes
+> Task :groovy-datetime:compileJava
+> Task :groovy-nio:jar
+> Task :groovy-datetime:compileGroovy NO-SOURCE
+> Task :groovy-datetime:classes
+> Task :groovy-datetime:jar
+
+> Task :groovy-cli-picocli:compileGroovy
+Groovy compilation avoidance is an incubating feature.
+
+> Task :groovy-jsr223:compileJava
+> Task :groovy-jsr223:compileGroovy NO-SOURCE
+> Task :groovy-jsr223:classes
+> Task :groovy-jsr223:jar
+> Task :groovy-testng:compileJava
+> Task :groovy-testng:compileGroovy NO-SOURCE
+> Task :groovy-testng:classes
+> Task :groovy-testng:jar
+> Task :groovy-swing:compileJava
+
+> Task :groovy-xml:compileJava
+Note: ${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/subprojects/groovy-xml/src/main/java/groovy/xml/XmlSlurper.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :groovy-contracts:compileJava
+> Task :groovy-contracts:compileGroovy NO-SOURCE
+> Task :groovy-contracts:classes
+> Task :groovy-contracts:jar
+> Task :performance:compileGroovy NO-SOURCE
+> Task :performance:classes UP-TO-DATE
+> Task :performance:jar
+> Task :stress:compileGroovy NO-SOURCE
+> Task :stress:classes UP-TO-DATE
+> Task :stress:jar
+> Task :tests-preview:compileJava NO-SOURCE
+> Task :tests-preview:compileGroovy NO-SOURCE
+> Task :tests-preview:classes UP-TO-DATE
+> Task :tests-preview:jar
+
+> Task :groovy-test:compileJava
+Note: ${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/subprojects/groovy-test/src/main/java/groovy/test/GroovyTestCase.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :groovy-test-junit5:compileJava
+> Task :groovy-sql:compileJava
+> Task :groovy-sql:compileGroovy NO-SOURCE
+> Task :groovy-sql:classes
+> Task :groovy-sql:jar
+> Task :groovy-toml:compileJava
+> Task :groovy-yaml:compileJava
+> Task :groovy-toml:compileGroovy NO-SOURCE
+> Task :groovy-yaml:compileGroovy NO-SOURCE
+> Task :groovy-yaml:classes
+> Task :groovy-toml:classes
+> Task :groovy-yaml:jar
+> Task :groovy-toml:jar
+> Task :groovy-test-junit5:compileGroovy
+> Task :groovy-test-junit5:classes
+> Task :groovy-test-junit5:jar
+> Task :groovy-cli-picocli:classes
+> Task :groovy-cli-picocli:jar
+> Task :groovy-cli-commons:compileGroovy
+> Task :groovy-cli-commons:classes
+> Task :groovy-cli-commons:jar
+> Task :groovy-test:compileGroovy
+> Task :groovy-test:classes
+> Task :groovy-test:jar
+> Task :groovy-xml:compileGroovy
+> Task :groovy-xml:classes
+> Task :groovy-xml:jar
+> Task :groovy-templates:compileJava NO-SOURCE
+> Task :groovy-jmx:compileGroovy
+> Task :groovy-jmx:classes
+> Task :groovy-jmx:jar
+
+> Task :groovy-swing:compileGroovy
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :groovy-macro:compileGroovy
+> Task :groovy-macro:classes
+> Task :groovy-macro:jar
+> Task :groovy-ginq:compileJava NO-SOURCE
+> Task :groovy-macro-library:compileJava NO-SOURCE
+> Task :groovy-typecheckers:compileJava NO-SOURCE
+> Task :groovy-swing:classes
+> Task :groovy-swing:jar
+> Task :groovy-templates:compileGroovy
+> Task :groovy-templates:classes
+> Task :groovy-templates:jar
+> Task :groovy-docgenerator:compileJava NO-SOURCE
+> Task :groovy-console:compileJava NO-SOURCE
+> Task :groovy-servlet:compileJava
+> Task :groovy-servlet:compileGroovy NO-SOURCE
+> Task :groovy-servlet:classes
+> Task :groovy-servlet:jar
+> Task :groovy-macro-library:compileGroovy
+> Task :groovy-macro-library:classes
+> Task :groovy-macro-library:jar
+> Task :groovy-typecheckers:compileGroovy
+> Task :groovy-typecheckers:classes
+> Task :groovy-typecheckers:jar
+> Task :groovy-docgenerator:compileGroovy
+> Task :groovy-docgenerator:classes
+> Task :groovy-docgenerator:jar
+> Task :groovy-groovydoc:compileJava
+> Task :groovy-groovydoc:compileGroovy
+> Task :groovy-groovydoc:classes
+> Task :groovy-groovydoc:jar
+> Task :groovy-ant:compileJava
+> Task :groovy-ant:compileGroovy
+> Task :groovy-ant:classes
+> Task :groovy-ant:jar
+
+> Task :groovy-ginq:compileGroovy
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :groovy-ginq:classes
+> Task :groovy-ginq:jar
+> Task :groovy-console:compileGroovy
+> Task :groovy-console:classes
+> Task :groovy-console:jar
+> Task :groovy-groovysh:compileJava NO-SOURCE
+> Task :groovy-groovysh:compileGroovy
+> Task :groovy-groovysh:classes
+> Task :groovy-groovysh:jar
+
+[Incubating] Problems report is available at: file://${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.4/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 1m 12s
+136 actionable tasks: 126 executed, 10 from cache

@@ -1,0 +1,3 @@
+buildopt-0.3.1-linux-amd64.tar.gz: OK
+BuildOpt installed in ${BUILDOPT_CAPTURE_ROOT}/install/bin
+Add ${BUILDOPT_CAPTURE_ROOT}/install/bin to PATH, then run: buildopt doctor

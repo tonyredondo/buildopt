@@ -1,0 +1,48 @@
+{
+  "key": "apache-groovy-jar-leaf-source",
+  "repositoryId": "apache/groovy",
+  "pipelineClass": "jar-packaging-leaf-source",
+  "publicRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+  "targetRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+  "terminalOutputSha256": "27f462c377352f1f2a4074f1fae1f96ed51ec97f97e5b42237a57174204da1d5",
+  "crossCaptureTerminalOutputMatched": false,
+  "candidateFallbackOutputsMatched": true,
+  "candidate": {
+    "decision": "POC_CANDIDATE",
+    "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+    "entrypoints": [
+      ":groovy-json:jar"
+    ],
+    "output": {
+      "sha256": "bfdaddcad4c48659522ecfdb6a7ccc6e85fab540d89dd987d7b06644a743a482",
+      "count": 1
+    },
+    "logSha256": "ea799083c9e4390e231cef61b72e0d4f237d2dcf86cdcb05033bbea693a65910"
+  },
+  "driftFallback": {
+    "decision": "FULL_GRAPH",
+    "reason": "PROFILE_PRECONDITION_FAILED",
+    "entrypoints": [
+      "jar"
+    ],
+    "output": {
+      "sha256": "bfdaddcad4c48659522ecfdb6a7ccc6e85fab540d89dd987d7b06644a743a482",
+      "count": 1
+    },
+    "logSha256": "0ed7dfd4826c3d30e8d1d1c2f9ee37a1fbe53b4e429a6f7776ea34329cd585de"
+  },
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "156d423af63ae76fca779a6a6520d6a8dbb507786e8afc0198ef7b659f6f7b3c",
+    "repositoryRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+    "pairs": 8,
+    "meanSavedMs": 52911.75,
+    "reductionRatio": 0.7381841772085674,
+    "interval95SavedMs": [
+      51316.625,
+      54591.375
+    ]
+  },
+  "productAttributableFailures": 0,
+  "testOptimization": "OUT_OF_SCOPE"
+}

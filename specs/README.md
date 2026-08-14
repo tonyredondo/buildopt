@@ -594,6 +594,14 @@ qualifying builds. All 12 drift probes miss the cache, replay artifacts are
 byte-identical, and existing terminal savings and correctness evidence remain
 unchanged.
 
+The [public installed-profile replay protocol](./poc-installed-profile-replay-v1.md)
+then freezes the adoption check for those six profiles. Its terminal
+[evidence bundle](../benchmarks/results/poc-installed-profile-replay-v1/README.md)
+installs public `v0.3.1`, drives the user-facing `buildopt poc` command in clean
+external checkouts, and proves six exact candidate plans, six digest-drift
+native fallbacks, six same-replay semantic-output matches, and six unchanged
+historical qualifications. This block performs no new timing.
+
 The retained [v5 evidence](../benchmarks/results/poc-generic-holdout-v5/README.md)
 passes that unchanged contract: native averages 216.724 seconds and BuildOpt
 203.991 seconds, saving 12.733 seconds/5.88% with interval

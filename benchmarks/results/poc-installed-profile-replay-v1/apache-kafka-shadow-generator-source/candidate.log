@@ -1,0 +1,32 @@
+buildopt: explicit Build Impact POC candidate changed-projects selected; this is not production authorization
+buildopt: qualified POC profile plan {"schemaVersion":"buildopt.poc/qualified-profile-plan/v4","profileId":"qualified-structural-build-impact","claimScope":"DECLARED_OUTPUTS_ONLY","repositoryId":"apache/kafka","pipelineClass":"shadow-jar-generator-source","selectionMode":"POC_CANDIDATE","selectionReason":"EXPLICIT_OWNER_POC_CANDIDATE","alternativeId":"changed-projects","entrypoints":[":clients:shadowJar"],"fallbackEntrypoints":["shadowJar"],"affectedProjects":[":clients",":clients:clients-integration-tests",":connect:api",":connect:basic-auth-extension",":connect:file",":connect:json",":connect:mirror",":connect:mirror-client",":connect:runtime",":connect:test-plugins",":connect:transforms",":coordinator-common",":core",":examples",":generator",":group-coordinator",":group-coordinator:group-coordinator-api",":jmh-benchmarks",":metadata",":raft",":server",":server-common",":share-coordinator",":shell",":storage",":storage:storage-api",":streams",":streams:examples",":streams:integration-tests",":streams:streams-scala",":streams:test-utils",":test-common:test-common-internal-api",":test-common:test-common-runtime",":tools",":tools:tools-api",":transaction-coordinator",":trogdor"],"omittedProjectCount":62,"expectedOutputs":["clients/build/libs/kafka-clients-*.jar"],"preservedTestCheckIds":null,"enabledAdapters":[],"disabledMechanisms":["HOT_STATE","RUNTIME_TUNING","SAFE_CACHE","SHARED_EDGE_CACHE","STANDARD_COPY","STANDARD_JAR"],"preconditions":[{"type":"FILE_SHA256","path":"buildopt-impact-manifest.json","sha256":"6ad4eecdff11abbfec425bd261c716a980e346b4d589870ef8f4fda6e30f11ec","status":"SATISFIED"},{"type":"FILE_SHA256","path":"buildopt-impact-graph.generated.json","sha256":"b9125f00a131df899e3af5855531924afbce4f80ad9bfbfdd994619700b1b983","status":"SATISFIED"},{"type":"FILE_SHA256","path":"buildopt-impact.generated.json","sha256":"1b9e1776cd5ee0ba475d353d971c4965ac063cd1d8ad3c8e6e71e46129b333c1","status":"SATISFIED"},{"type":"FILE_SHA256","path":"buildopt-output-equivalence.json","sha256":"22dba20d585be322658604491b4b91d1f7e5deaa8dece5e5b8a954881630108a","status":"SATISFIED"}],"qualification":{"schemaVersion":"buildopt.evidence/structural-profile-qualification/v1","sha256":"62d32b5a5fccddc3923ce7cb16d6ec0764220e52de25fed1ce9a76c7e184138f","repositoryRevision":"5f2ebbce13f19f351b84e94671741453eec25c75","pairs":8,"meanSavedMs":29121.625,"reductionRatio":0.7915017513581094,"interval95SavedMs":[27917.625,30386.375]},"productionAuthorized":false}
+Starting a Gradle Daemon (subsequent builds will be faster)
+
+> Configure project :
+Starting build with version 4.3.1 (commit id 5f2ebbce) using Gradle 9.2.1, Java 25 and Scala 2.13.18
+Build properties: ignoreFailures=false, maxParallelForks=12, maxScalacThreads=8, maxTestRetries=0
+
+> Task :clients:processResources
+> Task :clients:createVersionFile
+> Task :generator:compileJava
+> Task :generator:processResources NO-SOURCE
+> Task :generator:classes
+> Task :generator:jar
+
+> Task :clients:processMessages
+MessageGenerator: processed 198 Kafka message JSON file(s).
+
+> Task :clients:compileJava
+> Task :clients:classes
+> Task :clients:shadowJar
+
+[Incubating] Problems report is available at: file://${BUILDOPT_CAPTURE_ROOT}/apache-kafka-shadow-generator-source/repository/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.2.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 1m 33s
+7 actionable tasks: 7 executed

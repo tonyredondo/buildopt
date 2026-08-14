@@ -98,6 +98,14 @@ unaffected project; an executable task without supported structural semantics
 stayed on native Gradle before timing. This is a capability result, not a new
 performance claim.
 
+The six reviewed Groovy and Kafka profiles have also been replayed from the
+public `v0.3.1` package through `buildopt poc` in clean external checkouts.
+All six selected the reviewed graph, all six exact manifest-drift probes fell
+back to native Gradle, and candidate/native-fallback semantic outputs matched
+in every cell. This transfers the already-qualified value to the public CLI;
+it does not create a new timing percentage or automatic activation claim. See
+the [installed replay evidence](./benchmarks/results/poc-installed-profile-replay-v1/README.md).
+
 The [product onboarding guide](./docs/getting-started/product-onboarding.md)
 contains Windows installation, CI snippets, component ownership and the
 recommended rollout order. Contributors who want the complete synthetic lab
@@ -142,9 +150,9 @@ and even whitespace-only graph drift restored the full graph. No product rule
 matches Micronaut or any repository name; new repositories remain native until
 their own structure and evidence qualify.
 
-`buildopt poc` is available in source-built packages from the current `main`.
-The published `v0.2.0` package continues to use the longer `buildopt impact`
-form until a later explicitly authorized release.
+`buildopt poc` is available in public `v0.3.1`. The installed-profile replay
+above validates that exact release; earlier `v0.2.0` remains historical
+onboarding evidence rather than the current qualified-profile package.
 
 The checked scorecard measures each optimization separately and then measures
 the complete public path without adding unrelated percentages. The tested

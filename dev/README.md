@@ -3587,6 +3587,31 @@ candidate target warm-ups. The checker verifies hashes, byte-identical
 artifacts, drift rejection, adaptive fingerprints, immutable terminal savings
 and deterministic recomputation.
 
+The installed-profile adoption replay is frozen by
+`specs/poc-installed-profile-replay-v1.json` and
+`specs/poc-installed-profile-replay-v1.md`. The capture runner downloads and
+installs immutable public `v0.3.1`, reconstructs all six qualified
+Groovy/Kafka changes in clean external checkouts, executes `buildopt poc`, and
+then changes one digest-bound manifest byte to require native fallback:
+
+```bash
+./dev/run-installed-profile-replay /absolute/path/to/new-capture
+```
+
+The committed bundle is validated without network access or Gradle execution:
+
+```bash
+./dev/check-installed-profile-replay-result
+./dev/test-installed-profile-replay-result
+```
+
+The checker rebuilds the aggregate from cell plans, outputs, log hashes and
+the prior immutable qualification. It requires 6/6 selective plans, 6/6
+`PROFILE_PRECONDITION_FAILED` fallbacks and 6/6 same-replay semantic-output
+matches. Historical terminal digests are diagnostic because the Groovy JAR
+contract excludes `BuildTime` but not its date-dependent `BuildDate`; no new
+timing is measured or inferred.
+
 `./dev/check-generic-profile-ci-replay` validates the manual clean-runner
 replay without cloning public repositories. It reconstructs retained Action
 artifacts for all five subjects, requires five semantic and byte-level graph

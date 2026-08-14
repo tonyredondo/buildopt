@@ -1,0 +1,31 @@
+buildopt: explicit Build Impact POC candidate changed-projects selected; this is not production authorization
+buildopt: qualified POC profile plan {"schemaVersion":"buildopt.poc/qualified-profile-plan/v4","profileId":"qualified-structural-build-impact","claimScope":"DECLARED_OUTPUTS_ONLY","repositoryId":"apache/kafka","pipelineClass":"checkstyle-main-client-utils-source","selectionMode":"POC_CANDIDATE","selectionReason":"EXPLICIT_OWNER_POC_CANDIDATE","alternativeId":"changed-projects","entrypoints":[":clients:checkstyleMain"],"fallbackEntrypoints":["checkstyleMain"],"affectedProjects":[":clients",":clients:clients-integration-tests",":connect:api",":connect:basic-auth-extension",":connect:file",":connect:json",":connect:mirror",":connect:mirror-client",":connect:runtime",":connect:test-plugins",":connect:transforms",":coordinator-common",":core",":examples",":group-coordinator",":group-coordinator:group-coordinator-api",":jmh-benchmarks",":metadata",":raft",":server",":server-common",":share-coordinator",":shell",":storage",":storage:storage-api",":streams",":streams:examples",":streams:integration-tests",":streams:streams-scala",":streams:test-utils",":test-common:test-common-internal-api",":test-common:test-common-runtime",":tools",":tools:tools-api",":transaction-coordinator",":trogdor"],"omittedProjectCount":62,"expectedOutputs":["clients/build/reports/checkstyle/main.html","clients/build/reports/checkstyle/main.xml"],"preservedTestCheckIds":null,"enabledAdapters":[],"disabledMechanisms":["HOT_STATE","RUNTIME_TUNING","SAFE_CACHE","SHARED_EDGE_CACHE","STANDARD_COPY","STANDARD_JAR"],"preconditions":[{"type":"FILE_SHA256","path":"buildopt-impact-manifest.json","sha256":"ab3c585c360ac6addb816b250182de1d7cb3112b0d9a6e17668b14a4c24a3e7a","status":"SATISFIED"},{"type":"FILE_SHA256","path":"buildopt-impact-graph.generated.json","sha256":"c76224a1568bbb01d891affd262b618985ae6db5cf7d51e72a0a76b12ba547fb","status":"SATISFIED"},{"type":"FILE_SHA256","path":"buildopt-impact.generated.json","sha256":"870ecb04709d5109b0d37de896bc685cc7f0e9245dfcc67aeb7b137f37500a97","status":"SATISFIED"},{"type":"FILE_SHA256","path":"buildopt-output-equivalence.json","sha256":"fef44cfc2b8c6b65077e257f5c7358286702e082903daff2d13391bdebc93586","status":"SATISFIED"}],"qualification":{"schemaVersion":"buildopt.evidence/structural-profile-qualification/v1","sha256":"f1a989304e8f37c162d0c230724c155f3cdd691c62f1e2faf1d70e429ca53f51","repositoryRevision":"69e4650c3ac2ec0338ef51475ef750e97a467b51","pairs":8,"meanSavedMs":28356.125,"reductionRatio":0.31684281538115583,"interval95SavedMs":[25331.125,31157.25]},"productionAuthorized":false}
+Starting a Gradle Daemon (subsequent builds will be faster)
+
+> Configure project :
+Starting build with version 4.3.1 (commit id 69e4650c) using Gradle 9.2.1, Java 25 and Scala 2.13.18
+Build properties: ignoreFailures=false, maxParallelForks=12, maxScalacThreads=8, maxTestRetries=0
+
+> Task :clients:processResources
+> Task :generator:compileJava
+> Task :generator:processResources NO-SOURCE
+> Task :generator:classes
+> Task :generator:jar
+
+> Task :clients:processMessages
+MessageGenerator: processed 198 Kafka message JSON file(s).
+
+> Task :clients:compileJava
+> Task :clients:classes
+> Task :clients:checkstyleMain
+
+[Incubating] Problems report is available at: file://${BUILDOPT_CAPTURE_ROOT}/apache-kafka-checkstyle-client-utils-source/repository/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.2.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 1m 36s
+6 actionable tasks: 6 executed

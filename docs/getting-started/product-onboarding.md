@@ -168,9 +168,16 @@ buildopt-impact check \
 buildopt poc --changes-file .buildopt-changes
 ```
 
-This short command is available in source-built packages from current `main`.
-The published `v0.2.0` package uses the equivalent explicit `buildopt impact`
-form until a later tagged release.
+This command is available in public `v0.3.1`. The six retained Groovy and
+Kafka profiles have been replayed through that exact package: each exact
+profile selected its reviewed graph, each digest-drift probe retained the
+native full graph, and every candidate matched its same-run native fallback
+under the owner-reviewed output contract. Review the
+[installed replay bundle](../../benchmarks/results/poc-installed-profile-replay-v1/README.md).
+
+The profile remains repository-owned and review-required. BuildOpt does not
+discover, qualify or activate an optimization automatically during this
+command, and any binding drift returns to the original Gradle entrypoints.
 
 The command prints the complete selected/fallback plan, exact adapters and
 expected outputs before Gradle begins. It does not select tests or grant

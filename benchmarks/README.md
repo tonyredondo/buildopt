@@ -162,6 +162,29 @@ captures. Installed break-even improves from 10–31 to **9–26 qualifying
 builds**, while complete-POC break-even improves from 20–55 to **19–50**.
 Existing terminal savings are immutable and remain cell-specific.
 
+### Public installed qualified-profile replay
+
+The [installed-profile replay bundle](./results/poc-installed-profile-replay-v1/README.md)
+tests the six reviewed profiles through the public `v0.3.1` Linux AMD64
+package rather than the source-tree research runner. All six exact profiles
+select their reviewed entrypoints; harmless byte drift in the bound manifest
+then produces six `FULL_GRAPH / PROFILE_PRECONDITION_FAILED` decisions. In
+every cell the selective candidate and its contemporary native fallback have
+the same owner-reviewed semantic output, and the embedded terminal
+qualification remains unchanged.
+
+Four Kafka outputs also match the historical terminal digest. Two Groovy JARs
+do not because their reviewed volatile-property contract excludes `BuildTime`
+but not the date-dependent `BuildDate`; direct native Gradle on the same frozen
+checkout matches the current BuildOpt digest. Cross-capture identity is
+therefore diagnostic. No new timing, averaged percentage, production
+activation, soak or Test Optimization claim is made.
+
+```bash
+./dev/check-installed-profile-replay-result
+./dev/test-installed-profile-replay-result
+```
+
 ### Unseen Hibernate ORM holdout
 
 The [terminal holdout bundle](./results/poc-generic-holdout-v2/README.md)
