@@ -19,7 +19,7 @@ buildopt_spec="${buildopt_repo_root}/specs/poc-installed-profile-replay-v1.json"
 buildopt_source_spec="${buildopt_repo_root}/specs/poc-generic-change-breadth-v1.json"
 buildopt_source_root="${buildopt_repo_root}/benchmarks/results/poc-generic-change-breadth-v1"
 
-for buildopt_command in awk cp curl file git jq mkdir mktemp mv perl sha256sum tar timeout; do
+for buildopt_command in awk cp curl file git jq mkdir mktemp mv perl python3 sha256sum tar timeout; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
         printf 'required installed-profile runner command is unavailable: %s\n' \
             "${buildopt_command}" >&2
@@ -56,6 +56,25 @@ buildopt_cleanup() {
 }
 trap buildopt_cleanup EXIT
 
+buildopt_normalize_log() {
+    local buildopt_log=$1
+    python3 - "${buildopt_log}" "${buildopt_root}" "${buildopt_repo_root}" "${HOME}" <<'PY'
+from pathlib import Path
+import sys
+
+log = Path(sys.argv[1])
+replacements = (
+    (sys.argv[2], "${BUILDOPT_CAPTURE_ROOT}"),
+    (sys.argv[3], "${BUILDOPT_SOURCE_ROOT}"),
+    (sys.argv[4], "${HOME}"),
+)
+content = log.read_text(encoding="utf-8")
+for source, replacement in sorted(replacements, key=lambda pair: len(pair[0]), reverse=True):
+    content = content.replace(source, replacement)
+log.write_text(content, encoding="utf-8")
+PY
+}
+
 mkdir -p -- "${buildopt_output}" "${buildopt_root}/install" "${buildopt_root}/release"
 curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' \
     --tlsv1.2 --output "${buildopt_root}/release/install.sh" "${buildopt_installer_url}"
@@ -65,6 +84,7 @@ curl --fail --silent --show-error --location --proto '=https' --proto-redir '=ht
     "https://github.com/tonyredondo/buildopt/releases/download/${buildopt_tag}/buildopt-${buildopt_version}-linux-amd64.tar.gz.sha256"
 bash "${buildopt_root}/release/install.sh" --version "${buildopt_version}" \
     --prefix "${buildopt_root}/install" >"${buildopt_output}/install.log" 2>&1
+buildopt_normalize_log "${buildopt_output}/install.log"
 buildopt_executable="${buildopt_root}/install/bin/buildopt"
 [[ -x ${buildopt_executable} ]] || {
     printf 'public BuildOpt executable was not installed\n' >&2
@@ -215,6 +235,7 @@ buildopt_capture_cell() {
             timeout 15m "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
             ./gradlew --version
     ) >"${buildopt_cell_output}/distribution.log" 2>&1
+    buildopt_normalize_log "${buildopt_cell_output}/distribution.log"
 
     buildopt_mutate_repository "${buildopt_mutation}" "${buildopt_repository}" \
         "${buildopt_change_path}" "${buildopt_key}"
@@ -261,6 +282,7 @@ buildopt_capture_cell() {
         printf 'installed candidate output drifted: %s\n' "${buildopt_key}" >&2
         return 1
     }
+    buildopt_normalize_log "${buildopt_cell_output}/candidate.log"
 
     git -C "${buildopt_repository}" clean -ffdxq
     printf '%s\n' "${buildopt_change_path}" \
@@ -293,6 +315,7 @@ buildopt_capture_cell() {
         printf 'installed fallback output drifted: %s\n' "${buildopt_key}" >&2
         return 1
     }
+    buildopt_normalize_log "${buildopt_cell_output}/fallback.log"
 
     jq -n \
         --arg key "${buildopt_key}" \

@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [/absolute/evidence/root]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence_root=${1:-"${buildopt_repo_root}/benchmarks/results/poc-installed-profile-replay-v1"}
+buildopt_spec="${buildopt_repo_root}/specs/poc-installed-profile-replay-v1.json"
+buildopt_source_spec="${buildopt_repo_root}/specs/poc-generic-change-breadth-v1.json"
+buildopt_terminal_root="${buildopt_repo_root}/benchmarks/results/poc-generic-change-breadth-v1"
+buildopt_summary="${buildopt_evidence_root}/summary.json"
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-installed-profile-check.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-installed-profile-check."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+[[ ${buildopt_evidence_root} == /* && -s ${buildopt_summary} ]] || {
+    printf 'installed-profile evidence root is invalid: %s\n' "${buildopt_evidence_root}" >&2
+    exit 1
+}
+"${buildopt_script_dir}/check-installed-profile-replay" >/dev/null
+
+jq -e --slurpfile spec "${buildopt_spec}" '
+  keys == ["aggregation", "boundaries", "capturedAt", "cells", "method", "release", "schemaVersion", "workItem"] and
+  .schemaVersion == $spec[0].evidenceSchemaVersion and .workItem == $spec[0].workItem and
+  (.capturedAt | fromdateiso8601) > 0 and
+  .release.version == $spec[0].release.version and .release.tag == $spec[0].release.tag and
+  .release.revision == $spec[0].release.revision and .release.platform == $spec[0].release.platform and
+  all([.release.executableSha256, .release.installerSha256, .release.archiveSha256][];
+      test("^[0-9a-f]{64}$")) and
+  .method == $spec[0].method and .boundaries == $spec[0].boundaries and
+  (.cells | length) == 6 and ([.cells[].key] == $spec[0].cells) and
+  .aggregation == {
+    cells: 6, selectivePlans: 6, driftFallbacks: 6,
+    candidateOutputsMatched: 6, fallbackOutputsMatched: 6,
+    qualificationsPreserved: 6, productAttributableFailures: 0,
+    repositoryPercentagesAveraged: false, mechanismPercentagesAdded: false
+  }
+' "${buildopt_summary}" >/dev/null
+
+[[ -s ${buildopt_evidence_root}/install.log ]] || exit 1
+while IFS= read -r buildopt_key; do
+    buildopt_cell="${buildopt_evidence_root}/${buildopt_key}"
+    buildopt_terminal="${buildopt_terminal_root}/${buildopt_key}/capture-2"
+    buildopt_source_index=$(jq --arg key "${buildopt_key}" \
+        '.repositories | map(.key) | index($key)' "${buildopt_source_spec}")
+    for buildopt_file in distribution.log candidate.log fallback.log candidate-plan.json \
+        fallback-plan.json candidate-output.json fallback-output.json result.json; do
+        [[ -s ${buildopt_cell}/${buildopt_file} ]] || {
+            printf 'installed-profile artifact is unavailable: %s\n' \
+                "${buildopt_cell}/${buildopt_file}" >&2
+            exit 1
+        }
+    done
+    if rg -n '/tmp/buildopt-installed-profile-replay|/home/tony/' \
+        "${buildopt_cell}"/*.log "${buildopt_evidence_root}/install.log" >/dev/null; then
+        printf 'installed-profile evidence contains a private capture path: %s\n' \
+            "${buildopt_key}" >&2
+        exit 1
+    fi
+    buildopt_expected_entrypoints=$(jq ".repositories[${buildopt_source_index}].expectedCandidateEntrypoints" \
+        "${buildopt_source_spec}")
+    buildopt_fallback_entrypoints=$(jq '.originalEntrypoints' \
+        "${buildopt_terminal}/buildopt-impact-manifest.json")
+    jq -e --argjson expected "${buildopt_expected_entrypoints}" \
+        --slurpfile profile "${buildopt_terminal}/profile.json" '
+      .schemaVersion == "buildopt.poc/qualified-profile-plan/v4" and
+      .selectionMode == "POC_CANDIDATE" and
+      .selectionReason == "EXPLICIT_OWNER_POC_CANDIDATE" and
+      .entrypoints == $expected and .qualification == $profile[0].qualification and
+      (.preconditions | length) == 3 and all(.preconditions[]; .status == "SATISFIED") and
+      .productionAuthorized == false
+    ' "${buildopt_cell}/candidate-plan.json" >/dev/null
+    jq -e --argjson fallback "${buildopt_fallback_entrypoints}" \
+        --slurpfile profile "${buildopt_terminal}/profile.json" '
+      .schemaVersion == "buildopt.poc/qualified-profile-plan/v4" and
+      .selectionMode == "FULL_GRAPH" and
+      .selectionReason == "PROFILE_PRECONDITION_FAILED" and
+      .entrypoints == $fallback and .fallbackEntrypoints == $fallback and
+      .qualification == $profile[0].qualification and
+      any(.preconditions[]; .status == "FAILED") and .enabledAdapters == [] and
+      .productionAuthorized == false
+    ' "${buildopt_cell}/fallback-plan.json" >/dev/null
+    jq -e '.count > 0 and (.sha256 | test("^[0-9a-f]{64}$"))' \
+        "${buildopt_cell}/candidate-output.json" "${buildopt_cell}/fallback-output.json" >/dev/null
+    grep -F 'buildopt: qualified POC profile plan ' "${buildopt_cell}/candidate.log" >/dev/null
+    grep -F 'buildopt: qualified POC profile plan ' "${buildopt_cell}/fallback.log" >/dev/null
+done < <(jq -r '.cells[]' "${buildopt_spec}")
+
+buildopt_reassembled="${buildopt_temp}/summary.json"
+"${buildopt_script_dir}/assemble-installed-profile-replay-result" \
+    "${buildopt_evidence_root}" "$(jq -r '.capturedAt' "${buildopt_summary}")" \
+    "${buildopt_reassembled}"
+cmp --silent "${buildopt_summary}" "${buildopt_reassembled}"
+
+buildopt_index=0
+while IFS= read -r buildopt_key; do
+    cmp --silent "${buildopt_evidence_root}/${buildopt_key}/result.json" \
+        <(jq ".cells[${buildopt_index}]" "${buildopt_reassembled}")
+    buildopt_index=$((buildopt_index + 1))
+done < <(jq -r '.cells[]' "${buildopt_spec}")
+
+printf 'Installed qualified-profile replay evidence OK: 6 selective plans, 6 drift fallbacks, outputs preserved\n'

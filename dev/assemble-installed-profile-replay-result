@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 3)) || [[ $1 != /* || $3 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/root CAPTURED_AT /absolute/output.json\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_evidence_root=$1
+buildopt_captured_at=$2
+buildopt_output=$3
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-installed-profile-replay-v1.json"
+buildopt_source_spec="${buildopt_repo_root}/specs/poc-generic-change-breadth-v1.json"
+buildopt_terminal_root="${buildopt_repo_root}/benchmarks/results/poc-generic-change-breadth-v1"
+buildopt_existing_summary="${buildopt_evidence_root}/summary.json"
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-installed-profile-assemble.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-installed-profile-assemble."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+[[ -s ${buildopt_existing_summary} ]] || {
+    printf 'installed-profile summary is unavailable: %s\n' "${buildopt_existing_summary}" >&2
+    exit 1
+}
+
+buildopt_index=0
+while IFS= read -r buildopt_key; do
+    buildopt_source_index=$(jq --arg key "${buildopt_key}" \
+        '.repositories | map(.key) | index($key)' "${buildopt_source_spec}")
+    [[ ${buildopt_source_index} != null ]] || exit 1
+    buildopt_cell="${buildopt_evidence_root}/${buildopt_key}"
+    buildopt_terminal="${buildopt_terminal_root}/${buildopt_key}/capture-2"
+    buildopt_expected_output=$(jq -er '
+        [.observations[] | .controlRequiredOutputSha256, .candidateRequiredOutputSha256] |
+        unique | if length == 1 then .[0] else error("terminal output drift") end
+    ' "${buildopt_terminal}/evidence.json")
+    jq -n \
+        --arg key "${buildopt_key}" \
+        --arg repositoryId "$(jq -er ".repositories[${buildopt_source_index}].repositoryId" "${buildopt_source_spec}")" \
+        --arg pipelineClass "$(jq -er ".repositories[${buildopt_source_index}].pipelineClass" "${buildopt_source_spec}")" \
+        --arg publicRevision "$(jq -er ".repositories[${buildopt_source_index}].publicRevision" "${buildopt_source_spec}")" \
+        --arg targetRevision "$(jq -er '.qualification.repositoryRevision' "${buildopt_terminal}/profile.json")" \
+        --arg expectedOutputSha256 "${buildopt_expected_output}" \
+        --arg candidateLogSha256 "$(sha256sum "${buildopt_cell}/candidate.log" | awk '{print $1}')" \
+        --arg fallbackLogSha256 "$(sha256sum "${buildopt_cell}/fallback.log" | awk '{print $1}')" \
+        --slurpfile candidatePlan "${buildopt_cell}/candidate-plan.json" \
+        --slurpfile fallbackPlan "${buildopt_cell}/fallback-plan.json" \
+        --slurpfile candidateOutput "${buildopt_cell}/candidate-output.json" \
+        --slurpfile fallbackOutput "${buildopt_cell}/fallback-output.json" \
+        --slurpfile terminalProfile "${buildopt_terminal}/profile.json" '
+        {
+          key: $key,
+          repositoryId: $repositoryId,
+          pipelineClass: $pipelineClass,
+          publicRevision: $publicRevision,
+          targetRevision: $targetRevision,
+          expectedOutputSha256: $expectedOutputSha256,
+          candidate: {
+            decision: $candidatePlan[0].selectionMode,
+            reason: $candidatePlan[0].selectionReason,
+            entrypoints: $candidatePlan[0].entrypoints,
+            output: $candidateOutput[0],
+            logSha256: $candidateLogSha256
+          },
+          driftFallback: {
+            decision: $fallbackPlan[0].selectionMode,
+            reason: $fallbackPlan[0].selectionReason,
+            entrypoints: $fallbackPlan[0].entrypoints,
+            output: $fallbackOutput[0],
+            logSha256: $fallbackLogSha256
+          },
+          qualification: $terminalProfile[0].qualification,
+          productAttributableFailures: 0,
+          testOptimization: "OUT_OF_SCOPE"
+        }
+    ' >"${buildopt_temp}/cell-${buildopt_index}.json"
+    buildopt_index=$((buildopt_index + 1))
+done < <(jq -r '.cells[]' "${buildopt_spec}")
+
+jq -n \
+    --arg capturedAt "${buildopt_captured_at}" \
+    --slurpfile existing "${buildopt_existing_summary}" \
+    --slurpfile spec "${buildopt_spec}" \
+    --slurpfile cells <(jq -s '.' "${buildopt_temp}"/cell-*.json) '
+    {
+      schemaVersion: $spec[0].evidenceSchemaVersion,
+      workItem: $spec[0].workItem,
+      capturedAt: $capturedAt,
+      release: $existing[0].release,
+      method: $spec[0].method,
+      cells: $cells[0],
+      aggregation: {
+        cells: ($cells[0] | length),
+        selectivePlans: ($cells[0] | map(select(.candidate.decision == "POC_CANDIDATE")) | length),
+        driftFallbacks: ($cells[0] | map(select(.driftFallback.reason == "PROFILE_PRECONDITION_FAILED")) | length),
+        candidateOutputsMatched: ($cells[0] | map(select(.candidate.output.sha256 == .expectedOutputSha256)) | length),
+        fallbackOutputsMatched: ($cells[0] | map(select(.driftFallback.output.sha256 == .expectedOutputSha256)) | length),
+        qualificationsPreserved: ($cells[0] | map(select(.qualification.pairs == 8)) | length),
+        productAttributableFailures: ($cells[0] | map(.productAttributableFailures) | add),
+        repositoryPercentagesAveraged: false,
+        mechanismPercentagesAdded: false
+      },
+      boundaries: $spec[0].boundaries
+    }
+' >"${buildopt_output}"
