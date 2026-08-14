@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "buildopt.evidence/change-breadth-fallback/v1",
+  "evidenceState": "FULL_GRAPH_FALLBACK_VERIFIED",
+  "capturedAt": "2026-08-14T15:36:30Z",
+  "subject": {
+    "repositoryId": "apache/groovy",
+    "repositoryRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+    "pipelineClass": "jar-packaging-build-logic",
+    "workflowFamily": "JAR_PACKAGING",
+    "changeClass": "BUILD_LOGIC"
+  },
+  "captures": [
+    {
+      "index": 1,
+      "targetRevision": "70bbb202eedfe6838ef2eca7184248a5d73fc73e",
+      "decision": "NATIVE_FULL_GRAPH",
+      "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"
+    },
+    {
+      "index": 2,
+      "targetRevision": "70bbb202eedfe6838ef2eca7184248a5d73fc73e",
+      "decision": "NATIVE_FULL_GRAPH",
+      "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"
+    }
+  ],
+  "result": null,
+  "decision": "RETAIN_NATIVE_GRADLE",
+  "timingClaim": false,
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

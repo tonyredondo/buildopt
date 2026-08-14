@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v4",
+  "profileVersion": 4,
+  "profileId": "qualified-structural-build-impact",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "apache/groovy",
+  "pipelineClass": "jar-packaging-leaf-source",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": false,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": false
+  },
+  "gradleOptions": [
+    "--daemon",
+    "--build-cache",
+    "--parallel",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-scan",
+    "--max-workers=12"
+  ],
+  "preconditions": [
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-manifest.json",
+      "sha256": "cdcb86f791bc4eea80300809a6f92941f7375ddd8e71a7b73c5bcf8931d1bb18"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-graph.generated.json",
+      "sha256": "34650f1646cfd871377dd684f3d73322f2ce7b576759f7a88407e5915d3e23c5"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact.generated.json",
+      "sha256": "a1efcfdf8feb29b8ff3759b6203d12e78d3ed9dab7514d770679c72b22e2fb6a"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-output-equivalence.json",
+      "sha256": "ed3bc40daec143645589a768d5058bdbdf1a982d08d2659170142bca3dea1ff5"
+    }
+  ],
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "156d423af63ae76fca779a6a6520d6a8dbb507786e8afc0198ef7b659f6f7b3c",
+    "repositoryRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+    "pairs": 8,
+    "meanSavedMs": 52911.75,
+    "reductionRatio": 0.7381841772085674,
+    "interval95SavedMs": [
+      51316.625,
+      54591.375
+    ]
+  }
+}

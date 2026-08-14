@@ -1,0 +1,49 @@
+{
+  "key": "apache-kafka-shadow-clients-source",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "shadow-jar-clients-source",
+  "workflowFamily": "FAT_JAR_DISTRIBUTION",
+  "changeClass": "LEAF_PRODUCTION_SOURCE",
+  "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+  "targetRevision": "929868cbdee1fbdc9cb60701e2ca17e8a66cd2ae",
+  "buildopt": {
+    "revision": "706ee5480fd24aade078565925ec853d7ae67de7",
+    "executableSha256": "cf2107fbc269af4dd46c5acdd6f8f4dc8d12e3df7f1882f3d9764672d48d89af"
+  },
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "shadowJar"
+    ],
+    "candidateEntrypoints": [
+      ":clients:shadowJar"
+    ],
+    "totalProjectCount": 64,
+    "selectedProjectCount": 2,
+    "omittedProjectCount": 62
+  },
+  "measurementStatus": "COMPLETED",
+  "measurementFailureClass": null,
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 45022.375,
+    "candidateMeanMs": 14915.875,
+    "meanSavedMs": 30106.5,
+    "reductionRatio": 0.6687008404154601,
+    "interval95SavedMs": [
+      28858.5,
+      31318.375
+    ],
+    "positivePairs": 8,
+    "executionShapeObserved": true,
+    "executionShapeStable": true,
+    "targetWarmupShapeObserved": true,
+    "targetWarmupShapeStable": true,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "evaluationDecision": "QUALIFY_STRUCTURAL_PROFILE",
+  "outputEquivalence": "buildopt-output-equivalence.json",
+  "outputEquivalenceSha256": "22dba20d585be322658604491b4b91d1f7e5deaa8dece5e5b8a954881630108a"
+}

@@ -1,0 +1,30 @@
+{
+  "key": "apache-kafka-shadow-global-configuration",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "shadow-jar-global-configuration",
+  "workflowFamily": "FAT_JAR_DISTRIBUTION",
+  "changeClass": "GLOBAL_CONFIGURATION",
+  "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+  "targetRevision": "1995e6bb3789bcaf4fc8e945e0493a51bad272cb",
+  "buildopt": {
+    "revision": "706ee5480fd24aade078565925ec853d7ae67de7",
+    "executableSha256": "cf2107fbc269af4dd46c5acdd6f8f4dc8d12e3df7f1882f3d9764672d48d89af"
+  },
+  "proposal": {
+    "decision": "NATIVE_FULL_GRAPH",
+    "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+    "originalEntrypoints": [
+      "shadowJar"
+    ],
+    "candidateEntrypoints": [],
+    "totalProjectCount": null,
+    "selectedProjectCount": null,
+    "omittedProjectCount": null
+  },
+  "measurementStatus": "NOT_RUN_NATIVE_FULL_GRAPH",
+  "measurementFailureClass": null,
+  "result": null,
+  "evaluationDecision": "NATIVE_FULL_GRAPH",
+  "outputEquivalence": "buildopt-output-equivalence.json",
+  "outputEquivalenceSha256": "22dba20d585be322658604491b4b91d1f7e5deaa8dece5e5b8a954881630108a"
+}

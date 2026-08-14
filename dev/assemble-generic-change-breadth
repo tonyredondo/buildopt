@@ -147,7 +147,10 @@ for buildopt_key in "${buildopt_keys[@]}"; do
         proposal: $proposal[0].proposal,
         evidenceState: $qualification[0].evidenceState,
         result: $qualification[0].result,
-        decision: $qualification[0].decision
+        decision: (if $cell.performanceClaim
+          then $qualification[0].result.decision
+          else $qualification[0].decision
+        end)
       }
     ' >"${buildopt_row}"
     buildopt_rows+=("${buildopt_row}")

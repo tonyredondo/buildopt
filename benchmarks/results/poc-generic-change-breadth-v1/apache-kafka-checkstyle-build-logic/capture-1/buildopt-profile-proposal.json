@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "buildopt.poc/profile-proposal/v1",
+  "decision": "NATIVE_FULL_GRAPH",
+  "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "checkstyle-main-build-logic",
+  "baseRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+  "targetRevision": "90dddfdc87ae898bf227e454dd865f6315a8b05e",
+  "originalEntrypoint": "checkstyleMain",
+  "originalEntrypoints": [
+    "checkstyleMain"
+  ],
+  "changedPaths": [
+    "build.gradle"
+  ],
+  "requiredOutputs": [
+    "clients/build/reports/checkstyle/main.html",
+    "clients/build/reports/checkstyle/main.xml"
+  ],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "unknownRelationships": false,
+  "documents": {
+    "outputContract": "buildopt-output-contract.json",
+    "proposal": "buildopt-profile-proposal.json"
+  },
+  "buildOptRevisionNeeded": false,
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false,
+  "testOptimization": "OUT_OF_SCOPE",
+  "outputEquivalence": "buildopt-output-equivalence.json",
+  "outputEquivalenceSha256": "fef44cfc2b8c6b65077e257f5c7358286702e082903daff2d13391bdebc93586"
+}

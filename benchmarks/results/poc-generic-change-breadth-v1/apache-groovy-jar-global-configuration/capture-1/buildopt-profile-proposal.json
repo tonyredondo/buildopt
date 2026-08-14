@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "buildopt.poc/profile-proposal/v1",
+  "decision": "NATIVE_FULL_GRAPH",
+  "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+  "repositoryId": "apache/groovy",
+  "pipelineClass": "jar-packaging-global-configuration",
+  "baseRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+  "targetRevision": "86f75cff4cde98f3a5a9a1deefb92297dc7f6524",
+  "originalEntrypoint": "jar",
+  "originalEntrypoints": [
+    "jar"
+  ],
+  "changedPaths": [
+    "gradle.properties"
+  ],
+  "requiredOutputs": [
+    "subprojects/groovy-json/build/libs/*.jar"
+  ],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "unknownRelationships": false,
+  "documents": {
+    "outputContract": "buildopt-output-contract.json",
+    "proposal": "buildopt-profile-proposal.json"
+  },
+  "buildOptRevisionNeeded": false,
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false,
+  "testOptimization": "OUT_OF_SCOPE",
+  "outputEquivalence": "buildopt-output-equivalence.json",
+  "outputEquivalenceSha256": "ed3bc40daec143645589a768d5058bdbdf1a982d08d2659170142bca3dea1ff5"
+}

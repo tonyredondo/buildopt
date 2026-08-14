@@ -1,0 +1,2122 @@
+{
+  "schemaVersion": "buildopt.poc/output-contract/v1",
+  "decision": "VALIDATED_REQUIRED_OUTPUTS",
+  "reason": "DECLARED_OUTPUTS_MATCH_EXECUTED_WORKFLOW",
+  "repositoryId": "apache/groovy",
+  "pipelineClass": "jar-packaging-global-configuration",
+  "repositoryRevision": "86f75cff4cde98f3a5a9a1deefb92297dc7f6524",
+  "gradleVersion": "8.14.4",
+  "originalEntrypoints": [
+    "jar"
+  ],
+  "declaredOutputs": [
+    "subprojects/groovy-json/build/libs/*.jar"
+  ],
+  "candidateOutputs": [
+    {
+      "pattern": "build/bootstrap/groovy-5.0.8-bootstrap.jar",
+      "path": "build/bootstrap/groovy-5.0.8-bootstrap.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":"
+      ],
+      "producerTasks": [
+        ":bootstrapJar"
+      ]
+    },
+    {
+      "pattern": "build/classes/groovy/main/**",
+      "path": "build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 166,
+      "ownerProjects": [
+        ":"
+      ],
+      "producerTasks": [
+        ":compileGroovy"
+      ]
+    },
+    {
+      "pattern": "build/classes/java/main/**",
+      "path": "build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1880,
+      "ownerProjects": [
+        ":"
+      ],
+      "producerTasks": [
+        ":compileJava"
+      ]
+    },
+    {
+      "pattern": "build/dgm/**",
+      "path": "build/dgm",
+      "kind": "DIRECTORY",
+      "fileCount": 1770,
+      "ownerProjects": [
+        ":"
+      ],
+      "producerTasks": [
+        ":dgmConverter"
+      ]
+    },
+    {
+      "pattern": "build/generated/sources/antlr4/**",
+      "path": "build/generated/sources/antlr4",
+      "kind": "DIRECTORY",
+      "fileCount": 8,
+      "ownerProjects": [
+        ":"
+      ],
+      "producerTasks": [
+        ":generateGrammarSource"
+      ]
+    },
+    {
+      "pattern": "build/libs/groovy-raw-5.0.8-raw.jar",
+      "path": "build/libs/groovy-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":"
+      ],
+      "producerTasks": [
+        ":jar"
+      ]
+    },
+    {
+      "pattern": "build/osgi-classes/**",
+      "path": "build/osgi-classes",
+      "kind": "DIRECTORY",
+      "fileCount": 2046,
+      "ownerProjects": [
+        ":"
+      ],
+      "producerTasks": [
+        ":osgiClasses"
+      ]
+    },
+    {
+      "pattern": "build/release-info/groovy-release-info.properties",
+      "path": "build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":"
+      ],
+      "producerTasks": [
+        ":generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "build/resources/main/**",
+      "path": "build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 3,
+      "ownerProjects": [
+        ":"
+      ],
+      "producerTasks": [
+        ":processResources"
+      ]
+    },
+    {
+      "pattern": "build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":"
+      ],
+      "producerTasks": [
+        ":compileGroovy"
+      ]
+    },
+    {
+      "pattern": "build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":"
+      ],
+      "producerTasks": [
+        ":compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-ant/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-ant/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":groovy-ant"
+      ],
+      "producerTasks": [
+        ":groovy-ant:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-ant/build/classes/java/main/**",
+      "path": "subprojects/groovy-ant/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 20,
+      "ownerProjects": [
+        ":groovy-ant"
+      ],
+      "producerTasks": [
+        ":groovy-ant:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-ant/build/libs/groovy-ant-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-ant/build/libs/groovy-ant-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-ant"
+      ],
+      "producerTasks": [
+        ":groovy-ant:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-ant/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-ant/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-ant"
+      ],
+      "producerTasks": [
+        ":groovy-ant:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-ant/build/resources/main/**",
+      "path": "subprojects/groovy-ant/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":groovy-ant"
+      ],
+      "producerTasks": [
+        ":groovy-ant:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-ant/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-ant/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-ant"
+      ],
+      "producerTasks": [
+        ":groovy-ant:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-ant/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-ant/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-ant"
+      ],
+      "producerTasks": [
+        ":groovy-ant:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-astbuilder/build/classes/java/main/**",
+      "path": "subprojects/groovy-astbuilder/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":groovy-astbuilder"
+      ],
+      "producerTasks": [
+        ":groovy-astbuilder:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-astbuilder/build/libs/groovy-astbuilder-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-astbuilder/build/libs/groovy-astbuilder-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-astbuilder"
+      ],
+      "producerTasks": [
+        ":groovy-astbuilder:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-astbuilder/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-astbuilder/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-astbuilder"
+      ],
+      "producerTasks": [
+        ":groovy-astbuilder:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-astbuilder/build/resources/main/**",
+      "path": "subprojects/groovy-astbuilder/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-astbuilder"
+      ],
+      "producerTasks": [
+        ":groovy-astbuilder:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-astbuilder/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-astbuilder/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-astbuilder"
+      ],
+      "producerTasks": [
+        ":groovy-astbuilder:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-cli-commons/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-cli-commons/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 27,
+      "ownerProjects": [
+        ":groovy-cli-commons"
+      ],
+      "producerTasks": [
+        ":groovy-cli-commons:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-cli-commons/build/libs/groovy-cli-commons-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-cli-commons/build/libs/groovy-cli-commons-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-cli-commons"
+      ],
+      "producerTasks": [
+        ":groovy-cli-commons:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-cli-commons/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-cli-commons/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-cli-commons"
+      ],
+      "producerTasks": [
+        ":groovy-cli-commons:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-cli-commons/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-cli-commons/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-cli-commons"
+      ],
+      "producerTasks": [
+        ":groovy-cli-commons:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-cli-picocli/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-cli-picocli/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 23,
+      "ownerProjects": [
+        ":groovy-cli-picocli"
+      ],
+      "producerTasks": [
+        ":groovy-cli-picocli:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-cli-picocli/build/libs/groovy-cli-picocli-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-cli-picocli/build/libs/groovy-cli-picocli-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-cli-picocli"
+      ],
+      "producerTasks": [
+        ":groovy-cli-picocli:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-cli-picocli/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-cli-picocli/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-cli-picocli"
+      ],
+      "producerTasks": [
+        ":groovy-cli-picocli:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-cli-picocli/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-cli-picocli/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-cli-picocli"
+      ],
+      "producerTasks": [
+        ":groovy-cli-picocli:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-console/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-console/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 432,
+      "ownerProjects": [
+        ":groovy-console"
+      ],
+      "producerTasks": [
+        ":groovy-console:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-console/build/libs/groovy-console-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-console/build/libs/groovy-console-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-console"
+      ],
+      "producerTasks": [
+        ":groovy-console:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-console/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-console/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-console"
+      ],
+      "producerTasks": [
+        ":groovy-console:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-console/build/resources/main/**",
+      "path": "subprojects/groovy-console/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 35,
+      "ownerProjects": [
+        ":groovy-console"
+      ],
+      "producerTasks": [
+        ":groovy-console:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-console/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-console/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-console"
+      ],
+      "producerTasks": [
+        ":groovy-console:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-contracts/build/classes/java/main/**",
+      "path": "subprojects/groovy-contracts/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 75,
+      "ownerProjects": [
+        ":groovy-contracts"
+      ],
+      "producerTasks": [
+        ":groovy-contracts:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-contracts/build/libs/groovy-contracts-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-contracts/build/libs/groovy-contracts-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-contracts"
+      ],
+      "producerTasks": [
+        ":groovy-contracts:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-contracts/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-contracts/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-contracts"
+      ],
+      "producerTasks": [
+        ":groovy-contracts:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-contracts/build/resources/main/**",
+      "path": "subprojects/groovy-contracts/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 4,
+      "ownerProjects": [
+        ":groovy-contracts"
+      ],
+      "producerTasks": [
+        ":groovy-contracts:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-contracts/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-contracts/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-contracts"
+      ],
+      "producerTasks": [
+        ":groovy-contracts:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-datetime/build/classes/java/main/**",
+      "path": "subprojects/groovy-datetime/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 3,
+      "ownerProjects": [
+        ":groovy-datetime"
+      ],
+      "producerTasks": [
+        ":groovy-datetime:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-datetime/build/libs/groovy-datetime-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-datetime/build/libs/groovy-datetime-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-datetime"
+      ],
+      "producerTasks": [
+        ":groovy-datetime:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-datetime/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-datetime/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-datetime"
+      ],
+      "producerTasks": [
+        ":groovy-datetime:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-datetime/build/resources/main/**",
+      "path": "subprojects/groovy-datetime/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-datetime"
+      ],
+      "producerTasks": [
+        ":groovy-datetime:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-datetime/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "path": "subprojects/groovy-datetime/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-datetime"
+      ],
+      "producerTasks": [
+        ":groovy-datetime:moduleDescriptor"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-datetime/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-datetime/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-datetime"
+      ],
+      "producerTasks": [
+        ":groovy-datetime:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-dateutil/build/classes/java/main/**",
+      "path": "subprojects/groovy-dateutil/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":groovy-dateutil"
+      ],
+      "producerTasks": [
+        ":groovy-dateutil:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-dateutil/build/libs/groovy-dateutil-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-dateutil/build/libs/groovy-dateutil-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-dateutil"
+      ],
+      "producerTasks": [
+        ":groovy-dateutil:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-dateutil/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-dateutil/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-dateutil"
+      ],
+      "producerTasks": [
+        ":groovy-dateutil:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-dateutil/build/resources/main/**",
+      "path": "subprojects/groovy-dateutil/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-dateutil"
+      ],
+      "producerTasks": [
+        ":groovy-dateutil:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-dateutil/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "path": "subprojects/groovy-dateutil/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-dateutil"
+      ],
+      "producerTasks": [
+        ":groovy-dateutil:moduleDescriptor"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-dateutil/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-dateutil/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-dateutil"
+      ],
+      "producerTasks": [
+        ":groovy-dateutil:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-docgenerator/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-docgenerator/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 49,
+      "ownerProjects": [
+        ":groovy-docgenerator"
+      ],
+      "producerTasks": [
+        ":groovy-docgenerator:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-docgenerator/build/libs/groovy-docgenerator-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-docgenerator/build/libs/groovy-docgenerator-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-docgenerator"
+      ],
+      "producerTasks": [
+        ":groovy-docgenerator:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-docgenerator/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-docgenerator/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-docgenerator"
+      ],
+      "producerTasks": [
+        ":groovy-docgenerator:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-docgenerator/build/resources/main/**",
+      "path": "subprojects/groovy-docgenerator/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 11,
+      "ownerProjects": [
+        ":groovy-docgenerator"
+      ],
+      "producerTasks": [
+        ":groovy-docgenerator:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-docgenerator/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-docgenerator/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-docgenerator"
+      ],
+      "producerTasks": [
+        ":groovy-docgenerator:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-ginq/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-ginq/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 112,
+      "ownerProjects": [
+        ":groovy-ginq"
+      ],
+      "producerTasks": [
+        ":groovy-ginq:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-ginq/build/libs/groovy-ginq-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-ginq/build/libs/groovy-ginq-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-ginq"
+      ],
+      "producerTasks": [
+        ":groovy-ginq:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-ginq/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-ginq/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-ginq"
+      ],
+      "producerTasks": [
+        ":groovy-ginq:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-ginq/build/resources/main/**",
+      "path": "subprojects/groovy-ginq/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-ginq"
+      ],
+      "producerTasks": [
+        ":groovy-ginq:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-ginq/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "path": "subprojects/groovy-ginq/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-ginq"
+      ],
+      "producerTasks": [
+        ":groovy-ginq:moduleDescriptor"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-ginq/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-ginq/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-ginq"
+      ],
+      "producerTasks": [
+        ":groovy-ginq:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-groovydoc/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-groovydoc/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":groovy-groovydoc"
+      ],
+      "producerTasks": [
+        ":groovy-groovydoc:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-groovydoc/build/classes/java/main/**",
+      "path": "subprojects/groovy-groovydoc/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 51,
+      "ownerProjects": [
+        ":groovy-groovydoc"
+      ],
+      "producerTasks": [
+        ":groovy-groovydoc:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-groovydoc/build/libs/groovy-groovydoc-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-groovydoc/build/libs/groovy-groovydoc-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-groovydoc"
+      ],
+      "producerTasks": [
+        ":groovy-groovydoc:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-groovydoc/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-groovydoc/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-groovydoc"
+      ],
+      "producerTasks": [
+        ":groovy-groovydoc:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-groovydoc/build/resources/main/**",
+      "path": "subprojects/groovy-groovydoc/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 16,
+      "ownerProjects": [
+        ":groovy-groovydoc"
+      ],
+      "producerTasks": [
+        ":groovy-groovydoc:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-groovydoc/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-groovydoc/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-groovydoc"
+      ],
+      "producerTasks": [
+        ":groovy-groovydoc:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-groovydoc/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-groovydoc/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-groovydoc"
+      ],
+      "producerTasks": [
+        ":groovy-groovydoc:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-groovysh/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-groovysh/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 100,
+      "ownerProjects": [
+        ":groovy-groovysh"
+      ],
+      "producerTasks": [
+        ":groovy-groovysh:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-groovysh/build/libs/groovy-groovysh-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-groovysh/build/libs/groovy-groovysh-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-groovysh"
+      ],
+      "producerTasks": [
+        ":groovy-groovysh:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-groovysh/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-groovysh/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-groovysh"
+      ],
+      "producerTasks": [
+        ":groovy-groovysh:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-groovysh/build/resources/main/**",
+      "path": "subprojects/groovy-groovysh/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 65,
+      "ownerProjects": [
+        ":groovy-groovysh"
+      ],
+      "producerTasks": [
+        ":groovy-groovysh:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-groovysh/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-groovysh/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-groovysh"
+      ],
+      "producerTasks": [
+        ":groovy-groovysh:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-jmx/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-jmx/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 41,
+      "ownerProjects": [
+        ":groovy-jmx"
+      ],
+      "producerTasks": [
+        ":groovy-jmx:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-jmx/build/classes/java/main/**",
+      "path": "subprojects/groovy-jmx/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 9,
+      "ownerProjects": [
+        ":groovy-jmx"
+      ],
+      "producerTasks": [
+        ":groovy-jmx:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-jmx/build/libs/groovy-jmx-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-jmx/build/libs/groovy-jmx-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-jmx"
+      ],
+      "producerTasks": [
+        ":groovy-jmx:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-jmx/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-jmx/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-jmx"
+      ],
+      "producerTasks": [
+        ":groovy-jmx:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-jmx/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-jmx/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-jmx"
+      ],
+      "producerTasks": [
+        ":groovy-jmx:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-jmx/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-jmx/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-jmx"
+      ],
+      "producerTasks": [
+        ":groovy-jmx:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-json/build/classes/java/main/**",
+      "path": "subprojects/groovy-json/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 66,
+      "ownerProjects": [
+        ":groovy-json"
+      ],
+      "producerTasks": [
+        ":groovy-json:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-json/build/libs/groovy-json-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-json/build/libs/groovy-json-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-json"
+      ],
+      "producerTasks": [
+        ":groovy-json:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-json/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-json/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-json"
+      ],
+      "producerTasks": [
+        ":groovy-json:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-json/build/resources/main/**",
+      "path": "subprojects/groovy-json/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-json"
+      ],
+      "producerTasks": [
+        ":groovy-json:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-json/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-json/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-json"
+      ],
+      "producerTasks": [
+        ":groovy-json:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-jsr223/build/classes/java/main/**",
+      "path": "subprojects/groovy-jsr223/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 8,
+      "ownerProjects": [
+        ":groovy-jsr223"
+      ],
+      "producerTasks": [
+        ":groovy-jsr223:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-jsr223/build/libs/groovy-jsr223-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-jsr223/build/libs/groovy-jsr223-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-jsr223"
+      ],
+      "producerTasks": [
+        ":groovy-jsr223:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-jsr223/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-jsr223/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-jsr223"
+      ],
+      "producerTasks": [
+        ":groovy-jsr223:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-jsr223/build/resources/main/**",
+      "path": "subprojects/groovy-jsr223/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":groovy-jsr223"
+      ],
+      "producerTasks": [
+        ":groovy-jsr223:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-jsr223/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "path": "subprojects/groovy-jsr223/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-jsr223"
+      ],
+      "producerTasks": [
+        ":groovy-jsr223:moduleDescriptor"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-jsr223/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-jsr223/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-jsr223"
+      ],
+      "producerTasks": [
+        ":groovy-jsr223:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-macro-library/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-macro-library/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-macro-library"
+      ],
+      "producerTasks": [
+        ":groovy-macro-library:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-macro-library/build/libs/groovy-macro-library-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-macro-library/build/libs/groovy-macro-library-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-macro-library"
+      ],
+      "producerTasks": [
+        ":groovy-macro-library:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-macro-library/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-macro-library/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-macro-library"
+      ],
+      "producerTasks": [
+        ":groovy-macro-library:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-macro-library/build/resources/main/**",
+      "path": "subprojects/groovy-macro-library/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-macro-library"
+      ],
+      "producerTasks": [
+        ":groovy-macro-library:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-macro-library/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "path": "subprojects/groovy-macro-library/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-macro-library"
+      ],
+      "producerTasks": [
+        ":groovy-macro-library:moduleDescriptor"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-macro-library/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-macro-library/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-macro-library"
+      ],
+      "producerTasks": [
+        ":groovy-macro-library:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-macro/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-macro/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 147,
+      "ownerProjects": [
+        ":groovy-macro"
+      ],
+      "producerTasks": [
+        ":groovy-macro:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-macro/build/libs/groovy-macro-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-macro/build/libs/groovy-macro-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-macro"
+      ],
+      "producerTasks": [
+        ":groovy-macro:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-macro/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-macro/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-macro"
+      ],
+      "producerTasks": [
+        ":groovy-macro:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-macro/build/resources/main/**",
+      "path": "subprojects/groovy-macro/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":groovy-macro"
+      ],
+      "producerTasks": [
+        ":groovy-macro:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-macro/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "path": "subprojects/groovy-macro/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-macro"
+      ],
+      "producerTasks": [
+        ":groovy-macro:moduleDescriptor"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-macro/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-macro/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-macro"
+      ],
+      "producerTasks": [
+        ":groovy-macro:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-nio/build/classes/java/main/**",
+      "path": "subprojects/groovy-nio/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":groovy-nio"
+      ],
+      "producerTasks": [
+        ":groovy-nio:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-nio/build/libs/groovy-nio-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-nio/build/libs/groovy-nio-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-nio"
+      ],
+      "producerTasks": [
+        ":groovy-nio:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-nio/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-nio/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-nio"
+      ],
+      "producerTasks": [
+        ":groovy-nio:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-nio/build/resources/main/**",
+      "path": "subprojects/groovy-nio/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-nio"
+      ],
+      "producerTasks": [
+        ":groovy-nio:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-nio/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "path": "subprojects/groovy-nio/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-nio"
+      ],
+      "producerTasks": [
+        ":groovy-nio:moduleDescriptor"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-nio/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-nio/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-nio"
+      ],
+      "producerTasks": [
+        ":groovy-nio:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-servlet/build/classes/java/main/**",
+      "path": "subprojects/groovy-servlet/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 11,
+      "ownerProjects": [
+        ":groovy-servlet"
+      ],
+      "producerTasks": [
+        ":groovy-servlet:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-servlet/build/libs/groovy-servlet-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-servlet/build/libs/groovy-servlet-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-servlet"
+      ],
+      "producerTasks": [
+        ":groovy-servlet:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-servlet/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-servlet/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-servlet"
+      ],
+      "producerTasks": [
+        ":groovy-servlet:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-servlet/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-servlet/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-servlet"
+      ],
+      "producerTasks": [
+        ":groovy-servlet:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-sql/build/classes/java/main/**",
+      "path": "subprojects/groovy-sql/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 66,
+      "ownerProjects": [
+        ":groovy-sql"
+      ],
+      "producerTasks": [
+        ":groovy-sql:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-sql/build/libs/groovy-sql-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-sql/build/libs/groovy-sql-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-sql"
+      ],
+      "producerTasks": [
+        ":groovy-sql:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-sql/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-sql/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-sql"
+      ],
+      "producerTasks": [
+        ":groovy-sql:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-sql/build/resources/main/**",
+      "path": "subprojects/groovy-sql/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-sql"
+      ],
+      "producerTasks": [
+        ":groovy-sql:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-sql/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "path": "subprojects/groovy-sql/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-sql"
+      ],
+      "producerTasks": [
+        ":groovy-sql:moduleDescriptor"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-sql/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-sql/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-sql"
+      ],
+      "producerTasks": [
+        ":groovy-sql:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-swing/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-swing/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 143,
+      "ownerProjects": [
+        ":groovy-swing"
+      ],
+      "producerTasks": [
+        ":groovy-swing:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-swing/build/classes/java/main/**",
+      "path": "subprojects/groovy-swing/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 49,
+      "ownerProjects": [
+        ":groovy-swing"
+      ],
+      "producerTasks": [
+        ":groovy-swing:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-swing/build/libs/groovy-swing-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-swing/build/libs/groovy-swing-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-swing"
+      ],
+      "producerTasks": [
+        ":groovy-swing:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-swing/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-swing/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-swing"
+      ],
+      "producerTasks": [
+        ":groovy-swing:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-swing/build/resources/main/**",
+      "path": "subprojects/groovy-swing/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-swing"
+      ],
+      "producerTasks": [
+        ":groovy-swing:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-swing/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "path": "subprojects/groovy-swing/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-swing"
+      ],
+      "producerTasks": [
+        ":groovy-swing:moduleDescriptor"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-swing/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-swing/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-swing"
+      ],
+      "producerTasks": [
+        ":groovy-swing:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-swing/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-swing/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-swing"
+      ],
+      "producerTasks": [
+        ":groovy-swing:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-templates/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-templates/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 49,
+      "ownerProjects": [
+        ":groovy-templates"
+      ],
+      "producerTasks": [
+        ":groovy-templates:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-templates/build/libs/groovy-templates-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-templates/build/libs/groovy-templates-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-templates"
+      ],
+      "producerTasks": [
+        ":groovy-templates:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-templates/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-templates/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-templates"
+      ],
+      "producerTasks": [
+        ":groovy-templates:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-templates/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-templates/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-templates"
+      ],
+      "producerTasks": [
+        ":groovy-templates:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-test-junit5/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-test-junit5/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":groovy-test-junit5"
+      ],
+      "producerTasks": [
+        ":groovy-test-junit5:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-test-junit5/build/classes/java/main/**",
+      "path": "subprojects/groovy-test-junit5/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-test-junit5"
+      ],
+      "producerTasks": [
+        ":groovy-test-junit5:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-test-junit5/build/libs/groovy-test-junit5-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-test-junit5/build/libs/groovy-test-junit5-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-test-junit5"
+      ],
+      "producerTasks": [
+        ":groovy-test-junit5:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-test-junit5/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-test-junit5/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-test-junit5"
+      ],
+      "producerTasks": [
+        ":groovy-test-junit5:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-test-junit5/build/resources/main/**",
+      "path": "subprojects/groovy-test-junit5/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-test-junit5"
+      ],
+      "producerTasks": [
+        ":groovy-test-junit5:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-test-junit5/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-test-junit5/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-test-junit5"
+      ],
+      "producerTasks": [
+        ":groovy-test-junit5:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-test-junit5/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-test-junit5/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-test-junit5"
+      ],
+      "producerTasks": [
+        ":groovy-test-junit5:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-test/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-test/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 21,
+      "ownerProjects": [
+        ":groovy-test"
+      ],
+      "producerTasks": [
+        ":groovy-test:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-test/build/classes/java/main/**",
+      "path": "subprojects/groovy-test/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 9,
+      "ownerProjects": [
+        ":groovy-test"
+      ],
+      "producerTasks": [
+        ":groovy-test:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-test/build/libs/groovy-test-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-test/build/libs/groovy-test-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-test"
+      ],
+      "producerTasks": [
+        ":groovy-test:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-test/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-test/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-test"
+      ],
+      "producerTasks": [
+        ":groovy-test:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-test/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-test/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-test"
+      ],
+      "producerTasks": [
+        ":groovy-test:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-test/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-test/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-test"
+      ],
+      "producerTasks": [
+        ":groovy-test:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-testng/build/classes/java/main/**",
+      "path": "subprojects/groovy-testng/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-testng"
+      ],
+      "producerTasks": [
+        ":groovy-testng:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-testng/build/libs/groovy-testng-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-testng/build/libs/groovy-testng-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-testng"
+      ],
+      "producerTasks": [
+        ":groovy-testng:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-testng/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-testng/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-testng"
+      ],
+      "producerTasks": [
+        ":groovy-testng:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-testng/build/resources/main/**",
+      "path": "subprojects/groovy-testng/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-testng"
+      ],
+      "producerTasks": [
+        ":groovy-testng:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-testng/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-testng/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-testng"
+      ],
+      "producerTasks": [
+        ":groovy-testng:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-toml/build/classes/java/main/**",
+      "path": "subprojects/groovy-toml/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 4,
+      "ownerProjects": [
+        ":groovy-toml"
+      ],
+      "producerTasks": [
+        ":groovy-toml:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-toml/build/libs/groovy-toml-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-toml/build/libs/groovy-toml-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-toml"
+      ],
+      "producerTasks": [
+        ":groovy-toml:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-toml/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-toml/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-toml"
+      ],
+      "producerTasks": [
+        ":groovy-toml:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-toml/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-toml/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-toml"
+      ],
+      "producerTasks": [
+        ":groovy-toml:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-typecheckers/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-typecheckers/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 29,
+      "ownerProjects": [
+        ":groovy-typecheckers"
+      ],
+      "producerTasks": [
+        ":groovy-typecheckers:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-typecheckers/build/libs/groovy-typecheckers-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-typecheckers/build/libs/groovy-typecheckers-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-typecheckers"
+      ],
+      "producerTasks": [
+        ":groovy-typecheckers:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-typecheckers/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-typecheckers/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-typecheckers"
+      ],
+      "producerTasks": [
+        ":groovy-typecheckers:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-typecheckers/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-typecheckers/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-typecheckers"
+      ],
+      "producerTasks": [
+        ":groovy-typecheckers:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-xml/build/classes/groovy/main/**",
+      "path": "subprojects/groovy-xml/build/classes/groovy/main",
+      "kind": "DIRECTORY",
+      "fileCount": 57,
+      "ownerProjects": [
+        ":groovy-xml"
+      ],
+      "producerTasks": [
+        ":groovy-xml:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-xml/build/classes/java/main/**",
+      "path": "subprojects/groovy-xml/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 73,
+      "ownerProjects": [
+        ":groovy-xml"
+      ],
+      "producerTasks": [
+        ":groovy-xml:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-xml/build/libs/groovy-xml-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-xml/build/libs/groovy-xml-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-xml"
+      ],
+      "producerTasks": [
+        ":groovy-xml:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-xml/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-xml/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-xml"
+      ],
+      "producerTasks": [
+        ":groovy-xml:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-xml/build/resources/main/**",
+      "path": "subprojects/groovy-xml/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-xml"
+      ],
+      "producerTasks": [
+        ":groovy-xml:processResources"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-xml/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "path": "subprojects/groovy-xml/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-xml"
+      ],
+      "producerTasks": [
+        ":groovy-xml:moduleDescriptor"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-xml/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "path": "subprojects/groovy-xml/build/tmp/compileGroovy/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-xml"
+      ],
+      "producerTasks": [
+        ":groovy-xml:compileGroovy"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-xml/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-xml/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-xml"
+      ],
+      "producerTasks": [
+        ":groovy-xml:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-yaml/build/classes/java/main/**",
+      "path": "subprojects/groovy-yaml/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 4,
+      "ownerProjects": [
+        ":groovy-yaml"
+      ],
+      "producerTasks": [
+        ":groovy-yaml:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-yaml/build/libs/groovy-yaml-raw-5.0.8-raw.jar",
+      "path": "subprojects/groovy-yaml/build/libs/groovy-yaml-raw-5.0.8-raw.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-yaml"
+      ],
+      "producerTasks": [
+        ":groovy-yaml:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-yaml/build/release-info/groovy-release-info.properties",
+      "path": "subprojects/groovy-yaml/build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-yaml"
+      ],
+      "producerTasks": [
+        ":groovy-yaml:generateReleaseInfo"
+      ]
+    },
+    {
+      "pattern": "subprojects/groovy-yaml/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "subprojects/groovy-yaml/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":groovy-yaml"
+      ],
+      "producerTasks": [
+        ":groovy-yaml:compileJava"
+      ]
+    },
+    {
+      "pattern": "subprojects/performance/build/libs/performance-5.0.8.jar",
+      "path": "subprojects/performance/build/libs/performance-5.0.8.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":performance"
+      ],
+      "producerTasks": [
+        ":performance:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/stress/build/libs/stress-5.0.8.jar",
+      "path": "subprojects/stress/build/libs/stress-5.0.8.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":stress"
+      ],
+      "producerTasks": [
+        ":stress:jar"
+      ]
+    },
+    {
+      "pattern": "subprojects/tests-preview/build/libs/tests-preview-5.0.8.jar",
+      "path": "subprojects/tests-preview/build/libs/tests-preview-5.0.8.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tests-preview"
+      ],
+      "producerTasks": [
+        ":tests-preview:jar"
+      ]
+    }
+  ],
+  "validations": [
+    {
+      "pattern": "subprojects/groovy-json/build/libs/*.jar",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":groovy-json"
+      ],
+      "producerTasks": [
+        ":groovy-json:jar"
+      ]
+    }
+  ],
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false,
+  "testOptimization": "OUT_OF_SCOPE"
+}

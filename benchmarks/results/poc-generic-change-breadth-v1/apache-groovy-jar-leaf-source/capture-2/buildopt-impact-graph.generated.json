@@ -1,0 +1,738 @@
+{
+  "schemaVersion": "buildopt.build-impact/declared-graph/v1",
+  "repositoryId": "apache/groovy",
+  "pipelineClass": "jar-packaging-leaf-source",
+  "manifestDigest": "sha256:fb0c1bd553fc3a8579f1bf98c1b0ce1246410444499848a1d1007dc1c2df985a",
+  "adapterVersion": "gradle-runtime-v1",
+  "complete": true,
+  "projects": [
+    {
+      "path": ":",
+      "sourcePaths": [
+        "src/**",
+        "subprojects/groovy-ant/**",
+        "subprojects/groovy-dateutil/**",
+        "subprojects/groovy-docgenerator/**",
+        "subprojects/groovy-groovydoc/**",
+        "subprojects/groovy-json/**",
+        "subprojects/groovy-macro/**",
+        "subprojects/groovy-templates/**",
+        "subprojects/groovy-test/**",
+        "subprojects/groovy-xml/**"
+      ],
+      "ownedSourcePaths": [
+        "src/**"
+      ],
+      "dependsOn": [
+        ":groovy-bom"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":binary-compatibility",
+      "sourcePaths": [
+        "subprojects/binary-compatibility/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-all",
+      "sourcePaths": [
+        "subprojects/groovy-all/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-cli-picocli",
+        ":groovy-console",
+        ":groovy-datetime",
+        ":groovy-docgenerator",
+        ":groovy-groovydoc",
+        ":groovy-groovysh",
+        ":groovy-jmx",
+        ":groovy-json",
+        ":groovy-jsr223",
+        ":groovy-macro",
+        ":groovy-nio",
+        ":groovy-servlet",
+        ":groovy-sql",
+        ":groovy-swing",
+        ":groovy-templates",
+        ":groovy-test",
+        ":groovy-test-junit5",
+        ":groovy-xml",
+        ":groovy-yaml"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-ant",
+      "sourcePaths": [
+        "src/**",
+        "subprojects/groovy-ant/**",
+        "subprojects/groovy-dateutil/**",
+        "subprojects/groovy-docgenerator/**",
+        "subprojects/groovy-groovydoc/**",
+        "subprojects/groovy-json/**",
+        "subprojects/groovy-macro/**",
+        "subprojects/groovy-templates/**",
+        "subprojects/groovy-test/**",
+        "subprojects/groovy-xml/**"
+      ],
+      "ownedSourcePaths": [
+        "subprojects/groovy-ant/**"
+      ],
+      "dependsOn": [
+        ":groovy-bom"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-astbuilder",
+      "sourcePaths": [
+        "subprojects/groovy-astbuilder/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-groovydoc",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-binary",
+      "sourcePaths": [
+        "subprojects/groovy-binary/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-all",
+        ":groovy-ant",
+        ":groovy-astbuilder",
+        ":groovy-cli-commons",
+        ":groovy-cli-picocli",
+        ":groovy-console",
+        ":groovy-contracts",
+        ":groovy-datetime",
+        ":groovy-dateutil",
+        ":groovy-docgenerator",
+        ":groovy-ginq",
+        ":groovy-groovydoc",
+        ":groovy-groovysh",
+        ":groovy-jmx",
+        ":groovy-json",
+        ":groovy-jsr223",
+        ":groovy-macro",
+        ":groovy-macro-library",
+        ":groovy-nio",
+        ":groovy-servlet",
+        ":groovy-sql",
+        ":groovy-swing",
+        ":groovy-templates",
+        ":groovy-test",
+        ":groovy-test-junit5",
+        ":groovy-testng",
+        ":groovy-toml",
+        ":groovy-typecheckers",
+        ":groovy-xml",
+        ":groovy-yaml"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-bom",
+      "sourcePaths": [
+        "subprojects/groovy-bom/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-cli-commons",
+      "sourcePaths": [
+        "subprojects/groovy-cli-commons/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-dateutil",
+        ":groovy-groovydoc",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-cli-picocli",
+      "sourcePaths": [
+        "subprojects/groovy-cli-picocli/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-dateutil",
+        ":groovy-groovydoc",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-console",
+      "sourcePaths": [
+        "subprojects/groovy-console/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-groovydoc",
+        ":groovy-swing",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-contracts",
+      "sourcePaths": [
+        "subprojects/groovy-contracts/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-groovydoc",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-datetime",
+      "sourcePaths": [
+        "subprojects/groovy-datetime/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-dateutil",
+        ":groovy-groovydoc",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-dateutil",
+      "sourcePaths": [
+        "src/**",
+        "subprojects/groovy-ant/**",
+        "subprojects/groovy-dateutil/**",
+        "subprojects/groovy-docgenerator/**",
+        "subprojects/groovy-groovydoc/**",
+        "subprojects/groovy-json/**",
+        "subprojects/groovy-macro/**",
+        "subprojects/groovy-templates/**",
+        "subprojects/groovy-test/**",
+        "subprojects/groovy-xml/**"
+      ],
+      "ownedSourcePaths": [
+        "subprojects/groovy-dateutil/**"
+      ],
+      "dependsOn": [
+        ":groovy-bom"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-docgenerator",
+      "sourcePaths": [
+        "src/**",
+        "subprojects/groovy-ant/**",
+        "subprojects/groovy-dateutil/**",
+        "subprojects/groovy-docgenerator/**",
+        "subprojects/groovy-groovydoc/**",
+        "subprojects/groovy-json/**",
+        "subprojects/groovy-macro/**",
+        "subprojects/groovy-templates/**",
+        "subprojects/groovy-test/**",
+        "subprojects/groovy-xml/**"
+      ],
+      "ownedSourcePaths": [
+        "subprojects/groovy-docgenerator/**"
+      ],
+      "dependsOn": [
+        ":groovy-bom"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-ginq",
+      "sourcePaths": [
+        "subprojects/groovy-ginq/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-console",
+        ":groovy-groovydoc",
+        ":groovy-json",
+        ":groovy-macro",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-groovydoc",
+      "sourcePaths": [
+        "src/**",
+        "subprojects/groovy-ant/**",
+        "subprojects/groovy-dateutil/**",
+        "subprojects/groovy-docgenerator/**",
+        "subprojects/groovy-groovydoc/**",
+        "subprojects/groovy-json/**",
+        "subprojects/groovy-macro/**",
+        "subprojects/groovy-templates/**",
+        "subprojects/groovy-test/**",
+        "subprojects/groovy-xml/**"
+      ],
+      "ownedSourcePaths": [
+        "subprojects/groovy-groovydoc/**"
+      ],
+      "dependsOn": [
+        ":groovy-bom"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-groovysh",
+      "sourcePaths": [
+        "subprojects/groovy-groovysh/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-console",
+        ":groovy-groovydoc",
+        ":groovy-json",
+        ":groovy-nio",
+        ":groovy-templates",
+        ":groovy-test",
+        ":groovy-xml"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-jmx",
+      "sourcePaths": [
+        "subprojects/groovy-jmx/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-groovydoc",
+        ":groovy-swing",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-json",
+      "sourcePaths": [
+        "src/**",
+        "subprojects/groovy-ant/**",
+        "subprojects/groovy-dateutil/**",
+        "subprojects/groovy-docgenerator/**",
+        "subprojects/groovy-groovydoc/**",
+        "subprojects/groovy-json/**",
+        "subprojects/groovy-macro/**",
+        "subprojects/groovy-templates/**",
+        "subprojects/groovy-test/**",
+        "subprojects/groovy-xml/**"
+      ],
+      "ownedSourcePaths": [
+        "subprojects/groovy-json/**"
+      ],
+      "dependsOn": [
+        ":groovy-bom"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-jsr223",
+      "sourcePaths": [
+        "subprojects/groovy-jsr223/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-groovydoc",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-macro",
+      "sourcePaths": [
+        "src/**",
+        "subprojects/groovy-ant/**",
+        "subprojects/groovy-dateutil/**",
+        "subprojects/groovy-docgenerator/**",
+        "subprojects/groovy-groovydoc/**",
+        "subprojects/groovy-json/**",
+        "subprojects/groovy-macro/**",
+        "subprojects/groovy-templates/**",
+        "subprojects/groovy-test/**",
+        "subprojects/groovy-xml/**"
+      ],
+      "ownedSourcePaths": [
+        "subprojects/groovy-macro/**"
+      ],
+      "dependsOn": [
+        ":groovy-bom"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-macro-library",
+      "sourcePaths": [
+        "subprojects/groovy-macro-library/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-groovydoc",
+        ":groovy-macro",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-nio",
+      "sourcePaths": [
+        "subprojects/groovy-nio/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-groovydoc",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-servlet",
+      "sourcePaths": [
+        "subprojects/groovy-servlet/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-groovydoc",
+        ":groovy-json",
+        ":groovy-templates",
+        ":groovy-test",
+        ":groovy-xml"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-sql",
+      "sourcePaths": [
+        "subprojects/groovy-sql/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-groovydoc",
+        ":groovy-macro",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-swing",
+      "sourcePaths": [
+        "subprojects/groovy-swing/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-groovydoc",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-templates",
+      "sourcePaths": [
+        "src/**",
+        "subprojects/groovy-ant/**",
+        "subprojects/groovy-dateutil/**",
+        "subprojects/groovy-docgenerator/**",
+        "subprojects/groovy-groovydoc/**",
+        "subprojects/groovy-json/**",
+        "subprojects/groovy-macro/**",
+        "subprojects/groovy-templates/**",
+        "subprojects/groovy-test/**",
+        "subprojects/groovy-xml/**"
+      ],
+      "ownedSourcePaths": [
+        "subprojects/groovy-templates/**"
+      ],
+      "dependsOn": [
+        ":groovy-bom"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-test",
+      "sourcePaths": [
+        "src/**",
+        "subprojects/groovy-ant/**",
+        "subprojects/groovy-dateutil/**",
+        "subprojects/groovy-docgenerator/**",
+        "subprojects/groovy-groovydoc/**",
+        "subprojects/groovy-json/**",
+        "subprojects/groovy-macro/**",
+        "subprojects/groovy-templates/**",
+        "subprojects/groovy-test/**",
+        "subprojects/groovy-xml/**"
+      ],
+      "ownedSourcePaths": [
+        "subprojects/groovy-test/**"
+      ],
+      "dependsOn": [
+        ":groovy-bom"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-test-junit5",
+      "sourcePaths": [
+        "subprojects/groovy-test-junit5/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-groovydoc",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-testng",
+      "sourcePaths": [
+        "subprojects/groovy-testng/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-groovydoc",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-toml",
+      "sourcePaths": [
+        "subprojects/groovy-toml/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-groovydoc",
+        ":groovy-json",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-typecheckers",
+      "sourcePaths": [
+        "subprojects/groovy-typecheckers/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-groovydoc",
+        ":groovy-macro",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-xml",
+      "sourcePaths": [
+        "src/**",
+        "subprojects/groovy-ant/**",
+        "subprojects/groovy-dateutil/**",
+        "subprojects/groovy-docgenerator/**",
+        "subprojects/groovy-groovydoc/**",
+        "subprojects/groovy-json/**",
+        "subprojects/groovy-macro/**",
+        "subprojects/groovy-templates/**",
+        "subprojects/groovy-test/**",
+        "subprojects/groovy-xml/**"
+      ],
+      "ownedSourcePaths": [
+        "subprojects/groovy-xml/**"
+      ],
+      "dependsOn": [
+        ":groovy-bom"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":groovy-yaml",
+      "sourcePaths": [
+        "subprojects/groovy-yaml/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-bom",
+        ":groovy-groovydoc",
+        ":groovy-json",
+        ":groovy-templates",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":performance",
+      "sourcePaths": [
+        "subprojects/performance/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-ant",
+        ":groovy-datetime",
+        ":groovy-dateutil",
+        ":groovy-sql",
+        ":groovy-swing",
+        ":groovy-templates",
+        ":groovy-xml"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":stress",
+      "sourcePaths": [
+        "subprojects/stress/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":tests-preview",
+      "sourcePaths": [
+        "subprojects/tests-preview/**"
+      ],
+      "dependsOn": [
+        ":",
+        ":groovy-test"
+      ],
+      "unknownRelationships": false
+    }
+  ],
+  "entrypoints": [
+    {
+      "name": ":groovy-json:jar",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [
+        ":",
+        ":groovy-json"
+      ],
+      "artifactIds": [
+        "required-output-1"
+      ],
+      "checkIds": [],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    },
+    {
+      "name": "jar",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [
+        ":",
+        ":groovy-ant",
+        ":groovy-astbuilder",
+        ":groovy-cli-commons",
+        ":groovy-cli-picocli",
+        ":groovy-console",
+        ":groovy-contracts",
+        ":groovy-datetime",
+        ":groovy-dateutil",
+        ":groovy-docgenerator",
+        ":groovy-ginq",
+        ":groovy-groovydoc",
+        ":groovy-groovysh",
+        ":groovy-jmx",
+        ":groovy-json",
+        ":groovy-jsr223",
+        ":groovy-macro",
+        ":groovy-macro-library",
+        ":groovy-nio",
+        ":groovy-servlet",
+        ":groovy-sql",
+        ":groovy-swing",
+        ":groovy-templates",
+        ":groovy-test",
+        ":groovy-test-junit5",
+        ":groovy-testng",
+        ":groovy-toml",
+        ":groovy-typecheckers",
+        ":groovy-xml",
+        ":groovy-yaml",
+        ":performance",
+        ":stress",
+        ":tests-preview"
+      ],
+      "artifactIds": [
+        "required-output-1"
+      ],
+      "checkIds": [],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    }
+  ],
+  "globalChangePaths": [
+    "build-logic/**"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "key": "apache-kafka-checkstyle-build-logic",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "checkstyle-main-build-logic",
+  "workflowFamily": "TYPED_VERIFICATION",
+  "changeClass": "BUILD_LOGIC",
+  "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+  "targetRevision": "90dddfdc87ae898bf227e454dd865f6315a8b05e",
+  "buildopt": {
+    "revision": "706ee5480fd24aade078565925ec853d7ae67de7",
+    "executableSha256": "cf2107fbc269af4dd46c5acdd6f8f4dc8d12e3df7f1882f3d9764672d48d89af"
+  },
+  "proposal": {
+    "decision": "NATIVE_FULL_GRAPH",
+    "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+    "originalEntrypoints": [
+      "checkstyleMain"
+    ],
+    "candidateEntrypoints": [],
+    "totalProjectCount": null,
+    "selectedProjectCount": null,
+    "omittedProjectCount": null
+  },
+  "measurementStatus": "NOT_RUN_NATIVE_FULL_GRAPH",
+  "measurementFailureClass": null,
+  "result": null,
+  "evaluationDecision": "NATIVE_FULL_GRAPH",
+  "outputEquivalence": "buildopt-output-equivalence.json",
+  "outputEquivalenceSha256": "fef44cfc2b8c6b65077e257f5c7358286702e082903daff2d13391bdebc93586"
+}

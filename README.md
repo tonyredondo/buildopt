@@ -34,8 +34,11 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > All 80 raw pairs improved, required outputs matched, tails improved, and full
 > fallbacks passed. A separate semantic-output rerun also qualified Groovy
 > `jar` (**73.10%**), Kafka Checkstyle (**29.73%**), and Kafka `shadowJar`
-> (**66.55%**) across 48/48 positive raw pairs. These results are bound to
-> exact changes, workflows, and reviewed output contracts;
+> (**66.55%**) across 48/48 positive raw pairs. A fresh change-breadth matrix
+> then qualified six distinct source edits across those three workflows at
+> **28.00% to 79.54% lower wall time**; all 96 raw pairs improved, while all
+> eight build-logic/global-change probes correctly retained native Gradle.
+> These results are bound to exact changes, workflows, and reviewed output contracts;
 > profiles remain review-required and are not production-authorized. See the
 > [current one-pager](./docs/findings/buildopt-poc-handoff.md)
 > and [generalization audit](./docs/findings/buildopt-generalization-audit.md).

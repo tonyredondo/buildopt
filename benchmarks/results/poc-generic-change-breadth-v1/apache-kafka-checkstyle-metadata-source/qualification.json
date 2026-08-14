@@ -1,0 +1,224 @@
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-balanced-qualification/v2",
+  "evidenceState": "QUALIFIED",
+  "capturedAt": "2026-08-14T15:36:30Z",
+  "subject": {
+    "repositoryId": "apache/kafka",
+    "repositoryRevision": "dd90892d8590b6e25b481e62b1a3fe8029acc19e",
+    "pipelineClass": "checkstyle-main-metadata-source"
+  },
+  "sourceBindings": {
+    "manifestSha256": "ccbe348d946bb4a40b55e9205ec92eeedf2fccfed9a71b8ddaa5a0523669280c",
+    "graphSha256": "6745a42ef39fc9f5469033d06be696f42fdb64352ad77239913ed9497d29cc99",
+    "generatedManifestSha256": "b69cdea63c543e7fbcd0dc2f24c02be0071b85b72502237133c416ea83777dfb",
+    "sourceEvidenceSha256": "d2a07796014a1b3b0b6666ac3ba54aba2993c93917adada7a7720a089e38788c",
+    "outputEquivalenceSha256": "fef44cfc2b8c6b65077e257f5c7358286702e082903daff2d13391bdebc93586"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":clients:checkstyleMain"
+    ],
+    "fallbackEntrypoints": [
+      "checkstyleMain"
+    ],
+    "requiredOutputs": [
+      "clients/build/reports/checkstyle/main.html",
+      "clients/build/reports/checkstyle/main.xml"
+    ],
+    "totalProjectCount": 64,
+    "selectedProjectCount": 2,
+    "omittedProjectCount": 62,
+    "omittedProjectRatio": 0.96875
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "706ee5480fd24aade078565925ec853d7ae67de7",
+    "executableSha256": "cf2107fbc269af4dd46c5acdd6f8f4dc8d12e3df7f1882f3d9764672d48d89af",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true,
+    "outputEquivalenceMode": "OWNER_REVIEWED_SEMANTIC_V1",
+    "captureCount": 2,
+    "pairsPerCapture": 8,
+    "blockCount": 8
+  },
+  "captures": [
+    {
+      "index": 1,
+      "path": "benchmarks/results/poc-generic-change-breadth-v1/apache-kafka-checkstyle-metadata-source/capture-1/evidence.json",
+      "sha256": "7ebf58cfd029501f403ae603bd49b2f68ad4c165d39ff7905e1d75d5b260b03a",
+      "capturedAt": "2026-08-14T10:58:01Z",
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 81517.375,
+        "candidateMeanMs": 59064.75,
+        "meanSavedMs": 22452.625,
+        "reductionRatio": 0.27543361154600476,
+        "interval95SavedMs": [
+          20000,
+          24751.5
+        ],
+        "positivePairs": 8,
+        "executionShapeObserved": true,
+        "executionShapeStable": true,
+        "targetWarmupShapeObserved": true,
+        "targetWarmupShapeStable": true,
+        "qualified": true,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE"
+      }
+    },
+    {
+      "index": 2,
+      "path": "benchmarks/results/poc-generic-change-breadth-v1/apache-kafka-checkstyle-metadata-source/capture-2/evidence.json",
+      "sha256": "8cf6885bb050e37081fe04f691941fc9b0ef3eb58838c895897e90d9dd08ad8e",
+      "capturedAt": "2026-08-14T11:43:23Z",
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 83344.5,
+        "candidateMeanMs": 59641.375,
+        "meanSavedMs": 23703.125,
+        "reductionRatio": 0.28439939048167545,
+        "interval95SavedMs": [
+          22642.875,
+          24664.125
+        ],
+        "positivePairs": 8,
+        "executionShapeObserved": true,
+        "executionShapeStable": true,
+        "targetWarmupShapeObserved": true,
+        "targetWarmupShapeStable": true,
+        "qualified": true,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE"
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "captureIndex": 1,
+      "block": 1,
+      "controlFirstPair": 1,
+      "candidateFirstPair": 2,
+      "controlMeanMs": 82442.5,
+      "candidateMeanMs": 59229,
+      "savedMs": 23213.5
+    },
+    {
+      "captureIndex": 1,
+      "block": 2,
+      "controlFirstPair": 3,
+      "candidateFirstPair": 4,
+      "controlMeanMs": 78414.5,
+      "candidateMeanMs": 60645.5,
+      "savedMs": 17769
+    },
+    {
+      "captureIndex": 1,
+      "block": 3,
+      "controlFirstPair": 5,
+      "candidateFirstPair": 6,
+      "controlMeanMs": 80705.5,
+      "candidateMeanMs": 57934.5,
+      "savedMs": 22771
+    },
+    {
+      "captureIndex": 1,
+      "block": 4,
+      "controlFirstPair": 7,
+      "candidateFirstPair": 8,
+      "controlMeanMs": 84507,
+      "candidateMeanMs": 58450,
+      "savedMs": 26057
+    },
+    {
+      "captureIndex": 2,
+      "block": 1,
+      "controlFirstPair": 1,
+      "candidateFirstPair": 2,
+      "controlMeanMs": 83600,
+      "candidateMeanMs": 60575.5,
+      "savedMs": 23024.5
+    },
+    {
+      "captureIndex": 2,
+      "block": 2,
+      "controlFirstPair": 3,
+      "candidateFirstPair": 4,
+      "controlMeanMs": 81954.5,
+      "candidateMeanMs": 59025,
+      "savedMs": 22929.5
+    },
+    {
+      "captureIndex": 2,
+      "block": 3,
+      "controlFirstPair": 5,
+      "candidateFirstPair": 6,
+      "controlMeanMs": 84404,
+      "candidateMeanMs": 59729.5,
+      "savedMs": 24674.5
+    },
+    {
+      "captureIndex": 2,
+      "block": 4,
+      "controlFirstPair": 7,
+      "candidateFirstPair": 8,
+      "controlMeanMs": 83419.5,
+      "candidateMeanMs": 59235.5,
+      "savedMs": 24184
+    }
+  ],
+  "qualification": {
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositiveBlocks": 6,
+    "positiveMedian": true,
+    "candidateP95NotRegressive": true,
+    "requiredOutputsIdentical": true,
+    "executionShapeStable": true,
+    "fullGraphFallbackRequired": true
+  },
+  "result": {
+    "captures": 2,
+    "pairs": 16,
+    "blocks": 8,
+    "controlMeanMs": 82430.9375,
+    "candidateMeanMs": 59353.0625,
+    "meanSavedMs": 23077.875,
+    "reductionRatio": 0.2799661838129646,
+    "medianBlockSavedMs": 23119,
+    "interval95BlockSavedMs": [
+      21373.1875,
+      24451.5625
+    ],
+    "positiveBlocks": 8,
+    "controlP95Ms": 85360,
+    "candidateP95Ms": 62772,
+    "controlFirstMeanSavedMs": 22526.375,
+    "candidateFirstMeanSavedMs": 23629.375,
+    "orderEffectMs": -1103,
+    "requiredOutputsIdentical": true,
+    "executionShapeStable": true,
+    "fallbacksSuccessful": true,
+    "qualified": true,
+    "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

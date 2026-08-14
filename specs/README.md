@@ -557,6 +557,14 @@ must still cover the changed source in the generated graph. Each selective
 cell keeps the balanced two-capture value gate and every fallback is repeated
 twice through the installed proposal path.
 
+The terminal [change-breadth evidence](../benchmarks/results/poc-generic-change-breadth-v1/README.md)
+qualifies all six selective cells: Groovy `jar` saves 73.54% and 65.80%, Kafka
+Checkstyle saves 28.00% and 30.10%, and Kafka `shadowJar` saves 66.64% and
+79.54% for their two distinct source changes. All 96 raw pairs and 48 blocks
+improve. Outputs, tails, task shapes, 12 selective fallbacks and zero-failure
+gates pass. The four build-logic/global cells retain native Gradle in all eight
+captures and make no timing claim. The result remains review-only POC evidence.
+
 The retained [v5 evidence](../benchmarks/results/poc-generic-holdout-v5/README.md)
 passes that unchanged contract: native averages 216.724 seconds and BuildOpt
 203.991 seconds, saving 12.733 seconds/5.88% with interval

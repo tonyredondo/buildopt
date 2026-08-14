@@ -110,6 +110,28 @@ The conformance suite still rejects undeclared report, property, and archive
 payload drift. No repository-name product rule or automatic activation was
 added, and percentages remain workflow-specific rather than averaged.
 
+### Generic change-shape breadth
+
+The [terminal change-breadth matrix](./results/poc-generic-change-breadth-v1/README.md)
+tests two distinct source edits per workflow plus independent build-logic and
+global-configuration fallbacks. The same output-owner-rooted implementation is
+used throughout; the product contains no Groovy or Kafka branch.
+
+| Repository and workflow | Change | Optimized native mean | BuildOpt mean | Direct result | Decision |
+| --- | --- | ---: | ---: | ---: | --- |
+| Apache Groovy `jar` | leaf source | 71.227 s | 18.843 s | **73.54% faster**, 8/8 blocks | Qualify for review |
+| Apache Groovy `jar` | shared source | 79.557 s | 27.207 s | **65.80% faster**, 8/8 blocks | Qualify for review |
+| Kafka `checkstyleMain` | metadata source | 82.431 s | 59.353 s | **28.00% faster**, 8/8 blocks | Qualify for review |
+| Kafka `checkstyleMain` | client-utils source | 87.522 s | 61.177 s | **30.10% faster**, 8/8 blocks | Qualify for review |
+| Kafka `shadowJar` | clients source | 44.828 s | 14.956 s | **66.64% faster**, 8/8 blocks | Qualify for review |
+| Kafka `shadowJar` | generator source | 37.079 s | 7.587 s | **79.54% faster**, 8/8 blocks | Qualify for review |
+
+All 96 raw pairs and 48 reciprocal blocks improve; outputs, task shapes,
+tails, 12 selective fallbacks, and zero-failure gates pass. Four additional
+build-logic/global cells produce eight independent
+`NATIVE_FULL_GRAPH / GLOBAL_CHANGE_REQUIRES_FULL_GRAPH` decisions and no
+timing claim. Percentages remain cell-specific and are not averaged.
+
 ### Unseen Hibernate ORM holdout
 
 The [terminal holdout bundle](./results/poc-generic-holdout-v2/README.md)

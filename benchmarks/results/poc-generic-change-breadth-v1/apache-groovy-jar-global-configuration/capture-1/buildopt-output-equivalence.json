@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "buildopt.poc/output-equivalence/v1",
+  "rules": [
+    {
+      "pattern": "subprojects/groovy-json/build/libs/*.jar",
+      "mode": "CANONICAL_ZIP",
+      "volatileProperties": [
+        {
+          "entry": "META-INF/groovy-release-info.properties",
+          "keys": [
+            "BuildTime"
+          ]
+        }
+      ]
+    }
+  ],
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false
+}

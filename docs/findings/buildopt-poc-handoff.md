@@ -18,7 +18,7 @@ scope.
 
 | Mechanism | Role | Current evidence decision |
 | --- | --- | --- |
-| **Structural Build Impact** | Selects the smallest proven change-specific project/task graph before Gradle runs. | **Retained accelerator.** It materially improves all five fresh public-repository subjects and all three additional build-owned workflow subjects below. |
+| **Structural Build Impact** | Selects the smallest proven change-specific project/task graph before Gradle runs. | **Retained accelerator.** It materially improves all five fresh public-repository subjects, three additional build-owned workflows, and six distinct source-change cells below. |
 | **Profile discovery and evaluation** | Derives the candidate from generic Gradle metadata, measures it against the owner workflow, binds inputs, and enforces native fallback. | **Required safety/evidence layer.** Review remains explicit. |
 | **Safe Cache / local L1** | Isolates and verifies cached outputs by repository, Wrapper, and platform. | **Supporting safety, not the current speed claim.** It is approximately at parity with a warm native cache. |
 | **Shared / Edge Cache** | Moves verified cache objects closer to developers or CI. | **Separate locality experiment.** Network-dependent results are not added to Structural Build Impact percentages. |
@@ -71,11 +71,36 @@ candidate p95 was lower, task shapes were stable, two native fallbacks passed
 per workflow, and product-attributable failures were zero. Percentages remain
 workflow-specific and are not combined with the five-repository table.
 
+## Change-shape breadth
+
+The latest preregistered matrix asks whether those reviewed workflow profiles
+transfer beyond one exact source edit. Each source cell has two independent
+eight-pair captures; build-logic and global changes are separate untimed safety
+cells.
+
+| Repository and workflow | Change | Full -> selected projects | Native mean | BuildOpt mean | Mean saving |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Apache Groovy `jar` | leaf source | 37 -> 2 | 71.227 s | 18.843 s | **52.384 s / 73.54%** |
+| Apache Groovy `jar` | shared source | 37 -> 2 | 79.557 s | 27.207 s | **52.349 s / 65.80%** |
+| Kafka `checkstyleMain` | metadata source | 64 -> 2 | 82.431 s | 59.353 s | **23.078 s / 28.00%** |
+| Kafka `checkstyleMain` | client-utils source | 64 -> 2 | 87.522 s | 61.177 s | **26.345 s / 30.10%** |
+| Kafka `shadowJar` | clients source | 64 -> 2 | 44.828 s | 14.956 s | **29.872 s / 66.64%** |
+| Kafka `shadowJar` | generator source | 64 -> 2 | 37.079 s | 7.587 s | **29.492 s / 79.54%** |
+
+All **96/96 raw pairs** and **48/48 reciprocal blocks** improved. Every output,
+shape, lower-bound, p95, selective fallback, and zero-product-failure gate
+passed. Eight independent build-logic/global captures correctly returned
+`NATIVE_FULL_GRAPH / GLOBAL_CHANGE_REQUIRES_FULL_GRAPH` and made no timing
+claim. The percentages remain independent and are not averaged.
+
 ## What this demonstrates
 
 - **The core idea transfers.** One generic implementation derived material
   graph reductions across five very different, substantial Gradle codebases
   without repository-name logic.
+- **The value transfers across source-change shapes.** Two distinct changes
+  per reviewed workflow qualify independently, while build-logic and global
+  changes retain native Gradle instead of forcing a reduction.
 - **Avoiding the graph compounds value.** Fewer selected projects remove
   configuration, scheduling, cache lookup, compilation, and packaging work;
   this is why Kafka and Groovy show especially large savings.
@@ -97,9 +122,11 @@ workflow-specific and are not combined with the five-repository table.
 ## Current limits
 
 The evidence is bound to exact revisions, changes, workflows, outputs, and a
-12-CPU host. It does not prove that every change in these repositories wins or
-that every Gradle repository can be activated automatically. Profiles remain
-review-required and native Gradle remains authoritative on drift or ambiguity.
+12-CPU host. The new matrix broadens each reviewed workflow to two source
+changes and proves conservative build-logic/global fallback, but it does not
+prove that every change in these repositories wins or that every Gradle
+repository can be activated automatically. Profiles remain review-required
+and native Gradle remains authoritative on drift or ambiguity.
 
 The evidence now covers those three known output representations, but only
 through explicit reviewed contracts: Groovy JAR metadata embeds build time,
@@ -109,19 +136,18 @@ until an owner declares and validates its semantics.
 
 ## Recommended next steps
 
-1. **Add change-shape breadth.** Preregister multiple source, shared-library,
-   build-logic, and global changes across the existing public repositories and
-   workflow families. Qualify each cell independently so one exact profile is
-   not mistaken for repository-wide support.
-2. **Measure calibration economics.** Record discovery, warm-up, and steady
+1. **Measure calibration economics.** Record discovery, warm-up, and steady
    state separately, then report the break-even number of repeated builds.
    Reuse only digest-bound facts and never move setup cost into a hidden bucket.
-3. **Replay qualified profiles through the public installed path.** Confirm
+2. **Replay qualified profiles through the public installed path.** Confirm
    the same value, semantic-output contract, drift handling, and native
    fallback outside the research runner.
-4. **Add one new substantial repository family.** Use the unchanged generic
+3. **Add one new substantial repository family.** Use the unchanged generic
    path and owner-input model; do not add a repository-name rule to force a
    result.
+4. **Broaden change classes incrementally.** Add dependency, resource, and
+   mixed-source changes only when the owner workflow and required outputs can
+   be declared without repository-specific product code.
 5. **Keep wall time authoritative.** Continue only mechanisms that materially
    beat optimized native Gradle under correctness, repeatability, and tail
    guards; retire or retain native for everything else.
@@ -133,6 +159,7 @@ until an owner declares and validates its semantics.
 - [Preregistered v2 contract](../../specs/poc-statistical-qualification-v2.md)
 - [Public workflow-family output barriers](../../benchmarks/results/poc-generic-workflow-value-v1/README.md)
 - [Terminal semantic output-equivalence qualification](../../benchmarks/results/poc-generic-output-equivalence-v1/README.md)
+- [Terminal generic change-breadth qualification](../../benchmarks/results/poc-generic-change-breadth-v1/README.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

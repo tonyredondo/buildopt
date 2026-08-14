@@ -1,0 +1,422 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-generic-change-breadth/v1",
+  "workItem": "POC-GENERIC-CHANGE-BREADTH-001",
+  "capturedAt": "2026-08-14T15:36:30Z",
+  "buildopt": {
+    "revision": "706ee5480fd24aade078565925ec853d7ae67de7",
+    "executableSha256": "cf2107fbc269af4dd46c5acdd6f8f4dc8d12e3df7f1882f3d9764672d48d89af"
+  },
+  "cells": [
+    {
+      "key": "apache-groovy-jar-leaf-source",
+      "repositoryId": "apache/groovy",
+      "repositoryRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "pipelineClass": "jar-packaging-leaf-source",
+      "workflowFamily": "JAR_PACKAGING",
+      "changeClass": "LEAF_PRODUCTION_SOURCE",
+      "changePath": "subprojects/groovy-json/src/main/java/org/apache/groovy/json/DefaultFastStringService.java",
+      "performanceClaim": true,
+      "proposal": {
+        "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+        "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+        "originalEntrypoints": [
+          "jar"
+        ],
+        "candidateEntrypoints": [
+          ":groovy-json:jar"
+        ],
+        "totalProjectCount": 37,
+        "selectedProjectCount": 2,
+        "omittedProjectCount": 35
+      },
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "captures": 2,
+        "pairs": 16,
+        "blocks": 8,
+        "controlMeanMs": 71227.125,
+        "candidateMeanMs": 18843.1875,
+        "meanSavedMs": 52383.9375,
+        "reductionRatio": 0.7354492758201318,
+        "medianBlockSavedMs": 51960,
+        "interval95BlockSavedMs": [
+          51622.125,
+          53591.8125
+        ],
+        "positiveBlocks": 8,
+        "controlP95Ms": 75044,
+        "candidateP95Ms": 21650,
+        "controlFirstMeanSavedMs": 52692.125,
+        "candidateFirstMeanSavedMs": 52075.75,
+        "orderEffectMs": 616.375,
+        "requiredOutputsIdentical": true,
+        "executionShapeStable": true,
+        "fallbacksSuccessful": true,
+        "qualified": true,
+        "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+      },
+      "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+    },
+    {
+      "key": "apache-groovy-jar-shared-source",
+      "repositoryId": "apache/groovy",
+      "repositoryRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "pipelineClass": "jar-packaging-shared-source",
+      "workflowFamily": "JAR_PACKAGING",
+      "changeClass": "SHARED_PRODUCTION_SOURCE",
+      "changePath": "src/main/java/groovy/beans/Bindable.java",
+      "performanceClaim": true,
+      "proposal": {
+        "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+        "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+        "originalEntrypoints": [
+          "jar"
+        ],
+        "candidateEntrypoints": [
+          ":groovy-json:jar"
+        ],
+        "totalProjectCount": 37,
+        "selectedProjectCount": 2,
+        "omittedProjectCount": 35
+      },
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "captures": 2,
+        "pairs": 16,
+        "blocks": 8,
+        "controlMeanMs": 79556.5,
+        "candidateMeanMs": 27207.0625,
+        "meanSavedMs": 52349.4375,
+        "reductionRatio": 0.6580158440856498,
+        "medianBlockSavedMs": 52449,
+        "interval95BlockSavedMs": [
+          51017,
+          53672.125
+        ],
+        "positiveBlocks": 8,
+        "controlP95Ms": 84150,
+        "candidateP95Ms": 30375,
+        "controlFirstMeanSavedMs": 51779.25,
+        "candidateFirstMeanSavedMs": 52919.625,
+        "orderEffectMs": -1140.375,
+        "requiredOutputsIdentical": true,
+        "executionShapeStable": true,
+        "fallbacksSuccessful": true,
+        "qualified": true,
+        "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+      },
+      "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+    },
+    {
+      "key": "apache-kafka-checkstyle-metadata-source",
+      "repositoryId": "apache/kafka",
+      "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "pipelineClass": "checkstyle-main-metadata-source",
+      "workflowFamily": "TYPED_VERIFICATION",
+      "changeClass": "LEAF_PRODUCTION_SOURCE",
+      "changePath": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+      "performanceClaim": true,
+      "proposal": {
+        "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+        "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+        "originalEntrypoints": [
+          "checkstyleMain"
+        ],
+        "candidateEntrypoints": [
+          ":clients:checkstyleMain"
+        ],
+        "totalProjectCount": 64,
+        "selectedProjectCount": 2,
+        "omittedProjectCount": 62
+      },
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "captures": 2,
+        "pairs": 16,
+        "blocks": 8,
+        "controlMeanMs": 82430.9375,
+        "candidateMeanMs": 59353.0625,
+        "meanSavedMs": 23077.875,
+        "reductionRatio": 0.2799661838129646,
+        "medianBlockSavedMs": 23119,
+        "interval95BlockSavedMs": [
+          21373.1875,
+          24451.5625
+        ],
+        "positiveBlocks": 8,
+        "controlP95Ms": 85360,
+        "candidateP95Ms": 62772,
+        "controlFirstMeanSavedMs": 22526.375,
+        "candidateFirstMeanSavedMs": 23629.375,
+        "orderEffectMs": -1103,
+        "requiredOutputsIdentical": true,
+        "executionShapeStable": true,
+        "fallbacksSuccessful": true,
+        "qualified": true,
+        "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+      },
+      "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+    },
+    {
+      "key": "apache-kafka-checkstyle-client-utils-source",
+      "repositoryId": "apache/kafka",
+      "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "pipelineClass": "checkstyle-main-client-utils-source",
+      "workflowFamily": "TYPED_VERIFICATION",
+      "changeClass": "SECOND_LEAF_PRODUCTION_SOURCE",
+      "changePath": "clients/src/main/java/org/apache/kafka/clients/ClientUtils.java",
+      "performanceClaim": true,
+      "proposal": {
+        "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+        "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+        "originalEntrypoints": [
+          "checkstyleMain"
+        ],
+        "candidateEntrypoints": [
+          ":clients:checkstyleMain"
+        ],
+        "totalProjectCount": 64,
+        "selectedProjectCount": 2,
+        "omittedProjectCount": 62
+      },
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "captures": 2,
+        "pairs": 16,
+        "blocks": 8,
+        "controlMeanMs": 87521.6875,
+        "candidateMeanMs": 61177.1875,
+        "meanSavedMs": 26344.5,
+        "reductionRatio": 0.30100539366314205,
+        "medianBlockSavedMs": 25610,
+        "interval95BlockSavedMs": [
+          24577.375,
+          28355.9375
+        ],
+        "positiveBlocks": 8,
+        "controlP95Ms": 93850,
+        "candidateP95Ms": 63909,
+        "controlFirstMeanSavedMs": 26238.875,
+        "candidateFirstMeanSavedMs": 26450.125,
+        "orderEffectMs": -211.25,
+        "requiredOutputsIdentical": true,
+        "executionShapeStable": true,
+        "fallbacksSuccessful": true,
+        "qualified": true,
+        "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+      },
+      "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+    },
+    {
+      "key": "apache-kafka-shadow-clients-source",
+      "repositoryId": "apache/kafka",
+      "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "pipelineClass": "shadow-jar-clients-source",
+      "workflowFamily": "FAT_JAR_DISTRIBUTION",
+      "changeClass": "LEAF_PRODUCTION_SOURCE",
+      "changePath": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+      "performanceClaim": true,
+      "proposal": {
+        "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+        "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+        "originalEntrypoints": [
+          "shadowJar"
+        ],
+        "candidateEntrypoints": [
+          ":clients:shadowJar"
+        ],
+        "totalProjectCount": 64,
+        "selectedProjectCount": 2,
+        "omittedProjectCount": 62
+      },
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "captures": 2,
+        "pairs": 16,
+        "blocks": 8,
+        "controlMeanMs": 44827.9375,
+        "candidateMeanMs": 14955.625,
+        "meanSavedMs": 29872.3125,
+        "reductionRatio": 0.6663771336791928,
+        "medianBlockSavedMs": 29654.75,
+        "interval95BlockSavedMs": [
+          29153.75,
+          30719.375
+        ],
+        "positiveBlocks": 8,
+        "controlP95Ms": 46699,
+        "candidateP95Ms": 17433,
+        "controlFirstMeanSavedMs": 29645.5,
+        "candidateFirstMeanSavedMs": 30099.125,
+        "orderEffectMs": -453.625,
+        "requiredOutputsIdentical": true,
+        "executionShapeStable": true,
+        "fallbacksSuccessful": true,
+        "qualified": true,
+        "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+      },
+      "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+    },
+    {
+      "key": "apache-kafka-shadow-generator-source",
+      "repositoryId": "apache/kafka",
+      "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "pipelineClass": "shadow-jar-generator-source",
+      "workflowFamily": "FAT_JAR_DISTRIBUTION",
+      "changeClass": "SHARED_PRODUCTION_SOURCE",
+      "changePath": "generator/src/main/java/org/apache/kafka/message/MessageGenerator.java",
+      "performanceClaim": true,
+      "proposal": {
+        "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+        "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+        "originalEntrypoints": [
+          "shadowJar"
+        ],
+        "candidateEntrypoints": [
+          ":clients:shadowJar"
+        ],
+        "totalProjectCount": 64,
+        "selectedProjectCount": 2,
+        "omittedProjectCount": 62
+      },
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "captures": 2,
+        "pairs": 16,
+        "blocks": 8,
+        "controlMeanMs": 37078.5625,
+        "candidateMeanMs": 7586.875,
+        "meanSavedMs": 29491.6875,
+        "reductionRatio": 0.7953837881390359,
+        "medianBlockSavedMs": 29606.5,
+        "interval95BlockSavedMs": [
+          29032.9375,
+          29905.8125
+        ],
+        "positiveBlocks": 8,
+        "controlP95Ms": 39946,
+        "candidateP95Ms": 8636,
+        "controlFirstMeanSavedMs": 29768.75,
+        "candidateFirstMeanSavedMs": 29214.625,
+        "orderEffectMs": 554.125,
+        "requiredOutputsIdentical": true,
+        "executionShapeStable": true,
+        "fallbacksSuccessful": true,
+        "qualified": true,
+        "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+      },
+      "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+    },
+    {
+      "key": "apache-groovy-jar-build-logic",
+      "repositoryId": "apache/groovy",
+      "repositoryRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "pipelineClass": "jar-packaging-build-logic",
+      "workflowFamily": "JAR_PACKAGING",
+      "changeClass": "BUILD_LOGIC",
+      "changePath": "build-logic/src/main/groovy/org/apache/groovy/gradle/ReleaseInfoGenerator.groovy",
+      "performanceClaim": false,
+      "proposal": {
+        "decision": "NATIVE_FULL_GRAPH",
+        "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+        "originalEntrypoints": [
+          "jar"
+        ],
+        "candidateEntrypoints": [],
+        "totalProjectCount": null,
+        "selectedProjectCount": null,
+        "omittedProjectCount": null
+      },
+      "evidenceState": "FULL_GRAPH_FALLBACK_VERIFIED",
+      "result": null,
+      "decision": "RETAIN_NATIVE_GRADLE"
+    },
+    {
+      "key": "apache-groovy-jar-global-configuration",
+      "repositoryId": "apache/groovy",
+      "repositoryRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "pipelineClass": "jar-packaging-global-configuration",
+      "workflowFamily": "JAR_PACKAGING",
+      "changeClass": "GLOBAL_CONFIGURATION",
+      "changePath": "gradle.properties",
+      "performanceClaim": false,
+      "proposal": {
+        "decision": "NATIVE_FULL_GRAPH",
+        "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+        "originalEntrypoints": [
+          "jar"
+        ],
+        "candidateEntrypoints": [],
+        "totalProjectCount": null,
+        "selectedProjectCount": null,
+        "omittedProjectCount": null
+      },
+      "evidenceState": "FULL_GRAPH_FALLBACK_VERIFIED",
+      "result": null,
+      "decision": "RETAIN_NATIVE_GRADLE"
+    },
+    {
+      "key": "apache-kafka-checkstyle-build-logic",
+      "repositoryId": "apache/kafka",
+      "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "pipelineClass": "checkstyle-main-build-logic",
+      "workflowFamily": "TYPED_VERIFICATION",
+      "changeClass": "BUILD_LOGIC",
+      "changePath": "build.gradle",
+      "performanceClaim": false,
+      "proposal": {
+        "decision": "NATIVE_FULL_GRAPH",
+        "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+        "originalEntrypoints": [
+          "checkstyleMain"
+        ],
+        "candidateEntrypoints": [],
+        "totalProjectCount": null,
+        "selectedProjectCount": null,
+        "omittedProjectCount": null
+      },
+      "evidenceState": "FULL_GRAPH_FALLBACK_VERIFIED",
+      "result": null,
+      "decision": "RETAIN_NATIVE_GRADLE"
+    },
+    {
+      "key": "apache-kafka-shadow-global-configuration",
+      "repositoryId": "apache/kafka",
+      "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "pipelineClass": "shadow-jar-global-configuration",
+      "workflowFamily": "FAT_JAR_DISTRIBUTION",
+      "changeClass": "GLOBAL_CONFIGURATION",
+      "changePath": "gradle.properties",
+      "performanceClaim": false,
+      "proposal": {
+        "decision": "NATIVE_FULL_GRAPH",
+        "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+        "originalEntrypoints": [
+          "shadowJar"
+        ],
+        "candidateEntrypoints": [],
+        "totalProjectCount": null,
+        "selectedProjectCount": null,
+        "omittedProjectCount": null
+      },
+      "evidenceState": "FULL_GRAPH_FALLBACK_VERIFIED",
+      "result": null,
+      "decision": "RETAIN_NATIVE_GRADLE"
+    }
+  ],
+  "aggregation": {
+    "cellCount": 10,
+    "selectiveCellCount": 6,
+    "qualifiedSelectiveCells": 6,
+    "retainedNativeSelectiveCells": 0,
+    "verifiedFallbackCells": 4,
+    "cellPercentagesAveraged": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

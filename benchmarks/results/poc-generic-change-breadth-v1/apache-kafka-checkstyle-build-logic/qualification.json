@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "buildopt.evidence/change-breadth-fallback/v1",
+  "evidenceState": "FULL_GRAPH_FALLBACK_VERIFIED",
+  "capturedAt": "2026-08-14T15:36:30Z",
+  "subject": {
+    "repositoryId": "apache/kafka",
+    "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "pipelineClass": "checkstyle-main-build-logic",
+    "workflowFamily": "TYPED_VERIFICATION",
+    "changeClass": "BUILD_LOGIC"
+  },
+  "captures": [
+    {
+      "index": 1,
+      "targetRevision": "90dddfdc87ae898bf227e454dd865f6315a8b05e",
+      "decision": "NATIVE_FULL_GRAPH",
+      "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"
+    },
+    {
+      "index": 2,
+      "targetRevision": "90dddfdc87ae898bf227e454dd865f6315a8b05e",
+      "decision": "NATIVE_FULL_GRAPH",
+      "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"
+    }
+  ],
+  "result": null,
+  "decision": "RETAIN_NATIVE_GRADLE",
+  "timingClaim": false,
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

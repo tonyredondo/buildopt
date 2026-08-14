@@ -3530,6 +3530,16 @@ validate the owner workflow and return
 `NATIVE_FULL_GRAPH / GLOBAL_CHANGE_REQUIRES_FULL_GRAPH` without candidate
 documents.
 
+The terminal matrix qualifies all six selective cells independently. Groovy
+`jar` saves 73.54% for a leaf edit and 65.80% for a shared-source edit; Kafka
+Checkstyle saves 28.00% and 30.10% for two distinct source edits; Kafka
+`shadowJar` saves 66.64% for a clients edit and 79.54% for a generator edit.
+All 96 raw pairs and 48 reciprocal blocks improve, candidate p95 is lower,
+semantic outputs and measured shapes match, 12 selective fallbacks pass, and
+product failures remain zero. All eight build-logic/global captures retain the
+native graph and emit no candidate artifacts. The terminal result is
+[versioned beside the benchmark](../benchmarks/results/poc-generic-change-breadth-v1/README.md).
+
 `./dev/check-generic-profile-ci-replay` validates the manual clean-runner
 replay without cloning public repositories. It reconstructs retained Action
 artifacts for all five subjects, requires five semantic and byte-level graph
