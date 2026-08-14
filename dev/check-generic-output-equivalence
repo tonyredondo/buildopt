@@ -64,10 +64,7 @@ jq -e '
   }]
 ' "${buildopt_repo_root}/fixtures/output-equivalence/groovy-jar.json" >/dev/null
 jq -e '
-  .rules == [
-    {pattern: "clients/build/reports/checkstyle/main.html", mode: "REPOSITORY_ROOT_TEXT"},
-    {pattern: "clients/build/reports/checkstyle/main.xml", mode: "REPOSITORY_ROOT_TEXT"}
-  ]
+  .rules == [{pattern: "clients/build/reports/checkstyle/main.xml", mode: "REPOSITORY_ROOT_TEXT"}]
 ' "${buildopt_repo_root}/fixtures/output-equivalence/kafka-checkstyle.json" >/dev/null
 jq -e '
   .rules == [{pattern: "clients/build/libs/kafka-clients-*.jar", mode: "CANONICAL_ZIP"}]

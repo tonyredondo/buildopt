@@ -49,6 +49,31 @@ func TestRepositoryRootTextCanonicalizesOnlyTheRoot(t *testing.T) {
 	}
 }
 
+func TestUnruledRequiredOutputRemainsExactBesideRelocatableText(t *testing.T) {
+	left, right := t.TempDir(), t.TempDir()
+	writeFile(t, left, "build/report.html", "<p>same</p>\n")
+	writeFile(t, right, "build/report.html", "<p>same</p>\n")
+	writeFile(t, left, "build/report.xml", "<file>"+left+"/src/Main.java</file>\n")
+	writeFile(t, right, "build/report.xml", "<file>"+right+"/src/Main.java</file>\n")
+	contract := Contract{SchemaVersion: SchemaVersion, Rules: []Rule{{
+		Pattern: "build/*.xml", Mode: ModeRepositoryRootText,
+	}}, ReviewRequired: true}
+	patterns := []string{"build/*.html", "build/*.xml"}
+	leftSHA, _, err := HashOutputs(left, patterns, &contract)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rightSHA, _, err := HashOutputs(right, patterns, &contract)
+	if err != nil || leftSHA != rightSHA {
+		t.Fatalf("mixed exact and relocatable outputs differ: %s %s %v", leftSHA, rightSHA, err)
+	}
+	writeFile(t, right, "build/report.html", "<p>changed</p>\n")
+	rightSHA, _, err = HashOutputs(right, patterns, &contract)
+	if err != nil || leftSHA == rightSHA {
+		t.Fatal("exact output drift was hidden beside a relocatable output")
+	}
+}
+
 func TestCanonicalZIPIgnoresOrderTimestampsAndDeclaredPropertyValue(t *testing.T) {
 	left, right := t.TempDir(), t.TempDir()
 	writeZIP(t, filepath.Join(left, "build/library.jar"), []zipFixtureEntry{

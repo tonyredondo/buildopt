@@ -2,6 +2,10 @@
   "schemaVersion": "buildopt.poc/output-equivalence/v1",
   "rules": [
     {
+      "pattern": "clients/build/reports/checkstyle/main.html",
+      "mode": "REPOSITORY_ROOT_TEXT"
+    },
+    {
       "pattern": "clients/build/reports/checkstyle/main.xml",
       "mode": "REPOSITORY_ROOT_TEXT"
     }

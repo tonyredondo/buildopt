@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v4",
+  "profileVersion": 4,
+  "profileId": "qualified-structural-build-impact",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "apache/groovy",
+  "pipelineClass": "jar-packaging",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": false,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": false
+  },
+  "gradleOptions": [
+    "--daemon",
+    "--build-cache",
+    "--parallel",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-scan",
+    "--max-workers=12"
+  ],
+  "preconditions": [
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-manifest.json",
+      "sha256": "a6d88334fec16415b7dd90012ab0036e68a673dd1d73ecab0421310d9d8dcf8f"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-graph.generated.json",
+      "sha256": "02520e4eaec8781a09edc8cbf42d58ce5621ffe4f4cadf54c6c2c87c4e6c4a24"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact.generated.json",
+      "sha256": "c6b7eaed059e3e25fe4ff4881063d2d8828ce437e3c95c2f4b9ea855b25d81e0"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-output-equivalence.json",
+      "sha256": "ed3bc40daec143645589a768d5058bdbdf1a982d08d2659170142bca3dea1ff5"
+    }
+  ],
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "3c356a203d5acadee038ce503dec96c10dad756016dc618e5d7ac2ec3aeeeda6",
+    "repositoryRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+    "pairs": 8,
+    "meanSavedMs": 52929.875,
+    "reductionRatio": 0.7300936758055033,
+    "interval95SavedMs": [
+      51625.25,
+      54186.25
+    ]
+  }
+}

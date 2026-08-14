@@ -31,8 +31,8 @@ output representation under `E-325`:
 
 - Apache Groovy root `jar`, allowing only `BuildTime` in
   `META-INF/groovy-release-info.properties` to vary;
-- Apache Kafka root `checkstyleMain`, relocating only the isolated checkout
-  prefix in `main.html` and `main.xml`; and
+- Apache Kafka root `checkstyleMain`, retaining exact bytes for `main.html`
+  and relocating only the isolated checkout prefix in `main.xml`; and
 - Apache Kafka root `shadowJar`, comparing canonical ZIP contents.
 
 Each workflow receives two fresh eight-pair captures on one BuildOpt revision.
@@ -46,6 +46,12 @@ generic measurement layer preserves ordered outcome transitions as diagnostics,
 uses the last emission as the terminal outcome, and fingerprints terminal task
 outcomes only. It does not discard tasks or treat transient console rendering
 as execution-shape drift. Malformed transitions still fail closed.
+
+An equivalence contract is intentionally partial: required outputs that match
+no rule retain the default `EXACT_BYTES` mode. A relocation rule must still
+replace at least one checkout-root occurrence in every file it matches. This
+keeps a misplaced or unnecessarily broad exception from silently behaving as
+exact comparison.
 
 ## Boundaries
 

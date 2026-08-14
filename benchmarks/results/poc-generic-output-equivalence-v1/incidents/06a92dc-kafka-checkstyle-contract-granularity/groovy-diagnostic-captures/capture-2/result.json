@@ -1,0 +1,44 @@
+{
+  "key": "apache-groovy-jar-packaging",
+  "repositoryId": "apache/groovy",
+  "pipelineClass": "jar-packaging",
+  "workflowFamily": "JAR_PACKAGING",
+  "publicRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+  "targetRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "jar"
+    ],
+    "candidateEntrypoints": [
+      ":groovy-json:jar"
+    ],
+    "totalProjectCount": 37,
+    "selectedProjectCount": 2,
+    "omittedProjectCount": 35
+  },
+  "measurementStatus": "COMPLETED",
+  "measurementFailureClass": null,
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 73809.75,
+    "candidateMeanMs": 19193,
+    "meanSavedMs": 54616.75,
+    "reductionRatio": 0.7399666033281511,
+    "interval95SavedMs": [
+      53649.625,
+      55484.875
+    ],
+    "positivePairs": 8,
+    "executionShapeObserved": true,
+    "executionShapeStable": true,
+    "targetWarmupShapeObserved": true,
+    "targetWarmupShapeStable": true,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "evaluationDecision": "QUALIFY_STRUCTURAL_PROFILE",
+  "outputEquivalence": "buildopt-output-equivalence.json",
+  "outputEquivalenceSha256": "ed3bc40daec143645589a768d5058bdbdf1a982d08d2659170142bca3dea1ff5"
+}
