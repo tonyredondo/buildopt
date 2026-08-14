@@ -547,6 +547,16 @@ fallbacks pass per subject, and product failures remain zero. The result is
 review-only POC evidence and does not widen the contract or authorize
 automatic activation.
 
+`poc-generic-change-breadth-v1.json` and
+`poc-generic-change-breadth-v1.md` preregister ten independent cells across
+Groovy JAR packaging, Kafka Checkstyle verification, and Kafka shadow-JAR
+distribution. Six selective cells cover distinct leaf and shared-source edits;
+four build-logic/global cells must retain the complete owner workflow without a
+timing claim. Candidate lifecycle tasks come from reviewed output owners and
+must still cover the changed source in the generated graph. Each selective
+cell keeps the balanced two-capture value gate and every fallback is repeated
+twice through the installed proposal path.
+
 The retained [v5 evidence](../benchmarks/results/poc-generic-holdout-v5/README.md)
 passes that unchanged contract: native averages 216.724 seconds and BuildOpt
 203.991 seconds, saving 12.733 seconds/5.88% with interval

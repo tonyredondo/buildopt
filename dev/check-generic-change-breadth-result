@@ -1,0 +1,190 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [/absolute/evidence/root]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence_root=${1:-"${buildopt_repo_root}/benchmarks/results/poc-generic-change-breadth-v1"}
+buildopt_spec="${buildopt_repo_root}/specs/poc-generic-change-breadth-v1.json"
+[[ ${buildopt_evidence_root} == /* ]] || {
+    printf 'evidence root must be absolute\n' >&2
+    exit 64
+}
+
+"${buildopt_script_dir}/check-generic-change-breadth" >/dev/null
+buildopt_summary="${buildopt_evidence_root}/summary.json"
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-generic-change-breadth/v1" and
+  .workItem == "POC-GENERIC-CHANGE-BREADTH-001" and
+  (.capturedAt | test("Z$")) and
+  (.buildopt.revision | test("^[0-9a-f]{40}$")) and
+  (.buildopt.executableSha256 | test("^[0-9a-f]{64}$")) and
+  (.cells | length) == 10 and .aggregation.cellCount == 10 and
+  .aggregation.selectiveCellCount == 6 and
+  (.aggregation.qualifiedSelectiveCells + .aggregation.retainedNativeSelectiveCells) == 6 and
+  .aggregation.verifiedFallbackCells == 4 and
+  .aggregation.cellPercentagesAveraged == false and
+  .boundaries.proofOfConcept == true and
+  .boundaries.productionAuthorized == false and
+  .boundaries.automaticActivation == false and
+  .boundaries.repositorySpecificRuleAdded == false and
+  .boundaries.testOptimizationModified == false
+' "${buildopt_summary}" >/dev/null
+
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-change-breadth-result.XXXXXX")
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-change-breadth-result."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+"${buildopt_script_dir}/run" --toolchain go -- go build -o "${buildopt_temp}/buildopt" ./cmd/buildopt
+buildopt_captured_at=$(jq -er '.capturedAt' "${buildopt_summary}")
+buildopt_revision=$(jq -er '.buildopt.revision' "${buildopt_summary}")
+buildopt_executable_sha=$(jq -er '.buildopt.executableSha256' "${buildopt_summary}")
+
+mapfile -t buildopt_keys < <(jq -r '.repositories[].key' "${buildopt_spec}")
+for buildopt_key in "${buildopt_keys[@]}"; do
+    buildopt_cell=$(jq -c --arg key "${buildopt_key}" '.repositories[] | select(.key == $key)' "${buildopt_spec}")
+    buildopt_performance=$(jq -r '.performanceClaim' <<<"${buildopt_cell}")
+    buildopt_expected_contract=$(jq -r '.outputEquivalenceContract' <<<"${buildopt_cell}")
+    buildopt_expected_contract_sha=$(sha256sum "${buildopt_repo_root}/${buildopt_expected_contract}" | awk '{print $1}')
+    buildopt_qualification="${buildopt_evidence_root}/${buildopt_key}/qualification.json"
+
+    for buildopt_capture in 1 2; do
+        buildopt_capture_root="${buildopt_evidence_root}/${buildopt_key}/capture-${buildopt_capture}"
+        buildopt_result="${buildopt_capture_root}/result.json"
+        jq -e \
+            --arg revision "${buildopt_revision}" \
+            --arg executable "${buildopt_executable_sha}" \
+            --arg key "${buildopt_key}" \
+            --arg changeClass "$(jq -r '.changeClass' <<<"${buildopt_cell}")" \
+            --arg path "$(jq -r '.changePath' <<<"${buildopt_cell}")" \
+            --arg contractSha "${buildopt_expected_contract_sha}" '
+          .key == $key and .changeClass == $changeClass and
+          .buildopt.revision == $revision and .buildopt.executableSha256 == $executable and
+          .proposal.originalEntrypoints != [] and .proposal.decision != null and
+          .outputEquivalenceSha256 == $contractSha
+        ' "${buildopt_result}" >/dev/null
+        jq -e --arg path "$(jq -r '.changePath' <<<"${buildopt_cell}")" \
+            '.changedPaths == [$path]' \
+            "${buildopt_capture_root}/buildopt-profile-proposal.json" >/dev/null
+        cmp -s "${buildopt_repo_root}/${buildopt_expected_contract}" \
+            "${buildopt_capture_root}/buildopt-output-equivalence.json" || {
+            printf 'captured output-equivalence contract drifted: %s capture %d\n' \
+                "${buildopt_key}" "${buildopt_capture}" >&2
+            exit 1
+        }
+        jq -e '
+          .decision == "VALIDATED_REQUIRED_OUTPUTS" and
+          .reason == "DECLARED_OUTPUTS_MATCH_EXECUTED_WORKFLOW" and
+          all(.validations[]; .status == "VALIDATED" and .matchedFiles > 0)
+        ' "${buildopt_capture_root}/buildopt-output-contract.json" >/dev/null
+    done
+
+    if [[ ${buildopt_performance} == true ]]; then
+        buildopt_expected_candidates=$(jq -c '.expectedCandidateEntrypoints' <<<"${buildopt_cell}")
+        for buildopt_capture in 1 2; do
+            buildopt_capture_root="${buildopt_evidence_root}/${buildopt_key}/capture-${buildopt_capture}"
+            jq -e --argjson candidates "${buildopt_expected_candidates}" '
+              .proposal.decision == "MEASURE_STRUCTURAL_CANDIDATE" and
+              .proposal.reason == "COMPLETE_STRUCTURAL_REDUCTION" and
+              .proposal.candidateEntrypoints == $candidates
+            ' "${buildopt_capture_root}/result.json" >/dev/null
+            if [[ $(jq -r '.measurementStatus' "${buildopt_capture_root}/result.json") == COMPLETED ]]; then
+                jq -e '
+                  (.observations | length) == 8 and
+                  all(.observations[];
+                    .productAttributableFailure == false and
+                    .requiredOutputCount > 0 and
+                    .controlRequiredOutputSha256 == .candidateRequiredOutputSha256) and
+                  .fallback.mode == "FULL_GRAPH" and .fallback.buildSuccessful == true and
+                  .result.targetWarmupShapeObserved == true and
+                  .result.targetWarmupShapeStable == true
+                ' "${buildopt_capture_root}/evidence.json" >/dev/null
+            fi
+        done
+
+        buildopt_first_status=$(jq -r '.measurementStatus' \
+            "${buildopt_evidence_root}/${buildopt_key}/capture-1/result.json")
+        buildopt_second_status=$(jq -r '.measurementStatus' \
+            "${buildopt_evidence_root}/${buildopt_key}/capture-2/result.json")
+        if [[ ${buildopt_first_status} == COMPLETED && ${buildopt_second_status} == COMPLETED ]]; then
+            buildopt_one="${buildopt_evidence_root}/${buildopt_key}/capture-1/evidence.json"
+            buildopt_two="${buildopt_evidence_root}/${buildopt_key}/capture-2/evidence.json"
+            buildopt_one_relative=${buildopt_one#"${buildopt_repo_root}/"}
+            buildopt_two_relative=${buildopt_two#"${buildopt_repo_root}/"}
+            (
+                cd -- "${buildopt_repo_root}"
+                "${buildopt_temp}/buildopt" profile aggregate \
+                    --capture "${buildopt_one_relative}" \
+                    --capture "${buildopt_two_relative}" \
+                    --captured-at "${buildopt_captured_at}"
+            ) >"${buildopt_temp}/${buildopt_key}.json"
+            cmp -s "${buildopt_qualification}" "${buildopt_temp}/${buildopt_key}.json" || {
+                printf 'change-breadth qualification does not recompute: %s\n' "${buildopt_key}" >&2
+                exit 1
+            }
+            jq -e '
+              .execution.captureCount == 2 and .execution.pairsPerCapture == 8 and
+              .execution.blockCount == 8 and (.blocks | length) == 8 and
+              .result.pairs == 16 and .result.blocks == 8 and
+              .result.requiredOutputsIdentical == true and
+              .result.executionShapeStable == true and .result.fallbacksSuccessful == true and
+              (.result.qualified == (.evidenceState == "QUALIFIED"))
+            ' "${buildopt_qualification}" >/dev/null
+        else
+            jq -e '
+              .evidenceState == "UNAVAILABLE" and .result == null and
+              .decision == "RETAIN_NATIVE_GRADLE"
+            ' "${buildopt_qualification}" >/dev/null
+        fi
+    else
+        buildopt_expected_decision=$(jq -r '.expectedProposalDecision' <<<"${buildopt_cell}")
+        buildopt_expected_reason=$(jq -r '.expectedProposalReason' <<<"${buildopt_cell}")
+        for buildopt_capture in 1 2; do
+            buildopt_capture_root="${buildopt_evidence_root}/${buildopt_key}/capture-${buildopt_capture}"
+            jq -e \
+                --arg decision "${buildopt_expected_decision}" \
+                --arg reason "${buildopt_expected_reason}" '
+              .proposal.decision == $decision and .proposal.reason == $reason and
+              .proposal.candidateEntrypoints == [] and
+              .measurementStatus == "NOT_RUN_NATIVE_FULL_GRAPH" and
+              .result == null and .evaluationDecision == "NATIVE_FULL_GRAPH"
+            ' "${buildopt_capture_root}/result.json" >/dev/null
+            for buildopt_forbidden in buildopt-impact-manifest.json \
+                buildopt-impact-graph.generated.json buildopt-impact.generated.json \
+                buildopt-fallback-changes.txt profile.json; do
+                [[ ! -e ${buildopt_capture_root}/${buildopt_forbidden} ]] || {
+                    printf 'fallback cell emitted candidate document: %s/%s\n' \
+                        "${buildopt_key}" "${buildopt_forbidden}" >&2
+                    exit 1
+                }
+            done
+        done
+        jq -e \
+            --arg decision "${buildopt_expected_decision}" \
+            --arg reason "${buildopt_expected_reason}" '
+          .schemaVersion == "buildopt.evidence/change-breadth-fallback/v1" and
+          .evidenceState == "FULL_GRAPH_FALLBACK_VERIFIED" and
+          (.captures | length) == 2 and
+          all(.captures[]; .decision == $decision and .reason == $reason) and
+          .result == null and .decision == "RETAIN_NATIVE_GRADLE" and
+          .timingClaim == false
+        ' "${buildopt_qualification}" >/dev/null
+    fi
+done
+
+jq -e --slurpfile spec "${buildopt_spec}" '
+  (.cells | map(.key)) == ($spec[0].repositories | map(.key)) and
+  all(.cells[]; .repositoryId != null and .changeClass != null and .decision != null) and
+  .aggregation.qualifiedSelectiveCells == ([.cells[] | select(.performanceClaim and .result.qualified)] | length) and
+  .aggregation.retainedNativeSelectiveCells == ([.cells[] | select(.performanceClaim and (.result.qualified | not))] | length) and
+  .aggregation.verifiedFallbackCells == ([.cells[] | select((.performanceClaim | not) and .evidenceState == "FULL_GRAPH_FALLBACK_VERIFIED")] | length)
+' "${buildopt_summary}" >/dev/null
+
+printf 'Generic change-breadth evidence OK: %s\n' "${buildopt_summary}"

@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-generic-change-breadth-v1.json"
+
+for buildopt_command in jq rg sha256sum; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'required change-breadth checker is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-generic-change-breadth/v1" and
+  .workItem == "POC-GENERIC-CHANGE-BREADTH-001" and
+  .runner.capturesPerCell == 2 and .runner.pairsPerSelectiveCapture == 8 and
+  .runner.targetStabilityConfirmations == 3 and .runner.blocksPerSelectiveCell == 8 and
+  (.repositories | length) == 10 and
+  ([.repositories[] | select(.performanceClaim)] | length) == 6 and
+  ([.repositories[] | select(.performanceClaim | not)] | length) == 4 and
+  (.repositories | map(.key) | unique | length) == 10 and
+  (.repositories | map(.workflowFamily) | unique) == [
+    "FAT_JAR_DISTRIBUTION", "JAR_PACKAGING", "TYPED_VERIFICATION"
+  ] and
+  ([.repositories[].changeClass] | group_by(.) | map({(.[0]): length}) | add) == {
+    BUILD_LOGIC: 2,
+    GLOBAL_CONFIGURATION: 2,
+    LEAF_PRODUCTION_SOURCE: 3,
+    SECOND_LEAF_PRODUCTION_SOURCE: 1,
+    SHARED_PRODUCTION_SOURCE: 2
+  } and
+  all(.repositories[];
+    (.publicRevision | test("^[0-9a-f]{40}$")) and
+    (.changeOriginalSha256 | test("^[0-9a-f]{64}$")) and
+    (.changePath | startswith("/") | not) and
+    (.requiredOutputs | length) >= 1 and
+    (.outputEquivalenceContract | startswith("fixtures/output-equivalence/"))) and
+  all(.repositories[] | select(.performanceClaim);
+    (.expectedCandidateEntrypoints | length) == 1 and
+    (.expectedProposalDecision == null)) and
+  all(.repositories[] | select(.performanceClaim | not);
+    .expectedProposalDecision == "NATIVE_FULL_GRAPH" and
+    .expectedProposalReason == "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH" and
+    (.expectedCandidateEntrypoints == null)) and
+  .method.candidateRootedAtReviewedOutputOwners == true and
+  .method.graphMustCoverChangedSourceAndDeclaredOutputs == true and
+  .method.fallbackCellsAreNotTimed == true and
+  .method.repositorySpecificProductRulesAllowed == false and
+  .qualification.minimumPositiveBlocks == 6 and
+  .qualification.independentNativeProposalCapturesPerFallbackCell == 2 and
+  .qualification.failedOrTimedOutObservationsMayBeDiscarded == false and
+  .boundaries.proofOfConcept == true and
+  .boundaries.productionAuthorized == false and
+  .boundaries.automaticActivation == false and
+  .boundaries.repositorySpecificProductRulesAllowed == false and
+  .boundaries.testOptimizationModified == false and
+  .boundaries.soakRequired == false and .boundaries.designPartnerRequired == false
+' "${buildopt_spec}" >/dev/null
+
+while IFS= read -r buildopt_contract; do
+    jq -e '
+      .schemaVersion == "buildopt.poc/output-equivalence/v1" and
+      .reviewRequired == true and .activationAutomatic == false and
+      .productionAuthorized == false
+    ' "${buildopt_repo_root}/${buildopt_contract}" >/dev/null
+done < <(jq -r '.repositories[].outputEquivalenceContract' "${buildopt_spec}" | sort -u)
+
+if rg -n 'apache/(groovy|kafka)|apache-groovy|apache-kafka' \
+    "${buildopt_repo_root}/internal/launcher/profile_proposal.go" >/dev/null; then
+    printf 'repository-specific branch leaked into proposal implementation\n' >&2
+    exit 1
+fi
+
+"${buildopt_script_dir}/run" --toolchain go -- go test -count=1 \
+    ./internal/launcher -run 'TestProposal' >/dev/null
+"${buildopt_script_dir}/run" --toolchain go -- go test -count=1 \
+    ./internal/outputequivalence >/dev/null
+
+printf 'Generic change-breadth contract OK: %s\n' "${buildopt_spec}"

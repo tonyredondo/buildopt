@@ -3511,6 +3511,25 @@ are stable, both full-graph fallbacks pass per subject, and product failures
 remain zero. The complete collection incidents remain indexed beside the
 terminal evidence and contribute no timing to the result.
 
+`./dev/check-generic-change-breadth` validates the next preregistered matrix:
+six selective leaf/shared-source cells and four untimed build-logic/global
+fallback cells across the same Groovy/Kafka workflow families. The generic
+proposal roots lifecycle candidates at the reviewed owners of the declared
+outputs; graph discovery must still prove that those tasks cover the changed
+source. Each selective cell receives two eight-pair captures and each fallback
+receives two independent installed-path proposals.
+
+```bash
+./dev/run-generic-change-breadth \
+  "$(pwd)/benchmarks/results/poc-generic-change-breadth-v1"
+./dev/check-generic-change-breadth-result
+```
+
+Fallback cells emit no wall-time percentage. They pass only when both captures
+validate the owner workflow and return
+`NATIVE_FULL_GRAPH / GLOBAL_CHANGE_REQUIRES_FULL_GRAPH` without candidate
+documents.
+
 `./dev/check-generic-profile-ci-replay` validates the manual clean-runner
 replay without cloning public repositories. It reconstructs retained Action
 artifacts for all five subjects, requires five semantic and byte-level graph

@@ -1,0 +1,190 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 2)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/root RFC3339_CAPTURE_TIME\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_evidence_root=$1
+buildopt_captured_at=$2
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-generic-change-breadth-v1.json"
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-change-breadth-aggregate.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-change-breadth-aggregate."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+date -u -d "${buildopt_captured_at}" +%Y-%m-%dT%H:%M:%SZ | \
+    grep -Fx -- "${buildopt_captured_at}" >/dev/null || {
+    printf 'capture time must be canonical UTC RFC3339\n' >&2
+    exit 1
+}
+"${buildopt_script_dir}/run" --toolchain go -- go build -o "${buildopt_temp}/buildopt" ./cmd/buildopt
+
+buildopt_rows=()
+mapfile -t buildopt_keys < <(jq -r '.repositories[].key' "${buildopt_spec}")
+for buildopt_key in "${buildopt_keys[@]}"; do
+    buildopt_cell=$(jq -c --arg key "${buildopt_key}" '.repositories[] | select(.key == $key)' "${buildopt_spec}")
+    buildopt_performance=$(jq -r '.performanceClaim' <<<"${buildopt_cell}")
+    buildopt_capture_one="${buildopt_evidence_root}/${buildopt_key}/capture-1"
+    buildopt_capture_two="${buildopt_evidence_root}/${buildopt_key}/capture-2"
+    buildopt_qualification="${buildopt_evidence_root}/${buildopt_key}/qualification.json"
+    for buildopt_capture in "${buildopt_capture_one}" "${buildopt_capture_two}"; do
+        [[ -s ${buildopt_capture}/result.json ]] || {
+            printf 'change-breadth capture is unavailable: %s\n' "${buildopt_capture}" >&2
+            exit 1
+        }
+    done
+
+    if [[ ${buildopt_performance} == true ]]; then
+        buildopt_first_status=$(jq -r '.measurementStatus' "${buildopt_capture_one}/result.json")
+        buildopt_second_status=$(jq -r '.measurementStatus' "${buildopt_capture_two}/result.json")
+        if [[ ${buildopt_first_status} == COMPLETED && ${buildopt_second_status} == COMPLETED ]]; then
+            buildopt_one_relative=${buildopt_capture_one#"${buildopt_repo_root}/"}/evidence.json
+            buildopt_two_relative=${buildopt_capture_two#"${buildopt_repo_root}/"}/evidence.json
+            [[ ${buildopt_one_relative} != "${buildopt_capture_one}/evidence.json" && \
+                ${buildopt_two_relative} != "${buildopt_capture_two}/evidence.json" ]] || {
+                printf 'terminal evidence root must be inside the BuildOpt repository\n' >&2
+                exit 1
+            }
+            (
+                cd -- "${buildopt_repo_root}"
+                "${buildopt_temp}/buildopt" profile aggregate \
+                    --capture "${buildopt_one_relative}" \
+                    --capture "${buildopt_two_relative}" \
+                    --captured-at "${buildopt_captured_at}"
+            ) >"${buildopt_qualification}"
+        else
+            jq -n \
+                --arg capturedAt "${buildopt_captured_at}" \
+                --argjson cell "${buildopt_cell}" \
+                --slurpfile first "${buildopt_capture_one}/result.json" \
+                --slurpfile second "${buildopt_capture_two}/result.json" '
+              {
+                schemaVersion: "buildopt.evidence/structural-profile-balanced-qualification/v2",
+                evidenceState: "UNAVAILABLE",
+                capturedAt: $capturedAt,
+                subject: {
+                  repositoryId: $cell.repositoryId,
+                  repositoryRevision: $first[0].targetRevision,
+                  pipelineClass: $cell.pipelineClass
+                },
+                captures: [
+                  {index: 1, measurementStatus: $first[0].measurementStatus,
+                   failureClass: $first[0].measurementFailureClass},
+                  {index: 2, measurementStatus: $second[0].measurementStatus,
+                   failureClass: $second[0].measurementFailureClass}
+                ],
+                result: null,
+                decision: "RETAIN_NATIVE_GRADLE",
+                boundaries: {
+                  proofOfConcept: true,
+                  productionAuthorized: false,
+                  automaticActivation: false,
+                  repositorySpecificRuleAdded: false,
+                  testOptimizationModified: false
+                }
+              }
+            ' >"${buildopt_qualification}"
+        fi
+    else
+        jq -n \
+            --arg capturedAt "${buildopt_captured_at}" \
+            --argjson cell "${buildopt_cell}" \
+            --slurpfile first "${buildopt_capture_one}/result.json" \
+            --slurpfile second "${buildopt_capture_two}/result.json" '
+          {
+            schemaVersion: "buildopt.evidence/change-breadth-fallback/v1",
+            evidenceState: "FULL_GRAPH_FALLBACK_VERIFIED",
+            capturedAt: $capturedAt,
+            subject: {
+              repositoryId: $cell.repositoryId,
+              repositoryRevision: $cell.publicRevision,
+              pipelineClass: $cell.pipelineClass,
+              workflowFamily: $cell.workflowFamily,
+              changeClass: $cell.changeClass
+            },
+            captures: [
+              {index: 1, targetRevision: $first[0].targetRevision,
+               decision: $first[0].proposal.decision, reason: $first[0].proposal.reason},
+              {index: 2, targetRevision: $second[0].targetRevision,
+               decision: $second[0].proposal.decision, reason: $second[0].proposal.reason}
+            ],
+            result: null,
+            decision: "RETAIN_NATIVE_GRADLE",
+            timingClaim: false,
+            boundaries: {
+              proofOfConcept: true,
+              productionAuthorized: false,
+              automaticActivation: false,
+              repositorySpecificRuleAdded: false,
+              testOptimizationModified: false
+            }
+          }
+        ' >"${buildopt_qualification}"
+    fi
+
+    buildopt_row="${buildopt_temp}/${buildopt_key}.json"
+    jq -n \
+        --argjson cell "${buildopt_cell}" \
+        --slurpfile qualification "${buildopt_qualification}" \
+        --slurpfile proposal "${buildopt_capture_one}/result.json" '
+      {
+        key: $cell.key,
+        repositoryId: $cell.repositoryId,
+        repositoryRevision: $cell.publicRevision,
+        pipelineClass: $cell.pipelineClass,
+        workflowFamily: $cell.workflowFamily,
+        changeClass: $cell.changeClass,
+        changePath: $cell.changePath,
+        performanceClaim: $cell.performanceClaim,
+        proposal: $proposal[0].proposal,
+        evidenceState: $qualification[0].evidenceState,
+        result: $qualification[0].result,
+        decision: $qualification[0].decision
+      }
+    ' >"${buildopt_row}"
+    buildopt_rows+=("${buildopt_row}")
+done
+
+buildopt_first_key=$(jq -r '.repositories[0].key' "${buildopt_spec}")
+buildopt_revision=$(jq -er '.buildopt.revision' \
+    "${buildopt_evidence_root}/${buildopt_first_key}/capture-1/result.json")
+buildopt_executable_sha=$(jq -er '.buildopt.executableSha256' \
+    "${buildopt_evidence_root}/${buildopt_first_key}/capture-1/result.json")
+
+jq -s \
+    --arg capturedAt "${buildopt_captured_at}" \
+    --arg revision "${buildopt_revision}" \
+    --arg executableSha256 "${buildopt_executable_sha}" '
+  {
+    schemaVersion: "buildopt.evidence/poc-generic-change-breadth/v1",
+    workItem: "POC-GENERIC-CHANGE-BREADTH-001",
+    capturedAt: $capturedAt,
+    buildopt: {revision: $revision, executableSha256: $executableSha256},
+    cells: .,
+    aggregation: {
+      cellCount: length,
+      selectiveCellCount: (map(select(.performanceClaim)) | length),
+      qualifiedSelectiveCells: (map(select(.performanceClaim and .result.qualified)) | length),
+      retainedNativeSelectiveCells: (map(select(.performanceClaim and (.result.qualified | not))) | length),
+      verifiedFallbackCells: (map(select((.performanceClaim | not) and .evidenceState == "FULL_GRAPH_FALLBACK_VERIFIED")) | length),
+      cellPercentagesAveraged: false
+    },
+    boundaries: {
+      proofOfConcept: true,
+      productionAuthorized: false,
+      automaticActivation: false,
+      repositorySpecificRuleAdded: false,
+      testOptimizationModified: false
+    }
+  }
+' "${buildopt_rows[@]}" >"${buildopt_evidence_root}/summary.json"
+
+printf 'Change-breadth matrix assembled: %s\n' "${buildopt_evidence_root}/summary.json"

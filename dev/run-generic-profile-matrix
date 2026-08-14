@@ -86,6 +86,10 @@ buildopt_mutate_repository() {
             printf '\n// buildopt-poc-%s\n' "${buildopt_marker}" \
                 >>"${buildopt_repository}/${buildopt_change_path}"
             ;;
+        APPEND_FIXED_HASH_COMMENT)
+            printf '\n# buildopt-poc-%s\n' "${buildopt_marker}" \
+                >>"${buildopt_repository}/${buildopt_change_path}"
+            ;;
         *)
             printf 'unsupported matrix mutation: %s\n' "${buildopt_mutation}" >&2
             return 1
@@ -179,7 +183,8 @@ buildopt_prepare_gradle_distribution() {
 buildopt_capture_subject() {
     local buildopt_index=$1
     local buildopt_key buildopt_repository_id buildopt_remote buildopt_public_revision
-    local buildopt_jdk buildopt_pipeline buildopt_workflow_family buildopt_change_path buildopt_mutation
+    local buildopt_jdk buildopt_pipeline buildopt_workflow_family buildopt_change_class
+    local buildopt_change_path buildopt_change_original_sha buildopt_mutation
     local buildopt_equivalence_source buildopt_equivalence_path
     local buildopt_repository
     local buildopt_gradle_home buildopt_subject_output buildopt_base buildopt_target
@@ -195,7 +200,9 @@ buildopt_capture_subject() {
     buildopt_jdk=$(jq -er ".repositories[${buildopt_index}].jdkToolchain" "${buildopt_spec}")
     buildopt_pipeline=$(jq -er ".repositories[${buildopt_index}].pipelineClass" "${buildopt_spec}")
     buildopt_workflow_family=$(jq -r ".repositories[${buildopt_index}].workflowFamily // empty" "${buildopt_spec}")
+    buildopt_change_class=$(jq -r ".repositories[${buildopt_index}].changeClass // empty" "${buildopt_spec}")
     buildopt_change_path=$(jq -er ".repositories[${buildopt_index}].changePath" "${buildopt_spec}")
+    buildopt_change_original_sha=$(jq -r ".repositories[${buildopt_index}].changeOriginalSha256 // empty" "${buildopt_spec}")
     buildopt_mutation=$(jq -er ".repositories[${buildopt_index}].mutation" "${buildopt_spec}")
     buildopt_target_stability_confirmations=$(jq -er '.runner.targetStabilityConfirmations // 1' "${buildopt_spec}")
     buildopt_equivalence_source=$(jq -r ".repositories[${buildopt_index}].outputEquivalenceContract // empty" "${buildopt_spec}")
@@ -220,6 +227,13 @@ buildopt_capture_subject() {
         "${buildopt_repository}" "${buildopt_gradle_home}" "${buildopt_jdk}" \
         "${buildopt_subject_output}/distribution-preparation.log"; then
         printf 'Gradle distribution preparation failed for %s\n' "${buildopt_key}" >&2
+        return 1
+    fi
+
+    if [[ -n ${buildopt_change_original_sha} && \
+        $(sha256sum "${buildopt_repository}/${buildopt_change_path}" | awk '{print $1}') != \
+            "${buildopt_change_original_sha}" ]]; then
+        printf 'frozen change input drifted for %s\n' "${buildopt_key}" >&2
         return 1
     fi
 
@@ -276,6 +290,7 @@ buildopt_capture_subject() {
     fi
 
     for buildopt_name in buildopt-changes.txt buildopt-fallback-changes.txt \
+        buildopt-output-contract.json \
         buildopt-impact-manifest.json buildopt-impact-graph.generated.json \
         buildopt-impact.generated.json buildopt-profile-proposal.json; do
         if [[ -s ${buildopt_repository}/${buildopt_name} ]]; then
@@ -351,8 +366,11 @@ buildopt_capture_subject() {
         --arg repositoryId "${buildopt_repository_id}" \
         --arg pipelineClass "${buildopt_pipeline}" \
         --arg workflowFamily "${buildopt_workflow_family}" \
+        --arg changeClass "${buildopt_change_class}" \
         --arg publicRevision "${buildopt_public_revision}" \
         --arg targetRevision "${buildopt_target}" \
+        --arg buildoptRevision "${buildopt_revision}" \
+        --arg executableSha256 "${buildopt_executable_sha}" \
         --arg measurementStatus "${buildopt_measure_status}" \
         --arg measurementFailureClass "${buildopt_measurement_failure_class}" \
         --arg evaluationDecision "${buildopt_evaluation_decision}" \
@@ -363,8 +381,10 @@ buildopt_capture_subject() {
           repositoryId: $repositoryId,
           pipelineClass: $pipelineClass,
           workflowFamily: (if $workflowFamily == "" then null else $workflowFamily end),
+          changeClass: (if $changeClass == "" then null else $changeClass end),
           publicRevision: $publicRevision,
           targetRevision: $targetRevision,
+          buildopt: {revision: $buildoptRevision, executableSha256: $executableSha256},
           proposal: {
             decision: $proposal[0].decision,
             reason: $proposal[0].reason,

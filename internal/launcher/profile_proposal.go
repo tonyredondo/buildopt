@@ -324,22 +324,11 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 			return report, documents, nil
 		}
 	}
-	owners, err := buildimpact.ResolveProjectOwners(snapshot, changedPaths)
-	if err != nil {
+	if _, err := buildimpact.ResolveProjectOwners(snapshot, changedPaths); err != nil {
 		report.Reason = "SOURCE_OWNERSHIP_AMBIGUOUS"
 		return report, documents, nil
 	}
-	candidateEntrypoints := make([]string, 0, len(owners)*len(selectors))
-	for _, owner := range owners {
-		for _, selector := range selectors {
-			if owner == ":" {
-				candidateEntrypoints = append(candidateEntrypoints, ":"+selector)
-			} else {
-				candidateEntrypoints = append(candidateEntrypoints, owner+":"+selector)
-			}
-		}
-	}
-	sort.Strings(candidateEntrypoints)
+	candidateEntrypoints := proposalOutputOwnerEntrypoints(outputReport, selectors)
 	report.CandidateEntrypoints = candidateEntrypoints
 
 	manifest := buildimpact.Manifest{
@@ -404,6 +393,42 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 	report.MeasureCommand = proposalMeasureCommand(config)
 	report.BuildOptRevisionNeeded = config.buildOptRevision == ""
 	return report, documents, nil
+}
+
+// proposalOutputOwnerProjects returns the reviewed owners of the declared
+// outputs. Candidate lifecycle tasks are rooted at these projects rather than
+// at the changed source owner: a shared dependency change must still rebuild
+// the project that produces the requested output. Graph discovery subsequently
+// proves that every candidate covers both the change and the declared output.
+func proposalOutputOwnerProjects(report outputContractReport) []string {
+	owners := map[string]bool{}
+	for _, validation := range report.Validations {
+		for _, owner := range validation.OwnerProjects {
+			owners[owner] = true
+		}
+	}
+	result := make([]string, 0, len(owners))
+	for owner := range owners {
+		result = append(result, owner)
+	}
+	sort.Strings(result)
+	return result
+}
+
+func proposalOutputOwnerEntrypoints(report outputContractReport, selectors []string) []string {
+	owners := proposalOutputOwnerProjects(report)
+	entrypoints := make([]string, 0, len(owners)*len(selectors))
+	for _, owner := range owners {
+		for _, selector := range selectors {
+			if owner == ":" {
+				entrypoints = append(entrypoints, ":"+selector)
+			} else {
+				entrypoints = append(entrypoints, owner+":"+selector)
+			}
+		}
+	}
+	sort.Strings(entrypoints)
+	return entrypoints
 }
 
 func nativeProfileProposal(config structuralProposalConfig, targetRevision string, changedPaths []string) profileProposalReport {
