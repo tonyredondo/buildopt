@@ -582,6 +582,11 @@ comparative POC, including native-control warm-ups, repays after 20–55.
 Checkout is visible but excluded as shared work and exact offline distribution
 materialization changes no rounded POC break-even.
 
+The [calibration efficiency protocol](./poc-calibration-efficiency-v1.md)
+preregisters one-pass discovery, digest-bound proposal replay, and bounded
+adaptive candidate stabilization. It keeps cold calibration and exact replay
+economics separate and does not change terminal build savings.
+
 The retained [v5 evidence](../benchmarks/results/poc-generic-holdout-v5/README.md)
 passes that unchanged contract: native averages 216.724 seconds and BuildOpt
 203.991 seconds, saving 12.733 seconds/5.88% with interval
