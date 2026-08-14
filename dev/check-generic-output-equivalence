@@ -21,6 +21,7 @@ jq -e '
   .schemaVersion == "buildopt.specs/poc-generic-output-equivalence/v1" and
   .workItem == "POC-GENERIC-OUTPUT-EQUIVALENCE-001" and
   .runner.capturesPerWorkflow == 2 and .runner.pairsPerCapture == 8 and
+  .runner.targetStabilityConfirmations == 3 and
   .runner.blocksPerWorkflow == 8 and
   (.repositories | map(.key)) == [
     "apache-groovy-jar-packaging",

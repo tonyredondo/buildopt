@@ -60,11 +60,22 @@ for buildopt_key in "${buildopt_keys[@]}"; do
               .schemaVersion == "buildopt.evidence/structural-profile-qualification/v1" and
               .sourceBindings.outputEquivalenceSha256 == $sha and
               .execution.outputEquivalenceMode == "OWNER_REVIEWED_SEMANTIC_V1" and
+              .execution.warmupsPerArm == 5 and
+              [.execution.controlWarmups[].phase] == [
+                "CACHE_SEED", "BASE_DAEMON_STABILIZATION", "TARGET_WORKLOAD_STABILIZATION",
+                "TARGET_WORKLOAD_STABILITY_CONFIRMATION", "TARGET_WORKLOAD_STABILITY_RECONFIRMATION"
+              ] and
+              [.execution.candidateWarmups[].phase] == [
+                "CACHE_SEED", "BASE_DAEMON_STABILIZATION", "TARGET_WORKLOAD_STABILIZATION",
+                "TARGET_WORKLOAD_STABILITY_CONFIRMATION", "TARGET_WORKLOAD_STABILITY_RECONFIRMATION"
+              ] and
               (.observations | length) == 8 and
               all(.observations[];
                 .productAttributableFailure == false and .requiredOutputCount > 0 and
                 .controlRequiredOutputSha256 == .candidateRequiredOutputSha256) and
               .fallback.mode == "FULL_GRAPH" and .fallback.buildSuccessful == true and
+              .result.targetWarmupShapeObserved == true and
+              .result.targetWarmupShapeStable == true and
               .boundaries.repositorySpecificRuleAdded == false
             ' "${buildopt_capture_root}/evidence.json" >/dev/null
         else

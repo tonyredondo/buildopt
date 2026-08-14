@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	profileMeasureUsage           = "usage: buildopt profile measure --manifest PATH --graph PATH --generated-manifest PATH --changes-file PATH --fallback-changes-file PATH --base-revision REVISION --buildopt-revision REVISION --evidence-output PATH [--output-equivalence PATH] [--gradle-option VALUE ...] [--target-stability-confirmations 1|2] [--timeout DURATION]\n"
+	profileMeasureUsage           = "usage: buildopt profile measure --manifest PATH --graph PATH --generated-manifest PATH --changes-file PATH --fallback-changes-file PATH --base-revision REVISION --buildopt-revision REVISION --evidence-output PATH [--output-equivalence PATH] [--gradle-option VALUE ...] [--target-stability-confirmations 1|2|3] [--timeout DURATION]\n"
 	measurementPairs              = 8
 	maximumMeasurementInterArmGap = 5 * time.Second
 )
@@ -108,7 +108,7 @@ func runStructuralProfileMeasurement(args []string, stdout, stderr io.Writer) in
 		*manifest == "" || *graph == "" || *generated == "" || *changes == "" ||
 		*fallbackChanges == "" || *baseRevision == "" || *buildOptRevision == "" ||
 		*evidenceOutput == "" || *timeout <= 0 ||
-		(*targetStabilityConfirmations != 1 && *targetStabilityConfirmations != 2) {
+		(*targetStabilityConfirmations < 1 || *targetStabilityConfirmations > 3) {
 		_, _ = io.WriteString(stderr, profileMeasureUsage)
 		return exitUsage
 	}
@@ -203,8 +203,8 @@ func prepareStructuralMeasurementConfig(
 	if len(gradleOptions) == 0 {
 		return structuralMeasurementConfig{}, errors.New("at least one Gradle option is required")
 	}
-	if targetStabilityConfirmations != 1 && targetStabilityConfirmations != 2 {
-		return structuralMeasurementConfig{}, errors.New("target stability confirmations must be one or two")
+	if targetStabilityConfirmations < 1 || targetStabilityConfirmations > 3 {
+		return structuralMeasurementConfig{}, errors.New("target stability confirmations must be between one and three")
 	}
 	for _, option := range gradleOptions {
 		if !validImpactGradleOption(option) {
@@ -493,20 +493,37 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	arm.warmups = append(arm.warmups, structuralWarmupDiagnostic("TARGET_WORKLOAD_STABILIZATION", targetWarmup))
 	_, _ = fmt.Fprintf(progress, "buildopt: warmed isolated %s arm target workload in %dms with %s\n",
 		name, targetWarmup.durationMS, formatStructuralTaskOutcomes(targetWarmup.taskOutcomes))
-	if config.targetStabilityConfirmations == 2 {
+	for confirmationIndex := 2; confirmationIndex <= config.targetStabilityConfirmations; confirmationIndex++ {
 		if err := resetStructuralArm(config, arm, config.targetRevision, true); err != nil {
 			return arm, fmt.Errorf("prepare %s target-workload stability confirmation: %w", name, err)
 		}
-		_, _ = fmt.Fprintf(progress, "buildopt: confirming isolated %s target-workload shape at %s (4/%d)\n", name, config.targetRevision, totalWarmups)
+		phase := "TARGET_WORKLOAD_STABILITY_CONFIRMATION"
+		if confirmationIndex == 3 {
+			phase = "TARGET_WORKLOAD_STABILITY_RECONFIRMATION"
+		}
+		_, _ = fmt.Fprintf(progress, "buildopt: confirming isolated %s target-workload shape at %s (%d/%d)\n",
+			name, config.targetRevision, 2+confirmationIndex, totalWarmups)
 		confirmation, err := runStructuralArm(config, arm, candidate, config.changesPath)
 		if err != nil {
 			return arm, fmt.Errorf("confirm %s target workload: %w", name, err)
 		}
-		arm.warmups = append(arm.warmups, structuralWarmupDiagnostic("TARGET_WORKLOAD_STABILITY_CONFIRMATION", confirmation))
+		arm.warmups = append(arm.warmups, structuralWarmupDiagnostic(phase, confirmation))
 		_, _ = fmt.Fprintf(progress, "buildopt: confirmed isolated %s target workload in %dms with %s\n",
 			name, confirmation.durationMS, formatStructuralTaskOutcomes(confirmation.taskOutcomes))
 	}
+	if config.targetStabilityConfirmations == 3 && !structuralTargetWarmupsConverged(arm.warmups) {
+		return arm, fmt.Errorf("%s target workload did not converge in three bounded warm-ups", name)
+	}
 	return arm, nil
+}
+
+func structuralTargetWarmupsConverged(warmups []profilediscovery.StructuralWarmupObservation) bool {
+	if len(warmups) < 5 {
+		return false
+	}
+	previous := warmups[len(warmups)-2].TaskOutcomes.FingerprintSHA256
+	current := warmups[len(warmups)-1].TaskOutcomes.FingerprintSHA256
+	return previous != "" && current == previous
 }
 
 func structuralWarmupDiagnostic(phase string, result structuralArmResult) profilediscovery.StructuralWarmupObservation {

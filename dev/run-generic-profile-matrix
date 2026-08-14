@@ -184,7 +184,7 @@ buildopt_capture_subject() {
     local buildopt_repository
     local buildopt_gradle_home buildopt_subject_output buildopt_base buildopt_target
     local buildopt_name buildopt_measure_status buildopt_measurement_failure_class
-    local buildopt_evaluation_decision
+    local buildopt_evaluation_decision buildopt_target_stability_confirmations
     local -a buildopt_entrypoint_args=() buildopt_required_output_args=()
     local -a buildopt_equivalence_args=()
 
@@ -197,6 +197,7 @@ buildopt_capture_subject() {
     buildopt_workflow_family=$(jq -r ".repositories[${buildopt_index}].workflowFamily // empty" "${buildopt_spec}")
     buildopt_change_path=$(jq -er ".repositories[${buildopt_index}].changePath" "${buildopt_spec}")
     buildopt_mutation=$(jq -er ".repositories[${buildopt_index}].mutation" "${buildopt_spec}")
+    buildopt_target_stability_confirmations=$(jq -er '.runner.targetStabilityConfirmations // 1' "${buildopt_spec}")
     buildopt_equivalence_source=$(jq -r ".repositories[${buildopt_index}].outputEquivalenceContract // empty" "${buildopt_spec}")
     buildopt_equivalence_path=
     buildopt_repository="${buildopt_root}/${buildopt_key}/repository"
@@ -307,6 +308,7 @@ buildopt_capture_subject() {
                 --gradle-option=--parallel --gradle-option=--no-configuration-cache \
                 --gradle-option=--console=plain --gradle-option=--no-scan \
                 --gradle-option=--max-workers=12 \
+                --target-stability-confirmations "${buildopt_target_stability_confirmations}" \
                 "${buildopt_equivalence_args[@]}" --timeout 30m
         ) >"${buildopt_subject_output}/measurement.log" 2>&1; then
             buildopt_measure_status=COMPLETED

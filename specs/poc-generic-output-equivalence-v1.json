@@ -10,6 +10,7 @@
     "maxWorkers": 12,
     "capturesPerWorkflow": 2,
     "pairsPerCapture": 8,
+    "targetStabilityConfirmations": 3,
     "blocksPerWorkflow": 8,
     "order": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
     "perBuildTimeout": "30m"

@@ -568,15 +568,18 @@ func validateStructuralDiagnostics(control, candidate []StructuralWarmupObservat
 		}
 		return nil
 	}
-	if len(control) != len(candidate) || (len(control) != 2 && len(control) != 3 && len(control) != 4) {
-		return errors.New("structural measurement requires complete two-, three-, or four-phase warm-ups")
+	if len(control) != len(candidate) || (len(control) != 2 && len(control) != 3 && len(control) != 4 && len(control) != 5) {
+		return errors.New("structural measurement requires complete two-, three-, four-, or five-phase warm-ups")
 	}
 	expectedPhases := []string{"CACHE_SEED", "DAEMON_STABILIZATION"}
 	if len(control) >= 3 {
 		expectedPhases = []string{"CACHE_SEED", "BASE_DAEMON_STABILIZATION", "TARGET_WORKLOAD_STABILIZATION"}
 	}
-	if len(control) == 4 {
+	if len(control) >= 4 {
 		expectedPhases = append(expectedPhases, "TARGET_WORKLOAD_STABILITY_CONFIRMATION")
+	}
+	if len(control) == 5 {
+		expectedPhases = append(expectedPhases, "TARGET_WORKLOAD_STABILITY_RECONFIRMATION")
 	}
 	fingerprintPresent := false
 	fingerprintAbsent := false
@@ -822,21 +825,27 @@ func applyStructuralTargetWarmupShape(
 	control, candidate []StructuralWarmupObservation,
 	observations []structuralObservation,
 ) structuralResult {
-	if (len(control) != 3 && len(control) != 4) || len(candidate) != len(control) || len(observations) == 0 {
+	if (len(control) != 3 && len(control) != 4 && len(control) != 5) || len(candidate) != len(control) || len(observations) == 0 {
 		return result
 	}
-	controlFingerprint := control[2].TaskOutcomes.FingerprintSHA256
-	candidateFingerprint := candidate[2].TaskOutcomes.FingerprintSHA256
+	baselineIndex := 2
+	comparisonStart := 3
+	if len(control) == 5 {
+		baselineIndex = 4
+		comparisonStart = 3
+	}
+	controlFingerprint := control[baselineIndex].TaskOutcomes.FingerprintSHA256
+	candidateFingerprint := candidate[baselineIndex].TaskOutcomes.FingerprintSHA256
 	if controlFingerprint == "" || candidateFingerprint == "" {
 		return result
 	}
 	result.TargetWarmupShapeObserved = true
 	result.TargetWarmupShapeStable = true
-	for _, warmup := range control[3:] {
+	for _, warmup := range control[comparisonStart:] {
 		result.TargetWarmupShapeStable = result.TargetWarmupShapeStable &&
 			warmup.TaskOutcomes.FingerprintSHA256 == controlFingerprint
 	}
-	for _, warmup := range candidate[3:] {
+	for _, warmup := range candidate[comparisonStart:] {
 		result.TargetWarmupShapeStable = result.TargetWarmupShapeStable &&
 			warmup.TaskOutcomes.FingerprintSHA256 == candidateFingerprint
 	}

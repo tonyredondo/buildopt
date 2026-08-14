@@ -262,6 +262,26 @@ func TestStructuralFallbackGradleOptionsPreserveMeasuredSchedulingWithoutMutatin
 	}
 }
 
+func TestStructuralTargetWarmupsRequireTwoFinalMatchingFingerprints(t *testing.T) {
+	warmups := []profilediscovery.StructuralWarmupObservation{
+		{TaskOutcomes: profilediscovery.StructuralTaskOutcomes{FingerprintSHA256: strings.Repeat("1", 64)}},
+		{TaskOutcomes: profilediscovery.StructuralTaskOutcomes{FingerprintSHA256: strings.Repeat("2", 64)}},
+		{TaskOutcomes: profilediscovery.StructuralTaskOutcomes{FingerprintSHA256: strings.Repeat("3", 64)}},
+		{TaskOutcomes: profilediscovery.StructuralTaskOutcomes{FingerprintSHA256: strings.Repeat("4", 64)}},
+		{TaskOutcomes: profilediscovery.StructuralTaskOutcomes{FingerprintSHA256: strings.Repeat("4", 64)}},
+	}
+	if !structuralTargetWarmupsConverged(warmups) {
+		t.Fatal("two final matching target warm-ups did not converge")
+	}
+	warmups[4].TaskOutcomes.FingerprintSHA256 = strings.Repeat("5", 64)
+	if structuralTargetWarmupsConverged(warmups) {
+		t.Fatal("different final target warm-ups converged")
+	}
+	if structuralTargetWarmupsConverged(warmups[:4]) {
+		t.Fatal("an incomplete five-phase sequence converged")
+	}
+}
+
 func TestDescribeMeasurementOutputDifferenceIsBoundedAndPathSpecific(t *testing.T) {
 	expected := t.TempDir()
 	actual := t.TempDir()
