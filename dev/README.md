@@ -3492,9 +3492,9 @@ properties and require fail-closed rejection. The frozen public rerun uses two
 fresh eight-pair captures for Groovy `jar`, Kafka `checkstyleMain`, and Kafka
 `shadowJar`, then evaluates eight reciprocal blocks per workflow under the
 current material-value, tail, shape, fallback, and zero-failure gates.
-If Gradle emits one local task path with multiple outcomes across its build
-tree, the evidence retains the sorted outcome set in the task fingerprint and
-uses the conservative outcome for counters; the collision is not discarded.
+If Gradle emits a task line before its terminal outcome, the evidence retains
+the ordered transitions as diagnostics, uses the last emission for counters,
+and fingerprints terminal task outcomes only. No task is discarded.
 
 ```bash
 ./dev/run-generic-output-equivalence \

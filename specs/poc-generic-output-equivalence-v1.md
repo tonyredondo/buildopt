@@ -41,11 +41,11 @@ positive median/lower-bound, at-least-six-positive-block, non-regressive-p95,
 stable-shape, complete-fallback, and zero-product-failure gates. Percentages
 remain independent across workflows.
 
-Gradle plain-console task identifiers are local to a build, so an included or
-composite build can emit the same path with different outcomes. The generic
-measurement layer preserves the sorted set of outcomes in its execution-shape
-fingerprint and uses the conservative outcome for counters. It does not discard
-the collision or pretend that the console path is globally unique.
+Gradle plain console can emit a task line before its terminal outcome. The
+generic measurement layer preserves ordered outcome transitions as diagnostics,
+uses the last emission as the terminal outcome, and fingerprints terminal task
+outcomes only. It does not discard tasks or treat transient console rendering
+as execution-shape drift. Malformed transitions still fail closed.
 
 ## Boundaries
 

@@ -647,7 +647,11 @@ func structuralTaskEvidenceError(armName string, validationErr error, log string
 
 func summarizeStructuralTaskOutcomes(log string) profilediscovery.StructuralTaskOutcomes {
 	var outcomes profilediscovery.StructuralTaskOutcomes
-	observed := map[string]map[string]bool{}
+	type observedTask struct {
+		outcome     string
+		transitions []string
+	}
+	observed := map[string]*observedTask{}
 	scanner := bufio.NewScanner(strings.NewReader(log))
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
@@ -670,23 +674,23 @@ func summarizeStructuralTaskOutcomes(log string) profilediscovery.StructuralTask
 			outcome = "SKIPPED"
 		}
 		path := fields[2]
-		if observed[path] == nil {
-			observed[path] = map[string]bool{}
+		task := observed[path]
+		if task == nil {
+			task = &observedTask{}
+			observed[path] = task
 		}
-		observed[path][outcome] = true
+		if len(task.transitions) == 0 || task.transitions[len(task.transitions)-1] != outcome {
+			task.transitions = append(task.transitions, outcome)
+		}
+		task.outcome = outcome
 	}
 	if len(observed) > 0 {
 		tasks := make([]profilediscovery.StructuralTaskObservation, 0, len(observed))
-		for path, observedOutcomes := range observed {
-			consoleOutcomes := make([]string, 0, len(observedOutcomes))
-			for outcome := range observedOutcomes {
-				consoleOutcomes = append(consoleOutcomes, outcome)
-			}
-			sort.Strings(consoleOutcomes)
-			outcome := conservativeStructuralConsoleOutcome(consoleOutcomes)
+		for path, observedTask := range observed {
+			outcome := observedTask.outcome
 			task := profilediscovery.StructuralTaskObservation{Path: path, Outcome: outcome}
-			if len(consoleOutcomes) > 1 {
-				task.ConsoleOutcomes = consoleOutcomes
+			if len(observedTask.transitions) > 1 {
+				task.ConsoleOutcomeTransitions = append([]string(nil), observedTask.transitions...)
 			}
 			tasks = append(tasks, task)
 			switch outcome {
@@ -728,23 +732,7 @@ func canonicalStructuralTaskLine(task profilediscovery.StructuralTaskObservation
 		line += " SKIPPED"
 	default:
 	}
-	if len(task.ConsoleOutcomes) > 0 {
-		line += " [console-outcomes=" + strings.Join(task.ConsoleOutcomes, ",") + "]"
-	}
 	return line
-}
-
-func conservativeStructuralConsoleOutcome(outcomes []string) string {
-	priority := map[string]int{
-		"SKIPPED": 1, "NO_SOURCE": 2, "UP_TO_DATE": 3, "FROM_CACHE": 4, "EXECUTED": 5,
-	}
-	selected := ""
-	for _, outcome := range outcomes {
-		if priority[outcome] > priority[selected] {
-			selected = outcome
-		}
-	}
-	return selected
 }
 
 func formatStructuralTaskOutcomes(outcomes profilediscovery.StructuralTaskOutcomes) string {

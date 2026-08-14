@@ -201,10 +201,14 @@ func TestSummarizeStructuralTaskOutcomesNormalizesRepeatedConsoleLines(t *testin
 	if err := profilediscovery.ValidateStructuralTaskOutcomes(conflicting); err != nil {
 		t.Fatalf("build-tree task-path collision was rejected: %v", err)
 	}
-	if conflicting.Total != 1 || conflicting.Executed != 1 || len(conflicting.Tasks) != 1 ||
-		conflicting.Tasks[0].Outcome != "EXECUTED" ||
-		!reflect.DeepEqual(conflicting.Tasks[0].ConsoleOutcomes, []string{"EXECUTED", "FROM_CACHE"}) {
+	if conflicting.Total != 1 || conflicting.FromCache != 1 || len(conflicting.Tasks) != 1 ||
+		conflicting.Tasks[0].Outcome != "FROM_CACHE" ||
+		!reflect.DeepEqual(conflicting.Tasks[0].ConsoleOutcomeTransitions, []string{"EXECUTED", "FROM_CACHE"}) {
 		t.Fatalf("build-tree task-path collision = %+v", conflicting)
+	}
+	terminalOnly := summarizeStructuralTaskOutcomes("> Task :compileJava FROM-CACHE\n")
+	if conflicting.FingerprintSHA256 != terminalOnly.FingerprintSHA256 {
+		t.Fatal("console transition changed the terminal task fingerprint")
 	}
 }
 

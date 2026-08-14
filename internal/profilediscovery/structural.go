@@ -192,9 +192,9 @@ type StructuralTaskOutcomes struct {
 // outcome used to derive an execution-shape fingerprint. The bounded list is
 // diagnostic evidence; it never authorizes repository-specific selection.
 type StructuralTaskObservation struct {
-	Path            string   `json:"path"`
-	Outcome         string   `json:"outcome"`
-	ConsoleOutcomes []string `json:"consoleOutcomes,omitempty"`
+	Path                      string   `json:"path"`
+	Outcome                   string   `json:"outcome"`
+	ConsoleOutcomeTransitions []string `json:"consoleOutcomeTransitions,omitempty"`
 }
 
 // StructuralHostPressure records the system-wide Linux PSI time accumulated
@@ -658,20 +658,19 @@ func ValidateStructuralTaskOutcomes(outcomes StructuralTaskOutcomes) error {
 		if !validStructuralTaskOutcome(task.Outcome) {
 			return fmt.Errorf("exact task %s has invalid outcome %q", task.Path, task.Outcome)
 		}
-		if len(task.ConsoleOutcomes) != 0 {
-			if len(task.ConsoleOutcomes) < 2 || len(task.ConsoleOutcomes) > 5 ||
-				!sort.StringsAreSorted(task.ConsoleOutcomes) {
-				return fmt.Errorf("exact task %s has invalid console outcomes", task.Path)
+		if len(task.ConsoleOutcomeTransitions) != 0 {
+			if len(task.ConsoleOutcomeTransitions) < 2 || len(task.ConsoleOutcomeTransitions) > 8 {
+				return fmt.Errorf("exact task %s has invalid console outcome transitions", task.Path)
 			}
 			previousOutcome := ""
-			for _, outcome := range task.ConsoleOutcomes {
+			for _, outcome := range task.ConsoleOutcomeTransitions {
 				if !validStructuralTaskOutcome(outcome) || outcome == previousOutcome {
-					return fmt.Errorf("exact task %s has invalid console outcomes", task.Path)
+					return fmt.Errorf("exact task %s has invalid console outcome transitions", task.Path)
 				}
 				previousOutcome = outcome
 			}
-			if structuralConservativeOutcome(task.ConsoleOutcomes) != task.Outcome {
-				return fmt.Errorf("exact task %s does not use its conservative console outcome", task.Path)
+			if task.ConsoleOutcomeTransitions[len(task.ConsoleOutcomeTransitions)-1] != task.Outcome {
+				return fmt.Errorf("exact task %s does not use its terminal console outcome", task.Path)
 			}
 		}
 		if previous != "" && task.Path <= previous {
@@ -726,23 +725,7 @@ func structuralTaskFingerprintLine(task StructuralTaskObservation) string {
 		line += " SKIPPED"
 	default:
 	}
-	if len(task.ConsoleOutcomes) > 0 {
-		line += " [console-outcomes=" + strings.Join(task.ConsoleOutcomes, ",") + "]"
-	}
 	return line
-}
-
-func structuralConservativeOutcome(outcomes []string) string {
-	priority := map[string]int{
-		"SKIPPED": 1, "NO_SOURCE": 2, "UP_TO_DATE": 3, "FROM_CACHE": 4, "EXECUTED": 5,
-	}
-	selected := ""
-	for _, outcome := range outcomes {
-		if priority[outcome] > priority[selected] {
-			selected = outcome
-		}
-	}
-	return selected
 }
 
 func validStructuralHostPressure(pressure *StructuralHostPressure) bool {

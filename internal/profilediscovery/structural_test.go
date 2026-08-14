@@ -266,11 +266,10 @@ func TestValidateStructuralTaskOutcomesExplainsMalformedExactEvidence(t *testing
 
 	invalidConsoleOutcomes := valid
 	invalidConsoleOutcomes.Tasks = append([]StructuralTaskObservation(nil), valid.Tasks...)
-	invalidConsoleOutcomes.Tasks[0].Outcome = "FROM_CACHE"
-	invalidConsoleOutcomes.Tasks[0].ConsoleOutcomes = []string{"EXECUTED", "FROM_CACHE"}
+	invalidConsoleOutcomes.Tasks[0].ConsoleOutcomeTransitions = []string{"EXECUTED", "FROM_CACHE"}
 	if err := ValidateStructuralTaskOutcomes(invalidConsoleOutcomes); err == nil ||
-		!strings.Contains(err.Error(), "conservative console outcome") {
-		t.Fatalf("non-conservative console outcome error = %v", err)
+		!strings.Contains(err.Error(), "terminal console outcome") {
+		t.Fatalf("non-terminal console outcome error = %v", err)
 	}
 
 	mismatch := valid

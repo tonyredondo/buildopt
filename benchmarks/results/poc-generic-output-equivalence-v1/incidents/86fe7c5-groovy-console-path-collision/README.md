@@ -9,11 +9,13 @@ first pair.
 
 This is a generic composite/included-build representation boundary, not an
 optimization result. Gradle console task paths are local to a build and are not
-globally unique across the build tree. The correction preserves the sorted set
-of observed outcomes on that path in the evidence fingerprint and normalizes
-its counter to the conservative outcome (`EXECUTED`). Repeated identical lines
-remain deduplicated. The output-equivalence contract, workflows, thresholds,
-pairing, and fallbacks did not change.
+globally unique across the build tree. The first correction preserved every
+observed outcome on that path. A later complete diagnostic capture established
+that the extra line was a console render transition rather than a second
+terminal outcome; that follow-up is preserved in the sibling
+`bfb7578-groovy-console-transition-fingerprint` incident. Repeated identical
+lines remain deduplicated. The output-equivalence contract, workflows,
+thresholds, pairing, and fallbacks did not change.
 
 All terminal captures restart from zero on the correction revision. The failed
 result and its logs remain here; it is not counted as a performance sample.
