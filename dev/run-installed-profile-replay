@@ -7,8 +7,13 @@ if (($# != 1)) || [[ $1 != /* ]]; then
 fi
 
 buildopt_output=$1
-[[ ! -e ${buildopt_output} ]] || {
-    printf 'installed-profile evidence output already exists: %s\n' \
+[[ ! -e ${buildopt_output} || -d ${buildopt_output} ]] || {
+    printf 'installed-profile evidence output is not a directory: %s\n' \
+        "${buildopt_output}" >&2
+    exit 1
+}
+[[ ! -s ${buildopt_output}/summary.json ]] || {
+    printf 'installed-profile evidence is already complete: %s\n' \
         "${buildopt_output}" >&2
     exit 1
 }
@@ -73,6 +78,19 @@ for source, replacement in sorted(replacements, key=lambda pair: len(pair[0]), r
     content = content.replace(source, replacement)
 log.write_text(content, encoding="utf-8")
 PY
+}
+
+buildopt_remove_cell_root() {
+    local buildopt_cell_root=$1
+    [[ ${buildopt_cell_root} == "${buildopt_root}/"* ]] || return 1
+    for _ in 1 2 3 4 5; do
+        rm -rf -- "${buildopt_cell_root}" || true
+        [[ ! -e ${buildopt_cell_root} ]] && return 0
+        sleep 1
+    done
+    printf 'installed-profile cell cleanup did not settle: %s\n' \
+        "${buildopt_cell_root}" >&2
+    return 1
 }
 
 mkdir -p -- "${buildopt_output}" "${buildopt_root}/install" "${buildopt_root}/release"
@@ -362,10 +380,19 @@ buildopt_capture_cell() {
             "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
             ./gradlew --stop
     ) >/dev/null 2>&1 || true
-    rm -rf -- "${buildopt_root:?}/${buildopt_key}"
+    buildopt_remove_cell_root "${buildopt_root:?}/${buildopt_key}"
 }
 
 while IFS= read -r buildopt_key; do
+    if [[ -s ${buildopt_output}/${buildopt_key}/result.json ]]; then
+        printf 'Preserving completed installed-profile cell %s\n' "${buildopt_key}"
+        continue
+    fi
+    [[ ! -e ${buildopt_output}/${buildopt_key} ]] || {
+        printf 'incomplete installed-profile cell blocks resume: %s\n' \
+            "${buildopt_key}" >&2
+        exit 1
+    }
     buildopt_capture_cell "${buildopt_key}"
 done < <(jq -r '.cells[]' "${buildopt_spec}")
 
