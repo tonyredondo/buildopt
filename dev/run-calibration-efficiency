@@ -87,6 +87,7 @@ seed_distribution() {
     destination="${gradle_home}/wrapper/dists/${distribution}"
     mkdir -p -- "${destination}"
     for source_root in \
+        "${temporary}/distribution-seed/wrapper/dists" \
         "${repo_root}/.tools/gradle-user-home/local/wrapper/dists" \
         "${repo_root}/.tools/gradle-user-home/wrapper/dists" \
         "${GRADLE_USER_HOME:-${HOME}/.gradle}/wrapper/dists"; do
@@ -98,6 +99,26 @@ seed_distribution() {
         printf 'exact offline Wrapper distribution is unavailable: %s\n' "${distribution}" >&2
         return 1
     }
+}
+
+prepare_distribution() {
+    local repository=$1 jdk=$2 seed_home="${temporary}/distribution-seed" attempt
+    if seed_distribution "${repository}" "${seed_home}" 2>/dev/null; then
+        return 0
+    fi
+    mkdir -p -- "${seed_home}"
+    for attempt in 1 2 3; do
+        printf 'Preparing exact Wrapper distribution before timing (%d/3)\n' "${attempt}"
+        if (
+            cd -- "${repository}"
+            env -u CI GRADLE_USER_HOME="${seed_home}" timeout 30m \
+                "${script_dir}/run" --toolchain "${jdk}" -- ./gradlew --version
+        ) >/dev/null 2>&1; then
+            return 0
+        fi
+    done
+    printf 'unable to prepare exact Wrapper distribution before timing\n' >&2
+    return 1
 }
 
 normalize_log() {
@@ -141,8 +162,9 @@ capture_cell() {
     git -C "${repository}" checkout -q --detach FETCH_HEAD
     base=$(git -C "${repository}" rev-parse HEAD)
     [[ ${base} == $(jq -r '.publicRevision' <<<"${cell}") ]] || return 1
-    seed_distribution "${repository}" "${gradle_home}"
     jdk=$(jq -r '.jdkToolchain' <<<"${cell}")
+    prepare_distribution "${repository}" "${jdk}"
+    seed_distribution "${repository}" "${gradle_home}"
     (
         cd -- "${repository}"
         env -u CI GRADLE_USER_HOME="${gradle_home}" timeout 30m \
