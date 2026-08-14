@@ -132,6 +132,22 @@ build-logic/global cells produce eight independent
 `NATIVE_FULL_GRAPH / GLOBAL_CHANGE_REQUIRES_FULL_GRAPH` decisions and no
 timing claim. Percentages remain cell-specific and are not averaged.
 
+### Calibration economics
+
+The [terminal calibration bundle](./results/poc-calibration-economics-v1/README.md)
+separates two fresh setup captures per selective change-breadth cell from the
+already-qualified terminal saving. The installed-workflow view counts the real
+combined output-preflight/discovery command and candidate warm-ups; the full
+POC view also counts native-control warm-ups.
+
+Installed payback is **10–11 builds** for Groovy JAR, **27–31 builds** for
+Kafka Checkstyle, and **14–15 builds** for Kafka `shadowJar`. Complete
+comparative-POC payback is **20–22**, **49–55**, and **27–28 builds**
+respectively. Offline Gradle distribution materialization adds under 1.4
+seconds per capture and does not change any rounded POC break-even. Checkout is
+measured but excluded as shared native/BuildOpt work. Results and percentages
+remain cell-specific and are never averaged.
+
 ### Unseen Hibernate ORM holdout
 
 The [terminal holdout bundle](./results/poc-generic-holdout-v2/README.md)

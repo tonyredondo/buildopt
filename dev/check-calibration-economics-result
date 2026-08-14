@@ -114,6 +114,13 @@ for buildopt_key in "${buildopt_keys[@]}"; do
             }
         done < <(jq -r '.sourceBindings.artifacts[] | [.path, .sha256] | @tsv' \
             "${buildopt_file}")
+        if grep -Eq '(/tmp/buildopt|/home/[^/]+|/Users/[^/]+|[A-Za-z]:\\Users\\)' \
+            "${buildopt_capture_root}/distribution.log" \
+            "${buildopt_capture_root}/proposal.log"; then
+            printf 'calibration log contains a host-local path: %s\n' \
+                "${buildopt_capture_root}" >&2
+            exit 1
+        fi
     done
 done
 

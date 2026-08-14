@@ -14,6 +14,7 @@
     "clock": "EXTERNAL_WALL_CLOCK_NANOSECONDS",
     "gradleMode": "OFFLINE_AFTER_PUBLIC_REVISION_FETCH",
     "distributionSeedPreparation": "BOUNDED_ONLINE_BEFORE_PHASE_TIMING_IF_EXACT_LOCAL_DISTRIBUTION_IS_ABSENT",
+    "capturedLogs": "PORTABLE_AFTER_PRIVATE_ROOT_NORMALIZATION",
     "maxWorkers": 12,
     "perCommandTimeout": "30m"
   },

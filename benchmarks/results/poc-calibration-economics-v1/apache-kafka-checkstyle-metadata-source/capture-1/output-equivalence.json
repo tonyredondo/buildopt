@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.poc/output-equivalence/v1",
+  "rules": [
+    {
+      "pattern": "clients/build/reports/checkstyle/main.xml",
+      "mode": "REPOSITORY_ROOT_TEXT"
+    }
+  ],
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false
+}

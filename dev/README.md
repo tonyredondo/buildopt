@@ -3558,6 +3558,12 @@ is not measured. The runner removes each temporary public checkout after its
 capture so the full matrix remains bounded by one active subject plus the
 installed exact BuildOpt revision.
 
+The terminal bundle reports installed-workflow break-even of 10–11 builds for
+Groovy JAR, 27–31 for Kafka Checkstyle, and 14–15 for Kafka `shadowJar`.
+Complete comparative-POC break-even is 20–22, 49–55, and 27–28 builds. Validate
+the versioned [phase artifacts and summary](../benchmarks/results/poc-calibration-economics-v1/README.md)
+with the two commands above.
+
 `./dev/check-generic-profile-ci-replay` validates the manual clean-runner
 replay without cloning public repositories. It reconstructs retained Action
 artifacts for all five subjects, requires five semantic and byte-level graph

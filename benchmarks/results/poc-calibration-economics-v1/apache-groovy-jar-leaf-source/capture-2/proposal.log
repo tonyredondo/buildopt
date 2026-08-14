@@ -1,0 +1,186 @@
+{
+  "schemaVersion": "buildopt.poc/profile-proposal/v1",
+  "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+  "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+  "repositoryId": "apache/groovy",
+  "pipelineClass": "jar-packaging-leaf-source",
+  "baseRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+  "targetRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+  "originalEntrypoint": "jar",
+  "originalEntrypoints": [
+    "jar"
+  ],
+  "changedPaths": [
+    "subprojects/groovy-json/src/main/java/org/apache/groovy/json/DefaultFastStringService.java"
+  ],
+  "requiredOutputs": [
+    "subprojects/groovy-json/build/libs/*.jar"
+  ],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "candidateEntrypoints": [
+    ":groovy-json:jar"
+  ],
+  "omittedProjects": [
+    ":binary-compatibility",
+    ":groovy-all",
+    ":groovy-ant",
+    ":groovy-astbuilder",
+    ":groovy-binary",
+    ":groovy-bom",
+    ":groovy-cli-commons",
+    ":groovy-cli-picocli",
+    ":groovy-console",
+    ":groovy-contracts",
+    ":groovy-datetime",
+    ":groovy-dateutil",
+    ":groovy-docgenerator",
+    ":groovy-ginq",
+    ":groovy-groovydoc",
+    ":groovy-groovysh",
+    ":groovy-jmx",
+    ":groovy-jsr223",
+    ":groovy-macro",
+    ":groovy-macro-library",
+    ":groovy-nio",
+    ":groovy-servlet",
+    ":groovy-sql",
+    ":groovy-swing",
+    ":groovy-templates",
+    ":groovy-test",
+    ":groovy-test-junit5",
+    ":groovy-testng",
+    ":groovy-toml",
+    ":groovy-typecheckers",
+    ":groovy-xml",
+    ":groovy-yaml",
+    ":performance",
+    ":stress",
+    ":tests-preview"
+  ],
+  "unknownRelationships": false,
+  "analysis": {
+    "schemaVersion": "buildopt.poc/opportunity-analysis/v1",
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "subject": {
+      "repositoryId": "apache/groovy",
+      "pipelineClass": "jar-packaging-leaf-source",
+      "gradleVersion": "8.14.4"
+    },
+    "inputs": null,
+    "sourceBindings": {
+      "manifestDigest": "sha256:fb0c1bd553fc3a8579f1bf98c1b0ce1246410444499848a1d1007dc1c2df985a",
+      "graphDigest": "sha256:b9e9ffef60373575b031b06ac70da25fbd777373fff5f9e9640ff4f989127edf",
+      "discoveryDigest": "sha256:15728f2f7ed8a770636c57191be0618a85e82185e9bd0fa96706ab6b56a5a55b"
+    },
+    "plan": {
+      "alternativeId": "changed-projects",
+      "entrypoints": [
+        ":groovy-json:jar"
+      ],
+      "fallbackEntrypoints": [
+        "jar"
+      ],
+      "requiredOutputs": [
+        "subprojects/groovy-json/build/libs/*.jar"
+      ],
+      "totalProjectCount": 37,
+      "selectedProjectCount": 2,
+      "omittedProjectCount": 35,
+      "omittedProjectRatio": 0.9459459459459459
+    },
+    "mechanisms": [
+      {
+        "name": "BUILD_IMPACT",
+        "status": "MEASURE_CANDIDATE",
+        "reason": "complete graph exposes a smaller reviewed alternative; direct timing is still required"
+      },
+      {
+        "name": "SHARED_EDGE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent locality and failure-fallback evidence for this workload"
+      },
+      {
+        "name": "HOT_STATE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "RUNTIME_TUNING",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "SAFE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "STANDARD_COPY",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "STANDARD_JAR",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "TEST_OPTIMIZATION",
+        "status": "NOT_AUTHORIZED",
+        "reason": "outside BuildOpt scope"
+      }
+    ],
+    "measurementRequired": true,
+    "reviewRequired": true,
+    "activationAutomatic": false,
+    "productionAuthorized": false
+  },
+  "documents": {
+    "outputContract": "buildopt-output-contract.json",
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json",
+    "fallbackChanges": "buildopt-fallback-changes.txt",
+    "proposal": "buildopt-profile-proposal.json"
+  },
+  "measureCommand": [
+    "buildopt",
+    "profile",
+    "measure",
+    "--manifest",
+    "buildopt-impact-manifest.json",
+    "--graph",
+    "buildopt-impact-graph.generated.json",
+    "--generated-manifest",
+    "buildopt-impact.generated.json",
+    "--changes-file",
+    "buildopt-changes.txt",
+    "--fallback-changes-file",
+    "buildopt-fallback-changes.txt",
+    "--base-revision",
+    "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+    "--buildopt-revision",
+    "706ee5480fd24aade078565925ec853d7ae67de7",
+    "--evidence-output",
+    "buildopt-profile-evidence.json",
+    "--output-equivalence",
+    "buildopt-output-equivalence.json"
+  ],
+  "buildOptRevisionNeeded": false,
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false,
+  "testOptimization": "OUT_OF_SCOPE",
+  "outputEquivalence": "buildopt-output-equivalence.json",
+  "outputEquivalenceSha256": "ed3bc40daec143645589a768d5058bdbdf1a982d08d2659170142bca3dea1ff5"
+}

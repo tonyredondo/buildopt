@@ -30,6 +30,7 @@ jq -e '
   .runner.clock == "EXTERNAL_WALL_CLOCK_NANOSECONDS" and
   .runner.distributionSeedPreparation ==
     "BOUNDED_ONLINE_BEFORE_PHASE_TIMING_IF_EXACT_LOCAL_DISTRIBUTION_IS_ABSENT" and
+  .runner.capturedLogs == "PORTABLE_AFTER_PRIVATE_ROOT_NORMALIZATION" and
   (.cells | length) == 6 and (.cells | unique | length) == 6 and
   .phases.repositoryCheckout.includedInBreakEven == false and
   .phases.offlineGradleDistributionPreparation.scope ==

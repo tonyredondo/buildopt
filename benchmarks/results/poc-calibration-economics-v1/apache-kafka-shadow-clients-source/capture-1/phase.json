@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-calibration-phase/v1",
+  "workItem": "POC-CALIBRATION-ECONOMICS-001",
+  "capturedAt": "2026-08-14T18:36:51Z",
+  "captureIndex": 1,
+  "buildopt": {
+    "revision": "706ee5480fd24aade078565925ec853d7ae67de7",
+    "executableSha256": "cf2107fbc269af4dd46c5acdd6f8f4dc8d12e3df7f1882f3d9764672d48d89af"
+  },
+  "cell": {
+    "key": "apache-kafka-shadow-clients-source",
+    "repositoryId": "apache/kafka",
+    "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "targetRevision": "929868cbdee1fbdc9cb60701e2ca17e8a66cd2ae",
+    "workflowFamily": "FAT_JAR_DISTRIBUTION",
+    "changeClass": "LEAF_PRODUCTION_SOURCE",
+    "changePath": "clients/src/main/java/org/apache/kafka/clients/Metadata.java"
+  },
+  "phases": {
+    "repositoryCheckoutMs": 7136,
+    "offlineGradleDistributionPreparationMs": 1324,
+    "fixturePreparationMs": 760,
+    "outputPreflightAndStructuralDiscoveryMs": 268874
+  },
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "shadowJar"
+    ],
+    "candidateEntrypoints": [
+      ":clients:shadowJar"
+    ]
+  },
+  "sourceBindings": {
+    "terminalEvidenceSha256": "abd504b1bc35efd861c591a944cd2b51207b2fcf6b661643cf93ded873ba042d",
+    "qualificationSha256": "747a5bac3d80aa7bc059467939d4dc8e78801095f93113d60d2800939278b7a5",
+    "artifacts": {
+      "distributionLog": {
+        "path": "distribution.log",
+        "sha256": "3ede9f68400cb07166b405c9cba9a1b14ad4d43254ff8beaba005980fa61fcc5"
+      },
+      "proposalLog": {
+        "path": "proposal.log",
+        "sha256": "a5bd7d5da7548cc320e04bbdc153a79d28e720fb69f0a5da460aaf7b7aaff635"
+      },
+      "proposal": {
+        "path": "proposal.json",
+        "sha256": "a5bd7d5da7548cc320e04bbdc153a79d28e720fb69f0a5da460aaf7b7aaff635"
+      },
+      "outputContract": {
+        "path": "output-contract.json",
+        "sha256": "4afdc829442f733278b6f4c1dae69443cfa505c0d1d42cde385e6f4e93459e37"
+      },
+      "outputEquivalence": {
+        "path": "output-equivalence.json",
+        "sha256": "22dba20d585be322658604491b4b91d1f7e5deaa8dece5e5b8a954881630108a"
+      }
+    }
+  },
+  "boundaries": {
+    "timingClaim": false,
+    "repositoryCheckoutIncludedInBreakEven": false,
+    "publicReleaseInstallMeasured": false,
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "testOptimizationModified": false
+  },
+  "captureSha256": "f70ce40a47ca58590ce8c3b412ae8faf8a03f81acec1a169b1926ceb6a14832c"
+}

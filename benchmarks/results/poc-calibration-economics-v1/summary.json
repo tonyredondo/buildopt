@@ -1,0 +1,407 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-calibration-economics/v1",
+  "workItem": "POC-CALIBRATION-ECONOMICS-001",
+  "capturedAt": "2026-08-14T18:50:44Z",
+  "buildopt": {
+    "revision": "706ee5480fd24aade078565925ec853d7ae67de7",
+    "executableSha256": "cf2107fbc269af4dd46c5acdd6f8f4dc8d12e3df7f1882f3d9764672d48d89af"
+  },
+  "method": {
+    "capturesPerCell": 2,
+    "breakEvenFormula": "CEIL(CALIBRATION_COST_MS / TERMINAL_MEAN_SAVED_MS)",
+    "percentagesAveragedAcrossCells": false,
+    "repositoryCheckoutIncludedInBreakEven": false,
+    "publicReleaseInstallMeasured": false
+  },
+  "cells": [
+    {
+      "key": "apache-groovy-jar-leaf-source",
+      "repositoryId": "apache/groovy",
+      "repositoryRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "workflowFamily": "JAR_PACKAGING",
+      "changeClass": "LEAF_PRODUCTION_SOURCE",
+      "changePath": "subprojects/groovy-json/src/main/java/org/apache/groovy/json/DefaultFastStringService.java",
+      "captures": 2,
+      "phasesMs": {
+        "repositoryCheckoutMean": 3723.5,
+        "offlineGradleDistributionPreparationMean": 754.5,
+        "outputPreflightAndStructuralDiscoveryMean": 257821.5,
+        "control": {
+          "cacheSeedMean": 205171,
+          "baseDaemonStabilizationMean": 82694,
+          "targetWorkloadStabilizationMean": 233516.5,
+          "totalWarmupMean": 521381.5
+        },
+        "candidate": {
+          "cacheSeedMean": 146072,
+          "baseDaemonStabilizationMean": 17811,
+          "targetWorkloadStabilizationMean": 58712,
+          "totalWarmupMean": 222595
+        }
+      },
+      "steadyState": {
+        "controlMeanMs": 71227.125,
+        "candidateMeanMs": 18843.1875,
+        "meanSavedMs": 52383.9375,
+        "reductionRatio": 0.7354492758201318,
+        "positiveBlocks": 8,
+        "blocks": 8
+      },
+      "economics": {
+        "installedWorkflow": {
+          "calibrationCostMs": 480416.5,
+          "exactBreakEvenBuilds": 9.171065080779771,
+          "breakEvenBuilds": 10
+        },
+        "pocValidation": {
+          "calibrationCostMs": 1001798,
+          "exactBreakEvenBuilds": 19.124144686527238,
+          "breakEvenBuilds": 20
+        },
+        "coldSingleWorkflow": {
+          "calibrationCostMs": 1002552.5,
+          "exactBreakEvenBuilds": 19.13854795661361,
+          "breakEvenBuilds": 20
+        }
+      },
+      "sourceBindings": {
+        "phaseCaptureSha256": [
+          "d757a3634cd18e9d00d56a5b13950622ddd111ac445ba61487fe9f1ec02b6063",
+          "716936f0350a081fac4f9dc28e5e766a3cd76e171653378cd9dc5b37205bb45b"
+        ],
+        "terminalEvidenceSha256": [
+          "cf3f096224b26c23c8f1522660f5db104cb887744f95fe4a3ea45ddc7713233c",
+          "156d423af63ae76fca779a6a6520d6a8dbb507786e8afc0198ef7b659f6f7b3c"
+        ],
+        "qualificationSha256": "b2c09a55d305ee85110ca2ecab8ceb704854920fc6741773728c9a8c6ca2222b"
+      }
+    },
+    {
+      "key": "apache-groovy-jar-shared-source",
+      "repositoryId": "apache/groovy",
+      "repositoryRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "workflowFamily": "JAR_PACKAGING",
+      "changeClass": "SHARED_PRODUCTION_SOURCE",
+      "changePath": "src/main/java/groovy/beans/Bindable.java",
+      "captures": 2,
+      "phasesMs": {
+        "repositoryCheckoutMean": 3621.5,
+        "offlineGradleDistributionPreparationMean": 766,
+        "outputPreflightAndStructuralDiscoveryMean": 285874,
+        "control": {
+          "cacheSeedMean": 227280.5,
+          "baseDaemonStabilizationMean": 68689,
+          "targetWorkloadStabilizationMean": 263538,
+          "totalWarmupMean": 559507.5
+        },
+        "candidate": {
+          "cacheSeedMean": 155560.5,
+          "baseDaemonStabilizationMean": 19066,
+          "targetWorkloadStabilizationMean": 84500,
+          "totalWarmupMean": 259126.5
+        }
+      },
+      "steadyState": {
+        "controlMeanMs": 79556.5,
+        "candidateMeanMs": 27207.0625,
+        "meanSavedMs": 52349.4375,
+        "reductionRatio": 0.6580158440856498,
+        "positiveBlocks": 8,
+        "blocks": 8
+      },
+      "economics": {
+        "installedWorkflow": {
+          "calibrationCostMs": 545000.5,
+          "exactBreakEvenBuilds": 10.41081864537704,
+          "breakEvenBuilds": 11
+        },
+        "pocValidation": {
+          "calibrationCostMs": 1104508,
+          "exactBreakEvenBuilds": 21.09875583667924,
+          "breakEvenBuilds": 22
+        },
+        "coldSingleWorkflow": {
+          "calibrationCostMs": 1105274,
+          "exactBreakEvenBuilds": 21.11338827661711,
+          "breakEvenBuilds": 22
+        }
+      },
+      "sourceBindings": {
+        "phaseCaptureSha256": [
+          "640601ea1a34facefd387eeea27ca0e52cae3581f69f51ce5ef9c9b8f76e2067",
+          "47ca10ac68b782872a6757e025a2c49dc52b2f84b356f3b3e7e60110869d8417"
+        ],
+        "terminalEvidenceSha256": [
+          "9212a2285f7b33af1e423a50c7546929dbf89aff0c6c0124b6f670a23e6c64b2",
+          "6a7feecec0622ec8bb256f27672bae12fa43a7695f8e5d09373528664da96ad9"
+        ],
+        "qualificationSha256": "b98cd3ece8bc607cdc5315710d60e4db9a3063c4d2df0216000b0c1374629733"
+      }
+    },
+    {
+      "key": "apache-kafka-checkstyle-metadata-source",
+      "repositoryId": "apache/kafka",
+      "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "workflowFamily": "TYPED_VERIFICATION",
+      "changeClass": "LEAF_PRODUCTION_SOURCE",
+      "changePath": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+      "captures": 2,
+      "phasesMs": {
+        "repositoryCheckoutMean": 7359.5,
+        "offlineGradleDistributionPreparationMean": 895,
+        "outputPreflightAndStructuralDiscoveryMean": 364763.5,
+        "control": {
+          "cacheSeedMean": 299175.5,
+          "baseDaemonStabilizationMean": 12870,
+          "targetWorkloadStabilizationMean": 252128,
+          "totalWarmupMean": 564173.5
+        },
+        "candidate": {
+          "cacheSeedMean": 141271.5,
+          "baseDaemonStabilizationMean": 7655.5,
+          "targetWorkloadStabilizationMean": 181505.5,
+          "totalWarmupMean": 330432.5
+        }
+      },
+      "steadyState": {
+        "controlMeanMs": 82430.9375,
+        "candidateMeanMs": 59353.0625,
+        "meanSavedMs": 23077.875,
+        "reductionRatio": 0.2799661838129646,
+        "positiveBlocks": 8,
+        "blocks": 8
+      },
+      "economics": {
+        "installedWorkflow": {
+          "calibrationCostMs": 695196,
+          "exactBreakEvenBuilds": 30.12391738840773,
+          "breakEvenBuilds": 31
+        },
+        "pocValidation": {
+          "calibrationCostMs": 1259369.5,
+          "exactBreakEvenBuilds": 54.570427303207076,
+          "breakEvenBuilds": 55
+        },
+        "coldSingleWorkflow": {
+          "calibrationCostMs": 1260264.5,
+          "exactBreakEvenBuilds": 54.6092090367939,
+          "breakEvenBuilds": 55
+        }
+      },
+      "sourceBindings": {
+        "phaseCaptureSha256": [
+          "9a53d69d1496f28853b734c6e3ec624213b3f496c66d41d235f44dfca28df308",
+          "8688c335ad9a4bde4874e38db937a938e846fb2228631c0aebeb2ae87e4d5819"
+        ],
+        "terminalEvidenceSha256": [
+          "7ebf58cfd029501f403ae603bd49b2f68ad4c165d39ff7905e1d75d5b260b03a",
+          "8cf6885bb050e37081fe04f691941fc9b0ef3eb58838c895897e90d9dd08ad8e"
+        ],
+        "qualificationSha256": "d8d2b8b4f38defca912ebdce8ebb728910f910abe7f7000d74b525ff03d71427"
+      }
+    },
+    {
+      "key": "apache-kafka-checkstyle-client-utils-source",
+      "repositoryId": "apache/kafka",
+      "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "workflowFamily": "TYPED_VERIFICATION",
+      "changeClass": "SECOND_LEAF_PRODUCTION_SOURCE",
+      "changePath": "clients/src/main/java/org/apache/kafka/clients/ClientUtils.java",
+      "captures": 2,
+      "phasesMs": {
+        "repositoryCheckoutMean": 6656.5,
+        "offlineGradleDistributionPreparationMean": 1105,
+        "outputPreflightAndStructuralDiscoveryMean": 358817,
+        "control": {
+          "cacheSeedMean": 307612.5,
+          "baseDaemonStabilizationMean": 12936.5,
+          "targetWorkloadStabilizationMean": 264364,
+          "totalWarmupMean": 584913
+        },
+        "candidate": {
+          "cacheSeedMean": 145040,
+          "baseDaemonStabilizationMean": 7160.5,
+          "targetWorkloadStabilizationMean": 188491.5,
+          "totalWarmupMean": 340692
+        }
+      },
+      "steadyState": {
+        "controlMeanMs": 87521.6875,
+        "candidateMeanMs": 61177.1875,
+        "meanSavedMs": 26344.5,
+        "reductionRatio": 0.30100539366314205,
+        "positiveBlocks": 8,
+        "blocks": 8
+      },
+      "economics": {
+        "installedWorkflow": {
+          "calibrationCostMs": 699509,
+          "exactBreakEvenBuilds": 26.552373360663516,
+          "breakEvenBuilds": 27
+        },
+        "pocValidation": {
+          "calibrationCostMs": 1284422,
+          "exactBreakEvenBuilds": 48.75484446468902,
+          "breakEvenBuilds": 49
+        },
+        "coldSingleWorkflow": {
+          "calibrationCostMs": 1285527,
+          "exactBreakEvenBuilds": 48.796788703524456,
+          "breakEvenBuilds": 49
+        }
+      },
+      "sourceBindings": {
+        "phaseCaptureSha256": [
+          "0b4a0bd0d224baa8e15009ff8300673d5c4129bc8ba991d962386d7a63e18ca0",
+          "34a1d26ea8827ea523c24efeb1f7699cd9183b8755c21a26397ba127b911dd49"
+        ],
+        "terminalEvidenceSha256": [
+          "461d3b4e9617ed2217555d0dbf421daf743eb2e521c6944a848c3ebc67f05f28",
+          "f1a989304e8f37c162d0c230724c155f3cdd691c62f1e2faf1d70e429ca53f51"
+        ],
+        "qualificationSha256": "74272dc507482d70708eda20985696eb4d2930960d4a69ccfa9d3da01f8a1851"
+      }
+    },
+    {
+      "key": "apache-kafka-shadow-clients-source",
+      "repositoryId": "apache/kafka",
+      "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "workflowFamily": "FAT_JAR_DISTRIBUTION",
+      "changeClass": "LEAF_PRODUCTION_SOURCE",
+      "changePath": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+      "captures": 2,
+      "phasesMs": {
+        "repositoryCheckoutMean": 6332.5,
+        "offlineGradleDistributionPreparationMean": 1122,
+        "outputPreflightAndStructuralDiscoveryMean": 269759.5,
+        "control": {
+          "cacheSeedMean": 236375,
+          "baseDaemonStabilizationMean": 13895.5,
+          "targetWorkloadStabilizationMean": 141065,
+          "totalWarmupMean": 391335.5
+        },
+        "candidate": {
+          "cacheSeedMean": 102575,
+          "baseDaemonStabilizationMean": 8045,
+          "targetWorkloadStabilizationMean": 54199.5,
+          "totalWarmupMean": 164819.5
+        }
+      },
+      "steadyState": {
+        "controlMeanMs": 44827.9375,
+        "candidateMeanMs": 14955.625,
+        "meanSavedMs": 29872.3125,
+        "reductionRatio": 0.6663771336791928,
+        "positiveBlocks": 8,
+        "blocks": 8
+      },
+      "economics": {
+        "installedWorkflow": {
+          "calibrationCostMs": 434579,
+          "exactBreakEvenBuilds": 14.5478861069092,
+          "breakEvenBuilds": 15
+        },
+        "pocValidation": {
+          "calibrationCostMs": 825914.5,
+          "exactBreakEvenBuilds": 27.648160817814155,
+          "breakEvenBuilds": 28
+        },
+        "coldSingleWorkflow": {
+          "calibrationCostMs": 827036.5,
+          "exactBreakEvenBuilds": 27.685720681986037,
+          "breakEvenBuilds": 28
+        }
+      },
+      "sourceBindings": {
+        "phaseCaptureSha256": [
+          "f70ce40a47ca58590ce8c3b412ae8faf8a03f81acec1a169b1926ceb6a14832c",
+          "01d039a8313087b89416452efaa5c22303151a8146e24c1708d486d15f8d5d69"
+        ],
+        "terminalEvidenceSha256": [
+          "abd504b1bc35efd861c591a944cd2b51207b2fcf6b661643cf93ded873ba042d",
+          "6fbb6f3a60331de77673d566dee3424adf97bdbdf8646ab5a76b6b969299121e"
+        ],
+        "qualificationSha256": "747a5bac3d80aa7bc059467939d4dc8e78801095f93113d60d2800939278b7a5"
+      }
+    },
+    {
+      "key": "apache-kafka-shadow-generator-source",
+      "repositoryId": "apache/kafka",
+      "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "workflowFamily": "FAT_JAR_DISTRIBUTION",
+      "changeClass": "SHARED_PRODUCTION_SOURCE",
+      "changePath": "generator/src/main/java/org/apache/kafka/message/MessageGenerator.java",
+      "captures": 2,
+      "phasesMs": {
+        "repositoryCheckoutMean": 8194,
+        "offlineGradleDistributionPreparationMean": 817,
+        "outputPreflightAndStructuralDiscoveryMean": 264598,
+        "control": {
+          "cacheSeedMean": 243591.5,
+          "baseDaemonStabilizationMean": 12396,
+          "targetWorkloadStabilizationMean": 116462.5,
+          "totalWarmupMean": 372450
+        },
+        "candidate": {
+          "cacheSeedMean": 102895,
+          "baseDaemonStabilizationMean": 7968,
+          "targetWorkloadStabilizationMean": 26419,
+          "totalWarmupMean": 137282
+        }
+      },
+      "steadyState": {
+        "controlMeanMs": 37078.5625,
+        "candidateMeanMs": 7586.875,
+        "meanSavedMs": 29491.6875,
+        "reductionRatio": 0.7953837881390359,
+        "positiveBlocks": 8,
+        "blocks": 8
+      },
+      "economics": {
+        "installedWorkflow": {
+          "calibrationCostMs": 401880,
+          "exactBreakEvenBuilds": 13.626890628079522,
+          "breakEvenBuilds": 14
+        },
+        "pocValidation": {
+          "calibrationCostMs": 774330,
+          "exactBreakEvenBuilds": 26.255872947249966,
+          "breakEvenBuilds": 27
+        },
+        "coldSingleWorkflow": {
+          "calibrationCostMs": 775147,
+          "exactBreakEvenBuilds": 26.283575668567625,
+          "breakEvenBuilds": 27
+        }
+      },
+      "sourceBindings": {
+        "phaseCaptureSha256": [
+          "8b037929a69fedcd0ce7bd8cbc76d15741f082b38775676e6ea768b1eafa16a4",
+          "1264f371926dd368fa4c08113d50143c556a3a8605680876422d9e8014ac05a0"
+        ],
+        "terminalEvidenceSha256": [
+          "d0a653da4f778136fa0f57f535a01b540c24e43d62ce9dee8b63388ac4fd05a2",
+          "62d32b5a5fccddc3923ce7cb16d6ec0764220e52de25fed1ce9a76c7e184138f"
+        ],
+        "qualificationSha256": "b0a78465fc3aafa69e92ab299a5480eccbad416125c76d3c3b818527ff64ddd7"
+      }
+    }
+  ],
+  "aggregation": {
+    "cellCount": 6,
+    "phaseCaptureCount": 12,
+    "terminalCellsQualified": 6,
+    "cellPercentagesAveraged": false,
+    "cellBreakEvenCountsAveraged": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "publicReleaseInstallMeasured": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

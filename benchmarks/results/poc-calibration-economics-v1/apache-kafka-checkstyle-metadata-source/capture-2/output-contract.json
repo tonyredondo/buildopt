@@ -1,0 +1,2278 @@
+{
+  "schemaVersion": "buildopt.poc/output-contract/v1",
+  "decision": "VALIDATED_REQUIRED_OUTPUTS",
+  "reason": "DECLARED_OUTPUTS_MATCH_EXECUTED_WORKFLOW",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "checkstyle-main-metadata-source",
+  "repositoryRevision": "dd90892d8590b6e25b481e62b1a3fe8029acc19e",
+  "gradleVersion": "9.2.1",
+  "originalEntrypoints": [
+    "checkstyleMain"
+  ],
+  "declaredOutputs": [
+    "clients/build/reports/checkstyle/main.html",
+    "clients/build/reports/checkstyle/main.xml"
+  ],
+  "candidateOutputs": [
+    {
+      "pattern": "clients/build/classes/java/main/**",
+      "path": "clients/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 3012,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:compileJava"
+      ]
+    },
+    {
+      "pattern": "clients/build/classes/java/test/**",
+      "path": "clients/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 841,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "clients/build/generated/main/java/org/apache/kafka/common/message/**",
+      "path": "clients/build/generated/main/java/org/apache/kafka/common/message",
+      "kind": "DIRECTORY",
+      "fileCount": 381,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:processMessages"
+      ]
+    },
+    {
+      "pattern": "clients/build/generated/test/java/org/apache/kafka/common/message/**",
+      "path": "clients/build/generated/test/java/org/apache/kafka/common/message",
+      "kind": "DIRECTORY",
+      "fileCount": 10,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:processTestMessages"
+      ]
+    },
+    {
+      "pattern": "clients/build/kafka/kafka-version.properties",
+      "path": "clients/build/kafka/kafka-version.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:createVersionFile"
+      ]
+    },
+    {
+      "pattern": "clients/build/libs/kafka-clients-4.3.1.jar",
+      "path": "clients/build/libs/kafka-clients-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:shadowJar"
+      ]
+    },
+    {
+      "pattern": "clients/build/reports/checkstyle/main.html",
+      "path": "clients/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "clients/build/reports/checkstyle/main.xml",
+      "path": "clients/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "clients/build/resources/main/**",
+      "path": "clients/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 200,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:processResources"
+      ]
+    },
+    {
+      "pattern": "clients/build/resources/test/**",
+      "path": "clients/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 9,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:processTestResources"
+      ]
+    },
+    {
+      "pattern": "clients/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "clients/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:compileJava"
+      ]
+    },
+    {
+      "pattern": "clients/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "clients/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/classes/java/main/**",
+      "path": "connect/api/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 79,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/reports/checkstyle/main.html",
+      "path": "connect/api/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/reports/checkstyle/main.xml",
+      "path": "connect/api/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/resources/main/**",
+      "path": "connect/api/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/api/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/basic-auth-extension/build/classes/java/main/**",
+      "path": "connect/basic-auth-extension/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 7,
+      "ownerProjects": [
+        ":connect:basic-auth-extension"
+      ],
+      "producerTasks": [
+        ":connect:basic-auth-extension:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/basic-auth-extension/build/reports/checkstyle/main.html",
+      "path": "connect/basic-auth-extension/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:basic-auth-extension"
+      ],
+      "producerTasks": [
+        ":connect:basic-auth-extension:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/basic-auth-extension/build/reports/checkstyle/main.xml",
+      "path": "connect/basic-auth-extension/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:basic-auth-extension"
+      ],
+      "producerTasks": [
+        ":connect:basic-auth-extension:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/basic-auth-extension/build/resources/main/**",
+      "path": "connect/basic-auth-extension/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:basic-auth-extension"
+      ],
+      "producerTasks": [
+        ":connect:basic-auth-extension:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/basic-auth-extension/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/basic-auth-extension/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:basic-auth-extension"
+      ],
+      "producerTasks": [
+        ":connect:basic-auth-extension:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/file/build/classes/java/main/**",
+      "path": "connect/file/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 4,
+      "ownerProjects": [
+        ":connect:file"
+      ],
+      "producerTasks": [
+        ":connect:file:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/file/build/reports/checkstyle/main.html",
+      "path": "connect/file/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:file"
+      ],
+      "producerTasks": [
+        ":connect:file:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/file/build/reports/checkstyle/main.xml",
+      "path": "connect/file/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:file"
+      ],
+      "producerTasks": [
+        ":connect:file:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/file/build/resources/main/**",
+      "path": "connect/file/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":connect:file"
+      ],
+      "producerTasks": [
+        ":connect:file:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/file/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/file/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:file"
+      ],
+      "producerTasks": [
+        ":connect:file:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/classes/java/main/**",
+      "path": "connect/json/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 14,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/reports/checkstyle/main.html",
+      "path": "connect/json/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/reports/checkstyle/main.xml",
+      "path": "connect/json/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/resources/main/**",
+      "path": "connect/json/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/json/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/mirror-client/build/classes/java/main/**",
+      "path": "connect/mirror-client/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 9,
+      "ownerProjects": [
+        ":connect:mirror-client"
+      ],
+      "producerTasks": [
+        ":connect:mirror-client:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/mirror-client/build/reports/checkstyle/main.html",
+      "path": "connect/mirror-client/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:mirror-client"
+      ],
+      "producerTasks": [
+        ":connect:mirror-client:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/mirror-client/build/reports/checkstyle/main.xml",
+      "path": "connect/mirror-client/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:mirror-client"
+      ],
+      "producerTasks": [
+        ":connect:mirror-client:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/mirror-client/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/mirror-client/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:mirror-client"
+      ],
+      "producerTasks": [
+        ":connect:mirror-client:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/mirror/build/classes/java/main/**",
+      "path": "connect/mirror/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 48,
+      "ownerProjects": [
+        ":connect:mirror"
+      ],
+      "producerTasks": [
+        ":connect:mirror:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/mirror/build/reports/checkstyle/main.html",
+      "path": "connect/mirror/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:mirror"
+      ],
+      "producerTasks": [
+        ":connect:mirror:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/mirror/build/reports/checkstyle/main.xml",
+      "path": "connect/mirror/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:mirror"
+      ],
+      "producerTasks": [
+        ":connect:mirror:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/mirror/build/resources/main/**",
+      "path": "connect/mirror/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:mirror"
+      ],
+      "producerTasks": [
+        ":connect:mirror:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/mirror/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/mirror/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:mirror"
+      ],
+      "producerTasks": [
+        ":connect:mirror:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/runtime/build/classes/java/main/**",
+      "path": "connect/runtime/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 335,
+      "ownerProjects": [
+        ":connect:runtime"
+      ],
+      "producerTasks": [
+        ":connect:runtime:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/runtime/build/reports/checkstyle/main.html",
+      "path": "connect/runtime/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:runtime"
+      ],
+      "producerTasks": [
+        ":connect:runtime:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/runtime/build/reports/checkstyle/main.xml",
+      "path": "connect/runtime/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:runtime"
+      ],
+      "producerTasks": [
+        ":connect:runtime:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/runtime/build/resources/main/**",
+      "path": "connect/runtime/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 3,
+      "ownerProjects": [
+        ":connect:runtime"
+      ],
+      "producerTasks": [
+        ":connect:runtime:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/runtime/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/runtime/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:runtime"
+      ],
+      "producerTasks": [
+        ":connect:runtime:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/test-plugins/build/classes/java/main/**",
+      "path": "connect/test-plugins/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 11,
+      "ownerProjects": [
+        ":connect:test-plugins"
+      ],
+      "producerTasks": [
+        ":connect:test-plugins:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/test-plugins/build/reports/checkstyle/main.html",
+      "path": "connect/test-plugins/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:test-plugins"
+      ],
+      "producerTasks": [
+        ":connect:test-plugins:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/test-plugins/build/reports/checkstyle/main.xml",
+      "path": "connect/test-plugins/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:test-plugins"
+      ],
+      "producerTasks": [
+        ":connect:test-plugins:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/test-plugins/build/resources/main/**",
+      "path": "connect/test-plugins/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":connect:test-plugins"
+      ],
+      "producerTasks": [
+        ":connect:test-plugins:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/test-plugins/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/test-plugins/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:test-plugins"
+      ],
+      "producerTasks": [
+        ":connect:test-plugins:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/transforms/build/classes/java/main/**",
+      "path": "connect/transforms/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 64,
+      "ownerProjects": [
+        ":connect:transforms"
+      ],
+      "producerTasks": [
+        ":connect:transforms:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/transforms/build/reports/checkstyle/main.html",
+      "path": "connect/transforms/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:transforms"
+      ],
+      "producerTasks": [
+        ":connect:transforms:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/transforms/build/reports/checkstyle/main.xml",
+      "path": "connect/transforms/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:transforms"
+      ],
+      "producerTasks": [
+        ":connect:transforms:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "connect/transforms/build/resources/main/**",
+      "path": "connect/transforms/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":connect:transforms"
+      ],
+      "producerTasks": [
+        ":connect:transforms:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/transforms/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/transforms/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:transforms"
+      ],
+      "producerTasks": [
+        ":connect:transforms:compileJava"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/classes/java/main/**",
+      "path": "coordinator-common/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 76,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:compileJava"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/classes/java/test/**",
+      "path": "coordinator-common/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 50,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/reports/checkstyle/main.html",
+      "path": "coordinator-common/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/reports/checkstyle/main.xml",
+      "path": "coordinator-common/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/resources/test/**",
+      "path": "coordinator-common/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:processTestResources"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "coordinator-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:compileJava"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "coordinator-common/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "core/build/classes/scala/main/**",
+      "path": "core/build/classes/scala/main",
+      "kind": "DIRECTORY",
+      "fileCount": 312,
+      "ownerProjects": [
+        ":core"
+      ],
+      "producerTasks": [
+        ":core:compileScala"
+      ]
+    },
+    {
+      "pattern": "core/build/reports/checkstyle/main.html",
+      "path": "core/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":core"
+      ],
+      "producerTasks": [
+        ":core:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "core/build/reports/checkstyle/main.xml",
+      "path": "core/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":core"
+      ],
+      "producerTasks": [
+        ":core:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "examples/build/classes/java/main/**",
+      "path": "examples/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 9,
+      "ownerProjects": [
+        ":examples"
+      ],
+      "producerTasks": [
+        ":examples:compileJava"
+      ]
+    },
+    {
+      "pattern": "examples/build/reports/checkstyle/main.html",
+      "path": "examples/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":examples"
+      ],
+      "producerTasks": [
+        ":examples:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "examples/build/reports/checkstyle/main.xml",
+      "path": "examples/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":examples"
+      ],
+      "producerTasks": [
+        ":examples:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "examples/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "examples/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":examples"
+      ],
+      "producerTasks": [
+        ":examples:compileJava"
+      ]
+    },
+    {
+      "pattern": "generator/build/classes/java/main/**",
+      "path": "generator/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 62,
+      "ownerProjects": [
+        ":generator"
+      ],
+      "producerTasks": [
+        ":generator:compileJava"
+      ]
+    },
+    {
+      "pattern": "generator/build/libs/generator-4.3.1.jar",
+      "path": "generator/build/libs/generator-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":generator"
+      ],
+      "producerTasks": [
+        ":generator:jar"
+      ]
+    },
+    {
+      "pattern": "generator/build/reports/checkstyle/main.html",
+      "path": "generator/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":generator"
+      ],
+      "producerTasks": [
+        ":generator:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "generator/build/reports/checkstyle/main.xml",
+      "path": "generator/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":generator"
+      ],
+      "producerTasks": [
+        ":generator:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "generator/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "generator/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":generator"
+      ],
+      "producerTasks": [
+        ":generator:compileJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/classes/java/main/**",
+      "path": "group-coordinator/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 277,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/generated/main/java/org/apache/kafka/coordinator/group/generated/**",
+      "path": "group-coordinator/build/generated/main/java/org/apache/kafka/coordinator/group/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 90,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:processMessages"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/reports/checkstyle/main.html",
+      "path": "group-coordinator/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/reports/checkstyle/main.xml",
+      "path": "group-coordinator/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/resources/main/**",
+      "path": "group-coordinator/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 44,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:processResources"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "group-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/group-coordinator-api/build/classes/java/main/**",
+      "path": "group-coordinator/group-coordinator-api/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 10,
+      "ownerProjects": [
+        ":group-coordinator:group-coordinator-api"
+      ],
+      "producerTasks": [
+        ":group-coordinator:group-coordinator-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/group-coordinator-api/build/reports/checkstyle/main.html",
+      "path": "group-coordinator/group-coordinator-api/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator:group-coordinator-api"
+      ],
+      "producerTasks": [
+        ":group-coordinator:group-coordinator-api:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/group-coordinator-api/build/reports/checkstyle/main.xml",
+      "path": "group-coordinator/group-coordinator-api/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator:group-coordinator-api"
+      ],
+      "producerTasks": [
+        ":group-coordinator:group-coordinator-api:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/group-coordinator-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "group-coordinator/group-coordinator-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator:group-coordinator-api"
+      ],
+      "producerTasks": [
+        ":group-coordinator:group-coordinator-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "jmh-benchmarks/build/classes/java/main/**",
+      "path": "jmh-benchmarks/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 460,
+      "ownerProjects": [
+        ":jmh-benchmarks"
+      ],
+      "producerTasks": [
+        ":jmh-benchmarks:compileJava"
+      ]
+    },
+    {
+      "pattern": "jmh-benchmarks/build/generated/sources/annotationProcessor/java/main/**",
+      "path": "jmh-benchmarks/build/generated/sources/annotationProcessor/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 351,
+      "ownerProjects": [
+        ":jmh-benchmarks"
+      ],
+      "producerTasks": [
+        ":jmh-benchmarks:compileJava"
+      ]
+    },
+    {
+      "pattern": "jmh-benchmarks/build/reports/checkstyle/main.html",
+      "path": "jmh-benchmarks/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":jmh-benchmarks"
+      ],
+      "producerTasks": [
+        ":jmh-benchmarks:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "jmh-benchmarks/build/reports/checkstyle/main.xml",
+      "path": "jmh-benchmarks/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":jmh-benchmarks"
+      ],
+      "producerTasks": [
+        ":jmh-benchmarks:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "jmh-benchmarks/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "jmh-benchmarks/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":jmh-benchmarks"
+      ],
+      "producerTasks": [
+        ":jmh-benchmarks:compileJava"
+      ]
+    },
+    {
+      "pattern": "metadata/build/classes/java/main/**",
+      "path": "metadata/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 381,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:compileJava"
+      ]
+    },
+    {
+      "pattern": "metadata/build/classes/java/test/**",
+      "path": "metadata/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 179,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "metadata/build/generated/main/java/org/apache/kafka/common/metadata/**",
+      "path": "metadata/build/generated/main/java/org/apache/kafka/common/metadata",
+      "kind": "DIRECTORY",
+      "fileCount": 54,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:processMessages"
+      ]
+    },
+    {
+      "pattern": "metadata/build/reports/checkstyle/main.html",
+      "path": "metadata/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "metadata/build/reports/checkstyle/main.xml",
+      "path": "metadata/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "metadata/build/resources/main/**",
+      "path": "metadata/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 26,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:processResources"
+      ]
+    },
+    {
+      "pattern": "metadata/build/resources/test/**",
+      "path": "metadata/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:processTestResources"
+      ]
+    },
+    {
+      "pattern": "metadata/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "metadata/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:compileJava"
+      ]
+    },
+    {
+      "pattern": "metadata/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "metadata/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "raft/build/classes/java/main/**",
+      "path": "raft/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:compileJava"
+      ]
+    },
+    {
+      "pattern": "raft/build/classes/java/test/**",
+      "path": "raft/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 105,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "raft/build/generated/main/java/org/apache/kafka/raft/generated/**",
+      "path": "raft/build/generated/main/java/org/apache/kafka/raft/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:processMessages"
+      ]
+    },
+    {
+      "pattern": "raft/build/reports/checkstyle/main.html",
+      "path": "raft/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "raft/build/reports/checkstyle/main.xml",
+      "path": "raft/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "raft/build/resources/main/**",
+      "path": "raft/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:processResources"
+      ]
+    },
+    {
+      "pattern": "raft/build/resources/test/**",
+      "path": "raft/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:processTestResources"
+      ]
+    },
+    {
+      "pattern": "raft/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "raft/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:compileJava"
+      ]
+    },
+    {
+      "pattern": "raft/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "raft/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "server-common/build/classes/java/main/**",
+      "path": "server-common/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 239,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:compileJava"
+      ]
+    },
+    {
+      "pattern": "server-common/build/classes/java/test/**",
+      "path": "server-common/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 99,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "server-common/build/reports/checkstyle/main.html",
+      "path": "server-common/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "server-common/build/reports/checkstyle/main.xml",
+      "path": "server-common/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "server-common/build/resources/test/**",
+      "path": "server-common/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:processTestResources"
+      ]
+    },
+    {
+      "pattern": "server-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "server-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:compileJava"
+      ]
+    },
+    {
+      "pattern": "server-common/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "server-common/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "server/build/classes/java/main/**",
+      "path": "server/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 207,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:compileJava"
+      ]
+    },
+    {
+      "pattern": "server/build/reports/checkstyle/main.html",
+      "path": "server/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "server/build/reports/checkstyle/main.xml",
+      "path": "server/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "server/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "server/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:compileJava"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/classes/java/main/**",
+      "path": "share-coordinator/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 34,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/generated/main/java/org/apache/kafka/coordinator/share/generated/**",
+      "path": "share-coordinator/build/generated/main/java/org/apache/kafka/coordinator/share/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 10,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:processMessages"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/reports/checkstyle/main.html",
+      "path": "share-coordinator/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/reports/checkstyle/main.xml",
+      "path": "share-coordinator/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/resources/main/**",
+      "path": "share-coordinator/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 4,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:processResources"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "share-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "shell/build/classes/java/main/**",
+      "path": "shell/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 41,
+      "ownerProjects": [
+        ":shell"
+      ],
+      "producerTasks": [
+        ":shell:compileJava"
+      ]
+    },
+    {
+      "pattern": "shell/build/reports/checkstyle/main.html",
+      "path": "shell/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":shell"
+      ],
+      "producerTasks": [
+        ":shell:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "shell/build/reports/checkstyle/main.xml",
+      "path": "shell/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":shell"
+      ],
+      "producerTasks": [
+        ":shell:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "shell/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "shell/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":shell"
+      ],
+      "producerTasks": [
+        ":shell:compileJava"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/classes/java/main/**",
+      "path": "storage/api/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 17,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/reports/checkstyle/main.html",
+      "path": "storage/api/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/reports/checkstyle/main.xml",
+      "path": "storage/api/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "storage/api/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "storage/build/classes/java/main/**",
+      "path": "storage/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 213,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:compileJava"
+      ]
+    },
+    {
+      "pattern": "storage/build/generated/main/java/org/apache/kafka/server/log/remote/metadata/storage/generated/**",
+      "path": "storage/build/generated/main/java/org/apache/kafka/server/log/remote/metadata/storage/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 12,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:processMessages"
+      ]
+    },
+    {
+      "pattern": "storage/build/reports/checkstyle/main.html",
+      "path": "storage/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "storage/build/reports/checkstyle/main.xml",
+      "path": "storage/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "storage/build/resources/main/**",
+      "path": "storage/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 5,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:processResources"
+      ]
+    },
+    {
+      "pattern": "storage/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "storage/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:compileJava"
+      ]
+    },
+    {
+      "pattern": "streams/build/classes/java/main/**",
+      "path": "streams/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1102,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:compileJava"
+      ]
+    },
+    {
+      "pattern": "streams/build/generated/main/java/org/apache/kafka/streams/internals/generated/**",
+      "path": "streams/build/generated/main/java/org/apache/kafka/streams/internals/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:processMessages"
+      ]
+    },
+    {
+      "pattern": "streams/build/reports/checkstyle/main.html",
+      "path": "streams/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "streams/build/reports/checkstyle/main.xml",
+      "path": "streams/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "streams/build/resources/main/**",
+      "path": "streams/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:processResources"
+      ]
+    },
+    {
+      "pattern": "streams/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "streams/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:compileJava"
+      ]
+    },
+    {
+      "pattern": "streams/examples/build/classes/java/main/**",
+      "path": "streams/examples/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 26,
+      "ownerProjects": [
+        ":streams:examples"
+      ],
+      "producerTasks": [
+        ":streams:examples:compileJava"
+      ]
+    },
+    {
+      "pattern": "streams/examples/build/reports/checkstyle/main.html",
+      "path": "streams/examples/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:examples"
+      ],
+      "producerTasks": [
+        ":streams:examples:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "streams/examples/build/reports/checkstyle/main.xml",
+      "path": "streams/examples/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:examples"
+      ],
+      "producerTasks": [
+        ":streams:examples:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "streams/examples/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "streams/examples/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:examples"
+      ],
+      "producerTasks": [
+        ":streams:examples:compileJava"
+      ]
+    },
+    {
+      "pattern": "streams/streams-scala/build/classes/scala/main/**",
+      "path": "streams/streams-scala/build/classes/scala/main",
+      "kind": "DIRECTORY",
+      "fileCount": 80,
+      "ownerProjects": [
+        ":streams:streams-scala"
+      ],
+      "producerTasks": [
+        ":streams:streams-scala:compileScala"
+      ]
+    },
+    {
+      "pattern": "streams/test-utils/build/classes/java/main/**",
+      "path": "streams/test-utils/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 23,
+      "ownerProjects": [
+        ":streams:test-utils"
+      ],
+      "producerTasks": [
+        ":streams:test-utils:compileJava"
+      ]
+    },
+    {
+      "pattern": "streams/test-utils/build/reports/checkstyle/main.html",
+      "path": "streams/test-utils/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:test-utils"
+      ],
+      "producerTasks": [
+        ":streams:test-utils:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "streams/test-utils/build/reports/checkstyle/main.xml",
+      "path": "streams/test-utils/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:test-utils"
+      ],
+      "producerTasks": [
+        ":streams:test-utils:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "streams/test-utils/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "streams/test-utils/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:test-utils"
+      ],
+      "producerTasks": [
+        ":streams:test-utils:compileJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-internal-api/build/classes/java/main/**",
+      "path": "test-common/test-common-internal-api/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 12,
+      "ownerProjects": [
+        ":test-common:test-common-internal-api"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-internal-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-internal-api/build/reports/checkstyle/main.html",
+      "path": "test-common/test-common-internal-api/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-internal-api"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-internal-api:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-internal-api/build/reports/checkstyle/main.xml",
+      "path": "test-common/test-common-internal-api/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-internal-api"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-internal-api:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-internal-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "test-common/test-common-internal-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-internal-api"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-internal-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-runtime/build/classes/java/main/**",
+      "path": "test-common/test-common-runtime/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 27,
+      "ownerProjects": [
+        ":test-common:test-common-runtime"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-runtime:compileJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-runtime/build/reports/checkstyle/main.html",
+      "path": "test-common/test-common-runtime/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-runtime"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-runtime:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-runtime/build/reports/checkstyle/main.xml",
+      "path": "test-common/test-common-runtime/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-runtime"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-runtime:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-runtime/build/resources/main/**",
+      "path": "test-common/test-common-runtime/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":test-common:test-common-runtime"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-runtime:processResources"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-runtime/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "test-common/test-common-runtime/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-runtime"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-runtime:compileJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-util/build/classes/java/main/**",
+      "path": "test-common/test-common-util/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 4,
+      "ownerProjects": [
+        ":test-common:test-common-util"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-util:compileJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-util/build/reports/checkstyle/main.html",
+      "path": "test-common/test-common-util/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-util"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-util:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-util/build/reports/checkstyle/main.xml",
+      "path": "test-common/test-common-util/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-util"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-util:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-util/build/resources/main/**",
+      "path": "test-common/test-common-util/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":test-common:test-common-util"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-util:processResources"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-util/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "test-common/test-common-util/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-util"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-util:compileJava"
+      ]
+    },
+    {
+      "pattern": "tools/build/classes/java/main/**",
+      "path": "tools/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 225,
+      "ownerProjects": [
+        ":tools"
+      ],
+      "producerTasks": [
+        ":tools:compileJava"
+      ]
+    },
+    {
+      "pattern": "tools/build/reports/checkstyle/main.html",
+      "path": "tools/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tools"
+      ],
+      "producerTasks": [
+        ":tools:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "tools/build/reports/checkstyle/main.xml",
+      "path": "tools/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tools"
+      ],
+      "producerTasks": [
+        ":tools:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "tools/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "tools/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tools"
+      ],
+      "producerTasks": [
+        ":tools:compileJava"
+      ]
+    },
+    {
+      "pattern": "tools/tools-api/build/classes/java/main/**",
+      "path": "tools/tools-api/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":tools:tools-api"
+      ],
+      "producerTasks": [
+        ":tools:tools-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "tools/tools-api/build/reports/checkstyle/main.html",
+      "path": "tools/tools-api/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tools:tools-api"
+      ],
+      "producerTasks": [
+        ":tools:tools-api:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "tools/tools-api/build/reports/checkstyle/main.xml",
+      "path": "tools/tools-api/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tools:tools-api"
+      ],
+      "producerTasks": [
+        ":tools:tools-api:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "tools/tools-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "tools/tools-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tools:tools-api"
+      ],
+      "producerTasks": [
+        ":tools:tools-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/classes/java/main/**",
+      "path": "transaction-coordinator/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 27,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/generated/main/java/org/apache/kafka/coordinator/transaction/generated/**",
+      "path": "transaction-coordinator/build/generated/main/java/org/apache/kafka/coordinator/transaction/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:processMessages"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/reports/checkstyle/main.html",
+      "path": "transaction-coordinator/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/reports/checkstyle/main.xml",
+      "path": "transaction-coordinator/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/resources/main/**",
+      "path": "transaction-coordinator/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:processResources"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "transaction-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "trogdor/build/classes/java/main/**",
+      "path": "trogdor/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 235,
+      "ownerProjects": [
+        ":trogdor"
+      ],
+      "producerTasks": [
+        ":trogdor:compileJava"
+      ]
+    },
+    {
+      "pattern": "trogdor/build/reports/checkstyle/main.html",
+      "path": "trogdor/build/reports/checkstyle/main.html",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":trogdor"
+      ],
+      "producerTasks": [
+        ":trogdor:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "trogdor/build/reports/checkstyle/main.xml",
+      "path": "trogdor/build/reports/checkstyle/main.xml",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":trogdor"
+      ],
+      "producerTasks": [
+        ":trogdor:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "trogdor/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "trogdor/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":trogdor"
+      ],
+      "producerTasks": [
+        ":trogdor:compileJava"
+      ]
+    }
+  ],
+  "validations": [
+    {
+      "pattern": "clients/build/reports/checkstyle/main.html",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:checkstyleMain"
+      ]
+    },
+    {
+      "pattern": "clients/build/reports/checkstyle/main.xml",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:checkstyleMain"
+      ]
+    }
+  ],
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false,
+  "testOptimization": "OUT_OF_SCOPE"
+}

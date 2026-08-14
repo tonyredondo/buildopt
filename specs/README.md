@@ -575,6 +575,13 @@ terminal savings. It reports installed-workflow, complete POC-validation, and
 conservative cold-single-workflow break-even separately for every cell; it
 never averages unrelated percentages or hides setup inside terminal pairs.
 
+The terminal [calibration economics evidence](../benchmarks/results/poc-calibration-economics-v1/README.md)
+preserves 12 fresh phase captures and recomputes all six cells. Discovery plus
+candidate warm-ups repays after 10–31 qualifying builds; the complete
+comparative POC, including native-control warm-ups, repays after 20–55.
+Checkout is visible but excluded as shared work and exact offline distribution
+materialization changes no rounded POC break-even.
+
 The retained [v5 evidence](../benchmarks/results/poc-generic-holdout-v5/README.md)
 passes that unchanged contract: native averages 216.724 seconds and BuildOpt
 203.991 seconds, saving 12.733 seconds/5.88% with interval

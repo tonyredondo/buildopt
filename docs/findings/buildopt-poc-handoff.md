@@ -93,6 +93,29 @@ passed. Eight independent build-logic/global captures correctly returned
 `NATIVE_FULL_GRAPH / GLOBAL_CHANGE_REQUIRES_FULL_GRAPH` and made no timing
 claim. The percentages remain independent and are not averaged.
 
+## Calibration economics
+
+Two fresh setup captures per selective cell now expose how long it takes to
+reach those steady-state savings. The installed-workflow view includes the
+real combined output-preflight/discovery command and all candidate warm-ups;
+the full POC view additionally includes native-control warm-ups used only to
+prove the comparison.
+
+| Workflow and change | Saving/build | Installed cost -> break-even | Full POC cost -> break-even |
+| --- | ---: | ---: | ---: |
+| Groovy `jar`, leaf source | 52.384 s | 480.417 s -> **10 builds** | 1,001.798 s -> **20 builds** |
+| Groovy `jar`, shared source | 52.349 s | 545.001 s -> **11 builds** | 1,104.508 s -> **22 builds** |
+| Kafka Checkstyle, metadata source | 23.078 s | 695.196 s -> **31 builds** | 1,259.370 s -> **55 builds** |
+| Kafka Checkstyle, client-utils source | 26.345 s | 699.509 s -> **27 builds** | 1,284.422 s -> **49 builds** |
+| Kafka `shadowJar`, clients source | 29.872 s | 434.579 s -> **15 builds** | 825.915 s -> **28 builds** |
+| Kafka `shadowJar`, generator source | 29.492 s | 401.880 s -> **14 builds** | 774.330 s -> **27 builds** |
+
+Checkout remains visible but is excluded as shared native/BuildOpt work.
+Offline Gradle distribution materialization adds less than 1.4 seconds per
+capture and changes none of the rounded POC break-even counts. The main costs
+are discovery/preflight and stability warm-ups, not installation or Wrapper
+copying.
+
 ## What this demonstrates
 
 - **The core idea transfers.** One generic implementation derived material
@@ -114,10 +137,10 @@ claim. The percentages remain independent and are not averaged.
   reports and packages without treating timestamps, archive order, or an
   isolated checkout prefix as business payload. Undeclared drift still fails
   closed.
-- **Discovery has a cost.** Distribution preparation, graph discovery, and
-  warm-up can be expensive—especially for OpenTelemetry and Micronaut—and are
-  outside stable-state pair timing. The POC proves repeated-build value, not
-  yet instant first-run payback.
+- **Discovery has measurable economics.** The current reviewed profiles repay
+  discovery plus candidate warm-ups after 10–31 qualifying builds; proving the
+  complete comparative POC takes 20–55. The POC proves repeated-build value,
+  not instant first-run payback.
 
 ## Current limits
 
@@ -136,9 +159,10 @@ until an owner declares and validates its semantics.
 
 ## Recommended next steps
 
-1. **Measure calibration economics.** Record discovery, warm-up, and steady
-   state separately, then report the break-even number of repeated builds.
-   Reuse only digest-bound facts and never move setup cost into a hidden bucket.
+1. **Reduce calibration cost without weakening evidence.** Reuse only
+   digest-bound output-preflight/discovery artifacts and test bounded adaptive
+   candidate stabilization. Re-measure all six cells; terminal savings,
+   correctness, drift, and native fallback gates remain unchanged.
 2. **Replay qualified profiles through the public installed path.** Confirm
    the same value, semantic-output contract, drift handling, and native
    fallback outside the research runner.
@@ -160,6 +184,7 @@ until an owner declares and validates its semantics.
 - [Public workflow-family output barriers](../../benchmarks/results/poc-generic-workflow-value-v1/README.md)
 - [Terminal semantic output-equivalence qualification](../../benchmarks/results/poc-generic-output-equivalence-v1/README.md)
 - [Terminal generic change-breadth qualification](../../benchmarks/results/poc-generic-change-breadth-v1/README.md)
+- [Terminal calibration economics](../../benchmarks/results/poc-calibration-economics-v1/README.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

@@ -97,6 +97,18 @@ buildopt_mutate_repository() {
     esac
 }
 
+buildopt_normalize_capture_log() {
+    local buildopt_log=$1
+
+    BUILDOPT_CAPTURE_TEMP_ROOT="${buildopt_root}" \
+        BUILDOPT_CAPTURE_REPOSITORY_ROOT="${buildopt_repo_root}" \
+        perl -0pi -e '
+          s/\Q$ENV{BUILDOPT_CAPTURE_TEMP_ROOT}\E/<CALIBRATION_ROOT>/g;
+          s/\Q$ENV{BUILDOPT_CAPTURE_REPOSITORY_ROOT}\E/<BUILDOPT_REPOSITORY_ROOT>/g;
+          s/\n+\z/\n/;
+        ' "${buildopt_log}"
+}
+
 buildopt_gradle_distribution_name() {
     local buildopt_repository=$1
     local buildopt_properties buildopt_url buildopt_archive buildopt_distribution
@@ -288,6 +300,8 @@ buildopt_capture_cell() {
     ) >"${buildopt_proposal_log}" 2>&1
     buildopt_finished=$(date +%s%N)
     buildopt_discovery_ms=$(((buildopt_finished - buildopt_started) / 1000000))
+    buildopt_normalize_capture_log "${buildopt_distribution_log}"
+    buildopt_normalize_capture_log "${buildopt_proposal_log}"
     buildopt_proposal="${buildopt_repository}/buildopt-profile-proposal.json"
     jq -e --argjson expected "$(jq -c '.expectedCandidateEntrypoints' <<<"${buildopt_cell}")" '
       .decision == "MEASURE_STRUCTURAL_CANDIDATE" and

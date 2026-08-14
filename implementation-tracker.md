@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `GENERIC STRUCTURAL POC QUALIFIES ACROSS REPOSITORIES, WORKFLOWS, AND REVIEWED SOURCE CHANGES` — five public repository subjects, three build-owned workflow families, and six fresh source-change cells independently beat optimized native Gradle while build-logic/global changes retain the complete graph<br>
-**Current phase:** `CALIBRATION ECONOMICS ACTIVE` — the phase contract is preregistered; collect two fresh setup captures for each of the six qualified change-breadth cells, then recompute cell-specific break-even without changing the terminal savings<br>
+**Overall status:** `GENERIC STRUCTURAL POC QUALIFIES WITH EXPLICIT PAYBACK` — five public repository subjects, three build-owned workflow families, and six source-change cells independently beat optimized native Gradle; the reviewed workflow cost repays after 10–31 qualifying builds while build-logic/global changes retain the complete graph<br>
+**Current phase:** `CALIBRATION EFFICIENCY NEXT` — reduce the now-measured discovery and candidate-stabilization cost through digest-bound reuse and bounded convergence, then rerun all six cells without changing terminal value or safety gates<br>
 **POC functional target:** improve real builds against optimized native Gradle by discovering structural opportunities generally, enabling only exact workload-qualified mechanisms, measuring their complete composition directly, and retaining native fallback whenever value does not replicate<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
@@ -130,7 +130,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-STATISTICAL-QUALIFICATION-V2 | Re-measure all five public structural subjects with two independent captures and balanced repeatability/tail gates | `DONE` | 1/1 | `E-326..330`; terminal 5/5 qualification |
 | POC-GENERIC-OUTPUT-EQUIVALENCE | Define explicit owner-reviewed semantic equivalence for relocatable reports and nondeterministic archives while retaining exact bytes by default | `DONE` | 1/1 | `E-331..337`; terminal 3/3 qualification |
 | POC-GENERIC-CHANGE-BREADTH | Test whether reviewed structural profiles transfer across multiple change shapes without repository-name rules | `DONE` | 1/1 | `E-338..339`; terminal 6/6 selective qualification and 4/4 conservative fallback |
-| POC-CALIBRATION-ECONOMICS | Separate first-run discovery and warm-up cost from repeated-build value and calculate profile break-even | `DOING` | 0/1 | `E-340`; preregistration only, no result yet |
+| POC-CALIBRATION-ECONOMICS | Separate first-run discovery and warm-up cost from repeated-build value and calculate profile break-even | `DONE` | 1/1 | `E-340..343`; installed payback 10–31 builds |
+| POC-CALIBRATION-EFFICIENCY | Reuse exact discovery and stop stabilization only after bounded convergence, then improve break-even under unchanged gates | `TODO` | 0/1 | Next POC block; no result yet |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -295,7 +296,8 @@ than partners. Test Optimization remains a separate product.
 | 94 | `POC-STATISTICAL-QUALIFICATION-V2-001` | Preserve every v1 decision, then rerun Spring, OpenTelemetry, Kafka, Micronaut and Groovy twice from one exact BuildOpt revision. Aggregate 16 raw pairs into eight AB/BA blocks and qualify independently only with material mean saving, positive median/lower bound, at least 6/8 positive blocks, non-regressive candidate p95, exact outputs, stable task shape, both fallbacks and zero product failures | `DONE` | Codex; `E-326..330` |
 | 95 | `POC-GENERIC-OUTPUT-EQUIVALENCE-001` | Keep byte identity as the default, add explicit owner-reviewed equivalence contracts for relocatable reports and canonical archive contents, prove that payload drift remains rejected, and rerun the three blocked public workflow families without repository-name rules | `DONE` | Codex; `E-325`, `E-331..337` |
 | 96 | `POC-GENERIC-CHANGE-BREADTH-001` | Preregister multiple source, shared-library, build-logic, and global change shapes across existing public repositories and workflow families; qualify every cell independently with the same optimized-native, semantic-output, repeatability, tail, fallback, and zero-failure gates | `DONE` | Codex; `E-338..339` |
-| 97 | `POC-CALIBRATION-ECONOMICS-001` | Measure distribution preparation, structural discovery, cache seeding, daemon/target stabilization and steady-state execution as separate immutable phases; calculate the repeated-build break-even per qualified workflow without moving setup cost into terminal pairs or averaging unrelated percentages | `DOING` | Codex; `E-340` |
+| 97 | `POC-CALIBRATION-ECONOMICS-001` | Measure distribution preparation, structural discovery, cache seeding, daemon/target stabilization and steady-state execution as separate immutable phases; calculate the repeated-build break-even per qualified workflow without moving setup cost into terminal pairs or averaging unrelated percentages | `DONE` | Codex; `E-340..343` |
+| 98 | `POC-CALIBRATION-EFFICIENCY-001` | Persist and reuse preflight/discovery only under exact repository, Wrapper, owner-input, output, graph, option and executable digests; test bounded adaptive candidate stabilization; rerun all six economics cells and improve installed break-even without changing terminal savings, correctness, drift or native fallback gates | `TODO` | Codex |
 
 #### Completed POC block: owner-reviewed output equivalence
 
@@ -345,8 +347,32 @@ owner workflow, emit no candidate documents and make no timing claim. The
 [terminal bundle](./benchmarks/results/poc-generic-change-breadth-v1/README.md)
 is bound to immutable BuildOpt `706ee548` and preserves independent cell
 percentages. Automatic/production activation remains disabled.
-`POC-CALIBRATION-ECONOMICS-001` is next because discovery and warm-up costs are
-material but intentionally outside stable-state pair timing.
+The calibration-economics follow-up below closes the discovery/warm-up gap
+without changing this stable-state evidence.
+
+#### Completed POC block: calibration economics
+
+`POC-CALIBRATION-ECONOMICS-001` adds two fresh setup captures to every
+qualified selective change-breadth cell and binds them to the immutable
+terminal warm-up/value evidence. The public proposal command is measured as
+one combined output-preflight/discovery phase because the current product does
+not expose a truthful internal split. Checkout remains visible but excluded as
+shared native/BuildOpt work; exact offline Gradle materialization remains a
+separate conservative cold view.
+
+For an installed reviewed workflow, Groovy JAR repays calibration after
+**10–11 qualifying builds**, Kafka Checkstyle after **27–31**, and Kafka
+`shadowJar` after **14–15**. The complete comparative POC, including native
+control warm-ups, repays after **20–22**, **49–55**, and **27–28** builds
+respectively. Distribution materialization adds under 1.4 seconds and changes
+no rounded POC break-even.
+
+The [terminal bundle](./benchmarks/results/poc-calibration-economics-v1/README.md)
+recomputes every result and an independent raw-source calculation matches all
+six cells and all three economic views. No percentages or break-even counts
+are averaged. The next block targets digest-bound discovery reuse and bounded
+adaptive candidate convergence; it cannot change terminal savings or weaken
+correctness, drift, fallback, review, or POC-only authority.
 
 #### Completed POC block: balanced public-repository qualification
 
@@ -2113,6 +2139,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-340` | 2026-08-14 | `POC-CALIBRATION-ECONOMICS-001` | The preregistered [calibration economics contract](./specs/poc-calibration-economics-v1.md), machine protocol, capture runner, deterministic assembler and strict checker freeze two fresh phase captures for each of the six terminal selective cells. The runner measures checkout, exact offline Gradle distribution preparation, fixture preparation and the real combined output-preflight/structural-discovery command; it binds immutable cache-seed, daemon/target stabilization and steady-state evidence rather than reconstructing those values from logs | `DOING` preregistration only: report installed-workflow, complete-POC-validation and conservative cold-single-workflow break-even independently per cell. Checkout remains visible but excluded as shared work; no percentages or break-even counts may be averaged across cells. No result, threshold change, repository-name rule, automatic/production authority, public-release SLA, soak, design-partner dependency or Test Optimization scope exists yet |
 | `E-341` | 2026-08-14 | `POC-CALIBRATION-ECONOMICS-001` | The first capture stopped before its offline Wrapper check because the host had no prepared Groovy 8.14.4 distribution; no proposal, warm-up, timing observation or evidence file existed. The runner now prepares an exact missing Wrapper distribution once with at most three bounded online attempts before any phase clock, then measures only copying that prepared distribution into the private capture home plus an offline version check | `DOING` infrastructure correction before phase timing: network variability cannot enter calibration economics. The six cells, two captures, immutable BuildOpt binary, terminal savings, break-even formula and all POC boundaries remain unchanged; no failed observation is reused |
 | `E-342` | 2026-08-14 | `POC-CALIBRATION-ECONOMICS-001` | Independent recomputation of the completed raw phase captures found that the first assembler selected `TARGET_WORKLOAD_STABILIZATION` but omitted the separately named `TARGET_WORKLOAD_STABILITY_CONFIRMATION` and `TARGET_WORKLOAD_STABILITY_RECONFIRMATION` entries. The preregistered contract requires three target executions per arm, so all three exact terminal phase names are now explicit and counted | `DOING` calculation correction before accepting or documenting the summary: every raw capture, terminal evidence file and steady-state saving is retained unchanged. The correction increases calibration cost and break-even rather than making the result more favorable; no cell, threshold, formula or POC boundary changed |
+| `E-343` | 2026-08-14 | `POC-CALIBRATION-ECONOMICS-001` | The [terminal calibration bundle](./benchmarks/results/poc-calibration-economics-v1/README.md) preserves 12 fresh phase captures, 60 captured proposal/preflight artifacts and immutable bindings to the six terminal value cells. Private temporary/checkout roots in logs are normalized before hashing. Installed-workflow calibration costs 401.880–699.509 seconds and repays after 10–31 qualifying builds; complete POC validation costs 774.330–1,284.422 seconds and repays after 20–55. Offline distribution materialization is 0.658–1.324 seconds per capture and changes no rounded POC break-even | `DONE` terminal `6/6 ECONOMICS_RECOMPUTED`: the strict checker regenerates the summary byte for byte and an independent calculation from raw phase/terminal files matches every cost and `ceil`. Checkout is visible but excluded as shared work; results remain cell-specific. No automatic/production authority, repository-name rule, SLA, soak, design-partner dependency or Test Optimization scope is added. `POC-CALIBRATION-EFFICIENCY-001` is next |
 
 ---
 
@@ -2120,6 +2147,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-14 | Closed calibration economics with 12 fresh setup captures and independently recomputed per-cell payback: 10–31 qualifying builds for an installed reviewed workflow and 20–55 for the complete comparative POC; opened exact calibration-efficiency work | Codex |
 | 2026-08-14 | Corrected the calibration assembler after independent recomputation found two of the three preregistered target-stability executions omitted by a phase-name prefix mismatch; raw evidence and terminal value remain unchanged | Codex |
 | 2026-08-14 | Kept network variability outside calibration economics after the first attempt found Groovy 8.14.4 absent locally; exact Wrapper preparation is now bounded and precedes every phase clock, with no observation reused | Codex |
 | 2026-08-14 | Preregistered calibration economics across all six qualified change-breadth cells, separating observed checkout/distribution/discovery from immutable arm warm-ups and terminal value before any new timing | Codex |

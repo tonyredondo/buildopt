@@ -38,6 +38,11 @@ that exact prepared distribution into the private capture home plus one
 offline Wrapper version check. Network latency is deliberately not presented
 as BuildOpt calibration cost.
 
+Captured logs replace only the private temporary calibration root and the
+local BuildOpt checkout root with stable placeholders before their hashes are
+recorded. This portability normalization does not alter phase clocks, Gradle
+versions, decisions, output contracts, or any economic input.
+
 Warm-up costs and steady-state value are recomputed from the two immutable
 terminal captures already used to qualify each change-breadth cell. They are
 not re-created from logs, and no failed or excluded attempt contributes data.

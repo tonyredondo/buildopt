@@ -1,0 +1,25 @@
+
+Welcome to Gradle 8.14.4!
+
+Here are the highlights of this release:
+ - Java 24 support
+ - GraalVM Native Image toolchain selection
+ - Enhancements to test reporting
+ - Build Authoring improvements
+
+For more details see https://docs.gradle.org/8.14.4/release-notes.html
+
+
+------------------------------------------------------------
+Gradle 8.14.4
+------------------------------------------------------------
+
+Build time:    2026-01-23 16:30:23 UTC
+Revision:      ad5ff774b4b0e9a8a0cf1a14ca70d7230003c3ad
+
+Kotlin:        2.0.21
+Groovy:        3.0.25
+Ant:           Apache Ant(TM) version 1.10.15 compiled on August 25 2024
+Launcher JVM:  21.0.12 (Eclipse Adoptium 21.0.12+8-LTS)
+Daemon JVM:    <BUILDOPT_REPOSITORY_ROOT>/.tools/toolchains/temurin-jdk-21-e4446ff06a276155 (no JDK specified, using current Java home)
+OS:            Linux 7.1.5-1-t2-noble amd64
