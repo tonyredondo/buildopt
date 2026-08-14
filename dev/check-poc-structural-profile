@@ -169,7 +169,7 @@ fi
     >"${buildopt_temporary}/help.stdout" 2>"${buildopt_temporary}/help.stderr"
 if [[ -s "${buildopt_temporary}/help.stderr" ]] ||
     ! grep -Fxq \
-        'usage: buildopt profile qualify --manifest PATH --graph PATH --generated-manifest PATH --evidence PATH' \
+        'usage: buildopt profile qualify --manifest PATH --graph PATH --generated-manifest PATH --evidence PATH [--output-equivalence PATH]' \
         "${buildopt_temporary}/help.stdout"; then
     printf 'structural profile help contract failed\n' >&2
     exit 1
