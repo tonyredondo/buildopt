@@ -187,7 +187,7 @@ buildopt_capture_cell() {
     local buildopt_key=$1
     local buildopt_index buildopt_repository_id buildopt_pipeline buildopt_remote
     local buildopt_public_revision buildopt_jdk buildopt_change_path buildopt_mutation
-    local buildopt_expected_target buildopt_expected_output buildopt_source
+    local buildopt_expected_target buildopt_terminal_output buildopt_source
     local buildopt_repository buildopt_gradle_home buildopt_cell_output buildopt_target
     local buildopt_candidate_sha buildopt_fallback_sha
     local -a buildopt_expected_entrypoints=()
@@ -209,7 +209,7 @@ buildopt_capture_cell() {
     buildopt_source="${buildopt_source_root}/${buildopt_key}/capture-2"
     buildopt_expected_target=$(jq -er '.qualification.repositoryRevision' \
         "${buildopt_source}/profile.json")
-    buildopt_expected_output=$(jq -er '
+    buildopt_terminal_output=$(jq -er '
         [.observations[] |
           .controlRequiredOutputSha256, .candidateRequiredOutputSha256] |
         unique | if length == 1 then .[0] else error("terminal output drift") end
@@ -278,10 +278,6 @@ buildopt_capture_cell() {
     buildopt_hash_outputs "${buildopt_repository}" "${buildopt_repository_id}" \
         "${buildopt_pipeline}" "${buildopt_cell_output}/candidate-output.json"
     buildopt_candidate_sha=$(jq -er '.sha256' "${buildopt_cell_output}/candidate-output.json")
-    [[ ${buildopt_candidate_sha} == "${buildopt_expected_output}" ]] || {
-        printf 'installed candidate output drifted: %s\n' "${buildopt_key}" >&2
-        return 1
-    }
     buildopt_normalize_log "${buildopt_cell_output}/candidate.log"
 
     git -C "${buildopt_repository}" clean -ffdxq
@@ -311,8 +307,9 @@ buildopt_capture_cell() {
     buildopt_hash_outputs "${buildopt_repository}" "${buildopt_repository_id}" \
         "${buildopt_pipeline}" "${buildopt_cell_output}/fallback-output.json"
     buildopt_fallback_sha=$(jq -er '.sha256' "${buildopt_cell_output}/fallback-output.json")
-    [[ ${buildopt_fallback_sha} == "${buildopt_expected_output}" ]] || {
-        printf 'installed fallback output drifted: %s\n' "${buildopt_key}" >&2
+    [[ ${buildopt_fallback_sha} == "${buildopt_candidate_sha}" ]] || {
+        printf 'installed candidate and native fallback outputs differ: %s\n' \
+            "${buildopt_key}" >&2
         return 1
     }
     buildopt_normalize_log "${buildopt_cell_output}/fallback.log"
@@ -323,7 +320,7 @@ buildopt_capture_cell() {
         --arg pipelineClass "${buildopt_pipeline}" \
         --arg publicRevision "${buildopt_public_revision}" \
         --arg targetRevision "${buildopt_target}" \
-        --arg expectedOutputSha256 "${buildopt_expected_output}" \
+        --arg terminalOutputSha256 "${buildopt_terminal_output}" \
         --arg candidateLogSha256 "$(sha256sum "${buildopt_cell_output}/candidate.log" | awk '{print $1}')" \
         --arg fallbackLogSha256 "$(sha256sum "${buildopt_cell_output}/fallback.log" | awk '{print $1}')" \
         --slurpfile candidatePlan "${buildopt_cell_output}/candidate-plan.json" \
@@ -337,7 +334,9 @@ buildopt_capture_cell() {
           pipelineClass: $pipelineClass,
           publicRevision: $publicRevision,
           targetRevision: $targetRevision,
-          expectedOutputSha256: $expectedOutputSha256,
+          terminalOutputSha256: $terminalOutputSha256,
+          crossCaptureTerminalOutputMatched: ($candidateOutput[0].sha256 == $terminalOutputSha256),
+          candidateFallbackOutputsMatched: ($candidateOutput[0].sha256 == $fallbackOutput[0].sha256),
           candidate: {
             decision: $candidatePlan[0].selectionMode,
             reason: $candidatePlan[0].selectionReason,
@@ -400,13 +399,14 @@ jq -n \
         archiveSha256: $archiveSha256
       },
       method: $spec[0].method,
+      amendment: $spec[0].amendment,
       cells: $cells[0],
       aggregation: {
         cells: ($cells[0] | length),
         selectivePlans: ($cells[0] | map(select(.candidate.decision == "POC_CANDIDATE")) | length),
         driftFallbacks: ($cells[0] | map(select(.driftFallback.reason == "PROFILE_PRECONDITION_FAILED")) | length),
-        candidateOutputsMatched: ($cells[0] | map(select(.candidate.output.sha256 == .expectedOutputSha256)) | length),
-        fallbackOutputsMatched: ($cells[0] | map(select(.driftFallback.output.sha256 == .expectedOutputSha256)) | length),
+        candidateFallbackOutputsMatched: ($cells[0] | map(select(.candidateFallbackOutputsMatched)) | length),
+        crossCaptureTerminalOutputsMatched: ($cells[0] | map(select(.crossCaptureTerminalOutputMatched)) | length),
         qualificationsPreserved: ($cells[0] | map(select(.qualification.pairs == 8)) | length),
         productAttributableFailures: ($cells[0] | map(.productAttributableFailures) | add),
         repositoryPercentagesAveraged: false,

@@ -25,17 +25,26 @@ fourth file through the same fail-closed SHA-256 path. For every cell it:
 
 1. runs the reviewed profile with `buildopt poc --changes-file ...`;
 2. requires the exact selected entrypoint and embedded terminal qualification;
-3. recomputes the owner-reviewed semantic output digest and requires the
-   terminal digest;
+3. recomputes the owner-reviewed semantic output digest;
 4. adds JSON whitespace to the digest-bound manifest without changing its
    semantics;
 5. requires `NATIVE_FULL_GRAPH / PROFILE_PRECONDITION_FAILED`; and
-6. recomputes the full-workflow output digest and requires the same terminal
-   digest.
+6. recomputes the full-workflow output digest and requires it to equal the
+   selective output from the same replay.
 
 The whitespace probe distinguishes an exact profile-binding drift from an
 invalid graph: the documents remain parseable, but the reviewed byte binding
 no longer holds, so execution must remain safe and native.
+
+The historical terminal digest is retained as diagnostic context but is not
+an acceptance gate. The first corrected-package attempt showed that Groovy's
+JAR embeds `BuildDate`: its reviewed contract removes `BuildTime`, so two
+same-day qualification captures agree while a later-day rebuild legitimately
+has a different cross-capture digest. A direct native Gradle diagnostic on the
+same frozen revision produced the same later-day digest as BuildOpt. The
+customer-relevant proof is therefore same-replay candidate versus native
+fallback equivalence; changing the old timing qualification is outside this
+non-timing block.
 
 ## Interpretation
 

@@ -29,18 +29,20 @@ trap buildopt_cleanup EXIT
 "${buildopt_script_dir}/check-installed-profile-replay" >/dev/null
 
 jq -e --slurpfile spec "${buildopt_spec}" '
-  keys == ["aggregation", "boundaries", "capturedAt", "cells", "method", "release", "schemaVersion", "workItem"] and
+  keys == ["aggregation", "amendment", "boundaries", "capturedAt", "cells", "method", "release", "schemaVersion", "workItem"] and
   .schemaVersion == $spec[0].evidenceSchemaVersion and .workItem == $spec[0].workItem and
   (.capturedAt | fromdateiso8601) > 0 and
   .release.version == $spec[0].release.version and .release.tag == $spec[0].release.tag and
   .release.revision == $spec[0].release.revision and .release.platform == $spec[0].release.platform and
   all([.release.executableSha256, .release.installerSha256, .release.archiveSha256][];
       test("^[0-9a-f]{64}$")) and
-  .method == $spec[0].method and .boundaries == $spec[0].boundaries and
+  .method == $spec[0].method and .amendment == $spec[0].amendment and
+  .boundaries == $spec[0].boundaries and
   (.cells | length) == 6 and ([.cells[].key] == $spec[0].cells) and
   .aggregation == {
     cells: 6, selectivePlans: 6, driftFallbacks: 6,
-    candidateOutputsMatched: 6, fallbackOutputsMatched: 6,
+    candidateFallbackOutputsMatched: 6,
+    crossCaptureTerminalOutputsMatched: ([.cells[] | select(.crossCaptureTerminalOutputMatched)] | length),
     qualificationsPreserved: 6, productAttributableFailures: 0,
     repositoryPercentagesAveraged: false, mechanismPercentagesAdded: false
   }
@@ -91,6 +93,12 @@ while IFS= read -r buildopt_key; do
     ' "${buildopt_cell}/fallback-plan.json" >/dev/null
     jq -e '.count > 0 and (.sha256 | test("^[0-9a-f]{64}$"))' \
         "${buildopt_cell}/candidate-output.json" "${buildopt_cell}/fallback-output.json" >/dev/null
+    [[ $(jq -r '.sha256' "${buildopt_cell}/candidate-output.json") == \
+        $(jq -r '.sha256' "${buildopt_cell}/fallback-output.json") ]] || {
+        printf 'installed candidate and native fallback output differ: %s\n' \
+            "${buildopt_key}" >&2
+        exit 1
+    }
     grep -F 'buildopt: qualified POC profile plan ' "${buildopt_cell}/candidate.log" >/dev/null
     grep -F 'buildopt: qualified POC profile plan ' "${buildopt_cell}/fallback.log" >/dev/null
 done < <(jq -r '.cells[]' "${buildopt_spec}")

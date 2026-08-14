@@ -36,7 +36,7 @@ while IFS= read -r buildopt_key; do
     [[ ${buildopt_source_index} != null ]] || exit 1
     buildopt_cell="${buildopt_evidence_root}/${buildopt_key}"
     buildopt_terminal="${buildopt_terminal_root}/${buildopt_key}/capture-2"
-    buildopt_expected_output=$(jq -er '
+    buildopt_terminal_output=$(jq -er '
         [.observations[] | .controlRequiredOutputSha256, .candidateRequiredOutputSha256] |
         unique | if length == 1 then .[0] else error("terminal output drift") end
     ' "${buildopt_terminal}/evidence.json")
@@ -46,7 +46,7 @@ while IFS= read -r buildopt_key; do
         --arg pipelineClass "$(jq -er ".repositories[${buildopt_source_index}].pipelineClass" "${buildopt_source_spec}")" \
         --arg publicRevision "$(jq -er ".repositories[${buildopt_source_index}].publicRevision" "${buildopt_source_spec}")" \
         --arg targetRevision "$(jq -er '.qualification.repositoryRevision' "${buildopt_terminal}/profile.json")" \
-        --arg expectedOutputSha256 "${buildopt_expected_output}" \
+        --arg terminalOutputSha256 "${buildopt_terminal_output}" \
         --arg candidateLogSha256 "$(sha256sum "${buildopt_cell}/candidate.log" | awk '{print $1}')" \
         --arg fallbackLogSha256 "$(sha256sum "${buildopt_cell}/fallback.log" | awk '{print $1}')" \
         --slurpfile candidatePlan "${buildopt_cell}/candidate-plan.json" \
@@ -60,7 +60,9 @@ while IFS= read -r buildopt_key; do
           pipelineClass: $pipelineClass,
           publicRevision: $publicRevision,
           targetRevision: $targetRevision,
-          expectedOutputSha256: $expectedOutputSha256,
+          terminalOutputSha256: $terminalOutputSha256,
+          crossCaptureTerminalOutputMatched: ($candidateOutput[0].sha256 == $terminalOutputSha256),
+          candidateFallbackOutputsMatched: ($candidateOutput[0].sha256 == $fallbackOutput[0].sha256),
           candidate: {
             decision: $candidatePlan[0].selectionMode,
             reason: $candidatePlan[0].selectionReason,
@@ -94,13 +96,14 @@ jq -n \
       capturedAt: $capturedAt,
       release: $existing[0].release,
       method: $spec[0].method,
+      amendment: $spec[0].amendment,
       cells: $cells[0],
       aggregation: {
         cells: ($cells[0] | length),
         selectivePlans: ($cells[0] | map(select(.candidate.decision == "POC_CANDIDATE")) | length),
         driftFallbacks: ($cells[0] | map(select(.driftFallback.reason == "PROFILE_PRECONDITION_FAILED")) | length),
-        candidateOutputsMatched: ($cells[0] | map(select(.candidate.output.sha256 == .expectedOutputSha256)) | length),
-        fallbackOutputsMatched: ($cells[0] | map(select(.driftFallback.output.sha256 == .expectedOutputSha256)) | length),
+        candidateFallbackOutputsMatched: ($cells[0] | map(select(.candidateFallbackOutputsMatched)) | length),
+        crossCaptureTerminalOutputsMatched: ($cells[0] | map(select(.crossCaptureTerminalOutputMatched)) | length),
         qualificationsPreserved: ($cells[0] | map(select(.qualification.pairs == 8)) | length),
         productAttributableFailures: ($cells[0] | map(.productAttributableFailures) | add),
         repositoryPercentagesAveraged: false,

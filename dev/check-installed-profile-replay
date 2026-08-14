@@ -21,7 +21,7 @@ done
 
 jq -e '
   keys == [
-    "acceptance", "boundaries", "cells", "decision", "evidenceSchemaVersion",
+    "acceptance", "amendment", "boundaries", "cells", "decision", "evidenceSchemaVersion",
     "method", "release", "schemaVersion", "sources", "workItem"
   ] and
   .schemaVersion == "buildopt.specs/poc-installed-profile-replay/v1" and
@@ -46,15 +46,24 @@ jq -e '
   .method.surface == "PUBLIC_RELEASE_BUILDOPT_POC" and
   .method.installation == "PINNED_PUBLIC_INSTALLER_AND_RELEASE_CHECKSUM" and
   .method.driftOutcome == "NATIVE_FULL_GRAPH_PROFILE_PRECONDITION_FAILED" and
+  .method.requiredOutputComparison == "SAME_REPLAY_CANDIDATE_EQUALS_NATIVE_FALLBACK" and
+  .method.terminalOutputDigestRole == "DIAGNOSTIC_ONLY_CROSS_DATE_VOLATILITY_NOT_A_GATE" and
   .method.repositorySpecificProductRulesAllowed == false and
   .acceptance.installedPackageRequired == true and
   .acceptance.allSelectivePlansRequired == true and
   .acceptance.allDriftProbesMustFallback == true and
-  .acceptance.candidateAndFallbackOutputsMustMatchTerminal == true and
+  .acceptance.candidateAndFallbackOutputsMustMatch == true and
+  .acceptance.terminalOutputDigestMustMatch == false and
   .acceptance.qualificationMustMatchTerminal == true and
   .acceptance.maximumProductAttributableFailures == 0 and
   .acceptance.cellPercentagesMayBeAveraged == false and
   .acceptance.mechanismPercentagesMayBeAdded == false and
+  .amendment.stage == "BEFORE_ANY_COMPLETE_CELL_RESULT" and
+  .amendment.invalidAssumption == "CROSS_DATE_SEMANTIC_DIGEST_MUST_EQUAL_TERMINAL_CAPTURE" and
+  .amendment.observedCause == "GROOVY_JAR_BUILDDATE_IS_NOT_REMOVED_BY_THE_REVIEWED_CONTRACT" and
+  .amendment.independentDiagnostic == "SAME_FROZEN_CHECKOUT_NATIVE_GRADLE_MATCHED_PUBLIC_BUILDOPT_DIGEST" and
+  .amendment.replacementGate == "SAME_REPLAY_CANDIDATE_EQUALS_NATIVE_FALLBACK" and
+  .amendment.timingQualificationChanged == false and
   .boundaries.proofOfConcept == true and
   .boundaries.productionAuthorized == false and
   .boundaries.automaticActivation == false and
