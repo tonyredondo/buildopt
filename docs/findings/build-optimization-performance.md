@@ -237,24 +237,26 @@ or 50.40%, with 4/4 positive pairs and a strictly positive interval. The result
 qualifies the clean composition for this exact workload; it does not rehabilitate
 hot state or authorize a universal claim.
 
-### Calibration value is real but not immediate
+### Calibration value is real, improved, but not immediate
 
 The terminal economics study separates two fresh setup captures per qualified
 change-breadth cell from immutable steady-state value. Combined
-output-preflight/discovery costs **257.822–364.764 seconds** on average;
-candidate warm-ups add **120.851–340.692 seconds**. Those one-time costs repay
-after **10–31 qualifying builds** for an installed reviewed workflow.
+output-preflight/discovery originally cost **257.822–364.764 seconds** on
+average. Fusing structural discovery lowers that cold phase by
+**8.01%–21.08%** in all six cells, and exact digest-bound replay reduces it to
+**0.281–1.261 seconds** when every input is unchanged. Removing the third
+candidate target warm-up only after two exact task fingerprints agree lowers
+installed break-even from 10–31 to **9–26 qualifying builds**.
 
-The complete comparative POC also pays for native-control warm-ups and needs
-**20–55 builds**. Checkout remains visible but excluded as shared work, while
-exact offline Gradle distribution preparation is under 1.4 seconds and changes
-no rounded break-even. The next engineering target is therefore reusable,
-digest-bound discovery and safely adaptive candidate stabilization—not another
-search for a more favorable steady-state percentage.
+The complete comparative POC also pays for native-control warm-ups and now
+needs **19–50 builds**. A repeat evaluation still pays for two candidate target
+warm-ups and repays after **4–12 builds**; replay alone is not a substitute for
+remeasuring a changed target. Checkout remains visible but excluded as shared
+work. Terminal wall-time savings and correctness evidence are unchanged.
 
 ## Recommended Direction
 
-### 1. Reduce calibration cost without weakening the qualified profile
+### 1. Replay the qualified profile through the public installed path
 
 Preserve the current clean profile and its non-regressive mechanisms:
 
@@ -265,13 +267,12 @@ Preserve the current clean profile and its non-regressive mechanisms:
 - output equivalence, failure attribution, and immediate bypass throughout.
 
 It must continue to exclude Runtime Tuning, strict Safe Cache, hot state, and
-Edge Cache until each demonstrates incremental value. The next bounded study
-should reuse preflight/discovery only when its repository, Wrapper, owner input,
-outputs, graph, options, and executable digests match, and should stop candidate
-stabilization early only after the same convergence invariant is proven. It
-must rerun all six cells and improve break-even without changing terminal
-savings, output correctness, drift, or native fallback. This is **calibration
-efficiency**, not automatic activation or "turn every feature on."
+Edge Cache until each demonstrates incremental value. Calibration efficiency
+now passes all six cells under unchanged gates. The next bounded study should
+install the public package in clean external checkouts, replay reviewed
+profiles through the user-facing command, and prove the same semantic outputs,
+drift handling, native fallback and terminal value. This is installed-path
+replication, not automatic activation or "turn every feature on."
 
 ### 2. Keep the same native control while broadening workload coverage
 

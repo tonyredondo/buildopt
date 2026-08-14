@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# < 2 || $# > 3)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/root CAPTURED_AT [output]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_evidence_root=$1
+buildopt_captured_at=$2
+buildopt_output=${3:-"${buildopt_evidence_root}/summary.json"}
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-calibration-efficiency-v1.json"
+buildopt_baseline="${buildopt_repo_root}/benchmarks/results/poc-calibration-economics-v1/summary.json"
+buildopt_terminal_root="${buildopt_repo_root}/benchmarks/results/poc-generic-change-breadth-v1"
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-calibration-efficiency-assemble.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-calibration-efficiency-assemble."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+mapfile -t buildopt_keys < <(jq -r '.cells[]' "${buildopt_spec}")
+buildopt_rows=()
+for buildopt_key in "${buildopt_keys[@]}"; do
+    buildopt_phase_one="${buildopt_evidence_root}/${buildopt_key}/capture-1/phase.json"
+    buildopt_phase_two="${buildopt_evidence_root}/${buildopt_key}/capture-2/phase.json"
+    buildopt_terminal_one="${buildopt_terminal_root}/${buildopt_key}/capture-1/evidence.json"
+    buildopt_terminal_two="${buildopt_terminal_root}/${buildopt_key}/capture-2/evidence.json"
+    buildopt_row="${buildopt_temp}/${buildopt_key}.json"
+
+    for buildopt_required in "${buildopt_phase_one}" "${buildopt_phase_two}" \
+        "${buildopt_terminal_one}" "${buildopt_terminal_two}" "${buildopt_baseline}"; do
+        [[ -s ${buildopt_required} ]] || {
+            printf 'calibration efficiency source is unavailable: %s\n' "${buildopt_required}" >&2
+            exit 1
+        }
+    done
+
+    jq -n \
+        --arg key "${buildopt_key}" \
+        --slurpfile p1 "${buildopt_phase_one}" \
+        --slurpfile p2 "${buildopt_phase_two}" \
+        --slurpfile e1 "${buildopt_terminal_one}" \
+        --slurpfile e2 "${buildopt_terminal_two}" \
+        --slurpfile baseline "${buildopt_baseline}" '
+      def mean2($a; $b): (($a + $b) / 2);
+      def candidate_targets($e):
+        [$e.execution.candidateWarmups[] | select(
+          .phase == "TARGET_WORKLOAD_STABILIZATION" or
+          .phase == "TARGET_WORKLOAD_STABILITY_CONFIRMATION" or
+          .phase == "TARGET_WORKLOAD_STABILITY_RECONFIRMATION")];
+      ($p1[0]) as $a |
+      ($p2[0]) as $b |
+      ($e1[0]) as $one |
+      ($e2[0]) as $two |
+      ($baseline[0].cells[] | select(.key == $key)) as $old |
+      candidate_targets($one) as $targetsOne |
+      candidate_targets($two) as $targetsTwo |
+      if (($targetsOne | length) != 3 or ($targetsTwo | length) != 3 or
+          ($targetsOne | map(.taskOutcomes.fingerprintSha256) | unique | length) != 1 or
+          ($targetsTwo | map(.taskOutcomes.fingerprintSha256) | unique | length) != 1)
+      then error("candidate target fingerprints do not prove adaptive early stop") else . end |
+      mean2($a.proposal.coldMs; $b.proposal.coldMs) as $cold |
+      mean2($a.proposal.exactReplayMs; $b.proposal.exactReplayMs) as $replay |
+      mean2($targetsOne[2].durationMs; $targetsTwo[2].durationMs) as $third |
+      ($old.phasesMs.candidate.totalWarmupMean - $third) as $adaptiveCandidate |
+      ($cold + $adaptiveCandidate) as $installedCost |
+      ($cold + $old.phasesMs.control.totalWarmupMean + $adaptiveCandidate) as $pocCost |
+      ($replay + $adaptiveCandidate) as $repeatCost |
+      ($old.steadyState.meanSavedMs) as $saving |
+      {
+        key: $key,
+        repositoryId: $old.repositoryId,
+        repositoryRevision: $old.repositoryRevision,
+        workflowFamily: $old.workflowFamily,
+        changeClass: $old.changeClass,
+        changePath: $old.changePath,
+        captures: 2,
+        proposal: {
+          priorColdMeanMs: $old.phasesMs.outputPreflightAndStructuralDiscoveryMean,
+          combinedColdMeanMs: $cold,
+          coldReductionMs: ($old.phasesMs.outputPreflightAndStructuralDiscoveryMean - $cold),
+          coldReductionRatio:
+            (($old.phasesMs.outputPreflightAndStructuralDiscoveryMean - $cold) /
+              $old.phasesMs.outputPreflightAndStructuralDiscoveryMean),
+          exactReplayMeanMs: $replay,
+          replayReductionFromCombinedColdRatio: (($cold - $replay) / $cold),
+          artifactsByteIdentical: ($a.proposal.artifactsByteIdentical and $b.proposal.artifactsByteIdentical),
+          driftProbesRejected: (($a.proposal.driftProbeExitCode != 0) and
+            ($b.proposal.driftProbeExitCode != 0) and
+            ($a.proposal.driftProbeReplayed == false) and
+            ($b.proposal.driftProbeReplayed == false))
+        },
+        stabilization: {
+          policy: "ADAPTIVE_EXACT_2_OF_3",
+          sourceTargetWarmupsPerCapture: 3,
+          optimizedTargetWarmupsPerCapture: 2,
+          verifiedOmittedThirdMeanMs: $third,
+          priorCandidateWarmupMeanMs: $old.phasesMs.candidate.totalWarmupMean,
+          optimizedCandidateWarmupMeanMs: $adaptiveCandidate,
+          captureFingerprints: [
+            ($targetsOne | map(.taskOutcomes.fingerprintSha256)),
+            ($targetsTwo | map(.taskOutcomes.fingerprintSha256))
+          ]
+        },
+        steadyState: $old.steadyState,
+        economics: {
+          baseline: {
+            installedCalibrationCostMs: $old.economics.installedWorkflow.calibrationCostMs,
+            installedBreakEvenBuilds: $old.economics.installedWorkflow.breakEvenBuilds,
+            pocCalibrationCostMs: $old.economics.pocValidation.calibrationCostMs,
+            pocBreakEvenBuilds: $old.economics.pocValidation.breakEvenBuilds
+          },
+          optimizedCold: {
+            installedCalibrationCostMs: $installedCost,
+            installedExactBreakEvenBuilds: ($installedCost / $saving),
+            installedBreakEvenBuilds: (($installedCost / $saving) | ceil),
+            installedBreakEvenImprovementBuilds:
+              ($old.economics.installedWorkflow.breakEvenBuilds - (($installedCost / $saving) | ceil)),
+            pocCalibrationCostMs: $pocCost,
+            pocExactBreakEvenBuilds: ($pocCost / $saving),
+            pocBreakEvenBuilds: (($pocCost / $saving) | ceil),
+            pocBreakEvenImprovementBuilds:
+              ($old.economics.pocValidation.breakEvenBuilds - (($pocCost / $saving) | ceil))
+          },
+          exactReplayEvaluation: {
+            calibrationCostMs: $repeatCost,
+            exactBreakEvenBuilds: ($repeatCost / $saving),
+            breakEvenBuilds: (($repeatCost / $saving) | ceil)
+          }
+        },
+        sourceBindings: {
+          efficiencyCaptureSha256: [$a.captureSha256, $b.captureSha256],
+          terminalEvidenceSha256: [
+            $a.sourceBindings.terminalEvidenceSha256,
+            $b.sourceBindings.terminalEvidenceSha256
+          ]
+        }
+      }
+    ' >"${buildopt_row}"
+    buildopt_rows+=("${buildopt_row}")
+done
+
+jq -s \
+    --arg capturedAt "${buildopt_captured_at}" \
+    --arg baselineSha "$(sha256sum "${buildopt_baseline}" | awk '{print $1}')" \
+    --slurpfile spec "${buildopt_spec}" '
+  {
+    schemaVersion: "buildopt.evidence/poc-calibration-efficiency/v1",
+    workItem: $spec[0].workItem,
+    capturedAt: $capturedAt,
+    buildopt: {
+      revision: $spec[0].source.buildoptRevision,
+      executableSha256: $spec[0].source.executableSha256
+    },
+    method: {
+      capturesPerCell: $spec[0].runner.capturesPerCell,
+      coldAndReplayReportedSeparately: true,
+      adaptivePolicy: "ADAPTIVE_EXACT_2_OF_3",
+      breakEvenFormula: $spec[0].economics.breakEvenFormula,
+      percentagesAveragedAcrossCells: false,
+      terminalSavingsRemeasured: false
+    },
+    cells: .,
+    aggregation: {
+      cellCount: length,
+      phaseCaptureCount: (length * $spec[0].runner.capturesPerCell),
+      cellsWithInstalledBreakEvenImprovement:
+        ([.[] | select(.economics.optimizedCold.installedBreakEvenImprovementBuilds >= 1)] | length),
+      cellsWithPocBreakEvenImprovement:
+        ([.[] | select(.economics.optimizedCold.pocBreakEvenImprovementBuilds >= 1)] | length),
+      cellPercentagesAveraged: false,
+      cellBreakEvenCountsAveraged: false
+    },
+    sourceBindings: {
+      baselineEconomicsSummarySha256: $baselineSha,
+      preregisteredAtRevision: $spec[0].preregisteredAtRevision
+    },
+    boundaries: $spec[0].boundaries
+  }
+' "${buildopt_rows[@]}" >"${buildopt_output}"

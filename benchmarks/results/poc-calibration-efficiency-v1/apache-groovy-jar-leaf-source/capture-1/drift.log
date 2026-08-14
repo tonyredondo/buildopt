@@ -1,0 +1,3 @@
+buildopt: structural profile proposal unavailable: run owner Gradle workflow for output-contract preflight: exit status 1
+Exception in thread "main" java.lang.RuntimeException: Could not create parent directory for lock file <EFFICIENCY_ROOT>/apache-groovy-jar-leaf-source-1/invalid-gradle-home/wrapper/dists/gradle-8.14.4-bin/92wwslzcyst3phie3o264zltu/gradle-8.14.4-bin.zip.lck
+	at org.gradle.wrapper.GradleWrapperMain.main(SourceFile:65)

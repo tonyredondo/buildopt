@@ -1,0 +1,521 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-calibration-efficiency/v1",
+  "workItem": "POC-CALIBRATION-EFFICIENCY-001",
+  "capturedAt": "2026-08-14T21:07:28Z",
+  "buildopt": {
+    "revision": "66ea4c1ca52da03a7839a0cd35fc6c7907fc9315",
+    "executableSha256": "1b5186549516c366e4cefcaf4d8fce92f64c7613f6de5689b2925ed21ff5e4e8"
+  },
+  "method": {
+    "capturesPerCell": 2,
+    "coldAndReplayReportedSeparately": true,
+    "adaptivePolicy": "ADAPTIVE_EXACT_2_OF_3",
+    "breakEvenFormula": "CEIL(CALIBRATION_COST_MS / UNCHANGED_TERMINAL_MEAN_SAVED_MS)",
+    "percentagesAveragedAcrossCells": false,
+    "terminalSavingsRemeasured": false
+  },
+  "cells": [
+    {
+      "key": "apache-groovy-jar-leaf-source",
+      "repositoryId": "apache/groovy",
+      "repositoryRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "workflowFamily": "JAR_PACKAGING",
+      "changeClass": "LEAF_PRODUCTION_SOURCE",
+      "changePath": "subprojects/groovy-json/src/main/java/org/apache/groovy/json/DefaultFastStringService.java",
+      "captures": 2,
+      "proposal": {
+        "priorColdMeanMs": 257821.5,
+        "combinedColdMeanMs": 226059.5,
+        "coldReductionMs": 31762,
+        "coldReductionRatio": 0.1231937600238925,
+        "exactReplayMeanMs": 280.5,
+        "replayReductionFromCombinedColdRatio": 0.9987591762345754,
+        "artifactsByteIdentical": true,
+        "driftProbesRejected": true
+      },
+      "stabilization": {
+        "policy": "ADAPTIVE_EXACT_2_OF_3",
+        "sourceTargetWarmupsPerCapture": 3,
+        "optimizedTargetWarmupsPerCapture": 2,
+        "verifiedOmittedThirdMeanMs": 18735.5,
+        "priorCandidateWarmupMeanMs": 222595,
+        "optimizedCandidateWarmupMeanMs": 203859.5,
+        "captureFingerprints": [
+          [
+            "b43c808e47c00d49cfb56f71197b3295e884e9f536fb660c7889cb8b633b76e2",
+            "b43c808e47c00d49cfb56f71197b3295e884e9f536fb660c7889cb8b633b76e2",
+            "b43c808e47c00d49cfb56f71197b3295e884e9f536fb660c7889cb8b633b76e2"
+          ],
+          [
+            "b43c808e47c00d49cfb56f71197b3295e884e9f536fb660c7889cb8b633b76e2",
+            "b43c808e47c00d49cfb56f71197b3295e884e9f536fb660c7889cb8b633b76e2",
+            "b43c808e47c00d49cfb56f71197b3295e884e9f536fb660c7889cb8b633b76e2"
+          ]
+        ]
+      },
+      "steadyState": {
+        "controlMeanMs": 71227.125,
+        "candidateMeanMs": 18843.1875,
+        "meanSavedMs": 52383.9375,
+        "reductionRatio": 0.7354492758201318,
+        "positiveBlocks": 8,
+        "blocks": 8
+      },
+      "economics": {
+        "baseline": {
+          "installedCalibrationCostMs": 480416.5,
+          "installedBreakEvenBuilds": 10,
+          "pocCalibrationCostMs": 1001798,
+          "pocBreakEvenBuilds": 20
+        },
+        "optimizedCold": {
+          "installedCalibrationCostMs": 429919,
+          "installedExactBreakEvenBuilds": 8.207076835337167,
+          "installedBreakEvenBuilds": 9,
+          "installedBreakEvenImprovementBuilds": 1,
+          "pocCalibrationCostMs": 951300.5,
+          "pocExactBreakEvenBuilds": 18.160156441084634,
+          "pocBreakEvenBuilds": 19,
+          "pocBreakEvenImprovementBuilds": 1
+        },
+        "exactReplayEvaluation": {
+          "calibrationCostMs": 204140,
+          "exactBreakEvenBuilds": 3.896996097324681,
+          "breakEvenBuilds": 4
+        }
+      },
+      "sourceBindings": {
+        "efficiencyCaptureSha256": [
+          "47010bb2a5429b35ba50eca13a38293d3140b24c7e6e545b2258e44d33b2ae5d",
+          "e761e4bad7329a0ecd7098a499ae9763e0ba25b077e71e3684c19e35f34bead2"
+        ],
+        "terminalEvidenceSha256": [
+          "cf3f096224b26c23c8f1522660f5db104cb887744f95fe4a3ea45ddc7713233c",
+          "156d423af63ae76fca779a6a6520d6a8dbb507786e8afc0198ef7b659f6f7b3c"
+        ]
+      }
+    },
+    {
+      "key": "apache-groovy-jar-shared-source",
+      "repositoryId": "apache/groovy",
+      "repositoryRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+      "workflowFamily": "JAR_PACKAGING",
+      "changeClass": "SHARED_PRODUCTION_SOURCE",
+      "changePath": "src/main/java/groovy/beans/Bindable.java",
+      "captures": 2,
+      "proposal": {
+        "priorColdMeanMs": 285874,
+        "combinedColdMeanMs": 262988.5,
+        "coldReductionMs": 22885.5,
+        "coldReductionRatio": 0.08005449953476007,
+        "exactReplayMeanMs": 296.5,
+        "replayReductionFromCombinedColdRatio": 0.9988725742760615,
+        "artifactsByteIdentical": true,
+        "driftProbesRejected": true
+      },
+      "stabilization": {
+        "policy": "ADAPTIVE_EXACT_2_OF_3",
+        "sourceTargetWarmupsPerCapture": 3,
+        "optimizedTargetWarmupsPerCapture": 2,
+        "verifiedOmittedThirdMeanMs": 26898.5,
+        "priorCandidateWarmupMeanMs": 259126.5,
+        "optimizedCandidateWarmupMeanMs": 232228,
+        "captureFingerprints": [
+          [
+            "b3f3b0a68c97970caa33cba7fd4fefde74dea576a22c71c2d6ffecef4cf35bb8",
+            "b3f3b0a68c97970caa33cba7fd4fefde74dea576a22c71c2d6ffecef4cf35bb8",
+            "b3f3b0a68c97970caa33cba7fd4fefde74dea576a22c71c2d6ffecef4cf35bb8"
+          ],
+          [
+            "b3f3b0a68c97970caa33cba7fd4fefde74dea576a22c71c2d6ffecef4cf35bb8",
+            "b3f3b0a68c97970caa33cba7fd4fefde74dea576a22c71c2d6ffecef4cf35bb8",
+            "b3f3b0a68c97970caa33cba7fd4fefde74dea576a22c71c2d6ffecef4cf35bb8"
+          ]
+        ]
+      },
+      "steadyState": {
+        "controlMeanMs": 79556.5,
+        "candidateMeanMs": 27207.0625,
+        "meanSavedMs": 52349.4375,
+        "reductionRatio": 0.6580158440856498,
+        "positiveBlocks": 8,
+        "blocks": 8
+      },
+      "economics": {
+        "baseline": {
+          "installedCalibrationCostMs": 545000.5,
+          "installedBreakEvenBuilds": 11,
+          "pocCalibrationCostMs": 1104508,
+          "pocBreakEvenBuilds": 22
+        },
+        "optimizedCold": {
+          "installedCalibrationCostMs": 495216.5,
+          "installedExactBreakEvenBuilds": 9.459824663827572,
+          "installedBreakEvenBuilds": 10,
+          "installedBreakEvenImprovementBuilds": 1,
+          "pocCalibrationCostMs": 1054724,
+          "pocExactBreakEvenBuilds": 20.147761855129772,
+          "pocBreakEvenBuilds": 21,
+          "pocBreakEvenImprovementBuilds": 1
+        },
+        "exactReplayEvaluation": {
+          "calibrationCostMs": 232524.5,
+          "exactBreakEvenBuilds": 4.441776475630707,
+          "breakEvenBuilds": 5
+        }
+      },
+      "sourceBindings": {
+        "efficiencyCaptureSha256": [
+          "0393a1e055376e4d9f21fff560f6c0804a1b08ffcb27765414c13811eb67f15f",
+          "063be0174620534ca3381306cd785023740d60aa59b114efdc57d1eec09ca196"
+        ],
+        "terminalEvidenceSha256": [
+          "9212a2285f7b33af1e423a50c7546929dbf89aff0c6c0124b6f670a23e6c64b2",
+          "6a7feecec0622ec8bb256f27672bae12fa43a7695f8e5d09373528664da96ad9"
+        ]
+      }
+    },
+    {
+      "key": "apache-kafka-checkstyle-metadata-source",
+      "repositoryId": "apache/kafka",
+      "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "workflowFamily": "TYPED_VERIFICATION",
+      "changeClass": "LEAF_PRODUCTION_SOURCE",
+      "changePath": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+      "captures": 2,
+      "proposal": {
+        "priorColdMeanMs": 364763.5,
+        "combinedColdMeanMs": 312590.5,
+        "coldReductionMs": 52173,
+        "coldReductionRatio": 0.14303240318727065,
+        "exactReplayMeanMs": 329.5,
+        "replayReductionFromCombinedColdRatio": 0.998945905265835,
+        "artifactsByteIdentical": true,
+        "driftProbesRejected": true
+      },
+      "stabilization": {
+        "policy": "ADAPTIVE_EXACT_2_OF_3",
+        "sourceTargetWarmupsPerCapture": 3,
+        "optimizedTargetWarmupsPerCapture": 2,
+        "verifiedOmittedThirdMeanMs": 58783,
+        "priorCandidateWarmupMeanMs": 330432.5,
+        "optimizedCandidateWarmupMeanMs": 271649.5,
+        "captureFingerprints": [
+          [
+            "3b4f5ae086fdb19ab5346d7a725cd9c1bf2e4738837383d0f48304413cbe0aa2",
+            "3b4f5ae086fdb19ab5346d7a725cd9c1bf2e4738837383d0f48304413cbe0aa2",
+            "3b4f5ae086fdb19ab5346d7a725cd9c1bf2e4738837383d0f48304413cbe0aa2"
+          ],
+          [
+            "3b4f5ae086fdb19ab5346d7a725cd9c1bf2e4738837383d0f48304413cbe0aa2",
+            "3b4f5ae086fdb19ab5346d7a725cd9c1bf2e4738837383d0f48304413cbe0aa2",
+            "3b4f5ae086fdb19ab5346d7a725cd9c1bf2e4738837383d0f48304413cbe0aa2"
+          ]
+        ]
+      },
+      "steadyState": {
+        "controlMeanMs": 82430.9375,
+        "candidateMeanMs": 59353.0625,
+        "meanSavedMs": 23077.875,
+        "reductionRatio": 0.2799661838129646,
+        "positiveBlocks": 8,
+        "blocks": 8
+      },
+      "economics": {
+        "baseline": {
+          "installedCalibrationCostMs": 695196,
+          "installedBreakEvenBuilds": 31,
+          "pocCalibrationCostMs": 1259369.5,
+          "pocBreakEvenBuilds": 55
+        },
+        "optimizedCold": {
+          "installedCalibrationCostMs": 584240,
+          "installedExactBreakEvenBuilds": 25.316022380743462,
+          "installedBreakEvenBuilds": 26,
+          "installedBreakEvenImprovementBuilds": 5,
+          "pocCalibrationCostMs": 1148413.5,
+          "pocExactBreakEvenBuilds": 49.76253229554281,
+          "pocBreakEvenBuilds": 50,
+          "pocBreakEvenImprovementBuilds": 5
+        },
+        "exactReplayEvaluation": {
+          "calibrationCostMs": 271979,
+          "exactBreakEvenBuilds": 11.785270524257541,
+          "breakEvenBuilds": 12
+        }
+      },
+      "sourceBindings": {
+        "efficiencyCaptureSha256": [
+          "bb52a066b3c5fb9ed90ccb13a2b9b84469403c2a50b0cafe4a2ec14df26e8929",
+          "54be9595efb4b5df602e5944c40e3a51ffddb90bc35555764100e0531d1788a4"
+        ],
+        "terminalEvidenceSha256": [
+          "7ebf58cfd029501f403ae603bd49b2f68ad4c165d39ff7905e1d75d5b260b03a",
+          "8cf6885bb050e37081fe04f691941fc9b0ef3eb58838c895897e90d9dd08ad8e"
+        ]
+      }
+    },
+    {
+      "key": "apache-kafka-checkstyle-client-utils-source",
+      "repositoryId": "apache/kafka",
+      "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "workflowFamily": "TYPED_VERIFICATION",
+      "changeClass": "SECOND_LEAF_PRODUCTION_SOURCE",
+      "changePath": "clients/src/main/java/org/apache/kafka/clients/ClientUtils.java",
+      "captures": 2,
+      "proposal": {
+        "priorColdMeanMs": 358817,
+        "combinedColdMeanMs": 329099,
+        "coldReductionMs": 29718,
+        "coldReductionRatio": 0.08282216282952035,
+        "exactReplayMeanMs": 1260.5,
+        "replayReductionFromCombinedColdRatio": 0.9961698455479961,
+        "artifactsByteIdentical": true,
+        "driftProbesRejected": true
+      },
+      "stabilization": {
+        "policy": "ADAPTIVE_EXACT_2_OF_3",
+        "sourceTargetWarmupsPerCapture": 3,
+        "optimizedTargetWarmupsPerCapture": 2,
+        "verifiedOmittedThirdMeanMs": 61151,
+        "priorCandidateWarmupMeanMs": 340692,
+        "optimizedCandidateWarmupMeanMs": 279541,
+        "captureFingerprints": [
+          [
+            "3b4f5ae086fdb19ab5346d7a725cd9c1bf2e4738837383d0f48304413cbe0aa2",
+            "3b4f5ae086fdb19ab5346d7a725cd9c1bf2e4738837383d0f48304413cbe0aa2",
+            "3b4f5ae086fdb19ab5346d7a725cd9c1bf2e4738837383d0f48304413cbe0aa2"
+          ],
+          [
+            "3b4f5ae086fdb19ab5346d7a725cd9c1bf2e4738837383d0f48304413cbe0aa2",
+            "3b4f5ae086fdb19ab5346d7a725cd9c1bf2e4738837383d0f48304413cbe0aa2",
+            "3b4f5ae086fdb19ab5346d7a725cd9c1bf2e4738837383d0f48304413cbe0aa2"
+          ]
+        ]
+      },
+      "steadyState": {
+        "controlMeanMs": 87521.6875,
+        "candidateMeanMs": 61177.1875,
+        "meanSavedMs": 26344.5,
+        "reductionRatio": 0.30100539366314205,
+        "positiveBlocks": 8,
+        "blocks": 8
+      },
+      "economics": {
+        "baseline": {
+          "installedCalibrationCostMs": 699509,
+          "installedBreakEvenBuilds": 27,
+          "pocCalibrationCostMs": 1284422,
+          "pocBreakEvenBuilds": 49
+        },
+        "optimizedCold": {
+          "installedCalibrationCostMs": 608640,
+          "installedExactBreakEvenBuilds": 23.10311450207823,
+          "installedBreakEvenBuilds": 24,
+          "installedBreakEvenImprovementBuilds": 3,
+          "pocCalibrationCostMs": 1193553,
+          "pocExactBreakEvenBuilds": 45.30558560610374,
+          "pocBreakEvenBuilds": 46,
+          "pocBreakEvenImprovementBuilds": 3
+        },
+        "exactReplayEvaluation": {
+          "calibrationCostMs": 280801.5,
+          "exactBreakEvenBuilds": 10.65882821841371,
+          "breakEvenBuilds": 11
+        }
+      },
+      "sourceBindings": {
+        "efficiencyCaptureSha256": [
+          "8e2a9bc521fba69845e8e40fc8152fc81c41737b93f13eda9b3dcc78c0ccecac",
+          "dff13086f9ff5cc1ef7224b68720ffde231ed523f9eda86db20a2582ddeee9ee"
+        ],
+        "terminalEvidenceSha256": [
+          "461d3b4e9617ed2217555d0dbf421daf743eb2e521c6944a848c3ebc67f05f28",
+          "f1a989304e8f37c162d0c230724c155f3cdd691c62f1e2faf1d70e429ca53f51"
+        ]
+      }
+    },
+    {
+      "key": "apache-kafka-shadow-clients-source",
+      "repositoryId": "apache/kafka",
+      "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "workflowFamily": "FAT_JAR_DISTRIBUTION",
+      "changeClass": "LEAF_PRODUCTION_SOURCE",
+      "changePath": "clients/src/main/java/org/apache/kafka/clients/Metadata.java",
+      "captures": 2,
+      "proposal": {
+        "priorColdMeanMs": 269759.5,
+        "combinedColdMeanMs": 212905.5,
+        "coldReductionMs": 56854,
+        "coldReductionRatio": 0.21075810119754818,
+        "exactReplayMeanMs": 322.5,
+        "replayReductionFromCombinedColdRatio": 0.9984852434530813,
+        "artifactsByteIdentical": true,
+        "driftProbesRejected": true
+      },
+      "stabilization": {
+        "policy": "ADAPTIVE_EXACT_2_OF_3",
+        "sourceTargetWarmupsPerCapture": 3,
+        "optimizedTargetWarmupsPerCapture": 2,
+        "verifiedOmittedThirdMeanMs": 16989,
+        "priorCandidateWarmupMeanMs": 164819.5,
+        "optimizedCandidateWarmupMeanMs": 147830.5,
+        "captureFingerprints": [
+          [
+            "a026be126dcf504181d183b2e72ba4ad24a60930ce1d1846e6d96ceada98296b",
+            "a026be126dcf504181d183b2e72ba4ad24a60930ce1d1846e6d96ceada98296b",
+            "a026be126dcf504181d183b2e72ba4ad24a60930ce1d1846e6d96ceada98296b"
+          ],
+          [
+            "a026be126dcf504181d183b2e72ba4ad24a60930ce1d1846e6d96ceada98296b",
+            "a026be126dcf504181d183b2e72ba4ad24a60930ce1d1846e6d96ceada98296b",
+            "a026be126dcf504181d183b2e72ba4ad24a60930ce1d1846e6d96ceada98296b"
+          ]
+        ]
+      },
+      "steadyState": {
+        "controlMeanMs": 44827.9375,
+        "candidateMeanMs": 14955.625,
+        "meanSavedMs": 29872.3125,
+        "reductionRatio": 0.6663771336791928,
+        "positiveBlocks": 8,
+        "blocks": 8
+      },
+      "economics": {
+        "baseline": {
+          "installedCalibrationCostMs": 434579,
+          "installedBreakEvenBuilds": 15,
+          "pocCalibrationCostMs": 825914.5,
+          "pocBreakEvenBuilds": 28
+        },
+        "optimizedCold": {
+          "installedCalibrationCostMs": 360736,
+          "installedExactBreakEvenBuilds": 12.075931516851934,
+          "installedBreakEvenBuilds": 13,
+          "installedBreakEvenImprovementBuilds": 2,
+          "pocCalibrationCostMs": 752071.5,
+          "pocExactBreakEvenBuilds": 25.17620622775689,
+          "pocBreakEvenBuilds": 26,
+          "pocBreakEvenImprovementBuilds": 2
+        },
+        "exactReplayEvaluation": {
+          "calibrationCostMs": 148153,
+          "exactBreakEvenBuilds": 4.959542385612095,
+          "breakEvenBuilds": 5
+        }
+      },
+      "sourceBindings": {
+        "efficiencyCaptureSha256": [
+          "fa43cfc455795f089e866420f15822173e4474ed114fe676f6716177bcdd7ff4",
+          "339b3747dec2c1c0cb78d6f5dff5395878950ea9b66a5ca0b62d32b39c1cb2ae"
+        ],
+        "terminalEvidenceSha256": [
+          "abd504b1bc35efd861c591a944cd2b51207b2fcf6b661643cf93ded873ba042d",
+          "6fbb6f3a60331de77673d566dee3424adf97bdbdf8646ab5a76b6b969299121e"
+        ]
+      }
+    },
+    {
+      "key": "apache-kafka-shadow-generator-source",
+      "repositoryId": "apache/kafka",
+      "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+      "workflowFamily": "FAT_JAR_DISTRIBUTION",
+      "changeClass": "SHARED_PRODUCTION_SOURCE",
+      "changePath": "generator/src/main/java/org/apache/kafka/message/MessageGenerator.java",
+      "captures": 2,
+      "proposal": {
+        "priorColdMeanMs": 264598,
+        "combinedColdMeanMs": 231905.5,
+        "coldReductionMs": 32692.5,
+        "coldReductionRatio": 0.12355535567162261,
+        "exactReplayMeanMs": 561,
+        "replayReductionFromCombinedColdRatio": 0.9975809111901184,
+        "artifactsByteIdentical": true,
+        "driftProbesRejected": true
+      },
+      "stabilization": {
+        "policy": "ADAPTIVE_EXACT_2_OF_3",
+        "sourceTargetWarmupsPerCapture": 3,
+        "optimizedTargetWarmupsPerCapture": 2,
+        "verifiedOmittedThirdMeanMs": 7936,
+        "priorCandidateWarmupMeanMs": 137282,
+        "optimizedCandidateWarmupMeanMs": 129346,
+        "captureFingerprints": [
+          [
+            "666c4d9df5a3315263a4850fb5500d0ed308cfccc377488afd56251386ab8099",
+            "666c4d9df5a3315263a4850fb5500d0ed308cfccc377488afd56251386ab8099",
+            "666c4d9df5a3315263a4850fb5500d0ed308cfccc377488afd56251386ab8099"
+          ],
+          [
+            "666c4d9df5a3315263a4850fb5500d0ed308cfccc377488afd56251386ab8099",
+            "666c4d9df5a3315263a4850fb5500d0ed308cfccc377488afd56251386ab8099",
+            "666c4d9df5a3315263a4850fb5500d0ed308cfccc377488afd56251386ab8099"
+          ]
+        ]
+      },
+      "steadyState": {
+        "controlMeanMs": 37078.5625,
+        "candidateMeanMs": 7586.875,
+        "meanSavedMs": 29491.6875,
+        "reductionRatio": 0.7953837881390359,
+        "positiveBlocks": 8,
+        "blocks": 8
+      },
+      "economics": {
+        "baseline": {
+          "installedCalibrationCostMs": 401880,
+          "installedBreakEvenBuilds": 14,
+          "pocCalibrationCostMs": 774330,
+          "pocBreakEvenBuilds": 27
+        },
+        "optimizedCold": {
+          "installedCalibrationCostMs": 361251.5,
+          "installedExactBreakEvenBuilds": 12.249265153104583,
+          "installedBreakEvenBuilds": 13,
+          "installedBreakEvenImprovementBuilds": 1,
+          "pocCalibrationCostMs": 733701.5,
+          "pocExactBreakEvenBuilds": 24.878247472275028,
+          "pocBreakEvenBuilds": 25,
+          "pocBreakEvenImprovementBuilds": 2
+        },
+        "exactReplayEvaluation": {
+          "calibrationCostMs": 129907,
+          "exactBreakEvenBuilds": 4.404868320946369,
+          "breakEvenBuilds": 5
+        }
+      },
+      "sourceBindings": {
+        "efficiencyCaptureSha256": [
+          "d67916156c86af34b151bf6509c4a9f691ced5c7a1c85fe65034f5c4bd01287b",
+          "3dfc63354d33c892a267bff810eb8df5c9013ce1b410f5fcee5426a58f2643bd"
+        ],
+        "terminalEvidenceSha256": [
+          "d0a653da4f778136fa0f57f535a01b540c24e43d62ce9dee8b63388ac4fd05a2",
+          "62d32b5a5fccddc3923ce7cb16d6ec0764220e52de25fed1ce9a76c7e184138f"
+        ]
+      }
+    }
+  ],
+  "aggregation": {
+    "cellCount": 6,
+    "phaseCaptureCount": 12,
+    "cellsWithInstalledBreakEvenImprovement": 6,
+    "cellsWithPocBreakEvenImprovement": 6,
+    "cellPercentagesAveraged": false,
+    "cellBreakEvenCountsAveraged": false
+  },
+  "sourceBindings": {
+    "baselineEconomicsSummarySha256": "515ac878438d4adeb309eadc19e373c1421f0b748ceb946280bfa33bb181d1bd",
+    "preregisteredAtRevision": "cdaaa424b53270d5496eeb90badc29b186f1bec7"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "terminalSavingsChanged": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

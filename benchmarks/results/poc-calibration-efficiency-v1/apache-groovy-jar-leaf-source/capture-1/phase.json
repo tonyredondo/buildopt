@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-calibration-efficiency-capture/v1",
+  "workItem": "POC-CALIBRATION-EFFICIENCY-001",
+  "capturedAt": "2026-08-14T20:13:05Z",
+  "captureIndex": 1,
+  "buildopt": {
+    "revision": "66ea4c1ca52da03a7839a0cd35fc6c7907fc9315",
+    "executableSha256": "1b5186549516c366e4cefcaf4d8fce92f64c7613f6de5689b2925ed21ff5e4e8"
+  },
+  "cell": {
+    "key": "apache-groovy-jar-leaf-source",
+    "repositoryId": "apache/groovy",
+    "repositoryRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+    "targetRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+    "workflowFamily": "JAR_PACKAGING",
+    "changeClass": "LEAF_PRODUCTION_SOURCE",
+    "changePath": "subprojects/groovy-json/src/main/java/org/apache/groovy/json/DefaultFastStringService.java"
+  },
+  "proposal": {
+    "coldMs": 196401,
+    "exactReplayMs": 253,
+    "artifactsByteIdentical": true,
+    "coldLogSha256": "0cb0c6a350e6c7dcc1db8777716727f54360a65fb6f74b9e3a1249782f555874",
+    "replayLogSha256": "b10ba6ab8f5c6849c91a0ac1576d784625060e71d1e462ef6de0980b99ff8a6b",
+    "cacheRecordSha256": "ae1b207f2f1817ce42fc2e5ae3dc4e2bddeb39addf6554338bd692af6373483b",
+    "driftProbeExitCode": 78,
+    "driftProbeReplayed": false
+  },
+  "sourceBindings": {
+    "terminalEvidenceSha256": "cf3f096224b26c23c8f1522660f5db104cb887744f95fe4a3ea45ddc7713233c"
+  },
+  "boundaries": {
+    "timingClaim": false,
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "testOptimizationModified": false
+  },
+  "captureSha256": "47010bb2a5429b35ba50eca13a38293d3140b24c7e6e545b2258e44d33b2ae5d"
+}

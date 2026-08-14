@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`GENERIC STRUCTURAL POC QUALIFIES WITH EXPLICIT PAYBACK\`"
-    "**Current phase:** \`CALIBRATION EFFICIENCY NEXT\`"
+    "**Overall status:** \`GENERIC STRUCTURAL POC QUALIFIES WITH IMPROVED PAYBACK\`"
+    "**Current phase:** \`PUBLIC INSTALLED PROFILE REPLAY NEXT\`"
     "| 75 | \`POC-GENERIC-MEASUREMENT-001\` | Collect eight isolated alternating optimized-native-versus-BuildOpt pairs"
     "| \`E-288\` | 2026-08-09 | \`POC-GENERIC-MEASUREMENT-001\`"
     "| 77 | \`POC-APACHE-GROOVY-GENERALIZATION-001\` | Apply the generic measurement workflow to Apache Groovy"
@@ -103,9 +103,12 @@ buildopt_required_tracker_text=(
     "| 96 | \`POC-GENERIC-CHANGE-BREADTH-001\` | Preregister multiple source, shared-library, build-logic, and global change shapes"
     "| 97 | \`POC-CALIBRATION-ECONOMICS-001\` | Measure distribution preparation, structural discovery, cache seeding, daemon/target stabilization and steady-state execution"
     "| 98 | \`POC-CALIBRATION-EFFICIENCY-001\` | Persist and reuse preflight/discovery only under exact repository, Wrapper, owner-input, output, graph, option and executable digests"
+    "| 99 | \`POC-INSTALLED-PROFILE-REPLAY-001\` | Install the public package in clean external checkouts"
     "| \`E-338\` | 2026-08-14 | \`POC-GENERIC-CHANGE-BREADTH-001\`"
     "| \`E-339\` | 2026-08-14 | \`POC-GENERIC-CHANGE-BREADTH-001\`"
     "| \`E-343\` | 2026-08-14 | \`POC-CALIBRATION-ECONOMICS-001\`"
+    "| \`E-344\` | 2026-08-14 | \`POC-CALIBRATION-EFFICIENCY-001\`"
+    "| \`E-345\` | 2026-08-14 | \`POC-CALIBRATION-EFFICIENCY-001\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"

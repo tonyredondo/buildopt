@@ -148,6 +148,20 @@ seconds per capture and does not change any rounded POC break-even. Checkout is
 measured but excluded as shared native/BuildOpt work. Results and percentages
 remain cell-specific and are never averaged.
 
+### Calibration efficiency
+
+The [terminal efficiency bundle](./results/poc-calibration-efficiency-v1/README.md)
+repeats all six setup cells after fusing structural discovery, adding exact
+digest-bound proposal replay and proving a two-of-three candidate-stability
+stop against the previously recorded task fingerprints.
+
+Cold discovery is **8.01% to 21.08% lower** in every cell. Exact proposal
+replay takes **0.281 to 1.261 seconds** and regenerates all six contract
+artifacts byte for byte; an added Gradle option misses the cache in all 12
+captures. Installed break-even improves from 10–31 to **9–26 qualifying
+builds**, while complete-POC break-even improves from 20–55 to **19–50**.
+Existing terminal savings are immutable and remain cell-specific.
+
 ### Unseen Hibernate ORM holdout
 
 The [terminal holdout bundle](./results/poc-generic-holdout-v2/README.md)

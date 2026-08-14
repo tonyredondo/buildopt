@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "apache/groovy",
+  "pipelineClass": "jar-packaging-leaf-source",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    "jar"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "changed-projects",
+      "entrypoints": [
+        ":groovy-json:jar"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "required-output-1",
+      "path": "subprojects/groovy-json/build/libs/*.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

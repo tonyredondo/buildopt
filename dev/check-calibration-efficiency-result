@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [/absolute/evidence/root]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence_root=${1:-"${buildopt_repo_root}/benchmarks/results/poc-calibration-efficiency-v1"}
+buildopt_spec="${buildopt_repo_root}/specs/poc-calibration-efficiency-v1.json"
+buildopt_baseline="${buildopt_repo_root}/benchmarks/results/poc-calibration-economics-v1/summary.json"
+buildopt_terminal_root="${buildopt_repo_root}/benchmarks/results/poc-generic-change-breadth-v1"
+buildopt_summary="${buildopt_evidence_root}/summary.json"
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-calibration-efficiency-check.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-calibration-efficiency-check."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+[[ ${buildopt_evidence_root} == /* && -s ${buildopt_summary} ]] || {
+    printf 'calibration efficiency evidence root is invalid: %s\n' "${buildopt_evidence_root}" >&2
+    exit 1
+}
+
+mapfile -t buildopt_keys < <(jq -r '.cells[]' "${buildopt_spec}")
+for buildopt_key in "${buildopt_keys[@]}"; do
+    for buildopt_capture in 1 2; do
+        buildopt_capture_root="${buildopt_evidence_root}/${buildopt_key}/capture-${buildopt_capture}"
+        buildopt_phase="${buildopt_capture_root}/phase.json"
+        buildopt_terminal="${buildopt_terminal_root}/${buildopt_key}/capture-${buildopt_capture}/evidence.json"
+        for buildopt_file in phase.json cold.log replay.log drift.log cache-record.json \
+            buildopt-output-contract.json buildopt-impact-manifest.json \
+            buildopt-impact-graph.generated.json buildopt-impact.generated.json \
+            buildopt-fallback-changes.txt buildopt-profile-proposal.json; do
+            [[ -s ${buildopt_capture_root}/${buildopt_file} ]] || {
+                printf 'calibration efficiency artifact is unavailable: %s\n' \
+                    "${buildopt_capture_root}/${buildopt_file}" >&2
+                exit 1
+            }
+        done
+
+        jq -e \
+            --arg key "${buildopt_key}" \
+            --argjson capture "${buildopt_capture}" \
+            --slurpfile spec "${buildopt_spec}" '
+          .schemaVersion == "buildopt.evidence/poc-calibration-efficiency-capture/v1" and
+          .workItem == $spec[0].workItem and .captureIndex == $capture and
+          .buildopt.revision == $spec[0].source.buildoptRevision and
+          .buildopt.executableSha256 == $spec[0].source.executableSha256 and
+          .cell.key == $key and (.cell.repositoryRevision | test("^[0-9a-f]{40}$")) and
+          (.cell.targetRevision | test("^[0-9a-f]{40}$")) and
+          .proposal.coldMs > 0 and .proposal.exactReplayMs > 0 and
+          .proposal.artifactsByteIdentical == true and
+          (.proposal.coldLogSha256 | test("^[0-9a-f]{64}$")) and
+          (.proposal.replayLogSha256 | test("^[0-9a-f]{64}$")) and
+          (.proposal.cacheRecordSha256 | test("^[0-9a-f]{64}$")) and
+          .proposal.driftProbeExitCode != 0 and .proposal.driftProbeReplayed == false and
+          (.sourceBindings.terminalEvidenceSha256 | test("^[0-9a-f]{64}$")) and
+          .boundaries.timingClaim == false and .boundaries.automaticActivation == false and
+          .boundaries.productionAuthorized == false and
+          .boundaries.testOptimizationModified == false and
+          (.captureSha256 | test("^[0-9a-f]{64}$"))
+        ' "${buildopt_phase}" >/dev/null
+
+        jq 'del(.captureSha256)' "${buildopt_phase}" >"${buildopt_temp}/phase-without-sha.json"
+        [[ $(sha256sum "${buildopt_temp}/phase-without-sha.json" | awk '{print $1}') == \
+            $(jq -r '.captureSha256' "${buildopt_phase}") ]]
+        [[ $(sha256sum "${buildopt_capture_root}/cold.log" | awk '{print $1}') == \
+            $(jq -r '.proposal.coldLogSha256' "${buildopt_phase}") ]]
+        [[ $(sha256sum "${buildopt_capture_root}/replay.log" | awk '{print $1}') == \
+            $(jq -r '.proposal.replayLogSha256' "${buildopt_phase}") ]]
+        [[ $(sha256sum "${buildopt_capture_root}/cache-record.json" | awk '{print $1}') == \
+            $(jq -r '.proposal.cacheRecordSha256' "${buildopt_phase}") ]]
+        [[ $(sha256sum "${buildopt_terminal}" | awk '{print $1}') == \
+            $(jq -r '.sourceBindings.terminalEvidenceSha256' "${buildopt_phase}") ]]
+        grep -F 'buildopt: exact structural proposal replay ' \
+            "${buildopt_capture_root}/replay.log" >/dev/null
+        if grep -F 'buildopt: exact structural proposal replay ' \
+            "${buildopt_capture_root}/cold.log" "${buildopt_capture_root}/drift.log" >/dev/null; then
+            printf 'cold or drift path incorrectly reports exact replay: %s capture %d\n' \
+                "${buildopt_key}" "${buildopt_capture}" >&2
+            exit 1
+        fi
+        jq -e '
+          .schemaVersion == "buildopt.poc/profile-proposal-cache/v1" and
+          (.binding.digest | test("^[0-9a-f]{64}$")) and
+          (.binding.executableSha256 | test("^[0-9a-f]{64}$")) and
+          (.binding.wrapperFiles | length) >= 2 and
+          (.artifactDigests | length) >= 6
+        ' "${buildopt_capture_root}/cache-record.json" >/dev/null
+    done
+done
+
+jq -e --slurpfile spec "${buildopt_spec}" '
+  .schemaVersion == "buildopt.evidence/poc-calibration-efficiency/v1" and
+  .workItem == $spec[0].workItem and
+  .buildopt.revision == $spec[0].source.buildoptRevision and
+  .buildopt.executableSha256 == $spec[0].source.executableSha256 and
+  .method.capturesPerCell == 2 and .method.coldAndReplayReportedSeparately == true and
+  .method.adaptivePolicy == "ADAPTIVE_EXACT_2_OF_3" and
+  .method.breakEvenFormula == $spec[0].economics.breakEvenFormula and
+  .method.percentagesAveragedAcrossCells == false and
+  .method.terminalSavingsRemeasured == false and
+  (.cells | length) == 6 and ([.cells[].key] | sort) == ($spec[0].cells | sort) and
+  all(.cells[];
+    .captures == 2 and .proposal.combinedColdMeanMs > 0 and
+    .proposal.exactReplayMeanMs > 0 and
+    .proposal.combinedColdMeanMs < .proposal.priorColdMeanMs and
+    .proposal.coldReductionMs > 0 and .proposal.coldReductionRatio > 0 and
+    .proposal.replayReductionFromCombinedColdRatio > 0.99 and
+    .proposal.artifactsByteIdentical == true and .proposal.driftProbesRejected == true and
+    .stabilization.policy == "ADAPTIVE_EXACT_2_OF_3" and
+    .stabilization.sourceTargetWarmupsPerCapture == 3 and
+    .stabilization.optimizedTargetWarmupsPerCapture == 2 and
+    .stabilization.verifiedOmittedThirdMeanMs > 0 and
+    .stabilization.optimizedCandidateWarmupMeanMs < .stabilization.priorCandidateWarmupMeanMs and
+    all(.stabilization.captureFingerprints[]; (length == 3 and (unique | length) == 1)) and
+    .steadyState.meanSavedMs > 0 and
+    .economics.optimizedCold.installedBreakEvenImprovementBuilds >= 1 and
+    .economics.optimizedCold.pocBreakEvenImprovementBuilds >= 1 and
+    .economics.optimizedCold.installedBreakEvenBuilds < .economics.baseline.installedBreakEvenBuilds and
+    .economics.optimizedCold.pocBreakEvenBuilds < .economics.baseline.pocBreakEvenBuilds and
+    .economics.exactReplayEvaluation.breakEvenBuilds > 0) and
+  .aggregation.cellCount == 6 and .aggregation.phaseCaptureCount == 12 and
+  .aggregation.cellsWithInstalledBreakEvenImprovement == 6 and
+  .aggregation.cellsWithPocBreakEvenImprovement == 6 and
+  .aggregation.cellPercentagesAveraged == false and
+  .aggregation.cellBreakEvenCountsAveraged == false and
+  (.sourceBindings.baselineEconomicsSummarySha256 | test("^[0-9a-f]{64}$")) and
+  .boundaries.proofOfConcept == true and .boundaries.productionAuthorized == false and
+  .boundaries.automaticActivation == false and
+  .boundaries.repositorySpecificProductRulesAllowed == false and
+  .boundaries.terminalSavingsChanged == false and
+  .boundaries.testOptimizationModified == false and
+  .boundaries.soakRequired == false and .boundaries.designPartnerRequired == false
+' "${buildopt_summary}" >/dev/null
+[[ $(jq -r '.sourceBindings.baselineEconomicsSummarySha256' "${buildopt_summary}") == \
+    $(sha256sum "${buildopt_baseline}" | awk '{print $1}') ]]
+
+buildopt_reassembled="${buildopt_temp}/summary.json"
+"${buildopt_script_dir}/assemble-calibration-efficiency-result" \
+    "${buildopt_evidence_root}" "$(jq -r '.capturedAt' "${buildopt_summary}")" \
+    "${buildopt_reassembled}"
+cmp --silent "${buildopt_summary}" "${buildopt_reassembled}"
+
+printf 'Calibration efficiency evidence OK: 6 cells, 12 captures, exact replay and adaptive break-even verified\n'

@@ -3564,6 +3564,29 @@ Complete comparative-POC break-even is 20–22, 49–55, and 27–28 builds. Val
 the versioned [phase artifacts and summary](../benchmarks/results/poc-calibration-economics-v1/README.md)
 with the two commands above.
 
+`./dev/check-calibration-efficiency` validates the preregistered follow-up that
+fuses structural discovery, permits only exact digest-bound proposal replay,
+and stops candidate stabilization after two matching exact task fingerprints.
+Fresh captures are assembled and checked with:
+
+```bash
+./dev/run-calibration-efficiency \
+  "$(pwd)/benchmarks/results/poc-calibration-efficiency-v1" \
+  /absolute/path/to/the/contract-bound/buildopt
+./dev/assemble-calibration-efficiency-result \
+  "$(pwd)/benchmarks/results/poc-calibration-efficiency-v1" \
+  2026-08-14T21:07:28Z
+./dev/check-calibration-efficiency-result
+./dev/test-calibration-efficiency-result
+```
+
+The terminal result lowers cold discovery by 8.01%–21.08% and improves
+installed break-even from 10–31 to 9–26 builds across all six cells. Exact
+replay takes 0.281–1.261 seconds, but repeat evaluation still includes two
+candidate target warm-ups. The checker verifies hashes, byte-identical
+artifacts, drift rejection, adaptive fingerprints, immutable terminal savings
+and deterministic recomputation.
+
 `./dev/check-generic-profile-ci-replay` validates the manual clean-runner
 replay without cloning public repositories. It reconstructs retained Action
 artifacts for all five subjects, requires five semantic and byte-level graph

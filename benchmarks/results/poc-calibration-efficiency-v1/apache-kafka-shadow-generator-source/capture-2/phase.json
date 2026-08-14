@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-calibration-efficiency-capture/v1",
+  "workItem": "POC-CALIBRATION-EFFICIENCY-001",
+  "capturedAt": "2026-08-14T21:07:28Z",
+  "captureIndex": 2,
+  "buildopt": {
+    "revision": "66ea4c1ca52da03a7839a0cd35fc6c7907fc9315",
+    "executableSha256": "1b5186549516c366e4cefcaf4d8fce92f64c7613f6de5689b2925ed21ff5e4e8"
+  },
+  "cell": {
+    "key": "apache-kafka-shadow-generator-source",
+    "repositoryId": "apache/kafka",
+    "repositoryRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+    "targetRevision": "5f2ebbce13f19f351b84e94671741453eec25c75",
+    "workflowFamily": "FAT_JAR_DISTRIBUTION",
+    "changeClass": "SHARED_PRODUCTION_SOURCE",
+    "changePath": "generator/src/main/java/org/apache/kafka/message/MessageGenerator.java"
+  },
+  "proposal": {
+    "coldMs": 241129,
+    "exactReplayMs": 806,
+    "artifactsByteIdentical": true,
+    "coldLogSha256": "1e6860fb023249591d4a5d4c3a2f70c6d8a7ca2ac012509a595a237653e748a8",
+    "replayLogSha256": "aba1bedc8152832987b9a03d41a6e937ab95e7f1fa8d6bbccd2cb7e93aea082d",
+    "cacheRecordSha256": "ffdf15b873039d7eba7113ff2dd3e5d134dd2b470d2038dd9fd93666198df039",
+    "driftProbeExitCode": 78,
+    "driftProbeReplayed": false
+  },
+  "sourceBindings": {
+    "terminalEvidenceSha256": "62d32b5a5fccddc3923ce7cb16d6ec0764220e52de25fed1ce9a76c7e184138f"
+  },
+  "boundaries": {
+    "timingClaim": false,
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "testOptimizationModified": false
+  },
+  "captureSha256": "3dfc63354d33c892a267bff810eb8df5c9013ce1b410f5fcee5426a58f2643bd"
+}

@@ -38,9 +38,11 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > then qualified six distinct source edits across those three workflows at
 > **28.00% to 79.54% lower wall time**; all 96 raw pairs improved, while all
 > eight build-logic/global-change probes correctly retained native Gradle.
-> One-time profile calibration now has explicit economics: reviewed Groovy JAR
-> and Kafka `shadowJar` cells repay discovery plus candidate warm-ups after
-> **10–15 qualifying builds**, while Kafka Checkstyle needs **27–31**.
+> One-time profile calibration now has explicit and improved economics:
+> digest-bound replay, fused discovery and adaptive stabilization reduce cold
+> discovery by **8.01%–21.08%**. Reviewed Groovy JAR and Kafka `shadowJar`
+> cells now repay after **9–13 qualifying builds**, while Kafka Checkstyle
+> needs **24–26**; exact repeat evaluation repays after **4–12**.
 > These results are bound to exact changes, workflows, and reviewed output contracts;
 > profiles remain review-required and are not production-authorized. See the
 > [current one-pager](./docs/findings/buildopt-poc-handoff.md)

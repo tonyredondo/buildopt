@@ -587,6 +587,13 @@ preregisters one-pass discovery, digest-bound proposal replay, and bounded
 adaptive candidate stabilization. It keeps cold calibration and exact replay
 economics separate and does not change terminal build savings.
 
+The terminal [calibration efficiency evidence](../benchmarks/results/poc-calibration-efficiency-v1/README.md)
+passes all six cells. Cold discovery is 8.01%–21.08% lower, exact replay takes
+0.281–1.261 seconds, and installed break-even improves from 10–31 to 9–26
+qualifying builds. All 12 drift probes miss the cache, replay artifacts are
+byte-identical, and existing terminal savings and correctness evidence remain
+unchanged.
+
 The retained [v5 evidence](../benchmarks/results/poc-generic-holdout-v5/README.md)
 passes that unchanged contract: native averages 216.724 seconds and BuildOpt
 203.991 seconds, saving 12.733 seconds/5.88% with interval

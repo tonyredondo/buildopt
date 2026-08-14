@@ -93,7 +93,7 @@ passed. Eight independent build-logic/global captures correctly returned
 `NATIVE_FULL_GRAPH / GLOBAL_CHANGE_REQUIRES_FULL_GRAPH` and made no timing
 claim. The percentages remain independent and are not averaged.
 
-## Calibration economics
+## Calibration economics and efficiency
 
 Two fresh setup captures per selective cell now expose how long it takes to
 reach those steady-state savings. The installed-workflow view includes the
@@ -101,20 +101,22 @@ real combined output-preflight/discovery command and all candidate warm-ups;
 the full POC view additionally includes native-control warm-ups used only to
 prove the comparison.
 
-| Workflow and change | Saving/build | Installed cost -> break-even | Full POC cost -> break-even |
+| Workflow and change | Saving/build | Installed break-even before -> now | Full POC break-even before -> now |
 | --- | ---: | ---: | ---: |
-| Groovy `jar`, leaf source | 52.384 s | 480.417 s -> **10 builds** | 1,001.798 s -> **20 builds** |
-| Groovy `jar`, shared source | 52.349 s | 545.001 s -> **11 builds** | 1,104.508 s -> **22 builds** |
-| Kafka Checkstyle, metadata source | 23.078 s | 695.196 s -> **31 builds** | 1,259.370 s -> **55 builds** |
-| Kafka Checkstyle, client-utils source | 26.345 s | 699.509 s -> **27 builds** | 1,284.422 s -> **49 builds** |
-| Kafka `shadowJar`, clients source | 29.872 s | 434.579 s -> **15 builds** | 825.915 s -> **28 builds** |
-| Kafka `shadowJar`, generator source | 29.492 s | 401.880 s -> **14 builds** | 774.330 s -> **27 builds** |
+| Groovy `jar`, leaf source | 52.384 s | **10 -> 9 builds** | **20 -> 19 builds** |
+| Groovy `jar`, shared source | 52.349 s | **11 -> 10 builds** | **22 -> 21 builds** |
+| Kafka Checkstyle, metadata source | 23.078 s | **31 -> 26 builds** | **55 -> 50 builds** |
+| Kafka Checkstyle, client-utils source | 26.345 s | **27 -> 24 builds** | **49 -> 46 builds** |
+| Kafka `shadowJar`, clients source | 29.872 s | **15 -> 13 builds** | **28 -> 26 builds** |
+| Kafka `shadowJar`, generator source | 29.492 s | **14 -> 13 builds** | **27 -> 25 builds** |
 
-Checkout remains visible but is excluded as shared native/BuildOpt work.
-Offline Gradle distribution materialization adds less than 1.4 seconds per
-capture and changes none of the rounded POC break-even counts. The main costs
-are discovery/preflight and stability warm-ups, not installation or Wrapper
-copying.
+The efficiency follow-up fuses structural discovery, replays only exact
+digest-bound proposals, and removes the third candidate target warm-up only
+after two exact task fingerprints match. Cold discovery is **8.01% to 21.08%
+lower** across all six cells; exact replay takes **0.281 to 1.261 seconds**.
+All six installed and full-POC break-even counts improve without changing any
+terminal saving, output, tail, fallback or failure result. Checkout remains
+visible but is excluded as shared native/BuildOpt work.
 
 ## What this demonstrates
 
@@ -137,9 +139,10 @@ copying.
   reports and packages without treating timestamps, archive order, or an
   isolated checkout prefix as business payload. Undeclared drift still fails
   closed.
-- **Discovery has measurable economics.** The current reviewed profiles repay
-  discovery plus candidate warm-ups after 10–31 qualifying builds; proving the
-  complete comparative POC takes 20–55. The POC proves repeated-build value,
+- **Calibration is cheaper but still not free.** The current reviewed profiles
+  repay fused discovery plus adaptive candidate warm-ups after 9–26 qualifying
+  builds; proving the complete comparative POC takes 19–50. Exact repeat
+  evaluation repays after 4–12 builds. The POC proves repeated-build value,
   not instant first-run payback.
 
 ## Current limits
@@ -159,20 +162,17 @@ until an owner declares and validates its semantics.
 
 ## Recommended next steps
 
-1. **Reduce calibration cost without weakening evidence.** Reuse only
-   digest-bound output-preflight/discovery artifacts and test bounded adaptive
-   candidate stabilization. Re-measure all six cells; terminal savings,
-   correctness, drift, and native fallback gates remain unchanged.
-2. **Replay qualified profiles through the public installed path.** Confirm
+1. **Replay qualified profiles through the public installed path.** Confirm
    the same value, semantic-output contract, drift handling, and native
-   fallback outside the research runner.
-3. **Add one new substantial repository family.** Use the unchanged generic
+   fallback outside the research runner. This is now the primary adoption
+   gap after calibration efficiency improved all six cells.
+2. **Add one new substantial repository family.** Use the unchanged generic
    path and owner-input model; do not add a repository-name rule to force a
    result.
-4. **Broaden change classes incrementally.** Add dependency, resource, and
+3. **Broaden change classes incrementally.** Add dependency, resource, and
    mixed-source changes only when the owner workflow and required outputs can
    be declared without repository-specific product code.
-5. **Keep wall time authoritative.** Continue only mechanisms that materially
+4. **Keep wall time authoritative.** Continue only mechanisms that materially
    beat optimized native Gradle under correctness, repeatability, and tail
    guards; retire or retain native for everything else.
 
@@ -185,6 +185,7 @@ until an owner declares and validates its semantics.
 - [Terminal semantic output-equivalence qualification](../../benchmarks/results/poc-generic-output-equivalence-v1/README.md)
 - [Terminal generic change-breadth qualification](../../benchmarks/results/poc-generic-change-breadth-v1/README.md)
 - [Terminal calibration economics](../../benchmarks/results/poc-calibration-economics-v1/README.md)
+- [Terminal calibration efficiency](../../benchmarks/results/poc-calibration-efficiency-v1/README.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-calibration-efficiency-capture/v1",
+  "workItem": "POC-CALIBRATION-EFFICIENCY-001",
+  "capturedAt": "2026-08-14T20:26:52Z",
+  "captureIndex": 2,
+  "buildopt": {
+    "revision": "66ea4c1ca52da03a7839a0cd35fc6c7907fc9315",
+    "executableSha256": "1b5186549516c366e4cefcaf4d8fce92f64c7613f6de5689b2925ed21ff5e4e8"
+  },
+  "cell": {
+    "key": "apache-groovy-jar-shared-source",
+    "repositoryId": "apache/groovy",
+    "repositoryRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+    "targetRevision": "491de170b6d0a6f35b6d93a23620a1c055268c85",
+    "workflowFamily": "JAR_PACKAGING",
+    "changeClass": "SHARED_PRODUCTION_SOURCE",
+    "changePath": "src/main/java/groovy/beans/Bindable.java"
+  },
+  "proposal": {
+    "coldMs": 266622,
+    "exactReplayMs": 282,
+    "artifactsByteIdentical": true,
+    "coldLogSha256": "41f43bff474f5fa6e6aa6030f900be49e75d02061ef230223d5e96d5e71449ab",
+    "replayLogSha256": "9769c58fb2b5020825b12642d9b64daaa44e957eccc8f1b0de11441d89b5eb28",
+    "cacheRecordSha256": "c28b0dbc44e3b927522e3694db1450c47cf0c30a32e0f6c96b6013f5f3529d20",
+    "driftProbeExitCode": 78,
+    "driftProbeReplayed": false
+  },
+  "sourceBindings": {
+    "terminalEvidenceSha256": "6a7feecec0622ec8bb256f27672bae12fa43a7695f8e5d09373528664da96ad9"
+  },
+  "boundaries": {
+    "timingClaim": false,
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "testOptimizationModified": false
+  },
+  "captureSha256": "063be0174620534ca3381306cd785023740d60aa59b114efdc57d1eec09ca196"
+}

@@ -1,0 +1,1368 @@
+{
+  "schemaVersion": "buildopt.poc/output-contract/v1",
+  "decision": "VALIDATED_REQUIRED_OUTPUTS",
+  "reason": "DECLARED_OUTPUTS_MATCH_EXECUTED_WORKFLOW",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "shadow-jar-generator-source",
+  "repositoryRevision": "5f2ebbce13f19f351b84e94671741453eec25c75",
+  "gradleVersion": "9.2.1",
+  "originalEntrypoints": [
+    "shadowJar"
+  ],
+  "declaredOutputs": [
+    "clients/build/libs/kafka-clients-*.jar"
+  ],
+  "candidateOutputs": [
+    {
+      "pattern": "clients/build/classes/java/main/**",
+      "path": "clients/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 3012,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:compileJava"
+      ]
+    },
+    {
+      "pattern": "clients/build/classes/java/test/**",
+      "path": "clients/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 841,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "clients/build/generated/main/java/org/apache/kafka/common/message/**",
+      "path": "clients/build/generated/main/java/org/apache/kafka/common/message",
+      "kind": "DIRECTORY",
+      "fileCount": 381,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:processMessages"
+      ]
+    },
+    {
+      "pattern": "clients/build/generated/test/java/org/apache/kafka/common/message/**",
+      "path": "clients/build/generated/test/java/org/apache/kafka/common/message",
+      "kind": "DIRECTORY",
+      "fileCount": 10,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:processTestMessages"
+      ]
+    },
+    {
+      "pattern": "clients/build/kafka/kafka-version.properties",
+      "path": "clients/build/kafka/kafka-version.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:createVersionFile"
+      ]
+    },
+    {
+      "pattern": "clients/build/libs/kafka-clients-4.3.1.jar",
+      "path": "clients/build/libs/kafka-clients-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:jar",
+        ":clients:shadowJar"
+      ]
+    },
+    {
+      "pattern": "clients/build/resources/main/**",
+      "path": "clients/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 200,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:processResources"
+      ]
+    },
+    {
+      "pattern": "clients/build/resources/test/**",
+      "path": "clients/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 9,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:processTestResources"
+      ]
+    },
+    {
+      "pattern": "clients/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "clients/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:compileJava"
+      ]
+    },
+    {
+      "pattern": "clients/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "clients/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/classes/java/main/**",
+      "path": "connect/api/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 79,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/dependant-libs/**",
+      "path": "connect/api/build/dependant-libs",
+      "kind": "DIRECTORY",
+      "fileCount": 7,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:copyDependantLibs"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/libs/connect-api-4.3.1.jar",
+      "path": "connect/api/build/libs/connect-api-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:jar"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/resources/main/**",
+      "path": "connect/api/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/api/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/classes/java/main/**",
+      "path": "connect/json/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 14,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/dependant-libs/**",
+      "path": "connect/json/build/dependant-libs",
+      "kind": "DIRECTORY",
+      "fileCount": 12,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:copyDependantLibs"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/libs/connect-json-4.3.1.jar",
+      "path": "connect/json/build/libs/connect-json-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:jar"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/resources/main/**",
+      "path": "connect/json/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/json/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/transforms/build/classes/java/main/**",
+      "path": "connect/transforms/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 64,
+      "ownerProjects": [
+        ":connect:transforms"
+      ],
+      "producerTasks": [
+        ":connect:transforms:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/transforms/build/dependant-libs/**",
+      "path": "connect/transforms/build/dependant-libs",
+      "kind": "DIRECTORY",
+      "fileCount": 7,
+      "ownerProjects": [
+        ":connect:transforms"
+      ],
+      "producerTasks": [
+        ":connect:transforms:copyDependantLibs"
+      ]
+    },
+    {
+      "pattern": "connect/transforms/build/libs/connect-transforms-4.3.1.jar",
+      "path": "connect/transforms/build/libs/connect-transforms-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:transforms"
+      ],
+      "producerTasks": [
+        ":connect:transforms:jar"
+      ]
+    },
+    {
+      "pattern": "connect/transforms/build/resources/main/**",
+      "path": "connect/transforms/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":connect:transforms"
+      ],
+      "producerTasks": [
+        ":connect:transforms:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/transforms/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/transforms/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:transforms"
+      ],
+      "producerTasks": [
+        ":connect:transforms:compileJava"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/classes/java/main/**",
+      "path": "coordinator-common/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 76,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:compileJava"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/classes/java/test/**",
+      "path": "coordinator-common/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 50,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/libs/kafka-coordinator-common-4.3.1.jar",
+      "path": "coordinator-common/build/libs/kafka-coordinator-common-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:jar"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/resources/test/**",
+      "path": "coordinator-common/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:processTestResources"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "coordinator-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:compileJava"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "coordinator-common/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "core/build/classes/scala/main/**",
+      "path": "core/build/classes/scala/main",
+      "kind": "DIRECTORY",
+      "fileCount": 312,
+      "ownerProjects": [
+        ":core"
+      ],
+      "producerTasks": [
+        ":core:compileScala"
+      ]
+    },
+    {
+      "pattern": "core/build/dependant-libs-2.13.18/**",
+      "path": "core/build/dependant-libs-2.13.18",
+      "kind": "DIRECTORY",
+      "fileCount": 45,
+      "ownerProjects": [
+        ":core"
+      ],
+      "producerTasks": [
+        ":core:copyDependantLibs"
+      ]
+    },
+    {
+      "pattern": "core/build/libs/kafka_2.13-4.3.1.jar",
+      "path": "core/build/libs/kafka_2.13-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":core"
+      ],
+      "producerTasks": [
+        ":core:jar"
+      ]
+    },
+    {
+      "pattern": "generator/build/classes/java/main/**",
+      "path": "generator/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 62,
+      "ownerProjects": [
+        ":generator"
+      ],
+      "producerTasks": [
+        ":generator:compileJava"
+      ]
+    },
+    {
+      "pattern": "generator/build/libs/generator-4.3.1.jar",
+      "path": "generator/build/libs/generator-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":generator"
+      ],
+      "producerTasks": [
+        ":generator:jar"
+      ]
+    },
+    {
+      "pattern": "generator/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "generator/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":generator"
+      ],
+      "producerTasks": [
+        ":generator:compileJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/classes/java/main/**",
+      "path": "group-coordinator/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 277,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/generated/main/java/org/apache/kafka/coordinator/group/generated/**",
+      "path": "group-coordinator/build/generated/main/java/org/apache/kafka/coordinator/group/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 90,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:processMessages"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/libs/kafka-group-coordinator-4.3.1.jar",
+      "path": "group-coordinator/build/libs/kafka-group-coordinator-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:jar"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/resources/main/**",
+      "path": "group-coordinator/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 44,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:processResources"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "group-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/group-coordinator-api/build/classes/java/main/**",
+      "path": "group-coordinator/group-coordinator-api/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 10,
+      "ownerProjects": [
+        ":group-coordinator:group-coordinator-api"
+      ],
+      "producerTasks": [
+        ":group-coordinator:group-coordinator-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/group-coordinator-api/build/kafka/kafka-version.properties",
+      "path": "group-coordinator/group-coordinator-api/build/kafka/kafka-version.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator:group-coordinator-api"
+      ],
+      "producerTasks": [
+        ":group-coordinator:group-coordinator-api:createVersionFile"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/group-coordinator-api/build/libs/kafka-group-coordinator-api-4.3.1.jar",
+      "path": "group-coordinator/group-coordinator-api/build/libs/kafka-group-coordinator-api-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator:group-coordinator-api"
+      ],
+      "producerTasks": [
+        ":group-coordinator:group-coordinator-api:jar"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/group-coordinator-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "group-coordinator/group-coordinator-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator:group-coordinator-api"
+      ],
+      "producerTasks": [
+        ":group-coordinator:group-coordinator-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "jmh-benchmarks/build/classes/java/main/**",
+      "path": "jmh-benchmarks/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 460,
+      "ownerProjects": [
+        ":jmh-benchmarks"
+      ],
+      "producerTasks": [
+        ":jmh-benchmarks:compileJava"
+      ]
+    },
+    {
+      "pattern": "jmh-benchmarks/build/generated/sources/annotationProcessor/java/main/**",
+      "path": "jmh-benchmarks/build/generated/sources/annotationProcessor/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 351,
+      "ownerProjects": [
+        ":jmh-benchmarks"
+      ],
+      "producerTasks": [
+        ":jmh-benchmarks:compileJava"
+      ]
+    },
+    {
+      "pattern": "jmh-benchmarks/build/libs/kafka-jmh-benchmarks-4.3.1-all.jar",
+      "path": "jmh-benchmarks/build/libs/kafka-jmh-benchmarks-4.3.1-all.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":jmh-benchmarks"
+      ],
+      "producerTasks": [
+        ":jmh-benchmarks:shadowJar"
+      ]
+    },
+    {
+      "pattern": "jmh-benchmarks/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "jmh-benchmarks/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":jmh-benchmarks"
+      ],
+      "producerTasks": [
+        ":jmh-benchmarks:compileJava"
+      ]
+    },
+    {
+      "pattern": "metadata/build/classes/java/main/**",
+      "path": "metadata/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 381,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:compileJava"
+      ]
+    },
+    {
+      "pattern": "metadata/build/classes/java/test/**",
+      "path": "metadata/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 179,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "metadata/build/generated/main/java/org/apache/kafka/common/metadata/**",
+      "path": "metadata/build/generated/main/java/org/apache/kafka/common/metadata",
+      "kind": "DIRECTORY",
+      "fileCount": 54,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:processMessages"
+      ]
+    },
+    {
+      "pattern": "metadata/build/libs/kafka-metadata-4.3.1.jar",
+      "path": "metadata/build/libs/kafka-metadata-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:jar"
+      ]
+    },
+    {
+      "pattern": "metadata/build/resources/main/**",
+      "path": "metadata/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 26,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:processResources"
+      ]
+    },
+    {
+      "pattern": "metadata/build/resources/test/**",
+      "path": "metadata/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:processTestResources"
+      ]
+    },
+    {
+      "pattern": "metadata/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "metadata/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:compileJava"
+      ]
+    },
+    {
+      "pattern": "metadata/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "metadata/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "raft/build/classes/java/main/**",
+      "path": "raft/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 136,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:compileJava"
+      ]
+    },
+    {
+      "pattern": "raft/build/classes/java/test/**",
+      "path": "raft/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 105,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "raft/build/generated/main/java/org/apache/kafka/raft/generated/**",
+      "path": "raft/build/generated/main/java/org/apache/kafka/raft/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:processMessages"
+      ]
+    },
+    {
+      "pattern": "raft/build/kafka/kafka-version.properties",
+      "path": "raft/build/kafka/kafka-version.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:createVersionFile"
+      ]
+    },
+    {
+      "pattern": "raft/build/libs/kafka-raft-4.3.1.jar",
+      "path": "raft/build/libs/kafka-raft-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:jar"
+      ]
+    },
+    {
+      "pattern": "raft/build/resources/main/**",
+      "path": "raft/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:processResources"
+      ]
+    },
+    {
+      "pattern": "raft/build/resources/test/**",
+      "path": "raft/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:processTestResources"
+      ]
+    },
+    {
+      "pattern": "raft/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "raft/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:compileJava"
+      ]
+    },
+    {
+      "pattern": "raft/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "raft/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "server-common/build/classes/java/main/**",
+      "path": "server-common/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 239,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:compileJava"
+      ]
+    },
+    {
+      "pattern": "server-common/build/classes/java/test/**",
+      "path": "server-common/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 99,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "server-common/build/kafka/kafka-version.properties",
+      "path": "server-common/build/kafka/kafka-version.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:createVersionFile"
+      ]
+    },
+    {
+      "pattern": "server-common/build/libs/kafka-server-common-4.3.1.jar",
+      "path": "server-common/build/libs/kafka-server-common-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:jar"
+      ]
+    },
+    {
+      "pattern": "server-common/build/resources/test/**",
+      "path": "server-common/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:processTestResources"
+      ]
+    },
+    {
+      "pattern": "server-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "server-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:compileJava"
+      ]
+    },
+    {
+      "pattern": "server-common/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "server-common/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "server/build/classes/java/main/**",
+      "path": "server/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 207,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:compileJava"
+      ]
+    },
+    {
+      "pattern": "server/build/kafka/kafka-version.properties",
+      "path": "server/build/kafka/kafka-version.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:createVersionFile"
+      ]
+    },
+    {
+      "pattern": "server/build/libs/kafka-server-4.3.1.jar",
+      "path": "server/build/libs/kafka-server-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:jar"
+      ]
+    },
+    {
+      "pattern": "server/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "server/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:compileJava"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/classes/java/main/**",
+      "path": "share-coordinator/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 34,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/generated/main/java/org/apache/kafka/coordinator/share/generated/**",
+      "path": "share-coordinator/build/generated/main/java/org/apache/kafka/coordinator/share/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 10,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:processMessages"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/libs/kafka-share-coordinator-4.3.1.jar",
+      "path": "share-coordinator/build/libs/kafka-share-coordinator-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:jar"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/resources/main/**",
+      "path": "share-coordinator/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 4,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:processResources"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "share-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/classes/java/main/**",
+      "path": "storage/api/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 17,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/kafka/kafka-version.properties",
+      "path": "storage/api/build/kafka/kafka-version.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:createVersionFile"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/libs/kafka-storage-api-4.3.1.jar",
+      "path": "storage/api/build/libs/kafka-storage-api-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:jar"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "storage/api/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "storage/build/classes/java/main/**",
+      "path": "storage/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 213,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:compileJava"
+      ]
+    },
+    {
+      "pattern": "storage/build/generated/main/java/org/apache/kafka/server/log/remote/metadata/storage/generated/**",
+      "path": "storage/build/generated/main/java/org/apache/kafka/server/log/remote/metadata/storage/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 12,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:processMessages"
+      ]
+    },
+    {
+      "pattern": "storage/build/kafka/kafka-version.properties",
+      "path": "storage/build/kafka/kafka-version.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:createVersionFile"
+      ]
+    },
+    {
+      "pattern": "storage/build/libs/kafka-storage-4.3.1.jar",
+      "path": "storage/build/libs/kafka-storage-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:jar"
+      ]
+    },
+    {
+      "pattern": "storage/build/resources/main/**",
+      "path": "storage/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 5,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:processResources"
+      ]
+    },
+    {
+      "pattern": "storage/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "storage/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:compileJava"
+      ]
+    },
+    {
+      "pattern": "streams/build/classes/java/main/**",
+      "path": "streams/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1102,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:compileJava"
+      ]
+    },
+    {
+      "pattern": "streams/build/dependant-libs-2.13.18/**",
+      "path": "streams/build/dependant-libs-2.13.18",
+      "kind": "DIRECTORY",
+      "fileCount": 5,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:copyDependantLibs"
+      ]
+    },
+    {
+      "pattern": "streams/build/generated/main/java/org/apache/kafka/streams/internals/generated/**",
+      "path": "streams/build/generated/main/java/org/apache/kafka/streams/internals/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:processMessages"
+      ]
+    },
+    {
+      "pattern": "streams/build/kafka/kafka-streams-version.properties",
+      "path": "streams/build/kafka/kafka-streams-version.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:createStreamsVersionFile"
+      ]
+    },
+    {
+      "pattern": "streams/build/libs/kafka-streams-4.3.1.jar",
+      "path": "streams/build/libs/kafka-streams-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:jar"
+      ]
+    },
+    {
+      "pattern": "streams/build/resources/main/**",
+      "path": "streams/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:processResources"
+      ]
+    },
+    {
+      "pattern": "streams/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "streams/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:compileJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-util/build/classes/java/main/**",
+      "path": "test-common/test-common-util/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 4,
+      "ownerProjects": [
+        ":test-common:test-common-util"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-util:compileJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-util/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "test-common/test-common-util/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-util"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-util:compileJava"
+      ]
+    },
+    {
+      "pattern": "tools/tools-api/build/classes/java/main/**",
+      "path": "tools/tools-api/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":tools:tools-api"
+      ],
+      "producerTasks": [
+        ":tools:tools-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "tools/tools-api/build/kafka/kafka-version.properties",
+      "path": "tools/tools-api/build/kafka/kafka-version.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tools:tools-api"
+      ],
+      "producerTasks": [
+        ":tools:tools-api:createVersionFile"
+      ]
+    },
+    {
+      "pattern": "tools/tools-api/build/libs/kafka-tools-api-4.3.1.jar",
+      "path": "tools/tools-api/build/libs/kafka-tools-api-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tools:tools-api"
+      ],
+      "producerTasks": [
+        ":tools:tools-api:jar"
+      ]
+    },
+    {
+      "pattern": "tools/tools-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "tools/tools-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tools:tools-api"
+      ],
+      "producerTasks": [
+        ":tools:tools-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/classes/java/main/**",
+      "path": "transaction-coordinator/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 27,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/generated/main/java/org/apache/kafka/coordinator/transaction/generated/**",
+      "path": "transaction-coordinator/build/generated/main/java/org/apache/kafka/coordinator/transaction/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:processMessages"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/libs/kafka-transaction-coordinator-4.3.1.jar",
+      "path": "transaction-coordinator/build/libs/kafka-transaction-coordinator-4.3.1.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:jar"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/resources/main/**",
+      "path": "transaction-coordinator/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:processResources"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "transaction-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:compileJava"
+      ]
+    }
+  ],
+  "validations": [
+    {
+      "pattern": "clients/build/libs/kafka-clients-*.jar",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:jar",
+        ":clients:shadowJar"
+      ]
+    }
+  ],
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false,
+  "testOptimization": "OUT_OF_SCOPE"
+}

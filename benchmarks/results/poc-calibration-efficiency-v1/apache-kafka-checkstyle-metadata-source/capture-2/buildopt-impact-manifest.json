@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "checkstyle-main-metadata-source",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    "checkstyleMain"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "changed-projects",
+      "entrypoints": [
+        ":clients:checkstyleMain"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "required-output-1",
+      "path": "clients/build/reports/checkstyle/main.html",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-2",
+      "path": "clients/build/reports/checkstyle/main.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

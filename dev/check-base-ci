@@ -231,6 +231,9 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-calibration-economics" >/dev/null
         "${buildopt_script_dir}/check-calibration-economics-result" \
             "${buildopt_repo_root}/benchmarks/results/poc-calibration-economics-v1" >/dev/null
+        "${buildopt_script_dir}/check-calibration-efficiency" >/dev/null
+        "${buildopt_script_dir}/check-calibration-efficiency-result" >/dev/null
+        "${buildopt_script_dir}/test-calibration-efficiency-result" >/dev/null
         "${buildopt_script_dir}/check-poc-profile-discovery" >/dev/null
         "${buildopt_script_dir}/check-poc-opportunity-analysis" >/dev/null
         "${buildopt_script_dir}/check-poc-general-build-value" >/dev/null
