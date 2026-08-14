@@ -28,8 +28,12 @@ jq -e '
   .runner.platform == "linux-amd64" and .runner.cpuCount == 12 and
   .runner.capturesPerCell == 2 and .runner.maxWorkers == 12 and
   .runner.clock == "EXTERNAL_WALL_CLOCK_NANOSECONDS" and
+  .runner.distributionSeedPreparation ==
+    "BOUNDED_ONLINE_BEFORE_PHASE_TIMING_IF_EXACT_LOCAL_DISTRIBUTION_IS_ABSENT" and
   (.cells | length) == 6 and (.cells | unique | length) == 6 and
   .phases.repositoryCheckout.includedInBreakEven == false and
+  .phases.offlineGradleDistributionPreparation.scope ==
+    "COPY_EXACT_PREPARED_DISTRIBUTION_AND_RUN_OFFLINE_WRAPPER_VERSION" and
   .phases.outputPreflightAndStructuralDiscovery.combinedBecausePublicCommandRunsBoth == true and
   .phases.targetWorkloadStabilization.confirmationsPerArm == 3 and
   .economics.breakEvenFormula == "CEIL(CALIBRATION_COST_MS / TERMINAL_MEAN_SAVED_MS)" and

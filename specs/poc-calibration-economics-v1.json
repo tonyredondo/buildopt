@@ -13,6 +13,7 @@
     "capturesPerCell": 2,
     "clock": "EXTERNAL_WALL_CLOCK_NANOSECONDS",
     "gradleMode": "OFFLINE_AFTER_PUBLIC_REVISION_FETCH",
+    "distributionSeedPreparation": "BOUNDED_ONLINE_BEFORE_PHASE_TIMING_IF_EXACT_LOCAL_DISTRIBUTION_IS_ABSENT",
     "maxWorkers": 12,
     "perCommandTimeout": "30m"
   },
@@ -32,6 +33,7 @@
     },
     "offlineGradleDistributionPreparation": {
       "measured": true,
+      "scope": "COPY_EXACT_PREPARED_DISTRIBUTION_AND_RUN_OFFLINE_WRAPPER_VERSION",
       "includedInInstalledBreakEven": false,
       "includedInColdSingleWorkflowBreakEven": true
     },

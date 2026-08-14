@@ -31,7 +31,7 @@ fi
     exit 1
 }
 
-for buildopt_command in awk cp date git jq perl sha256sum tar timeout; do
+for buildopt_command in awk cp date find git grep jq perl sha256sum tar timeout; do
     command -v "${buildopt_command}" >/dev/null || {
         printf 'required calibration command is unavailable: %s\n' \
             "${buildopt_command}" >&2
@@ -97,11 +97,9 @@ buildopt_mutate_repository() {
     esac
 }
 
-buildopt_seed_gradle_distribution() {
+buildopt_gradle_distribution_name() {
     local buildopt_repository=$1
-    local buildopt_gradle_home=$2
     local buildopt_properties buildopt_url buildopt_archive buildopt_distribution
-    local buildopt_source buildopt_destination
 
     buildopt_properties="${buildopt_repository}/gradle/wrapper/gradle-wrapper.properties"
     buildopt_url=$(awk -F= '$1 == "distributionUrl" {sub(/^[^=]*=/, ""); print; exit}' \
@@ -114,15 +112,61 @@ buildopt_seed_gradle_distribution() {
         printf 'unsupported Gradle Wrapper distribution: %s\n' "${buildopt_url}" >&2
         return 1
     }
-    buildopt_source="${buildopt_repo_root}/.tools/gradle-user-home/wrapper/dists/${buildopt_distribution}"
-    [[ -d ${buildopt_source} ]] || {
+    printf '%s\n' "${buildopt_distribution}"
+}
+
+buildopt_seed_gradle_distribution() {
+    local buildopt_repository=$1
+    local buildopt_gradle_home=$2
+    local buildopt_distribution buildopt_source_root buildopt_source buildopt_destination
+
+    buildopt_distribution=$(buildopt_gradle_distribution_name "${buildopt_repository}")
+    buildopt_destination="${buildopt_gradle_home}/wrapper/dists/${buildopt_distribution}"
+    mkdir -p -- "${buildopt_destination}"
+    for buildopt_source_root in \
+        "${buildopt_root}/distribution-seed/wrapper/dists" \
+        "${buildopt_repo_root}/.tools/gradle-user-home/wrapper/dists" \
+        "${GRADLE_USER_HOME:-${HOME}/.gradle}/wrapper/dists"; do
+        buildopt_source="${buildopt_source_root}/${buildopt_distribution}"
+        [[ -d ${buildopt_source} ]] || continue
+        [[ ${buildopt_source} != "${buildopt_destination}" ]] || continue
+        cp -a -- "${buildopt_source}/." "${buildopt_destination}/"
+    done
+    find "${buildopt_destination}" -type f -name gradle -perm -u+x -print -quit |
+        grep -q . || {
         printf 'offline Gradle distribution seed is unavailable: %s\n' \
             "${buildopt_distribution}" >&2
         return 1
     }
-    buildopt_destination="${buildopt_gradle_home}/wrapper/dists/${buildopt_distribution}"
-    mkdir -p -- "${buildopt_destination}"
-    cp -a -- "${buildopt_source}/." "${buildopt_destination}/"
+}
+
+buildopt_prepare_gradle_distribution_seed() {
+    local buildopt_repository=$1
+    local buildopt_jdk=$2
+    local buildopt_seed_home="${buildopt_root}/distribution-seed"
+    local buildopt_distribution buildopt_attempt
+
+    buildopt_distribution=$(buildopt_gradle_distribution_name "${buildopt_repository}")
+    if buildopt_seed_gradle_distribution "${buildopt_repository}" \
+        "${buildopt_seed_home}" 2>/dev/null; then
+        return 0
+    fi
+    printf 'Preparing exact %s once before phase timing\n' "${buildopt_distribution}"
+    mkdir -p -- "${buildopt_seed_home}"
+    for buildopt_attempt in 1 2 3; do
+        printf 'Gradle distribution seed attempt %d/3\n' "${buildopt_attempt}"
+        if (
+            cd -- "${buildopt_repository}"
+            env -u CI GRADLE_USER_HOME="${buildopt_seed_home}" \
+                timeout 30m "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+                ./gradlew --version
+        ) >/dev/null 2>&1; then
+            return 0
+        fi
+    done
+    printf 'unable to prepare exact Gradle distribution: %s\n' \
+        "${buildopt_distribution}" >&2
+    return 1
 }
 
 buildopt_capture_cell() {
@@ -181,6 +225,7 @@ buildopt_capture_cell() {
     }
 
     buildopt_jdk=$(jq -r '.jdkToolchain' <<<"${buildopt_cell}")
+    buildopt_prepare_gradle_distribution_seed "${buildopt_repository}" "${buildopt_jdk}"
     buildopt_started=$(date +%s%N)
     buildopt_seed_gradle_distribution "${buildopt_repository}" "${buildopt_gradle_home}"
     (

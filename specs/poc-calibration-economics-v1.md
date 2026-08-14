@@ -31,6 +31,13 @@ inventing an internal split. Checkout is measured but excluded from every
 break-even calculation because both native Gradle and BuildOpt require the
 same source revision.
 
+If the host does not already contain the exact Wrapper distribution, the
+runner downloads it once with up to three bounded attempts before any phase
+clock starts. The measured distribution phase is then the reproducible copy of
+that exact prepared distribution into the private capture home plus one
+offline Wrapper version check. Network latency is deliberately not presented
+as BuildOpt calibration cost.
+
 Warm-up costs and steady-state value are recomputed from the two immutable
 terminal captures already used to qualify each change-breadth cell. They are
 not re-created from logs, and no failed or excluded attempt contributes data.
