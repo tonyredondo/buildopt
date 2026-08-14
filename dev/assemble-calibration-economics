@@ -1,0 +1,164 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# < 2 || $# > 3)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/root CAPTURED_AT [output]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_evidence_root=$1
+buildopt_captured_at=$2
+buildopt_output=${3:-"${buildopt_evidence_root}/summary.json"}
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-calibration-economics-v1.json"
+buildopt_source_root="${buildopt_repo_root}/benchmarks/results/poc-generic-change-breadth-v1"
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-calibration-assemble.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-calibration-assemble."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+mapfile -t buildopt_keys < <(jq -r '.cells[]' "${buildopt_spec}")
+buildopt_rows=()
+for buildopt_key in "${buildopt_keys[@]}"; do
+    buildopt_phase_one="${buildopt_evidence_root}/${buildopt_key}/capture-1/phase.json"
+    buildopt_phase_two="${buildopt_evidence_root}/${buildopt_key}/capture-2/phase.json"
+    buildopt_terminal_one="${buildopt_source_root}/${buildopt_key}/capture-1/evidence.json"
+    buildopt_terminal_two="${buildopt_source_root}/${buildopt_key}/capture-2/evidence.json"
+    buildopt_qualification="${buildopt_source_root}/${buildopt_key}/qualification.json"
+    buildopt_row="${buildopt_temp}/${buildopt_key}.json"
+
+    for buildopt_required in "${buildopt_phase_one}" "${buildopt_phase_two}" \
+        "${buildopt_terminal_one}" "${buildopt_terminal_two}" "${buildopt_qualification}"; do
+        [[ -s ${buildopt_required} ]] || {
+            printf 'calibration source is unavailable: %s\n' "${buildopt_required}" >&2
+            exit 1
+        }
+    done
+
+    jq -n \
+        --slurpfile p1 "${buildopt_phase_one}" \
+        --slurpfile p2 "${buildopt_phase_two}" \
+        --slurpfile e1 "${buildopt_terminal_one}" \
+        --slurpfile e2 "${buildopt_terminal_two}" \
+        --slurpfile q "${buildopt_qualification}" '
+      def mean2($a; $b): (($a + $b) / 2);
+      def warmup($e; $arm; $phase):
+        ($e.execution[$arm] | map(select(.phase == $phase) | .durationMs) | add);
+      def target($e; $arm):
+        ($e.execution[$arm] |
+          map(select(.phase | startswith("TARGET_WORKLOAD_STABILIZATION")) | .durationMs) |
+          add);
+      ($p1[0]) as $a |
+      ($p2[0]) as $b |
+      ($e1[0]) as $one |
+      ($e2[0]) as $two |
+      ($q[0]) as $qualification |
+      mean2($a.phases.repositoryCheckoutMs; $b.phases.repositoryCheckoutMs) as $checkout |
+      mean2($a.phases.offlineGradleDistributionPreparationMs; $b.phases.offlineGradleDistributionPreparationMs) as $distribution |
+      mean2($a.phases.outputPreflightAndStructuralDiscoveryMs; $b.phases.outputPreflightAndStructuralDiscoveryMs) as $discovery |
+      mean2(warmup($one; "controlWarmups"; "CACHE_SEED"); warmup($two; "controlWarmups"; "CACHE_SEED")) as $controlSeed |
+      mean2(warmup($one; "candidateWarmups"; "CACHE_SEED"); warmup($two; "candidateWarmups"; "CACHE_SEED")) as $candidateSeed |
+      mean2(warmup($one; "controlWarmups"; "BASE_DAEMON_STABILIZATION"); warmup($two; "controlWarmups"; "BASE_DAEMON_STABILIZATION")) as $controlDaemon |
+      mean2(warmup($one; "candidateWarmups"; "BASE_DAEMON_STABILIZATION"); warmup($two; "candidateWarmups"; "BASE_DAEMON_STABILIZATION")) as $candidateDaemon |
+      mean2(target($one; "controlWarmups"); target($two; "controlWarmups")) as $controlTarget |
+      mean2(target($one; "candidateWarmups"); target($two; "candidateWarmups")) as $candidateTarget |
+      ($controlSeed + $controlDaemon + $controlTarget) as $controlWarmups |
+      ($candidateSeed + $candidateDaemon + $candidateTarget) as $candidateWarmups |
+      ($discovery + $candidateWarmups) as $installedCost |
+      ($discovery + $controlWarmups + $candidateWarmups) as $validationCost |
+      ($distribution + $validationCost) as $coldCost |
+      ($qualification.result.meanSavedMs) as $saving |
+      {
+        key: $a.cell.key,
+        repositoryId: $a.cell.repositoryId,
+        repositoryRevision: $a.cell.repositoryRevision,
+        workflowFamily: $a.cell.workflowFamily,
+        changeClass: $a.cell.changeClass,
+        changePath: $a.cell.changePath,
+        captures: 2,
+        phasesMs: {
+          repositoryCheckoutMean: $checkout,
+          offlineGradleDistributionPreparationMean: $distribution,
+          outputPreflightAndStructuralDiscoveryMean: $discovery,
+          control: {
+            cacheSeedMean: $controlSeed,
+            baseDaemonStabilizationMean: $controlDaemon,
+            targetWorkloadStabilizationMean: $controlTarget,
+            totalWarmupMean: $controlWarmups
+          },
+          candidate: {
+            cacheSeedMean: $candidateSeed,
+            baseDaemonStabilizationMean: $candidateDaemon,
+            targetWorkloadStabilizationMean: $candidateTarget,
+            totalWarmupMean: $candidateWarmups
+          }
+        },
+        steadyState: {
+          controlMeanMs: $qualification.result.controlMeanMs,
+          candidateMeanMs: $qualification.result.candidateMeanMs,
+          meanSavedMs: $saving,
+          reductionRatio: $qualification.result.reductionRatio,
+          positiveBlocks: $qualification.result.positiveBlocks,
+          blocks: $qualification.result.blocks
+        },
+        economics: {
+          installedWorkflow: {
+            calibrationCostMs: $installedCost,
+            exactBreakEvenBuilds: ($installedCost / $saving),
+            breakEvenBuilds: (($installedCost / $saving) | ceil)
+          },
+          pocValidation: {
+            calibrationCostMs: $validationCost,
+            exactBreakEvenBuilds: ($validationCost / $saving),
+            breakEvenBuilds: (($validationCost / $saving) | ceil)
+          },
+          coldSingleWorkflow: {
+            calibrationCostMs: $coldCost,
+            exactBreakEvenBuilds: ($coldCost / $saving),
+            breakEvenBuilds: (($coldCost / $saving) | ceil)
+          }
+        },
+        sourceBindings: {
+          phaseCaptureSha256: [$a.captureSha256, $b.captureSha256],
+          terminalEvidenceSha256: [$a.sourceBindings.terminalEvidenceSha256, $b.sourceBindings.terminalEvidenceSha256],
+          qualificationSha256: $a.sourceBindings.qualificationSha256
+        }
+      }
+    ' >"${buildopt_row}"
+    buildopt_rows+=("${buildopt_row}")
+done
+
+jq -s \
+    --arg capturedAt "${buildopt_captured_at}" \
+    --slurpfile spec "${buildopt_spec}" '
+  {
+    schemaVersion: "buildopt.evidence/poc-calibration-economics/v1",
+    workItem: $spec[0].workItem,
+    capturedAt: $capturedAt,
+    buildopt: {
+      revision: $spec[0].source.buildoptRevision,
+      executableSha256: $spec[0].source.executableSha256
+    },
+    method: {
+      capturesPerCell: $spec[0].runner.capturesPerCell,
+      breakEvenFormula: $spec[0].economics.breakEvenFormula,
+      percentagesAveragedAcrossCells: false,
+      repositoryCheckoutIncludedInBreakEven: false,
+      publicReleaseInstallMeasured: false
+    },
+    cells: .,
+    aggregation: {
+      cellCount: length,
+      phaseCaptureCount: (length * $spec[0].runner.capturesPerCell),
+      terminalCellsQualified: ([.[] | select(.steadyState.meanSavedMs > 0)] | length),
+      cellPercentagesAveraged: false,
+      cellBreakEvenCountsAveraged: false
+    },
+    boundaries: $spec[0].boundaries
+  }
+' "${buildopt_rows[@]}" >"${buildopt_output}"

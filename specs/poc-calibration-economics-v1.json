@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "buildopt.specs/poc-calibration-economics/v1",
+  "workItem": "POC-CALIBRATION-ECONOMICS-001",
+  "source": {
+    "changeBreadthSpec": "specs/poc-generic-change-breadth-v1.json",
+    "changeBreadthEvidence": "benchmarks/results/poc-generic-change-breadth-v1",
+    "buildoptRevision": "706ee5480fd24aade078565925ec853d7ae67de7",
+    "executableSha256": "cf2107fbc269af4dd46c5acdd6f8f4dc8d12e3df7f1882f3d9764672d48d89af"
+  },
+  "runner": {
+    "platform": "linux-amd64",
+    "cpuCount": 12,
+    "capturesPerCell": 2,
+    "clock": "EXTERNAL_WALL_CLOCK_NANOSECONDS",
+    "gradleMode": "OFFLINE_AFTER_PUBLIC_REVISION_FETCH",
+    "maxWorkers": 12,
+    "perCommandTimeout": "30m"
+  },
+  "cells": [
+    "apache-groovy-jar-leaf-source",
+    "apache-groovy-jar-shared-source",
+    "apache-kafka-checkstyle-metadata-source",
+    "apache-kafka-checkstyle-client-utils-source",
+    "apache-kafka-shadow-clients-source",
+    "apache-kafka-shadow-generator-source"
+  ],
+  "phases": {
+    "repositoryCheckout": {
+      "measured": true,
+      "includedInBreakEven": false,
+      "reason": "The same immutable repository revision is required by native Gradle and BuildOpt."
+    },
+    "offlineGradleDistributionPreparation": {
+      "measured": true,
+      "includedInInstalledBreakEven": false,
+      "includedInColdSingleWorkflowBreakEven": true
+    },
+    "outputPreflightAndStructuralDiscovery": {
+      "measured": true,
+      "command": "buildopt profile propose",
+      "combinedBecausePublicCommandRunsBoth": true
+    },
+    "cacheSeed": {
+      "source": "terminal change-breadth warmup evidence",
+      "arms": ["CONTROL", "CANDIDATE"]
+    },
+    "baseDaemonStabilization": {
+      "source": "terminal change-breadth warmup evidence",
+      "arms": ["CONTROL", "CANDIDATE"]
+    },
+    "targetWorkloadStabilization": {
+      "source": "terminal change-breadth warmup evidence",
+      "confirmationsPerArm": 3,
+      "arms": ["CONTROL", "CANDIDATE"]
+    },
+    "steadyState": {
+      "source": "terminal balanced change-breadth qualification",
+      "capturesPerCell": 2,
+      "pairsPerCell": 16,
+      "blocksPerCell": 8
+    }
+  },
+  "economics": {
+    "installedWorkflow": {
+      "cost": [
+        "outputPreflightAndStructuralDiscovery",
+        "candidateCacheSeed",
+        "candidateBaseDaemonStabilization",
+        "candidateTargetWorkloadStabilization"
+      ],
+      "excludes": [
+        "repositoryCheckout",
+        "offlineGradleDistributionPreparation",
+        "controlWarmups"
+      ]
+    },
+    "pocValidation": {
+      "cost": [
+        "outputPreflightAndStructuralDiscovery",
+        "controlWarmups",
+        "candidateWarmups"
+      ],
+      "excludes": [
+        "repositoryCheckout",
+        "offlineGradleDistributionPreparation"
+      ]
+    },
+    "coldSingleWorkflow": {
+      "cost": [
+        "offlineGradleDistributionPreparation",
+        "outputPreflightAndStructuralDiscovery",
+        "controlWarmups",
+        "candidateWarmups"
+      ],
+      "excludes": ["repositoryCheckout"]
+    },
+    "breakEvenFormula": "CEIL(CALIBRATION_COST_MS / TERMINAL_MEAN_SAVED_MS)",
+    "percentagesMayBeAveragedAcrossCells": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "publicReleaseInstallMeasured": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

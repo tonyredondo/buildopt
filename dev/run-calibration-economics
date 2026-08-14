@@ -1,0 +1,373 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# < 1 || $# > 3)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/root [cell-key] [capture-index]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_evidence_root=$1
+buildopt_filter=${2:-}
+buildopt_capture_filter=${3:-}
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-calibration-economics-v1.json"
+buildopt_source_spec="${buildopt_repo_root}/specs/poc-generic-change-breadth-v1.json"
+buildopt_source_root="${buildopt_repo_root}/benchmarks/results/poc-generic-change-breadth-v1"
+
+if [[ -n ${buildopt_capture_filter} && ${buildopt_capture_filter} != 1 && \
+    ${buildopt_capture_filter} != 2 ]]; then
+    printf 'capture index must be 1 or 2\n' >&2
+    exit 64
+fi
+if [[ -n ${buildopt_filter} && \
+    $(jq --arg key "${buildopt_filter}" '[.cells[] | select(. == $key)] | length' \
+        "${buildopt_spec}") -ne 1 ]]; then
+    printf 'calibration cell is absent or ambiguous: %s\n' "${buildopt_filter}" >&2
+    exit 64
+fi
+[[ -z $(git -C "${buildopt_repo_root}" status --porcelain --untracked-files=no) ]] || {
+    printf 'BuildOpt tracked state must be clean before calibration capture\n' >&2
+    exit 1
+}
+
+for buildopt_command in awk cp date git jq perl sha256sum tar timeout; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'required calibration command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-calibration.XXXXXX")
+buildopt_cleanup() {
+    if [[ ${buildopt_root} == "${TMPDIR:-/tmp}/buildopt-calibration."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+mkdir -p -- "${buildopt_evidence_root}"
+
+buildopt_revision=$(jq -er '.source.buildoptRevision' "${buildopt_spec}")
+buildopt_expected_executable_sha=$(jq -er '.source.executableSha256' "${buildopt_spec}")
+buildopt_source_checkout="${buildopt_root}/buildopt-source"
+git clone -q --no-hardlinks "${buildopt_repo_root}" "${buildopt_source_checkout}"
+git -C "${buildopt_source_checkout}" checkout -q --detach "${buildopt_revision}"
+ln -s -- "${buildopt_repo_root}/.tools" "${buildopt_source_checkout}/.tools"
+mkdir -p -- "${buildopt_root}/package" "${buildopt_root}/release" "${buildopt_root}/install"
+env BUILDOPT_TOOLS_ROOT="${buildopt_repo_root}/.tools" \
+    GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home" \
+    "${buildopt_source_checkout}/packaging/linux/package.sh" \
+        --version 0.3.0-dev --output "${buildopt_root}/package" >/dev/null
+tar -xzf "${buildopt_root}/package/buildopt-0.3.0-dev-linux-amd64.tar.gz" \
+    -C "${buildopt_root}/release"
+"${buildopt_root}/release/buildopt-0.3.0-dev-linux-amd64/install.sh" \
+    --prefix "${buildopt_root}/install" >/dev/null
+buildopt_executable="${buildopt_root}/install/bin/buildopt"
+buildopt_executable_sha=$(sha256sum "${buildopt_executable}" | awk '{print $1}')
+[[ ${buildopt_executable_sha} == "${buildopt_expected_executable_sha}" ]] || {
+    printf 'calibration executable differs from terminal evidence: expected=%s actual=%s\n' \
+        "${buildopt_expected_executable_sha}" "${buildopt_executable_sha}" >&2
+    exit 1
+}
+
+buildopt_mutate_repository() {
+    local buildopt_mutation=$1
+    local buildopt_repository=$2
+    local buildopt_change_path=$3
+    local buildopt_marker=$4
+
+    case "${buildopt_mutation}" in
+        ADD_PACKAGE_PRIVATE_MARKER_RETURNING_ONE)
+            perl -0pi -e 's/\n}\n\z/\n\n    int buildOptPocMarker() {\n        return 1;\n    }\n}\n/' \
+                "${buildopt_repository}/${buildopt_change_path}"
+            ;;
+        APPEND_FIXED_COMMENT)
+            printf '\n// buildopt-poc-%s\n' "${buildopt_marker}" \
+                >>"${buildopt_repository}/${buildopt_change_path}"
+            ;;
+        APPEND_FIXED_HASH_COMMENT)
+            printf '\n# buildopt-poc-%s\n' "${buildopt_marker}" \
+                >>"${buildopt_repository}/${buildopt_change_path}"
+            ;;
+        *)
+            printf 'unsupported calibration mutation: %s\n' "${buildopt_mutation}" >&2
+            return 1
+            ;;
+    esac
+}
+
+buildopt_seed_gradle_distribution() {
+    local buildopt_repository=$1
+    local buildopt_gradle_home=$2
+    local buildopt_properties buildopt_url buildopt_archive buildopt_distribution
+    local buildopt_source buildopt_destination
+
+    buildopt_properties="${buildopt_repository}/gradle/wrapper/gradle-wrapper.properties"
+    buildopt_url=$(awk -F= '$1 == "distributionUrl" {sub(/^[^=]*=/, ""); print; exit}' \
+        "${buildopt_properties}")
+    buildopt_url=${buildopt_url//\\:/:}
+    buildopt_archive=${buildopt_url%%\?*}
+    buildopt_archive=${buildopt_archive##*/}
+    buildopt_distribution=${buildopt_archive%.zip}
+    [[ ${buildopt_distribution} =~ ^gradle-[0-9][0-9.]*-(bin|all)$ ]] || {
+        printf 'unsupported Gradle Wrapper distribution: %s\n' "${buildopt_url}" >&2
+        return 1
+    }
+    buildopt_source="${buildopt_repo_root}/.tools/gradle-user-home/wrapper/dists/${buildopt_distribution}"
+    [[ -d ${buildopt_source} ]] || {
+        printf 'offline Gradle distribution seed is unavailable: %s\n' \
+            "${buildopt_distribution}" >&2
+        return 1
+    }
+    buildopt_destination="${buildopt_gradle_home}/wrapper/dists/${buildopt_distribution}"
+    mkdir -p -- "${buildopt_destination}"
+    cp -a -- "${buildopt_source}/." "${buildopt_destination}/"
+}
+
+buildopt_capture_cell() {
+    local buildopt_key=$1
+    local buildopt_capture=$2
+    local buildopt_cell buildopt_cell_root buildopt_repository buildopt_gradle_home
+    local buildopt_destination buildopt_phase_file buildopt_value
+    local buildopt_started buildopt_finished buildopt_checkout_ms buildopt_distribution_ms
+    local buildopt_fixture_ms buildopt_discovery_ms buildopt_base buildopt_target
+    local buildopt_change_path buildopt_mutation buildopt_jdk buildopt_contract
+    local buildopt_proposal buildopt_output_contract buildopt_output_equivalence
+    local buildopt_distribution_log buildopt_proposal_log buildopt_payload
+    local buildopt_capture_sha buildopt_distribution_log_sha buildopt_proposal_log_sha
+    local buildopt_proposal_sha buildopt_output_contract_sha buildopt_output_equivalence_sha
+    local buildopt_terminal buildopt_qualification buildopt_terminal_sha buildopt_qualification_sha
+    local -a buildopt_entrypoint_args=() buildopt_output_args=()
+
+    buildopt_cell=$(jq -c --arg key "${buildopt_key}" \
+        '.repositories[] | select(.key == $key and .performanceClaim)' \
+        "${buildopt_source_spec}")
+    [[ -n ${buildopt_cell} ]] || {
+        printf 'selective source cell is unavailable: %s\n' "${buildopt_key}" >&2
+        return 1
+    }
+    buildopt_destination="${buildopt_evidence_root}/${buildopt_key}/capture-${buildopt_capture}"
+    buildopt_phase_file="${buildopt_destination}/phase.json"
+    if [[ -s ${buildopt_phase_file} ]]; then
+        printf 'Calibration capture already exists; preserving %s\n' \
+            "${buildopt_destination}"
+        return 0
+    fi
+    [[ ! -e ${buildopt_destination} ]] || {
+        printf 'incomplete calibration capture exists: %s\n' "${buildopt_destination}" >&2
+        return 1
+    }
+
+    buildopt_cell_root="${buildopt_root}/cell-${buildopt_key}-${buildopt_capture}"
+    buildopt_repository="${buildopt_cell_root}/repository"
+    buildopt_gradle_home="${buildopt_cell_root}/gradle-home"
+    buildopt_distribution_log="${buildopt_cell_root}/distribution.log"
+    buildopt_proposal_log="${buildopt_cell_root}/proposal.log"
+    mkdir -p -- "${buildopt_repository}" "${buildopt_gradle_home}"
+
+    buildopt_started=$(date +%s%N)
+    git -C "${buildopt_repository}" init -q
+    git -C "${buildopt_repository}" remote add origin "$(jq -r '.remoteUrl' <<<"${buildopt_cell}")"
+    git -C "${buildopt_repository}" fetch --depth=1 origin \
+        "$(jq -r '.publicRevision' <<<"${buildopt_cell}")" >/dev/null
+    git -C "${buildopt_repository}" checkout -q --detach FETCH_HEAD
+    buildopt_finished=$(date +%s%N)
+    buildopt_checkout_ms=$(((buildopt_finished - buildopt_started) / 1000000))
+    buildopt_base=$(git -C "${buildopt_repository}" rev-parse HEAD)
+    [[ ${buildopt_base} == "$(jq -r '.publicRevision' <<<"${buildopt_cell}")" ]] || {
+        printf 'public revision drifted for %s\n' "${buildopt_key}" >&2
+        return 1
+    }
+
+    buildopt_jdk=$(jq -r '.jdkToolchain' <<<"${buildopt_cell}")
+    buildopt_started=$(date +%s%N)
+    buildopt_seed_gradle_distribution "${buildopt_repository}" "${buildopt_gradle_home}"
+    (
+        cd -- "${buildopt_repository}"
+        env -u CI GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            timeout 30m "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+            ./gradlew --offline --version
+    ) >"${buildopt_distribution_log}" 2>&1
+    buildopt_finished=$(date +%s%N)
+    buildopt_distribution_ms=$(((buildopt_finished - buildopt_started) / 1000000))
+
+    buildopt_change_path=$(jq -r '.changePath' <<<"${buildopt_cell}")
+    [[ $(sha256sum "${buildopt_repository}/${buildopt_change_path}" | awk '{print $1}') == \
+        "$(jq -r '.changeOriginalSha256' <<<"${buildopt_cell}")" ]] || {
+        printf 'frozen calibration input drifted: %s\n' "${buildopt_key}" >&2
+        return 1
+    }
+    buildopt_mutation=$(jq -r '.mutation' <<<"${buildopt_cell}")
+    buildopt_started=$(date +%s%N)
+    buildopt_mutate_repository "${buildopt_mutation}" "${buildopt_repository}" \
+        "${buildopt_change_path}" "${buildopt_key}"
+    git -C "${buildopt_repository}" config user.name 'BuildOpt POC'
+    git -C "${buildopt_repository}" config user.email 'buildopt-poc@example.invalid'
+    git -C "${buildopt_repository}" config commit.gpgsign false
+    git -C "${buildopt_repository}" add "${buildopt_change_path}"
+    GIT_AUTHOR_DATE='2026-08-10T00:00:00Z' \
+        GIT_COMMITTER_DATE='2026-08-10T00:00:00Z' \
+        git -C "${buildopt_repository}" commit -qm 'Apply frozen BuildOpt matrix mutation'
+    buildopt_target=$(git -C "${buildopt_repository}" rev-parse HEAD)
+    printf '%s\n' "${buildopt_change_path}" >"${buildopt_repository}/buildopt-changes.txt"
+    buildopt_contract=$(jq -r '.outputEquivalenceContract' <<<"${buildopt_cell}")
+    buildopt_output_equivalence="${buildopt_repository}/buildopt-output-equivalence.json"
+    cp -- "${buildopt_repo_root}/${buildopt_contract}" \
+        "${buildopt_output_equivalence}"
+    buildopt_finished=$(date +%s%N)
+    buildopt_fixture_ms=$(((buildopt_finished - buildopt_started) / 1000000))
+
+    while IFS= read -r buildopt_value; do
+        buildopt_entrypoint_args+=(--entrypoint "${buildopt_value}")
+    done < <(jq -r '.entrypoints[]' <<<"${buildopt_cell}")
+    while IFS= read -r buildopt_value; do
+        buildopt_output_args+=(--required-output "${buildopt_value}")
+    done < <(jq -r '.requiredOutputs[]' <<<"${buildopt_cell}")
+
+    buildopt_started=$(date +%s%N)
+    (
+        cd -- "${buildopt_repository}"
+        env -u CI GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            timeout 30m "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+            "${buildopt_executable}" profile propose \
+            --repository-id "$(jq -r '.repositoryId' <<<"${buildopt_cell}")" \
+            --pipeline-class "$(jq -r '.pipelineClass' <<<"${buildopt_cell}")" \
+            "${buildopt_entrypoint_args[@]}" \
+            --changes-file buildopt-changes.txt --base-revision "${buildopt_base}" \
+            "${buildopt_output_args[@]}" \
+            --output-equivalence buildopt-output-equivalence.json \
+            --gradle-option=--no-configuration-cache \
+            --gradle-option=--no-scan --gradle-option=--max-workers=12 \
+            --buildopt-revision "${buildopt_revision}" --timeout 30m
+    ) >"${buildopt_proposal_log}" 2>&1
+    buildopt_finished=$(date +%s%N)
+    buildopt_discovery_ms=$(((buildopt_finished - buildopt_started) / 1000000))
+    buildopt_proposal="${buildopt_repository}/buildopt-profile-proposal.json"
+    jq -e --argjson expected "$(jq -c '.expectedCandidateEntrypoints' <<<"${buildopt_cell}")" '
+      .decision == "MEASURE_STRUCTURAL_CANDIDATE" and
+      .reason == "COMPLETE_STRUCTURAL_REDUCTION" and
+      .candidateEntrypoints == $expected and
+      .reviewRequired == true and .activationAutomatic == false and
+      .productionAuthorized == false
+    ' "${buildopt_proposal}" >/dev/null
+    buildopt_output_contract="${buildopt_repository}/buildopt-output-contract.json"
+    jq -e '
+      .decision == "VALIDATED_REQUIRED_OUTPUTS" and
+      all(.validations[]; .status == "VALIDATED" and .matchedFiles > 0)
+    ' "${buildopt_output_contract}" >/dev/null
+
+    buildopt_terminal="${buildopt_source_root}/${buildopt_key}/capture-${buildopt_capture}/evidence.json"
+    buildopt_qualification="${buildopt_source_root}/${buildopt_key}/qualification.json"
+    buildopt_terminal_sha=$(sha256sum "${buildopt_terminal}" | awk '{print $1}')
+    buildopt_qualification_sha=$(sha256sum "${buildopt_qualification}" | awk '{print $1}')
+    buildopt_distribution_log_sha=$(sha256sum "${buildopt_distribution_log}" | awk '{print $1}')
+    buildopt_proposal_log_sha=$(sha256sum "${buildopt_proposal_log}" | awk '{print $1}')
+    buildopt_proposal_sha=$(sha256sum "${buildopt_proposal}" | awk '{print $1}')
+    buildopt_output_contract_sha=$(sha256sum "${buildopt_output_contract}" | awk '{print $1}')
+    buildopt_output_equivalence_sha=$(sha256sum "${buildopt_output_equivalence}" | awk '{print $1}')
+    buildopt_payload="${buildopt_cell_root}/capture-payload.json"
+    jq -n \
+        --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+        --arg key "${buildopt_key}" --argjson capture "${buildopt_capture}" \
+        --arg revision "${buildopt_revision}" --arg executable "${buildopt_executable_sha}" \
+        --arg repositoryId "$(jq -r '.repositoryId' <<<"${buildopt_cell}")" \
+        --arg repositoryRevision "${buildopt_base}" --arg targetRevision "${buildopt_target}" \
+        --arg workflowFamily "$(jq -r '.workflowFamily' <<<"${buildopt_cell}")" \
+        --arg changeClass "$(jq -r '.changeClass' <<<"${buildopt_cell}")" \
+        --arg changePath "${buildopt_change_path}" \
+        --argjson checkout "${buildopt_checkout_ms}" \
+        --argjson distribution "${buildopt_distribution_ms}" \
+        --argjson fixture "${buildopt_fixture_ms}" \
+        --argjson discovery "${buildopt_discovery_ms}" \
+        --argjson proposal "$(jq '{decision,reason,originalEntrypoints,candidateEntrypoints}' "${buildopt_proposal}")" \
+        --arg terminalSha "${buildopt_terminal_sha}" \
+        --arg qualificationSha "${buildopt_qualification_sha}" \
+        --arg distributionLogSha "${buildopt_distribution_log_sha}" \
+        --arg proposalLogSha "${buildopt_proposal_log_sha}" \
+        --arg proposalSha "${buildopt_proposal_sha}" \
+        --arg outputContractSha "${buildopt_output_contract_sha}" \
+        --arg outputEquivalenceSha "${buildopt_output_equivalence_sha}" '
+      {
+        schemaVersion: "buildopt.evidence/poc-calibration-phase/v1",
+        workItem: "POC-CALIBRATION-ECONOMICS-001",
+        capturedAt: $capturedAt,
+        captureIndex: $capture,
+        buildopt: {revision: $revision, executableSha256: $executable},
+        cell: {
+          key: $key, repositoryId: $repositoryId,
+          repositoryRevision: $repositoryRevision, targetRevision: $targetRevision,
+          workflowFamily: $workflowFamily, changeClass: $changeClass,
+          changePath: $changePath
+        },
+        phases: {
+          repositoryCheckoutMs: $checkout,
+          offlineGradleDistributionPreparationMs: $distribution,
+          fixturePreparationMs: $fixture,
+          outputPreflightAndStructuralDiscoveryMs: $discovery
+        },
+        proposal: $proposal,
+        sourceBindings: {
+          terminalEvidenceSha256: $terminalSha,
+          qualificationSha256: $qualificationSha,
+          artifacts: {
+            distributionLog: {path: "distribution.log", sha256: $distributionLogSha},
+            proposalLog: {path: "proposal.log", sha256: $proposalLogSha},
+            proposal: {path: "proposal.json", sha256: $proposalSha},
+            outputContract: {path: "output-contract.json", sha256: $outputContractSha},
+            outputEquivalence: {path: "output-equivalence.json", sha256: $outputEquivalenceSha}
+          }
+        },
+        boundaries: {
+          timingClaim: false,
+          repositoryCheckoutIncludedInBreakEven: false,
+          publicReleaseInstallMeasured: false,
+          automaticActivation: false,
+          productionAuthorized: false,
+          testOptimizationModified: false
+        }
+      }
+    ' >"${buildopt_payload}"
+    buildopt_capture_sha=$(sha256sum "${buildopt_payload}" | awk '{print $1}')
+    mkdir -p -- "${buildopt_destination}"
+    cp -- "${buildopt_distribution_log}" "${buildopt_destination}/distribution.log"
+    cp -- "${buildopt_proposal_log}" "${buildopt_destination}/proposal.log"
+    cp -- "${buildopt_proposal}" "${buildopt_destination}/proposal.json"
+    cp -- "${buildopt_output_contract}" "${buildopt_destination}/output-contract.json"
+    cp -- "${buildopt_output_equivalence}" "${buildopt_destination}/output-equivalence.json"
+    jq --arg sha "${buildopt_capture_sha}" '. + {captureSha256: $sha}' \
+        "${buildopt_payload}" >"${buildopt_phase_file}"
+    if [[ ${buildopt_cell_root} == "${buildopt_root}/cell-"* ]]; then
+        rm -rf -- "${buildopt_cell_root}"
+    fi
+    printf 'Captured %s %d/2: distribution=%dms discovery=%dms\n' \
+        "${buildopt_key}" "${buildopt_capture}" \
+        "${buildopt_distribution_ms}" "${buildopt_discovery_ms}"
+}
+
+mapfile -t buildopt_keys < <(jq -r '.cells[]' "${buildopt_spec}")
+for buildopt_key in "${buildopt_keys[@]}"; do
+    [[ -z ${buildopt_filter} || ${buildopt_key} == "${buildopt_filter}" ]] || continue
+    for buildopt_capture in 1 2; do
+        [[ -z ${buildopt_capture_filter} || ${buildopt_capture} == \
+            "${buildopt_capture_filter}" ]] || continue
+        buildopt_capture_cell "${buildopt_key}" "${buildopt_capture}"
+    done
+done
+
+buildopt_complete=true
+for buildopt_key in "${buildopt_keys[@]}"; do
+    for buildopt_capture in 1 2; do
+        [[ -s ${buildopt_evidence_root}/${buildopt_key}/capture-${buildopt_capture}/phase.json ]] || \
+            buildopt_complete=false
+    done
+done
+if [[ ${buildopt_complete} == false ]]; then
+    printf 'Calibration evidence is partial; resume remaining captures.\n'
+    exit 0
+fi
+
+"${buildopt_script_dir}/assemble-calibration-economics" \
+    "${buildopt_evidence_root}" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+"${buildopt_script_dir}/check-calibration-economics-result" \
+    "${buildopt_evidence_root}"

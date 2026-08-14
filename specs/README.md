@@ -565,6 +565,16 @@ improve. Outputs, tails, task shapes, 12 selective fallbacks and zero-failure
 gates pass. The four build-logic/global cells retain native Gradle in all eight
 captures and make no timing claim. The result remains review-only POC evidence.
 
+`poc-calibration-economics-v1.json` and
+`poc-calibration-economics-v1.md` preregister the first-run economics follow-up
+for all six qualified change-breadth cells. Two fresh captures per cell time
+repository checkout, exact offline Wrapper preparation, fixture preparation,
+and the real combined `buildopt profile propose` preflight/discovery command.
+The assembler then binds the existing immutable control/candidate warm-ups and
+terminal savings. It reports installed-workflow, complete POC-validation, and
+conservative cold-single-workflow break-even separately for every cell; it
+never averages unrelated percentages or hides setup inside terminal pairs.
+
 The retained [v5 evidence](../benchmarks/results/poc-generic-holdout-v5/README.md)
 passes that unchanged contract: native averages 216.724 seconds and BuildOpt
 203.991 seconds, saving 12.733 seconds/5.88% with interval

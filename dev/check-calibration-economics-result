@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [/absolute/evidence/root]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence_root=${1:-"${buildopt_repo_root}/benchmarks/results/poc-calibration-economics-v1"}
+buildopt_spec="${buildopt_repo_root}/specs/poc-calibration-economics-v1.json"
+buildopt_source_spec="${buildopt_repo_root}/specs/poc-generic-change-breadth-v1.json"
+buildopt_source_root="${buildopt_repo_root}/benchmarks/results/poc-generic-change-breadth-v1"
+buildopt_summary="${buildopt_evidence_root}/summary.json"
+[[ ${buildopt_evidence_root} == /* ]] || {
+    printf 'evidence root must be absolute\n' >&2
+    exit 64
+}
+
+"${buildopt_script_dir}/check-calibration-economics" >/dev/null
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-calibration-economics/v1" and
+  .workItem == "POC-CALIBRATION-ECONOMICS-001" and
+  (.capturedAt | test("Z$")) and
+  (.cells | length) == 6 and
+  .aggregation.cellCount == 6 and .aggregation.phaseCaptureCount == 12 and
+  .aggregation.terminalCellsQualified == 6 and
+  .aggregation.cellPercentagesAveraged == false and
+  .aggregation.cellBreakEvenCountsAveraged == false and
+  all(.cells[];
+    .captures == 2 and
+    .phasesMs.repositoryCheckoutMean > 0 and
+    .phasesMs.offlineGradleDistributionPreparationMean > 0 and
+    .phasesMs.outputPreflightAndStructuralDiscoveryMean > 0 and
+    .phasesMs.control.cacheSeedMean > 0 and
+    .phasesMs.control.baseDaemonStabilizationMean > 0 and
+    .phasesMs.control.targetWorkloadStabilizationMean > 0 and
+    .phasesMs.candidate.cacheSeedMean > 0 and
+    .phasesMs.candidate.baseDaemonStabilizationMean > 0 and
+    .phasesMs.candidate.targetWorkloadStabilizationMean > 0 and
+    .steadyState.meanSavedMs > 0 and
+    .economics.installedWorkflow.breakEvenBuilds >= 1 and
+    .economics.pocValidation.breakEvenBuilds >= .economics.installedWorkflow.breakEvenBuilds and
+    .economics.coldSingleWorkflow.breakEvenBuilds >= .economics.pocValidation.breakEvenBuilds) and
+  .boundaries.proofOfConcept == true and
+  .boundaries.productionAuthorized == false and
+  .boundaries.automaticActivation == false and
+  .boundaries.testOptimizationModified == false
+' "${buildopt_summary}" >/dev/null
+
+mapfile -t buildopt_keys < <(jq -r '.cells[]' "${buildopt_spec}")
+for buildopt_key in "${buildopt_keys[@]}"; do
+    for buildopt_capture in 1 2; do
+        buildopt_capture_root="${buildopt_evidence_root}/${buildopt_key}/capture-${buildopt_capture}"
+        buildopt_file="${buildopt_capture_root}/phase.json"
+        jq -e \
+            --arg key "${buildopt_key}" \
+            --argjson capture "${buildopt_capture}" \
+            --slurpfile spec "${buildopt_spec}" \
+            --slurpfile source "${buildopt_source_spec}" '
+          ($source[0].repositories | map(select(.key == $key and .performanceClaim)) | first) as $cell |
+          .schemaVersion == "buildopt.evidence/poc-calibration-phase/v1" and
+          .workItem == $spec[0].workItem and .cell.key == $key and
+          .captureIndex == $capture and
+          .buildopt.revision == $spec[0].source.buildoptRevision and
+          .buildopt.executableSha256 == $spec[0].source.executableSha256 and
+          .cell.repositoryId == $cell.repositoryId and
+          .cell.repositoryRevision == $cell.publicRevision and
+          .cell.workflowFamily == $cell.workflowFamily and
+          .cell.changeClass == $cell.changeClass and
+          .cell.changePath == $cell.changePath and
+          .phases.repositoryCheckoutMs > 0 and
+          .phases.offlineGradleDistributionPreparationMs > 0 and
+          .phases.outputPreflightAndStructuralDiscoveryMs > 0 and
+          .proposal.decision == "MEASURE_STRUCTURAL_CANDIDATE" and
+          .proposal.reason == "COMPLETE_STRUCTURAL_REDUCTION" and
+          .proposal.candidateEntrypoints == $cell.expectedCandidateEntrypoints and
+          (.captureSha256 | test("^[0-9a-f]{64}$")) and
+          (.sourceBindings.terminalEvidenceSha256 | test("^[0-9a-f]{64}$")) and
+          (.sourceBindings.qualificationSha256 | test("^[0-9a-f]{64}$")) and
+          (.sourceBindings.artifacts | keys | sort) ==
+            (["distributionLog", "outputContract", "outputEquivalence", "proposal", "proposalLog"] | sort) and
+          all(.sourceBindings.artifacts[];
+            (.path | test("^[a-z-]+\\.(json|log)$")) and
+            (.sha256 | test("^[0-9a-f]{64}$"))) and
+          .boundaries.timingClaim == false and
+          .boundaries.repositoryCheckoutIncludedInBreakEven == false
+        ' "${buildopt_file}" >/dev/null
+        buildopt_payload_sha=$(jq 'del(.captureSha256)' "${buildopt_file}" | \
+            sha256sum | awk '{print $1}')
+        [[ ${buildopt_payload_sha} == "$(jq -er '.captureSha256' "${buildopt_file}")" ]] || {
+            printf 'calibration phase payload hash differs: %s\n' "${buildopt_file}" >&2
+            exit 1
+        }
+        buildopt_terminal="${buildopt_source_root}/${buildopt_key}/capture-${buildopt_capture}/evidence.json"
+        buildopt_qualification="${buildopt_source_root}/${buildopt_key}/qualification.json"
+        [[ $(sha256sum "${buildopt_terminal}" | awk '{print $1}') == \
+            "$(jq -er '.sourceBindings.terminalEvidenceSha256' "${buildopt_file}")" ]] || {
+            printf 'terminal evidence binding differs: %s\n' "${buildopt_file}" >&2
+            exit 1
+        }
+        [[ $(sha256sum "${buildopt_qualification}" | awk '{print $1}') == \
+            "$(jq -er '.sourceBindings.qualificationSha256' "${buildopt_file}")" ]] || {
+            printf 'qualification binding differs: %s\n' "${buildopt_file}" >&2
+            exit 1
+        }
+        while IFS=$'\t' read -r buildopt_artifact buildopt_artifact_sha; do
+            [[ $(sha256sum "${buildopt_capture_root}/${buildopt_artifact}" | awk '{print $1}') == \
+                "${buildopt_artifact_sha}" ]] || {
+                printf 'calibration phase artifact hash differs: %s/%s\n' \
+                    "${buildopt_capture_root}" "${buildopt_artifact}" >&2
+                exit 1
+            }
+        done < <(jq -r '.sourceBindings.artifacts[] | [.path, .sha256] | @tsv' \
+            "${buildopt_file}")
+    done
+done
+
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-calibration-result.XXXXXX")
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-calibration-result."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+"${buildopt_script_dir}/assemble-calibration-economics" \
+    "${buildopt_evidence_root}" "$(jq -er '.capturedAt' "${buildopt_summary}")" \
+    "${buildopt_temp}/summary.json"
+cmp -s "${buildopt_summary}" "${buildopt_temp}/summary.json" || {
+    printf 'calibration economics summary does not recompute\n' >&2
+    exit 1
+}
+
+printf 'Calibration economics evidence OK: %s\n' "${buildopt_summary}"

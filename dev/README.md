@@ -3540,6 +3540,24 @@ product failures remain zero. All eight build-logic/global captures retain the
 native graph and emit no candidate artifacts. The terminal result is
 [versioned beside the benchmark](../benchmarks/results/poc-generic-change-breadth-v1/README.md).
 
+`./dev/check-calibration-economics` validates the preregistered follow-up that
+separates first-run calibration work from the already-qualified steady-state
+value. The runner writes two fresh phase captures for each of the six selective
+change-breadth cells and keeps proposal/preflight artifacts beside their
+SHA-256-bound phase record:
+
+```bash
+./dev/run-calibration-economics \
+  "$(pwd)/benchmarks/results/poc-calibration-economics-v1"
+./dev/check-calibration-economics-result
+```
+
+The summary reports three cell-specific break-even views. Checkout stays
+visible but is excluded as shared native/BuildOpt work; public-release download
+is not measured. The runner removes each temporary public checkout after its
+capture so the full matrix remains bounded by one active subject plus the
+installed exact BuildOpt revision.
+
 `./dev/check-generic-profile-ci-replay` validates the manual clean-runner
 replay without cloning public repositories. It reconstructs retained Action
 artifacts for all five subjects, requires five semantic and byte-level graph

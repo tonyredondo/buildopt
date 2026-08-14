@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-calibration-economics-v1.json"
+buildopt_source_spec="${buildopt_repo_root}/specs/poc-generic-change-breadth-v1.json"
+buildopt_source_summary="${buildopt_repo_root}/benchmarks/results/poc-generic-change-breadth-v1/summary.json"
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'required calibration checker is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-calibration-economics/v1" and
+  .workItem == "POC-CALIBRATION-ECONOMICS-001" and
+  (.source.buildoptRevision | test("^[0-9a-f]{40}$")) and
+  (.source.executableSha256 | test("^[0-9a-f]{64}$")) and
+  .runner.platform == "linux-amd64" and .runner.cpuCount == 12 and
+  .runner.capturesPerCell == 2 and .runner.maxWorkers == 12 and
+  .runner.clock == "EXTERNAL_WALL_CLOCK_NANOSECONDS" and
+  (.cells | length) == 6 and (.cells | unique | length) == 6 and
+  .phases.repositoryCheckout.includedInBreakEven == false and
+  .phases.outputPreflightAndStructuralDiscovery.combinedBecausePublicCommandRunsBoth == true and
+  .phases.targetWorkloadStabilization.confirmationsPerArm == 3 and
+  .economics.breakEvenFormula == "CEIL(CALIBRATION_COST_MS / TERMINAL_MEAN_SAVED_MS)" and
+  .economics.percentagesMayBeAveragedAcrossCells == false and
+  .boundaries.proofOfConcept == true and
+  .boundaries.productionAuthorized == false and
+  .boundaries.automaticActivation == false and
+  .boundaries.publicReleaseInstallMeasured == false and
+  .boundaries.repositorySpecificProductRulesAllowed == false and
+  .boundaries.testOptimizationModified == false and
+  .boundaries.soakRequired == false and .boundaries.designPartnerRequired == false
+' "${buildopt_spec}" >/dev/null
+
+jq -e --slurpfile source "${buildopt_source_spec}" '
+  (.cells | sort) == ([$source[0].repositories[] | select(.performanceClaim) | .key] | sort) and
+  all(.cells[];
+    . as $key |
+    ([$source[0].repositories[] | select(.key == $key and .performanceClaim)] | length) == 1)
+' "${buildopt_spec}" >/dev/null
+
+jq -e --slurpfile spec "${buildopt_spec}" '
+  . as $summary |
+  $summary.schemaVersion == "buildopt.evidence/poc-generic-change-breadth/v1" and
+  $summary.buildopt.revision == $spec[0].source.buildoptRevision and
+  $summary.buildopt.executableSha256 == $spec[0].source.executableSha256 and
+  all($spec[0].cells[];
+    . as $key |
+    any($summary.cells[]; .key == $key and .performanceClaim and
+      .evidenceState == "QUALIFIED" and .result.qualified == true and
+      .result.meanSavedMs > 0))
+' "${buildopt_source_summary}" >/dev/null
+
+printf 'Calibration economics contract OK: %s\n' "${buildopt_spec}"
