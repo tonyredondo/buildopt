@@ -15,6 +15,7 @@ repo_root=$(cd -- "${script_dir}/.." && pwd -P)
 spec="${repo_root}/specs/poc-calibration-efficiency-v1.json"
 source_spec="${repo_root}/specs/poc-generic-change-breadth-v1.json"
 source_root="${repo_root}/benchmarks/results/poc-generic-change-breadth-v1"
+distribution_seed=${BUILDOPT_CALIBRATION_DISTRIBUTION_SEED:-${TMPDIR:-/tmp}/buildopt-calibration-efficiency-distribution-seed}
 
 if [[ ! -x ${buildopt_executable} ]] ||
     [[ $(sha256sum "${buildopt_executable}" | awk '{print $1}') != $(jq -r '.source.executableSha256' "${spec}") ]]; then
@@ -29,6 +30,10 @@ if [[ -n ${cell_filter} && $(jq --arg key "${cell_filter}" '[.cells[] | select(.
     printf 'calibration efficiency cell is absent or ambiguous: %s\n' "${cell_filter}" >&2
     exit 64
 fi
+if [[ ${distribution_seed} != /* || ${distribution_seed} == / ]]; then
+    printf 'calibration distribution seed must be an absolute non-root path\n' >&2
+    exit 64
+fi
 [[ -z $(git -C "${repo_root}" status --porcelain --untracked-files=no) ]] || {
     printf 'BuildOpt tracked state must be clean before efficiency capture\n' >&2
     exit 1
@@ -41,6 +46,8 @@ for command in awk cp date find git grep jq perl sha256sum timeout; do
 done
 
 temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-calibration-efficiency.XXXXXX")
+mkdir -p -- "${distribution_seed}"
+chmod 700 -- "${distribution_seed}"
 cleanup() {
     if [[ ${temporary} == "${TMPDIR:-/tmp}/buildopt-calibration-efficiency."* ]]; then
         rm -rf -- "${temporary}"
@@ -87,7 +94,7 @@ seed_distribution() {
     destination="${gradle_home}/wrapper/dists/${distribution}"
     mkdir -p -- "${destination}"
     for source_root in \
-        "${temporary}/distribution-seed/wrapper/dists" \
+        "${distribution_seed}/wrapper/dists" \
         "${repo_root}/.tools/gradle-user-home/local/wrapper/dists" \
         "${repo_root}/.tools/gradle-user-home/wrapper/dists" \
         "${GRADLE_USER_HOME:-${HOME}/.gradle}/wrapper/dists"; do
@@ -102,7 +109,7 @@ seed_distribution() {
 }
 
 prepare_distribution() {
-    local repository=$1 jdk=$2 seed_home="${temporary}/distribution-seed" attempt
+    local repository=$1 jdk=$2 seed_home="${distribution_seed}" attempt
     if seed_distribution "${repository}" "${seed_home}" 2>/dev/null; then
         return 0
     fi
