@@ -235,6 +235,32 @@ func TestRenderStructuralMeasurementEvidencePreservesWarmupAndPairDiagnostics(t 
 		t.Fatalf("converged five-phase evidence = %+v", evidence)
 	}
 
+	raw, qualified, err = RenderStructuralMeasurementEvidence(StructuralMeasurementOptions{
+		CapturedAt: time.Date(2026, 8, 11, 13, 50, 0, 0, time.UTC), Analysis: analysis,
+		RepositoryRevision: strings.Repeat("b", 40), BuildOptRevision: strings.Repeat("c", 40),
+		ExecutableSHA256: strings.Repeat("e", 64), SourceEvidenceSHA256: strings.Repeat("d", 64),
+		GradleOptions: []string{"--daemon", "--build-cache"}, ControlWarmups: controlFivePhase,
+		CandidateWarmups: candidateFourPhase, Observations: observations,
+		CandidateStabilization: CandidateStabilizationAdaptiveExactTwoOfThree,
+		FallbackReason:         "IMPACT_GLOBAL_CHANGE", FallbackSuccessful: true,
+	})
+	if err != nil || !qualified {
+		t.Fatalf("render adaptive candidate evidence = %v/%v", qualified, err)
+	}
+	evidence = structuralEvidence{}
+	if err := json.Unmarshal(raw, &evidence); err != nil {
+		t.Fatal(err)
+	}
+	if evidence.Execution.WarmupsPerArm != 0 || evidence.Execution.ControlWarmupCount != 5 ||
+		evidence.Execution.CandidateWarmupCount != 4 ||
+		evidence.Execution.CandidateStabilization != CandidateStabilizationAdaptiveExactTwoOfThree ||
+		!evidence.Result.TargetWarmupShapeStable {
+		t.Fatalf("adaptive candidate evidence = %+v", evidence)
+	}
+	if err := validateStructuralEvidence(evidence, analysis); err != nil {
+		t.Fatalf("validate adaptive candidate evidence: %v", err)
+	}
+
 	observations[7].ControlTaskOutcomes.FingerprintSHA256 = strings.Repeat("7", 64)
 	raw, qualified, err = RenderStructuralMeasurementEvidence(StructuralMeasurementOptions{
 		CapturedAt: time.Date(2026, 8, 11, 14, 0, 0, 0, time.UTC), Analysis: analysis,

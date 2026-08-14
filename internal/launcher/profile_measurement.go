@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	profileMeasureUsage           = "usage: buildopt profile measure --manifest PATH --graph PATH --generated-manifest PATH --changes-file PATH --fallback-changes-file PATH --base-revision REVISION --buildopt-revision REVISION --evidence-output PATH [--output-equivalence PATH] [--gradle-option VALUE ...] [--target-stability-confirmations 1|2|3] [--timeout DURATION]\n"
+	profileMeasureUsage           = "usage: buildopt profile measure --manifest PATH --graph PATH --generated-manifest PATH --changes-file PATH --fallback-changes-file PATH --base-revision REVISION --buildopt-revision REVISION --evidence-output PATH [--output-equivalence PATH] [--gradle-option VALUE ...] [--target-stability-confirmations 1|2|3] [--adaptive-candidate-stability] [--timeout DURATION]\n"
 	measurementPairs              = 8
 	maximumMeasurementInterArmGap = 5 * time.Second
 )
@@ -61,6 +61,7 @@ type structuralMeasurementConfig struct {
 	outputEquivalenceSHA256      string
 	outputEquivalence            *outputequivalence.Contract
 	targetStabilityConfirmations int
+	adaptiveCandidateStability   bool
 	gradleDistributionSeed       string
 }
 
@@ -102,13 +103,15 @@ func runStructuralProfileMeasurement(args []string, stdout, stderr io.Writer) in
 	outputEquivalence := flags.String("output-equivalence", "", "owner-reviewed semantic output-equivalence contract")
 	timeout := flags.Duration("timeout", 20*time.Minute, "per-build timeout")
 	targetStabilityConfirmations := flags.Int("target-stability-confirmations", 1, "target-workload warm-ups required before measured pairs")
+	adaptiveCandidateStability := flags.Bool("adaptive-candidate-stability", false, "stop the candidate after two exact matching target fingerprints, bounded by three")
 	var gradleOptions repeatedStringFlag
 	flags.Var(&gradleOptions, "gradle-option", "Gradle option shared by both arms; repeat for multiple values")
 	if err := flags.Parse(args); err != nil || flags.NArg() != 0 ||
 		*manifest == "" || *graph == "" || *generated == "" || *changes == "" ||
 		*fallbackChanges == "" || *baseRevision == "" || *buildOptRevision == "" ||
 		*evidenceOutput == "" || *timeout <= 0 ||
-		(*targetStabilityConfirmations < 1 || *targetStabilityConfirmations > 3) {
+		(*targetStabilityConfirmations < 1 || *targetStabilityConfirmations > 3) ||
+		(*adaptiveCandidateStability && *targetStabilityConfirmations != 3) {
 		_, _ = io.WriteString(stderr, profileMeasureUsage)
 		return exitUsage
 	}
@@ -119,7 +122,7 @@ func runStructuralProfileMeasurement(args []string, stdout, stderr io.Writer) in
 		*manifest, *graph, *generated, *changes, *fallbackChanges,
 		*baseRevision, *buildOptRevision, *evidenceOutput,
 		append([]string(nil), gradleOptions...), *timeout,
-		*targetStabilityConfirmations, *outputEquivalence,
+		*targetStabilityConfirmations, *adaptiveCandidateStability, *outputEquivalence,
 	)
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile measurement unavailable: %v\n", err)
@@ -152,6 +155,7 @@ func prepareStructuralMeasurementConfig(
 	gradleOptions []string,
 	timeout time.Duration,
 	targetStabilityConfirmations int,
+	adaptiveCandidateStability bool,
 	outputEquivalencePath string,
 ) (structuralMeasurementConfig, error) {
 	repositoryRoot, err := canonicalWorkingDirectory()
@@ -205,6 +209,9 @@ func prepareStructuralMeasurementConfig(
 	}
 	if targetStabilityConfirmations < 1 || targetStabilityConfirmations > 3 {
 		return structuralMeasurementConfig{}, errors.New("target stability confirmations must be between one and three")
+	}
+	if adaptiveCandidateStability && targetStabilityConfirmations != 3 {
+		return structuralMeasurementConfig{}, errors.New("adaptive candidate stabilization requires three bounded confirmations")
 	}
 	for _, option := range gradleOptions {
 		if !validImpactGradleOption(option) {
@@ -287,6 +294,7 @@ func prepareStructuralMeasurementConfig(
 		outputEquivalenceSHA256:      equivalenceSHA256,
 		outputEquivalence:            equivalence,
 		targetStabilityConfirmations: targetStabilityConfirmations,
+		adaptiveCandidateStability:   adaptiveCandidateStability,
 		gradleDistributionSeed:       gradleDistributionSeed,
 	}, nil
 }
@@ -432,7 +440,8 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 		OutputEquivalenceSHA256: config.outputEquivalenceSHA256,
 		GradleOptions:           config.gradleOptions, Observations: observations,
 		ControlWarmups: control.warmups, CandidateWarmups: candidate.warmups,
-		FallbackReason: fallbackReason, FallbackSuccessful: true,
+		CandidateStabilization: structuralCandidateStabilizationPolicy(config),
+		FallbackReason:         fallbackReason, FallbackSuccessful: true,
 	})
 }
 
@@ -510,6 +519,10 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 		arm.warmups = append(arm.warmups, structuralWarmupDiagnostic(phase, confirmation))
 		_, _ = fmt.Fprintf(progress, "buildopt: confirmed isolated %s target workload in %dms with %s\n",
 			name, confirmation.durationMS, formatStructuralTaskOutcomes(confirmation.taskOutcomes))
+		if shouldStopAdaptiveCandidateStabilization(candidate, config.adaptiveCandidateStability, confirmationIndex, arm.warmups) {
+			_, _ = fmt.Fprintf(progress, "buildopt: adaptive candidate stabilization converged after two exact target fingerprints; third warm-up omitted\n")
+			break
+		}
 	}
 	if config.targetStabilityConfirmations == 3 && !structuralTargetWarmupsConverged(arm.warmups) {
 		return arm, fmt.Errorf("%s target workload did not converge in three bounded warm-ups: %s",
@@ -522,12 +535,23 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 }
 
 func structuralTargetWarmupsConverged(warmups []profilediscovery.StructuralWarmupObservation) bool {
-	if len(warmups) < 5 {
+	if len(warmups) < 4 {
 		return false
 	}
 	previous := warmups[len(warmups)-2].TaskOutcomes.FingerprintSHA256
 	current := warmups[len(warmups)-1].TaskOutcomes.FingerprintSHA256
 	return previous != "" && current == previous
+}
+
+func shouldStopAdaptiveCandidateStabilization(candidate, adaptive bool, confirmationIndex int, warmups []profilediscovery.StructuralWarmupObservation) bool {
+	return candidate && adaptive && confirmationIndex == 2 && structuralTargetWarmupsConverged(warmups)
+}
+
+func structuralCandidateStabilizationPolicy(config structuralMeasurementConfig) string {
+	if config.adaptiveCandidateStability {
+		return profilediscovery.CandidateStabilizationAdaptiveExactTwoOfThree
+	}
+	return ""
 }
 
 func describeStructuralTaskOutcomeDifference(previous, current profilediscovery.StructuralTaskOutcomes) string {

@@ -19,12 +19,13 @@ import (
 )
 
 const (
-	StructuralEvidenceSchema = "buildopt.evidence/structural-profile-qualification/v1"
-	StructuralProfileSchema  = "buildopt.poc/qualified-profile/v4"
-	StructuralProfileID      = "qualified-structural-build-impact"
-	structuralPairCount      = 8
-	structuralMinimumSavedMS = 500.0
-	structuralMinimumRatio   = 0.02
+	StructuralEvidenceSchema                      = "buildopt.evidence/structural-profile-qualification/v1"
+	StructuralProfileSchema                       = "buildopt.poc/qualified-profile/v4"
+	StructuralProfileID                           = "qualified-structural-build-impact"
+	CandidateStabilizationAdaptiveExactTwoOfThree = "ADAPTIVE_EXACT_2_OF_3"
+	structuralPairCount                           = 8
+	structuralMinimumSavedMS                      = 500.0
+	structuralMinimumRatio                        = 0.02
 )
 
 // StructuralOptions binds an independently measured structural optimization
@@ -105,6 +106,9 @@ type structuralExecution struct {
 	LauncherOverheadIncluded bool                          `json:"launcherOverheadIncluded"`
 	OutputEquivalenceMode    string                        `json:"outputEquivalenceMode,omitempty"`
 	WarmupsPerArm            int                           `json:"warmupsPerArm,omitempty"`
+	ControlWarmupCount       int                           `json:"controlWarmupCount,omitempty"`
+	CandidateWarmupCount     int                           `json:"candidateWarmupCount,omitempty"`
+	CandidateStabilization   string                        `json:"candidateStabilization,omitempty"`
 	ControlWarmups           []StructuralWarmupObservation `json:"controlWarmups,omitempty"`
 	CandidateWarmups         []StructuralWarmupObservation `json:"candidateWarmups,omitempty"`
 }
@@ -233,6 +237,7 @@ type StructuralMeasurementOptions struct {
 	GradleOptions           []string
 	ControlWarmups          []StructuralWarmupObservation
 	CandidateWarmups        []StructuralWarmupObservation
+	CandidateStabilization  string
 	Observations            []StructuralMeasurementObservation
 	FallbackReason          string
 	FallbackSuccessful      bool
@@ -256,6 +261,16 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 	}
 	if options.CapturedAt.IsZero() || options.FallbackReason == "" || !options.FallbackSuccessful {
 		return nil, false, errors.New("structural measurement fallback is unproven")
+	}
+	if options.CandidateStabilization != "" && options.CandidateStabilization != CandidateStabilizationAdaptiveExactTwoOfThree {
+		return nil, false, errors.New("structural candidate stabilization policy is invalid")
+	}
+	if options.CandidateStabilization == "" && len(options.ControlWarmups) != len(options.CandidateWarmups) {
+		return nil, false, errors.New("structural legacy warm-up counts must match")
+	}
+	if options.CandidateStabilization == CandidateStabilizationAdaptiveExactTwoOfThree &&
+		(len(options.ControlWarmups) != 5 || (len(options.CandidateWarmups) != 4 && len(options.CandidateWarmups) != 5)) {
+		return nil, false, errors.New("adaptive candidate stabilization requires five control and four or five candidate warm-ups")
 	}
 	outputEquivalenceMode := ""
 	if options.OutputEquivalenceSHA256 != "" {
@@ -330,7 +345,10 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 			GradleOptions:            append([]string(nil), options.GradleOptions...),
 			LauncherOverheadIncluded: true,
 			OutputEquivalenceMode:    outputEquivalenceMode,
-			WarmupsPerArm:            len(options.ControlWarmups),
+			WarmupsPerArm:            equalStructuralWarmupCount(options.ControlWarmups, options.CandidateWarmups),
+			ControlWarmupCount:       adaptiveStructuralWarmupCount(options.CandidateStabilization, len(options.ControlWarmups)),
+			CandidateWarmupCount:     adaptiveStructuralWarmupCount(options.CandidateStabilization, len(options.CandidateWarmups)),
+			CandidateStabilization:   options.CandidateStabilization,
 			ControlWarmups:           append([]StructuralWarmupObservation(nil), options.ControlWarmups...),
 			CandidateWarmups:         append([]StructuralWarmupObservation(nil), options.CandidateWarmups...),
 		},
@@ -512,8 +530,7 @@ func validateStructuralCaptureEvidence(evidence structuralEvidence, analysis Ana
 	} else if evidence.Execution.OutputEquivalenceMode != "OWNER_REVIEWED_SEMANTIC_V1" {
 		return errors.New("structural output-equivalence execution binding is invalid")
 	}
-	if evidence.Execution.WarmupsPerArm != len(evidence.Execution.ControlWarmups) ||
-		evidence.Execution.WarmupsPerArm != len(evidence.Execution.CandidateWarmups) {
+	if !validStructuralWarmupCounts(evidence.Execution) {
 		return errors.New("structural qualification warm-up evidence is invalid")
 	}
 	if err := validateStructuralDiagnostics(evidence.Execution.ControlWarmups, evidence.Execution.CandidateWarmups, evidence.Observations); err != nil {
@@ -568,18 +585,8 @@ func validateStructuralDiagnostics(control, candidate []StructuralWarmupObservat
 		}
 		return nil
 	}
-	if len(control) != len(candidate) || (len(control) != 2 && len(control) != 3 && len(control) != 4 && len(control) != 5) {
+	if !validStructuralWarmupLength(len(control)) || !validStructuralWarmupLength(len(candidate)) {
 		return errors.New("structural measurement requires complete two-, three-, four-, or five-phase warm-ups")
-	}
-	expectedPhases := []string{"CACHE_SEED", "DAEMON_STABILIZATION"}
-	if len(control) >= 3 {
-		expectedPhases = []string{"CACHE_SEED", "BASE_DAEMON_STABILIZATION", "TARGET_WORKLOAD_STABILIZATION"}
-	}
-	if len(control) >= 4 {
-		expectedPhases = append(expectedPhases, "TARGET_WORKLOAD_STABILITY_CONFIRMATION")
-	}
-	if len(control) == 5 {
-		expectedPhases = append(expectedPhases, "TARGET_WORKLOAD_STABILITY_RECONFIRMATION")
 	}
 	fingerprintPresent := false
 	fingerprintAbsent := false
@@ -598,6 +605,7 @@ func validateStructuralDiagnostics(control, candidate []StructuralWarmupObservat
 		}
 	}
 	for _, warmups := range [][]StructuralWarmupObservation{control, candidate} {
+		expectedPhases := structuralWarmupPhases(len(warmups))
 		for index, warmup := range warmups {
 			if warmup.Phase != expectedPhases[index] || warmup.DurationMS <= 0 ||
 				!validSHA(warmup.LogSHA256) || !validStructuralTaskOutcomes(warmup.TaskOutcomes) ||
@@ -625,6 +633,62 @@ func validateStructuralDiagnostics(control, candidate []StructuralWarmupObservat
 		return errors.New("structural measurement host-pressure diagnostics are incomplete")
 	}
 	return nil
+}
+
+func equalStructuralWarmupCount(control, candidate []StructuralWarmupObservation) int {
+	if len(control) == len(candidate) {
+		return len(control)
+	}
+	return 0
+}
+
+func adaptiveStructuralWarmupCount(policy string, count int) int {
+	if policy == CandidateStabilizationAdaptiveExactTwoOfThree {
+		return count
+	}
+	return 0
+}
+
+func validStructuralWarmupCounts(execution structuralExecution) bool {
+	control := len(execution.ControlWarmups)
+	candidate := len(execution.CandidateWarmups)
+	if execution.CandidateStabilization == "" {
+		return execution.ControlWarmupCount == 0 && execution.CandidateWarmupCount == 0 &&
+			execution.WarmupsPerArm == control && execution.WarmupsPerArm == candidate
+	}
+	return execution.CandidateStabilization == CandidateStabilizationAdaptiveExactTwoOfThree &&
+		execution.WarmupsPerArm == 0 && execution.ControlWarmupCount == control &&
+		execution.CandidateWarmupCount == candidate && control == 5 &&
+		(candidate == 4 || candidate == 5)
+}
+
+func validStructuralWarmupLength(count int) bool {
+	return count >= 2 && count <= 5
+}
+
+func structuralWarmupPhases(count int) []string {
+	phases := []string{"CACHE_SEED", "DAEMON_STABILIZATION"}
+	if count >= 3 {
+		phases = []string{"CACHE_SEED", "BASE_DAEMON_STABILIZATION", "TARGET_WORKLOAD_STABILIZATION"}
+	}
+	if count >= 4 {
+		phases = append(phases, "TARGET_WORKLOAD_STABILITY_CONFIRMATION")
+	}
+	if count == 5 {
+		phases = append(phases, "TARGET_WORKLOAD_STABILITY_RECONFIRMATION")
+	}
+	return phases
+}
+
+func structuralWarmupBaselineIndex(count int) int {
+	if count == 5 {
+		return 4
+	}
+	return 2
+}
+
+func structuralWarmupComparisonStart() int {
+	return 3
 }
 
 func validStructuralTaskOutcomes(outcomes StructuralTaskOutcomes) bool {
@@ -825,27 +889,23 @@ func applyStructuralTargetWarmupShape(
 	control, candidate []StructuralWarmupObservation,
 	observations []structuralObservation,
 ) structuralResult {
-	if (len(control) != 3 && len(control) != 4 && len(control) != 5) || len(candidate) != len(control) || len(observations) == 0 {
+	if len(control) < 3 || len(control) > 5 || len(candidate) < 3 || len(candidate) > 5 || len(observations) == 0 {
 		return result
 	}
-	baselineIndex := 2
-	comparisonStart := 3
-	if len(control) == 5 {
-		baselineIndex = 4
-		comparisonStart = 3
-	}
-	controlFingerprint := control[baselineIndex].TaskOutcomes.FingerprintSHA256
-	candidateFingerprint := candidate[baselineIndex].TaskOutcomes.FingerprintSHA256
+	controlBaseline := structuralWarmupBaselineIndex(len(control))
+	candidateBaseline := structuralWarmupBaselineIndex(len(candidate))
+	controlFingerprint := control[controlBaseline].TaskOutcomes.FingerprintSHA256
+	candidateFingerprint := candidate[candidateBaseline].TaskOutcomes.FingerprintSHA256
 	if controlFingerprint == "" || candidateFingerprint == "" {
 		return result
 	}
 	result.TargetWarmupShapeObserved = true
 	result.TargetWarmupShapeStable = true
-	for _, warmup := range control[comparisonStart:] {
+	for _, warmup := range control[structuralWarmupComparisonStart():] {
 		result.TargetWarmupShapeStable = result.TargetWarmupShapeStable &&
 			warmup.TaskOutcomes.FingerprintSHA256 == controlFingerprint
 	}
-	for _, warmup := range candidate[comparisonStart:] {
+	for _, warmup := range candidate[structuralWarmupComparisonStart():] {
 		result.TargetWarmupShapeStable = result.TargetWarmupShapeStable &&
 			warmup.TaskOutcomes.FingerprintSHA256 == candidateFingerprint
 	}

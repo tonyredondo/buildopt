@@ -281,6 +281,18 @@ func TestStructuralTargetWarmupsRequireTwoFinalMatchingFingerprints(t *testing.T
 	if structuralTargetWarmupsConverged(warmups[:4]) {
 		t.Fatal("an incomplete five-phase sequence converged")
 	}
+	warmups[3].TaskOutcomes.FingerprintSHA256 = strings.Repeat("3", 64)
+	if !structuralTargetWarmupsConverged(warmups[:4]) {
+		t.Fatal("two matching adaptive target warm-ups did not converge")
+	}
+	if !shouldStopAdaptiveCandidateStabilization(true, true, 2, warmups[:4]) {
+		t.Fatal("eligible adaptive candidate did not stop after two exact fingerprints")
+	}
+	if shouldStopAdaptiveCandidateStabilization(false, true, 2, warmups[:4]) ||
+		shouldStopAdaptiveCandidateStabilization(true, false, 2, warmups[:4]) ||
+		shouldStopAdaptiveCandidateStabilization(true, true, 3, warmups[:4]) {
+		t.Fatal("adaptive stabilization changed an ineligible arm or confirmation")
+	}
 }
 
 func TestDescribeStructuralTaskOutcomeDifferenceIsBoundedAndSpecific(t *testing.T) {

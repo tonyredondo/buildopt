@@ -18,7 +18,7 @@ import (
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
 
-const profileProposalUsage = "usage: buildopt profile propose (--owner-input PATH [--changes-file PATH] | --repository-id OWNER/REPO --pipeline-class CLASS --entrypoint TASK [--entrypoint TASK ...] --required-output GLOB [--required-output GLOB ...] --changes-file PATH [--output-equivalence PATH]) --base-revision REVISION [--global-change GLOB ...] [--gradle-command PATH] [--gradle-option VALUE ...] [--output-contract-output PATH] [--manifest-output PATH] [--graph-output PATH] [--generated-manifest-output PATH] [--fallback-changes-output PATH] [--proposal-output PATH] [--buildopt-revision REVISION] [--timeout DURATION]\n"
+const profileProposalUsage = "usage: buildopt profile propose (--owner-input PATH [--changes-file PATH] | --repository-id OWNER/REPO --pipeline-class CLASS --entrypoint TASK [--entrypoint TASK ...] --required-output GLOB [--required-output GLOB ...] --changes-file PATH [--output-equivalence PATH]) --base-revision REVISION [--global-change GLOB ...] [--gradle-command PATH] [--gradle-option VALUE ...] [--discovery-cache-dir ABSOLUTE_PATH] [--output-contract-output PATH] [--manifest-output PATH] [--graph-output PATH] [--generated-manifest-output PATH] [--fallback-changes-output PATH] [--proposal-output PATH] [--buildopt-revision REVISION] [--timeout DURATION]\n"
 
 var defaultProposalGlobalChanges = []string{
 	"build-logic/**",
@@ -42,6 +42,8 @@ type profileProposalDocuments struct {
 
 type profileProposalReport struct {
 	repositoryRoot          string                           `json:"-"`
+	cacheHit                bool                             `json:"-"`
+	cacheKey                string                           `json:"-"`
 	SchemaVersion           string                           `json:"schemaVersion"`
 	Decision                string                           `json:"decision"`
 	Reason                  string                           `json:"reason"`
@@ -103,6 +105,7 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 	fallbackOutput := flags.String("fallback-changes-output", "buildopt-fallback-changes.txt", "full-graph fallback input")
 	proposalOutput := flags.String("proposal-output", "buildopt-profile-proposal.json", "reviewable proposal output")
 	buildOptRevision := flags.String("buildopt-revision", "", "immutable BuildOpt revision for the next measure command")
+	discoveryCacheDir := flags.String("discovery-cache-dir", "", "absolute private directory for exact proposal replay")
 	timeout := flags.Duration("timeout", 0, "Gradle discovery timeout")
 	var requiredOutputs proposalStringFlag
 	var globalChanges proposalStringFlag
@@ -172,11 +175,15 @@ func runStructuralProfileProposal(args []string, stdout, stderr io.Writer) int {
 		ownerInput: *ownerInputPath, ownerInputSHA256: ownerInputDigest,
 		outputEquivalence: *outputEquivalence,
 		changeSource:      ownerChangeSource,
+		discoveryCacheDir: *discoveryCacheDir,
 		timeout:           *timeout,
 	})
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile proposal unavailable: %v\n", err)
 		return exitConfiguration
+	}
+	if report.cacheHit {
+		_, _ = fmt.Fprintf(stderr, "buildopt: exact structural proposal replay %s\n", report.cacheKey)
 	}
 	for _, output := range []string{report.Documents.OutputContract, report.Documents.Manifest, report.Documents.Graph, report.Documents.Generated, report.Documents.FallbackChanges} {
 		raw, ok := documents[output]
@@ -215,6 +222,7 @@ type structuralProposalConfig struct {
 	ownerInput, ownerInputSHA256                                     string
 	outputEquivalence                                                string
 	changeSource                                                     string
+	discoveryCacheDir                                                string
 	timeout                                                          time.Duration
 }
 
@@ -278,6 +286,23 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 	report.OutputEquivalence = config.outputEquivalence
 	report.OutputEquivalenceSHA256 = outputEquivalenceSHA256
 	report.repositoryRoot = root
+	var cacheBinding profileProposalCacheBinding
+	if config.discoveryCacheDir != "" {
+		cacheBinding, err = prepareProfileProposalCacheBinding(root, targetRevision, changedPaths, config, outputEquivalenceSHA256)
+		if err != nil {
+			return profileProposalReport{}, nil, err
+		}
+		cachedReport, cachedDocuments, hit, cacheErr := loadProfileProposalCache(config.discoveryCacheDir, cacheBinding, config)
+		if cacheErr != nil {
+			return profileProposalReport{}, nil, cacheErr
+		}
+		if hit {
+			cachedReport.repositoryRoot = root
+			cachedReport.cacheHit = true
+			cachedReport.cacheKey = cacheBinding.Digest
+			return cachedReport, cachedDocuments, nil
+		}
+	}
 	outputReport, err := prepareOutputContract(ctx, root, outputContractConfig{
 		repositoryID: config.repositoryID, pipelineClass: config.pipelineClass,
 		repositoryRevision: targetRevision,
@@ -301,32 +326,11 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 		return report, documents, nil
 	}
 
-	observationContext, cancel := context.WithTimeout(ctx, config.timeout)
-	defer cancel()
-	snapshot, err := buildimpact.ObserveGradle(observationContext, buildimpact.ObservationOptions{
-		RepositoryRoot: root, Entrypoints: config.entrypoints,
-		GradleCommand: config.gradleCommand, GradleArgs: config.gradleOptions,
-	})
-	if err != nil {
-		return profileProposalReport{}, nil, err
-	}
-	report.UnknownRelationships = !snapshot.Complete
-	for _, entrypoint := range snapshot.Entrypoints {
-		report.UnknownRelationships = report.UnknownRelationships || entrypoint.UnknownRelationships
-	}
-	if !snapshot.Complete {
-		report.Reason = "ORIGINAL_WORKFLOW_UNSUPPORTED"
-		return report, documents, nil
-	}
 	for _, changedPath := range changedPaths {
 		if matchesAnyProposalGlob(config.globalChanges, changedPath) {
 			report.Reason = "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"
 			return report, documents, nil
 		}
-	}
-	if _, err := buildimpact.ResolveProjectOwners(snapshot, changedPaths); err != nil {
-		report.Reason = "SOURCE_OWNERSHIP_AMBIGUOUS"
-		return report, documents, nil
 	}
 	candidateEntrypoints := proposalOutputOwnerEntrypoints(outputReport, selectors)
 	report.CandidateEntrypoints = candidateEntrypoints
@@ -363,6 +367,31 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 		report.Reason = "CANDIDATE_WORKFLOW_UNSUPPORTED"
 		return report, documents, nil
 	}
+	snapshot := generated.Snapshot
+	report.UnknownRelationships = !snapshot.Complete
+	originalUnknown := false
+	originalSet := make(map[string]bool, len(config.entrypoints))
+	for _, entrypoint := range config.entrypoints {
+		originalSet[entrypoint] = true
+	}
+	for _, entrypoint := range snapshot.Entrypoints {
+		if entrypoint.UnknownRelationships {
+			report.UnknownRelationships = true
+			originalUnknown = originalUnknown || originalSet[entrypoint.Name]
+		}
+	}
+	if !snapshot.Complete || report.UnknownRelationships {
+		if originalUnknown {
+			report.Reason = "ORIGINAL_WORKFLOW_UNSUPPORTED"
+		} else {
+			report.Reason = "CANDIDATE_GRAPH_INCOMPLETE"
+		}
+		return report, documents, nil
+	}
+	if _, err := buildimpact.ResolveProjectOwners(snapshot, changedPaths); err != nil {
+		report.Reason = "SOURCE_OWNERSHIP_AMBIGUOUS"
+		return report, documents, nil
+	}
 	if !generated.Generated.Complete {
 		report.Reason = "CANDIDATE_GRAPH_INCOMPLETE"
 		report.UnknownRelationships = true
@@ -392,6 +421,11 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 	report.OmittedProjects = proposalOmittedProjects(generated.Graph.Graph, candidateEntrypoints)
 	report.MeasureCommand = proposalMeasureCommand(config)
 	report.BuildOptRevisionNeeded = config.buildOptRevision == ""
+	if config.discoveryCacheDir != "" {
+		if err := storeProfileProposalCache(config.discoveryCacheDir, cacheBinding, config, report, documents, generated.Snapshot); err != nil {
+			return profileProposalReport{}, nil, err
+		}
+	}
 	return report, documents, nil
 }
 
@@ -605,6 +639,8 @@ func proposalMeasureCommand(config structuralProposalConfig) []string {
 		"--base-revision", config.baseRevision,
 		"--buildopt-revision", revision,
 		"--evidence-output", "buildopt-profile-evidence.json",
+		"--target-stability-confirmations", "3",
+		"--adaptive-candidate-stability",
 	}
 	if config.outputEquivalence != "" {
 		command = append(command, "--output-equivalence", config.outputEquivalence)

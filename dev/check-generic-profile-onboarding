@@ -13,7 +13,8 @@ repository="${temporary}/external-gradle-repository"
 fixture_gradle_home="${buildopt_root}/.tools/gradle-user-home/local"
 mkdir -p -- "${repository}/service-a/src/main/java/example" \
     "${repository}/service-b/src/main/java/example" \
-    "${temporary}/bin"
+    "${temporary}/bin" "${temporary}/proposal-cache"
+chmod 700 -- "${temporary}/proposal-cache"
 
 cp -- "${buildopt_root}/gradlew" "${repository}/gradlew"
 cp -R -- "${buildopt_root}/gradle" "${repository}/gradle"
@@ -73,15 +74,24 @@ proposal_args=(
     --base-revision "${base_revision}"
     --required-output 'service-a/build/classes/**'
     --gradle-option=--offline
+    --discovery-cache-dir "${temporary}/proposal-cache"
 )
 (
     cd -- "${repository}"
-    GRADLE_USER_HOME="${fixture_gradle_home}" "${temporary}/bin/buildopt" "${proposal_args[@]}" >proposal.stdout.json
+    if ! GRADLE_USER_HOME="${fixture_gradle_home}" "${temporary}/bin/buildopt" "${proposal_args[@]}" >proposal.stdout.json 2>proposal.cold.stderr; then
+        cat proposal.cold.stderr >&2
+        exit 1
+    fi
 )
+if grep -F 'exact structural proposal replay' "${repository}/proposal.cold.stderr" >/dev/null; then
+    printf 'cold proposal unexpectedly used replay state\n' >&2
+    exit 1
+fi
 cp -- "${repository}/buildopt-profile-proposal.json" "${temporary}/first-proposal.json"
 cp -- "${repository}/buildopt-impact-manifest.json" "${temporary}/first-manifest.json"
 cp -- "${repository}/buildopt-impact-graph.generated.json" "${temporary}/first-graph.json"
 cp -- "${repository}/buildopt-impact.generated.json" "${temporary}/first-generated.json"
+printf 'not a Gradle home\n' >"${temporary}/invalid-gradle-home"
 
 python3 - "${repository}/buildopt-profile-proposal.json" <<'PY'
 import json
@@ -123,7 +133,7 @@ PY
 
 (
     cd -- "${repository}"
-    GRADLE_USER_HOME="${fixture_gradle_home}" "${temporary}/bin/buildopt" "${proposal_args[@]}" >/dev/null
+    GRADLE_USER_HOME="${temporary}/invalid-gradle-home" "${temporary}/bin/buildopt" "${proposal_args[@]}" >/dev/null 2>proposal.replay.stderr
     "${temporary}/bin/buildopt" profile analyze \
         --manifest buildopt-impact-manifest.json \
         --graph buildopt-impact-graph.generated.json \
@@ -133,6 +143,7 @@ PY
         --graph buildopt-impact-graph.generated.json \
         --generated-manifest buildopt-impact.generated.json >evaluation.json
 )
+grep -F 'buildopt: exact structural proposal replay ' "${repository}/proposal.replay.stderr" >/dev/null
 cmp --silent "${temporary}/first-proposal.json" "${repository}/buildopt-profile-proposal.json"
 cmp --silent "${temporary}/first-manifest.json" "${repository}/buildopt-impact-manifest.json"
 cmp --silent "${temporary}/first-graph.json" "${repository}/buildopt-impact-graph.generated.json"
@@ -159,6 +170,23 @@ assert evaluation["profile"] is None
 assert evaluation["reviewRequired"] is True
 assert evaluation["activationAutomatic"] is False
 PY
+
+set +e
+(
+    cd -- "${repository}"
+    GRADLE_USER_HOME="${temporary}/invalid-gradle-home" "${temporary}/bin/buildopt" "${proposal_args[@]}" \
+        --gradle-option=--stacktrace >/dev/null 2>proposal-drift.stderr
+)
+drift_status=$?
+set -e
+if ((drift_status == 0)); then
+    printf 'proposal replay accepted Gradle option drift\n' >&2
+    exit 1
+fi
+if grep -F 'exact structural proposal replay' "${repository}/proposal-drift.stderr" >/dev/null; then
+    printf 'proposal option drift reused cached state\n' >&2
+    exit 1
+fi
 
 custom_repository="${temporary}/custom-workflow"
 cp -R -- "${repository}" "${custom_repository}"
