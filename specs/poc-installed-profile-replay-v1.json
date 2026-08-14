@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "buildopt.specs/poc-installed-profile-replay/v1",
+  "evidenceSchemaVersion": "buildopt.evidence/poc-installed-profile-replay/v1",
+  "workItem": "POC-INSTALLED-PROFILE-REPLAY-001",
+  "decision": "PREREGISTER_PUBLIC_INSTALLED_QUALIFIED_PROFILE_REPLAY",
+  "release": {
+    "version": "0.3.0",
+    "tag": "v0.3.0",
+    "revision": "TO_BE_BOUND_BY_RELEASE",
+    "platform": "linux-amd64",
+    "installerUrl": "https://raw.githubusercontent.com/tonyredondo/buildopt/v0.3.0/install.sh"
+  },
+  "sources": {
+    "matrixSpec": "specs/poc-generic-change-breadth-v1.json",
+    "terminalEvidence": "benchmarks/results/poc-generic-change-breadth-v1",
+    "capture": 2
+  },
+  "cells": [
+    "apache-groovy-jar-leaf-source",
+    "apache-groovy-jar-shared-source",
+    "apache-kafka-checkstyle-metadata-source",
+    "apache-kafka-checkstyle-client-utils-source",
+    "apache-kafka-shadow-clients-source",
+    "apache-kafka-shadow-generator-source"
+  ],
+  "method": {
+    "surface": "PUBLIC_RELEASE_BUILDOPT_POC",
+    "installation": "PINNED_PUBLIC_INSTALLER_AND_RELEASE_CHECKSUM",
+    "checkout": "CLEAN_EXTERNAL_CHECKOUT_AT_FROZEN_PUBLIC_REVISION",
+    "candidate": "REPOSITORY_COMMITTED_QUALIFIED_PROFILE_V4",
+    "driftProbe": "APPEND_JSON_WHITESPACE_TO_BOUND_MANIFEST",
+    "driftOutcome": "NATIVE_FULL_GRAPH_PROFILE_PRECONDITION_FAILED",
+    "requiredOutputComparison": "OWNER_REVIEWED_SEMANTIC_DIGEST_EQUALS_TERMINAL_CAPTURE",
+    "valueDecision": "PRESERVE_TERMINAL_QUALIFICATION_WITHOUT_REESTIMATION",
+    "repositorySpecificProductRulesAllowed": false
+  },
+  "acceptance": {
+    "installedPackageRequired": true,
+    "allSelectivePlansRequired": true,
+    "allDriftProbesMustFallback": true,
+    "candidateAndFallbackOutputsMustMatchTerminal": true,
+    "qualificationMustMatchTerminal": true,
+    "maximumProductAttributableFailures": 0,
+    "cellPercentagesMayBeAveraged": false,
+    "mechanismPercentagesMayBeAdded": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "newTimingClaim": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

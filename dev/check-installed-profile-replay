@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-installed-profile-replay-v1.json"
+buildopt_source_spec="${buildopt_repo_root}/specs/poc-generic-change-breadth-v1.json"
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required installed-profile checker command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  keys == [
+    "acceptance", "boundaries", "cells", "decision", "evidenceSchemaVersion",
+    "method", "release", "schemaVersion", "sources", "workItem"
+  ] and
+  .schemaVersion == "buildopt.specs/poc-installed-profile-replay/v1" and
+  .evidenceSchemaVersion == "buildopt.evidence/poc-installed-profile-replay/v1" and
+  .workItem == "POC-INSTALLED-PROFILE-REPLAY-001" and
+  .decision == "PREREGISTER_PUBLIC_INSTALLED_QUALIFIED_PROFILE_REPLAY" and
+  .release.version == "0.3.0" and
+  .release.tag == "v0.3.0" and
+  (.release.revision == "TO_BE_BOUND_BY_RELEASE" or
+    (.release.revision | test("^[0-9a-f]{40}$"))) and
+  .release.platform == "linux-amd64" and
+  .release.installerUrl ==
+    "https://raw.githubusercontent.com/tonyredondo/buildopt/v0.3.0/install.sh" and
+  .sources.matrixSpec == "specs/poc-generic-change-breadth-v1.json" and
+  .sources.terminalEvidence ==
+    "benchmarks/results/poc-generic-change-breadth-v1" and
+  .sources.capture == 2 and
+  (.cells | length) == 6 and (.cells | unique | length) == 6 and
+  .method.surface == "PUBLIC_RELEASE_BUILDOPT_POC" and
+  .method.installation == "PINNED_PUBLIC_INSTALLER_AND_RELEASE_CHECKSUM" and
+  .method.driftOutcome == "NATIVE_FULL_GRAPH_PROFILE_PRECONDITION_FAILED" and
+  .method.repositorySpecificProductRulesAllowed == false and
+  .acceptance.installedPackageRequired == true and
+  .acceptance.allSelectivePlansRequired == true and
+  .acceptance.allDriftProbesMustFallback == true and
+  .acceptance.candidateAndFallbackOutputsMustMatchTerminal == true and
+  .acceptance.qualificationMustMatchTerminal == true and
+  .acceptance.maximumProductAttributableFailures == 0 and
+  .acceptance.cellPercentagesMayBeAveraged == false and
+  .acceptance.mechanismPercentagesMayBeAdded == false and
+  .boundaries.proofOfConcept == true and
+  .boundaries.productionAuthorized == false and
+  .boundaries.automaticActivation == false and
+  .boundaries.newTimingClaim == false and
+  .boundaries.soakRequired == false and
+  .boundaries.designPartnerRequired == false and
+  .boundaries.testOptimizationModified == false
+' "${buildopt_spec}" >/dev/null
+
+while IFS= read -r buildopt_key; do
+    [[ $(jq --arg key "${buildopt_key}" \
+        '[.repositories[] | select(.key == $key and .performanceClaim == true)] | length' \
+        "${buildopt_source_spec}") -eq 1 ]] || {
+        printf 'installed-profile cell is absent or not selective: %s\n' \
+            "${buildopt_key}" >&2
+        exit 1
+    }
+done < <(jq -r '.cells[]' "${buildopt_spec}")
+
+printf 'Installed qualified-profile replay contract OK: %s\n' "${buildopt_spec}"
