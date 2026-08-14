@@ -14,6 +14,7 @@ import (
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
 	"github.com/tonyredondo/buildopt/internal/localauthority"
+	"github.com/tonyredondo/buildopt/internal/platformfs"
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
 
@@ -286,8 +287,7 @@ func prepareProfileProposalCacheRoot(root string) error {
 	if err := os.MkdirAll(root, 0o700); err != nil {
 		return fmt.Errorf("create proposal replay cache directory: %w", err)
 	}
-	resolved, err := filepath.EvalSymlinks(root)
-	if err != nil || resolved != root {
+	if err := platformfs.ValidateNoLinks(root); err != nil {
 		return errors.New("proposal replay cache directory must not resolve through symlinks")
 	}
 	info, err := os.Lstat(root)
