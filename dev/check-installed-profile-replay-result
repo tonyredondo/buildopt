@@ -76,7 +76,7 @@ while IFS= read -r buildopt_key; do
       .selectionMode == "POC_CANDIDATE" and
       .selectionReason == "EXPLICIT_OWNER_POC_CANDIDATE" and
       .entrypoints == $expected and .qualification == $profile[0].qualification and
-      (.preconditions | length) == 3 and all(.preconditions[]; .status == "SATISFIED") and
+      (.preconditions | length) == 4 and all(.preconditions[]; .status == "SATISFIED") and
       .productionAuthorized == false
     ' "${buildopt_cell}/candidate-plan.json" >/dev/null
     jq -e --argjson fallback "${buildopt_fallback_entrypoints}" \

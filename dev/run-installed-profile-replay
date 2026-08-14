@@ -271,7 +271,7 @@ buildopt_capture_cell() {
         .selectionReason == "EXPLICIT_OWNER_POC_CANDIDATE" and
         .entrypoints == $entrypoints and
         .qualification == $profile[0].qualification and
-        (.preconditions | length) == 3 and
+        (.preconditions | length) == 4 and
         all(.preconditions[]; .status == "SATISFIED") and
         .productionAuthorized == false
     ' "${buildopt_cell_output}/candidate-plan.json" >/dev/null

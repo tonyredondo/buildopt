@@ -28,13 +28,16 @@ jq -e '
   .evidenceSchemaVersion == "buildopt.evidence/poc-installed-profile-replay/v1" and
   .workItem == "POC-INSTALLED-PROFILE-REPLAY-001" and
   .decision == "PREREGISTER_PUBLIC_INSTALLED_QUALIFIED_PROFILE_REPLAY" and
-  .release.version == "0.3.0" and
-  .release.tag == "v0.3.0" and
+  .release.version == "0.3.1" and
+  .release.tag == "v0.3.1" and
   (.release.revision == "TO_BE_BOUND_BY_RELEASE" or
     (.release.revision | test("^[0-9a-f]{40}$"))) and
   .release.platform == "linux-amd64" and
   .release.installerUrl ==
-    "https://raw.githubusercontent.com/tonyredondo/buildopt/v0.3.0/install.sh" and
+    "https://raw.githubusercontent.com/tonyredondo/buildopt/v0.3.1/install.sh" and
+  .release.supersedes.tag == "v0.3.0" and
+  .release.supersedes.revision == "c46f68f8c908e35594cb1128ff9f50c1ffb95ad5" and
+  .release.supersedes.reason == "GENERATED_FOUR_BINDING_PROFILE_REJECTED_BEFORE_GRADLE" and
   .sources.matrixSpec == "specs/poc-generic-change-breadth-v1.json" and
   .sources.terminalEvidence ==
     "benchmarks/results/poc-generic-change-breadth-v1" and

@@ -365,19 +365,25 @@ func validateQualifiedPOCProfile(profile qualifiedPOCProfile) error {
 	if versionFour && (!profile.Mechanisms.BuildImpact || profile.Mechanisms.StandardJarAdapter ||
 		profile.Mechanisms.SafeCache || profile.Mechanisms.RuntimeTuning ||
 		profile.Mechanisms.HotState || profile.Mechanisms.StandardCopyAdapter ||
-		profile.Mechanisms.SharedEdgeCache || len(profile.Preconditions) != 3 || profile.EdgeCache != nil ||
+		profile.Mechanisms.SharedEdgeCache || len(profile.Preconditions) < 3 || len(profile.Preconditions) > 4 || profile.EdgeCache != nil ||
 		profile.Qualification == nil || profile.Qualification.SchemaVersion != profilediscovery.StructuralEvidenceSchema ||
 		!validQualifiedPOCLowerHex(profile.Qualification.SHA256, sha256.Size*2) ||
 		!validQualifiedPOCLowerHex(profile.Qualification.RepositoryRevision, 40) ||
 		profile.Qualification.Pairs != 8 || profile.Qualification.MeanSavedMS < 500 ||
 		profile.Qualification.ReductionRatio < 0.02 || len(profile.Qualification.Interval95SavedMS) != 2 ||
 		profile.Qualification.Interval95SavedMS[0] <= 0 || len(profile.GradleOptions) == 0) {
-		return errors.New("qualified POC profile v4 requires exact positive structural evidence and three file bindings")
+		return errors.New("qualified POC profile v4 requires exact positive structural evidence and three or four file bindings")
 	}
 	if versionFour && (profile.Preconditions[0].Path != profile.Impact.Manifest ||
 		profile.Preconditions[1].Path != profile.Impact.Graph ||
 		profile.Preconditions[2].Path != profile.Impact.GeneratedManifest) {
 		return errors.New("qualified POC profile v4 preconditions must bind its manifest, graph, and generated state")
+	}
+	if versionFour && len(profile.Preconditions) == 4 &&
+		(profile.Preconditions[3].Path == profile.Impact.Manifest ||
+			profile.Preconditions[3].Path == profile.Impact.Graph ||
+			profile.Preconditions[3].Path == profile.Impact.GeneratedManifest) {
+		return errors.New("qualified POC profile v4 optional output-equivalence binding must be distinct")
 	}
 	if !versionFour && profile.Qualification != nil {
 		return errors.New("legacy qualified POC profiles cannot carry structural qualification evidence")

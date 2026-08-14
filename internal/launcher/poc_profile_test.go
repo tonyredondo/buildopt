@@ -188,6 +188,60 @@ func TestQualifiedPOCStructuralProfileSelectsAndFailsClosedOnDrift(t *testing.T)
 	}
 }
 
+func TestQualifiedPOCStructuralProfileBindsReviewedOutputEquivalence(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	configureQualifiedPOCStructuralTestProfile(t, repositoryRoot)
+	profile, err := loadQualifiedPOCProfile(repositoryRoot, qualifiedPOCProfileDefaultPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	contract := []byte(`{"schemaVersion":"buildopt.poc/output-equivalence/v1","reviewRequired":true}`)
+	digest := sha256.Sum256(contract)
+	profile.Preconditions = append(profile.Preconditions, qualifiedPOCPrecondition{
+		Type: "FILE_SHA256", Path: "buildopt-output-equivalence.json",
+		SHA256: fmt.Sprintf("%x", digest),
+	})
+	raw, err := json.MarshalIndent(profile, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(repositoryRoot, qualifiedPOCProfileDefaultPath), append(raw, '\n'), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	equivalencePath := filepath.Join(repositoryRoot, "buildopt-output-equivalence.json")
+	if err := os.WriteFile(equivalencePath, contract, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	t.Chdir(repositoryRoot)
+
+	invocation, err := prepareQualifiedPOCProfileInvocation([]string{
+		"--changes-file", "changed.txt",
+	}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !invocation.plan.CandidateSelected || invocation.qualifiedProfile == nil ||
+		len(invocation.qualifiedProfile.Preconditions) != 4 ||
+		invocation.qualifiedProfile.Preconditions[3].Status != "SATISFIED" {
+		t.Fatalf("output-equivalence-bound invocation = %+v", invocation)
+	}
+
+	if err := os.WriteFile(equivalencePath, append(contract, '\n'), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	invocation, err = prepareQualifiedPOCProfileInvocation([]string{
+		"--changes-file", "changed.txt",
+	}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if invocation.plan.CandidateSelected || invocation.plan.Mode != buildimpact.DecisionFullGraph ||
+		invocation.plan.Reason != "PROFILE_PRECONDITION_FAILED" || invocation.qualifiedProfile == nil ||
+		invocation.qualifiedProfile.Preconditions[3].Status != "FAILED" {
+		t.Fatalf("drifted output-equivalence invocation = %+v", invocation)
+	}
+}
+
 func TestQualifiedPOCBuildImpactOnlyProfileRejectsExtraMechanism(t *testing.T) {
 	repositoryRoot := impactTestRepository(t)
 	configureQualifiedPOCBuildImpactOnlyTestProfile(t, repositoryRoot)

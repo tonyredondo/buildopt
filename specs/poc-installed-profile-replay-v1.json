@@ -4,11 +4,16 @@
   "workItem": "POC-INSTALLED-PROFILE-REPLAY-001",
   "decision": "PREREGISTER_PUBLIC_INSTALLED_QUALIFIED_PROFILE_REPLAY",
   "release": {
-    "version": "0.3.0",
-    "tag": "v0.3.0",
-    "revision": "c46f68f8c908e35594cb1128ff9f50c1ffb95ad5",
+    "version": "0.3.1",
+    "tag": "v0.3.1",
+    "revision": "TO_BE_BOUND_BY_RELEASE",
     "platform": "linux-amd64",
-    "installerUrl": "https://raw.githubusercontent.com/tonyredondo/buildopt/v0.3.0/install.sh"
+    "installerUrl": "https://raw.githubusercontent.com/tonyredondo/buildopt/v0.3.1/install.sh",
+    "supersedes": {
+      "tag": "v0.3.0",
+      "revision": "c46f68f8c908e35594cb1128ff9f50c1ffb95ad5",
+      "reason": "GENERATED_FOUR_BINDING_PROFILE_REJECTED_BEFORE_GRADLE"
+    }
   },
   "sources": {
     "matrixSpec": "specs/poc-generic-change-breadth-v1.json",

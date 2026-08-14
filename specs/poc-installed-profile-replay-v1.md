@@ -15,8 +15,13 @@ revision and deterministic change. The checked terminal capture supplies the
 reviewed profile, graph, manifest, generated state, semantic-output contract,
 qualification, and expected output digest.
 
-The runner installs `v0.3.0` through its immutable public installer. It does
-not compile or execute the checkout's BuildOpt source. For every cell it:
+The runner installs `v0.3.1` through its immutable public installer. It does
+not compile or execute the checkout's BuildOpt source. The preregistered
+`v0.3.0` attempt stopped before Gradle because its launcher accepted the
+original three structural bindings while the reviewed profile generator
+emitted a fourth output-equivalence binding. No result from that invalid
+attempt is retained. `v0.3.1` accepts both shapes and evaluates the optional
+fourth file through the same fail-closed SHA-256 path. For every cell it:
 
 1. runs the reviewed profile with `buildopt poc --changes-file ...`;
 2. requires the exact selected entrypoint and embedded terminal qualification;
