@@ -40,6 +40,9 @@ Each arm runs one changed-target stabilization followed by two bounded shape
 confirmations. The last two target fingerprints must match before pair 1; a
 non-convergent arm stops without timing. The earlier target warmup remains in
 the diagnostics but cannot veto a later, explicitly demonstrated steady state.
+A convergence failure reports a bounded, sorted task-path and terminal-outcome
+diff between the final confirmations; this is diagnostic only and cannot relax
+or bypass the convergence precondition.
 Eight reciprocal AB/BA blocks are evaluated with the current 500 ms/2%,
 positive median/lower-bound, at-least-six-positive-block, non-regressive-p95,
 stable-shape, complete-fallback, and zero-product-failure gates. Percentages

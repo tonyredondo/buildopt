@@ -2,6 +2,7 @@ package launcher
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -279,6 +280,39 @@ func TestStructuralTargetWarmupsRequireTwoFinalMatchingFingerprints(t *testing.T
 	}
 	if structuralTargetWarmupsConverged(warmups[:4]) {
 		t.Fatal("an incomplete five-phase sequence converged")
+	}
+}
+
+func TestDescribeStructuralTaskOutcomeDifferenceIsBoundedAndSpecific(t *testing.T) {
+	task := func(path, outcome string) profilediscovery.StructuralTaskObservation {
+		return profilediscovery.StructuralTaskObservation{Path: path, Outcome: outcome}
+	}
+	previous := profilediscovery.StructuralTaskOutcomes{Tasks: []profilediscovery.StructuralTaskObservation{
+		task(":alpha", "FROM_CACHE"),
+		task(":removed", "EXECUTED"),
+		task(":stable", "NO_SOURCE"),
+	}}
+	current := profilediscovery.StructuralTaskOutcomes{Tasks: []profilediscovery.StructuralTaskObservation{
+		task(":added", "EXECUTED"),
+		task(":alpha", "EXECUTED"),
+		task(":stable", "NO_SOURCE"),
+	}}
+	got := describeStructuralTaskOutcomeDifference(previous, current)
+	want := ":added ABSENT -> EXECUTED; :alpha FROM_CACHE -> EXECUTED; :removed EXECUTED -> ABSENT"
+	if got != want {
+		t.Fatalf("task difference = %q, want %q", got, want)
+	}
+
+	previous.Tasks = previous.Tasks[:0]
+	current.Tasks = current.Tasks[:0]
+	for index := 0; index < 18; index++ {
+		path := fmt.Sprintf(":task-%02d", index)
+		previous.Tasks = append(previous.Tasks, task(path, "FROM_CACHE"))
+		current.Tasks = append(current.Tasks, task(path, "EXECUTED"))
+	}
+	got = describeStructuralTaskOutcomeDifference(previous, current)
+	if strings.Count(got, " -> ") != 16 || !strings.HasSuffix(got, "; and 2 more") {
+		t.Fatalf("bounded task difference = %q", got)
 	}
 }
 

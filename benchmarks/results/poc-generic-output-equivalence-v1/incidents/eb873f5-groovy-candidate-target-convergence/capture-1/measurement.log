@@ -1,0 +1,21 @@
+buildopt: warming isolated control arm at c16898314460cdfc3e0f0d7d24822585bbd1997e (cache seed 1/5)
+buildopt: warmed isolated control arm cache seed in 208150ms with total:218/executed:167/from-cache:0/up-to-date:3/no-source:48/skipped:0/fingerprint:7517f029b7a075e985d670178f879974e0297889ca1085e0a5e7fdc9d123fa8f
+buildopt: warming isolated control arm at c16898314460cdfc3e0f0d7d24822585bbd1997e (base daemon stabilization 2/5)
+buildopt: warmed isolated control arm daemon stabilization in 80541ms with total:218/executed:133/from-cache:27/up-to-date:10/no-source:48/skipped:0/fingerprint:412113aca5cb6c75afb026125187314f7d484f4361ae7ee7828d97177895a0d0
+buildopt: warming isolated control arm at 3d6e5f4f6e8b492528fe133366680a377b7e4706 (target-workload stabilization 3/5)
+buildopt: warmed isolated control arm target workload in 82675ms with total:218/executed:138/from-cache:24/up-to-date:8/no-source:48/skipped:0/fingerprint:a8c9059b0fb2a799ddfba8828062a5ba4fb07b5deb583fa958f0ecb41079e151
+buildopt: confirming isolated control target-workload shape at 3d6e5f4f6e8b492528fe133366680a377b7e4706 (4/5)
+buildopt: confirmed isolated control target workload in 78993ms with total:218/executed:138/from-cache:24/up-to-date:8/no-source:48/skipped:0/fingerprint:a8c9059b0fb2a799ddfba8828062a5ba4fb07b5deb583fa958f0ecb41079e151
+buildopt: confirming isolated control target-workload shape at 3d6e5f4f6e8b492528fe133366680a377b7e4706 (5/5)
+buildopt: confirmed isolated control target workload in 76637ms with total:218/executed:138/from-cache:24/up-to-date:8/no-source:48/skipped:0/fingerprint:a8c9059b0fb2a799ddfba8828062a5ba4fb07b5deb583fa958f0ecb41079e151
+buildopt: warming isolated candidate arm at c16898314460cdfc3e0f0d7d24822585bbd1997e (cache seed 1/5)
+buildopt: warmed isolated candidate arm cache seed in 149529ms with total:25/executed:24/from-cache:0/up-to-date:0/no-source:1/skipped:0/fingerprint:74a2e1a4588b91accdf076cda4cb2c697590539d0f32836d22e89ed76e3bf071
+buildopt: warming isolated candidate arm at c16898314460cdfc3e0f0d7d24822585bbd1997e (base daemon stabilization 2/5)
+buildopt: warmed isolated candidate arm daemon stabilization in 14080ms with total:25/executed:14/from-cache:10/up-to-date:0/no-source:1/skipped:0/fingerprint:518271d7ae0ed7bcec07c4a9859a59b96a835ac29b04aeb5d6d8c8a491b92d33
+buildopt: warming isolated candidate arm at 3d6e5f4f6e8b492528fe133366680a377b7e4706 (target-workload stabilization 3/5)
+buildopt: warmed isolated candidate arm target workload in 12408ms with total:25/executed:15/from-cache:9/up-to-date:0/no-source:1/skipped:0/fingerprint:722650c99abe3bde8e68c9ef8e77a7460e9de14869e125205f1da4e1183b3d77
+buildopt: confirming isolated candidate target-workload shape at 3d6e5f4f6e8b492528fe133366680a377b7e4706 (4/5)
+buildopt: confirmed isolated candidate target workload in 9616ms with total:25/executed:15/from-cache:9/up-to-date:0/no-source:1/skipped:0/fingerprint:722650c99abe3bde8e68c9ef8e77a7460e9de14869e125205f1da4e1183b3d77
+buildopt: confirming isolated candidate target-workload shape at 3d6e5f4f6e8b492528fe133366680a377b7e4706 (5/5)
+buildopt: confirmed isolated candidate target workload in 17780ms with total:25/executed:16/from-cache:8/up-to-date:0/no-source:1/skipped:0/fingerprint:b43c808e47c00d49cfb56f71197b3295e884e9f536fb660c7889cb8b633b76e2
+buildopt: structural profile measurement unavailable: candidate target workload did not converge in three bounded warm-ups

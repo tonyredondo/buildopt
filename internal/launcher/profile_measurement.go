@@ -512,7 +512,11 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 			name, confirmation.durationMS, formatStructuralTaskOutcomes(confirmation.taskOutcomes))
 	}
 	if config.targetStabilityConfirmations == 3 && !structuralTargetWarmupsConverged(arm.warmups) {
-		return arm, fmt.Errorf("%s target workload did not converge in three bounded warm-ups", name)
+		return arm, fmt.Errorf("%s target workload did not converge in three bounded warm-ups: %s",
+			name, describeStructuralTaskOutcomeDifference(
+				arm.warmups[len(arm.warmups)-2].TaskOutcomes,
+				arm.warmups[len(arm.warmups)-1].TaskOutcomes,
+			))
 	}
 	return arm, nil
 }
@@ -524,6 +528,54 @@ func structuralTargetWarmupsConverged(warmups []profilediscovery.StructuralWarmu
 	previous := warmups[len(warmups)-2].TaskOutcomes.FingerprintSHA256
 	current := warmups[len(warmups)-1].TaskOutcomes.FingerprintSHA256
 	return previous != "" && current == previous
+}
+
+func describeStructuralTaskOutcomeDifference(previous, current profilediscovery.StructuralTaskOutcomes) string {
+	const maximumDifferences = 16
+	previousByPath := make(map[string]string, len(previous.Tasks))
+	currentByPath := make(map[string]string, len(current.Tasks))
+	paths := make(map[string]struct{}, len(previous.Tasks)+len(current.Tasks))
+	for _, task := range previous.Tasks {
+		previousByPath[task.Path] = task.Outcome
+		paths[task.Path] = struct{}{}
+	}
+	for _, task := range current.Tasks {
+		currentByPath[task.Path] = task.Outcome
+		paths[task.Path] = struct{}{}
+	}
+	orderedPaths := make([]string, 0, len(paths))
+	for taskPath := range paths {
+		orderedPaths = append(orderedPaths, taskPath)
+	}
+	sort.Strings(orderedPaths)
+	differences := make([]string, 0, maximumDifferences)
+	totalDifferences := 0
+	for _, taskPath := range orderedPaths {
+		before, beforePresent := previousByPath[taskPath]
+		after, afterPresent := currentByPath[taskPath]
+		if beforePresent && afterPresent && before == after {
+			continue
+		}
+		totalDifferences++
+		if len(differences) == maximumDifferences {
+			continue
+		}
+		if !beforePresent {
+			before = "ABSENT"
+		}
+		if !afterPresent {
+			after = "ABSENT"
+		}
+		differences = append(differences, fmt.Sprintf("%s %s -> %s", taskPath, before, after))
+	}
+	if totalDifferences == 0 {
+		return "fingerprints differ without a task-level difference"
+	}
+	description := strings.Join(differences, "; ")
+	if totalDifferences > len(differences) {
+		description += fmt.Sprintf("; and %d more", totalDifferences-len(differences))
+	}
+	return description
 }
 
 func structuralWarmupDiagnostic(phase string, result structuralArmResult) profilediscovery.StructuralWarmupObservation {
