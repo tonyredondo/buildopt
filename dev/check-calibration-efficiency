@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+repo_root=$(cd -- "${script_dir}/.." && pwd -P)
+spec="${repo_root}/specs/poc-calibration-efficiency-v1.json"
+source_spec="${repo_root}/specs/poc-generic-change-breadth-v1.json"
+economics="${repo_root}/benchmarks/results/poc-calibration-economics-v1/summary.json"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-calibration-efficiency/v1" and
+  .workItem == "POC-CALIBRATION-EFFICIENCY-001" and
+  (.preregisteredAtRevision | test("^[0-9a-f]{40}$")) and
+  (.source.buildoptRevision | test("^[0-9a-f]{40}$")) and
+  (.source.executableSha256 | test("^[0-9a-f]{64}$")) and
+  .runner.platform == "linux-amd64" and .runner.cpuCount == 12 and
+  .runner.capturesPerCell == 2 and .runner.maxWorkers == 12 and
+  (.cells | length) == 6 and (.cells | unique | length) == 6 and
+  .proposal.coldPass == "OUTPUT_PREFLIGHT_PLUS_ONE_COMBINED_GRADLE_DISCOVERY" and
+  .proposal.replay == "EXACT_DIGEST_BOUND_PRIVATE_CACHE" and
+  .proposal.coldAndReplayReportedSeparately == true and
+  (.proposal.requiredByteIdenticalArtifacts | length) == 6 and
+  .proposal.driftProbe == "ADDITIONAL_GRADLE_OPTION_MUST_NOT_REPLAY" and
+  .stabilization.controlTargetWarmups == 3 and
+  .stabilization.candidateMinimumTargetWarmups == 2 and
+  .stabilization.candidateMaximumTargetWarmups == 3 and
+  .stabilization.earlyStop == "FIRST_TWO_EXACT_TASK_FINGERPRINTS_MATCH" and
+  .economics.breakEvenFormula ==
+    "CEIL(CALIBRATION_COST_MS / UNCHANGED_TERMINAL_MEAN_SAVED_MS)" and
+  .economics.exactReplayIsSeparateView == true and
+  .economics.percentagesMayBeAveragedAcrossCells == false and
+  .economics.requiredInstalledBreakEvenImprovementBuilds == 1 and
+  .boundaries.proofOfConcept == true and
+  .boundaries.productionAuthorized == false and
+  .boundaries.automaticActivation == false and
+  .boundaries.repositorySpecificProductRulesAllowed == false and
+  .boundaries.terminalSavingsChanged == false and
+  .boundaries.testOptimizationModified == false and
+  .boundaries.soakRequired == false and .boundaries.designPartnerRequired == false
+' "${spec}" >/dev/null
+
+jq -e --slurpfile source "${source_spec}" --slurpfile economics "${economics}" '
+  (.cells | sort) == ([$source[0].repositories[] | select(.performanceClaim) | .key] | sort) and
+  (.cells | sort) == ([$economics[0].cells[].key] | sort) and
+  all(.cells[]; . as $key |
+    any($source[0].repositories[]; .key == $key and .performanceClaim) and
+    any($economics[0].cells[]; .key == $key and .steadyState.meanSavedMs > 0))
+' "${spec}" >/dev/null
+
+printf 'Calibration efficiency contract OK: %s\n' "${spec}"
+

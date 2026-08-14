@@ -1,0 +1,281 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# < 2 || $# > 4)) || [[ $1 != /* || $2 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/root /absolute/buildopt [cell-key] [capture-index]\n' "$0" >&2
+    exit 64
+fi
+
+evidence_root=$1
+buildopt_executable=$2
+cell_filter=${3:-}
+capture_filter=${4:-}
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+repo_root=$(cd -- "${script_dir}/.." && pwd -P)
+spec="${repo_root}/specs/poc-calibration-efficiency-v1.json"
+source_spec="${repo_root}/specs/poc-generic-change-breadth-v1.json"
+source_root="${repo_root}/benchmarks/results/poc-generic-change-breadth-v1"
+
+if [[ ! -x ${buildopt_executable} ]] ||
+    [[ $(sha256sum "${buildopt_executable}" | awk '{print $1}') != $(jq -r '.source.executableSha256' "${spec}") ]]; then
+    printf 'installed BuildOpt executable does not match the efficiency contract\n' >&2
+    exit 1
+fi
+if [[ -n ${capture_filter} && ${capture_filter} != 1 && ${capture_filter} != 2 ]]; then
+    printf 'capture index must be 1 or 2\n' >&2
+    exit 64
+fi
+if [[ -n ${cell_filter} && $(jq --arg key "${cell_filter}" '[.cells[] | select(. == $key)] | length' "${spec}") -ne 1 ]]; then
+    printf 'calibration efficiency cell is absent or ambiguous: %s\n' "${cell_filter}" >&2
+    exit 64
+fi
+[[ -z $(git -C "${repo_root}" status --porcelain --untracked-files=no) ]] || {
+    printf 'BuildOpt tracked state must be clean before efficiency capture\n' >&2
+    exit 1
+}
+for command in awk cp date find git grep jq perl sha256sum timeout; do
+    command -v "${command}" >/dev/null || {
+        printf 'required efficiency command is unavailable: %s\n' "${command}" >&2
+        exit 1
+    }
+done
+
+temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-calibration-efficiency.XXXXXX")
+cleanup() {
+    if [[ ${temporary} == "${TMPDIR:-/tmp}/buildopt-calibration-efficiency."* ]]; then
+        rm -rf -- "${temporary}"
+    fi
+}
+trap cleanup EXIT
+mkdir -p -- "${evidence_root}"
+
+mutate_repository() {
+    local mutation=$1 repository=$2 change_path=$3 marker=$4
+    case "${mutation}" in
+        ADD_PACKAGE_PRIVATE_MARKER_RETURNING_ONE)
+            perl -0pi -e 's/\n}\n\z/\n\n    int buildOptPocMarker() {\n        return 1;\n    }\n}\n/' \
+                "${repository}/${change_path}"
+            ;;
+        APPEND_FIXED_COMMENT)
+            printf '\n// buildopt-poc-%s\n' "${marker}" >>"${repository}/${change_path}"
+            ;;
+        APPEND_FIXED_HASH_COMMENT)
+            printf '\n# buildopt-poc-%s\n' "${marker}" >>"${repository}/${change_path}"
+            ;;
+        *)
+            printf 'unsupported efficiency mutation: %s\n' "${mutation}" >&2
+            return 1
+            ;;
+    esac
+}
+
+distribution_name() {
+    local repository=$1 url archive distribution
+    url=$(awk -F= '$1 == "distributionUrl" {sub(/^[^=]*=/, ""); print; exit}' \
+        "${repository}/gradle/wrapper/gradle-wrapper.properties")
+    url=${url//\\:/:}
+    archive=${url%%\?*}
+    archive=${archive##*/}
+    distribution=${archive%.zip}
+    [[ ${distribution} =~ ^gradle-[0-9][0-9.]*-(bin|all)$ ]] || return 1
+    printf '%s\n' "${distribution}"
+}
+
+seed_distribution() {
+    local repository=$1 gradle_home=$2 distribution source_root source destination
+    distribution=$(distribution_name "${repository}")
+    destination="${gradle_home}/wrapper/dists/${distribution}"
+    mkdir -p -- "${destination}"
+    for source_root in \
+        "${repo_root}/.tools/gradle-user-home/local/wrapper/dists" \
+        "${repo_root}/.tools/gradle-user-home/wrapper/dists" \
+        "${GRADLE_USER_HOME:-${HOME}/.gradle}/wrapper/dists"; do
+        source="${source_root}/${distribution}"
+        [[ -d ${source} ]] || continue
+        cp -a -- "${source}/." "${destination}/"
+    done
+    find "${destination}" -type f -name gradle -perm -u+x -print -quit | grep -q . || {
+        printf 'exact offline Wrapper distribution is unavailable: %s\n' "${distribution}" >&2
+        return 1
+    }
+}
+
+normalize_log() {
+    local log=$1
+    BUILDOPT_PRIVATE_ROOT="${temporary}" BUILDOPT_CHECKOUT_ROOT="${repo_root}" \
+        perl -0pi -e '
+          s/\Q$ENV{BUILDOPT_PRIVATE_ROOT}\E/<EFFICIENCY_ROOT>/g;
+          s/\Q$ENV{BUILDOPT_CHECKOUT_ROOT}\E/<BUILDOPT_REPOSITORY_ROOT>/g;
+          s/\n+\z/\n/;
+        ' "${log}"
+}
+
+capture_cell() {
+    local key=$1 capture=$2 cell cell_root repository gradle_home cache_root destination
+    local base target change_path jdk cache_record
+    local cold_log replay_log drift_log started finished cold_ms replay_ms cold_sha replay_sha
+    local artifact capture_payload capture_sha value
+    local -a entrypoint_args=() output_args=() proposal_args=()
+
+    cell=$(jq -c --arg key "${key}" '.repositories[] | select(.key == $key and .performanceClaim)' "${source_spec}")
+    [[ -n ${cell} ]] || return 1
+    destination="${evidence_root}/${key}/capture-${capture}"
+    if [[ -s ${destination}/phase.json ]]; then
+        printf 'Efficiency capture already exists; preserving %s\n' "${destination}"
+        return 0
+    fi
+    [[ ! -e ${destination} ]] || {
+        printf 'incomplete efficiency capture exists: %s\n' "${destination}" >&2
+        return 1
+    }
+    cell_root="${temporary}/${key}-${capture}"
+    repository="${cell_root}/repository"
+    gradle_home="${cell_root}/gradle-home"
+    cache_root="${cell_root}/proposal-cache"
+    mkdir -p -- "${repository}" "${gradle_home}" "${cache_root}"
+    chmod 700 -- "${cache_root}"
+
+    git -C "${repository}" init -q
+    git -C "${repository}" remote add origin "$(jq -r '.remoteUrl' <<<"${cell}")"
+    git -C "${repository}" fetch --depth=1 origin "$(jq -r '.publicRevision' <<<"${cell}")" >/dev/null
+    git -C "${repository}" checkout -q --detach FETCH_HEAD
+    base=$(git -C "${repository}" rev-parse HEAD)
+    [[ ${base} == $(jq -r '.publicRevision' <<<"${cell}") ]] || return 1
+    seed_distribution "${repository}" "${gradle_home}"
+    jdk=$(jq -r '.jdkToolchain' <<<"${cell}")
+    (
+        cd -- "${repository}"
+        env -u CI GRADLE_USER_HOME="${gradle_home}" timeout 30m \
+            "${script_dir}/run" --toolchain "${jdk}" -- ./gradlew --offline --version
+    ) >/dev/null 2>&1
+
+    change_path=$(jq -r '.changePath' <<<"${cell}")
+    [[ $(sha256sum "${repository}/${change_path}" | awk '{print $1}') == $(jq -r '.changeOriginalSha256' <<<"${cell}") ]] || return 1
+    mutate_repository "$(jq -r '.mutation' <<<"${cell}")" "${repository}" "${change_path}" "${key}"
+    git -C "${repository}" config user.name 'BuildOpt POC'
+    git -C "${repository}" config user.email 'buildopt-poc@example.invalid'
+    git -C "${repository}" config commit.gpgsign false
+    git -C "${repository}" add "${change_path}"
+    GIT_AUTHOR_DATE='2026-08-10T00:00:00Z' GIT_COMMITTER_DATE='2026-08-10T00:00:00Z' \
+        git -C "${repository}" commit -qm 'Apply frozen BuildOpt matrix mutation'
+    target=$(git -C "${repository}" rev-parse HEAD)
+    printf '%s\n' "${change_path}" >"${repository}/buildopt-changes.txt"
+    cp -- "${repo_root}/$(jq -r '.outputEquivalenceContract' <<<"${cell}")" \
+        "${repository}/buildopt-output-equivalence.json"
+    while IFS= read -r value; do entrypoint_args+=(--entrypoint "${value}"); done < <(jq -r '.entrypoints[]' <<<"${cell}")
+    while IFS= read -r value; do output_args+=(--required-output "${value}"); done < <(jq -r '.requiredOutputs[]' <<<"${cell}")
+    proposal_args=(
+        profile propose --repository-id "$(jq -r '.repositoryId' <<<"${cell}")"
+        --pipeline-class "$(jq -r '.pipelineClass' <<<"${cell}")"
+        "${entrypoint_args[@]}" --changes-file buildopt-changes.txt --base-revision "${base}"
+        "${output_args[@]}" --output-equivalence buildopt-output-equivalence.json
+        --gradle-option=--no-configuration-cache --gradle-option=--no-scan
+        --gradle-option=--max-workers=12 --buildopt-revision "$(jq -r '.source.buildoptRevision' "${spec}")"
+        --discovery-cache-dir "${cache_root}" --timeout 30m
+    )
+    cold_log="${cell_root}/cold.log"
+    replay_log="${cell_root}/replay.log"
+    drift_log="${cell_root}/drift.log"
+    started=$(date +%s%N)
+    (cd -- "${repository}" && env -u CI GRADLE_USER_HOME="${gradle_home}" timeout 30m \
+        "${script_dir}/run" --toolchain "${jdk}" -- "${buildopt_executable}" "${proposal_args[@]}") \
+        >"${cold_log}" 2>&1
+    finished=$(date +%s%N)
+    cold_ms=$(((finished - started) / 1000000))
+    if grep -F 'exact structural proposal replay' "${cold_log}" >/dev/null; then
+        printf 'cold proposal unexpectedly replayed cached state: %s\n' "${key}" >&2
+        return 1
+    fi
+    jq -e --argjson expected "$(jq -c '.expectedCandidateEntrypoints' <<<"${cell}")" '
+      .decision == "MEASURE_STRUCTURAL_CANDIDATE" and
+      .reason == "COMPLETE_STRUCTURAL_REDUCTION" and
+      .candidateEntrypoints == $expected and .activationAutomatic == false and
+      .productionAuthorized == false
+    ' "${repository}/buildopt-profile-proposal.json" >/dev/null
+    mkdir -p -- "${cell_root}/cold"
+    for artifact in buildopt-output-contract.json buildopt-impact-manifest.json \
+        buildopt-impact-graph.generated.json buildopt-impact.generated.json \
+        buildopt-fallback-changes.txt buildopt-profile-proposal.json; do
+        cp -- "${repository}/${artifact}" "${cell_root}/cold/${artifact}"
+    done
+
+    started=$(date +%s%N)
+    (cd -- "${repository}" && env -u CI GRADLE_USER_HOME="${gradle_home}" timeout 30m \
+        "${script_dir}/run" --toolchain "${jdk}" -- "${buildopt_executable}" "${proposal_args[@]}") \
+        >"${replay_log}" 2>&1
+    finished=$(date +%s%N)
+    replay_ms=$(((finished - started) / 1000000))
+    grep -F 'buildopt: exact structural proposal replay ' "${replay_log}" >/dev/null
+    for artifact in buildopt-output-contract.json buildopt-impact-manifest.json \
+        buildopt-impact-graph.generated.json buildopt-impact.generated.json \
+        buildopt-fallback-changes.txt buildopt-profile-proposal.json; do
+        cmp --silent "${cell_root}/cold/${artifact}" "${repository}/${artifact}"
+    done
+    cache_record=$(find "${cache_root}" -maxdepth 1 -type f -name '*.json' -print)
+    [[ -n ${cache_record} && $(wc -l <<<"${cache_record}") -eq 1 ]]
+
+    printf 'not a Gradle home\n' >"${cell_root}/invalid-gradle-home"
+    set +e
+    (cd -- "${repository}" && env -u CI GRADLE_USER_HOME="${cell_root}/invalid-gradle-home" \
+        timeout 30m "${script_dir}/run" --toolchain "${jdk}" -- "${buildopt_executable}" \
+        "${proposal_args[@]}" --gradle-option=--stacktrace) >"${drift_log}" 2>&1
+    drift_status=$?
+    set -e
+    ((drift_status != 0))
+    if grep -F 'exact structural proposal replay' "${drift_log}" >/dev/null; then
+        printf 'drift probe replayed cached state: %s\n' "${key}" >&2
+        return 1
+    fi
+
+    normalize_log "${cold_log}"
+    normalize_log "${replay_log}"
+    normalize_log "${drift_log}"
+    cold_sha=$(sha256sum "${cold_log}" | awk '{print $1}')
+    replay_sha=$(sha256sum "${replay_log}" | awk '{print $1}')
+    capture_payload="${cell_root}/capture.json"
+    jq -n \
+        --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --arg key "${key}" --argjson capture "${capture}" \
+        --arg revision "$(jq -r '.source.buildoptRevision' "${spec}")" \
+        --arg executable "$(jq -r '.source.executableSha256' "${spec}")" \
+        --arg repositoryId "$(jq -r '.repositoryId' <<<"${cell}")" --arg repositoryRevision "${base}" \
+        --arg targetRevision "${target}" --arg workflowFamily "$(jq -r '.workflowFamily' <<<"${cell}")" \
+        --arg changeClass "$(jq -r '.changeClass' <<<"${cell}")" --arg changePath "${change_path}" \
+        --argjson cold "${cold_ms}" --argjson replay "${replay_ms}" --argjson drift "${drift_status}" \
+        --arg coldLogSha "${cold_sha}" --arg replayLogSha "${replay_sha}" \
+        --arg cacheSha "$(sha256sum "${cache_record}" | awk '{print $1}')" \
+        --arg terminalSha "$(sha256sum "${source_root}/${key}/capture-${capture}/evidence.json" | awk '{print $1}')" '
+      {
+        schemaVersion: "buildopt.evidence/poc-calibration-efficiency-capture/v1",
+        workItem: "POC-CALIBRATION-EFFICIENCY-001", capturedAt: $capturedAt, captureIndex: $capture,
+        buildopt: {revision: $revision, executableSha256: $executable},
+        cell: {key: $key, repositoryId: $repositoryId, repositoryRevision: $repositoryRevision,
+          targetRevision: $targetRevision, workflowFamily: $workflowFamily,
+          changeClass: $changeClass, changePath: $changePath},
+        proposal: {coldMs: $cold, exactReplayMs: $replay, artifactsByteIdentical: true,
+          coldLogSha256: $coldLogSha, replayLogSha256: $replayLogSha,
+          cacheRecordSha256: $cacheSha, driftProbeExitCode: $drift,
+          driftProbeReplayed: false},
+        sourceBindings: {terminalEvidenceSha256: $terminalSha},
+        boundaries: {timingClaim: false, automaticActivation: false,
+          productionAuthorized: false, testOptimizationModified: false}
+      }
+    ' >"${capture_payload}"
+    capture_sha=$(sha256sum "${capture_payload}" | awk '{print $1}')
+    mkdir -p -- "${destination}"
+    cp -- "${cold_log}" "${destination}/cold.log"
+    cp -- "${replay_log}" "${destination}/replay.log"
+    cp -- "${drift_log}" "${destination}/drift.log"
+    cp -- "${cache_record}" "${destination}/cache-record.json"
+    cp -- "${cell_root}/cold/"* "${destination}/"
+    jq --arg sha "${capture_sha}" '. + {captureSha256: $sha}' "${capture_payload}" >"${destination}/phase.json"
+    printf 'Captured %s %d/2: cold=%dms replay=%dms\n' "${key}" "${capture}" "${cold_ms}" "${replay_ms}"
+}
+
+mapfile -t keys < <(jq -r '.cells[]' "${spec}")
+for key in "${keys[@]}"; do
+    [[ -z ${cell_filter} || ${key} == "${cell_filter}" ]] || continue
+    for capture in 1 2; do
+        [[ -z ${capture_filter} || ${capture} == "${capture_filter}" ]] || continue
+        capture_cell "${key}" "${capture}"
+    done
+done

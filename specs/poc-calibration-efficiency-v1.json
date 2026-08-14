@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "buildopt.specs/poc-calibration-efficiency/v1",
+  "workItem": "POC-CALIBRATION-EFFICIENCY-001",
+  "preregisteredAtRevision": "cdaaa424b53270d5496eeb90badc29b186f1bec7",
+  "source": {
+    "economicsSpec": "specs/poc-calibration-economics-v1.json",
+    "economicsEvidence": "benchmarks/results/poc-calibration-economics-v1",
+    "changeBreadthSpec": "specs/poc-generic-change-breadth-v1.json",
+    "changeBreadthEvidence": "benchmarks/results/poc-generic-change-breadth-v1",
+    "buildoptRevision": "66ea4c1ca52da03a7839a0cd35fc6c7907fc9315",
+    "executableSha256": "1b5186549516c366e4cefcaf4d8fce92f64c7613f6de5689b2925ed21ff5e4e8"
+  },
+  "runner": {
+    "platform": "linux-amd64",
+    "cpuCount": 12,
+    "capturesPerCell": 2,
+    "clock": "EXTERNAL_WALL_CLOCK_NANOSECONDS",
+    "maxWorkers": 12,
+    "perCommandTimeout": "30m"
+  },
+  "cells": [
+    "apache-groovy-jar-leaf-source",
+    "apache-groovy-jar-shared-source",
+    "apache-kafka-checkstyle-metadata-source",
+    "apache-kafka-checkstyle-client-utils-source",
+    "apache-kafka-shadow-clients-source",
+    "apache-kafka-shadow-generator-source"
+  ],
+  "proposal": {
+    "coldPass": "OUTPUT_PREFLIGHT_PLUS_ONE_COMBINED_GRADLE_DISCOVERY",
+    "replay": "EXACT_DIGEST_BOUND_PRIVATE_CACHE",
+    "coldAndReplayReportedSeparately": true,
+    "requiredByteIdenticalArtifacts": [
+      "output-contract",
+      "manifest",
+      "graph",
+      "generated-manifest",
+      "fallback-changes",
+      "proposal"
+    ],
+    "driftProbe": "ADDITIONAL_GRADLE_OPTION_MUST_NOT_REPLAY"
+  },
+  "stabilization": {
+    "controlTargetWarmups": 3,
+    "candidateMinimumTargetWarmups": 2,
+    "candidateMaximumTargetWarmups": 3,
+    "earlyStop": "FIRST_TWO_EXACT_TASK_FINGERPRINTS_MATCH",
+    "fallbackConvergence": "LAST_TWO_OF_THREE_EXACT_TASK_FINGERPRINTS_MATCH",
+    "source": "THREE_RECORDED_TERMINAL_WARMUPS_PER_CAPTURE"
+  },
+  "economics": {
+    "breakEvenFormula": "CEIL(CALIBRATION_COST_MS / UNCHANGED_TERMINAL_MEAN_SAVED_MS)",
+    "coldInstalledCost": [
+      "freshColdProposalMean",
+      "priorCandidateWarmupMean",
+      "minusVerifiedThirdCandidateTargetWarmupMean"
+    ],
+    "exactReplayIsSeparateView": true,
+    "percentagesMayBeAveragedAcrossCells": false,
+    "requiredInstalledBreakEvenImprovementBuilds": 1
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "terminalSavingsChanged": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}
