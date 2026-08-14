@@ -51,7 +51,10 @@ for buildopt_key in "${buildopt_keys[@]}"; do
         ($e.execution[$arm] | map(select(.phase == $phase) | .durationMs) | add);
       def target($e; $arm):
         ($e.execution[$arm] |
-          map(select(.phase | startswith("TARGET_WORKLOAD_STABILIZATION")) | .durationMs) |
+          map(select(
+            .phase == "TARGET_WORKLOAD_STABILIZATION" or
+            .phase == "TARGET_WORKLOAD_STABILITY_CONFIRMATION" or
+            .phase == "TARGET_WORKLOAD_STABILITY_RECONFIRMATION") | .durationMs) |
           add);
       ($p1[0]) as $a |
       ($p2[0]) as $b |

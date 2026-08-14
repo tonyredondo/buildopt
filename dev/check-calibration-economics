@@ -36,6 +36,11 @@ jq -e '
     "COPY_EXACT_PREPARED_DISTRIBUTION_AND_RUN_OFFLINE_WRAPPER_VERSION" and
   .phases.outputPreflightAndStructuralDiscovery.combinedBecausePublicCommandRunsBoth == true and
   .phases.targetWorkloadStabilization.confirmationsPerArm == 3 and
+  .phases.targetWorkloadStabilization.phaseNames == [
+    "TARGET_WORKLOAD_STABILIZATION",
+    "TARGET_WORKLOAD_STABILITY_CONFIRMATION",
+    "TARGET_WORKLOAD_STABILITY_RECONFIRMATION"
+  ] and
   .economics.breakEvenFormula == "CEIL(CALIBRATION_COST_MS / TERMINAL_MEAN_SAVED_MS)" and
   .economics.percentagesMayBeAveragedAcrossCells == false and
   .boundaries.proofOfConcept == true and

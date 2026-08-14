@@ -41,6 +41,9 @@ as BuildOpt calibration cost.
 Warm-up costs and steady-state value are recomputed from the two immutable
 terminal captures already used to qualify each change-breadth cell. They are
 not re-created from logs, and no failed or excluded attempt contributes data.
+The three target executions are the terminal evidence phases
+`TARGET_WORKLOAD_STABILIZATION`, `TARGET_WORKLOAD_STABILITY_CONFIRMATION`, and
+`TARGET_WORKLOAD_STABILITY_RECONFIRMATION`; all three count toward calibration.
 
 ## Three economic views
 

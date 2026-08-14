@@ -53,6 +53,11 @@
     "targetWorkloadStabilization": {
       "source": "terminal change-breadth warmup evidence",
       "confirmationsPerArm": 3,
+      "phaseNames": [
+        "TARGET_WORKLOAD_STABILIZATION",
+        "TARGET_WORKLOAD_STABILITY_CONFIRMATION",
+        "TARGET_WORKLOAD_STABILITY_RECONFIRMATION"
+      ],
       "arms": ["CONTROL", "CANDIDATE"]
     },
     "steadyState": {
