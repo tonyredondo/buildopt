@@ -1,0 +1,44 @@
+{
+  "key": "apache-kafka-shadow-distribution",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "shadow-jar-distribution",
+  "workflowFamily": "FAT_JAR_DISTRIBUTION",
+  "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+  "targetRevision": "d02f6f62f56e7c8746d4006ccc4ab4725c9be00b",
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "shadowJar"
+    ],
+    "candidateEntrypoints": [
+      ":clients:shadowJar"
+    ],
+    "totalProjectCount": 64,
+    "selectedProjectCount": 2,
+    "omittedProjectCount": 62
+  },
+  "measurementStatus": "COMPLETED",
+  "measurementFailureClass": null,
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 40106.625,
+    "candidateMeanMs": 13778,
+    "meanSavedMs": 26328.625,
+    "reductionRatio": 0.6564657335290616,
+    "interval95SavedMs": [
+      25549.125,
+      27009
+    ],
+    "positivePairs": 8,
+    "executionShapeObserved": true,
+    "executionShapeStable": true,
+    "targetWarmupShapeObserved": true,
+    "targetWarmupShapeStable": true,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "evaluationDecision": "QUALIFY_STRUCTURAL_PROFILE",
+  "outputEquivalence": "buildopt-output-equivalence.json",
+  "outputEquivalenceSha256": "22dba20d585be322658604491b4b91d1f7e5deaa8dece5e5b8a954881630108a"
+}

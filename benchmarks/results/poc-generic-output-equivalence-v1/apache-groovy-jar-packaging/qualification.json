@@ -1,0 +1,223 @@
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-balanced-qualification/v2",
+  "evidenceState": "QUALIFIED",
+  "capturedAt": "2026-08-14T06:05:07Z",
+  "subject": {
+    "repositoryId": "apache/groovy",
+    "repositoryRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+    "pipelineClass": "jar-packaging"
+  },
+  "sourceBindings": {
+    "manifestSha256": "a6d88334fec16415b7dd90012ab0036e68a673dd1d73ecab0421310d9d8dcf8f",
+    "graphSha256": "02520e4eaec8781a09edc8cbf42d58ce5621ffe4f4cadf54c6c2c87c4e6c4a24",
+    "generatedManifestSha256": "c6b7eaed059e3e25fe4ff4881063d2d8828ce437e3c95c2f4b9ea855b25d81e0",
+    "sourceEvidenceSha256": "567700230e4130b93ec67296f6a281dfbcbbf312156c7887463e20ec110f42fd",
+    "outputEquivalenceSha256": "ed3bc40daec143645589a768d5058bdbdf1a982d08d2659170142bca3dea1ff5"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":groovy-json:jar"
+    ],
+    "fallbackEntrypoints": [
+      "jar"
+    ],
+    "requiredOutputs": [
+      "subprojects/groovy-json/build/libs/*.jar"
+    ],
+    "totalProjectCount": 37,
+    "selectedProjectCount": 2,
+    "omittedProjectCount": 35,
+    "omittedProjectRatio": 0.9459459459459459
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "55ad6bdd4dbd0320cac6102dd0b86be250d518f6",
+    "executableSha256": "48705241bfd805c3f7f06273e2ca7ea0d67151366cf7ee2e1d9451ecd20ae069",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true,
+    "outputEquivalenceMode": "OWNER_REVIEWED_SEMANTIC_V1",
+    "captureCount": 2,
+    "pairsPerCapture": 8,
+    "blockCount": 8
+  },
+  "captures": [
+    {
+      "index": 1,
+      "path": "benchmarks/results/poc-generic-output-equivalence-v1/apache-groovy-jar-packaging/capture-1/evidence.json",
+      "sha256": "9ee362a586ee531d39d3777743ad99c51612909e209b8d9cf1ab3b60ae136c7c",
+      "capturedAt": "2026-08-14T03:16:40Z",
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 72679.375,
+        "candidateMeanMs": 19182.875,
+        "meanSavedMs": 53496.5,
+        "reductionRatio": 0.7360616405961113,
+        "interval95SavedMs": [
+          52537.5,
+          54565.875
+        ],
+        "positivePairs": 8,
+        "executionShapeObserved": true,
+        "executionShapeStable": true,
+        "targetWarmupShapeObserved": true,
+        "targetWarmupShapeStable": true,
+        "qualified": true,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE"
+      }
+    },
+    {
+      "index": 2,
+      "path": "benchmarks/results/poc-generic-output-equivalence-v1/apache-groovy-jar-packaging/capture-2/evidence.json",
+      "sha256": "a9a58f7ec0955bc646eeee11f341c75d0c12df9b1f4e9574d2081b4cb342061f",
+      "capturedAt": "2026-08-14T03:48:30Z",
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 71957.875,
+        "candidateMeanMs": 19726.125,
+        "meanSavedMs": 52231.75,
+        "reductionRatio": 0.7258656540371711,
+        "interval95SavedMs": [
+          50937.5,
+          53551
+        ],
+        "positivePairs": 8,
+        "executionShapeObserved": true,
+        "executionShapeStable": true,
+        "targetWarmupShapeObserved": true,
+        "targetWarmupShapeStable": true,
+        "qualified": true,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE"
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "captureIndex": 1,
+      "block": 1,
+      "controlFirstPair": 1,
+      "candidateFirstPair": 2,
+      "controlMeanMs": 71676.5,
+      "candidateMeanMs": 19690.5,
+      "savedMs": 51986
+    },
+    {
+      "captureIndex": 1,
+      "block": 2,
+      "controlFirstPair": 3,
+      "candidateFirstPair": 4,
+      "controlMeanMs": 73724.5,
+      "candidateMeanMs": 18867,
+      "savedMs": 54857.5
+    },
+    {
+      "captureIndex": 1,
+      "block": 3,
+      "controlFirstPair": 5,
+      "candidateFirstPair": 6,
+      "controlMeanMs": 72789.5,
+      "candidateMeanMs": 18895.5,
+      "savedMs": 53894
+    },
+    {
+      "captureIndex": 1,
+      "block": 4,
+      "controlFirstPair": 7,
+      "candidateFirstPair": 8,
+      "controlMeanMs": 72527,
+      "candidateMeanMs": 19278.5,
+      "savedMs": 53248.5
+    },
+    {
+      "captureIndex": 2,
+      "block": 1,
+      "controlFirstPair": 1,
+      "candidateFirstPair": 2,
+      "controlMeanMs": 72105.5,
+      "candidateMeanMs": 20554.5,
+      "savedMs": 51551
+    },
+    {
+      "captureIndex": 2,
+      "block": 2,
+      "controlFirstPair": 3,
+      "candidateFirstPair": 4,
+      "controlMeanMs": 72559,
+      "candidateMeanMs": 19016.5,
+      "savedMs": 53542.5
+    },
+    {
+      "captureIndex": 2,
+      "block": 3,
+      "controlFirstPair": 5,
+      "candidateFirstPair": 6,
+      "controlMeanMs": 71261,
+      "candidateMeanMs": 20040,
+      "savedMs": 51221
+    },
+    {
+      "captureIndex": 2,
+      "block": 4,
+      "controlFirstPair": 7,
+      "candidateFirstPair": 8,
+      "controlMeanMs": 71906,
+      "candidateMeanMs": 19293.5,
+      "savedMs": 52612.5
+    }
+  ],
+  "qualification": {
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositiveBlocks": 6,
+    "positiveMedian": true,
+    "candidateP95NotRegressive": true,
+    "requiredOutputsIdentical": true,
+    "executionShapeStable": true,
+    "fullGraphFallbackRequired": true
+  },
+  "result": {
+    "captures": 2,
+    "pairs": 16,
+    "blocks": 8,
+    "controlMeanMs": 72318.625,
+    "candidateMeanMs": 19454.5,
+    "meanSavedMs": 52864.125,
+    "reductionRatio": 0.730989077848203,
+    "medianBlockSavedMs": 52930.5,
+    "interval95BlockSavedMs": [
+      52059,
+      53679.125
+    ],
+    "positiveBlocks": 8,
+    "controlP95Ms": 75725,
+    "candidateP95Ms": 21341,
+    "controlFirstMeanSavedMs": 53653.5,
+    "candidateFirstMeanSavedMs": 52074.75,
+    "orderEffectMs": 1578.75,
+    "requiredOutputsIdentical": true,
+    "executionShapeStable": true,
+    "fallbacksSuccessful": true,
+    "qualified": true,
+    "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

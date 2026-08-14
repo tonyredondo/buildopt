@@ -3,14 +3,15 @@
 ## Current Executive Summary
 
 - **The current POC has one broadly supported accelerator: structural Build
-  Impact.** Under the same installed, eight-pair method it qualified on
-  OpenTelemetry (**14.43% faster**), Kafka (**84.11%**), Micronaut
-  (**41.74%**), Groovy (**73.85%**), and the unseen Hibernate holdout
-  (**5.88%**) while preserving exact required outputs and full-graph fallback.
-- **Spring confirms that the product gate is stricter than the mean.** It was
-  **17.94% faster** on average with a positive interval, but one -260-ms pair
-  failed the frozen 8/8 rule, so the current decision remains optimized native
-  Gradle.
+  Impact.** The latest balanced protocol qualified Spring (**15.99% faster**),
+  OpenTelemetry (**14.97%**), Kafka (**87.35%**), Micronaut (**39.44%**), and
+  Groovy (**74.00%**) independently, with 80/80 positive raw pairs, stable
+  shapes, exact outputs, improved p95, and full-graph fallback.
+- **Explicit output semantics broaden the workflows that can be measured
+  safely.** Two fresh captures qualified Groovy `jar` (**73.10% faster**),
+  Kafka Checkstyle (**29.73%**), and Kafka `shadowJar` (**66.55%**) across
+  48/48 positive raw pairs. Byte identity remains the default and undeclared
+  report/archive payload drift is still rejected.
 - **The unseen-repository transfer now qualifies after investigation.** The
   unchanged generic path reduced Hibernate ORM from 29 projects to one. A
   preregistered reciprocal crossover saved **12.733 seconds/5.88%** with exact
@@ -102,7 +103,7 @@ measured on different workloads and scopes.
 |---|---|---:|---|
 | **Safe Cache / local L1** | Reuses verified outputs in a scope isolated by repository, Wrapper, and platform. | Against cache-off: **15.9% faster in Kotlin** and **13.7% faster in Groovy**. Against native Gradle cache: **0.02% faster in Kotlin** and **0.47% slower in Groovy**. | Useful when a repository has no effective cache, but **not an accelerator over native Gradle cache**. Strict Safe Cache remains explicit-only. |
 | **Runtime Tuning (retired)** | Tested bounded worker, heap, and resource profiles intended to improve Gradle execution. | The latest real Spring candidate capped 12 workers to 6 and was **2.00% slower** (191.5 ms), with 2/4 favorable pairs and interval -973.5..+590.5 ms. Earlier synthetic `W3_H4G` and `W4_H6G` candidates were **4.3%** and **54.7% slower**. | **No defensible value. Removed.** Optimized native Gradle remains the stable control. |
-| **Build Impact** | Maps a change to the projects and tasks needed for the requested outputs, with full-graph fallback for unknown or global changes. | Synthetic coverage: **73.5-76.0% faster**. Installed Spring path: **15.76% faster**. Generalized Spring test preparation: **18.88% faster**. Kafka client packaging scope: **57.58% faster**. Micronaut generic installed profile: **72.16% faster**. Fresh Apache Groovy classes: **50.06% faster**, 8/8 positive. Spring verification is graph-complete but saved only **0.31%**; attribution found no product phase above **1.238233 ms**. | **The strongest broadly useful accelerator currently demonstrated, but only for independently qualified scopes.** Profile materialization and execution are repository-name independent; global, ambiguous and drifted inputs still fail closed. |
+| **Build Impact** | Maps a change to the projects and tasks needed for the requested outputs, with full-graph fallback for unknown or global changes. | Latest balanced repository matrix: **15.99% to 87.35% faster** across five independently qualified public subjects. Additional owner-reviewed workflows: Groovy `jar` **73.10%**, Kafka Checkstyle **29.73%**, and Kafka `shadowJar` **66.55%** faster. Historical Spring verification is graph-complete but saved only **0.31%**. | **The strongest broadly useful accelerator currently demonstrated, but only for independently qualified scopes.** Profile materialization and execution are repository-name independent; global, ambiguous and drifted inputs still fail closed. |
 | **Task Intelligence** | Observes and qualifies tasks only when their inputs, outputs, cache keys, and outcomes are exact enough to support an optimization. | No general direct saving. In the accepted pilot it enabled a qualified native-cache restore that saved **203 ms** on average. | A **safety and eligibility layer**, not a standalone accelerator. Its value is realized through a qualified cache or patch route. |
 | **Patch Autopilot / reviewed task patch** | Produces a reviewable and reversible patch that correctly declares inputs and outputs and enables caching for an exact custom-task shape. | Exact reviewed Java recipe: **67.3% faster in Kotlin** and **68.0% faster in Groovy**. Combined installed path: **63.5-67.3% faster**. | Highly promising for **specific reviewed task contracts**. The result must not be generalized to arbitrary tasks or recipes. |
 | **Graph reduction** | Replaces broad aggregate task dependencies with the typed producers required for the declared outputs. | The OpenTelemetry experiment removed **3 graph nodes and 2 executed tasks** while preserving all 125 required outputs. No standalone wall-clock percentage is claimed. | Structurally valuable, but it still needs independent timing evidence before it can be presented as a separate accelerator. |
@@ -127,6 +128,22 @@ The Spring evidence remains positive after including package installation,
 launcher startup, manifest loading, graph validation, and fallback machinery.
 That makes its **15.76% installed-path saving** more decision-useful than a
 larger synthetic-only percentage.
+
+### Correct output semantics matter as much as graph selection
+
+The first broader-workflow run could not make a value decision for Groovy
+packaging or Kafka verification/distribution because correct outputs contained
+build time, isolated checkout paths, or ZIP container nondeterminism. Treating
+those bytes as arbitrary would have weakened correctness; requiring byte
+identity forever would have excluded valid customer workflows.
+
+The owner-reviewed semantic contract resolves that boundary without
+repository-specific product code. Across two independent captures per
+workflow, Groovy `jar` saved 52.864 seconds/73.10%, Kafka Checkstyle saved
+24.627 seconds/29.73%, and Kafka `shadowJar` saved 27.103 seconds/66.55%.
+All 48 raw pairs improved and all semantic outputs matched. Exact bytes remain
+implicit for every unruled output, and negative fixtures prove that undeclared
+payload changes are rejected.
 
 ### Precise task adapters can unlock large gains
 

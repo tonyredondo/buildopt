@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-generic-output-equivalence/v1",
+  "workItem": "POC-GENERIC-OUTPUT-EQUIVALENCE-001",
+  "capturedAt": "2026-08-14T06:05:07Z",
+  "subjects": [
+    {
+      "repositoryId": "apache/groovy",
+      "repositoryRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+      "pipelineClass": "jar-packaging",
+      "evidenceState": "QUALIFIED",
+      "plan": {
+        "originalEntrypoints": [
+          "jar"
+        ],
+        "candidateEntrypoints": [
+          ":groovy-json:jar"
+        ],
+        "totalProjectCount": 37,
+        "selectedProjectCount": 2,
+        "omittedProjectCount": 35
+      },
+      "outputEquivalenceSha256": "ed3bc40daec143645589a768d5058bdbdf1a982d08d2659170142bca3dea1ff5",
+      "result": {
+        "captures": 2,
+        "pairs": 16,
+        "blocks": 8,
+        "controlMeanMs": 72318.625,
+        "candidateMeanMs": 19454.5,
+        "meanSavedMs": 52864.125,
+        "reductionRatio": 0.730989077848203,
+        "medianBlockSavedMs": 52930.5,
+        "interval95BlockSavedMs": [
+          52059,
+          53679.125
+        ],
+        "positiveBlocks": 8,
+        "controlP95Ms": 75725,
+        "candidateP95Ms": 21341,
+        "controlFirstMeanSavedMs": 53653.5,
+        "candidateFirstMeanSavedMs": 52074.75,
+        "orderEffectMs": 1578.75,
+        "requiredOutputsIdentical": true,
+        "executionShapeStable": true,
+        "fallbacksSuccessful": true,
+        "qualified": true,
+        "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+      }
+    },
+    {
+      "repositoryId": "apache/kafka",
+      "repositoryRevision": "4db12142986acc0fbc82da355ee068d7581f0c99",
+      "pipelineClass": "checkstyle-main",
+      "evidenceState": "QUALIFIED",
+      "plan": {
+        "originalEntrypoints": [
+          "checkstyleMain"
+        ],
+        "candidateEntrypoints": [
+          ":clients:checkstyleMain"
+        ],
+        "totalProjectCount": 64,
+        "selectedProjectCount": 2,
+        "omittedProjectCount": 62
+      },
+      "outputEquivalenceSha256": "fef44cfc2b8c6b65077e257f5c7358286702e082903daff2d13391bdebc93586",
+      "result": {
+        "captures": 2,
+        "pairs": 16,
+        "blocks": 8,
+        "controlMeanMs": 82835.375,
+        "candidateMeanMs": 58208.5,
+        "meanSavedMs": 24626.875,
+        "reductionRatio": 0.2972990102356632,
+        "medianBlockSavedMs": 25677,
+        "interval95BlockSavedMs": [
+          22148.375,
+          26722.4375
+        ],
+        "positiveBlocks": 8,
+        "controlP95Ms": 88980,
+        "candidateP95Ms": 61402,
+        "controlFirstMeanSavedMs": 26088.125,
+        "candidateFirstMeanSavedMs": 23165.625,
+        "orderEffectMs": 2922.5,
+        "requiredOutputsIdentical": true,
+        "executionShapeStable": true,
+        "fallbacksSuccessful": true,
+        "qualified": true,
+        "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+      }
+    },
+    {
+      "repositoryId": "apache/kafka",
+      "repositoryRevision": "d02f6f62f56e7c8746d4006ccc4ab4725c9be00b",
+      "pipelineClass": "shadow-jar-distribution",
+      "evidenceState": "QUALIFIED",
+      "plan": {
+        "originalEntrypoints": [
+          "shadowJar"
+        ],
+        "candidateEntrypoints": [
+          ":clients:shadowJar"
+        ],
+        "totalProjectCount": 64,
+        "selectedProjectCount": 2,
+        "omittedProjectCount": 62
+      },
+      "outputEquivalenceSha256": "22dba20d585be322658604491b4b91d1f7e5deaa8dece5e5b8a954881630108a",
+      "result": {
+        "captures": 2,
+        "pairs": 16,
+        "blocks": 8,
+        "controlMeanMs": 40727.8125,
+        "candidateMeanMs": 13624.9375,
+        "meanSavedMs": 27102.875,
+        "reductionRatio": 0.6654635576118899,
+        "medianBlockSavedMs": 26619.25,
+        "interval95BlockSavedMs": [
+          26184.625,
+          28181.375
+        ],
+        "positiveBlocks": 8,
+        "controlP95Ms": 44147,
+        "candidateP95Ms": 15583,
+        "controlFirstMeanSavedMs": 26818.375,
+        "candidateFirstMeanSavedMs": 27387.375,
+        "orderEffectMs": -569,
+        "requiredOutputsIdentical": true,
+        "executionShapeStable": true,
+        "fallbacksSuccessful": true,
+        "qualified": true,
+        "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+      }
+    }
+  ],
+  "aggregation": {
+    "subjectCount": 3,
+    "qualified": 3,
+    "retainedNative": 0,
+    "unavailable": 0,
+    "workflowPercentagesAveraged": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

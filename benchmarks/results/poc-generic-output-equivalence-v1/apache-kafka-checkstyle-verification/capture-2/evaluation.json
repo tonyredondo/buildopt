@@ -1,0 +1,171 @@
+{
+  "schemaVersion": "buildopt.poc/profile-evaluation/v1",
+  "decision": "QUALIFY_STRUCTURAL_PROFILE",
+  "reason": "OWNER_REVIEWED_EQUIVALENCE_EVIDENCE_QUALIFIED",
+  "analysis": {
+    "schemaVersion": "buildopt.poc/opportunity-analysis/v1",
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "subject": {
+      "repositoryId": "apache/kafka",
+      "pipelineClass": "checkstyle-main",
+      "gradleVersion": "9.2.1"
+    },
+    "inputs": [
+      {
+        "role": "BUILD_IMPACT_MANIFEST",
+        "path": "buildopt-impact-manifest.json",
+        "sha256": "sha256:361d4628b30e4ed716447c89ac93653d4058cf1999dd6b69012d61ae145253fd"
+      },
+      {
+        "role": "BUILD_IMPACT_GRAPH",
+        "path": "buildopt-impact-graph.generated.json",
+        "sha256": "sha256:9772ae5d84a71b3174ee75d51df77f723e8160c55f89295d44e9ce489eb1f727"
+      },
+      {
+        "role": "GENERATED_MANIFEST",
+        "path": "buildopt-impact.generated.json",
+        "sha256": "sha256:d1224ff2cb088d4450ab512db04c826b3e6ce04023272658cbc1d27ae718dc8a"
+      }
+    ],
+    "sourceBindings": {
+      "manifestDigest": "sha256:588358b91339d2be474d291daa91cd51ce236c249ec2ba0ddb0df6821fdef379",
+      "graphDigest": "sha256:4eea6cad8049689b332e6ed1d18be9042bf07bf57735cde438371dc835117e24",
+      "discoveryDigest": "sha256:3d474f0d470f0d1c9f51b47dd2a58d9be6602c8746d452be5b559c7c9d1b95f9"
+    },
+    "plan": {
+      "alternativeId": "changed-projects",
+      "entrypoints": [
+        ":clients:checkstyleMain"
+      ],
+      "fallbackEntrypoints": [
+        "checkstyleMain"
+      ],
+      "requiredOutputs": [
+        "clients/build/reports/checkstyle/main.html",
+        "clients/build/reports/checkstyle/main.xml"
+      ],
+      "totalProjectCount": 64,
+      "selectedProjectCount": 2,
+      "omittedProjectCount": 62,
+      "omittedProjectRatio": 0.96875
+    },
+    "mechanisms": [
+      {
+        "name": "BUILD_IMPACT",
+        "status": "MEASURE_CANDIDATE",
+        "reason": "complete graph exposes a smaller reviewed alternative; direct timing is still required"
+      },
+      {
+        "name": "SHARED_EDGE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent locality and failure-fallback evidence for this workload"
+      },
+      {
+        "name": "HOT_STATE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "RUNTIME_TUNING",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "SAFE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "STANDARD_COPY",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "STANDARD_JAR",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "TEST_OPTIMIZATION",
+        "status": "NOT_AUTHORIZED",
+        "reason": "outside BuildOpt scope"
+      }
+    ],
+    "measurementRequired": true,
+    "reviewRequired": true,
+    "activationAutomatic": false,
+    "productionAuthorized": false
+  },
+  "profile": {
+    "schemaVersion": "buildopt.poc/qualified-profile/v4",
+    "profileVersion": 4,
+    "profileId": "qualified-structural-build-impact",
+    "ownership": "REPOSITORY_COMMITTED",
+    "claimScope": "DECLARED_OUTPUTS_ONLY",
+    "repositoryId": "apache/kafka",
+    "pipelineClass": "checkstyle-main",
+    "fallback": "NATIVE_FULL_GRAPH",
+    "impact": {
+      "manifest": "buildopt-impact-manifest.json",
+      "graph": "buildopt-impact-graph.generated.json",
+      "generatedManifest": "buildopt-impact.generated.json"
+    },
+    "mechanisms": {
+      "buildImpact": true,
+      "standardJarAdapter": false,
+      "safeCache": false,
+      "runtimeTuning": false,
+      "hotState": false,
+      "standardCopyAdapter": false,
+      "sharedEdgeCache": false
+    },
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "preconditions": [
+      {
+        "type": "FILE_SHA256",
+        "path": "buildopt-impact-manifest.json",
+        "sha256": "361d4628b30e4ed716447c89ac93653d4058cf1999dd6b69012d61ae145253fd"
+      },
+      {
+        "type": "FILE_SHA256",
+        "path": "buildopt-impact-graph.generated.json",
+        "sha256": "9772ae5d84a71b3174ee75d51df77f723e8160c55f89295d44e9ce489eb1f727"
+      },
+      {
+        "type": "FILE_SHA256",
+        "path": "buildopt-impact.generated.json",
+        "sha256": "d1224ff2cb088d4450ab512db04c826b3e6ce04023272658cbc1d27ae718dc8a"
+      },
+      {
+        "type": "FILE_SHA256",
+        "path": "buildopt-output-equivalence.json",
+        "sha256": "fef44cfc2b8c6b65077e257f5c7358286702e082903daff2d13391bdebc93586"
+      }
+    ],
+    "qualification": {
+      "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+      "sha256": "3e3d7b8f69323b374d413457ae867cabd8266ec9affacdf4a67d7be0c176be7c",
+      "repositoryRevision": "4db12142986acc0fbc82da355ee068d7581f0c99",
+      "pairs": 8,
+      "meanSavedMs": 23672.25,
+      "reductionRatio": 0.287024210440165,
+      "interval95SavedMs": [
+        20351.375,
+        27216
+      ]
+    }
+  },
+  "profileOutput": "buildopt-qualified-profile.json",
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false
+}

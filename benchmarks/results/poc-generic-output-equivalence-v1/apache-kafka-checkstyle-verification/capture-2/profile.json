@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v4",
+  "profileVersion": 4,
+  "profileId": "qualified-structural-build-impact",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "checkstyle-main",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": false,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": false
+  },
+  "gradleOptions": [
+    "--daemon",
+    "--build-cache",
+    "--parallel",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-scan",
+    "--max-workers=12"
+  ],
+  "preconditions": [
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-manifest.json",
+      "sha256": "361d4628b30e4ed716447c89ac93653d4058cf1999dd6b69012d61ae145253fd"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-graph.generated.json",
+      "sha256": "9772ae5d84a71b3174ee75d51df77f723e8160c55f89295d44e9ce489eb1f727"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact.generated.json",
+      "sha256": "d1224ff2cb088d4450ab512db04c826b3e6ce04023272658cbc1d27ae718dc8a"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-output-equivalence.json",
+      "sha256": "fef44cfc2b8c6b65077e257f5c7358286702e082903daff2d13391bdebc93586"
+    }
+  ],
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "3e3d7b8f69323b374d413457ae867cabd8266ec9affacdf4a67d7be0c176be7c",
+    "repositoryRevision": "4db12142986acc0fbc82da355ee068d7581f0c99",
+    "pairs": 8,
+    "meanSavedMs": 23672.25,
+    "reductionRatio": 0.287024210440165,
+    "interval95SavedMs": [
+      20351.375,
+      27216
+    ]
+  }
+}

@@ -538,6 +538,15 @@ Every other payload, path, mode, output shape, fallback, and wall-time gate
 remains bound. Two fresh captures per workflow use the balanced qualification
 method and no repository-name product rule.
 
+The terminal [output-equivalence evidence](../benchmarks/results/poc-generic-output-equivalence-v1/README.md)
+qualifies all three subjects independently: Groovy `jar` saves
+52,864.125 ms/73.10%, Kafka Checkstyle saves 24,626.875 ms/29.73%, and Kafka
+`shadowJar` saves 27,102.875 ms/66.55%. All 48 raw pairs improve, every output
+passes its reviewed semantic contract, task shapes and tails are stable, both
+fallbacks pass per subject, and product failures remain zero. The result is
+review-only POC evidence and does not widen the contract or authorize
+automatic activation.
+
 The retained [v5 evidence](../benchmarks/results/poc-generic-holdout-v5/README.md)
 passes that unchanged contract: native averages 216.724 seconds and BuildOpt
 203.991 seconds, saving 12.733 seconds/5.88% with interval

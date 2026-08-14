@@ -32,7 +32,10 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > qualified independently on Spring, OpenTelemetry, Kafka, Micronaut, and
 > Groovy at **14.97% to 87.35% lower wall time** than optimized native Gradle.
 > All 80 raw pairs improved, required outputs matched, tails improved, and full
-> fallbacks passed. These results are bound to exact changes and workflows;
+> fallbacks passed. A separate semantic-output rerun also qualified Groovy
+> `jar` (**73.10%**), Kafka Checkstyle (**29.73%**), and Kafka `shadowJar`
+> (**66.55%**) across 48/48 positive raw pairs. These results are bound to
+> exact changes, workflows, and reviewed output contracts;
 > profiles remain review-required and are not production-authorized. See the
 > [current one-pager](./docs/findings/buildopt-poc-handoff.md)
 > and [generalization audit](./docs/findings/buildopt-generalization-audit.md).

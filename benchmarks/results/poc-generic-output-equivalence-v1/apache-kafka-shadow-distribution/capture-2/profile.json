@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v4",
+  "profileVersion": 4,
+  "profileId": "qualified-structural-build-impact",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "shadow-jar-distribution",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": false,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": false
+  },
+  "gradleOptions": [
+    "--daemon",
+    "--build-cache",
+    "--parallel",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-scan",
+    "--max-workers=12"
+  ],
+  "preconditions": [
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-manifest.json",
+      "sha256": "e959569ff71ccd1a7a2ded3522bdff8b16b80393ffc746fb810edc0bd265d57b"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-graph.generated.json",
+      "sha256": "25b7a100ebbf64635793fa43e8d0a71a2c826ed0ced897de6a3b23ea8a4570cf"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact.generated.json",
+      "sha256": "d392ebba7b9f4e768c3f411d3b97b70bec9cd4ef776c1977e1a4c1fba5ab4534"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-output-equivalence.json",
+      "sha256": "22dba20d585be322658604491b4b91d1f7e5deaa8dece5e5b8a954881630108a"
+    }
+  ],
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "628c5bd597cb7c5e398ef2bf002a68a57e52c71da81364a3ad4ef580d1ef8262",
+    "repositoryRevision": "d02f6f62f56e7c8746d4006ccc4ab4725c9be00b",
+    "pairs": 8,
+    "meanSavedMs": 26328.625,
+    "reductionRatio": 0.6564657335290616,
+    "interval95SavedMs": [
+      25549.125,
+      27009
+    ]
+  }
+}

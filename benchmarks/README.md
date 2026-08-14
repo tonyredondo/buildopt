@@ -88,6 +88,28 @@ families retaining native Gradle. This is useful correctness evidence and a
 concrete next generalization target; it is not a universal workflow-value
 claim.
 
+### Owner-reviewed semantic output equivalence
+
+The subsequent [terminal output-equivalence bundle](./results/poc-generic-output-equivalence-v1/README.md)
+repeats the three representation-blocked workflows with strict, digest-bound
+owner contracts. Byte identity remains the default. Groovy permits only its
+declared `BuildTime` property to vary, Kafka Checkstyle relocates only the
+isolated repository root in `main.xml`, and Kafka `shadowJar` compares
+canonical ZIP entry content rather than container timestamps and order.
+
+| Repository and workflow | Optimized native mean | BuildOpt mean | Direct result | Decision |
+| --- | ---: | ---: | ---: | --- |
+| Apache Groovy `jar` | 72.319 s | 19.455 s | **52.864 s / 73.10% faster**, 8/8 blocks | Qualify for review |
+| Apache Kafka `checkstyleMain` | 82.835 s | 58.209 s | **24.627 s / 29.73% faster**, 8/8 blocks | Qualify for review |
+| Apache Kafka `shadowJar` | 40.728 s | 13.625 s | **27.103 s / 66.55% faster**, 8/8 blocks | Qualify for review |
+
+All 48 raw pairs improve. Every semantic output comparison passes, candidate
+p95 is lower, measured and final warm-up task shapes are stable, both native
+fallbacks pass per workflow, and product-attributable failures remain zero.
+The conformance suite still rejects undeclared report, property, and archive
+payload drift. No repository-name product rule or automatic activation was
+added, and percentages remain workflow-specific rather than averaged.
+
 ### Unseen Hibernate ORM holdout
 
 The [terminal holdout bundle](./results/poc-generic-holdout-v2/README.md)

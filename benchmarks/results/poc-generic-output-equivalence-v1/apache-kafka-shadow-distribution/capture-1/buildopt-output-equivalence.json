@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.poc/output-equivalence/v1",
+  "rules": [
+    {
+      "pattern": "clients/build/libs/kafka-clients-*.jar",
+      "mode": "CANONICAL_ZIP"
+    }
+  ],
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false
+}

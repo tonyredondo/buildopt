@@ -128,7 +128,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-GENERIC-WORKFLOW-BREADTH | Exercise the unchanged owner-input path across distinct owner workflows before any new timing | `DONE` | 1/1 | `E-321..323` |
 | POC-GENERIC-WORKFLOW-VALUE | Measure reviewed substantial public workflow families through the installed path against optimized native Gradle | `DONE` | 1/1 | `E-324..325` |
 | POC-STATISTICAL-QUALIFICATION-V2 | Re-measure all five public structural subjects with two independent captures and balanced repeatability/tail gates | `DONE` | 1/1 | `E-326..330`; terminal 5/5 qualification |
-| POC-GENERIC-OUTPUT-EQUIVALENCE | Define explicit owner-reviewed semantic equivalence for relocatable reports and nondeterministic archives while retaining exact bytes by default | `DOING` | 0/1 | `E-331` through `E-334` |
+| POC-GENERIC-OUTPUT-EQUIVALENCE | Define explicit owner-reviewed semantic equivalence for relocatable reports and nondeterministic archives while retaining exact bytes by default | `DONE` | 1/1 | `E-331..337`; terminal 3/3 qualification |
+| POC-GENERIC-CHANGE-BREADTH | Test whether reviewed structural profiles transfer across multiple change shapes without repository-name rules | `TODO` | 0/1 | Follows `E-337` |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -291,7 +292,33 @@ than partners. Test Optimization remains a separate product.
 | 92 | `POC-GENERIC-WORKFLOW-BREADTH-001` | Run the unchanged generated owner-file flow on packaging, verification, distribution and build-owned test-preparation workflows, preserving repository-declared success outputs and retaining native before timing on unsupported semantics | `DONE` | Codex; `E-321..323` |
 | 93 | `POC-GENERIC-WORKFLOW-VALUE-001` | Measure reviewed substantial public packaging, verification, distribution and build-owned test-preparation candidates through the installed path; preserve exact outputs and full fallback, and retain native independently for every family that does not beat optimized native Gradle | `DONE` | Codex; `E-324..325` |
 | 94 | `POC-STATISTICAL-QUALIFICATION-V2-001` | Preserve every v1 decision, then rerun Spring, OpenTelemetry, Kafka, Micronaut and Groovy twice from one exact BuildOpt revision. Aggregate 16 raw pairs into eight AB/BA blocks and qualify independently only with material mean saving, positive median/lower bound, at least 6/8 positive blocks, non-regressive candidate p95, exact outputs, stable task shape, both fallbacks and zero product failures | `DONE` | Codex; `E-326..330` |
-| 95 | `POC-GENERIC-OUTPUT-EQUIVALENCE-001` | Keep byte identity as the default, add explicit owner-reviewed equivalence contracts for relocatable reports and canonical archive contents, prove that payload drift remains rejected, and rerun the three blocked public workflow families without repository-name rules | `DOING` | Codex; `E-325`, `E-331` |
+| 95 | `POC-GENERIC-OUTPUT-EQUIVALENCE-001` | Keep byte identity as the default, add explicit owner-reviewed equivalence contracts for relocatable reports and canonical archive contents, prove that payload drift remains rejected, and rerun the three blocked public workflow families without repository-name rules | `DONE` | Codex; `E-325`, `E-331..337` |
+| 96 | `POC-GENERIC-CHANGE-BREADTH-001` | Preregister multiple source, shared-library, build-logic, and global change shapes across existing public repositories and workflow families; qualify every cell independently with the same optimized-native, semantic-output, repeatability, tail, fallback, and zero-failure gates | `TODO` | Codex; follows `E-337` |
+
+#### Completed POC block: owner-reviewed output equivalence
+
+`POC-GENERIC-OUTPUT-EQUIVALENCE-001` retains byte identity as the default and
+adds only three versioned, digest-bound semantic modes: isolated repository-root
+relocation in bounded UTF-8 text, canonical ZIP content, and exact volatile
+Java-properties keys inside exact archive entries. Negative conformance
+fixtures prove that unruled report, archive, and property payload drift remains
+rejected.
+
+Two independent eight-pair captures qualify each previously blocked workflow.
+Groovy `jar` reduces 37 projects to 2 and saves **52.864 seconds/73.10%**;
+Kafka Checkstyle reduces 64 projects to 2 and saves **24.627 seconds/29.73%**;
+Kafka `shadowJar` reduces 64 projects to 2 and saves **27.103 seconds/66.55%**.
+All 48 raw pairs and all 24 reciprocal observations improve, every candidate
+p95 is lower, semantic outputs match, final warm-up and measured shapes are
+stable, both native fallbacks pass per workflow, and product failures are zero.
+
+The [terminal bundle](./benchmarks/results/poc-generic-output-equivalence-v1/README.md)
+also preserves five excluded collection/convergence incidents. None contributes
+timing to the terminal result, and no correction changed a workflow, output
+exception, value threshold, pair order, fallback, repository-specific product
+branch, or POC boundary. Profiles remain review-required; automatic and
+production activation remain disabled. `POC-GENERIC-CHANGE-BREADTH-001` is
+next.
 
 #### Completed POC block: balanced public-repository qualification
 
@@ -317,7 +344,8 @@ capture records a one-warm-up 13/9-to-14/8 executed/cache transition; all 16
 measured pairs stabilize at the same 14/8 fingerprint and the second capture
 reaches it before timing. No historical evidence was rewritten, no threshold
 was changed after observation, and no repository-name rule or automatic
-activation was added. `POC-GENERIC-OUTPUT-EQUIVALENCE-001` remains next.
+activation was added. The output-equivalence follow-up is closed separately by
+`E-337`.
 
 #### Completed POC block: public workflow-family value
 
@@ -2051,6 +2079,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-334` | 2026-08-14 | `POC-GENERIC-OUTPUT-EQUIVALENCE-001` | Two fresh Groovy captures on `06a92dc` completed 16/16 positive pairs, semantic JAR equivalence and two fallbacks, but the first Kafka Checkstyle capture stopped before pair 1 because `main.html` contains no checkout root while its rule required one. The [complete incident](./benchmarks/results/poc-generic-output-equivalence-v1/incidents/06a92dc-kafka-checkstyle-contract-granularity/README.md) retains both superseded Groovy captures and the Kafka failure. The reviewed Kafka contract now keeps `main.html` byte-exact and relocates only `main.xml`; a mixed-mode conformance test proves that unruled outputs remain exact beside a narrow exception | `DOING` preregistration correction before terminal timing: this was a contract-shape failure, not output drift or negative value. No workflow, task, threshold, pair, timing boundary, payload exception, fallback, repository-specific product branch, or POC boundary changed. All terminal captures restart from zero on one later immutable SHA |
 | `E-335` | 2026-08-14 | `POC-GENERIC-OUTPUT-EQUIVALENCE-001` | The first terminal attempt on `99d7785` completed 8/8 positive, semantically equivalent Groovy pairs and fallback with 55,250.125 ms/73.86% diagnostic mean saving, but retained native because its single changed-target warmup had one more cache hit than all eight internally stable measured candidate samples. The [complete incident](./benchmarks/results/poc-generic-output-equivalence-v1/incidents/99d7785-groovy-target-warmup-convergence/README.md) is retained. The generic runner now executes three bounded changed-target warmups, requires the final two fingerprints to match before pair 1, and treats the earlier warmup only as convergence diagnostics | `DOING` pre-measurement convergence correction: the gate is strengthened rather than relaxed; a non-convergent arm stops without timing. No workflow, task, output rule, threshold, pair order, fallback, repository-specific product branch, or POC boundary changed. All terminal captures restart from zero on one later immutable SHA |
 | `E-336` | 2026-08-14 | `POC-GENERIC-OUTPUT-EQUIVALENCE-001` | The first capture on `eb873f5` stopped before pair 1 after the final two Groovy candidate confirmations differed by one executed versus cached task, while the control arm had converged. The [complete incident](./benchmarks/results/poc-generic-output-equivalence-v1/incidents/eb873f5-groovy-candidate-target-convergence/README.md) is retained. The generic failure now reports a bounded, sorted task-path and terminal-outcome diff between those confirmations | `DOING` root-cause diagnosis before any terminal timing: the new detail is diagnostic only and cannot weaken the convergence gate. No measured pair exists, no result was discarded, and no workflow, output rule, threshold, pair order, fallback, product branch, or POC boundary changed |
+| `E-337` | 2026-08-14 | `POC-GENERIC-OUTPUT-EQUIVALENCE-001` | The [terminal semantic-output bundle](./benchmarks/results/poc-generic-output-equivalence-v1/README.md) contains two fresh eight-pair captures and eight reciprocal blocks per workflow from immutable BuildOpt `55ad6bdd4dbd0320cac6102dd0b86be250d518f6`. Groovy `jar` saves 52,864.125 ms/73.10%, Kafka Checkstyle saves 24,626.875 ms/29.73%, and Kafka `shadowJar` saves 27,102.875 ms/66.55%; all 48 raw pairs and 24 blocks improve, every candidate p95 is lower, semantic outputs match, final warm-up and measured shapes are stable, both full-graph fallbacks pass per workflow, and product failures are zero. The [incident index](./benchmarks/results/poc-generic-output-equivalence-v1/incidents/README.md) preserves five excluded attempts and every correction | `DONE` terminal `3/3 QUALIFIED`: byte identity remains default; reviewed rules are path/mode/digest bound and negative fixtures reject undeclared payload drift. No incident timing is reused, no percentage is averaged, and no repository-name rule, automatic/production authority, soak, design-partner dependency, or Test Optimization scope is added. `POC-GENERIC-CHANGE-BREADTH-001` is next |
 
 ---
 
@@ -2063,6 +2092,7 @@ This table points to the latest valid result. It does not replace reports or all
 | 2026-08-14 | Preserved the first Groovy no-timing incident, generalized task-shape evidence for build-tree-local console path collisions, and restarted terminal captures on one correction revision without changing the frozen experiment | Codex |
 | 2026-08-14 | Preserved the complete 8-pair Groovy console-transition diagnostic, separated terminal task outcomes from transient console rendering, and restarted terminal captures without changing the experiment | Codex |
 | 2026-08-14 | Preserved the no-timing Groovy candidate-convergence incident and added bounded task-level diagnostics before deciding whether any correction is justified | Codex |
+| 2026-08-14 | Closed generic semantic output equivalence at 3/3 qualified workflows and 48/48 positive pairs, with reviewed output contracts, stable tails/shapes, complete fallbacks, preserved incidents, and no automatic activation; moved multiple change-shape breadth next | Codex |
 | 2026-08-12 | Preserved the OpenTelemetry Configuration Cache failure, aligned the generic output-contract preflight with the already disabled measured mode, and restarted all terminal captures on one correction SHA | Codex |
 | 2026-08-12 | Completed Gradle network isolation by preparing each repository-selected Wrapper distribution before proposal and copying it into both private arms; terminal captures restart on one correction SHA | Codex |
 | 2026-08-12 | Preserved two external Gradle Wrapper EOF failures and the prior Spring capture, then moved verified distribution preparation ahead of all isolated warm-ups/timings; all five subjects restart on one correction SHA | Codex |

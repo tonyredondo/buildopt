@@ -3502,6 +3502,15 @@ and fingerprints terminal task outcomes only. No task is discarded.
 ./dev/check-generic-output-equivalence-result
 ```
 
+The terminal bundle qualifies all three subjects independently. Groovy `jar`
+reduces 72,318.625 ms to 19,454.5 ms (**73.10%**), Kafka Checkstyle reduces
+82,835.375 ms to 58,208.5 ms (**29.73%**), and Kafka `shadowJar` reduces
+40,727.8125 ms to 13,624.9375 ms (**66.55%**). All 48 raw pairs improve,
+semantic outputs match, p95 improves, final warm-up and measured task shapes
+are stable, both full-graph fallbacks pass per subject, and product failures
+remain zero. The complete collection incidents remain indexed beside the
+terminal evidence and contribute no timing to the result.
+
 `./dev/check-generic-profile-ci-replay` validates the manual clean-runner
 replay without cloning public repositories. It reconstructs retained Action
 artifacts for all five subjects, requires five semantic and byte-level graph

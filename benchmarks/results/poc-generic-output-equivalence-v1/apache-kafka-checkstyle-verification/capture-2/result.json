@@ -1,0 +1,44 @@
+{
+  "key": "apache-kafka-checkstyle-verification",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "checkstyle-main",
+  "workflowFamily": "TYPED_VERIFICATION",
+  "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+  "targetRevision": "4db12142986acc0fbc82da355ee068d7581f0c99",
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "checkstyleMain"
+    ],
+    "candidateEntrypoints": [
+      ":clients:checkstyleMain"
+    ],
+    "totalProjectCount": 64,
+    "selectedProjectCount": 2,
+    "omittedProjectCount": 62
+  },
+  "measurementStatus": "COMPLETED",
+  "measurementFailureClass": null,
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 82474.75,
+    "candidateMeanMs": 58802.5,
+    "meanSavedMs": 23672.25,
+    "reductionRatio": 0.287024210440165,
+    "interval95SavedMs": [
+      20351.375,
+      27216
+    ],
+    "positivePairs": 8,
+    "executionShapeObserved": true,
+    "executionShapeStable": true,
+    "targetWarmupShapeObserved": true,
+    "targetWarmupShapeStable": true,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "evaluationDecision": "QUALIFY_STRUCTURAL_PROFILE",
+  "outputEquivalence": "buildopt-output-equivalence.json",
+  "outputEquivalenceSha256": "fef44cfc2b8c6b65077e257f5c7358286702e082903daff2d13391bdebc93586"
+}
