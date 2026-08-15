@@ -531,10 +531,13 @@ fallbacks and zero product failures. Historical v1 decisions remain immutable.
 `poc-new-family-transfer-v1.json` and
 `poc-new-family-transfer-v1.md` freeze a transfer test on Ktor before any
 owner workflow, BuildOpt proposal or target timing. The contract binds public
-revision `bc7de799`, root JVM-only `assemble`, one internal `ktor-http` source
-comment, the module JVM JAR, exact-byte comparison, optimized native Gradle and
-the balanced two-capture qualification gate. It records no expected candidate
-or favorable result and forbids repository-name product rules.
+revision `bc7de799`, the public unqualified `jvmJar` selector, one internal
+`ktor-http` source comment, the module JVM JAR, exact-byte comparison,
+optimized native Gradle and the balanced two-capture qualification gate. The
+original root-`assemble` target declaration was rejected before timing because
+Ktor reads target switches from `gradle.properties`, not CLI project
+properties. The terminal result derives `:ktor-http:jvmJar` in both fresh
+captures and qualifies without repository-name product rules.
 
 `poc-generic-output-equivalence-v1.json` and
 `poc-generic-output-equivalence-v1.md` preregister the three public workflows

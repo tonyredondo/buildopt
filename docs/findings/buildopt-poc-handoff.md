@@ -18,7 +18,7 @@ scope.
 
 | Mechanism | Role | Current evidence decision |
 | --- | --- | --- |
-| **Structural Build Impact** | Selects the smallest proven change-specific project/task graph before Gradle runs. | **Retained accelerator.** It materially improves all five fresh public-repository subjects, three additional build-owned workflows, and six distinct source-change cells below. |
+| **Structural Build Impact** | Selects the smallest proven change-specific project/task graph before Gradle runs. | **Retained accelerator.** It materially improves the five-repository matrix, a fresh Ktor family transfer, three additional build-owned workflows, and six distinct source-change cells below. |
 | **Profile discovery and evaluation** | Derives the candidate from generic Gradle metadata, measures it against the owner workflow, binds inputs, and enforces native fallback. | **Required safety/evidence layer.** Review remains explicit. |
 | **Safe Cache / local L1** | Isolates and verifies cached outputs by repository, Wrapper, and platform. | **Supporting safety, not the current speed claim.** It is approximately at parity with a warm native cache. |
 | **Shared / Edge Cache** | Moves verified cache objects closer to developers or CI. | **Separate locality experiment.** Network-dependent results are not added to Structural Build Impact percentages. |
@@ -27,26 +27,35 @@ scope.
 
 ## Fresh comparable public-repository evidence
 
-The preregistered v2 protocol ran two independent captures per repository,
-eight alternating pairs per capture, and eight opposite-order AB/BA blocks.
+The latest preregistered balanced protocols ran two independent captures per
+repository, eight alternating pairs per capture, and eight opposite-order
+AB/BA blocks.
 The control is optimized native Gradle with the same revision, workflow,
 resources, required outputs, cache/parallel options, and warmed state. BuildOpt
 timing includes its installed launcher, profile validation, planning, and
 Gradle execution.
 
-| Repository | Full -> selected projects | Native mean | BuildOpt mean | Mean saving | Blocks | p95 native -> BuildOpt |
+| Repository | Declared -> selected projects | Native mean | BuildOpt mean | Mean saving | Blocks | p95 native -> BuildOpt |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Spring Framework | 27 -> 10 | 13.311 s | 11.183 s | **2.128 s / 15.99%** | 8/8 positive | 15.711 -> 13.318 s |
 | OpenTelemetry Java Instrumentation | 1,024 -> 34 | 87.869 s | 74.713 s | **13.156 s / 14.97%** | 8/8 positive | 100.229 -> 79.004 s |
 | Apache Kafka | 64 -> 3 | 113.381 s | 14.341 s | **99.040 s / 87.35%** | 8/8 positive | 145.478 -> 15.339 s |
 | Micronaut Core | 75 -> 22 | 30.411 s | 18.418 s | **11.993 s / 39.44%** | 8/8 positive | 34.006 -> 20.448 s |
 | Apache Groovy | 37 -> 2 | 79.868 s | 20.767 s | **59.101 s / 74.00%** | 8/8 positive | 85.338 -> 24.183 s |
+| Ktor JVM JAR workflow | 133 -> 3 | 103.724 s | 14.308 s | **89.416 s / 86.21%** | 8/8 positive | 153.818 -> 20.397 s |
 
-All **5/5 repositories qualify independently**. Across the matrix, all 80 raw
+All **6/6 repositories qualify independently**. Across the matrix and Ktor
+transfer, all 96 raw
 pairs improved, every required output matched exactly, measured task shapes
 were stable, both full-graph fallbacks passed for every repository, and no
 product-attributable failure occurred. Percentages are neither averaged across
 repositories nor added to cache or other mechanism results.
+
+Ktor is intentionally a JVM JAR selector rather than a claim about its full
+multiplatform release build. Its two independent captures saved 92.128 and
+86.705 seconds; the balanced block interval is +79.451..+98.422 seconds. Five
+invalid or rejected attempts are retained, and neither their timings nor their
+state enters the terminal result.
 
 The result replaces no historical evidence. In particular, Spring's previous
 7/8 decision remains valid for its old strict protocol; the fresh balanced run
@@ -121,8 +130,8 @@ visible but is excluded as shared native/BuildOpt work.
 ## What this demonstrates
 
 - **The core idea transfers.** One generic implementation derived material
-  graph reductions across five very different, substantial Gradle codebases
-  without repository-name logic.
+  graph reductions across six very different, substantial Gradle codebases,
+  including a new Kotlin Multiplatform family, without repository-name logic.
 - **The value transfers across source-change shapes.** Two distinct changes
   per reviewed workflow qualify independently, while build-logic and global
   changes retain native Gradle instead of forcing a reduction.
@@ -175,12 +184,12 @@ build on another day or authority to ignore arbitrary timestamps.
 
 ## Recommended next steps
 
-1. **Add one new substantial repository family.** Use the unchanged generic
-   path and owner-input model; do not add a repository-name rule to force a
-   result.
-2. **Broaden change classes incrementally.** Add dependency, resource, and
+1. **Broaden change classes incrementally.** Add dependency, resource, and
    mixed-source changes only when the owner workflow and required outputs can
    be declared without repository-specific product code.
+2. **Measure adoption economics on the new family.** Separate Ktor discovery,
+   warm-up and steady-state value so a reviewer knows how many repeated builds
+   are needed to repay calibration.
 3. **Keep wall time authoritative.** Continue only mechanisms that materially
    beat optimized native Gradle under correctness, repeatability, and tail
    guards; retire or retain native for everything else.
@@ -197,6 +206,7 @@ build on another day or authority to ignore arbitrary timestamps.
 - [Terminal calibration efficiency](../../benchmarks/results/poc-calibration-efficiency-v1/README.md)
 - [Public installed profile replay](../../benchmarks/results/poc-installed-profile-replay-v1/README.md)
 - [Reviewed cross-date output equivalence](../../benchmarks/results/poc-cross-date-output-equivalence-v1/README.md)
+- [Ktor new-family transfer](../../benchmarks/results/poc-new-family-transfer-v1/README.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

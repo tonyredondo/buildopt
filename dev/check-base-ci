@@ -228,7 +228,7 @@ case "${buildopt_lane}" in
             "${buildopt_repo_root}/benchmarks/results/poc-qualified-profile-matrix-v1/summary.json" >/dev/null
         "${buildopt_script_dir}/check-statistical-qualification-v2-result" \
             "${buildopt_repo_root}/benchmarks/results/poc-statistical-qualification-v2" >/dev/null
-        "${buildopt_script_dir}/check-new-family-transfer" --spec-only >/dev/null
+        "${buildopt_script_dir}/test-new-family-transfer-result" >/dev/null
         "${buildopt_script_dir}/check-calibration-economics" >/dev/null
         "${buildopt_script_dir}/check-calibration-economics-result" \
             "${buildopt_repo_root}/benchmarks/results/poc-calibration-economics-v1" >/dev/null

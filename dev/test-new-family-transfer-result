@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_source="${buildopt_repo_root}/benchmarks/results/poc-new-family-transfer-v1"
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-new-family-test.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-new-family-test."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+"${buildopt_script_dir}/check-new-family-transfer" "${buildopt_source}"
+cp -a -- "${buildopt_source}/." "${buildopt_temp}/"
+
+jq '.result.meanSavedMs += 1' "${buildopt_temp}/summary.json" \
+    >"${buildopt_temp}/summary-mutated.json"
+mv -- "${buildopt_temp}/summary-mutated.json" "${buildopt_temp}/summary.json"
+if "${buildopt_script_dir}/check-new-family-transfer" "${buildopt_temp}" \
+    >/dev/null 2>&1; then
+    printf 'checker accepted a tampered new-family summary\n' >&2
+    exit 1
+fi
+
+cp -- "${buildopt_source}/summary.json" "${buildopt_temp}/summary.json"
+jq '.result.meanSavedMs += 1' "${buildopt_temp}/qualification.json" \
+    >"${buildopt_temp}/qualification-mutated.json"
+mv -- "${buildopt_temp}/qualification-mutated.json" \
+    "${buildopt_temp}/qualification.json"
+if "${buildopt_script_dir}/check-new-family-transfer" "${buildopt_temp}" \
+    >/dev/null 2>&1; then
+    printf 'checker accepted a tampered new-family qualification\n' >&2
+    exit 1
+fi
+
+printf 'New-family transfer negative fixtures OK\n'

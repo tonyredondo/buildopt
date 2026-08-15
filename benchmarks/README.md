@@ -1700,6 +1700,28 @@ savings or beta-promotion evidence. Revalidate it with:
 The measurement contract lives in
 [`specs/no-hit-overhead-v1.md`](../specs/no-hit-overhead-v1.md).
 
+## Ktor new-family transfer
+
+[`results/poc-new-family-transfer-v1/`](./results/poc-new-family-transfer-v1/README.md)
+is the terminal transfer test for the unchanged generic structural path on
+Ktor's public JVM JAR workflow. Both independent captures derived
+`:ktor-http:jvmJar` from the reviewed workflow/output/change inputs and reduced
+133 projects to three without repository-name product logic.
+
+Across 16 raw pairs, optimized native Gradle averaged 103.724 seconds and
+installed BuildOpt averaged 14.308 seconds, saving **89.416 seconds/86.21%**.
+All eight reciprocal blocks improved, the deterministic block interval is
++79.451..+98.422 seconds, p95 improves from 153.818 to 20.397 seconds, exact
+JAR bytes and task shapes match, and both full-graph fallbacks pass. Five
+rejected attempts are preserved separately and contribute no accepted timing.
+
+Revalidate the captures, aggregate and negative tamper fixtures with:
+
+```bash
+./dev/check-new-family-transfer
+./dev/test-new-family-transfer-result
+```
+
 ## JVM Agent spike evidence
 
 [`results/spk-002-agent.json`](./results/spk-002-agent.json) records the one

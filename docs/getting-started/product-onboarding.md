@@ -231,11 +231,12 @@ method against optimized native Gradle:
 
 | Repository | Native mean | BuildOpt mean | Result | Current decision |
 | --- | ---: | ---: | ---: | --- |
-| Spring Framework | 13.940 s | 11.438 s | **17.94% faster**, 7/8 positive | Retain native under the frozen repeatability rule. |
-| OpenTelemetry | 83.934 s | 71.825 s | **14.43% faster**, 8/8 positive | Qualify. |
-| Apache Kafka | 82.498 s | 13.113 s | **84.11% faster**, 8/8 positive | Qualify. |
-| Micronaut Core | 27.407 s | 15.968 s | **41.74% faster**, 8/8 positive | Qualify. |
-| Apache Groovy | 75.064 s | 19.629 s | **73.85% faster**, 8/8 positive | Qualify. |
+| Spring Framework | 13.311 s | 11.183 s | **15.99% faster**, 8/8 balanced blocks | Qualify. |
+| OpenTelemetry | 87.869 s | 74.713 s | **14.97% faster**, 8/8 balanced blocks | Qualify. |
+| Apache Kafka | 113.381 s | 14.341 s | **87.35% faster**, 8/8 balanced blocks | Qualify. |
+| Micronaut Core | 30.411 s | 18.418 s | **39.44% faster**, 8/8 balanced blocks | Qualify. |
+| Apache Groovy | 79.868 s | 20.767 s | **74.00% faster**, 8/8 balanced blocks | Qualify. |
+| Ktor JVM JAR workflow | 103.724 s | 14.308 s | **86.21% faster**, 8/8 balanced blocks | Qualify. |
 
 Every accepted row preserved the declared outputs byte for byte and proved
 full-graph fallback. These results show that structural reduction can create

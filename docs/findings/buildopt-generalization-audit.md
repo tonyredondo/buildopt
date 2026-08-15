@@ -20,8 +20,8 @@ outputs represent success for an unknown customer build.
 | Installation and launcher | Native packages and `buildopt gradle` locate the Wrapper, preserve argv/process behavior and support Linux, macOS and Windows. | The repository's Wrapper and requested Gradle command. | External Kotlin and Groovy pilots pass onboarding; platform CI covers native lifecycle. |
 | Safe Cache / L1 | Cache scope is derived from repository, Wrapper and platform; unsafe or unavailable state falls back to native execution. | None beyond the repository and Wrapper already being executed. | At parity with a warm native Gradle cache, so it is a safety/onboarding feature rather than a retained accelerator claim. |
 | Output-contract preflight | The exact owner workflow runs once before proposal discovery; Gradle-declared task outputs are reduced to non-empty, repository-contained candidates with one most-specific project owner per file. Missing, empty, symlinked or ambiguous declarations retain native Gradle. | Repository identity, original entrypoints and optional required-output globs to confirm. | The same generic code caught Hibernate's wrong `build/libs` declaration, exposed its Gradle-owned `target/libs` JARs and stopped before warm-up or timing. |
-| Structural proposal | Typed Gradle discovery maps the original entrypoints and exact changed paths to project owners, constructs a smaller candidate and rejects incomplete or ambiguous graphs. | Repository identity, original entrypoints, exact Git change and validated required output globs. | The same code reproduced five clean-CI proposals and discovered the unseen Hibernate 29-to-1 candidate. No public-repository names appear in the customer execution decision. |
-| Structural measurement | Independent source trees, Gradle homes and cache seeds compare optimized native Gradle with the candidate, bind source/tool/profile hashes, compare output bytes and prove full-graph fallback. | Accepted proposal and its declared output contract. | Spring, OpenTelemetry, Kafka, Micronaut, Groovy and Hibernate use the same installed measure/evaluate path. |
+| Structural proposal | Typed Gradle discovery maps the original entrypoints and exact changed paths to project owners, constructs a smaller candidate and rejects incomplete or ambiguous graphs. | Repository identity, original entrypoints, exact Git change and validated required output globs. | The same code reproduced five clean-CI proposals, discovered the unseen Hibernate 29-to-1 candidate and independently derived Ktor's 133-to-3 JVM JAR candidate twice. No public-repository names appear in the customer execution decision. |
+| Structural measurement | Independent source trees, Gradle homes and cache seeds compare optimized native Gradle with the candidate, bind source/tool/profile hashes, compare output bytes and prove full-graph fallback. | Accepted proposal and its declared output contract. | Spring, OpenTelemetry, Kafka, Micronaut, Groovy, Hibernate and Ktor use the same installed measure/evaluate path. |
 | Structural decision | Fixed minimum saving, reduction, uncertainty, repeatability, output, failure and fallback gates determine `REVIEW_STRUCTURAL_PROFILE` or native fallback. | Explicit human review remains required. | Hibernate version 5 qualifies at 5.88%, 8/8 reciprocal blocks; Spring remains native at 7/8 despite a positive mean. |
 | Reviewed task optimization | Exact task adapters and Patch Autopilot can repair one understood cacheability contract with signed, reversible evidence. | A reviewed task type/recipe and its exact validation boundary. | Strong Kotlin/Groovy custom-task evidence exists, but this is not generalized to arbitrary task implementations. |
 | Shared / Edge Cache | Implements Gradle remote-cache protocol, authenticated commit authority, locality and safe miss/failure behavior. | Operator endpoint, credentials and a workload/network profile. | Locality has bounded synthetic and Kafka evidence; it is not part of the uniform structural claim. |
@@ -76,7 +76,7 @@ digest and is revalidated on each target.
 
 ## Cross-repository evidence
 
-The uniform structural-only method now has six public-repository results. The
+The uniform structural-only method now has seven public-repository results. The
 percentages are not averaged because the workloads are different.
 
 | Repository | Full -> selected projects | Direct wall-time result | Decision |
@@ -87,13 +87,16 @@ percentages are not averaged because the workloads are different.
 | Micronaut Core | 75 -> 22 | 41.74% faster, 8/8 | Reviewable candidate. |
 | Apache Groovy | 37 -> 2 | 73.85% faster, 8/8 | Reviewable candidate. |
 | Hibernate ORM holdout | 29 -> 1 | **5.88% faster, 8/8 reciprocal blocks** | Reviewable candidate after preregistered order correction. |
+| Ktor JVM JAR workflow | 133 -> 3 | **86.21% faster, 8/8 reciprocal blocks** | Reviewable candidate from two independent captures. |
 
 All accepted observations include BuildOpt overhead, preserve the declared
 outputs byte for byte and exercise native full-graph fallback. Hibernate is
 particularly important: it was selected after the method was frozen, failed
 the first timing protocol, was investigated rather than discarded, and then
 qualified only after a generic measurement correction removed execution-order
-bias.
+bias. Ktor then exercises a materially different Kotlin Multiplatform family:
+all 16 raw pairs improve, exact JVM JARs and task shapes match, and both global
+fallbacks pass. Its selector is not a claim about the full Ktor release graph.
 
 ## What is implementation-generic versus evidence-specific
 
@@ -118,16 +121,13 @@ declared.
 
 ## Remaining gaps before calling the POC broadly usable
 
-1. **Installed value across workflow families.** The unchanged owner-input
-   path now preserves exact outputs for packaging, typed verification,
-   distribution and build-owned test preparation, while an unsupported custom
-   workflow retains native before timing. Measure substantial public examples
-   of those families through the installed path and qualify each family only
-   when it materially beats optimized native Gradle. Gradle `Test` optimization
-   remains separate.
-2. **Installed replay of qualified profiles.** Prove that a reviewed profile
-   selected by `evaluate` produces the same value through the public package,
-   not only the measurement harness, for more than the existing bounded cases.
+1. **New-family change breadth.** Preregister dependency, resource, and
+   mixed-source changes under Ktor's same public JVM JAR workflow. Time only
+   candidates whose generic graph and output contract remain complete; record
+   uncertain/global cells as native without a timing claim.
+2. **Ktor replay and calibration economics.** Prove the reviewed Ktor profile
+   through the public package and separate discovery/warm-up cost from its
+   repeated-build value before making an onboarding claim.
 3. **Generic task-contract research.** Add an adapter or patch recipe only when
    an exact task contract and end-to-end wall-time win transfer across
    repositories; never infer value from cacheability alone.
@@ -145,14 +145,14 @@ declared.
 The retained idea is not “a faster Gradle cache.” It is a generic,
 evidence-gated layer that can request less Gradle work for an exact change and
 output contract, then decline the optimization when correctness or value does
-not replicate. That idea now transfers across six materially different public
-repositories and beats optimized native Gradle in five under their frozen
-decision rules; Spring demonstrates that native fallback still governs a
-positive but insufficiently repeatable result.
+not replicate. That idea now transfers across seven materially different
+public repositories and beats optimized native Gradle in six under the frozen
+decisions summarized here; the fresh balanced matrix separately closes Spring
+under its newer protocol, while historical rejected evidence remains
+immutable.
 
-The next block should measure installed-path value for substantial public
-packaging, verification, distribution, and build-owned test-preparation
-workflows. The capability surface is now common and fail-closed; that does not
-prove any family is faster. Each family needs fresh paired wall-time evidence,
-exact declared outputs, native fallback, and an independent retain-or-reject
-decision.
+The next block should broaden Ktor to materially different change classes
+without changing the generic implementation. Each selective cell still needs
+fresh paired wall-time evidence, exact declared outputs, native fallback, and
+an independent retain-or-reject decision; unsupported/global cells should
+stop before timing.

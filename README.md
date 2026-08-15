@@ -32,7 +32,10 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > qualified independently on Spring, OpenTelemetry, Kafka, Micronaut, and
 > Groovy at **14.97% to 87.35% lower wall time** than optimized native Gradle.
 > All 80 raw pairs improved, required outputs matched, tails improved, and full
-> fallbacks passed. A separate semantic-output rerun also qualified Groovy
+> fallbacks passed. The unchanged generic path then transferred to Ktor's
+> public JVM JAR workflow: **86.21% lower wall time**, 16/16 positive pairs,
+> exact output, stable task shapes and both full-graph fallbacks. A separate
+> semantic-output rerun also qualified Groovy
 > `jar` (**73.10%**), Kafka Checkstyle (**29.73%**), and Kafka `shadowJar`
 > (**66.55%**) across 48/48 positive raw pairs. A fresh change-breadth matrix
 > then qualified six distinct source edits across those three workflows at

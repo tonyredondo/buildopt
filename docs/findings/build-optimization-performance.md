@@ -7,6 +7,11 @@
   OpenTelemetry (**14.97%**), Kafka (**87.35%**), Micronaut (**39.44%**), and
   Groovy (**74.00%**) independently, with 80/80 positive raw pairs, stable
   shapes, exact outputs, improved p95, and full-graph fallback.
+- **The unchanged path also transfers to Ktor.** Two independent captures of
+  its public JVM JAR workflow reduced 133 projects to three and saved
+  **89.416 seconds/86.21%** on average, with 16/16 positive pairs, eight of
+  eight positive reciprocal blocks, exact JARs, stable task shapes, lower p95
+  and both full-graph fallbacks.
 - **Explicit output semantics broaden the workflows that can be measured
   safely.** Two fresh captures qualified Groovy `jar` (**73.10% faster**),
   Kafka Checkstyle (**29.73%**), and Kafka `shadowJar` (**66.55%**) across
@@ -261,7 +266,7 @@ work. Terminal wall-time savings and correctness evidence are unchanged.
 
 ## Recommended Direction
 
-### 1. Preserve the closed output boundary while adding a new family
+### 1. Preserve the closed output boundary while broadening the new family
 
 Preserve the current clean profile and its non-regressive mechanisms:
 
@@ -276,10 +281,12 @@ Edge Cache until each demonstrates incremental value. Public `v0.3.1` replay
 passes all six cells, and the follow-up cross-date evidence closes at 6/6:
 four natural Kafka matches plus two controlled real-JAR Groovy matches under
 the exact `BuildDate + BuildTime` declaration. Undeclared property and class
-payload changes remain visible. The next bounded study should apply the same
-generic owner-input, optimized-native control, explicit output contract, and
-fallback gates to one new substantial repository family without adding a
-repository-name rule.
+payload changes remain visible. That unchanged path has now transferred to
+Ktor's JVM JAR workflow at **86.21% lower wall time** across two independent
+captures. The next bounded study should apply the same owner-input,
+optimized-native control, explicit output contract, and fallback gates to
+materially different Ktor change classes without adding a repository-name
+rule.
 
 ### 2. Keep the same native control while broadening workload coverage
 
@@ -676,7 +683,7 @@ relaxing a gate or adding a Hibernate-specific decision.
   versioned owner input without hiding repository semantics or weakening drift
   detection?
 - Which additional unseen repository family and workflow should test whether
-  the qualified structural method continues to transfer?
+  the qualified structural method continues to transfer after Ktor?
 
 ## Evidence Boundaries
 

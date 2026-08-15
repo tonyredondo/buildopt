@@ -1,0 +1,123 @@
+{
+  "boundaries": {
+    "automaticActivation": false,
+    "designPartnerRequired": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositorySpecificProductRulesAllowed": false,
+    "soakRequired": false,
+    "testOptimizationModified": false
+  },
+  "buildopt": {
+    "executableSha256": "10b1feae55925adfa94ba7f071854b1c7e1a248b1b9e221775d9af152271b07e",
+    "packageVersion": "0.3.0-dev",
+    "revision": "d658a23c20a6dca603eefdad5394a9b076cfde93"
+  },
+  "capturedAt": "2026-08-15T13:27:39Z",
+  "evaluationDecision": "QUALIFY_STRUCTURAL_PROFILE",
+  "measurementStatus": "COMPLETED",
+  "method": {
+    "bothArmsPreparedBeforeMeasuredPair": true,
+    "candidateMechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "control": "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW",
+    "fullGraphFallbackRequiredPerCapture": true,
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12",
+      "-Pktor.develocity.skipBuildScans=true"
+    ],
+    "independentGradleHomes": true,
+    "independentNativeCacheSeeds": true,
+    "isolatedArms": true,
+    "networkAllowedDuringWarmupsOrTiming": false,
+    "onlinePreparationMeasured": false,
+    "outputEquivalence": "EXACT_BYTES",
+    "postResultTuningAllowed": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "requiredOutputsComparedByteForByte": true,
+    "surface": "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE",
+    "targetRevisionWarmupBeforePairs": true,
+    "twoTargetShapeObservationsBeforePairs": true,
+    "warmupAndPairExactTaskPathsRecorded": true,
+    "warmupsMeasured": false
+  },
+  "proposal": {
+    "candidateEntrypoints": [
+      ":ktor-http:jvmJar"
+    ],
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "omittedProjectCount": 130,
+    "originalEntrypoints": [
+      "jvmJar"
+    ],
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "selectedProjectCount": 3,
+    "totalProjectCount": 133
+  },
+  "qualification": {
+    "blockCount": 8,
+    "blockDefinition": "MEAN_OF_ONE_CONTROL_FIRST_PAIR_AND_THE_FOLLOWING_CANDIDATE_FIRST_PAIR",
+    "candidateP95NotRegressive": true,
+    "executionShapeStable": true,
+    "failedOrTimedOutObservationsMayBeDiscarded": false,
+    "fullGraphFallbackRequiredPerCapture": true,
+    "maximumProductAttributableFailures": 0,
+    "minimumMeanSavedMs": 500,
+    "minimumPositiveBlocks": 6,
+    "minimumReductionRatio": 0.02,
+    "nonWinningDecision": "RETAIN_NATIVE_GRADLE",
+    "positiveLower95BlockBootstrapBound": true,
+    "positiveMedianBlockSaving": true,
+    "requiredOutputsIdentical": true
+  },
+  "result": {
+    "candidateMeanMs": 13769.375,
+    "controlMeanMs": 100474,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE",
+    "executionShapeObserved": true,
+    "executionShapeStable": true,
+    "interval95SavedMs": [
+      69720.75,
+      109591.375
+    ],
+    "meanSavedMs": 86704.625,
+    "pairs": 8,
+    "positivePairs": 8,
+    "qualified": true,
+    "reductionRatio": 0.8629558393216156,
+    "targetWarmupShapeObserved": true,
+    "targetWarmupShapeStable": true
+  },
+  "schemaVersion": "buildopt.evidence/poc-new-family-transfer-capture/v1",
+  "subject": {
+    "changePath": "ktor-http/common/src/io/ktor/http/AsciiBitSet.kt",
+    "entrypoints": [
+      "jvmJar"
+    ],
+    "gradleWrapperSha256": "bafc141b619ad6350fd975fc903156dd5c151998cc8b058e8c1044ab5f7b031f",
+    "gradleWrapperVersion": "9.5.1",
+    "jdkToolchain": "temurin-jdk-21",
+    "key": "ktor",
+    "mutation": "APPEND_FIXED_COMMENT",
+    "observedPublicRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+    "ownerJdkSource": "CONTRIBUTING.md:36",
+    "ownerWorkflowSource": "GRADLE_PUBLIC_TASK_MODEL:help --task jvmJar",
+    "pipelineClass": "jvm-jar",
+    "publicRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+    "remoteUrl": "https://github.com/ktorio/ktor.git",
+    "repositoryId": "ktorio/ktor",
+    "requiredOutputs": [
+      "ktor-http/build/libs/ktor-http-jvm-*.jar"
+    ],
+    "scope": "JVM_JAR_TASK_SELECTOR",
+    "targetRevision": "cc5ac835d4ab3f962565ef74d0995064acdcdb96"
+  },
+  "workItem": "POC-NEW-FAMILY-TRANSFER-001"
+}

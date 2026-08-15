@@ -3457,17 +3457,18 @@ does not average repository percentages or permit a failed observation to be
 discarded.
 
 `./dev/check-new-family-transfer --spec-only` validates the preregistered Ktor
-JVM assembly transfer before the owner workflow or BuildOpt proposal runs.
+JVM JAR transfer before the owner workflow or BuildOpt proposal runs.
 After that contract is committed,
 `./dev/run-new-family-transfer /absolute/repository/evidence/directory`
 collects two fresh installed captures and aggregates them with the same
 balanced 500-ms/2%, 6-of-8-block, positive-bound and non-regressive-p95 gate.
-Both arms run root `assemble` with the same repository-supported JVM-only
-target properties, exact `ktor-http` JAR output and optimized-native Gradle
-options. `./dev/check-new-family-transfer [directory]` revalidates each source
-capture and recomputes the aggregate offline. Unsupported, weak or unstable
-results retain native Gradle; the runner cannot add a Ktor-specific product
-decision.
+Both arms run Ktor's public unqualified `jvmJar` selector with the exact
+`ktor-http` JAR output and optimized-native Gradle options.
+`./dev/check-new-family-transfer [directory]` revalidates each source capture
+and recomputes the aggregate offline. `./dev/test-new-family-transfer-result`
+also proves that summary and aggregate tampering fail closed. Unsupported,
+weak or unstable results retain native Gradle; the runner cannot add a
+Ktor-specific product decision.
 
 Before the original-workflow preflight, the runner prepares the exact Wrapper
 distribution selected by that repository, reusing only a matching cached
