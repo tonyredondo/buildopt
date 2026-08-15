@@ -953,10 +953,31 @@ func validStructuralGradleOptions(options []string) bool {
 			workers, err := strconv.Atoi(strings.TrimPrefix(option, "--max-workers="))
 			valid = err == nil && workers > 0
 		}
+		if !valid && strings.HasPrefix(option, "-P") {
+			valid = validStructuralGradleProjectProperty(option)
+		}
 		if !valid || seen[option] {
 			return false
 		}
 		seen[option] = true
+	}
+	return true
+}
+
+func validStructuralGradleProjectProperty(option string) bool {
+	property := strings.TrimPrefix(option, "-P")
+	name, value, found := strings.Cut(property, "=")
+	if !found || name == "" || strings.ContainsAny(value, "\x00\r\n") {
+		return false
+	}
+	for _, character := range name {
+		if (character >= 'a' && character <= 'z') ||
+			(character >= 'A' && character <= 'Z') ||
+			(character >= '0' && character <= '9') ||
+			strings.ContainsRune("._-", character) {
+			continue
+		}
+		return false
 	}
 	return true
 }

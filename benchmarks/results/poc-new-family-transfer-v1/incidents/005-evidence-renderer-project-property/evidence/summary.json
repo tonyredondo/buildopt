@@ -1,0 +1,106 @@
+{
+  "boundaries": {
+    "automaticActivation": false,
+    "designPartnerRequired": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositorySpecificProductRulesAllowed": false,
+    "soakRequired": false,
+    "testOptimizationModified": false
+  },
+  "buildopt": {
+    "executableSha256": "1727c960f45650dc9402c77e8a6fb365de404640b5ca9b254fc05a1dd45352a5",
+    "packageVersion": "0.3.0-dev",
+    "revision": "84f7f5a128370f2b68f921b970e32c605c130897"
+  },
+  "capturedAt": "2026-08-15T11:59:49Z",
+  "evaluationDecision": "NATIVE_FULL_GRAPH",
+  "measurementStatus": "MEASUREMENT_UNAVAILABLE",
+  "method": {
+    "bothArmsPreparedBeforeMeasuredPair": true,
+    "candidateMechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "control": "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW",
+    "fullGraphFallbackRequiredPerCapture": true,
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12",
+      "-Pktor.develocity.skipBuildScans=true"
+    ],
+    "independentGradleHomes": true,
+    "independentNativeCacheSeeds": true,
+    "isolatedArms": true,
+    "networkAllowedDuringWarmupsOrTiming": false,
+    "onlinePreparationMeasured": false,
+    "outputEquivalence": "EXACT_BYTES",
+    "postResultTuningAllowed": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "requiredOutputsComparedByteForByte": true,
+    "surface": "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE",
+    "targetRevisionWarmupBeforePairs": true,
+    "twoTargetShapeObservationsBeforePairs": true,
+    "warmupAndPairExactTaskPathsRecorded": true,
+    "warmupsMeasured": false
+  },
+  "proposal": {
+    "candidateEntrypoints": [
+      ":ktor-http:jvmJar"
+    ],
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "omittedProjectCount": 130,
+    "originalEntrypoints": [
+      "jvmJar"
+    ],
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "selectedProjectCount": 3,
+    "totalProjectCount": 133
+  },
+  "qualification": {
+    "blockCount": 8,
+    "blockDefinition": "MEAN_OF_ONE_CONTROL_FIRST_PAIR_AND_THE_FOLLOWING_CANDIDATE_FIRST_PAIR",
+    "candidateP95NotRegressive": true,
+    "executionShapeStable": true,
+    "failedOrTimedOutObservationsMayBeDiscarded": false,
+    "fullGraphFallbackRequiredPerCapture": true,
+    "maximumProductAttributableFailures": 0,
+    "minimumMeanSavedMs": 500,
+    "minimumPositiveBlocks": 6,
+    "minimumReductionRatio": 0.02,
+    "nonWinningDecision": "RETAIN_NATIVE_GRADLE",
+    "positiveLower95BlockBootstrapBound": true,
+    "positiveMedianBlockSaving": true,
+    "requiredOutputsIdentical": true
+  },
+  "result": null,
+  "schemaVersion": "buildopt.evidence/poc-new-family-transfer-capture/v1",
+  "subject": {
+    "changePath": "ktor-http/common/src/io/ktor/http/AsciiBitSet.kt",
+    "entrypoints": [
+      "jvmJar"
+    ],
+    "gradleWrapperSha256": "bafc141b619ad6350fd975fc903156dd5c151998cc8b058e8c1044ab5f7b031f",
+    "gradleWrapperVersion": "9.5.1",
+    "jdkToolchain": "temurin-jdk-21",
+    "key": "ktor",
+    "mutation": "APPEND_FIXED_COMMENT",
+    "observedPublicRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+    "ownerJdkSource": "CONTRIBUTING.md:36",
+    "ownerWorkflowSource": "GRADLE_PUBLIC_TASK_MODEL:help --task jvmJar",
+    "pipelineClass": "jvm-jar",
+    "publicRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+    "remoteUrl": "https://github.com/ktorio/ktor.git",
+    "repositoryId": "ktorio/ktor",
+    "requiredOutputs": [
+      "ktor-http/build/libs/ktor-http-jvm-*.jar"
+    ],
+    "scope": "JVM_JAR_TASK_SELECTOR",
+    "targetRevision": "cc5ac835d4ab3f962565ef74d0995064acdcdb96"
+  },
+  "workItem": "POC-NEW-FAMILY-TRANSFER-001"
+}

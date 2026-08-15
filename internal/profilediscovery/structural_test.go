@@ -90,6 +90,26 @@ func TestRenderStructuralMeasurementEvidenceQualifiesOnlyPositiveExactPairs(t *t
 	}
 }
 
+func TestValidStructuralGradleOptionsAcceptsReviewedProjectProperties(t *testing.T) {
+	if !validStructuralGradleOptions([]string{
+		"--daemon",
+		"--build-cache",
+		"-Pktor.develocity.skipBuildScans=true",
+	}) {
+		t.Fatal("reviewed Gradle project property was rejected")
+	}
+	for _, option := range []string{
+		"-P=value",
+		"-Punsafe/name=value",
+		"-Punsafe=value\n--offline",
+		"-Pmissing-value",
+	} {
+		if validStructuralGradleOptions([]string{"--daemon", option}) {
+			t.Fatalf("unsafe Gradle project property %q was accepted", option)
+		}
+	}
+}
+
 func TestRenderStructuralMeasurementEvidencePreservesWarmupAndPairDiagnostics(t *testing.T) {
 	root := repositoryRoot(t)
 	repository := structuralTestRepository(
