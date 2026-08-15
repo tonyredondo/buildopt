@@ -237,6 +237,9 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-installed-profile-replay" >/dev/null
         "${buildopt_script_dir}/check-installed-profile-replay-result" >/dev/null
         "${buildopt_script_dir}/test-installed-profile-replay-result" >/dev/null
+        "${buildopt_script_dir}/check-cross-date-output-equivalence" >/dev/null
+        "${buildopt_script_dir}/check-cross-date-output-equivalence-result" >/dev/null
+        "${buildopt_script_dir}/test-cross-date-output-equivalence-result" >/dev/null
         "${buildopt_script_dir}/check-poc-profile-discovery" >/dev/null
         "${buildopt_script_dir}/check-poc-opportunity-analysis" >/dev/null
         "${buildopt_script_dir}/check-poc-general-build-value" >/dev/null

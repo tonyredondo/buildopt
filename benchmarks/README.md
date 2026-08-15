@@ -174,15 +174,35 @@ the same owner-reviewed semantic output, and the embedded terminal
 qualification remains unchanged.
 
 Four Kafka outputs also match the historical terminal digest. Two Groovy JARs
-do not because their reviewed volatile-property contract excludes `BuildTime`
-but not the date-dependent `BuildDate`; direct native Gradle on the same frozen
-checkout matches the current BuildOpt digest. Cross-capture identity is
-therefore diagnostic. No new timing, averaged percentage, production
-activation, soak or Test Optimization claim is made.
+do not under their immutable historical contract because it excludes
+`BuildTime` but not the date-dependent `BuildDate`; direct native Gradle on the
+same frozen checkout matches the current BuildOpt digest. Cross-capture
+identity is therefore diagnostic for that historical bundle.
 
 ```bash
 ./dev/check-installed-profile-replay-result
 ./dev/test-installed-profile-replay-result
+```
+
+### Reviewed cross-date output equivalence
+
+The [cross-date bundle](./results/poc-cross-date-output-equivalence-v1/README.md)
+closes that diagnostic gap for future evidence without editing old profiles.
+Four Kafka cells retain their natural independent-capture matches. Two fresh
+Groovy real-JAR probes change only `BuildDate`: the historical
+`BuildTime`-only contract rejects both changes, while the reviewed
+`BuildDate + BuildTime` contract matches both. Changing undeclared
+`ImplementationVersion` or a `.class` payload still produces a mismatch in
+2/2 cells.
+
+The aggregate is **6/6 cross-date comparable**, with six unchanged historical
+eight-pair qualifications and zero product failures. The Groovy boundary is a
+controlled correctness probe, not a new timed build, so no saving or
+percentage is recomputed.
+
+```bash
+./dev/check-cross-date-output-equivalence-result
+./dev/test-cross-date-output-equivalence-result
 ```
 
 ### Unseen Hibernate ORM holdout

@@ -1,0 +1,77 @@
+
+Welcome to Gradle 8.14.4!
+
+Here are the highlights of this release:
+ - Java 24 support
+ - GraalVM Native Image toolchain selection
+ - Enhancements to test reporting
+ - Build Authoring improvements
+
+For more details see https://docs.gradle.org/8.14.4/release-notes.html
+
+Starting a Gradle Daemon (subsequent builds will be faster)
+Type-safe project accessors is an incubating feature.
+> Task :build-logic:extractPluginRequests
+> Task :build-logic:generatePluginAdapters
+> Task :build-logic:compileJava
+
+> Task :build-logic:compileGroovy
+Groovy compilation avoidance is an incubating feature.
+
+> Task :build-logic:compileGroovyPlugins
+> Task :build-logic:pluginDescriptors
+> Task :build-logic:processResources
+> Task :build-logic:classes
+> Task :build-logic:jar
+
+> Configure project :
+Detected development environment
+ArtifactoryUser user: not defined
+Using Java from ${BUILDOPT_SOURCE_ROOT}/.tools/toolchains/temurin-jdk-21-e4446ff06a276155 (version 21.0.12)
+user.dir: ${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository
+
+> Task :groovy-json:processResources
+> Task :groovy-json:generateReleaseInfo
+
+> Task :generateGrammarSource
+warning(154): GroovyParser.g4:282:0: rule 'methodDeclaration' contains an optional block with at least one alternative that can match an empty string
+
+> Task :compileJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+Translated 31 methods and 0 method calls
+
+> Task :dgmConverter
+Saved 1769 dgm records to: ${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/build/dgm//META-INF/dgminfo
+
+> Task :generateReleaseInfo
+> Task :bootstrapJar
+> Task :compileGroovy
+> Task :processResources
+> Task :classes
+> Task :osgiClasses
+
+> Task :jar
+file '${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/licenses/LICENSE-JARJAR' will be copied to 'META-INF/LICENSE', overwriting file '${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/LICENSE', which has already been copied there.
+file '${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/notices/NOTICE-JARJAR' will be copied to 'META-INF/NOTICE', overwriting file '${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/NOTICE', which has already been copied there.
+
+> Task :groovy-json:compileJava
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :groovy-json:compileGroovy NO-SOURCE
+> Task :groovy-json:classes
+> Task :groovy-json:jar
+
+[Incubating] Problems report is available at: file://${BUILDOPT_CAPTURE_ROOT}/apache-groovy-jar-shared-source/repository/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.4/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 1m 56s
+21 actionable tasks: 21 executed

@@ -1,0 +1,24 @@
+{
+  "key": "apache-kafka-shadow-generator-source",
+  "repositoryId": "apache/kafka",
+  "evidenceKind": "NATURAL_CROSS_CAPTURE",
+  "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+  "targetRevision": "5f2ebbce13f19f351b84e94671741453eec25c75",
+  "crossDateOutputMatched": true,
+  "terminalOutputSha256": "56938ecb334635cbaad67174259431b22f2935042ea44f63bb427efa6127e272",
+  "replayOutputSha256": "56938ecb334635cbaad67174259431b22f2935042ea44f63bb427efa6127e272",
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "62d32b5a5fccddc3923ce7cb16d6ec0764220e52de25fed1ce9a76c7e184138f",
+    "repositoryRevision": "5f2ebbce13f19f351b84e94671741453eec25c75",
+    "pairs": 8,
+    "meanSavedMs": 29121.625,
+    "reductionRatio": 0.7915017513581094,
+    "interval95SavedMs": [
+      27917.625,
+      30386.375
+    ]
+  },
+  "productAttributableFailures": 0,
+  "testOptimization": "OUT_OF_SCOPE"
+}

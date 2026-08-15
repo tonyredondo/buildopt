@@ -1,0 +1,70 @@
+{
+  "key": "apache-groovy-jar-leaf-source",
+  "repositoryId": "apache/groovy",
+  "evidenceKind": "CONTROLLED_REAL_ARTIFACT_DATE_PROBE",
+  "publicRevision": "c16898314460cdfc3e0f0d7d24822585bbd1997e",
+  "targetRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+  "crossDateOutputMatched": true,
+  "previousContractRejectedDateChange": true,
+  "undeclaredPropertyDriftRejected": true,
+  "payloadDriftRejected": true,
+  "probe": {
+    "schemaVersion": "buildopt.evidence/cross-date-output-probe/v1",
+    "artifact": {
+      "relativePath": "subprojects/groovy-json/build/libs/groovy-json-raw-5.0.8-raw.jar",
+      "rawSha256": "7c6073e1c496481c44419697efc1245b0c6947c4bb12bd009d7e934f144ba95c",
+      "entryCount": 80
+    },
+    "previousContractSha256": "ed3bc40daec143645589a768d5058bdbdf1a982d08d2659170142bca3dea1ff5",
+    "reviewedContractSha256": "34806209225a086c7e79c9dc379018f2703d3aca5d32c60cfb87c3a70b115f7b",
+    "observedProperties": {
+      "buildDate": "15-Aug-2026",
+      "buildTime": "09:10 AM",
+      "implementationVersion": "5.0.8"
+    },
+    "controlledDateBoundary": {
+      "mutation": "REPLACE_DECLARED_BUILDDATE",
+      "entry": "META-INF/groovy-release-info.properties",
+      "originalRawSha256": "7c6073e1c496481c44419697efc1245b0c6947c4bb12bd009d7e934f144ba95c",
+      "mutatedRawSha256": "fc3be9218e07e31fa8670c238d18b19e3bfa1466d60abb53b6130b1a475d6b54",
+      "previousContractMatched": false,
+      "reviewedContractMatched": true,
+      "originalSemanticSha256": "e64465e880f0e35e317ad54eff9156b2dadd37188aab3134c1f0195e5ab4a04f",
+      "mutatedSemanticSha256": "e64465e880f0e35e317ad54eff9156b2dadd37188aab3134c1f0195e5ab4a04f"
+    },
+    "undeclaredPropertyDrift": {
+      "mutation": "CHANGE_UNDECLARED_IMPLEMENTATIONVERSION",
+      "entry": "META-INF/groovy-release-info.properties",
+      "originalRawSha256": "7c6073e1c496481c44419697efc1245b0c6947c4bb12bd009d7e934f144ba95c",
+      "mutatedRawSha256": "80366362ca6ec14a69b2667777f84f0922aeebb82053fc24c2e87b21ed45341e",
+      "reviewedContractMatched": false,
+      "originalSemanticSha256": "e64465e880f0e35e317ad54eff9156b2dadd37188aab3134c1f0195e5ab4a04f",
+      "mutatedSemanticSha256": "4e5c36bc79de11c8b0cefc4734e74859f2e4d5461a8cbc3c404534710dc90c36"
+    },
+    "nonMetadataPayloadDrift": {
+      "mutation": "CHANGE_NON_METADATA_CLASS_PAYLOAD",
+      "entry": "groovy/json/DefaultJsonGenerator$ClosureConverter.class",
+      "originalRawSha256": "7c6073e1c496481c44419697efc1245b0c6947c4bb12bd009d7e934f144ba95c",
+      "mutatedRawSha256": "7903579997580d436be435a5dcb56d3351361c022396be186a1d6d9eb8d49a8a",
+      "reviewedContractMatched": false,
+      "originalSemanticSha256": "e64465e880f0e35e317ad54eff9156b2dadd37188aab3134c1f0195e5ab4a04f",
+      "mutatedSemanticSha256": "0f684953066bb74fa9bce3f83daea82e3671a3dc5c634aace0ee2c3f2430a35f"
+    },
+    "productAttributableFailures": 0
+  },
+  "buildLogSha256": "685a7a754b8223340fc0d10431ed5d2ac64321b3f0593f90730707602bcb50b1",
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "156d423af63ae76fca779a6a6520d6a8dbb507786e8afc0198ef7b659f6f7b3c",
+    "repositoryRevision": "3d6e5f4f6e8b492528fe133366680a377b7e4706",
+    "pairs": 8,
+    "meanSavedMs": 52911.75,
+    "reductionRatio": 0.7381841772085674,
+    "interval95SavedMs": [
+      51316.625,
+      54591.375
+    ]
+  },
+  "productAttributableFailures": 0,
+  "testOptimization": "OUT_OF_SCOPE"
+}

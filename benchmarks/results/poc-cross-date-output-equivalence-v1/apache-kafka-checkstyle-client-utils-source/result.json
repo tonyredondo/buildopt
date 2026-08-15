@@ -1,0 +1,24 @@
+{
+  "key": "apache-kafka-checkstyle-client-utils-source",
+  "repositoryId": "apache/kafka",
+  "evidenceKind": "NATURAL_CROSS_CAPTURE",
+  "publicRevision": "26b251a451ce941d3d7a55e6487bcb7f16b5ad48",
+  "targetRevision": "69e4650c3ac2ec0338ef51475ef750e97a467b51",
+  "crossDateOutputMatched": true,
+  "terminalOutputSha256": "798f5262b6ac7cd280f6add96ce7b781aeed1a74a7851339ddfa17f6fc6edd75",
+  "replayOutputSha256": "798f5262b6ac7cd280f6add96ce7b781aeed1a74a7851339ddfa17f6fc6edd75",
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "f1a989304e8f37c162d0c230724c155f3cdd691c62f1e2faf1d70e429ca53f51",
+    "repositoryRevision": "69e4650c3ac2ec0338ef51475ef750e97a467b51",
+    "pairs": 8,
+    "meanSavedMs": 28356.125,
+    "reductionRatio": 0.31684281538115583,
+    "interval95SavedMs": [
+      25331.125,
+      31157.25
+    ]
+  },
+  "productAttributableFailures": 0,
+  "testOptimization": "OUT_OF_SCOPE"
+}

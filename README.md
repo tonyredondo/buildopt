@@ -106,6 +106,14 @@ in every cell. This transfers the already-qualified value to the public CLI;
 it does not create a new timing percentage or automatic activation claim. See
 the [installed replay evidence](./benchmarks/results/poc-installed-profile-replay-v1/README.md).
 
+The remaining date-dependent output gap is also closed for future reviewed
+evidence. Groovy's exact release-properties exception now declares only
+`BuildDate` and `BuildTime`; 2/2 real-JAR date probes match, while changes to
+undeclared `ImplementationVersion` or class payloads still fail closed. With
+the four natural Kafka cross-capture matches, all six retained cells are
+cross-date comparable without rewriting any historical qualification. See the
+[cross-date evidence](./benchmarks/results/poc-cross-date-output-equivalence-v1/README.md).
+
 The [product onboarding guide](./docs/getting-started/product-onboarding.md)
 contains Windows installation, CI snippets, component ownership and the
 recommended rollout order. Contributors who want the complete synthetic lab

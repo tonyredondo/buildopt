@@ -149,6 +149,12 @@ visible but is excluded as shared native/BuildOpt work.
   manifest-drift probes retained native Gradle and all six contemporary
   candidate/native outputs were semantically equal. The replay preserves the
   existing timing qualifications rather than creating new percentages.
+- **Cross-date output comparison is now explicit and fail-closed.** Four Kafka
+  cells match naturally across independent captures. Two real Groovy JAR
+  probes match after declaring only `BuildDate + BuildTime`; the previous
+  contract rejects the date change, and the reviewed contract still rejects
+  undeclared version and class-payload drift. Historical profiles and timing
+  values remain unchanged.
 
 ## Current limits
 
@@ -160,27 +166,22 @@ repository can be activated automatically. Profiles remain review-required
 and native Gradle remains authoritative on drift or ambiguity.
 
 The evidence now covers those three known output representations, but only
-through explicit reviewed contracts: Groovy JAR metadata embeds build time,
-Kafka Checkstyle embeds isolated workspace paths, and Kafka `shadowJar`
+through explicit reviewed contracts: Groovy JAR metadata embeds build date and
+time, Kafka Checkstyle embeds isolated workspace paths, and Kafka `shadowJar`
 preserves timestamp/order differences. A new output shape remains byte-exact
-until an owner declares and validates its semantics. Public replay also exposed
-that Groovy's JAR has a date-dependent `BuildDate` in addition to the already
-declared `BuildTime`; native and BuildOpt agree within one replay, but the two
-Groovy digests do not compare across dates under the current contract.
+until an owner declares and validates its semantics. The controlled Groovy
+date probe proves the semantic boundary on real JARs; it is not a second timed
+build on another day or authority to ignore arbitrary timestamps.
 
 ## Recommended next steps
 
-1. **Generalize cross-date output equivalence.** Add an owner-declared,
-   digest-bound way to ignore exact volatile date/time properties, prove that
-   payload drift is still rejected, and repeat the six public replay cells
-   across a date boundary without changing their timing qualification.
-2. **Add one new substantial repository family.** Use the unchanged generic
+1. **Add one new substantial repository family.** Use the unchanged generic
    path and owner-input model; do not add a repository-name rule to force a
    result.
-3. **Broaden change classes incrementally.** Add dependency, resource, and
+2. **Broaden change classes incrementally.** Add dependency, resource, and
    mixed-source changes only when the owner workflow and required outputs can
    be declared without repository-specific product code.
-4. **Keep wall time authoritative.** Continue only mechanisms that materially
+3. **Keep wall time authoritative.** Continue only mechanisms that materially
    beat optimized native Gradle under correctness, repeatability, and tail
    guards; retire or retain native for everything else.
 
@@ -195,6 +196,7 @@ Groovy digests do not compare across dates under the current contract.
 - [Terminal calibration economics](../../benchmarks/results/poc-calibration-economics-v1/README.md)
 - [Terminal calibration efficiency](../../benchmarks/results/poc-calibration-efficiency-v1/README.md)
 - [Public installed profile replay](../../benchmarks/results/poc-installed-profile-replay-v1/README.md)
+- [Reviewed cross-date output equivalence](../../benchmarks/results/poc-cross-date-output-equivalence-v1/README.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)
