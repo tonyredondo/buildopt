@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v4",
+  "profileVersion": 4,
+  "profileId": "qualified-structural-build-impact",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "ktorio/ktor",
+  "pipelineClass": "jvm-jar",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": "buildopt-impact-manifest.json",
+    "graph": "buildopt-impact-graph.generated.json",
+    "generatedManifest": "buildopt-impact.generated.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": false,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": false
+  },
+  "gradleOptions": [
+    "--daemon",
+    "--build-cache",
+    "--parallel",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-scan",
+    "--max-workers=12",
+    "-Pktor.develocity.skipBuildScans=true"
+  ],
+  "preconditions": [
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-manifest.json",
+      "sha256": "10659b81165043088824391b0e1e1e4ce744bec11104298ec6e6a3df7427fafb"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact-graph.generated.json",
+      "sha256": "e8510c868200f6fb709533bc79b77900756e7f79c9c6079cd82a3af5bdedece1"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": "buildopt-impact.generated.json",
+      "sha256": "9baecbb4d7abac67b4e126324717a14ff835587f13a70b66f7edf7b07506a3bf"
+    }
+  ],
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "aa9a6d5fcd2ef0f1008575688e0c68d8465b21a02a9c08fc40dcf8a53a2d7748",
+    "repositoryRevision": "f3e2fd65bdcc056c0da168672003240650518333",
+    "pairs": 8,
+    "meanSavedMs": 85048.5,
+    "reductionRatio": 0.7847558148386516,
+    "interval95SavedMs": [
+      69922,
+      103509.125
+    ]
+  }
+}

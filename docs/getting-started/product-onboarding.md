@@ -249,6 +249,12 @@ for the interpretation and roadmap, and the
 [benchmark index](../../benchmarks/README.md#build-optimization-scorecard) for
 the raw evidence.
 
+Ktor also has three change-breadth results under the same selector:
+dependency source is **85.80% faster**, a JVM resource is **86.51% faster**,
+and a two-module mixed-source change is **77.98% faster**. Each result has
+16/16 positive pairs, exact required JARs and both fallbacks; root
+configuration retains native Gradle without a timing claim.
+
 ## Component ownership and configuration
 
 Start with only the launcher. Add another component when a concrete need

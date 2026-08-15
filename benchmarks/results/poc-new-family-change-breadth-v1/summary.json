@@ -1,0 +1,299 @@
+{
+  "aggregation": {
+    "cellCount": 4,
+    "cellPercentagesAveraged": false,
+    "qualifiedSelectiveCells": 3,
+    "retainedNativeSelectiveCells": 0,
+    "selectiveCellCount": 3,
+    "verifiedFallbackCells": 1
+  },
+  "boundaries": {
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  },
+  "buildopt": {
+    "executableSha256": "10b1feae55925adfa94ba7f071854b1c7e1a248b1b9e221775d9af152271b07e",
+    "revision": "35065d30ed066af3f9dea75382b2b9b9af66301a"
+  },
+  "capturedAt": "2026-08-15T23:07:42Z",
+  "cells": [
+    {
+      "changeClass": "UPSTREAM_DEPENDENCY_SOURCE",
+      "changes": [
+        {
+          "mutation": "APPEND_FIXED_COMMENT",
+          "originalSha256": "be41f0fca8c72770ef45812b931be0bf28a6a6649aefad0183537357c40e9d28",
+          "path": "ktor-utils/common/src/io/ktor/util/StringValues.kt"
+        }
+      ],
+      "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE",
+      "evidenceState": "QUALIFIED",
+      "key": "ktor-jvm-jar-dependency-source",
+      "performanceClaim": true,
+      "pipelineClass": "jvm-jar",
+      "proposal": {
+        "candidateEntrypointsIdentical": true,
+        "decisionsIdentical": true,
+        "first": {
+          "candidateEntrypoints": [
+            ":ktor-http:jvmJar",
+            ":ktor-utils:jvmJar"
+          ],
+          "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+          "omittedProjectCount": 130,
+          "originalEntrypoints": [
+            "jvmJar"
+          ],
+          "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+          "selectedProjectCount": 3,
+          "totalProjectCount": 133
+        },
+        "second": {
+          "candidateEntrypoints": [
+            ":ktor-http:jvmJar",
+            ":ktor-utils:jvmJar"
+          ],
+          "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+          "omittedProjectCount": 130,
+          "originalEntrypoints": [
+            "jvmJar"
+          ],
+          "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+          "selectedProjectCount": 3,
+          "totalProjectCount": 133
+        }
+      },
+      "repositoryId": "ktorio/ktor",
+      "repositoryRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+      "result": {
+        "blocks": 8,
+        "candidateFirstMeanSavedMs": 77497.5,
+        "candidateMeanMs": 13954.25,
+        "candidateP95Ms": 19202,
+        "captures": 2,
+        "controlFirstMeanSavedMs": 91131.375,
+        "controlMeanMs": 98268.6875,
+        "controlP95Ms": 135716,
+        "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE",
+        "executionShapeStable": true,
+        "fallbacksSuccessful": true,
+        "interval95BlockSavedMs": [
+          76347.625,
+          91332.125
+        ],
+        "meanSavedMs": 84314.4375,
+        "medianBlockSavedMs": 86418.25,
+        "orderEffectMs": 13633.875,
+        "pairs": 16,
+        "positiveBlocks": 8,
+        "qualified": true,
+        "reductionRatio": 0.8579990192705077,
+        "requiredOutputsIdentical": true
+      },
+      "workflowFamily": "JVM_JAR"
+    },
+    {
+      "changeClass": "JVM_RESOURCE",
+      "changes": [
+        {
+          "mutation": "APPEND_FIXED_HASH_COMMENT",
+          "originalSha256": "897d19dec0bdf4791661f9b3f26eba771ae68bab4ab57cb5d4fde8da5bfc3ae2",
+          "path": "ktor-server/ktor-server-core/jvm/resources/META-INF/services/io.ktor.server.config.ConfigLoader"
+        }
+      ],
+      "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE",
+      "evidenceState": "QUALIFIED",
+      "key": "ktor-jvm-jar-resource",
+      "performanceClaim": true,
+      "pipelineClass": "jvm-jar",
+      "proposal": {
+        "candidateEntrypointsIdentical": true,
+        "decisionsIdentical": true,
+        "first": {
+          "candidateEntrypoints": [
+            ":ktor-server-core:jvmJar"
+          ],
+          "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+          "omittedProjectCount": 124,
+          "originalEntrypoints": [
+            "jvmJar"
+          ],
+          "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+          "selectedProjectCount": 9,
+          "totalProjectCount": 133
+        },
+        "second": {
+          "candidateEntrypoints": [
+            ":ktor-server-core:jvmJar"
+          ],
+          "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+          "omittedProjectCount": 124,
+          "originalEntrypoints": [
+            "jvmJar"
+          ],
+          "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+          "selectedProjectCount": 9,
+          "totalProjectCount": 133
+        }
+      },
+      "repositoryId": "ktorio/ktor",
+      "repositoryRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+      "result": {
+        "blocks": 8,
+        "candidateFirstMeanSavedMs": 48691.125,
+        "candidateMeanMs": 7720.3125,
+        "candidateP95Ms": 11345,
+        "captures": 2,
+        "controlFirstMeanSavedMs": 50343.5,
+        "controlMeanMs": 57237.625,
+        "controlP95Ms": 91795,
+        "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE",
+        "executionShapeStable": true,
+        "fallbacksSuccessful": true,
+        "interval95BlockSavedMs": [
+          40513.125,
+          59159.625
+        ],
+        "meanSavedMs": 49517.3125,
+        "medianBlockSavedMs": 50183,
+        "orderEffectMs": 1652.375,
+        "pairs": 16,
+        "positiveBlocks": 8,
+        "qualified": true,
+        "reductionRatio": 0.8651182242449788,
+        "requiredOutputsIdentical": true
+      },
+      "workflowFamily": "JVM_JAR"
+    },
+    {
+      "changeClass": "MIXED_PRODUCTION_SOURCE",
+      "changes": [
+        {
+          "mutation": "APPEND_FIXED_COMMENT",
+          "originalSha256": "7e6e7ad515a2c2d4be2616bebf7a830fe3e7b4a95ebbbb023dc4f34cb7fc219d",
+          "path": "ktor-http/common/src/io/ktor/http/AsciiBitSet.kt"
+        },
+        {
+          "mutation": "APPEND_FIXED_COMMENT",
+          "originalSha256": "dc63beba8323af8c2a4af9cb8b04751c4f84bd313d3785e2e4ca957f1eac5358",
+          "path": "ktor-server/ktor-server-core/common/src/io/ktor/server/application/Application.kt"
+        }
+      ],
+      "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE",
+      "evidenceState": "QUALIFIED",
+      "key": "ktor-jvm-jar-mixed-source",
+      "performanceClaim": true,
+      "pipelineClass": "jvm-jar",
+      "proposal": {
+        "candidateEntrypointsIdentical": true,
+        "decisionsIdentical": true,
+        "first": {
+          "candidateEntrypoints": [
+            ":ktor-http:jvmJar",
+            ":ktor-server-core:jvmJar"
+          ],
+          "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+          "omittedProjectCount": 124,
+          "originalEntrypoints": [
+            "jvmJar"
+          ],
+          "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+          "selectedProjectCount": 9,
+          "totalProjectCount": 133
+        },
+        "second": {
+          "candidateEntrypoints": [
+            ":ktor-http:jvmJar",
+            ":ktor-server-core:jvmJar"
+          ],
+          "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+          "omittedProjectCount": 124,
+          "originalEntrypoints": [
+            "jvmJar"
+          ],
+          "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+          "selectedProjectCount": 9,
+          "totalProjectCount": 133
+        }
+      },
+      "repositoryId": "ktorio/ktor",
+      "repositoryRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+      "result": {
+        "blocks": 8,
+        "candidateFirstMeanSavedMs": 75397,
+        "candidateMeanMs": 23095.5,
+        "candidateP95Ms": 34848,
+        "captures": 2,
+        "controlFirstMeanSavedMs": 88165.25,
+        "controlMeanMs": 104876.625,
+        "controlP95Ms": 146338,
+        "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE",
+        "executionShapeStable": true,
+        "fallbacksSuccessful": true,
+        "interval95BlockSavedMs": [
+          72094.1875,
+          89812.875
+        ],
+        "meanSavedMs": 81781.125,
+        "medianBlockSavedMs": 87354.5,
+        "orderEffectMs": 12768.25,
+        "pairs": 16,
+        "positiveBlocks": 8,
+        "qualified": true,
+        "reductionRatio": 0.7797841034644278,
+        "requiredOutputsIdentical": true
+      },
+      "workflowFamily": "JVM_JAR"
+    },
+    {
+      "changeClass": "GLOBAL_CONFIGURATION",
+      "changes": [
+        {
+          "mutation": "APPEND_FIXED_HASH_COMMENT",
+          "originalSha256": "1b320d20fb1b450ef8a7a6552b8ea6f9ae0d67b934f384dc31a34ee25bce05c6",
+          "path": "gradle.properties"
+        }
+      ],
+      "decision": "RETAIN_NATIVE_GRADLE",
+      "evidenceState": "FULL_GRAPH_FALLBACK_VERIFIED",
+      "key": "ktor-jvm-jar-global-configuration",
+      "performanceClaim": false,
+      "pipelineClass": "jvm-jar",
+      "proposal": {
+        "candidateEntrypointsIdentical": true,
+        "decisionsIdentical": true,
+        "first": {
+          "candidateEntrypoints": [],
+          "decision": "NATIVE_FULL_GRAPH",
+          "omittedProjectCount": null,
+          "originalEntrypoints": [
+            "jvmJar"
+          ],
+          "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+          "selectedProjectCount": null,
+          "totalProjectCount": null
+        },
+        "second": {
+          "candidateEntrypoints": [],
+          "decision": "NATIVE_FULL_GRAPH",
+          "omittedProjectCount": null,
+          "originalEntrypoints": [
+            "jvmJar"
+          ],
+          "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+          "selectedProjectCount": null,
+          "totalProjectCount": null
+        }
+      },
+      "repositoryId": "ktorio/ktor",
+      "repositoryRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+      "result": null,
+      "workflowFamily": "JVM_JAR"
+    }
+  ],
+  "schemaVersion": "buildopt.evidence/poc-new-family-change-breadth/v1",
+  "workItem": "POC-NEW-FAMILY-CHANGE-BREADTH-001"
+}

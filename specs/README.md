@@ -548,6 +548,12 @@ runner now accepts multiple changed paths while retaining the legacy
 single-path contract; every selective cell keeps the balanced value gate and
 the global cell must remain on native Gradle.
 
+The terminal matrix qualifies all three selective cells: dependency source
+saves 85.80%, a JVM resource saves 86.51%, and a two-module mixed-source edit
+saves 77.98%. All 48 pairs and 24 reciprocal blocks improve with exact JARs;
+the root-configuration cell retains the native full graph twice without a
+timing claim. Evidence remains bound to the public revision and selector.
+
 `poc-generic-output-equivalence-v1.json` and
 `poc-generic-output-equivalence-v1.md` preregister the three public workflows
 whose outputs were semantically stable but not byte-reproducible. Exact bytes

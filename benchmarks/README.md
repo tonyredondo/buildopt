@@ -1722,6 +1722,33 @@ Revalidate the captures, aggregate and negative tamper fixtures with:
 ./dev/test-new-family-transfer-result
 ```
 
+## Ktor new-family change breadth
+
+[`results/poc-new-family-change-breadth-v1/`](./results/poc-new-family-change-breadth-v1/README.md)
+tests three materially different changes under the same public Ktor `jvmJar`
+workflow and one untimed root-configuration fallback. Dependency source saves
+**84.314 seconds/85.80%**, a JVM service resource saves **49.517
+seconds/86.51%**, and a two-module mixed-source edit saves **81.781
+seconds/77.98%** against optimized native Gradle.
+
+All 48 raw pairs and 24 reciprocal blocks improve, required JARs are
+byte-identical, tails improve, task shapes remain stable and all six selective
+fallbacks pass. Both root-configuration proposals retain the native full
+graph without a timing claim. Percentages remain cell-specific and are not
+averaged.
+
+The first complete diagnostic run is retained under `incidents/` but is not
+terminal evidence: the generic runner omitted one preregistered Ktor Gradle
+option. BuildOpt was corrected to propagate the frozen option list exactly,
+and all eight accepted captures restarted from zero on revision `35065d3`.
+
+Recompute the terminal matrix and its negative tamper fixtures with:
+
+```bash
+./dev/check-new-family-change-breadth-result
+./dev/test-new-family-change-breadth-result
+```
+
 ## JVM Agent spike evidence
 
 [`results/spk-002-agent.json`](./results/spk-002-agent.json) records the one

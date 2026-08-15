@@ -18,7 +18,7 @@ scope.
 
 | Mechanism | Role | Current evidence decision |
 | --- | --- | --- |
-| **Structural Build Impact** | Selects the smallest proven change-specific project/task graph before Gradle runs. | **Retained accelerator.** It materially improves the five-repository matrix, a fresh Ktor family transfer, three additional build-owned workflows, and six distinct source-change cells below. |
+| **Structural Build Impact** | Selects the smallest proven change-specific project/task graph before Gradle runs. | **Retained accelerator.** It materially improves the five-repository matrix, a fresh Ktor family transfer, three additional build-owned workflows, six earlier source-change cells, and three materially different Ktor change classes below. |
 | **Profile discovery and evaluation** | Derives the candidate from generic Gradle metadata, measures it against the owner workflow, binds inputs, and enforces native fallback. | **Required safety/evidence layer.** Review remains explicit. |
 | **Safe Cache / local L1** | Isolates and verifies cached outputs by repository, Wrapper, and platform. | **Supporting safety, not the current speed claim.** It is approximately at parity with a warm native cache. |
 | **Shared / Edge Cache** | Moves verified cache objects closer to developers or CI. | **Separate locality experiment.** Network-dependent results are not added to Structural Build Impact percentages. |
@@ -56,6 +56,24 @@ multiplatform release build. Its two independent captures saved 92.128 and
 86.705 seconds; the balanced block interval is +79.451..+98.422 seconds. Five
 invalid or rejected attempts are retained, and neither their timings nor their
 state enters the terminal result.
+
+The same generic Ktor path now also qualifies three independently
+preregistered change classes under that selector:
+
+| Ktor change | Full -> selected projects | Native mean | BuildOpt mean | Mean saving | Blocks |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Upstream dependency source | 133 -> 3 | 98.269 s | 13.954 s | **84.314 s / 85.80%** | 8/8 positive |
+| JVM service resource | 133 -> 9 | 57.238 s | 7.720 s | **49.517 s / 86.51%** | 8/8 positive |
+| Mixed production source, two modules | 133 -> 9 | 104.877 s | 23.096 s | **81.781 s / 77.98%** | 8/8 positive |
+
+All **48/48 raw pairs** and **24/24 reciprocal blocks** improve. Required JARs
+are byte-identical, candidate p95 is lower, task shapes are stable and all six
+selective fallbacks pass. Two independent root-configuration proposals retain
+native Gradle without a timing claim. These percentages remain independent;
+they are not averaged with each other or with the original Ktor transfer.
+The accepted matrix restarted from zero after a diagnostic run exposed a
+missing preregistered Gradle option in the generic runner. That rejected run is
+preserved for audit and contributes no timing to this table.
 
 The result replaces no historical evidence. In particular, Spring's previous
 7/8 decision remains valid for its old strict protocol; the fresh balanced run
@@ -132,9 +150,10 @@ visible but is excluded as shared native/BuildOpt work.
 - **The core idea transfers.** One generic implementation derived material
   graph reductions across six very different, substantial Gradle codebases,
   including a new Kotlin Multiplatform family, without repository-name logic.
-- **The value transfers across source-change shapes.** Two distinct changes
-  per reviewed workflow qualify independently, while build-logic and global
-  changes retain native Gradle instead of forcing a reduction.
+- **The value transfers across change shapes.** Two distinct changes per
+  reviewed Groovy/Kafka workflow and dependency, resource, and multi-module
+  Ktor changes qualify independently, while build-logic and global changes
+  retain native Gradle instead of forcing a reduction.
 - **Avoiding the graph compounds value.** Fewer selected projects remove
   configuration, scheduling, cache lookup, compilation, and packaging work;
   this is why Kafka and Groovy show especially large savings.
@@ -168,11 +187,11 @@ visible but is excluded as shared native/BuildOpt work.
 ## Current limits
 
 The evidence is bound to exact revisions, changes, workflows, outputs, and a
-12-CPU host. The new matrix broadens each reviewed workflow to two source
-changes and proves conservative build-logic/global fallback, but it does not
-prove that every change in these repositories wins or that every Gradle
-repository can be activated automatically. Profiles remain review-required
-and native Gradle remains authoritative on drift or ambiguity.
+12-CPU host. The matrices cover multiple source shapes, a JVM resource,
+multiple simultaneous paths, and conservative build-logic/global fallback,
+but they do not prove that every change in these repositories wins or that
+every Gradle repository can be activated automatically. Profiles remain
+review-required and native Gradle remains authoritative on drift or ambiguity.
 
 The evidence now covers those three known output representations, but only
 through explicit reviewed contracts: Groovy JAR metadata embeds build date and
@@ -184,12 +203,12 @@ build on another day or authority to ignore arbitrary timestamps.
 
 ## Recommended next steps
 
-1. **Broaden change classes incrementally.** Add dependency, resource, and
-   mixed-source changes only when the owner workflow and required outputs can
-   be declared without repository-specific product code.
-2. **Measure adoption economics on the new family.** Separate Ktor discovery,
+1. **Measure adoption economics on the new family.** Separate Ktor discovery,
    warm-up and steady-state value so a reviewer knows how many repeated builds
    are needed to repay calibration.
+2. **Replay the reviewed Ktor profiles through the public package.** Require
+   exact bindings, drift fallback and contemporary native-output equivalence
+   without creating new historical percentages.
 3. **Keep wall time authoritative.** Continue only mechanisms that materially
    beat optimized native Gradle under correctness, repeatability, and tail
    guards; retire or retain native for everything else.
@@ -207,6 +226,7 @@ build on another day or authority to ignore arbitrary timestamps.
 - [Public installed profile replay](../../benchmarks/results/poc-installed-profile-replay-v1/README.md)
 - [Reviewed cross-date output equivalence](../../benchmarks/results/poc-cross-date-output-equivalence-v1/README.md)
 - [Ktor new-family transfer](../../benchmarks/results/poc-new-family-transfer-v1/README.md)
+- [Ktor new-family change breadth](../../benchmarks/results/poc-new-family-change-breadth-v1/README.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`GENERIC STRUCTURAL POC QUALIFIES AND TRANSFERS\`"
-    "**Current phase:** \`NEW-FAMILY CHANGE BREADTH NEXT\`"
+    "**Overall status:** \`GENERIC STRUCTURAL POC QUALIFIES ACROSS FAMILIES AND CHANGE SHAPES\`"
+    "**Current phase:** \`NEW-FAMILY CALIBRATION ECONOMICS NEXT\`"
     "| 75 | \`POC-GENERIC-MEASUREMENT-001\` | Collect eight isolated alternating optimized-native-versus-BuildOpt pairs"
     "| \`E-288\` | 2026-08-09 | \`POC-GENERIC-MEASUREMENT-001\`"
     "| 77 | \`POC-APACHE-GROOVY-GENERALIZATION-001\` | Apply the generic measurement workflow to Apache Groovy"
@@ -107,6 +107,7 @@ buildopt_required_tracker_text=(
     "| 100 | \`POC-CROSS-DATE-OUTPUT-EQUIVALENCE-001\` | Add a generic owner-declared volatile-property rule"
     "| 101 | \`POC-NEW-FAMILY-TRANSFER-001\` | Select one substantial public Gradle repository family"
     "| 102 | \`POC-NEW-FAMILY-CHANGE-BREADTH-001\` | Preregister materially different dependency, resource, or mixed-source changes"
+    "| 103 | \`POC-NEW-FAMILY-CALIBRATION-ECONOMICS-001\` | Bind the three terminal Ktor value cells"
     "| \`E-338\` | 2026-08-14 | \`POC-GENERIC-CHANGE-BREADTH-001\`"
     "| \`E-339\` | 2026-08-14 | \`POC-GENERIC-CHANGE-BREADTH-001\`"
     "| \`E-343\` | 2026-08-14 | \`POC-CALIBRATION-ECONOMICS-001\`"
@@ -115,6 +116,7 @@ buildopt_required_tracker_text=(
     "| \`E-346\` | 2026-08-14 | \`POC-INSTALLED-PROFILE-REPLAY-001\`"
     "| \`E-347\` | 2026-08-15 | \`POC-CROSS-DATE-OUTPUT-EQUIVALENCE-001\`"
     "| \`E-348\` | 2026-08-15 | \`POC-NEW-FAMILY-TRANSFER-001\`"
+    "| \`E-349\` | 2026-08-15 | \`POC-NEW-FAMILY-CHANGE-BREADTH-001\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"

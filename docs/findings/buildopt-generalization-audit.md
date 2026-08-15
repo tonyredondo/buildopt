@@ -121,11 +121,10 @@ declared.
 
 ## Remaining gaps before calling the POC broadly usable
 
-1. **New-family change breadth.** Preregister dependency, resource, and
-   mixed-source changes under Ktor's same public JVM JAR workflow. Time only
-   candidates whose generic graph and output contract remain complete; record
-   uncertain/global cells as native without a timing claim.
-2. **Ktor replay and calibration economics.** Prove the reviewed Ktor profile
+1. **Ktor calibration economics.** Measure discovery, stabilization and
+   steady-state payback for the three independently qualified Ktor change
+   classes without changing their terminal timing evidence.
+2. **Ktor installed replay.** Prove the reviewed Ktor profiles
    through the public package and separate discovery/warm-up cost from its
    repeated-build value before making an onboarding claim.
 3. **Generic task-contract research.** Add an adapter or patch recipe only when
@@ -151,8 +150,9 @@ decisions summarized here; the fresh balanced matrix separately closes Spring
 under its newer protocol, while historical rejected evidence remains
 immutable.
 
-The next block should broaden Ktor to materially different change classes
-without changing the generic implementation. Each selective cell still needs
-fresh paired wall-time evidence, exact declared outputs, native fallback, and
-an independent retain-or-reject decision; unsupported/global cells should
-stop before timing.
+Ktor change breadth is now closed without changing the generic product path:
+dependency source, JVM resource and multi-module source changes qualify at
+85.80%, 86.51% and 77.98% lower wall time, while root configuration remains
+native. The next block should measure the one-time economics needed to obtain
+those reviewed profiles rather than assuming their steady-state savings are
+free.

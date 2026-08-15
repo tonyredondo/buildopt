@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.build-impact/generated-manifest/v1",
+  "repositoryId": "ktorio/ktor",
+  "pipelineClass": "jvm-jar",
+  "manifestDigest": "sha256:071b7e2e7ab55c57af68983f904c92cf3fee67b11785abff3b9ff30d1e1bbbdb",
+  "graphDigest": "sha256:830d6fa3ab142bc724ec5a5a8daa2719c5494c5136b0cd5bf7ec0d3eb344c843",
+  "discoveryDigest": "sha256:7d8af4e0f800a6c882f977ebb8d91fa4a97944a3776c7cd36dfe5f518288648f",
+  "adapterVersion": "gradle-runtime-v1",
+  "gradleVersion": "9.5.1",
+  "complete": true,
+  "fallbackReasons": []
+}

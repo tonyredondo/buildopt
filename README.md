@@ -34,7 +34,11 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > All 80 raw pairs improved, required outputs matched, tails improved, and full
 > fallbacks passed. The unchanged generic path then transferred to Ktor's
 > public JVM JAR workflow: **86.21% lower wall time**, 16/16 positive pairs,
-> exact output, stable task shapes and both full-graph fallbacks. A separate
+> exact output, stable task shapes and both full-graph fallbacks. Three new
+> Ktor change classes then qualified independently: dependency source at
+> **85.80%**, a JVM resource at **86.51%**, and a two-module mixed-source
+> change at **77.98%** lower wall time; all 48 pairs improved, while two root
+> configuration probes correctly retained native Gradle. A separate
 > semantic-output rerun also qualified Groovy
 > `jar` (**73.10%**), Kafka Checkstyle (**29.73%**), and Kafka `shadowJar`
 > (**66.55%**) across 48/48 positive raw pairs. A fresh change-breadth matrix

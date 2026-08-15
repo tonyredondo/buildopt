@@ -3485,6 +3485,15 @@ runner. `dev/assemble-new-family-change-breadth` creates the terminal matrix,
 qualification from its captures, and `dev/test-new-family-change-breadth-result`
 proves that summary or qualification tampering fails closed.
 
+The terminal Ktor matrix qualifies dependency source at 85.80%, a JVM
+resource at 86.51%, and a two-module mixed-source edit at 77.98% lower wall
+time. All 48 raw pairs and 24 reciprocal blocks improve with exact outputs and
+six fallbacks; two global proposals retain native Gradle without timing.
+
+The accepted captures all propagate the complete preregistered Gradle option
+list. An earlier diagnostic matrix that omitted the repository's Develocity
+property is preserved under `incidents/` and contributes zero terminal pairs.
+
 Before the original-workflow preflight, the runner prepares the exact Wrapper
 distribution selected by that repository, reusing only a matching cached
 distribution and allowing at most three bounded network attempts. It runs no

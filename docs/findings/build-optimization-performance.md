@@ -288,6 +288,17 @@ optimized-native control, explicit output contract, and fallback gates to
 materially different Ktor change classes without adding a repository-name
 rule.
 
+That bounded study is now complete. Dependency source qualifies at **85.80%**,
+a JVM resource at **86.51%**, and a two-module mixed-source edit at **77.98%**
+lower wall time. All 48 raw pairs and 24 reciprocal blocks improve, exact JARs
+and task shapes match, six selective fallbacks pass, and two root-configuration
+proposals retain native Gradle without timing. The next study should measure
+Ktor discovery and warm-up economics under these unchanged terminal results.
+
+The accepted matrix was rerun from zero after the generic runner was found to
+omit one preregistered Ktor Gradle option. The rejected 48-pair diagnostic run
+is preserved as an incident and is not included in these percentages.
+
 ### 2. Keep the same native control while broadening workload coverage
 
 A single native-versus-everything comparison still does not prove transfer.
@@ -682,8 +693,8 @@ relaxing a gate or adding a Hibernate-specific decision.
 - Can a reviewed Gradle-owned output candidate be turned into one convenient,
   versioned owner input without hiding repository semantics or weakening drift
   detection?
-- Which additional unseen repository family and workflow should test whether
-  the qualified structural method continues to transfer after Ktor?
+- Do Ktor's discovery and stabilization costs repay within a practical number
+  of repeated qualifying builds for all three retained change classes?
 
 ## Evidence Boundaries
 

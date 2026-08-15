@@ -1,0 +1,36 @@
+{
+  "boundaries": {
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  },
+  "capturedAt": "2026-08-15T23:07:42Z",
+  "captures": [
+    {
+      "decision": "NATIVE_FULL_GRAPH",
+      "index": 1,
+      "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+      "targetRevision": "89aff7a0aa7e0b21f9c40bb90f0f123cf24f104f"
+    },
+    {
+      "decision": "NATIVE_FULL_GRAPH",
+      "index": 2,
+      "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+      "targetRevision": "89aff7a0aa7e0b21f9c40bb90f0f123cf24f104f"
+    }
+  ],
+  "decision": "RETAIN_NATIVE_GRADLE",
+  "evidenceState": "FULL_GRAPH_FALLBACK_VERIFIED",
+  "result": null,
+  "schemaVersion": "buildopt.evidence/change-breadth-fallback/v1",
+  "subject": {
+    "changeClass": "GLOBAL_CONFIGURATION",
+    "pipelineClass": "jvm-jar",
+    "repositoryId": "ktorio/ktor",
+    "repositoryRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+    "workflowFamily": "JVM_JAR"
+  },
+  "timingClaim": false
+}
