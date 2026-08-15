@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)) || { (($# == 1)) && [[ $1 != --spec-only ]]; }; then
+    printf 'usage: %s [--spec-only]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-new-family-transfer-v1.json"
+
+command -v jq >/dev/null 2>&1 || {
+    printf 'required new-family validation command is unavailable: jq\n' >&2
+    exit 1
+}
+[[ -f ${buildopt_spec} ]] || {
+    printf 'new-family transfer specification is unavailable\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-new-family-transfer/v1" and
+  .evidenceSchemaVersion == "buildopt.evidence/structural-profile-balanced-qualification/v2" and
+  .workItem == "POC-NEW-FAMILY-TRANSFER-001" and
+  .decision == "MEASURE_UNCHANGED_GENERIC_PATH_ON_PREREGISTERED_KTOR_JVM_ASSEMBLY" and
+  .preregisteredFromRevision == "5f451bf2ef9605ff4aabd4941af1e4af7face842" and
+  .selection == {
+    familyPreviouslyUsedToDevelopProfiles: false,
+    compatibilityPreflightOnly: true,
+    compatibilityPreflightCommand: "./gradlew help",
+    ownerWorkflowExecutedBeforePreregistration: false,
+    buildoptProposalExecutedBeforePreregistration: false,
+    targetWorkflowTimingObservedBeforePreregistration: false
+  } and
+  .subject == {
+    key: "ktor",
+    repositoryId: "ktorio/ktor",
+    remoteUrl: "https://github.com/ktorio/ktor.git",
+    publicRevision: "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+    gradleWrapperVersion: "9.5.1",
+    gradleWrapperSha256: "bafc141b619ad6350fd975fc903156dd5c151998cc8b058e8c1044ab5f7b031f",
+    jdkToolchain: "temurin-jdk-21",
+    pipelineClass: "assemble",
+    entrypoints: ["assemble"],
+    changePath: "ktor-http/common/src/io/ktor/http/AsciiBitSet.kt",
+    mutation: "APPEND_FIXED_COMMENT",
+    requiredOutputs: ["ktor-http/build/libs/ktor-http-jvm-*.jar"],
+    ownerWorkflowSource: "CONTRIBUTING.md:25",
+    ownerJdkSource: "CONTRIBUTING.md:36",
+    scope: "JVM_ONLY_OWNER_SUPPORTED_TARGET_CONFIGURATION"
+  } and
+  .runner.platform == "linux-amd64" and
+  .runner.cpuCount == 12 and .runner.maxWorkers == 12 and
+  .runner.captureCount == 2 and .runner.pairsPerCapture == 8 and
+  .runner.reciprocalBlocks == 8 and .runner.warmupsPerArm == 4 and
+  .runner.targetStabilityConfirmations == 2 and
+  .runner.orderWithinCapture == "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST" and
+  .runner.blockConstruction == "ADJACENT_CONTROL_FIRST_PLUS_CANDIDATE_FIRST" and
+  .runner.perBuildTimeout == "45m" and .runner.maximumInterArmGap == "5s" and
+  .method.surface == "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE" and
+  .method.candidateMechanisms == ["BUILD_IMPACT"] and
+  .method.control == "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW" and
+  .method.gradleOptions == [
+    "--daemon", "--build-cache", "--parallel", "--no-configuration-cache",
+    "--console=plain", "--no-scan", "--max-workers=12",
+    "-Ptarget.posix=false", "-Ptarget.js=false", "-Ptarget.wasmJs=false",
+    "-Ptarget.android=false", "-Pktor.develocity.skipBuildScans=true"
+  ] and
+  .method.outputEquivalence == "EXACT_BYTES" and
+  .method.requiredOutputsComparedByteForByte == true and
+  .method.fullGraphFallbackRequiredPerCapture == true and
+  .method.networkAllowedDuringWarmupsOrTiming == false and
+  .method.repositorySpecificProductRulesAllowed == false and
+  .method.postResultTuningAllowed == false and
+  .qualification == {
+    blockDefinition: "MEAN_OF_ONE_CONTROL_FIRST_PAIR_AND_THE_FOLLOWING_CANDIDATE_FIRST_PAIR",
+    blockCount: 8,
+    minimumMeanSavedMs: 500,
+    minimumReductionRatio: 0.02,
+    positiveLower95BlockBootstrapBound: true,
+    positiveMedianBlockSaving: true,
+    minimumPositiveBlocks: 6,
+    candidateP95NotRegressive: true,
+    requiredOutputsIdentical: true,
+    executionShapeStable: true,
+    fullGraphFallbackRequiredPerCapture: true,
+    maximumProductAttributableFailures: 0,
+    failedOrTimedOutObservationsMayBeDiscarded: false,
+    nonWinningDecision: "RETAIN_NATIVE_GRADLE"
+  } and
+  .decisionRules.repositorySpecificException == "FORBIDDEN" and
+  .decisionRules.thresholdRelaxation == "FORBIDDEN" and
+  .boundaries == {
+    proofOfConcept: true,
+    productionAuthorized: false,
+    automaticActivation: false,
+    repositorySpecificProductRulesAllowed: false,
+    testOptimizationModified: false,
+    soakRequired: false,
+    designPartnerRequired: false
+  }
+' "${buildopt_spec}" >/dev/null
+
+printf 'New-family transfer preregistration OK: %s\n' "${buildopt_spec}"

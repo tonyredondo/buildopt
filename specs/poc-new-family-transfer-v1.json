@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "buildopt.specs/poc-new-family-transfer/v1",
+  "evidenceSchemaVersion": "buildopt.evidence/structural-profile-balanced-qualification/v2",
+  "workItem": "POC-NEW-FAMILY-TRANSFER-001",
+  "decision": "MEASURE_UNCHANGED_GENERIC_PATH_ON_PREREGISTERED_KTOR_JVM_ASSEMBLY",
+  "preregisteredFromRevision": "5f451bf2ef9605ff4aabd4941af1e4af7face842",
+  "selection": {
+    "familyPreviouslyUsedToDevelopProfiles": false,
+    "compatibilityPreflightOnly": true,
+    "compatibilityPreflightCommand": "./gradlew help",
+    "ownerWorkflowExecutedBeforePreregistration": false,
+    "buildoptProposalExecutedBeforePreregistration": false,
+    "targetWorkflowTimingObservedBeforePreregistration": false
+  },
+  "subject": {
+    "key": "ktor",
+    "repositoryId": "ktorio/ktor",
+    "remoteUrl": "https://github.com/ktorio/ktor.git",
+    "publicRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+    "gradleWrapperVersion": "9.5.1",
+    "gradleWrapperSha256": "bafc141b619ad6350fd975fc903156dd5c151998cc8b058e8c1044ab5f7b031f",
+    "jdkToolchain": "temurin-jdk-21",
+    "pipelineClass": "assemble",
+    "entrypoints": [
+      "assemble"
+    ],
+    "changePath": "ktor-http/common/src/io/ktor/http/AsciiBitSet.kt",
+    "mutation": "APPEND_FIXED_COMMENT",
+    "requiredOutputs": [
+      "ktor-http/build/libs/ktor-http-jvm-*.jar"
+    ],
+    "ownerWorkflowSource": "CONTRIBUTING.md:25",
+    "ownerJdkSource": "CONTRIBUTING.md:36",
+    "scope": "JVM_ONLY_OWNER_SUPPORTED_TARGET_CONFIGURATION"
+  },
+  "runner": {
+    "platform": "linux-amd64",
+    "cpuCount": 12,
+    "maxWorkers": 12,
+    "captureCount": 2,
+    "pairsPerCapture": 8,
+    "reciprocalBlocks": 8,
+    "warmupsPerArm": 4,
+    "warmupPhases": [
+      "CACHE_SEED",
+      "BASE_DAEMON_STABILIZATION",
+      "TARGET_WORKLOAD_STABILIZATION",
+      "TARGET_WORKLOAD_STABILITY_CONFIRMATION"
+    ],
+    "targetStabilityConfirmations": 2,
+    "orderWithinCapture": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
+    "blockConstruction": "ADJACENT_CONTROL_FIRST_PLUS_CANDIDATE_FIRST",
+    "perBuildTimeout": "45m",
+    "maximumInterArmGap": "5s",
+    "fallbackMaxWorkers": 12
+  },
+  "method": {
+    "surface": "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE",
+    "candidateMechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "control": "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW",
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12",
+      "-Ptarget.posix=false",
+      "-Ptarget.js=false",
+      "-Ptarget.wasmJs=false",
+      "-Ptarget.android=false",
+      "-Pktor.develocity.skipBuildScans=true"
+    ],
+    "outputEquivalence": "EXACT_BYTES",
+    "isolatedArms": true,
+    "independentGradleHomes": true,
+    "independentNativeCacheSeeds": true,
+    "bothArmsPreparedBeforeMeasuredPair": true,
+    "requiredOutputsComparedByteForByte": true,
+    "fullGraphFallbackRequiredPerCapture": true,
+    "onlinePreparationMeasured": false,
+    "warmupsMeasured": false,
+    "targetRevisionWarmupBeforePairs": true,
+    "twoTargetShapeObservationsBeforePairs": true,
+    "warmupAndPairExactTaskPathsRecorded": true,
+    "networkAllowedDuringWarmupsOrTiming": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "postResultTuningAllowed": false
+  },
+  "qualification": {
+    "blockDefinition": "MEAN_OF_ONE_CONTROL_FIRST_PAIR_AND_THE_FOLLOWING_CANDIDATE_FIRST_PAIR",
+    "blockCount": 8,
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95BlockBootstrapBound": true,
+    "positiveMedianBlockSaving": true,
+    "minimumPositiveBlocks": 6,
+    "candidateP95NotRegressive": true,
+    "requiredOutputsIdentical": true,
+    "executionShapeStable": true,
+    "fullGraphFallbackRequiredPerCapture": true,
+    "maximumProductAttributableFailures": 0,
+    "failedOrTimedOutObservationsMayBeDiscarded": false,
+    "nonWinningDecision": "RETAIN_NATIVE_GRADLE"
+  },
+  "decisionRules": {
+    "unsupportedOrUncertainProposal": "RETAIN_NATIVE_GRADLE",
+    "completeButWeakMeasurement": "RETAIN_NATIVE_GRADLE",
+    "unstableTargetShape": "RETAIN_NATIVE_GRADLE_AND_REPORT_EXACT_TASK_DIFF",
+    "qualifiedMeasurement": "REVIEW_STRUCTURAL_PROFILE",
+    "genericCorrectnessDefect": "FIX_GENERIC_MECHANISM_AND_RERUN_FROZEN_SUBJECT_FROM_ZERO",
+    "repositorySpecificException": "FORBIDDEN",
+    "thresholdRelaxation": "FORBIDDEN"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

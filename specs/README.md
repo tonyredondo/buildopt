@@ -528,6 +528,14 @@ positive median and bootstrap lower bound, at least six positive blocks,
 non-regressive candidate p95, exact outputs, stable task shape, both full-graph
 fallbacks and zero product failures. Historical v1 decisions remain immutable.
 
+`poc-new-family-transfer-v1.json` and
+`poc-new-family-transfer-v1.md` freeze a transfer test on Ktor before any
+owner workflow, BuildOpt proposal or target timing. The contract binds public
+revision `bc7de799`, root JVM-only `assemble`, one internal `ktor-http` source
+comment, the module JVM JAR, exact-byte comparison, optimized native Gradle and
+the balanced two-capture qualification gate. It records no expected candidate
+or favorable result and forbids repository-name product rules.
+
 `poc-generic-output-equivalence-v1.json` and
 `poc-generic-output-equivalence-v1.md` preregister the three public workflows
 whose outputs were semantically stable but not byte-reproducible. Exact bytes
