@@ -9,28 +9,36 @@ family that was not used to develop the current profiles?
 ## Frozen subject
 
 Ktor is frozen at public revision
-`bc7de799f4eb997a63250f2f70492d85f5c92f50`. Its own contribution guide names
-root `assemble` as the artifact-building workflow and requires JDK 21. The POC
-uses Ktor's documented target properties to evaluate that workflow for JVM
-artifacts only; native, JavaScript, Wasm and Android targets are disabled in
-both arms. This is a JVM assembly claim, not a claim about the full
-multiplatform release build.
+`bc7de799f4eb997a63250f2f70492d85f5c92f50` and requires JDK 21. The POC uses
+the public unqualified `jvmJar` task selector exposed by Ktor's Gradle model.
+That selector covers the repository's JVM JAR tasks without claiming to
+represent the full multiplatform release build.
 
 Before this contract was committed, a non-measured `./gradlew help` run proved
 only that the fixed checkout, Gradle 9.5.1 Wrapper and locked Temurin 21 could
-configure. `help --task :ktor-http:jvmJar` confirmed the Gradle-owned JVM JAR
-task. No `assemble`, BuildOpt proposal, candidate graph or target-workflow
+configure. `help --task :ktor-http:jvmJar` confirmed one Gradle-owned JVM JAR
+task. No owner build, BuildOpt proposal, candidate graph or target-workflow
 timing was run or observed.
+
+The initial preregistration selected root `assemble` with `-Ptarget.*=false`
+options. A pre-measurement compatibility run proved that Ktor's custom target
+loader reads `gradle.properties` files directly and therefore ignores those
+CLI target properties; native tasks were scheduled. The attempt was stopped
+before proposal completion, warm-up or timing. A second non-measured
+`help --task jvmJar` run confirmed the public JVM-only selector across Ktor
+subprojects. This amendment changes only the workflow description: the public
+revision, change, required output, thresholds and generic mechanism remain
+frozen, and no data from the invalid attempt is accepted.
 
 The repository-owned inputs are frozen as follows:
 
-- original workflow: root `assemble`;
+- original workflow: unqualified `jvmJar` across matching Ktor subprojects;
 - exact change: append one fixed comment to the internal
   `ktor-http/common/src/io/ktor/http/AsciiBitSet.kt` source;
 - required output: `ktor-http/build/libs/ktor-http-jvm-*.jar`;
 - semantic boundary: exact bytes;
-- optimized-native control: the same workflow, target properties, daemon,
-  build cache, parallel execution, disabled Configuration Cache and 12 workers;
+- optimized-native control: the same workflow, daemon, build cache, parallel
+  execution, disabled Configuration Cache and 12 workers;
 - candidate mechanism: generic structural Build Impact only.
 
 No candidate entrypoint, project count, expected saving or favorable result is
@@ -75,4 +83,4 @@ observed Ktor result.
 
 The implementation commit distinguishes the per-capture envelope schema from
 the balanced aggregate schema. This naming correction was made before any
-`assemble`, proposal or timing and changes no frozen subject, method or gate.
+owner build, proposal or timing and changes no frozen subject, method or gate.

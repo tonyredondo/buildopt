@@ -3,7 +3,7 @@
   "captureEvidenceSchemaVersion": "buildopt.evidence/poc-new-family-transfer-capture/v1",
   "aggregateEvidenceSchemaVersion": "buildopt.evidence/structural-profile-balanced-qualification/v2",
   "workItem": "POC-NEW-FAMILY-TRANSFER-001",
-  "decision": "MEASURE_UNCHANGED_GENERIC_PATH_ON_PREREGISTERED_KTOR_JVM_ASSEMBLY",
+  "decision": "MEASURE_UNCHANGED_GENERIC_PATH_ON_PREREGISTERED_KTOR_JVM_JAR_SELECTOR",
   "preregisteredFromRevision": "5f451bf2ef9605ff4aabd4941af1e4af7face842",
   "selection": {
     "familyPreviouslyUsedToDevelopProfiles": false,
@@ -21,18 +21,18 @@
     "gradleWrapperVersion": "9.5.1",
     "gradleWrapperSha256": "bafc141b619ad6350fd975fc903156dd5c151998cc8b058e8c1044ab5f7b031f",
     "jdkToolchain": "temurin-jdk-21",
-    "pipelineClass": "assemble",
+    "pipelineClass": "jvm-jar",
     "entrypoints": [
-      "assemble"
+      "jvmJar"
     ],
     "changePath": "ktor-http/common/src/io/ktor/http/AsciiBitSet.kt",
     "mutation": "APPEND_FIXED_COMMENT",
     "requiredOutputs": [
       "ktor-http/build/libs/ktor-http-jvm-*.jar"
     ],
-    "ownerWorkflowSource": "CONTRIBUTING.md:25",
+    "ownerWorkflowSource": "GRADLE_PUBLIC_TASK_MODEL:help --task jvmJar",
     "ownerJdkSource": "CONTRIBUTING.md:36",
-    "scope": "JVM_ONLY_OWNER_SUPPORTED_TARGET_CONFIGURATION"
+    "scope": "JVM_JAR_TASK_SELECTOR"
   },
   "runner": {
     "platform": "linux-amd64",
@@ -70,10 +70,6 @@
       "--console=plain",
       "--no-scan",
       "--max-workers=12",
-      "-Ptarget.posix=false",
-      "-Ptarget.js=false",
-      "-Ptarget.wasmJs=false",
-      "-Ptarget.android=false",
       "-Pktor.develocity.skipBuildScans=true"
     ],
     "outputEquivalence": "EXACT_BYTES",
@@ -116,6 +112,21 @@
     "genericCorrectnessDefect": "FIX_GENERIC_MECHANISM_AND_RERUN_FROZEN_SUBJECT_FROM_ZERO",
     "repositorySpecificException": "FORBIDDEN",
     "thresholdRelaxation": "FORBIDDEN"
+  },
+  "amendment": {
+    "reason": "KTOR_TARGET_SELECTION_READS_PROJECT_GRADLE_PROPERTIES_FILES_AND_IGNORES_TARGET_CLI_PROPERTIES",
+    "replacementWorkflow": "jvmJar",
+    "compatibilityPreflightCommand": "./gradlew help --task jvmJar",
+    "compatibilityPreflightResult": "PUBLIC_JAR_TASK_SELECTOR_AVAILABLE_ACROSS_KTOR_JVM_SUBPROJECTS",
+    "ownerWorkflowExecuted": false,
+    "targetWorkflowTimingObserved": false,
+    "acceptedProposals": 0,
+    "acceptedWarmups": 0,
+    "acceptedPairs": 0,
+    "qualificationChanged": false,
+    "subjectRevisionChanged": false,
+    "changePathChanged": false,
+    "requiredOutputChanged": false
   },
   "boundaries": {
     "proofOfConcept": true,

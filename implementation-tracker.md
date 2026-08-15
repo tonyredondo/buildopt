@@ -134,7 +134,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-CALIBRATION-EFFICIENCY | Reuse exact discovery and stop stabilization only after bounded convergence, then improve break-even under unchanged gates | `DONE` | 1/1 | `E-344..345`; installed payback 9–26 builds |
 | POC-INSTALLED-PROFILE-REPLAY | Replay reviewed profiles through the public package and user-facing command without repository-specific product logic | `DONE` | 1/1 | `E-346`; 6/6 public plans, fallbacks and same-replay outputs |
 | POC-CROSS-DATE-OUTPUT-EQUIVALENCE | Generalize reviewed volatile metadata so qualified outputs remain comparable across dates without hiding payload drift | `DONE` | 1/1 | `E-347`; 6/6 cross-date comparable, undeclared drift rejected |
-| POC-NEW-FAMILY-TRANSFER | Apply the unchanged generic owner-input/profile path to one new substantial Gradle repository family | `DOING` | 0/1 | Ktor JVM assembly preregistered before owner workflow, proposal or timing; no repository-name product rule allowed |
+| POC-NEW-FAMILY-TRANSFER | Apply the unchanged generic owner-input/profile path to one new substantial Gradle repository family | `DOING` | 0/1 | Ktor `jvmJar` selector preregistered before owner workflow, proposal or timing; invalid `assemble` target-property semantics preserved with zero accepted timing; no repository-name product rule allowed |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
