@@ -273,8 +273,7 @@ func observeOutputContract(ctx context.Context, repositoryRoot string, config ou
 	} else if !filepath.IsAbs(gradleCommand) {
 		gradleCommand = filepath.Join(repositoryRoot, gradleCommand)
 	}
-	arguments := append([]string(nil), config.gradleOptions...)
-	arguments = append(arguments, "--no-daemon", "--console=plain", "--init-script", initPath, "buildoptOutputContract")
+	arguments := outputContractGradleArguments(config.gradleOptions, initPath)
 	workflowContext, cancel := context.WithTimeout(ctx, config.timeout)
 	defer cancel()
 	command := exec.CommandContext(workflowContext, gradleCommand, arguments...)
@@ -292,6 +291,17 @@ func observeOutputContract(ctx context.Context, repositoryRoot string, config ou
 		return outputContractSnapshot{}, fmt.Errorf("read output-contract snapshot: %w", err)
 	}
 	return parseOutputContractSnapshot(raw, config.entrypoints)
+}
+
+func outputContractGradleArguments(ownerOptions []string, initPath string) []string {
+	arguments := make([]string, 0, len(ownerOptions)+4)
+	for _, option := range ownerOptions {
+		if option == "--daemon" || option == "--no-daemon" || strings.HasPrefix(option, "--console=") {
+			continue
+		}
+		arguments = append(arguments, option)
+	}
+	return append(arguments, "--no-daemon", "--console=plain", "--init-script", initPath, "buildoptOutputContract")
 }
 
 func parseOutputContractSnapshot(raw []byte, entrypoints []string) (outputContractSnapshot, error) {
