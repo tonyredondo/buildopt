@@ -1,0 +1,222 @@
+{
+  "schemaVersion": "buildopt.specs/poc-new-family-change-breadth/v1",
+  "captureEvidenceSchemaVersion": "buildopt.evidence/poc-generic-profile-matrix/v1",
+  "aggregateEvidenceSchemaVersion": "buildopt.evidence/poc-new-family-change-breadth/v1",
+  "workItem": "POC-NEW-FAMILY-CHANGE-BREADTH-001",
+  "decision": "MEASURE_ONLY_GENERICALLY_COMPLETE_KTOR_CHANGE_CELLS",
+  "preregisteredFromRevision": "dd0962de445d0a856d930c2029e081388a25d356",
+  "selection": {
+    "priorQualifiedWorkflow": "KTOR_PUBLIC_JVM_JAR_SELECTOR",
+    "priorQualifiedEvidence": "benchmarks/results/poc-new-family-transfer-v1/summary.json",
+    "ownerWorkflowExecutedForTheseChangesBeforePreregistration": false,
+    "buildoptProposalExecutedForTheseChangesBeforePreregistration": false,
+    "targetWorkflowTimingObservedForTheseChangesBeforePreregistration": false,
+    "priorTransferTimingMayBeReused": false
+  },
+  "subject": {
+    "repositoryId": "ktorio/ktor",
+    "remoteUrl": "https://github.com/ktorio/ktor.git",
+    "publicRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+    "gradleWrapperVersion": "9.5.1",
+    "gradleWrapperSha256": "bafc141b619ad6350fd975fc903156dd5c151998cc8b058e8c1044ab5f7b031f",
+    "jdkToolchain": "temurin-jdk-21",
+    "pipelineClass": "jvm-jar",
+    "entrypoints": [
+      "jvmJar"
+    ],
+    "scope": "PUBLIC_JVM_JAR_TASK_SELECTOR"
+  },
+  "repositories": [
+    {
+      "key": "ktor-jvm-jar-dependency-source",
+      "repositoryId": "ktorio/ktor",
+      "remoteUrl": "https://github.com/ktorio/ktor.git",
+      "publicRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+      "jdkToolchain": "temurin-jdk-21",
+      "pipelineClass": "jvm-jar",
+      "workflowFamily": "JVM_JAR",
+      "changeClass": "UPSTREAM_DEPENDENCY_SOURCE",
+      "entrypoints": [
+        "jvmJar"
+      ],
+      "changes": [
+        {
+          "path": "ktor-utils/common/src/io/ktor/util/StringValues.kt",
+          "originalSha256": "be41f0fca8c72770ef45812b931be0bf28a6a6649aefad0183537357c40e9d28",
+          "mutation": "APPEND_FIXED_COMMENT"
+        }
+      ],
+      "requiredOutputs": [
+        "ktor-http/build/libs/ktor-http-jvm-*.jar",
+        "ktor-utils/build/libs/ktor-utils-jvm-*.jar"
+      ],
+      "performanceClaim": true,
+      "expectedCandidateEntrypoints": [
+        ":ktor-http:jvmJar",
+        ":ktor-utils:jvmJar"
+      ],
+      "expectedProposalDecision": null,
+      "expectedProposalReason": null
+    },
+    {
+      "key": "ktor-jvm-jar-resource",
+      "repositoryId": "ktorio/ktor",
+      "remoteUrl": "https://github.com/ktorio/ktor.git",
+      "publicRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+      "jdkToolchain": "temurin-jdk-21",
+      "pipelineClass": "jvm-jar",
+      "workflowFamily": "JVM_JAR",
+      "changeClass": "JVM_RESOURCE",
+      "entrypoints": [
+        "jvmJar"
+      ],
+      "changes": [
+        {
+          "path": "ktor-server/ktor-server-core/jvm/resources/META-INF/services/io.ktor.server.config.ConfigLoader",
+          "originalSha256": "897d19dec0bdf4791661f9b3f26eba771ae68bab4ab57cb5d4fde8da5bfc3ae2",
+          "mutation": "APPEND_FIXED_HASH_COMMENT"
+        }
+      ],
+      "requiredOutputs": [
+        "ktor-server/ktor-server-core/build/libs/ktor-server-core-jvm-*.jar"
+      ],
+      "performanceClaim": true,
+      "expectedCandidateEntrypoints": [
+        ":ktor-server-core:jvmJar"
+      ],
+      "expectedProposalDecision": null,
+      "expectedProposalReason": null
+    },
+    {
+      "key": "ktor-jvm-jar-mixed-source",
+      "repositoryId": "ktorio/ktor",
+      "remoteUrl": "https://github.com/ktorio/ktor.git",
+      "publicRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+      "jdkToolchain": "temurin-jdk-21",
+      "pipelineClass": "jvm-jar",
+      "workflowFamily": "JVM_JAR",
+      "changeClass": "MIXED_PRODUCTION_SOURCE",
+      "entrypoints": [
+        "jvmJar"
+      ],
+      "changes": [
+        {
+          "path": "ktor-http/common/src/io/ktor/http/AsciiBitSet.kt",
+          "originalSha256": "7e6e7ad515a2c2d4be2616bebf7a830fe3e7b4a95ebbbb023dc4f34cb7fc219d",
+          "mutation": "APPEND_FIXED_COMMENT"
+        },
+        {
+          "path": "ktor-server/ktor-server-core/common/src/io/ktor/server/application/Application.kt",
+          "originalSha256": "dc63beba8323af8c2a4af9cb8b04751c4f84bd313d3785e2e4ca957f1eac5358",
+          "mutation": "APPEND_FIXED_COMMENT"
+        }
+      ],
+      "requiredOutputs": [
+        "ktor-http/build/libs/ktor-http-jvm-*.jar",
+        "ktor-server/ktor-server-core/build/libs/ktor-server-core-jvm-*.jar"
+      ],
+      "performanceClaim": true,
+      "expectedCandidateEntrypoints": [
+        ":ktor-http:jvmJar",
+        ":ktor-server-core:jvmJar"
+      ],
+      "expectedProposalDecision": null,
+      "expectedProposalReason": null
+    },
+    {
+      "key": "ktor-jvm-jar-global-configuration",
+      "repositoryId": "ktorio/ktor",
+      "remoteUrl": "https://github.com/ktorio/ktor.git",
+      "publicRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+      "jdkToolchain": "temurin-jdk-21",
+      "pipelineClass": "jvm-jar",
+      "workflowFamily": "JVM_JAR",
+      "changeClass": "GLOBAL_CONFIGURATION",
+      "entrypoints": [
+        "jvmJar"
+      ],
+      "changes": [
+        {
+          "path": "gradle.properties",
+          "originalSha256": "1b320d20fb1b450ef8a7a6552b8ea6f9ae0d67b934f384dc31a34ee25bce05c6",
+          "mutation": "APPEND_FIXED_HASH_COMMENT"
+        }
+      ],
+      "requiredOutputs": [
+        "ktor-http/build/libs/ktor-http-jvm-*.jar"
+      ],
+      "performanceClaim": false,
+      "expectedCandidateEntrypoints": null,
+      "expectedProposalDecision": "NATIVE_FULL_GRAPH",
+      "expectedProposalReason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"
+    }
+  ],
+  "method": {
+    "surface": "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE",
+    "candidateMechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "control": "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW",
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12",
+      "-Pktor.develocity.skipBuildScans=true"
+    ],
+    "candidateRootedAtReviewedOutputOwners": true,
+    "graphMustCoverEveryChangedPathAndDeclaredOutput": true,
+    "outputEquivalence": "EXACT_BYTES",
+    "fallbackCellsAreNotTimed": true,
+    "repositorySpecificProductRulesAllowed": false,
+    "failedObservationsDiscarded": false
+  },
+  "runner": {
+    "platform": "linux-amd64",
+    "cpuCount": 12,
+    "maxWorkers": 12,
+    "capturesPerCell": 2,
+    "pairsPerSelectiveCapture": 8,
+    "targetStabilityConfirmations": 2,
+    "blocksPerSelectiveCell": 8,
+    "order": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
+    "perBuildTimeout": "45m"
+  },
+  "qualification": {
+    "blockDefinition": "MEAN_OF_ONE_CONTROL_FIRST_PAIR_AND_THE_FOLLOWING_CANDIDATE_FIRST_PAIR",
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95BlockBootstrapBound": true,
+    "positiveMedianBlockSaving": true,
+    "minimumPositiveBlocks": 6,
+    "candidateP95NotRegressive": true,
+    "requiredOutputsIdentical": true,
+    "executionShapeStable": true,
+    "fullGraphFallbackRequiredPerSelectiveCapture": true,
+    "independentNativeProposalCapturesPerFallbackCell": 2,
+    "maximumProductAttributableFailures": 0,
+    "failedOrTimedOutObservationsMayBeDiscarded": false,
+    "nonWinningDecision": "RETAIN_NATIVE_GRADLE"
+  },
+  "decisionRules": {
+    "completeSelectiveProposal": "MEASURE_WITH_FROZEN_BALANCED_GATE",
+    "unsupportedOrUncertainProposal": "RETAIN_NATIVE_GRADLE_WITHOUT_TIMING_CLAIM",
+    "globalChange": "RETAIN_NATIVE_GRADLE_WITHOUT_TIMING_CLAIM",
+    "completeButWeakMeasurement": "RETAIN_NATIVE_GRADLE",
+    "qualifiedMeasurement": "REVIEW_STRUCTURAL_PROFILE",
+    "repositorySpecificException": "FORBIDDEN",
+    "thresholdRelaxation": "FORBIDDEN"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

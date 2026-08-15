@@ -184,7 +184,7 @@ buildopt_capture_subject() {
     local buildopt_index=$1
     local buildopt_key buildopt_repository_id buildopt_remote buildopt_public_revision
     local buildopt_jdk buildopt_pipeline buildopt_workflow_family buildopt_change_class
-    local buildopt_change_path buildopt_change_original_sha buildopt_mutation
+    local buildopt_change_count buildopt_change_index
     local buildopt_equivalence_source buildopt_equivalence_path
     local buildopt_repository
     local buildopt_gradle_home buildopt_subject_output buildopt_base buildopt_target
@@ -192,6 +192,8 @@ buildopt_capture_subject() {
     local buildopt_evaluation_decision buildopt_target_stability_confirmations
     local -a buildopt_entrypoint_args=() buildopt_required_output_args=()
     local -a buildopt_equivalence_args=()
+    local -a buildopt_change_paths=() buildopt_change_original_shas=()
+    local -a buildopt_mutations=()
 
     buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_spec}")
     buildopt_repository_id=$(jq -er ".repositories[${buildopt_index}].repositoryId" "${buildopt_spec}")
@@ -201,9 +203,26 @@ buildopt_capture_subject() {
     buildopt_pipeline=$(jq -er ".repositories[${buildopt_index}].pipelineClass" "${buildopt_spec}")
     buildopt_workflow_family=$(jq -r ".repositories[${buildopt_index}].workflowFamily // empty" "${buildopt_spec}")
     buildopt_change_class=$(jq -r ".repositories[${buildopt_index}].changeClass // empty" "${buildopt_spec}")
-    buildopt_change_path=$(jq -er ".repositories[${buildopt_index}].changePath" "${buildopt_spec}")
-    buildopt_change_original_sha=$(jq -r ".repositories[${buildopt_index}].changeOriginalSha256 // empty" "${buildopt_spec}")
-    buildopt_mutation=$(jq -er ".repositories[${buildopt_index}].mutation" "${buildopt_spec}")
+    mapfile -t buildopt_change_paths < <(
+        jq -r ".repositories[${buildopt_index}] |
+          (.changes // [{path: .changePath}]) | .[].path" "${buildopt_spec}"
+    )
+    mapfile -t buildopt_change_original_shas < <(
+        jq -r ".repositories[${buildopt_index}] |
+          (.changes // [{originalSha256: (.changeOriginalSha256 // \"\")}]) |
+          .[].originalSha256 // \"\"" "${buildopt_spec}"
+    )
+    mapfile -t buildopt_mutations < <(
+        jq -r ".repositories[${buildopt_index}] |
+          (.changes // [{mutation: .mutation}]) | .[].mutation" "${buildopt_spec}"
+    )
+    buildopt_change_count=${#buildopt_change_paths[@]}
+    if ((buildopt_change_count == 0)) ||
+        ((${#buildopt_change_original_shas[@]} != buildopt_change_count)) ||
+        ((${#buildopt_mutations[@]} != buildopt_change_count)); then
+        printf 'invalid frozen change list for %s\n' "${buildopt_key}" >&2
+        return 1
+    fi
     buildopt_target_stability_confirmations=$(jq -er '.runner.targetStabilityConfirmations // 1' "${buildopt_spec}")
     buildopt_equivalence_source=$(jq -r ".repositories[${buildopt_index}].outputEquivalenceContract // empty" "${buildopt_spec}")
     buildopt_equivalence_path=
@@ -230,24 +249,33 @@ buildopt_capture_subject() {
         return 1
     fi
 
-    if [[ -n ${buildopt_change_original_sha} && \
-        $(sha256sum "${buildopt_repository}/${buildopt_change_path}" | awk '{print $1}') != \
-            "${buildopt_change_original_sha}" ]]; then
-        printf 'frozen change input drifted for %s\n' "${buildopt_key}" >&2
-        return 1
-    fi
-
-    buildopt_mutate_repository "${buildopt_mutation}" "${buildopt_repository}" \
-        "${buildopt_change_path}" "${buildopt_key}"
+    for ((buildopt_change_index = 0;
+        buildopt_change_index < buildopt_change_count;
+        buildopt_change_index++)); do
+        if [[ -n ${buildopt_change_original_shas[buildopt_change_index]} && \
+            $(sha256sum "${buildopt_repository}/${buildopt_change_paths[buildopt_change_index]}" |
+                awk '{print $1}') != \
+                "${buildopt_change_original_shas[buildopt_change_index]}" ]]; then
+            printf 'frozen change input drifted for %s: %s\n' \
+                "${buildopt_key}" "${buildopt_change_paths[buildopt_change_index]}" >&2
+            return 1
+        fi
+        buildopt_mutate_repository \
+            "${buildopt_mutations[buildopt_change_index]}" \
+            "${buildopt_repository}" \
+            "${buildopt_change_paths[buildopt_change_index]}" \
+            "${buildopt_key}-$((buildopt_change_index + 1))"
+    done
     git -C "${buildopt_repository}" config user.name 'BuildOpt POC'
     git -C "${buildopt_repository}" config user.email 'buildopt-poc@example.invalid'
     git -C "${buildopt_repository}" config commit.gpgsign false
-    git -C "${buildopt_repository}" add "${buildopt_change_path}"
+    git -C "${buildopt_repository}" add -- "${buildopt_change_paths[@]}"
     GIT_AUTHOR_DATE='2026-08-10T00:00:00Z' \
         GIT_COMMITTER_DATE='2026-08-10T00:00:00Z' \
         git -C "${buildopt_repository}" commit -qm 'Apply frozen BuildOpt matrix mutation'
     buildopt_target=$(git -C "${buildopt_repository}" rev-parse HEAD)
-    printf '%s\n' "${buildopt_change_path}" >"${buildopt_repository}/buildopt-changes.txt"
+    printf '%s\n' "${buildopt_change_paths[@]}" \
+        >"${buildopt_repository}/buildopt-changes.txt"
     if [[ -n ${buildopt_equivalence_source} ]]; then
         [[ -f ${buildopt_repo_root}/${buildopt_equivalence_source} ]] || {
             printf 'output-equivalence contract is unavailable: %s\n' "${buildopt_equivalence_source}" >&2

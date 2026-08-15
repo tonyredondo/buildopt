@@ -539,6 +539,15 @@ Ktor reads target switches from `gradle.properties`, not CLI project
 properties. The terminal result derives `:ktor-http:jvmJar` in both fresh
 captures and qualifies without repository-name product rules.
 
+`poc-new-family-change-breadth-v1.json` and
+`poc-new-family-change-breadth-v1.md` freeze the follow-up Ktor matrix before
+any new proposal or timing. It covers an upstream dependency-source edit, a
+JVM resource edit, a two-module mixed-source edit and an untimed global
+configuration fallback under the same public `jvmJar` selector. The generic
+runner now accepts multiple changed paths while retaining the legacy
+single-path contract; every selective cell keeps the balanced value gate and
+the global cell must remain on native Gradle.
+
 `poc-generic-output-equivalence-v1.json` and
 `poc-generic-output-equivalence-v1.md` preregister the three public workflows
 whose outputs were semantically stable but not byte-reproducible. Exact bytes

@@ -3470,6 +3470,14 @@ also proves that summary and aggregate tampering fail closed. Unsupported,
 weak or unstable results retain native Gradle; the runner cannot add a
 Ktor-specific product decision.
 
+`./dev/check-new-family-change-breadth --spec-only` validates the frozen Ktor
+follow-up before any new proposal or timing. Its three selective cells cover
+an upstream dependency source, a JVM resource and a two-module mixed-source
+change; a fourth root-configuration cell must return an untimed native
+full-graph decision. `dev/run-generic-profile-matrix` accepts the new
+`changes[]` form while preserving the previous `changePath` form, so this
+tests multiple paths without adding Ktor logic to the product.
+
 Before the original-workflow preflight, the runner prepares the exact Wrapper
 distribution selected by that repository, reusing only a matching cached
 distribution and allowing at most three bounded network attempts. It runs no

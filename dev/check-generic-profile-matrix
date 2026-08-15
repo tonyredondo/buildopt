@@ -89,7 +89,7 @@ for ((buildopt_index = 0; buildopt_index < buildopt_repository_count; buildopt_i
         .schemaVersion == "buildopt.poc/profile-proposal/v1" and
         .repositoryId == $expected.repositoryId and
         .baseRevision == $expected.publicRevision and
-        .changedPaths == [$expected.changePath] and
+        .changedPaths == (($expected.changes // [{path: $expected.changePath}]) | map(.path)) and
         .requiredOutputs == $expected.requiredOutputs and
         .reviewRequired == true and
         .activationAutomatic == false and

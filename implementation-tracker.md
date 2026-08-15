@@ -135,7 +135,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-INSTALLED-PROFILE-REPLAY | Replay reviewed profiles through the public package and user-facing command without repository-specific product logic | `DONE` | 1/1 | `E-346`; 6/6 public plans, fallbacks and same-replay outputs |
 | POC-CROSS-DATE-OUTPUT-EQUIVALENCE | Generalize reviewed volatile metadata so qualified outputs remain comparable across dates without hiding payload drift | `DONE` | 1/1 | `E-347`; 6/6 cross-date comparable, undeclared drift rejected |
 | POC-NEW-FAMILY-TRANSFER | Apply the unchanged generic owner-input/profile path to one new substantial Gradle repository family | `DONE` | 1/1 | `E-348`; Ktor `jvmJar` 133→3 projects, 86.21% lower wall time, 16/16 positive pairs, exact output and two fallbacks |
-| POC-NEW-FAMILY-CHANGE-BREADTH | Test the qualified new-family workflow on materially different owner-declared change classes | `TODO` | 0/1 | `E-348`; same generic path and value gates, no repository-name product rule |
+| POC-NEW-FAMILY-CHANGE-BREADTH | Test the qualified new-family workflow on materially different owner-declared change classes | `DOING` | 0/1 | dependency-source, JVM-resource, mixed-source and untimed global cells preregistered; no proposal or timing observed |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -310,7 +310,7 @@ than partners. Test Optimization remains a separate product.
 | 99 | `POC-INSTALLED-PROFILE-REPLAY-001` | Install the public package in clean external checkouts and replay the reviewed profiles through the user-facing command; require the same semantic outputs, drift rejection, native fallback and value decision without repository-name product rules | `DONE` | Codex; `E-346` |
 | 100 | `POC-CROSS-DATE-OUTPUT-EQUIVALENCE-001` | Add a generic owner-declared volatile-property rule for exact date/time fields, prove undeclared payload drift still fails closed, and replay the six retained cells across a date boundary without changing their historical timing qualification | `DONE` | Codex; `E-347` |
 | 101 | `POC-NEW-FAMILY-TRANSFER-001` | Select one substantial public Gradle repository family not used to develop the current profiles; preregister its owner workflow, changed inputs, required outputs, optimized-native control, semantic-output boundary, repeatability/tail gates and native fallback before measuring the unchanged generic path | `DONE` | Codex; `E-348` |
-| 102 | `POC-NEW-FAMILY-CHANGE-BREADTH-001` | Preregister materially different dependency, resource, or mixed-source changes under Ktor's same public JVM JAR workflow; derive every decision from generic owner inputs, time only complete selective candidates under the balanced gate, and retain native without a timing claim when the graph is uncertain or global | `TODO` | Unassigned |
+| 102 | `POC-NEW-FAMILY-CHANGE-BREADTH-001` | Preregister materially different dependency, resource, or mixed-source changes under Ktor's same public JVM JAR workflow; derive every decision from generic owner inputs, time only complete selective candidates under the balanced gate, and retain native without a timing claim when the graph is uncertain or global | `DOING` | Codex; frozen contract, no accepted proposal/timing yet |
 
 #### Completed POC block: owner-reviewed output equivalence
 

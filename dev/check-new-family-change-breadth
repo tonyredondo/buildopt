@@ -1,0 +1,156 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)) || { (($# == 1)) && [[ $1 != --spec-only ]]; }; then
+    printf 'usage: %s [--spec-only]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-new-family-change-breadth-v1.json"
+
+for buildopt_command in git jq rg; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required new-family change-breadth command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-new-family-change-breadth/v1" and
+  .captureEvidenceSchemaVersion == "buildopt.evidence/poc-generic-profile-matrix/v1" and
+  .aggregateEvidenceSchemaVersion == "buildopt.evidence/poc-new-family-change-breadth/v1" and
+  .workItem == "POC-NEW-FAMILY-CHANGE-BREADTH-001" and
+  .decision == "MEASURE_ONLY_GENERICALLY_COMPLETE_KTOR_CHANGE_CELLS" and
+  .preregisteredFromRevision == "dd0962de445d0a856d930c2029e081388a25d356" and
+  .selection == {
+    priorQualifiedWorkflow: "KTOR_PUBLIC_JVM_JAR_SELECTOR",
+    priorQualifiedEvidence: "benchmarks/results/poc-new-family-transfer-v1/summary.json",
+    ownerWorkflowExecutedForTheseChangesBeforePreregistration: false,
+    buildoptProposalExecutedForTheseChangesBeforePreregistration: false,
+    targetWorkflowTimingObservedForTheseChangesBeforePreregistration: false,
+    priorTransferTimingMayBeReused: false
+  } and
+  .subject == {
+    repositoryId: "ktorio/ktor",
+    remoteUrl: "https://github.com/ktorio/ktor.git",
+    publicRevision: "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+    gradleWrapperVersion: "9.5.1",
+    gradleWrapperSha256: "bafc141b619ad6350fd975fc903156dd5c151998cc8b058e8c1044ab5f7b031f",
+    jdkToolchain: "temurin-jdk-21",
+    pipelineClass: "jvm-jar",
+    entrypoints: ["jvmJar"],
+    scope: "PUBLIC_JVM_JAR_TASK_SELECTOR"
+  } and
+  (.repositories | length) == 4 and
+  (.repositories | map(.key)) == [
+    "ktor-jvm-jar-dependency-source",
+    "ktor-jvm-jar-resource",
+    "ktor-jvm-jar-mixed-source",
+    "ktor-jvm-jar-global-configuration"
+  ] and
+  (.repositories | map(.changeClass)) == [
+    "UPSTREAM_DEPENDENCY_SOURCE",
+    "JVM_RESOURCE",
+    "MIXED_PRODUCTION_SOURCE",
+    "GLOBAL_CONFIGURATION"
+  ] and
+  ([.repositories[] | select(.performanceClaim)] | length) == 3 and
+  ([.repositories[] | select(.performanceClaim | not)] | length) == 1 and
+  all(.repositories[];
+    .repositoryId == $subject.repositoryId and
+    .remoteUrl == $subject.remoteUrl and
+    .publicRevision == $subject.publicRevision and
+    .jdkToolchain == $subject.jdkToolchain and
+    .pipelineClass == $subject.pipelineClass and
+    .entrypoints == $subject.entrypoints and
+    .workflowFamily == "JVM_JAR" and
+    (.changes | length) >= 1 and
+    all(.changes[];
+      (.path | startswith("/") | not) and
+      (.originalSha256 | test("^[0-9a-f]{64}$")) and
+      (.mutation | IN("APPEND_FIXED_COMMENT", "APPEND_FIXED_HASH_COMMENT"))) and
+    (.requiredOutputs | length) >= 1) and
+  ((.repositories[] | select(.key == "ktor-jvm-jar-dependency-source")) |
+    .changes == [{
+      path: "ktor-utils/common/src/io/ktor/util/StringValues.kt",
+      originalSha256: "be41f0fca8c72770ef45812b931be0bf28a6a6649aefad0183537357c40e9d28",
+      mutation: "APPEND_FIXED_COMMENT"
+    }] and
+    .requiredOutputs == [
+      "ktor-http/build/libs/ktor-http-jvm-*.jar",
+      "ktor-utils/build/libs/ktor-utils-jvm-*.jar"
+    ] and
+    .expectedCandidateEntrypoints == [":ktor-http:jvmJar", ":ktor-utils:jvmJar"]) and
+  ((.repositories[] | select(.key == "ktor-jvm-jar-resource")) |
+    .changes == [{
+      path: "ktor-server/ktor-server-core/jvm/resources/META-INF/services/io.ktor.server.config.ConfigLoader",
+      originalSha256: "897d19dec0bdf4791661f9b3f26eba771ae68bab4ab57cb5d4fde8da5bfc3ae2",
+      mutation: "APPEND_FIXED_HASH_COMMENT"
+    }] and
+    .requiredOutputs == ["ktor-server/ktor-server-core/build/libs/ktor-server-core-jvm-*.jar"] and
+    .expectedCandidateEntrypoints == [":ktor-server-core:jvmJar"]) and
+  ((.repositories[] | select(.key == "ktor-jvm-jar-mixed-source")) |
+    (.changes | map(.path)) == [
+      "ktor-http/common/src/io/ktor/http/AsciiBitSet.kt",
+      "ktor-server/ktor-server-core/common/src/io/ktor/server/application/Application.kt"
+    ] and
+    .requiredOutputs == [
+      "ktor-http/build/libs/ktor-http-jvm-*.jar",
+      "ktor-server/ktor-server-core/build/libs/ktor-server-core-jvm-*.jar"
+    ] and
+    .expectedCandidateEntrypoints == [":ktor-http:jvmJar", ":ktor-server-core:jvmJar"]) and
+  ((.repositories[] | select(.key == "ktor-jvm-jar-global-configuration")) |
+    .changes == [{
+      path: "gradle.properties",
+      originalSha256: "1b320d20fb1b450ef8a7a6552b8ea6f9ae0d67b934f384dc31a34ee25bce05c6",
+      mutation: "APPEND_FIXED_HASH_COMMENT"
+    }] and
+    .performanceClaim == false and
+    .expectedCandidateEntrypoints == null and
+    .expectedProposalDecision == "NATIVE_FULL_GRAPH" and
+    .expectedProposalReason == "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH") and
+  .method.candidateMechanisms == ["BUILD_IMPACT"] and
+  .method.control == "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW" and
+  .method.graphMustCoverEveryChangedPathAndDeclaredOutput == true and
+  .method.outputEquivalence == "EXACT_BYTES" and
+  .method.fallbackCellsAreNotTimed == true and
+  .method.repositorySpecificProductRulesAllowed == false and
+  .runner.platform == "linux-amd64" and .runner.cpuCount == 12 and
+  .runner.maxWorkers == 12 and .runner.capturesPerCell == 2 and
+  .runner.pairsPerSelectiveCapture == 8 and .runner.blocksPerSelectiveCell == 8 and
+  .runner.targetStabilityConfirmations == 2 and .runner.perBuildTimeout == "45m" and
+  .qualification.minimumMeanSavedMs == 500 and
+  .qualification.minimumReductionRatio == 0.02 and
+  .qualification.minimumPositiveBlocks == 6 and
+  .qualification.failedOrTimedOutObservationsMayBeDiscarded == false and
+  .decisionRules.globalChange == "RETAIN_NATIVE_GRADLE_WITHOUT_TIMING_CLAIM" and
+  .decisionRules.repositorySpecificException == "FORBIDDEN" and
+  .decisionRules.thresholdRelaxation == "FORBIDDEN" and
+  .boundaries.proofOfConcept == true and
+  .boundaries.productionAuthorized == false and
+  .boundaries.automaticActivation == false and
+  .boundaries.repositorySpecificProductRulesAllowed == false and
+  .boundaries.testOptimizationModified == false and
+  .boundaries.soakRequired == false and .boundaries.designPartnerRequired == false
+' --argjson subject "$(jq '.subject' "${buildopt_spec}")" \
+    "${buildopt_spec}" >/dev/null
+
+git -C "${buildopt_repo_root}" cat-file -e \
+    "$(jq -er '.preregisteredFromRevision' "${buildopt_spec}")^{commit}"
+
+if rg -n 'ktorio/ktor|ktor-jvm-jar|:ktor-(http|server-core|utils)' \
+    "${buildopt_repo_root}/internal" "${buildopt_repo_root}/cmd" >/dev/null; then
+    printf 'Ktor-specific branch leaked into product implementation\n' >&2
+    exit 1
+fi
+
+rg -Fq -- '(.changes // [{path: .changePath}])' \
+    "${buildopt_script_dir}/run-generic-profile-matrix" || {
+    printf 'generic profile runner does not accept multiple changed paths\n' >&2
+    exit 1
+}
+
+printf 'New-family change-breadth preregistration OK: %s\n' "${buildopt_spec}"
