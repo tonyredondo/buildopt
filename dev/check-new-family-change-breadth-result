@@ -50,6 +50,12 @@ trap buildopt_cleanup EXIT
 buildopt_captured_at=$(jq -er '.capturedAt' "${buildopt_summary}")
 buildopt_revision=$(jq -er '.buildopt.revision' "${buildopt_summary}")
 buildopt_executable_sha=$(jq -er '.buildopt.executableSha256' "${buildopt_summary}")
+buildopt_public_revision=$(jq -er '.subject.publicRevision' "${buildopt_spec}")
+buildopt_expected_mechanisms=$(jq -c '.method.candidateMechanisms' "${buildopt_spec}")
+buildopt_expected_gradle_options=$(jq -c '.method.gradleOptions' "${buildopt_spec}")
+buildopt_minimum_mean_saved_ms=$(jq -er '.qualification.minimumMeanSavedMs' "${buildopt_spec}")
+buildopt_minimum_reduction_ratio=$(jq -er '.qualification.minimumReductionRatio' "${buildopt_spec}")
+buildopt_minimum_positive_blocks=$(jq -er '.qualification.minimumPositiveBlocks' "${buildopt_spec}")
 
 mapfile -t buildopt_keys < <(jq -r '.repositories[].key' "${buildopt_spec}")
 for buildopt_key in "${buildopt_keys[@]}"; do
@@ -57,8 +63,10 @@ for buildopt_key in "${buildopt_keys[@]}"; do
         '.repositories[] | select(.key == $key)' "${buildopt_spec}")
     buildopt_performance=$(jq -r '.performanceClaim' <<<"${buildopt_cell}")
     buildopt_changes=$(jq -c '.changes | map(.path)' <<<"${buildopt_cell}")
+    buildopt_required_outputs=$(jq -c '.requiredOutputs' <<<"${buildopt_cell}")
     buildopt_qualification="${buildopt_evidence_root}/${buildopt_key}/qualification.json"
     buildopt_first_proposal=
+    buildopt_first_target_revision=
 
     for buildopt_capture in 1 2; do
         buildopt_capture_root="${buildopt_evidence_root}/${buildopt_key}/capture-${buildopt_capture}"
@@ -67,15 +75,21 @@ for buildopt_key in "${buildopt_keys[@]}"; do
             --arg revision "${buildopt_revision}" \
             --arg executable "${buildopt_executable_sha}" \
             --arg key "${buildopt_key}" \
+            --arg publicRevision "${buildopt_public_revision}" \
             --arg changeClass "$(jq -r '.changeClass' <<<"${buildopt_cell}")" '
           .key == $key and .changeClass == $changeClass and
           .buildopt.revision == $revision and
           .buildopt.executableSha256 == $executable and
+          .publicRevision == $publicRevision and
           .proposal.originalEntrypoints == ["jvmJar"] and
           .outputEquivalence == null and .outputEquivalenceSha256 == null
         ' "${buildopt_result}" >/dev/null
-        jq -e --argjson changes "${buildopt_changes}" \
-            '.changedPaths == $changes' \
+        jq -e --arg publicRevision "${buildopt_public_revision}" \
+            --argjson changes "${buildopt_changes}" \
+            --argjson outputs "${buildopt_required_outputs}" '
+          .baseRevision == $publicRevision and
+          .changedPaths == $changes and .requiredOutputs == $outputs
+        ' \
             "${buildopt_capture_root}/buildopt-profile-proposal.json" >/dev/null
         jq -e '
           .decision == "VALIDATED_REQUIRED_OUTPUTS" and
@@ -84,9 +98,12 @@ for buildopt_key in "${buildopt_keys[@]}"; do
         ' "${buildopt_capture_root}/buildopt-output-contract.json" >/dev/null
         if [[ -z ${buildopt_first_proposal} ]]; then
             buildopt_first_proposal=$(jq -c '.proposal' "${buildopt_result}")
+            buildopt_first_target_revision=$(jq -er '.targetRevision' "${buildopt_result}")
         else
             jq -e --argjson first "${buildopt_first_proposal}" \
-                '.proposal == $first' "${buildopt_result}" >/dev/null
+                --arg targetRevision "${buildopt_first_target_revision}" '
+              .proposal == $first and .targetRevision == $targetRevision
+            ' "${buildopt_result}" >/dev/null
         fi
     done
 
@@ -102,7 +119,10 @@ for buildopt_key in "${buildopt_keys[@]}"; do
             ' "${buildopt_capture_root}/result.json" >/dev/null
             if [[ $(jq -r '.measurementStatus' \
                 "${buildopt_capture_root}/result.json") == COMPLETED ]]; then
-                jq -e '
+                jq -e --argjson mechanisms "${buildopt_expected_mechanisms}" \
+                    --argjson options "${buildopt_expected_gradle_options}" '
+                  .execution.mechanisms == $mechanisms and
+                  .execution.gradleOptions == $options and
                   (.observations | length) == 8 and
                   all(.observations[];
                     .productAttributableFailure == false and
@@ -134,7 +154,10 @@ for buildopt_key in "${buildopt_keys[@]}"; do
                 printf 'qualification does not recompute: %s\n' "${buildopt_key}" >&2
                 exit 1
             }
-            jq -e '
+            jq -e --argjson mechanisms "${buildopt_expected_mechanisms}" \
+                --argjson options "${buildopt_expected_gradle_options}" '
+              .execution.mechanisms == $mechanisms and
+              .execution.gradleOptions == $options and
               .execution.captureCount == 2 and .execution.pairsPerCapture == 8 and
               .execution.blockCount == 8 and (.blocks | length) == 8 and
               .result.pairs == 16 and .result.blocks == 8 and
@@ -143,6 +166,19 @@ for buildopt_key in "${buildopt_keys[@]}"; do
               .result.fallbacksSuccessful == true and
               (.result.qualified == (.evidenceState == "QUALIFIED"))
             ' "${buildopt_qualification}" >/dev/null
+            if [[ $(jq -r '.evidenceState' "${buildopt_qualification}") == QUALIFIED ]]; then
+                jq -e \
+                    --argjson minimumMean "${buildopt_minimum_mean_saved_ms}" \
+                    --argjson minimumRatio "${buildopt_minimum_reduction_ratio}" \
+                    --argjson minimumBlocks "${buildopt_minimum_positive_blocks}" '
+                  .result.meanSavedMs >= $minimumMean and
+                  .result.reductionRatio >= $minimumRatio and
+                  .result.medianBlockSavedMs > 0 and
+                  .result.interval95BlockSavedMs[0] > 0 and
+                  .result.positiveBlocks >= $minimumBlocks and
+                  .result.candidateP95Ms <= .result.controlP95Ms
+                ' "${buildopt_qualification}" >/dev/null
+            fi
         else
             jq -e '
               .evidenceState == "UNAVAILABLE" and .result == null and
@@ -184,7 +220,8 @@ for buildopt_key in "${buildopt_keys[@]}"; do
 
     jq -e --arg key "${buildopt_key}" --slurpfile qualification \
         "${buildopt_qualification}" '
-      .key == $key and .evidenceState == $qualification[0].evidenceState and
+      .cells[] | select(.key == $key) |
+      .evidenceState == $qualification[0].evidenceState and
       .result == $qualification[0].result and
       .decision == ($qualification[0].result.decision // $qualification[0].decision)
     ' "${buildopt_summary}" >/dev/null
