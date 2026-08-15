@@ -1,0 +1,34 @@
+buildopt: warming isolated control arm at bc7de799f4eb997a63250f2f70492d85f5c92f50 (cache seed 1/4)
+buildopt: warmed isolated control arm cache seed in 280839ms with total:1141/executed:301/from-cache:259/up-to-date:102/no-source:231/skipped:248/fingerprint:7ba1d6812b6e576c8d2017c5b32e7a2d502d2f641ff0f8516547c21abde37002
+buildopt: warming isolated control arm at bc7de799f4eb997a63250f2f70492d85f5c92f50 (base daemon stabilization 2/4)
+buildopt: warmed isolated control arm daemon stabilization in 37542ms with total:1141/executed:301/from-cache:259/up-to-date:102/no-source:231/skipped:248/fingerprint:7ba1d6812b6e576c8d2017c5b32e7a2d502d2f641ff0f8516547c21abde37002
+buildopt: warming isolated control arm at cc5ac835d4ab3f962565ef74d0995064acdcdb96 (target-workload stabilization 3/4)
+buildopt: warmed isolated control arm target workload in 98714ms with total:1141/executed:410/from-cache:151/up-to-date:101/no-source:231/skipped:248/fingerprint:12713cd9f0c69242e64eb9efd173ee70387e38bc7c75c7665905e148290168a3
+buildopt: confirming isolated control target-workload shape at cc5ac835d4ab3f962565ef74d0995064acdcdb96 (4/4)
+buildopt: confirmed isolated control target workload in 78727ms with total:1141/executed:410/from-cache:151/up-to-date:101/no-source:231/skipped:248/fingerprint:12713cd9f0c69242e64eb9efd173ee70387e38bc7c75c7665905e148290168a3
+buildopt: warming isolated candidate arm at bc7de799f4eb997a63250f2f70492d85f5c92f50 (cache seed 1/4)
+buildopt: warmed isolated candidate arm cache seed in 142956ms with total:58/executed:18/from-cache:19/up-to-date:3/no-source:9/skipped:9/fingerprint:8ea074f3bcc12a09cb853cb7730e10b8e414c7dddf5c480c1e096f8b83e6dc79
+buildopt: warming isolated candidate arm at bc7de799f4eb997a63250f2f70492d85f5c92f50 (base daemon stabilization 2/4)
+buildopt: warmed isolated candidate arm daemon stabilization in 7026ms with total:58/executed:18/from-cache:19/up-to-date:3/no-source:9/skipped:9/fingerprint:8ea074f3bcc12a09cb853cb7730e10b8e414c7dddf5c480c1e096f8b83e6dc79
+buildopt: warming isolated candidate arm at cc5ac835d4ab3f962565ef74d0995064acdcdb96 (target-workload stabilization 3/4)
+buildopt: warmed isolated candidate arm target workload in 33503ms with total:58/executed:21/from-cache:17/up-to-date:2/no-source:9/skipped:9/fingerprint:a3a2929636e31772a64fa2af0f79df8c2e1b467e8ffd43a9eba4ae43cbe16a63
+buildopt: confirming isolated candidate target-workload shape at cc5ac835d4ab3f962565ef74d0995064acdcdb96 (4/4)
+buildopt: confirmed isolated candidate target workload in 20671ms with total:58/executed:21/from-cache:17/up-to-date:2/no-source:9/skipped:9/fingerprint:a3a2929636e31772a64fa2af0f79df8c2e1b467e8ffd43a9eba4ae43cbe16a63
+buildopt: structural pair 1/8 control=135500ms candidate=15176ms saved=120324ms gap=9ms order=CONTROL_FIRST
+buildopt: structural pair 1 task outcomes control=total:1141/executed:410/from-cache:151/up-to-date:101/no-source:231/skipped:248/fingerprint:12713cd9f0c69242e64eb9efd173ee70387e38bc7c75c7665905e148290168a3 candidate=total:58/executed:21/from-cache:17/up-to-date:2/no-source:9/skipped:9/fingerprint:a3a2929636e31772a64fa2af0f79df8c2e1b467e8ffd43a9eba4ae43cbe16a63
+buildopt: structural pair 2/8 control=92805ms candidate=13580ms saved=79225ms gap=1ms order=CANDIDATE_FIRST
+buildopt: structural pair 2 task outcomes control=total:1141/executed:410/from-cache:151/up-to-date:101/no-source:231/skipped:248/fingerprint:12713cd9f0c69242e64eb9efd173ee70387e38bc7c75c7665905e148290168a3 candidate=total:58/executed:21/from-cache:17/up-to-date:2/no-source:9/skipped:9/fingerprint:a3a2929636e31772a64fa2af0f79df8c2e1b467e8ffd43a9eba4ae43cbe16a63
+buildopt: structural pair 3/8 control=91536ms candidate=16921ms saved=74615ms gap=2ms order=CONTROL_FIRST
+buildopt: structural pair 3 task outcomes control=total:1141/executed:410/from-cache:151/up-to-date:101/no-source:231/skipped:248/fingerprint:12713cd9f0c69242e64eb9efd173ee70387e38bc7c75c7665905e148290168a3 candidate=total:58/executed:21/from-cache:17/up-to-date:2/no-source:9/skipped:9/fingerprint:a3a2929636e31772a64fa2af0f79df8c2e1b467e8ffd43a9eba4ae43cbe16a63
+buildopt: structural pair 4/8 control=162685ms candidate=12997ms saved=149688ms gap=0ms order=CANDIDATE_FIRST
+buildopt: structural pair 4 task outcomes control=total:1141/executed:410/from-cache:151/up-to-date:101/no-source:231/skipped:248/fingerprint:12713cd9f0c69242e64eb9efd173ee70387e38bc7c75c7665905e148290168a3 candidate=total:58/executed:21/from-cache:17/up-to-date:2/no-source:9/skipped:9/fingerprint:a3a2929636e31772a64fa2af0f79df8c2e1b467e8ffd43a9eba4ae43cbe16a63
+buildopt: structural pair 5/8 control=94360ms candidate=16483ms saved=77877ms gap=9ms order=CONTROL_FIRST
+buildopt: structural pair 5 task outcomes control=total:1141/executed:410/from-cache:151/up-to-date:101/no-source:231/skipped:248/fingerprint:12713cd9f0c69242e64eb9efd173ee70387e38bc7c75c7665905e148290168a3 candidate=total:58/executed:21/from-cache:17/up-to-date:2/no-source:9/skipped:9/fingerprint:a3a2929636e31772a64fa2af0f79df8c2e1b467e8ffd43a9eba4ae43cbe16a63
+buildopt: structural pair 6/8 control=88133ms candidate=13386ms saved=74747ms gap=0ms order=CANDIDATE_FIRST
+buildopt: structural pair 6 task outcomes control=total:1141/executed:410/from-cache:151/up-to-date:101/no-source:231/skipped:248/fingerprint:12713cd9f0c69242e64eb9efd173ee70387e38bc7c75c7665905e148290168a3 candidate=total:58/executed:21/from-cache:17/up-to-date:2/no-source:9/skipped:9/fingerprint:a3a2929636e31772a64fa2af0f79df8c2e1b467e8ffd43a9eba4ae43cbe16a63
+buildopt: structural pair 7/8 control=167909ms candidate=15192ms saved=152717ms gap=3ms order=CONTROL_FIRST
+buildopt: structural pair 7 task outcomes control=total:1141/executed:410/from-cache:151/up-to-date:101/no-source:231/skipped:248/fingerprint:12713cd9f0c69242e64eb9efd173ee70387e38bc7c75c7665905e148290168a3 candidate=total:58/executed:21/from-cache:17/up-to-date:2/no-source:9/skipped:9/fingerprint:a3a2929636e31772a64fa2af0f79df8c2e1b467e8ffd43a9eba4ae43cbe16a63
+buildopt: structural pair 8/8 control=96347ms candidate=16375ms saved=79972ms gap=1ms order=CANDIDATE_FIRST
+buildopt: structural pair 8 task outcomes control=total:1141/executed:410/from-cache:151/up-to-date:101/no-source:231/skipped:248/fingerprint:12713cd9f0c69242e64eb9efd173ee70387e38bc7c75c7665905e148290168a3 candidate=total:58/executed:21/from-cache:17/up-to-date:2/no-source:9/skipped:9/fingerprint:a3a2929636e31772a64fa2af0f79df8c2e1b467e8ffd43a9eba4ae43cbe16a63
+buildopt: validating full-graph fallback with --no-daemon and measured scheduling
+buildopt: structural profile measurement unavailable: structural measurement identity or Gradle options are invalid
