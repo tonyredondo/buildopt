@@ -10,7 +10,7 @@ buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
 buildopt_spec="${buildopt_repo_root}/specs/poc-new-family-change-breadth-v1.json"
 
-for buildopt_command in git jq rg; do
+for buildopt_command in git grep jq; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
         printf 'required new-family change-breadth command is unavailable: %s\n' \
             "${buildopt_command}" >&2
@@ -160,19 +160,19 @@ buildopt_incident=$(jq -er '.amendment.preservedIncident' "${buildopt_spec}")
     exit 1
 }
 
-if rg -n 'ktorio/ktor|ktor-jvm-jar|:ktor-(http|server-core|utils)' \
+if grep -ERn 'ktorio/ktor|ktor-jvm-jar|:ktor-(http|server-core|utils)' \
     "${buildopt_repo_root}/internal" "${buildopt_repo_root}/cmd" >/dev/null; then
     printf 'Ktor-specific branch leaked into product implementation\n' >&2
     exit 1
 fi
 
-rg -Fq -- '(.changes // [{path: .changePath}])' \
+grep -Fq -- '(.changes // [{path: .changePath}])' \
     "${buildopt_script_dir}/run-generic-profile-matrix" || {
     printf 'generic profile runner does not accept multiple changed paths\n' >&2
     exit 1
 }
 
-rg -Fq -- "jq -r '.method.gradleOptions[]?'" \
+grep -Fq -- "jq -r '.method.gradleOptions[]?'" \
     "${buildopt_script_dir}/run-generic-profile-matrix" || {
     printf 'generic profile runner does not consume frozen Gradle options\n' >&2
     exit 1
