@@ -3478,6 +3478,13 @@ full-graph decision. `dev/run-generic-profile-matrix` accepts the new
 `changes[]` form while preserving the previous `changePath` form, so this
 tests multiple paths without adding Ktor logic to the product.
 
+`./dev/run-new-family-change-breadth /absolute/repository/evidence/root
+[cell-key] [capture-index]` records resumable cells through that generic
+runner. `dev/assemble-new-family-change-breadth` creates the terminal matrix,
+`dev/check-new-family-change-breadth-result` recomputes every completed
+qualification from its captures, and `dev/test-new-family-change-breadth-result`
+proves that summary or qualification tampering fails closed.
+
 Before the original-workflow preflight, the runner prepares the exact Wrapper
 distribution selected by that repository, reusing only a matching cached
 distribution and allowing at most three bounded network attempts. It runs no
