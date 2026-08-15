@@ -11,6 +11,14 @@ buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
 buildopt_spec="${buildopt_repo_root}/specs/poc-new-family-transfer-v1.json"
 
+for buildopt_command in basename date find jq; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required new-family runner command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
 case "${buildopt_output}" in
     "${buildopt_repo_root}"/*) ;;
     *)
@@ -18,10 +26,19 @@ case "${buildopt_output}" in
         exit 64
         ;;
 esac
-[[ ! -e ${buildopt_output} ]] || {
-    printf 'new-family evidence output already exists: %s\n' "${buildopt_output}" >&2
-    exit 1
-}
+if [[ -e ${buildopt_output} ]]; then
+    [[ -d ${buildopt_output} ]] || {
+        printf 'new-family evidence output is not a directory: %s\n' "${buildopt_output}" >&2
+        exit 1
+    }
+    while IFS= read -r buildopt_existing; do
+        [[ $(basename -- "${buildopt_existing}") == incidents ]] || {
+            printf 'new-family evidence output already contains capture state: %s\n' \
+                "${buildopt_existing}" >&2
+            exit 1
+        }
+    done < <(find "${buildopt_output}" -mindepth 1 -maxdepth 1 -print)
+fi
 
 "${buildopt_script_dir}/check-new-family-transfer" --spec-only
 mkdir -p -- "${buildopt_output}"

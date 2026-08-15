@@ -37,6 +37,9 @@ Gradle options, timeout, observed revision, and the source output-contract
 SHA-256. `reviewRequired` is always true, while automatic activation and
 production authority are always false. Run `buildopt profile input --check
 .buildopt/profile.json` after resolving a merge or editing workflow metadata.
+Gradle project properties needed by that workflow may be recorded as explicit
+`-Pname=value` options; credentials and other secrets must not be placed in
+this checked-in owner file.
 
 Every proposal executes the recorded workflow and revalidates its output
 contract at the current target. Drift is a reviewable native decision, not an

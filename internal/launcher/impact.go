@@ -53,7 +53,28 @@ func validImpactGradleOption(value string) bool {
 		workers, err := strconv.Atoi(strings.TrimPrefix(value, "--max-workers="))
 		return err == nil && workers > 0
 	}
+	if strings.HasPrefix(value, "-P") {
+		return validGradleProjectProperty(value)
+	}
 	return false
+}
+
+func validGradleProjectProperty(value string) bool {
+	property := strings.TrimPrefix(value, "-P")
+	name, propertyValue, found := strings.Cut(property, "=")
+	if !found || name == "" || strings.ContainsAny(propertyValue, "\x00\r\n") {
+		return false
+	}
+	for _, character := range name {
+		if (character >= 'a' && character <= 'z') ||
+			(character >= 'A' && character <= 'Z') ||
+			(character >= '0' && character <= '9') ||
+			strings.ContainsRune("._-", character) {
+			continue
+		}
+		return false
+	}
+	return true
 }
 
 type impactInvocation struct {

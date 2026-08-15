@@ -191,9 +191,10 @@ buildopt impact \
 `PATH` is a bounded repository-relative file with one unique changed path per
 line. The command validates all checked-in Build Impact state and then runs
 either the exact repository-owned alternative or the manifest's original full
-entrypoints. `--gradle-option` is repeatable and accepts only execution options
-that cannot add/exclude tasks or change the project root; task entrypoints come
-only from the repository manifest.
+entrypoints. `--gradle-option` is repeatable and accepts bounded execution
+options plus explicit `-Pname=value` project properties recorded by the owner.
+It cannot add/exclude tasks, change the project root or load an init script;
+task entrypoints come only from the repository manifest.
 
 This command is an explicit POC experiment, not production authorization.
 Malformed or drifted state returns code `78`; unknown and global changes safely

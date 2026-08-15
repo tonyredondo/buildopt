@@ -28,8 +28,10 @@ also retains the full graph. A missing file remains a configuration error.
 
 Repeated `--gradle-option` values are restricted to a bounded allowlist of
 execution controls such as offline mode, console mode, daemon/cache flags and
-an explicit positive worker count. They cannot add or exclude tasks, select a
-different project root, or override the manifest's entrypoints.
+an explicit positive worker count. Owner-declared Gradle project properties
+are accepted only as `-Pname=value`, with a bounded safe name and no control
+characters in the value. Options cannot add or exclude tasks, select a
+different project root, load an init script, or override manifest entrypoints.
 
 `BUILDOPT_BYPASS=1` always restores the original entrypoints and does not
 require the generated graph to be healthy, preserving the existing recovery

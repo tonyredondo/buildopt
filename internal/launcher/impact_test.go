@@ -210,6 +210,38 @@ func TestImpactInvocationAcceptsBoundedSpringExecutionOptions(t *testing.T) {
 	}
 }
 
+func TestImpactInvocationAcceptsOwnerGradleProjectProperties(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	t.Chdir(repositoryRoot)
+	invocation, err := prepareImpactInvocation([]string{
+		"--repository-id", "tonyredondo/buildopt-impact-synthetic",
+		"--changes-file", "changed.txt",
+		"--gradle-option=-Ptarget.posix=false",
+		"--gradle-option=-Powner-feature_1=enabled value",
+	}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := strings.Join(invocation.gradleArgs, " "); got != "-Ptarget.posix=false -Powner-feature_1=enabled value :service-a:assemble" {
+		t.Fatalf("project-property Gradle arguments = %q", got)
+	}
+}
+
+func TestImpactInvocationRejectsMalformedGradleProjectProperties(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	t.Chdir(repositoryRoot)
+	for _, option := range []string{"-P", "-Pmissing-value", "-Pbad/name=value", "-Pbad name=value", "-Pname=line\nbreak"} {
+		_, err := prepareImpactInvocation([]string{
+			"--repository-id", "tonyredondo/buildopt-impact-synthetic",
+			"--changes-file", "changed.txt",
+			"--gradle-option=" + option,
+		}, false)
+		if err == nil {
+			t.Fatalf("malformed Gradle project property %q was accepted", option)
+		}
+	}
+}
+
 func TestImpactInvocationEmptyDiffRetainsFullGraph(t *testing.T) {
 	repositoryRoot := impactTestRepository(t)
 	t.Chdir(repositoryRoot)
