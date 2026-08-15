@@ -602,6 +602,13 @@ external checkouts, and proves six exact candidate plans, six digest-drift
 native fallbacks, six same-replay semantic-output matches, and six unchanged
 historical qualifications. This block performs no new timing.
 
+The [cross-date output-equivalence protocol](./poc-cross-date-output-equivalence-v1.md)
+freezes the narrow follow-up to that public replay. It adds only Groovy's
+`BuildDate` beside the already reviewed `BuildTime`, requires the old contract
+to reject the controlled date change, and requires undeclared property and ZIP
+payload drift to remain visible. Historical profiles and timing qualifications
+remain immutable.
+
 The retained [v5 evidence](../benchmarks/results/poc-generic-holdout-v5/README.md)
 passes that unchanged contract: native averages 216.724 seconds and BuildOpt
 203.991 seconds, saving 12.733 seconds/5.88% with interval

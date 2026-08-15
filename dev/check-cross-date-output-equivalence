@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-cross-date-output-equivalence-v1.json"
+buildopt_contract="${buildopt_repo_root}/fixtures/output-equivalence/groovy-jar.json"
+buildopt_installed="${buildopt_repo_root}/benchmarks/results/poc-installed-profile-replay-v1/summary.json"
+
+command -v jq >/dev/null 2>&1 || {
+    printf 'required cross-date checker command is unavailable: jq\n' >&2
+    exit 1
+}
+
+jq -e '
+  keys == [
+    "acceptance", "boundaries", "cells", "contractExtension", "decision",
+    "evidenceSchemaVersion", "method", "schemaVersion", "sources", "workItem"
+  ] and
+  .schemaVersion == "buildopt.specs/poc-cross-date-output-equivalence/v1" and
+  .evidenceSchemaVersion == "buildopt.evidence/poc-cross-date-output-equivalence/v1" and
+  .workItem == "POC-CROSS-DATE-OUTPUT-EQUIVALENCE-001" and
+  .decision == "PREREGISTER_REVIEWED_CROSS_DATE_OUTPUT_EQUIVALENCE" and
+  (.cells | length) == 6 and (.cells | unique | length) == 6 and
+  .contractExtension.repositoryId == "apache/groovy" and
+  .contractExtension.pattern == "subprojects/groovy-json/build/libs/*.jar" and
+  .contractExtension.entry == "META-INF/groovy-release-info.properties" and
+  .contractExtension.previousKeys == ["BuildTime"] and
+  .contractExtension.reviewedKeys == ["BuildDate", "BuildTime"] and
+  .contractExtension.onlyAddedKey == "BuildDate" and
+  .method.groovyDateBoundaryProbe ==
+    "COPY_REAL_JAR_AND_REPLACE_ONLY_OWNER_DECLARED_BUILDDATE" and
+  .method.previousContractExpectation == "MISMATCH" and
+  .method.reviewedContractExpectation == "MATCH" and
+  .method.undeclaredPropertyProbe == "CHANGE_IMPLEMENTATIONVERSION" and
+  .method.payloadProbe == "CHANGE_NON_METADATA_ZIP_ENTRY_PAYLOAD" and
+  .method.undeclaredDriftExpectation == "MISMATCH" and
+  .method.historicalProfilesMutated == false and
+  .method.repositorySpecificProductRulesAllowed == false and
+  .acceptance.cellsRequired == 6 and
+  .acceptance.crossDateMatchesRequired == 6 and
+  .acceptance.groovyControlledDateProbesRequired == 2 and
+  .acceptance.kafkaNaturalCrossCaptureMatchesRequired == 4 and
+  .acceptance.previousGroovyContractMustRejectDateChange == true and
+  .acceptance.reviewedGroovyContractMustAcceptDateAndTimeOnly == true and
+  .acceptance.undeclaredPropertyDriftMustFail == true and
+  .acceptance.payloadDriftMustFail == true and
+  .acceptance.historicalQualificationsMustRemainUnchanged == true and
+  .acceptance.maximumProductAttributableFailures == 0 and
+  .boundaries.proofOfConcept == true and
+  .boundaries.productionAuthorized == false and
+  .boundaries.automaticActivation == false and
+  .boundaries.newTimingClaim == false and
+  .boundaries.repositoryPercentagesMayBeAveraged == false and
+  .boundaries.mechanismPercentagesMayBeAdded == false and
+  .boundaries.soakRequired == false and
+  .boundaries.designPartnerRequired == false and
+  .boundaries.testOptimizationModified == false
+' "${buildopt_spec}" >/dev/null
+
+jq -e '
+  .rules == [{
+    pattern: "subprojects/groovy-json/build/libs/*.jar",
+    mode: "CANONICAL_ZIP",
+    volatileProperties: [{
+      entry: "META-INF/groovy-release-info.properties",
+      keys: ["BuildDate", "BuildTime"]
+    }]
+  }] and
+  .reviewRequired == true and
+  .activationAutomatic == false and
+  .productionAuthorized == false
+' "${buildopt_contract}" >/dev/null
+
+jq -e --slurpfile protocol "${buildopt_spec}" '
+  .schemaVersion == "buildopt.evidence/poc-installed-profile-replay/v1" and
+  ([.cells[].key] == $protocol[0].cells) and
+  .aggregation.cells == 6 and
+  .aggregation.crossCaptureTerminalOutputsMatched == 4 and
+  .aggregation.qualificationsPreserved == 6 and
+  .aggregation.productAttributableFailures == 0
+' "${buildopt_installed}" >/dev/null
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/outputequivalence \
+    -run 'Test(CanonicalZIP|CanonicalProperty|Contract)' >/dev/null
+
+printf 'Cross-date output-equivalence contract OK: %s\n' "${buildopt_spec}"

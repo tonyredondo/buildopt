@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "buildopt.specs/poc-cross-date-output-equivalence/v1",
+  "evidenceSchemaVersion": "buildopt.evidence/poc-cross-date-output-equivalence/v1",
+  "workItem": "POC-CROSS-DATE-OUTPUT-EQUIVALENCE-001",
+  "decision": "PREREGISTER_REVIEWED_CROSS_DATE_OUTPUT_EQUIVALENCE",
+  "sources": {
+    "installedReplay": "benchmarks/results/poc-installed-profile-replay-v1/summary.json",
+    "terminalQualifications": "benchmarks/results/poc-generic-change-breadth-v1",
+    "matrixSpec": "specs/poc-generic-change-breadth-v1.json",
+    "reviewedContract": "fixtures/output-equivalence/groovy-jar.json"
+  },
+  "cells": [
+    "apache-groovy-jar-leaf-source",
+    "apache-groovy-jar-shared-source",
+    "apache-kafka-checkstyle-metadata-source",
+    "apache-kafka-checkstyle-client-utils-source",
+    "apache-kafka-shadow-clients-source",
+    "apache-kafka-shadow-generator-source"
+  ],
+  "contractExtension": {
+    "repositoryId": "apache/groovy",
+    "pattern": "subprojects/groovy-json/build/libs/*.jar",
+    "entry": "META-INF/groovy-release-info.properties",
+    "previousKeys": [
+      "BuildTime"
+    ],
+    "reviewedKeys": [
+      "BuildDate",
+      "BuildTime"
+    ],
+    "onlyAddedKey": "BuildDate"
+  },
+  "method": {
+    "groovyArtifact": "REAL_JAR_FROM_FROZEN_PUBLIC_REVISION_AND_DETERMINISTIC_CHANGE",
+    "groovyDateBoundaryProbe": "COPY_REAL_JAR_AND_REPLACE_ONLY_OWNER_DECLARED_BUILDDATE",
+    "previousContractExpectation": "MISMATCH",
+    "reviewedContractExpectation": "MATCH",
+    "undeclaredPropertyProbe": "CHANGE_IMPLEMENTATIONVERSION",
+    "payloadProbe": "CHANGE_NON_METADATA_ZIP_ENTRY_PAYLOAD",
+    "undeclaredDriftExpectation": "MISMATCH",
+    "kafkaCrossDateEvidence": "PRESERVE_FOUR_NATURAL_CROSS_CAPTURE_MATCHES_FROM_INSTALLED_REPLAY",
+    "qualificationDecision": "PRESERVE_ALL_SIX_HISTORICAL_TIMING_QUALIFICATIONS_BYTE_FOR_BYTE",
+    "historicalProfilesMutated": false,
+    "repositorySpecificProductRulesAllowed": false
+  },
+  "acceptance": {
+    "cellsRequired": 6,
+    "crossDateMatchesRequired": 6,
+    "groovyControlledDateProbesRequired": 2,
+    "kafkaNaturalCrossCaptureMatchesRequired": 4,
+    "previousGroovyContractMustRejectDateChange": true,
+    "reviewedGroovyContractMustAcceptDateAndTimeOnly": true,
+    "undeclaredPropertyDriftMustFail": true,
+    "payloadDriftMustFail": true,
+    "historicalQualificationsMustRemainUnchanged": true,
+    "maximumProductAttributableFailures": 0
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "newTimingClaim": false,
+    "repositoryPercentagesMayBeAveraged": false,
+    "mechanismPercentagesMayBeAdded": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}
