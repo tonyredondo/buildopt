@@ -343,6 +343,7 @@ buildopt_required_files=(
     "dev/check-statistical-qualification-v2"
     "dev/check-statistical-qualification-v2-result"
     "dev/check-new-family-transfer"
+    "dev/run-new-family-transfer"
     "dev/assemble-generic-output-equivalence"
     "dev/assemble-generic-change-breadth"
     "dev/assemble-calibration-economics"

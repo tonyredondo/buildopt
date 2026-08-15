@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/repository/evidence/directory\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-new-family-transfer-v1.json"
+
+case "${buildopt_output}" in
+    "${buildopt_repo_root}"/*) ;;
+    *)
+        printf 'new-family evidence must be written inside the BuildOpt repository\n' >&2
+        exit 64
+        ;;
+esac
+[[ ! -e ${buildopt_output} ]] || {
+    printf 'new-family evidence output already exists: %s\n' "${buildopt_output}" >&2
+    exit 1
+}
+
+"${buildopt_script_dir}/check-new-family-transfer" --spec-only
+mkdir -p -- "${buildopt_output}"
+
+for buildopt_capture in 1 2; do
+    printf 'Capturing independent Ktor transfer %d/2\n' "${buildopt_capture}"
+    "${buildopt_script_dir}/run-generic-holdout" \
+        "${buildopt_output}/capture-${buildopt_capture}" "${buildopt_spec}"
+done
+
+buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+buildopt_first_status=$(jq -er '.measurementStatus' \
+    "${buildopt_output}/capture-1/summary.json")
+buildopt_second_status=$(jq -er '.measurementStatus' \
+    "${buildopt_output}/capture-2/summary.json")
+
+if [[ ${buildopt_first_status} == COMPLETED && ${buildopt_second_status} == COMPLETED ]]; then
+    buildopt_capture_one=${buildopt_output#"${buildopt_repo_root}/"}/capture-1/evidence.json
+    buildopt_capture_two=${buildopt_output#"${buildopt_repo_root}/"}/capture-2/evidence.json
+    (
+        cd -- "${buildopt_repo_root}"
+        "${buildopt_script_dir}/run" --toolchain go -- \
+            go run ./cmd/buildopt profile aggregate \
+            --capture "${buildopt_capture_one}" \
+            --capture "${buildopt_capture_two}" \
+            --captured-at "${buildopt_captured_at}"
+    ) >"${buildopt_output}/qualification.json"
+else
+    jq -n -S \
+        --arg capturedAt "${buildopt_captured_at}" \
+        --slurpfile spec "${buildopt_spec}" \
+        --slurpfile first "${buildopt_output}/capture-1/summary.json" \
+        --slurpfile second "${buildopt_output}/capture-2/summary.json" '
+      {
+        schemaVersion: $spec[0].aggregateEvidenceSchemaVersion,
+        evidenceState: "UNAVAILABLE",
+        capturedAt: $capturedAt,
+        subject: {
+          repositoryId: $spec[0].subject.repositoryId,
+          repositoryRevision: $spec[0].subject.publicRevision,
+          pipelineClass: $spec[0].subject.pipelineClass
+        },
+        captures: [
+          {index: 1, proposalDecision: $first[0].proposal.decision,
+           measurementStatus: $first[0].measurementStatus},
+          {index: 2, proposalDecision: $second[0].proposal.decision,
+           measurementStatus: $second[0].measurementStatus}
+        ],
+        result: null,
+        decision: "RETAIN_NATIVE_GRADLE",
+        boundaries: {
+          proofOfConcept: true,
+          productionAuthorized: false,
+          automaticActivation: false,
+          repositorySpecificRuleAdded: false,
+          testOptimizationModified: false
+        }
+      }
+    ' >"${buildopt_output}/qualification.json"
+fi
+
+jq -n -S \
+    --arg capturedAt "${buildopt_captured_at}" \
+    --slurpfile spec "${buildopt_spec}" \
+    --slurpfile first "${buildopt_output}/capture-1/summary.json" \
+    --slurpfile second "${buildopt_output}/capture-2/summary.json" \
+    --slurpfile qualification "${buildopt_output}/qualification.json" '
+  {
+    schemaVersion: "buildopt.evidence/poc-new-family-transfer-summary/v1",
+    workItem: $spec[0].workItem,
+    capturedAt: $capturedAt,
+    subject: $spec[0].subject,
+    captures: [
+      {index: 1, capturedAt: $first[0].capturedAt,
+       buildoptRevision: $first[0].buildopt.revision,
+       executableSha256: $first[0].buildopt.executableSha256,
+       targetRevision: $first[0].subject.targetRevision,
+       proposalDecision: $first[0].proposal.decision,
+       measurementStatus: $first[0].measurementStatus},
+      {index: 2, capturedAt: $second[0].capturedAt,
+       buildoptRevision: $second[0].buildopt.revision,
+       executableSha256: $second[0].buildopt.executableSha256,
+       targetRevision: $second[0].subject.targetRevision,
+       proposalDecision: $second[0].proposal.decision,
+       measurementStatus: $second[0].measurementStatus}
+    ],
+    proposal: {
+      decisionsIdentical: ($first[0].proposal.decision == $second[0].proposal.decision),
+      candidateEntrypointsIdentical:
+        ($first[0].proposal.candidateEntrypoints == $second[0].proposal.candidateEntrypoints),
+      first: $first[0].proposal,
+      second: $second[0].proposal
+    },
+    result: $qualification[0].result,
+    evidenceState: $qualification[0].evidenceState,
+    decision: ($qualification[0].result.decision // $qualification[0].decision),
+    boundaries: $spec[0].boundaries
+  }
+' >"${buildopt_output}/summary.json"
+
+"${buildopt_script_dir}/check-new-family-transfer" "${buildopt_output}"
+printf 'New-family transfer evidence written to %s\n' "${buildopt_output}"

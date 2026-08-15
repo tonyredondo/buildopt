@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if (($# > 1)) || { (($# == 1)) && [[ $1 != --spec-only ]]; }; then
-    printf 'usage: %s [--spec-only]\n' "$0" >&2
+if (($# > 1)) || { (($# == 1)) && [[ $1 != --spec-only && $1 != /* ]]; }; then
+    printf 'usage: %s [--spec-only|/absolute/evidence/directory]\n' "$0" >&2
     exit 64
 fi
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
 buildopt_spec="${buildopt_repo_root}/specs/poc-new-family-transfer-v1.json"
+buildopt_evidence=${1:-"${buildopt_repo_root}/benchmarks/results/poc-new-family-transfer-v1"}
 
 command -v jq >/dev/null 2>&1 || {
     printf 'required new-family validation command is unavailable: jq\n' >&2
@@ -21,7 +22,8 @@ command -v jq >/dev/null 2>&1 || {
 
 jq -e '
   .schemaVersion == "buildopt.specs/poc-new-family-transfer/v1" and
-  .evidenceSchemaVersion == "buildopt.evidence/structural-profile-balanced-qualification/v2" and
+  .captureEvidenceSchemaVersion == "buildopt.evidence/poc-new-family-transfer-capture/v1" and
+  .aggregateEvidenceSchemaVersion == "buildopt.evidence/structural-profile-balanced-qualification/v2" and
   .workItem == "POC-NEW-FAMILY-TRANSFER-001" and
   .decision == "MEASURE_UNCHANGED_GENERIC_PATH_ON_PREREGISTERED_KTOR_JVM_ASSEMBLY" and
   .preregisteredFromRevision == "5f451bf2ef9605ff4aabd4941af1e4af7face842" and
@@ -57,7 +59,8 @@ jq -e '
   .runner.targetStabilityConfirmations == 2 and
   .runner.orderWithinCapture == "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST" and
   .runner.blockConstruction == "ADJACENT_CONTROL_FIRST_PLUS_CANDIDATE_FIRST" and
-  .runner.perBuildTimeout == "45m" and .runner.maximumInterArmGap == "5s" and
+  .runner.proposalTimeout == "60m" and .runner.perBuildTimeout == "45m" and
+  .runner.maximumInterArmGap == "5s" and
   .method.surface == "INSTALLED_BUILDOPT_PROFILE_PROPOSE_MEASURE_EVALUATE" and
   .method.candidateMechanisms == ["BUILD_IMPACT"] and
   .method.control == "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW" and
@@ -103,3 +106,114 @@ jq -e '
 ' "${buildopt_spec}" >/dev/null
 
 printf 'New-family transfer preregistration OK: %s\n' "${buildopt_spec}"
+
+if [[ ${buildopt_evidence} == --spec-only ]]; then
+    exit 0
+fi
+
+for buildopt_command in cmp mktemp; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required new-family validation command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+for buildopt_capture in 1 2; do
+    "${buildopt_script_dir}/check-generic-holdout" \
+        "${buildopt_evidence}/capture-${buildopt_capture}" "${buildopt_spec}"
+done
+
+buildopt_summary="${buildopt_evidence}/summary.json"
+buildopt_qualification="${buildopt_evidence}/qualification.json"
+for buildopt_file in "${buildopt_summary}" "${buildopt_qualification}"; do
+    [[ -s ${buildopt_file} ]] || {
+        printf 'missing new-family transfer evidence: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+jq -e --slurpfile spec "${buildopt_spec}" '
+  .schemaVersion == "buildopt.evidence/poc-new-family-transfer-summary/v1" and
+  .workItem == $spec[0].workItem and (.capturedAt | fromdateiso8601) > 0 and
+  .subject == $spec[0].subject and (.captures | length) == 2 and
+  [.captures[].index] == [1, 2] and
+  ([.captures[].capturedAt] | unique | length) == 2 and
+  ([.captures[].buildoptRevision] | unique | length) == 1 and
+  ([.captures[].executableSha256] | unique | length) == 1 and
+  ([.captures[].targetRevision] | unique | length) == 1 and
+  .proposal.decisionsIdentical == true and
+  .proposal.candidateEntrypointsIdentical == true and
+  .boundaries == $spec[0].boundaries and
+  (.decision | IN("QUALIFY_BALANCED_STRUCTURAL_PROFILE", "RETAIN_NATIVE_GRADLE"))
+' "${buildopt_summary}" >/dev/null
+
+buildopt_first_status=$(jq -er '.captures[0].measurementStatus' "${buildopt_summary}")
+buildopt_second_status=$(jq -er '.captures[1].measurementStatus' "${buildopt_summary}")
+if [[ ${buildopt_first_status} == COMPLETED && ${buildopt_second_status} == COMPLETED ]]; then
+    buildopt_expected=$(mktemp "${TMPDIR:-/tmp}/buildopt-new-family-check.XXXXXX")
+    trap 'rm -f -- "${buildopt_expected}"' EXIT
+    buildopt_captured_at=$(jq -er '.capturedAt' "${buildopt_qualification}")
+    buildopt_capture_one=${buildopt_evidence#"${buildopt_repo_root}/"}/capture-1/evidence.json
+    buildopt_capture_two=${buildopt_evidence#"${buildopt_repo_root}/"}/capture-2/evidence.json
+    [[ ${buildopt_capture_one} != "${buildopt_evidence}/capture-1/evidence.json" ]] || {
+        printf 'new-family evidence must be inside the BuildOpt repository\n' >&2
+        exit 1
+    }
+    (
+        cd -- "${buildopt_repo_root}"
+        "${buildopt_script_dir}/run" --toolchain go -- \
+            go run ./cmd/buildopt profile aggregate \
+            --capture "${buildopt_capture_one}" \
+            --capture "${buildopt_capture_two}" \
+            --captured-at "${buildopt_captured_at}"
+    ) >"${buildopt_expected}"
+    cmp --silent "${buildopt_expected}" "${buildopt_qualification}" || {
+        printf 'new-family qualification does not recompute from its captures\n' >&2
+        exit 1
+    }
+    jq -e --slurpfile spec "${buildopt_spec}" '
+      .schemaVersion == $spec[0].aggregateEvidenceSchemaVersion and
+      (.evidenceState | IN("QUALIFIED", "INCONCLUSIVE")) and
+      .subject.repositoryId == $spec[0].subject.repositoryId and
+      (.subject.repositoryRevision | test("^[0-9a-f]{40}$")) and
+      .execution.captureCount == 2 and .execution.pairsPerCapture == 8 and
+      .execution.blockCount == 8 and .execution.mechanisms == ["BUILD_IMPACT"] and
+      .execution.gradleOptions == $spec[0].method.gradleOptions and
+      (.captures | length) == 2 and (.blocks | length) == 8 and
+      all(.captures[]; (.sha256 | test("^[0-9a-f]{64}$"))) and
+      .qualification.minimumMeanSavedMs == $spec[0].qualification.minimumMeanSavedMs and
+      .qualification.minimumReductionRatio == $spec[0].qualification.minimumReductionRatio and
+      .qualification.minimumPositiveBlocks == $spec[0].qualification.minimumPositiveBlocks and
+      .result.captures == 2 and .result.pairs == 16 and .result.blocks == 8 and
+      .result.requiredOutputsIdentical == true and
+      .result.executionShapeStable == true and
+      .result.fallbacksSuccessful == true and
+      (.result.qualified == (.evidenceState == "QUALIFIED")) and
+      (.result.decision == (if .result.qualified then
+        "QUALIFY_BALANCED_STRUCTURAL_PROFILE" else "RETAIN_NATIVE_GRADLE" end)) and
+      .boundaries.proofOfConcept == true and
+      .boundaries.productionAuthorized == false and
+      .boundaries.repositorySpecificRuleAdded == false and
+      .boundaries.testOptimizationModified == false
+    ' "${buildopt_qualification}" >/dev/null
+else
+    jq -e --slurpfile spec "${buildopt_spec}" '
+      .schemaVersion == $spec[0].aggregateEvidenceSchemaVersion and
+      .evidenceState == "UNAVAILABLE" and .result == null and
+      .decision == "RETAIN_NATIVE_GRADLE" and (.captures | length) == 2 and
+      ([.captures[].measurementStatus] | any(. != "COMPLETED")) and
+      .boundaries.proofOfConcept == true and
+      .boundaries.productionAuthorized == false and
+      .boundaries.repositorySpecificRuleAdded == false and
+      .boundaries.testOptimizationModified == false
+    ' "${buildopt_qualification}" >/dev/null
+fi
+
+jq -e --slurpfile qualification "${buildopt_qualification}" '
+  .evidenceState == $qualification[0].evidenceState and
+  .result == $qualification[0].result and
+  .decision == ($qualification[0].result.decision // $qualification[0].decision)
+' "${buildopt_summary}" >/dev/null
+
+printf 'New-family transfer evidence OK: %s (%s)\n' \
+    "${buildopt_evidence}" "$(jq -r '.decision' "${buildopt_summary}")"

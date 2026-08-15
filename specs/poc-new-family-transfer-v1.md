@@ -72,3 +72,7 @@ Validate the preregistration before any owner workflow, proposal or timing:
 The capture and offline evidence commands are added only after this
 preregistration is committed, so their implementation cannot encode an
 observed Ktor result.
+
+The implementation commit distinguishes the per-capture envelope schema from
+the balanced aggregate schema. This naming correction was made before any
+`assemble`, proposal or timing and changes no frozen subject, method or gate.

@@ -305,7 +305,7 @@ for buildopt_file in "${buildopt_required[@]}"; do
 done
 
 jq -e --slurpfile spec "${buildopt_spec}" '
-    .schemaVersion == $spec[0].evidenceSchemaVersion and
+    .schemaVersion == ($spec[0].captureEvidenceSchemaVersion // $spec[0].evidenceSchemaVersion) and
     .workItem == $spec[0].workItem and
     (.capturedAt | fromdateiso8601) > 0 and
     (.buildopt.revision | test("^[0-9a-f]{40}$")) and

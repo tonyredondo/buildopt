@@ -50,6 +50,8 @@ buildopt_jdk=$(jq -er '.subject.jdkToolchain' "${buildopt_spec}")
 buildopt_pipeline=$(jq -er '.subject.pipelineClass' "${buildopt_spec}")
 buildopt_change_path=$(jq -er '.subject.changePath' "${buildopt_spec}")
 buildopt_mutation=$(jq -er '.subject.mutation' "${buildopt_spec}")
+buildopt_per_build_timeout=$(jq -er '.runner.perBuildTimeout' "${buildopt_spec}")
+buildopt_proposal_timeout=$(jq -r '.runner.proposalTimeout // "45m"' "${buildopt_spec}")
 buildopt_repository="${buildopt_root}/repository"
 buildopt_gradle_home="${buildopt_root}/gradle-home"
 buildopt_package_root="${buildopt_root}/package"
@@ -105,12 +107,16 @@ buildopt_output_args=()
 while IFS= read -r buildopt_required_output; do
     buildopt_output_args+=(--required-output "${buildopt_required_output}")
 done < <(jq -r '.subject.requiredOutputs[]' "${buildopt_spec}")
+buildopt_gradle_args=()
+while IFS= read -r buildopt_gradle_option; do
+    buildopt_gradle_args+=(--gradle-option="${buildopt_gradle_option}")
+done < <(jq -r '.method.gradleOptions[]' "${buildopt_spec}")
 
 printf 'Discovering generic structural candidate for %s\n' "${buildopt_repository_id}"
 if ! (
     cd -- "${buildopt_repository}"
     env -u CI GRADLE_USER_HOME="${buildopt_gradle_home}" \
-        timeout 45m \
+        timeout "${buildopt_proposal_timeout}" \
         "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
         "${buildopt_executable}" profile propose \
         --repository-id "${buildopt_repository_id}" \
@@ -118,9 +124,9 @@ if ! (
         "${buildopt_entrypoint_args[@]}" \
         --changes-file buildopt-changes.txt \
         --base-revision "${buildopt_base}" \
-        "${buildopt_output_args[@]}" \
-        --gradle-option=--no-scan --gradle-option=--max-workers=12 \
-        --buildopt-revision "${buildopt_revision}" --timeout 30m
+        "${buildopt_output_args[@]}" "${buildopt_gradle_args[@]}" \
+        --buildopt-revision "${buildopt_revision}" \
+        --timeout "${buildopt_per_build_timeout}"
 ) >"${buildopt_output}/proposal.log" 2>&1; then
     tail -n 200 "${buildopt_output}/proposal.log" >&2
     printf 'holdout proposal execution failed\n' >&2
@@ -144,11 +150,7 @@ printf 'null\n' >"${buildopt_output}/evaluation.json"
 if [[ $(jq -r '.decision' \
     "${buildopt_repository}/buildopt-profile-proposal.json") == \
     MEASURE_STRUCTURAL_CANDIDATE ]]; then
-	buildopt_gradle_args=()
-    while IFS= read -r buildopt_gradle_option; do
-        buildopt_gradle_args+=(--gradle-option="${buildopt_gradle_option}")
-	done < <(jq -r '.method.gradleOptions[]' "${buildopt_spec}")
-	buildopt_stability_args=()
+		buildopt_stability_args=()
 	buildopt_target_confirmations=$(jq -r '.runner.targetStabilityConfirmations // 1' "${buildopt_spec}")
 	if [[ ${buildopt_target_confirmations} != 1 ]]; then
 		buildopt_stability_args+=(--target-stability-confirmations "${buildopt_target_confirmations}")
@@ -168,7 +170,8 @@ if [[ $(jq -r '.decision' \
             --base-revision "${buildopt_base}" \
             --buildopt-revision "${buildopt_revision}" \
 			--evidence-output buildopt-structural-evidence.json \
-			"${buildopt_gradle_args[@]}" "${buildopt_stability_args[@]}" --timeout 30m
+				"${buildopt_gradle_args[@]}" "${buildopt_stability_args[@]}" \
+				--timeout "${buildopt_per_build_timeout}"
     ) >"${buildopt_output}/measurement.log" 2>&1; then
         buildopt_measure_status=COMPLETED
         cp -- "${buildopt_repository}/buildopt-structural-evidence.json" \
@@ -207,7 +210,7 @@ jq -n -S \
     --slurpfile proposal "${buildopt_repository}/buildopt-profile-proposal.json" \
     --slurpfile evidence "${buildopt_output}/evidence.json" '
     {
-      schemaVersion: $spec[0].evidenceSchemaVersion,
+      schemaVersion: ($spec[0].captureEvidenceSchemaVersion // $spec[0].evidenceSchemaVersion),
       workItem: $spec[0].workItem,
       capturedAt: $capturedAt,
       buildopt: {

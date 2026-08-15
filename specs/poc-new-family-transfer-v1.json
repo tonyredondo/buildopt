@@ -1,6 +1,7 @@
 {
   "schemaVersion": "buildopt.specs/poc-new-family-transfer/v1",
-  "evidenceSchemaVersion": "buildopt.evidence/structural-profile-balanced-qualification/v2",
+  "captureEvidenceSchemaVersion": "buildopt.evidence/poc-new-family-transfer-capture/v1",
+  "aggregateEvidenceSchemaVersion": "buildopt.evidence/structural-profile-balanced-qualification/v2",
   "workItem": "POC-NEW-FAMILY-TRANSFER-001",
   "decision": "MEASURE_UNCHANGED_GENERIC_PATH_ON_PREREGISTERED_KTOR_JVM_ASSEMBLY",
   "preregisteredFromRevision": "5f451bf2ef9605ff4aabd4941af1e4af7face842",
@@ -50,6 +51,7 @@
     "targetStabilityConfirmations": 2,
     "orderWithinCapture": "ALTERNATING_CONTROL_FIRST_CANDIDATE_FIRST",
     "blockConstruction": "ADJACENT_CONTROL_FIRST_PLUS_CANDIDATE_FIRST",
+    "proposalTimeout": "60m",
     "perBuildTimeout": "45m",
     "maximumInterArmGap": "5s",
     "fallbackMaxWorkers": 12
