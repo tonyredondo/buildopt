@@ -1,0 +1,290 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/output\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+[[ ! -e ${buildopt_output} || -d ${buildopt_output} ]] || {
+    printf 'cross-date evidence output is not a directory: %s\n' "${buildopt_output}" >&2
+    exit 1
+}
+[[ ! -s ${buildopt_output}/summary.json ]] || {
+    printf 'cross-date evidence is already complete: %s\n' "${buildopt_output}" >&2
+    exit 1
+}
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-cross-date-output-equivalence-v1.json"
+buildopt_source_spec="${buildopt_repo_root}/specs/poc-generic-change-breadth-v1.json"
+buildopt_terminal_root="${buildopt_repo_root}/benchmarks/results/poc-generic-change-breadth-v1"
+buildopt_installed="${buildopt_repo_root}/benchmarks/results/poc-installed-profile-replay-v1/summary.json"
+buildopt_reviewed_contract="${buildopt_repo_root}/fixtures/output-equivalence/groovy-jar.json"
+
+for buildopt_command in awk cp find git jq mkdir mktemp perl python3 sha256sum sort tar timeout; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required cross-date runner command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+"${buildopt_script_dir}/check-cross-date-output-equivalence" >/dev/null
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-cross-date-output.XXXXXX")
+buildopt_cleanup() {
+    if [[ ${buildopt_root:-} == "${TMPDIR:-/tmp}/buildopt-cross-date-output."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_normalize_log() {
+    local buildopt_log=$1
+    python3 - "${buildopt_log}" "${buildopt_root}" "${buildopt_repo_root}" "${HOME}" <<'PY'
+from pathlib import Path
+import sys
+
+log = Path(sys.argv[1])
+content = log.read_text(encoding="utf-8")
+for source, replacement in sorted((
+    (sys.argv[2], "${BUILDOPT_CAPTURE_ROOT}"),
+    (sys.argv[3], "${BUILDOPT_SOURCE_ROOT}"),
+    (sys.argv[4], "${HOME}"),
+), key=lambda pair: len(pair[0]), reverse=True):
+    content = content.replace(source, replacement)
+log.write_text(content, encoding="utf-8")
+PY
+}
+
+buildopt_seed_gradle_distribution() {
+    local buildopt_repository=$1
+    local buildopt_gradle_home=$2
+    local buildopt_properties buildopt_url buildopt_archive buildopt_distribution
+    local buildopt_source_root_candidate buildopt_source buildopt_destination
+    buildopt_properties="${buildopt_repository}/gradle/wrapper/gradle-wrapper.properties"
+    buildopt_url=$(awk -F= '$1 == "distributionUrl" {sub(/^[^=]*=/, ""); print; exit}' \
+        "${buildopt_properties}")
+    buildopt_url=${buildopt_url//\\:/:}
+    buildopt_archive=${buildopt_url%%\?*}
+    buildopt_archive=${buildopt_archive##*/}
+    buildopt_distribution=${buildopt_archive%.zip}
+    [[ ${buildopt_distribution} =~ ^gradle-[0-9][0-9.]*-(bin|all)$ ]] || return 1
+    buildopt_destination="${buildopt_gradle_home}/wrapper/dists/${buildopt_distribution}"
+    mkdir -p -- "${buildopt_destination}"
+    for buildopt_source_root_candidate in \
+        "${buildopt_repo_root}/.tools/gradle-user-home/wrapper/dists" \
+        "${GRADLE_USER_HOME:-${HOME}/.gradle}/wrapper/dists"; do
+        buildopt_source="${buildopt_source_root_candidate}/${buildopt_distribution}"
+        [[ -d ${buildopt_source} ]] || continue
+        cp -a -- "${buildopt_source}/." "${buildopt_destination}/"
+    done
+}
+
+buildopt_mutate_repository() {
+    local buildopt_mutation=$1
+    local buildopt_repository=$2
+    local buildopt_change_path=$3
+    local buildopt_marker=$4
+    case "${buildopt_mutation}" in
+        ADD_PACKAGE_PRIVATE_MARKER_RETURNING_ONE)
+            perl -0pi -e 's/\n}\n\z/\n\n    int buildOptPocMarker() {\n        return 1;\n    }\n}\n/' \
+                "${buildopt_repository}/${buildopt_change_path}"
+            ;;
+        APPEND_FIXED_COMMENT)
+            printf '\n// buildopt-poc-%s\n' "${buildopt_marker}" \
+                >>"${buildopt_repository}/${buildopt_change_path}"
+            ;;
+        *)
+            printf 'unsupported cross-date mutation: %s\n' "${buildopt_mutation}" >&2
+            return 1
+            ;;
+    esac
+}
+
+mkdir -p -- "${buildopt_output}" "${buildopt_root}/source"
+buildopt_public_revision=$(jq -er '
+  [.repositories[] | select(.repositoryId == "apache/groovy") | .publicRevision] |
+  unique | if length == 1 then .[0] else error("Groovy revision is ambiguous") end
+' "${buildopt_source_spec}")
+git -C "${buildopt_root}/source" init -q
+git -C "${buildopt_root}/source" remote add origin https://github.com/apache/groovy.git
+git -C "${buildopt_root}/source" fetch --depth=1 origin "${buildopt_public_revision}"
+git -C "${buildopt_root}/source" checkout -q --detach FETCH_HEAD
+
+buildopt_probe="${buildopt_root}/cross-date-output-probe"
+"${buildopt_script_dir}/run" --toolchain go -- go build -trimpath \
+    -o "${buildopt_probe}" ./dev/cross-date-output-probe
+buildopt_previous_contract="${buildopt_terminal_root}/apache-groovy-jar-leaf-source/capture-2/buildopt-output-equivalence.json"
+
+while IFS= read -r buildopt_key; do
+    buildopt_cell_output="${buildopt_output}/${buildopt_key}"
+    buildopt_cell_root="${buildopt_root}/${buildopt_key}"
+    buildopt_repository="${buildopt_cell_root}/repository"
+    buildopt_gradle_home="${buildopt_cell_root}/gradle-home"
+    mkdir -p -- "${buildopt_cell_output}" "${buildopt_gradle_home}"
+    git clone -q --no-local "${buildopt_root}/source" "${buildopt_repository}"
+
+    buildopt_index=$(jq --arg key "${buildopt_key}" \
+        '.repositories | map(.key) | index($key)' "${buildopt_source_spec}")
+    [[ ${buildopt_index} != null ]] || exit 1
+    buildopt_change_path=$(jq -er ".repositories[${buildopt_index}].changePath" "${buildopt_source_spec}")
+    buildopt_mutation=$(jq -er ".repositories[${buildopt_index}].mutation" "${buildopt_source_spec}")
+    buildopt_jdk=$(jq -er ".repositories[${buildopt_index}].jdkToolchain" "${buildopt_source_spec}")
+    buildopt_mutate_repository "${buildopt_mutation}" "${buildopt_repository}" \
+        "${buildopt_change_path}" "${buildopt_key}"
+    git -C "${buildopt_repository}" config user.name 'BuildOpt POC'
+    git -C "${buildopt_repository}" config user.email 'buildopt-poc@example.invalid'
+    git -C "${buildopt_repository}" config commit.gpgsign false
+    git -C "${buildopt_repository}" add "${buildopt_change_path}"
+    GIT_AUTHOR_DATE='2026-08-10T00:00:00Z' \
+        GIT_COMMITTER_DATE='2026-08-10T00:00:00Z' \
+        git -C "${buildopt_repository}" commit -qm 'Apply frozen BuildOpt matrix mutation'
+    buildopt_target=$(git -C "${buildopt_repository}" rev-parse HEAD)
+    buildopt_expected_target=$(jq -er '.qualification.repositoryRevision' \
+        "${buildopt_terminal_root}/${buildopt_key}/capture-2/profile.json")
+    [[ ${buildopt_target} == "${buildopt_expected_target}" ]] || {
+        printf 'cross-date target revision drifted: %s\n' "${buildopt_key}" >&2
+        exit 1
+    }
+
+    buildopt_seed_gradle_distribution "${buildopt_repository}" "${buildopt_gradle_home}"
+    printf 'Building real Groovy output for %s\n' "${buildopt_key}"
+    (
+        cd -- "${buildopt_repository}"
+        env -u CI GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            timeout 30m "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+            ./gradlew --daemon --build-cache --parallel --no-configuration-cache \
+            --console=plain --no-scan --max-workers=12 :groovy-json:jar
+    ) >"${buildopt_cell_output}/build.log" 2>&1
+    mapfile -t buildopt_jars < <(
+        find "${buildopt_repository}/subprojects/groovy-json/build/libs" \
+            -maxdepth 1 -type f -name '*.jar' -print | sort
+    )
+    [[ ${#buildopt_jars[@]} -eq 1 ]] || {
+        printf 'expected one real Groovy JAR for %s, got %d\n' \
+            "${buildopt_key}" "${#buildopt_jars[@]}" >&2
+        exit 1
+    }
+    buildopt_relative=${buildopt_jars[0]#"${buildopt_repository}/"}
+    "${buildopt_probe}" "${buildopt_repository}" "${buildopt_relative}" \
+        "${buildopt_previous_contract}" "${buildopt_reviewed_contract}" \
+        "${buildopt_cell_output}/probe.json"
+    jq -e '
+      .schemaVersion == "buildopt.evidence/cross-date-output-probe/v1" and
+      .controlledDateBoundary.previousContractMatched == false and
+      .controlledDateBoundary.reviewedContractMatched == true and
+      .undeclaredPropertyDrift.reviewedContractMatched == false and
+      .nonMetadataPayloadDrift.reviewedContractMatched == false and
+      .productAttributableFailures == 0
+    ' "${buildopt_cell_output}/probe.json" >/dev/null
+    buildopt_normalize_log "${buildopt_cell_output}/build.log"
+    jq -n \
+        --arg key "${buildopt_key}" \
+        --arg repositoryId "apache/groovy" \
+        --arg publicRevision "${buildopt_public_revision}" \
+        --arg targetRevision "${buildopt_target}" \
+        --arg buildLogSha256 "$(sha256sum "${buildopt_cell_output}/build.log" | awk '{print $1}')" \
+        --slurpfile probe "${buildopt_cell_output}/probe.json" \
+        --slurpfile profile "${buildopt_terminal_root}/${buildopt_key}/capture-2/profile.json" '
+      {
+        key: $key,
+        repositoryId: $repositoryId,
+        evidenceKind: "CONTROLLED_REAL_ARTIFACT_DATE_PROBE",
+        publicRevision: $publicRevision,
+        targetRevision: $targetRevision,
+        crossDateOutputMatched: $probe[0].controlledDateBoundary.reviewedContractMatched,
+        previousContractRejectedDateChange: ($probe[0].controlledDateBoundary.previousContractMatched == false),
+        undeclaredPropertyDriftRejected: ($probe[0].undeclaredPropertyDrift.reviewedContractMatched == false),
+        payloadDriftRejected: ($probe[0].nonMetadataPayloadDrift.reviewedContractMatched == false),
+        probe: $probe[0],
+        buildLogSha256: $buildLogSha256,
+        qualification: $profile[0].qualification,
+        productAttributableFailures: 0,
+        testOptimization: "OUT_OF_SCOPE"
+      }
+    ' >"${buildopt_cell_output}/result.json"
+    (
+        cd -- "${buildopt_repository}"
+        env GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+            ./gradlew --stop
+    ) >/dev/null 2>&1 || true
+    [[ ${buildopt_cell_root} == "${buildopt_root}/"* ]] || exit 1
+    rm -rf -- "${buildopt_cell_root}"
+done < <(jq -r '.cells[] | select(startswith("apache-groovy"))' "${buildopt_spec}")
+
+while IFS= read -r buildopt_key; do
+    buildopt_cell_output="${buildopt_output}/${buildopt_key}"
+    mkdir -p -- "${buildopt_cell_output}"
+    jq -n \
+        --arg key "${buildopt_key}" \
+        --slurpfile installed "${buildopt_installed}" '
+      ($installed[0].cells[] | select(.key == $key)) as $cell |
+      {
+        key: $key,
+        repositoryId: $cell.repositoryId,
+        evidenceKind: "NATURAL_CROSS_CAPTURE",
+        publicRevision: $cell.publicRevision,
+        targetRevision: $cell.targetRevision,
+        crossDateOutputMatched: $cell.crossCaptureTerminalOutputMatched,
+        terminalOutputSha256: $cell.terminalOutputSha256,
+        replayOutputSha256: $cell.candidate.output.sha256,
+        qualification: $cell.qualification,
+        productAttributableFailures: $cell.productAttributableFailures,
+        testOptimization: $cell.testOptimization
+      }
+    ' >"${buildopt_cell_output}/result.json"
+done < <(jq -r '.cells[] | select(startswith("apache-kafka"))' "${buildopt_spec}")
+
+mapfile -t buildopt_results < <(
+    jq -r '.cells[]' "${buildopt_spec}" |
+        while IFS= read -r buildopt_key; do
+            printf '%s/%s/result.json\n' "${buildopt_output}" "${buildopt_key}"
+        done
+)
+jq -n \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg buildoptRevision "$(git -C "${buildopt_repo_root}" rev-parse HEAD)" \
+    --arg installedReplaySha256 "$(sha256sum "${buildopt_installed}" | awk '{print $1}')" \
+    --arg previousContractSha256 "$(sha256sum "${buildopt_previous_contract}" | awk '{print $1}')" \
+    --arg reviewedContractSha256 "$(sha256sum "${buildopt_reviewed_contract}" | awk '{print $1}')" \
+    --slurpfile spec "${buildopt_spec}" \
+    --slurpfile cells <(jq -s '.' "${buildopt_results[@]}") '
+  {
+    schemaVersion: $spec[0].evidenceSchemaVersion,
+    workItem: $spec[0].workItem,
+    capturedAt: $capturedAt,
+    buildoptRevision: $buildoptRevision,
+    sourceBindings: {
+      installedReplaySha256: $installedReplaySha256,
+      previousContractSha256: $previousContractSha256,
+      reviewedContractSha256: $reviewedContractSha256
+    },
+    method: $spec[0].method,
+    cells: $cells[0],
+    aggregation: {
+      cells: ($cells[0] | length),
+      crossDateMatches: ($cells[0] | map(select(.crossDateOutputMatched)) | length),
+      controlledRealArtifactDateProbes:
+        ($cells[0] | map(select(.evidenceKind == "CONTROLLED_REAL_ARTIFACT_DATE_PROBE")) | length),
+      naturalCrossCaptureMatches:
+        ($cells[0] | map(select(.evidenceKind == "NATURAL_CROSS_CAPTURE" and .crossDateOutputMatched)) | length),
+      previousContractDateRejections:
+        ($cells[0] | map(select(.previousContractRejectedDateChange == true)) | length),
+      undeclaredPropertyDriftRejections:
+        ($cells[0] | map(select(.undeclaredPropertyDriftRejected == true)) | length),
+      payloadDriftRejections:
+        ($cells[0] | map(select(.payloadDriftRejected == true)) | length),
+      qualificationsPreserved: ($cells[0] | map(select(.qualification.pairs == 8)) | length),
+      productAttributableFailures: ($cells[0] | map(.productAttributableFailures) | add),
+      repositoryPercentagesAveraged: false,
+      mechanismPercentagesAdded: false
+    },
+    boundaries: $spec[0].boundaries
+  }
+' >"${buildopt_output}/summary.json"
+
+printf 'Cross-date output-equivalence evidence written to %s\n' "${buildopt_output}"

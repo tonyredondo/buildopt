@@ -61,7 +61,10 @@ jq -e '
   .rules == [{
     pattern: "subprojects/groovy-json/build/libs/*.jar",
     mode: "CANONICAL_ZIP",
-    volatileProperties: [{entry: "META-INF/groovy-release-info.properties", keys: ["BuildTime"]}]
+    volatileProperties: [{
+      entry: "META-INF/groovy-release-info.properties",
+      keys: ["BuildDate", "BuildTime"]
+    }]
   }]
 ' "${buildopt_repo_root}/fixtures/output-equivalence/groovy-jar.json" >/dev/null
 jq -e '

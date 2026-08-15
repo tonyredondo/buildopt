@@ -74,19 +74,33 @@ func TestUnruledRequiredOutputRemainsExactBesideRelocatableText(t *testing.T) {
 	}
 }
 
-func TestCanonicalZIPIgnoresOrderTimestampsAndDeclaredPropertyValue(t *testing.T) {
+func TestCanonicalZIPIgnoresOrderTimestampsAndDeclaredPropertyValues(t *testing.T) {
 	left, right := t.TempDir(), t.TempDir()
 	writeZIP(t, filepath.Join(left, "build/library.jar"), []zipFixtureEntry{
 		{name: "payload.txt", body: "payload"},
-		{name: "META-INF/release.properties", body: "Version=1\nBuildTime=one\n"},
+		{name: "META-INF/release.properties", body: "Version=1\nBuildDate=14-Aug-2026\nBuildTime=one\n"},
 	})
 	writeZIP(t, filepath.Join(right, "build/library.jar"), []zipFixtureEntry{
-		{name: "META-INF/release.properties", body: "Version=1\nBuildTime=two\n"},
+		{name: "META-INF/release.properties", body: "Version=1\nBuildDate=15-Aug-2026\nBuildTime=two\n"},
 		{name: "payload.txt", body: "payload"},
 	})
-	contract := Contract{SchemaVersion: SchemaVersion, Rules: []Rule{{
+	previousContract := Contract{SchemaVersion: SchemaVersion, Rules: []Rule{{
 		Pattern: "build/*.jar", Mode: ModeCanonicalZIP,
 		VolatileProperties: []VolatileProperties{{Entry: "META-INF/release.properties", Keys: []string{"BuildTime"}}},
+	}}, ReviewRequired: true}
+	leftPreviousSHA, _, err := HashOutputs(left, []string{"build/*.jar"}, &previousContract)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rightPreviousSHA, _, err := HashOutputs(right, []string{"build/*.jar"}, &previousContract)
+	if err != nil || leftPreviousSHA == rightPreviousSHA {
+		t.Fatal("previous contract hid undeclared BuildDate drift")
+	}
+	contract := Contract{SchemaVersion: SchemaVersion, Rules: []Rule{{
+		Pattern: "build/*.jar", Mode: ModeCanonicalZIP,
+		VolatileProperties: []VolatileProperties{{
+			Entry: "META-INF/release.properties", Keys: []string{"BuildDate", "BuildTime"},
+		}},
 	}}, ReviewRequired: true}
 	leftSHA, _, err := HashOutputs(left, []string{"build/*.jar"}, &contract)
 	if err != nil {
@@ -97,12 +111,27 @@ func TestCanonicalZIPIgnoresOrderTimestampsAndDeclaredPropertyValue(t *testing.T
 		t.Fatalf("canonical ZIP outputs differ: %s %s %v", leftSHA, rightSHA, err)
 	}
 	writeZIP(t, filepath.Join(right, "build/library.jar"), []zipFixtureEntry{
-		{name: "META-INF/release.properties", body: "Version=2\nBuildTime=three\n"},
+		{name: "META-INF/release.properties", body: "Version=2\nBuildDate=16-Aug-2026\nBuildTime=three\n"},
 		{name: "payload.txt", body: "payload"},
 	})
 	rightSHA, _, err = HashOutputs(right, []string{"build/*.jar"}, &contract)
 	if err != nil || leftSHA == rightSHA {
-		t.Fatal("non-volatile archive payload drift was hidden")
+		t.Fatal("non-volatile archive property drift was hidden")
+	}
+	writeZIP(t, filepath.Join(right, "build/library.jar"), []zipFixtureEntry{
+		{name: "META-INF/release.properties", body: "Version=1\nBuildDate=16-Aug-2026\nBuildTime=three\n"},
+		{name: "payload.txt", body: "changed"},
+	})
+	rightSHA, _, err = HashOutputs(right, []string{"build/*.jar"}, &contract)
+	if err != nil || leftSHA == rightSHA {
+		t.Fatal("non-metadata archive payload drift was hidden")
+	}
+	writeZIP(t, filepath.Join(right, "build/library.jar"), []zipFixtureEntry{
+		{name: "META-INF/release.properties", body: "Version=1\nBuildTime=three\n"},
+		{name: "payload.txt", body: "payload"},
+	})
+	if _, _, err := HashOutputs(right, []string{"build/*.jar"}, &contract); err == nil {
+		t.Fatal("missing declared BuildDate was accepted")
 	}
 }
 
@@ -173,11 +202,16 @@ func writeFile(t *testing.T, root, relative, content string) {
 }
 
 func TestCanonicalPropertyOutputIsStable(t *testing.T) {
-	first, err := canonicalizeProperties([]byte("A=1\nBuildTime=first\n"), []string{"BuildTime"})
+	keys := []string{"BuildDate", "BuildTime"}
+	first, err := canonicalizeProperties(
+		[]byte("A=1\nBuildDate=14-Aug-2026\nBuildTime=first\n"), keys,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
-	second, err := canonicalizeProperties([]byte("A=1\nBuildTime=second\n"), []string{"BuildTime"})
+	second, err := canonicalizeProperties(
+		[]byte("A=1\nBuildDate=15-Aug-2026\nBuildTime=second\n"), keys,
+	)
 	if err != nil || !bytes.Equal(first, second) {
 		t.Fatalf("canonical properties differ: %q %q %v", first, second, err)
 	}

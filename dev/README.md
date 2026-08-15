@@ -3605,12 +3605,33 @@ The committed bundle is validated without network access or Gradle execution:
 ./dev/test-installed-profile-replay-result
 ```
 
+`specs/poc-cross-date-output-equivalence-v1.json` and
+`specs/poc-cross-date-output-equivalence-v1.md` freeze the follow-up for the
+remaining Groovy date boundary. The reviewed fixture adds exactly `BuildDate`
+beside `BuildTime`. The runner builds the two frozen Groovy cells, applies a
+controlled date-only mutation to each real JAR, and requires the old contract
+to reject it while the reviewed contract matches. It also requires an
+undeclared property change and a class-payload change to remain visible. Four
+natural Kafka cross-capture matches are carried forward from the digest-bound
+public replay; all six historical timing qualifications remain unchanged.
+
+```bash
+./dev/run-cross-date-output-equivalence /absolute/path/to/new-capture
+./dev/check-cross-date-output-equivalence-result /absolute/path/to/new-capture
+./dev/test-cross-date-output-equivalence-result
+```
+
+The controlled date mutation is reproducible semantic-equivalence evidence,
+not a second timed build on another date. This block adds no timing claim,
+automatic activation, production authority, soak, design-partner dependency,
+or Test Optimization scope.
+
 The checker rebuilds the aggregate from cell plans, outputs, log hashes and
 the prior immutable qualification. It requires 6/6 selective plans, 6/6
 `PROFILE_PRECONDITION_FAILED` fallbacks and 6/6 same-replay semantic-output
 matches. Historical terminal digests are diagnostic because the Groovy JAR
-contract excludes `BuildTime` but not its date-dependent `BuildDate`; no new
-timing is measured or inferred.
+qualification used the earlier contract that excluded `BuildTime` but not its
+date-dependent `BuildDate`; no new timing is measured or inferred.
 
 `./dev/check-generic-profile-ci-replay` validates the manual clean-runner
 replay without cloning public repositories. It reconstructs retained Action

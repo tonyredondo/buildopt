@@ -8,6 +8,7 @@
         {
           "entry": "META-INF/groovy-release-info.properties",
           "keys": [
+            "BuildDate",
             "BuildTime"
           ]
         }

@@ -5,7 +5,9 @@ contain no repository identity or task-selection logic. Exact bytes remain the
 default for every required output that a rule does not match.
 
 - `groovy-jar.json` compares canonical ZIP contents and permits only the
-  `BuildTime` value in Groovy's release-properties entry to vary.
+  `BuildDate` and `BuildTime` values in Groovy's release-properties entry to
+  vary. The two exact keys are needed because release builds derive both from
+  the current clock; every other property and ZIP payload remains bound.
 - `kafka-checkstyle.json` replaces only the isolated repository-root prefix in
   the UTF-8 Checkstyle reports; findings, paths below that root, and all other
   report bytes remain bound.
