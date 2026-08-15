@@ -1,0 +1,30 @@
+{
+  "key": "ktor-jvm-jar-global-configuration",
+  "repositoryId": "ktorio/ktor",
+  "pipelineClass": "jvm-jar",
+  "workflowFamily": "JVM_JAR",
+  "changeClass": "GLOBAL_CONFIGURATION",
+  "publicRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+  "targetRevision": "89aff7a0aa7e0b21f9c40bb90f0f123cf24f104f",
+  "buildopt": {
+    "revision": "980d0215f09dd49c3dc867cd7c1fb6898b19a019",
+    "executableSha256": "10b1feae55925adfa94ba7f071854b1c7e1a248b1b9e221775d9af152271b07e"
+  },
+  "proposal": {
+    "decision": "NATIVE_FULL_GRAPH",
+    "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+    "originalEntrypoints": [
+      "jvmJar"
+    ],
+    "candidateEntrypoints": [],
+    "totalProjectCount": null,
+    "selectedProjectCount": null,
+    "omittedProjectCount": null
+  },
+  "measurementStatus": "NOT_RUN_NATIVE_FULL_GRAPH",
+  "measurementFailureClass": null,
+  "result": null,
+  "evaluationDecision": "NATIVE_FULL_GRAPH",
+  "outputEquivalence": null,
+  "outputEquivalenceSha256": null
+}

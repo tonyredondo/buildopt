@@ -210,6 +210,17 @@
     "repositorySpecificException": "FORBIDDEN",
     "thresholdRelaxation": "FORBIDDEN"
   },
+  "amendment": {
+    "reason": "GENERIC_RUNNER_DID_NOT_PROPAGATE_PREREGISTERED_REPOSITORY_GRADLE_OPTION",
+    "invalidBuildoptRevision": "980d0215f09dd49c3dc867cd7c1fb6898b19a019",
+    "invalidTimedPairs": 48,
+    "acceptedTerminalPairs": 0,
+    "preservedIncident": "benchmarks/results/poc-new-family-change-breadth-v1/incidents/980d021-omitted-preregistered-gradle-option",
+    "gradleOptionsChanged": false,
+    "cellsChanged": false,
+    "qualificationChanged": false,
+    "incidentTimingMayBeReused": false
+  },
   "boundaries": {
     "proofOfConcept": true,
     "productionAuthorized": false,

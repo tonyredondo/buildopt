@@ -129,6 +129,17 @@ jq -e '
   .decisionRules.globalChange == "RETAIN_NATIVE_GRADLE_WITHOUT_TIMING_CLAIM" and
   .decisionRules.repositorySpecificException == "FORBIDDEN" and
   .decisionRules.thresholdRelaxation == "FORBIDDEN" and
+  .amendment == {
+    reason: "GENERIC_RUNNER_DID_NOT_PROPAGATE_PREREGISTERED_REPOSITORY_GRADLE_OPTION",
+    invalidBuildoptRevision: "980d0215f09dd49c3dc867cd7c1fb6898b19a019",
+    invalidTimedPairs: 48,
+    acceptedTerminalPairs: 0,
+    preservedIncident: "benchmarks/results/poc-new-family-change-breadth-v1/incidents/980d021-omitted-preregistered-gradle-option",
+    gradleOptionsChanged: false,
+    cellsChanged: false,
+    qualificationChanged: false,
+    incidentTimingMayBeReused: false
+  } and
   .boundaries.proofOfConcept == true and
   .boundaries.productionAuthorized == false and
   .boundaries.automaticActivation == false and
@@ -141,6 +152,14 @@ jq -e '
 git -C "${buildopt_repo_root}" cat-file -e \
     "$(jq -er '.preregisteredFromRevision' "${buildopt_spec}")^{commit}"
 
+buildopt_incident=$(jq -er '.amendment.preservedIncident' "${buildopt_spec}")
+[[ -s ${buildopt_repo_root}/${buildopt_incident}/README.md &&
+    -s ${buildopt_repo_root}/${buildopt_incident}/summary.json ]] || {
+    printf 'recorded Gradle-option incident is unavailable: %s\n' \
+        "${buildopt_incident}" >&2
+    exit 1
+}
+
 if rg -n 'ktorio/ktor|ktor-jvm-jar|:ktor-(http|server-core|utils)' \
     "${buildopt_repo_root}/internal" "${buildopt_repo_root}/cmd" >/dev/null; then
     printf 'Ktor-specific branch leaked into product implementation\n' >&2
@@ -150,6 +169,12 @@ fi
 rg -Fq -- '(.changes // [{path: .changePath}])' \
     "${buildopt_script_dir}/run-generic-profile-matrix" || {
     printf 'generic profile runner does not accept multiple changed paths\n' >&2
+    exit 1
+}
+
+rg -Fq -- "jq -r '.method.gradleOptions[]?'" \
+    "${buildopt_script_dir}/run-generic-profile-matrix" || {
+    printf 'generic profile runner does not consume frozen Gradle options\n' >&2
     exit 1
 }
 

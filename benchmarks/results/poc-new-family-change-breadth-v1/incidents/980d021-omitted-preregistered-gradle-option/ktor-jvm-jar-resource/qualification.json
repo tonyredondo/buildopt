@@ -1,0 +1,221 @@
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-balanced-qualification/v2",
+  "evidenceState": "QUALIFIED",
+  "capturedAt": "2026-08-15T19:08:52Z",
+  "subject": {
+    "repositoryId": "ktorio/ktor",
+    "repositoryRevision": "45bd3b4d9d24e951e6a25a47b0900b656219e8d1",
+    "pipelineClass": "jvm-jar"
+  },
+  "sourceBindings": {
+    "manifestSha256": "fa53a9915a8410f7b412891341c0894d7373aea53f90a31cfa2d4a701016b37b",
+    "graphSha256": "71496ea7b7f088d914f6a608f27a620a474af15d51298c6c0f68393a6042dbea",
+    "generatedManifestSha256": "7c03fd9ee5f40d90be9fc9fd94f2fac4075b1d23a366f0cde99f67f8837be66d",
+    "sourceEvidenceSha256": "e18e68524bdefcc7c68f7f7d26bb28afb8760b2434da57974f8589bf87f918c7"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":ktor-server-core:jvmJar"
+    ],
+    "fallbackEntrypoints": [
+      "jvmJar"
+    ],
+    "requiredOutputs": [
+      "ktor-server/ktor-server-core/build/libs/ktor-server-core-jvm-*.jar"
+    ],
+    "totalProjectCount": 133,
+    "selectedProjectCount": 9,
+    "omittedProjectCount": 124,
+    "omittedProjectRatio": 0.9323308270676691
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "980d0215f09dd49c3dc867cd7c1fb6898b19a019",
+    "executableSha256": "10b1feae55925adfa94ba7f071854b1c7e1a248b1b9e221775d9af152271b07e",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true,
+    "captureCount": 2,
+    "pairsPerCapture": 8,
+    "blockCount": 8
+  },
+  "captures": [
+    {
+      "index": 1,
+      "path": "benchmarks/results/poc-new-family-change-breadth-v1/ktor-jvm-jar-resource/capture-1/evidence.json",
+      "sha256": "cf7a005a6eb5a51d6a94bc7c7e31f0b423c8823a2fd3d0623d061ab4a96ff217",
+      "capturedAt": "2026-08-15T17:12:14Z",
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 59801.875,
+        "candidateMeanMs": 7688.875,
+        "meanSavedMs": 52113,
+        "reductionRatio": 0.8714275263108389,
+        "interval95SavedMs": [
+          39452,
+          67448.75
+        ],
+        "positivePairs": 8,
+        "executionShapeObserved": true,
+        "executionShapeStable": true,
+        "targetWarmupShapeObserved": true,
+        "targetWarmupShapeStable": true,
+        "qualified": true,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE"
+      }
+    },
+    {
+      "index": 2,
+      "path": "benchmarks/results/poc-new-family-change-breadth-v1/ktor-jvm-jar-resource/capture-2/evidence.json",
+      "sha256": "422bee8a2471e825101e50baeace21358dc343585b1a01ca1f5679d82e6960a7",
+      "capturedAt": "2026-08-15T17:42:15Z",
+      "evidenceState": "QUALIFIED",
+      "result": {
+        "pairs": 8,
+        "controlMeanMs": 59182,
+        "candidateMeanMs": 8341.125,
+        "meanSavedMs": 50840.875,
+        "reductionRatio": 0.8590597647933493,
+        "interval95SavedMs": [
+          37555.5,
+          67310.875
+        ],
+        "positivePairs": 8,
+        "executionShapeObserved": true,
+        "executionShapeStable": true,
+        "targetWarmupShapeObserved": true,
+        "targetWarmupShapeStable": true,
+        "qualified": true,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE"
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "captureIndex": 1,
+      "block": 1,
+      "controlFirstPair": 1,
+      "candidateFirstPair": 2,
+      "controlMeanMs": 43488,
+      "candidateMeanMs": 7693,
+      "savedMs": 35795
+    },
+    {
+      "captureIndex": 1,
+      "block": 2,
+      "controlFirstPair": 3,
+      "candidateFirstPair": 4,
+      "controlMeanMs": 73997,
+      "candidateMeanMs": 8775,
+      "savedMs": 65222
+    },
+    {
+      "captureIndex": 1,
+      "block": 3,
+      "controlFirstPair": 5,
+      "candidateFirstPair": 6,
+      "controlMeanMs": 47299,
+      "candidateMeanMs": 6742,
+      "savedMs": 40557
+    },
+    {
+      "captureIndex": 1,
+      "block": 4,
+      "controlFirstPair": 7,
+      "candidateFirstPair": 8,
+      "controlMeanMs": 74423.5,
+      "candidateMeanMs": 7545.5,
+      "savedMs": 66878
+    },
+    {
+      "captureIndex": 2,
+      "block": 1,
+      "controlFirstPair": 1,
+      "candidateFirstPair": 2,
+      "controlMeanMs": 42164.5,
+      "candidateMeanMs": 7414,
+      "savedMs": 34750.5
+    },
+    {
+      "captureIndex": 2,
+      "block": 2,
+      "controlFirstPair": 3,
+      "candidateFirstPair": 4,
+      "controlMeanMs": 73444.5,
+      "candidateMeanMs": 8798,
+      "savedMs": 64646.5
+    },
+    {
+      "captureIndex": 2,
+      "block": 3,
+      "controlFirstPair": 5,
+      "candidateFirstPair": 6,
+      "controlMeanMs": 45153,
+      "candidateMeanMs": 9596.5,
+      "savedMs": 35556.5
+    },
+    {
+      "captureIndex": 2,
+      "block": 4,
+      "controlFirstPair": 7,
+      "candidateFirstPair": 8,
+      "controlMeanMs": 75966,
+      "candidateMeanMs": 7556,
+      "savedMs": 68410
+    }
+  ],
+  "qualification": {
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "minimumPositiveBlocks": 6,
+    "positiveMedian": true,
+    "candidateP95NotRegressive": true,
+    "requiredOutputsIdentical": true,
+    "executionShapeStable": true,
+    "fullGraphFallbackRequired": true
+  },
+  "result": {
+    "captures": 2,
+    "pairs": 16,
+    "blocks": 8,
+    "controlMeanMs": 59491.9375,
+    "candidateMeanMs": 8015,
+    "meanSavedMs": 51476.9375,
+    "reductionRatio": 0.8652758619602866,
+    "medianBlockSavedMs": 52601.75,
+    "interval95BlockSavedMs": [
+      41127.5625,
+      62517.8125
+    ],
+    "positiveBlocks": 8,
+    "controlP95Ms": 96977,
+    "candidateP95Ms": 11641,
+    "controlFirstMeanSavedMs": 54857.875,
+    "candidateFirstMeanSavedMs": 48096,
+    "orderEffectMs": 6761.875,
+    "requiredOutputsIdentical": true,
+    "executionShapeStable": true,
+    "fallbacksSuccessful": true,
+    "qualified": true,
+    "decision": "QUALIFY_BALANCED_STRUCTURAL_PROFILE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

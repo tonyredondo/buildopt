@@ -1,0 +1,50 @@
+{
+  "key": "ktor-jvm-jar-dependency-source",
+  "repositoryId": "ktorio/ktor",
+  "pipelineClass": "jvm-jar",
+  "workflowFamily": "JVM_JAR",
+  "changeClass": "UPSTREAM_DEPENDENCY_SOURCE",
+  "publicRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+  "targetRevision": "2be6470cf3d898a4d4baa907d58bb5d558506614",
+  "buildopt": {
+    "revision": "980d0215f09dd49c3dc867cd7c1fb6898b19a019",
+    "executableSha256": "10b1feae55925adfa94ba7f071854b1c7e1a248b1b9e221775d9af152271b07e"
+  },
+  "proposal": {
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "originalEntrypoints": [
+      "jvmJar"
+    ],
+    "candidateEntrypoints": [
+      ":ktor-http:jvmJar",
+      ":ktor-utils:jvmJar"
+    ],
+    "totalProjectCount": 133,
+    "selectedProjectCount": 3,
+    "omittedProjectCount": 130
+  },
+  "measurementStatus": "COMPLETED",
+  "measurementFailureClass": null,
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 99337.5,
+    "candidateMeanMs": 15988.75,
+    "meanSavedMs": 83348.75,
+    "reductionRatio": 0.8390461809487857,
+    "interval95SavedMs": [
+      66437,
+      102835.875
+    ],
+    "positivePairs": 8,
+    "executionShapeObserved": true,
+    "executionShapeStable": true,
+    "targetWarmupShapeObserved": true,
+    "targetWarmupShapeStable": true,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "evaluationDecision": "QUALIFY_STRUCTURAL_PROFILE",
+  "outputEquivalence": null,
+  "outputEquivalenceSha256": null
+}

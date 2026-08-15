@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "buildopt.poc/profile-evaluation/v1",
+  "decision": "QUALIFY_STRUCTURAL_PROFILE",
+  "reason": "EXACT_EVIDENCE_QUALIFIED",
+  "analysis": {
+    "schemaVersion": "buildopt.poc/opportunity-analysis/v1",
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "subject": {
+      "repositoryId": "ktorio/ktor",
+      "pipelineClass": "jvm-jar",
+      "gradleVersion": "9.5.1"
+    },
+    "inputs": [
+      {
+        "role": "BUILD_IMPACT_MANIFEST",
+        "path": "buildopt-impact-manifest.json",
+        "sha256": "sha256:fa53a9915a8410f7b412891341c0894d7373aea53f90a31cfa2d4a701016b37b"
+      },
+      {
+        "role": "BUILD_IMPACT_GRAPH",
+        "path": "buildopt-impact-graph.generated.json",
+        "sha256": "sha256:71496ea7b7f088d914f6a608f27a620a474af15d51298c6c0f68393a6042dbea"
+      },
+      {
+        "role": "GENERATED_MANIFEST",
+        "path": "buildopt-impact.generated.json",
+        "sha256": "sha256:7c03fd9ee5f40d90be9fc9fd94f2fac4075b1d23a366f0cde99f67f8837be66d"
+      }
+    ],
+    "sourceBindings": {
+      "manifestDigest": "sha256:071b7e2e7ab55c57af68983f904c92cf3fee67b11785abff3b9ff30d1e1bbbdb",
+      "graphDigest": "sha256:830d6fa3ab142bc724ec5a5a8daa2719c5494c5136b0cd5bf7ec0d3eb344c843",
+      "discoveryDigest": "sha256:7d8af4e0f800a6c882f977ebb8d91fa4a97944a3776c7cd36dfe5f518288648f"
+    },
+    "plan": {
+      "alternativeId": "changed-projects",
+      "entrypoints": [
+        ":ktor-server-core:jvmJar"
+      ],
+      "fallbackEntrypoints": [
+        "jvmJar"
+      ],
+      "requiredOutputs": [
+        "ktor-server/ktor-server-core/build/libs/ktor-server-core-jvm-*.jar"
+      ],
+      "totalProjectCount": 133,
+      "selectedProjectCount": 9,
+      "omittedProjectCount": 124,
+      "omittedProjectRatio": 0.9323308270676691
+    },
+    "mechanisms": [
+      {
+        "name": "BUILD_IMPACT",
+        "status": "MEASURE_CANDIDATE",
+        "reason": "complete graph exposes a smaller reviewed alternative; direct timing is still required"
+      },
+      {
+        "name": "SHARED_EDGE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent locality and failure-fallback evidence for this workload"
+      },
+      {
+        "name": "HOT_STATE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "RUNTIME_TUNING",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "SAFE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "STANDARD_COPY",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "STANDARD_JAR",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "TEST_OPTIMIZATION",
+        "status": "NOT_AUTHORIZED",
+        "reason": "outside BuildOpt scope"
+      }
+    ],
+    "measurementRequired": true,
+    "reviewRequired": true,
+    "activationAutomatic": false,
+    "productionAuthorized": false
+  },
+  "profile": {
+    "schemaVersion": "buildopt.poc/qualified-profile/v4",
+    "profileVersion": 4,
+    "profileId": "qualified-structural-build-impact",
+    "ownership": "REPOSITORY_COMMITTED",
+    "claimScope": "DECLARED_OUTPUTS_ONLY",
+    "repositoryId": "ktorio/ktor",
+    "pipelineClass": "jvm-jar",
+    "fallback": "NATIVE_FULL_GRAPH",
+    "impact": {
+      "manifest": "buildopt-impact-manifest.json",
+      "graph": "buildopt-impact-graph.generated.json",
+      "generatedManifest": "buildopt-impact.generated.json"
+    },
+    "mechanisms": {
+      "buildImpact": true,
+      "standardJarAdapter": false,
+      "safeCache": false,
+      "runtimeTuning": false,
+      "hotState": false,
+      "standardCopyAdapter": false,
+      "sharedEdgeCache": false
+    },
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "preconditions": [
+      {
+        "type": "FILE_SHA256",
+        "path": "buildopt-impact-manifest.json",
+        "sha256": "fa53a9915a8410f7b412891341c0894d7373aea53f90a31cfa2d4a701016b37b"
+      },
+      {
+        "type": "FILE_SHA256",
+        "path": "buildopt-impact-graph.generated.json",
+        "sha256": "71496ea7b7f088d914f6a608f27a620a474af15d51298c6c0f68393a6042dbea"
+      },
+      {
+        "type": "FILE_SHA256",
+        "path": "buildopt-impact.generated.json",
+        "sha256": "7c03fd9ee5f40d90be9fc9fd94f2fac4075b1d23a366f0cde99f67f8837be66d"
+      }
+    ],
+    "qualification": {
+      "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+      "sha256": "422bee8a2471e825101e50baeace21358dc343585b1a01ca1f5679d82e6960a7",
+      "repositoryRevision": "45bd3b4d9d24e951e6a25a47b0900b656219e8d1",
+      "pairs": 8,
+      "meanSavedMs": 50840.875,
+      "reductionRatio": 0.8590597647933493,
+      "interval95SavedMs": [
+        37555.5,
+        67310.875
+      ]
+    }
+  },
+  "profileOutput": "buildopt-qualified-profile.json",
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false
+}

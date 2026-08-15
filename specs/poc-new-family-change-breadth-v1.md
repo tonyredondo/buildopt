@@ -57,3 +57,18 @@ Validate the frozen contract before running any proposal:
 ```bash
 ./dev/check-new-family-change-breadth --spec-only
 ```
+
+## Recorded runner correction
+
+The first complete diagnostic matrix on BuildOpt `980d021` exposed that the
+generic matrix runner used its common Gradle option list and did not propagate
+the already preregistered Ktor property
+`-Pktor.develocity.skipBuildScans=true`. Both arms were internally comparable,
+but the run does not satisfy this frozen contract. All 48 diagnostic pairs are
+preserved under the incident path recorded in the machine specification and
+none may enter terminal aggregation.
+
+The generic runner now consumes `method.gradleOptions` exactly when present
+and retains its previous defaults for older specifications. No cell, input,
+output, option, threshold, order, fallback or POC boundary changed. Terminal
+captures restart from zero on the correction revision.

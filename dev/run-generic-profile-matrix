@@ -193,7 +193,9 @@ buildopt_capture_subject() {
     local -a buildopt_entrypoint_args=() buildopt_required_output_args=()
     local -a buildopt_equivalence_args=()
     local -a buildopt_change_paths=() buildopt_change_original_shas=()
-    local -a buildopt_mutations=()
+    local -a buildopt_mutations=() buildopt_gradle_options=()
+    local -a buildopt_proposal_gradle_args=() buildopt_measure_gradle_args=()
+    local buildopt_gradle_option
 
     buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_spec}")
     buildopt_repository_id=$(jq -er ".repositories[${buildopt_index}].repositoryId" "${buildopt_spec}")
@@ -293,6 +295,30 @@ buildopt_capture_subject() {
         < <(buildopt_entrypoint_arguments "${buildopt_index}")
     mapfile -d '' -t buildopt_required_output_args \
         < <(buildopt_output_arguments "${buildopt_index}")
+    mapfile -t buildopt_gradle_options < <(
+        jq -r '.method.gradleOptions[]?' "${buildopt_spec}"
+    )
+    if ((${#buildopt_gradle_options[@]} > 0)); then
+        for buildopt_gradle_option in "${buildopt_gradle_options[@]}"; do
+            buildopt_proposal_gradle_args+=(--gradle-option="${buildopt_gradle_option}")
+            buildopt_measure_gradle_args+=(--gradle-option="${buildopt_gradle_option}")
+        done
+    else
+        buildopt_proposal_gradle_args=(
+            --gradle-option=--no-configuration-cache
+            --gradle-option=--no-scan
+            --gradle-option=--max-workers=12
+        )
+        buildopt_measure_gradle_args=(
+            --gradle-option=--daemon
+            --gradle-option=--build-cache
+            --gradle-option=--parallel
+            --gradle-option=--no-configuration-cache
+            --gradle-option=--console=plain
+            --gradle-option=--no-scan
+            --gradle-option=--max-workers=12
+        )
+    fi
 
     printf 'Discovering generic structural candidate for %s\n' "${buildopt_repository_id}"
     if ! (
@@ -307,8 +333,7 @@ buildopt_capture_subject() {
             --changes-file buildopt-changes.txt \
             --base-revision "${buildopt_base}" \
             "${buildopt_required_output_args[@]}" \
-            --gradle-option=--no-configuration-cache \
-            --gradle-option=--no-scan --gradle-option=--max-workers=12 \
+            "${buildopt_proposal_gradle_args[@]}" \
             "${buildopt_equivalence_args[@]}" \
             --buildopt-revision "${buildopt_revision}" --timeout 30m
     ) >"${buildopt_subject_output}/proposal.log" 2>&1; then
@@ -347,10 +372,7 @@ buildopt_capture_subject() {
                 --base-revision "${buildopt_base}" \
                 --buildopt-revision "${buildopt_revision}" \
                 --evidence-output buildopt-structural-evidence.json \
-                --gradle-option=--daemon --gradle-option=--build-cache \
-                --gradle-option=--parallel --gradle-option=--no-configuration-cache \
-                --gradle-option=--console=plain --gradle-option=--no-scan \
-                --gradle-option=--max-workers=12 \
+                "${buildopt_measure_gradle_args[@]}" \
                 --target-stability-confirmations "${buildopt_target_stability_confirmations}" \
                 "${buildopt_equivalence_args[@]}" --timeout 30m
         ) >"${buildopt_subject_output}/measurement.log" 2>&1; then

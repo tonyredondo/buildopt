@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "ktorio/ktor",
+  "pipelineClass": "jvm-jar",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    "jvmJar"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "changed-projects",
+      "entrypoints": [
+        ":ktor-server-core:jvmJar"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "required-output-1",
+      "path": "ktor-server/ktor-server-core/build/libs/ktor-server-core-jvm-*.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}
