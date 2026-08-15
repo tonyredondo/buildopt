@@ -34,7 +34,11 @@ cat >"${buildopt_repository}/settings.gradle.kts" <<'EOF'
 rootProject.name = "generic-output-contract-fixture"
 include("service-a", "service-b")
 EOF
+cat >"${buildopt_repository}/gradle.properties" <<'EOF'
+org.gradle.configureondemand=true
+EOF
 cat >"${buildopt_repository}/build.gradle.kts" <<'EOF'
+check(providers.gradleProperty("owner.mode").orNull == "jvm")
 subprojects {
     apply(plugin = "java")
     layout.buildDirectory = layout.projectDirectory.dir("target")
@@ -70,6 +74,7 @@ buildopt_common=(
     --pipeline-class jar
     --entrypoint jar
     --gradle-option=--offline
+    --gradle-option=-Powner.mode=jvm
 )
 (
     cd -- "${buildopt_repository}"
@@ -82,15 +87,15 @@ import json
 import sys
 with open(sys.argv[1], encoding="utf-8") as handle:
     report = json.load(handle)
-assert report["decision"] == "REVIEW_REQUIRED_OUTPUTS"
-assert report["reason"] == "OUTPUTS_DISCOVERED"
-assert report["declaredOutputs"] == []
+assert report["decision"] == "REVIEW_REQUIRED_OUTPUTS", report
+assert report["reason"] == "OUTPUTS_DISCOVERED", report
+assert report["declaredOutputs"] == [], report
 candidates = {item["pattern"]: item for item in report["candidateOutputs"]}
-assert "service-a/target/libs/service-a.jar" in candidates
-assert "service-b/target/libs/service-b.jar" in candidates
-assert candidates["service-a/target/libs/service-a.jar"]["ownerProjects"] == [":service-a"]
-assert report["activationAutomatic"] is False
-assert report["productionAuthorized"] is False
+assert "service-a/target/libs/service-a.jar" in candidates, report
+assert "service-b/target/libs/service-b.jar" in candidates, report
+assert candidates["service-a/target/libs/service-a.jar"]["ownerProjects"] == [":service-a"], report
+assert report["activationAutomatic"] is False, report
+assert report["productionAuthorized"] is False, report
 PY
 
 (
@@ -107,10 +112,10 @@ import json
 import sys
 with open(sys.argv[1], encoding="utf-8") as handle:
     report = json.load(handle)
-assert report["decision"] == "VALIDATED_REQUIRED_OUTPUTS"
-assert report["reason"] == "DECLARED_OUTPUTS_MATCH_EXECUTED_WORKFLOW"
-assert [item["status"] for item in report["validations"]] == ["VALIDATED", "VALIDATED"]
-assert all(item["matchedFiles"] == 1 for item in report["validations"])
+assert report["decision"] == "VALIDATED_REQUIRED_OUTPUTS", report
+assert report["reason"] == "DECLARED_OUTPUTS_MATCH_EXECUTED_WORKFLOW", report
+assert [item["status"] for item in report["validations"]] == ["VALIDATED", "VALIDATED"], report
+assert all(item["matchedFiles"] == 1 for item in report["validations"]), report
 PY
 
 wrong_proposal=(
@@ -135,14 +140,14 @@ with open(sys.argv[1], encoding="utf-8") as handle:
     contract = json.load(handle)
 with open(sys.argv[2], encoding="utf-8") as handle:
     proposal = json.load(handle)
-assert contract["decision"] == "NATIVE_FULL_GRAPH"
-assert contract["reason"] == "REQUIRED_OUTPUTS_EMPTY"
-assert contract["validations"][0]["status"] == "EMPTY"
-assert any(item["pattern"].startswith("service-a/target/") for item in contract["candidateOutputs"])
-assert proposal["decision"] == "NATIVE_FULL_GRAPH"
-assert proposal["reason"] == "REQUIRED_OUTPUTS_EMPTY"
-assert proposal["documents"]["outputContract"] == "wrong-output-contract.json"
-assert "manifest" not in proposal["documents"]
+assert contract["decision"] == "NATIVE_FULL_GRAPH", contract
+assert contract["reason"] == "REQUIRED_OUTPUTS_EMPTY", contract
+assert contract["validations"][0]["status"] == "EMPTY", contract
+assert any(item["pattern"].startswith("service-a/target/") for item in contract["candidateOutputs"]), contract
+assert proposal["decision"] == "NATIVE_FULL_GRAPH", proposal
+assert proposal["reason"] == "REQUIRED_OUTPUTS_EMPTY", proposal
+assert proposal["documents"]["outputContract"] == "wrong-output-contract.json", proposal
+assert "manifest" not in proposal["documents"], proposal
 PY
 test ! -e "${buildopt_repository}/buildopt-impact-manifest.json"
 
@@ -169,11 +174,11 @@ with open(sys.argv[1], encoding="utf-8") as handle:
     contract = json.load(handle)
 with open(sys.argv[2], encoding="utf-8") as handle:
     proposal = json.load(handle)
-assert contract["decision"] == "VALIDATED_REQUIRED_OUTPUTS"
-assert proposal["decision"] == "MEASURE_STRUCTURAL_CANDIDATE"
-assert proposal["candidateEntrypoints"] == [":service-a:jar"]
-assert proposal["omittedProjects"] == [":service-b"]
-assert proposal["analysis"]["plan"]["requiredOutputs"] == ["service-a/target/libs/**"]
+assert contract["decision"] == "VALIDATED_REQUIRED_OUTPUTS", contract
+assert proposal["decision"] == "MEASURE_STRUCTURAL_CANDIDATE", proposal
+assert proposal["candidateEntrypoints"] == [":service-a:jar"], proposal
+assert proposal["omittedProjects"] == [":service-b"], proposal
+assert proposal["analysis"]["plan"]["requiredOutputs"] == ["service-a/target/libs/**"], proposal
 PY
 
 buildopt_ambiguous="${buildopt_temp}/ambiguous"
@@ -203,6 +208,7 @@ git -C "${buildopt_ambiguous}" commit -qm 'add ambiguous shared output'
         --entrypoint sharedOutput \
         --required-output 'shared/**' \
         --gradle-option=--offline \
+        --gradle-option=-Powner.mode=jvm \
         --output ambiguous.json >/dev/null
 )
 python3 - "${buildopt_ambiguous}/ambiguous.json" <<'PY'
@@ -210,10 +216,10 @@ import json
 import sys
 with open(sys.argv[1], encoding="utf-8") as handle:
     report = json.load(handle)
-assert report["decision"] == "NATIVE_FULL_GRAPH"
-assert report["reason"] == "OUTPUT_OWNERSHIP_AMBIGUOUS"
-assert report["validations"][0]["status"] == "AMBIGUOUS"
-assert report["validations"][0]["ownerProjects"] == [":service-a", ":service-b"]
+assert report["decision"] == "NATIVE_FULL_GRAPH", report
+assert report["reason"] == "OUTPUT_OWNERSHIP_AMBIGUOUS", report
+assert report["validations"][0]["status"] == "AMBIGUOUS", report
+assert report["validations"][0]["ownerProjects"] == [":service-a", ":service-b"], report
 PY
 
 printf 'Generic output-contract preflight passed\n'

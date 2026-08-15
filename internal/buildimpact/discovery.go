@@ -182,8 +182,7 @@ func observeGradle(ctx context.Context, options ObservationOptions) ([]byte, err
 	} else if !filepath.IsAbs(gradleCommand) {
 		gradleCommand = filepath.Join(root, gradleCommand)
 	}
-	arguments := append([]string{}, options.GradleArgs...)
-	arguments = append(arguments, "--no-daemon", "--console=plain", "--init-script", initPath, "buildoptImpactDiscovery")
+	arguments := discoveryGradleArguments(options.GradleArgs, initPath)
 	command := exec.CommandContext(ctx, gradleCommand, arguments...)
 	command.Dir = root
 	command.Env = replaceDiscoveryEnvironment(os.Environ(), map[string]string{
@@ -199,6 +198,19 @@ func observeGradle(ctx context.Context, options ObservationOptions) ([]byte, err
 		return nil, fmt.Errorf("read Gradle impact discovery: %w", err)
 	}
 	return raw, nil
+}
+
+func discoveryGradleArguments(ownerOptions []string, initPath string) []string {
+	arguments := make([]string, 0, len(ownerOptions)+6)
+	for _, option := range ownerOptions {
+		if option == "--daemon" || option == "--no-daemon" ||
+			option == "--configure-on-demand" || option == "--no-configure-on-demand" ||
+			strings.HasPrefix(option, "--console=") {
+			continue
+		}
+		arguments = append(arguments, option)
+	}
+	return append(arguments, "--no-daemon", "--no-configure-on-demand", "--console=plain", "--init-script", initPath, "buildoptImpactDiscovery")
 }
 
 // GenerateImpact strictly validates a Gradle snapshot and produces canonical

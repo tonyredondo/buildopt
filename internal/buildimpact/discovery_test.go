@@ -167,6 +167,19 @@ func automaticDiscoveryManifest(t *testing.T) LoadedManifest {
 	return loaded
 }
 
+func TestDiscoveryGradleArgumentsOwnObservationOnlyOptionsWithoutDroppingOwnerProperties(t *testing.T) {
+	got := discoveryGradleArguments([]string{
+		"--daemon", "--build-cache", "--configure-on-demand", "--console=rich", "-Powner.mode=jvm",
+	}, "/private/discovery.init.gradle")
+	want := []string{
+		"--build-cache", "-Powner.mode=jvm", "--no-daemon", "--no-configure-on-demand", "--console=plain",
+		"--init-script", "/private/discovery.init.gradle", "buildoptImpactDiscovery",
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("discovery Gradle arguments = %#v, want %#v", got, want)
+	}
+}
+
 func TestSyntheticGradleDiscoveryGeneratedStateIsCurrent(t *testing.T) {
 	if os.Getenv("BUILDOPT_RUN_BUILD_IMPACT_DISCOVERY_PROOF") != "1" {
 		t.Skip("real Gradle discovery proof is run by check-build-impact-automatic")

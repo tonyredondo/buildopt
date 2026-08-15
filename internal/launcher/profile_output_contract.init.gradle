@@ -5,6 +5,12 @@ import java.nio.file.Files
 // Init scripts are inherited by buildSrc and included builds. Output-contract
 // discovery owns only the top-level repository selected by the CLI.
 if (gradle.getParent() == null) {
+    // Configuration-on-demand resolves root task names before projectsEvaluated.
+    // Register the stable entrypoint as soon as the root project exists, then
+    // attach the fully resolved owner tasks after all projects are evaluated.
+    gradle.rootProject {
+        it.tasks.register("buildoptOutputContract")
+    }
     gradle.projectsEvaluated {
         def outputPath = System.getenv("BUILDOPT_OUTPUT_CONTRACT_SNAPSHOT")
         def entrypointJSON = System.getenv("BUILDOPT_OUTPUT_CONTRACT_ENTRYPOINTS")
@@ -32,7 +38,7 @@ if (gradle.getParent() == null) {
             return matches
         }.toSet().toList().sort { left, right -> left.path <=> right.path }
 
-        def contractTask = root.tasks.register("buildoptOutputContract") {
+        root.tasks.named("buildoptOutputContract") {
             group = "buildopt"
             description = "Executes the owner workflow and records its repository-owned outputs"
             dependsOn(requestedTasks)

@@ -69,10 +69,10 @@ func TestValidOutputContractPatternRejectsEscapes(t *testing.T) {
 
 func TestOutputContractGradleArgumentsOwnDaemonAndConsoleWithoutDroppingOwnerProperties(t *testing.T) {
 	got := outputContractGradleArguments([]string{
-		"--daemon", "--build-cache", "--console=plain", "-Ptarget.posix=false",
+		"--daemon", "--build-cache", "--configure-on-demand", "--console=plain", "-Ptarget.posix=false",
 	}, "/private/output-contract.init.gradle")
 	want := []string{
-		"--build-cache", "-Ptarget.posix=false", "--no-daemon", "--console=plain",
+		"--build-cache", "-Ptarget.posix=false", "--no-daemon", "--no-configure-on-demand", "--console=plain",
 		"--init-script", "/private/output-contract.init.gradle", "buildoptOutputContract",
 	}
 	if !reflect.DeepEqual(got, want) {
