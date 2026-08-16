@@ -56,14 +56,21 @@ arbitrary restored directory as qualified state.
 Both providers publish `.buildopt/ci-report/v1` with:
 
 - `result.json`, when BuildOpt reaches final reporting;
+- `value-report.md`, explaining graph reduction, measured value, economics and
+  fallback in customer language;
+- `value-report.json`, carrying the recomputable source metrics and formulas;
 - `summary.md`, containing provider, repository, checked-out revision, and
   process result without raw Gradle arguments; and
-- `SHA256SUMS` for the machine result.
+- `SHA256SUMS` for every available result, summary, and value-report file.
 
 Raw Gradle console output, credentials, absolute checkout paths, and the
 command argument vector are not persisted. State stays in the provider cache;
 it is not uploaded as a review artifact. Gradle or BuildOpt failure remains a
 failed CI job, while the available report is uploaded for diagnosis.
+
+Before the command starts, the helper removes only the previous derived result
+and value-report files while preserving the learned state. An early launcher
+failure therefore cannot publish stale evidence as the current job's result.
 
 ## POC boundary
 

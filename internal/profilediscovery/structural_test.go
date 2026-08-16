@@ -73,6 +73,7 @@ func TestRenderStructuralMeasurementEvidenceQualifiesOnlyPositiveExactPairs(t *t
 	if !summary.Qualified || summary.Pairs != structuralPairCount ||
 		summary.ControlMeanMS != 10000 || summary.CandidateMeanMS != 7000 ||
 		summary.MeanSavedMS != 3000 || summary.PositivePairs != structuralPairCount ||
+		summary.ControlP95MS != 10000 || summary.CandidateP95MS != 7000 ||
 		!summary.FallbackSuccessful || summary.ProductionAuthorized {
 		t.Fatalf("structural measurement summary = %+v", summary)
 	}

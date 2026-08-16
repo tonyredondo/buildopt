@@ -13,7 +13,7 @@ buildopt_contract="${buildopt_root}/specs/poc-magic-ci-onboarding-v1.json"
 jq -e '
   keys == [
     "acceptance", "acceptedBindings", "boundaries", "command",
-    "persistence", "portableScope", "providers", "report",
+    "freshness", "persistence", "portableScope", "providers", "report",
     "schemaVersion", "workItem"
   ] and
   .schemaVersion == "buildopt.poc/magic-ci-onboarding/v1" and
@@ -42,11 +42,19 @@ jq -e '
     cacheCorruptionRunsNative: true, serviceRequired: false,
     crossRevisionInference: false
   } and
-  .report.files == ["SHA256SUMS", "result.json", "summary.md"] and
+  .report.files == [
+    "SHA256SUMS", "result.json", "summary.md",
+    "value-report.json", "value-report.md"
+  ] and
   .report.rawGradleArgumentsPersisted == false and
   .report.consoleLogPersisted == false and
   .report.credentialsPersisted == false and
   .report.absoluteCheckoutPathPersisted == false and
+  .freshness == {
+    priorDerivedReportsRemovedBeforeInvocation: true,
+    resumeStatePreserved: true,
+    earlyFailurePublishesPriorReport: false
+  } and
   .acceptance.differentCheckoutSameProviderRepositoryAcceptsExactCheckpoint == true and
   .acceptance.differentProviderRepositoryRejectsCheckpoint == true and
   .acceptance.providerRevisionDriftRejectedBeforeStateUse == true and

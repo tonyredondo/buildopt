@@ -26,6 +26,8 @@ const (
 	optimizeDefaultStateDir     = ".buildopt/optimize/v1"
 	optimizeStateFile           = "state.json"
 	optimizeResultFile          = "result.json"
+	optimizeValueReportJSONFile = "value-report.json"
+	optimizeValueReportMDFile   = "value-report.md"
 	optimizeOutcomeLearning     = "LEARNING"
 	optimizeOutcomeNative       = "NATIVE_RETAINED"
 	optimizePhaseUnseen         = "UNSEEN"
@@ -107,6 +109,7 @@ type optimizeState struct {
 	Calibration          optimizeCalibrationResult `json:"calibration"`
 	Portfolio            optimizePortfolioResult   `json:"portfolio"`
 	Selection            optimizeSelectionResult   `json:"selection"`
+	Value                optimizeValueState        `json:"value"`
 	UpdatedAt            string                    `json:"updatedAt"`
 	ProductionAuthorized bool                      `json:"productionAuthorized"`
 }
@@ -125,11 +128,13 @@ type optimizeExecutionResult struct {
 }
 
 type optimizeGeneratedFiles struct {
-	State       string   `json:"state"`
-	Result      string   `json:"result"`
-	Discovery   []string `json:"discovery"`
-	Calibration []string `json:"calibration"`
-	Portfolio   []string `json:"portfolio"`
+	State         string   `json:"state"`
+	Result        string   `json:"result"`
+	Discovery     []string `json:"discovery"`
+	Calibration   []string `json:"calibration"`
+	Portfolio     []string `json:"portfolio"`
+	ValueJSON     string   `json:"valueJson"`
+	ValueMarkdown string   `json:"valueMarkdown"`
 }
 
 type optimizeResult struct {
@@ -151,6 +156,7 @@ type optimizeResult struct {
 	Calibration          optimizeCalibrationResult `json:"calibration"`
 	Portfolio            optimizePortfolioResult   `json:"portfolio"`
 	Selection            optimizeSelectionResult   `json:"selection"`
+	Value                optimizeValueState        `json:"value"`
 	GeneratedFiles       optimizeGeneratedFiles    `json:"generatedFiles"`
 	ManualFilesRequired  int                       `json:"manualFilesRequired"`
 	CalibrationPerformed bool                      `json:"calibrationPerformed"`
@@ -165,6 +171,8 @@ type optimizeRun struct {
 	state         optimizeState
 	statePath     string
 	resultPath    string
+	valueJSONPath string
+	valueMDPath   string
 	startedAt     time.Time
 	childStarted  bool
 	previousState *optimizeState
@@ -390,6 +398,8 @@ func beginOptimizeRun(invocation optimizeInvocation) (*optimizeRun, error) {
 	startedAt := time.Now().UTC()
 	statePath := filepath.Join(invocation.stateDirectory, optimizeStateFile)
 	resultPath := filepath.Join(invocation.stateDirectory, optimizeResultFile)
+	valueJSONPath := filepath.Join(invocation.stateDirectory, optimizeValueReportJSONFile)
+	valueMDPath := filepath.Join(invocation.stateDirectory, optimizeValueReportMDFile)
 	resume, generation, attempt, previous := inspectOptimizeCheckpoint(statePath, invocation)
 	state := optimizeState{
 		SchemaVersion: optimizeStateSchemaVersion, Generation: generation, Attempt: attempt,
@@ -404,7 +414,8 @@ func beginOptimizeRun(invocation optimizeInvocation) (*optimizeRun, error) {
 	}
 	return &optimizeRun{
 		invocation: invocation, state: state, statePath: statePath,
-		resultPath: resultPath, startedAt: startedAt, previousState: previous,
+		resultPath: resultPath, valueJSONPath: valueJSONPath, valueMDPath: valueMDPath,
+		startedAt: startedAt, previousState: previous,
 	}, nil
 }
 
@@ -469,6 +480,7 @@ func validOptimizeState(state optimizeState) bool {
 		!validOptimizeCalibrationCheckpoint(state) ||
 		!validOptimizePortfolioCheckpoint(state) ||
 		!validOptimizeSelectionCheckpoint(state) ||
+		!validOptimizeValueState(state) ||
 		!optimizeStringIn(state.Bindings.Completeness, optimizeBindingContractOnly, optimizeBindingDiscovery, optimizeBindingCalibration, optimizeBindingPortfolio, optimizeBindingReplay) ||
 		state.Budget.WallTimeSeconds < 1 || state.Budget.Pairs < 2 ||
 		state.Budget.Pairs > 16 || state.Budget.MaxBreakEvenBuilds < 1 ||
@@ -624,6 +636,11 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 	run.state.Calibration = calibration
 	run.state.Portfolio = portfolio
 	run.state.Selection = selection
+	previousValue := optimizeValueState{}
+	if run.state.Resume.Accepted && run.previousState != nil {
+		previousValue = run.previousState.Value
+	}
+	run.state.Value = nextOptimizeValueState(previousValue, calibration, selection, exitCode)
 	if calibration.Status == optimizeCalibrationComplete {
 		run.state.Bindings.Completeness = optimizeBindingCalibration
 	}
@@ -662,20 +679,33 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		Calibration: calibration,
 		Portfolio:   portfolio,
 		Selection:   selection,
+		Value:       run.state.Value,
 		GeneratedFiles: optimizeGeneratedFiles{
-			State:       filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeStateFile)),
-			Result:      filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeResultFile)),
-			Discovery:   append([]string{}, discovery.GeneratedFiles...),
-			Calibration: append([]string{}, calibration.GeneratedFiles...),
-			Portfolio:   append([]string{}, portfolio.GeneratedFiles...),
+			State:         filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeStateFile)),
+			Result:        filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeResultFile)),
+			Discovery:     append([]string{}, discovery.GeneratedFiles...),
+			Calibration:   append([]string{}, calibration.GeneratedFiles...),
+			Portfolio:     append([]string{}, portfolio.GeneratedFiles...),
+			ValueJSON:     filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeValueReportJSONFile)),
+			ValueMarkdown: filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeValueReportMDFile)),
 		},
 		ManualFilesRequired: 0, CalibrationPerformed: calibration.Performed && !calibration.Reused,
 		PortfolioPerformed: portfolio.Performed && !portfolio.Reused, SelectionPerformed: selection.Performed,
 		ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
 	}
+	valueReport := newOptimizeValueReport(result)
+	valueMarkdown := renderOptimizeValueMarkdown(valueReport)
 	if err := writeCanonicalPrivateJSON(run.statePath, run.state); err != nil {
 		return err
 	}
+	if err := writeCanonicalPrivateJSON(run.valueJSONPath, valueReport); err != nil {
+		return err
+	}
+	if err := writePrivateAtomicFile(run.valueMDPath, valueMarkdown); err != nil {
+		return err
+	}
+	// Publish the invocation result only after its customer-readable evidence is
+	// complete, so a newly visible result never points at a partial report set.
 	if err := writeCanonicalPrivateJSON(run.resultPath, result); err != nil {
 		return err
 	}
@@ -689,10 +719,11 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 	}
 	_, err := fmt.Fprintf(
 		stderr,
-		"BuildOpt optimize: %s (%s)\nCurrent build: %s\nState: %s\nNext: %s; production authorization remains false\n",
+		"BuildOpt optimize: %s (%s)\nCurrent build: %s\nValue report: %s\nState: %s\nNext: %s; production authorization remains false\n",
 		result.Outcome,
 		result.Reason,
 		optimizeSelectionDescription(selection),
+		result.GeneratedFiles.ValueMarkdown,
 		result.GeneratedFiles.Result,
 		optimizeNextStep(discovery, calibration, portfolio, selection),
 	)

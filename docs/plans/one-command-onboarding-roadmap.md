@@ -191,7 +191,7 @@ UNSEEN -> DISCOVERED -> CALIBRATING -> QUALIFIED -> ACTIVE
 | 4 | `POC-MAGIC-PROFILE-PORTFOLIO-001` | Classify observed changes into exact structural families and maintain multiple qualified profiles without repository-name rules. | **Done:** dependency, resource, leaf and mixed-source facts map to distinct logical families; independently qualified families coexist, the same family replaces only its exact binding, exact state resumes and tampering is rebuilt from valid evidence without granting selection. |
 | 5 | `POC-MAGIC-AUTO-REPLAY-001` | Let `buildopt optimize` automatically use a qualifying portfolio entry and refresh stale entries. | **Done:** the first qualifying run creates the profile; a later exact run validates eleven bindings and selects it with no extra flag or calibration; drift disables it before Gradle starts and valid evidence may repair a corrupt artifact for the next run. |
 | 6 | `POC-MAGIC-CI-ONBOARDING-001` | Add one-input GitHub/GitLab orchestration and portable calibration persistence. | **Done:** a clean consumer supplies `command: optimize build`; provider identity makes exact state independent of the checkout path, every other binding remains fail-closed, and both providers publish checksummed results without a service. |
-| 7 | `POC-MAGIC-WOW-REPORT-001` | Present graph reduction, observed wall time, uncertainty, break-even, cumulative saving and fallback reasons. | Human output is understandable without the tracker; JSON recomputes every number and never adds unrelated mechanism percentages. |
+| 7 | `POC-MAGIC-WOW-REPORT-001` | Present graph reduction, observed wall time, uncertainty, break-even, cumulative saving and fallback reasons. | **Done:** human output is understandable without the tracker; JSON recomputes every number, labels cumulative value as a projection, keeps useful lifetime unavailable until observed, and never adds unrelated mechanism percentages. |
 | 8 | `POC-MAGIC-END-TO-END-VALUE-001` | Validate the complete onboarding on fresh substantial public repositories. | Install-to-decision uses one command and zero manual BuildOpt files; at least two different Gradle families produce equivalent outputs and a net installed-path win, while a negative case retains native. |
 
 Blocks 1–8 are ordered. A later block cannot bypass a missing safety or value
@@ -243,10 +243,10 @@ and honest native decisions when the idea does not pay.
 
 ## Immediate next step
 
-Complete `POC-MAGIC-WOW-REPORT-001`. The same command now runs locally and
-through one-input GitHub/GitLab orchestration, restores only provider-bound
-exact state and publishes a checksummed machine result without requiring a
-BuildOpt service. The next block must turn that evidence into a customer-level
-explanation of selected versus full graph, measured net saving, uncertainty,
-calibration cost, break-even, cumulative value and the exact native-fallback
-reason. Gradle remains authoritative on drift or ambiguity.
+Complete `POC-MAGIC-END-TO-END-VALUE-001`. The same one-command path now emits
+a customer-readable and recomputable explanation locally and in GitHub/GitLab
+artifacts. The next block must start from fresh substantial public repositories
+and the public package, require zero manual BuildOpt files, compare the complete
+installed path with optimized native Gradle, validate equivalent outputs and
+the generated report, preserve one honest native case, and begin observing how
+long exact profiles remain useful instead of assuming an infinite lifetime.

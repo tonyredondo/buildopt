@@ -190,6 +190,8 @@ type StructuralMeasurementSummary struct {
 	ReductionRatio       float64
 	Interval95SavedMS    []float64
 	PositivePairs        int
+	ControlP95MS         float64
+	CandidateP95MS       float64
 	Qualified            bool
 	Decision             string
 	FallbackSuccessful   bool
@@ -208,6 +210,12 @@ func InspectStructuralMeasurementEvidence(raw []byte, analysis AnalysisReport) (
 	if err := validateStructuralCaptureEvidence(evidence, analysis); err != nil {
 		return StructuralMeasurementSummary{}, err
 	}
+	controlDurations := make([]float64, 0, len(evidence.Observations))
+	candidateDurations := make([]float64, 0, len(evidence.Observations))
+	for _, observation := range evidence.Observations {
+		controlDurations = append(controlDurations, float64(observation.ControlDurationMS))
+		candidateDurations = append(candidateDurations, float64(observation.CandidateDurationMS))
+	}
 	return StructuralMeasurementSummary{
 		EvidenceState:        evidence.EvidenceState,
 		Pairs:                evidence.Result.Pairs,
@@ -217,11 +225,26 @@ func InspectStructuralMeasurementEvidence(raw []byte, analysis AnalysisReport) (
 		ReductionRatio:       evidence.Result.ReductionRatio,
 		Interval95SavedMS:    append([]float64(nil), evidence.Result.Interval95SavedMS...),
 		PositivePairs:        evidence.Result.PositivePairs,
+		ControlP95MS:         structuralNearestRank(controlDurations, .95),
+		CandidateP95MS:       structuralNearestRank(candidateDurations, .95),
 		Qualified:            evidence.Result.Qualified,
 		Decision:             evidence.Result.Decision,
 		FallbackSuccessful:   evidence.Fallback.BuildSuccessful,
 		ProductionAuthorized: evidence.Boundaries.ProductionAuthorized,
 	}, nil
+}
+
+func structuralNearestRank(values []float64, percentile float64) float64 {
+	ordered := append([]float64(nil), values...)
+	sort.Float64s(ordered)
+	if len(ordered) == 0 {
+		return 0
+	}
+	index := int(math.Ceil(percentile*float64(len(ordered)))) - 1
+	if index < 0 {
+		index = 0
+	}
+	return ordered[index]
 }
 
 // StructuralTaskOutcomes is a bounded execution-shape summary parsed from

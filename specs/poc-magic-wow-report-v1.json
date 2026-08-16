@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "buildopt.poc/magic-wow-report-contract/v1",
+  "workItem": "POC-MAGIC-WOW-REPORT-001",
+  "generatedFiles": {
+    "json": ".buildopt/optimize/v1/value-report.json",
+    "markdown": ".buildopt/optimize/v1/value-report.md",
+    "permissions": "CURRENT_USER_PRIVATE",
+    "writeBehavior": "ATOMIC_PRIVATE_REPLACE"
+  },
+  "graph": {
+    "fields": [
+      "fullProjects",
+      "selectedProjects",
+      "omittedProjects",
+      "reductionRatio"
+    ],
+    "reductionFormula": "OMITTED_PROJECTS / FULL_PROJECTS",
+    "graphReductionIsValueClaim": false
+  },
+  "performance": {
+    "control": "OPTIMIZED_NATIVE_GRADLE",
+    "candidate": "INSTALLED_BUILDOPT_SELECTED_GRAPH",
+    "meanSavingFormula": "OPTIMIZED_NATIVE_MEAN_MS - BUILDOPT_MEAN_MS",
+    "reductionFormula": "OBSERVED_NET_MEAN_SAVED_MS / OPTIMIZED_NATIVE_MEAN_MS",
+    "uncertainty": "DETERMINISTIC_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
+    "tail": "NEAREST_RANK_P95_PER_ARM",
+    "tailDeltaFormula": "BUILDOPT_P95_MS - OPTIMIZED_NATIVE_P95_MS",
+    "launcherOverheadIncluded": true,
+    "requiredOutputsEquivalent": true,
+    "noEvidenceDecision": "NO_WALL_TIME_CLAIM"
+  },
+  "economics": {
+    "breakEvenFormula": "CEIL(CALIBRATION_COST_MS / OBSERVED_NET_MEAN_SAVED_MS)",
+    "matchingReplayCount": "SUCCESSFUL_EXACT_SELECTED_REPLAYS_IN_CURRENT_GENERATION",
+    "projectedGrossFormula": "MATCHING_REPLAY_COUNT * OBSERVED_NET_MEAN_SAVED_MS",
+    "projectedCumulativeNetFormula": "PROJECTED_GROSS_SAVED_MS - CALIBRATION_COST_MS - CUMULATIVE_SELECTION_OVERHEAD_MS",
+    "selectionOverheadAccounting": "ALL_EXACT_SELECTED_ATTEMPTS_IN_CURRENT_GENERATION_INCLUDING_FAILED_BUILDS",
+    "paybackRemainingFormula": "MAX(0, CALIBRATION_COST_MS - PROJECTED_GROSS_SAVED_MS + CUMULATIVE_SELECTION_OVERHEAD_MS)",
+    "projectionIsObservedCumulativeWallTime": false,
+    "expectedUsefulLifetime": {
+      "status": "UNAVAILABLE",
+      "estimatedMatchingBuilds": null,
+      "reason": "EXACT_REVISION_REPLAY_HAS_NO_OBSERVED_FUTURE_MATCH_COUNT"
+    }
+  },
+  "fallback": {
+    "mode": "OPTIMIZED_NATIVE",
+    "currentNativeDecisionReportsExactReason": true,
+    "selectedDecisionRetainsNativeOnDriftOrUncertainty": true
+  },
+  "recomputation": {
+    "sourceResult": ".buildopt/optimize/v1/result.json",
+    "calibrationEvidenceDigestBound": true,
+    "discoveryDigestBound": true,
+    "mechanismPercentagesAdded": false,
+    "unavailableValuesReplacedWithZero": false
+  },
+  "ciArtifactFiles": [
+    "SHA256SUMS",
+    "result.json",
+    "summary.md",
+    "value-report.json",
+    "value-report.md"
+  ],
+  "authority": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "autonomousPromotion": false,
+    "testOptimization": "OUT_OF_SCOPE",
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

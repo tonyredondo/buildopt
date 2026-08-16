@@ -43,7 +43,7 @@ export PATH="$HOME/.local/bin:$PATH"
 buildopt doctor
 ```
 
-Use `--version 0.2.0` to pin a release or `--prefix /absolute/path` to choose
+Use `--version <published-version>` to pin a release or `--prefix /absolute/path` to choose
 another user-owned installation. The installer detects the operating system
 and architecture, downloads the matching archive and checksum, verifies the
 complete archive, verifies its internal files again, and records only the
@@ -61,7 +61,7 @@ Invoke-WebRequest `
 buildopt doctor
 ```
 
-Open a new terminal after `-UpdatePath`. `-Version 0.2.0` pins a release and
+Open a new terminal after `-UpdatePath`. `-Version <published-version>` pins a release and
 `-Prefix C:\absolute\path` changes the installation root.
 
 ## Run the first build
@@ -135,6 +135,20 @@ stdout for one result document:
 buildopt optimize --json -- build
 ```
 
+Every completed invocation writes two customer-facing files beside the exact
+state:
+
+- `.buildopt/optimize/v1/value-report.md` explains graph reduction, observed
+  installed-path saving, uncertainty, p95, learning cost, break-even and the
+  exact fallback reason;
+- `.buildopt/optimize/v1/value-report.json` contains the source metrics and
+  formulas needed to recompute every derived number.
+
+Cumulative value is clearly labeled as a projection over successful exact
+replays, not observed cumulative wall time. Expected useful lifetime remains
+`UNAVAILABLE` until cross-commit applicability is measured separately; the POC does
+not assume a profile survives forever.
+
 `BUILDOPT_BYPASS=1 buildopt optimize build` skips optimize state and reporting
 entirely. The [command contract](../../specs/poc-magic-onboarding-contract-v1.md)
 defines resume bindings, budgets, outcomes and exit behavior; the
@@ -150,6 +164,8 @@ exact pre-Gradle matching, measured decision overhead and native fallback.
 The [one-input CI contract](../../specs/poc-magic-ci-onboarding-v1.md) makes
 that same exact command portable between clean runners of one provider
 repository without trusting restored files or requiring a BuildOpt service.
+The [value-report contract](../../specs/poc-magic-wow-report-v1.md) defines the
+human explanation, recomputation formulas and POC boundary.
 
 ## Try the Build Impact accelerator
 

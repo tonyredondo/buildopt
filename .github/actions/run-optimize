@@ -54,10 +54,32 @@ for buildopt_segment in .buildopt ci-report v1; do
     fi
     chmod 0700 -- "${buildopt_current}"
 done
-for buildopt_name in result.json SHA256SUMS summary.md; do
+for buildopt_name in result.json value-report.json value-report.md SHA256SUMS summary.md; do
     if [[ -e ${buildopt_artifact}/${buildopt_name} || -L ${buildopt_artifact}/${buildopt_name} ]]; then
         printf 'BuildOpt CI report destination already exists\n' >&2
         exit 1
+    fi
+done
+
+# Result and value reports are replaceable outputs, not resume authority. Remove
+# the previous invocation's copies so an early launcher failure cannot publish
+# stale evidence as the result of this job; state.json remains untouched.
+buildopt_optimize_output=${buildopt_repository}
+for buildopt_segment in .buildopt optimize v1; do
+    buildopt_optimize_output="${buildopt_optimize_output}/${buildopt_segment}"
+    if [[ -L ${buildopt_optimize_output} || -e ${buildopt_optimize_output} && ! -d ${buildopt_optimize_output} ]]; then
+        printf 'BuildOpt optimize output path contains an unsafe component\n' >&2
+        exit 1
+    fi
+done
+for buildopt_name in result.json value-report.json value-report.md; do
+    buildopt_path="${buildopt_optimize_output}/${buildopt_name}"
+    if [[ -L ${buildopt_path} || -e ${buildopt_path} && ! -f ${buildopt_path} ]]; then
+        printf 'BuildOpt optimize output path is unsafe\n' >&2
+        exit 1
+    fi
+    if [[ -f ${buildopt_path} ]]; then
+        rm -- "${buildopt_path}"
     fi
 done
 
@@ -71,9 +93,13 @@ printf 'artifact-directory=%s\n' "${buildopt_artifact}" >>"${buildopt_github_out
 buildopt_result="${buildopt_repository}/.buildopt/optimize/v1/result.json"
 if [[ -f ${buildopt_result} && ! -L ${buildopt_result} ]]; then
     install -m 0600 -- "${buildopt_result}" "${buildopt_artifact}/result.json"
-    sha256sum "${buildopt_artifact}/result.json" >"${buildopt_artifact}/SHA256SUMS"
-    chmod 0600 -- "${buildopt_artifact}/SHA256SUMS"
 fi
+for buildopt_name in value-report.json value-report.md; do
+    buildopt_source="${buildopt_repository}/.buildopt/optimize/v1/${buildopt_name}"
+    if [[ -f ${buildopt_source} && ! -L ${buildopt_source} ]]; then
+        install -m 0600 -- "${buildopt_source}" "${buildopt_artifact}/${buildopt_name}"
+    fi
+done
 {
     printf '# BuildOpt CI result\n\n'
     printf '%s\n' '- Provider: GitHub Actions'
@@ -82,7 +108,21 @@ fi
     printf '%s%s%s\n' '- Process exit code: `' "${buildopt_exit}" '`'
     printf '%s\n' '- Persistent state: provider cache, accepted only after BuildOpt validates every exact binding'
     printf '%s\n' "- Review: \`result.json\` when the command reached final reporting"
+    printf '%s\n' "- Value explanation: \`value-report.md\` with recomputable \`value-report.json\` when available"
 } >"${buildopt_artifact}/summary.md"
 chmod 0600 -- "${buildopt_artifact}/summary.md"
+buildopt_checksum_files=()
+for buildopt_name in result.json summary.md value-report.json value-report.md; do
+    if [[ -f ${buildopt_artifact}/${buildopt_name} ]]; then
+        buildopt_checksum_files+=("${buildopt_name}")
+    fi
+done
+if ((${#buildopt_checksum_files[@]} > 0)); then
+    (
+        cd -- "${buildopt_artifact}"
+        sha256sum -- "${buildopt_checksum_files[@]}"
+    ) >"${buildopt_artifact}/SHA256SUMS"
+    chmod 0600 -- "${buildopt_artifact}/SHA256SUMS"
+fi
 
 exit "${buildopt_exit}"

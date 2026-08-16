@@ -61,6 +61,7 @@ func TestOptimizeCalibrationCheckpointRejectsAuthorityAndMetricTampering(t *test
 			Performed: true, PairsRequested: 8, PairsMeasured: 8,
 			ControlMeanMS: 10000, CandidateMeanMS: 7000, MeanSavedMS: 3000,
 			ReductionRatio: 0.3, Interval95SavedMS: []float64{2500, 3500}, PositivePairs: 8,
+			ControlP95MS: 11000, CandidateP95MS: 7600,
 			CalibrationCostMS: 24000, BreakEvenBuilds: 8, MaximumBreakEvenBuilds: 30,
 			ValueGatePassed: true, Qualified: true, FallbackSuccessful: true,
 			EvidenceSHA256: strings.Repeat("a", 64), DiscoverySHA256: strings.Repeat("b", 64),

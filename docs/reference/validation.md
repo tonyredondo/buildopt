@@ -258,6 +258,21 @@ draft-only boundary.
 Run the automatic check after CLI/discovery changes and the gate after any
 selection, fallback, ownership, or Test Optimization boundary change.
 
+## One-command POC
+
+```bash
+./dev/check-magic-wow-report
+./dev/check-magic-ci-onboarding
+./dev/check-magic-calibration
+```
+
+The focused value-report check is fast and recomputes the human/JSON contract.
+The CI fixture proves private checksummed publication on both providers. The
+calibration fixture is the slower end-to-end proof: eight real balanced pairs,
+full fallback, exact replay, tamper recovery, cumulative economics and the
+under-budget no-claim path. Its intentional delay validates the protocol; it
+is not public-repository performance evidence.
+
 ## CI, releases, and deployment
 
 ```bash

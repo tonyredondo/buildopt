@@ -5,7 +5,8 @@ x64 runners. Consumers pin the Action source to a reviewed commit; the
 one-command POC path needs only `command: optimize build` and resolves the
 latest native package plus its published SHA-256. It derives provider
 repository/base/head facts, restores exact state through an immutable
-`actions/cache` revision and publishes a checksummed review result. Restored
+`actions/cache` revision and publishes checksummed machine and customer value
+reports. Restored
 state remains untrusted until every launcher binding passes. `version` pins
 native bits, while the paired `archive-url` and
 `archive-sha256` inputs preserve the historical signed Release Bundle v1 path.

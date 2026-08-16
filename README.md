@@ -71,7 +71,12 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > graph, output, evidence and profile bindings before Gradle, then reports
 > `QUALIFIED_AND_USED / QUALIFIED_PROFILE_SELECTED` and executes the smaller
 > graph. The decision overhead is measured; any drift runs optimized native
-> Gradle instead. This authority exists only inside the explicit POC command
+> Gradle instead. Every completed command now writes a readable value report
+> plus recomputable JSON covering graph reduction, measured mean/tail value,
+> calibration cost, break-even, exact replays and fallback. Future profile
+> lifetime remains explicitly unavailable until cross-commit applicability is
+> measured separately.
+> This authority exists only inside the explicit POC command
 > and never grants production promotion. The ordered work and success
 > scorecard live in the
 > [one-command onboarding roadmap](./docs/plans/one-command-onboarding-roadmap.md).
@@ -126,7 +131,8 @@ In GitHub Actions, the same path needs one BuildOpt-specific input:
 ```
 
 GitLab uses the same `command` input. Both integrations derive provider
-revisions, restore only exact compatible state and upload a reviewable result;
+revisions, restore only exact compatible state and upload `value-report.md`,
+its recomputable JSON source and the exact machine result with checksums;
 cache loss or drift runs optimized native Gradle and no BuildOpt service is
 required. See the [CI integration guide](./docs/guides/ci-integration.md).
 

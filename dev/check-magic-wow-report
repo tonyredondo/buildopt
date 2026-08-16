@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [contract.json]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract=${1:-"${buildopt_root}/specs/poc-magic-wow-report-v1.json"}
+
+[[ -s ${buildopt_contract} ]] || {
+    printf 'magic value-report contract is unavailable: %s\n' "${buildopt_contract}" >&2
+    exit 1
+}
+
+jq -e '
+  keys == [
+    "authority", "ciArtifactFiles", "economics", "fallback",
+    "generatedFiles", "graph", "performance", "recomputation",
+    "schemaVersion", "workItem"
+  ] and
+  .schemaVersion == "buildopt.poc/magic-wow-report-contract/v1" and
+  .workItem == "POC-MAGIC-WOW-REPORT-001" and
+  .generatedFiles == {
+    json: ".buildopt/optimize/v1/value-report.json",
+    markdown: ".buildopt/optimize/v1/value-report.md",
+    permissions: "CURRENT_USER_PRIVATE", writeBehavior: "ATOMIC_PRIVATE_REPLACE"
+  } and
+  .graph.reductionFormula == "OMITTED_PROJECTS / FULL_PROJECTS" and
+  .graph.graphReductionIsValueClaim == false and
+  .performance.control == "OPTIMIZED_NATIVE_GRADLE" and
+  .performance.meanSavingFormula == "OPTIMIZED_NATIVE_MEAN_MS - BUILDOPT_MEAN_MS" and
+  .performance.uncertainty == "DETERMINISTIC_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95" and
+  .performance.tail == "NEAREST_RANK_P95_PER_ARM" and
+  .performance.launcherOverheadIncluded == true and
+  .performance.requiredOutputsEquivalent == true and
+  .performance.noEvidenceDecision == "NO_WALL_TIME_CLAIM" and
+  .economics.breakEvenFormula == "CEIL(CALIBRATION_COST_MS / OBSERVED_NET_MEAN_SAVED_MS)" and
+  .economics.matchingReplayCount == "SUCCESSFUL_EXACT_SELECTED_REPLAYS_IN_CURRENT_GENERATION" and
+  .economics.selectionOverheadAccounting ==
+    "ALL_EXACT_SELECTED_ATTEMPTS_IN_CURRENT_GENERATION_INCLUDING_FAILED_BUILDS" and
+  .economics.projectionIsObservedCumulativeWallTime == false and
+  .economics.expectedUsefulLifetime == {
+    status: "UNAVAILABLE", estimatedMatchingBuilds: null,
+    reason: "EXACT_REVISION_REPLAY_HAS_NO_OBSERVED_FUTURE_MATCH_COUNT"
+  } and
+  .fallback == {
+    mode: "OPTIMIZED_NATIVE", currentNativeDecisionReportsExactReason: true,
+    selectedDecisionRetainsNativeOnDriftOrUncertainty: true
+  } and
+  .recomputation.mechanismPercentagesAdded == false and
+  .recomputation.unavailableValuesReplacedWithZero == false and
+  .ciArtifactFiles == [
+    "SHA256SUMS", "result.json", "summary.md",
+    "value-report.json", "value-report.md"
+  ] and
+  .authority == {
+    proofOfConcept: true, productionAuthorized: false,
+    autonomousPromotion: false, testOptimization: "OUT_OF_SCOPE",
+    soakRequired: false, designPartnerRequired: false
+  }
+' "${buildopt_contract}" >/dev/null
+
+for buildopt_source in \
+    'optimizeValueReportSchemaVersion = "buildopt.poc/magic-wow-report/v1"' \
+    'func newOptimizeValueReport(result optimizeResult)' \
+    'func renderOptimizeValueMarkdown(report optimizeValueReport)' \
+    'func validOptimizeValueState(state optimizeState) bool'; do
+    grep -R -F "${buildopt_source}" "${buildopt_root}/internal/launcher" >/dev/null
+done
+
+"${buildopt_root}/dev/run" --toolchain go -- go test ./internal/launcher \
+    -run '^(TestOptimizeValue|TestOptimizeContractRunsNativeAndResumesOnlyExactBindings)$'
+
+printf 'Magic value report OK: recomputable wall-time value, economics, and exact native fallback\n'

@@ -39,6 +39,8 @@ func TestOptimizeContractRunsNativeAndResumesOnlyExactBindings(t *testing.T) {
 
 	resultPath := filepath.Join(repository, ".buildopt", "optimize-test", "v1", optimizeResultFile)
 	statePath := filepath.Join(repository, ".buildopt", "optimize-test", "v1", optimizeStateFile)
+	valueJSONPath := filepath.Join(repository, ".buildopt", "optimize-test", "v1", optimizeValueReportJSONFile)
+	valueMDPath := filepath.Join(repository, ".buildopt", "optimize-test", "v1", optimizeValueReportMDFile)
 	result := readOptimizeResultForTest(t, resultPath)
 	if result.SchemaVersion != optimizeResultSchemaVersion || result.Outcome != optimizeOutcomeNative ||
 		result.Reason != "NATIVE_BUILD_FAILED" || result.Phase != "NATIVE_RETAINED" ||
@@ -53,6 +55,12 @@ func TestOptimizeContractRunsNativeAndResumesOnlyExactBindings(t *testing.T) {
 	}
 	assertPrivateOptimizeFile(t, statePath)
 	assertPrivateOptimizeFile(t, resultPath)
+	assertPrivateOptimizeFile(t, valueJSONPath)
+	assertPrivateOptimizeFile(t, valueMDPath)
+	if result.GeneratedFiles.ValueJSON != ".buildopt/optimize-test/v1/value-report.json" ||
+		result.GeneratedFiles.ValueMarkdown != ".buildopt/optimize-test/v1/value-report.md" {
+		t.Fatalf("value report paths = %+v", result.GeneratedFiles)
+	}
 
 	t.Setenv("BUILDOPT_OPTIMIZE_TEST_EXIT", "0")
 	stdout.Reset()

@@ -15,5 +15,9 @@ redacted result artifacts for seven days. Cross-project merge requests force rem
 behavior off. The component neither requests nor consumes a GitLab token,
 deploy token, CI job token or BuildOpt remote credential.
 
+The retained artifact includes the exact result, a customer-readable value
+report, its recomputable JSON form and checksums. It excludes private state,
+raw Gradle arguments, console logs and credentials.
+
 Run `./dev/check-magic-ci-onboarding` and `./dev/check-gitlab-ci` for the
 owner-controlled synthetic proofs.

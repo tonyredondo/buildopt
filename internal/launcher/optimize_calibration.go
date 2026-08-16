@@ -43,6 +43,8 @@ type optimizeCalibrationResult struct {
 	ReductionRatio         float64   `json:"reductionRatio"`
 	Interval95SavedMS      []float64 `json:"interval95SavedMs"`
 	PositivePairs          int       `json:"positivePairs"`
+	ControlP95MS           float64   `json:"controlP95Ms"`
+	CandidateP95MS         float64   `json:"candidateP95Ms"`
 	CalibrationCostMS      int64     `json:"calibrationCostMs"`
 	BreakEvenBuilds        int       `json:"breakEvenBuilds"`
 	MaximumBreakEvenBuilds int       `json:"maximumBreakEvenBuilds"`
@@ -68,12 +70,14 @@ func validOptimizeCalibrationCheckpoint(state optimizeState) bool {
 	case optimizeCalibrationSkipped:
 		return !calibration.Performed && calibration.Reason != "" &&
 			len(calibration.GeneratedFiles) == 0 && len(calibration.Interval95SavedMS) == 0 &&
+			calibration.ControlP95MS == 0 && calibration.CandidateP95MS == 0 &&
 			calibration.TestOptimization == "OUT_OF_SCOPE" &&
 			optimizeStringIn(state.Phase, "DISCOVERED", "NATIVE_RETAINED")
 	case optimizeCalibrationRetained:
 		return state.Phase == "NATIVE_RETAINED" && !calibration.Performed &&
 			calibration.Reason != "" && len(calibration.GeneratedFiles) == 0 &&
-			len(calibration.Interval95SavedMS) == 0 && calibration.TestOptimization == "OUT_OF_SCOPE"
+			len(calibration.Interval95SavedMS) == 0 && calibration.ControlP95MS == 0 &&
+			calibration.CandidateP95MS == 0 && calibration.TestOptimization == "OUT_OF_SCOPE"
 	case optimizeCalibrationComplete:
 		if !calibration.Performed || calibration.PairsMeasured != optimizeRequiredCalibrationPairs ||
 			calibration.PairsRequested < optimizeRequiredCalibrationPairs || calibration.CalibrationCostMS < 1 ||
@@ -81,6 +85,7 @@ func validOptimizeCalibrationCheckpoint(state optimizeState) bool {
 			len(calibration.Interval95SavedMS) != 2 || len(calibration.GeneratedFiles) != 1 ||
 			!validOptimizeGeneratedPath(calibration.GeneratedFiles[0]) ||
 			!validOptimizeSHA(calibration.EvidenceSHA256) || !validOptimizeSHA(calibration.DiscoverySHA256) ||
+			calibration.ControlP95MS <= 0 || calibration.CandidateP95MS <= 0 ||
 			!calibration.FallbackSuccessful || calibration.TestOptimization != "OUT_OF_SCOPE" {
 			return false
 		}
@@ -237,7 +242,8 @@ func (run *optimizeRun) calibrate(
 		ControlMeanMS: summary.ControlMeanMS, CandidateMeanMS: summary.CandidateMeanMS,
 		MeanSavedMS: summary.MeanSavedMS, ReductionRatio: summary.ReductionRatio,
 		Interval95SavedMS: append([]float64(nil), summary.Interval95SavedMS...),
-		PositivePairs:     summary.PositivePairs, CalibrationCostMS: costMS,
+		PositivePairs:     summary.PositivePairs, ControlP95MS: summary.ControlP95MS,
+		CandidateP95MS: summary.CandidateP95MS, CalibrationCostMS: costMS,
 		BreakEvenBuilds: breakEven, MaximumBreakEvenBuilds: run.invocation.maxBreakEvenBuilds,
 		ValueGatePassed: summary.Qualified, Qualified: qualified,
 		FallbackSuccessful: summary.FallbackSuccessful,
@@ -381,6 +387,8 @@ func sameOptimizeCalibrationSummary(calibration optimizeCalibrationResult, summa
 		calibration.MeanSavedMS == summary.MeanSavedMS &&
 		calibration.ReductionRatio == summary.ReductionRatio &&
 		calibration.PositivePairs == summary.PositivePairs &&
+		calibration.ControlP95MS == summary.ControlP95MS &&
+		calibration.CandidateP95MS == summary.CandidateP95MS &&
 		calibration.BreakEvenBuilds == breakEven &&
 		calibration.ValueGatePassed == summary.Qualified &&
 		calibration.Qualified == qualified &&

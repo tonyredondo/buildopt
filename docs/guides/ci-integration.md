@@ -21,10 +21,11 @@ and internal manifest, installs below `runner.temp`, derives the immutable
 GitHub base/head context, and caches `.buildopt/optimize/v1` under the provider
 repository ID, exact SHA, Wrapper and resolved BuildOpt version. Restored files
 are untrusted until the launcher validates every binding. The
-`buildopt-optimize-result` artifact contains the result, readable summary and
-checksum; it never contains the state portfolio, raw command, console log,
-credential or checkout path. To keep native bits fixed while updating workflow
-code:
+`buildopt-optimize-result` artifact contains `result.json`, a readable CI
+summary, the customer-level `value-report.md`, recomputable
+`value-report.json`, and checksums for every included report. It never contains
+the state portfolio, raw command, console log, credential or checkout path. To
+keep native bits fixed while updating workflow code:
 
 ```yaml
 with:

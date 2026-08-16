@@ -62,7 +62,9 @@
     "files": [
       "SHA256SUMS",
       "result.json",
-      "summary.md"
+      "summary.md",
+      "value-report.json",
+      "value-report.md"
     ],
     "uploadedOnSuccess": true,
     "uploadedOnFailureWhenAvailable": true,
@@ -70,6 +72,11 @@
     "consoleLogPersisted": false,
     "credentialsPersisted": false,
     "absoluteCheckoutPathPersisted": false
+  },
+  "freshness": {
+    "priorDerivedReportsRemovedBeforeInvocation": true,
+    "resumeStatePreserved": true,
+    "earlyFailurePublishesPriorReport": false
   },
   "acceptance": {
     "differentCheckoutSameProviderRepositoryAcceptsExactCheckpoint": true,

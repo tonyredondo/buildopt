@@ -118,6 +118,7 @@ jq -e '
     .calibration.reductionRatio >= 0.02 and
     .calibration.interval95SavedMs[0] > 0 and
     .calibration.positivePairs == 8 and
+    .calibration.controlP95Ms > 0 and .calibration.candidateP95Ms > 0 and
     .calibration.valueGatePassed == true and
     .calibration.qualified == true and
     .calibration.fallbackSuccessful == true and
@@ -139,7 +140,13 @@ jq -e '
     .portfolio.selectionPerformed == false and
     .portfolio.productionAuthorized == false and
     .portfolio.testOptimization == "OUT_OF_SCOPE" and
-    .portfolioPerformed == true
+    .portfolioPerformed == true and
+    .value.matchingReplayCount == 0 and
+    .value.projectedGrossSavedMs == 0 and
+    .value.cumulativeSelectionOverheadMs == 0 and
+    .value.projectedCumulativeNetSavedMs == -.calibration.calibrationCostMs and
+    .generatedFiles.valueJson == ".buildopt/optimize/qualified/value-report.json" and
+    .generatedFiles.valueMarkdown == ".buildopt/optimize/qualified/value-report.md"
 ' "${buildopt_first}" >/dev/null || {
     printf 'qualified automatic calibration result is invalid\n' >&2
     jq . "${buildopt_first}" >&2
@@ -176,6 +183,37 @@ buildopt_first_cost=$(jq -r '.calibration.calibrationCostMs' "${buildopt_first}"
 buildopt_first_saved=$(jq -r '.calibration.meanSavedMs' "${buildopt_first}")
 buildopt_first_reduction=$(jq -r '.calibration.reductionRatio * 100' "${buildopt_first}")
 buildopt_first_break_even=$(jq -r '.calibration.breakEvenBuilds' "${buildopt_first}")
+buildopt_value_json=$(jq -r '.generatedFiles.valueJson' "${buildopt_first}")
+buildopt_value_markdown=$(jq -r '.generatedFiles.valueMarkdown' "${buildopt_first}")
+test -s "${buildopt_repository}/${buildopt_value_json}"
+test -s "${buildopt_repository}/${buildopt_value_markdown}"
+jq -e '
+    .schemaVersion == "buildopt.poc/magic-wow-report/v1" and
+    .graph.status == "OBSERVED" and
+    ((.graph.reductionRatio - (.graph.omittedProjects / .graph.fullProjects)) | fabs) < 0.000000001 and
+    .performance.status == "OBSERVED_CALIBRATION" and
+    .performance.observedNetMeanSavedMs ==
+        (.performance.optimizedNativeMeanMs - .performance.buildOptMeanMs) and
+    ((.performance.observedReductionRatio -
+        (.performance.observedNetMeanSavedMs / .performance.optimizedNativeMeanMs)) | fabs) < 0.000000001 and
+    .performance.p95DeltaMs ==
+        (.performance.buildOptP95Ms - .performance.optimizedNativeP95Ms) and
+    .performance.outputsEquivalent == true and
+    .economics.breakEvenBuilds ==
+        ((.economics.calibrationCostMs / .performance.observedNetMeanSavedMs) | ceil) and
+    .economics.expectedUsefulLifetime == {
+        status: "UNAVAILABLE", estimatedMatchingBuilds: null,
+        reason: "EXACT_REVISION_REPLAY_HAS_NO_OBSERVED_FUTURE_MATCH_COUNT"
+    } and
+    ((.economics.projectedCumulativeNetSavedMs -
+        (.economics.projectedGrossSavedMs - .economics.calibrationCostMs -
+         .economics.cumulativeSelectionOverheadMs)) | fabs) < 0.000000001 and
+    .proofOfConcept == true and .productionAuthorized == false and
+    .testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_repository}/${buildopt_value_json}" >/dev/null
+grep -Fq '# BuildOpt value report' "${buildopt_repository}/${buildopt_value_markdown}"
+grep -Fq 'Expected useful lifetime: **unavailable**' \
+    "${buildopt_repository}/${buildopt_value_markdown}"
 
 buildopt_second=$(buildopt_run qualified 8 2)
 buildopt_selection_ns=$(jq -r '.selection.durationNs' "${buildopt_second}")
@@ -228,7 +266,13 @@ jq -e \
         testOptimization: "OUT_OF_SCOPE"
     } and
     .selection.durationNs >= 1 and
-    .selectionPerformed == true and .productionAuthorized == false
+    .selectionPerformed == true and .productionAuthorized == false and
+    .value.matchingReplayCount == 1 and
+    .value.projectedGrossSavedMs == .calibration.meanSavedMs and
+    .value.cumulativeSelectionOverheadMs == (.selection.durationNs / 1000000) and
+    .value.projectedCumulativeNetSavedMs ==
+        (.value.projectedGrossSavedMs - .calibration.calibrationCostMs -
+         .value.cumulativeSelectionOverheadMs)
 ' "${buildopt_second}" >/dev/null || {
     printf 'exact automatic profile replay is invalid\n' >&2
     jq . "${buildopt_second}" >&2

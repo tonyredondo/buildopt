@@ -222,10 +222,10 @@ full fallback and break-even evaluation, then resumes matching evidence without
 remeasurement. An under-budget run makes no claim. Unsupported relationships,
 a root build change and an ambiguous Git base independently retain optimized
 native Gradle. This validates orchestration, not a new transferable performance
-percentage: the fixture's intentional delay produced 1.346 s/68.06% mean
-saving across 8/8 positive pairs and repaid its 75.601-s learning cost after 57
+percentage: the current fixture's intentional delay produced 1.303 s/66.84% mean
+saving across 8/8 positive pairs and repaid its 74.968-s learning cost after 58
 matching builds under the fixture's explicit 100-build ceiling. A second exact
-invocation selected `:service-a:jar` instead of the original `jar` in 19.192 ms
+invocation selected `:service-a:jar` instead of the original `jar` in 18.780 ms
 without remeasurement; profile tampering retained native before Gradle and was
 repaired only from the still-valid evidence. Those values test the protocol and
 do not extend the real-repository evidence above.
@@ -238,6 +238,19 @@ Executable, Wrapper, argv, base/target, graph, output, evidence and profile
 bindings still pass before use. Both providers publish a checksummed result;
 cache miss, corruption or drift runs optimized native Gradle and no BuildOpt
 service or manual internal file is required.
+
+The command now also turns the technical decision into a customer-level value
+report. `value-report.md` explains the full and selected project counts,
+observed installed-path mean saving, paired 95% interval, native and candidate
+p95, calibration cost, break-even, exact replay count, selection overhead and
+the exact current fallback reason. `value-report.json` carries the same source
+metrics and fixed formulas, so every graph, timing and economics number can be
+recomputed. It never treats graph reduction alone as value or adds unrelated
+mechanism percentages. Cumulative saving is explicitly a projection from the
+observed calibration mean over successful exact replays, less calibration and
+selection cost. Expected useful lifetime remains `UNAVAILABLE`: exact-revision
+replay cannot yet observe whether a profile would remain applicable across
+future commits.
 
 The evidence is bound to exact revisions, changes, workflows, outputs, and a
 12-CPU host. The matrices cover multiple source shapes, a JVM resource,
@@ -272,16 +285,17 @@ Gradle, and automatic selection remains POC-only with production authority
 false. The ordered implementation and scorecard are frozen in the
 [one-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md).
 
-1. **Explain the decision at customer altitude.** Report selected/full graph,
-   selection overhead, measured saving, uncertainty, calibration cost,
-   break-even, cumulative value and exact fallback reason without requiring the
-   implementation tracker.
-2. **Prove the complete effect.** Measure install-to-decision time, net
+1. **Prove the complete effect.** Measure install-to-decision time, net
    installed-path wall time and break-even on fresh substantial public
-   repositories; never add isolated mechanism percentages.
-3. **Evaluate cross-revision learning separately.** The current CI cache safely
-   accelerates retries of one exact commit. Reuse across source revisions must
-   prove current graph/output applicability before it can reduce calibration.
+   repositories; require the generated value report to agree with raw evidence
+   and never add isolated mechanism percentages.
+2. **Observe useful profile lifetime.** Repeat representative changes across
+   commits and record how many builds preserve exact structural, workflow and
+   output applicability. Until then, payback remains a projection rather than a
+   product promise.
+3. **Evaluate cross-revision learning only from that evidence.** Reuse across
+   source revisions must prove current graph/output applicability before it can
+   reduce calibration.
 
 ## Evidence
 
@@ -305,6 +319,7 @@ false. The ordered implementation and scorecard are frozen in the
 - [Automatic profile portfolio contract](../../specs/poc-magic-profile-portfolio-v1.md)
 - [Automatic qualified-profile replay contract](../../specs/poc-magic-auto-replay-v1.md)
 - [One-input CI onboarding contract](../../specs/poc-magic-ci-onboarding-v1.md)
+- [Customer-readable value report](../../specs/poc-magic-wow-report-v1.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [One-command POC onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)
