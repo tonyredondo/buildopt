@@ -231,10 +231,11 @@ Gradle, and automatic selection remains POC-only with production authority
 false. The ordered implementation and scorecard are frozen in the
 [one-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md).
 
-1. **Define and implement `buildopt optimize`.** Collapse output preflight,
-   discovery, measurement, evaluation and profile materialization behind one
-   resumable command with no hand-authored BuildOpt JSON.
-2. **Automate portfolio selection and CI persistence.** Match qualified
+1. **Automate discovery behind `buildopt optimize`.** Its stable CLI, private
+   state, exact resume, budget and human/JSON result now exist; derive the
+   Wrapper, workflow, immutable base, exact change, outputs and structural
+   graph without hand-authored BuildOpt JSON.
+2. **Orchestrate calibration, then automate portfolio selection and CI persistence.** Match qualified
    change families, retain native on drift and reuse only exact calibration
    state through one-input GitHub/GitLab onboarding.
 3. **Prove the complete effect.** Measure install-to-decision time, net
@@ -257,6 +258,7 @@ false. The ordered implementation and scorecard are frozen in the
 - [Ktor new-family change breadth](../../benchmarks/results/poc-new-family-change-breadth-v1/README.md)
 - [Ktor calibration economics](../../benchmarks/results/poc-new-family-calibration-economics-v1/README.md)
 - [Ktor public installed profile replay](../../benchmarks/results/poc-new-family-installed-profile-replay-v1/README.md)
+- [One-command POC onboarding contract](../../specs/poc-magic-onboarding-contract-v1.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [One-command POC onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)

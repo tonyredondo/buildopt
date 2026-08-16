@@ -45,6 +45,22 @@ Run the real-binary integration suite with:
 ./dev/check-buildopt-cli
 ```
 
+## One-command optimization POC
+
+The stable customer entrypoint is:
+
+```bash
+buildopt optimize build
+```
+
+The first executable contract intentionally runs optimized native Gradle and
+reports `NATIVE_RETAINED / AUTO_DISCOVERY_PENDING`. It creates private atomic
+state and result documents under `.buildopt/optimize/v1`, accepts resume only
+under exact digest bindings, preserves the Gradle exit status, requires zero
+manual BuildOpt files and keeps `productionAuthorized=false`. Later ordered
+blocks add discovery, calibration and profile selection behind this unchanged
+surface.
+
 ## Explicit Build Impact POC candidate
 
 The installed launcher also exposes the owner-operated candidate path:

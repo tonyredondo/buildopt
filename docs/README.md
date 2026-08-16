@@ -66,6 +66,9 @@ before running the product.
 - [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md):
   the `buildopt optimize build` north star, automatic state machine, ordered
   implementation blocks, end-to-end value gates and explicit POC boundaries.
+- [One-command POC onboarding contract](../specs/poc-magic-onboarding-contract-v1.md):
+  the executable CLI, private state/result, exact resume, bounded budget,
+  exit behavior and non-production authority used by that roadmap.
 - [Centralized Gradle cache and BuildOpt state POC roadmap](./plans/centralized-cache-and-state-roadmap.md):
   an optional HTTPS service for native Gradle cache objects and separately
   governed BuildOpt profiles, evidence and checkpoints across build machines.

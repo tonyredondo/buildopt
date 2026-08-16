@@ -18,7 +18,7 @@ const (
 	exitCannotExecute = 126
 	exitNotFound      = 127
 	exitConfiguration = 78
-	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt poc --changes-file PATH [options]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt profile input [options]\n       buildopt profile outputs [options]\n       buildopt profile propose [options]\n       buildopt profile analyze [options]\n       buildopt profile measure [options]\n       buildopt profile qualify [options]\n       buildopt profile evaluate [options]\n       buildopt profile aggregate [options]\n       buildopt profile discover [options]\n       buildopt doctor\n"
+	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt optimize [options] [--] <gradle args...>\n       buildopt poc --changes-file PATH [options]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt profile input [options]\n       buildopt profile outputs [options]\n       buildopt profile propose [options]\n       buildopt profile analyze [options]\n       buildopt profile measure [options]\n       buildopt profile qualify [options]\n       buildopt profile evaluate [options]\n       buildopt profile aggregate [options]\n       buildopt profile discover [options]\n       buildopt doctor\n"
 	bypassEnvironment = "BUILDOPT_BYPASS"
 )
 
@@ -27,29 +27,38 @@ const (
 // skeleton or managed runner-slot lifecycle, delivers the WS-005 session
 // ingest when configured, installs the signed A0-007 Gradle bootstrap cache,
 // honors the F0-039 local bypass, exposes read-only structural opportunity
-// analysis, and returns the child process exit status.
+// analysis, records the one-command optimization POC contract, and returns the
+// child process exit status.
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode int) {
+	var optimize *optimizeRun
+	childStdout := stdout
 	var impactTiming *impactTimingState
 	execute := func(
 		childArgs []string,
 		environmentOverrides map[string]string,
 	) childExecution {
+		var execution childExecution
 		if impactTiming != nil {
-			return impactTiming.execute(
+			execution = impactTiming.execute(
 				childArgs,
 				environmentOverrides,
 				stdin,
-				stdout,
+				childStdout,
+				stderr,
+			)
+		} else {
+			execution = executeChild(
+				childArgs,
+				environmentOverrides,
+				stdin,
+				childStdout,
 				stderr,
 			)
 		}
-		return executeChild(
-			childArgs,
-			environmentOverrides,
-			stdin,
-			stdout,
-			stderr,
-		)
+		if optimize != nil {
+			optimize.childStarted = execution.started
+		}
+		return execution
 	}
 	if len(args) > 0 && args[0] == managedGatewayInternalCommand {
 		return runManagedGatewayProcess(args, stderr)
@@ -71,6 +80,40 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 	if len(args) == 2 && args[0] == "poc" && isHelp(args[1:]) {
 		_, _ = io.WriteString(stdout, qualifiedPOCProfileUsage)
 		return 0
+	}
+	if len(args) == 2 && args[0] == "optimize" && isHelp(args[1:]) {
+		_, _ = io.WriteString(stdout, optimizeUsage)
+		return 0
+	}
+	optimizeContractOnly := false
+	if len(args) > 0 && args[0] == "optimize" {
+		optimizeEnabled := os.Getenv(bypassEnvironment) != "1"
+		invocation, err := prepareOptimizeInvocation(args[1:], optimizeEnabled)
+		if err != nil {
+			_, _ = fmt.Fprintf(stderr, "buildopt: optimize invocation unavailable: %v\n", err)
+			_, _ = io.WriteString(stderr, optimizeUsage)
+			if errors.Is(err, errOptimizeUsage) {
+				return exitUsage
+			}
+			return exitConfiguration
+		}
+		args = append([]string{"gradle"}, invocation.gradleArgs...)
+		if optimizeEnabled {
+			optimize, err = beginOptimizeRun(invocation)
+			if err != nil {
+				_, _ = fmt.Fprintf(stderr, "buildopt: optimize state unavailable: %v\n", err)
+				return exitConfiguration
+			}
+			optimizeContractOnly = true
+			if invocation.jsonOutput {
+				childStdout = stderr
+			}
+			defer func() {
+				if err := optimize.finish(runExitCode, stdout, stderr); err != nil {
+					_, _ = fmt.Fprintf(stderr, "buildopt: optimize result unavailable: %v\n", err)
+				}
+			}()
+		}
 	}
 	gradleEnvironment := map[string]string(nil)
 	var gradleManagedL1 *managedL1Config
@@ -167,10 +210,14 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 				return os.Getenv(name)
 			}
 		}
+		gradleGetenv := getenv
+		if optimizeContractOnly {
+			gradleGetenv = func(string) string { return "" }
+		}
 		invocation, err := prepareGradleInvocationWithEnvironment(
 			gradleArgs,
 			os.Getenv(bypassEnvironment) == "1",
-			getenv,
+			gradleGetenv,
 		)
 		if err != nil {
 			_, _ = fmt.Fprintf(stderr, "buildopt: Gradle setup unavailable: %v\n", err)
@@ -202,7 +249,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		return childWaitExitCode(childArgs[0], execution.err, stderr)
 	}
 	if gradleNativeOnly || gradleLocalOnly {
-		if impactTiming == nil && nativeGradleProcessReplacementSupported(stdin, stdout, stderr) {
+		if impactTiming == nil && optimize == nil && nativeGradleProcessReplacementSupported(stdin, stdout, stderr) {
 			err := replaceWithNativeGradleProcess(childArgs, gradleEnvironment)
 			return launchErrorExitCode(childArgs[0], err, stderr)
 		}

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_source="${buildopt_repo_root}/specs/poc-magic-onboarding-contract-v1.json"
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-magic-contract.XXXXXX")
+trap 'rm -f -- "${buildopt_temp}/contract.json"; rmdir -- "${buildopt_temp}"' EXIT
+
+"${buildopt_script_dir}/check-magic-onboarding-contract" "${buildopt_source}" >/dev/null
+
+jq '.authority.productionAuthorized = true' "${buildopt_source}" >"${buildopt_temp}/contract.json"
+if "${buildopt_script_dir}/check-magic-onboarding-contract" "${buildopt_temp}/contract.json" \
+    >/dev/null 2>&1; then
+    printf 'checker accepted production authority in the POC onboarding contract\n' >&2
+    exit 1
+fi
+
+jq '.command.manualBuildOptFilesRequired = 1' "${buildopt_source}" >"${buildopt_temp}/contract.json"
+if "${buildopt_script_dir}/check-magic-onboarding-contract" "${buildopt_temp}/contract.json" \
+    >/dev/null 2>&1; then
+    printf 'checker accepted a manual BuildOpt file in the supported onboarding path\n' >&2
+    exit 1
+fi
+
+printf 'Magic onboarding contract negative fixtures OK\n'

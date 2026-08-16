@@ -243,7 +243,8 @@ and honest native decisions when the idea does not pay.
 
 ## Immediate next step
 
-Complete `POC-NEW-FAMILY-INSTALLED-PROFILE-REPLAY-001`. Then implement the
-one-command contract before changing product behavior. This prevents the CLI
-from becoming a thin wrapper around the current internal commands without a
-stable customer experience or measurable definition of time to value.
+Complete `POC-MAGIC-AUTO-DISCOVERY-001` behind the now-stable
+`buildopt optimize` contract. The current executable skeleton records exact
+private state and runs optimized native Gradle; discovery must next derive the
+Wrapper, workflow context, immutable comparison base, exact change, output
+candidates and structural graph from command and repository facts alone.

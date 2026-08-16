@@ -13,11 +13,13 @@ plugin paths.
 
 The current public path below separates compatibility, proposal, measurement
 and replay explicitly. The target POC experience is the single command
-`buildopt optimize build`, which will orchestrate those stages and use only
-qualified profiles without hand-authored BuildOpt files. It is not implemented
-yet; follow the [one-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
-for the ordered delivery and keep using the explicit commands documented here
-until their tracker blocks close.
+`buildopt optimize build`. Its stable CLI, private state, exact resume, budget,
+human/JSON result and exit contract are now implemented. Until automatic
+discovery is delivered, the command runs optimized native Gradle and reports
+`NATIVE_RETAINED / AUTO_DISCOVERY_PENDING`; use the explicit commands below for
+real proposals and qualification. Follow the
+[one-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
+for the remaining ordered delivery.
 
 ## Install
 
@@ -100,6 +102,28 @@ BUILDOPT_BYPASS=1 buildopt gradle build
 ```
 
 In PowerShell use `$env:BUILDOPT_BYPASS = '1'` for that invocation.
+
+## Preview the one-command POC
+
+The final entrypoint is already safe to use:
+
+```bash
+buildopt optimize build
+```
+
+Today it executes the optimized native Gradle baseline, writes private
+generated state and a result under `.buildopt/optimize/v1`, and explains that
+automatic discovery is pending. It requires no hand-authored BuildOpt files
+and grants no production authority. Machine-readable mode reserves stdout for
+one result document:
+
+```bash
+buildopt optimize --json -- build
+```
+
+`BUILDOPT_BYPASS=1 buildopt optimize build` skips optimize state and reporting
+entirely. The [normative contract](../../specs/poc-magic-onboarding-contract-v1.md)
+defines resume bindings, budgets, outcomes and exit behavior.
 
 ## Try the Build Impact accelerator
 

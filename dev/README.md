@@ -3702,6 +3702,21 @@ outputs from the same reconstructed checkout. The committed public `v0.3.2`
 bundle passes all three selections, option-drift fallbacks and exact output
 comparisons.
 
+The one-command onboarding contract is validated separately:
+
+```bash
+./dev/check-magic-onboarding-contract
+./dev/test-magic-onboarding-contract
+./dev/run --toolchain go -- go test -count=1 ./internal/launcher -run '^TestOptimize'
+```
+
+The contract fixes `buildopt optimize build`, private atomic state/result
+files, exact checkpoint reuse, bounded calibration options, human/JSON output,
+Gradle exit preservation and the POC authority boundary. Its executable
+skeleton runs optimized native Gradle and reports
+`NATIVE_RETAINED / AUTO_DISCOVERY_PENDING`; it performs no discovery,
+calibration or selection yet.
+
 `specs/poc-cross-date-output-equivalence-v1.json` and
 `specs/poc-cross-date-output-equivalence-v1.md` freeze the follow-up for the
 remaining Groovy date boundary. The reviewed fixture adds exactly `BuildDate`

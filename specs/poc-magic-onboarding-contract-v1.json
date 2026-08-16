@@ -1,0 +1,190 @@
+{
+  "schemaVersion": "buildopt.poc/magic-onboarding-contract/v1",
+  "workItem": "POC-MAGIC-ONBOARDING-CONTRACT-001",
+  "command": {
+    "name": "buildopt optimize",
+    "syntax": "buildopt optimize [options] [--] <gradle args...>",
+    "northStar": "buildopt optimize build",
+    "manualBuildOptFilesRequired": 0,
+    "gradleArgumentBoundary": "FIRST_POSITIONAL_OR_DOUBLE_DASH",
+    "options": {
+      "stateDir": {
+        "flag": "--state-dir",
+        "default": ".buildopt/optimize/v1",
+        "constraint": "CLEAN_REPOSITORY_RELATIVE_UNDER_DOT_BUILDOPT"
+      },
+      "resume": {
+        "flag": "--resume",
+        "default": "AUTO",
+        "values": [
+          "AUTO",
+          "NEVER"
+        ]
+      },
+      "calibrationBudget": {
+        "flag": "--calibration-budget",
+        "defaultSeconds": 1800,
+        "minimumExclusiveSeconds": 0,
+        "maximumSeconds": 86400
+      },
+      "calibrationPairs": {
+        "flag": "--calibration-pairs",
+        "default": 8,
+        "minimum": 2,
+        "maximum": 16
+      },
+      "maxBreakEvenBuilds": {
+        "flag": "--max-break-even-builds",
+        "default": 30,
+        "minimum": 1,
+        "maximum": 1000
+      },
+      "json": {
+        "flag": "--json",
+        "stdout": "ONE_OPTIMIZE_RESULT_JSON",
+        "gradleConsole": "STDERR"
+      }
+    }
+  },
+  "outcomes": [
+    {
+      "id": "QUALIFIED_AND_USED",
+      "meaning": "A digest-compatible profile passed correctness, net-wall-time, tail, failure, fallback and payback gates and was used inside the owner-invoked POC command."
+    },
+    {
+      "id": "LEARNING",
+      "meaning": "Comparable evidence is incomplete; optimized native Gradle remains authoritative while bounded POC work may continue."
+    },
+    {
+      "id": "NATIVE_RETAINED",
+      "meaning": "BuildOpt found unsupported, ambiguous, unsafe, drifted or non-value state; optimized native Gradle remains authoritative with an exact reason."
+    }
+  ],
+  "phases": [
+    "UNSEEN",
+    "DISCOVERED",
+    "CALIBRATING",
+    "QUALIFIED",
+    "ACTIVE",
+    "NATIVE_RETAINED",
+    "STALE",
+    "RECALIBRATING"
+  ],
+  "transitions": {
+    "UNSEEN": [
+      "DISCOVERED",
+      "NATIVE_RETAINED"
+    ],
+    "DISCOVERED": [
+      "CALIBRATING",
+      "NATIVE_RETAINED"
+    ],
+    "CALIBRATING": [
+      "CALIBRATING",
+      "QUALIFIED",
+      "NATIVE_RETAINED"
+    ],
+    "QUALIFIED": [
+      "ACTIVE",
+      "STALE"
+    ],
+    "ACTIVE": [
+      "ACTIVE",
+      "STALE"
+    ],
+    "NATIVE_RETAINED": [
+      "DISCOVERED",
+      "NATIVE_RETAINED"
+    ],
+    "STALE": [
+      "RECALIBRATING",
+      "NATIVE_RETAINED"
+    ],
+    "RECALIBRATING": [
+      "RECALIBRATING",
+      "QUALIFIED",
+      "NATIVE_RETAINED"
+    ]
+  },
+  "state": {
+    "schemaVersion": "buildopt.poc/optimize-state/v1",
+    "root": ".buildopt/optimize/v1",
+    "file": "state.json",
+    "permissions": "CURRENT_USER_PRIVATE",
+    "maximumBytes": 1048576,
+    "rawGradleArgumentsPersisted": false,
+    "bindingCompleteness": [
+      "CONTRACT_ONLY",
+      "DISCOVERY_COMPLETE",
+      "CALIBRATION_COMPLETE"
+    ],
+    "exactResumeBindings": [
+      "BUILDOPT_EXECUTABLE",
+      "REPOSITORY_SCOPE",
+      "GRADLE_WRAPPER_PROPERTIES",
+      "GRADLE_ARGUMENTS",
+      "CALIBRATION_BUDGET"
+    ],
+    "resumeDecisions": [
+      "NO_CHECKPOINT",
+      "EXACT_BINDINGS",
+      "BINDING_DRIFT",
+      "INVALID_CHECKPOINT",
+      "RESUME_DISABLED"
+    ],
+    "mismatchBehavior": "NEVER_REUSE_AND_RUN_NATIVE",
+    "writeBehavior": "ATOMIC_PRIVATE_REPLACE"
+  },
+  "result": {
+    "schemaVersion": "buildopt.poc/optimize-result/v1",
+    "file": ".buildopt/optimize/v1/result.json",
+    "permissions": "CURRENT_USER_PRIVATE",
+    "alwaysReports": [
+      "OUTCOME_AND_REASON",
+      "PHASE",
+      "NATIVE_START_AND_EXIT",
+      "BUDGET",
+      "RESUME_DECISION",
+      "BINDING_DIGESTS",
+      "GENERATED_FILES",
+      "MANUAL_FILE_COUNT",
+      "CALIBRATION_AND_SELECTION_STATUS",
+      "PRODUCTION_AUTHORITY",
+      "TEST_OPTIMIZATION_BOUNDARY"
+    ],
+    "humanOutput": "SHORT_STDERR_SUMMARY",
+    "machineOutput": "RESULT_FILE_ALWAYS_AND_STDOUT_WITH_JSON_FLAG"
+  },
+  "exitBehavior": {
+    "invalidUsage": 64,
+    "configurationBeforeGradle": 78,
+    "cannotExecute": 126,
+    "notFound": 127,
+    "afterGradleStarts": "PRESERVE_GRADLE_EXIT_OR_SIGNAL_STATUS",
+    "finalReportFailureAfterGradle": "WARN_AND_PRESERVE_GRADLE_EXIT"
+  },
+  "authority": {
+    "proofOfConcept": true,
+    "automaticSelectionScope": "OWNER_INVOKED_OPTIMIZE_COMMAND_ONLY_AFTER_ALL_GATES",
+    "productionAuthorized": false,
+    "autonomousPromotion": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "currentImplementation": {
+    "status": "CONTRACT_AND_NATIVE_SKELETON",
+    "outcome": "NATIVE_RETAINED",
+    "reason": "AUTO_DISCOVERY_PENDING",
+    "phase": "UNSEEN",
+    "nativeBuildCache": true,
+    "automaticDiscovery": false,
+    "calibrationPerformed": false,
+    "selectionPerformed": false
+  },
+  "boundaries": {
+    "percentagesAveragedAcrossRepositories": false,
+    "mechanismPercentagesAdded": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "productionScope": false
+  }
+}
