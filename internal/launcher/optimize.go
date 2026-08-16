@@ -600,7 +600,7 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 	defer cancel()
 	discovery, calibration, resumed := run.resumeCalibration()
 	if !resumed {
-		discovery = run.discover(learningContext, exitCode)
+		discovery = run.discover(learningContext, exitCode, stderr)
 		calibration = run.calibrate(learningContext, learningStarted, discovery, stderr)
 	}
 	portfolio := run.materializePortfolio(discovery, calibration)

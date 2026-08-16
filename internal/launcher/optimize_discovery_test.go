@@ -1,6 +1,8 @@
 package launcher
 
 import (
+	"context"
+	"errors"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -181,6 +183,23 @@ func TestOptimizeGeneratedStatePath(t *testing.T) {
 		if optimizeGeneratedStatePath(path) {
 			t.Fatalf("customer path %q was accepted as generated state", path)
 		}
+	}
+}
+
+func TestOptimizeDiscoveryErrorReasonIdentifiesFailedStage(t *testing.T) {
+	tests := map[string]string{
+		"output preflight: command failed": "OUTPUT_PREFLIGHT_FAILED",
+		"graph preflight: command failed":  "GRAPH_PREFLIGHT_FAILED",
+		"proposal: command failed":         "PROPOSAL_PREFLIGHT_FAILED",
+		"unexpected failure":               "DISCOVERY_EXECUTION_FAILED",
+	}
+	for message, expected := range tests {
+		if actual := optimizeDiscoveryErrorReason(errors.New(message)); actual != expected {
+			t.Fatalf("optimizeDiscoveryErrorReason(%q) = %q, want %q", message, actual, expected)
+		}
+	}
+	if actual := optimizeDiscoveryErrorReason(context.DeadlineExceeded); actual != "DISCOVERY_BUDGET_EXHAUSTED" {
+		t.Fatalf("deadline reason = %q, want DISCOVERY_BUDGET_EXHAUSTED", actual)
 	}
 }
 

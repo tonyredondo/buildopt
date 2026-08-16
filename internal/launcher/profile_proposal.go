@@ -20,6 +20,8 @@ import (
 
 const profileProposalUsage = "usage: buildopt profile propose (--owner-input PATH [--changes-file PATH] | --repository-id OWNER/REPO --pipeline-class CLASS --entrypoint TASK [--entrypoint TASK ...] --required-output GLOB [--required-output GLOB ...] --changes-file PATH [--output-equivalence PATH]) --base-revision REVISION [--global-change GLOB ...] [--gradle-command PATH] [--gradle-option VALUE ...] [--discovery-cache-dir ABSOLUTE_PATH] [--output-contract-output PATH] [--manifest-output PATH] [--graph-output PATH] [--generated-manifest-output PATH] [--fallback-changes-output PATH] [--proposal-output PATH] [--buildopt-revision REVISION] [--timeout DURATION]\n"
 
+const maximumStructuralAlternativeEntrypoints = 64
+
 var defaultProposalGlobalChanges = []string{
 	"build-logic/**",
 	"build.gradle",
@@ -334,6 +336,10 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 	}
 	candidateEntrypoints := proposalOutputOwnerEntrypoints(outputReport, selectors)
 	report.CandidateEntrypoints = candidateEntrypoints
+	if len(candidateEntrypoints) > maximumStructuralAlternativeEntrypoints {
+		report.Reason = "CANDIDATE_TASK_SET_TOO_LARGE"
+		return report, documents, nil
+	}
 
 	manifest := buildimpact.Manifest{
 		SchemaVersion: buildimpact.ManifestSchemaVersion, ManifestVersion: 1,

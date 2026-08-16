@@ -1,8 +1,12 @@
 package launcher
 
 import (
+	"encoding/json"
+	"fmt"
 	"reflect"
 	"testing"
+
+	"github.com/tonyredondo/buildopt/internal/buildimpact"
 )
 
 func TestProposalTerminalSelectorsAcceptsSingleAndQualifiedWorkflows(t *testing.T) {
@@ -17,6 +21,29 @@ func TestProposalTerminalSelectorsAcceptsSingleAndQualifiedWorkflows(t *testing.
 	want := []string{"classes", "testClasses"}
 	if !reflect.DeepEqual(selectors, want) {
 		t.Fatalf("selectors = %v, want %v", selectors, want)
+	}
+}
+
+func TestProposalAlternativeEntrypointBoundMatchesBuildImpactManifest(t *testing.T) {
+	entrypoints := make([]string, maximumStructuralAlternativeEntrypoints+1)
+	for index := range entrypoints {
+		entrypoints[index] = fmt.Sprintf(":project-%d:jar", index)
+	}
+	manifest := buildimpact.Manifest{
+		SchemaVersion: buildimpact.ManifestSchemaVersion, ManifestVersion: 1,
+		RepositoryID: "owner/repository", PipelineClass: "jar",
+		Ownership:           buildimpact.RepositoryOwnership,
+		OriginalEntrypoints: []string{"jar"},
+		AllowedAlternatives: []buildimpact.EntrypointSet{{ID: "changed-projects", Entrypoints: entrypoints}},
+		RequiredArtifacts:   []buildimpact.Artifact{}, RequiredChecks: []buildimpact.Check{},
+		GlobalChangePaths: []string{"build.gradle"}, UnknownChangePolicy: buildimpact.FullGraphPolicy,
+	}
+	raw, err := json.Marshal(manifest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := buildimpact.ParseManifest(raw, manifest.RepositoryID, manifest.PipelineClass); err == nil {
+		t.Fatal("Build Impact manifest accepted more alternative entrypoints than profile proposal permits")
 	}
 }
 

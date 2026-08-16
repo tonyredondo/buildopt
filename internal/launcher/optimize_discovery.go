@@ -365,7 +365,7 @@ func optimizeDiscoveryContextSHA(context optimizeDiscoveryContext) string {
 	return optimizeDigest("buildopt-optimize-discovery-context-v1", values...)
 }
 
-func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int) optimizeDiscoveryResult {
+func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int, diagnostics io.Writer) optimizeDiscoveryResult {
 	result := optimizeDiscoveryResult{
 		Status: optimizeDiscoverySkipped, Reason: "NATIVE_BUILD_FAILED",
 		Source:           run.invocation.discovery.Source,
@@ -394,6 +394,7 @@ func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int)
 	if err != nil {
 		result.Status = optimizeDiscoveryRetained
 		result.Reason = optimizeDiscoveryErrorReason(err)
+		_, _ = fmt.Fprintf(diagnostics, "buildopt: automatic discovery unavailable: %v\n", err)
 		return result
 	}
 	result = discovered
@@ -647,6 +648,14 @@ func optimizePipelineClass(entrypoints []string, changeSHA string) string {
 func optimizeDiscoveryErrorReason(err error) string {
 	if errors.Is(err, context.DeadlineExceeded) {
 		return "DISCOVERY_BUDGET_EXHAUSTED"
+	}
+	switch {
+	case strings.HasPrefix(err.Error(), "output preflight:"):
+		return "OUTPUT_PREFLIGHT_FAILED"
+	case strings.HasPrefix(err.Error(), "graph preflight:"):
+		return "GRAPH_PREFLIGHT_FAILED"
+	case strings.HasPrefix(err.Error(), "proposal:"):
+		return "PROPOSAL_PREFLIGHT_FAILED"
 	}
 	return "DISCOVERY_EXECUTION_FAILED"
 }
