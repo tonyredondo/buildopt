@@ -87,26 +87,26 @@ type structuralArmResult struct {
 }
 
 type structuralCalibrationEvidence struct {
-	SchemaVersion            string                                             `json:"schemaVersion"`
-	CapturedAt               string                                             `json:"capturedAt"`
-	RepositoryRevision       string                                             `json:"repositoryRevision"`
-	BaseRevision             string                                             `json:"baseRevision"`
-	BuildOptRevision         string                                             `json:"buildoptRevision"`
-	ExecutableSHA256         string                                             `json:"executableSha256"`
-	SourceEvidenceSHA256     string                                             `json:"sourceEvidenceSha256"`
-	OutputEquivalenceSHA256  string                                             `json:"outputEquivalenceSha256,omitempty"`
-	Analysis                 profilediscovery.AnalysisReport                    `json:"analysis"`
-	GradleOptions            []string                                           `json:"gradleOptions"`
-	CandidateWarmups         []profilediscovery.StructuralWarmupObservation     `json:"candidateWarmups"`
-	CandidateStabilization   string                                             `json:"candidateStabilization"`
-	RequiredOutputSHA256     string                                             `json:"requiredOutputSha256"`
-	RequiredOutputCount      int                                                `json:"requiredOutputCount"`
-	Boundaries               structuralCalibrationBoundaries                    `json:"boundaries"`
+	SchemaVersion           string                                         `json:"schemaVersion"`
+	CapturedAt              string                                         `json:"capturedAt"`
+	RepositoryRevision      string                                         `json:"repositoryRevision"`
+	BaseRevision            string                                         `json:"baseRevision"`
+	BuildOptRevision        string                                         `json:"buildoptRevision"`
+	ExecutableSHA256        string                                         `json:"executableSha256"`
+	SourceEvidenceSHA256    string                                         `json:"sourceEvidenceSha256"`
+	OutputEquivalenceSHA256 string                                         `json:"outputEquivalenceSha256,omitempty"`
+	Analysis                profilediscovery.AnalysisReport                `json:"analysis"`
+	GradleOptions           []string                                       `json:"gradleOptions"`
+	CandidateWarmups        []profilediscovery.StructuralWarmupObservation `json:"candidateWarmups"`
+	CandidateStabilization  string                                         `json:"candidateStabilization"`
+	RequiredOutputSHA256    string                                         `json:"requiredOutputSha256"`
+	RequiredOutputCount     int                                            `json:"requiredOutputCount"`
+	Boundaries              structuralCalibrationBoundaries                `json:"boundaries"`
 }
 
 type structuralCalibrationBoundaries struct {
 	TimingClaim          bool `json:"timingClaim"`
-	AutomaticActivation bool `json:"automaticActivation"`
+	AutomaticActivation  bool `json:"automaticActivation"`
 	ProductionAuthorized bool `json:"productionAuthorized"`
 }
 
@@ -216,21 +216,21 @@ func calibrateStructuralProfile(config structuralMeasurementConfig, progress io.
 		return nil, errors.New("installed BuildOpt executable changed during calibration")
 	}
 	evidence := structuralCalibrationEvidence{
-		SchemaVersion: "buildopt.evidence/poc-structural-calibration/v1",
-		CapturedAt: time.Now().UTC().Format(time.RFC3339),
-		RepositoryRevision: config.targetRevision,
-		BaseRevision: config.baseRevision,
-		BuildOptRevision: config.buildOptRevision,
-		ExecutableSHA256: config.executableSHA256,
-		SourceEvidenceSHA256: hex.EncodeToString(changesSHA[:]),
+		SchemaVersion:           "buildopt.evidence/poc-structural-calibration/v1",
+		CapturedAt:              time.Now().UTC().Format(time.RFC3339),
+		RepositoryRevision:      config.targetRevision,
+		BaseRevision:            config.baseRevision,
+		BuildOptRevision:        config.buildOptRevision,
+		ExecutableSHA256:        config.executableSHA256,
+		SourceEvidenceSHA256:    hex.EncodeToString(changesSHA[:]),
 		OutputEquivalenceSHA256: config.outputEquivalenceSHA256,
-		Analysis: config.analysis,
-		GradleOptions: append([]string(nil), config.gradleOptions...),
-		CandidateWarmups: append([]profilediscovery.StructuralWarmupObservation(nil), candidate.warmups...),
-		CandidateStabilization: structuralCandidateStabilizationPolicy(config),
-		RequiredOutputSHA256: outputSHA,
-		RequiredOutputCount: outputCount,
-		Boundaries: structuralCalibrationBoundaries{},
+		Analysis:                config.analysis,
+		GradleOptions:           append([]string(nil), config.gradleOptions...),
+		CandidateWarmups:        append([]profilediscovery.StructuralWarmupObservation(nil), candidate.warmups...),
+		CandidateStabilization:  structuralCandidateStabilizationPolicy(config),
+		RequiredOutputSHA256:    outputSHA,
+		RequiredOutputCount:     outputCount,
+		Boundaries:              structuralCalibrationBoundaries{},
 	}
 	raw, err := json.MarshalIndent(evidence, "", "  ")
 	if err != nil {
@@ -425,14 +425,14 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 		}
 		var controlResult, candidateResult structuralArmResult
 		if order == "CONTROL_FIRST" {
-			controlResult, err = runStructuralArm(config, control, false, config.changesPath)
+			controlResult, err = runStructuralArm(config, control, false, false, config.changesPath)
 			if err == nil {
-				candidateResult, err = runStructuralArm(config, candidate, true, config.changesPath)
+				candidateResult, err = runStructuralArm(config, candidate, true, true, config.changesPath)
 			}
 		} else {
-			candidateResult, err = runStructuralArm(config, candidate, true, config.changesPath)
+			candidateResult, err = runStructuralArm(config, candidate, true, true, config.changesPath)
 			if err == nil {
-				controlResult, err = runStructuralArm(config, control, false, config.changesPath)
+				controlResult, err = runStructuralArm(config, control, false, false, config.changesPath)
 			}
 		}
 		if err != nil {
@@ -559,7 +559,7 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 		return arm, fmt.Errorf("prepare %s baseline: %w", name, err)
 	}
 	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s arm at %s (cache seed 1/%d)\n", name, config.baseRevision, totalWarmups)
-	seedWarmup, err := runStructuralArm(config, arm, candidate, config.changesPath)
+	seedWarmup, err := runStructuralArm(config, arm, candidate, candidate, config.changesPath)
 	if err != nil {
 		return arm, fmt.Errorf("warm %s arm: %w", name, err)
 	}
@@ -574,7 +574,7 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 		return arm, fmt.Errorf("prepare %s daemon stabilization: %w", name, err)
 	}
 	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s arm at %s (base daemon stabilization 2/%d)\n", name, config.baseRevision, totalWarmups)
-	stabilizationWarmup, err := runStructuralArm(config, arm, candidate, config.changesPath)
+	stabilizationWarmup, err := runStructuralArm(config, arm, candidate, candidate, config.changesPath)
 	if err != nil {
 		return arm, fmt.Errorf("stabilize %s arm: %w", name, err)
 	}
@@ -585,7 +585,7 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 		return arm, fmt.Errorf("prepare %s target-workload stabilization: %w", name, err)
 	}
 	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s arm at %s (target-workload stabilization 3/%d)\n", name, config.targetRevision, totalWarmups)
-	targetWarmup, err := runStructuralArm(config, arm, candidate, config.changesPath)
+	targetWarmup, err := runStructuralArm(config, arm, candidate, candidate, config.changesPath)
 	if err != nil {
 		return arm, fmt.Errorf("stabilize %s target workload: %w", name, err)
 	}
@@ -602,7 +602,7 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 		}
 		_, _ = fmt.Fprintf(progress, "buildopt: confirming isolated %s target-workload shape at %s (%d/%d)\n",
 			name, config.targetRevision, 2+confirmationIndex, totalWarmups)
-		confirmation, err := runStructuralArm(config, arm, candidate, config.changesPath)
+		confirmation, err := runStructuralArm(config, arm, candidate, candidate, config.changesPath)
 		if err != nil {
 			return arm, fmt.Errorf("confirm %s target workload: %w", name, err)
 		}
@@ -715,7 +715,9 @@ func measureStructuralFallback(config structuralMeasurementConfig, arm structura
 	fallbackConfig := config
 	fallbackConfig.gradleOptions = structuralFallbackGradleOptions(config.gradleOptions)
 	_, _ = fmt.Fprintln(progress, "buildopt: validating full-graph fallback with --no-daemon and measured scheduling")
-	result, err := runStructuralArm(fallbackConfig, arm, true, config.fallbackChangesPath)
+	// The fallback still enters through BuildOpt, but it must reject the
+	// analyzed alternative and run the complete graph.
+	result, err := runStructuralArm(fallbackConfig, arm, true, false, config.fallbackChangesPath)
 	if err != nil {
 		return result, "", fmt.Errorf("full-graph fallback: %w", err)
 	}
@@ -766,7 +768,7 @@ func resetStructuralArm(config structuralMeasurementConfig, arm structuralMeasur
 	return nil
 }
 
-func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurementArm, candidate bool, changesPath string) (structuralArmResult, error) {
+func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurementArm, candidate, requireAlternative bool, changesPath string) (structuralArmResult, error) {
 	var command []string
 	if candidate {
 		command = []string{config.executable, "impact",
@@ -820,7 +822,7 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 	if err != nil {
 		return result, fmt.Errorf("%s arm failed: %w\n%s", arm.name, err, tailMeasurementLog(result.log, 80))
 	}
-	if candidate && !strings.Contains(result.log,
+	if requireAlternative && !strings.Contains(result.log,
 		"explicit Build Impact POC candidate "+config.analysis.Plan.AlternativeID+" selected") {
 		return result, errors.New("installed candidate did not select the analyzed structural alternative")
 	}
