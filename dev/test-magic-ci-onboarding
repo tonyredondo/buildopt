@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_temporary=$(mktemp -d)
+buildopt_cleanup() {
+    if [[ ${buildopt_temporary:-} == /tmp/* && -d ${buildopt_temporary:-} ]]; then
+        rm -rf -- "${buildopt_temporary}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_fake_bin="${buildopt_temporary}/bin"
+mkdir -p -- "${buildopt_fake_bin}"
+cat >"${buildopt_fake_bin}/buildopt" <<'SCRIPT'
+#!/usr/bin/env bash
+set -euo pipefail
+printf '%s\n' "$@" >"${BUILDOPT_TEST_ARGV}"
+mkdir -p .buildopt/optimize/v1
+printf '%s\n' '{"schemaVersion":"buildopt.poc/optimize-result/v1","productionAuthorized":false}' \
+    >.buildopt/optimize/v1/result.json
+printf '%s\n' '{"schemaVersion":"buildopt.poc/optimize-state/v1","productionAuthorized":false}' \
+    >.buildopt/optimize/v1/state.json
+chmod 0600 .buildopt/optimize/v1/result.json .buildopt/optimize/v1/state.json
+exit "${BUILDOPT_TEST_EXIT:-0}"
+SCRIPT
+chmod 0700 -- "${buildopt_fake_bin}/buildopt"
+
+buildopt_new_repository() {
+    local buildopt_repository=$1
+    mkdir -p -- "${buildopt_repository}"
+    git -C "${buildopt_repository}" init -q
+}
+
+buildopt_assert_report() {
+    local buildopt_repository=$1
+    local buildopt_provider=$2
+    local buildopt_report="${buildopt_repository}/.buildopt/ci-report/v1"
+    [[ -s ${buildopt_report}/result.json && -s ${buildopt_report}/summary.md && \
+        -s ${buildopt_report}/SHA256SUMS ]]
+    (cd -- "${buildopt_report}" && sha256sum --check SHA256SUMS >/dev/null)
+    grep -Fqx -- "- Provider: ${buildopt_provider}" "${buildopt_report}/summary.md"
+    [[ $(stat -c '%a' "${buildopt_report}/result.json") == 600 ]]
+}
+
+buildopt_github="${buildopt_temporary}/github"
+buildopt_new_repository "${buildopt_github}"
+: >"${buildopt_temporary}/github-output"
+(
+    cd -- "${buildopt_github}"
+    env \
+        BUILDOPT_CI_COMMAND='optimize build --no-daemon -Pfixture=value' \
+        BUILDOPT_TEST_ARGV="${buildopt_temporary}/github-argv" \
+        GITHUB_OUTPUT="${buildopt_temporary}/github-output" \
+        GITHUB_REPOSITORY_ID=42 \
+        GITHUB_REPOSITORY=owner/repository \
+        GITHUB_SHA=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+        PATH="${buildopt_fake_bin}:${PATH}" \
+        "${buildopt_root}/.github/actions/run-optimize"
+)
+printf '%s\n' optimize build --no-daemon -Pfixture=value >"${buildopt_temporary}/expected-argv"
+cmp -s "${buildopt_temporary}/expected-argv" "${buildopt_temporary}/github-argv"
+grep -Fqx "artifact-directory=${buildopt_github}/.buildopt/ci-report/v1" \
+    "${buildopt_temporary}/github-output"
+buildopt_assert_report "${buildopt_github}" 'GitHub Actions'
+
+buildopt_gitlab="${buildopt_temporary}/gitlab"
+buildopt_new_repository "${buildopt_gitlab}"
+(
+    cd -- "${buildopt_gitlab}"
+    env \
+        BUILDOPT_CI_COMMAND='optimize check --no-daemon' \
+        BUILDOPT_TEST_ARGV="${buildopt_temporary}/gitlab-argv" \
+        CI_PROJECT_DIR="${buildopt_gitlab}" \
+        CI_PROJECT_ID=84 \
+        CI_PROJECT_PATH=group/platform/repository \
+        CI_COMMIT_SHA=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb \
+        PATH="${buildopt_fake_bin}:${PATH}" \
+        "${buildopt_root}/.gitlab/run-optimize"
+)
+printf '%s\n' optimize check --no-daemon >"${buildopt_temporary}/expected-argv"
+cmp -s "${buildopt_temporary}/expected-argv" "${buildopt_temporary}/gitlab-argv"
+buildopt_assert_report "${buildopt_gitlab}" 'GitLab CI'
+
+buildopt_gitlab_failure="${buildopt_temporary}/gitlab-failure"
+buildopt_new_repository "${buildopt_gitlab_failure}"
+
+buildopt_unsafe_report="${buildopt_temporary}/unsafe-report"
+buildopt_new_repository "${buildopt_unsafe_report}"
+mkdir -p -- "${buildopt_unsafe_report}/.buildopt"
+ln -s -- "${buildopt_temporary}" "${buildopt_unsafe_report}/.buildopt/ci-report"
+
+set +e
+(
+    cd -- "${buildopt_github}"
+    env \
+        BUILDOPT_CI_COMMAND='optimize --state-dir .buildopt/other build' \
+        BUILDOPT_TEST_ARGV="${buildopt_temporary}/rejected-argv" \
+        GITHUB_OUTPUT="${buildopt_temporary}/github-output" \
+        GITHUB_REPOSITORY_ID=42 \
+        GITHUB_REPOSITORY=owner/repository \
+        GITHUB_SHA=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+        PATH="${buildopt_fake_bin}:${PATH}" \
+        "${buildopt_root}/.github/actions/run-optimize"
+) >/dev/null 2>&1
+buildopt_rejected_exit=$?
+set -e
+[[ ${buildopt_rejected_exit} == 64 && ! -e ${buildopt_temporary}/rejected-argv ]]
+
+set +e
+(
+    cd -- "${buildopt_unsafe_report}"
+    env \
+        BUILDOPT_CI_COMMAND='optimize build' \
+        BUILDOPT_TEST_ARGV="${buildopt_temporary}/unsafe-argv" \
+        GITHUB_OUTPUT="${buildopt_temporary}/github-output" \
+        GITHUB_REPOSITORY_ID=42 \
+        GITHUB_REPOSITORY=owner/repository \
+        GITHUB_SHA=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+        PATH="${buildopt_fake_bin}:${PATH}" \
+        "${buildopt_root}/.github/actions/run-optimize"
+) >/dev/null 2>&1
+buildopt_unsafe_exit=$?
+set -e
+[[ ${buildopt_unsafe_exit} == 1 && ! -e ${buildopt_temporary}/unsafe-argv ]]
+
+set +e
+(
+    cd -- "${buildopt_gitlab_failure}"
+    env \
+        BUILDOPT_CI_COMMAND='optimize build' \
+        BUILDOPT_TEST_ARGV="${buildopt_temporary}/failure-argv" \
+        BUILDOPT_TEST_EXIT=37 \
+        CI_PROJECT_DIR="${buildopt_gitlab_failure}" \
+        CI_PROJECT_ID=84 \
+        CI_PROJECT_PATH=group/platform/repository \
+        CI_COMMIT_SHA=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb \
+        PATH="${buildopt_fake_bin}:${PATH}" \
+        "${buildopt_root}/.gitlab/run-optimize"
+) >/dev/null 2>&1
+buildopt_failure_exit=$?
+set -e
+[[ ${buildopt_failure_exit} == 37 ]]
+grep -Fqx -- "- Process exit code: \`37\`" \
+    "${buildopt_gitlab_failure}/.buildopt/ci-report/v1/summary.md"
+
+printf 'Magic CI onboarding fixture OK: one command, exact argv, safe reports, rejection, and exit preservation\n'

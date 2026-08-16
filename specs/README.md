@@ -83,6 +83,7 @@ the exact cross-component contract.
 | [`poc-magic-calibration-v1.md`](./poc-magic-calibration-v1.md) and [`poc-magic-calibration-v1.json`](./poc-magic-calibration-v1.json) | `POC-MAGIC-CALIBRATION-001` |
 | [`poc-magic-profile-portfolio-v1.md`](./poc-magic-profile-portfolio-v1.md) and [`poc-magic-profile-portfolio-v1.json`](./poc-magic-profile-portfolio-v1.json) | `POC-MAGIC-PROFILE-PORTFOLIO-001` |
 | [`poc-magic-auto-replay-v1.md`](./poc-magic-auto-replay-v1.md) and [`poc-magic-auto-replay-v1.json`](./poc-magic-auto-replay-v1.json) | `POC-MAGIC-AUTO-REPLAY-001` |
+| [`poc-magic-ci-onboarding-v1.md`](./poc-magic-ci-onboarding-v1.md) and [`poc-magic-ci-onboarding-v1.json`](./poc-magic-ci-onboarding-v1.json) | `POC-MAGIC-CI-ONBOARDING-001` |
 | [`poc-normal-build-tail-expansion-v1.md`](./poc-normal-build-tail-expansion-v1.md) and [`poc-normal-build-tail-expansion-v1.json`](./poc-normal-build-tail-expansion-v1.json) | `POC-NORMAL-BUILD-TAIL-EXPANSION-001` |
 | [`private-beta-data-lifecycle-v1.md`](./private-beta-data-lifecycle-v1.md) | `A1-004` / `A1-G05` |
 | [`private-beta-operations-v1.md`](./private-beta-operations-v1.md) | `A1-005` |
@@ -598,6 +599,15 @@ all repository, revision, executable, Wrapper, workflow, option, graph, output,
 evidence and profile bindings pass before Gradle or the original optimized
 native workflow runs. Selection overhead is part of invocation wall time;
 production authority remains false.
+
+`poc-magic-ci-onboarding-v1.json` and
+`poc-magic-ci-onboarding-v1.md` expose the same command through GitHub Actions
+and GitLab with one ordinary input. Provider repository identity replaces the
+ephemeral checkout path only in the repository-scope digest; executable,
+Wrapper, argv, base/target, discovery and budget bindings remain exact before
+restored state can be accepted. Both providers publish a checksummed result
+without state, command text, logs, credentials or absolute paths. Cache loss,
+corruption or drift retains native Gradle and no service is required.
 
 `poc-new-family-calibration-economics-v1.json` and
 `poc-new-family-calibration-economics-v1.md` freeze the follow-up economics

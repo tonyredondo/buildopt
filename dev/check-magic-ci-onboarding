@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract="${buildopt_root}/specs/poc-magic-ci-onboarding-v1.json"
+
+jq -e '
+  keys == [
+    "acceptance", "acceptedBindings", "boundaries", "command",
+    "persistence", "portableScope", "providers", "report",
+    "schemaVersion", "workItem"
+  ] and
+  .schemaVersion == "buildopt.poc/magic-ci-onboarding/v1" and
+  .workItem == "POC-MAGIC-CI-ONBOARDING-001" and
+  .command == {
+    githubInput: "command", gitlabInput: "command", example: "optimize build",
+    manualBuildOptFilesRequired: 0, internalStateOptionsAccepted: false
+  } and
+  .providers.github.cache == "actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830" and
+  .providers.gitlab.cache == "NATIVE_JOB_CACHE" and
+  .portableScope == {
+    digestVersion: "buildopt-optimize-ci-repository-scope-v1",
+    fields: ["PROVIDER", "PROVIDER_REPOSITORY_ID", "PROVIDER_REPOSITORY_PATH"],
+    absoluteCheckoutPathIncluded: false, crossRepositoryReuse: false,
+    crossProviderReuse: false
+  } and
+  .acceptedBindings == [
+    "BUILDOPT_EXECUTABLE", "CALIBRATION_BUDGET", "DISCOVERY_CONTEXT",
+    "GRADLE_ARGUMENT_VECTOR", "GRADLE_WRAPPER_PROPERTIES",
+    "PROVIDER_REPOSITORY_SCOPE", "REPOSITORY_BASE_REVISION",
+    "REPOSITORY_TARGET_REVISION"
+  ] and
+  .persistence == {
+    path: ".buildopt/optimize/v1", restoredFilesTrusted: false,
+    exactBindingValidationBeforeUse: true, cacheMissRunsNative: true,
+    cacheCorruptionRunsNative: true, serviceRequired: false,
+    crossRevisionInference: false
+  } and
+  .report.files == ["SHA256SUMS", "result.json", "summary.md"] and
+  .report.rawGradleArgumentsPersisted == false and
+  .report.consoleLogPersisted == false and
+  .report.credentialsPersisted == false and
+  .report.absoluteCheckoutPathPersisted == false and
+  .acceptance.differentCheckoutSameProviderRepositoryAcceptsExactCheckpoint == true and
+  .acceptance.differentProviderRepositoryRejectsCheckpoint == true and
+  .acceptance.providerRevisionDriftRejectedBeforeStateUse == true and
+  .acceptance.gradleExitFailurePreserved == true and
+  .acceptance.productionAuthorized == false and
+  .acceptance.testOptimization == "OUT_OF_SCOPE" and
+  .boundaries == {
+    proofOfConcept: true, crossCommitPortfolioSync: false,
+    centralService: false, autonomousProductionPromotion: false,
+    soakRequired: false, designPartnerRequired: false
+  }
+' "${buildopt_contract}" >/dev/null
+
+for buildopt_action_line in \
+    '  command:' \
+    '      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830' \
+    '        path: .buildopt/optimize/v1' \
+    '        name: buildopt-optimize-result'; do
+    grep -Fqx "${buildopt_action_line}" "${buildopt_root}/action.yml"
+done
+grep -Fqx \
+    "      run: '\"\$BUILDOPT_CI_ACTION_PATH/.github/actions/run-optimize\"'" \
+    "${buildopt_root}/action.yml"
+for buildopt_gitlab_line in \
+    '    command:' \
+    '      default: optimize build' \
+    '    - .buildopt/run-optimize' \
+    '      - .buildopt/ci-report/v1/' \
+    '      - .buildopt/optimize/v1/'; do
+    grep -Fqx "${buildopt_gitlab_line}" \
+        "${buildopt_root}/.gitlab/buildopt-component.yml"
+done
+if grep -Fq 'gradle-tasks:' "${buildopt_root}/.gitlab/buildopt-component.yml"; then
+    printf 'GitLab one-command component retains the retired gradle-tasks input\n' >&2
+    exit 1
+fi
+
+"${buildopt_script_dir}/test-magic-ci-onboarding"
+"${buildopt_root}/dev/run" --toolchain go -- go test ./internal/launcher \
+    -run '^TestOptimizeRepositoryScopeIsPortableOnlyInsideOneCIRepository$'
+
+printf 'Magic CI onboarding OK: one command, provider-bound exact state, review artifacts, and native fallback\n'

@@ -8,16 +8,17 @@ spec:
       default: eclipse-temurin:21-jdk
     version:
       default: latest
-    gradle-tasks:
-      default: build
+    command:
+      default: optimize build
 ---
 "$[[ inputs.job-name ]]":
   stage: "$[[ inputs.stage ]]"
   image: "$[[ inputs.image ]]"
   timeout: 30m
   variables:
+    GIT_DEPTH: "0"
     BUILDOPT_VERSION: "$[[ inputs.version ]]"
-    BUILDOPT_GRADLE_TASKS: "$[[ inputs.gradle-tasks ]]"
+    BUILDOPT_CI_COMMAND: "$[[ inputs.command ]]"
     BUILDOPT_EVENT_PATH: ".buildopt/gitlab-job-event.json"
   before_script:
     - |
@@ -37,14 +38,15 @@ spec:
         --output .buildopt/install.sh "$buildopt_source/install.sh"
       curl --fail --silent --show-error --location \
         --output .buildopt/buildopt-job-event "$buildopt_source/.gitlab/buildopt-job-event"
-      chmod 0700 .buildopt/install.sh .buildopt/buildopt-job-event
+      curl --fail --silent --show-error --location \
+        --output .buildopt/run-optimize "$buildopt_source/.gitlab/run-optimize"
+      chmod 0700 .buildopt/install.sh .buildopt/buildopt-job-event .buildopt/run-optimize
       .buildopt/install.sh --version "$buildopt_version" --prefix "$CI_PROJECT_DIR/.buildopt/runtime"
       printf 'export PATH=%q\n' "$CI_PROJECT_DIR/.buildopt/runtime/bin:$PATH" > .buildopt/release.env
       printf 'export BUILDOPT_VERSION=%q\n' "$buildopt_version" >> .buildopt/release.env
       source .buildopt/release.env
   script:
-    - read -r -a buildopt_tasks <<< "$BUILDOPT_GRADLE_TASKS"
-    - buildopt gradle --no-daemon "${buildopt_tasks[@]}"
+    - .buildopt/run-optimize
   after_script:
     - source .buildopt/release.env
     - .buildopt/buildopt-job-event "$CI_JOB_STATUS" "$BUILDOPT_EVENT_PATH"
@@ -53,7 +55,13 @@ spec:
     expire_in: 7 days
     paths:
       - .buildopt/gitlab-job-event.json
+      - .buildopt/ci-report/v1/
       - .buildopt/exports/
+  cache:
+    key: "buildopt-optimize-v1-$CI_PROJECT_ID-$CI_COMMIT_SHA-$BUILDOPT_VERSION"
+    paths:
+      - .buildopt/optimize/v1/
+    policy: pull-push
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_SOURCE_PROJECT_ID != $CI_PROJECT_ID'
       variables:

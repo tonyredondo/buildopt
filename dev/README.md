@@ -3717,6 +3717,7 @@ The one-command onboarding contract is validated separately:
 ./dev/test-magic-profile-portfolio-contract
 ./dev/check-magic-auto-replay-contract
 ./dev/test-magic-auto-replay-contract
+./dev/check-magic-ci-onboarding
 ./dev/check-magic-calibration
 ```
 
@@ -3741,6 +3742,11 @@ bindings before Gradle, selects the smaller qualified graph without another
 flag or calibration, and records the decision in nanoseconds. The same checker
 proves that a tampered profile runs native, repairs only from still-valid
 evidence, and becomes selectable on the following exact invocation.
+The CI onboarding checker then proves one command on GitHub and GitLab,
+provider-bound path-independent exact checkpoint reuse, cross-repository and
+revision rejection, exact argv, private checksummed review artifacts and child
+failure preservation. Provider cache contents remain untrusted and no service
+or hand-authored BuildOpt file is required.
 
 `specs/poc-cross-date-output-equivalence-v1.json` and
 `specs/poc-cross-date-output-equivalence-v1.md` freeze the follow-up for the

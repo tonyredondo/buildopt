@@ -66,7 +66,12 @@ prove safe task behavior.
 
 ### 1. Preflight and bypass
 
-The launcher accepts raw `buildopt run -- <argv>` and packaged `buildopt gradle <args>` entrypoints. It evaluates
+The launcher accepts raw `buildopt run -- <argv>`, packaged
+`buildopt gradle <args>`, and the owner-invoked `buildopt optimize <args>` POC
+entrypoints. The optimize path owns discovery, calibration, repository-scoped
+profile storage and exact pre-Gradle replay; GitHub/GitLab replace only the
+ephemeral checkout-path scope with provider repository identity. Every other
+state binding remains exact. It evaluates
 `BUILDOPT_BYPASS=1` before starting any BuildOpt service. In bypass, reserved
 BuildOpt variables are removed and the original argv is executed directly.
 

@@ -1,29 +1,40 @@
 # CI integration
 
-BuildOpt has one CI entrypoint: install the package, then replace
-`./gradlew ...` with `buildopt gradle ...`. The target repository keeps its own
-Wrapper, tasks and exit semantics.
+The POC has one ordinary CI input: the Gradle workflow to optimize. BuildOpt
+installs itself, derives provider revisions, restores only exact compatible
+state, runs the repository Wrapper, and publishes a review artifact. The
+target repository keeps its own tasks and exit semantics.
 
 ## GitHub Actions
 
 Pin the Action source to a reviewed full commit SHA:
 
 ```yaml
-- name: Install BuildOpt
+- name: Optimize the existing Gradle build
   uses: tonyredondo/buildopt@<40-character-commit-sha>
-
-- name: Run the existing Gradle build
-  run: buildopt gradle --no-daemon build
+  with:
+    command: optimize build
 ```
 
 The Action resolves the latest published native release, verifies its SHA-256
-and internal manifest, installs below `runner.temp`, and adds its `bin/` to
-subsequent `PATH`. To keep native bits fixed while updating workflow code:
+and internal manifest, installs below `runner.temp`, derives the immutable
+GitHub base/head context, and caches `.buildopt/optimize/v1` under the provider
+repository ID, exact SHA, Wrapper and resolved BuildOpt version. Restored files
+are untrusted until the launcher validates every binding. The
+`buildopt-optimize-result` artifact contains the result, readable summary and
+checksum; it never contains the state portfolio, raw command, console log,
+credential or checkout path. To keep native bits fixed while updating workflow
+code:
 
 ```yaml
 with:
-  version: 0.2.0
+  version: <published-version>
 ```
+
+Run the Action after the repository checkout and make the immutable comparison
+base available (for `actions/checkout`, use `fetch-depth: 0`). This is provider
+Git history, not a BuildOpt profile or configuration file. An unavailable base
+retains native Gradle with an explicit reason.
 
 `archive-url` and `archive-sha256` remain a paired compatibility override for
 the older signed Release Bundle v1 installer. Ordinary users should not need
@@ -31,6 +42,9 @@ them.
 
 Do not expose cache/server credentials to untrusted forks. The Action does not
 request them and its default local path works without secrets.
+
+Omit `command` to retain the historical install-only surface. The Action also
+keeps the explicit review-only proposal mode below for existing consumers.
 
 ### Review a structural proposal
 
@@ -82,14 +96,21 @@ include:
     ref: <40-character-commit-sha>
     file: /.gitlab/buildopt-component.yml
     inputs:
-      gradle-tasks: build
+      command: optimize build
 ```
 
 The component is self-contained: it resolves and verifies the native package,
-installs below `.buildopt/runtime`, runs the repository Wrapper through
-`buildopt gradle`, and publishes a normalized job event plus redacted exports.
-Set `version: 0.2.0` to pin native bits. Cross-project merge requests force
-remote behavior off, and no GitLab or BuildOpt credential is requested.
+installs below `.buildopt/runtime`, derives GitLab project/base/head metadata,
+runs `buildopt optimize`, restores and saves exact state through the native job
+cache, and publishes a normalized job event plus the same result bundle. Set
+`version` to pin native bits. Cross-project merge requests force remote
+behavior off, and no GitLab or BuildOpt credential is requested.
+
+GitHub and GitLab cache hits are performance hints, never authority. Missing,
+corrupt, cross-repository, cross-revision, Wrapper-drifted or executable-drifted
+state starts a new native-authoritative generation. This POC does not infer
+profile applicability across commits and requires no central service. See the
+[one-input CI contract](../../specs/poc-magic-ci-onboarding-v1.md).
 
 ## Bypass and rollback
 

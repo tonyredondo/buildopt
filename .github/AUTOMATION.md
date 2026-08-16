@@ -1,14 +1,23 @@
 # GitHub automation
 
 The repository-root [`action.yml`](../action.yml) installs BuildOpt on Linux
-x64 runners. Consumers pin the Action source to a reviewed commit; the normal
-path needs no inputs and resolves the latest native package plus its published
-SHA-256. `version` pins native bits, while the paired `archive-url` and
+x64 runners. Consumers pin the Action source to a reviewed commit; the
+one-command POC path needs only `command: optimize build` and resolves the
+latest native package plus its published SHA-256. It derives provider
+repository/base/head facts, restores exact state through an immutable
+`actions/cache` revision and publishes a checksummed review result. Restored
+state remains untrusted until every launcher binding passes. `version` pins
+native bits, while the paired `archive-url` and
 `archive-sha256` inputs preserve the historical signed Release Bundle v1 path.
 The Action verifies the complete archive and its internal manifest before
 exposing the launcher, Build Impact, server, Edge, plugin, agent and init
 script. [`release.yml`](./workflows/release.yml) creates the native packages on
 Linux, macOS and Windows when a semantic-version tag is pushed.
+
+Omitting `command` preserves the install-only compatibility surface. The
+one-command path requires no service or credential and never uploads the
+private portfolio as a review artifact. See the
+[CI onboarding contract](../specs/poc-magic-ci-onboarding-v1.md).
 
 The same Action exposes an explicit `profile-proposal` mode for Linux CI. It
 builds the CLI from the Action's immutable source commit, reads the consumer's

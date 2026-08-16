@@ -14,6 +14,9 @@
   "job": {
     "gradleWrapper": "./gradlew",
     "initScript": ".github/actions/buildopt.init.gradle",
+    "commandInput": "optimize build",
+    "optimizeState": ".buildopt/optimize/v1",
+    "reviewArtifact": ".buildopt/ci-report/v1",
     "artifactsWhen": "always",
     "artifactRetention": "7 days"
   },

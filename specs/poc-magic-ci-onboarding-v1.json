@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "buildopt.poc/magic-ci-onboarding/v1",
+  "workItem": "POC-MAGIC-CI-ONBOARDING-001",
+  "command": {
+    "githubInput": "command",
+    "gitlabInput": "command",
+    "example": "optimize build",
+    "manualBuildOptFilesRequired": 0,
+    "internalStateOptionsAccepted": false
+  },
+  "providers": {
+    "github": {
+      "repository": "GITHUB_REPOSITORY",
+      "repositoryId": "GITHUB_REPOSITORY_ID",
+      "target": "GITHUB_SHA",
+      "base": "GITHUB_EVENT_PATH",
+      "cache": "actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830"
+    },
+    "gitlab": {
+      "repository": "CI_PROJECT_PATH",
+      "repositoryId": "CI_PROJECT_ID",
+      "target": "CI_COMMIT_SHA",
+      "base": [
+        "CI_MERGE_REQUEST_DIFF_BASE_SHA",
+        "CI_COMMIT_BEFORE_SHA"
+      ],
+      "cache": "NATIVE_JOB_CACHE"
+    }
+  },
+  "portableScope": {
+    "digestVersion": "buildopt-optimize-ci-repository-scope-v1",
+    "fields": [
+      "PROVIDER",
+      "PROVIDER_REPOSITORY_ID",
+      "PROVIDER_REPOSITORY_PATH"
+    ],
+    "absoluteCheckoutPathIncluded": false,
+    "crossRepositoryReuse": false,
+    "crossProviderReuse": false
+  },
+  "acceptedBindings": [
+    "BUILDOPT_EXECUTABLE",
+    "CALIBRATION_BUDGET",
+    "DISCOVERY_CONTEXT",
+    "GRADLE_ARGUMENT_VECTOR",
+    "GRADLE_WRAPPER_PROPERTIES",
+    "PROVIDER_REPOSITORY_SCOPE",
+    "REPOSITORY_BASE_REVISION",
+    "REPOSITORY_TARGET_REVISION"
+  ],
+  "persistence": {
+    "path": ".buildopt/optimize/v1",
+    "restoredFilesTrusted": false,
+    "exactBindingValidationBeforeUse": true,
+    "cacheMissRunsNative": true,
+    "cacheCorruptionRunsNative": true,
+    "serviceRequired": false,
+    "crossRevisionInference": false
+  },
+  "report": {
+    "artifactPath": ".buildopt/ci-report/v1",
+    "files": [
+      "SHA256SUMS",
+      "result.json",
+      "summary.md"
+    ],
+    "uploadedOnSuccess": true,
+    "uploadedOnFailureWhenAvailable": true,
+    "rawGradleArgumentsPersisted": false,
+    "consoleLogPersisted": false,
+    "credentialsPersisted": false,
+    "absoluteCheckoutPathPersisted": false
+  },
+  "acceptance": {
+    "differentCheckoutSameProviderRepositoryAcceptsExactCheckpoint": true,
+    "differentProviderRepositoryRejectsCheckpoint": true,
+    "providerRevisionDriftRejectedBeforeStateUse": true,
+    "wrapperOrExecutableDriftRejectedBeforeStateUse": true,
+    "gradleExitFailurePreserved": true,
+    "productionAuthorized": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "crossCommitPortfolioSync": false,
+    "centralService": false,
+    "autonomousProductionPromotion": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

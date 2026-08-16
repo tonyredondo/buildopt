@@ -258,15 +258,24 @@ All profiles tokenize repository, trust-domain, and task identities before
 durable output. A broader profile is not inferred from an existing file or an
 operator's read access.
 
-## CI installer variables
+## CI onboarding inputs
 
-GitHub Action and GitLab component users normally provide no installer data.
-`version` optionally pins native bits; the integration resolves the matching
-public archive and SHA-256. The Action additionally keeps the paired
+The ordinary GitHub Action and GitLab component path provides one BuildOpt
+input: `command: optimize build`. The integrations own the generated state
+path and calibration/resume flags; callers cannot redirect them to restored
+arbitrary files. `version` optionally pins native bits; the integration
+resolves the matching public archive and SHA-256. The Action additionally keeps the paired
 `archive-url` and `archive-sha256` inputs for legacy Release Bundle v1
 consumers. `BUILDOPT_ACTION_*`, `BUILDOPT_VERSION` and
 `BUILDOPT_ARCHIVE_*` are installer internals rather than product configuration.
 Prefer the published interfaces instead of setting them manually.
+
+`GITHUB_REPOSITORY_ID`, `GITHUB_REPOSITORY`, `GITHUB_SHA`, the GitHub event
+file, and the corresponding GitLab project/base/head fields are provider-owned
+identity. BuildOpt derives a path-independent opaque repository scope from
+them and rejects inconsistency with the checked-out Git repository. Do not set
+these fields manually. Provider cache contents are untrusted until executable,
+Wrapper, argv, scope, base/target, discovery and budget bindings pass.
 
 
 See [CI integration](../guides/ci-integration.md).

@@ -190,7 +190,7 @@ UNSEEN -> DISCOVERED -> CALIBRATING -> QUALIFIED -> ACTIVE
 | 3 | `POC-MAGIC-CALIBRATION-001` | Orchestrate preflight, propose, measure and evaluate behind one command with progress, budget and exact checkpoint reuse. | **Done:** a clean repository reaches a deterministic decision without invoking internal subcommands; exact evidence resumes and an insufficient pair budget makes no claim. |
 | 4 | `POC-MAGIC-PROFILE-PORTFOLIO-001` | Classify observed changes into exact structural families and maintain multiple qualified profiles without repository-name rules. | **Done:** dependency, resource, leaf and mixed-source facts map to distinct logical families; independently qualified families coexist, the same family replaces only its exact binding, exact state resumes and tampering is rebuilt from valid evidence without granting selection. |
 | 5 | `POC-MAGIC-AUTO-REPLAY-001` | Let `buildopt optimize` automatically use a qualifying portfolio entry and refresh stale entries. | **Done:** the first qualifying run creates the profile; a later exact run validates eleven bindings and selects it with no extra flag or calibration; drift disables it before Gradle starts and valid evidence may repair a corrupt artifact for the next run. |
-| 6 | `POC-MAGIC-CI-ONBOARDING-001` | Add one-input GitHub/GitLab orchestration and portable calibration persistence. | A clean external consumer config supplies only the Gradle command; provider metadata, reports and compatible state are automatic. |
+| 6 | `POC-MAGIC-CI-ONBOARDING-001` | Add one-input GitHub/GitLab orchestration and portable calibration persistence. | **Done:** a clean consumer supplies `command: optimize build`; provider identity makes exact state independent of the checkout path, every other binding remains fail-closed, and both providers publish checksummed results without a service. |
 | 7 | `POC-MAGIC-WOW-REPORT-001` | Present graph reduction, observed wall time, uncertainty, break-even, cumulative saving and fallback reasons. | Human output is understandable without the tracker; JSON recomputes every number and never adds unrelated mechanism percentages. |
 | 8 | `POC-MAGIC-END-TO-END-VALUE-001` | Validate the complete onboarding on fresh substantial public repositories. | Install-to-decision uses one command and zero manual BuildOpt files; at least two different Gradle families produce equivalent outputs and a net installed-path win, while a negative case retains native. |
 
@@ -243,11 +243,10 @@ and honest native decisions when the idea does not pay.
 
 ## Immediate next step
 
-Complete `POC-MAGIC-CI-ONBOARDING-001`. The local command now derives the
-Wrapper, workflow context, immutable comparison base, exact change, output
-candidates and structural graph, runs the frozen eight-pair calibration,
-stores qualified structural families and selects an exact profile only after
-eleven bindings pass before Gradle. The next block must expose this unchanged
-contract through GitHub and GitLab with only the Gradle command as customer
-input, restore only provider-bound compatible state and publish the reviewable
-result without requiring a BuildOpt service.
+Complete `POC-MAGIC-WOW-REPORT-001`. The same command now runs locally and
+through one-input GitHub/GitLab orchestration, restores only provider-bound
+exact state and publishes a checksummed machine result without requiring a
+BuildOpt service. The next block must turn that evidence into a customer-level
+explanation of selected versus full graph, measured net saving, uncertainty,
+calibration cost, break-even, cumulative value and the exact native-fallback
+reason. Gradle remains authoritative on drift or ambiguity.

@@ -89,6 +89,130 @@ func TestOptimizeContractRunsNativeAndResumesOnlyExactBindings(t *testing.T) {
 	}
 }
 
+func TestOptimizeRepositoryScopeIsPortableOnlyInsideOneCIRepository(t *testing.T) {
+	first := newOptimizeTestRepository(t)
+	second := newOptimizeTestRepository(t)
+	discovery := optimizeDiscoveryContext{
+		RepositoryID:   "owner/repository",
+		TargetRevision: strings.Repeat("a", 40),
+	}
+	values := map[string]string{
+		"GITHUB_ACTIONS":       "true",
+		"GITHUB_REPOSITORY_ID": "12345",
+		"GITHUB_REPOSITORY":    discovery.RepositoryID,
+		"GITHUB_SHA":           discovery.TargetRevision,
+	}
+	for name, value := range values {
+		t.Setenv(name, value)
+	}
+	getenv := func(name string) string { return values[name] }
+
+	firstScope, err := optimizeRepositoryScopeSHA(&optimizeInvocation{
+		repositoryRoot: first,
+		discovery:      discovery,
+	}, getenv)
+	if err != nil {
+		t.Fatal(err)
+	}
+	secondScope, err := optimizeRepositoryScopeSHA(&optimizeInvocation{
+		repositoryRoot: second,
+		discovery:      discovery,
+	}, getenv)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if firstScope != secondScope {
+		t.Fatalf("CI repository scope is path-dependent: %s != %s", firstScope, secondScope)
+	}
+	newInvocation := func(repository string) optimizeInvocation {
+		stateRelative := filepath.Join(".buildopt", "optimize", "v1")
+		return optimizeInvocation{
+			repositoryRoot:     repository,
+			stateDirectory:     filepath.Join(repository, stateRelative),
+			stateRelative:      filepath.ToSlash(stateRelative),
+			gradleArgs:         []string{"build", "--no-daemon"},
+			resumeMode:         optimizeResumeAuto,
+			calibrationBudget:  optimizeDefaultBudget,
+			calibrationPairs:   optimizeDefaultPairs,
+			maxBreakEvenBuilds: optimizeDefaultBreakEven,
+			discovery:          discovery,
+		}
+	}
+	firstInvocation := newInvocation(first)
+	if err := bindOptimizeInvocation(&firstInvocation); err != nil {
+		t.Fatal(err)
+	}
+	firstRun, err := beginOptimizeRun(firstInvocation)
+	if err != nil {
+		t.Fatal(err)
+	}
+	checkpoint, err := os.ReadFile(firstRun.statePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	secondInvocation := newInvocation(second)
+	if err := bindOptimizeInvocation(&secondInvocation); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := resolveOptimizeStateDirectory(second, secondInvocation.stateRelative, true); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(secondInvocation.stateDirectory, optimizeStateFile), checkpoint, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	secondRun, err := beginOptimizeRun(secondInvocation)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !secondRun.state.Resume.Accepted || secondRun.state.Resume.Reason != optimizeResumeExact ||
+		secondRun.state.Generation != 1 || secondRun.state.Attempt != 2 {
+		t.Fatalf("portable checkpoint was not accepted: %+v", secondRun.state.Resume)
+	}
+
+	values["GITHUB_REPOSITORY_ID"] = "54321"
+	differentScope, err := optimizeRepositoryScopeSHA(&optimizeInvocation{
+		repositoryRoot: second,
+		discovery:      discovery,
+	}, getenv)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if differentScope == firstScope {
+		t.Fatal("different CI repositories share one optimize scope")
+	}
+	t.Setenv("GITHUB_REPOSITORY_ID", "54321")
+	driftedInvocation := newInvocation(second)
+	if err := bindOptimizeInvocation(&driftedInvocation); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(driftedInvocation.stateDirectory, optimizeStateFile), checkpoint, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	driftedRun, err := beginOptimizeRun(driftedInvocation)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if driftedRun.state.Resume.Accepted || driftedRun.state.Resume.Reason != optimizeResumeDrift ||
+		driftedRun.state.Generation != 2 || driftedRun.state.Attempt != 1 {
+		t.Fatalf("cross-repository checkpoint was not rejected: %+v", driftedRun.state.Resume)
+	}
+
+	values["GITHUB_REPOSITORY_ID"] = "12345"
+	values["GITHUB_SHA"] = strings.Repeat("b", 40)
+	if _, err := optimizeRepositoryScopeSHA(&optimizeInvocation{
+		repositoryRoot: second,
+		discovery:      discovery,
+	}, getenv); err == nil {
+		t.Fatal("provider revision drift was accepted")
+	}
+	if nested := optimizeGitLabRepositoryID("group/platform/repository"); !strings.HasPrefix(nested, "gitlab/") || len(nested) != len("gitlab/")+20 {
+		t.Fatalf("nested GitLab repository ID = %q", nested)
+	}
+	if optimizeGitLabRepositoryID("group//repository") != "" {
+		t.Fatal("invalid nested GitLab repository path was accepted")
+	}
+}
+
 func TestOptimizeJSONAndBypass(t *testing.T) {
 	repository := newOptimizeTestRepository(t)
 	t.Chdir(repository)

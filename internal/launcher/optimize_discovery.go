@@ -102,6 +102,11 @@ func inspectOptimizeDiscoveryContext(repositoryRoot string, gradleArgs []string,
 		context.Reason = "WORKTREE_DIRTY"
 		return context
 	}
+	context.RepositoryID = optimizeRepositoryID(repositoryRoot, getenv)
+	if !outputContractRepositoryPattern.MatchString(context.RepositoryID) {
+		context.Reason = "REPOSITORY_IDENTITY_UNAVAILABLE"
+		return context
+	}
 	base, source, reason := optimizeComparisonBase(repositoryRoot, context.TargetRevision, getenv)
 	context.Source = source
 	if reason != "" {
@@ -122,11 +127,6 @@ func inspectOptimizeDiscoveryContext(repositoryRoot string, gradleArgs []string,
 	context.changedPaths = changes
 	context.ChangedPathCount = len(changes)
 	context.ChangeSHA256 = optimizeDigest("buildopt-optimize-change-set-v1", changes...)
-	context.RepositoryID = optimizeRepositoryID(repositoryRoot, getenv)
-	if !outputContractRepositoryPattern.MatchString(context.RepositoryID) {
-		context.Reason = "REPOSITORY_IDENTITY_UNAVAILABLE"
-		return context
-	}
 	context.Ready = true
 	context.Reason = optimizeDiscoveryReady
 	return context
@@ -304,10 +304,11 @@ func optimizeZeroRevision(revision string) bool {
 }
 
 func optimizeRepositoryID(repositoryRoot string, getenv func(string) string) string {
-	for _, name := range []string{"GITHUB_REPOSITORY", "CI_PROJECT_PATH"} {
-		if value := strings.TrimSpace(getenv(name)); outputContractRepositoryPattern.MatchString(value) {
-			return value
-		}
+	if value := strings.TrimSpace(getenv("GITHUB_REPOSITORY")); outputContractRepositoryPattern.MatchString(value) {
+		return value
+	}
+	if value := optimizeGitLabRepositoryID(strings.TrimSpace(getenv("CI_PROJECT_PATH"))); value != "" {
+		return value
 	}
 	if remote, err := gitOutput(repositoryRoot, "config", "--get", "remote.origin.url"); err == nil {
 		if repositoryID := optimizeRepositoryIDFromRemote(strings.TrimSpace(remote)); repositoryID != "" {
@@ -316,6 +317,26 @@ func optimizeRepositoryID(repositoryRoot string, getenv func(string) string) str
 	}
 	digest := optimizeDigest("buildopt-optimize-local-repository-v1", repositoryRoot)
 	return "local/" + digest[:20]
+}
+
+func optimizeGitLabRepositoryID(path string) string {
+	segments := strings.Split(path, "/")
+	if len(segments) < 2 || len(path) > 512 {
+		return ""
+	}
+	for _, segment := range segments {
+		if !outputContractRepositoryPattern.MatchString("x/" + segment) {
+			return ""
+		}
+	}
+	if len(segments) == 2 {
+		return path
+	}
+	// The public result schema uses owner/repository. Preserve nested GitLab
+	// identity without truncating to the last subgroup by storing an opaque ID;
+	// the CI scope separately binds the provider's immutable numeric project ID.
+	digest := optimizeDigest("buildopt-optimize-gitlab-repository-v1", path)
+	return "gitlab/" + digest[:20]
 }
 
 func optimizeRepositoryIDFromRemote(remote string) string {

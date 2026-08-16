@@ -175,6 +175,7 @@ if [[ "$("${buildopt_server}" --fixture-version)" != \
 fi
 
 for buildopt_expected_output in \
+    "version=${buildopt_version}" \
     "install-root=${buildopt_install_root}" \
     "buildopt-path=${buildopt_binary}" \
     "buildopt-server-path=${buildopt_server}" \

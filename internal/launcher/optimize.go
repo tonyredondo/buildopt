@@ -279,7 +279,10 @@ func bindOptimizeInvocation(invocation *optimizeInvocation) error {
 		return fmt.Errorf("hash Gradle Wrapper properties: %w", err)
 	}
 	invocation.invocationSHA256 = optimizeDigest("buildopt-optimize-invocation-v1", invocation.gradleArgs...)
-	invocation.repositoryScopeSHA = optimizeDigest("buildopt-optimize-repository-scope-v1", invocation.repositoryRoot)
+	invocation.repositoryScopeSHA, err = optimizeRepositoryScopeSHA(invocation, os.Getenv)
+	if err != nil {
+		return err
+	}
 	invocation.discoveryContextSHA = optimizeDiscoveryContextSHA(invocation.discovery)
 	invocation.bindingSHA256 = optimizeDigest(
 		"buildopt-optimize-bindings-v1",
@@ -293,6 +296,55 @@ func bindOptimizeInvocation(invocation *optimizeInvocation) error {
 		strconv.Itoa(invocation.maxBreakEvenBuilds),
 	)
 	return nil
+}
+
+// optimizeRepositoryScopeSHA keeps local state checkout-bound while allowing
+// exact CI state to survive an ephemeral workspace path. Provider identity is
+// only one binding; revision, Wrapper, executable, argv, discovery and budget
+// remain independently bound by bindOptimizeInvocation.
+func optimizeRepositoryScopeSHA(invocation *optimizeInvocation, getenv func(string) string) (string, error) {
+	provider := ""
+	repositoryIDVariable := ""
+	repositoryPathVariable := ""
+	targetVariable := ""
+	switch {
+	case getenv("GITHUB_ACTIONS") == "true":
+		provider = "GITHUB"
+		repositoryIDVariable = "GITHUB_REPOSITORY_ID"
+		repositoryPathVariable = "GITHUB_REPOSITORY"
+		targetVariable = "GITHUB_SHA"
+	case getenv("GITLAB_CI") == "true":
+		provider = "GITLAB"
+		repositoryIDVariable = "CI_PROJECT_ID"
+		repositoryPathVariable = "CI_PROJECT_PATH"
+		targetVariable = "CI_COMMIT_SHA"
+	default:
+		return optimizeDigest("buildopt-optimize-repository-scope-v1", invocation.repositoryRoot), nil
+	}
+	if invocation.discovery.RepositoryID == "" || invocation.discovery.TargetRevision == "" {
+		return optimizeDigest("buildopt-optimize-repository-scope-v1", invocation.repositoryRoot), nil
+	}
+
+	repositoryNumericID := strings.TrimSpace(getenv(repositoryIDVariable))
+	repositoryPath := strings.TrimSpace(getenv(repositoryPathVariable))
+	targetRevision := strings.ToLower(strings.TrimSpace(getenv(targetVariable)))
+	expectedRepositoryID := repositoryPath
+	if provider == "GITLAB" {
+		expectedRepositoryID = optimizeGitLabRepositoryID(repositoryPath)
+	}
+	if repositoryNumericID == "" || len(repositoryNumericID) > 32 ||
+		strings.Trim(repositoryNumericID, "0123456789") != "" ||
+		expectedRepositoryID == "" || expectedRepositoryID != invocation.discovery.RepositoryID ||
+		!validMeasurementRevision(targetRevision) ||
+		targetRevision != invocation.discovery.TargetRevision {
+		return "", fmt.Errorf("invalid %s repository identity or checked-out revision", provider)
+	}
+	return optimizeDigest(
+		"buildopt-optimize-ci-repository-scope-v1",
+		provider,
+		repositoryNumericID,
+		repositoryPath,
+	), nil
 }
 
 func optimizeFileSHA256(path string, allowMissing bool) (string, error) {

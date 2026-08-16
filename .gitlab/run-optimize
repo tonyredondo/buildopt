@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_command=${BUILDOPT_CI_COMMAND:?missing BUILDOPT_CI_COMMAND}
+buildopt_repository=${CI_PROJECT_DIR:?missing CI_PROJECT_DIR}
+if [[ ${#buildopt_command} -gt 1024 ]] ||
+    [[ ${buildopt_command} == *$'\n'* ]] ||
+    [[ ${buildopt_command} == *$'\r'* ]] ||
+    [[ ! ${CI_PROJECT_ID:-} =~ ^[0-9]{1,32}$ ]] ||
+    [[ ! ${CI_PROJECT_PATH:-} =~ ^([A-Za-z0-9][A-Za-z0-9_.-]{0,99}/)+[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$ ]] ||
+    [[ ! ${CI_COMMIT_SHA:-} =~ ^[0-9a-fA-F]{40}$ ]]; then
+    printf 'BuildOpt CI command or GitLab repository identity is invalid\n' >&2
+    exit 64
+fi
+
+read -r -a buildopt_arguments <<<"${buildopt_command}"
+if ((${#buildopt_arguments[@]} < 2)) || [[ ${buildopt_arguments[0]} != optimize ]]; then
+    printf 'BuildOpt CI command must begin with optimize and include a Gradle workflow\n' >&2
+    exit 64
+fi
+for buildopt_argument in "${buildopt_arguments[@]:1}"; do
+    case ${buildopt_argument} in
+        --state-dir | --state-dir=* | --resume | --resume=* | --json | \
+            --calibration-budget | --calibration-budget=* | \
+            --calibration-pairs | --calibration-pairs=* | \
+            --max-break-even-builds | --max-break-even-builds=*)
+            printf 'BuildOpt CI owns optimize persistence and calibration options\n' >&2
+            exit 64
+            ;;
+    esac
+done
+
+if [[ $(cd -- "${buildopt_repository}" && pwd -P) != $(pwd -P) ]]; then
+    printf 'BuildOpt CI must run from the checked-out repository root\n' >&2
+    exit 64
+fi
+
+buildopt_artifact="${buildopt_repository}/.buildopt/ci-report/v1"
+buildopt_current=${buildopt_repository}
+for buildopt_segment in .buildopt ci-report v1; do
+    buildopt_current="${buildopt_current}/${buildopt_segment}"
+    if [[ -L ${buildopt_current} ]] || [[ -e ${buildopt_current} && ! -d ${buildopt_current} ]]; then
+        printf 'BuildOpt CI report path contains an unsafe component\n' >&2
+        exit 1
+    fi
+    if [[ ! -d ${buildopt_current} ]]; then
+        mkdir -- "${buildopt_current}"
+    fi
+    chmod 0700 -- "${buildopt_current}"
+done
+for buildopt_name in result.json SHA256SUMS summary.md; do
+    if [[ -e ${buildopt_artifact}/${buildopt_name} || -L ${buildopt_artifact}/${buildopt_name} ]]; then
+        printf 'BuildOpt CI report destination already exists\n' >&2
+        exit 1
+    fi
+done
+
+
+set +e
+buildopt "${buildopt_arguments[@]}"
+buildopt_exit=$?
+set -e
+
+buildopt_result="${buildopt_repository}/.buildopt/optimize/v1/result.json"
+if [[ -f ${buildopt_result} && ! -L ${buildopt_result} ]]; then
+    install -m 0600 -- "${buildopt_result}" "${buildopt_artifact}/result.json"
+    sha256sum "${buildopt_artifact}/result.json" >"${buildopt_artifact}/SHA256SUMS"
+    chmod 0600 -- "${buildopt_artifact}/SHA256SUMS"
+fi
+{
+    printf '# BuildOpt CI result\n\n'
+    printf '%s\n' '- Provider: GitLab CI'
+    printf '%s%s%s\n' '- Repository: `' "${CI_PROJECT_PATH}" '`'
+    printf '%s%s%s\n' '- Checked-out revision: `' "${CI_COMMIT_SHA}" '`'
+    printf '%s%s%s\n' '- Process exit code: `' "${buildopt_exit}" '`'
+    printf '%s\n' '- Persistent state: provider cache, accepted only after BuildOpt validates every exact binding'
+    printf '%s\n' "- Review: \`result.json\` when the command reached final reporting"
+} >"${buildopt_artifact}/summary.md"
+chmod 0600 -- "${buildopt_artifact}/summary.md"
+
+exit "${buildopt_exit}"

@@ -1,7 +1,10 @@
-name: Setup or review BuildOpt
-description: Install BuildOpt or publish a review-only structural profile proposal
+name: Setup, optimize, or review BuildOpt
+description: Install BuildOpt, run one-command optimization, or publish a review-only proposal
 
 inputs:
+  command:
+    description: Optional one-command CI entrypoint, beginning with optimize (for example, optimize build)
+    required: false
   mode:
     description: install or profile-proposal
     required: false
@@ -39,6 +42,9 @@ inputs:
     required: false
 
 outputs:
+  version:
+    description: Resolved BuildOpt release version
+    value: ${{ steps.install.outputs.version }}
   install-root:
     description: Verified release installation root
     value: ${{ steps.install.outputs.install-root }}
@@ -66,6 +72,9 @@ outputs:
   profile-artifact-directory:
     description: Absolute directory uploaded as the review artifact
     value: ${{ steps.profile.outputs.artifact-directory }}
+  ci-artifact-directory:
+    description: Absolute directory uploaded as the one-command CI result
+    value: ${{ steps.optimize.outputs.artifact-directory }}
 
 runs:
   using: composite
@@ -74,10 +83,15 @@ runs:
       shell: bash
       env:
         BUILDOPT_ACTION_MODE: ${{ inputs.mode }}
+        BUILDOPT_ACTION_COMMAND: ${{ inputs.command }}
       run: |
         if [[ "$BUILDOPT_ACTION_MODE" != install && \
           "$BUILDOPT_ACTION_MODE" != profile-proposal ]]; then
           printf 'BuildOpt Action mode must be install or profile-proposal\n' >&2
+          exit 64
+        fi
+        if [[ -n "$BUILDOPT_ACTION_COMMAND" && "$BUILDOPT_ACTION_MODE" != install ]]; then
+          printf 'BuildOpt command cannot be combined with profile-proposal mode\n' >&2
           exit 64
         fi
 
@@ -92,6 +106,43 @@ runs:
         BUILDOPT_ACTION_INSTALL_DIR: ${{ runner.temp }}/buildopt-action
         BUILDOPT_ACTION_PATH: ${{ github.action_path }}
       run: '"$BUILDOPT_ACTION_PATH/.github/actions/setup-buildopt"'
+
+    - name: Restore exact compatible BuildOpt optimize state
+      if: inputs.command != ''
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+      with:
+        path: .buildopt/optimize/v1
+        key: buildopt-optimize-v1-${{ runner.os }}-${{ runner.arch }}-${{ github.repository_id }}-${{ github.sha }}-${{ steps.install.outputs.version }}-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+
+    - name: Run the one-command BuildOpt POC
+      id: optimize
+      if: inputs.command != ''
+      continue-on-error: true
+      shell: bash
+      env:
+        BUILDOPT_CI_COMMAND: ${{ inputs.command }}
+        BUILDOPT_CI_ACTION_PATH: ${{ github.action_path }}
+      run: '"$BUILDOPT_CI_ACTION_PATH/.github/actions/run-optimize"'
+
+    - name: Upload the one-command BuildOpt result
+      if: inputs.command != '' && always() && steps.optimize.outputs.artifact-directory != ''
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: buildopt-optimize-result
+        path: ${{ steps.optimize.outputs.artifact-directory }}
+        if-no-files-found: error
+        retention-days: 14
+
+    - name: Preserve Gradle or BuildOpt failures after publishing diagnostics
+      if: inputs.command != '' && always()
+      shell: bash
+      env:
+        BUILDOPT_CI_STEP_OUTCOME: ${{ steps.optimize.outcome }}
+      run: |
+        if [[ "$BUILDOPT_CI_STEP_OUTCOME" != success ]]; then
+          printf 'BuildOpt optimize failed; review the uploaded result artifact\n' >&2
+          exit 1
+        fi
 
     - name: Install the pinned Go toolchain for proposal generation
       if: inputs.mode == 'profile-proposal'

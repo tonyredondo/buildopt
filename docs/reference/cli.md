@@ -36,22 +36,24 @@ BuildOpt init script or plugin.
 buildopt optimize [options] [--] <gradle args...>
 ```
 
-The stable north-star invocation is `buildopt optimize build`. The command runs
-optimized native Gradle first, then derives repository identity, immutable
-base/target, exact changes, non-empty Gradle-owned outputs and a typed
-structural graph. A complete candidate returns
-`LEARNING / STRUCTURAL_CANDIDATE_DISCOVERED`; unsupported or ambiguous state
-retains native Gradle. Generated private state, discovery documents and the
-latest result live under `.buildopt/optimize/v1`, with exact resume only for
-matching executable, repository scope, Wrapper, Gradle arguments, derived
-discovery context and budget bindings.
+The stable north-star invocation is `buildopt optimize build`. The first
+qualifying invocation runs optimized native Gradle, derives repository/change/
+output/graph facts, calibrates a complete candidate and stores it only after
+exact output, fallback, wall-time and payback gates pass. A later exact
+invocation validates the executable, repository scope, revision, Wrapper,
+arguments, graph, outputs, evidence and profile before selecting the smaller
+graph. Unsupported, ambiguous, drifted or non-value state retains native
+Gradle. Generated private state and the latest result live under
+`.buildopt/optimize/v1`.
 
 Defaults are a 30-minute future calibration budget, eight balanced pairs and a
 maximum accepted break-even of 30 matching builds. `--json` reserves stdout
 for one result object and sends Gradle console output to stderr.
-`BUILDOPT_BYPASS=1` skips optimize state and reporting. No state grants
-production authority or enters Test Optimization scope. Discovery performs no
-calibration, selection or performance claim yet.
+`BUILDOPT_BYPASS=1` skips optimize state and reporting. In GitHub/GitLab, the
+repository scope uses provider identity instead of the ephemeral checkout path
+so an exact checkpoint can move between runners; every other binding still
+passes before reuse. No state grants production authority or enters Test
+Optimization scope.
 
 ### Run the qualified POC profile
 

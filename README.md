@@ -106,10 +106,29 @@ explicit POC experiment because it has not demonstrated incremental build-time
 value over that native baseline.
 
 This two-command check validates installation and cache-compatible execution;
-it does not by itself activate or prove the structural accelerator. The current
-accelerator requires repository-owned inputs, paired measurement, explicit
-review, and a qualified profile. Follow the [Build Impact workflow](./docs/guides/product-workflows.md#build-impact)
-to evaluate that path.
+it does not by itself activate or prove the structural accelerator. The
+separate `optimize` path below owns paired measurement, output equivalence,
+payback qualification and exact native fallback before it may select anything.
+
+The current one-command POC can also discover, calibrate and replay a verified
+structural profile automatically:
+
+```bash
+buildopt optimize build
+```
+
+In GitHub Actions, the same path needs one BuildOpt-specific input:
+
+```yaml
+- uses: tonyredondo/buildopt@<40-character-commit-sha>
+  with:
+    command: optimize build
+```
+
+GitLab uses the same `command` input. Both integrations derive provider
+revisions, restore only exact compatible state and upload a reviewable result;
+cache loss or drift runs optimized native Gradle and no BuildOpt service is
+required. See the [CI integration guide](./docs/guides/ci-integration.md).
 
 For a non-invasive evaluation, the GitHub Action's `profile-proposal` mode
 turns a checked-in workflow/output declaration and exact pull-request diff into

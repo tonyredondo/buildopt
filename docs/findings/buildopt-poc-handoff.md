@@ -230,13 +230,23 @@ without remeasurement; profile tampering retained native before Gradle and was
 repaired only from the still-valid evidence. Those values test the protocol and
 do not extend the real-repository evidence above.
 
+The same command is now available as one-input GitHub and GitLab orchestration:
+`command: optimize build`. Provider repository identity replaces the ephemeral
+checkout path only for the repository-scope digest, allowing an exact
+checkpoint to move between clean runners of the same repository and commit.
+Executable, Wrapper, argv, base/target, graph, output, evidence and profile
+bindings still pass before use. Both providers publish a checksummed result;
+cache miss, corruption or drift runs optimized native Gradle and no BuildOpt
+service or manual internal file is required.
+
 The evidence is bound to exact revisions, changes, workflows, outputs, and a
 12-CPU host. The matrices cover multiple source shapes, a JVM resource,
 multiple simultaneous paths, and conservative build-logic/global fallback,
 but they do not prove that every change in these repositories wins or that
 every Gradle repository can be activated automatically. Historical public
 profiles remain review-required; the one-command path may activate only its
-own exact locally qualified profile inside the explicit POC command. Native
+own exact qualified profile inside the explicit POC command. CI persistence
+is exact-commit only and does not infer applicability across revisions. Native
 Gradle remains authoritative on drift or ambiguity.
 
 The evidence now covers those three known output representations, but only
@@ -262,17 +272,16 @@ Gradle, and automatic selection remains POC-only with production authority
 false. The ordered implementation and scorecard are frozen in the
 [one-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md).
 
-1. **Make exact replay portable through CI.** The local command now discovers,
-   calibrates, stores and selects an exact qualified profile with zero manual
-   BuildOpt files. GitHub and GitLab must restore only provider-bound compatible
-   state and require only the Gradle command as customer input.
-2. **Explain the decision at customer altitude.** Report selected/full graph,
+1. **Explain the decision at customer altitude.** Report selected/full graph,
    selection overhead, measured saving, uncertainty, calibration cost,
    break-even, cumulative value and exact fallback reason without requiring the
    implementation tracker.
-3. **Prove the complete effect.** Measure install-to-decision time, net
+2. **Prove the complete effect.** Measure install-to-decision time, net
    installed-path wall time and break-even on fresh substantial public
    repositories; never add isolated mechanism percentages.
+3. **Evaluate cross-revision learning separately.** The current CI cache safely
+   accelerates retries of one exact commit. Reuse across source revisions must
+   prove current graph/output applicability before it can reduce calibration.
 
 ## Evidence
 
@@ -295,6 +304,7 @@ false. The ordered implementation and scorecard are frozen in the
 - [Automatic one-command calibration contract](../../specs/poc-magic-calibration-v1.md)
 - [Automatic profile portfolio contract](../../specs/poc-magic-profile-portfolio-v1.md)
 - [Automatic qualified-profile replay contract](../../specs/poc-magic-auto-replay-v1.md)
+- [One-input CI onboarding contract](../../specs/poc-magic-ci-onboarding-v1.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [One-command POC onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)

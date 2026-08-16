@@ -69,6 +69,9 @@ before running the product.
 - [One-command POC onboarding contract](../specs/poc-magic-onboarding-contract-v1.md):
   the executable CLI, private state/result, exact resume, bounded budget,
   exit behavior and non-production authority used by that roadmap.
+- [One-input CI onboarding contract](../specs/poc-magic-ci-onboarding-v1.md):
+  GitHub/GitLab command input, provider-bound portable exact state, review
+  artifacts and service-free native fallback.
 - [Centralized Gradle cache and BuildOpt state POC roadmap](./plans/centralized-cache-and-state-roadmap.md):
   an optional HTTPS service for native Gradle cache objects and separately
   governed BuildOpt profiles, evidence and checkpoints across build machines.

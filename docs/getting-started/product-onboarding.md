@@ -147,6 +147,9 @@ defines generic family classification, digest bindings, bounded coexistence
 and tamper recovery. The
 [automatic-replay contract](../../specs/poc-magic-auto-replay-v1.md) defines
 exact pre-Gradle matching, measured decision overhead and native fallback.
+The [one-input CI contract](../../specs/poc-magic-ci-onboarding-v1.md) makes
+that same exact command portable between clean runners of one provider
+repository without trusting restored files or requiring a BuildOpt service.
 
 ## Try the Build Impact accelerator
 
@@ -244,21 +247,23 @@ candidate and full builds, and treat the measured result as POC evidence.
 
 ### GitHub Actions
 
-Pin the Action source to a reviewed 40-character commit SHA. No release inputs
-are required for the normal path:
+Pin the Action source to a reviewed 40-character commit SHA. The only ordinary
+BuildOpt input is the existing Gradle workflow:
 
 ```yaml
-- name: Install BuildOpt
+- name: Optimize the build
   uses: tonyredondo/buildopt@<40-character-commit-sha>
-
-- name: Build
-  run: buildopt gradle --no-daemon build
+  with:
+    command: optimize build
 ```
 
-Set `version` when the workflow must pin a particular binary release. The
-Action resolves the published archive checksum, verifies the archive and adds
-the installed commands to `PATH`. Existing consumers that provide the legacy
-`archive-url` and `archive-sha256` pair remain supported.
+The Action installs the verified release, derives GitHub base/head revisions,
+restores only provider-bound exact state, and uploads
+`buildopt-optimize-result`. A cache miss or drift runs optimized native Gradle.
+Run it after a checkout with the comparison base available (`fetch-depth: 0`
+for `actions/checkout`).
+Set `version` when the workflow must pin a particular binary release. Existing
+install-only and legacy archive consumers remain supported.
 
 ### GitLab CI
 
@@ -271,12 +276,14 @@ include:
     ref: <40-character-commit-sha>
     file: /.gitlab/buildopt-component.yml
     inputs:
-      gradle-tasks: build
+      command: optimize build
 ```
 
 The component installs the matching public release into `.buildopt/runtime`,
-runs `buildopt gradle`, and retains the normalized job event and redacted
-exports. Add `version: 0.2.0` to pin the native package.
+runs the same `buildopt optimize` command, uses the native project cache only
+for exact state, and retains the normalized job event plus review result. Add
+`version` to pin the native package. Neither provider requires a BuildOpt
+server, credential, hand-authored profile or internal state option.
 
 ## What improvement should you expect?
 

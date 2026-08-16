@@ -57,18 +57,19 @@ The command writes two private, atomic documents:
 
 No raw Gradle arguments, console logs, credentials or absolute repository path
 are persisted. The checkpoint binds opaque SHA-256 values for
-the BuildOpt executable, canonical local repository scope, Wrapper properties,
+the BuildOpt executable, repository scope, Wrapper properties,
 complete Gradle argument vector, derived repository/base/target/change context
 and calibration budget. A selected replay reports
 `AUTOMATIC_REPLAY_COMPLETE`. A ready context reports `DISCOVERY_COMPLETE`; an
-ambiguous one remains `CONTRACT_ONLY`. The local scope is intentionally not
-portable; the later CI block must use provider identity before state may move
-between runners.
+ambiguous one remains `CONTRACT_ONLY`.
 
 `--resume auto` accepts only an exact binding match. Invocation, Wrapper,
 executable, repository or budget drift creates a new generation and runs
 native. A malformed checkpoint is hashed for diagnosis, rejected and replaced
-without candidate reuse. `--resume never` always starts a new generation.
+without candidate reuse. Local runs bind the canonical checkout path; GitHub
+and GitLab bind provider repository identity so an exact checkpoint can move
+between clean runners while every other binding remains unchanged. `--resume
+never` always starts a new generation.
 
 ## Outcomes and authority
 

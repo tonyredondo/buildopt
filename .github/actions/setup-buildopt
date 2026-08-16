@@ -96,6 +96,7 @@ for buildopt_file in \
 done
 
 {
+    printf 'version=%s\n' "${buildopt_version}"
     printf 'install-root=%s\n' "${buildopt_install_root}"
     printf 'buildopt-path=%s\n' "${buildopt_binary}"
     printf 'buildopt-server-path=%s\n' "${buildopt_server}"
