@@ -169,11 +169,11 @@ buildopt_apply_changes() {
         }
         case "${buildopt_mutation}" in
             APPEND_FIXED_COMMENT)
-                printf '\n// buildopt-poc-%s-%d\n' "${buildopt_key}" "${buildopt_change_index}" \
+                printf '\n// buildopt-poc-%s-%d\n' "${buildopt_key}" "$((buildopt_change_index + 1))" \
                     >>"${buildopt_repository}/${buildopt_path}"
                 ;;
             APPEND_FIXED_HASH_COMMENT)
-                printf '\n# buildopt-poc-%s-%d\n' "${buildopt_key}" "${buildopt_change_index}" \
+                printf '\n# buildopt-poc-%s-%d\n' "${buildopt_key}" "$((buildopt_change_index + 1))" \
                     >>"${buildopt_repository}/${buildopt_path}"
                 ;;
             *)
