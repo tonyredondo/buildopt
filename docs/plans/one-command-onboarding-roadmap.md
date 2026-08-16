@@ -115,6 +115,14 @@ persist a qualifying profile portfolio as a normal cache/artifact. It must not
 require a BuildOpt server, dashboard or operator-managed database for this POC
 path.
 
+Teams may optionally connect the same command to an owner-operated
+`buildopt-server` that centralizes Gradle remote-cache objects and compatible
+BuildOpt state across developer machines and CI providers. The local path
+remains complete without that service. The separate
+[centralized cache and state roadmap](./centralized-cache-and-state-roadmap.md)
+defines namespaces, HTTPS/authentication, cross-commit applicability,
+fallbacks and the two-machine value proof.
+
 ## Generic architecture
 
 The implementation remains repository-name independent. Repository-specific

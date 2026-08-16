@@ -16,6 +16,7 @@ before running the product.
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
 | Review the POC idea, mechanisms, current value, and next steps | [Current POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
 | Follow the path to automatic onboarding | [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md) | [Product onboarding](./getting-started/product-onboarding.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
+| Plan optional shared state across machines | [Centralized cache and state POC roadmap](./plans/centralized-cache-and-state-roadmap.md) | [Architecture overview](./architecture/overview.md), [operations](./guides/operations.md) |
 | Inspect exact behavior | [Specifications index](../specs/README.md) | [Contracts index](../contracts/README.md), [ADRs](../adr/README.md) |
 
 ## Documentation map
@@ -65,6 +66,9 @@ before running the product.
 - [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md):
   the `buildopt optimize build` north star, automatic state machine, ordered
   implementation blocks, end-to-end value gates and explicit POC boundaries.
+- [Centralized Gradle cache and BuildOpt state POC roadmap](./plans/centralized-cache-and-state-roadmap.md):
+  an optional HTTPS service for native Gradle cache objects and separately
+  governed BuildOpt profiles, evidence and checkpoints across build machines.
 
 ### Reference
 
