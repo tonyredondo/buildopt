@@ -6,7 +6,7 @@
   "release": {
     "version": "0.3.2",
     "tag": "v0.3.2",
-    "revision": "TO_BE_BOUND_BY_RELEASE",
+    "revision": "ff7cf20f3417e8c8c09bce2c80a0ca570e964c1e",
     "platform": "linux-amd64",
     "installerUrl": "https://raw.githubusercontent.com/tonyredondo/buildopt/v0.3.2/install.sh"
   },
