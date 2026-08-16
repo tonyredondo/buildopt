@@ -173,6 +173,13 @@ homes at the base revision, alternates eight target-revision pairs, verifies
 byte-identical required outputs and proves full-graph fallback. It writes
 qualified or inconclusive evidence but never activates an optimization.
 
+POC calibration studies can add `--calibration-only` to run only the candidate
+cache seed, base-daemon stabilization and bounded target-workload
+stabilization. That mode records the setup phases and required-output digest;
+it does not run measured pairs, make a timing claim or produce a qualification
+decision. It exists so calibration cost can be compared with savings already
+established by a separate immutable terminal measurement.
+
 The combined POC decision surface removes the manual analyze/qualify handoff:
 
 ```bash

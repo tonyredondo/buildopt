@@ -163,6 +163,9 @@ buildopt profile measure \
   --buildopt-revision REVISION \
   --evidence-output PATH \
   [--gradle-option VALUE ...] \
+  [--target-stability-confirmations 1|2|3] \
+  [--adaptive-candidate-stability] \
+  [--calibration-only] \
   [--timeout DURATION]
 ```
 
@@ -174,6 +177,10 @@ Required outputs must remain byte-identical in every observation and under the
 full-graph fallback. Non-positive evidence remains `INCONCLUSIVE`; invalid
 source state, build failure or output mismatch writes no evidence. See
 [generic isolated structural measurement](../../specs/poc-generic-measurement-v1.md).
+With `--calibration-only`, the command records only the candidate cache seed,
+base-daemon stabilization and bounded target-workload stabilization. It makes
+no timing or qualification claim and is intended for POC break-even studies
+that are bound to a separate terminal performance result.
 
 ### Run an explicit Build Impact POC candidate
 

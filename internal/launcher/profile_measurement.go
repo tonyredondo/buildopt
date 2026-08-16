@@ -6,6 +6,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -26,7 +27,7 @@ import (
 )
 
 const (
-	profileMeasureUsage           = "usage: buildopt profile measure --manifest PATH --graph PATH --generated-manifest PATH --changes-file PATH --fallback-changes-file PATH --base-revision REVISION --buildopt-revision REVISION --evidence-output PATH [--output-equivalence PATH] [--gradle-option VALUE ...] [--target-stability-confirmations 1|2|3] [--adaptive-candidate-stability] [--timeout DURATION]\n"
+	profileMeasureUsage           = "usage: buildopt profile measure --manifest PATH --graph PATH --generated-manifest PATH --changes-file PATH --fallback-changes-file PATH --base-revision REVISION --buildopt-revision REVISION --evidence-output PATH [--output-equivalence PATH] [--gradle-option VALUE ...] [--target-stability-confirmations 1|2|3] [--adaptive-candidate-stability] [--calibration-only] [--timeout DURATION]\n"
 	measurementPairs              = 8
 	maximumMeasurementInterArmGap = 5 * time.Second
 )
@@ -85,6 +86,30 @@ type structuralArmResult struct {
 	finishedAt   time.Time
 }
 
+type structuralCalibrationEvidence struct {
+	SchemaVersion            string                                             `json:"schemaVersion"`
+	CapturedAt               string                                             `json:"capturedAt"`
+	RepositoryRevision       string                                             `json:"repositoryRevision"`
+	BaseRevision             string                                             `json:"baseRevision"`
+	BuildOptRevision         string                                             `json:"buildoptRevision"`
+	ExecutableSHA256         string                                             `json:"executableSha256"`
+	SourceEvidenceSHA256     string                                             `json:"sourceEvidenceSha256"`
+	OutputEquivalenceSHA256  string                                             `json:"outputEquivalenceSha256,omitempty"`
+	Analysis                 profilediscovery.AnalysisReport                    `json:"analysis"`
+	GradleOptions            []string                                           `json:"gradleOptions"`
+	CandidateWarmups         []profilediscovery.StructuralWarmupObservation     `json:"candidateWarmups"`
+	CandidateStabilization   string                                             `json:"candidateStabilization"`
+	RequiredOutputSHA256     string                                             `json:"requiredOutputSha256"`
+	RequiredOutputCount      int                                                `json:"requiredOutputCount"`
+	Boundaries               structuralCalibrationBoundaries                    `json:"boundaries"`
+}
+
+type structuralCalibrationBoundaries struct {
+	TimingClaim          bool `json:"timingClaim"`
+	AutomaticActivation bool `json:"automaticActivation"`
+	ProductionAuthorized bool `json:"productionAuthorized"`
+}
+
 func runStructuralProfileMeasurement(args []string, stdout, stderr io.Writer) int {
 	if isHelp(args) {
 		_, _ = io.WriteString(stdout, profileMeasureUsage)
@@ -104,6 +129,7 @@ func runStructuralProfileMeasurement(args []string, stdout, stderr io.Writer) in
 	timeout := flags.Duration("timeout", 20*time.Minute, "per-build timeout")
 	targetStabilityConfirmations := flags.Int("target-stability-confirmations", 1, "target-workload warm-ups required before measured pairs")
 	adaptiveCandidateStability := flags.Bool("adaptive-candidate-stability", false, "stop the candidate after two exact matching target fingerprints, bounded by three")
+	calibrationOnly := flags.Bool("calibration-only", false, "capture candidate calibration phases without measured pairs or a qualification decision")
 	var gradleOptions repeatedStringFlag
 	flags.Var(&gradleOptions, "gradle-option", "Gradle option shared by both arms; repeat for multiple values")
 	if err := flags.Parse(args); err != nil || flags.NArg() != 0 ||
@@ -128,6 +154,23 @@ func runStructuralProfileMeasurement(args []string, stdout, stderr io.Writer) in
 		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile measurement unavailable: %v\n", err)
 		return exitConfiguration
 	}
+	if *calibrationOnly {
+		raw, calibrationErr := calibrateStructuralProfile(config, stderr)
+		if calibrationErr != nil {
+			_, _ = fmt.Fprintf(stderr, "buildopt: structural profile calibration unavailable: %v\n", calibrationErr)
+			return exitConfiguration
+		}
+		if calibrationErr = writeRepositoryDocument(config.repositoryRoot, config.evidenceOutput, raw, 0o644); calibrationErr != nil {
+			_, _ = fmt.Fprintf(stderr, "buildopt: structural profile calibration unavailable: %v\n", calibrationErr)
+			return exitConfiguration
+		}
+		_, _ = fmt.Fprintf(stderr, "buildopt: structural candidate calibration written to %s; no qualification decision was made\n", config.evidenceOutput)
+		if _, calibrationErr = stdout.Write(raw); calibrationErr != nil {
+			_, _ = fmt.Fprintf(stderr, "buildopt: write structural profile calibration: %v\n", calibrationErr)
+			return exitConfiguration
+		}
+		return 0
+	}
 	raw, qualified, err := measureStructuralProfile(config, stderr)
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile measurement unavailable: %v\n", err)
@@ -147,6 +190,53 @@ func runStructuralProfileMeasurement(args []string, stdout, stderr io.Writer) in
 		return exitConfiguration
 	}
 	return 0
+}
+
+func calibrateStructuralProfile(config structuralMeasurementConfig, progress io.Writer) ([]byte, error) {
+	root, err := os.MkdirTemp("", "buildopt-structural-calibration-*")
+	if err != nil {
+		return nil, fmt.Errorf("create isolated calibration root: %w", err)
+	}
+	defer os.RemoveAll(root)
+	candidate, err := prepareStructuralMeasurementArm(config, root, "candidate", true, progress)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = stopStructuralMeasurementArm(candidate) }()
+	outputSHA, outputCount, err := hashStructuralMeasurementOutputs(config, candidate.workspace)
+	if err != nil {
+		return nil, fmt.Errorf("verify candidate calibration outputs: %w", err)
+	}
+	changesSHA := sha256.Sum256(config.inputDocuments[config.changesPath])
+	executableSHA, err := hashMeasurementFile(config.executable)
+	if err != nil {
+		return nil, fmt.Errorf("hash installed BuildOpt executable: %w", err)
+	}
+	if executableSHA != config.executableSHA256 {
+		return nil, errors.New("installed BuildOpt executable changed during calibration")
+	}
+	evidence := structuralCalibrationEvidence{
+		SchemaVersion: "buildopt.evidence/poc-structural-calibration/v1",
+		CapturedAt: time.Now().UTC().Format(time.RFC3339),
+		RepositoryRevision: config.targetRevision,
+		BaseRevision: config.baseRevision,
+		BuildOptRevision: config.buildOptRevision,
+		ExecutableSHA256: config.executableSHA256,
+		SourceEvidenceSHA256: hex.EncodeToString(changesSHA[:]),
+		OutputEquivalenceSHA256: config.outputEquivalenceSHA256,
+		Analysis: config.analysis,
+		GradleOptions: append([]string(nil), config.gradleOptions...),
+		CandidateWarmups: append([]profilediscovery.StructuralWarmupObservation(nil), candidate.warmups...),
+		CandidateStabilization: structuralCandidateStabilizationPolicy(config),
+		RequiredOutputSHA256: outputSHA,
+		RequiredOutputCount: outputCount,
+		Boundaries: structuralCalibrationBoundaries{},
+	}
+	raw, err := json.MarshalIndent(evidence, "", "  ")
+	if err != nil {
+		return nil, fmt.Errorf("render structural calibration evidence: %w", err)
+	}
+	return append(raw, '\n'), nil
 }
 
 func prepareStructuralMeasurementConfig(
@@ -729,6 +819,10 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 	}
 	if err != nil {
 		return result, fmt.Errorf("%s arm failed: %w\n%s", arm.name, err, tailMeasurementLog(result.log, 80))
+	}
+	if candidate && !strings.Contains(result.log,
+		"explicit Build Impact POC candidate "+config.analysis.Plan.AlternativeID+" selected") {
+		return result, errors.New("installed candidate did not select the analyzed structural alternative")
 	}
 	return result, nil
 }

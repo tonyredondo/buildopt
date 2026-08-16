@@ -1,6 +1,7 @@
 package launcher
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"os"
@@ -12,6 +13,17 @@ import (
 
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
+
+func TestStructuralProfileMeasurementHelpDocumentsCalibrationMode(t *testing.T) {
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	if code := runStructuralProfileMeasurement([]string{"--help"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("help exit code = %d, stderr = %q", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), "[--calibration-only]") {
+		t.Fatalf("help does not expose calibration mode: %q", stdout.String())
+	}
+}
 
 func TestHashMeasurementOutputsIsPathAndContentBound(t *testing.T) {
 	repository := t.TempDir()
