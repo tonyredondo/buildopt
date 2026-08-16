@@ -3713,6 +3713,8 @@ The one-command onboarding contract is validated separately:
 ./dev/check-magic-auto-discovery
 ./dev/check-magic-calibration-contract
 ./dev/test-magic-calibration-contract
+./dev/check-magic-profile-portfolio-contract
+./dev/test-magic-profile-portfolio-contract
 ./dev/check-magic-calibration
 ```
 
@@ -3725,8 +3727,13 @@ zero manual BuildOpt files and private generated evidence. Unsupported,
 global-change and ambiguous-base fixtures must retain native Gradle. The
 automatic-calibration checker then proves eight balanced pairs, exact outputs,
 full fallback, break-even evaluation, private evidence, exact reuse without
-remeasurement and an under-budget no-claim result. It materializes and selects
-no profile.
+remeasurement and an under-budget no-claim result. A qualified result is
+materialized as a private v4 profile under a digest-bound family portfolio.
+The same real checker proves exact profile reuse, one-entry idempotence,
+fail-closed repair after profile tampering and no profile under an insufficient
+pair budget. Unit and contract fixtures cover dependency-source, resource,
+leaf-source and mixed-source families plus coexistence/replacement semantics.
+No profile is selected or activated.
 
 `specs/poc-cross-date-output-equivalence-v1.json` and
 `specs/poc-cross-date-output-equivalence-v1.md` freeze the follow-up for the

@@ -17,18 +17,21 @@ evidence document or qualified profile.
 ## Current executable behavior
 
 The command is deliberately fail-closed. It executes optimized native Gradle,
-enables only Gradle's native Build Cache unless the caller disables it, and
-then attempts bounded structural discovery. A complete safe candidate returns:
+enables only Gradle's native Build Cache unless the caller disables it, then
+attempts bounded structural discovery and calibration. A qualified candidate
+is stored in the structural portfolio and returns:
 
 ```text
-LEARNING / STRUCTURAL_CANDIDATE_DISCOVERED
+LEARNING / QUALIFIED_PROFILE_STORED
 ```
 
 The command derives its exact Git change, workflow, Gradle-owned outputs and
-typed graph without hand-authored BuildOpt files. Unsupported workflows,
-global changes, dirty/ambiguous repository state and incomplete ownership or
-relationships retain native Gradle with an exact reason. Discovery does not
-calibrate, select a profile or claim a saving.
+typed graph without hand-authored BuildOpt files, calibrates through eight
+balanced pairs and stores only candidates that clear correctness, value and
+payback gates. Unsupported workflows, global changes, dirty/ambiguous
+repository state and incomplete ownership or relationships retain native
+Gradle with an exact reason. A stored profile is learning state; the command
+does not select or activate it yet.
 
 `BUILDOPT_BYPASS=1` keeps the Wrapper shortcut but skips optimize state and
 reporting completely. Once Gradle starts, its exit or signal status remains the

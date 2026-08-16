@@ -78,6 +78,33 @@ func TestOptimizeAffectedProjectsAndRequiredOutputs(t *testing.T) {
 	}
 }
 
+func TestOptimizeChangeFamilyUsesOnlyGraphAndChangedPaths(t *testing.T) {
+	snapshot := buildimpact.DiscoverySnapshot{Projects: []buildimpact.DiscoveredProject{
+		{Path: ":core"},
+		{Path: ":service", DependsOn: []string{":core"}},
+		{Path: ":leaf"},
+	}}
+	tests := []struct {
+		name   string
+		paths  []string
+		owners []string
+		want   string
+	}{
+		{"dependency source", []string{"core/src/main/java/Api.java"}, []string{":core"}, optimizeFamilyDependency},
+		{"resource", []string{"service/src/main/resources/application.yaml"}, []string{":service"}, optimizeFamilyResource},
+		{"leaf source", []string{"leaf/src/main/java/Leaf.java"}, []string{":leaf"}, optimizeFamilyLeaf},
+		{"mixed source", []string{"core/src/main/java/Api.java", "leaf/src/main/java/Leaf.java"}, []string{":core", ":leaf"}, optimizeFamilyMixed},
+		{"source and resource", []string{"leaf/src/main/java/Leaf.java", "leaf/src/main/resources/leaf.txt"}, []string{":leaf"}, optimizeFamilyMixed},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if got := optimizeChangeFamily(snapshot, test.paths, test.owners); got != test.want {
+				t.Fatalf("change family = %q, want %q", got, test.want)
+			}
+		})
+	}
+}
+
 func TestInspectOptimizeDiscoveryContextUsesExactLocalUpstream(t *testing.T) {
 	repository := t.TempDir()
 	runOptimizeGit(t, repository, "init", "-b", "main")

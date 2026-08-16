@@ -251,6 +251,8 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-magic-auto-discovery" >/dev/null
         "${buildopt_script_dir}/check-magic-calibration-contract" >/dev/null
         "${buildopt_script_dir}/test-magic-calibration-contract" >/dev/null
+        "${buildopt_script_dir}/check-magic-profile-portfolio-contract" >/dev/null
+        "${buildopt_script_dir}/test-magic-profile-portfolio-contract" >/dev/null
         "${buildopt_script_dir}/check-magic-calibration" >/dev/null
         "${buildopt_script_dir}/check-cross-date-output-equivalence" >/dev/null
         "${buildopt_script_dir}/check-cross-date-output-equivalence-result" >/dev/null

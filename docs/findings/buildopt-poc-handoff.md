@@ -182,6 +182,13 @@ untimed native Gradle.
   Ktor cells repay first-time calibration after 7–10 builds and exact replay
   evaluation after 2–4. The POC proves repeated-build value, not instant
   first-run payback.
+- **One-command learning now persists as a portfolio.** Qualified measurements
+  become exact v4 profiles in a bounded repository-scoped portfolio. Four
+  generic change families are derived from changed paths, Gradle project
+  ownership and dependency edges, never from repository names. Exact state is
+  reused without measurement and profile tampering is rebuilt only from
+  still-valid calibration evidence. Matching and execution are not active yet,
+  so this storage block changes none of the historical wall-time claims.
 - **The reviewed profiles transfer to the public package.** Public `v0.3.1`
   reproduced all six selective decisions through `buildopt poc`; all six
   manifest-drift probes retained native Gradle and all six contemporary

@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_source="${buildopt_root}/specs/poc-magic-profile-portfolio-v1.json"
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-magic-profile-portfolio.XXXXXX")
+trap 'rm -f -- "${buildopt_temp}/contract.json"; rmdir -- "${buildopt_temp}"' EXIT
+
+"${buildopt_script_dir}/check-magic-profile-portfolio-contract" "${buildopt_source}" >/dev/null
+
+for buildopt_filter in \
+    '.identity.repositoryNameRule = true' \
+    '.identity.targetRevisionInLogicalFamily = true' \
+    '.storage.maximumProfiles = 0' \
+    '.qualification.differentFamilies = "REPLACE"' \
+    '.authority.automaticSelection = true' \
+    '.authority.productionAuthorized = true'; do
+    jq "${buildopt_filter}" "${buildopt_source}" >"${buildopt_temp}/contract.json"
+    if "${buildopt_script_dir}/check-magic-profile-portfolio-contract" \
+        "${buildopt_temp}/contract.json" >/dev/null 2>&1; then
+        printf 'profile-portfolio checker accepted forbidden mutation: %s\n' \
+            "${buildopt_filter}" >&2
+        exit 1
+    fi
+done
+
+printf 'Magic profile-portfolio contract negative fixtures OK\n'

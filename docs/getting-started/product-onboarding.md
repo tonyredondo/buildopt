@@ -118,12 +118,13 @@ safe candidate through eight order-balanced pairs. Qualification requires
 equivalent outputs, a successful full-graph fallback, a positive paired bound,
 at least 500 ms and 2% mean saving, 8/8 positive pairs, and repayment within
 `--max-break-even-builds`. A positive candidate reports
-`LEARNING / CANDIDATE_CALIBRATION_QUALIFIED`; ambiguity, global changes,
+`LEARNING / QUALIFIED_PROFILE_STORED`; ambiguity, global changes,
 unsupported relationships, insufficient evidence, poor payback and full test
 execution retain native Gradle or make no claim with an exact reason. It writes
 private generated state/evidence under `.buildopt/optimize/v1`, requires no
-hand-authored BuildOpt files, performs no profile selection and grants no
-production authority. Machine-readable mode reserves stdout for one result
+hand-authored BuildOpt files and stores qualifying candidates in a private
+portfolio keyed by structural change family. It performs no profile selection
+and grants no production authority. Machine-readable mode reserves stdout for one result
 document:
 
 ```bash
@@ -136,7 +137,10 @@ defines resume bindings, budgets, outcomes and exit behavior; the
 [automatic-discovery contract](../../specs/poc-magic-auto-discovery-v1.md)
 defines derived inputs, evidence and native fallbacks. The
 [automatic-calibration contract](../../specs/poc-magic-calibration-v1.md)
-defines measurement, value, payback and exact evidence-reuse gates.
+defines measurement, value, payback and exact evidence-reuse gates. The
+[profile-portfolio contract](../../specs/poc-magic-profile-portfolio-v1.md)
+defines generic family classification, digest bindings, bounded coexistence
+and tamper recovery. Automatic matching and execution remain the next block.
 
 ## Try the Build Impact accelerator
 

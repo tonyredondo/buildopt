@@ -21,6 +21,10 @@ const (
 	optimizeDiscoveryRetained    = "NATIVE_RETAINED"
 	optimizeDiscoverySkipped     = "SKIPPED"
 	optimizeDiscoveryReasonFound = "STRUCTURAL_CANDIDATE_DISCOVERED"
+	optimizeFamilyDependency     = "DEPENDENCY_SOURCE"
+	optimizeFamilyResource       = "RESOURCE"
+	optimizeFamilyLeaf           = "LEAF_SOURCE"
+	optimizeFamilyMixed          = "MIXED_SOURCE"
 )
 
 var optimizeGlobalChangePaths = append([]string(nil), defaultProposalGlobalChanges...)
@@ -57,6 +61,8 @@ type optimizeDiscoveryResult struct {
 	Entrypoints          []string               `json:"entrypoints"`
 	RequiredOutputs      []string               `json:"requiredOutputs"`
 	CandidateEntrypoints []string               `json:"candidateEntrypoints"`
+	ChangeFamily         string                 `json:"changeFamily"`
+	ChangedProjects      []string               `json:"changedProjects"`
 	Graph                optimizeDiscoveryGraph `json:"graph"`
 	GeneratedFiles       []string               `json:"generatedFiles"`
 	ReviewRequired       bool                   `json:"reviewRequired"`
@@ -349,7 +355,7 @@ func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int)
 		ChangedPathCount: run.invocation.discovery.ChangedPathCount,
 		Entrypoints:      append([]string(nil), run.invocation.discovery.Entrypoints...),
 		RequiredOutputs:  []string{}, CandidateEntrypoints: []string{},
-		GeneratedFiles: []string{}, ReviewRequired: true,
+		ChangedProjects: []string{}, GeneratedFiles: []string{}, ReviewRequired: true,
 		ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
 	}
 	if exitCode != 0 || !run.childStarted {
@@ -386,7 +392,7 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		BaseRevision: discovery.BaseRevision, TargetRevision: discovery.TargetRevision,
 		ChangeSHA256: discovery.ChangeSHA256, ChangedPathCount: discovery.ChangedPathCount,
 		Entrypoints:     append([]string(nil), discovery.Entrypoints...),
-		RequiredOutputs: []string{}, CandidateEntrypoints: []string{}, GeneratedFiles: []string{},
+		RequiredOutputs: []string{}, CandidateEntrypoints: []string{}, ChangedProjects: []string{}, GeneratedFiles: []string{},
 		ReviewRequired: true, ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
 	}
 	if head, err := gitOutput(invocation.repositoryRoot, "rev-parse", "HEAD"); err != nil || strings.TrimSpace(head) != discovery.TargetRevision {
@@ -442,6 +448,8 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		return result, optimizeDiscoveryDocuments{}, nil
 	}
 	affected := optimizeAffectedProjects(snapshot, changedOwners)
+	result.ChangeFamily = optimizeChangeFamily(snapshot, discovery.changedPaths, changedOwners)
+	result.ChangedProjects = append([]string(nil), changedOwners...)
 	patterns := optimizeRequiredOutputPatterns(outputReport.CandidateOutputs, discovery.Entrypoints, affected)
 	if len(patterns) == 0 {
 		result.Reason = "OUTPUT_SEMANTICS_AMBIGUOUS"
@@ -495,6 +503,27 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		result.Reason = optimizeDiscoveryReasonFound
 	}
 	return result, optimizeDiscoveryDocuments{values: documents}, nil
+}
+
+func optimizeChangeFamily(snapshot buildimpact.DiscoverySnapshot, changedPaths, owners []string) string {
+	resourceCount := 0
+	for _, path := range changedPaths {
+		normalized := "/" + strings.ToLower(filepath.ToSlash(path)) + "/"
+		if strings.Contains(normalized, "/resources/") {
+			resourceCount++
+		}
+	}
+	if len(changedPaths) > 0 && resourceCount == len(changedPaths) {
+		return optimizeFamilyResource
+	}
+	if resourceCount > 0 || len(owners) != 1 {
+		return optimizeFamilyMixed
+	}
+	affected := optimizeAffectedProjects(snapshot, owners)
+	if len(affected) > 1 {
+		return optimizeFamilyDependency
+	}
+	return optimizeFamilyLeaf
 }
 
 func optimizeAffectedProjects(snapshot buildimpact.DiscoverySnapshot, owners []string) map[string]bool {

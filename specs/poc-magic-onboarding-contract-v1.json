@@ -116,7 +116,8 @@
     "bindingCompleteness": [
       "CONTRACT_ONLY",
       "DISCOVERY_COMPLETE",
-      "CALIBRATION_COMPLETE"
+      "CALIBRATION_COMPLETE",
+      "PROFILE_PORTFOLIO_COMPLETE"
     ],
     "exactResumeBindings": [
       "BUILDOPT_EXECUTABLE",
@@ -150,7 +151,7 @@
       "DISCOVERY_DECISION_AND_FILES",
       "GENERATED_FILES",
       "MANUAL_FILE_COUNT",
-      "CALIBRATION_AND_SELECTION_STATUS",
+      "CALIBRATION_PORTFOLIO_AND_SELECTION_STATUS",
       "PRODUCTION_AUTHORITY",
       "TEST_OPTIMIZATION_BOUNDARY"
     ],
@@ -173,13 +174,14 @@
     "testOptimization": "OUT_OF_SCOPE"
   },
   "currentImplementation": {
-    "status": "AUTOMATIC_DISCOVERY",
+    "status": "PROFILE_PORTFOLIO",
     "outcome": "LEARNING",
-    "reason": "STRUCTURAL_CANDIDATE_DISCOVERED",
-    "phase": "DISCOVERED",
+    "reason": "QUALIFIED_PROFILE_STORED",
+    "phase": "QUALIFIED",
     "nativeBuildCache": true,
     "automaticDiscovery": true,
-    "calibrationPerformed": false,
+    "calibrationPerformed": true,
+    "profileMaterialized": true,
     "selectionPerformed": false
   },
   "boundaries": {

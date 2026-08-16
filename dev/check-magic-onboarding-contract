@@ -47,7 +47,7 @@ jq -e '
   .state.root == ".buildopt/optimize/v1" and .state.file == "state.json" and
   .state.permissions == "CURRENT_USER_PRIVATE" and .state.maximumBytes == 1048576 and
   .state.rawGradleArgumentsPersisted == false and
-  .state.bindingCompleteness == ["CONTRACT_ONLY", "DISCOVERY_COMPLETE", "CALIBRATION_COMPLETE"] and
+  .state.bindingCompleteness == ["CONTRACT_ONLY", "DISCOVERY_COMPLETE", "CALIBRATION_COMPLETE", "PROFILE_PORTFOLIO_COMPLETE"] and
   .state.exactResumeBindings == [
     "BUILDOPT_EXECUTABLE", "REPOSITORY_SCOPE", "GRADLE_WRAPPER_PROPERTIES",
     "GRADLE_ARGUMENTS", "DISCOVERY_CONTEXT", "CALIBRATION_BUDGET"
@@ -75,9 +75,10 @@ jq -e '
     testOptimization: "OUT_OF_SCOPE"
   } and
   .currentImplementation == {
-    status: "AUTOMATIC_DISCOVERY", outcome: "LEARNING",
-    reason: "STRUCTURAL_CANDIDATE_DISCOVERED", phase: "DISCOVERED", nativeBuildCache: true,
-    automaticDiscovery: true, calibrationPerformed: false, selectionPerformed: false
+    status: "PROFILE_PORTFOLIO", outcome: "LEARNING",
+    reason: "QUALIFIED_PROFILE_STORED", phase: "QUALIFIED", nativeBuildCache: true,
+    automaticDiscovery: true, calibrationPerformed: true,
+    profileMaterialized: true, selectionPerformed: false
   } and
   .boundaries == {
     percentagesAveragedAcrossRepositories: false, mechanismPercentagesAdded: false,

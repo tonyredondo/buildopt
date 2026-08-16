@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [contract.json]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract=${1:-"${buildopt_root}/specs/poc-magic-profile-portfolio-v1.json"}
+
+jq -e '
+    keys == [
+        "authority", "checkpoint", "customerCommand", "families", "identity",
+        "qualification", "schemaVersion", "storage", "workItem"
+    ] and
+    .schemaVersion == "buildopt.poc/magic-profile-portfolio/v1" and
+    .workItem == "POC-MAGIC-PROFILE-PORTFOLIO-001" and
+    .customerCommand == "buildopt optimize <gradle args...>" and
+    .families == {
+        DEPENDENCY_SOURCE: "ONE_SOURCE_OWNER_WITH_TRANSITIVE_DEPENDENTS",
+        RESOURCE: "RESOURCE_PATHS_ONLY",
+        LEAF_SOURCE: "ONE_SOURCE_OWNER_WITHOUT_DEPENDENTS",
+        MIXED_SOURCE: "MULTIPLE_SOURCE_OWNERS_OR_SOURCE_RESOURCE_MIX"
+    } and
+    .identity.repositoryNameRule == false and
+    .identity.targetRevisionInLogicalFamily == false and
+    .identity.inputs == [
+        "REPOSITORY_IDENTITY", "STRUCTURAL_FAMILY", "CHANGED_PROJECT_OWNERS",
+        "ORIGINAL_ENTRYPOINTS", "CANDIDATE_ENTRYPOINTS", "REQUIRED_OUTPUTS"
+    ] and
+    .storage.maximumProfiles == 64 and
+    .storage.publishOrder == "ARTIFACTS_THEN_INDEX" and
+    .storage.permissions == "CURRENT_USER_PRIVATE" and
+    .qualification.input == "CANDIDATE_CALIBRATION_QUALIFIED" and
+    .qualification.profileSchema == "buildopt.poc/qualified-profile/v4" and
+    .qualification.sameFamilyUpdate == "REPLACE_EXACT_BINDING" and
+    .qualification.differentFamilies == "COEXIST" and
+    .checkpoint == {
+        bindingCompleteness: "PROFILE_PORTFOLIO_COMPLETE",
+        reuse: "EXACT_FAMILY_AND_PROFILE_BINDINGS_ONLY",
+        tamperDecision: "REBUILD_FROM_VALID_CALIBRATION_OR_RETAIN_NATIVE"
+    } and
+    .authority == {
+        proofOfConcept: true, nativeGradleAuthoritative: true,
+        profileMaterialized: true, automaticSelection: false,
+        automaticActivation: false, productionAuthorized: false,
+        testOptimization: "OUT_OF_SCOPE"
+    }
+' "${buildopt_contract}" >/dev/null
+
+grep -E 'optimizePortfolioMaximumEntries[[:space:]]*= 64' \
+    "${buildopt_root}/internal/launcher/optimize_portfolio.go" >/dev/null
+
+printf 'Magic profile-portfolio contract OK\n'

@@ -96,8 +96,8 @@ buildopt_first=$(buildopt_run qualified 8 1)
 jq -e '
     .schemaVersion == "buildopt.poc/optimize-result/v1" and
     .outcome == "LEARNING" and .phase == "QUALIFIED" and
-    .reason == "CANDIDATE_CALIBRATION_QUALIFIED" and
-    .bindings.completeness == "CALIBRATION_COMPLETE" and
+    .reason == "QUALIFIED_PROFILE_STORED" and
+    .bindings.completeness == "PROFILE_PORTFOLIO_COMPLETE" and
     .native == {authoritative: true, started: true, exitCode: 0} and
     .manualFilesRequired == 0 and
     .calibrationPerformed == true and .selectionPerformed == false and
@@ -121,7 +121,19 @@ jq -e '
     (.calibration.discoverySha256 | test("^[0-9a-f]{64}$")) and
     (.calibration.generatedFiles | length) == 1 and
     .calibration.productionAuthorized == false and
-    .calibration.testOptimization == "OUT_OF_SCOPE"
+    .calibration.testOptimization == "OUT_OF_SCOPE" and
+    .portfolio.status == "COMPLETE" and
+    .portfolio.reason == "QUALIFIED_PROFILE_STORED" and
+    .portfolio.performed == true and .portfolio.reused == false and
+    .portfolio.changeFamily == "LEAF_SOURCE" and
+    (.portfolio.familySha256 | test("^[0-9a-f]{64}$")) and
+    (.portfolio.profileSha256 | test("^[0-9a-f]{64}$")) and
+    .portfolio.profileCount == 1 and
+    (.portfolio.generatedFiles | length) == 6 and
+    .portfolio.selectionPerformed == false and
+    .portfolio.productionAuthorized == false and
+    .portfolio.testOptimization == "OUT_OF_SCOPE" and
+    .portfolioPerformed == true
 ' "${buildopt_first}" >/dev/null || {
     printf 'qualified automatic calibration result is invalid\n' >&2
     jq . "${buildopt_first}" >&2
@@ -139,6 +151,21 @@ fi
 
 buildopt_first_evidence_sha=$(jq -r '.calibration.evidenceSha256' "${buildopt_first}")
 buildopt_first_discovery_sha=$(jq -r '.calibration.discoverySha256' "${buildopt_first}")
+buildopt_first_family_sha=$(jq -r '.portfolio.familySha256' "${buildopt_first}")
+buildopt_first_profile_sha=$(jq -r '.portfolio.profileSha256' "${buildopt_first}")
+buildopt_portfolio=$(jq -r '.portfolio.portfolioFile' "${buildopt_first}")
+buildopt_profile=$(jq -r '.portfolio.profileFile' "${buildopt_first}")
+test -s "${buildopt_repository}/${buildopt_portfolio}"
+test -s "${buildopt_repository}/${buildopt_profile}"
+jq -e '
+    .schemaVersion == "buildopt.poc/qualified-profile/v4" and
+    .profileId == "qualified-structural-build-impact" and
+    .mechanisms.buildImpact == true and
+    .mechanisms.safeCache == false and
+    .mechanisms.runtimeTuning == false and
+    .qualification.pairs == 8 and
+    .qualification.interval95SavedMs[0] > 0
+' "${buildopt_repository}/${buildopt_profile}" >/dev/null
 buildopt_first_cost=$(jq -r '.calibration.calibrationCostMs' "${buildopt_first}")
 buildopt_first_saved=$(jq -r '.calibration.meanSavedMs' "${buildopt_first}")
 buildopt_first_reduction=$(jq -r '.calibration.reductionRatio * 100' "${buildopt_first}")
@@ -148,6 +175,8 @@ buildopt_second=$(buildopt_run qualified 8 2)
 jq -e \
     --arg evidence "${buildopt_first_evidence_sha}" \
     --arg discovery "${buildopt_first_discovery_sha}" \
+    --arg family "${buildopt_first_family_sha}" \
+    --arg profile "${buildopt_first_profile_sha}" \
     --argjson cost "${buildopt_first_cost}" \
     --argjson saved "${buildopt_first_saved}" '
     .outcome == "LEARNING" and .phase == "QUALIFIED" and
@@ -164,6 +193,15 @@ jq -e \
     .calibration.discoverySha256 == $discovery and
     .calibration.calibrationCostMs == $cost and
     .calibration.meanSavedMs == $saved and
+    .reason == "QUALIFIED_PROFILE_REUSED" and
+    .bindings.completeness == "PROFILE_PORTFOLIO_COMPLETE" and
+    .portfolio.status == "COMPLETE" and
+    .portfolio.reason == "QUALIFIED_PROFILE_REUSED" and
+    .portfolio.performed == false and .portfolio.reused == true and
+    .portfolio.familySha256 == $family and
+    .portfolio.profileSha256 == $profile and
+    .portfolio.profileCount == 1 and
+    .portfolioPerformed == false and
     .selectionPerformed == false and .productionAuthorized == false
 ' "${buildopt_second}" >/dev/null || {
     printf 'exact automatic calibration resume is invalid\n' >&2
@@ -172,6 +210,30 @@ jq -e \
 }
 if rg -q 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-2.log"; then
     printf 'exact calibration resume unexpectedly repeated measurement\n' >&2
+    exit 1
+fi
+
+printf '\n' >>"${buildopt_repository}/${buildopt_profile}"
+buildopt_repaired=$(buildopt_run qualified 8 3)
+jq -e \
+    --arg family "${buildopt_first_family_sha}" \
+    --arg profile "${buildopt_first_profile_sha}" '
+    .generation == 1 and .attempt == 3 and
+    .calibration.reused == true and .calibrationPerformed == false and
+    .portfolio.reason == "QUALIFIED_PROFILE_STORED" and
+    .portfolio.performed == true and .portfolio.reused == false and
+    .portfolio.familySha256 == $family and
+    .portfolio.profileSha256 == $profile and
+    .portfolio.profileCount == 1 and
+    .portfolioPerformed == true and
+    .selectionPerformed == false and .productionAuthorized == false
+' "${buildopt_repaired}" >/dev/null || {
+    printf 'tampered automatic profile was not rebuilt safely\n' >&2
+    jq . "${buildopt_repaired}" >&2
+    exit 1
+}
+if rg -q 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-3.log"; then
+    printf 'profile repair unexpectedly repeated calibration\n' >&2
     exit 1
 fi
 
@@ -187,6 +249,9 @@ jq -e '
     .calibration.performed == false and .calibration.qualified == false and
     .calibration.generatedFiles == [] and
     .calibration.productionAuthorized == false and
+    .portfolio.status == "SKIPPED" and
+    .portfolio.performed == false and .portfolio.generatedFiles == [] and
+    .portfolioPerformed == false and
     .selectionPerformed == false and .productionAuthorized == false
 ' "${buildopt_under_budget}" >/dev/null || {
     printf 'under-budget automatic calibration result is invalid\n' >&2
@@ -194,6 +259,6 @@ jq -e '
     exit 1
 }
 
-printf 'Magic calibration OK: mean saved=%sms reduction=%s%% positive=8/8 calibration=%sms break-even=%s builds; exact evidence resumed and insufficient pair budget made no claim\n' \
+printf 'Magic calibration and profile portfolio OK: family=LEAF_SOURCE profiles=1 mean saved=%sms reduction=%s%% positive=8/8 calibration=%sms break-even=%s builds; exact evidence/profile resumed, tamper rebuilt, and insufficient pair budget made no claim\n' \
     "${buildopt_first_saved}" "${buildopt_first_reduction}" \
     "${buildopt_first_cost}" "${buildopt_first_break_even}"

@@ -61,10 +61,15 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > change, Gradle-owned outputs and structural graph automatically for supported
 > build-owned workflows and calibrates the candidate with eight balanced
 > native/candidate pairs, exact outputs, full fallback and bounded break-even.
+> A qualified candidate is stored as a private, digest-bound profile in a
+> bounded structural portfolio. Dependency-source, resource-only, leaf-source
+> and mixed-source families are derived from Gradle ownership and dependency
+> facts rather than repository names; exact profiles resume without
+> remeasurement and tampering is rebuilt only from still-valid evidence.
 > Optimized native Gradle remains authoritative. A positive result reports
-> `LEARNING / CANDIDATE_CALIBRATION_QUALIFIED`; ambiguity, no value, insufficient
+> `LEARNING / QUALIFIED_PROFILE_STORED`; ambiguity, no value, insufficient
 > evidence or unsupported scope retains native or makes no claim with an exact
-> reason. It does not materialize or select a profile yet. The ordered work and
+> reason. It does not select or activate a profile yet. The ordered work and
 > success scorecard live in the
 > [one-command onboarding roadmap](./docs/plans/one-command-onboarding-roadmap.md).
 

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "buildopt.poc/magic-profile-portfolio/v1",
+  "workItem": "POC-MAGIC-PROFILE-PORTFOLIO-001",
+  "customerCommand": "buildopt optimize <gradle args...>",
+  "families": {
+    "DEPENDENCY_SOURCE": "ONE_SOURCE_OWNER_WITH_TRANSITIVE_DEPENDENTS",
+    "RESOURCE": "RESOURCE_PATHS_ONLY",
+    "LEAF_SOURCE": "ONE_SOURCE_OWNER_WITHOUT_DEPENDENTS",
+    "MIXED_SOURCE": "MULTIPLE_SOURCE_OWNERS_OR_SOURCE_RESOURCE_MIX"
+  },
+  "identity": {
+    "inputs": [
+      "REPOSITORY_IDENTITY",
+      "STRUCTURAL_FAMILY",
+      "CHANGED_PROJECT_OWNERS",
+      "ORIGINAL_ENTRYPOINTS",
+      "CANDIDATE_ENTRYPOINTS",
+      "REQUIRED_OUTPUTS"
+    ],
+    "repositoryNameRule": false,
+    "targetRevisionInLogicalFamily": false
+  },
+  "storage": {
+    "index": ".buildopt/optimize/v1/portfolio/portfolio.json",
+    "profileRoot": ".buildopt/optimize/v1/portfolio/profiles/<family-sha256>",
+    "maximumProfiles": 64,
+    "publishOrder": "ARTIFACTS_THEN_INDEX",
+    "permissions": "CURRENT_USER_PRIVATE"
+  },
+  "qualification": {
+    "input": "CANDIDATE_CALIBRATION_QUALIFIED",
+    "profileSchema": "buildopt.poc/qualified-profile/v4",
+    "bindings": [
+      "MANIFEST_SHA256",
+      "GRAPH_SHA256",
+      "GENERATED_MANIFEST_SHA256",
+      "EVIDENCE_SHA256",
+      "PROFILE_SHA256",
+      "WRAPPER_SHA256",
+      "EXECUTABLE_SHA256"
+    ],
+    "sameFamilyUpdate": "REPLACE_EXACT_BINDING",
+    "differentFamilies": "COEXIST"
+  },
+  "checkpoint": {
+    "bindingCompleteness": "PROFILE_PORTFOLIO_COMPLETE",
+    "reuse": "EXACT_FAMILY_AND_PROFILE_BINDINGS_ONLY",
+    "tamperDecision": "REBUILD_FROM_VALID_CALIBRATION_OR_RETAIN_NATIVE"
+  },
+  "authority": {
+    "proofOfConcept": true,
+    "nativeGradleAuthoritative": true,
+    "profileMaterialized": true,
+    "automaticSelection": false,
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

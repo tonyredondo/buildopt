@@ -104,6 +104,7 @@ type optimizeState struct {
 	LastExitCode         int                       `json:"lastExitCode"`
 	Discovery            optimizeDiscoveryResult   `json:"discovery"`
 	Calibration          optimizeCalibrationResult `json:"calibration"`
+	Portfolio            optimizePortfolioResult   `json:"portfolio"`
 	UpdatedAt            string                    `json:"updatedAt"`
 	ProductionAuthorized bool                      `json:"productionAuthorized"`
 }
@@ -119,6 +120,7 @@ type optimizeGeneratedFiles struct {
 	Result      string   `json:"result"`
 	Discovery   []string `json:"discovery"`
 	Calibration []string `json:"calibration"`
+	Portfolio   []string `json:"portfolio"`
 }
 
 type optimizeResult struct {
@@ -137,9 +139,11 @@ type optimizeResult struct {
 	Native               optimizeNativeResult      `json:"native"`
 	Discovery            optimizeDiscoveryResult   `json:"discovery"`
 	Calibration          optimizeCalibrationResult `json:"calibration"`
+	Portfolio            optimizePortfolioResult   `json:"portfolio"`
 	GeneratedFiles       optimizeGeneratedFiles    `json:"generatedFiles"`
 	ManualFilesRequired  int                       `json:"manualFilesRequired"`
 	CalibrationPerformed bool                      `json:"calibrationPerformed"`
+	PortfolioPerformed   bool                      `json:"portfolioPerformed"`
 	SelectionPerformed   bool                      `json:"selectionPerformed"`
 	ProductionAuthorized bool                      `json:"productionAuthorized"`
 	TestOptimization     string                    `json:"testOptimization"`
@@ -395,7 +399,8 @@ func validOptimizeState(state optimizeState) bool {
 		state.LastReason == "" || state.ProductionAuthorized ||
 		!validOptimizeDiscoveryCheckpoint(state) ||
 		!validOptimizeCalibrationCheckpoint(state) ||
-		!optimizeStringIn(state.Bindings.Completeness, optimizeBindingContractOnly, optimizeBindingDiscovery, optimizeBindingCalibration) ||
+		!validOptimizePortfolioCheckpoint(state) ||
+		!optimizeStringIn(state.Bindings.Completeness, optimizeBindingContractOnly, optimizeBindingDiscovery, optimizeBindingCalibration, optimizeBindingPortfolio) ||
 		state.Budget.WallTimeSeconds < 1 || state.Budget.Pairs < 2 ||
 		state.Budget.Pairs > 16 || state.Budget.MaxBreakEvenBuilds < 1 ||
 		state.Budget.MaxBreakEvenBuilds > 1000 {
@@ -449,7 +454,9 @@ func validOptimizeDiscoveryCheckpoint(state optimizeState) bool {
 			discovery.Reason == optimizeDiscoveryReasonFound &&
 			discovery.ReviewRequired && discovery.TestOptimization == "OUT_OF_SCOPE" &&
 			validOptimizeDiscoveryFiles(discovery.GeneratedFiles, true) && discovery.Graph.TotalProjects > 0 &&
-			discovery.Graph.SelectedProjects > 0 && discovery.Graph.OmittedProjects > 0
+			discovery.Graph.SelectedProjects > 0 && discovery.Graph.OmittedProjects > 0 &&
+			validOptimizeFamily(discovery.ChangeFamily) && len(discovery.ChangedProjects) > 0 &&
+			uniqueMeasurementStrings(discovery.ChangedProjects)
 	case optimizeDiscoveryRetained, optimizeDiscoverySkipped:
 		return state.Phase == "NATIVE_RETAINED" && discovery.Reason != "" &&
 			discovery.ReviewRequired && discovery.TestOptimization == "OUT_OF_SCOPE" &&
@@ -515,6 +522,7 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		discovery = run.discover(learningContext, exitCode)
 		calibration = run.calibrate(learningContext, learningStarted, discovery, stderr)
 	}
+	portfolio := run.materializePortfolio(discovery, calibration)
 	completedAt := time.Now().UTC()
 	run.state.LastOutcome = optimizeOutcomeNative
 	run.state.LastReason = calibration.Reason
@@ -526,17 +534,26 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		run.state.LastOutcome = optimizeOutcomeLearning
 		run.state.Phase = "DISCOVERED"
 	}
+	if portfolio.Status == optimizePortfolioComplete {
+		run.state.LastReason = portfolio.Reason
+	} else if calibration.Status == optimizeCalibrationComplete && calibration.Qualified && portfolio.Status == optimizePortfolioRetained {
+		run.state.LastReason = portfolio.Reason
+	}
 	run.state.BuildStarted = run.childStarted
 	run.state.LastExitCode = exitCode
 	run.state.Discovery = discovery
 	run.state.Calibration = calibration
+	run.state.Portfolio = portfolio
 	if calibration.Status == optimizeCalibrationComplete {
 		run.state.Bindings.Completeness = optimizeBindingCalibration
+	}
+	if portfolio.Status == optimizePortfolioComplete {
+		run.state.Bindings.Completeness = optimizeBindingPortfolio
 	}
 	run.state.UpdatedAt = completedAt.Format(time.RFC3339Nano)
 	result := optimizeResult{
 		SchemaVersion: optimizeResultSchemaVersion,
-		Outcome:       run.state.LastOutcome, Reason: calibration.Reason,
+		Outcome:       run.state.LastOutcome, Reason: run.state.LastReason,
 		Phase:       run.state.Phase,
 		StartedAt:   run.startedAt.Format(time.RFC3339Nano),
 		CompletedAt: completedAt.Format(time.RFC3339Nano),
@@ -546,13 +563,16 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		Native:      optimizeNativeResult{Authoritative: true, Started: run.childStarted, ExitCode: exitCode},
 		Discovery:   discovery,
 		Calibration: calibration,
+		Portfolio:   portfolio,
 		GeneratedFiles: optimizeGeneratedFiles{
 			State:       filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeStateFile)),
 			Result:      filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeResultFile)),
 			Discovery:   append([]string{}, discovery.GeneratedFiles...),
 			Calibration: append([]string{}, calibration.GeneratedFiles...),
+			Portfolio:   append([]string{}, portfolio.GeneratedFiles...),
 		},
-		ManualFilesRequired: 0, CalibrationPerformed: calibration.Performed && !calibration.Reused, SelectionPerformed: false,
+		ManualFilesRequired: 0, CalibrationPerformed: calibration.Performed && !calibration.Reused,
+		PortfolioPerformed: portfolio.Performed && !portfolio.Reused, SelectionPerformed: false,
 		ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
 	}
 	if err := writeCanonicalPrivateJSON(run.statePath, run.state); err != nil {
@@ -575,12 +595,15 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		result.Outcome,
 		result.Reason,
 		result.GeneratedFiles.Result,
-		optimizeNextStep(discovery, calibration),
+		optimizeNextStep(discovery, calibration, portfolio),
 	)
 	return err
 }
 
-func optimizeNextStep(discovery optimizeDiscoveryResult, calibration optimizeCalibrationResult) string {
+func optimizeNextStep(discovery optimizeDiscoveryResult, calibration optimizeCalibrationResult, portfolio optimizePortfolioResult) string {
+	if portfolio.Status == optimizePortfolioComplete {
+		return "match and replay an exact qualified family while native Gradle remains the fallback"
+	}
 	if calibration.Status == optimizeCalibrationComplete && calibration.Qualified {
 		return "store the qualified change-family profile for automatic replay"
 	}
