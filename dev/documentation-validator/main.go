@@ -32,6 +32,7 @@ var requiredDocuments = []string{
 	"docs/guides/product-workflows.md",
 	"docs/guides/ci-integration.md",
 	"docs/guides/operations.md",
+	"docs/plans/one-command-onboarding-roadmap.md",
 	"docs/reference/cli.md",
 	"docs/reference/configuration.md",
 	"docs/reference/validation.md",

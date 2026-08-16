@@ -15,6 +15,7 @@ before running the product.
 | Operate self-hosted or Edge | [Operations guide](./guides/operations.md) | [Runbooks](../runbooks/README.md) |
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
 | Review the POC idea, mechanisms, current value, and next steps | [Current POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
+| Follow the path to automatic onboarding | [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md) | [Product onboarding](./getting-started/product-onboarding.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
 | Inspect exact behavior | [Specifications index](../specs/README.md) | [Contracts index](../contracts/README.md), [ADRs](../adr/README.md) |
 
 ## Documentation map
@@ -58,6 +59,12 @@ before running the product.
   which mechanisms are repository-independent, which semantic inputs must
   remain owner-controlled, how output ownership now fails before measurement,
   and what still blocks broad POC onboarding.
+
+### Plans
+
+- [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md):
+  the `buildopt optimize build` north star, automatic state machine, ordered
+  implementation blocks, end-to-end value gates and explicit POC boundaries.
 
 ### Reference
 

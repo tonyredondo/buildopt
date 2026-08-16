@@ -55,6 +55,15 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > [current one-pager](./docs/findings/buildopt-poc-handoff.md)
 > and [generalization audit](./docs/findings/buildopt-generalization-audit.md).
 
+> **POC onboarding north star:** install BuildOpt, open a Gradle repository and
+> run `buildopt optimize build`. That command will eventually own discovery,
+> calibration, value/equivalence evaluation, profile materialization and
+> replay with no hand-authored BuildOpt files for supported workflows. The
+> ordered work and success scorecard live in the
+> [one-command onboarding roadmap](./docs/plans/one-command-onboarding-roadmap.md).
+> The command is not implemented yet; the current explicit workflow below
+> remains authoritative until its tracker blocks close.
+
 ## Get your first result
 
 Install a published package; you do not need this source checkout or a Go

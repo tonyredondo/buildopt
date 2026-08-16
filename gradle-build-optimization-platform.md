@@ -2,8 +2,8 @@
 
 ## Product specification and technical design
 
-**Status:** master POC architecture RFC — bounded synthetic value passed; public workflows authorize Spotless Build Impact and Mockito test-build experiments<br>
-**Last technical review:** August 5, 2026<br>
+**Status:** master POC architecture RFC — generic structural value qualifies across public Gradle families; one-command onboarding is the next product-direction objective<br>
+**Last technical review:** August 16, 2026<br>
 **Working name:** Gradle Build Optimization<br>
 **Scope:** autonomous optimization of Gradle builds in CI and local environments<br>
 **Relationship with Test Optimization:** complementary product with explicit ownership: Build Optimization optimizes build work; Test Optimization retains test selection, execution, and policy
@@ -74,6 +74,23 @@ The solution combines four pillars:
 Developers will not have to run a build twice manually. Natural builds provide observations; any additional repetitions required for validation run automatically in CI within a budget and isolated environments. Local environments consume already validated policies but create their own Configuration Cache entries.
 
 The current objective is a **proof of concept**, not a private-beta or production launch. The combined BuildOpt path has demonstrated customer-visible build-time reduction against a well-configured native Gradle baseline across the qualified synthetic Kotlin/Groovy workload matrix. Safe Cache, Runtime Tuning, Build Impact, reviewed task contracts, and Patch Autopilot are measured separately so that value is attributable; the complete path receives its own comparison because overlapping percentages are never added.
+
+The POC onboarding north star is one owner-invoked command:
+
+```text
+install BuildOpt -> open a Gradle repository -> buildopt optimize build
+```
+
+For supported workflows, that command owns output preflight, structural
+discovery, isolated calibration, value/equivalence evaluation, profile
+materialization and later replay. Users do not hand-author BuildOpt manifests,
+graphs, changes files, evidence or profile JSON. This authorizes automatic
+selection only inside the explicitly invoked POC command after every frozen
+correctness, value, tail, payback and fallback gate passes. It does not
+authorize autonomous production promotion: ambiguous or drifted state retains
+optimized native Gradle, generated profiles remain repository-owned and
+reviewable, and `productionAuthorized` remains false. The implementation plan
+is the [one-command onboarding roadmap](./docs/plans/one-command-onboarding-roadmap.md).
 
 The result authorizes a `CONTINUE` decision for further POC exploration only. It does not prove universal savings or production readiness. The initial realistic change-class matrix in [`poc-breadth-validation-v1`](./specs/poc-breadth-validation-v1.md) qualified 2/8 cells. Attribution and calibrated paired experiments reproduced the bounded Groovy and leaf Kotlin value cells, while shared-source and build-logic Kotlin remained order-sensitive. The terminal decision therefore retained the qualified synthetic claim and prohibited more unchanged replication or product tuning against noisy evidence.
 

@@ -213,14 +213,31 @@ build on another day or authority to ignore arbitrary timestamps.
 
 ## Recommended next steps
 
+The product-direction north star is now one owner-invoked command:
+
+```text
+install BuildOpt -> open a Gradle repository -> buildopt optimize build
+```
+
+That command must automatically discover, calibrate, evaluate, materialize and
+replay repository-owned profiles. The magic is orchestration rather than
+weaker evidence: unsupported or ambiguous workflows retain optimized native
+Gradle, and automatic selection remains POC-only with production authority
+false. The ordered implementation and scorecard are frozen in the
+[one-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md).
+
 1. **Replay the reviewed Ktor profiles through the public package.** Require
    exact bindings, drift fallback and contemporary native-output equivalence
    without creating new historical percentages.
-2. **Measure complete installed compositions where mechanisms overlap.** Use
-   end-to-end wall time and never add isolated mechanism percentages.
-3. **Keep wall time authoritative.** Continue only mechanisms that materially
-   beat optimized native Gradle under correctness, repeatability, and tail
-   guards; retire or retain native for everything else.
+2. **Define and implement `buildopt optimize`.** Collapse output preflight,
+   discovery, measurement, evaluation and profile materialization behind one
+   resumable command with no hand-authored BuildOpt JSON.
+3. **Automate portfolio selection and CI persistence.** Match qualified
+   change families, retain native on drift and reuse only exact calibration
+   state through one-input GitHub/GitLab onboarding.
+4. **Prove the complete effect.** Measure install-to-decision time, net
+   installed-path wall time and break-even on fresh substantial public
+   repositories; never add isolated mechanism percentages.
 
 ## Evidence
 
@@ -238,5 +255,6 @@ build on another day or authority to ignore arbitrary timestamps.
 - [Ktor new-family change breadth](../../benchmarks/results/poc-new-family-change-breadth-v1/README.md)
 - [Ktor calibration economics](../../benchmarks/results/poc-new-family-calibration-economics-v1/README.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
+- [One-command POC onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

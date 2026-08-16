@@ -1,13 +1,14 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `GENERIC STRUCTURAL POC QUALIFIES ACROSS FAMILIES AND CHANGE SHAPES` — the balanced five-repository matrix, Ktor family transfer, three build-owned workflows, six earlier source cells and three Ktor dependency/resource/mixed cells beat optimized native Gradle; build-logic/global changes retain the complete graph<br>
-**Current phase:** `NEW-FAMILY INSTALLED REPLAY NEXT` — replay the three reviewed Ktor profiles through the public package with exact bindings, drift fallback and contemporary native-output equivalence<br>
-**POC functional target:** improve real builds against optimized native Gradle by discovering structural opportunities generally, enabling only exact workload-qualified mechanisms, measuring their complete composition directly, and retaining native fallback whenever value does not replicate<br>
+**Overall status:** `GENERIC STRUCTURAL VALUE QUALIFIED; ONE-COMMAND ONBOARDING ROADMAP FROZEN` — the generic POC beats optimized native Gradle across qualified families and change shapes; the next product-direction objective is `buildopt optimize build` with automatic discovery, calibration, qualification and replay<br>
+**Current phase:** `NEW-FAMILY INSTALLED REPLAY NEXT` — replay the three reviewed Ktor profiles through the public package, then implement the ordered one-command onboarding blocks without weakening correctness or value gates<br>
+**POC functional target:** improve real builds against optimized native Gradle and make that value accessible through one owner-invoked command with zero hand-authored BuildOpt files for supported workflows; ambiguous, drifted or non-value state retains native Gradle<br>
+**POC onboarding north star:** `install BuildOpt -> open a Gradle repository -> buildopt optimize build`; automatic selection is allowed only inside the explicit POC command after qualification, while autonomous production promotion remains out of scope<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
 **Last updated:** 2026-08-16<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
-**RFC baseline SHA-256:** `963eb08cc43d82d35366edc834b014c079d1470e14e16a60ef28c3ab1dcbd861`
+**RFC baseline SHA-256:** `135448428affcf78018434bab41e7fab0c4ac3e86b7422de10a89385dfaeefdb`
 
 ---
 
@@ -138,6 +139,15 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-NEW-FAMILY-CHANGE-BREADTH | Test the qualified new-family workflow on materially different owner-declared change classes | `DONE` | 1/1 | `E-349`; 3/3 selective cells qualify, 48/48 pairs and 24/24 blocks positive, global fallback 2/2 |
 | POC-NEW-FAMILY-CALIBRATION-ECONOMICS | Measure discovery/stabilization cost and repeated-build payback for the retained Ktor cells | `DONE` | 1/1 | `E-350`; first-time payback 7–10 builds, exact-replay evaluation payback 2–4 builds |
 | POC-NEW-FAMILY-INSTALLED-PROFILE-REPLAY | Replay the reviewed Ktor profiles through the public package without changing their historical value evidence | `TODO` | 0/1 | `E-350`; economics and exact profiles available |
+| POC-MAGIC-ONBOARDING-ROADMAP | Freeze the one-command customer experience, ordered implementation sequence, scorecard and POC authority boundary | `DONE` | 1/1 | `E-351`; [roadmap](./docs/plans/one-command-onboarding-roadmap.md) |
+| POC-MAGIC-ONBOARDING-CONTRACT | Define `buildopt optimize`, resumable state and machine/human outputs without manual internal files | `TODO` | 0/1 | After Ktor installed replay |
+| POC-MAGIC-AUTO-DISCOVERY | Derive Wrapper, workflow context, exact change, output candidates and structural graph automatically | `WAITING` | 0/1 | Requires onboarding contract |
+| POC-MAGIC-CALIBRATION | Orchestrate preflight, proposal, isolated measurement and evaluation behind one command | `WAITING` | 0/1 | Requires automatic discovery |
+| POC-MAGIC-PROFILE-PORTFOLIO | Maintain independently bound change-family profiles without repository-name rules | `WAITING` | 0/1 | Requires automatic calibration |
+| POC-MAGIC-AUTO-REPLAY | Select a qualifying profile automatically inside the explicit POC command and invalidate on drift | `WAITING` | 0/1 | Requires profile portfolio |
+| POC-MAGIC-CI-ONBOARDING | Provide one-input GitHub/GitLab execution and exact portable calibration persistence | `WAITING` | 0/1 | Requires automatic replay |
+| POC-MAGIC-WOW-REPORT | Explain graph reduction, net saving, uncertainty, break-even, cumulative value and fallback | `WAITING` | 0/1 | Requires end-to-end orchestrator outputs |
+| POC-MAGIC-END-TO-END-VALUE | Prove one-command install-to-value on fresh substantial public repositories | `WAITING` | 0/1 | Requires all preceding magic-onboarding blocks |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -315,6 +325,35 @@ than partners. Test Optimization remains a separate product.
 | 102 | `POC-NEW-FAMILY-CHANGE-BREADTH-001` | Preregister materially different dependency, resource, or mixed-source changes under Ktor's same public JVM JAR workflow; derive every decision from generic owner inputs, time only complete selective candidates under the balanced gate, and retain native without a timing claim when the graph is uncertain or global | `DONE` | Codex; `E-349` |
 | 103 | `POC-NEW-FAMILY-CALIBRATION-ECONOMICS-001` | Bind the three terminal Ktor value cells, capture fresh installed discovery and target-stabilization phases, and report cell-specific repeated-build break-even without rewriting terminal savings or timing the global fallback | `DONE` | Codex; `E-350` |
 | 104 | `POC-NEW-FAMILY-INSTALLED-PROFILE-REPLAY-001` | Install the public package in clean external Ktor checkouts and replay all three reviewed profiles through the user-facing command; require exact plan bindings, option-drift native fallback and contemporary native-output equivalence without creating new timing percentages | `TODO` | — |
+| 105 | `POC-MAGIC-ONBOARDING-ROADMAP-001` | Freeze the `buildopt optimize build` north star, generic state machine, POC-only automatic-selection authority, ordered implementation blocks, customer-visible scorecard and end-to-end acceptance boundary | `DONE` | Codex; `E-351` |
+| 106 | `POC-MAGIC-ONBOARDING-CONTRACT-001` | Define the customer-facing `buildopt optimize` CLI, human/JSON result, resumable state, exit behavior, calibration budget and exact distinction between automatic POC selection and prohibited production promotion | `TODO` | — |
+| 107 | `POC-MAGIC-AUTO-DISCOVERY-001` | Derive the Wrapper, requested workflow, immutable CI/local comparison base, exact changes, non-empty Gradle-owned output candidates and complete structural graph from the customer command; require no hand-authored BuildOpt JSON and retain native on ambiguity | `WAITING` | — |
+| 108 | `POC-MAGIC-CALIBRATION-001` | Orchestrate output preflight, structural proposal, isolated balanced measurement, evaluation and exact checkpoint reuse behind one progress-reporting command; preserve the native result while evidence is incomplete | `WAITING` | — |
+| 109 | `POC-MAGIC-PROFILE-PORTFOLIO-001` | Classify observed changes into digest-bound structural families and maintain multiple independently qualified repository-owned profiles; match dependency, resource, leaf and mixed-source changes without repository-name rules | `WAITING` | — |
+| 110 | `POC-MAGIC-AUTO-REPLAY-001` | Automatically select a matching qualified profile inside `buildopt optimize`, measure selection overhead, and disable stale profiles before Gradle on repository, Wrapper, graph, option, output or executable drift | `WAITING` | — |
+| 111 | `POC-MAGIC-CI-ONBOARDING-001` | Expose the same command through GitHub Actions and GitLab with only the Gradle command as customer input; derive provider revisions, restore only compatible state and publish reviewable reports without requiring a service | `WAITING` | — |
+| 112 | `POC-MAGIC-WOW-REPORT-001` | Report the selected/full graph, observed net wall-time effect, uncertainty, tail, calibration cost, break-even, expected useful lifetime, cumulative saving and fallback reason in human and recomputable JSON forms | `WAITING` | — |
+| 113 | `POC-MAGIC-END-TO-END-VALUE-001` | Starting from clean substantial public repositories and the public package, require one repeated customer command, zero manual BuildOpt files, equivalent outputs, native fallback and a net installed-path win on at least two different Gradle families; preserve one honest negative/native case | `WAITING` | — |
+
+#### One-command POC critical path
+
+```text
+Ktor public installed replay
+  -> buildopt optimize contract
+  -> automatic workflow/change/output discovery
+  -> automatic resumable calibration
+  -> repository-owned profile portfolio
+  -> automatic POC replay with drift fallback
+  -> one-input CI integration
+  -> customer-visible wow report
+  -> fresh public-repository install-to-value proof
+```
+
+The complete plan and acceptance scorecard are maintained in the
+[one-command POC onboarding roadmap](./docs/plans/one-command-onboarding-roadmap.md).
+No block may replace optimized-native wall time with graph size, cache hits or
+modeled savings. No block may add autonomous production promotion, repository-
+name rules, soak, design-partner dependency or Test Optimization behavior.
 
 #### Completed POC block: owner-reviewed output equivalence
 
@@ -2188,6 +2227,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-348` | 2026-08-15 | `POC-NEW-FAMILY-TRANSFER-001` | The [terminal Ktor transfer bundle](./benchmarks/results/poc-new-family-transfer-v1/README.md) binds public Ktor `bc7de799`, Gradle 9.5.1, Temurin 21, the public `jvmJar` selector, one exact `ktor-http` source comment and byte-exact module JAR to immutable BuildOpt `d658a23`. The unchanged generic path independently derives `:ktor-http:jvmJar` twice, reducing 133 projects to three. Native Gradle averages 103,724.438 ms and installed BuildOpt 14,308.188 ms, saving 89,416.25 ms/**86.21%**. All 16 raw pairs and eight reciprocal blocks improve; the block interval is +79,451.313..+98,422.063 ms, p95 improves 153,818→20,397 ms, exact JARs and task shapes match, both full-graph fallbacks pass and product failures are zero. Five rejected attempts and their generic corrections remain preserved outside the result | `DONE` terminal `QUALIFY_BALANCED_STRUCTURAL_PROFILE`: no incident observation is reused, the two accepted captures restart from zero after the final generic correction, and summary/qualification tamper tests fail closed. Ktor's selector is a JVM JAR workflow, not its complete multiplatform release. No repository-name rule, post-result tuning, threshold change, automatic/production authority, soak, design-partner dependency or Test Optimization scope is added. `POC-NEW-FAMILY-CHANGE-BREADTH-001` is next |
 | `E-349` | 2026-08-15 | `POC-NEW-FAMILY-CHANGE-BREADTH-001` | The [terminal four-cell Ktor bundle](./benchmarks/results/poc-new-family-change-breadth-v1/README.md) binds public Ktor `bc7de799`, Gradle 9.5.1, Temurin 21 and immutable installed BuildOpt `35065d3`. Dependency source reduces 133→3 projects and saves 84,314.438 ms/**85.80%**; a JVM service resource reduces 133→9 and saves 49,517.313 ms/**86.51%**; a two-module mixed-source edit preserves both paths/outputs, reduces 133→9 and saves 81,781.125 ms/**77.98%**. All 48 raw pairs and 24 reciprocal blocks improve, every block lower bound is positive, candidate p95 is lower, exact JARs and shapes match, all six selective fallbacks pass and product failures are zero. Two root-configuration proposals independently retain `NATIVE_FULL_GRAPH / GLOBAL_CHANGE_REQUIRES_FULL_GRAPH` without candidate documents or timing. A complete 48-pair diagnostic matrix on `980d021` is preserved under `incidents/` but rejected because the generic runner omitted one preregistered Ktor Gradle option; none of its observations enter the terminal result | `DONE` terminal `3/3 QUALIFIED + 1/1 FULL_GRAPH_FALLBACK_VERIFIED`: the corrected generic runner propagates all frozen Gradle options and accepts multiple paths while preserving legacy input; all eight accepted captures restarted from zero, and recomputation plus summary/qualification tamper tests fail closed. Percentages remain cell-specific. No Ktor product branch, threshold change, automatic/production authority, soak, design-partner dependency or Test Optimization scope is added. `POC-NEW-FAMILY-CALIBRATION-ECONOMICS-001` is next |
 | `E-350` | 2026-08-16 | `POC-NEW-FAMILY-CALIBRATION-ECONOMICS-001` | The [terminal Ktor calibration-economics bundle](./benchmarks/results/poc-new-family-calibration-economics-v1/README.md) binds six fresh isolated captures to the three immutable value cells. Dependency-source cold discovery averages 372,864 ms and candidate stabilization 168,254.5 ms, repaying its 84,314.438-ms saving after **7 builds**; resource discovery averages 333,585 ms and stabilization 151,174.5 ms, repaying 49,517.313 ms after **10**; mixed-source discovery averages 384,984.5 ms and stabilization 219,425 ms, repaying 81,781.125 ms after **8**. Exact proposal replay takes 0.321–0.376 seconds; including fresh stabilization it repays after **2, 4 and 3 builds**. All six proposal artifact sets are byte-identical, all six option-drift probes reject replay, target fingerprints converge, terminal output digests/counts match and the global cell remains untimed | `DONE` terminal `3/3 ECONOMICS_RECOMPUTED`: the strict checker regenerates the summary, structured captures and immutable source bindings; negative fixtures reject summary/structured-evidence tampering. Raw process logs are not published; their hashes remain bound in phase records. No measured pair or new qualification is created, no cell result is averaged, and no Ktor product branch, automatic/production authority, soak, design-partner dependency or Test Optimization scope is added. `POC-NEW-FAMILY-INSTALLED-PROFILE-REPLAY-001` is next |
+| `E-351` | 2026-08-16 | `POC-MAGIC-ONBOARDING-ROADMAP-001` | The [one-command POC onboarding roadmap](./docs/plans/one-command-onboarding-roadmap.md) freezes `install BuildOpt -> open a Gradle repository -> buildopt optimize build` as the customer north star. It defines automatic Wrapper/change/output/graph discovery, resumable calibration, repository-owned profile portfolios, exact drift fallback, one-input CI, a recomputable customer report and install-to-value validation without hand-authored BuildOpt files for supported workflows | `DONE` planning authority only: the ordered `POC-MAGIC-*` blocks must still implement and prove the experience. Automatic selection is allowed only inside the explicitly invoked POC command after correctness, net wall-time, tail, failure, fallback and payback gates pass; `productionAuthorized` remains false. The roadmap adds no product implementation, timing result, repository-name rule, threshold movement, soak, design-partner dependency or Test Optimization scope. Ktor public installed replay remains the immediate next block |
 
 ---
 
@@ -2195,6 +2235,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-16 | Froze the one-command POC onboarding north star and ordered implementation roadmap: `buildopt optimize build` must automate discovery, calibration, profile materialization, replay, CI persistence and the customer value report while retaining optimized native Gradle on ambiguity, drift or no value | Codex |
 | 2026-08-16 | Closed Ktor calibration economics from six fresh phase captures: first-time discovery plus stabilization repays after 7, 10 and 8 qualifying builds; exact proposal replay plus stabilization repays after 2, 4 and 3, with exact artifacts, drift rejection and unchanged terminal value | Codex |
 | 2026-08-15 | Closed Ktor change breadth after rejecting and preserving a runner-contract incident: fresh dependency source, JVM resource and two-module mixed-source cells qualify at 85.80%, 86.51% and 77.98% lower wall time with 48/48 positive pairs; root configuration retains native Gradle 2/2 | Codex |
 | 2026-08-15 | Closed the Ktor new-family transfer: the unchanged generic path reduces 133 projects to three and saves 89.416 seconds/86.21% across two independent captures, with 16/16 positive pairs, exact JVM JARs, stable shapes and both native fallbacks | Codex |

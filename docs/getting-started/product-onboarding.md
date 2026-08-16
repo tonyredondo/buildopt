@@ -11,6 +11,14 @@ the self-hosted server, Edge Cache, and the JVM agent. Users do not need to
 clone this repository, build Go or Java sources, copy JARs, or set internal
 plugin paths.
 
+The current public path below separates compatibility, proposal, measurement
+and replay explicitly. The target POC experience is the single command
+`buildopt optimize build`, which will orchestrate those stages and use only
+qualified profiles without hand-authored BuildOpt files. It is not implemented
+yet; follow the [one-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
+for the ordered delivery and keep using the explicit commands documented here
+until their tracker blocks close.
+
 ## Install
 
 Published packages currently cover Linux AMD64, macOS Intel and Apple Silicon,

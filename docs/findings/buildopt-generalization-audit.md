@@ -136,6 +136,14 @@ declared.
    qualification protocol natively before making macOS or Windows performance
    claims.
 
+The strategic direction is no longer a permanently guided sequence of
+internal commands. The [one-command POC onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
+turns the same generic and fail-closed stages into `buildopt optimize build`:
+automatic discovery, calibration, qualification, portfolio replay and native
+fallback with zero hand-authored BuildOpt files for supported workflows.
+Automatic selection is limited to that explicitly invoked POC command and
+does not authorize production promotion.
+
 ## POC conclusion
 
 The retained idea is not “a faster Gradle cache.” It is a generic,
