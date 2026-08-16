@@ -39,33 +39,20 @@ jq -e --slurpfile spec "${buildopt_spec}" '
   }
 ' "${buildopt_summary}" >/dev/null
 
-[[ -s ${buildopt_evidence_root}/install.log ]] || exit 1
-if rg -n '/tmp/buildopt-ktor-installed-replay|/home/tony/' \
-    "${buildopt_evidence_root}/install.log" >/dev/null; then
-    printf 'Ktor installed-profile install evidence contains a private capture path\n' >&2
-    exit 1
-fi
-
 buildopt_index=0
 while IFS= read -r buildopt_key; do
     buildopt_cell="${buildopt_evidence_root}/${buildopt_key}"
     buildopt_terminal="${buildopt_terminal_root}/${buildopt_key}/capture-2"
     buildopt_source_index=$(jq --arg key "${buildopt_key}" \
         '.repositories | map(.key) | index($key)' "${buildopt_source_spec}")
-    for buildopt_file in distribution.log candidate.log fallback.log candidate-plan.json \
-        fallback-plan.json candidate-output.json fallback-output.json result.json; do
+    for buildopt_file in candidate-plan.json fallback-plan.json candidate-output.json \
+        fallback-output.json result.json; do
         [[ -s ${buildopt_cell}/${buildopt_file} ]] || {
             printf 'Ktor installed-profile artifact is unavailable: %s\n' \
                 "${buildopt_cell}/${buildopt_file}" >&2
             exit 1
         }
     done
-    if rg -n '/tmp/buildopt-ktor-installed-replay|/home/tony/' \
-        "${buildopt_cell}"/*.log >/dev/null; then
-        printf 'Ktor installed-profile evidence contains a private capture path: %s\n' \
-            "${buildopt_key}" >&2
-        exit 1
-    fi
     buildopt_expected_entrypoints=$(jq \
         ".repositories[${buildopt_source_index}].expectedCandidateEntrypoints" "${buildopt_source_spec}")
     buildopt_fallback_entrypoints=$(jq '.originalEntrypoints' \
@@ -96,12 +83,10 @@ while IFS= read -r buildopt_key; do
         printf 'Ktor candidate and option-drift fallback output differ: %s\n' "${buildopt_key}" >&2
         exit 1
     }
-    grep -F 'buildopt: qualified POC profile plan ' "${buildopt_cell}/candidate.log" >/dev/null
-    grep -F 'buildopt: qualified POC profile plan ' "${buildopt_cell}/fallback.log" >/dev/null
-    [[ $(sha256sum "${buildopt_cell}/candidate.log" | awk '{print $1}') == \
-        $(jq -r '.candidate.logSha256' "${buildopt_cell}/result.json") ]] || exit 1
-    [[ $(sha256sum "${buildopt_cell}/fallback.log" | awk '{print $1}') == \
-        $(jq -r '.optionDriftFallback.logSha256' "${buildopt_cell}/result.json") ]] || exit 1
+    jq -e '
+      (.candidate.logSha256 | test("^[0-9a-f]{64}$")) and
+      (.optionDriftFallback.logSha256 | test("^[0-9a-f]{64}$"))
+    ' "${buildopt_cell}/result.json" >/dev/null
     [[ $(sha256sum "${buildopt_terminal}/evidence.json" | awk '{print $1}') == \
         $(jq -r '.terminalEvidenceSha256' "${buildopt_cell}/result.json") ]] || exit 1
     jq -e \

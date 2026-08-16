@@ -29,6 +29,11 @@ BuildOpt source. For every cell it:
    and
 7. requires the contemporary candidate and native outputs to match exactly.
 
+Normalized process logs are checked while the capture runs, and their
+SHA-256 bindings are retained in each structured result. Raw logs are not
+published because they are unnecessary for offline revalidation and may carry
+host-specific diagnostic context.
+
 The extra option is intentionally harmless to output bytes. It proves that a
 profile cannot reuse a timing qualification under invocation options that were
 not measured. The native fallback executes the caller-supplied option list and

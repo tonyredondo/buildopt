@@ -1771,6 +1771,27 @@ Recompute the result and its negative tamper fixtures with:
 ./dev/test-new-family-calibration-economics-result
 ```
 
+## Ktor public installed profile replay
+
+[`results/poc-new-family-installed-profile-replay-v1/`](./results/poc-new-family-installed-profile-replay-v1/README.md)
+installs immutable public `v0.3.2` and replays all three terminal Ktor profiles
+through `buildopt poc` in clean external checkouts. The dependency, resource
+and mixed-source cells select their exact reviewed entrypoints. Adding only
+`--stacktrace` to the complete qualified option list produces three
+`FULL_GRAPH / PROFILE_GRADLE_OPTIONS_DRIFT` plans before Gradle execution.
+
+All three candidate/native fallback output sets match by exact bytes, all
+three historical output digests also match as a diagnostic, every terminal
+qualification is unchanged and product-attributable failures are zero. This
+bundle creates no new timing claim or averaged percentage.
+
+Revalidate the result and its negative tamper fixtures with:
+
+```bash
+./dev/check-new-family-installed-profile-replay-result
+./dev/test-new-family-installed-profile-replay-result
+```
+
 ## JVM Agent spike evidence
 
 [`results/spk-002-agent.json`](./results/spk-002-agent.json) records the one

@@ -1,0 +1,50 @@
+{
+  "key": "ktor-jvm-jar-mixed-source",
+  "repositoryId": "ktorio/ktor",
+  "pipelineClass": "jvm-jar",
+  "publicRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+  "targetRevision": "f3e2fd65bdcc056c0da168672003240650518333",
+  "terminalEvidenceSha256": "63925ff15501544d0b57e9dccd413547804da1c5a42b0e09bfd1f11c91a32edd",
+  "terminalOutputSha256": "26ee904a6ded844b1eb510067ebaabf983203fc4cd67b6afc4668ea39b0f4717",
+  "crossCaptureTerminalOutputMatched": true,
+  "candidateFallbackOutputsMatched": true,
+  "candidate": {
+    "decision": "POC_CANDIDATE",
+    "reason": "EXPLICIT_OWNER_POC_CANDIDATE",
+    "entrypoints": [
+      ":ktor-http:jvmJar",
+      ":ktor-server-core:jvmJar"
+    ],
+    "output": {
+      "sha256": "26ee904a6ded844b1eb510067ebaabf983203fc4cd67b6afc4668ea39b0f4717",
+      "count": 2
+    },
+    "logSha256": "54d08bc0fc84e39a7309786889ea2d1bce4e42677c3210aeab7b9f625143c169"
+  },
+  "optionDriftFallback": {
+    "decision": "FULL_GRAPH",
+    "reason": "PROFILE_GRADLE_OPTIONS_DRIFT",
+    "entrypoints": [
+      "jvmJar"
+    ],
+    "output": {
+      "sha256": "26ee904a6ded844b1eb510067ebaabf983203fc4cd67b6afc4668ea39b0f4717",
+      "count": 2
+    },
+    "logSha256": "25fd19108916ea4b7fdaa90a6f4e0658649264398f8d0acfdc054019eb1664a9"
+  },
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "63925ff15501544d0b57e9dccd413547804da1c5a42b0e09bfd1f11c91a32edd",
+    "repositoryRevision": "f3e2fd65bdcc056c0da168672003240650518333",
+    "pairs": 8,
+    "meanSavedMs": 78513.75,
+    "reductionRatio": 0.774469186949767,
+    "interval95SavedMs": [
+      59190,
+      100613.125
+    ]
+  },
+  "productAttributableFailures": 0,
+  "testOptimization": "OUT_OF_SCOPE"
+}

@@ -187,6 +187,11 @@ untimed native Gradle.
   manifest-drift probes retained native Gradle and all six contemporary
   candidate/native outputs were semantically equal. The replay preserves the
   existing timing qualifications rather than creating new percentages.
+- **The new Ktor family also transfers to the public package.** Public
+  `v0.3.2` reproduced all three dependency, resource and mixed-source plans;
+  adding one unqualified Gradle option retained native Gradle 3/3 before
+  execution, and all contemporary candidate/native JARs matched exactly.
+  Historical Ktor percentages remain unchanged.
 - **Cross-date output comparison is now explicit and fail-closed.** Four Kafka
   cells match naturally across independent captures. Two real Groovy JAR
   probes match after declaring only `BuildDate + BuildTime`; the previous
@@ -226,16 +231,13 @@ Gradle, and automatic selection remains POC-only with production authority
 false. The ordered implementation and scorecard are frozen in the
 [one-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md).
 
-1. **Replay the reviewed Ktor profiles through the public package.** Require
-   exact bindings, drift fallback and contemporary native-output equivalence
-   without creating new historical percentages.
-2. **Define and implement `buildopt optimize`.** Collapse output preflight,
+1. **Define and implement `buildopt optimize`.** Collapse output preflight,
    discovery, measurement, evaluation and profile materialization behind one
    resumable command with no hand-authored BuildOpt JSON.
-3. **Automate portfolio selection and CI persistence.** Match qualified
+2. **Automate portfolio selection and CI persistence.** Match qualified
    change families, retain native on drift and reuse only exact calibration
    state through one-input GitHub/GitLab onboarding.
-4. **Prove the complete effect.** Measure install-to-decision time, net
+3. **Prove the complete effect.** Measure install-to-decision time, net
    installed-path wall time and break-even on fresh substantial public
    repositories; never add isolated mechanism percentages.
 
@@ -254,6 +256,7 @@ false. The ordered implementation and scorecard are frozen in the
 - [Ktor new-family transfer](../../benchmarks/results/poc-new-family-transfer-v1/README.md)
 - [Ktor new-family change breadth](../../benchmarks/results/poc-new-family-change-breadth-v1/README.md)
 - [Ktor calibration economics](../../benchmarks/results/poc-new-family-calibration-economics-v1/README.md)
+- [Ktor public installed profile replay](../../benchmarks/results/poc-new-family-installed-profile-replay-v1/README.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [One-command POC onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)

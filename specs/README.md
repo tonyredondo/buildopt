@@ -559,7 +559,11 @@ timing claim. Evidence remains bound to the public revision and selector.
 adoption check for those three Ktor profiles. The installed `buildopt poc`
 path must select every exact reviewed plan, preserve contemporary JAR bytes,
 and retain native Gradle before execution when the complete invocation option
-list differs from the qualified profile. Historical timing remains immutable.
+list differs from the qualified profile. The terminal
+[evidence bundle](../benchmarks/results/poc-new-family-installed-profile-replay-v1/README.md)
+passes 3/3 exact selections, 3/3 option-drift native fallbacks and 3/3 exact
+candidate/fallback output comparisons through public `v0.3.2`. Historical
+timing remains immutable.
 
 `poc-new-family-calibration-economics-v1.json` and
 `poc-new-family-calibration-economics-v1.md` freeze the follow-up economics

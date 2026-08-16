@@ -3698,7 +3698,9 @@ Gradle:
 
 This replay creates no new timing claim. It preserves each terminal Ktor
 qualification and compares only contemporary candidate and native-fallback
-outputs from the same reconstructed checkout.
+outputs from the same reconstructed checkout. The committed public `v0.3.2`
+bundle passes all three selections, option-drift fallbacks and exact output
+comparisons.
 
 `specs/poc-cross-date-output-equivalence-v1.json` and
 `specs/poc-cross-date-output-equivalence-v1.md` freeze the follow-up for the

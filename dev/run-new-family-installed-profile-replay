@@ -361,6 +361,9 @@ buildopt_capture_cell() {
         testOptimization: "OUT_OF_SCOPE"
       }
     ' >"${buildopt_cell_output}/result.json"
+    rm -f -- "${buildopt_cell_output}/distribution.log" \
+        "${buildopt_cell_output}/candidate.log" \
+        "${buildopt_cell_output}/fallback.log"
     (
         cd -- "${buildopt_repository}"
         env GRADLE_USER_HOME="${buildopt_gradle_home}" \
@@ -445,5 +448,7 @@ jq -n \
     boundaries: $spec[0].boundaries
   }
 ' >"${buildopt_output}/summary.json"
+
+rm -f -- "${buildopt_output}/install.log"
 
 printf 'Ktor public installed-profile replay evidence written to %s\n' "${buildopt_output}"

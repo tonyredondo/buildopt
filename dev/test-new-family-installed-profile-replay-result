@@ -31,11 +31,15 @@ if "${buildopt_script_dir}/check-new-family-installed-profile-replay-result" "${
 fi
 
 cp -- "${buildopt_source}/summary.json" "${buildopt_temp}/summary.json"
-printf 'tampered\n' >>"${buildopt_temp}/ktor-jvm-jar-resource/candidate.log"
+jq '.selectionReason = "TAMPERED"' \
+    "${buildopt_temp}/ktor-jvm-jar-resource/candidate-plan.json" \
+    >"${buildopt_temp}/ktor-jvm-jar-resource/candidate-plan-mutated.json"
+mv -- "${buildopt_temp}/ktor-jvm-jar-resource/candidate-plan-mutated.json" \
+    "${buildopt_temp}/ktor-jvm-jar-resource/candidate-plan.json"
 if "${buildopt_script_dir}/check-new-family-installed-profile-replay-result" "${buildopt_temp}" \
     >/dev/null 2>&1; then
-    printf 'checker accepted a tampered Ktor installed-profile log\n' >&2
+    printf 'checker accepted a tampered Ktor installed-profile plan\n' >&2
     exit 1
 fi
 
-printf 'Ktor installed-profile negative fixtures OK: summary and log tampering rejected\n'
+printf 'Ktor installed-profile negative fixtures OK: summary and plan tampering rejected\n'
