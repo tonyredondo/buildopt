@@ -66,11 +66,14 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > and mixed-source families are derived from Gradle ownership and dependency
 > facts rather than repository names; exact profiles resume without
 > remeasurement and tampering is rebuilt only from still-valid evidence.
-> Optimized native Gradle remains authoritative. A positive result reports
-> `LEARNING / QUALIFIED_PROFILE_STORED`; ambiguity, no value, insufficient
-> evidence or unsupported scope retains native or makes no claim with an exact
-> reason. It does not select or activate a profile yet. The ordered work and
-> success scorecard live in the
+> The first positive result reports `LEARNING / QUALIFIED_PROFILE_STORED`.
+> Repeating the exact command validates eleven revision, toolchain, workflow,
+> graph, output, evidence and profile bindings before Gradle, then reports
+> `QUALIFIED_AND_USED / QUALIFIED_PROFILE_SELECTED` and executes the smaller
+> graph. The decision overhead is measured; any drift runs optimized native
+> Gradle instead. This authority exists only inside the explicit POC command
+> and never grants production promotion. The ordered work and success
+> scorecard live in the
 > [one-command onboarding roadmap](./docs/plans/one-command-onboarding-roadmap.md).
 
 ## Get your first result

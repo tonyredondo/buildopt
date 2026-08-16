@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "buildopt.poc/magic-auto-replay/v1",
+  "workItem": "POC-MAGIC-AUTO-REPLAY-001",
+  "trigger": {
+    "command": "buildopt optimize <gradle args...>",
+    "checkpoint": "EXACT_BINDINGS",
+    "profileState": "QUALIFIED",
+    "manualSelectionFlagRequired": false,
+    "completedBeforeGradle": true
+  },
+  "bindings": [
+    "BUILDOPT_EXECUTABLE",
+    "CALIBRATION_EVIDENCE",
+    "CHANGE_FAMILY",
+    "DISCOVERY_DOCUMENTS",
+    "GRADLE_OPTIONS",
+    "GRADLE_WRAPPER_PROPERTIES",
+    "PROFILE_ARTIFACTS",
+    "PROFILE_PRECONDITIONS",
+    "REPOSITORY_ID",
+    "REPOSITORY_REVISION",
+    "WORKFLOW_ENTRYPOINTS"
+  ],
+  "selection": {
+    "statuses": [
+      "SKIPPED",
+      "NATIVE_RETAINED",
+      "SELECTED"
+    ],
+    "skippedReason": "NO_QUALIFIED_CHECKPOINT",
+    "selectedReason": "QUALIFIED_PROFILE_SELECTED",
+    "overheadUnit": "NANOSECONDS",
+    "overheadIncludedInInvocationWallTime": true,
+    "recordsOriginalEntrypoints": true,
+    "recordsSelectedEntrypoints": true,
+    "recordsValidatedAndFailedBindings": true
+  },
+  "execution": {
+    "selectedMode": "SELECTIVE_PROFILE",
+    "fallbackMode": "OPTIMIZED_NATIVE",
+    "selectedOutcome": "QUALIFIED_AND_USED",
+    "selectedPhase": "ACTIVE",
+    "fallbackBeforeGradle": true,
+    "preserveChildExitStatus": true
+  },
+  "fallbackReasons": [
+    "CHECKPOINT_BINDING_DRIFT",
+    "QUALIFICATION_EVIDENCE_DRIFT",
+    "PROFILE_PORTFOLIO_INVALID",
+    "PROFILE_FAMILY_NOT_FOUND",
+    "PROFILE_BINDING_DRIFT",
+    "PROFILE_PLAN_REJECTED"
+  ],
+  "acceptance": {
+    "firstInvocationStoresOnly": true,
+    "exactSecondInvocationSelects": true,
+    "secondInvocationRepeatsCalibration": false,
+    "tamperedProfileStartsSelectiveGradle": false,
+    "tamperedProfileMayRepairFromValidEvidence": true,
+    "repairedProfileMaySelectNextInvocation": true,
+    "crossRevisionInference": false
+  },
+  "authority": {
+    "proofOfConcept": true,
+    "ownerInvokedCommandOnly": true,
+    "selectionAuthorized": true,
+    "productionAuthorized": false,
+    "autonomousPromotion": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "boundaries": {
+    "syntheticPercentageTransferable": false,
+    "percentagesAveragedAcrossRepositories": false,
+    "mechanismPercentagesAdded": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

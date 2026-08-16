@@ -16,9 +16,10 @@ and replay explicitly. The target POC experience is the single command
 `buildopt optimize build`. Its stable CLI, private state, exact resume, budget,
 human/JSON result and exit contract are now implemented. The command runs
 optimized native Gradle, discovers a structural proposal and calibrates it
-under one bounded deadline. The authoritative build remains native until a
-later block materializes and replays a qualified profile. Use the explicit
-commands below to inspect the lower-level stages. Follow the
+under one bounded deadline. A later invocation with the same exact bindings
+automatically selects the qualified profile before Gradle; any drift retains
+optimized native Gradle. Use the explicit commands below to inspect the
+lower-level stages. Follow the
 [one-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
 for the remaining ordered delivery.
 
@@ -123,9 +124,12 @@ unsupported relationships, insufficient evidence, poor payback and full test
 execution retain native Gradle or make no claim with an exact reason. It writes
 private generated state/evidence under `.buildopt/optimize/v1`, requires no
 hand-authored BuildOpt files and stores qualifying candidates in a private
-portfolio keyed by structural change family. It performs no profile selection
-and grants no production authority. Machine-readable mode reserves stdout for one result
-document:
+portfolio keyed by structural change family. Repeating the exact command on the
+same revision automatically validates and selects that profile before Gradle;
+any repository, Wrapper, executable, option, graph, output, evidence or profile
+drift runs the original optimized native graph instead. Selection remains
+POC-only and grants no production authority. Machine-readable mode reserves
+stdout for one result document:
 
 ```bash
 buildopt optimize --json -- build
@@ -140,7 +144,9 @@ defines derived inputs, evidence and native fallbacks. The
 defines measurement, value, payback and exact evidence-reuse gates. The
 [profile-portfolio contract](../../specs/poc-magic-profile-portfolio-v1.md)
 defines generic family classification, digest bindings, bounded coexistence
-and tamper recovery. Automatic matching and execution remain the next block.
+and tamper recovery. The
+[automatic-replay contract](../../specs/poc-magic-auto-replay-v1.md) defines
+exact pre-Gradle matching, measured decision overhead and native fallback.
 
 ## Try the Build Impact accelerator
 

@@ -3715,6 +3715,8 @@ The one-command onboarding contract is validated separately:
 ./dev/test-magic-calibration-contract
 ./dev/check-magic-profile-portfolio-contract
 ./dev/test-magic-profile-portfolio-contract
+./dev/check-magic-auto-replay-contract
+./dev/test-magic-auto-replay-contract
 ./dev/check-magic-calibration
 ```
 
@@ -3733,7 +3735,12 @@ The same real checker proves exact profile reuse, one-entry idempotence,
 fail-closed repair after profile tampering and no profile under an insufficient
 pair budget. Unit and contract fixtures cover dependency-source, resource,
 leaf-source and mixed-source families plus coexistence/replacement semantics.
-No profile is selected or activated.
+An exact second invocation now validates eleven repository, revision,
+executable, Wrapper, workflow, option, graph, output, evidence and profile
+bindings before Gradle, selects the smaller qualified graph without another
+flag or calibration, and records the decision in nanoseconds. The same checker
+proves that a tampered profile runs native, repairs only from still-valid
+evidence, and becomes selectable on the following exact invocation.
 
 `specs/poc-cross-date-output-equivalence-v1.json` and
 `specs/poc-cross-date-output-equivalence-v1.md` freeze the follow-up for the

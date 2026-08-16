@@ -53,3 +53,44 @@ func TestOptimizePortfolioFamilyDigestIsPortableAndStructural(t *testing.T) {
 		t.Fatal("structural family did not affect the logical identity")
 	}
 }
+
+func TestFindOptimizePortfolioEntryUsesExactSortedFamily(t *testing.T) {
+	entries := []optimizePortfolioEntry{
+		{FamilySHA256: "1111111111111111111111111111111111111111111111111111111111111111"},
+		{FamilySHA256: "3333333333333333333333333333333333333333333333333333333333333333"},
+	}
+	entry, found := findOptimizePortfolioEntry(entries, "3333333333333333333333333333333333333333333333333333333333333333")
+	if !found || entry.FamilySHA256 != entries[1].FamilySHA256 {
+		t.Fatalf("exact family lookup = %+v, found = %t", entry, found)
+	}
+	if _, found := findOptimizePortfolioEntry(entries, "2222222222222222222222222222222222222222222222222222222222222222"); found {
+		t.Fatal("missing structural family was selected")
+	}
+}
+
+func TestOptimizeSelectedCheckpointRequiresCompletePreGradleBindings(t *testing.T) {
+	selection := optimizeSelectionResult{
+		Status: optimizeSelectionSelected, Reason: optimizeSelectionReasonSelected,
+		Performed: true, Selected: true, CompletedBeforeGradle: true, DurationNS: 1,
+		ChangeFamily:        optimizeFamilyLeaf,
+		FamilySHA256:        "1111111111111111111111111111111111111111111111111111111111111111",
+		ProfileSHA256:       "2222222222222222222222222222222222222222222222222222222222222222",
+		ProfileFile:         ".buildopt/optimize/v1/portfolio/profiles/1111111111111111111111111111111111111111111111111111111111111111/profile.json",
+		OriginalEntrypoints: []string{"jar"}, SelectedEntrypoints: []string{":service-a:jar"},
+		ValidatedBindings: append([]string(nil), optimizeReplayBindingNames...), FailedBindings: []string{},
+		TestOptimization: "OUT_OF_SCOPE",
+	}
+	state := optimizeState{Phase: "ACTIVE", Selection: selection}
+	if !validOptimizeSelectionCheckpoint(state) {
+		t.Fatal("complete selected checkpoint was rejected")
+	}
+	state.Selection.ValidatedBindings = state.Selection.ValidatedBindings[:len(state.Selection.ValidatedBindings)-1]
+	if validOptimizeSelectionCheckpoint(state) {
+		t.Fatal("incomplete selected binding set was accepted")
+	}
+	state.Selection = selection
+	state.Selection.FailedBindings = []string{"GRADLE_OPTIONS"}
+	if validOptimizeSelectionCheckpoint(state) {
+		t.Fatal("selected checkpoint with a failed binding was accepted")
+	}
+}

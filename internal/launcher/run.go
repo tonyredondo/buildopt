@@ -31,6 +31,7 @@ const (
 // child process exit status.
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode int) {
 	var optimize *optimizeRun
+	var automaticOptimizeImpact *impactInvocation
 	childStdout := stdout
 	var impactTiming *impactTimingState
 	execute := func(
@@ -105,6 +106,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 				return exitConfiguration
 			}
 			optimizeContractOnly = true
+			automaticOptimizeImpact = optimize.prepareAutomaticReplay()
 			if invocation.jsonOutput {
 				childStdout = stderr
 			}
@@ -122,11 +124,13 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 	impactStandardJarCache := false
 	impactPOCEdgeCacheURL := ""
 	qualifiedPOCProfile := false
-	if len(args) > 0 && (args[0] == "impact" || args[0] == "poc") {
+	if automaticOptimizeImpact != nil || len(args) > 0 && (args[0] == "impact" || args[0] == "poc") {
 		impactStartedAt := time.Now()
 		var impact impactInvocation
 		var err error
-		if args[0] == "poc" {
+		if automaticOptimizeImpact != nil {
+			impact = *automaticOptimizeImpact
+		} else if args[0] == "poc" {
 			impact, err = prepareQualifiedPOCProfileInvocation(
 				args[1:],
 				os.Getenv(bypassEnvironment) == "1",
@@ -165,7 +169,13 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 				}
 			}()
 		}
-		if impact.plan.CandidateSelected {
+		if automaticOptimizeImpact != nil {
+			_, _ = fmt.Fprintf(
+				stderr,
+				"buildopt: automatic qualified-profile candidate %s selected before Gradle; this is POC-only authority\n",
+				impact.plan.AlternativeID,
+			)
+		} else if impact.plan.CandidateSelected {
 			_, _ = fmt.Fprintf(
 				stderr,
 				"buildopt: explicit Build Impact POC candidate %s selected; this is not production authorization\n",

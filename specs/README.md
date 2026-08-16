@@ -9,7 +9,6 @@ the exact cross-component contract.
 
 | Specification | Owning item |
 |---|---|
-| [`poc-magic-profile-portfolio-v1.md`](./poc-magic-profile-portfolio-v1.md) and [`poc-magic-profile-portfolio-v1.json`](./poc-magic-profile-portfolio-v1.json) | `POC-MAGIC-PROFILE-PORTFOLIO-001` |
 | [`poc-generic-workflow-breadth-v1.md`](./poc-generic-workflow-breadth-v1.md) and [`poc-generic-workflow-breadth-v1.json`](./poc-generic-workflow-breadth-v1.json) | `POC-GENERIC-WORKFLOW-BREADTH-001` |
 | [`poc-generic-owner-input-v1.md`](./poc-generic-owner-input-v1.md) and [`poc-generic-owner-input-v1.json`](./poc-generic-owner-input-v1.json) | `POC-GENERIC-OWNER-INPUT-001` |
 | [`poc-generic-profile-ci-replay-v1.md`](./poc-generic-profile-ci-replay-v1.md) and [`poc-generic-profile-ci-replay-v1.json`](./poc-generic-profile-ci-replay-v1.json) | `POC-GENERIC-PROFILE-CI-REPLAY-001` |
@@ -82,6 +81,8 @@ the exact cross-component contract.
 | [`poc-magic-onboarding-contract-v1.md`](./poc-magic-onboarding-contract-v1.md) and [`poc-magic-onboarding-contract-v1.json`](./poc-magic-onboarding-contract-v1.json) | `POC-MAGIC-ONBOARDING-CONTRACT-001` |
 | [`poc-magic-auto-discovery-v1.md`](./poc-magic-auto-discovery-v1.md) and [`poc-magic-auto-discovery-v1.json`](./poc-magic-auto-discovery-v1.json) | `POC-MAGIC-AUTO-DISCOVERY-001` |
 | [`poc-magic-calibration-v1.md`](./poc-magic-calibration-v1.md) and [`poc-magic-calibration-v1.json`](./poc-magic-calibration-v1.json) | `POC-MAGIC-CALIBRATION-001` |
+| [`poc-magic-profile-portfolio-v1.md`](./poc-magic-profile-portfolio-v1.md) and [`poc-magic-profile-portfolio-v1.json`](./poc-magic-profile-portfolio-v1.json) | `POC-MAGIC-PROFILE-PORTFOLIO-001` |
+| [`poc-magic-auto-replay-v1.md`](./poc-magic-auto-replay-v1.md) and [`poc-magic-auto-replay-v1.json`](./poc-magic-auto-replay-v1.json) | `POC-MAGIC-AUTO-REPLAY-001` |
 | [`poc-normal-build-tail-expansion-v1.md`](./poc-normal-build-tail-expansion-v1.md) and [`poc-normal-build-tail-expansion-v1.json`](./poc-normal-build-tail-expansion-v1.json) | `POC-NORMAL-BUILD-TAIL-EXPANSION-001` |
 | [`private-beta-data-lifecycle-v1.md`](./private-beta-data-lifecycle-v1.md) | `A1-004` / `A1-G05` |
 | [`private-beta-operations-v1.md`](./private-beta-operations-v1.md) | `A1-005` |
@@ -588,6 +589,15 @@ shared discovery/calibration deadline, frozen eight-pair value gate, exact
 output and full-fallback requirements, break-even decision and digest-exact
 evidence resume. A qualified result remains POC learning: it creates no
 profile, automatic selection or production authority.
+
+`poc-magic-profile-portfolio-v1.json` and
+`poc-magic-profile-portfolio-v1.md` bind the bounded repository-scoped family
+portfolio and its private exact artifacts. `poc-magic-auto-replay-v1.json` and
+`poc-magic-auto-replay-v1.md` then authorize only exact owner-invoked replay:
+all repository, revision, executable, Wrapper, workflow, option, graph, output,
+evidence and profile bindings pass before Gradle or the original optimized
+native workflow runs. Selection overhead is part of invocation wall time;
+production authority remains false.
 
 `poc-new-family-calibration-economics-v1.json` and
 `poc-new-family-calibration-economics-v1.md` freeze the follow-up economics

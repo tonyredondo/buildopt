@@ -19,7 +19,7 @@ scope.
 | Mechanism | Role | Current evidence decision |
 | --- | --- | --- |
 | **Structural Build Impact** | Selects the smallest proven change-specific project/task graph before Gradle runs. | **Retained accelerator.** It materially improves the five-repository matrix, a fresh Ktor family transfer, three additional build-owned workflows, six earlier source-change cells, and three materially different Ktor change classes below. |
-| **Profile discovery and evaluation** | Derives the candidate from generic Gradle metadata, measures it against the owner workflow, binds inputs, and enforces native fallback. | **Required safety/evidence layer.** Review remains explicit. |
+| **Profile discovery, evaluation and replay** | Derives the candidate from generic Gradle metadata, measures it against the owner workflow, binds inputs, stores structural families and replays only an exact qualified match. | **Required safety/evidence layer.** `buildopt optimize` now selects exact local profiles automatically inside the explicit POC command; cross-revision and production activation remain disabled. |
 | **Safe Cache / local L1** | Isolates and verifies cached outputs by repository, Wrapper, and platform. | **Supporting safety, not the current speed claim.** It is approximately at parity with a warm native cache. |
 | **Shared / Edge Cache** | Moves verified cache objects closer to developers or CI. | **Separate locality experiment.** Network-dependent results are not added to Structural Build Impact percentages. |
 | **Build History and launcher** | Records evidence, preserves process behavior, and applies bypass/fallback. | **Supporting infrastructure.** Its candidate-path overhead is included in measurements. |
@@ -182,13 +182,16 @@ untimed native Gradle.
   Ktor cells repay first-time calibration after 7–10 builds and exact replay
   evaluation after 2–4. The POC proves repeated-build value, not instant
   first-run payback.
-- **One-command learning now persists as a portfolio.** Qualified measurements
+- **One-command learning now persists and replays exact profiles.** Qualified measurements
   become exact v4 profiles in a bounded repository-scoped portfolio. Four
   generic change families are derived from changed paths, Gradle project
   ownership and dependency edges, never from repository names. Exact state is
   reused without measurement and profile tampering is rebuilt only from
-  still-valid calibration evidence. Matching and execution are not active yet,
-  so this storage block changes none of the historical wall-time claims.
+  still-valid calibration evidence. A later exact command validates eleven
+  bindings before Gradle and automatically executes the smaller graph; a
+  tampered profile runs native and can be repaired for the following command.
+  Selection duration is recorded and included in total invocation wall time.
+  This orchestration result changes none of the historical wall-time claims.
 - **The reviewed profiles transfer to the public package.** Public `v0.3.1`
   reproduced all six selective decisions through `buildopt poc`; all six
   manifest-drift probes retained native Gradle and all six contemporary
@@ -208,8 +211,9 @@ untimed native Gradle.
 
 ## Current limits
 
-The first two one-command automation blocks are now executable rather than
-only a roadmap. In the real two-project Gradle fixture, `buildopt optimize`
+The one-command implementation now covers discovery, calibration, portfolio
+storage and exact automatic replay rather than only a roadmap. In the real
+two-project Gradle fixture, `buildopt optimize`
 discovers packaging, custom verification, distribution and `testClasses`
 proposals with zero hand-authored BuildOpt files; every case derives a 2→1
 project graph and writes seven private review documents. For a measurable
@@ -218,17 +222,22 @@ full fallback and break-even evaluation, then resumes matching evidence without
 remeasurement. An under-budget run makes no claim. Unsupported relationships,
 a root build change and an ambiguous Git base independently retain optimized
 native Gradle. This validates orchestration, not a new transferable performance
-percentage: the fixture's intentional delay produced 1.299 s/66.43% mean
-saving across 8/8 positive pairs and repaid its 77.922-s learning cost after 60
-matching builds under the fixture's explicit 100-build ceiling. Those values
-test the math and do not extend the real-repository evidence above.
+percentage: the fixture's intentional delay produced 1.346 s/68.06% mean
+saving across 8/8 positive pairs and repaid its 75.601-s learning cost after 57
+matching builds under the fixture's explicit 100-build ceiling. A second exact
+invocation selected `:service-a:jar` instead of the original `jar` in 19.192 ms
+without remeasurement; profile tampering retained native before Gradle and was
+repaired only from the still-valid evidence. Those values test the protocol and
+do not extend the real-repository evidence above.
 
 The evidence is bound to exact revisions, changes, workflows, outputs, and a
 12-CPU host. The matrices cover multiple source shapes, a JVM resource,
 multiple simultaneous paths, and conservative build-logic/global fallback,
 but they do not prove that every change in these repositories wins or that
-every Gradle repository can be activated automatically. Profiles remain
-review-required and native Gradle remains authoritative on drift or ambiguity.
+every Gradle repository can be activated automatically. Historical public
+profiles remain review-required; the one-command path may activate only its
+own exact locally qualified profile inside the explicit POC command. Native
+Gradle remains authoritative on drift or ambiguity.
 
 The evidence now covers those three known output representations, but only
 through explicit reviewed contracts: Groovy JAR metadata embeds build date and
@@ -253,14 +262,14 @@ Gradle, and automatic selection remains POC-only with production authority
 false. The ordered implementation and scorecard are frozen in the
 [one-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md).
 
-1. **Materialize a generic profile portfolio.** The command now derives and
-   calibrates a candidate with zero manual BuildOpt files, eight balanced
-   pairs, equivalent outputs, full fallback, positive value and bounded
-   break-even. Next it must store multiple independently bound change-family
-   profiles without repository-name rules.
-2. **Automate portfolio selection and CI persistence.** Match qualified
-   change families, retain native on drift and reuse only exact calibration
-   state through one-input GitHub/GitLab onboarding.
+1. **Make exact replay portable through CI.** The local command now discovers,
+   calibrates, stores and selects an exact qualified profile with zero manual
+   BuildOpt files. GitHub and GitLab must restore only provider-bound compatible
+   state and require only the Gradle command as customer input.
+2. **Explain the decision at customer altitude.** Report selected/full graph,
+   selection overhead, measured saving, uncertainty, calibration cost,
+   break-even, cumulative value and exact fallback reason without requiring the
+   implementation tracker.
 3. **Prove the complete effect.** Measure install-to-decision time, net
    installed-path wall time and break-even on fresh substantial public
    repositories; never add isolated mechanism percentages.
@@ -284,6 +293,8 @@ false. The ordered implementation and scorecard are frozen in the
 - [One-command POC onboarding contract](../../specs/poc-magic-onboarding-contract-v1.md)
 - [Automatic one-command discovery contract](../../specs/poc-magic-auto-discovery-v1.md)
 - [Automatic one-command calibration contract](../../specs/poc-magic-calibration-v1.md)
+- [Automatic profile portfolio contract](../../specs/poc-magic-profile-portfolio-v1.md)
+- [Automatic qualified-profile replay contract](../../specs/poc-magic-auto-replay-v1.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [One-command POC onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)

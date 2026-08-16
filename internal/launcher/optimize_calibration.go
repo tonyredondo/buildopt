@@ -85,7 +85,9 @@ func validOptimizeCalibrationCheckpoint(state optimizeState) bool {
 			return false
 		}
 		if calibration.Qualified {
-			return state.Phase == "QUALIFIED" && state.LastOutcome == optimizeOutcomeLearning &&
+			qualifiedState := state.Phase == "QUALIFIED" && state.LastOutcome == optimizeOutcomeLearning
+			replayState := optimizeStringIn(state.Phase, "ACTIVE", "STALE") && state.LastOutcome == "QUALIFIED_AND_USED"
+			return (qualifiedState || replayState) &&
 				calibration.Reason == optimizeCalibrationReasonQualified && calibration.ValueGatePassed &&
 				calibration.BreakEvenBuilds > 0 && calibration.BreakEvenBuilds <= calibration.MaximumBreakEvenBuilds
 		}

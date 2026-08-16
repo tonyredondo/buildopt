@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`GENERIC STRUCTURAL VALUE QUALIFIED; ONE-COMMAND PROFILE PORTFOLIO IMPLEMENTED\`"
-    "**Current phase:** \`AUTOMATIC PROFILE REPLAY NEXT\`"
+    "**Overall status:** \`GENERIC STRUCTURAL VALUE QUALIFIED; ONE-COMMAND EXACT REPLAY IMPLEMENTED\`"
+    "**Current phase:** \`ONE-INPUT CI ONBOARDING NEXT\`"
     "| 75 | \`POC-GENERIC-MEASUREMENT-001\` | Collect eight isolated alternating optimized-native-versus-BuildOpt pairs"
     "| \`E-288\` | 2026-08-09 | \`POC-GENERIC-MEASUREMENT-001\`"
     "| 77 | \`POC-APACHE-GROOVY-GENERALIZATION-001\` | Apply the generic measurement workflow to Apache Groovy"
@@ -136,6 +136,9 @@ buildopt_required_tracker_text=(
     "| \`E-353\` | 2026-08-16 | \`POC-NEW-FAMILY-INSTALLED-PROFILE-REPLAY-001\`"
     "| \`E-354\` | 2026-08-16 | \`POC-MAGIC-ONBOARDING-CONTRACT-001\`"
     "| \`E-355\` | 2026-08-16 | \`POC-MAGIC-AUTO-DISCOVERY-001\`"
+    "| \`E-356\` | 2026-08-16 | \`POC-MAGIC-CALIBRATION-001\`"
+    "| \`E-357\` | 2026-08-16 | \`POC-MAGIC-PROFILE-PORTFOLIO-001\`"
+    "| \`E-358\` | 2026-08-16 | \`POC-MAGIC-AUTO-REPLAY-001\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"

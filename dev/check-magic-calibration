@@ -99,8 +99,14 @@ jq -e '
     .reason == "QUALIFIED_PROFILE_STORED" and
     .bindings.completeness == "PROFILE_PORTFOLIO_COMPLETE" and
     .native == {authoritative: true, started: true, exitCode: 0} and
+    .execution == {mode: "OPTIMIZED_NATIVE", authoritative: true, started: true, exitCode: 0} and
     .manualFilesRequired == 0 and
     .calibrationPerformed == true and .selectionPerformed == false and
+    .selection.status == "SKIPPED" and
+    .selection.reason == "NO_QUALIFIED_CHECKPOINT" and
+    .selection.performed == false and .selection.selected == false and
+    .selection.completedBeforeGradle == true and .selection.durationNs >= 1 and
+    .selection.validatedBindings == [] and .selection.failedBindings == [] and
     .productionAuthorized == false and .testOptimization == "OUT_OF_SCOPE" and
     .discovery.status == "COMPLETE" and
     .discovery.reason == "STRUCTURAL_CANDIDATE_DISCOVERED" and
@@ -172,6 +178,7 @@ buildopt_first_reduction=$(jq -r '.calibration.reductionRatio * 100' "${buildopt
 buildopt_first_break_even=$(jq -r '.calibration.breakEvenBuilds' "${buildopt_first}")
 
 buildopt_second=$(buildopt_run qualified 8 2)
+buildopt_selection_ns=$(jq -r '.selection.durationNs' "${buildopt_second}")
 jq -e \
     --arg evidence "${buildopt_first_evidence_sha}" \
     --arg discovery "${buildopt_first_discovery_sha}" \
@@ -179,7 +186,7 @@ jq -e \
     --arg profile "${buildopt_first_profile_sha}" \
     --argjson cost "${buildopt_first_cost}" \
     --argjson saved "${buildopt_first_saved}" '
-    .outcome == "LEARNING" and .phase == "QUALIFIED" and
+    .outcome == "QUALIFIED_AND_USED" and .phase == "ACTIVE" and
     .generation == 1 and .attempt == 2 and
     .resume == {
         mode: "AUTO", checkpointFound: true, accepted: true,
@@ -193,8 +200,10 @@ jq -e \
     .calibration.discoverySha256 == $discovery and
     .calibration.calibrationCostMs == $cost and
     .calibration.meanSavedMs == $saved and
-    .reason == "QUALIFIED_PROFILE_REUSED" and
-    .bindings.completeness == "PROFILE_PORTFOLIO_COMPLETE" and
+    .reason == "QUALIFIED_PROFILE_SELECTED" and
+    .bindings.completeness == "AUTOMATIC_REPLAY_COMPLETE" and
+    .native == {authoritative: false, started: false, exitCode: 0} and
+    .execution == {mode: "SELECTIVE_PROFILE", authoritative: true, started: true, exitCode: 0} and
     .portfolio.status == "COMPLETE" and
     .portfolio.reason == "QUALIFIED_PROFILE_REUSED" and
     .portfolio.performed == false and .portfolio.reused == true and
@@ -202,16 +211,35 @@ jq -e \
     .portfolio.profileSha256 == $profile and
     .portfolio.profileCount == 1 and
     .portfolioPerformed == false and
-    .selectionPerformed == false and .productionAuthorized == false
+    .selection == {
+        status: "SELECTED", reason: "QUALIFIED_PROFILE_SELECTED",
+        performed: true, selected: true, completedBeforeGradle: true,
+        durationNs: .selection.durationNs,
+        changeFamily: "LEAF_SOURCE", familySha256: $family,
+        profileSha256: $profile, profileFile: .portfolio.profileFile,
+        originalEntrypoints: ["jar"], selectedEntrypoints: [":service-a:jar"],
+        validatedBindings: [
+            "BUILDOPT_EXECUTABLE", "CALIBRATION_EVIDENCE", "CHANGE_FAMILY",
+            "DISCOVERY_DOCUMENTS", "GRADLE_OPTIONS", "GRADLE_WRAPPER_PROPERTIES",
+            "PROFILE_ARTIFACTS", "PROFILE_PRECONDITIONS", "REPOSITORY_ID",
+            "REPOSITORY_REVISION", "WORKFLOW_ENTRYPOINTS"
+        ],
+        failedBindings: [], productionAuthorized: false,
+        testOptimization: "OUT_OF_SCOPE"
+    } and
+    .selection.durationNs >= 1 and
+    .selectionPerformed == true and .productionAuthorized == false
 ' "${buildopt_second}" >/dev/null || {
-    printf 'exact automatic calibration resume is invalid\n' >&2
+    printf 'exact automatic profile replay is invalid\n' >&2
     jq . "${buildopt_second}" >&2
     exit 1
 }
 if rg -q 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-2.log"; then
-    printf 'exact calibration resume unexpectedly repeated measurement\n' >&2
+    printf 'exact automatic replay unexpectedly repeated measurement\n' >&2
     exit 1
 fi
+grep -F 'automatic qualified-profile candidate' \
+    "${buildopt_temp}/qualified-2.log" >/dev/null
 
 printf '\n' >>"${buildopt_repository}/${buildopt_profile}"
 buildopt_repaired=$(buildopt_run qualified 8 3)
@@ -226,7 +254,14 @@ jq -e \
     .portfolio.profileSha256 == $profile and
     .portfolio.profileCount == 1 and
     .portfolioPerformed == true and
-    .selectionPerformed == false and .productionAuthorized == false
+    .selection.status == "NATIVE_RETAINED" and
+    .selection.reason == "PROFILE_PORTFOLIO_INVALID" and
+    .selection.performed == true and .selection.selected == false and
+    .selection.completedBeforeGradle == true and .selection.durationNs >= 1 and
+    .selection.failedBindings == ["PROFILE_ARTIFACTS"] and
+    .native == {authoritative: true, started: true, exitCode: 0} and
+    .execution == {mode: "OPTIMIZED_NATIVE", authoritative: true, started: true, exitCode: 0} and
+    .selectionPerformed == true and .productionAuthorized == false
 ' "${buildopt_repaired}" >/dev/null || {
     printf 'tampered automatic profile was not rebuilt safely\n' >&2
     jq . "${buildopt_repaired}" >&2
@@ -234,6 +269,32 @@ jq -e \
 }
 if rg -q 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-3.log"; then
     printf 'profile repair unexpectedly repeated calibration\n' >&2
+    exit 1
+fi
+
+buildopt_replayed_after_repair=$(buildopt_run qualified 8 4)
+jq -e \
+    --arg family "${buildopt_first_family_sha}" \
+    --arg profile "${buildopt_first_profile_sha}" '
+    .outcome == "QUALIFIED_AND_USED" and .phase == "ACTIVE" and
+    .reason == "QUALIFIED_PROFILE_SELECTED" and
+    .generation == 1 and .attempt == 4 and
+    .calibration.reused == true and .calibrationPerformed == false and
+    .portfolio.reused == true and .portfolioPerformed == false and
+    .selection.status == "SELECTED" and .selection.selected == true and
+    .selection.familySha256 == $family and .selection.profileSha256 == $profile and
+    .selection.selectedEntrypoints == [":service-a:jar"] and
+    .selection.durationNs >= 1 and
+    .native == {authoritative: false, started: false, exitCode: 0} and
+    .execution == {mode: "SELECTIVE_PROFILE", authoritative: true, started: true, exitCode: 0} and
+    .productionAuthorized == false
+' "${buildopt_replayed_after_repair}" >/dev/null || {
+    printf 'repaired automatic profile was not selected\n' >&2
+    jq . "${buildopt_replayed_after_repair}" >&2
+    exit 1
+}
+if rg -q 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-4.log"; then
+    printf 'repaired automatic replay unexpectedly repeated calibration\n' >&2
     exit 1
 fi
 
@@ -259,6 +320,6 @@ jq -e '
     exit 1
 }
 
-printf 'Magic calibration and profile portfolio OK: family=LEAF_SOURCE profiles=1 mean saved=%sms reduction=%s%% positive=8/8 calibration=%sms break-even=%s builds; exact evidence/profile resumed, tamper rebuilt, and insufficient pair budget made no claim\n' \
+printf 'Magic calibration and profile portfolio OK: family=LEAF_SOURCE profiles=1 mean saved=%sms reduction=%s%% positive=8/8 calibration=%sms break-even=%s builds selection=%sns; exact evidence/profile replayed, tamper rebuilt, and insufficient pair budget made no claim\n' \
     "${buildopt_first_saved}" "${buildopt_first_reduction}" \
-    "${buildopt_first_cost}" "${buildopt_first_break_even}"
+    "${buildopt_first_cost}" "${buildopt_first_break_even}" "${buildopt_selection_ns}"

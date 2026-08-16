@@ -108,7 +108,7 @@ func validOptimizePortfolioCheckpoint(state optimizeState) bool {
 		return state.Phase == "QUALIFIED" && portfolio.Reason != "" && !portfolio.Performed &&
 			!portfolio.Reused && len(portfolio.GeneratedFiles) == 0 && portfolio.TestOptimization == "OUT_OF_SCOPE"
 	case optimizePortfolioComplete:
-		return state.Phase == "QUALIFIED" && portfolio.Reason != "" &&
+		return optimizeStringIn(state.Phase, "QUALIFIED", "ACTIVE", "STALE") && portfolio.Reason != "" &&
 			(portfolio.Performed != portfolio.Reused) &&
 			optimizeStringIn(portfolio.Reason, optimizePortfolioReasonStored, optimizePortfolioReasonReused) &&
 			validOptimizeFamily(portfolio.ChangeFamily) && validOptimizeSHA(portfolio.FamilySHA256) &&

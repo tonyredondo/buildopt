@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_checker="${buildopt_repo_root}/dev/check-magic-auto-replay-contract"
+buildopt_contract="${buildopt_repo_root}/specs/poc-magic-auto-replay-v1.json"
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-magic-auto-replay.XXXXXX")
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-magic-auto-replay."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+"${buildopt_checker}" "${buildopt_contract}"
+
+buildopt_expect_rejection() {
+    local buildopt_name=$1
+    local buildopt_filter=$2
+    local buildopt_mutated="${buildopt_temp}/${buildopt_name}.json"
+    jq "${buildopt_filter}" "${buildopt_contract}" >"${buildopt_mutated}"
+    if "${buildopt_checker}" "${buildopt_mutated}" >/dev/null 2>&1; then
+        printf 'automatic replay contract accepted mutation: %s\n' "${buildopt_name}" >&2
+        exit 1
+    fi
+}
+
+buildopt_expect_rejection missing-wrapper-binding \
+    'del(.bindings[] | select(. == "GRADLE_WRAPPER_PROPERTIES"))'
+buildopt_expect_rejection selection-after-gradle \
+    '.trigger.completedBeforeGradle = false'
+buildopt_expect_rejection cross-revision-inference \
+    '.acceptance.crossRevisionInference = true'
+buildopt_expect_rejection production-authority \
+    '.authority.productionAuthorized = true'
+buildopt_expect_rejection hidden-overhead \
+    '.selection.overheadIncludedInInvocationWallTime = false'
+
+if "${buildopt_checker}" unexpected extra >/dev/null 2>&1; then
+    printf 'automatic replay checker accepted invalid usage\n' >&2
+    exit 1
+fi
+
+printf 'Magic automatic replay negative fixtures OK: bindings, timing and authority fail closed\n'
