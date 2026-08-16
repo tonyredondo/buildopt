@@ -199,11 +199,15 @@ func TestOptimizeRepositoryScopeIsPortableOnlyInsideOneCIRepository(t *testing.T
 
 	values["GITHUB_REPOSITORY_ID"] = "12345"
 	values["GITHUB_SHA"] = strings.Repeat("b", 40)
-	if _, err := optimizeRepositoryScopeSHA(&optimizeInvocation{
+	revisionDriftScope, err := optimizeRepositoryScopeSHA(&optimizeInvocation{
 		repositoryRoot: second,
 		discovery:      discovery,
-	}, getenv); err == nil {
-		t.Fatal("provider revision drift was accepted")
+	}, getenv)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if revisionDriftScope == firstScope {
+		t.Fatal("provider revision drift retained portable checkpoint scope")
 	}
 	if nested := optimizeGitLabRepositoryID("group/platform/repository"); !strings.HasPrefix(nested, "gitlab/") || len(nested) != len("gitlab/")+20 {
 		t.Fatalf("nested GitLab repository ID = %q", nested)

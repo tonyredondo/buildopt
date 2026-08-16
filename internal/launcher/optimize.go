@@ -303,6 +303,7 @@ func bindOptimizeInvocation(invocation *optimizeInvocation) error {
 // only one binding; revision, Wrapper, executable, argv, discovery and budget
 // remain independently bound by bindOptimizeInvocation.
 func optimizeRepositoryScopeSHA(invocation *optimizeInvocation, getenv func(string) string) (string, error) {
+	localScope := optimizeDigest("buildopt-optimize-repository-scope-v1", invocation.repositoryRoot)
 	provider := ""
 	repositoryIDVariable := ""
 	repositoryPathVariable := ""
@@ -319,10 +320,10 @@ func optimizeRepositoryScopeSHA(invocation *optimizeInvocation, getenv func(stri
 		repositoryPathVariable = "CI_PROJECT_PATH"
 		targetVariable = "CI_COMMIT_SHA"
 	default:
-		return optimizeDigest("buildopt-optimize-repository-scope-v1", invocation.repositoryRoot), nil
+		return localScope, nil
 	}
 	if invocation.discovery.RepositoryID == "" || invocation.discovery.TargetRevision == "" {
-		return optimizeDigest("buildopt-optimize-repository-scope-v1", invocation.repositoryRoot), nil
+		return localScope, nil
 	}
 
 	repositoryNumericID := strings.TrimSpace(getenv(repositoryIDVariable))
@@ -337,7 +338,10 @@ func optimizeRepositoryScopeSHA(invocation *optimizeInvocation, getenv func(stri
 		expectedRepositoryID == "" || expectedRepositoryID != invocation.discovery.RepositoryID ||
 		!validMeasurementRevision(targetRevision) ||
 		targetRevision != invocation.discovery.TargetRevision {
-		return "", fmt.Errorf("invalid %s repository identity or checked-out revision", provider)
+		// Provider metadata can be absent or refer to an outer checkout when
+		// optimize is invoked in a nested/generated repository. Such a context
+		// may run native Gradle, but it cannot accept state from another runner.
+		return localScope, nil
 	}
 	return optimizeDigest(
 		"buildopt-optimize-ci-repository-scope-v1",
