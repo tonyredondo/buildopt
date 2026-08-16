@@ -37,7 +37,7 @@ retain the original workflow.
 
 ## Result
 
-A safe candidate reports:
+A safe discovery sub-result reports:
 
 ```text
 LEARNING / STRUCTURAL_CANDIDATE_DISCOVERED / DISCOVERED
@@ -46,7 +46,10 @@ LEARNING / STRUCTURAL_CANDIDATE_DISCOVERED / DISCOVERED
 and writes seven current-user-private documents under the command's state
 directory: the exact changes, output contract, proposed manifest, graph,
 generated binding, fallback change and structural proposal. These files are
-generated evidence, not customer input and not activation authority.
+generated evidence, not customer input and not activation authority. The
+top-level command may then advance to automatic calibration; when the owner
+allows fewer than eight pairs it remains `DISCOVERED` and reports
+`CALIBRATION_PAIR_BUDGET_INSUFFICIENT` without a value claim.
 
 The real Gradle fixture covers packaging (`jar`), custom verification,
 distribution (`distZip`) and build-owned test preparation (`testClasses`). It
@@ -56,12 +59,13 @@ native because Test Optimization is outside this POC.
 
 ## POC authority
 
-Discovery performs no timing, calibration or selection and creates no build
-speed claim. The native execution remains authoritative and every state/result
-keeps `productionAuthorized=false`. The next ordered block may calibrate only
-the discovered candidate against the same optimized-native workflow and must
-still reject candidates that do not produce equivalent outputs or positive net
-wall-time value.
+Discovery itself performs no timing, calibration or selection and creates no
+build-speed claim. The native execution remains authoritative and every
+state/result keeps `productionAuthorized=false`. The separate
+[automatic-calibration contract](./poc-magic-calibration-v1.md) now consumes
+only a complete discovered candidate and rejects candidates that do not
+produce equivalent outputs, positive net wall-time value and acceptable
+payback.
 
 The exact machine contract is
 [`poc-magic-auto-discovery-v1.json`](./poc-magic-auto-discovery-v1.json).

@@ -59,11 +59,13 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > run `buildopt optimize build`. The command now has a stable state/result,
 > resume, budget, exit and POC-authority contract. It now derives the exact Git
 > change, Gradle-owned outputs and structural graph automatically for supported
-> build-owned workflows, while optimized native Gradle remains authoritative.
-> A safe proposal reports `LEARNING / STRUCTURAL_CANDIDATE_DISCOVERED`; an
-> ambiguous, global or unsupported case reports its native fallback reason. It
-> does not calibrate, claim a saving or select an optimization yet. The ordered
-> work and success scorecard live in the
+> build-owned workflows and calibrates the candidate with eight balanced
+> native/candidate pairs, exact outputs, full fallback and bounded break-even.
+> Optimized native Gradle remains authoritative. A positive result reports
+> `LEARNING / CANDIDATE_CALIBRATION_QUALIFIED`; ambiguity, no value, insufficient
+> evidence or unsupported scope retains native or makes no claim with an exact
+> reason. It does not materialize or select a profile yet. The ordered work and
+> success scorecard live in the
 > [one-command onboarding roadmap](./docs/plans/one-command-onboarding-roadmap.md).
 
 ## Get your first result

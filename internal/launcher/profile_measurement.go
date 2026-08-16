@@ -64,6 +64,7 @@ type structuralMeasurementConfig struct {
 	targetStabilityConfirmations int
 	adaptiveCandidateStability   bool
 	gradleDistributionSeed       string
+	deadline                     time.Time
 }
 
 type structuralMeasurementArm struct {
@@ -390,6 +391,9 @@ func prepareStructuralMeasurementConfig(
 }
 
 func measureStructuralProfile(config structuralMeasurementConfig, progress io.Writer) ([]byte, bool, error) {
+	if err := checkStructuralMeasurementBudget(config); err != nil {
+		return nil, false, err
+	}
 	root, err := os.MkdirTemp("", "buildopt-structural-measurement-*")
 	if err != nil {
 		return nil, false, fmt.Errorf("create isolated measurement root: %w", err)
@@ -409,6 +413,9 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 	stableOutputSHA := ""
 	stableOutputCount := 0
 	for pair := 1; pair <= measurementPairs; pair++ {
+		if err := checkStructuralMeasurementBudget(config); err != nil {
+			return nil, false, err
+		}
 		order := "CANDIDATE_FIRST"
 		if pair%2 == 1 {
 			order = "CONTROL_FIRST"
@@ -536,6 +543,9 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 }
 
 func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, name string, candidate bool, progress io.Writer) (structuralMeasurementArm, error) {
+	if err := checkStructuralMeasurementBudget(config); err != nil {
+		return structuralMeasurementArm{}, err
+	}
 	totalWarmups := 2 + config.targetStabilityConfirmations
 	arm := structuralMeasurementArm{
 		name:       name,
@@ -593,6 +603,9 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	_, _ = fmt.Fprintf(progress, "buildopt: warmed isolated %s arm target workload in %dms with %s\n",
 		name, targetWarmup.durationMS, formatStructuralTaskOutcomes(targetWarmup.taskOutcomes))
 	for confirmationIndex := 2; confirmationIndex <= config.targetStabilityConfirmations; confirmationIndex++ {
+		if err := checkStructuralMeasurementBudget(config); err != nil {
+			return arm, err
+		}
 		if err := resetStructuralArm(config, arm, config.targetRevision, true); err != nil {
 			return arm, fmt.Errorf("prepare %s target-workload stability confirmation: %w", name, err)
 		}
@@ -709,6 +722,9 @@ func structuralHostPressurePointer(pressure profilediscovery.StructuralHostPress
 }
 
 func measureStructuralFallback(config structuralMeasurementConfig, arm structuralMeasurementArm, progress io.Writer) (structuralArmResult, string, error) {
+	if err := checkStructuralMeasurementBudget(config); err != nil {
+		return structuralArmResult{}, "", err
+	}
 	if err := resetStructuralArm(config, arm, config.targetRevision, true); err != nil {
 		return structuralArmResult{}, "", err
 	}
@@ -785,7 +801,11 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 	} else {
 		command = measurementGradleCommand(arm.workspace, append(append([]string(nil), config.gradleOptions...), config.analysis.Plan.FallbackEntrypoints...))
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), config.timeout)
+	timeout, err := structuralMeasurementTimeout(config)
+	if err != nil {
+		return structuralArmResult{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 	cmd := exec.CommandContext(ctx, command[0], command[1:]...)
 	cmd.Dir = arm.workspace
@@ -795,7 +815,7 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 	cmd.Stderr = &log
 	pressureBefore := readStructuralPressureSnapshot()
 	started := time.Now()
-	err := cmd.Run()
+	err = cmd.Run()
 	finished := time.Now()
 	pressureAfter := readStructuralPressureSnapshot()
 	duration := finished.Sub(started).Milliseconds()
@@ -817,7 +837,7 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 		return result, fmt.Errorf("%s arm produced invalid host-pressure evidence: %w", arm.name, validationErr)
 	}
 	if ctx.Err() == context.DeadlineExceeded {
-		return result, fmt.Errorf("%s arm exceeded %s", arm.name, config.timeout)
+		return result, fmt.Errorf("%s arm exceeded %s: %w", arm.name, timeout, context.DeadlineExceeded)
 	}
 	if err != nil {
 		return result, fmt.Errorf("%s arm failed: %w\n%s", arm.name, err, tailMeasurementLog(result.log, 80))
@@ -827,6 +847,28 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 		return result, errors.New("installed candidate did not select the analyzed structural alternative")
 	}
 	return result, nil
+}
+
+func checkStructuralMeasurementBudget(config structuralMeasurementConfig) error {
+	_, err := structuralMeasurementTimeout(config)
+	return err
+}
+
+func structuralMeasurementTimeout(config structuralMeasurementConfig) (time.Duration, error) {
+	timeout := config.timeout
+	if !config.deadline.IsZero() {
+		remaining := time.Until(config.deadline)
+		if remaining <= 0 {
+			return 0, context.DeadlineExceeded
+		}
+		if remaining < timeout {
+			timeout = remaining
+		}
+	}
+	if timeout <= 0 {
+		return 0, context.DeadlineExceeded
+	}
+	return timeout, nil
 }
 
 func structuralTaskEvidenceError(armName string, validationErr error, log string) error {

@@ -2,6 +2,7 @@ package launcher
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
@@ -22,6 +24,18 @@ func TestStructuralProfileMeasurementHelpDocumentsCalibrationMode(t *testing.T) 
 	}
 	if !strings.Contains(stdout.String(), "[--calibration-only]") {
 		t.Fatalf("help does not expose calibration mode: %q", stdout.String())
+	}
+}
+
+func TestStructuralMeasurementDeadlineBoundsEveryChildTimeout(t *testing.T) {
+	config := structuralMeasurementConfig{timeout: time.Hour, deadline: time.Now().Add(time.Minute)}
+	timeout, err := structuralMeasurementTimeout(config)
+	if err != nil || timeout <= 0 || timeout > time.Minute {
+		t.Fatalf("bounded structural timeout = %s/%v", timeout, err)
+	}
+	config.deadline = time.Now().Add(-time.Millisecond)
+	if _, err := structuralMeasurementTimeout(config); !errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("expired structural deadline = %v, want deadline exceeded", err)
 	}
 }
 

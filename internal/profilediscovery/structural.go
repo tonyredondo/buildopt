@@ -178,6 +178,52 @@ type StructuralMeasurementObservation struct {
 	CandidateHostPressure      *StructuralHostPressure
 }
 
+// StructuralMeasurementSummary is the strictly recomputed result of one
+// installed-path structural measurement. It lets the one-command orchestrator
+// consume the frozen evidence without duplicating its qualification rules.
+type StructuralMeasurementSummary struct {
+	EvidenceState        string
+	Pairs                int
+	ControlMeanMS        float64
+	CandidateMeanMS      float64
+	MeanSavedMS          float64
+	ReductionRatio       float64
+	Interval95SavedMS    []float64
+	PositivePairs        int
+	Qualified            bool
+	Decision             string
+	FallbackSuccessful   bool
+	ProductionAuthorized bool
+}
+
+// InspectStructuralMeasurementEvidence strictly decodes and recomputes a
+// measurement generated for the supplied analysis. Inconclusive evidence is
+// valid input and remains unqualified; malformed or manipulated evidence is
+// rejected.
+func InspectStructuralMeasurementEvidence(raw []byte, analysis AnalysisReport) (StructuralMeasurementSummary, error) {
+	var evidence structuralEvidence
+	if err := decodeStrictJSON(raw, &evidence); err != nil {
+		return StructuralMeasurementSummary{}, fmt.Errorf("decode structural measurement evidence: %w", err)
+	}
+	if err := validateStructuralCaptureEvidence(evidence, analysis); err != nil {
+		return StructuralMeasurementSummary{}, err
+	}
+	return StructuralMeasurementSummary{
+		EvidenceState:        evidence.EvidenceState,
+		Pairs:                evidence.Result.Pairs,
+		ControlMeanMS:        evidence.Result.ControlMeanMS,
+		CandidateMeanMS:      evidence.Result.CandidateMeanMS,
+		MeanSavedMS:          evidence.Result.MeanSavedMS,
+		ReductionRatio:       evidence.Result.ReductionRatio,
+		Interval95SavedMS:    append([]float64(nil), evidence.Result.Interval95SavedMS...),
+		PositivePairs:        evidence.Result.PositivePairs,
+		Qualified:            evidence.Result.Qualified,
+		Decision:             evidence.Result.Decision,
+		FallbackSuccessful:   evidence.Fallback.BuildSuccessful,
+		ProductionAuthorized: evidence.Boundaries.ProductionAuthorized,
+	}, nil
+}
+
 // StructuralTaskOutcomes is a bounded execution-shape summary parsed from
 // Gradle's plain console output. It helps diagnose timing outliers without
 // retaining repository build logs or changing the measured Gradle invocation.

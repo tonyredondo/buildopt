@@ -14,11 +14,11 @@ plugin paths.
 The current public path below separates compatibility, proposal, measurement
 and replay explicitly. The target POC experience is the single command
 `buildopt optimize build`. Its stable CLI, private state, exact resume, budget,
-human/JSON result and exit contract are now implemented. Until automatic
-calibration is delivered, the command runs optimized native Gradle and then
-automatically produces either a reviewable structural proposal or an exact
-native-fallback reason. Use the explicit commands below for measurement and
-qualification. Follow the
+human/JSON result and exit contract are now implemented. The command runs
+optimized native Gradle, discovers a structural proposal and calibrates it
+under one bounded deadline. The authoritative build remains native until a
+later block materializes and replays a qualified profile. Use the explicit
+commands below to inspect the lower-level stages. Follow the
 [one-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
 for the remaining ordered delivery.
 
@@ -112,15 +112,19 @@ The final entrypoint is already safe to use:
 buildopt optimize build
 ```
 
-Today it executes the optimized native Gradle baseline and then automatically
-derives the exact Git change, Gradle-owned outputs and complete structural
-graph for supported build-owned workflows. A safe candidate reports
-`LEARNING / STRUCTURAL_CANDIDATE_DISCOVERED`; ambiguity, global changes,
-unsupported relationships and full test execution retain native Gradle with an
-exact reason. It writes private generated state/evidence under
-`.buildopt/optimize/v1`, requires no hand-authored BuildOpt files, performs no
-calibration or selection and grants no production authority. Machine-readable
-mode reserves stdout for one result document:
+Today it executes the optimized native Gradle baseline, derives the exact Git
+change, Gradle-owned outputs and complete structural graph, then measures a
+safe candidate through eight order-balanced pairs. Qualification requires
+equivalent outputs, a successful full-graph fallback, a positive paired bound,
+at least 500 ms and 2% mean saving, 8/8 positive pairs, and repayment within
+`--max-break-even-builds`. A positive candidate reports
+`LEARNING / CANDIDATE_CALIBRATION_QUALIFIED`; ambiguity, global changes,
+unsupported relationships, insufficient evidence, poor payback and full test
+execution retain native Gradle or make no claim with an exact reason. It writes
+private generated state/evidence under `.buildopt/optimize/v1`, requires no
+hand-authored BuildOpt files, performs no profile selection and grants no
+production authority. Machine-readable mode reserves stdout for one result
+document:
 
 ```bash
 buildopt optimize --json -- build
@@ -130,7 +134,9 @@ buildopt optimize --json -- build
 entirely. The [command contract](../../specs/poc-magic-onboarding-contract-v1.md)
 defines resume bindings, budgets, outcomes and exit behavior; the
 [automatic-discovery contract](../../specs/poc-magic-auto-discovery-v1.md)
-defines derived inputs, evidence and native fallbacks.
+defines derived inputs, evidence and native fallbacks. The
+[automatic-calibration contract](../../specs/poc-magic-calibration-v1.md)
+defines measurement, value, payback and exact evidence-reuse gates.
 
 ## Try the Build Impact accelerator
 

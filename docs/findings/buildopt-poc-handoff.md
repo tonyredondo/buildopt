@@ -201,15 +201,20 @@ untimed native Gradle.
 
 ## Current limits
 
-The first one-command automation block is now executable rather than only a
-roadmap. In the real two-project Gradle fixture, `buildopt optimize` discovers
-packaging, custom verification, distribution and `testClasses` proposals with
-zero hand-authored BuildOpt files; every case derives a 2→1 project graph and
-writes seven private review documents. Unsupported task relationships, a root
-build change and an ambiguous local Git base independently retain optimized
-native Gradle. This proves orchestration and safe fallback only: discovery has
-not yet timed or qualified those generated candidates, so it adds no new
-wall-time percentage to the evidence above.
+The first two one-command automation blocks are now executable rather than
+only a roadmap. In the real two-project Gradle fixture, `buildopt optimize`
+discovers packaging, custom verification, distribution and `testClasses`
+proposals with zero hand-authored BuildOpt files; every case derives a 2→1
+project graph and writes seven private review documents. For a measurable
+candidate, the same command now runs eight balanced pairs, exact output checks,
+full fallback and break-even evaluation, then resumes matching evidence without
+remeasurement. An under-budget run makes no claim. Unsupported relationships,
+a root build change and an ambiguous Git base independently retain optimized
+native Gradle. This validates orchestration, not a new transferable performance
+percentage: the fixture's intentional delay produced 1.299 s/66.43% mean
+saving across 8/8 positive pairs and repaid its 77.922-s learning cost after 60
+matching builds under the fixture's explicit 100-build ceiling. Those values
+test the math and do not extend the real-repository evidence above.
 
 The evidence is bound to exact revisions, changes, workflows, outputs, and a
 12-CPU host. The matrices cover multiple source shapes, a JVM resource,
@@ -241,10 +246,11 @@ Gradle, and automatic selection remains POC-only with production authority
 false. The ordered implementation and scorecard are frozen in the
 [one-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md).
 
-1. **Orchestrate calibration behind the discovered candidate.** The command now
-   derives the workflow, immutable base, exact change, outputs and structural
-   graph with zero manual BuildOpt files. Next it must measure that proposal
-   against the same optimized-native workflow within the declared budget.
+1. **Materialize a generic profile portfolio.** The command now derives and
+   calibrates a candidate with zero manual BuildOpt files, eight balanced
+   pairs, equivalent outputs, full fallback, positive value and bounded
+   break-even. Next it must store multiple independently bound change-family
+   profiles without repository-name rules.
 2. **Automate portfolio selection and CI persistence.** Match qualified
    change families, retain native on drift and reuse only exact calibration
    state through one-input GitHub/GitLab onboarding.
@@ -270,6 +276,7 @@ false. The ordered implementation and scorecard are frozen in the
 - [Ktor public installed profile replay](../../benchmarks/results/poc-new-family-installed-profile-replay-v1/README.md)
 - [One-command POC onboarding contract](../../specs/poc-magic-onboarding-contract-v1.md)
 - [Automatic one-command discovery contract](../../specs/poc-magic-auto-discovery-v1.md)
+- [Automatic one-command calibration contract](../../specs/poc-magic-calibration-v1.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [One-command POC onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)

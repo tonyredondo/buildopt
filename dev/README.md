@@ -3711,6 +3711,9 @@ The one-command onboarding contract is validated separately:
 ./dev/check-magic-auto-discovery-contract
 ./dev/test-magic-auto-discovery-contract
 ./dev/check-magic-auto-discovery
+./dev/check-magic-calibration-contract
+./dev/test-magic-calibration-contract
+./dev/check-magic-calibration
 ```
 
 The command contract fixes `buildopt optimize build`, private atomic
@@ -3719,8 +3722,11 @@ human/JSON output, Gradle exit preservation and the POC authority boundary.
 The automatic-discovery checker then exercises the real binary on packaging,
 verification, distribution and test-preparation Gradle workflows, requiring
 zero manual BuildOpt files and private generated evidence. Unsupported,
-global-change and ambiguous-base fixtures must retain native Gradle. This
-block performs no calibration, selection or timing claim.
+global-change and ambiguous-base fixtures must retain native Gradle. The
+automatic-calibration checker then proves eight balanced pairs, exact outputs,
+full fallback, break-even evaluation, private evidence, exact reuse without
+remeasurement and an under-budget no-claim result. It materializes and selects
+no profile.
 
 `specs/poc-cross-date-output-equivalence-v1.json` and
 `specs/poc-cross-date-output-equivalence-v1.md` freeze the follow-up for the

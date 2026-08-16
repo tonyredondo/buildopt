@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "buildopt.poc/magic-calibration/v1",
+  "workItem": "POC-MAGIC-CALIBRATION-001",
+  "customerCommand": "buildopt optimize <gradle args...>",
+  "orchestration": [
+    "OPTIMIZED_NATIVE_AUTHORITATIVE",
+    "AUTOMATIC_DISCOVERY",
+    "ISOLATED_STRUCTURAL_MEASUREMENT",
+    "FULL_GRAPH_FALLBACK",
+    "BREAK_EVEN_EVALUATION"
+  ],
+  "budget": {
+    "sharedDeadline": "DISCOVERY_AND_CALIBRATION",
+    "acceptedPairRange": [2, 16],
+    "qualificationPairs": 8,
+    "insufficientPairDecision": "CALIBRATION_PAIR_BUDGET_INSUFFICIENT"
+  },
+  "qualification": {
+    "order": "BALANCED_CONTROL_CANDIDATE",
+    "requiredOutputEquivalence": "EXACT_BYTES_BY_DEFAULT",
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "minimumPositivePairs": 8,
+    "interval95LowerBoundPositive": true,
+    "executionShapeStableWhenObserved": true,
+    "fullGraphFallbackRequired": true,
+    "breakEven": "CEIL_CALIBRATION_COST_DIVIDED_BY_MEAN_SAVED",
+    "maximumBreakEvenBuilds": "CUSTOMER_BOUND"
+  },
+  "checkpoint": {
+    "bindingCompleteness": "CALIBRATION_COMPLETE",
+    "reuse": "EXACT_BINDINGS_AND_RECOMPUTED_EVIDENCE_ONLY",
+    "discoveryDigestRequired": true,
+    "evidenceDigestRequired": true,
+    "tamperDecision": "RECALIBRATE_OR_RETAIN_NATIVE"
+  },
+  "decisions": {
+    "qualified": "CANDIDATE_CALIBRATION_QUALIFIED",
+    "noValue": "CALIBRATION_VALUE_NOT_PROVEN",
+    "poorPayback": "CALIBRATION_BREAK_EVEN_EXCEEDED",
+    "executionFailure": "CALIBRATION_EXECUTION_FAILED",
+    "budgetExhausted": "CALIBRATION_BUDGET_EXHAUSTED"
+  },
+  "generatedDocument": {
+    "path": ".buildopt/optimize/v1/calibration/evidence.json",
+    "permissions": "CURRENT_USER_PRIVATE",
+    "writeBehavior": "ATOMIC_PRIVATE_REPLACE"
+  },
+  "authority": {
+    "proofOfConcept": true,
+    "nativeGradleAuthoritative": true,
+    "profileMaterialized": false,
+    "automaticSelection": false,
+    "productionAuthorized": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

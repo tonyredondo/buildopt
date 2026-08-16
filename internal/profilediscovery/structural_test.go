@@ -66,6 +66,30 @@ func TestRenderStructuralMeasurementEvidenceQualifiesOnlyPositiveExactPairs(t *t
 		evidence.Boundaries.ProductionAuthorized || evidence.Boundaries.TestOptimizationModified {
 		t.Fatalf("rendered evidence = %+v", evidence)
 	}
+	summary, err := InspectStructuralMeasurementEvidence(raw, analysis)
+	if err != nil {
+		t.Fatalf("inspect qualified evidence: %v", err)
+	}
+	if !summary.Qualified || summary.Pairs != structuralPairCount ||
+		summary.ControlMeanMS != 10000 || summary.CandidateMeanMS != 7000 ||
+		summary.MeanSavedMS != 3000 || summary.PositivePairs != structuralPairCount ||
+		!summary.FallbackSuccessful || summary.ProductionAuthorized {
+		t.Fatalf("structural measurement summary = %+v", summary)
+	}
+	tampered := bytes.Replace(raw, []byte(`"qualified": true`), []byte(`"qualified": false`), 1)
+	if bytes.Equal(tampered, raw) {
+		t.Fatal("qualified evidence fixture did not contain the expected decision field")
+	}
+	if _, err := InspectStructuralMeasurementEvidence(tampered, analysis); err == nil {
+		t.Fatal("tampered structural evidence was accepted")
+	}
+	unknown := bytes.Replace(raw, []byte("{\n"), []byte("{\n  \"unknown\": true,\n"), 1)
+	if bytes.Equal(unknown, raw) {
+		t.Fatal("could not add an unknown field to the structural evidence fixture")
+	}
+	if _, err := InspectStructuralMeasurementEvidence(unknown, analysis); err == nil {
+		t.Fatal("structural evidence with an unknown field was accepted")
+	}
 
 	for index := range observations {
 		observations[index].CandidateDurationMS = 9950

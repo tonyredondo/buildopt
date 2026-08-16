@@ -80,6 +80,7 @@ the exact cross-component contract.
 | [`poc-standard-copy-cache-v1.md`](./poc-standard-copy-cache-v1.md) and [`poc-standard-copy-cache-v1.json`](./poc-standard-copy-cache-v1.json) | Historical retired standard-`Copy` evidence |
 | [`poc-magic-onboarding-contract-v1.md`](./poc-magic-onboarding-contract-v1.md) and [`poc-magic-onboarding-contract-v1.json`](./poc-magic-onboarding-contract-v1.json) | `POC-MAGIC-ONBOARDING-CONTRACT-001` |
 | [`poc-magic-auto-discovery-v1.md`](./poc-magic-auto-discovery-v1.md) and [`poc-magic-auto-discovery-v1.json`](./poc-magic-auto-discovery-v1.json) | `POC-MAGIC-AUTO-DISCOVERY-001` |
+| [`poc-magic-calibration-v1.md`](./poc-magic-calibration-v1.md) and [`poc-magic-calibration-v1.json`](./poc-magic-calibration-v1.json) | `POC-MAGIC-CALIBRATION-001` |
 | [`poc-normal-build-tail-expansion-v1.md`](./poc-normal-build-tail-expansion-v1.md) and [`poc-normal-build-tail-expansion-v1.json`](./poc-normal-build-tail-expansion-v1.json) | `POC-NORMAL-BUILD-TAIL-EXPANSION-001` |
 | [`private-beta-data-lifecycle-v1.md`](./private-beta-data-lifecycle-v1.md) | `A1-004` / `A1-G05` |
 | [`private-beta-operations-v1.md`](./private-beta-operations-v1.md) | `A1-005` |
@@ -580,6 +581,12 @@ change/output/graph inputs and fail-closed reasons. Packaging, verification,
 distribution and test-preparation fixtures reach a structural proposal through
 the customer command; unsupported, global and ambiguous inputs retain native
 Gradle. No calibration, selection or timing claim is created.
+
+`poc-magic-calibration-v1.json` and `poc-magic-calibration-v1.md` bind the
+shared discovery/calibration deadline, frozen eight-pair value gate, exact
+output and full-fallback requirements, break-even decision and digest-exact
+evidence resume. A qualified result remains POC learning: it creates no
+profile, automatic selection or production authority.
 
 `poc-new-family-calibration-economics-v1.json` and
 `poc-new-family-calibration-economics-v1.md` freeze the follow-up economics

@@ -338,7 +338,7 @@ func optimizeDiscoveryContextSHA(context optimizeDiscoveryContext) string {
 	return optimizeDigest("buildopt-optimize-discovery-context-v1", values...)
 }
 
-func (run *optimizeRun) discover(exitCode int) optimizeDiscoveryResult {
+func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int) optimizeDiscoveryResult {
 	result := optimizeDiscoveryResult{
 		Status: optimizeDiscoverySkipped, Reason: "NATIVE_BUILD_FAILED",
 		Source:           run.invocation.discovery.Source,
@@ -363,8 +363,6 @@ func (run *optimizeRun) discover(exitCode int) optimizeDiscoveryResult {
 		result.Reason = run.invocation.discovery.Reason
 		return result
 	}
-	discoveryContext, cancel := context.WithTimeout(context.Background(), run.invocation.calibrationBudget)
-	defer cancel()
 	discovered, documents, err := runAutomaticOptimizeDiscovery(discoveryContext, run.invocation)
 	if err != nil {
 		result.Status = optimizeDiscoveryRetained

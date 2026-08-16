@@ -2,6 +2,7 @@ package launcher
 
 import (
 	"bytes"
+	"context"
 	"crypto/sha256"
 	"encoding/binary"
 	"encoding/hex"
@@ -90,20 +91,21 @@ type optimizeResume struct {
 }
 
 type optimizeState struct {
-	SchemaVersion        string                  `json:"schemaVersion"`
-	Generation           int                     `json:"generation"`
-	Attempt              int                     `json:"attempt"`
-	Phase                string                  `json:"phase"`
-	LastOutcome          string                  `json:"lastOutcome"`
-	LastReason           string                  `json:"lastReason"`
-	Bindings             optimizeBindings        `json:"bindings"`
-	Budget               optimizeBudget          `json:"budget"`
-	Resume               optimizeResume          `json:"resume"`
-	BuildStarted         bool                    `json:"buildStarted"`
-	LastExitCode         int                     `json:"lastExitCode"`
-	Discovery            optimizeDiscoveryResult `json:"discovery"`
-	UpdatedAt            string                  `json:"updatedAt"`
-	ProductionAuthorized bool                    `json:"productionAuthorized"`
+	SchemaVersion        string                    `json:"schemaVersion"`
+	Generation           int                       `json:"generation"`
+	Attempt              int                       `json:"attempt"`
+	Phase                string                    `json:"phase"`
+	LastOutcome          string                    `json:"lastOutcome"`
+	LastReason           string                    `json:"lastReason"`
+	Bindings             optimizeBindings          `json:"bindings"`
+	Budget               optimizeBudget            `json:"budget"`
+	Resume               optimizeResume            `json:"resume"`
+	BuildStarted         bool                      `json:"buildStarted"`
+	LastExitCode         int                       `json:"lastExitCode"`
+	Discovery            optimizeDiscoveryResult   `json:"discovery"`
+	Calibration          optimizeCalibrationResult `json:"calibration"`
+	UpdatedAt            string                    `json:"updatedAt"`
+	ProductionAuthorized bool                      `json:"productionAuthorized"`
 }
 
 type optimizeNativeResult struct {
@@ -113,41 +115,44 @@ type optimizeNativeResult struct {
 }
 
 type optimizeGeneratedFiles struct {
-	State     string   `json:"state"`
-	Result    string   `json:"result"`
-	Discovery []string `json:"discovery"`
+	State       string   `json:"state"`
+	Result      string   `json:"result"`
+	Discovery   []string `json:"discovery"`
+	Calibration []string `json:"calibration"`
 }
 
 type optimizeResult struct {
-	SchemaVersion        string                  `json:"schemaVersion"`
-	Outcome              string                  `json:"outcome"`
-	Reason               string                  `json:"reason"`
-	Phase                string                  `json:"phase"`
-	StartedAt            string                  `json:"startedAt"`
-	CompletedAt          string                  `json:"completedAt"`
-	DurationMs           int64                   `json:"durationMs"`
-	Generation           int                     `json:"generation"`
-	Attempt              int                     `json:"attempt"`
-	Bindings             optimizeBindings        `json:"bindings"`
-	Budget               optimizeBudget          `json:"budget"`
-	Resume               optimizeResume          `json:"resume"`
-	Native               optimizeNativeResult    `json:"native"`
-	Discovery            optimizeDiscoveryResult `json:"discovery"`
-	GeneratedFiles       optimizeGeneratedFiles  `json:"generatedFiles"`
-	ManualFilesRequired  int                     `json:"manualFilesRequired"`
-	CalibrationPerformed bool                    `json:"calibrationPerformed"`
-	SelectionPerformed   bool                    `json:"selectionPerformed"`
-	ProductionAuthorized bool                    `json:"productionAuthorized"`
-	TestOptimization     string                  `json:"testOptimization"`
+	SchemaVersion        string                    `json:"schemaVersion"`
+	Outcome              string                    `json:"outcome"`
+	Reason               string                    `json:"reason"`
+	Phase                string                    `json:"phase"`
+	StartedAt            string                    `json:"startedAt"`
+	CompletedAt          string                    `json:"completedAt"`
+	DurationMs           int64                     `json:"durationMs"`
+	Generation           int                       `json:"generation"`
+	Attempt              int                       `json:"attempt"`
+	Bindings             optimizeBindings          `json:"bindings"`
+	Budget               optimizeBudget            `json:"budget"`
+	Resume               optimizeResume            `json:"resume"`
+	Native               optimizeNativeResult      `json:"native"`
+	Discovery            optimizeDiscoveryResult   `json:"discovery"`
+	Calibration          optimizeCalibrationResult `json:"calibration"`
+	GeneratedFiles       optimizeGeneratedFiles    `json:"generatedFiles"`
+	ManualFilesRequired  int                       `json:"manualFilesRequired"`
+	CalibrationPerformed bool                      `json:"calibrationPerformed"`
+	SelectionPerformed   bool                      `json:"selectionPerformed"`
+	ProductionAuthorized bool                      `json:"productionAuthorized"`
+	TestOptimization     string                    `json:"testOptimization"`
 }
 
 type optimizeRun struct {
-	invocation   optimizeInvocation
-	state        optimizeState
-	statePath    string
-	resultPath   string
-	startedAt    time.Time
-	childStarted bool
+	invocation    optimizeInvocation
+	state         optimizeState
+	statePath     string
+	resultPath    string
+	startedAt     time.Time
+	childStarted  bool
+	previousState *optimizeState
 }
 
 func prepareOptimizeInvocation(args []string, stateEnabled bool) (optimizeInvocation, error) {
@@ -313,7 +318,7 @@ func beginOptimizeRun(invocation optimizeInvocation) (*optimizeRun, error) {
 	startedAt := time.Now().UTC()
 	statePath := filepath.Join(invocation.stateDirectory, optimizeStateFile)
 	resultPath := filepath.Join(invocation.stateDirectory, optimizeResultFile)
-	resume, generation, attempt := inspectOptimizeCheckpoint(statePath, invocation)
+	resume, generation, attempt, previous := inspectOptimizeCheckpoint(statePath, invocation)
 	state := optimizeState{
 		SchemaVersion: optimizeStateSchemaVersion, Generation: generation, Attempt: attempt,
 		Phase: optimizePhaseUnseen, LastOutcome: optimizeOutcomeLearning,
@@ -327,55 +332,61 @@ func beginOptimizeRun(invocation optimizeInvocation) (*optimizeRun, error) {
 	}
 	return &optimizeRun{
 		invocation: invocation, state: state, statePath: statePath,
-		resultPath: resultPath, startedAt: startedAt,
+		resultPath: resultPath, startedAt: startedAt, previousState: previous,
 	}, nil
 }
 
-func inspectOptimizeCheckpoint(path string, invocation optimizeInvocation) (optimizeResume, int, int) {
+func inspectOptimizeCheckpoint(path string, invocation optimizeInvocation) (optimizeResume, int, int, *optimizeState) {
 	resume := optimizeResume{Mode: invocation.resumeMode, Reason: optimizeResumeNone}
 	raw, err := os.ReadFile(path)
 	if os.IsNotExist(err) {
 		if invocation.resumeMode == optimizeResumeNever {
 			resume.Reason = optimizeResumeDisabled
 		}
-		return resume, 1, 1
+		return resume, 1, 1, nil
 	}
 	if err != nil {
 		resume.CheckpointFound = true
 		resume.Reason = optimizeResumeInvalid
-		return resume, 1, 1
+		return resume, 1, 1, nil
 	}
 	resume.CheckpointFound = true
 	digest := sha256.Sum256(raw)
 	resume.PreviousStateSHA256 = hex.EncodeToString(digest[:])
 	if len(raw) > optimizeMaximumStateBytes {
 		resume.Reason = optimizeResumeInvalid
-		return resume, 1, 1
+		return resume, 1, 1, nil
 	}
 	decoder := json.NewDecoder(bytes.NewReader(raw))
 	decoder.DisallowUnknownFields()
 	var previous optimizeState
 	if err := decoder.Decode(&previous); err != nil {
 		resume.Reason = optimizeResumeInvalid
-		return resume, 1, 1
+		return resume, 1, 1, nil
 	}
 	if err := decoder.Decode(&struct{}{}); !errors.Is(err, io.EOF) ||
 		!validOptimizeState(previous) {
 		resume.Reason = optimizeResumeInvalid
-		return resume, 1, 1
+		return resume, 1, 1, nil
 	}
 	if invocation.resumeMode == optimizeResumeNever {
 		resume.Reason = optimizeResumeDisabled
-		return resume, previous.Generation + 1, 1
+		return resume, previous.Generation + 1, 1, nil
 	}
-	if previous.Bindings != optimizeInvocationBindings(invocation) ||
+	if !sameOptimizeBindingIdentity(previous.Bindings, optimizeInvocationBindings(invocation)) ||
 		previous.Budget != optimizeInvocationBudget(invocation) {
 		resume.Reason = optimizeResumeDrift
-		return resume, previous.Generation + 1, 1
+		return resume, previous.Generation + 1, 1, nil
 	}
 	resume.Accepted = true
 	resume.Reason = optimizeResumeExact
-	return resume, previous.Generation, previous.Attempt + 1
+	return resume, previous.Generation, previous.Attempt + 1, &previous
+}
+
+func sameOptimizeBindingIdentity(left, right optimizeBindings) bool {
+	left.Completeness = ""
+	right.Completeness = ""
+	return left == right
 }
 
 func validOptimizeState(state optimizeState) bool {
@@ -383,7 +394,8 @@ func validOptimizeState(state optimizeState) bool {
 		state.Attempt < 1 || state.Phase == "" || state.LastOutcome == "" ||
 		state.LastReason == "" || state.ProductionAuthorized ||
 		!validOptimizeDiscoveryCheckpoint(state) ||
-		!optimizeStringIn(state.Bindings.Completeness, optimizeBindingContractOnly, optimizeBindingDiscovery) ||
+		!validOptimizeCalibrationCheckpoint(state) ||
+		!optimizeStringIn(state.Bindings.Completeness, optimizeBindingContractOnly, optimizeBindingDiscovery, optimizeBindingCalibration) ||
 		state.Budget.WallTimeSeconds < 1 || state.Budget.Pairs < 2 ||
 		state.Budget.Pairs > 16 || state.Budget.MaxBreakEvenBuilds < 1 ||
 		state.Budget.MaxBreakEvenBuilds > 1000 {
@@ -433,7 +445,8 @@ func validOptimizeDiscoveryCheckpoint(state optimizeState) bool {
 		return state.Phase == optimizePhaseUnseen && !state.BuildStarted &&
 			discovery.Reason == "" && discovery.TestOptimization == ""
 	case optimizeDiscoveryComplete:
-		return state.Phase == "DISCOVERED" && discovery.Reason == optimizeDiscoveryReasonFound &&
+		return optimizeStringIn(state.Phase, "DISCOVERED", "CALIBRATING", "QUALIFIED", "NATIVE_RETAINED") &&
+			discovery.Reason == optimizeDiscoveryReasonFound &&
 			discovery.ReviewRequired && discovery.TestOptimization == "OUT_OF_SCOPE" &&
 			validOptimizeDiscoveryFiles(discovery.GeneratedFiles, true) && discovery.Graph.TotalProjects > 0 &&
 			discovery.Graph.SelectedProjects > 0 && discovery.Graph.OmittedProjects > 0
@@ -494,36 +507,52 @@ func optimizeInvocationBudget(invocation optimizeInvocation) optimizeBudget {
 }
 
 func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
-	discovery := run.discover(exitCode)
+	learningStarted := time.Now()
+	learningContext, cancel := context.WithTimeout(context.Background(), run.invocation.calibrationBudget)
+	defer cancel()
+	discovery, calibration, resumed := run.resumeCalibration()
+	if !resumed {
+		discovery = run.discover(learningContext, exitCode)
+		calibration = run.calibrate(learningContext, learningStarted, discovery, stderr)
+	}
 	completedAt := time.Now().UTC()
 	run.state.LastOutcome = optimizeOutcomeNative
-	run.state.LastReason = discovery.Reason
+	run.state.LastReason = calibration.Reason
 	run.state.Phase = "NATIVE_RETAINED"
-	if discovery.Status == optimizeDiscoveryComplete {
+	if calibration.Status == optimizeCalibrationComplete && calibration.Qualified {
+		run.state.LastOutcome = optimizeOutcomeLearning
+		run.state.Phase = "QUALIFIED"
+	} else if discovery.Status == optimizeDiscoveryComplete && calibration.Status == optimizeCalibrationSkipped {
 		run.state.LastOutcome = optimizeOutcomeLearning
 		run.state.Phase = "DISCOVERED"
 	}
 	run.state.BuildStarted = run.childStarted
 	run.state.LastExitCode = exitCode
 	run.state.Discovery = discovery
+	run.state.Calibration = calibration
+	if calibration.Status == optimizeCalibrationComplete {
+		run.state.Bindings.Completeness = optimizeBindingCalibration
+	}
 	run.state.UpdatedAt = completedAt.Format(time.RFC3339Nano)
 	result := optimizeResult{
 		SchemaVersion: optimizeResultSchemaVersion,
-		Outcome:       run.state.LastOutcome, Reason: discovery.Reason,
+		Outcome:       run.state.LastOutcome, Reason: calibration.Reason,
 		Phase:       run.state.Phase,
 		StartedAt:   run.startedAt.Format(time.RFC3339Nano),
 		CompletedAt: completedAt.Format(time.RFC3339Nano),
 		DurationMs:  completedAt.Sub(run.startedAt).Milliseconds(),
 		Generation:  run.state.Generation, Attempt: run.state.Attempt,
 		Bindings: run.state.Bindings, Budget: run.state.Budget, Resume: run.state.Resume,
-		Native:    optimizeNativeResult{Authoritative: true, Started: run.childStarted, ExitCode: exitCode},
-		Discovery: discovery,
+		Native:      optimizeNativeResult{Authoritative: true, Started: run.childStarted, ExitCode: exitCode},
+		Discovery:   discovery,
+		Calibration: calibration,
 		GeneratedFiles: optimizeGeneratedFiles{
-			State:     filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeStateFile)),
-			Result:    filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeResultFile)),
-			Discovery: append([]string{}, discovery.GeneratedFiles...),
+			State:       filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeStateFile)),
+			Result:      filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeResultFile)),
+			Discovery:   append([]string{}, discovery.GeneratedFiles...),
+			Calibration: append([]string{}, calibration.GeneratedFiles...),
 		},
-		ManualFilesRequired: 0, CalibrationPerformed: false, SelectionPerformed: false,
+		ManualFilesRequired: 0, CalibrationPerformed: calibration.Performed && !calibration.Reused, SelectionPerformed: false,
 		ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
 	}
 	if err := writeCanonicalPrivateJSON(run.statePath, run.state); err != nil {
@@ -546,14 +575,17 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		result.Outcome,
 		result.Reason,
 		result.GeneratedFiles.Result,
-		optimizeNextStep(discovery),
+		optimizeNextStep(discovery, calibration),
 	)
 	return err
 }
 
-func optimizeNextStep(discovery optimizeDiscoveryResult) string {
-	if discovery.Status == optimizeDiscoveryComplete {
-		return "automatic calibration of the discovered candidate"
+func optimizeNextStep(discovery optimizeDiscoveryResult, calibration optimizeCalibrationResult) string {
+	if calibration.Status == optimizeCalibrationComplete && calibration.Qualified {
+		return "store the qualified change-family profile for automatic replay"
+	}
+	if discovery.Status == optimizeDiscoveryComplete && !calibration.Performed {
+		return "automatic calibration needs a complete eight-pair budget"
 	}
 	return "native Gradle remains authoritative until discovery is safe"
 }

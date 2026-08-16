@@ -1,0 +1,199 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "$0")/.." && pwd -P)
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-magic-calibration.XXXXXX")
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-magic-calibration."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in git jq; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required automatic-calibration command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_binary="${buildopt_temp}/buildopt"
+buildopt_gradle_home="${buildopt_root}/.tools/gradle-user-home/local"
+"${buildopt_root}/dev/run" --toolchain go -- \
+    go build -trimpath -o "${buildopt_binary}" ./cmd/buildopt
+
+buildopt_repository="${buildopt_temp}/repository"
+mkdir -p -- "${buildopt_repository}"
+cp -R -- "${buildopt_root}/fixtures/gradle-workflow-breadth/." \
+    "${buildopt_repository}/"
+cp -- "${buildopt_root}/gradlew" "${buildopt_repository}/gradlew"
+cp -R -- "${buildopt_root}/gradle" "${buildopt_repository}/gradle"
+chmod +x -- "${buildopt_repository}/gradlew"
+printf '.buildopt/\n**/build/\n' >"${buildopt_repository}/.gitignore"
+sed -i 's/service-a-target/service-a-base/' \
+    "${buildopt_repository}/service-a/src/main/java/example/Application.java"
+printf '%s\n' \
+    '' \
+    "project(':service-b') {" \
+    "    tasks.register('calibrationWork') {" \
+    '        outputs.upToDateWhen { false }' \
+    '        doLast { Thread.sleep(1300) }' \
+    '    }' \
+    "    tasks.named('jar') { dependsOn tasks.named('calibrationWork') }" \
+    '}' >>"${buildopt_repository}/build.gradle"
+
+git -C "${buildopt_repository}" init -qb main
+git -C "${buildopt_repository}" config user.name 'BuildOpt Fixture'
+git -C "${buildopt_repository}" config user.email buildopt-fixture@example.invalid
+git -C "${buildopt_repository}" config commit.gpgsign false
+git -C "${buildopt_repository}" add .
+git -C "${buildopt_repository}" commit -qm 'automatic calibration base'
+git -C "${buildopt_repository}" switch -qc feature
+git -C "${buildopt_repository}" config branch.feature.remote .
+git -C "${buildopt_repository}" config branch.feature.merge refs/heads/main
+sed -i 's/service-a-base/service-a-target/' \
+    "${buildopt_repository}/service-a/src/main/java/example/Application.java"
+git -C "${buildopt_repository}" add \
+    service-a/src/main/java/example/Application.java
+git -C "${buildopt_repository}" commit -qm 'automatic calibration target'
+
+buildopt_run() {
+    local buildopt_state=$1
+    local buildopt_pairs=$2
+    local buildopt_attempt=$3
+    local buildopt_stdout="${buildopt_temp}/${buildopt_state}-${buildopt_attempt}.json"
+    local buildopt_stderr="${buildopt_temp}/${buildopt_state}-${buildopt_attempt}.log"
+    (
+        cd -- "${buildopt_repository}"
+        env -u BUILDOPT_BYPASS \
+            -u GITHUB_EVENT_PATH -u GITHUB_REPOSITORY \
+            -u CI_MERGE_REQUEST_DIFF_BASE_SHA -u CI_COMMIT_BEFORE_SHA \
+            -u CI_PROJECT_PATH \
+            GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            "${buildopt_binary}" optimize --json \
+            --state-dir ".buildopt/optimize/${buildopt_state}" \
+            --calibration-budget 5m \
+            --calibration-pairs "${buildopt_pairs}" \
+            --max-break-even-builds 100 \
+            jar --offline \
+            >"${buildopt_stdout}" 2>"${buildopt_stderr}"
+    ) || {
+        printf 'automatic calibration failed: %s attempt %s\n' \
+            "${buildopt_state}" "${buildopt_attempt}" >&2
+        sed -n '1,260p' "${buildopt_stderr}" >&2
+        return 1
+    }
+    printf '%s\n' "${buildopt_stdout}"
+}
+
+buildopt_first=$(buildopt_run qualified 8 1)
+jq -e '
+    .schemaVersion == "buildopt.poc/optimize-result/v1" and
+    .outcome == "LEARNING" and .phase == "QUALIFIED" and
+    .reason == "CANDIDATE_CALIBRATION_QUALIFIED" and
+    .bindings.completeness == "CALIBRATION_COMPLETE" and
+    .native == {authoritative: true, started: true, exitCode: 0} and
+    .manualFilesRequired == 0 and
+    .calibrationPerformed == true and .selectionPerformed == false and
+    .productionAuthorized == false and .testOptimization == "OUT_OF_SCOPE" and
+    .discovery.status == "COMPLETE" and
+    .discovery.reason == "STRUCTURAL_CANDIDATE_DISCOVERED" and
+    .calibration.status == "COMPLETE" and
+    .calibration.reason == "CANDIDATE_CALIBRATION_QUALIFIED" and
+    .calibration.performed == true and .calibration.reused == false and
+    .calibration.pairsRequested == 8 and .calibration.pairsMeasured == 8 and
+    .calibration.meanSavedMs >= 500 and
+    .calibration.reductionRatio >= 0.02 and
+    .calibration.interval95SavedMs[0] > 0 and
+    .calibration.positivePairs == 8 and
+    .calibration.valueGatePassed == true and
+    .calibration.qualified == true and
+    .calibration.fallbackSuccessful == true and
+    .calibration.breakEvenBuilds >= 1 and
+    .calibration.breakEvenBuilds <= .calibration.maximumBreakEvenBuilds and
+    (.calibration.evidenceSha256 | test("^[0-9a-f]{64}$")) and
+    (.calibration.discoverySha256 | test("^[0-9a-f]{64}$")) and
+    (.calibration.generatedFiles | length) == 1 and
+    .calibration.productionAuthorized == false and
+    .calibration.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_first}" >/dev/null || {
+    printf 'qualified automatic calibration result is invalid\n' >&2
+    jq . "${buildopt_first}" >&2
+    exit 1
+}
+
+buildopt_evidence=$(jq -r '.calibration.generatedFiles[0]' "${buildopt_first}")
+test -s "${buildopt_repository}/${buildopt_evidence}"
+if [[ $(uname -s) == Linux ]] &&
+    [[ $(stat -c '%a' "${buildopt_repository}/${buildopt_evidence}") != 600 ]]; then
+    printf 'automatic calibration evidence is not private: %s\n' \
+        "${buildopt_evidence}" >&2
+    exit 1
+fi
+
+buildopt_first_evidence_sha=$(jq -r '.calibration.evidenceSha256' "${buildopt_first}")
+buildopt_first_discovery_sha=$(jq -r '.calibration.discoverySha256' "${buildopt_first}")
+buildopt_first_cost=$(jq -r '.calibration.calibrationCostMs' "${buildopt_first}")
+buildopt_first_saved=$(jq -r '.calibration.meanSavedMs' "${buildopt_first}")
+buildopt_first_reduction=$(jq -r '.calibration.reductionRatio * 100' "${buildopt_first}")
+buildopt_first_break_even=$(jq -r '.calibration.breakEvenBuilds' "${buildopt_first}")
+
+buildopt_second=$(buildopt_run qualified 8 2)
+jq -e \
+    --arg evidence "${buildopt_first_evidence_sha}" \
+    --arg discovery "${buildopt_first_discovery_sha}" \
+    --argjson cost "${buildopt_first_cost}" \
+    --argjson saved "${buildopt_first_saved}" '
+    .outcome == "LEARNING" and .phase == "QUALIFIED" and
+    .generation == 1 and .attempt == 2 and
+    .resume == {
+        mode: "AUTO", checkpointFound: true, accepted: true,
+        reason: "EXACT_BINDINGS",
+        previousStateSha256: .resume.previousStateSha256
+    } and
+    (.resume.previousStateSha256 | test("^[0-9a-f]{64}$")) and
+    .calibration.performed == true and .calibration.reused == true and
+    .calibrationPerformed == false and
+    .calibration.evidenceSha256 == $evidence and
+    .calibration.discoverySha256 == $discovery and
+    .calibration.calibrationCostMs == $cost and
+    .calibration.meanSavedMs == $saved and
+    .selectionPerformed == false and .productionAuthorized == false
+' "${buildopt_second}" >/dev/null || {
+    printf 'exact automatic calibration resume is invalid\n' >&2
+    jq . "${buildopt_second}" >&2
+    exit 1
+}
+if rg -q 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-2.log"; then
+    printf 'exact calibration resume unexpectedly repeated measurement\n' >&2
+    exit 1
+fi
+
+buildopt_under_budget=$(buildopt_run under-budget 2 1)
+jq -e '
+    .outcome == "LEARNING" and .phase == "DISCOVERED" and
+    .reason == "CALIBRATION_PAIR_BUDGET_INSUFFICIENT" and
+    .bindings.completeness == "DISCOVERY_COMPLETE" and
+    .discovery.status == "COMPLETE" and
+    .calibration.status == "SKIPPED" and
+    .calibration.reason == "CALIBRATION_PAIR_BUDGET_INSUFFICIENT" and
+    .calibration.pairsRequested == 2 and
+    .calibration.performed == false and .calibration.qualified == false and
+    .calibration.generatedFiles == [] and
+    .calibration.productionAuthorized == false and
+    .selectionPerformed == false and .productionAuthorized == false
+' "${buildopt_under_budget}" >/dev/null || {
+    printf 'under-budget automatic calibration result is invalid\n' >&2
+    jq . "${buildopt_under_budget}" >&2
+    exit 1
+}
+
+printf 'Magic calibration OK: mean saved=%sms reduction=%s%% positive=8/8 calibration=%sms break-even=%s builds; exact evidence resumed and insufficient pair budget made no claim\n' \
+    "${buildopt_first_saved}" "${buildopt_first_reduction}" \
+    "${buildopt_first_cost}" "${buildopt_first_break_even}"

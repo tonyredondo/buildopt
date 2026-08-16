@@ -87,6 +87,7 @@ buildopt_run_optimize() {
             "${buildopt_binary}" optimize --json \
             --state-dir ".buildopt/optimize/${buildopt_state}" \
             --calibration-budget 10m \
+            --calibration-pairs 2 \
             "${buildopt_entrypoint}" --offline \
             >"${buildopt_stdout}" 2>"${buildopt_stderr}"
     ) || {
@@ -124,7 +125,7 @@ buildopt_check_supported() {
     jq -e --arg entrypoint "${buildopt_entrypoint}" \
         --arg expected "${buildopt_expected}" '
         .outcome == "LEARNING" and
-        .reason == "STRUCTURAL_CANDIDATE_DISCOVERED" and
+        .reason == "CALIBRATION_PAIR_BUDGET_INSUFFICIENT" and
         .phase == "DISCOVERED" and
         .bindings.completeness == "DISCOVERY_COMPLETE" and
         .discovery.status == "COMPLETE" and
@@ -168,7 +169,7 @@ buildopt_check_supported test-preparation testClasses \
 buildopt_run_optimize "${buildopt_repository}" packaging jar
 jq -e '
     .outcome == "LEARNING" and
-    .reason == "STRUCTURAL_CANDIDATE_DISCOVERED" and
+    .reason == "CALIBRATION_PAIR_BUDGET_INSUFFICIENT" and
     .generation == 1 and .attempt == 2 and
     .resume.checkpointFound == true and .resume.accepted == true and
     .resume.reason == "EXACT_BINDINGS" and

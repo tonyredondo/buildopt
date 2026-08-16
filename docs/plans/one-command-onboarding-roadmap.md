@@ -187,7 +187,7 @@ UNSEEN -> DISCOVERED -> CALIBRATING -> QUALIFIED -> ACTIVE
 | 0 | `POC-NEW-FAMILY-INSTALLED-PROFILE-REPLAY-001` | Replay Ktor's three reviewed profiles through the public package. | Clean checkouts select exact plans, option drift retains native and contemporary outputs equal native Gradle. |
 | 1 | `POC-MAGIC-ONBOARDING-CONTRACT-001` | Define `buildopt optimize`, its state machine, authority, outputs, exit behavior and resumable state. | One normative CLI/JSON contract; no manual internal files in the supported path; production authority remains false. |
 | 2 | `POC-MAGIC-AUTO-DISCOVERY-001` | Derive Wrapper, command, CI/local base, exact changes, Gradle output candidates and graph automatically. | Conventional packaging, classes, verification, distribution and build-owned test-preparation fixtures reach a proposal from command arguments alone; ambiguity retains native. |
-| 3 | `POC-MAGIC-CALIBRATION-001` | Orchestrate preflight, propose, measure and evaluate behind one command with progress, budget and exact checkpoint reuse. | A clean repository reaches a deterministic decision without invoking internal subcommands; interruption resumes only matching work. |
+| 3 | `POC-MAGIC-CALIBRATION-001` | Orchestrate preflight, propose, measure and evaluate behind one command with progress, budget and exact checkpoint reuse. | **Done:** a clean repository reaches a deterministic decision without invoking internal subcommands; exact evidence resumes and an insufficient pair budget makes no claim. |
 | 4 | `POC-MAGIC-PROFILE-PORTFOLIO-001` | Classify observed changes into exact structural families and maintain multiple qualified profiles without repository-name rules. | Dependency, resource, leaf and mixed-source fixtures select only their own profile; global/build-logic drift uses native Gradle. |
 | 5 | `POC-MAGIC-AUTO-REPLAY-001` | Let `buildopt optimize` automatically use a qualifying portfolio entry and refresh stale entries. | First qualifying run creates the profile; a later matching run selects it with no extra flag; drift disables it before Gradle starts. |
 | 6 | `POC-MAGIC-CI-ONBOARDING-001` | Add one-input GitHub/GitLab orchestration and portable calibration persistence. | A clean external consumer config supplies only the Gradle command; provider metadata, reports and compatible state are automatic. |
@@ -243,10 +243,10 @@ and honest native decisions when the idea does not pay.
 
 ## Immediate next step
 
-Complete `POC-MAGIC-CALIBRATION-001` behind the now-discovered candidate. The
-current command derives the Wrapper, workflow context, immutable comparison
-base, exact change, output candidates and structural graph from command and
-repository facts alone while native Gradle remains authoritative. Calibration
-must next compare that generated candidate with the same optimized-native
-workflow under the declared budget, resume only exact checkpoints and retain
-native whenever correctness or net wall-time value is not proven.
+Complete `POC-MAGIC-PROFILE-PORTFOLIO-001`. The command now derives the
+Wrapper, workflow context, immutable comparison base, exact change, output
+candidates and structural graph, then runs the frozen eight-pair calibration,
+checks exact outputs and full fallback, evaluates break-even and resumes only
+recomputed digest-exact evidence. The next block must turn a qualified result
+into independently bound change-family entries without repository-name rules;
+it must not activate those entries yet.
