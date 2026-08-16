@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	qualifiedPOCProfileUsage             = "usage: buildopt poc --changes-file PATH [--config PATH] [--timings-file PATH] [--edge-url LOOPBACK_ORIGIN]\n"
+	qualifiedPOCProfileUsage             = "usage: buildopt poc --changes-file PATH [--config PATH] [--timings-file PATH] [--edge-url LOOPBACK_ORIGIN] [--gradle-option VALUE ...]\n"
 	qualifiedPOCProfileSchemaVersionV1   = "buildopt.poc/qualified-profile/v1"
 	qualifiedPOCProfileSchemaVersionV2   = "buildopt.poc/qualified-profile/v2"
 	qualifiedPOCProfileSchemaVersionV3   = "buildopt.poc/qualified-profile/v3"
@@ -130,6 +130,8 @@ func prepareQualifiedPOCProfileInvocation(args []string, bypass bool) (impactInv
 	changesPath := flags.String("changes-file", "", "repository-relative newline-delimited changed paths")
 	timingsPath := flags.String("timings-file", "", "repository-relative machine-readable phase timing output")
 	edgeURL := flags.String("edge-url", "", "read-only IPv4 loopback Edge origin for the qualified POC")
+	var invocationGradleOptions repeatedStringFlag
+	flags.Var(&invocationGradleOptions, "gradle-option", "exact Gradle workflow option; repeat to bind the complete invocation option list")
 	if err := flags.Parse(args); err != nil || flags.NArg() != 0 || *changesPath == "" {
 		return impactInvocation{}, errors.New("invalid qualified POC profile arguments")
 	}
@@ -194,6 +196,20 @@ func prepareQualifiedPOCProfileInvocation(args []string, bypass bool) (impactInv
 		}
 		invocation.gradleArgs = append(append([]string(nil), profile.GradleOptions...), invocation.plan.Entrypoints...)
 	}
+	effectiveGradleOptions := append([]string(nil), profile.GradleOptions...)
+	if len(invocationGradleOptions) > 0 {
+		effectiveGradleOptions = append([]string(nil), invocationGradleOptions...)
+		if invocation.plan.CandidateSelected &&
+			!equalQualifiedPOCGradleOptions(profile.GradleOptions, invocationGradleOptions) {
+			invocation.plan = qualifiedPOCNativeFallback(
+				invocation.plan,
+				manifest.Manifest.OriginalEntrypoints,
+				"PROFILE_GRADLE_OPTIONS_DRIFT",
+			)
+			pocEdgeURL = ""
+		}
+	}
+	invocation.gradleArgs = append(effectiveGradleOptions, invocation.plan.Entrypoints...)
 	expectedOutputs := make([]string, 0, len(manifest.Manifest.RequiredArtifacts))
 	for _, artifact := range manifest.Manifest.RequiredArtifacts {
 		expectedOutputs = append(expectedOutputs, artifact.Path)
@@ -244,6 +260,18 @@ func prepareQualifiedPOCProfileInvocation(args []string, bypass bool) (impactInv
 		ProductionAuthorized:  false,
 	}
 	return invocation, nil
+}
+
+func equalQualifiedPOCGradleOptions(expected []string, actual repeatedStringFlag) bool {
+	if len(expected) != len(actual) {
+		return false
+	}
+	for index := range expected {
+		if expected[index] != actual[index] {
+			return false
+		}
+	}
+	return true
 }
 
 func canonicalWorkingDirectory() (string, error) {

@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "buildopt.specs/poc-new-family-installed-profile-replay/v1",
+  "evidenceSchemaVersion": "buildopt.evidence/poc-new-family-installed-profile-replay/v1",
+  "workItem": "POC-NEW-FAMILY-INSTALLED-PROFILE-REPLAY-001",
+  "decision": "PREREGISTER_KTOR_PUBLIC_INSTALLED_PROFILE_REPLAY",
+  "release": {
+    "version": "0.3.2",
+    "tag": "v0.3.2",
+    "revision": "TO_BE_BOUND_BY_RELEASE",
+    "platform": "linux-amd64",
+    "installerUrl": "https://raw.githubusercontent.com/tonyredondo/buildopt/v0.3.2/install.sh"
+  },
+  "sources": {
+    "matrixSpec": "specs/poc-new-family-change-breadth-v1.json",
+    "terminalEvidence": "benchmarks/results/poc-new-family-change-breadth-v1",
+    "capture": 2
+  },
+  "cells": [
+    "ktor-jvm-jar-dependency-source",
+    "ktor-jvm-jar-resource",
+    "ktor-jvm-jar-mixed-source"
+  ],
+  "method": {
+    "surface": "PUBLIC_RELEASE_BUILDOPT_POC",
+    "installation": "PINNED_PUBLIC_INSTALLER_AND_RELEASE_CHECKSUM",
+    "checkout": "CLEAN_EXTERNAL_CHECKOUT_AT_FROZEN_PUBLIC_REVISION",
+    "candidate": "REPOSITORY_COMMITTED_QUALIFIED_PROFILE_V4",
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12",
+      "-Pktor.develocity.skipBuildScans=true"
+    ],
+    "optionDriftProbe": "COMPLETE_QUALIFIED_OPTIONS_PLUS_STACKTRACE",
+    "optionDriftOutcome": "NATIVE_FULL_GRAPH_PROFILE_GRADLE_OPTIONS_DRIFT",
+    "requiredOutputComparison": "SAME_REPLAY_EXACT_CANDIDATE_EQUALS_NATIVE_FALLBACK",
+    "terminalOutputDigestRole": "DIAGNOSTIC_ONLY_NOT_A_GATE",
+    "valueDecision": "PRESERVE_TERMINAL_QUALIFICATION_WITHOUT_REESTIMATION",
+    "repositorySpecificProductRulesAllowed": false
+  },
+  "acceptance": {
+    "installedPackageRequired": true,
+    "allSelectivePlansRequired": true,
+    "allOptionDriftProbesMustFallback": true,
+    "candidateAndFallbackOutputsMustMatch": true,
+    "terminalOutputDigestMustMatch": false,
+    "qualificationMustMatchTerminal": true,
+    "maximumProductAttributableFailures": 0,
+    "cellPercentagesMayBeAveraged": false,
+    "mechanismPercentagesMayBeAdded": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "newTimingClaim": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationModified": false
+  }
+}

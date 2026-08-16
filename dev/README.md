@@ -3678,6 +3678,28 @@ The committed bundle is validated without network access or Gradle execution:
 ./dev/test-installed-profile-replay-result
 ```
 
+The Ktor public-package replay is frozen separately by
+`specs/poc-new-family-installed-profile-replay-v1.json`. It reconstructs the
+three terminal dependency-source, resource and mixed-source changes, installs
+the pinned public release and proves both exact selection and invocation-option
+drift fallback:
+
+```bash
+./dev/run-new-family-installed-profile-replay /absolute/path/to/new-capture
+```
+
+The committed result is checked without downloading the release or executing
+Gradle:
+
+```bash
+./dev/check-new-family-installed-profile-replay-result
+./dev/test-new-family-installed-profile-replay-result
+```
+
+This replay creates no new timing claim. It preserves each terminal Ktor
+qualification and compares only contemporary candidate and native-fallback
+outputs from the same reconstructed checkout.
+
 `specs/poc-cross-date-output-equivalence-v1.json` and
 `specs/poc-cross-date-output-equivalence-v1.md` freeze the follow-up for the
 remaining Groovy date boundary. The reviewed fixture adds exactly `BuildDate`

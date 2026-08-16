@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-new-family-installed-profile-replay-v1.json"
+buildopt_source_spec="${buildopt_repo_root}/specs/poc-new-family-change-breadth-v1.json"
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Ktor installed-profile checker command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  keys == [
+    "acceptance", "boundaries", "cells", "decision", "evidenceSchemaVersion",
+    "method", "release", "schemaVersion", "sources", "workItem"
+  ] and
+  .schemaVersion == "buildopt.specs/poc-new-family-installed-profile-replay/v1" and
+  .evidenceSchemaVersion == "buildopt.evidence/poc-new-family-installed-profile-replay/v1" and
+  .workItem == "POC-NEW-FAMILY-INSTALLED-PROFILE-REPLAY-001" and
+  .decision == "PREREGISTER_KTOR_PUBLIC_INSTALLED_PROFILE_REPLAY" and
+  .release.version == "0.3.2" and .release.tag == "v0.3.2" and
+  (.release.revision == "TO_BE_BOUND_BY_RELEASE" or
+    (.release.revision | test("^[0-9a-f]{40}$"))) and
+  .release.platform == "linux-amd64" and
+  .release.installerUrl ==
+    "https://raw.githubusercontent.com/tonyredondo/buildopt/v0.3.2/install.sh" and
+  .sources == {
+    matrixSpec: "specs/poc-new-family-change-breadth-v1.json",
+    terminalEvidence: "benchmarks/results/poc-new-family-change-breadth-v1",
+    capture: 2
+  } and
+  .cells == [
+    "ktor-jvm-jar-dependency-source",
+    "ktor-jvm-jar-resource",
+    "ktor-jvm-jar-mixed-source"
+  ] and
+  .method.surface == "PUBLIC_RELEASE_BUILDOPT_POC" and
+  .method.installation == "PINNED_PUBLIC_INSTALLER_AND_RELEASE_CHECKSUM" and
+  .method.candidate == "REPOSITORY_COMMITTED_QUALIFIED_PROFILE_V4" and
+  .method.gradleOptions == [
+    "--daemon", "--build-cache", "--parallel", "--no-configuration-cache",
+    "--console=plain", "--no-scan", "--max-workers=12",
+    "-Pktor.develocity.skipBuildScans=true"
+  ] and
+  .method.optionDriftProbe == "COMPLETE_QUALIFIED_OPTIONS_PLUS_STACKTRACE" and
+  .method.optionDriftOutcome == "NATIVE_FULL_GRAPH_PROFILE_GRADLE_OPTIONS_DRIFT" and
+  .method.requiredOutputComparison ==
+    "SAME_REPLAY_EXACT_CANDIDATE_EQUALS_NATIVE_FALLBACK" and
+  .method.terminalOutputDigestRole == "DIAGNOSTIC_ONLY_NOT_A_GATE" and
+  .method.repositorySpecificProductRulesAllowed == false and
+  .acceptance == {
+    installedPackageRequired: true,
+    allSelectivePlansRequired: true,
+    allOptionDriftProbesMustFallback: true,
+    candidateAndFallbackOutputsMustMatch: true,
+    terminalOutputDigestMustMatch: false,
+    qualificationMustMatchTerminal: true,
+    maximumProductAttributableFailures: 0,
+    cellPercentagesMayBeAveraged: false,
+    mechanismPercentagesMayBeAdded: false
+  } and
+  .boundaries == {
+    proofOfConcept: true,
+    productionAuthorized: false,
+    automaticActivation: false,
+    newTimingClaim: false,
+    soakRequired: false,
+    designPartnerRequired: false,
+    testOptimizationModified: false
+  }
+' "${buildopt_spec}" >/dev/null
+
+while IFS= read -r buildopt_key; do
+    jq -e --arg key "${buildopt_key}" --slurpfile replay "${buildopt_spec}" '
+      ([.repositories[] |
+        select(.key == $key and .performanceClaim == true and
+          .repositoryId == "ktorio/ktor" and
+          .publicRevision == "bc7de799f4eb997a63250f2f70492d85f5c92f50" and
+          .jdkToolchain == "temurin-jdk-21" and
+          .pipelineClass == "jvm-jar" and
+          .entrypoints == ["jvmJar"] and
+          .expectedCandidateEntrypoints != null and
+          (.changes | length) >= 1)] | length == 1) and
+      $replay[0].method.gradleOptions == .method.gradleOptions
+    ' "${buildopt_source_spec}" >/dev/null
+    buildopt_source="${buildopt_repo_root}/benchmarks/results/poc-new-family-change-breadth-v1/${buildopt_key}/capture-2"
+    for buildopt_file in profile.json buildopt-impact-manifest.json \
+        buildopt-impact-graph.generated.json buildopt-impact.generated.json evidence.json; do
+        [[ -s ${buildopt_source}/${buildopt_file} ]] || {
+            printf 'terminal Ktor profile artifact is unavailable: %s/%s\n' \
+                "${buildopt_key}" "${buildopt_file}" >&2
+            exit 1
+        }
+    done
+    jq -e --slurpfile replay "${buildopt_spec}" '
+      .schemaVersion == "buildopt.poc/qualified-profile/v4" and
+      .profileVersion == 4 and .profileId == "qualified-structural-build-impact" and
+      .repositoryId == "ktorio/ktor" and .pipelineClass == "jvm-jar" and
+      .gradleOptions == $replay[0].method.gradleOptions and
+      (.preconditions | length) == 3 and
+      .qualification.pairs == 8 and .qualification.meanSavedMs >= 500 and
+      .qualification.reductionRatio >= 0.02 and
+      .qualification.interval95SavedMs[0] > 0 and
+      .mechanisms == {
+        buildImpact: true, standardJarAdapter: false, safeCache: false,
+        runtimeTuning: false, hotState: false, standardCopyAdapter: false,
+        sharedEdgeCache: false
+      }
+    ' "${buildopt_source}/profile.json" >/dev/null
+done < <(jq -r '.cells[]' "${buildopt_spec}")
+
+printf 'Ktor public installed-profile replay contract OK: %s\n' "${buildopt_spec}"

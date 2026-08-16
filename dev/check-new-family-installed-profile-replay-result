@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [/absolute/evidence/root]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence_root=${1:-"${buildopt_repo_root}/benchmarks/results/poc-new-family-installed-profile-replay-v1"}
+buildopt_spec="${buildopt_repo_root}/specs/poc-new-family-installed-profile-replay-v1.json"
+buildopt_source_spec="${buildopt_repo_root}/specs/poc-new-family-change-breadth-v1.json"
+buildopt_terminal_root="${buildopt_repo_root}/benchmarks/results/poc-new-family-change-breadth-v1"
+buildopt_summary="${buildopt_evidence_root}/summary.json"
+
+[[ ${buildopt_evidence_root} == /* && -s ${buildopt_summary} ]] || {
+    printf 'Ktor installed-profile evidence root is invalid: %s\n' "${buildopt_evidence_root}" >&2
+    exit 1
+}
+"${buildopt_script_dir}/check-new-family-installed-profile-replay" >/dev/null
+
+jq -e --slurpfile spec "${buildopt_spec}" '
+  keys == ["aggregation", "boundaries", "capturedAt", "cells", "method", "release", "schemaVersion", "workItem"] and
+  .schemaVersion == $spec[0].evidenceSchemaVersion and .workItem == $spec[0].workItem and
+  (.capturedAt | fromdateiso8601) > 0 and
+  .release.version == $spec[0].release.version and .release.tag == $spec[0].release.tag and
+  .release.revision == $spec[0].release.revision and .release.platform == $spec[0].release.platform and
+  all([.release.executableSha256, .release.installerSha256, .release.archiveSha256][];
+      test("^[0-9a-f]{64}$")) and
+  .method == $spec[0].method and .boundaries == $spec[0].boundaries and
+  (.cells | length) == 3 and ([.cells[].key] == $spec[0].cells) and
+  .aggregation == {
+    cells: 3, selectivePlans: 3, optionDriftFallbacks: 3,
+    candidateFallbackOutputsMatched: 3,
+    crossCaptureTerminalOutputsMatched: ([.cells[] | select(.crossCaptureTerminalOutputMatched)] | length),
+    qualificationsPreserved: 3, productAttributableFailures: 0,
+    repositoryPercentagesAveraged: false, mechanismPercentagesAdded: false
+  }
+' "${buildopt_summary}" >/dev/null
+
+[[ -s ${buildopt_evidence_root}/install.log ]] || exit 1
+if rg -n '/tmp/buildopt-ktor-installed-replay|/home/tony/' \
+    "${buildopt_evidence_root}/install.log" >/dev/null; then
+    printf 'Ktor installed-profile install evidence contains a private capture path\n' >&2
+    exit 1
+fi
+
+buildopt_index=0
+while IFS= read -r buildopt_key; do
+    buildopt_cell="${buildopt_evidence_root}/${buildopt_key}"
+    buildopt_terminal="${buildopt_terminal_root}/${buildopt_key}/capture-2"
+    buildopt_source_index=$(jq --arg key "${buildopt_key}" \
+        '.repositories | map(.key) | index($key)' "${buildopt_source_spec}")
+    for buildopt_file in distribution.log candidate.log fallback.log candidate-plan.json \
+        fallback-plan.json candidate-output.json fallback-output.json result.json; do
+        [[ -s ${buildopt_cell}/${buildopt_file} ]] || {
+            printf 'Ktor installed-profile artifact is unavailable: %s\n' \
+                "${buildopt_cell}/${buildopt_file}" >&2
+            exit 1
+        }
+    done
+    if rg -n '/tmp/buildopt-ktor-installed-replay|/home/tony/' \
+        "${buildopt_cell}"/*.log >/dev/null; then
+        printf 'Ktor installed-profile evidence contains a private capture path: %s\n' \
+            "${buildopt_key}" >&2
+        exit 1
+    fi
+    buildopt_expected_entrypoints=$(jq \
+        ".repositories[${buildopt_source_index}].expectedCandidateEntrypoints" "${buildopt_source_spec}")
+    buildopt_fallback_entrypoints=$(jq '.originalEntrypoints' \
+        "${buildopt_terminal}/buildopt-impact-manifest.json")
+    jq -e --argjson expected "${buildopt_expected_entrypoints}" \
+        --slurpfile profile "${buildopt_terminal}/profile.json" '
+      .schemaVersion == "buildopt.poc/qualified-profile-plan/v4" and
+      .selectionMode == "POC_CANDIDATE" and
+      .selectionReason == "EXPLICIT_OWNER_POC_CANDIDATE" and
+      .entrypoints == $expected and .qualification == $profile[0].qualification and
+      (.preconditions | length) == 3 and all(.preconditions[]; .status == "SATISFIED") and
+      .enabledAdapters == [] and .productionAuthorized == false
+    ' "${buildopt_cell}/candidate-plan.json" >/dev/null
+    jq -e --argjson fallback "${buildopt_fallback_entrypoints}" \
+        --slurpfile profile "${buildopt_terminal}/profile.json" '
+      .schemaVersion == "buildopt.poc/qualified-profile-plan/v4" and
+      .selectionMode == "FULL_GRAPH" and
+      .selectionReason == "PROFILE_GRADLE_OPTIONS_DRIFT" and
+      .entrypoints == $fallback and .fallbackEntrypoints == $fallback and
+      .qualification == $profile[0].qualification and
+      (.preconditions | length) == 3 and all(.preconditions[]; .status == "SATISFIED") and
+      .enabledAdapters == [] and .productionAuthorized == false
+    ' "${buildopt_cell}/fallback-plan.json" >/dev/null
+    jq -e '.count > 0 and (.sha256 | test("^[0-9a-f]{64}$"))' \
+        "${buildopt_cell}/candidate-output.json" "${buildopt_cell}/fallback-output.json" >/dev/null
+    [[ $(jq -r '.sha256' "${buildopt_cell}/candidate-output.json") == \
+        $(jq -r '.sha256' "${buildopt_cell}/fallback-output.json") ]] || {
+        printf 'Ktor candidate and option-drift fallback output differ: %s\n' "${buildopt_key}" >&2
+        exit 1
+    }
+    grep -F 'buildopt: qualified POC profile plan ' "${buildopt_cell}/candidate.log" >/dev/null
+    grep -F 'buildopt: qualified POC profile plan ' "${buildopt_cell}/fallback.log" >/dev/null
+    [[ $(sha256sum "${buildopt_cell}/candidate.log" | awk '{print $1}') == \
+        $(jq -r '.candidate.logSha256' "${buildopt_cell}/result.json") ]] || exit 1
+    [[ $(sha256sum "${buildopt_cell}/fallback.log" | awk '{print $1}') == \
+        $(jq -r '.optionDriftFallback.logSha256' "${buildopt_cell}/result.json") ]] || exit 1
+    [[ $(sha256sum "${buildopt_terminal}/evidence.json" | awk '{print $1}') == \
+        $(jq -r '.terminalEvidenceSha256' "${buildopt_cell}/result.json") ]] || exit 1
+    jq -e \
+        --slurpfile candidatePlan "${buildopt_cell}/candidate-plan.json" \
+        --slurpfile fallbackPlan "${buildopt_cell}/fallback-plan.json" \
+        --slurpfile candidateOutput "${buildopt_cell}/candidate-output.json" \
+        --slurpfile fallbackOutput "${buildopt_cell}/fallback-output.json" \
+        --slurpfile profile "${buildopt_terminal}/profile.json" '
+      .candidate.decision == $candidatePlan[0].selectionMode and
+      .candidate.reason == $candidatePlan[0].selectionReason and
+      .candidate.entrypoints == $candidatePlan[0].entrypoints and
+      .candidate.output == $candidateOutput[0] and
+      .optionDriftFallback.decision == $fallbackPlan[0].selectionMode and
+      .optionDriftFallback.reason == $fallbackPlan[0].selectionReason and
+      .optionDriftFallback.entrypoints == $fallbackPlan[0].entrypoints and
+      .optionDriftFallback.output == $fallbackOutput[0] and
+      .candidateFallbackOutputsMatched == true and
+      .qualification == $profile[0].qualification and
+      .productAttributableFailures == 0 and .testOptimization == "OUT_OF_SCOPE"
+    ' "${buildopt_cell}/result.json" >/dev/null
+    cmp --silent "${buildopt_cell}/result.json" <(jq ".cells[${buildopt_index}]" "${buildopt_summary}")
+    buildopt_index=$((buildopt_index + 1))
+done < <(jq -r '.cells[]' "${buildopt_spec}")
+
+printf 'Ktor public installed-profile evidence OK: 3 selective plans, 3 option-drift fallbacks, exact outputs preserved\n'

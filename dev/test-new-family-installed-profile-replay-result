@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_source="${buildopt_repo_root}/benchmarks/results/poc-new-family-installed-profile-replay-v1"
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-ktor-installed-test.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-ktor-installed-test."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+"${buildopt_script_dir}/check-new-family-installed-profile-replay-result" "${buildopt_source}"
+cp -a -- "${buildopt_source}/." "${buildopt_temp}/"
+
+jq '.aggregation.selectivePlans = 2' "${buildopt_temp}/summary.json" \
+    >"${buildopt_temp}/summary-mutated.json"
+mv -- "${buildopt_temp}/summary-mutated.json" "${buildopt_temp}/summary.json"
+if "${buildopt_script_dir}/check-new-family-installed-profile-replay-result" "${buildopt_temp}" \
+    >/dev/null 2>&1; then
+    printf 'checker accepted a tampered Ktor installed-profile summary\n' >&2
+    exit 1
+fi
+
+cp -- "${buildopt_source}/summary.json" "${buildopt_temp}/summary.json"
+printf 'tampered\n' >>"${buildopt_temp}/ktor-jvm-jar-resource/candidate.log"
+if "${buildopt_script_dir}/check-new-family-installed-profile-replay-result" "${buildopt_temp}" \
+    >/dev/null 2>&1; then
+    printf 'checker accepted a tampered Ktor installed-profile log\n' >&2
+    exit 1
+fi
+
+printf 'Ktor installed-profile negative fixtures OK: summary and log tampering rejected\n'

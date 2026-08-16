@@ -188,6 +188,40 @@ func TestQualifiedPOCStructuralProfileSelectsAndFailsClosedOnDrift(t *testing.T)
 	}
 }
 
+func TestQualifiedPOCStructuralProfileBindsInvocationGradleOptions(t *testing.T) {
+	repositoryRoot := impactTestRepository(t)
+	configureQualifiedPOCStructuralTestProfile(t, repositoryRoot)
+	t.Chdir(repositoryRoot)
+
+	matching, err := prepareQualifiedPOCProfileInvocation([]string{
+		"--changes-file", "changed.txt",
+		"--gradle-option=--no-daemon",
+	}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !matching.plan.CandidateSelected || matching.qualifiedProfile == nil ||
+		strings.Join(matching.gradleArgs, " ") != "--no-daemon :service-a:assemble" {
+		t.Fatalf("matching option invocation = %+v", matching)
+	}
+
+	drifted, err := prepareQualifiedPOCProfileInvocation([]string{
+		"--changes-file", "changed.txt",
+		"--gradle-option=--no-daemon",
+		"--gradle-option=--stacktrace",
+	}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if drifted.plan.CandidateSelected || drifted.qualifiedProfile == nil ||
+		drifted.plan.Mode != buildimpact.DecisionFullGraph ||
+		drifted.plan.Reason != "PROFILE_GRADLE_OPTIONS_DRIFT" ||
+		drifted.qualifiedProfile.SelectionReason != "PROFILE_GRADLE_OPTIONS_DRIFT" ||
+		strings.Join(drifted.gradleArgs, " ") != "--no-daemon --stacktrace assemble" {
+		t.Fatalf("drifted option invocation = %+v", drifted)
+	}
+}
+
 func TestQualifiedPOCStructuralProfileBindsReviewedOutputEquivalence(t *testing.T) {
 	repositoryRoot := impactTestRepository(t)
 	configureQualifiedPOCStructuralTestProfile(t, repositoryRoot)

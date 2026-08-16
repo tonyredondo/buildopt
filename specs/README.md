@@ -554,6 +554,13 @@ saves 77.98%. All 48 pairs and 24 reciprocal blocks improve with exact JARs;
 the root-configuration cell retains the native full graph twice without a
 timing claim. Evidence remains bound to the public revision and selector.
 
+`poc-new-family-installed-profile-replay-v1.json` and
+`poc-new-family-installed-profile-replay-v1.md` freeze the public-package
+adoption check for those three Ktor profiles. The installed `buildopt poc`
+path must select every exact reviewed plan, preserve contemporary JAR bytes,
+and retain native Gradle before execution when the complete invocation option
+list differs from the qualified profile. Historical timing remains immutable.
+
 `poc-new-family-calibration-economics-v1.json` and
 `poc-new-family-calibration-economics-v1.md` freeze the follow-up economics
 study before fresh phase timing. The study binds the three terminal Ktor value
