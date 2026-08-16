@@ -1,0 +1,224 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [/absolute/evidence/root]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence_root=${1:-"${buildopt_repo_root}/benchmarks/results/poc-new-family-calibration-economics-v1"}
+buildopt_spec="${buildopt_repo_root}/specs/poc-new-family-calibration-economics-v1.json"
+buildopt_source_spec="${buildopt_repo_root}/specs/poc-new-family-change-breadth-v1.json"
+buildopt_source_root="${buildopt_repo_root}/benchmarks/results/poc-new-family-change-breadth-v1"
+buildopt_summary="${buildopt_evidence_root}/summary.json"
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-new-family-calibration-check.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ ${buildopt_temporary} == "${TMPDIR:-/tmp}/buildopt-new-family-calibration-check."* ]]; then
+        rm -rf -- "${buildopt_temporary}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+[[ ${buildopt_evidence_root} == /* && -s ${buildopt_summary} ]] || {
+    printf 'new-family calibration evidence root is invalid: %s\n' \
+        "${buildopt_evidence_root}" >&2
+    exit 1
+}
+"${buildopt_script_dir}/check-new-family-calibration-economics" --spec-only >/dev/null
+
+mapfile -t buildopt_keys < <(jq -r '.cells[].key' "${buildopt_spec}")
+for buildopt_key in "${buildopt_keys[@]}"; do
+    for buildopt_capture in 1 2; do
+        buildopt_capture_root="${buildopt_evidence_root}/${buildopt_key}/capture-${buildopt_capture}"
+        buildopt_phase="${buildopt_capture_root}/phase.json"
+        buildopt_calibration="${buildopt_capture_root}/calibration.json"
+        buildopt_terminal="${buildopt_source_root}/${buildopt_key}/capture-${buildopt_capture}/evidence.json"
+        buildopt_qualification="${buildopt_source_root}/${buildopt_key}/qualification.json"
+        for buildopt_file in phase.json calibration.json cold.log replay.log drift.log \
+            calibration.log cache-record.json buildopt-changes.txt buildopt-output-contract.json \
+            buildopt-impact-manifest.json buildopt-impact-graph.generated.json \
+            buildopt-impact.generated.json buildopt-fallback-changes.txt \
+            buildopt-profile-proposal.json; do
+            [[ -s ${buildopt_capture_root}/${buildopt_file} ]] || {
+                printf 'calibration artifact is unavailable: %s\n' \
+                    "${buildopt_capture_root}/${buildopt_file}" >&2
+                exit 1
+            }
+        done
+
+        jq -e --arg key "${buildopt_key}" --argjson capture "${buildopt_capture}" \
+            --slurpfile spec "${buildopt_spec}" --slurpfile source "${buildopt_source_spec}" '
+          ($source[0].repositories[] | select(.key == $key)) as $sourceCell |
+          .schemaVersion == "buildopt.evidence/poc-new-family-calibration-phase/v1" and
+          .workItem == $spec[0].workItem and .captureIndex == $capture and
+          .buildopt.revision == $spec[0].calibration.buildoptRevision and
+          .buildopt.executableSha256 == $spec[0].calibration.executableSha256 and
+          .cell.key == $key and .cell.repositoryId == $sourceCell.repositoryId and
+          .cell.repositoryRevision == $sourceCell.publicRevision and
+          .cell.changeClass == $sourceCell.changeClass and
+          .cell.changes == $sourceCell.changes and
+          .proposal.coldMs > 0 and .proposal.exactReplayMs > 0 and
+          .proposal.artifactsByteIdentical == true and
+          .proposal.driftProbeExitCode != 0 and .proposal.driftProbeReplayed == false and
+          (.proposal.coldLogSha256 | test("^[0-9a-f]{64}$")) and
+          (.proposal.replayLogSha256 | test("^[0-9a-f]{64}$")) and
+          (.proposal.driftLogSha256 | test("^[0-9a-f]{64}$")) and
+          (.proposal.cacheRecordSha256 | test("^[0-9a-f]{64}$")) and
+          (.proposal.artifactSha256 | keys | sort) == ([
+            "buildopt-output-contract.json", "buildopt-impact-manifest.json",
+            "buildopt-impact-graph.generated.json", "buildopt-impact.generated.json",
+            "buildopt-fallback-changes.txt", "buildopt-profile-proposal.json"
+          ] | sort) and
+          all(.proposal.artifactSha256[]; test("^[0-9a-f]{64}$")) and
+          (.calibration.evidenceSha256 | test("^[0-9a-f]{64}$")) and
+          (.calibration.logSha256 | test("^[0-9a-f]{64}$")) and
+          .calibration.measuredPairs == 0 and
+          .calibration.qualificationDecisionMade == false and
+          .calibration.globalFallbackTimed == false and
+          .sourceBindings.changeBreadthSpecSha256 == $spec[0].source.changeBreadthSpecSha256 and
+          .sourceBindings.terminalSummarySha256 == $spec[0].source.terminalSummarySha256 and
+          (.sourceBindings.changesSha256 | test("^[0-9a-f]{64}$")) and
+          .boundaries.timingClaim == false and
+          .boundaries.automaticActivation == false and
+          .boundaries.productionAuthorized == false and
+          .boundaries.terminalSavingsRemeasured == false and
+          .boundaries.testOptimizationModified == false and
+          (.captureSha256 | test("^[0-9a-f]{64}$"))
+        ' "${buildopt_phase}" >/dev/null
+
+        jq 'del(.captureSha256)' "${buildopt_phase}" >"${buildopt_temporary}/phase.json"
+        [[ $(sha256sum "${buildopt_temporary}/phase.json" | awk '{print $1}') == \
+            $(jq -er '.captureSha256' "${buildopt_phase}") ]]
+        [[ $(sha256sum "${buildopt_capture_root}/cold.log" | awk '{print $1}') == \
+            $(jq -er '.proposal.coldLogSha256' "${buildopt_phase}") ]]
+        [[ $(sha256sum "${buildopt_capture_root}/replay.log" | awk '{print $1}') == \
+            $(jq -er '.proposal.replayLogSha256' "${buildopt_phase}") ]]
+        [[ $(sha256sum "${buildopt_capture_root}/drift.log" | awk '{print $1}') == \
+            $(jq -er '.proposal.driftLogSha256' "${buildopt_phase}") ]]
+        [[ $(sha256sum "${buildopt_capture_root}/calibration.log" | awk '{print $1}') == \
+            $(jq -er '.calibration.logSha256' "${buildopt_phase}") ]]
+        [[ $(sha256sum "${buildopt_capture_root}/calibration.json" | awk '{print $1}') == \
+            $(jq -er '.calibration.evidenceSha256' "${buildopt_phase}") ]]
+        [[ $(sha256sum "${buildopt_capture_root}/cache-record.json" | awk '{print $1}') == \
+            $(jq -er '.proposal.cacheRecordSha256' "${buildopt_phase}") ]]
+        [[ $(sha256sum "${buildopt_capture_root}/buildopt-changes.txt" | awk '{print $1}') == \
+            $(jq -er '.sourceBindings.changesSha256' "${buildopt_phase}") ]]
+        while IFS=$'\t' read -r buildopt_artifact buildopt_sha; do
+            [[ $(sha256sum "${buildopt_capture_root}/${buildopt_artifact}" | awk '{print $1}') == \
+                "${buildopt_sha}" ]]
+        done < <(jq -r '.proposal.artifactSha256 | to_entries[] | [.key, .value] | @tsv' \
+            "${buildopt_phase}")
+
+        [[ $(sha256sum "${buildopt_terminal}" | awk '{print $1}') == \
+            $(jq -er '.sourceBindings.terminalEvidenceSha256' "${buildopt_phase}") ]]
+        [[ $(sha256sum "${buildopt_qualification}" | awk '{print $1}') == \
+            $(jq -er '.sourceBindings.qualificationSha256' "${buildopt_phase}") ]]
+        grep -Fq 'buildopt: exact structural proposal replay ' \
+            "${buildopt_capture_root}/replay.log"
+        if grep -Fq 'buildopt: exact structural proposal replay ' \
+            "${buildopt_capture_root}/cold.log" "${buildopt_capture_root}/drift.log"; then
+            printf 'cold or drift path incorrectly reports exact replay: %s capture %d\n' \
+                "${buildopt_key}" "${buildopt_capture}" >&2
+            exit 1
+        fi
+        if grep -Eq '(/tmp/buildopt|/home/[^/]+|/Users/[^/]+|[A-Za-z]:\\Users\\)' \
+            "${buildopt_capture_root}/cold.log" "${buildopt_capture_root}/replay.log" \
+            "${buildopt_capture_root}/drift.log" "${buildopt_capture_root}/calibration.log"; then
+            printf 'calibration log contains a host-local path: %s\n' \
+                "${buildopt_capture_root}" >&2
+            exit 1
+        fi
+
+        jq -e --arg key "${buildopt_key}" --slurpfile spec "${buildopt_spec}" \
+            --slurpfile source "${buildopt_source_spec}" --slurpfile phase "${buildopt_phase}" '
+          ($spec[0].cells[] | select(.key == $key)) as $cell |
+          ($source[0].repositories[] | select(.key == $key)) as $sourceCell |
+          .schemaVersion == "buildopt.evidence/poc-structural-calibration/v1" and
+          .repositoryRevision == $phase[0].cell.targetRevision and
+          .baseRevision == $sourceCell.publicRevision and
+          .buildoptRevision == $spec[0].calibration.buildoptRevision and
+          .executableSha256 == $spec[0].calibration.executableSha256 and
+          .sourceEvidenceSha256 == $phase[0].sourceBindings.changesSha256 and
+          .analysis.decision == "MEASURE_STRUCTURAL_CANDIDATE" and
+          .analysis.reason == "COMPLETE_STRUCTURAL_REDUCTION" and
+          .analysis.plan.candidateEntrypoints == $sourceCell.expectedCandidateEntrypoints and
+          .gradleOptions == $spec[0].runner.gradleOptions and
+          .candidateStabilization == "ADAPTIVE_EXACT_2_OF_3" and
+          (.candidateWarmups | length) >= 4 and (.candidateWarmups | length) <= 5 and
+          .candidateWarmups[0].phase == "CACHE_SEED" and
+          .candidateWarmups[1].phase == "BASE_DAEMON_STABILIZATION" and
+          .candidateWarmups[2].phase == "TARGET_WORKLOAD_STABILIZATION" and
+          all(.candidateWarmups[];
+            .durationMs > 0 and (.logSha256 | test("^[0-9a-f]{64}$")) and
+            (.taskOutcomes.fingerprintSha256 | test("^[0-9a-f]{64}$"))) and
+          ([.candidateWarmups[] | select(.phase | startswith("TARGET_WORKLOAD")) |
+            .taskOutcomes.fingerprintSha256][-2:] | unique | length) == 1 and
+          .requiredOutputSha256 == $cell.terminalRequiredOutputSha256 and
+          .requiredOutputCount == $cell.terminalRequiredOutputCount and
+          .boundaries.timingClaim == false and
+          .boundaries.automaticActivation == false and
+          .boundaries.productionAuthorized == false
+        ' "${buildopt_calibration}" >/dev/null
+    done
+done
+
+jq -e --slurpfile spec "${buildopt_spec}" '
+  .schemaVersion == "buildopt.evidence/poc-new-family-calibration-economics/v1" and
+  .workItem == $spec[0].workItem and (.capturedAt | test("Z$")) and
+  .calibrationBuildopt.revision == $spec[0].calibration.buildoptRevision and
+  .calibrationBuildopt.executableSha256 == $spec[0].calibration.executableSha256 and
+  .terminalBuildopt.revision == $spec[0].source.terminalBuildoptRevision and
+  .terminalBuildopt.executableSha256 == $spec[0].source.terminalExecutableSha256 and
+  .method.capturesPerCell == 2 and
+  .method.installedCalibrationCostFormula == $spec[0].economics.installedCalibrationCostFormula and
+  .method.exactReplayEvaluationFormula == $spec[0].economics.exactReplayEvaluationFormula and
+  .method.breakEvenFormula == $spec[0].economics.breakEvenFormula and
+  .method.terminalSavingsRemeasured == false and
+  .method.cellPercentagesAveraged == false and
+  .method.cellBreakEvenCountsAveraged == false and
+  (.cells | length) == 3 and ([.cells[].key] | sort) == ([$spec[0].cells[].key] | sort) and
+  all(.cells[];
+    .captures == 2 and (.proposal.coldMs | length) == 2 and
+    (.proposal.exactReplayMs | length) == 2 and
+    .proposal.coldMeanMs > 0 and .proposal.exactReplayMeanMs > 0 and
+    .proposal.artifactsByteIdentical == true and .proposal.driftProbesRejected == true and
+    (.calibration.candidateWarmupTotalMs | length) == 2 and
+    .calibration.candidateWarmupMeanMs > 0 and
+    all(.calibration.targetWarmupCounts[]; . >= 2 and . <= 3) and
+    all(.calibration.targetFingerprints[]; length >= 2 and length <= 3 and
+      (.[-2:] | unique | length) == 1) and
+    .calibration.measuredPairs == 0 and
+    .calibration.qualificationDecisionMade == false and
+    .calibration.globalFallbackTimed == false and
+    .terminalValue.meanSavedMs > 0 and .terminalValue.unchanged == true and
+    .economics.installedWorkflow.calibrationCostMs > 0 and
+    .economics.installedWorkflow.exactBreakEvenBuilds > 0 and
+    .economics.installedWorkflow.breakEvenBuilds >= 1 and
+    .economics.exactReplayEvaluation.calibrationCostMs > 0 and
+    .economics.exactReplayEvaluation.breakEvenBuilds >= 1) and
+  .excludedCell == $spec[0].excludedCell and .excludedCell.timed == false and
+  .aggregation.timedCellCount == 3 and .aggregation.phaseCaptureCount == 6 and
+  .aggregation.cellPercentagesAveraged == false and
+  .aggregation.cellBreakEvenCountsAveraged == false and
+  .sourceBindings.changeBreadthSpecSha256 == $spec[0].source.changeBreadthSpecSha256 and
+  .sourceBindings.terminalSummarySha256 == $spec[0].source.terminalSummarySha256 and
+  .sourceBindings.preregisteredFromRevision == $spec[0].preregisteredFromRevision and
+  .boundaries.proofOfConcept == true and .boundaries.productionAuthorized == false and
+  .boundaries.automaticActivation == false and
+  .boundaries.repositorySpecificProductRulesAllowed == false and
+  .boundaries.terminalSavingsChanged == false and
+  .boundaries.globalFallbackTimed == false and
+  .boundaries.testOptimizationModified == false and
+  .boundaries.soakRequired == false and .boundaries.designPartnerRequired == false
+' "${buildopt_summary}" >/dev/null
+
+buildopt_reassembled="${buildopt_temporary}/summary.json"
+"${buildopt_script_dir}/assemble-new-family-calibration-economics" \
+    "${buildopt_evidence_root}" "$(jq -er '.capturedAt' "${buildopt_summary}")" \
+    "${buildopt_reassembled}"
+cmp --silent "${buildopt_summary}" "${buildopt_reassembled}"
+
+printf 'New-family calibration economics evidence OK: 3 cells, 6 fresh captures, cell-specific break-even verified\n'

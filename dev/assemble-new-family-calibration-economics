@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# < 2 || $# > 3)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/root CAPTURED_AT [output]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_evidence_root=$1
+buildopt_captured_at=$2
+buildopt_output=${3:-"${buildopt_evidence_root}/summary.json"}
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-new-family-calibration-economics-v1.json"
+buildopt_source_summary="${buildopt_repo_root}/benchmarks/results/poc-new-family-change-breadth-v1/summary.json"
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-new-family-calibration-assemble.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ ${buildopt_temporary} == "${TMPDIR:-/tmp}/buildopt-new-family-calibration-assemble."* ]]; then
+        rm -rf -- "${buildopt_temporary}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+mapfile -t buildopt_keys < <(jq -r '.cells[].key' "${buildopt_spec}")
+buildopt_rows=()
+for buildopt_key in "${buildopt_keys[@]}"; do
+    buildopt_phase_one="${buildopt_evidence_root}/${buildopt_key}/capture-1/phase.json"
+    buildopt_phase_two="${buildopt_evidence_root}/${buildopt_key}/capture-2/phase.json"
+    buildopt_calibration_one="${buildopt_evidence_root}/${buildopt_key}/capture-1/calibration.json"
+    buildopt_calibration_two="${buildopt_evidence_root}/${buildopt_key}/capture-2/calibration.json"
+    buildopt_row="${buildopt_temporary}/${buildopt_key}.json"
+    for buildopt_required in "${buildopt_phase_one}" "${buildopt_phase_two}" \
+        "${buildopt_calibration_one}" "${buildopt_calibration_two}" \
+        "${buildopt_source_summary}"; do
+        [[ -s ${buildopt_required} ]] || {
+            printf 'new-family calibration source is unavailable: %s\n' \
+                "${buildopt_required}" >&2
+            exit 1
+        }
+    done
+
+    jq -n \
+        --arg key "${buildopt_key}" \
+        --slurpfile p1 "${buildopt_phase_one}" \
+        --slurpfile p2 "${buildopt_phase_two}" \
+        --slurpfile c1 "${buildopt_calibration_one}" \
+        --slurpfile c2 "${buildopt_calibration_two}" \
+        --slurpfile spec "${buildopt_spec}" \
+        --slurpfile terminal "${buildopt_source_summary}" '
+      def mean2($a; $b): (($a + $b) / 2);
+      def warmup_total($capture):
+        ([$capture.candidateWarmups[].durationMs] | add);
+      def target_warmups($capture):
+        [$capture.candidateWarmups[] |
+          select(.phase | startswith("TARGET_WORKLOAD"))];
+      ($p1[0]) as $phaseOne |
+      ($p2[0]) as $phaseTwo |
+      ($c1[0]) as $calibrationOne |
+      ($c2[0]) as $calibrationTwo |
+      ($spec[0].cells[] | select(.key == $key)) as $cell |
+      ($terminal[0].cells[] | select(.key == $key)) as $terminalCell |
+      mean2($phaseOne.proposal.coldMs; $phaseTwo.proposal.coldMs) as $cold |
+      mean2($phaseOne.proposal.exactReplayMs; $phaseTwo.proposal.exactReplayMs) as $replay |
+      mean2(warmup_total($calibrationOne); warmup_total($calibrationTwo)) as $warmups |
+      ($cold + $warmups) as $installedCost |
+      ($replay + $warmups) as $replayCost |
+      {
+        key: $key,
+        repositoryId: $terminalCell.repositoryId,
+        repositoryRevision: $terminalCell.repositoryRevision,
+        workflowFamily: $terminalCell.workflowFamily,
+        changeClass: $terminalCell.changeClass,
+        changes: $terminalCell.changes,
+        captures: 2,
+        proposal: {
+          coldMs: [$phaseOne.proposal.coldMs, $phaseTwo.proposal.coldMs],
+          coldMeanMs: $cold,
+          exactReplayMs: [$phaseOne.proposal.exactReplayMs, $phaseTwo.proposal.exactReplayMs],
+          exactReplayMeanMs: $replay,
+          artifactsByteIdentical: ($phaseOne.proposal.artifactsByteIdentical and
+            $phaseTwo.proposal.artifactsByteIdentical),
+          driftProbesRejected: (($phaseOne.proposal.driftProbeExitCode != 0) and
+            ($phaseTwo.proposal.driftProbeExitCode != 0) and
+            ($phaseOne.proposal.driftProbeReplayed == false) and
+            ($phaseTwo.proposal.driftProbeReplayed == false))
+        },
+        calibration: {
+          candidateWarmupTotalMs: [warmup_total($calibrationOne), warmup_total($calibrationTwo)],
+          candidateWarmupMeanMs: $warmups,
+          warmupPhases: [
+            [$calibrationOne.candidateWarmups[].phase],
+            [$calibrationTwo.candidateWarmups[].phase]
+          ],
+          targetWarmupCounts: [
+            (target_warmups($calibrationOne) | length),
+            (target_warmups($calibrationTwo) | length)
+          ],
+          targetFingerprints: [
+            [target_warmups($calibrationOne)[] | .taskOutcomes.fingerprintSha256],
+            [target_warmups($calibrationTwo)[] | .taskOutcomes.fingerprintSha256]
+          ],
+          requiredOutputSha256: $cell.terminalRequiredOutputSha256,
+          requiredOutputCount: $cell.terminalRequiredOutputCount,
+          measuredPairs: 0,
+          qualificationDecisionMade: false,
+          globalFallbackTimed: false
+        },
+        terminalValue: {
+          meanSavedMs: $cell.terminalMeanSavedMs,
+          reductionRatio: $terminalCell.result.reductionRatio,
+          captures: $terminalCell.result.captures,
+          pairs: $terminalCell.result.pairs,
+          unchanged: true
+        },
+        economics: {
+          installedWorkflow: {
+            calibrationCostMs: $installedCost,
+            exactBreakEvenBuilds: ($installedCost / $cell.terminalMeanSavedMs),
+            breakEvenBuilds: (($installedCost / $cell.terminalMeanSavedMs) | ceil)
+          },
+          exactReplayEvaluation: {
+            calibrationCostMs: $replayCost,
+            exactBreakEvenBuilds: ($replayCost / $cell.terminalMeanSavedMs),
+            breakEvenBuilds: (($replayCost / $cell.terminalMeanSavedMs) | ceil)
+          }
+        },
+        sourceBindings: {
+          phaseCaptureSha256: [$phaseOne.captureSha256, $phaseTwo.captureSha256],
+          calibrationEvidenceSha256: [
+            $phaseOne.calibration.evidenceSha256,
+            $phaseTwo.calibration.evidenceSha256
+          ],
+          terminalEvidenceSha256: $cell.terminalEvidenceSha256,
+          qualificationSha256: $cell.qualificationSha256
+        }
+      }
+    ' >"${buildopt_row}"
+    buildopt_rows+=("${buildopt_row}")
+done
+
+jq -s \
+    --arg capturedAt "${buildopt_captured_at}" \
+    --slurpfile spec "${buildopt_spec}" '
+  {
+    schemaVersion: "buildopt.evidence/poc-new-family-calibration-economics/v1",
+    workItem: $spec[0].workItem,
+    capturedAt: $capturedAt,
+    calibrationBuildopt: {
+      revision: $spec[0].calibration.buildoptRevision,
+      executableSha256: $spec[0].calibration.executableSha256
+    },
+    terminalBuildopt: {
+      revision: $spec[0].source.terminalBuildoptRevision,
+      executableSha256: $spec[0].source.terminalExecutableSha256
+    },
+    method: {
+      capturesPerCell: $spec[0].runner.capturesPerCell,
+      installedCalibrationCostFormula: $spec[0].economics.installedCalibrationCostFormula,
+      exactReplayEvaluationFormula: $spec[0].economics.exactReplayEvaluationFormula,
+      breakEvenFormula: $spec[0].economics.breakEvenFormula,
+      terminalSavingsRemeasured: false,
+      cellPercentagesAveraged: false,
+      cellBreakEvenCountsAveraged: false
+    },
+    cells: .,
+    excludedCell: $spec[0].excludedCell,
+    aggregation: {
+      timedCellCount: length,
+      phaseCaptureCount: (length * $spec[0].runner.capturesPerCell),
+      cellsWithOneBuildInstalledBreakEven:
+        ([.[] | select(.economics.installedWorkflow.breakEvenBuilds == 1)] | length),
+      cellsWithTwoOrFewerBuildInstalledBreakEven:
+        ([.[] | select(.economics.installedWorkflow.breakEvenBuilds <= 2)] | length),
+      cellPercentagesAveraged: false,
+      cellBreakEvenCountsAveraged: false
+    },
+    sourceBindings: {
+      changeBreadthSpecSha256: $spec[0].source.changeBreadthSpecSha256,
+      terminalSummarySha256: $spec[0].source.terminalSummarySha256,
+      preregisteredFromRevision: $spec[0].preregisteredFromRevision
+    },
+    boundaries: $spec[0].boundaries
+  }
+' "${buildopt_rows[@]}" >"${buildopt_output}"

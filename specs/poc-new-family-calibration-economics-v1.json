@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "buildopt.specs/poc-new-family-calibration-economics/v1",
+  "workItem": "POC-NEW-FAMILY-CALIBRATION-ECONOMICS-001",
+  "preregisteredFromRevision": "82c25e3d516ffc6e4f25d93893d7f6d9d8e6136e",
+  "source": {
+    "changeBreadthSpec": "specs/poc-new-family-change-breadth-v1.json",
+    "changeBreadthSpecSha256": "fcab73f3f77ee3de91241247a4d7f7dff4c5cb78d4fc52d2ff3b5fb61046f854",
+    "terminalEvidence": "benchmarks/results/poc-new-family-change-breadth-v1",
+    "terminalSummarySha256": "c769b6af80b2b029f7b50c2073c209663eef2669e146ad62efb07fa4f1d11820",
+    "terminalBuildoptRevision": "35065d30ed066af3f9dea75382b2b9b9af66301a",
+    "terminalExecutableSha256": "10b1feae55925adfa94ba7f071854b1c7e1a248b1b9e221775d9af152271b07e"
+  },
+  "calibration": {
+    "buildoptRevision": "82c25e3d516ffc6e4f25d93893d7f6d9d8e6136e",
+    "executableSha256": "f90db6bdc8c0a431cd14fbc222c61eda393594249fb7183c216c7037bbabcdd3",
+    "proposal": {
+      "coldPass": "OUTPUT_PREFLIGHT_PLUS_ONE_COMBINED_GRADLE_DISCOVERY",
+      "exactReplay": "EXACT_DIGEST_BOUND_PRIVATE_CACHE",
+      "coldAndReplayReportedSeparately": true,
+      "driftProbe": "ADDITIONAL_GRADLE_OPTION_MUST_NOT_REPLAY",
+      "requiredByteIdenticalArtifacts": [
+        "output-contract",
+        "manifest",
+        "graph",
+        "generated-manifest",
+        "fallback-changes",
+        "proposal"
+      ]
+    },
+    "candidatePhases": [
+      "CACHE_SEED",
+      "BASE_DAEMON_STABILIZATION",
+      "TARGET_WORKLOAD_STABILIZATION",
+      "TARGET_WORKLOAD_STABILITY_CONFIRMATION"
+    ],
+    "adaptiveTargetStabilization": "FIRST_TWO_EXACT_TARGET_FINGERPRINTS_MATCH_ELSE_LAST_TWO_OF_THREE_MUST_MATCH"
+  },
+  "runner": {
+    "platform": "linux-amd64",
+    "cpuCount": 12,
+    "capturesPerCell": 2,
+    "clock": "EXTERNAL_WALL_CLOCK_NANOSECONDS",
+    "maxWorkers": 12,
+    "perCommandTimeout": "45m",
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12",
+      "-Pktor.develocity.skipBuildScans=true"
+    ]
+  },
+  "cells": [
+    {
+      "key": "ktor-jvm-jar-dependency-source",
+      "terminalMeanSavedMs": 84314.4375,
+      "terminalRequiredOutputSha256": "c885bbb245c219d71496704a3c6ddc9db549f50b6bc248b340321b1c966a1551",
+      "terminalRequiredOutputCount": 2,
+      "qualificationSha256": "140a47336083e74445aa8a43bbb06e974d192229a5d6da0d690552d3da735900",
+      "terminalEvidenceSha256": [
+        "43a40426f87eace4242e38834970798ea885c09954b83a298417c654d4012036",
+        "e25dd6ebd322776715de2585582925d57a3d675a80e475c854f1c0cc2cabf7c5"
+      ]
+    },
+    {
+      "key": "ktor-jvm-jar-resource",
+      "terminalMeanSavedMs": 49517.3125,
+      "terminalRequiredOutputSha256": "90ae2a371364bd6048afb34a4ab680a0164dfed8889c451d798ce84faed3c487",
+      "terminalRequiredOutputCount": 1,
+      "qualificationSha256": "2a30e31572034e0e456fa2e07ff786ca7c5187a13a3bdaf0c6a0eff5dbaa9bbf",
+      "terminalEvidenceSha256": [
+        "324f765ce1e6f05aa41a1a4c1dfc3121686ad1c82e3f9c07a3b4a4b6ba4289c7",
+        "fb2db5cfa3653bff0b247d78173fe12651c1499fa9789e8a531e30acbc006c4b"
+      ]
+    },
+    {
+      "key": "ktor-jvm-jar-mixed-source",
+      "terminalMeanSavedMs": 81781.125,
+      "terminalRequiredOutputSha256": "26ee904a6ded844b1eb510067ebaabf983203fc4cd67b6afc4668ea39b0f4717",
+      "terminalRequiredOutputCount": 2,
+      "qualificationSha256": "8d162643300c9a9195019846f36dc6c4dc5a273416da04790e8a8234f03f3996",
+      "terminalEvidenceSha256": [
+        "aa9a6d5fcd2ef0f1008575688e0c68d8465b21a02a9c08fc40dcf8a53a2d7748",
+        "63925ff15501544d0b57e9dccd413547804da1c5a42b0e09bfd1f11c91a32edd"
+      ]
+    }
+  ],
+  "excludedCell": {
+    "key": "ktor-jvm-jar-global-configuration",
+    "decision": "RETAIN_NATIVE_GRADLE",
+    "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+    "timed": false
+  },
+  "economics": {
+    "installedCalibrationCostFormula": "FRESH_COLD_PROPOSAL_MEAN_MS + FRESH_CANDIDATE_WARMUP_MEAN_MS",
+    "exactReplayEvaluationFormula": "FRESH_EXACT_REPLAY_MEAN_MS + FRESH_CANDIDATE_WARMUP_MEAN_MS",
+    "breakEvenFormula": "CEIL(CALIBRATION_COST_MS / UNCHANGED_TERMINAL_MEAN_SAVED_MS)",
+    "terminalSavingsRemeasured": false,
+    "percentagesMayBeAveragedAcrossCells": false,
+    "breakEvenCountsMayBeAveragedAcrossCells": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "terminalSavingsChanged": false,
+    "globalFallbackTimed": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

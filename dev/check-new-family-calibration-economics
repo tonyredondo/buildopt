@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [--spec-only]\n' "$0" >&2
+    exit 64
+fi
+if (($# == 1)) && [[ $1 != --spec-only ]]; then
+    printf 'usage: %s [--spec-only]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_spec_only=${1:-}
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec="${buildopt_repo_root}/specs/poc-new-family-calibration-economics-v1.json"
+buildopt_source_spec="${buildopt_repo_root}/specs/poc-new-family-change-breadth-v1.json"
+buildopt_source_root="${buildopt_repo_root}/benchmarks/results/poc-new-family-change-breadth-v1"
+buildopt_source_summary="${buildopt_source_root}/summary.json"
+buildopt_result_root="${buildopt_repo_root}/benchmarks/results/poc-new-family-calibration-economics-v1"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-new-family-calibration-economics/v1" and
+  .workItem == "POC-NEW-FAMILY-CALIBRATION-ECONOMICS-001" and
+  (.preregisteredFromRevision | test("^[0-9a-f]{40}$")) and
+  (.source.changeBreadthSpecSha256 | test("^[0-9a-f]{64}$")) and
+  (.source.terminalSummarySha256 | test("^[0-9a-f]{64}$")) and
+  (.source.terminalBuildoptRevision | test("^[0-9a-f]{40}$")) and
+  (.source.terminalExecutableSha256 | test("^[0-9a-f]{64}$")) and
+  (.calibration.buildoptRevision | test("^[0-9a-f]{40}$")) and
+  (.calibration.executableSha256 | test("^[0-9a-f]{64}$")) and
+  .calibration.proposal.coldPass == "OUTPUT_PREFLIGHT_PLUS_ONE_COMBINED_GRADLE_DISCOVERY" and
+  .calibration.proposal.exactReplay == "EXACT_DIGEST_BOUND_PRIVATE_CACHE" and
+  .calibration.proposal.coldAndReplayReportedSeparately == true and
+  .calibration.proposal.driftProbe == "ADDITIONAL_GRADLE_OPTION_MUST_NOT_REPLAY" and
+  (.calibration.proposal.requiredByteIdenticalArtifacts | length) == 6 and
+  .calibration.candidatePhases == [
+    "CACHE_SEED", "BASE_DAEMON_STABILIZATION",
+    "TARGET_WORKLOAD_STABILIZATION", "TARGET_WORKLOAD_STABILITY_CONFIRMATION"
+  ] and
+  .runner.platform == "linux-amd64" and .runner.cpuCount == 12 and
+  .runner.capturesPerCell == 2 and .runner.maxWorkers == 12 and
+  .runner.perCommandTimeout == "45m" and
+  .runner.gradleOptions == [
+    "--daemon", "--build-cache", "--parallel", "--no-configuration-cache",
+    "--console=plain", "--no-scan", "--max-workers=12",
+    "-Pktor.develocity.skipBuildScans=true"
+  ] and
+  (.cells | length) == 3 and ([.cells[].key] | unique | length) == 3 and
+  all(.cells[];
+    .terminalMeanSavedMs > 0 and
+    (.terminalRequiredOutputSha256 | test("^[0-9a-f]{64}$")) and
+    .terminalRequiredOutputCount > 0 and
+    (.qualificationSha256 | test("^[0-9a-f]{64}$")) and
+    (.terminalEvidenceSha256 | length) == 2 and
+    all(.terminalEvidenceSha256[]; test("^[0-9a-f]{64}$"))) and
+  .excludedCell.key == "ktor-jvm-jar-global-configuration" and
+  .excludedCell.decision == "RETAIN_NATIVE_GRADLE" and
+  .excludedCell.reason == "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH" and
+  .excludedCell.timed == false and
+  .economics.installedCalibrationCostFormula ==
+    "FRESH_COLD_PROPOSAL_MEAN_MS + FRESH_CANDIDATE_WARMUP_MEAN_MS" and
+  .economics.exactReplayEvaluationFormula ==
+    "FRESH_EXACT_REPLAY_MEAN_MS + FRESH_CANDIDATE_WARMUP_MEAN_MS" and
+  .economics.breakEvenFormula ==
+    "CEIL(CALIBRATION_COST_MS / UNCHANGED_TERMINAL_MEAN_SAVED_MS)" and
+  .economics.terminalSavingsRemeasured == false and
+  .economics.percentagesMayBeAveragedAcrossCells == false and
+  .economics.breakEvenCountsMayBeAveragedAcrossCells == false and
+  .boundaries.proofOfConcept == true and
+  .boundaries.productionAuthorized == false and
+  .boundaries.automaticActivation == false and
+  .boundaries.repositorySpecificProductRulesAllowed == false and
+  .boundaries.terminalSavingsChanged == false and
+  .boundaries.globalFallbackTimed == false and
+  .boundaries.testOptimizationModified == false and
+  .boundaries.soakRequired == false and .boundaries.designPartnerRequired == false
+' "${buildopt_spec}" >/dev/null
+
+[[ $(sha256sum "${buildopt_source_spec}" | awk '{print $1}') == \
+    $(jq -er '.source.changeBreadthSpecSha256' "${buildopt_spec}") ]]
+[[ $(sha256sum "${buildopt_source_summary}" | awk '{print $1}') == \
+    $(jq -er '.source.terminalSummarySha256' "${buildopt_spec}") ]]
+
+mapfile -t buildopt_keys < <(jq -r '.cells[].key' "${buildopt_spec}")
+for buildopt_key in "${buildopt_keys[@]}"; do
+    jq -e --arg key "${buildopt_key}" --slurpfile source "${buildopt_source_spec}" \
+        --slurpfile summary "${buildopt_source_summary}" '
+      (.cells[] | select(.key == $key)) as $cell |
+      ($source[0].repositories[] | select(.key == $key)) as $sourceCell |
+      ($summary[0].cells[] | select(.key == $key)) as $terminal |
+      $sourceCell.performanceClaim == true and
+      $terminal.evidenceState == "QUALIFIED" and $terminal.result.qualified == true and
+      $cell.terminalMeanSavedMs == $terminal.result.meanSavedMs
+    ' "${buildopt_spec}" >/dev/null
+    [[ $(sha256sum "${buildopt_source_root}/${buildopt_key}/qualification.json" | awk '{print $1}') == \
+        $(jq -er --arg key "${buildopt_key}" '.cells[] | select(.key == $key) | .qualificationSha256' "${buildopt_spec}") ]]
+    for buildopt_capture in 1 2; do
+        buildopt_index=$((buildopt_capture - 1))
+        [[ $(sha256sum "${buildopt_source_root}/${buildopt_key}/capture-${buildopt_capture}/evidence.json" | awk '{print $1}') == \
+            $(jq -er --arg key "${buildopt_key}" --argjson index "${buildopt_index}" \
+                '.cells[] | select(.key == $key) | .terminalEvidenceSha256[$index]' "${buildopt_spec}") ]]
+    done
+done
+
+printf 'New-family calibration economics contract OK: 3 timed cells; global fallback excluded\n'
+if [[ ${buildopt_spec_only} != --spec-only && -s ${buildopt_result_root}/summary.json ]]; then
+    "${buildopt_script_dir}/check-new-family-calibration-economics-result" \
+        "${buildopt_result_root}"
+fi

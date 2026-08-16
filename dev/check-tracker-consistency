@@ -117,6 +117,7 @@ buildopt_required_tracker_text=(
     "| \`E-347\` | 2026-08-15 | \`POC-CROSS-DATE-OUTPUT-EQUIVALENCE-001\`"
     "| \`E-348\` | 2026-08-15 | \`POC-NEW-FAMILY-TRANSFER-001\`"
     "| \`E-349\` | 2026-08-15 | \`POC-NEW-FAMILY-CHANGE-BREADTH-001\`"
+    "| \`E-350\` | 2026-08-16 | \`POC-NEW-FAMILY-CALIBRATION-ECONOMICS-001\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"

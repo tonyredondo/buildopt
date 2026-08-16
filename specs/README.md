@@ -554,6 +554,14 @@ saves 77.98%. All 48 pairs and 24 reciprocal blocks improve with exact JARs;
 the root-configuration cell retains the native full graph twice without a
 timing claim. Evidence remains bound to the public revision and selector.
 
+`poc-new-family-calibration-economics-v1.json` and
+`poc-new-family-calibration-economics-v1.md` freeze the follow-up economics
+study before fresh phase timing. The study binds the three terminal Ktor value
+cells, separately records installed cold discovery, exact replay and candidate
+stabilization, and computes repeated-build break-even against each unchanged
+terminal saving. The global fallback remains untimed and no result is averaged
+across change shapes.
+
 `poc-generic-output-equivalence-v1.json` and
 `poc-generic-output-equivalence-v1.md` preregister the three public workflows
 whose outputs were semantically stable but not byte-reproducible. Exact bytes

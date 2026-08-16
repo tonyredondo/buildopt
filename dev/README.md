@@ -3494,6 +3494,24 @@ The accepted captures all propagate the complete preregistered Gradle option
 list. An earlier diagnostic matrix that omitted the repository's Develocity
 property is preserved under `incidents/` and contributes zero terminal pairs.
 
+`./dev/check-new-family-calibration-economics --spec-only` validates the
+preregistered Ktor economics study and all immutable terminal bindings before
+fresh timing. The resumable runner is:
+
+```bash
+./dev/run-new-family-calibration-economics \
+  "$(pwd)/benchmarks/results/poc-new-family-calibration-economics-v1" \
+  /absolute/path/to/preregistered/buildopt [cell-key] [capture-index]
+```
+
+It times cold discovery and exact replay separately, rejects an option-drift
+replay, then invokes `profile measure --calibration-only` for candidate cache
+seed, base-daemon and bounded target stabilization. The assembler reports
+installed and exact-replay break-even per cell against unchanged terminal
+savings. The result checker recomputes the summary and the negative fixture
+must reject summary or log tampering. The global-configuration cell is never
+timed.
+
 Before the original-workflow preflight, the runner prepares the exact Wrapper
 distribution selected by that repository, reusing only a matching cached
 distribution and allowing at most three bounded network attempts. It runs no

@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_source="${buildopt_repo_root}/benchmarks/results/poc-new-family-calibration-economics-v1"
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-new-family-calibration-test.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ ${buildopt_temporary} == "${TMPDIR:-/tmp}/buildopt-new-family-calibration-test."* ]]; then
+        rm -rf -- "${buildopt_temporary}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+"${buildopt_script_dir}/check-new-family-calibration-economics-result" "${buildopt_source}"
+cp -a -- "${buildopt_source}/." "${buildopt_temporary}/"
+
+jq '.cells[0].economics.installedWorkflow.breakEvenBuilds += 1' \
+    "${buildopt_temporary}/summary.json" >"${buildopt_temporary}/summary-mutated.json"
+mv -- "${buildopt_temporary}/summary-mutated.json" "${buildopt_temporary}/summary.json"
+if "${buildopt_script_dir}/check-new-family-calibration-economics-result" \
+    "${buildopt_temporary}" >/dev/null 2>&1; then
+    printf 'checker accepted a manipulated break-even result\n' >&2
+    exit 1
+fi
+
+cp -- "${buildopt_source}/summary.json" "${buildopt_temporary}/summary.json"
+printf 'tampered\n' >>"${buildopt_temporary}/ktor-jvm-jar-resource/capture-1/calibration.log"
+if "${buildopt_script_dir}/check-new-family-calibration-economics-result" \
+    "${buildopt_temporary}" >/dev/null 2>&1; then
+    printf 'checker accepted a tampered calibration log\n' >&2
+    exit 1
+fi
+
+printf 'New-family calibration economics negative fixtures OK: summary and log tampering rejected\n'
