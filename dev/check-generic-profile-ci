@@ -47,9 +47,15 @@ for buildopt_line in \
     "      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02" \
     "        retention-days: 14" \
     "        BUILDOPT_PROFILE_ACTION_REF: \${{ github.action_ref }}"; do
-    if [[ "$(grep -Fxc "${buildopt_line}" "${buildopt_action}")" != 1 ]]; then
-        printf 'Action is missing the profile CI contract line: %s\n' \
-            "${buildopt_line}" >&2
+    buildopt_expected_count=1
+    case ${buildopt_line} in
+        *actions/upload-artifact@* | *retention-days*)
+            buildopt_expected_count=2
+            ;;
+    esac
+    if [[ $(grep -Fxc "${buildopt_line}" "${buildopt_action}") != "${buildopt_expected_count}" ]]; then
+        printf 'Action contract line has an unexpected count (%s): %s\n' \
+            "${buildopt_expected_count}" "${buildopt_line}" >&2
         exit 1
     fi
 done
