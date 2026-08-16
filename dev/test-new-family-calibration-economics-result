@@ -31,11 +31,15 @@ if "${buildopt_script_dir}/check-new-family-calibration-economics-result" \
 fi
 
 cp -- "${buildopt_source}/summary.json" "${buildopt_temporary}/summary.json"
-printf 'tampered\n' >>"${buildopt_temporary}/ktor-jvm-jar-resource/capture-1/calibration.log"
+jq '.candidateWarmups[0].durationMs += 1' \
+    "${buildopt_temporary}/ktor-jvm-jar-resource/capture-1/calibration.json" \
+    >"${buildopt_temporary}/calibration-mutated.json"
+mv -- "${buildopt_temporary}/calibration-mutated.json" \
+    "${buildopt_temporary}/ktor-jvm-jar-resource/capture-1/calibration.json"
 if "${buildopt_script_dir}/check-new-family-calibration-economics-result" \
     "${buildopt_temporary}" >/dev/null 2>&1; then
-    printf 'checker accepted a tampered calibration log\n' >&2
+    printf 'checker accepted manipulated structured calibration evidence\n' >&2
     exit 1
 fi
 
-printf 'New-family calibration economics negative fixtures OK: summary and log tampering rejected\n'
+printf 'New-family calibration economics negative fixtures OK: summary and structured-capture tampering rejected\n'

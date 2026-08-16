@@ -1749,6 +1749,28 @@ Recompute the terminal matrix and its negative tamper fixtures with:
 ./dev/test-new-family-change-breadth-result
 ```
 
+## Ktor calibration economics
+
+[`results/poc-new-family-calibration-economics-v1/`](./results/poc-new-family-calibration-economics-v1/README.md)
+binds two fresh setup captures to each qualified Ktor change cell without
+rerunning or rewriting its terminal value evidence. First-time discovery plus
+candidate stabilization repays after **7 builds** for dependency source,
+**10 builds** for a JVM resource and **8 builds** for the mixed-source change.
+
+Exact digest-bound proposal replay takes 0.321–0.376 seconds. Including fresh
+candidate stabilization, repeat evaluation repays after **2, 4 and 3 builds**
+respectively. All replay artifacts are byte-identical, every option-drift
+probe misses, target fingerprints converge, required output digests remain
+exact and the global-configuration fallback is not timed. Cell economics are
+not averaged.
+
+Recompute the result and its negative tamper fixtures with:
+
+```bash
+./dev/check-new-family-calibration-economics-result
+./dev/test-new-family-calibration-economics-result
+```
+
 ## JVM Agent spike evidence
 
 [`results/spk-002-agent.json`](./results/spk-002-agent.json) records the one

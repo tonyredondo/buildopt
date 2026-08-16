@@ -1,0 +1,2011 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-structural-calibration/v1",
+  "capturedAt": "2026-08-16T08:00:31Z",
+  "repositoryRevision": "b6c643af46858e145ac7c34dabca2ef92d3e477e",
+  "baseRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+  "buildoptRevision": "82c25e3d516ffc6e4f25d93893d7f6d9d8e6136e",
+  "executableSha256": "f90db6bdc8c0a431cd14fbc222c61eda393594249fb7183c216c7037bbabcdd3",
+  "sourceEvidenceSha256": "e18e68524bdefcc7c68f7f7d26bb28afb8760b2434da57974f8589bf87f918c7",
+  "analysis": {
+    "schemaVersion": "buildopt.poc/opportunity-analysis/v1",
+    "decision": "MEASURE_STRUCTURAL_CANDIDATE",
+    "reason": "COMPLETE_STRUCTURAL_REDUCTION",
+    "subject": {
+      "repositoryId": "ktorio/ktor",
+      "pipelineClass": "jvm-jar",
+      "gradleVersion": "9.5.1"
+    },
+    "inputs": [
+      {
+        "role": "BUILD_IMPACT_MANIFEST",
+        "path": "buildopt-impact-manifest.json",
+        "sha256": "sha256:fa53a9915a8410f7b412891341c0894d7373aea53f90a31cfa2d4a701016b37b"
+      },
+      {
+        "role": "BUILD_IMPACT_GRAPH",
+        "path": "buildopt-impact-graph.generated.json",
+        "sha256": "sha256:71496ea7b7f088d914f6a608f27a620a474af15d51298c6c0f68393a6042dbea"
+      },
+      {
+        "role": "GENERATED_MANIFEST",
+        "path": "buildopt-impact.generated.json",
+        "sha256": "sha256:7c03fd9ee5f40d90be9fc9fd94f2fac4075b1d23a366f0cde99f67f8837be66d"
+      }
+    ],
+    "sourceBindings": {
+      "manifestDigest": "sha256:071b7e2e7ab55c57af68983f904c92cf3fee67b11785abff3b9ff30d1e1bbbdb",
+      "graphDigest": "sha256:830d6fa3ab142bc724ec5a5a8daa2719c5494c5136b0cd5bf7ec0d3eb344c843",
+      "discoveryDigest": "sha256:7d8af4e0f800a6c882f977ebb8d91fa4a97944a3776c7cd36dfe5f518288648f"
+    },
+    "plan": {
+      "alternativeId": "changed-projects",
+      "entrypoints": [
+        ":ktor-server-core:jvmJar"
+      ],
+      "fallbackEntrypoints": [
+        "jvmJar"
+      ],
+      "requiredOutputs": [
+        "ktor-server/ktor-server-core/build/libs/ktor-server-core-jvm-*.jar"
+      ],
+      "totalProjectCount": 133,
+      "selectedProjectCount": 9,
+      "omittedProjectCount": 124,
+      "omittedProjectRatio": 0.9323308270676691
+    },
+    "mechanisms": [
+      {
+        "name": "BUILD_IMPACT",
+        "status": "MEASURE_CANDIDATE",
+        "reason": "complete graph exposes a smaller reviewed alternative; direct timing is still required"
+      },
+      {
+        "name": "SHARED_EDGE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent locality and failure-fallback evidence for this workload"
+      },
+      {
+        "name": "HOT_STATE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "RUNTIME_TUNING",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "SAFE_CACHE",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires independent end-to-end value evidence for this workload"
+      },
+      {
+        "name": "STANDARD_COPY",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "STANDARD_JAR",
+        "status": "NOT_AUTHORIZED",
+        "reason": "requires exact task-shape and end-to-end value evidence"
+      },
+      {
+        "name": "TEST_OPTIMIZATION",
+        "status": "NOT_AUTHORIZED",
+        "reason": "outside BuildOpt scope"
+      }
+    ],
+    "measurementRequired": true,
+    "reviewRequired": true,
+    "activationAutomatic": false,
+    "productionAuthorized": false
+  },
+  "gradleOptions": [
+    "--daemon",
+    "--build-cache",
+    "--parallel",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-scan",
+    "--max-workers=12",
+    "-Pktor.develocity.skipBuildScans=true"
+  ],
+  "candidateWarmups": [
+    {
+      "phase": "CACHE_SEED",
+      "durationMs": 129664,
+      "logSha256": "7f574bd931d914a23692f9d05d869212a5084308f11dda6c232381a14e4b8ef7",
+      "taskOutcomes": {
+        "total": 112,
+        "executed": 34,
+        "fromCache": 31,
+        "upToDate": 7,
+        "noSource": 19,
+        "skipped": 21,
+        "fingerprintSha256": "40c88480bbca3d374d39acd611b3562de2fb151282d1535df9565404aa42ae21",
+        "tasks": [
+          {
+            "path": ":build-logic:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":build-logic:classes",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-logic:compileJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":build-logic:compileKotlin",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:compilePluginsBlocks",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:extractPrecompiledScriptPluginPlugins",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:generateExternalPluginSpecBuilders",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:generatePrecompiledScriptPluginAccessors",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:generateScriptPluginAdapters",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:jar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-logic:pluginDescriptors",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-logic:processResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":build-settings-logic:classes",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:compileJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":build-settings-logic:compileKotlin",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:compilePluginsBlocks",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:classes",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:compileJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:compileKotlin",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:jar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:processResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":build-settings-logic:extractPrecompiledScriptPluginPlugins",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:generateExternalPluginSpecBuilders",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:generatePrecompiledScriptPluginAccessors",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:generateScriptPluginAdapters",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:jar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:pluginDescriptors",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:processResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:suppressGradlePluginVersionWarning",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-events:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-events:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-events:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-events:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-events:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-events:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-events:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-events:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-events:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-http-cio:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-http-cio:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-http-cio:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-http-cio:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-http-cio:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-http-cio:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-http-cio:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-http-cio:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-http-cio:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-http:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-http:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-http:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-http:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-http:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-http:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-http:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-http:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-http:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-io:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-io:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-io:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-io:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-io:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-io:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-io:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-io:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-io:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-network:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-network:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-network:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-network:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-network:jvmMainClasses",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-network:jvmProcessResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-network:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-network:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-network:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-serialization:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-serialization:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-serialization:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-serialization:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-serialization:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-serialization:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-serialization:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-serialization:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-serialization:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-server-core:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-server-core:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-server-core:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-server-core:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-server-core:jvmMainClasses",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-server-core:jvmProcessResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-server-core:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-server-core:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-server-core:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-utils:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-utils:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-utils:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-utils:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-utils:jvmMainClasses",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-utils:jvmProcessResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-utils:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-utils:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-utils:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-websockets:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-websockets:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-websockets:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-websockets:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-websockets:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-websockets:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-websockets:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-websockets:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-websockets:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          }
+        ]
+      },
+      "hostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 2321858,
+        "memorySomeTotalUs": 11679,
+        "memoryFullTotalUs": 10884,
+        "ioSomeTotalUs": 96214544,
+        "ioFullTotalUs": 74007449
+      }
+    },
+    {
+      "phase": "BASE_DAEMON_STABILIZATION",
+      "durationMs": 5920,
+      "logSha256": "58209c9b34691a613f7be4c34898de4512dc5d1af9e649d579b5dc9c0f3a1ef3",
+      "taskOutcomes": {
+        "total": 112,
+        "executed": 34,
+        "fromCache": 31,
+        "upToDate": 7,
+        "noSource": 19,
+        "skipped": 21,
+        "fingerprintSha256": "40c88480bbca3d374d39acd611b3562de2fb151282d1535df9565404aa42ae21",
+        "tasks": [
+          {
+            "path": ":build-logic:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":build-logic:classes",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-logic:compileJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":build-logic:compileKotlin",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:compilePluginsBlocks",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:extractPrecompiledScriptPluginPlugins",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:generateExternalPluginSpecBuilders",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:generatePrecompiledScriptPluginAccessors",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:generateScriptPluginAdapters",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:jar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-logic:pluginDescriptors",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-logic:processResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":build-settings-logic:classes",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:compileJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":build-settings-logic:compileKotlin",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:compilePluginsBlocks",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:classes",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:compileJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:compileKotlin",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:jar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:processResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":build-settings-logic:extractPrecompiledScriptPluginPlugins",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:generateExternalPluginSpecBuilders",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:generatePrecompiledScriptPluginAccessors",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:generateScriptPluginAdapters",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:jar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:pluginDescriptors",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:processResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:suppressGradlePluginVersionWarning",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-events:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-events:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-events:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-events:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-events:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-events:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-events:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-events:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-events:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-http-cio:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-http-cio:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-http-cio:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-http-cio:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-http-cio:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-http-cio:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-http-cio:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-http-cio:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-http-cio:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-http:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-http:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-http:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-http:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-http:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-http:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-http:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-http:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-http:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-io:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-io:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-io:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-io:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-io:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-io:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-io:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-io:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-io:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-network:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-network:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-network:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-network:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-network:jvmMainClasses",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-network:jvmProcessResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-network:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-network:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-network:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-serialization:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-serialization:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-serialization:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-serialization:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-serialization:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-serialization:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-serialization:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-serialization:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-serialization:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-server-core:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-server-core:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-server-core:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-server-core:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-server-core:jvmMainClasses",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-server-core:jvmProcessResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-server-core:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-server-core:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-server-core:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-utils:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-utils:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-utils:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-utils:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-utils:jvmMainClasses",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-utils:jvmProcessResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-utils:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-utils:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-utils:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-websockets:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-websockets:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-websockets:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-websockets:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-websockets:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-websockets:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-websockets:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-websockets:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-websockets:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          }
+        ]
+      },
+      "hostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 11159,
+        "memorySomeTotalUs": 4482,
+        "memoryFullTotalUs": 4481,
+        "ioSomeTotalUs": 5029663,
+        "ioFullTotalUs": 3510255
+      }
+    },
+    {
+      "phase": "TARGET_WORKLOAD_STABILIZATION",
+      "durationMs": 6099,
+      "logSha256": "f3c34ad9f0ad18de25895f53eb6d638bbe959c79dbab1a9cebf1e8b2eda87d68",
+      "taskOutcomes": {
+        "total": 112,
+        "executed": 34,
+        "fromCache": 31,
+        "upToDate": 7,
+        "noSource": 19,
+        "skipped": 21,
+        "fingerprintSha256": "40c88480bbca3d374d39acd611b3562de2fb151282d1535df9565404aa42ae21",
+        "tasks": [
+          {
+            "path": ":build-logic:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":build-logic:classes",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-logic:compileJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":build-logic:compileKotlin",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:compilePluginsBlocks",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:extractPrecompiledScriptPluginPlugins",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:generateExternalPluginSpecBuilders",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:generatePrecompiledScriptPluginAccessors",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:generateScriptPluginAdapters",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:jar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-logic:pluginDescriptors",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-logic:processResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":build-settings-logic:classes",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:compileJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":build-settings-logic:compileKotlin",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:compilePluginsBlocks",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:classes",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:compileJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:compileKotlin",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:jar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:processResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":build-settings-logic:extractPrecompiledScriptPluginPlugins",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:generateExternalPluginSpecBuilders",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:generatePrecompiledScriptPluginAccessors",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:generateScriptPluginAdapters",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:jar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:pluginDescriptors",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:processResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:suppressGradlePluginVersionWarning",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-events:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-events:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-events:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-events:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-events:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-events:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-events:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-events:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-events:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-http-cio:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-http-cio:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-http-cio:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-http-cio:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-http-cio:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-http-cio:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-http-cio:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-http-cio:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-http-cio:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-http:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-http:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-http:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-http:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-http:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-http:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-http:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-http:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-http:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-io:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-io:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-io:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-io:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-io:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-io:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-io:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-io:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-io:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-network:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-network:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-network:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-network:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-network:jvmMainClasses",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-network:jvmProcessResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-network:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-network:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-network:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-serialization:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-serialization:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-serialization:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-serialization:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-serialization:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-serialization:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-serialization:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-serialization:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-serialization:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-server-core:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-server-core:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-server-core:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-server-core:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-server-core:jvmMainClasses",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-server-core:jvmProcessResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-server-core:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-server-core:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-server-core:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-utils:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-utils:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-utils:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-utils:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-utils:jvmMainClasses",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-utils:jvmProcessResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-utils:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-utils:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-utils:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-websockets:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-websockets:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-websockets:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-websockets:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-websockets:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-websockets:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-websockets:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-websockets:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-websockets:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          }
+        ]
+      },
+      "hostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 12754,
+        "memorySomeTotalUs": 0,
+        "memoryFullTotalUs": 0,
+        "ioSomeTotalUs": 4475168,
+        "ioFullTotalUs": 3492484
+      }
+    },
+    {
+      "phase": "TARGET_WORKLOAD_STABILITY_CONFIRMATION",
+      "durationMs": 7518,
+      "logSha256": "4507db424bb93120b4ba8fbc2b738be7899931f2dc7b46e7511e8e9ae4557e91",
+      "taskOutcomes": {
+        "total": 112,
+        "executed": 34,
+        "fromCache": 31,
+        "upToDate": 7,
+        "noSource": 19,
+        "skipped": 21,
+        "fingerprintSha256": "40c88480bbca3d374d39acd611b3562de2fb151282d1535df9565404aa42ae21",
+        "tasks": [
+          {
+            "path": ":build-logic:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":build-logic:classes",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-logic:compileJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":build-logic:compileKotlin",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:compilePluginsBlocks",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:extractPrecompiledScriptPluginPlugins",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:generateExternalPluginSpecBuilders",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:generatePrecompiledScriptPluginAccessors",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:generateScriptPluginAdapters",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-logic:jar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-logic:pluginDescriptors",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-logic:processResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":build-settings-logic:classes",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:compileJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":build-settings-logic:compileKotlin",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:compilePluginsBlocks",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:classes",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:compileJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:compileKotlin",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:jar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:develocity-patched:processResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":build-settings-logic:extractPrecompiledScriptPluginPlugins",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:generateExternalPluginSpecBuilders",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:generatePrecompiledScriptPluginAccessors",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:generateScriptPluginAdapters",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":build-settings-logic:jar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:pluginDescriptors",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:processResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":build-settings-logic:suppressGradlePluginVersionWarning",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-events:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-events:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-events:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-events:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-events:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-events:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-events:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-events:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-events:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-http-cio:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-http-cio:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-http-cio:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-http-cio:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-http-cio:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-http-cio:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-http-cio:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-http-cio:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-http-cio:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-http:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-http:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-http:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-http:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-http:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-http:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-http:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-http:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-http:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-io:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-io:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-io:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-io:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-io:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-io:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-io:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-io:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-io:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-network:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-network:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-network:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-network:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-network:jvmMainClasses",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-network:jvmProcessResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-network:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-network:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-network:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-serialization:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-serialization:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-serialization:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-serialization:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-serialization:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-serialization:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-serialization:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-serialization:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-serialization:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-server-core:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-server-core:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-server-core:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-server-core:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-server-core:jvmMainClasses",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-server-core:jvmProcessResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-server-core:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-server-core:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-server-core:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-utils:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-utils:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-utils:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-utils:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-utils:jvmMainClasses",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-utils:jvmProcessResources",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-utils:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-utils:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-utils:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-websockets:checkKotlinGradlePluginConfigurationErrors",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-websockets:compileJvmMainJava",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-websockets:compileKotlinJvm",
+            "outcome": "FROM_CACHE"
+          },
+          {
+            "path": ":ktor-websockets:jvmJar",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-websockets:jvmMainClasses",
+            "outcome": "UP_TO_DATE"
+          },
+          {
+            "path": ":ktor-websockets:jvmProcessResources",
+            "outcome": "NO_SOURCE"
+          },
+          {
+            "path": ":ktor-websockets:kmpPartiallyResolvedDependenciesChecker",
+            "outcome": "EXECUTED"
+          },
+          {
+            "path": ":ktor-websockets:processJvmMainResources",
+            "outcome": "SKIPPED"
+          },
+          {
+            "path": ":ktor-websockets:transformJvmMainAtomicfu",
+            "outcome": "FROM_CACHE"
+          }
+        ]
+      },
+      "hostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 29365,
+        "memorySomeTotalUs": 0,
+        "memoryFullTotalUs": 0,
+        "ioSomeTotalUs": 5396631,
+        "ioFullTotalUs": 4242263
+      }
+    }
+  ],
+  "candidateStabilization": "ADAPTIVE_EXACT_2_OF_3",
+  "requiredOutputSha256": "90ae2a371364bd6048afb34a4ab680a0164dfed8889c451d798ce84faed3c487",
+  "requiredOutputCount": 1,
+  "boundaries": {
+    "timingClaim": false,
+    "automaticActivation": false,
+    "productionAuthorized": false
+  }
+}

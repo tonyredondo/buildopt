@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-new-family-calibration-phase/v1",
+  "workItem": "POC-NEW-FAMILY-CALIBRATION-ECONOMICS-001",
+  "capturedAt": "2026-08-16T07:33:41Z",
+  "captureIndex": 1,
+  "buildopt": {
+    "revision": "82c25e3d516ffc6e4f25d93893d7f6d9d8e6136e",
+    "executableSha256": "f90db6bdc8c0a431cd14fbc222c61eda393594249fb7183c216c7037bbabcdd3"
+  },
+  "cell": {
+    "key": "ktor-jvm-jar-dependency-source",
+    "repositoryId": "ktorio/ktor",
+    "repositoryRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+    "targetRevision": "440b4e0a49b0eb13eceaaf8a3aaff471f49f38f8",
+    "changeClass": "UPSTREAM_DEPENDENCY_SOURCE",
+    "changes": [
+      {
+        "path": "ktor-utils/common/src/io/ktor/util/StringValues.kt",
+        "originalSha256": "be41f0fca8c72770ef45812b931be0bf28a6a6649aefad0183537357c40e9d28",
+        "mutation": "APPEND_FIXED_COMMENT"
+      }
+    ]
+  },
+  "proposal": {
+    "coldMs": 380604,
+    "exactReplayMs": 376,
+    "artifactsByteIdentical": true,
+    "driftProbeExitCode": 78,
+    "driftProbeReplayed": false,
+    "coldLogSha256": "b6692f8eb453bd97e945a13eb5bfd1fb95955fc9292f39823d3467d16b33e094",
+    "replayLogSha256": "094d25edd406b60eabae98cf253c2cef8c22d17b5464f319b933dd572bfb157f",
+    "driftLogSha256": "a0a870c79627de4ff151e7a85eb1c3ab2724ffb8e68111189a646a7bb6a699f1",
+    "cacheRecordSha256": "6c46d65da179bfcc969f5da04449032ebe20cd0e12c0f67cb910ebf4aaf5fed1",
+    "artifactSha256": {
+      "buildopt-output-contract.json": "58a1e5f07c4f9cdf7baf9b6cfbfbd8d7eddce5f7b60ebc5e5887911c8bb3e53f",
+      "buildopt-impact-manifest.json": "dfd51e8c9300db2cadf683b2b5566f76ab8672a1010ab81903400d9749e9b17b",
+      "buildopt-impact-graph.generated.json": "c555e073e9bb1e37c991cc030de57b34d0361d41efea4381ced2600da84953d2",
+      "buildopt-impact.generated.json": "d5b0314c10753b495e1dad9a0a1e0454d124badeac33cce36847742a5bfb8a52",
+      "buildopt-fallback-changes.txt": "fa01f357a57e6b6b5d5fa4679b42a54974486a7eed29ea14c3e25ae3e9392a66",
+      "buildopt-profile-proposal.json": "b6692f8eb453bd97e945a13eb5bfd1fb95955fc9292f39823d3467d16b33e094"
+    }
+  },
+  "calibration": {
+    "evidenceSha256": "adf26fdbad7dab5ed6c08a02e9698386b38f8596eac309c63d5a8ce94ecc56f2",
+    "logSha256": "5277a4002cbcea7a3188c7da094f0e2278310406005c4f5224779edbece9bc79",
+    "measuredPairs": 0,
+    "qualificationDecisionMade": false,
+    "globalFallbackTimed": false
+  },
+  "sourceBindings": {
+    "terminalEvidenceSha256": "43a40426f87eace4242e38834970798ea885c09954b83a298417c654d4012036",
+    "qualificationSha256": "140a47336083e74445aa8a43bbb06e974d192229a5d6da0d690552d3da735900",
+    "changesSha256": "aa44503c3607724963fc732c566ae3f8c3550b6778b472b754ec676e2ad436ce",
+    "changeBreadthSpecSha256": "fcab73f3f77ee3de91241247a4d7f7dff4c5cb78d4fc52d2ff3b5fb61046f854",
+    "terminalSummarySha256": "c769b6af80b2b029f7b50c2073c209663eef2669e146ad62efb07fa4f1d11820"
+  },
+  "boundaries": {
+    "timingClaim": false,
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "terminalSavingsRemeasured": false,
+    "testOptimizationModified": false
+  },
+  "captureSha256": "452c82c3ae20b5ee9bc6e142724aca07aa4f36d17f5c749af32c0aee485b98f9"
+}

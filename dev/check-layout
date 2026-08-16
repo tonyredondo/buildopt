@@ -614,6 +614,8 @@ buildopt_required_files=(
     "benchmarks/results/poc-new-family-change-breadth-v1/ktor-jvm-jar-resource/qualification.json"
     "benchmarks/results/poc-new-family-change-breadth-v1/ktor-jvm-jar-mixed-source/qualification.json"
     "benchmarks/results/poc-new-family-change-breadth-v1/ktor-jvm-jar-global-configuration/qualification.json"
+    "benchmarks/results/poc-new-family-calibration-economics-v1/README.md"
+    "benchmarks/results/poc-new-family-calibration-economics-v1/summary.json"
     "specs/poc-generic-profile-ci-v1.md"
     "specs/poc-generic-profile-ci-replay-v1.json"
     "specs/poc-generic-profile-ci-replay-v1.md"

@@ -1,0 +1,368 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-new-family-calibration-economics/v1",
+  "workItem": "POC-NEW-FAMILY-CALIBRATION-ECONOMICS-001",
+  "capturedAt": "2026-08-16T08:21:59Z",
+  "calibrationBuildopt": {
+    "revision": "82c25e3d516ffc6e4f25d93893d7f6d9d8e6136e",
+    "executableSha256": "f90db6bdc8c0a431cd14fbc222c61eda393594249fb7183c216c7037bbabcdd3"
+  },
+  "terminalBuildopt": {
+    "revision": "35065d30ed066af3f9dea75382b2b9b9af66301a",
+    "executableSha256": "10b1feae55925adfa94ba7f071854b1c7e1a248b1b9e221775d9af152271b07e"
+  },
+  "method": {
+    "capturesPerCell": 2,
+    "installedCalibrationCostFormula": "FRESH_COLD_PROPOSAL_MEAN_MS + FRESH_CANDIDATE_WARMUP_MEAN_MS",
+    "exactReplayEvaluationFormula": "FRESH_EXACT_REPLAY_MEAN_MS + FRESH_CANDIDATE_WARMUP_MEAN_MS",
+    "breakEvenFormula": "CEIL(CALIBRATION_COST_MS / UNCHANGED_TERMINAL_MEAN_SAVED_MS)",
+    "terminalSavingsRemeasured": false,
+    "cellPercentagesAveraged": false,
+    "cellBreakEvenCountsAveraged": false
+  },
+  "cells": [
+    {
+      "key": "ktor-jvm-jar-dependency-source",
+      "repositoryId": "ktorio/ktor",
+      "repositoryRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+      "workflowFamily": "JVM_JAR",
+      "changeClass": "UPSTREAM_DEPENDENCY_SOURCE",
+      "changes": [
+        {
+          "mutation": "APPEND_FIXED_COMMENT",
+          "originalSha256": "be41f0fca8c72770ef45812b931be0bf28a6a6649aefad0183537357c40e9d28",
+          "path": "ktor-utils/common/src/io/ktor/util/StringValues.kt"
+        }
+      ],
+      "captures": 2,
+      "proposal": {
+        "coldMs": [
+          380604,
+          365124
+        ],
+        "coldMeanMs": 372864,
+        "exactReplayMs": [
+          376,
+          365
+        ],
+        "exactReplayMeanMs": 370.5,
+        "artifactsByteIdentical": true,
+        "driftProbesRejected": true
+      },
+      "calibration": {
+        "candidateWarmupTotalMs": [
+          161257,
+          175252
+        ],
+        "candidateWarmupMeanMs": 168254.5,
+        "warmupPhases": [
+          [
+            "CACHE_SEED",
+            "BASE_DAEMON_STABILIZATION",
+            "TARGET_WORKLOAD_STABILIZATION",
+            "TARGET_WORKLOAD_STABILITY_CONFIRMATION"
+          ],
+          [
+            "CACHE_SEED",
+            "BASE_DAEMON_STABILIZATION",
+            "TARGET_WORKLOAD_STABILIZATION",
+            "TARGET_WORKLOAD_STABILITY_CONFIRMATION"
+          ]
+        ],
+        "targetWarmupCounts": [
+          2,
+          2
+        ],
+        "targetFingerprints": [
+          [
+            "8b1d3bf9392038920e4026bcebb30f701d6a9be0122f468de33b7aab26ca3717",
+            "8b1d3bf9392038920e4026bcebb30f701d6a9be0122f468de33b7aab26ca3717"
+          ],
+          [
+            "8b1d3bf9392038920e4026bcebb30f701d6a9be0122f468de33b7aab26ca3717",
+            "8b1d3bf9392038920e4026bcebb30f701d6a9be0122f468de33b7aab26ca3717"
+          ]
+        ],
+        "requiredOutputSha256": "c885bbb245c219d71496704a3c6ddc9db549f50b6bc248b340321b1c966a1551",
+        "requiredOutputCount": 2,
+        "measuredPairs": 0,
+        "qualificationDecisionMade": false,
+        "globalFallbackTimed": false
+      },
+      "terminalValue": {
+        "meanSavedMs": 84314.4375,
+        "reductionRatio": 0.8579990192705077,
+        "captures": 2,
+        "pairs": 16,
+        "unchanged": true
+      },
+      "economics": {
+        "installedWorkflow": {
+          "calibrationCostMs": 541118.5,
+          "exactBreakEvenBuilds": 6.417862895663628,
+          "breakEvenBuilds": 7
+        },
+        "exactReplayEvaluation": {
+          "calibrationCostMs": 168625,
+          "exactBreakEvenBuilds": 1.9999540410857868,
+          "breakEvenBuilds": 2
+        }
+      },
+      "sourceBindings": {
+        "phaseCaptureSha256": [
+          "452c82c3ae20b5ee9bc6e142724aca07aa4f36d17f5c749af32c0aee485b98f9",
+          "68ecf11f35c6be776d353ab4f8f9546096ea9bc2027458e7c95ea4ba90666599"
+        ],
+        "calibrationEvidenceSha256": [
+          "adf26fdbad7dab5ed6c08a02e9698386b38f8596eac309c63d5a8ce94ecc56f2",
+          "518e4056a11479688f06b564d1bb0f80ead78c385aef4e492c521840c6ca66d1"
+        ],
+        "terminalEvidenceSha256": [
+          "43a40426f87eace4242e38834970798ea885c09954b83a298417c654d4012036",
+          "e25dd6ebd322776715de2585582925d57a3d675a80e475c854f1c0cc2cabf7c5"
+        ],
+        "qualificationSha256": "140a47336083e74445aa8a43bbb06e974d192229a5d6da0d690552d3da735900"
+      }
+    },
+    {
+      "key": "ktor-jvm-jar-resource",
+      "repositoryId": "ktorio/ktor",
+      "repositoryRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+      "workflowFamily": "JVM_JAR",
+      "changeClass": "JVM_RESOURCE",
+      "changes": [
+        {
+          "mutation": "APPEND_FIXED_HASH_COMMENT",
+          "originalSha256": "897d19dec0bdf4791661f9b3f26eba771ae68bab4ab57cb5d4fde8da5bfc3ae2",
+          "path": "ktor-server/ktor-server-core/jvm/resources/META-INF/services/io.ktor.server.config.ConfigLoader"
+        }
+      ],
+      "captures": 2,
+      "proposal": {
+        "coldMs": [
+          326812,
+          340358
+        ],
+        "coldMeanMs": 333585,
+        "exactReplayMs": [
+          317,
+          335
+        ],
+        "exactReplayMeanMs": 326,
+        "artifactsByteIdentical": true,
+        "driftProbesRejected": true
+      },
+      "calibration": {
+        "candidateWarmupTotalMs": [
+          153148,
+          149201
+        ],
+        "candidateWarmupMeanMs": 151174.5,
+        "warmupPhases": [
+          [
+            "CACHE_SEED",
+            "BASE_DAEMON_STABILIZATION",
+            "TARGET_WORKLOAD_STABILIZATION",
+            "TARGET_WORKLOAD_STABILITY_CONFIRMATION"
+          ],
+          [
+            "CACHE_SEED",
+            "BASE_DAEMON_STABILIZATION",
+            "TARGET_WORKLOAD_STABILIZATION",
+            "TARGET_WORKLOAD_STABILITY_CONFIRMATION"
+          ]
+        ],
+        "targetWarmupCounts": [
+          2,
+          2
+        ],
+        "targetFingerprints": [
+          [
+            "40c88480bbca3d374d39acd611b3562de2fb151282d1535df9565404aa42ae21",
+            "40c88480bbca3d374d39acd611b3562de2fb151282d1535df9565404aa42ae21"
+          ],
+          [
+            "40c88480bbca3d374d39acd611b3562de2fb151282d1535df9565404aa42ae21",
+            "40c88480bbca3d374d39acd611b3562de2fb151282d1535df9565404aa42ae21"
+          ]
+        ],
+        "requiredOutputSha256": "90ae2a371364bd6048afb34a4ab680a0164dfed8889c451d798ce84faed3c487",
+        "requiredOutputCount": 1,
+        "measuredPairs": 0,
+        "qualificationDecisionMade": false,
+        "globalFallbackTimed": false
+      },
+      "terminalValue": {
+        "meanSavedMs": 49517.3125,
+        "reductionRatio": 0.8651182242449788,
+        "captures": 2,
+        "pairs": 16,
+        "unchanged": true
+      },
+      "economics": {
+        "installedWorkflow": {
+          "calibrationCostMs": 484759.5,
+          "exactBreakEvenBuilds": 9.789697290215416,
+          "breakEvenBuilds": 10
+        },
+        "exactReplayEvaluation": {
+          "calibrationCostMs": 151500.5,
+          "exactBreakEvenBuilds": 3.0595460930962277,
+          "breakEvenBuilds": 4
+        }
+      },
+      "sourceBindings": {
+        "phaseCaptureSha256": [
+          "0bdfd25e25df7c71c2e2ec6223ef2113c9792b71a10db7ebae0347d12f5bc065",
+          "9c60d1ff78e449f196d880fef99445572857ec52ee935b723d94745274269c95"
+        ],
+        "calibrationEvidenceSha256": [
+          "b23c0f9da9557177ac258508239e02d3035375e2bab7781ce8a5d0f3299b6f56",
+          "58df6bd6f0d41be73f72aef7bd9a6304fbdd4e4695619850e136706fc50d60fd"
+        ],
+        "terminalEvidenceSha256": [
+          "324f765ce1e6f05aa41a1a4c1dfc3121686ad1c82e3f9c07a3b4a4b6ba4289c7",
+          "fb2db5cfa3653bff0b247d78173fe12651c1499fa9789e8a531e30acbc006c4b"
+        ],
+        "qualificationSha256": "2a30e31572034e0e456fa2e07ff786ca7c5187a13a3bdaf0c6a0eff5dbaa9bbf"
+      }
+    },
+    {
+      "key": "ktor-jvm-jar-mixed-source",
+      "repositoryId": "ktorio/ktor",
+      "repositoryRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+      "workflowFamily": "JVM_JAR",
+      "changeClass": "MIXED_PRODUCTION_SOURCE",
+      "changes": [
+        {
+          "mutation": "APPEND_FIXED_COMMENT",
+          "originalSha256": "7e6e7ad515a2c2d4be2616bebf7a830fe3e7b4a95ebbbb023dc4f34cb7fc219d",
+          "path": "ktor-http/common/src/io/ktor/http/AsciiBitSet.kt"
+        },
+        {
+          "mutation": "APPEND_FIXED_COMMENT",
+          "originalSha256": "dc63beba8323af8c2a4af9cb8b04751c4f84bd313d3785e2e4ca957f1eac5358",
+          "path": "ktor-server/ktor-server-core/common/src/io/ktor/server/application/Application.kt"
+        }
+      ],
+      "captures": 2,
+      "proposal": {
+        "coldMs": [
+          390446,
+          379523
+        ],
+        "coldMeanMs": 384984.5,
+        "exactReplayMs": [
+          341,
+          321
+        ],
+        "exactReplayMeanMs": 331,
+        "artifactsByteIdentical": true,
+        "driftProbesRejected": true
+      },
+      "calibration": {
+        "candidateWarmupTotalMs": [
+          223579,
+          215271
+        ],
+        "candidateWarmupMeanMs": 219425,
+        "warmupPhases": [
+          [
+            "CACHE_SEED",
+            "BASE_DAEMON_STABILIZATION",
+            "TARGET_WORKLOAD_STABILIZATION",
+            "TARGET_WORKLOAD_STABILITY_CONFIRMATION"
+          ],
+          [
+            "CACHE_SEED",
+            "BASE_DAEMON_STABILIZATION",
+            "TARGET_WORKLOAD_STABILIZATION",
+            "TARGET_WORKLOAD_STABILITY_CONFIRMATION"
+          ]
+        ],
+        "targetWarmupCounts": [
+          2,
+          2
+        ],
+        "targetFingerprints": [
+          [
+            "7cac65b8770f6be193ba6e9fcde966d7a24709a60135864244413d6e80ea8db2",
+            "7cac65b8770f6be193ba6e9fcde966d7a24709a60135864244413d6e80ea8db2"
+          ],
+          [
+            "7cac65b8770f6be193ba6e9fcde966d7a24709a60135864244413d6e80ea8db2",
+            "7cac65b8770f6be193ba6e9fcde966d7a24709a60135864244413d6e80ea8db2"
+          ]
+        ],
+        "requiredOutputSha256": "26ee904a6ded844b1eb510067ebaabf983203fc4cd67b6afc4668ea39b0f4717",
+        "requiredOutputCount": 2,
+        "measuredPairs": 0,
+        "qualificationDecisionMade": false,
+        "globalFallbackTimed": false
+      },
+      "terminalValue": {
+        "meanSavedMs": 81781.125,
+        "reductionRatio": 0.7797841034644278,
+        "captures": 2,
+        "pairs": 16,
+        "unchanged": true
+      },
+      "economics": {
+        "installedWorkflow": {
+          "calibrationCostMs": 604409.5,
+          "exactBreakEvenBuilds": 7.390574536606094,
+          "breakEvenBuilds": 8
+        },
+        "exactReplayEvaluation": {
+          "calibrationCostMs": 219756,
+          "exactBreakEvenBuilds": 2.6871237097802214,
+          "breakEvenBuilds": 3
+        }
+      },
+      "sourceBindings": {
+        "phaseCaptureSha256": [
+          "d9160fbd796b2f2b007c72f43a07c336042dcc20c46b55cdc1677bebbad38623",
+          "88d92c70be22c973fe3c437f4c8f62204c42e4924e5655758456d9f84b768cf7"
+        ],
+        "calibrationEvidenceSha256": [
+          "99730461b257dde70c1d947e981bf1ca0c204e6ebdff4493b8893c30ae691dbb",
+          "f6e5f86d856840f88334a64a36a131fe2afb20c40cd231a9b33252787e563fe6"
+        ],
+        "terminalEvidenceSha256": [
+          "aa9a6d5fcd2ef0f1008575688e0c68d8465b21a02a9c08fc40dcf8a53a2d7748",
+          "63925ff15501544d0b57e9dccd413547804da1c5a42b0e09bfd1f11c91a32edd"
+        ],
+        "qualificationSha256": "8d162643300c9a9195019846f36dc6c4dc5a273416da04790e8a8234f03f3996"
+      }
+    }
+  ],
+  "excludedCell": {
+    "key": "ktor-jvm-jar-global-configuration",
+    "decision": "RETAIN_NATIVE_GRADLE",
+    "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+    "timed": false
+  },
+  "aggregation": {
+    "timedCellCount": 3,
+    "phaseCaptureCount": 6,
+    "cellsWithOneBuildInstalledBreakEven": 0,
+    "cellsWithTwoOrFewerBuildInstalledBreakEven": 0,
+    "cellPercentagesAveraged": false,
+    "cellBreakEvenCountsAveraged": false
+  },
+  "sourceBindings": {
+    "changeBreadthSpecSha256": "fcab73f3f77ee3de91241247a4d7f7dff4c5cb78d4fc52d2ff3b5fb61046f854",
+    "terminalSummarySha256": "c769b6af80b2b029f7b50c2073c209663eef2669e146ad62efb07fa4f1d11820",
+    "preregisteredFromRevision": "82c25e3d516ffc6e4f25d93893d7f6d9d8e6136e"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivation": false,
+    "repositorySpecificProductRulesAllowed": false,
+    "terminalSavingsChanged": false,
+    "globalFallbackTimed": false,
+    "testOptimizationModified": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

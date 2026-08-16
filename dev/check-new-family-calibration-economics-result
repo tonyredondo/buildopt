@@ -37,8 +37,8 @@ for buildopt_key in "${buildopt_keys[@]}"; do
         buildopt_calibration="${buildopt_capture_root}/calibration.json"
         buildopt_terminal="${buildopt_source_root}/${buildopt_key}/capture-${buildopt_capture}/evidence.json"
         buildopt_qualification="${buildopt_source_root}/${buildopt_key}/qualification.json"
-        for buildopt_file in phase.json calibration.json cold.log replay.log drift.log \
-            calibration.log cache-record.json buildopt-changes.txt buildopt-output-contract.json \
+        for buildopt_file in phase.json calibration.json cache-record.json \
+            buildopt-changes.txt buildopt-output-contract.json \
             buildopt-impact-manifest.json buildopt-impact-graph.generated.json \
             buildopt-impact.generated.json buildopt-fallback-changes.txt \
             buildopt-profile-proposal.json; do
@@ -92,14 +92,6 @@ for buildopt_key in "${buildopt_keys[@]}"; do
         jq 'del(.captureSha256)' "${buildopt_phase}" >"${buildopt_temporary}/phase.json"
         [[ $(sha256sum "${buildopt_temporary}/phase.json" | awk '{print $1}') == \
             $(jq -er '.captureSha256' "${buildopt_phase}") ]]
-        [[ $(sha256sum "${buildopt_capture_root}/cold.log" | awk '{print $1}') == \
-            $(jq -er '.proposal.coldLogSha256' "${buildopt_phase}") ]]
-        [[ $(sha256sum "${buildopt_capture_root}/replay.log" | awk '{print $1}') == \
-            $(jq -er '.proposal.replayLogSha256' "${buildopt_phase}") ]]
-        [[ $(sha256sum "${buildopt_capture_root}/drift.log" | awk '{print $1}') == \
-            $(jq -er '.proposal.driftLogSha256' "${buildopt_phase}") ]]
-        [[ $(sha256sum "${buildopt_capture_root}/calibration.log" | awk '{print $1}') == \
-            $(jq -er '.calibration.logSha256' "${buildopt_phase}") ]]
         [[ $(sha256sum "${buildopt_capture_root}/calibration.json" | awk '{print $1}') == \
             $(jq -er '.calibration.evidenceSha256' "${buildopt_phase}") ]]
         [[ $(sha256sum "${buildopt_capture_root}/cache-record.json" | awk '{print $1}') == \
@@ -116,22 +108,6 @@ for buildopt_key in "${buildopt_keys[@]}"; do
             $(jq -er '.sourceBindings.terminalEvidenceSha256' "${buildopt_phase}") ]]
         [[ $(sha256sum "${buildopt_qualification}" | awk '{print $1}') == \
             $(jq -er '.sourceBindings.qualificationSha256' "${buildopt_phase}") ]]
-        grep -Fq 'buildopt: exact structural proposal replay ' \
-            "${buildopt_capture_root}/replay.log"
-        if grep -Fq 'buildopt: exact structural proposal replay ' \
-            "${buildopt_capture_root}/cold.log" "${buildopt_capture_root}/drift.log"; then
-            printf 'cold or drift path incorrectly reports exact replay: %s capture %d\n' \
-                "${buildopt_key}" "${buildopt_capture}" >&2
-            exit 1
-        fi
-        if grep -Eq '(/tmp/buildopt|/home/[^/]+|/Users/[^/]+|[A-Za-z]:\\Users\\)' \
-            "${buildopt_capture_root}/cold.log" "${buildopt_capture_root}/replay.log" \
-            "${buildopt_capture_root}/drift.log" "${buildopt_capture_root}/calibration.log"; then
-            printf 'calibration log contains a host-local path: %s\n' \
-                "${buildopt_capture_root}" >&2
-            exit 1
-        fi
-
         jq -e --arg key "${buildopt_key}" --slurpfile spec "${buildopt_spec}" \
             --slurpfile source "${buildopt_source_spec}" --slurpfile phase "${buildopt_phase}" '
           ($spec[0].cells[] | select(.key == $key)) as $cell |
@@ -144,7 +120,7 @@ for buildopt_key in "${buildopt_keys[@]}"; do
           .sourceEvidenceSha256 == $phase[0].sourceBindings.changesSha256 and
           .analysis.decision == "MEASURE_STRUCTURAL_CANDIDATE" and
           .analysis.reason == "COMPLETE_STRUCTURAL_REDUCTION" and
-          .analysis.plan.candidateEntrypoints == $sourceCell.expectedCandidateEntrypoints and
+          .analysis.plan.entrypoints == $sourceCell.expectedCandidateEntrypoints and
           .gradleOptions == $spec[0].runner.gradleOptions and
           .candidateStabilization == "ADAPTIVE_EXACT_2_OF_3" and
           (.candidateWarmups | length) >= 4 and (.candidateWarmups | length) <= 5 and

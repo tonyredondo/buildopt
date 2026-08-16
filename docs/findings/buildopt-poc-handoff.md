@@ -145,6 +145,15 @@ All six installed and full-POC break-even counts improve without changing any
 terminal saving, output, tail, fallback or failure result. Checkout remains
 visible but is excluded as shared native/BuildOpt work.
 
+The same economics protocol now covers the three qualified Ktor change
+classes. First-time cold discovery plus candidate stabilization repays after
+**7 builds** for dependency source, **10 builds** for a JVM resource and
+**8 builds** for the mixed-source edit. Exact proposal replay is
+0.321–0.376 seconds; including fresh stabilization, reevaluation repays after
+**2, 4 and 3 builds**. Every replay artifact and terminal output binding is
+exact, all six drift probes reject replay, and the global fallback stays
+untimed native Gradle.
+
 ## What this demonstrates
 
 - **The core idea transfers.** One generic implementation derived material
@@ -167,11 +176,12 @@ visible but is excluded as shared native/BuildOpt work.
   reports and packages without treating timestamps, archive order, or an
   isolated checkout prefix as business payload. Undeclared drift still fails
   closed.
-- **Calibration is cheaper but still not free.** The current reviewed profiles
-  repay fused discovery plus adaptive candidate warm-ups after 9–26 qualifying
-  builds; proving the complete comparative POC takes 19–50. Exact repeat
-  evaluation repays after 4–12 builds. The POC proves repeated-build value,
-  not instant first-run payback.
+- **Calibration is cheaper but still not free.** The original six reviewed
+  profiles repay fused discovery plus adaptive candidate warm-ups after 9–26
+  qualifying builds; exact repeat evaluation repays after 4–12. The three
+  Ktor cells repay first-time calibration after 7–10 builds and exact replay
+  evaluation after 2–4. The POC proves repeated-build value, not instant
+  first-run payback.
 - **The reviewed profiles transfer to the public package.** Public `v0.3.1`
   reproduced all six selective decisions through `buildopt poc`; all six
   manifest-drift probes retained native Gradle and all six contemporary
@@ -203,12 +213,11 @@ build on another day or authority to ignore arbitrary timestamps.
 
 ## Recommended next steps
 
-1. **Measure adoption economics on the new family.** Separate Ktor discovery,
-   warm-up and steady-state value so a reviewer knows how many repeated builds
-   are needed to repay calibration.
-2. **Replay the reviewed Ktor profiles through the public package.** Require
+1. **Replay the reviewed Ktor profiles through the public package.** Require
    exact bindings, drift fallback and contemporary native-output equivalence
    without creating new historical percentages.
+2. **Measure complete installed compositions where mechanisms overlap.** Use
+   end-to-end wall time and never add isolated mechanism percentages.
 3. **Keep wall time authoritative.** Continue only mechanisms that materially
    beat optimized native Gradle under correctness, repeatability, and tail
    guards; retire or retain native for everything else.
@@ -227,6 +236,7 @@ build on another day or authority to ignore arbitrary timestamps.
 - [Reviewed cross-date output equivalence](../../benchmarks/results/poc-cross-date-output-equivalence-v1/README.md)
 - [Ktor new-family transfer](../../benchmarks/results/poc-new-family-transfer-v1/README.md)
 - [Ktor new-family change breadth](../../benchmarks/results/poc-new-family-change-breadth-v1/README.md)
+- [Ktor calibration economics](../../benchmarks/results/poc-new-family-calibration-economics-v1/README.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)
 - [Implementation tracker](../../implementation-tracker.md)

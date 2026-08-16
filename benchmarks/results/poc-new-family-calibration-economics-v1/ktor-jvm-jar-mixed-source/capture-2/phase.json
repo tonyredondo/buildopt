@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-new-family-calibration-phase/v1",
+  "workItem": "POC-NEW-FAMILY-CALIBRATION-ECONOMICS-001",
+  "capturedAt": "2026-08-16T08:21:56Z",
+  "captureIndex": 2,
+  "buildopt": {
+    "revision": "82c25e3d516ffc6e4f25d93893d7f6d9d8e6136e",
+    "executableSha256": "f90db6bdc8c0a431cd14fbc222c61eda393594249fb7183c216c7037bbabcdd3"
+  },
+  "cell": {
+    "key": "ktor-jvm-jar-mixed-source",
+    "repositoryId": "ktorio/ktor",
+    "repositoryRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+    "targetRevision": "6db4cdf72794669cf7aeb3a9b950c89ea5f9e325",
+    "changeClass": "MIXED_PRODUCTION_SOURCE",
+    "changes": [
+      {
+        "path": "ktor-http/common/src/io/ktor/http/AsciiBitSet.kt",
+        "originalSha256": "7e6e7ad515a2c2d4be2616bebf7a830fe3e7b4a95ebbbb023dc4f34cb7fc219d",
+        "mutation": "APPEND_FIXED_COMMENT"
+      },
+      {
+        "path": "ktor-server/ktor-server-core/common/src/io/ktor/server/application/Application.kt",
+        "originalSha256": "dc63beba8323af8c2a4af9cb8b04751c4f84bd313d3785e2e4ca957f1eac5358",
+        "mutation": "APPEND_FIXED_COMMENT"
+      }
+    ]
+  },
+  "proposal": {
+    "coldMs": 379523,
+    "exactReplayMs": 321,
+    "artifactsByteIdentical": true,
+    "driftProbeExitCode": 78,
+    "driftProbeReplayed": false,
+    "coldLogSha256": "2573efdb11fe7645294002c224e02d85694cc8f5e9375620ccf46c8c5a44aba6",
+    "replayLogSha256": "5c1b5da048cbc715d43631d9bfd17576bcc72b6b0554fdf694bf3a4e047be9ca",
+    "driftLogSha256": "a0a870c79627de4ff151e7a85eb1c3ab2724ffb8e68111189a646a7bb6a699f1",
+    "cacheRecordSha256": "7324ba8d9eafae3121145e60ecbaf3d52167ec9471c6bc99e3f9cce4ac477358",
+    "artifactSha256": {
+      "buildopt-output-contract.json": "b8e44823d7c20947fca8eb7a4a642ca8c65d81e188012ea705031a5dcd19f890",
+      "buildopt-impact-manifest.json": "10659b81165043088824391b0e1e1e4ce744bec11104298ec6e6a3df7427fafb",
+      "buildopt-impact-graph.generated.json": "e8510c868200f6fb709533bc79b77900756e7f79c9c6079cd82a3af5bdedece1",
+      "buildopt-impact.generated.json": "9baecbb4d7abac67b4e126324717a14ff835587f13a70b66f7edf7b07506a3bf",
+      "buildopt-fallback-changes.txt": "fa01f357a57e6b6b5d5fa4679b42a54974486a7eed29ea14c3e25ae3e9392a66",
+      "buildopt-profile-proposal.json": "2573efdb11fe7645294002c224e02d85694cc8f5e9375620ccf46c8c5a44aba6"
+    }
+  },
+  "calibration": {
+    "evidenceSha256": "f6e5f86d856840f88334a64a36a131fe2afb20c40cd231a9b33252787e563fe6",
+    "logSha256": "2a23dbb55481492a848585be4c18b6da2e9370378fcf8ca99894dd364433937b",
+    "measuredPairs": 0,
+    "qualificationDecisionMade": false,
+    "globalFallbackTimed": false
+  },
+  "sourceBindings": {
+    "terminalEvidenceSha256": "63925ff15501544d0b57e9dccd413547804da1c5a42b0e09bfd1f11c91a32edd",
+    "qualificationSha256": "8d162643300c9a9195019846f36dc6c4dc5a273416da04790e8a8234f03f3996",
+    "changesSha256": "58e39b6ce55998c63b4408a01bdc7b006b6244f19cc302f738cd13ede7e1d949",
+    "changeBreadthSpecSha256": "fcab73f3f77ee3de91241247a4d7f7dff4c5cb78d4fc52d2ff3b5fb61046f854",
+    "terminalSummarySha256": "c769b6af80b2b029f7b50c2073c209663eef2669e146ad62efb07fa4f1d11820"
+  },
+  "boundaries": {
+    "timingClaim": false,
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "terminalSavingsRemeasured": false,
+    "testOptimizationModified": false
+  },
+  "captureSha256": "88d92c70be22c973fe3c437f4c8f62204c42e4924e5655758456d9f84b768cf7"
+}

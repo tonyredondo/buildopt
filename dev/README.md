@@ -3525,6 +3525,23 @@ output-contract preflight inspects repository-owned task outputs and is not a
 configuration-cache-compatible workload; using the same explicit mode prevents
 repository defaults from changing whether that generic preflight can run.
 
+The terminal bundle contains two fresh captures per Ktor cell. Installed cold
+discovery plus candidate stabilization repays after 7 builds for dependency
+source, 10 for a JVM resource and 8 for the mixed-source edit. Exact proposal
+replay itself takes 0.321–0.376 seconds; including fresh stabilization, replay
+evaluation repays after 2, 4 and 3 builds. Revalidate it with:
+
+```bash
+./dev/check-new-family-calibration-economics
+./dev/check-new-family-calibration-economics-result
+./dev/test-new-family-calibration-economics-result
+```
+
+The checker binds every structured capture and recomputes `summary.json`; the
+negative fixture rejects summary or structured-calibration tampering. Raw
+process logs are not published; their hashes remain in the phase records. The
+global-configuration cell remains untimed native full graph.
+
 `./dev/run-generic-workflow-value /absolute/evidence/directory [workflow-key]`
 uses the same installed generic runner with the frozen public workflow-family
 contract. It measures Groovy JAR packaging, Kafka Checkstyle verification,

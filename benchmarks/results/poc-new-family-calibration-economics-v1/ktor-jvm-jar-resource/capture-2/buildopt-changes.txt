@@ -1,0 +1,1 @@
+ktor-server/ktor-server-core/jvm/resources/META-INF/services/io.ktor.server.config.ConfigLoader

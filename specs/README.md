@@ -562,6 +562,13 @@ stabilization, and computes repeated-build break-even against each unchanged
 terminal saving. The global fallback remains untimed and no result is averaged
 across change shapes.
 
+The terminal [economics evidence](../benchmarks/results/poc-new-family-calibration-economics-v1/README.md)
+contains two fresh captures per cell. First-time calibration repays after 7,
+10 and 8 qualifying builds; exact proposal replay plus fresh stabilization
+repays after 2, 4 and 3. Replay artifacts, drift rejection, target fingerprints
+and terminal output bindings are checked without creating measured pairs or a
+new qualification decision.
+
 `poc-generic-output-equivalence-v1.json` and
 `poc-generic-output-equivalence-v1.md` preregister the three public workflows
 whose outputs were semantically stable but not byte-reproducible. Exact bytes

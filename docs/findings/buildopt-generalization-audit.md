@@ -121,19 +121,16 @@ declared.
 
 ## Remaining gaps before calling the POC broadly usable
 
-1. **Ktor calibration economics.** Measure discovery, stabilization and
-   steady-state payback for the three independently qualified Ktor change
-   classes without changing their terminal timing evidence.
-2. **Ktor installed replay.** Prove the reviewed Ktor profiles
-   through the public package and separate discovery/warm-up cost from its
-   repeated-build value before making an onboarding claim.
-3. **Generic task-contract research.** Add an adapter or patch recipe only when
+1. **Ktor installed replay.** Prove the reviewed Ktor profiles through the
+   public package with exact bindings, drift fallback and contemporary native
+   output equivalence before making an onboarding claim.
+2. **Generic task-contract research.** Add an adapter or patch recipe only when
    an exact task contract and end-to-end wall-time win transfer across
    repositories; never infer value from cacheability alone.
-4. **Portfolio measurement.** When more than one mechanism qualifies for the
+3. **Portfolio measurement.** When more than one mechanism qualifies for the
    same workload, measure the complete installed composition directly. Do not
    add isolated percentages.
-5. **Native measurement parity.** Installation, launcher and service lifecycle
+4. **Native measurement parity.** Installation, launcher and service lifecycle
    are validated on Linux, macOS and Windows, but the current comparable
    structural wall-time matrix is Linux evidence. Run the same fail-closed
    qualification protocol natively before making macOS or Windows performance
@@ -150,9 +147,11 @@ decisions summarized here; the fresh balanced matrix separately closes Spring
 under its newer protocol, while historical rejected evidence remains
 immutable.
 
-Ktor change breadth is now closed without changing the generic product path:
+Ktor change breadth is closed without changing the generic product path:
 dependency source, JVM resource and multi-module source changes qualify at
 85.80%, 86.51% and 77.98% lower wall time, while root configuration remains
-native. The next block should measure the one-time economics needed to obtain
-those reviewed profiles rather than assuming their steady-state savings are
-free.
+native. Fresh calibration evidence now shows that those cells repay first-time
+discovery and stabilization after 7, 10 and 8 qualifying builds; exact replay
+evaluation repays after 2, 4 and 3. The next block should prove the reviewed
+profiles through the public package rather than treating laboratory evidence
+as onboarding evidence.
