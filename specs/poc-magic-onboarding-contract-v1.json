@@ -123,6 +123,7 @@
       "REPOSITORY_SCOPE",
       "GRADLE_WRAPPER_PROPERTIES",
       "GRADLE_ARGUMENTS",
+      "DISCOVERY_CONTEXT",
       "CALIBRATION_BUDGET"
     ],
     "resumeDecisions": [
@@ -146,6 +147,7 @@
       "BUDGET",
       "RESUME_DECISION",
       "BINDING_DIGESTS",
+      "DISCOVERY_DECISION_AND_FILES",
       "GENERATED_FILES",
       "MANUAL_FILE_COUNT",
       "CALIBRATION_AND_SELECTION_STATUS",
@@ -171,12 +173,12 @@
     "testOptimization": "OUT_OF_SCOPE"
   },
   "currentImplementation": {
-    "status": "CONTRACT_AND_NATIVE_SKELETON",
-    "outcome": "NATIVE_RETAINED",
-    "reason": "AUTO_DISCOVERY_PENDING",
-    "phase": "UNSEEN",
+    "status": "AUTOMATIC_DISCOVERY",
+    "outcome": "LEARNING",
+    "reason": "STRUCTURAL_CANDIDATE_DISCOVERED",
+    "phase": "DISCOVERED",
     "nativeBuildCache": true,
-    "automaticDiscovery": false,
+    "automaticDiscovery": true,
     "calibrationPerformed": false,
     "selectionPerformed": false
   },

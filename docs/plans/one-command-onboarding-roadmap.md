@@ -243,8 +243,10 @@ and honest native decisions when the idea does not pay.
 
 ## Immediate next step
 
-Complete `POC-MAGIC-AUTO-DISCOVERY-001` behind the now-stable
-`buildopt optimize` contract. The current executable skeleton records exact
-private state and runs optimized native Gradle; discovery must next derive the
-Wrapper, workflow context, immutable comparison base, exact change, output
-candidates and structural graph from command and repository facts alone.
+Complete `POC-MAGIC-CALIBRATION-001` behind the now-discovered candidate. The
+current command derives the Wrapper, workflow context, immutable comparison
+base, exact change, output candidates and structural graph from command and
+repository facts alone while native Gradle remains authoritative. Calibration
+must next compare that generated candidate with the same optimized-native
+workflow under the declared budget, resume only exact checkpoints and retain
+native whenever correctness or net wall-time value is not proven.

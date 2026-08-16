@@ -1,0 +1,209 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "$0")/.." && pwd -P)
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-magic-discovery.XXXXXX")
+buildopt_cleanup() {
+    if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-magic-discovery."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in git jq; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required automatic-discovery command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_binary="${buildopt_temp}/buildopt"
+buildopt_gradle_home="${buildopt_root}/.tools/gradle-user-home/local"
+"${buildopt_root}/dev/run" --toolchain go -- \
+    go build -trimpath -o "${buildopt_binary}" ./cmd/buildopt
+
+buildopt_prepare_repository() {
+    local buildopt_path=$1
+    local buildopt_change=$2
+    mkdir -p -- "${buildopt_path}"
+    cp -R -- "${buildopt_root}/fixtures/gradle-workflow-breadth/." \
+        "${buildopt_path}/"
+    cp -- "${buildopt_root}/gradlew" "${buildopt_path}/gradlew"
+    cp -R -- "${buildopt_root}/gradle" "${buildopt_path}/gradle"
+    chmod +x -- "${buildopt_path}/gradlew"
+    printf '.buildopt/\n**/build/\n' >"${buildopt_path}/.gitignore"
+    sed -i 's/service-a-target/service-a-base/' \
+        "${buildopt_path}/service-a/src/main/java/example/Application.java"
+    git -C "${buildopt_path}" init -qb main
+    git -C "${buildopt_path}" config user.name 'BuildOpt Fixture'
+    git -C "${buildopt_path}" config user.email buildopt-fixture@example.invalid
+    git -C "${buildopt_path}" config commit.gpgsign false
+    git -C "${buildopt_path}" add .
+    git -C "${buildopt_path}" commit -qm 'automatic discovery base'
+    git -C "${buildopt_path}" switch -qc feature
+    if [[ ${buildopt_change} != no-upstream ]]; then
+        git -C "${buildopt_path}" config branch.feature.remote .
+        git -C "${buildopt_path}" config branch.feature.merge refs/heads/main
+    fi
+    case ${buildopt_change} in
+        source | no-upstream)
+            sed -i 's/service-a-base/service-a-target/' \
+                "${buildopt_path}/service-a/src/main/java/example/Application.java"
+            git -C "${buildopt_path}" add \
+                service-a/src/main/java/example/Application.java
+            ;;
+        global)
+            printf '\n// automatic-discovery global-change fixture\n' \
+                >>"${buildopt_path}/build.gradle"
+            git -C "${buildopt_path}" add build.gradle
+            ;;
+        *)
+            printf 'unknown fixture change: %s\n' "${buildopt_change}" >&2
+            exit 1
+            ;;
+    esac
+    git -C "${buildopt_path}" commit -qm 'automatic discovery target'
+}
+
+buildopt_run_optimize() {
+    local buildopt_repository=$1
+    local buildopt_state=$2
+    local buildopt_entrypoint=$3
+    local buildopt_stdout="${buildopt_temp}/${buildopt_state}.json"
+    local buildopt_stderr="${buildopt_temp}/${buildopt_state}.log"
+    (
+        cd -- "${buildopt_repository}"
+        env -u BUILDOPT_BYPASS \
+            -u GITHUB_EVENT_PATH -u GITHUB_REPOSITORY \
+            -u CI_MERGE_REQUEST_DIFF_BASE_SHA -u CI_COMMIT_BEFORE_SHA \
+            -u CI_PROJECT_PATH \
+            GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            "${buildopt_binary}" optimize --json \
+            --state-dir ".buildopt/optimize/${buildopt_state}" \
+            --calibration-budget 10m \
+            "${buildopt_entrypoint}" --offline \
+            >"${buildopt_stdout}" 2>"${buildopt_stderr}"
+    ) || {
+        printf 'automatic discovery case failed: %s\n' "${buildopt_state}" >&2
+        sed -n '1,240p' "${buildopt_stderr}" >&2
+        return 1
+    }
+    jq -e --arg state "${buildopt_state}" '
+        .schemaVersion == "buildopt.poc/optimize-result/v1" and
+        .native == {authoritative: true, started: true, exitCode: 0} and
+        .generatedFiles.result == (".buildopt/optimize/" + $state + "/result.json") and
+        .manualFilesRequired == 0 and
+        .calibrationPerformed == false and
+        .selectionPerformed == false and
+        .productionAuthorized == false and
+        .testOptimization == "OUT_OF_SCOPE"
+    ' "${buildopt_stdout}" >/dev/null || {
+        printf 'automatic discovery result envelope is invalid: %s\n' \
+            "${buildopt_state}" >&2
+        jq . "${buildopt_stdout}" >&2
+        return 1
+    }
+}
+
+buildopt_repository="${buildopt_temp}/supported"
+buildopt_prepare_repository "${buildopt_repository}" source
+
+buildopt_check_supported() {
+    local buildopt_id=$1
+    local buildopt_entrypoint=$2
+    local buildopt_expected=$3
+    buildopt_run_optimize "${buildopt_repository}" "${buildopt_id}" \
+        "${buildopt_entrypoint}"
+    local buildopt_result="${buildopt_repository}/.buildopt/optimize/${buildopt_id}/result.json"
+    jq -e --arg entrypoint "${buildopt_entrypoint}" \
+        --arg expected "${buildopt_expected}" '
+        .outcome == "LEARNING" and
+        .reason == "STRUCTURAL_CANDIDATE_DISCOVERED" and
+        .phase == "DISCOVERED" and
+        .bindings.completeness == "DISCOVERY_COMPLETE" and
+        .discovery.status == "COMPLETE" and
+        .discovery.reason == "STRUCTURAL_CANDIDATE_DISCOVERED" and
+        .discovery.source == "LOCAL_UPSTREAM" and
+        .discovery.changedPathCount == 1 and
+        .discovery.entrypoints == [$entrypoint] and
+        (.discovery.requiredOutputs | length) >= 1 and
+        all(.discovery.requiredOutputs[]; startswith($expected)) and
+        .discovery.candidateEntrypoints == [(":service-a:" + $entrypoint)] and
+        .discovery.graph == {totalProjects: 2, selectedProjects: 1, omittedProjects: 1} and
+        (.discovery.generatedFiles | length) == 7 and
+        .discovery.reviewRequired == true and
+        .discovery.productionAuthorized == false and
+        .discovery.testOptimization == "OUT_OF_SCOPE"
+    ' "${buildopt_result}" >/dev/null || {
+        printf 'supported automatic discovery assertion failed: %s\n' \
+            "${buildopt_id}" >&2
+        jq . "${buildopt_result}" >&2
+        return 1
+    }
+    while IFS= read -r buildopt_generated; do
+        test -s "${buildopt_repository}/${buildopt_generated}"
+        if [[ $(uname -s) == Linux ]] &&
+            [[ $(stat -c '%a' "${buildopt_repository}/${buildopt_generated}") != 600 ]]; then
+            printf 'automatic discovery output is not private: %s\n' \
+                "${buildopt_generated}" >&2
+            exit 1
+        fi
+    done < <(jq -r '.discovery.generatedFiles[]' "${buildopt_result}")
+}
+
+buildopt_check_supported packaging jar 'service-a/build/libs/'
+buildopt_check_supported verification verifyMetadata \
+    'service-a/build/reports/verification/'
+buildopt_check_supported distribution distZip \
+    'service-a/build/distributions/'
+buildopt_check_supported test-preparation testClasses \
+    'service-a/build/classes/java/test/'
+
+buildopt_run_optimize "${buildopt_repository}" packaging jar
+jq -e '
+    .outcome == "LEARNING" and
+    .reason == "STRUCTURAL_CANDIDATE_DISCOVERED" and
+    .generation == 1 and .attempt == 2 and
+    .resume.checkpointFound == true and .resume.accepted == true and
+    .resume.reason == "EXACT_BINDINGS" and
+    .bindings.completeness == "DISCOVERY_COMPLETE"
+' "${buildopt_repository}/.buildopt/optimize/packaging/result.json" >/dev/null
+
+buildopt_run_optimize "${buildopt_repository}" unsupported prepareReleaseNotes
+jq -e '
+    .outcome == "NATIVE_RETAINED" and
+    .reason == "ORIGINAL_WORKFLOW_UNSUPPORTED" and
+    .phase == "NATIVE_RETAINED" and
+    .discovery.status == "NATIVE_RETAINED" and
+    .discovery.generatedFiles == [] and
+    .calibrationPerformed == false and .selectionPerformed == false
+' "${buildopt_repository}/.buildopt/optimize/unsupported/result.json" >/dev/null
+
+buildopt_global="${buildopt_temp}/global"
+buildopt_prepare_repository "${buildopt_global}" global
+buildopt_run_optimize "${buildopt_global}" global jar
+jq -e '
+    .outcome == "NATIVE_RETAINED" and
+    .reason == "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH" and
+    .discovery.status == "NATIVE_RETAINED" and
+    .discovery.generatedFiles == []
+' "${buildopt_global}/.buildopt/optimize/global/result.json" >/dev/null
+
+buildopt_ambiguous="${buildopt_temp}/ambiguous"
+buildopt_prepare_repository "${buildopt_ambiguous}" no-upstream
+buildopt_run_optimize "${buildopt_ambiguous}" ambiguous jar
+jq -e '
+    .outcome == "NATIVE_RETAINED" and
+    .reason == "BASE_REVISION_AMBIGUOUS" and
+    .bindings.completeness == "CONTRACT_ONLY" and
+    .discovery.status == "NATIVE_RETAINED" and
+    .discovery.generatedFiles == []
+' "${buildopt_ambiguous}/.buildopt/optimize/ambiguous/result.json" >/dev/null
+
+printf 'Magic automatic discovery OK: four workflow families discovered; unsupported, global and ambiguous cases retained native Gradle\n'

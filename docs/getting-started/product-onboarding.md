@@ -15,9 +15,10 @@ The current public path below separates compatibility, proposal, measurement
 and replay explicitly. The target POC experience is the single command
 `buildopt optimize build`. Its stable CLI, private state, exact resume, budget,
 human/JSON result and exit contract are now implemented. Until automatic
-discovery is delivered, the command runs optimized native Gradle and reports
-`NATIVE_RETAINED / AUTO_DISCOVERY_PENDING`; use the explicit commands below for
-real proposals and qualification. Follow the
+calibration is delivered, the command runs optimized native Gradle and then
+automatically produces either a reviewable structural proposal or an exact
+native-fallback reason. Use the explicit commands below for measurement and
+qualification. Follow the
 [one-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
 for the remaining ordered delivery.
 
@@ -111,19 +112,25 @@ The final entrypoint is already safe to use:
 buildopt optimize build
 ```
 
-Today it executes the optimized native Gradle baseline, writes private
-generated state and a result under `.buildopt/optimize/v1`, and explains that
-automatic discovery is pending. It requires no hand-authored BuildOpt files
-and grants no production authority. Machine-readable mode reserves stdout for
-one result document:
+Today it executes the optimized native Gradle baseline and then automatically
+derives the exact Git change, Gradle-owned outputs and complete structural
+graph for supported build-owned workflows. A safe candidate reports
+`LEARNING / STRUCTURAL_CANDIDATE_DISCOVERED`; ambiguity, global changes,
+unsupported relationships and full test execution retain native Gradle with an
+exact reason. It writes private generated state/evidence under
+`.buildopt/optimize/v1`, requires no hand-authored BuildOpt files, performs no
+calibration or selection and grants no production authority. Machine-readable
+mode reserves stdout for one result document:
 
 ```bash
 buildopt optimize --json -- build
 ```
 
 `BUILDOPT_BYPASS=1 buildopt optimize build` skips optimize state and reporting
-entirely. The [normative contract](../../specs/poc-magic-onboarding-contract-v1.md)
-defines resume bindings, budgets, outcomes and exit behavior.
+entirely. The [command contract](../../specs/poc-magic-onboarding-contract-v1.md)
+defines resume bindings, budgets, outcomes and exit behavior; the
+[automatic-discovery contract](../../specs/poc-magic-auto-discovery-v1.md)
+defines derived inputs, evidence and native fallbacks.
 
 ## Try the Build Impact accelerator
 

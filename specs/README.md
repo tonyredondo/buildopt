@@ -79,6 +79,7 @@ the exact cross-component contract.
 | [`poc-standard-jar-cache-v1.md`](./poc-standard-jar-cache-v1.md) | OpenTelemetry POC repeated-work reduction |
 | [`poc-standard-copy-cache-v1.md`](./poc-standard-copy-cache-v1.md) and [`poc-standard-copy-cache-v1.json`](./poc-standard-copy-cache-v1.json) | Historical retired standard-`Copy` evidence |
 | [`poc-magic-onboarding-contract-v1.md`](./poc-magic-onboarding-contract-v1.md) and [`poc-magic-onboarding-contract-v1.json`](./poc-magic-onboarding-contract-v1.json) | `POC-MAGIC-ONBOARDING-CONTRACT-001` |
+| [`poc-magic-auto-discovery-v1.md`](./poc-magic-auto-discovery-v1.md) and [`poc-magic-auto-discovery-v1.json`](./poc-magic-auto-discovery-v1.json) | `POC-MAGIC-AUTO-DISCOVERY-001` |
 | [`poc-normal-build-tail-expansion-v1.md`](./poc-normal-build-tail-expansion-v1.md) and [`poc-normal-build-tail-expansion-v1.json`](./poc-normal-build-tail-expansion-v1.json) | `POC-NORMAL-BUILD-TAIL-EXPANSION-001` |
 | [`private-beta-data-lifecycle-v1.md`](./private-beta-data-lifecycle-v1.md) | `A1-004` / `A1-G05` |
 | [`private-beta-operations-v1.md`](./private-beta-operations-v1.md) | `A1-005` |
@@ -568,12 +569,17 @@ timing remains immutable.
 
 `poc-magic-onboarding-contract-v1.json` and
 `poc-magic-onboarding-contract-v1.md` fix the stable
-`buildopt optimize build` surface before automatic discovery. The executable
-skeleton requires zero manual BuildOpt files, writes private atomic state and
-result documents, accepts only digest-exact local resume, preserves Gradle exit
-behavior and keeps production authority false. Until the next block it runs
-optimized native Gradle and reports
-`NATIVE_RETAINED / AUTO_DISCOVERY_PENDING` without a timing claim.
+`buildopt optimize build` surface used by the automatic-discovery implementation.
+The command requires zero manual BuildOpt files, writes private atomic state,
+result and discovery documents, accepts only digest-exact context-bound resume,
+preserves Gradle exit behavior and keeps production authority false.
+
+`poc-magic-auto-discovery-v1.json` and
+`poc-magic-auto-discovery-v1.md` bind the derived repository/workflow/base/
+change/output/graph inputs and fail-closed reasons. Packaging, verification,
+distribution and test-preparation fixtures reach a structural proposal through
+the customer command; unsupported, global and ambiguous inputs retain native
+Gradle. No calibration, selection or timing claim is created.
 
 `poc-new-family-calibration-economics-v1.json` and
 `poc-new-family-calibration-economics-v1.md` freeze the follow-up economics

@@ -1,0 +1,169 @@
+package launcher
+
+import (
+	"os"
+	"os/exec"
+	"path/filepath"
+	"reflect"
+	"strings"
+	"testing"
+
+	"github.com/tonyredondo/buildopt/internal/buildimpact"
+)
+
+func TestSplitOptimizeGradleWorkflow(t *testing.T) {
+	entrypoints, options, reason := splitOptimizeGradleWorkflow([]string{
+		"--no-daemon", "--max-workers", "4", "-Pmode=ci", ":service:distZip",
+	})
+	if reason != "" || !reflect.DeepEqual(entrypoints, []string{":service:distZip"}) ||
+		!reflect.DeepEqual(options, []string{"--no-daemon", "--max-workers", "4", "-Pmode=ci"}) {
+		t.Fatalf("workflow = %v, options = %v, reason = %q", entrypoints, options, reason)
+	}
+
+	for _, test := range []struct {
+		arguments []string
+		reason    string
+	}{
+		{[]string{"--tests", "Example", "test"}, "WORKFLOW_BOUNDARY_UNSUPPORTED"},
+		{[]string{"-p", "other", "build"}, "WORKFLOW_BOUNDARY_UNSUPPORTED"},
+		{[]string{"--unknown", "build"}, "WORKFLOW_OPTION_UNSUPPORTED"},
+		{[]string{"--offline"}, "WORKFLOW_ARGUMENTS_AMBIGUOUS"},
+	} {
+		if _, _, got := splitOptimizeGradleWorkflow(test.arguments); got != test.reason {
+			t.Fatalf("arguments %v reason = %q, want %q", test.arguments, got, test.reason)
+		}
+	}
+}
+
+func TestOptimizeRepositoryIDFromRemote(t *testing.T) {
+	for remote, want := range map[string]string{
+		"git@github.com:owner/repository.git":      "owner/repository",
+		"https://github.com/owner/repository.git":  "owner/repository",
+		"ssh://git@example.test/owner/repository":  "owner/repository",
+		"https://example.test/one/two/repository/": "two/repository",
+	} {
+		if got := optimizeRepositoryIDFromRemote(remote); got != want {
+			t.Fatalf("remote %q repository = %q, want %q", remote, got, want)
+		}
+	}
+	if got := optimizeRepositoryIDFromRemote("not-a-repository"); got != "" {
+		t.Fatalf("invalid remote repository = %q", got)
+	}
+}
+
+func TestOptimizeAffectedProjectsAndRequiredOutputs(t *testing.T) {
+	snapshot := buildimpact.DiscoverySnapshot{Projects: []buildimpact.DiscoveredProject{
+		{Path: ":library"},
+		{Path: ":service", DependsOn: []string{":library"}},
+		{Path: ":unrelated"},
+	}}
+	affected := optimizeAffectedProjects(snapshot, []string{":library"})
+	if !affected[":library"] || !affected[":service"] || affected[":unrelated"] {
+		t.Fatalf("affected projects = %v", affected)
+	}
+
+	candidates := []outputContractCandidate{
+		{Pattern: "service/build/distributions/**", Path: "service/build/distributions/service.zip", FileCount: 1, OwnerProjects: []string{":service"}, ProducerTasks: []string{":service:distZip"}},
+		{Pattern: "library/build/classes/**", Path: "library/build/classes/java/test/Example.class", FileCount: 1, OwnerProjects: []string{":library"}, ProducerTasks: []string{":library:compileTestJava"}},
+		{Pattern: "unrelated/build/libs/**", Path: "unrelated/build/libs/unrelated.jar", FileCount: 1, OwnerProjects: []string{":unrelated"}, ProducerTasks: []string{":unrelated:jar"}},
+	}
+	if got := optimizeRequiredOutputPatterns(candidates, []string{"distZip"}, affected); !reflect.DeepEqual(got, []string{"service/build/distributions/**"}) {
+		t.Fatalf("direct output patterns = %v", got)
+	}
+	if got := optimizeRequiredOutputPatterns(candidates, []string{"testClasses"}, affected); !reflect.DeepEqual(got, []string{"library/build/classes/**"}) {
+		t.Fatalf("test-preparation output patterns = %v", got)
+	}
+	if got := optimizeRequiredOutputPatterns(candidates, []string{"distZip", "testClasses"}, affected); !reflect.DeepEqual(got, []string{"library/build/classes/**", "service/build/distributions/**"}) {
+		t.Fatalf("multi-entrypoint output patterns = %v", got)
+	}
+}
+
+func TestInspectOptimizeDiscoveryContextUsesExactLocalUpstream(t *testing.T) {
+	repository := t.TempDir()
+	runOptimizeGit(t, repository, "init", "-b", "main")
+	runOptimizeGit(t, repository, "config", "user.name", "BuildOpt Test")
+	runOptimizeGit(t, repository, "config", "user.email", "buildopt@example.invalid")
+	path := filepath.Join(repository, "source.txt")
+	if err := os.WriteFile(path, []byte("base\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	runOptimizeGit(t, repository, "add", "source.txt")
+	runOptimizeGit(t, repository, "commit", "-m", "base")
+	base := strings.TrimSpace(runOptimizeGit(t, repository, "rev-parse", "HEAD"))
+	runOptimizeGit(t, repository, "switch", "-c", "feature")
+	runOptimizeGit(t, repository, "config", "branch.feature.remote", ".")
+	runOptimizeGit(t, repository, "config", "branch.feature.merge", "refs/heads/main")
+	if err := os.WriteFile(path, []byte("target\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	runOptimizeGit(t, repository, "add", "source.txt")
+	runOptimizeGit(t, repository, "commit", "-m", "target")
+	target := strings.TrimSpace(runOptimizeGit(t, repository, "rev-parse", "HEAD"))
+
+	context := inspectOptimizeDiscoveryContext(repository, []string{"jar", "--offline"}, func(string) string { return "" })
+	if !context.Ready || context.Source != "LOCAL_UPSTREAM" || context.BaseRevision != base ||
+		context.TargetRevision != target || !reflect.DeepEqual(context.changedPaths, []string{"source.txt"}) ||
+		context.RepositoryID == "" || len(context.ChangeSHA256) != 64 {
+		t.Fatalf("discovery context = %+v", context)
+	}
+
+	if err := os.WriteFile(path, []byte("dirty\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	dirty := inspectOptimizeDiscoveryContext(repository, []string{"jar"}, func(string) string { return "" })
+	if dirty.Ready || dirty.Reason != "WORKTREE_DIRTY" {
+		t.Fatalf("dirty discovery context = %+v", dirty)
+	}
+	if err := os.WriteFile(path, []byte("target\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(repository, "new-source.txt"), []byte("untracked\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	untracked := inspectOptimizeDiscoveryContext(repository, []string{"jar"}, func(string) string { return "" })
+	if untracked.Ready || untracked.Reason != "WORKTREE_DIRTY" {
+		t.Fatalf("untracked discovery context = %+v", untracked)
+	}
+}
+
+func TestOptimizeGitHubBaseRejectsTrailingJSON(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "event.json")
+	valid := `{"pull_request":{"base":{"sha":"0123456789abcdef0123456789abcdef01234567"}}}`
+	if err := os.WriteFile(path, []byte(valid), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	base, err := optimizeGitHubBase(path)
+	if err != nil || base != "0123456789abcdef0123456789abcdef01234567" {
+		t.Fatalf("GitHub base = %q, err = %v", base, err)
+	}
+	if err := os.WriteFile(path, []byte(valid+"{}"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := optimizeGitHubBase(path); err == nil {
+		t.Fatal("trailing GitHub event JSON was accepted")
+	}
+}
+
+func TestOptimizeGeneratedStatePath(t *testing.T) {
+	for _, path := range []string{".buildopt/state.json", ".gradle/9.6.1/cache.bin"} {
+		if !optimizeGeneratedStatePath(path) {
+			t.Fatalf("generated state path %q was rejected", path)
+		}
+	}
+	for _, path := range []string{"src/New.java", "gradle/init.gradle", "build.gradle"} {
+		if optimizeGeneratedStatePath(path) {
+			t.Fatalf("customer path %q was accepted as generated state", path)
+		}
+	}
+}
+
+func runOptimizeGit(t *testing.T, repository string, arguments ...string) string {
+	t.Helper()
+	command := exec.Command("git", arguments...)
+	command.Dir = repository
+	output, err := command.CombinedOutput()
+	if err != nil {
+		t.Fatalf("git %v: %v\n%s", arguments, err, output)
+	}
+	return string(output)
+}

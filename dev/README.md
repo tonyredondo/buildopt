@@ -3708,14 +3708,19 @@ The one-command onboarding contract is validated separately:
 ./dev/check-magic-onboarding-contract
 ./dev/test-magic-onboarding-contract
 ./dev/run --toolchain go -- go test -count=1 ./internal/launcher -run '^TestOptimize'
+./dev/check-magic-auto-discovery-contract
+./dev/test-magic-auto-discovery-contract
+./dev/check-magic-auto-discovery
 ```
 
-The contract fixes `buildopt optimize build`, private atomic state/result
-files, exact checkpoint reuse, bounded calibration options, human/JSON output,
-Gradle exit preservation and the POC authority boundary. Its executable
-skeleton runs optimized native Gradle and reports
-`NATIVE_RETAINED / AUTO_DISCOVERY_PENDING`; it performs no discovery,
-calibration or selection yet.
+The command contract fixes `buildopt optimize build`, private atomic
+state/result files, exact checkpoint reuse, bounded calibration options,
+human/JSON output, Gradle exit preservation and the POC authority boundary.
+The automatic-discovery checker then exercises the real binary on packaging,
+verification, distribution and test-preparation Gradle workflows, requiring
+zero manual BuildOpt files and private generated evidence. Unsupported,
+global-change and ambiguous-base fixtures must retain native Gradle. This
+block performs no calibration, selection or timing claim.
 
 `specs/poc-cross-date-output-equivalence-v1.json` and
 `specs/poc-cross-date-output-equivalence-v1.md` freeze the follow-up for the

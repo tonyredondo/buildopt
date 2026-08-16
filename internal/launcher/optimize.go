@@ -36,7 +36,8 @@ const (
 	optimizeResumeDrift         = "BINDING_DRIFT"
 	optimizeResumeInvalid       = "INVALID_CHECKPOINT"
 	optimizeResumeDisabled      = "RESUME_DISABLED"
-	optimizeBindingCompleteness = "CONTRACT_ONLY"
+	optimizeBindingContractOnly = "CONTRACT_ONLY"
+	optimizeBindingDiscovery    = "DISCOVERY_COMPLETE"
 	optimizeDefaultBudget       = 30 * time.Minute
 	optimizeDefaultPairs        = 8
 	optimizeDefaultBreakEven    = 30
@@ -46,20 +47,22 @@ const (
 var errOptimizeUsage = errors.New("invalid optimize usage")
 
 type optimizeInvocation struct {
-	repositoryRoot     string
-	stateDirectory     string
-	stateRelative      string
-	gradleArgs         []string
-	resumeMode         string
-	calibrationBudget  time.Duration
-	calibrationPairs   int
-	maxBreakEvenBuilds int
-	jsonOutput         bool
-	bindingSHA256      string
-	executableSHA256   string
-	wrapperSHA256      string
-	invocationSHA256   string
-	repositoryScopeSHA string
+	repositoryRoot      string
+	stateDirectory      string
+	stateRelative       string
+	gradleArgs          []string
+	resumeMode          string
+	calibrationBudget   time.Duration
+	calibrationPairs    int
+	maxBreakEvenBuilds  int
+	jsonOutput          bool
+	bindingSHA256       string
+	executableSHA256    string
+	wrapperSHA256       string
+	invocationSHA256    string
+	repositoryScopeSHA  string
+	discoveryContextSHA string
+	discovery           optimizeDiscoveryContext
 }
 
 type optimizeBudget struct {
@@ -69,12 +72,13 @@ type optimizeBudget struct {
 }
 
 type optimizeBindings struct {
-	SHA256                string `json:"sha256"`
-	Completeness          string `json:"completeness"`
-	ExecutableSHA256      string `json:"executableSha256"`
-	WrapperSHA256         string `json:"wrapperSha256"`
-	InvocationSHA256      string `json:"invocationSha256"`
-	RepositoryScopeSHA256 string `json:"repositoryScopeSha256"`
+	SHA256                 string `json:"sha256"`
+	Completeness           string `json:"completeness"`
+	ExecutableSHA256       string `json:"executableSha256"`
+	WrapperSHA256          string `json:"wrapperSha256"`
+	InvocationSHA256       string `json:"invocationSha256"`
+	RepositoryScopeSHA256  string `json:"repositoryScopeSha256"`
+	DiscoveryContextSHA256 string `json:"discoveryContextSha256"`
 }
 
 type optimizeResume struct {
@@ -86,19 +90,20 @@ type optimizeResume struct {
 }
 
 type optimizeState struct {
-	SchemaVersion        string           `json:"schemaVersion"`
-	Generation           int              `json:"generation"`
-	Attempt              int              `json:"attempt"`
-	Phase                string           `json:"phase"`
-	LastOutcome          string           `json:"lastOutcome"`
-	LastReason           string           `json:"lastReason"`
-	Bindings             optimizeBindings `json:"bindings"`
-	Budget               optimizeBudget   `json:"budget"`
-	Resume               optimizeResume   `json:"resume"`
-	BuildStarted         bool             `json:"buildStarted"`
-	LastExitCode         int              `json:"lastExitCode"`
-	UpdatedAt            string           `json:"updatedAt"`
-	ProductionAuthorized bool             `json:"productionAuthorized"`
+	SchemaVersion        string                  `json:"schemaVersion"`
+	Generation           int                     `json:"generation"`
+	Attempt              int                     `json:"attempt"`
+	Phase                string                  `json:"phase"`
+	LastOutcome          string                  `json:"lastOutcome"`
+	LastReason           string                  `json:"lastReason"`
+	Bindings             optimizeBindings        `json:"bindings"`
+	Budget               optimizeBudget          `json:"budget"`
+	Resume               optimizeResume          `json:"resume"`
+	BuildStarted         bool                    `json:"buildStarted"`
+	LastExitCode         int                     `json:"lastExitCode"`
+	Discovery            optimizeDiscoveryResult `json:"discovery"`
+	UpdatedAt            string                  `json:"updatedAt"`
+	ProductionAuthorized bool                    `json:"productionAuthorized"`
 }
 
 type optimizeNativeResult struct {
@@ -108,30 +113,32 @@ type optimizeNativeResult struct {
 }
 
 type optimizeGeneratedFiles struct {
-	State  string `json:"state"`
-	Result string `json:"result"`
+	State     string   `json:"state"`
+	Result    string   `json:"result"`
+	Discovery []string `json:"discovery"`
 }
 
 type optimizeResult struct {
-	SchemaVersion        string                 `json:"schemaVersion"`
-	Outcome              string                 `json:"outcome"`
-	Reason               string                 `json:"reason"`
-	Phase                string                 `json:"phase"`
-	StartedAt            string                 `json:"startedAt"`
-	CompletedAt          string                 `json:"completedAt"`
-	DurationMs           int64                  `json:"durationMs"`
-	Generation           int                    `json:"generation"`
-	Attempt              int                    `json:"attempt"`
-	Bindings             optimizeBindings       `json:"bindings"`
-	Budget               optimizeBudget         `json:"budget"`
-	Resume               optimizeResume         `json:"resume"`
-	Native               optimizeNativeResult   `json:"native"`
-	GeneratedFiles       optimizeGeneratedFiles `json:"generatedFiles"`
-	ManualFilesRequired  int                    `json:"manualFilesRequired"`
-	CalibrationPerformed bool                   `json:"calibrationPerformed"`
-	SelectionPerformed   bool                   `json:"selectionPerformed"`
-	ProductionAuthorized bool                   `json:"productionAuthorized"`
-	TestOptimization     string                 `json:"testOptimization"`
+	SchemaVersion        string                  `json:"schemaVersion"`
+	Outcome              string                  `json:"outcome"`
+	Reason               string                  `json:"reason"`
+	Phase                string                  `json:"phase"`
+	StartedAt            string                  `json:"startedAt"`
+	CompletedAt          string                  `json:"completedAt"`
+	DurationMs           int64                   `json:"durationMs"`
+	Generation           int                     `json:"generation"`
+	Attempt              int                     `json:"attempt"`
+	Bindings             optimizeBindings        `json:"bindings"`
+	Budget               optimizeBudget          `json:"budget"`
+	Resume               optimizeResume          `json:"resume"`
+	Native               optimizeNativeResult    `json:"native"`
+	Discovery            optimizeDiscoveryResult `json:"discovery"`
+	GeneratedFiles       optimizeGeneratedFiles  `json:"generatedFiles"`
+	ManualFilesRequired  int                     `json:"manualFilesRequired"`
+	CalibrationPerformed bool                    `json:"calibrationPerformed"`
+	SelectionPerformed   bool                    `json:"selectionPerformed"`
+	ProductionAuthorized bool                    `json:"productionAuthorized"`
+	TestOptimization     string                  `json:"testOptimization"`
 }
 
 type optimizeRun struct {
@@ -190,6 +197,7 @@ func prepareOptimizeInvocation(args []string, stateEnabled bool) (optimizeInvoca
 	invocation.repositoryRoot = repositoryRoot
 	invocation.stateDirectory = statePath
 	invocation.stateRelative = stateRelative
+	invocation.discovery = inspectOptimizeDiscoveryContext(repositoryRoot, invocation.gradleArgs, os.Getenv)
 	if err := bindOptimizeInvocation(&invocation); err != nil {
 		return optimizeInvocation{}, err
 	}
@@ -251,12 +259,14 @@ func bindOptimizeInvocation(invocation *optimizeInvocation) error {
 	}
 	invocation.invocationSHA256 = optimizeDigest("buildopt-optimize-invocation-v1", invocation.gradleArgs...)
 	invocation.repositoryScopeSHA = optimizeDigest("buildopt-optimize-repository-scope-v1", invocation.repositoryRoot)
+	invocation.discoveryContextSHA = optimizeDiscoveryContextSHA(invocation.discovery)
 	invocation.bindingSHA256 = optimizeDigest(
 		"buildopt-optimize-bindings-v1",
 		invocation.executableSHA256,
 		invocation.wrapperSHA256,
 		invocation.invocationSHA256,
 		invocation.repositoryScopeSHA,
+		invocation.discoveryContextSHA,
 		strconv.FormatInt(int64(invocation.calibrationBudget/time.Second), 10),
 		strconv.Itoa(invocation.calibrationPairs),
 		strconv.Itoa(invocation.maxBreakEvenBuilds),
@@ -372,7 +382,8 @@ func validOptimizeState(state optimizeState) bool {
 	if state.SchemaVersion != optimizeStateSchemaVersion || state.Generation < 1 ||
 		state.Attempt < 1 || state.Phase == "" || state.LastOutcome == "" ||
 		state.LastReason == "" || state.ProductionAuthorized ||
-		state.Bindings.Completeness != optimizeBindingCompleteness ||
+		!validOptimizeDiscoveryCheckpoint(state) ||
+		!optimizeStringIn(state.Bindings.Completeness, optimizeBindingContractOnly, optimizeBindingDiscovery) ||
 		state.Budget.WallTimeSeconds < 1 || state.Budget.Pairs < 2 ||
 		state.Budget.Pairs > 16 || state.Budget.MaxBreakEvenBuilds < 1 ||
 		state.Budget.MaxBreakEvenBuilds > 1000 {
@@ -394,6 +405,7 @@ func validOptimizeState(state optimizeState) bool {
 		state.Bindings.WrapperSHA256,
 		state.Bindings.InvocationSHA256,
 		state.Bindings.RepositoryScopeSHA256,
+		state.Bindings.DiscoveryContextSHA256,
 	} {
 		if len(digest) != 64 || strings.ToLower(digest) != digest {
 			return false
@@ -411,6 +423,45 @@ func validOptimizeState(state optimizeState) bool {
 	return true
 }
 
+func validOptimizeDiscoveryCheckpoint(state optimizeState) bool {
+	discovery := state.Discovery
+	if discovery.ProductionAuthorized {
+		return false
+	}
+	switch discovery.Status {
+	case "":
+		return state.Phase == optimizePhaseUnseen && !state.BuildStarted &&
+			discovery.Reason == "" && discovery.TestOptimization == ""
+	case optimizeDiscoveryComplete:
+		return state.Phase == "DISCOVERED" && discovery.Reason == optimizeDiscoveryReasonFound &&
+			discovery.ReviewRequired && discovery.TestOptimization == "OUT_OF_SCOPE" &&
+			validOptimizeDiscoveryFiles(discovery.GeneratedFiles, true) && discovery.Graph.TotalProjects > 0 &&
+			discovery.Graph.SelectedProjects > 0 && discovery.Graph.OmittedProjects > 0
+	case optimizeDiscoveryRetained, optimizeDiscoverySkipped:
+		return state.Phase == "NATIVE_RETAINED" && discovery.Reason != "" &&
+			discovery.ReviewRequired && discovery.TestOptimization == "OUT_OF_SCOPE" &&
+			validOptimizeDiscoveryFiles(discovery.GeneratedFiles, false)
+	default:
+		return false
+	}
+}
+
+func validOptimizeDiscoveryFiles(paths []string, complete bool) bool {
+	if len(paths) > 7 || (complete && len(paths) != 7) {
+		return false
+	}
+	seen := make(map[string]bool, len(paths))
+	for _, path := range paths {
+		native := filepath.FromSlash(path)
+		if path == "" || filepath.IsAbs(native) || filepath.Clean(native) != native ||
+			!strings.HasPrefix(path, ".buildopt/") || seen[path] {
+			return false
+		}
+		seen[path] = true
+	}
+	return true
+}
+
 func optimizeStringIn(value string, allowed ...string) bool {
 	for _, candidate := range allowed {
 		if value == candidate {
@@ -421,11 +472,16 @@ func optimizeStringIn(value string, allowed ...string) bool {
 }
 
 func optimizeInvocationBindings(invocation optimizeInvocation) optimizeBindings {
+	completeness := optimizeBindingContractOnly
+	if invocation.discovery.Ready {
+		completeness = optimizeBindingDiscovery
+	}
 	return optimizeBindings{
-		SHA256: invocation.bindingSHA256, Completeness: optimizeBindingCompleteness,
+		SHA256: invocation.bindingSHA256, Completeness: completeness,
 		ExecutableSHA256: invocation.executableSHA256, WrapperSHA256: invocation.wrapperSHA256,
-		InvocationSHA256:      invocation.invocationSHA256,
-		RepositoryScopeSHA256: invocation.repositoryScopeSHA,
+		InvocationSHA256:       invocation.invocationSHA256,
+		RepositoryScopeSHA256:  invocation.repositoryScopeSHA,
+		DiscoveryContextSHA256: invocation.discoveryContextSHA,
 	}
 }
 
@@ -438,25 +494,34 @@ func optimizeInvocationBudget(invocation optimizeInvocation) optimizeBudget {
 }
 
 func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
+	discovery := run.discover(exitCode)
 	completedAt := time.Now().UTC()
 	run.state.LastOutcome = optimizeOutcomeNative
-	run.state.LastReason = optimizeReasonPending
+	run.state.LastReason = discovery.Reason
+	run.state.Phase = "NATIVE_RETAINED"
+	if discovery.Status == optimizeDiscoveryComplete {
+		run.state.LastOutcome = optimizeOutcomeLearning
+		run.state.Phase = "DISCOVERED"
+	}
 	run.state.BuildStarted = run.childStarted
 	run.state.LastExitCode = exitCode
+	run.state.Discovery = discovery
 	run.state.UpdatedAt = completedAt.Format(time.RFC3339Nano)
 	result := optimizeResult{
 		SchemaVersion: optimizeResultSchemaVersion,
-		Outcome:       optimizeOutcomeNative, Reason: optimizeReasonPending,
-		Phase:       optimizePhaseUnseen,
+		Outcome:       run.state.LastOutcome, Reason: discovery.Reason,
+		Phase:       run.state.Phase,
 		StartedAt:   run.startedAt.Format(time.RFC3339Nano),
 		CompletedAt: completedAt.Format(time.RFC3339Nano),
 		DurationMs:  completedAt.Sub(run.startedAt).Milliseconds(),
 		Generation:  run.state.Generation, Attempt: run.state.Attempt,
 		Bindings: run.state.Bindings, Budget: run.state.Budget, Resume: run.state.Resume,
-		Native: optimizeNativeResult{Authoritative: true, Started: run.childStarted, ExitCode: exitCode},
+		Native:    optimizeNativeResult{Authoritative: true, Started: run.childStarted, ExitCode: exitCode},
+		Discovery: discovery,
 		GeneratedFiles: optimizeGeneratedFiles{
-			State:  filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeStateFile)),
-			Result: filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeResultFile)),
+			State:     filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeStateFile)),
+			Result:    filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeResultFile)),
+			Discovery: append([]string{}, discovery.GeneratedFiles...),
 		},
 		ManualFilesRequired: 0, CalibrationPerformed: false, SelectionPerformed: false,
 		ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
@@ -477,10 +542,18 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 	}
 	_, err := fmt.Fprintf(
 		stderr,
-		"BuildOpt optimize: %s (%s)\nCurrent build: optimized native Gradle\nState: %s\nNext: automatic discovery is the next POC block; production authorization remains false\n",
+		"BuildOpt optimize: %s (%s)\nCurrent build: optimized native Gradle\nState: %s\nNext: %s; production authorization remains false\n",
 		result.Outcome,
 		result.Reason,
 		result.GeneratedFiles.Result,
+		optimizeNextStep(discovery),
 	)
 	return err
+}
+
+func optimizeNextStep(discovery optimizeDiscoveryResult) string {
+	if discovery.Status == optimizeDiscoveryComplete {
+		return "automatic calibration of the discovered candidate"
+	}
+	return "native Gradle remains authoritative until discovery is safe"
 }

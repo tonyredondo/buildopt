@@ -32,7 +32,7 @@ func TestOptimizeContractRunsNativeAndResumesOnlyExactBindings(t *testing.T) {
 	if !strings.Contains(stdout.String(), "native:--build-cache build --no-daemon") {
 		t.Fatalf("native stdout = %q", stdout.String())
 	}
-	if !strings.Contains(stderr.String(), "NATIVE_RETAINED (AUTO_DISCOVERY_PENDING)") ||
+	if !strings.Contains(stderr.String(), "NATIVE_RETAINED (NATIVE_BUILD_FAILED)") ||
 		!strings.Contains(stderr.String(), "production authorization remains false") {
 		t.Fatalf("optimize stderr = %q", stderr.String())
 	}
@@ -41,7 +41,7 @@ func TestOptimizeContractRunsNativeAndResumesOnlyExactBindings(t *testing.T) {
 	statePath := filepath.Join(repository, ".buildopt", "optimize-test", "v1", optimizeStateFile)
 	result := readOptimizeResultForTest(t, resultPath)
 	if result.SchemaVersion != optimizeResultSchemaVersion || result.Outcome != optimizeOutcomeNative ||
-		result.Reason != optimizeReasonPending || result.Phase != optimizePhaseUnseen ||
+		result.Reason != "NATIVE_BUILD_FAILED" || result.Phase != "NATIVE_RETAINED" ||
 		result.Generation != 1 || result.Attempt != 1 || result.Native.ExitCode != 37 ||
 		!result.Native.Authoritative || !result.Native.Started || result.ManualFilesRequired != 0 ||
 		result.CalibrationPerformed || result.SelectionPerformed || result.ProductionAuthorized ||
@@ -108,6 +108,7 @@ func TestOptimizeJSONAndBypass(t *testing.T) {
 		t.Fatalf("decode JSON stdout %q: %v", stdout.String(), err)
 	}
 	if result.Outcome != optimizeOutcomeNative || !result.Native.Started ||
+		result.Reason != "TARGET_REVISION_UNAVAILABLE" ||
 		strings.Contains(stdout.String(), "native:") ||
 		!strings.Contains(stderr.String(), "native:--build-cache assemble") ||
 		strings.Contains(stderr.String(), "BuildOpt optimize:") {
@@ -209,6 +210,49 @@ func TestOptimizeInvalidCheckpointRunsNativeWithoutReuse(t *testing.T) {
 		result.Resume.Reason != optimizeResumeInvalid ||
 		len(result.Resume.PreviousStateSHA256) != 64 || !result.Native.Started {
 		t.Fatalf("invalid-checkpoint result = %+v", result)
+	}
+}
+
+func TestOptimizeRejectsDiscoveryAuthorityInCheckpoint(t *testing.T) {
+	repository := newOptimizeTestRepository(t)
+	t.Chdir(repository)
+	t.Setenv(bypassEnvironment, "")
+	t.Setenv("BUILDOPT_OPTIMIZE_TEST_EXIT", "0")
+	stateDirectory := filepath.Join(repository, ".buildopt", "authority", "v1")
+	arguments := []string{"optimize", "--state-dir", ".buildopt/authority/v1", "jar"}
+
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	if code := Run(arguments, strings.NewReader(""), &stdout, &stderr); code != 0 {
+		t.Fatalf("initial optimize exit code = %d, stderr = %q", code, stderr.String())
+	}
+	statePath := filepath.Join(stateDirectory, optimizeStateFile)
+	raw, err := os.ReadFile(statePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var state optimizeState
+	if err := json.Unmarshal(raw, &state); err != nil {
+		t.Fatal(err)
+	}
+	state.Discovery.ProductionAuthorized = true
+	mutated, err := json.Marshal(state)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(statePath, mutated, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	stdout.Reset()
+	stderr.Reset()
+	if code := Run(arguments, strings.NewReader(""), &stdout, &stderr); code != 0 {
+		t.Fatalf("mutated optimize exit code = %d, stderr = %q", code, stderr.String())
+	}
+	result := readOptimizeResultForTest(t, filepath.Join(stateDirectory, optimizeResultFile))
+	if result.Resume.Reason != optimizeResumeInvalid || result.Resume.Accepted ||
+		result.Generation != 1 || result.Attempt != 1 {
+		t.Fatalf("mutated discovery checkpoint result = %+v", result)
 	}
 }
 

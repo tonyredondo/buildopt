@@ -2,8 +2,8 @@
 
 ## Purpose
 
-This contract fixes the customer-facing boundary before automatic discovery or
-calibration is implemented. The stable entrypoint is:
+This contract fixes the customer-facing boundary used by automatic discovery
+and the later calibration blocks. The stable entrypoint is:
 
 ```bash
 buildopt optimize build
@@ -16,18 +16,19 @@ evidence document or qualified profile.
 
 ## Current executable behavior
 
-The first implementation is deliberately fail-closed. It executes optimized
-native Gradle, enables only Gradle's native Build Cache unless the caller
-disables it, and returns:
+The command is deliberately fail-closed. It executes optimized native Gradle,
+enables only Gradle's native Build Cache unless the caller disables it, and
+then attempts bounded structural discovery. A complete safe candidate returns:
 
 ```text
-NATIVE_RETAINED / AUTO_DISCOVERY_PENDING
+LEARNING / STRUCTURAL_CANDIDATE_DISCOVERED
 ```
 
-It does not call the existing internal discovery commands, fabricate a
-candidate, calibrate, select a profile or claim a saving. This makes the final
-CLI usable while the ordered tracker blocks replace the reason with real
-discovery, learning and qualification decisions.
+The command derives its exact Git change, workflow, Gradle-owned outputs and
+typed graph without hand-authored BuildOpt files. Unsupported workflows,
+global changes, dirty/ambiguous repository state and incomplete ownership or
+relationships retain native Gradle with an exact reason. Discovery does not
+calibrate, select a profile or claim a saving.
 
 `BUILDOPT_BYPASS=1` keeps the Wrapper shortcut but skips optimize state and
 reporting completely. Once Gradle starts, its exit or signal status remains the
@@ -42,12 +43,13 @@ The command writes two private, atomic documents:
 - `.buildopt/optimize/v1/result.json` is the latest customer result.
 
 No raw Gradle arguments, console logs, credentials or absolute repository path
-are persisted. This contract-only checkpoint binds opaque SHA-256 values for
+are persisted. The checkpoint binds opaque SHA-256 values for
 the BuildOpt executable, canonical local repository scope, Wrapper properties,
-complete Gradle argument vector and calibration budget. The local scope is
-intentionally not portable; the later discovery block must replace
-`CONTRACT_ONLY` with a provider/repository identity before CI or central state
-may reuse it.
+complete Gradle argument vector, derived repository/base/target/change context
+and calibration budget. A ready context reports `DISCOVERY_COMPLETE`; an
+ambiguous one remains `CONTRACT_ONLY`. The local scope is intentionally not
+portable; the later CI block must use provider identity before state may move
+between runners.
 
 `--resume auto` accepts only an exact binding match. Invocation, Wrapper,
 executable, repository or budget drift creates a new generation and runs
@@ -74,8 +76,8 @@ autonomous production promotion.
 The default future calibration envelope is 30 minutes, at most eight balanced
 pairs and a maximum accepted break-even of 30 matching builds. Owners can
 reduce or extend those bounded values through the CLI, up to the limits in the
-machine contract. The current native skeleton records but does not spend that
-budget.
+machine contract. Discovery spends only the bounded wall-time envelope; no
+calibration pair is executed yet.
 
 Human mode preserves Gradle stdout and prints a four-line decision summary to
 stderr. `--json` reserves stdout for one `buildopt.poc/optimize-result/v1`

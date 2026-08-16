@@ -201,6 +201,16 @@ untimed native Gradle.
 
 ## Current limits
 
+The first one-command automation block is now executable rather than only a
+roadmap. In the real two-project Gradle fixture, `buildopt optimize` discovers
+packaging, custom verification, distribution and `testClasses` proposals with
+zero hand-authored BuildOpt files; every case derives a 2→1 project graph and
+writes seven private review documents. Unsupported task relationships, a root
+build change and an ambiguous local Git base independently retain optimized
+native Gradle. This proves orchestration and safe fallback only: discovery has
+not yet timed or qualified those generated candidates, so it adds no new
+wall-time percentage to the evidence above.
+
 The evidence is bound to exact revisions, changes, workflows, outputs, and a
 12-CPU host. The matrices cover multiple source shapes, a JVM resource,
 multiple simultaneous paths, and conservative build-logic/global fallback,
@@ -231,11 +241,11 @@ Gradle, and automatic selection remains POC-only with production authority
 false. The ordered implementation and scorecard are frozen in the
 [one-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md).
 
-1. **Automate discovery behind `buildopt optimize`.** Its stable CLI, private
-   state, exact resume, budget and human/JSON result now exist; derive the
-   Wrapper, workflow, immutable base, exact change, outputs and structural
-   graph without hand-authored BuildOpt JSON.
-2. **Orchestrate calibration, then automate portfolio selection and CI persistence.** Match qualified
+1. **Orchestrate calibration behind the discovered candidate.** The command now
+   derives the workflow, immutable base, exact change, outputs and structural
+   graph with zero manual BuildOpt files. Next it must measure that proposal
+   against the same optimized-native workflow within the declared budget.
+2. **Automate portfolio selection and CI persistence.** Match qualified
    change families, retain native on drift and reuse only exact calibration
    state through one-input GitHub/GitLab onboarding.
 3. **Prove the complete effect.** Measure install-to-decision time, net
@@ -259,6 +269,7 @@ false. The ordered implementation and scorecard are frozen in the
 - [Ktor calibration economics](../../benchmarks/results/poc-new-family-calibration-economics-v1/README.md)
 - [Ktor public installed profile replay](../../benchmarks/results/poc-new-family-installed-profile-replay-v1/README.md)
 - [One-command POC onboarding contract](../../specs/poc-magic-onboarding-contract-v1.md)
+- [Automatic one-command discovery contract](../../specs/poc-magic-auto-discovery-v1.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [One-command POC onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)

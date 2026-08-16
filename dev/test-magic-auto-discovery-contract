@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_source="${buildopt_root}/specs/poc-magic-auto-discovery-v1.json"
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-magic-discovery-contract.XXXXXX")
+trap 'rm -f -- "${buildopt_temp}/contract.json"; rmdir -- "${buildopt_temp}"' EXIT
+
+"${buildopt_script_dir}/check-magic-auto-discovery-contract" \
+    "${buildopt_source}" >/dev/null
+
+for buildopt_filter in \
+    '.manualBuildOptFilesRequired = 1' \
+    '.authority.productionAuthorized = true' \
+    '.discoveredDecision.selectionPerformed = true' \
+    'del(.nativeFallbackReasons[] | select(. == "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"))'; do
+    jq "${buildopt_filter}" "${buildopt_source}" >"${buildopt_temp}/contract.json"
+    if "${buildopt_script_dir}/check-magic-auto-discovery-contract" \
+        "${buildopt_temp}/contract.json" >/dev/null 2>&1; then
+        printf 'automatic-discovery checker accepted forbidden mutation: %s\n' \
+            "${buildopt_filter}" >&2
+        exit 1
+    fi
+done
+
+printf 'Magic automatic-discovery contract negative fixtures OK\n'

@@ -57,10 +57,13 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
 > **POC onboarding north star:** install BuildOpt, open a Gradle repository and
 > run `buildopt optimize build`. The command now has a stable state/result,
-> resume, budget, exit and POC-authority contract. Until automatic discovery is
-> implemented it honestly executes optimized native Gradle and reports
-> `NATIVE_RETAINED / AUTO_DISCOVERY_PENDING`; it does not claim or select an
-> optimization. The ordered work and success scorecard live in the
+> resume, budget, exit and POC-authority contract. It now derives the exact Git
+> change, Gradle-owned outputs and structural graph automatically for supported
+> build-owned workflows, while optimized native Gradle remains authoritative.
+> A safe proposal reports `LEARNING / STRUCTURAL_CANDIDATE_DISCOVERED`; an
+> ambiguous, global or unsupported case reports its native fallback reason. It
+> does not calibrate, claim a saving or select an optimization yet. The ordered
+> work and success scorecard live in the
 > [one-command onboarding roadmap](./docs/plans/one-command-onboarding-roadmap.md).
 
 ## Get your first result

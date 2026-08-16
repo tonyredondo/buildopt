@@ -36,19 +36,22 @@ BuildOpt init script or plugin.
 buildopt optimize [options] [--] <gradle args...>
 ```
 
-The stable north-star invocation is `buildopt optimize build`. The current
-contract skeleton runs optimized native Gradle and returns
-`NATIVE_RETAINED / AUTO_DISCOVERY_PENDING`; automatic discovery, calibration
-and selection remain subsequent tracker blocks. Generated private state and
-the latest result live under `.buildopt/optimize/v1`, with exact resume only
-for matching executable, repository scope, Wrapper, Gradle arguments and
-budget bindings.
+The stable north-star invocation is `buildopt optimize build`. The command runs
+optimized native Gradle first, then derives repository identity, immutable
+base/target, exact changes, non-empty Gradle-owned outputs and a typed
+structural graph. A complete candidate returns
+`LEARNING / STRUCTURAL_CANDIDATE_DISCOVERED`; unsupported or ambiguous state
+retains native Gradle. Generated private state, discovery documents and the
+latest result live under `.buildopt/optimize/v1`, with exact resume only for
+matching executable, repository scope, Wrapper, Gradle arguments, derived
+discovery context and budget bindings.
 
 Defaults are a 30-minute future calibration budget, eight balanced pairs and a
 maximum accepted break-even of 30 matching builds. `--json` reserves stdout
 for one result object and sends Gradle console output to stderr.
 `BUILDOPT_BYPASS=1` skips optimize state and reporting. No state grants
-production authority or enters Test Optimization scope.
+production authority or enters Test Optimization scope. Discovery performs no
+calibration, selection or performance claim yet.
 
 ### Run the qualified POC profile
 

@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "buildopt.poc/magic-auto-discovery/v1",
+  "workItem": "POC-MAGIC-AUTO-DISCOVERY-001",
+  "customerCommand": "buildopt optimize <gradle args...>",
+  "manualBuildOptFilesRequired": 0,
+  "derivation": {
+    "wrapper": "REPOSITORY_GRADLE_WRAPPER",
+    "workflow": "GRADLE_ARGUMENT_VECTOR",
+    "repositoryIdentity": [
+      "GITHUB_REPOSITORY",
+      "GITLAB_PROJECT_PATH",
+      "ORIGIN_REMOTE",
+      "OPAQUE_LOCAL_ID"
+    ],
+    "basePriority": [
+      "GITHUB_EVENT_BASE",
+      "GITLAB_MERGE_REQUEST_BASE",
+      "GITLAB_PUSH_BEFORE",
+      "LOCAL_UPSTREAM_MERGE_BASE"
+    ],
+    "target": "IMMUTABLE_HEAD",
+    "changes": "EXACT_BASE_TO_HEAD_GIT_DIFF",
+    "outputs": "NON_EMPTY_GRADLE_DECLARED_REPOSITORY_OUTPUTS",
+    "graph": "TYPED_COMPLETE_GRADLE_PROJECT_AND_TASK_RELATIONSHIPS"
+  },
+  "supportedFixtureFamilies": [
+    "PACKAGING",
+    "VERIFICATION",
+    "DISTRIBUTION",
+    "TEST_PREPARATION"
+  ],
+  "discoveredDecision": {
+    "outcome": "LEARNING",
+    "reason": "STRUCTURAL_CANDIDATE_DISCOVERED",
+    "phase": "DISCOVERED",
+    "bindingCompleteness": "DISCOVERY_COMPLETE",
+    "nativeAuthoritative": true,
+    "calibrationPerformed": false,
+    "selectionPerformed": false
+  },
+  "nativeFallbackReasons": [
+    "BASE_REVISION_AMBIGUOUS",
+    "CI_BASE_INVALID",
+    "CHANGE_SET_UNAVAILABLE",
+    "DISCOVERY_BUDGET_EXHAUSTED",
+    "DISCOVERY_EXECUTION_FAILED",
+    "DISCOVERY_STATE_WRITE_FAILED",
+    "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+    "NATIVE_BUILD_FAILED",
+    "NATIVE_BUILD_NOT_STARTED",
+    "NO_SAFE_STRUCTURAL_CANDIDATE",
+    "ORIGINAL_WORKFLOW_UNSUPPORTED",
+    "OUTPUT_SEMANTICS_AMBIGUOUS",
+    "OUTPUTS_MISSING",
+    "REPOSITORY_IDENTITY_UNAVAILABLE",
+    "SOURCE_OWNERSHIP_AMBIGUOUS",
+    "TARGET_REVISION_DRIFT",
+    "TARGET_REVISION_UNAVAILABLE",
+    "TEST_EXECUTION_OUT_OF_SCOPE",
+    "WORKTREE_DIRTY",
+    "WORKFLOW_ARGUMENTS_AMBIGUOUS",
+    "WORKFLOW_BOUNDARY_UNSUPPORTED",
+    "WORKFLOW_OPTION_UNSUPPORTED"
+  ],
+  "generatedDocuments": [
+    "changes.txt",
+    "output-contract.json",
+    "manifest.json",
+    "graph.json",
+    "generated-manifest.json",
+    "fallback-changes.txt",
+    "proposal.json"
+  ],
+  "storage": {
+    "root": ".buildopt/optimize/v1/discovery",
+    "permissions": "CURRENT_USER_PRIVATE",
+    "writeBehavior": "ATOMIC_PRIVATE_REPLACE",
+    "rawGradleArgumentsPersisted": false,
+    "absoluteRepositoryPathPersisted": false
+  },
+  "authority": {
+    "proofOfConcept": true,
+    "reviewRequired": true,
+    "nativeGradleAuthoritative": true,
+    "automaticActivation": false,
+    "productionAuthorized": false,
+    "performanceClaimCreated": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

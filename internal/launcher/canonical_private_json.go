@@ -17,6 +17,10 @@ func writeCanonicalPrivateJSON(path string, value any) error {
 	if err != nil {
 		return err
 	}
+	return writePrivateAtomicFile(path, canonical)
+}
+
+func writePrivateAtomicFile(path string, contents []byte) error {
 	temporary, err := os.CreateTemp(filepath.Dir(path), ".buildopt-state-*")
 	if err != nil {
 		return err
@@ -27,7 +31,7 @@ func writeCanonicalPrivateJSON(path string, value any) error {
 		_ = temporary.Close()
 		return err
 	}
-	if _, err := temporary.Write(canonical); err != nil {
+	if _, err := temporary.Write(contents); err != nil {
 		_ = temporary.Close()
 		return err
 	}

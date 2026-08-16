@@ -50,7 +50,7 @@ jq -e '
   .state.bindingCompleteness == ["CONTRACT_ONLY", "DISCOVERY_COMPLETE", "CALIBRATION_COMPLETE"] and
   .state.exactResumeBindings == [
     "BUILDOPT_EXECUTABLE", "REPOSITORY_SCOPE", "GRADLE_WRAPPER_PROPERTIES",
-    "GRADLE_ARGUMENTS", "CALIBRATION_BUDGET"
+    "GRADLE_ARGUMENTS", "DISCOVERY_CONTEXT", "CALIBRATION_BUDGET"
   ] and
   .state.resumeDecisions == [
     "NO_CHECKPOINT", "EXACT_BINDINGS", "BINDING_DRIFT", "INVALID_CHECKPOINT", "RESUME_DISABLED"
@@ -60,7 +60,7 @@ jq -e '
   .result.schemaVersion == "buildopt.poc/optimize-result/v1" and
   .result.file == ".buildopt/optimize/v1/result.json" and
   .result.permissions == "CURRENT_USER_PRIVATE" and
-  (.result.alwaysReports | length) == 11 and
+  (.result.alwaysReports | length) == 12 and
   .result.humanOutput == "SHORT_STDERR_SUMMARY" and
   .result.machineOutput == "RESULT_FILE_ALWAYS_AND_STDOUT_WITH_JSON_FLAG" and
   .exitBehavior == {
@@ -75,9 +75,9 @@ jq -e '
     testOptimization: "OUT_OF_SCOPE"
   } and
   .currentImplementation == {
-    status: "CONTRACT_AND_NATIVE_SKELETON", outcome: "NATIVE_RETAINED",
-    reason: "AUTO_DISCOVERY_PENDING", phase: "UNSEEN", nativeBuildCache: true,
-    automaticDiscovery: false, calibrationPerformed: false, selectionPerformed: false
+    status: "AUTOMATIC_DISCOVERY", outcome: "LEARNING",
+    reason: "STRUCTURAL_CANDIDATE_DISCOVERED", phase: "DISCOVERED", nativeBuildCache: true,
+    automaticDiscovery: true, calibrationPerformed: false, selectionPerformed: false
   } and
   .boundaries == {
     percentagesAveragedAcrossRepositories: false, mechanismPercentagesAdded: false,
@@ -101,4 +101,4 @@ grep -F 'buildopt optimize [options] [--] <gradle args...>' \
 grep -F 'buildopt optimize build' \
     "${buildopt_repo_root}/specs/poc-magic-onboarding-contract-v1.md" >/dev/null
 
-printf 'Magic onboarding contract OK: one command, zero manual files, exact resume, native skeleton\n'
+printf 'Magic onboarding contract OK: one command, zero manual files, exact discovery-bound resume\n'
