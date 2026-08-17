@@ -36,6 +36,7 @@ include("service-a", "service-b")
 EOF
 cat >"${buildopt_repository}/gradle.properties" <<'EOF'
 org.gradle.configureondemand=true
+org.gradle.configuration-cache=true
 EOF
 cat >"${buildopt_repository}/build.gradle.kts" <<'EOF'
 check(providers.gradleProperty("owner.mode").orNull == "jvm")
@@ -186,12 +187,13 @@ cp -R -- "${buildopt_repository}" "${buildopt_ambiguous}"
 git -C "${buildopt_ambiguous}" clean -ffdxq
 cat >>"${buildopt_ambiguous}/build.gradle.kts" <<'EOF'
 subprojects {
+    val outputName = project.name
     tasks.register("sharedOutput") {
         outputs.dir(rootProject.layout.projectDirectory.dir("shared"))
         doLast {
-            rootProject.file("shared/${project.name}.txt").apply {
+            File(outputs.files.singleFile, "${outputName}.txt").apply {
                 parentFile.mkdirs()
-                writeText(project.name)
+                writeText(outputName)
             }
         }
     }
