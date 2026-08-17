@@ -174,7 +174,7 @@ func TestMeasurementGradleDistributionSeedRejectsSymlinks(t *testing.T) {
 	}
 }
 
-func TestStructuralMeasurementSharesOnlyImmutableResolvedDependencies(t *testing.T) {
+func TestStructuralMeasurementSharesOnlyImmutableGradleCaches(t *testing.T) {
 	gradleHome := t.TempDir()
 	modulesRoot := filepath.Join(gradleHome, "caches", "modules-2")
 	artifact := filepath.Join(modulesRoot, "files-2.1", "example", "artifact.jar")
@@ -192,10 +192,24 @@ func TestStructuralMeasurementSharesOnlyImmutableResolvedDependencies(t *testing
 			t.Fatal(err)
 		}
 	}
+	nativeBuildCache := filepath.Join(gradleHome, "caches", "build-cache-1")
+	if err := os.MkdirAll(nativeBuildCache, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(nativeBuildCache, "cache-entry"), []byte("native output"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(nativeBuildCache, "build-cache-1.lock"), []byte("transient"), 0o600); err != nil {
+		t.Fatal(err)
+	}
 	t.Setenv("GRADLE_USER_HOME", gradleHome)
 	seed, err := measurementGradleDependencySeed()
 	if err != nil || seed != modulesRoot {
 		t.Fatalf("dependency seed = %q/%v", seed, err)
+	}
+	buildCacheSeed, err := measurementGradleNativeBuildCacheSeed()
+	if err != nil || buildCacheSeed != nativeBuildCache {
+		t.Fatalf("native build-cache seed = %q/%v", buildCacheSeed, err)
 	}
 	measurementRoot := filepath.Join(t.TempDir(), "measurement")
 	if err := os.Mkdir(measurementRoot, 0o700); err != nil {
@@ -203,8 +217,9 @@ func TestStructuralMeasurementSharesOnlyImmutableResolvedDependencies(t *testing
 	}
 	defer cleanupStructuralMeasurementRoot(measurementRoot)
 	config, err := prepareStructuralDependencySnapshot(structuralMeasurementConfig{
-		gradleDependencySeed: seed,
-		timeout:              time.Minute,
+		gradleDependencySeed:       seed,
+		gradleNativeBuildCacheSeed: buildCacheSeed,
+		timeout:                    time.Minute,
 	}, measurementRoot, io.Discard)
 	if err != nil {
 		t.Fatal(err)
@@ -220,6 +235,27 @@ func TestStructuralMeasurementSharesOnlyImmutableResolvedDependencies(t *testing
 	for _, transient := range []string{"modules-2.lock", "gc.properties"} {
 		if _, err := os.Stat(filepath.Join(config.gradleReadOnlyDependencyRoot, "modules-2", transient)); !os.IsNotExist(err) {
 			t.Fatalf("transient dependency state %q was copied: %v", transient, err)
+		}
+	}
+	if config.gradleSharedBuildCacheSeed == "" {
+		t.Fatal("shared native build-cache seed was not prepared")
+	}
+	cacheEntry := filepath.Join(config.gradleSharedBuildCacheSeed, "cache-entry")
+	cacheInfo, err := os.Stat(cacheEntry)
+	if err != nil || (runtime.GOOS != "windows" && cacheInfo.Mode().Perm() != 0o400) {
+		t.Fatalf("shared native cache entry = %v/%v", cacheInfo, err)
+	}
+	if _, err := os.Stat(filepath.Join(config.gradleSharedBuildCacheSeed, "build-cache-1.lock")); !os.IsNotExist(err) {
+		t.Fatalf("native build-cache lock was copied: %v", err)
+	}
+	for _, armName := range []string{"control", "candidate"} {
+		armCache := filepath.Join(measurementRoot, armName+"-home", "caches", "build-cache-1")
+		if err := copyMeasurementTree(config.gradleSharedBuildCacheSeed, armCache); err != nil {
+			t.Fatalf("seed %s arm cache: %v", armName, err)
+		}
+		raw, err := os.ReadFile(filepath.Join(armCache, "cache-entry"))
+		if err != nil || string(raw) != "native output" {
+			t.Fatalf("%s arm cache entry = %q/%v", armName, raw, err)
 		}
 	}
 	control := strings.Join(measurementEnvironment("control-home", config.gradleReadOnlyDependencyRoot), "\n")
