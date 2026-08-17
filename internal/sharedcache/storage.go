@@ -51,7 +51,7 @@ var (
 	ErrCapacityExceeded = errors.New("Shared cache capacity exceeded")
 )
 
-// Layout is the complete private on-disk A0-004 layout.
+// Layout is the complete private on-disk cache, control, and typed-state layout.
 type Layout struct {
 	Root            string
 	Blobs           string
@@ -59,6 +59,7 @@ type Layout struct {
 	Quarantine      string
 	CacheDatabase   string
 	ControlDatabase string
+	StateDatabase   string
 	WriterLock      string
 }
 
@@ -87,7 +88,7 @@ type MetadataStore interface {
 // benchmark fault runs may inject a reduced availability reading at open time.
 type DiskCapacityProbe func(root string) (total uint64, available uint64, err error)
 
-// Storage owns the process-wide writer lease, immutable blobs, and the two
+// Storage owns the process-wide writer lease, immutable blobs, and the three
 // deliberately independent SQLite lifecycles.
 type Storage struct {
 	operationMutex             sync.RWMutex
@@ -105,6 +106,8 @@ type Storage struct {
 	blobs                      *filesystemBlobStore
 	cache                      *sqliteMetadata
 	control                    *sqliteMetadata
+	state                      *sqliteMetadata
+	stateCASMutex              sync.Mutex
 	capacity                   CapacityPolicy
 	reservations               map[*pendingReservation]struct{}
 	blobCleanupPending         bool
@@ -234,6 +237,7 @@ func openWithConfiguration(
 		Quarantine:      filepath.Join(root, "quarantine"),
 		CacheDatabase:   filepath.Join(root, "cache.sqlite"),
 		ControlDatabase: filepath.Join(root, "control.sqlite"),
+		StateDatabase:   filepath.Join(root, "state.sqlite"),
 		WriterLock:      filepath.Join(root, "writer.lock"),
 	}
 	if err := preparePrivateDirectory(layout.Root); err != nil {
@@ -321,6 +325,9 @@ func openWithConfiguration(
 		clock:                      time.Now,
 	}
 	cleanup := func(openErr error) (*Storage, error) {
+		if storage.state != nil {
+			_ = storage.state.close()
+		}
 		if storage.control != nil {
 			_ = storage.control.close()
 		}
@@ -358,6 +365,19 @@ func openWithConfiguration(
 		))
 	}
 	storage.control = control
+
+	state, err := openSQLiteMetadata(
+		ctx,
+		storage,
+		stateMetadataDefinition(layout.StateDatabase),
+	)
+	if err != nil {
+		return cleanup(fmt.Errorf(
+			"open single-node Shared storage: state metadata: %w",
+			err,
+		))
+	}
+	storage.state = state
 	if err := storage.applyCapacityPolicy(ctx); err != nil {
 		return cleanup(fmt.Errorf(
 			"open single-node Shared storage: apply capacity policy: %w",
@@ -369,6 +389,12 @@ func openWithConfiguration(
 		blobRoot:         layout.Blobs,
 		spoolRoot:        layout.Spool,
 		maximumBlobBytes: maximumBlobBytes,
+	}
+	if _, err := storage.maintainStateMetadata(ctx, storage.now()); err != nil {
+		return cleanup(fmt.Errorf(
+			"open single-node Shared storage: maintain typed state: %w",
+			err,
+		))
 	}
 	if _, err := storage.reconcile(ctx, storage.now()); err != nil {
 		return cleanup(fmt.Errorf(
@@ -400,6 +426,10 @@ func validateStorageRootEntries(root string) error {
 		"control.sqlite-journal": {},
 		"control.sqlite-shm":     {},
 		"control.sqlite-wal":     {},
+		"state.sqlite":           {},
+		"state.sqlite-journal":   {},
+		"state.sqlite-shm":       {},
+		"state.sqlite-wal":       {},
 	}
 	entries, err := os.ReadDir(root)
 	if err != nil {
@@ -449,6 +479,11 @@ func (storage *Storage) ControlMetadata() MetadataStore {
 	return storage.control
 }
 
+// StateMetadata returns the independent typed BuildOpt-state lifecycle.
+func (storage *Storage) StateMetadata() MetadataStore {
+	return storage.state
+}
+
 func (storage *Storage) now() time.Time {
 	return storage.clock().UTC()
 }
@@ -480,6 +515,9 @@ func (storage *Storage) Close() error {
 	storage.accessBatchMutex.Unlock()
 	if storage.control != nil {
 		closeErrors = append(closeErrors, storage.control.close())
+	}
+	if storage.state != nil {
+		closeErrors = append(closeErrors, storage.state.close())
 	}
 	if storage.cache != nil {
 		closeErrors = append(closeErrors, storage.cache.close())

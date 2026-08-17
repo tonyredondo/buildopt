@@ -152,8 +152,10 @@ required. See the [CI integration guide](./docs/guides/ci-integration.md).
 
 An optional cross-machine cache/state service is the next POC direction. Its
 [storage contract](./specs/poc-central-storage-contract-v1.md) is executable,
-but the state store, HTTPS connection and remote profile reuse are not yet
-implemented and do not change this onboarding path.
+and the [restart-safe local state store](./specs/poc-central-state-storage-v1.md)
+now persists typed portfolios, evidence and checkpoints on the shared CAS with
+independent SQLite visibility. HTTPS connection and remote profile reuse are
+not yet implemented and do not change this onboarding path.
 
 For a non-invasive evaluation, the GitHub Action's `profile-proposal` mode
 turns a checked-in workflow/output declaration and exact pull-request diff into

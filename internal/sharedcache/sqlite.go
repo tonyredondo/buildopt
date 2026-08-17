@@ -19,9 +19,11 @@ import (
 const (
 	cacheMetadataRole   = "CACHE_VISIBILITY"
 	controlMetadataRole = "CONTROL_AUDIT_INDEX"
+	stateMetadataRole   = "BUILDOPT_TYPED_STATE"
 
 	cacheMetadataConnections   = 32
 	controlMetadataConnections = 1
+	stateMetadataConnections   = 8
 )
 
 type metadataDefinition struct {
@@ -642,6 +644,8 @@ func openSQLiteMetadata(
 		// WAL permits data-plane readers to proceed concurrently while
 		// lifecycle and access writers remain transactionally serialized.
 		connectionLimit = cacheMetadataConnections
+	} else if definition.role == stateMetadataRole {
+		connectionLimit = stateMetadataConnections
 	}
 	database.SetMaxOpenConns(connectionLimit)
 	database.SetMaxIdleConns(connectionLimit)
@@ -697,7 +701,11 @@ func (metadata *sqliteMetadata) applyOrValidateSchema(
 	).Scan(&version); err != nil {
 		return fmt.Errorf("read schema version: %w", err)
 	}
-	if version < 0 || version > SchemaVersion {
+	targetVersion := len(metadata.definition.migrations)
+	if targetVersion == 0 {
+		return errors.New("metadata definition has no schema migrations")
+	}
+	if version < 0 || version > targetVersion {
 		return fmt.Errorf(
 			"unsupported %s schema version %d",
 			metadata.definition.role,
@@ -714,7 +722,7 @@ func (metadata *sqliteMetadata) applyOrValidateSchema(
 	); err != nil {
 		return err
 	}
-	for version < SchemaVersion {
+	for version < targetVersion {
 		migration := metadata.definition.migrations[version]
 		if migration.version != version+1 {
 			return errors.New("non-contiguous schema migration definition")
@@ -726,7 +734,7 @@ func (metadata *sqliteMetadata) applyOrValidateSchema(
 	}
 	if err := metadata.validateMigrationRecords(
 		ctx,
-		SchemaVersion,
+		targetVersion,
 	); err != nil {
 		return err
 	}

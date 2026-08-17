@@ -563,6 +563,24 @@ SELECT blob_digest FROM committed_objects`,
 	if err := rows.Close(); err != nil {
 		return 0, err
 	}
+	stateRows, err := storage.state.database.QueryContext(
+		ctx,
+		`SELECT blob_digest FROM state_objects`,
+	)
+	if err != nil {
+		return 0, err
+	}
+	for stateRows.Next() {
+		var digest string
+		if err := stateRows.Scan(&digest); err != nil {
+			_ = stateRows.Close()
+			return 0, err
+		}
+		referenced[digest] = struct{}{}
+	}
+	if err := stateRows.Close(); err != nil {
+		return 0, err
+	}
 	blobs, err := storage.blobs.list()
 	if err != nil {
 		return 0, err

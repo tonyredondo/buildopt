@@ -115,10 +115,11 @@ retention, checkpoint expiry, service outage and safe native fallback.
 
 ## POC boundary
 
-This contract does not implement storage, HTTPS, credentials, client sync,
-cross-commit applicability or a two-machine performance claim. It does not
-require production HA, multi-tenancy, RBAC administration, KMS/HSM, backup
-SLAs, soak or a design partner. Test Optimization remains outside this
-product. The next block is `POC-CENTRAL-STATE-STORAGE-001`, which must implement
-these exact state semantics on the existing content-addressed/SQLite
-foundation.
+This contract itself does not expose storage, HTTPS, credentials, client sync,
+cross-commit applicability or a two-machine performance claim. Its local state
+semantics are now implemented by
+[`POC-CENTRAL-STATE-STORAGE-001`](./poc-central-state-storage-v1.md) on the
+existing content-addressed/SQLite foundation. Production HA, multi-tenancy,
+RBAC administration, KMS/HSM, backup SLAs, soak and design partners remain out
+of scope. Test Optimization remains outside this product. The next block is
+`POC-CENTRAL-HTTPS-AUTH-001`.

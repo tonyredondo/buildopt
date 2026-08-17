@@ -123,6 +123,14 @@ func TestCacheMetadataUsesBoundedConcurrentWALConnections(t *testing.T) {
 			controlMetadataConnections,
 		)
 	}
+	if actual := storage.state.database.Stats().MaxOpenConnections; actual !=
+		stateMetadataConnections {
+		t.Fatalf(
+			"state metadata connection limit = %d, want %d",
+			actual,
+			stateMetadataConnections,
+		)
+	}
 
 	connections := make([]*sql.Conn, 0, cacheMetadataConnections-1)
 	defer func() {
@@ -173,6 +181,7 @@ func TestOpenCreatesPrivateWALStorageAndOwnsWriter(t *testing.T) {
 		Quarantine:      filepath.Join(root, "quarantine"),
 		CacheDatabase:   filepath.Join(root, "cache.sqlite"),
 		ControlDatabase: filepath.Join(root, "control.sqlite"),
+		StateDatabase:   filepath.Join(root, "state.sqlite"),
 		WriterLock:      filepath.Join(root, "writer.lock"),
 	}) {
 		t.Fatalf("layout = %+v", layout)
@@ -189,6 +198,7 @@ func TestOpenCreatesPrivateWALStorageAndOwnsWriter(t *testing.T) {
 	for _, file := range []string{
 		layout.CacheDatabase,
 		layout.ControlDatabase,
+		layout.StateDatabase,
 		layout.WriterLock,
 	} {
 		assertMode(t, file, false, 0o600)
@@ -198,12 +208,21 @@ func TestOpenCreatesPrivateWALStorageAndOwnsWriter(t *testing.T) {
 		t,
 		storage.cache,
 		cacheMetadataRole,
+		SchemaVersion,
 		"wal",
 	)
 	assertMetadataHealth(
 		t,
 		storage.control,
 		controlMetadataRole,
+		SchemaVersion,
+		"wal",
+	)
+	assertMetadataHealth(
+		t,
+		storage.state,
+		stateMetadataRole,
+		StateSchemaVersion,
 		"wal",
 	)
 	assertSchemaObjects(
@@ -215,6 +234,11 @@ func TestOpenCreatesPrivateWALStorageAndOwnsWriter(t *testing.T) {
 		t,
 		storage.control.database,
 		controlMetadataDefinition(layout.ControlDatabase).objects,
+	)
+	assertSchemaObjects(
+		t,
+		storage.state.database,
+		stateMetadataDefinition(layout.StateDatabase).objects,
 	)
 
 	second, err := Open(ctx, root)
@@ -526,6 +550,7 @@ func assertMetadataHealth(
 	t *testing.T,
 	metadata *sqliteMetadata,
 	role string,
+	expectedVersion int,
 	journalMode string,
 ) {
 	t.Helper()
@@ -534,7 +559,7 @@ func assertMetadataHealth(
 		t.Errorf("role = %q, want %q", metadata.Role(), role)
 	}
 	if version, err := metadata.SchemaVersion(ctx); err != nil ||
-		version != SchemaVersion {
+		version != expectedVersion {
 		t.Errorf("schema version = %d/%v", version, err)
 	}
 	if err := metadata.IntegrityCheck(ctx); err != nil {

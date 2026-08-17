@@ -157,6 +157,8 @@ buildopt_required_files=(
     "internal/sharedcache/platform_darwin.go"
     "internal/sharedcache/platform_windows.go"
     "internal/sharedcache/sqlite.go"
+    "internal/sharedcache/state.go"
+    "internal/sharedcache/state_sqlite.go"
     "internal/sharedcache/storage.go"
     "internal/sharedcache/storage_test.go"
     "specs/single-node-shared-storage-v1.md"
@@ -240,7 +242,8 @@ done
 for buildopt_file in \
     "${buildopt_state}/writer.lock" \
     "${buildopt_state}/cache.sqlite" \
-    "${buildopt_state}/control.sqlite"; do
+    "${buildopt_state}/control.sqlite" \
+    "${buildopt_state}/state.sqlite"; do
     if [[ ! -f "${buildopt_file}" ]] ||
         [[ -L "${buildopt_file}" ]] ||
         [[ "$(stat -c '%a' -- "${buildopt_file}")" != "600" ]]; then
@@ -292,4 +295,4 @@ if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
     exit 1
 fi
 
-printf 'A0-004 single-node Shared storage OK: private local blobs, WAL-separated cache/control metadata, writer ownership, corruption checks, and real server restart\n'
+printf 'A0-004 single-node Shared storage OK: private local blobs, WAL-separated cache/control/state metadata, writer ownership, corruption checks, and real server restart\n'

@@ -22,17 +22,19 @@ Gradle cache entries.
 
 ## Current status
 
-The storage contract is complete. The three versioned state schemas, exact
-HTTP/state semantics and executable lifecycle vectors are defined in the
+The storage contract and local persistence are complete. The three versioned
+state schemas and lifecycle vectors are defined in the
 [central storage contract](../../specs/poc-central-storage-contract-v1.md).
-They keep Gradle objects opaque and evictable while portfolios, evidence and
-checkpoints use typed immutable manifests plus one CAS head. No central-state
-server, external listener, credential flow or synchronization exists yet.
+The [concrete store](../../specs/poc-central-state-storage-v1.md) adds an
+independent `state.sqlite` lifecycle over the existing physical CAS and proves
+restart, corruption rejection, concurrent CAS, invisible partial publication
+and independent retention. Gradle objects remain opaque and evictable while
+portfolios, evidence and checkpoints use typed immutable manifests plus one
+head. No external listener, credential flow or synchronization exists yet.
 
-The next block is `POC-CENTRAL-STATE-STORAGE-001`: implement those exact state
-semantics on the existing content-addressed files and SQLite metadata, then
-prove restart, corruption, concurrency and partial-publication behavior before
-adding HTTPS.
+The next block is `POC-CENTRAL-HTTPS-AUTH-001`: expose the already proven cache
+and state boundaries through trusted HTTPS with separately scoped POC
+credentials, without yet selecting remote profiles automatically.
 
 ## Target experience
 

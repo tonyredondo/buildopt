@@ -165,6 +165,7 @@ KMS/HSM-backed keys, HA, and recovery objectives.
 | Managed L1 | Launcher and Gradle plugin | Repository/trust/compatibility/generation segmented; exclusive invocation lease |
 | Shared blobs | Server | Immutable content-addressed files on a proven local filesystem |
 | Cache and control metadata | Server | Separate SQLite databases in WAL and `FULL` synchronous mode |
+| BuildOpt portfolio/evidence/checkpoint metadata | Server | Independent `state.sqlite`; immutable manifests plus exact-generation CAS head |
 | Edge blobs and metadata | Edge | Bounded local store, durable pending replication, TTL and byte-SLRU |
 | Build sessions | Server exporter | Atomic mode-`0600` immutable JSON plus bounded deterministic JSONL |
 | Patch staging | Java patcher | Private detached Git worktree; exact branch/ref publication only after all postimages match |
@@ -181,11 +182,13 @@ planes:
 | BuildOpt state | Typed portfolio, evidence and checkpoint artifacts under a repository/kind namespace | Immutable artifact and manifest upload followed by exact next-generation head CAS; invalid or unavailable state retains optimized native Gradle |
 
 The executable [central storage contract](../../specs/poc-central-storage-contract-v1.md)
-fixes namespaces, retention, CAS and fallback before implementation. Physical
-blob bytes may be deduplicated, but metadata, authorization and visibility do
-not cross planes. Remote portfolio selection will still require exact local
-revalidation. The state store, HTTPS listener and client sync are not yet
-implemented.
+fixes namespaces, retention, CAS and fallback. Its
+[local storage implementation](../../specs/poc-central-state-storage-v1.md)
+now uses the existing physical CAS plus independent `state.sqlite` metadata,
+reverifies every artifact on publication/read and preserves typed state across
+restart. Metadata, authorization and visibility do not cross planes. Remote
+portfolio selection will still require exact local revalidation; the HTTPS
+listener and client sync are not yet implemented.
 
 Linux checks a local filesystem allowlist. macOS requires `MNT_LOCAL` and a
 same-device boundary. Windows requires one local volume and rejects reparse

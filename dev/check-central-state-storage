@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-central-state-storage-v1.json"
+
+if ! command -v jq >/dev/null 2>&1; then
+    printf 'required central-state command is unavailable: jq\n' >&2
+    exit 1
+fi
+
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/central-state-storage/v1" and
+    .workItem == "POC-CENTRAL-STATE-STORAGE-001" and
+    .root == {
+        owner: "buildopt-server",
+        writerLease: "EXISTING_PROCESS_LIFETIME_EXCLUSIVE_LOCK",
+        blobStore: "blobs/sha256",
+        metadata: "state.sqlite",
+        physicalBlobDeduplication: true,
+        logicalMetadataSharedWithGradleCache: false
+    } and
+    .sqlite.schemaVersion == 1 and
+    .sqlite.journalMode == "WAL" and
+    .sqlite.synchronous == "FULL" and
+    .sqlite.foreignKeys == true and
+    .sqlite.busyTimeoutMs == 5000 and
+    (.sqlite.tables | length) == 7 and
+    .publication.headVisibleBeforeCAS == false and
+    .publication.exactReplay == "IDEMPOTENT" and
+    .publication.changedReplay == "IDEMPOTENCY_CONFLICT" and
+    .publication.concurrentLoser == "STATE_PRECONDITION_FAILED" and
+    .publication.skippedGeneration == "GENERATION_CONFLICT" and
+    .read.selectionRequiresLocalRevalidation == true and
+    .retention.gradleCachePolicyIndependent == true and
+    .restart.retentionMaintenanceBeforeBlobReconciliation == true and
+    .authority == {
+        proofOfConcept: true,
+        productionAuthorized: false,
+        soakRequired: false,
+        designPartnerRequired: false,
+        testOptimization: "OUT_OF_SCOPE"
+    } and
+    (.deferred | index("EXTERNAL_HTTPS_LISTENER")) != null and
+    (.deferred | index("CLIENT_CONNECT_AND_SYNC")) != null
+' "${buildopt_contract}" >/dev/null; then
+    printf 'central state storage contract is malformed\n' >&2
+    exit 1
+fi
+
+"${buildopt_script_dir}/check-central-storage-contract"
+
+cd -- "${buildopt_repo_root}"
+exec "${buildopt_script_dir}/run" \
+    --toolchain go \
+    -- \
+    go test \
+        -race \
+        -count=1 \
+        -run '^TestTypedState' \
+        ./internal/sharedcache

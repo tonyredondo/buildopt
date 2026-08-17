@@ -387,6 +387,22 @@ namespace isolation, independent retention, interruption, outage, and native
 fallback. This is contract evidence only; it does not start a server or claim
 cross-machine performance.
 
+## Restart-safe central state storage
+
+Validate the concrete typed-state implementation over the existing Shared CAS:
+
+```bash
+./dev/check-central-state-storage
+```
+
+The checker composes the central contract with race-enabled storage tests. It
+proves private independent `state.sqlite` migrations, restart persistence,
+repository/kind isolation, exact CAS replay, one-winner concurrent promotion,
+invisible partial publication, complete-byte corruption rejection and the
+portfolio/evidence/checkpoint retention rules. It does not open a network
+listener or claim cross-machine value; HTTPS/authentication remains the next
+POC block.
+
 ## CI orchestration validation
 
 Validate the `F0-030` authoritative-job, protected validation queue,

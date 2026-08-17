@@ -61,12 +61,13 @@ monotonic policy/revocation state used independently by launcher and Shared.
 `sharedcache/` owns the A0-004..A0-006 single-node storage and publication
 boundary used by `buildopt-server`: private same-filesystem SHA-256 blobs, a
 process-lifetime writer lease, independently migrated WAL-mode
-`cache.sqlite`/`control.sqlite`, durable pending attempts, canonical Ed25519
-decisions, atomic first-writer visibility, context-bound opaque HTTP GET/PUT,
-quarantine, startup reconciliation, and current local-authority records. It
-verifies complete bytes before returning a hit, persists no raw data-plane
-credential, rejects stale/rolled-back authority, and never derives authority
-from blob presence.
+`cache.sqlite`/`control.sqlite`/`state.sqlite`, durable pending attempts,
+canonical Ed25519 decisions, atomic first-writer visibility, context-bound
+opaque HTTP GET/PUT, quarantine, startup reconciliation, current
+local-authority records, and restart-safe typed portfolio/evidence/checkpoint
+state. It verifies complete bytes before returning a cache hit or state
+snapshot, persists no raw data-plane credential, rejects stale/rolled-back
+authority, and never derives authority from blob presence.
 
 `edgecache/` owns the optional MVP-C2 boundary. C2-001 adds the strict private
 single-node configuration, loopback listener and authenticated Shared-origin

@@ -169,9 +169,11 @@ human explanation, recomputation formulas and POC boundary.
 
 No server is required for this flow. The optional cross-machine design now has
 an executable [storage contract](../../specs/poc-central-storage-contract-v1.md),
-but central state, `buildopt connect` and remote profile selection are not yet
-implemented. Until those later POC blocks close, `.buildopt/optimize/v1` and
-the CI-provider cache remain the only supported optimize-state persistence.
+and its [local typed store](../../specs/poc-central-state-storage-v1.md)
+persists portfolios, evidence and checkpoints safely inside `buildopt-server`.
+HTTPS, `buildopt connect` and remote profile selection are not yet implemented.
+Until those later POC blocks close, `.buildopt/optimize/v1` and the CI-provider
+cache remain the only supported customer-facing optimize-state persistence.
 
 ## Try the Build Impact accelerator
 

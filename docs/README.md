@@ -78,6 +78,9 @@ before running the product.
 - [Optional central storage contract](../specs/poc-central-storage-contract-v1.md):
   executable namespaces, immutable publication, exact-generation CAS,
   retention and native fallback before any remote state service exists.
+- [Restart-safe typed central state](../specs/poc-central-state-storage-v1.md):
+  local CAS/SQLite persistence, exact replay, corruption rejection and
+  independent state retention before HTTPS or client synchronization.
 
 ### Reference
 
